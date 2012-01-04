@@ -162,6 +162,7 @@
 
 - (IBAction) Help;
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
@@ -214,6 +215,7 @@
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
@@ -244,6 +246,8 @@
 
 - (NSString *) showTroubleshootingForIndex:(NSUInteger)index
 {
+    appDelegate.didUserInteract = YES;
+    
     ZKSObject * obj = [array objectAtIndex:index];
     NSDictionary * dict = [obj fields];
     
@@ -464,6 +468,7 @@
 
 - (IBAction) Done
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
@@ -484,6 +489,7 @@
 
 - (IBAction) showProductManual
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
@@ -503,6 +509,7 @@
 
 - (IBAction) showChatter
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
@@ -648,7 +655,7 @@
 - (void)tableView:(UITableView *)_tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Navigation logic may go here. Create and push another view controller.
-    
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [appDelegate displayNoInternetAvailable];

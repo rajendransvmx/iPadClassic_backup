@@ -64,6 +64,7 @@
 
 - (IBAction) Close
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
@@ -345,6 +346,7 @@
 
 - (IBAction) sendMail
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
@@ -1898,6 +1900,7 @@
 
 - (IBAction) Help;
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];

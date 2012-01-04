@@ -86,6 +86,8 @@
     appDelegate.username = txtUsernameLandscape.text;
     appDelegate.password = txtPasswordLandscape.text;
     
+    appDelegate.isInternetConnectionAvailable = YES;
+
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [appDelegate updateInterfaceWithReachability:appDelegate.hostReach];	

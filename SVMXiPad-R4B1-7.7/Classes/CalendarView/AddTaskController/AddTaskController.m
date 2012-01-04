@@ -102,6 +102,7 @@
 
 - (IBAction) Done
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [appDelegate displayNoInternetAvailable];

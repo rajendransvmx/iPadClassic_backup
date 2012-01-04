@@ -91,6 +91,7 @@
 
 - (IBAction) Help;
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
@@ -505,6 +506,7 @@
 
 - (IBAction) postNewChat
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
@@ -547,6 +549,7 @@
 #pragma mark ChatterCell Delegate
 - (void) postComment:(NSString *)_comment forFeedCommentId:(NSString *)_feedCommentId;
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
@@ -579,6 +582,7 @@
 
 - (IBAction) Done
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];

@@ -145,6 +145,7 @@
 
 - (void) showHelp
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];

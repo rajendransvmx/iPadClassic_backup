@@ -110,9 +110,11 @@
 
 @synthesize connectionAvailable;
 
-@synthesize isInternetConnectionAvailable;
+@dynamic isInternetConnectionAvailable;
 
 @synthesize allURLConnectionsArray;
+
+@synthesize isInternetPresentAfterWake, didAppBecomeActive, didUserInteract, internetConnectionStatus;
 
 //Reachability
 @synthesize hostReach;
@@ -133,11 +135,11 @@
     
     hostReach = [[Reachability reachabilityWithHostName: @"www.salesforce.com"] retain];
 	[hostReach startNotifier];
-	[self updateInterfaceWithReachability:hostReach];
+//	[self updateInterfaceWithReachability:hostReach];
 	
-    internetReach = [[Reachability reachabilityForInternetConnection] retain];
-	[internetReach startNotifier];
-	[self updateInterfaceWithReachability:internetReach];
+//    internetReach = [[Reachability reachabilityForInternetConnection] retain];
+//	[internetReach startNotifier];
+//	[self updateInterfaceWithReachability:internetReach];
     
     //    wifiReach = [[Reachability reachabilityForLocalWiFi] retain];
     //	[wifiReach startNotifier];
@@ -191,52 +193,51 @@
 	[self updateInterfaceWithReachability:curReach];
 }
 
-- (BOOL) isReachable:(Reachability *)curReach
+- (void) updateInterfaceWithReachability: (Reachability*)curReach
 {
     NetworkStatus netStatus = [curReach currentReachabilityStatus];
-//    NSString* statusString= @"";
+    BOOL isReallyReachable = NO;
     switch (netStatus)
     {
         case NotReachable:
-        {
-//            statusString = @"Access Not Available";
-            return NO;
-        }
-        case ReachableViaWWAN:
-        {
-//            statusString = @"Reachable WWAN";
-            return YES;
-        }
-        case ReachableViaWiFi:
-        {
-//            statusString = @"Reachable WiFi";
-            return YES;
-        }
-    }
-
-    return NO;
-}
-
-- (void) updateInterfaceWithReachability: (Reachability*) curReach
-{
-    NetworkStatus netStatus = [curReach currentReachabilityStatus];
-    NSString* statusString= @"";
-    switch (netStatus)
-    {
-        case NotReachable:
-        {
-            statusString = @"Access Not Available";
-            isInternetConnectionAvailable = NO;
-            [self PostInternetNotificationUnavailable];
+            isReallyReachable = [curReach isReachable];
+            if (isReallyReachable)
+            {
+                isInternetConnectionAvailable = YES;
+                internetConnectionStatus = YES;
+                [self PostInternetNotificationAvailable];
+                NSLog(@"Really Reachable 1");
+                break;
+            }
+            netStatus = [curReach currentReachabilityStatus];
+            if (netStatus != kNotReachable)
+            {
+                isInternetConnectionAvailable = YES;
+                internetConnectionStatus = YES;
+                [self PostInternetNotificationAvailable];
+                NSLog(@"Really Reachable 2");
+                break;
+            }
+            else
+            {
+                isInternetConnectionAvailable = NO;
+                internetConnectionStatus = NO;
+                [self PostInternetNotificationUnavailable];
+                NSLog(@"Really Not Reachable");
+            }
             break;
-        }
         case ReachableViaWWAN:
-            statusString = @"Reachable WWAN";
         case ReachableViaWiFi:
-            statusString = @"Reachable WiFi";
             isInternetConnectionAvailable = YES;
+            internetConnectionStatus = YES;
             [self PostInternetNotificationAvailable];
+            NSLog(@"WiFi WWAN Reachable");
             break;
+        default:
+            isInternetConnectionAvailable = YES;
+            internetConnectionStatus = YES;
+            [self PostInternetNotificationAvailable];
+            NSLog(@"Default Reachable");
     }
 }
 
@@ -262,8 +263,9 @@
 
 - (void) applicationDidEnterBackground:(UIApplication *)application
 {
-    // 19 Dec, 2011, Samman - stop hostReach from polling for internet connection while the app is in the background
-    [hostReach stopNotifier];
+//    // 19 Dec, 2011, Samman - stop hostReach from polling for internet connection while the app is in the background
+//    [hostReach stopNotifier];
+//    [internetReach stopNotifier];
     
     NSError * error = nil;
     for (NSString * userName in userNameImageList)
@@ -285,8 +287,20 @@
 
 - (void) applicationDidBecomeActive:(UIApplication *)application
 {
-    // 19 Dec, 2011 - Samman - Resume hostReach notification once the app becomes active again
-    [hostReach startNotifier];
+//    // 19 Dec, 2011 - Samman - Resume hostReach notification once the app becomes active again
+//    [hostReach startNotifier];
+//    [self updateInterfaceWithReachability:hostReach];
+//    [internetReach startNotifier];
+//    [self updateInterfaceWithReachability:internetReach];
+
+//    [hostReach performSelector:@selector(startNotifier) withObject:nil afterDelay:10];
+//    [self updateInterfaceWithReachability:hostReach];
+//    [internetReach performSelector:@selector(startNotifier) withObject:nil afterDelay:10];
+//    [self updateInterfaceWithReachability:internetReach];
+    
+    didAppBecomeActive = YES;
+    didUserInteract = NO;
+    
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
@@ -371,6 +385,9 @@
 
 - (void) displayNoInternetAvailable
 {
+    if (!didUserInteract)
+        return;
+    
     NSString * message = [wsInterface.tagsDictionary objectForKey:ALERT_INTERNET_NOT_AVAILABLE];
     NSString * cancelButtonTitle = [wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
     
@@ -389,6 +406,42 @@
     UIAlertView * _alert = [[UIAlertView alloc] initWithTitle:@"ServiceMax" message:message delegate:nil cancelButtonTitle:cancelButtonTitle otherButtonTitles:nil];
     [_alert show];
     [_alert release];
+}
+
+// isInternetConnectionAvailable getter & setter methods
+
+- (void) setIsInternetConnectionAvailable:(BOOL)isInternetConnectionAvailable
+{
+    
+}
+
+- (BOOL) isInternetConnectionAvailable
+{
+    if (didUserInteract && didAppBecomeActive)
+    {
+        didAppBecomeActive = NO;
+        
+        if (!isInternetConnectionAvailable)
+        {
+            [Reachability reachabilityWithHostName:@"www.salesforce.com"];
+            
+            int maxCount = 0;
+            
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 2, FALSE))
+            {
+                maxCount++;
+                if (maxCount == 10)
+                    break;
+                
+                if (internetConnectionStatus)
+                    break;
+            }
+        }
+        
+        return internetConnectionStatus;
+    }
+
+    return isInternetConnectionAvailable;
 }
 
 @end

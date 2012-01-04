@@ -38,6 +38,7 @@ const NSUInteger kNumImages = 7;
 #pragma mark - 
 - (void) showTasks
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [appDelegate displayNoInternetAvailable];
@@ -65,6 +66,7 @@ const NSUInteger kNumImages = 7;
 
 - (void) showCalendar
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [appDelegate displayNoInternetAvailable];
@@ -83,6 +85,7 @@ const NSUInteger kNumImages = 7;
 }
 - (void) showMap
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [appDelegate displayNoInternetAvailable];
@@ -219,6 +222,7 @@ const NSUInteger kNumImages = 7;
 }
 - (void) showHelp
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [appDelegate displayNoInternetAvailable];

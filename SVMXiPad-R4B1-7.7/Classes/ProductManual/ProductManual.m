@@ -210,6 +210,8 @@
 
 - (void) showManualForIndex:(NSUInteger)index;
 {
+    appDelegate.didUserInteract = YES;
+    
     ZKSObject * obj = [array objectAtIndex:index];
     NSDictionary * dict = [obj fields];
     
@@ -257,6 +259,7 @@
 
 - (IBAction) Help;
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
@@ -303,6 +306,7 @@
 
 - (IBAction) Done
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
@@ -322,6 +326,7 @@
 
 - (IBAction) showChatter
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];

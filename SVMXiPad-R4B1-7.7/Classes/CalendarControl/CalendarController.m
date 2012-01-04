@@ -289,6 +289,7 @@
 
 - (IBAction) NextMonth
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [appDelegate displayNoInternetAvailable];
@@ -307,6 +308,7 @@
 
 - (IBAction) PrevMonth
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [appDelegate displayNoInternetAvailable];
@@ -542,6 +544,7 @@
 
 - (IBAction) DateClicked:(id)sender
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [appDelegate displayNoInternetAvailable];

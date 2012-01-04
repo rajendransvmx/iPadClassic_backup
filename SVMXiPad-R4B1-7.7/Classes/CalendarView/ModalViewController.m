@@ -192,6 +192,7 @@
 
 - (IBAction) Help;
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [appDelegate displayNoInternetAvailable];
@@ -369,6 +370,7 @@
 
 - (IBAction) refreshViews;
 {
+    appDelegate.didUserInteract = YES;
     [self disableUI];
     if (!appDelegate.isInternetConnectionAvailable)
     {
@@ -441,6 +443,8 @@
 - (IBAction) ShowMap
 {
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+    
+    appDelegate.didUserInteract = YES;
     
     if (!appDelegate.isInternetConnectionAvailable)
     {
@@ -568,6 +572,7 @@
 
 - (IBAction) ToggleLandscapeView
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [appDelegate displayNoInternetAvailable];
@@ -714,6 +719,7 @@
 
 - (IBAction) AddTask:(id)sender
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
@@ -1073,6 +1079,7 @@
 
 - (IBAction) SetToday
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
@@ -1387,6 +1394,7 @@
 
 - (IBAction) IncrDate
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
@@ -1422,6 +1430,7 @@
 
 - (IBAction) DecrDate
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];

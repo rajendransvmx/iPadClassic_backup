@@ -193,6 +193,7 @@
 - (void) moveTo:(CGRect)location
 {
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [self restorePositionToRect:selfFrame];

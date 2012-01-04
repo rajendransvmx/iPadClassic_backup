@@ -371,6 +371,7 @@
 // Back Button Methods
 - (void) DismissModalViewController:(id)sender
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
@@ -972,6 +973,7 @@
 #pragma mark - ActionMenu Delegate Method
 - (void) didSubmitAction:(NSString *)processId processTitle:(NSString *)processTitle
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
@@ -996,6 +998,7 @@
 
 - (void) didInvokeWebService:(NSString *)targetCall
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
@@ -1039,6 +1042,7 @@
 
 - (void) didSubmitDefaultAction:(NSString *)defaultAction
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
@@ -1268,6 +1272,8 @@
     [self disableSFMUI];
     
     clickedBack = NO;
+    
+    appDelegate.didUserInteract = YES;
  
     if (!appDelegate.isInternetConnectionAvailable)
     {
@@ -1434,6 +1440,7 @@
 
 - (void) showTroubleshooting
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
@@ -1459,6 +1466,7 @@
 
 - (void) showChatter
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
@@ -3610,8 +3618,10 @@
                     [format setDateFormat:@"MMM dd yyyy"];
                     value = [format stringFromDate:date];
                 }
-                
-                lbl2.text = value;
+                //#003299
+                lbl2.text = nil;
+                if(value != nil)
+                    lbl2.text = [NSString stringWithFormat:@"%@",value ];
                 if(lbl2.text == nil)
                 {
                     ValueCount++;
@@ -4009,7 +4019,7 @@
             custLabel.text = value;
             custLabel.controlDelegate = self;
             //custLabel.textColor = [UIColor blueColor];
-            custLabel.font = [UIFont systemFontOfSize:custLabel.font.pointSize];
+            custLabel.font = [UIFont systemFontOfSize:custLabel.font.pointSize];//#003253
             custLabel.userInteractionEnabled = TRUE;
             custLabel.id_ = key;
             custLabel.refered_to_table_name = related_to_table_name;
@@ -5257,6 +5267,7 @@
 #pragma mark - accessoryTapped: Method
 - (void) accessoryTapped:(id)sender
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
@@ -5518,6 +5529,7 @@
 #pragma mark- multiAccessoryTapped:Method
 - (IBAction) multiAccessoryTapped:(id)sender
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
@@ -6750,6 +6762,8 @@
 
 - (void) setSignImageData:(NSData *)imageData
 {
+    appDelegate.didUserInteract = YES;
+    
     isShowingSignatureCapture = NO;
 
     if (!appDelegate.isInternetConnectionAvailable)
@@ -6778,6 +6792,7 @@
 #pragma mark - ShowHelp Method
 - (void) showHelp
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];

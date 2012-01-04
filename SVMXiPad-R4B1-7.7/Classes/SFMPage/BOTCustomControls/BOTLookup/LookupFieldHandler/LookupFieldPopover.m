@@ -95,6 +95,7 @@
 #pragma mark - LookupView Delegate Method
 - (void) searchObject:(NSString *)keyword withObjectName:(NSString *)objectName returnTo:(id)caller setting:(BOOL)idAvailable
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [appDelegate displayNoInternetAvailable];
@@ -117,7 +118,7 @@
             NSString * value_Field_API = [dict objectForKey:gVALUE_FIELD_API_NAME];
             if ([value_Field_API isEqualToString:lookupField.Field_Lookup_Context])
             {
-                Field_Lookup_Context_Value = [dict objectForKey:gVALUE_FIELD_VALUE_VALUE];
+                Field_Lookup_Context_Value = [dict objectForKey:gVALUE_FIELD_VALUE_KEY];
                 break;
             }
         }
@@ -138,7 +139,7 @@
                 NSString * value_Field_API = [section_field objectForKey:gFIELD_API_NAME];
                 if ([value_Field_API isEqualToString:lookupField.Field_Lookup_Context])
                 {
-                    Field_Lookup_Context_Value = [section_field objectForKey:gFIELD_VALUE_VALUE];
+                    Field_Lookup_Context_Value = [section_field objectForKey:gFIELD_VALUE_KEY];
                     flag = YES;
                     break;
                 }

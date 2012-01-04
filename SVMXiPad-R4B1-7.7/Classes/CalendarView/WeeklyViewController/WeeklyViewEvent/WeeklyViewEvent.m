@@ -190,6 +190,7 @@
 - (void) moveTo:(CGRect)location
 {
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+    appDelegate.didUserInteract = YES;
     if(!appDelegate.isInternetConnectionAvailable)
     {
         [UIView beginAnimations:@"move" context:nil];

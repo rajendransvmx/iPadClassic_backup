@@ -1203,7 +1203,7 @@
 
     if ([response.error isKindOfClass:[NSURLErrorDomain class]])
     {
-        appDelegate.isInternetConnectionAvailable = NO;
+//        appDelegate.isInternetConnectionAvailable = NO;
         [[NSNotificationCenter defaultCenter] postNotificationName:kInternetConnectionChanged object:[NSNumber numberWithInt:0] userInfo:nil];
     }
 
@@ -4188,7 +4188,7 @@
 - (void) internetConnectionFailed
 {
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    appDelegate.isInternetConnectionAvailable = NO;
+//    appDelegate.isInternetConnectionAvailable = NO;
 }
 
 @end
@@ -4203,7 +4203,7 @@
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
-    appDelegate.isInternetConnectionAvailable = NO;
+//    appDelegate.isInternetConnectionAvailable = NO;
     [[NSNotificationCenter defaultCenter] postNotificationName:kInternetConnectionChanged object:[NSNumber numberWithInt:0] userInfo:nil];
 }
 
@@ -4219,7 +4219,7 @@
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
-    appDelegate.isInternetConnectionAvailable = NO;
+//    appDelegate.isInternetConnectionAvailable = NO;
     [[NSNotificationCenter defaultCenter] postNotificationName:kInternetConnectionChanged object:[NSNumber numberWithInt:0] userInfo:nil];
 }
 

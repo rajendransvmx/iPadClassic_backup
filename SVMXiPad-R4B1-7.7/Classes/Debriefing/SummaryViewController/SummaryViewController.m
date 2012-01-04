@@ -168,6 +168,7 @@
 
 - (IBAction) createPDF;
 {
+    AppDelegate.didUserInteract = YES;
     if (!AppDelegate.isInternetConnectionAvailable)
     {
         [AppDelegate displayNoInternetAvailable];
@@ -246,6 +247,7 @@
 
 - (IBAction) Done
 {
+    AppDelegate.didUserInteract = YES;
     if (!AppDelegate.isInternetConnectionAvailable)
     {
         [AppDelegate displayNoInternetAvailable];
@@ -655,6 +657,7 @@
 
 - (IBAction) Help
 {
+    AppDelegate.didUserInteract = YES;
     if (!AppDelegate.isInternetConnectionAvailable)
     {
         [AppDelegate displayNoInternetAvailable];

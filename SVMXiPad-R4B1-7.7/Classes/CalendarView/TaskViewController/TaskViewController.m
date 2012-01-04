@@ -117,6 +117,8 @@
 {
     if (task == nil) return;
     
+    appDelegate.didUserInteract = YES;
+    
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [appDelegate displayNoInternetAvailable];
@@ -128,6 +130,7 @@
 
 - (void) addNewTask:(NSMutableArray*)task;
 {
+    appDelegate.didUserInteract = YES;
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [appDelegate displayNoInternetAvailable];

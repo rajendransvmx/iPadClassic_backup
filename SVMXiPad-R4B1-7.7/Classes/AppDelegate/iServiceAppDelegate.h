@@ -296,12 +296,21 @@ BOOL didSessionResume;
 @property (nonatomic, retain) Reachability *hostReach;
 @property (nonatomic, retain) Reachability *internetReach;
 
+@property (nonatomic) BOOL isInternetPresentAfterWake;
+@property (nonatomic) BOOL didAppBecomeActive;
+@property (nonatomic) BOOL didUserInteract, internetConnectionStatus;
+
 // Reachability
-- (BOOL) isReachable:(Reachability *)curReach;
 - (void) updateInterfaceWithReachability:(Reachability*)curReach;
 - (void) PostInternetNotificationUnavailable;
 - (void) PostInternetNotificationAvailable;
 - (void) displayNoInternetAvailable;
+
+// isInternetConnectionAvailable 
+// Getter
+- (BOOL) isInternetConnectionAvailable;
+// Setter
+- (void) setIsInternetConnectionAvailable:(BOOL)isInternetConnectionAvailable;
 
 // Get Color from HEX
 - (UIColor *) colorForHex:(NSString *)hexColor;
