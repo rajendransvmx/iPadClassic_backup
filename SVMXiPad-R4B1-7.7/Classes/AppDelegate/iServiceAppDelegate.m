@@ -222,8 +222,11 @@
             {
                 isInternetConnectionAvailable = NO;
                 internetConnectionStatus = NO;
-                [self PostInternetNotificationUnavailable];
-                NSLog(@"Really Not Reachable");
+                if (!didAppBecomeActive)
+                {
+                    [self PostInternetNotificationUnavailable];
+                    NSLog(@"Really Not Reachable");
+                }
             }
             break;
         case ReachableViaWWAN:
@@ -441,6 +444,8 @@
         return internetConnectionStatus;
     }
 
+    if (!isInternetConnectionAvailable)
+        [self PostInternetNotificationUnavailable];
     return isInternetConnectionAvailable;
 }
 
