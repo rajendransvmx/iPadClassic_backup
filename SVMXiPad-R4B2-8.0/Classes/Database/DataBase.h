@@ -37,7 +37,7 @@
 - (void) insertValuesInToReferenceTable:(NSMutableArray *)object definition:(NSMutableArray *)objectDefinition;
 - (void) insertValuesInToObjectTable:(NSMutableArray *)object definition:(NSMutableArray *)objectDefintion;
 - (void) insertValuesInToRecordType:(NSMutableArray *)object defintion:(NSMutableArray *)objectDefinition;
-
+- (void) insertValuesInToChildRelationshipTable:(NSMutableArray *)object definition:(NSMutableArray *)objectDefinition;
 
 //Expressions 
 - (void) insertValuesInToExpressionTables:(NSMutableDictionary *)processDictionary;
@@ -86,6 +86,13 @@
 //Method to create extra table for trouble shooting and summary
 - (void) createTableForSummaryAndTroubleShooting;
 
+
+//DataSync Methods
+- (void) insertDataInToTables:(NSMutableArray *)fieldValueArray;
+
+- (void) updateChildSfIdWithParentLocalId:(NSArray *)childObject;
+
+- (void) addvaluesToLookUpFieldTable:(NSDictionary *)lookUpDict WithId:(NSInteger)Id;
 
 //To Test the blob data
 //- (void) testData;

@@ -27,7 +27,7 @@
     
     NSError *error; 
     NSArray *searchPaths =NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentFolderPath = [searchPaths objectAtIndex: 0];
+    NSString *documentFolderPath = [searchPaths objectAtIndex:0];
     dbFilePath = [[documentFolderPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.%@", DATABASENAME1, DATABASETYPE1]]retain];
    
     BOOL success=[[NSFileManager defaultManager] fileExistsAtPath:dbFilePath];
@@ -58,10 +58,12 @@
     return self;
 }*/
 
+
+#pragma mark - Initial MetaSync
 - (void) insertValuesInToOBjDefTableWithObject:(NSMutableArray *)object definition:(NSMutableArray *)objectDefinition
 {
     
-    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE SFObjectField ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0) ,'object_api_name' VARCHAR,'api_name' VARCHAR,'label' VARCHAR,'precision' DOUBLE,'length' INTEGER,'type' VARCHAR,'reference_to' VARCHAR,'nillable' BOOL,'unique' BOOL,'restricted_picklist' BOOL,'calculated' BOOL,'defaulted_on_create' BOOL,'name_field' BOOL, 'relationship_name' VARCHAR)"]];
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFObjectField ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0) ,'object_api_name' VARCHAR,'api_name' VARCHAR,'label' VARCHAR,'precision' DOUBLE,'length' INTEGER,'type' VARCHAR,'reference_to' VARCHAR,'nillable' BOOL,'unique' BOOL,'restricted_picklist' BOOL,'calculated' BOOL,'defaulted_on_create' BOOL,'name_field' BOOL, 'relationship_name' VARCHAR)"]];
     
     if (result == YES)
     {
@@ -93,9 +95,9 @@
                 keys = [dictionary allKeys];
                 for (int j = 0; j < [keys count]; j++)
                 {
-                    if ( [[keys objectAtIndex:j] isEqualToString:@"FIELDPROPERTY"])
+                    if ( [[keys objectAtIndex:j] isEqualToString:MFIELDPROPERTY])
                     {
-                        fieldArray = [dictionary objectForKey:@"FIELDPROPERTY"];
+                        fieldArray = [dictionary objectForKey:MFIELDPROPERTY];
                         break;
                     }
                 }
@@ -140,7 +142,7 @@
 - (void) insertValuesInToReferenceTable:(NSMutableArray *)object definition:(NSMutableArray *)objectDefinition
 {
     
-    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE SFReferenceTo ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0) ,'object_api_name' VARCHAR,'field_api_name' VARCHAR,'reference_to' VARCHAR)"]];
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFReferenceTo ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0) ,'object_api_name' VARCHAR,'field_api_name' VARCHAR,'reference_to' VARCHAR)"]];
     
     if (result == YES)
     {
@@ -175,9 +177,9 @@
                 keys = [dictionary allKeys];
                 for (int j = 0; j < [keys count]; j++)
                 {
-                    if ( [[keys objectAtIndex:j] isEqualToString:@"FIELDPROPERTY"])
+                    if ( [[keys objectAtIndex:j] isEqualToString:MFIELDPROPERTY])
                     {
-                        fieldArray = [dictionary objectForKey:@"FIELDPROPERTY"];
+                        fieldArray = [dictionary objectForKey:MFIELDPROPERTY];
                         break;
                     }
                 }
@@ -219,7 +221,7 @@
 - (void) insertValuesInToRecordType:(NSMutableArray *)object defintion:(NSMutableArray *)objectDefinition
 {
     
-    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE SFRecordType ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0) ,'record_type_id' VARCHAR,'object_api_name' VARCHAR,'record_type' VARCHAR)"]];
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFRecordType ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0) ,'record_type_id' VARCHAR,'object_api_name' VARCHAR,'record_type' VARCHAR)"]];
     
     if (result == YES)
     {
@@ -253,9 +255,9 @@
                 keys = [dictionary allKeys];
                 for (int j = 0; j < [keys count]; j++)
                 {
-                    if ( [[keys objectAtIndex:j] isEqualToString:@"OBJECTPROPERTY"])
+                    if ( [[keys objectAtIndex:j] isEqualToString:MOBJECTPROPERTY])
                     {
-                        propertyArray = [dictionary objectForKey:@"OBJECTPROPERTY"];
+                        propertyArray = [dictionary objectForKey:MOBJECTPROPERTY];
                         break;
                     }
                 }
@@ -269,9 +271,9 @@
                 keys = [dict allKeys];
                 for (int j = 0; j < [keys count]; j++)
                 {
-                    if ( [[keys objectAtIndex:j] isEqualToString:@"RECORDTYPE"])
+                    if ( [[keys objectAtIndex:j] isEqualToString:MRECORDTYPE])
                     {
-                        recordType = [dict objectForKey:@"RECORDTYPE"];
+                        recordType = [dict objectForKey:MRECORDTYPE];
                         break;
                     }
                 }            
@@ -282,7 +284,7 @@
             
             for (int r = 0; r < [recordKeys count]; r++)
             {
-                if (![[recordKeys objectAtIndex:r] isEqualToString:@"RECORDTYPE"])
+                if (![[recordKeys objectAtIndex:r] isEqualToString:MRECORDTYPE])
                 {
                     
                     NSString * queryStatement =[NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@') VALUES ('%@', '%@', '%@', '%d')", SFRECORDTYPE, MRECORD_TYPE_ID, MOBJECT_API_NAME, MRECORD_TYPE, MLOCAL_ID, [recordKeys objectAtIndex:r], objectName, [recordValues objectAtIndex:r],id_Value++];
@@ -303,7 +305,7 @@
 
 - (void) insertValuesInToObjectTable:(NSMutableArray *)object definition:(NSMutableArray *)objectDefintion
 {
-    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE SFObject ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0) ,'key_prefix' VARCHAR,'label' VARCHAR,'label_plural' VARCHAR,'api_name' VARCHAR)"]];
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFObject ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0) ,'key_prefix' VARCHAR,'label' VARCHAR,'label_plural' VARCHAR,'api_name' VARCHAR)"]];
     
     if (result == YES)
     {
@@ -339,9 +341,9 @@
                 keys = [dictionary allKeys];
                 for (int j = 0; j < [keys count]; j++)
                 {
-                    if ( [[keys objectAtIndex:j] isEqualToString:@"OBJECTPROPERTY"])
+                    if ( [[keys objectAtIndex:j] isEqualToString:MOBJECTPROPERTY])
                     {
-                        propertyArray = [dictionary objectForKey:@"OBJECTPROPERTY"];
+                        propertyArray = [dictionary objectForKey:MOBJECTPROPERTY];
                         break;
                     }
                 }
@@ -354,9 +356,9 @@
                 keys = [dict allKeys];
                 for (int j = 0; j < [keys count]; j++)
                 {
-                    if ( [[keys objectAtIndex:j] isEqualToString:@"OBJECTDEFINITION"])
+                    if ( [[keys objectAtIndex:j] isEqualToString:MOBJECTDEFINITION])
                     {
-                        objDef = [dict objectForKey:@"OBJECTDEFINITION"];
+                        objDef = [dict objectForKey:MOBJECTDEFINITION];
                         break;
                     }
                 }            
@@ -373,8 +375,90 @@
             }
         }
     }
-    [self createObjectTable:object coulomns:objectDefintion];
+    //Radha 9th jan
+    [self insertValuesInToChildRelationshipTable:object definition:objectDefintion];
     
+    //[self createObjectTable:object coulomns:objectDefintion];
+    
+}
+
+- (void) insertValuesInToChildRelationshipTable:(NSMutableArray *)object definition:(NSMutableArray *)objectDefinition
+{
+    
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFChildRelationship ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  DEFAULT 0,'object_api_name_parent' VARCHAR, 'object_api_name_child' VARCHAR, 'cascade_delete' BOOL, 'field_api_name' VARCHAR)"]];
+    
+    if (result == YES)
+    {
+        int id_value = 0;
+        NSString * objectName = @"";
+        for (int i = 0; i < [object count]; i++)
+        {
+            NSDictionary * masterDetail;
+            NSDictionary * dict = [object objectAtIndex:i];
+            objectName = ([dict valueForKey:OBJECT] != nil)?[dict valueForKey:OBJECT]:@"";
+            
+            
+            NSDictionary * objectDict = [objectDefinition objectAtIndex:i];
+            
+            NSArray * objectArray = [[[NSArray alloc] init] autorelease];
+            NSArray * keys = [objectDict allKeys];
+            for (int k = 0; k < [keys count]; k++)
+            {
+                if ([objectName isEqualToString:[keys objectAtIndex:k]])
+                {
+                    objectArray = [objectDict objectForKey:[keys objectAtIndex:k]];
+                    break;
+                }
+            }
+            NSMutableArray * propertyArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+            for (int m = 0; m < [objectArray count]; m++)
+            {
+                NSDictionary * dictionary = [objectArray objectAtIndex:m];
+                keys = [dictionary allKeys];
+                for (int j = 0; j < [keys count]; j++)
+                {
+                    if ( [[keys objectAtIndex:j] isEqualToString:MOBJECTPROPERTY])
+                    {
+                        propertyArray = [dictionary objectForKey:MOBJECTPROPERTY];
+                        break;
+                    }
+                }
+            }
+            NSDictionary *  objDef = [[[NSDictionary alloc] init] autorelease];;
+            for (int m = 0; m < [propertyArray count]; m++)
+            {
+                
+                NSDictionary * dict = [propertyArray objectAtIndex:m];
+                keys = [dict allKeys];
+                for (int j = 0; j < [keys count]; j++)
+                {
+                    if ( [[keys objectAtIndex:j] isEqualToString:MOBJECTDEFINITION])
+                    {
+                        objDef = [dict objectForKey:MOBJECTDEFINITION];
+                        break;
+                    }
+                }            
+            }
+            
+            masterDetail = [objDef objectForKey:MASTERDETAILS];
+            
+            NSArray * masterDetailKeys = [masterDetail allKeys];
+            NSArray * mastetDetaiValues = [masterDetail allValues];
+            
+            for (int val = 0; val < [masterDetailKeys count]; val++)
+            {
+                NSString * queryStatement = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@') VALUES ('%@', '%@', '%@', '%@', '%d')", SFCHILDRELATIONSHIP, @"object_api_name_parent", @"object_api_name_child", @"cascade_delete", @"field_api_name", MLOCAL_ID, objectName, [masterDetailKeys objectAtIndex:val], @"", [mastetDetaiValues objectAtIndex:val], ++id_value ];
+                
+                char * err;
+                if (sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+                {
+                    NSLog(@"Failed to insert");
+                }
+                
+            }
+        }
+    }
+    [self createObjectTable:object coulomns:objectDefinition];
 }
 
 - (void) createObjectTable:(NSMutableArray *)object coulomns:(NSMutableArray *)columns
@@ -409,9 +493,9 @@
             keys = [dictionary allKeys];
             for (int j = 0; j < [keys count]; j++)
             {
-                if ( [[keys objectAtIndex:j] isEqualToString:@"FIELDPROPERTY"])
+                if ( [[keys objectAtIndex:j] isEqualToString:MFIELDPROPERTY])
                 {
-                    fieldArray = [dictionary objectForKey:@"FIELDPROPERTY"];
+                    fieldArray = [dictionary objectForKey:MFIELDPROPERTY];
                     break;
                 }
             }
@@ -484,6 +568,7 @@
         }
     
     }
+    //Just For testing purpose
     if ([tableName isEqualToString:@"Product2"])
     {
         NSString * query = [NSString stringWithFormat:@"INSERT INTO %@ (Name, Id) VALUES ('%@', '%@')", tableName, @"Wasing Machine",
@@ -505,11 +590,11 @@
     NSMutableArray * processIdList = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
     
     
-    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE SFProcess ('local_id' INTEGER PRIMARY KEY  NOT NULL ,'process_id' VARCHAR,'object_api_name' VARCHAR,'process_type' VARCHAR,'process_name' VARCHAR,'process_description' VARCHAR, 'page_layout_id' VARCHAR, 'process_info' BLOB)"]];
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFProcess ('local_id' INTEGER PRIMARY KEY  NOT NULL ,'process_id' VARCHAR,'object_api_name' VARCHAR,'process_type' VARCHAR,'process_name' VARCHAR,'process_description' VARCHAR, 'page_layout_id' VARCHAR, 'process_info' BLOB)"]];
     
     if (result == YES)
     {
-        processArray = [processDictionary objectForKey:@"SFMProcess"];
+        processArray = [processDictionary objectForKey:MSFMProcess];
         
         NSString * process_type = @"";
         
@@ -611,11 +696,11 @@
     }
     
     
-    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE SFProcess_test ('process_id' VARCHAR,'layout_id' VARCHAR,'object_name' VARCHAR,'expression_id' VARCHAR,'object_mapping_id' VARCHAR,'component_type' VARCHAR,'local_id' INTEGER PRIMARY KEY  NOT NULL , 'parent_column' VARCHAR, 'value_id' VARCHAR, 'parent_object' VARCHAR)"]];
+    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFProcess_test ('process_id' VARCHAR,'layout_id' VARCHAR,'object_name' VARCHAR,'expression_id' VARCHAR,'object_mapping_id' VARCHAR,'component_type' VARCHAR,'local_id' INTEGER PRIMARY KEY  NOT NULL , 'parent_column' VARCHAR, 'value_id' VARCHAR, 'parent_object' VARCHAR)"]];
     
     if (result == YES)
     {
-        NSArray * sfProcess_comp = [processDictionary objectForKey:@"SFProcess_component"];
+        NSArray * sfProcess_comp = [processDictionary objectForKey:MSFProcess_component];
         id_value = 0;
         
         NSString * processId = @"";
@@ -838,7 +923,7 @@
             }
 
         }
-        else if ([processType isEqualToString:SOURCETOTARGET])
+       /* else if ([processType isEqualToString:SOURCETOTARGET])
         {
             queryStatement = [NSString stringWithFormat:@"SELECT * FROM SFprocess_test WHERE process_id = '%@'", [processIdList objectAtIndex:i]];
             
@@ -849,10 +934,10 @@
         else if ([processType isEqualToString:SOURCETOTARGETONLYCHILDROWS])
         {
             queryStatement = [NSString stringWithFormat:@"SELECT * FROM SFprocess_test WHERE process_id = '%@'", [processIdList objectAtIndex:i]];
-        }
+        }*/
         
     }
-    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE SFProcessComponent ('process_id' VARCHAR,'layout_id' VARCHAR,'target_object_name' VARCHAR,'source_object_name' VARCHAR,'expression_id' VARCHAR,'object_mapping_id' VARCHAR,'component_type' VARCHAR,'local_id' INTEGER PRIMARY KEY  NOT NULL ,'parent_column' VARCHAR, 'value_mapping_id' VARCHAR)"]];
+    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFProcessComponent ('process_id' VARCHAR,'layout_id' VARCHAR,'target_object_name' VARCHAR,'source_object_name' VARCHAR,'expression_id' VARCHAR,'object_mapping_id' VARCHAR,'component_type' VARCHAR,'local_id' INTEGER PRIMARY KEY  NOT NULL ,'parent_column' VARCHAR, 'value_mapping_id' VARCHAR)"]];
     
     if (result == YES)
     {
@@ -885,7 +970,7 @@
 -(void) insertvaluesToPicklist:(NSMutableArray *)object fields:(NSMutableArray *)fields value:(NSMutableArray *)values
 {
     
-    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE SFPickList ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE, 'object_api_name' VARCHAR,'field_api_name' VARCHAR,'label' VARCHAR,'value' VARCHAR, 'defaultvalue'VARCHAR)"]];
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFPickList ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE, 'object_api_name' VARCHAR,'field_api_name' VARCHAR,'label' VARCHAR,'value' VARCHAR, 'defaultvalue'VARCHAR)"]];
     
     if (result == YES)
     {
@@ -974,11 +1059,11 @@
 {
     int id_value = 0;
     
-    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE SFExpression ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , 'expression_id' VARCHAR, 'expression' VARCHAR, 'expression_name' VARCHAR)"]];
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFExpression ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , 'expression_id' VARCHAR, 'expression' VARCHAR, 'expression_name' VARCHAR)"]];
     if (result == YES)
     {
         
-        NSArray * sfExpression = [processDictionary objectForKey:@"SFExpression"];
+        NSArray * sfExpression = [processDictionary objectForKey:MSFExpression];
         
         for (int i = 0; i < [sfExpression count]; i++)
         {
@@ -998,12 +1083,12 @@
     }
     id_value = 0;
     
-    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE SFExpressionComponent ('local_id' INTEGER PRIMARY KEY  NOT NULL ,'expression_id' VARCHAR,'component_sequence_number' VARCHAR,'component_lhs' VARCHAR,'component_rhs' VARCHAR,'operator'CHAR)"]];
+    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFExpressionComponent ('local_id' INTEGER PRIMARY KEY  NOT NULL ,'expression_id' VARCHAR,'component_sequence_number' VARCHAR,'component_lhs' VARCHAR,'component_rhs' VARCHAR,'operator'CHAR)"]];
     
     if (result == YES)
     {
     
-        NSArray * sfExpression_com = [processDictionary objectForKey:@"SFExpression_component"];
+        NSArray * sfExpression_com = [processDictionary objectForKey:MSFExpression_component];
         
         for (int i = 0; i < [sfExpression_com count]; i++)
         {
@@ -1034,17 +1119,19 @@
     
     int id_value = 0;
     
-    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE SFObjectMapping ('local_id' INTEGER PRIMARY KEY  NOT NULL ,'object_mapping_id' VARCHAR)"]];
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFObjectMapping ('local_id' INTEGER PRIMARY KEY  NOT NULL ,'object_mapping_id' VARCHAR , 'source_object_name' VARCHAR, 'target_object_name' VARCHAR)"]];
     if (result == YES)
     {
-        NSArray * sfobjectMap = [processDictionary objectForKey:@"SFObject_mapping"];
+        NSArray * sfobjectMap = [processDictionary objectForKey:MSFObject_mapping];
         
         for (int i = 0; i < [sfobjectMap count]; i++)
         {
             NSDictionary * dict = [sfobjectMap objectAtIndex:i];
             
-            NSString * queryStatement =[NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@') VALUES ('%@','%d')", SFOBJECTMAPPING, MOBJECT_MAPPING_ID , MLOCAL_ID,
-                        ([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@"", ++id_value];
+            NSString * queryStatement =[NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@') VALUES ('%@', '%@', '%@', '%d')", SFOBJECTMAPPING, MOBJECT_MAPPING_ID , MSOURCE_OBJECT_NAME, MTARGET_OBJECT_NAME, MLOCAL_ID,
+                        ([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@"",
+                        ([dict objectForKey:MSOURCE_OBJECT_NAME] != nil)?[dict objectForKey:MSOURCE_OBJECT_NAME]:@"",
+                                        ([dict objectForKey:MTARGET_OBJECT_NAME] != nil)?[dict objectForKey:MTARGET_OBJECT_NAME]:@"", ++id_value];
             char *err;
             if (sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
             {
@@ -1053,11 +1140,11 @@
         }
     }
     
-    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE SFObjectMappingComponent ('local_id' INTEGER PRIMARY KEY  NOT NULL ,'object_mapping_id' VARCHAR,'source_field_name' VARCHAR,'target_field_name' VARCHAR,'mapping_value' VARCHAR,'mapping_component_type' VARCHAR,'mapping_value_flag' BOOL)"]];
+    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFObjectMappingComponent ('local_id' INTEGER PRIMARY KEY  NOT NULL ,'object_mapping_id' VARCHAR,'source_field_name' VARCHAR,'target_field_name' VARCHAR,'mapping_value' VARCHAR,'mapping_component_type' VARCHAR,'mapping_value_flag' BOOL)"]];
     
     if (result == YES)
     {
-        NSArray * sfObject_com = [processDictionary objectForKey:@"SFObject_mapping_component"];
+        NSArray * sfObject_com = [processDictionary objectForKey:MSFObject_mapping_component];
         
         NSString * flag = @"true";
         NSString * value = @"";
@@ -1072,15 +1159,15 @@
             
             if ([target_field_name isEqualToString:@""])
             {
-                value = @"VALUEMAPPING";
+                value = MVALUEMAPPING;
             }
             if ((![target_field_name isEqualToString:@""]) && (![mappingValue isEqualToString:@""]))
             {
-                value = @"VALUEMAPPING";
+                value = MVALUEMAPPING;
             }
             else
             {
-                value = @"FIELDMAPPING";
+                value = MFIELDMAPPING;
             }
             
             
@@ -1107,10 +1194,10 @@
 - (void) insertValuesInToLookUpTable:(NSMutableDictionary *)processDictionary
 {
     int id_value = 0;
-    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE SFNamedSearch ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'default_lookup_column' VARCHAR, 'search_name' VARCHAR, 'object_name' VARCHAR, 'search_type' VARCHAR, 'named_search_id' VARCHAR, 'no_of_lookup_records' VARCHAR, 'is_default' VARCHAR, 'is_standard' VARCHAR)"]];
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFNamedSearch ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'default_lookup_column' VARCHAR, 'search_name' VARCHAR, 'object_name' VARCHAR, 'search_type' VARCHAR, 'named_search_id' VARCHAR, 'no_of_lookup_records' VARCHAR, 'is_default' VARCHAR, 'is_standard' VARCHAR)"]];
     if (result == YES)
     {
-        NSArray * sfNamedSearch = [processDictionary objectForKey:@"SFNAMEDSEARCH"];
+        NSArray * sfNamedSearch = [processDictionary objectForKey:MSFNAMEDSEARCH];
         
         for (int i = 0; i < [sfNamedSearch count]; i++)
         {
@@ -1137,12 +1224,12 @@
         
     }
     
-    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE SFNamedSearchComponent ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'expression_type' VARCHAR, 'field_name' VARCHAR, 'named_search' VARCHAR, 'search_object_field_type' VARCHAR,  'field_type' VARCHAR, 'field_relationship_name' VARCHAR, 'sequence' VARCHAR)"]];
+    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFNamedSearchComponent ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'expression_type' VARCHAR, 'field_name' VARCHAR, 'named_search' VARCHAR, 'search_object_field_type' VARCHAR,  'field_type' VARCHAR, 'field_relationship_name' VARCHAR, 'sequence' VARCHAR)"]];
               
     id_value = 0;
     if (result == YES)
     {
-        NSArray * sfNameSearchComp = [processDictionary objectForKey:@"SFNAMEDSEARCH_COMPONENT"];
+        NSArray * sfNameSearchComp = [processDictionary objectForKey:MSFNAMEDSEARCH_COMPONENT];
         
         for (int i = 0; i < [sfNameSearchComp count]; i++)
         {
@@ -1174,7 +1261,7 @@
 - (void) insertValuesInToTagsTable:(NSMutableDictionary *)tagsDictionary
 {
     int id_value = 0;
-    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE MobileDeviceTags ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'tag_id' VARCHAR, 'value' VARCHAR)"]];
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS MobileDeviceTags ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'tag_id' VARCHAR, 'value' VARCHAR)"]];
     if (result == YES)
     {
     
@@ -1206,7 +1293,7 @@
 {
     int id_value = 0;
     
-    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE MobileDeviceSettings ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'setting_id' VARCHAR, 'value' VARCHAR)"]];
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS MobileDeviceSettings ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'setting_id' VARCHAR, 'value' VARCHAR)"]];
                                      
     if (result == YES)
     {
@@ -1234,13 +1321,13 @@
 {
     int id_value = 0;
     
-    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE SFWizard ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , 'object_name' VARCHAR, 'wizard_id' VARCHAR, 'expression_id' VARCHAR, 'wizard_description' VARCHAR)"]];
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFWizard ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , 'object_name' VARCHAR, 'wizard_id' VARCHAR, 'expression_id' VARCHAR, 'wizard_description' VARCHAR)"]];
 
     if (result == YES)
     {
-        NSArray * sfWizard = [wizardDict objectForKey:@"SFW_wizard"];
+        NSArray * sfWizard = [wizardDict objectForKey:MSFW_wizard];
         
-        NSArray * sfexpression = [wizardDict objectForKey:@"SFExpression"];
+        NSArray * sfexpression = [wizardDict objectForKey:MSFExpression];
         
         NSString * objectName = @"";
         
@@ -1278,10 +1365,10 @@
     
     }
     
-    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE SFWizardComponent ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , 'wizard_id' VARCHAR, 'action_id' VARCHAR, 'action_description' VARCHAR, 'expression_id' VARCHAR, 'process_id' VARCHAR, 'action_type' VARCHAR)"]];
+    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFWizardComponent ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , 'wizard_id' VARCHAR, 'action_id' VARCHAR, 'action_description' VARCHAR, 'expression_id' VARCHAR, 'process_id' VARCHAR, 'action_type' VARCHAR)"]];
     if (result == YES)
     {
-        NSArray * sfExpComponent = [wizardDict objectForKey:@"SFW_wizard_steps"];
+        NSArray * sfExpComponent = [wizardDict objectForKey:MSFW_wizard_steps];
         NSArray * sfProcess = [appDelegate.wsInterface.processDictionary objectForKey:@"SFMProcess"];
         
         id_value = 0;
@@ -1363,7 +1450,7 @@
     sqlite3_stmt * statement;
     NSString * queryStatement = [NSString stringWithFormat:@"SELECT * FROM %@", MOBILEDEVICETAGS];
     
-    NSMutableDictionary * tagDict = [[NSMutableDictionary alloc] initWithCapacity:0];
+    NSMutableDictionary * tagDict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
     
     if (sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &statement, NULL) == SQLITE_OK)
     {
@@ -1463,7 +1550,7 @@
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS  SFSignatureData ('record_Id' VARCHAR,'object_api_name' VARCHAR,'signature_data' TEXT,'sig_Id' INTEGER PRIMARY KEY  NOT NULL ,'WorkOrderNumber' VARCHAR)"];
     [self createTable:query];
     
-    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS  UserImages ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0), 'username' VARCHAR,'userimage' BLOB)"];
+    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS UserImages ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0), 'username' VARCHAR,'userimage' BLOB)"];
     [self createTable:query];
     
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS  trobleshootdata ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0),'ProductId' VARCHAR, 'ProductName' VARCHAR, 'Product_Doc' BLOB, 'DocId' VARCHAR, 'prod_manual_Id' VARCHAR, 'prod_manual_name' VARCHAR, 'productmanbody' VARCHAR)"];
@@ -1475,6 +1562,15 @@
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS  SVMXC__ServiceMax_Processes__c ('Id' TEXT,'SVMXC__Name__c' TEXT,'SVMXC__Description__c' VARCHAR,'SVMXC__ModuleID__c' VARCHAR,'SVMXC__IsStandard__c' BOOL,'RecordTypeId' TEXT,'SVMXC__SubmoduleID__c' TEXT,'SVMXC__SettingID__c' TEXT,'SVMXC__Setting_Unique_ID__c' VARCHAR,'SVMXC__Settings_Name__c' TEXT,'SVMXC__Data_Type__c' VARCHAR,'SVMXC__Values__c' VARCHAR,'SVMXC__Default_Value__c' VARCHAR,'SVMXC__Setting_Type__c' VARCHAR,'SVMXC__Search_Order__c' TEXT,'SVMXC__IsPrivate__c' BOOL,'SVMXC__Active__c' BOOL,'SVMXC__Submodule__c' VARCHAR,'local_id' INTEGER NOT NULL  DEFAULT (0) , 'SVMXC__Module__c' VARCHAR)"];
     [self createTable:query];
 
+    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFDataTrailer ('timestamp' DATETIME, 'local_id'INTEGER,'sf_id' VARCHAR, 'record_type' VARCHAR, 'operation' VARCHAR, 'object_name' VARCHAR, 'sync_flag' BOOL)"];
+    [self createTable:query];
+    
+    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS LookUpFieldValue ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0), 'object_api_name' VARCHAR, 'Id' VARCHAR, 'value' VARCHAR)"];
+    [self createTable:query];
+    
+    query = [NSString stringWithFormat:@"CREATE TABLE Event ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0), 'AccountId' TEXT,'ActivityDate' TEXT,'ActivityDateTime' DATETIME,'CreatedById' TEXT,'CreatedDate' DATETIME,'CurrencyIsoCode' TEXT,'Description' TEXT,'DurationInMinutes' INTEGER,'EndDateTime' DATETIME,'GroupEventType' VARCHAR,'IsAllDayEvent' BOOL,'IsArchived' BOOL,'IsChild' BOOL,'IsDeleted' BOOL,'IsGroupEvent' BOOL,'IsPrivate' BOOL,'IsRecurrence' BOOL,'IsReminderSet' BOOL,'LastModifiedById' VARCHAR,'LastModifiedDate' DATETIME,'Location' VARCHAR,'OwnerId' VARCHAR,'RecurrenceActivityId' VARCHAR,'RecurrenceDayOfMonth' INTEGER,'RecurrenceDayOfWeekMask' INTEGER,'RecurrenceEndDateOnly' VARCHAR,'RecurrenceInstance' VARCHAR,'RecurrenceInterval' INTEGER,'RecurrenceMonthOfYear' VARCHAR,'RecurrenceStartDateTime' DATETIME,'RecurrenceTimeZoneSidKey' VARCHAR,'RecurrenceType' VARCHAR,'ReminderDateTime' DATETIME,'SVMX_Event__c' VARCHAR,'ShowAs' VARCHAR,'StartDateTime' DATETIME,'Subject' VARCHAR,'SystemModstamp' DATETIME,'WhatId' VARCHAR,'WhoId' VARCHAR,'sa_EventStatus__c' VARCHAR,'sa_pick__c' VARCHAR,'Id' VARCHAR, 'IsVisibleInSelfService' BOOLEAN)"];
+        [self createTable:query];
+    
 }
 
 
@@ -1489,6 +1585,174 @@
         return NO;
     }
     return YES;
+}
+
+#pragma mark - DataSync
+
+- (void) insertDataInToTables:(NSMutableArray *)fieldValueArray
+{
+    NSArray * fields = [[[NSArray alloc] init] autorelease];
+    NSArray * values = [[[NSArray alloc] init] autorelease];
+    int lookUp_id = 0;
+    
+    for (int i = 0; i < [fieldValueArray count]; i++)
+    {
+        NSDictionary * dict = [fieldValueArray objectAtIndex:i];
+        
+        NSArray * keys = [dict allKeys];
+        
+        for (int j = 0; j < [keys count]; j++)
+        {
+            NSString * objectName = [keys objectAtIndex:j];
+            
+            int id_value = 0;
+            
+            NSMutableArray * fieldArray = [dict objectForKey:[keys objectAtIndex:j]];
+            
+            for (int val = 0; val < [fieldArray count]; val++)
+            {
+                NSDictionary * fieldValues = [fieldArray objectAtIndex:val];
+                
+                fields = [fieldValues allKeys];
+                values = [fieldValues allValues];
+                
+                NSString * field_string = @"";
+                NSString * value_string = @"";
+                
+                for (int f = 0; f < [fields count]; f++)
+                {
+                    NSMutableDictionary * lookUpDict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
+                    
+                    if ([[values objectAtIndex:f] isKindOfClass:[NSDictionary class]])
+                    {
+                        NSString * field = [fields objectAtIndex:f];
+                        
+                        NSRange range = [field rangeOfString:@"__r"];
+                        
+                        if (range.location != NSNotFound)
+                        {
+                            NSDictionary * attDict = [[values objectAtIndex:f] objectForKey:@"attributes"];
+                            
+                            [lookUpDict setValue:[[values objectAtIndex:f] objectForKey:@"Id"] forKey:@"Id"];
+                            [lookUpDict setValue:[[values objectAtIndex:f] objectForKey:@"Name"] forKey:@"Name"];
+                            [lookUpDict setValue:[attDict objectForKey:@"type"] forKey:@"type"];
+                            
+                            [self addvaluesToLookUpFieldTable:lookUpDict WithId:lookUp_id++];
+                        }                        
+                        
+                    }
+                    
+                    if ([[fields objectAtIndex:f] isKindOfClass:[NSString class]] && (![[values objectAtIndex:f] isKindOfClass:[NSDictionary class]]))
+                    {
+                        NSString * value = [fieldValues objectForKey:[fields objectAtIndex:f]];
+                        
+                        if ([field_string length] > 0)
+                        {
+                            value_string = [value_string stringByAppendingString:@", "];
+                            field_string = [field_string stringByAppendingString:@","];                        
+                        }
+                        
+                        value_string = [value_string stringByAppendingString:[NSString stringWithFormat:@"'%@'", value]];
+                        field_string = [field_string stringByAppendingString:[NSString stringWithFormat:@"%@", [fields objectAtIndex:f]]];
+                    }
+                }  
+                
+                NSString * query = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ (%@, '%@') VALUES (%@, '%d')", objectName, field_string, MLOCAL_ID, value_string, id_value++];
+                
+                char * err;
+                if (sqlite3_exec(appDelegate.db, [query UTF8String], NULL, NULL, &err) != SQLITE_OK)
+                {  
+                    NSLog(@"Failed to insert");
+                }
+            }
+        }        
+    }
+    [self updateChildSfIdWithParentLocalId:appDelegate.wsInterface.childObject];
+}
+
+-(void) addvaluesToLookUpFieldTable:(NSDictionary *)lookUpDict WithId:(NSInteger)Id
+{
+    NSString * query = [NSString stringWithFormat:@"INSERT OR REPLACE INTO LookUpFieldValue ('%@', '%@', '%@', '%@') VALUES ('%@',    '%@', '%@', '%d')", MOBJECT_API_NAME, @"Id", MVALUEM, MLOCAL_ID, 
+                        ([lookUpDict objectForKey:@"type"] != nil)?[lookUpDict objectForKey:@"type"]:@"", 
+                        ([lookUpDict objectForKey:@"Id"] != nil)?[lookUpDict objectForKey:@"Id"]:@"", 
+                        ([lookUpDict objectForKey:@"Name"] != nil)?[lookUpDict objectForKey:@"Name"]:@"", Id];
+    
+    char * err;
+    if(sqlite3_exec(appDelegate.db, [query UTF8String], NULL, NULL, &err) != SQLITE_OK)
+    {
+        NSLog(@"Failed to insert");
+    }
+    
+}
+-(void)  updateChildSfIdWithParentLocalId:(NSArray *)childObject
+{
+    for (NSString * objectName in childObject)
+    {
+        NSString * queryStatement = [NSString stringWithFormat:@"SELECT field_api_name, object_api_name_parent FROM SFChildRelationship where object_api_name_parent = (SELECT object_api_name_parent FROM SFChildRelationship WHERE object_api_name_child = '%@') and object_api_name_child = '%@'", objectName, objectName];
+        
+        sqlite3_stmt * statement;
+        
+        NSString * parentColumn = @""; 
+        NSString * parent_object = @"";
+        
+        if (sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &statement, NULL) == SQLITE_OK)
+        {
+            if(sqlite3_step(statement))
+            {
+                char * _field_api_name = (char *)sqlite3_column_text(statement, 0);
+                
+                if ((_field_api_name != nil) && strlen(_field_api_name))
+                    parentColumn = [NSString stringWithUTF8String:_field_api_name];
+                
+                char * _parent_object = (char *)sqlite3_column_text(statement, 1);
+                
+                if ((_parent_object != nil) && strlen(_parent_object))
+                    parent_object = [NSString stringWithUTF8String:_parent_object];
+            }
+        }
+        
+        statement = nil;
+        
+        NSString * sfId = @"";
+        int column = 0;
+        queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM %@", parentColumn, objectName];
+        
+        if (sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &statement, NULL) == SQLITE_OK)
+        {
+            while(sqlite3_step(statement) == SQLITE_ROW)
+            {
+                char * _sfId = (char *) sqlite3_column_text(statement, column++);
+                
+                if ((_sfId != nil) && strlen(_sfId))
+                    sfId = [NSString stringWithUTF8String:_sfId];
+                
+                queryStatement = [NSString stringWithFormat:@"SELECT local_id FROM %@ WHERE Id = '%@'", parent_object, sfId];
+                
+                if (sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &statement, NULL) == SQLITE_OK)
+                {
+                    if (sqlite3_step(statement))
+                    {
+                        int _localId = sqlite3_column_int(statement, 0);
+                        
+                        NSString * localId = [NSString stringWithFormat:@"%d", _localId];
+                        
+                        queryStatement = [NSString stringWithFormat:@"UPDATE %@ SET %@ = '%@' WHERE %@ = '%@'", objectName, parentColumn, localId, parentColumn, sfId];
+                        
+                        char * err;
+                        if (sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+                        {
+                            NSLog(@"Failed to update");
+                        }
+                    }
+                                    
+                }
+                
+                                
+            }
+        }        
+        
+    }
+    appDelegate.wsInterface.didOpComplete = TRUE;
 }
 
 @end
