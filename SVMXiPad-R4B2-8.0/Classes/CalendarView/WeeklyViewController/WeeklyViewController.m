@@ -241,9 +241,9 @@
             objectAPIName = [NSString stringWithFormat:@"%@__%@",SVMX_ORG_PREFIX,objectAPIName];
         objectAPIName = [objectAPIName uppercaseString];
         
-        for (int v = 0; v < [appDelegate.wsInterface.viewLayoutsArray count]; v++)
+        for (int v = 0; v < [appDelegate.view_layout_array count]; v++)
         {
-            NSDictionary * dict = [appDelegate.wsInterface.viewLayoutsArray objectAtIndex:v];
+            NSDictionary * dict = [appDelegate.view_layout_array objectAtIndex:v];
             NSString * object_label = [dict objectForKey:VIEW_OBJECTNAME];
             object_label = [object_label uppercaseString];
             if ([object_label isEqualToString:objectAPIName])
@@ -1331,13 +1331,13 @@
             NSDictionary * _dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
             [activity startAnimating];
                         
-            /*if ([_dict objectForKey:PROCESSID] == @"" || [_dict objectForKey:PROCESSID] == nil)
+            if ([_dict objectForKey:PROCESSID] == @"" || [_dict objectForKey:PROCESSID] == nil)
             {
                 UIAlertView * alert = [[UIAlertView alloc] initWithTitle:warning message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
                 [alert show];
                 [alert release];
             }
-            else*/
+            else
             {
                 [self disableUI];
                 didRunOperation = YES;
