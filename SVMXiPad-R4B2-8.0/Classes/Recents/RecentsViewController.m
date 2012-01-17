@@ -107,20 +107,23 @@
     }
     
     // Sort recentObjectsArray before displaying
+    //Abinash Fixed
     for (int i = 0; i < [recentObjectsArray count]; i++)
     {
         NSDictionary * dict1 = [recentObjectsArray objectAtIndex:i];
         NSString * key1 = [[dict1 allKeys] objectAtIndex:0];
-        for (int j = 1; j < [recentObjectsArray count]; j++)
+        for (int j = i + 1; j < [recentObjectsArray count]; j++)
         {
             NSDictionary * dict2 = [recentObjectsArray objectAtIndex:j];
             NSString * key2 = [[dict2 allKeys] objectAtIndex:0];
-            NSComparisonResult result = [key1 compare:key2];
+           
+            int result = strcmp([key1 UTF8String], [key2 UTF8String]);
             
-            if (result == NSOrderedDescending)
+            if (result > 0 )
             {
                 // perform swap
                 [recentObjectsArray exchangeObjectAtIndex:i withObjectAtIndex:j];
+                key1 = key2;
             }
         }
     }
@@ -218,6 +221,10 @@
     
     if(flag)
     {
+        //Abinash Fix
+        [self presentModalViewController:appDelegate.sfmPageController animated:YES];
+        [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];
+
     }
     else
     {
