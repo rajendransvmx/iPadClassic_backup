@@ -375,7 +375,7 @@
 #define FIELDNOTACCESSIBLE                  @"FIELD NOT ACCESSIBLE"
 
 //Macros for viewLayouts
-#define VIEW_OBJECTNAME                     @"objectName"
+#define VIEW_OBJECTNAME                     @"SVMXC__Source_Object_Name__c"
 #define VIEW_SVMXC_Name                     @"SVMXC__Name__c"
 #define VIEW_SVMXC_ProcessID                @"SVMXC__ProcessID__c"
 
