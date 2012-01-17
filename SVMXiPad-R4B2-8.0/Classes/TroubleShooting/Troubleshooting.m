@@ -186,12 +186,13 @@
 
 - (IBAction) Help;
 {
-    /*if (!appDelegate.isInternetConnectionAvailable)
+    //Abinash fix for defect 3350
+    if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
         [appDelegate displayNoInternetAvailable];
         return;
-    }*/
+    }
     
     HelpController * help = [[HelpController alloc] initWithNibName:@"HelpController" bundle:nil];
     help.modalPresentationStyle = UIModalPresentationFullScreen;
