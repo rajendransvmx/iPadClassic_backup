@@ -278,6 +278,9 @@ SFWToolBarDelegate>
 
 - (void) enableSFMUI;
 - (void) disableSFMUI;
+//Abinash Fix
+-(NSArray *)orderingAnArray:(NSArray *)array;
+
 
 #define SHOWALL_HEADERS                     0
 #define SHOW_HEADER_ROW                     1

@@ -731,7 +731,6 @@
         [no_page_Layout release];
         return;
     }
-    
     NSString * process_type = [page_layoutInfo objectForKey:gPROCESSTYPE];
         
     NSMutableDictionary * _header =  [page_layoutInfo objectForKey:@"header"];
@@ -928,10 +927,14 @@
                                 }
                                 if([field_value isEqualToString:@"" ]||[field_value isEqualToString:@" "] || field_value == nil)
                                 {
-                                    field_value = field_key;
+                                    field_value = [appDelegate.databaseInterface getLookUpNameForId:field_key];
+                                    if([field_value isEqualToString:@"" ]||[field_value isEqualToString:@" "] || field_value == nil)
+                                    {
+                                        field_value = field_key;
+                                    }
                                 }
                                  break;
-                                }
+                            }
                             
                         }
                         else if([field_data_type isEqualToString:@"datetime"])
@@ -1143,31 +1146,31 @@
                             {
                                 NSMutableArray * referenceTotableNames = [appDelegate.databaseInterface getReferenceToForField:filed_api_name objectapiName:headerObjName tableName:SF_REFERENCE_TO];
                                 
-                                NSString *  keyPrefix = [field_key  substringToIndex:3];
-                                
-                                NSString * reference_to_tableName = [appDelegate.databaseInterface getTheObjectApiNameForThePrefix:keyPrefix tableName:SFOBJECT];
-                                
-                                for(int i=0;i < [referenceTotableNames count];i++)
+                                if([referenceTotableNames count ] > 0)
                                 {
-                                    if([reference_to_tableName isEqualToString:[referenceTotableNames objectAtIndex:i]])
+                                    NSString * reference_to_tableName = [referenceTotableNames objectAtIndex:0];
+                                    
+                                    NSString * referenceTo_Table_fieldName = [appDelegate.databaseInterface getFieldNameForReferenceTable:reference_to_tableName tableName:SFOBJECTFIELD];
+                                    
+                                    field_value = [appDelegate.databaseInterface getReferenceValueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:field_key];
+                                    
+                                }
+                                if([field_value isEqualToString:@"" ]||[field_value isEqualToString:@" "] || field_value == nil)
+                                {
+                                    field_value = [appDelegate.databaseInterface getLookUpNameForId:field_key];
+                                    if([field_value isEqualToString:@"" ]||[field_value isEqualToString:@" "] || field_value == nil)
                                     {
-                                        NSString * referenceTo_Table_fieldName = [appDelegate.databaseInterface getFieldNameForReferenceTable:reference_to_tableName tableName:SFOBJECTFIELD];
-                                        
-                                        field_value = [appDelegate.databaseInterface getReferenceValueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:field_key];
-                                        
-                                        if([field_value isEqualToString:@"" ]||[field_value isEqualToString:@" "] || field_value == nil)
-                                        {
-                                            field_value = field_key;
-                                        }
-                                        break;
+                                        field_value = field_key;
                                     }
                                 }
+                                break;
                             }
+                            
                         }
                         else if([field_data_type isEqualToString:@"datetime"])
                         {
                             NSString * date = field_key;
-                            //date = [date stringByDeletingPathExtension];
+                            date = [date stringByDeletingPathExtension];
                             field_key = date;
                             field_value = date;
                         }
@@ -1175,7 +1178,7 @@
                         else if([field_data_type isEqualToString:@"date"])
                         {
                             NSString * date = field_key;
-                            //date = [date stringByDeletingPathExtension];
+                            date = [date stringByDeletingPathExtension];
                             field_key = date;
                             field_value = date;
                         }
@@ -1289,7 +1292,7 @@
                             }
                             else
                             {
-                                NSMutableArray * referenceTotableNames = [appDelegate.databaseInterface getReferenceToForField:filed_api_name objectapiName:headerObjName tableName:SF_REFERENCE_TO];
+                               /* NSMutableArray * referenceTotableNames = [appDelegate.databaseInterface getReferenceToForField:filed_api_name objectapiName:headerObjName tableName:SF_REFERENCE_TO];
                                 
                                 
                                 NSString *  keyPrefix = [field_key  substringToIndex:3];
@@ -1306,11 +1309,58 @@
                                         
                                         if([field_value isEqualToString:@"" ]||[field_value isEqualToString:@" "] || field_value == nil)
                                         {
-                                            field_value = field_key;
+                                            field_value = [appDelegate.databaseInterface getLookUpNameForId:field_key];
+                                            if([field_value isEqualToString:@"" ]||[field_value isEqualToString:@" "] || field_value == nil)
+                                            {
+                                                field_value = field_key;
+                                            }
                                         }
+
                                         break;
                                     }
+                                }*/
+                                
+                                NSMutableArray * referenceTotableNames = [appDelegate.databaseInterface getReferenceToForField:filed_api_name objectapiName:headerObjName tableName:SF_REFERENCE_TO];
+                                
+                                
+                                /*NSString *  keyPrefix = [field_key  substringToIndex:3];
+                                 
+                                 NSString * reference_to_tableName = [appDelegate.databaseInterface getTheObjectApiNameForThePrefix:keyPrefix tableName:SFOBJECT];
+                                 
+                                 for(int i=0;i < [referenceTotableNames count];i++)
+                                 {
+                                 if([reference_to_tableName isEqualToString:[referenceTotableNames objectAtIndex:i]])
+                                 {
+                                 NSString * referenceTo_Table_fieldName = [appDelegate.databaseInterface getFieldNameForReferenceTable:reference_to_tableName tableName:SFOBJECTFIELD];
+                                 
+                                 field_value = [appDelegate.databaseInterface getReferenceValueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:field_key];
+                                 
+                                 if([field_value isEqualToString:@"" ]||[field_value isEqualToString:@" "] || field_value == nil)
+                                 {
+                                 field_value = field_key;
+                                 }
+                                 break;
+                                 }
+                                 }*/
+                                if([referenceTotableNames count ] > 0)
+                                {
+                                    NSString * reference_to_tableName = [referenceTotableNames objectAtIndex:0];
+                                    
+                                    NSString * referenceTo_Table_fieldName = [appDelegate.databaseInterface getFieldNameForReferenceTable:reference_to_tableName tableName:SFOBJECTFIELD];
+                                    
+                                    field_value = [appDelegate.databaseInterface getReferenceValueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:field_key];
+                                    
                                 }
+                                if([field_value isEqualToString:@"" ]||[field_value isEqualToString:@" "] || field_value == nil)
+                                {
+                                    field_value = [appDelegate.databaseInterface getLookUpNameForId:field_key];
+                                    if([field_value isEqualToString:@"" ]||[field_value isEqualToString:@" "] || field_value == nil)
+                                    {
+                                        field_value = field_key;
+                                    }
+                                }
+                                break;
+
                             }
                         }
                         else if([field_data_type isEqualToString:@"datetime"])
@@ -1868,105 +1918,8 @@
         
         if ([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"VIEWRECORD"]) 
         {
-            
-            NSMutableDictionary * wizard_buttons = [[NSMutableDictionary alloc] initWithCapacity:0];
-            
-            NSMutableArray * array = [wizard_dict objectForKey:SFW_WIZARD_INFO];
-
-            int Total_height = 0;
-            for(int i = 0; i < [array count];i++)
-            {
-                NSDictionary * dict = [array objectAtIndex:i];
-                NSString * wizard_id = [dict objectForKey:WIZARD_ID];
-                NSMutableArray * buttons_ = [[NSMutableArray alloc] initWithCapacity:0];
-                for(int j = 0 ; j < [buttonsArray_offline count];j++)
-                {
-                    NSDictionary * dict = [buttonsArray_offline objectAtIndex:j];
-                    NSString * id_  = [dict objectForKey:WIZARD_ID];
-                    if([id_ isEqualToString:wizard_id])
-                    {
-                        [buttons_ addObject:dict];
-                    }
-                }
-                
-                [wizard_buttons setObject:buttons_ forKey:wizard_id];
-            }
-            
-            for(int section = 0 ; section < [array count];section ++)
-            {
-                NSDictionary * dict = [array objectAtIndex:section];
-                NSString * wizard_id = [dict objectForKey:WIZARD_ID];
-               
-                NSArray * allkeys = [wizard_buttons allKeys];
-                for(int k = 0 ; k< [allkeys count]; k++)
-                {
-                    NSString * key_id = [allkeys objectAtIndex:k];
-                    if([key_id isEqualToString:wizard_id])
-                    {
-                        NSArray * wizard = [wizard_buttons objectForKey:key_id];
-                        int button_count = [wizard count];
-                        int row; 
-                        NSInteger quotient = [wizard count] / 6;
-                        NSInteger reminder = [wizard count] % 6;
-                        if(reminder != 0)
-                        {
-                            row =  quotient +1;
-                        }
-                        else
-                        {
-                            row =  quotient;
-                        }
-                        
-                        for(int row_count = 0 ;row_count < row; row_count++)
-                        {
-                           // int row_count ;
-                             int x = row_count * 6;
-                            CGFloat final_height = 0;
-                            CGFloat temp_height  = 0;
-
-                            for(int j = x ; j < (x+6) ;j++)
-                            {
-                                
-                                if(j >= [wizard count])
-                                {
-                                    break;
-                                }
-                                NSDictionary * each_button = [wizard objectAtIndex:j];
-                                NSString * str = [each_button objectForKey:SFW_ACTION_DESCRIPTION];
-                                // CGSize size = [str sizeWithFont:[UIFont systemFontOfSize:17] forWidth:CELL_BUTTON_WIDTH lineBreakMode:UILineBreakModeWordWrap];
-                                CGSize size1 = [str sizeWithFont:[UIFont systemFontOfSize:17] constrainedToSize:CGSizeMake(150, 9999)];
-                                temp_height = size1.height;
-                                
-                                if(temp_height > final_height)
-                                {
-                                    final_height = temp_height;
-                                }
-                            }
-                            
-                            if(final_height < 40)
-                                Total_height = Total_height+ 60;
-                            else
-                                Total_height = Total_height+final_height+30;
-                            
-
-                        }
-
-                        
-                    }
-                    
-                }
-                Total_height = Total_height + 20;
-                
-            }
-            
-            if([ipad_only_array count] > 0)
-            {
-                Total_height = Total_height +40 ;
-            }
-            
-
             UIPopoverController * popover = [[UIPopoverController alloc] initWithContentViewController:sfwToolBar];
-            [popover setPopoverContentSize:CGSizeMake(1024, Total_height)];
+            [popover setPopoverContentSize:CGSizeMake(1024, 768)];
             popover.delegate = self;
             CGPoint p ;
             CGSize q;
@@ -4007,7 +3960,8 @@
                    //query to acces the picklist values for lines 
                    NSMutableDictionary * picklistValues = [appDelegate.databaseInterface  getPicklistValuesForTheFiled:fieldAPIName tableName:SFPicklist objectName:headerObjName];
                    NSArray * allvalues = [picklistValues allValues];
-                   
+                   //Abinash Fix
+                   allvalues = [self orderingAnArray:allvalues];
                    for (NSString * str in allvalues ) 
                    {
                        [descObjArray addObject:str];
@@ -4053,6 +4007,7 @@
                     
                     NSMutableDictionary * picklistValues = [appDelegate.databaseInterface  getPicklistValuesForTheFiled:fieldAPIName tableName:SFPicklist objectName:headerObjName];
                     NSArray * allvalues = [picklistValues allValues];
+                    
                     arr = [[NSMutableArray  alloc] initWithArray:allvalues];
                    
                 }
@@ -5199,6 +5154,9 @@
             NSMutableDictionary * picklistValues = [appDelegate.databaseInterface  getPicklistValuesForTheFiled:fieldAPIName tableName:SFPicklist objectName:detail_objectName];
             
             NSArray * allvalues = [picklistValues allValues];
+            //Abinash Fix
+            allvalues = [self orderingAnArray:allvalues];
+            
             for (NSString * str in allvalues ) 
             {
                 [descObjArray addObject:str];
@@ -6118,20 +6076,20 @@
             return doubleType;
         }
         else
-        {
-            doubleType = [[CTextField  alloc] initWithFrame:frame lableValue:labelValue controlType:@"double" isinViewMode:isInViewMode];
-            doubleType.controlDelegate = self;
-            doubleType.text = value;
-            doubleType.indexPath = indexPath;
-            if (!isInViewMode)
-                doubleType.enabled = NO;
-            else
-                doubleType.enabled = readOnly;
-            doubleType.fieldAPIName = fieldType;
-            doubleType.required = required;
-            doubleType.control_type = controlType;
-            return doubleType;
-        }
+	{
+        doubleType = [[CTextField  alloc] initWithFrame:frame lableValue:labelValue controlType:@"double" isinViewMode:isInViewMode];
+        doubleType.controlDelegate = self;
+        doubleType.text = value;
+        doubleType.indexPath = indexPath;
+        if (!isInViewMode)
+            doubleType.enabled = NO;
+        else
+            doubleType.enabled = readOnly;
+        doubleType.fieldAPIName = fieldType;
+        doubleType.required = required;
+        doubleType.control_type = controlType;
+        return doubleType;
+	}
     }
     
     if([controlType isEqualToString:@"textarea"])    
@@ -6570,7 +6528,7 @@
                         else
                         {
                             NSMutableArray * referenceTotableNames = [appDelegate.databaseInterface getReferenceToForField:field_api_name objectapiName:detailObjectName tableName:SF_REFERENCE_TO];
-                            NSString *  keyPrefix = [key  substringToIndex:3];
+                            /*NSString *  keyPrefix = [key  substringToIndex:3];
                             NSString * reference_to_tableName = @"";
                             if([keyPrefix length ] != 0)
                                 reference_to_tableName = [appDelegate.databaseInterface getTheObjectApiNameForThePrefix:keyPrefix tableName:SFOBJECT];
@@ -6592,7 +6550,30 @@
                                     }
                                     break;
                                 }
+                            }*/
+                            
+                            if([referenceTotableNames count ] > 0)
+                            {
+                                NSString * reference_to_tableName = [referenceTotableNames objectAtIndex:0];
+                                
+                                NSString * referenceTo_Table_fieldName = [appDelegate.databaseInterface getFieldNameForReferenceTable:reference_to_tableName tableName:SFOBJECTFIELD];
+                                
+                                //field_value = [appDelegate.databaseInterface getReferencefield_valueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:field_key];
+                                value = [appDelegate.databaseInterface getReferenceValueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:key];
+                                
+                                
                             }
+                            if([value isEqualToString:@"" ]||[value isEqualToString:@" "] || value == nil)
+                            {
+                                value = [appDelegate.databaseInterface getLookUpNameForId:key];
+                                if([value isEqualToString:@"" ]||[value isEqualToString:@" "] || value == nil)
+                                {
+                                    value = key;
+                                }
+                            }
+                            
+
+                            
                         }
                         
                     }
@@ -7252,29 +7233,24 @@
                             else
                             {
                                 NSMutableArray * referenceTotableNames = [appDelegate.databaseInterface getReferenceToForField:field_api_name objectapiName:detailObjectName tableName:SF_REFERENCE_TO];
-                                NSString *  keyPrefix = [key  substringToIndex:3];
-                                NSString * reference_to_tableName = @"";
-                                if([keyPrefix length ] != 0)
-                                    reference_to_tableName = [appDelegate.databaseInterface getTheObjectApiNameForThePrefix:keyPrefix tableName:SFOBJECT];
-                                for(int i=0;i < [referenceTotableNames count];i++)
+                                if([referenceTotableNames count ] > 0)
                                 {
-                                    if([reference_to_tableName length] == 0 )
+                                    NSString * reference_to_tableName = [referenceTotableNames objectAtIndex:0];
+                                    
+                                    NSString * referenceTo_Table_fieldName = [appDelegate.databaseInterface getFieldNameForReferenceTable:reference_to_tableName tableName:SFOBJECTFIELD];
+                                    
+                                    value = [appDelegate.databaseInterface getReferenceValueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:key];
+                                    
+                                }
+                                if([value isEqualToString:@"" ]||[value isEqualToString:@" "] || value == nil)
+                                {
+                                    value = [appDelegate.databaseInterface getLookUpNameForId:key];
+                                    if([value isEqualToString:@"" ]||[value isEqualToString:@" "] || value == nil)
                                     {
                                         value = key;
-                                        break;
-                                    }
-                                    if([reference_to_tableName isEqualToString:[referenceTotableNames objectAtIndex:i]])
-                                    {
-                                        NSString * referenceTo_Table_fieldName = [appDelegate.databaseInterface getFieldNameForReferenceTable:reference_to_tableName tableName:SFOBJECTFIELD];
-                                        
-                                        value = [appDelegate.databaseInterface getReferenceValueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:key];
-                                        if([value isEqualToString:@"" ]||[value isEqualToString:@" "] || value == nil)
-                                        {
-                                            value = key;
-                                        }
-                                        break;
                                     }
                                 }
+                                break;
                             }
                             
                         }
@@ -8683,19 +8659,18 @@
                         if([value length] == 0 )
                         {
                             error = TRUE;
-                            //sahana TEMP chage
-                            //break;
+                            break;
                         }
                     }
                 }        
             }
             if(error == TRUE)
             {
-                //[self requireFieldWarning];
+                [self requireFieldWarning];
                 requiredFieldCheck = TRUE;
                 
                 [self enableSFMUI];
-                //sahana TEMP chage
+                
                 //return;
             }
             
@@ -8731,8 +8706,7 @@
                                     if([deatil_value length]== 0)
                                     {
                                         line_error = TRUE; 
-                                        //sahana TEMP chage
-                                        //break;
+                                        break;
                                     }
                                 }
                             }
@@ -8743,7 +8717,7 @@
             
             if(line_error)
             {
-               // [self requireFieldWarning];
+                [self requireFieldWarning];
                 requiredFieldCheck = TRUE;
                 
                 [self enableSFMUI];
@@ -8985,15 +8959,14 @@
                         if([value length] == 0 )
                         {
                             error = TRUE;
-                            //sahana TEMP chage
-                            //break;
+                            break;
                         }
                     }
                 }        
             }
             if(error == TRUE)
             {
-                //[self requireFieldWarning];
+                [self requireFieldWarning];
                 requiredFieldCheck = TRUE;
                 
                 [self enableSFMUI];
@@ -9033,8 +9006,7 @@
                                     if([deatil_value length]== 0)
                                     {
                                         line_error = TRUE; 
-                                        //sahana TEMP chage
-                                        //break;
+                                        break;
                                     }
                                 }
                             }
@@ -9045,8 +9017,7 @@
             
             if(line_error)
             {
-                //sahana TEMP chage
-               // [self requireFieldWarning];
+                [self requireFieldWarning];
                 requiredFieldCheck = TRUE;
                 
                 [self enableSFMUI];
@@ -9363,16 +9334,14 @@
                         if([value length] == 0 )
                         {
                             error = TRUE;
-                            //sahana TEMP chage
-                            //break;
+                            break;
                         }
                     }
                 }        
             }
             if(error == TRUE)
             {
-                //sahana TEMP chage
-                //[self requireFieldWarning];
+                [self requireFieldWarning];
                 requiredFieldCheck = TRUE;
                 
                 [self enableSFMUI];
@@ -9412,8 +9381,7 @@
                                     if([deatil_value length]== 0)
                                     {
                                         line_error = TRUE; 
-                                        //sahana TEMP chage
-                                       // break;
+                                        break;
                                     }
                                 }
                             }
@@ -9424,8 +9392,7 @@
             
             if(line_error)
             {
-                //sahana TEMP chage
-               // [self requireFieldWarning];
+                [self requireFieldWarning];
                 requiredFieldCheck = TRUE;
                 
                 [self enableSFMUI];
@@ -9509,7 +9476,7 @@
 
             if(data_inserted)
             {
-                NSString * header_record_local_id = [appDelegate.databaseInterface getTheRecordIdOfnewlyInsertedRecord:headerObjName];               for (int i=0;i<[details count];i++) //parts, labor, expense for instance
+                NSString * header_record_local_id = [appDelegate.databaseInterface getTheRecordIdOfnewlyInsertedRecord:headerObjName];                for (int i=0;i<[details count];i++) //parts, labor, expense for instance
                 {
                     NSDictionary *detail = [details objectAtIndex:i];
                     
@@ -9599,17 +9566,6 @@
             }
         }
         
-        if([targetCall isEqualToString:cancel])
-        {
-            if([targetCall isEqualToString:cancel])
-            {
-                appDelegate.SFMPage = nil;
-                appDelegate.SFMoffline = nil;
-                [delegate BackOnSave];
-            }
-            
-        }
-        
     }
 }
 
@@ -9655,7 +9611,7 @@
         {
             NSMutableArray * referenceTotableNames = [appDelegate.databaseInterface getReferenceToForField:filed_api_name objectapiName:object_name tableName:SF_REFERENCE_TO];
             
-            NSString *  keyPrefix = [field_key  substringToIndex:3];
+            /*NSString *  keyPrefix = [field_key  substringToIndex:3];
             
             NSString * reference_to_tableName = [appDelegate.databaseInterface getTheObjectApiNameForThePrefix:keyPrefix tableName:SFOBJECT];
             
@@ -9669,11 +9625,38 @@
                     
                     if([field_value isEqualToString:@"" ]||[field_value isEqualToString:@" "] || field_value == nil)
                     {
-                        field_value = field_key;
+                        field_value = [appDelegate.databaseInterface  getLookUpNameForId:field_key];
+                        if([field_value isEqualToString:@"" ]||[field_value isEqualToString:@" "] || field_value == nil)
+                        {
+                            field_value = field_key;
+                        }
                     }
+
+                }
                     break;
+            }*/
+            
+            if([referenceTotableNames count ] > 0)
+            {
+                NSString * reference_to_tableName = [referenceTotableNames objectAtIndex:0];
+                
+                NSString * referenceTo_Table_fieldName = [appDelegate.databaseInterface getFieldNameForReferenceTable:reference_to_tableName tableName:SFOBJECTFIELD];
+                
+                //field_value = [appDelegate.databaseInterface getReferencefield_valueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:field_key];
+                field_value = [appDelegate.databaseInterface getReferenceValueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:field_key];
+
+                
+            }
+            if([field_value isEqualToString:@"" ]||[field_value isEqualToString:@" "] || field_value == nil)
+            {
+                field_value = [appDelegate.databaseInterface getLookUpNameForId:field_key];
+                if([field_value isEqualToString:@"" ]||[field_value isEqualToString:@" "] || field_value == nil)
+                {
+                    field_value = field_key;
                 }
             }
+
+            
         }
         
     }
@@ -9749,19 +9732,16 @@
     NSMutableDictionary * created_object_info = [[NSMutableDictionary alloc] initWithCapacity:0];
     [created_object_info setObject:object_name forKey:OBJECT_NAME];
     
-    NSString * process_id = appDelegate.currentProcessID;
+    NSString * process_id = @"";
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     
-    if(process_id == nil || [process_id length] ==0)
+    for (NSDictionary * dict in appDelegate.view_layout_array)
     {
-        for (NSDictionary * dict in appDelegate.view_layout_array)
+        NSString * viewLayoutObjectName = [dict objectForKey:SVMXC_OBJECT_NAME];
+        if ([viewLayoutObjectName isEqualToString:object_name])
         {
-            NSString * viewLayoutObjectName = [dict objectForKey:SVMXC_OBJECT_NAME];
-            if ([viewLayoutObjectName isEqualToString:object_name])
-            {
-                process_id = [dict objectForKey:SVMXC_ProcessID];
-                break;
-            }
+            process_id = [dict objectForKey:SVMXC_ProcessID];
+            break;
         }
     }
     
@@ -9786,5 +9766,30 @@
     [self didReceivePageLayoutOffline];
      
 }
+
+//Abinash Fix
+-(NSArray *)orderingAnArray:(NSArray *)array
+{
+    NSArray * arr = nil;
+    NSMutableArray * sortedArray = [[NSMutableArray alloc] initWithArray:array];
+    int i = 0;
+    for (i = 0; i < [sortedArray count] - 1; i++)
+    {
+        
+        for (int j = 0; j < ([sortedArray count] - (i +1)); j++)
+        {
+            NSString * label = [sortedArray objectAtIndex:j];
+            NSString * label1;
+            label1 = [sortedArray objectAtIndex:j+1];
+            if (strcmp([label UTF8String], [label1 UTF8String]) > 0)
+            {
+                [sortedArray exchangeObjectAtIndex:j withObjectAtIndex:j+1];
+            }
+        }
+    } 
+    arr = sortedArray;
+    return arr;
+}
+
 
 @end
