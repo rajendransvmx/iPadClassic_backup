@@ -1409,9 +1409,9 @@
             objectAPIName = [NSString stringWithFormat:@"%@__%@",SVMX_ORG_PREFIX,objectAPIName];
         objectAPIName = [objectAPIName uppercaseString];
         
-        for (int v = 0; v < [appDelegate.wsInterface.viewLayoutsArray count]; v++)
+        for (int v = 0; v < [appDelegate.view_layout_array count]; v++)
         {
-            NSDictionary * dict = [appDelegate.wsInterface.viewLayoutsArray objectAtIndex:v];
+            NSDictionary * dict = [appDelegate.view_layout_array objectAtIndex:v];
             NSString * object_label = [dict objectForKey:VIEW_OBJECTNAME];
             object_label = [object_label uppercaseString];
             NSLog(@"%@ %@", object_label, objectAPIName);
@@ -1593,7 +1593,7 @@
     }
     else
     {
-        NSString * processId = [appDelegate.switchViewLayouts objectForKey:[event objectForKey:OBJECTAPINAME]];
+        NSString * processId =@"1CustIPAD-012"; //[appDelegate.switchViewLayouts objectForKey:[event objectForKey:OBJECTAPINAME]];
         appDelegate.sfmPageController.processId = (processId != nil)?processId:[event objectForKey:PROCESSID];
         
        /* appDelegate.sfmPageController.recordId = [event objectForKey:RECORDID];
@@ -1820,13 +1820,13 @@
                 [self showSFMWithDayEvent:_dict];
                 
                 
-                /*if ([_dict objectForKey:PROCESSID] == @"" || [_dict objectForKey:PROCESSID] == nil)
+                if ([_dict objectForKey:PROCESSID] == @"" || [_dict objectForKey:PROCESSID] == nil)
                 {
                     NSString * noView = [appDelegate.wsInterface.tagsDictionary objectForKey:NO_VIEW_PROCESS];
                     UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Warning" message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
                     [alert show];
                     [alert release];
-                }*/
+                }
                /* else
                 {
                     if (([eventView.recordId length] == 0) || (![eventView.recordId isKindOfClass:[NSString class]]))
@@ -1988,40 +1988,33 @@
         appDelegate.SFMPage = nil;
     }
     
-    BOOL status = [Reachability connectivityStatus];
-    if(status)
+    NSString * processId = [appDelegate.switchViewLayouts objectForKey:[event objectForKey:OBJECTAPINAME]];
+    appDelegate.sfmPageController.processId = (processId != nil)?processId:[event objectForKey:PROCESSID];
+    
+    NSString * object_name = [event objectForKey:OBJECTAPINAME];
+    appDelegate.sfmPageController.objectName = [event objectForKey:OBJECTAPINAME];
+    NSString * object_api_name =  [[event objectForKey:OBJECTAPINAME] uppercaseString];
+    NSString * temp = @"SVMXC__Service_Order__c";
+    NSString * work_order = [temp uppercaseString];
+    if([object_api_name isEqualToString:work_order])
     {
+        
     }
     else
     {
-        NSString * processId = [appDelegate.switchViewLayouts objectForKey:[event objectForKey:OBJECTAPINAME]];
-        appDelegate.sfmPageController.processId = (processId != nil)?processId:[event objectForKey:PROCESSID];
-        
-        NSString * object_name = [event objectForKey:OBJECTAPINAME];
-        appDelegate.sfmPageController.objectName = [event objectForKey:OBJECTAPINAME];
-        NSString * object_api_name =  [[event objectForKey:OBJECTAPINAME] uppercaseString];
-        NSString * temp = @"SVMXC__Service_Order__c";
-        NSString * work_order = [temp uppercaseString];
-        if([object_api_name isEqualToString:work_order])
-        {
-            
-        }
-        else
-        {
-            UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"" message:@"No View Process is associated with the Event" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-            [alert show];
-            [alert release];
-            return;
-        }
-        
-        NSString * recordId =  [event objectForKey:RECORDID];
-        if(recordId == nil || [recordId length] == 0)
-            return;
-        
-        NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:recordId tableName:object_name];
-        appDelegate.sfmPageController.recordId = local_id;
-    
+        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"" message:@"No View Process is associated with the Event" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+        return;
     }
+    
+    NSString * recordId =  [event objectForKey:RECORDID];
+    if(recordId == nil || [recordId length] == 0)
+        return;
+    
+    NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:recordId tableName:object_name];
+    appDelegate.sfmPageController.recordId = local_id;
+    
    
     appDelegate.sfmPageController.activityDate = [event objectForKey:ACTIVITYDATE];
     appDelegate.sfmPageController.accountId = [event objectForKey:ACCOUNTID];
