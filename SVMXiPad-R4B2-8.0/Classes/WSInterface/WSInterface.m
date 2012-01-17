@@ -60,6 +60,7 @@
 @synthesize didOpComplete;
 @synthesize didGetPicklistValueDb;
 @synthesize processDictionary;
+@synthesize childObject;
 
 #define VALUE 100
 
@@ -182,7 +183,7 @@
     [sfmRequest addValueMap:svmxMap];
     
     [sfmRequest.values addObjectsFromArray:values];
-    
+
     [sfmRequest addClientInfo:client];
     
     [metaSync setRequest:sfmRequest];  
@@ -196,6 +197,54 @@
     
 }
 
+#pragma mark DataSync
+- (void) dataSyncWithEventName:(NSString *)eventName eventType:(NSString *)eventType values:(NSMutableArray *)values
+{
+    
+    [INTF_WebServicesDefServiceSvc initialize];
+    
+    INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init];
+    sessionHeader.sessionId = [appDelegate.loginResult sessionId];
+    
+    INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[INTF_WebServicesDefServiceSvc_CallOptions alloc] init];
+    callOptions.client = nil;
+    
+    INTF_WebServicesDefServiceSvc_DebuggingHeader * debuggingHeader = [[INTF_WebServicesDefServiceSvc_DebuggingHeader alloc] init];
+    debuggingHeader.debugLevel = 0;
+    
+    INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * allowFieldTruncationHeader = [[INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader alloc] init];
+    allowFieldTruncationHeader.allowFieldTruncation = NO;
+    
+    INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
+    binding.logXMLInOut = YES;
+    
+    
+    INTF_WebServicesDefServiceSvc_INTF_DataSync_WS * dataSync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] autorelease];
+    
+    INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] 
+                                                                  autorelease];
+    
+    INTF_WebServicesDefServiceSvc_SVMXClient * client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
+    
+    client.clientType = @"iPad";
+    [client.clientInfo addObject:@"OS:iPadOS"];
+    [client.clientInfo addObject:appDelegate.SVMX_Version];
+    
+    sfmRequest.eventName = eventName;
+    sfmRequest.eventType = eventType;
+    sfmRequest.userId = [appDelegate.loginResult userId];
+    sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
+    sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
+    
+    [sfmRequest addClientInfo:client];
+    [dataSync setRequest:sfmRequest];
+    
+    [binding INTF_DataSync_WSAsyncUsingParameters:dataSync 
+                                    SessionHeader:sessionHeader 
+                                      CallOptions:callOptions
+                                  DebuggingHeader:debuggingHeader
+                       AllowFieldTruncationHeader:allowFieldTruncationHeader delegate:self];    
+}
 #pragma mark WSInterface Layer
 
 - (void) getTags
@@ -1311,7 +1360,7 @@
         
         INTF_WebServicesDefServiceSvc_INTF_MetaSync_WSResponse * wsResponse = [response.bodyParts objectAtIndex:0];
         
-        if ([wsResponse.result.eventName isEqualToString:@"SFM_METADATA"])
+        if ([wsResponse.result.eventName isEqualToString:SFM_METADATA])
         {
             processDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
             NSMutableArray * keys = [[NSMutableArray alloc] initWithCapacity:0];
@@ -1821,7 +1870,6 @@
         
         else if ([wsResponse.result.eventName isEqualToString:SFM_PICKLIST_DEFINITIONS])
         {
-            
             didGetPicklistValues = TRUE;
             NSMutableArray * arr;
             NSMutableArray * Fields = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
@@ -1975,8 +2023,44 @@
                         {
                             INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [mapValuesArray objectAtIndex:g];
                             [keys addObject:(svmxMap.key != nil)?(svmxMap.key):@""];
-                            [values addObject:(svmxMap.value != nil)?(svmxMap.value):@""];
+                            
+                            //To store the MasterDetails
+                       //     if ([(svmxMap.key != nil)?(svmxMap.key):@"" isEqualToString:@"MASTERDETAILS"])
+                          //  {
+                                NSMutableArray * detailArray = svmxMap.valueMap;  
+                                
+                                if ([detailArray count] > 0)
+                                {
+                                    NSMutableArray * detailkey = [[NSMutableArray alloc] initWithCapacity:0];
+                                    NSMutableArray * detailValue = [[NSMutableArray alloc] initWithCapacity:0];
+                                    for (int val = 0; val < [detailArray count]; val++)
+                                    {
+                                        INTF_WebServicesDefServiceSvc_SVMXMap * masterDetailMap = [detailArray objectAtIndex:val];
+                                        
+                                        if (![(masterDetailMap.key != nil)?masterDetailMap.key:@"" isEqualToString:@""])
+                                        {
+                                            [detailkey addObject:masterDetailMap.key];
+                                            [detailValue addObject:(masterDetailMap.value != nil)?masterDetailMap.value:@""];
+                                        }
+                                        else
+                                            [values addObject:(svmxMap.value != nil)?(svmxMap.value):@""];
+                                        
+                                    }
+                                    if ([detailkey count] > 0)
+                                    {
+                                        NSMutableDictionary * detailKeyValue = [NSMutableDictionary dictionaryWithObjects:detailValue forKeys:detailkey];
+
+                                        [values addObject:detailKeyValue];
+                                    }
+                                    if ([detailkey count] > 0)
+                                        [detailkey release];
+                                    if ([detailValue count] > 0)
+                                        [detailValue release];
+                                    
+                                }
+                                
                         }
+                        
                         valueMapDict = [NSMutableDictionary dictionaryWithObjects:values forKeys:keys];
                         objectDict = [NSMutableDictionary dictionaryWithObject:valueMapDict forKey:object_key];
                         [object_array addObject:objectDict]; 
@@ -1984,7 +2068,7 @@
                             [keys removeAllObjects];
                         if (values)
                             [values removeAllObjects];
-                    } 
+                    }   
                     array1 = [NSMutableArray arrayWithArray:object_array];
                     objectDict = [NSMutableDictionary dictionaryWithObject:array1 forKey:objectProperty];
                     [arr addObject:objectDict];
@@ -2106,32 +2190,32 @@
         
      
       else if ([wsResponse.result.eventName isEqualToString:MOBILE_DEVICE_TAGS])
+      {
+        mobileDeviceTagsDict = [[NSMutableDictionary alloc] initWithCapacity:0];
+        NSMutableArray * array = [wsResponse.result valueMap];
+        
+        for (int i = 0; i < [array count]; i++)
         {
-            mobileDeviceTagsDict = [[NSMutableDictionary alloc] initWithCapacity:0];
-            NSMutableArray * array = [wsResponse.result valueMap];
+            INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [array objectAtIndex:i];
             
-            for (int i = 0; i < [array count]; i++)
-            {
-                INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [array objectAtIndex:i];
-                
-                NSString * key = (svmxMap.key!=nil)?(svmxMap.key):@"";
-                
-                if (![key isEqualToString:@""])
-                    [mobileDeviceTagsDict setValue:(svmxMap.value!=nil)?(svmxMap.value):@"" forKey:(svmxMap.key!=nil)?svmxMap.key:@""];
-            }            
-         //   didGetWizards = FALSE;
-            [appDelegate.dataBase insertValuesInToTagsTable:mobileDeviceTagsDict];
+            NSString * key = (svmxMap.key!=nil)?(svmxMap.key):@"";
             
-          /*  while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE))
+            if (![key isEqualToString:@""])
+                [mobileDeviceTagsDict setValue:(svmxMap.value!=nil)?(svmxMap.value):@"" forKey:(svmxMap.key!=nil)?svmxMap.key:@""];
+        }            
+     //   didGetWizards = FALSE;
+        [appDelegate.dataBase insertValuesInToTagsTable:mobileDeviceTagsDict];
+        
+      /*  while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE))
+        {
+            if (didGetWizards)
             {
-                if (didGetWizards)
-                {
-                    // didGetAllMetaData = TRUE;
-                    break;
-                }
-            } 
-            didGetWizards = FALSE;*/
-           // [appDelegate.wsInterface metaSyncWithEventName:MOBILE_DEVICE_SETTINGS eventType:SYNC values:nil];
+                // didGetAllMetaData = TRUE;
+                break;
+            }
+        } 
+        didGetWizards = FALSE;*/
+       // [appDelegate.wsInterface metaSyncWithEventName:MOBILE_DEVICE_SETTINGS eventType:SYNC values:nil];
 
         }
         else if ([wsResponse.result.eventName isEqualToString:MOBILE_DEVICE_SETTINGS])
@@ -2161,6 +2245,91 @@
                 break;
             }
         } */
+    }
+    
+    if ([operation isKindOfClass:[INTF_WebServicesDefBinding_INTF_DataSync_WS class]])
+    {
+        jsonParser = [[SBJsonParser alloc] init];
+        
+        INTF_WebServicesDefServiceSvc_INTF_DataSync_WSResponse * wsResponse = [response.bodyParts objectAtIndex:0];
+        
+        childObject = [[NSMutableArray alloc] initWithCapacity:0];
+        
+        NSMutableArray * objectFieldValue = [[NSMutableArray alloc] initWithCapacity:0];
+        
+        if ([wsResponse.result.eventName isEqualToString:@"DATA_SYNC"])
+        {
+           // NSMutableArray * objects = wsResponse.result.values;
+            
+         /*   for (int obj = 0; obj < [objects count]; obj++)
+            {
+                [master_object addObject:[objects objectAtIndex:obj]];
+            } */
+            
+            NSString * objectApiName = @"";
+         //   NSMutableDictionary * fieldValueDict = [[NSMutableDictionary alloc] initWithCapacity:0];
+            
+            NSMutableArray * fieldValueArray = [[NSMutableArray alloc] initWithCapacity:0];
+            
+            NSDictionary * dictionary;
+            NSMutableArray * array = [wsResponse.result valueMap];
+            
+            for (int i = 0; i < [array count]; i++)
+            {
+                INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [array objectAtIndex:i];
+                NSString * key = (svmxMap.key != nil)?(svmxMap.key):@"";
+                
+                if ([key isEqualToString:@"Child_Object"])
+                    [childObject addObject:(svmxMap.value != nil)?svmxMap.value:@""];
+                    
+                
+                if (![key isEqualToString:@""])
+                    objectApiName = (svmxMap.value != nil)?svmxMap.value:@"";
+
+                NSMutableArray * valueMap = [svmxMap valueMap];
+                
+                for (int j = 0; j < [valueMap count]; j++)
+                {
+                    NSArray * fieldArray;
+                    
+                    INTF_WebServicesDefServiceSvc_SVMXMap * fieldSvmxMap = [valueMap objectAtIndex:j];
+                    
+                    NSString * key = (fieldSvmxMap.key != nil)?(fieldSvmxMap.key):@"";
+                    
+                    NSString * fieldValue = @"";
+                    
+                    if ([key isEqualToString:@"Fields"])
+                        fieldValue = (fieldSvmxMap.value != nil)?fieldSvmxMap.value:@"";
+                    
+                    if (![fieldValue isEqualToString:@""])
+                        fieldArray = [fieldValue componentsSeparatedByString:@","];
+                    
+                    NSMutableArray * values = fieldSvmxMap.values;
+                    
+                    for (int k = 0; k < [values count]; k++)
+                    {
+                        NSString * value = [values objectAtIndex:k];
+                                            
+                        NSDictionary * jsonDict = [jsonParser objectWithString:value];
+                        
+                        [fieldValueArray addObject:jsonDict];
+                    }
+                }
+                NSDictionary * dict;
+                NSArray * arr = [NSArray arrayWithArray:fieldValueArray];
+                if (![objectApiName isEqualToString:@""])
+                    dict = [NSDictionary dictionaryWithObject:arr forKey:objectApiName];
+                if ([fieldValueArray count])
+                    [fieldValueArray removeAllObjects];
+                
+                dictionary = [NSDictionary dictionaryWithDictionary:dict];
+                [objectFieldValue addObject:dictionary];
+                if ([dictionary count] > 0)
+                    [dictionary release];
+                
+            }
+        }
+        [appDelegate.dataBase insertDataInToTables:objectFieldValue];        
     }
     
     if([operation isKindOfClass:[INTF_WebServicesDefBinding_SVMX_GetSvmxVersion class]])

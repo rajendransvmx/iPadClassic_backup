@@ -14,6 +14,7 @@
 #import "LocalizationGlobals.h"
 #import "QuartzCore/QuartzCore.h"
 #import "DataBaseGlobals.h"
+#import "SBJsonParser.h"
 
 //radha 18th August 2011
 
@@ -89,18 +90,13 @@
     //Radha Information about the objects and its definitions
     NSMutableArray * objectDefinitions;
     NSMutableArray * object;
-    
     //PicklistValues
     NSMutableArray * picklistObject;
     NSMutableArray * picklistField;
     NSMutableArray * picklistValues;
-    
-    //Pagelayout Info
+        //Pagelayout Info
     NSMutableArray * pageUiHistory;
-    
-    
     //Radha - Flags to maintain synchronization
-
     BOOL didGetAllMetadata;
     BOOL didGetPicklistValues;
     BOOL didGetPageData;
@@ -124,6 +120,11 @@
     
     //keep Track of process_type for page_id
     NSMutableDictionary * processType_dict;
+    
+    
+    //Radha DataSync
+    SBJsonParser * jsonParser;
+    NSMutableArray * childObject;
 
 }
 @property (nonatomic)  BOOL didGetProcessId;
@@ -179,6 +180,8 @@
 @property (nonatomic, retain) NSMutableArray * object;
 @property (nonatomic, retain) NSMutableArray * picklistValues;
 @property (nonatomic, retain) NSMutableDictionary * processDictionary;
+//Radha DataSync
+@property (nonatomic, retain) NSMutableArray * childObject;
 
 
 - (void) getSvmxVersion;
@@ -248,14 +251,11 @@
 
 - (BOOL) checkValidStartDate:(NSString *)_startDate EndDate:(NSString *)_endDate;
 
-
-
-//Radha metasync test 
-//- (void) metaSync;
-
 //Radha Meta Sync 
 - (void) metaSyncWithEventName:(NSString *)eventName eventType:(NSString *)eventType values:(NSMutableArray *)values;
 
+//Radha datasync
+- (void) dataSyncWithEventName:(NSString *)eventName eventType:(NSString *)eventType values:(NSMutableArray *)values;
 
 
 //Radha temperory check for the picklist values
