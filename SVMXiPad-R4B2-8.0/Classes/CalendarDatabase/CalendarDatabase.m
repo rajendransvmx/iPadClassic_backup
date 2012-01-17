@@ -23,37 +23,6 @@
 -initWithDBName
 {
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];    
-   /* NSError *error; 
-    NSArray *searchPaths =NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentFolderPath = [searchPaths objectAtIndex: 0];
-    dbFilePath = [[documentFolderPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.%@", DATABASENAME, DATABASETYPE]]retain];
-    NSLog(@"%@", dbFilePath);
-    BOOL success=[[NSFileManager defaultManager] fileExistsAtPath:dbFilePath];
-    if ( success)
-    { 
-        NSLog(@"\n db exist in the path");		
-    }
-    else    //didn't find db, need to copy
-    {
-        NSString *backupDbPath = [[NSBundle mainBundle] pathForResource:DATABASENAME ofType:DATABASETYPE]; 
-        if (backupDbPath == nil) 
-        {
-            NSLog(@"\n db not able to create error");   
-        }
-        else 
-        { 
-            BOOL copiedBackupDb = [[NSFileManager defaultManager] copyItemAtPath:backupDbPath toPath:dbFilePath error:&error]; 
-            if (!copiedBackupDb) 
-                NSAssert1(0, @"Failed to create writable database file with message '%@'.", [error localizedDescription]);
-        } 
-    }
-    if( sqlite3_open ([dbFilePath UTF8String], &db) != SQLITE_OK )
-    { 
-        NSLog (@"couldn't open db:");
-        NSAssert(0, @"Database failed to open.");		//throw another exception here
-        return nil;
-    }
-    */
     return self;
 }
 
@@ -156,7 +125,7 @@
     
     const char * _query = [query UTF8String];
     
-    if ( sqlite3_prepare_v2(appDelegate.dataBase, _query,-1, &statement, nil) == SQLITE_OK )
+    if ( sqlite3_prepare_v2(appDelegate.db, _query,-1, &statement, nil) == SQLITE_OK )
     {
         while(sqlite3_step(statement) == SQLITE_ROW)
         {
@@ -186,8 +155,9 @@
 
 - (NSMutableArray *) didGetTaskFromDB:(NSString *)_date
 {
-    NSMutableString *query = [NSMutableString stringWithFormat:@"Select Priority, Subject, CreatedDate, Id from Tasks where CreatedDate = '%@'", _date];
-    NSLog(@"%@", query);
+    NSMutableString * query = [NSMutableString stringWithFormat:@"Select Priority, Subject, CreatedDate, Id from Tasks where CreatedDate = '%@'", _date];
+    
+    
     NSMutableArray *taskArray = [[[NSMutableArray alloc]initWithCapacity:0]autorelease];
     
     const char * _query = [query UTF8String];
@@ -244,23 +214,26 @@
 - (NSMutableArray *) GetEventsFromDBWithStartDate:(NSString *)startdate endDate:(NSString *)endDate
 {
     
-    sqlite3_stmt *dbps;
+    sqlite3_stmt * dbps;
     NSMutableArray * resultSet = [[NSMutableArray alloc] initWithCapacity:0];
-    NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
+    NSMutableString * queryStatement = [[NSMutableString alloc]initWithCapacity:0];
     
-    queryStatement = [NSString stringWithFormat:@"SELECT  ActivityDate, ActivityDateTime,DurationInMinutes,EndDateTime,StartDateTime,Subject,WhatId,Id FROM Events where StartDateTime >= '%@' and EndDateTime <= '%@'", startdate, endDate];
+    queryStatement = [NSString stringWithFormat:@"SELECT  ActivityDate, ActivityDateTime,DurationInMinutes,EndDateTime,StartDateTime,Subject,WhatId,Id FROM Event where StartDateTime >= '%@' and EndDateTime <= '%@'", startdate, endDate];
     
     const char * selectStatement = [queryStatement UTF8String];
     
     int dbrc = sqlite3_prepare_v2(appDelegate.db, selectStatement, -1, &dbps, NULL);
     
     dbrc = sqlite3_step(dbps);
+    
     NSDateFormatter * dateFormatter = [[[NSDateFormatter alloc] init]autorelease];
     [dateFormatter setDateFormat:@"YYYY-MM-dd"];
     NSDateFormatter * datetimeFormatter=[[[NSDateFormatter alloc]init]autorelease];
     [datetimeFormatter  setDateFormat:@"YYYY-MM-dd HH:mm:ss"];
     NSTimeZone * gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
     [datetimeFormatter setTimeZone:gmt];
+    
+    
     NSArray * keys = [NSArray arrayWithObjects:
                       ACTIVITYDATE,
                       ACTIVITYDTIME,
@@ -370,19 +343,21 @@
         
         BOOL retVal, retVal1;
         retVal = [self isWorkOrder:whatId1];
+        
         retVal1 = [self isCase:whatId1];
         if ( retVal == YES && (whatId1 != @"" || whatId1 != nil) )
         {
             NSString *subject1  = @"";
             NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
-            //queryStatement = [NSString stringWithFormat:@"SELECT Name from SVMXC__Service_Order__c where Id = '%@'", whatId1];
-            queryStatement =[NSString stringWithFormat:@"Select Subject From Events where WhatId = '%@'",whatId1];
+            
+            
+            queryStatement =[NSString stringWithFormat:@"Select Subject From Event where WhatId = '%@'", whatId1];
             const char * selectStatement = [queryStatement UTF8String];
-            if ( sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &statement, nil) == SQLITE_OK )
+            if ( sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &dbps, nil) == SQLITE_OK )
             {
-                while(sqlite3_step(statement) == SQLITE_ROW)
+                while(sqlite3_step(dbps) == SQLITE_ROW)
                 {
-                    char * _subject = (char *) sqlite3_column_text(statement,0);
+                    char * _subject = (char *) sqlite3_column_text(dbps,0);
                     
                     if ((_subject != nil) && strlen(_subject))
                     {
@@ -399,12 +374,12 @@
             NSMutableString * queryStatement1 = [[NSMutableString alloc]initWithCapacity:0];
             queryStatement1 = [NSMutableString stringWithFormat:@"Select Name From SVMXC__Service_Order__c where Id = '%@'",whatId1];
             const char * selectStatement1 = [queryStatement1 UTF8String];
-            if ( sqlite3_prepare_v2(appDelegate.db, selectStatement1, -1, &statement, nil) == SQLITE_OK)
+            if ( sqlite3_prepare_v2(appDelegate.db, selectStatement1, -1, &dbps, nil) == SQLITE_OK)
             {
-                while (sqlite3_step(statement) == SQLITE_ROW) 
+                while (sqlite3_step(dbps) == SQLITE_ROW) 
                 {
                     
-                    char * _WorkOrderLabel = (char *) sqlite3_column_text(statement, 0);
+                    char * _WorkOrderLabel = (char *) sqlite3_column_text(dbps, 0);
                     if ((_WorkOrderLabel !=nil) && strlen(_WorkOrderLabel))
                     {
                         WorkOrderLabel = [NSString stringWithUTF8String:_WorkOrderLabel];
@@ -413,33 +388,34 @@
             }
             additonalInfo = @"";
             NSString * info = @"";
-            queryStatement = [NSString stringWithFormat:@"SELECT ObjectLabel from LabelInfo where ObjectAPIName = '%@'", @"SVMXC__Service_Order__c"];
+            queryStatement = [NSString stringWithFormat:@"SELECT label from SFObject where api_name = '%@'", objectApiName];
+            
             selectStatement = [queryStatement UTF8String];
-            if ( sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &statement, nil) == SQLITE_OK )
+            if ( sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &dbps, nil) == SQLITE_OK )
             {
-                while(sqlite3_step(statement) == SQLITE_ROW)
+                while(sqlite3_step(dbps) == SQLITE_ROW)
                 {
-                    char * _addInfo = (char *) sqlite3_column_text(statement,0);
+                    char * _addInfo = (char *) sqlite3_column_text(dbps,0);
                     
                     if ((_addInfo != nil) && strlen(_addInfo))
                         info = [NSString stringWithUTF8String:_addInfo];
                 }
             }
             additonalInfo = [NSString stringWithFormat:@"%@ : %@", info, WorkOrderLabel];
-            objectApiName = @"SVMXC__Service_Order__c";
         }
         
         //Case 
-        else if ( retVal1 == YES && (whatId1 != @"" || whatId1 != nil) )             {
+        else if ( retVal1 == YES && (whatId1 != @"" || whatId1 != nil) )             
+        {
             NSString * subject1  = @"";
             NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
             queryStatement = [NSString stringWithFormat:@"SELECT CaseNumber from Case where Id = '%@'", whatId1];
             const char * selectStatement = [queryStatement UTF8String];
-            if ( sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &statement, nil) == SQLITE_OK )
+            if ( sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &dbps, nil) == SQLITE_OK )
             {
-                while(sqlite3_step(statement) == SQLITE_ROW)
+                while(sqlite3_step(dbps) == SQLITE_ROW)
                 {
-                    char * _subject = (char *) sqlite3_column_text(statement,0);
+                    char * _subject = (char *) sqlite3_column_text(dbps,0);
                     
                     if ((_subject != nil) && strlen(_subject))
                     {
@@ -454,20 +430,19 @@
             }                 
             additonalInfo = @"";
             NSString * info = @"";
-            queryStatement = [NSString stringWithFormat:@"SELECT ObjectLabel from LabelInfo where ObjectAPIName = '%@'", @"Case"];
+            queryStatement = [NSString stringWithFormat:@"SELECT label from SFObject where api_name = '%@'", objectApiName];
             selectStatement = [queryStatement UTF8String];
-            if ( sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &statement, nil) == SQLITE_OK )
+            if ( sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &dbps, nil) == SQLITE_OK )
             {
-                while(sqlite3_step(statement) == SQLITE_ROW)
+                while(sqlite3_step(dbps) == SQLITE_ROW)
                 {
-                    char * _addInfo = (char *) sqlite3_column_text(statement,0);
+                    char * _addInfo = (char *) sqlite3_column_text(dbps,0);
                     
                     if ((_addInfo != nil) && strlen(_addInfo))
                         info = [NSString stringWithUTF8String:_addInfo];
                 }
             }
             additonalInfo = [NSString stringWithFormat:@"%@ : %@", info, subject];
-            objectApiName = @"Case";
         }  
         
         //Other 
@@ -477,13 +452,13 @@
             NSString * tableName = [self getTableNameForWhatId:whatId1];
             
             NSString * info = @"";
-            queryStatement = [NSString stringWithFormat:@"SELECT ObjectLabel from LabelInfo where ObjectAPIName = '%@'", tableName];
+            queryStatement = [NSString stringWithFormat:@"SELECT label from SFObject where api_name = '%@'", tableName];
             selectStatement = [queryStatement UTF8String];
-            if ( sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &statement, nil) == SQLITE_OK )
+            if ( sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &dbps, nil) == SQLITE_OK )
             {
-                while(sqlite3_step(statement) == SQLITE_ROW)
+                while(sqlite3_step(dbps) == SQLITE_ROW)
                 {
-                    char * _addInfo = (char *) sqlite3_column_text(statement,0);
+                    char * _addInfo = (char *) sqlite3_column_text(dbps,0);
                     
                     if ((_addInfo != nil) && strlen(_addInfo))
                         info = [NSString stringWithUTF8String:_addInfo];
@@ -518,7 +493,7 @@
 
 - (void) updateMovedEventWithStartTime:(NSString *)_startDT EndDate:(NSString *)_endDT RecordID:_recordId
 {
-    NSString *sql = [NSString stringWithFormat: @"Update  Events Set StartDateTime = '%@', EndDateTime = '%@', ActivityDateTime = '%@' Where Id = '%@'", _startDT, _endDT,_startDT, _recordId];
+    NSString *sql = [NSString stringWithFormat: @"Update Event Set StartDateTime = '%@', EndDateTime = '%@', ActivityDateTime = '%@' Where Id = '%@'", _startDT, _endDT,_startDT, _recordId];
     NSLog(@"%@", sql);
     char *err;
     if (sqlite3_exec(appDelegate.db, [sql UTF8String], NULL, NULL, &err) != SQLITE_OK)
@@ -528,26 +503,62 @@
     }
 }
 
-- (BOOL) isWorkOrder:(NSString *)__whatId
+//Radha Changed Method
+- (BOOL) isWorkOrder:(NSString *)whatId
 {
     
-    NSString *str = [__whatId substringToIndex:3];
-    NSLog(@"%@" ,str);
-    if ([str isEqualToString:@"a0t"])
+    NSString * str = [whatId substringToIndex:3];
+    
+    NSString * query = [NSString stringWithFormat:@"SELECT api_name FROM SFObject WHERE key_prefix = '%@'", str];
+    
+    sqlite3_stmt * stmt;
+    NSString * objectName = @"";
+    
+    if (sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        if (sqlite3_step(stmt) ==  SQLITE_ROW)
+        {
+            char * _api_name = (char *) sqlite3_column_text(stmt, 0);
+            if ((_api_name != nil) && strlen(_api_name))
+                 objectName = [NSString stringWithUTF8String:_api_name];
+        }
+    }
+    
+    if ([objectName isEqualToString:@"SVMXC__Service_Order__c"])
+    {
+        objectApiName = objectName;
         return YES;
-    else
-        return NO;
+    }
+    return NO;
+        
 }
 
 - (BOOL) isCase:(NSString *)whatId
 {
+    NSString * str = [whatId substringToIndex:3];
     
-    NSString *str = [whatId substringToIndex:3];
-    NSLog(@"%@" ,str);
-    if ([str isEqualToString:@"500"])
+    NSString * query = [NSString stringWithFormat:@"SELECT api_name FROM SFObject WHERE key_prefix = '%@'", str];
+    
+    sqlite3_stmt * stmt;
+    NSString * objectName = @"";
+    
+    if (sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        if (sqlite3_step(stmt) ==  SQLITE_ROW)
+        {
+            char * _api_name = (char *) sqlite3_column_text(stmt, 0);
+            if ((_api_name != nil) && strlen(_api_name))
+                objectName = [NSString stringWithUTF8String:_api_name];
+        }
+    }
+    
+    if ([objectName isEqualToString:@"Case"])
+    {
+        objectApiName = objectName;
         return YES;
-    else
-        return NO;
+    }
+    return NO;
+    
 }
 
 
@@ -634,16 +645,24 @@
 
 - (NSString *) getTableNameForWhatId:(NSString *)whatId
 {
-    if ([[whatId substringToIndex:3] isEqualToString:@"a0S"])
-        return @"SVMXC__RMA_Shipment_Order__c";
-    else if ([[whatId substringToIndex:3] isEqualToString:@"a0C"]) 
-        return @"SVMXC__Installed_Product__c";
-    else if ([[whatId substringToIndex:3] isEqualToString:@"a0p"])
-        return @"SVMXC__Service_Group_Skills__c";
-    else if ([[whatId substringToIndex:3] isEqualToString:@"a0G"])
-        return @"SVMXC__Offline_View__c";
-    else
-        return @"";
+    NSString * str = [whatId substringToIndex:3];
+    
+    NSString * query = [NSString stringWithFormat:@"SELECT api_name FROM SFObject WHERE key_prefix = '%@'", str];
+    
+    sqlite3_stmt * stmt;
+    NSString * objectName = @"";
+    
+    if (sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        if (sqlite3_step(stmt) ==  SQLITE_ROW)
+        {
+            char * _api_name = (char *) sqlite3_column_text(stmt, 0);
+            if ((_api_name != nil) && strlen(_api_name))
+                objectName = [NSString stringWithUTF8String:_api_name];
+        }
+    }
+    
+    return objectName;
     
 }
 
@@ -651,7 +670,7 @@
 {
     NSString *fieldStr = @"";
     NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
-    queryStatement = [NSString stringWithFormat:@"Select NameField From LabelInfo where ObjectAPIName = '%@'",tableName];
+    queryStatement = [NSString stringWithFormat:@"Select Name From SFObject where ObjectAPIName = '%@'",tableName];
     const char * selectStatement = [queryStatement UTF8String];
     
     if ( sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &statement, nil) == SQLITE_OK )
