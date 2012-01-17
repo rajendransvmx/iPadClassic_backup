@@ -96,8 +96,8 @@
     if (isinitialSyncButtonChecked)
     {
         //appDelegate.dataBase = [[DataBase alloc] initWithDBName:DATABASENAME1 type:DATABASETYPE1 sqlite:nil];
-        
        
+        isinitialSyncButtonChecked = NO;
 
         if (!appDelegate.isInternetConnectionAvailable)
         {
@@ -121,12 +121,24 @@
             return;
         } 
         
+        
+        
         didLoginCompleted = FALSE;
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
         {
             if (didLoginCompleted == TRUE)
                 break;
         }
+        
+      /*  appDelegate.wsInterface.didOpComplete = FALSE;
+        [appDelegate.wsInterface dataSyncWithEventName:@"DATA_SYNC" eventType:SYNC values:nil];
+        
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+        {
+            if (appDelegate.wsInterface.didOpComplete == TRUE)
+                break; 
+        } */
+        
         appDelegate.wsInterface.didOpComplete = FALSE;
         [appDelegate.wsInterface metaSyncWithEventName:SFM_METADATA eventType:INITIAL_SYNC values:nil];
         while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
@@ -135,6 +147,15 @@
                 break; 
         }
         
+        appDelegate.wsInterface.didOpComplete = FALSE;
+        [appDelegate.wsInterface dataSyncWithEventName:@"DATA_SYNC" eventType:SYNC values:nil];
+        
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+        {
+            if (appDelegate.wsInterface.didOpComplete == TRUE)
+                break; 
+        }
+                
         //remove recents
         NSFileManager * fileManager = [NSFileManager defaultManager];
         NSString * rootPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
@@ -168,8 +189,7 @@
         
         
         //for view process
-        appDelegate.view_layout_array = [[appDelegate.databaseInterface getAllTheProcesses:@"VIEWRECORD"] retain];
-        
+        appDelegate.view_layout_array = [appDelegate.databaseInterface getAllTheProcesses:@"VIEWRECORD"];        
         
         [self getCreateProcessArray:createprocessArray];
         
@@ -180,7 +200,6 @@
         
         [appDelegate.calDataBase startQueryConfiguration];
         [appDelegate.wsInterface getWeekdates:dateString];
-        NSLog(@"%@ %@",appDelegate.wsInterface.startDate, appDelegate.wsInterface.endDate);
         NSString *startDate = [iOSInterfaceObject getGMTFromLocalTime:appDelegate.wsInterface.startDate];
         NSString *endDate = [iOSInterfaceObject getGMTFromLocalTime:appDelegate.wsInterface.endDate];
         startDate = [startDate stringByReplacingOccurrencesOfString:@"T" withString:@" "];
@@ -211,7 +230,6 @@
     // Assign the Session id to the loginResult
     
     appDelegate.loginResult = lr;
-    NSLog(@"%@", appDelegate.loginResult);
     
     NSString * serverUrl = [lr serverUrl];
     NSArray * array = [serverUrl pathComponents];
@@ -222,7 +240,7 @@
         [appDelegate.currentServerUrl release];
         appDelegate.currentServerUrl = nil;
     }
-    appDelegate.currentServerUrl = [server retain];
+    appDelegate.currentServerUrl = server;
     
     ZKUserInfo * userInfo = [lr userInfo];
     if (appDelegate.currentUserName != nil)
@@ -234,7 +252,7 @@
     
     NSDictionary * defaultTags = [appDelegate.wsInterface getDefaultTags];
     
-    NSString * serviceMax = [defaultTags objectForKey:ALERT_ERROR_TITLE];
+   // NSString * serviceMax = [defaultTags objectForKey:ALERT_ERROR_TITLE];
     NSString * alert_ok = [defaultTags objectForKey:ALERT_ERROR_OK];
     NSString * description = @"";
     if ([error userInfo] == nil)
@@ -1529,7 +1547,7 @@
         [section_for_createObjects addObject:createobjects];
         [createobjects release];
     }
-    appDelegate.StandAloneCreateProcess = [section_for_createObjects retain];
+    appDelegate.StandAloneCreateProcess = section_for_createObjects;
     
 }
 
