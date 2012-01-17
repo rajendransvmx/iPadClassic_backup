@@ -36,6 +36,7 @@
 #define SFNAMEDSEACHCOMPONENT       @"SFNamedSearchComponent"
 #define MOBILEDEVICETAGS            @"MobileDeviceTags"
 #define MOBILEDEVICESETTINGS        @"MobileDeviceSettings"
+#define SFCHILDRELATIONSHIP         @"SFChildRelationship"
 
 
 
@@ -196,12 +197,6 @@
 #define COLUMNTAG_ID             0
 #define COLUMNTAG_VALUE          1
 
-
-
-//KEYS
-
-
-
 //TYPES
 #define BOOLEAN                 @"BOOLEAN"
 #define _BOOL                   @"BOOL"
@@ -214,6 +209,28 @@
 #define TEXTAREA                @"TEXTAREA"
 #define VARCHAR                 @"VARCHAR"
 #define TEXT                    @"TEXT"
+
+//Macros
+#define MVALUEMAPPING           @"VALUEMAPPING"
+#define MFIELDMAPPING           @"FIELDMAPPING"
+
+
+//Keys 
+#define MFIELDPROPERTY                  @"FIELDPROPERTY"
+#define MOBJECTPROPERTY                 @"OBJECTPROPERTY"
+#define MRECORDTYPE                     @"RECORDTYPE"
+#define MOBJECTDEFINITION               @"OBJECTDEFINITION"
+#define MSFMProcess                     @"SFMProcess"
+#define MSFProcess_component            @"SFProcess_component"
+#define MSFExpression                   @"SFExpression"
+#define MSFExpression_component         @"SFExpression_component"
+#define MSFObject_mapping               @"SFObject_mapping"
+#define MSFObject_mapping_component     @"SFObject_mapping_component"
+#define MSFNAMEDSEARCH                  @"SFNAMEDSEARCH"
+#define MSFNAMEDSEARCH_COMPONENT        @"SFNAMEDSEARCH_COMPONENT"
+#define MSFW_wizard                     @"SFW_wizard"
+#define MSFW_wizard_steps               @"SFW_wizard_steps"
+#define MASTERDETAILS                   @"MASTERDETAILS"
 
 
 
