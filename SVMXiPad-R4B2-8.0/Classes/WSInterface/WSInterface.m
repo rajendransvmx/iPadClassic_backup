@@ -2271,7 +2271,7 @@
             
             NSMutableArray * fieldValueArray = [[NSMutableArray alloc] initWithCapacity:0];
             
-            NSDictionary * dictionary;
+            NSDictionary * dictionary = nil;
             NSMutableArray * array = [wsResponse.result valueMap];
             
             for (int i = 0; i < [array count]; i++)
@@ -2315,16 +2315,17 @@
                         [fieldValueArray addObject:jsonDict];
                     }
                 }
-                NSDictionary * dict;
+                NSDictionary * dict = nil;
                 NSArray * arr = [NSArray arrayWithArray:fieldValueArray];
                 if (![objectApiName isEqualToString:@""])
                     dict = [NSDictionary dictionaryWithObject:arr forKey:objectApiName];
                 if ([fieldValueArray count])
                     [fieldValueArray removeAllObjects];
-                
-                dictionary = [NSDictionary dictionaryWithDictionary:dict];
-                [objectFieldValue addObject:dictionary];
-                if ([dictionary count] > 0)
+                if (dict != nil && [dict count] > 0)
+                    dictionary = [NSDictionary dictionaryWithDictionary:dict];
+                if (dictionary != nil && [dictionary count] > 0)
+                    [objectFieldValue addObject:dictionary];
+                if (dictionary != nil && [dictionary count] > 0)
                     [dictionary release];
                 
             }
