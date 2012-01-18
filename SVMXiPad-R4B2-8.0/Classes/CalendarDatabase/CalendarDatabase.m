@@ -27,7 +27,7 @@
 }
 
 
-- (BOOL) isUsernamePresent:(NSString *)username password:(NSString *)passWord
+/*- (BOOL) isUsernamePresent:(NSString *)username password:(NSString *)passWord
 {
     NSString *query = @"Select * from Users";
     int flag = 0;
@@ -53,7 +53,7 @@
     else
         return NO;
     
-}
+}*/
 
 
 - (BOOL) isUsernameValid:(NSString *)userName
@@ -92,6 +92,7 @@
     NSString *query = @"Select * from Processes";
     NSMutableArray *viewArray = [[[NSMutableArray alloc]initWithCapacity:0]autorelease];
     
+    sqlite3_stmt * statement;
     const char * _query = [query UTF8String];
     
     if ( sqlite3_prepare_v2(appDelegate.db, _query,-1, &statement, nil) == SQLITE_OK )
@@ -116,10 +117,10 @@
         }
     }
     return  viewArray;
-}
+} 
 
 
-- (NSMutableArray *) getViewLayoutsFromDB
+/*- (NSMutableArray *) getViewLayoutsFromDB
 {
     NSString *query = @"Select * from ViewLayout";
     NSMutableArray *viewArray = [[[NSMutableArray alloc]initWithCapacity:0]autorelease];
@@ -152,35 +153,37 @@
         }
     }
     return  viewArray;
-}
+}*/
+
 
 - (NSMutableArray *) didGetTaskFromDB:(NSString *)_date
 {
     NSMutableString * query = [NSMutableString stringWithFormat:@"Select Priority, Subject, CreatedDate, Id from Tasks where CreatedDate = '%@'", _date];
     
+    sqlite3_stmt * stmt;
     
     NSMutableArray *taskArray = [[[NSMutableArray alloc]initWithCapacity:0]autorelease];
     
     const char * _query = [query UTF8String];
     
-    if ( sqlite3_prepare_v2(appDelegate.db, _query,-1, &statement, nil) == SQLITE_OK )
+    if ( sqlite3_prepare_v2(appDelegate.db, _query,-1, &stmt, nil) == SQLITE_OK )
     {
-        while(sqlite3_step(statement) == SQLITE_ROW)
+        while(sqlite3_step(stmt) == SQLITE_ROW)
         {
             NSMutableArray *_taskArray =[[NSMutableArray alloc]initWithCapacity:0];
-            char *field1 = (char *) sqlite3_column_text(statement,0);
+            char *field1 = (char *) sqlite3_column_text(stmt,0);
             NSString *field1Str = [[NSString alloc] initWithUTF8String: field1];
             [_taskArray addObject:field1Str];
             
-            char *field2 = (char *) sqlite3_column_text(statement,1);
+            char *field2 = (char *) sqlite3_column_text(stmt,1);
             NSString *field2Str = [[NSString alloc] initWithUTF8String: field2];
             [_taskArray addObject:field2Str];
             
-            char *field3 = (char *) sqlite3_column_text(statement,2);
+            char *field3 = (char *) sqlite3_column_text(stmt,2);
             NSString *field3Str = [[NSString alloc] initWithUTF8String: field3];
             [_taskArray addObject:field3Str];
             
-            char *field4 = (char *) sqlite3_column_text(statement,3);
+            char *field4 = (char *) sqlite3_column_text(stmt,3);
             NSString *field4Str = [[NSString alloc] initWithUTF8String: field4];
             [_taskArray addObject:field4Str];
             
@@ -218,6 +221,8 @@
     sqlite3_stmt * dbps;
     NSMutableArray * resultSet = [[NSMutableArray alloc] initWithCapacity:0];
     NSMutableString * queryStatement = [[NSMutableString alloc]initWithCapacity:0];
+    
+    sqlite3_stmt * statement;
     
     queryStatement = [NSString stringWithFormat:@"SELECT  ActivityDate, ActivityDateTime,DurationInMinutes,EndDateTime,StartDateTime,Subject,WhatId,Id FROM Event where StartDateTime >= '%@' and EndDateTime <= '%@'", startdate, endDate];
     
@@ -384,7 +389,6 @@
                 {
                     while (sqlite3_step(dbps) == SQLITE_ROW) 
                     {
-                        
                         char * _WorkOrderLabel = (char *) sqlite3_column_text(dbps, 0);
                         if ((_WorkOrderLabel !=nil) && strlen(_WorkOrderLabel))
                         {
@@ -509,8 +513,9 @@
 //Radha Changed Method
 - (BOOL) isWorkOrder:(NSString *)whatId
 {
-    
-    NSString * str = [whatId substringToIndex:3];
+    NSString * str = @"";
+    if (![whatId isEqualToString:@""])
+        str = [whatId substringToIndex:3];
     
     NSString * query = [NSString stringWithFormat:@"SELECT api_name FROM SFObject WHERE key_prefix = '%@'", str];
     
@@ -538,7 +543,9 @@
 
 - (BOOL) isCase:(NSString *)whatId
 {
-    NSString * str = [whatId substringToIndex:3];
+    NSString * str = @"";
+    if (![whatId isEqualToString:@""])
+        str = [whatId substringToIndex:3];
     
     NSString * query = [NSString stringWithFormat:@"SELECT api_name FROM SFObject WHERE key_prefix = '%@'", str];
     
@@ -628,16 +635,18 @@
 - (NSString *) retreiveCurrentTaskIdCreated
 {
     NSString *field1Str = @"";
+    sqlite3_stmt * stmt;
+    
     NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
     queryStatement = [NSString stringWithFormat:@"Select Id from Tasks where Id = (Select MAX (Id) From Tasks)"];
     NSLog(@"%@", queryStatement);
     const char * selectStatement = [queryStatement UTF8String];
     
-    if ( sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &statement, nil) == SQLITE_OK )
+    if ( sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &stmt, nil) == SQLITE_OK )
     {
-        if(sqlite3_step(statement) == SQLITE_ROW)
+        if(sqlite3_step(stmt) == SQLITE_ROW)
         {
-            char *field1 = (char *) sqlite3_column_text(statement,0);
+            char *field1 = (char *) sqlite3_column_text(stmt,0);
             field1Str = [[NSString alloc] initWithUTF8String: field1];
             
         }
@@ -672,32 +681,22 @@
 - (NSString *) getNameFieldForTableName:(NSString *)tableName
 {
     NSString *fieldStr = @"";
+    sqlite3_stmt * stmt;
     NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
     queryStatement = [NSString stringWithFormat:@"Select Name From SFObject where ObjectAPIName = '%@'",tableName];
     const char * selectStatement = [queryStatement UTF8String];
     
-    if ( sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &statement, nil) == SQLITE_OK )
+    if ( sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &stmt, nil) == SQLITE_OK )
     {
-        if(sqlite3_step(statement) == SQLITE_ROW)
+        if(sqlite3_step(stmt) == SQLITE_ROW)
         {
-            char *field1 = (char *) sqlite3_column_text(statement,0);
+            char *field1 = (char *) sqlite3_column_text(stmt,0);
             fieldStr = [[NSString alloc] initWithUTF8String:field1];
             
         }
     }
     return  fieldStr;
 }
-
-//Abinash
-
-/*-(BOOL) isEventWithoutViewProcess:(NSString *)__whatId
- {
- NSString *str = [__whatId substringToIndex:3];
- if ([str isEqualToString:@"a0G"]) 
- return YES;
- else
- return NO;
- }*/
 
 //Abinash
 #pragma mark - Service Report Methods
@@ -724,7 +723,6 @@
     
 }
 //Abinash
-
 
 //For Expenses
 -(NSMutableArray*)queryForExpenses:(NSString *)currentRecordId

@@ -1425,7 +1425,7 @@
         
         //Shrinivas && Abinash
         //NSString * colourCode = [dict objectForKey:COLORCODE];
-        NSString * colourCode = [appDelegate.calDataBase getColorCodeForPriority:[dict objectForKey:WHATID]];
+        NSString * colourCode = [appDelegate.calDataBase getColorCodeForPriority:([dict objectForKey:WHATID] != nil)?[dict objectForKey:WHATID]:@""];
         UIColor * color = [appDelegate colorForHex:colourCode];
         NSLog(@"%@", color);
         

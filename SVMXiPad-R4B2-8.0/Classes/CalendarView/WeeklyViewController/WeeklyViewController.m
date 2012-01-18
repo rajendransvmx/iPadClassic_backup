@@ -258,7 +258,7 @@
         
         NSString * duration = [dict objectForKey:DURATIONINMIN];
         
-        NSString * colourCode = [appDelegate.calDataBase getColorCodeForPriority:[dict objectForKey:WHATID]];
+        NSString * colourCode = [appDelegate.calDataBase getColorCodeForPriority:([dict objectForKey:WHATID] != nil)?[dict objectForKey:WHATID]:@""];
         UIColor * color = [appDelegate colorForHex:colourCode];
     
         

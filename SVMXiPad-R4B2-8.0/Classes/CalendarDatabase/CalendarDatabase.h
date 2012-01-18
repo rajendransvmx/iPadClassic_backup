@@ -13,13 +13,12 @@
 @interface CalendarDatabase : NSObject
 {
     NSString *dbFilePath;
-	//sqlite3  *db;
     NSMutableArray *resultArray;
     NSString *whatId1;
     NSString *subject;
     NSString *additonalInfo;
     
-    sqlite3_stmt *statement;
+ //   sqlite3_stmt *statement;
     //Abinash
     NSDictionary * ExpensesDictionary;
     NSMutableArray * Parts, * Expenses, * Labor, * reportEssentials;
