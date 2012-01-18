@@ -40,7 +40,7 @@ NSMutableArray * weeklyEventPositionArray;
     IBOutlet UILabel * subject;
     IBOutlet UILabel *workOrderName;
     NSString * processName;
-    NSString * processID, * recordID, * objectName, * createdDate, * accountId, * startDate, * endDate;
+    NSString * processId, * recordId, * objectName, * createdDate, * accountId, * startDate, * endDate;
     //sahana 12th Sept
     BOOL didDismissAlertView , continue_reshceduling;
 }

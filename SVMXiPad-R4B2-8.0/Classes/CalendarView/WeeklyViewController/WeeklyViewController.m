@@ -219,15 +219,19 @@
                 break;
             }
         }
-        
-        events = [[WeeklyViewEvent alloc] initWithNibName:[WeeklyViewEvent description] bundle:nil];
+        if (events == nil)
+        {
+            events = [[WeeklyViewEvent alloc] initWithNibName:[WeeklyViewEvent description] bundle:nil];
+        }
         events.delegate = self;
+            
         
         events.view.tag = [eventViewArray count];
        
         NSLog(@"%@", [dict objectForKey:SUBJECT]);
         events.processId = @"";
         events.eventId = ([dict objectForKey:EVENTID] != nil)?[dict objectForKey:EVENTID]:@"";
+        
         events.recordId = ([dict objectForKey:WHATID] != nil)?[dict objectForKey:WHATID]:@"";
         events.objectName = ([dict objectForKey:OBJECTAPINAME] != nil)?[dict objectForKey:OBJECTAPINAME]:@"";
         events.createdDate = ([dict objectForKey:CREATEDDATE] != nil)?[dict objectForKey:CREATEDDATE]:@"";
@@ -237,8 +241,7 @@
         
         
         NSString * objectAPIName = [dict objectForKey:OBJECTAPINAME];
-        if ([objectAPIName isEqualToString:@"service_order__c"])
-            objectAPIName = [NSString stringWithFormat:@"%@__%@",SVMX_ORG_PREFIX,objectAPIName];
+        
         objectAPIName = [objectAPIName uppercaseString];
         
         for (int v = 0; v < [appDelegate.view_layout_array count]; v++)
@@ -266,7 +269,7 @@
             [events setLabelsweeklyview:event];
             [eventViewArray addObject:events];
             [events release];
-            events = nil;            
+            events = nil;
         }
     }
     [activity stopAnimating];

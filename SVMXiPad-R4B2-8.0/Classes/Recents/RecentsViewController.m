@@ -221,10 +221,7 @@
     
     if(flag)
     {
-        //Abinash Fix
-        [self presentModalViewController:appDelegate.sfmPageController animated:YES];
-        [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];
-
+    
     }
     else
     {

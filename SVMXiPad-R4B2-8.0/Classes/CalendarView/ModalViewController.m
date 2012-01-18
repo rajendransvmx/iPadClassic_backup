@@ -1586,45 +1586,38 @@
     
     appDelegate.sfmPageController = [[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE];
     
-    BOOL  status = [Reachability connectivityStatus];
-    if(status)
+    
+    NSString * processId = [appDelegate.switchViewLayouts objectForKey:[event objectForKey:OBJECTAPINAME]];
+    appDelegate.sfmPageController.processId = (processId != nil)?processId:[event objectForKey:PROCESSID];
+    
+   /* appDelegate.sfmPageController.recordId = [event objectForKey:RECORDID];
+    NSString * recordId =  [event objectForKey:RECORDID];
+    if(recordId == nil || [recordId length] == 0)
+        return;*/
+    
+    appDelegate.sfmPageController.objectName = [event objectForKey:OBJECTAPINAME];
+    NSString * object_name = [event objectForKey:OBJECTAPINAME];
+    NSString * object_api_name =  [[event objectForKey:OBJECTAPINAME] uppercaseString];
+    NSString * temp = @"SVMXC__Service_Order__c";
+    NSString * work_order = [temp uppercaseString];
+    if([object_api_name isEqualToString:work_order])
     {
         
     }
     else
     {
-        NSString * processId =@"1CustIPAD-012"; //[appDelegate.switchViewLayouts objectForKey:[event objectForKey:OBJECTAPINAME]];
-        appDelegate.sfmPageController.processId = (processId != nil)?processId:[event objectForKey:PROCESSID];
-        
-       /* appDelegate.sfmPageController.recordId = [event objectForKey:RECORDID];
-        NSString * recordId =  [event objectForKey:RECORDID];
-        if(recordId == nil || [recordId length] == 0)
-            return;*/
-        
-        appDelegate.sfmPageController.objectName = [event objectForKey:OBJECTAPINAME];
-        NSString * object_name = [event objectForKey:OBJECTAPINAME];
-        NSString * object_api_name =  [[event objectForKey:OBJECTAPINAME] uppercaseString];
-        NSString * temp = @"SVMXC__Service_Order__c";
-        NSString * work_order = [temp uppercaseString];
-        if([object_api_name isEqualToString:work_order])
-        {
-            
-        }
-        else
-        {
-            UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"" message:@"No View Process is associated with the Event" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-            [alert show];
-            [alert release];
-            return;
-        }
-
-        NSString * recordId =  [event objectForKey:RECORDID];
-        if(recordId == nil || [recordId length] == 0)
-            return;
-        
-        NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:recordId tableName:object_name];
-        appDelegate.sfmPageController.recordId = local_id;
+        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"" message:@"No View Process is associated with the Event" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+        return;
     }
+
+    NSString * recordId =  [event objectForKey:RECORDID];
+    if(recordId == nil || [recordId length] == 0)
+        return;
+    
+    NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:recordId tableName:object_name];
+    appDelegate.sfmPageController.recordId = local_id;
     
     appDelegate.sfmPageController.activityDate = [event objectForKey:ACTIVITYDATE];
     appDelegate.sfmPageController.accountId = [event objectForKey:ACCOUNTID];
