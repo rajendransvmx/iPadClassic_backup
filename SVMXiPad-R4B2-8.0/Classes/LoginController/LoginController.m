@@ -742,9 +742,6 @@
     didDebriefData = FALSE;
     didQueryTechnician = FALSE;
     
-    //Temperory
-    txtPasswordLandscape.text = @"maxpl0reZreCHlst0SmHC5jvlOsIFVlQB";
-    txtUsernameLandscape.text = @"nagendra@svmxc_7.70002.patch";
 }
 
 - (void) didInternetConnectionChange:(NSNotification *)notification
