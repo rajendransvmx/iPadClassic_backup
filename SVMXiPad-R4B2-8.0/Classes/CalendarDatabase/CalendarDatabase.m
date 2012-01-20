@@ -60,6 +60,8 @@
 {
     NSString * queryStatement = [NSString stringWithFormat:@"SELECT Username FROM User"];
     
+     NSString *field1Str = @"";
+    
     sqlite3_stmt * stmt;
     
     BOOL flag = FALSE;
@@ -67,7 +69,6 @@
     {
         while (sqlite3_step(stmt) ==  SQLITE_ROW) 
         {
-            NSString *field1Str = @"";
             char *field1 = (char *) sqlite3_column_text(stmt,0);
             if ((field1 != nil) && strlen(field1))
               field1Str = [NSString stringWithUTF8String:field1];
@@ -77,8 +78,6 @@
                 flag = TRUE;
                 break;
             }
-            
-            [field1Str release];
         }
     }
     if ( flag )

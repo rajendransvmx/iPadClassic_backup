@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "sqlite3.h"
 #import "offlineGlobles.h"
+#import "iOSInterfaceObject.h"
 @class iServiceAppDelegate;
 @interface databaseIntefaceSfm : NSObject
 {
@@ -169,6 +170,7 @@
 #define SOURCE_OBJECT_NAME          @"source_object_name"
 #define TARGET_OBJECT_NAME          @"target_object_name"
 #define PARENT_COLUMN_NAME          @"parent_column"
+#define VALUE_MAPPING_ID            @"value_mapping_id"
 
 #define VALUE_MAPPING                @"VALUEMAPPING"
 #define FIELD_MAPPING                @"FIELDMAPPING"
@@ -199,4 +201,16 @@
 #define LOOKUP_OBJECT_NAME            @"object_name"
 #define LOOkUP_IS_DEFAULT             @"is_default"
 #define LOOKUP_IS_STANDARD            @"is_standard"
+
+
+//VALUE MAPPING THINGS 
+#define MACRO_TODAY                  @"TODAY"      //@"TODAY"
+#define MACRO_TOMMOROW               @"Tomorrow"   //@"TOMMOrROW"
+#define MACRO_YESTERDAY              @"Yesterday"  //@"YESTERDAY"
+
+#define MACRO_NOW                    @"Now"        //@"NOW"
+#define MACRO_CURRENTUSER            @"CURRENTUSER" // @"CURRENTUSER"
+#define MACRO_RECORDOWNER            @"RECORDOWNER"
+
+
 @end

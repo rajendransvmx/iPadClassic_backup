@@ -98,7 +98,8 @@
     CGFloat x = [self setXBasedOnDay:day];
     CGFloat y = [self setYBasedOnTime:time];
 
-    CGFloat height = (duration * wEVENTHEIGHT) + ((duration - 1) * kwYGAP);
+    //RADHA FIX 19/01/12
+    CGFloat height = (duration * wEVENTHEIGHT) + ((duration - 1) * kwYGAP) - 10;
     CGRect frame = CGRectMake(x, y, wEVENTWIDTH, height);
     
     self.view.frame = frame;

@@ -824,10 +824,8 @@
                 }
             }
         }
-        
         [details_api_keys release];
-        
-    }
+            }
         
     if([process_type isEqualToString:@"VIEWRECORD"] )
     {
@@ -1918,8 +1916,105 @@
         
         if ([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"VIEWRECORD"]) 
         {
+            
+            NSMutableDictionary * wizard_buttons = [[NSMutableDictionary alloc] initWithCapacity:0];
+            
+            NSMutableArray * array = [wizard_dict objectForKey:SFW_WIZARD_INFO];
+
+            int Total_height = 0;
+            for(int i = 0; i < [array count];i++)
+            {
+                NSDictionary * dict = [array objectAtIndex:i];
+                NSString * wizard_id = [dict objectForKey:WIZARD_ID];
+                NSMutableArray * buttons_ = [[NSMutableArray alloc] initWithCapacity:0];
+                for(int j = 0 ; j < [buttonsArray_offline count];j++)
+                {
+                    NSDictionary * dict = [buttonsArray_offline objectAtIndex:j];
+                    NSString * id_  = [dict objectForKey:WIZARD_ID];
+                    if([id_ isEqualToString:wizard_id])
+                    {
+                        [buttons_ addObject:dict];
+                    }
+                }
+                
+                [wizard_buttons setObject:buttons_ forKey:wizard_id];
+            }
+            
+            for(int section = 0 ; section < [array count];section ++)
+            {
+                NSDictionary * dict = [array objectAtIndex:section];
+                NSString * wizard_id = [dict objectForKey:WIZARD_ID];
+               
+                NSArray * allkeys = [wizard_buttons allKeys];
+                for(int k = 0 ; k< [allkeys count]; k++)
+                {
+                    NSString * key_id = [allkeys objectAtIndex:k];
+                    if([key_id isEqualToString:wizard_id])
+                    {
+                        NSArray * wizard = [wizard_buttons objectForKey:key_id];
+                        int button_count = [wizard count];
+                        int row; 
+                        NSInteger quotient = [wizard count] / 6;
+                        NSInteger reminder = [wizard count] % 6;
+                        if(reminder != 0)
+                        {
+                            row =  quotient +1;
+                        }
+                        else
+                        {
+                            row =  quotient;
+                        }
+                        
+                        for(int row_count = 0 ;row_count < row; row_count++)
+                        {
+                           // int row_count ;
+                             int x = row_count * 6;
+                            CGFloat final_height = 0;
+                            CGFloat temp_height  = 0;
+
+                            for(int j = x ; j < (x+6) ;j++)
+                            {
+                                
+                                if(j >= [wizard count])
+                                {
+                                    break;
+                                }
+                                NSDictionary * each_button = [wizard objectAtIndex:j];
+                                NSString * str = [each_button objectForKey:SFW_ACTION_DESCRIPTION];
+                                // CGSize size = [str sizeWithFont:[UIFont systemFontOfSize:17] forWidth:CELL_BUTTON_WIDTH lineBreakMode:UILineBreakModeWordWrap];
+                                CGSize size1 = [str sizeWithFont:[UIFont systemFontOfSize:17] constrainedToSize:CGSizeMake(150, 9999)];
+                                temp_height = size1.height;
+                                
+                                if(temp_height > final_height)
+                                {
+                                    final_height = temp_height;
+                                }
+                            }
+                            
+                            if(final_height < 40)
+                                Total_height = Total_height+ 60;
+                            else
+                                Total_height = Total_height+final_height+30;
+                            
+
+                        }
+
+                        
+                    }
+                    
+                }
+                Total_height = Total_height + 20;
+                
+            }
+            
+            if([ipad_only_array count] > 0)
+            {
+                Total_height = Total_height +40 ;
+            }
+            
+
             UIPopoverController * popover = [[UIPopoverController alloc] initWithContentViewController:sfwToolBar];
-            [popover setPopoverContentSize:CGSizeMake(1024, 768)];
+            [popover setPopoverContentSize:CGSizeMake(1024, Total_height)];
             popover.delegate = self;
             CGPoint p ;
             CGSize q;
@@ -8659,18 +8754,19 @@
                         if([value length] == 0 )
                         {
                             error = TRUE;
-                            break;
+                            //sahana TEMP chage
+                            //break;
                         }
                     }
                 }        
             }
             if(error == TRUE)
             {
-                [self requireFieldWarning];
+                //[self requireFieldWarning];
                 requiredFieldCheck = TRUE;
                 
                 [self enableSFMUI];
-                
+                //sahana TEMP chage
                 //return;
             }
             
@@ -8706,7 +8802,8 @@
                                     if([deatil_value length]== 0)
                                     {
                                         line_error = TRUE; 
-                                        break;
+                                        //sahana TEMP chage
+                                        //break;
                                     }
                                 }
                             }
@@ -8717,7 +8814,7 @@
             
             if(line_error)
             {
-                [self requireFieldWarning];
+               // [self requireFieldWarning];
                 requiredFieldCheck = TRUE;
                 
                 [self enableSFMUI];
@@ -8780,7 +8877,6 @@
                         {
                             value = @"";
                         }
-                        
                         [header_fields_dict setObject:value forKey:key];
                         break;
                     }
@@ -8959,14 +9055,15 @@
                         if([value length] == 0 )
                         {
                             error = TRUE;
-                            break;
+                            //sahana TEMP chage
+                            //break;
                         }
                     }
                 }        
             }
             if(error == TRUE)
             {
-                [self requireFieldWarning];
+                //[self requireFieldWarning];
                 requiredFieldCheck = TRUE;
                 
                 [self enableSFMUI];
@@ -9006,7 +9103,8 @@
                                     if([deatil_value length]== 0)
                                     {
                                         line_error = TRUE; 
-                                        break;
+                                        //sahana TEMP chage
+                                        //break;
                                     }
                                 }
                             }
@@ -9017,7 +9115,8 @@
             
             if(line_error)
             {
-                [self requireFieldWarning];
+                //sahana TEMP chage
+               // [self requireFieldWarning];
                 requiredFieldCheck = TRUE;
                 
                 [self enableSFMUI];
@@ -9087,7 +9186,7 @@
             BOOL success_flag = [appDelegate.databaseInterface  UpdateTableforId:currentRecordId forObject:headerObjName data:all_header_fields];
             
             //sahana need to remove below code
-            success_flag = TRUE;
+           // success_flag = TRUE;
             if(success_flag)
             {
                 NSLog(@"Success");
@@ -9334,14 +9433,16 @@
                         if([value length] == 0 )
                         {
                             error = TRUE;
-                            break;
+                            //sahana TEMP chage
+                            //break;
                         }
                     }
                 }        
             }
             if(error == TRUE)
             {
-                [self requireFieldWarning];
+                //sahana TEMP chage
+                //[self requireFieldWarning];
                 requiredFieldCheck = TRUE;
                 
                 [self enableSFMUI];
@@ -9381,7 +9482,8 @@
                                     if([deatil_value length]== 0)
                                     {
                                         line_error = TRUE; 
-                                        break;
+                                        //sahana TEMP chage
+                                       // break;
                                     }
                                 }
                             }
@@ -9392,7 +9494,8 @@
             
             if(line_error)
             {
-                [self requireFieldWarning];
+                //sahana TEMP chage
+               // [self requireFieldWarning];
                 requiredFieldCheck = TRUE;
                 
                 [self enableSFMUI];
@@ -9439,7 +9542,6 @@
                         {
                             value = @"";
                         }
-                        
                         [header_fields_dict setObject:value forKey:key];
                         break;
                     }
@@ -9464,7 +9566,6 @@
                         {
                             value = @"";
                         }
-                        
                         [header_fields_dict setObject:value forKey:key];
                         break;
                     }
@@ -9564,6 +9665,17 @@
                 [self SaveRecordIntoPlist:header_record_local_id objectName:headerObjName];
                 
             }
+        }
+        
+        if([targetCall isEqualToString:cancel])
+        {
+            if([targetCall isEqualToString:cancel])
+            {
+                appDelegate.SFMPage = nil;
+                appDelegate.SFMoffline = nil;
+                [delegate BackOnSave];
+            }
+            
         }
         
     }
@@ -9732,23 +9844,27 @@
     NSMutableDictionary * created_object_info = [[NSMutableDictionary alloc] initWithCapacity:0];
     [created_object_info setObject:object_name forKey:OBJECT_NAME];
     
-    NSString * process_id = @"";
+    NSString * process_id = appDelegate.currentProcessID;
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     
-    for (NSDictionary * dict in appDelegate.view_layout_array)
+    if(process_id == nil || [process_id length] ==0)
     {
-        NSString * viewLayoutObjectName = [dict objectForKey:SVMXC_OBJECT_NAME];
-        if ([viewLayoutObjectName isEqualToString:object_name])
+        for (NSDictionary * dict in appDelegate.view_layout_array)
         {
-            process_id = [dict objectForKey:SVMXC_ProcessID];
-            break;
+            NSString * viewLayoutObjectName = [dict objectForKey:SVMXC_OBJECT_NAME];
+            if ([viewLayoutObjectName isEqualToString:object_name])
+            {
+                process_id = [dict objectForKey:SVMXC_ProcessID];
+                break;
+            }
         }
     }
     
     [created_object_info setObject:process_id forKey:gPROCESS_ID];
     [created_object_info setObject:date_str forKey:gDATE_TODAY];
     [created_object_info setObject:record_id forKey:RESULTID];
-    [created_object_info setObject:object_label forKey:NAME_FIELD];
+    //Need to changed when the proper incremental data sync happens.
+    [created_object_info setObject:@"" forKey:NAME_FIELD];
     [created_object_info setObject:object_label forKey:OBJECT_LABEL];
     [appDelegate.wsInterface saveDictionaryToPList:created_object_info];
     

@@ -1481,12 +1481,38 @@
 //Temperory Method - Removed After Data Sync is completed.
 - (void) insertUsernameToUserTable:(NSString *)UserName
 {
-    NSString * queryStatement = [NSString stringWithFormat:@"INSERT INTO USER ('Username') VALUES ('%@')", UserName];
+    NSString * queryStatement = [NSString stringWithFormat:@"SELECT Username FROM User"];
+    sqlite3_stmt * stmt;
     
-    char * err;
-    if (sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+    BOOL flag = FALSE;
+    
+    NSString * name = @"";
+    
+    if (sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &stmt, NULL) == SQLITE_OK)
     {
-        NSLog(@"Failed to insert");
+        while (sqlite3_step(stmt) == SQLITE_ROW) 
+        {
+            char * _name = (char *) sqlite3_column_text(stmt, 0);
+            if ((_name != nil) && strlen(_name))
+                name = [NSString stringWithUTF8String:_name];
+            
+            if ([name isEqualToString:UserName])
+            {
+                flag = TRUE;
+                break;
+            }
+        }
+    }
+    
+    if (!flag)
+    {
+        queryStatement = [NSString stringWithFormat:@"INSERT INTO User ('Username') VALUES ('%@')", UserName];
+        
+        char * err;
+        if (sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+        {
+            NSLog(@"Failed to insert");
+        }
     }
 }
 
@@ -1593,7 +1619,7 @@
 {
     NSArray * fields = [[[NSArray alloc] init] autorelease];
     NSArray * values = [[[NSArray alloc] init] autorelease];
-    int lookUp_id = 0;
+    int lookUp_id = 1;
     
     for (int i = 0; i < [fieldValueArray count]; i++)
     {
@@ -1605,7 +1631,7 @@
         {
             NSString * objectName = [keys objectAtIndex:j];
             
-            int id_value = 0;
+            int id_value = 1;
             
             NSMutableArray * fieldArray = [dict objectForKey:[keys objectAtIndex:j]];
             

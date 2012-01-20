@@ -1340,6 +1340,7 @@
         didGetPageData = TRUE;
         didGetPicklistValues = TRUE;
         didGetPicklistValueDb = TRUE;
+        didGetWorkOder = TRUE;
 
         responseError = 1;
 //        if (isLoggedIn)

@@ -297,8 +297,10 @@
     // Save Lookup History Cache 
 }
 
+
 - (void) applicationDidEnterBackground:(UIApplication *)application
 {
+   // [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
     NSError * error = nil;
     for (NSString * userName in userNameImageList)
     {

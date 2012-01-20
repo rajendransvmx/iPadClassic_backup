@@ -474,20 +474,12 @@
 - (IBAction) ShowMap
 {
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    
-   /* if (!appDelegate.isInternetConnectionAvailable && (offline == YES))
-    {
-        [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
-        return;
-    }*/
 
     NSString * serviceMax = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_TITLE];
     NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
     NSString * noEvents = [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_NO_EVENTS];
     
     if (appDelegate.wsInterface.eventArray == nil || [appDelegate.wsInterface.eventArray count] == 0)
-        
     {
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle:serviceMax message:noEvents delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
         [alert show];
@@ -1981,12 +1973,12 @@
         appDelegate.SFMPage = nil;
     }
     
-    NSString * processId = [appDelegate.switchViewLayouts objectForKey:[event objectForKey:OBJECTAPINAME]];
+    NSString * processId =  [appDelegate.switchViewLayouts objectForKey:[event objectForKey:OBJECTAPINAME]];
     appDelegate.sfmPageController.processId = (processId != nil)?processId:[event objectForKey:PROCESSID];
     
     NSString * object_name = [event objectForKey:OBJECTAPINAME];
     appDelegate.sfmPageController.objectName = [event objectForKey:OBJECTAPINAME];
-    NSString * object_api_name =  [[event objectForKey:OBJECTAPINAME] uppercaseString];
+   /* NSString * object_api_name =  [[event objectForKey:OBJECTAPINAME] uppercaseString];
     NSString * temp = @"SVMXC__Service_Order__c";
     NSString * work_order = [temp uppercaseString];
     if([object_api_name isEqualToString:work_order])
@@ -1999,7 +1991,7 @@
         [alert show];
         [alert release];
         return;
-    }
+    }*/
     
     NSString * recordId =  [event objectForKey:RECORDID];
     if(recordId == nil || [recordId length] == 0)
