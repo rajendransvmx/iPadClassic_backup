@@ -21,7 +21,8 @@
 
 
 #import "ZKXmlDeserializer.h"
-#import "ZKDescribeLayoutButtonSection.h"
+
+@class ZKDescribeLayoutButtonSection;
 
 /*
  <element name="buttonLayoutSection" type="tns:DescribeLayoutButtonSection" minOccurs="0"/>
@@ -32,11 +33,13 @@
  
  */
 @interface ZKDescribeLayout: ZKXmlDeserializer {
+	ZKDescribeLayoutButtonSection *buttonLayoutSection;
 	NSArray *detailLayoutSections;
 	NSArray *editLayoutSections;
 	NSArray *relatedLists;
 }
-- (ZKDescribeLayoutButtonSection *) buttonLayoutSectionCopy;
+
+- (ZKDescribeLayoutButtonSection *) buttonLayoutSection;
 - (NSArray *) detailLayoutSections;
 - (NSArray *) editLayoutSections;
 - (NSString *) Id;

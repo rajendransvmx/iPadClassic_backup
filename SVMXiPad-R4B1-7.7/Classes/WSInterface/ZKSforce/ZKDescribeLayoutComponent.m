@@ -22,25 +22,42 @@
 #import "ZKDescribeLayoutComponent.h"
 
 @implementation ZKDescribeLayoutComponent
- 
--(NSString *) value 
-{
+
+- (id)initWithXmlElement:(ZKElement *)e {
+	self = [super initWithXmlElement:e];
+	compType = zkComponentTypeUnknown;
+	return self;
+}
+
+-(NSString *) value {
 	return [self string:@"value"];
 }
 
--(NSString *) type  
-{
+-(NSString *) typeName {
 	return [self string:@"type"];
 }
 
--(NSInteger) tabOrder 
-{
+-(NSInteger) tabOrder {
 	return [self integer:@"tabOrder"];
 }
 
--(NSInteger) displayLines 
-{
+-(NSInteger) displayLines {
 	return [self integer:@"displayLines"];
+}
+
+- (ZKDescribeLayoutComponentType)type {
+	if (compType == zkComponentTypeUnknown) {
+		NSString *t = [self typeName];
+		if ([t isEqualToString:@"Field"])
+			compType = zkComponentTypeField;
+		else if ([t isEqualToString:@"Separator"])
+			compType = zkComponentTypeSeparator;
+		else if ([t isEqualToString:@"SControl"])
+			compType = zkComponentTypeSControl;
+		else if ([t isEqualToString:@"EmptySpace"])
+			compType = zkComponentTypeEmptySpace;
+	}
+	return compType;
 }
 
 @end

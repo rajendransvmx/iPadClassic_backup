@@ -73,76 +73,43 @@ for ( ZKDescribeLayout *layout in layouts ) {
 
 @implementation ZKDescribeLayout
 
--(void)dealloc 
-{
+-(void)dealloc {
+	[buttonLayoutSection release];
 	[detailLayoutSections release];
 	[editLayoutSections release];
 	[relatedLists release];
 	[super dealloc];
 }
 
--(NSString *) Id 
-{
+-(NSString *) Id {
 	return [self string:@"id"];
 }
 
 // this is a single section, not a list, it holds a list of buttons
-- (ZKDescribeLayoutButtonSection *) buttonLayoutSectionCopy 
+- (ZKDescribeLayoutButtonSection *) buttonLayoutSection 
 {
-	ZKElement *bNode = [node childElement:@"buttonLayout"];
-	ZKDescribeLayoutButtonSection *bs = [[ZKDescribeLayoutButtonSection alloc]	initWithXmlElement:bNode];
-
-	return bs;
-	[bs release]; // TODO : figure out if bs should have been autoreleased before returning.
+	if (buttonLayoutSection == nil) {
+		ZKElement *bNode = [node childElement:@"buttonLayout"];
+		buttonLayoutSection = [[ZKDescribeLayoutButtonSection alloc] initWithXmlElement:bNode];
+	}
+	return buttonLayoutSection;
 }
 
-- (NSArray *) detailLayoutSections 
-{
-	if (detailLayoutSections == nil) 
-    {
-		NSArray *rti = [node childElements:@"detailLayoutSections"];
-		NSMutableArray *res = [NSMutableArray arrayWithCapacity:[rti count]];
-		for (ZKElement *rnode in rti) 
-        {
-			ZKDescribeLayoutSection *r = [[ZKDescribeLayoutSection alloc] initWithXmlElement:rnode];
-			[res addObject:r];
-			[r release];
-		}
-		detailLayoutSections = [res retain];
-	} 
+- (NSArray *) detailLayoutSections  {
+	if (detailLayoutSections == nil)
+		detailLayoutSections = [[self complexTypeArrayFromElements:@"detailLayoutSections" cls:[ZKDescribeLayoutSection class]] retain];
 	return detailLayoutSections;	
 }
 
-- (NSArray *) editLayoutSections 
-{
+- (NSArray *) editLayoutSections {
 	if (editLayoutSections == nil) 
-    {
-		NSArray *rti = [node childElements:@"editLayoutSections"];
-		NSMutableArray *res = [NSMutableArray arrayWithCapacity:[rti count]];
-		for (ZKElement *rnode in rti) 
-        {
-			ZKDescribeLayoutSection *r = [[ZKDescribeLayoutSection alloc] initWithXmlElement:rnode];
-			[res addObject:r];
-			[r release];
-		}
-		editLayoutSections = [res retain];
-	} 
+		editLayoutSections = [[self complexTypeArrayFromElements:@"editLayoutSections" cls:[ZKDescribeLayoutSection class]] retain];
 	return editLayoutSections;	
 }
-- (NSArray *) relatedLists 
-{
+
+- (NSArray *) relatedLists {
 	if (relatedLists == nil) 
-    {
-		NSArray *rti = [node childElements:@"relatedLists"];
-		NSMutableArray *res = [NSMutableArray arrayWithCapacity:[rti count]];
-		for (ZKElement *rnode in rti) 
-        {
-			ZKRelatedList *r = [[ZKRelatedList alloc] initWithXmlElement:rnode];
-			[res addObject:r];
-			[r release];
-		}
-		relatedLists = [res retain];
-	} 
+		relatedLists = [[self complexTypeArrayFromElements:@"relatedLists" cls:[ZKRelatedList class]] retain];
 	return relatedLists;	
 }
 

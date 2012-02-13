@@ -26,27 +26,19 @@
 
 @implementation ZKDescribeLayoutRow
 
-- (NSInteger ) numItems 
-{
+-(void)dealloc {
+	[layoutItems release];
+	[super dealloc];
+}
+
+-(NSInteger) numItems {
 	return [self integer:@"numItems"];
 }
 
-- (NSArray *) layoutItems 
-{
+-(NSArray *) layoutItems {
 	if (layoutItems == nil) 
-    {
-		NSArray *li = [node childElements:@"layoutItems"];
-		NSMutableArray *res = [NSMutableArray arrayWithCapacity:[li count]];
-		for (ZKElement *rnode in li) 
-        {
-			ZKDescribeLayoutItem *r = [[ZKDescribeLayoutItem alloc] initWithXmlElement:rnode];
-			[res addObject:r];
-			[r release];
-		}
-		layoutItems = [res retain];
-	} 
+		layoutItems = [[self complexTypeArrayFromElements:@"layoutItems" cls:[ZKDescribeLayoutItem class]] retain];
 	return layoutItems;
-	
 }
 
 @end

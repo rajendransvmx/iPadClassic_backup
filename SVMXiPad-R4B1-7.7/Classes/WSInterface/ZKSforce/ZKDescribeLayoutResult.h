@@ -29,7 +29,6 @@
  <element name="recordTypeSelectorRequired" type="xsd:boolean"/>
 
  */
-@class ZKElement;
 
 @interface ZKDescribeLayoutResult :  ZKXmlDeserializer  {
 	NSArray *layouts;

@@ -22,6 +22,13 @@
 
 #import "ZKXmlDeserializer.h"
 
+typedef enum ZKDescribeLayoutComponentType {
+	zkComponentTypeUnknown,
+	zkComponentTypeField,
+	zkComponentTypeSeparator,
+	zkComponentTypeSControl,
+	zkComponentTypeEmptySpace
+} ZKDescribeLayoutComponentType;
 
 /*
  <element name="displayLines" type="xsd:int"/>
@@ -31,9 +38,11 @@
  */
 
 @interface ZKDescribeLayoutComponent: ZKXmlDeserializer {
+	ZKDescribeLayoutComponentType compType;
 }
 
-- (NSString *)type; /*<enumeration value="Field"/>
+- (ZKDescribeLayoutComponentType)type;
+- (NSString *)typeName; /*<enumeration value="Field"/>
 					 <enumeration value="Separator"/>
 					 <enumeration value="SControl"/>
 					 <enumeration value="EmptySpace"/>*/

@@ -20,7 +20,7 @@
 //
 
 
-#import "ZKXmlDeserializer.h"
+#import "zkXmlDeserializer.h"
 
 //<complexType name="PicklistEntry">
 //    <sequence>
@@ -39,5 +39,4 @@
 - (NSString *)label;
 - (NSString *)validFor;
 - (NSString *)value;
-
 @end

@@ -27,71 +27,45 @@
 
 @implementation ZKRelatedList
 
--(void)dealloc 
-{
+-(void)dealloc {
 	[columns release];
 	[sort release];
 	[super dealloc];
 }
 
--(BOOL) custom 
-{
+-(BOOL) custom {
 	return [self boolean:@"custom"];
 }
 
--(NSString *) field 
-{
+-(NSString *) field {
 	return [self string:@"field"];
 }
 
--(NSString *) name 
-{
+-(NSString *) name {
 	return [self string:@"name"];
 }
 
--(NSString *) label 
-{
+-(NSString *) label {
 	return [self string:@"label"];
 }
 
--(NSString *) sobject 
-{
+-(NSString *) sobject {
 	return [self string:@"sobject"];
 }
 
-- (NSInteger ) limitRows 
-{
+- (NSInteger) limitRows {
 	return [self integer:@"limitRows"];
 }
 
-- (NSArray *) columns 
-{
-	if (columns == nil) 
-    {
-		NSArray *rti = [node childElements:@"columns"];
-		NSMutableArray *res = [NSMutableArray arrayWithCapacity:[rti count]];
-		for (ZKElement *rnode in rti) 
-        {
-			ZKRelatedListColumn *r = [[ZKRelatedListColumn alloc] initWithXmlElement:rnode];
-			[res addObject:r];
-			[r release];
-		}
-		columns = [res retain];
-	} 
+- (NSArray *) columns {
+	if (columns == nil)
+		columns = [[self complexTypeArrayFromElements:@"columns" cls:[ZKRelatedListColumn class]] retain];
 	return columns;	
 }
+
 - (NSArray *) sort {
-	if (sort == nil) {
-		NSArray *rti = [node childElements:@"sort"];
-		NSMutableArray *res = [NSMutableArray arrayWithCapacity:[rti count]];
-		for (ZKElement *rnode in rti) 
-        {
-			ZKRelatedListSort *r = [[ZKRelatedListSort alloc] initWithXmlElement:rnode];
-			[res addObject:r];
-			[r release];
-		}
-		sort = [res retain];
-	} 
+	if (sort == nil) 
+		sort = [[self complexTypeArrayFromElements:@"sort" cls:[ZKRelatedListSort class]] retain];
 	return sort;	
 }
 
@@ -106,8 +80,8 @@
 			[self name],
 			[self label],
 			[self field],
-            [self custom]?@"custom":@"standard"
-			];
+            [self custom] ? @"custom" : @"standard"
+		];
 }
 
 - (NSString *) removeLastComma :(NSString *) str 

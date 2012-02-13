@@ -41,3 +41,7 @@
 #import "ZKMessageEnvelope.h"
 #import "ZKMessageElement.h"
 #import "ZKParser.h"
+#import "ZKDescribeLayoutResult.h"
+#import "ZKPicklistForRecordType.h"
+#import "ZKRecordTypeMapping.h"
+#import "ZKPicklistEntry.h"

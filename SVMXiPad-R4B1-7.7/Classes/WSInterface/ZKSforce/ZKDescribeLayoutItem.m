@@ -26,48 +26,31 @@
 
 @implementation ZKDescribeLayoutItem
 
--(void)dealloc 
-{
+-(void)dealloc  {
 	[layoutComponents release];
 	[super dealloc];
 }
 
--(BOOL) editable 
-{
+-(BOOL) editable {
 	return [self boolean:@"editable"];
 }
 
--(BOOL) placeholder 
-{
+-(BOOL) placeholder {
 	return [self boolean:@"placeholder"];
 }
 
--(BOOL) required 
-{
+-(BOOL) required {
 	return [self boolean:@"required"];
 }
 
--(NSString *) label 
-{
+-(NSString *) label {
 	return [self string:@"label"];
 }
 
-- (NSArray *) layoutComponents 
-{
+- (NSArray *) layoutComponents {
 	if (layoutComponents == nil) 
-    {
-		NSArray *rti = [node childElements:@"layoutComponents"];
-		NSMutableArray *res = [NSMutableArray arrayWithCapacity:[rti count]];
-		for (ZKElement *rnode in rti) 
-        {
-			ZKDescribeLayoutComponent *r = [[ZKDescribeLayoutComponent alloc] initWithXmlElement:rnode];
-			[res addObject:r];
-			[r release];
-		}
-		layoutComponents = [res retain];
-	} 
+		layoutComponents = [[self complexTypeArrayFromElements:@"layoutComponents" cls:[ZKDescribeLayoutComponent class]] retain];
 	return layoutComponents;
-	
 }
 
 @end

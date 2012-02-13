@@ -25,26 +25,14 @@
 
 @implementation ZKDescribeLayoutButtonSection
 
--(void)dealloc 
-{
+-(void)dealloc  {
 	[detailButtons release];
 	[super dealloc];
 }
 
-- (NSArray *) detailButtons 
-{
+- (NSArray *) detailButtons {
 	if (detailButtons == nil) 
-    {
-		NSArray *rti = [node childElements:@"detailButtons"];
-		NSMutableArray *res = [NSMutableArray arrayWithCapacity:[rti count]];
-		for (ZKElement *rnode in rti) 
-        {
-			ZKDescribeLayoutButton *r = [[ZKDescribeLayoutButton alloc] initWithXmlElement:rnode];
-			[res addObject:r];
-			[r release];
-		}
-		detailButtons = [res retain];
-	} 
+		detailButtons = [[self complexTypeArrayFromElements:@"detailButtons" cls:[ZKDescribeLayoutButton class]] retain];
 	return detailButtons;
 }
 

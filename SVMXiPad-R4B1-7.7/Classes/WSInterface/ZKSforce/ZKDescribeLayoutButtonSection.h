@@ -29,6 +29,7 @@
 @interface ZKDescribeLayoutButtonSection: ZKXmlDeserializer {
 	NSArray *detailButtons;
 }
+
 - (NSArray *) detailButtons;
 
 @end

@@ -20,8 +20,6 @@
 //
 
 #import "ZKXmlDeserializer.h"
-#import "ZKPicklistForRecordType.h"
-#import "ZKRecordTypeMapping.h"
 /*
  <element name="available" type="xsd:boolean"/>
  <element name="defaultRecordTypeMapping" type="xsd:boolean"/>
