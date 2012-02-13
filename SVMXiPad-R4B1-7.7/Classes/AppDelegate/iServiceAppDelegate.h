@@ -29,6 +29,8 @@ BOOL didSessionResume;
 @interface iServiceAppDelegate : NSObject
 <UIApplicationDelegate, UIActionSheetDelegate, WSInterfaceDelegate>
 {
+    //sahana RecorsdTypeId
+    BOOL recordtypeId_webservice_called;
     UIWindow *window;
     LoginController * loginController;
     
@@ -169,6 +171,7 @@ BOOL didSessionResume;
     BOOL isInternetConnectionAvailable;
     NSMutableArray * allURLConnectionsArray;
 }
+@property (nonatomic) BOOL recordtypeId_webservice_called;
 @property (nonatomic) BOOL didGetVersion;
 @property (nonatomic , retain) NSString * SVMX_Version;
 @property (nonatomic , retain)  NSString * newProcessId;

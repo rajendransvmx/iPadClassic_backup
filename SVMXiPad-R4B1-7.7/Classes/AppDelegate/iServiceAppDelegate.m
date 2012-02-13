@@ -11,7 +11,7 @@
 #import "LocalizationGlobals.h"
 
 @implementation iServiceAppDelegate
-
+@synthesize recordtypeId_webservice_called;
 @synthesize currentProcessID;
 @synthesize SVMX_Version;
 @synthesize didGetVersion;
