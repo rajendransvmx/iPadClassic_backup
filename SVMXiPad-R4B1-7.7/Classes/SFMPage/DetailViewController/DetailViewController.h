@@ -178,6 +178,8 @@ ChatterDelegate>
     BOOL didRunOperation;
     
     SummaryViewController * Summary;
+    BOOL didDescribeLayoutReceived;
+    
 }
 
 @property (nonatomic, retain) id <DetailViewControllerDelegate> delegate, calendarDelegate;
@@ -229,7 +231,9 @@ ChatterDelegate>
 
 @property (nonatomic, retain) NSMutableDictionary * LabourValuesDictionary;
 
-
+@property (nonatomic, retain) NSMutableArray * RecordTypePickList;
+           
+@property (nonatomic, retain) NSString *recordTypeID_Value;
 
 -(id)getControl:(NSString *)controlType withRect:(CGRect)frame withData:(NSArray *)datasource withValue:(NSString *)value fieldType:(NSString *)fieldType labelValue:(NSString *)labelValue enabled:(BOOL)readOnly refObjName:(NSString *)refObjName referenceView:(UIView *)POView indexPath:(NSIndexPath *)indexPath required:(BOOL)required valueKeyValue:(NSString *)valueKeyValue lookUpSearchId:(NSString *)searchid overrideRelatedLookup:(NSNumber *)Override_Related_Lookup fieldLookupContext:(NSString *)Field_Lookup_Context fieldLookupQuery:(NSString *)Field_Lookup_Query dependentPicklistControllerName:(NSString *)dependPick_controllerName picklistValidFor:(NSMutableArray *)validFor picklistIsdependent:(BOOL)isdependentPicklist;
 
@@ -271,9 +275,10 @@ ChatterDelegate>
 
 - (NSString *) getObjectNameFromHeaderData:(NSDictionary *)dictionary forKey:(NSString *)key;
 - (NSMutableString *) removeDuplicatesFromSOQL:(NSString *)soql withString:(NSString *)_query;
-
+-(BOOL)isControllerPresent:(NSString *)controller_name inRecordType:(NSString *)record_type;
 - (void) enableSFMUI;
 - (void) disableSFMUI;
+- (NSString *) timeDifferenceFrom:(NSString *)fromDate toDate:(NSString *)toDate;
 
 #define SHOWALL_HEADERS                     0
 #define SHOW_HEADER_ROW                     1

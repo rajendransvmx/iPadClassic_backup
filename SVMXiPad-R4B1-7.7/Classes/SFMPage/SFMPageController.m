@@ -136,9 +136,15 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
+    iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+
     // Return YES for supported orientations
     if ((interfaceOrientation == UIInterfaceOrientationPortrait) || (interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown))
     {
+        if(appDelegate.recordtypeId_webservice_called)
+        {
+            return NO;
+        }
         // Do something
         detailView.view.frame = self.view.frame;
         [detailView splitViewController:splitView willHideViewController:masterView withBarButtonItem:barButton forPopoverController:popover];
@@ -146,8 +152,13 @@
     
     if ((interfaceOrientation == UIInterfaceOrientationLandscapeLeft) || (interfaceOrientation == UIInterfaceOrientationLandscapeRight))
     {
+        if(appDelegate.recordtypeId_webservice_called)
+        {
+            return NO;
+        }
         // Do something
         [detailView splitViewController:splitView willShowViewController:masterView invalidatingBarButtonItem:barButton];
+        
     }
 	return YES;
 }

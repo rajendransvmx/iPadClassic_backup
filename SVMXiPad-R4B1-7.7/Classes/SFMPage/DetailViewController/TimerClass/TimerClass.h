@@ -39,5 +39,5 @@ typedef enum
 - (void) DecrMin;
 - (void) DecrHrs;
 - (void) DecrDay;
-
+- (void) updateTimerLabel:(NSString *) updatedTime;
 @end

@@ -19,6 +19,11 @@
 #import "TimerClass.h"
 #import "Troubleshooting.h"
 #import "Chatter.h"
+#import "ZKDescribeLayoutResult.h"
+#import "ZKDescribeLayout.h"
+#import "ZKRecordTypeMapping.h"
+#import "ZKPicklistForRecordType.h"
+#import "ZKPicklistEntry.h"
 
 @interface DetailViewController ()
 @property (nonatomic, retain) UIPopoverController *popoverController;
@@ -71,6 +76,9 @@
 @synthesize detailTitle;
 @synthesize mLookupDictionary;
 @synthesize LabourValuesDictionary;
+@synthesize RecordTypePickList;
+
+@synthesize recordTypeID_Value;
 
 - (id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -238,6 +246,8 @@
 {
     [super viewDidLoad];
     
+    recordTypeID_Value = nil;
+    
     didRunOperation = YES;
     
     isShowingSaveError = NO;
@@ -287,6 +297,32 @@
         self.navigationItem.leftBarButtonItem = backBarButtonItem;
         // ################################################### //
     }
+    //Siva Manne
+    RecordTypePickList = nil;
+    didDescribeLayoutReceived = NO;
+    if (!isInEditDetail && !isInViewMode)
+    {
+        RecordTypePickList = [[NSMutableArray alloc] init];
+    [[ZKServerSwitchboard switchboard] describeLayout:@"SVMXC__RMA_Shipment_Order__c" target:self selector:@selector(didDescribeSObjectLayout:error:context:) context:nil];
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, FALSE))
+        {
+            NSLog(@"DetailViewController viewdidLoad in while loop");
+            if (!appDelegate.isInternetConnectionAvailable)
+            {
+                [activity stopAnimating];
+                [appDelegate displayNoInternetAvailable];
+                return;
+            }
+            if (didDescribeLayoutReceived)
+            {
+                break;
+            }
+            NSLog(@"Receiving RecordTypeId Info ..");
+        }
+
+
+    }
+
 }
 
 - (void) didInternetConnectionChange:(NSNotification *)notification
@@ -351,6 +387,7 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
+    
     if (lookupPopover)
     {
         if (UIDeviceOrientationIsLandscape(interfaceOrientation))
@@ -364,6 +401,7 @@
             [lookupPopover presentPopoverFromRect:CGRectMake(768, 0, 0, 0) inView:self.view permittedArrowDirections:0 animated:YES];
         }
     }
+   
     return YES;
 }
 
@@ -1303,6 +1341,7 @@
     
     // Service Report Essentials
     query = [NSString stringWithFormat:@"SELECT Name,SVMXC__Problem_Description__c,SVMXC__Contact__r.Name,SVMXC__Contact__r.Phone,SVMXC__Work_Performed__c"];
+
     NSString * cleanQuery = [self removeDuplicatesFromSOQL:appDelegate.soqlQuery withString:query];
     query = [NSString stringWithFormat:@"%@%@ FROM SVMXC__Service_Order__c WHERE Id = '%@'", query, cleanQuery, currentRecordId];
     [[ZKServerSwitchboard switchboard] query:query target:self selector:@selector(getReportEssentials:error:context:) context:nil];
@@ -2032,6 +2071,7 @@
 
 - (void) getReportEssentials:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
+
     if (reportEssentials != nil)
         [reportEssentials release];
     
@@ -2832,6 +2872,13 @@
             NSString * dependPick_controllerName = @"";
             
             NSString * fieldAPIName = [dict objectForKey:gFIELD_API_NAME];
+            if([fieldAPIName isEqualToString:@"RecordTypeId"])
+            {
+                NSLog(@"Dict Value = %@",dict);
+                //NSLog(@" Value = %@",value);
+                NSLog(@"key Value = %@",keyValue);
+                recordTypeID_Value = value;
+            }
             if([field_datatype isEqualToString: @"picklist"])
             {
                 NSMutableArray * descObjArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
@@ -2912,7 +2959,7 @@
                 refObjSearchId = [dict objectForKey:gFIELD_RELATED_OBJECT_SEARCH_ID];
                 refObjName = [dict objectForKey:gFIELD_RELATED_OBJECT_NAME];
 
-                appDelegate.wsInterface.didGetRecordTypeId = FALSE;
+               /* appDelegate.wsInterface.didGetRecordTypeId = FALSE;
                 if([refObjSearchId isEqualToString:@""])
                 {
                     // Pass a 0 here for overrideRelatedLookup field
@@ -2965,7 +3012,7 @@
                             }
                         }
                     }
-                }
+                }*/
             }
             NSLog(@"%@", arr);
             // Special handling for Lookup Additional Filter
@@ -3179,6 +3226,57 @@
 	return cell;
 }
 
+- (void)didDescribeSObjectLayout:(ZKDescribeLayoutResult *)result error:(NSError *)error context:(id)context
+{
+    NSArray *recordTypeMappings = [result recordTypeMappings];
+    for(ZKRecordTypeMapping *recordType in recordTypeMappings)
+    {
+        NSMutableDictionary *sub_dict =[[NSMutableDictionary alloc] init];
+        NSLog(@"Layout = %@",[recordType layoutId]);
+        NSLog(@"Name = %@",[recordType name]);
+        NSLog(@"RecordTypeId = %@",[recordType recordTypeId]);
+        
+        [sub_dict setObject:[recordType name] forKey:@"RecorTypeName"];
+        [sub_dict setObject:[recordType layoutId] forKey:@"RecorTypeLayoutId"];
+        [sub_dict setObject:[recordType recordTypeId] forKey:@"RecorTypeId"];
+        
+        NSArray *pickLists = [recordType picklistsForRecordType];
+        NSMutableArray *pickList_Main_Array = [[NSMutableArray alloc] init];
+
+        for(ZKPicklistForRecordType *pickList in pickLists)
+        {
+            NSLog(@"Picklist Name = %@",[pickList picklistName]);
+            
+            NSArray *pickListValueArray = [pickList picklistValues];
+            NSMutableArray *pickListValue_array = [[NSMutableArray alloc] init];
+            NSMutableDictionary *pickListValue_dict = [[NSMutableDictionary alloc] init];
+            for(ZKPicklistEntry *pickListValue in pickListValueArray)
+            {
+                NSMutableDictionary *pickList_value_Dict = [[NSMutableDictionary alloc] init];                   
+                NSLog(@"label  = %@ : value  = %@",[pickListValue label],[pickListValue value]);   
+                [pickList_value_Dict setObject:[pickListValue label] forKey:@"label"];
+                [pickList_value_Dict setObject:[pickListValue value] forKey:@"value"]; 
+                [pickListValue_array addObject:pickList_value_Dict];
+                [pickList_value_Dict release];
+            }
+                         
+            [pickListValue_dict setObject:[pickList picklistName] forKey:@"PickListName"];
+            [pickListValue_dict setObject:pickListValue_array forKey:@"PickListValue"];
+            [pickListValue_array release];
+            [pickList_Main_Array addObject:pickListValue_dict];
+            [pickListValue_dict release];
+        }
+        
+        [sub_dict setObject:pickList_Main_Array forKey:@"PickLists"];
+        [pickList_Main_Array release]; 
+        [RecordTypePickList addObject:sub_dict];
+        [sub_dict release];
+        
+    }
+    if(RecordTypePickList != nil)
+        NSLog(@"Record Type Dict = %@",RecordTypePickList);
+    didDescribeLayoutReceived = YES;
+}
 
 - (UITableViewCell *) SFMViewCellForTable:(UITableView *)_tableView AtIndexPath:(NSIndexPath *)indexPath
 {
@@ -3267,7 +3365,23 @@
             NSDictionary * header_dict = [appDelegate.SFMPage objectForKey:gHEADER];
             
             NSLog(@"%@", header_dict);
+            BOOL isSLAClockPaused = NO;
             
+            NSString *sla_clock_paused = [[header_dict objectForKey:@"hdr_Data"] objectForKey:@"Svmxc__Sla_Clock_Paused__C"];
+            NSString *actual_resolution = nil;
+            NSString *actual_restoration = nil;
+           actual_resolution =  [[header_dict objectForKey:@"hdr_Data"] 
+                                 objectForKey:@"Svmxc__Actual_Resolution__C"];
+            actual_restoration =  [[header_dict objectForKey:@"hdr_Data"] 
+                                   objectForKey:@"Svmxc__Actual_Restoration__C"];
+            if([sla_clock_paused isEqualToString:@"true"])
+            {
+                isSLAClockPaused = YES;
+                //[[header_dict objectForKey:@"hdr_Data"] objectForKey:@"Svmxc__Sla_Restoration_Clock_Pause_Time__C"];
+            }
+            NSLog(@"Actual Resolution = %@",actual_resolution);
+            NSLog(@"Actual Restoration = %@",actual_restoration);
+            NSLog(@"SLA Clock Paused = %d",isSLAClockPaused);
             if (row == 0)
             {
                 for (int i = 0; i < 2; i++)
@@ -3302,15 +3416,37 @@
                 NSMutableDictionary * slaTimer = [appDelegate.SFMPage objectForKey:SLATIMER];
                 NSString * resolutionTimerValue = [slaTimer objectForKey:RESOLUTIONTIME];
                 NSString * restorationTimerValue = [slaTimer objectForKey:RESTORATIONTIME];
-
+                NSLog(@"Rest = %@ and Reso = %@",restorationTimerValue,resolutionTimerValue);
                 if (!restorationTimer)
                     restorationTimer = [[TimerClass alloc] initWithNibName:@"TimerClass" bundle:nil];
                 restorationTimer.type = TimerClassTypeRestoration;
                 restorationTimer.slaTimer = slaTimer;
                 restorationTimer.view.frame = CGRectMake(0, 10, width, control_height-10);
                 [restorationTimer ResetTimer];
+                
+                if(actual_restoration!=nil)
+                {
+                    NSString *restoration_customer = [[header_dict objectForKey:@"hdr_Data"] 
+                                                      objectForKey:@"Svmxc__Restoration_Customer_By__C"];
+                                        NSLog(@"Actual Restoration = %@",actual_restoration);
+                    NSLog(@"Restoration Customer = %@",restoration_customer);
+                    [restorationTimer updateTimerLabel:[self timeDifferenceFrom:restoration_customer toDate:actual_restoration]];
+
+                }
+                else
+                if(isSLAClockPaused )
+                {
+                    NSString *restoration_customer = [[header_dict objectForKey:@"hdr_Data"] 
+                                                      objectForKey:@"Svmxc__Restoration_Customer_By__C"];
+                    NSString *paused_time = [[header_dict objectForKey:@"hdr_Data"] 
+                                                 objectForKey:@"Svmxc__Sla_Clock_Pause_Time__C"];
+
+                    [restorationTimer updateTimerLabel:[self timeDifferenceFrom:restoration_customer toDate:paused_time]];
+                }
+                else
                 if (restorationTimerValue != nil)
                     [self restorationTimeLeftFromDateTime:restorationTimerValue];
+                 
                 [background addSubview:restorationTimer.view];
 
                 if (!resolutionTimer)
@@ -3319,8 +3455,29 @@
                 resolutionTimer.slaTimer = slaTimer;
                 resolutionTimer.view.frame = CGRectMake(380, 10, width, control_height-10);
                 [resolutionTimer ResetTimer];
+                 
+                if(actual_resolution!=nil)
+                {
+                    
+                    NSString *resolution_customer = [[header_dict objectForKey:@"hdr_Data"] 
+                                                      objectForKey:@"Svmxc__Resolution_Customer_By__C"];
+                                     [resolutionTimer updateTimerLabel:[self timeDifferenceFrom:resolution_customer toDate:actual_resolution]];
+
+                }
+                else
+                if(isSLAClockPaused )
+                {
+                    NSString *resolution_customer = [[header_dict objectForKey:@"hdr_Data"] 
+                                                     objectForKey:@"Svmxc__Resolution_Customer_By__C"];
+                    NSString *paused_time = [[header_dict objectForKey:@"hdr_Data"] 
+                                             objectForKey:@"Svmxc__Sla_Clock_Pause_Time__C"];
+
+                    [resolutionTimer updateTimerLabel:[self timeDifferenceFrom:resolution_customer toDate:paused_time]];        
+                }
+                else
                 if (resolutionTimerValue != nil)
                     [self resolutionTimeLeftFromDateTime:resolutionTimerValue];
+                 
                 [background addSubview:resolutionTimer.view];
                 
                 [cell.contentView addSubview:background];
@@ -4234,7 +4391,9 @@
 
         refObjName = [[Disclosure_Details objectAtIndex:row] objectForKey:gFIELD_RELATED_OBJECT_NAME];
         refObjSearchId = [[Disclosure_Details objectAtIndex:row] objectForKey:gFIELD_RELATED_OBJECT_SEARCH_ID];
-        appDelegate.wsInterface.didGetRecordTypeId = FALSE;
+        
+        
+        /*appDelegate.wsInterface.didGetRecordTypeId = FALSE;
         if([refObjSearchId isEqualToString:@""])
         {
             [appDelegate.wsInterface getLookUpFieldsWithKeyword:@"" forObject:refObjName returnTo:self setting:FALSE overrideRelatedLookup:0 lookupContext:nil lookupQuery:nil];
@@ -4291,7 +4450,7 @@
                 }
                 
             }
-        }
+        }*/
     }
 
     if(oldValue != nil)
@@ -4372,6 +4531,8 @@
     indicatorForAddRow = nil;
     [webView release];
     webView = nil;
+    [RecordTypePickList release];
+    RecordTypePickList = nil;
 	[super viewDidUnload];
 
 	// Release any retained subviews of the main view.
@@ -4506,6 +4667,9 @@
     NSLog(@"%@", currentEditRow);
 }
 
+- (void) setSpinnerPopover:(UIPopoverController *)popover control:(id)control;
+{
+}
 // This one's ONLY for LOOKUP
 - (void) selectControlAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -4983,7 +5147,10 @@
         else
             botSpinner.enabled = readOnly;
         botSpinner.indexPath = indexPath;
+        botSpinner.TFHandler.refObjectName = refObjName;
+        botSpinner.TFHandler.refSearch_id = searchid;
         botSpinner.fieldAPIName = fieldType;
+        botSpinner.controlDelegate = self;
         botSpinner.required = required;
         botSpinner.control_type = controlType;
         return botSpinner;
@@ -6914,7 +7081,12 @@
                                 return 0;
                             }
                         }
-                        
+                        //if control type is recortypeid //Siva Manne From Sahana
+                        if([control_type isEqualToString:@"RecordTypeId"])
+                        {
+                            
+                        }
+
                     }
                 }
             }
@@ -6974,6 +7146,180 @@
     }
     return 9999999;
 }
+- (NSString *) getRecordTypeIDValue
+{
+    if([recordTypeID_Value isEqualToString:@" "])
+    {
+        NSLog(@"space");
+        recordTypeID_Value = nil;
+    }
+    else if (recordTypeID_Value == nil)
+    {
+         NSLog(@"nil");
+        
+    }
+    else if ([recordTypeID_Value length ] == 0)
+    {
+         NSLog(@"length 0");
+        recordTypeID_Value = nil;
+    }
+    return  recordTypeID_Value;
+}
+-(void)clearTheDependentRecordTypePicklistValue:(NSString *)recordType_Name 
+                                    atIndexPath:(NSIndexPath *)indexPath 
+                                    controlType:(NSString *)controlType;
+{
+
+    if (selectedSection == SHOW_HEADER_ROW || selectedSection == SHOWALL_HEADERS)
+    {
+        
+        int section = indexPath.section;
+        int index;
+        
+        if (isDefault)
+            index = section;
+        else
+            index = selectedRow;
+        
+        NSMutableDictionary *_header = [appDelegate.SFMPage objectForKey:gHEADER];
+        NSMutableArray *header_sections = [_header objectForKey:gHEADER_SECTIONS];
+        
+        for(int i=0; i <[header_sections count] ;i++)
+        {
+            NSDictionary * section_info = [header_sections objectAtIndex:i];
+            NSMutableArray * sectionFileds= [section_info objectForKey:@"section_Fields"];
+            
+            for(int j= 0;j<[sectionFileds count]; j++)
+            {
+                NSMutableDictionary * filed_info =[sectionFileds objectAtIndex:j];
+                NSString * field_api_name = [filed_info objectForKey:gFIELD_API_NAME];
+                // NSString * dict_value = [filed_info objectForKey:gFIELD_VALUE_VALUE];
+                NSLog(@"Api Name = %@", field_api_name);
+                   /*
+                    for (int i = 0; i < [appDelegate.describeObjectsArray count]; i++)
+                    {
+                        ZKDescribeSObject * descObj = [appDelegate.describeObjectsArray objectAtIndex:i];
+                        ZKDescribeField * descField = [descObj fieldWithName:field_api_name];
+                        if (descField == nil)
+                            continue;
+                        if( [self isControllerPresent:field_api_name inRecordType:recordType_Name])
+                        {
+                            [filed_info setValue:@"" forKey:gFIELD_VALUE_VALUE];
+                            [filed_info setValue:@"" forKey:gFIELD_VALUE_KEY];
+                            
+                            NSLog(@"Fields Info ========= %@" , filed_info);
+                            break;
+                        }
+                    }
+                    */
+                if( [self isControllerPresent:field_api_name inRecordType:recordType_Name])
+                {
+                    [filed_info setValue:@"" forKey:gFIELD_VALUE_VALUE];
+                    [filed_info setValue:@"" forKey:gFIELD_VALUE_KEY];
+                    NSLog(@"Fields Info ========= %@" , filed_info);
+                    //break;
+                }
+
+            }
+        }
+    }
+    else
+    {
+        NSMutableArray * array = [Disclosure_dict objectForKey:gDETAILS_VALUES_ARRAY];
+        NSMutableArray  * field_array = [Disclosure_dict objectForKey:gDETAILS_FIELDS_ARRAY];
+        NSMutableArray * detail_values = [array objectAtIndex:self.selectedRowForDetailEdit];
+        NSMutableDictionary * field_dataType_dict = [[[NSMutableDictionary alloc] initWithCapacity:0]autorelease];
+        
+        for(int j = 0 ; j< [field_array count]; j++)
+        {
+            NSDictionary * dict = [field_array objectAtIndex:j];
+            //[api_names addObject:[dict objectForKey:gFIELD_API_NAME]];
+            NSString * api_name = [dict objectForKey:gFIELD_API_NAME];
+            NSString * data_type = [dict objectForKey:gFIELD_DATA_TYPE];
+            [field_dataType_dict setValue:data_type forKey:api_name];
+        }
+        NSArray * all_api_names = [field_dataType_dict allKeys];
+        
+        for (int i = 0; i < [detail_values count]; i++)
+        {
+            
+            NSString * value_Field_API = [[detail_values objectAtIndex:i] objectForKey:gVALUE_FIELD_API_NAME];
+            NSString * control_type = @"";
+            for(NSString * api in all_api_names)
+            {
+                if([value_Field_API isEqualToString:api])
+                {
+                    control_type = [field_dataType_dict objectForKey:api];
+                }
+            }
+            if ([control_type isEqualToString:@"reference"] && 
+                [value_Field_API isEqualToString:@"RecordTypeId"])
+            {
+                for (int i = 0; i < [appDelegate.describeObjectsArray count]; i++)
+                {
+                    ZKDescribeSObject * descObj = [appDelegate.describeObjectsArray objectAtIndex:i];
+                    ZKDescribeField * descField = [descObj fieldWithName:value_Field_API];
+                    NSString * controller_type = [descField controllerName];
+                    NSLog(@"RecordTypeControllerr --- %@", controller_type);
+                    if (descField == nil)
+                        continue;
+                    if( [self isControllerPresent:controller_type inRecordType:recordType_Name])
+                    {
+                        [[detail_values objectAtIndex:i] setValue:@"" forKey:gFIELD_VALUE_VALUE];
+                        [[detail_values objectAtIndex:i] setValue:@"" forKey:gFIELD_VALUE_KEY];
+                        break;
+                    }
+                }
+                
+            }            
+        }
+    }
+}
+- (NSMutableArray *) getValuesForRecordTypePickList:(NSString *)api_name
+{
+    NSMutableArray *picklistValues = [[NSMutableArray alloc] init];
+    [picklistValues addObject:@""];//Siva Manne
+    NSDictionary *recordtype_dict;
+    NSArray *pickLists = nil;
+    for(int i=0; i< [RecordTypePickList count]; i++)
+    {
+        recordtype_dict = [RecordTypePickList objectAtIndex:i];
+        if([[recordtype_dict objectForKey:@"RecorTypeName"] isEqualToString:recordTypeID_Value])
+        {
+            pickLists = [recordtype_dict objectForKey:@"PickLists"];
+            break;
+        }
+    }
+    if(pickLists != nil )
+    {
+        NSDictionary *pickListDetails;
+        NSArray      *pickListArray;
+        NSString     *pickListName;
+        for(int j=0; j< [pickLists count]; j++)
+        {
+            pickListDetails =  [pickLists objectAtIndex:j];
+            pickListName = [pickListDetails objectForKey:@"PickListName"];
+            NSLog(@"PickList Name = %@",pickListName);
+            if([pickListName isEqualToString:api_name])
+            {
+                pickListArray = [pickListDetails objectForKey:@"PickListValue"];
+                for(int k=0; k<[pickListArray count]; k++)
+                {
+                    NSLog(@"PickList Value %d = %@",k,[[pickListArray objectAtIndex:k] objectForKey:@"value"]);
+                    
+                    [picklistValues addObject:[[pickListArray objectAtIndex:k] objectForKey:@"value"]];
+                }
+            }
+            
+        }
+    }
+    else
+    {
+        NSLog(@"Record Type Not Found");
+    }
+
+    return [picklistValues autorelease];
+}
 -(void)clearTheDependentPicklistValue:(NSString *)fieldApi_name atIndexPath:(NSIndexPath *)indexPath controlType:(NSString *)controlType;
 {
     
@@ -6999,7 +7345,7 @@
             for(int j= 0;j<[sectionFileds count]; j++)
             {
                 NSMutableDictionary * filed_info =[sectionFileds objectAtIndex:j];
-                NSString * filed_api_name = [filed_info objectForKey:gFIELD_API_NAME];
+                NSString * field_api_name = [filed_info objectForKey:gFIELD_API_NAME];
                 NSString * control_type = [filed_info objectForKey:gFIELD_DATA_TYPE];
                // NSString * dict_value = [filed_info objectForKey:gFIELD_VALUE_VALUE];
                 
@@ -7008,7 +7354,7 @@
                     for (int i = 0; i < [appDelegate.describeObjectsArray count]; i++)
                     {
                         ZKDescribeSObject * descObj = [appDelegate.describeObjectsArray objectAtIndex:i];
-                        ZKDescribeField * descField = [descObj fieldWithName:filed_api_name];
+                        ZKDescribeField * descField = [descObj fieldWithName:field_api_name];
                         BOOL isdependent = [descField dependentPicklist];
                         NSString * controller_type = [descField controllerName];
                         NSLog(@"Controllerr --- %@", controller_type);
@@ -7078,12 +7424,44 @@
                     
                 }
             }
-            
-        }
+         }
     }
 
 }
+-(BOOL)isControllerPresent:(NSString *)controller_name inRecordType:(NSString *)record_type
+{
+    BOOL found = NO;
+    NSDictionary *recordtype_dict;
+    NSArray *pickLists = nil;
+    for(int i=0; i< [RecordTypePickList count]; i++)
+    {
+        recordtype_dict = [RecordTypePickList objectAtIndex:i];
+        if([[recordtype_dict objectForKey:@"RecorTypeName"] isEqualToString:record_type])
+        {
+            pickLists = [recordtype_dict objectForKey:@"PickLists"];
+            break;
+        }
+    }
+    if(pickLists != nil )
+    {
+        NSDictionary *pickListDetails;
+        NSString     *pickListName;
+        for(int j=0; j< [pickLists count]; j++)
+        {
+            pickListDetails =  [pickLists objectAtIndex:j];
+            pickListName = [pickListDetails objectForKey:@"PickListName"];
+            NSLog(@"PickList Name = %@",pickListName);
+            if([pickListName isEqualToString:controller_name])
+            {
+                found = YES;
+                break;
+            }
+            
+        }
+    }
+    return found;
 
+}
 -(void)singleTapOncusLabel:(id)cusLabel
 {
     if([cusLabel isKindOfClass:[CusLabel  class]])
@@ -7181,5 +7559,38 @@
         }
     }
 
+}
+#pragma mark - Custom Methods
+- (NSString *) timeDifferenceFrom:(NSString *)fromDate toDate:(NSString *)toDate
+{
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+
+    NSDate *date1 = [dateFormatter dateFromString:toDate];
+    NSLog(@"Date 1 = %@",date1);
+    
+    NSDate *date2 = [dateFormatter dateFromString:fromDate];
+    NSLog(@"Date 2 = %@",date2);
+    
+    NSTimeInterval diff_time = [date2 timeIntervalSinceDate:date1];
+    NSLog(@"Difference = %f",diff_time);
+    
+    [dateFormatter release];
+    
+    int days  = diff_time / 86400;
+    int days_rem = ((int)diff_time % 86400);
+    
+    int hours  = days_rem / 3600;
+    int hours_rem = days_rem % 3600;
+    
+    int min = hours_rem / 60;
+    int sec = hours_rem % 60;
+    NSString *final_time = [NSString stringWithFormat:@"%d:%d:%d:%d",days,hours,min,sec];
+    return final_time;
+}
+
+-(void)controlActivityIndicatorOnDetailViewController:(NSString *)operation;
+{
+   
 }
 @end

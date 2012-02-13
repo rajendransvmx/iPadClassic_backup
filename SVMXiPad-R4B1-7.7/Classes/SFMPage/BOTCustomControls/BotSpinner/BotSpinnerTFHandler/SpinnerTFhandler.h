@@ -24,7 +24,15 @@
     NSString * controllerName;
     NSMutableArray * validFor;
     BOOL isdependentPicklist;
+    NSString * refObjectName;
+    NSString * refSearch_id ;
+    NSDictionary * lookupData;
+   
 }
+
+@property (nonatomic , retain) NSDictionary * lookupData;
+@property (nonatomic , retain) NSString * refObjectName;
+@property (nonatomic , retain) NSString * refSearch_id ;
 @property (nonatomic) BOOL isdependentPicklist;
 @property (nonatomic , retain) NSString * controllerName;
 @property (nonatomic , retain) NSMutableArray * validFor;
@@ -37,11 +45,15 @@
 @property (nonatomic)   CGRect rect;
 @property (nonatomic , retain)  popOverContent *contentView;
 @property (nonatomic , retain)  UIPopoverController * POC;
+
+
+-(NSMutableArray *)getLookUpForRecordTypeId;
 @end
 
 @protocol setSpinnerValue <NSObject>
 
 @optional
+
 -(void) setSpinnerValue;
 -(NSArray *)getValuesForDependentPickList;
 -(void)clearTheDependentPickListValue;

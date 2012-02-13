@@ -19,10 +19,17 @@
 - (void) control:(id)control didChangeValue:(NSString *)value atIndexPath:(NSIndexPath *)indexPath;
 - (void) updateDictionaryForCellAtIndexPath:(NSIndexPath *)indexPath fieldAPIName:(NSString *)fieldAPI fieldValue:(NSString *)fieldValue fieldKeyValue:(NSString *)fieldKeyValue controlType:(NSString *)control_type;
 - (void) setLookupPopover:(UIPopoverController *)popover;
+- (void) setSpinnerPopover:(UIPopoverController *)popover control:(id)control;
+-(void)controlActivityIndicatorOnDetailViewController:(NSString *)operation;
 // Lookup History
 - (void) addLookupHistory:(NSMutableArray *)lookupHistory forRelatedObjectName:(NSString *)relatedObjectName;
 -(NSInteger)getControlFieldPickListIndexForControlledPicklist:(NSString *)fieldApi_name atIndexPath:(NSIndexPath *)indexPath controlType:(NSString *)controlType;
 -(void)clearTheDependentPicklistValue:(NSString *)fieldApi_name atIndexPath:(NSIndexPath *)indexPath controlType:(NSString *)controlType;
+-(void)clearTheDependentRecordTypePicklistValue:(NSString *)recordType_Name 
+                                    atIndexPath:(NSIndexPath *)indexPath 
+                                    controlType:(NSString *)controlType;
 -(void)singleTapOncusLabel:(id)cusLabel;
 -(void)doubleTapOnCusLabel:(id)cusLabel;
+- (NSString *) getRecordTypeIDValue;
+- (NSMutableArray *) getValuesForRecordTypePickList:(NSString *)api_name;
 @end

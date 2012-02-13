@@ -19,7 +19,9 @@
     NSString * fieldAPIName;
     BOOL required;
     NSString * control_type;
+    NSDictionary * lookupData;
 }
+@property (nonatomic , retain) NSDictionary * lookupData;
 @property (nonatomic , retain) NSString * control_type;
 @property (nonatomic, assign) id <ControlDelegate> controlDelegate;
 @property (nonatomic, retain) NSArray * spinnerData;
@@ -29,4 +31,5 @@
 @property (nonatomic) BOOL required;
 
 -(id)initWithFrame:(CGRect)frame initArray:(NSArray *)arr;
+-(NSString *)getKeyForvalue_recordTypeId:(NSString *)text_value;
 @end

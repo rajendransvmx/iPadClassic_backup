@@ -8,7 +8,7 @@
 
 #import "BotSpinnerTextField.h"
 #import "BitSet.h"
-
+#import "iServiceAppDelegate.h"
 @implementation BotSpinnerTextField
 
 @synthesize TFHandler; 
@@ -60,10 +60,42 @@
 }
 -(void) setTextField :(NSString *)str
 {
+    NSString *old_Value = self.text;
     self.text=str;
-    [self.controlDelegate updateDictionaryForCellAtIndexPath:indexPath fieldAPIName:fieldAPIName fieldValue:self.text fieldKeyValue:self.text controlType:self.control_type];
-    //for dependent picklist 
-    [self.controlDelegate clearTheDependentPicklistValue:self.fieldAPIName atIndexPath:indexPath controlType:control_type];
+    NSString * key = @"";
+    if([fieldAPIName isEqualToString:@"RecordTypeId"] && [control_type isEqualToString:@"reference"])
+    {
+        key = [self getKeyForvalue_recordTypeId:str];
+        if(key == nil)
+        {
+            key = @"";
+        }
+    }
+    else
+    {
+        key = str;
+    }
+    [self.controlDelegate updateDictionaryForCellAtIndexPath:indexPath fieldAPIName:fieldAPIName fieldValue:self.text fieldKeyValue:key controlType:self.control_type];
+    //for recordtype id
+    if([self.fieldAPIName isEqualToString:@"RecordTypeId"])
+    {
+        if(![old_Value isEqualToString:str])
+        {
+            NSLog(@"Update PickList Values ");
+            NSLog(@"Old Value = %@ and New Value = %@",old_Value,str);
+            if(old_Value != nil)
+            [self.controlDelegate clearTheDependentRecordTypePicklistValue:old_Value 
+                                                               atIndexPath:indexPath 
+                                                            controlType:control_type];      
+        }
+    }
+    else
+    {
+        //for dependent picklist 
+        [self.controlDelegate clearTheDependentPicklistValue:self.fieldAPIName atIndexPath:indexPath controlType:control_type];
+
+    }
+
     [self.controlDelegate didUpdateLookUp:@"" fieldApiName:@"" valueKey:@""];
     
 }
@@ -144,5 +176,52 @@
 -(void)clearTheDependentPickListValue
 {
      [self.controlDelegate clearTheDependentPicklistValue:self.fieldAPIName atIndexPath:indexPath controlType:control_type];
+}
+-(NSString *)getKeyForvalue_recordTypeId:(NSString *)text_value
+{
+    iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+    NSDictionary * hdr_object = [appDelegate.SFMPage objectForKey:gHEADER];
+    NSString * hdr_object_name = [hdr_object objectForKey:gHEADER_OBJECT_NAME];    
+    NSArray * array = [self.TFHandler.lookupData objectForKey:@"DATA"];
+    NSString * name = @"", * Id_= @"";
+    for (int i = 0; i < [array count]; i++)
+    {
+        NSArray * data = [array objectAtIndex:i];
+        for (int j = 0; j < [data count]; j++)
+        {
+            NSDictionary * _dict = [data objectAtIndex:j];
+            NSString * sobjectName = [_dict objectForKey:@"key"];
+            if([sobjectName isEqualToString:@"SobjectType"])
+            {
+                NSString * object_name = [_dict objectForKey:@"value"];
+                if([object_name isEqualToString:hdr_object_name])
+                {
+                    
+                    for (int k = 0; k<[data count]; k++) 
+                    {
+                        NSDictionary * _dict1 = [data objectAtIndex:k];
+                        NSString * keyValue = [_dict1 objectForKey:@"key"];
+                        if ([keyValue isEqualToString:@"Name"])
+                        {
+                            name = [_dict1 objectForKey:@"value"];
+                        }
+                        if([keyValue isEqualToString:@"Id"])
+                        {
+                            Id_ = [_dict1 objectForKey:@"value"];
+                        }
+                        
+                    }
+                    if([name isEqualToString:text_value])
+                    {
+                        return  Id_;
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    
+    return Id_;
+
 }
 @end

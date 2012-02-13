@@ -66,7 +66,17 @@
         secondLabel.text = [NSString stringWithFormat:@"%d", seconds];
     
     isTimerRunning = YES;
-    [NSThread detachNewThreadSelector:@selector(startTimerThread) toTarget:self withObject:nil];
+    //[NSThread detachNewThreadSelector:@selector(startTimerThread) toTarget:self withObject:nil];//Siva Manne Commented it for iOS 5.0 crash
+    
+    dispatch_queue_t mainQueue = dispatch_get_main_queue();
+    dispatch_async(mainQueue, ^{
+        timer = [NSTimer scheduledTimerWithTimeInterval:1.0f
+                                                 target:self					  
+                                               selector:@selector(DecrSec)
+                                               userInfo:nil
+                                                repeats:YES];
+     
+    });
 
     // timer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(DecrSec) userInfo:nil repeats:YES];
 }
@@ -86,9 +96,52 @@
     [pool release];
 }
 
-- (void) updateTimerLabel
+- (void) updateTimerLabel:(NSString *) updatedTime 
 {
     //Update timer label
+    if (isTimerRunning)
+    {
+        [timer invalidate];
+        isTimerRunning = NO;
+    }
+
+    NSArray * components = [updatedTime componentsSeparatedByString:@":"];
+    NSInteger days_value = [[components objectAtIndex:0] intValue];
+    NSInteger hours_value = [[components objectAtIndex:1] intValue];
+    NSInteger minutes_value = [[components objectAtIndex:2] intValue];
+    NSInteger seconds_value = [[components objectAtIndex:3] intValue];
+    if (days_value < 10)
+      dayLabel.text = [NSString stringWithFormat:@"0%d", days_value];
+    else
+     dayLabel.text = [NSString stringWithFormat:@"%d", days_value];
+    
+    if (hours_value < 10)
+        hourLabel.text = [NSString stringWithFormat:@"0%d", hours_value];
+    else
+        hourLabel.text = [NSString stringWithFormat:@"%d", hours_value];
+    
+    if (minutes_value < 10)
+        minuteLabel.text = [NSString stringWithFormat:@"0%d", minutes_value];
+    else
+        minuteLabel.text = [NSString stringWithFormat:@"%d", minutes_value];
+    
+    if (seconds_value < 10)
+        secondLabel.text = [NSString stringWithFormat:@"0%d", seconds_value];
+    else
+        secondLabel.text = [NSString stringWithFormat:@"%d", seconds_value];
+    NSLog(@"Day = %@ Hour = %@ Min = %@ Sec = %@",dayLabel.text,hourLabel.text,minuteLabel.text,secondLabel.text);
+     /*
+    NSString * newTime = [NSString stringWithFormat:@"%@:%@:%@:%@", dayLabel.text, hourLabel.text, minuteLabel.text, secondLabel.text];
+   
+    if (type == TimerClassTypeResolution)
+    {
+        [slaTimer setValue:newTime forKey:RESOLUTIONTIME];
+    }
+    else if (type == TimerClassTypeRestoration)
+    {
+        [slaTimer setValue:newTime forKey:RESTORATIONTIME];
+    }
+     */
 }
 
 - (void) ResetTimer
