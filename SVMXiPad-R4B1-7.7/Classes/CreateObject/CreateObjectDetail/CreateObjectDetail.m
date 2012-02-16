@@ -128,11 +128,12 @@
 	return YES;
 }
 
-- (void) showSFMCreateObjectWithProcessID:(NSString *)processId processTitle:(NSString *)processTitle
+- (void) showSFMCreateObjectWithProcessID:(NSString *)processId processTitle:(NSString *)processTitle objectName:(NSString *)objectName
 {
     appDelegate.sfmPageController = [[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:NO];
     appDelegate.sfmPageController.processId = processId;
     appDelegate.sfmPageController.recordId = nil;
+    appDelegate.sfmPageController.objectName = objectName;
     appDelegate.sfmPageController.detailView.detailTitle = processTitle;
     [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
     [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
@@ -269,9 +270,10 @@
     NSDictionary * dict = [[appDelegate.StandAloneCreateProcess objectAtIndex:selectedRootViewRow] objectAtIndex:indexPath.row];
     NSString * processTitle = [dict objectForKey:SVMXC_Name];
     processId = [dict objectForKey:SVMXC_ProcessID];
+    NSString *objectName = [dict objectForKey:SVMXC_OBJECT_NAME];
     NSLog(@"%@", processId);
     
-    [delegate showSFMCreateObjectWithProcessID:processId processTitle:processTitle];
+    [delegate showSFMCreateObjectWithProcessID:processId processTitle:processTitle objectName:objectName];
     [activity stopAnimating];
 }
 
@@ -303,8 +305,9 @@
     NSDictionary * dict = [[appDelegate.StandAloneCreateProcess objectAtIndex:selectedRootViewRow] objectAtIndex:indexPath.row];
     NSString * processTitle = [dict objectForKey:SVMXC_Name];
     processId = [dict objectForKey:SVMXC_ProcessID];
+    NSString *objectName = [dict objectForKey:SVMXC_OBJECT_NAME];
     NSLog(@"%@", processId);
-    [delegate showSFMCreateObjectWithProcessID:processId processTitle:processTitle];
+    [delegate showSFMCreateObjectWithProcessID:processId processTitle:processTitle objectName:objectName];
     [activity stopAnimating];
 }
 

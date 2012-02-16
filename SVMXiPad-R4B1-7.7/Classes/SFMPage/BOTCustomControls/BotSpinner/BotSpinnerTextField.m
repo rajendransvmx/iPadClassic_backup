@@ -84,9 +84,13 @@
             NSLog(@"Update PickList Values ");
             NSLog(@"Old Value = %@ and New Value = %@",old_Value,str);
             if(old_Value != nil)
-            [self.controlDelegate clearTheDependentRecordTypePicklistValue:old_Value 
+            /*[self.controlDelegate clearTheDependentRecordTypePicklistValue:old_Value 
                                                                atIndexPath:indexPath 
-                                                            controlType:control_type];      
+                                                            controlType:control_type]; */     
+            [self.controlDelegate clearTheDependentRecordTypePicklistValue:str 
+                                                               atIndexPath:indexPath 
+                                                               controlType:control_type];      
+
         }
     }
     else

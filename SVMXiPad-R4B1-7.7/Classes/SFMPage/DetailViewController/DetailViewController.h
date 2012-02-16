@@ -279,6 +279,7 @@ ChatterDelegate>
 - (void) enableSFMUI;
 - (void) disableSFMUI;
 - (NSString *) timeDifferenceFrom:(NSString *)fromDate toDate:(NSString *)toDate;
+- (NSMutableDictionary *)getDefaultValue:(NSString *)controller_name inRecordType:(NSString *)record_type;
 
 #define SHOWALL_HEADERS                     0
 #define SHOW_HEADER_ROW                     1

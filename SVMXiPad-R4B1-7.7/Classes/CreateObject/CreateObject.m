@@ -47,7 +47,7 @@
     // Release any cached data, images, etc that aren't in use.
 }
 
-- (void) showSFMCreateObjectWithProcessID:(NSString *)processId processTitle:(NSString *)processTitle
+- (void) showSFMCreateObjectWithProcessID:(NSString *)processId processTitle:(NSString *)processTitle objectName:(NSString *)objectName
 {
     if ([appDelegate.SFMPage retainCount] > 0)
     {
@@ -57,6 +57,7 @@
     
     appDelegate.sfmPageController = [[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:NO];
     appDelegate.sfmPageController.processId = processId;
+    appDelegate.sfmPageController.objectName = objectName;
     appDelegate.sfmPageController.recordId = nil;
     appDelegate.sfmPageController.detailView.detailTitle = processTitle;
     [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
@@ -235,8 +236,9 @@
     NSDictionary * dict = [[appDelegate.StandAloneCreateProcess objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     NSString * processTitle = [dict objectForKey:SVMXC_Name];
     processId = [dict objectForKey:SVMXC_ProcessID];
+    NSString *objName = [dict objectForKey:SVMXC_OBJECT_NAME];
     NSLog(@"%@", processId);
-    [self showSFMCreateObjectWithProcessID:processId processTitle:processTitle];
+    [self showSFMCreateObjectWithProcessID:processId processTitle:processTitle objectName:objName ];
     
 }
 

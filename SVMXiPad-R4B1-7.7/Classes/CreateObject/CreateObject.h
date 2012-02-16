@@ -33,7 +33,7 @@ UISplitViewControllerDelegate>
 
 - (IBAction) back;
 - (IBAction) createObject;
-- (void) showSFMCreateObjectWithProcessID:(NSString *)processId processTitle:(NSString *)processTitle;
+- (void) showSFMCreateObjectWithProcessID:(NSString *)processId processTitle:(NSString *)processTitle objectName:(NSString *)objectName;
 
 // Display user name
 - (IBAction) displayUser:(id)sender;

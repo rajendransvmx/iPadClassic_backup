@@ -30,7 +30,7 @@ UITableViewDataSource>
 @property (nonatomic, assign) id <CreateObjectDetailDelegate> delegate;
 @property (nonatomic, retain) IBOutlet UITableView * tableView;
 
-- (void) showSFMCreateObjectWithProcessID:(NSString *)processId processTitle:(NSString *)processTitle;
+- (void) showSFMCreateObjectWithProcessID:(NSString *)processId processTitle:(NSString *)processTitle objectName:(NSString *)objectName;
 - (void) accessoryButtonTapped: (UIControl *) button withEvent:(UIEvent *) event;
 
 @end
@@ -39,6 +39,6 @@ UITableViewDataSource>
 
 @optional
 - (void) dismissSelf;
-- (void) showSFMCreateObjectWithProcessID:(NSString *)processId processTitle:(NSString *)processTitle;
+- (void) showSFMCreateObjectWithProcessID:(NSString *)processId processTitle:(NSString *)processTitle objectName:(NSString *)objectName;
 
 @end
