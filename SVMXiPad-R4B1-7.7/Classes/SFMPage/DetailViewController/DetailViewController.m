@@ -246,7 +246,7 @@
 {
     [super viewDidLoad];
     
-    recordTypeID_Value = nil;
+    //recordTypeID_Value = nil;
     
     didRunOperation = YES;
     
@@ -283,6 +283,7 @@
     
     currentRecordId =  appDelegate.sfmPageController.recordId;
     currentProcessId = appDelegate.sfmPageController.processId;
+    
     if (!isInEditDetail)
     {
         [self didSubmitProcess:currentProcessId forRecord:currentRecordId];
@@ -300,10 +301,13 @@
     //Siva Manne
     RecordTypePickList = nil;
     didDescribeLayoutReceived = NO;
-    if (!isInEditDetail && !isInViewMode)
+    NSString *objName = appDelegate.sfmPageController.objectName;
+    //if (!isInEditDetail && !isInViewMode && objName!=nil && [objName length] >0  )
+    if ( objName!=nil && [objName length] >0  )
     {
         RecordTypePickList = [[NSMutableArray alloc] init];
-    [[ZKServerSwitchboard switchboard] describeLayout:@"SVMXC__RMA_Shipment_Order__c" target:self selector:@selector(didDescribeSObjectLayout:error:context:) context:nil];
+    
+        [[ZKServerSwitchboard switchboard] describeLayout:objName target:self selector:@selector(didDescribeSObjectLayout:error:context:) context:nil];
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, FALSE))
         {
             NSLog(@"DetailViewController viewdidLoad in while loop");
@@ -319,10 +323,7 @@
             }
             NSLog(@"Receiving RecordTypeId Info ..");
         }
-
-
     }
-
 }
 
 - (void) didInternetConnectionChange:(NSNotification *)notification
@@ -2889,6 +2890,7 @@
                 {
                     ZKDescribeSObject * descObj = [appDelegate.describeObjectsArray objectAtIndex:i];
                     ZKDescribeField * descField = [descObj fieldWithName:fieldAPIName];
+                                        
                     isdependentPicklist  = [descField dependentPicklist];
                     dependPick_controllerName = [descField controllerName];
                     
@@ -3170,7 +3172,12 @@
                         {
                             lbl2 = [[UILabel alloc]initWithFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)];
                             NSLog(@"%@", value);
-
+                            NSString * api_name = [[detail_fields objectAtIndex:j]objectForKey:gFIELD_API_NAME];
+                            NSLog(@"api_name = %@",api_name);
+                            if([control_type isEqualToString:@"reference"] && [api_name isEqualToString:@"RecordTypeId"])
+                            {
+                                recordTypeID_Value = value;
+                            }
                             if([control_type isEqualToString:@"datetime"])
                             {
                                 value = [value stringByReplacingOccurrencesOfString:@"T" withString:@" "];
@@ -3250,18 +3257,27 @@
             NSArray *pickListValueArray = [pickList picklistValues];
             NSMutableArray *pickListValue_array = [[NSMutableArray alloc] init];
             NSMutableDictionary *pickListValue_dict = [[NSMutableDictionary alloc] init];
+            NSString *defaultLabel = @"";
+            NSString *defaultValue = @"";
             for(ZKPicklistEntry *pickListValue in pickListValueArray)
             {
                 NSMutableDictionary *pickList_value_Dict = [[NSMutableDictionary alloc] init];                   
-                NSLog(@"label  = %@ : value  = %@",[pickListValue label],[pickListValue value]);   
+                NSLog(@"label  = %@ : value  = %@ Default = %d",[pickListValue label],[pickListValue value],[pickListValue defaultValue]);   
                 [pickList_value_Dict setObject:[pickListValue label] forKey:@"label"];
                 [pickList_value_Dict setObject:[pickListValue value] forKey:@"value"]; 
+                if([pickListValue defaultValue])
+                {
+                     defaultLabel = [pickListValue label];
+                     defaultValue = [pickListValue value];   
+                }
                 [pickListValue_array addObject:pickList_value_Dict];
                 [pickList_value_Dict release];
             }
                          
             [pickListValue_dict setObject:[pickList picklistName] forKey:@"PickListName"];
             [pickListValue_dict setObject:pickListValue_array forKey:@"PickListValue"];
+            [pickListValue_dict setObject:defaultLabel forKey:@"PickListDefaultLabel"];
+            [pickListValue_dict setObject:defaultValue forKey:@"PickListDefaultValue"];
             [pickListValue_array release];
             [pickList_Main_Array addObject:pickListValue_dict];
             [pickListValue_dict release];
@@ -5452,7 +5468,8 @@
     NSMutableArray * details = [appDelegate.SFMPage objectForKey:@"details"];
     NSMutableArray * detailFieldsArray = [[details objectAtIndex:section] objectForKey:gDETAILS_FIELDS_ARRAY];
     NSString * layout_id = [[details objectAtIndex:section] objectForKey:gDETAILS_LAYOUT_ID];
-    
+    //gDETAIL_OBJECT_NAME
+    appDelegate.sfmPageController.objectName = [[details objectAtIndex:section] objectForKey:gDETAIL_OBJECT_NAME];
     //calling the web service to add the rows to 
     NSString * process_id = currentProcessId;
     
@@ -5616,6 +5633,7 @@
     detailViewObject.Disclosure_dict = self.Disclosure_dict;
     detailViewObject.Disclosure_Fields = self.Disclosure_Fields;
     detailViewObject.Disclosure_Details = self.Disclosure_Details;
+    detailViewObject.recordTypeID_Value = self.recordTypeID_Value;
     
     
     //sahana navigation custom button
@@ -7156,7 +7174,6 @@
     else if (recordTypeID_Value == nil)
     {
          NSLog(@"nil");
-        
     }
     else if ([recordTypeID_Value length ] == 0)
     {
@@ -7193,30 +7210,14 @@
             {
                 NSMutableDictionary * filed_info =[sectionFileds objectAtIndex:j];
                 NSString * field_api_name = [filed_info objectForKey:gFIELD_API_NAME];
-                // NSString * dict_value = [filed_info objectForKey:gFIELD_VALUE_VALUE];
                 NSLog(@"Api Name = %@", field_api_name);
-                   /*
-                    for (int i = 0; i < [appDelegate.describeObjectsArray count]; i++)
-                    {
-                        ZKDescribeSObject * descObj = [appDelegate.describeObjectsArray objectAtIndex:i];
-                        ZKDescribeField * descField = [descObj fieldWithName:field_api_name];
-                        if (descField == nil)
-                            continue;
-                        if( [self isControllerPresent:field_api_name inRecordType:recordType_Name])
-                        {
-                            [filed_info setValue:@"" forKey:gFIELD_VALUE_VALUE];
-                            [filed_info setValue:@"" forKey:gFIELD_VALUE_KEY];
-                            
-                            NSLog(@"Fields Info ========= %@" , filed_info);
-                            break;
-                        }
-                    }
-                    */
                 if( [self isControllerPresent:field_api_name inRecordType:recordType_Name])
                 {
-                    [filed_info setValue:@"" forKey:gFIELD_VALUE_VALUE];
-                    [filed_info setValue:@"" forKey:gFIELD_VALUE_KEY];
+                    NSMutableDictionary *defaultValue =  [[self getDefaultValue:field_api_name inRecordType:recordType_Name] retain] ;
+                    [filed_info setValue:[defaultValue objectForKey:@"PickListDefaultValue"] forKey:gFIELD_VALUE_VALUE];
+                    [filed_info setValue:[defaultValue objectForKey:@"PickListDefaultLabel"] forKey:gFIELD_VALUE_KEY];
                     NSLog(@"Fields Info ========= %@" , filed_info);
+                    [defaultValue release];
                     //break;
                 }
 
@@ -7284,7 +7285,9 @@
     for(int i=0; i< [RecordTypePickList count]; i++)
     {
         recordtype_dict = [RecordTypePickList objectAtIndex:i];
-        if([[recordtype_dict objectForKey:@"RecorTypeName"] isEqualToString:recordTypeID_Value])
+        if(([[recordtype_dict objectForKey:@"RecorTypeName"] isEqualToString:recordTypeID_Value]) ||
+           ([[recordtype_dict objectForKey:@"RecorTypeId"] isEqualToString:recordTypeID_Value]) 
+           )
         {
             pickLists = [recordtype_dict objectForKey:@"PickLists"];
             break;
@@ -7364,7 +7367,7 @@
                         {
                             [filed_info setValue:@"" forKey:gFIELD_VALUE_VALUE];
                             [filed_info setValue:@"" forKey:gFIELD_VALUE_KEY];
-                            
+
                             NSLog(@"Fields Info ========= %@" , filed_info);
                             break;
                         }
@@ -7428,6 +7431,47 @@
     }
 
 }
+- (NSMutableDictionary *)getDefaultValue:(NSString *)controller_name inRecordType:(NSString *)record_type
+{
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
+    BOOL found = NO;
+    NSDictionary *recordtype_dict;
+    NSArray *pickLists = nil;
+    for(int i=0; i< [RecordTypePickList count]; i++)
+    {
+        recordtype_dict = [RecordTypePickList objectAtIndex:i];
+        if([[recordtype_dict objectForKey:@"RecorTypeName"] isEqualToString:record_type])
+        {
+            pickLists = [recordtype_dict objectForKey:@"PickLists"];
+            break;
+        }
+    }
+    if(pickLists != nil )
+    {
+        NSDictionary *pickListDetails;
+        NSString     *pickListName;
+        for(int j=0; j< [pickLists count]; j++)
+        {
+            pickListDetails =  [pickLists objectAtIndex:j];
+            pickListName = [pickListDetails objectForKey:@"PickListName"];
+            NSLog(@"PickList Name = %@",pickListName);
+            if([pickListName isEqualToString:controller_name])
+            {
+                found = YES;
+                [result setObject:[pickListDetails objectForKey:@"PickListDefaultLabel"] forKey:@"PickListDefaultLabel"];
+                [result setObject:[pickListDetails objectForKey:@"PickListDefaultValue"] forKey:@"PickListDefaultValue"];
+                break;
+            }            
+        }
+    }
+    if(!found)
+    {    
+        [result setObject:@"" forKey:@"PickListDefaultLabel"];
+        [result setObject:@"" forKey:@"PickListDefaultValue"];
+    }
+    
+    return [result autorelease];
+}
 -(BOOL)isControllerPresent:(NSString *)controller_name inRecordType:(NSString *)record_type
 {
     BOOL found = NO;
@@ -7460,7 +7504,6 @@
         }
     }
     return found;
-
 }
 -(void)singleTapOncusLabel:(id)cusLabel
 {
@@ -7576,6 +7619,9 @@
     NSLog(@"Difference = %f",diff_time);
     
     [dateFormatter release];
+
+    if(diff_time < 0)
+        return [NSString stringWithFormat:@"00:00:00:00"];
     
     int days  = diff_time / 86400;
     int days_rem = ((int)diff_time % 86400);
