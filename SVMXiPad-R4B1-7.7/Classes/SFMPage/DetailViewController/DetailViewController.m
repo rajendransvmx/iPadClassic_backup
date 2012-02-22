@@ -4556,6 +4556,73 @@
 	self.popoverController = nil;
 }
 
+- (void) populateDefaultRecordTypeDependentPickList
+{
+    NSUInteger row_count = 1;
+    if (!isInEditDetail)
+    {
+        if (isDefault)
+        {
+            if (selectedSection == SHOWALL_HEADERS)
+            {
+                NSMutableDictionary *_header = [appDelegate.SFMPage objectForKey:gHEADER];
+                NSMutableArray *header_sections = [_header objectForKey:gHEADER_SECTIONS];
+                row_count =  [header_sections count];
+            }
+            else if (selectedSection == SHOWALL_LINES)
+            {
+                NSMutableArray *details = [appDelegate.SFMPage objectForKey:gDETAILS];
+                row_count =  [details count];
+            }
+        }
+    }
+    if(!isInViewMode)
+    {
+        NSString * control_type;
+        for(int i=0; i<row_count; i++)
+        {
+            control_type = [[Disclosure_Details objectAtIndex:i] objectForKey:gFIELD_DATA_TYPE];
+            if([control_type isEqualToString:@"picklist"])
+            {
+                /*
+                for(int i =0; i<[appDelegate.describeObjectsArray count]; i++)
+                {
+                    ZKDescribeSObject * descObj = [appDelegate.describeObjectsArray objectAtIndex:i];
+                    ZKDescribeField * descField = [descObj fieldWithName:fieldAPIName ];
+                    
+                    if(descField == nil)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        NSArray * pickListEntryArray = [descField picklistValues];
+                        
+                        for (int k = 0; k < [pickListEntryArray count]; k++)
+                        {
+                            if(!isdependentPicklist)
+                            {
+                                // [descObjArray addObject:[[pickListEntryArray objectAtIndex:k]]];;
+                                
+                                NSLog(@"%@", validFor);
+                                [descObjArray addObject:[[pickListEntryArray objectAtIndex:k] label]];
+                                ZKPicklistEntry * picklistEntry = [pickListEntryArray objectAtIndex:k];
+                                NSString * validFor = [picklistEntry validFor];
+                                [descObjValidFor addObject:validFor];
+                                NSLog(@"%@", validFor);
+                            }
+                            else
+                                [descObjArray addObject:[[pickListEntryArray objectAtIndex:k] label]];
+                        }
+                        
+                        break;
+                    }
+                }*/
+
+            }
+        }
+    }
+}
 #pragma mark - UIScrollView Delegate Method
 - (void) scrollViewDidScroll:(UIScrollView *)scrollView
 {
@@ -6032,6 +6099,7 @@
     detailViewObject.selectedRowForDetailEdit = _indexPath.row-1;
     detailViewObject.isInEditDetail = YES;
     detailViewObject.isInViewMode = isInViewMode;
+    detailViewObject.recordTypeID_Value = self.recordTypeID_Value;
     detailViewObject.header = self.header;
     detailViewObject.line = self.line;
     detailViewObject.Disclosure_dict = self.Disclosure_dict;
