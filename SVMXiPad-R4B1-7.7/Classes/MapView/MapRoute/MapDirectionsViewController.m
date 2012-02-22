@@ -183,6 +183,13 @@ static NSString* const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 																		   annotationType:UICRouteAnnotationTypeEnd];
     endAnnotation.workOrder = [workOrderArray lastObject];
     endAnnotation.index = [workOrderArray count]-1;
+    
+    // SAMMAN - BEGIN - Ensure duplicate addresses are not used
+    
+    NSMutableArray * latitudeList = [[NSMutableArray alloc] initWithCapacity:0];
+    NSMutableArray * longitudeList = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    // SAMMAN - END
 
 	if ([wayPoints count] > 0)
     {
@@ -195,8 +202,28 @@ static NSString* const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
             NSString * address = [endGeocode objectForKey:@"address"];
             CLLocationCoordinate2D coord = [location coordinate];
             NSLog(@"%@, %f, %f", address, coord.latitude, coord.longitude);
-            if (![address isKindOfClass:[NSString class]])
-                continue;
+            // SAMMAN - BEGIN - Ensure duplicate addresses are not used
+            if ([latitudeList containsObject:[NSNumber numberWithDouble:coord.latitude]])
+            {
+                if ([longitudeList containsObject:[NSNumber numberWithDouble:coord.longitude]])
+                {
+                    NSInteger latitudeIndex = [latitudeList indexOfObject:[NSNumber numberWithDouble:coord.latitude]];
+                    NSInteger longitudeIndex = [longitudeList indexOfObject:[NSNumber numberWithDouble:coord.longitude]];
+                    if (latitudeIndex == longitudeIndex)
+                        continue;
+                }
+            }
+            else
+            {
+                [latitudeList addObject:[NSNumber numberWithDouble:coord.latitude]];
+                [longitudeList addObject:[NSNumber numberWithDouble:coord.longitude]];
+            }
+            
+            // SAMMAN - Remove the below erroneous code, annotations don't always carry valid addresses.
+//            if (![address isKindOfClass:[NSString class]])
+//                continue;
+
+            // SAMMAN - END
 			UICRouteAnnotation *annotation = [[UICRouteAnnotation alloc] initWithCoordinate:[location coordinate]
 																					   title:address
 																			  annotationType:UICRouteAnnotationTypeWayPoint];
@@ -205,6 +232,15 @@ static NSString* const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 			[routeMapView addAnnotation:annotation];
             [annotation release];
 		}
+        
+        // SAMMAN - BEGIN - Ensure duplicate addresses are not used
+        // release addressList NOW
+        [latitudeList removeAllObjects];
+        [latitudeList release];
+        [longitudeList removeAllObjects];
+        [longitudeList release];
+        // SAMMAN - END
+        
 	}
 		
 	// [routeMapView addAnnotations:[NSArray arrayWithObjects:startAnnotation, endAnnotation, nil]];

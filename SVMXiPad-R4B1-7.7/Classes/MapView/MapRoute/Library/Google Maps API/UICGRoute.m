@@ -33,7 +33,7 @@
 		dictionaryRepresentation = [dictionary retain];
 //        NSArray *allKeys = [dictionaryRepresentation allKeys];
 //        NSDictionary *k = [dictionaryRepresentation objectForKey:[allKeys objectAtIndex:[allKeys count] - 1]];
-        NSDictionary *k = [dictionaryRepresentation objectForKey:@"A"];
+        NSDictionary *k = [dictionaryRepresentation objectForKey:@"k"];  //Shrinivas - Code Changed
 		NSArray *stepDics = [k objectForKey:@"Steps"];
 		numberOfSteps = [stepDics count];
 		steps = [[NSMutableArray alloc] initWithCapacity:numberOfSteps];
