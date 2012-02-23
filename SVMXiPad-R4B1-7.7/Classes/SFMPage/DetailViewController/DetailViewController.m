@@ -1385,22 +1385,30 @@
     NSArray * _keys = [NSArray arrayWithObjects:SVMXC__Activity_Type__c, SVMXC__Actual_Price2__c, SVMXC__Actual_Quantity2__c, nil];
     // Calculate Labor
     NSArray * allKeys = [LabourValuesDictionary allKeys];
-    for (NSString * key in allKeys)
+    for(NSString *labour_key in allKeys)
     {
-        if ([key Contains:@"QTY_"])
+        NSArray *labour_details = [LabourValuesDictionary objectForKey:labour_key];
+        for(int j=0;j<[labour_details count];j++)
         {
-            NSString * quantity = [LabourValuesDictionary objectForKey:key];
-            int _quantity = [quantity floatValue];
-            if (_quantity)
+            NSArray *labour_detail_allKeys = [[labour_details objectAtIndex:j] allKeys];
+            for (NSString * key in labour_detail_allKeys)
             {
-                NSString * item = [key stringByReplacingOccurrencesOfString:@"QTY_" withString:@""];
-                NSString * _rate = [LabourValuesDictionary objectForKey:[NSString stringWithFormat:@"Rate_%@", item]];
-                NSArray * _objects = [NSArray arrayWithObjects:item, _rate, quantity, nil];
-                
-                if (Labor == nil)
-                    Labor = [[NSMutableArray alloc] initWithCapacity:0];
-                NSDictionary * laborDictionary = [NSDictionary dictionaryWithObjects:_objects forKeys:_keys];
-                [Labor addObject:laborDictionary];
+                if ([key Contains:@"QTY_"])
+                {
+                    NSString * quantity = [[labour_details objectAtIndex:j] objectForKey:key];
+                    int _quantity = [quantity floatValue];
+                    if (_quantity)
+                    {
+                        NSString * item = [key stringByReplacingOccurrencesOfString:@"QTY_" withString:@""];
+                        NSString * _rate = [[labour_details objectAtIndex:j] objectForKey:[NSString stringWithFormat:@"Rate_%@", item]];
+                        NSArray * _objects = [NSArray arrayWithObjects:item, _rate, quantity, nil];
+                        
+                        if (Labor == nil)
+                            Labor = [[NSMutableArray alloc] initWithCapacity:0];
+                        NSDictionary * laborDictionary = [NSDictionary dictionaryWithObjects:_objects forKeys:_keys];
+                        [Labor addObject:laborDictionary];
+                    }
+                }
             }
         }
     }
@@ -1923,36 +1931,77 @@
 	[LabourValuesDictionary setValue:@"0" forKey:REPAIR];
 	[LabourValuesDictionary setValue:@"0" forKey:SERVICE];
 
+    NSMutableArray *calibrationData = [[NSMutableArray alloc] init];
+    NSMutableArray *cleanupData = [[NSMutableArray alloc] init];
+    NSMutableArray *installationData = [[NSMutableArray alloc] init];
+    NSMutableArray *repairData = [[NSMutableArray alloc] init];
+    NSMutableArray *serviceData = [[NSMutableArray alloc] init];
+    
     for (int j = 0; j < [array count]; j++)
     {
         ZKSObject * obj = [array objectAtIndex:j];
         if ([[[obj fields] objectForKey:@"SVMXC__Activity_Type__c"] isEqualToString:CALIBRATION])
         {
-            [LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_CALIBRATION];
-            [LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_CALIBRATION];
+            //[LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_CALIBRATION];
+            //[LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_CALIBRATION];
+            NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+            [dict setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_CALIBRATION];
+            [dict setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_CALIBRATION];                                         
+            [calibrationData addObject:dict];
+            [dict release];
         }
         if ([[[obj fields] objectForKey:@"SVMXC__Activity_Type__c"] isEqualToString:CLEANUP])
         {
-            [LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_CLEANUP];
-            [LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_CLEANUP];
+            //[LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_CLEANUP];
+            //[LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_CLEANUP];
+            NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+            [dict setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_CLEANUP];
+            [dict setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_CLEANUP];
+            [cleanupData addObject:dict];
+            [dict release];
         }
         if ([[[obj fields] objectForKey:@"SVMXC__Activity_Type__c"] isEqualToString:INSTALLATION])
         {
-            [LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_INSTALLATION];
-            [LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_INSTALLATION];
+            //[LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_INSTALLATION];
+            //[LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_INSTALLATION];
+            NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];     
+            [dict setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_INSTALLATION];
+            [dict setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_INSTALLATION];
+            [installationData addObject:dict];
+            [dict release];
         }
         if ([[[obj fields] objectForKey:@"SVMXC__Activity_Type__c"] isEqualToString:REPAIR])
         {
-            [LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_REPAIR];
-            [LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_REPAIR];
+            //[LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_REPAIR];
+            //[LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_REPAIR];
+            NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+            [dict setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_REPAIR];
+            [dict setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_REPAIR];
+            [repairData addObject:dict];
+            [dict release];
         }
         if ([[[obj fields] objectForKey:@"SVMXC__Activity_Type__c"] isEqualToString:SERVICE])
         {
-            [LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_SERVICE];
-            [LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_SERVICE];
+            //[LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_SERVICE];
+            //[LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_SERVICE];
+            NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+            [dict setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_SERVICE];
+            [dict setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_SERVICE];
+            [serviceData addObject:dict];
+            [dict release];
         }
     }
+    [LabourValuesDictionary setValue:calibrationData forKey:CALIBRATION];
+	[LabourValuesDictionary setValue:cleanupData forKey:CLEANUP];
+	[LabourValuesDictionary setValue:installationData forKey:INSTALLATION];
+	[LabourValuesDictionary setValue:repairData forKey:REPAIR];
+	[LabourValuesDictionary setValue:serviceData forKey:SERVICE];
     
+    [calibrationData release];
+    [cleanupData release];
+    [installationData release];
+    [repairData release];
+    [serviceData release];
     NSString * query = [NSString stringWithFormat:@"SELECT SVMXC__Billable_Cost2__c FROM SVMXC__Service_Group_Costs__c	WHERE SVMXC__Group_Member__c = '%@' AND SVMXC__Cost_Category__c = 'Straight' LIMIT 1", appDelegate.appTechnicianId];
     [[ZKServerSwitchboard switchboard] query:query target:self selector:@selector(getPriceForLabor:error:context:) context:nil];
 }
