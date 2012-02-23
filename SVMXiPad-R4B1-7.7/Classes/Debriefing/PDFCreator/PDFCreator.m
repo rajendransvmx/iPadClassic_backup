@@ -556,7 +556,7 @@
         for (int i = 0; i < [_parts count]; i++)
         {
             NSLog(@"%@", [_parts objectAtIndex:i]);
-            float linePrice = [[[_parts objectAtIndex:i] objectForKey:@"CostPerPart"] intValue];
+            float linePrice = [[[_parts objectAtIndex:i] objectForKey:@"CostPerPart"] floatValue];
             linePrice *= [[[_parts objectAtIndex:i] objectForKey:@"PartsUsed"] intValue];
             linePrice *= (1 - ([[[_parts objectAtIndex:i] objectForKey:@"Discount"] floatValue]/100));
             {
