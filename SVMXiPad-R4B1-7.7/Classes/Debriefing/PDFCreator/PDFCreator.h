@@ -167,7 +167,7 @@
 - (void) setImageWithName:(NSString *)imageName;
 - (void) setDescription:(NSString *)description;
 - (void) setWorkPerformed:(NSString *)workPerformed;
-
+- (NSString *) getFormattedCost:(float)cost;
 // Write Parts
 - (void) writePartsNo:(NSString *)sno part:(NSString *)part qty:(NSString *)qty unitprice:(NSString *)unitprice lineprice:(NSString *)lineprice;
 // Write Parts with Discount

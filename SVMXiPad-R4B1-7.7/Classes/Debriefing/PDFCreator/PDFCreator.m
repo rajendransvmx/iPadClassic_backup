@@ -567,7 +567,7 @@
                     [self writePartsNo:[NSString stringWithFormat:@"%d.", i+1]
                                   part:[[_parts objectAtIndex:i] objectForKey:@"Name"]
                                    qty:[[_parts objectAtIndex:i] objectForKey:@"PartsUsed"]
-                             unitprice:[[_parts objectAtIndex:i] objectForKey:@"CostPerPart"]
+                             unitprice:[self getFormattedCost:[[[_parts objectAtIndex:i] objectForKey:@"CostPerPart"] floatValue]]
                              lineprice:[NSString stringWithFormat:@"%.2f", linePrice] 
                               discount:discount
                      ];
@@ -577,7 +577,7 @@
                     [self writePartsNo:[NSString stringWithFormat:@"%d.", i+1]
                                   part:[[_parts objectAtIndex:i] objectForKey:@"Name"]
                                    qty:[[_parts objectAtIndex:i] objectForKey:@"PartsUsed"]
-                             unitprice:[[_parts objectAtIndex:i] objectForKey:@"CostPerPart"]
+                             unitprice:[self getFormattedCost:[[[_parts objectAtIndex:i] objectForKey:@"CostPerPart"]floatValue]]
                              lineprice:[NSString stringWithFormat:@"%.2f", linePrice]
                      ];
                 }
@@ -586,7 +586,7 @@
                     [self writePartsNo:[NSString stringWithFormat:@"%d.", i+1]
                                   part:[[_parts objectAtIndex:i] objectForKey:@"Name"]
                                    qty:[[_parts objectAtIndex:i] objectForKey:@"PartsUsed"]
-                             unitprice:[[_parts objectAtIndex:i] objectForKey:@"CostPerPart"]
+                             unitprice:[self getFormattedCost:[[[_parts objectAtIndex:i] objectForKey:@"CostPerPart"]floatValue]]
                              lineprice:discount
                      ];
                 }
@@ -1053,7 +1053,26 @@
 }
 
 #pragma mark -
-
+- (NSString *) getFormattedCost:(float)cost
+{
+    NSMutableString * decimalCostStr = [NSMutableString stringWithFormat:@"%d", (int)cost];
+    int strLength = [decimalCostStr length];
+    for (int i = 0; i < strLength; i++)
+    {
+        if ((i > 0) && (i%3 == 0))
+        {
+            // insert a ',' after the current position
+            [decimalCostStr insertString:@"," atIndex:strLength-i];
+        }
+    }
+    // add the floating portion of the number to the string
+    NSUInteger decimalPortion = cost;
+    cost = cost - decimalPortion;
+    NSMutableString * floatStr = [NSMutableString stringWithFormat:@"%.2f", cost];
+    [floatStr replaceOccurrencesOfString:@"0." withString:@"." options:NSCaseInsensitiveSearch range:NSMakeRange(0, [floatStr length])];
+    [decimalCostStr appendString:floatStr];
+    return decimalCostStr;
+}
 - (void) createPage
 {
     // Set signature image
