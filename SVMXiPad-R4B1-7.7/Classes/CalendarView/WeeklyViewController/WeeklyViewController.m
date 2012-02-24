@@ -493,15 +493,54 @@
         _endDate = [NSString stringWithFormat:@"%d", end];
     
     // Retrieve current month and year
-    NSString * monthString;
+    int startMonth,endMonth;
+    int startYear,endYear;
+    NSString * startMonthString;
+    NSString * endMonthString;
     NSUInteger month = [[weekDetails objectForKey:wMONTHNUMBER] intValue];
-    if (month < 10)
-        monthString = [NSString stringWithFormat:@"0%d", month];
+    NSUInteger year = [[weekDetails objectForKey:wYEAR] intValue];
+
+    startYear = endYear = year;
+    startMonth =endMonth = month;
+    if(index == 0)
+    {
+        if(start > end)
+        {
+            startMonth = month-1;
+            if(startMonth == 0)
+            {
+                startMonth = 12;
+                startYear = startYear - 1;
+            }
+        }
+    }
     else
-        monthString = [NSString stringWithFormat:@"%d", month];
+    {
+        if(index == ([weeksArray count]-1))
+        {
+            if(start > end)
+            {
+                endMonth = month + 1;
+                if(endMonth == 13)
+                {
+                    endMonth = 1;
+                    endYear = endYear + 1;
+                }
+            }  
+        }
+    }
+    if (startMonth < 10)
+        startMonthString = [NSString stringWithFormat:@"0%d", startMonth];
+    else
+        startMonthString = [NSString stringWithFormat:@"%d", startMonth];
+    if (endMonth < 10)
+        endMonthString = [NSString stringWithFormat:@"0%d", endMonth];
+    else
+        endMonthString = [NSString stringWithFormat:@"%d", endMonth];
     
-    NSString * weekStart = [NSString stringWithFormat:@"%@-%@-%@", [weekDetails objectForKey:wYEAR], monthString, _startDate];
-    NSString * weekEnd = [NSString stringWithFormat:@"%@-%@-%@", [weekDetails objectForKey:wYEAR], monthString, _endDate];
+
+    NSString * weekStart = [NSString stringWithFormat:@"%d-%@-%@", startYear, startMonthString, _startDate];
+    NSString * weekEnd = [NSString stringWithFormat:@"%d-%@-%@", endYear, endMonthString, _endDate];
     
     // Performance Enhancement
     if (currentWeekDateRange == nil)
@@ -724,7 +763,9 @@
         // show slider in the first location
         //pavaman 16th jan 2011 - we should go to NextMonthStart
 		//[calendar NextMonth];
+
 		[calendar NextMonthStart];
+        //[weekDetails setValue:@"2" forKey:wWEEK];
         [self RefreshLandscape];
         // Calendar function
         [self setupWeeks];
