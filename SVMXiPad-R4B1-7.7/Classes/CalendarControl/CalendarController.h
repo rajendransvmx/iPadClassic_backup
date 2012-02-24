@@ -216,6 +216,9 @@
 
 - (void) enableUI;
 - (void) disableUI;
+- (NSMutableArray *) getRemainingDaysInMonth:(int ) month 
+                               lastNumOfDays:(NSInteger)noDays 
+                                 isPrevMonth:(BOOL) prevMonth;
 
 @end
 

@@ -483,11 +483,40 @@
 
 - (void) resetAllCellBackgroundColor
 {
-    for (int i = 0; i < [buttonArray count]; i++)
+    BOOL is_prev_next_month = YES;
+    BOOL isMonthStarted = NO;
+    NSString *nextBtnTitle;
+    NSString *curBtnTitle;
+
+    for (NSUInteger i = 0; i < [buttonArray count]; i++)
     {
         UIButton * button = [buttonArray objectAtIndex:i];
-        // [button setBackgroundColor:defaultCellColor];
+        curBtnTitle  = [button titleForState:UIControlStateNormal];
+        if(i+1 < [buttonArray count])
+            nextBtnTitle = [[buttonArray objectAtIndex:i+1] titleForState:UIControlStateNormal];
+        else
+            nextBtnTitle = nil;
         [button setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+        if([curBtnTitle isEqualToString:@"1"])
+        {
+            if(!isMonthStarted)
+            {
+                isMonthStarted = YES;
+                is_prev_next_month = NO;
+            }
+            else
+            is_prev_next_month = YES;
+        }
+        if(is_prev_next_month)
+           // [button setTitleColor:[UIColor colorWithRed:0.79 green:0.79 blue:0.79 alpha:0.75] forState:UIControlStateNormal];
+             [button setTitleColor:[UIColor colorWithRed:0.79 green:0.79 blue:0.79 alpha:0.0] forState:UIControlStateNormal];
+
+        if(!is_prev_next_month && nextBtnTitle!=nil)
+        {
+            if([curBtnTitle intValue] > [nextBtnTitle intValue])
+                is_prev_next_month = YES;
+        }
+        
         [button setBackgroundImage:nil forState:UIControlStateNormal];
         [button setBackgroundImage:nil forState:UIControlStateSelected];
     }
@@ -524,11 +553,21 @@
 	{
 		UIButton * button = [buttonArray objectAtIndex:k];
 		[button setTitle:nil forState:UIControlStateNormal];
+        [button setTag:k];
 		button.titleLabel.text = nil;
 	}
     
     // weekday = weekday==7?7:weekday-1; 
-
+    //Siva Manne Prev Month Days
+    NSMutableArray *prevDays = [self getRemainingDaysInMonth:selMonth-1 lastNumOfDays:weekday isPrevMonth:YES];
+    for (int i = 0; i < weekday-1; i++)
+	{
+		[dates insertObject:[prevDays objectAtIndex:i+1] atIndex:i];
+		UIButton * button = [buttonArray objectAtIndex:i];
+		[button setTitle:[dates objectAtIndex:i] forState:UIControlStateNormal];
+        [button setEnabled:NO];
+	}
+     //Siva Manne End Prev Month Days
 	for (int i = weekday-1; i < numDays + weekday - 1; i++)
     // for (int i = 0; i < numDays; i++)
 	{
@@ -536,10 +575,58 @@
 		[dates insertObject:[NSString stringWithFormat:@"%d", dayCount++] atIndex:i];
 		UIButton * button = [buttonArray objectAtIndex:i];
 		[button setTitle:[dates objectAtIndex:i] forState:UIControlStateNormal];
+        [button setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
 	}
+    //Siva Manne Next Month Days
+    NSMutableArray *nextMonthDays = [self getRemainingDaysInMonth:selMonth lastNumOfDays:weekday isPrevMonth:NO];
+    
+    int count_next_month_days=0;
+    for (int i = numDays + weekday - 1; i < numDays + weekday - 1+[nextMonthDays count]; i++)
+	{
+		[dates insertObject:[nextMonthDays objectAtIndex:count_next_month_days++] atIndex:i];
+		UIButton * button = [buttonArray objectAtIndex:i];
+		[button setTitle:[dates objectAtIndex:i] forState:UIControlStateNormal];
+        [button setEnabled:NO];
+	}
+
+    //Siva Manne Next Month End
     [dates removeAllObjects];
     [dates release];
     dates = nil;
+}
+- (NSMutableArray *) getRemainingDaysInMonth:(int ) month 
+                               lastNumOfDays:(NSInteger)noDays 
+                                 isPrevMonth:(BOOL) prevMonth
+{
+    if(month == 0)
+        month = 12;
+    
+    NSMutableArray *days = [[NSMutableArray alloc] init];
+    NSString * numberOfDays = [monthDaysInYearDict objectAtIndex:month];
+	int numDays = [numberOfDays intValue];
+	if ([self IsLeapYear:selYear])
+	{
+		if (month == 2)
+		{
+			numDays++;
+		}
+	}
+    if(prevMonth)
+    {
+        for(int i = numDays - noDays + 1;i<=numDays;i++)
+            [days addObject:[NSString stringWithFormat:@"%d",i]];
+    }
+    else
+    {
+        int forDays = 7 - ((numDays+noDays)%7);
+        if(forDays == 7)
+            forDays = 0;
+        if(forDays == 6)
+            forDays = -1;
+        for(int i = 1;i<=forDays +1 ;i++)
+            [days addObject:[NSString stringWithFormat:@"%d",i]];        
+    }
+    return [days autorelease];
 }
 
 - (IBAction) DateClicked:(id)sender
@@ -552,12 +639,53 @@
     }
 	// Perform date clicked operation
 	UIButton * dateButton = (UIButton *) sender;
+    
+    //Siva Manne 
+    NSDateComponents * newDay = [[NSDateComponents alloc] init];
+	[newDay setDay:1];
+	[newDay setMonth:selMonth];
+	[newDay setYear:selYear];
+
+    NSCalendar * gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+	NSDate * NEWDay = [gregorian dateFromComponents:newDay];
+	NSDateComponents * newDateComponents = [gregorian components:(NSWeekdayCalendarUnit | NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit) fromDate:NEWDay];
+	NSInteger newWeekday = [newDateComponents weekday]==1?7:[newDateComponents weekday]-1;
+    NSLog(@"Tag = %d WeekDay = %d",[dateButton tag],newWeekday);
+    int result = [dateButton tag] - (newWeekday-2);
+    [newDay release];
+    if(result == [dateButton.titleLabel.text intValue])
+    {
+        NSLog(@"Current Month");
+    }
+    else
+    if(result < [dateButton.titleLabel.text intValue])
+    {
+        NSLog(@"Previous Month");
+        selMonth = selMonth-1;
+        if(selMonth == 0 )
+        {
+            selMonth = 12;
+            selYear = selYear - 1;
+        }
+        
+    }
+    else
+    if(result > [dateButton.titleLabel.text intValue])
+    {
+        NSLog(@"Next Month");
+        selMonth = selMonth + 1;
+        if(selMonth == 13)
+        {   selMonth = 1;
+            selYear = selYear + 1;
+        }
+    }
+    //Siva Manne End
     // NSLog(@"Date = %@", dateButton.titleLabel.text);
     if (dateButton.titleLabel.text == nil)
         return;
 	// [dateButton setBackgroundColor:[UIColor lightGrayColor]];
     
-    NSCalendar * gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+   
 
     selectedDate = dateButton;
     
@@ -578,6 +706,7 @@
 	calendarLabel = [calendarLabel stringByAppendingString:[monthArray objectAtIndex:selMonth]];
 	calendarLabel = [calendarLabel stringByAppendingString:@" "];
 	calendarLabel = [calendarLabel stringByAppendingString:[NSString stringWithFormat:@"%d", selYear]];
+
     dayLabel.text = [NSString stringWithFormat:@"%@, %@", [dayArray objectAtIndex:weekday], calendarLabel];
     
     dateLabel.text = selectedDate.titleLabel.text;
@@ -625,7 +754,7 @@
     NSMutableArray * weekdays;
     NSUInteger dateIndex = 0;
     BOOL isAllNil = YES;
-    
+    BOOL isFound = NO;
     currentWeek = 1;
     
     for (int i = 1; i <= 6; i++)
@@ -645,9 +774,10 @@
             }
             
             if (selDate == 0) selDate = currDate;
-            if (selDate == [button.titleLabel.text intValue])
+            if (selDate == [button.titleLabel.text intValue] && !isFound)
             {
                 currentWeek = i;
+                isFound = YES;
             }
         }
         if (!isAllNil)
