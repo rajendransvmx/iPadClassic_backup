@@ -32,7 +32,7 @@
 }
 
 @property (nonatomic, retain) UIPopoverController * popOverController;
-
+@property (nonatomic, retain) IBOutlet UITextView * textView;
 @property (nonatomic, retain) TaskViewController * taskView;
 
 - (IBAction) Cancel;

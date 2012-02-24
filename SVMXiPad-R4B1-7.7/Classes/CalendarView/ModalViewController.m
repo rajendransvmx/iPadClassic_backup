@@ -97,6 +97,7 @@
     else
         [tasks removeAllObjects];
     
+    addTaskView = nil;
     if (taskView == nil)
         taskView = [[TaskViewController alloc] initWithNibName:@"TaskViewController" bundle:nil];
     taskView.calendar = calendar;
@@ -726,6 +727,8 @@
         [appDelegate displayNoInternetAvailable];
         return;
     }
+    if(addTaskView != nil)
+        [addTaskView release];
     addTaskView = [[AddTaskController alloc] initWithNibName:@"AddTaskController" bundle:nil];
     addTaskView.taskView = taskView;
     UIPopoverController * popOver = [[UIPopoverController alloc] initWithContentViewController:addTaskView];
@@ -735,6 +738,7 @@
     UIButton * button = (UIButton *) sender;
     [popOver presentPopoverFromRect:button.frame inView:leftPane permittedArrowDirections:UIPopoverArrowDirectionRight animated:YES];
     popOverController = popOver;
+    [popOver release];
 }
 
 - (void) dismissSelf:(UIPopoverController *)popOver
