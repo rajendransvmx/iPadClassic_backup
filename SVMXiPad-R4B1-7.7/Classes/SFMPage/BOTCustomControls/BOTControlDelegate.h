@@ -28,8 +28,10 @@
 -(void)clearTheDependentRecordTypePicklistValue:(NSString *)recordType_Name 
                                     atIndexPath:(NSIndexPath *)indexPath 
                                     controlType:(NSString *)controlType;
+-(BOOL)isControllerPresent:(NSString *)controller_name inRecordType:(NSString *)record_type;
 -(void)singleTapOncusLabel:(id)cusLabel;
 -(void)doubleTapOnCusLabel:(id)cusLabel;
 - (NSString *) getRecordTypeIDValue;
+- (NSString *) getRecordTypeID:(NSString *)recordTypeName;
 - (NSMutableArray *) getValuesForRecordTypePickList:(NSString *)api_name;
 @end
