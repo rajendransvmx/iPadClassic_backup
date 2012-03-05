@@ -135,17 +135,17 @@
    
     for(int j = 0 ; j< [TFHandler.spinnerData count];j++)
     {
-        NSLog(@"--");
+       // NSLog(@"--");
         NSString * obj = [TFHandler.validFor objectAtIndex:j];
-        NSLog(@"object :%@", obj);
+        //NSLog(@"object :%@", obj);
         obj = [obj stringByReplacingOccurrencesOfString:@" " withString:@""];
         if(obj == nil || [obj isEqualToString:@""])
         {
            // NSLog(@" object  %@" , obj);
             continue;
         }
-        NSLog(@" valid For %@" , TFHandler.validFor);
-        NSLog(@"spinner data %@ " , TFHandler.spinnerData);
+        //NSLog(@" valid For %@" , TFHandler.validFor);
+        //NSLog(@"spinner data %@ " , TFHandler.spinnerData);
         
         BitSet *bitObj = [[BitSet alloc] initWithData:obj];
         for (int k = 0; k < [bitObj size]; k++)
@@ -156,11 +156,11 @@
                 // for the controlling entry at index k
                 if(count == k)
                 {
-                    NSLog(@"Index of %@ = %d",obj,k);
+                   // NSLog(@"Index of %@ = %d",obj,k);
                     
                     //add to cityData
                     [spinner_Array addObject:[TFHandler.spinnerData objectAtIndex:j]];
-                    NSLog(@"SpinnerData %@", [TFHandler.spinnerData objectAtIndex:j]);
+                   // NSLog(@"SpinnerData %@", [TFHandler.spinnerData objectAtIndex:j]);
                     break;
                 }
             }
