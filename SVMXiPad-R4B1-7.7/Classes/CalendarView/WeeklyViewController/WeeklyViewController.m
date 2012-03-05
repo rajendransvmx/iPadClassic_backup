@@ -1138,7 +1138,81 @@
     
     if ([date intValue] < 10)
         date = [NSString stringWithFormat:@"0%d", [date intValue]];
-    
+
+    NSRange range = {8,2};
+    int prevDate = [[startTime substringWithRange:range] intValue];  
+    NSLog(@"PrevDate = %d and Next Date =%d",prevDate,[date intValue]);
+    int diff = ([date intValue] > prevDate)?([date intValue] - prevDate):(prevDate - [date intValue]);
+    if(diff > 7)
+    {
+        if( prevDate > [date intValue] )
+        {
+            NSRange monthRange = {6,2};
+            int newMonth = [[startTime substringWithRange:monthRange] intValue]; 
+            newMonth = newMonth + 1;
+            if(newMonth == 13 )
+            {
+                newMonth = 1; 
+                NSRange yearRange = {0,4};
+                int newYear = [[startTime substringWithRange:yearRange] intValue]; 
+                NSString *newMonthStr, *newYearStr;
+                newMonthStr = [NSString stringWithFormat:@"0%d",newMonth];
+                newYear = newYear + 1;
+                newYearStr = [NSString stringWithFormat:@"%d",newYear];                                
+                startTime = [startTime stringByReplacingCharactersInRange:NSMakeRange(5, 2) withString:newMonthStr];
+                startTime = [startTime stringByReplacingCharactersInRange:NSMakeRange(0, 4) withString:newYearStr];
+                endTime = [endTime stringByReplacingCharactersInRange:NSMakeRange(5, 2) withString:newMonthStr];
+                endTime = [endTime stringByReplacingCharactersInRange:NSMakeRange(0, 4) withString:newYearStr];
+                
+            }
+            else
+            {
+                NSString *newMonthStr;
+                if(newMonth<10)
+                    newMonthStr = [NSString stringWithFormat:@"0%d",newMonth];
+                else
+                    newMonthStr = [NSString stringWithFormat:@"%d",newMonth];
+                startTime = [startTime stringByReplacingCharactersInRange:NSMakeRange(5, 2) withString:newMonthStr];
+                endTime = [endTime stringByReplacingCharactersInRange:NSMakeRange(5, 2) withString:newMonthStr];
+                
+            }
+
+        }
+        else
+        {
+            NSRange monthRange = {6,2};
+            int newMonth = [[startTime substringWithRange:monthRange] intValue]; 
+            newMonth = newMonth -1;
+            if(newMonth == 0 )
+            {
+                newMonth = 12; 
+                NSRange yearRange = {0,4};
+                int newYear = [[startTime substringWithRange:yearRange] intValue]; 
+                NSString *newMonthStr, *newYearStr;
+                if(newMonth<10)
+                    newMonthStr = [NSString stringWithFormat:@"0%d",newMonth];
+                else
+                    newMonthStr = [NSString stringWithFormat:@"%d",newMonth];
+                newYear = newYear -1;
+                newYearStr = [NSString stringWithFormat:@"%d",newYear];                
+                
+                startTime = [startTime stringByReplacingCharactersInRange:NSMakeRange(5, 2) withString:newMonthStr];
+                startTime = [startTime stringByReplacingCharactersInRange:NSMakeRange(0, 4) withString:newYearStr];
+                endTime = [endTime stringByReplacingCharactersInRange:NSMakeRange(5, 2) withString:newMonthStr];
+                endTime = [endTime stringByReplacingCharactersInRange:NSMakeRange(0, 4) withString:newYearStr];
+            }
+            else
+            {
+                NSString *newMonthStr;
+                if(newMonth<10)
+                    newMonthStr = [NSString stringWithFormat:@"0%d",newMonth];
+                else
+                    newMonthStr = [NSString stringWithFormat:@"%d",newMonth];
+                startTime = [startTime stringByReplacingCharactersInRange:NSMakeRange(5, 2) withString:newMonthStr];
+                endTime = [endTime stringByReplacingCharactersInRange:NSMakeRange(5, 2) withString:newMonthStr];
+            }
+        }
+    }
     //Replace date with current date
     NSString * oldString = [startTime substringToIndex:10];
     NSString * newString = [startTime substringToIndex:8];
