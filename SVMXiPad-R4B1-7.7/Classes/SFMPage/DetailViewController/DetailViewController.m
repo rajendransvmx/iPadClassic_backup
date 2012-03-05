@@ -1049,7 +1049,16 @@
     
     NSLog(@"Web Service Method - %@", targetCall);
     NSArray * keys = [NSArray arrayWithObjects:WEBSERVICE_NAME, SFM_DICTIONARY, nil];
-    NSArray * objects = [NSArray arrayWithObjects:targetCall, appDelegate.SFMPage, nil];
+    NSMutableDictionary *finalData = [[NSMutableDictionary alloc] initWithDictionary:appDelegate.SFMPage];
+    NSLog(@"Final Data = %@",finalData);
+    /*
+    for(int i=0;i<[finalData count]; i++)
+    {
+        finalData objectForKey:<#(id)#>
+    }
+     */
+    //NSArray * objects = [NSArray arrayWithObjects:targetCall, appDelegate.SFMPage, nil];
+    NSArray * objects = [NSArray arrayWithObjects:targetCall, finalData, nil];
     NSDictionary * dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
     [activity startAnimating];
     appDelegate.wsInterface.getPrice = FALSE;
@@ -1071,6 +1080,7 @@
             break;
         }
     }
+    [finalData release];
     [self.tableView reloadData];
     [appDelegate.sfmPageController.rootView refreshTable];
     [self  didselectSection:0];    
@@ -1182,6 +1192,11 @@
         }
     
     }
+    //Siva Manne
+    NSDictionary *oldSFMData = [appDelegate SFMPage];
+    NSLog(@"Old Data = %@",oldSFMData);
+    appDelegate.SFMPage = [self getModifiedDictionaryWithUpdateRecordTypeID];
+    NSLog(@"New Data = %@",appDelegate.SFMPage);
     if ([defaultAction isEqualToString:quick_save])
     {
         //sahana 2nd Aug  sfmEvents
@@ -1302,10 +1317,40 @@
         appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
         appDelegate.isDetailActive = NO;
     }
-    
+    appDelegate.SFMPage = oldSFMData;
     [self enableSFMUI];
 }
 
+- (NSMutableDictionary *) getModifiedDictionaryWithUpdateRecordTypeID
+{
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithDictionary:[appDelegate SFMPage]];
+    NSMutableArray *headerSectionArray = [[dict objectForKey:gHEADER] objectForKey:gHEADER_SECTIONS];
+    for(int i=0;i< [headerSectionArray count]; i++)
+    {
+        NSMutableDictionary *subDict = [headerSectionArray objectAtIndex:i];
+        NSMutableArray *subArray = [subDict objectForKey:gSECTION_FIELDS];
+        BOOL found = NO;
+        for(int j=0;j< [subArray count]; j++)
+        {
+            if([[[subArray objectAtIndex:j] objectForKey:gFIELD_API_NAME] isEqualToString:@"RecordTypeId"])
+            {
+                NSString *recordTypeName = [[subArray objectAtIndex:j] objectForKey:gFIELD_VALUE_VALUE];
+                if([recordTypeName length] > 0)
+                [[subArray objectAtIndex:j] setObject:[self getRecordTypeID:recordTypeName] forKey:gFIELD_VALUE_KEY];
+                found =YES;
+                [subDict setObject:subArray forKey:gSECTION_FIELDS];
+                break;
+            }
+        }
+        if(found)
+        {
+            [headerSectionArray insertObject:subDict atIndex:i];
+            break;
+        }
+    }
+    [[dict objectForKey:gHEADER] setObject:headerSectionArray forKey:gHEADER_SECTIONS];
+    return [dict autorelease]; 
+}
 - (void) startSummaryDataFetch
 {
     [self disableSFMUI];
@@ -1385,30 +1430,22 @@
     NSArray * _keys = [NSArray arrayWithObjects:SVMXC__Activity_Type__c, SVMXC__Actual_Price2__c, SVMXC__Actual_Quantity2__c, nil];
     // Calculate Labor
     NSArray * allKeys = [LabourValuesDictionary allKeys];
-    for(NSString *labour_key in allKeys)
+    for (NSString * key in allKeys)
     {
-        NSArray *labour_details = [LabourValuesDictionary objectForKey:labour_key];
-        for(int j=0;j<[labour_details count];j++)
+        if ([key Contains:@"QTY_"])
         {
-            NSArray *labour_detail_allKeys = [[labour_details objectAtIndex:j] allKeys];
-            for (NSString * key in labour_detail_allKeys)
+            NSString * quantity = [LabourValuesDictionary objectForKey:key];
+            int _quantity = [quantity floatValue];
+            if (_quantity)
             {
-                if ([key Contains:@"QTY_"])
-                {
-                    NSString * quantity = [[labour_details objectAtIndex:j] objectForKey:key];
-                    int _quantity = [quantity floatValue];
-                    if (_quantity)
-                    {
-                        NSString * item = [key stringByReplacingOccurrencesOfString:@"QTY_" withString:@""];
-                        NSString * _rate = [[labour_details objectAtIndex:j] objectForKey:[NSString stringWithFormat:@"Rate_%@", item]];
-                        NSArray * _objects = [NSArray arrayWithObjects:item, _rate, quantity, nil];
-                        
-                        if (Labor == nil)
-                            Labor = [[NSMutableArray alloc] initWithCapacity:0];
-                        NSDictionary * laborDictionary = [NSDictionary dictionaryWithObjects:_objects forKeys:_keys];
-                        [Labor addObject:laborDictionary];
-                    }
-                }
+                NSString * item = [key stringByReplacingOccurrencesOfString:@"QTY_" withString:@""];
+                NSString * _rate = [LabourValuesDictionary objectForKey:[NSString stringWithFormat:@"Rate_%@", item]];
+                NSArray * _objects = [NSArray arrayWithObjects:item, _rate, quantity, nil];
+                
+                if (Labor == nil)
+                    Labor = [[NSMutableArray alloc] initWithCapacity:0];
+                NSDictionary * laborDictionary = [NSDictionary dictionaryWithObjects:_objects forKeys:_keys];
+                [Labor addObject:laborDictionary];
             }
         }
     }
@@ -1931,77 +1968,37 @@
 	[LabourValuesDictionary setValue:@"0" forKey:REPAIR];
 	[LabourValuesDictionary setValue:@"0" forKey:SERVICE];
 
-    NSMutableArray *calibrationData = [[NSMutableArray alloc] init];
-    NSMutableArray *cleanupData = [[NSMutableArray alloc] init];
-    NSMutableArray *installationData = [[NSMutableArray alloc] init];
-    NSMutableArray *repairData = [[NSMutableArray alloc] init];
-    NSMutableArray *serviceData = [[NSMutableArray alloc] init];
     
     for (int j = 0; j < [array count]; j++)
     {
         ZKSObject * obj = [array objectAtIndex:j];
         if ([[[obj fields] objectForKey:@"SVMXC__Activity_Type__c"] isEqualToString:CALIBRATION])
         {
-            //[LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_CALIBRATION];
-            //[LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_CALIBRATION];
-            NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-            [dict setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_CALIBRATION];
-            [dict setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_CALIBRATION];                                         
-            [calibrationData addObject:dict];
-            [dict release];
+            [LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_CALIBRATION];
+            [LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_CALIBRATION];
         }
         if ([[[obj fields] objectForKey:@"SVMXC__Activity_Type__c"] isEqualToString:CLEANUP])
         {
-            //[LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_CLEANUP];
-            //[LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_CLEANUP];
-            NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-            [dict setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_CLEANUP];
-            [dict setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_CLEANUP];
-            [cleanupData addObject:dict];
-            [dict release];
+            [LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_CLEANUP];
+            [LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_CLEANUP];
         }
         if ([[[obj fields] objectForKey:@"SVMXC__Activity_Type__c"] isEqualToString:INSTALLATION])
         {
-            //[LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_INSTALLATION];
-            //[LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_INSTALLATION];
-            NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];     
-            [dict setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_INSTALLATION];
-            [dict setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_INSTALLATION];
-            [installationData addObject:dict];
-            [dict release];
+            [LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_INSTALLATION];
+            [LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_INSTALLATION];
         }
         if ([[[obj fields] objectForKey:@"SVMXC__Activity_Type__c"] isEqualToString:REPAIR])
         {
-            //[LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_REPAIR];
-            //[LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_REPAIR];
-            NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-            [dict setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_REPAIR];
-            [dict setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_REPAIR];
-            [repairData addObject:dict];
-            [dict release];
+            [LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_REPAIR];
+            [LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_REPAIR];
         }
         if ([[[obj fields] objectForKey:@"SVMXC__Activity_Type__c"] isEqualToString:SERVICE])
         {
-            //[LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_SERVICE];
-            //[LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_SERVICE];
-            NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-            [dict setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_SERVICE];
-            [dict setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_SERVICE];
-            [serviceData addObject:dict];
-            [dict release];
+            [LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_SERVICE];
+            [LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_SERVICE];
         }
     }
-    [LabourValuesDictionary setValue:calibrationData forKey:CALIBRATION];
-	[LabourValuesDictionary setValue:cleanupData forKey:CLEANUP];
-	[LabourValuesDictionary setValue:installationData forKey:INSTALLATION];
-	[LabourValuesDictionary setValue:repairData forKey:REPAIR];
-	[LabourValuesDictionary setValue:serviceData forKey:SERVICE];
-    
-    [calibrationData release];
-    [cleanupData release];
-    [installationData release];
-    [repairData release];
-    [serviceData release];
+
     NSString * query = [NSString stringWithFormat:@"SELECT SVMXC__Billable_Cost2__c FROM SVMXC__Service_Group_Costs__c	WHERE SVMXC__Group_Member__c = '%@' AND SVMXC__Cost_Category__c = 'Straight' LIMIT 1", appDelegate.appTechnicianId];
     [[ZKServerSwitchboard switchboard] query:query target:self selector:@selector(getPriceForLabor:error:context:) context:nil];
 }
@@ -3009,7 +3006,14 @@
                 
                 refObjSearchId = [dict objectForKey:gFIELD_RELATED_OBJECT_SEARCH_ID];
                 refObjName = [dict objectForKey:gFIELD_RELATED_OBJECT_NAME];
-
+                arr = [[NSMutableArray alloc] init];
+                [arr addObject:@""];
+                for(int k=0;k<[RecordTypePickList count];k++)
+                {
+                    if(![[[RecordTypePickList objectAtIndex:k] objectForKey:@"RecorTypeName"] isEqual:@"Master"])
+                        [arr addObject:[[RecordTypePickList objectAtIndex:k] objectForKey:@"RecorTypeName"]];
+                    NSLog(@"Data = %@",[[RecordTypePickList objectAtIndex:k] objectForKey:@"RecorTypeName"]);
+                }
                /* appDelegate.wsInterface.didGetRecordTypeId = FALSE;
                 if([refObjSearchId isEqualToString:@""])
                 {
@@ -3191,6 +3195,7 @@
                                 if ([api_name isEqualToString:value_Field_API])
                                 {
                                     value = [[detail_values objectAtIndex:i] objectForKey:gVALUE_FIELD_VALUE_VALUE];
+                                    value = [self getRecordTypeName:value];
                                     break;
                                 }
                             }
@@ -3439,7 +3444,35 @@
                                  objectForKey:@"Svmxc__Actual_Resolution__C"];
             actual_restoration =  [[header_dict objectForKey:@"hdr_Data"] 
                                    objectForKey:@"Svmxc__Actual_Restoration__C"];
-            if([sla_clock_paused isEqualToString:@"true"])
+            /*
+            if(actual_restoration == nil)
+            {
+                NSArray *hdr_sections = [header_dict objectForKey:@"hdr_Sections"];
+                BOOL found = NO;
+                for(int i=0;i<[hdr_sections count];i++)
+                {
+                    NSArray *sec_obj = [[hdr_sections objectAtIndex:i] objectForKey:@"section_Fields"];
+                    NSLog(@"Hdr Obj = %@",sec_obj);
+                    
+                    for(int j =0;j< [sec_obj count]; j++)
+                    {
+                        NSDictionary *sub_sec_obj = [sec_obj objectAtIndex:j];
+                        NSLog(@"Object = %@",sub_sec_obj);
+                        NSString *api_name = [sub_sec_obj objectForKey:@"Field_API_Name"];
+                        if([api_name isEqualToString:@"SVMXC__Actual_Restoration__c"])
+                        {
+                            actual_restoration = [sub_sec_obj objectForKey:@"Field_Value_Value"];
+                            found = YES;
+                        }
+                    }
+                    if(found)
+                    break;
+                }
+            }
+             */
+            if([sla_clock_paused isEqualToString:@"true"] ||
+               [sla_clock_paused isEqualToString:@"True"]
+               )
             {
                 isSLAClockPaused = YES;
                 //[[header_dict objectForKey:@"hdr_Data"] objectForKey:@"Svmxc__Sla_Restoration_Clock_Pause_Time__C"];
@@ -3493,7 +3526,33 @@
                 {
                     NSString *restoration_customer = [[header_dict objectForKey:@"hdr_Data"] 
                                                       objectForKey:@"Svmxc__Restoration_Customer_By__C"];
-                                        NSLog(@"Actual Restoration = %@",actual_restoration);
+                    /*
+                    if(restoration_customer == nil)
+                    {
+                        NSArray *hdr_sections = [header_dict objectForKey:@"hdr_Sections"];
+                        BOOL found = NO;
+                        for(int i=0;i<[hdr_sections count];i++)
+                        {
+                            NSArray *sec_obj = [[hdr_sections objectAtIndex:i] objectForKey:@"section_Fields"];
+                            NSLog(@"Hdr Obj = %@",sec_obj);
+                            
+                            for(int j =0;j< [sec_obj count]; j++)
+                            {
+                                NSDictionary *sub_sec_obj = [sec_obj objectAtIndex:j];
+                                NSLog(@"Object = %@",sub_sec_obj);
+                                NSString *api_name = [sub_sec_obj objectForKey:@"Field_API_Name"];
+                                if([api_name isEqualToString:@"SVMXC__Restoration_Customer_By__c"])
+                                {
+                                    restoration_customer = [sub_sec_obj objectForKey:@"Field_Value_Value"];
+                                    found = YES;
+                                }
+                            }
+                            if(found)
+                                break;
+                        }
+                    }
+                     */
+                    NSLog(@"Actual Restoration = %@",actual_restoration);
                     NSLog(@"Restoration Customer = %@",restoration_customer);
                     [restorationTimer updateTimerLabel:[self timeDifferenceFrom:restoration_customer toDate:actual_restoration]];
 
@@ -4216,6 +4275,8 @@
         if ([field_API_Name isEqualToString:value_Field_API])
         {
             value = [[detail_values objectAtIndex:i] objectForKey:gVALUE_FIELD_VALUE_VALUE];
+            if([field_API_Name isEqualToString:@"RecordTypeId"])
+                value = [self getRecordTypeName:value];
             keyValue = [[detail_values objectAtIndex:i]  objectForKey:gVALUE_FIELD_VALUE_KEY];
             break;
         }
@@ -4886,8 +4947,8 @@
                                 NSArray * pickListEntryArray = [descField picklistValues];
                                 for (int k = 0; k < [pickListEntryArray count]; k++)
                                 {
-                                    NSString * value = [[pickListEntryArray objectAtIndex:k] label];
-                                    if([value isEqualToString:fieldValue])
+                                    NSString * myValue = [[pickListEntryArray objectAtIndex:k] label];
+                                    if([myValue isEqualToString:fieldValue])
                                     {
                                         fieldKeyValue =[[pickListEntryArray objectAtIndex:k] value];
                                         break;
@@ -4944,6 +5005,10 @@
                             fieldKeyValue = @"";
                         }
                         NSLog(@"%@",date);
+                    }
+                    if([control_type isEqualToString:@"reference"] && [fieldAPI isEqualToString:@"RecordTypeId"])
+                    {
+                        recordTypeID_Value = fieldValue;
                     }
 
                     [dict setValue:fieldKeyValue forKey:gFIELD_VALUE_KEY];
@@ -5038,7 +5103,11 @@
                         }
                         NSLog(@"%@",date);
                     }
-                
+                    if([control_type isEqualToString:@"reference"] && [fieldAPI isEqualToString:@"RecordTypeId"])
+                    {
+                        recordTypeID_Value = fieldValue;
+                    }
+
                     [[detail_values objectAtIndex:i] setValue:fieldValue forKey:gVALUE_FIELD_VALUE_VALUE];
                     [[detail_values objectAtIndex:i] setValue:fieldKeyValue forKey:gVALUE_FIELD_VALUE_KEY];
                     break;
@@ -7281,6 +7350,44 @@
     }
     return 9999999;
 }
+- (NSString *) getRecordTypeName:(NSString *)recordTypeID
+{
+    NSString *recordTypeName = nil;
+    if([recordTypeID isEqualToString:@" "] || recordTypeID == nil )
+    {
+        NSLog(@"space");
+    }
+    else
+    {
+        for(int i=0; i< [RecordTypePickList count]; i++)
+        {
+            NSString *recordID = [[RecordTypePickList objectAtIndex:i] objectForKey:@"RecorTypeId"];
+            if([recordID isEqualToString:recordTypeID])
+                recordTypeName = [[RecordTypePickList objectAtIndex:i] objectForKey:@"RecorTypeName"];
+        }
+    }
+    if(recordTypeName == nil)
+        recordTypeName = recordTypeID;
+    return  recordTypeName;
+}
+- (NSString *) getRecordTypeID:(NSString *)recordTypeName
+{
+    NSString *recordTypeID = @"";
+    if([recordTypeName isEqualToString:@" "] || recordTypeName == nil ||[recordTypeID_Value length ] == 0)
+    {
+        NSLog(@"space");
+    }
+    else
+    {
+        for(int i=0; i< [RecordTypePickList count]; i++)
+        {
+            NSString *recordType = [[RecordTypePickList objectAtIndex:i] objectForKey:@"RecorTypeName"];
+            if([recordType isEqualToString:recordTypeName])
+                recordTypeID = [[RecordTypePickList objectAtIndex:i] objectForKey:@"RecorTypeId"];
+        }
+    }
+    return  recordTypeID;
+}
 - (NSString *) getRecordTypeIDValue
 {
     if([recordTypeID_Value isEqualToString:@" "])
@@ -7399,45 +7506,56 @@
     [picklistValues addObject:@""];//Siva Manne
     NSDictionary *recordtype_dict;
     NSArray *pickLists = nil;
-    for(int i=0; i< [RecordTypePickList count]; i++)
+    if([api_name isEqualToString:@"RecordTypeId"])
     {
-        recordtype_dict = [RecordTypePickList objectAtIndex:i];
-        if(([[recordtype_dict objectForKey:@"RecorTypeName"] isEqualToString:recordTypeID_Value]) ||
-           ([[recordtype_dict objectForKey:@"RecorTypeId"] isEqualToString:recordTypeID_Value]) 
-           )
+        for(int i=0; i< [RecordTypePickList count]; i++)
         {
-            pickLists = [recordtype_dict objectForKey:@"PickLists"];
-            break;
-        }
-    }
-    if(pickLists != nil )
-    {
-        NSDictionary *pickListDetails;
-        NSArray      *pickListArray;
-        NSString     *pickListName;
-        for(int j=0; j< [pickLists count]; j++)
-        {
-            pickListDetails =  [pickLists objectAtIndex:j];
-            pickListName = [pickListDetails objectForKey:@"PickListName"];
-            NSLog(@"PickList Name = %@",pickListName);
-            if([pickListName isEqualToString:api_name])
-            {
-                pickListArray = [pickListDetails objectForKey:@"PickListValue"];
-                for(int k=0; k<[pickListArray count]; k++)
-                {
-                    NSLog(@"PickList Value %d = %@",k,[[pickListArray objectAtIndex:k] objectForKey:@"value"]);
-                    
-                    [picklistValues addObject:[[pickListArray objectAtIndex:k] objectForKey:@"value"]];
-                }
-            }
-            
+            recordtype_dict = [RecordTypePickList objectAtIndex:i];
+            if(![[recordtype_dict objectForKey:@"RecorTypeName"] isEqualToString:@"Master"])
+                [picklistValues addObject:[recordtype_dict objectForKey:@"RecorTypeName"]];
         }
     }
     else
     {
-        NSLog(@"Record Type Not Found");
+        for(int i=0; i< [RecordTypePickList count]; i++)
+        {
+            recordtype_dict = [RecordTypePickList objectAtIndex:i];
+            if(([[recordtype_dict objectForKey:@"RecorTypeName"] isEqualToString:recordTypeID_Value]) ||
+               ([[recordtype_dict objectForKey:@"RecorTypeId"] isEqualToString:recordTypeID_Value]) 
+               )
+            {
+                pickLists = [recordtype_dict objectForKey:@"PickLists"];
+                break;
+            }
+        }
+        if(pickLists != nil )
+        {
+            NSDictionary *pickListDetails;
+            NSArray      *pickListArray;
+            NSString     *pickListName;
+            for(int j=0; j< [pickLists count]; j++)
+            {
+                pickListDetails =  [pickLists objectAtIndex:j];
+                pickListName = [pickListDetails objectForKey:@"PickListName"];
+                NSLog(@"PickList Name = %@",pickListName);
+                if([pickListName isEqualToString:api_name])
+                {
+                    pickListArray = [pickListDetails objectForKey:@"PickListValue"];
+                    for(int k=0; k<[pickListArray count]; k++)
+                    {
+                        NSLog(@"PickList Value %d = %@",k,[[pickListArray objectAtIndex:k] objectForKey:@"value"]);
+                        
+                        [picklistValues addObject:[[pickListArray objectAtIndex:k] objectForKey:@"value"]];
+                    }
+                }
+                
+            }
+        }
+        else
+        {
+            NSLog(@"Record Type Not Found");
+        }
     }
-
     return [picklistValues autorelease];
 }
 -(void)clearTheDependentPicklistValue:(NSString *)fieldApi_name atIndexPath:(NSIndexPath *)indexPath controlType:(NSString *)controlType;
@@ -7602,6 +7720,12 @@
             pickLists = [recordtype_dict objectForKey:@"PickLists"];
             break;
         }
+        if([[recordtype_dict objectForKey:@"RecorTypeId"] isEqualToString:record_type])
+        {
+            pickLists = [recordtype_dict objectForKey:@"PickLists"];
+            break;
+        }
+        
     }
     if(pickLists != nil )
     {
