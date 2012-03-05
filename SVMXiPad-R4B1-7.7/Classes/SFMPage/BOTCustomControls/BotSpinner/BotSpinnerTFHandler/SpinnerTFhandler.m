@@ -42,17 +42,20 @@
     {
        contentView.spinnerData  = [setSpinnerValuedelegate  getValuesForDependentPickList];
     }
+    else if([ parent.fieldAPIName isEqualToString:@"RecordTypeId"] && [parent.control_type isEqualToString:@"reference"])
+    {
+        contentView.spinnerData  = (NSArray *)[parent.controlDelegate  getValuesForRecordTypePickList:parent.fieldAPIName];
+
+        //call webservice method         
+        //contentView.spinnerData = [self getLookUpForRecordTypeId];
+    }
     else
-    if(([parent.controlDelegate getRecordTypeIDValue] != nil) && ![ parent.fieldAPIName isEqualToString:@"RecordTypeId"])
+    if([parent.controlDelegate getRecordTypeIDValue] != nil && 
+       ([parent.controlDelegate isControllerPresent:parent.fieldAPIName inRecordType:[parent.controlDelegate getRecordTypeIDValue]]))
     {
         contentView.spinnerData  = (NSArray *)[parent.controlDelegate  getValuesForRecordTypePickList:parent.fieldAPIName];
     }
-    else if([ parent.fieldAPIName isEqualToString:@"RecordTypeId"] && [parent.control_type isEqualToString:@"reference"])
-    {
-        //call webservice method 
-        
-        contentView.spinnerData = [self getLookUpForRecordTypeId];
-    }
+
     else
     {
         //[setSpinnerValuedelegate clearTheDependentPickListValue];
@@ -84,7 +87,7 @@
 }
 -(NSMutableArray *)getLookUpForRecordTypeId
 {
-    
+
     BotSpinnerTextField * parent = (BotSpinnerTextField *)delegate;
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];;
     appDelegate.recordtypeId_webservice_called = TRUE;
@@ -164,6 +167,7 @@
     }
     NSLog(@"%@", arr);
     return arr;
+
 }
 
 
