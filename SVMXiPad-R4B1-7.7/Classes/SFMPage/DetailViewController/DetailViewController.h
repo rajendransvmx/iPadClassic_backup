@@ -280,7 +280,8 @@ ChatterDelegate>
 - (void) disableSFMUI;
 - (NSString *) timeDifferenceFrom:(NSString *)fromDate toDate:(NSString *)toDate;
 - (NSMutableDictionary *)getDefaultValue:(NSString *)controller_name inRecordType:(NSString *)record_type;
-
+- (NSMutableDictionary *) getModifiedDictionaryWithUpdateRecordTypeID;
+- (NSString *) getRecordTypeName:(NSString *)recordTypeID;
 #define SHOWALL_HEADERS                     0
 #define SHOW_HEADER_ROW                     1
 #define SHOWALL_LINES                       2
