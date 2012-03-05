@@ -396,6 +396,7 @@
         UIButton * button = [buttonArray objectAtIndex:i];
         [button setTitle:nil forState:UIControlStateNormal];
         button.titleLabel.text = nil;
+        [button setTag:i];
     }
 	
 	[self UpdateDates];
@@ -449,7 +450,22 @@
     {
         selDate = currDate;
     }
+    int index = 0;
+    BOOL dateFound = NO;
     for (int i = 0; i < [buttonArray count]; i++)
+    {
+        UIButton * button = [buttonArray objectAtIndex:i];
+        
+        if (!dateFound && [button.titleLabel.text isEqualToString:@"1"])
+        {
+            index = i;
+            dateFound = YES;
+        }
+        [button setBackgroundImage:nil forState:UIControlStateNormal];
+        [button setBackgroundImage:nil forState:UIControlStateSelected];
+    }
+
+    for (int i = index; i < [buttonArray count]; i++)
     {
         UIButton * button = [buttonArray objectAtIndex:i];
 
@@ -461,13 +477,6 @@
             [button setBackgroundImage:[UIImage imageNamed:@"calendar-date-highlighter.png"] forState:UIControlStateSelected];
             neverHighlightedDate = NO;
             break;
-        }
-        else if ([button.titleLabel.text isEqualToString:[NSString stringWithFormat:@"%d", selDate]])
-        {
-            // [button setBackgroundColor:[UIColor lightGrayColor]];
-            [button setBackgroundImage:nil forState:UIControlStateNormal];
-            [button setBackgroundImage:nil forState:UIControlStateSelected];
-            // selectedDate = button;
         }
     }
     
@@ -548,7 +557,7 @@
 	{
 		[dates insertObject:@"" atIndex:j];
 	}
-	
+	/*
 	for (int k = 0; k < [buttonArray count]; k++)
 	{
 		UIButton * button = [buttonArray objectAtIndex:k];
@@ -556,6 +565,7 @@
         [button setTag:k];
 		button.titleLabel.text = nil;
 	}
+     */
     
     // weekday = weekday==7?7:weekday-1; 
     //Siva Manne Prev Month Days
@@ -576,6 +586,7 @@
 		UIButton * button = [buttonArray objectAtIndex:i];
 		[button setTitle:[dates objectAtIndex:i] forState:UIControlStateNormal];
         [button setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+        [button setEnabled:YES];
 	}
     //Siva Manne Next Month Days
     NSMutableArray *nextMonthDays = [self getRemainingDaysInMonth:selMonth lastNumOfDays:weekday isPrevMonth:NO];
@@ -651,41 +662,9 @@
 	NSDateComponents * newDateComponents = [gregorian components:(NSWeekdayCalendarUnit | NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit) fromDate:NEWDay];
 	NSInteger newWeekday = [newDateComponents weekday]==1?7:[newDateComponents weekday]-1;
     NSLog(@"Tag = %d WeekDay = %d",[dateButton tag],newWeekday);
-    int result = [dateButton tag] - (newWeekday-2);
     [newDay release];
-    if(result == [dateButton.titleLabel.text intValue])
-    {
-        NSLog(@"Current Month");
-    }
-    else
-    if(result < [dateButton.titleLabel.text intValue])
-    {
-        NSLog(@"Previous Month");
-        selMonth = selMonth-1;
-        if(selMonth == 0 )
-        {
-            selMonth = 12;
-            selYear = selYear - 1;
-        }
-        
-    }
-    else
-    if(result > [dateButton.titleLabel.text intValue])
-    {
-        NSLog(@"Next Month");
-        selMonth = selMonth + 1;
-        if(selMonth == 13)
-        {   selMonth = 1;
-            selYear = selYear + 1;
-        }
-    }
-    //Siva Manne End
-    // NSLog(@"Date = %@", dateButton.titleLabel.text);
     if (dateButton.titleLabel.text == nil)
         return;
-	// [dateButton setBackgroundColor:[UIColor lightGrayColor]];
-    
-   
 
     selectedDate = dateButton;
     
@@ -754,7 +733,7 @@
     NSMutableArray * weekdays;
     NSUInteger dateIndex = 0;
     BOOL isAllNil = YES;
-    BOOL isFound = NO;
+    int count = 0;
     currentWeek = 1;
     
     for (int i = 1; i <= 6; i++)
@@ -774,10 +753,12 @@
             }
             
             if (selDate == 0) selDate = currDate;
-            if (selDate == [button.titleLabel.text intValue] && !isFound)
+            //if (selDate == [button.titleLabel.text intValue] && !isFound)
+            if([button.titleLabel.text intValue] == 1)
+                count++;
+            if (selDate == [button.titleLabel.text intValue] && count == 1)
             {
                 currentWeek = i;
-                isFound = YES;
             }
         }
         if (!isAllNil)
