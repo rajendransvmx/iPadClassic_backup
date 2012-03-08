@@ -45,6 +45,17 @@
 {
     return readOnly;
 }
+- (void) setRequired:(BOOL)_required
+{
+    required = _required;
+    if (required)
+    {
+        UIImageView *imgView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"required_textarea.png"]];
+        [self addSubview: imgView];
+        [self sendSubviewToBack: imgView];
+        [imgView release];
+    }
+}
 
 - (void) setReadOnly:(BOOL)flag
 {
