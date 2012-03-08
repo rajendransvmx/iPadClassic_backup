@@ -27,12 +27,15 @@
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
     NSString * currentText = textView.text;
-    if ([text length] != 0)
-        currentText = [NSString stringWithFormat:@"%@%@", currentText, text];
-    else
-        currentText = [currentText substringToIndex:[currentText length]-1];
-    
-    [delegate didChangeText:currentText];
+    if([currentText length] > 0)
+    {
+        if ([text length] != 0)
+            currentText = [NSString stringWithFormat:@"%@%@", currentText, text];
+        else
+            currentText = [currentText substringToIndex:[currentText length]-1];
+        
+        [delegate didChangeText:currentText];
+    }
     return YES;
 }
 
