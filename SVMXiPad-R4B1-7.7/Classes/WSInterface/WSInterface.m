@@ -1645,8 +1645,7 @@
                     [bubbleInfoDict setValue:arr forKey:field_api_name];
                     [arr release];
                 }
-                
-                
+                  
                  NSLog(@"   NUm  %d" ,recordNO);
                 NSString * str_record_num = [NSString stringWithFormat:@"%d" , recordNO];
                 NSString * str_record_id = @"";
@@ -2194,8 +2193,56 @@
         }
 
         NSMutableDictionary *hdr_object = [appDelegate.SFMPage objectForKey:gHEADER];
+        NSMutableDictionary * header_data = [hdr_object objectForKey:gHEADER_DATA];
         NSMutableArray *header_sections = [hdr_object objectForKey:gHEADER_SECTIONS];
 
+        
+        NSLog(@"BEFORE HDRE_DATA %@", header_data);
+        NSArray * allkeys = [bubbleInfoDict_hdr allKeys];
+       
+        for(NSString * str in allkeys)
+        {
+            
+            BOOL flag = FALSE;
+            for (int i=0;i<[header_sections count];i++)
+            {
+                NSMutableDictionary * section = [header_sections objectAtIndex:i];
+                NSMutableArray *section_fields = [section objectForKey:gSECTION_FIELDS];
+                for (int j=0;j<[section_fields count];j++)
+                {
+                    NSMutableDictionary *section_field = [section_fields objectAtIndex:j];
+                    NSString * api_name = [section_field objectForKey:gFIELD_API_NAME];
+                    
+                    if([str isEqualToString:api_name])
+                    {
+                        flag = TRUE;
+                        break;
+                    }
+                }
+            }
+            if(!flag)
+            {
+                NSString * temp_value = [header_data objectForKey:str];
+                NSMutableArray * strmap =[bubbleInfoDict_hdr  objectForKey:str];
+                if([strmap count] > 0)
+                {
+                    //retrieving key from dict 
+                    NSMutableDictionary * key_dict = [strmap objectAtIndex:0];
+                    NSString * key = [key_dict objectForKey:@"key"];
+                    [header_data  setObject:key forKey:str];
+                    //retrieving value from dict
+                    
+                    NSLog(@"BEFOREEVENT %@  AFTEREVENT %@",temp_value,key);
+                }
+                
+               
+            }
+            
+        }
+        
+        NSLog(@"AFTER HDRE_DATA %@", header_data);
+        
+        
         for (int i=0;i<[header_sections count];i++)
         {
             NSMutableDictionary * section = [header_sections objectAtIndex:i];
@@ -2444,7 +2491,7 @@
         {
             INTF_WebServicesDefServiceSvc_INTF_UIField * field = [fields objectAtIndex:i];
             INTF_WebServicesDefServiceSvc_SVMXC__Page_Layout_Detail__c * fieldDetail = [field fieldDetail];
-            if ([fieldDetail.SVMXC__DataType__c isEqualToString:@"reference"])
+            if ([fieldDetail.SVMXC__DataType__c isEqualToString:@"reference"]) 
             {
                 [describeObjectsArray addObject:fieldDetail.SVMXC__Related_Object_Name__c];
             }
