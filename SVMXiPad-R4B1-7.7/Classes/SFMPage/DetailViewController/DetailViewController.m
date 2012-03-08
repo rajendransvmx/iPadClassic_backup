@@ -24,6 +24,7 @@
 #import "ZKRecordTypeMapping.h"
 #import "ZKPicklistForRecordType.h"
 #import "ZKPicklistEntry.h"
+extern void SVMXLog(NSString *format, ...);
 
 @interface DetailViewController ()
 @property (nonatomic, retain) UIPopoverController *popoverController;
@@ -80,6 +81,7 @@
 
 @synthesize recordTypeID_Value;
 
+@synthesize selectedSection;
 - (id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -1221,7 +1223,16 @@
                         [self didInvokeWebService:TargetCall];
                     }
                 }
-            
+                if([eventType isEqualToString:@"Before Save/Insert"])
+                {
+                    if([TargetCall isEqualToString:@""])
+                    {
+                    }
+                    else
+                    {
+                        [self didInvokeWebService:TargetCall];
+                    }
+                }                            
             }
 
         }
@@ -1266,6 +1277,16 @@
                         [self didInvokeWebService:TargetCall];
                     }
                 }
+                if([eventType isEqualToString:@"Before Save/Insert"])
+                {
+                    if([TargetCall isEqualToString:@""])
+                    {
+                    }
+                    else
+                    {
+                        [self didInvokeWebService:TargetCall];
+                    }
+                }                
             }
         }
 
@@ -1654,6 +1675,16 @@
                         [self didInvokeWebService:TargetCall];
                     }
                 }
+                if([eventType isEqualToString:@"After Save/Insert"])
+                {
+                    if([TargetCall isEqualToString:@""])
+                    {
+                    }
+                    else
+                    {
+                        [self didInvokeWebService:TargetCall];
+                    }
+                }                
             }
         }
     }
@@ -1689,7 +1720,17 @@
                         [self didInvokeWebService:TargetCall];
                     }
                 }
-                
+                if([eventType isEqualToString:@"After Save/Insert"])
+                {
+                    if([TargetCall isEqualToString:@""])
+                    {
+                    }
+                    else
+                    {
+                        [self didInvokeWebService:TargetCall];
+                    }
+                }                
+ 
             }
             
         }
@@ -1724,7 +1765,16 @@
                         [self didInvokeWebService:TargetCall];
                     }
                 }
-                
+                if([eventType isEqualToString:@"After Save/Insert"])
+                {
+                    if([TargetCall isEqualToString:@""])
+                    {
+                    }
+                    else
+                    {
+                        [self didInvokeWebService:TargetCall];
+                    }
+                }                
             }
             
         }
@@ -1764,7 +1814,16 @@
                         [self didInvokeWebService:TargetCall];
                     }
                 }
-                
+                if([eventType isEqualToString:@"After Save/Insert"])
+                {
+                    if([TargetCall isEqualToString:@""])
+                    {
+                    }
+                    else
+                    {
+                        [self didInvokeWebService:TargetCall];
+                    }
+                }                
             }
             
         }
@@ -1805,6 +1864,16 @@
                         [self didInvokeWebService:TargetCall];
                     }
                 }
+                if([eventType isEqualToString:@"After Save/Insert"])
+                {
+                    if([TargetCall isEqualToString:@""])
+                    {
+                    }
+                    else
+                    {
+                        [self didInvokeWebService:TargetCall];
+                    }
+                }                
                 
             }
             
@@ -3433,7 +3502,6 @@
         if(SLA_FLAG)
         {
             NSDictionary * header_dict = [appDelegate.SFMPage objectForKey:gHEADER];
-            
             NSLog(@"%@", header_dict);
             BOOL isSLAClockPaused = NO;
             
@@ -3444,32 +3512,7 @@
                                  objectForKey:@"Svmxc__Actual_Resolution__C"];
             actual_restoration =  [[header_dict objectForKey:@"hdr_Data"] 
                                    objectForKey:@"Svmxc__Actual_Restoration__C"];
-            /*
-            if(actual_restoration == nil)
-            {
-                NSArray *hdr_sections = [header_dict objectForKey:@"hdr_Sections"];
-                BOOL found = NO;
-                for(int i=0;i<[hdr_sections count];i++)
-                {
-                    NSArray *sec_obj = [[hdr_sections objectAtIndex:i] objectForKey:@"section_Fields"];
-                    NSLog(@"Hdr Obj = %@",sec_obj);
-                    
-                    for(int j =0;j< [sec_obj count]; j++)
-                    {
-                        NSDictionary *sub_sec_obj = [sec_obj objectAtIndex:j];
-                        NSLog(@"Object = %@",sub_sec_obj);
-                        NSString *api_name = [sub_sec_obj objectForKey:@"Field_API_Name"];
-                        if([api_name isEqualToString:@"SVMXC__Actual_Restoration__c"])
-                        {
-                            actual_restoration = [sub_sec_obj objectForKey:@"Field_Value_Value"];
-                            found = YES;
-                        }
-                    }
-                    if(found)
-                    break;
-                }
-            }
-             */
+
             if([sla_clock_paused isEqualToString:@"true"] ||
                [sla_clock_paused isEqualToString:@"True"]
                )
@@ -3526,32 +3569,7 @@
                 {
                     NSString *restoration_customer = [[header_dict objectForKey:@"hdr_Data"] 
                                                       objectForKey:@"Svmxc__Restoration_Customer_By__C"];
-                    /*
-                    if(restoration_customer == nil)
-                    {
-                        NSArray *hdr_sections = [header_dict objectForKey:@"hdr_Sections"];
-                        BOOL found = NO;
-                        for(int i=0;i<[hdr_sections count];i++)
-                        {
-                            NSArray *sec_obj = [[hdr_sections objectAtIndex:i] objectForKey:@"section_Fields"];
-                            NSLog(@"Hdr Obj = %@",sec_obj);
-                            
-                            for(int j =0;j< [sec_obj count]; j++)
-                            {
-                                NSDictionary *sub_sec_obj = [sec_obj objectAtIndex:j];
-                                NSLog(@"Object = %@",sub_sec_obj);
-                                NSString *api_name = [sub_sec_obj objectForKey:@"Field_API_Name"];
-                                if([api_name isEqualToString:@"SVMXC__Restoration_Customer_By__c"])
-                                {
-                                    restoration_customer = [sub_sec_obj objectForKey:@"Field_Value_Value"];
-                                    found = YES;
-                                }
-                            }
-                            if(found)
-                                break;
-                        }
-                    }
-                     */
+
                     NSLog(@"Actual Restoration = %@",actual_restoration);
                     NSLog(@"Restoration Customer = %@",restoration_customer);
                     [restorationTimer updateTimerLabel:[self timeDifferenceFrom:restoration_customer toDate:actual_restoration]];
@@ -3585,7 +3603,8 @@
                     
                     NSString *resolution_customer = [[header_dict objectForKey:@"hdr_Data"] 
                                                       objectForKey:@"Svmxc__Resolution_Customer_By__C"];
-                                     [resolutionTimer updateTimerLabel:[self timeDifferenceFrom:resolution_customer toDate:actual_resolution]];
+
+                    [resolutionTimer updateTimerLabel:[self timeDifferenceFrom:resolution_customer toDate:actual_resolution]];
 
                 }
                 else
@@ -5819,6 +5838,7 @@
     detailViewObject.Disclosure_Fields = self.Disclosure_Fields;
     detailViewObject.Disclosure_Details = self.Disclosure_Details;
     detailViewObject.recordTypeID_Value = self.recordTypeID_Value;
+    //detailViewObject.selectedSection = self.selectedSection;
     
     
     //sahana navigation custom button
@@ -6225,7 +6245,7 @@
     detailViewObject.Disclosure_Details = self.Disclosure_Details;
     detailViewObject.navigationItem.leftBarButtonItem = nil;
     [detailViewObject.navigationItem setHidesBackButton:YES animated:YES];
-
+    //detailViewObject.selectedSection = self.selectedSection; // Siva Manne
     //adding the Back button
     UIButton * BackButton = [[[UIButton alloc] initWithFrame:CGRectMake(6, 6, 39, 36)] autorelease];
 
@@ -7442,14 +7462,31 @@
                     [filed_info setValue:[defaultValue objectForKey:@"PickListDefaultLabel"] forKey:gFIELD_VALUE_KEY];
                     NSLog(@"Fields Info ========= %@" , filed_info);
                     [defaultValue release];
-                    //break;
                 }
 
             }
         }
-    }
+    }    
     else
     {
+        /*
+        NSMutableArray * array = [Disclosure_dict objectForKey:gDETAILS_VALUES_ARRAY];
+        NSMutableArray * detail_values = [array objectAtIndex:self.selectedRowForDetailEdit];
+        for(int i=0; i< [ detail_values count]; i++)
+        {
+            NSMutableDictionary *dict = [detail_values objectAtIndex:i];
+            NSString *api_name = [dict objectForKey:gVALUE_FIELD_API_NAME];
+            if([self isControllerPresent:api_name inRecordType:recordType_Name])
+            {
+                NSMutableDictionary *defaultValue =  [[self getDefaultValue:api_name inRecordType:recordType_Name] retain] ;
+                [dict setValue:[defaultValue objectForKey:@"PickListDefaultValue"] forKey:gVALUE_FIELD_VALUE_VALUE];
+                [dict setValue:[defaultValue objectForKey:@"PickListDefaultLabel"] forKey:gVALUE_FIELD_VALUE_KEY];
+                NSLog(@"Fields Info ========= %@" , dict);
+                [defaultValue release];
+            }
+                                   
+        }
+         */
         NSMutableArray * array = [Disclosure_dict objectForKey:gDETAILS_VALUES_ARRAY];
         NSMutableArray  * field_array = [Disclosure_dict objectForKey:gDETAILS_FIELDS_ARRAY];
         NSMutableArray * detail_values = [array objectAtIndex:self.selectedRowForDetailEdit];
@@ -7560,7 +7597,6 @@
 }
 -(void)clearTheDependentPicklistValue:(NSString *)fieldApi_name atIndexPath:(NSIndexPath *)indexPath controlType:(NSString *)controlType;
 {
-    
     if (selectedSection == SHOW_HEADER_ROW || selectedSection == SHOWALL_HEADERS)
     {
       
@@ -7847,6 +7883,10 @@
 #pragma mark - Custom Methods
 - (NSString *) timeDifferenceFrom:(NSString *)fromDate toDate:(NSString *)toDate
 {
+    
+    if(fromDate == nil || toDate == nil)
+        return [NSString stringWithFormat:@"00:00:00:00"];
+
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
 
