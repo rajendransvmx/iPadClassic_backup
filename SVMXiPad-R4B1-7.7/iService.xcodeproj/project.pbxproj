@@ -762,6 +762,7 @@
 		7BE74976129A938F005FF156 /* serviceMaxStyle.css in Resources */ = {isa = PBXBuildFile; fileRef = 7BE7492C129A938F005FF156 /* serviceMaxStyle.css */; };
 		7BF8B8F0122FD1260027A6EF /* icon_greenA.png in Resources */ = {isa = PBXBuildFile; fileRef = 7BF8B8EE122FD1260027A6EF /* icon_greenA.png */; };
 		7BF8B8F1122FD1260027A6EF /* icon_greenB.png in Resources */ = {isa = PBXBuildFile; fileRef = 7BF8B8EF122FD1260027A6EF /* icon_greenB.png */; };
+		A83AEEFC1505EDB8001AA349 /* required_textarea.png in Resources */ = {isa = PBXBuildFile; fileRef = A83AEEFB1505EDB8001AA349 /* required_textarea.png */; };
 		A84D2F901474E9B8001092CC /* GTMStringEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = A84D2F8F1474E9B7001092CC /* GTMStringEncoding.m */; };
 		FA81F73913A87E950044DD12 /* home-icon-wo-bg.png in Resources */ = {isa = PBXBuildFile; fileRef = FA81F73813A87E950044DD12 /* home-icon-wo-bg.png */; };
 		FA81F74313A8912B0044DD12 /* home-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = FA81F74213A8912B0044DD12 /* home-icon.png */; };
@@ -1723,9 +1724,11 @@
 		7BF8B8EE122FD1260027A6EF /* icon_greenA.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_greenA.png; sourceTree = "<group>"; };
 		7BF8B8EF122FD1260027A6EF /* icon_greenB.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_greenB.png; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* iService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "iService-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
+		A83AEEFB1505EDB8001AA349 /* required_textarea.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = required_textarea.png; sourceTree = "<group>"; };
 		A84D2F8D1474E9B6001092CC /* GTMDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMDefines.h; sourceTree = "<group>"; };
 		A84D2F8E1474E9B6001092CC /* GTMStringEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMStringEncoding.h; sourceTree = "<group>"; };
 		A84D2F8F1474E9B7001092CC /* GTMStringEncoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMStringEncoding.m; sourceTree = "<group>"; };
+		A862FBAF1504BE7300E87BDE /* LoggingController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggingController.h; sourceTree = "<group>"; };
 		FA81F73813A87E950044DD12 /* home-icon-wo-bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "home-icon-wo-bg.png"; sourceTree = "<group>"; };
 		FA81F74213A8912B0044DD12 /* home-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "home-icon.png"; sourceTree = "<group>"; };
 		FAFEB29F148F8F4C004302DE /* BitSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitSet.h; sourceTree = "<group>"; };
@@ -2325,6 +2328,7 @@
 		3E34672D13E95C4C00B5790F /* HelpController */ = {
 			isa = PBXGroup;
 			children = (
+				A862FBAF1504BE7300E87BDE /* LoggingController.h */,
 				3E34672E13E95C4C00B5790F /* HelpController.h */,
 				3E34672F13E95C4C00B5790F /* HelpController.m */,
 				3E34673013E95C4C00B5790F /* HelpController.xib */,
@@ -3305,6 +3309,7 @@
 				3E3468D613E95C4D00B5790F /* phone.png */,
 				3E3468D713E95C4D00B5790F /* red_btn_image.png */,
 				3E3468D813E95C4D00B5790F /* required.png */,
+				A83AEEFB1505EDB8001AA349 /* required_textarea.png */,
 				3E3468D913E95C4D00B5790F /* SFM-Detail-bg.png */,
 				3E3468DA13E95C4D00B5790F /* SFM-View-Screen-Assets */,
 				3E3468F813E95C4D00B5790F /* SFM-View-showall-icon_mod.png */,
@@ -4761,6 +4766,7 @@
 				3E6732C11408FB14001564AD /* Delete_red.png in Resources */,
 				3ED59590141F32E900F0FBE4 /* SFM-Screen-Switch-Views-button.png in Resources */,
 				3ED59593141F38DC00F0FBE4 /* SFM-Screen-Back-Arrow-Button.png in Resources */,
+				A83AEEFC1505EDB8001AA349 /* required_textarea.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4991,8 +4997,8 @@
 				MACOSX_DEPLOYMENT_TARGET = "";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_NAME = ServiceMax;
-				PROVISIONING_PROFILE = "5FF00E1A-0148-4CBD-BD8A-010C3FCC7149";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "5FF00E1A-0148-4CBD-BD8A-010C3FCC7149";
+				PROVISIONING_PROFILE = "72A5BE5C-BC63-4FC0-8C42-08BC96F7C227";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "72A5BE5C-BC63-4FC0-8C42-08BC96F7C227";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -5007,8 +5013,8 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"ARCHS[sdk=iphoneos*]" = "$(ARCHS_STANDARD_32_BIT)";
 				"ARCHS[sdk=iphonesimulator*]" = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: ServiceMax Inc";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: ServiceMax Inc";
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -5024,6 +5030,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				MACOSX_DEPLOYMENT_TARGET = "";
 				PRODUCT_NAME = ServiceMax;
+				PROVISIONING_PROFILE = "72A5BE5C-BC63-4FC0-8C42-08BC96F7C227";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "72A5BE5C-BC63-4FC0-8C42-08BC96F7C227";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -5082,8 +5090,8 @@
 				MACOSX_DEPLOYMENT_TARGET = "";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_NAME = ServiceMax;
-				PROVISIONING_PROFILE = "5FF00E1A-0148-4CBD-BD8A-010C3FCC7149";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "5FF00E1A-0148-4CBD-BD8A-010C3FCC7149";
+				PROVISIONING_PROFILE = "72A5BE5C-BC63-4FC0-8C42-08BC96F7C227";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "72A5BE5C-BC63-4FC0-8C42-08BC96F7C227";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
