@@ -456,7 +456,8 @@
             if (![laborRateHours isKindOfClass:[NSString class]])
                 laborRateHours = @"";
 			labourcell.Hours.text = laborRateHours;
-			float cost = [laborRateStr intValue] * [laborRateHours floatValue];
+			//float cost = [laborRateStr intValue] * [laborRateHours floatValue];
+            float cost = [laborRateStr floatValue] * [laborRateHours floatValue];
 			 LblTotalCost.text = [NSString stringWithFormat:@"%@%@", AppDelegate.workOrderCurrency, [self getFormattedCost:totalCost]];
             labourcell.LinePrice.text = [self getFormattedCost:cost];
 			view = labourcell;
