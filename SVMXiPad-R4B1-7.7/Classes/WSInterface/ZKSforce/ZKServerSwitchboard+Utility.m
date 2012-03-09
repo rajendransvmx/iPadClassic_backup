@@ -32,7 +32,7 @@
 #import "ZKMessageEnvelope.h"
 #import "ZKMessageElement.h"
 #import "ZKUserInfo.h"
-
+extern void SVMXLog(NSString *format, ...);
 @interface ZKServerSwitchboard (UtilityWrappers)
 
 - (NSNumber *)_processSetPasswordResponse:(ZKElement *)setPasswordResponseElement error:(NSError *)error context:(NSDictionary *)context;

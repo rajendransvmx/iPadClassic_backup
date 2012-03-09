@@ -20,7 +20,7 @@
 //
 
 #import "ZKEmailMessage.h"
-
+extern void SVMXLog(NSString *format, ...);
 @interface ZKEmailMessage (Private)
 
 - (NSString *)_priorityStringForValue:(ZKEmailMessagePriority)priority;

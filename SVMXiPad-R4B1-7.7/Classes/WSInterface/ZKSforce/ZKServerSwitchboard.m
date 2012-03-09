@@ -38,7 +38,7 @@
 #import "ZKMessageElement.h"
 
 #import "iServiceAppDelegate.h"
-
+extern void SVMXLog(NSString *format, ...);
 static const int MAX_SESSION_AGE = 10 * 60; // 10 minutes.  15 minutes is the minimum length that you can set sessions to last to, so 10 should be safe.
 static ZKServerSwitchboard * sharedSwitchboard =  nil;
 

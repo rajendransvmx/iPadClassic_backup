@@ -25,7 +25,7 @@
 #import "ZKSoapException.h"
 #import "NSObject+Additions.h"
 #import "NSURL+Additions.h"
-
+extern void SVMXLog(NSString *format, ...);
 static NSString *SOAP_NS = @"http://schemas.xmlsoap.org/soap/envelope/";
 
 @implementation ZKServerSwitchboard (Private)
