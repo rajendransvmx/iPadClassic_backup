@@ -15,7 +15,7 @@
 #import "CreateObject.h"
 #import "SearchViewController.h"
 #import "CalendarController.h"
-
+extern void SVMXLog(NSString *format, ...);
 @implementation iPadScrollerViewController
 
 @synthesize scrollPages;

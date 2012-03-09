@@ -11,7 +11,7 @@
 #import "GTMStringEncoding.h" //Siva Manne
 #import <CommonCrypto/CommonDigest.h> //Siva Manne
 #import <CommonCrypto/CommonHMAC.h> //Siva Manne
-
+extern void SVMXLog(NSString *format, ...);
 @interface UIWebView(JavaScriptEvaluator)
 - (void)webView:(UIWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(id)frame;
 @end

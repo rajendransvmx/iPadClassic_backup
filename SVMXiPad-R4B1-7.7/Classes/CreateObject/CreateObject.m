@@ -8,7 +8,7 @@
 
 #import "CreateObject.h"
 #import "About.h"
-
+extern void SVMXLog(NSString *format, ...);
 @implementation CreateObject
 
 @synthesize array;

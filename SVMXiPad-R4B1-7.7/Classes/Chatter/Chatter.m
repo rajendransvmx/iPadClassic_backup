@@ -10,7 +10,7 @@
 #import "Base64.h"
 #import "HTMLBrowser.h"
 #import "LocalizationGlobals.h"
-
+extern void SVMXLog(NSString *format, ...);
 @implementation ChatterURLConnection
 
 @synthesize userName;

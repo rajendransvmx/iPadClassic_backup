@@ -10,7 +10,7 @@
 #import "ProductManualCell.h"
 #import "MoviePlayer.h"
 #import "HTMLBrowser.h"
-
+extern void SVMXLog(NSString *format, ...);
 @implementation ProductManual
 
 @synthesize delegate;

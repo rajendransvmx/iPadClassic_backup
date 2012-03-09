@@ -25,7 +25,7 @@
 #import "AFGetImageOperation.h"
 #import "UIImageExtras.h"
 
-
+extern void SVMXLog(NSString *format, ...);
 @implementation AFGetImageOperation
 @synthesize imageURL;
 

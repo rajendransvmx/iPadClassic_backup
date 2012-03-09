@@ -12,7 +12,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-
+extern void SVMXLog(NSString *format, ...);
 @implementation EventViewController
 
 @synthesize delegate;

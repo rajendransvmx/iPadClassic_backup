@@ -9,7 +9,7 @@
 #import "iServiceAppDelegate.h"
 #import "LoginController.h" 
 #import "LocalizationGlobals.h"
-
+extern void SVMXLog(NSString *format, ...);
 @implementation iServiceAppDelegate
 @synthesize recordtypeId_webservice_called;
 @synthesize currentProcessID;

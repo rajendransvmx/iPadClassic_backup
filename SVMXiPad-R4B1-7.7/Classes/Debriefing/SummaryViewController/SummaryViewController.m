@@ -10,7 +10,7 @@
 #import "PDFCreator.h"
 #import "HelpController.h"
 #import "About.h"
-
+extern void SVMXLog(NSString *format, ...);
 @implementation SummaryViewController
 
 @synthesize delegate;
@@ -435,8 +435,8 @@
             NSString * keyPartsUsedStr = [dict valueForKey:KEY_PARTSUSED];
             if (![keyPartsUsedStr isKindOfClass:[NSString class]])
                 keyPartsUsedStr = @"";
-			float cost = [keyPartsUsedStr intValue] * costPerPart * (1 - (discount/100));
-			LblTotalCost.text = [NSString stringWithFormat:@"%@%@",AppDelegate.workOrderCurrency, [self getFormattedCost:totalCost]];
+            float cost = [keyPartsUsedStr intValue] * costPerPart * (1 - (discount/100));
+            LblTotalCost.text = [NSString stringWithFormat:@"%@%@",AppDelegate.workOrderCurrency, [self getFormattedCost:totalCost]];
             partcell.LinePrice.text = [self getFormattedCost:cost];
 			view = partcell;
 			break;

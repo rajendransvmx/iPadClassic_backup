@@ -10,7 +10,7 @@
 #import "LocalizationGlobals.h"
 
 #import "iServiceAppDelegate.h"
-
+extern void SVMXLog(NSString *format, ...);
 @implementation CalendarController
 
 @synthesize delegate;

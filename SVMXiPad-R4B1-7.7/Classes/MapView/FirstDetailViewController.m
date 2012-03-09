@@ -19,7 +19,7 @@
 #import "DateTimeFormatter.h"
 #import "LocalizationGlobals.h"
 #import "About.h"
-
+extern void SVMXLog(NSString *format, ...);
 @implementation FirstDetailViewController
 
 @synthesize delegate;

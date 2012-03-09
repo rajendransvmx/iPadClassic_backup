@@ -8,7 +8,7 @@
 
 #import "HelpController.h"
 #import "iServiceAppDelegate.h"
-
+extern void SVMXLog(NSString *format, ...);
 @implementation HelpController
 
 @synthesize helpString;

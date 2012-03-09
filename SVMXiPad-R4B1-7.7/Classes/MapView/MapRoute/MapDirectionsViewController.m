@@ -13,7 +13,7 @@
 #import "RouteListViewController.h"
 
 static NSString* const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
-
+extern void SVMXLog(NSString *format, ...);
 @implementation MapDirectionsViewController
 
 @synthesize delegate;

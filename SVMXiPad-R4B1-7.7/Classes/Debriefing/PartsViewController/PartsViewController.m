@@ -7,7 +7,7 @@
 //
 
 #import "PartsViewController.h"
-
+extern void SVMXLog(NSString *format, ...);
 @implementation PartsViewController
 
 @synthesize parent, PartsTable;

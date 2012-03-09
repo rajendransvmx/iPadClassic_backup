@@ -12,7 +12,7 @@
 #import "iServiceAppDelegate.h"
 #import "DateTimeFormatter.h"
 #import "About.h"
-
+extern void SVMXLog(NSString *format, ...);
 @implementation PDFCreator
 
 @synthesize delegate;

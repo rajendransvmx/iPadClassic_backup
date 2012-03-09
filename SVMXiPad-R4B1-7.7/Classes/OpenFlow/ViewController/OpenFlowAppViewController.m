@@ -13,7 +13,7 @@
 #import "RecentsViewController.h"
 #import "CreateObject.h"
 #import "SearchViewController.h"
-
+extern void SVMXLog(NSString *format, ...);
 @implementation OpenFlowAppViewController
 
 - (void)dealloc

@@ -8,7 +8,7 @@
 
 #import "UICRouteOverlayMapView.h"
 #import "UICGRoute.h"
-
+extern void SVMXLog(NSString *format, ...);
 @implementation UICRouteOverlayMapView
 
 @synthesize inMapView;

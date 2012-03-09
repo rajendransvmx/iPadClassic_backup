@@ -15,7 +15,7 @@
 #import "zkSObject.h"
 
 #define VAL 2
-
+extern void SVMXLog(NSString *format, ...);
 @implementation ModalViewController
 @synthesize Continue_rescheduling;
 @synthesize weekView;

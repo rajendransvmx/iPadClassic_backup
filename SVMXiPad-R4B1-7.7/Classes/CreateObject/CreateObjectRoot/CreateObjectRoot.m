@@ -9,7 +9,7 @@
 #import "CreateObjectRoot.h"
 
 @implementation CreateObjectRoot
-
+extern void SVMXLog(NSString *format, ...);
 @synthesize delegate;
 
 - (id)initWithStyle:(UITableViewStyle)style

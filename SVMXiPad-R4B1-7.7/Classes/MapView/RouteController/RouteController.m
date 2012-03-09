@@ -9,7 +9,7 @@
 #import "RouteController.h"
 #import "UICGRoute.h"
 #import "UICGStep.h"
-
+extern void SVMXLog(NSString *format, ...);
 @implementation RouteController
 
 @synthesize directionArray;

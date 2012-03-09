@@ -8,7 +8,7 @@
 
 #import "LabourViewController.h"
 
-
+extern void SVMXLog(NSString *format, ...);
 @implementation LabourViewController
 
 @synthesize parent;

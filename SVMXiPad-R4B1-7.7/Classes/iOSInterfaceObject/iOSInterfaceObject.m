@@ -9,7 +9,7 @@
 #import "iOSInterfaceObject.h"
 #import "iServiceAppDelegate.h"
 #import "ModalViewController.h"
-
+extern void SVMXLog(NSString *format, ...);
 @implementation iOSInterfaceObject
 
 @synthesize delegate;

@@ -8,6 +8,7 @@
 
 #import "TaskViewController.h"
 
+extern void SVMXLog(NSString *format, ...);
 @implementation TaskViewController
 
 @synthesize tasks;

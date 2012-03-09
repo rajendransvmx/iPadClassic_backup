@@ -8,7 +8,7 @@
 
 #import "ExpenseViewController.h"
 
-
+extern void SVMXLog(NSString *format, ...);
 @implementation ExpenseViewController
 
 @synthesize parent;

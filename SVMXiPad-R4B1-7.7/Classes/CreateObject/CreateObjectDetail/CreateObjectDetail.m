@@ -8,7 +8,7 @@
 
 #import "CreateObjectDetail.h"
 #import "CreateObject.h"
-
+extern void SVMXLog(NSString *format, ...);
 @implementation CreateObjectDetail
 
 @synthesize delegate, tableView;

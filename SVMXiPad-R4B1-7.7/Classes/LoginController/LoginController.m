@@ -14,7 +14,7 @@
 #import "iOSInterfaceObject.h"
 #import "LocalizationGlobals.h"
 #import "SFHFKeychainUtils.h"
-
+extern void SVMXLog(NSString *format, ...);
 #define degreesToRadian(x) (M_PI * x / 180.0)
 #define KEYCHAIN_SERVICE_NAME               @"ServiceMaxEnterprise"
 
