@@ -11,6 +11,7 @@
 #import "LocalizationGlobals.h"
 #import <QuartzCore/QuartzCore.h>
 
+extern void SVMXLog(NSString *format, ...);
 @implementation WeeklyViewController
 
 @synthesize delegate;
@@ -1512,13 +1513,6 @@
         NSString * warning = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_WARNING];
         NSString * noView = [appDelegate.wsInterface.tagsDictionary objectForKey:NO_VIEW_PROCESS];
         
-        //Siva Manne
-        NSString * rootPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-        NSString * plistPath = [rootPath stringByAppendingPathComponent:SWITCH_VIEW_LAYOUTS_PLIST];
-        NSMutableDictionary * sViewLayouts = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
-        NSLog(@"Data From Plist =%@ File = %@",sViewLayouts,plistPath);
-        [sViewLayouts release];
-
         if (!didMoveEvent)
         {
             NSArray * keys = [NSArray arrayWithObjects:PROCESSID, RECORDID, OBJECTAPINAME, CREATEDDATE, ACCOUNTID, nil];
@@ -1577,7 +1571,7 @@
                     
                     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
                     {
-                        NSLog(@"WeeklyViewController touchesEnded in while loop");
+                        NSLog(@"[StartDateTime] WeeklyViewController touchesEnded in while loop");
                         if (!appDelegate.isInternetConnectionAvailable)
                         {
                             [activity stopAnimating];
@@ -1603,7 +1597,7 @@
                 
                 while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
                 {
-                    NSLog(@"WeeklyViewController touchesEnded in while loop");
+                    NSLog(@"[StartDate] WeeklyViewController touchesEnded in while loop");
                     if ( appDelegate.wsInterface.didRescheduleEvent == TRUE )
                     {
                         appDelegate.wsInterface.didRescheduleEvent = FALSE;
