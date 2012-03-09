@@ -10,7 +10,7 @@
 #include <string.h>
 
 #import "NSDate+ISO8601Parsing.h"
-
+extern void SVMXLog(NSString *format, ...);
 #ifndef DEFAULT_TIME_SEPARATOR
 #	define DEFAULT_TIME_SEPARATOR ':'
 #endif
