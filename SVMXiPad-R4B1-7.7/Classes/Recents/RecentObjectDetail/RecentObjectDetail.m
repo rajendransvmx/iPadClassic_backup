@@ -8,12 +8,12 @@
 
 #import "RecentObjectDetail.h"
 #import "RecentsViewController.h"
-
+extern void SVMXLog(NSString *format, ...);
 @implementation RecentObjectDetail
 
 @synthesize delegate, tableView;
 @synthesize recentObjectsArray;
-
+@synthesize backButton;
 - (id)initWithStyle:(UITableViewStyle)style
 {
     self = [super initWithStyle:style];
@@ -63,7 +63,7 @@
     self.tableView.backgroundColor = [UIColor clearColor];
     
     // Add a Back button to the detail
-    UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 39, 37)] autorelease];
+    backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 39, 37)] autorelease];
     [backButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Back-Arrow-Button"] forState:UIControlStateNormal];
     [backButton addTarget:self action:@selector(DismissSplitView:) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem * backBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:backButton] autorelease];
@@ -268,7 +268,10 @@
     }
     else
     {
+        [backButton setEnabled:NO];
         [delegate showSFMWithProcessId:processId recordId:[dict objectForKey:RESULTID]];
+        [backButton setEnabled:YES];
+
     }
     [activity stopAnimating];
 //    [activity release];
@@ -322,7 +325,9 @@
     }
     else
     {
+        [backButton setEnabled:NO];
         [delegate showSFMWithProcessId:processId recordId:[dict objectForKey:RESULTID]];
+        [backButton setEnabled:YES];
     }
     [activity stopAnimating];
 //    [activity release];

@@ -8,7 +8,7 @@
 
 #import "TimerClass.h"
 #import "WSIntfGlobals.h"
-
+extern void SVMXLog(NSString *format, ...);
 @implementation TimerClass
 
 @synthesize type, slaTimer;

@@ -8,7 +8,7 @@
 
 #import "SelectProcessController.h"
 #import "iServiceAppDelegate.h"
-
+extern void SVMXLog(NSString *format, ...);
 @implementation SelectProcessController
 
 @synthesize delegate;

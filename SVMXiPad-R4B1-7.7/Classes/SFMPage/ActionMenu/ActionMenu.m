@@ -9,7 +9,7 @@
 #import "ActionMenu.h"
 #import "WSIntfGlobals.h"
 #import "iServiceAppDelegate.h"
-
+extern void SVMXLog(NSString *format, ...);
 @implementation ActionMenu
 
 @synthesize delegate;

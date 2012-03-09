@@ -14,7 +14,7 @@
 #import "Base64.h"
 #import "HTMLBrowser.h"
 #import "About.h"
-
+extern void SVMXLog(NSString *format, ...);
 //Radha 22nd April 2011
 # import "LocalizationGlobals.h"
 

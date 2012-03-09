@@ -11,7 +11,7 @@
 #import "iServiceAppDelegate.h"
 #import "WSIntfGlobals.h"
 #import "SFMPageController.h"
-
+extern void SVMXLog(NSString *format, ...);
 @implementation RootViewController
 	
 

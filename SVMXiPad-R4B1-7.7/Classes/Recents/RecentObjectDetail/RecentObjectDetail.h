@@ -32,7 +32,7 @@ UITableViewDataSource
 @property (nonatomic, assign) id <RecentObjectDetailDelegate> delegate;
 @property (nonatomic, retain) IBOutlet UITableView * tableView;
 @property (nonatomic, retain) NSMutableArray * recentObjectsArray;
-
+@property (nonatomic, retain) UIButton * backButton;
 - (void) showSFMWithProcessId:(NSString *)processId recordId:(NSString *)recordId;
 
 @end
