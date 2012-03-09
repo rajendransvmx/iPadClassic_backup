@@ -8,7 +8,7 @@
 
 #import "WSInterface.h"
 #import "iServiceAppDelegate.h"
-
+extern void SVMXLog(NSString *format, ...);
 @implementation WSInterface
 
 @synthesize delegate;
