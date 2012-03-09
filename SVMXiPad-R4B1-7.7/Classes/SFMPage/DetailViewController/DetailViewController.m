@@ -5838,7 +5838,7 @@ extern void SVMXLog(NSString *format, ...);
     detailViewObject.Disclosure_Fields = self.Disclosure_Fields;
     detailViewObject.Disclosure_Details = self.Disclosure_Details;
     detailViewObject.recordTypeID_Value = self.recordTypeID_Value;
-    //detailViewObject.selectedSection = self.selectedSection;
+    detailViewObject.selectedSection = self.selectedSection;
     
     
     //sahana navigation custom button
@@ -6245,7 +6245,7 @@ extern void SVMXLog(NSString *format, ...);
     detailViewObject.Disclosure_Details = self.Disclosure_Details;
     detailViewObject.navigationItem.leftBarButtonItem = nil;
     [detailViewObject.navigationItem setHidesBackButton:YES animated:YES];
-    //detailViewObject.selectedSection = self.selectedSection; // Siva Manne
+    detailViewObject.selectedSection = self.selectedSection; // Siva Manne
     //adding the Back button
     UIButton * BackButton = [[[UIButton alloc] initWithFrame:CGRectMake(6, 6, 39, 36)] autorelease];
 
@@ -7469,7 +7469,7 @@ extern void SVMXLog(NSString *format, ...);
     }    
     else
     {
-        /*
+        
         NSMutableArray * array = [Disclosure_dict objectForKey:gDETAILS_VALUES_ARRAY];
         NSMutableArray * detail_values = [array objectAtIndex:self.selectedRowForDetailEdit];
         for(int i=0; i< [ detail_values count]; i++)
@@ -7486,7 +7486,7 @@ extern void SVMXLog(NSString *format, ...);
             }
                                    
         }
-         */
+         /*
         NSMutableArray * array = [Disclosure_dict objectForKey:gDETAILS_VALUES_ARRAY];
         NSMutableArray  * field_array = [Disclosure_dict objectForKey:gDETAILS_FIELDS_ARRAY];
         NSMutableArray * detail_values = [array objectAtIndex:self.selectedRowForDetailEdit];
@@ -7535,6 +7535,7 @@ extern void SVMXLog(NSString *format, ...);
                 
             }            
         }
+          */
     }
 }
 - (NSMutableArray *) getValuesForRecordTypePickList:(NSString *)api_name
@@ -7691,8 +7692,8 @@ extern void SVMXLog(NSString *format, ...);
                         continue;
                     if(isdependent && [controller_type isEqualToString:fieldApi_name])
                     {
-                        [[detail_values objectAtIndex:i] setValue:@"" forKey:gFIELD_VALUE_VALUE];
-                        [[detail_values objectAtIndex:i] setValue:@"" forKey:gFIELD_VALUE_KEY];
+                        [[detail_values objectAtIndex:i] setValue:@"" forKey:gVALUE_FIELD_VALUE_VALUE];
+                        [[detail_values objectAtIndex:i] setValue:@"" forKey:gVALUE_FIELD_VALUE_KEY];
                         break;
                     }
                     
