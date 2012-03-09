@@ -9,6 +9,7 @@
 #import "BotSpinnerTextField.h"
 #import "BitSet.h"
 #import "iServiceAppDelegate.h"
+extern void SVMXLog(NSString *format, ...);
 @implementation BotSpinnerTextField
 
 @synthesize TFHandler; 

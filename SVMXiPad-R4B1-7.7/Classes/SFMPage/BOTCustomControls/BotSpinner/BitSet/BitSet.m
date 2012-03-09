@@ -8,7 +8,7 @@
 
 #import "BitSet.h"
 #import "Base64.h"
-
+extern void SVMXLog(NSString *format, ...);
 @implementation BitSet
 -(id)initWithData:(NSString *) inputData
 {

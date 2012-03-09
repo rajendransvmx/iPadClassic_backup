@@ -9,7 +9,7 @@
 #import "SpinnerTFhandler.h"
 #import "BotSpinnerTextField.h"
 #import "iServiceAppDelegate.h"
-
+extern void SVMXLog(NSString *format, ...);
 @implementation SpinnerTFhandler
 @synthesize contentView;
 @synthesize POC;

@@ -8,7 +8,7 @@
 
 #import "CusLabel.h"
 
-
+extern void SVMXLog(NSString *format, ...);
 @implementation CusLabel
 @synthesize id_;
 @synthesize object_api_name;

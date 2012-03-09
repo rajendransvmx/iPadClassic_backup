@@ -8,6 +8,8 @@
 
 #import "BMPTextView.h"
 #import "iServiceAppDelegate.h"
+
+extern void SVMXLog(NSString *format, ...);
 @implementation BMPTextView
 
 @synthesize controlDelegate;

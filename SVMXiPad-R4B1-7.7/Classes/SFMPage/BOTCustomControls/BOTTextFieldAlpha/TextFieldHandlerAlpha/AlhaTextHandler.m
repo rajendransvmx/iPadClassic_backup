@@ -10,7 +10,7 @@
 #import "cusTextFieldAlpha.h"
 #import "iServiceAppDelegate.h"
 
-
+extern void SVMXLog(NSString *format, ...);
 @implementation AlhaTextHandler
 
 @synthesize delegate;
