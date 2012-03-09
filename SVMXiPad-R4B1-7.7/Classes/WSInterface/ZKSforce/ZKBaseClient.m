@@ -23,7 +23,7 @@
 #import "ZKSoapException.h"
 #import "ZKParser.h"
 
-
+extern void SVMXLog(NSString *format, ...);
 @implementation ZKBaseClient
 
 static NSString *SOAP_NS = @"http://schemas.xmlsoap.org/soap/envelope/";
