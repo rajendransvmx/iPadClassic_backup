@@ -11,7 +11,7 @@
 #import "iOSInterfaceObject.h"
 
 #import <QuartzCore/QuartzCore.h>
-
+extern void SVMXLog(NSString *format, ...);
 @implementation WeeklyViewEvent
 
 @synthesize delegate;
