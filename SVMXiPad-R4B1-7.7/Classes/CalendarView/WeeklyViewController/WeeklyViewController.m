@@ -33,7 +33,7 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize didLoadWeekData;
 
 @synthesize didMoveEvent;
-
+@synthesize isScheduling;
 - (id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -85,7 +85,7 @@ extern void SVMXLog(NSString *format, ...);
     day5Label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:DAY5LABEL];
     day6Label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:DAY6LABEL];    
     day7Label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:DAY7LABEL];
-    
+    isScheduling = NO;
     [self populateWeekView];
 }
 
@@ -1319,7 +1319,6 @@ extern void SVMXLog(NSString *format, ...);
 	UITouch *touch = [touches anyObject];
 	BOOL flag = NO;
     eventView = nil;
-    
     if ([touch view] == weekViewPane)
     {
         initialPoint = [touch locationInView:weekViewPaneParent];
@@ -1336,7 +1335,8 @@ extern void SVMXLog(NSString *format, ...);
             flag = YES;
             didTap = YES;
             // NSLog(@"EventView %d tapped", i);
-            [weekViewPane bringSubviewToFront:eventView.view];
+            if(!isScheduling)
+                [weekViewPane bringSubviewToFront:eventView.view];
             break;
         }
         else
@@ -1445,6 +1445,8 @@ extern void SVMXLog(NSString *format, ...);
             {
                 return;
             }
+            if(isScheduling)
+                return;
             // Change eventView's frame
             eventView.dayFrame = locationRect;
             [UIView beginAnimations:@"move" context:nil];
@@ -1461,7 +1463,6 @@ extern void SVMXLog(NSString *format, ...);
 	
     if (!allowTouches)
         return;
-    
 	UITouch *touch = [touches anyObject];
     
     if ([touch view] == weekViewPane)
@@ -1559,66 +1560,80 @@ extern void SVMXLog(NSString *format, ...);
             [self disableUI];
             NSLog(@"%@", weeklyEventPositionArray);
             CGRect oldRect = eventView.selfFrame;
-            [eventView moveTo:eventView.view.frame];
-
-            if(ContinueRescheduling == TRUE)
+            if(isScheduling)
+              [self enableUI];  
+            else
             {
-                NSLog(@"%@", weeklyEventPositionArray);
-                if ([updatestartDateTime length] > 0 && [updateendDateTime length] > 0)
+                [eventView moveTo:eventView.view.frame];
+
+                if(ContinueRescheduling == TRUE)
                 {
-                    [appDelegate.wsInterface getUpdateEventsForStartDate:updatestartDateTime EndDate:updateendDateTime 
-                                                                recordID:eventView.eventId];
+                    isScheduling = YES;
+                    if ([updatestartDateTime length] > 0 && [updateendDateTime length] > 0)
+                    {
+                        [appDelegate.wsInterface getUpdateEventsForStartDate:updatestartDateTime EndDate:updateendDateTime 
+                                                                    recordID:eventView.eventId];
+                        
+                        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
+                        {
+                            NSLog(@"[StartDateTime] WeeklyViewController touchesEnded in while loop");
+                            if (!appDelegate.isInternetConnectionAvailable)
+                            {
+                                [activity stopAnimating];
+                                appDelegate.wsInterface.didRescheduleEvent = FALSE;
+                                [eventView restorePositionToRect:oldRect];
+                                [appDelegate displayNoInternetAvailable];
+                                isScheduling = NO;
+                                break;
+                            }
+                            
+                            if ( appDelegate.wsInterface.didRescheduleEvent == TRUE )
+                            {
+                                appDelegate.wsInterface.didRescheduleEvent = FALSE;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    updatestartDateTime = @"";
+                    updateendDateTime = @"";
+                    
+                    appDelegate.wsInterface.didRescheduleEvent = FALSE; // Reusing this variable for get Events purpose
+                    [appDelegate.wsInterface getEventsForStartDate:startDate EndDate:endDate];
                     
                     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
                     {
-                        NSLog(@"[StartDateTime] WeeklyViewController touchesEnded in while loop");
+                        NSLog(@"[StartDate] WeeklyViewController touchesEnded in while loop");
                         if (!appDelegate.isInternetConnectionAvailable)
                         {
                             [activity stopAnimating];
                             appDelegate.wsInterface.didRescheduleEvent = FALSE;
                             [eventView restorePositionToRect:oldRect];
                             [appDelegate displayNoInternetAvailable];
+                            isScheduling = NO;
                             break;
                         }
-                        
                         if ( appDelegate.wsInterface.didRescheduleEvent == TRUE )
                         {
                             appDelegate.wsInterface.didRescheduleEvent = FALSE;
                             break;
                         }
+                        
                     }
-                }
-                
-                updatestartDateTime = @"";
-                updateendDateTime = @"";
-                
-                appDelegate.wsInterface.didRescheduleEvent = FALSE; // Reusing this variable for get Events purpose
-                [appDelegate.wsInterface getEventsForStartDate:startDate EndDate:endDate];
-                
-                while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
-                {
-                    NSLog(@"[StartDate] WeeklyViewController touchesEnded in while loop");
-                    if ( appDelegate.wsInterface.didRescheduleEvent == TRUE )
+                    isScheduling = NO;
+                    if ([appDelegate.wsInterface.rescheduleEvent isEqualToString:@"SUCCESS"])
                     {
-                        appDelegate.wsInterface.didRescheduleEvent = FALSE;
-                        break;
+                        [activity stopAnimating];
                     }
+                    else
+                        [activity stopAnimating];
+
+                }            
+                else
+                {
                     
                 }
-                
-                if ([appDelegate.wsInterface.rescheduleEvent isEqualToString:@"SUCCESS"])
-                {
-                    [activity stopAnimating];
-                }
-                else
-                    [activity stopAnimating];
-
             }
-            else
-            {
-                
-            }
-            
         }
 	}
     didMoveEvent = NO;
@@ -1789,10 +1804,17 @@ extern void SVMXLog(NSString *format, ...);
     calendarDidLoad = allowTouches = YES;
     [weekViewPane setUserInteractionEnabled:YES];
     [weekViewPaneParent setUserInteractionEnabled:YES];
+    [self setUserIntractionForView:weekViewPane enabled:YES];
+    [self setUserIntractionForView:weekViewPaneParent enabled:YES];
     [self.view setUserInteractionEnabled:YES];
     [[super view] setUserInteractionEnabled:YES];
 }
-
+- (void) setUserIntractionForView:(UIView *)parentView enabled:(BOOL) enableValue
+{
+    NSArray *subViews = [parentView subviews];
+    for(id singleView in subViews)
+        [singleView setUserInteractionEnabled:enableValue];
+}
 - (void) disableUI
 {
 //    [delegate enableRefreshButton:NO];
@@ -1802,6 +1824,8 @@ extern void SVMXLog(NSString *format, ...);
     calendarDidLoad = allowTouches = NO;
     [weekViewPane setUserInteractionEnabled:NO];
     [weekViewPaneParent setUserInteractionEnabled:NO];
+    [self setUserIntractionForView:weekViewPane enabled:NO];
+    [self setUserIntractionForView:weekViewPaneParent enabled:NO];
 //    [self.view setUserInteractionEnabled:NO];
 //    [[super view] setUserInteractionEnabled:NO];
 }

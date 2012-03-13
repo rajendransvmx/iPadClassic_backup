@@ -145,7 +145,7 @@
 
 //pavaman 21st Jan 2011
 @property (nonatomic, assign) BOOL didLoadWeekData;
-
+@property (nonatomic, assign) BOOL isScheduling;
 //Radha 10th April 2011
 - (void) populateWeekView;
 - (NSString *)dateToStringConversion:(NSDate*)date;
@@ -188,5 +188,5 @@
 
 - (void) enableUI;
 - (void) disableUI;
-
+- (void) setUserIntractionForView:(UIView *)parentView enabled:(BOOL) enableValue;
 @end
