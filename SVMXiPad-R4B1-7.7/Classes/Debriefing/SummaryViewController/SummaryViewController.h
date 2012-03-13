@@ -35,7 +35,8 @@
 	IBOutlet UITableView *summarytable;
 	NSMutableArray *Parts, *Expenses, * Labour;
 
-	float totalCost;
+	//float totalCost;
+    double totalCost;
 	IBOutlet UILabel *LblTotalCost;
 	IBOutlet UIImageView *signature;
 	SignatureViewController *sign;
@@ -73,7 +74,7 @@
 - (IBAction) createPDF;
 - (NSString *) getFormattedDate:(NSString *)date;
 
-- (NSString *) getFormattedCost:(float)cost;
+- (NSString *) getFormattedCost:(double)cost;
 
 - (IBAction) Help;
 

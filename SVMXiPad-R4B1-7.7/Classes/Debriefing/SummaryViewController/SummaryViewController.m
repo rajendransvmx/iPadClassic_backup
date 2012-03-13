@@ -326,7 +326,8 @@ extern void SVMXLog(NSString *format, ...);
         else
             costPerPart = [[dict objectForKey:KEY_COSTPERPART] floatValue];
         float discount = [[dict valueForKey:@"Discount"] floatValue];
-        float cost = [[dict valueForKey:KEY_PARTSUSED] intValue] * costPerPart * (1 - (discount/100));
+        //float cost = [[dict valueForKey:KEY_PARTSUSED] intValue] * costPerPart * (1 - (discount/100));
+        double cost = [[dict valueForKey:KEY_PARTSUSED] intValue] * costPerPart * (1 - (discount/100));
         totalCost += cost;
     }
     
@@ -365,6 +366,7 @@ extern void SVMXLog(NSString *format, ...);
         float cost = [actualPrice floatValue] * [actualQuantity floatValue];
         totalCost += cost;
     }
+    NSLog(@"Total Cost = %f",totalCost);
 }
 
 // Customize the appearance of table view cells.
@@ -436,6 +438,7 @@ extern void SVMXLog(NSString *format, ...);
             if (![keyPartsUsedStr isKindOfClass:[NSString class]])
                 keyPartsUsedStr = @"";
             float cost = [keyPartsUsedStr intValue] * costPerPart * (1 - (discount/100));
+            NSLog(@"Parts Formatted Cost = %@",[self getFormattedCost:totalCost]);
             LblTotalCost.text = [NSString stringWithFormat:@"%@%@",AppDelegate.workOrderCurrency, [self getFormattedCost:totalCost]];
             partcell.LinePrice.text = [self getFormattedCost:cost];
 			view = partcell;
@@ -458,6 +461,7 @@ extern void SVMXLog(NSString *format, ...);
 			labourcell.Hours.text = laborRateHours;
 			//float cost = [laborRateStr intValue] * [laborRateHours floatValue];
             float cost = [laborRateStr floatValue] * [laborRateHours floatValue];
+            NSLog(@"Labor Formatted Cost = %@",[self getFormattedCost:totalCost]);
 			 LblTotalCost.text = [NSString stringWithFormat:@"%@%@", AppDelegate.workOrderCurrency, [self getFormattedCost:totalCost]];
             labourcell.LinePrice.text = [self getFormattedCost:cost];
 			view = labourcell;
@@ -483,6 +487,7 @@ extern void SVMXLog(NSString *format, ...);
             
             CGFloat linePriceValue = [linePrice floatValue] * [expenseQty floatValue];
             expensecell.LinePrice.text = [self getFormattedCost:linePriceValue];
+            NSLog(@"Expenses Formatted Cost = %@",[self getFormattedCost:totalCost]);
 			LblTotalCost.text = [NSString stringWithFormat:@"%@%@",AppDelegate.workOrderCurrency, [self getFormattedCost:totalCost]];
 			view = expensecell;
 			break;
@@ -501,7 +506,7 @@ extern void SVMXLog(NSString *format, ...);
 	return cell;
 }
 
-- (NSString *) getFormattedCost:(float)cost
+- (NSString *) getFormattedCost:(double)cost
 {
     NSMutableString * decimalCostStr = [NSMutableString stringWithFormat:@"%d", (int)cost];
     int strLength = [decimalCostStr length];
