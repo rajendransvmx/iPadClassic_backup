@@ -164,8 +164,8 @@ static ZKServerSwitchboard * sharedSwitchboard =  nil;
     {
         NSLog(@"First time login.");
         [defaults setValue:@"kFirstTimeLogin" forKey:kFirstTimeLogin];
-        enabled = YES;
-        [defaults setBool:enabled forKey:@"enabled_preference"];
+        //enabled = YES; //Siva Manne #3811
+        //[defaults setBool:enabled forKey:@"enabled_preference"];
     }
     else
     {
