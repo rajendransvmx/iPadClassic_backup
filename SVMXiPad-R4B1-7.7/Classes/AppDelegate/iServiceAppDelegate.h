@@ -319,7 +319,7 @@ BOOL didSessionResume;
 - (UIColor *) colorForHex:(NSString *)hexColor;
 
 -(void)popupActionSheet:(NSString *)message;
-
+- (void)registerDefaultsFromSettingsBundle;
 @end
 
 // ALog always displays output regardless of the DEBUG setting
