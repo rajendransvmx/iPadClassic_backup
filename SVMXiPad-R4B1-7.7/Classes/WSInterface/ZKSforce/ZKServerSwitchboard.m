@@ -159,20 +159,7 @@ static ZKServerSwitchboard * sharedSwitchboard =  nil;
     // return @"https://www.salesforce.com";
     NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
 
-    NSString *groupIdentifier = [defaults objectForKey:kFirstTimeLogin];
-    if (!groupIdentifier)
-    {
-        NSLog(@"First time login.");
-        [defaults setValue:@"kFirstTimeLogin" forKey:kFirstTimeLogin];
-        //enabled = YES; //Siva Manne #3811
-        //[defaults setBool:enabled forKey:@"enabled_preference"];
-    }
-    else
-    {
-        enabled = [defaults boolForKey:@"enabled_preference"];
-    }
-
-    NSLog(@"Not a first time login.");
+    enabled = [defaults boolForKey:@"enabled_preference"];
     
     if (enabled)
     {
