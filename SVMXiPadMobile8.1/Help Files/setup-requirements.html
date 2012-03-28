@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>ServiceMax for iPad help</title>
+<link href="iPadHelp.css".css" rel="stylesheet" type="text/css" />
+<style type="text/css">
+	.toplinkcontainer ul li {padding: 0 70px;}
+	.chatterList li {padding:0 0 10px 0}
+	.chatterList {padding-bottom:0; margin-bottom: 0;}
+</style>
+</head>
+
+<body>
+<div class="MainContainer">
+	<div class="topcontainer">
+		<div class="topcontainerLeft">
+			<div class="textHeading">Setup Requirements</div>
+		</div>
+	<div class="topcontainerRight"><img src="iService-help1_with-slices_03.gif" width="88" height="59" alt="" /></div>
+	</div>
+	<div class="toplinkcontainer">
+    	<div class="toplinkcontainer">
+        <div class="linkfirstLeft"><img src="iService-help1_with-slices_04.gif" width="20" height="51" alt=""></div>
+        <div class="link1"><div id="linkText1"><a href="home.html">Home Page</a></div></div>
+        <div class="linkDevider1"><img src="iService-help1_with-slices_06.gif" width="8" height="51" alt=""></div>
+        <div class="linkDevider"><img src="iService-help1_with-slices_07.gif" width="2" height="51" alt=""></div>
+        <div class="link2"><div id="linkText2"><a href="day-view.html">Day View</a></div></div>
+        <div class="linkDevider"><img src="iService-help1_with-slices_07.gif" width="2" height="51" alt=""></div>
+        <div class="link3"><div id="linkText3"><a href="map-view.html">Map View</a></div></div>
+        <div class="linkDevider"><img src="iService-help1_with-slices_07.gif" width="2" height="51" alt=""></div>
+        <div class="link4"><div id="linkText4"><a href="sync.html">Synchronization</a></div></div>
+        <div class="link5"><div id="linkText5"></div></div>
+        <div class="linkfirstright"><img src="iService-help1_with-slices_04.gif" width="10" height="51" alt=""></div>
+        </div>
+	</div>
+	<div class="BlockcontainerConfig">
+		<div class="topleftimg"><img src="iService-help1_with-slices_13.gif" width="20" height="1576" alt=""></div>
+		<div class="toprightimg"><img src="iService-help1_with-slices_15.gif" width="21" height="1576" alt=""></div>
+		<div class="BlockcontainerTopBorder"><img src="iService-help1_with-slices_14.gif" width="984" height="8" alt=""></div>
+		<div class="BlockcontainerTopText">
+			<div class="BlockcontainerTopTextDescription">This document outlines the setup activities in ServiceMax/Salesforce that drive the functionality and user experience of the ServiceMax iPad client. The functionality in the iPad application will work as intended only if the setup is completed as instructed below. Familiarity with Salesforce and ServiceMax setup is needed to successfully perform the steps. 
+		</div>
+		</div>		
+		<div class="BlockcontainerTopBorder"><img src="iService-help1_with-slices_17.gif" width="984" height="7" alt=""></div>
+		<div class="BlockcontainerRightHeaderConfig" style="background:#F2F3F5">
+			<div class="BlockcontainerRightHeaderNewConfig">
+				<div class="BlockcontainerRightHeaderDescriptionHeading"><a name="DeviceRequirements">Device requirements</a></div>
+			</div>
+			<div class="BlockcontainerRightHeaderDescriptionConfig">
+				ServiceMax iPad client will work with all models of iPad. The minimum configuration is iOS v4.2. Internet connectivity is required, either through 3G or Wi-Fi.  If there is a proxy or firewall in your network, the iPad must be configured to get the appropriate access to salesforce.com. 
+			</div>
+
+		<div class="BlockcontainerTopBorder"><img src="iService-help1_with-slices_17.gif" width="984" height="7" alt=""></div>
+		<div class="BlockcontainerRightHeaderNewConfig">
+			<div class="BlockcontainerRightHeaderDescriptionHeading"><a name="Synchronization">Synchronization</a></div>
+		</div>
+		<div class="BlockcontainerRightHeaderDescriptionConfig">
+			<span style="padding-right:5px;"><img src="arrow.gif" align="top" /></span> Events from the current day and week are cached locally for better performance. The cache can be refreshed manually by tapping on the Refresh button in the Day View of the calendar or by navigating to a day in a different week. The cache is local to the device and the user.
+			</div>
+
+			<div class="BlockcontainerRightHeaderDescriptionConfig" style="background:#F2F3F5">
+				<span style="padding-right:5px;"><img src="arrow.gif" align="top" /></span> Updates made from iPad client to work orders and other objects are saved to Salesforce immediately and synchronized back to the local database if there is online connectivity.
+			</div>
+            
+            <div class="BlockcontainerRightHeaderDescriptionConfig" style="background:#F2F3F5">
+				<span style="padding-right:5px;"><img src="arrow.gif" align="top" /></span> Dataset synchronization will happen as per the mobile configuration in Salesforce.
+            </div>
+			
+            <div class="BlockcontainerRightHeaderDescriptionConfig" style="background:#F2F3F5">
+				<span style="padding-right:5px;"><img src="arrow.gif" align="top" /></span> The application will continue to work offline with the local dataset if there is no online connectivity.
+            </div>
+            
+		</div>
+
+	<div class="BlockcontainerTopBorder"><img src="iService-help1_with-slices_17.gif" width="984" height="7" alt=""></div>
+
+	<div class="BlockcontainerRightHeaderNewConfig">
+		<div class="BlockcontainerRightHeaderDescriptionHeading"><a name="Product">Product</a></div> 
+	</div>
+	<div class="BlockcontainerRightHeaderDescriptionConfig"><span style="padding-right:5px;"><img src="arrow.gif" align="top" /></span> To view the product’s picture on the chatter screen, create an image attachment to the Product record in Salesforce. The attachment file name should contain the word PICTURE in it. For example: <i>CS2000 PICTURE.jpg</i> or <i>PICTURE OF CS2000.jpg</i>. Supported valid image formats are jpeg, png, gif and bmp. Using unsupported image formats can result in unpredictable behavior in the application.
+		
+	</div>
+	<div class="BlockcontainerRightHeaderDescriptionConfig">
+		<span style="padding-right:5px;"><img src="arrow.gif" align="top" /></span> To view product manuals in the iPad client, create a PDF attachment with the word MANUAL in the file name. For example: <i>CS2000 MANUAL.pdf</i> or <i>MANUAL for CS2000.pdf</i>
+	</div>
+    
+    <div class="BlockcontainerRightHeaderDescriptionConfig">
+		<span style="padding-right:5px;"><img src="arrow.gif" align="top" /></span> The product manuals are downloaded/cached when there is online connectivity. Downloaded/cached copy will be used in subsequent invocations.
+	</div>
+	<div class="BlockcontainerTopBorder"><img src="iService-help1_with-slices_17.gif" width="984" height="7" alt=""></div>
+	
+	<div class="BlockcontainerRightHeaderNewConfig">
+		<div class="BlockcontainerRightHeaderDescriptionHeading"><a name="Chatter">Chatter</a></div> 
+	</div>
+	<div class="BlockcontainerRightHeaderDescriptionConfig"><span style="padding-right:5px;"><img src="arrow.gif" align="top" /></span> To collaborate using chatter on iPad, enable chatter in Salesforce and specifically for the product object. Refer to Salesforce online help for more information on enabling chatter.
+	</div>
+	<div class="BlockcontainerRightHeaderDescriptionConfig"><span style="padding-right:5px;"><img src="arrow.gif" align="top" /></span> For adding your photo to the product chatter feed on the application, perform the following steps on Salesforce.
+		<ol class="chatterList">
+			<li>Create a new folder under Documents called <strong>ServiceMax for IPad</strong>. Choose the <strong>This folder is accessible by all users</strong> setting.</li>
+			<li>Create a new document with name as your fully qualified user name (e.g., yourlogin@yourcompany.com).</li>
+			<li>Upload your photo in PNG format. Note that only PNG format is supported.</li>
+			<li>Save it in the folder created in Step 1.</li>
+		</ol>
+	</div>
+	
+	
+	<!--div class="BlockcontainerTopBorder"><img src="iService-help1_with-slices_17.gif" width="984" height="7" alt=""></div>
+	<div class="BlockcontainerRightHeaderNewConfig">
+		<div class="BlockcontainerRightHeaderDescriptionHeading"><a name="Account">Account</a></div> 
+	</div>
+	<div class="BlockcontainerRightHeaderDescriptionConfig"><span style="padding-right:5px;"><img src="arrow.jpg" align="top" /></span><strong>Adding Photo  </strong>
+		<div class="BlockcontainerRightHeaderDescriptionConfigSubText">To view the account’s picture on the job details screen, create an image attachment to the Account record in Salesforce. The attachment file name should contain the word PICTURE in it. For example: <i>ABC Inc PICTURE.jpg</i> or <i>PICTURE OF ABC Inc.jpg.</i>
+		<br><br>
+		<i>Note: Supported valid image formats are jpeg, png, gif and bmp. Using unsupported image formats can result in unpredictable behavior in the application.</i>
+		</div>
+	</div-->
+
+	<div class="BlockcontainerTopBorder"><img src="iService-help1_with-slices_17.gif" width="984" height="7" alt=""></div>
+
+	<div class="BlockcontainerRightHeaderNewConfig">
+		<div class="BlockcontainerRightHeaderDescriptionHeading"><a name="Contact">Contact</a></div> 
+	</div>
+	
+	<div class="BlockcontainerRightHeaderDescriptionConfig">
+		To view the contact’s picture on the job details screen, create an image attachment to the Contact record in Salesforce. The attachment file name should contain the word PICTURE in it. For example: <i>John Doe PICTURE.jpg</i> or <i>PICTURE OF John Doe.jpg</i>. Supported valid image formats are jpeg, png, gif and bmp. Using unsupported image formats can result in unpredictable behavior in the application.
+	</div>
+
+	<div class="BlockcontainerTopBorder"><img src="iService-help1_with-slices_17.gif" width="984" height="7" alt=""></div>
+
+	<!--div class="BlockcontainerRightHeaderNewConfig">
+		<div class="BlockcontainerRightHeaderDescriptionHeading"><a name="PriceBook">Price book</a></div> 
+	</div>
+	<div class="BlockcontainerRightHeaderDescriptionConfig"><span style="padding-right:5px;"><img src="arrow.jpg" align="top" /></span>Standard Price Book must be active.</div>
+	<div class="BlockcontainerRightHeaderDescriptionConfig"><span style="padding-right:5px;"><img src="arrow.jpg" align="top" /></span>Parts to be used in work order debrief screen must have an active price defined in Standard Price Book.
+	</div-->
+
+	<div class="BlockcontainerTopBorder"><img src="iService-help1_with-slices_17.gif" width="984" height="7" alt=""></div>
+
+	<div class="BlockcontainerRightHeaderNewConfig">
+		<div class="BlockcontainerRightHeaderDescriptionHeading"><a name="TechnicianLabor">Knowledgebase Articles for troubleshooting</a></div> 
+	</div>
+		
+	<div class="BlockcontainerRightHeaderDescriptionConfig">
+		For creating knowledge base articles, perform the following steps: 
+		<ol>
+			<li>Create a folder whose name <i>exactly</i> matches the title of the KB article.</li>
+			<li>Create <i>index.html</i> page in which hyperlinks, images and video files can be embedded in the folder. The hyperlinks can be relative local paths or web-based URLs.</li>
+			<li>Zip the folder. For optimum performance, make sure the zip file size does not exceed 3 MB.</li>
+			<li>Login to Salesforce and navigate to Documents tab.</li>
+			<li>If a dedicated document folder does not exist for KB articles, create a folder first.</li>
+			<li>Create a new document as follows:
+				<ol type="i">
+					<li>Document Name = Title of the KB article.</li>
+					<li>Folder = Name of the folder created in step #5.</li>
+					<li>Description = Detailed description of this solution.</li>
+					<li>Keywords = Comma-separated list of keywords that must contain the exact product name, can be used to locate this document. Typically product name, family, problem type etc..</li>
+					<li>Choose the Zip file created in step #3.</li>
+				</ol>
+			</li>
+			<li>Click Save.</li>
+		</ol>
+	</div>
+
+
+	<div class="BlockcontainerTopBorder"><img src="iService-help1_with-slices_17.gif" width="984" height="7" alt=""></div>
+
+	<div class="BlockcontainerRightHeaderNewConfig">
+		<div class="BlockcontainerRightHeaderDescriptionHeading"><a name="ServiceReport">Service Report</a></div>
+	</div>
+	<div class="BlockcontainerRightHeaderDescriptionConfig"><span style="padding-right:5px;">To change the logo on the Service Report, perform the following steps in Salesforce.
+		<ol type="1">
+		<li> Create an image file with the logo as follows:</li>
+			<ol type="i">
+				<li> Name = ServiceMax_iPad_CompanyLogo</li>
+				<li> Format = PNG only</li>
+				<li> Maximum dimensions allowed = 600 (width) x 250 (height) </li>
+				<li> Minimum resolution required = 72 dpi </li>
+			</ol>
+		<li> Upload the file to the <b>ServiceMax for IPad</b> folder under Documents. Create the folder if it doesn't exist already. </li>
+		</ol>
+	</div>
+	
+	<div class="BlockcontainerTopBorder"><img src="iService-help1_with-slices_17.gif" width="984" height="7" alt=""></div>
+	<div class="BlockcontainerRightHeaderNewConfig">
+		<div class="BlockcontainerRightHeaderDescriptionHeading"><a name="ServiceReport">Create/Edit/View Record Screens</a></div>
+	</div>
+	<div class="BlockcontainerRightHeaderDescriptionConfig">Creating new records as well as viewing and editing existing records is driven by SFM transaction configuration. Please refer to ServiceMax help or contact your ServiceMax administrator about how to configure and deploy SFM transactions for iPad.
+		
+		
+	</div>
+	
+	</div>
+
+	
+	</div>
+
+	</div>
+</div>
+<!--Footer Container-->
+<div class="MainContainer">
+<div class="copyContainer"><img src="iService-help1_with-slices_60.gif" width="815" height="16" alt=""></div>
+<div class="copyContainerRight">
+<div class="copyContainerRightText">Copyright &copy; 2011.ServiceMax, Inc.</div>
+</div>
+</div>
+
+</body>
+</html>
