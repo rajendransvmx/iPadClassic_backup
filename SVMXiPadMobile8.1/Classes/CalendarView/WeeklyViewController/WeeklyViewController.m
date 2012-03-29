@@ -183,7 +183,9 @@
         event = [NSArray arrayWithObjects:subject, workOrderName, nil];
         
         weeksArray = [calendar getWeeksArray];
-        
+        if(currentSliderPositionIndex+1 > [weeksArray count])
+            currentSliderPositionIndex = 0;//#3845 
+
         NSMutableArray * array = [weeksArray objectAtIndex:currentSliderPositionIndex];
         
         NSUInteger dayIndex = 0;
