@@ -341,7 +341,7 @@
         float costPerPart = 0.0;
         costPerPart = [[dict objectForKey:KEY_COSTPERPART] floatValue];
         float discount = [[dict valueForKey:@"Discount"] floatValue];
-        float cost = [[dict valueForKey:KEY_PARTSUSED] intValue] * costPerPart * (1 - (discount/100));
+        double cost = [[dict valueForKey:KEY_PARTSUSED] intValue] * costPerPart * (1 - (discount/100));//#3014
         totalCost += cost;
     }
     
@@ -359,7 +359,7 @@
             if (![actualQuantity isKindOfClass:[NSString class]])
                 actualQuantity = @"0.0";
 
-            float cost = [actualPrice floatValue] * [actualQuantity floatValue];
+            double cost = [actualPrice floatValue] * [actualQuantity floatValue];
             totalCost += cost;
         }
     }
@@ -377,7 +377,7 @@
         if (![actualQuantity isKindOfClass:[NSString class]])
             actualQuantity = @"0.0";
         
-        float cost = [actualPrice floatValue] * [actualQuantity floatValue];
+        double cost = [actualPrice floatValue] * [actualQuantity floatValue];
         totalCost += cost;
     }
 }
@@ -450,7 +450,7 @@
             NSString * keyPartsUsedStr = [dict valueForKey:KEY_PARTSUSED];
             if (![keyPartsUsedStr isKindOfClass:[NSString class]])
                 keyPartsUsedStr = @"";
-			float cost = [keyPartsUsedStr intValue] * costPerPart * (1 - (discount/100));
+			double cost = [keyPartsUsedStr intValue] * costPerPart * (1 - (discount/100));
 			LblTotalCost.text = [NSString stringWithFormat:@"%@%@",AppDelegate.workOrderCurrency, [self getFormattedCost:totalCost]];
             partcell.LinePrice.text = [self getFormattedCost:cost];
 			view = partcell;
@@ -465,7 +465,7 @@
             NSString * laborRateStr = [dict valueForKey:@"SVMXC__Actual_Price2__c"];
             if (![laborRateStr isKindOfClass:[NSString class]])
                 laborRateStr = @"";
-            float laborRate = [laborRateStr floatValue];
+            double laborRate = [laborRateStr floatValue];
             labourcell.Rate.text = [self getFormattedCost:laborRate];
             NSString * laborRateHours = [dict valueForKey:@"SVMXC__Actual_Quantity2__c"];
             if (![laborRateHours isKindOfClass:[NSString class]])
@@ -473,7 +473,7 @@
 			labourcell.Hours.text = laborRateHours;
 		//	float cost = [laborRateStr intValue] * [laborRateHours floatValue];
             //Abinash 28 december
-            float cost = [laborRateStr floatValue] * [laborRateHours floatValue];
+            double cost = [laborRateStr doubleValue] * [laborRateHours doubleValue];
 			 LblTotalCost.text = [NSString stringWithFormat:@"%@%@", AppDelegate.workOrderCurrency, [self getFormattedCost:totalCost]];
             labourcell.LinePrice.text = [self getFormattedCost:cost];
 			view = labourcell;
@@ -517,7 +517,7 @@
 	return cell;
 }
 
-- (NSString *) getFormattedCost:(float)cost
+- (NSString *) getFormattedCost:(double)cost
 {
     NSMutableString * decimalCostStr = [NSMutableString stringWithFormat:@"%d", (int)cost];
     int strLength = [decimalCostStr length];
