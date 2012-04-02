@@ -35,7 +35,7 @@
 	IBOutlet UITableView *summarytable;
 	NSMutableArray *Parts, *Expenses, * Labour;
 
-	float totalCost;
+    double totalCost;//#3014
 	IBOutlet UILabel *LblTotalCost;
 	IBOutlet UIImageView *signature;
 	SignatureViewController *sign;
@@ -89,7 +89,7 @@
 
 - (NSString *) getFormattedDate:(NSString *)date;
 
-- (NSString *) getFormattedCost:(float)cost;
+- (NSString *) getFormattedCost:(double)cost;//#3014
 
 - (IBAction) Help;
 
