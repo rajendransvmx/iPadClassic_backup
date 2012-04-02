@@ -2483,7 +2483,16 @@
                         [self didInvokeWebService:TargetCall];
                     }
                 }
-            
+                if([eventType isEqualToString:@"Before Save/Insert"])
+                {
+                    if([TargetCall isEqualToString:@""])
+                    {
+                    }
+                    else
+                    {
+                        [self didInvokeWebService:TargetCall];
+                    }
+                }      
             }
 
         }
@@ -2520,6 +2529,16 @@
                         [self didInvokeWebService:TargetCall];
                     }
                 }
+                if([eventType isEqualToString:@"Before Save/Insert"])
+                {
+                    if([TargetCall isEqualToString:@""])
+                    {
+                    }
+                    else
+                    {
+                        [self didInvokeWebService:TargetCall];
+                    }
+                } 
             }
         }
 
@@ -2888,6 +2907,17 @@
                         [self didInvokeWebService:TargetCall];
                     }
                 }
+                if([eventType isEqualToString:@"After Save/Insert"])
+                {
+                    if([TargetCall isEqualToString:@""])
+                    {
+                    }
+                    else
+                    {
+                        [self didInvokeWebService:TargetCall];
+                    }
+                }                
+
             }
         }
     }
@@ -2923,6 +2953,17 @@
                         [self didInvokeWebService:TargetCall];
                     }
                 }
+                if([eventType isEqualToString:@"After Save/Insert"])
+                {
+                    if([TargetCall isEqualToString:@""])
+                    {
+                    }
+                    else
+                    {
+                        [self didInvokeWebService:TargetCall];
+                    }
+                }                
+
                 
             }
             
@@ -2958,7 +2999,16 @@
                         [self didInvokeWebService:TargetCall];
                     }
                 }
-                
+                if([eventType isEqualToString:@"After Save/Insert"])
+                {
+                    if([TargetCall isEqualToString:@""])
+                    {
+                    }
+                    else
+                    {
+                        [self didInvokeWebService:TargetCall];
+                    }
+                }                
             }
             
         }
@@ -2998,7 +3048,16 @@
                         [self didInvokeWebService:TargetCall];
                     }
                 }
-                
+                if([eventType isEqualToString:@"After Save/Insert"])
+                {
+                    if([TargetCall isEqualToString:@""])
+                    {
+                    }
+                    else
+                    {
+                        [self didInvokeWebService:TargetCall];
+                    }
+                }                
             }
             
         }
@@ -3039,7 +3098,16 @@
                         [self didInvokeWebService:TargetCall];
                     }
                 }
-                
+                if([eventType isEqualToString:@"After Save/Insert"])
+                {
+                    if([TargetCall isEqualToString:@""])
+                    {
+                    }
+                    else
+                    {
+                        [self didInvokeWebService:TargetCall];
+                    }
+                }                                
             }
             
         }
