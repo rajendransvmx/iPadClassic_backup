@@ -208,7 +208,9 @@
 
 - (void) setCalendarDate:(NSUInteger)date Month:(NSUInteger)month Year:(NSUInteger)year;
 - (NSArray *) getCalendarDate;
-
+- (NSMutableArray *) getRemainingDaysInMonth:(int ) month 
+                               lastNumOfDays:(NSInteger)noDays 
+                                 isPrevMonth:(BOOL) prevMonth;
 //pavaman 11th Jan 2011
 - (NSMutableArray *) getWeekBoundaries:(NSString *)date;
 

@@ -396,15 +396,54 @@
         _endDate = [NSString stringWithFormat:@"%d", end];
     
     // Retrieve current month and year
-    NSString * monthString;
+    int startMonth,endMonth;
+    int startYear,endYear;
+    NSString * startMonthString;
+    NSString * endMonthString;
     NSUInteger month = [[weekDetails objectForKey:wMONTHNUMBER] intValue];
-    if (month < 10)
-        monthString = [NSString stringWithFormat:@"0%d", month];
-    else
-        monthString = [NSString stringWithFormat:@"%d", month];
+    NSUInteger year = [[weekDetails objectForKey:wYEAR] intValue];
     
-    NSString * weekStart = [NSString stringWithFormat:@"%@-%@-%@", [weekDetails objectForKey:wYEAR], monthString, _startDate];
-    NSString * weekEnd = [NSString stringWithFormat:@"%@-%@-%@", [weekDetails objectForKey:wYEAR], monthString, _endDate];
+    startYear = endYear = year;
+    startMonth =endMonth = month;
+    if(index == 0)
+    {
+        if(start > end)
+        {
+            startMonth = month-1;
+            if(startMonth == 0)
+            {
+                startMonth = 12;
+                startYear = startYear - 1;
+            }
+        }
+    }
+    else
+    {
+        if(index == ([weeksArray count]-1))
+        {
+            if(start > end)
+            {
+                endMonth = month + 1;
+                if(endMonth == 13)
+                {
+                    endMonth = 1;
+                    endYear = endYear + 1;
+                }
+            }  
+        }
+    }
+    if (startMonth < 10)
+        startMonthString = [NSString stringWithFormat:@"0%d", startMonth];
+    else
+        startMonthString = [NSString stringWithFormat:@"%d", startMonth];
+    if (endMonth < 10)
+        endMonthString = [NSString stringWithFormat:@"0%d", endMonth];
+    else
+        endMonthString = [NSString stringWithFormat:@"%d", endMonth];
+    
+    
+    NSString * weekStart = [NSString stringWithFormat:@"%d-%@-%@", startYear, startMonthString, _startDate];
+    NSString * weekEnd = [NSString stringWithFormat:@"%d-%@-%@", endYear, endMonthString, _endDate];
     
     // Performance Enhancement
     if (currentWeekDateRange == nil)
@@ -417,7 +456,7 @@
         currentWeekDateRange = nil;
         currentWeekDateRange = [[NSArray alloc] initWithObjects:weekStart, weekEnd, nil];
     }
-
+    
     // Analyzer
     return [NSArray arrayWithObjects:weekStart, weekEnd, nil];
 }
@@ -1013,7 +1052,81 @@
     
     if ([date intValue] < 10)
         date = [NSString stringWithFormat:@"0%d", [date intValue]];
-    
+    NSRange range = {8,2};
+    int prevDate = [[startTime substringWithRange:range] intValue];  
+    NSLog(@"PrevDate = %d and Next Date =%d",prevDate,[date intValue]);
+    int diff = ([date intValue] > prevDate)?([date intValue] - prevDate):(prevDate - [date intValue]);
+    if(diff > 7)
+    {
+        if( prevDate > [date intValue] )
+        {
+            NSRange monthRange = {6,2};
+            int newMonth = [[startTime substringWithRange:monthRange] intValue]; 
+            newMonth = newMonth + 1;
+            if(newMonth == 13 )
+            {
+                newMonth = 1; 
+                NSRange yearRange = {0,4};
+                int newYear = [[startTime substringWithRange:yearRange] intValue]; 
+                NSString *newMonthStr, *newYearStr;
+                newMonthStr = [NSString stringWithFormat:@"0%d",newMonth];
+                newYear = newYear + 1;
+                newYearStr = [NSString stringWithFormat:@"%d",newYear];                                
+                startTime = [startTime stringByReplacingCharactersInRange:NSMakeRange(5, 2) withString:newMonthStr];
+                startTime = [startTime stringByReplacingCharactersInRange:NSMakeRange(0, 4) withString:newYearStr];
+                endTime = [endTime stringByReplacingCharactersInRange:NSMakeRange(5, 2) withString:newMonthStr];
+                endTime = [endTime stringByReplacingCharactersInRange:NSMakeRange(0, 4) withString:newYearStr];
+                
+            }
+            else
+            {
+                NSString *newMonthStr;
+                if(newMonth<10)
+                    newMonthStr = [NSString stringWithFormat:@"0%d",newMonth];
+                else
+                    newMonthStr = [NSString stringWithFormat:@"%d",newMonth];
+                startTime = [startTime stringByReplacingCharactersInRange:NSMakeRange(5, 2) withString:newMonthStr];
+                endTime = [endTime stringByReplacingCharactersInRange:NSMakeRange(5, 2) withString:newMonthStr];
+                
+            }
+            
+        }
+        else
+        {
+            NSRange monthRange = {6,2};
+            int newMonth = [[startTime substringWithRange:monthRange] intValue]; 
+            newMonth = newMonth -1;
+            if(newMonth == 0 )
+            {
+                newMonth = 12; 
+                NSRange yearRange = {0,4};
+                int newYear = [[startTime substringWithRange:yearRange] intValue]; 
+                NSString *newMonthStr, *newYearStr;
+                if(newMonth<10)
+                    newMonthStr = [NSString stringWithFormat:@"0%d",newMonth];
+                else
+                    newMonthStr = [NSString stringWithFormat:@"%d",newMonth];
+                newYear = newYear -1;
+                newYearStr = [NSString stringWithFormat:@"%d",newYear];                
+                
+                startTime = [startTime stringByReplacingCharactersInRange:NSMakeRange(5, 2) withString:newMonthStr];
+                startTime = [startTime stringByReplacingCharactersInRange:NSMakeRange(0, 4) withString:newYearStr];
+                endTime = [endTime stringByReplacingCharactersInRange:NSMakeRange(5, 2) withString:newMonthStr];
+                endTime = [endTime stringByReplacingCharactersInRange:NSMakeRange(0, 4) withString:newYearStr];
+            }
+            else
+            {
+                NSString *newMonthStr;
+                if(newMonth<10)
+                    newMonthStr = [NSString stringWithFormat:@"0%d",newMonth];
+                else
+                    newMonthStr = [NSString stringWithFormat:@"%d",newMonth];
+                startTime = [startTime stringByReplacingCharactersInRange:NSMakeRange(5, 2) withString:newMonthStr];
+                endTime = [endTime stringByReplacingCharactersInRange:NSMakeRange(5, 2) withString:newMonthStr];
+            }
+        }
+    }
+
     //Replace date with current date
     NSString * oldString = [startTime substringToIndex:10];
     NSString * newString = [startTime substringToIndex:8];
