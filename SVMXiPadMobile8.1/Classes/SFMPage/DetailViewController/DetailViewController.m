@@ -2680,7 +2680,7 @@
         if ([key Contains:@"QTY_"])
         {
             NSString * quantity = [LabourValuesDictionary objectForKey:key];
-            int _quantity = [quantity floatValue];
+            float _quantity = [quantity floatValue]; //#3736
             if (_quantity)
             {
                 NSString * item = [key stringByReplacingOccurrencesOfString:@"QTY_" withString:@""];
