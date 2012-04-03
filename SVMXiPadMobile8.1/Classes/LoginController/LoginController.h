@@ -168,7 +168,7 @@
 - (void) enableControls;
 - (void) disableControls;
 
--(void) getCreateProcessArray:(NSMutableArray *)processes_array;
+//-(void) getCreateProcessArray:(NSMutableArray *)processes_array;
 
 
 
