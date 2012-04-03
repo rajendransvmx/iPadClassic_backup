@@ -50,6 +50,7 @@
     NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
     NSDateFormatter * formatter1 = [[NSDateFormatter alloc] init];
     [formatter1 setDateFormat:@"EEE, dd MMM yyyy HH:mm:ss a"];
+    [formatter1 setTimeZone:[NSTimeZone defaultTimeZone]];
     //[formatter1 setTimeStyle:NSDateFormatterMediumStyle];
     //[formatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
     [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
