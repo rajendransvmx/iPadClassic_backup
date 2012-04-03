@@ -16,6 +16,8 @@
 
 @implementation databaseIntefaceSfm
 
+@synthesize MyPopoverDelegate;
+
 -(NSString *) filePath:(NSString *)dataBaseName
 { 
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES); 
@@ -5206,5 +5208,29 @@
     }
     return default_value;
 }
+
+- (NSString *) getDefaultValueForRTPicklistDependency:(NSString *)objectName recordtypeId:(NSString *)recordtypeId field_api_name:(NSString *)field_api_name
+{
+    NSString * defaultValue = @"";
+    
+    sqlite3_stmt * statement;
+    NSString * selectQuery = [NSString stringWithFormat:@"SELECT DISTINCT defaultvalue FROM SFRTPicklist where object_api_name = '%@' and field_api_name = '%@' and recordtypeid ='%@'", objectName, field_api_name, recordtypeId];
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1 , &statement , nil)  ==  SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement)== SQLITE_ROW)
+        {
+            char * _defaultValue = (char *) synchronized_sqlite3_column_text(statement, COLUMN_1);
+            
+            if(_defaultValue != nil)
+            {
+                defaultValue = [NSString stringWithUTF8String:_defaultValue];
+            }
+        }
+    }
+    
+    return defaultValue;
+}
+
 
 @end
