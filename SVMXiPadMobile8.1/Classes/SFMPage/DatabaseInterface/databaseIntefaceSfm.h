@@ -13,9 +13,14 @@
 @class iServiceAppDelegate;
 @interface databaseIntefaceSfm : NSObject
 {
+    //RADHA
+    id MyPopoverDelegate;
+    
     //sqlite3 * db;
     iServiceAppDelegate * appDelegate;
 }
+
+@property (nonatomic, retain) id MyPopoverDelegate;
 
 -(NSString *) filePath:(NSString *)dataBaseName;
 
@@ -175,7 +180,7 @@
 -(BOOL)getConflictsStatus;
 -(void)deleterecordsFromConflictTableForOperationType:(NSString *)opeation_type overrideFlag:(NSString *)override_flag  table_name:(NSString *)table_name   id_value:(NSString *)id_   field_name:(NSString *)field_name;
 
--(BOOL)DoesConflictContainTheRecord:(NSString *)local_id  operation_type:(NSString *)operation_type  object_name:(NSString *)object_name;
+//-(BOOL)DoesConflictContainTheRecord:(NSString *)local_id  operation_type:(NSString *)operation_type  object_name:(NSString *)object_name;
 
 -(NSMutableDictionary *)getValidForDictForObject:(NSString *)object_name  field_api_name:(NSString *)field_api_name;
 
@@ -203,6 +208,11 @@
 
 -(NSMutableArray *)getRtDependentPicklistsForObject:(NSString *)objectName recordtypeName:(NSString *)recordtypeName;
 -(NSString *)getDefaultValueForRTPicklist:(NSString *)objectName recordtypeName:(NSString *)recordtypeName  field_api_name:(NSString *)field_api_name  type:(NSString *)returnField;
+
+//Shrinivas - 02/04/2012
+//Method to get the default value of RTPicklistDependency
+- (NSString *) getDefaultValueForRTPicklistDependency:(NSString *)objectName recordtypeId:(NSString *)recordtypeId field_api_name:(NSString *)field_api_name;
+
 
 #define SERVER_OVERRIDE                     @"Server_Override"
 #define CLIENT_OVERRIDE                     @"Client_Override"
