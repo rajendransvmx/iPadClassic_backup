@@ -595,8 +595,14 @@
 		[button setTitle:[dates objectAtIndex:i] forState:UIControlStateNormal];
         [button setEnabled:NO];
 	}
-    
-    //Siva Manne Next Month End
+    //Keerti Remaining Buttons Set to NULL #4118
+    for (int i = numDays + weekday - 1+[nextMonthDays count]; i < [buttonArray count]; i++)
+    {
+        UIButton * button = [buttonArray objectAtIndex:i];
+        [button setTitle:nil forState:UIControlStateNormal];
+        button.titleLabel.text = nil;
+        [button setEnabled:NO];
+    }
     [dates removeAllObjects];
     [dates release];
     dates = nil;
@@ -724,7 +730,6 @@
     NSUInteger dateIndex = 0;
     BOOL isAllNil = YES;
     currentWeek = 1;
-    int count = 0;
     for (int i = 1; i <= 6; i++)
     {
         weekdays = [[NSMutableArray alloc] initWithCapacity:0];
@@ -742,9 +747,7 @@
             }
             
             if (selDate == 0) selDate = currDate;
-            if([button.titleLabel.text intValue] == selDate)
-                count++;
-            if ((selDate == [button.titleLabel.text intValue]) && [button isEnabled] && count == 1)
+            if ((selDate == [button.titleLabel.text intValue]) && [button isEnabled])
             {
                 currentWeek = i;
             }
