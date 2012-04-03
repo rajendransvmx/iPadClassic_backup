@@ -15,6 +15,9 @@
 
 @implementation WSInterface
 
+//RADHA
+@synthesize MyPopoverDelegate;
+
 @synthesize objectDefinitions; 
 @synthesize object; 
 @synthesize picklistObject;
@@ -662,6 +665,9 @@ last_sync_time:(NSString *)last_sync_time
     }
     if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
     {
+        appDelegate.SyncStatus = SYNC_GREEN;
+        [refreshSyncButton showSyncStatusButton];
+        [refreshModalStatusButton showModalSyncStatus];
         return;
     }
     
@@ -676,6 +682,9 @@ last_sync_time:(NSString *)last_sync_time
     }  
     if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
     {
+        appDelegate.SyncStatus = SYNC_GREEN;
+        [refreshSyncButton showSyncStatusButton];
+        [refreshModalStatusButton showModalSyncStatus];
         return;
     }                                                             //call delete
                                                                         //call Update
@@ -686,7 +695,8 @@ last_sync_time:(NSString *)last_sync_time
     {
         if (!appDelegate.isInternetConnectionAvailable)
         {
-            [appDelegate throwException];
+            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                [MyPopoverDelegate performSelector:@selector(throwException)];
             break;
         }
         if(appDelegate.Incremental_sync_status == GET_DELETE_DONE || appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
@@ -697,6 +707,9 @@ last_sync_time:(NSString *)last_sync_time
     
     if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
     {
+        appDelegate.SyncStatus = SYNC_GREEN;
+        [refreshSyncButton showSyncStatusButton];
+        [refreshModalStatusButton showModalSyncStatus];
         return;
     }
     
@@ -710,7 +723,8 @@ last_sync_time:(NSString *)last_sync_time
      {
          if (!appDelegate.isInternetConnectionAvailable)
          {
-             [appDelegate throwException];
+             if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                 [MyPopoverDelegate performSelector:@selector(throwException)];
              break;
          }
          if(appDelegate.Incremental_sync_status == PUT_DELETE_DONE || appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
@@ -721,6 +735,9 @@ last_sync_time:(NSString *)last_sync_time
     
      if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
      {
+         appDelegate.SyncStatus = SYNC_GREEN;
+         [refreshSyncButton showSyncStatusButton];
+         [refreshModalStatusButton showModalSyncStatus];
          return;
      }
     
@@ -740,7 +757,8 @@ last_sync_time:(NSString *)last_sync_time
     {
         if (!appDelegate.isInternetConnectionAvailable)
         {
-            [appDelegate throwException];
+            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                [MyPopoverDelegate performSelector:@selector(throwException)];
             break;
         }
         if(appDelegate.Incremental_sync_status == PUT_UPDATE_DONE  || appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
@@ -750,6 +768,9 @@ last_sync_time:(NSString *)last_sync_time
     }
     if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
     {
+        appDelegate.SyncStatus = SYNC_GREEN;
+        [refreshSyncButton showSyncStatusButton];
+        [refreshModalStatusButton showModalSyncStatus];
         return;
     }
     
@@ -760,7 +781,8 @@ last_sync_time:(NSString *)last_sync_time
     {
         if (!appDelegate.isInternetConnectionAvailable)
         {
-            [appDelegate throwException];
+            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                [MyPopoverDelegate performSelector:@selector(throwException)];
             break;
         }
         if(appDelegate.Incremental_sync_status == GET_UPDATE_DONE || appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
@@ -771,6 +793,9 @@ last_sync_time:(NSString *)last_sync_time
     
     if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
     {
+        appDelegate.SyncStatus = SYNC_GREEN;
+        [refreshSyncButton showSyncStatusButton];
+        [refreshModalStatusButton showModalSyncStatus];
         return;
     }
     
@@ -782,7 +807,8 @@ last_sync_time:(NSString *)last_sync_time
     {
         if (!appDelegate.isInternetConnectionAvailable)
         {
-            [appDelegate throwException];
+            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                [MyPopoverDelegate performSelector:@selector(throwException)];
             break;
         }
         if(appDelegate.Incremental_sync_status == PUT_RECORDS_DONE || appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
@@ -793,6 +819,9 @@ last_sync_time:(NSString *)last_sync_time
     
     if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
     {
+        appDelegate.SyncStatus = SYNC_GREEN;
+        [refreshSyncButton showSyncStatusButton];
+        [refreshModalStatusButton showModalSyncStatus];
         return;
     }
    
@@ -3078,6 +3107,8 @@ last_sync_time:(NSString *)last_sync_time
     ret = [[response.bodyParts objectAtIndex:0] isKindOfClass:[SOAPFault class]];
     if (ret)
     {
+        
+        
         appDelegate.incrementalSync_Failed = TRUE;
         SOAPFault * sFault = [response.bodyParts objectAtIndex:0];
         NSLog(@"%@", sFault.faultcode);
@@ -3121,6 +3152,9 @@ last_sync_time:(NSString *)last_sync_time
         didGetAddtionalObjDef = TRUE;
         
         appDelegate.didFinishWithError = TRUE;
+        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+            [MyPopoverDelegate performSelector:@selector(throwException)];
+        
         responseError = 1;
 //        if (isLoggedIn)
             [self didFinishGetEventsWithFault:sFault];
@@ -3682,7 +3716,8 @@ last_sync_time:(NSString *)last_sync_time
                 {
                     if (!appDelegate.isInternetConnectionAvailable)
                     {
-                        [appDelegate throwException];
+                        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                            [MyPopoverDelegate performSelector:@selector(throwException)];
                         break;
                     }
                     if (didGetPageData)
@@ -3697,7 +3732,8 @@ last_sync_time:(NSString *)last_sync_time
                 {
                     if (!appDelegate.isInternetConnectionAvailable)
                     {
-                        [appDelegate throwException];
+                        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                            [MyPopoverDelegate performSelector:@selector(throwException)];
                         break;
                     }
 
@@ -3799,7 +3835,8 @@ last_sync_time:(NSString *)last_sync_time
                 {
                     if (!appDelegate.isInternetConnectionAvailable)
                     {
-                        [appDelegate throwException];
+                        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                            [MyPopoverDelegate performSelector:@selector(throwException)];
                         break;
                     }
 
@@ -3818,7 +3855,8 @@ last_sync_time:(NSString *)last_sync_time
                 {
                     if (!appDelegate.isInternetConnectionAvailable)
                     {
-                        [appDelegate throwException];
+                        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                            [MyPopoverDelegate performSelector:@selector(throwException)];
                         break;
                     }
 
@@ -6233,7 +6271,8 @@ last_sync_time:(NSString *)last_sync_time
             NSLog(@"DetailViewController viewdidLoad in while loop");
             if (!appDelegate.isInternetConnectionAvailable)
             {
-                [appDelegate throwException];
+                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                    [MyPopoverDelegate performSelector:@selector(throwException)];
                 [appDelegate displayNoInternetAvailable];
                 return ;
             }
@@ -6249,7 +6288,6 @@ last_sync_time:(NSString *)last_sync_time
     [appDelegate.dataBase insertValuesInToRTPicklistTableForObject:objects Values:recordTypeDict];
     
     return;
-    
 }
 
 - (void) didDescribeSObjectLayoutForObject:(ZKDescribeLayoutResult *)result error:(NSError *)error context:(id)context
