@@ -9,13 +9,13 @@
 #import "DataBase.h"
 #import "LocalizationGlobals.h"
 #import "iServiceAppDelegate.h"
-
 #import "PopoverButtons.h"
 
 @implementation DataBase 
 
 @synthesize dbFilePath;
 @synthesize didInsertTable;
+@synthesize MyPopoverDelegate;
 //@synthesize db;
 -(id)init
 {
@@ -132,7 +132,8 @@
                 char *err;
                 if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
                 {
-                    [appDelegate throwException];
+                    if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                        [MyPopoverDelegate performSelector:@selector(throwException)];
                     NSLog(@"Failed to insert in to table");
                 }
             }
@@ -209,7 +210,8 @@
                     char *err;
                     if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
                     {
-                        [appDelegate throwException];
+                        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                            [MyPopoverDelegate performSelector:@selector(throwException)];
                         NSLog(@"Failed to insert in to table");
                     }
 
@@ -297,7 +299,8 @@
                     char *err;
                     if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
                     {
-                        [appDelegate throwException];
+                        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                            [MyPopoverDelegate performSelector:@selector(throwException)];
                         NSLog(@"Failed to insert in to table");
                     }
 
@@ -459,7 +462,8 @@
                 char * err;
                 if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
                 {
-                    [appDelegate throwException];
+                    if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                        [MyPopoverDelegate performSelector:@selector(throwException)];
                     NSLog(@"Failed to insert");
                 }
                 
@@ -566,7 +570,8 @@
         char * err;
         if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
         {
-            [appDelegate throwException];
+            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                [MyPopoverDelegate performSelector:@selector(throwException)];
             NSLog(@"Failed to drop");
         }
     
@@ -621,7 +626,8 @@
             int ret = synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err);
             if (ret != SQLITE_OK)
             {
-                [appDelegate throwException];
+                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                    [MyPopoverDelegate performSelector:@selector(throwException)];
                 NSLog(@"Failed to insert");
             }
 
@@ -678,7 +684,8 @@
             char * err;
             if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
             {
-                [appDelegate throwException];
+                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                    [MyPopoverDelegate performSelector:@selector(throwException)];
                 NSLog(@"Failed to insert");
             }
         } 
@@ -731,7 +738,8 @@
             char * err;
             if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
             {
-                [appDelegate throwException];
+                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                    [MyPopoverDelegate performSelector:@selector(throwException)];
                 NSLog(@"Failed to insert");
             }
         }
@@ -960,7 +968,8 @@
             char * err;
             if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
             {
-                [appDelegate throwException];
+                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                    [MyPopoverDelegate performSelector:@selector(throwException)];
                 NSLog(@"Failed to insert");
             }
         }
@@ -1040,7 +1049,8 @@
                         char *err;
                         if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
                         {
-                            [appDelegate throwException];
+                            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                                [MyPopoverDelegate performSelector:@selector(throwException)];
                             NSLog(@"Failed to insert in to table");
                         }                                                        
                     }
@@ -1102,7 +1112,8 @@
                         char * err;
                         if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
                         {
-                            [appDelegate throwException];
+                            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                                [MyPopoverDelegate performSelector:@selector(throwException)];
                             NSLog(@"Failed to insert");
                         }
                     }
@@ -1138,7 +1149,8 @@
             char *err;
             if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
             {
-                [appDelegate throwException];
+                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                    [MyPopoverDelegate performSelector:@selector(throwException)];
                 NSLog(@"Failed to insert in to table");
             }         
         }
@@ -1166,7 +1178,8 @@
             char *err;
             if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
             {
-                [appDelegate throwException];
+                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                    [MyPopoverDelegate performSelector:@selector(throwException)];
                 NSLog(@"Failed to insert in to table");
             }         
         }
@@ -1198,7 +1211,8 @@
             char *err;
             if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
             {
-                [appDelegate throwException];
+                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                    [MyPopoverDelegate performSelector:@selector(throwException)];
                 NSLog(@"Failed to insert in to table");
             }         
         }
@@ -1247,7 +1261,8 @@
             char *err;
             if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
             {
-                [appDelegate throwException];
+                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                    [MyPopoverDelegate performSelector:@selector(throwException)];
                 NSLog(@"Failed to insert in to table");
             }         
         }
@@ -1285,7 +1300,8 @@
             
             if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
             {
-                [appDelegate throwException];
+                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                    [MyPopoverDelegate performSelector:@selector(throwException)];
                 NSLog(@"Failed To Insert");
             }
             
@@ -1319,7 +1335,8 @@
             char * err;
             if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
             {
-                [appDelegate throwException];
+                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                    [MyPopoverDelegate performSelector:@selector(throwException)];
                 NSLog(@"Failed To Insert");
             }
         }
@@ -1499,7 +1516,8 @@
         char *err;
         if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
         {
-            [appDelegate throwException];
+            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                [MyPopoverDelegate performSelector:@selector(throwException)];
             NSLog(@"Failed to insert in to table");
         }         
     }
@@ -1533,7 +1551,8 @@
         char *err;
         if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
         {
-            [appDelegate throwException];
+            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                [MyPopoverDelegate performSelector:@selector(throwException)];
             NSLog(@"Failed to insert in to table");
         }         
     }   
@@ -1649,7 +1668,8 @@
         char * err;
         if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
         {
-            [appDelegate throwException];
+            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                [MyPopoverDelegate performSelector:@selector(throwException)];
             NSLog(@"Failed to insert");
         }
     }
@@ -1690,7 +1710,8 @@
             queryStatemnt = [NSString stringWithFormat:@"DROP TABLE '%@'", [tables objectAtIndex:i]];
             if (synchronized_sqlite3_exec(appDelegate.db, [queryStatemnt UTF8String], NULL, NULL, &err) != SQLITE_OK)
             {
-                [appDelegate throwException];
+                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                    [MyPopoverDelegate performSelector:@selector(throwException)];
                 NSLog(@"Failed to drop");
               
             }
@@ -2019,7 +2040,8 @@
         char * err;
         if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
         {
-            [appDelegate throwException];
+            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                [MyPopoverDelegate performSelector:@selector(throwException)];
             NSLog(@"Failed to insert");
         }
 
@@ -2127,7 +2149,9 @@
     char * err;
     if (synchronized_sqlite3_exec(appDelegate.db, [statement UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
-        [appDelegate throwException];
+        
+        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+            [MyPopoverDelegate performSelector:@selector(throwException)];
         NSLog(@"Failed");
         return NO;
     }
@@ -2222,7 +2246,8 @@
                     char * err;
                     if (synchronized_sqlite3_exec(appDelegate.db, [query UTF8String], NULL, NULL, &err) != SQLITE_OK)
                     {  
-                        [appDelegate throwException];
+                        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                            [MyPopoverDelegate performSelector:@selector(throwException)];
                         NSLog(@"Failed to insert");
                     }
                 }
@@ -2248,7 +2273,8 @@
     char * err;
     if(synchronized_sqlite3_exec(appDelegate.db, [query UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
-        [appDelegate throwException];
+        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+            [MyPopoverDelegate performSelector:@selector(throwException)];
         NSLog(@"Failed to insert");
     }
     
@@ -2355,7 +2381,8 @@
                                 char * err;
                                 if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement3 UTF8String], NULL, NULL, &err) != SQLITE_OK)
                                 {
-                                    [appDelegate throwException];
+                                    if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                                        [MyPopoverDelegate performSelector:@selector(throwException)];
                                     NSLog(@"Failed to update");
                                 }
 
@@ -2701,7 +2728,8 @@
     {
         if (!appDelegate.isInternetConnectionAvailable)
         {
-            [appDelegate throwException];
+            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                [MyPopoverDelegate performSelector:@selector(throwException)];
             break;
         }
         
@@ -2720,7 +2748,8 @@
     {
         if (!appDelegate.isInternetConnectionAvailable)
         {
-            [appDelegate throwException];
+            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                [MyPopoverDelegate performSelector:@selector(throwException)];
             break;
         }
         if (appDelegate.wsInterface.didOpComplete == TRUE)
@@ -2736,7 +2765,8 @@
     {
         if (!appDelegate.isInternetConnectionAvailable)
         {
-            [appDelegate throwException];
+            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                [MyPopoverDelegate performSelector:@selector(throwException)];
             break;
         }
         if (appDelegate.Incremental_sync_status == PUT_RECORDS_DONE)
@@ -2878,7 +2908,8 @@
     char * err;
     if (synchronized_sqlite3_exec(tempDb, [statement UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
-        [appDelegate throwException];        
+        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+            [MyPopoverDelegate performSelector:@selector(throwException)];
         NSLog(@"Failed");
         return NO;
     }
