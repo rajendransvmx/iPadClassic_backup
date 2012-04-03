@@ -69,8 +69,20 @@
     [POC setPopoverContentSize:contentView.view.frame.size animated:YES];
     POC.delegate = contentView;
     [POC presentPopoverFromRect:CGRectMake(0, 0, rect.size.width, rect.size.height) inView:TextfieldView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-   
-    NSInteger indexOfText = [spinnerData indexOfObject:textField.text];
+    
+    //Shrinivas RTPicklist - Defect:3663
+    NSLog(@"%@", textField.text);
+    NSInteger indexOfText;
+    NSString * defaultValue = @"";
+    if (ISRTDEPPicklist && ![parent.fieldAPIName isEqualToString:@"RecordTypeId"]&& [textField.text isEqualToString:@""]){
+        defaultValue = [appDelegate.databaseInterface getDefaultValueForRTPicklistDependency:SFM_ObjectName recordtypeId:RecordTypeId field_api_name:parent.fieldAPIName];
+        
+        indexOfText = [spinnerData indexOfObject:defaultValue];
+        
+    }else{
+        indexOfText = [spinnerData indexOfObject:textField.text];
+    }
+
     [contentView.valuePicker selectRow:indexOfText inComponent:0 animated:YES];
     
     return NO;
