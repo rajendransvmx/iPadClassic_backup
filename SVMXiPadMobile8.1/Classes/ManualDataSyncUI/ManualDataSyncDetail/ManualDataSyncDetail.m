@@ -1322,6 +1322,15 @@
     [activity stopAnimating];
 }
 
+- (void) throwException
+{
+   NSException * exception = [NSException exceptionWithName:@"Error" reason: @"Synchronize Configuration Failed"
+                                      userInfo: nil];
+    
+    @throw exception;
+}
+
+
 - (void)dealloc 
 {
     [self.popoverController release];
