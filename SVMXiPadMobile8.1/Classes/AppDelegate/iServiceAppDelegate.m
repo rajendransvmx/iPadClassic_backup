@@ -975,15 +975,173 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     }
 }
 
+-(void) getCreateProcessArray:(NSMutableArray *)processes_array
+{
+    if (self.objectLabelName_array)
+    {
+        self.objectLabelName_array = nil;
+    }
+    
+    NSMutableArray * _objectNames_array;
+    //collect all the object names in an array arrange it in the alpha order 
+    _objectNames_array = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    for(int i = 0 ;i<[processes_array count]; i++)
+    {
+        NSDictionary * dictionary = [processes_array objectAtIndex:i];
+        NSString * str = [dictionary objectForKey:SVMXC_OBJECT_NAME];  
+        
+        if(i  == 0)
+        {
+            [_objectNames_array  addObject:str];
+            continue;
+        }
+        NSInteger count=0;
+        for(int j = 0; j < [_objectNames_array count];j++)
+        {
+            if([str isEqualToString:[_objectNames_array objectAtIndex:j]])
+            {
+                count ++;
+            }
+        }
+        if(count == 0)
+        {
+            [_objectNames_array  addObject:str];
+        }
+        
+    }
+    
+    NSMutableArray * section_for_createObjects = [[NSMutableArray alloc] initWithCapacity:0];
+    for(int i=0 ;i< [_objectNames_array count]; i++)
+    {
+        NSString * _objectName = [_objectNames_array objectAtIndex:i];
+        NSMutableArray * createobjects = [[NSMutableArray alloc] initWithCapacity:0];
+        for(int j=0;j<[processes_array count];j++)
+        {
+            NSDictionary * _dict = [processes_array objectAtIndex:j];
+            NSString * str = [_dict objectForKey:SVMXC_OBJECT_NAME];
+            if([str isEqualToString:_objectName])
+            {
+                [createobjects addObject:_dict];
+            }
+        }
+        
+        [section_for_createObjects addObject:createobjects];
+        [createobjects release];
+    }
+    //create a
+    self.StandAloneCreateProcess = section_for_createObjects;
+    self.objectNames_array = _objectNames_array;
+    
+    //write a method to get all the labels for the  object
+    NSMutableArray * objectNames = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    for(int k = 0; k < [self.objectNames_array count];k++ )
+    {
+        NSString * label = [self.databaseInterface getObjectLabel:@"SFObject" objectApi_name:[self.objectNames_array objectAtIndex:k]];
+        [objectNames addObject:label];
+        
+    }
+    
+    self.objectLabel_array = objectNames;
+    
+    if (self.objectLabelName_array == nil)
+        self.objectLabelName_array = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    
+    
+    NSMutableDictionary * _dict = nil;
+    for (int i = 0; i < [self.objectNames_array count]; i++)
+    {
+        if (_dict == nil)
+            _dict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
+        
+        [_dict setValue:[self.objectLabel_array objectAtIndex:i] forKey:[self.objectNames_array objectAtIndex:i]];
+        [self.objectLabelName_array addObject:_dict];
+        _dict = nil;
+    }
+    
+    NSLog(@"%@", self.objectLabelName_array);
+    
+    if ( [self.objectLabelName_array count] > 1 )
+    {
+        int i = 0;
+        for (i = 0; i < [self.objectLabelName_array count] - 1; i++)
+        {
+            
+            for (int j = 0; j < ([self.objectLabelName_array count] - (i +1)); j++)
+            {
+                NSDictionary * dict_ = [self.objectLabelName_array objectAtIndex:j];
+                NSArray * arr = [dict_ allValues];
+                NSString * label = [arr objectAtIndex:0];
+                NSString * label1;
+                NSDictionary * _dict = [self.objectLabelName_array objectAtIndex:j+1];
+                NSArray * arr1 = [_dict allValues];
+                label1 = [arr1 objectAtIndex:0];
+                if (strcmp([label UTF8String], [label1 UTF8String]) > 0)
+                {
+                    [self.objectLabelName_array exchangeObjectAtIndex:j withObjectAtIndex:j+1];
+                }
+            }
+        }
+    }
+    
+    [section_for_createObjects release];
+    section_for_createObjects = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    for(int i=0 ;i< [_objectNames_array count]; i++)
+    {
+        
+        NSDictionary * dict_ =  [self.objectLabelName_array objectAtIndex:i];
+        NSString * _objectName = [[dict_ allKeys] objectAtIndex:0];
+        NSMutableArray * createobjects = [[NSMutableArray alloc] initWithCapacity:0];
+        for(int j=0;j<[processes_array count];j++)
+        {
+            NSDictionary * _dict = [processes_array objectAtIndex:j];
+            NSString * str = [_dict objectForKey:SVMXC_OBJECT_NAME];
+            if([str isEqualToString:_objectName])
+            {
+                [createobjects addObject:_dict];
+            }
+        }
+        
+        //Radha
+        for (int k = 0; k <[createobjects count]; k++)
+        {
+            NSDictionary * dict1 = [createobjects objectAtIndex:k];
+            NSString * key1 = [dict1 objectForKey:@"SVMXC__Name__c"];
+            for (int r = k + 1; r < [createobjects count]; r++)
+            {
+                NSDictionary * dict2 = [createobjects objectAtIndex:r];
+                NSString * key2 = [dict2 objectForKey:@"SVMXC__Name__c"];
+                
+                key1 = [key1 uppercaseString];
+                key2 = [key2 uppercaseString];
+                int result = strcmp([key1 UTF8String], [key2 UTF8String]);
+                
+                if (result > 0 )
+                {
+                    // perform swap
+                    [createobjects exchangeObjectAtIndex:k withObjectAtIndex:r];
+                    key1 = key2;
+                }
+            }
+            
+        }
+        
+        [section_for_createObjects addObject:createobjects];
+        [createobjects release];
+    }
+    self.StandAloneCreateProcess = section_for_createObjects;
+    
+}
+
+
 
 //Radha - 21 MARCH
-- (void) throwException
+/*- (void) throwException
 {
     exception = [NSException exceptionWithName:@"Error" reason: @"Synchronize Configuration Failed"
                                       userInfo: nil];
 
     @throw exception;
-}
+}*/
 
 @end
 
