@@ -325,7 +325,8 @@
     
     NSLog(@"%@", array);
     
-    self.productName = [[array objectAtIndex:index] objectForKey:DOCUMENTS_NAME];
+   // self.productName = [[array objectAtIndex:index] objectForKey:DOCUMENTS_NAME];
+    
     self.productId = [appDelegate.calDataBase getProductIdForName:self.productName];
     
     _index = index;
