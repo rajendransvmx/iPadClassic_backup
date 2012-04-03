@@ -23,7 +23,7 @@
 
 - (void)loadView
 {
-    appDelegate = [[UIApplication sharedApplication] delegate];
+    appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
     
     detail = [[ManualDataSyncDetail alloc] init];
     
@@ -147,6 +147,9 @@
         if (appDelegate.SyncStatus == SYNC_RED)
             return;
         
+        appDelegate.dataBase.MyPopoverDelegate = delegate;
+        appDelegate.databaseInterface.MyPopoverDelegate = delegate;
+        appDelegate.wsInterface.MyPopoverDelegate = delegate;
         [delegate activityStart];
         
         if([appDelegate.syncThread isExecuting])
@@ -202,6 +205,23 @@
         [appDelegate ScheduleIncrementalDatasyncTimer];
         [appDelegate.dataBase deleteDatabase:TEMPDATABASENAME];
         [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+        
+        if ([appDelegate.StandAloneCreateProcess count] > 0)
+        {
+            [appDelegate.StandAloneCreateProcess  removeAllObjects];
+            NSMutableArray * createprocessArray = [appDelegate.databaseInterface getAllTheProcesses:@"STANDALONECREATE"];
+            [appDelegate getCreateProcessArray:createprocessArray];
+        }
+             
+        if ([appDelegate.view_layout_array count] > 0)
+        {
+            [appDelegate.view_layout_array removeAllObjects];
+            appDelegate.view_layout_array = [appDelegate.databaseInterface getAllTheProcesses:@"VIEWRECORD"]; 
+        }
+        
+        appDelegate.dataBase.MyPopoverDelegate = nil;
+        appDelegate.databaseInterface.MyPopoverDelegate = nil;
+        appDelegate.wsInterface.MyPopoverDelegate = nil;
         [delegate activityStop];
     }
     
