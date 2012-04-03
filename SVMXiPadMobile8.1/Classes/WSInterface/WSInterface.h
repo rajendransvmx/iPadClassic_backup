@@ -38,6 +38,9 @@
 <INTF_WebServicesDefBindingResponseDelegate>
 {
     
+    //RADHA
+    id MyPopoverDelegate;
+    
     NSString * request_time;
     id <WSInterfaceDelegate> delegate;
     id <WSInterFaceDelegateForDetailView> detailDelegate;
@@ -164,6 +167,9 @@
     NSMutableArray * RecordTypePickList;
 
 }
+
+//RADHA
+@property (nonatomic, retain) id MyPopoverDelegate;
 
 @property (nonatomic , retain)  NSString * request_time;
 @property (nonatomic , retain) NSString * update_last_sync_time ;
