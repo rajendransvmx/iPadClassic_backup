@@ -70,8 +70,7 @@
     POC.delegate = contentView;
     [POC presentPopoverFromRect:CGRectMake(0, 0, rect.size.width, rect.size.height) inView:TextfieldView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
     
-    //Shrinivas RTPicklist - Defect:3663
-    NSLog(@"%@", textField.text);
+    //Shrinivas RTPicklist - Defect:3668
     NSInteger indexOfText;
     NSString * defaultValue = @"";
     if (ISRTDEPPicklist && ![parent.fieldAPIName isEqualToString:@"RecordTypeId"]&& [textField.text isEqualToString:@""]){
