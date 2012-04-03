@@ -506,9 +506,11 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 -(void) getDPpicklistInfo;
 
 
+-(void) getCreateProcessArray:(NSMutableArray *)processes_array;
+
 
 //Radha - 21 March
-- (void) throwException;
+//- (void) throwException;
 
 @end
 
