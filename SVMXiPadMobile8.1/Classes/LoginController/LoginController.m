@@ -178,7 +178,7 @@
         //for view process
         appDelegate.view_layout_array = [appDelegate.databaseInterface getAllTheProcesses:@"VIEWRECORD"];        
         
-        [self getCreateProcessArray:createprocessArray];
+        [appDelegate getCreateProcessArray:createprocessArray];
         
         NSDate *date =  [NSDate date];
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -1675,7 +1675,7 @@
 
 // #################################################################################################
 
--(void) getCreateProcessArray:(NSMutableArray *)processes_array
+/*-(void) getCreateProcessArray:(NSMutableArray *)processes_array
 {
     if (appDelegate.objectLabelName_array)
     {
@@ -1830,7 +1830,7 @@
     }
     appDelegate.StandAloneCreateProcess = section_for_createObjects;
     
-}
+}*/
 
 
 #pragma mark - Initial Meta Sync
