@@ -13,12 +13,17 @@
 -(void)dismisspopover;
 - (void) activityStart;
 - (void) activityStop;
+//Radha
+- (void) throwException;
+
 @end
 
 @class ManualDataSyncDetail;
 
 @interface PopoverButtons : UIViewController <UIPopoverControllerDelegate>
 {
+    id<MyPopoverDelegate> delegate;
+    
     UIButton *button;
     UIButton *button1;
     UIButton *button2;
