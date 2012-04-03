@@ -15,6 +15,9 @@
 
 @interface DataBase : NSObject 
 {
+    //RADHA
+    id MyPopoverDelegate;
+    
     NSString *dbFilePath;
 	//sqlite3  *db;
     
@@ -22,9 +25,9 @@
     sqlite3 * tempDb;
     NSString * filepath;
     NSMutableArray * object_names;
+    
+    
 
-    
-    
     BOOL didInsertTable;
     
     iServiceAppDelegate * appDelegate;
@@ -43,6 +46,10 @@
     BOOL didGetReportEssentials;
    // int i;
 }
+
+//RADHA
+
+@property (nonatomic, retain) id MyPopoverDelegate;
 
 @property (nonatomic, retain) NSString *dbFilePath;
 //@property (nonatomic) sqlite3  *db;
