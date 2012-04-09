@@ -5038,6 +5038,11 @@
                 CusLabel * custLabel = [[CusLabel alloc] initWithFrame:CGRectMake((2*j+1)*field_width , 6, field_width,control_height-8)];
                 custLabel.backgroundColor = [UIColor clearColor];
                 
+                custLabel.tapRecgLabel=value;
+                if ([value length]>15) {
+                    value= [value substringToIndex:15];    
+                    value=[value stringByAppendingFormat:@"..."];
+                }
                 custLabel.text = value;
                 custLabel.userInteractionEnabled = TRUE;
                 custLabel.controlDelegate = self;
@@ -11002,7 +11007,7 @@
             contentView_textView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, label_popOver_content.view.frame.size.width, 34)];  
         }
         
-        contentView_textView.text = label.text;
+        contentView_textView.text = label.tapRecgLabel;
         contentView_textView.font = font;
         contentView_textView.userInteractionEnabled = YES;
         contentView_textView.editable = NO;

@@ -15,6 +15,7 @@
 @synthesize object_api_name;
 @synthesize refered_to_table_name;
 @synthesize controlDelegate;
+@synthesize tapRecgLabel;
 
 #define DOUBLE_TAP_DELAY   0.35
 

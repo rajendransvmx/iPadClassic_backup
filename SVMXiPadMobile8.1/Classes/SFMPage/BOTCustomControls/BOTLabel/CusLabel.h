@@ -26,4 +26,5 @@
 -(id)initWithFrame:(CGRect)frame;
 -(NSString *) getLabel;
 @property (nonatomic, assign) id <ControlDelegate> controlDelegate;
+@property (nonatomic, retain) NSString *tapRecgLabel;
 @end
