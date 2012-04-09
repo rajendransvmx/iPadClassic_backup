@@ -1074,6 +1074,8 @@
     
     if (result == YES)
     {
+        result = [self createTable:[NSString stringWithFormat:@"CREATE INDEX IF NOT EXISTS RTIndex ON SFRTpicklist (object_api_name, field_api_name, recordtypename, defaultlabel, defaultvalue, label, value)"]];
+                       
         NSString * queryStatement = @"";
         
         for (NSString * objectName in objects)
