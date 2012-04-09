@@ -156,13 +156,21 @@
     [segmentButton setImage:[UIImage imageNamed:@"iService-Day-Button-Down-State.png"] forSegmentAtIndex:0];
     [segmentButton setImage:[UIImage imageNamed:@"iService-Week-Button-Up-State.png"] forSegmentAtIndex:1];
     
-    statusButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    /*statusButton = [UIButton buttonWithType:UIButtonTypeCustom];
     statusButton.frame = CGRectMake(815, 8, 26, 26);
     [statusButton setBackgroundImage:[self getStatusImage] forState:UIControlStateNormal];
     [statusButton addTarget:self action:@selector(showManualSyncUI) forControlEvents:UIControlEventTouchUpInside];
-    statusButton.enabled = NO;
+    statusButton.enabled = NO;*/
+    
+    animatedImageView = [[UIImageView alloc] initWithFrame:CGRectMake(815, 8, 26, 26)]; 
+    [self getStatusImage];
+    animatedImageView.animationDuration = 1.0f;
+    animatedImageView.animationRepeatCount = 0;
+    [animatedImageView startAnimating];
+    [self.view addSubview:animatedImageView];
 
-    [self.view addSubview:statusButton];
+
+    //[self.view addSubview:statusButton];
 }
 
 - (void) didInternetConnectionChange:(NSNotification *)notification
@@ -671,7 +679,8 @@
             refreshButton.alpha = 1.0;
             HomeButton.frame = homeButtonRect;
             refreshButton.frame = refreshButtontRect;
-            statusButton.frame = CGRectMake(815, 8, 26, 26);
+            //statusButton.frame = CGRectMake(815, 8, 26, 26);
+            animatedImageView.frame = CGRectMake(815, 8, 26, 26);
             [UIView commitAnimations];
             isViewDirty = NO;
         }
@@ -687,7 +696,8 @@
             refreshButton.alpha = 1.0;
             HomeButton.frame = homeButtonRect;
             refreshButton.frame = refreshButtontRect;
-            statusButton.frame = CGRectMake(815, 8, 26, 26);
+            //statusButton.frame = CGRectMake(815, 8, 26, 26);
+            animatedImageView.frame = CGRectMake(815, 8, 26, 26);
             [UIView commitAnimations];
         }
         
@@ -743,7 +753,8 @@
         HomeButton.frame = showMapButton.frame;
         refreshButtontRect = refreshButton.frame;
         refreshButton.frame = refreshButtontRect;
-        statusButton.frame = CGRectMake(855, 8, 26, 26); //Check This    
+        //statusButton.frame = CGRectMake(855, 8, 26, 26); //Check This  
+        animatedImageView.frame = CGRectMake(855, 8, 26, 26);
         [UIView commitAnimations];
         
         [self disableUI];
@@ -2076,7 +2087,53 @@
 
 - (UIImage *) getStatusImage
 {
+    
     UIImage  * img;
+    if (appDelegate.SyncStatus == SYNC_RED)
+    {
+        [animatedImageView stopAnimating];
+        animatedImageView.animationImages = nil;
+        NSMutableArray * imgArr = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+        for ( int i = 1; i < 34; i++)
+        {
+            [imgArr addObject:[UIImage imageNamed:[NSString stringWithFormat:@"r%d.png", i]]];
+        }
+        
+        NSLog(@"%@", imgArr);
+        animatedImageView.animationImages = [NSArray arrayWithArray:imgArr];
+        NSLog(@"%@", animatedImageView.animationImages);
+        animatedImageView.animationDuration = 1.0f;
+        animatedImageView.animationRepeatCount = 0;
+        [animatedImageView startAnimating];
+    }
+    else if (appDelegate.SyncStatus == SYNC_GREEN)
+    {
+        NSString * statusImage = @"green.png";
+        [animatedImageView stopAnimating];
+        animatedImageView.image = [UIImage imageNamed:@"green.png"];
+        img = [UIImage imageNamed:statusImage];
+        [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
+    }
+    else if (appDelegate.SyncStatus == SYNC_ORANGE)
+    {
+        animatedImageView.animationImages = nil;
+        NSMutableArray * imgArr = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+        for ( int i = 1; i < 34; i++)
+        {
+            [imgArr addObject:[UIImage imageNamed:[NSString stringWithFormat:@"o%d.png", i]]];
+        }
+        
+        NSLog(@"%@", imgArr);
+        animatedImageView.animationImages = [NSArray arrayWithArray:imgArr];
+        NSLog(@"%@", animatedImageView.animationImages);
+        animatedImageView.animationDuration = 1.0f;
+        animatedImageView.animationRepeatCount = 0;
+        [animatedImageView startAnimating];
+    }
+    
+    return img;
+
+    /*UIImage  * img;
     if (appDelegate.SyncStatus == SYNC_RED)
     {
         NSString * statusImage = @"red.png";
@@ -2095,7 +2152,7 @@
         img = [UIImage imageNamed:statusImage];
         [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
     }
-    return img;
+    return img;*/
 }
 
 
