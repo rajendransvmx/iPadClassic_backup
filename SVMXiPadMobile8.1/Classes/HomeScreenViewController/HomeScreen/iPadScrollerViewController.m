@@ -363,7 +363,7 @@ const NSUInteger kNumImages = 7;
     else
     {
         isInternetAvailable = NO;
-        [appDelegate displayNoInternetAvailable];
+        //[appDelegate displayNoInternetAvailable];  ---- Shrinivas Commented on 4/04/2012
     }
 }
 
