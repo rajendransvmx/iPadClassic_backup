@@ -193,6 +193,7 @@ SFWToolBarDelegate,RefreshSyncStatusButton>
     
     //Shrinivas
     UIButton  * statusButton;
+    UIImageView* animatedImageView;
 }
 
 @property (nonatomic, retain) DetailViewController * parentReference;
