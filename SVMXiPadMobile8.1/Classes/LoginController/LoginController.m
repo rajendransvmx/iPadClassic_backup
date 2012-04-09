@@ -915,6 +915,7 @@
 
 - (void) showHomeScreenviewController
 {
+    didRunProcess = NO;  //Shrinivas -----> BUG #4090
     if (appDelegate.didFinishWithError == TRUE)
     {
         return;
