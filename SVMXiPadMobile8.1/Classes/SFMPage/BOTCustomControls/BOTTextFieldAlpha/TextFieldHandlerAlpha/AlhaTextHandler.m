@@ -41,7 +41,7 @@
 
 - (BOOL) textFieldShouldEndEditing:(UITextField *)textField
 {
-    iServiceAppDelegate * appDelegate = [[UIApplication sharedApplication] delegate];
+    iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     NSString * warning = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_WARNING];
     NSString * invalidEmail = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_TEXT_INVALID_EMAIL]; 
     NSString * invalidUrl = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_TEXT_INVALID_URL];
@@ -57,12 +57,13 @@
         {
             return YES;
         }
-        else
+        else if ([textField.text length] > 0 )
         {
             NSLog(@"email not in proper format");
             UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:warning message:invalidEmail delegate:self cancelButtonTitle:alert_ok otherButtonTitles:nil, nil];
             [alertView show];
             [alertView release];
+            
             return YES;
         }
         return YES;
