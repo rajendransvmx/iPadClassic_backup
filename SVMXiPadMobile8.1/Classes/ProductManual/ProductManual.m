@@ -75,7 +75,6 @@
             [self showManualForIndex:lastIndex];
         }
     
-        [activity startAnimating];
     }
 }
 
