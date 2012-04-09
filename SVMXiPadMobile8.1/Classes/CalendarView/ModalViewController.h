@@ -148,6 +148,7 @@ DetailViewControllerDelegate, RefreshModalSyncStatusButton>
     
     //Shrinivas
     UIButton * statusButton;
+    UIImageView* animatedImageView;
 }
 
 
