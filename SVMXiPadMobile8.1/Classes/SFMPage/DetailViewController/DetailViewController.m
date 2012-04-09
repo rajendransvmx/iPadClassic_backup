@@ -328,14 +328,14 @@
         // ################################################### //
     }
     
-    //Sync Status Button - SHRINIVAS
-    statusButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    statusButton.frame = CGRectMake(485, 8, 26, 26);
-    [statusButton setBackgroundImage:[self getStatusImage] forState:UIControlStateNormal];
-    [statusButton addTarget:self action:@selector(showManualSyncUI) forControlEvents:UIControlEventTouchUpInside];
-    statusButton.enabled = NO;
+    //Image View animation
+    animatedImageView = [[UIImageView alloc] initWithFrame:CGRectMake(485, 8, 26, 26)];    
+    [self getStatusImage];
+    animatedImageView.animationDuration = 1.0f;
+    animatedImageView.animationRepeatCount = 0;
+    [animatedImageView startAnimating];
+    [self.navigationController.view addSubview:animatedImageView];
     
-    [self.navigationController.view addSubview:statusButton];
 }
 
 - (void) didInternetConnectionChange:(NSNotification *)notification
@@ -6127,6 +6127,7 @@
     [super dealloc];
     [appDelegate.dict release];
     [backBtn release];
+    [animatedImageView release];
 }
 
 #pragma mark - Custom Controls' Delegate Method
@@ -9283,9 +9284,15 @@
 }
 
 -(void)offlineActions:(NSDictionary *)buttonDict
-{   
-    appDelegate.showUI = FALSE;
+{  
+    NSString * warning = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_WARNING];
+    NSString * invalidEmail = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_TEXT_INVALID_EMAIL]; 
+    NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+    
+    //appDelegate.showUI = FALSE;
+    
     [self dismissActionMenu];
+    [self disableSFMUI];
     
     NSString * targetCall = [buttonDict objectForKey:SFW_ACTION_DESCRIPTION];
     NSString * action_process_id = [buttonDict objectForKey:SFW_PROCESS_ID];
@@ -9453,6 +9460,7 @@
                     NSString * field_api = [section_field objectForKey:gFIELD_API_NAME];
                     NSString * value = [section_field objectForKey:gFIELD_VALUE_VALUE];
                     NSString * key = [section_field objectForKey:gFIELD_VALUE_KEY];
+                    NSString * dataType = [section_field objectForKey:gFIELD_DATA_TYPE];
                     if(key == nil)
                     {
                         key = @"";
@@ -9465,9 +9473,27 @@
                         if([value length] == 0 )
                         {
                             error = TRUE;
-                            //sahana TEMP chage
+                            //sahana TEMP change
                             break;
                         }
+                    }
+                    if ([dataType isEqualToString:@"email"] )  //Shrinivas Fix for Email Validation 03/04/2012
+                    {
+                        BOOL result;
+                        NSString * emailRegEx = @"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}";
+                        NSPredicate * emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegEx];
+                        result = [emailTest evaluateWithObject:value];
+                        
+                        if (result == NO && [value length] > 0)
+                        {
+                            UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:warning message:invalidEmail delegate:self cancelButtonTitle:alert_ok otherButtonTitles:nil, nil];
+                            [alertView show];
+                            [alertView release];
+
+                            [self enableSFMUI];
+                            return;
+                        }
+                        
                     }
                 }        
             }
@@ -9516,6 +9542,26 @@
                                     }
                                 }
                             }
+                            
+                            if ([detail_api_name isEqualToString:@"SVMXC__Email__c"] )  //Shrinivas Fix for Email Validation 03/04/2012
+                            {
+                                BOOL result;
+                                NSString * emailRegEx = @"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}";
+                                NSPredicate * emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegEx];
+                                result = [emailTest evaluateWithObject:deatil_value];
+                                
+                                if (result == NO && [deatil_value length] > 0)
+                                {
+                                    UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:warning message:invalidEmail delegate:self cancelButtonTitle:alert_ok otherButtonTitles:nil, nil];
+                                    [alertView show];
+                                    [alertView release];
+
+                                    [self enableSFMUI];
+                                    return;
+                                }
+                                
+                            }
+
                         }
                     }
                 }        
@@ -9768,6 +9814,7 @@
                     NSString * field_api = [section_field objectForKey:gFIELD_API_NAME];
                     NSString * value = [section_field objectForKey:gFIELD_VALUE_VALUE];
                     NSString * key = [section_field objectForKey:gFIELD_VALUE_KEY];
+                    NSString * dataType = [section_field objectForKey:gFIELD_DATA_TYPE];
                     [SFM_header_fields setObject:key forKey:field_api];
                     if(key == nil)
                     {
@@ -9783,6 +9830,27 @@
                             break;
                         }
                     }
+                    
+                    if ([dataType isEqualToString:@"email"] )  //Shrinivas Fix for Email Validation 03/04/2012
+                    {
+                        BOOL result;
+                        NSString * emailRegEx = @"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}";
+                        NSPredicate * emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegEx];
+                        result = [emailTest evaluateWithObject:value];
+                        
+                        if (result == NO && [value length] > 0)
+                        {
+                            UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:warning message:invalidEmail delegate:self cancelButtonTitle:alert_ok otherButtonTitles:nil, nil];
+                            [alertView show];
+                            [alertView release];
+
+                            [self enableSFMUI];
+                            return;
+                        }
+                        
+                    }
+
+                    
                 }        
             }
             if(error == TRUE)
@@ -9830,6 +9898,26 @@
                                     }
                                 }
                             }
+                            
+                            if ([detail_api_name isEqualToString:@"SVMXC__Email__c"] )  //Shrinivas Fix for Email Validation 03/04/2012
+                            {
+                                BOOL result;
+                                NSString * emailRegEx = @"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}";
+                                NSPredicate * emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegEx];
+                                result = [emailTest evaluateWithObject:deatil_value];
+                                
+                                if (result == NO && [deatil_value length] > 0)
+                                {
+                                    UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:warning message:invalidEmail delegate:self cancelButtonTitle:alert_ok otherButtonTitles:nil, nil];
+                                    [alertView show];
+                                    [alertView release];
+
+                                    [self enableSFMUI];
+                                    return;
+                                }
+                                
+                            }
+
                         }
                     }
                 }        
@@ -10355,6 +10443,7 @@
                     NSString * field_api = [section_field objectForKey:gFIELD_API_NAME];
                     NSString * value = [section_field objectForKey:gFIELD_VALUE_VALUE];
                     NSString * key = [section_field objectForKey:gFIELD_VALUE_KEY];
+                    NSString * dataType = [section_field objectForKey:gFIELD_DATA_TYPE];
                     [SFM_header_fields setObject:key forKey:field_api];
                     BOOL readOnly = [[section_field objectForKey:gFIELD_READ_ONLY] boolValue];
                     BOOL required = [[section_field objectForKey:gFIELD_REQUIRED] boolValue];
@@ -10367,9 +10456,28 @@
                         if([value length] == 0 )
                         {
                             error = TRUE;
-                            //sahana TEMP chage
+                            //sahana TEMP change
                             break;
                         }
+                    }
+                    
+                    if ([dataType isEqualToString:@"email"] )  //Shrinivas Fix for Email Validation 03/04/2012
+                    {
+                        BOOL result;
+                        NSString * emailRegEx = @"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}";
+                        NSPredicate * emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegEx];
+                        result = [emailTest evaluateWithObject:value];
+                        
+                        if (result == NO && [value length] > 0)
+                        {
+                            UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:warning message:invalidEmail delegate:self cancelButtonTitle:alert_ok otherButtonTitles:nil, nil];
+                            [alertView show];
+                            [alertView release];
+
+                            [self enableSFMUI];
+                            return;
+                        }
+                        
                     }
                 }        
             }
@@ -10418,6 +10526,26 @@
                                     }
                                 }
                             }
+                            
+                            if ([detail_api_name isEqualToString:@"SVMXC__Email__c"] )  //Shrinivas Fix for Email Validation 03/04/2012
+                            {
+                                BOOL result;
+                                NSString * emailRegEx = @"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}";
+                                NSPredicate * emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegEx];
+                                result = [emailTest evaluateWithObject:deatil_value];
+                                
+                                if (result == NO && [deatil_value length] > 0)
+                                {
+                                    UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:warning message:invalidEmail delegate:self cancelButtonTitle:alert_ok otherButtonTitles:nil, nil];
+                                    [alertView show];
+                                    [alertView release];
+
+                                    [self enableSFMUI];
+                                    return;
+                                }
+                                
+                            }
+
                         }
                     }
                 }        
@@ -10618,6 +10746,8 @@
         }
         
     }
+    [self enableSFMUI];
+    
 }
 
 -(void) initAllrequriredDetailsForProcessId:(NSString *)process_id recordId:(NSString *)recordId object_name:(NSString *)object_name
@@ -10633,6 +10763,8 @@
 {
     
 }
+
+
 -(NSString *)getValueForApiName:(NSString *)filed_api_name dataType:(NSString *)field_data_type  object_name:(NSString *)object_name field_key:(NSString *) field_key
 {
     
@@ -11501,21 +11633,44 @@
     UIImage  * img;
     if (appDelegate.SyncStatus == SYNC_RED)
     {
-        NSString * statusImage = @"red.png";
-        img = [UIImage imageNamed:statusImage];
-        [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
+        [animatedImageView stopAnimating];
+        animatedImageView.animationImages = nil;
+        NSMutableArray * imgArr = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+        for ( int i = 1; i < 34; i++)
+        {
+            [imgArr addObject:[UIImage imageNamed:[NSString stringWithFormat:@"r%d.png", i]]];
+        }
+        
+        NSLog(@"%@", imgArr);
+        animatedImageView.animationImages = [NSArray arrayWithArray:imgArr];
+        NSLog(@"%@", animatedImageView.animationImages);
+        animatedImageView.animationDuration = 1.0f;
+        animatedImageView.animationRepeatCount = 0;
+        [animatedImageView startAnimating];
     }
     else if (appDelegate.SyncStatus == SYNC_GREEN)
     {
-         NSString * statusImage = @"green.png";
+        NSString * statusImage = @"green.png";
+        [animatedImageView stopAnimating];
+        animatedImageView.image = [UIImage imageNamed:@"green.png"];
         img = [UIImage imageNamed:statusImage];
         [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
     }
     else if (appDelegate.SyncStatus == SYNC_ORANGE)
     {
-        NSString * statusImage = @"orange.png";
-        img = [UIImage imageNamed:statusImage];
-        [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
+        animatedImageView.animationImages = nil;
+        NSMutableArray * imgArr = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+        for ( int i = 1; i < 34; i++)
+        {
+            [imgArr addObject:[UIImage imageNamed:[NSString stringWithFormat:@"o%d.png", i]]];
+        }
+        
+        NSLog(@"%@", imgArr);
+        animatedImageView.animationImages = [NSArray arrayWithArray:imgArr];
+        NSLog(@"%@", animatedImageView.animationImages);
+        animatedImageView.animationDuration = 1.0f;
+        animatedImageView.animationRepeatCount = 0;
+        [animatedImageView startAnimating];
     }
     
     return img;
