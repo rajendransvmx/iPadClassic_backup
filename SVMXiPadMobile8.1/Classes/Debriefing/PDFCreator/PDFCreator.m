@@ -182,7 +182,7 @@
         if (didRunOperation)
         {
             [activity stopAnimating];
-            [appDelegate displayNoInternetAvailable];
+            //[appDelegate displayNoInternetAvailable];  -- Shrinivas
             didRunOperation = NO;
         }
     }
