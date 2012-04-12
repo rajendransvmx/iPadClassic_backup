@@ -16,7 +16,7 @@
 
 @protocol RootViewControllerDelegate;
 
-#define SectionHeaderHeight      31  // 55
+#define SectionHeaderHeight      45  
 
 #define BGIMAGETAG               1100
 #define CELLLABELTAG             1101

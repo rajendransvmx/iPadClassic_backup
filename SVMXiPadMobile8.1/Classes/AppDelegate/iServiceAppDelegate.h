@@ -20,6 +20,8 @@
 //Radha
 #import "DataBase.h"
 
+#define TableViewCellHeight 40
+
 @class iServiceViewController;
 @class LoginController;
 @class JobViewController;

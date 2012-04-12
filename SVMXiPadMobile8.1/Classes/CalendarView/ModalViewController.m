@@ -161,8 +161,8 @@
     [statusButton setBackgroundImage:[self getStatusImage] forState:UIControlStateNormal];
     [statusButton addTarget:self action:@selector(showManualSyncUI) forControlEvents:UIControlEventTouchUpInside];
     statusButton.enabled = NO;*/
-    
-    animatedImageView = [[UIImageView alloc] initWithFrame:CGRectMake(815, 8, 26, 26)]; 
+     
+    animatedImageView = [[UIImageView alloc] initWithFrame:CGRectMake(784, 8, 26, 26)]; 
     [self getStatusImage];
     animatedImageView.animationDuration = 1.0f;
     animatedImageView.animationRepeatCount = 0;
@@ -680,7 +680,7 @@
             HomeButton.frame = homeButtonRect;
             refreshButton.frame = refreshButtontRect;
             //statusButton.frame = CGRectMake(815, 8, 26, 26);
-            animatedImageView.frame = CGRectMake(815, 8, 26, 26);
+            animatedImageView.frame = CGRectMake(784, 8, 26, 26);
             [UIView commitAnimations];
             isViewDirty = NO;
         }
@@ -697,7 +697,7 @@
             HomeButton.frame = homeButtonRect;
             refreshButton.frame = refreshButtontRect;
             //statusButton.frame = CGRectMake(815, 8, 26, 26);
-            animatedImageView.frame = CGRectMake(815, 8, 26, 26);
+            animatedImageView.frame = CGRectMake(784, 8, 26, 26);
             [UIView commitAnimations];
         }
         
@@ -754,7 +754,7 @@
         refreshButtontRect = refreshButton.frame;
         refreshButton.frame = refreshButtontRect;
         //statusButton.frame = CGRectMake(855, 8, 26, 26); //Check This  
-        animatedImageView.frame = CGRectMake(855, 8, 26, 26);
+        animatedImageView.frame = CGRectMake(837, 8, 26, 26);
         [UIView commitAnimations];
         
         [self disableUI];

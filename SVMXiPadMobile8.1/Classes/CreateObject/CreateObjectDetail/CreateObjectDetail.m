@@ -58,7 +58,7 @@
     self.tableView.backgroundColor = [UIColor clearColor];
     
     // Add a Back button to the detail
-    UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 39, 37)] autorelease];
+    UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 37)] autorelease];
     [backButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Back-Arrow-Button"] forState:UIControlStateNormal];
     [backButton addTarget:self action:@selector(DismissSplitView:) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem * backBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:backButton] autorelease];
@@ -74,7 +74,7 @@
     self.navigationItem.titleView = titleLabel;
     
     //Add a help button to the detail - Radha 16 August 2011
-    UIButton * helpButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 37, 35)];
+    UIButton * helpButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)];
     [helpButton setBackgroundImage:[UIImage imageNamed:@"iService-Screen-Help.png"] forState:UIControlStateNormal];
     [helpButton addTarget:self action:@selector(showHelp) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem * helpBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:helpButton];

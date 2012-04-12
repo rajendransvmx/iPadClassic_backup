@@ -40,7 +40,7 @@
 
 @end
 #define  BUTTON_WIDTH   150
-#define  BUTTON_HEIGHT  40
+#define  BUTTON_HEIGHT  60 
 
 #define CELL_BUTTON_WIDTH  150
 #define CELL_BUTTON_HEIGHT 80

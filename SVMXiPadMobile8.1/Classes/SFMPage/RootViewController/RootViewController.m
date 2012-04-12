@@ -113,7 +113,7 @@
 {
     if ([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"VIEWRECORD"])
     {
-        UIButton * selectProcessButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 33, 31)];
+        UIButton * selectProcessButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)];
         [selectProcessButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Switch-Views-button"] forState:UIControlStateNormal];
         [selectProcessButton addTarget:self action:@selector(selectProcess:) forControlEvents:UIControlEventTouchUpInside];
         selProcessBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:selectProcessButton];
@@ -208,9 +208,8 @@
          //   sectionTitle = @"Header Info";
             
             sectionTitle = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_LEFT_PANE_HEADER];
-            
             // Create label with section title
-            UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(20, 3, 170, 30)] autorelease];//y was  6
+            UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(20, 7, 170, 30)] autorelease];//y was  6
             
             label.backgroundColor = [UIColor clearColor];
             label.textColor = [UIColor whiteColor];
@@ -224,7 +223,7 @@
             view.image = [UIImage imageNamed:@"SFM-View-line-header-bg.png"];
             [view addSubview:label];
             
-            UIButton * header_button = [[[UIButton alloc]  initWithFrame:CGRectMake(290, 3, 21, 21)] autorelease];//6 44 44
+            UIButton * header_button = [[[UIButton alloc]  initWithFrame:CGRectMake(290, 7, 28, 28)] autorelease];//6 44 44
             header_button.tag = section;
             NSDictionary *header = [appDelegate.SFMPage objectForKey:@"header"];
             NSArray * header_sections = [header objectForKey:@"hdr_Sections"];
@@ -254,10 +253,9 @@
             {
                 return nil;
             }
-            
             // Create label with section title
             UILabel *label = [[[UILabel alloc] init] autorelease];
-            label.frame = CGRectMake(20, 3, 170, 30);
+            label.frame = CGRectMake(20, 7, 170, 30);
             label.backgroundColor = [UIColor clearColor];
             label.textColor = [UIColor whiteColor];
 
@@ -265,14 +263,14 @@
             label.text = sectionTitle;
             
             // Create header view and add label as a subview
-            view = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, SectionHeaderHeight)];//320 width before changing
+            view = [[UIImageView alloc] initWithFrame:CGRectMake(0, 7, 320, SectionHeaderHeight)];//320 width before changing
             view.image = [UIImage imageNamed:@"SFM-View-line-header-bg.png"];
             [view autorelease];
             [view addSubview:label];
             NSArray *details = [appDelegate.SFMPage objectForKey:@"details"];
             NSInteger count = [details count];
             
-            UIButton * lines_button = [[[UIButton alloc]  initWithFrame:CGRectMake(290, 3, 21, 21)] autorelease];//x = 250
+            UIButton * lines_button = [[[UIButton alloc]  initWithFrame:CGRectMake(290, 15, 28, 28)] autorelease];//x = 250
             lines_button.enabled = YES;
             lines_button.userInteractionEnabled = YES;
             lines_button.tag = section;
@@ -296,7 +294,6 @@
         case 2:
         {
             sectionTitle = [self tableView:tableView titleForHeaderInSection:section];
-            
             if (sectionTitle == nil)
             {
                 return nil;
@@ -304,7 +301,7 @@
 
             // Create label with section title
             UILabel *label = [[[UILabel alloc] init] autorelease];
-            label.frame = CGRectMake(20, 3, 170, 30);
+            label.frame = CGRectMake(20, 7, 170, 30);
             label.backgroundColor = [UIColor clearColor];
             label.textColor = [UIColor whiteColor];
 
@@ -312,12 +309,12 @@
             label.text = sectionTitle;
             
             // Create header view and add label as a subview
-            view = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, SectionHeaderHeight)];//320 width before changing
+            view = [[UIImageView alloc] initWithFrame:CGRectMake(0, 7, 320, SectionHeaderHeight)];//320 width before changing
             view.image = [UIImage imageNamed:@"SFM-View-line-header-bg.png"];
             [view autorelease];
             [view addSubview:label];
             
-            UIButton * lines_button = [[[UIButton alloc]  initWithFrame:CGRectMake(290, 3, 21, 21)] autorelease];
+            UIButton * lines_button = [[[UIButton alloc]  initWithFrame:CGRectMake(290, 15, 28, 28)] autorelease];
             lines_button.enabled = YES;
             lines_button.userInteractionEnabled = YES;
             lines_button.tag = section;
@@ -509,7 +506,7 @@
             
     }
     
-    return 31;
+    return SectionHeaderHeight;
     
 }
 
@@ -538,7 +535,7 @@
     switch (indexPath.section)
     {
         case 0:
-            bgView = [[[UIView alloc] initWithFrame:CGRectMake(40, 0, 300, 31)] autorelease];
+            bgView = [[[UIView alloc] initWithFrame:CGRectMake(40, 0, 300, SectionHeaderHeight)] autorelease];
             {
                 NSString * section_title =  [[appDelegate.wsInterface GetHeaderSectionForSequenceNumber:indexPath.row] objectForKey:@"section_Title"];
                 if(indexPath.row != 0 && [section_title isEqualToString:@""])
@@ -587,7 +584,7 @@
             break;
             
         case 1:
-            bgView = [[[UIView alloc] initWithFrame:CGRectMake(40, 0, 300, 31)] autorelease];
+            bgView = [[[UIView alloc] initWithFrame:CGRectMake(40, 0, 300, SectionHeaderHeight)] autorelease];
             {
                 NSArray *details = [appDelegate.SFMPage objectForKey:@"details"];
                 cellLabel.text = [[details objectAtIndex:indexPath.row] objectForKey:@"details_Object_Label"];
@@ -610,7 +607,7 @@
             }
             break;
         case 2:
-            bgView = [[[UIView alloc] initWithFrame:CGRectMake(40, 0, 300, 31)] autorelease];
+            bgView = [[[UIView alloc] initWithFrame:CGRectMake(40, 0, 300, SectionHeaderHeight)] autorelease];
             if(product_history || account_history)
             {
                 // cellLabel.text = [addition_info_items objectAtIndex:indexPath.row];
@@ -640,7 +637,7 @@
     
     if ([cellLabel.text length] > 0)
     {
-        bgImage.frame = CGRectMake(0, 0, 300, 31);
+        bgImage.frame = CGRectMake(0, 0, 300, SectionHeaderHeight);
         bgImage.tag = BGIMAGETAG;
         [bgView addSubview:bgImage];
         cellLabel.center = bgView.center;
@@ -648,7 +645,6 @@
         [bgView addSubview:cellLabel];
         cell.backgroundView = bgView;
     }
-    
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     return cell;

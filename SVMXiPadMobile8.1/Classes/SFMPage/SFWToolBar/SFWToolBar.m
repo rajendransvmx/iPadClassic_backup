@@ -77,7 +77,7 @@
                                  
                                  
     NSLog(@"%f, %f", ipad_only_view.frame.size.width, ipad_only_view.frame.size.height);
-    ipad_only_view.frame = CGRectMake(0, 0, 1024, 44);
+    ipad_only_view.frame = CGRectMake(10, 0, 1024, 62);
     CGPoint p = CGPointZero;
     p.x  = ipad_only_view.frame.origin.x;
     p.y = ipad_only_view.frame.origin.y;
@@ -259,7 +259,7 @@
                 NSDictionary * each_button = [wizard objectAtIndex:j];
                 NSString * title = [each_button objectForKey:SFW_ACTION_DESCRIPTION];
                 NSString * enable = [each_button  objectForKey:SFW_ENABLE_ACTION_BUTTON];
-                CGRect frame = CGRectMake(index*field_width, 6 , CELL_BUTTON_WIDTH , background.frame.size.height);
+                CGRect frame = CGRectMake(20+index*field_width, 6 , CELL_BUTTON_WIDTH , background.frame.size.height);
                 
                 cusButton * btn = nil; // [[cusButton alloc] initWithFrame:frame buttonTitle:title buttonInfo:each_button];
                 btn = [cusButton buttonWithType:UIButtonTypeCustom];

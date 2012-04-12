@@ -125,7 +125,7 @@
     {
         case 0:
         {   
-            bgView = [[[UIView alloc] initWithFrame:CGRectMake(40, 0, 300, 40)] autorelease];
+            bgView = [[[UIView alloc] initWithFrame:CGRectMake(40, 0, 300, SectionHeaderHeight)] autorelease]; 
             {
                 iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
                 NSString * label = @"";
@@ -151,7 +151,7 @@
             
             if ([cellLabel.text length] > 0)
             {
-                bgImage.frame = CGRectMake(0, 0, 300, 40);
+                bgImage.frame = CGRectMake(0, 0, 300, SectionHeaderHeight); //old 40
                 bgImage.tag = BGIMAGETAG;
                 [bgView addSubview:bgImage];
                 cellLabel.center = bgView.center;
@@ -167,7 +167,7 @@
     }
     if ([cellLabel.text length] > 0)
     {
-        bgImage.frame = CGRectMake(0, 0, 300, 40);
+        bgImage.frame = CGRectMake(0, 0, 300, SectionHeaderHeight); //old 40
         bgImage.tag = BGIMAGETAG;
         [bgView addSubview:bgImage];
         cellLabel.center = bgView.center;
@@ -176,6 +176,7 @@
         cell.backgroundView = bgView;
     }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    NSLog(@"Title = %@",cellLabel.text);
     return cell;
 }
 
@@ -232,12 +233,12 @@
             label.text = sectionTitle;
             
             // Create header view and add label as a subview
-            view = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, SectionHeaderHeight)];//320 width before changing
+            view = [[UIImageView alloc] initWithFrame:CGRectMake(0, 7, 320, SectionHeaderHeight)];//320 width before changing
             view.image = [UIImage imageNamed:@"SFM-View-line-header-bg.png"];
             [view autorelease];
             [view addSubview:label];
         
-            UIButton * header_button = [[[UIButton alloc]  initWithFrame:CGRectMake(290, 3, 21, 21)] autorelease];//6 44 44
+            UIButton * header_button = [[[UIButton alloc]  initWithFrame:CGRectMake(290, 15, 28, 28)] autorelease];//6 44 44
             [header_button  setBackgroundImage:[UIImage imageNamed:@"SFM-View-showall-icon_mod.png"] forState:UIControlStateNormal];
             [header_button addTarget:self action:@selector(didSelectHeader:) forControlEvents:UIControlEventTouchUpInside];
             

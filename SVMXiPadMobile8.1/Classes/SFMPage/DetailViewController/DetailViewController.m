@@ -318,7 +318,7 @@
         [self fillSFMdictForOfflineforProcess:currentProcessId forRecord:currentRecordId];
         
         // ################ BACK BUTTON HERE ################# //
-        UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 33, 31)] autorelease];
+        UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)] autorelease];
         // [backButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Done-Back-Button.png"] forState:UIControlStateNormal];
         [backButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Back-Arrow-Button"] forState:UIControlStateNormal];
         [backButton addTarget:self action:@selector(DismissModalViewController:) forControlEvents:UIControlEventTouchUpInside];
@@ -329,7 +329,7 @@
     }
     
     //Image View animation
-    animatedImageView = [[UIImageView alloc] initWithFrame:CGRectMake(485, 8, 26, 26)];    
+    animatedImageView = [[UIImageView alloc] initWithFrame:CGRectMake(475, 8, 26, 26)];    
     [self getStatusImage];
     animatedImageView.animationDuration = 1.0f;
     animatedImageView.animationRepeatCount = 0;
@@ -481,8 +481,9 @@
 
 - (void) addNavigationButtons:(NSString *)sectionTitle
 {
+    int toolBarWidth = 0;
     // Adding the Back button
-    UIButton * actionButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 67, 31)] autorelease];
+    UIButton * actionButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 67, 37)] autorelease];
     [actionButton setTitle:@"Actions" forState:UIControlStateNormal];
 
     UIImage * actionImage = [UIImage imageNamed:@"SFM-Screen-Done-Back-Button"];
@@ -508,7 +509,7 @@
         [actionBtn setTarget:self];
         [actionBtn setAction:@selector(action:)];
     }
-
+    toolBarWidth += 67; //Action Button Width
     NSMutableArray * buttons = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
     [buttons addObject:actionBtn];
     // Samman - 20 July, 2011 - Signature Capture - BEGIN
@@ -516,26 +517,26 @@
     BOOL isStandAloneCreate = [[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"STANDALONECREATE"];
     if (appDelegate.signatureCaptureUpload && !isInEditDetail && !isStandAloneCreate && !isInViewMode)
     {
-        actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 35, 33)];
+        actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 37)];
         [actionButton setTitle:@"Actions" forState:UIControlStateNormal];
         [actionButton setImage:[UIImage imageNamed:@"sfm_signature_capture"] forState:UIControlStateNormal];
         [actionButton addTarget:self action:@selector(ShowSignature) forControlEvents:UIControlEventTouchUpInside];
     
         UIBarButtonItem * actionBtn1 = [[UIBarButtonItem alloc] initWithCustomView:actionButton];
-        actionBtn1.width = 37;
+        actionBtn1.width = 43;
         [actionBtn1 setTarget:self];
         [actionBtn1 setAction:@selector(ShowSignature)];
         [buttons insertObject:actionBtn1 atIndex:0];
-        
+        toolBarWidth += actionBtn1.width;
         [actionBtn1 release];
         [actionButton release];
     }
     else
     {
         // Insert a blank button to place the Action button item at the same location
-        actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 37, 31)];
+        actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 37)];
         UIBarButtonItem * actionBtn1 = [[UIBarButtonItem alloc] initWithCustomView:actionButton];
-        actionBtn1.width = 37;
+        actionBtn1.width = 43;
         [actionBtn1 setTarget:self];
         [actionBtn1 setAction:@selector(ShowSignature)];
         [buttons insertObject:actionBtn1 atIndex:0];
@@ -549,7 +550,7 @@
     //Add help button Radha - 26 August, 2011
     if(appDelegate.isWorkinginOffline)
     {
-        actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 37, 31)];
+        actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 37)];
         [actionButton setImage:[UIImage imageNamed:@"iService-Screen-Help.png"] forState:UIControlStateNormal];
         actionButton.alpha = 1.0;
         [actionButton addTarget:self action:@selector(showHelp) forControlEvents:UIControlEventTouchUpInside];
@@ -558,15 +559,27 @@
         [helpBarButton setTarget:self];
         [helpBarButton setAction:@selector(showHelp)];
         [buttons insertObject:helpBarButton atIndex:2];
+        toolBarWidth += 43;
         [helpBarButton release];
         [actionButton release];
     }
     //Add help button Radha - 26 August, 2011 - END
     
-    UIToolbar* toolbar = [[[UIToolbar alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 75, 0, 180, 44)] autorelease];
+    NSLog(@"Tool Bar Width = %d",toolBarWidth);
+    UIToolbar* toolbar = [[[UIToolbar alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 75, 0, 200, 44)] autorelease];
     [toolbar setItems:buttons];
-
+    NSLog(@"Tool Bar Frame x = %f y = %f w = %f h = %f",[toolbar frame].origin.x,[toolbar frame].origin.y,[toolbar frame].size.width,[toolbar frame].size.height);
     
+    CGRect syncFrame;
+    if(toolBarWidth >= 150)
+     syncFrame = CGRectMake(473, animatedImageView.frame.origin.y, animatedImageView.frame.size.width, animatedImageView.frame.size.height);
+    else
+        syncFrame = CGRectMake(525, animatedImageView.frame.origin.y, animatedImageView.frame.size.width, animatedImageView.frame.size.height);
+        
+    NSLog(@"New Frame x = %f y = %f w = %f h = %f",syncFrame.origin.x,syncFrame.origin.y,syncFrame.size.width,syncFrame.size.height);
+
+    [animatedImageView setFrame:syncFrame];
+     
     self.navigationItem.titleView = label;
     self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:toolbar] autorelease];
 }
@@ -658,7 +671,7 @@
     [toolbar setItems:buttons];
 
     // ################ BACK BUTTON HERE ################# //
-    UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 33, 31)] autorelease];
+    UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)] autorelease];
     [backButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Back-Arrow-Button"] forState:UIControlStateNormal];
     [backButton addTarget:self action:@selector(DismissModalViewController:) forControlEvents:UIControlEventTouchUpInside];
     [backButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -7366,7 +7379,7 @@
         [detailViewObject.navigationItem setHidesBackButton:YES animated:YES];
         
         // ################ BACK BUTTON HERE ################# //
-        UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 33, 31)] autorelease];
+        UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)] autorelease];
         [backButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Back-Arrow-Button"] forState:UIControlStateNormal];
         [backButton addTarget:detailViewObject action:@selector(PopNavigationController:) forControlEvents:UIControlEventTouchUpInside];
         [backButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -7375,7 +7388,7 @@
         // ################################################### //
         
         //Radha 20th august 2011
-        UIButton * actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 37, 31)];
+        UIButton * actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)];
         [actionButton setBackgroundImage:[UIImage imageNamed:@"iService-Screen-Help.png"] forState:UIControlStateNormal];
         [actionButton addTarget:self action:@selector(showHelp) forControlEvents:UIControlEventTouchUpInside];
         UIBarButtonItem * helpBarButton = [[UIBarButtonItem alloc] initWithCustomView:actionButton];  
@@ -7611,7 +7624,7 @@
     [detailViewObject.navigationItem setHidesBackButton:YES animated:YES];
     
     // ################ BACK BUTTON HERE ################# //
-    UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 33, 31)] autorelease];
+    UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)] autorelease];
     [backButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Back-Arrow-Button"] forState:UIControlStateNormal];
     [backButton addTarget:detailViewObject action:@selector(PopNavigationController:) forControlEvents:UIControlEventTouchUpInside];
     [backButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -7620,7 +7633,7 @@
     // ################################################### //
 
         //Radha 20th august 2011
-        UIButton * actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 37, 31)];
+        UIButton * actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)];
         [actionButton setBackgroundImage:[UIImage imageNamed:@"iService-Screen-Help.png"] forState:UIControlStateNormal];
         [actionButton addTarget:self action:@selector(showHelp) forControlEvents:UIControlEventTouchUpInside];
         UIBarButtonItem * helpBarButton = [[UIBarButtonItem alloc] initWithCustomView:actionButton];  
@@ -8185,7 +8198,7 @@
     [detailViewObject.navigationItem setHidesBackButton:YES animated:YES];
 
     //adding the Back button
-    UIButton * BackButton = [[[UIButton alloc] initWithFrame:CGRectMake(6, 6, 39, 36)] autorelease];
+    UIButton * BackButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)] autorelease];
 
     BackButton.titleLabel.font = [UIFont boldSystemFontOfSize:14.0];
     [BackButton addTarget:detailViewObject action:@selector(PopNavigationController:) forControlEvents:UIControlEventTouchUpInside];
@@ -8194,7 +8207,7 @@
     detailViewObject.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:BackButton] autorelease];
 
     //Radha 20th august 2011
-    UIButton * actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 37, 31)];
+    UIButton * actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)];
     [actionButton setBackgroundImage:[UIImage imageNamed:@"iService-Screen-Help.png"] forState:UIControlStateNormal];
     [actionButton addTarget:self action:@selector(showHelp) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem * helpBarButton = [[UIBarButtonItem alloc] initWithCustomView:actionButton];  
