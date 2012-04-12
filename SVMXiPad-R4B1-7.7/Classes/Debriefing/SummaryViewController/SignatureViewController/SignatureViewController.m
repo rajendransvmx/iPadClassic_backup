@@ -48,13 +48,7 @@
 {    
     mouseSwiped = NO;
     UITouch *touch = [touches anyObject];
-    
-    if ([touch tapCount] == 2)
-	{
-        drawImage.image = nil;
-        return;
-    }
-	
+    	
     lastPoint = [touch locationInView:self.view];
     lastPoint.y -= 20;	
 }
@@ -86,13 +80,7 @@
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {    
     UITouch *touch = [touches anyObject];
-    
-    if ([touch tapCount] == 2)
-	{
-        drawImage.image = nil;
-        return;
-    }
-    
+        
     if(!mouseSwiped)
 	{
         UIGraphicsBeginImageContext(self.view.frame.size);
