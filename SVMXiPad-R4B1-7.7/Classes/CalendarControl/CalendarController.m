@@ -599,7 +599,13 @@ extern void SVMXLog(NSString *format, ...);
 		[button setTitle:[dates objectAtIndex:i] forState:UIControlStateNormal];
         [button setEnabled:NO];
 	}
-
+    for (int i = numDays + weekday - 1+[nextMonthDays count]; i < [buttonArray count]; i++)
+    {
+        UIButton * button = [buttonArray objectAtIndex:i];
+        [button setTitle:nil forState:UIControlStateNormal];
+        button.titleLabel.text = nil;
+        [button setEnabled:NO];
+    }
     //Siva Manne Next Month End
     [dates removeAllObjects];
     [dates release];
