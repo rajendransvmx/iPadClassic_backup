@@ -329,6 +329,9 @@
 - (NSMutableArray *) getAllPageLauoutId;
 - (void) getAdditionalObjectdefinition;
 
+//RADHA 12/04/12
+- (NSMutableArray *) getAllProcessId;
+
 //Radha - RecordTypeDependentPicklist
 - (void) getRecordTypeDictForObjects:(NSArray *)objects;
 - (void) didDescribeSObjectLayoutForObject:(ZKDescribeLayoutResult *)result error:(NSError *)error context:(id)context;
