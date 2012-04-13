@@ -291,7 +291,14 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     BOOL didFinishWithError;
     
     
+    //Radha Purging
+    NSMutableArray * initialEventMappinArray;
+    NSMutableArray * newEventMappinArray;
+    
 }
+
+@property (nonatomic, retain) NSMutableArray * initialEventMappinArray, * newEventMappinArray;
+
 @property (nonatomic) BOOL didFinishWithError;
 
 @property (nonatomic , retain)  NSString * last_initial_data_sync_time;;
