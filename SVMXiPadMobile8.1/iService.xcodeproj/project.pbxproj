@@ -793,6 +793,7 @@
 		7BE74976129A938F005FF156 /* serviceMaxStyle.css in Resources */ = {isa = PBXBuildFile; fileRef = 7BE7492C129A938F005FF156 /* serviceMaxStyle.css */; };
 		7BF8B8F0122FD1260027A6EF /* icon_greenA.png in Resources */ = {isa = PBXBuildFile; fileRef = 7BF8B8EE122FD1260027A6EF /* icon_greenA.png */; };
 		7BF8B8F1122FD1260027A6EF /* icon_greenB.png in Resources */ = {isa = PBXBuildFile; fileRef = 7BF8B8EF122FD1260027A6EF /* icon_greenB.png */; };
+		A8B8DA1C1534281F008BBB96 /* ProductManual-Background.png in Resources */ = {isa = PBXBuildFile; fileRef = A8B8DA1B1534281F008BBB96 /* ProductManual-Background.png */; };
 		FA0722D914DFBA79008CAFB3 /* GTMStringEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = FA0722D814DFBA79008CAFB3 /* GTMStringEncoding.m */; };
 		FA0F7B8414F58C1400052BD6 /* ___INTF_WebServicesDefServiceSvc___m___l7j8pj in Resources */ = {isa = PBXBuildFile; fileRef = FA0F7B7014F58C1400052BD6 /* ___INTF_WebServicesDefServiceSvc___m___l7j8pj */; };
 		FA0F7B8514F58C1400052BD6 /* ___INTF_WebServicesDefServiceSvc___m___Riwcoq in Resources */ = {isa = PBXBuildFile; fileRef = FA0F7B7114F58C1400052BD6 /* ___INTF_WebServicesDefServiceSvc___m___Riwcoq */; };
@@ -1943,6 +1944,7 @@
 		7BF8B8EE122FD1260027A6EF /* icon_greenA.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_greenA.png; sourceTree = "<group>"; };
 		7BF8B8EF122FD1260027A6EF /* icon_greenB.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_greenB.png; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* iService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "iService-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
+		A8B8DA1B1534281F008BBB96 /* ProductManual-Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ProductManual-Background.png"; sourceTree = "<group>"; };
 		FA0722D614DFBA79008CAFB3 /* GTMDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMDefines.h; sourceTree = "<group>"; };
 		FA0722D714DFBA79008CAFB3 /* GTMStringEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMStringEncoding.h; sourceTree = "<group>"; };
 		FA0722D814DFBA79008CAFB3 /* GTMStringEncoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMStringEncoding.m; sourceTree = "<group>"; };
@@ -4039,6 +4041,7 @@
 				7BDE4BBB1340A1D000DBDC65 /* thesmartvan.png */,
 				7BDE4BB91340A05900DBDC65 /* help.png */,
 				7BDE4BB71340A03D00DBDC65 /* troubleshoot.png */,
+				A8B8DA1B1534281F008BBB96 /* ProductManual-Background.png */,
 				7B5B1BB812D2359500035519 /* refresh.png */,
 				7B98179E12A90614006EA9A9 /* blank.png */,
 				7B5334EE128822220072C32B /* 57x57.png */,
@@ -6089,6 +6092,7 @@
 				FA4593C51532C659001FAC50 /* r7.png in Resources */,
 				FA4593C61532C659001FAC50 /* r8.png in Resources */,
 				FA4593C71532C659001FAC50 /* r9.png in Resources */,
+				A8B8DA1C1534281F008BBB96 /* ProductManual-Background.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6338,8 +6342,8 @@
 				MACOSX_DEPLOYMENT_TARGET = "";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_NAME = "ServiceMax Mobile";
-				PROVISIONING_PROFILE = "7877F8FE-5619-477B-BC00-9A60708269B8";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "7877F8FE-5619-477B-BC00-9A60708269B8";
+				PROVISIONING_PROFILE = "72A5BE5C-BC63-4FC0-8C42-08BC96F7C227";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "72A5BE5C-BC63-4FC0-8C42-08BC96F7C227";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -6373,8 +6377,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				MACOSX_DEPLOYMENT_TARGET = "";
 				PRODUCT_NAME = "ServiceMax Mobile";
-				PROVISIONING_PROFILE = "7877F8FE-5619-477B-BC00-9A60708269B8";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "7877F8FE-5619-477B-BC00-9A60708269B8";
+				PROVISIONING_PROFILE = "72A5BE5C-BC63-4FC0-8C42-08BC96F7C227";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "72A5BE5C-BC63-4FC0-8C42-08BC96F7C227";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -6435,8 +6439,8 @@
 				MACOSX_DEPLOYMENT_TARGET = "";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_NAME = "ServiceMax Mobile";
-				PROVISIONING_PROFILE = "7877F8FE-5619-477B-BC00-9A60708269B8";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "7877F8FE-5619-477B-BC00-9A60708269B8";
+				PROVISIONING_PROFILE = "72A5BE5C-BC63-4FC0-8C42-08BC96F7C227";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "72A5BE5C-BC63-4FC0-8C42-08BC96F7C227";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = YES;
