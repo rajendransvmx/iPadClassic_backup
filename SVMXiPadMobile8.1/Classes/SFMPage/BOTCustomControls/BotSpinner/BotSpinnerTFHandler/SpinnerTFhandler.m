@@ -73,19 +73,42 @@
     //Shrinivas RTPicklist - Defect #3668
     NSInteger indexOfText;
     NSString * defaultValue = @"";
-    if (ISRTDEPPicklist && ![parent.fieldAPIName isEqualToString:@"RecordTypeId"]){
-        defaultValue = [appDelegate.databaseInterface getDefaultValueForRTPicklistDependency:SFM_ObjectName recordtypeId:RecordTypeId field_api_name:parent.fieldAPIName];
+    
+    //10/04/2012 --> Changes made please integrate
+    if(isdependentPicklist && [controllerName length] != 0 && [validFor count] != 0)
+    {
+        contentView.spinnerData  = [setSpinnerValuedelegate  getValuesForDependentPickList];
+        if (ISRTDEPPicklist){
+            NSLog(@"Oh God Even this is Possible");
+            if ([textField.text isEqualToString:@""]){
+                 defaultValue = [appDelegate.databaseInterface getDefaultValueForRTPicklistDependency:SFM_ObjectName recordtypeId:RecordTypeId field_api_name:parent.fieldAPIName];
+                
+                indexOfText = [contentView.spinnerData indexOfObject:defaultValue];
+            }else
+                indexOfText = [contentView.spinnerData indexOfObject:textField.text];
+        }else{
+            
+            indexOfText = [contentView.spinnerData indexOfObject:textField.text];
+        }
+    }else if(ISRTDEPPicklist && ![parent.fieldAPIName isEqualToString:@"RecordTypeId"]){
         
-        indexOfText = [spinnerData indexOfObject:defaultValue];
+        defaultValue = [appDelegate.databaseInterface getDefaultValueForRTPicklistDependency:SFM_ObjectName recordtypeId:RecordTypeId field_api_name:parent.fieldAPIName];
+        NSLog(@"%@ %@", contentView.spinnerData, spinnerData);
+        if ([textField.text isEqualToString:@""])
+            indexOfText = [contentView.spinnerData indexOfObject:defaultValue];
+        else
+            indexOfText = [contentView.spinnerData indexOfObject:textField.text];
         
     }else{
-        indexOfText = [spinnerData indexOfObject:textField.text];
+        
+        NSLog(@"%@ %@", contentView.spinnerData, spinnerData);
+        indexOfText = [contentView.spinnerData indexOfObject:textField.text];
     }
 
     [contentView.valuePicker selectRow:indexOfText inComponent:0 animated:YES];
-    
     return NO;
 }
+
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
     
