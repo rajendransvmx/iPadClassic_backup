@@ -1053,13 +1053,14 @@
     NSString * caontactName = @"";
     NSString * workOrderProblemDescription = @"";
     NSString * workOrderOrderType = @"";
+    NSString * contact_Id = @"";     //Shrinivas
     
     NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithCapacity:0];
 
     if(record_id != nil)
     {
-        
-        NSString * query = [NSString stringWithFormat:@"select c.phone ,c.Email, c.Name,w.Name ,w.SVMXC__Problem_Description__c ,w.SVMXC__Order_Type__c from SVMXC__Service_Order__c  as w  inner join  Contact  as c on  w.SVMXC__Contact__c = c. id   where  w.local_id = '%@'" ,record_id];
+        //Shrinivas - 13.07.2012
+        NSString * query = [NSString stringWithFormat:@"select c.phone ,c.Email, c.Name, w.Name ,w.SVMXC__Problem_Description__c ,w.SVMXC__Order_Type__c, w.SVMXC__Contact__c from SVMXC__Service_Order__c  as w  inner join  Contact  as c on  w.SVMXC__Contact__c = c. id   where  w.local_id = '%@'" ,record_id];
         sqlite3_stmt * stmt ;
         
         if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK  )
@@ -1093,12 +1094,17 @@
                 if(temp_workOrderOrderType != nil)
                     workOrderOrderType = [NSString stringWithUTF8String:temp_workOrderOrderType];
                 
+                char * _contact_Id  = (char *)synchronized_sqlite3_column_text(stmt, 6);
+                if(_contact_Id != nil)
+                    contact_Id = [NSString stringWithUTF8String:_contact_Id];
+                
                 [dict  setObject:Phone forKey:@"SVMXC__Contact__r.Phone"];
                 [dict  setObject:email forKey:@"SVMXC__Contact__r.Email"];
                 [dict  setObject:caontactName forKey:@"SVMXC__Contact__r.Name"];
                 [dict  setObject:Work_orderName forKey:@"Name"];
                 [dict  setObject:workOrderProblemDescription forKey:@"SVMXC__Problem_Description__c"];
                 [dict  setObject:workOrderOrderType forKey:@"SVMXC__Order_Type__c"];
+                [dict  setObject:contact_Id forKey:@"SVMXC__Contact__c"]; //shrinivas
                 
             }
             
@@ -3974,9 +3980,6 @@
 
 -(void)updateSyncRecordsIntoLocalDatabase
 {
-    
-
- 
     NSString  * sql = [NSString stringWithFormat:@"SELECT sf_id ,local_id, object_name , json_record ,record_type,sync_type FROM 'sync_Records_Heap'  where sync_flag = 'true'"];
     sqlite3_stmt * statement ;
     NSString  * local_id = nil , *sf_id = nil, * object_Name = nil , * json_record = nil , * record_type = nil, *sync_type = nil;
