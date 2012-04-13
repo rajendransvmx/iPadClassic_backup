@@ -410,6 +410,14 @@
     
     NSLog(@"SAMMAN Update Sync Records Start: %@", [NSDate date]);
     [appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
+    
+    //Radha purging - 10/April/12
+    NSMutableArray * recordId = [appDelegate.dataBase getAllTheRecordIdsFromEvent];
+    
+     appDelegate.initialEventMappinArray = [appDelegate.dataBase checkForTheObjectWithRecordId:recordId];
+    //Radha End
+
+    
     NSLog(@"SAMMAN Update Sync Records End: %@", [NSDate date]);
     //remove recents
     NSFileManager * fileManager = [NSFileManager defaultManager];
