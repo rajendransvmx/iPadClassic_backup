@@ -386,6 +386,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
         //NSLog(@"Mapview initDebrief in while loop");
         if (!appDelegate.isInternetConnectionAvailable)
         {
+            [self setContactImage];
             [appDelegate displayNoInternetAvailable];
             break;
         }
@@ -421,6 +422,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     {
         NSLog(@"Map Internet Reachable");
         [self setupMapView];
+        [self setContactImage];
     }
     else
     {
@@ -569,6 +571,17 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 - (void) queryImagesForAccount:(NSString *)companyId Contact:(NSString *)contactId
 {
     NSString * _query;
+    //Shrinivas --> Contact Picture Offline Implementation
+    if(!appDelegate.isInternetConnectionAvailable){
+        NSString * imageDataString = [appDelegate.calDataBase retrieveContactImageDataFromDb:contactId];
+        contactImage.image = [UIImage imageWithData:[Base64 decode:imageDataString]];
+        if (contactImage.image == nil)
+        {
+            contactImage.image = [UIImage imageNamed:@"user.png"];
+        }
+        [imageActivity stopAnimating];
+        return;
+    }
     
     if (contactId != nil)
     {
@@ -596,6 +609,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 
 - (void) didQueryContactImagesForAccount:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
+    NSString * contactId = [currentWorkOrderInfo objectForKey:SVMXC__CONTACT__C];
     NSArray * array = [result records];
 
     if ([array count] == 0)
@@ -608,6 +622,11 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     ZKSObject * obj = [array objectAtIndex:0];
     NSString * imageDataString = [[obj fields] objectForKey:@"Body"];
 
+    //Shrinivas --> Contact Picture Offline Implementation
+    if ([imageDataString length] > 0){
+        [appDelegate.calDataBase insertContactImageIntoDatabase:contactId andContactImageData:imageDataString];
+    }
+      
     contactImage.image = [UIImage imageWithData:[Base64 decode:imageDataString]];
     if (contactImage.image == nil)
     {
@@ -1122,6 +1141,8 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     NSUInteger row = [indexPath row];
 
     [self setJobDetailsForWorkOrder:[appDelegate.workOrderEventArray objectAtIndex:row] workOrderInfo:[appDelegate.workOrderInfo objectAtIndex:row]];
+    
+    [self setContactImage];
     currentSelection = row;
 }
 
