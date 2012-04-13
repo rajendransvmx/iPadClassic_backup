@@ -1468,7 +1468,6 @@
 
             if(ContinueRescheduling == TRUE)
             {
-               // NSLog(@"%@", [updatestartDateTime substringToIndex:10]);
 
                 NSString * _currentDate;
                 NSLog(@"%@", weeklyEventPositionArray);
@@ -1494,6 +1493,7 @@
                     startDate = [weekBound objectAtIndex:0];
                     endDate = [weekBound objectAtIndex:1];
                     
+                                        
                     NSMutableArray * currentDateRange = [appDelegate getWeekdates:_currentDate];
                     
                     appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0]  endDate:[currentDateRange objectAtIndex:1]];                
@@ -1504,8 +1504,18 @@
                 
                 appDelegate.wsInterface.didRescheduleEvent = FALSE; //Reusing this variable for get Events purpose
                
-                //Shrinivas 
-                NSMutableArray * currentDateRange = [appDelegate getWeekdates:_currentDate];
+             /*   if ([_currentDate length] == 0 )
+                {
+                   NSArray * startEnd = [self getWeekStartEndDatesAtOptionalIndex:[NSString stringWithFormat:@"%d", currentSliderPositionIndex]];
+                    _currentDate = [startEnd objectAtIndex:START_DATE];
+                }*/
+                
+                //Radha
+                NSString * date = @"";
+                NSArray * startEnd = [self getWeekStartEndDatesAtOptionalIndex:[NSString stringWithFormat:@"%d", currentSliderPositionIndex]];
+                date = [startEnd objectAtIndex:START_DATE];
+                
+                NSMutableArray * currentDateRange = [appDelegate getWeekdates:date];
                 
                 appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0]  endDate:[currentDateRange objectAtIndex:1]];                               
                 if ([appDelegate.wsInterface.rescheduleEvent isEqualToString:@"SUCCESS"])
