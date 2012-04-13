@@ -107,8 +107,7 @@
     picklistField = [[NSMutableArray alloc] initWithCapacity:0];
     picklistValues = [[NSMutableArray alloc] initWithCapacity:0];
     pageUiHistory = [[NSMutableArray alloc] initWithCapacity:0];
-    
-
+    processDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
     
     return self;
 }
@@ -825,7 +824,27 @@ last_sync_time:(NSString *)last_sync_time
         return;
     }
    
-   
+    //Radha Purging 
+    NSMutableArray * recordIds = [appDelegate.dataBase getAllTheNewEventsFromSynCRecordHeap];
+    
+    appDelegate.newEventMappinArray = [appDelegate.dataBase checkForTheObjectWithRecordId:recordIds];
+    
+    //Include the below commented method once the webservice is available
+   // [appDelegate.dataBase removeIdExistsInIntialEventMappingArray];
+    
+    NSString * settingValue = [appDelegate.settingsDict objectForKey:@"Synchronization To Remove Events"];
+    
+    NSTimeInterval value = [settingValue integerValue];
+    
+    NSString * date = [appDelegate.dataBase getDateToDeleteEventsAndTask:value];
+    
+    
+    [appDelegate.dataBase purgingDataOnSyncSettings:date tableName:@"Event"];
+    
+    [appDelegate.dataBase purgingDataOnSyncSettings:date tableName:@"Task"];
+
+    //Radha Purging End
+    
     
     [appDelegate.databaseInterface  updateSyncRecordsIntoLocalDatabase];
     
@@ -854,6 +873,7 @@ last_sync_time:(NSString *)last_sync_time
 
     [appDelegate.dataBase updateRecentsPlist];
     
+
     //Shrinivas 
     //Sync signature to server
     didWriteSignature = NO;
@@ -1948,16 +1968,29 @@ last_sync_time:(NSString *)last_sync_time
     
     INTF_WebServicesDefServiceSvc_SVMXClient * client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
     
-    if ([eventName isEqualToString:MOBILE_DEVICE_TAGS] || [eventName isEqualToString:MOBILE_DEVICE_SETTINGS])
+    
+    if ([eventName isEqualToString:SFM_METADATA] && [eventType isEqualToString:SYNC])
+    {
+        sfmRequest.value = [values objectAtIndex:0];
+        [sfmRequest.values addObjectsFromArray:nil];
+    }
+    
+    else if ([eventName isEqualToString:MOBILE_DEVICE_TAGS] || [eventName isEqualToString:MOBILE_DEVICE_SETTINGS])
     {
         client = NULL;
+        sfmRequest.value = @"";
+        [sfmRequest.values addObjectsFromArray:values];
     }
+    
     else
     {
         client.clientType = @"iPad";
         [client.clientInfo addObject:@"OS:iPadOS"];
         [client.clientInfo addObject:@"R4B2"];
+        sfmRequest.value = @"";
+        [sfmRequest.values addObjectsFromArray:values];
     }
+    
     
     
     sfmRequest.eventName = eventName;
@@ -1966,10 +1999,8 @@ last_sync_time:(NSString *)last_sync_time
     sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
     sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
     sfmRequest.name = @"";
-    sfmRequest.value = @"";
     [sfmRequest addValueMap:svmxMap];
     
-    [sfmRequest.values addObjectsFromArray:values];
 
     [sfmRequest addClientInfo:client];
     
@@ -3107,8 +3138,6 @@ last_sync_time:(NSString *)last_sync_time
     ret = [[response.bodyParts objectAtIndex:0] isKindOfClass:[SOAPFault class]];
     if (ret)
     {
-        
-        
         appDelegate.incrementalSync_Failed = TRUE;
         SOAPFault * sFault = [response.bodyParts objectAtIndex:0];
         NSLog(@"%@", sFault.faultcode);
@@ -3172,9 +3201,8 @@ last_sync_time:(NSString *)last_sync_time
         INTF_WebServicesDefServiceSvc_INTF_MetaSync_WSResponse * wsResponse = [response.bodyParts objectAtIndex:0];
         
         if ([wsResponse.result.eventName isEqualToString:SFM_METADATA])
-        {
+        {            
             NSLog(@"SAMMAN MetaSync SFM_METADATA received, processing starts: %@", [NSDate date]);
-            processDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
             NSMutableArray * keys = [[NSMutableArray alloc] initWithCapacity:0];
             NSMutableArray * values = [[NSMutableArray alloc] initWithCapacity:0];
             NSMutableArray * arr = [[NSMutableArray alloc] initWithCapacity:0];
@@ -3289,10 +3317,25 @@ last_sync_time:(NSString *)last_sync_time
                 }
             } 
             
-            NSMutableArray * pageId = [self getAllPageLauoutId];
-            NSLog(@"SAMMAN MetaSync SFM_METADATA received, processing ends: %@", [NSDate date]);
-            [self metaSyncWithEventName:SFM_PAGEDATA eventType:SYNC values:pageId];
-            didGetPageData = FALSE;
+            NSArray * value = wsResponse.result.values;
+            
+            NSString * processValue = @"";
+            
+            if ((value != nil) && [value count] > 0)
+                processValue = ([value objectAtIndex:0] != nil)?[value objectAtIndex:0]:@"";
+            
+            if (![processValue isEqualToString:@""])
+            {
+                [self metaSyncWithEventName:SFM_METADATA eventType:SYNC values:(NSMutableArray *)value];
+            }
+            
+            else
+            {
+                NSMutableArray * pageId = [self getAllPageLauoutId];
+                NSLog(@"SAMMAN MetaSync SFM_METADATA received, processing ends: %@", [NSDate date]);
+                [self metaSyncWithEventName:SFM_PAGEDATA eventType:SYNC values:pageId];
+                didGetPageData = FALSE;
+            }
         }
         else if ([wsResponse.result.eventName isEqualToString:SFM_PAGEDATA])    
         {
@@ -3742,18 +3785,11 @@ last_sync_time:(NSString *)last_sync_time
                 } 
                 didGetPageDataDb = FALSE;
                 NSLog(@"SAMMAN MetaSync SFM_PAGEADATA received, processing ends: %@", [NSDate date]);
-
-                [self metaSyncWithEventName:SFM_OBJECT_DEFINITIONS eventType:SYNC values:nil]; 
+                
+                NSMutableArray * _values = [self getAllProcessId];
+                
+                [self metaSyncWithEventName:SFM_OBJECT_DEFINITIONS eventType:SYNC values:_values]; 
             }
-            
-          //  didGetPageDataDb = FALSE;
-         //   [appDelegate.dataBase insertValuesToProcessTable:processDictionary page:pageUiHistory];
-            
-          /*  while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE))
-            {
-                if (didGetPageDataDb)
-                    break;
-            } */
             
         }
         
@@ -3882,23 +3918,6 @@ last_sync_time:(NSString *)last_sync_time
                // [self metaSyncWithEventName:SFW_METADATA eventType:SYNC values:nil];
             }
              
-         /*   didGetPicklistValueDb = FALSE;
-            if (didGetPicklistValues == TRUE)
-            {
-                [appDelegate.dataBase insertvaluesToPicklist:picklistObject fields:picklistField value:picklistValues];
-                didGetPicklistValues = FALSE;
-            }
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE))
-            {
-                if (didGetPicklistValueDb)
-                    break;
-            }
-           // didGetPicklistValueDb = FALSE;
-         //   if (didGetPicklistValueDb == YES)
-          //  {
-             //   [self metaSyncWithEventName:SFW_METADATA eventType:SYNC values:nil];
-             //   didGetPicklistValueDb = FALSE;
-           // } */
         } 
         
         else if ([wsResponse.result.eventName isEqualToString:SFM_OBJECT_DEFINITIONS])
@@ -3926,7 +3945,8 @@ last_sync_time:(NSString *)last_sync_time
                 dict = [NSMutableDictionary dictionaryWithObject:(svmxMap.value != nil)?(svmxMap.value):@"" forKey:(svmxMap.key != nil)?(svmxMap.key):@""];
                 NSString * key = (svmxMap.value != nil)?(svmxMap.value):@"";
                 
-                [object addObject:dict];
+                if (![key isEqualToString:@""] && (![((svmxMap.value != nil)?(svmxMap.value):@"") isEqualToString:@""]))
+                    [object addObject:dict];
                 
                 NSMutableArray * valueMap = [svmxMap valueMap];
                 NSMutableDictionary * valueMapDict;
@@ -4031,7 +4051,8 @@ last_sync_time:(NSString *)last_sync_time
             {
                 if (!appDelegate.isInternetConnectionAvailable)
                 {
-                    [appDelegate throwException];
+                    if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                        [MyPopoverDelegate performSelector:@selector(throwException)];
                     break;
                 }
 
@@ -4424,7 +4445,7 @@ last_sync_time:(NSString *)last_sync_time
                 for (int j = 0; j < [valueMap count]; j++)
                 {
                     INTF_WebServicesDefServiceSvc_SVMXMap * record_map = [valueMap objectAtIndex:j];
-                    NSString * key = (record_map.key!= nil) ?record_map.key:@"";//local_id
+                    NSString * key = (record_map.key!= nil) ?record_map.key:@""; //local_id
                     NSString * json_record = record_map.value;
                     
                     //fetch id from the record 
@@ -6217,7 +6238,7 @@ last_sync_time:(NSString *)last_sync_time
 }
 
 
-#pragma mark CollectAllPageId
+#pragma mark CollectAllPageId And ProcessId
 - (NSMutableArray *) getAllPageLauoutId
 {
     NSMutableArray * pageId = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
@@ -6230,30 +6251,36 @@ last_sync_time:(NSString *)last_sync_time
         NSDictionary * dict = [array objectAtIndex:i];
         
         NSString * str = ([dict objectForKey:@"page_layout_id"]) != nil?[dict objectForKey:@"page_layout_id"]:@"";
-       /* NSString * process_type = ([dict objectForKey:@"process_type"]) != nil?[dict objectForKey:@"process_type"]:@"";
-        if ([process_type isEqualToString:SOURCE_TO_TARGET_ALL])
-            process_type = SOURCETOTARGET;
-        else if ([process_type isEqualToString:SOURCE_TO_TARGET_CHILD])
-            process_type = SOURCETOTARGETONLYCHILDROWS;
-        else if ([process_type isEqualToString:STANDALONE_EDIT])
-            process_type = EDIT;
-        else if ([process_type isEqualToString:STANDALONE_CREATE])
-            process_type = STANDALONECREATE;
-        else if ([process_type isEqualToString:VIEW_RECORD])
-            process_type = VIEWRECORD;
-        else
-            process_type = @"";*/
-
+               
+        if (![str isEqualToString:@""])
+        {
+            [pageId addObject:str];        
+        }
+    }
+    return pageId;
+}
+    
+- (NSMutableArray *) getAllProcessId
+{
+    NSMutableArray * processId = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    
+    NSArray * sfm_processComp = [processDictionary objectForKey:@"SFProcess_component"];
+    
+    for (int i = 0; i < [sfm_processComp count]; i++)
+    {
+        NSDictionary * dict = [sfm_processComp objectAtIndex:i];
+        
+        NSString * str = ([dict objectForKey:@"process_id"]) != nil?[dict objectForKey:@"process_id"]:@"";
         
         if (![str isEqualToString:@""])
         {
-            [pageId addObject:str];
-          //  [processType_dict setValue:process_type forKey:str];
-        
+            [processId addObject:str];        
         }
-      }
-    return pageId;
+    }
+    return processId;
 }
+
+
 
 #pragma mark - RT Dependent picklist
 - (void) getRecordTypeDictForObjects:(NSArray *)objects
