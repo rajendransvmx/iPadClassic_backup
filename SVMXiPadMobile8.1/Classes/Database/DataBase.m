@@ -2885,7 +2885,7 @@
 
 -(NSString *)retrieveQuery:(NSString *)tableName
 {
-    NSMutableString * query = [NSMutableString stringWithFormat:@"SELECT sql FROM sqlite_master WHERE tbl_name = '%@'", tableName];
+    NSMutableString * query = [NSMutableString stringWithFormat:@"SELECT sql FROM sqlite_master WHERE tbl_name = '%@' AND type = 'table'", tableName];
     
     sqlite3_stmt * stmt;
     
@@ -2894,7 +2894,7 @@
     
     if ( synchronized_sqlite3_prepare_v2(appDelegate.db, _query,-1, &stmt, nil) == SQLITE_OK )
     {
-        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        while (synchronized_sqlite3_step(stmt) == SQLITE_ROW)
         {
             char *field1 = (char *) synchronized_sqlite3_column_text(stmt,0);
             if ((field1 != nil) && strlen(field1))
