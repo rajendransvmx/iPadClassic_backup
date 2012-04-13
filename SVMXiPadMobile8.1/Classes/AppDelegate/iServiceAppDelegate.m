@@ -120,6 +120,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 @synthesize didFinishWithError;
 
+@synthesize initialEventMappinArray, newEventMappinArray;
+
 @synthesize exception;
 @synthesize _manualDataSync;
 @synthesize last_initial_data_sync_time;
@@ -311,6 +313,13 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     wsInterface.tagsDictionary = [wsInterface getDefaultTags];
     if (settingsDict == nil)
         settingsDict = [[NSMutableDictionary alloc] initWithCapacity:0];
+    
+    
+    if (initialEventMappinArray == nil)
+        initialEventMappinArray = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    if (newEventMappinArray == nil)
+        newEventMappinArray = [[NSMutableArray alloc] initWithCapacity:0];
     
     [self initWithDBName:DATABASENAME1 type:DATABASETYPE1];
     
@@ -744,9 +753,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 }
 
 - (void) goOnlineIfRequired
-{
-    
-    
+{    
     if (!self.isInternetConnectionAvailable)
     {
         return;
