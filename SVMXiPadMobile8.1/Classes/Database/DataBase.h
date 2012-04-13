@@ -11,6 +11,8 @@
 #include "ZKSforce.h"
 #import "DataBaseGlobals.h"
 
+#import "SBJsonParser.h"
+
 @class iServiceAppDelegate;
 
 @interface DataBase : NSObject 
@@ -45,6 +47,9 @@
     NSMutableArray * reportEssentials;
     BOOL didGetReportEssentials;
    // int i;
+    
+    SBJsonParser * parser;
+    
 }
 
 //RADHA
@@ -170,6 +175,21 @@
 //RADHA - 21 MARCH
 - (NSMutableArray *) retreiveTableNamesFronDB:(sqlite3 *)dbName;
 - (void) copyTempsqlToSfm;
+
+
+//-RADHA - 10th April
+- (NSMutableArray *) getAllTheRecordIdsFromEvent;
+- (NSMutableArray *) checkForTheObjectWithRecordId:(NSMutableArray *)recordId;
+- (NSMutableArray *) retreiveObjectNames;
+- (BOOL) doesObjectExistsForEventID:(NSString *)object _Id:(NSString *)recordId;
+
+- (NSMutableArray *) getAllTheNewEventsFromSynCRecordHeap;
+
+- (void) removeIdExistsInIntialEventMappingArray;
+
+- (NSString *) getDateToDeleteEventsAndTask:(NSTimeInterval)Value;
+
+- (void) purgingDataOnSyncSettings:(NSString *)Date tableName:(NSString *)tableName;
 
 
 @end
