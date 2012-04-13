@@ -193,7 +193,7 @@
     [self CreatePDFFile:newFilePath];
     didRunOperation = YES;
  //   statusDescription.text = [appDelegate.wsInterface.tagsDictionary objectForKey:PDF_ATTACHING];
-    statusDescription.text = [NSString stringWithFormat:@"%@ For %@", [appDelegate.wsInterface.tagsDictionary objectForKey:PDF_ATTACHING], _wonumber];
+    statusDescription.text = [NSString stringWithFormat:@"%@%@", [appDelegate.wsInterface.tagsDictionary objectForKey:PDF_ATTACHING], _wonumber];
     [appDelegate.calDataBase insertPDFintoDB:newFilePath WithrecordId:_recordId apiName:appDelegate.sfmPageController.objectName WOnumber:_wonumber];
     
 #ifdef DEBUG
