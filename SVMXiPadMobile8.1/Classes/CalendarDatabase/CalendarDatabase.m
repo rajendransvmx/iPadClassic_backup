@@ -3592,4 +3592,39 @@
     return flag;
 }
 
+
+//Contact Image offline Methods
+- (void)insertContactImageIntoDatabase:(NSString *)contactId andContactImageData:(NSString *)imageData
+{
+    NSString * insertQuery = [NSString stringWithFormat:@"Insert into contact_images (contact_Id, contact_Image) Values ('%@', '%@')", contactId, imageData];
+    
+    char *err;
+    if (synchronized_sqlite3_exec(appDelegate.db, [insertQuery UTF8String], NULL, NULL, &err) != SQLITE_OK){
+        NSLog(@"error:Failed to insert into database");
+    }
+
+    
+}
+
+- (NSString *)retrieveContactImageDataFromDb:(NSString *)contactId
+{
+    NSString * contactImageData = @"";  
+    NSString * selectQuery = [NSString stringWithFormat:@"Select contact_Image from contact_images Where contact_Id = '%@'", contactId];
+    
+    sqlite3_stmt * statement;
+    const char * _query = [selectQuery UTF8String];
+    
+    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, _query,-1, &statement, nil) == SQLITE_OK ){
+        
+        while(synchronized_sqlite3_step(statement) == SQLITE_ROW){
+            
+            char *field1 = (char *) synchronized_sqlite3_column_text(statement,COLUMN_1);
+            contactImageData = [[NSString alloc] initWithUTF8String:field1];
+            
+        }
+    }
+    return contactImageData;
+}
+
+
 @end
