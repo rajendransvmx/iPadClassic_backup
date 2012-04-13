@@ -143,6 +143,11 @@
 - (NSString *)getOverrideFlagStatusForId:(NSString *)Id;
 
 
+//Shrinivas - Contact Image offline Methods
+- (void)insertContactImageIntoDatabase:(NSString *)contactId andContactImageData:(NSString *)imageData;
+- (NSString *)retrieveContactImageDataFromDb:(NSString *)contactId;
+
+
 #define DATABASENAME   @"sfm"
 #define DATABASETYPE   @"sqlite"
 //Abinash
