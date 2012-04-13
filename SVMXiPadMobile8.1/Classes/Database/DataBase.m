@@ -1074,7 +1074,7 @@
     
     if (result == YES)
     {
-        result = [self createTable:[NSString stringWithFormat:@"CREATE INDEX IF NOT EXISTS RTIndex ON SFRTpicklist (object_api_name, field_api_name, recordtypename, defaultlabel, defaultvalue, label, value)"]];
+        result = [self createTable:[NSString stringWithFormat:@"CREATE INDEX IF NOT EXISTS RTIndex ON SFRTPicklist (object_api_name, field_api_name, recordtypename, defaultlabel, defaultvalue, label, value)"]];
                        
         NSString * queryStatement = @"";
         
@@ -2142,6 +2142,9 @@
     
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS sync_error_conflict ('sf_id' VARCHAR, 'local_id' VARCHAR,'object_name' VARCHAR, 'record_type' VARCHAR ,'sync_type' VARCHAR ,'error_message' VARCHAR ,'operation_type' VARCHAR , 'error_type' VARCHAR , 'override_flag'  VARCHAR)"];
     [self createTable:query];
+    
+    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS contact_images ('contact_Id' VARCHAR, 'contact_Image' VARCHAR)"];
+    [self createTable:query];
 }
 
 
@@ -2959,7 +2962,12 @@
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS sync_error_conflict ('sf_id' VARCHAR, 'local_id' VARCHAR,'object_name' VARCHAR, 'record_type' VARCHAR ,'sync_type' VARCHAR ,'error_message' VARCHAR ,'operation_type' VARCHAR , 'error_type' VARCHAR , 'override_flag'  VARCHAR)"];
     [self createTemporaryTable:query];
     
-    NSArray * tempTableArray = [NSArray arrayWithObjects:@"ChatterPostDetails",@"Document",@"ProductImage",@"SFSignatureData",@"UserImages",@"trobleshootdata",@"SFDataTrailer",@"SFDataTrailer_Temp",@"SYNC_HISTORY",@"sync_Records_Heap",@"LookUpFieldValue",@"Summary_PDF",@"sync_error_conflict",nil];
+    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS contact_images ('contact_Id' VARCHAR, 'contact_Image' VARCHAR)"];
+    [self createTemporaryTable:query];
+    
+    NSArray * tempTableArray = [NSArray arrayWithObjects:@"ChatterPostDetails",@"Document",@"ProductImage",@"SFSignatureData",@"UserImages",@"trobleshootdata",@"SFDataTrailer",@"SFDataTrailer_Temp",@"SYNC_HISTORY",@"sync_Records_Heap",@"LookUpFieldValue",@"Summary_PDF",@"sync_error_conflict", @"contact_images", nil];
+    
+    
     
     return tempTableArray;
 }
@@ -3095,6 +3103,13 @@
 
 - (void) removecache
 {
+    if ((appDelegate.wsInterface.processDictionary != nil) && [appDelegate.wsInterface.processDictionary count] > 0)
+    {
+        appDelegate.wsInterface.processDictionary = nil;
+        [appDelegate.wsInterface.processDictionary release];
+        appDelegate.wsInterface.processDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
+    }
+    
     if ((appDelegate.wsInterface.objectDefinitions != nil) && [appDelegate.wsInterface.objectDefinitions count] > 0)
     {
         appDelegate.wsInterface.objectDefinitions = nil;
@@ -3192,4 +3207,253 @@
     return value;
 }
 
+//RADHA 10th April 
+#pragma mark - PURGING
+
+- (NSMutableArray *) getAllTheRecordIdsFromEvent
+{
+    NSString * queryStatement = [NSString stringWithFormat:@"SELECT WhatId FROM Event"];
+    
+    NSMutableArray * recordId = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    NSString * whatId = @"";
+    
+    sqlite3_stmt * statement;
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &statement, nil) == SQLITE_OK)
+    {
+        while(synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            char * _id = (char *) synchronized_sqlite3_column_text(statement,COLUMN_1);
+            if ((_id != nil) && strlen(_id))
+            {
+                whatId = [NSString stringWithUTF8String:_id];
+                [recordId addObject:whatId];
+            }
+        }
+    }
+    synchronized_sqlite3_finalize(statement);
+    
+    return recordId;
+    
+}
+
+- (NSMutableArray *) checkForTheObjectWithRecordId:(NSMutableArray *)recordId
+{
+    NSMutableArray * objectNames = [self retreiveObjectNames];
+    
+    NSMutableDictionary * detail_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+    
+    NSMutableArray * mappingArray = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    NSString * name = @"";
+    
+    BOOL flag = FALSE;
+    
+    for (NSString * _id in recordId)
+    {
+        for (name in objectNames)
+        {
+            flag = [self doesObjectExistsForEventID:name _Id:_id];
+            
+            if (flag)
+                break;
+            else
+                continue;
+        }
+        if ((name != nil) && (_id != nil))
+            [detail_dict setObject:name forKey:_id];
+    }
+    
+    NSArray * allVaues = [detail_dict allValues];
+    
+    
+    NSString * str = @"";
+    NSString * str1 = @"";
+    for (int i = 0; i < [allVaues count];)
+    {   
+        str = [allVaues objectAtIndex:i];
+        NSArray * array = [[NSArray alloc] init];
+        NSDictionary * dict;
+        
+        if (i == 0)
+        {
+            array = [detail_dict allKeysForObject:str];
+            dict = [NSDictionary dictionaryWithObject:array forKey:str];
+            [mappingArray addObject:dict];
+            [array release];
+            [detail_dict removeObjectsForKeys:array];
+            allVaues = [detail_dict allValues];
+            str1 = str;
+            i = 0;
+        }
+               
+    }
+    return mappingArray;
+}
+
+
+- (NSMutableArray *) retreiveObjectNames
+{
+    NSString * queryStatement = [NSString stringWithFormat:@"SELECT DISTINCT object_api_name FROM SFObjectField"];
+    
+    NSMutableArray * objectNames = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    
+    sqlite3_stmt * statement;
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &statement, NULL) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW) 
+        {
+            char * _name = (char *)synchronized_sqlite3_column_text(statement, 0);
+            
+            if ((_name != nil) && (strlen(_name)))
+            {
+                NSString * name = [NSString stringWithUTF8String:_name];
+                [objectNames addObject:name];
+            }
+        }
+    }
+    sqlite3_finalize(statement);
+    
+    return objectNames;
+}
+
+- (BOOL) doesObjectExistsForEventID:(NSString *)object _Id:(NSString *)recordId
+{
+    NSString * queryStatement = [NSString stringWithFormat:@"SELECT COUNT(*) FROM '%@' WHERE Id = '%@'", object, recordId];
+    
+    int count = 0;
+    
+    sqlite3_stmt * statement;
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &statement, NULL) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW) 
+        {
+            count = synchronized_sqlite3_column_int(statement, 0);
+        }
+    }
+    
+    if (count)
+        return TRUE;
+    else
+        return FALSE;
+    
+}
+
+
+- (NSMutableArray *) getAllTheNewEventsFromSynCRecordHeap
+{
+    NSMutableArray * recordIds = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    
+    NSString * queryStatement = [NSString stringWithFormat:@"SELECT json_record FROM sync_Records_Heap where object_name = 'Event' and sync_flag = 'true'"];
+    
+    
+    if (parser == nil)
+        parser = [[SBJsonParser alloc] init];
+    
+    NSString * jsonRecord = @"";
+    
+    sqlite3_stmt * statement;
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &statement, NULL) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW) 
+        {
+            char * record = (char *) synchronized_sqlite3_column_text(statement, 0);
+            
+            if ((record != nil) && (strlen(record)))
+            {
+                jsonRecord = [NSString stringWithUTF8String:record];
+                
+                NSDictionary * dict = [parser objectWithString:jsonRecord];
+                
+                [recordIds addObject:[dict objectForKey:@"WhatId"]];
+            }
+                
+        }
+    }
+    return recordIds;
+}
+
+
+- (void) removeIdExistsInIntialEventMappingArray
+{
+    
+    NSLog(@"%@, %@", appDelegate.initialEventMappinArray, appDelegate.newEventMappinArray);
+    
+    for (NSDictionary * dict in appDelegate.newEventMappinArray)
+    {
+        NSArray * allKeys = [dict allKeys];
+        
+        NSString * str = [allKeys objectAtIndex:0];
+        
+        NSArray * allValues = [dict allValues];
+                
+        for (NSDictionary * dict1 in appDelegate.initialEventMappinArray)
+        {
+            NSArray * allInitialKeys = [dict1 allKeys];
+            
+            NSString * value = [allInitialKeys objectAtIndex:0];
+            
+            if ([value isEqualToString:str])
+            {                
+                NSMutableArray * initialValues = (NSMutableArray *) [dict1 allValues];
+                
+                for (NSString * key in allValues) 
+                {
+                    if ([initialValues containsObject:key])
+                    {
+                        [initialValues removeObject:key];
+                    }
+                }
+                break;
+            }
+            else
+                continue;            
+        }
+    }
+
+}
+
+- (NSString *) getDateToDeleteEventsAndTask:(NSTimeInterval)Value
+{
+    NSDate * today = [NSDate date];
+    
+    NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"yyyy-MM-dd hh:mm:ss"];
+    NSTimeZone *gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
+    [formatter setTimeZone:gmt];
+    
+    
+    NSDate * previousDate = [today dateByAddingTimeInterval:(-Value * 24 * 60 * 60)];
+    
+    NSString * currentDate = [formatter stringFromDate:previousDate];
+    
+    currentDate = [currentDate stringByReplacingCharactersInRange:NSMakeRange(11, 8) withString:@"00:00:00"];
+    
+    return currentDate;
+}
+
+- (void) purgingDataOnSyncSettings:(NSString *)Date tableName:(NSString *)tableName
+{
+    
+    NSString * column = @"";
+    
+    if ([tableName isEqualToString:@"Event"])
+        column = @"EndDateTime";
+    else
+        column = @"ActivityDate";
+
+    NSString * queryStatement = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ <= '%@'", tableName, column, Date];
+    
+    char * err;
+    
+    if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+    {
+        NSLog(@"Purging Failed to delete");
+    }
+    
+}
+#pragma mark -End
 @end
