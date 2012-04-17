@@ -118,6 +118,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 @implementation iServiceAppDelegate
 
+
+@synthesize logoutFlag;
 @synthesize didFinishWithError;
 
 @synthesize initialEventMappinArray, newEventMappinArray;
@@ -279,6 +281,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     //////////// REGISTER FOR REACHABILITY NOTIFICATIONS ////////////
     /////////////////////////////////////////////////////////////////
     
+    logoutFlag = FALSE;
     // Check for internet connection
     [[NSNotificationCenter defaultCenter] addObserver:self 
                                              selector:@selector(reachabilityChanged:) 
@@ -784,6 +787,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 # pragma mark - Logout
 - (void) showloginScreen
 {
+    iServiceAppDelegate * appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+    appDelegate.logoutFlag = TRUE;
+    
     if([self.syncThread isExecuting])
     {
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
@@ -807,6 +813,10 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         
     }
     sqlite3_close(self.db);
+	
+    self.wsInterface.didOpComplete = FALSE;
+    loginController.didEnterAlertView = FALSE;
+    [loginController readUsernameAndPasswordFromKeychain];
     [loginController.activity stopAnimating];
     loginController.txtPasswordLandscape.text = @"";
     [loginController enableControls];
@@ -814,7 +824,6 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 -(void)callDataSync
 {
-    
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc]init];
     
     [self goOnlineIfRequired];
