@@ -98,6 +98,9 @@
     BOOL didEnterAlertView;
     
 }
+
+@property (nonatomic ) BOOL didEnterAlertView;
+
 @property (nonatomic, retain) NSMutableArray * eventInfoarray;
 
 //- (void) storeLoginDetails;
@@ -167,6 +170,8 @@
 
 - (void) enableControls;
 - (void) disableControls;
+
+- (void) readUsernameAndPasswordFromKeychain;
 
 //-(void) getCreateProcessArray:(NSMutableArray *)processes_array;
 
