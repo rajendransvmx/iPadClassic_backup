@@ -4037,7 +4037,7 @@ last_sync_time:(NSString *)last_sync_time
             [objectDefinitions retain];
             
             didGetAddtionalObjDef = FALSE;
-            NSMutableArray * objects = [NSMutableArray  arrayWithObjects:@"Task", @"Event", nil];
+            NSMutableArray * objects = [NSMutableArray  arrayWithObjects:@"Task", @"Event", @"User", nil];
             [appDelegate.wsInterface metaSyncWithEventName:SFM_BATCH_OBJECT_DEFINITIONS eventType:SYNC values:objects]; 
             while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE))
             {
