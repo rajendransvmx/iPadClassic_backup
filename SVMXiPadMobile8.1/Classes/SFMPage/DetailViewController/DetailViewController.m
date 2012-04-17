@@ -357,12 +357,6 @@
             //[appDelegate displayNoInternetAvailable];
             didRunOperation = NO;
             
-        //Commented the below code(It is an offline app)
-            /*if (appDelegate.SFMPage != nil)
-            {
-                [appDelegate.SFMPage release];
-                appDelegate.SFMPage = nil;
-            }*/
         }
         
         [tableView reloadData];
@@ -8543,8 +8537,35 @@
     
     if (currentEditRow != nil)
     {
-        CGRect rowRect = [tableView rectForRowAtIndexPath:currentEditRow];
-        [tableView scrollRectToVisible:rowRect animated:YES];
+        //Shrinivas --> Crash Fix
+        NSInteger sections = [tableView numberOfSections];
+        NSInteger rows = [tableView numberOfRowsInSection:sections - 1];
+        NSLog(@"%d", rows);
+        int index = 0;
+        
+        for ( int i = 0; i < sections - 1; i++)
+        {
+            for ( int j = 0; j < [tableView numberOfRowsInSection:i]; j++)
+            {
+               if (i == currentEditRow.section && j == currentEditRow.row)
+               {
+                   break;
+               }else{
+                   index ++;
+               }
+               
+            }
+        }
+        NSLog(@"%d", index);
+        
+        NSArray * visible = [self.tableView visibleCells];
+        UITableViewCell * cell = [visible objectAtIndex:index];
+        
+        if ( currentEditRow.section != 0)
+            [self.tableView scrollRectToVisible:cell.frame animated:YES];
+        
+        //CGRect rowRect = [tableView rectForRowAtIndexPath:currentEditRow];
+        //[tableView scrollRectToVisible:rowRect animated:YES];
     }
     
     isKeyboardShowing = YES;
@@ -8559,9 +8580,36 @@
 {
     if (currentEditRow == nil)
         return;
-
-    CGRect rowRect = [tableView rectForRowAtIndexPath:self.currentEditRow];
-    [tableView scrollRectToVisible:rowRect animated:YES];
+    
+    //Shrinivas --> Crash Fix
+    NSInteger sections = [tableView numberOfSections];
+    NSInteger rows = [tableView numberOfRowsInSection:sections - 1];
+    NSLog(@"%d", rows);
+    int index = 0;
+    
+    for ( int i = 0; i < sections - 1; i++)
+    {
+        for ( int j = 0; j < [tableView numberOfRowsInSection:i]; j++)
+        {
+            if (i == currentEditRow.section && j == currentEditRow.row)
+            {
+                break;
+            }else{
+                index ++;
+            }
+            
+        }
+    }
+    
+    NSLog(@"%d", index);
+    NSLog(@"%d", currentEditRow.row);
+    NSArray * visible = [self.tableView visibleCells];
+    UITableViewCell * cell = [visible objectAtIndex:index];
+    if ( currentEditRow.section != 0)
+        [self.tableView scrollRectToVisible:cell.frame animated:YES];
+    
+    //CGRect rowRect = [tableView rectForRowAtIndexPath:self.currentEditRow];
+    //[tableView scrollRectToVisible:rowRect animated:YES];
     currentEditRow = nil;
 }
 
@@ -11230,6 +11278,7 @@
             
             UIAlertView * alert_view = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:Ok otherButtonTitles:nil, nil];
             [alert_view  show];
+            [alert_view release];  //Inconsistent Crash
 
             
         }
@@ -11697,6 +11746,7 @@
     manualDataSync.modalPresentationStyle = UIModalPresentationFullScreen;
     manualDataSync.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     appDelegate._manualDataSync.didAppearFromSFMScreen = YES;
+    [manualDataSync release];
     //[(SFMPageController *)delegate presentModalViewController:manualDataSync animated:YES];
     
     if (appDelegate.showUI)
