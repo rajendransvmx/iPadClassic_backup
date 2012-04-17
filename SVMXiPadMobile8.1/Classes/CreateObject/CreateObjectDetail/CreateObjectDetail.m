@@ -251,15 +251,7 @@
     NSString * processId = nil;
     BOOL status;
     status = [Reachability connectivityStatus];
-
-   /* if (!appDelegate.isInternetConnectionAvailable)
-    {
-        [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
-        return;
-    }*/
-    
-    activity.frame = CGRectMake(self.view.frame.size.height/2, self.view.frame.size.width/2, activity.frame.size.width, activity.frame.size.height);
+   
 
     [activity startAnimating];
     
@@ -268,7 +260,6 @@
         NSDictionary * dict = [appDelegate.wsInterface.createProcessArray objectAtIndex:i];
         if(i == indexPath.row)
         {
-//            processId = [dict objectForKey:SVMXC_ProcessID];
             break;
         }
     }
@@ -287,13 +278,6 @@
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
 {
-    /*if (!appDelegate.isInternetConnectionAvailable)
-    {
-        [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
-        return;
-    }*/
-
     NSString * processId = nil;
     
 //    activity.frame = CGRectMake(self.view.frame.size.height/2, self.view.frame.size.width/2, activity.frame.size.width, activity.frame.size.height);
@@ -302,10 +286,8 @@
 
     for (int i = 0; i < [appDelegate.wsInterface.createProcessArray count]; i++)
     {
-        NSDictionary * dict = [appDelegate.wsInterface.createProcessArray objectAtIndex:i];
         if(i == indexPath.row)
         {
-//            processId = [dict objectForKey:SVMXC_ProcessID];
             break;
         }
     }
@@ -316,13 +298,9 @@
     NSLog(@"%@", processId);
     
     //sahana offline
-    
     NSString * object_name = [dict objectForKey:SVMXC_OBJECT_NAME];
-    
     [delegate showSFMCreateObjectWithProcessID:processId processTitle:processTitle object_name:object_name];
-
     [activity stopAnimating];
-    [activity release];
 }
 
 - (void) didSelectRowAtIndexPath:(NSIndexPath *)indexPath
