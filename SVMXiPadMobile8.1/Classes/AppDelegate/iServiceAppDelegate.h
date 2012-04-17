@@ -295,11 +295,15 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     NSMutableArray * initialEventMappinArray;
     NSMutableArray * newEventMappinArray;
     
+    
+    //logout
+    BOOL logoutFlag;
 }
 
 @property (nonatomic, retain) NSMutableArray * initialEventMappinArray, * newEventMappinArray;
 
 @property (nonatomic) BOOL didFinishWithError;
+@property (nonatomic) BOOL logoutFlag;
 
 @property (nonatomic , retain)  NSString * last_initial_data_sync_time;;
 @property (nonatomic, retain) NSException * exception;
