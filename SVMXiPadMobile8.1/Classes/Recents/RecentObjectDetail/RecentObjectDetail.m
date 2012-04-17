@@ -314,8 +314,8 @@
             }
         }
     }
-    if(processId == nil || [processId length] == 0)
-    {
+    if(processId == nil || [processId length] == 0){
+        
         NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
         NSString * warning = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_WARNING];
         NSString * noView = [appDelegate.wsInterface.tagsDictionary objectForKey:NO_VIEW_PROCESS];
@@ -323,14 +323,14 @@
         UIAlertView * alertView =  [[UIAlertView alloc] initWithTitle:warning message:noView delegate:self cancelButtonTitle:alert_ok otherButtonTitles:nil, nil];
         [alertView show];
         [alertView release];
+        
         return;
-    }
-    else
-    {
+    }else{
+        
         [delegate showSFMWithProcessId:processId recordId:[dict objectForKey:RESULTID] objectName:objectName];
     }
+    
     [activity stopAnimating];
-//    [activity release];
 }
 
 - (void) didSelectRowAtIndexPath:(NSIndexPath *)indexPath
