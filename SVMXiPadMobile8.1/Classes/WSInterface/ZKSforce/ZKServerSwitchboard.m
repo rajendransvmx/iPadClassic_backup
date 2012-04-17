@@ -193,6 +193,13 @@ static ZKServerSwitchboard * sharedSwitchboard =  nil;
 
 - (NSString *)apiUrl
 {
+    iServiceAppDelegate * appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+    if ( appDelegate.logoutFlag == TRUE)
+    {
+        apiUrl = NULL;
+        appDelegate.logoutFlag = FALSE;
+    }
+    
     if (apiUrl)
         return apiUrl;
     return [self authenticationUrl];
