@@ -21,6 +21,9 @@
 
 @implementation LoginController
 
+
+@synthesize didEnterAlertView;
+
 @synthesize eventInfoarray;
 
 @synthesize txtUsernamePortrait;
@@ -104,6 +107,7 @@
     [self disableControls];
     
     didRunProcess = YES;
+    didEnterAlertView = FALSE;
     
     [txtUsernameLandscape resignFirstResponder];
     [txtPasswordLandscape resignFirstResponder];
@@ -290,7 +294,6 @@
     
     if (didEnterAlertView && continueFalg)
     {
-                
         [self loginWithUsernamePassword];
         
         if (appDelegate.wsInterface.didOpComplete == FALSE)
@@ -299,8 +302,15 @@
             [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
         }
         
+        //Radha -17/4/2012
+        
+        
         if (appDelegate.wsInterface.didOpComplete == TRUE)
             return; 
+        
+        [self readUsernameAndPasswordFromKeychain];
+        
+        didEnterAlertView = FALSE;
         
         [self doMetaAndDataSync];
         
@@ -952,6 +962,7 @@
     return userId;
 }
 
+
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
 {
@@ -976,7 +987,6 @@
     }
     txtUsernameLandscape.text = _username;
     _newusername = _username;
-  //  txtUsernameLandscape.text = [NSString stringWithFormat:@"%@", _username];
     
     // Retrieve password from keychain
     
@@ -984,11 +994,9 @@
     NSLog(@"%@", _password);
     if ((_password == nil) && (appDelegate.savedReference != nil))
     {
-        // check in the previous version for the password
         _password = [[appDelegate.savedReference objectAtIndex:0] objectForKey:@"password"];
     }
     txtPasswordLandscape.text = _password;
-  //  txtPasswordLandscape.text = [NSString stringWithFormat:@"%@", _password];
     
     [createSampleLabel setText:SAMPLEDATA];
     
@@ -1002,6 +1010,7 @@
     
     didDebriefData = FALSE;
     didQueryTechnician = FALSE;
+    didEnterAlertView = FALSE;  
 
     
 }
@@ -1682,165 +1691,36 @@
     didRetrieveReportSettings = YES;
 }
 
-// #################################################################################################
 
-/*-(void) getCreateProcessArray:(NSMutableArray *)processes_array
+- (void) readUsernameAndPasswordFromKeychain
 {
-    if (appDelegate.objectLabelName_array)
+    NSString * kRestoreLocationKey = [NSString stringWithFormat:@"RestoreLocation"];
+    NSMutableArray * temp = [[NSUserDefaults standardUserDefaults] objectForKey:kRestoreLocationKey];
+    NSLog(@"%@", temp);
+    
+    appDelegate.priceBookName = @"Standard Price Book";
+    
+    NSError * error = nil;
+    _username = [SFHFKeychainUtils getPasswordForUsername:@"username" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
+    NSLog(@"%@", _username);
+    if ((_username == nil) && (temp != nil))
     {
-        appDelegate.objectLabelName_array = nil;
+        _username = [[temp objectAtIndex:0] objectForKey:@"username"];
     }
+    txtUsernameLandscape.text = _username;
+    _newusername = _username;
     
-    NSMutableArray * objectNames_array;
-    //collect all the object names in an array arrange it in the alpha order 
-    objectNames_array = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-    for(int i = 0 ;i<[processes_array count]; i++)
+    // Retrieve password from keychain
+    
+    _password = [SFHFKeychainUtils getPasswordForUsername:@"password" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
+    NSLog(@"%@", _password);
+    if ((_password == nil) && (appDelegate.savedReference != nil))
     {
-        NSDictionary * dict = [processes_array objectAtIndex:i];
-        NSString * str = [dict objectForKey:SVMXC_OBJECT_NAME];  
-        
-        if(i  == 0)
-        {
-            [objectNames_array  addObject:str];
-            continue;
-        }
-        NSInteger count=0;
-        for(int j = 0; j < [objectNames_array count];j++)
-        {
-            if([str isEqualToString:[objectNames_array objectAtIndex:j]])
-            {
-                count ++;
-            }
-        }
-        if(count == 0)
-        {
-            [objectNames_array  addObject:str];
-        }
-        
+        _password = [[appDelegate.savedReference objectAtIndex:0] objectForKey:@"password"];
     }
-
-    NSMutableArray * section_for_createObjects = [[NSMutableArray alloc] initWithCapacity:0];
-    for(int i=0 ;i< [objectNames_array count]; i++)
-    {
-        NSString * objectName = [objectNames_array objectAtIndex:i];
-        NSMutableArray * createobjects = [[NSMutableArray alloc] initWithCapacity:0];
-        for(int j=0;j<[processes_array count];j++)
-        {
-            NSDictionary * dict = [processes_array objectAtIndex:j];
-            NSString * str = [dict objectForKey:SVMXC_OBJECT_NAME];
-            if([str isEqualToString:objectName])
-            {
-                [createobjects addObject:dict];
-            }
-        }
-        
-        [section_for_createObjects addObject:createobjects];
-        [createobjects release];
-    }
-    //create a
-    appDelegate.StandAloneCreateProcess = section_for_createObjects;
-    appDelegate.objectNames_array = objectNames_array;
-   
-    //write a method to get all the labels for the  object
-    NSMutableArray * objectNames = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-    for(int k = 0; k < [appDelegate.objectNames_array count];k++ )
-    {
-        NSString * label = [appDelegate.databaseInterface getObjectLabel:@"SFObject" objectApi_name:[appDelegate.objectNames_array objectAtIndex:k]];
-        [objectNames addObject:label];
-        
-    }
+    txtPasswordLandscape.text = _password;
     
-    appDelegate.objectLabel_array = objectNames;
-    
-    if (appDelegate.objectLabelName_array == nil)
-        appDelegate.objectLabelName_array = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-    
-    
-    NSMutableDictionary * _dict = nil;
-    for (int i = 0; i < [appDelegate.objectNames_array count]; i++)
-    {
-        if (_dict == nil)
-            _dict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
-        
-        [_dict setValue:[appDelegate.objectLabel_array objectAtIndex:i] forKey:[appDelegate.objectNames_array objectAtIndex:i]];
-        [appDelegate.objectLabelName_array addObject:_dict];
-        _dict = nil;
-    }
-    
-    NSLog(@"%@", appDelegate.objectLabelName_array);
-    
-    if ( [appDelegate.objectLabelName_array count] > 1 )
-    {
-        int i = 0;
-        for (i = 0; i < [appDelegate.objectLabelName_array count] - 1; i++)
-        {
-            
-            for (int j = 0; j < ([appDelegate.objectLabelName_array count] - (i +1)); j++)
-            {
-                NSDictionary * dict = [appDelegate.objectLabelName_array objectAtIndex:j];
-                NSArray * arr = [dict allValues];
-                NSString * label = [arr objectAtIndex:0];
-                NSString * label1;
-                NSDictionary * _dict = [appDelegate.objectLabelName_array objectAtIndex:j+1];
-                NSArray * arr1 = [_dict allValues];
-                label1 = [arr1 objectAtIndex:0];
-                if (strcmp([label UTF8String], [label1 UTF8String]) > 0)
-                {
-                    [appDelegate.objectLabelName_array exchangeObjectAtIndex:j withObjectAtIndex:j+1];
-                }
-            }
-        }
-    }
-    
-    [section_for_createObjects release];
-    section_for_createObjects = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-    for(int i=0 ;i< [objectNames_array count]; i++)
-    {
-        
-        NSDictionary * dict =  [appDelegate.objectLabelName_array objectAtIndex:i];
-        NSString * objectName = [[dict allKeys] objectAtIndex:0];
-        NSMutableArray * createobjects = [[NSMutableArray alloc] initWithCapacity:0];
-        for(int j=0;j<[processes_array count];j++)
-        {
-            NSDictionary * dict = [processes_array objectAtIndex:j];
-            NSString * str = [dict objectForKey:SVMXC_OBJECT_NAME];
-            if([str isEqualToString:objectName])
-            {
-                [createobjects addObject:dict];
-            }
-        }
-        
-        //Radha
-        for (int k = 0; k <[createobjects count]; k++)
-        {
-            NSDictionary * dict1 = [createobjects objectAtIndex:k];
-            NSString * key1 = [dict1 objectForKey:@"SVMXC__Name__c"];
-            for (int r = k + 1; r < [createobjects count]; r++)
-            {
-                NSDictionary * dict2 = [createobjects objectAtIndex:r];
-                NSString * key2 = [dict2 objectForKey:@"SVMXC__Name__c"];
-                
-                 key1 = [key1 uppercaseString];
-                 key2 = [key2 uppercaseString];
-                int result = strcmp([key1 UTF8String], [key2 UTF8String]);
-                
-                if (result > 0 )
-                {
-                    // perform swap
-                    [createobjects exchangeObjectAtIndex:k withObjectAtIndex:r];
-                    key1 = key2;
-                }
-            }
-            
-        }
-        
-        [section_for_createObjects addObject:createobjects];
-        [createobjects release];
-    }
-    appDelegate.StandAloneCreateProcess = section_for_createObjects;
-    
-}*/
-
+}
 
 #pragma mark - Initial Meta Sync
 
