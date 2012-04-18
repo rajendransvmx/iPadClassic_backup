@@ -229,7 +229,7 @@ SFWToolBarDelegate,RefreshSyncStatusButton>
 @property (nonatomic, retain) id detailItem;
 @property (nonatomic, retain) IBOutlet UILabel * detailDescriptionLabel;
 @property (nonatomic, retain) IBOutlet UITableView * tableView;
-
+@property (nonatomic, assign) BOOL showSyncUI;
 @property (nonatomic, retain) UILabel *lbl1, *lbl2;
 @property (nonatomic, retain) UITextField *txtfld,*txtfld1;
 @property (nonatomic) BOOL editable;

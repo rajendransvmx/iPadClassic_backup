@@ -77,7 +77,7 @@
 @synthesize detailTitle;
 @synthesize mLookupDictionary;
 @synthesize LabourValuesDictionary;
-
+@synthesize showSyncUI;
 - (id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -329,13 +329,16 @@
     }
     
     //Image View animation
+    if(!showSyncUI)
+    {
     animatedImageView = [[UIImageView alloc] initWithFrame:CGRectMake(475, 8, 26, 26)];    
     [self getStatusImage];
     animatedImageView.animationDuration = 1.0f;
     animatedImageView.animationRepeatCount = 0;
     [animatedImageView startAnimating];
+     showSyncUI = YES;
     [self.navigationController.view addSubview:animatedImageView];
-    
+    }
 }
 
 - (void) didInternetConnectionChange:(NSNotification *)notification
@@ -7367,7 +7370,7 @@
         detailViewObject.Disclosure_dict = self.Disclosure_dict;
         detailViewObject.Disclosure_Fields = self.Disclosure_Fields;
         detailViewObject.Disclosure_Details = self.Disclosure_Details;
-
+        detailViewObject.showSyncUI = self.showSyncUI;
         //sahana navigation custom button
         detailViewObject.navigationItem.leftBarButtonItem = nil;
         [detailViewObject.navigationItem setHidesBackButton:YES animated:YES];
@@ -7422,7 +7425,7 @@
         [buttons release];
         
         detailViewObject.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:toolBar] autorelease];
-        
+        showSyncUI=YES;
         [self.navigationController pushViewController:detailViewObject animated:YES];
         [self enableSFMUI];
         
@@ -7685,7 +7688,7 @@
             [self enableSFMUI];
             return;
         }
-       
+       showSyncUI=YES;
         [self.navigationController pushViewController:detailViewObject animated:YES];
         [detailViewObject release];
         
@@ -8261,6 +8264,8 @@
             return;
         }
     }
+    detailViewObject.showSyncUI = self.showSyncUI;
+    showSyncUI=YES;
     [self.navigationController pushViewController:detailViewObject animated:YES];
 }
 
