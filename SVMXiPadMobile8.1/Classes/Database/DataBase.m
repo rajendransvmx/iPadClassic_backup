@@ -2783,6 +2783,12 @@
     [appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
     NSLog(@"SAMMAN Update Sync Records End: %@", [NSDate date]);
     
+    //Radha purging - 10/April/12
+    NSMutableArray * recordId = [appDelegate.dataBase getAllTheRecordIdsFromEvent];
+    
+    appDelegate.initialEventMappinArray = [appDelegate.dataBase checkForTheObjectWithRecordId:recordId];
+    //Radha End
+    
     
     txnstmt = @"END TRANSACTION";
     retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);    
