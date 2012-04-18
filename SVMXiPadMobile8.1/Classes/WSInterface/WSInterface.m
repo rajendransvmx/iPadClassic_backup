@@ -142,8 +142,14 @@
         appDelegate.settingsDict = [appDelegate.dataBase getSettingsDictionary];
     
     int no_of_days ;
-    NSString * timeInterval = ([appDelegate.settingsDict objectForKey:@"Synchronization To Get Events"]) != nil?[appDelegate.settingsDict objectForKey:@"Synchronization To Get Events"]:@"";
     
+    NSString * timeInterval = @"";
+    
+    if([time isEqualToString:START_TIME])
+        timeInterval = ([appDelegate.settingsDict objectForKey:@"Synchronization To Remove Events"]) != nil?[appDelegate.settingsDict objectForKey:@"Synchronization To Remove Events"]:@"";
+    else
+        timeInterval = ([appDelegate.settingsDict objectForKey:@"Synchronization To Get Events"]) != nil?[appDelegate.settingsDict objectForKey:@"Synchronization To Get Events"]:@"";
+        
     if([timeInterval isEqualToString:@""])
     {
         no_of_days = 15;    
@@ -168,12 +174,14 @@
     {
         tomorrow = [today dateByAddingTimeInterval: -secondsPerDay];
         NSString * current_gmt_time = [dateFormatter_ stringFromDate:tomorrow];
+        current_gmt_time = [current_gmt_time stringByReplacingCharactersInRange:NSMakeRange(11, 8) withString:@"00:00:00"];
         return current_gmt_time;
     }
     else
     {
         yesterday = [today dateByAddingTimeInterval: secondsPerDay];
         NSString * current_gmt_time = [dateFormatter_ stringFromDate:yesterday];
+        current_gmt_time = [current_gmt_time stringByReplacingCharactersInRange:NSMakeRange(11, 8) withString:@"00:00:00"];
         return current_gmt_time;
     }
 }
