@@ -122,6 +122,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize logoutFlag;
 @synthesize didFinishWithError;
 
+@synthesize metaSyncTimer;
+@synthesize metaSyncThread;
+
 @synthesize initialEventMappinArray, newEventMappinArray;
 
 @synthesize exception;
@@ -367,6 +370,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     syncThread = nil;
     
     special_incremental_thread = nil;
+    
+    metaSyncThread = nil;
     
     _manualDataSync = [[ManualDataSync alloc] init];   //btn merge
     
@@ -862,7 +867,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 }
 -(void)ScheduleIncrementalDatasyncTimer
 {
-    NSString * timerValue = ([self.settingsDict objectForKey:@"Dataset Synchronization"]) != nil?[self.settingsDict objectForKey:@"Dataset Synchronization"]:@"";
+    NSString * timerValue = ([self.settingsDict objectForKey:@"Dataset Synchronization"] != nil)?[self.settingsDict objectForKey:@"Dataset Synchronization"]:@"";
     
     NSTimeInterval scheduledTimer = 0;
     
@@ -1148,16 +1153,49 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     
 }
 
+#pragma mark - Schedule IncrementalMetaSync
 
-
-//Radha - 21 MARCH
-/*- (void) throwException
+- (void) ScheduleIncrementalMetaSyncTimer
 {
-    exception = [NSException exceptionWithName:@"Error" reason: @"Synchronize Configuration Failed"
-                                      userInfo: nil];
+    NSString * timerInterval = ([self.settingsDict objectForKey:@"Frequency of Application Changes"] != nil)?[self.settingsDict objectForKey:@"Frequency of Application Changes"]:@"";
+    
+    NSTimeInterval  metaSyncTimeInterval = 0;
+    
+    if (![timerInterval isEqualToString:@""])
+    {
+        double interval = [timerInterval doubleValue];
+        
+        metaSyncTimeInterval = interval * 60;
+    }
+    
+    metaSyncTimer = [NSTimer scheduledTimerWithTimeInterval:metaSyncTimeInterval target:self selector:@selector(metaSyncTimer) userInfo:nil repeats:YES];
 
-    @throw exception;
-}*/
+}
+
+- (void) metaSyncTimer
+{
+    if (metaSyncThread != nil)
+    {
+        if ([metaSyncThread isFinished] == YES)
+        {
+            NSLog(@"Meta Sync");
+        }
+        else
+        {
+            NSLog(@"Meta Sync");
+        }
+        
+        
+    }
+    
+    [metaSyncThread release]; 
+    metaSyncThread = [[NSThread alloc] initWithTarget:self.dataBase selector:@selector(callIncrementalMetasync) object:nil];
+    [metaSyncThread start];
+}
+
+
+#pragma mark - End
+
 
 @end
 
