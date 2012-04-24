@@ -91,12 +91,11 @@
 
 -(void) searchBarSearchButtonClicked:(UISearchBar *)_searchBar
 {
-   
     //call the delegate method
     NSString * keyword = [_searchBar.text stringByReplacingCharactersInRange:NSMakeRange(0, 1) withString:@""];
     if(appDelegate.isWorkinginOffline)
     {
-        NSMutableDictionary * dict = [appDelegate.databaseInterface getDataForMultiAdd:objectName searchField:search_field];
+        NSMutableDictionary * dict = [appDelegate.databaseInterface getDataForMultiAdd:objectName searchField:keyword];
         [self setLookupData:dict];
         
     }
