@@ -181,7 +181,7 @@
     {
         yesterday = [today dateByAddingTimeInterval: secondsPerDay];
         NSString * current_gmt_time = [dateFormatter_ stringFromDate:yesterday];
-        current_gmt_time = [current_gmt_time stringByReplacingCharactersInRange:NSMakeRange(11, 8) withString:@"00:00:00"];
+        current_gmt_time = [current_gmt_time stringByReplacingCharactersInRange:NSMakeRange(11, 8) withString:@"23:59:00"];
         return current_gmt_time;
     }
 }
@@ -3892,7 +3892,6 @@ last_sync_time:(NSString *)last_sync_time
             else
             {
               //  didGetPicklistValueDb = FALSE;
-                [appDelegate.dataBase insertvaluesToPicklist:picklistObject fields:picklistField value:picklistValues];
                 didGetPicklistValues = FALSE;
                 [appDelegate.dataBase insertvaluesToPicklist:picklistObject fields:picklistField value:picklistValues];
                 while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, FALSE))
@@ -3919,7 +3918,7 @@ last_sync_time:(NSString *)last_sync_time
                     
                     if (![objectName isEqualToString:@""])
                         [allObjects addObject:objectName];
-	      }
+                }
                
                 NSLog(@"SAMMAN MetaSync SFM_PICKLIST_DEFINITIONS received, processing ends: %@", [NSDate date]);
                 [self getRecordTypeDictForObjects:allObjects];
