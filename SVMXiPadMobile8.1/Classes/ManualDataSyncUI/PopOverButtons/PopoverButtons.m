@@ -55,14 +55,25 @@
     [button1 addSubview:label1];
     [button1 setImage:buttonBkground forState:UIControlStateNormal];
     [button1 addTarget:self action:@selector(synchronizeConfiguration)forControlEvents:UIControlEventTouchUpInside];
- //   button1.enabled = NO;
+ 
     
-        
+    //Label2
+    UILabel *label2 = [[[UILabel alloc] initWithFrame:CGRectMake(10, 0, 200, 50)] autorelease];
+    label2.backgroundColor = [UIColor clearColor];
+    label2.text = @"Full Data Synchronise";
+    button2 = [UIButton buttonWithType:UIButtonTypeCustom];
+    button2.frame = CGRectMake(0, 115, 214, 59);
+    [button2 addSubview:label2];
+    [button2 setImage:buttonBkground forState:UIControlStateNormal];
+    [button2 addTarget:self action:@selector(fullDataSynchronization)forControlEvents:UIControlEventTouchUpInside];
+
+    
     self.view.backgroundColor = [UIColor clearColor];
     [self.view addSubview:bgImage];
     
     [self.view addSubview:button];
     [self.view addSubview:button1];
+    [self.view addSubview:button2];
 }
 
 
@@ -137,13 +148,10 @@
 - (void) synchronizeConfiguration
 {
     syncConfigurationFailed = FALSE;
-
     
     @try {
         
         [delegate dismisspopover];
-
-        
         if (appDelegate.SyncStatus == SYNC_RED)
             return;
         
@@ -189,17 +197,18 @@
 
     }
     @catch (NSException * exception) {
+        
         exception = [NSException exceptionWithName:@"Error" reason:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_failed_try_again] userInfo: nil];
         syncConfigurationFailed = TRUE;
         [appDelegate.dataBase copyTempsqlToSfm];
         
-        NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button1];
+        NSString * title  = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button1];
         NSString * cancel = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
 
-        
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:[NSString stringWithFormat:@"%@",exception.description] delegate:self cancelButtonTitle:cancel otherButtonTitles: nil];
         [alert show];
         [alert release];
+        
     }
     @finally {
         [appDelegate ScheduleIncrementalDatasyncTimer];
@@ -242,4 +251,176 @@
     
 }
 
+
+- (void) fullDataSynchronization
+{
+    fullDataSyncFailed = FALSE;
+    @try {
+        
+        [delegate dismisspopover];
+        if (appDelegate.SyncStatus == SYNC_RED)
+            return;
+        
+        appDelegate.dataBase.MyPopoverDelegate = delegate;
+        appDelegate.databaseInterface.MyPopoverDelegate = delegate;
+        appDelegate.wsInterface.MyPopoverDelegate = delegate;
+        
+        [delegate activityStart];
+        if([appDelegate.syncThread isExecuting])
+        {
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            {
+                if (!appDelegate.isInternetConnectionAvailable)
+                {
+                    break;
+                }
+                
+                if ([appDelegate.syncThread isFinished])
+                {
+                    [appDelegate.datasync_timer invalidate];
+                    break;
+                }
+            }
+        }
+        else{
+            if (appDelegate.datasync_timer){
+                [appDelegate.datasync_timer invalidate];
+            }            
+        } 
+        
+        [appDelegate goOnlineIfRequired];
+        [appDelegate.dataBase startFullDataSync];
+        [delegate activityStop];
+        
+    }
+    @catch (NSException *exception) {
+        exception = [NSException exceptionWithName:@"Error" reason:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_failed_try_again] userInfo: nil];
+        fullDataSyncFailed = TRUE;
+        [appDelegate.dataBase copyTempsqlToSfm];
+        
+        NSString * title  = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button1];
+        NSString * cancel = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:[NSString stringWithFormat:@"%@", exception.description] delegate:self cancelButtonTitle:cancel otherButtonTitles: nil];
+        
+        [alert show];
+        [alert release];
+    }
+    @finally {
+        
+        [appDelegate ScheduleIncrementalDatasyncTimer];
+        [appDelegate.dataBase deleteDatabase:TEMPDATABASENAME];
+        [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+        
+        appDelegate.dataBase.MyPopoverDelegate = nil;
+        appDelegate.databaseInterface.MyPopoverDelegate = nil;
+        appDelegate.wsInterface.MyPopoverDelegate = nil;
+        
+        [delegate activityStop];
+
+    }
+    if (fullDataSyncFailed == FALSE)
+    {
+        NSString * title  = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button1];
+        NSString * cancel = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+        
+        UIAlertView *alert =  [[UIAlertView alloc] initWithTitle:title message:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_completed] delegate:self cancelButtonTitle:cancel otherButtonTitles: nil];
+        
+        [alert show];
+        [alert release];
+    }
+    
+    [delegate activityStop];
+}
+
+
+
+
+
+- (void) schdulesynchronizeConfiguration
+{
+    
+    if (appDelegate == nil)
+        appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+    
+    syncConfigurationFailed = FALSE;
+    
+    @try {
+        
+        if (appDelegate.SyncStatus == SYNC_RED)
+            return;
+        
+        appDelegate.dataBase.MyPopoverDelegate = delegate;
+        appDelegate.databaseInterface.MyPopoverDelegate = delegate;
+        appDelegate.wsInterface.MyPopoverDelegate = delegate;
+               
+        if([appDelegate.syncThread isExecuting])
+        {
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            {
+                if (!appDelegate.isInternetConnectionAvailable)
+                {
+                    break;
+                }
+                
+                if ([appDelegate.syncThread isFinished])
+                {
+                    [appDelegate.datasync_timer invalidate];
+                    break;
+                }
+            }
+        }
+        else
+        {
+            if (appDelegate.datasync_timer)
+            {
+                [appDelegate.datasync_timer invalidate];
+            }            
+        }   
+        
+        [appDelegate goOnlineIfRequired];
+        [appDelegate.dataBase removecache];
+        appDelegate.didincrementalmetasyncdone = FALSE;
+        
+        [appDelegate.dataBase StartIncrementalmetasync];
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+        {
+            if (appDelegate.didincrementalmetasyncdone == TRUE)
+                break; 
+        }
+        
+    }
+    @catch (NSException * exception) {
+        exception = [NSException exceptionWithName:@"Error" reason:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_failed_try_again] userInfo: nil];
+        syncConfigurationFailed = TRUE;
+        [appDelegate.dataBase copyTempsqlToSfm];
+
+    }
+    @finally {
+        [appDelegate ScheduleIncrementalDatasyncTimer];
+        [appDelegate.dataBase deleteDatabase:TEMPDATABASENAME];
+        [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+        
+        if ([appDelegate.StandAloneCreateProcess count] > 0)
+        {
+            [appDelegate.StandAloneCreateProcess  removeAllObjects];
+            NSMutableArray * createprocessArray = [appDelegate.databaseInterface getAllTheProcesses:@"STANDALONECREATE"];
+            [appDelegate getCreateProcessArray:createprocessArray];
+        }
+        
+        if ([appDelegate.view_layout_array count] > 0)
+        {
+            [appDelegate.view_layout_array removeAllObjects];
+            appDelegate.view_layout_array = [appDelegate.databaseInterface getAllTheProcesses:@"VIEWRECORD"]; 
+        }
+        
+        appDelegate.dataBase.MyPopoverDelegate = nil;
+        appDelegate.databaseInterface.MyPopoverDelegate = nil;
+        appDelegate.wsInterface.MyPopoverDelegate = nil;
+    }
+
+}
+
 @end
+
+
