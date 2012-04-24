@@ -152,36 +152,7 @@
     NSString * fieldsString =@"";
     NSString * singleField = @"";
     NSMutableDictionary * dict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
-   /* for(int i=0 ; i< [api_names count];i++)
-    {
-        NSString * sql ;
-        if([expression_ length] != 0 && expression_ != nil)
-            sql = [NSString stringWithFormat:@"SELECT %@ FROM %@ where %@ = '%@' and %@",[api_names objectAtIndex:i],tableName,@"local_id", recordId,expression_];
-        else
-            sql = [NSString stringWithFormat:@"SELECT %@ FROM %@ where %@ = '%@'",[api_names objectAtIndex:i],tableName,@"local_id", recordId];
-        
-        sqlite3_stmt * sql_stmt;
-        
-        NSLog(@"%@",sql);
-        if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sql UTF8String], -1, &sql_stmt, nil)== SQLITE_OK)
-        {
-            while(synchronized_sqlite3_step(sql_stmt) == SQLITE_ROW)
-            {
-                char * temp = (char*)synchronized_sqlite3_column_text(sql_stmt, 0);
-                NSString * name = @"";
-                if(temp != nil)
-                {    
-                    name  =[NSString stringWithUTF8String:temp]; 
-                }
-
-                [dict setObject:name forKey:[api_names objectAtIndex:i]];
-            }
-        }
-        
-        synchronized_sqlite3_finalize(sql_stmt);
-    }*/
-    
-    
+       
     for(int i=0 ;i< [api_names count];i++)
     {
         singleField = [api_names objectAtIndex:i];
@@ -235,7 +206,7 @@
     NSString * parent_column_name = @"";
     
     NSString * expression_ = [appDelegate.databaseInterface  queryForExpression:expression_id];
-    parent_column_name = parent_column;//[appDelegate.databaseInterface getParentColumnNameFormChildInfoTable:SFChildRelationShip childApiName:detailObjectName parentApiName:headerObjectName];
+    parent_column_name = parent_column;
     
     NSString * local_record_id = record_id; //[appDelegate.databaseInterface getLocalIdFromSFId:record_id tableName:headerObjectName];
     
@@ -252,11 +223,11 @@
     
     
     //fetch the parent  column name  in child table from  CHildInfo Table   -- IMP headerObjectName
-    // NSString * sql = [NSString stringWithFormat:@"SELECT %@ FROM %@ WHERE %@ = '%@' and %@ = '%@'",fieldsString,detailObjectName,parent_column_name,local_record_id, @"SVMXC__Line_Type__c",detailsAliasName];
+    
     NSString * sql;
     if([expression_ length ] != 0 && expression_ != nil)
         
-        sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE %@ = '%@' and %@ ",fieldsString,detailObjectName,parent_column_name,local_record_id, expression_];
+        sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE %@ = '%@' and %@",fieldsString,detailObjectName,parent_column_name,local_record_id, expression_];
     else
         sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE %@ = '%@'",fieldsString,detailObjectName,parent_column_name,local_record_id];
     NSLog(@" LineRecord %@",sql);
@@ -307,31 +278,6 @@
                     {
                         NSMutableArray * referenceTotableNames = [appDelegate.databaseInterface getReferenceToForField:[apiNames objectAtIndex:j] objectapiName:detailObjectName tableName:SF_REFERENCE_TO];
                         
-                        /*NSString *  keyPrefix = [value  substringToIndex:3];
-                        NSString * reference_to_tableName = @"";
-                        
-                        if([keyPrefix length ] != 0)
-                             reference_to_tableName = [appDelegate.databaseInterface getTheObjectApiNameForThePrefix:keyPrefix tableName:SFOBJECT];
-                        
-                        for(int i=0;i < [referenceTotableNames count];i++)
-                        {
-                            if([reference_to_tableName length] == 0 )
-                            {
-                                label = value;
-                                break;
-                            }
-                            if([reference_to_tableName isEqualToString:[referenceTotableNames objectAtIndex:i]])
-                            {
-                                NSString * referenceTo_Table_fieldName = [appDelegate.databaseInterface getFieldNameForReferenceTable:reference_to_tableName tableName:SFOBJECTFIELD];
-                                
-                                 label = [appDelegate.databaseInterface getReferenceValueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:value];
-                                if([label isEqualToString:@"" ]||[label isEqualToString:@" "] || label == nil)
-                                {
-                                    label = value;
-                                }
-                                break;
-                            }
-                        }*/
                         if([referenceTotableNames count ] > 0)
                         {
                             NSString * reference_to_tableName = [referenceTotableNames objectAtIndex:0];
@@ -1596,6 +1542,8 @@
     {
         NSLog(@"Insert Failed");
         success = FALSE;
+        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+            [MyPopoverDelegate performSelector:@selector(throwException)];
     }
     else
     {
@@ -1634,7 +1582,13 @@
     NSMutableDictionary * muti_add_data = [[NSMutableDictionary alloc] initWithCapacity:0];
     NSMutableArray * eachRow = [[NSMutableArray alloc] initWithCapacity:0];
     
-    NSString * query = [NSString stringWithFormat:@"SELECT Id , %@ FROM '%@'",@"Name" , object_name];
+    NSString * query = @"";
+    if ([search_field length] > 0){
+        query = [NSString stringWithFormat:@"SELECT Id , %@ FROM '%@' Where Name LIKE '%%%@%%'",@"Name" , object_name, search_field];
+    }else{
+        query = [NSString stringWithFormat:@"SELECT Id , %@ FROM '%@'",@"Name" , object_name];
+    }
+    
     sqlite3_stmt * stmt ;
     NSString * Id = @"";
     NSString * field_value = @"";
@@ -1661,13 +1615,14 @@
             
             NSMutableDictionary * dict2 = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"Name",field_value, nil] forKeys:[NSArray arrayWithObjects:@"key",@"value", nil]];
             
+            
             [arr  addObject:dict1];
             [arr  addObject:dict2];
-           
             [eachRow addObject:arr];
             [arr release];
         }
     }
+    
     synchronized_sqlite3_finalize(stmt);
     [muti_add_data setObject:eachRow forKey:@"DATA"];
     
@@ -1751,8 +1706,20 @@
             }
         }
         
-        //Sahana Fixed
-        NSString * querystring2 = [NSString stringWithFormat:@"Select %@ , Id from '%@'  WHERE  Id  NOT NULL   AND Id != '' ", default_column_name, object];
+        //Sahana Fixed   ---
+        //Shrinivas for R4B2 - 20/04/2012
+        NSString * _searchForString = [searchForString substringFromIndex:1];
+        NSString * querystring2 = @"";
+        NSLog(@"%d", [searchForString length]);
+        if ([searchForString length] > 1)
+        {
+            querystring2 = [NSString stringWithFormat:@"Select %@ , Id from '%@'  WHERE  Id  NOT NULL   AND Id != '' and %@ LIKE '%%%@%%' ", default_column_name, object, default_column_name, _searchForString];
+            
+        }else {
+            
+            querystring2 = [NSString stringWithFormat:@"Select %@ , Id from '%@'  WHERE  Id  NOT NULL   AND Id != '' ", default_column_name, object];
+        }
+       
         // NSMutableArray * _keys = [NSMutableArray arrayWithObjects:@"key", @"value", nil];
         
         sqlite3_stmt * stmt;
@@ -1865,38 +1832,6 @@
         NSMutableString *result_fieldNames = [[NSMutableString alloc]initWithCapacity:0];
         
         
-        /*for ( int i = 0; i < [results_array count]; i++ )
-         {
-         
-         NSMutableString * field = [results_array objectAtIndex:i];
-         for(int j= 0 ; j< [fields_array count]; j++)
-         {
-         NSDictionary * dict = [fields_array objectAtIndex:j];
-         NSString * dict_field_name = [dict objectForKey:LOOK_UP_FIELDNAME];
-         NSString * dict_field_type = [dict objectForKey:LOOK_UP_FIELD_TYPE];
-         NSString * dict_related_to = [dict objectForKey:LU_FIELD_RELATED_TO];
-         if([field isEqualToString:dict_field_name])
-         {
-         if([dict_field_type isEqualToString:@"REFERENCE"])
-         {
-         field = [NSMutableString stringWithFormat:@"%@.Name",dict_related_to];
-         }
-         }
-         }
-         
-         if ( [field length] !=  0)
-         {
-         if ( i == 0 ) 
-         {
-         [fieldNames appendFormat:@"%@ ", field];
-         }
-         else 
-         {
-         [fieldNames appendFormat:@", %@", field];
-         }
-         }
-         }*/
-        
         for ( int i = 0; i < [results_array count]; i++ )
         {
             
@@ -1919,6 +1854,8 @@
         if([searchForString isEqualToString:@" "] )
         {
             searchForString = [searchForString stringByReplacingOccurrencesOfString:@" " withString:@""];
+        }else{  //shrinivas fixed for search -- R4B2
+            searchForString = [searchForString substringFromIndex:1];
         }
         
         
@@ -2066,185 +2003,6 @@
     return finalDict;
 }
 
-/*- (NSDictionary *) getLookupDataFromDBWith:(NSString *)lookupID referenceTo:(NSString *)object 
-{
-    
-    NSMutableArray *fieldArray   = [[[NSMutableArray alloc]initWithCapacity:0]autorelease];
-    NSMutableArray *dataArray  = [[[NSMutableArray alloc]initWithCapacity:0]autorelease];
-    NSMutableArray *Array = [[[NSMutableArray alloc]initWithCapacity:0]autorelease]; 
-    NSMutableArray *_dictKeys = [NSMutableArray arrayWithObjects:@"DATA", @"SEQUENCE", @"SVMXC__Default_Lookup_Column__c", nil];
-    
-    
-    NSString *querystring1 = [NSString stringWithFormat:@"Select SVMXC_Field_Name_c from Config_data_table where Id = '%@'", lookupID];
-    sqlite3_stmt * stmt;
-    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [querystring1 UTF8String], -1, &stmt, nil) == SQLITE_OK  ) 
-    {
-        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW) 
-        {
-            char *field1 = (char *) synchronized_sqlite3_column_text(stmt, 0);
-            if ( field1 != nil ) 
-            {
-                NSString * field1Str = [[NSString alloc] initWithUTF8String:field1];  
-                [fieldArray addObject:field1Str];
-                [field1Str release];
-            }
-         }
-     }
-    NSLog(@"%@", fieldArray);
-    NSMutableString *fieldNames = [[NSMutableString alloc]initWithCapacity:0];
-    for ( int i = 0; i < [fieldArray count]; i++ )
-    {
-        if ( [[fieldArray objectAtIndex:i]length] !=  0)
-        {
-            if ( i == 0 ) 
-            {
-                [fieldNames appendFormat:@"%@ ", [fieldArray objectAtIndex:i]];
-            }
-            else {
-                [fieldNames appendFormat:@", %@", [fieldArray objectAtIndex:i]];
-            }
-        }
-    }
-    
-    NSString * querystring2 = [NSString stringWithFormat:@"Select %@ from %@ ", fieldNames, object];
-    NSMutableArray * _keys = [NSMutableArray arrayWithObjects:@"key", @"value", nil];
-    NSMutableArray * each_record = [[NSMutableArray alloc] initWithCapacity:0];
-    
-    
-    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [querystring2 UTF8String], -1, &stmt, nil) == SQLITE_OK)
-    {
-        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
-        {
-            NSMutableArray *subdataArray = [[NSMutableArray alloc]initWithCapacity:0];
-            NSString *field1;
-            for(int i = 0 ; i < [fieldArray count]; i++)
-            {
-                char *_field1 = (char *) synchronized_sqlite3_column_text(stmt,i);
-                if ( _field1 != nil ) 
-                {
-                    field1 = [[NSString alloc]initWithUTF8String:_field1];
-                }
-                else
-                {
-                    field1 = @"";
-                }
-                
-                NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:[fieldArray objectAtIndex:i],field1, nil] forKeys:[NSArray   arrayWithObjects:@"key",@"value",nil]];
-                [subdataArray addObject:dict];
-            }
-            
-            [each_record addObject:subdataArray];
-            [subdataArray release];
-            
-         }
-        
-         NSLog(@"%@", each_record);
-    }
-    
-   // iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    
-    for (int i = 0; i < [each_record count] ; i++) 
-    {
-        
-        NSMutableArray * array = [each_record objectAtIndex:i];
-        
-        for(int p = 0 ; p < [array count]; p++ )
-        {
-            NSMutableDictionary * dict = [array objectAtIndex:p];
-            NSString * api_name  = [dict objectForKey:@"key"];
-        
-                
-            NSString * filedDataType = [appDelegate.databaseInterface getFieldDataType:object filedName:api_name];
-            if([filedDataType isEqualToString:@"reference"])
-            {
-                NSString * value = [dict objectForKey:@"value"];
-                NSString * label = @"";
-                NSMutableArray * referenceTotableNames = [appDelegate.databaseInterface getReferenceToForField:api_name objectapiName:object tableName:SF_REFERENCE_TO];
-                
-                if([value length ]== 0 || value == nil)
-                    continue;
-                    
-                NSString *  keyPrefix = [value  substringToIndex:3];
-                NSString * reference_to_tableName = @"";
-                
-                if([keyPrefix length ] != 0)
-                    
-                    reference_to_tableName = [appDelegate.databaseInterface getTheObjectApiNameForThePrefix:keyPrefix tableName:SFOBJECT];
-                
-                for(int i=0;i < [referenceTotableNames count];i++)
-                {
-                    if([reference_to_tableName length] == 0 )
-                    {
-                        label = value;
-                        [dict setObject:label forKey:@"value"];
-                        break;
-                    }
-                    if([reference_to_tableName isEqualToString:[referenceTotableNames objectAtIndex:i]])
-                    {
-                        NSString * referenceTo_Table_fieldName = [appDelegate.databaseInterface getFieldNameForReferenceTable:reference_to_tableName 																					tableName:SFOBJECTFIELD];
-                        
-                        label = [appDelegate.databaseInterface getReferenceValueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName 												record_id:value];
-                        if([label isEqualToString:@"" ]||[label isEqualToString:@" "] || label == nil)
-                        {
-                            label = value;
-                            [dict setObject:label forKey:@"value"];
-                        }
-                        else
-                        {
-                            [dict setObject:label forKey:@"value"];
-                        }
-                        break;
-                    }
-                }
-                
-              }
-
-            }
-        }
-    
-    
-    NSString *queryString3 = [NSString stringWithFormat:@"Select SVMXC_Sequence_Type__c from Config_data_table where Id = '%@'", lookupID];
-    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [queryString3 UTF8String], -1, &stmt, nil) == SQLITE_OK)
-    {
-        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
-        {
-            NSString *field1;
-            char *_field1 = (char *) synchronized_sqlite3_column_text(stmt, 0);
-            if ( _field1 != nil )
-            {
-                field1 = [[NSString alloc]initWithUTF8String:_field1];
-            }
-            else
-            {
-                field1 = @"";
-            }
-            [Array addObject:field1];
-            [field1 release];
-        }
-    }
-    
-    NSMutableArray *sequenceArray = [[NSMutableArray alloc]initWithCapacity:0];
-    for ( int i = 0; i < [fieldArray count]; i++ )
-    {
-        NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:[fieldArray objectAtIndex:i], nil]
-                                                                       forKeys:[NSArray arrayWithObjects:[Array objectAtIndex:i], nil]];
-        
-        [sequenceArray addObject:dict];
-         NSLog(@"%@", sequenceArray);
-       
-    }
-    
-    NSString * default_display_column = [appDelegate.databaseInterface getTheDefaultDisplayColumnForLookUpId:lookupID];
-    if([default_display_column length] == 0)
-    {
-        default_display_column = @"Id";
-    }
-    NSDictionary *finalDict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:each_record, sequenceArray,default_display_column, nil] forKeys:_dictKeys];
-    NSLog(@"%@", finalDict);
-    return  finalDict;
-
-}*/
-
 -(NSString *)getTheDefaultDisplayColumnForLookUpId:(NSString *)lookup_id 
 {
     NSString * query = [NSString stringWithFormat:@"SELECT SVMXC_Field_Name_c FROM '%@' where Id = '%@' and default_desplay_column = '%@' ",SFCONFIG_DATA_TABLE ,lookup_id,@"true" ];
@@ -2298,11 +2056,7 @@
 
 -(NSString *) queryForExpressionComponent:(NSString *)expression expression_id:(NSString *)expression_id;
 {
-   /* NSString  * expression_ = @"((1 or 2) and 3) or (4 and 5)"; 
-    NSArray * expression_test  = [expression_ componentsSeparatedByString:@" "];
-    NSLog(@"%@",expression_test);
-    
-    return expression_;*/
+   
     NSString  * expression_ = expression;
     
     NSString * modified_expr = [expression_ stringByReplacingOccurrencesOfString:@"(" withString:@"#(#"];
@@ -2312,7 +2066,6 @@
     
     NSArray * array = [modified_expr componentsSeparatedByString:@"#"];
 
-   // NSLog(@"%@",array);
     
     NSMutableArray * components = [[NSMutableArray alloc] initWithCapacity:0];
     NSMutableArray * operators = [[NSMutableArray alloc] initWithCapacity:0];
@@ -3353,6 +3106,8 @@
     {
         success = FALSE;
         NSLog(@"ERROR IN UPDATING");
+        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+            [MyPopoverDelegate performSelector:@selector(throwException)];
     }
     else
     {
@@ -3539,6 +3294,8 @@
             if(synchronized_sqlite3_exec(appDelegate.db, [update_query UTF8String],NULL, NULL, &err) != SQLITE_OK)
             {
                 NSLog(@"UNSUCCESS");
+                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                    [MyPopoverDelegate performSelector:@selector(throwException)];
             }
         }
     }
@@ -3659,6 +3416,8 @@
             if(synchronized_sqlite3_exec(appDelegate.db, [update_query UTF8String],NULL, NULL, &err) != SQLITE_OK)
             {
                 NSLog(@"UNSUCCESS");
+                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                    [MyPopoverDelegate performSelector:@selector(throwException)];
             }
             
         }
@@ -4506,6 +4265,8 @@
             if(synchronized_sqlite3_exec(appDelegate.db, [insert_query UTF8String],NULL, NULL, &err) != SQLITE_OK)
             {
                 NSLog(@"INSERTION INTO CONFLICT TABLE UNSUCCESS");
+                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                    [MyPopoverDelegate performSelector:@selector(throwException)];
             }
             
         }
