@@ -39,6 +39,9 @@
     //RADHA - 21 MARCH
     BOOL syncConfigurationFailed;
     ManualDataSyncDetail * detail;
+    
+    BOOL fullDataSyncFailed;
+    
 }
 
 @property (nonatomic , retain)  UIPopoverController * popover;
@@ -54,5 +57,7 @@
 
 - (void) Syncronise;
 - (void) synchronizeConfiguration;
+- (void) fullDataSynchronization;
+- (void) schdulesynchronizeConfiguration;
 
 @end
