@@ -778,14 +778,14 @@
     popOver_view.delegate = self;
     UIPopoverController * popoverController_temp = [[UIPopoverController alloc] initWithContentViewController:popOver_view];
     
-    [popoverController_temp setPopoverContentSize:CGSizeMake(215, 117) animated:YES];
+    [popoverController_temp setPopoverContentSize:CGSizeMake(214, 175) animated:YES];
     popoverController_temp.delegate = self;
-
     
     popOver_view.popover = popoverController_temp;
     
     UIBarButtonItem *barButton = [[UIBarButtonItem alloc] initWithCustomView:button];
     [popoverController_temp presentPopoverFromBarButtonItem:barButton permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    
     [barButton release];
     
 }
