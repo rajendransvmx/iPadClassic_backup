@@ -119,22 +119,18 @@
     [activity startAnimating];
 }
 
+
+
 - (void) setLookupData:(NSDictionary *)lookupDictionary
 {
-    /*if (!appDelegate.isInternetConnectionAvailable)
-    {
-        [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
-        return;
-    }*/
-    
-    
     NSLog(@"%@", lookupDictionary);
     if(appDelegate.isWorkinginOffline)
     {
         lookupData = [lookupDictionary retain];
-        NSArray * sequenceArray = [lookupData objectForKey:@"SEQUENCE"];
-        NSMutableArray * allkeys = [[NSMutableArray alloc] initWithCapacity:0]; 
+        
+        NSArray * sequenceArray  = [lookupData objectForKey:@"SEQUENCE"];
+        NSMutableArray * allkeys = [[NSMutableArray alloc] initWithCapacity:0];
+        
         for (int i = 0; i < [sequenceArray count]; i++)
         {
             NSDictionary * dict = [sequenceArray objectAtIndex:i];
@@ -145,23 +141,19 @@
             }
         }
         
-         label_key = [appDelegate.databaseInterface queryTheObjectInfoTable:allkeys tableName:SFOBJECTFIELD object_name:objectName];
-    }
-    else
-    {
+        label_key = [appDelegate.databaseInterface queryTheObjectInfoTable:allkeys tableName:SFOBJECTFIELD object_name:objectName];
+    }else {
+        
         NSDictionary * _lookupDetails = [lookupDictionary objectForKey:gLOOKUP_DETAILS];
         describeObject = [[lookupDictionary objectForKey:gLOOKUP_DESCRIBEOBJECT] retain];
         lookupData = _lookupDetails;
     }
    
-    
     [self reloadData];
     
     [activity stopAnimating];
     activity = nil;
     [searchBar resignFirstResponder];
-    
-   // [NSThread detachNewThreadSelector:@selector(refresh) toTarget:self withObject:nil];
 }
 
 - (void)viewDidUnload
@@ -179,14 +171,7 @@
 
 #pragma mark - UITableView Delegate Methods
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    /*if (!appDelegate.isInternetConnectionAvailable)
-    {
-        [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
-        return;
-    }*/
-    
+{    
     NSArray * array = [[lookupData objectForKey:@"DATA"] objectAtIndex:indexPath.row];
     NSString * defaultLookupColumn = @"";
     defaultLookupColumn = [lookupData objectForKey:DEFAULT_LOOKUP_COLUMN];
@@ -194,44 +179,27 @@
 }
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
-{
-    /*if (!appDelegate.isInternetConnectionAvailable)
-    {
-        [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
-        return;
-    }*/
-    
+{    
     NSArray * array = [[lookupData objectForKey:@"DATA"] objectAtIndex:indexPath.row];
     NSDictionary * rowDict = nil; // [array objectAtIndex:indexPath.row];
     NSMutableArray * _array = [[NSMutableArray alloc] initWithCapacity:0];
     NSArray * sequenceArray = [lookupData objectForKey:@"SEQUENCE"];
+    
     for (int i = 0; i < [sequenceArray count]; i++)
     {
         NSDictionary * dict = [sequenceArray objectAtIndex:i];
         NSString * field = [[dict allValues] objectAtIndex:0]; // for e.g. field is Name
         NSString * fieldLabel = @"";
-       if(appDelegate.isWorkinginOffline)
-       {
-           /*NSArray * allkeys =[label_key allKeys];
-            NSString * key = @"";
-           for(int j = 0 ;j< [allkeys count]; j ++)
-           {
-               key = [allkeys objectAtIndex:j];
-               break;
-           }
-           if(key == nil || [key length] == 0 )
-           {
-               key = field;
-           }*/
+        
+       if(appDelegate.isWorkinginOffline){
+           
            fieldLabel = field;
-       }
-        else
-        {
+       }else{
             fieldLabel = [[describeObject fieldWithName:field] label];
-        }
-        for (int j = 0; j < [array count]; j++)
-        {
+       }
+        
+       for (int j = 0; j < [array count]; j++)
+       {
             rowDict = [array objectAtIndex:j];
             if ([[rowDict objectForKey:@"key"] isEqualToString:field])
             {
