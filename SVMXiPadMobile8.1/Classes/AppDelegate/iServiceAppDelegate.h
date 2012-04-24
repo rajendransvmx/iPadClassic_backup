@@ -296,9 +296,18 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     NSMutableArray * newEventMappinArray;
     
     
+    //Radha
+    NSTimer * metaSyncTimer;
+    NSThread * metaSyncThread;
+    
     //logout
     BOOL logoutFlag;
 }
+
+
+@property (nonatomic, retain) NSTimer * metaSyncTimer;
+@property (nonatomic, retain) NSThread * metaSyncThread;
+
 
 @property (nonatomic, retain) NSMutableArray * initialEventMappinArray, * newEventMappinArray;
 
@@ -521,6 +530,10 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 
 -(void) getCreateProcessArray:(NSMutableArray *)processes_array;
 
+
+//Radha - IncrementalMetasync
+- (void) ScheduleIncrementalMetaSyncTimer;
+- (void) metaSyncTimer;
 
 //Radha - 21 March
 //- (void) throwException;
