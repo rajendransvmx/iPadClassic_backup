@@ -167,7 +167,10 @@
     {
         appDelegate.settingsDict = [appDelegate.dataBase getSettingsDictionary];
         
-        [appDelegate  ScheduleIncrementalDatasyncTimer];        
+        [appDelegate  ScheduleIncrementalDatasyncTimer];      
+        
+        [appDelegate ScheduleIncrementalMetaSyncTimer];
+        
         appDelegate.wsInterface.tagsDictionary = [appDelegate.wsInterface getDefaultTags];
         
     //    appDelegate.wsInterface.tagsDictionary = [appDelegate.wsInterface fillEmptyTags:appDelegate.wsInterface.tagsDictionary];
