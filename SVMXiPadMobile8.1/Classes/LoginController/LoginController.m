@@ -173,9 +173,7 @@
         
         appDelegate.wsInterface.tagsDictionary = [appDelegate.wsInterface getDefaultTags];
         
-    //    appDelegate.wsInterface.tagsDictionary = [appDelegate.wsInterface fillEmptyTags:appDelegate.wsInterface.tagsDictionary];
-    
-        
+
         appDelegate.wsInterface.createProcessArray =  [appDelegate.calDataBase getProcessFromDatabase];
         
         appDelegate.isWorkinginOffline = TRUE;
@@ -198,6 +196,7 @@
         appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0]  endDate:[currentDateRange objectAtIndex:1]];
         [dateFormatter release];
         [self showHomeScreenviewController];
+        
 
     }
     return;
