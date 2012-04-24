@@ -14,6 +14,7 @@
 #import "SBJsonParser.h"
 
 @class iServiceAppDelegate;
+@class PopoverButtons;
 
 @interface DataBase : NSObject 
 {
@@ -49,6 +50,8 @@
    // int i;
     
     SBJsonParser * parser;
+    
+    PopoverButtons * metaSyncPopover;
     
 }
 
@@ -151,7 +154,7 @@
 
 //Abinash
 - (void)openDB:(NSString *)name type:(NSString *)type sqlite:(sqlite3 *)database;
-- (NSString *)retrieveQuery:(NSString *)tableName;
+- (NSString *)retrieveQuery:(NSString *)tableName sqlite:(sqlite3 *)database;
 - (BOOL) createTemporaryTable:(NSString *)statement;
 - (void)StartIncrementalmetasync;
 - (void) createBackUpDb;
@@ -192,4 +195,12 @@
 - (void) purgingDataOnSyncSettings:(NSString *)Date tableName:(NSString *)tableName;
 
 
+- (void) callIncrementalMetasync;
+
+//DATA SYNC
+- (void) startFullDataSync;
+- (void) copyMetaSyncDataInToSfm;
+- (NSMutableArray *) retreiveDataObjectTable;
+- (void) copyMetaTableInToSfm:(NSMutableArray *)metaTable;
+- (void) startDataSync;
 @end
