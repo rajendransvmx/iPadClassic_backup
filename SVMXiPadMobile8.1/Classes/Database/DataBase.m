@@ -380,7 +380,8 @@
             char * err;
             if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
             {
-                [appDelegate throwException];
+                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                    [MyPopoverDelegate performSelector:@selector(throwException)];
                 NSLog(@"Failed To Insert");
             }
         }
@@ -1025,6 +1026,9 @@
                     
                     for (int r = 0; r < count; ++r)
                     {
+                        if ([[key objectAtIndex:r] isEqualToString:@"ISMULTIPICKLIST"])
+                            continue;
+                        
                         pickValue = [value objectAtIndex:r];
                         pickValue = [pickValue stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
                         pickLabel = [value objectAtIndex:++r];
@@ -2673,7 +2677,7 @@
     
     for (NSString * objectName in object_names)
     {
-        NSString * query = [self retrieveQuery:objectName];
+        NSString * query = [self retrieveQuery:objectName sqlite:appDelegate.db];
         
         [self createTemporaryTable:query];
     }
@@ -2889,7 +2893,7 @@
 } 
 
 
--(NSString *)retrieveQuery:(NSString *)tableName
+-(NSString *)retrieveQuery:(NSString *)tableName sqlite:(sqlite3 *)database
 {
     NSMutableString * query = [NSMutableString stringWithFormat:@"SELECT sql FROM sqlite_master WHERE tbl_name = '%@' AND type = 'table'", tableName];
     
@@ -2898,7 +2902,7 @@
     NSString * queryStatement = @"";    
     const char * _query = [query UTF8String];
     
-    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, _query,-1, &stmt, nil) == SQLITE_OK )
+    if ( synchronized_sqlite3_prepare_v2(database, _query,-1, &stmt, nil) == SQLITE_OK )
     {
         while (synchronized_sqlite3_step(stmt) == SQLITE_ROW)
         {
@@ -3462,4 +3466,168 @@
     
 }
 #pragma mark -End
+
+
+#pragma mark - FULL DATA SYNC
+- (void) startFullDataSync
+{
+    [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
+    
+    if (object_names != nil)
+        [object_names release];
+    
+    object_names = [[NSMutableArray alloc] initWithCapacity:0];
+    object_names = [self retreiveTableNamesFronDB:appDelegate.db];
+    
+    for (NSString * objectName in object_names)
+    {
+        NSString * query = [self retrieveQuery:objectName sqlite:appDelegate.db];
+        [self createTemporaryTable:query];
+    }
+      
+    NSString * query1 = [NSString stringWithFormat:@"ATTACH DATABASE '%@' AS sfm", self.dbFilePath];
+    [self createTemporaryTable:query1];
+    
+    //Here we fill up the tables with data  
+    for (NSString * objectName in object_names){
+        if ([objectName isEqualToString:@"Case"])
+            objectName = @"'Case'";
+        
+        query1 = [NSString stringWithFormat:@"INSERT INTO %@ SELECT * FROM sfm.%@", objectName, objectName];
+        [self createTemporaryTable:query1];
+    }
+    
+    //Delete the old database after creating the backup
+    [self deleteDatabase:DATABASENAME];
+    [self copyMetaSyncDataInToSfm];
+}
+
+- (void) copyMetaSyncDataInToSfm
+{
+    [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+    
+    NSMutableArray * dataObjects = [self retreiveDataObjectTable];
+    NSMutableArray * metaTable  = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    
+    
+    int count = 0;
+    for (int i = 0; i < [object_names count]; i++)
+    {
+        for (int j = 0; j < [dataObjects count]; j++)
+        {
+           if ([[dataObjects objectAtIndex:j] isEqualToString:[object_names objectAtIndex:i]]) 
+           {
+               count++; 
+           }
+        }
+        
+        if (count == 0){
+            [metaTable addObject:[object_names objectAtIndex:i]];
+        }
+        count = 0;
+    }
+    
+    [self copyMetaTableInToSfm:metaTable];
+    
+    for (NSString * tableName in dataObjects)
+    {
+        NSString * query = [self retrieveQuery:tableName sqlite:tempDb];
+        [self createTable:query];
+    }
+    
+    [self startDataSync];
+    
+}
+
+- (void) startDataSync
+{
+    
+    NSLog(@"SAMMAN DataSync WS Start: %@", [NSDate date]);
+    appDelegate.wsInterface.didOpComplete = FALSE;
+    [appDelegate.wsInterface dataSyncWithEventName:@"DATA_SYNC" eventType:SYNC values:nil];
+    
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+    {
+        if (appDelegate.wsInterface.didOpComplete == TRUE)
+            break; 
+    }
+    NSLog(@"SAMMAN DataSync WS End: %@", [NSDate date]);
+    
+    NSLog(@"SAMMAN Incremental DataSync WS Start: %@", [NSDate date]);
+    appDelegate.Incremental_sync_status = INCR_STARTS;
+    [appDelegate.wsInterface PutAllTheRecordsForIds];
+    
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+    {
+        if (appDelegate.Incremental_sync_status == PUT_RECORDS_DONE)
+            break; 
+    }
+    NSLog(@"SAMMAN Incremental DataSync WS End: %@", [NSDate date]);
+    
+    NSLog(@"SAMMAN Update Sync Records Start: %@", [NSDate date]);
+    [appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
+}
+
+- (void) copyMetaTableInToSfm:(NSMutableArray *)metaTable
+{
+    for (NSString * objectName in metaTable)
+    {
+        NSString * query = [self retrieveQuery:objectName sqlite:tempDb];
+        [self createTable:query];
+    }
+    
+    NSString * query1 = [NSString stringWithFormat:@"ATTACH DATABASE '%@' AS tempSfm",filepath];
+    [self createTable:query1];
+    
+    //Here we fill up the tables with data  
+    for (NSString * objectName in metaTable)
+    {
+        query1 = [NSString stringWithFormat:@"INSERT INTO %@ SELECT * FROM tempSfm.%@", objectName, objectName];
+        [self createTable:query1];
+    }
+
+    
+}
+
+
+- (NSMutableArray *) retreiveDataObjectTable
+{
+    NSMutableArray * array = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    NSString * queryStatement = [NSString stringWithFormat:@"SELECT DISTINCT object_api_name FROM SFObjectField"];
+
+    sqlite3_stmt * stmt;
+    
+    if (sqlite3_prepare_v2(tempDb, [queryStatement UTF8String], -1, &stmt, NULL) == SQLITE_OK){
+        
+        while (sqlite3_step(stmt) == SQLITE_ROW) 
+        {
+            char * _object = (char *)sqlite3_column_text(stmt, 0);
+            
+            if (_object != nil && strlen(_object))
+                [array addObject:[NSString stringWithUTF8String:_object]];
+        }
+        
+    }
+    
+    sqlite3_finalize(stmt);
+    
+    return array;
+    
+}
+
+#pragma mark - END
+
+
+- (void) callIncrementalMetasync
+{
+    if (metaSyncPopover == nil)
+        metaSyncPopover = [[PopoverButtons alloc] init];
+    
+    [metaSyncPopover schdulesynchronizeConfiguration];
+
+    
+}
+
+
+
 @end
