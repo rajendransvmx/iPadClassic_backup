@@ -275,24 +275,6 @@ const NSUInteger kNumImages = 7;
 //Abinash
 -(void)logout
 {
-    if([appDelegate.syncThread isExecuting])
-    {
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
-        {
-            if ([appDelegate.syncThread isFinished])
-            {
-                [appDelegate.datasync_timer invalidate];
-                break; 
-            }
-        }
-        
-    }
-    else
-    {
-        
-        [appDelegate.datasync_timer invalidate];
-    }
-    
     [appDelegate showloginScreen];
     [self dismissModalViewControllerAnimated:YES];
 }
