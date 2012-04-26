@@ -3620,10 +3620,14 @@
 
 - (void) callIncrementalMetasync
 {
+    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+    
     if (metaSyncPopover == nil)
         metaSyncPopover = [[PopoverButtons alloc] init];
     
     [metaSyncPopover schdulesynchronizeConfiguration];
+    
+    [pool release];
 
     
 }
