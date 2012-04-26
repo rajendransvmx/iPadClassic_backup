@@ -138,11 +138,40 @@
     {
         if (appDelegate.datasync_timer)
         {
-           
+           [appDelegate.datasync_timer invalidate];
         }
         
     }    
+    
+    if ([appDelegate.metaSyncThread isExecuting])
+    {
+        
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+        {
+            if (!appDelegate.isInternetConnectionAvailable)
+            {
+                break;
+            }
+            
+            if ([appDelegate.metaSyncThread isFinished])
+            {
+                [appDelegate.metasync_timer invalidate];
+                break;
+            }
+        }
+    }
+    else
+    {
+        if (appDelegate.metasync_timer)
+        {
+            [appDelegate.metasync_timer invalidate];
+        }            
+    }   
+
+    
     [appDelegate callSpecialIncrementalSync];
+    
+    [appDelegate ScheduleIncrementalMetaSyncTimer];
 }
 
 - (void) synchronizeConfiguration
@@ -184,6 +213,34 @@
             }            
         }   
         
+        
+        
+        if ([appDelegate.metaSyncThread isExecuting])
+        {
+            
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            {
+                if (!appDelegate.isInternetConnectionAvailable)
+                {
+                    break;
+                }
+                
+                if ([appDelegate.metaSyncThread isFinished])
+                {
+                    [appDelegate.metasync_timer invalidate];
+                    break;
+                }
+            }
+        }
+        else
+        {
+            if (appDelegate.metasync_timer)
+            {
+                [appDelegate.metasync_timer invalidate];
+            }            
+        }   
+
+        
         [appDelegate goOnlineIfRequired];
         [appDelegate.dataBase removecache];
         appDelegate.didincrementalmetasyncdone = FALSE;
@@ -212,6 +269,7 @@
     }
     @finally {
         [appDelegate ScheduleIncrementalDatasyncTimer];
+        [appDelegate ScheduleIncrementalMetaSyncTimer];
         [appDelegate.dataBase deleteDatabase:TEMPDATABASENAME];
         [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
         
@@ -288,6 +346,33 @@
             }            
         } 
         
+        
+        if ([appDelegate.metaSyncThread isExecuting])
+        {
+            
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            {
+                if (!appDelegate.isInternetConnectionAvailable)
+                {
+                    break;
+                }
+                
+                if ([appDelegate.metaSyncThread isFinished])
+                {
+                    [appDelegate.metasync_timer invalidate];
+                    break;
+                }
+            }
+        }
+        else
+        {
+            if (appDelegate.metasync_timer)
+            {
+                [appDelegate.metasync_timer invalidate];
+            }            
+        }   
+
+        
         [appDelegate goOnlineIfRequired];
         [appDelegate.dataBase startFullDataSync];
         [delegate activityStop];
@@ -309,6 +394,7 @@
     @finally {
         
         [appDelegate ScheduleIncrementalDatasyncTimer];
+        [appDelegate ScheduleIncrementalMetaSyncTimer];
         [appDelegate.dataBase deleteDatabase:TEMPDATABASENAME];
         [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
         
@@ -339,6 +425,8 @@
 
 - (void) schdulesynchronizeConfiguration
 {
+    
+    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
     
     if (appDelegate == nil)
         appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
@@ -418,7 +506,8 @@
         appDelegate.databaseInterface.MyPopoverDelegate = nil;
         appDelegate.wsInterface.MyPopoverDelegate = nil;
     }
-
+    
+    [pool release];
 }
 
 @end
