@@ -2333,6 +2333,31 @@
         }            
     }   
 
+    if ([appDelegate.metaSyncThread isExecuting])
+    {
+        
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+        {
+            if (!appDelegate.isInternetConnectionAvailable)
+            {
+                break;
+            }
+            
+            if ([appDelegate.metaSyncThread isFinished])
+            {
+                [appDelegate.metasync_timer invalidate];
+                break;
+            }
+        }
+    }
+    else
+    {
+        if (appDelegate.metasync_timer)
+        {
+            [appDelegate.metasync_timer invalidate];
+        }            
+    }   
+
     
     [appDelegate goOnlineIfRequired];
     
@@ -2370,6 +2395,7 @@
     [self  didselectSection:0];    
     [activity stopAnimating];
     [appDelegate ScheduleIncrementalDatasyncTimer];
+    [appDelegate ScheduleIncrementalMetaSyncTimer];
     [self enableSFMUI];
 }
 
@@ -11020,6 +11046,61 @@
     [activity startAnimating];
     [appDelegate goOnlineIfRequired];
     
+    
+    
+    if ([appDelegate.syncThread isExecuting])
+    {
+        
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+        {
+            if (!appDelegate.isInternetConnectionAvailable)
+            {
+                break;
+            }
+            
+            if ([appDelegate.datasync_timer isFinished])
+            {
+                [appDelegate.datasync_timer invalidate];
+                break;
+            }
+        }
+    }
+    else
+    {
+        if (appDelegate.datasync_timer)
+        {
+            [appDelegate.datasync_timer invalidate];
+        }            
+    }   
+
+    
+    
+    if ([appDelegate.metaSyncThread isExecuting])
+    {
+        
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+        {
+            if (!appDelegate.isInternetConnectionAvailable)
+            {
+                break;
+            }
+            
+            if ([appDelegate.metaSyncThread isFinished])
+            {
+                [appDelegate.metasync_timer invalidate];
+                break;
+            }
+        }
+    }
+    else
+    {
+        if (appDelegate.metasync_timer)
+        {
+            [appDelegate.metasync_timer invalidate];
+        }            
+    }   
+
+    
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
@@ -11071,6 +11152,8 @@
     }
     [activity stopAnimating];
     [self.tableView reloadData];
+    [appDelegate ScheduleIncrementalMetaSyncTimer];
+    [appDelegate ScheduleIncrementalDatasyncTimer];
 } 
 
 #pragma mark - Get Product Info
