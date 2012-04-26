@@ -297,16 +297,16 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     
     
     //Radha
-    NSTimer * metaSyncTimer;
+  //  NSTimer * metaSyncTimer;
     NSThread * metaSyncThread;
+    NSTimer * metasync_timer;
     
     //logout
     BOOL logoutFlag;
 }
 
-
-@property (nonatomic, retain) NSTimer * metaSyncTimer;
 @property (nonatomic, retain) NSThread * metaSyncThread;
+@property (nonatomic, retain) NSTimer * metasync_timer;
 
 
 @property (nonatomic, retain) NSMutableArray * initialEventMappinArray, * newEventMappinArray;
