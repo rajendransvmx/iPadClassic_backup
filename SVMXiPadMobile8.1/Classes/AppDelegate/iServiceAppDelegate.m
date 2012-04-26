@@ -122,8 +122,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize logoutFlag;
 @synthesize didFinishWithError;
 
-@synthesize metaSyncTimer;
+
 @synthesize metaSyncThread;
+@synthesize metasync_timer;
 
 @synthesize initialEventMappinArray, newEventMappinArray;
 
@@ -795,14 +796,13 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
     appDelegate.logoutFlag = TRUE;
     
-    if([self.syncThread isExecuting])
+    if([appDelegate.syncThread isExecuting])
     {
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
         {
-            if ([self.syncThread isFinished])
+            if ([appDelegate.syncThread isFinished])
             {
-                [self.datasync_timer invalidate];
-                datasync_timer = nil;
+                [appDelegate.datasync_timer invalidate];
                 break;
             }
         }
@@ -810,13 +810,40 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     }
     else
     {
-        if (self.datasync_timer)
+        if (appDelegate.datasync_timer)
         {
-            [self.datasync_timer invalidate];
-            datasync_timer = nil;
+            [appDelegate.datasync_timer invalidate];
         }
         
     }
+    
+    if ([appDelegate.metaSyncThread isExecuting])
+    {
+        
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+        {
+            if (!appDelegate.isInternetConnectionAvailable)
+            {
+                break;
+            }
+            
+            if ([appDelegate.metaSyncThread isFinished])
+            {
+                [appDelegate.metasync_timer invalidate];
+                break;
+            }
+        }
+    }
+    else
+    {
+        if (appDelegate.metasync_timer)
+        {
+            [appDelegate.metasync_timer invalidate];
+        }            
+    }   
+
+
+    
     sqlite3_close(self.db);
 	
     self.wsInterface.didOpComplete = FALSE;
@@ -1168,7 +1195,14 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         metaSyncTimeInterval = interval * 60;
     }
     
-    metaSyncTimer = [NSTimer scheduledTimerWithTimeInterval:metaSyncTimeInterval target:self selector:@selector(metaSyncTimer) userInfo:nil repeats:YES];
+    else
+        return;
+    
+    metasync_timer = [NSTimer scheduledTimerWithTimeInterval:metaSyncTimeInterval 
+                                                     target:self 
+                                                   selector:@selector(metaSyncTimer) 
+                                                   userInfo:nil 
+                                                    repeats:YES];
 
 }
 
