@@ -60,7 +60,7 @@
     //Label2
     UILabel *label2 = [[[UILabel alloc] initWithFrame:CGRectMake(10, 0, 200, 50)] autorelease];
     label2.backgroundColor = [UIColor clearColor];
-    label2.text = @"Full Data Synchronise";
+    label2.text = @"Full Data Synchronize";
     button2 = [UIButton buttonWithType:UIButtonTypeCustom];
     button2.frame = CGRectMake(0, 115, 214, 59);
     [button2 addSubview:label2];
