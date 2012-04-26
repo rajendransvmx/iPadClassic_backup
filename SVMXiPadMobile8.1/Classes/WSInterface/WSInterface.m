@@ -3307,7 +3307,21 @@ last_sync_time:(NSString *)last_sync_time
                             else if ([arr count] > 0)
                             {
                                 NSArray * valueArray = [NSArray arrayWithArray:arr];
-                                [processDictionary setValue:valueArray forKey:keyValue];
+                                
+                                NSArray * getValues = [processDictionary objectForKey:keyValue];
+                                
+                                NSMutableArray * getValues_mutable = [NSMutableArray arrayWithArray:getValues];
+                                
+                                if ([getValues_mutable count] > 0)
+                                {
+                                    for (NSDictionary * dict in valueArray)
+                                    {
+                                        [getValues_mutable addObject:dict];
+                                    }
+                                    [processDictionary setValue:getValues forKey:keyValue];
+                                }
+                                else
+                                    [processDictionary setValue:valueArray forKey:keyValue];
                                 keyValue = nil;
                                 if ([arr count] > 0)
                                     [arr removeAllObjects];
@@ -3317,7 +3331,20 @@ last_sync_time:(NSString *)last_sync_time
                         if ([arr count] > 0)
                         {
                             NSArray * valueArray = [NSArray arrayWithArray:arr];
-                            [processDictionary setValue:valueArray forKey:keyValue];
+                            NSArray * getValues = [processDictionary objectForKey:keyValue];
+                            
+                            NSMutableArray * getValues_mutable = [NSMutableArray arrayWithArray:getValues];
+                            
+                            if ([getValues_mutable count] > 0)
+                            {
+                                for (NSDictionary * dict in valueArray)
+                                {
+                                    [getValues_mutable addObject:dict];
+                                }
+                                [processDictionary setValue:getValues forKey:keyValue];
+                            }
+                            else
+                                [processDictionary setValue:valueArray forKey:keyValue];
                             keyValue = nil;
                             [arr removeAllObjects];
                         }
