@@ -52,7 +52,7 @@
             
             NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
             NSString * documentsDirectoryPath = [paths objectAtIndex:0];
-            NSString * filePath = [documentsDirectoryPath stringByAppendingPathComponent:@"sahana.plist"];
+            NSString * filePath = [documentsDirectoryPath stringByAppendingPathComponent:@"processInfo.plist"];
             
             NSPropertyListFormat * format = nil;
             
