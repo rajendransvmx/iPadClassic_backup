@@ -2,6 +2,8 @@
 #import "USAdditions.h"
 #import <libxml/tree.h>
 #import "USGlobals.h"
+@class iServiceAppDelegate;
+
 
 Class xNSClassFromString(NSString * aClassName);
 
@@ -23617,6 +23619,8 @@ NSString * INTF_WebServicesDefServiceSvc_LogType_stringFromEnum(INTF_WebServices
 @protocol INTF_WebServicesDefBindingResponseDelegate <NSObject>
 - (void) operation:(INTF_WebServicesDefBindingOperation *)operation completedWithResponse:(INTF_WebServicesDefBindingResponse *)response;
 @end
+
+@class iServiceAppDelegate;
 @interface INTF_WebServicesDefBinding : NSObject <INTF_WebServicesDefBindingResponseDelegate> {
 	NSURL *address;
 	NSTimeInterval defaultTimeout;
@@ -23625,6 +23629,7 @@ NSString * INTF_WebServicesDefServiceSvc_LogType_stringFromEnum(INTF_WebServices
 	BOOL synchronousOperationComplete;
 	NSString *authUsername;
 	NSString *authPassword;
+	iServiceAppDelegate *appDelegate;
 }
 @property (copy) NSURL *address;
 @property (assign) BOOL logXMLInOut;
@@ -23748,6 +23753,7 @@ NSString * INTF_WebServicesDefServiceSvc_LogType_stringFromEnum(INTF_WebServices
 	id<INTF_WebServicesDefBindingResponseDelegate> delegate;
 	NSMutableData *responseData;
 	NSURLConnection *urlConnection;
+	iServiceAppDelegate *appDelegate;
 }
 @property (retain) INTF_WebServicesDefBinding *binding;
 @property (readonly) INTF_WebServicesDefBindingResponse *response;
