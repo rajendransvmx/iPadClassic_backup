@@ -2657,8 +2657,9 @@
 
 -(void)StartIncrementalmetasync
 {
-    
     [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
+    
+    [self clearTempDatabase];
     
     //We are retriving the SFObjectField table here so that we can compare the fields of the tables of the two databases
     //not necessary
@@ -2921,6 +2922,7 @@
 - (BOOL) createTemporaryTable:(NSString *)statement
 {
     char * err;
+
     if (synchronized_sqlite3_exec(tempDb, [statement UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
@@ -3473,6 +3475,9 @@
 {
     [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
     
+    
+    [self clearTempDatabase];
+    
     if (object_names != nil)
         [object_names release];
     
@@ -3559,6 +3564,10 @@
     
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
     {
+        if (!appDelegate.isInternetConnectionAvailable)
+        {
+            break;
+        }
         if (appDelegate.Incremental_sync_status == PUT_RECORDS_DONE)
             break; 
     }
@@ -3629,9 +3638,50 @@
     
     [pool release];
 
-    
 }
 
 
+- (void) clearTempDatabase
+{
+    sqlite3_stmt *stmt;
+    NSMutableArray * tables = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    
+    NSString * queryStatemnt = [NSString stringWithFormat:@"SELECT * FROM sqlite_master WHERE type = 'table'"];
+    
+    if (synchronized_sqlite3_prepare_v2(tempDb, [queryStatemnt UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(stmt) == SQLITE_ROW) 
+        {
+            char * _table = (char *) synchronized_sqlite3_column_text(stmt, 1);
+            
+            if ((_table != nil) && strlen(_table))
+            {
+                NSString * table_name = [NSString stringWithUTF8String:_table];
+                if ((![table_name isEqualToString:@"sqlite_sequence"]))
+                    [tables addObject:table_name];
+            }
+            
+        }
+    }
+    
+    synchronized_sqlite3_finalize(stmt);
+    
+    
+    char * err;
+    
+    for (int i = 0; i < [tables count]; i++)
+    {
+        queryStatemnt = [NSString stringWithFormat:@"DROP TABLE '%@'", [tables objectAtIndex:i]];
+        if (synchronized_sqlite3_exec(tempDb, [queryStatemnt UTF8String], NULL, NULL, &err) != SQLITE_OK)
+        {
+            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                [MyPopoverDelegate performSelector:@selector(throwException)];
+            NSLog(@"Failed to drop");
+            
+        }
+        
+    }    
+
+}
 
 @end
