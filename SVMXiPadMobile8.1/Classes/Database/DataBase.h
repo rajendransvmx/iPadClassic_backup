@@ -197,6 +197,8 @@
 
 - (void) callIncrementalMetasync;
 
+- (void) clearTempDatabase;
+
 //DATA SYNC
 - (void) startFullDataSync;
 - (void) copyMetaSyncDataInToSfm;
