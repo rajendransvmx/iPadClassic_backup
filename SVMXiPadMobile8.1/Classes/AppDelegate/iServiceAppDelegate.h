@@ -303,6 +303,10 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     
     //logout
     BOOL logoutFlag;
+
+  //Application in the Background
+    BOOL isBackground;
+    BOOL isForeGround;
 }
 
 @property (nonatomic, retain) NSThread * metaSyncThread;
@@ -313,6 +317,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 
 @property (nonatomic) BOOL didFinishWithError;
 @property (nonatomic) BOOL logoutFlag;
+@property (nonatomic) BOOL isBackground;
+@property (nonatomic) BOOL isForeGround;
 
 @property (nonatomic , retain)  NSString * last_initial_data_sync_time;;
 @property (nonatomic, retain) NSException * exception;
