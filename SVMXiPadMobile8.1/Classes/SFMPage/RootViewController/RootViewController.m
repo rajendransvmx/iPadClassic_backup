@@ -263,14 +263,14 @@
             label.text = sectionTitle;
             
             // Create header view and add label as a subview
-            view = [[UIImageView alloc] initWithFrame:CGRectMake(0, 7, 320, SectionHeaderHeight)];//320 width before changing
+            view = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, SectionHeaderHeight)];//320 width before changing
             view.image = [UIImage imageNamed:@"SFM-View-line-header-bg.png"];
             [view autorelease];
             [view addSubview:label];
             NSArray *details = [appDelegate.SFMPage objectForKey:@"details"];
             NSInteger count = [details count];
             
-            UIButton * lines_button = [[[UIButton alloc]  initWithFrame:CGRectMake(290, 15, 28, 28)] autorelease];//x = 250
+            UIButton * lines_button = [[[UIButton alloc]  initWithFrame:CGRectMake(290, 10, 28, 28)] autorelease];//x = 250
             lines_button.enabled = YES;
             lines_button.userInteractionEnabled = YES;
             lines_button.tag = section;
@@ -309,12 +309,12 @@
             label.text = sectionTitle;
             
             // Create header view and add label as a subview
-            view = [[UIImageView alloc] initWithFrame:CGRectMake(0, 7, 320, SectionHeaderHeight)];//320 width before changing
+            view = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, SectionHeaderHeight)];//320 width before changing
             view.image = [UIImage imageNamed:@"SFM-View-line-header-bg.png"];
             [view autorelease];
             [view addSubview:label];
             
-            UIButton * lines_button = [[[UIButton alloc]  initWithFrame:CGRectMake(290, 15, 28, 28)] autorelease];
+            UIButton * lines_button = [[[UIButton alloc]  initWithFrame:CGRectMake(290, 10, 28, 28)] autorelease];
             lines_button.enabled = YES;
             lines_button.userInteractionEnabled = YES;
             lines_button.tag = section;
