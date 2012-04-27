@@ -3189,8 +3189,16 @@ last_sync_time:(NSString *)last_sync_time
         didGetAddtionalObjDef = TRUE;
         
         appDelegate.didFinishWithError = TRUE;
+        
+    
         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-            [MyPopoverDelegate performSelector:@selector(throwException)];
+        {
+            if ([appDelegate.syncThread isExecuting])
+                NSLog(@"Data Sync");
+            else
+                [MyPopoverDelegate performSelector:@selector(throwException)]; 
+            
+        }
         
         responseError = 1;
 //        if (isLoggedIn)
