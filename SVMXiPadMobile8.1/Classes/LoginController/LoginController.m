@@ -104,6 +104,13 @@
 
 -(IBAction)callLogin:(id)sender
 {
+    //shrinivas
+    if (appDelegate.isBackground == TRUE)
+        appDelegate.isBackground = FALSE;
+    
+    if (appDelegate.isForeGround == TRUE)
+        appDelegate.isForeGround = FALSE;
+    
     [self disableControls];
     
     didRunProcess = YES;
@@ -384,7 +391,17 @@
     {
         if (appDelegate.wsInterface.didOpComplete == TRUE)
             break; 
+        
+        //shrinivas
+        if (appDelegate.isForeGround == TRUE)
+        {
+            appDelegate.didFinishWithError = FALSE;
+            [activity stopAnimating];
+            [self enableControls];
+            return;
+        }
     }
+    
     NSLog(@"SAMMAN MetaSync WS End: %@", [NSDate date]);
     
     [appDelegate getDPpicklistInfo];
@@ -404,25 +421,56 @@
     
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
     {
+        if (!appDelegate.isInternetConnectionAvailable)
+        {
+            break;
+        }
         if (appDelegate.wsInterface.didOpComplete == TRUE)
             break; 
+        
+        //shrinivas 
+        if (appDelegate.isForeGround == TRUE)
+        {
+            appDelegate.didFinishWithError = FALSE;
+            [activity stopAnimating];
+            [self enableControls];
+            return;
+        }
     }
+    
     NSLog(@"SAMMAN DataSync WS End: %@", [NSDate date]);
-    
     NSLog(@"SAMMAN Incremental DataSync WS Start: %@", [NSDate date]);
+    
     appDelegate.Incremental_sync_status = INCR_STARTS;
-    [appDelegate.wsInterface PutAllTheRecordsForIds];
+
+    if (appDelegate.isForeGround == FALSE)
+        [appDelegate.wsInterface PutAllTheRecordsForIds];
     
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+    if (appDelegate.isForeGround == FALSE)
     {
-        if (appDelegate.Incremental_sync_status == PUT_RECORDS_DONE)
-            break; 
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+        {
+            if (appDelegate.Incremental_sync_status == PUT_RECORDS_DONE)
+                break; 
+            
+            //shrinivas 
+            if (appDelegate.isForeGround == TRUE)
+            {
+                appDelegate.didFinishWithError = FALSE;
+                [activity stopAnimating];
+                [self enableControls];
+                return;
+            }
+
+        }
     }
+
     NSLog(@"SAMMAN Incremental DataSync WS End: %@", [NSDate date]);
-    
     NSLog(@"SAMMAN Update Sync Records Start: %@", [NSDate date]);
-    [appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
-    
+
+    if (appDelegate.isForeGround == FALSE)
+        [appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
+
     //Radha purging - 10/April/12
     NSMutableArray * recordId = [appDelegate.dataBase getAllTheRecordIdsFromEvent];
     
@@ -431,6 +479,7 @@
 
     
     NSLog(@"SAMMAN Update Sync Records End: %@", [NSDate date]);
+    
     //remove recents
     NSFileManager * fileManager = [NSFileManager defaultManager];
     NSString * rootPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
