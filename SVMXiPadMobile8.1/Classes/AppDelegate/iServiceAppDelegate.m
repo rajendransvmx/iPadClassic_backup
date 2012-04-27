@@ -119,6 +119,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @implementation iServiceAppDelegate
 
 
+@synthesize isForeGround;
+@synthesize isBackground;
 @synthesize logoutFlag;
 @synthesize didFinishWithError;
 
@@ -278,6 +280,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    self.isBackground = FALSE;
     // Check for internet connection here
     [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
     
@@ -472,12 +475,13 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     
     [userNameImageList removeAllObjects];
     
-    
+    self.isBackground = TRUE;
 }
 
 - (void) applicationWillEnterForeground:(UIApplication *)application
 {
-        
+    //self.isBackground = FALSE; 
+    self.isForeGround = TRUE;
 }
 
 - (void) applicationDidBecomeActive:(UIApplication *)application
@@ -907,11 +911,11 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     else
         scheduledTimer = 600;
     
-    datasync_timer =  [NSTimer scheduledTimerWithTimeInterval:scheduledTimer
+    datasync_timer =  [[NSTimer scheduledTimerWithTimeInterval:scheduledTimer
                                      target:self
                                     selector:@selector(MethodForTimer:)
                                    userInfo:nil
-                                    repeats:YES];
+                                    repeats:YES] retain];
 }
 
 -(void)MethodForTimer:(NSTimer *)timer
@@ -1198,11 +1202,11 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     else
         return;
     
-    metasync_timer = [NSTimer scheduledTimerWithTimeInterval:metaSyncTimeInterval 
+    metasync_timer = [[NSTimer scheduledTimerWithTimeInterval:metaSyncTimeInterval 
                                                      target:self 
                                                    selector:@selector(metaSyncTimer) 
                                                    userInfo:nil 
-                                                    repeats:YES];
+                                                    repeats:YES] retain];
 
 }
 
