@@ -105,8 +105,7 @@
 
 - (void)viewDidUnload
 {
-    [button release]; 
-    [button1 release];
+    
 }
 
 - (void) Syncronise
@@ -172,6 +171,7 @@
     [appDelegate callSpecialIncrementalSync];
     
     [appDelegate ScheduleIncrementalMetaSyncTimer];
+    [appDelegate ScheduleIncrementalDatasyncTimer];
 }
 
 - (void) synchronizeConfiguration
@@ -248,6 +248,10 @@
         [appDelegate.dataBase StartIncrementalmetasync];
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
         {
+            if (!appDelegate.isInternetConnectionAvailable)
+            {
+                break;
+            }
             if (appDelegate.didincrementalmetasyncdone == TRUE)
                 break; 
         }
@@ -467,12 +471,15 @@
         }   
         
         [appDelegate goOnlineIfRequired];
-        [appDelegate.dataBase removecache];
+        [appDelegate.dataBase removecache];     
         appDelegate.didincrementalmetasyncdone = FALSE;
         
         [appDelegate.dataBase StartIncrementalmetasync];
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
         {
+            if (!appDelegate.isInternetConnectionAvailable)
+                break;
+            
             if (appDelegate.didincrementalmetasyncdone == TRUE)
                 break; 
         }
