@@ -8,6 +8,7 @@
 
 #import "WSInterface.h"
 #import "iServiceAppDelegate.h"
+#import "LoginController.h"
 
 //sahana Note 
 //write an incremental Sync Method to clean up all data related to incremental Sync 
@@ -162,28 +163,53 @@
     
     NSTimeInterval secondsPerDay =  no_of_days * 24 * 60 * 60;
     
-    NSDate *today = [NSDate date];;
+    NSDate *today = [NSDate date];
     NSDate *tomorrow, *yesterday;
+    
+    
+    NSDateFormatter * format = [[NSDateFormatter alloc] init];
+    [format setDateFormat:@"yyyy-MM-dd hh:mm:ss"];
+    NSString * date_ = [format stringFromDate:today];
+    
     
     NSDateFormatter * dateFormatter_ = [[NSDateFormatter alloc] init];
     [dateFormatter_ setDateFormat:@"yyyy-MM-dd hh:mm:ss"];
     NSTimeZone *gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
     [dateFormatter_ setTimeZone:gmt];
-   
+    date_ = [date_ stringByReplacingCharactersInRange:NSMakeRange(11, 8) withString:@"00:00:00"];
+    
+    NSDate * actualDate = [dateFormatter_ dateFromString:date_];
+    
+    
     if([time isEqualToString:START_TIME])
+    {
+        
+        tomorrow = [actualDate dateByAddingTimeInterval: -secondsPerDay];
+        NSString * current_gmt_time = [dateFormatter_ stringFromDate:tomorrow];
+        return current_gmt_time;
+    }
+    else
+    {
+        yesterday = [actualDate dateByAddingTimeInterval: secondsPerDay];
+        NSString * current_gmt_time = [dateFormatter_ stringFromDate:yesterday];
+        return current_gmt_time;
+    }
+    
+   
+   /* if([time isEqualToString:START_TIME])
     {
         tomorrow = [today dateByAddingTimeInterval: -secondsPerDay];
         NSString * current_gmt_time = [dateFormatter_ stringFromDate:tomorrow];
-        current_gmt_time = [current_gmt_time stringByReplacingCharactersInRange:NSMakeRange(11, 8) withString:@"00:00:00"];
+     //   current_gmt_time = [current_gmt_time stringByReplacingCharactersInRange:NSMakeRange(11, 8) withString:@"00:00:00"];
         return current_gmt_time;
     }
     else
     {
         yesterday = [today dateByAddingTimeInterval: secondsPerDay];
         NSString * current_gmt_time = [dateFormatter_ stringFromDate:yesterday];
-        current_gmt_time = [current_gmt_time stringByReplacingCharactersInRange:NSMakeRange(11, 8) withString:@"23:59:00"];
+       // current_gmt_time = [current_gmt_time stringByReplacingCharactersInRange:NSMakeRange(11, 8) withString:@"23:59:00"];
         return current_gmt_time;
-    }
+    }*/
 }
 
 //sahana 26/feb
@@ -3131,7 +3157,7 @@ last_sync_time:(NSString *)last_sync_time
 - (void) operation:(INTF_WebServicesDefBindingOperation *)operation completedWithResponse:(INTF_WebServicesDefBindingResponse *)response
 {
     int ret;
-    NSLog(@"OPERATION COMPLETED RESPONSE");
+    //NSLog(@"OPERATION COMPLETED RESPONSE");
     
     if (!appDelegate.isInternetConnectionAvailable)
     {
@@ -3800,6 +3826,19 @@ last_sync_time:(NSString *)last_sync_time
                 [self metaSyncWithEventName:SFM_PAGEDATA eventType:SYNC values:resultValues];
                 while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE))
                 {
+                    //shrinivas
+                    if (appDelegate.isForeGround == TRUE)
+                    {
+                        LoginController * loginController = [[LoginController alloc] init];
+                        appDelegate.didFinishWithError = FALSE;
+                        [loginController.activity stopAnimating];
+                        [loginController enableControls];
+                        
+                        [loginController release];
+                        return;
+                    }
+
+                    
                     if (!appDelegate.isInternetConnectionAvailable)
                     {
                         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
@@ -3816,6 +3855,7 @@ last_sync_time:(NSString *)last_sync_time
                 [appDelegate.dataBase insertValuesToProcessTable:processDictionary page:pageUiHistory];
                 while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE))
                 {
+                    
                     if (!appDelegate.isInternetConnectionAvailable)
                     {
                         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
@@ -3912,6 +3952,20 @@ last_sync_time:(NSString *)last_sync_time
                 [self metaSyncWithEventName:SFM_PICKLIST_DEFINITIONS eventType:SYNC values:resultValues];
                 while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE))
                 {
+                    
+                    //shrinivas
+                    if (appDelegate.isForeGround == TRUE)
+                    {
+                        LoginController * loginController = [[LoginController alloc] init];
+                        appDelegate.didFinishWithError = FALSE;
+                        [loginController.activity stopAnimating];
+                        [loginController enableControls];
+                        
+                        [loginController release];
+                        return;
+                    }
+
+                    
                     if (!appDelegate.isInternetConnectionAvailable)
                     {
                         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
@@ -4083,6 +4137,20 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.wsInterface metaSyncWithEventName:SFM_BATCH_OBJECT_DEFINITIONS eventType:SYNC values:objects]; 
             while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE))
             {
+                //shrinivas
+                if (appDelegate.isForeGround == TRUE)
+                {
+                    LoginController * loginController = [[LoginController alloc] init];
+                    appDelegate.didFinishWithError = FALSE;
+                    [loginController.activity stopAnimating];
+                    [loginController enableControls];
+                    
+                    [loginController release];
+                    return;
+                }
+
+                
+                
                 if (didGetAddtionalObjDef)
                     break;
             }
@@ -6337,6 +6405,19 @@ last_sync_time:(NSString *)last_sync_time
         [[ZKServerSwitchboard switchboard] describeLayout:objName target:self selector:@selector(didDescribeSObjectLayoutForObject:error:context:) context:nil];
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, FALSE))
         {
+            //shrinivas
+            if (appDelegate.isForeGround == TRUE)
+            {
+                LoginController * loginController = [[LoginController alloc] init];
+                appDelegate.didFinishWithError = FALSE;
+                [loginController.activity stopAnimating];
+                [loginController enableControls];
+                
+                [loginController release];
+                return;
+            }
+
+            
             NSLog(@"DetailViewController viewdidLoad in while loop");
             if (!appDelegate.isInternetConnectionAvailable)
             {
@@ -8488,6 +8569,19 @@ last_sync_time:(NSString *)last_sync_time
     
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
     {
+        //shrinivas
+        if (appDelegate.isForeGround == TRUE)
+        {
+            LoginController * loginController = [[LoginController alloc] init];
+            appDelegate.didFinishWithError = FALSE;
+            [loginController.activity stopAnimating];
+            [loginController enableControls];
+            
+            [loginController release];
+            return;
+        }
+
+        
         NSLog(@"WSInterface getNameFieldForCreateProcess in while loop");
         if (!appDelegate.isInternetConnectionAvailable)
         {
