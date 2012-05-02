@@ -131,6 +131,8 @@
                 [appDelegate.datasync_timer invalidate];
                 break;
             }
+            if (!appDelegate.isInternetConnectionAvailable)
+                break;
         }
     }
     else
