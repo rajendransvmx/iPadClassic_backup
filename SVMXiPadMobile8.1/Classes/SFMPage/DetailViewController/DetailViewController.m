@@ -11133,6 +11133,8 @@
         {
             if (appDelegate.wsInterface.didGetProductHistory == TRUE)
                 break;
+            if (!appDelegate.isInternetConnectionAvailable)
+                break;
         }
         
         if ([appDelegate.wsInterface.productHistory count] > 0)
@@ -11145,6 +11147,9 @@
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
         {
             if (appDelegate.wsInterface.didGetAccountHistory == TRUE)
+                break;
+            
+            if (!appDelegate.isInternetConnectionAvailable)
                 break;
         }
         if ([appDelegate.wsInterface.accountHistory count] > 0)
