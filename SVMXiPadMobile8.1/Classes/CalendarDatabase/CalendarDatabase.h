@@ -148,6 +148,11 @@
 - (NSString *)retrieveContactImageDataFromDb:(NSString *)contactId;
 
 
+//Radha
+- (NSData *) retrievePdfData:(NSString *)Id;
+
+
+
 #define DATABASENAME   @"sfm"
 #define DATABASETYPE   @"sqlite"
 //Abinash
