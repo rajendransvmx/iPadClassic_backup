@@ -3514,27 +3514,40 @@
         }
     }
     
-    /*if ([PDF_name isEqualToString:@"Service Report_.pdf"])
-    {
-        //WO_Number = [self getWONumberForRecordId:recordId ForObject:_objectApiName];
-        
-        if (![WO_Number isEqualToString:@""])
-        {
-            NSString * updateQuery = [NSString stringWithFormat:@"Update Summary_PDF Set WorkOrderNumber = '%@', pdf_name = '%@_%@.pdf' Where record_Id = '%@'", WO_Number,serviceReport, WO_Number, recordId];
-            
-            char * err;
-            if (synchronized_sqlite3_exec(appDelegate.db, [updateQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
-            {
-                NSLog(@"Failed to update");
-            }
-        }
-    }*/ 
-    
+   
     NSString * saveFileName = [[NSString stringWithFormat:@"%@_%@.pdf",serviceReport, WO_Number] retain];
     NSString * newFilePath = [[saveDirectory stringByAppendingPathComponent:saveFileName] retain];
     
     PDFCreator *pdfCreator = [[PDFCreator alloc] init];
     [pdfCreator removeAllPDF:saveFileName];
+    
+    
+    //Radha 2/5/12
+    BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:newFilePath];
+    
+    if (fileExists)
+    {
+        NSLog(@"FILE EXISTS");
+    }
+    else
+    {
+        newFilePath = @"";
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *saveDirectory = [paths objectAtIndex:0];
+        NSString * serviceReport = [appDelegate.wsInterface.tagsDictionary objectForKey:PDF_SERVICE_REPORT];
+        saveFileName = [[NSString stringWithFormat:@"%@_%@.pdf",serviceReport, WO_Number] retain];
+        newFilePath = [saveDirectory stringByAppendingPathComponent:saveFileName];  
+        
+        NSData * data = [self retrievePdfData:recordId];
+        [data writeToFile:newFilePath atomically:YES];
+        
+        
+    }
+    
+    
+
+    
+    
     [pdfCreator attachPDF:newFilePath];
     
     synchronized_sqlite3_finalize(stmt);
@@ -3626,5 +3639,29 @@
     return contactImageData;
 }
 
+
+- (NSData *) retrievePdfData:(NSString *)Id
+{
+    NSData * data;
+    NSString *pdfData = @"";
+    NSString * selectQuery = [NSString stringWithFormat:@"Select PDF_data from Summary_PDF Where record_Id = '%@'", Id];
+    
+    sqlite3_stmt * statement;
+    const char * _query = [selectQuery UTF8String];
+    
+    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, _query,-1, &statement, nil) == SQLITE_OK ){
+        
+        while(synchronized_sqlite3_step(statement) == SQLITE_ROW){
+            
+            char *field1 = (char *) synchronized_sqlite3_column_text(statement,COLUMN_1);
+            if (field1 != nil)
+                pdfData = [[NSString alloc] initWithUTF8String:field1];
+            
+        }
+    }
+    data = [Base64 decode:pdfData];
+    
+    return data;
+}
 
 @end
