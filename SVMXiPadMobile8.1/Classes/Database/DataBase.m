@@ -3553,6 +3553,9 @@
     
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
     {
+        if (!appDelegate.isInternetConnectionAvailable)
+            break;
+    
         if (appDelegate.wsInterface.didOpComplete == TRUE)
             break; 
     }
