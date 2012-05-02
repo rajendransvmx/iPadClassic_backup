@@ -481,6 +481,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 - (void) applicationWillEnterForeground:(UIApplication *)application
 {
     //self.isBackground = FALSE; 
+    [loginController.activity stopAnimating];
+    //loginController.activity.hidden = NO;
     self.isForeGround = TRUE;
 }
 
@@ -809,6 +811,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
                 [appDelegate.datasync_timer invalidate];
                 break;
             }
+            if (!appDelegate.isInternetConnectionAvailable)
+                break;
         }
         
     }
@@ -1019,11 +1023,23 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
     {
+        //shrinivas -- 02/05/2012
+        if (self.isForeGround == TRUE)
+        {
+            self.didFinishWithError = FALSE;
+            [loginController.activity stopAnimating];
+            [loginController enableControls];
+            return;
+        }
+
         if(self.dPicklist_retrieval_complete)
         {
             self.dPicklist_retrieval_complete = FALSE;
             break;
         }
+        
+        if (!isInternetConnectionAvailable)
+            break;
     }
 }
 
