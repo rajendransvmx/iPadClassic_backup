@@ -312,8 +312,6 @@
         }
         
         //Radha -17/4/2012
-        
-        
         if (appDelegate.wsInterface.didOpComplete == TRUE)
             return; 
         
@@ -335,7 +333,6 @@
 
 - (void) loginWithUsernamePassword
 {
-    
     //Siva Manne #3547
     if (!appDelegate.isInternetConnectionAvailable)
     {
@@ -369,9 +366,22 @@
     {
         if (didLoginCompleted == TRUE)
             break;
+        //shrinivas  ---- 02/05/2012
+        if (appDelegate.isForeGround == TRUE)
+        {
+            appDelegate.didFinishWithError = FALSE;
+            [activity stopAnimating];
+            [self enableControls];
+            return;
+        }
+        if (!appDelegate.isInternetConnectionAvailable)
+            break;
+
+        
     }
 
 }
+
 
 - (void) doMetaAndDataSync
 {
@@ -389,9 +399,6 @@
     [appDelegate.wsInterface metaSyncWithEventName:SFM_METADATA eventType:INITIAL_SYNC values:nil];
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
     {
-        if (appDelegate.wsInterface.didOpComplete == TRUE)
-            break; 
-        
         //shrinivas
         if (appDelegate.isForeGround == TRUE)
         {
@@ -399,7 +406,14 @@
             [activity stopAnimating];
             [self enableControls];
             return;
-        }
+        }   
+
+        if (appDelegate.wsInterface.didOpComplete == TRUE)
+            break; 
+        
+        if (!appDelegate.isInternetConnectionAvailable)
+            break;
+        
     }
     
     NSLog(@"SAMMAN MetaSync WS End: %@", [NSDate date]);
@@ -421,13 +435,6 @@
     
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
     {
-        if (!appDelegate.isInternetConnectionAvailable)
-        {
-            break;
-        }
-        if (appDelegate.wsInterface.didOpComplete == TRUE)
-            break; 
-        
         //shrinivas 
         if (appDelegate.isForeGround == TRUE)
         {
@@ -436,11 +443,19 @@
             [self enableControls];
             return;
         }
+
+        if (!appDelegate.isInternetConnectionAvailable)
+        {
+            break;
+        }
+        
+        if (appDelegate.wsInterface.didOpComplete == TRUE)
+            break; 
+        
     }
-    
     NSLog(@"SAMMAN DataSync WS End: %@", [NSDate date]);
-    NSLog(@"SAMMAN Incremental DataSync WS Start: %@", [NSDate date]);
     
+    NSLog(@"SAMMAN Incremental DataSync WS Start: %@", [NSDate date]);
     appDelegate.Incremental_sync_status = INCR_STARTS;
 
     if (appDelegate.isForeGround == FALSE)
@@ -450,9 +465,6 @@
     {
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
         {
-            if (appDelegate.Incremental_sync_status == PUT_RECORDS_DONE)
-                break; 
-            
             //shrinivas 
             if (appDelegate.isForeGround == TRUE)
             {
@@ -461,7 +473,13 @@
                 [self enableControls];
                 return;
             }
-
+            if (!appDelegate.isInternetConnectionAvailable)
+            {
+                break;
+            }
+            
+            if (appDelegate.Incremental_sync_status == PUT_RECORDS_DONE)
+                break; 
         }
     }
 
@@ -479,7 +497,6 @@
 
     
     NSLog(@"SAMMAN Update Sync Records End: %@", [NSDate date]);
-    
     //remove recents
     NSFileManager * fileManager = [NSFileManager defaultManager];
     NSString * rootPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
@@ -933,6 +950,15 @@
     
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
+        //shrinivas
+        if (appDelegate.isForeGround == TRUE)
+        {
+            appDelegate.didFinishWithError = FALSE;
+            [activity stopAnimating];
+            [self enableControls];
+            return;
+        }
+
         if (!appDelegate.isInternetConnectionAvailable)
             return NO;
         NSLog(@"LoginViewController checkVersion in while loop");
