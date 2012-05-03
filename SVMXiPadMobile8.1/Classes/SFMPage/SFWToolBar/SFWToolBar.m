@@ -48,9 +48,25 @@
     
     wizard_buttons = [[NSMutableDictionary alloc] initWithCapacity:0];
     
+    //Shrinivas
+    if ([ipad_only_array count] > 0)
+    {
+        NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"Troubleshooting and Summary",@"0001TS", nil] forKeys:[NSArray arrayWithObjects:@"wizard_description",@"wizard_id", nil]];
+        
+        [[wizard_info objectForKey:@"sfw_wizard_info"] insertObject:dict atIndex:0];
+
+        
+        for (int i = 0;i < [ipad_only_array count]; i++)
+        {
+            [[ipad_only_array objectAtIndex:i] setValue:@"0001TS" forKey:@"wizard_id"];
+            [[wizard_info objectForKey:@"sfw_wizard_button"] insertObject:[ipad_only_array objectAtIndex:i] atIndex:i];
+        }
+        
+    }
+
     NSMutableArray * array = [wizard_info objectForKey:SFW_WIZARD_INFO];
     
-    for(int i = 0; i < [array count];i++)
+    for(int i = 0; i < [array count]; i++)
     {
         NSDictionary * dict = [array objectAtIndex:i];
         NSString * wizard_id = [dict objectForKey:WIZARD_ID];
@@ -108,6 +124,7 @@
         [ipad_only_view addSubview:btn];
     }
 }
+
 
 - (void)viewDidUnload
 {
@@ -301,7 +318,6 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;
 {
-    
     NSMutableArray * array = [wizard_info objectForKey:SFW_WIZARD_INFO];
     if([array count] > 0)
     {
