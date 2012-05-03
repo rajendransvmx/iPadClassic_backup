@@ -2252,7 +2252,7 @@
             sfwToolBar.ipad_only_view.backgroundColor = [UIColor whiteColor];
             [popover presentPopoverFromRect:CGRectMake(900, 21, 67, 20) inView:appDelegate.sfmPageController.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
             sfwToolBar.popOver = popover;
-            [sfwToolBar showIpadOnlyButtons];
+            //[sfwToolBar showIpadOnlyButtons];
 
         }
     }
