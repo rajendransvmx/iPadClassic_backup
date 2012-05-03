@@ -125,7 +125,7 @@
     {
         case 0:
         {   
-            bgView = [[[UIView alloc] initWithFrame:CGRectMake(40, 0, 300, SectionHeaderHeight)] autorelease]; 
+            bgView = [[[UIView alloc] initWithFrame:CGRectMake(40, 7, 300, SectionHeaderHeight)] autorelease]; 
             {
                 iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
                 NSString * label = @"";
@@ -151,7 +151,7 @@
             
             if ([cellLabel.text length] > 0)
             {
-                bgImage.frame = CGRectMake(0, 0, 300, SectionHeaderHeight); //old 40
+                bgImage.frame = CGRectMake(0, 7, 300, SectionHeaderHeight); //old 40
                 bgImage.tag = BGIMAGETAG;
                 [bgView addSubview:bgImage];
                 cellLabel.center = bgView.center;
@@ -167,7 +167,7 @@
     }
     if ([cellLabel.text length] > 0)
     {
-        bgImage.frame = CGRectMake(0, 0, 300, SectionHeaderHeight); //old 40
+        bgImage.frame = CGRectMake(0, 7, 300, SectionHeaderHeight); //old 40
         bgImage.tag = BGIMAGETAG;
         [bgView addSubview:bgImage];
         cellLabel.center = bgView.center;
