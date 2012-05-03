@@ -1728,7 +1728,7 @@
 #pragma mark - ADD Source to target
 -(void) insertSourceToTargetInToSFProcessComponent
 {
-    NSMutableArray * process_info = [[NSMutableArray alloc] initWithCapacity:0];
+    NSMutableArray * process_info = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
     
     for (int i = 0; i < [processIdList count]; i++)
     {        
@@ -2322,7 +2322,7 @@
         sqlite3_stmt * stmt;
         NSString * queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM %@", parentColumn, objectName];
         
-        NSMutableArray * sfid_array = [[NSMutableArray alloc] initWithCapacity:0];
+        NSMutableArray * sfid_array = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
         NSString * check_id = @"";
         
         if (synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &stmt, NULL) == SQLITE_OK)
@@ -2808,7 +2808,7 @@
 
 - (NSMutableArray *) retreiveTableNamesFronDB:(sqlite3 *)dbName
 {
-    NSMutableArray * array = [[NSMutableArray alloc] initWithCapacity:0];
+    NSMutableArray * array = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
     NSString * query = [NSString stringWithFormat:@"SELECT tbl_name FROM Sqlite_master where type = 'table'"];
     
     sqlite3_stmt * stmt;
@@ -3391,9 +3391,6 @@
 
 - (void) removeIdExistsInIntialEventMappingArray
 {
-    
-    NSLog(@"%@, %@", appDelegate.initialEventMappinArray, appDelegate.newEventMappinArray);
-    
     for (NSDictionary * dict in appDelegate.newEventMappinArray)
     {
         NSArray * allKeys = [dict allKeys];
@@ -3432,7 +3429,7 @@
 {
     NSDate * today = [NSDate date];
     
-    NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
+    NSDateFormatter * formatter = [[[NSDateFormatter alloc] init] autorelease];
     [formatter setDateFormat:@"yyyy-MM-dd hh:mm:ss"];
     NSTimeZone *gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
     [formatter setTimeZone:gmt];
