@@ -131,7 +131,7 @@
     
     NSDate * current_dateTime = [NSDate date];
     
-    NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
+    NSDateFormatter * dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
     [dateFormatter setDateFormat:@"yyyy-MM-dd hh:mm:ss"];
     NSTimeZone *gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
     [dateFormatter setTimeZone:gmt];
@@ -154,7 +154,7 @@
        }
         
         NSArray * sync_hist_keys = [NSArray arrayWithObjects:LAST_INITIAL_SYNC_IME, REQUEST_ID, LAST_INSERT_REQUEST_TIME,LAST_INSERT_RESONSE_TIME,LAST_UPDATE_REQUEST_TIME,LAST_UPDATE_RESONSE_TIME, LAST_DELETE_REQUEST_TIME, LAST_DELETE_RESPONSE_TIME,INSERT_SUCCESS,UPDATE_SUCCESS,DELETE_SUCCESS, nil];
-        NSMutableDictionary * sync_info = [[NSMutableDictionary alloc] initWithObjects:[NSArray arrayWithObjects:current_gmt_time,@"",current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,@"true",@"",@"", nil] forKeys:sync_hist_keys];
+        NSMutableDictionary * sync_info = [[[NSMutableDictionary alloc] initWithObjects:[NSArray arrayWithObjects:current_gmt_time,@"",current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,@"true",@"",@"", nil] forKeys:sync_hist_keys] autorelease];
         [sync_info writeToFile:plistPath_SYNHIST atomically:YES];
     }
     
@@ -315,7 +315,8 @@
         if (appDelegate.wsInterface.didOpComplete == TRUE)
             return; 
         
-        [self readUsernameAndPasswordFromKeychain];
+        if (appDelegate.isForeGround == FALSE)
+            [self readUsernameAndPasswordFromKeychain];
         
         didEnterAlertView = FALSE;
         
@@ -602,80 +603,6 @@
     [self storeLoginDetails];
     
     appDelegate.loggedInUserId = [[lr userId] retain];
-
-
-    
-    // Before saving the current user credentials
-    // Check if the current username is same as the saved user name
-    // if NOT then delete ALL favorites data
-  /*  [self checkFavoritesUser];
-    
-    // Save user credentials
-    [self storeLoginDetails];
-    
-    appDelegate.loggedInUserId = [[lr userId] retain];
-  
-    didRetrieveReportSettings = NO;
-    NSString * _query = [NSString stringWithFormat:@"SELECT Id, SVMXC__Service_Group__c, SVMXC__Inventory_Location__c  FROM SVMXC__Service_Group_Members__c WHERE SVMXC__Salesforce_User__c = '%@'", appDelegate.loggedInUserId];
-    
-    [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(initDebriefData:error:context:) context:nil];
-   // [self startQueryConfiguration];
-    
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, FALSE))
-    {
-        NSLog(@"LoginViewController didLogin in while loop");
-        if (!appDelegate.isInternetConnectionAvailable)
-        {
-            [activity stopAnimating];
-            [appDelegate displayNoInternetAvailable];
-            
-            [self enableControls];
-            
-            return;
-        }
-        if (didRetrieveReportSettings && didDebriefData)
-        {
-            break;
-        }
-        NSLog(@"1");
-    }
-    
-    // Retrieve Service Report Logo
-    didGetServiceReportLogo = NO;
-    [self getServiceReportLogo];
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, FALSE))
-    {
-        NSLog(@"LoginViewController didLogin in while loop");
-        if (!appDelegate.isInternetConnectionAvailable)
-        {
-            [activity stopAnimating];
-            [appDelegate displayNoInternetAvailable];
-            
-            [self enableControls];
-            
-            return;
-        }
-
-        if (didGetServiceReportLogo)
-        {
-            break;
-        }   
-        NSLog(@"2");
-    }
-    
-    isShowingLogin = NO;
-    
-    if (!appDelegate.isInternetConnectionAvailable)
-    {
-        [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
-        
-        [self enableControls];
-        
-        return;
-    }
-
-    [self showModalViewController]; */
 }
 
 - (void) checkFavoritesUser
