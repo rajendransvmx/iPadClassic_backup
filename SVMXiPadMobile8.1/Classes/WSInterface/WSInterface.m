@@ -121,7 +121,7 @@
     NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:SYNC_HISTORY];
     
     NSString * value = @"";
-    NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST];
+    NSMutableDictionary * dict = [[[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST] autorelease];
     NSArray * allkeys= [dict allKeys];
     for(NSString * str in allkeys)
     {
@@ -167,12 +167,12 @@
     NSDate *tomorrow, *yesterday;
     
     
-    NSDateFormatter * format = [[NSDateFormatter alloc] init];
+    NSDateFormatter * format = [[[NSDateFormatter alloc] init] autorelease];
     [format setDateFormat:@"yyyy-MM-dd hh:mm:ss"];
     NSString * date_ = [format stringFromDate:today];
     
     
-    NSDateFormatter * dateFormatter_ = [[NSDateFormatter alloc] init];
+    NSDateFormatter * dateFormatter_ = [[[NSDateFormatter alloc] init] autorelease];
     [dateFormatter_ setDateFormat:@"yyyy-MM-dd hh:mm:ss"];
     NSTimeZone *gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
     [dateFormatter_ setTimeZone:gmt];
@@ -195,21 +195,6 @@
         return current_gmt_time;
     }
     
-   
-   /* if([time isEqualToString:START_TIME])
-    {
-        tomorrow = [today dateByAddingTimeInterval: -secondsPerDay];
-        NSString * current_gmt_time = [dateFormatter_ stringFromDate:tomorrow];
-     //   current_gmt_time = [current_gmt_time stringByReplacingCharactersInRange:NSMakeRange(11, 8) withString:@"00:00:00"];
-        return current_gmt_time;
-    }
-    else
-    {
-        yesterday = [today dateByAddingTimeInterval: secondsPerDay];
-        NSString * current_gmt_time = [dateFormatter_ stringFromDate:yesterday];
-       // current_gmt_time = [current_gmt_time stringByReplacingCharactersInRange:NSMakeRange(11, 8) withString:@"23:59:00"];
-        return current_gmt_time;
-    }*/
 }
 
 //sahana 26/feb
@@ -218,7 +203,7 @@
     NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:SYNC_HISTORY];
     
-    NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST];
+    NSMutableDictionary * dict = [[[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST] autorelease];
     NSArray * allkeys= [dict allKeys];
     
     for(NSString *  str in allkeys)
@@ -235,7 +220,7 @@
     NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:SYNC_HISTORY];
     
-    NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST];
+    NSMutableDictionary * dict = [[[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST] autorelease];
     NSArray * allkeys= [dict allKeys];
     
     
@@ -265,14 +250,14 @@ last_sync_time:(NSString *)last_sync_time
     NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:SYNC_HISTORY];
     
-    NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST];
+    NSMutableDictionary * dict = [[[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST] autorelease];
     NSArray * allkeys= [dict allKeys];
     
     //get the current datetime from client side 
     
-    NSDate * current_dateTime = [NSDate date];
+   // NSDate * current_dateTime = [NSDate date];
     
-    NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
+    NSDateFormatter * dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
     [dateFormatter setDateFormat:@"yyyy-MM-dd hh:mm:ss"];
    
     
@@ -357,10 +342,6 @@ last_sync_time:(NSString *)last_sync_time
             {
                 [dict setObject:current_gmt_time forKey:LAST_DELETE_REQUEST_TIME];
             }
-           /* else if ([str isEqualToString:DELETE_SUCCESS])
-            {
-                [dict setObject:@"false" forKey:DELETE_SUCCESS];
-            }*/
         }
     }
     if([sync_type isEqualToString:DELETE] && [operation_type isEqualToString:RESPONSE])
@@ -371,10 +352,6 @@ last_sync_time:(NSString *)last_sync_time
             {
                 [dict setObject:last_sync_time forKey:LAST_DELETE_RESPONSE_TIME];
             }
-            /*else if ([str isEqualToString:DELETE_SUCCESS])
-            {
-                [dict setObject:@"true" forKey:DELETE_SUCCESS];
-            }*/
         }
     }
     
@@ -484,7 +461,7 @@ last_sync_time:(NSString *)last_sync_time
 
 -(void)getAllRecordsForOperationTypeFromSYNCCONFLICT:(NSString *)operationType OverRideFlag:(NSString *)overrideFlag; 
 {
-    NSMutableArray * object_array = [[appDelegate.databaseInterface getAllRecordsFromConflictTableForOperationType:operationType overrideFlag:overrideFlag] retain];
+    NSMutableArray * object_array = [appDelegate.databaseInterface getAllRecordsFromConflictTableForOperationType:operationType overrideFlag:overrideFlag];
     
     if( appDelegate.dataSync_dict == nil)
         appDelegate.dataSync_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
@@ -552,7 +529,6 @@ last_sync_time:(NSString *)last_sync_time
         }
         
     }
-
 }
 
 #pragma mark - incremental Data Sync
@@ -563,13 +539,13 @@ last_sync_time:(NSString *)last_sync_time
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
     sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
     
-    INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[INTF_WebServicesDefServiceSvc_CallOptions alloc] init];
+    INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
     callOptions.client = nil;
     
-    INTF_WebServicesDefServiceSvc_DebuggingHeader * debuggingHeader = [[INTF_WebServicesDefServiceSvc_DebuggingHeader alloc] init];
+    INTF_WebServicesDefServiceSvc_DebuggingHeader * debuggingHeader = [[[INTF_WebServicesDefServiceSvc_DebuggingHeader alloc] init] autorelease];
     debuggingHeader.debugLevel = 0;
     
-    INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * allowFieldTruncationHeader = [[INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader alloc] init];
+    INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * allowFieldTruncationHeader = [[[INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader alloc] init] autorelease];
     allowFieldTruncationHeader.allowFieldTruncation = NO;
     
 
@@ -577,7 +553,7 @@ last_sync_time:(NSString *)last_sync_time
     binding.logXMLInOut = YES;
     
     
-    INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init];
+    INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] autorelease];
     
     INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] autorelease];
     sfmRequest.eventName = @"TX_FETCH";
@@ -605,7 +581,7 @@ last_sync_time:(NSString *)last_sync_time
         
         if([object_api_name length] != 0 && ![object_api_name isEqualToString:@""])
         {
-            INTF_WebServicesDefServiceSvc_SVMXMap  * svmxcmap = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+            INTF_WebServicesDefServiceSvc_SVMXMap  * svmxcmap = [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
             svmxcmap.key = @"TX_OBJECT" ;
             svmxcmap.value = object_api_name; //object  api name
             NSMutableArray * array_of_record_ids = [dict  objectForKey:object_api_name];
@@ -623,15 +599,15 @@ last_sync_time:(NSString *)last_sync_time
             }
             [sfmRequest.valueMap addObject:svmxcmap];
         }
+
     }
     
     //ADD SVMXClient
-    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init];
+    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
     
     svmxc_client.clientType = @"iPad";
     [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
     [svmxc_client.clientInfo addObject:@"R4B2"];
-    //[client_listMap.valueList addObject:svmxc_client];
     
     [sfmRequest addClientInfo:svmxc_client];
     [datasync setRequest:sfmRequest];
@@ -656,7 +632,7 @@ last_sync_time:(NSString *)last_sync_time
     }
     NSDate * current_dateTime = [NSDate date];
     
-    NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
+    NSDateFormatter * dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     
     NSString * current_gmt_time = [dateFormatter stringFromDate:current_dateTime];
@@ -971,7 +947,7 @@ last_sync_time:(NSString *)last_sync_time
     //get all the master records
     //recordType  can be MASETR  Or Detail
     appDelegate.dataSync_dict = nil;
-    NSMutableArray * object_array = [[appDelegate.databaseInterface getAllInsertRecords:OpearationType] retain];
+    NSMutableArray * object_array = [appDelegate.databaseInterface getAllInsertRecords:OpearationType];
     
     if( appDelegate.dataSync_dict == nil)
         appDelegate.dataSync_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
@@ -1048,16 +1024,16 @@ last_sync_time:(NSString *)last_sync_time
 {
     [INTF_WebServicesDefServiceSvc initialize];
     
-    INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init];
+    INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
     sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];    
     
-    INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[INTF_WebServicesDefServiceSvc_CallOptions alloc] init];
+    INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
     callOptions.client = nil;
     
-    INTF_WebServicesDefServiceSvc_DebuggingHeader * debuggingHeader = [[INTF_WebServicesDefServiceSvc_DebuggingHeader alloc] init];
+    INTF_WebServicesDefServiceSvc_DebuggingHeader * debuggingHeader = [[[INTF_WebServicesDefServiceSvc_DebuggingHeader alloc] init] autorelease];
     debuggingHeader.debugLevel = 0;
     
-    INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * allowFieldTruncationHeader = [[INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader alloc] init];
+    INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * allowFieldTruncationHeader = [[[INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader alloc] init] autorelease];
     allowFieldTruncationHeader.allowFieldTruncation = NO;
     
     
@@ -1065,7 +1041,7 @@ last_sync_time:(NSString *)last_sync_time
     binding.logXMLInOut = YES;
     
     
-    INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init];
+    INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] autorelease];
     
     INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] autorelease];
     sfmRequest.eventName = @"GET_INSERT";
@@ -1075,15 +1051,15 @@ last_sync_time:(NSString *)last_sync_time
     sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
     sfmRequest.value = Insert_requestId;
     
-    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_lastModified =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_lastModified =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
     SVMXCMap_lastModified.key = @"LAST_SYNC_TIME";
     SVMXCMap_lastModified.value = [self get_SYNCHISTORYTime_ForKey:LAST_INSERT_RESONSE_TIME] == nil ?@"":[self get_SYNCHISTORYTime_ForKey:LAST_INSERT_RESONSE_TIME];
     
-    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_startTime =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_startTime =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
     SVMXCMap_startTime.key  = @"RANGE_START";
     SVMXCMap_startTime.value = [self getSyncTimeStampWithTheIntervalof15days:START_TIME] == nil ? @"" :[self getSyncTimeStampWithTheIntervalof15days:START_TIME];
     
-    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_endTime =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_endTime =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
     SVMXCMap_endTime.key  = @"RANGE_END";
     SVMXCMap_endTime.value = [self getSyncTimeStampWithTheIntervalof15days:END_TIME]== nil ? @"" :[self getSyncTimeStampWithTheIntervalof15days:END_TIME];
     
@@ -1092,7 +1068,7 @@ last_sync_time:(NSString *)last_sync_time
     [sfmRequest.valueMap addObject:SVMXCMap_endTime];
 
     //ADD SVMXClient
-    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init];
+    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
     
     svmxc_client.clientType = @"iPad";
     [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
@@ -1116,23 +1092,23 @@ last_sync_time:(NSString *)last_sync_time
 {
     [INTF_WebServicesDefServiceSvc initialize];
     
-    INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init];
+    INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
     sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
     
-    INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[INTF_WebServicesDefServiceSvc_CallOptions alloc] init];
+    INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
     callOptions.client = nil;
     
-    INTF_WebServicesDefServiceSvc_DebuggingHeader * debuggingHeader = [[INTF_WebServicesDefServiceSvc_DebuggingHeader alloc] init];
+    INTF_WebServicesDefServiceSvc_DebuggingHeader * debuggingHeader = [[[INTF_WebServicesDefServiceSvc_DebuggingHeader alloc] init] autorelease];
     debuggingHeader.debugLevel = 0;
     
-    INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * allowFieldTruncationHeader = [[INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader alloc] init];
+    INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * allowFieldTruncationHeader = [[[INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader alloc] init] autorelease];
     allowFieldTruncationHeader.allowFieldTruncation = NO;
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
     binding.logXMLInOut = YES;
     
     
-    INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init];
+    INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] autorelease];
     
     INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] autorelease];
     sfmRequest.eventName = @"GET_UPDATE";
@@ -1142,15 +1118,15 @@ last_sync_time:(NSString *)last_sync_time
     sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
     sfmRequest.value = Insert_requestId;
     
-    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_lastModified =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_lastModified =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
     SVMXCMap_lastModified.key = @"LAST_SYNC_TIME";
     SVMXCMap_lastModified.value = [self get_SYNCHISTORYTime_ForKey:LAST_UPDATE_RESONSE_TIME] == nil ?@"":[self get_SYNCHISTORYTime_ForKey:LAST_UPDATE_RESONSE_TIME];
     
-    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_startTime =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_startTime =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
     SVMXCMap_startTime.key  = @"RANGE_START";
     SVMXCMap_startTime.value = [self getSyncTimeStampWithTheIntervalof15days:START_TIME] == nil ? @"" :[self getSyncTimeStampWithTheIntervalof15days:START_TIME];
     
-    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_endTime =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_endTime =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
     SVMXCMap_endTime.key  = @"RANGE_END";
     SVMXCMap_endTime.value = [self getSyncTimeStampWithTheIntervalof15days:END_TIME]== nil ? @"" :[self getSyncTimeStampWithTheIntervalof15days:END_TIME];
     
@@ -1159,7 +1135,7 @@ last_sync_time:(NSString *)last_sync_time
     [sfmRequest.valueMap addObject:SVMXCMap_endTime];
     
     //ADD SVMXClient
-    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init];
+    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
     
     svmxc_client.clientType = @"iPad";
     [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
@@ -1182,23 +1158,23 @@ last_sync_time:(NSString *)last_sync_time
 {
     [INTF_WebServicesDefServiceSvc initialize];
     
-    INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init];
+    INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
     sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
     
-    INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[INTF_WebServicesDefServiceSvc_CallOptions alloc] init];
+    INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
     callOptions.client = nil;
     
-    INTF_WebServicesDefServiceSvc_DebuggingHeader * debuggingHeader = [[INTF_WebServicesDefServiceSvc_DebuggingHeader alloc] init];
+    INTF_WebServicesDefServiceSvc_DebuggingHeader * debuggingHeader = [[[INTF_WebServicesDefServiceSvc_DebuggingHeader alloc] init] autorelease];
     debuggingHeader.debugLevel = 0;
     
-    INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * allowFieldTruncationHeader = [[INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader alloc] init];
+    INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * allowFieldTruncationHeader = [[[INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader alloc] init] autorelease];
     allowFieldTruncationHeader.allowFieldTruncation = NO;
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
     binding.logXMLInOut = YES;
     
     
-    INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init];
+    INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] autorelease];
     
     INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] autorelease];
     sfmRequest.eventName = @"GET_DELETE";
@@ -1208,15 +1184,15 @@ last_sync_time:(NSString *)last_sync_time
     sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
     sfmRequest.value = Insert_requestId;
     
-    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_lastModified =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_lastModified =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
     SVMXCMap_lastModified.key = @"LAST_SYNC_TIME";
     SVMXCMap_lastModified.value = [self get_SYNCHISTORYTime_ForKey:LAST_DELETE_RESPONSE_TIME] == nil ?@"":[self get_SYNCHISTORYTime_ForKey:LAST_DELETE_RESPONSE_TIME];
     
-    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_startTime =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_startTime =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
     SVMXCMap_startTime.key  = @"RANGE_START";
     SVMXCMap_startTime.value = [self getSyncTimeStampWithTheIntervalof15days:START_TIME] == nil ? @"" :[self getSyncTimeStampWithTheIntervalof15days:START_TIME];
     
-    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_endTime =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_endTime =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
     SVMXCMap_endTime.key  = @"RANGE_END";
     SVMXCMap_endTime.value = [self getSyncTimeStampWithTheIntervalof15days:END_TIME]== nil ? @"" :[self getSyncTimeStampWithTheIntervalof15days:END_TIME];
     
@@ -1225,7 +1201,7 @@ last_sync_time:(NSString *)last_sync_time
     [sfmRequest.valueMap addObject:SVMXCMap_endTime];
     
     //ADD SVMXClient
-    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init];
+    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
     
     svmxc_client.clientType = @"iPad";
     [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
@@ -1269,13 +1245,13 @@ last_sync_time:(NSString *)last_sync_time
     NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:SYNC_HISTORY];
     
-    NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST];
+    NSMutableDictionary * dict = [[[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST] autorelease];
     NSArray * allkeys= [dict allKeys];
     
     //get the current datetime from client side 
     NSDate * current_dateTime = [NSDate date];
     
-    NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
+    NSDateFormatter * dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     
   /*  NSTimeZone *gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
@@ -1298,16 +1274,16 @@ last_sync_time:(NSString *)last_sync_time
     NSString * event_type = @"SYNC";
     [INTF_WebServicesDefServiceSvc initialize];
     
-    INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init];
+    INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
     sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
     
-    INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[INTF_WebServicesDefServiceSvc_CallOptions alloc] init];
+    INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
     callOptions.client = nil;
     
-    INTF_WebServicesDefServiceSvc_DebuggingHeader * debuggingHeader = [[INTF_WebServicesDefServiceSvc_DebuggingHeader alloc] init];
+    INTF_WebServicesDefServiceSvc_DebuggingHeader * debuggingHeader = [[[INTF_WebServicesDefServiceSvc_DebuggingHeader alloc] init] autorelease];
     debuggingHeader.debugLevel = 0;
     
-    INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * allowFieldTruncationHeader = [[INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader alloc] init];
+    INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * allowFieldTruncationHeader = [[[INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader alloc] init] autorelease];
     allowFieldTruncationHeader.allowFieldTruncation = NO;
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
@@ -1315,7 +1291,7 @@ last_sync_time:(NSString *)last_sync_time
     binding.logXMLInOut = YES;
     
     
-    INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init];
+    INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] autorelease];
     
     INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] autorelease];
     sfmRequest.eventName = event_name;
@@ -1328,7 +1304,7 @@ last_sync_time:(NSString *)last_sync_time
     if([event_name isEqualToString:@"PUT_UPDATE"] && [event_type isEqualToString:@"SYNC"])//PUT_UPSATE
     {
         
-      INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_lastModified =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+      INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_lastModified =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
         SVMXCMap_lastModified.key = @"SYNC_TIME_STAMP";
         SVMXCMap_lastModified.value = [self get_SYNCHISTORYTime_ForKey:LAST_UPDATE_RESONSE_TIME] == nil ?@"":[self get_SYNCHISTORYTime_ForKey:LAST_UPDATE_RESONSE_TIME];
         
@@ -1610,22 +1586,22 @@ last_sync_time:(NSString *)last_sync_time
         
         NSArray * masterObjects = [appDelegate.databaseInterface getAllObjectsForRecordType:MASTER  forOperation:INSERT];
         NSArray * detailObjects = [appDelegate.databaseInterface getAllObjectsForRecordType:DETAIL forOperation:INSERT];
-        NSMutableArray * masterDetailArray = [[NSMutableArray alloc] initWithObjects:masterObjects,detailObjects, nil];
+        NSMutableArray * masterDetailArray = [[[NSMutableArray alloc] initWithObjects:masterObjects,detailObjects, nil] autorelease];
         
         //put all the parent information  "Parent_Object"
         NSArray * all_objects = [appDelegate.dataSync_dict allKeys];
         
         NSInteger count = 0;
         
-        INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_lastModified =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+        INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_lastModified =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
         SVMXCMap_lastModified.key = @"SYNC_TIME_STAMP";
         SVMXCMap_lastModified.value = [self get_SYNCHISTORYTime_ForKey:LAST_INSERT_RESONSE_TIME] == nil ?@"":[self get_SYNCHISTORYTime_ForKey:LAST_INSERT_RESONSE_TIME];
         
-        INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_startTime =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+        INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_startTime =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
         SVMXCMap_startTime.key  = @"RANGE_START";
         SVMXCMap_startTime.value = [self getSyncTimeStampWithTheIntervalof15days:START_TIME] == nil ? @"" :[self getSyncTimeStampWithTheIntervalof15days:START_TIME];
         
-        INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_endTime =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+        INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_endTime =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
         SVMXCMap_endTime.key  = @"RANGE_END";
         SVMXCMap_endTime.value = [self getSyncTimeStampWithTheIntervalof15days:END_TIME]== nil ? @"" :[self getSyncTimeStampWithTheIntervalof15days:END_TIME];
         
@@ -1715,7 +1691,7 @@ last_sync_time:(NSString *)last_sync_time
                                 }
                             }
                             
-                            INTF_WebServicesDefServiceSvc_SVMXMap * testSVMXCMap =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+                            INTF_WebServicesDefServiceSvc_SVMXMap * testSVMXCMap =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
                             
                             NSMutableDictionary * each_record = [appDelegate.databaseInterface getRecordsForRecordId:local_id  ForObjectName:object_name fields:field_string];
                             
@@ -1799,7 +1775,7 @@ last_sync_time:(NSString *)last_sync_time
     }
     else if ([event_name isEqualToString:@"PUT_DELETE"] && [event_type isEqualToString:@"SYNC"])
     {
-        INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_lastModified =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+        INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_lastModified =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
         SVMXCMap_lastModified.key = @"SYNC_TIME_STAMP";
         SVMXCMap_lastModified.value = [self get_SYNCHISTORYTime_ForKey:LAST_DELETE_RESPONSE_TIME] == nil ?@"":[self get_SYNCHISTORYTime_ForKey:LAST_DELETE_RESPONSE_TIME];
         [sfmRequest.valueMap addObject:SVMXCMap_lastModified];
@@ -1815,7 +1791,7 @@ last_sync_time:(NSString *)last_sync_time
             
             // BOOL MasterObject = FALSE ;
             
-            INTF_WebServicesDefServiceSvc_SVMXMap  * svmxcmap = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+            INTF_WebServicesDefServiceSvc_SVMXMap  * svmxcmap = [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
             
             // NSString * Master_or_parent = @"";
             svmxcmap.key = @"object_name" ;
@@ -1828,7 +1804,7 @@ last_sync_time:(NSString *)last_sync_time
             // query object for the id put in in list map
             
             // ADD   FIELDS  method
-            INTF_WebServicesDefServiceSvc_SVMXMap  * record_svmxc  = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+            INTF_WebServicesDefServiceSvc_SVMXMap  * record_svmxc  = [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
             
             record_svmxc.key = @"Fields";
             record_svmxc.value = @"";
@@ -1870,7 +1846,8 @@ last_sync_time:(NSString *)last_sync_time
                 }
                 
                 
-                INTF_WebServicesDefServiceSvc_SVMXMap * testSVMXCMap =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+                INTF_WebServicesDefServiceSvc_SVMXMap * testSVMXCMap =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] 
+                                                                         autorelease];
                 
                 testSVMXCMap.key = @"";
                 NSString * sf_id = [appDelegate.databaseInterface getSfid_For_LocalId_From_TrailerForlocal_id:local_id];
@@ -1890,12 +1867,12 @@ last_sync_time:(NSString *)last_sync_time
             svmxcmap.value = object_name;
             
             //ISCALLBACK   method
-            INTF_WebServicesDefServiceSvc_SVMXMap  * iscallBack = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+            INTF_WebServicesDefServiceSvc_SVMXMap  * iscallBack = [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
             iscallBack.key = @"IS_CALLBACK";
             iscallBack.value = @"YES";
             
             //SYNC_TIMESTAMP  
-            INTF_WebServicesDefServiceSvc_SVMXMap * timestap = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+            INTF_WebServicesDefServiceSvc_SVMXMap * timestap = [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
             timestap.key = @"SYNC_TIMESTAMP";
             timestap.value = @"";
             
@@ -1909,7 +1886,7 @@ last_sync_time:(NSString *)last_sync_time
         
     }
         //ADD SVMXClient
-   INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init];
+   INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
     
     svmxc_client.clientType = @"iPad";
     [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
@@ -2055,34 +2032,35 @@ last_sync_time:(NSString *)last_sync_time
 {
     [INTF_WebServicesDefServiceSvc initialize];
     
-    INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init];
+    INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
     sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
     
-    INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[INTF_WebServicesDefServiceSvc_CallOptions alloc] init];
+    INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
     callOptions.client = nil;
     
-    INTF_WebServicesDefServiceSvc_DebuggingHeader * debuggingHeader = [[INTF_WebServicesDefServiceSvc_DebuggingHeader alloc] init];
+    INTF_WebServicesDefServiceSvc_DebuggingHeader * debuggingHeader = [[[INTF_WebServicesDefServiceSvc_DebuggingHeader alloc] init] autorelease];
     debuggingHeader.debugLevel = 0;
     
-    INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * allowFieldTruncationHeader = [[INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader alloc] init];
+    INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * allowFieldTruncationHeader = [[[INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader alloc] init] autorelease];
     allowFieldTruncationHeader.allowFieldTruncation = NO;
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = NO;
     
     
-    INTF_WebServicesDefServiceSvc_INTF_DataSync_WS * dataSync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] autorelease];
+    INTF_WebServicesDefServiceSvc_INTF_DataSync_WS * dataSync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] 
+                                                                 autorelease];
     
     INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] 
                                                                   autorelease];
     
     INTF_WebServicesDefServiceSvc_SVMXClient * client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
     
-    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_startTime =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_startTime =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
     SVMXCMap_startTime.key  = @"RANGE_START";
     SVMXCMap_startTime.value = [self getSyncTimeStampWithTheIntervalof15days:START_TIME] == nil?@"":[self getSyncTimeStampWithTheIntervalof15days:START_TIME];
     
-    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_endTime =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_endTime =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
     SVMXCMap_endTime.key  = @"RANGE_END";
     SVMXCMap_endTime.value = [self getSyncTimeStampWithTheIntervalof15days:END_TIME]== nil?@"":[self getSyncTimeStampWithTheIntervalof15days:END_TIME];
 
@@ -3408,7 +3386,7 @@ last_sync_time:(NSString *)last_sync_time
         }
         else if ([wsResponse.result.eventName isEqualToString:SFM_PAGEDATA])    
         {
-            NSLog(@"SAMMAN MetaSync SFM_PAGEDATA received, processing starts: %@", [NSDate date]);
+           // NSLog(@"SAMMAN MetaSync SFM_PAGEDATA received, processing starts: %@", [NSDate date]);
 
             didGetPageData = TRUE;
             
@@ -5552,7 +5530,7 @@ last_sync_time:(NSString *)last_sync_time
             NSString * aliasName = [detailDataSet aliasName];
             NSMutableArray * details = [appDelegate.SFMPage objectForKey:gDETAILS]; //as many as number of lines sections
             //sahana 
-            NSMutableArray * event_Record_id_set = [[NSMutableArray alloc] initWithCapacity:0];
+            NSMutableArray * event_Record_id_set = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
             NSArray * record_key = [NSArray arrayWithObjects:@"RecordId",@"RecordNum",nil];
             
             // NSMutableArray * temp_details_record_id = nil;
@@ -6055,7 +6033,7 @@ last_sync_time:(NSString *)last_sync_time
                 }
             }
             
-            NSMutableArray * local_deletedRecord_array = [[NSMutableArray alloc] initWithCapacity:0];
+            NSMutableArray * local_deletedRecord_array = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
             
             NSLog(@"details record id --------%@",deleted_details_array);
             for(int q = 0; q < [detail_values_array count]; q++)
@@ -7593,7 +7571,6 @@ last_sync_time:(NSString *)last_sync_time
         
         NSString * detail_object_name = [detail objectForKey:gDETAIL_OBJECT_NAME];
         NSString * detail_layout_id = [detail objectForKey:gDETAILS_LAYOUT_ID];
-         NSString *parent_column_name = [detail objectForKey:gDETAIL_HEADER_REFERENCE_FIELD];
         
         
         [targetRecordObjectDetails setObjName:[detail objectForKey:gDETAIL_OBJECT_NAME]];
@@ -8864,8 +8841,8 @@ last_sync_time:(NSString *)last_sync_time
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-    iServiceAppDelegate * appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
-    appDelegate.isInternetConnectionAvailable = NO;
+    iServiceAppDelegate * appDelegate_ = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+    appDelegate_.isInternetConnectionAvailable = NO;
     [[NSNotificationCenter defaultCenter] postNotificationName:kInternetConnectionChanged object:[NSNumber numberWithInt:0] userInfo:nil];
 }
 
