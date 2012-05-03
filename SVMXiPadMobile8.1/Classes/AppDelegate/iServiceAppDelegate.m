@@ -475,14 +475,14 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     
     [userNameImageList removeAllObjects];
     
+    //shrinivas
     self.isBackground = TRUE;
 }
 
 - (void) applicationWillEnterForeground:(UIApplication *)application
 {
-    //self.isBackground = FALSE; 
     [loginController.activity stopAnimating];
-    //loginController.activity.hidden = NO;
+    //shrinivas
     self.isForeGround = TRUE;
 }
 
@@ -854,6 +854,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     
     sqlite3_close(self.db);
 	
+    [appDelegate.dataBase removecache];
     self.wsInterface.didOpComplete = FALSE;
     loginController.didEnterAlertView = FALSE;
     [loginController readUsernameAndPasswordFromKeychain];
