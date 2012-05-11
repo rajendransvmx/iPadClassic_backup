@@ -83,7 +83,8 @@
 
 - (void) accessoryButtonTapped:(id)sender
 { 
-
+    if(isOnlineRecord)
+        return;
     objectName = [appDelegate.dataBase getApiNameFromFieldLabel:objectName];
     char *field1;
     appDelegate.showUI = FALSE;   //btn merge
