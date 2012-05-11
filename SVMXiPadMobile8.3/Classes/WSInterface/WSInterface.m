@@ -2372,7 +2372,114 @@ last_sync_time:(NSString *)last_sync_time
 }
 
 #pragma mark DataSync
-
+- (void) dataSyncWithEventName:(NSString *)eventName eventType:(NSString *)eventType values:(NSMutableArray *)values
+{
+    [INTF_WebServicesDefServiceSvc initialize];
+    
+    INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
+    sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
+    
+    INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
+    callOptions.client = nil;
+    
+    INTF_WebServicesDefServiceSvc_DebuggingHeader * debuggingHeader = [[[INTF_WebServicesDefServiceSvc_DebuggingHeader alloc] init] autorelease];
+    debuggingHeader.debugLevel = 0;
+    
+    INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * allowFieldTruncationHeader = [[[INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader alloc] init] autorelease];
+    allowFieldTruncationHeader.allowFieldTruncation = NO;
+    
+    INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
+    binding.logXMLInOut = YES;
+    
+    
+    INTF_WebServicesDefServiceSvc_INTF_DataSync_WS * dataSync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] 
+                                                                 autorelease];
+    
+    INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] 
+                                                                  autorelease];
+    
+    INTF_WebServicesDefServiceSvc_SVMXClient * client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
+    
+    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_startTime =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
+    SVMXCMap_startTime.key  = @"RANGE_START";
+    SVMXCMap_startTime.value = [self getSyncTimeStampWithTheIntervalof15days:START_TIME] == nil?@"":[self getSyncTimeStampWithTheIntervalof15days:START_TIME];
+    
+    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_endTime =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
+    SVMXCMap_endTime.key  = @"RANGE_END";
+    SVMXCMap_endTime.value = [self getSyncTimeStampWithTheIntervalof15days:END_TIME]== nil?@"":[self getSyncTimeStampWithTheIntervalof15days:END_TIME];
+    
+    [sfmRequest.valueMap addObject:SVMXCMap_startTime];
+    [sfmRequest.valueMap addObject:SVMXCMap_endTime];
+    
+    client.clientType = @"iPad";
+    [client.clientInfo addObject:@"OS:iPadOS"];
+    [client.clientInfo addObject:@"R4B2"];
+    
+    sfmRequest.eventName = eventName;
+    sfmRequest.eventType = eventType;
+    
+    sfmRequest.userId = [appDelegate.loginResult userId];
+    sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
+    sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
+    
+    [sfmRequest addClientInfo:client];
+    [dataSync setRequest:sfmRequest];
+    //SFM Search
+    if([eventName isEqualToString:@"SFM_SEARCH"] && [eventType isEqualToString:@"SEARCH_RESULTS"])
+    {
+        INTF_WebServicesDefServiceSvc_SVMXMap * svmxcProcessID =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+        svmxcProcessID.key  = @"SearchProcessId";
+        if([values objectAtIndex:0] != nil)
+            svmxcProcessID.value = [values objectAtIndex:0];
+        else
+            svmxcProcessID.value = @"";
+        [sfmRequest.valueMap addObject:svmxcProcessID];
+        [svmxcProcessID release];
+        
+        INTF_WebServicesDefServiceSvc_SVMXMap * svmxcCrtieria =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+        svmxcCrtieria.key  = @"SEARCH_OPERATOR";
+        if([values objectAtIndex:3] != nil)
+            svmxcCrtieria.value = [values objectAtIndex:3];
+        else
+            svmxcCrtieria.value = @"";
+        [sfmRequest.valueMap addObject:svmxcCrtieria];
+        [svmxcCrtieria release];
+        
+        INTF_WebServicesDefServiceSvc_SVMXMap * svmxcUserFilterString =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+        svmxcUserFilterString.key  = @"KeyWord";
+        if([values objectAtIndex:4] != nil)
+            svmxcUserFilterString.value = [values objectAtIndex:4];
+        else
+            svmxcUserFilterString.value = @"";
+        [sfmRequest.valueMap addObject:svmxcUserFilterString];
+        [svmxcUserFilterString release];
+        
+        NSArray *objectList = [values objectAtIndex:1];
+        NSArray *objectResultList = [values objectAtIndex:2];
+        
+        for(int i=0; i<[objectList count]; i++)
+        {
+            NSArray *resultsArray = [objectResultList objectAtIndex:i];            
+            INTF_WebServicesDefServiceSvc_SVMXMap * svmxcObject =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+            
+            svmxcObject.key  = @"ObjectId";
+            svmxcObject.value = [objectList objectAtIndex:i];
+            for(int j=0; j< [resultsArray count]; j++)
+            {
+                [svmxcObject addValues:[resultsArray objectAtIndex:j]];
+            }
+            [sfmRequest.valueMap addObject:svmxcObject];            
+            [svmxcObject release];
+        }
+    }
+    //SFM Search End
+    [[ZKServerSwitchboard switchboard] doCheckSession];
+    [binding INTF_DataSync_WSAsyncUsingParameters:dataSync 
+                                    SessionHeader:sessionHeader 
+                                      CallOptions:callOptions
+                                  DebuggingHeader:debuggingHeader
+                       AllowFieldTruncationHeader:allowFieldTruncationHeader delegate:self];
+}
 
 - (void) dataSyncWithEventName:(NSString *)eventName eventType:(NSString *)eventType requestId:(NSString *)requestId
 {
