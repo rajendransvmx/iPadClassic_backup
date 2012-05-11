@@ -127,7 +127,7 @@
 {
     if (!appDelegate.isInternetConnectionAvailable)
     {
-        [appDelegate displayNoInternetAvailable];
+        //[appDelegate displayNoInternetAvailable];
         return;
     }
 
