@@ -1877,11 +1877,11 @@
                 [activity stopAnimating];
                 appDelegate.wsInterface.sfm_response = FALSE;
                 //[appDelegate displayNoInternetAvailable];
-                if (appDelegate.SFMPage != nil)
+                /*if (appDelegate.SFMPage != nil)
                 {
                     [appDelegate.SFMPage release];
                     appDelegate.SFMPage = nil;
-                }
+                }*/
                 [self enableSFMUI];
                 return;
             }
@@ -2315,6 +2315,7 @@
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
+        appDelegate.shouldShowConnectivityStatus = TRUE; //shrinivas.
         [appDelegate displayNoInternetAvailable];
         [self enableSFMUI];
         return;
@@ -2327,7 +2328,7 @@
             if (!appDelegate.isInternetConnectionAvailable)
             {
                 [activity stopAnimating];
-                [appDelegate displayNoInternetAvailable];
+                //[appDelegate displayNoInternetAvailable];
                 [self enableSFMUI];
                 return;
             }
@@ -2390,7 +2391,8 @@
             {
                 appDelegate.wsInterface.getPrice = TRUE;
                 [activity stopAnimating];
-                [appDelegate displayNoInternetAvailable];
+                //appDelegate.shouldShowConnectivityStatus = TRUE;
+                //[appDelegate displayNoInternetAvailable];
                 [self enableSFMUI];
                 return;
             }
@@ -3671,11 +3673,11 @@
         if (!appDelegate.isInternetConnectionAvailable)
         {
             
-            if (appDelegate.SFMPage != nil)
+            /*if (appDelegate.SFMPage != nil)
             {
                 [appDelegate.SFMPage release];
                 appDelegate.SFMPage = nil;
-            }
+            }*/
             
             [tableView reloadData];
             [rootViewController.tableView reloadData];
@@ -6118,8 +6120,8 @@
         {
             if (appDelegate.SFMPage != nil)
             {
-                [appDelegate.SFMPage release];
-                appDelegate.SFMPage = nil;
+               // [appDelegate.SFMPage release];
+                //appDelegate.SFMPage = nil;
 
                     [self.tableView reloadData];
                     [appDelegate.sfmPageController.rootView refreshTable];
@@ -7716,8 +7718,8 @@
         {
             if (appDelegate.SFMPage != nil)
             {
-                [appDelegate.SFMPage release];
-                appDelegate.SFMPage = nil;
+                //[appDelegate.SFMPage release];
+                //appDelegate.SFMPage = nil;
                 
                 [self.tableView reloadData];
                 [appDelegate.sfmPageController.rootView refreshTable];
@@ -8291,8 +8293,8 @@
         {
             if (appDelegate.SFMPage != nil)
             {
-                [appDelegate.SFMPage release];
-                appDelegate.SFMPage = nil;
+                //[appDelegate.SFMPage release];
+                //appDelegate.SFMPage = nil;
                 
                 [self.tableView reloadData];
                 [appDelegate.sfmPageController.rootView refreshTable];
@@ -11114,10 +11116,10 @@
         }            
     }   
 
-    
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
+        appDelegate.shouldShowConnectivityStatus = TRUE;
         [appDelegate displayNoInternetAvailable];
         return;
     } 
