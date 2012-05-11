@@ -273,6 +273,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize isConnectedOnline;
 @synthesize didLoginAgain;
 @synthesize didBackUpDatabase;
+@synthesize shouldShowConnectivityStatus;
 
 @synthesize EventsArray, TasksArray;
 @synthesize speacialSyncIsGoingOn;
@@ -625,9 +626,16 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         cancelButtonTitle = [dictionary objectForKey:ALERT_ERROR_OK];
     }
     
-    UIAlertView * _alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:cancelButtonTitle otherButtonTitles:nil];
-    [_alert show];
-    [_alert release];
+    //Probable solution for internet connectivity.
+    if (self.shouldShowConnectivityStatus == TRUE)
+    {
+        UIAlertView * _alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:cancelButtonTitle otherButtonTitles:nil];
+        [_alert show];
+        [_alert release];
+        
+        self.shouldShowConnectivityStatus = FALSE;
+    }
+    
 }
 
 -(void)initWithDBName:(NSString *)name type:(NSString *)type 
