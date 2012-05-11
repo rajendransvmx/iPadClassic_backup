@@ -116,7 +116,7 @@
     NSString * queryStatement2 = [NSMutableString stringWithFormat:@"Select process_id FROM SFProcess where process_type = 'VIEWRECORD' and object_api_name = '%@'",objectName];   
     const char *selectStatement2 = [queryStatement2 UTF8String];
     
-    NSString *processId = @"";
+    NSString *processId =nil;
     
     if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement2,-1, &labelstmt, nil) == SQLITE_OK )
     {
@@ -126,10 +126,10 @@
             NSLog(@"%s",field1);
             if(field1)
                 processId = [NSString stringWithFormat:@"%s", field1];
-            else
-                processId = @"";
         }
     }
+    if(!processId)
+        return;
     appDelegate.sfmPageController.processId = processId;
     appDelegate.sfmPageController.objectName = objectName;
     
