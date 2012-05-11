@@ -568,6 +568,7 @@
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
+        appDelegate.shouldShowConnectivityStatus = TRUE;
         [appDelegate displayNoInternetAvailable];
         return;
     }
@@ -610,6 +611,7 @@
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
+        appDelegate.shouldShowConnectivityStatus = TRUE;
         [appDelegate displayNoInternetAvailable];
         return;
     }
