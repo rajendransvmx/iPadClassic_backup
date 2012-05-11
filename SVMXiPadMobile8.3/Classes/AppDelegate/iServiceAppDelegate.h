@@ -326,9 +326,12 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
   //Application in the Background
     BOOL isBackground;
     BOOL isForeGround;
+    
+    //Possible solution for Abrupt Internet Connectivity Problem.
+    BOOL shouldShowConnectivityStatus;
 }
 
-
+@property (nonatomic) BOOL shouldShowConnectivityStatus;
 @property (nonatomic) DATASYNC_CHUNCKING data_sync_chunking;
 @property (nonatomic, retain) NSThread * metaSyncThread;
 @property (nonatomic, retain) NSTimer * metasync_timer;
