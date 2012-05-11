@@ -28,7 +28,8 @@
 @property (nonatomic, retain) NSMutableArray *onlineDataArray;
 @property (nonatomic, retain) NSString *sfmConfigName;
 @property (nonatomic, assign) id<SFMResultDetailViewControllerDelegate> splitViewDelegate;
-- (NSDictionary *) getResultPlist:(NSString *)objectName withConfiguration:(NSArray *)config;
+
+//- (NSDictionary *) getResultPlist:(NSString *)objectName withConfiguration:(NSArray *)config;
 - (BOOL) isRecordFound:(NSString *)value ;
 - (void) createTable;
 - (void) showHelp;

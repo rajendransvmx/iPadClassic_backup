@@ -14,13 +14,13 @@
 #import "SFMPageController.h"
 #define TableViewResultViewCellHeight 50
 @interface SFMResultDetailViewController ()
-{
-    NSMutableArray          *configData;
-    NSMutableArray          *tableDataArray;
-}
+@property (nonatomic, retain) NSMutableArray          *configData;
+@property (nonatomic, retain) NSMutableArray          *tableDataArray;
 @end
 
 @implementation SFMResultDetailViewController
+@synthesize configData;
+@synthesize tableDataArray;
 @synthesize detailTable;
 @synthesize detailTableArray;
 @synthesize sfmConfigName;
