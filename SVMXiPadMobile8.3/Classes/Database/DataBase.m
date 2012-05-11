@@ -2631,6 +2631,9 @@
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS sync_Records_Heap ('sf_id' VARCHAR, 'local_id' VARCHAR,'object_name' VARCHAR, 'sync_type' VARCHAR, 'json_record' VARCHAR , 'sync_flag' BOOL , 'record_type' VARCHAR)"];
     [self createTable:query];
     
+    query = [NSString stringWithFormat:@"CREATE INDEX IF NOT EXISTS sync_Record_Heap_Index ON sync_Records_Heap (sf_id ASC, local_id ASC, object_name ASC, sync_flag ASC)"];
+    [self createTable:query];
+    
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS LookUpFieldValue ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0), 'object_api_name' VARCHAR, 'Id' VARCHAR, 'value' VARCHAR)"];
     [self createTable:query];
     
@@ -3169,7 +3172,9 @@
     //all the tables which do not form in metasync are being created here in the backup
     
     if (object_names != nil)
-        [object_names release];
+    {
+        object_names = nil;
+    }
     
     object_names = [[NSMutableArray alloc] initWithCapacity:0];
     
@@ -3219,7 +3224,6 @@
 
     //we again start metasync here
 
-    
     appDelegate.db = nil;
     self.dbFilePath = nil;
     [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
@@ -3246,6 +3250,7 @@
         if (appDelegate.wsInterface.didOpComplete == TRUE)
             break; 
     }
+
     //SFM Search 
     
     appDelegate.wsInterface.didOpSFMSearchComplete = FALSE;
@@ -3268,42 +3273,81 @@
     NSLog(@"META SYNC 1");
     
     NSLog(@"SAMMAN DataSync WS Start: %@", [NSDate date]);
+    //sahaan generate client req id for initital data sync 
     appDelegate.wsInterface.didOpComplete = FALSE;
-    [appDelegate.wsInterface dataSyncWithEventName:@"DATA_SYNC" eventType:SYNC values:nil];
+    
+    [appDelegate.wsInterface dataSyncWithEventName:EVENT_SYNC eventType:SYNC requestId:@""];
     
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
     {
         if (!appDelegate.isInternetConnectionAvailable)
+            break;
+        
+        if (appDelegate.wsInterface.didOpComplete == TRUE)
         {
-            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                [MyPopoverDelegate performSelector:@selector(throwException)];
+            break; 
+        }
+    }
+
+    
+    appDelegate.wsInterface.didOpComplete = FALSE;
+    
+    appDelegate.initial_dataSync_reqid = [iServiceAppDelegate GetUUID];
+    
+    NSLog(@"reqId%@" , appDelegate.initial_dataSync_reqid);
+    [appDelegate.wsInterface dataSyncWithEventName:DOWNLOAD_CREITERIA_SYNC eventType:SYNC requestId:appDelegate.initial_dataSync_reqid];
+    
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+    {
+        if (appDelegate.wsInterface.didOpComplete == TRUE)
+        {
             break;
         }
-        if (appDelegate.wsInterface.didOpComplete == TRUE)
-            break; 
+        if (!appDelegate.isInternetConnectionAvailable && appDelegate.data_sync_chunking == REQUEST_SENT)
+        {
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            {
+                if (appDelegate.isInternetConnectionAvailable)
+                {
+                    [appDelegate goOnlineIfRequired];
+                    [appDelegate.wsInterface dataSyncWithEventName:DOWNLOAD_CREITERIA_SYNC eventType:SYNC requestId:appDelegate.initial_dataSync_reqid];
+                    break;
+                }
+            }
+        }
     }
     NSLog(@"SAMMAN DataSync WS End: %@", [NSDate date]);
-    
     NSLog(@"SAMMAN Incremental DataSync WS Start: %@", [NSDate date]);
-    appDelegate.Incremental_sync_status = INCR_STARTS;
-    [appDelegate.wsInterface PutAllTheRecordsForIds];
     
+    [appDelegate.wsInterface cleanUpForRequestId:appDelegate.initial_dataSync_reqid forEventName:@"CLEAN_UP_SELECT"];
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    {
+        if (!appDelegate.isInternetConnectionAvailable)
+            break;
+        
+        if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
+            break;
+    }
+    appDelegate.Incremental_sync_status = INCR_STARTS;
+    
+    [appDelegate.wsInterface PutAllTheRecordsForIds];
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
     {
         if (!appDelegate.isInternetConnectionAvailable)
-        {
-            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                [MyPopoverDelegate performSelector:@selector(throwException)];
             break;
-        }
+        
         if (appDelegate.Incremental_sync_status == PUT_RECORDS_DONE)
             break; 
     }
+    
+    
     NSLog(@"SAMMAN Incremental DataSync WS End: %@", [NSDate date]);
     
     NSLog(@"SAMMAN Update Sync Records Start: %@", [NSDate date]);
+    
+    NSLog(@"SAMMAN Update Sync Records Start: %@", [NSDate date]);
     [appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
-    NSLog(@"SAMMAN Update Sync Records End: %@", [NSDate date]);
+    NSLog(@"SAMMAN Update Sync Records End: %@", [NSDate date]); 
     
     //Radha purging - 10/April/12
     NSMutableArray * recordId = [appDelegate.dataBase getAllTheRecordIdsFromEvent];
@@ -3482,6 +3526,9 @@
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS sync_Records_Heap ('sf_id' VARCHAR, 'local_id' VARCHAR,'object_name' VARCHAR, 'sync_type' VARCHAR, 'json_record' VARCHAR , 'sync_flag' BOOL , 'record_type' VARCHAR)"];
     [self createTemporaryTable:query];
     
+    query = [NSString stringWithFormat:@"CREATE INDEX IF NOT EXISTS sync_Record_Heap_Index ON sync_Records_Heap (sf_id ASC, local_id ASC, object_name ASC, sync_flag ASC)"];
+    [self createTable:query];
+    
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS LookUpFieldValue ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0), 'object_api_name' VARCHAR, 'Id' VARCHAR, 'value' VARCHAR)"];
     [self createTemporaryTable:query];
     
@@ -3504,21 +3551,29 @@
 {
     NSString * query1 = [NSString stringWithFormat:@"ATTACH DATABASE '%@' AS tempsfm",filepath];
     [self createTable:query1];
-    [object_names addObject:@"ChatterPostDetails"];
-    [object_names addObject:@"Document"];
-    [object_names addObject:@"ProductImage"];
-    [object_names addObject:@"SFSignatureData"];
-    [object_names addObject:@"UserImages"];
-    [object_names addObject:@"trobleshootdata"];
-    [object_names addObject:@"SFDataTrailer"];
-    [object_names addObject:@"SFDataTrailer_Temp"];
-    [object_names addObject:@"SYNC_HISTORY"];
-    [object_names addObject:@"sync_Records_Heap"];
-    [object_names addObject:@"LookUpFieldValue"];
-    [object_names addObject:@"Summary_PDF"];
-    [object_names addObject:@"sync_error_conflict"];
     
-    for (NSString * tableName in object_names)
+    
+    NSMutableArray * objects = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    
+    NSString * queryStatement = [NSString stringWithFormat:@"SELECT DISTINCT object_api_name FROM SFObjectField"];
+    
+    sqlite3_stmt * objectStatement;
+    
+    NSString * object_api_name = @"";
+    
+    if ( synchronized_sqlite3_prepare_v2(tempDb, [queryStatement UTF8String],-1, &objectStatement, nil) == SQLITE_OK )
+    {
+        while(synchronized_sqlite3_step(objectStatement) == SQLITE_ROW)
+        {
+            char * field = (char *) synchronized_sqlite3_column_text(objectStatement,1);
+            if ((field != nil) && strlen(field))
+                object_api_name = [[NSString alloc] initWithUTF8String:field];
+            [objects  addObject:object_api_name];
+            
+        }
+    }
+    
+    for (NSString * tableName in objects)
     {
         if ([tableName isEqualToString:@"Case"])
             tableName = @"'Case'";
@@ -3993,9 +4048,9 @@
     [self clearTempDatabase];
     
     if (object_names != nil)
-        [object_names release];
+        object_names = nil;
     
-    object_names = [[NSMutableArray alloc] initWithCapacity:0];
+    //object_names = [[NSMutableArray alloc] initWithCapacity:0];
     object_names = [self retreiveTableNamesFronDB:appDelegate.db];
     
     for (NSString * objectName in object_names)
