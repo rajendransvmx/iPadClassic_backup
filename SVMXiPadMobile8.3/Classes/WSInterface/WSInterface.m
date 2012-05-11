@@ -7806,7 +7806,6 @@ last_sync_time:(NSString *)last_sync_time
     NSMutableDictionary * hdrData = [[NSMutableDictionary alloc] initWithCapacity:0];
     NSMutableArray * hdrButtons = [[NSMutableArray alloc] initWithCapacity:0];
     NSMutableArray * hdrSections = [[NSMutableArray alloc] initWithCapacity:0];
-    NSMutableArray * allFields = [[NSMutableArray alloc] initWithCapacity:0];
     
     INTF_WebServicesDefServiceSvc_sObject * _hdrData = [hdr hdrData];
 
