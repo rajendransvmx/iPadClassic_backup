@@ -174,11 +174,10 @@
     }
     cell.textLabel.text = [[_sfmArray objectAtIndex:indexPath.row] objectForKey:@"SVMXC__Name__c"];
     cell.detailTextLabel.text = [[_sfmArray objectAtIndex:indexPath.row] objectForKey:@"SVMXC__Description__c"];
-   // cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
-    
-    UIButton * button = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 100, 60)] autorelease];
+    UIButton * button = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 20, 21)] autorelease];
     [button setTitle:@"Search" forState:UIControlStateNormal];
-    [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [button setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"] 
+                      forState:UIControlStateNormal];
     [button setBackgroundColor:[UIColor lightGrayColor]];
     [button addTarget:self action:@selector(searchButtonTapped:withEvent:)  forControlEvents:UIControlEventTouchUpInside];
     cell.accessoryView = button;
