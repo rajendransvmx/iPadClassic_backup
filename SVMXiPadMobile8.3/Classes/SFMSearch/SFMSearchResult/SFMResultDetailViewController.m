@@ -296,6 +296,7 @@
     NSArray *cellArray = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"Values"];
     NSString *objectId = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"ObjectId"];
     NSArray *headerArray =[[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"TableHeader"];
+    NSString *objectName = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"ObjectName"];
     SFMFullResultViewController *resultViewController = [[SFMFullResultViewController alloc] initWithNibName:@"SFMFullResultViewController" bundle:nil];
     resultViewController.fullMainDelegate = self;
     resultViewController.tableHeaderArray = headerArray;
@@ -305,6 +306,7 @@
         {
             fullDataDict = [cellArray objectAtIndex:indexPath.row]; 
             resultViewController.isOnlineRecord = NO;
+            resultViewController.objectName = objectName;
         }
         else 
         {
@@ -331,6 +333,7 @@
     {
         fullDataDict = [cellArray objectAtIndex:indexPath.row];
         resultViewController.isOnlineRecord = NO;
+        resultViewController.objectName = objectName;
         NSLog(@"Data = %@",fullDataDict);
     }
     
@@ -583,6 +586,8 @@
             {
                 NSString *key = [displaydict objectForKey:@"SVMXC__Field_Name__c"];
                 [resultDict setObject:[dict objectForKey:key] forKey:key];
+                [resultDict setObject:[dict objectForKey:@"Id"] forKey:@"Id"]; 
+                [resultDict setObject:[dict objectForKey:@"local_id"] forKey:@"local_id"]; 
             }
             [results addObject:resultDict];
         }
@@ -639,7 +644,6 @@
         {
             [objectList addObject:[[tableDataArray objectAtIndex:i] objectForKey:@"ObjectId"]];
         }
-        //NSArray  *objectList = [NSArray arrayWithObjects:@"a0a70000000fse8",@"a0a70000000fse9",@"a0a70000000fseB", nil];
         for(int j=0;j<[tableDataArray count]; j++)
         {
             NSArray *objectResultsArray = [[tableDataArray objectAtIndex:j] objectForKey:@"Values"];
@@ -655,21 +659,12 @@
             [objResultArray release];
         }
         
-        /*
-        NSArray  *subResultList1 = [NSArray arrayWithObjects:@"a0s70000001H8hk", nil];
-        NSArray  *subResultList2 = [NSArray arrayWithObjects:@"", nil];
-        NSArray  *subResultList3 = [NSArray arrayWithObjects:@"5007000000Ly2Tz", nil];
-        NSArray  *subResultList4 = [NSArray arrayWithObjects:@"", nil];
-        NSArray  *resultList = [NSArray arrayWithObjects:subResultList1,subResultList2,subResultList3,subResultList4, nil];
-       */
         
         NSString *criteria = self.masterView.searchCriteriaString;
         NSString *userFilterString = self.masterView.searchData;
-        // NSString *userFilterString = @"acc";
         [ searchResultData addObject:self.masterView.processId];
         [ searchResultData addObject:objectList];
         [ searchResultData addObject:objectResultList];
-        //[ searchResultData addObject:resultList];
         [ searchResultData addObject:criteria];
         [ searchResultData addObject:userFilterString];
         
@@ -711,7 +706,6 @@
     }
 
     NSLog(@"Table Data = %@",tableDataArray);
-    NSLog(@"Table Data = %@",tableDataArray);
     [detailTable reloadData];
 }
 - (void) accessoryButtonTapped:(id)sender
@@ -725,70 +719,67 @@
         ownerCellIndexPath = [self.detailTable indexPathForCell:ownerCell];
         NSLog(@"Accessory in index path is tapped. Index path = %d", ownerCellIndexPath.row);
     }
+    NSDictionary *dict = [tableDataArray objectAtIndex:ownerCellIndexPath.section];
+    NSDictionary *dataDict = [[dict objectForKey:@"Values"] objectAtIndex:ownerCellIndexPath.row]; 
+    NSString *objectName = [appDelegate.dataBase getApiNameFromFieldLabel:[dict objectForKey:@"ObjectName"]];
      char *field1;
     appDelegate.showUI = FALSE;   //btn merge
+    if(appDelegate.sfmPageController)
+        [appDelegate.sfmPageController release];
     appDelegate.sfmPageController = [[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE];
     
-    if ([appDelegate.SFMPage retainCount] > 0)
-    {
-        [appDelegate.SFMPage release];
-        appDelegate.SFMPage = nil;
-    }   
     NSMutableString * queryStatement1 = [[NSMutableString alloc]initWithCapacity:0];
-    queryStatement1 = [NSMutableString stringWithFormat:@"Select local_id FROM SVMXC__Service_Order__c "];    sqlite3_stmt * labelstmt;
+    NSString *recordId = [dataDict objectForKey:@"Id"];
+    queryStatement1 = [NSMutableString stringWithFormat:@"Select local_id FROM '%@' where Id = '%@'",objectName,recordId];    
+    sqlite3_stmt * labelstmt;
     const char *selectStatement = [queryStatement1 UTF8String];
-     NSMutableArray *array=[[NSMutableArray alloc]init ];
+    
+    NSString *localId = @"";
     
     if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &labelstmt, nil) == SQLITE_OK )
     {
-        while(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW){
+        if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
+        {
             field1 = (char *) synchronized_sqlite3_column_text(labelstmt,0);
             NSLog(@"%s",field1);
-            [array addObject:[NSString stringWithFormat:@"%s", field1]];
-             
-                  }
-    }
-    
-    NSMutableString * queryStatement2 = [[NSMutableString alloc]initWithCapacity:0];
-    queryStatement2 = [NSMutableString stringWithFormat:@"Select ActivityDate FROM Event"];    
-    sqlite3_stmt * labelstmt2;
-    const char *selectStatement2 = [queryStatement2 UTF8String];
-    NSMutableArray *array2=[[NSMutableArray alloc]init ];
-    
-    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement2,-1, &labelstmt2, nil) == SQLITE_OK )
-    {
-        while(synchronized_sqlite3_step(labelstmt2) == SQLITE_ROW){
-            field1 = (char *) synchronized_sqlite3_column_text(labelstmt2,0);
-            NSLog(@"%s",field1);
-            [array2 addObject:[NSString stringWithFormat:@"%s", field1]];
-            
+            if(field1)
+                localId = [NSString stringWithFormat:@"%s", field1];
+            else
+                localId = @"";
         }
     }
 
+    NSString * queryStatement2 = [NSMutableString stringWithFormat:@"Select process_id FROM SFProcess where process_type = 'VIEWRECORD' and object_api_name = '%@'",objectName];   
+    const char *selectStatement2 = [queryStatement2 UTF8String];
     
-    NSArray * keys = [NSArray arrayWithObjects:PROCESSID, RECORDID, OBJECTAPINAME, ACTIVITYDATE, ACCOUNTID, nil];
-  NSArray * objects = [NSArray arrayWithObjects:@"IPAD-012", [array objectAtIndex:(ownerCellIndexPath.row)], @"SVMXC__Service_Order__c",[array2 objectAtIndex:(ownerCellIndexPath.row)],@"", nil];
-    NSDictionary * _dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
+    NSString *processId = @"";
     
-    appDelegate.sfmPageController.processId = @"IPAD-012";
-    
-    appDelegate.sfmPageController.objectName = @"SVMXC__Service_Order__c";
+    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement2,-1, &labelstmt, nil) == SQLITE_OK )
+    {
+        if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
+        {
+            field1 = (char *) synchronized_sqlite3_column_text(labelstmt,0);
+            NSLog(@"%s",field1);
+            if(field1)
+                processId = [NSString stringWithFormat:@"%s", field1];
+            else
+                processId = @"";
+        }
+    }
+    appDelegate.sfmPageController.processId = processId;
+    appDelegate.sfmPageController.objectName = objectName;
     
     //appDelegate.sfmPageController.recordId = [NSString stringWithFormat:@"%s", field1];
-    appDelegate.sfmPageController.activityDate = [array2 objectAtIndex:(ownerCellIndexPath.row)];
-    appDelegate.sfmPageController.accountId = @"";
+    //appDelegate.sfmPageController.activityDate = [array2 objectAtIndex:(ownerCellIndexPath.row)];
+    //appDelegate.sfmPageController.accountId = @"";
     appDelegate.sfmPageController.topLevelId = nil;
-    appDelegate.sfmPageController.recordId = [array objectAtIndex:(ownerCellIndexPath.row)];    
+    appDelegate.sfmPageController.recordId = localId;    
     [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
     [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
     [appDelegate.sfmPageController.detailView view];
     [self presentModalViewController:appDelegate.sfmPageController animated:YES];
     [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];
-    
-    
-    //sahana - offline
     appDelegate.didsubmitModelView = FALSE;
-    
     [appDelegate.sfmPageController release];
 
 }

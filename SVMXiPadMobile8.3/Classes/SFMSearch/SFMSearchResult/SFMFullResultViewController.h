@@ -20,6 +20,7 @@
     iServiceAppDelegate * appDelegate;
 }
 @property (nonatomic, retain) NSDictionary *data;
+@property (nonatomic, retain) NSString *objectName;
 @property (nonatomic, retain) NSArray *tableHeaderArray;
 @property (nonatomic, assign) BOOL isOnlineRecord;
 @property (nonatomic, assign) id <SFMFullResultViewControllerDelegate> fullMainDelegate;

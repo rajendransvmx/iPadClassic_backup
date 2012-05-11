@@ -19,6 +19,7 @@
 @synthesize actionButton,detailButton;
 @synthesize isOnlineRecord;
 @synthesize fullMainDelegate;
+@synthesize objectName;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -82,96 +83,70 @@
 
 - (void) accessoryButtonTapped:(id)sender
 { 
-    [ fullMainDelegate DismissSplitViewControllerByLaunchingSFMProcess];
-    [self dismissModalViewControllerAnimated:YES];
-//    UITableViewCell *ownerCell = (UITableViewCell*)[sender superview];
-//    NSIndexPath *ownerCellIndexPath;
-//    if (ownerCell != nil)
-//    {
-//        /* Now we will retrieve the index path of the cell which contains the section and the row of the cell */
-//        ownerCellIndexPath = [self.detailTable indexPathForCell:ownerCell];
-//        NSLog(@"Accessory in index path is tapped. Index path = %d", ownerCellIndexPath.row);
-//    }
-    
-    /*
-    NSString *filedName=@"";
-    char *field,*filedForName;
-    NSLog(@"Display Values = %@",data);
-    for(NSString *objName in data){
-       if([objName isEqualToString:@"Name"])
-        filedName=[data objectForKey:@"Name"];
-        }
-    NSMutableString * queryForGettingObject = [[NSMutableString alloc]initWithCapacity:0];
-    queryForGettingObject = [NSMutableString stringWithFormat:@"Select local_id FROM SVMXC__Service_Order__c where Name = '%@'",filedName];    
-    sqlite3_stmt * labelstmt;
-    const char *selectStatement = [queryForGettingObject UTF8String];
 
+    objectName = [appDelegate.dataBase getApiNameFromFieldLabel:objectName];
+    char *field1;
+    appDelegate.showUI = FALSE;   //btn merge
+    if(appDelegate.sfmPageController)
+        [appDelegate.sfmPageController release];
+    appDelegate.sfmPageController = [[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE];
+    
+    NSMutableString * queryStatement1 = [[NSMutableString alloc]initWithCapacity:0];
+    NSString *recordId = [data objectForKey:@"Id"];
+    queryStatement1 = [NSMutableString stringWithFormat:@"Select local_id FROM '%@' where Id = '%@'",objectName,recordId];    
+    sqlite3_stmt * labelstmt;
+    const char *selectStatement = [queryStatement1 UTF8String];
+    
+    NSString *localId = @"";
     
     if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &labelstmt, nil) == SQLITE_OK )
     {
-        while(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW){
-            filedForName = (char *) synchronized_sqlite3_column_text(labelstmt,0);
-            NSLog(@"%s",filedForName);
-            appDelegate.sfmPageController.recordId = [NSString stringWithFormat:@"%s", filedForName];
-            
+        if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
+        {
+            field1 = (char *) synchronized_sqlite3_column_text(labelstmt,0);
+            NSLog(@"%s",field1);
+            if(field1)
+                localId = [NSString stringWithFormat:@"%s", field1];
+            else
+                localId = @"";
         }
     }
-
-    NSLog(@"Field Value %@",filedName);
     
+    NSString * queryStatement2 = [NSMutableString stringWithFormat:@"Select process_id FROM SFProcess where process_type = 'VIEWRECORD' and object_api_name = '%@'",objectName];   
+    const char *selectStatement2 = [queryStatement2 UTF8String];
     
-    if(appDelegate){
-     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    }
- 
-    appDelegate.showUI = FALSE;   //btn merge
-    appDelegate.sfmPageController = [[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE];
-
-    if ([appDelegate.SFMPage retainCount] > 0)
+    NSString *processId = @"";
+    
+    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement2,-1, &labelstmt, nil) == SQLITE_OK )
     {
-        [appDelegate.SFMPage release];
-        appDelegate.SFMPage = nil;
-    }   
-
-    
-    NSMutableString * queryForActivityDate = [[NSMutableString alloc]initWithCapacity:0];
-    queryForActivityDate = [NSMutableString stringWithFormat:@"Select ActivityDate FROM Event where Subject = '%@'",filedName];    
-    sqlite3_stmt * labelstmtForActivityDate;
-    const char *selectStatementForActivityDate = [queryForActivityDate UTF8String];
-
-    
-    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatementForActivityDate,-1, &labelstmtForActivityDate, nil) == SQLITE_OK )
-    {
-        while(synchronized_sqlite3_step(labelstmtForActivityDate) == SQLITE_ROW){
-            field = (char *) synchronized_sqlite3_column_text(labelstmtForActivityDate,0);
-            NSLog(@"%s",field);          
-            appDelegate.sfmPageController.activityDate =[NSString stringWithFormat:@"%s", field];
+        if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
+        {
+            field1 = (char *) synchronized_sqlite3_column_text(labelstmt,0);
+            NSLog(@"%s",field1);
+            if(field1)
+                processId = [NSString stringWithFormat:@"%s", field1];
+            else
+                processId = @"";
         }
     }
-
+    appDelegate.sfmPageController.processId = processId;
+    appDelegate.sfmPageController.objectName = objectName;
     
-    appDelegate.sfmPageController.processId = @"IPAD-012";
-    
-    appDelegate.sfmPageController.objectName = @"SVMXC__Service_Order__c";
-
-    NSLog(@"%s",field);
-
-    appDelegate.sfmPageController.accountId = @"";
+    //appDelegate.sfmPageController.recordId = [NSString stringWithFormat:@"%s", field1];
+    //appDelegate.sfmPageController.activityDate = [array2 objectAtIndex:(ownerCellIndexPath.row)];
+    //appDelegate.sfmPageController.accountId = @"";
     appDelegate.sfmPageController.topLevelId = nil;
-       NSLog(@"%s",filedForName);
-        
+    appDelegate.sfmPageController.recordId = localId;    
     [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
-    [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
+    [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
     [appDelegate.sfmPageController.detailView view];
     [self presentModalViewController:appDelegate.sfmPageController animated:YES];
     [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];
-    
-    
-    //sahana - offline
     appDelegate.didsubmitModelView = FALSE;
-    
     [appDelegate.sfmPageController release];
-    */
+
+    [ fullMainDelegate DismissSplitViewControllerByLaunchingSFMProcess];
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 - (void)viewDidUnload
@@ -191,6 +166,7 @@
 }
 -(void) dealloc
 {
+    [objectName release];
     [tableHeaderArray release];
     [data release];
     [super dealloc];
