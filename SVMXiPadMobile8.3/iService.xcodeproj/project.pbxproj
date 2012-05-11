@@ -804,6 +804,7 @@
 		8B97C7F415594C5C004914F7 /* SBJsonUTF8Stream.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B97C7EB15594C5C004914F7 /* SBJsonUTF8Stream.m */; };
 		A8A8EECA155CB9AD00F43F67 /* OnlineRecord.png in Resources */ = {isa = PBXBuildFile; fileRef = A8A8EEC9155CB9AD00F43F67 /* OnlineRecord.png */; };
 		A8A8EECD155CB9E100F43F67 /* SFM-Screen-Disclosure-Button-Gray.png in Resources */ = {isa = PBXBuildFile; fileRef = A8A8EECC155CB9E100F43F67 /* SFM-Screen-Disclosure-Button-Gray.png */; };
+		A8A8EED3155CC13600F43F67 /* 8.png in Resources */ = {isa = PBXBuildFile; fileRef = A8A8EED2155CC13600F43F67 /* 8.png */; };
 		A8B8DA1C1534281F008BBB96 /* ProductManual-Background.png in Resources */ = {isa = PBXBuildFile; fileRef = A8B8DA1B1534281F008BBB96 /* ProductManual-Background.png */; };
 		A8FBA65A155A503600F52346 /* DataBase.plist in Resources */ = {isa = PBXBuildFile; fileRef = A8FBA63F155A503600F52346 /* DataBase.plist */; };
 		A8FBA65B155A503600F52346 /* DetailViewControllerForSFM.m in Sources */ = {isa = PBXBuildFile; fileRef = A8FBA641155A503600F52346 /* DetailViewControllerForSFM.m */; };
@@ -1990,6 +1991,7 @@
 		8D1107310486CEB800E47090 /* iService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "iService-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 		A8A8EEC9155CB9AD00F43F67 /* OnlineRecord.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OnlineRecord.png; sourceTree = "<group>"; };
 		A8A8EECC155CB9E100F43F67 /* SFM-Screen-Disclosure-Button-Gray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SFM-Screen-Disclosure-Button-Gray.png"; sourceTree = "<group>"; };
+		A8A8EED2155CC13600F43F67 /* 8.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 8.png; sourceTree = "<group>"; };
 		A8B8DA1B1534281F008BBB96 /* ProductManual-Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ProductManual-Background.png"; sourceTree = "<group>"; };
 		A8FBA63F155A503600F52346 /* DataBase.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DataBase.plist; sourceTree = "<group>"; };
 		A8FBA640155A503600F52346 /* DetailViewControllerForSFM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailViewControllerForSFM.h; sourceTree = "<group>"; };
@@ -3118,6 +3120,7 @@
 				3E34674113E95C4C00B5790F /* 3.png */,
 				3E34674213E95C4C00B5790F /* 4.png */,
 				3E34674313E95C4C00B5790F /* 5.png */,
+				A8A8EED2155CC13600F43F67 /* 8.png */,
 				3E34674413E95C4C00B5790F /* dashboard-box-cloud-bg.png */,
 				3E34674513E95C4C00B5790F /* dashboard-box-dividers.png */,
 				3E34674613E95C4C00B5790F /* dashboard-chatter-icon.png */,
@@ -6237,6 +6240,7 @@
 				A8FBA66B155A503600F52346 /* SFMResultMasterViewController.xib in Resources */,
 				A8A8EECA155CB9AD00F43F67 /* OnlineRecord.png in Resources */,
 				A8A8EECD155CB9E100F43F67 /* SFM-Screen-Disclosure-Button-Gray.png in Resources */,
+				A8A8EED3155CC13600F43F67 /* 8.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6490,7 +6494,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = iService_Prefix.pch;
 				GCC_THUMB_SUPPORT = NO;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = (
 					/usr/lib,
 					/usr/include/libxml2,
@@ -6526,7 +6530,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = iService_Prefix.pch;
 				GCC_THUMB_SUPPORT = NO;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = (
 					/usr/lib,
 					/usr/include/libxml2,
@@ -6587,7 +6591,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = iService_Prefix.pch;
 				GCC_THUMB_SUPPORT = NO;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = (
 					/usr/lib,
 					/usr/include/libxml2,
