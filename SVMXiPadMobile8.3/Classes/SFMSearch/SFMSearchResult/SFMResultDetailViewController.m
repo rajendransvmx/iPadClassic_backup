@@ -188,18 +188,22 @@
     UIButton * button = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 40)] autorelease];
     NSString *objname=[[tableDataArray objectAtIndex:indexPath.section ] objectForKey:@"ObjectName"];
     NSLog(@"objname =%@",objname);
+    objname = [appDelegate.dataBase getApiNameFromFieldLabel:objname];
     char *field1;
     NSMutableString * queryStatement1 = [[NSMutableString alloc]initWithCapacity:0];
     queryStatement1 =[NSMutableString stringWithFormat:@"Select process_id from SFProcess where object_api_name is  '%@' and process_type is 'VIEWRECORD'",objname]; 
     sqlite3_stmt * labelstmt;
     const char *selectStatement = [queryStatement1 UTF8String];
-        
+    BOOL processAvailbleForRecord = NO;
     if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &labelstmt, nil) == SQLITE_OK )
     {
-        while(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW){
+        if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
+        {
             field1 = (char *) synchronized_sqlite3_column_text(labelstmt,0);           
-            appDelegate.sfmPageController.processId=[NSString stringWithFormat:@"%s",field1];
-             NSLog(@"%@",appDelegate.sfmPageController.processId);
+            if(field1 != nil)
+            {
+                processAvailbleForRecord = YES;
+            }
                       
         }
     }
@@ -218,9 +222,17 @@
                 if(indexPath.row < [cellArray count])
                     labelForObjects.text=[[cellArray  objectAtIndex:indexPath.row] objectForKey:[tableHeader objectAtIndex:j]];
                 labelForObjects.textAlignment = UITextAlignmentLeft;
-                [button setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"] 
-                                  forState:UIControlStateNormal];
-                [button addTarget:self action:@selector(accessoryButtonTapped:)  forControlEvents:UIControlEventTouchUpInside];
+                if(processAvailbleForRecord)
+                {
+                    [button setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"] 
+                                      forState:UIControlStateNormal];
+                    [button addTarget:self action:@selector(accessoryButtonTapped:)  forControlEvents:UIControlEventTouchUpInside];
+                }
+                else
+                {
+                    [button setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button-Gray.png"] 
+                                      forState:UIControlStateNormal];
+                }
 
                 [cell addSubview:labelForObjects];
                 [labelForObjects release];
@@ -268,9 +280,18 @@
             [cell addSubview:labelForObjects];
             [labelForObjects release];
         }
+        if(processAvailbleForRecord)
+        {
         [button setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"] 
                           forState:UIControlStateNormal];
         [button addTarget:self action:@selector(accessoryButtonTapped:)  forControlEvents:UIControlEventTouchUpInside];
+        }
+        else
+        {
+            [button setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button-Gray.png"] 
+                              forState:UIControlStateNormal];
+
+        }
     }
     cell.accessoryView = button;
     cell.backgroundColor = [UIColor clearColor];
