@@ -221,10 +221,6 @@
     
     for(NSString *  str in allkeys)
     {   
-        /*if ([str isEqualToString:INSERT_SUCCESS])
-        {
-            [dict setObject:success_flag forKey:INSERT_SUCCESS];
-        }*/
         if ([str isEqualToString:REQUEST_ID])
         {
             [dict setObject:req_id forKey:REQUEST_ID];
@@ -271,24 +267,7 @@ last_sync_time:(NSString *)last_sync_time
     NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST];
     NSArray * allkeys= [dict allKeys];
     
-    //get the current datetime from client side 
-    
-    //sahana30April
- //   NSDate * current_dateTime = [NSDate date];                                    
-    
-   /* NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd hh:mm:ss"];
-   
-    
-    if([operation_type isEqualToString:REQUEST])
-    {
-    }
-    else if ([operation_type isEqualToString:RESPONSE])
-    {
-        NSTimeZone *gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
-        [dateFormatter setTimeZone  :gmt];
-    }*/
-        
+           
     NSString * current_gmt_time = [self requestSnapShot] ;//[dateFormatter stringFromDate:current_dateTime];
 
     
@@ -370,7 +349,6 @@ last_sync_time:(NSString *)last_sync_time
         }
     }
       
-    //if([dict writeToFile:plistPath_SYNHIST atomically:YES];
     [dict writeToFile:plistPath_SYNHIST atomically:YES];
     [dict release];                    //sahana30April
 }
@@ -428,7 +406,6 @@ last_sync_time:(NSString *)last_sync_time
     [appDelegate.databaseInterface  updateSyncRecordsIntoLocalDatabase];
     
     [appDelegate.databaseInterface cleartable:SYNC_RECORD_HEAP];
-    //[appDelegate.databaseInterface cleartable:SYNC_ERROR_CONFLICT];
     appDelegate.speacialSyncIsGoingOn  = FALSE;
     BOOL conflict_exists = [appDelegate.databaseInterface getConflictsStatus];
     if(conflict_exists)
@@ -476,9 +453,6 @@ last_sync_time:(NSString *)last_sync_time
         [refreshModalStatusButton showModalSyncStatus];
         [manualDataSyncUIDelegate refreshdataSyncUI];
     }
-    
-    //refresh the DataSYNC_UI
-   // [manualDataSyncUIDelegate refreshdataSyncUI];
     [autoreleasePool release];
 }
 
@@ -632,7 +606,6 @@ last_sync_time:(NSString *)last_sync_time
     svmxc_client.clientType = @"iPad";
     [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
     [svmxc_client.clientInfo addObject:@"R4B2"];
-    //[client_listMap.valueList addObject:svmxc_client];
     
     [sfmRequest addClientInfo:svmxc_client];
     [datasync setRequest:sfmRequest];
@@ -695,10 +668,9 @@ last_sync_time:(NSString *)last_sync_time
     
     [self generateRequestId];
     
-   // [self checkdownloadcriteria];
     if(dcobjects_incrementalSync != nil)
     {
-     //   [dcobjects_incrementalSync release];
+    //[dcobjects_incrementalSync release];
         dcobjects_incrementalSync = nil;
     }
   
@@ -709,7 +681,7 @@ last_sync_time:(NSString *)last_sync_time
     
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (!appDelegate.isInternetConnectionAvailable || appDelegate.Incremental_sync_status ==GET_DELETE_DONE || appDelegate.incrementalSync_Failed == TRUE)
         {
             break;
         }
@@ -722,14 +694,6 @@ last_sync_time:(NSString *)last_sync_time
         return;
     }
     
-    
-    if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
-    {
-        appDelegate.SyncStatus = SYNC_GREEN;
-        [refreshSyncButton showSyncStatusButton];
-        [refreshModalStatusButton showModalSyncStatus];
-        return;
-    }
     
     [self GETDownloadCriteriaRecordsFor:GET_DELETE_DOWNLOAD_CRITERIA];
     
@@ -784,7 +748,7 @@ last_sync_time:(NSString *)last_sync_time
     
     if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
     {
-	 appDelegate.SyncStatus = SYNC_GREEN;
+        appDelegate.SyncStatus = SYNC_GREEN;
          [refreshSyncButton showSyncStatusButton];
          [refreshModalStatusButton showModalSyncStatus];
         return;
@@ -920,7 +884,8 @@ last_sync_time:(NSString *)last_sync_time
     {
         if (!appDelegate.isInternetConnectionAvailable)
         {
-            [appDelegate throwException];
+            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                [MyPopoverDelegate performSelector:@selector(throwException)];
             break;
         }
         if(appDelegate.Incremental_sync_status == GET_UPDATE_DC_DONE || appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
@@ -2407,114 +2372,8 @@ last_sync_time:(NSString *)last_sync_time
 }
 
 #pragma mark DataSync
-- (void) dataSyncWithEventName:(NSString *)eventName eventType:(NSString *)eventType values:(NSMutableArray *)values
-{
-    [INTF_WebServicesDefServiceSvc initialize];
-    
-    INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
-    sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
-    
-    INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
-    callOptions.client = nil;
-    
-    INTF_WebServicesDefServiceSvc_DebuggingHeader * debuggingHeader = [[[INTF_WebServicesDefServiceSvc_DebuggingHeader alloc] init] autorelease];
-    debuggingHeader.debugLevel = 0;
-    
-    INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * allowFieldTruncationHeader = [[[INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader alloc] init] autorelease];
-    allowFieldTruncationHeader.allowFieldTruncation = NO;
-    
-    INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
-    
-    
-    INTF_WebServicesDefServiceSvc_INTF_DataSync_WS * dataSync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] 
-                                                                 autorelease];
-    
-    INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] 
-                                                                  autorelease];
-    
-    INTF_WebServicesDefServiceSvc_SVMXClient * client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
-    
-    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_startTime =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
-    SVMXCMap_startTime.key  = @"RANGE_START";
-    SVMXCMap_startTime.value = [self getSyncTimeStampWithTheIntervalof15days:START_TIME] == nil?@"":[self getSyncTimeStampWithTheIntervalof15days:START_TIME];
-    
-    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_endTime =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
-    SVMXCMap_endTime.key  = @"RANGE_END";
-    SVMXCMap_endTime.value = [self getSyncTimeStampWithTheIntervalof15days:END_TIME]== nil?@"":[self getSyncTimeStampWithTheIntervalof15days:END_TIME];
 
-    [sfmRequest.valueMap addObject:SVMXCMap_startTime];
-    [sfmRequest.valueMap addObject:SVMXCMap_endTime];
-    
-    client.clientType = @"iPad";
-    [client.clientInfo addObject:@"OS:iPadOS"];
-    [client.clientInfo addObject:@"R4B2"];
-    
-    sfmRequest.eventName = eventName;
-    sfmRequest.eventType = eventType;
-    
-    sfmRequest.userId = [appDelegate.loginResult userId];
-    sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
-    sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
-    
-    [sfmRequest addClientInfo:client];
-    [dataSync setRequest:sfmRequest];
-    //SFM Search
-    if([eventName isEqualToString:@"SFM_SEARCH"] && [eventType isEqualToString:@"SEARCH_RESULTS"])
-    {
-        INTF_WebServicesDefServiceSvc_SVMXMap * svmxcProcessID =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
-        svmxcProcessID.key  = @"SearchProcessId";
-        if([values objectAtIndex:0] != nil)
-            svmxcProcessID.value = [values objectAtIndex:0];
-        else
-            svmxcProcessID.value = @"";
-        [sfmRequest.valueMap addObject:svmxcProcessID];
-        [svmxcProcessID release];
-        
-        INTF_WebServicesDefServiceSvc_SVMXMap * svmxcCrtieria =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
-        svmxcCrtieria.key  = @"SEARCH_OPERATOR";
-        if([values objectAtIndex:3] != nil)
-            svmxcCrtieria.value = [values objectAtIndex:3];
-        else
-            svmxcCrtieria.value = @"";
-        [sfmRequest.valueMap addObject:svmxcCrtieria];
-        [svmxcCrtieria release];
-        
-        INTF_WebServicesDefServiceSvc_SVMXMap * svmxcUserFilterString =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
-        svmxcUserFilterString.key  = @"KeyWord";
-        if([values objectAtIndex:4] != nil)
-            svmxcUserFilterString.value = [values objectAtIndex:4];
-        else
-            svmxcUserFilterString.value = @"";
-        [sfmRequest.valueMap addObject:svmxcUserFilterString];
-        [svmxcUserFilterString release];
 
-        NSArray *objectList = [values objectAtIndex:1];
-        NSArray *objectResultList = [values objectAtIndex:2];
-        
-        for(int i=0; i<[objectList count]; i++)
-        {
-            NSArray *resultsArray = [objectResultList objectAtIndex:i];            
-            INTF_WebServicesDefServiceSvc_SVMXMap * svmxcObject =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
-            
-            svmxcObject.key  = @"ObjectId";
-            svmxcObject.value = [objectList objectAtIndex:i];
-            for(int j=0; j< [resultsArray count]; j++)
-            {
-                [svmxcObject addValues:[resultsArray objectAtIndex:j]];
-            }
-            [sfmRequest.valueMap addObject:svmxcObject];            
-            [svmxcObject release];
-        }
-    }
-    //SFM Search End
-    [[ZKServerSwitchboard switchboard] doCheckSession];
-    [binding INTF_DataSync_WSAsyncUsingParameters:dataSync 
-                                    SessionHeader:sessionHeader 
-                                      CallOptions:callOptions
-                                  DebuggingHeader:debuggingHeader
-                       AllowFieldTruncationHeader:allowFieldTruncationHeader delegate:self];
-}
 - (void) dataSyncWithEventName:(NSString *)eventName eventType:(NSString *)eventType requestId:(NSString *)requestId
 {
     
@@ -3732,16 +3591,6 @@ last_sync_time:(NSString *)last_sync_time
 {
     int ret;
     //NSLog(@"OPERATION COMPLETED RESPONSE");
-    
-    if (!appDelegate.isInternetConnectionAvailable)
-    {
-        if (appDelegate.SFMPage != nil)
-        {
-            [appDelegate.SFMPage release];
-            appDelegate.SFMPage = nil;
-        }
-        return;
-    }
     
     ret = [[response.bodyParts objectAtIndex:0] isKindOfClass:[SOAPFault class]];
     if (ret)
@@ -5277,17 +5126,6 @@ last_sync_time:(NSString *)last_sync_time
                         }
                     }
                     [self downloadcriteriaplist:dcobjects];
-                    
-                    
-                    
-                  /*  NSAutoreleasePool * autoreleasePool = [[NSAutoreleasePool alloc]init];
-                    SBJsonParser * parser = [[[SBJsonParser alloc] init] autorelease];
-                    NSDictionary * dict = [[parser objectWithString:svmxMap.value] retain];
-                    NSLog(@"%@",dict);
-                    
-                    [self downloadcriteriaplist:dict];
-                    [autoreleasePool release];*/
-
                 }
                 else if ([key isEqualToString:@"PARTIAL_EXECUTED_OBJECT"])
                 {
@@ -5313,9 +5151,7 @@ last_sync_time:(NSString *)last_sync_time
                     {
                         
                         INTF_WebServicesDefServiceSvc_SVMXMap * fieldSvmxMap = [valueMap objectAtIndex:j];
-                        
-                      //  NSString * key = (fieldSvmxMap.key != nil)?(fieldSvmxMap.key):@"";
-                        
+                                            
                         NSString * fieldValue = (fieldSvmxMap.value != nil)?fieldSvmxMap.value:@"";
                         
                         NSMutableArray * values =  [self getIdsFromJsonString:fieldValue];
@@ -5335,7 +5171,6 @@ last_sync_time:(NSString *)last_sync_time
                                     break;
                                 }
                             }
-                            //NSString * sync_type = 
                             if(flag)
                             {
                             
@@ -5384,7 +5219,6 @@ last_sync_time:(NSString *)last_sync_time
             
             [autoreleasePool release];
             
-          //  [self  calculateMemory];
         }
         //sahana incremental Data sync 
         else if ([wsResponse.result.eventName isEqualToString:@"TX_FETCH"])
@@ -5429,7 +5263,6 @@ last_sync_time:(NSString *)last_sync_time
                     }
                     if(flag)
                     {
-                       // NSDictionary * dict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:key, json_record,SF_id,nil] forKeys:[NSArray arrayWithObjects:@"LOCAL_ID",@"JSON_RECORD",@"SF_ID", nil]];
                         NSArray * objects = [[NSArray alloc] initWithObjects:key, json_record,SF_id, nil];
                         NSDictionary * dict = [[NSDictionary alloc] initWithObjects:objects forKeys:keys_];
                         NSMutableArray * array1 = [record_dict objectForKey:object_name];
@@ -5522,7 +5355,6 @@ last_sync_time:(NSString *)last_sync_time
                                             break;
                                         }
                                     }
-                                    //NSString * sync_type = 
                                     if(flag)
                                     {
                                         NSDictionary * dict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:local_id, @"",sf_id,event_name,record_type,nil] forKeys:[NSArray arrayWithObjects:@"LOCAL_ID",@"JSON_RECORD",@"SF_ID",@"SYNC_TYPE", @"RECORD_TYPE",nil]];
@@ -5563,7 +5395,6 @@ last_sync_time:(NSString *)last_sync_time
                                     break;
                                 }
                             }
-                            //NSString * sync_type = 
                             if(flag)
                             {
                                 NSDictionary * dict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:local_id, @"",sf_id,event_name,record_type,nil] forKeys:[NSArray arrayWithObjects:@"LOCAL_ID",@"JSON_RECORD",@"SF_ID",@"SYNC_TYPE", @"RECORD_TYPE",nil]];
@@ -5614,13 +5445,6 @@ last_sync_time:(NSString *)last_sync_time
                         {
                             record_type = MASTER;
                         }
-                        
-                        /*  NSMutableArray * errors = record_map.values;//object at index 0 will have the Error String  
-                         
-                         if([errors count] > 0)
-                         {
-                         error_message = [errors objectAtIndex:0];
-                         }*/
                         
                         NSArray * allkeys = [conflict_dict allKeys];
                         BOOL flag = FALSE;
@@ -7499,7 +7323,7 @@ last_sync_time:(NSString *)last_sync_time
             {
                 if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                     [MyPopoverDelegate performSelector:@selector(throwException)];
-                [appDelegate displayNoInternetAvailable];
+                //[appDelegate displayNoInternetAvailable];
                 return ;
             }
             if (didDescribeLayoutReceived)
@@ -9940,8 +9764,8 @@ last_sync_time:(NSString *)last_sync_time
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-    iServiceAppDelegate * appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
-    appDelegate.isInternetConnectionAvailable = NO;
+    iServiceAppDelegate * appDelegate_ = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+    appDelegate_.isInternetConnectionAvailable = NO;
     [[NSNotificationCenter defaultCenter] postNotificationName:kInternetConnectionChanged object:[NSNumber numberWithInt:0] userInfo:nil];
 }
 
