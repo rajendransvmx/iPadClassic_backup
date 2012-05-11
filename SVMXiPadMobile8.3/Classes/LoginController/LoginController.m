@@ -790,7 +790,6 @@
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
         [self enableControls];
         return;
     }
@@ -842,7 +841,6 @@
         if (!appDelegate.isInternetConnectionAvailable)
         {
             [activity stopAnimating];
-            [appDelegate displayNoInternetAvailable];
             break;
         }
         if (isSampleDataButtonChecked)
@@ -1211,7 +1209,7 @@
 		if ( [nibItem isKindOfClass: [UIView class]])
 		{
 			customView = (LoginController *) nibItem;
-            // NSLog(@"%@", [customView description]);
+        
 			if ([[customView description] isEqualToString:toOrientation])
 				break; // OneTeamUS We have a winner
 			else
@@ -1287,7 +1285,6 @@
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
         [self enableControls];
         return;
     }
@@ -1344,7 +1341,6 @@
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
         [self enableControls];
         return;
     }
@@ -1373,7 +1369,6 @@
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
         [self enableControls];
         return;
     }
@@ -1389,7 +1384,6 @@
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
         [self enableControls];
         return;
     }
@@ -1427,7 +1421,6 @@
         if (!appDelegate.isInternetConnectionAvailable)
         {
             [activity stopAnimating];
-            [appDelegate displayNoInternetAvailable];
             [self enableControls];
             return;
         }
@@ -1474,7 +1467,6 @@
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
         [self enableControls];
         return;
     }
@@ -1488,7 +1480,6 @@
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
         [self enableControls];
         return;
     }
@@ -1513,7 +1504,6 @@
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
         [self enableControls];
         return;
     }
@@ -1536,7 +1526,6 @@
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
         [self enableControls];
         return;
     }
@@ -1574,7 +1563,6 @@
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
         [self enableControls];
         return;
     }
@@ -1603,7 +1591,6 @@
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
         [self enableControls];
         return;
     }
@@ -1736,7 +1723,6 @@
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
         [self enableControls];
         return;
     }
@@ -1749,7 +1735,7 @@
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
+        //[appDelegate displayNoInternetAvailable];
         [self enableControls];
         return;
     }
