@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "SFMFullResultViewController.h"
 @class SFMResultMasterViewController;
 @class iServiceAppDelegate;
 
@@ -16,7 +16,7 @@
 - (void) DismissSplitViewController;
 @end
 
-@interface SFMResultDetailViewController : UIViewController <UITableViewDataSource,UITableViewDelegate>
+@interface SFMResultDetailViewController : UIViewController <UITableViewDataSource,UITableViewDelegate,SFMFullResultViewControllerDelegate>
 {
   iServiceAppDelegate * appDelegate;
 
@@ -31,7 +31,8 @@
 - (NSDictionary *) getResultPlist:(NSString *)objectName withConfiguration:(NSArray *)config;
 - (BOOL) isRecordFound:(NSString *)value ;
 - (void) createTable;
-- (void) showObjects:(NSArray *)tableData;
+- (void) showHelp;
+- (void) showObjects:(NSArray *)tableData forAllObjects:(BOOL) makeOnlineSearch;
 - (void) accessoryButtonTapped:(id)sender;
 - (NSMutableArray *)getResultsForObject:(NSString *)object withConfigData:(NSDictionary *)dataForObject;
 - (NSArray *) constructTableHeader : (NSArray *)data;

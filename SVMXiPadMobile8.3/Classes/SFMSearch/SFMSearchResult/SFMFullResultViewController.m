@@ -16,7 +16,8 @@
 @implementation SFMFullResultViewController
 @synthesize data;
 @synthesize actionButton,detailButton;
-
+@synthesize isOnlineRecord;
+@synthesize fullMainDelegate;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -37,7 +38,15 @@
     CGRect rightFrame = CGRectMake(240, 40, 200, 60);
     [actionButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Done-Back-Button.png"] forState:UIControlStateNormal];
     [detailButton setFrame:CGRectMake(500, 0, 40, 40)];
-    [detailButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"] forState:UIControlStateNormal];
+    
+    if(self.isOnlineRecord)
+    {
+        [detailButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button-Gray.png"] forState:UIControlStateNormal];
+    }
+    else 
+    {
+        [detailButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"] forState:UIControlStateNormal];
+    }
     NSArray *allKeys = [data allKeys];
     
     for(id field in allKeys)
@@ -71,8 +80,8 @@
 
 - (void) accessoryButtonTapped:(id)sender
 { 
- 
-    
+    [ fullMainDelegate DismissSplitViewControllerByLaunchingSFMProcess];
+    [self dismissModalViewControllerAnimated:YES];
 //    UITableViewCell *ownerCell = (UITableViewCell*)[sender superview];
 //    NSIndexPath *ownerCellIndexPath;
 //    if (ownerCell != nil)
@@ -82,7 +91,7 @@
 //        NSLog(@"Accessory in index path is tapped. Index path = %d", ownerCellIndexPath.row);
 //    }
     
-    
+    /*
     NSString *filedName=@"";
     char *field,*filedForName;
     NSLog(@"Display Values = %@",data);
@@ -160,7 +169,7 @@
     appDelegate.didsubmitModelView = FALSE;
     
     [appDelegate.sfmPageController release];
-    
+    */
 }
 
 - (void)viewDidUnload

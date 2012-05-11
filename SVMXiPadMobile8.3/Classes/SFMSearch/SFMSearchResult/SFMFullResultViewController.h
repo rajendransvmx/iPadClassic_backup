@@ -9,13 +9,19 @@
 #import <UIKit/UIKit.h>
 #import "iServiceAppDelegate.h"
 #define SectionHeaderHeight      45 
+@protocol SFMFullResultViewControllerDelegate
+@optional
+- (void) DismissSplitViewControllerByLaunchingSFMProcess;
+@end
 
 @class iServiceAppDelegate;
-@interface SFMFullResultViewController : UIViewController
+@interface SFMFullResultViewController : UIViewController<SFMFullResultViewControllerDelegate>
 {
     iServiceAppDelegate * appDelegate;
 }
 @property (nonatomic, retain) NSDictionary *data;
+@property (nonatomic, assign) BOOL isOnlineRecord;
+@property (nonatomic, assign) id <SFMFullResultViewControllerDelegate> fullMainDelegate;
 @property(nonatomic,retain) IBOutlet UIButton *actionButton,*detailButton;
 - (IBAction)dismissView:(id)sender;
 - (IBAction) accessoryButtonTapped:(id)sender;

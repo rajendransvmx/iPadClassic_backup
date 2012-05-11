@@ -37,6 +37,15 @@
     }
     return self;
 }
+- (void) showHelp
+{
+    HelpController * help = [[HelpController alloc] initWithNibName:@"HelpController" bundle:nil];
+    help.modalPresentationStyle = UIModalPresentationFullScreen;
+    help.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    help.helpString = @"create-new.html";  
+    [self presentModalViewController:help animated:YES];
+    [help release];
+}
 
 - (void)viewDidLoad
 {
@@ -52,7 +61,7 @@
     self.navigationItem.leftBarButtonItem = backBarButtonItem;
     UIButton * helpButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 33, 31)] autorelease];
     [helpButton setBackgroundImage:[UIImage imageNamed:@"iService-Screen-Help"] forState:UIControlStateNormal];
-    [helpButton addTarget:self action:@selector(insertNewObject:) forControlEvents:UIControlEventTouchUpInside];
+    [helpButton addTarget:self action:@selector(showHelp) forControlEvents:UIControlEventTouchUpInside];
     [helpButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     UIBarButtonItem * addButton = [[[UIBarButtonItem alloc] initWithCustomView:helpButton] autorelease];
     self.navigationItem.rightBarButtonItem = addButton;
@@ -148,7 +157,7 @@
         int onlineCount = 0;
         for(NSDictionary *dict in onlineDataArray)
         {
-            NSString *objectId = [dict objectForKey:@"ObjectId"];
+            NSString *objectId = [dict objectForKey:@"SearchObjectId"];
             if([objectId isEqualToString:sectionObjectId])
                 onlineCount++;
         }
@@ -199,43 +208,89 @@
         }
     }
 
-    if( [appDelegate.sfmPageController.processId isEqualToString:@"IPAD-012"]){
-        [button setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"] 
-                          forState:UIControlStateNormal];
-
-            [button addTarget:self action:@selector(accessoryButtonTapped:)  forControlEvents:UIControlEventTouchUpInside];
-    }else{
-        
-        [button setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"] 
-                          forState:UIControlStateNormal];
-      
-
-    }
-
-    cell.accessoryView = button;
     NSArray *tableHeader = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"TableHeader"];
-    for(int j=0;j<[tableHeader count];j++)
-    {
-        labelForObjects=[[UILabel alloc]initWithFrame:CGRectMake((5+j*(640/no_of_fields)),0,210, 48)]; 
-        labelForObjects.backgroundColor = [UIColor clearColor];      
-        labelForObjects.font = [UIFont boldSystemFontOfSize:18];  
+    
+    if([self.masterView.searchFilterSwitch isOn])
+    {   
         if(indexPath.row < [cellArray count])
-            labelForObjects.text=[[cellArray  objectAtIndex:indexPath.row] objectAtIndex:j];
-        else
         {
-            //NSArray *onlineCellArray = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"OnlineResults"];
+            for(int j=0;j<[tableHeader count] && j < no_of_fields;j++)
+            {
+                labelForObjects=[[UILabel alloc]initWithFrame:CGRectMake((20+j*(640/no_of_fields)),0,210, 48)]; 
+                labelForObjects.backgroundColor = [UIColor clearColor];      
+                labelForObjects.font = [UIFont boldSystemFontOfSize:18];  
+                if(indexPath.row < [cellArray count])
+                    labelForObjects.text=[[cellArray  objectAtIndex:indexPath.row] objectForKey:[tableHeader objectAtIndex:j]];
+                labelForObjects.textAlignment = UITextAlignmentLeft;
+                [button setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"] 
+                                  forState:UIControlStateNormal];
+                [button addTarget:self action:@selector(accessoryButtonTapped:)  forControlEvents:UIControlEventTouchUpInside];
+
+                [cell addSubview:labelForObjects];
+                [labelForObjects release];
+            }
+        }
+        else 
+        {
+            //save online dict data array in mutable array of mutable dict
+            NSMutableArray *onlineDataCopy = onlineDataArray ; 
             NSDictionary *sectionDict = [tableDataArray objectAtIndex:indexPath.section];
             NSString *sectionObjectId = [sectionDict objectForKey:@"ObjectId"];
-            NSLog(@"Online Cell Array = %@",onlineDataArray);
-            if([[[onlineDataArray objectAtIndex:indexPath.row] objectForKey:@"SearchObjectId"] isEqualToString:sectionObjectId])
-                labelForObjects.text=[[onlineDataArray objectAtIndex:indexPath.row] objectForKey:[tableHeader objectAtIndex:j]];
+            for(NSMutableDictionary *mDict in onlineDataCopy)
+            {
+                NSString *searchObjectId = [mDict objectForKey:@"SearchObjectId"];
+                NSString *isVisited = [mDict objectForKey:@"isVisited"];
+                if(!isVisited)
+                {
+                    if([searchObjectId isEqualToString:sectionObjectId])
+                    {
+                        for(int j=0;j<[tableHeader count] && j < no_of_fields;j++)
+                        {
+                            labelForObjects=[[UILabel alloc]initWithFrame:CGRectMake((20+j*(640/no_of_fields)),0,210, 48)]; 
+                            labelForObjects.backgroundColor = [UIColor clearColor];      
+                            labelForObjects.font = [UIFont boldSystemFontOfSize:18];  
+                            labelForObjects.text=[mDict objectForKey:[tableHeader objectAtIndex:j]];
+                            labelForObjects.textAlignment = UITextAlignmentLeft;
+                            
+                            [cell addSubview:labelForObjects];
+                            [labelForObjects release];
+                        }
+
+                        //Save the data in Dict
+                        [mDict setObject:@"1" forKey:@"isVisited"];
+                        // Online Image Indicator
+                        UIImage *onlineImage = [UIImage imageNamed:@"OnlineRecord.png"];
+                        UIImageView *onlineImgView  = [[[UIImageView alloc] initWithImage:onlineImage] autorelease];
+                        [onlineImgView setFrame:CGRectMake(0, 0,10, 50)];
+                        [cell addSubview:onlineImgView];
+                        [button setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button-Gray.png"] 
+                                          forState:UIControlStateNormal];
+                        break;
+                    }
+                }
+            }
+            onlineDataArray = onlineDataCopy;
         }
-        labelForObjects.textAlignment = UITextAlignmentLeft;
-        
-        [cell addSubview:labelForObjects];
-        [labelForObjects release];
-    }  
-    
+    }
+    else 
+    {
+        for(int j=0;j<[tableHeader count] && j < no_of_fields;j++)
+        {
+            labelForObjects=[[UILabel alloc]initWithFrame:CGRectMake((20+j*(640/no_of_fields)),0,210, 48)]; 
+            labelForObjects.backgroundColor = [UIColor clearColor];      
+            labelForObjects.font = [UIFont boldSystemFontOfSize:18];  
+            if(indexPath.row < [cellArray count])
+                labelForObjects.text=[[cellArray  objectAtIndex:indexPath.row] objectForKey:[tableHeader objectAtIndex:j]];
+            labelForObjects.textAlignment = UITextAlignmentLeft;
+            
+            [cell addSubview:labelForObjects];
+            [labelForObjects release];
+        }
+        [button setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"] 
+                          forState:UIControlStateNormal];
+        [button addTarget:self action:@selector(accessoryButtonTapped:)  forControlEvents:UIControlEventTouchUpInside];
+    }
+    cell.accessoryView = button;
     cell.backgroundColor = [UIColor clearColor];
 
     return cell;
@@ -255,26 +310,47 @@
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSArray *cellArray = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"Values"];
-    //NSArray *onlineCellArray = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"OnlineResults"];
     NSDictionary *fullDataDict;
-    if(([cellArray count] == 0) || ([cellArray count] < indexPath.row))
+    NSArray *cellArray = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"Values"];
+    NSString *objectId = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"ObjectId"];
+    SFMFullResultViewController *resultViewController = [[SFMFullResultViewController alloc] initWithNibName:@"SFMFullResultViewController" bundle:nil];
+    resultViewController.fullMainDelegate = self;
+    if([self.masterView.searchFilterSwitch isOn])
     {
-        fullDataDict = [onlineDataArray objectAtIndex:indexPath.row];
+        if(indexPath.row < [cellArray count])
+        {
+            fullDataDict = [cellArray objectAtIndex:indexPath.row]; 
+            resultViewController.isOnlineRecord = NO;
+        }
+        else 
+        {
+            int count = 0;
+            int onlineIndex = [cellArray count] - indexPath.row;
+            //fullDataDict = [onlineDataArray objectAtIndex:(count-indexPath.row)];
+            for(NSDictionary *dict in onlineDataArray)
+            {
+                NSString *searchObjectId = [dict objectForKey:@"SearchObjectId"];
+                if( ([searchObjectId isEqualToString:objectId]) && (count == onlineIndex))
+                {
+                    fullDataDict = dict;
+                    resultViewController.isOnlineRecord = YES;
+                    break;
+                }
+            }
+        }
     }
-    else
+    else 
     {
         fullDataDict = [cellArray objectAtIndex:indexPath.row];
+        resultViewController.isOnlineRecord = NO;
+        NSLog(@"Data = %@",fullDataDict);
     }
-    NSLog(@"Data = %@",fullDataDict);
     
-     SFMFullResultViewController *resultViewController = [[SFMFullResultViewController alloc] initWithNibName:@"SFMFullResultViewController" bundle:nil];
      resultViewController.modalPresentationStyle = UIModalPresentationFormSheet;
      resultViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;    
     resultViewController.data = fullDataDict;
      [self presentModalViewController:resultViewController animated:YES];
      [resultViewController release];
-         
 }
 
 #pragma mark - Custom Methods
@@ -494,6 +570,8 @@
     NSMutableArray *results = [[NSMutableArray alloc] init];
     NSArray *searchableArray = [dataForObject objectForKey:@"SearchableFields"];
     NSArray *displayArray = [dataForObject objectForKey:@"DisplayFields"];
+    if(appDelegate == nil)
+        appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     NSMutableArray *result = [[appDelegate.dataBase getResults:object withConfigData:dataForObject] retain];
     for(NSDictionary *dict in result)
     {   
@@ -521,7 +599,7 @@
     [result release];
     return [results autorelease];
 }
-- (void) showObjects:(NSArray *)sections
+- (void) showObjects:(NSArray *)sections forAllObjects:(BOOL) makeOnlineSearch
 {
     NSLog(@"SFM Config = %@",sfmConfigName);
     NSLog(@"Table Array = %@",sections);
@@ -556,7 +634,7 @@
         [tableHeader release];
         [dict release];          
     }
-    if([self.masterView.searchFilterSwitch isOn])
+    if([self.masterView.searchFilterSwitch isOn] && makeOnlineSearch)
     {
         //Make a WebService Call 
         NSLog(@"Process ID = %@",self.masterView.processId);
@@ -573,23 +651,33 @@
         for(int j=0;j<[tableDataArray count]; j++)
         {
             NSArray *objectResultsArray = [[tableDataArray objectAtIndex:j] objectForKey:@"Values"];
-            [objectResultList addObject:objectResultsArray];
+            NSMutableArray *objResultArray = [[NSMutableArray alloc] init];
+            for(NSDictionary *dict in objectResultsArray)
+            {
+                NSString *recordId = [dict objectForKey:@"Id"];                
+                if(!recordId)
+                    recordId = @"";
+                [objResultArray addObject:recordId];                                       
+            }
+            [objectResultList addObject:objResultArray];
+            [objResultArray release];
         }
         
+        /*
         NSArray  *subResultList1 = [NSArray arrayWithObjects:@"a0s70000001H8hk", nil];
         NSArray  *subResultList2 = [NSArray arrayWithObjects:@"", nil];
         NSArray  *subResultList3 = [NSArray arrayWithObjects:@"5007000000Ly2Tz", nil];
         NSArray  *subResultList4 = [NSArray arrayWithObjects:@"", nil];
         NSArray  *resultList = [NSArray arrayWithObjects:subResultList1,subResultList2,subResultList3,subResultList4, nil];
-       
+       */
         
         NSString *criteria = self.masterView.searchCriteriaString;
-       // NSString *userFilterString = self.masterView.searchData;
-         NSString *userFilterString = @"acc";
+        NSString *userFilterString = self.masterView.searchData;
+        // NSString *userFilterString = @"acc";
         [ searchResultData addObject:self.masterView.processId];
         [ searchResultData addObject:objectList];
-        //[ searchResultData addObject:objectResultList];
-        [ searchResultData addObject:resultList];
+        [ searchResultData addObject:objectResultList];
+        //[ searchResultData addObject:resultList];
         [ searchResultData addObject:criteria];
         [ searchResultData addObject:userFilterString];
         
@@ -602,17 +690,22 @@
         {                
             if (appDelegate.wsInterface.didOpComplete == TRUE)
                 break;   
+            if (!appDelegate.isInternetConnectionAvailable)
+            {
+                break;
+            }
+
             NSLog(@"Retreiving Online Reccords");
         }
         [activityIndicator stopAnimating];
         [objectResultList release];
         [objectList release];
         [searchResultData release];
+        NSLog(@"Online Data = %@",appDelegate.onlineDataArray);
+        onlineDataArray = [appDelegate.onlineDataArray retain];
     }
 
     NSLog(@"Table Data = %@",tableDataArray);
-    NSLog(@"Online Data = %@",appDelegate.onlineDataArray);
-    onlineDataArray = [appDelegate.onlineDataArray retain];
     /*
     for(int i=0; i<[tableDataArray count]; i++)
     {
@@ -711,6 +804,40 @@
     
     [appDelegate.sfmPageController release];
 
+}
+#pragma mark - SFM Full Result View Delegate
+- (void) DismissSplitViewControllerByLaunchingSFMProcess
+{
+    NSLog(@"Launch SFM Process");
+
+    
+    if(appDelegate){
+        appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+    }
+    
+    appDelegate.showUI = FALSE;   //btn merge
+    appDelegate.sfmPageController = [[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE];
+    
+    
+    appDelegate.sfmPageController.processId = @"IPAD-012";
+    
+    appDelegate.sfmPageController.objectName = @"SVMXC__Service_Order__c";
+    
+    
+    appDelegate.sfmPageController.accountId = @"";
+    appDelegate.sfmPageController.topLevelId = nil;
+    
+    [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
+    [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
+    [appDelegate.sfmPageController.detailView view];
+    [self presentModalViewController:appDelegate.sfmPageController animated:YES];
+    [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];
+    
+    
+    //sahana - offline
+    appDelegate.didsubmitModelView = FALSE;
+    
+    [appDelegate.sfmPageController release];
 }
 @end
 

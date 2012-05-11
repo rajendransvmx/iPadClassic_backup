@@ -56,9 +56,18 @@
 
 - (void) showHelp
 {
+    /*
     UIAlertView *helpAlert = [[UIAlertView alloc] initWithTitle:@"Help" message:@"Display Help Topics for SFM Search Module" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
     [helpAlert show];
     [helpAlert release];
+     */
+    HelpController * help = [[HelpController alloc] initWithNibName:@"HelpController" bundle:nil];
+    help.modalPresentationStyle = UIModalPresentationFullScreen;
+    help.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    help.helpString = @"create-new.html";  
+    [self presentModalViewController:help animated:YES];
+    [help release];
+
 }
 - (void)viewDidLoad
 {
@@ -166,7 +175,37 @@
     cell.textLabel.text = [[_sfmArray objectAtIndex:indexPath.row] objectForKey:@"SVMXC__Name__c"];
     cell.detailTextLabel.text = [[_sfmArray objectAtIndex:indexPath.row] objectForKey:@"SVMXC__Description__c"];
    // cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
+    
+    UIButton * button = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 100, 60)] autorelease];
+    [button setTitle:@"Search" forState:UIControlStateNormal];
+    [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [button setBackgroundColor:[UIColor lightGrayColor]];
+    [button addTarget:self action:@selector(searchButtonTapped:withEvent:)  forControlEvents:UIControlEventTouchUpInside];
+    cell.accessoryView = button;
+    //[button release];
+     
+    UIImageView * bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM-Screen-Table-Strip.png"]];
+    bgImage.frame = cell.frame;
+    cell.backgroundView = bgImage;
+    [bgImage release];
+
     return cell;
+}
+- (void) searchButtonTapped:(id)sender withEvent:(UIEvent *) event
+{
+    
+    NSLog(@"Button Tapped");
+    UIButton *button = sender;
+     /*
+    CGPoint correctedPoint = [button convertPoint:button.bounds.origin toView:self.detailTable]; 
+    NSIndexPath *indexPath = [self.detailTable indexPathForRowAtPoint:correctedPoint]; 
+    NSLog(@"Button tapped in row %d", indexPath.row);
+    */
+    NSIndexPath * indexPath = [self.detailTable indexPathForRowAtPoint: [[[event touchesForView:button] anyObject] locationInView: self.detailTable]];
+    if ( indexPath == nil )
+        return;
+    [self  tableView:self.detailTable didSelectRowAtIndexPath:indexPath];
+    //[self.tableView.delegate tableView: self.tableView accessoryButtonTappedForRowWithIndexPath: indexPath];
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {

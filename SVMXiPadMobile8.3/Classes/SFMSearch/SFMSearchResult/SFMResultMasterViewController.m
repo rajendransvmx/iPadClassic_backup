@@ -203,7 +203,7 @@
     lastSelectedIndexPath = [indexPath retain];
 
     [resultDetailView setSfmConfigName:tableHeader];
-    [resultDetailView showObjects:[NSArray arrayWithObject:[tableArray objectAtIndex:indexPath.row]]];
+    [resultDetailView showObjects:[NSArray arrayWithObject:[tableArray objectAtIndex:indexPath.row]] forAllObjects:NO];
 }
 
 - (UIView *) tableView:(UITableView *)_tableView viewForHeaderInSection:(NSInteger)section
@@ -213,7 +213,7 @@
 
     sectionTitle = tableHeader;
     // Create label with section title
-    UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(10, 8, 170, 30)] autorelease];//y was  6
+    UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(10, 8, 280, 30)] autorelease];//y was  6
     
     label.backgroundColor = [UIColor clearColor];
    label.textColor = [UIColor whiteColor];
@@ -255,7 +255,7 @@
     lastSelectedIndexPath = 0;
 
     [resultDetailView setSfmConfigName:tableHeader];
-    [resultDetailView showObjects:tableArray];
+    [resultDetailView showObjects:tableArray forAllObjects:YES];
 }
 - (IBAction)refineSearch:(id)sender
 {

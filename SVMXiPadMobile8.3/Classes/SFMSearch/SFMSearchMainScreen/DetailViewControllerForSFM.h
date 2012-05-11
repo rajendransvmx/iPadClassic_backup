@@ -17,6 +17,7 @@
 @property (nonatomic, retain) IBOutlet UITableView *detailTable;
 @property (nonatomic, assign) id<DetailViewControllerMainDelegate> splitViewDelegate;
 @property (nonatomic, retain) MasterViewController *masterView;
+- (void) searchButtonTapped:(id)sender withEvent:(UIEvent *) event;
 @end
 @protocol DetailViewControllerMainDelegate
 @optional
