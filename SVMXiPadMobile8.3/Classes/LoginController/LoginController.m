@@ -344,6 +344,8 @@
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
+        appDelegate.shouldShowConnectivityStatus = YES;
+        [appDelegate displayNoInternetAvailable];
         [self enableControls];
         return;
     } 
@@ -357,6 +359,7 @@
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [activity stopAnimating];
+        appDelegate.shouldShowConnectivityStatus = YES;
         [appDelegate displayNoInternetAvailable];
         [self enableControls];
         return;
@@ -376,7 +379,12 @@
             return;
         }
         if (!appDelegate.isInternetConnectionAvailable)
+        {
+            appDelegate.shouldShowConnectivityStatus = YES;
+            [appDelegate displayNoInternetAvailable];
+            [self enableControls];
             break;
+        }
 
         
     }
@@ -650,9 +658,9 @@
   
     if (lr == nil)
     {
-        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:alert_authentication_error_] message:description delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
+        /*UIAlertView * alert = [[UIAlertView alloc] initWithTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:alert_authentication_error_] message:description delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
         [alert show];
-        [alert release];
+        [alert release];*/
         [activity stopAnimating];
         
         [self enableControls];
