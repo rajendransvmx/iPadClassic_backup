@@ -154,10 +154,6 @@
             NSLog(@"Object ID = %@",[objectDict objectForKey:@"Id"] );
             NSString *targetObjectNameFull = [objectDict objectForKey:@"SVMXC__Target_Object_Name__c"];
             NSString *targetObjectName = [self getFieldLabelForApiName:targetObjectNameFull];
-            if(targetObjectName == nil)
-            {
-                targetObjectName = targetObjectNameFull;
-            }
             NSString  *queryStatement = [NSString stringWithFormat:@"INSERT INTO SFM_Search_Objects ('SVMXC__Module__c','SVMXC__ProcessID__c','SVMXC__Target_Object_Name__c','ProcessName','ProcessId','ObjectId') VALUES ('%@','%@','%@','%@','%@','%@')",[objectDict objectForKey:@"SVMXC__Module__c"],[objectDict objectForKey:@"SVMXC__ProcessID__c"],targetObjectName,processName,processId,[objectDict objectForKey:@"Id"] ];
             char * err;
             if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
@@ -174,17 +170,9 @@
                 NSString  *queryStatement;
                 NSString *fieldNameFull = [objectConfigDict objectForKey:@"SVMXC__Field_Name__c"];
                 NSString *fieldName = [self getFieldLabelForApiName:fieldNameFull];
-                if(fieldName == nil)
-                {
-                    fieldName = fieldNameFull;
-                }
 
                 NSString *objectName2Full = [objectConfigDict objectForKey:@"SVMXC__Object_Name2__c"];
                 NSString *objectName2 = [self getFieldLabelForApiName:objectName2Full];
-                if(objectName2 == nil)
-                {
-                    objectName2 = objectName2Full;
-                }
 
                 if([keys containsObject:@"SVMXC__Search_Object_Field_Type__c"])
                 {
@@ -427,21 +415,33 @@
 {
     NSArray *searchableArray = [dataForObject objectForKey:@"SearchableFields"];
     NSArray *displayArray = [dataForObject objectForKey:@"DisplayFields"];
+    NSMutableArray *displayFieldsArray = [[NSMutableArray alloc] init] ;
     NSArray *criteriaArray = [dataForObject objectForKey:@"SearchCriteriaFields"];
     NSMutableArray *results = [[NSMutableArray alloc] init];
     NSMutableString *queryFields = [[NSMutableString alloc] init];
+    int fieldsCount = 0;
     for(int i=0; i<[displayArray count]; i++)
     {
         if(i)
             [queryFields appendString:@","];
-        [queryFields appendFormat:@"%@",[[displayArray objectAtIndex:i] objectForKey:@"SVMXC__Field_Name__c"]];
+        NSString *fieldName = [[displayArray objectAtIndex:i] objectForKey:@"SVMXC__Field_Name__c"];
+        fieldName = [self getApiNameFromFieldLabel:fieldName];
+        [queryFields appendFormat:@"%@",fieldName];
+        [displayFieldsArray addObject:fieldName];
+        fieldsCount++;
     }
     for(int i=0; i<[searchableArray count]; i++)
     {
-        [queryFields appendString:@","];
-        [queryFields appendFormat:@"%@",[[searchableArray objectAtIndex:i] objectForKey:@"SVMXC__Field_Name__c"]];
+        NSString *searchableField = [[searchableArray objectAtIndex:i] objectForKey:@"SVMXC__Field_Name__c"];
+        searchableField = [self getApiNameFromFieldLabel:searchableField];
+        if(![displayFieldsArray containsObject:searchableField])
+        {
+            [queryFields appendString:@","];
+            [queryFields appendFormat:@"%@",searchableField];
+            fieldsCount++;
+        }
     }
-    
+    [displayFieldsArray release];
     NSString *queryStatement;
     if([criteriaArray count] == 0 )
         queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@'",queryFields,object];
@@ -463,20 +463,20 @@
             if(j)
                 [conditionFields appendString:@" and "];
             if([operator isEqualToString:@"eq"] )
-                [conditionFields appendFormat:@"%@ = %@",fieldName,operand];
+                [conditionFields appendFormat:@"%@ = '%@'",fieldName,operand];
             if([operator isEqualToString:@"ne"] )
-                [conditionFields appendFormat:@"%@ != %@",fieldName,operand];
+                [conditionFields appendFormat:@"%@ != '%@'",fieldName,operand];
             if([operator isEqualToString:@"gt"] )
-                [conditionFields appendFormat:@"%@ > %@",fieldName,operand];
+                [conditionFields appendFormat:@"%@ > '%@'",fieldName,operand];
             if([operator isEqualToString:@"ge"] )
-                [conditionFields appendFormat:@"%@ >= %@",fieldName,operand];
+                [conditionFields appendFormat:@"%@ >= '%@'",fieldName,operand];
             if([operator isEqualToString:@"lt"] )
-                [conditionFields appendFormat:@"%@ < %@",fieldName,operand];
+                [conditionFields appendFormat:@"%@ < '%@'",fieldName,operand];
             if([operator isEqualToString:@"le"] )
-                [conditionFields appendFormat:@"%@ <= %@",fieldName,operand];
+                [conditionFields appendFormat:@"%@ <= '%@'",fieldName,operand];
         }
         if([conditionFields length] > 0)
-            queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE '%@'",queryFields,object,conditionFields];
+            queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE %@",queryFields,object,conditionFields];
         else
             queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@'",queryFields,object];
     }
@@ -488,8 +488,7 @@
         while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
         {
             NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-            int count = [displayArray count] + [searchableArray count];
-            for(int j=0; j< count; j++)
+            for(int j=0; j< fieldsCount; j++)
             {
                 const char * _type = (char *)synchronized_sqlite3_column_text(statement, j);
                 if ( !_type)
@@ -514,7 +513,7 @@
     NSString *queryStatement = [NSString stringWithFormat:@"SELECT label from SFObject where api_name = '%@'",apiName];
     NSLog(@"Query Statement = %@",queryStatement);
     sqlite3_stmt * statement;
-    NSString *apiLabel = nil;
+    NSString *apiLabel = apiName;
     if(appDelegate == nil)
         appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
     if (synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &statement, NULL) == SQLITE_OK)
@@ -533,6 +532,32 @@
     
     synchronized_sqlite3_finalize(statement);
     return apiLabel;
+    
+}
+- (NSString *) getApiNameFromFieldLabel:(NSString *)labelName
+{
+    NSString *queryStatement = [NSString stringWithFormat:@"SELECT api_name from SFObject where label = '%@'",labelName];
+    NSLog(@"Query Statement = %@",queryStatement);
+    sqlite3_stmt * statement;
+    NSString *apiName = labelName;
+    if(appDelegate == nil)
+        appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &statement, NULL) == SQLITE_OK)
+    {
+        if (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            const char * label = (char *)synchronized_sqlite3_column_text(statement, 0);
+            if (strlen(label))
+            {
+                apiName = [NSString stringWithUTF8String:label];   
+                NSLog(@"Label Name = %@",apiName);
+                
+            }
+        }
+    }
+    
+    synchronized_sqlite3_finalize(statement);
+    return apiName;
     
 }
 #pragma mark - Meta Sync

@@ -15,6 +15,7 @@
 
 @implementation SFMFullResultViewController
 @synthesize data;
+@synthesize tableHeaderArray;
 @synthesize actionButton,detailButton;
 @synthesize isOnlineRecord;
 @synthesize fullMainDelegate;
@@ -47,9 +48,10 @@
     {
         [detailButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"] forState:UIControlStateNormal];
     }
-    NSArray *allKeys = [data allKeys];
+    //NSArray *allKeys = [data allKeys];
     
-    for(id field in allKeys)
+    //for(id field in allKeys)
+    for(id field in tableHeaderArray)
     {
         UILabel *leftlabel = [[UILabel alloc] initWithFrame:leftFrame];
         [leftlabel setFrame:leftFrame];
@@ -189,6 +191,7 @@
 }
 -(void) dealloc
 {
+    [tableHeaderArray release];
     [data release];
     [super dealloc];
 }

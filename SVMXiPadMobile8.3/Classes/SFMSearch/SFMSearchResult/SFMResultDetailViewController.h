@@ -25,7 +25,7 @@
 @property (nonatomic, retain) IBOutlet UIActivityIndicatorView *activityIndicator;
 @property (nonatomic, retain)  UITableView *detailTable;
 @property (nonatomic, retain) NSMutableArray *detailTableArray;
-@property (nonatomic, retain) NSMutableArray *onlineDataArray;
+@property (nonatomic, retain) NSMutableDictionary *onlineDataDict;
 @property (nonatomic, retain) NSString *sfmConfigName;
 @property (nonatomic, assign) id<SFMResultDetailViewControllerDelegate> splitViewDelegate;
 

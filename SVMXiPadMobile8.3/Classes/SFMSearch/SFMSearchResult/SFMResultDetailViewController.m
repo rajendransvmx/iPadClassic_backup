@@ -27,7 +27,7 @@
 @synthesize splitViewDelegate;
 @synthesize masterView;
 @synthesize activityIndicator;
-@synthesize onlineDataArray;
+@synthesize onlineDataDict;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -100,7 +100,7 @@
 
 - (void) dealloc
 {
-    [onlineDataArray release];
+    [onlineDataDict release];
     [activityIndicator release];
     [masterView release];     
     [detailTableArray release];
@@ -155,12 +155,8 @@
         NSDictionary *sectionDict = [tableDataArray objectAtIndex:section];
         NSString *sectionObjectId = [sectionDict objectForKey:@"ObjectId"];
         int onlineCount = 0;
-        for(NSDictionary *dict in onlineDataArray)
-        {
-            NSString *objectId = [dict objectForKey:@"SearchObjectId"];
-            if([objectId isEqualToString:sectionObjectId])
-                onlineCount++;
-        }
+        NSMutableArray *objectSectionData = [onlineDataDict objectForKey:sectionObjectId];
+        onlineCount = [objectSectionData count];
         return [cellArray count] + onlineCount;
     }
     else {
@@ -233,43 +229,29 @@
         else 
         {
             //save online dict data array in mutable array of mutable dict
-            NSMutableArray *onlineDataCopy = onlineDataArray ; 
             NSDictionary *sectionDict = [tableDataArray objectAtIndex:indexPath.section];
             NSString *sectionObjectId = [sectionDict objectForKey:@"ObjectId"];
-            for(NSMutableDictionary *mDict in onlineDataCopy)
+            NSMutableArray *onlineDataArray = [onlineDataDict objectForKey:sectionObjectId]; 
+            NSDictionary *mDict = [onlineDataArray  objectAtIndex:(indexPath.row - [cellArray count])];
+            for(int j=0;j<[tableHeader count] && j < no_of_fields;j++)
             {
-                NSString *searchObjectId = [mDict objectForKey:@"SearchObjectId"];
-                NSString *isVisited = [mDict objectForKey:@"isVisited"];
-                if(!isVisited)
-                {
-                    if([searchObjectId isEqualToString:sectionObjectId])
-                    {
-                        for(int j=0;j<[tableHeader count] && j < no_of_fields;j++)
-                        {
-                            labelForObjects=[[UILabel alloc]initWithFrame:CGRectMake((20+j*(640/no_of_fields)),0,210, 48)]; 
-                            labelForObjects.backgroundColor = [UIColor clearColor];      
-                            labelForObjects.font = [UIFont boldSystemFontOfSize:18];  
-                            labelForObjects.text=[mDict objectForKey:[tableHeader objectAtIndex:j]];
-                            labelForObjects.textAlignment = UITextAlignmentLeft;
-                            
-                            [cell addSubview:labelForObjects];
-                            [labelForObjects release];
-                        }
-
-                        //Save the data in Dict
-                        [mDict setObject:@"1" forKey:@"isVisited"];
-                        // Online Image Indicator
-                        UIImage *onlineImage = [UIImage imageNamed:@"OnlineRecord.png"];
-                        UIImageView *onlineImgView  = [[[UIImageView alloc] initWithImage:onlineImage] autorelease];
-                        [onlineImgView setFrame:CGRectMake(0, 0,10, 50)];
-                        [cell addSubview:onlineImgView];
-                        [button setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button-Gray.png"] 
-                                          forState:UIControlStateNormal];
-                        break;
-                    }
-                }
+                labelForObjects=[[UILabel alloc]initWithFrame:CGRectMake((20+j*(640/no_of_fields)),0,210, 48)]; 
+                labelForObjects.backgroundColor = [UIColor clearColor];      
+                labelForObjects.font = [UIFont boldSystemFontOfSize:18];  
+                labelForObjects.text=[mDict objectForKey:[tableHeader objectAtIndex:j]];
+                labelForObjects.textAlignment = UITextAlignmentLeft;
+                
+                [cell addSubview:labelForObjects];
+                [labelForObjects release];
             }
-            onlineDataArray = onlineDataCopy;
+
+            // Online Image Indicator
+            UIImage *onlineImage = [UIImage imageNamed:@"OnlineRecord.png"];
+            UIImageView *onlineImgView  = [[[UIImageView alloc] initWithImage:onlineImage] autorelease];
+            [onlineImgView setFrame:CGRectMake(0, 0,10, 50)];
+            [cell addSubview:onlineImgView];
+            [button setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button-Gray.png"] 
+                              forState:UIControlStateNormal];
         }
     }
     else 
@@ -313,8 +295,10 @@
     NSDictionary *fullDataDict;
     NSArray *cellArray = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"Values"];
     NSString *objectId = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"ObjectId"];
+    NSArray *headerArray =[[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"TableHeader"];
     SFMFullResultViewController *resultViewController = [[SFMFullResultViewController alloc] initWithNibName:@"SFMFullResultViewController" bundle:nil];
     resultViewController.fullMainDelegate = self;
+    resultViewController.tableHeaderArray = headerArray;
     if([self.masterView.searchFilterSwitch isOn])
     {
         if(indexPath.row < [cellArray count])
@@ -324,9 +308,12 @@
         }
         else 
         {
-            int count = 0;
-            int onlineIndex = [cellArray count] - indexPath.row;
+            int onlineIndex =  indexPath.row - [cellArray count];
+            NSDictionary *rowData = [[onlineDataDict objectForKey:objectId] objectAtIndex:onlineIndex];
+            fullDataDict = rowData;
+            resultViewController.isOnlineRecord = YES;
             //fullDataDict = [onlineDataArray objectAtIndex:(count-indexPath.row)];
+            /*
             for(NSDictionary *dict in onlineDataArray)
             {
                 NSString *searchObjectId = [dict objectForKey:@"SearchObjectId"];
@@ -337,6 +324,7 @@
                     break;
                 }
             }
+             */
         }
     }
     else 
@@ -567,11 +555,14 @@
 {
     NSLog(@"Config Data = %@",dataForObject);
     NSLog(@"Object Name = %@",object);
+    
     NSMutableArray *results = [[NSMutableArray alloc] init];
     NSArray *searchableArray = [dataForObject objectForKey:@"SearchableFields"];
     NSArray *displayArray = [dataForObject objectForKey:@"DisplayFields"];
     if(appDelegate == nil)
         appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+    object = [appDelegate.dataBase getApiNameFromFieldLabel:object];
+
     NSMutableArray *result = [[appDelegate.dataBase getResults:object withConfigData:dataForObject] retain];
     for(NSDictionary *dict in result)
     {   
@@ -614,6 +605,7 @@
     for(NSDictionary *objectDetails in sections)
     {
         NSString *objectName = [objectDetails objectForKey:@"ObjectName"];
+
         NSString *objectId = [objectDetails objectForKey:@"ObjectId"];
         NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
         //NSArray     *dataForObject  = [[self getConfigDataforObject:object] retain];
@@ -702,28 +694,23 @@
         [objectList release];
         [searchResultData release];
         NSLog(@"Online Data = %@",appDelegate.onlineDataArray);
-        onlineDataArray = [appDelegate.onlineDataArray retain];
+        if(onlineDataDict)
+            [onlineDataDict release];
+        onlineDataDict = [[NSMutableDictionary alloc] init];
+        for(NSDictionary *dict in appDelegate.onlineDataArray)
+        {
+            NSString *objectID = [dict objectForKey:@"SearchObjectId"];
+            NSMutableArray *objectArray = [[onlineDataDict objectForKey:objectID] retain];
+            if(!objectArray)
+                objectArray = [[NSMutableArray alloc] init];
+            [objectArray addObject:dict];
+            [onlineDataDict setObject:objectArray forKey:objectID];
+            [objectArray release];
+        }
+        NSLog(@"Online Dict = %@",onlineDataDict);
     }
 
     NSLog(@"Table Data = %@",tableDataArray);
-    /*
-    for(int i=0; i<[tableDataArray count]; i++)
-    {
-        NSDictionary *dict = [tableDataArray objectAtIndex:i];
-        NSString *objName = [dict objectForKey:@"ObjectName"];
-        NSMutableArray *onlineResults = [dict objectForKey:@"OnlineResults"];
-        NSArray *headerInfo = [dict objectForKey:@"TableHeader"];
-        for(NSDictionary *onlineDict in appDelegate.onlineDataArray)
-        {
-            NSString *objectId = [onlineDict objectForKey:@"SearchObjectId"];
-            if([objName isEqualToString:@"Case"])
-            {
-                [onlineResults addObject:onlineDict];
-            }
-        }
-        //if object id is same as online results add the record to online and update tabledata
-    }
-     */
     NSLog(@"Table Data = %@",tableDataArray);
     [detailTable reloadData];
 }

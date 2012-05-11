@@ -138,6 +138,7 @@
 - (NSMutableArray *) getSearchCriteriaForObject:(NSString *)objectId;
 - (NSMutableArray *) getResults:(NSString *)object withConfigData:(NSDictionary *)dataForObject;
 - (NSString *) getFieldLabelForApiName:(NSString *)apiName;
+- (NSString *) getApiNameFromFieldLabel:(NSString *)apiName;
 //DataSync Methods
 - (void) insertDataInToTables:(NSMutableArray *)fieldValueArray;
 
