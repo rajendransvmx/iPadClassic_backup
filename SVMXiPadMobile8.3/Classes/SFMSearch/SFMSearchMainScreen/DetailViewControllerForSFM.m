@@ -64,7 +64,7 @@
     HelpController * help = [[HelpController alloc] initWithNibName:@"HelpController" bundle:nil];
     help.modalPresentationStyle = UIModalPresentationFullScreen;
     help.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    help.helpString = @"create-new.html";  
+    help.helpString = @"home.html";  
     [self presentModalViewController:help animated:YES];
     [help release];
 
