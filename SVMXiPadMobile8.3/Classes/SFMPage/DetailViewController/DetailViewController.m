@@ -626,9 +626,11 @@
     }
     
     NSMutableArray * buttons = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-    [buttons addObject:actionBtn];
+    //[buttons addObject:actionBtn];  -- Shrinivas
     
-    if (appDelegate.signatureCaptureUpload)
+    //if (appDelegate.signatureCaptureUpload)
+    BOOL isStandAloneCreate = [[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"STANDALONECREATE"];
+    if (appDelegate.signatureCaptureUpload && !isInEditDetail && !isStandAloneCreate && !isInViewMode)
     {
         UIButton * actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 35, 33)];
         [actionButton setImage:[UIImage imageNamed:@"sfm_signature_capture"] forState:UIControlStateNormal];
@@ -643,8 +645,25 @@
         
         [actionBtn1 release];
         [actionButton release];
+    }else{
+        UIButton * actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 35, 33)];
+        [actionButton setBackgroundColor:[UIColor clearColor]];
+        //[actionButton setImage:[UIImage imageNamed:@"sfm_signature_capture"] forState:UIControlStateNormal];
+        //[actionButton addTarget:self action:@selector(ShowSignature) forControlEvents:UIControlEventTouchUpInside];
+        
+        UIBarButtonItem * actionBtn1 = [[UIBarButtonItem alloc] initWithCustomView:actionButton];
+        actionBtn1.width = 37;
+        //[actionBtn1 setTarget:self];
+        //[actionBtn1 setAction:@selector(ShowSignature)];
+        // [buttons insertObject:actionBtn1 atIndex:0];
+        [buttons addObject:actionBtn1];
+        
+        [actionBtn1 release];
+        [actionButton release];
+
     }
     
+    [buttons addObject:actionBtn];//Shrinivas
     //Add help button Radha - 26 August, 2011
     UIButton * actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 37, 31)];
     [actionButton setImage:[UIImage imageNamed:@"iService-Screen-Help.png"] forState:UIControlStateNormal];
