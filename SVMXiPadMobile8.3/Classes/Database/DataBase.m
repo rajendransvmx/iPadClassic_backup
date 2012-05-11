@@ -2677,7 +2677,6 @@
     char * err;
     if (synchronized_sqlite3_exec(appDelegate.db, [statement UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
-        
         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
             [MyPopoverDelegate performSelector:@selector(throwException)];
         NSLog(@"Failed");
@@ -3289,7 +3288,7 @@
     [appDelegate getDPpicklistInfo];
     NSLog(@"META SYNC 1");
     
-    NSLog(@"SAMMAN DataSync WS Start: %@", [NSDate date]);
+ /*   NSLog(@"SAMMAN DataSync WS Start: %@", [NSDate date]);
     //sahaan generate client req id for initital data sync 
     appDelegate.wsInterface.didOpComplete = FALSE;
     
@@ -3364,15 +3363,9 @@
     
     NSLog(@"SAMMAN Update Sync Records Start: %@", [NSDate date]);
     [appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
-    NSLog(@"SAMMAN Update Sync Records End: %@", [NSDate date]); 
+    NSLog(@"SAMMAN Update Sync Records End: %@", [NSDate date]); */
     
-    //Radha purging - 10/April/12
-    NSMutableArray * recordId = [appDelegate.dataBase getAllTheRecordIdsFromEvent];
-    
-    appDelegate.initialEventMappinArray = [appDelegate.dataBase checkForTheObjectWithRecordId:recordId];
-    //Radha End
-    
-    
+       
     txnstmt = @"END TRANSACTION";
     retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);    
     
@@ -3380,8 +3373,14 @@
     time(&t2);
     double diff = difftime(t2,t1);
     NSLog(@"time taken for meta and data sync = %f",diff);
-
-
+    
+    [self populateDatabaseFromBackUp];
+    
+    //Radha purging - 10/April/12
+    NSMutableArray * recordId = [appDelegate.dataBase getAllTheRecordIdsFromEvent];
+    
+    appDelegate.initialEventMappinArray = [appDelegate.dataBase checkForTheObjectWithRecordId:recordId];
+    //Radha End
 }
 
 - (NSMutableArray *) retreiveTableNamesFronDB:(sqlite3 *)dbName
@@ -3566,6 +3565,8 @@
 }
 -(void)populateDatabaseFromBackUp
 {
+    [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+     
     NSString * query1 = [NSString stringWithFormat:@"ATTACH DATABASE '%@' AS tempsfm",filepath];
     [self createTable:query1];
     
@@ -3582,7 +3583,7 @@
     {
         while(synchronized_sqlite3_step(objectStatement) == SQLITE_ROW)
         {
-            char * field = (char *) synchronized_sqlite3_column_text(objectStatement,1);
+            char * field = (char *) synchronized_sqlite3_column_text(objectStatement,0);
             if ((field != nil) && strlen(field))
                 object_api_name = [[NSString alloc] initWithUTF8String:field];
             [objects  addObject:object_api_name];
@@ -4097,7 +4098,7 @@
 {
     [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
     
-    NSMutableArray * dataObjects = [self retreiveDataObjectTable];
+  /*  NSMutableArray * dataObjects = [self retreiveDataObjectTable];
     NSMutableArray * metaTable  = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
     
     
@@ -4116,15 +4117,15 @@
             [metaTable addObject:[object_names objectAtIndex:i]];
         }
         count = 0;
-    }
+    }*/
     
-    [self copyMetaTableInToSfm:metaTable];
+    [self copyMetaTableInToSfm:object_names];
     
-    for (NSString * tableName in dataObjects)
+  /*  for (NSString * tableName in dataObjects)
     {
         NSString * query = [self retrieveQuery:tableName sqlite:tempDb];
         [self createTable:query];
-    }
+    }*/
     
     [self startDataSync];
     
@@ -4222,6 +4223,8 @@
     //Here we fill up the tables with data  
     for (NSString * objectName in metaTable)
     {
+        if ([objectName isEqualToString:@"Case"])
+            objectName = @"'Case'";
         query1 = [NSString stringWithFormat:@"INSERT INTO %@ SELECT * FROM tempSfm.%@", objectName, objectName];
         [self createTable:query1];
     }
