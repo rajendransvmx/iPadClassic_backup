@@ -419,11 +419,13 @@
     NSArray *criteriaArray = [dataForObject objectForKey:@"SearchCriteriaFields"];
     NSMutableArray *results = [[NSMutableArray alloc] init];
     NSMutableString *queryFields = [[NSMutableString alloc] init];
-    int fieldsCount = 0;
+    int fieldsCount = 2;
+    [queryFields appendString:@"Id"];
+    [queryFields appendString:@","];
+    [queryFields appendString:@"local_id"];
     for(int i=0; i<[displayArray count]; i++)
     {
-        if(i)
-            [queryFields appendString:@","];
+        [queryFields appendString:@","];
         NSString *fieldName = [[displayArray objectAtIndex:i] objectForKey:@"SVMXC__Field_Name__c"];
         fieldName = [self getApiNameFromFieldLabel:fieldName];
         [queryFields appendFormat:@"%@",fieldName];
@@ -482,7 +484,7 @@
     }
     [queryFields release];
     sqlite3_stmt * statement;
-    
+    NSLog(@"Query = %@",queryStatement);
     if (synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &statement, NULL) == SQLITE_OK)
     {
         while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
@@ -496,11 +498,26 @@
                     _type = "";
                 }
                 NSString *value = [NSString stringWithUTF8String:_type];
-                if(j<[displayArray count])
-                    [dict setObject:value forKey:[[displayArray objectAtIndex:j] 
-                                                  objectForKey:@"SVMXC__Field_Name__c"]];
-                 else
-                     [dict setObject:value forKey:[[searchableArray objectAtIndex:(j-[displayArray count] ) ] objectForKey:@"SVMXC__Field_Name__c"]];                      
+                if(j==0)
+                {
+                    [dict setObject:value forKey:@"Id"];
+                }
+                else
+                if(j==1)
+                {
+                    [dict setObject:value forKey:@"local_id"];
+                }
+                else
+                {
+                    if(j<([displayArray count] +2))
+                        [dict setObject:value forKey:[[displayArray objectAtIndex:j-2] 
+                                                      objectForKey:@"SVMXC__Field_Name__c"]];
+                     else
+                     {
+                         int indexValue = j - [displayArray count] - 2;
+                         [dict setObject:value forKey:[[searchableArray objectAtIndex:indexValue ] objectForKey:@"SVMXC__Field_Name__c"]];                      
+                     }
+                }
             }
             [results addObject:dict];
         }
