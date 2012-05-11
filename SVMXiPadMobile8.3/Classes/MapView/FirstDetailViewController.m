@@ -1254,7 +1254,6 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 {
     if (!appDelegate.isInternetConnectionAvailable)
     {
-        [appDelegate displayNoInternetAvailable];
         return;
     }
     
@@ -1291,7 +1290,6 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
         //NSLog(@"Mapview initDebrief in while loop");
         if (!appDelegate.isInternetConnectionAvailable)
         {
-            [appDelegate displayNoInternetAvailable];
             break;
         }
         if (didQueryTechnician)
