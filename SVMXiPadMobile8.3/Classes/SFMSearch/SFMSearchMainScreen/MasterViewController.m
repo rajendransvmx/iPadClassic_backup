@@ -11,9 +11,6 @@
 #import "SearchCriteriaViewController.h"
 #import "iServiceAppDelegate.h"
 @interface MasterViewController ()
-{
-    NSMutableArray *_objects;
-}
 @property(retain, nonatomic) NSMutableArray *sfmArray;
 @end
 
@@ -53,7 +50,6 @@
     [searchFilterSwitch release];
     [searchString release];
     [searchCriteria release];
-    [_objects release];
     [_sfmArray release];
     [super dealloc];
 }
