@@ -4502,7 +4502,7 @@
 {
     NSMutableDictionary * delete_list = [[NSMutableDictionary alloc] initWithCapacity:0];
     NSString * query = [NSString stringWithFormat:@"SELECT sf_id ,object_name FROM  '%@' WHERE  sync_type = '%@'" , SYNC_RECORD_HEAP,sync_type];
-    NSArray * keys = [NSArray arrayWithObjects: @"sf_id", nil];
+    
     
     sqlite3_stmt * stmt ;
     NSString * sf_id = @"" , * object_name = @"";
