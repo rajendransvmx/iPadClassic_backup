@@ -658,9 +658,9 @@
   
     if (lr == nil)
     {
-        /*UIAlertView * alert = [[UIAlertView alloc] initWithTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:alert_authentication_error_] message:description delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
+        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:alert_authentication_error_] message:description delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
         [alert show];
-        [alert release];*/
+        [alert release];
         [activity stopAnimating];
         
         [self enableControls];
