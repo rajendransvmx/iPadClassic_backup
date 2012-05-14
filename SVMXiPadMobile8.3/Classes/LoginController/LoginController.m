@@ -663,6 +663,9 @@
         [alert release];
         [activity stopAnimating];
         
+        appDelegate.wsInterface.didOpComplete = TRUE;
+        didLoginCompleted  = TRUE;
+        
         [self enableControls];
         
         return;
