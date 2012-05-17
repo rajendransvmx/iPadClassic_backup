@@ -296,12 +296,7 @@
         {
             [[[mySegment subviews] objectAtIndex:1] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
         }
-     /*   else if ( [override_flag isEqualToString:@"None"]||[override_flag isEqualToString:@""] )
-        {
-            [[[mySegment subviews] objectAtIndex:2] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
-            [[[mySegment subviews] objectAtIndex:1] setTintColor:[appDelegate colorForHex:@"#C8C8C8"]];
-        }*/
-        
+            
         NSString * undo = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_undo];
         NSString * hold = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_hold];
         
@@ -333,17 +328,7 @@
         [mySegment release];
         [mySegment1 release];
         
-        /*UIImageView *disclosureImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
-        [disclosureImage setImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button"]];
-        UIButton *disclosureButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        disclosureButton.frame = CGRectMake(630, 25, 35, 35);
-        disclosureButton.backgroundColor = [UIColor clearColor];
-        [disclosureButton addTarget:self action:@selector(DisclosureButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
-        [disclosureButton addSubview:disclosureImage];
-        [cell.contentView addSubview:disclosureButton];
-        
-        [disclosureImage release];*/
-        
+            
         UILabel *textView = [[UILabel alloc] initWithFrame:CGRectMake(180, 3, 200, 50)];
         textView.font = [UIFont systemFontOfSize:19.0];
         textView.text = [[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"Error_message"];
@@ -429,11 +414,6 @@
         {
             [[[mySegment subviews] objectAtIndex:1] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
         }
-       /* else if ([override_flag isEqualToString:@"None"]||[override_flag isEqualToString:@""])
-        {
-            [[[mySegment subviews] objectAtIndex:2] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
-            [[[mySegment subviews] objectAtIndex:1] setTintColor:[appDelegate colorForHex:@"#C8C8C8"]];
-        }*/
 
         
         mySegment1.tintColor = newTintColor;
@@ -451,21 +431,11 @@
         
         [mySegment release];
         [mySegment1 release];
-        
-        /*UIImageView *disclosureImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
-        [disclosureImage setImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button"]];
-        UIButton *disclosureButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        disclosureButton.frame = CGRectMake(630, 25, 35, 35);
-        disclosureButton.backgroundColor = [UIColor clearColor];
-        [disclosureButton addTarget:self action:@selector(DisclosureButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
-        [disclosureButton addSubview:disclosureImage];
-        [cell.contentView addSubview:disclosureButton];
-        
-        [disclosureImage release];*/
+    
         
         UILabel *textView = [[UILabel alloc] initWithFrame:CGRectMake(180, 3, 200, 50)];
         textView.font = [UIFont systemFontOfSize:19.0];
-     //   NSLog(@"%@",[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row]  );
+     
         textView.text = [[[objectsDict objectForKey:[objectsArray objectAtIndex:selectedRow]]objectAtIndex:indexPath.row] objectForKey:@"Error_message"];
         textView.userInteractionEnabled = YES;
         textView.backgroundColor = [UIColor clearColor];
