@@ -329,8 +329,8 @@
     }
     
     //Image View animation
-    if(!showSyncUI)
-    {
+    //if(!showSyncUI)
+    //{
     animatedImageView = [[UIImageView alloc] initWithFrame:CGRectMake(475, 8, 26, 26)];    
     [self getStatusImage];
     animatedImageView.animationDuration = 1.0f;
@@ -338,7 +338,7 @@
     [animatedImageView startAnimating];
      showSyncUI = YES;
     [self.navigationController.view addSubview:animatedImageView];
-    }
+    //}
 }
 
 - (void) didInternetConnectionChange:(NSNotification *)notification
@@ -575,7 +575,7 @@
         
     NSLog(@"New Frame x = %f y = %f w = %f h = %f",syncFrame.origin.x,syncFrame.origin.y,syncFrame.size.width,syncFrame.size.height);
 
-    [animatedImageView setFrame:syncFrame];
+    //[animatedImageView setFrame:syncFrame];
      
     self.navigationItem.titleView = label;
     self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:toolbar] autorelease];
@@ -593,7 +593,7 @@
 
     self.popoverController = nil;
     
-    [tableView reloadData];
+    //[tableView reloadData];  //uncomment
     
     [self enableSFMUI];
 }
@@ -698,7 +698,7 @@
     self.navigationItem.titleView = label;
     self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:toolbar] autorelease];
     
-    [tableView reloadData];
+    //[tableView reloadData];
     
     [self enableSFMUI];
 }
@@ -9459,6 +9459,23 @@
                     [self fillSFMdictForOfflineforProcess:action_process_id forRecord:currentRecordId];
                     [self didReceivePageLayoutOffline];
                 }
+                //Radha 15/5/11
+                if ([process_type isEqualToString:@"STANDALONECREATE"])
+                {
+                    
+                    appDelegate.sfmPageController.sourceProcessId = appDelegate.sfmPageController.processId;
+                    appDelegate.sfmPageController.sourceRecordId = nil;
+                    
+                    appDelegate.sfmPageController.processId = action_process_id;
+                    appDelegate.sfmPageController.recordId  = nil;
+                    
+                    currentRecordId  = nil;
+                    currentProcessId = action_process_id;
+                    //check For view process - dont require
+                    [self fillSFMdictForOfflineforProcess:action_process_id forRecord:currentRecordId];
+                    [self didReceivePageLayoutOffline];
+                }
+                    
                 if([process_type isEqualToString:@"SOURCETOTARGET"] || [process_type isEqualToString:@"SOURCETOTARGETONLYCHILDROWS"])
                 {
                     
