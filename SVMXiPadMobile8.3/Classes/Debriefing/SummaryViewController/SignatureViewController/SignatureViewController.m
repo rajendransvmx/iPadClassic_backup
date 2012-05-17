@@ -224,7 +224,7 @@
     NSArray *randomArray = [date componentsSeparatedByString:@"."];
     NSString *randomString = nil;
     randomString = [NSString stringWithFormat:@"%@%@",[[randomArray objectAtIndex:0] substringWithRange:
-                                                       NSMakeRange(2, 6)],[[randomArray objectAtIndex:1] substringWithRange:NSMakeRange(0, 2)]];
+                                                       NSMakeRange(2, 6)],[[randomArray objectAtIndex:1] substringWithRange:NSMakeRange(0, 5)]];
     
     return randomString;
 }
