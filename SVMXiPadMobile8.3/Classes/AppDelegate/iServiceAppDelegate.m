@@ -482,6 +482,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     
     //shrinivas
     self.isBackground = TRUE;
+    self.wsInterface.didOpComplete = FALSE;
+    loginController.didEnterAlertView = FALSE;
 }
 
 - (void) applicationWillEnterForeground:(UIApplication *)application
