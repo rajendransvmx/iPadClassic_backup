@@ -5188,8 +5188,6 @@ last_sync_time:(NSString *)last_sync_time
             NSAutoreleasePool * autoreleasePool = [[NSAutoreleasePool alloc] init];
             appDelegate.data_sync_chunking = RESPONSE_RECIEVED; //sahana IMP 
             NSLog(@"SAMMAN Incremental DataSync response recieved: %@", [NSDate date]);
-            
-            NSString * event_name = wsResponse.result.eventName;
     
             NSString * event_name_temp = @"DATA_SYNC";
             NSMutableDictionary * record_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
