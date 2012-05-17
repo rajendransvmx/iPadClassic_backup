@@ -32,7 +32,9 @@
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     
     [cancelBuuton setTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:ADD_TASKS_CANCEL_BUTTON] forState:UIControlStateNormal];
+    [cancelBuuton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [doneButton setTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:ADD_TASKS_DONE_BUTTON] forState:UIControlStateNormal];
+    [doneButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     taskPrompt.text = [appDelegate.wsInterface.tagsDictionary objectForKey:ADD_TASKS_PROMPT];
     priority.text = [appDelegate.wsInterface.tagsDictionary objectForKey:ADD_TASKS_SET_PRIORITY_TITLE];
     
@@ -41,6 +43,7 @@
     NSString * normal = [appDelegate.wsInterface.tagsDictionary objectForKey:ADD_TASKS_PRIORITY_NORMAL];
     // Set Picker to have only 3 values High, Medium, Low
     pickerValues = [[NSArray alloc] initWithObjects:low, normal, high, nil];
+    
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -78,7 +81,16 @@
 
 - (NSMutableArray *) getTask
 {
-    if ([textView.text length] > 0)
+    //Shrinivas  --> Fix for Empty task getting created
+    NSString *rawString = [textView text];
+    NSCharacterSet * whitespace = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+    NSString *trimmed = [rawString stringByTrimmingCharactersInSet:whitespace];
+    
+    if ([trimmed length] == 0) {
+        NSLog(@"Empty String");
+    }
+
+    if ([textView.text length] > 0 && [trimmed length] != 0)
     {
         return [NSMutableArray arrayWithObjects:[pickerValues objectAtIndex:selectedPickerRow], textView.text, nil];
     }
@@ -102,11 +114,7 @@
 
 - (IBAction) Done
 {
-   /* if (!appDelegate.isInternetConnectionAvailable)
-    {
-        [appDelegate displayNoInternetAvailable];
-        return;
-    }*/
+    [doneButton setEnabled:NO];
     [taskView AddTaskWithText:[self getTask]];
     [popOverController dismissPopoverAnimated:YES];
 }
