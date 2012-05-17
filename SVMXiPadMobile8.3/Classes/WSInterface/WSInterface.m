@@ -5063,7 +5063,7 @@ last_sync_time:(NSString *)last_sync_time
     if ([operation isKindOfClass:[INTF_WebServicesDefBinding_INTF_DataSync_WS class]])
     {
        // jsonParser = [[SBJsonParser alloc] init];
-        didOpComplete = YES;
+      //  didOpComplete = YES;
         INTF_WebServicesDefServiceSvc_INTF_DataSync_WSResponse * wsResponse = [response.bodyParts objectAtIndex:0];
 		if ([wsResponse.result.eventName isEqualToString:@"SFM_SEARCH"] &&
             [wsResponse.result.eventType isEqualToString:@"SEARCH_RESULTS"]
