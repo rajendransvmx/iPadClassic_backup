@@ -30,6 +30,33 @@
 #define HOME_HELP_TEXT                      @"IPAD012_TAG012"
 #define HOME_NO_EVENTS                      @"IPAD012_TAG013"
 
+//progressbar
+#define sync_progress_metadata                 @"IPAD012_TAG018"
+#define sync_progress_pagedata                 @"IPAD012_TAG019"
+#define sync_progress_obj_definition           @"IPAD012_TAG020"
+#define sync_progress_batch_definition         @"IPAD012_TAG021"
+#define sync_progress_picklist_definition      @"IPAD012_TAG022"
+#define sync_progress_RT_picklist              @"IPAD012_TAG023"
+#define sync_progress_SFW_metadata             @"IPAD012_TAG024"
+#define sync_progress_mob_tags                 @"IPAD012_TAG025"
+#define sync_progress_mob_settings             @"IPAD012_TAG026"
+#define sync_progress_sfm_search               @"IPAD012_TAG027"
+#define sync_progress_dp_picklist              @"IPAD012_TAG028"
+#define sync_progress_event_sync               @"IPAD012_TAG029"
+#define sync_progress_dc_sync                  @"IPAD012_TAG030"
+#define sync_progress_cleanup                  @"IPAD012_TAG031"
+#define sync_progress_tx_fetch                 @"IPAD012_TAG032"
+#define sync_progress_localdb                  @"IPAD012_TAG033"
+#define sync_progress_sync_complete            @"IPAD012_TAG034"
+#define sync_progress_retry                    @"IPAD012_TAG035"
+#define sync_progress_i_ll_try                 @"IPAD012_TAG036"
+#define sync_progress_start                    @"IPAD012_TAG037"
+#define sync_progress_data                     @"IPAD012_TAG038"
+#define sync_progress_step                     @"IPAD012_TAG039"
+#define sync_progress_of                       @"IPAD012_TAG040"
+#define sync_progress_title                    @"IPAD012_TAG041"
+
+
 // CALENDAR TAGS
 #define LTASKLABEL                         @"IPAD006_TAG001"
 #define RSCHDULELABEL                      @"IPAD006_TAG002"
