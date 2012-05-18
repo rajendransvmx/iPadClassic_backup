@@ -32,7 +32,7 @@
 @protocol RefreshSyncStatus;
 @protocol RefreshSyncStatusButton;
 @protocol RefreshModalSyncStatusButton;
-
+@protocol RefreshProgressBar;
 
 @interface WSInterface : NSObject
 <INTF_WebServicesDefBindingResponseDelegate>
@@ -49,6 +49,8 @@
     id <RefreshSyncStatus> updateSyncStatus;
     id <RefreshSyncStatusButton> refreshSyncButton;
     id <RefreshModalSyncStatusButton> refreshModalStatusButton;
+    id<RefreshProgressBar> refreshProgressBarUIDelegate;
+    
     iServiceAppDelegate * appDelegate;
     
     NSMutableArray * processArray;
@@ -175,9 +177,14 @@
     
     //sahana
     NSMutableDictionary * dcobjects_incrementalSync;
+    
+    BOOL FisrtTime_response;
 
 }
+//sahana
+@property (nonatomic,assign) id<RefreshProgressBar> refreshProgressBarUIDelegate;;
 
+@property (nonatomic) BOOL FisrtTime_response;
 @property (nonatomic , retain) NSMutableDictionary * dcobjects_incrementalSync;
 @property (nonatomic , retain) NSString * get_dc_records_request_id;
 
@@ -401,6 +408,12 @@ last_sync_time:(NSString *)last_sync_time;
 
 @end
 
+@protocol RefreshProgressBar <NSObject>
+
+@optional
+-(void)RefreshProgressBar:(NSString *)sync;
+
+@end
 @protocol RefreshSyncStatus <NSObject>
 
 @optional
@@ -421,6 +434,7 @@ last_sync_time:(NSString *)last_sync_time;
 -(void) showModalSyncStatus;
 
 @end
+
 
 
 
