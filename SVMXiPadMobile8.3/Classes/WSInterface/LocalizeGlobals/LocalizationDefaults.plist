@@ -452,5 +452,53 @@
 	<string>Continue</string>
 	<key>IPAD011_TAG014</key>
 	<string>Authentication Error</string>
+	<key>IPAD012_TAG018</key>
+	<string>Downloading SFM MetaData</string>
+	<key>IPAD012_TAG019</key>
+	<string>Downloading SFM PageData</string>
+	<key>IPAD012_TAG020</key>
+	<string>Downloading SFM Object Definitions</string>
+	<key>IPAD012_TAG021</key>
+	<string>Downloading SFM batch Object Definitions</string>
+	<key>IPAD012_TAG022</key>
+	<string>Downloading SFM Picklist Definitions</string>
+	<key>IPAD012_TAG023</key>
+	<string>Downloading RecordType Dependent Pikclist</string>
+	<key>IPAD012_TAG024</key>
+	<string>Downloading SFW Metadata</string>
+	<key>IPAD012_TAG025</key>
+	<string>Downloading mobile device tags</string>
+	<key>IPAD012_TAG026</key>
+	<string>Downloading Mobile Device Settings</string>
+	<key>IPAD012_TAG027</key>
+	<string>Downloading SFM Search data</string>
+	<key>IPAD012_TAG028</key>
+	<string>Downloading Dependent Picklist</string>
+	<key>IPAD012_TAG029</key>
+	<string>Downloading Event and task related record id&apos;s</string>
+	<key>IPAD012_TAG030</key>
+	<string>Downloading download criteria Objects record id&apos;s</string>
+	<key>IPAD012_TAG031</key>
+	<string>Clean up call</string>
+	<key>IPAD012_TAG032</key>
+	<string>Downloading Events , Tasks and Download criteria records</string>
+	<key>IPAD012_TAG033</key>
+	<string>Inserting Downloaded records into local DataBase</string>
+	<key>IPAD012_TAG034</key>
+	<string>Initial Sync Completed</string>
+	<key>IPAD012_TAG035</key>
+	<string>Retry</string>
+	<key>IPAD012_TAG036</key>
+	<string>I will Try Later</string>
+	<key>IPAD012_TAG037</key>
+	<string>Initiating Sync from the Beginning</string>
+	<key>IPAD012_TAG038</key>
+	<string>Initiating Sync from DataSync</string>
+	<key>IPAD012_TAG039</key>
+	<string>Step</string>
+	<key>IPAD012_TAG040</key>
+	<string>of</string>
+	<key>IPAD012_TAG041</key>
+	<string>Initial Setup : Preparing application for the first time use</string>
 </dict>
 </plist>
