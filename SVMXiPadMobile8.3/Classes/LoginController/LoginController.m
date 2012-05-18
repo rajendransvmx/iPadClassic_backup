@@ -103,7 +103,9 @@
 }
 
 -(IBAction)callLogin:(id)sender
-{
+{	
+	 appDelegate.IsLogedIn = ISLOGEDIN_TRUE;
+    appDelegate.wsInterface.didOpComplete = FALSE;
     //shrinivas
     if (appDelegate.isBackground == TRUE)
         appDelegate.isBackground = FALSE;
@@ -125,117 +127,45 @@
     [activity startAnimating];
            
     appDelegate.last_initial_data_sync_time = nil;
+    appDelegate.do_meta_data_sync = DONT_ALLOW_META_DATA_SYNC;
     
-    [self CheckForUserNamePassword];  //SYNC_HISTORY PLIST  check should be done before calling to the
-  
-    
-    NSDate * current_dateTime = [NSDate date];
-    
-    NSDateFormatter * dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd hh:mm:ss"];
-    NSTimeZone *gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
-    [dateFormatter setTimeZone:gmt];
-    NSString * current_gmt_time = @"";
-    
-     NSFileManager * fileManager = [NSFileManager defaultManager];
-    //create SYNC_HISTORY PLIST 
-    NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:SYNC_HISTORY];
-    
-    if (![fileManager fileExistsAtPath:plistPath_SYNHIST])
+    BOOL ContinueLogin = [self CheckForUserNamePassword];  //SYNC_HISTORY PLIST  check should be done before calling to the
+    if(ContinueLogin && appDelegate.isInternetConnectionAvailable)
     {
-       if( appDelegate.last_initial_data_sync_time != nil)
-       {
-           current_gmt_time = appDelegate.last_initial_data_sync_time;
-       }
-       else
-       {
-           current_gmt_time = [dateFormatter stringFromDate:current_dateTime];
-       }
-        
-        NSArray * sync_hist_keys = [NSArray arrayWithObjects:LAST_INITIAL_SYNC_IME, REQUEST_ID, LAST_INSERT_REQUEST_TIME,LAST_INSERT_RESONSE_TIME,LAST_UPDATE_REQUEST_TIME,LAST_UPDATE_RESONSE_TIME, LAST_DELETE_REQUEST_TIME, LAST_DELETE_RESPONSE_TIME,INSERT_SUCCESS,UPDATE_SUCCESS,DELETE_SUCCESS, nil];
-        NSMutableDictionary * sync_info = [[[NSMutableDictionary alloc] initWithObjects:[NSArray arrayWithObjects:current_gmt_time,@"",current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,@"true",@"",@"", nil] forKeys:sync_hist_keys] autorelease];
-        [sync_info writeToFile:plistPath_SYNHIST atomically:YES];
-    }
-    
-    BOOL conflict_exists = [appDelegate.databaseInterface getConflictsStatus];
-    if(conflict_exists)
-    {
-        appDelegate.SyncStatus = SYNC_RED;
+         [self showHomeScreenviewController];
     }
     else
     {
-        appDelegate.SyncStatus = SYNC_GREEN;
+        return;
     }
-              
-    BOOL retVal = [appDelegate.calDataBase isUsernameValid:txtUsernameLandscape.text];
-    NSMutableArray * createprocessArray;
-    if ( retVal == YES )
-    {
-        appDelegate.settingsDict = [appDelegate.dataBase getSettingsDictionary];
-        
-        [appDelegate  ScheduleIncrementalDatasyncTimer];      
-        
-        [appDelegate ScheduleIncrementalMetaSyncTimer];
-        
-        appDelegate.wsInterface.tagsDictionary = [appDelegate.wsInterface getDefaultTags];
-        
-
-        appDelegate.wsInterface.createProcessArray =  [appDelegate.calDataBase getProcessFromDatabase];
-        
-        appDelegate.isWorkinginOffline = TRUE;
-        //for create process 
-        createprocessArray = [appDelegate.databaseInterface getAllTheProcesses:@"STANDALONECREATE"];
-        
-        //for view process
-        appDelegate.view_layout_array = [appDelegate.databaseInterface getAllTheProcesses:@"VIEWRECORD"];        
-        
-        [appDelegate getCreateProcessArray:createprocessArray];
-        
-        NSDate *date =  [NSDate date];
-        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        [dateFormatter  setDateFormat:@"YYYY-MM-dd HH:mm:ss"];
-        NSString * dateString = [dateFormatter stringFromDate:date];
-        
-        [appDelegate.calDataBase startQueryConfiguration];
-        NSMutableArray * currentDateRange = [appDelegate getWeekdates:dateString];
-
-        appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0]  endDate:[currentDateRange objectAtIndex:1]];
-        [dateFormatter release];
-        [self showHomeScreenviewController];
-        
-
-    }
+                 
     return;
-
 }
 
 
-- (void) CheckForUserNamePassword
+- (BOOL) CheckForUserNamePassword
 {
-    if (!_username && !_password)
+    if (!_username && !_password)                    //if key chain is nill - 
     {
         _username = [NSString stringWithFormat:@"%@", _username];
         _password = [NSString stringWithFormat:@"%@", _password];
         _newusername = _username;
-        
-        
         
         [self loginWithUsernamePassword];
         if (appDelegate.wsInterface.didOpComplete == FALSE)
         {
             [appDelegate.dataBase clearDatabase];
         }
-            
         
-        if (appDelegate.wsInterface.didOpComplete == TRUE)
-            return; 
+       /* if (appDelegate.wsInterface.didOpComplete == TRUE)
+            return ; */
         
-        [self doMetaAndDataSync];
+        appDelegate.do_meta_data_sync = ALLOW_META_AND_DATA_SYNC; //[self doMetaAndDataSync];       //sahana9May
+        return TRUE;                                                                                //sahana9May
     }
     
     
-    else if (([txtPasswordLandscape.text isEqualToString:_password]) && ([txtUsernameLandscape.text isEqualToString:_username]) )
+    else if (([txtPasswordLandscape.text isEqualToString:_password]) && ([txtUsernameLandscape.text isEqualToString:_username]) )   // if the user is already exists
     {
         BOOL retVal = [appDelegate.calDataBase isUsernameValid:txtUsernameLandscape.text];
         
@@ -248,26 +178,27 @@
                 [appDelegate.dataBase clearDatabase];
             }
             
-            if (appDelegate.wsInterface.didOpComplete == TRUE)
-                return;                                         //we need a correct fix for this issue. This is quick and dirty
+           /* if (appDelegate.wsInterface.didOpComplete == TRUE)
+                return;          */                               //we need a correct fix for this issue. This is quick and dirty
             
-            [self doMetaAndDataSync];
+            appDelegate.do_meta_data_sync = ALLOW_META_AND_DATA_SYNC;         //[self doMetaAndDataSync];    //sahana9May
             
         }
         
         if (homeScreenView)
             homeScreenView = nil;
+        
+        return TRUE;
     }
 
-    else if (((![txtPasswordLandscape.text isEqualToString:_password]) && ([txtUsernameLandscape.text isEqualToString:_username])) || (([txtPasswordLandscape.text isEqualToString:_password]) && (![txtUsernameLandscape.text isEqualToString:_password])))
+    else if (((![txtPasswordLandscape.text isEqualToString:_password]) && ([txtUsernameLandscape.text isEqualToString:_username])) || (([txtPasswordLandscape.text isEqualToString:_password]) && (![txtUsernameLandscape.text isEqualToString:_password])))    // to validate username and passowrd 
     {
         [self loginWithUsernamePassword];
-        return;
+        return FALSE;
         
     }
     
-    
-    else if ((![txtUsernameLandscape.text isEqualToString:_username] && (![_username isEqualToString:nil]) && (![_username isEqualToString:@""])) || (![txtPasswordLandscape.text isEqualToString:_password] && (![_password isEqualToString:nil]) && (![_password isEqualToString:@""])) )
+    else if ((![txtUsernameLandscape.text isEqualToString:_username] && (![_username isEqualToString:nil]) && (![_username isEqualToString:@""])) || (![txtPasswordLandscape.text isEqualToString:_password] && (![_password isEqualToString:nil]) && (![_password isEqualToString:@""])) ) //switch user
     {
         _newusername = appDelegate.username;
         
@@ -275,7 +206,7 @@
         NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_switch_user];
         NSString * Ok = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
         NSString * continue_ = [appDelegate.wsInterface.tagsDictionary objectForKey:login_continue];
-        
+        		
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle:title message:description delegate:self cancelButtonTitle:continue_ otherButtonTitles:Ok, nil];
         [alert show];
         [alert release];
@@ -312,15 +243,17 @@
         }
         
         //Radha -17/4/2012
-        if (appDelegate.wsInterface.didOpComplete == TRUE)
-            return; 
+       /* if (appDelegate.wsInterface.didOpComplete == TRUE)
+            return; */
         
         if (appDelegate.isForeGround == FALSE && !appDelegate.isInternetConnectionAvailable)
             [self readUsernameAndPasswordFromKeychain];
         
         didEnterAlertView = FALSE;
         
-        [self doMetaAndDataSync];
+        appDelegate.do_meta_data_sync = ALLOW_META_AND_DATA_SYNC;   //[self doMetaAndDataSync];         //sahana9May
+        
+        return TRUE;                                                                                    //sahana9May
         
     }
     
@@ -328,8 +261,10 @@
     {
         [self enableControls];
         [activity stopAnimating];
-        return;
+        return FALSE;
     }
+    
+    return FALSE;
 }
 
 - (void) loginWithUsernamePassword
@@ -386,7 +321,6 @@
             break;
         }
 
-        
     }
 
 }
@@ -664,6 +598,7 @@
         [activity stopAnimating];
         
         appDelegate.wsInterface.didOpComplete = TRUE;
+        NSLog(@"IComeOUTHere login");
         didLoginCompleted  = TRUE;
         
         [self enableControls];
