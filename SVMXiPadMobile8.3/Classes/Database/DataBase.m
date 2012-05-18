@@ -1646,6 +1646,8 @@
     
     NSLog(@"SAMMAN insertValuesInToRTPicklistTableForObject Processing starts: %@", [NSDate date]);
     
+    appDelegate.initial_sync_status = SYNC_SFW_METADATA;
+    appDelegate.Sync_check_in = FALSE;
     [appDelegate.wsInterface metaSyncWithEventName:SFW_METADATA eventType:SYNC values:nil];
 
 }
@@ -1869,6 +1871,15 @@
 
 - (void) insertValuesInToTagsTable:(NSMutableDictionary *)tagsDictionary
 {
+    
+    if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
+    {
+        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+        {
+            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+            return;
+        }
+    }
     NSLog(@"SAMMAN MetaSync insertValuesInToTagsTable starts: %@", [NSDate date]);
     int id_value = 0;
     BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS MobileDeviceTags ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'tag_id' VARCHAR, 'value' VARCHAR)"]];
@@ -1897,11 +1908,21 @@
     }
     NSLog(@"SAMMAN MetaSync insertValuesInToTagsTable ends: %@", [NSDate date]);
    // appDelegate.wsInterface.didGetWizards = TRUE;
+    appDelegate.initial_sync_status =  SYNC_MOBILE_DEVICE_SETTINGS;
+    appDelegate.Sync_check_in = FALSE;
     [appDelegate.wsInterface metaSyncWithEventName:MOBILE_DEVICE_SETTINGS eventType:SYNC values:nil];
 }
 
 - (void) insertValuesInToSettingsTable:(NSMutableDictionary *)settingsDictionary
 {
+    if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
+    {
+        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+        {
+            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+            return;
+        }
+    }
     NSLog(@"SAMMAN MetaSync insertValuesInToSettingsTable processing starts: %@", [NSDate date]);
     int id_value = 0;
     
@@ -2080,6 +2101,11 @@
     }   
     NSLog(@"SAMMAN MetaSync insertValuesInToSFWizardsTable: processing ends: %@", [NSDate date]);
    // appDelegate.wsInterface.didGetWizards = TRUE;
+   
+    
+    
+    appDelegate.initial_sync_status = SYNC_MOBILE_DEVICE_TAGS;
+    appDelegate.Sync_check_in = FALSE;
     [appDelegate.wsInterface metaSyncWithEventName:MOBILE_DEVICE_TAGS eventType:SYNC values:nil];
 }
 
@@ -2924,6 +2950,7 @@
         synchronized_sqlite3_finalize(stmt);
     }
     appDelegate.wsInterface.didOpComplete = TRUE;
+    NSLog(@"IComeOUTHere Databse");
 }
 
 -(BOOL) checkForDuplicateId:(NSString *)objectName sfId:(NSString *)sfId
@@ -2951,7 +2978,14 @@
 #pragma mark - PDF Settings
 - (void) generatePDFSettings
 {
-    
+    if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
+    {
+        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+        {
+            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+            return;
+        }
+    }
     // Get details of the IPAD Module
     NSString * _query = @"SELECT Id, SVMXC__Name__c, SVMXC__Description__c, SVMXC__ModuleID__c, SVMXC__IsStandard__c FROM SVMXC__ServiceMax_Processes__c WHERE SVMXC__ModuleID__c = \'IPAD\' AND RecordType.Name = \'MODULE\'";
     [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetModuleInfo:error:context:) context:nil];
@@ -2959,7 +2993,14 @@
 
 - (void) didGetModuleInfo:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
-    
+    if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
+    {
+        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+        {
+            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+            return;
+        }
+    }
     // Get Submodules Info (query could return multiple rows)
     if ([[result records] count] > 0)
     {
@@ -2976,6 +3017,14 @@
 
 - (void) didGetSubModuleInfo:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
+    if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
+    {
+        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+        {
+            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+            return;
+        }
+    }
     // Get Settings Info(query could return multiple rows)
     if ([[result records] count] > 0)
     {
@@ -2991,7 +3040,14 @@
 
 - (void) didGetSettingsInfo:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
-    
+    if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
+    {
+        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+        {
+            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+            return;
+        }
+    }
     // Get the Active Global Profile
     if ([[result records] count] > 0)
     {
@@ -3022,6 +3078,14 @@
 
 - (void) didGetActiveGlobalProfile:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
+    if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
+    {
+        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+        {
+            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+            return;
+        }
+    }
     // Get Settings value Info(query could return multiple rows)
     if ([[result records] count] > 0)
     {
@@ -3043,6 +3107,14 @@
 
 - (void) didGetSettingsValue:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
+    if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
+    {
+        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+        {
+            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+            return;
+        }
+    }
     if ([[result records] count] > 0)
     {
         appDelegate.serviceReport = [[NSMutableDictionary alloc] initWithCapacity:0];
@@ -3060,6 +3132,7 @@
     [self insertSettingsIntoTable:settingsInfoArray:@"SettingsInfo"];
     
     appDelegate.wsInterface.didOpComplete = TRUE;
+    NSLog(@"IComeOUTHere didgetsettings");
 
 }
 -(void)insertSettingsIntoTable:(NSMutableArray*)array:(NSString*)TableName
