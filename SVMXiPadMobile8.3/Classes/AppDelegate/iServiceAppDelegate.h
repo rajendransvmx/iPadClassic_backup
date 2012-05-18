@@ -52,6 +52,26 @@ typedef enum  INCREMENTAL_SYNC{
     CLEANUP_DONE = 11
     } INCREMENTAL_SYNC;
 
+typedef enum INITIAL_SYNC_SUCCES_OR_FAILED
+{
+    INITIAL_SYNC_SUCCESS = 1,
+    META_SYNC_FAILED = 2,
+    DATA_SYNC_FAILED = 3,
+    TX_FETCH_FAILED = 4
+} INIITIAL_SYNC_SUCCES_OR_FAILED;
+
+typedef enum DO_INITIAL_META_DATA_SYNC
+{
+    DONT_ALLOW_META_DATA_SYNC = 0,
+    ALLOW_META_AND_DATA_SYNC = 1
+    
+}DO_INITIAL_META_DATA_SYNC;
+
+typedef enum ISLOGEDIN
+{
+    ISLOGEDIN_FALSE = 0,
+    ISLOGEDIN_TRUE = 1
+}ISLOGEDIN;
 
 
 typedef enum DATASYNC_CHUNCKING
@@ -59,6 +79,46 @@ typedef enum DATASYNC_CHUNCKING
     REQUEST_SENT      = 0,
     RESPONSE_RECIEVED = 1
 } DATASYNC_CHUNCKING;
+
+typedef enum INITIAL_SYNC_STATUS
+{
+    INITIAL_SYNC_STARTS = 0,
+    INITIAL_SYNC_SFM_METADATA = 1,
+    INITIAL_SYNC_SFM_METADATA_DONE = 2,
+    SYNC_SFM_METADATA = 3,
+    SYNC_SFM_METADATA_DONE = 4,
+    SYNC_SFM_PAGEDATA = 5,
+    SYNC_SFM_PAGEDATA_DONE = 6,
+    SYNC_SFMOBJECT_DEFINITIONS = 7,
+    SYNC_SFMOBJECT_DEFINITIONS_DONE = 8,
+    SYNC_SFM_BATCH_OBJECT_DEFINITIONS = 9,
+    SYNC_SFM_BATCH_OBJECT_DEFINITIONS_DONE = 10,
+    SYNC_SFM_PICKLIST_DEFINITIONS = 11,
+    SYNC_SFM_PICKLIST_DEFINITIONS_DONE = 12,
+    SYNC_SFW_METADATA = 13,
+    SYNC_SFW_METADATA_DONE = 14,
+    SYNC_MOBILE_DEVICE_TAGS = 15,
+    SYNC_MOBILE_DEVICE_TAGS_DONE = 16,
+    SYNC_MOBILE_DEVICE_SETTINGS = 17,
+    SYNC_MOBILE_DEVICE_SETTINGS_DONE = 18,
+    SYNC_SFM_SEARCH = 19,
+    SYNC_SFM_SEARCH_DONE = 20,
+    SYNC_RT_DP_PICKLIST_INFO = 21,
+    SYNC_RT_DP_PICKLIST_INFO_DONE = 22,
+    SYNC_DP_PICKLIST_INFO = 23,
+    SYNC_DP_PICKLIST_INFO_DONE = 24,
+    SYNC_EVENT_SYNC = 25,
+    SYNC_EVENT_SYNC_DONE = 26,
+    SYNC_DOWNLOAD_CRITERIA_SYNC = 27, 
+    SYNC_DOWNLOAD_CRITERIA_SYNC_DONE = 28,
+    SYNC_CLEANUP_SELECT = 29,
+    SYNC_CLEANUP_SELECT_DONE =  30,
+    SYNC_TX_FETCH = 31, 
+    SYNC_TX_FETCH_DONE = 32,
+    SYNC_INSERTING_RECORDS_TO_LOCAL_DATABASE = 33,
+    INITIAL_SYNC_COMPLETED = 34
+}INITIAL_SYNC_STATUS;
+
 
 BOOL isSessionInavalid;
 #define kInternetConnectionChanged          @"kInternetConnectionChanged"
@@ -92,6 +152,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 @interface iServiceAppDelegate : NSObject
 <UIApplicationDelegate, UIActionSheetDelegate, WSInterfaceDelegate>
 {
+    BOOL Sync_check_in;
+    
     NSThread * special_incremental_thread;
     
     BOOL incrementalSync_Failed ;
@@ -106,6 +168,10 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     NSTimer * datasync_timer;
     INCREMENTAL_SYNC  Incremental_sync_status ;
     DATASYNC_CHUNCKING data_sync_chunking;
+    DO_INITIAL_META_DATA_SYNC  do_meta_data_sync;
+    ISLOGEDIN IsLogedIn;
+    INITIAL_SYNC_STATUS initial_sync_status;
+    INIITIAL_SYNC_SUCCES_OR_FAILED initial_sync_succes_or_failed;
     
     BOOL Incremental_sync;
     BOOL temp_incremental_sync;
@@ -330,6 +396,12 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     //Possible solution for Abrupt Internet Connectivity Problem.
     BOOL shouldShowConnectivityStatus;
 }
+
+@property (nonatomic) BOOL Sync_check_in;
+@property (nonatomic)  INITIAL_SYNC_STATUS initial_sync_status;
+@property (nonatomic) ISLOGEDIN IsLogedIn;
+@property (nonatomic) INIITIAL_SYNC_SUCCES_OR_FAILED initial_sync_succes_or_failed;
+@property (nonatomic) DO_INITIAL_META_DATA_SYNC  do_meta_data_sync;
 
 @property (nonatomic) BOOL shouldShowConnectivityStatus;
 @property (nonatomic) DATASYNC_CHUNCKING data_sync_chunking;
