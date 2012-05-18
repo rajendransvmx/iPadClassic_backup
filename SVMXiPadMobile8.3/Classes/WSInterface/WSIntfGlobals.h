@@ -16,6 +16,10 @@
 
 //sahana
 
+#define META_SYNC_                                      @"meta_sync"
+#define DATA_SYNC_                                     @"data_sync"
+#define TX_FETCH_                                       @"tx_fetch"
+
 #define EVENT_SYNC                                      @"EVENT_SYNC"
 #define DOWNLOAD_CREITERIA_SYNC                         @"DOWNLOAD_CREITERIA_SYNC"
 #define DOWNLOAD_CRITERIA_OBJECTS                       @"DOWNLOAD_CRITERIA_OBJECTS"
