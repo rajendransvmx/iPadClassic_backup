@@ -179,7 +179,8 @@
 
 //Radha ->Login
 - (void) doMetaAndDataSync;
-- (void) CheckForUserNamePassword;
+//- (void) CheckForUserNamePassword;
+- (BOOL) CheckForUserNamePassword;
 - (void) loginWithUsernamePassword;
 
 
