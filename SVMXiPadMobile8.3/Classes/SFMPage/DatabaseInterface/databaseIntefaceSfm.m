@@ -3289,6 +3289,10 @@
 
 -(void)updateAllRecordsToSyncRecordsHeap:(NSMutableDictionary *)sync_data
 {
+    if(appDelegate.isForeGround && appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+    {
+        return;
+    }
     NSLog(@"SAMMAN updateAllRecordsToSyncRecordsHeap Processing starts: %@  for count %d", [NSDate date],[sync_data count]);
     sync_data = [sync_data retain];
     NSArray * all_objects = [sync_data allKeys];
@@ -3472,8 +3476,6 @@
                     [MyPopoverDelegate performSelector:@selector(throwException)];
             }
              [autorelesePool release];
-
-
         }
         
     }
@@ -3482,7 +3484,7 @@
  
     NSLog(@" sync_data %d",[sync_data retainCount]);
     [sync_data release];
-    appDelegate.wsInterface.didOpComplete = TRUE;
+    NSLog(@"IComeOUTHere databaseinterface");
     NSLog(@"SAMMAN insertRecordIdsIntosyncRecordHeap ends: %@", [NSDate date]);
 }
 
@@ -4770,6 +4772,15 @@
 {
     NSMutableArray * describeObjects = [[self getAllobjectsApiNameFromSFObjectField] retain];
     [[ZKServerSwitchboard switchboard] describeSObjects:describeObjects  target:self selector:@selector(didDescribeSObjects:error:context:) context:nil];
+    
+    if (appDelegate.isForeGround == TRUE)
+    {
+        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+        {
+           // appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+            return;
+        }
+    }
    
 }
 
@@ -4795,6 +4806,15 @@
 
 -(void)didDescribeSObjects:(NSMutableArray *)result error:(NSError *)error context:(id)context
 {
+    if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
+    {
+        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+        {
+            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+            return;
+        }
+    }
+    
     [result retain];
         
     for (int i = 0; i < [result count]; i++)
@@ -4840,9 +4860,35 @@
                 
                  
             }
+            if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
+            {
+                if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                {
+                   // appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                    break;
+                }
+            }
             
         }
         
+        if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
+        {
+            if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+            {
+                // appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                break;
+            }
+        }
+
+    }
+    
+    if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
+    {
+        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+        {
+            // appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+            return;
+        }
     }
     
     appDelegate.dPicklist_retrieval_complete = TRUE;
