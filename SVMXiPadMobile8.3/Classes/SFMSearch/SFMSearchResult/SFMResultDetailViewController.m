@@ -692,6 +692,7 @@
         [activityIndicator startAnimating];
         if(appDelegate==nil)
             appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+        [appDelegate goOnlineIfRequired]; //RADHA 18/05/11
         [appDelegate.wsInterface dataSyncWithEventName:@"SFM_SEARCH" eventType:@"SEARCH_RESULTS" values:searchResultData]; 
         appDelegate.wsInterface.didOpComplete = FALSE;
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
