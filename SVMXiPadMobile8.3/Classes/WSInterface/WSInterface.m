@@ -17,12 +17,13 @@
 @implementation WSInterface
 
 //sahana dc sync
+@synthesize refreshProgressBarUIDelegate;
 @synthesize dcobjects_incrementalSync;
 @synthesize insert_dc_last_sync_time,update_dc_last_sync_time,delete_dc_last_sync_time;
 @synthesize get_dc_records_request_id;
 //RADHA
 @synthesize MyPopoverDelegate;
-
+@synthesize FisrtTime_response;
 @synthesize objectDefinitions; 
 @synthesize object; 
 @synthesize picklistObject;
@@ -532,6 +533,10 @@ last_sync_time:(NSString *)last_sync_time
 #pragma mark - incremental Data Sync
 -(void) PutAllTheRecordsForIds
 {
+    if(appDelegate.isForeGround && appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+    {
+        return;
+    }
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
@@ -647,7 +652,8 @@ last_sync_time:(NSString *)last_sync_time
 
 -(void)DoIncrementalDataSync
 {
- NSAutoreleasePool * autoreleasePool = [[NSAutoreleasePool alloc] init];
+    NSAutoreleasePool * autoreleasePool = [[NSAutoreleasePool alloc] init];
+    [appDelegate goOnlineIfRequired];
     appDelegate.Incremental_sync = FALSE;
     appDelegate.SyncStatus = SYNC_ORANGE;
     [updateSyncStatus refreshSyncStatus];
@@ -2296,6 +2302,13 @@ last_sync_time:(NSString *)last_sync_time
 
 - (void) metaSyncWithEventName:(NSString *)eventName eventType:(NSString *)eventType values:(NSMutableArray *)values
 {
+    if (appDelegate.isForeGround == TRUE)
+    {
+        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+        {
+            return;
+        }
+    }
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * session = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
@@ -2484,6 +2497,13 @@ last_sync_time:(NSString *)last_sync_time
 - (void) dataSyncWithEventName:(NSString *)eventName eventType:(NSString *)eventType requestId:(NSString *)requestId
 {
     
+    if(appDelegate.isForeGround)
+    {
+        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+        {
+            return;
+        }
+    }
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
@@ -3771,97 +3791,112 @@ last_sync_time:(NSString *)last_sync_time
     if ([operation isKindOfClass:[INTF_WebServicesDefBinding_INTF_MetaSync_WS class]])
     {
         INTF_WebServicesDefServiceSvc_INTF_MetaSync_WSResponse * wsResponse = [response.bodyParts objectAtIndex:0];
-        if ([operation isKindOfClass:[INTF_WebServicesDefBinding_INTF_MetaSync_WS class]])
+        if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
         {
-            
-            INTF_WebServicesDefServiceSvc_INTF_MetaSync_WSResponse * wsResponse = [response.bodyParts objectAtIndex:0];
-            
-            if ([wsResponse.result.eventName isEqualToString:SFM_SEARCH] && [wsResponse.result.eventType isEqualToString:SYNC])
+            if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
             {
-                didOpSFMSearchComplete = TRUE;
-                NSLog(@" MetaSync SFM_SEARCH received, processing starts: %@", [NSDate date]);
-                 [appDelegate.dataBase createTablesForSFMSearch];
+               if([wsResponse.result.eventName isEqualToString:SFM_PICKLIST_DEFINITIONS] && !FisrtTime_response )
+               {
+                   [refreshProgressBarUIDelegate RefreshProgressBar:META_SYNC_];
+                   appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                   
+               }
                 
-                NSArray * array = [wsResponse.result valueMap];
-                NSLog(@"No of Configuration Processes = %d",[array count]);
-                 NSMutableArray *sfmProcessData = [[NSMutableArray alloc] init];
-                 for (int  i = 0; i < [array count]; i+=2)
-                 {
-                     //Process Information
-                     INTF_WebServicesDefServiceSvc_SVMXMap * svmxMapForProcess = [array objectAtIndex:i];
-                     NSArray *processInfo = [svmxMapForProcess valueMap];
-                     NSMutableDictionary *processInfoDict    = [[NSMutableDictionary alloc] init];
-                     for(int j=0; j<[processInfo count]; j++)
-                     {
-                        INTF_WebServicesDefServiceSvc_SVMXMap * svmxMapForProcessInfo = [processInfo objectAtIndex:j]; 
-                         [processInfoDict setObject:svmxMapForProcessInfo.value forKey:svmxMapForProcessInfo.key];                        
-                     }
-                     NSLog(@"Process Info = %@",processInfoDict);
-                    
-                     //Objects Information of above Process
-                     INTF_WebServicesDefServiceSvc_SVMXMap * svmxMapForObject = [array objectAtIndex:i+1];
-                     NSArray *objectInfo = [svmxMapForObject valueMap];
-                     NSMutableArray *sfmObjectData = [[NSMutableArray alloc] init];
-                     
-                     for(int k=0; k<[objectInfo count]; k++) //4 objects
-                     {
-                         INTF_WebServicesDefServiceSvc_SVMXMap * svmxMapForObjectInfo = [objectInfo objectAtIndex:k]; 
-                         NSArray *detailsArray = [svmxMapForObjectInfo valueMap];
-                         NSLog(@"Count = %d",[detailsArray count]);
-                         
-                         for(int l=0; l< [detailsArray count]; l+=2)// 2 maps // object map, config data
-                         {
-                             NSMutableDictionary *objectInfoDict    = [[NSMutableDictionary alloc] init];
-                             //1st for Object Info 
-                             INTF_WebServicesDefServiceSvc_SVMXMap * mapObjectInfo = [detailsArray objectAtIndex:l];
-                             INTF_WebServicesDefServiceSvc_SVMXMap * objectInfoMap =  [[mapObjectInfo valueMap] objectAtIndex:0];
-                             NSArray *objectInfoArray = [objectInfoMap valueMap];
-                              
-                             for(int m=0; m<[objectInfoArray count]; m++)
-                             {
-                                INTF_WebServicesDefServiceSvc_SVMXMap * objectInfo = [objectInfoArray objectAtIndex:m];
-                                 [objectInfoDict setObject:objectInfo.value forKey:objectInfo.key];
-                             }
-                             //2nd for Config Data. save this in array of dicts
-                             INTF_WebServicesDefServiceSvc_SVMXMap * mapObjectConfig = [detailsArray objectAtIndex:l+1];
-                             NSArray *configMapArray = [mapObjectConfig valueMap];
-                             NSLog(@"Count = %d",[configMapArray count]);
-                             NSMutableArray *configMutableArray = [[NSMutableArray alloc] init];
-                             for(int n=0; n<[configMapArray count]; n++)
-                             {
-                                 INTF_WebServicesDefServiceSvc_SVMXMap * configDataMap = [configMapArray objectAtIndex:n];
-                                 NSArray *configDataArray = [configDataMap valueMap];
-                                 NSMutableDictionary *configDataDict = [[NSMutableDictionary alloc] init];
-                                 for(int p =0; p< [configDataArray count]; p++)
-                                 {
-                                     INTF_WebServicesDefServiceSvc_SVMXMap * cnfgMap = [configDataArray objectAtIndex:p];
-                                     [configDataDict setObject:cnfgMap.value forKey:cnfgMap.key];
-                                 }
-                                 [configMutableArray addObject:configDataDict];
-                                 [configDataDict release];
-                             }
-                             [objectInfoDict setObject:configMutableArray forKey:@"ConfigData"];
-                             [sfmObjectData addObject:objectInfoDict];
-                             [configMutableArray release];
-                             [objectInfoDict release];
-                         }                          
-                     }
-                     NSLog(@"Object Data = %@",sfmObjectData);
-                     [processInfoDict setObject:sfmObjectData forKey:@"Objects"];
-                     [sfmProcessData addObject:processInfoDict];
-                     [processInfoDict release];
-                 }
-                NSLog(@" MetaSync SFM_SEARCH processing End: %@", [NSDate date]);
-                //Call Data Base with data to store the info in table
-                [appDelegate.dataBase insertValuesintoSFMProcessTable:sfmProcessData];
-                NSLog(@"SFM Search Configuration = %@",sfmProcessData);
-                [sfmProcessData release];
-                 
+                if(![wsResponse.result.eventName isEqualToString:SFM_PICKLIST_DEFINITIONS])
+                {
+                    [refreshProgressBarUIDelegate RefreshProgressBar:META_SYNC_];
+                     appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                }
+                
+                return;
             }
+        }
+        
+        if ([wsResponse.result.eventName isEqualToString:SFM_SEARCH] && [wsResponse.result.eventType isEqualToString:SYNC])
+        {
+            didOpSFMSearchComplete = TRUE;
+           // NSLog(@" MetaSync SFM_SEARCH received, processing starts: %@", [NSDate date]);
+             [appDelegate.dataBase createTablesForSFMSearch];
+            
+            NSArray * array = [wsResponse.result valueMap];
+           // NSLog(@"No of Configuration Processes = %d",[array count]);
+             NSMutableArray *sfmProcessData = [[NSMutableArray alloc] init];
+             for (int  i = 0; i < [array count]; i+=2)
+             {
+                 //Process Information
+                 INTF_WebServicesDefServiceSvc_SVMXMap * svmxMapForProcess = [array objectAtIndex:i];
+                 NSArray *processInfo = [svmxMapForProcess valueMap];
+                 NSMutableDictionary *processInfoDict    = [[NSMutableDictionary alloc] init];
+                 for(int j=0; j<[processInfo count]; j++)
+                 {
+                    INTF_WebServicesDefServiceSvc_SVMXMap * svmxMapForProcessInfo = [processInfo objectAtIndex:j]; 
+                     [processInfoDict setObject:svmxMapForProcessInfo.value forKey:svmxMapForProcessInfo.key];                        
+                 }
+               //  NSLog(@"Process Info = %@",processInfoDict);
+                
+                 //Objects Information of above Process
+                 INTF_WebServicesDefServiceSvc_SVMXMap * svmxMapForObject = [array objectAtIndex:i+1];
+                 NSArray *objectInfo = [svmxMapForObject valueMap];
+                 NSMutableArray *sfmObjectData = [[NSMutableArray alloc] init];
+                 
+                 for(int k=0; k<[objectInfo count]; k++) //4 objects
+                 {
+                     INTF_WebServicesDefServiceSvc_SVMXMap * svmxMapForObjectInfo = [objectInfo objectAtIndex:k]; 
+                     NSArray *detailsArray = [svmxMapForObjectInfo valueMap];
+                    // NSLog(@"Count = %d",[detailsArray count]);
+                     
+                     for(int l=0; l< [detailsArray count]; l+=2)// 2 maps // object map, config data
+                     {
+                         NSMutableDictionary *objectInfoDict    = [[NSMutableDictionary alloc] init];
+                         //1st for Object Info 
+                         INTF_WebServicesDefServiceSvc_SVMXMap * mapObjectInfo = [detailsArray objectAtIndex:l];
+                         INTF_WebServicesDefServiceSvc_SVMXMap * objectInfoMap =  [[mapObjectInfo valueMap] objectAtIndex:0];
+                         NSArray *objectInfoArray = [objectInfoMap valueMap];
+                          
+                         for(int m=0; m<[objectInfoArray count]; m++)
+                         {
+                            INTF_WebServicesDefServiceSvc_SVMXMap * objectInfo = [objectInfoArray objectAtIndex:m];
+                             [objectInfoDict setObject:objectInfo.value forKey:objectInfo.key];
+                         }
+                         //2nd for Config Data. save this in array of dicts
+                         INTF_WebServicesDefServiceSvc_SVMXMap * mapObjectConfig = [detailsArray objectAtIndex:l+1];
+                         NSArray *configMapArray = [mapObjectConfig valueMap];
+                        // NSLog(@"Count = %d",[configMapArray count]);
+                         NSMutableArray *configMutableArray = [[NSMutableArray alloc] init];
+                         for(int n=0; n<[configMapArray count]; n++)
+                         {
+                             INTF_WebServicesDefServiceSvc_SVMXMap * configDataMap = [configMapArray objectAtIndex:n];
+                             NSArray *configDataArray = [configDataMap valueMap];
+                             NSMutableDictionary *configDataDict = [[NSMutableDictionary alloc] init];
+                             for(int p =0; p< [configDataArray count]; p++)
+                             {
+                                 INTF_WebServicesDefServiceSvc_SVMXMap * cnfgMap = [configDataArray objectAtIndex:p];
+                                 [configDataDict setObject:cnfgMap.value forKey:cnfgMap.key];
+                             }
+                             [configMutableArray addObject:configDataDict];
+                             [configDataDict release];
+                         }
+                         [objectInfoDict setObject:configMutableArray forKey:@"ConfigData"];
+                         [sfmObjectData addObject:objectInfoDict];
+                         [configMutableArray release];
+                         [objectInfoDict release];
+                     }                          
+                 }
+              //   NSLog(@"Object Data = %@",sfmObjectData);
+                 [processInfoDict setObject:sfmObjectData forKey:@"Objects"];
+                 [sfmProcessData addObject:processInfoDict];
+                 [processInfoDict release];
+             }
+         //   NSLog(@" MetaSync SFM_SEARCH processing End: %@", [NSDate date]);
+            //Call Data Base with data to store the info in table
+            [appDelegate.dataBase insertValuesintoSFMProcessTable:sfmProcessData];
+           // NSLog(@"SFM Search Configuration = %@",sfmProcessData);
+            [sfmProcessData release];
+             
         }
         if ([wsResponse.result.eventName isEqualToString:SFM_METADATA])
         {            
-            NSLog(@"SAMMAN MetaSync SFM_METADATA received, processing starts: %@", [NSDate date]);
+            //NSLog(@"SAMMAN MetaSync SFM_METADATA received, processing starts: %@", [NSDate date]);
             NSMutableArray * keys = [[NSMutableArray alloc] initWithCapacity:0];
             NSMutableArray * values = [[NSMutableArray alloc] initWithCapacity:0];
             NSMutableArray * arr = [[NSMutableArray alloc] initWithCapacity:0];
@@ -4012,20 +4047,50 @@ last_sync_time:(NSString *)last_sync_time
             
             if (![processValue isEqualToString:@""])
             {
+                appDelegate.initial_sync_status = SYNC_SFM_METADATA;
+                appDelegate.Sync_check_in = FALSE;
                 [self metaSyncWithEventName:SFM_METADATA eventType:SYNC values:(NSMutableArray *)value];
+                if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
+                {
+                    if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                    {
+                        [refreshProgressBarUIDelegate RefreshProgressBar:META_SYNC_];
+                        appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                      
+                        return;
+                    }
+                }
+
             }
-            
             else
             {
+                appDelegate.initial_sync_status = SYNC_SFM_METADATA_DONE;
+                appDelegate.Sync_check_in = FALSE;
+                
+                appDelegate.initial_sync_status = SYNC_SFM_PAGEDATA;
+                appDelegate.Sync_check_in = FALSE;
+                
                 NSMutableArray * pageId = [self getAllPageLauoutId];
-                NSLog(@"SAMMAN MetaSync SFM_METADATA received, processing ends: %@", [NSDate date]);
+                //NSLog(@"SAMMAN MetaSync SFM_METADATA received, processing ends: %@", [NSDate date]);
                 [self metaSyncWithEventName:SFM_PAGEDATA eventType:SYNC values:pageId];
+                if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
+                {
+                    if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                    {
+                        [refreshProgressBarUIDelegate RefreshProgressBar:META_SYNC_];
+                        appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                        return;
+                        
+                    }
+                }
+
                 didGetPageData = FALSE;
             }
         }
         else if ([wsResponse.result.eventName isEqualToString:SFM_PAGEDATA])    
         {
-            NSLog(@"SAMMAN MetaSync SFM_PAGEDATA received, processing starts: %@", [NSDate date]);
+            
+           // NSLog(@"SAMMAN MetaSync SFM_PAGEDATA received, processing starts: %@", [NSDate date]);
 
             didGetPageData = TRUE;
             
@@ -4241,7 +4306,7 @@ last_sync_time:(NSString *)last_sync_time
                     
                     hdrButtons = [NSMutableArray arrayWithArray:buttons_array];
                     
-                    NSLog(@"buttons");
+                   // NSLog(@"buttons");
                 }
 
                 
@@ -4430,9 +4495,9 @@ last_sync_time:(NSString *)last_sync_time
                     [pageDict release]; */
             }
             
-         //   if(hdrSections != nil)
-          //      [hdrSections release];
-          /*  if (hdrData != nil)
+            //   if(hdrSections != nil)
+            //      [hdrSections release];
+            /*  if (hdrData != nil)
                 [hdrData release];
             if (hdrButtons != nil)
                 [hdrButtons release];*/
@@ -4446,24 +4511,53 @@ last_sync_time:(NSString *)last_sync_time
                     //shrinivas
                     if (appDelegate.isForeGround == TRUE)
                     {
-                        LoginController * loginController = [[LoginController alloc] init];
-                        appDelegate.didFinishWithError = FALSE;
-                        [loginController.activity stopAnimating];
-                        [loginController enableControls];
-                        
-                        [loginController release];
-                        return;
+                        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                        {
+                          
+                           // appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                            break;
+                        }
+                        else
+                        {
+                            LoginController * loginController = [[LoginController alloc] init];
+                            appDelegate.didFinishWithError = FALSE;
+                            [loginController.activity stopAnimating];
+                            [loginController enableControls];
+                            
+                            [loginController release];
+                            return;
+                        }
                     }
 
-                    
                     if (!appDelegate.isInternetConnectionAvailable)
                     {
-                        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                            [MyPopoverDelegate performSelector:@selector(throwException)];
+                        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                        {
+                            [refreshProgressBarUIDelegate RefreshProgressBar:META_SYNC_];
+                            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                            
+                        }
+                        else
+                        {
+                            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                                [MyPopoverDelegate performSelector:@selector(throwException)];
+                        }
+
                         break;
                     }
                     if (didGetPageData)
                         break;
+                }
+                
+                if (!appDelegate.isInternetConnectionAvailable)
+                {
+                    if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                    {
+                        [refreshProgressBarUIDelegate RefreshProgressBar:META_SYNC_];
+                        appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                       
+                        return;
+                    }
                 }
             }
             else
@@ -4472,30 +4566,68 @@ last_sync_time:(NSString *)last_sync_time
                 [appDelegate.dataBase insertValuesToProcessTable:processDictionary page:pageUiHistory];
                 while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE))
                 {
-                    
+                    if (appDelegate.isForeGround == TRUE)
+                    {
+                        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                        {
+                            break;
+                        }
+                    }
                     if (!appDelegate.isInternetConnectionAvailable)
                     {
-                        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                            [MyPopoverDelegate performSelector:@selector(throwException)];
+                        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                        {
+                             [refreshProgressBarUIDelegate RefreshProgressBar:META_SYNC_];
+                             appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                        }
+                        else
+                        {
+                            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                                [MyPopoverDelegate performSelector:@selector(throwException)];
+                        }
+                        
                         break;
+                       
                     }
 
                     if (didGetPageDataDb)
                         break;
                 } 
+                if ( !appDelegate.isInternetConnectionAvailable)
+                {
+                    if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                    {
+                         [refreshProgressBarUIDelegate RefreshProgressBar:META_SYNC_];
+                         appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                        return;
+                    }
+                }
                 didGetPageDataDb = FALSE;
-                NSLog(@"SAMMAN MetaSync SFM_PAGEADATA received, processing ends: %@", [NSDate date]);
-                
+               // NSLog(@"SAMMAN MetaSync SFM_PAGEADATA received, processing ends: %@", [NSDate date]);
+            
+                appDelegate.initial_sync_status = SYNC_SFMOBJECT_DEFINITIONS;
+                appDelegate.Sync_check_in = FALSE;
+
                 NSMutableArray * _values = [self getAllProcessId];
                 
                 [self metaSyncWithEventName:SFM_OBJECT_DEFINITIONS eventType:SYNC values:_values]; 
+                if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
+                {
+                    if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                    {
+                        [refreshProgressBarUIDelegate RefreshProgressBar:META_SYNC_];
+                         appDelegate.initial_sync_succes_or_failed  = META_SYNC_FAILED;
+                        return;
+                    }
+                }
             }
-            
         }
         
         else if ([wsResponse.result.eventName isEqualToString:SFM_PICKLIST_DEFINITIONS])
         {
-            NSLog(@"SAMMAN MetaSync SFM_PICKLIST_DEFINITIONS received, processing starts: %@", [NSDate date]);
+           
+            FisrtTime_response = FALSE;
+            //NSLog(@"SAMMAN MetaSync SFM_PICKLIST_DEFINITIONS received, processing starts: %@", [NSDate date]);
             didGetPicklistValues = TRUE;
             NSMutableArray * arr;
             NSMutableArray * Fields = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
@@ -4573,25 +4705,49 @@ last_sync_time:(NSString *)last_sync_time
                     //shrinivas
                     if (appDelegate.isForeGround == TRUE)
                     {
-                        LoginController * loginController = [[LoginController alloc] init];
-                        appDelegate.didFinishWithError = FALSE;
-                        [loginController.activity stopAnimating];
-                        [loginController enableControls];
-                        
-                        [loginController release];
-                        return;
+                        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                        {
+                           // appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                            break;
+                        }
+                        else
+                        {
+                            LoginController * loginController = [[LoginController alloc] init];
+                            appDelegate.didFinishWithError = FALSE;
+                            [loginController.activity stopAnimating];
+                            [loginController enableControls];
+                            [loginController release];
+                            return;
+                        }
                     }
 
                     
                     if (!appDelegate.isInternetConnectionAvailable)
                     {
-                        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                            [MyPopoverDelegate performSelector:@selector(throwException)];
+                        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                        {
+                            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                            
+                        }
+                        else
+                        {
+                            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                                [MyPopoverDelegate performSelector:@selector(throwException)];
+                        }
                         break;
                     }
 
                     if (didGetPicklistValues)
                         break;
+                }
+                
+                if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                {
+                    if(!appDelegate.isInternetConnectionAvailable)
+                    {
+                        return;
+                    }
+                    //Should not return from here, bec there is one more call which is going to 
                 }
                 
             }
@@ -4604,17 +4760,42 @@ last_sync_time:(NSString *)last_sync_time
                 {
                     if (!appDelegate.isInternetConnectionAvailable)
                     {
-                        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                            [MyPopoverDelegate performSelector:@selector(throwException)];
-                        break;
+                        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                        {
+                           // appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;  //should not set here becuse main loop would break and 2 calls would be sent 
+                            break;
+                        }
+                        else
+                        {
+                            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                                [MyPopoverDelegate performSelector:@selector(throwException)];
+                        }
+
+                    }
+                    if (appDelegate.isForeGround == TRUE)
+                    {
+                        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                        {
+                            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                            break;
+                        }
                     }
 
-                    NSLog(@"DetailViewController viewdidLoad in while loop");
+                    //NSLog(@"DetailViewController viewdidLoad in while loop");
                     if (didGetPicklistValues)
                     {
                         break;
                     }
-                    NSLog(@"Receiving RecordTypeId Info ..");
+                    //NSLog(@"Receiving RecordTypeId Info ..");
+                }
+                
+                if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                {
+                     if(!appDelegate.isInternetConnectionAvailable)
+                    {
+                        return;
+                    }
+                    //Should not return from here, bec there is one more call which is going to 
                 }
 
                 NSMutableArray * allObjects = [[NSMutableArray alloc] initWithCapacity:0];
@@ -4626,8 +4807,21 @@ last_sync_time:(NSString *)last_sync_time
                         [allObjects addObject:objectName];
                 }
                
-                NSLog(@"SAMMAN MetaSync SFM_PICKLIST_DEFINITIONS received, processing ends: %@", [NSDate date]);
+                
+                appDelegate.initial_sync_status =  SYNC_RT_DP_PICKLIST_INFO;
+                appDelegate.Sync_check_in = FALSE;
+                
+                //NSLog(@"SAMMAN MetaSync SFM_PICKLIST_DEFINITIONS received, processing ends: %@", [NSDate date]);
                 [self getRecordTypeDictForObjects:allObjects];
+                if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
+                {
+                    if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                    {
+                         [refreshProgressBarUIDelegate RefreshProgressBar:META_SYNC_];
+                        appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                        return;
+                    }
+                }
                // [self metaSyncWithEventName:SFW_METADATA eventType:SYNC values:nil];
             }
              
@@ -4635,7 +4829,8 @@ last_sync_time:(NSString *)last_sync_time
         
         else if ([wsResponse.result.eventName isEqualToString:SFM_OBJECT_DEFINITIONS])
         {
-            NSLog(@"SAMMAN MetaSync SFM_OBJECT_DEFINITIONS received, processing starts: %@", [NSDate date]);
+           
+           // NSLog(@"SAMMAN MetaSync SFM_OBJECT_DEFINITIONS received, processing starts: %@", [NSDate date]);
             int m = 0;
             NSMutableArray * arr = [[[NSMutableArray alloc] initWithCapacity:0] retain];
             NSMutableArray * object_array = [[[NSMutableArray alloc] initWithCapacity:0] retain];
@@ -4749,6 +4944,9 @@ last_sync_time:(NSString *)last_sync_time
             [object retain];
             [objectDefinitions retain];
             
+            appDelegate.initial_sync_status = SYNC_SFM_BATCH_OBJECT_DEFINITIONS;
+            appDelegate.Sync_check_in = FALSE;
+            
             didGetAddtionalObjDef = FALSE;
             NSMutableArray * objects = [NSMutableArray  arrayWithObjects:@"Task", @"Event", @"User", nil];
             [appDelegate.wsInterface metaSyncWithEventName:SFM_BATCH_OBJECT_DEFINITIONS eventType:SYNC values:objects]; 
@@ -4757,46 +4955,117 @@ last_sync_time:(NSString *)last_sync_time
                 //shrinivas
                 if (appDelegate.isForeGround == TRUE)
                 {
-                    LoginController * loginController = [[LoginController alloc] init];
-                    appDelegate.didFinishWithError = FALSE;
-                    [loginController.activity stopAnimating];
-                    [loginController enableControls];
-                    
-                    [loginController release];
-                    return;
+                    if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                    {
+                        //sahana for background handling of app
+                        //appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                        break;
+                    }
+                    else
+                    {
+                        LoginController * loginController = [[LoginController alloc] init];
+                        appDelegate.didFinishWithError = FALSE;
+                        [loginController.activity stopAnimating];
+                        [loginController enableControls];
+                        
+                        [loginController release];
+                        return;
+                    }
                 }
-
                 
                 
+                if (!appDelegate.isInternetConnectionAvailable)
+                {
+                    if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                    {
+                        appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                    }
+                    else
+                    {
+                        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                            [MyPopoverDelegate performSelector:@selector(throwException)];
+                    }
+                    
+                    break;
+                }
+              
                 if (didGetAddtionalObjDef)
                     break;
             }
-            
+          
+            if ( !appDelegate.isInternetConnectionAvailable)
+            {
+                if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                {
+                     [refreshProgressBarUIDelegate RefreshProgressBar:META_SYNC_];
+                     appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                    return;
+                }
+            }
             didGetObjectDef = FALSE;
             [appDelegate.dataBase insertValuesInToOBjDefTableWithObject:object definition:objectDefinitions]; 
             while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE))
             {
+                
+                if (appDelegate.isForeGround == TRUE)
+                {
+                    if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                    {
+                       // appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                        break;
+                    }
+                }
                 if (!appDelegate.isInternetConnectionAvailable)
                 {
-                    if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                        [MyPopoverDelegate performSelector:@selector(throwException)];
+                    if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                    {
+                        appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                    }
+                    else
+                    {
+                        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                            [MyPopoverDelegate performSelector:@selector(throwException)];
+                    }
+
                     break;
                 }
 
                 if (didGetObjectDef)
                     break;
             }
+            if (!appDelegate.isInternetConnectionAvailable)
+            {
+                if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                {
+                     [refreshProgressBarUIDelegate RefreshProgressBar:META_SYNC_];
+                     appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                    return;
+                }
+            }
             didGetObjectDef = FALSE;
             NSMutableArray * pickListObj = [self collectPickListObject];
 
-            NSLog(@"SAMMAN MetaSync SFM_OBJECT_DEFINITIONS received, processing ends: %@", [NSDate date]);
+           // NSLog(@"SAMMAN MetaSync SFM_OBJECT_DEFINITIONS received, processing ends: %@", [NSDate date]);
+            
+            appDelegate.initial_sync_status = SYNC_SFM_PICKLIST_DEFINITIONS;
+            appDelegate.Sync_check_in = FALSE;
             
             [self metaSyncWithEventName:SFM_PICKLIST_DEFINITIONS eventType:SYNC values:pickListObj];   
-            
+            FisrtTime_response = TRUE;
+            if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
+            {
+                if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                {
+                     [refreshProgressBarUIDelegate RefreshProgressBar:META_SYNC_];
+                     appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                    return;
+                }
+            }
         }
         else if ([wsResponse.result.eventName isEqualToString:SFM_BATCH_OBJECT_DEFINITIONS])
         {
-            NSLog(@"SAMMAN MetaSync SFM_BATCH_OBJECT_DEFINITIONS received, processing starts: %@", [NSDate date]);
+
+            //NSLog(@"SAMMAN MetaSync SFM_BATCH_OBJECT_DEFINITIONS received, processing starts: %@", [NSDate date]);
             NSMutableArray * arr = [[[NSMutableArray alloc] initWithCapacity:0] retain];
             NSMutableArray * object_array = [[[NSMutableArray alloc] initWithCapacity:0] retain];
             NSMutableArray * array1;
@@ -4904,12 +5173,13 @@ last_sync_time:(NSString *)last_sync_time
             }
             
             didGetAddtionalObjDef = TRUE;
-            NSLog(@"SAMMAN MetaSync SFM_BATCH_OBJECT_DEFINITIONS received, processing ends: %@", [NSDate date]);
+            //NSLog(@"SAMMAN MetaSync SFM_BATCH_OBJECT_DEFINITIONS received, processing ends: %@", [NSDate date]);
         }
 
         else if ([wsResponse.result.eventName isEqualToString:SFW_METADATA])
         {
-            NSLog(@"SAMMAN MetaSync SFW_METADATA received, processing starts: %@", [NSDate date]);
+           
+           // NSLog(@"SAMMAN MetaSync SFW_METADATA received, processing starts: %@", [NSDate date]);
             wizardDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
             
             NSMutableArray * array = [wsResponse.result valueMap];
@@ -4983,9 +5253,21 @@ last_sync_time:(NSString *)last_sync_time
                     [arr removeAllObjects]; 
                 
             }
-            NSLog(@"SAMMAN MetaSync SFW_METADATA received, processing ends: %@", [NSDate date]);
+            //NSLog(@"SAMMAN MetaSync SFW_METADATA received, processing ends: %@", [NSDate date]);
         //    didGetWizards = FALSE;
+           
+            
+            
             [appDelegate.dataBase insertValuesInToSFWizardsTable:wizardDictionary];
+            if(!appDelegate.isInternetConnectionAvailable || appDelegate.isForeGround == TRUE)
+            {
+                if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                {
+                     [refreshProgressBarUIDelegate RefreshProgressBar:META_SYNC_];
+                     appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                    return;
+                }
+            }
           /*  while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE))
             {
                 if (didGetWizards)
@@ -4997,10 +5279,11 @@ last_sync_time:(NSString *)last_sync_time
           //  didGetWizards = FALSE;
          //   [self metaSyncWithEventName:MOBILE_DEVICE_TAGS eventType:SYNC values:nil];
              
-        }
+      }
       else if ([wsResponse.result.eventName isEqualToString:MOBILE_DEVICE_TAGS])
       {
-          NSLog(@"SAMMAN MetaSync MOBILE_DEVICE_TAGS processing starts: %@", [NSDate date]);
+          
+         // NSLog(@"SAMMAN MetaSync MOBILE_DEVICE_TAGS processing starts: %@", [NSDate date]);
           mobileDeviceTagsDict = [[NSMutableDictionary alloc] initWithCapacity:0];
           NSMutableArray * array = [wsResponse.result valueMap];
         
@@ -5013,9 +5296,19 @@ last_sync_time:(NSString *)last_sync_time
               if (![key isEqualToString:@""])
                   [mobileDeviceTagsDict setValue:(svmxMap.value!=nil)?(svmxMap.value):@"" forKey:(svmxMap.key!=nil)?svmxMap.key:@""];
           }
-          NSLog(@"SAMMAN MetaSync MOBILE_DEVICE_TAGS processing ends: %@", [NSDate date]);
+         // NSLog(@"SAMMAN MetaSync MOBILE_DEVICE_TAGS processing ends: %@", [NSDate date]);
      //   didGetWizards = FALSE;
-        [appDelegate.dataBase insertValuesInToTagsTable:mobileDeviceTagsDict];
+          [appDelegate.dataBase insertValuesInToTagsTable:mobileDeviceTagsDict];
+          if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
+          {
+              if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+              {
+                   [refreshProgressBarUIDelegate RefreshProgressBar:META_SYNC_];
+                   appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                  return;
+              }
+          }
+
         
       /*  while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE))
         {
@@ -5031,7 +5324,8 @@ last_sync_time:(NSString *)last_sync_time
         }
         else if ([wsResponse.result.eventName isEqualToString:MOBILE_DEVICE_SETTINGS])
         {
-            NSLog(@"SAMMAN MetaSync MOBILE_DEVICE_SETTINGS processing starts: %@", [NSDate date]);
+           
+           // NSLog(@"SAMMAN MetaSync MOBILE_DEVICE_SETTINGS processing starts: %@", [NSDate date]);
             mobileDeviceSettingsDict = [[NSMutableDictionary alloc] initWithCapacity:0];
             NSMutableArray * array = [wsResponse.result valueMap];
                         
@@ -5043,10 +5337,20 @@ last_sync_time:(NSString *)last_sync_time
                 if (![key isEqualToString:@""])
                     [mobileDeviceSettingsDict setValue:(svmxMap.value!=nil)?(svmxMap.value):@"" forKey:(svmxMap.key!=nil)?(svmxMap.key):@""];
             }          
-            NSLog(@"SAMMAN MetaSync MOBILE_DEVICE_SETTINGS processing ends: %@", [NSDate date]);
+           // NSLog(@"SAMMAN MetaSync MOBILE_DEVICE_SETTINGS processing ends: %@", [NSDate date]);
           //  didOpComplete = TRUE;
             
             [appDelegate.dataBase insertValuesInToSettingsTable:mobileDeviceSettingsDict];
+            if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
+            {
+                if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                {
+                     [refreshProgressBarUIDelegate RefreshProgressBar:META_SYNC_];
+                     appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                    return;
+                }
+            }
+
         }
         
       /*  while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE))
@@ -5057,18 +5361,34 @@ last_sync_time:(NSString *)last_sync_time
                 break;
             }
         } */
-        NSLog(@"SAMMAN MetaSync Processing End: %@", [NSDate date]);
+       // NSLog(@"SAMMAN MetaSync Processing End: %@", [NSDate date]);
     }
     
     if ([operation isKindOfClass:[INTF_WebServicesDefBinding_INTF_DataSync_WS class]])
     {
-       // jsonParser = [[SBJsonParser alloc] init];
-      //  didOpComplete = YES;
         INTF_WebServicesDefServiceSvc_INTF_DataSync_WSResponse * wsResponse = [response.bodyParts objectAtIndex:0];
-		if ([wsResponse.result.eventName isEqualToString:@"SFM_SEARCH"] &&
-            [wsResponse.result.eventType isEqualToString:@"SEARCH_RESULTS"]
+        if (appDelegate.isForeGround == TRUE )
+        {
+            if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+            {
+                if([wsResponse.result.eventName isEqualToString:@"TX_FETCH"] || [wsResponse.result.eventName isEqualToString:@"CLEAN_UP_SELECT"])
+                {
+                    appDelegate.initial_sync_succes_or_failed = TX_FETCH_FAILED;
+                }
+                else
+                {
+                    appDelegate.initial_sync_succes_or_failed = DATA_SYNC_FAILED;
+                }
+                return;
+            }
+        }
+
+       // didOpComplete = YES;
+      
+		if ([wsResponse.result.eventName isEqualToString:@"SFM_SEARCH"] && [wsResponse.result.eventType isEqualToString:@"SEARCH_RESULTS"]
             )
         {
+           
             didOpComplete = YES;         
             NSLog(@"SFM Search Results Got");
             NSMutableArray * array = [wsResponse.result valueMap]; 
@@ -5093,6 +5413,7 @@ last_sync_time:(NSString *)last_sync_time
         }
         if ([wsResponse.result.eventName isEqualToString:@"DATA_SYNC"])
         {
+            
             NSLog(@"SAMMAN DATA_SYNC Processing starts: %@", [NSDate date]);
             NSString * event_name = wsResponse.result.eventName;
             
@@ -5188,6 +5509,8 @@ last_sync_time:(NSString *)last_sync_time
             NSAutoreleasePool * autoreleasePool = [[NSAutoreleasePool alloc] init];
             appDelegate.data_sync_chunking = RESPONSE_RECIEVED; //sahana IMP 
             NSLog(@"SAMMAN Incremental DataSync response recieved: %@", [NSDate date]);
+            
+           // NSString * event_name = wsResponse.result.eventName;
     
             NSString * event_name_temp = @"DATA_SYNC";
             NSMutableDictionary * record_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
@@ -5314,14 +5637,24 @@ last_sync_time:(NSString *)last_sync_time
 
             if(call_Back)
             {
+                NSLog(@"NxtCallDC");
+                 appDelegate.wsInterface.didOpComplete = FALSE;
                 [appDelegate.wsInterface dataSyncWithEventName:DOWNLOAD_CREITERIA_SYNC eventType:@"SYNC" requestId:appDelegate.initial_dataSync_reqid];
                 appDelegate.data_sync_chunking = REQUEST_SENT;  // sahana imp 
+               
             }
             else
             {
+                NSLog(@"NxtCallDC1");
                 appDelegate.wsInterface.didOpComplete = TRUE;
+                NSLog(@"IComeOUTHere wsinterface");
             }
             
+            if(appDelegate.isForeGround && appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+            {
+                appDelegate.initial_sync_succes_or_failed = DATA_SYNC_FAILED;
+                return;
+            }
             [autoreleasePool release];
             
         }
@@ -5396,6 +5729,11 @@ last_sync_time:(NSString *)last_sync_time
             
             [self PutAllTheRecordsForIds];        //sahana tesing    uncomment this line 
             
+            if(appDelegate.isForeGround && appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+            {
+                appDelegate.initial_sync_succes_or_failed = DATA_SYNC_FAILED;
+                return;
+            }
             [autoreleasePool drain];
             
         }
@@ -6265,7 +6603,6 @@ last_sync_time:(NSString *)last_sync_time
         {
             //sahana 16th Sept
             didGetProcessId = FALSE;
-            
             
             
             appDelegate.createObjectContext = [self getSaveTargetRecords:response];
@@ -7401,7 +7738,16 @@ last_sync_time:(NSString *)last_sync_time
 - (void) getRecordTypeDictForObjects:(NSArray *)objects
 {
     didDescribeLayoutReceived = NO;
-    
+    NSLog(@"enterd getRecordTypeDictForObjects");
+    if (appDelegate.isForeGround == TRUE )
+    {
+        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+        {
+            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+            return;
+        }
+    }
+
     recordTypeDict = [[NSMutableDictionary alloc] initWithCapacity:0];
     for(id objName in objects)
     {
@@ -7413,21 +7759,38 @@ last_sync_time:(NSString *)last_sync_time
             //shrinivas
             if (appDelegate.isForeGround == TRUE)
             {
-                LoginController * loginController = [[LoginController alloc] init];
-                appDelegate.didFinishWithError = FALSE;
-                [loginController.activity stopAnimating];
-                [loginController enableControls];
-                
-                [loginController release];
-                return;
+                if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                {
+                    //sahana for background handling of app
+                    appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                   break;
+                    //return;
+                }
+                else
+                {
+                    LoginController * loginController = [[LoginController alloc] init];
+                    appDelegate.didFinishWithError = FALSE;
+                    [loginController.activity stopAnimating];
+                    [loginController enableControls];
+                    
+                    [loginController release];
+                    return;
+                }
             }
 
             
             NSLog(@"DetailViewController viewdidLoad in while loop");
             if (!appDelegate.isInternetConnectionAvailable)
             {
-                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                    [MyPopoverDelegate performSelector:@selector(throwException)];
+                if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                {
+                    appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                }
+                else
+                {
+                    if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                        [MyPopoverDelegate performSelector:@selector(throwException)];
+                }
                 //[appDelegate displayNoInternetAvailable];
                 return ;
             }
@@ -7437,9 +7800,29 @@ last_sync_time:(NSString *)last_sync_time
             }
             NSLog(@"Receiving RecordTypeId Info ..");
         }
+        if (appDelegate.isForeGround == TRUE)
+        {
+            if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+            {
+                //sahana for background handling of app
+                appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                break;
+                //return;
+            }
+        }
         didDescribeLayoutReceived = NO;
     }
-    
+    if (appDelegate.isForeGround == TRUE)
+    {
+        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+        {
+            //sahana for background handling of app
+            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+            return;
+            //return;
+        }
+    }
+       
     [appDelegate.dataBase insertValuesInToRTPicklistTableForObject:objects Values:recordTypeDict];
     
     return;
