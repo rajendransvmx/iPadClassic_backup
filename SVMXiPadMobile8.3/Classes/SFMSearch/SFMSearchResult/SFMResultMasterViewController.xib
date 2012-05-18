@@ -17,6 +17,7 @@
 			<string>IBUISwitch</string>
 			<string>IBUIButton</string>
 			<string>IBUITextField</string>
+			<string>IBUIActivityIndicatorView</string>
 			<string>IBUITableView</string>
 			<string>IBUIView</string>
 		</array>
@@ -46,7 +47,7 @@
 						<string key="NSFrame">{{0, 43}, {320, 832}}</string>
 						<reference key="NSSuperview" ref="495669496"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="248959314"/>
+						<reference key="NSNextKeyView" ref="821948671"/>
 						<string key="NSReuseIdentifierKey">_NS:569</string>
 						<bool key="IBUIUserInteractionEnabled">NO</bool>
 						<string key="targetRuntimeIdentifier">IBIPadFramework</string>
@@ -223,7 +224,7 @@
 						<string key="NSFrame">{{0, 6}, {320, 50}}</string>
 						<reference key="NSSuperview" ref="495669496"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="821948671"/>
+						<reference key="NSNextKeyView" ref="435660809"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIUserInteractionEnabled">NO</bool>
 						<string key="targetRuntimeIdentifier">IBIPadFramework</string>
@@ -263,11 +264,23 @@
 							<int key="NSfFlags">16</int>
 						</object>
 					</object>
+					<object class="IBUIActivityIndicatorView" id="16505719">
+						<reference key="NSNextResponder" ref="495669496"/>
+						<int key="NSvFlags">292</int>
+						<string key="NSFrame">{{222, 250}, {37, 37}}</string>
+						<reference key="NSSuperview" ref="495669496"/>
+						<reference key="NSWindow"/>
+						<string key="NSReuseIdentifierKey">_NS:9</string>
+						<bool key="IBUIOpaque">NO</bool>
+						<string key="targetRuntimeIdentifier">IBIPadFramework</string>
+						<bool key="IBUIHidesWhenStopped">NO</bool>
+						<int key="IBUIStyle">0</int>
+					</object>
 				</array>
 				<string key="NSFrameSize">{320, 832}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSWindow"/>
-				<reference key="NSNextKeyView" ref="435660809"/>
+				<reference key="NSNextKeyView" ref="248959314"/>
 				<string key="NSReuseIdentifierKey">_NS:9</string>
 				<object class="NSColor" key="IBUIBackgroundColor">
 					<int key="NSColorSpace">3</int>
@@ -326,6 +339,14 @@
 						<reference key="destination" ref="45541312"/>
 					</object>
 					<int key="connectionID">43</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">activity</string>
+						<reference key="source" ref="841351856"/>
+						<reference key="destination" ref="16505719"/>
+					</object>
+					<int key="connectionID">48</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchOutletConnection" key="connection">
@@ -393,6 +414,7 @@
 							<reference ref="435660809"/>
 							<reference ref="821948671"/>
 							<reference ref="248959314"/>
+							<reference ref="16505719"/>
 						</array>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -442,6 +464,11 @@
 						<reference key="object" ref="248959314"/>
 						<reference key="parent" ref="495669496"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">47</int>
+						<reference key="object" ref="16505719"/>
+						<reference key="parent" ref="495669496"/>
+					</object>
 				</array>
 			</object>
 			<dictionary class="NSMutableDictionary" key="flattenedProperties">
@@ -459,12 +486,13 @@
 				<string key="34.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="4.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="44.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+				<string key="47.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 			</dictionary>
 			<dictionary class="NSMutableDictionary" key="unlocalizedProperties"/>
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">44</int>
+			<int key="maxID">48</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -484,6 +512,7 @@
 					</object>
 					<dictionary class="NSMutableDictionary" key="outlets">
 						<string key="actionButton">UIButton</string>
+						<string key="activity">UIActivityIndicatorView</string>
 						<string key="searchCriteria">UITextField</string>
 						<string key="searchFilterSwitch">UISwitch</string>
 						<string key="searchMasterTable">UITableView</string>
@@ -493,6 +522,10 @@
 						<object class="IBToOneOutletInfo" key="actionButton">
 							<string key="name">actionButton</string>
 							<string key="candidateClassName">UIButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="activity">
+							<string key="name">activity</string>
+							<string key="candidateClassName">UIActivityIndicatorView</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="searchCriteria">
 							<string key="name">searchCriteria</string>

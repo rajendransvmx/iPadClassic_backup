@@ -26,6 +26,7 @@
 @synthesize switchStatus;
 @synthesize actionButton;
 @synthesize processId;
+@synthesize activity;
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
     SearchCriteriaViewController *searchPicker = [[SearchCriteriaViewController alloc] init];
@@ -72,6 +73,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     NSLog(@"Data = %@",searchData);
+    [activity setHidden:TRUE];
     [actionButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Done-Back-Button.png"] forState:UIControlStateNormal];
     searchString.text = searchData;
     searchCriteria.text = searchCriteriaString;
@@ -105,6 +107,7 @@
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
+    self.activity =nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -114,6 +117,7 @@
 }
 - (void) dealloc
 {
+    [activity release];
     [processId release];
     [pickerData release];
     [resultDetailView release];
@@ -259,7 +263,13 @@
 }
 - (IBAction)refineSearch:(id)sender
 {
+    [activity setHidden:FALSE];
+    [activity startAnimating];
+    [searchFilterSwitch setEnabled:FALSE];
     [self performSelector:@selector(didSelectHeader:)];
+    [searchFilterSwitch setEnabled:TRUE];
+    [activity stopAnimating];
+    [activity setHidden:TRUE];
     /*
     NSMutableArray *searchResultData = [[NSMutableArray alloc] init];
     NSString *processID = @"a0a70000000fsduAAA";

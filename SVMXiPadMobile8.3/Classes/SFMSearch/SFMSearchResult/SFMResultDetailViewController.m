@@ -796,7 +796,7 @@
     appDelegate.sfmPageController.topLevelId = nil;
     appDelegate.sfmPageController.recordId = localId;    
     [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
-    [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
+    [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
     [appDelegate.sfmPageController.detailView view];
     [self presentModalViewController:appDelegate.sfmPageController animated:YES];
     [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];

@@ -19,6 +19,7 @@
 @property (nonatomic, retain) IBOutlet UITextField *searchString;
 @property (nonatomic, retain) IBOutlet UISwitch    *searchFilterSwitch;
 @property (nonatomic, retain) IBOutlet UITableView    *searchMasterTable;
+@property (nonatomic, retain) IBOutlet UIActivityIndicatorView *activity;
 @property (nonatomic, retain) NSString *tableHeader;
 @property (nonatomic, retain) NSString *processId;
 @property (nonatomic, retain) NSArray *tableArray;

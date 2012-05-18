@@ -8,6 +8,7 @@
 
 #import "SFMFullResultViewController.h"
 #import "iServiceAppDelegate.h"
+#define TableViewResultViewCellHeight 50
 
 @interface SFMFullResultViewController ()
 
@@ -20,6 +21,7 @@
 @synthesize isOnlineRecord;
 @synthesize fullMainDelegate;
 @synthesize objectName;
+@synthesize resultTableView;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -36,8 +38,6 @@
     NSLog(@"Display Values = %@",data);
     int positionY = 40;
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    CGRect leftFrame = CGRectMake(40, positionY, 200, 60);
-    CGRect rightFrame = CGRectMake(240, 40, 200, 60);
     [actionButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Done-Back-Button.png"] forState:UIControlStateNormal];
     [detailButton setFrame:CGRectMake(500, 0, 40, 40)];
     
@@ -49,35 +49,10 @@
     {
         [detailButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"] forState:UIControlStateNormal];
     }
+    [resultTableView setBackgroundColor:[UIColor clearColor]];
     //NSArray *allKeys = [data allKeys];
     
     //for(id field in allKeys)
-    for(id field in tableHeaderArray)
-    {
-        UILabel *leftlabel = [[UILabel alloc] initWithFrame:leftFrame];
-        [leftlabel setFrame:leftFrame];
-        leftlabel.text = field;
-        leftlabel.textColor=[UIColor blackColor];//[appDelegate colorForHex:@"2d5d83"];
-        leftlabel.backgroundColor=[UIColor clearColor];
-        [self.view addSubview:leftlabel]; 
-        positionY += 50;
-        leftFrame = CGRectMake(40,positionY,200,60);
-        [leftlabel release];
-        
-        UILabel *rightLabel = [[UILabel alloc] initWithFrame:rightFrame];
-        [rightLabel setFrame:rightFrame];
-        rightLabel.text = [data objectForKey:field];
-        rightLabel.textColor=[appDelegate colorForHex:@"2d5d83"];
-        rightLabel.backgroundColor=[UIColor clearColor];
-        [self.view addSubview:rightLabel]; 
-        rightFrame = CGRectMake(240,positionY,200,60);
-        [rightLabel release];
-        if(appDelegate.sfmPageController.processId==NULL)
-        {
-            
-        }
-            
-    }
 }
 
 
@@ -139,7 +114,7 @@
     appDelegate.sfmPageController.topLevelId = nil;
     appDelegate.sfmPageController.recordId = localId;    
     [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
-    [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
+    [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
     [appDelegate.sfmPageController.detailView view];
     [self presentModalViewController:appDelegate.sfmPageController animated:YES];
     [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];
@@ -153,6 +128,8 @@
 - (void)viewDidUnload
 {
     [super viewDidUnload];
+    resultTableView = nil;
+
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
 }
@@ -165,9 +142,53 @@
 {
     [self dismissModalViewControllerAnimated:YES];
 }
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return [tableHeaderArray count];
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UILabel *lblObjects,*lblValues;
+    NSString *identifier = @"identifier";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+    if(cell == nil)
+    {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier];
+    }
+    else
+    {
+        NSArray *subLabelViews = [cell subviews];
+        for(UIView *txtView in subLabelViews)
+        {
+            [txtView removeFromSuperview];
+        }
+    }
+    [cell setBackgroundColor:[UIColor clearColor]];
+    lblObjects =[[UILabel alloc]initWithFrame:CGRectMake(20, 0, 200, TableViewResultViewCellHeight)];
+    lblObjects.text= [tableHeaderArray objectAtIndex:indexPath.row];
+    lblObjects.textAlignment=UITextAlignmentLeft;
+    [lblObjects setBackgroundColor:[UIColor clearColor]];
+    [cell addSubview:lblObjects];
+    lblValues=[[UILabel alloc]initWithFrame:CGRectMake(250, 0, 500, TableViewResultViewCellHeight)];
+    [lblValues setBackgroundColor:[UIColor clearColor]];
+    lblValues.text=[data objectForKey:[tableHeaderArray objectAtIndex:indexPath.row]];
+    lblObjects.textColor = [appDelegate colorForHex:@"2d5d83"];  
+    lblValues.textAlignment=UITextAlignmentLeft;
+    [cell addSubview:lblValues];    
+    [lblObjects release];
+    [lblValues release];
+    return cell;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return TableViewResultViewCellHeight;
+}
+
+
 -(void) dealloc
 {
-    [objectName release];
+    [resultTableView release];
     [tableHeaderArray release];
     [data release];
     [super dealloc];

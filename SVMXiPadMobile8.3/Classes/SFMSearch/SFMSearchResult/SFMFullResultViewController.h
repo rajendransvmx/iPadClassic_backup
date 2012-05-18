@@ -15,7 +15,7 @@
 @end
 
 @class iServiceAppDelegate;
-@interface SFMFullResultViewController : UIViewController<SFMFullResultViewControllerDelegate>
+@interface SFMFullResultViewController : UIViewController<SFMFullResultViewControllerDelegate,UITableViewDataSource,UITableViewDelegate>
 {
     iServiceAppDelegate * appDelegate;
 }
@@ -24,6 +24,7 @@
 @property (nonatomic, retain) NSArray *tableHeaderArray;
 @property (nonatomic, assign) BOOL isOnlineRecord;
 @property (nonatomic, assign) id <SFMFullResultViewControllerDelegate> fullMainDelegate;
+@property(nonatomic,retain) IBOutlet UITableView *resultTableView;
 @property(nonatomic,retain) IBOutlet UIButton *actionButton,*detailButton;
 - (IBAction)dismissView:(id)sender;
 - (IBAction) accessoryButtonTapped:(id)sender;
