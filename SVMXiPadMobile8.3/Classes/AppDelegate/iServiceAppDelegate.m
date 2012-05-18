@@ -118,8 +118,11 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 @implementation iServiceAppDelegate
 
+@synthesize Sync_check_in;
+@synthesize initial_sync_status;
+@synthesize IsLogedIn;
 @synthesize data_sync_chunking;
-
+@synthesize do_meta_data_sync;
 @synthesize isForeGround;
 @synthesize isBackground;
 @synthesize logoutFlag;
@@ -127,7 +130,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize initital_sync_object_name;
 @synthesize initial_dataSync_reqid;
 @synthesize initial_Sync_last_index;
-
+@synthesize initial_sync_succes_or_failed;
 
 @synthesize metaSyncThread;
 @synthesize metasync_timer;
@@ -865,7 +868,6 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         }            
     }   
 
-
     
     sqlite3_close(self.db);
 	
@@ -873,7 +875,10 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     self.wsInterface.didOpComplete = FALSE;
     loginController.didEnterAlertView = FALSE;
     [loginController readUsernameAndPasswordFromKeychain];
-    [loginController.activity stopAnimating];
+    if(!appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+    {
+        [loginController.activity stopAnimating];
+    }
     loginController.txtPasswordLandscape.text = @"";
     [loginController enableControls];
 }
@@ -1042,12 +1047,22 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         //shrinivas -- 02/05/2012
         if (self.isForeGround == TRUE)
         {
-            self.didFinishWithError = FALSE;
-            [loginController.activity stopAnimating];
-            [loginController enableControls];
-            return;
+            
+            if(IsLogedIn == ISLOGEDIN_TRUE)
+            {
+                 initial_sync_succes_or_failed = META_SYNC_FAILED;                    //sahana for background handling of app
+                break;
+            }
+            else
+            {
+                self.didFinishWithError = FALSE;
+                [loginController.activity stopAnimating];
+                [loginController enableControls];
+                // appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                return;
+            }
         }
-
+       
         if(self.dPicklist_retrieval_complete)
         {
             self.dPicklist_retrieval_complete = FALSE;
@@ -1055,7 +1070,22 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         }
         
         if (!isInternetConnectionAvailable)
+        {
+            if(IsLogedIn == ISLOGEDIN_TRUE)
+            {
+               initial_sync_succes_or_failed = META_SYNC_FAILED;
+            }
             break;
+        }
+    }
+    if (self.isForeGround == TRUE)
+    {
+        if(IsLogedIn == ISLOGEDIN_TRUE)
+        {
+            initial_sync_succes_or_failed = META_SYNC_FAILED;
+            //sahana for background handling of app
+            return;
+        }
     }
 }
 
