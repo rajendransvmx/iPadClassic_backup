@@ -157,10 +157,10 @@
             [appDelegate.dataBase clearDatabase];
         }
         
-       /* if (appDelegate.wsInterface.didOpComplete == TRUE)
-            return ; */
+        if (appDelegate.loginResult == nil) //RADHA 21/05/2011
+            return FALSE;
         
-        appDelegate.do_meta_data_sync = ALLOW_META_AND_DATA_SYNC; //[self doMetaAndDataSync];       //sahana9May
+        appDelegate.do_meta_data_sync = ALLOW_META_AND_DATA_SYNC;      //sahana9May
         return TRUE;                                                                                //sahana9May
     }
     
@@ -178,10 +178,10 @@
                 [appDelegate.dataBase clearDatabase];
             }
             
-           /* if (appDelegate.wsInterface.didOpComplete == TRUE)
-                return;          */                               //we need a correct fix for this issue. This is quick and dirty
+            if (appDelegate.loginResult == nil) //RADHA 21/05/2011
+                return FALSE;
             
-            appDelegate.do_meta_data_sync = ALLOW_META_AND_DATA_SYNC;         //[self doMetaAndDataSync];    //sahana9May
+            appDelegate.do_meta_data_sync = ALLOW_META_AND_DATA_SYNC;    //sahana9May
             
         }
         
@@ -241,17 +241,16 @@
             [appDelegate.dataBase deleteDatabase:DATABASENAME1];
             [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
         }
-        
-        //Radha -17/4/2012
-       /* if (appDelegate.wsInterface.didOpComplete == TRUE)
-            return; */
+        if (appDelegate.loginResult == nil) //RADHA 21/05/2011
+            return FALSE;
+    
         
         if (appDelegate.isForeGround == FALSE && !appDelegate.isInternetConnectionAvailable)
             [self readUsernameAndPasswordFromKeychain];
         
         didEnterAlertView = FALSE;
         
-        appDelegate.do_meta_data_sync = ALLOW_META_AND_DATA_SYNC;   //[self doMetaAndDataSync];         //sahana9May
+        appDelegate.do_meta_data_sync = ALLOW_META_AND_DATA_SYNC;            //sahana9May
         
         return TRUE;                                                                                    //sahana9May
         
