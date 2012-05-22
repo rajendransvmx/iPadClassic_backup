@@ -23,6 +23,7 @@
 @synthesize objectName;
 @synthesize resultTableView;
 @synthesize onlineImageView;
+@synthesize TitleForResultWindow;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -53,9 +54,12 @@
          [onlineImageView setImage:nil];
     }
     [resultTableView setBackgroundColor:[UIColor clearColor]];
-    //NSArray *allKeys = [data allKeys];
-    
-    //for(id field in allKeys)
+    NSString *title=[data objectForKey:[tableHeaderArray objectAtIndex:0]];
+   if(title)
+       TitleForResultWindow.text=title;
+   else 
+       TitleForResultWindow.text=@"";
+
 }
 
 
@@ -133,6 +137,7 @@
     [super viewDidUnload];
     resultTableView = nil;
     onlineImageView = nil;
+    TitleForResultWindow = nil;
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
 }
@@ -191,6 +196,7 @@
 
 -(void) dealloc
 {
+	[TitleForResultWindow release];
     [resultTableView release];
     [tableHeaderArray release];
     [data release];
