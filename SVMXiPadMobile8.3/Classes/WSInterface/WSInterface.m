@@ -2436,7 +2436,6 @@ last_sync_time:(NSString *)last_sync_time
     sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
     
     [sfmRequest addClientInfo:client];
-    [dataSync setRequest:sfmRequest];
     //SFM Search
     if([eventName isEqualToString:@"SFM_SEARCH"] && [eventType isEqualToString:@"SEARCH_RESULTS"])
     {
@@ -2485,6 +2484,7 @@ last_sync_time:(NSString *)last_sync_time
             [svmxcObject release];
         }
     }
+    [dataSync setRequest:sfmRequest];
     //SFM Search End
     [[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_DataSync_WSAsyncUsingParameters:dataSync 
