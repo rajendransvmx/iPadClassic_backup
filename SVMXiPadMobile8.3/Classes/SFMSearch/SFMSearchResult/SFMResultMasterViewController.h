@@ -15,6 +15,8 @@
  NSIndexPath * lastSelectedIndexPath;
     iServiceAppDelegate * appDelegate;
 }
+@property (nonatomic, retain) IBOutlet UILabel *searchCriteriaLabel;
+@property (nonatomic, retain) IBOutlet UILabel *includeOnlineResultLabel;
 @property (nonatomic, retain) IBOutlet UITextField *searchCriteria;
 @property (nonatomic, retain) IBOutlet UITextField *searchString;
 @property (nonatomic, retain) IBOutlet UISwitch    *searchFilterSwitch;
@@ -31,4 +33,6 @@
 @property(nonatomic,retain) IBOutlet UIButton *actionButton;
 - (IBAction)refineSearch:(id)sender;
 -(void) didSelectHeader:(id)sender;
+- (void) reloadTableData;
+- (IBAction) backgroundSelected:(id)sender;
 @end

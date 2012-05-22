@@ -114,9 +114,10 @@
 					<object class="IBUITableView" id="418388909">
 						<reference key="NSNextResponder" ref="310098771"/>
 						<int key="NSvFlags">274</int>
-						<string key="NSFrame">{{0, 50}, {540, 565}}</string>
+						<string key="NSFrame">{{0, 55}, {540, 560}}</string>
 						<reference key="NSSuperview" ref="310098771"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="520874972"/>
 						<string key="NSReuseIdentifierKey">_NS:408</string>
 						<reference key="IBUIBackgroundColor" ref="403004321"/>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -128,6 +129,16 @@
 						<float key="IBUIRowHeight">44</float>
 						<float key="IBUISectionHeaderHeight">22</float>
 						<float key="IBUISectionFooterHeight">22</float>
+					</object>
+					<object class="IBUIImageView" id="520874972">
+						<reference key="NSNextResponder" ref="310098771"/>
+						<int key="NSvFlags">292</int>
+						<string key="NSFrame">{{86, 2}, {10, 50}}</string>
+						<reference key="NSSuperview" ref="310098771"/>
+						<reference key="NSWindow"/>
+						<string key="NSReuseIdentifierKey">_NS:9</string>
+						<bool key="IBUIUserInteractionEnabled">NO</bool>
+						<string key="targetRuntimeIdentifier">IBIPadFramework</string>
 					</object>
 				</array>
 				<string key="NSFrameSize">{540, 615}</string>
@@ -178,6 +189,14 @@
 						<reference key="destination" ref="418388909"/>
 					</object>
 					<int key="connectionID">31</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">onlineImageView</string>
+						<reference key="source" ref="841351856"/>
+						<reference key="destination" ref="520874972"/>
+					</object>
+					<int key="connectionID">33</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchEventConnection" key="connection">
@@ -241,6 +260,7 @@
 							<reference ref="462733475"/>
 							<reference ref="495014813"/>
 							<reference ref="418388909"/>
+							<reference ref="520874972"/>
 						</array>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -264,6 +284,11 @@
 						<reference key="object" ref="418388909"/>
 						<reference key="parent" ref="310098771"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">32</int>
+						<reference key="object" ref="520874972"/>
+						<reference key="parent" ref="310098771"/>
+					</object>
 				</array>
 			</object>
 			<dictionary class="NSMutableDictionary" key="flattenedProperties">
@@ -275,13 +300,14 @@
 				<string key="19.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="24.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="28.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+				<string key="32.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="6.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 			</dictionary>
 			<dictionary class="NSMutableDictionary" key="unlocalizedProperties"/>
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">31</int>
+			<int key="maxID">33</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -305,6 +331,7 @@
 					<dictionary class="NSMutableDictionary" key="outlets">
 						<string key="actionButton">UIButton</string>
 						<string key="detailButton">UIButton</string>
+						<string key="onlineImageView">UIImageView</string>
 						<string key="resultTableView">UITableView</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -315,6 +342,10 @@
 						<object class="IBToOneOutletInfo" key="detailButton">
 							<string key="name">detailButton</string>
 							<string key="candidateClassName">UIButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="onlineImageView">
+							<string key="name">onlineImageView</string>
+							<string key="candidateClassName">UIImageView</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="resultTableView">
 							<string key="name">resultTableView</string>

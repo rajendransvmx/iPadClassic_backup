@@ -27,20 +27,26 @@
 @synthesize actionButton;
 @synthesize processId;
 @synthesize activity;
+@synthesize searchCriteriaLabel;
+@synthesize includeOnlineResultLabel;
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
-    SearchCriteriaViewController *searchPicker = [[SearchCriteriaViewController alloc] init];
-    searchPicker.pickerData = pickerData ;
-    UIPopoverController *pop = [[UIPopoverController alloc] initWithContentViewController:searchPicker];
-    searchPicker.pickerDelegate = self;
-    [pop presentPopoverFromRect:[textField frame] inView:searchCriteria permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
-    [pop setPopoverContentSize:CGSizeMake(320, 216)];
-    NSInteger indexOfText = [searchPicker.pickerData indexOfObject:textField.text];
-    [searchPicker.picker selectRow:indexOfText inComponent:0 animated:YES];
-    
-    [searchPicker release];
-    
-    return NO;
+    if([textField tag] == 0)
+    {
+        SearchCriteriaViewController *searchPicker = [[SearchCriteriaViewController alloc] init];
+        searchPicker.pickerData = pickerData ;
+        UIPopoverController *pop = [[UIPopoverController alloc] initWithContentViewController:searchPicker];
+        searchPicker.pickerDelegate = self;
+        [pop presentPopoverFromRect:[textField frame] inView:searchCriteria permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+        [pop setPopoverContentSize:CGSizeMake(320, 216)];
+        NSInteger indexOfText = [searchPicker.pickerData indexOfObject:textField.text];
+        [searchPicker.picker selectRow:indexOfText inComponent:0 animated:YES];
+        
+        [searchPicker release];
+        
+        return NO;
+    }
+    return YES;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -48,8 +54,14 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
-        self.title = NSLocalizedString(@"Result Master", @"Result Master");
-        pickerData = [[NSArray alloc] initWithObjects:@"Contains",@"Exact Match",@"Ends With",@"Starts With", nil];
+        //self.title = NSLocalizedString(@"Result Master", @"Result Master");
+        if(appDelegate == nil)
+            appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+        NSString *contains = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_CRITERIA_CONTAINS];
+        NSString *exact_match = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_CRITERIA_EXTACT_MATCH];
+        NSString *ends_with = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_CRITERIA_ENDS_WITH];
+        NSString *starts_with = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_CRITERIA_STARTS_WITH];
+        pickerData = [[NSArray alloc] initWithObjects:contains,exact_match,ends_with,starts_with, nil];
     }
     return self;
 }
@@ -73,11 +85,15 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     NSLog(@"Data = %@",searchData);
+    appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+
     [activity setHidden:TRUE];
     [actionButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Done-Back-Button.png"] forState:UIControlStateNormal];
+    [actionButton setTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_SRCH_SEARCH] forState:UIControlStateNormal];
+
     searchString.text = searchData;
     searchCriteria.text = searchCriteriaString;
-    appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+    
     if(appDelegate.isInternetConnectionAvailable)
     {
         searchFilterSwitch.enabled=TRUE;
@@ -88,26 +104,37 @@
         [searchFilterSwitch setOn:NO];
         searchFilterSwitch.enabled=FALSE;
     }
-    if([tableArray count] > 0)
-    {
-       
-        [self didSelectHeader:nil];
-        UIImageView * bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_left_panel_bg_main_top.png"]];
-        searchMasterTable.backgroundView = bgImage;
-        searchMasterTable.backgroundColor = [UIColor clearColor];       
-    }
+    UIImageView * bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_left_panel_bg_main_top.png"]];
+    searchMasterTable.backgroundView = bgImage;
+    searchMasterTable.backgroundColor = [UIColor clearColor];       
+    searchString.placeholder = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_SRCH_ENTER_TEXT];
+    searchCriteriaLabel.text = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_SRCH_Criteria];
+    includeOnlineResultLabel.text = [appDelegate.wsInterface.tagsDictionary objectForKey:INCLUDE_ONLINE_RESULTS];
     [[NSNotificationCenter defaultCenter] addObserver:self 
                                              selector:@selector(reachabilityChanged:) 
                                                  name:kReachabilityChangedNotification
                                                object:nil];
 }
+- (void) reloadTableData
+{
+   [activity setHidden:FALSE];
+    [activity startAnimating];
+    if([tableArray count] > 0)
+    {
+        [self didSelectHeader:nil];
+    }
+    [activity stopAnimating];
+    [activity setHidden:TRUE];
 
+}
 - (void)viewDidUnload
 {
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
     self.activity =nil;
+    self.searchCriteriaLabel = nil;
+    self.includeOnlineResultLabel = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -117,6 +144,8 @@
 }
 - (void) dealloc
 {
+    [includeOnlineResultLabel release];
+    [searchCriteriaLabel release];
     [activity release];
     [processId release];
     [pickerData release];
@@ -177,6 +206,7 @@
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [searchString resignFirstResponder];
     [tableView deselectRowAtIndexPath:lastSelectedIndexPath animated:YES];
     [tableView deselectRowAtIndexPath:indexPath animated:YES];    
     UIImage * image = nil;
@@ -245,6 +275,7 @@
 }
 -(void) didSelectHeader:(id)sender
 {    
+    [searchString resignFirstResponder];
     UIImage *image =nil;
     UITableViewCell * lastSelectedCell = [searchMasterTable cellForRowAtIndexPath:lastSelectedIndexPath];
     image = [UIImage imageNamed:@"SFM_left_button_UP.png"];
@@ -263,6 +294,7 @@
 }
 - (IBAction)refineSearch:(id)sender
 {
+    [searchString resignFirstResponder];
     [activity setHidden:FALSE];
     [activity startAnimating];
     [searchFilterSwitch setEnabled:FALSE];
@@ -298,6 +330,10 @@
     [searchResultData release];
     NSLog(@"Online Records = %@",appDelegate.onlineDataArray);
      */
+}
+- (IBAction) backgroundSelected:(id)sender
+{
+    [searchString resignFirstResponder];
 }
 #pragma mark - PopOver Delegate Methods
 -(void) setTextField :(NSString *)str

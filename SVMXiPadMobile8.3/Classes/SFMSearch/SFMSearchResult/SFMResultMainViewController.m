@@ -63,6 +63,11 @@
     [resultmasterView setSwitchStatus:switchStatus];
 
 }
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    [resultmasterView reloadTableData];
+}
 
 - (void)viewDidUnload
 {

@@ -22,6 +22,7 @@
 @synthesize fullMainDelegate;
 @synthesize objectName;
 @synthesize resultTableView;
+@synthesize onlineImageView;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -36,18 +37,20 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     NSLog(@"Display Values = %@",data);
-    int positionY = 40;
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     [actionButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Done-Back-Button.png"] forState:UIControlStateNormal];
+    [actionButton setTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_SRCH_CLOSE] forState:UIControlStateNormal];
     [detailButton setFrame:CGRectMake(500, 0, 40, 40)];
     
     if(self.isOnlineRecord)
     {
         [detailButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button-Gray.png"] forState:UIControlStateNormal];
+        [onlineImageView setImage:[UIImage imageNamed:@"OnlineRecord.png"]];
     }
     else 
     {
         [detailButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"] forState:UIControlStateNormal];
+         [onlineImageView setImage:nil];
     }
     [resultTableView setBackgroundColor:[UIColor clearColor]];
     //NSArray *allKeys = [data allKeys];
@@ -129,7 +132,7 @@
 {
     [super viewDidUnload];
     resultTableView = nil;
-
+    onlineImageView = nil;
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
 }
@@ -191,6 +194,7 @@
     [resultTableView release];
     [tableHeaderArray release];
     [data release];
+    [onlineImageView release];
     [super dealloc];
 }
 @end

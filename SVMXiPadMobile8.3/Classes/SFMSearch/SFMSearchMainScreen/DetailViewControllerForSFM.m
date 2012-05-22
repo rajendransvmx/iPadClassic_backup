@@ -94,7 +94,7 @@
     UILabel * titleLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, 200, 44)] autorelease];
     titleLabel.textAlignment = UITextAlignmentCenter;
     
-    titleLabel.text = @"SFM Search";
+    titleLabel.text = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search];
     titleLabel.font = [UIFont boldSystemFontOfSize:15];
     titleLabel.backgroundColor = [UIColor clearColor];
     self.navigationItem.titleView = titleLabel;
@@ -212,6 +212,7 @@
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [self.masterView.searchString resignFirstResponder];
     NSArray *objects = [[_sfmArray objectAtIndex:indexPath.row] objectForKey:@"Objects"];
     NSString *processId = [[_sfmArray objectAtIndex:indexPath.row] objectForKey:@"Id"];
     

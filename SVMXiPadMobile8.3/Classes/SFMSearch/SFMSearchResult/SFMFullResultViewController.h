@@ -25,6 +25,7 @@
 @property (nonatomic, assign) BOOL isOnlineRecord;
 @property (nonatomic, assign) id <SFMFullResultViewControllerDelegate> fullMainDelegate;
 @property(nonatomic,retain) IBOutlet UITableView *resultTableView;
+@property(nonatomic,retain) IBOutlet UIImageView *onlineImageView;
 @property(nonatomic,retain) IBOutlet UIButton *actionButton,*detailButton;
 - (IBAction)dismissView:(id)sender;
 - (IBAction) accessoryButtonTapped:(id)sender;

@@ -19,34 +19,46 @@
 @synthesize searchCriteria,searchString;
 @synthesize searchFilterSwitch;
 @synthesize pickerData;
+@synthesize searchCriteriaLabel;
+@synthesize includeOnlineResultLabel;
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
-    SearchCriteriaViewController *searchPicker = [[SearchCriteriaViewController alloc] init];
-    searchPicker.pickerData = pickerData ;
-    UIPopoverController *pop = [[UIPopoverController alloc] initWithContentViewController:searchPicker];
-    searchPicker.pickerDelegate = self;
-    [pop presentPopoverFromRect:[textField frame] inView:searchCriteria permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
-    [pop setPopoverContentSize:CGSizeMake(320, 216)];
-    NSInteger indexOfText = [searchPicker.pickerData indexOfObject:textField.text];
-    [searchPicker.picker selectRow:indexOfText inComponent:0 animated:YES];
+    if([textField tag] == 0)
+    {
+        SearchCriteriaViewController *searchPicker = [[SearchCriteriaViewController alloc] init];
+        searchPicker.pickerData = pickerData ;
+        UIPopoverController *pop = [[UIPopoverController alloc] initWithContentViewController:searchPicker];
+        searchPicker.pickerDelegate = self;
+        [pop presentPopoverFromRect:[textField frame] inView:searchCriteria permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+        [pop setPopoverContentSize:CGSizeMake(320, 216)];
+        NSInteger indexOfText = [searchPicker.pickerData indexOfObject:textField.text];
+        [searchPicker.picker selectRow:indexOfText inComponent:0 animated:YES];
 
-    [searchPicker release];
+        [searchPicker release];
 
-    return NO;
+        return NO;
+    }
+    return YES;
 }
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        self.title = NSLocalizedString(@"Master", @"Master");
+        //self.title = NSLocalizedString(@"Master", @"Master");
         self.contentSizeForViewInPopover = CGSizeMake(320.0, 600.0);
-        pickerData = [[NSArray alloc] initWithObjects:@"Contains",@"Exact Match",@"Ends With",@"Starts With", nil];
+        iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+        NSString *contains = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_CRITERIA_CONTAINS];
+        NSString *exact_match = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_CRITERIA_EXTACT_MATCH];
+        NSString *ends_with = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_CRITERIA_ENDS_WITH];
+        NSString *starts_with = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_CRITERIA_STARTS_WITH];
+        pickerData = [[NSArray alloc] initWithObjects:contains,exact_match,ends_with,starts_with, nil];
     }
     return self;
 }
 							
 - (void)dealloc
 {
+    [searchCriteriaLabel release];
     [searchFilterSwitch release];
     [searchString release];
     [searchCriteria release];
@@ -90,12 +102,16 @@
         [searchFilterSwitch setOn:NO];
         searchFilterSwitch.enabled=FALSE;
     }
+    searchString.placeholder = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_SRCH_ENTER_TEXT];
+    searchCriteriaLabel.text = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_SRCH_Criteria];
+    includeOnlineResultLabel.text = [appDelegate.wsInterface.tagsDictionary objectForKey:INCLUDE_ONLINE_RESULTS];
 }
 
 - (void)viewDidUnload
 {
     [super viewDidUnload];
     // Release any retained subviews of the main view.
+    self.searchCriteriaLabel = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -108,5 +124,8 @@
 {
     searchCriteria.text = str;
 }
-
+- (IBAction) backgroundSelected:(id)sender
+{
+    [searchString resignFirstResponder];
+}
 @end
