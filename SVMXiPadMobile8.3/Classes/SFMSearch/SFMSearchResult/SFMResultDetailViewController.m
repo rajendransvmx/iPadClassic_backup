@@ -207,6 +207,7 @@
                       
         }
     }
+    synchronized_sqlite3_finalize(labelstmt);
 
     NSArray *tableHeader = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"TableHeader"];
     
@@ -574,7 +575,7 @@
     
     for(NSDictionary *obj in data)
     {
-        [header addObject:[obj objectForKey:@"SVMXC__Field_Name__c"]];
+        [header addObject:[NSString stringWithFormat:@"%@.%@",[obj objectForKey:@"SVMXC__Object_Name2__c"],[obj objectForKey:@"SVMXC__Field_Name__c"]]];
     }
     return [header autorelease];
 
@@ -609,7 +610,7 @@
             NSMutableDictionary *resultDict = [[NSMutableDictionary alloc] init];
             for(NSDictionary *displaydict in displayArray)
             {
-                NSString *key = [displaydict objectForKey:@"SVMXC__Field_Name__c"];
+                NSString *key = [NSString stringWithFormat:@"%@.%@",[displaydict objectForKey:@"SVMXC__Object_Name2__c"], [displaydict objectForKey:@"SVMXC__Field_Name__c"]];
                 [resultDict setObject:[dict objectForKey:key] forKey:key];
                 [resultDict setObject:[dict objectForKey:@"Id"] forKey:@"Id"]; 
                 [resultDict setObject:[dict objectForKey:@"local_id"] forKey:@"local_id"]; 
@@ -778,15 +779,16 @@
     }
 
     NSString * queryStatement2 = [NSMutableString stringWithFormat:@"Select process_id FROM SFProcess where process_type = 'VIEWRECORD' and object_api_name = '%@'",objectName];   
+    sqlite3_stmt * labelstmt2;
     const char *selectStatement2 = [queryStatement2 UTF8String];
     
     NSString *processId = @"";
     
-    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement2,-1, &labelstmt, nil) == SQLITE_OK )
+    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement2,-1, &labelstmt2, nil) == SQLITE_OK )
     {
-        if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
+        if(synchronized_sqlite3_step(labelstmt2) == SQLITE_ROW)
         {
-            field1 = (char *) synchronized_sqlite3_column_text(labelstmt,0);
+            field1 = (char *) synchronized_sqlite3_column_text(labelstmt2,0);
             NSLog(@"%s",field1);
             if(field1)
                 processId = [NSString stringWithFormat:@"%s", field1];
@@ -809,6 +811,8 @@
     [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];
     appDelegate.didsubmitModelView = FALSE;
     [appDelegate.sfmPageController release];
+    synchronized_sqlite3_finalize(labelstmt);
+    synchronized_sqlite3_finalize(labelstmt2);
 
 }
 #pragma mark - SFM Full Result View Delegate

@@ -531,6 +531,8 @@
                 [TableArray addObject:TableName];
                 operand = [dict objectForKey:@"SVMXC__Operand__c"];
                 operator = [dict objectForKey:@"SVMXC__Operator__c"]; 
+                synchronized_sqlite3_finalize(labelstmt);
+                synchronized_sqlite3_finalize(labelstmt2);
             }
             else
             {
@@ -555,13 +557,14 @@
             if([operator isEqualToString:@"le"] )
                 [conditionFields appendFormat:@"'%@'.%@ <= '%@'",TableName,fieldName,operand];
         }
+        sqlite3_stmt * labelstmt;
         for (int i=0; i<[TableArray count]; i++) {
             if(![[TableArray objectAtIndex:i]isEqual:object]){
                 
                 NSMutableString * queryStatement1 = [[NSMutableString alloc]initWithCapacity:0];
                 
                 queryStatement1 = [NSMutableString stringWithFormat:@"SELECT api_name,type,relationship_name,reference_to FROM SFObjectField where object_api_name = '%@'and label='%@'",object, [self getFieldLabelForApiName:[TableArray objectAtIndex:i]]];    
-                sqlite3_stmt * labelstmt;
+                
                 const char *selectStatement = [queryStatement1 UTF8String];
                 char *apiName,*type,*relationshipName,*reference_to;        
                 if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &labelstmt, nil) == SQLITE_OK )
@@ -584,6 +587,7 @@
                 }
             }
         }
+        synchronized_sqlite3_finalize(labelstmt);
         
     if([conditionFields length] > 0)
             queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE %@ COLLATE NOCASE",queryFields,object,joinFields,conditionFields];
@@ -618,8 +622,12 @@
                 else
                 {
                     if(j<([displayArray count] +2))
-                        [dict setObject:value forKey:[[displayArray objectAtIndex:j-2] 
-                                                      objectForKey:@"SVMXC__Field_Name__c"]];
+                    {
+                        NSDictionary *object = [displayArray objectAtIndex:j-2];
+                        [dict setObject:value forKey:[NSString stringWithFormat:@"%@.%@",[object 
+                                                      objectForKey:@"SVMXC__Object_Name2__c"],[object 
+                                                      objectForKey:@"SVMXC__Field_Name__c"]]];
+                    }
                      else
                      {
                          int indexValue = j - [displayArray count] - 2;

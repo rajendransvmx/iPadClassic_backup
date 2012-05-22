@@ -299,7 +299,10 @@
     [activity startAnimating];
     [searchFilterSwitch setEnabled:FALSE];
     [self performSelector:@selector(didSelectHeader:)];
-    [searchFilterSwitch setEnabled:TRUE];
+    if(appDelegate.isInternetConnectionAvailable)
+    {
+        [searchFilterSwitch setEnabled:TRUE];
+    }
     [activity stopAnimating];
     [activity setHidden:TRUE];
     /*
