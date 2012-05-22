@@ -501,19 +501,19 @@
 	<key>IPAD012_TAG041</key>
 	<string>Initial Setup : Preparing application for the first time use</string>
 	<key>IPAD019_TAG001</key>
-	<string>SFM Search</string>
+	<string>ServiceMax Search</string>
 	<key>IPAD019_TAG002</key>
-	<string>SFM Search Description</string>
+	<string>Search for records in local database and in server, based on pre-configured searches.</string>
 	<key>IPAD019_TAG003</key>
 	<string>Search Criteria</string>
 	<key>IPAD019_TAG004</key>
-	<string>Include Online Results</string>
+	<string> Include online results</string>
 	<key>IPAD019_TAG005</key>
-	<string>Enter Search Text Here</string>
+	<string>Enter keyword here...</string>
 	<key>IPAD019_TAG006</key>
-	<string>Go</string>
+	<string>Go!</string>
 	<key>IPAD019_TAG007</key>
-	<string>SFM Search Result</string>
+	<string>Search Results</string>
 	<key>IPAD019_TAG008</key>
 	<string>Contains</string>
 	<key>IPAD019_TAG009</key>
