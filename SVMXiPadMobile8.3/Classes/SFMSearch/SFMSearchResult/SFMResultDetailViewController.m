@@ -77,7 +77,7 @@
     UILabel * titleLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, 200, 44)] autorelease];
     titleLabel.textAlignment = UITextAlignmentCenter;
     
-    titleLabel.text = @"SFM Search Result";
+    titleLabel.text = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_SRCH_RESULTS];
     titleLabel.font = [UIFont boldSystemFontOfSize:15];
     titleLabel.backgroundColor = [UIColor clearColor];
     self.navigationItem.titleView = titleLabel;
@@ -497,28 +497,32 @@
     BOOL result = NO;
     //get all the searchable fields
     NSLog(@"Search String = %@",searchString);
-    if([self.masterView.searchCriteria.text isEqualToString:@"Contains"])
+    searchField = [searchField lowercaseString];
+    searchString = [searchString lowercaseString];
+    NSLog(@"Search String = :%@:",self.masterView.searchCriteria.text);
+    NSLog(@"Tag = :%@:",[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_CRITERIA_STARTS_WITH]);
+    if([self.masterView.searchCriteria.text isEqualToString:[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_CRITERIA_CONTAINS]])
     {
         if([searchField rangeOfString:searchString].length > 0)
         {
             result = YES;
         }
     }
-    if([self.masterView.searchCriteria.text isEqualToString:@"Exact Match"])
+    if([self.masterView.searchCriteria.text isEqualToString:[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_CRITERIA_EXTACT_MATCH]])
     {
         if([searchField isEqualToString:searchString])
         {
             result = YES;
         }
     }
-    if([self.masterView.searchCriteria.text isEqualToString:@"Ends With"])
+    if([self.masterView.searchCriteria.text isEqualToString:[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_CRITERIA_ENDS_WITH]])
     {
         if([searchField hasSuffix:searchString])
         {
             result = YES;
         }
     }
-    if([self.masterView.searchCriteria.text isEqualToString:@"Starts With"])
+    if([self.masterView.searchCriteria.text isEqualToString:[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_CRITERIA_STARTS_WITH]])
     {
         if([searchField hasPrefix:searchString])
         {
@@ -554,7 +558,7 @@
 {
     if(detailTable)
         [detailTable release];
-    detailTable = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 710, self.view.frame.size.height)];
+    detailTable = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 710, 700)];
     detailTable.delegate = self;
     detailTable.dataSource = self;
     UIImageView * bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_right_panel_bg_main_top.png"]];
@@ -681,8 +685,9 @@
         }
         
         
-        NSString *criteria = self.masterView.searchCriteriaString;
-        NSString *userFilterString = self.masterView.searchData;
+        NSString *criteria = self.masterView.searchCriteria.text;
+        NSString *userFilterString = self.masterView.searchString.text;
+        NSLog(@"User Filter String = %@",userFilterString);
         [ searchResultData addObject:self.masterView.processId];
         [ searchResultData addObject:objectList];
         [ searchResultData addObject:objectResultList];
@@ -692,9 +697,10 @@
         [activityIndicator startAnimating];
         if(appDelegate==nil)
             appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-        [appDelegate goOnlineIfRequired]; //RADHA 18/05/11
-        [appDelegate.wsInterface dataSyncWithEventName:@"SFM_SEARCH" eventType:@"SEARCH_RESULTS" values:searchResultData]; 
+        [appDelegate goOnlineIfRequired];
         appDelegate.wsInterface.didOpComplete = FALSE;
+        [appDelegate.wsInterface dataSyncWithEventName:@"SFM_SEARCH" eventType:@"SEARCH_RESULTS" values:searchResultData]; 
+
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
         {                
             if (appDelegate.wsInterface.didOpComplete == TRUE)
