@@ -303,6 +303,19 @@
 #define alert_authentication_error_         @"IPAD011_TAG014"
 #define login_continue                      @"IPAD015_TAG010"
 
+//SFM Search
+#define SFM_Search                          @"IPAD019_TAG001"
+#define SFM_Search_Description              @"IPAD019_TAG002"
+#define SFM_SRCH_Criteria                   @"IPAD019_TAG003"
+#define INCLUDE_ONLINE_RESULTS              @"IPAD019_TAG004"
+#define SFM_SRCH_ENTER_TEXT                 @"IPAD019_TAG005"
+#define SFM_SRCH_SEARCH                     @"IPAD019_TAG006"
+#define SFM_SRCH_RESULTS                    @"IPAD019_TAG007"
+#define SFM_CRITERIA_CONTAINS               @"IPAD019_TAG008"
+#define SFM_CRITERIA_EXTACT_MATCH           @"IPAD019_TAG009"
+#define SFM_CRITERIA_ENDS_WITH              @"IPAD019_TAG010"
+#define SFM_CRITERIA_STARTS_WITH            @"IPAD019_TAG011"
+#define SFM_SRCH_CLOSE                      @"IPAD019_TAG012"
 
 
 
