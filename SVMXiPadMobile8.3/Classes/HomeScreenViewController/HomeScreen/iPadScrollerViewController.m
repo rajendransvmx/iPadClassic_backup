@@ -337,7 +337,7 @@ const NSUInteger kNumImages = 7;
                  [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_HELP],
                  [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_sync_label], 
                   [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_label],
-                  @"SFM Search",
+                  [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search],
                  nil] retain];
 
     descriptionArray = [[NSArray arrayWithObjects:
@@ -349,7 +349,7 @@ const NSUInteger kNumImages = 7;
                          [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_HELP_TEXT],
                          [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_sync_text], 
                          [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_text],
-                         @"SFM Search Description",
+                         [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search_Description],
                          nil] retain];
     
     self.scrollPages = [self getScrollViewNames];
@@ -598,7 +598,7 @@ const NSUInteger kNumImages = 7;
         [self sync];
     else if ([itemSelected isEqualToString:[appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_label]])
         [self logout];
-    else if ([itemSelected isEqualToString:@"SFM Search"])
+    else if ([itemSelected isEqualToString:[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search]])
         [self showSearch];
 
 }
