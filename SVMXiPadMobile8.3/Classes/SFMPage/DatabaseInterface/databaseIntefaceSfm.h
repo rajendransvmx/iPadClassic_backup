@@ -216,6 +216,11 @@
 
 -(NSArray *)getAllIdsFromDatabase:(NSString *)sync_type  forObjectName:(NSString *)object_name;
 -(void)deleteDownloadCriteriaObjects:(NSArray *)deleted_objects;
+-(NSMutableDictionary *)getAllFieldsAndItsDataTypesForObject:(NSString *)object_api_name tableName:(NSString *)tableName;
+
+//sahana
+-(NSArray *)getAllObjectsFromHeap;
+
 #define SERVER_OVERRIDE                     @"Server_Override"
 #define CLIENT_OVERRIDE                     @"Client_Override"
 #define UNDO                                @"Undo"
