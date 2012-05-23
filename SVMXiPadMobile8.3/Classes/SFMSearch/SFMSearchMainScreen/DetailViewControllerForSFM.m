@@ -173,7 +173,11 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier];
     }
     cell.textLabel.text = [[_sfmArray objectAtIndex:indexPath.row] objectForKey:@"SVMXC__Name__c"];
-    cell.detailTextLabel.text = [[_sfmArray objectAtIndex:indexPath.row] objectForKey:@"SVMXC__Description__c"];
+    NSString *DescriptionText=[[_sfmArray objectAtIndex:indexPath.row] objectForKey:@"SVMXC__Description__c"];
+    if(![DescriptionText isEqualToString:@"(null)"])
+        cell.detailTextLabel.text =DescriptionText;
+    else
+        cell.detailTextLabel.text =@"";
     UIButton * button = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 20, 21)] autorelease];
     [button setTitle:@"Search" forState:UIControlStateNormal];
     [button setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"] 
