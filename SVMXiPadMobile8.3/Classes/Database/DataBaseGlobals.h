@@ -181,6 +181,7 @@
 #define MWIZARD_STEP_DESCRIPTION @"wizard_step_description"
 #define MWIZARD_STEP_NAME        @"wizard_step_name"
 #define MACTION_TYPE             @"action_type"
+#define MWIZARD_NAME             @"wizard_name"   
 
 //MobileDeviceTags
 #define MTAG_ID                  @"tag_id"
