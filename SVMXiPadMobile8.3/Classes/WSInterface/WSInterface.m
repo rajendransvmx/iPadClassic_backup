@@ -5298,18 +5298,25 @@ last_sync_time:(NSString *)last_sync_time
           }
          // NSLog(@"SAMMAN MetaSync MOBILE_DEVICE_TAGS processing ends: %@", [NSDate date]);
      //   didGetWizards = FALSE;
-          [appDelegate.dataBase insertValuesInToTagsTable:mobileDeviceTagsDict];
-          if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
+          if(!appDelegate.firstTimeCallForTags)
           {
-              if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+              [appDelegate.dataBase insertValuesInToTagsTable:mobileDeviceTagsDict];
+              if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable )
               {
-                   [refreshProgressBarUIDelegate RefreshProgressBar:META_SYNC_];
-                   appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
-                  return;
+                  if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+                  {
+                       [refreshProgressBarUIDelegate RefreshProgressBar:META_SYNC_];
+                       appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                      return;
+                  }
               }
           }
-
-        
+          else
+          {
+              NSMutableDictionary * temp_dict = [[self fillEmptyTags:mobileDeviceTagsDict] retain];
+              appDelegate.wsInterface.tagsDictionary = [temp_dict retain];
+              appDelegate.download_tags_done = TRUE;;
+          }
       /*  while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE))
         {
             if (didGetWizards)
@@ -5340,8 +5347,9 @@ last_sync_time:(NSString *)last_sync_time
            // NSLog(@"SAMMAN MetaSync MOBILE_DEVICE_SETTINGS processing ends: %@", [NSDate date]);
           //  didOpComplete = TRUE;
             
+           
             [appDelegate.dataBase insertValuesInToSettingsTable:mobileDeviceSettingsDict];
-            if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
+            if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable )
             {
                 if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
                 {
@@ -9500,6 +9508,7 @@ last_sync_time:(NSString *)last_sync_time
     NSArray * keys = [_tagsDictionary allKeys];
 
     NSMutableDictionary * defaultTags = [self getDefaultTags];
+    NSArray * default_keys = [defaultTags allKeys];
     
     for (int i = 0; i < [keys count]; i++)
     {
@@ -9507,6 +9516,16 @@ last_sync_time:(NSString *)last_sync_time
         if (([_tagsDictionary objectForKey:key] == nil) || 
             [[_tagsDictionary objectForKey:key] isEqualToString:@""] || 
             ([[_tagsDictionary objectForKey:key] length] == 0))
+        {
+            NSString * defaultValue = [defaultTags objectForKey:key];
+            [_tagsDictionary setValue:defaultValue forKey:key];
+        }
+    }
+    
+    for(int j = 0 ; j < [default_keys count];j++)
+    {
+        NSString * key = [default_keys objectAtIndex:j];    
+        if(![keys containsObject:key])
         {
             NSString * defaultValue = [defaultTags objectForKey:key];
             [_tagsDictionary setValue:defaultValue forKey:key];
