@@ -48,21 +48,6 @@
     
     wizard_buttons = [[NSMutableDictionary alloc] initWithCapacity:0];
     
-    //Shrinivas fix for defect #4333
-    /*if ([ipad_only_array count] > 0)
-    {
-        NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"Troubleshooting and Summary",@"0001TS", nil] forKeys:[NSArray arrayWithObjects:@"wizard_description",@"wizard_id", nil]];
-        
-        [[wizard_info objectForKey:@"sfw_wizard_info"] insertObject:dict atIndex:0];
-
-        
-        for (int i = 0;i < [ipad_only_array count]; i++)
-        {
-            [[ipad_only_array objectAtIndex:i] setValue:@"0001TS" forKey:@"wizard_id"];
-            [[wizard_info objectForKey:@"sfw_wizard_button"] insertObject:[ipad_only_array objectAtIndex:i] atIndex:i];
-        }
-        
-    }*/
 
     NSMutableArray * array = [wizard_info objectForKey:SFW_WIZARD_INFO];
     
@@ -340,7 +325,8 @@
 {
     NSMutableArray * array = [wizard_info objectForKey:SFW_WIZARD_INFO];
     NSDictionary * dict = [array objectAtIndex:section];
-    NSString * wizard_description = [dict objectForKey:WIZARD_DESCRIPTION];
+   // NSString * wizard_description = [dict objectForKey:WIZARD_DESCRIPTION];
+    NSString * wizard_description = [dict objectForKey:WIZARD_TITLE]; //RADHA
     return wizard_description;
 }
 
