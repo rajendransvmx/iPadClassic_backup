@@ -51,14 +51,23 @@
     else 
     {
         [detailButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"] forState:UIControlStateNormal];
-         [onlineImageView setImage:nil];
+        [onlineImageView setImage:nil];
     }
     [resultTableView setBackgroundColor:[UIColor clearColor]];
-    NSString *title=[data objectForKey:[tableHeaderArray objectAtIndex:0]];
-   if(title)
-       TitleForResultWindow.text=title;
-   else 
-       TitleForResultWindow.text=@"";
+    TitleForResultWindow.font=[UIFont boldSystemFontOfSize:18];
+    if([data objectForKey:[tableHeaderArray objectAtIndex:0]])
+    {
+        if (objectName) 
+        {
+            TitleForResultWindow.text=[NSString stringWithFormat:@"%@: %@",objectName,[data objectForKey:[tableHeaderArray objectAtIndex:0]]];
+        }  
+        else
+        {
+            TitleForResultWindow.text=[NSString stringWithFormat:@"%@",[data objectForKey:[tableHeaderArray objectAtIndex:0]]];
+        }
+    }
+    else 
+        TitleForResultWindow.text=@"";
 
 }
 
