@@ -288,6 +288,8 @@
 #define WIZARD_ID                    @"wizard_id"
 #define EXPRESSION_ID                @"expression_id"
 #define WIZARD_DESCRIPTION           @"wizard_description"
+//RADHA
+#define WIZARD_TITLE                 @"wizard_name"
 
 #define TARGET                        @"TARGET"
 #define TARGETCHILD                   @"TARGETCHILD"
