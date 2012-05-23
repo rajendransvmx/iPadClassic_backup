@@ -1464,7 +1464,7 @@
                             
                             if([mapping_value isEqualToString:MACRO_YESTERDAY])
                             {
-                                [dict setObject:yesterday forKey:target_field_name];
+                                [dict setObject:yesterday_date forKey:target_field_name]; //RADHA
                             }
                             
                         }
@@ -2451,15 +2451,14 @@
     NSMutableArray * wizard_ids_array = [[NSMutableArray alloc] initWithCapacity:0];
     NSMutableArray * wizard_buttons_array = [[NSMutableArray alloc] initWithCapacity:0]; 
     
-    //iServiceAppDelegate * appdelegate =(iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    
-    NSString * query = [NSString stringWithFormat:@"SELECT wizard_id , expression_id , wizard_description  FROM '%@' where object_name = '%@'" ,SFWIZARD , objectName];
+    NSString * query = [NSString stringWithFormat:@"SELECT wizard_id , expression_id , wizard_description, wizard_name  FROM '%@' where object_name = '%@'" ,SFWIZARD , objectName];
     
     NSString * wizard_id = @"";
     NSString * expression_id = @"";
     NSString * wizard_description = @"";
+    NSString * wizard_title = @"";  //RADHA
     
-    NSArray * keys = [NSArray arrayWithObjects:WIZARD_ID,WIZARD_DESCRIPTION,nil];
+    NSArray * keys = [NSArray arrayWithObjects:WIZARD_ID,WIZARD_DESCRIPTION, WIZARD_TITLE, nil];
     
     sqlite3_stmt * stmt ;
     
@@ -2485,13 +2484,19 @@
                 wizard_description = [NSString stringWithUTF8String:temp_wizard_description];
             }
             
+            char * temp_wizard_name = (char *)synchronized_sqlite3_column_text(stmt, 3);
+            if (temp_wizard_name != nil)
+            {
+                wizard_title = [NSString stringWithUTF8String:temp_wizard_name];
+            }
+            
             if([expression_id length] != 0)
             {
                 NSString * expression = [appDelegate.databaseInterface queryForExpression:expression_id];
                 BOOL flag = [appDelegate.databaseInterface validateTheExpressionForRecordId:record_id objectName:objectName expression:expression];
                 if(flag)
                 {
-                    NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:wizard_id,wizard_description, nil] forKeys:keys];
+                    NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:wizard_id,wizard_description, wizard_title, nil] forKeys:keys];
                     [wizard_array addObject:dict];
                     [wizard_ids_array addObject:wizard_id];
                 }
@@ -2499,7 +2504,7 @@
             }
             else
             {
-                NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:wizard_id,wizard_description, nil] forKeys:keys];
+                NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:wizard_id,wizard_description, wizard_title, nil] forKeys:keys];
                 [wizard_array addObject:dict];
                 [wizard_ids_array addObject:wizard_id];
             }
@@ -2509,8 +2514,6 @@
     if([wizard_ids_array count] > 0)
     {
         wizard_buttons_array  = [appDelegate.databaseInterface getButtonsForWizardInformation:wizard_ids_array record_id:record_id object_name:objectName]; 
-      //  NSLog(@"%@",wizard_array);
-      //  NSLog(@"wizard buttons array -%@",wizard_buttons_array);
     }
     
     [wizard_dict  setObject:wizard_array forKey:SFW_WIZARD_INFO];
