@@ -375,10 +375,21 @@ const NSUInteger kNumImages = 7;
             appDelegate.wsInterface.refreshProgressBarUIDelegate = self;
             Total_calls = 17;
             
+           // description_label.autoresizesSubviews = TRUE;
+           // description_label.lineBreakMode = UILineBreakModeWordWrap;
+            
             ProgressView.layer.cornerRadius = 5;
             ProgressView.frame = CGRectMake(300, 15, 474, 200);
             [self.view addSubview:transparent_layer];
             [self.view addSubview:ProgressView];
+           
+            description_label.numberOfLines = 3;
+           // description_label.lineBreakMode = UILineBreakModeWordWrap;
+            
+            description_label.font =  [UIFont systemFontOfSize:14.0];
+            StepLabel.font =  [UIFont systemFontOfSize:14.0];
+            download_desc_label.font =  [UIFont systemFontOfSize:14.0];
+          //  download_desc_label.numberOfLines = 0;
             
             ProgressView.backgroundColor = [UIColor clearColor];
             ProgressView.layer.borderColor = [UIColor blackColor].CGColor;
@@ -390,10 +401,12 @@ const NSUInteger kNumImages = 7;
             progressTitle.layer.cornerRadius = 8;
             progressBar.progress = 0.0;
             total_progress = 0.0;
-            initial_sync_timer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(updateProgressBar:) userInfo:nil repeats:YES];
+            if(initial_sync_timer == nil)
+                initial_sync_timer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(updateProgressBar:) userInfo:nil repeats:YES];
             
            // [self doMetaAndDataSync];
             
+            appDelegate.initial_sync_succes_or_failed = INITIAL_SYNC_SUCCESS;
             [self doMetaSync];
             
             if(appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED && !appDelegate.isInternetConnectionAvailable)
@@ -708,7 +721,11 @@ const NSUInteger kNumImages = 7;
         
         [appDelegate ScheduleIncrementalMetaSyncTimer];
         
-        appDelegate.wsInterface.tagsDictionary = [appDelegate.wsInterface getDefaultTags];
+        appDelegate.wsInterface.tagsDictionary = [appDelegate.dataBase getTagsDictionary];
+        
+        NSMutableDictionary * temp_dict = [appDelegate.wsInterface fillEmptyTags:appDelegate.wsInterface.tagsDictionary];
+        appDelegate.wsInterface.tagsDictionary = [temp_dict retain];
+        
         
         appDelegate.wsInterface.createProcessArray =  [appDelegate.calDataBase getProcessFromDatabase];
         
@@ -943,6 +960,9 @@ const float progress_ = 0.058;
        // temp_percentage = 5;
        // progressBar.progress = 0.058;
         download_desc_label.text =  [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_metadata];//@"Downloading SFM MetaData";
+        description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_metadata_desc];
+       //  [description_label sizeToFit];
+       
         //Downloading SFM MetaData
         NSLog(@"1");
       
@@ -955,7 +975,10 @@ const float progress_ = 0.058;
         total_progress =  progress_ ;  //total_progress + 0.058;
         progressBar.progress = total_progress;
         //Downloading SFM PageData
-         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_metadata];//@"Downloading SFM MetaData";
+        download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_metadata];//@"Downloading SFM MetaData";
+        description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_metadata_desc];
+       // [description_label sizeToFit];
+       
         NSLog(@"Downloading SFM MetaData2");
     }
     else if(appDelegate.initial_sync_status == SYNC_SFM_PAGEDATA  && appDelegate.Sync_check_in == FALSE)
@@ -966,6 +989,9 @@ const float progress_ = 0.058;
         total_progress = progress_ * 2;//total_progress + 0.058;
         progressBar.progress = total_progress;
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_pagedata];//@"Downloading SFM PageData";
+        description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_pagedata_desc];
+       // [description_label sizeToFit];
+        
         NSLog(@"3");
         //Downloading SFM Object Definitions
     }
@@ -978,6 +1004,9 @@ const float progress_ = 0.058;
         progressBar.progress = total_progress;
         //Downloading SFM batch Object Definitions
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_obj_definition];//@"Downloading SFM Object Definitions";
+        description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_obj_definition_desc];
+        //[description_label sizeToFit];
+     
          NSLog(@"4");
     }
     else if(appDelegate.initial_sync_status == SYNC_SFM_BATCH_OBJECT_DEFINITIONS  && appDelegate.Sync_check_in == FALSE)
@@ -989,6 +1018,9 @@ const float progress_ = 0.058;
         progressBar.progress = total_progress;
         //Downloading SFM Picklist DEfinition
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_batch_definition];//@"Downloading SFM batch Object Definitions";
+        description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_batch_definition_desc];
+        
+       // [description_label sizeToFit];
          NSLog(@"5");
     }
     else if(appDelegate.initial_sync_status == SYNC_SFM_PICKLIST_DEFINITIONS  && appDelegate.Sync_check_in == FALSE)
@@ -1000,7 +1032,10 @@ const float progress_ = 0.058;
         progressBar.progress = total_progress;
         //Downloading SFW Metadata
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_picklist_definition];//@"Downloading SFM Picklist Definitions";
-         NSLog(@"6");
+        description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_picklist_definition_desc];
+        
+       // [description_label sizeToFit];
+        NSLog(@"6");
     }
     else if(appDelegate.initial_sync_status == SYNC_RT_DP_PICKLIST_INFO  && appDelegate.Sync_check_in == FALSE)
     {
@@ -1011,6 +1046,9 @@ const float progress_ = 0.058;
         progressBar.progress = total_progress;
         //Downloading Dependent Picklist 
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_RT_picklist];//@"Downloading RecordType Dependent Pikclist ";
+        description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_RT_picklist_desc];
+        
+       // [description_label sizeToFit];
         NSLog(@"7");
     }
     else if (appDelegate.initial_sync_status == SYNC_SFW_METADATA  && appDelegate.Sync_check_in == FALSE)
@@ -1022,6 +1060,8 @@ const float progress_ = 0.058;
         progressBar.progress = total_progress;
         //Downloading mobile device tags 
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_SFW_metadata];//@"Downloading SFW Metadata ";
+        description_label.text =  [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_SFW_metadata_desc];
+       // [description_label sizeToFit];
         NSLog(@"8");
     }
     else if(appDelegate.initial_sync_status == SYNC_MOBILE_DEVICE_TAGS  && appDelegate.Sync_check_in == FALSE)
@@ -1033,6 +1073,9 @@ const float progress_ = 0.058;
         progressBar.progress = total_progress;
         //downloading mobile device settings
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_mob_tags];//@"Downloading mobile device tags";
+        description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_mob_tags_desc];
+        // [description_label sizeToFit];
+      
          NSLog(@"9");
     }
     else if(appDelegate.initial_sync_status == SYNC_MOBILE_DEVICE_SETTINGS  && appDelegate.Sync_check_in == FALSE)
@@ -1044,6 +1087,8 @@ const float progress_ = 0.058;
         progressBar.progress = total_progress;
         //downloading SFM Search data 
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_mob_settings];// @"Downloading Mobile Device Settings";
+        description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_mob_settings_desc];
+        // [description_label sizeToFit];
          NSLog(@"10");
     }
     else if(appDelegate.initial_sync_status == SYNC_SFM_SEARCH  && appDelegate.Sync_check_in == FALSE)
@@ -1055,6 +1100,8 @@ const float progress_ = 0.058;
         progressBar.progress = total_progress;
         //Downloading RecordType Dependent Pikclist 
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_sfm_search];//@"Downloading SFM Search data ";
+        description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_sfm_search_desc];
+        // [description_label sizeToFit];
          NSLog(@"11");
     }
    
@@ -1067,6 +1114,8 @@ const float progress_ = 0.058;
         progressBar.progress = total_progress;
         //Downloading Event and task data
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_dp_picklist];//@"Downloading Dependent Picklist ";
+        description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_dp_picklist_desc]; 
+        // [description_label sizeToFit];
          NSLog(@"12");
     }
     else if(appDelegate.initial_sync_status == SYNC_EVENT_SYNC  && appDelegate.Sync_check_in == FALSE)
@@ -1078,6 +1127,8 @@ const float progress_ = 0.058;
         progressBar.progress = total_progress;
         //Downloading download criteria sync data
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_event_sync];//@"Downloading Event and task related record id's";
+        description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_event_sync_desc];
+       // [description_label sizeToFit];
         NSLog(@"13");
      
     }
@@ -1090,6 +1141,8 @@ const float progress_ = 0.058;
         progressBar.progress = total_progress;
         //Cleaning Up Data 
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_dc_sync];//@"Downloading download criteria Objects record id's";
+        description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_dc_sync_desc];
+       //  [description_label sizeToFit];
          NSLog(@"14");
            }
     else if(appDelegate.initial_sync_status == SYNC_CLEANUP_SELECT  && appDelegate.Sync_check_in == FALSE)
@@ -1101,6 +1154,8 @@ const float progress_ = 0.058;
         progressBar.progress = total_progress;
         //Downloading Events , Tasks and associated information
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_cleanup];//@"Clean up call";
+        download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_cleanup_desc];
+       //  [description_label sizeToFit];
          NSLog(@"15");
         
     }
@@ -1112,7 +1167,8 @@ const float progress_ = 0.058;
         total_progress = progress_ * 15;//total_progress + 0.058;
         progressBar.progress = total_progress;
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_tx_fetch];//@"Downloading Events , Tasks and Download criteria records";
-        
+        download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_tx_fetch_desc];
+       //  [description_label sizeToFit];
         NSLog(@"16");
     }
     else if(appDelegate.initial_sync_status == SYNC_INSERTING_RECORDS_TO_LOCAL_DATABASE  && appDelegate.Sync_check_in == FALSE)
@@ -1123,7 +1179,8 @@ const float progress_ = 0.058;
         total_progress = progress_ * 16;//total_progress + 0.058; //total_progress + 0.06;
         progressBar.progress = total_progress;
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_localdb];//@"Inserting Downloaded records into local DataBase";
-       
+        download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_localdb_desc];
+         //[description_label sizeToFit];
        // [initial_sync_timer invalidate];
     }
     else if(appDelegate.initial_sync_status == INITIAL_SYNC_COMPLETED && appDelegate.Sync_check_in == FALSE)
@@ -1132,6 +1189,8 @@ const float progress_ = 0.058;
         total_progress = 1.0;
         progressBar.progress = total_progress;
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_sync_complete];//@"Initial Sync Completed";
+        download_desc_label.text =  [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_sync_complete_desc];
+         [description_label sizeToFit];
         appDelegate.Sync_check_in = TRUE;
         [initial_sync_timer invalidate];
          initial_sync_timer = nil;
@@ -1540,12 +1599,18 @@ const float progress_ = 0.058;
         }
         else
         {
+            [appDelegate goOnlineIfRequired];
             [self continueMetaAndDataSync];
         }
-        
     }
     else if(buttonIndex == 1)
     {
+        if(initial_sync_timer != nil)
+        {
+            [initial_sync_timer invalidate];    //invalidate the timer
+            initial_sync_timer = nil;
+            appDelegate.initial_sync_succes_or_failed = INITIAL_SYNC_SUCCESS;
+        }
         [self logout];
         NSLog(@"index 1");
     }
@@ -1554,7 +1619,7 @@ const float progress_ = 0.058;
 {
     if([sync isEqualToString:META_SYNC_])
     {
-        download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_start];//@"Initiating Sync From the Beginning";
+       // download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_start];//@"Initiating Sync From the Beginning";
         progressBar.progress = 0.0;
         //StepLabel.text = @"Step 0 of 17";
         current_num_of_call = 0;
@@ -1562,14 +1627,14 @@ const float progress_ = 0.058;
     }
     else if([sync isEqualToString:DATA_SYNC_])
     {
-        download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_data];//@"Initiating Sync From the Beginning";
+        //download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_data];//@"Initiating Sync From the Beginning";
         temp_percentage = percentage_ * 11; //temp_percentage + 5.8;
         current_num_of_call = 12;
         total_progress = progress_ * 11;//total_progress + 0.058;
     }
     else if([sync isEqualToString:TX_FETCH_])
     {
-        download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_data];//@"Initiating Sync From the Beginning";
+        //download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_data];//@"Initiating Sync From the Beginning";
         temp_percentage = percentage_ * 13; //temp_percentage + 5.8;
         current_num_of_call = 14;
         total_progress = progress_ * 13;//total_progress + 0.058;
@@ -1579,7 +1644,7 @@ const float progress_ = 0.058;
 {
     if([sync isEqualToString:META_SYNC_])
     {
-        download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_start];//@"Initiating Sync From the Beginning";
+       // download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_start];//@"Initiating Sync From the Beginning";
         progressBar.progress = 0.0;
         //StepLabel.text = @"Step 0 of 17";
         current_num_of_call = 0;
@@ -1587,14 +1652,14 @@ const float progress_ = 0.058;
     }
     else if([sync isEqualToString:DATA_SYNC_])
     {
-        download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_data];//@"Initiating Sync From the Beginning";
+        //download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_data];//@"Initiating Sync From the Beginning";
         temp_percentage = percentage_ * 11; //temp_percentage + 5.8;
         current_num_of_call = 12;
         total_progress = progress_ * 11;//total_progress + 0.058;
     }
     else if([sync isEqualToString:TX_FETCH_])
     {
-        download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_data];//@"Initiating Sync From the Beginning";
+        //download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_data];//@"Initiating Sync From the Beginning";
         temp_percentage = percentage_ * 13; //temp_percentage + 5.8;
         current_num_of_call = 14;
         total_progress = progress_ * 13;//total_progress + 0.058;
