@@ -117,7 +117,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 #pragma mark -
 
 @implementation iServiceAppDelegate
-
+@synthesize firstTimeCallForTags;
+@synthesize IsSSL_error;
 @synthesize Sync_check_in;
 @synthesize initial_sync_status;
 @synthesize IsLogedIn;
@@ -131,7 +132,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize initial_dataSync_reqid;
 @synthesize initial_Sync_last_index;
 @synthesize initial_sync_succes_or_failed;
-
+@synthesize download_tags_done;
 @synthesize metaSyncThread;
 @synthesize metasync_timer;
 
@@ -877,9 +878,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     [loginController readUsernameAndPasswordFromKeychain];
     if(!appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
     {
-        [loginController.activity stopAnimating];
+         loginController.txtPasswordLandscape.text = @"";
     }
-    loginController.txtPasswordLandscape.text = @"";
+    [loginController.activity stopAnimating];
     [loginController enableControls];
 }
 
