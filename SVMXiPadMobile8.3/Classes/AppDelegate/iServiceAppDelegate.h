@@ -152,6 +152,11 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 @interface iServiceAppDelegate : NSObject
 <UIApplicationDelegate, UIActionSheetDelegate, WSInterfaceDelegate>
 {
+   
+    BOOL download_tags_done;
+    BOOL firstTimeCallForTags;
+    BOOL IsSSL_error;
+    
     BOOL Sync_check_in;
     
     NSThread * special_incremental_thread;
@@ -396,7 +401,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     //Possible solution for Abrupt Internet Connectivity Problem.
     BOOL shouldShowConnectivityStatus;
 }
-
+@property (nonatomic) BOOL IsSSL_error;
+@property (nonatomic) BOOL firstTimeCallForTags;;
+@property (nonatomic) BOOL download_tags_done;
 @property (nonatomic) BOOL Sync_check_in;
 @property (nonatomic)  INITIAL_SYNC_STATUS initial_sync_status;
 @property (nonatomic) ISLOGEDIN IsLogedIn;
