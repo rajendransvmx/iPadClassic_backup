@@ -553,7 +553,7 @@ last_sync_time:(NSString *)last_sync_time
     
 
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+   // binding.logXMLInOut = YES;
      
     INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init]   autorelease];
     
