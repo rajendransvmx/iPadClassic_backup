@@ -2165,7 +2165,10 @@
             //shrinivas fix for defect #4333
             if ([ipad_only_array count] > 0)
             {
-                NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"Troubleshooting and Summary",@"0001TS", nil] forKeys:[NSArray arrayWithObjects:@"wizard_description",@"wizard_id", nil]];
+                
+                NSString * str = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_sfw_header];
+                
+                NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:str,@"0001TS",str, nil] forKeys:[NSArray arrayWithObjects:@"wizard_description",@"wizard_id", @"wizard_name", nil]];
                 
                 [[wizard_dict objectForKey:@"sfw_wizard_info"] insertObject:dict atIndex:0];
                 
@@ -7280,7 +7283,7 @@
                                 
                                 NSString * referenceTo_Table_fieldName = [appDelegate.databaseInterface getFieldNameForReferenceTable:reference_to_tableName tableName:SFOBJECTFIELD];
                                 
-                                //field_value = [appDelegate.databaseInterface getReferencefield_valueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:field_key];
+
                                 value = [appDelegate.databaseInterface getReferenceValueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:key];
                                 if([value isEqualToString:@"" ]||[value isEqualToString:@" "] || value == nil)
                                 {
