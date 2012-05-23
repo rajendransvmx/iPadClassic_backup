@@ -382,6 +382,8 @@
 	<string>This record does not meet the entry criteria for this SFM Process. Please select another process.</string>
 	<key>IPAD014_TAG028</key>
 	<string>Please sync with online before proceeding with this operation</string>
+	<key>IPAD014_TAG029</key>
+	<string>TrobleShooting and Summary</string>
 	<key>IPAD015_TAG005</key>
 	<string>Connecting as new user removes all the unsaved data. Do you want to continue?</string>
 	<key>IPAD015_TAG006</key>
@@ -448,58 +450,90 @@
 	<string>Hold</string>
 	<key>IPAD018_TAG028</key>
 	<string>Undo</string>
+	<key>IPAD018_TAG030</key>
+	<string>Full Data Synchronization</string>
 	<key>IPAD015_TAG010</key>
 	<string>Continue</string>
 	<key>IPAD011_TAG014</key>
 	<string>Authentication Error</string>
 	<key>IPAD012_TAG018</key>
-	<string>Downloading SFM MetaData</string>
+	<string>Downloading the list of SFM transactions along with related objects, expressions, and field &amp; value maps</string>
 	<key>IPAD012_TAG019</key>
-	<string>Downloading SFM PageData</string>
+	<string>Downloading SFM transactions</string>
 	<key>IPAD012_TAG020</key>
-	<string>Downloading SFM Object Definitions</string>
+	<string>Downloading the page layout details of SFM transactions</string>
 	<key>IPAD012_TAG021</key>
-	<string>Downloading SFM batch Object Definitions</string>
+	<string>Downloading SFM page layouts</string>
 	<key>IPAD012_TAG022</key>
-	<string>Downloading SFM Picklist Definitions</string>
+	<string>Downloading the field describe details of SFM objects</string>
 	<key>IPAD012_TAG023</key>
-	<string>Downloading RecordType Dependent Pikclist</string>
+	<string>Downloading SFM object details</string>
 	<key>IPAD012_TAG024</key>
-	<string>Downloading SFW Metadata</string>
+	<string>Downloading details of User, Event, and Task objects</string>
 	<key>IPAD012_TAG025</key>
-	<string>Downloading mobile device tags</string>
+	<string>Downloading other object details</string>
 	<key>IPAD012_TAG026</key>
-	<string>Downloading Mobile Device Settings</string>
+	<string>Downloading labels and values of all the picklist fields of all the objects</string>
 	<key>IPAD012_TAG027</key>
-	<string>Downloading SFM Search data</string>
+	<string>Downloading picklist details</string>
 	<key>IPAD012_TAG028</key>
-	<string>Downloading Dependent Picklist</string>
+	<string>Downloading Record Type dependency details for picklists</string>
 	<key>IPAD012_TAG029</key>
-	<string>Downloading Event and task related record id&apos;s</string>
+	<string>Downloading Record Type based picklist</string>
 	<key>IPAD012_TAG030</key>
-	<string>Downloading download criteria Objects record id&apos;s</string>
+	<string>Downloading SFW definitions and qualifying criteria for each SFW</string>
 	<key>IPAD012_TAG031</key>
-	<string>Clean up call</string>
+	<string>Downloading SFW details</string>
 	<key>IPAD012_TAG032</key>
-	<string>Downloading Events , Tasks and Download criteria records</string>
+	<string>Downloading labels and error messages</string>
 	<key>IPAD012_TAG033</key>
-	<string>Inserting Downloaded records into local DataBase</string>
+	<string>Downloading tags</string>
 	<key>IPAD012_TAG034</key>
-	<string>Initial Sync Completed</string>
+	<string>Downloading Mobile Configuration details such as auto-sync interval, conflict resolution, chatter setting, etc.</string>
 	<key>IPAD012_TAG035</key>
-	<string>Retry</string>
+	<string>Downloading Mobile Configuration</string>
 	<key>IPAD012_TAG036</key>
-	<string>I will Try Later</string>
+	<string>Downloading SFM Search configuration details</string>
 	<key>IPAD012_TAG037</key>
-	<string>Initiating Sync from the Beginning</string>
+	<string>Downloading SFM Search definition</string>
 	<key>IPAD012_TAG038</key>
-	<string>Initiating Sync from DataSync</string>
+	<string>Downloading dependent picklist details such as controlling field, dependent field, and applicable values for each controlling value</string>
 	<key>IPAD012_TAG039</key>
-	<string>Step</string>
+	<string>Downloading dependent picklist</string>
 	<key>IPAD012_TAG040</key>
-	<string>of</string>
+	<string>Downloading Event and Task IDs for the interval specified in Mobile Configuration</string>
 	<key>IPAD012_TAG041</key>
-	<string>Initial Setup : Preparing application for the first time use</string>
+	<string>Downloading Event and Task IDs</string>
+	<key>IPAD012_TAG042</key>
+	<string>Downloading IDs of objects having download criteria</string>
+	<key>IPAD012_TAG043</key>
+	<string>Downloading other object record IDs</string>
+	<key>IPAD012_TAG044</key>
+	<string>Purging temporary sync request records created in server</string>
+	<key>IPAD012_TAG045</key>
+	<string>Purging temporary records in server</string>
+	<key>IPAD012_TAG046</key>
+	<string>Downloading events, tasks, and records of other objects</string>
+	<key>IPAD012_TAG047</key>
+	<string>Downloading records</string>
+	<key>IPAD012_TAG048</key>
+	<string>Inserting downloaded records into local database</string>
+	<key>IPAD012_TAG049</key>
+	<string>Inserting records</string>
+	<key>IPAD012_TAG050</key>
+	<string>Initial sync of configuration and application data completed. App is ready for use.</string>
+	<key>IPAD012_TAG051</key>
+	<string>Initial sync completed</string>
+	<key>IPAD012_TAG052</key>
+	<string>Retry</string>
+	<key>IPAD012_TAG053</key>
+	<string>I will try later</string>
+	<key>IPAD012_TAG054</key>
+	<string>Initial Setup: Preparing application for the first time use</string>
+	<key>IPAD012_TAG055</key>
+	<string>Step</string>
+	<key>IPAD012_TAG056</key>
+	<string>of</string>
 	<key>IPAD019_TAG001</key>
 	<string>ServiceMax Search</string>
 	<key>IPAD019_TAG002</key>
