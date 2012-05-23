@@ -173,6 +173,7 @@
 
 - (void) readUsernameAndPasswordFromKeychain;
 
+-(void)getTagsForTheFirstTime;
 //-(void) getCreateProcessArray:(NSMutableArray *)processes_array;
 
 
