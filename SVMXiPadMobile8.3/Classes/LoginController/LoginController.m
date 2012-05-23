@@ -104,6 +104,7 @@
 
 -(IBAction)callLogin:(id)sender
 {	
+    appDelegate.IsSSL_error = FALSE;
 	 appDelegate.IsLogedIn = ISLOGEDIN_TRUE;
     appDelegate.wsInterface.didOpComplete = FALSE;
     //shrinivas
@@ -130,7 +131,7 @@
     appDelegate.do_meta_data_sync = DONT_ALLOW_META_DATA_SYNC;
     
     BOOL ContinueLogin = [self CheckForUserNamePassword];  //SYNC_HISTORY PLIST  check should be done before calling to the
-    if(ContinueLogin && appDelegate.isInternetConnectionAvailable)
+    if(ContinueLogin)
     {
          [self showHomeScreenviewController];
     }
@@ -156,6 +157,10 @@
         {
             [appDelegate.dataBase clearDatabase];
         }
+        if(!appDelegate.isInternetConnectionAvailable)
+        {
+            return FALSE;
+        }
         
         if (appDelegate.loginResult == nil) //RADHA 21/05/2011
             return FALSE;
@@ -178,6 +183,10 @@
                 [appDelegate.dataBase clearDatabase];
             }
             
+            if(!appDelegate.isInternetConnectionAvailable)
+            {
+                return FALSE;
+            }
             if (appDelegate.loginResult == nil) //RADHA 21/05/2011
                 return FALSE;
             
@@ -202,6 +211,7 @@
     {
         _newusername = appDelegate.username;
         
+               
         NSString * description = [appDelegate.wsInterface.tagsDictionary objectForKey:login_switch_user];
         NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_switch_user];
         NSString * Ok = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
@@ -211,6 +221,7 @@
         [alert show];
         [alert release];
         
+       
         didEnterAlertView = TRUE;
         
         if (homeScreenView)
@@ -243,7 +254,11 @@
         }
         if (appDelegate.loginResult == nil) //RADHA 21/05/2011
             return FALSE;
-    
+      
+        if(!appDelegate.isInternetConnectionAvailable)
+        {
+            return FALSE;
+        }
         
         if (appDelegate.isForeGround == FALSE && !appDelegate.isInternetConnectionAvailable)
             [self readUsernameAndPasswordFromKeychain];
@@ -616,6 +631,12 @@
         
         return;
     }
+    
+   
+    [self getTagsForTheFirstTime];
+    
+    
+    
     didLoginCompleted = TRUE;
     appDelegate.didLoginAgain = TRUE;
     
@@ -624,6 +645,19 @@
     [self storeLoginDetails];
     
     appDelegate.loggedInUserId = [[lr userId] retain];
+}
+
+-(void)getTagsForTheFirstTime
+{
+    appDelegate.download_tags_done = FALSE;
+    appDelegate.firstTimeCallForTags = TRUE;
+    [appDelegate.wsInterface metaSyncWithEventName:MOBILE_DEVICE_TAGS eventType:SYNC values:nil];
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    {
+        if(appDelegate.download_tags_done)
+            break;
+    }
+    appDelegate.firstTimeCallForTags= FALSE;
 }
 
 - (void) checkFavoritesUser
