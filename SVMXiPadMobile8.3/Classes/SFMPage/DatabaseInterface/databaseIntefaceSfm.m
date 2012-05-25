@@ -4066,7 +4066,7 @@
                                 }
                                 else if([columnType isEqualToString:VARCHAR])
                                 {
-                                    sqlite3_bind_text16(bulk_statement, column_num, [final_value UTF8String], [final_value length], SQLITE_TRANSIENT);
+                                    sqlite3_bind_text(bulk_statement, column_num, [final_value UTF8String], [final_value length], SQLITE_TRANSIENT);
                                 }
                                 else if([columnType isEqualToString:_BOOL])
                                 {
