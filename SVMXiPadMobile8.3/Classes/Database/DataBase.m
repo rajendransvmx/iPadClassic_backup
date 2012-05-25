@@ -3457,6 +3457,8 @@
             break; 
     }
 
+    /*
+     // Uncomment this when SFM Search Module is Required
     //SFM Search 
     
     appDelegate.wsInterface.didOpSFMSearchComplete = FALSE;
@@ -3472,9 +3474,10 @@
         if (appDelegate.wsInterface.didOpSFMSearchComplete == TRUE)
             break; 
     }
-    NSLog(@"SAMMAN MetaSync SFM Search End: %@", [NSDate date]);
+    NSLog(@"MetaSync SFM Search End: %@", [NSDate date]);
     
     //SFM Search End
+     */
     [appDelegate getDPpicklistInfo];
     NSLog(@"META SYNC 1");
     

@@ -337,7 +337,7 @@ const NSUInteger kNumImages = 7;
                  [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_HELP],
                  [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_sync_label], 
                   [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_label],
-                  [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search],
+                  //[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search], 
                  nil] retain];
 
     descriptionArray = [[NSArray arrayWithObjects:
@@ -349,7 +349,7 @@ const NSUInteger kNumImages = 7;
                          [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_HELP_TEXT],
                          [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_sync_text], 
                          [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_text],
-                         [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search_Description],
+                         //[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search_Description],
                          nil] retain];
     
     self.scrollPages = [self getScrollViewNames];
@@ -1275,6 +1275,7 @@ const float progress_ = 0.058;
         return;
     }
     
+    /*
     //SFM Search 
     appDelegate.initial_sync_status = SYNC_SFM_SEARCH;
     appDelegate.Sync_check_in = FALSE;
@@ -1297,7 +1298,7 @@ const float progress_ = 0.058;
             break; 
     }
     NSLog(@"SAMMAN MetaSync SFM Search End: %@", [NSDate date]);
-    
+    */
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [self RefreshProgressBarNativeMethod:META_SYNC_];
