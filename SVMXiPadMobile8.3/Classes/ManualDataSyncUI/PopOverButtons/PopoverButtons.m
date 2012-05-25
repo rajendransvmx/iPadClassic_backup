@@ -8,7 +8,7 @@
 
 #import "PopoverButtons.h"
 #import "ManualDataSyncDetail.h"
-
+#import "WSInterface.h"
 
 @implementation PopoverButtons
 
@@ -60,7 +60,8 @@
     //Label2
     UILabel *label2 = [[[UILabel alloc] initWithFrame:CGRectMake(10, 0, 200, 50)] autorelease];
     label2.backgroundColor = [UIColor clearColor];
-    label2.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_full_data_synchronize];
+    //label2.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_full_data_synchronize];
+    label2.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_events];
     button2 = [UIButton buttonWithType:UIButtonTypeCustom];
     button2.frame = CGRectMake(0, 115, 214, 59);
     [button2 addSubview:label2];
@@ -163,7 +164,7 @@
     }
     else
     {
-        if (appDelegate.metasync_timer)
+        if (appDelegate.metasync_timer)		
         {
             [appDelegate.metasync_timer invalidate];
         }            
@@ -178,25 +179,52 @@
 
 - (void) synchronizeConfiguration
 {
+    
     syncConfigurationFailed = FALSE;
+    appDelegate.isIncrementalMetaSyncInProgress = FALSE;
     
     @try {
         
         [delegate dismisspopover];
+        
+        
+        if (!appDelegate.isInternetConnectionAvailable)
+        {
+            
+            return;
+        }
+        
         if (appDelegate.SyncStatus == SYNC_RED)
             return;
         
         appDelegate.dataBase.MyPopoverDelegate = delegate;
         appDelegate.databaseInterface.MyPopoverDelegate = delegate;
         appDelegate.wsInterface.MyPopoverDelegate = delegate;
+        
         [delegate activityStart];
+        [delegate disableControls];
+        
+        
+        appDelegate.SyncStatus = SYNC_ORANGE;
+        
+        [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+        [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+        [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+        appDelegate.isIncrementalMetaSyncInProgress = TRUE;
+       
         
         if([appDelegate.syncThread isExecuting])
         {
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, YES))
             {
                 if (!appDelegate.isInternetConnectionAvailable)
                 {
+                    appDelegate.SyncStatus = SYNC_RED;
+                    
+                    [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+                    [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+                    [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+                    [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"META SYNC"];
                     break;
                 }
                 
@@ -220,10 +248,18 @@
         if ([appDelegate.metaSyncThread isExecuting])
         {
             
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, YES))
             {
                 if (!appDelegate.isInternetConnectionAvailable)
                 {
+                    appDelegate.SyncStatus = SYNC_RED;
+                    
+                    [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+                    [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+                    [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+                    [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"META SYNC"];
+                    break;
+
                     break;
                 }
                 
@@ -248,10 +284,16 @@
         appDelegate.didincrementalmetasyncdone = FALSE;
         
         [appDelegate.dataBase StartIncrementalmetasync];
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, YES))
         {
             if (!appDelegate.isInternetConnectionAvailable)
             {
+                appDelegate.SyncStatus = SYNC_RED;
+                
+                [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+                [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+                [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+                [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"META SYNC"];
                 break;
             }
             if (appDelegate.didincrementalmetasyncdone == TRUE)
@@ -261,12 +303,17 @@
     }
     @catch (NSException * exception) {
         
-        exception = [NSException exceptionWithName:@"Error" reason:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_failed_try_again] userInfo: nil];
+       exception = [NSException exceptionWithName:@"Error" reason:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_failed_try_again] userInfo: nil];
         syncConfigurationFailed = TRUE;
-        [appDelegate.dataBase copyTempsqlToSfm];
+        appDelegate.dataBase.MyPopoverDelegate = nil;
+        appDelegate.databaseInterface.MyPopoverDelegate = nil;
+        appDelegate.wsInterface.MyPopoverDelegate = nil;
         
+        [appDelegate.dataBase copyTempsqlToSfm];
+    
+        [delegate enableControls];
         NSString * title  = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button1];
-        NSString * cancel = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+       NSString * cancel = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
 
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:[NSString stringWithFormat:@"%@",exception.description] delegate:self cancelButtonTitle:cancel otherButtonTitles: nil];
         [alert show];
@@ -279,7 +326,7 @@
         [appDelegate.dataBase deleteDatabase:TEMPDATABASENAME];
         [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
         
-        if ([appDelegate.StandAloneCreateProcess count] > 0)
+       if ([appDelegate.StandAloneCreateProcess count] > 0)
         {
             [appDelegate.StandAloneCreateProcess  removeAllObjects];
             NSMutableArray * createprocessArray = [appDelegate.databaseInterface getAllTheProcesses:@"STANDALONECREATE"];
@@ -296,14 +343,25 @@
         appDelegate.databaseInterface.MyPopoverDelegate = nil;
         appDelegate.wsInterface.MyPopoverDelegate = nil;
         [delegate activityStop];
+        
+        appDelegate.isIncrementalMetaSyncInProgress = FALSE;
+        
     }
     
     if (syncConfigurationFailed == FALSE)
     {
+        [delegate enableControls];
+        
         NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button1];
         NSString * cancel = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
         
         UIAlertView *alert =  [[UIAlertView alloc] initWithTitle:title message:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_completed] delegate:self cancelButtonTitle:cancel otherButtonTitles: nil];
+        
+        appDelegate.SyncStatus = SYNC_GREEN;
+        
+        [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+        [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+        [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
         [alert show];
         [alert release];
     }
@@ -311,7 +369,6 @@
     {
         
     }
-    [detail.activity stopAnimating];
     
 }
 
@@ -387,6 +444,9 @@
     @catch (NSException *exception) {
         exception = [NSException exceptionWithName:@"Error" reason:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_failed_try_again] userInfo: nil];
         fullDataSyncFailed = TRUE;
+        appDelegate.dataBase.MyPopoverDelegate = nil;
+        appDelegate.databaseInterface.MyPopoverDelegate = nil;
+        appDelegate.wsInterface.MyPopoverDelegate = nil;
         [appDelegate.dataBase copyTempsqlToSfm];
         
         NSString * title  = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button1];
