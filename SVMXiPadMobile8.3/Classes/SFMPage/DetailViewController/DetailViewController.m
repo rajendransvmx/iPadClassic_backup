@@ -2015,10 +2015,13 @@
     keys_event = [NSArray arrayWithObjects:SFW_ACTION_ID,SFW_ACTION_DESCRIPTION,SFW_EXPRESSION_ID,SFW_PROCESS_ID,SFW_ACTION_TYPE ,SFW_WIZARD_ID,SFW_ENABLE_ACTION_BUTTON,nil]; 
     NSMutableDictionary * dict_events_quicksave = [NSMutableDictionary dictionaryWithObjects:objects_event forKeys:keys_event];
     
-    NSMutableDictionary * dict_events_getPrice = nil;
-    if ([headerButtons count] > 0)
+  
+   // if ([headerButtons count] > 0)
+        
+    for(int i = 0 ; i< [headerButtons count];i++)   
     {
-        NSDictionary * button_dict = [headerButtons objectAtIndex:0];
+        NSMutableDictionary * dict_events_getPrice = nil;
+        NSDictionary * button_dict = [headerButtons objectAtIndex:i];
         NSString * flag_ = @"";
         NSNumber * enable = [button_dict objectForKey:@"Enable"];   
         NSInteger value = [enable integerValue];
@@ -2034,7 +2037,13 @@
             
         objects_event = [NSArray arrayWithObjects:@"",([button_dict objectForKey:@"button_Title"] != nil)?[button_dict objectForKey:@"button_Title"]:@"",@"",@"",button_type ,@"",flag_,nil];
         keys_event = [NSArray arrayWithObjects:SFW_ACTION_ID,SFW_ACTION_DESCRIPTION,SFW_EXPRESSION_ID,SFW_PROCESS_ID,SFW_ACTION_TYPE ,SFW_WIZARD_ID,SFW_ENABLE_ACTION_BUTTON,nil]; 
-        dict_events_getPrice = [NSMutableDictionary dictionaryWithObjects:objects_event forKeys:keys_event];
+        if(dict_events_getPrice == nil)
+            dict_events_getPrice = [NSMutableDictionary dictionaryWithObjects:objects_event forKeys:keys_event];
+        
+        if(value)
+        {
+            [buttonsArray_offline addObject:dict_events_getPrice];
+        }
     }
 
     
@@ -2105,10 +2114,10 @@
         }
         [buttonsArray_offline  addObject:dict_events_cancel];
         
-        if (value == 1)
+        /*if (value == 1)
         {
             [buttonsArray_offline addObject:dict_events_getPrice];
-        }
+        }*/
         
     }
     if([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"STANDALONECREATE"] || [[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"SOURCETOTARGET"]||[[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"SOURCETOTARGETONLYCHILDROWS"])
@@ -2331,7 +2340,7 @@
     editTitle = [processTitle retain];
 }
 
-- (void) didInvokeWebService:(NSString *)targetCall
+- (void) didInvokeWebService:(NSString *)targetCall  event_name:(NSString *)event_name
 {    
     didRunOperation = YES;
     if (!appDelegate.isInternetConnectionAvailable)
@@ -2406,7 +2415,7 @@
 
     if (appDelegate.isInternetConnectionAvailable)
     {
-        [appDelegate.wsInterface callSFMEvent:dict];
+        [appDelegate.wsInterface callSFMEvent:dict event_name:event_name];
         while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
         {
             if (!appDelegate.isInternetConnectionAvailable)
@@ -2437,7 +2446,7 @@
     [self enableSFMUI];
 }
 
-- (void) didSubmitDefaultAction:(NSString *)defaultAction
+/*- (void) didSubmitDefaultAction:(NSString *)defaultAction
 {
         
     [self disableSFMUI];
@@ -2623,13 +2632,7 @@
 
         appDelegate.sfmSave = FALSE;
         
-        /*if (!appDelegate.isInternetConnectionAvailable)
-        {
-            [activity stopAnimating];
-            [appDelegate displayNoInternetAvailable];
-            [self enableSFMUI];
-            return;
-        }*/
+       
         
         didRunOperation = YES;
 
@@ -2666,7 +2669,7 @@
     }
     
     [self enableSFMUI];
-}
+}*/
 
 - (void) startSummaryDataFetch
 {
@@ -2904,7 +2907,7 @@
     [self enableSFMUI];
 }
 
-- (void) BackOnSave:(NSString *)targetCall
+/*- (void) BackOnSave:(NSString *)targetCall
 {
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     if (actionMenu)
@@ -3203,7 +3206,7 @@
         appDelegate.SFMPage = nil;
         [delegate BackOnSave];
     }
-}
+}*/
 
 - (void) dismissActionMenu
 {
@@ -3542,7 +3545,7 @@
 }
 
 #pragma mark - WSInterface Delegate Method
-- (void) didReceivePageLayout:(NSMutableDictionary *)pageLayout withDescribeObjects:(NSMutableArray *)describeObjects
+/*- (void) didReceivePageLayout:(NSMutableDictionary *)pageLayout withDescribeObjects:(NSMutableArray *)describeObjects
 {
     didRunOperation = NO;
     if (isShowingSaveError)
@@ -3590,14 +3593,7 @@
     else if ([[pageLayout objectForKey:gPROCESSTYPE] isEqualToString:@"EDIT"])
     {
         isInViewMode = YES; //CRAZZZZY STUFF - PLEASE CHANGE THE SEMANTICS OF isInViewMode to the reverse of what it is now - pavaman
-        /*NSDictionary * dict = [appDelegate.SFMPage objectForKey:gHEADER];
-        NSDictionary * headerData = [dict objectForKey:gHEADER_DATA];
-        NSString * objName = [self getObjectNameFromHeaderData:headerData forKey:gName]; // [headerData objectForKey:gName];
-        NSString * title = editTitle;
-        title = [title stringByAppendingString:[NSString stringWithFormat:@" (%@)", objName]];
-        detailTitle = title;*/
-        
-        NSDictionary * dict = [appDelegate.SFMPage objectForKey:gHEADER];
+               NSDictionary * dict = [appDelegate.SFMPage objectForKey:gHEADER];
         NSDictionary * headerData = [dict objectForKey:gHEADER_DATA];
         NSString * objName = [self getObjectNameFromHeaderData:headerData forKey:gName]; // [headerData objectForKey:gName];
         NSString * objectType = [dict objectForKey:gHEADER_OBJECT_NAME];
@@ -3695,17 +3691,13 @@
         if (!appDelegate.isInternetConnectionAvailable)
         {
             
-            /*if (appDelegate.SFMPage != nil)
-            {
-                [appDelegate.SFMPage release];
-                appDelegate.SFMPage = nil;
-            }*/
+           
             
             [tableView reloadData];
             [rootViewController.tableView reloadData];
         }
     }
-}
+}*/
 
 -(void) didReceivePageLayoutOffline
 {
@@ -3729,11 +3721,14 @@
         [appDelegate.wsInterface saveSwitchView:appDelegate.sfmPageController.processId forObject:appDelegate.sfmPageController.objectName];
     }
     
-    if(appDelegate.SFMoffline != nil)
+    if (appDelegate.SFMoffline != nil)
     {  
         appDelegate.describeObjectsArray = nil;
         appDelegate.SFMPage = appDelegate.SFMoffline;
     }
+    
+    
+    //[self pageLevelEventsForEvent:ONLOAD];
     
     
     isDefault = YES;
@@ -9425,6 +9420,7 @@
     [self disableSFMUI];
     
     NSString * targetCall = [buttonDict objectForKey:SFW_ACTION_DESCRIPTION];
+    NSString * action_type = [buttonDict objectForKey:SFW_ACTION_TYPE];
     NSString * action_process_id = [buttonDict objectForKey:SFW_PROCESS_ID];
     
     if ([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"VIEWRECORD"]) 
@@ -9585,6 +9581,9 @@
         if([targetCall isEqualToString:save])
         {
             
+            [self pageLevelEventsForEvent:BEFORESAVE];
+            [self pageLevelEventsForEvent:AFTERSAVE];
+           
             NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
             
             NSArray * header_sections = [hdr_object objectForKey:@"hdr_Sections"];
@@ -9924,7 +9923,27 @@
             }
             
         }
+        if([action_type isEqual:@"WEBSERVICE"])
+        {
+            
+            NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
+            NSString * targetCall = [[[[[hdr_object objectForKey:gHEADER_BUTTONS] objectAtIndex:0] objectForKey:@"button_Events"] objectAtIndex:0] objectForKey:@"button_Event_Target_Call"];
+            if ([targetCall isEqualToString:nil])
+                targetCall = @"";
+            
+            
+            if ([targetCall isEqualToString:@"Get Price"])
+            {
                 
+            }
+            else
+            {
+                appDelegate.wsInterface.webservice_call = TRUE;
+            }
+            [self didInvokeWebService:targetCall event_name:GETPRICE];
+            appDelegate.wsInterface.webservice_call = FALSE;
+        }
+        
         if([targetCall isEqualToString:cancel])
         {
             appDelegate.SFMPage = nil;
@@ -9938,6 +9957,9 @@
     {
         if([targetCall isEqualToString:save] || [targetCall isEqualToString:quick_save])
         {
+            [self pageLevelEventsForEvent:BEFORESAVE];
+            [self pageLevelEventsForEvent:AFTERSAVE];
+            
             NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
             
             NSArray * header_sections = [hdr_object objectForKey:@"hdr_Sections"];
@@ -9945,6 +9967,9 @@
             NSString * layout_id = [hdr_object objectForKey:gHEADER_HEADER_LAYOUT_ID];
             NSMutableDictionary * hdrData = [hdr_object objectForKey:gHEADER_DATA];
             NSString * processId = appDelegate.sfmPageController.processId;
+        
+            NSMutableArray * sfmPageEvents = [hdr_object objectForKey:gPAGELEVEL_EVENTS];
+            
             NSMutableDictionary * SFM_header_fields = [[NSMutableDictionary alloc] initWithCapacity:0];
             
             
@@ -10547,16 +10572,26 @@
         }
         
         
-        if ([targetCall isEqualToString:@"Get Price"])
+        if([action_type isEqual:@"WEBSERVICE"])
         {
-            NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
-            NSString * targetCall = [[[[[hdr_object objectForKey:gHEADER_BUTTONS] objectAtIndex:0] objectForKey:@"button_Events"] objectAtIndex:0] objectForKey:@"button_Event_Target_Call"];
-            if ([targetCall isEqualToString:nil])
-                targetCall = @"";
             
-            [self didInvokeWebService:targetCall];
+                NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
+                NSString * targetCall = [[[[[hdr_object objectForKey:gHEADER_BUTTONS] objectAtIndex:0] objectForKey:@"button_Events"] objectAtIndex:0] objectForKey:@"button_Event_Target_Call"];
+                if ([targetCall isEqualToString:nil])
+                    targetCall = @"";
+                
+            
+            if ([targetCall isEqualToString:@"Get Price"])
+            {
+                
+            }
+            else
+            {
+                appDelegate.wsInterface.webservice_call = TRUE;
+            }
+            [self didInvokeWebService:targetCall event_name:GETPRICE];
+            appDelegate.wsInterface.webservice_call = FALSE;
         }
-        
         if([targetCall isEqualToString:quick_save])
         {
             [self fillSFMdictForOfflineforProcess:appDelegate.sfmPageController.processId forRecord:appDelegate.sfmPageController.recordId ];
@@ -10569,6 +10604,10 @@
         //write a method to  save the header and lines 
         if([targetCall isEqualToString:save])
         {
+            
+            [self pageLevelEventsForEvent:BEFORESAVE];
+            [self pageLevelEventsForEvent:AFTERSAVE];
+            
             NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
             
             NSArray * header_sections = [hdr_object objectForKey:@"hdr_Sections"];
@@ -10889,8 +10928,28 @@
                 appDelegate.SFMoffline = nil;
                 [delegate BackOnSave];
             }
-            
         }
+        if([action_type isEqual:@"WEBSERVICE"])
+        {
+            
+            NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
+            NSString * targetCall = [[[[[hdr_object objectForKey:gHEADER_BUTTONS] objectAtIndex:0] objectForKey:@"button_Events"] objectAtIndex:0] objectForKey:@"button_Event_Target_Call"];
+            if ([targetCall isEqualToString:nil])
+                targetCall = @"";
+            
+            
+            if ([targetCall isEqualToString:@"Get Price"])
+            {
+                
+            }
+            else
+            {
+                appDelegate.wsInterface.webservice_call = TRUE;
+            }
+            [self didInvokeWebService:targetCall event_name:GETPRICE];
+            appDelegate.wsInterface.webservice_call = FALSE;
+        }
+
         
     }
     [self enableSFMUI];
@@ -11913,6 +11972,97 @@
 {
    [statusButton setBackgroundImage:[self getStatusImage] forState:UIControlStateNormal]; 
 }
-
+- (void) refreshStatusImage
+{
+    [statusButton setBackgroundImage:[self getStatusImage] forState:UIControlStateNormal];
+}
+-(void)pageLevelEventsForEvent:(NSString *)event_Name
+{
+    NSMutableDictionary * headerDataDictionary = [appDelegate.SFMPage objectForKey:gHEADER];
+    NSMutableArray * pageLevelEvents = [[[headerDataDictionary objectForKey:gPAGELEVEL_EVENTS] mutableCopy] autorelease];
+    for(int i = 0; i< [pageLevelEvents count];i++)
+    {
+        NSDictionary * eventsDictionary = [pageLevelEvents objectAtIndex:i];
+        
+        if([event_Name isEqualToString:AFTERSAVE])
+        {
+            if ([eventsDictionary count]> 0)
+            {
+                NSString * eventType = [eventsDictionary objectForKey:gEVENT_TYPE];
+                NSString * TargetCall = [eventsDictionary objectForKey:gEVENT_TARGET_CALL];
+                if([eventType isEqualToString:@"After Save/Update"])
+                {
+                    if([TargetCall isEqualToString:@""])
+                    {
+                        
+                    }
+                    else
+                    {
+                        [self didInvokeWebService:TargetCall event_name:AFTERSAVE];
+                    }
+                }
+                if([eventType isEqualToString:@"After Save/Insert"])
+                {
+                    if([TargetCall isEqualToString:@""])
+                    {
+                    }
+                    else
+                    {
+                        [self didInvokeWebService:TargetCall event_name:AFTERSAVE];
+                    }
+                }                
+            }
+        }
+        else if([event_Name isEqualToString:BEFORESAVE])
+        {
+            if ([eventsDictionary count]> 0)
+            {
+                NSString * eventType = [eventsDictionary objectForKey:gEVENT_TYPE];
+                NSString * TargetCall = [eventsDictionary objectForKey:gEVENT_TARGET_CALL];
+                if([eventType isEqualToString:@"Before Save/Update"])
+                {
+                    if([TargetCall isEqualToString:@""])
+                    {
+                        
+                    }
+                    else
+                    {
+                        [self didInvokeWebService:TargetCall event_name:BEFORESAVE];
+                    }
+                }
+                if([eventType isEqualToString:@"Before Save/Insert"])
+                {
+                    if([TargetCall isEqualToString:@""])
+                    {
+                    }
+                    else
+                    {
+                        [self didInvokeWebService:TargetCall event_name:BEFORESAVE];
+                    }
+                }                
+                
+            }
+        }
+        else if([event_Name isEqualToString:ONLOAD])
+        {
+            if ([eventsDictionary count]> 0)
+            {
+                NSString * eventType = [eventsDictionary objectForKey:gEVENT_TYPE];
+                NSString * TargetCall = [eventsDictionary objectForKey:gEVENT_TARGET_CALL];
+                if([eventType isEqualToString:@"On Load"])
+                {
+                    if([TargetCall isEqualToString:@""])
+                    {
+                        
+                    }
+                    else
+                    {
+                        [self didInvokeWebService:TargetCall event_name:ONLOAD];
+                    }
+                }
+            }
+        }
+    }
+}
 
 @end
