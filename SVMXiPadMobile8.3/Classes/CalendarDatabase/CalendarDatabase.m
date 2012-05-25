@@ -328,8 +328,8 @@
                 NSString *subject1  = @"";
                 NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
                 
-                if((_startDateTime!=nil) && strlen(_startDateTime))
-                    queryStatement =[NSString stringWithFormat:@"Select Subject From Event where WhatId = '%@' and StartDateTime = '%s'", whatId1,_startDateTime];
+                if((_startDateTime!=nil) && strlen(_startDateTime) && (_endDateTime!=nil) && strlen(_endDateTime))
+                    queryStatement =[NSString stringWithFormat:@"Select Subject From Event where WhatId = '%@' and StartDateTime = '%s' and EndDateTime = '%s'", whatId1,_startDateTime,_endDateTime];
                 else
                     queryStatement =[NSString stringWithFormat:@"Select Subject From Event where WhatId = '%@'", whatId1];
                 
