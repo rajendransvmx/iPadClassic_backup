@@ -30,7 +30,7 @@
 @optional
 - (void) didSubmitDefaultAction:(NSString *)defaultAction;
 - (void) didSubmitAction:(NSString *)processId processTitle:(NSString *)processTitle;
-- (void) didInvokeWebService:(NSString *)method;
+- (void) didInvokeWebService:(NSString *)method event_name:(NSString *)event_name;
 - (void) BackOnSave:(NSString *) tergetCall;
 - (void)  OnQuickSave:(NSString *) tergetCall;
 - (void) stopActivityIndicator;
