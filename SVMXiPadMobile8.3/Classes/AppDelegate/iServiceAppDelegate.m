@@ -154,8 +154,6 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize download_tags_done;
 @synthesize metaSyncThread;
 @synthesize metasync_timer;
-@synthesize initialEventMappinArray;
-@synthesize newEventMappinArray;
 @synthesize sfmSearchTableArray;
 @synthesize initialEventMappinArray, newEventMappinArray;
 
