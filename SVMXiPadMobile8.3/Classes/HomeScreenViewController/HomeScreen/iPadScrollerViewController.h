@@ -58,7 +58,7 @@
 @property (retain, nonatomic) IBOutlet UILabel *description_label;
 @property (retain, nonatomic) IBOutlet UIView *titleBackground;
 @property (retain, nonatomic) IBOutlet UILabel *download_desc_label;
-@property (retain, nonatomic) IBOutlet UILabel *StepLabel;
+//@property (retain, nonatomic) IBOutlet UILabel *StepLabel;
 @property (nonatomic)  float total_progress;
 @property (nonatomic , retain) NSTimer * initial_sync_timer;
 @property (retain, nonatomic) IBOutlet UIProgressView *progressBar;
