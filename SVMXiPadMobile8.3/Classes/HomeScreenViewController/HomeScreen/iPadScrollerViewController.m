@@ -35,6 +35,7 @@
 @synthesize transparent_layer;
 @synthesize display_pecentage;
 @synthesize temp_percentage;
+@synthesize titleBackground;
 const NSUInteger kNumImages = 7;
 
 - (void)dealloc
@@ -385,9 +386,10 @@ const NSUInteger kNumImages = 7;
            
             description_label.numberOfLines = 3;
            // description_label.lineBreakMode = UILineBreakModeWordWrap;
-            
             description_label.font =  [UIFont systemFontOfSize:14.0];
+           // [description_label sizeToFit];
             StepLabel.font =  [UIFont systemFontOfSize:14.0];
+            StepLabel.textAlignment = UITextAlignmentCenter;
             download_desc_label.font =  [UIFont systemFontOfSize:14.0];
           //  download_desc_label.numberOfLines = 0;
             
@@ -399,6 +401,7 @@ const NSUInteger kNumImages = 7;
             self.progressTitle.text =  [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_title];//@"  Initial Setup : Preparing application for the first time use  ";
             progressTitle.backgroundColor = [UIColor clearColor];
             progressTitle.layer.cornerRadius = 8;
+            titleBackground.layer.cornerRadius=5;
             progressBar.progress = 0.0;
             total_progress = 0.0;
             if(initial_sync_timer == nil)
@@ -1190,7 +1193,7 @@ const float progress_ = 0.058;
         progressBar.progress = total_progress;
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_sync_complete];//@"Initial Sync Completed";
         download_desc_label.text =  [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_sync_complete_desc];
-         [description_label sizeToFit];
+        // [description_label sizeToFit];
         appDelegate.Sync_check_in = TRUE;
         [initial_sync_timer invalidate];
          initial_sync_timer = nil;

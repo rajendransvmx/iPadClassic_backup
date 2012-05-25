@@ -56,6 +56,7 @@
 @property (nonatomic , retain) IBOutlet UIView * transparent_layer;
 @property (nonatomic)  BOOL Sync_status;
 @property (retain, nonatomic) IBOutlet UILabel *description_label;
+@property (retain, nonatomic) IBOutlet UIView *titleBackground;
 @property (retain, nonatomic) IBOutlet UILabel *download_desc_label;
 @property (retain, nonatomic) IBOutlet UILabel *StepLabel;
 @property (nonatomic)  float total_progress;

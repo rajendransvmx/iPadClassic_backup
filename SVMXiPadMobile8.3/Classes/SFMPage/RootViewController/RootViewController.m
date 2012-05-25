@@ -526,7 +526,7 @@
     
     UILabel * cellLabel = [[[UILabel alloc] init] autorelease];
     cellLabel.backgroundColor = [UIColor clearColor];
-    cellLabel.frame = CGRectMake(0, 0, 300, 44);
+    cellLabel.frame = CGRectMake(0, 0, 270, 44);
     
     UIView * bgView = nil;
     UIImageView * bgImage = nil;
@@ -535,7 +535,7 @@
     switch (indexPath.section)
     {
         case 0:
-            bgView = [[[UIView alloc] initWithFrame:CGRectMake(40, 0, 300, SectionHeaderHeight)] autorelease];
+            bgView = [[[UIView alloc] initWithFrame:CGRectMake(10, 0, 300, SectionHeaderHeight)] autorelease];
             {
                 NSString * section_title =  [[appDelegate.wsInterface GetHeaderSectionForSequenceNumber:indexPath.row] objectForKey:@"section_Title"];
                 if(indexPath.row != 0 && [section_title isEqualToString:@""])
@@ -584,7 +584,7 @@
             break;
             
         case 1:
-            bgView = [[[UIView alloc] initWithFrame:CGRectMake(40, 0, 300, SectionHeaderHeight)] autorelease];
+            bgView = [[[UIView alloc] initWithFrame:CGRectMake(10, 0, 300, SectionHeaderHeight)] autorelease];
             {
                 NSArray *details = [appDelegate.SFMPage objectForKey:@"details"];
                 cellLabel.text = [[details objectAtIndex:indexPath.row] objectForKey:@"details_Object_Label"];
@@ -607,7 +607,7 @@
             }
             break;
         case 2:
-            bgView = [[[UIView alloc] initWithFrame:CGRectMake(40, 0, 300, SectionHeaderHeight)] autorelease];
+            bgView = [[[UIView alloc] initWithFrame:CGRectMake(10, 0, 300, SectionHeaderHeight)] autorelease];
             if(product_history || account_history)
             {
                 // cellLabel.text = [addition_info_items objectAtIndex:indexPath.row];

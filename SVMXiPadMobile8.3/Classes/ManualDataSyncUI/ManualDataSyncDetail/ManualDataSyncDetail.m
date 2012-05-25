@@ -67,13 +67,13 @@
     
     self._tableView.backgroundColor = [UIColor clearColor];
     
-    UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)] autorelease];
+    UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 38)] autorelease];
     [backButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Back-Arrow-Button"] forState:UIControlStateNormal];
     [backButton addTarget:self action:@selector(DismissSplitView:) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem * backBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:backButton] autorelease];
     self.navigationItem.leftBarButtonItem = backBarButtonItem;
     
-    UILabel * titleLabel = [[[UILabel alloc] initWithFrame:CGRectMake(200, 0, 200, 44)] autorelease];
+    UILabel * titleLabel = [[[UILabel alloc] initWithFrame:CGRectMake(200, 5, 200, 38)] autorelease];
     titleLabel.textAlignment = UITextAlignmentCenter;
     
     titleLabel.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_conflicts];
@@ -83,7 +83,7 @@
     [self.navigationController.view addSubview:titleLabel];
     
     button = [UIButton buttonWithType:UIButtonTypeCustom];
-    button.frame = CGRectMake(70, 5, 100, 35);
+    button.frame = CGRectMake(85, 5, 100, 38);
     button.backgroundColor = [UIColor clearColor];
     [button setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Done-Back-Button"] forState:UIControlStateNormal];
     [button setTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_synchronize_button] forState:UIControlStateNormal];
@@ -91,16 +91,12 @@
     [button addTarget:self action:@selector(ShowActions) forControlEvents:UIControlEventTouchUpInside];
     [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     
-    UIButton *helpButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    helpButton.frame = CGRectMake(180, 5, 55, 35);
+    UIButton *helpButton = [[UIButton alloc] initWithFrame:CGRectMake(190, 5, 37, 38)];
     helpButton.backgroundColor = [UIColor clearColor];
-    [helpButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Done-Back-Button"] forState:UIControlStateNormal];
-    [helpButton setTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:HOME_HELP] forState:UIControlStateNormal];
-    [helpButton.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
-    [helpButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    
+    [helpButton setBackgroundImage:[UIImage imageNamed:@"iService-Screen-Help"] forState:UIControlStateNormal];
+    [helpButton addTarget:self action:@selector(showHelp) forControlEvents:UIControlEventTouchUpInside];
     statusButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    statusButton.frame = CGRectMake(0, 5, 60, 35);
+    statusButton.frame = CGRectMake(20, 5, 60, 38);
     statusButton.backgroundColor = [UIColor clearColor];
     [statusButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Done-Back-Button"] forState:UIControlStateNormal];
     [statusButton setTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button] forState:UIControlStateNormal];
@@ -118,6 +114,16 @@
     [myToolBar release];
                     
 }
+- (void) showHelp
+{
+    HelpController * help = [[HelpController alloc] initWithNibName:@"HelpController" bundle:nil];
+    help.modalPresentationStyle = UIModalPresentationFullScreen;
+    help.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    help.helpString = @"home.html";  
+    [self presentModalViewController:help animated:YES];
+    [help release];
+}
+
 
 - (void)viewDidUnload
 {

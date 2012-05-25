@@ -2,10 +2,10 @@
 <archive type="com.apple.InterfaceBuilder3.CocoaTouch.iPad.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1280</int>
-		<string key="IBDocument.SystemVersion">11D2001</string>
+		<string key="IBDocument.SystemVersion">11E53</string>
 		<string key="IBDocument.InterfaceBuilderVersion">1938</string>
-		<string key="IBDocument.AppKitVersion">1138.32</string>
-		<string key="IBDocument.HIToolboxVersion">568.00</string>
+		<string key="IBDocument.AppKitVersion">1138.47</string>
+		<string key="IBDocument.HIToolboxVersion">569.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 			<string key="NS.object.0">933</string>
@@ -145,7 +145,7 @@
 					<object class="IBUILabel" id="630030964">
 						<reference key="NSNextResponder" ref="844340011"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{133, 45}, {337, 26}}</string>
+						<string key="NSFrame">{{120, 52}, {337, 26}}</string>
 						<reference key="NSSuperview" ref="844340011"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="481500700"/>
@@ -163,6 +163,7 @@
 						<nil key="IBUIHighlightedColor"/>
 						<int key="IBUIBaselineAdjustment">1</int>
 						<float key="IBUIMinimumFontSize">10</float>
+						<int key="IBUILineBreakMode">0</int>
 						<object class="IBUIFontDescription" key="IBUIFontDescription" id="1008499065">
 							<int key="type">1</int>
 							<double key="pointSize">17</double>
@@ -176,7 +177,7 @@
 					<object class="IBUILabel" id="481500700">
 						<reference key="NSNextResponder" ref="844340011"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{24, 87}, {427, 51}}</string>
+						<string key="NSFrame">{{30, 79}, {440, 49}}</string>
 						<reference key="NSSuperview" ref="844340011"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="165536467"/>
@@ -193,16 +194,16 @@
 						<string key="IBUIText"/>
 						<reference key="IBUITextColor" ref="237327564"/>
 						<nil key="IBUIHighlightedColor"/>
-						<int key="IBUIBaselineAdjustment">1</int>
 						<float key="IBUIMinimumFontSize">10</float>
 						<int key="IBUINumberOfLines">0</int>
+						<int key="IBUILineBreakMode">0</int>
 						<reference key="IBUIFontDescription" ref="1008499065"/>
 						<reference key="IBUIFont" ref="54203517"/>
 					</object>
 					<object class="IBUILabel" id="493330754">
 						<reference key="NSNextResponder" ref="844340011"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{30, 45}, {85, 26}}</string>
+						<string key="NSFrame">{{30, 52}, {89, 26}}</string>
 						<reference key="NSSuperview" ref="844340011"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="630030964"/>
@@ -248,7 +249,7 @@
 							<object class="IBUILabel" id="170652349">
 								<reference key="NSNextResponder" ref="939250406"/>
 								<int key="NSvFlags">292</int>
-								<string key="NSFrame">{{30, 0}, {434, 37}}</string>
+								<string key="NSFrame">{{30, 0}, {430, 37}}</string>
 								<reference key="NSSuperview" ref="939250406"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="493330754"/>
@@ -271,7 +272,7 @@
 								<reference key="IBUIFont" ref="54203517"/>
 							</object>
 						</object>
-						<string key="NSFrameSize">{475, 37}</string>
+						<string key="NSFrameSize">{474, 37}</string>
 						<reference key="NSSuperview" ref="844340011"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="170652349"/>
@@ -402,6 +403,14 @@
 					</object>
 					<int key="connectionID">33</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">titleBackground</string>
+						<reference key="source" ref="841351856"/>
+						<reference key="destination" ref="939250406"/>
+					</object>
+					<int key="connectionID">50</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -467,10 +476,10 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="1022008453"/>
 							<reference ref="165536467"/>
-							<reference ref="493330754"/>
 							<reference ref="939250406"/>
-							<reference ref="630030964"/>
 							<reference ref="481500700"/>
+							<reference ref="630030964"/>
+							<reference ref="493330754"/>
 						</object>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -579,7 +588,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">48</int>
+			<int key="maxID">50</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -611,6 +620,7 @@
 							<string>progressTitle</string>
 							<string>refFrame</string>
 							<string>scrollViewPreview</string>
+							<string>titleBackground</string>
 							<string>transparent_layer</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
@@ -627,6 +637,7 @@
 							<string>UILabel</string>
 							<string>UIView</string>
 							<string>BSPreviewScrollView</string>
+							<string>UIView</string>
 							<string>UIView</string>
 						</object>
 					</object>
@@ -646,6 +657,7 @@
 							<string>progressTitle</string>
 							<string>refFrame</string>
 							<string>scrollViewPreview</string>
+							<string>titleBackground</string>
 							<string>transparent_layer</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
@@ -697,6 +709,10 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">scrollViewPreview</string>
 								<string key="candidateClassName">BSPreviewScrollView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">titleBackground</string>
+								<string key="candidateClassName">UIView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">transparent_layer</string>

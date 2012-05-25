@@ -139,7 +139,8 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    return YES;
+    return ((interfaceOrientation == UIInterfaceOrientationLandscapeRight)||
+            (interfaceOrientation == UIInterfaceOrientationLandscapeLeft));
 }
 
 - (BOOL)splitViewController: (UISplitViewController*)svc shouldHideViewController:(UIViewController *)vc inOrientation:(UIInterfaceOrientation)orientation
