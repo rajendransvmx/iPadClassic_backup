@@ -12,6 +12,7 @@
 #import "DataSyncLabelPopover.h"
 #import "ManualDataSyncRoot.h"
 #import "SyncStatusView.h"
+#import "WSInterface.h"
 
 
 @protocol ManualDataSync;
@@ -21,11 +22,12 @@
 
 # define ERROR_MESSAGE   @"Error_message"
 
-@interface ManualDataSyncDetail : UIViewController <UIPopoverControllerDelegate, UITableViewDelegate, UITableViewDataSource, UISplitViewControllerDelegate, MyPopoverDelegate, ManualDataSyncRootDelegate>
+@interface ManualDataSyncDetail : UIViewController <UIPopoverControllerDelegate, UITableViewDelegate, UITableViewDataSource, UISplitViewControllerDelegate, MyPopoverDelegate, ManualDataSyncRootDelegate, RefreshSyncUIStatusButton, ReloadSyncTable>
 {
     UITableView * tableView;
     
     id <SFMPageDelegate> delegate;
+    id <SyncRootViewProtocolDelegate> rootSyncDelegate;
     
     UIBarButtonItem * actionButton;
     UINavigationBar * navigationBar;
@@ -64,9 +66,16 @@
     NSInteger selectedRootViewRow;
     IBOutlet UIActivityIndicatorView *activity;
     
-    SyncStatusView * syncStatus;        
+    SyncStatusView * syncStatus;  
+    
+    NSMutableArray * internet_Conflicts;
+
+	//Shrinivas
+    UIImageView* animatedImageView;
 }
 
+@property (nonatomic, assign)   id <SyncRootViewProtocolDelegate> rootSyncDelegate;
+@property (nonatomic, retain)  NSMutableArray * internet_Conflicts;
 @property (nonatomic, retain)  UIToolbar *toolBar;
 @property (nonatomic, retain)  IBOutlet UINavigationBar *navigationBar;
 @property (nonatomic, retain)  IBOutlet UIToolbar *toolbar;
@@ -92,6 +101,7 @@
 //- (void) showSFMWithProcessId:(NSString *)processId recordId:(NSString *)recordId objectName:(NSString *)objectName;
 - (void) deleteUndoneRecords;
 - (NSString *) getlocalIdForSFId:(NSString *)SFId ForObject:(NSString *)Objectname;
+- (UIImage *) getStatusImage;
 
 
 @end
@@ -101,6 +111,14 @@
 - (void) dissmisController;
 - (void) showSFMWithProcessId:(NSString *)processId recordId:(NSString *)recordId objectName:(NSString *)objectName;
 - (void) throwException;
+
+@end
+
+@protocol SyncRootViewProtocolDelegate <NSObject>
+
+- (void) disableRootControls;
+- (void) enableRootControls;
+
 @end
 
 
