@@ -57,6 +57,7 @@
 
 //RADHA
 
+@property (nonatomic,assign) sqlite3 * tempDb;
 @property (nonatomic, retain) id MyPopoverDelegate;
 
 @property (nonatomic, retain) NSString *dbFilePath;
@@ -162,7 +163,7 @@
 - (void) didGetSettingsValue:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
 - (void)insertSettingsIntoTable:(NSMutableArray*)array:(NSString*)TableName;
 
-//Abinash
+//Radha - Incremental MetaSync
 - (void)openDB:(NSString *)name type:(NSString *)type sqlite:(sqlite3 *)database;
 - (NSString *)retrieveQuery:(NSString *)tableName sqlite:(sqlite3 *)database;
 - (BOOL) createTemporaryTable:(NSString *)statement;
@@ -173,6 +174,11 @@
 - (void)deleteDatabase:(NSString *)databaseName;
 
 - (void) removecache;
+
+//May-24-2011
+- (void) startMetaSync;
+
+
 
 
 //update plist
