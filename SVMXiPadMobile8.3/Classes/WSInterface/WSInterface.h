@@ -33,6 +33,7 @@
 @protocol RefreshSyncStatusButton;
 @protocol RefreshModalSyncStatusButton;
 @protocol RefreshProgressBar;
+@protocol RefreshSyncUIStatusButton;
 
 @interface WSInterface : NSObject
 <INTF_WebServicesDefBindingResponseDelegate>
@@ -50,6 +51,7 @@
     id <RefreshSyncStatusButton> refreshSyncButton;
     id <RefreshModalSyncStatusButton> refreshModalStatusButton;
     id<RefreshProgressBar> refreshProgressBarUIDelegate;
+	id <RefreshSyncUIStatusButton> refreshSyncStatusUIButton;
     
     iServiceAppDelegate * appDelegate;
     
@@ -179,9 +181,16 @@
     NSMutableDictionary * dcobjects_incrementalSync;
     
     BOOL FisrtTime_response;
-
+    
+    BOOL AfterSaveEventsCalls;
+    BOOL didCompleteAfterSaveEventCalls;
+    BOOL webservice_call;
+   
 }
 //sahana
+@property (nonatomic) BOOL webservice_call;
+@property (nonatomic)  BOOL didCompleteAfterSaveEventCalls;
+@property (nonatomic) BOOL AfterSaveEventsCalls;
 @property (nonatomic,assign) id<RefreshProgressBar> refreshProgressBarUIDelegate;;
 
 @property (nonatomic) BOOL FisrtTime_response;
@@ -218,6 +227,7 @@
 @property (nonatomic, assign) id <RefreshSyncStatus> updateSyncStatus;
 @property (nonatomic, assign) id <RefreshSyncStatusButton> refreshSyncButton;
 @property (nonatomic, assign) id <RefreshModalSyncStatusButton> refreshModalStatusButton;
+@property (nonatomic, assign) id <RefreshSyncUIStatusButton> refreshSyncStatusUIButton;
 @property (nonatomic, retain) NSMutableArray * processArray;
 
 @property (nonatomic, retain) NSMutableDictionary * tagsDictionary;
@@ -321,7 +331,7 @@
 - (INTF_WebServicesDefServiceSvc_INTF_TargetRecord *) getTargetRecordsFromSFMPage:(NSDictionary *)sfmpage;
 
 // Thoons method
-- (void) callSFMEvent:(NSDictionary *)dictionary;
+- (void) callSFMEvent:(NSDictionary *)dictionary  event_name:(NSString *)event_name;
 
 -(NSString *) getAllFieldsForObjectName:(NSString *)hdr_object_name;
 
@@ -397,6 +407,7 @@ last_sync_time:(NSString *)last_sync_time;
 -(NSDictionary *)getdownloadCriteriaObjects;
 -(void)checkdownloadcriteria;
 
+-(void)callsfMEventForAfterSaveOrupdateEvents:(INTF_WebServicesDefServiceSvc_INTF_PREQ_GetPrice_WS *) getThoonsEvent binding:(INTF_WebServicesDefBinding *) binding;
 
 - (NSString *) getGmtDateAndTime:(NSDate *)localTime;
 @end
@@ -434,6 +445,16 @@ last_sync_time:(NSString *)last_sync_time;
 -(void) showModalSyncStatus;
 
 @end
+
+
+@protocol RefreshSyncUIStatusButton <NSObject>
+
+@optional
+-(void) showSyncUIStatus;
+
+@end
+
+
 
 
 
