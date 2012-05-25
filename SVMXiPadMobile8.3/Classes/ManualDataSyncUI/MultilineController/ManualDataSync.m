@@ -75,6 +75,7 @@
     dataSyncDetail._tableView.backgroundView = bgImage;
     dataSyncDetail._tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     dataSyncDetail.didAppearFromSFMScreen = self.didAppearFromSFMScreen;
+    dataSyncDetail.rootSyncDelegate = self;
     UINavigationController * detail = [[[UINavigationController alloc] initWithRootViewController:dataSyncDetail] autorelease];
     
     dataSyncRoot.dataSyncRootDelegate = dataSyncDetail;
@@ -181,4 +182,15 @@
     
 }
 
+-(void) disableRootControls
+{
+    self.view.userInteractionEnabled = NO;
+    dataSyncRoot.tableView.userInteractionEnabled = NO;
+}
+
+-(void) enableRootControls
+{
+    self.view.userInteractionEnabled = YES;
+    dataSyncRoot.tableView.userInteractionEnabled = YES;
+}
 @end
