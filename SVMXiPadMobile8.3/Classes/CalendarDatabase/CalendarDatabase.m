@@ -3667,4 +3667,96 @@
     return data;
 }
 
+
+#pragma mark - Internet Conflict Handling
+
+- (void) insertIntoConflictInternetErrorWithSyncType:(NSString *)sync_type
+{
+    NSString * insertQuery = [NSString stringWithFormat:@"Insert into internet_conflicts (sync_type, error_message, operation_type, error_type) Values ('%@', 'Internet Connectivity lost please retry when available', 'Sync', 'Conflict')", sync_type];
+     char *err;
+    
+    if (synchronized_sqlite3_exec(appDelegate.db, [insertQuery UTF8String], NULL, NULL, &err) != SQLITE_OK){
+        
+        NSLog(@"error:Failed to insert into database");
+        
+    }
+}
+
+- (void) insertIntoConflictInternetErrorWithSyncType:(NSString *)sync_type WithDB:(sqlite3 *)db
+{
+    NSString * insertQuery = [NSString stringWithFormat:@"Insert into internet_conflicts (sync_type, error_message, operation_type, error_type) Values ('%@', 'Internet Connectivity lost please retry when available', 'Sync', 'Conflict')", sync_type];
+    char *err;
+    
+    if (synchronized_sqlite3_exec(db, [insertQuery UTF8String], NULL, NULL, &err) != SQLITE_OK){
+        
+        NSLog(@"error:Failed to insert into database");
+        
+    }
+
+}
+
+
+- (NSMutableArray *) getInternetConflicts
+{
+    
+    NSString * selectQuery = [NSString stringWithFormat:@"Select sync_type, error_message from internet_conflicts"];
+    NSArray  * keys = [NSArray arrayWithObjects:@"Error_message",@"sync_type",nil];
+    
+    NSString * sync_type = @"";
+    NSString * error_message = @"";
+        
+    NSMutableArray * internetConflict = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    
+    sqlite3_stmt * statement;
+    
+    const char * _selectQuery = [selectQuery UTF8String];
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, _selectQuery,-1, &statement, nil) == SQLITE_OK)
+    {
+                
+        while(synchronized_sqlite3_step(statement) == SQLITE_ROW){
+        char *field1 = (char *) synchronized_sqlite3_column_text(statement,COLUMN_1);
+            
+        if (field1 != nil)
+            
+        sync_type = [[NSString alloc] initWithUTF8String:field1];
+        
+        char *field2 = (char *) synchronized_sqlite3_column_text(statement,COLUMN_2);
+        
+        if (field2 != nil)
+            error_message = [[NSString alloc] initWithUTF8String:field2];
+        
+        NSArray * object = [[NSArray arrayWithObjects:sync_type, error_message, nil] retain];
+        
+        NSMutableDictionary * mDict = [[NSMutableDictionary alloc] initWithObjects:object forKeys:keys];
+        
+        
+        
+        NSLog(@"%@", mDict);
+        [internetConflict addObject:mDict];
+                
+        [mDict release];
+        [object release];
+            
+        }
+        
+    }
+    return internetConflict;
+}
+
+
+- (void) removeInternetConflicts
+{
+    NSString * deleteQuery = [NSString stringWithFormat:@"Delete from internet_conflicts"];
+    
+    char *err;
+    
+    if (synchronized_sqlite3_exec(appDelegate.db, [deleteQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
+    {
+        NSLog(@"error:Failed to delete from database");
+    }
+
+}
+
+
 @end
