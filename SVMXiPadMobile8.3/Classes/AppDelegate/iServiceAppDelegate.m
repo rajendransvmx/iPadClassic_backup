@@ -116,8 +116,27 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 }
 #pragma mark -
 
+
 @implementation iServiceAppDelegate
+
+@synthesize reloadTable;
+@synthesize internetConflictExists;
+@synthesize internet_Conflicts;
+
+
+///can remove
+@synthesize isServerInValid;
+
+
+@synthesize _pingServer;
+
+
+@synthesize dataBase;
+@synthesize isIncrementalMetaSyncInProgress;
+@synthesize isMetaSyncExceptionCalled;
 @synthesize firstTimeCallForTags;
+@synthesize afterSavePageEventsBinging;
+@synthesize afterSavePageLevelEvents;
 @synthesize IsSSL_error;
 @synthesize Sync_check_in;
 @synthesize initial_sync_status;
@@ -135,6 +154,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize download_tags_done;
 @synthesize metaSyncThread;
 @synthesize metasync_timer;
+@synthesize initialEventMappinArray;
+@synthesize newEventMappinArray;
 @synthesize sfmSearchTableArray;
 @synthesize initialEventMappinArray, newEventMappinArray;
 
@@ -271,7 +292,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize db;
 //Database
 @synthesize calDataBase;
-@synthesize dataBase;
+//@synthesize dataBase;
 
 //shrinivas
 @synthesize isConnectedOnline;
@@ -340,10 +361,11 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     if (newEventMappinArray == nil)
         newEventMappinArray = [[NSMutableArray alloc] initWithCapacity:0];
     
+    isIncrementalMetaSyncInProgress = FALSE;
+    isMetaSyncExceptionCalled = FALSE;
+    
     [self initWithDBName:DATABASENAME1 type:DATABASETYPE1];
-    
         
-    
     //sahana
     databaseInterface  = [[databaseIntefaceSfm alloc] init];
     
@@ -387,6 +409,14 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     metaSyncThread = nil;
     
     _manualDataSync = [[ManualDataSync alloc] init];   //btn merge
+    
+    self.internet_Conflicts = [self.calDataBase getInternetConflicts];
+    NSLog(@"%@", self.internet_Conflicts);
+    
+    if ([self.internet_Conflicts count] > 0 )
+    {
+        [self.calDataBase removeInternetConflicts];
+    }
     
 	return YES;
 }
@@ -450,12 +480,27 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 - (void) PostInternetNotificationUnavailable
 {
+    self.internet_Conflicts = [self.calDataBase getInternetConflicts];
     [[NSNotificationCenter defaultCenter] postNotificationName:kInternetConnectionChanged object:[NSNumber numberWithInt:0] userInfo:nil];
 }
 
 - (void) PostInternetNotificationAvailable
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:kInternetConnectionChanged object:[NSNumber numberWithInt:1] userInfo:nil];
+    
+    if ([self.internet_Conflicts count] > 0)
+    {
+        [self.calDataBase removeInternetConflicts];
+        [self.internet_Conflicts removeAllObjects];
+        
+        self.SyncStatus = SYNC_GREEN;
+        
+        [self.reloadTable ReloadSyncTable];
+        [self.wsInterface.refreshSyncButton showSyncStatusButton]; 
+        [self.wsInterface.refreshModalStatusButton showModalSyncStatus];
+        [self.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+    }
+    
 }
 
 - (void) didFinishGetEvents
@@ -815,6 +860,83 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     }
 }
 
+- (BOOL) pingServer
+{
+    _pingServer = TRUE;
+    if (!self.isInternetConnectionAvailable)
+    {
+        return NO;
+    }
+    else
+    {        
+        didLoginAgain = NO;
+        
+        [[ZKServerSwitchboard switchboard] loginWithUsername:self.username password:self.password target:self selector:@selector(didLoginForServer:error:context:)];
+        
+        self.isServerInValid = FALSE;
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
+        {
+            if (!self.isInternetConnectionAvailable)
+            {
+                break;
+            }  
+            
+            if (self.isServerInValid == TRUE)
+            {
+                break;
+            }
+                        
+            if (didLoginAgain)
+                break;
+        }
+        
+    }
+    if (isServerInValid == TRUE)
+    {
+        self.isServerInValid = FALSE;
+        return NO;
+    }
+
+    return YES;
+}
+
+- (void) didLoginForServer:(ZKLoginResult *)lr error:(NSError *)error context:(id)context
+{
+    self.loginResult = lr;
+    
+    NSString * serverUrl = [lr serverUrl];
+    NSArray  * array = [serverUrl pathComponents];
+    NSString * server = [NSString stringWithFormat:@"%@//%@", [array objectAtIndex:0], [array objectAtIndex:1]];
+    
+    if (self.currentServerUrl != nil)
+    {
+        self.currentServerUrl = nil;
+    }
+    self.currentServerUrl = [[NSString stringWithFormat:@"%@", server] retain];
+    
+    ZKUserInfo * userInfo = [lr userInfo];
+    
+    if (self.currentUserName != nil)
+    {
+        [self.currentUserName release];
+        self.currentUserName = nil;
+    }
+    self.currentUserName = [[userInfo fullName] mutableCopy];
+    
+    //Shrinivas -- code for firewall
+    if (lr == nil && self._pingServer == TRUE)
+    {
+        self._pingServer = FALSE;
+        self.isServerInValid = TRUE;
+        self.didLoginAgain = TRUE;
+        return;
+    }
+    
+    self._pingServer = FALSE;
+    self.didLoginAgain = TRUE;
+}
+
+
 
 # pragma mark - Logout
 - (void) showloginScreen
@@ -876,6 +998,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     [appDelegate.dataBase removecache];
     self.wsInterface.didOpComplete = FALSE;
     loginController.didEnterAlertView = FALSE;
+    self.isMetaSyncExceptionCalled = FALSE;
+    self.isIncrementalMetaSyncInProgress = FALSE;
     [loginController readUsernameAndPasswordFromKeychain];
     if(!appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
     {
@@ -909,7 +1033,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         else
         {
             NSLog(@"thread is not finished its work");
-            return;
+           // return;
         }
         
     }
@@ -1049,10 +1173,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         //shrinivas -- 02/05/2012
         if (self.isForeGround == TRUE)
         {
-            
             if(IsLogedIn == ISLOGEDIN_TRUE)
             {
-                 initial_sync_succes_or_failed = META_SYNC_FAILED;                    //sahana for background handling of app
+                initial_sync_succes_or_failed = META_SYNC_FAILED;                    //sahana for background handling of app
                 break;
             }
             else
@@ -1060,7 +1183,6 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
                 self.didFinishWithError = FALSE;
                 [loginController.activity stopAnimating];
                 [loginController enableControls];
-                // appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
                 return;
             }
         }
