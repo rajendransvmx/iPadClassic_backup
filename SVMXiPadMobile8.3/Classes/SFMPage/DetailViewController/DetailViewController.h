@@ -33,6 +33,9 @@
 @class TimerClass;
 @class ManualDataSyncDetail;
 
+//can remove
+@protocol RefreshForInternet;
+
 NSInteger multiAddFlag;
 NSString * objectLabel;
 
@@ -54,7 +57,7 @@ WSInterFaceDelegateForDetailView,
 SignatureDelegate,
 SummaryViewControllerDelegate,
 ChatterDelegate,
-SFWToolBarDelegate,RefreshSyncStatusButton>
+SFWToolBarDelegate,RefreshSyncStatusButton, RefreshForInternet>
 {
     id <DetailViewControllerDelegate> delegate;
     SFWToolBar * sfwToolBar;
@@ -302,6 +305,8 @@ SFWToolBarDelegate,RefreshSyncStatusButton>
 
 //To get the status Image
 - (UIImage *) getStatusImage;
+- (void) refreshStatusImage;
+-(void)pageLevelEventsForEvent:(NSString *)event_Name;
 
 #define SHOWALL_HEADERS                     0
 #define SHOW_HEADER_ROW                     1
@@ -323,6 +328,10 @@ SFWToolBarDelegate,RefreshSyncStatusButton>
 #define SVMXC_LINES                         @"SVMXC__Service_Order_Line__c"
 #define SVMXC_WORK_ORDER                    @"SVMXC__Service_Order__c"
 
+#define AFTERSAVE                           @"AfterSave"
+#define BEFORESAVE                          @"BeforeSave"
+#define ONLOAD                              @"Onload"
+#define GETPRICE                            @"GETPRICE"
 #pragma mark = offline
 //sahana and shrinivas 3rd November
 -(void)fillSFMdictForOfflineforProcess:(NSString *) processId forRecord:(NSString *)recordId;
