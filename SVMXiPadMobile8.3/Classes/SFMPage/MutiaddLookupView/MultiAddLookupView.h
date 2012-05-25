@@ -36,11 +36,9 @@
     NSMutableArray * selectedObjDetails;
     NSMutableDictionary * objectSelected;
     //sahana offline code for multiadd
-    NSString * search_field;
-    
-    NSMutableDictionary * mapping_dict;
+    NSString * search_field;    
 }
-@property (nonatomic , retain)  NSMutableDictionary * mapping_dict;
+@property (nonatomic , retain)  NSMutableArray * mappingArray;
 - (IBAction)doneButtonClicked:(id)sender;
 @property (nonatomic,retain) NSString * search_field;
 @property (nonatomic) NSInteger index;

@@ -12,7 +12,6 @@
 
 @implementation MultiAddLookupView
 
-@synthesize mapping_dict;
 @synthesize delegate;
 @synthesize popOver;
 @synthesize  searchBar;
@@ -22,7 +21,7 @@
 @synthesize objectSelected, selectedObjDetails;
 @synthesize index;
 @synthesize search_field;
-
+@synthesize mappingArray;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -34,6 +33,7 @@
 
 - (void)dealloc
 {
+    [mappingArray release];
     [searchBar release];
     [_tableView release];
     [super dealloc];
@@ -74,6 +74,7 @@
 }
 - (void)viewDidUnload
 {
+    mappingArray = nil;
     [searchBar release];
     searchBar = nil;
     [_tableView release];
@@ -115,32 +116,38 @@
     if(appDelegate.isWorkinginOffline)
     {
         lookupData = [lookupDictionary retain];
+        mappingArray = [[NSMutableArray alloc] init];
         
-        mapping_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
         for (int i = 0; i < [[lookupData objectForKey:@"DATA"] count]; i++)
         {
-           NSArray * eachLookUp = [[lookupData objectForKey:@"DATA"] objectAtIndex:i];
-            for(int j = 0; j< [eachLookUp count];j++)
+            NSArray * eachLookUp = [[lookupData objectForKey:@"DATA"] objectAtIndex:i];
+            NSLog(@"lookup = %@",eachLookUp);
+            NSString *Id = @"";
+            NSString *name = @"";
+            for(NSDictionary *dict in eachLookUp)
             {
-                NSDictionary * dict = [eachLookUp objectAtIndex:j];
-                
-                NSArray * allkeys = [dict allKeys];
-                NSString * value = @"";
-                for(NSString *  str in allkeys)
+                if([[dict objectForKey:@"key"] isEqualToString:@"Id"])
                 {
-                    NSString * key = [dict objectForKey:@"key"];
-                   
-                    if ([key isEqualToString:@"Name"])
-                    {
-                        value = [dict objectForKey:@"value"];
-                        break;
-                    }
+                    Id = [dict objectForKey:@"value"];
                 }
-                
-                [mapping_dict setValue:@"false" forKey:value];
+                else
+                if([[dict objectForKey:@"key"] isEqualToString:@"Name"])
+                {
+                    name = [dict objectForKey:@"value"];
+                }
+
+            }
+            if(![Id isEqualToString:@""])
+            {
+                NSMutableDictionary *subDict  = [[NSMutableDictionary alloc] init];
+                [subDict setObject:name forKey:@"Name"];
+                [subDict setObject:Id forKey:@"Id"];
+                [subDict setObject:@"false" forKey:@"Value"];
+                [mappingArray addObject:subDict];
+                [subDict release];
             }
         }
-        
+
     }
     else
     {
@@ -162,61 +169,15 @@
 
 - (IBAction)doneButtonClicked:(id)sender 
 {
-   /* NSArray * array = [lookupData objectForKey:@"DATA"];
-    for (int i = 0; i < [array count]; i++)
+    NSLog(@"Mutable Array = %@",mappingArray);
+    for(NSDictionary *dict in mappingArray)
     {
-        NSIndexPath * indexPath = [NSIndexPath indexPathForRow:i inSection:0];
-        UITableViewCell * cell = [_tableView cellForRowAtIndexPath:indexPath];
-        
-        if (cell.accessoryType == UITableViewCellAccessoryCheckmark)
+        if([[dict objectForKey:@"Value"] isEqualToString:CHECK])
         {
-            NSArray * _array = [[lookupData objectForKey:@"DATA"] objectAtIndex:i];
-            [selectedObjDetails addObjectsFromArray:_array];
-            
-            [self selectObjectValue:_array];
-        }
-    }*/
-    
-    
-    NSArray * array = [lookupData objectForKey:@"DATA"];
-    
-    NSArray * mapping_value_keys = [mapping_dict allKeys];
-        
-    for (int j = 0; j < [array count]; j++)
-    {
-        NSArray * subarray = [array objectAtIndex:j];
-        
-        NSString * dict_value = @"" , * dict_key = @"";
-        
-        for(int k = 0; k< [subarray count]; k++)
-        {
-            NSDictionary * dict = [subarray objectAtIndex:k];
-            NSString * _key = [dict objectForKey:@"key"];
-            if([_key isEqualToString:@"Id"])
-            {
-                dict_key = [dict objectForKey:@"value"];
-            }
-            else if ([_key isEqualToString:@"Name"])
-            {
-                dict_value = [dict objectForKey:@"value"];
-            }
-            
-        }
-        for(int i = 0; i< [mapping_value_keys count]; i++)
-        {
-            NSString * MApping_value = [mapping_value_keys objectAtIndex:i];
-            NSString * mapping_flag  = [mapping_dict  objectForKey:MApping_value];
-            if([MApping_value isEqualToString:dict_value])
-            {
-                if([mapping_flag isEqualToString:CHECK])
-                {
-                    [objectSelected  setObject:dict_value forKey:dict_key];
-                }
-                break;
-            }
+            [objectSelected  setObject:[dict objectForKey:@"Name"] forKey:[dict objectForKey:@"Id"]];
         }
     }
-    
+    NSLog(@"Objects Selected  = %@",objectSelected);
     [delegate addMultiChildRows:objectSelected forIndex:index];
 }
 
@@ -245,36 +206,17 @@
     {
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
-    
-    NSArray * array = [[lookupData objectForKey:@"DATA"] objectAtIndex:indexPath.row];
-    
-    NSString * name = nil;
-    
-    for (int i = 0; i < [array count]; i++)
+
+    NSDictionary *dict = [mappingArray objectAtIndex:indexPath.row];
+    if([[dict objectForKey:@"Value"] isEqualToString:CHECK])
     {
-        NSDictionary * dict = [array objectAtIndex:i];
-        NSString * keyValue = [dict objectForKey:@"key"];
-        if ([keyValue isEqualToString:@"Name"])
-        {
-            name = [dict objectForKey:@"value"];
-            break;
-        }
-    }  
-    
-    NSArray * mapping_keys = [mapping_dict  allKeys];
-    for(NSString * mapKey in mapping_keys)
-    {
-        if([mapKey isEqualToString:name])
-        {
-            NSString * mapvalue = [mapping_dict objectForKey:mapKey];
-            if(mapvalue == CHECK)
-            {
-                cell.accessoryType = UITableViewCellAccessoryCheckmark;
-            }
-        }
+        cell.accessoryType = UITableViewCellAccessoryCheckmark;
     }
-    
-    cell.textLabel.text = name;
+    else 
+    {
+        cell.accessoryType = UITableViewCellAccessoryNone;
+    }
+    cell.textLabel.text = [dict objectForKey:@"Name"];
     return cell;
 }
 
@@ -294,15 +236,17 @@
 	if (cell.accessoryType == UITableViewCellAccessoryNone)
     {
 		cell.accessoryType = UITableViewCellAccessoryCheckmark;
-        [mapping_dict setValue:CHECK forKey:cellText];
-        NSLog(@"%@", objectSelected);
+        NSMutableDictionary *dict = [mappingArray objectAtIndex:indexPath.row];
+        [dict setObject:CHECK forKey:@"Value"];
+                              
     }
 	else
     {
 		cell.accessoryType = UITableViewCellAccessoryNone;
-        [mapping_dict setValue:NOTCHECK forKey:cellText];
+        NSMutableDictionary *dict = [mappingArray objectAtIndex:indexPath.row];
+        [dict setObject:NOTCHECK forKey:@"Value"];
     }
-    
+    NSLog(@"Mapping Array = %@",mappingArray);
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
     
 }
