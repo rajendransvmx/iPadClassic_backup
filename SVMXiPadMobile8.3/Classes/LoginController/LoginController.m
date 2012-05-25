@@ -247,11 +247,9 @@
     {
         [self loginWithUsernamePassword];
         
-        if (appDelegate.wsInterface.didOpComplete == FALSE)
-        {
-            [appDelegate.dataBase deleteDatabase:DATABASENAME1];
-            [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
-        }
+        [appDelegate.dataBase deleteDatabase:DATABASENAME1];
+        [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+
         if (appDelegate.loginResult == nil) //RADHA 21/05/2011
             return FALSE;
       
