@@ -11,7 +11,7 @@
 #import "WSInterface.h"
 #import "ManualDataSyncRoot.h"
 
-@interface ManualDataSync : UIViewController <UISplitViewControllerDelegate, ManualDataSync>
+@interface ManualDataSync : UIViewController <UISplitViewControllerDelegate, ManualDataSync, SyncRootViewProtocolDelegate>
 {
     ManualDataSyncRoot *dataSyncRoot ;
     ManualDataSyncDetail *dataSyncDetail;
