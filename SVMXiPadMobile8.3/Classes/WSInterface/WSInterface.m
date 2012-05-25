@@ -5399,6 +5399,11 @@ last_sync_time:(NSString *)last_sync_time
            
             didOpComplete = YES;         
             NSLog(@"SFM Search Results Got");
+            NSArray *tableField=appDelegate.sfmSearchTableArray;
+            NSArray *fieldsForTableHeader=[[[NSArray alloc]init ]autorelease];
+            NSLog(@"%@",tableField);
+            NSDictionary *filedForObjectID=[[NSDictionary alloc]initWithObjects:[tableField valueForKey:@"TableHeader"] forKeys:[tableField valueForKey:@"ObjectId"]];
+            NSLog(@"%@",filedForObjectID);
             NSMutableArray * array = [wsResponse.result valueMap]; 
             NSMutableArray *resultsArray = [[[NSMutableArray alloc] init] autorelease];
             for(int i=0;i<[array count];i++)
@@ -5410,8 +5415,9 @@ last_sync_time:(NSString *)last_sync_time
                 [resultDict setObject:mapForObjectId.key forKey:@"SearchObjectId"];
                 for(int j=0; j<[resultMap count]; j++)
                 {
+                    fieldsForTableHeader=[filedForObjectID objectForKey:mapForObjectId.key];
                     INTF_WebServicesDefServiceSvc_SVMXMap * mapForResult = [resultMap objectAtIndex:j];
-                    [resultDict setObject:mapForResult.value forKey:mapForResult.key];
+                    [resultDict setObject:mapForResult.value forKey:[fieldsForTableHeader objectAtIndex:j]];
                 }
                 [resultsArray addObject:resultDict];
                 [resultDict release];

@@ -419,7 +419,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 @property (nonatomic , retain) NSString * initial_dataSync_reqid;
 @property (nonatomic , retain)  NSString * initial_Sync_last_index;
 @property (nonatomic , retain) NSString * initital_sync_object_name;
-
+@property (nonatomic , retain) NSArray * sfmSearchTableArray;
 
 
 @property (nonatomic, retain) NSMutableArray * initialEventMappinArray, * newEventMappinArray;

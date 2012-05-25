@@ -135,7 +135,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize download_tags_done;
 @synthesize metaSyncThread;
 @synthesize metasync_timer;
-
+@synthesize sfmSearchTableArray;
 @synthesize initialEventMappinArray, newEventMappinArray;
 
 @synthesize exception;
@@ -562,6 +562,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 - (void)dealloc
 {
+    [sfmSearchTableArray release];
 	[onlineDataArray release];
     [wsInterface release];
     [viewController release];

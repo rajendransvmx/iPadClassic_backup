@@ -662,6 +662,7 @@
         //Make a WebService Call 
         NSLog(@"Process ID = %@",self.masterView.processId);
         NSLog(@"Table Data = %@",tableDataArray);
+         appDelegate.sfmSearchTableArray = tableDataArray;
         NSMutableArray *searchResultData = [[NSMutableArray alloc] init];
         
         NSMutableArray *objectList = [[NSMutableArray alloc] init];
