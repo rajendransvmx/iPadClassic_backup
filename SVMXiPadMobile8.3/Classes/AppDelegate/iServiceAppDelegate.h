@@ -29,6 +29,8 @@
 @class processInfo;
 @class ZKLoginResult;
 @class ManualDataSync;    //btn merge
+@class DetailViewController;       ///can remove
+
 
 BOOL didSessionResume;
 
@@ -148,10 +150,21 @@ int synchronized_sqlite3_column_bytes(sqlite3_stmt*, int iCol);
 int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 #pragma mark -
 
+///can remove 
+@protocol ReloadSyncTable <NSObject>
+
+- (void) ReloadSyncTable;
+
+@end
+
+
 
 @interface iServiceAppDelegate : NSObject
 <UIApplicationDelegate, UIActionSheetDelegate, WSInterfaceDelegate>
 {
+	///can remove
+    id <ReloadSyncTable> reloadTable;
+
    
     BOOL download_tags_done;
     BOOL firstTimeCallForTags;
@@ -400,7 +413,36 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     
     //Possible solution for Abrupt Internet Connectivity Problem.
     BOOL shouldShowConnectivityStatus;
+    
+    NSMutableDictionary * afterSavePageLevelEvents;
+    NSMutableDictionary * afterSavePageEventsBinging;
+	
+	 //Shrinivas 
+    BOOL _pingServer;
+    BOOL isServerInValid;
+    
+    //Shrinivas -- Internet Conflicts
+    NSMutableArray * internet_Conflicts;
+    BOOL internetConflictExists;
+    
+    //Radha - To Handle Internet Connectivity and Exception
+    BOOL isIncrementalMetaSyncInProgress;
+    BOOL isMetaSyncExceptionCalled;
+    
+    
 }
+@property (nonatomic , retain)  NSMutableDictionary * afterSavePageEventsBinging;
+@property (nonatomic, retain) NSMutableDictionary * afterSavePageLevelEvents;
+@property (nonatomic) BOOL _pingServer;
+@property (nonatomic) BOOL isServerInValid;
+@property (nonatomic) BOOL internetConflictExists;
+@property (nonatomic, retain) NSMutableArray * internet_Conflicts;
+
+///can remove
+@property (nonatomic, assign) id <ReloadSyncTable> reloadTable;
+@property (nonatomic) BOOL isIncrementalMetaSyncInProgress;
+@property (nonatomic) BOOL isMetaSyncExceptionCalled;
+
 @property (nonatomic) BOOL IsSSL_error;
 @property (nonatomic) BOOL firstTimeCallForTags;;
 @property (nonatomic) BOOL download_tags_done;
@@ -626,6 +668,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 
 //Shrinivas
 - (void) goOnlineIfRequired;
+- (BOOL) pingServer;
 
 // Get Color from HEX
 - (UIColor *) colorForHex:(NSString *)hexColor;
