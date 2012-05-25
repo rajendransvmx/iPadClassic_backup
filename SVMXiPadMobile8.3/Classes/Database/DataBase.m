@@ -16,6 +16,7 @@
 @synthesize dbFilePath;
 @synthesize didInsertTable;
 @synthesize MyPopoverDelegate;
+@synthesize tempDb;
 //@synthesize db;
 -(id)init
 {
@@ -23,45 +24,7 @@
     return self;
 }
 
-/*-(id)initWithDBName:(NSString *)name type:(NSString *)type sqlite:(sqlite3 *)database
-{
-    appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
-    
-    NSError *error; 
-    NSArray *searchPaths =NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentFolderPath = [searchPaths objectAtIndex:0];
-    dbFilePath = [[documentFolderPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.%@", DATABASENAME1, DATABASETYPE1]]retain];
-   
-    BOOL success=[[NSFileManager defaultManager] fileExistsAtPath:dbFilePath];
-    if ( success)
-    { 
-        NSLog(@"\n db exist in the path");		
-    }
-    else    //didn't find db, need to copy
-    {
-        NSString *backupDbPath = [[NSBundle mainBundle] pathForResource:name ofType:type]; 
-        if (backupDbPath == nil) 
-        {
-                NSLog(@"\n db not able to create error");   
-        }
-        else 
-        { 
-                BOOL copiedBackupDb = [[NSFileManager defaultManager] copyItemAtPath:backupDbPath toPath:dbFilePath error:&error]; 
-                if (!copiedBackupDb) 
-                    NSAssert1(0, @"Failed to create writable database file with message '%@'.", [error localizedDescription]);
-        } 
-    }
-    if( sqlite3_open ([dbFilePath UTF8String], &db) != SQLITE_OK )
-    { 
-        NSLog (@"couldn't open db:"); 
-        NSAssert(0, @"Database failed to open.");		//throw another exception here
-        return nil;
-    }
-    return self;
-}*/
 
-
-#pragma mark - Initial MetaSync
 #pragma mark - SFM Search
 
 - (void) createTablesForSFMSearch
@@ -694,7 +657,7 @@
     return apiName;
     
 }
-#pragma mark - Meta Sync
+#pragma mark - Initial MetaSync
 - (void) insertValuesInToOBjDefTableWithObject:(NSMutableArray *)object definition:(NSMutableArray *)objectDefinition
 {
     BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFObjectField ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0) ,'object_api_name' VARCHAR,'api_name' VARCHAR,'label' VARCHAR,'precision' DOUBLE,'length' INTEGER,'type' VARCHAR,'reference_to' VARCHAR,'nillable' BOOL,'unique' BOOL,'restricted_picklist' BOOL,'calculated' BOOL,'defaulted_on_create' BOOL,'name_field' BOOL, 'relationship_name' VARCHAR , 'dependent_picklist' BOOL ,'controler_field' VARCHAR)"]];
@@ -706,71 +669,103 @@
         NSMutableArray * objectArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
         NSArray * fieldArray  = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
         NSString * objectName = @"";
-        for (int i = 0; i < [object count]; i++)
+        
+        NSString * emptyString = @"";
+        
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@','%@', '%@', '%@', '%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14)", SFOBJECTFIELD ,MOBJECT_API_NAME, MFIELD_API_NAME, MLENGTH, MTYPEM, MREFERENCE_TO, MRELATIONSHIP_NAME, MLABEL, MPRECISION, MNILLABLE, MRESTRICTED_PICKLIST, MCALCULATED, MDEFAULT_ON_CREATE, MNAME_FIELD, MLOCAL_ID];
+        
+        sqlite3_stmt * bulkStmt;
+        
+        int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
+        
+        if (ret_value == SQLITE_OK)
         {
-            NSDictionary * dict = [object objectAtIndex:i];
-            
-            objectName = ([dict valueForKey:OBJECT] != nil)?[dict valueForKey:OBJECT]:@"";
-       
-            
-            NSDictionary * objectDict = [objectDefinition objectAtIndex:i];
-            NSArray * keys = [objectDict allKeys];
-            for (int k = 0; k < [keys count]; k++)
+            for (int i = 0; i < [object count]; i++)
             {
-                if ([objectName isEqualToString:[keys objectAtIndex:k]])
+                NSDictionary * dict = [object objectAtIndex:i];
+                
+                objectName = ([dict valueForKey:OBJECT] != nil)?[dict valueForKey:OBJECT]:@"";
+           
+                
+                NSDictionary * objectDict = [objectDefinition objectAtIndex:i];
+                NSArray * keys = [objectDict allKeys];
+                for (int k = 0; k < [keys count]; k++)
                 {
-                    objectArray = [objectDict objectForKey:[keys objectAtIndex:k]];
-                    break;
-                }
-            }
-            for (int m = 0; m < [objectArray count]; m++)
-            {
-                NSDictionary * dictionary = [objectArray objectAtIndex:m];
-                keys = [dictionary allKeys];
-                for (int j = 0; j < [keys count]; j++)
-                {
-                    if ( [[keys objectAtIndex:j] isEqualToString:MFIELDPROPERTY])
+                    if ([objectName isEqualToString:[keys objectAtIndex:k]])
                     {
-                        fieldArray = [dictionary objectForKey:MFIELDPROPERTY];
+                        objectArray = [objectDict objectForKey:[keys objectAtIndex:k]];
                         break;
                     }
                 }
+                for (int m = 0; m < [objectArray count]; m++)
+                {
+                    NSDictionary * dictionary = [objectArray objectAtIndex:m];
+                    keys = [dictionary allKeys];
+                    for (int j = 0; j < [keys count]; j++)
+                    {
+                        if ( [[keys objectAtIndex:j] isEqualToString:MFIELDPROPERTY])
+                        {
+                            fieldArray = [dictionary objectForKey:MFIELDPROPERTY];
+                            break;
+                        }
+                    }
+                    
+                }
                 
-            }
-            
-            
-            for (int m = 0; m < [fieldArray count]; m++)
-            {
-                NSDictionary * dictionary = [fieldArray objectAtIndex:m];
                 
-                NSDictionary * obj = [dictionary objectForKey:FIELD];
+                for (int m = 0; m < [fieldArray count]; m++)
+                {
+                    NSDictionary * dictionary = [fieldArray objectAtIndex:m];
+                    
+                    NSDictionary * obj = [dictionary objectForKey:FIELD];
 
-                NSString * label = ([obj objectForKey:_LABEL] != nil)?[obj objectForKey:_LABEL]:@"";
-                if (![label isEqualToString:@""])
-                {
-                    label = [label stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                    NSString * label = ([obj objectForKey:_LABEL] != nil)?[obj objectForKey:_LABEL]:@"";
+                    if (![label isEqualToString:@""])
+                    {
+                        label = [label stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                    }
+                    
+                    NSString * type = ([obj objectForKey:_TYPE] != nil)?[obj objectForKey:_TYPE]:@"";
+                    type = [type lowercaseString];
+                    
+                    sqlite3_bind_text(bulkStmt, 1, [objectName UTF8String], [objectName length], SQLITE_TRANSIENT);
+                    
+                    sqlite3_bind_text(bulkStmt, 2, [([obj objectForKey:FIELD] != nil)?[obj objectForKey:FIELD]:@"" UTF8String], [([obj objectForKey:FIELD] != nil)?[obj objectForKey:FIELD]:@"" length], SQLITE_TRANSIENT);
+                    
+                    sqlite3_bind_text(bulkStmt, 3, [([obj objectForKey:_LENGTH] != nil)?[obj objectForKey:_LENGTH]:@"" UTF8String], [([obj objectForKey:_LENGTH] != nil)?[obj objectForKey:_LENGTH]:@"" length], SQLITE_TRANSIENT);
+                    
+                    sqlite3_bind_text(bulkStmt, 4, [type UTF8String], [type length], SQLITE_TRANSIENT);
+                    
+                    sqlite3_bind_text(bulkStmt, 5, [([obj objectForKey:_REFERENCETO] != nil)?[obj objectForKey:_REFERENCETO]:@"" UTF8String], [([obj objectForKey:_REFERENCETO] != nil)?[obj objectForKey:_REFERENCETO]:@"" length], SQLITE_TRANSIENT);
+                    
+                    sqlite3_bind_text(bulkStmt, 6, [([obj objectForKey:_RELATIONSHIPNAME] != nil)?[obj objectForKey:_RELATIONSHIPNAME]:@"" UTF8String], [([obj objectForKey:_RELATIONSHIPNAME] != nil)?[obj objectForKey:_RELATIONSHIPNAME]:@"" length], SQLITE_TRANSIENT);
+                    
+                    sqlite3_bind_text(bulkStmt, 7, [label UTF8String], [label length], SQLITE_TRANSIENT);
+                    
+                    sqlite3_bind_text(bulkStmt, 8, [emptyString UTF8String], [emptyString length], SQLITE_TRANSIENT);
+                    
+                    sqlite3_bind_text(bulkStmt, 9, [emptyString UTF8String], [emptyString length], SQLITE_TRANSIENT);
+                    
+                    sqlite3_bind_text(bulkStmt, 10, [emptyString UTF8String], [emptyString length], SQLITE_TRANSIENT);
+                    
+                    sqlite3_bind_text(bulkStmt, 11, [emptyString UTF8String], [emptyString length], SQLITE_TRANSIENT);
+                    
+                    sqlite3_bind_text(bulkStmt, 12, [emptyString UTF8String], [emptyString length], SQLITE_TRANSIENT);
+                    
+                    sqlite3_bind_text(bulkStmt, 13, [([obj objectForKey:_NAMEFIELD] != nil)?[obj objectForKey:_NAMEFIELD]:@"" UTF8String], [([obj objectForKey:_NAMEFIELD] != nil)?[obj objectForKey:_NAMEFIELD]:@"" length], SQLITE_TRANSIENT);
+                    
+                    sqlite3_bind_int(bulkStmt, 14, id_value++);
+                    
+                    if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                    {
+                        printf("Commit Failed!\n");
+                    }
+                    
+                    sqlite3_reset(bulkStmt);
+                                        
                 }
-                
-                NSString * type = ([obj objectForKey:_TYPE] != nil)?[obj objectForKey:_TYPE]:@"";
-                type = [type lowercaseString];
-                
-                NSString * queryStatement =[NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@','%@', '%@', '%@', '%@', '%@', '%@', '%@') VALUES ( '%@', '%@', '%@', '%@', '%@', '%@', '%@','%@', '%@', '%@', '%@', '%@', '%@', '%d')", SFOBJECTFIELD ,MOBJECT_API_NAME, MFIELD_API_NAME, MLENGTH, MTYPEM, MREFERENCE_TO, MRELATIONSHIP_NAME, MLABEL, MPRECISION, MNILLABLE, MRESTRICTED_PICKLIST, MCALCULATED, MDEFAULT_ON_CREATE, MNAME_FIELD, MLOCAL_ID, objectName, 
-                    ([obj objectForKey:FIELD] != nil)?[obj objectForKey:FIELD]:@"", 
-                    ([obj objectForKey:_LENGTH] != nil)?[obj objectForKey:_LENGTH]:@"", 
-                    type, 
-                    ([obj objectForKey:_REFERENCETO] != nil)?[obj objectForKey:_REFERENCETO]:@"", 
-                    ([obj objectForKey:_RELATIONSHIPNAME] != nil)?[obj objectForKey:_RELATIONSHIPNAME]:@"",
-                    label, @"", @"", @"", @"", @"", ([obj objectForKey:_NAMEFIELD] != nil)?[obj objectForKey:_NAMEFIELD]:@"", 
-                                            id_value++];
-                char *err;
-                if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
-                {
-                    if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                        [MyPopoverDelegate performSelector:@selector(throwException)];
-                    NSLog(@"Failed to insert in to table");
-                }
+                            
             }
-                        
         }
     }
     
@@ -789,6 +784,15 @@
       
         
         NSString * objectName = @"";
+        
+                
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@') VALUES (?1,    ?2, ?3, ?4)", SFREFERENCETO, MOBJECT_API_NAME, _MFIELD_API_NAME, MREFERENCE_TO, MLOCAL_ID];
+        
+        sqlite3_stmt * bulkStmt;
+        
+        int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
+        
+
         
         for (int i = 0; i < [object count]; i++)
         {
@@ -824,35 +828,40 @@
                 
             }
             
-            for (int m = 0; m < [fieldArray count]; m++)
-            {
-                NSDictionary * dictionary = [fieldArray objectAtIndex:m];
-                NSDictionary  * obj = [dictionary objectForKey:FIELD];
-                
-                NSString * referenceName = [obj objectForKey:_REFERENCETO];
-                NSLog(@"%@", referenceName);
-                if (!referenceName)
-                    referenceName = @"";
             
-                if (!([referenceName isEqualToString:@""]))
+            if (ret_value == SQLITE_OK)
+            {
+                for (int m = 0; m < [fieldArray count]; m++)
                 {
-                    NSString * queryStatement =[NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@') VALUES ('%@', '%@', '%@', '%d')", SFREFERENCETO, MOBJECT_API_NAME, _MFIELD_API_NAME, MREFERENCE_TO, MLOCAL_ID, objectName, 
-                        ([obj objectForKey:FIELD] != nil)?[obj objectForKey:FIELD]:@"", 
-                        ([obj objectForKey:_REFERENCETO] != nil)?[obj objectForKey:_REFERENCETO]:@"", id_Value++];
-                                                
-                    char *err;
-                    if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+                    NSDictionary * dictionary = [fieldArray objectAtIndex:m];
+                    NSDictionary  * obj = [dictionary objectForKey:FIELD];
+                    
+                    NSString * referenceName = [obj objectForKey:_REFERENCETO];
+                    NSLog(@"%@", referenceName);
+                    if (!referenceName)
+                        referenceName = @"";
+                
+                    if (!([referenceName isEqualToString:@""]))
                     {
-                        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                            [MyPopoverDelegate performSelector:@selector(throwException)];
-                        NSLog(@"Failed to insert in to table");
+                        sqlite3_bind_text(bulkStmt, 1, [objectName UTF8String], [objectName length], SQLITE_TRANSIENT);
+                        
+                        sqlite3_bind_text(bulkStmt, 2, [([obj objectForKey:FIELD] != nil)?[obj objectForKey:FIELD]:@"" UTF8String], [ ([obj objectForKey:FIELD] != nil)?[obj objectForKey:FIELD]:@"" length], SQLITE_TRANSIENT);
+                        
+                        sqlite3_bind_text(bulkStmt, 3, [([obj objectForKey:_REFERENCETO] != nil)?[obj objectForKey:_REFERENCETO]:@"" UTF8String], [([obj objectForKey:_REFERENCETO] != nil)?[obj objectForKey:_REFERENCETO]:@"" length], SQLITE_TRANSIENT);
+                        
+                        sqlite3_bind_int(bulkStmt, 4, id_Value++);
+                        
+                        if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                        {
+                            printf("Commit Failed!\n");
+                        }
+                        
+                        sqlite3_reset(bulkStmt);
                     }
-
                 }
             }
         }
     }
-   // [self createObjectTable:object coulomns:objectDefinition];
     
     [self insertValuesInToRecordType:object defintion:objectDefinition];
     
@@ -867,6 +876,12 @@
     {
         NSString * objectName = @"";
         int id_Value =  1;
+                
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@') VALUES (?1, ?2,   ?3, ?4)", SFRECORDTYPE, MRECORD_TYPE_ID, MOBJECT_API_NAME, MRECORD_TYPE, MLOCAL_ID];
+        
+        sqlite3_stmt * bulkStmt;
+        
+        int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
         
         for (int i = 0; i < [object count]; i++)
         {
@@ -922,21 +937,29 @@
             NSArray * recordKeys = [recordType allKeys];
             NSArray * recordValues = [recordType allValues];
             
-            for (int r = 0; r < [recordKeys count]; r++)
+            
+            if (ret_value == SQLITE_OK)
             {
-                if (![[recordKeys objectAtIndex:r] isEqualToString:MRECORDTYPE])
+                for (int r = 0; r < [recordKeys count]; r++)
                 {
-                    
-                    NSString * queryStatement =[NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@') VALUES ('%@', '%@', '%@', '%d')", SFRECORDTYPE, MRECORD_TYPE_ID, MOBJECT_API_NAME, MRECORD_TYPE, MLOCAL_ID, [recordKeys objectAtIndex:r], objectName, [recordValues objectAtIndex:r],id_Value++];
-                    
-                    char *err;
-                    if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+                    if (![[recordKeys objectAtIndex:r] isEqualToString:MRECORDTYPE])
                     {
-                        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                            [MyPopoverDelegate performSelector:@selector(throwException)];
-                        NSLog(@"Failed to insert in to table");
+                        
+                        sqlite3_bind_text(bulkStmt, 1, [[recordKeys objectAtIndex:r] UTF8String], [[recordKeys objectAtIndex:r] length], SQLITE_TRANSIENT);
+                        
+                        sqlite3_bind_text(bulkStmt, 2, [objectName UTF8String], [objectName length], SQLITE_TRANSIENT);
+                        
+                        sqlite3_bind_text(bulkStmt, 3, [[recordValues objectAtIndex:r] UTF8String], [[recordValues objectAtIndex:r] length], SQLITE_TRANSIENT);
+                        
+                        sqlite3_bind_int(bulkStmt, 4, id_Value++);
+                        
+                        if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                        {
+                            printf("Commit Failed!\n");
+                        }
+                        
+                        sqlite3_reset(bulkStmt);
                     }
-
                 }
             }
         }
@@ -955,74 +978,87 @@
         NSString * objectName = @"";
         int id_Value = 0;
         
-        for (int i = 0; i < [object count]; i++)
+        
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5)", SFOBJECT, MKEY_PREFIX, MLABEL, MLABEL_PURAL, MFIELD_API_NAME, MLOCAL_ID];
+        
+        sqlite3_stmt * bulkStmt;
+        
+        int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
+
+        if (ret_value == SQLITE_OK)
         {
-            
-            NSDictionary * dict = [object objectAtIndex:i];
-            objectName = ([dict valueForKey:OBJECT] != nil)?[dict valueForKey:OBJECT]:@"";
-            
-            
-            NSDictionary * objectDict = [objectDefintion objectAtIndex:i];
-            
-            NSArray * objectArray = [[[NSArray alloc] init] autorelease];
-            NSArray * keys = [objectDict allKeys];
-            for (int k = 0; k < [keys count]; k++)
-            {
-                if ([objectName isEqualToString:[keys objectAtIndex:k]])
-                {
-                    objectArray = [objectDict objectForKey:[keys objectAtIndex:k]];
-                    break;
-                }
-            }
-            
-            NSMutableArray * propertyArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-            
-            for (int m = 0; m < [objectArray count]; m++)
-            {
-                NSDictionary * dictionary = [objectArray objectAtIndex:m];
-                keys = [dictionary allKeys];
-                for (int j = 0; j < [keys count]; j++)
-                {
-                    if ( [[keys objectAtIndex:j] isEqualToString:MOBJECTPROPERTY])
-                    {
-                        propertyArray = [dictionary objectForKey:MOBJECTPROPERTY];
-                        break;
-                    }
-                }
-            }
-            NSDictionary *  objDef = [[[NSDictionary alloc] init] autorelease];
-            for (int m = 0; m < [propertyArray count]; m++)
+            for (int i = 0; i < [object count]; i++)
             {
                 
-                NSDictionary * dict = [propertyArray objectAtIndex:m];
-                keys = [dict allKeys];
-                for (int j = 0; j < [keys count]; j++)
+                NSDictionary * dict = [object objectAtIndex:i];
+                objectName = ([dict valueForKey:OBJECT] != nil)?[dict valueForKey:OBJECT]:@"";
+                
+                
+                NSDictionary * objectDict = [objectDefintion objectAtIndex:i];
+                
+                NSArray * objectArray = [[[NSArray alloc] init] autorelease];
+                NSArray * keys = [objectDict allKeys];
+                for (int k = 0; k < [keys count]; k++)
                 {
-                    if ( [[keys objectAtIndex:j] isEqualToString:MOBJECTDEFINITION])
+                    if ([objectName isEqualToString:[keys objectAtIndex:k]])
                     {
-                        objDef = [dict objectForKey:MOBJECTDEFINITION];
+                        objectArray = [objectDict objectForKey:[keys objectAtIndex:k]];
                         break;
                     }
-                }            
-            }
-            
-            NSString * queryStatement = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@') VALUES ('%@', '%@', '%@', '%@', '%d')", SFOBJECT, MKEY_PREFIX, MLABEL, MLABEL_PURAL, MFIELD_API_NAME, MLOCAL_ID, 
-                        ([objDef objectForKey:_MKEYPREFIX]!= nil)?[objDef objectForKey:_MKEYPREFIX]:@"",
-                                         ([objDef objectForKey:_LABEL]!= nil)?[objDef objectForKey:_LABEL]:@"",
-                        ([objDef objectForKey:_MPLURALLABEL]!= nil)?[objDef objectForKey:_MPLURALLABEL]:@"", objectName, ++id_Value];
-            char * err;
-            if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
-            {
-                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                    [MyPopoverDelegate performSelector:@selector(throwException)];
-                NSLog(@"Failed To Insert");
+                }
+                
+                NSMutableArray * propertyArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+                
+                for (int m = 0; m < [objectArray count]; m++)
+                {
+                    NSDictionary * dictionary = [objectArray objectAtIndex:m];
+                    keys = [dictionary allKeys];
+                    for (int j = 0; j < [keys count]; j++)
+                    {
+                        if ( [[keys objectAtIndex:j] isEqualToString:MOBJECTPROPERTY])
+                        {
+                            propertyArray = [dictionary objectForKey:MOBJECTPROPERTY];
+                            break;
+                        }
+                    }
+                }
+                NSDictionary *  objDef = [[[NSDictionary alloc] init] autorelease];
+                for (int m = 0; m < [propertyArray count]; m++)
+                {
+                    
+                    NSDictionary * dict = [propertyArray objectAtIndex:m];
+                    keys = [dict allKeys];
+                    for (int j = 0; j < [keys count]; j++)
+                    {
+                        if ( [[keys objectAtIndex:j] isEqualToString:MOBJECTDEFINITION])
+                        {
+                            objDef = [dict objectForKey:MOBJECTDEFINITION];
+                            break;
+                        }
+                    }            
+                }
+                        
+                sqlite3_bind_text(bulkStmt, 1, [([objDef objectForKey:_MKEYPREFIX]!= nil)?[objDef objectForKey:_MKEYPREFIX]:@"" UTF8String], [([objDef objectForKey:_MKEYPREFIX]!= nil)?[objDef objectForKey:_MKEYPREFIX]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 2, [([objDef objectForKey:_LABEL]!= nil)?[objDef objectForKey:_LABEL]:@"" UTF8String], [([objDef objectForKey:_LABEL]!= nil)?[objDef objectForKey:_LABEL]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 3, [([objDef objectForKey:_MPLURALLABEL]!= nil)?[objDef objectForKey:_MPLURALLABEL]:@"" UTF8String], [([objDef objectForKey:_MPLURALLABEL]!= nil)?[objDef objectForKey:_MPLURALLABEL]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 4, [objectName UTF8String], [objectName length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_int(bulkStmt, 5, ++id_Value);
+                
+                if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                {
+                    printf("Commit Failed!\n");
+                }
+                
+                sqlite3_reset(bulkStmt);
             }
         }
     }
     //Radha 9th jan
     [self insertValuesInToChildRelationshipTable:object definition:objectDefintion];
-    
-    //[self createObjectTable:object coulomns:objectDefintion];
     
 }
 
@@ -1035,72 +1071,93 @@
     {
         int id_value = 0;
         NSString * objectName = @"";
-        for (int i = 0; i < [object count]; i++)
+        
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5)", SFCHILDRELATIONSHIP, @"object_api_name_parent", @"object_api_name_child", @"cascade_delete", @"field_api_name", MLOCAL_ID];
+        
+        sqlite3_stmt * bulkStmt;
+        
+        int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
+        
+        NSString * emptyString = @"";
+        
+        if (ret_value == SQLITE_OK)
         {
-            NSDictionary * masterDetail;
-            NSDictionary * dict = [object objectAtIndex:i];
-            objectName = ([dict valueForKey:OBJECT] != nil)?[dict valueForKey:OBJECT]:@"";
-            
-            
-            NSDictionary * objectDict = [objectDefinition objectAtIndex:i];
-            
-            NSArray * objectArray = [[[NSArray alloc] init] autorelease];
-            NSArray * keys = [objectDict allKeys];
-            for (int k = 0; k < [keys count]; k++)
+            for (int i = 0; i < [object count]; i++)
             {
-                if ([objectName isEqualToString:[keys objectAtIndex:k]])
+                NSDictionary * masterDetail;
+                NSDictionary * dict = [object objectAtIndex:i];
+                objectName = ([dict valueForKey:OBJECT] != nil)?[dict valueForKey:OBJECT]:@"";
+                
+                
+                NSDictionary * objectDict = [objectDefinition objectAtIndex:i];
+                
+                NSArray * objectArray = [[[NSArray alloc] init] autorelease];
+                NSArray * keys = [objectDict allKeys];
+                for (int k = 0; k < [keys count]; k++)
                 {
-                    objectArray = [objectDict objectForKey:[keys objectAtIndex:k]];
-                    break;
-                }
-            }
-            NSMutableArray * propertyArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-            for (int m = 0; m < [objectArray count]; m++)
-            {
-                NSDictionary * dictionary = [objectArray objectAtIndex:m];
-                keys = [dictionary allKeys];
-                for (int j = 0; j < [keys count]; j++)
-                {
-                    if ( [[keys objectAtIndex:j] isEqualToString:MOBJECTPROPERTY])
+                    if ([objectName isEqualToString:[keys objectAtIndex:k]])
                     {
-                        propertyArray = [dictionary objectForKey:MOBJECTPROPERTY];
+                        objectArray = [objectDict objectForKey:[keys objectAtIndex:k]];
                         break;
                     }
                 }
-            }
-            NSDictionary *  objDef = [[[NSDictionary alloc] init] autorelease];;
-            for (int m = 0; m < [propertyArray count]; m++)
-            {
-                
-                NSDictionary * dict = [propertyArray objectAtIndex:m];
-                keys = [dict allKeys];
-                for (int j = 0; j < [keys count]; j++)
+                NSMutableArray * propertyArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+                for (int m = 0; m < [objectArray count]; m++)
                 {
-                    if ( [[keys objectAtIndex:j] isEqualToString:MOBJECTDEFINITION])
+                    NSDictionary * dictionary = [objectArray objectAtIndex:m];
+                    keys = [dictionary allKeys];
+                    for (int j = 0; j < [keys count]; j++)
                     {
-                        objDef = [dict objectForKey:MOBJECTDEFINITION];
-                        break;
+                        if ( [[keys objectAtIndex:j] isEqualToString:MOBJECTPROPERTY])
+                        {
+                            propertyArray = [dictionary objectForKey:MOBJECTPROPERTY];
+                            break;
+                        }
                     }
-                }            
-            }
-            
-            masterDetail = [objDef objectForKey:MASTERDETAILS];
-            
-            NSArray * masterDetailKeys = [masterDetail allKeys];
-            NSArray * mastetDetaiValues = [masterDetail allValues];
-            
-            for (int val = 0; val < [masterDetailKeys count]; val++)
-            {
-                NSString * queryStatement = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@') VALUES ('%@', '%@', '%@', '%@', '%d')", SFCHILDRELATIONSHIP, @"object_api_name_parent", @"object_api_name_child", @"cascade_delete", @"field_api_name", MLOCAL_ID, objectName, [masterDetailKeys objectAtIndex:val], @"", [mastetDetaiValues objectAtIndex:val], ++id_value ];
-                
-                char * err;
-                if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+                }
+                NSDictionary *  objDef = [[[NSDictionary alloc] init] autorelease];;
+                for (int m = 0; m < [propertyArray count]; m++)
                 {
-                    if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                        [MyPopoverDelegate performSelector:@selector(throwException)];
-                    NSLog(@"Failed to insert");
+                    
+                    NSDictionary * dict = [propertyArray objectAtIndex:m];
+                    keys = [dict allKeys];
+                    for (int j = 0; j < [keys count]; j++)
+                    {
+                        if ( [[keys objectAtIndex:j] isEqualToString:MOBJECTDEFINITION])
+                        {
+                            objDef = [dict objectForKey:MOBJECTDEFINITION];
+                            break;
+                        }
+                    }            
                 }
                 
+                masterDetail = [objDef objectForKey:MASTERDETAILS];
+                
+                NSArray * masterDetailKeys = [masterDetail allKeys];
+                NSArray * mastetDetaiValues = [masterDetail allValues];
+                
+                
+                for (int val = 0; val < [masterDetailKeys count]; val++)
+                {
+                    sqlite3_bind_text(bulkStmt, 1, [objectName UTF8String], [objectName length], SQLITE_TRANSIENT);
+                    
+                    sqlite3_bind_text(bulkStmt, 2, [[masterDetailKeys objectAtIndex:val] UTF8String], [[masterDetailKeys objectAtIndex:val] length], SQLITE_TRANSIENT);
+                    
+                    sqlite3_bind_text(bulkStmt, 3, [emptyString UTF8String], [emptyString length], SQLITE_TRANSIENT);
+                    
+                    sqlite3_bind_text(bulkStmt, 4, [[mastetDetaiValues objectAtIndex:val] UTF8String], [[mastetDetaiValues objectAtIndex:val] length], SQLITE_TRANSIENT);
+                    
+                    sqlite3_bind_int(bulkStmt, 5, ++id_value);
+                    
+                    if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                    {
+                        printf("Commit Failed!\n");
+                    }
+                    
+                    sqlite3_reset(bulkStmt);
+
+                    
+                }
             }
         }
     }
@@ -1330,53 +1387,85 @@
     
     if (result == YES)
     {
+        char * err;
+        
+        NSString * txnstmt = @"BEGIN TRANSACTION";
+        
+        int exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+        
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@',  '%@', '%@', '%@', '%@', '%@',     '%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)", @"SFProcess_test", MPROCESS_ID, @"layout_id", @"object_name", @"expression_id", @"object_mapping_id", @"component_type", @"parent_column", @"value_id", @"parent_object", MLOCAL_ID];
+    
+        
+        sqlite3_stmt * bulkStmt = nil;
+        
+        int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], -1, &bulkStmt, NULL);
+        
         NSArray * sfProcess_comp = [processDictionary objectForKey:MSFProcess_component];
         id_value = 0;
         
         NSString * processId = @"";
-        for (int i = 0; i < [sfProcess_comp count]; i++)
+        
+        if (ret_value == SQLITE_OK)
         {
-            NSDictionary * dict = [sfProcess_comp objectAtIndex:i];
-            NSString * processComp_Id = ([dict objectForKey:MPROCESS_ID] != nil)?[dict objectForKey:MPROCESS_ID]:@"";
-            
-            for (int j = 0; j < [processArray count]; j++)
+            for (int i = 0; i < [sfProcess_comp count]; i++)
             {
-                NSDictionary * sfdict = [processArray objectAtIndex:j];
+                NSDictionary * dict = [sfProcess_comp objectAtIndex:i];
+                NSString * processComp_Id = ([dict objectForKey:MPROCESS_ID] != nil)?[dict objectForKey:MPROCESS_ID]:@"";
                 
-                NSString * pId = ([sfdict objectForKey:MPROCESS_ID] != nil)?[sfdict objectForKey:MPROCESS_ID]:@"";
-                
-                if ([pId isEqualToString:processComp_Id])
+                for (int j = 0; j < [processArray count]; j++)
                 {
-                    processId = ([sfdict objectForKey:MPROCESS_UNIQUE_ID] != nil)?[sfdict objectForKey:MPROCESS_UNIQUE_ID]:@"";
-                    break;
+                    NSDictionary * sfdict = [processArray objectAtIndex:j];
+                    
+                    NSString * pId = ([sfdict objectForKey:MPROCESS_ID] != nil)?[sfdict objectForKey:MPROCESS_ID]:@"";
+                    
+                    if ([pId isEqualToString:processComp_Id])
+                    {
+                        processId = ([sfdict objectForKey:MPROCESS_UNIQUE_ID] != nil)?[sfdict objectForKey:MPROCESS_UNIQUE_ID]:@"";
+                        break;
+                    }
                 }
-            }
-            
-            NSString * mapping_id = ([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@"";
-            NSString * value = @"";
-            if ([mapping_id isEqualToString:@""])
-            {
-                value = ([dict objectForKey:@"value_mapping_id"] != nil)?[dict objectForKey:@"value_mapping_id"]:@"";
-            }
-            
-            NSString * queryStatement = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@',  '%@', '%@', '%@', '%@') VALUES ('%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@','%@', '%d')", @"SFProcess_test", MPROCESS_ID, @"layout_id", @"object_name", @"expression_id", @"object_mapping_id", @"component_type", @"parent_column", @"value_id", @"parent_object", MLOCAL_ID, processId, 
-                                         ([dict objectForKey:MLAYOUT_ID] != nil)?[dict objectForKey:MLAYOUT_ID]:@"",
-                                         ([dict objectForKey:MOBJECT_NAME] != nil)?[dict objectForKey:MOBJECT_NAME]:@"",
-                                         ([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"",
-                                         ([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@"",
-                                         ([dict objectForKey:MCOMPONENT_TYPE] != nil)?[dict objectForKey:MCOMPONENT_TYPE]:@"",
-                                         ([dict objectForKey:MPARENT_COLUMN] != nil)?[dict objectForKey:MPARENT_COLUMN]:@"",
-                                         ([dict objectForKey:MVALUE_MAPPING_ID] != nil)?[dict objectForKey:MVALUE_MAPPING_ID]:@"",
-                                         ([dict objectForKey:MPARENT_OBJECT] != nil)?[dict objectForKey:MPARENT_OBJECT]:@"",
-                                         ++id_value];
-            char * err;
-            if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
-            {
-                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                    [MyPopoverDelegate performSelector:@selector(throwException)];
-                NSLog(@"Failed to insert");
+                
+                NSString * mapping_id = ([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@"";
+                NSString * value = @"";
+                if ([mapping_id isEqualToString:@""])
+                {
+                    value = ([dict objectForKey:@"value_mapping_id"] != nil)?[dict objectForKey:@"value_mapping_id"]:@"";
+                }
+                
+                sqlite3_bind_text(bulkStmt, 1, [processId UTF8String], strlen([processId UTF8String]), SQLITE_TRANSIENT);  
+                
+                sqlite3_bind_text(bulkStmt, 2, [([dict objectForKey:MLAYOUT_ID] != nil)?[dict objectForKey:MLAYOUT_ID]:@"" UTF8String], [([dict objectForKey:MLAYOUT_ID] != nil)?[dict objectForKey:MLAYOUT_ID]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 3, [([dict objectForKey:MOBJECT_NAME] != nil)?[dict objectForKey:MOBJECT_NAME]:@"" UTF8String], [([dict objectForKey:MOBJECT_NAME] != nil)?[dict objectForKey:MOBJECT_NAME]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 4, [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" UTF8String], [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 5, [([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@"" UTF8String], [([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 6, [([dict objectForKey:MCOMPONENT_TYPE] != nil)?[dict objectForKey:MCOMPONENT_TYPE]:@"" UTF8String], [([dict objectForKey:MCOMPONENT_TYPE] != nil)?[dict objectForKey:MCOMPONENT_TYPE]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 7, [([dict objectForKey:MPARENT_COLUMN] != nil)?[dict objectForKey:MPARENT_COLUMN]:@"" UTF8String], [ ([dict objectForKey:MPARENT_COLUMN] != nil)?[dict objectForKey:MPARENT_COLUMN]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 8, [([dict objectForKey:MVALUE_MAPPING_ID] != nil)?[dict objectForKey:MVALUE_MAPPING_ID]: @"" UTF8String], [([dict objectForKey:MVALUE_MAPPING_ID] != nil)?[dict objectForKey:MVALUE_MAPPING_ID] :@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 9, [([dict objectForKey:MPARENT_OBJECT] != nil)?[dict objectForKey:MPARENT_OBJECT]:@"" UTF8String], [([dict objectForKey:MPARENT_OBJECT] != nil)?[dict objectForKey:MPARENT_OBJECT]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_int(bulkStmt, 10, ++id_value);
+                
+                if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                {
+                    printf("Commit Failed!\n");
+                }
+                
+                sqlite3_reset(bulkStmt);
+                
             }
         }
+        
+        txnstmt = @"END TRANSACTION";
+        exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+        
+        
     }
     NSMutableArray * process_comp_array = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
 
@@ -1566,47 +1655,70 @@
             synchronized_sqlite3_finalize(createstatement);
 
         }
-       /* else if ([processType isEqualToString:SOURCETOTARGET])
-        {
-            queryStatement = [NSString stringWithFormat:@"SELECT * FROM SFprocess_test WHERE process_id = '%@'", [processIdList objectAtIndex:i]];
-            
-            NSLog(@"cnvmxc");
-            
-            
-        }
-        else if ([processType isEqualToString:SOURCETOTARGETONLYCHILDROWS])
-        {
-            queryStatement = [NSString stringWithFormat:@"SELECT * FROM SFprocess_test WHERE process_id = '%@'", [processIdList objectAtIndex:i]];
-        }*/
-        
+              
     }
     result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFProcessComponent ('process_id' VARCHAR,'layout_id' VARCHAR,'target_object_name' VARCHAR,'source_object_name' VARCHAR,'expression_id' VARCHAR,'object_mapping_id' VARCHAR,'component_type' VARCHAR,'local_id' INTEGER PRIMARY KEY  NOT NULL ,'parent_column' VARCHAR, 'value_mapping_id' VARCHAR, 'source_child_parent_column' VARCHAR)"]];
     
     if (result == YES)
     {
-        id_value = 0;
+        char * err;
+        NSString * txnstmt = @"BEGIN TRANSACTION";
         
-        for (int i = 0; i < [process_comp_array count]; i++)
+        int exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);        
+        
+        
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@',  '%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6,?7, ?8, ?9, ?10, ?11)", SFPROCESSCOMPONENT, MPROCESS_ID, MLAYOUT_ID, MTARGET_OBJECT_NAME, MSOURCE_OBJECT_NAME, MEXPRESSION_ID, MOBJECT_MAPPING_ID, MCOMPONENT_TYPE, MPARENT_COLUMN,MVALUE_MAPPING_ID,@"source_child_parent_column", MLOCAL_ID];
+        
+        sqlite3_stmt * bulkStmt;
+        
+        int ret_val = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]),  &bulkStmt, NULL);
+
+        
+        id_value = 0;
+        NSString * emptyString = @"";
+        
+        if (ret_val == SQLITE_OK)
         {
-            NSDictionary * dict = [process_comp_array objectAtIndex:i];
-                        
-            NSString * queryStatement = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@',  '%@', '%@', '%@', '%@') VALUES ('%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@','%@', '%d')", SFPROCESSCOMPONENT, MPROCESS_ID, MLAYOUT_ID, MTARGET_OBJECT_NAME, MSOURCE_OBJECT_NAME, MEXPRESSION_ID, MOBJECT_MAPPING_ID, MCOMPONENT_TYPE, MPARENT_COLUMN,MVALUE_MAPPING_ID,@"source_child_parent_column", MLOCAL_ID, ([dict objectForKey:MPROCESS_ID] != nil)?[dict objectForKey:MPROCESS_ID]:@"",
-                        ([dict objectForKey:MLAYOUT_ID] != nil)?[dict objectForKey:MLAYOUT_ID]:@"",
-                        ([dict objectForKey:MTARGET_OBJECT_NAME] != nil)?[dict objectForKey:MTARGET_OBJECT_NAME]:@"",
-                        ([dict objectForKey:SOURCE_OBJECT_NAME] != nil)?[dict objectForKey:MSOURCE_OBJECT_NAME]:@"",
-                        ([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"",
-                        ([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@"",
-                        ([dict objectForKey:MCOMPONENT_TYPE] != nil)?[dict objectForKey:MCOMPONENT_TYPE]:@"",
-                        ([dict objectForKey:MPARENT_COLUMN] != nil)?[dict objectForKey:MPARENT_COLUMN]:@"",
-                        ([dict objectForKey:MVALUE_MAPPING_ID] != nil)?[dict objectForKey:MVALUE_MAPPING_ID]:@"", @"", ++id_value];
-            char * err;
-            if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+        
+            for (int i = 0; i < [process_comp_array count]; i++)
             {
-                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                    [MyPopoverDelegate performSelector:@selector(throwException)];
-                NSLog(@"Failed to insert");
+                NSDictionary * dict = [process_comp_array objectAtIndex:i];
+                
+                sqlite3_bind_text(bulkStmt, 1, [([dict objectForKey:MPROCESS_ID] != nil)?[dict objectForKey:MPROCESS_ID]:@"" UTF8String], [([dict objectForKey:MPROCESS_ID] != nil)?[dict objectForKey:MPROCESS_ID]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 2, [([dict objectForKey:MLAYOUT_ID] != nil)?[dict objectForKey:MLAYOUT_ID]:@""  UTF8String], [([dict objectForKey:MLAYOUT_ID] != nil)?[dict objectForKey:MLAYOUT_ID]:@"" length], 
+                                    SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 3, [([dict objectForKey:MTARGET_OBJECT_NAME] != nil)?[dict objectForKey:MTARGET_OBJECT_NAME]:@""  UTF8String], [([dict objectForKey:MTARGET_OBJECT_NAME] != nil)?[dict objectForKey:MTARGET_OBJECT_NAME]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 4, [([dict objectForKey:MSOURCE_OBJECT_NAME] != nil)?[dict objectForKey:MSOURCE_OBJECT_NAME]:@""  UTF8String], [([dict objectForKey:MSOURCE_OBJECT_NAME] != nil)?[dict objectForKey:MSOURCE_OBJECT_NAME]:@"" length], SQLITE_TRANSIENT);
+                
+                
+                sqlite3_bind_text(bulkStmt, 5, [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@""  UTF8String], [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 6, [([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@""  UTF8String], [([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 7, [([dict objectForKey:MCOMPONENT_TYPE] != nil)?[dict objectForKey:MCOMPONENT_TYPE]:@""  UTF8String], [([dict objectForKey:MCOMPONENT_TYPE] != nil)?[dict objectForKey:MCOMPONENT_TYPE]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 8, [([dict objectForKey:MPARENT_COLUMN] != nil)?[dict objectForKey:MPARENT_COLUMN]:@""  UTF8String], [([dict objectForKey:MPARENT_COLUMN] != nil)?[dict objectForKey:MPARENT_COLUMN]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 9, [([dict objectForKey:MVALUE_MAPPING_ID] != nil)?[dict objectForKey:MVALUE_MAPPING_ID]:@""  UTF8String], [([dict objectForKey:MVALUE_MAPPING_ID] != nil)?[dict objectForKey:MVALUE_MAPPING_ID]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 10, [emptyString  UTF8String], [emptyString length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_int(bulkStmt, 11, ++id_value);
+                
+                if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                {
+                    printf("Commit Failed!\n");
+                }
+                
+                sqlite3_reset(bulkStmt);                
+                            
             }
         }
+        txnstmt = @"END TRANSACTION";
+        exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
                                      
     }
     [self insertValuesInToExpressionTables:processDictionary];
@@ -1624,76 +1736,103 @@
         NSString * defautPickValue = @"";
         int id_value = 1;
         
-        for (int i = 0; i < [object count]; i++)
+        char * err;
+        NSString * txnstmt = @"BEGIN TRANSACTION";
+        
+        int exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+        
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6)", SFPICKLIST, MOBJECT_API_NAME, _MFIELD_API_NAME, LABEL, MVALUEM, MDEFAULTVALUE, MLOCAL_ID];
+        
+        sqlite3_stmt * bulkStmt;
+        
+        int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
+
+        
+
+        if (ret_value == SQLITE_OK)
         {
-            NSString * objectName = [[object objectAtIndex:i] objectForKey:OBJECT];
-            
-            NSDictionary * fieldDict = [fields objectAtIndex:i];
-            
-            NSArray * fieldArray = [fieldDict objectForKey:objectName];
-            
-       //     NSLog(@"%@", [fields objectAtIndex:i]);
-            
-            NSDictionary * valueDict = [values objectAtIndex:i];
-            
-            
-            NSArray * picklistValues = [valueDict objectForKey:objectName];
-                    
-            for (int j = 0; j < [picklistValues count]; j++)
+            for (int i = 0; i < [object count]; i++)
             {
-                NSDictionary * dict = [fieldArray objectAtIndex:j];
+                NSString * objectName = [[object objectAtIndex:i] objectForKey:OBJECT];
                 
-                NSArray * keys = [dict allValues];
+                NSDictionary * fieldDict = [fields objectAtIndex:i];
                 
-                NSString * fieldName = [keys objectAtIndex:0];
+                NSArray * fieldArray = [fieldDict objectForKey:objectName];
+                        
+                NSDictionary * valueDict = [values objectAtIndex:i];
                 
-                NSArray * values = [[picklistValues objectAtIndex:j] objectForKey:fieldName];
                 
-                
-                for (int m = 0; m < [values count]; m++)
+                NSArray * picklistValues = [valueDict objectForKey:objectName];
+                        
+                for (int j = 0; j < [picklistValues count]; j++)
                 {
-                    NSArray * key = [values objectAtIndex:m];
-                    NSArray * value = [values objectAtIndex:++m];
+                    NSDictionary * dict = [fieldArray objectAtIndex:j];
                     
-                    int count = [key count];
+                    NSArray * keys = [dict allValues];
                     
-                    for (int r = 0; r < count; ++r)
+                    NSString * fieldName = [keys objectAtIndex:0];
+                    
+                    NSArray * values = [[picklistValues objectAtIndex:j] objectForKey:fieldName];
+                    
+                    
+                    for (int m = 0; m < [values count]; m++)
                     {
-                        if ([[key objectAtIndex:r] isEqualToString:@"ISMULTIPICKLIST"])
-                            continue;
+                        NSArray * key = [values objectAtIndex:m];
+                        NSArray * value = [values objectAtIndex:++m];
                         
-                        pickValue = [value objectAtIndex:r];
-                        pickValue = [pickValue stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
-                        pickLabel = [value objectAtIndex:++r];
-                        pickLabel = [pickLabel stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                        int count = [key count];
                         
-                        if ( r < [key count] - 1)
+                        for (int r = 0; r < count; ++r)
                         {
-                            if ([[key objectAtIndex:++r] isEqualToString:DEFAULTPICKLISTVALUE])
+                            if ([[key objectAtIndex:r] isEqualToString:@"ISMULTIPICKLIST"])
+                                continue;
+                            
+                            pickValue = [value objectAtIndex:r];
+                            pickValue = [pickValue stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                            pickLabel = [value objectAtIndex:++r];
+                            pickLabel = [pickLabel stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                            
+                            if ( r < [key count] - 1)
                             {
-                                defautPickValue = [value objectAtIndex:r];
-                                defautPickValue = [defautPickValue stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                                if ([[key objectAtIndex:++r] isEqualToString:DEFAULTPICKLISTVALUE])
+                                {
+                                    defautPickValue = [value objectAtIndex:r];
+                                    defautPickValue = [defautPickValue stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                                }
+                                else
+                                {
+                                    --r;
+                                    defautPickValue = @"";
+                                }
                             }
-                            else
+                            
+                            sqlite3_bind_text(bulkStmt, 1, [objectName UTF8String], [objectName length], SQLITE_TRANSIENT);
+                            
+                            sqlite3_bind_text(bulkStmt, 2, [fieldName UTF8String], [fieldName length], SQLITE_TRANSIENT);
+                            
+                            sqlite3_bind_text(bulkStmt, 3, [pickLabel UTF8String], [pickLabel length], SQLITE_TRANSIENT);
+                            
+                            sqlite3_bind_text(bulkStmt, 4, [pickValue UTF8String], [pickValue length], SQLITE_TRANSIENT);
+                            
+                            sqlite3_bind_text(bulkStmt, 5, [defautPickValue UTF8String], [defautPickValue length], SQLITE_TRANSIENT);
+                            
+                            sqlite3_bind_int(bulkStmt, 6, id_value++);
+                                                        
+                            if (sqlite3_step(bulkStmt) != SQLITE_DONE)
                             {
-                                --r;
-                                defautPickValue = @"";
+                                printf("Commit Failed!\n");
                             }
+                            
+                            sqlite3_reset(bulkStmt);
+                            
                         }
-                        
-                        NSString * queryStatement =[NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@') VALUES ('%@', '%@', '%@', '%@', '%@', '%d')", SFPICKLIST, MOBJECT_API_NAME, _MFIELD_API_NAME, LABEL, MVALUEM, MDEFAULTVALUE, MLOCAL_ID, objectName, fieldName, pickLabel, pickValue, defautPickValue, id_value++];
-                        
-                        char *err;
-                        if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
-                        {
-                            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                                [MyPopoverDelegate performSelector:@selector(throwException)];
-                            NSLog(@"Failed to insert in to table");
-                        }                                                        
                     }
                 }
-            }
-         }
+             }
+        }
+        
+        txnstmt = @"END TRANSACTION";
+        exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
     }
   
     appDelegate.wsInterface.didGetPicklistValues = TRUE;
@@ -1712,53 +1851,91 @@
     if (result == YES)
     {
         result = [self createTable:[NSString stringWithFormat:@"CREATE INDEX IF NOT EXISTS RTIndex ON SFRTPicklist (object_api_name, field_api_name, recordtypename, defaultlabel, defaultvalue, label, value)"]];
-                       
-        NSString * queryStatement = @"";
         
-        for (NSString * objectName in objects)
+        
+        char * err;
+        
+        NSString * txnstmt = @"BEGIN TRANSACTION";
+        
+        int exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+        
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ ( %@, %@, %@, %@, %@, %@, %@, %@, %@,%@ ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)", SFRTPICKLIST, MOBJECT_API_NAME, _MFIELD_API_NAME, MLABEL, MVALUEM, MDEFAULTVALUE, MDEFAULTLABEL, @"recordtypename", @"recordtypeid", @"recordtypelayoutid", MLOCAL_ID];
+        
+        sqlite3_stmt * bulkStmt;
+        
+        int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
+
+        
+        if (ret_value)
         {
-            NSMutableArray * RecordTypePickList = [recordTypeDict objectForKey:objectName];
-            
-            for (NSMutableDictionary * sub_dict in RecordTypePickList)
+        
+            for (NSString * objectName in objects)
             {
-                NSString * recordTypeName = ([sub_dict objectForKey:@"RecorTypeName"] != nil)?[sub_dict objectForKey:@"RecorTypeName"]:@"";
-                NSString * recordTypeID = ([sub_dict objectForKey:@"RecorTypeId"] != nil)?[sub_dict objectForKey:@"RecorTypeId"]:@"";
-                NSString * recordTypeLayoutId = ([sub_dict objectForKey:@"RecorTypeLayoutId"] != nil)?[sub_dict objectForKey:@"RecorTypeLayoutId"]:@"";
+                NSMutableArray * RecordTypePickList = [recordTypeDict objectForKey:objectName];
                 
-                
-                NSArray * picklists = [sub_dict objectForKey:@"PickLists"];
-                NSString * defaultValue = @"";
-                NSString * defaultLabel = @"";
-                NSString * api_name = @"";
-                
-                for (NSDictionary * picklistValueDict in picklists)
+                for (NSMutableDictionary * sub_dict in RecordTypePickList)
                 {
-                    defaultLabel = ([picklistValueDict objectForKey:@"PickListDefaultLabel"] != nil)?[picklistValueDict objectForKey:@"PickListDefaultLabel"]:@"";
-                    defaultValue = ([picklistValueDict objectForKey:@"PickListDefaultValue"] != nil)?[picklistValueDict objectForKey:@"PickListDefaultValue"]:@"";
-                    api_name = ([picklistValueDict objectForKey:@"PickListName"] != nil)?[picklistValueDict objectForKey: @"PickListName"]:@"";
-                    NSArray * pickListValue = [picklistValueDict objectForKey:@"PickListValue"];
+                    NSString * recordTypeName = ([sub_dict objectForKey:@"RecorTypeName"] != nil)?[sub_dict objectForKey:@"RecorTypeName"]:@"";
+                    NSString * recordTypeID = ([sub_dict objectForKey:@"RecorTypeId"] != nil)?[sub_dict objectForKey:@"RecorTypeId"]:@"";
+                    NSString * recordTypeLayoutId = ([sub_dict objectForKey:@"RecorTypeLayoutId"] != nil)?[sub_dict objectForKey:@"RecorTypeLayoutId"]:@"";
                     
-                    for (NSDictionary * labelValueDict in pickListValue)
-                    {                        
-                        NSString * label = ([labelValueDict objectForKey:@"label"] != nil)?[labelValueDict objectForKey:@"label"]:@"";
-                        NSString * value = ([labelValueDict objectForKey:@"value"] != nil)?[labelValueDict objectForKey:@"value"]:@"";
+                    
+                    NSArray * picklists = [sub_dict objectForKey:@"PickLists"];
+                    NSString * defaultValue = @"";
+                    NSString * defaultLabel = @"";
+                    NSString * api_name = @"";
+                    
+                    for (NSDictionary * picklistValueDict in picklists)
+                    {
+                        defaultLabel = ([picklistValueDict objectForKey:@"PickListDefaultLabel"] != nil)?[picklistValueDict objectForKey:@"PickListDefaultLabel"]:@"";
+                        defaultValue = ([picklistValueDict objectForKey:@"PickListDefaultValue"] != nil)?[picklistValueDict objectForKey:@"PickListDefaultValue"]:@"";
+                        api_name = ([picklistValueDict objectForKey:@"PickListName"] != nil)?[picklistValueDict objectForKey: @"PickListName"]:@"";
+                        NSArray * pickListValue = [picklistValueDict objectForKey:@"PickListValue"];
                         
-                        label = [label stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
-                        value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
-                        
-                        queryStatement = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ ( %@, %@, %@, %@, %@, %@, %@, %@, %@,%@ ) VALUES ('%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%d' )", SFRTPICKLIST, MOBJECT_API_NAME, _MFIELD_API_NAME, MLABEL, MVALUEM, MDEFAULTVALUE, MDEFAULTLABEL, @"recordtypename", @"recordtypeid", @"recordtypelayoutid", MLOCAL_ID, objectName, api_name, label, value, defaultLabel, defaultValue, recordTypeName, recordTypeID, recordTypeLayoutId, ++id_value];    
-                        
-                        char * err;
-                        if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
-                        {
-                            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                                [MyPopoverDelegate performSelector:@selector(throwException)];
-                            NSLog(@"Failed to insert");
+                        for (NSDictionary * labelValueDict in pickListValue)
+                        {                        
+                            NSString * label = ([labelValueDict objectForKey:@"label"] != nil)?[labelValueDict objectForKey:@"label"]:@"";
+                            NSString * value = ([labelValueDict objectForKey:@"value"] != nil)?[labelValueDict objectForKey:@"value"]:@"";
+                            
+                            label = [label stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                            value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                            
+                            sqlite3_bind_text(bulkStmt, 1, [objectName UTF8String], [objectName length], SQLITE_TRANSIENT);
+                            
+                            sqlite3_bind_text(bulkStmt, 2, [api_name UTF8String], [api_name length], SQLITE_TRANSIENT);
+                            
+                            sqlite3_bind_text(bulkStmt, 3, [label UTF8String], [label length], SQLITE_TRANSIENT);
+                            
+                            sqlite3_bind_text(bulkStmt, 4, [value UTF8String], [value length], SQLITE_TRANSIENT);
+                            
+                            sqlite3_bind_text(bulkStmt, 5, [defaultLabel UTF8String], [defaultLabel length], SQLITE_TRANSIENT);
+                            
+                            sqlite3_bind_text(bulkStmt, 6, [defaultValue UTF8String], [defaultValue length], SQLITE_TRANSIENT);
+                            
+                            sqlite3_bind_text(bulkStmt, 7, [recordTypeName UTF8String], [recordTypeName length], SQLITE_TRANSIENT);
+                            
+                            sqlite3_bind_text(bulkStmt, 8, [recordTypeID UTF8String], [recordTypeID length], SQLITE_TRANSIENT);
+                            
+                            sqlite3_bind_text(bulkStmt, 9, [recordTypeLayoutId UTF8String], [recordTypeLayoutId length], SQLITE_TRANSIENT);
+                            
+                            sqlite3_bind_int(bulkStmt, 10, ++id_value);
+                            
+                            if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                            {
+                                printf("Commit Failed!\n");
+                            }
+                            
+                            sqlite3_reset(bulkStmt);
+                            
                         }
                     }
                 }
             }
+        
         }
+        txnstmt = @"END TRANSACTION";
+        exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+    
     }
     
     NSLog(@"SAMMAN insertValuesInToRTPicklistTableForObject Processing starts: %@", [NSDate date]);
@@ -1775,26 +1952,48 @@
     BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFExpression ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , 'expression_id' VARCHAR, 'expression' VARCHAR, 'expression_name' VARCHAR)"]];
     if (result == YES)
     {
+        char * err;    
+        
+        NSString * txnstmt = @"BEGIN TRANSACTION";
+        
+        int exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+        
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@') VALUES (?1, ?2,   ?3, ?4)", SFEXPRESSION, MEXPRESSION_ID , MEXPRESSION_NAME, MEXPRESSION, MLOCAL_ID];
+        
+        sqlite3_stmt * bulkStmt;
+        
+        int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
+
         
         NSArray * sfExpression = [processDictionary objectForKey:MSFExpression];
         
-        for (int i = 0; i < [sfExpression count]; i++)
+        if (ret_value)
         {
-            NSDictionary * dict = [sfExpression objectAtIndex:i];
-            
-            NSString * queryStatement =[NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@') VALUES ('%@', '%@', '%@', '%d')", SFEXPRESSION, MEXPRESSION_ID , MEXPRESSION_NAME, MEXPRESSION, MLOCAL_ID,
-                                        ([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"",
-                                        ([dict objectForKey:MEXPRESSION_NAME] != nil)?[dict objectForKey:MEXPRESSION_NAME]:@"",
-                                        ([dict objectForKey:MADVANCE_EXPRESSION] != nil)?[dict objectForKey:MADVANCE_EXPRESSION]:@"",
-                                        ++id_value];
-            char *err;
-            if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+        
+            for (int i = 0; i < [sfExpression count]; i++)
             {
-                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                    [MyPopoverDelegate performSelector:@selector(throwException)];
-                NSLog(@"Failed to insert in to table");
-            }         
+                NSDictionary * dict = [sfExpression objectAtIndex:i];
+                
+                sqlite3_bind_text(bulkStmt, 1, [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" UTF8String], [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 2, [([dict objectForKey:MEXPRESSION_NAME] != nil)?[dict objectForKey:MEXPRESSION_NAME]:@"" UTF8String], [([dict objectForKey:MEXPRESSION_NAME] != nil)?[dict objectForKey:MEXPRESSION_NAME]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 3, [([dict objectForKey:MADVANCE_EXPRESSION] != nil)?[dict objectForKey:MADVANCE_EXPRESSION]:@"" UTF8String], [([dict objectForKey:MADVANCE_EXPRESSION] != nil)?[dict objectForKey:MADVANCE_EXPRESSION]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_int(bulkStmt, 4, ++id_value);
+                                
+                if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                {
+                    printf("Commit Failed!\n");
+                }
+                
+                sqlite3_reset(bulkStmt);
+
+            }
         }
+        txnstmt = @"END TRANSACTION";
+        exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL,     &err);
+
     }
     id_value = 0;
     
@@ -1802,28 +2001,51 @@
     
     if (result == YES)
     {
-    
+        char * err;
+        
+        NSString * txnstmt = @"BEGIN TRANSACTION";
+        
+        int exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+        
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6)", SFEXPRESSIONCOMPONENT, MEXPRESSION_ID, MCOMPONENT_SEQ_NUM, MCOMPONENT_LHS, MCOMPONENT_RHS, MOPERATOR, MLOCAL_ID];
+        
+        sqlite3_stmt * bulkStmt;
+        
+        int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
+
         NSArray * sfExpression_com = [processDictionary objectForKey:MSFExpression_component];
         
-        for (int i = 0; i < [sfExpression_com count]; i++)
+        if (ret_value == SQLITE_OK)
         {
-            NSDictionary * dict = [sfExpression_com objectAtIndex:i];
-            
-            NSString * queryStatement =[NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@') VALUES ('%@', '%@', '%@', '%@', '%@', '%d')", SFEXPRESSIONCOMPONENT, MEXPRESSION_ID, MCOMPONENT_SEQ_NUM, MCOMPONENT_LHS, MCOMPONENT_RHS, MOPERATOR, MLOCAL_ID,
-                            ([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"",
-                            ([dict objectForKey:MSEQUENCE] != nil)?[dict objectForKey:MSEQUENCE]:@"",
-                            ([dict objectForKey:MSOURCE_FIELD_NAME] != nil)?[dict objectForKey:MSOURCE_FIELD_NAME]:@"", 
-                            ([dict objectForKey:MVALUEM] != nil)?[dict objectForKey:MVALUEM]:@"",
-                            ([dict objectForKey:MOPERATOR] != nil)?[dict objectForKey:MOPERATOR]:@"",
-                                        ++id_value];
-            char *err;
-            if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+        
+            for (int i = 0; i < [sfExpression_com count]; i++)
             {
-                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                    [MyPopoverDelegate performSelector:@selector(throwException)];
-                NSLog(@"Failed to insert in to table");
-            }         
+                NSDictionary * dict = [sfExpression_com objectAtIndex:i];
+                
+                sqlite3_bind_text(bulkStmt, 1, [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" UTF8String], [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 2, [([dict objectForKey:MSEQUENCE] != nil)?[dict objectForKey:MSEQUENCE]:@"" UTF8String], [([dict objectForKey:MSEQUENCE] != nil)?[dict objectForKey:MSEQUENCE]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 3, [([dict objectForKey:MSOURCE_FIELD_NAME] != nil)?[dict objectForKey:MSOURCE_FIELD_NAME]:@"" UTF8String], [([dict objectForKey:MSOURCE_FIELD_NAME] != nil)?[dict objectForKey:MSOURCE_FIELD_NAME]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 4, [([dict objectForKey:MVALUEM] != nil)?[dict objectForKey:MVALUEM]:@"" UTF8String], [([dict objectForKey:MVALUEM] != nil)?[dict objectForKey:MVALUEM]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 5, [([dict objectForKey:MOPERATOR] != nil)?[dict objectForKey:MOPERATOR]:@"" UTF8String], [([dict objectForKey:MOPERATOR] != nil)?[dict objectForKey:MOPERATOR]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_int(bulkStmt, 6, ++id_value);
+                
+                if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                {
+                    printf("Commit Failed!\n");
+                }
+                
+                sqlite3_reset(bulkStmt);
+            }
         }
+        
+        txnstmt = @"END TRANSACTION";
+        exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+
     }
     
     
@@ -1839,24 +2061,48 @@
     BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFObjectMapping ('local_id' INTEGER PRIMARY KEY  NOT NULL ,'object_mapping_id' VARCHAR , 'source_object_name' VARCHAR, 'target_object_name' VARCHAR)"]];
     if (result == YES)
     {
+        
+        char * err;
+        
+        NSString * txnstmt = @"BEGIN TRANSACTION";
+        
+        int exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+        
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@') VALUES (?1, ?2,   ?3, ?4)", SFOBJECTMAPPING, MOBJECT_MAPPING_ID , MSOURCE_OBJECT_NAME, MTARGET_OBJECT_NAME, MLOCAL_ID];
+        
+        sqlite3_stmt * bulkStmt;
+        
+        int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
+
+        
         NSArray * sfobjectMap = [processDictionary objectForKey:MSFObject_mapping];
         
-        for (int i = 0; i < [sfobjectMap count]; i++)
+        if (ret_value == SQLITE_OK)
         {
-            NSDictionary * dict = [sfobjectMap objectAtIndex:i];
-            
-            NSString * queryStatement =[NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@') VALUES ('%@', '%@', '%@', '%d')", SFOBJECTMAPPING, MOBJECT_MAPPING_ID , MSOURCE_OBJECT_NAME, MTARGET_OBJECT_NAME, MLOCAL_ID,
-                        ([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@"",
-                        ([dict objectForKey:MSOURCE_OBJECT_NAME] != nil)?[dict objectForKey:MSOURCE_OBJECT_NAME]:@"",
-                                        ([dict objectForKey:MTARGET_OBJECT_NAME] != nil)?[dict objectForKey:MTARGET_OBJECT_NAME]:@"", ++id_value];
-            char *err;
-            if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+        
+            for (int i = 0; i < [sfobjectMap count]; i++)
             {
-                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                    [MyPopoverDelegate performSelector:@selector(throwException)];
-                NSLog(@"Failed to insert in to table");
-            }         
+                NSDictionary * dict = [sfobjectMap objectAtIndex:i];
+                
+                sqlite3_bind_text(bulkStmt, 1, [([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@"" UTF8String], [([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 2, [([dict objectForKey:MSOURCE_OBJECT_NAME] != nil)?[dict objectForKey:MSOURCE_OBJECT_NAME]:@"" UTF8String], [([dict objectForKey:MSOURCE_OBJECT_NAME] != nil)?[dict objectForKey:MSOURCE_OBJECT_NAME]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 3, [([dict objectForKey:MTARGET_OBJECT_NAME] != nil)?[dict objectForKey:MTARGET_OBJECT_NAME]:@"" UTF8String], [([dict objectForKey:MTARGET_OBJECT_NAME] != nil)?[dict objectForKey:MTARGET_OBJECT_NAME]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_int(bulkStmt, 4, ++id_value);
+                
+                if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                {
+                    printf("Commit Failed!\n");
+                }
+                
+                sqlite3_reset(bulkStmt);
+
+            }
         }
+        txnstmt = @"END TRANSACTION";
+        exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
     }
     
     [self insertSourceToTargetInToSFProcessComponent];
@@ -1872,46 +2118,71 @@
         NSString * value = @"";
         id_value = 0;
 
-        for (int i = 0; i < [sfObject_com count]; i++)
+        char * err;
+        
+        NSString * txnstmt = @"BEGIN TRANSACTION";
+        
+        int exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+        
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)", SFOBJECTMAPCOMPONENT, MOBJECT_MAPPING_ID , MSOURCE_FIELD_NAME, MTARGET_FIELD_NAME, MMAPPING_VALUE, MMAPPING_COMP_TYPE, MMAPPING_VALUE_FLAG, MLOCAL_ID];
+        
+        sqlite3_stmt * bulkStmt;
+        
+        int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
+
+        
+        if (ret_value == SQLITE_OK)
         {
-            NSDictionary * dict = [sfObject_com objectAtIndex:i];
-            
-            NSString * target_field_name = ([dict objectForKey:@"target_field_name"] != nil)?[dict objectForKey:@"target_field_name"]:@"";
-            NSString * mappingValue = ([dict objectForKey:@"mapping_value"] != nil)?[dict objectForKey:@"mapping_value"]:@"";
-            
-            if ([target_field_name isEqualToString:@""])
+        
+            for (int i = 0; i < [sfObject_com count]; i++)
             {
-                value = MVALUEMAPPING;
+                NSDictionary * dict = [sfObject_com objectAtIndex:i];
+                
+                NSString * target_field_name = ([dict objectForKey:@"target_field_name"] != nil)?[dict objectForKey:@"target_field_name"]:@"";
+                NSString * mappingValue = ([dict objectForKey:@"mapping_value"] != nil)?[dict objectForKey:@"mapping_value"]:@"";
+                
+                if ([target_field_name isEqualToString:@""])
+                {
+                    value = MVALUEMAPPING;
+                }
+                if ((![target_field_name isEqualToString:@""]) && (![mappingValue isEqualToString:@""]))
+                {
+                    value = MVALUEMAPPING;
+                }
+                else
+                {
+                    value = MFIELDMAPPING;
+                }
+                
+                
+                sqlite3_bind_text(bulkStmt, 1, [([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@"" UTF8String], [([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 2, [([dict objectForKey:MSOURCE_FIELD_NAME] != nil)?[dict objectForKey:MSOURCE_FIELD_NAME]:@"" UTF8String], [([dict objectForKey:MSOURCE_FIELD_NAME] != nil)?[dict objectForKey:MSOURCE_FIELD_NAME]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 3, [([dict objectForKey:MTARGET_FIELD_NAME] != nil)?[dict objectForKey:MTARGET_FIELD_NAME]:@"" UTF8String], [([dict objectForKey:MTARGET_FIELD_NAME] != nil)?[dict objectForKey:MTARGET_FIELD_NAME]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 4, [([dict objectForKey:MMAPPING_VALUE] != nil)?[dict objectForKey:MMAPPING_VALUE]:@"" UTF8String], [([dict objectForKey:MMAPPING_VALUE] != nil)?[dict objectForKey:MMAPPING_VALUE]:@""  length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 5, [value UTF8String], [value length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 6, [flag UTF8String], [flag length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_int(bulkStmt, 7, ++id_value);
+                
+                if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                {
+                    printf("Commit Failed!\n");
+                }
+                
+                sqlite3_reset(bulkStmt);
+                
             }
-            if ((![target_field_name isEqualToString:@""]) && (![mappingValue isEqualToString:@""]))
-            {
-                value = MVALUEMAPPING;
-            }
-            else
-            {
-                value = MFIELDMAPPING;
-            }
-            
-            
-            NSString * queryStatement =[NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@') VALUES ('%@', '%@', '%@', '%@', '%@', '%@', '%d')", SFOBJECTMAPCOMPONENT, MOBJECT_MAPPING_ID , MSOURCE_FIELD_NAME, MTARGET_FIELD_NAME, MMAPPING_VALUE, MMAPPING_COMP_TYPE, MMAPPING_VALUE_FLAG, MLOCAL_ID,
-                        ([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@"",
-                        ([dict objectForKey:MSOURCE_FIELD_NAME] != nil)?[dict objectForKey:MSOURCE_FIELD_NAME]:@"",
-                        ([dict objectForKey:MTARGET_FIELD_NAME] != nil)?[dict objectForKey:MTARGET_FIELD_NAME]:@"",
-                        ([dict objectForKey:MMAPPING_VALUE] != nil)?[dict objectForKey:MMAPPING_VALUE]:@"", value, flag,
-                                        ++id_value];
-            char *err;
-            if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
-            {
-                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                    [MyPopoverDelegate performSelector:@selector(throwException)];
-                NSLog(@"Failed to insert in to table");
-            }         
         }
+        txnstmt = @"END TRANSACTION";
+        exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
     }
     
     [self insertValuesInToLookUpTable:processDictionary];
-   // appDelegate.wsInterface.didGetPageDataDb = TRUE;
-  //  [appDelegate.wsInterface metaSyncWithEventName:SFM_OBJECT_DEFINITIONS eventType:SYNC values:nil];
 }
 
 
@@ -1923,31 +2194,53 @@
     {
         NSArray * sfNamedSearch = [processDictionary objectForKey:MSFNAMEDSEARCH];
         
-        for (int i = 0; i < [sfNamedSearch count]; i++)
-        {
-            NSDictionary * nameSearchDict = [sfNamedSearch objectAtIndex:i];
-            
-            NSString * queryStatement = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@' ) VALUES ('%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%d')", SFNAMEDSEARCH, MDEFAULT_LOOKUP_COLUMN, MOBJECT_NAME, MSEARCH_NAME, MSEARCH_TYPE, MNAMED_SEARCHID, MNO_OF_LOOKUP_RECORDS, MIS_DEFAULT, MIS_STANDARD, MLOCAL_ID ,
-                                         ([nameSearchDict objectForKey:MDEFAULT_LOOKUP_COLUMN] != nil)?[nameSearchDict objectForKey:MDEFAULT_LOOKUP_COLUMN]:@"",
-                                         ([nameSearchDict objectForKey:MOBJECT_NAME] != nil)?[nameSearchDict objectForKey:MOBJECT_NAME]:@"",
-                                         ([nameSearchDict objectForKey:MSEARCH_NAME] != nil)?[nameSearchDict objectForKey:MSEARCH_NAME]:@"",
-                                         ([nameSearchDict objectForKey:MSEARCH_TYPE] != nil)?[nameSearchDict objectForKey:MSEARCH_TYPE]:@"",
-                                         ([nameSearchDict objectForKey:MNAMED_SEARCHID] != nil)?[nameSearchDict objectForKey:MNAMED_SEARCHID]:@"",
-                                         ([nameSearchDict objectForKey:MNO_OF_LOOKUP_RECORDS] != nil)?[nameSearchDict objectForKey:MNO_OF_LOOKUP_RECORDS]:@"",
-                                         ([nameSearchDict objectForKey:MIS_DEFAULT] != nil)?[nameSearchDict objectForKey:MIS_DEFAULT]:@"",
-                                         ([nameSearchDict objectForKey:MIS_STANDARD] != nil)?[nameSearchDict objectForKey:MIS_STANDARD]:@"", ++id_value]; 
-            
-            char * err;
-            
-            if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
-            {
-                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                    [MyPopoverDelegate performSelector:@selector(throwException)];
-                NSLog(@"Failed To Insert");
-            }
-            
-        }
+        char *err;
         
+        NSString * txnstmt = @"BEGIN TRANSACTION";
+        
+        int exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+        
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@' ) VALUES (?1, ?2, ?3, ?4, ?5, ?6,?7, ?8, ?9)", SFNAMEDSEARCH, MDEFAULT_LOOKUP_COLUMN, MOBJECT_NAME, MSEARCH_NAME, MSEARCH_TYPE, MNAMED_SEARCHID, MNO_OF_LOOKUP_RECORDS, MIS_DEFAULT, MIS_STANDARD, MLOCAL_ID];
+        
+        sqlite3_stmt * bulkStmt;
+        
+        int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
+
+        if (ret_value == SQLITE_OK)
+        {
+            for (int i = 0; i < [sfNamedSearch count]; i++)
+            {
+                NSDictionary * nameSearchDict = [sfNamedSearch objectAtIndex:i];
+                
+                sqlite3_bind_text(bulkStmt, 1, [([nameSearchDict objectForKey:MDEFAULT_LOOKUP_COLUMN] != nil)?[nameSearchDict objectForKey:MDEFAULT_LOOKUP_COLUMN]:@"" UTF8String], [([nameSearchDict objectForKey:MDEFAULT_LOOKUP_COLUMN] != nil)?[nameSearchDict objectForKey:MDEFAULT_LOOKUP_COLUMN]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 2, [([nameSearchDict objectForKey:MOBJECT_NAME] != nil)?[nameSearchDict objectForKey:MOBJECT_NAME]:@"" UTF8String], [([nameSearchDict objectForKey:MOBJECT_NAME] != nil)?[nameSearchDict objectForKey:MOBJECT_NAME]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 3, [([nameSearchDict objectForKey:MSEARCH_NAME] != nil)?[nameSearchDict objectForKey:MSEARCH_NAME]:@"" UTF8String], [([nameSearchDict objectForKey:MSEARCH_NAME] != nil)?[nameSearchDict objectForKey:MSEARCH_NAME]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 4, [([nameSearchDict objectForKey:MSEARCH_TYPE] != nil)?[nameSearchDict objectForKey:MSEARCH_TYPE]:@"" UTF8String], [([nameSearchDict objectForKey:MSEARCH_TYPE] != nil)?[nameSearchDict objectForKey:MSEARCH_TYPE]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 5, [([nameSearchDict objectForKey:MNAMED_SEARCHID] != nil)?[nameSearchDict objectForKey:MNAMED_SEARCHID]:@"" UTF8String], [([nameSearchDict objectForKey:MNAMED_SEARCHID] != nil)?[nameSearchDict objectForKey:MNAMED_SEARCHID]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 6, [([nameSearchDict objectForKey:MNO_OF_LOOKUP_RECORDS] != nil)?[nameSearchDict objectForKey:MNO_OF_LOOKUP_RECORDS]:@"" UTF8String], [([nameSearchDict objectForKey:MNO_OF_LOOKUP_RECORDS] != nil)?[nameSearchDict objectForKey:MNO_OF_LOOKUP_RECORDS]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 7, [([nameSearchDict objectForKey:MIS_DEFAULT] != nil)?[nameSearchDict objectForKey:MIS_DEFAULT]:@"" UTF8String], [([nameSearchDict objectForKey:MIS_DEFAULT] != nil)?[nameSearchDict objectForKey:MIS_DEFAULT]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 8, [([nameSearchDict objectForKey:MIS_STANDARD] != nil)?[nameSearchDict objectForKey:MIS_STANDARD]:@"" UTF8String], [([nameSearchDict objectForKey:MIS_STANDARD] != nil)?[nameSearchDict objectForKey:MIS_STANDARD]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_int(bulkStmt, 10, ++id_value);
+                
+                if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                {
+                    printf("Commit Failed!\n");
+                }
+                
+                sqlite3_reset(bulkStmt);
+                            
+            }
+        }
+        txnstmt = @"END TRANSACTION";
+        exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
     }
     
     result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFNamedSearchComponent ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'expression_type' VARCHAR, 'field_name' VARCHAR, 'named_search' VARCHAR, 'search_object_field_type' VARCHAR,  'field_type' VARCHAR, 'field_relationship_name' VARCHAR, 'sequence' VARCHAR)"]];
@@ -1957,30 +2250,54 @@
     {
         NSArray * sfNameSearchComp = [processDictionary objectForKey:MSFNAMEDSEARCH_COMPONENT];
         
-        for (int i = 0; i < [sfNameSearchComp count]; i++)
+        char * err;
+        
+        NSString * txnstmt = @"BEGIN TRANSACTION";
+        
+        int exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+        
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@' ) VALUES (?1, ?2, ?3, ?4, ?5, ?6,?7, ?8)", SFNAMEDSEACHCOMPONENT, MEXPRESSION_TYPE, MFIELD_NAME, MNAMED_SEARCH, MSEARCH_OBJECT_FIELD, MFIELD_TYPE, MFIELD_RELATIONSHIPNAME, MSEQUENCE, MLOCAL_ID];
+        
+        sqlite3_stmt * bulkStmt;
+        
+        int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
+        
+        if (ret_value == SQLITE_OK)
         {
-            NSDictionary * nameSearchComp = [sfNameSearchComp objectAtIndex:i];
-            
-            NSString * relationshipName = ([nameSearchComp objectForKey:MFIELD_RELATIONSHIPNAME] != nil)?[nameSearchComp objectForKey:MFIELD_RELATIONSHIPNAME]:@"";
-            if (![relationshipName isEqualToString:@""])
-                relationshipName = [relationshipName stringByReplacingOccurrencesOfString:@"__r" withString:@"__c"];
-            
-            NSString * queryStatement = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@',  '%@', '%@' ) VALUES ('%@', '%@', '%@', '%@', '%@', '%@', '%@', '%d')", SFNAMEDSEACHCOMPONENT, MEXPRESSION_TYPE,
-                MFIELD_NAME, MNAMED_SEARCH, MSEARCH_OBJECT_FIELD, MFIELD_TYPE, MFIELD_RELATIONSHIPNAME, MSEQUENCE, MLOCAL_ID,  ([nameSearchComp objectForKey:MEXPRESSION_TYPE] != nil)?[nameSearchComp objectForKey:MEXPRESSION_TYPE]:@"", 
-                    ([nameSearchComp objectForKey:MFIELD_NAME] != nil)?[nameSearchComp objectForKey:MFIELD_NAME]:@"", 
-                    ([nameSearchComp objectForKey:MNAMED_SEARCH] != nil)?[nameSearchComp objectForKey:MNAMED_SEARCH]:@"", 
-                    ([nameSearchComp objectForKey:MSEARCH_OBJECT_FIELD] != nil)?[nameSearchComp objectForKey:MSEARCH_OBJECT_FIELD]:@"", 
-                    ([nameSearchComp objectForKey:MFIELD_TYPE] != nil)?[nameSearchComp objectForKey:MFIELD_TYPE]:@"", relationshipName,                           
-                    ([nameSearchComp objectForKey:MSEQUENCE] != nil)?[nameSearchComp objectForKey:MSEQUENCE]:@"",  ++id_value];
-            
-            char * err;
-            if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+            for (int i = 0; i < [sfNameSearchComp count]; i++)
             {
-                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                    [MyPopoverDelegate performSelector:@selector(throwException)];
-                NSLog(@"Failed To Insert");
+                NSDictionary * nameSearchComp = [sfNameSearchComp objectAtIndex:i];
+                
+                NSString * relationshipName = ([nameSearchComp objectForKey:MFIELD_RELATIONSHIPNAME] != nil)?[nameSearchComp objectForKey:MFIELD_RELATIONSHIPNAME]:@"";
+                if (![relationshipName isEqualToString:@""])
+                    relationshipName = [relationshipName stringByReplacingOccurrencesOfString:@"__r" withString:@"__c"];
+                
+                sqlite3_bind_text(bulkStmt, 1, [([nameSearchComp objectForKey:MEXPRESSION_TYPE] != nil)?[nameSearchComp objectForKey:MEXPRESSION_TYPE]:@"" UTF8String], [([nameSearchComp objectForKey:MEXPRESSION_TYPE] != nil)?[nameSearchComp objectForKey:MEXPRESSION_TYPE]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 2, [([nameSearchComp objectForKey:MFIELD_NAME] != nil)?[nameSearchComp objectForKey:MFIELD_NAME]:@"" UTF8String], [([nameSearchComp objectForKey:MFIELD_NAME] != nil)?[nameSearchComp objectForKey:MFIELD_NAME]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 3, [([nameSearchComp objectForKey:MNAMED_SEARCH] != nil)?[nameSearchComp objectForKey:MNAMED_SEARCH]:@"" UTF8String], [([nameSearchComp objectForKey:MNAMED_SEARCH] != nil)?[nameSearchComp objectForKey:MNAMED_SEARCH]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 4, [([nameSearchComp objectForKey:MSEARCH_OBJECT_FIELD] != nil)?[nameSearchComp objectForKey:MSEARCH_OBJECT_FIELD]:@"" UTF8String], [([nameSearchComp objectForKey:MSEARCH_OBJECT_FIELD] != nil)?[nameSearchComp objectForKey:MSEARCH_OBJECT_FIELD]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 5, [([nameSearchComp objectForKey:MFIELD_TYPE] != nil)?[nameSearchComp objectForKey:MFIELD_TYPE]:@"" UTF8String], [([nameSearchComp objectForKey:MFIELD_TYPE] != nil)?[nameSearchComp objectForKey:MFIELD_TYPE]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 6, [relationshipName UTF8String], [relationshipName length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 7, [([nameSearchComp objectForKey:MSEQUENCE] != nil)?[nameSearchComp objectForKey:MSEQUENCE]:@"" UTF8String], [([nameSearchComp objectForKey:MSEQUENCE] != nil)?[nameSearchComp objectForKey:MSEQUENCE]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_int(bulkStmt, 8, ++id_value);
+                
+                if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                {
+                    printf("Commit Failed!\n");
+                }
+                
+                sqlite3_reset(bulkStmt);
             }
         }
+        txnstmt = @"END TRANSACTION";
+        exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
     }
     appDelegate.wsInterface.didGetPageDataDb = TRUE;
 }
@@ -2006,25 +2323,37 @@
         NSArray * keys = [tagsDictionary allKeys];
         NSArray * values = [tagsDictionary allValues];
         
-        for (int i = 0; i < [keys count]; i++)
+        
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@' ) VALUES (?1, ?2, ?3)", MOBILEDEVICETAGS, MTAG_ID, MVALUEM, MLOCAL_ID];
+        
+        sqlite3_stmt * bulkStmt;
+        
+        int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
+
+        if (ret_value == SQLITE_OK)
         {
-            NSString * value = ([values objectAtIndex:i] != nil)?[values objectAtIndex:i]:@"";
-            value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
-            
-            
-            NSString * queryStatement = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@' ) VALUES ('%@', '%@', '%d')", MOBILEDEVICETAGS, MTAG_ID, MVALUEM, MLOCAL_ID, [keys objectAtIndex:i], value,
-                                         ++id_value];
-            
-            char * err;
-            if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+            for (int i = 0; i < [keys count]; i++)
             {
-                NSLog(@"Failted to insert");
-            }
+                NSString * value = ([values objectAtIndex:i] != nil)?[values objectAtIndex:i]:@"";
+                value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
             
+                
+                sqlite3_bind_text(bulkStmt, 1, [[keys objectAtIndex:i] UTF8String], [[keys objectAtIndex:i] length],  SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 2, [value UTF8String], [value length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_int(bulkStmt, 3, ++id_value);
+                
+                if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                {
+                    printf("Commit Failed!\n");
+                }
+                
+                sqlite3_reset(bulkStmt);                
+            }
         }
     }
     NSLog(@"SAMMAN MetaSync insertValuesInToTagsTable ends: %@", [NSDate date]);
-   // appDelegate.wsInterface.didGetWizards = TRUE;
     appDelegate.initial_sync_status =  SYNC_MOBILE_DEVICE_SETTINGS;
     appDelegate.Sync_check_in = FALSE;
     [appDelegate.wsInterface metaSyncWithEventName:MOBILE_DEVICE_SETTINGS eventType:SYNC values:nil];
@@ -2034,6 +2363,21 @@
 {
     if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
     {
+        if (appDelegate.isIncrementalMetaSyncInProgress)
+        {
+            appDelegate.SyncStatus = SYNC_RED;
+            
+            [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+            [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+            [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+           // [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"META SYNC" WithDB:tempDb];
+            
+
+            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                [MyPopoverDelegate performSelector:@selector(throwException)];
+            return;
+        }
+
         if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
         {
             appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
@@ -2051,16 +2395,29 @@
         NSArray * keys = [settingsDictionary allKeys];
         NSArray * values = [settingsDictionary allValues];
         
-        for (int i = 0; i < [keys count]; i++)
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@' ) VALUES (?1, ?2, ?3)", MOBILEDEVICESETTINGS, MSETTING_ID, MVALUEM, MLOCAL_ID];
+        
+        sqlite3_stmt * bulkStmt;
+        
+        int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
+        
+        if (ret_value == SQLITE_OK)
         {
-            NSString * queryStatement = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@' ) VALUES ('%@', '%@',      '%d')", MOBILEDEVICESETTINGS, MSETTING_ID, MVALUEM, MLOCAL_ID, [keys objectAtIndex:i],                                             [values objectAtIndex:i], ++id_value];
-            
-            char * err;
-            if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+            for (int i = 0; i < [keys count]; i++)
             {
-                NSLog(@"Failted to insert");
+                sqlite3_bind_text(bulkStmt, 1, [[keys objectAtIndex:i] UTF8String], [[keys objectAtIndex:i] length],  SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 2, [[values objectAtIndex:i] UTF8String], [[values objectAtIndex:i] length], 
+                                    SQLITE_TRANSIENT);
+                sqlite3_bind_int(bulkStmt, 3, ++id_value);
+                
+                if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                {
+                    printf("Commit Failed!\n");
+                }
+                
+                sqlite3_reset(bulkStmt);   
             }
-            
         }
     }
     
@@ -2085,25 +2442,41 @@
         
         NSString * _objectName = @"";
         
-        for (int i = 0; i < [sfWizard count]; i++)
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@' ) VALUES (?1, ?2, ?3, ?4, ?5, ?6)", SFWIZARD, MOBJECT_NAME, MWIZARD_ID, MEXPRESSION_ID, MWIZARD_DESCRIPTION,MWIZARD_NAME, MLOCAL_ID];
+        
+        sqlite3_stmt * bulkStmt;
+        
+        int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
+        
+        if (ret_value == SQLITE_OK)
         {
-            NSDictionary * dict = [sfWizard objectAtIndex:i];
-            
-            _objectName = ([dict objectForKey:MOBJECT_NAME] != nil)?[dict objectForKey:MOBJECT_NAME]:@"";
-           
-            NSString * queryStatement = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@' ) VALUES ('%@', '%@', '%@', '%@', '%@', '%d')", SFWIZARD, MOBJECT_NAME, MWIZARD_ID, MEXPRESSION_ID, MWIZARD_DESCRIPTION,MWIZARD_NAME, MLOCAL_ID, _objectName, 
-                ([dict objectForKey:MWIZARD_ID] != nil)?[dict objectForKey:MWIZARD_ID]:@"",
-                ([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"",
-                ([dict objectForKey:MWIZARD_DESCRIPTION] != nil)?[dict objectForKey:MWIZARD_DESCRIPTION]:@"",
-                ([dict objectForKey:MWIZARD_NAME] != nil)?[dict objectForKey:MWIZARD_NAME]:@"", 
-                                    ++id_value];  
-            char * err;
-            if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+        
+            for (int i = 0; i < [sfWizard count]; i++)
             {
-                NSLog(@"Failted to insert");
+                NSDictionary * dict = [sfWizard objectAtIndex:i];
+                
+                _objectName = ([dict objectForKey:MOBJECT_NAME] != nil)?[dict objectForKey:MOBJECT_NAME]:@"";
+               
+                sqlite3_bind_text(bulkStmt, 1, [_objectName UTF8String], [_objectName length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 2, [([dict objectForKey:MWIZARD_ID] != nil)?[dict objectForKey:MWIZARD_ID]:@"" UTF8String], [([dict objectForKey:MWIZARD_ID] != nil)?[dict objectForKey:MWIZARD_ID]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 3, [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" UTF8String], [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 4, [([dict objectForKey:MWIZARD_DESCRIPTION] != nil)?[dict objectForKey:MWIZARD_DESCRIPTION]:@"" UTF8String], [([dict objectForKey:MWIZARD_DESCRIPTION] != nil)?[dict objectForKey:MWIZARD_DESCRIPTION]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 5, [([dict objectForKey:MWIZARD_NAME] != nil)?[dict objectForKey:MWIZARD_NAME]:@"" UTF8String], [([dict objectForKey:MWIZARD_NAME] != nil)?[dict objectForKey:MWIZARD_NAME]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_int(bulkStmt, 6, ++id_value);
+                
+                if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                {
+                    printf("Commit Failed!\n");
+                }
+                
+                sqlite3_reset(bulkStmt);
             }
         }
-    
     }
     
     result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFWizardComponent ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , 'wizard_id' VARCHAR, 'action_id' VARCHAR, 'action_description' VARCHAR, 'expression_id' VARCHAR, 'process_id' VARCHAR, 'action_type' VARCHAR)"]];
@@ -2115,37 +2488,58 @@
         id_value = 0;
         NSString * wProcessId = @"";
         
-        for (int i = 0; i < [sfWizComponent count]; i++)
+        NSString * emptyString = @"";
+        
+        
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)", SFWIZARDCOMPONENT, MWIZARD_ID, MACTION_ID, MACTION_DESCRIPTION, MEXPRESSION_ID, MPROCESS_ID, MACTION_TYPE, MLOCAL_ID];
+        
+        sqlite3_stmt * bulkStmt;
+        
+        int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
+        
+        if (ret_value == SQLITE_OK)
         {
-            NSDictionary * comp_dict = [sfWizComponent objectAtIndex:i];
-            
-            NSString * wizard_processId = ([comp_dict objectForKey:MPROCESS_ID] != nil)?[comp_dict objectForKey:MPROCESS_ID]:@"";
-            
-            for (int j = 0; j < [sfProcess count]; j++)
+            for (int i = 0; i < [sfWizComponent count]; i++)
             {
-                NSDictionary * dict  = [sfProcess objectAtIndex:j];
+                NSDictionary * comp_dict = [sfWizComponent objectAtIndex:i];
                 
-                NSString * process_id = ([dict objectForKey:MPROCESS_ID] != nil)?[dict objectForKey:MPROCESS_ID]:@"";
+                NSString * wizard_processId = ([comp_dict objectForKey:MPROCESS_ID] != nil)?[comp_dict objectForKey:MPROCESS_ID]:@"";
                 
-                if ([wizard_processId isEqualToString:process_id])
+                for (int j = 0; j < [sfProcess count]; j++)
                 {
-                    wProcessId = ([dict objectForKey:MPROCESS_UNIQUE_ID] != nil)?[dict objectForKey:MPROCESS_UNIQUE_ID]:@"";
-                    break;
+                    NSDictionary * dict  = [sfProcess objectAtIndex:j];
+                    
+                    NSString * process_id = ([dict objectForKey:MPROCESS_ID] != nil)?[dict objectForKey:MPROCESS_ID]:@"";
+                    
+                    if ([wizard_processId isEqualToString:process_id])
+                    {
+                        wProcessId = ([dict objectForKey:MPROCESS_UNIQUE_ID] != nil)?[dict objectForKey:MPROCESS_UNIQUE_ID]:@"";
+                        break;
+                    }
                 }
+            
+                sqlite3_bind_text(bulkStmt, 1, [([comp_dict objectForKey:MWIZARD_ID] != nil)?[comp_dict objectForKey:MWIZARD_ID]:@"" UTF8String], [([comp_dict objectForKey:MWIZARD_ID] != nil)?[comp_dict objectForKey:MWIZARD_ID]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 2, [emptyString UTF8String], [emptyString length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 3, [([comp_dict objectForKey:MWIZARD_STEP_NAME]!= nil)?[comp_dict objectForKey:MWIZARD_STEP_NAME]:@"" UTF8String], [([comp_dict objectForKey:MWIZARD_STEP_NAME]!= nil)?[comp_dict objectForKey:MWIZARD_STEP_NAME]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 4, [([comp_dict objectForKey:MEXPRESSION_ID] != nil)?[comp_dict objectForKey:MEXPRESSION_ID]:@"" UTF8String], [([comp_dict objectForKey:MEXPRESSION_ID] != nil)?[comp_dict objectForKey:MEXPRESSION_ID]:@"" length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 5, [wProcessId UTF8String], [wProcessId length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_text(bulkStmt, 6, [SFM UTF8String], [SFM length], SQLITE_TRANSIENT);
+                
+                sqlite3_bind_int(bulkStmt, 7, ++id_value);
+                
+                if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                {
+                    printf("Commit Failed!\n");
+                }
+                
+                sqlite3_reset(bulkStmt);
+                            
             }
-            
-            
-            NSString * queryStatement = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@') VALUES ('%@', '%@', '%@', '%@', '%@', '%@', '%d')", SFWIZARDCOMPONENT, MWIZARD_ID, MACTION_ID, MACTION_DESCRIPTION, MEXPRESSION_ID, MPROCESS_ID, MACTION_TYPE, MLOCAL_ID, 
-                    ([comp_dict objectForKey:MWIZARD_ID] != nil)?[comp_dict objectForKey:MWIZARD_ID]:@"", @"",
-                    ([comp_dict objectForKey:MWIZARD_STEP_NAME]!= nil)?[comp_dict objectForKey:MWIZARD_STEP_NAME]:@"",
-                    ([comp_dict objectForKey:MEXPRESSION_ID] != nil)?[comp_dict objectForKey:MEXPRESSION_ID]:@"",
-                    wProcessId, SFM, ++id_value];
-            char * err;
-            if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
-            {
-                NSLog(@"Failted to insert");
-            }
-            
         }
     }
     
@@ -2164,22 +2558,34 @@
     synchronized_sqlite3_finalize(statement);
     NSArray * sfExpression = [wizardDict objectForKey:MSFExpression];
     
-    for (int i = 0; i < [sfExpression count]; i++)
+    
+    NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3,   ?4)", SFEXPRESSION, MEXPRESSION_ID , MEXPRESSION_NAME, MEXPRESSION, MLOCAL_ID];
+    
+    sqlite3_stmt * bulkStmt;
+    
+    int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
+    
+    if (ret_value == SQLITE_OK)
     {
-        NSDictionary * dict = [sfExpression objectAtIndex:i];
-        
-        NSString * queryStatement =[NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@') VALUES ('%@', '%@', '%@', '%d')", SFEXPRESSION, MEXPRESSION_ID , MEXPRESSION_NAME, MEXPRESSION, MLOCAL_ID,
-                                    ([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"",
-                                    ([dict objectForKey:MEXPRESSION_NAME] != nil)?[dict objectForKey:MEXPRESSION_NAME]:@"",
-                                    ([dict objectForKey:MADVANCE_EXPRESSION] != nil)?[dict objectForKey:MADVANCE_EXPRESSION]:@"",
-                                    ++id_value];
-        char *err;
-        if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+        for (int i = 0; i < [sfExpression count]; i++)
         {
-            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                [MyPopoverDelegate performSelector:@selector(throwException)];
-            NSLog(@"Failed to insert in to table");
-        }         
+            NSDictionary * dict = [sfExpression objectAtIndex:i];
+            
+            sqlite3_bind_text(bulkStmt, 1, [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" UTF8String], [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" length], SQLITE_TRANSIENT);
+            
+            sqlite3_bind_text(bulkStmt, 2, [([dict objectForKey:MEXPRESSION_NAME] != nil)?[dict objectForKey:MEXPRESSION_NAME]:@"" UTF8String], [([dict objectForKey:MEXPRESSION_NAME] != nil)?[dict objectForKey:MEXPRESSION_NAME]:@"" length], SQLITE_TRANSIENT);
+            
+            sqlite3_bind_text(bulkStmt, 3, [([dict objectForKey:MADVANCE_EXPRESSION] != nil)?[dict objectForKey:MADVANCE_EXPRESSION]:@"" UTF8String], [([dict objectForKey:MADVANCE_EXPRESSION] != nil)?[dict objectForKey:MADVANCE_EXPRESSION]:@"" length], SQLITE_TRANSIENT);
+            
+            sqlite3_bind_int(bulkStmt, 4, ++id_value);
+            
+            if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+            {
+                printf("Commit Failed!\n");
+            }
+            
+            sqlite3_reset(bulkStmt);            
+        }
     }
 
     query = [NSString stringWithFormat:@"SELECT COUNT(*) FROM '%@'", SFEXPRESSION_COMPONENT];
@@ -2196,30 +2602,42 @@
     synchronized_sqlite3_finalize(stmt);
     
     NSArray * sfExpression_com = [wizardDict objectForKey:MSFExpression_component];
+    bulkQueryStmt = @"";
     
-    for (int i = 0; i < [sfExpression_com count]; i++)
+    bulkStmt=  nil;
+    
+    bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3,  ?4, ?5, ?6)", SFEXPRESSIONCOMPONENT, MEXPRESSION_ID, MCOMPONENT_SEQ_NUM, MCOMPONENT_LHS, MCOMPONENT_RHS, MOPERATOR, MLOCAL_ID];
+    
+    
+    ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
+    
+    if (ret_value == SQLITE_OK)
     {
-        NSDictionary * dict = [sfExpression_com objectAtIndex:i];
-        
-        NSString * queryStatement =[NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@') VALUES ('%@', '%@', '%@', '%@', '%@', '%d')", SFEXPRESSIONCOMPONENT, MEXPRESSION_ID, MCOMPONENT_SEQ_NUM, MCOMPONENT_LHS, MCOMPONENT_RHS, MOPERATOR, MLOCAL_ID,
-                                    ([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"",
-                                    ([dict objectForKey:MSEQUENCE] != nil)?[dict objectForKey:MSEQUENCE]:@"",
-                                    ([dict objectForKey:MSOURCE_FIELD_NAME] != nil)?[dict objectForKey:MSOURCE_FIELD_NAME]:@"", 
-                                    ([dict objectForKey:MVALUEM] != nil)?[dict objectForKey:MVALUEM]:@"",
-                                    ([dict objectForKey:MOPERATOR] != nil)?[dict objectForKey:MOPERATOR]:@"",
-                                    ++id_value];
-        char *err;
-        if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+        for (int i = 0; i < [sfExpression_com count]; i++)
         {
-            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                [MyPopoverDelegate performSelector:@selector(throwException)];
-            NSLog(@"Failed to insert in to table");
-        }         
+            NSDictionary * dict = [sfExpression_com objectAtIndex:i];
+        
+            sqlite3_bind_text(bulkStmt, 1, [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" UTF8String], [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" length], SQLITE_TRANSIENT);
+            
+            sqlite3_bind_text(bulkStmt, 2, [([dict objectForKey:MSEQUENCE] != nil)?[dict objectForKey:MSEQUENCE]:@"" UTF8String], [([dict objectForKey:MSEQUENCE] != nil)?[dict objectForKey:MSEQUENCE]:@"" length], SQLITE_TRANSIENT);
+            
+            sqlite3_bind_text(bulkStmt, 3, [([dict objectForKey:MSOURCE_FIELD_NAME] != nil)?[dict objectForKey:MSOURCE_FIELD_NAME]:@"" UTF8String], [([dict objectForKey:MSOURCE_FIELD_NAME] != nil)?[dict objectForKey:MSOURCE_FIELD_NAME]:@"" length], SQLITE_TRANSIENT);
+            
+            sqlite3_bind_text(bulkStmt, 4, [([dict objectForKey:MVALUEM] != nil)?[dict objectForKey:MVALUEM]:@"" UTF8String], [([dict objectForKey:MVALUEM] != nil)?[dict objectForKey:MVALUEM]:@"" length], SQLITE_TRANSIENT);
+            
+            sqlite3_bind_text(bulkStmt, 5, [([dict objectForKey:MOPERATOR] != nil)?[dict objectForKey:MOPERATOR]:@"" UTF8String], [([dict objectForKey:MOPERATOR] != nil)?[dict objectForKey:MOPERATOR]:@"" length], SQLITE_TRANSIENT);
+            
+            sqlite3_bind_int(bulkStmt, 6, ++id_value);
+            
+            if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+            {
+                printf("Commit Failed!\n");
+            }
+            
+            sqlite3_reset(bulkStmt);
+        }
     }   
     NSLog(@"SAMMAN MetaSync insertValuesInToSFWizardsTable: processing ends: %@", [NSDate date]);
-   // appDelegate.wsInterface.didGetWizards = TRUE;
-   
-    
     
     appDelegate.initial_sync_status = SYNC_MOBILE_DEVICE_TAGS;
     appDelegate.Sync_check_in = FALSE;
@@ -2690,29 +3108,51 @@
     }
     synchronized_sqlite3_finalize(stmt);
     int id_value = count;
-    for (NSDictionary * dict in process_info)
-    {
-        NSString * queryStatement = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@',  '%@', '%@', '%@', '%@') VALUES ('%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@','%@', '%d')", SFPROCESSCOMPONENT, MPROCESS_ID, MLAYOUT_ID, MTARGET_OBJECT_NAME, MSOURCE_OBJECT_NAME, MEXPRESSION_ID, MOBJECT_MAPPING_ID, MCOMPONENT_TYPE, MPARENT_COLUMN,MVALUE_MAPPING_ID,@"source_child_parent_column", MLOCAL_ID, ([dict objectForKey:MPROCESS_ID] != nil)?[dict objectForKey:MPROCESS_ID]:@"",
-                                     ([dict objectForKey:MLAYOUT_ID] != nil)?[dict objectForKey:MLAYOUT_ID]:@"",
-                                     ([dict objectForKey:MTARGET_OBJECT_NAME] != nil)?[dict objectForKey:MTARGET_OBJECT_NAME]:@"",
-                                     ([dict objectForKey:SOURCE_OBJECT_NAME] != nil)?[dict objectForKey:MSOURCE_OBJECT_NAME]:@"",
-                                     ([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"",
-                                     ([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@"",
-                                     ([dict objectForKey:MCOMPONENT_TYPE] != nil)?[dict objectForKey:MCOMPONENT_TYPE]:@"",
-                                     ([dict objectForKey:MPARENT_COLUMN] != nil)?[dict objectForKey:MPARENT_COLUMN]:@"",
-                                     ([dict objectForKey:MVALUE_MAPPING_ID] != nil)?[dict objectForKey:MVALUE_MAPPING_ID]:@"",
-                                      ([dict objectForKey:@"source_child_parent_column"] != nil)?[dict objectForKey:@"source_child_parent_column"]:@"", ++id_value];
-        char * err;
-        if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
-        {
-            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                [MyPopoverDelegate performSelector:@selector(throwException)];
-            NSLog(@"Failed to insert");
-        }
+    
+    
+    NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@',  '%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6,?7, ?8, ?9, ?10, ?11)", SFPROCESSCOMPONENT, MPROCESS_ID, MLAYOUT_ID, MTARGET_OBJECT_NAME, MSOURCE_OBJECT_NAME, MEXPRESSION_ID, MOBJECT_MAPPING_ID, MCOMPONENT_TYPE, MPARENT_COLUMN,MVALUE_MAPPING_ID,@"source_child_parent_column", MLOCAL_ID];
+    
+    sqlite3_stmt * bulkStmt;
+    
+    int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
 
+    if (ret_value == SQLITE_OK)
+    {
+        for (NSDictionary * dict in process_info)
+        {
+            sqlite3_bind_text(bulkStmt, 1, [([dict objectForKey:MPROCESS_ID] != nil)?[dict objectForKey:MPROCESS_ID]:@"" UTF8String], [([dict objectForKey:MPROCESS_ID] != nil)?[dict objectForKey:MPROCESS_ID]:@"" length], SQLITE_TRANSIENT);
+            
+            sqlite3_bind_text(bulkStmt, 2, [([dict objectForKey:MLAYOUT_ID] != nil)?[dict objectForKey:MLAYOUT_ID]:@"" UTF8String], [([dict objectForKey:MLAYOUT_ID] != nil)?[dict objectForKey:MLAYOUT_ID]:@"" length], SQLITE_TRANSIENT);
+            
+            sqlite3_bind_text(bulkStmt, 3, [([dict objectForKey:MTARGET_OBJECT_NAME] != nil)?[dict objectForKey:MTARGET_OBJECT_NAME]:@"" UTF8String], [([dict objectForKey:MTARGET_OBJECT_NAME] != nil)?[dict objectForKey:MTARGET_OBJECT_NAME]:@"" length], SQLITE_TRANSIENT);
+            
+            sqlite3_bind_text(bulkStmt, 4, [([dict objectForKey:MSOURCE_OBJECT_NAME] != nil)?[dict objectForKey:MSOURCE_OBJECT_NAME]:@"" UTF8String], [([dict objectForKey:MSOURCE_OBJECT_NAME] != nil)?[dict objectForKey:MSOURCE_OBJECT_NAME]:@"" length], SQLITE_TRANSIENT);
+            
+            sqlite3_bind_text(bulkStmt, 5, [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" UTF8String], [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" length], SQLITE_TRANSIENT);
+            
+            sqlite3_bind_text(bulkStmt, 6, [([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@"" UTF8String], [([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@"" length], SQLITE_TRANSIENT);
+            
+            sqlite3_bind_text(bulkStmt, 7, [([dict objectForKey:MCOMPONENT_TYPE] != nil)?[dict objectForKey:MCOMPONENT_TYPE]:@"" UTF8String], [([dict objectForKey:MCOMPONENT_TYPE] != nil)?[dict objectForKey:MCOMPONENT_TYPE]:@"" length], SQLITE_TRANSIENT);
+            
+            sqlite3_bind_text(bulkStmt, 8, [([dict objectForKey:MPARENT_COLUMN] != nil)?[dict objectForKey:MPARENT_COLUMN]:@"" UTF8String], [([dict objectForKey:MPARENT_COLUMN] != nil)?[dict objectForKey:MPARENT_COLUMN]:@"" length], SQLITE_TRANSIENT);
+            
+            sqlite3_bind_text(bulkStmt, 9, [([dict objectForKey:MVALUE_MAPPING_ID] != nil)?[dict objectForKey:MVALUE_MAPPING_ID]:@"" UTF8String], [([dict objectForKey:MVALUE_MAPPING_ID] != nil)?[dict objectForKey:MVALUE_MAPPING_ID]:@"" length], SQLITE_TRANSIENT);
+            
+            sqlite3_bind_text(bulkStmt,  10, [([dict objectForKey:@"source_child_parent_column"] != nil)?[dict objectForKey:@"source_child_parent_column"]:@"" UTF8String], [([dict objectForKey:@"source_child_parent_column"] != nil)?[dict objectForKey:@"source_child_parent_column"]:@"" length], SQLITE_TRANSIENT);
+            
+            sqlite3_bind_int(bulkStmt, 11, ++id_value);
+            
+            if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+            {
+                printf("Commit Failed!\n");
+            }
+            
+            sqlite3_reset(bulkStmt);
+        }
     }
 
 }
+#pragma mark - END
 
 
 - (NSString *) getObjectNameFromSFobjMapping:(NSString *)mappingId
@@ -2810,6 +3250,9 @@
     [self createTable:query];
     
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS contact_images ('contact_Id' VARCHAR, 'contact_Image' VARCHAR)"];
+    [self createTable:query];
+    
+    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS internet_conflicts ('sync_type' VARCHAR, 'error_message' VARCHAR, 'operation_type' VARCHAR, 'error_type' VARCHAR)"];
     [self createTable:query];
 }
 
@@ -3073,6 +3516,12 @@
 -(BOOL) checkForDuplicateId:(NSString *)objectName sfId:(NSString *)sfId
 {
     int count = 0;
+    
+    if([objectName isEqualToString:@"Case"])
+    {
+        objectName = @"'Case'";
+    }
+    
     NSString * query = [[NSString alloc] initWithFormat:@"SELECT COUNT(*) FROM %@ WHERE Id = '%@'", objectName, sfId];
     
     sqlite3_stmt * stmt;
@@ -3402,13 +3851,8 @@
     
 }
 
-//This method fills the backup DB with all the data
-
 - (void) createBackUpDb
-{
-  //  sqlite3_close(appDelegate.db);
-    NSLog(@"%@",dbFilePath);
-  
+{  
     NSString * query1 = [NSString stringWithFormat:@"ATTACH DATABASE '%@' AS sfm",self.dbFilePath];
     [self createTemporaryTable:query1];
     
@@ -3423,8 +3867,6 @@
         [self createTemporaryTable:query1];
     }
        
-    
-    
     //Delete the old database after creating the backup
     [self deleteDatabase:DATABASENAME];
 
@@ -3434,13 +3876,9 @@
     self.dbFilePath = nil;
     [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
     
-    
     time_t t1;
     time(&t1);
-    
-    NSString* txnstmt = @"BEGIN TRANSACTION";
-    char * err ;
-    int retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);  
+
     
     appDelegate.wsInterface.didOpComplete = FALSE;
     [appDelegate.wsInterface metaSyncWithEventName:SFM_METADATA eventType:INITIAL_SYNC values:nil];
@@ -3480,87 +3918,6 @@
      */
     [appDelegate getDPpicklistInfo];
     NSLog(@"META SYNC 1");
-    
- /*   NSLog(@"SAMMAN DataSync WS Start: %@", [NSDate date]);
-    //sahaan generate client req id for initital data sync 
-    appDelegate.wsInterface.didOpComplete = FALSE;
-    
-    [appDelegate.wsInterface dataSyncWithEventName:EVENT_SYNC eventType:SYNC requestId:@""];
-    
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
-    {
-        if (!appDelegate.isInternetConnectionAvailable)
-            break;
-        
-        if (appDelegate.wsInterface.didOpComplete == TRUE)
-        {
-            break; 
-        }
-    }
-
-    
-    appDelegate.wsInterface.didOpComplete = FALSE;
-    
-    appDelegate.initial_dataSync_reqid = [iServiceAppDelegate GetUUID];
-    
-    NSLog(@"reqId%@" , appDelegate.initial_dataSync_reqid);
-    [appDelegate.wsInterface dataSyncWithEventName:DOWNLOAD_CREITERIA_SYNC eventType:SYNC requestId:appDelegate.initial_dataSync_reqid];
-    
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
-    {
-        if (appDelegate.wsInterface.didOpComplete == TRUE)
-        {
-            break;
-        }
-        if (!appDelegate.isInternetConnectionAvailable && appDelegate.data_sync_chunking == REQUEST_SENT)
-        {
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
-            {
-                if (appDelegate.isInternetConnectionAvailable)
-                {
-                    [appDelegate goOnlineIfRequired];
-                    [appDelegate.wsInterface dataSyncWithEventName:DOWNLOAD_CREITERIA_SYNC eventType:SYNC requestId:appDelegate.initial_dataSync_reqid];
-                    break;
-                }
-            }
-        }
-    }
-    NSLog(@"SAMMAN DataSync WS End: %@", [NSDate date]);
-    NSLog(@"SAMMAN Incremental DataSync WS Start: %@", [NSDate date]);
-    
-    [appDelegate.wsInterface cleanUpForRequestId:appDelegate.initial_dataSync_reqid forEventName:@"CLEAN_UP_SELECT"];
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
-    {
-        if (!appDelegate.isInternetConnectionAvailable)
-            break;
-        
-        if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
-            break;
-    }
-    appDelegate.Incremental_sync_status = INCR_STARTS;
-    
-    [appDelegate.wsInterface PutAllTheRecordsForIds];
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
-    {
-        if (!appDelegate.isInternetConnectionAvailable)
-            break;
-        
-        if (appDelegate.Incremental_sync_status == PUT_RECORDS_DONE)
-            break; 
-    }
-    
-    
-    NSLog(@"SAMMAN Incremental DataSync WS End: %@", [NSDate date]);
-    
-    NSLog(@"SAMMAN Update Sync Records Start: %@", [NSDate date]);
-    
-    NSLog(@"SAMMAN Update Sync Records Start: %@", [NSDate date]);
-    [appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
-    NSLog(@"SAMMAN Update Sync Records End: %@", [NSDate date]); */
-    
-       
-    txnstmt = @"END TRANSACTION";
-    retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);    
     
     time_t t2;
     time(&t2);
@@ -3611,6 +3968,18 @@
     object_names = [self retreiveTableNamesFronDB:tempDb];
     
     [appDelegate.dataBase clearDatabase];
+    
+    for (NSString * objectName in object_names)
+    {
+        NSString * query = [self retrieveQuery:objectName sqlite:tempDb];
+        
+        [self createTable:query];
+    }
+
+    
+    
+    [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+
     
     NSString * query1 = [NSString stringWithFormat:@"ATTACH DATABASE '%@' AS tempsfm",filepath];
     [self createTable:query1];
@@ -3750,9 +4119,10 @@
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS contact_images ('contact_Id' VARCHAR, 'contact_Image' VARCHAR)"];
     [self createTemporaryTable:query];
     
-    NSArray * tempTableArray = [NSArray arrayWithObjects:@"ChatterPostDetails",@"Document",@"ProductImage",@"SFSignatureData",@"UserImages",@"trobleshootdata",@"SFDataTrailer",@"SFDataTrailer_Temp",@"SYNC_HISTORY",@"sync_Records_Heap",@"LookUpFieldValue",@"Summary_PDF",@"sync_error_conflict", @"contact_images", nil];
+    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS internet_conflicts ('sync_type' VARCHAR, 'error_message' VARCHAR, 'operation_type' VARCHAR, 'error_type' VARCHAR)"];
+    [self createTemporaryTable:query];
     
-    
+    NSArray * tempTableArray = [NSArray arrayWithObjects:@"ChatterPostDetails",@"Document",@"ProductImage",@"SFSignatureData",@"UserImages",@"trobleshootdata",@"SFDataTrailer",@"SFDataTrailer_Temp",@"SYNC_HISTORY",@"sync_Records_Heap",@"LookUpFieldValue",@"Summary_PDF",@"sync_error_conflict", @"contact_images",@"internet_conflict", nil];
     
     return tempTableArray;
 }
