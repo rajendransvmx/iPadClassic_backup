@@ -15,10 +15,13 @@
 - (void) activityStop;
 //Radha
 - (void) throwException;
+- (void) enableControls;
+- (void) disableControls;
 
 @end
 
 @class ManualDataSyncDetail;
+
 
 @interface PopoverButtons : UIViewController <UIPopoverControllerDelegate>
 {
