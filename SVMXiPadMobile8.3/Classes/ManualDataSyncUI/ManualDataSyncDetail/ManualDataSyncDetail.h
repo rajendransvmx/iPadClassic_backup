@@ -14,7 +14,7 @@
 #import "SyncStatusView.h"
 #import "WSInterface.h"
 
-
+@protocol SyncRootViewProtocolDelegate;
 @protocol ManualDataSync;
 @protocol SyncButtonProtocol;
 
