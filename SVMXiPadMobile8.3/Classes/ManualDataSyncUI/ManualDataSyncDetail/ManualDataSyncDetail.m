@@ -109,7 +109,7 @@
     [helpButton addTarget:self action:@selector(showHelp) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem * helpBarButton = [[[UIBarButtonItem alloc] initWithCustomView:helpButton] autorelease];
     [arrayForRightBarButton addObject:helpBarButton];
-    UIToolbar *myToolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(450, 0, 220, 40)];
+    UIToolbar *myToolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(450, 0, 230, 40)];
     myToolBar.backgroundColor = [UIColor clearColor];
     [myToolBar setItems:arrayForRightBarButton]; 
     self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:myToolBar] autorelease];
