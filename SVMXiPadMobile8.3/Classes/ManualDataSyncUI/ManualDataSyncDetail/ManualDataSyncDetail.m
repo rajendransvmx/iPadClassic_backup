@@ -16,6 +16,8 @@
 
 @implementation ManualDataSyncDetail
 
+@synthesize rootSyncDelegate;
+
 @synthesize  didAppearFromSFMScreen;
 @synthesize  toolbar = _toolbar;
 @synthesize  navigationBar; 
@@ -29,6 +31,7 @@
 @synthesize objectsArray;
 @synthesize objectsDict;
 @synthesize objectDetailsArray,activity;
+@synthesize internet_Conflicts;
 
 
 
@@ -58,6 +61,13 @@
     [super viewDidLoad];
     
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+    appDelegate.reloadTable = self;
+    
+    if ([appDelegate.internet_Conflicts count] == 0)
+        appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+    
+    appDelegate.wsInterface.refreshSyncStatusUIButton = self;
+
     UIImageView * bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_right_panel_bg_main.png"]];
     self._tableView.backgroundView = bgImage;
     [bgImage release];
@@ -193,6 +203,11 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
+    if ([appDelegate.internet_Conflicts count] > 0)
+    {
+        return 1;
+    }
+    
     if (selectedSection == 0 && HeaderSelected == 1)
         return [objectsArray count];
     else
@@ -201,6 +216,11 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    if ([appDelegate.internet_Conflicts count] > 0)
+    {
+        return [appDelegate.internet_Conflicts count];
+    }
+
     if ((objectsDict != nil) && ([objectsDict count] > 0) && [objectsArray count] > 0)
     {
         if (HeaderSelected == 0)
@@ -250,6 +270,42 @@
     
     if ( HeaderSelected == 1 )
     {
+        if ([appDelegate.internet_Conflicts count] > 0)
+        {
+            UILabel * lbl;
+            lbl = [[[UILabel alloc] initWithFrame:CGRectMake(10, 9, 300, 30)] autorelease];
+            lbl.text = [[appDelegate.internet_Conflicts objectAtIndex:0] objectForKey:@"sync_type"];
+            lbl.font = [UIFont fontWithName:@"HelveticaBold" size:19];
+            lbl.textColor = [UIColor blackColor];
+            lbl.backgroundColor = [UIColor clearColor];
+            [background addSubview:lbl];
+            lbl.userInteractionEnabled = YES;
+            
+            UILabel *textView = [[UILabel alloc] initWithFrame:CGRectMake(180, 3, 200, 50)];
+            textView.font = [UIFont systemFontOfSize:19.0];
+            textView.text = [[appDelegate.internet_Conflicts objectAtIndex:0] objectForKey:@"Error_message"];
+            textView.userInteractionEnabled = YES;
+            textView.backgroundColor = [UIColor clearColor];
+            [background addSubview:textView];
+            
+            UITapGestureRecognizer * tapMe3 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapRecognized:)];
+            [textView addGestureRecognizer:tapMe3];
+            [tapMe3 release];
+            
+            NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_retry];
+            
+            UIButton * retry = [UIButton buttonWithType:UIButtonTypeCustom];
+            [retry setFrame:CGRectMake(420, 17, 120, 35)];
+            [retry setTitle:title forState:UIControlStateNormal];
+            [retry setBackgroundImage:[UIImage imageNamed:@"debrief-button.png"] forState:UIControlStateNormal];
+            [background addSubview:retry];            
+            
+            
+            [cell.contentView addSubview:background];
+            [textView release];
+            return cell;
+        }
+        
         //Please check this code 
         NSString * syncType = @"";
         NSString * override_flag = @"";
@@ -355,6 +411,46 @@
     }
     if ( selectedSection == 0 && HeaderSelected == 0)
     {
+        if ([appDelegate.internet_Conflicts count] > 0)
+        {
+            UILabel * lbl;
+            lbl = [[[UILabel alloc] initWithFrame:CGRectMake(10, 9, 300, 30)] autorelease];
+            lbl.text = [[appDelegate.internet_Conflicts objectAtIndex:0] objectForKey:@"Error_message"];
+            lbl.font = [UIFont fontWithName:@"HelveticaBold" size:19];
+            lbl.textColor = [UIColor blackColor];
+            lbl.backgroundColor = [UIColor clearColor];
+            [background addSubview:lbl];
+            lbl.userInteractionEnabled = YES;
+            
+            UILabel *textView = [[UILabel alloc] initWithFrame:CGRectMake(180, 3, 200, 50)];
+            textView.font = [UIFont systemFontOfSize:19.0];
+            textView.text = [[appDelegate.internet_Conflicts objectAtIndex:0] objectForKey:@"sync_type"];
+            textView.userInteractionEnabled = YES;
+            textView.backgroundColor = [UIColor clearColor];
+            [background addSubview:textView];
+            
+            UITapGestureRecognizer * tapMe3 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapRecognized:)];
+            [textView addGestureRecognizer:tapMe3];
+            [tapMe3 release];
+            
+            NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_retry];
+           
+            UIButton * retry = [UIButton buttonWithType:UIButtonTypeCustom];
+            [retry setFrame:CGRectMake(420, 17, 120, 35)];
+            [retry setTitle:title forState:UIControlStateNormal];
+            [retry addTarget:self action:@selector(retryDataSyncAgain) forControlEvents:UIControlEventTouchUpInside];
+            [retry setBackgroundImage:[UIImage imageNamed:@"debrief-button.png"] forState:UIControlStateNormal];
+            [background addSubview:retry];
+
+            [cell.contentView addSubview:background];
+            [textView release];
+            
+            cell.accessoryType = UITableViewCellAccessoryNone;
+            cell.textLabel.font = [UIFont fontWithName:@"HelveticaBold" size:19];
+            
+            return cell;
+        }
+
         NSString * syncType = @"";
         NSString * api_name = @"";
         NSString * _apiName = @"";
@@ -1265,6 +1361,72 @@
     
 }
 
+-(void) showSyncUIStatus
+{
+    [self getStatusImage];
+}
+
+- (UIImage *) getStatusImage
+{
+    UIImage  * img;
+    if (appDelegate.SyncStatus == SYNC_RED)
+    {
+        [animatedImageView stopAnimating];
+        animatedImageView.animationImages = nil;
+        NSMutableArray * imgArr = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+        for ( int i = 1; i < 34; i++)
+        {
+            [imgArr addObject:[UIImage imageNamed:[NSString stringWithFormat:@"r%d.png", i]]];
+        }
+        
+        NSLog(@"%@", imgArr);
+        animatedImageView.animationImages = [NSArray arrayWithArray:imgArr];
+        NSLog(@"%@", animatedImageView.animationImages);
+        animatedImageView.animationDuration = 1.0f;
+        animatedImageView.animationRepeatCount = 0;
+        [animatedImageView startAnimating];
+    }
+    else if (appDelegate.SyncStatus == SYNC_GREEN)
+    {
+        NSString * statusImage = @"green.png";
+        [animatedImageView stopAnimating];
+        animatedImageView.image = [UIImage imageNamed:@"green.png"];
+        img = [UIImage imageNamed:statusImage];
+        [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
+    }
+    else if (appDelegate.SyncStatus == SYNC_ORANGE)
+    {
+        animatedImageView.animationImages = nil;
+        NSMutableArray * imgArr = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+        for ( int i = 1; i < 34; i++)
+        {
+            [imgArr addObject:[UIImage imageNamed:[NSString stringWithFormat:@"o%d.png", i]]];
+        }
+        
+        NSLog(@"%@", imgArr);
+        animatedImageView.animationImages = [NSArray arrayWithArray:imgArr];
+        NSLog(@"%@", animatedImageView.animationImages);
+        animatedImageView.animationDuration = 1.0f;
+        animatedImageView.animationRepeatCount = 0;
+        [animatedImageView startAnimating];
+    }
+    
+    return img;
+}
+
+
+//can remove 
+- (void) ReloadSyncTable
+{
+    [self._tableView reloadData];
+}
+
+
+- (void) retryDataSyncAgain
+{
+    [appDelegate.wsInterface DoIncrementalDataSync];
+}
+
 - (void) didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     selectedRow = indexPath.row;
@@ -1304,10 +1466,22 @@
 {
    NSException * exception = [NSException exceptionWithName:@"Error" reason: @"Synchronize Configuration Failed"
                                       userInfo: nil];
+    appDelegate.isMetaSyncExceptionCalled = TRUE;
     
     @throw exception;
 }
 
+- (void) disableControls
+{
+    self.view.userInteractionEnabled = NO;
+    [rootSyncDelegate disableRootControls];
+}
+
+- (void) enableControls
+{
+    self.view.userInteractionEnabled = YES;
+    [rootSyncDelegate enableRootControls];
+}
 
 - (void)dealloc 
 {
