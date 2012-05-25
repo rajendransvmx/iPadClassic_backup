@@ -328,8 +328,11 @@
                 NSString *subject1  = @"";
                 NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
                 
+                if((_startDateTime!=nil) && strlen(_startDateTime))
+                    queryStatement =[NSString stringWithFormat:@"Select Subject From Event where WhatId = '%@' and StartDateTime = '%s'", whatId1,_startDateTime];
+                else
+                    queryStatement =[NSString stringWithFormat:@"Select Subject From Event where WhatId = '%@'", whatId1];
                 
-                queryStatement =[NSString stringWithFormat:@"Select Subject From Event where WhatId = '%@'", whatId1];
                 const char * selectStatement = [queryStatement UTF8String];
                 sqlite3_stmt * eventsubject;
                 if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &eventsubject, nil) == SQLITE_OK )
