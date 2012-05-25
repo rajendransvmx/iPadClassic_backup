@@ -28,7 +28,7 @@
 @synthesize progressTitle;
 @synthesize description_label;
 @synthesize download_desc_label;
-@synthesize StepLabel;
+//@synthesize StepLabel;
 @synthesize total_progress;
 @synthesize current_num_of_call;
 @synthesize Total_calls;
@@ -46,7 +46,7 @@ const NSUInteger kNumImages = 7;
     [progressBar release];
     [progressBar release];
     [progressTitle release];
-    [StepLabel release];
+    //[StepLabel release];
     [download_desc_label release];
     [description_label release];
    
@@ -387,10 +387,12 @@ const NSUInteger kNumImages = 7;
             description_label.numberOfLines = 3;
            // description_label.lineBreakMode = UILineBreakModeWordWrap;
             description_label.font =  [UIFont systemFontOfSize:14.0];
+            description_label.textAlignment = UITextAlignmentCenter;
            // [description_label sizeToFit];
-            StepLabel.font =  [UIFont systemFontOfSize:14.0];
-            StepLabel.textAlignment = UITextAlignmentCenter;
-            download_desc_label.font =  [UIFont systemFontOfSize:14.0];
+            //.font =  [UIFont systemFontOfSize:14.0];
+            //StepLabel.textAlignment = UITextAlignmentCenter;
+            download_desc_label.font =  [UIFont systemFontOfSize:16.0];
+            download_desc_label.textAlignment = UITextAlignmentCenter;
           //  download_desc_label.numberOfLines = 0;
             
             ProgressView.backgroundColor = [UIColor clearColor];
@@ -648,7 +650,7 @@ const NSUInteger kNumImages = 7;
     [self setProgressBar:nil];
     [progressTitle release];
     progressTitle = nil;
-    [self setStepLabel:nil];
+   // [self setStepLabel:nil];
     [self setDownload_desc_label:nil];
     [self setDescription_label:nil];
     [transparent_layer release];
@@ -757,7 +759,6 @@ const NSUInteger kNumImages = 7;
 - (void)continueMetaAndDataSync
 {
     NSLog(@"I will come here first");
-   
    
     //again inititate
     if(appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED)
@@ -948,8 +949,8 @@ const NSUInteger kNumImages = 7;
 {
     return FALSE;
 }
-const int percentage_ = 5; 
-const float progress_ = 0.058;
+const int percentage_ = 6; 
+const float progress_ = 0.07;
 #pragma mark - timer method to update progressbar
 -(void)updateProgressBar:(id)sender
 {
@@ -1069,7 +1070,7 @@ const float progress_ = 0.058;
     }
     else if(appDelegate.initial_sync_status == SYNC_MOBILE_DEVICE_TAGS  && appDelegate.Sync_check_in == FALSE)
     {
-        current_num_of_call = 9;//current_num_of_call + 1;
+       /* current_num_of_call = 9;//current_num_of_call + 1;
         temp_percentage = percentage_ * 8 ;//temp_percentage + 5.8;
         appDelegate.Sync_check_in = TRUE;
         total_progress = progress_ * 8;//total_progress + 0.058;
@@ -1077,16 +1078,16 @@ const float progress_ = 0.058;
         //downloading mobile device settings
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_mob_tags];//@"Downloading mobile device tags";
         description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_mob_tags_desc];
-        // [description_label sizeToFit];
+        // [description_label sizeToFit];*/
       
          NSLog(@"9");
     }
     else if(appDelegate.initial_sync_status == SYNC_MOBILE_DEVICE_SETTINGS  && appDelegate.Sync_check_in == FALSE)
     {
-        current_num_of_call = 10;//current_num_of_call + 1;
-        temp_percentage = percentage_ * 9;//temp_percentage + 5.8;
+        current_num_of_call = 9;//current_num_of_call + 1;
+        temp_percentage = percentage_ * 8;//temp_percentage + 5.8;
         appDelegate.Sync_check_in = TRUE;
-        total_progress = progress_ * 9;//total_progress + 0.058;
+        total_progress = progress_ * 8;//total_progress + 0.058;
         progressBar.progress = total_progress;
         //downloading SFM Search data 
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_mob_settings];// @"Downloading Mobile Device Settings";
@@ -1096,7 +1097,7 @@ const float progress_ = 0.058;
     }
     else if(appDelegate.initial_sync_status == SYNC_SFM_SEARCH  && appDelegate.Sync_check_in == FALSE)
     {
-        current_num_of_call = 11;//current_num_of_call + 1;
+       /* current_num_of_call = 11;//current_num_of_call + 1;
         temp_percentage = percentage_ * 10;//temp_percentage + 5.8;
         appDelegate.Sync_check_in = TRUE;
         total_progress = progress_ * 10;//total_progress + 0.058;
@@ -1104,16 +1105,16 @@ const float progress_ = 0.058;
         //Downloading RecordType Dependent Pikclist 
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_sfm_search];//@"Downloading SFM Search data ";
         description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_sfm_search_desc];
-        // [description_label sizeToFit];
+        // [description_label sizeToFit];*/
          NSLog(@"11");
     }
    
     else if(appDelegate.initial_sync_status == SYNC_DP_PICKLIST_INFO  && appDelegate.Sync_check_in == FALSE)
     {
-        current_num_of_call = 12;//current_num_of_call + 1;
-        temp_percentage = percentage_ * 11; //temp_percentage + 5.8;
+        current_num_of_call = 10;//current_num_of_call + 1;
+        temp_percentage = percentage_ * 9; //temp_percentage + 5.8;
         appDelegate.Sync_check_in = TRUE;
-        total_progress = progress_ * 11;//total_progress + 0.058;
+        total_progress = progress_ * 9;//total_progress + 0.058;
         progressBar.progress = total_progress;
         //Downloading Event and task data
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_dp_picklist];//@"Downloading Dependent Picklist ";
@@ -1123,10 +1124,10 @@ const float progress_ = 0.058;
     }
     else if(appDelegate.initial_sync_status == SYNC_EVENT_SYNC  && appDelegate.Sync_check_in == FALSE)
     {
-        current_num_of_call = 13;//current_num_of_call + 1;
-        temp_percentage = percentage_ * 12;//temp_percentage + 5.8;
+        current_num_of_call = 11;//current_num_of_call + 1;
+        temp_percentage = percentage_ * 10;//temp_percentage + 5.8;
         appDelegate.Sync_check_in = TRUE;
-        total_progress = progress_ * 12;//total_progress + 0.058;
+        total_progress = progress_ * 10;//total_progress + 0.058;
         progressBar.progress = total_progress;
         //Downloading download criteria sync data
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_event_sync];//@"Downloading Event and task related record id's";
@@ -1137,23 +1138,21 @@ const float progress_ = 0.058;
     }
     else if(appDelegate.initial_sync_status == SYNC_DOWNLOAD_CRITERIA_SYNC  && appDelegate.Sync_check_in == FALSE)
     {
-        current_num_of_call = 14;//current_num_of_call + 1;
-        temp_percentage = percentage_ * 13;//temp_percentage + 5.8;
+        temp_percentage = percentage_ * 11;//temp_percentage + 5.8;
         appDelegate.Sync_check_in = TRUE;
-        total_progress = progress_ * 13;//total_progress + 0.058;
+        total_progress = progress_ * 11;//total_progress + 0.058;
         progressBar.progress = total_progress;
         //Cleaning Up Data 
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_dc_sync];//@"Downloading download criteria Objects record id's";
         description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_dc_sync_desc];
        //  [description_label sizeToFit];
          NSLog(@"14");
-           }
+    }
     else if(appDelegate.initial_sync_status == SYNC_CLEANUP_SELECT  && appDelegate.Sync_check_in == FALSE)
     {
-        current_num_of_call = 15;//current_num_of_call + 1;
-        temp_percentage = percentage_ * 14; //temp_percentage + 5.8;
+        temp_percentage = percentage_ * 12; //temp_percentage + 5.8;
         appDelegate.Sync_check_in = TRUE;
-        total_progress = progress_ * 14;//total_progress + 0.058;
+        total_progress = progress_ * 12;//total_progress + 0.058;
         progressBar.progress = total_progress;
         //Downloading Events , Tasks and associated information
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_cleanup];//@"Clean up call";
@@ -1164,10 +1163,10 @@ const float progress_ = 0.058;
     }
     else if(appDelegate.initial_sync_status == SYNC_TX_FETCH  && appDelegate.Sync_check_in == FALSE)
     {
-        current_num_of_call = 16;//current_num_of_call + 1;
-        temp_percentage = percentage_ * 15 + 10;//temp_percentage + 5.8;
+        current_num_of_call = 14;//current_num_of_call + 1;
+        temp_percentage = percentage_ * 13 +10;//temp_percentage + 5.8;
         appDelegate.Sync_check_in = TRUE;
-        total_progress = progress_ * 15;//total_progress + 0.058;
+        total_progress = progress_ * 13;//total_progress + 0.058;
         progressBar.progress = total_progress;
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_tx_fetch];//@"Downloading Events , Tasks and Download criteria records";
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_tx_fetch_desc];
@@ -1176,10 +1175,10 @@ const float progress_ = 0.058;
     }
     else if(appDelegate.initial_sync_status == SYNC_INSERTING_RECORDS_TO_LOCAL_DATABASE  && appDelegate.Sync_check_in == FALSE)
     {
-        current_num_of_call =  17;  //current_num_of_call + 1;
-        temp_percentage = percentage_ * 16 +10;//temp_percentage + 8;
+        current_num_of_call =  15;  //current_num_of_call + 1;
+        temp_percentage = percentage_ * 14+6;//temp_percentage + 8;
         appDelegate.Sync_check_in = TRUE;
-        total_progress = progress_ * 16;//total_progress + 0.058; //total_progress + 0.06;
+        total_progress = progress_ * 14;//total_progress + 0.058; //total_progress + 0.06;
         progressBar.progress = total_progress;
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_localdb];//@"Inserting Downloaded records into local DataBase";
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_localdb_desc];
@@ -1191,8 +1190,8 @@ const float progress_ = 0.058;
         temp_percentage = 100;
         total_progress = 1.0;
         progressBar.progress = total_progress;
-        download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_sync_complete];//@"Initial Sync Completed";
-        download_desc_label.text =  [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_sync_complete_desc];
+       // download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_sync_complete];//@"Initial Sync Completed";
+       // download_desc_label.text =  [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_sync_complete_desc];
         // [description_label sizeToFit];
         appDelegate.Sync_check_in = TRUE;
         [initial_sync_timer invalidate];
@@ -1205,11 +1204,11 @@ const float progress_ = 0.058;
 
 -(void)fillNumberOfStepsCompletedLabel
 {
-    NSString * step = [appDelegate.wsInterface.tagsDictionary  objectForKey:sync_progress_step];
+  /*  NSString * step = [appDelegate.wsInterface.tagsDictionary  objectForKey:sync_progress_step];
     NSString * of = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_of];
     NSString * temp_value = [[NSString alloc] initWithFormat:@"%@ %d %@ %d :",step,current_num_of_call,of,Total_calls];
     StepLabel.text = temp_value;
-    [temp_value release];
+    [temp_value release];*/
     
     NSString * _percentage = [[NSString alloc] initWithFormat:@"%d%%", temp_percentage];
     display_pecentage.text = _percentage;
@@ -1626,22 +1625,19 @@ const float progress_ = 0.058;
        // download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_start];//@"Initiating Sync From the Beginning";
         progressBar.progress = 0.0;
         //StepLabel.text = @"Step 0 of 17";
-        current_num_of_call = 0;
         temp_percentage = 0;
     }
     else if([sync isEqualToString:DATA_SYNC_])
     {
         //download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_data];//@"Initiating Sync From the Beginning";
-        temp_percentage = percentage_ * 11; //temp_percentage + 5.8;
-        current_num_of_call = 12;
-        total_progress = progress_ * 11;//total_progress + 0.058;
+        temp_percentage = percentage_ * 9; //temp_percentage + 5.8;
+        total_progress = progress_ * 9;//total_progress + 0.058;
     }
     else if([sync isEqualToString:TX_FETCH_])
     {
         //download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_data];//@"Initiating Sync From the Beginning";
-        temp_percentage = percentage_ * 13; //temp_percentage + 5.8;
-        current_num_of_call = 14;
-        total_progress = progress_ * 13;//total_progress + 0.058;
+        temp_percentage = percentage_ * 11; //temp_percentage + 5.8;
+        total_progress = progress_ * 11;//total_progress + 0.058;
     }
 }
 -(void)RefreshProgressBar:(NSString *)sync
@@ -1657,16 +1653,14 @@ const float progress_ = 0.058;
     else if([sync isEqualToString:DATA_SYNC_])
     {
         //download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_data];//@"Initiating Sync From the Beginning";
-        temp_percentage = percentage_ * 11; //temp_percentage + 5.8;
-        current_num_of_call = 12;
-        total_progress = progress_ * 11;//total_progress + 0.058;
+        temp_percentage = percentage_ * 9; //temp_percentage + 5.8;
+        total_progress = progress_ * 9;//total_progress + 0.058;
     }
     else if([sync isEqualToString:TX_FETCH_])
     {
         //download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_data];//@"Initiating Sync From the Beginning";
-        temp_percentage = percentage_ * 13; //temp_percentage + 5.8;
-        current_num_of_call = 14;
-        total_progress = progress_ * 13;//total_progress + 0.058;
+        temp_percentage = percentage_ * 11; //temp_percentage + 5.8;
+        total_progress = progress_ * 11;//total_progress + 0.058;
     }
 }
 
