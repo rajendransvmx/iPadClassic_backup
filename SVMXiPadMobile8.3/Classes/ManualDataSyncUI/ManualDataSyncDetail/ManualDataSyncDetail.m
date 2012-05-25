@@ -81,7 +81,7 @@
     titleLabel.backgroundColor = [UIColor clearColor];
 
     [self.navigationController.view addSubview:titleLabel];
-    
+    NSMutableArray *arrayForRightBarButton=[[NSMutableArray alloc]init ];
     button = [UIButton buttonWithType:UIButtonTypeCustom];
     button.frame = CGRectMake(85, 5, 100, 38);
     button.backgroundColor = [UIColor clearColor];
@@ -90,11 +90,9 @@
     [button.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
     [button addTarget:self action:@selector(ShowActions) forControlEvents:UIControlEventTouchUpInside];
     [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    
-    UIButton *helpButton = [[UIButton alloc] initWithFrame:CGRectMake(190, 5, 37, 38)];
-    helpButton.backgroundColor = [UIColor clearColor];
-    [helpButton setBackgroundImage:[UIImage imageNamed:@"iService-Screen-Help"] forState:UIControlStateNormal];
-    [helpButton addTarget:self action:@selector(showHelp) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem * barButton = [[[UIBarButtonItem alloc] initWithCustomView:button] autorelease];
+
+    [arrayForRightBarButton addObject:barButton];
     statusButton = [UIButton buttonWithType:UIButtonTypeCustom];
     statusButton.frame = CGRectMake(20, 5, 60, 38);
     statusButton.backgroundColor = [UIColor clearColor];
@@ -103,14 +101,18 @@
     [statusButton.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
     [statusButton addTarget:self action:@selector(showSyncronisationStatus) forControlEvents:UIControlEventTouchUpInside];
     [statusButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-                            
+    UIBarButtonItem * statusBarButton = [[[UIBarButtonItem alloc] initWithCustomView:statusButton] autorelease];        
+    [arrayForRightBarButton addObject:statusBarButton];
+    UIButton *helpButton = [[UIButton alloc] initWithFrame:CGRectMake(190, 5, 37, 38)];
+    helpButton.backgroundColor = [UIColor clearColor];
+    [helpButton setBackgroundImage:[UIImage imageNamed:@"iService-Screen-Help"] forState:UIControlStateNormal];
+    [helpButton addTarget:self action:@selector(showHelp) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem * helpBarButton = [[[UIBarButtonItem alloc] initWithCustomView:helpButton] autorelease];
+    [arrayForRightBarButton addObject:helpBarButton];
     UIToolbar *myToolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(450, 0, 220, 40)];
     myToolBar.backgroundColor = [UIColor clearColor];
-    
-    [myToolBar addSubview:button];
-    [myToolBar addSubview:helpButton];
-    [myToolBar addSubview:statusButton];
-    [self.navigationController.view addSubview:myToolBar];
+    [myToolBar setItems:arrayForRightBarButton]; 
+    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:myToolBar] autorelease];
     [myToolBar release];
                     
 }
