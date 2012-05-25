@@ -145,12 +145,19 @@
 
 //Shrinivas - Contact Image offline Methods
 - (void)insertContactImageIntoDatabase:(NSString *)contactId andContactImageData:(NSString *)imageData;
+
 - (NSString *)retrieveContactImageDataFromDb:(NSString *)contactId;
 
 
 //Radha
 - (NSData *) retrievePdfData:(NSString *)Id;
 
+
+//Shrinivas -- Sync conflict Internet handler
+- (void) insertIntoConflictInternetErrorWithSyncType:(NSString *)sync_type;
+- (void) insertIntoConflictInternetErrorWithSyncType:(NSString *)sync_type WithDB:(sqlite3 *)db;
+- (NSMutableArray *) getInternetConflicts;
+- (void) removeInternetConflicts;
 
 
 #define DATABASENAME   @"sfm"
