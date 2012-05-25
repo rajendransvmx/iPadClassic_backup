@@ -457,73 +457,73 @@
 	<key>IPAD011_TAG014</key>
 	<string>Authentication Error</string>
 	<key>IPAD012_TAG018</key>
-	<string>Downloading the list of SFM transactions along with related objects, expressions, and field &amp; value maps</string>
+	<string>Now downloading SFM Transactions</string>
 	<key>IPAD012_TAG019</key>
-	<string>Downloading SFM transactions</string>
+	<string>Downloading Mobile Configuration</string>
 	<key>IPAD012_TAG020</key>
-	<string>Downloading the page layout details of SFM transactions</string>
+	<string>Now downloading SFM page layouts</string>
 	<key>IPAD012_TAG021</key>
-	<string>Downloading SFM page layouts</string>
+	<string>Downloading Mobile Configuration</string>
 	<key>IPAD012_TAG022</key>
-	<string>Downloading the field describe details of SFM objects</string>
+	<string>Now downloading object definitions</string>
 	<key>IPAD012_TAG023</key>
-	<string>Downloading SFM object details</string>
+	<string>Downloading Mobile Configuration</string>
 	<key>IPAD012_TAG024</key>
-	<string>Downloading details of User, Event, and Task objects</string>
+	<string>Now downloading object definitions</string>
 	<key>IPAD012_TAG025</key>
-	<string>Downloading other object details</string>
+	<string>Downloading Mobile Configuration</string>
 	<key>IPAD012_TAG026</key>
-	<string>Downloading labels and values of all the picklist fields of all the objects</string>
+	<string>Now downloading picklists</string>
 	<key>IPAD012_TAG027</key>
-	<string>Downloading picklist details</string>
+	<string>Downloading Mobile Configuration</string>
 	<key>IPAD012_TAG028</key>
-	<string>Downloading Record Type dependency details for picklists</string>
+	<string>Now downloading picklists</string>
 	<key>IPAD012_TAG029</key>
-	<string>Downloading Record Type based picklist</string>
+	<string>Downloading Mobile Configuration</string>
 	<key>IPAD012_TAG030</key>
-	<string>Downloading SFW definitions and qualifying criteria for each SFW</string>
+	<string>Now downloading SFM wizards</string>
 	<key>IPAD012_TAG031</key>
-	<string>Downloading SFW details</string>
+	<string>Downloading Mobile Configuration</string>
 	<key>IPAD012_TAG032</key>
-	<string>Downloading labels and error messages</string>
+	<string></string>
 	<key>IPAD012_TAG033</key>
-	<string>Downloading tags</string>
+	<string></string>
 	<key>IPAD012_TAG034</key>
-	<string>Downloading Mobile Configuration details such as auto-sync interval, conflict resolution, chatter setting, etc.</string>
+	<string>Now downloading configuration settings</string>
 	<key>IPAD012_TAG035</key>
 	<string>Downloading Mobile Configuration</string>
 	<key>IPAD012_TAG036</key>
-	<string>Downloading SFM Search configuration details</string>
+	<string></string>
 	<key>IPAD012_TAG037</key>
-	<string>Downloading SFM Search definition</string>
+	<string></string>
 	<key>IPAD012_TAG038</key>
-	<string>Downloading dependent picklist details such as controlling field, dependent field, and applicable values for each controlling value</string>
+	<string>Now downloading dependent picklists</string>
 	<key>IPAD012_TAG039</key>
-	<string>Downloading dependent picklist</string>
+	<string>Downloading Mobile Configuration</string>
 	<key>IPAD012_TAG040</key>
-	<string>Downloading Event and Task IDs for the interval specified in Mobile Configuration</string>
+	<string>Assessing volume of data to download</string>
 	<key>IPAD012_TAG041</key>
-	<string>Downloading Event and Task IDs</string>
+	<string>Downloading Data</string>
 	<key>IPAD012_TAG042</key>
-	<string>Downloading IDs of objects having download criteria</string>
+	<string>Assessing volume of data to download</string>
 	<key>IPAD012_TAG043</key>
-	<string>Downloading other object record IDs</string>
+	<string>Downloading Data</string>
 	<key>IPAD012_TAG044</key>
-	<string>Purging temporary sync request records created in server</string>
+	<string>Setting up batches to download</string>
 	<key>IPAD012_TAG045</key>
-	<string>Purging temporary records in server</string>
+	<string>Downloading Data</string>
 	<key>IPAD012_TAG046</key>
-	<string>Downloading events, tasks, and records of other objects</string>
-	<key>IPAD012_TAG047</key>
 	<string>Downloading records</string>
+	<key>IPAD012_TAG047</key>
+	<string>Downloading Data</string>
 	<key>IPAD012_TAG048</key>
-	<string>Inserting downloaded records into local database</string>
+	<string>Setting up downloaded records for offline use</string>
 	<key>IPAD012_TAG049</key>
-	<string>Inserting records</string>
+	<string>Downloading Data</string>
 	<key>IPAD012_TAG050</key>
-	<string>Initial sync of configuration and application data completed. App is ready for use.</string>
+	<string> </string>
 	<key>IPAD012_TAG051</key>
-	<string>Initial sync completed</string>
+	<string> </string>
 	<key>IPAD012_TAG052</key>
 	<string>Retry</string>
 	<key>IPAD012_TAG053</key>
