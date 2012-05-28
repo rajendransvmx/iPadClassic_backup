@@ -1540,8 +1540,7 @@
         insert_statement = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' DEFAULT VALUES",tableName ];
     
     char * err;
-   // NSLog(@"%@", insert_statement);
-    
+      
     if(synchronized_sqlite3_exec(appDelegate.db, [insert_statement UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
         NSLog(@"Insert Failed");
@@ -4078,14 +4077,15 @@
                                 }
                             }
                             
-                            if (sqlite3_step(bulk_statement) != SQLITE_DONE)
+                            int ret = synchronized_sqlite3_step(bulk_statement);
+                            if (ret!= SQLITE_DONE)
                             {
                                 printf("Commit Failed!\n");
                             }
                             sqlite3_reset(bulk_statement);
                         }
                     }
-                    else if ( [local_id length] != 0 && [json_record length] != 0 )
+                    else if ([local_id length] != 0 && [json_record length] != 0 )
                     {
                         if([record_type isEqualToString:DETAIL])
                         {
@@ -4123,7 +4123,6 @@
                     [new_local_id release];
                     NSLog(@"Record %d" ,count );
                     
-                   //  NSLog(@"SAMMAN updateSyncRecordsIntoLocalDatabase starts: %@", [NSDate date]);
                 }
             }
         }
@@ -4133,9 +4132,6 @@
     
     txnstmt = @"END TRANSACTION";
     retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);    
-    
-   // NSLog(@"No of Records %d" ,count);
-    
     
     statement = nil;
     
