@@ -155,8 +155,9 @@
 
 //Shrinivas -- Sync conflict Internet handler
 - (void) insertIntoConflictInternetErrorWithSyncType:(NSString *)sync_type;
-- (void) insertIntoConflictInternetErrorWithSyncType:(NSString *)sync_type WithDB:(sqlite3 *)db;
+- (void) insertIntoConflictInternetErrorForMetaSync:(NSString *)sync_type WithDB:(sqlite3 *)db;
 - (NSMutableArray *) getInternetConflicts;
+- (NSMutableArray *) getInternetConflictsForMetaSyncWithDB:(sqlite3 *)db;
 - (void) removeInternetConflicts;
 
 
