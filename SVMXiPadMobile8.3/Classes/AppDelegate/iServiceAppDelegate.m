@@ -1031,7 +1031,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         else
         {
             NSLog(@"thread is not finished its work");
-           // return;
+            return; //Please don't comment return
         }
         
     }
