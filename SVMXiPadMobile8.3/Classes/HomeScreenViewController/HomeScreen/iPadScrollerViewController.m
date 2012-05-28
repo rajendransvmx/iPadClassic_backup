@@ -329,6 +329,15 @@ const NSUInteger kNumImages = 7;
     [super viewDidLoad];
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     
+    if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+    {
+        if(appDelegate.do_meta_data_sync != ALLOW_META_AND_DATA_SYNC)
+        {
+            appDelegate.wsInterface.tagsDictionary = [appDelegate.dataBase getTagsDictionary];
+            NSMutableDictionary * temp_dict = [appDelegate.wsInterface fillEmptyTags:appDelegate.wsInterface.tagsDictionary];
+            appDelegate.wsInterface.tagsDictionary = [temp_dict retain];
+        }
+    }
     itemArray = [[NSArray arrayWithObjects:
                  [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CALENDAR],
                  [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_MAP],
@@ -710,11 +719,15 @@ const NSUInteger kNumImages = 7;
         
         [appDelegate ScheduleIncrementalMetaSyncTimer];
         
-        appDelegate.wsInterface.tagsDictionary = [appDelegate.dataBase getTagsDictionary];
-        
-        NSMutableDictionary * temp_dict = [appDelegate.wsInterface fillEmptyTags:appDelegate.wsInterface.tagsDictionary];
-        appDelegate.wsInterface.tagsDictionary = [temp_dict retain];
-        
+       /* if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+        {
+            if(appDelegate.do_meta_data_sync == ALLOW_META_AND_DATA_SYNC)
+            {
+                appDelegate.wsInterface.tagsDictionary = [appDelegate.dataBase getTagsDictionary];
+                NSMutableDictionary * temp_dict = [appDelegate.wsInterface fillEmptyTags:appDelegate.wsInterface.tagsDictionary];
+                appDelegate.wsInterface.tagsDictionary = [temp_dict retain];
+            }
+        }*/
         
         appDelegate.wsInterface.createProcessArray =  [appDelegate.calDataBase getProcessFromDatabase];
         

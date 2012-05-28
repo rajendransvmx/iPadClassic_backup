@@ -1273,7 +1273,14 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     for(int k = 0; k < [self.objectNames_array count];k++ )
     {
         NSString * label = [self.databaseInterface getObjectLabel:@"SFObject" objectApi_name:[self.objectNames_array objectAtIndex:k]];
-        [objectNames addObject:label];
+        if(label != nil)
+        {
+            [objectNames addObject:label];
+        }
+        else
+        {
+            [objectNames addObject:@""];
+        }
         
     }
     

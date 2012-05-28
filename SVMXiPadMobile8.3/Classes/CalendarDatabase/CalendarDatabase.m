@@ -1833,7 +1833,7 @@
                     type = [[NSString alloc] initWithUTF8String:_type];
                 }
                 
-                NSMutableArray * objects9 = [[NSMutableArray arrayWithObjects:api_name,label,type,nil] retain];
+                NSMutableArray * objects9 = [[NSMutableArray arrayWithObjects:(api_name != nil)?api_name:@"",(label != nil)?label:@"",(type != nil)?type:@"",nil] retain];
                 
                 NSDictionary * dictionary9 = [[NSDictionary alloc] initWithObjects:objects9 forKeys:keys9];
                 [WorkOrderFields addObject:dictionary9];
