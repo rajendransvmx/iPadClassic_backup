@@ -11910,9 +11910,7 @@
             [imgArr addObject:[UIImage imageNamed:[NSString stringWithFormat:@"r%d.png", i]]];
         }
         
-        NSLog(@"%@", imgArr);
         animatedImageView.animationImages = [NSArray arrayWithArray:imgArr];
-        NSLog(@"%@", animatedImageView.animationImages);
         animatedImageView.animationDuration = 1.0f;
         animatedImageView.animationRepeatCount = 0;
         [animatedImageView startAnimating];
@@ -11934,9 +11932,8 @@
             [imgArr addObject:[UIImage imageNamed:[NSString stringWithFormat:@"o%d.png", i]]];
         }
         
-        NSLog(@"%@", imgArr);
+        
         animatedImageView.animationImages = [NSArray arrayWithArray:imgArr];
-        NSLog(@"%@", animatedImageView.animationImages);
         animatedImageView.animationDuration = 1.0f;
         animatedImageView.animationRepeatCount = 0;
         [animatedImageView startAnimating];
