@@ -3882,11 +3882,9 @@
         
         [dict setValue:@"VARCHAR" forKey:@"local_id"];
         NSArray * all_keys_object_api_names = [dict allKeys];
-       // NSString * final_fields_string = @"";
         NSString * field_string = @"";
         NSString * values_string = @"";
-      //  field_string = [field_string stringByAppendingString:@"local_id"];
-       // values_string = [values_string stringByAppendingString:@"?1"];
+     
         for(int t = 0; t < [all_keys_object_api_names count];t++)
         {
               NSString * obj_ = [all_keys_object_api_names objectAtIndex:t];
@@ -3902,7 +3900,6 @@
                 field_string = [field_string stringByAppendingFormat:@"%@",temp_field_string];
                 values_string = [values_string stringByAppendingFormat:@"?%d",t+1];
             }
-          //  [fields_string stringByAppendingFormat:@"%@,",obj_];
         }
         
         NSString * query_string = [NSString stringWithFormat:@"INSERT INTO '%@' (%@) VALUES (%@)",Object_name_temp,field_string,values_string]; 
@@ -3911,18 +3908,13 @@
 
         int prepare_ = sqlite3_prepare_v2(appDelegate.db, [query_string UTF8String], strlen([query_string UTF8String]), &bulk_statement, NULL);
         
-       /* char buffer[];
-        int len = [ length] + 1;
-
-        BOOL falg =  [field_string getCString:buffer maxLength:len encoding:NSUTF8StringEncoding];*/
-       // char buffer[] = ;//"INSERT INTO '%@'(field_string) VALUES (values_string)";
+       
         if(prepare_ == SQLITE_OK)
         {
             if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sql UTF8String], -1, &statement, nil) == SQLITE_OK)
             {
                 while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
                 {   
-                   //  NSLog(@"SAMMAN updateSyncRecordsIntoLocalDatabase starts: %@", [NSDate date]);
                     local_id = @"",sf_id = @"", object_Name = @"" ,  json_record = @"" ,  record_type = @"", sync_type = @"";
                     char * temp_sf_id = (char *)synchronized_sqlite3_column_text(statement, 0);
                     if(temp_sf_id != nil)
@@ -3968,7 +3960,6 @@
                     }
                     else if ([record_type isEqualToString:DETAIL])
                     {
-                       // parent_column_name = [appDelegate.databaseInterface  getParentColumnNameFormChildInfoTable:SFChildRelationShip childApiName:object_Name parentApiName:@""];
                         parent_column_name = [self getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_Name field_name:@"parent_column_name"];
                     }
 
