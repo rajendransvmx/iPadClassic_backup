@@ -124,8 +124,15 @@
     [myToolBar setItems:arrayForRightBarButton]; 
     self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:myToolBar] autorelease];
     [myToolBar release];
-                    
+    
+    animatedImageView = [[UIImageView alloc] initWithFrame:CGRectMake(435, 8, 26, 26)];    
+    [self getStatusImage];
+    animatedImageView.animationDuration = 1.0f;
+    animatedImageView.animationRepeatCount = 0;
+    [animatedImageView startAnimating];
+    [self.navigationController.view addSubview:animatedImageView];
 }
+
 - (void) showHelp
 {
     HelpController * help = [[HelpController alloc] initWithNibName:@"HelpController" bundle:nil];
@@ -1379,9 +1386,7 @@
             [imgArr addObject:[UIImage imageNamed:[NSString stringWithFormat:@"r%d.png", i]]];
         }
         
-        NSLog(@"%@", imgArr);
         animatedImageView.animationImages = [NSArray arrayWithArray:imgArr];
-        NSLog(@"%@", animatedImageView.animationImages);
         animatedImageView.animationDuration = 1.0f;
         animatedImageView.animationRepeatCount = 0;
         [animatedImageView startAnimating];
@@ -1403,9 +1408,8 @@
             [imgArr addObject:[UIImage imageNamed:[NSString stringWithFormat:@"o%d.png", i]]];
         }
         
-        NSLog(@"%@", imgArr);
+        
         animatedImageView.animationImages = [NSArray arrayWithArray:imgArr];
-        NSLog(@"%@", animatedImageView.animationImages);
         animatedImageView.animationDuration = 1.0f;
         animatedImageView.animationRepeatCount = 0;
         [animatedImageView startAnimating];
