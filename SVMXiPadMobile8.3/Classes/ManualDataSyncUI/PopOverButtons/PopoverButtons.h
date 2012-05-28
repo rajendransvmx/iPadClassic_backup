@@ -60,7 +60,7 @@
 
 - (void) Syncronise;
 - (void) synchronizeConfiguration;
-- (void) fullDataSynchronization;
+- (void) synchronizeEvents;
 - (void) schdulesynchronizeConfiguration;
 
 @end
