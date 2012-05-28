@@ -756,7 +756,7 @@
                     
                     sqlite3_bind_int(bulkStmt, 14, id_value++);
                     
-                    if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                    if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                     {
                         printf("Commit Failed!\n");
                     }
@@ -851,7 +851,7 @@
                         
                         sqlite3_bind_int(bulkStmt, 4, id_Value++);
                         
-                        if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                        if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                         {
                             printf("Commit Failed!\n");
                         }
@@ -953,7 +953,7 @@
                         
                         sqlite3_bind_int(bulkStmt, 4, id_Value++);
                         
-                        if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                        if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                         {
                             printf("Commit Failed!\n");
                         }
@@ -1048,7 +1048,7 @@
                 
                 sqlite3_bind_int(bulkStmt, 5, ++id_Value);
                 
-                if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
                 }
@@ -1149,7 +1149,7 @@
                     
                     sqlite3_bind_int(bulkStmt, 5, ++id_value);
                     
-                    if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                    if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                     {
                         printf("Commit Failed!\n");
                     }
@@ -1452,7 +1452,7 @@
                 
                 sqlite3_bind_int(bulkStmt, 10, ++id_value);
                 
-                if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
                 }
@@ -1708,7 +1708,7 @@
                 
                 sqlite3_bind_int(bulkStmt, 11, ++id_value);
                 
-                if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
                 }
@@ -1818,7 +1818,7 @@
                             
                             sqlite3_bind_int(bulkStmt, 6, id_value++);
                                                         
-                            if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                            if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                             {
                                 printf("Commit Failed!\n");
                             }
@@ -1866,7 +1866,7 @@
         int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
 
         
-        if (ret_value)
+        if (ret_value == SQLITE_OK)
         {
         
             for (NSString * objectName in objects)
@@ -1920,7 +1920,7 @@
                             
                             sqlite3_bind_int(bulkStmt, 10, ++id_value);
                             
-                            if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                            if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                             {
                                 printf("Commit Failed!\n");
                             }
@@ -1967,7 +1967,7 @@
         
         NSArray * sfExpression = [processDictionary objectForKey:MSFExpression];
         
-        if (ret_value)
+        if (ret_value == SQLITE_OK)
         {
         
             for (int i = 0; i < [sfExpression count]; i++)
@@ -1982,7 +1982,7 @@
                 
                 sqlite3_bind_int(bulkStmt, 4, ++id_value);
                                 
-                if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                if ( synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
                 }
@@ -2034,7 +2034,7 @@
                 
                 sqlite3_bind_int(bulkStmt, 6, ++id_value);
                 
-                if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
                 }
@@ -2092,7 +2092,7 @@
                 
                 sqlite3_bind_int(bulkStmt, 4, ++id_value);
                 
-                if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
                 }
@@ -2169,7 +2169,7 @@
                 
                 sqlite3_bind_int(bulkStmt, 7, ++id_value);
                 
-                if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
                 }
@@ -2230,7 +2230,7 @@
                 
                 sqlite3_bind_int(bulkStmt, 10, ++id_value);
                 
-                if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
                 }
@@ -2288,7 +2288,7 @@
                 
                 sqlite3_bind_int(bulkStmt, 8, ++id_value);
                 
-                if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
                 }
@@ -2344,7 +2344,7 @@
                 
                 sqlite3_bind_int(bulkStmt, 3, ++id_value);
                 
-                if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
                 }
@@ -2363,15 +2363,18 @@
 {
     if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
     {
-        if (appDelegate.isIncrementalMetaSyncInProgress)
+        if (appDelegate.isIncrementalMetaSyncInProgress &&!appDelegate.isInternetConnectionAvailable)
         {
             appDelegate.SyncStatus = SYNC_RED;
             
             [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
             [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
             [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-           // [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"META SYNC" WithDB:tempDb];
+           
+            [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync:@"META SYNC" WithDB:tempDb];
             
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflictsForMetaSyncWithDB:appDelegate.dataBase.tempDb];
+             [appDelegate.reloadTable ReloadSyncTable];
 
             if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                 [MyPopoverDelegate performSelector:@selector(throwException)];
@@ -2411,7 +2414,7 @@
                                     SQLITE_TRANSIENT);
                 sqlite3_bind_int(bulkStmt, 3, ++id_value);
                 
-                if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
                 }
@@ -2469,7 +2472,7 @@
                 
                 sqlite3_bind_int(bulkStmt, 6, ++id_value);
                 
-                if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
                 }
@@ -2532,7 +2535,7 @@
                 
                 sqlite3_bind_int(bulkStmt, 7, ++id_value);
                 
-                if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
                 }
@@ -2579,7 +2582,7 @@
             
             sqlite3_bind_int(bulkStmt, 4, ++id_value);
             
-            if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+            if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
             {
                 printf("Commit Failed!\n");
             }
@@ -2629,7 +2632,7 @@
             
             sqlite3_bind_int(bulkStmt, 6, ++id_value);
             
-            if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+            if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
             {
                 printf("Commit Failed!\n");
             }
@@ -3142,7 +3145,7 @@
             
             sqlite3_bind_int(bulkStmt, 11, ++id_value);
             
-            if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+            if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
             {
                 printf("Commit Failed!\n");
             }
@@ -4621,85 +4624,10 @@
 
 
 #pragma mark - FULL DATA SYNC
-- (void) startFullDataSync
-{
-    [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
-    
-    
-    [self clearTempDatabase];
-    
-    if (object_names != nil)
-        object_names = nil;
-    
-    //object_names = [[NSMutableArray alloc] initWithCapacity:0];
-    object_names = [self retreiveTableNamesFronDB:appDelegate.db];
-    
-    for (NSString * objectName in object_names)
-    {
-        NSString * query = [self retrieveQuery:objectName sqlite:appDelegate.db];
-        [self createTemporaryTable:query];
-    }
-      
-    NSString * query1 = [NSString stringWithFormat:@"ATTACH DATABASE '%@' AS sfm", self.dbFilePath];
-    [self createTemporaryTable:query1];
-    
-    //Here we fill up the tables with data  
-    for (NSString * objectName in object_names){
-        if ([objectName isEqualToString:@"Case"])
-            objectName = @"'Case'";
-        
-        query1 = [NSString stringWithFormat:@"INSERT INTO %@ SELECT * FROM sfm.%@", objectName, objectName];
-        [self createTemporaryTable:query1];
-    }
-    
-    //Delete the old database after creating the backup
-    [self deleteDatabase:DATABASENAME];
-    [self copyMetaSyncDataInToSfm];
-}
-
-- (void) copyMetaSyncDataInToSfm
-{
-    [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
-    
-  /*  NSMutableArray * dataObjects = [self retreiveDataObjectTable];
-    NSMutableArray * metaTable  = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-    
-    
-    int count = 0;
-    for (int i = 0; i < [object_names count]; i++)
-    {
-        for (int j = 0; j < [dataObjects count]; j++)
-        {
-           if ([[dataObjects objectAtIndex:j] isEqualToString:[object_names objectAtIndex:i]]) 
-           {
-               count++; 
-           }
-        }
-        
-        if (count == 0){
-            [metaTable addObject:[object_names objectAtIndex:i]];
-        }
-        count = 0;
-    }*/
-    
-    [self copyMetaTableInToSfm:object_names];
-    
-  /*  for (NSString * tableName in dataObjects)
-    {
-        NSString * query = [self retrieveQuery:tableName sqlite:tempDb];
-        [self createTable:query];
-    }*/
-    
-    [self startDataSync];
-    
-}
-
-- (void) startDataSync
+- (BOOL) startEventSync
 {
     NSLog(@"SAMMAN DataSync WS Start: %@", [NSDate date]);
     appDelegate.wsInterface.didOpComplete = FALSE;
-    
-    //sahaan generate client req id for initital data sync                                                                                                                                                                                                                                                                     
     
     [appDelegate.wsInterface dataSyncWithEventName:EVENT_SYNC eventType:SYNC requestId:@""];
     
@@ -4714,46 +4642,23 @@
         }
     }
     
-    appDelegate.wsInterface.didOpComplete = FALSE;
-    
-    appDelegate.initial_dataSync_reqid = [iServiceAppDelegate GetUUID];
-    
-    NSLog(@"reqId%@" , appDelegate.initial_dataSync_reqid);
-    [appDelegate.wsInterface dataSyncWithEventName:DOWNLOAD_CREITERIA_SYNC eventType:SYNC requestId:appDelegate.initial_dataSync_reqid];
-    
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
-    {        
-        if (appDelegate.wsInterface.didOpComplete == TRUE)
-        {
-            break; 
-        }
-        if (!appDelegate.isInternetConnectionAvailable && appDelegate.data_sync_chunking == REQUEST_SENT)
-        {
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
-            {
-                if (appDelegate.isInternetConnectionAvailable)
-                {
-                    [appDelegate goOnlineIfRequired];
-                    [appDelegate.wsInterface dataSyncWithEventName:DOWNLOAD_CREITERIA_SYNC eventType:SYNC requestId:appDelegate.initial_dataSync_reqid];
-                    break;
-                }
-            }
-        }
-    }
-    NSLog(@"SAMMAN DataSync WS End: %@", [NSDate date]);
-    NSLog(@"SAMMAN Incremental DataSync WS Start: %@", [NSDate date]);
-    
-    [appDelegate.wsInterface cleanUpForRequestId:appDelegate.initial_dataSync_reqid forEventName:@"CLEAN_UP_SELECT"];
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    if (!appDelegate.isInternetConnectionAvailable)
     {
-        if (!appDelegate.isInternetConnectionAvailable)
-            break;
+        appDelegate.SyncStatus = SYNC_RED;
         
-        if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
-            break;
+        [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+        [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+        [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+        
+        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"Event Sync"];
+         appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+        [appDelegate.reloadTable ReloadSyncTable];
+        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+            [MyPopoverDelegate performSelector:@selector(throwException)];
+        return FALSE;
     }
-    appDelegate.Incremental_sync_status = INCR_STARTS;
     
+    appDelegate.Incremental_sync_status = INCR_STARTS;
     
     [appDelegate.wsInterface PutAllTheRecordsForIds];
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
@@ -4765,11 +4670,28 @@
             break; 
     }
     
+    if (!appDelegate.isInternetConnectionAvailable)
+    {
+        appDelegate.SyncStatus = SYNC_RED;
+        
+        [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+        [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+        [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+
+        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"Event Sync"];
+        appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+        [appDelegate.reloadTable ReloadSyncTable];
+        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+            [MyPopoverDelegate performSelector:@selector(throwException)];
+        return FALSE;
+    }
     
-    NSLog(@"SAMMAN Incremental DataSync WS End: %@", [NSDate date]);
+    [appDelegate.databaseInterface cleartable:@"EVENT"];
+    [appDelegate.databaseInterface cleartable:@"Task"];
     
-    NSLog(@"SAMMAN Update Sync Records Start: %@", [NSDate date]);
     [appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
+    
+    return TRUE;
 }
 
 - (void) copyMetaTableInToSfm:(NSMutableArray *)metaTable
