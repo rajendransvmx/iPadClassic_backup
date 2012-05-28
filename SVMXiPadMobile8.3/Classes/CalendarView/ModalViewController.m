@@ -2087,7 +2087,6 @@
 
 - (UIImage *) getStatusImage
 {
-    
     UIImage  * img;
     if (appDelegate.SyncStatus == SYNC_RED)
     {
@@ -2099,9 +2098,7 @@
             [imgArr addObject:[UIImage imageNamed:[NSString stringWithFormat:@"r%d.png", i]]];
         }
         
-        NSLog(@"%@", imgArr);
         animatedImageView.animationImages = [NSArray arrayWithArray:imgArr];
-        NSLog(@"%@", animatedImageView.animationImages);
         animatedImageView.animationDuration = 1.0f;
         animatedImageView.animationRepeatCount = 0;
         [animatedImageView startAnimating];
@@ -2123,36 +2120,14 @@
             [imgArr addObject:[UIImage imageNamed:[NSString stringWithFormat:@"o%d.png", i]]];
         }
         
-        NSLog(@"%@", imgArr);
+        
         animatedImageView.animationImages = [NSArray arrayWithArray:imgArr];
-        NSLog(@"%@", animatedImageView.animationImages);
         animatedImageView.animationDuration = 1.0f;
         animatedImageView.animationRepeatCount = 0;
         [animatedImageView startAnimating];
     }
     
     return img;
-
-    /*UIImage  * img;
-    if (appDelegate.SyncStatus == SYNC_RED)
-    {
-        NSString * statusImage = @"red.png";
-        img = [UIImage imageNamed:statusImage];
-        [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
-    }
-    else if (appDelegate.SyncStatus == SYNC_GREEN)
-    {
-        NSString * statusImage = @"green.png";
-        img = [UIImage imageNamed:statusImage];
-        [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
-    }
-    else if (appDelegate.SyncStatus == SYNC_ORANGE)
-    {
-        NSString * statusImage = @"orange.png";
-        img = [UIImage imageNamed:statusImage];
-        [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
-    }
-    return img;*/
 }
 
 
