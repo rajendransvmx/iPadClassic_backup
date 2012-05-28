@@ -221,4 +221,8 @@
 - (NSMutableArray *) retreiveDataObjectTable;
 - (void) copyMetaTableInToSfm:(NSMutableArray *)metaTable;
 - (void) startDataSync;
+
+//RADHA only event sync
+- (BOOL) startEventSync;
+
 @end
