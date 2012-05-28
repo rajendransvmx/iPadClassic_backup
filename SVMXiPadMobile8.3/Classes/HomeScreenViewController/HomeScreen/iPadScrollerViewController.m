@@ -376,25 +376,18 @@ const NSUInteger kNumImages = 7;
             appDelegate.wsInterface.refreshProgressBarUIDelegate = self;
             Total_calls = 17;
             
-           // description_label.autoresizesSubviews = TRUE;
-           // description_label.lineBreakMode = UILineBreakModeWordWrap;
-            
             ProgressView.layer.cornerRadius = 5;
             ProgressView.frame = CGRectMake(300, 15, 474, 200);
             [self.view addSubview:transparent_layer];
             [self.view addSubview:ProgressView];
            
             description_label.numberOfLines = 3;
-           // description_label.lineBreakMode = UILineBreakModeWordWrap;
             description_label.font =  [UIFont systemFontOfSize:14.0];
             description_label.textAlignment = UITextAlignmentCenter;
-           // [description_label sizeToFit];
-            //.font =  [UIFont systemFontOfSize:14.0];
-            //StepLabel.textAlignment = UITextAlignmentCenter;
+       
             download_desc_label.font =  [UIFont systemFontOfSize:16.0];
             download_desc_label.textAlignment = UITextAlignmentCenter;
-          //  download_desc_label.numberOfLines = 0;
-            
+                    
             ProgressView.backgroundColor = [UIColor clearColor];
             ProgressView.layer.borderColor = [UIColor blackColor].CGColor;
             ProgressView.layer.borderWidth = 1.0f;
@@ -409,8 +402,6 @@ const NSUInteger kNumImages = 7;
             if(initial_sync_timer == nil)
                 initial_sync_timer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(updateProgressBar:) userInfo:nil repeats:YES];
             
-           // [self doMetaAndDataSync];
-            
             appDelegate.initial_sync_succes_or_failed = INITIAL_SYNC_SUCCESS;
             [self doMetaSync];
             
@@ -418,9 +409,7 @@ const NSUInteger kNumImages = 7;
             {
                 [initial_sync_timer invalidate];    //invalidate the timer
                 initial_sync_timer = nil;
-                //current_num_of_call = 0;
-                //total_progress = 0.0;
-            
+                            
                 return;
             }
             else if (appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED && appDelegate.isForeGround == TRUE)
@@ -428,10 +417,6 @@ const NSUInteger kNumImages = 7;
                 NSLog(@"I dont come here -Control");
                 [initial_sync_timer invalidate];    //invalidate the timer
                 initial_sync_timer = nil;
-                //current_num_of_call = 0;
-                //total_progress = 0.0;
-                //[self showAlertViewForAppwasinBackground];
-               // display_pecentage.text = @"0%";
                 [self continueMetaAndDataSync];
                 return;
             }
@@ -467,7 +452,6 @@ const NSUInteger kNumImages = 7;
             {
                 [initial_sync_timer invalidate];    //invalidate the timer
                 initial_sync_timer = nil;
-                //[self showAlertViewForAppwasinBackground];
                 [self continueMetaAndDataSync];
                 return;
             }
@@ -768,10 +752,6 @@ const NSUInteger kNumImages = 7;
         NSLog(@"I will come here first");
         appDelegate.isBackground = FALSE;
         
-        //description_label.text = @"Initiating Sync From the Beginning";
-        NSLog(@"metasync");
-        
-        
         appDelegate.initial_sync_succes_or_failed = INITIAL_SYNC_SUCCESS;
         appDelegate.initial_sync_status = INITIAL_SYNC_STARTS;
         
@@ -791,11 +771,9 @@ const NSUInteger kNumImages = 7;
         }
         else if (appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED && appDelegate.isForeGround == TRUE)
         {
-//            appDelegate.isForeGround = FALSE;
-//            appDelegate.isBackground = FALSE;
+
             [initial_sync_timer invalidate];    //invalidate the timer
             initial_sync_timer = nil;
-            //[self showAlertViewForAppwasinBackground];
             [self continueMetaAndDataSync];
             return;
         }
@@ -809,11 +787,8 @@ const NSUInteger kNumImages = 7;
         }
         else if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED && appDelegate.isForeGround == TRUE)
         {
-//            appDelegate.isForeGround = FALSE;
-//            appDelegate.isBackground = FALSE;
             [initial_sync_timer invalidate];    //invalidate the timer
             initial_sync_timer = nil;
-            //[self showAlertViewForAppwasinBackground];
             [self continueMetaAndDataSync];
             return;
         }
@@ -826,11 +801,8 @@ const NSUInteger kNumImages = 7;
         }
         else if (appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED && appDelegate.isForeGround == TRUE)
         {
-//            appDelegate.isForeGround = FALSE;
-//            appDelegate.isBackground = FALSE;
             [initial_sync_timer invalidate];    //invalidate the timer
             initial_sync_timer = nil;
-            //[self showAlertViewForAppwasinBackground];
             [self continueMetaAndDataSync];
             return;
         }
@@ -859,11 +831,8 @@ const NSUInteger kNumImages = 7;
         }
         else if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED && appDelegate.isForeGround == TRUE)
         {
-//            appDelegate.isForeGround = FALSE;
-//            appDelegate.isBackground = FALSE;
             [initial_sync_timer invalidate];    //invalidate the timer
             initial_sync_timer = nil;
-            //[self showAlertViewForAppwasinBackground];
             [self continueMetaAndDataSync];
             return;
         }
@@ -877,11 +846,8 @@ const NSUInteger kNumImages = 7;
         }
         else if (appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED && appDelegate.isForeGround == TRUE)
         {
-//            appDelegate.isForeGround = FALSE;
-//            appDelegate.isBackground = FALSE;
             [initial_sync_timer invalidate];    //invalidate the timer
             initial_sync_timer = nil;
-            //[self showAlertViewForAppwasinBackground];
             [self continueMetaAndDataSync];
             return;
         }
@@ -908,11 +874,8 @@ const NSUInteger kNumImages = 7;
         }
         else if (appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED && appDelegate.isForeGround == TRUE)
         {
-//            appDelegate.isForeGround = FALSE;
-//            appDelegate.isBackground = FALSE;
             [initial_sync_timer invalidate];    //invalidate the timer
             initial_sync_timer = nil;
-            //[self showAlertViewForAppwasinBackground];
             [self continueMetaAndDataSync];
             return;
         }
@@ -961,11 +924,8 @@ const float progress_ = 0.07;
     {
         current_num_of_call = 1;
         appDelegate.Sync_check_in = TRUE;
-       // temp_percentage = 5;
-       // progressBar.progress = 0.058;
         download_desc_label.text =  [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_metadata];//@"Downloading SFM MetaData";
         description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_metadata_desc];
-       //  [description_label sizeToFit];
        
         //Downloading SFM MetaData
         NSLog(@"1");
@@ -1070,16 +1030,6 @@ const float progress_ = 0.07;
     }
     else if(appDelegate.initial_sync_status == SYNC_MOBILE_DEVICE_TAGS  && appDelegate.Sync_check_in == FALSE)
     {
-       /* current_num_of_call = 9;//current_num_of_call + 1;
-        temp_percentage = percentage_ * 8 ;//temp_percentage + 5.8;
-        appDelegate.Sync_check_in = TRUE;
-        total_progress = progress_ * 8;//total_progress + 0.058;
-        progressBar.progress = total_progress;
-        //downloading mobile device settings
-        download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_mob_tags];//@"Downloading mobile device tags";
-        description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_mob_tags_desc];
-        // [description_label sizeToFit];*/
-      
          NSLog(@"9");
     }
     else if(appDelegate.initial_sync_status == SYNC_MOBILE_DEVICE_SETTINGS  && appDelegate.Sync_check_in == FALSE)
@@ -1097,15 +1047,6 @@ const float progress_ = 0.07;
     }
     else if(appDelegate.initial_sync_status == SYNC_SFM_SEARCH  && appDelegate.Sync_check_in == FALSE)
     {
-       /* current_num_of_call = 11;//current_num_of_call + 1;
-        temp_percentage = percentage_ * 10;//temp_percentage + 5.8;
-        appDelegate.Sync_check_in = TRUE;
-        total_progress = progress_ * 10;//total_progress + 0.058;
-        progressBar.progress = total_progress;
-        //Downloading RecordType Dependent Pikclist 
-        download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_sfm_search];//@"Downloading SFM Search data ";
-        description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_sfm_search_desc];
-        // [description_label sizeToFit];*/
          NSLog(@"11");
     }
    
@@ -1156,7 +1097,7 @@ const float progress_ = 0.07;
         progressBar.progress = total_progress;
         //Downloading Events , Tasks and associated information
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_cleanup];//@"Clean up call";
-        download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_cleanup_desc];
+        description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_cleanup_desc];
        //  [description_label sizeToFit];
          NSLog(@"15");
         
@@ -1169,7 +1110,7 @@ const float progress_ = 0.07;
         total_progress = progress_ * 13;//total_progress + 0.058;
         progressBar.progress = total_progress;
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_tx_fetch];//@"Downloading Events , Tasks and Download criteria records";
-        download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_tx_fetch_desc];
+        description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_tx_fetch_desc];
        //  [description_label sizeToFit];
         NSLog(@"16");
     }
@@ -1181,7 +1122,7 @@ const float progress_ = 0.07;
         total_progress = progress_ * 14;//total_progress + 0.058; //total_progress + 0.06;
         progressBar.progress = total_progress;
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_localdb];//@"Inserting Downloaded records into local DataBase";
-        download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_localdb_desc];
+        description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_localdb_desc];
          //[description_label sizeToFit];
        // [initial_sync_timer invalidate];
     }
@@ -1505,20 +1446,24 @@ const float progress_ = 0.07;
     [appDelegate.wsInterface PutAllTheRecordsForIds];
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
     {
-        //shrinivas
         if (appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED)
         {
+            NSLog(@"Break TxFetch");
             appDelegate.initial_sync_succes_or_failed = TX_FETCH_FAILED;
             break;
         }  
         if (!appDelegate.isInternetConnectionAvailable)
-        {
+        {  
+            NSLog(@"Break TxFetch");
             appDelegate.initial_sync_succes_or_failed = TX_FETCH_FAILED;
             break;
         }
         
         if (appDelegate.Incremental_sync_status == PUT_RECORDS_DONE)
+        {
+            NSLog(@"Break TxFetch");
             break; 
+        }
     }
     
     if (!appDelegate.isInternetConnectionAvailable)
