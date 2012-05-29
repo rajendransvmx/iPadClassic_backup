@@ -119,6 +119,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 @implementation iServiceAppDelegate
 
+@synthesize isSpecialSyncDone;
+
 @synthesize reloadTable;
 @synthesize internetConflictExists;
 @synthesize internet_Conflicts;
@@ -361,6 +363,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     
     isIncrementalMetaSyncInProgress = FALSE;
     isMetaSyncExceptionCalled = FALSE;
+    isSpecialSyncDone = FALSE;
     
     [self initWithDBName:DATABASENAME1 type:DATABASETYPE1];
         
@@ -998,6 +1001,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     loginController.didEnterAlertView = FALSE;
     self.isMetaSyncExceptionCalled = FALSE;
     self.isIncrementalMetaSyncInProgress = FALSE;
+    self.isSpecialSyncDone = FALSE;
     [loginController readUsernameAndPasswordFromKeychain];
     if(!appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
     {
