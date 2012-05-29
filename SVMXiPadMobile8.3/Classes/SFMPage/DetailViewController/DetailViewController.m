@@ -4128,9 +4128,10 @@
     }
     if( selectedSection == SHOW_ADDITIONALINFO_ROW )
     {
-        if ( [label.text isEqualToString:@"Product History"] )
+        if ( [label.text isEqualToString:[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_LEFT_PANE_PRODUCTHISTORY]])
             seeMoreButton.tag = 1;
-        else if ( [label.text isEqualToString:@"Account History"])
+        
+        else if ( [label.text isEqualToString:[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_LEFT_PANE_ACCOUNTHISTORY]])
             seeMoreButton.tag = 2;
     }
     
