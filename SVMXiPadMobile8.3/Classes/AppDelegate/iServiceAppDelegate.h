@@ -429,8 +429,14 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     BOOL isIncrementalMetaSyncInProgress;
     BOOL isMetaSyncExceptionCalled;
     
+    //RADHA 
+    BOOL isSpecialSyncDone;
+    
     
 }
+
+@property (nonatomic) BOOL isSpecialSyncDone;
+
 @property (nonatomic , retain)  NSMutableDictionary * afterSavePageEventsBinging;
 @property (nonatomic, retain) NSMutableDictionary * afterSavePageLevelEvents;
 @property (nonatomic) BOOL _pingServer;
