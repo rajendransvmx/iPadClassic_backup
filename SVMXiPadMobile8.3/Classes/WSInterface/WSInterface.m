@@ -362,6 +362,7 @@ last_sync_time:(NSString *)last_sync_time
 {
     if (!appDelegate.isInternetConnectionAvailable)
     {
+        appDelegate.isSpecialSyncDone = TRUE;
         return;
     }
     
@@ -474,6 +475,8 @@ last_sync_time:(NSString *)last_sync_time
         [manualDataSyncUIDelegate refreshdataSyncUI];
         [refreshSyncStatusUIButton showSyncUIStatus];
     }
+    
+    appDelegate.isSpecialSyncDone = TRUE;
     [autoreleasePool release];
 }
 
@@ -766,9 +769,9 @@ last_sync_time:(NSString *)last_sync_time
     }
     if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
     {
-        //appDelegate.SyncStatus = SYNC_GREEN;
-        appDelegate.SyncStatus = SYNC_RED;
-        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+        if (appDelegate.isInternetConnectionAvailable)
+            appDelegate.SyncStatus = SYNC_GREEN;
+
         [refreshSyncButton showSyncStatusButton];
         [refreshModalStatusButton showModalSyncStatus];
         [refreshSyncStatusUIButton showSyncUIStatus];
@@ -811,9 +814,8 @@ last_sync_time:(NSString *)last_sync_time
     }
     if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
     {
-        //appDelegate.SyncStatus = SYNC_GREEN;
-        appDelegate.SyncStatus = SYNC_RED;
-        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+        appDelegate.SyncStatus = SYNC_GREEN;
+        
         [refreshSyncButton showSyncStatusButton];
         [refreshModalStatusButton showModalSyncStatus];
         [refreshSyncStatusUIButton showSyncUIStatus];
@@ -892,9 +894,9 @@ last_sync_time:(NSString *)last_sync_time
     
     if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
     {
-        //appDelegate.SyncStatus = SYNC_GREEN;
-        appDelegate.SyncStatus = SYNC_RED;
-        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+        if (appDelegate.isInternetConnectionAvailable)
+            appDelegate.SyncStatus = SYNC_GREEN;
+        
         [refreshSyncButton showSyncStatusButton];
         [refreshModalStatusButton showModalSyncStatus];
 	[refreshSyncStatusUIButton showSyncUIStatus];
@@ -944,9 +946,9 @@ last_sync_time:(NSString *)last_sync_time
     }
     if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
     {
-        //appDelegate.SyncStatus = SYNC_GREEN;
-        appDelegate.SyncStatus = SYNC_RED;
-        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+        if (appDelegate.isInternetConnectionAvailable)
+            appDelegate.SyncStatus = SYNC_GREEN;
+        
         [refreshSyncButton showSyncStatusButton];
         [refreshModalStatusButton showModalSyncStatus];
 
@@ -987,9 +989,9 @@ last_sync_time:(NSString *)last_sync_time
     }  
     if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
     {
-        //appDelegate.SyncStatus = SYNC_GREEN;
-        appDelegate.SyncStatus = SYNC_RED;
-        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+        if (appDelegate.isInternetConnectionAvailable)
+            appDelegate.SyncStatus = SYNC_GREEN;
+        
         [refreshSyncButton showSyncStatusButton];
         [refreshModalStatusButton showModalSyncStatus];
         
@@ -1032,10 +1034,9 @@ last_sync_time:(NSString *)last_sync_time
     }
     if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
     {
-        //[self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP_SELECT"];
-        //appDelegate.SyncStatus = SYNC_GREEN;
-        appDelegate.SyncStatus = SYNC_RED;
-        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+        if (appDelegate.isInternetConnectionAvailable)
+            appDelegate.SyncStatus = SYNC_GREEN;
+        
         [refreshSyncButton showSyncStatusButton];
         [refreshModalStatusButton showModalSyncStatus];
         
@@ -1110,9 +1111,9 @@ last_sync_time:(NSString *)last_sync_time
     }
     if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
     {
-        //appDelegate.SyncStatus = SYNC_GREEN;
-        appDelegate.SyncStatus = SYNC_RED;
-        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+        if (appDelegate.isInternetConnectionAvailable)
+            appDelegate.SyncStatus = SYNC_GREEN;
+        
         [refreshSyncButton showSyncStatusButton];
         [refreshModalStatusButton showModalSyncStatus];
 	[refreshSyncStatusUIButton showSyncUIStatus];
@@ -1156,9 +1157,9 @@ last_sync_time:(NSString *)last_sync_time
     
     if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
     {
-        //appDelegate.SyncStatus = SYNC_GREEN;
-        appDelegate.SyncStatus = SYNC_RED;
-        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+        if (appDelegate.isInternetConnectionAvailable)
+            appDelegate.SyncStatus = SYNC_GREEN;
+        
         [refreshSyncButton showSyncStatusButton];
         [refreshModalStatusButton showModalSyncStatus];
 	[refreshSyncStatusUIButton showSyncUIStatus];
@@ -1200,10 +1201,9 @@ last_sync_time:(NSString *)last_sync_time
     }
     if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
     {
-        //[self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP_SELECT"];
-        //appDelegate.SyncStatus = SYNC_GREEN;
-        appDelegate.SyncStatus = SYNC_RED;
-        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+        if (appDelegate.isInternetConnectionAvailable)
+            appDelegate.SyncStatus = SYNC_GREEN;
+        
         [refreshSyncButton showSyncStatusButton];
         [refreshModalStatusButton showModalSyncStatus];
     
@@ -1276,9 +1276,9 @@ last_sync_time:(NSString *)last_sync_time
     
     if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
     {
-        //appDelegate.SyncStatus = SYNC_GREEN;
-        appDelegate.SyncStatus = SYNC_RED;
-        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+        if (appDelegate.isInternetConnectionAvailable)
+            appDelegate.SyncStatus = SYNC_GREEN;
+        
         [refreshSyncButton showSyncStatusButton];
         [refreshModalStatusButton showModalSyncStatus];
 	[refreshSyncStatusUIButton showSyncUIStatus];
@@ -4208,6 +4208,8 @@ last_sync_time:(NSString *)last_sync_time
         didOpSFMSearchComplete = TRUE;
         appDelegate.didFinishWithError = TRUE;
         
+        appDelegate.isSpecialSyncDone = TRUE;
+        
     
         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
         {
@@ -4510,7 +4512,7 @@ last_sync_time:(NSString *)last_sync_time
                         [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
                         [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
                         [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-                        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];
+                        [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];
                     
                         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                             [MyPopoverDelegate performSelector:@selector(throwException)];
@@ -4547,7 +4549,7 @@ last_sync_time:(NSString *)last_sync_time
                         [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
                         [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
                         [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-                        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];
+                        [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];
                         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                             [MyPopoverDelegate performSelector:@selector(throwException)];
                         return;
@@ -5035,7 +5037,7 @@ last_sync_time:(NSString *)last_sync_time
                             [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
                             [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
                             [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-                            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];
+                            [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync: @"META SYNC" WithDB:appDelegate.dataBase.tempDb];
                             
                             if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                                 [MyPopoverDelegate performSelector:@selector(throwException)];
@@ -5062,7 +5064,7 @@ last_sync_time:(NSString *)last_sync_time
                         [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
                         [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
                         [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-                        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];
+                        [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync: @"META SYNC" WithDB:appDelegate.dataBase.tempDb];
                         
                         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                             [MyPopoverDelegate performSelector:@selector(throwException)];
@@ -5106,7 +5108,7 @@ last_sync_time:(NSString *)last_sync_time
                             [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
                             [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
                             [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-                            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];
+                           [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync: @"META SYNC" WithDB:appDelegate.dataBase.tempDb];
                             
                             if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                                 [MyPopoverDelegate performSelector:@selector(throwException)];
@@ -5136,7 +5138,7 @@ last_sync_time:(NSString *)last_sync_time
                         [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
                         [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
                         [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-                        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];
+                        [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync: @"META SYNC" WithDB:appDelegate.dataBase.tempDb];
                         
                         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                             [MyPopoverDelegate performSelector:@selector(throwException)];;
@@ -5286,7 +5288,7 @@ last_sync_time:(NSString *)last_sync_time
                             [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
                             [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
                             [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-                            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];
+                           [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync: @"META SYNC" WithDB:appDelegate.dataBase.tempDb];
                             
                             if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                                 [MyPopoverDelegate performSelector:@selector(throwException)];;
@@ -5331,7 +5333,7 @@ last_sync_time:(NSString *)last_sync_time
                             [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
                             [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
                             [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-                            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];
+                            [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync: @"META SYNC" WithDB:appDelegate.dataBase.tempDb];
 
                             if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                                 [MyPopoverDelegate performSelector:@selector(throwException)];
@@ -5400,7 +5402,7 @@ last_sync_time:(NSString *)last_sync_time
                         [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
                         [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
                         [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-                        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];
+                        [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync: @"META SYNC" WithDB:appDelegate.dataBase.tempDb];
                         
                         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                             [MyPopoverDelegate performSelector:@selector(throwException)];
@@ -5581,7 +5583,7 @@ last_sync_time:(NSString *)last_sync_time
                         [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
                         [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
                         [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-                        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];
+                        [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync: @"META SYNC" WithDB:appDelegate.dataBase.tempDb];
                         
                         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                             [MyPopoverDelegate performSelector:@selector(throwException)];
@@ -5607,7 +5609,7 @@ last_sync_time:(NSString *)last_sync_time
                     [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
                     [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
                     [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-                    [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];
+                    [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync: @"META SYNC" WithDB:appDelegate.dataBase.tempDb];
                     
                     if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                         [MyPopoverDelegate performSelector:@selector(throwException)];
@@ -5650,7 +5652,7 @@ last_sync_time:(NSString *)last_sync_time
                         [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
                         [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
                         [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-                        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];
+                        [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync: @"META SYNC" WithDB:appDelegate.dataBase.tempDb];
                         
                         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                             [MyPopoverDelegate performSelector:@selector(throwException)];
@@ -5676,7 +5678,7 @@ last_sync_time:(NSString *)last_sync_time
                     [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
                     [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
                     [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-                    [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];
+                    [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync: @"META SYNC" WithDB:appDelegate.dataBase.tempDb];
                     
                     if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                         [MyPopoverDelegate performSelector:@selector(throwException)];;
@@ -5709,7 +5711,7 @@ last_sync_time:(NSString *)last_sync_time
                     [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
                     [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
                     [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-                    [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];
+                   [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync: @"META SYNC" WithDB:appDelegate.dataBase.tempDb];
                     
                     if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                         [MyPopoverDelegate performSelector:@selector(throwException)];
@@ -5930,7 +5932,7 @@ last_sync_time:(NSString *)last_sync_time
                     [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
                     [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
                     [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-                    [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];
+                    [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync: @"META SYNC" WithDB:appDelegate.dataBase.tempDb];
                     
                     if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                         [MyPopoverDelegate performSelector:@selector(throwException)];;
@@ -6018,7 +6020,7 @@ last_sync_time:(NSString *)last_sync_time
                     [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
                     [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
                     [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-                    [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];
+                    [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];
                     
                     if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                         [MyPopoverDelegate performSelector:@selector(throwException)];
