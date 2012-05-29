@@ -33,6 +33,8 @@
 #define LAST_INITIAL_SYNC_IME                            @"last_initial_sync_time"
 #define REQUEST_ID                                       @"request_id"
 
+#define LAST_INITIAL_META_SYNC_TIME                      @"last_initial_meta_sync"
+
 // INSERT
 #define LAST_INSERT_REQUEST_TIME                        @"last_insert_request_time"
 #define LAST_INSERT_RESONSE_TIME                        @"last_insert_response_time"
