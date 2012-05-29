@@ -111,68 +111,144 @@
 
 - (void) Syncronise
 {
-    
     [delegate dismisspopover];
     appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+    
+    [delegate activityStart];
     if(appDelegate.SyncStatus != SYNC_RED)
-    {
-        [detail.activity stopAnimating];
-        return;
-    
-    }
-    
-    [appDelegate.calDataBase selectUndoneRecords];
-    
-    if([appDelegate.syncThread isExecuting])
-    {
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+    {        
+        if([appDelegate.syncThread isExecuting])
         {
-            if ([appDelegate.syncThread isFinished])
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            {
+                if ([appDelegate.syncThread isFinished])
+                {
+                    [appDelegate.datasync_timer invalidate];
+                    break;
+                }
+                if (!appDelegate.isInternetConnectionAvailable)
+                    break;
+            }
+        }
+        else
+        {
+            if (appDelegate.datasync_timer)
             {
                 [appDelegate.datasync_timer invalidate];
-                break;
             }
-            if (!appDelegate.isInternetConnectionAvailable)
-                break;
-        }
-    }
-    else
-    {
-        if (appDelegate.datasync_timer)
+            
+        }    
+        
+        if ([appDelegate.metaSyncThread isExecuting])
         {
-           [appDelegate.datasync_timer invalidate];
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            {
+                if (!appDelegate.isInternetConnectionAvailable)
+                {
+                    break;
+                }
+                if ([appDelegate.metaSyncThread isFinished])
+                {
+                    [appDelegate.metasync_timer invalidate];
+                    break;
+                }
+            }
+        }
+        else
+        {
+            if (appDelegate.metasync_timer)		
+            {
+                [appDelegate.metasync_timer invalidate];
+            }            
+        }       
+
+        
+        if (!appDelegate.isInternetConnectionAvailable)
+        {
+            appDelegate.SyncStatus = SYNC_RED;
+            [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+            [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+            [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"Data Sync"];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflictsForMetaSyncWithDB:appDelegate.dataBase.tempDb];
+            [appDelegate.reloadTable ReloadSyncTable];
+            return;
         }
         
-    }    
+        [appDelegate callDataSync];
+        
+    }
     
-    if ([appDelegate.metaSyncThread isExecuting])
-    {
+    else 
+    {        
+        [appDelegate.calDataBase selectUndoneRecords];
+        
+        if([appDelegate.syncThread isExecuting])
+        {
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            {
+                if ([appDelegate.syncThread isFinished])
+                {
+                    [appDelegate.datasync_timer invalidate];
+                    break;
+                }
+                if (!appDelegate.isInternetConnectionAvailable)
+                    break;
+            }
+        }
+        else
+        {
+            if (appDelegate.datasync_timer)
+            {
+               [appDelegate.datasync_timer invalidate];
+            }
+            
+        }    
+        
+        if ([appDelegate.metaSyncThread isExecuting])
+        {
+            
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            {
+                if (!appDelegate.isInternetConnectionAvailable)
+                {
+                    break;
+                }
+                
+                if ([appDelegate.metaSyncThread isFinished])
+                {
+                    [appDelegate.metasync_timer invalidate];
+                    break;
+                }
+            }
+        }
+        else
+        {
+            if (appDelegate.metasync_timer)		
+            {
+                [appDelegate.metasync_timer invalidate];
+            }            
+        }       
+        appDelegate.isSpecialSyncDone = FALSE;
+        [appDelegate callSpecialIncrementalSync];
         
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
         {
-            if (!appDelegate.isInternetConnectionAvailable)
-            {
+            if(appDelegate.isSpecialSyncDone)
                 break;
-            }
             
-            if ([appDelegate.metaSyncThread isFinished])
-            {
-                [appDelegate.metasync_timer invalidate];
+            if (!appDelegate.isInternetConnectionAvailable)
                 break;
-            }
+        }
+
+        
+        
+        if (appDelegate.SyncStatus != SYNC_RED)
+        {
+            [appDelegate callDataSync];
         }
     }
-    else
-    {
-        if (appDelegate.metasync_timer)		
-        {
-            [appDelegate.metasync_timer invalidate];
-        }            
-    }   
-
-    
-    [appDelegate callSpecialIncrementalSync];
-    
+    [delegate activityStop];
     [appDelegate ScheduleIncrementalMetaSyncTimer];
     [appDelegate ScheduleIncrementalDatasyncTimer];
 }
@@ -571,6 +647,13 @@
         {
             [appDelegate.view_layout_array removeAllObjects];
             appDelegate.view_layout_array = [appDelegate.databaseInterface getAllTheProcesses:@"VIEWRECORD"]; 
+        }
+        
+        if ([appDelegate.wsInterface.tagsDictionary count] > 0)
+        {
+            [appDelegate.wsInterface.tagsDictionary removeAllObjects];
+            NSMutableDictionary * dict = [appDelegate.dataBase getTagsDictionary];
+            appDelegate.wsInterface.tagsDictionary = [appDelegate.wsInterface fillEmptyTags:dict];
         }
         
         appDelegate.dataBase.MyPopoverDelegate = nil;
