@@ -224,5 +224,6 @@
 
 //RADHA only event sync
 - (BOOL) startEventSync;
+- (void) scheduleEventSync;
 
 @end
