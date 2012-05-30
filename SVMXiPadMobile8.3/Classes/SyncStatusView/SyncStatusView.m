@@ -168,7 +168,7 @@
     [formatter2 setDateFormat:@"EEE, dd MMM yyyy HH:mm:ss a"];
     
     
-    NSString * timerValue = ([appDelegate.settingsDict objectForKey:@"Dataset Synchronization"]) != nil?[appDelegate.settingsDict objectForKey:@"Dataset Synchronization"]:@"";
+    NSString * timerValue = ([appDelegate.settingsDict objectForKey:@"Frequency of Master Data"]) != nil?[appDelegate.settingsDict objectForKey:@"Frequency of Master Data"]:@"";
     
     NSTimeInterval scheduledTimer = 0;
     
