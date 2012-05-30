@@ -63,4 +63,7 @@
 - (void) synchronizeEvents;
 - (void) schdulesynchronizeConfiguration;
 
+
+- (void) startSyncEvents;
+
 @end
