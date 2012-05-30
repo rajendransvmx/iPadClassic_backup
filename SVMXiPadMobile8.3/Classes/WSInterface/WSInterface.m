@@ -433,7 +433,7 @@ last_sync_time:(NSString *)last_sync_time
         appDelegate.SyncStatus = SYNC_RED ;
         
         
-        NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_failed_try_again];
+       /* NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_failed_try_again];
         NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button1];
         NSString * cancel = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
 
@@ -441,7 +441,7 @@ last_sync_time:(NSString *)last_sync_time
         
         UIAlertView *av = [[UIAlertView alloc]initWithTitle:title message:message delegate:self cancelButtonTitle:cancel otherButtonTitles: nil];
         [av show];
-        [av release];
+        [av release]; */
         
         [updateSyncStatus refreshSyncStatus];
         [refreshSyncButton showSyncStatusButton];
@@ -3970,6 +3970,9 @@ last_sync_time:(NSString *)last_sync_time
         {
             appDelegate.afterSavePageEventsBinging = [[NSMutableDictionary alloc] initWithCapacity:0];
         }
+        if (appDelegate.sfmPageController.recordId == nil)
+            appDelegate.sfmPageController.recordId = @"";
+        
         [appDelegate.afterSavePageLevelEvents setObject:getThoonsEvent forKey:appDelegate.sfmPageController.recordId];
         
         [appDelegate.afterSavePageEventsBinging setObject:binding forKey:appDelegate.sfmPageController.recordId];
