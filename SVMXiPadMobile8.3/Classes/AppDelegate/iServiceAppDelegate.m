@@ -308,6 +308,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize internetReach;
 @synthesize onlineDataArray;
 
+@synthesize event_timer;
+@synthesize event_thread;
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.isBackground = FALSE;
@@ -1051,7 +1054,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 }
 -(void)ScheduleIncrementalDatasyncTimer
 {
-    NSString * timerValue = ([self.settingsDict objectForKey:@"Dataset Synchronization"] != nil)?[self.settingsDict objectForKey:@"Dataset Synchronization"]:@"";
+    NSString * timerValue = ([self.settingsDict objectForKey:@"Frequency of Master Data"] != nil)?[self.settingsDict objectForKey:@"Frequency of Master Data"]:@"";
     
     NSTimeInterval scheduledTimer = 0;
     
@@ -1428,6 +1431,56 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 
 #pragma mark - End
+
+
+#pragma mark - EventSync
+- (void) ScheduleTimerForEventSync
+{
+    
+    NSString * timerInterval = ([self.settingsDict objectForKey:@"Dataset Synchronization"] != nil)?[self.settingsDict objectForKey:@"Dataset Synchronization"]:@"";
+    
+    NSTimeInterval  eventTimeInterval = 0;
+    
+    if (![timerInterval isEqualToString:@""])
+    {
+        double value = [timerInterval doubleValue];
+        
+        eventTimeInterval = value * 60;
+    }
+    
+    event_timer = [NSTimer scheduledTimerWithTimeInterval:eventTimeInterval 
+                                                   target:self 
+                                                 selector:@selector(eventSyncTimer) 
+                                                 userInfo:nil 
+                                                  repeats:YES];
+}
+
+- (void) eventSyncTimer
+{
+    [self performSelectorOnMainThread:@selector(callEventSyncTimer) withObject:nil waitUntilDone:NO];
+}
+
+- (void) callEventSyncTimer
+{
+    if (event_thread != nil)
+    {
+        if ([event_thread isExecuting])
+        {
+            NSLog(@"Executing");
+            
+        }
+        else 
+        {
+            NSLog(@"finished");
+            return;
+        }
+    }
+    
+    [event_thread release];
+    event_thread = [[NSThread alloc] initWithTarget:self.dataBase selector:@selector(scheduleEventSync) object:nil];
+    [event_thread start];
+    
+}
 
 
 @end
