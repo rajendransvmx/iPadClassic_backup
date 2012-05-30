@@ -4745,20 +4745,25 @@
 
 #pragma mark - END
 
-
+#pragma mark - Incremental Meta And Event
 - (void) callIncrementalMetasync
 {
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-    
     if (metaSyncPopover == nil)
         metaSyncPopover = [[PopoverButtons alloc] init];
     
     [metaSyncPopover schdulesynchronizeConfiguration];
     
-    [pool release];
-
 }
 
+- (void) scheduleEventSync
+{
+    if (metaSyncPopover == nil)
+        metaSyncPopover = [[PopoverButtons alloc] init];
+    
+    [metaSyncPopover startSyncEvents];
+    
+}
+#pragma mark - END
 
 - (void) clearTempDatabase
 {
