@@ -266,12 +266,8 @@
         
         if (!appDelegate.isInternetConnectionAvailable)
         {
-            
             return;
         }
-        
-        if (appDelegate.SyncStatus == SYNC_RED)
-            return;
         
         appDelegate.dataBase.MyPopoverDelegate = delegate;
         appDelegate.databaseInterface.MyPopoverDelegate = delegate;
@@ -450,123 +446,8 @@
 
 - (void) synchronizeEvents
 {
-    fullDataSyncFailed = FALSE;
-    @try {
-        
-        [delegate dismisspopover];
-        if (appDelegate.SyncStatus == SYNC_RED)
-            return;
-        BOOL retVal;
-        
-        appDelegate.dataBase.MyPopoverDelegate = delegate;
-        appDelegate.databaseInterface.MyPopoverDelegate = delegate;
-        appDelegate.wsInterface.MyPopoverDelegate = delegate;
-        
-        [delegate activityStart];
-        if([appDelegate.syncThread isExecuting])
-        {
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
-            {
-                if (!appDelegate.isInternetConnectionAvailable)
-                {
-                    break;
-                }
-                
-                if ([appDelegate.syncThread isFinished])
-                {
-                    [appDelegate.datasync_timer invalidate];
-                    break;
-                }
-            }
-        }
-        else{
-            if (appDelegate.datasync_timer){
-                [appDelegate.datasync_timer invalidate];
-            }            
-        } 
-        
-        
-        if ([appDelegate.metaSyncThread isExecuting])
-        {
-            
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
-            {
-                if (!appDelegate.isInternetConnectionAvailable)
-                {
-                    break;
-                }
-                
-                if ([appDelegate.metaSyncThread isFinished])
-                {
-                    [appDelegate.metasync_timer invalidate];
-                    break;
-                }
-            }
-        }
-        else
-        {
-            if (appDelegate.metasync_timer)
-            {
-                [appDelegate.metasync_timer invalidate];
-            }            
-        }   
-
-        
-        [appDelegate goOnlineIfRequired];
-        
-        [appDelegate.databaseInterface cleartable:SYNC_RECORD_HEAP];
-        
-         retVal = [appDelegate.dataBase startEventSync];
-        
-        [delegate activityStop];
-        
-    }
-    @catch (NSException *exception) { 
-        
-        exception = [NSException exceptionWithName:@"Error" reason:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_failed_try_again] userInfo: nil];
-        fullDataSyncFailed = TRUE;
-        appDelegate.dataBase.MyPopoverDelegate = nil;
-        appDelegate.databaseInterface.MyPopoverDelegate = nil;
-        appDelegate.wsInterface.MyPopoverDelegate = nil;
-       
-        
-        NSString * title  = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button1];
-        NSString * cancel = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
-        
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:[NSString stringWithFormat:@"%@", exception.description] delegate:self cancelButtonTitle:cancel otherButtonTitles: nil];
-        
-        [alert show];
-        [alert release];
-    }
-    @finally {
-        
-        [appDelegate ScheduleIncrementalDatasyncTimer];
-        [appDelegate ScheduleIncrementalMetaSyncTimer];
-               
-        appDelegate.dataBase.MyPopoverDelegate = nil;
-        appDelegate.databaseInterface.MyPopoverDelegate = nil;
-        appDelegate.wsInterface.MyPopoverDelegate = nil;
-        
-        [delegate activityStop];
-
-    }
-    if (fullDataSyncFailed == FALSE)
-    {
-        NSString * title  = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button1];
-        NSString * cancel = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
-        
-        UIAlertView *alert =  [[UIAlertView alloc] initWithTitle:title message:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_completed] delegate:self cancelButtonTitle:cancel otherButtonTitles: nil];
-        
-        [alert show];
-        [alert release];
-    }
-    
-    [delegate activityStop];
+    [self startSyncEvents];
 }
-
-
-
-
 
 - (void) schdulesynchronizeConfiguration
 {
@@ -662,6 +543,158 @@
     }
     
     [pool release];
+}
+
+
+
+- (void) startSyncEvents
+{
+    NSAutoreleasePool * popl = [[NSAutoreleasePool alloc] init];
+    
+    if (appDelegate == nil)
+        appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+    
+    fullDataSyncFailed = FALSE;
+    @try {
+        
+        [delegate dismisspopover];
+       
+        BOOL retVal;
+        
+        appDelegate.dataBase.MyPopoverDelegate = delegate;
+        appDelegate.databaseInterface.MyPopoverDelegate = delegate;
+        appDelegate.wsInterface.MyPopoverDelegate = delegate;
+        
+        [delegate activityStart];
+        if([appDelegate.syncThread isExecuting])
+        {
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            {
+                if (!appDelegate.isInternetConnectionAvailable)
+                {
+                    break;
+                }
+                
+                if ([appDelegate.syncThread isFinished])
+                {
+                    [appDelegate.datasync_timer invalidate];
+                    break;
+                }
+            }
+        }
+        else{
+            if (appDelegate.datasync_timer){
+                [appDelegate.datasync_timer invalidate];
+            }            
+        } 
+        
+        
+        if ([appDelegate.metaSyncThread isExecuting])
+        {
+            
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            {
+                if (!appDelegate.isInternetConnectionAvailable)
+                {
+                    break;
+                }
+                
+                if ([appDelegate.metaSyncThread isFinished])
+                {
+                    [appDelegate.metasync_timer invalidate];
+                    break;
+                }
+            }
+        }
+        else
+        {
+            if (appDelegate.metasync_timer)
+            {
+                [appDelegate.metasync_timer invalidate];
+            }            
+        }   
+        appDelegate.SyncStatus = SYNC_ORANGE;
+        
+        [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+        [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+        [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+        
+        [appDelegate goOnlineIfRequired];
+        
+        [appDelegate.databaseInterface cleartable:SYNC_RECORD_HEAP];
+        
+        retVal = [appDelegate.dataBase startEventSync];
+        
+        
+    }
+    @catch (NSException *exception) { 
+        
+        exception = [NSException exceptionWithName:@"Error" reason:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_failed_try_again] userInfo: nil];
+        fullDataSyncFailed = TRUE;
+        appDelegate.dataBase.MyPopoverDelegate = nil;
+        appDelegate.databaseInterface.MyPopoverDelegate = nil;
+        appDelegate.wsInterface.MyPopoverDelegate = nil;
+        
+        
+        if ([appDelegate.event_thread isExecuting])
+        {
+            
+        }
+        else 
+        {
+            NSString * title  = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button1];
+            NSString * cancel = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+            
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:[NSString stringWithFormat:@"%@", exception.description] delegate:self cancelButtonTitle:cancel otherButtonTitles: nil];
+            
+            [alert show];
+            [alert release];
+        }
+        appDelegate.SyncStatus = SYNC_GREEN;
+        
+        [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+        [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+        [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+    }
+    @finally {
+        
+        [appDelegate ScheduleIncrementalDatasyncTimer];
+        [appDelegate ScheduleIncrementalMetaSyncTimer];
+        
+        appDelegate.dataBase.MyPopoverDelegate = nil;
+        appDelegate.databaseInterface.MyPopoverDelegate = nil;
+        appDelegate.wsInterface.MyPopoverDelegate = nil;
+        
+        [delegate activityStop];
+        
+    }
+    if (fullDataSyncFailed == FALSE)
+    {
+        if ([appDelegate.event_thread isExecuting])
+        {
+            
+        }
+        else
+        {
+        
+            NSString * title  = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button1];
+            NSString * cancel = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+            
+            UIAlertView *alert =  [[UIAlertView alloc] initWithTitle:title message:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_completed] delegate:self cancelButtonTitle:cancel otherButtonTitles: nil];
+            
+            [alert show];
+            [alert release];
+        }
+        appDelegate.SyncStatus = SYNC_GREEN;
+        
+        [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+        [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+        [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+    }
+    
+    [delegate activityStop];
+    
+    [popl release];
 }
 
 @end
