@@ -168,14 +168,77 @@
     [dateFormatter release];
 
     NSString * string = [NSString stringWithFormat:@"%@ %@ ", objName, stringFromDate];
-    
+    string=[self getWrappedStringFromString:string];
+        
     NSMutableString * markerString = [[[NSMutableString alloc] initWithCapacity:0] autorelease];
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < 10; i++)
     {
         [markerString appendString:string];
+        [markerString appendString:@"\n"];
     }
     watermark.text = markerString;
     // ################################ //
+}
+- (NSString *) getWrappedStringFromString:(NSString *)data
+
+{
+    //NSString *data = [userData text];
+    if([data length] == 0)        
+        return nil;
+    //669
+    CGSize oldSize = [data sizeWithFont:[UIFont boldSystemFontOfSize:31]
+                      
+                      constrainedToSize:CGSizeMake(MAX_WIDTH, MAX_HEIGHT)
+                      
+                          lineBreakMode:UILineBreakModeWordWrap];
+    
+    
+    NSString *newData = [data substringToIndex:0];
+    
+    CGSize newSize;
+    
+    int position = 0;
+    
+    while ((MAX_WIDTH-10)> newSize.width) 
+        
+    {
+        
+        NSRange range;
+        
+        range.length = 1;
+        
+        range.location = position;
+        
+        oldSize = [newData sizeWithFont:[UIFont boldSystemFontOfSize:31]
+                   
+                   constrainedToSize:CGSizeMake(MAX_WIDTH, MAX_HEIGHT)
+                   
+                       lineBreakMode:UILineBreakModeWordWrap];
+        NSLog(@"Range Position = %d Data Length = %d",range.location,[data length]);
+        if(range.location >= [data length])
+        {
+            range.location = 0;
+            position = 0;
+        }
+        newData = [newData stringByAppendingFormat:@"%@",[data substringWithRange:range]];
+        newSize = [newData sizeWithFont:[UIFont boldSystemFontOfSize:31]
+                   
+                   constrainedToSize:CGSizeMake(MAX_WIDTH, MAX_HEIGHT)
+                   
+                       lineBreakMode:UILineBreakModeWordWrap];
+        position++;
+        if(oldSize.width >= newSize.width)
+        {
+            break;
+        }
+        
+    }
+    NSLog(@"I am here");
+    newData = [newData substringToIndex:[newData length]-1];
+    newData = [newData stringByAppendingString:@" "];
+    
+    return newData;
+    
 }
 
 - (void) SetImage

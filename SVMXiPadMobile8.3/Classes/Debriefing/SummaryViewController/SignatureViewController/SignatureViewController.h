@@ -13,6 +13,8 @@
 @protocol SignatureDelegate;
 
 #define TIMEFORMAT          @"EEE,dd MMM yyyy hh:mm:ss a"
+#define MAX_WIDTH           669
+#define MAX_HEIGHT          378
 
 @interface SignatureViewController : UIViewController
 {
@@ -43,7 +45,7 @@
 - (IBAction) Erase;
 - (void) SetImage;
 - (NSString *) getRandomString;
-
+- (NSString *) getWrappedStringFromString:(NSString *)data;
 
 @end
 
