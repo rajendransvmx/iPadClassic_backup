@@ -432,6 +432,10 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     //RADHA 
     BOOL isSpecialSyncDone;
     
+    //RADHA - EventSync
+    NSTimer * event_timer;
+    NSThread * event_thread;
+    
     
 }
 
@@ -652,6 +656,11 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 //Shrinivas
 @property (nonatomic, retain) ManualDataSync * _manualDataSync;   //btn merge
 
+//RADHA
+@property (nonatomic, retain) NSTimer * event_timer;
+@property (nonatomic, retain) NSThread * event_thread;
+
+
 
 // get GUID 
 + (NSString *)GetUUID;
@@ -701,6 +710,11 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 
 //Radha - 21 March
 //- (void) throwException;
+
+//RADHA - Sync events, task and related data
+- (void) ScheduleTimerForEventSync;
+- (void) eventSyncTimer;
+- (void) callEventSyncTimer;
 
 @end
 
