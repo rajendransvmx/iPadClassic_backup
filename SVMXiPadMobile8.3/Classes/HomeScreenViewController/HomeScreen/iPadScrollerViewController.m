@@ -719,6 +719,8 @@ const NSUInteger kNumImages = 7;
         
         [appDelegate ScheduleIncrementalMetaSyncTimer];
         
+        [appDelegate ScheduleTimerForEventSync];
+        
        /* if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
         {
             if(appDelegate.do_meta_data_sync == ALLOW_META_AND_DATA_SYNC)
