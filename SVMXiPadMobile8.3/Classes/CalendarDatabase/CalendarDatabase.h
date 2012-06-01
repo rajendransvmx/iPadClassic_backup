@@ -161,6 +161,11 @@
 - (void) removeInternetConflicts;
 
 
+//Shrinivas --- Status for Meta Sync
+-(void) insertMetaSyncStatus:(NSString *)status WithDB:(sqlite3 *)db;
+-(NSString *) retrieveMetaSyncStatus;
+
+
 #define DATABASENAME   @"sfm"
 #define DATABASETYPE   @"sqlite"
 //Abinash
