@@ -19,6 +19,7 @@
 @synthesize objectDetailsArray;
 @synthesize delegate;
 @synthesize popover;
+@synthesize refreshMetaSyncDelegate;
 
 
 - (void)loadView
@@ -269,7 +270,11 @@
             return;
         }
         
-        appDelegate.dataBase.MyPopoverDelegate = delegate;
+        
+
+
+ [appDelegate.calDataBase insertMetaSyncStatus:@"Green" WithDB:appDelegate.db];
+appDelegate.dataBase.MyPopoverDelegate = delegate;
         appDelegate.databaseInterface.MyPopoverDelegate = delegate;
         appDelegate.wsInterface.MyPopoverDelegate = delegate;
         
@@ -279,6 +284,7 @@
         
         appDelegate.SyncStatus = SYNC_ORANGE;
         
+        [refreshMetaSyncDelegate refreshMetaSyncStatus];
         [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
         [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
         [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
@@ -335,6 +341,8 @@
         {
             appDelegate.SyncStatus = SYNC_RED;
             
+        
+            [refreshMetaSyncDelegate refreshMetaSyncStatus];
             [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
             [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
             [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
@@ -361,12 +369,15 @@
         {
             appDelegate.SyncStatus = SYNC_RED;
             
+            
+            [refreshMetaSyncDelegate refreshMetaSyncStatus];
             [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
             [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
             [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-            //[appDelegate.reloadTable ReloadSyncTable];
+            
             [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];     
             appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflictsForMetaSyncWithDB:appDelegate.dataBase.tempDb];
+            
             [appDelegate.reloadTable ReloadSyncTable];
         }
 
@@ -381,15 +392,35 @@
         appDelegate.wsInterface.MyPopoverDelegate = nil;
         
         [appDelegate.dataBase copyTempsqlToSfm];
+
+  [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];
+        
+        appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflictsForMetaSyncWithDB:appDelegate.dataBase.tempDb];
+        [appDelegate.reloadTable ReloadSyncTable];
     
         [delegate enableControls];
-        NSString * title  = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button1];
-       NSString * cancel = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
-
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:[NSString stringWithFormat:@"%@",exception.description] delegate:self cancelButtonTitle:cancel otherButtonTitles: nil];
-        [alert show];
-        [alert release];
         
+        if (!appDelegate.isInternetConnectionAvailable)
+        {
+            
+        }
+        else
+        {
+            NSString * title  = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button1];
+           NSString * cancel = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_meta_sync_failed] delegate:self cancelButtonTitle:cancel otherButtonTitles: nil];
+            [alert show];
+            [alert release];
+            
+
+        }
+        
+        appDelegate.SyncStatus = SYNC_GREEN;
+        
+        [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+        [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+        [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
     }
     @finally {
         [appDelegate ScheduleIncrementalDatasyncTimer];
@@ -430,6 +461,8 @@
         
         appDelegate.SyncStatus = SYNC_GREEN;
         
+        [appDelegate.calDataBase insertMetaSyncStatus:@"Green" WithDB:appDelegate.db];
+        [refreshMetaSyncDelegate refreshMetaSyncStatus];
         [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
         [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
         [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
