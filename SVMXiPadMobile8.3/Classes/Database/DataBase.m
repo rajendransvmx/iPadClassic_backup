@@ -3020,6 +3020,19 @@
                 
                 NSDictionary * source_dict = [mappingArray objectAtIndex:0];
                 NSDictionary * target_dict = [mappingArray objectAtIndex:1];
+                if ([[[mappingArray objectAtIndex:0]objectForKey:@"component_type"] isEqualToString:@"SOURCE"])
+                {
+                    source_dict = [mappingArray objectAtIndex:0];
+                    target_dict = [mappingArray objectAtIndex:1];
+                    
+                }
+                else
+                {
+                    source_dict = [mappingArray objectAtIndex:1];
+                    target_dict = [mappingArray objectAtIndex:0];
+                }
+
+                
                 
                 
                 objects = [NSArray arrayWithObjects:
@@ -3256,6 +3269,9 @@
     [self createTable:query];
     
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS internet_conflicts ('sync_type' VARCHAR, 'error_message' VARCHAR, 'operation_type' VARCHAR, 'error_type' VARCHAR)"];
+    [self createTable:query];
+    
+    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS meta_sync_status ('sync_status' VARCHAR)"];
     [self createTable:query];
 }
 
@@ -4125,7 +4141,10 @@
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS internet_conflicts ('sync_type' VARCHAR, 'error_message' VARCHAR, 'operation_type' VARCHAR, 'error_type' VARCHAR)"];
     [self createTemporaryTable:query];
     
-    NSArray * tempTableArray = [NSArray arrayWithObjects:@"ChatterPostDetails",@"Document",@"ProductImage",@"SFSignatureData",@"UserImages",@"trobleshootdata",@"SFDataTrailer",@"SFDataTrailer_Temp",@"SYNC_HISTORY",@"sync_Records_Heap",@"LookUpFieldValue",@"Summary_PDF",@"sync_error_conflict", @"contact_images",@"internet_conflict", nil];
+    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS meta_sync_status ('sync_status' VARCHAR)"];  
+    [self createTemporaryTable:query];
+    
+    NSArray * tempTableArray = [NSArray arrayWithObjects:@"ChatterPostDetails",@"Document",@"ProductImage",@"SFSignatureData",@"UserImages",@"trobleshootdata",@"SFDataTrailer",@"SFDataTrailer_Temp",@"SYNC_HISTORY",@"sync_Records_Heap",@"LookUpFieldValue",@"Summary_PDF",@"sync_error_conflict", @"contact_images",@"internet_conflict", @"meta_sync_status", nil];
     
     return tempTableArray;
 }
