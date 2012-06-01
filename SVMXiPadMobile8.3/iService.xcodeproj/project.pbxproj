@@ -824,6 +824,7 @@
 		A8FBA669155A503600F52346 /* SFMResultMainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8FBA656155A503600F52346 /* SFMResultMainViewController.xib */; };
 		A8FBA66A155A503600F52346 /* SFMResultMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8FBA658155A503600F52346 /* SFMResultMasterViewController.m */; };
 		A8FBA66B155A503600F52346 /* SFMResultMasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8FBA659155A503600F52346 /* SFMResultMasterViewController.xib */; };
+		BA9A95591578F3B0008A0475 /* blue button.png in Resources */ = {isa = PBXBuildFile; fileRef = BA9A95581578F3B0008A0475 /* blue button.png */; };
 		FA0722D914DFBA79008CAFB3 /* GTMStringEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = FA0722D814DFBA79008CAFB3 /* GTMStringEncoding.m */; };
 		FA0F7B8414F58C1400052BD6 /* ___INTF_WebServicesDefServiceSvc___m___l7j8pj in Resources */ = {isa = PBXBuildFile; fileRef = FA0F7B7014F58C1400052BD6 /* ___INTF_WebServicesDefServiceSvc___m___l7j8pj */; };
 		FA0F7B8514F58C1400052BD6 /* ___INTF_WebServicesDefServiceSvc___m___Riwcoq in Resources */ = {isa = PBXBuildFile; fileRef = FA0F7B7114F58C1400052BD6 /* ___INTF_WebServicesDefServiceSvc___m___Riwcoq */; };
@@ -2019,6 +2020,7 @@
 		A8FBA657155A503600F52346 /* SFMResultMasterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFMResultMasterViewController.h; sourceTree = "<group>"; };
 		A8FBA658155A503600F52346 /* SFMResultMasterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFMResultMasterViewController.m; sourceTree = "<group>"; };
 		A8FBA659155A503600F52346 /* SFMResultMasterViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SFMResultMasterViewController.xib; sourceTree = "<group>"; };
+		BA9A95581578F3B0008A0475 /* blue button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blue button.png"; sourceTree = "<group>"; };
 		FA0722D614DFBA79008CAFB3 /* GTMDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMDefines.h; sourceTree = "<group>"; };
 		FA0722D714DFBA79008CAFB3 /* GTMStringEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMStringEncoding.h; sourceTree = "<group>"; };
 		FA0722D814DFBA79008CAFB3 /* GTMStringEncoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMStringEncoding.m; sourceTree = "<group>"; };
@@ -5190,6 +5192,7 @@
 		FA9F86DF151A6A160013F4BE /* SyncStatusImages */ = {
 			isa = PBXGroup;
 			children = (
+				BA9A95581578F3B0008A0475 /* blue button.png */,
 				FA9F86E0151A6A160013F4BE /* animation1.gif */,
 				FA9F86E1151A6A160013F4BE /* animation2.gif */,
 				FA9F86E2151A6A160013F4BE /* animation3.gif */,
@@ -6241,6 +6244,7 @@
 				A8A8EECA155CB9AD00F43F67 /* OnlineRecord.png in Resources */,
 				A8A8EECD155CB9E100F43F67 /* SFM-Screen-Disclosure-Button-Gray.png in Resources */,
 				A8A8EED3155CC13600F43F67 /* 8.png in Resources */,
+				BA9A95591578F3B0008A0475 /* blue button.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
