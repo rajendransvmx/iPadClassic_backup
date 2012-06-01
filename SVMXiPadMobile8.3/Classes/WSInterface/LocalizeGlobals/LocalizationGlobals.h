@@ -288,6 +288,7 @@
 #define sfm_swich_process                   @"IPAD014_TAG027"
 #define sfm_sync_error                      @"IPAD014_TAG028"
 #define sfm_sfw_header                      @"IPAD014_TAG029"
+#define sync_meta_sync_failed               @"IPAD014_TAG030"
 
 #define login_switch_user                   @"IPAD015_TAG005"
 #define login_connection_error              @"IPAD015_TAG006"
