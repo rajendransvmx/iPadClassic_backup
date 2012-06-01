@@ -576,7 +576,7 @@ last_sync_time:(NSString *)last_sync_time
     
 
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-  //  binding.logXMLInOut = YES;
+    binding.logXMLInOut = YES;
      
     INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init]   autorelease];
     
@@ -748,6 +748,9 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
+            [self.refreshSyncStatusUIButton showSyncUIStatus];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
             return;
         }
         
@@ -758,6 +761,9 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
+            [self.refreshSyncStatusUIButton showSyncUIStatus];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
             
             break;
         }
@@ -792,6 +798,9 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
+            [self.refreshSyncStatusUIButton showSyncUIStatus];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
             return;
         }
 
@@ -802,6 +811,9 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
+            [self.refreshSyncStatusUIButton showSyncUIStatus];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
             
             if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                 [MyPopoverDelegate performSelector:@selector(throwException)];
@@ -834,6 +846,10 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
+            [self.refreshSyncStatusUIButton showSyncUIStatus];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
+            
             return;
         }
         
@@ -844,6 +860,9 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
+            [self.refreshSyncStatusUIButton showSyncUIStatus];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
             
             break;
         }
@@ -870,6 +889,10 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
+            [self.refreshSyncStatusUIButton showSyncUIStatus];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
+            
             return;
         }
 
@@ -880,6 +903,9 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
+            [self.refreshSyncStatusUIButton showSyncUIStatus];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
         
            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                [MyPopoverDelegate performSelector:@selector(throwException)];
@@ -925,6 +951,9 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
+            [self.refreshSyncStatusUIButton showSyncUIStatus];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
             return;
         }
         
@@ -935,6 +964,9 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
+            [self.refreshSyncStatusUIButton showSyncUIStatus];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
             
             break;
         }
@@ -969,6 +1001,9 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
+            [self.refreshSyncStatusUIButton showSyncUIStatus];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
             return;
         }
         if (!appDelegate.isInternetConnectionAvailable)
@@ -978,6 +1013,9 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
+            [self.refreshSyncStatusUIButton showSyncUIStatus];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
             
             break;
         }
@@ -1012,6 +1050,9 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
+            [self.refreshSyncStatusUIButton showSyncUIStatus];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
             return;
         }
 
@@ -1022,6 +1063,9 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
+            [self.refreshSyncStatusUIButton showSyncUIStatus];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
             
             if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                 [MyPopoverDelegate performSelector:@selector(throwException)];
@@ -1056,6 +1100,9 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
+            [self.refreshSyncStatusUIButton showSyncUIStatus];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
             return;
         }
 
@@ -1066,6 +1113,9 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
+            [self.refreshSyncStatusUIButton showSyncUIStatus];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
         }
         
         if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
@@ -1089,6 +1139,9 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
+            [self.refreshSyncStatusUIButton showSyncUIStatus];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
             return;
         }
 
@@ -1099,6 +1152,9 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
+            [self.refreshSyncStatusUIButton showSyncUIStatus];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
             
             if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                 [MyPopoverDelegate performSelector:@selector(throwException)];
@@ -1116,7 +1172,7 @@ last_sync_time:(NSString *)last_sync_time
         
         [refreshSyncButton showSyncStatusButton];
         [refreshModalStatusButton showModalSyncStatus];
-	[refreshSyncStatusUIButton showSyncUIStatus];
+	    [refreshSyncStatusUIButton showSyncUIStatus];
         return;
     }
     
@@ -1135,6 +1191,9 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
+            [self.refreshSyncStatusUIButton showSyncUIStatus];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
             return;
         }
 
@@ -1145,6 +1204,9 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
+            [self.refreshSyncStatusUIButton showSyncUIStatus];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
             if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                 [MyPopoverDelegate performSelector:@selector(throwException)];
             break;
@@ -1179,6 +1241,9 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
+            [self.refreshSyncStatusUIButton showSyncUIStatus];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
             return;
         }
 
@@ -1189,6 +1254,9 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
+            [self.refreshSyncStatusUIButton showSyncUIStatus];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
             
             if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                 [MyPopoverDelegate performSelector:@selector(throwException)];
@@ -1222,6 +1290,10 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
+            [self.refreshSyncStatusUIButton showSyncUIStatus];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
+            
             return;
         }
 
@@ -1232,6 +1304,9 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
+            [self.refreshSyncStatusUIButton showSyncUIStatus];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
         }
         
         if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
@@ -1253,6 +1328,9 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
+            [self.refreshSyncStatusUIButton showSyncUIStatus];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
             return;
         }
 
@@ -1263,6 +1341,9 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
+            [self.refreshSyncStatusUIButton showSyncUIStatus];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
             
             if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                 [MyPopoverDelegate performSelector:@selector(throwException)];
@@ -1281,7 +1362,7 @@ last_sync_time:(NSString *)last_sync_time
         
         [refreshSyncButton showSyncStatusButton];
         [refreshModalStatusButton showModalSyncStatus];
-	[refreshSyncStatusUIButton showSyncUIStatus];
+	    [refreshSyncStatusUIButton showSyncUIStatus];
         return;
     }
        
@@ -1350,7 +1431,7 @@ last_sync_time:(NSString *)last_sync_time
         [updateSyncStatus refreshSyncStatus];
         [refreshSyncButton showSyncStatusButton];
         [refreshModalStatusButton showModalSyncStatus];
-	[refreshSyncStatusUIButton showSyncUIStatus];
+	    [refreshSyncStatusUIButton showSyncUIStatus];
     }
     else
     {
@@ -1375,7 +1456,7 @@ last_sync_time:(NSString *)last_sync_time
         [updateSyncStatus refreshSyncStatus];
         [refreshSyncButton showSyncStatusButton];
         [refreshModalStatusButton showModalSyncStatus];
-	[refreshSyncStatusUIButton showSyncUIStatus];
+	    [refreshSyncStatusUIButton showSyncUIStatus];
     }
     
     [appDelegate.dataBase updateRecentsPlist];
