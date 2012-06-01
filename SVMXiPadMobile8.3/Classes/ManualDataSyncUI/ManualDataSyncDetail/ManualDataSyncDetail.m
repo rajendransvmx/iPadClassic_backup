@@ -302,14 +302,21 @@
             NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_retry];
             
             UIButton * retry = [UIButton buttonWithType:UIButtonTypeCustom];
-            [retry setFrame:CGRectMake(420, 17, 120, 35)];
+            [retry setFrame:CGRectMake(420, 17, 100, 30)];
             [retry setTitle:title forState:UIControlStateNormal];
-            [retry setBackgroundImage:[UIImage imageNamed:@"debrief-button.png"] forState:UIControlStateNormal];
+            [retry setBackgroundImage:[UIImage imageNamed:@"blue button.png"] forState:UIControlStateNormal];
+            
+        
+            if ([lbl.text isEqualToString:@"DataSync"])
+                [retry addTarget:self action:@selector(retryDataSyncAgain) forControlEvents:UIControlEventTouchUpInside];
+            else if ([lbl.text isEqualToString:@"META SYNC"])
+                [retry addTarget:self action:@selector(retryMetaDataSyncAgain) forControlEvents:UIControlEventTouchUpInside];
+            
+            
             [background addSubview:retry];            
-            
-            
             [cell.contentView addSubview:background];
             [textView release];
+            
             return cell;
         }
         
@@ -429,7 +436,7 @@
             [background addSubview:lbl];
             lbl.userInteractionEnabled = YES;
             
-            UILabel *textView = [[UILabel alloc] initWithFrame:CGRectMake(180, 3, 200, 50)];
+            UILabel * textView = [[UILabel alloc] initWithFrame:CGRectMake(180, 3, 200, 50)];
             textView.font = [UIFont systemFontOfSize:19.0];
             textView.text = [[appDelegate.internet_Conflicts objectAtIndex:0] objectForKey:@"sync_type"];
             textView.userInteractionEnabled = YES;
@@ -441,14 +448,21 @@
             [tapMe3 release];
             
             NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_retry];
-           
+            [title sizeWithFont:[UIFont fontWithName:@"HelveticaBold" size:19]];
+            
             UIButton * retry = [UIButton buttonWithType:UIButtonTypeCustom];
-            [retry setFrame:CGRectMake(420, 17, 120, 35)];
+            [retry setFrame:CGRectMake(420, 17, 125, 32)];
             [retry setTitle:title forState:UIControlStateNormal];
-            [retry addTarget:self action:@selector(retryDataSyncAgain) forControlEvents:UIControlEventTouchUpInside];
-            [retry setBackgroundImage:[UIImage imageNamed:@"debrief-button.png"] forState:UIControlStateNormal];
-            [background addSubview:retry];
+            [retry setBackgroundImage:[UIImage imageNamed:@"blue button.png"] forState:UIControlStateNormal];
+            
+            if ([lbl.text isEqualToString:@"DataSync"])
+                [retry addTarget:self action:@selector(retryDataSyncAgain) forControlEvents:UIControlEventTouchUpInside];
+            else if ([lbl.text isEqualToString:@"META SYNC"])
+                [retry addTarget:self action:@selector(retryMetaDataSyncAgain) forControlEvents:UIControlEventTouchUpInside];
+            
+            [background addSubview:retry];            
 
+            
             [cell.contentView addSubview:background];
             [textView release];
             
@@ -539,11 +553,9 @@
             [[[mySegment1 subviews] objectAtIndex:1] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
         }
 
-        
         [mySegment release];
         [mySegment1 release];
     
-        
         UILabel *textView = [[UILabel alloc] initWithFrame:CGRectMake(180, 3, 200, 50)];
         textView.font = [UIFont systemFontOfSize:19.0];
      
@@ -1158,145 +1170,7 @@
 }
              
 #pragma mark - Table view delegate
-/*- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    //btn merge
-    if ( appDelegate._manualDataSync.didAppearFromSFMScreen && !appDelegate.showUI)
-    {
-        [dataSync dissmisController];
-    }
-    else
-    {
-        NSString * SFId          = @"";
-        NSString * objectAPIName = @"";
-        NSString * sync_type     = @"";
-        NSString * processId     = @"";
-        
-        if (selectedSection == 0 && HeaderSelected == 0)
-        {
-            objectAPIName = [objectsArray objectAtIndex:selectedRow];
-            sync_type = [[[objectsDict objectForKey:[objectsArray objectAtIndex:selectedRow]]objectAtIndex:indexPath.row] objectForKey:@"sync_type"];
-            
-            if ([sync_type isEqualToString:@"PUT_INSERT"])
-            {
-                SFId = [[[objectsDict objectForKey:[objectsArray objectAtIndex:selectedRow]]objectAtIndex:indexPath.row] objectForKey:@"local_id"];
-            }
-            else 
-            {
-                SFId = [[[objectsDict objectForKey:[objectsArray objectAtIndex:selectedRow]]objectAtIndex:indexPath.row] objectForKey:@"SFId"]; 
-            }
-            NSString * localId = @"";
-            if ( [objectsDict count] > 0)
-            {
-                if ([[[[objectsDict objectForKey:[objectsArray objectAtIndex:selectedRow]]objectAtIndex:indexPath.row] objectForKey:@"record_type"] isEqualToString:@"MASTER"])
-                {
-                    NSLog(@"%@", appDelegate.view_layout_array);
-                    for (int v = 0; v < [appDelegate.view_layout_array count]; v++)
-                    {
-                        NSDictionary * dict = [appDelegate.view_layout_array objectAtIndex:v];
-                        NSString * object_label = [dict objectForKey:VIEW_OBJECTNAME];
-                        NSLog(@"%@ %@", object_label, objectAPIName);
-                        if ([object_label isEqualToString:objectAPIName])
-                        {
-                            processId = ([dict objectForKey:VIEW_SVMXC_ProcessID]!=nil)?[dict objectForKey:VIEW_SVMXC_ProcessID]:@"";
-                            break;
-                        }
-                    }
-                    NSString * localId = [self getlocalIdForSFId:SFId ForObject:objectAPIName];
-                    [dataSync showSFMWithProcessId:processId recordId:localId objectName:objectAPIName];
-                    
-                }
-                else if ([[[[objectsDict objectForKey:[objectsArray objectAtIndex:selectedRow]]objectAtIndex:indexPath.row] objectForKey:@"record_type"] isEqualToString:@"DETAIL"])
-                {
-                    NSString *parent_obj_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectAPIName field_name:@"parent_name"];
-                    NSString * parent_column_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectAPIName field_name:@"parent_column_name"];
-                    
-                    NSLog(@"%@ %@", parent_obj_name, parent_column_name);
-                    localId = [appDelegate.databaseInterface selectLocalIdFrom:objectAPIName WithId:SFId andParentColumnName:parent_column_name andSyncType:sync_type];
-                    NSLog(@"%@", localId);
-                    
-                    for (int v = 0; v < [appDelegate.view_layout_array count]; v++)
-                    {
-                        NSDictionary * dict = [appDelegate.view_layout_array objectAtIndex:v];
-                        NSString * object_label = [dict objectForKey:VIEW_OBJECTNAME];
-                        if ([object_label isEqualToString:objectAPIName])
-                        {
-                            processId = ([dict objectForKey:VIEW_SVMXC_ProcessID]!=nil)?[dict objectForKey:VIEW_SVMXC_ProcessID]:@"";
-                            break;
-                        }
-                    }
-                    
-                    [dataSync showSFMWithProcessId:processId recordId:localId objectName:parent_obj_name];
-                    
-                }
-                
-            }
-        }
-        
-        else if (HeaderSelected == 1)
-        {
-            objectAPIName = [objectsArray objectAtIndex:indexPath.section];
-            sync_type = [[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"sync_type"];
-            
-            NSLog(@"%@", objectsDict);
-            if ([sync_type isEqualToString:@"PUT_INSERT"])
-            {
-                SFId = [[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"local_id"];
-            }
-            else 
-            {
-                SFId = [[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"SFId"]; 
-            }
-            NSString * localId = @"";
-            if ( [objectsDict count] > 0)
-            {
-                if ([[[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"record_type"] isEqualToString:@"MASTER"])
-                {
-                    NSLog(@"%@", appDelegate.view_layout_array);
-                    for (int v = 0; v < [appDelegate.view_layout_array count]; v++)
-                    {
-                        NSDictionary * dict = [appDelegate.view_layout_array objectAtIndex:v];
-                        NSString * object_label = [dict objectForKey:VIEW_OBJECTNAME];
-                        NSLog(@"%@ %@", object_label, objectAPIName);
-                        if ([object_label isEqualToString:objectAPIName])
-                        {
-                            processId = ([dict objectForKey:VIEW_SVMXC_ProcessID]!=nil)?[dict objectForKey:VIEW_SVMXC_ProcessID]:@"";
-                            break;
-                        }
-                    }
-                    NSString * localId = [self getlocalIdForSFId:SFId ForObject:objectAPIName];
-                    [dataSync showSFMWithProcessId:processId recordId:localId objectName:objectAPIName];
-                    
-                }
-                
-                else if ([[[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"record_type"] isEqualToString:@"DETAIL"])
-                {
-                    NSString *parent_obj_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectAPIName field_name:@"parent_name"];
-                    NSString * parent_column_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectAPIName field_name:@"parent_column_name"];
-                    
-                    NSLog(@"%@ %@", parent_obj_name, parent_column_name);
-                    localId = [appDelegate.databaseInterface selectLocalIdFrom:objectAPIName WithId:SFId andParentColumnName:parent_column_name andSyncType:sync_type];
-                    NSLog(@"%@", localId);
-                    
-                    for (int v = 0; v < [appDelegate.view_layout_array count]; v++)
-                    {
-                        NSDictionary * dict = [appDelegate.view_layout_array objectAtIndex:v];
-                        NSString * object_label = [dict objectForKey:VIEW_OBJECTNAME];
-                        if ([object_label isEqualToString:objectAPIName])
-                        {
-                            processId = ([dict objectForKey:VIEW_SVMXC_ProcessID]!=nil)?[dict objectForKey:VIEW_SVMXC_ProcessID]:@"";
-                            break;
-                        }
-                    }
-                    [dataSync showSFMWithProcessId:processId recordId:localId objectName:parent_obj_name];
-                    
-                }
-                
-            }
-            
-        }
-    }
-}*/ 
+
 
 - (void) accessoryButtonTapped:(UIControl *)_button withEvent:(UIEvent *)event
 {
@@ -1408,7 +1282,6 @@
             [imgArr addObject:[UIImage imageNamed:[NSString stringWithFormat:@"o%d.png", i]]];
         }
         
-        
         animatedImageView.animationImages = [NSArray arrayWithArray:imgArr];
         animatedImageView.animationDuration = 1.0f;
         animatedImageView.animationRepeatCount = 0;
@@ -1430,6 +1303,13 @@
 {
     [appDelegate.wsInterface DoIncrementalDataSync];
 }
+
+-(void) retryMetaDataSyncAgain
+{
+    [popOver_view synchronizeConfiguration];
+}
+
+
 
 - (void) didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
