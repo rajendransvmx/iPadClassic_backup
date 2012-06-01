@@ -9528,6 +9528,8 @@
                     NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGET process_id:action_process_id layoutId:layout_id objectName:headerObjName];
                     NSString * source_parent_object_name = [process_components objectForKey:SOURCE_OBJECT_NAME];
                     
+                    if ([source_parent_object_name length] == 0)
+                        source_parent_object_name = headerObjName;
                     
                     NSString * parent_sf_id =  [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:source_parent_object_name local_id:appDelegate.sfmPageController.recordId];
                     
@@ -9555,7 +9557,7 @@
                                 [details_api_keys addObject:api_name];
                             }
                             
-                            NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGETCHILD process_id:action_process_id layoutId:detail_layout_id objectName:detailObjectName];//[appDelegate.databaseInterface  getValueMappingForlayoutId:detail_layout_id process_id:process_id objectName:detailObjectName];
+                            NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGETCHILD process_id:action_process_id layoutId:detail_layout_id objectName:detailObjectName];
                             
                             NSString * source_child_object_name = [process_components objectForKey:SOURCE_OBJECT_NAME];
                             NSString * source_child_parent_column = [process_components objectForKey:SOURCE_CHILD_PARENT_COLUMN];
