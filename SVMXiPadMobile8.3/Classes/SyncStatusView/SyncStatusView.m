@@ -39,7 +39,10 @@
     [super viewDidLoad];
     
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+    
     appDelegate.wsInterface.updateSyncStatus = self;
+    popOverButtons.refreshMetaSyncDelegate = self;
+
     UIView * view = nil;
     
     UIImageView * bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_right_panel_bg_main.png"]];
@@ -57,12 +60,12 @@
     
     
     //Read from the plist
-    NSArray  * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES);
+    NSArray  * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString * documentsPath = [paths objectAtIndex:0];
     
     NSString * fooPath = [documentsPath stringByAppendingPathComponent:@"SYNC_HISTORY.plist"];
     NSDictionary * dictionary = [[NSDictionary alloc] initWithContentsOfFile:fooPath];
-    NSLog(@"%@",  dictionary);
+    NSLog(@"%@", dictionary);
     
     lastSyncTime = @"";
     lastSyncTime = [dictionary objectForKey:@"last_initial_sync_time"];
@@ -150,7 +153,7 @@
     
     UILabel *label2;
     label2 = [[UILabel alloc] initWithFrame:CGRectMake(35, 75, 550, 45)];
-    UIImageView * bgView1 = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"wou-row1-textfield-bg.png"]];//SFM-Screen-Table-Strip
+    UIImageView * bgView1 = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"wou-row1-textfield-bg.png"]];
     bgView1.frame = CGRectMake(0, 0, 550, 45);
     label2.backgroundColor = [UIColor clearColor];
     label2.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_next_time];
@@ -168,7 +171,7 @@
     [formatter2 setDateFormat:@"EEE, dd MMM yyyy HH:mm:ss a"];
     
     
-    NSString * timerValue = ([appDelegate.settingsDict objectForKey:@"Frequency of Master Data"]) != nil?[appDelegate.settingsDict objectForKey:@"Frequency of Master Data"]:@"";
+    NSString * timerValue = ([appDelegate.settingsDict objectForKey:@"Dataset Synchronization"]) != nil?[appDelegate.settingsDict objectForKey:@"Dataset Synchronization"]:@"";
     
     NSTimeInterval scheduledTimer = 0;
     
@@ -185,7 +188,6 @@
     
     NSDate *dateTwoMinsAhead = [gmtDate dateByAddingTimeInterval:scheduledTimer];
     nextSyncTime = @"";
-    //[formatter setDateFormat:DATETIMEFORMAT];
     nextSyncTime = [formatter2 stringFromDate:dateTwoMinsAhead];
     [formatter2 release];
     
@@ -244,6 +246,55 @@
     [label4 addSubview:bgView4];
     [self.view addSubview:label4];
     
+    /*################################## Time Stamp For Meta Sync ################################*/
+    
+    NSDateFormatter * formatter3 = [[NSDateFormatter alloc] init];
+    NSDateFormatter * formatter4 = [[NSDateFormatter alloc] init];
+    
+    [formatter4 setDateFormat:@"EEE, dd MMM yyyy HH:mm:ss a"];
+    [formatter4 setTimeZone:[NSTimeZone defaultTimeZone]];
+
+    [formatter3 setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    
+    NSLog(@"%@",[dictionary objectForKey:LAST_INITIAL_META_SYNC_TIME]);
+    
+    lastSyncTime = @"";
+    lastSyncTime = [dictionary objectForKey:LAST_INITIAL_META_SYNC_TIME];
+    
+    NSDate * _gmtDate3 = [formatter3 dateFromString:lastSyncTime];
+    
+    lastSyncTime = [formatter4 stringFromDate:_gmtDate3];
+    
+    NSLog(@"%@", lastSyncTime);;
+    
+    NSString * str4 = nil;
+    NSString * str5 = nil;
+    NSString * str6 = nil;
+    
+    if ( [lastSyncTime length] > 17)
+        str4 = [lastSyncTime substringFromIndex:17];
+    if ( [str4 length] > 2)
+        str5 = [str4 substringToIndex:2];
+    
+    int k;
+    k = [str5 intValue];
+    if (k > 12)
+    {
+        k = k - 12;
+    }
+    
+    str6 = [NSString stringWithFormat:@"%d", k];
+    NSLog(@"%@", str6);
+    NSRange range1 = NSMakeRange(17,2);
+    NSLog(@"%@", [lastSyncTime stringByReplacingCharactersInRange:range1 withString:str6]);
+    lastSyncTime = [lastSyncTime stringByReplacingCharactersInRange:range1 withString:str6];
+
+    lastSync = [[UILabel alloc] initWithFrame:CGRectMake(300, 192, 450, 45)];
+    [lastSync setBackgroundColor:[UIColor clearColor]];
+    lastSync.text = lastSyncTime;
+    [self.view addSubview:lastSync];
+    
+    [lastSync release];
     [label4 release];
     
     UILabel *label5;
@@ -255,7 +306,63 @@
     [label5 addSubview:bgView5];
     [self.view addSubview:label5];
     
+    /*############################### Next Sync Time for Meta Sync ########################*/
+    
+    NSDateFormatter * format_MS = [[NSDateFormatter alloc] init];
+    [format_MS setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    NSString * _str = [dictionary objectForKey:LAST_INITIAL_META_SYNC_TIME];
+    NSDate * gmtDate_ = [format_MS dateFromString:_str];
+    [format_MS release];
+    
+    NSDateFormatter * formatter2_MS = [[NSDateFormatter alloc] init];
+    [formatter2_MS setDateFormat:@"EEE, dd MMM yyyy HH:mm:ss a"];
+    
+    
+    NSString *  timerValue_MS = ([appDelegate.settingsDict objectForKey:@"Frequency of Master Data"]) != nil?[appDelegate.settingsDict objectForKey:@"Frequency of Master Data"]:@"";
+    
+    NSTimeInterval scheduledTimer_MS = 0;
+    
+    if (![timerValue_MS isEqualToString:@""])  
+    {
+        double timeInterval = [timerValue_MS doubleValue];
+        scheduledTimer_MS = timeInterval * 60;
+    }
+    else
+        scheduledTimer_MS = 600;
+    
+    NSDate * dateAhead_MS = [gmtDate_ dateByAddingTimeInterval:scheduledTimer_MS];
+    nextSyncTime = @"";
+    nextSyncTime = [formatter2_MS stringFromDate:dateAhead_MS];
+    [formatter2_MS release];
+    
+    NSString * _str4 = nil;
+    NSString * _str5 = nil;
+    NSString * _str6 = nil;
+    if ( [nextSyncTime length] > 17)
+        _str4 = [nextSyncTime substringFromIndex:17];
+    if ( [_str4 length] > 2)
+        _str5 = [_str1 substringToIndex:2];
+    
+    int p;
+    p = [_str5 intValue];
+    if (p > 12)
+    {
+        p = p - 12;
+    }
+    _str6 = [NSString stringWithFormat:@"%d", p];
+    NSLog(@"%@", _str6);
+    NSRange range_MS = NSMakeRange(17,2);
+    NSLog(@"%@", [lastSyncTime stringByReplacingCharactersInRange:range_MS withString:_str6]);
+    nextSyncTime = [nextSyncTime stringByReplacingCharactersInRange:range_MS withString:_str6];
+    
+    nextSync = [[UILabel alloc] initWithFrame:CGRectMake(300, 238, 450, 45)];
+    [nextSync setBackgroundColor:[UIColor clearColor]];
+    nextSync.text = nextSyncTime;
+    [self.view addSubview:nextSync];
+    
     [label5 release];
+    [nextSync release];
+    
     
     UILabel *label6 = [[UILabel alloc] initWithFrame:CGRectMake(35, 286, 550, 45)];
     UIImageView * bgView6 = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"wou-row1-textfield-bg.png"]];
@@ -265,8 +372,24 @@
     [label6 addSubview:bgView6];
     [self.view addSubview:label6];
     
-    [label6 release];
     
+    _statusForMetaSync = [[UILabel alloc] initWithFrame:CGRectMake(300, 286, 450, 45)];
+    _statusForMetaSync.backgroundColor = [UIColor clearColor];
+
+   
+    NSString * Status = @"";
+    Status = [appDelegate.calDataBase retrieveMetaSyncStatus];
+    
+    if ([Status isEqualToString:@"Green"])
+        _statusForMetaSync.text = syncStatus = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_succeeded];
+    else if ([Status isEqualToString:@"Red"])
+        _statusForMetaSync.text = syncStatus = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_failed];
+    
+    
+    [self.view addSubview:_statusForMetaSync];
+
+    
+    [label6 release];
     [view release];
 }
 
@@ -274,8 +397,14 @@
 {
     NSLog(@"Synchronization ..");
     NSLog(@"%d", appDelegate.SyncStatus);
+    
     _status.text = [self getSyncronisationStatus];
 } 
+
+-(void)refreshMetaSyncStatus
+{
+    _statusForMetaSync.text = [self getSyncronisationStatus];
+}
 
 -(NSString *)getSyncronisationStatus  
 {
@@ -338,6 +467,7 @@
 - (void)dealloc
 {
     [_status release];
+    [_statusForMetaSync release];
     [super dealloc];
 }
 
