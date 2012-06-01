@@ -8827,7 +8827,7 @@
         
         label_popOver.delegate = self;
         
-        [label_popOver presentPopoverFromRect:CGRectMake(label.frame.size.width/2,0, 10, 10) inView:label permittedArrowDirections:UIPopoverArrowDirectionDown animated:YES];
+        [label_popOver presentPopoverFromRect:CGRectMake(label.frame.size.width/2,0, 10, 10) inView:label permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
         
         [contentView_textView release];
         [label_popOver_content release];
@@ -11455,7 +11455,7 @@
         
         label_popOver.delegate = self;
         
-        [label_popOver presentPopoverFromRect:CGRectMake(label.frame.size.width/2,0, 10, 10) inView:label permittedArrowDirections:UIPopoverArrowDirectionDown animated:YES];
+        [label_popOver presentPopoverFromRect:CGRectMake(label.frame.size.width/2,0, 10, 10) inView:label permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
         
         [contentView_textView release];
         [label_popOver_content release];
