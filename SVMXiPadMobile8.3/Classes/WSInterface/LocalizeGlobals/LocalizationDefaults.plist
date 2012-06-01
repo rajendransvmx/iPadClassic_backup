@@ -558,5 +558,7 @@
 	<string>Starts With</string>
 	<key>IPAD019_TAG012</key>
 	<string>Close</string>
+	<key>IPAD014_TAG030</key>
+	<string>Synchronize Configuration Failed. Please Retry Again</string>
 </dict>
 </plist>
