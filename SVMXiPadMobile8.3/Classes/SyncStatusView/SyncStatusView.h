@@ -8,10 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "WSInterface.h"
+#import "PopoverButtons.h"
 
 @class iServiceAppDelegate;
 
-@interface SyncStatusView : UIViewController<RefreshSyncStatus>
+@interface SyncStatusView : UIViewController<RefreshSyncStatus, RefreshMetaSyncStatus>
 {
     iServiceAppDelegate * appDelegate;
     
@@ -22,8 +23,11 @@
     UILabel * lastSync;
     UILabel * nextSync;
     UILabel * _status;
+    UILabel * _statusForMetaSync;
     
     UIPopoverController * popOver;
+    
+    PopoverButtons * popOverButtons;
 }
 
 @property (nonatomic, retain) UIPopoverController * popOver;
