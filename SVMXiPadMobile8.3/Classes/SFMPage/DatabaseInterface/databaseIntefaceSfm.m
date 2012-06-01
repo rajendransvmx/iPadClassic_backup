@@ -4010,7 +4010,7 @@
                             {
                                 [final_dict removeObjectForKey:parent_column_name];
                             }
-                            BOOL flag = [ self UpdateTableforSFId:sf_id forObject:object_Name data:final_dict];
+                            BOOL flag = [self UpdateTableforSFId:sf_id forObject:object_Name data:final_dict];
                             if(flag)
                             {
                                 
@@ -4024,8 +4024,7 @@
                         if(check_flag)
                         {
                             
-                           
-                            //temp change
+                                                       //temp change
                             [final_dict setObject:new_local_id forKey:@"local_id"];
                             /*insert_flag = [self insertdataIntoTable:object_Name data:final_dict];*/
                             
@@ -4074,6 +4073,14 @@
                                 printf("Commit Failed!\n");
                             }
                             sqlite3_reset(bulk_statement);
+                        }
+                        else
+                        {
+                            BOOL flag = [self UpdateTableforSFId:sf_id forObject:object_Name data:final_dict];
+                            if(flag)
+                            {
+                                
+                            }
                         }
                     }
                     else if ([local_id length] != 0 && [json_record length] != 0 )
@@ -4177,6 +4184,7 @@
                     NSString *parent_obj_name = [self getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_Name field_name:@"parent_name"];
                     NSString * parent_column_name = [self getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_Name field_name:@"parent_column_name"];
                     NSString * parent_local_id = [self getParentLocalIdForChildSFID:sf_id parentObject_name:parent_obj_name parent_column_name:parent_column_name child_object_name:object_Name];
+                    
                     [self updateParentColumnNameInChildTableWithParentLocalId:object_Name parent_column_name:parent_column_name parent_local_id:parent_local_id child_sf_id:sf_id];
                 }
             }
