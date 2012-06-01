@@ -2928,6 +2928,26 @@
     }
     synchronized_sqlite3_finalize(statement);
     
+    statement = nil;
+    
+    if(productName == nil || [productName length] == 0)
+    {
+        NSString * query2 = [NSString stringWithFormat:@"Select value from LookUpFieldValue where Id = '%@'", productId];
+        
+        if ( synchronized_sqlite3_prepare_v2(appDelegate.db, [query2 UTF8String], -1, &statement, nil ) == SQLITE_OK )
+        {
+            while ( synchronized_sqlite3_step(statement) == SQLITE_ROW )
+            {
+                
+                char *field = (char *) synchronized_sqlite3_column_text(statement, COLUMN_1);
+                if ( field != nil )
+                    productName = [NSString stringWithUTF8String:field];
+                
+            }
+        }
+        
+        synchronized_sqlite3_finalize(statement);
+    }
     return productName;
 }
 
@@ -3804,6 +3824,54 @@
         NSLog(@"error:Failed to delete from database");
     }
 
+}
+
+#pragma mark - Meta Sync Status
+
+-(void) insertMetaSyncStatus:(NSString *)status WithDB:(sqlite3 *)db
+{
+    NSString * deleteQuery = [NSString stringWithFormat:@"Delete from meta_sync_status"];
+     char *err;
+    
+    if (synchronized_sqlite3_exec(db, [deleteQuery UTF8String], NULL, NULL, &err) != SQLITE_OK){
+        
+        NSLog(@"error:Failed to delete");
+        
+    }
+
+    NSString * insertQuery = [NSString stringWithFormat:@"INSERT OR REPLACE INTO meta_sync_status (sync_status) Values ('%@')", status];
+    
+    
+    if (synchronized_sqlite3_exec(db, [insertQuery UTF8String], NULL, NULL, &err) != SQLITE_OK){
+        
+        NSLog(@"error:Failed to insert into database");
+        
+    }
+
+}
+
+-(NSString *)retrieveMetaSyncStatus
+{
+    NSString * sync_Status = @"";
+    NSString * selectQuery = [NSString stringWithFormat:@"Select sync_status from meta_sync_status"];
+    
+    sqlite3_stmt * statement;
+    
+    const char * _selectQuery = [selectQuery UTF8String];
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, _selectQuery,-1, &statement, nil) == SQLITE_OK)
+    {
+        
+        while(synchronized_sqlite3_step(statement) == SQLITE_ROW){
+            char *field1 = (char *) synchronized_sqlite3_column_text(statement,COLUMN_1);
+            if (field1 != nil)
+                sync_Status = [[NSString alloc] initWithUTF8String:field1];
+            
+        }
+        
+    }
+
+    return sync_Status;
 }
 
 
