@@ -290,11 +290,6 @@ const NSUInteger kNumImages = 7;
 }
 - (void) showHelp
 {
-    if (!appDelegate.isInternetConnectionAvailable)
-    {
-        //[appDelegate displayNoInternetAvailable];
-        return;
-    }
     HelpController * help = [[HelpController alloc] initWithNibName:@"HelpController" bundle:nil];
     help.modalPresentationStyle = UIModalPresentationFullScreen;
     help.modalTransitionStyle = UIModalTransitionStyleCoverVertical;

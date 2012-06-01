@@ -685,13 +685,7 @@
 }
 
 - (IBAction) Help
-{
-    if (!AppDelegate.isInternetConnectionAvailable)
-    {
-        //[AppDelegate displayNoInternetAvailable];
-        return;
-    }
-    
+{    
     HelpController * help = [[HelpController alloc] initWithNibName:@"HelpController" bundle:nil];
     
     help.helpString = @"summary.html";

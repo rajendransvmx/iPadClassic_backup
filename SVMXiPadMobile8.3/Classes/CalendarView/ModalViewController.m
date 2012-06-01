@@ -219,12 +219,6 @@
 
 - (IBAction) Help;
 {
-    if (!appDelegate.isInternetConnectionAvailable)
-    {
-        //[appDelegate displayNoInternetAvailable];
-        return;
-    } 
-
     HelpController * help = [[HelpController alloc] initWithNibName:@"HelpController" bundle:nil];
     help.modalPresentationStyle = UIModalPresentationFullScreen;
     help.modalTransitionStyle = UIModalTransitionStyleCoverVertical;

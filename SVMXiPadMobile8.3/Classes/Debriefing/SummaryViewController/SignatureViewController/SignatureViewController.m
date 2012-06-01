@@ -233,9 +233,6 @@
         }
         
     }
-    NSLog(@"I am here");
-    newData = [newData substringToIndex:[newData length]-1];
-    newData = [newData stringByAppendingString:@" "];
     
     return newData;
     
