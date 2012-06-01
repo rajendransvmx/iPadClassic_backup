@@ -29,7 +29,7 @@
 @end
 
 @implementation DetailViewController
-
+@synthesize animatedImageView;
 @synthesize parentReference;
 
 @synthesize delegate, calendarDelegate;
@@ -331,14 +331,12 @@
     //Image View animation
     //if(!showSyncUI)
     //{
-    animatedImageView = [[UIImageView alloc] initWithFrame:CGRectMake(475, 8, 26, 26)];    
+    animatedImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 26, 26)];    
     [self getStatusImage];
     animatedImageView.animationDuration = 1.0f;
     animatedImageView.animationRepeatCount = 0;
     [animatedImageView startAnimating];
      showSyncUI = YES;
-    [self.navigationController.view addSubview:animatedImageView];
-    //}
 }
 
 - (void) didInternetConnectionChange:(NSNotification *)notification
@@ -508,7 +506,21 @@
     }
     toolBarWidth += 67; //Action Button Width
     NSMutableArray * buttons = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-    [buttons addObject:actionBtn];
+    
+    if (animatedImageView) {
+        [animatedImageView release];
+        animatedImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 26, 26)];    
+    }
+    [self getStatusImage];
+    animatedImageView.animationDuration = 1.0f;
+    animatedImageView.animationRepeatCount = 0;
+    [animatedImageView startAnimating];
+    UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:animatedImageView];
+    [buttons addObject:syncBarButton];
+    [syncBarButton setTarget:self];
+    syncBarButton.width =26;
+    toolBarWidth += syncBarButton.width;
+    [syncBarButton release];
     // Samman - 20 July, 2011 - Signature Capture - BEGIN
 
     BOOL isStandAloneCreate = [[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"STANDALONECREATE"];
@@ -523,27 +535,15 @@
         actionBtn1.width = 43;
         [actionBtn1 setTarget:self];
         [actionBtn1 setAction:@selector(ShowSignature)];
-        [buttons insertObject:actionBtn1 atIndex:0];
+        [buttons addObject:actionBtn1];
         toolBarWidth += actionBtn1.width;
         [actionBtn1 release];
         [actionButton release];
     }
-    else
-    {
-        // Insert a blank button to place the Action button item at the same location
-        actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 37)];
-        UIBarButtonItem * actionBtn1 = [[UIBarButtonItem alloc] initWithCustomView:actionButton];
-        actionBtn1.width = 43;
-        [actionBtn1 setTarget:self];
-        [actionBtn1 setAction:@selector(ShowSignature)];
-        [buttons insertObject:actionBtn1 atIndex:0];
-        
-        [actionBtn1 release];
-        [actionButton release];
-    }
+
     
     // Samman - 20 July, 2011 - Signature Capture - END
-    
+     [buttons addObject:actionBtn];
     //Add help button Radha - 26 August, 2011
     if(appDelegate.isWorkinginOffline)
     {
@@ -555,7 +555,7 @@
         UIBarButtonItem * helpBarButton = [[UIBarButtonItem alloc] initWithCustomView:actionButton];
         [helpBarButton setTarget:self];
         [helpBarButton setAction:@selector(showHelp)];
-        [buttons insertObject:helpBarButton atIndex:2];
+         [buttons addObject:helpBarButton];
         toolBarWidth += 43;
         [helpBarButton release];
         [actionButton release];
@@ -563,20 +563,21 @@
     //Add help button Radha - 26 August, 2011 - END
     
     NSLog(@"Tool Bar Width = %d",toolBarWidth);
-    UIToolbar* toolbar = [[[UIToolbar alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 75, 0, 200, 44)] autorelease];
-    [toolbar setItems:buttons];
-    NSLog(@"Tool Bar Frame x = %f y = %f w = %f h = %f",[toolbar frame].origin.x,[toolbar frame].origin.y,[toolbar frame].size.width,[toolbar frame].size.height);
     
-    CGRect syncFrame;
-    if(toolBarWidth >= 150)
-     syncFrame = CGRectMake(473, animatedImageView.frame.origin.y, animatedImageView.frame.size.width, animatedImageView.frame.size.height);
-    else
-        syncFrame = CGRectMake(525, animatedImageView.frame.origin.y, animatedImageView.frame.size.width, animatedImageView.frame.size.height);
-        
-    NSLog(@"New Frame x = %f y = %f w = %f h = %f",syncFrame.origin.x,syncFrame.origin.y,syncFrame.size.width,syncFrame.size.height);
+        UIToolbar* toolbar;
+    if (appDelegate.signatureCaptureUpload && !isInEditDetail && !isStandAloneCreate && !isInViewMode){
 
-    //[animatedImageView setFrame:syncFrame];
-     
+        toolbar = [[[UIToolbar alloc] initWithFrame:CGRectMake(self.view.frame.size.width -220, 0, 220, 44)] autorelease];
+    }
+    else
+    {
+        toolbar = [[[UIToolbar alloc] initWithFrame:CGRectMake(self.view.frame.size.width -100, 0, 170, 44)] autorelease];
+
+    }
+   
+    NSLog(@"Tool Bar Frame x = %f y = %f w = %f h = %f",[toolbar frame].origin.x,[toolbar frame].origin.y,[toolbar frame].size.width,[toolbar frame].size.height);
+
+      [toolbar setItems:buttons];
     self.navigationItem.titleView = label;
     self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:toolbar] autorelease];
 }
@@ -629,6 +630,22 @@
     //[buttons addObject:actionBtn];  -- Shrinivas
     
     //if (appDelegate.signatureCaptureUpload)
+    if(animatedImageView)
+    {
+        [animatedImageView release];
+        animatedImageView=[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 26, 26)];  
+    } 
+    [self getStatusImage];
+    showSyncUI=YES;
+    animatedImageView.animationDuration = 1.0f;
+    animatedImageView.animationRepeatCount = 0;
+    [animatedImageView startAnimating];
+    
+    UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:animatedImageView];
+    [buttons addObject:syncBarButton];
+    [syncBarButton setTarget:self];
+    
+    
     BOOL isStandAloneCreate = [[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"STANDALONECREATE"];
     if (appDelegate.signatureCaptureUpload && !isInEditDetail && !isStandAloneCreate && !isInViewMode)
     {
@@ -645,22 +662,6 @@
         
         [actionBtn1 release];
         [actionButton release];
-    }else{
-        UIButton * actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 35, 33)];
-        [actionButton setBackgroundColor:[UIColor clearColor]];
-        //[actionButton setImage:[UIImage imageNamed:@"sfm_signature_capture"] forState:UIControlStateNormal];
-        //[actionButton addTarget:self action:@selector(ShowSignature) forControlEvents:UIControlEventTouchUpInside];
-        
-        UIBarButtonItem * actionBtn1 = [[UIBarButtonItem alloc] initWithCustomView:actionButton];
-        actionBtn1.width = 37;
-        //[actionBtn1 setTarget:self];
-        //[actionBtn1 setAction:@selector(ShowSignature)];
-        // [buttons insertObject:actionBtn1 atIndex:0];
-        [buttons addObject:actionBtn1];
-        
-        [actionBtn1 release];
-        [actionButton release];
-
     }
     
     [buttons addObject:actionBtn];//Shrinivas
@@ -674,15 +675,15 @@
     [helpBarButton setTarget:self];
     [helpBarButton setAction:@selector(showHelp)];
     [buttons addObject:helpBarButton];
- 
+    [syncBarButton release];
     [helpBarButton release];
     [actionButton release];
     //Add help button Radha - 26 August, 2011 - END
     CGFloat toolbarWidth = 0;
-    if (appDelegate.signatureCaptureUpload)
-        toolbarWidth = 170;
+    if (appDelegate.signatureCaptureUpload && !isInEditDetail && !isStandAloneCreate && !isInViewMode)
+        toolbarWidth = 220;
     else
-        toolbarWidth = 133;
+        toolbarWidth = 170;
     UIToolbar* toolbar = [[[UIToolbar alloc] initWithFrame:CGRectMake(self.view.frame.size.width, 0, toolbarWidth, 44)] autorelease];
     [toolbar setItems:buttons];
 
@@ -2070,6 +2071,8 @@
     if ([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"EDIT"]) 
     {
         //[buttonsArray_offline  addObject:];
+        appDelegate.wsInterface.refreshSyncButton = self;
+
         NSDictionary * header_dict = [appDelegate.SFMPage objectForKey:@"header"];
         
         NSInteger value = 0;
@@ -4139,6 +4142,7 @@
     view = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, _tableView.frame.size.width, 31)] autorelease];
     UIImageView * imageView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_section_header_bg.png"]] autorelease];
     imageView.frame = CGRectMake(12, 0, _tableView.frame.size.width - 24, 31);
+    imageView.autoresizingMask=UIViewAutoresizingFlexibleWidth;
     [view addSubview:imageView];
     [view addSubview:label];
     if( selectedSection == SHOW_ADDITIONALINFO_ROW || selectedSection == SHOW_ALL_ADDITIONALINFO)
@@ -6087,7 +6091,7 @@
     webView = nil;
     */
 	[super viewDidUnload];
-
+    animatedImageView = nil;
 	// Release any retained subviews of the main view.
 	// e.g. self.myOutlet = nil;
 	// self.popoverController = nil;
@@ -7451,13 +7455,20 @@
         UIBarButtonItem * helpBarButton = [[UIBarButtonItem alloc] initWithCustomView:actionButton];  
         
         NSMutableArray * buttons = [[NSMutableArray alloc] initWithCapacity:0];
-        
+        if(animatedImageView)
+        {
+            [animatedImageView release];
+            animatedImageView=[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 26, 26)];  
+        }
+        [self getStatusImage];
+        showSyncUI=YES;
+        animatedImageView.animationDuration = 1.0f;
+        animatedImageView.animationRepeatCount = 0;
+        [animatedImageView startAnimating];
+        UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:animatedImageView];
+        [buttons addObject:syncBarButton];
+        [syncBarButton setTarget:self];
         //sahana offline
-        [buttons addObject:helpBarButton];
-        
-        [actionButton release];
-        [helpBarButton release];
-        
         UIToolbar * toolBar;
         // adding the done button
         // ################ DONE BUTTON HERE ################# //
@@ -7473,15 +7484,18 @@
             [actionButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
             UIBarButtonItem * doneBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:actionButton];
             [actionButton release];
-            [buttons insertObject:doneBarButtonItem atIndex:0];
+            [buttons addObject:doneBarButtonItem];
             [doneBarButtonItem release];
-            toolBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(self.view.frame.origin.x -75, 0, 130, 44)] autorelease];
+            toolBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, 190, 44)] autorelease];
         }
         // ################################################### //
         else
-            toolBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(self.view.frame.origin.x -75, 0, 50, 44)] autorelease];
-        
+            toolBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, 90, 44)] autorelease];
+        [buttons addObject:helpBarButton];
         [toolBar setItems:buttons];
+        [helpBarButton release];
+        [actionButton release];
+        [syncBarButton release];
         [buttons release];
         
         detailViewObject.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:toolBar] autorelease];
@@ -7696,13 +7710,20 @@
         UIBarButtonItem * helpBarButton = [[UIBarButtonItem alloc] initWithCustomView:actionButton];  
         
         NSMutableArray * buttons = [[NSMutableArray alloc] initWithCapacity:0];
-        
+        if(animatedImageView)
+        {
+            [animatedImageView release];
+            animatedImageView=[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 26, 26)];  
+        }
+        [self getStatusImage];
+        showSyncUI=YES;
+        animatedImageView.animationDuration = 1.0f;
+        animatedImageView.animationRepeatCount = 0;
+        [animatedImageView startAnimating];
+        UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:animatedImageView];
+        [buttons addObject:syncBarButton];
+        [syncBarButton setTarget:self];
         //sahana offline
-        [buttons addObject:helpBarButton];
-
-        [actionButton release];
-        [helpBarButton release];
-        
         UIToolbar * toolBar;
         // adding the done button
         // ################ DONE BUTTON HERE ################# //
@@ -7718,15 +7739,18 @@
             [actionButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
             UIBarButtonItem * doneBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:actionButton];
             [actionButton release];
-            [buttons insertObject:doneBarButtonItem atIndex:0];
+            [buttons addObject:doneBarButtonItem];
             [doneBarButtonItem release];
-            toolBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(self.view.frame.origin.x -75, 0, 130, 44)] autorelease];
+            toolBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, 200, 44)] autorelease];
         }
         // ################################################### //
         else
-            toolBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(self.view.frame.origin.x -75, 0, 50, 44)] autorelease];
-        
+            toolBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, 100, 44)] autorelease];
+        [buttons addObject:helpBarButton];
         [toolBar setItems:buttons];
+        [syncBarButton release];
+        [actionButton release];
+        [helpBarButton release];
         [buttons release];
         
         detailViewObject.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:toolBar] autorelease];
@@ -8267,13 +8291,23 @@
     UIButton * actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)];
     [actionButton setBackgroundImage:[UIImage imageNamed:@"iService-Screen-Help.png"] forState:UIControlStateNormal];
     [actionButton addTarget:self action:@selector(showHelp) forControlEvents:UIControlEventTouchUpInside];
-    UIBarButtonItem * helpBarButton = [[UIBarButtonItem alloc] initWithCustomView:actionButton];  
+    UIBarButtonItem * helpBarButton = [[UIBarButtonItem alloc] initWithCustomView:actionButton]; 
+    if(animatedImageView)
+    {
+        //loaded parts line
+        [animatedImageView release];
+        animatedImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 26, 26)];  
+    }
+    [self getStatusImage];
+    showSyncUI=YES;
+    animatedImageView.animationDuration = 1.0f;
+    animatedImageView.animationRepeatCount = 0;
+    [animatedImageView startAnimating];
+    UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:animatedImageView];
     
     NSMutableArray * buttons = [[NSMutableArray alloc] initWithCapacity:0];
-    [buttons addObject:helpBarButton];
-    [actionButton release];
-    [helpBarButton release];
-    
+    [buttons addObject:syncBarButton];
+    [syncBarButton setTarget:self];
     UIToolbar * toolBar;
     // adding the done button
     // ################ DONE BUTTON HERE ################# //
@@ -8289,15 +8323,20 @@
         [actionButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         UIBarButtonItem * doneBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:actionButton];
         [actionButton release];
-        [buttons insertObject:doneBarButtonItem atIndex:0];
+        [buttons addObject:doneBarButtonItem];
         [doneBarButtonItem release];
-        toolBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(self.view.frame.origin.x -75, 0, 130, 44)] autorelease];
+        toolBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, 200, 44)] autorelease];
     }
     // ################################################### //
     else
-        toolBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(self.view.frame.origin.x -75, 0, 50, 44)] autorelease];
-    
+        toolBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, 100, 44)] autorelease];
+   // toolBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(self.view.frame.origin.x -75, 0, 50, 44)] autorelease];
+
+    [buttons addObject:helpBarButton];
     [toolBar setItems:buttons];
+    [actionButton release];
+    [helpBarButton release];
+    [syncBarButton release];
     [buttons release];
     
     detailViewObject.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:toolBar] autorelease];
@@ -9364,12 +9403,6 @@
 #pragma mark - ShowHelp Method
 - (void) showHelp
 {
-    if (!appDelegate.isInternetConnectionAvailable)
-    {
-        [activity stopAnimating];
-        //[appDelegate displayNoInternetAvailable];
-        return;
-    }
     HelpController * help = [[HelpController alloc] initWithNibName:@"HelpController" bundle:nil];
     help.modalPresentationStyle = UIModalPresentationFullScreen;
     help.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
@@ -10953,6 +10986,7 @@
 
         
     }
+    [self getStatusImage];
     [self enableSFMUI];
     
 }

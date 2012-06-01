@@ -198,6 +198,7 @@ SFWToolBarDelegate,RefreshSyncStatusButton, RefreshForInternet>
     UIButton  * statusButton;
     UIImageView* animatedImageView;
 }
+@property (nonatomic, retain) UIImageView* animatedImageView;
 
 @property (nonatomic, retain) DetailViewController * parentReference;
 
