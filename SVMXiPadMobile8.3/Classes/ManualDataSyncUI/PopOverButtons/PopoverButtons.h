@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "iServiceAppDelegate.h"
 
+
 @protocol MyPopoverDelegate <NSObject>
 -(void)dismisspopover;
 - (void) activityStart;
@@ -20,12 +21,18 @@
 
 @end
 
+@protocol RefreshMetaSyncStatus <NSObject>
+-(void)refreshMetaSyncStatus;
+
+@end
+
 @class ManualDataSyncDetail;
 
 
 @interface PopoverButtons : UIViewController <UIPopoverControllerDelegate>
 {
     id<MyPopoverDelegate> delegate;
+    id<RefreshMetaSyncStatus> refreshMetaSyncDelegate;
     
     UIButton *button;
     UIButton *button1;
@@ -50,6 +57,8 @@
 @property (nonatomic , retain)  UIPopoverController * popover;
 
 @property (nonatomic, assign) id<MyPopoverDelegate> delegate;
+@property (nonatomic, assign) id<RefreshMetaSyncStatus> refreshMetaSyncDelegate;;
+
 @property (nonatomic, retain) UIButton *button;
 @property (nonatomic, retain) UIButton *button1;
 @property (nonatomic, retain) UIButton *button2;
