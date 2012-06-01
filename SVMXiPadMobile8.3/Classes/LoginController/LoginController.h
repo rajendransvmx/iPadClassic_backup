@@ -92,7 +92,6 @@
     BOOL didLoginCompleted;
     
     //Abinash
-    NSString * _newusername;
     BOOL continueFalg;
     BOOL didDismissalertview;
     BOOL didEnterAlertView;
@@ -116,7 +115,6 @@
 @property (nonatomic, retain) NSString * startDateForResponse, * endDateForResponse;
 //Abinash
 @property (nonatomic, retain) NSString * _username;
-@property (nonatomic, retain) NSString * _newusername;
 
 @property (nonatomic, retain) IBOutlet UIActivityIndicatorView * activity;
 

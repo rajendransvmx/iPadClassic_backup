@@ -36,7 +36,6 @@
 @synthesize startDateForResponse, endDateForResponse;
 //Abinash
 @synthesize _username;
-@synthesize _newusername;
 
 - (id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -147,11 +146,7 @@
 - (BOOL) CheckForUserNamePassword
 {
     if (!_username && !_password)                    //if key chain is nill - 
-    {
-        _username = [NSString stringWithFormat:@"%@", _username];
-        _password = [NSString stringWithFormat:@"%@", _password];
-        _newusername = _username;
-        
+    {        
         [self loginWithUsernamePassword];
         if (appDelegate.wsInterface.didOpComplete == FALSE)
         {
@@ -199,18 +194,8 @@
         
         return TRUE;
     }
-
-    else if (((![txtPasswordLandscape.text isEqualToString:_password]) && ([txtUsernameLandscape.text isEqualToString:_username])) || (([txtPasswordLandscape.text isEqualToString:_password]) && (![txtUsernameLandscape.text isEqualToString:_password])))    // to validate username and passowrd 
-    {
-        [self loginWithUsernamePassword];
-        return FALSE;
-        
-    }
-    
     else if ((![txtUsernameLandscape.text isEqualToString:_username] && (![_username isEqualToString:nil]) && (![_username isEqualToString:@""])) || (![txtPasswordLandscape.text isEqualToString:_password] && (![_password isEqualToString:nil]) && (![_password isEqualToString:@""])) ) //switch user
     {
-        _newusername = appDelegate.username;
-        
                
         NSString * description = [appDelegate.wsInterface.tagsDictionary objectForKey:login_switch_user];
         NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_switch_user];
@@ -1042,7 +1027,6 @@
         _username = [[temp objectAtIndex:0] objectForKey:@"username"];
     }
     txtUsernameLandscape.text = _username;
-    _newusername = _username;
     
     // Retrieve password from keychain
     
@@ -1752,7 +1736,6 @@
         _username = [[temp objectAtIndex:0] objectForKey:@"username"];
     }
     txtUsernameLandscape.text = _username;
-    _newusername = _username;
     
     // Retrieve password from keychain
     
