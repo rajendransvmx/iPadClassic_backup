@@ -598,6 +598,7 @@
         appDelegate.wsInterface.didOpComplete = TRUE;
         NSLog(@"IComeOUTHere login");
         didLoginCompleted  = TRUE;
+        appDelegate.didLoginAgain = TRUE;
         
         [self enableControls];
         
