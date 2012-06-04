@@ -4705,10 +4705,9 @@
         return FALSE;
     }
     
-    [appDelegate.databaseInterface cleartable:@"EVENT"];
-    [appDelegate.databaseInterface cleartable:@"Task"];
     
     [appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
+    
     
     return TRUE;
 }
@@ -4770,7 +4769,7 @@
     if (metaSyncPopover == nil)
         metaSyncPopover = [[PopoverButtons alloc] init];
     
-    [metaSyncPopover schdulesynchronizeConfiguration];
+    [metaSyncPopover startSyncConfiguration];
     
 }
 
