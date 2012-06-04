@@ -707,6 +707,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 //Radha - IncrementalMetasync
 - (void) ScheduleIncrementalMetaSyncTimer;
 - (void) metaSyncTimer;
+- (void) callMetaSyncTimer;
 
 //Radha - 21 March
 //- (void) throwException;
@@ -715,6 +716,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 - (void) ScheduleTimerForEventSync;
 - (void) eventSyncTimer;
 - (void) callEventSyncTimer;
+
 
 @end
 
