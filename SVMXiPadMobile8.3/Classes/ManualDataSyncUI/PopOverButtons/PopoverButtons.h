@@ -75,4 +75,7 @@
 
 - (void) startSyncEvents;
 
+//RADHA 
+- (void) startSyncConfiguration;
+
 @end
