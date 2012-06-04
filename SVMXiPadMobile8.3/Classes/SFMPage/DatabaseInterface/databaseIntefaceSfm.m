@@ -41,11 +41,7 @@
     {
         while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
         {
-           /* NSString * id_  =[NSString stringWithUTF8String:(char*)synchronized_sqlite3_column_text(stmt, 1)];
-            NSString * object_api_name  =[NSString stringWithUTF8String:(char*)synchronized_sqlite3_column_text(stmt, 2)];
-            NSString * processType  =[NSString stringWithUTF8String:(char*)synchronized_sqlite3_column_text(stmt, 3)];
-            NSString * processName  =[NSString stringWithUTF8String:(char*)synchronized_sqlite3_column_text(stmt, 4)];
-            NSString * processDescription  =[NSString stringWithUTF8String:(char*)synchronized_sqlite3_column_text(stmt, 5)];*/
+          
             NSData * data = [[[NSData alloc] initWithBytes:sqlite3_column_blob(stmt, 0) length:synchronized_sqlite3_column_bytes(stmt, 0)]autorelease];
            
             NSString *errorStr = nil;
@@ -95,10 +91,12 @@
             {
                char * temp = (char*)synchronized_sqlite3_column_text(sql_stmt, 0);
                NSString * name = @"";
-                if(temp != nil)
+                if(temp != nil && strlen(temp))
                 {    
-                    name  =[NSString stringWithUTF8String:temp]; 
+                    name  = [NSString stringWithUTF8String:temp]; 
                 }
+                if ([name length] == 0)
+                    name  = @"";
                 [dict setObject:name forKey:[api_names objectAtIndex:i]];
             }
         }
@@ -1545,8 +1543,6 @@
     {
         NSLog(@"Insert Failed");
         success = FALSE;
-        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-            [MyPopoverDelegate performSelector:@selector(throwException)];
     }
     else
     {
@@ -3112,8 +3108,6 @@
     {
         success = FALSE;
         NSLog(@"ERROR IN UPDATING");
-        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-            [MyPopoverDelegate performSelector:@selector(throwException)];
     }
     else
     {
@@ -3346,9 +3340,8 @@
             
             if(synchronized_sqlite3_exec(appDelegate.db, [update_query UTF8String],NULL, NULL, &err) != SQLITE_OK)
             {
-                NSLog(@"UNSUCCESS");
-                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                    [MyPopoverDelegate performSelector:@selector(throwException)];
+                NSLog(@"UNSUCCESS"); //RADHA TODAY
+              
             }
             [autorelease drain];
            /* txnstmt = @"END TRANSACTION";
@@ -3476,8 +3469,6 @@
             if(synchronized_sqlite3_exec(appDelegate.db, [update_query UTF8String],NULL, NULL, &err) != SQLITE_OK)
             {
                 NSLog(@"UNSUCCESS");
-                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                    [MyPopoverDelegate performSelector:@selector(throwException)];
             }
              [autorelesePool release];
         }
@@ -4498,8 +4489,7 @@
             if(synchronized_sqlite3_exec(appDelegate.db, [insert_query UTF8String],NULL, NULL, &err) != SQLITE_OK)
             {
                 NSLog(@"INSERTION INTO CONFLICT TABLE UNSUCCESS");
-                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                    [MyPopoverDelegate performSelector:@selector(throwException)];
+            
             }
             
         }
