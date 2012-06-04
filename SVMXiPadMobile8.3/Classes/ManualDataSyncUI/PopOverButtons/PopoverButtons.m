@@ -30,7 +30,7 @@
     
     [super loadView];
     self.view.frame = CGRectMake(0, 0, 100, 100);
-    UIImageView * bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_right_panel_bg_main.png"]];
+    UIImageView * bgImage = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_right_panel_bg_main.png"]] autorelease];
     
     //Label
     UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(12, 0, 200, 50)] autorelease];
@@ -164,6 +164,31 @@
         }       
 
         
+        if ([appDelegate.event_thread isExecuting])
+        {
+            
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            {
+                if (!appDelegate.isInternetConnectionAvailable)
+                {
+                    break;
+                }
+                
+                if ([appDelegate.event_thread isFinished])
+                {
+                    [appDelegate.event_timer invalidate];
+                    break;
+                }
+            }
+        }
+        else
+        {
+            if (appDelegate.event_timer)
+            {
+                [appDelegate.event_timer invalidate];
+            }            
+        }   
+
         if (!appDelegate.isInternetConnectionAvailable)
         {
             appDelegate.SyncStatus = SYNC_RED;
@@ -230,6 +255,32 @@
                 [appDelegate.metasync_timer invalidate];
             }            
         }       
+        
+        if ([appDelegate.event_thread isExecuting])
+        {
+            
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            {
+                if (!appDelegate.isInternetConnectionAvailable)
+                {
+                    break;
+                }
+                
+                if ([appDelegate.event_thread isFinished])
+                {
+                    [appDelegate.event_timer invalidate];
+                    break;
+                }
+            }
+        }
+        else
+        {
+            if (appDelegate.event_timer)
+            {
+                [appDelegate.event_timer invalidate];
+            }            
+        }   
+
         appDelegate.isSpecialSyncDone = FALSE;
         [appDelegate callSpecialIncrementalSync];
         
@@ -252,11 +303,24 @@
     [delegate activityStop];
     [appDelegate ScheduleIncrementalMetaSyncTimer];
     [appDelegate ScheduleIncrementalDatasyncTimer];
+    [appDelegate ScheduleTimerForEventSync];
 }
 
 - (void) synchronizeConfiguration
 {
-    
+    [self startSyncConfiguration];
+}
+
+
+- (void) synchronizeEvents
+{
+    [self startSyncEvents];
+}
+
+- (void) startSyncConfiguration
+{
+    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+
     syncConfigurationFailed = FALSE;
     appDelegate.isIncrementalMetaSyncInProgress = FALSE;
     
@@ -269,27 +333,16 @@
         {
             return;
         }
+        appDelegate.isIncrementalMetaSyncInProgress = TRUE;
         
-        
-
-
- [appDelegate.calDataBase insertMetaSyncStatus:@"Green" WithDB:appDelegate.db];
-appDelegate.dataBase.MyPopoverDelegate = delegate;
+        [appDelegate.calDataBase insertMetaSyncStatus:@"Green" WithDB:appDelegate.db];
+        appDelegate.dataBase.MyPopoverDelegate = delegate;
         appDelegate.databaseInterface.MyPopoverDelegate = delegate;
         appDelegate.wsInterface.MyPopoverDelegate = delegate;
         
         [delegate activityStart];
         [delegate disableControls];
         
-        
-        appDelegate.SyncStatus = SYNC_ORANGE;
-        
-        [refreshMetaSyncDelegate refreshMetaSyncStatus];
-        [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
-        [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
-        [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-        appDelegate.isIncrementalMetaSyncInProgress = TRUE;
-       
         
         if([appDelegate.syncThread isExecuting])
         {
@@ -337,11 +390,38 @@ appDelegate.dataBase.MyPopoverDelegate = delegate;
             }            
         }   
         
+        if ([appDelegate.event_thread isExecuting])
+        {
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            {
+                if (!appDelegate.isInternetConnectionAvailable)
+                {
+                    break;
+                }
+                
+                if ([appDelegate.event_thread isFinished])
+                {
+                    [appDelegate.event_timer invalidate];
+                    break;
+                }
+            }
+        }
+        else
+        {
+            if (appDelegate.event_timer)
+            {
+                [appDelegate.event_timer invalidate];
+            }            
+        }   
+        
+        
+        
+        
         if (!appDelegate.isInternetConnectionAvailable)
         {
-            appDelegate.SyncStatus = SYNC_RED;
+            appDelegate.SyncStatus = SYNC_GREEN;
             
-        
+            
             [refreshMetaSyncDelegate refreshMetaSyncStatus];
             [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
             [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
@@ -350,6 +430,14 @@ appDelegate.dataBase.MyPopoverDelegate = delegate;
             appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflictsForMetaSyncWithDB:appDelegate.dataBase.tempDb];
             [appDelegate.reloadTable ReloadSyncTable];
         }
+        
+        appDelegate.SyncStatus = SYNC_ORANGE;
+        
+        [refreshMetaSyncDelegate refreshMetaSyncStatus];
+        [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+        [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+        [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+
         
         [appDelegate goOnlineIfRequired];
         [appDelegate.dataBase removecache];
@@ -380,40 +468,37 @@ appDelegate.dataBase.MyPopoverDelegate = delegate;
             
             [appDelegate.reloadTable ReloadSyncTable];
         }
-
-
+        
+        
     }
     @catch (NSException * exception) {
         
-       exception = [NSException exceptionWithName:@"Error" reason:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_failed_try_again] userInfo: nil];
+        exception = [NSException exceptionWithName:@"Error" reason:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_failed_try_again] userInfo: nil];
         syncConfigurationFailed = TRUE;
-        appDelegate.dataBase.MyPopoverDelegate = nil;
-        appDelegate.databaseInterface.MyPopoverDelegate = nil;
-        appDelegate.wsInterface.MyPopoverDelegate = nil;
-        
+               
         [appDelegate.dataBase copyTempsqlToSfm];
-
-  [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];
         
-        appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflictsForMetaSyncWithDB:appDelegate.dataBase.tempDb];
-        [appDelegate.reloadTable ReloadSyncTable];
-    
         [delegate enableControls];
         
         if (!appDelegate.isInternetConnectionAvailable)
         {
+            [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];
             
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflictsForMetaSyncWithDB:appDelegate.dataBase.tempDb];
+            [appDelegate.reloadTable ReloadSyncTable];
+            
+
         }
         else
         {
             NSString * title  = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button1];
-           NSString * cancel = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
-
+            NSString * cancel = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+            
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_meta_sync_failed] delegate:self cancelButtonTitle:cancel otherButtonTitles: nil];
             [alert show];
             [alert release];
             
-
+            
         }
         
         appDelegate.SyncStatus = SYNC_GREEN;
@@ -425,128 +510,7 @@ appDelegate.dataBase.MyPopoverDelegate = delegate;
     @finally {
         [appDelegate ScheduleIncrementalDatasyncTimer];
         [appDelegate ScheduleIncrementalMetaSyncTimer];
-        [appDelegate.dataBase deleteDatabase:TEMPDATABASENAME];
-        [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
-        
-       if ([appDelegate.StandAloneCreateProcess count] > 0)
-        {
-            [appDelegate.StandAloneCreateProcess  removeAllObjects];
-            NSMutableArray * createprocessArray = [appDelegate.databaseInterface getAllTheProcesses:@"STANDALONECREATE"];
-            [appDelegate getCreateProcessArray:createprocessArray];
-        }
-             
-        if ([appDelegate.view_layout_array count] > 0)
-        {
-            [appDelegate.view_layout_array removeAllObjects];
-            appDelegate.view_layout_array = [appDelegate.databaseInterface getAllTheProcesses:@"VIEWRECORD"]; 
-        }
-        
-        appDelegate.dataBase.MyPopoverDelegate = nil;
-        appDelegate.databaseInterface.MyPopoverDelegate = nil;
-        appDelegate.wsInterface.MyPopoverDelegate = nil;
-        [delegate activityStop];
-        
-        appDelegate.isIncrementalMetaSyncInProgress = FALSE;
-        
-    }
-    
-    if (syncConfigurationFailed == FALSE)
-    {
-        [delegate enableControls];
-        
-        NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button1];
-        NSString * cancel = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
-        
-        UIAlertView *alert =  [[UIAlertView alloc] initWithTitle:title message:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_completed] delegate:self cancelButtonTitle:cancel otherButtonTitles: nil];
-        
-        appDelegate.SyncStatus = SYNC_GREEN;
-        
-        [appDelegate.calDataBase insertMetaSyncStatus:@"Green" WithDB:appDelegate.db];
-        [refreshMetaSyncDelegate refreshMetaSyncStatus];
-        [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
-        [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
-        [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-        [alert show];
-        [alert release];
-    }
-    else
-    {
-        
-    }
-    
-}
-
-
-- (void) synchronizeEvents
-{
-    [self startSyncEvents];
-}
-
-- (void) schdulesynchronizeConfiguration
-{
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-    
-    if (appDelegate == nil)
-        appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
-    
-    syncConfigurationFailed = FALSE;
-    
-    @try {
-        
-        if (appDelegate.SyncStatus == SYNC_RED)
-            return;
-        
-        appDelegate.dataBase.MyPopoverDelegate = delegate;
-        appDelegate.databaseInterface.MyPopoverDelegate = delegate;
-        appDelegate.wsInterface.MyPopoverDelegate = delegate;
-               
-        if([appDelegate.syncThread isExecuting])
-        {
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
-            {
-                if (!appDelegate.isInternetConnectionAvailable)
-                {
-                    break;
-                }
-                
-                if ([appDelegate.syncThread isFinished])
-                {
-                    [appDelegate.datasync_timer invalidate];
-                    break;
-                }
-            }
-        }
-        else
-        {
-            if (appDelegate.datasync_timer)
-            {
-                [appDelegate.datasync_timer invalidate];
-            }            
-        }   
-        
-        [appDelegate goOnlineIfRequired];
-        [appDelegate.dataBase removecache];     
-        appDelegate.didincrementalmetasyncdone = FALSE;
-        
-        [appDelegate.dataBase StartIncrementalmetasync];
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
-        {
-            if (!appDelegate.isInternetConnectionAvailable)
-                break;
-            
-            if (appDelegate.didincrementalmetasyncdone == TRUE)
-                break; 
-        }
-        
-    }
-    @catch (NSException * exception) {
-        exception = [NSException exceptionWithName:@"Error" reason:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_failed_try_again] userInfo: nil];
-        syncConfigurationFailed = TRUE;
-        [appDelegate.dataBase copyTempsqlToSfm];
-
-    }
-    @finally {
-        [appDelegate ScheduleIncrementalDatasyncTimer];
+        [appDelegate ScheduleTimerForEventSync];
         [appDelegate.dataBase deleteDatabase:TEMPDATABASENAME];
         [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
         
@@ -563,26 +527,47 @@ appDelegate.dataBase.MyPopoverDelegate = delegate;
             appDelegate.view_layout_array = [appDelegate.databaseInterface getAllTheProcesses:@"VIEWRECORD"]; 
         }
         
-        if ([appDelegate.wsInterface.tagsDictionary count] > 0)
-        {
-            [appDelegate.wsInterface.tagsDictionary removeAllObjects];
-            NSMutableDictionary * dict = [appDelegate.dataBase getTagsDictionary];
-            appDelegate.wsInterface.tagsDictionary = [appDelegate.wsInterface fillEmptyTags:dict];
-        }
+        [delegate activityStop];
+        
+        appDelegate.isIncrementalMetaSyncInProgress = FALSE;
         
         appDelegate.dataBase.MyPopoverDelegate = nil;
         appDelegate.databaseInterface.MyPopoverDelegate = nil;
         appDelegate.wsInterface.MyPopoverDelegate = nil;
+
+        
+    }
+    
+    if (syncConfigurationFailed == FALSE)
+    {
+        [delegate enableControls];
+        
+             
+        NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button1];
+        NSString * cancel = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+        
+        UIAlertView *alert =  [[UIAlertView alloc] initWithTitle:title message:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_completed] delegate:self cancelButtonTitle:cancel otherButtonTitles: nil];
+        
+        appDelegate.SyncStatus = SYNC_GREEN;
+        
+        [appDelegate.calDataBase insertMetaSyncStatus:@"Green" WithDB:appDelegate.db];
+        [refreshMetaSyncDelegate refreshMetaSyncStatus];
+        [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+        [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+        [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+        [alert show];
+        [alert release];
     }
     
     [pool release];
-}
 
+    
+}
 
 
 - (void) startSyncEvents
 {
-    NSAutoreleasePool * popl = [[NSAutoreleasePool alloc] init];
+    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
     
     if (appDelegate == nil)
         appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
@@ -646,6 +631,33 @@ appDelegate.dataBase.MyPopoverDelegate = delegate;
                 [appDelegate.metasync_timer invalidate];
             }            
         }   
+        
+        if ([appDelegate.event_thread isExecuting])
+        {
+            
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            {
+                if (!appDelegate.isInternetConnectionAvailable)
+                {
+                    break;
+                }
+                
+                if ([appDelegate.event_thread isFinished])
+                {
+                    [appDelegate.event_timer invalidate];
+                    break;
+                }
+            }
+        }
+        else
+        {
+            if (appDelegate.event_thread)
+            {
+                [appDelegate.event_timer invalidate];
+            }            
+        }   
+
+        
         appDelegate.SyncStatus = SYNC_ORANGE;
         
         [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
@@ -693,6 +705,7 @@ appDelegate.dataBase.MyPopoverDelegate = delegate;
         
         [appDelegate ScheduleIncrementalDatasyncTimer];
         [appDelegate ScheduleIncrementalMetaSyncTimer];
+        [appDelegate ScheduleTimerForEventSync];
         
         appDelegate.dataBase.MyPopoverDelegate = nil;
         appDelegate.databaseInterface.MyPopoverDelegate = nil;
@@ -727,7 +740,7 @@ appDelegate.dataBase.MyPopoverDelegate = delegate;
     
     [delegate activityStop];
     
-    [popl release];
+    [pool release];
 }
 
 @end
