@@ -526,7 +526,7 @@
     BOOL isStandAloneCreate = [[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"STANDALONECREATE"];
     if (appDelegate.signatureCaptureUpload && !isInEditDetail && !isStandAloneCreate && !isInViewMode)
     {
-        actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)];
+        actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 37)];
         [actionButton setTitle:@"Actions" forState:UIControlStateNormal];
         [actionButton setImage:[UIImage imageNamed:@"sfm_signature_capture"] forState:UIControlStateNormal];
         [actionButton addTarget:self action:@selector(ShowSignature) forControlEvents:UIControlEventTouchUpInside];
@@ -547,7 +547,7 @@
     //Add help button Radha - 26 August, 2011
     if(appDelegate.isWorkinginOffline)
     {
-        actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)];
+        actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 37)];
         [actionButton setImage:[UIImage imageNamed:@"iService-Screen-Help.png"] forState:UIControlStateNormal];
         actionButton.alpha = 1.0;
         [actionButton addTarget:self action:@selector(showHelp) forControlEvents:UIControlEventTouchUpInside];
@@ -2362,9 +2362,8 @@
             if (!appDelegate.isInternetConnectionAvailable)
             {
                 [activity stopAnimating];
-                //[appDelegate displayNoInternetAvailable];
                 [self enableSFMUI];
-                return;
+                break;
             }
             
             if ([appDelegate.syncThread isFinished])
@@ -2389,6 +2388,8 @@
         {
             if (!appDelegate.isInternetConnectionAvailable)
             {
+                [activity stopAnimating];
+                [self enableSFMUI];
                 break;
             }
             
@@ -2407,6 +2408,33 @@
         }            
     }   
 
+    
+    if ([appDelegate.event_thread isExecuting])
+    {
+        
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+        {
+            if (!appDelegate.isInternetConnectionAvailable)
+            {
+                [activity stopAnimating];
+                [self enableSFMUI];
+                break;
+            }
+            
+            if ([appDelegate.event_thread isFinished])
+            {
+                [appDelegate.event_timer invalidate];
+                break;
+            }
+        }
+    }
+    else
+    {
+        if (appDelegate.event_timer)
+        {
+            [appDelegate.event_timer invalidate];
+        }            
+    }   
     
     [appDelegate goOnlineIfRequired];
     
@@ -2446,6 +2474,7 @@
     [activity stopAnimating];
     [appDelegate ScheduleIncrementalDatasyncTimer];
     [appDelegate ScheduleIncrementalMetaSyncTimer];
+    [appDelegate ScheduleTimerForEventSync];
     [self enableSFMUI];
 }
 
@@ -3548,159 +3577,6 @@
 }
 
 #pragma mark - WSInterface Delegate Method
-/*- (void) didReceivePageLayout:(NSMutableDictionary *)pageLayout withDescribeObjects:(NSMutableArray *)describeObjects
-{
-    didRunOperation = NO;
-    if (isShowingSaveError)
-    {
-        // Restore table back to original position and hide web view
-        [UIView beginAnimations:@"animateTable" context:nil];
-        [UIView setAnimationDuration:0.3];
-        [UIView setAnimationDelegate:self];
-        [UIView setAnimationDidStopSelector:@selector(animation1DidStop:finished:context:)];
-        self.tableView.frame = CGRectMake(self.tableView.frame.origin.x, 0, self.tableView.frame.size.width, self.view.frame.size.height);
-        [UIView commitAnimations];
-        isShowingSaveError = NO;
-    }
-    // Received PageLayout, Save View Layout as default for current object type
-    if (didSelectViewLayout)
-    {
-        didSelectViewLayout = NO;
-        [appDelegate.wsInterface saveSwitchView:currentProcessId forObject:objectAPIName];
-    }
-    
-    appDelegate.describeObjectsArray = describeObjects;
-    appDelegate.SFMPage = pageLayout;
-    
-    isDefault = YES;
-    
-    if ([[pageLayout objectForKey:gPROCESSTYPE] isEqualToString:@"VIEWRECORD"])
-    {
-        isInViewMode = NO;
-        NSDictionary * dict = [appDelegate.SFMPage objectForKey:gHEADER];
-        NSDictionary * headerData = [dict objectForKey:gHEADER_DATA];
-        NSString * objName = [self getObjectNameFromHeaderData:headerData forKey:gName]; // [headerData objectForKey:gName];
-        NSString * objectType = [dict objectForKey:gHEADER_OBJECT_NAME];
-        NSString * object_label =[self getLabelForObject:objectType];
-        NSString * title = object_label;
-        int titleLength = [title length];
-        title = [title stringByAppendingString:@": "];
-        title = [title stringByAppendingString:objName];
-        int objNameLength = [objName length];
-        if ((titleLength + objNameLength) > 0)
-            detailTitle = title;
-        else
-            detailTitle = @"";
-
-    }
-    else if ([[pageLayout objectForKey:gPROCESSTYPE] isEqualToString:@"EDIT"])
-    {
-        isInViewMode = YES; //CRAZZZZY STUFF - PLEASE CHANGE THE SEMANTICS OF isInViewMode to the reverse of what it is now - pavaman
-               NSDictionary * dict = [appDelegate.SFMPage objectForKey:gHEADER];
-        NSDictionary * headerData = [dict objectForKey:gHEADER_DATA];
-        NSString * objName = [self getObjectNameFromHeaderData:headerData forKey:gName]; // [headerData objectForKey:gName];
-        NSString * objectType = [dict objectForKey:gHEADER_OBJECT_NAME];
-        NSString * object_label =[self getLabelForObject:objectType];
-        NSString * title = object_label;
-        int titleLength = [title length];
-        title = [title stringByAppendingString:@": "];
-        title = [title stringByAppendingString:objName];
-        int objNameLength = [objName length];
-        if ((titleLength + objNameLength) > 0)
-            detailTitle = title;
-        else
-            detailTitle = @"";
-        
-    }
-    else if ([[pageLayout objectForKey:gPROCESSTYPE] isEqualToString:@"STANDALONECREATE"])
-    {
-        isInViewMode = YES;
-        NSDictionary * dict = [appDelegate.SFMPage objectForKey:gHEADER];
-        NSDictionary * headerData = [dict objectForKey:gHEADER_DATA];
-        NSString * objName = [self getObjectNameFromHeaderData:headerData forKey:gName]; // [headerData objectForKey:gName];
-        NSString * objectType = [dict objectForKey:gHEADER_OBJECT_NAME];
-        NSString * object_label =[self getLabelForObject:objectType];
-        NSString * title = object_label;
-        int titleLength = [title length];
-        title = [title stringByAppendingString:@": "];
-        title = [title stringByAppendingString:objName];
-        int objNameLength = [objName length];
-        if ((titleLength + objNameLength) > 0)
-            detailTitle = title;
-        else
-            detailTitle = @"";
-    }
-    else if ([[pageLayout objectForKey:gPROCESSTYPE] isEqualToString:@"SOURCETOTARGET"])
-    {
-        isInViewMode = YES;
-        detailTitle = [appDelegate.SFMPage objectForKey:@"processTitle"];
-    }
-    else
-        isInViewMode = YES;
-   
-    
-    //sahana 2nd August sfm page events
-    NSMutableDictionary * headerDataDictionary = [appDelegate.SFMPage objectForKey:gHEADER];
-    NSMutableArray * pageLevelEvents = [[[headerDataDictionary objectForKey:gPAGELEVEL_EVENTS] mutableCopy] autorelease];
-    for(int i = 0; i< [pageLevelEvents count];i++)
-    {
-        NSDictionary * eventsDictionary = [pageLevelEvents objectAtIndex:i];
-        if ([eventsDictionary count]> 0)
-        {
-            NSString * eventType = [eventsDictionary objectForKey:gEVENT_TYPE];
-            NSString * TargetCall = [eventsDictionary objectForKey:gEVENT_TARGET_CALL];
-            
-            if([eventType isEqualToString:@"On Load"])
-            {
-                if([TargetCall isEqualToString:@""])
-                {
-                    
-                }
-                else
-                {
-                    [self didInvokeWebService:TargetCall];
-                }
-            }
-            
-        }
-    }
-
-    
-    appDelegate.isSFMReloading = FALSE;
-    [self.tableView reloadData];
-    [appDelegate.sfmPageController.rootView refreshTable];
-
-    [self  didselectSection:0];    
-       
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 400, 44)];
-	label.backgroundColor = [UIColor clearColor];
-	label.font = [UIFont boldSystemFontOfSize:14.0];
-	label.shadowColor = [UIColor colorWithWhite:0.0 alpha:0.5];
-	label.textAlignment = UITextAlignmentCenter;
-	label.textColor = [UIColor blackColor];
-	label.text = detailTitle;	
-	self.navigationItem.titleView = label;
-	[label release];
-    
-    [activity stopAnimating];
-    
-    [self addNavigationButtons:detailTitle];
-    
-    [appDelegate.sfmPageController.rootView displaySwitchViews];
-    BOOL status;
-    status = [Reachability connectivityStatus];
-    if(status)
-    {
-        if (!appDelegate.isInternetConnectionAvailable)
-        {
-            
-           
-            
-            [tableView reloadData];
-            [rootViewController.tableView reloadData];
-        }
-    }
-}*/
 
 -(void) didReceivePageLayoutOffline
 {
@@ -11209,7 +11085,7 @@
                 break;
             }
             
-            if ([appDelegate.datasync_timer isFinished])
+            if ([appDelegate.syncThread isFinished])
             {
                 [appDelegate.datasync_timer invalidate];
                 break;
@@ -11250,6 +11126,34 @@
             [appDelegate.metasync_timer invalidate];
         }            
     }   
+    
+    
+    
+    if ([appDelegate.event_thread isExecuting])
+    {
+        
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+        {
+            if (!appDelegate.isInternetConnectionAvailable)
+            {
+                break;
+            }
+            
+            if ([appDelegate.event_thread isFinished])
+            {
+                [appDelegate.event_timer invalidate];
+                break;
+            }
+        }
+    }
+    else
+    {
+        if (appDelegate.event_timer)
+        {
+            [appDelegate.event_timer invalidate];
+        }            
+    }   
+
 
     if (!appDelegate.isInternetConnectionAvailable)
     {
@@ -11310,6 +11214,7 @@
     [self.tableView reloadData];
     [appDelegate ScheduleIncrementalMetaSyncTimer];
     [appDelegate ScheduleIncrementalDatasyncTimer];
+    [appDelegate ScheduleTimerForEventSync];
 } 
 
 #pragma mark - Get Product Info
