@@ -216,11 +216,11 @@
 - (void) clearTempDatabase;
 
 //DATA SYNC
-- (void) startFullDataSync;
-- (void) copyMetaSyncDataInToSfm;
+//- (void) startFullDataSync;
+//- (void) copyMetaSyncDataInToSfm;
 - (NSMutableArray *) retreiveDataObjectTable;
 - (void) copyMetaTableInToSfm:(NSMutableArray *)metaTable;
-- (void) startDataSync;
+//- (void) startDataSync;
 
 //RADHA only event sync
 - (BOOL) startEventSync;
