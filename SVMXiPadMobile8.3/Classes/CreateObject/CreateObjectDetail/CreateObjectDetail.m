@@ -251,7 +251,6 @@
     
     for (int i = 0; i < [appDelegate.wsInterface.createProcessArray count]; i++)
     {
-        NSDictionary * dict = [appDelegate.wsInterface.createProcessArray objectAtIndex:i];
         if(i == indexPath.row)
         {
             break;
@@ -266,7 +265,7 @@
     //sahana offline
     NSString * object_name = [dict objectForKey:SVMXC_OBJECT_NAME];
     //NSString * object_name = appDelegate.sfmPageController.objectName;
-    [delegate showSFMCreateObjectWithProcessID:processId processTitle:processTitle object_name:object_name];
+   [delegate showSFMCreateObjectWithProcessID:processId processTitle:processTitle object_name:object_name];
     [activity stopAnimating];
 }
 
