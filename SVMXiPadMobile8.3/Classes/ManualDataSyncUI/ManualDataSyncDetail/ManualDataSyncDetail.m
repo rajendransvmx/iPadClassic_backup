@@ -77,7 +77,7 @@
     
     self._tableView.backgroundColor = [UIColor clearColor];
     
-    UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)] autorelease];
+    UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 38)] autorelease];
     [backButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Back-Arrow-Button"] forState:UIControlStateNormal];
     [backButton addTarget:self action:@selector(DismissSplitView:) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem * backBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:backButton] autorelease];
@@ -113,7 +113,7 @@
     [statusButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     UIBarButtonItem * statusBarButton = [[[UIBarButtonItem alloc] initWithCustomView:statusButton] autorelease];        
     [arrayForRightBarButton addObject:statusBarButton];
-    UIButton *helpButton = [[UIButton alloc] initWithFrame:CGRectMake(190, 5, 43, 35)];
+    UIButton *helpButton = [[UIButton alloc] initWithFrame:CGRectMake(190, 5, 37, 38)];
     helpButton.backgroundColor = [UIColor clearColor];
     [helpButton setBackgroundImage:[UIImage imageNamed:@"iService-Screen-Help"] forState:UIControlStateNormal];
     [helpButton addTarget:self action:@selector(showHelp) forControlEvents:UIControlEventTouchUpInside];
@@ -302,7 +302,7 @@
             NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_retry];
             
             UIButton * retry = [UIButton buttonWithType:UIButtonTypeCustom];
-            [retry setFrame:CGRectMake(420, 17, 120, 35)];
+            [retry setFrame:CGRectMake(420, 17, 100, 30)];
             [retry setTitle:title forState:UIControlStateNormal];
             [retry setBackgroundImage:[UIImage imageNamed:@"blue button.png"] forState:UIControlStateNormal];
             
@@ -1301,12 +1301,32 @@
 
 - (void) retryDataSyncAgain
 {
-    [appDelegate.wsInterface DoIncrementalDataSync];
+    BOOL retVal = [appDelegate pingServer];
+    
+    
+    if(retVal == YES)
+    {
+        appDelegate.SyncStatus = SYNC_GREEN;
+        [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+        [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+        [appDelegate callDataSync];
+        
+    }
 }
 
 -(void) retryMetaDataSyncAgain
 {
-    [popOver_view synchronizeConfiguration];
+    BOOL retVal = [appDelegate pingServer];
+    
+    
+    if(retVal == YES)
+    {
+        appDelegate.SyncStatus = SYNC_GREEN;
+        [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+        [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+        [popOver_view synchronizeConfiguration];        
+    }
+
 }
 
 
