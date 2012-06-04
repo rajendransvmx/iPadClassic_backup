@@ -78,14 +78,14 @@
     _sfmArray = [[appDelegate.dataBase getSFMSearchConfigurationSettings] retain];
     
     //Back Button
-    UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 33, 31)] autorelease];
+    UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)] autorelease];
     [backButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Back-Arrow-Button"] forState:UIControlStateNormal];
     [backButton addTarget:self action:@selector(DismissViewController:) forControlEvents:UIControlEventTouchUpInside];
     [backButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     UIBarButtonItem * backBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:backButton] autorelease];
     self.navigationItem.leftBarButtonItem = backBarButtonItem;
     //Help Button
-    UIButton * helpButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 33, 31)] autorelease];
+    UIButton * helpButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)] autorelease];
     [helpButton setBackgroundImage:[UIImage imageNamed:@"iService-Screen-Help"] forState:UIControlStateNormal];
     [helpButton addTarget:self action:@selector(showHelp) forControlEvents:UIControlEventTouchUpInside];
     [helpButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];

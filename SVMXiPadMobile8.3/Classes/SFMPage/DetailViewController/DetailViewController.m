@@ -526,7 +526,7 @@
     BOOL isStandAloneCreate = [[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"STANDALONECREATE"];
     if (appDelegate.signatureCaptureUpload && !isInEditDetail && !isStandAloneCreate && !isInViewMode)
     {
-        actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 37)];
+        actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)];
         [actionButton setTitle:@"Actions" forState:UIControlStateNormal];
         [actionButton setImage:[UIImage imageNamed:@"sfm_signature_capture"] forState:UIControlStateNormal];
         [actionButton addTarget:self action:@selector(ShowSignature) forControlEvents:UIControlEventTouchUpInside];
@@ -547,7 +547,7 @@
     //Add help button Radha - 26 August, 2011
     if(appDelegate.isWorkinginOffline)
     {
-        actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 37)];
+        actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)];
         [actionButton setImage:[UIImage imageNamed:@"iService-Screen-Help.png"] forState:UIControlStateNormal];
         actionButton.alpha = 1.0;
         [actionButton addTarget:self action:@selector(showHelp) forControlEvents:UIControlEventTouchUpInside];
