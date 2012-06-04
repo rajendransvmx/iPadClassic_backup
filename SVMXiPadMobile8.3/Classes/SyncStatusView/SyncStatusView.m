@@ -51,7 +51,7 @@
     [bgImage release];
     
     NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
-    NSDateFormatter * formatter1 = [[NSDateFormatter alloc] init];
+    NSDateFormatter * formatter1 = [[[NSDateFormatter alloc] init] autorelease];
     [formatter1 setDateFormat:@"EEE, dd MMM yyyy HH:mm:ss a"];
     [formatter1 setTimeZone:[NSTimeZone defaultTimeZone]];
     //[formatter1 setTimeStyle:NSDateFormatterMediumStyle];
@@ -123,7 +123,7 @@
     label.font = [UIFont boldSystemFontOfSize:16];
     
     view = [[UIView alloc] initWithFrame:CGRectMake(0, 84, 300, 31)];
-    UIImageView * imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_section_header_bg.png"]];
+    UIImageView * imageView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_section_header_bg.png"]] autorelease];
     imageView.frame = CGRectMake(10, 84, 580, 31);
     [view addSubview:imageView];
     [view addSubview:label];
@@ -137,7 +137,7 @@
     UILabel * label1;
     label1 = [[UILabel alloc] initWithFrame:CGRectMake(35, 32, 550, 45)];
     label1.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_last_time];
-    UIImageView * bgView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"wou-row1-textfield-bg.png"]];
+    UIImageView * bgView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"wou-row1-textfield-bg.png"]] autorelease];
     bgView.frame = CGRectMake(0, 0, 550, 45);
     label1.backgroundColor = [UIColor clearColor];
     [label1 addSubview:bgView];
@@ -222,7 +222,7 @@
     
     
     UILabel *label3 = [[UILabel alloc] initWithFrame:CGRectMake(35, 120, 550, 45)];
-    UIImageView * bgView3 = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"wou-row1-textfield-bg.png"]];
+    UIImageView * bgView3 = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"wou-row1-textfield-bg.png"]] autorelease];
     bgView3.frame = CGRectMake(0, 0, 550, 45);
     label3.backgroundColor = [UIColor clearColor];
     label3.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_last_status];
@@ -239,7 +239,7 @@
     //Set 2
     UILabel *label4;
     label4 = [[UILabel alloc] initWithFrame:CGRectMake(35, 196, 550, 45)];
-    UIImageView * bgView4 = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"wou-row1-textfield-bg.png"]];
+    UIImageView * bgView4 = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"wou-row1-textfield-bg.png"]] autorelease];
     bgView4.frame = CGRectMake(0, 0, 550, 45);
     label4.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_last_time];
     label4.backgroundColor = [UIColor clearColor];
@@ -248,8 +248,8 @@
     
     /*################################## Time Stamp For Meta Sync ################################*/
     
-    NSDateFormatter * formatter3 = [[NSDateFormatter alloc] init];
-    NSDateFormatter * formatter4 = [[NSDateFormatter alloc] init];
+    NSDateFormatter * formatter3 = [[[NSDateFormatter alloc] init] autorelease];
+    NSDateFormatter * formatter4 = [[[NSDateFormatter alloc] init] autorelease];
     
     [formatter4 setDateFormat:@"EEE, dd MMM yyyy HH:mm:ss a"];
     [formatter4 setTimeZone:[NSTimeZone defaultTimeZone]];
@@ -299,7 +299,7 @@
     
     UILabel *label5;
     label5 = [[UILabel alloc] initWithFrame:CGRectMake(35, 241, 550, 45)];
-    UIImageView * bgView5 = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"wou-row1-textfield-bg.png"]];
+    UIImageView * bgView5 = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"wou-row1-textfield-bg.png"]] autorelease];
     bgView5.frame = CGRectMake(0, 0, 550, 45);
     label5.backgroundColor = [UIColor clearColor];
     label5.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_next_time];
@@ -365,7 +365,7 @@
     
     
     UILabel *label6 = [[UILabel alloc] initWithFrame:CGRectMake(35, 286, 550, 45)];
-    UIImageView * bgView6 = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"wou-row1-textfield-bg.png"]];
+    UIImageView * bgView6 = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"wou-row1-textfield-bg.png"]] autorelease];
     bgView6.frame = CGRectMake(0, 0, 550, 45);
     label6.backgroundColor = [UIColor clearColor];
     label6.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_last_status];
