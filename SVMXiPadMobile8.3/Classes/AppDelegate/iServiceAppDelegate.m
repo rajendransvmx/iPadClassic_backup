@@ -867,41 +867,35 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 - (BOOL) pingServer
 {
     _pingServer = TRUE;
-    if (!self.isInternetConnectionAvailable)
+     
+    didLoginAgain = NO;
+    
+    [[ZKServerSwitchboard switchboard] loginWithUsername:self.username password:self.password target:self selector:@selector(didLoginForServer:error:context:)];
+    
+    self.isServerInValid = FALSE;
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
     {
-        return NO;
-    }
-    else
-    {        
-        didLoginAgain = NO;
-        
-        [[ZKServerSwitchboard switchboard] loginWithUsername:self.username password:self.password target:self selector:@selector(didLoginForServer:error:context:)];
-        
-        self.isServerInValid = FALSE;
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
+        if (!self.isInternetConnectionAvailable)
         {
-            if (!self.isInternetConnectionAvailable)
-            {
-                break;
-            }  
-            
-            if (self.isServerInValid == TRUE)
-            {
-                break;
-            }
-                        
-            if (didLoginAgain)
-                break;
-        }
+            break;
+        }  
         
+        if (self.isServerInValid == TRUE)
+        {
+            break;
+        }
+                    
+        if (didLoginAgain)
+            break;
     }
+        
     if (isServerInValid == TRUE)
     {
         self.isServerInValid = FALSE;
         return NO;
     }
-
-    return YES;
+    else
+        return YES;
 }
 
 - (void) didLoginForServer:(ZKLoginResult *)lr error:(NSError *)error context:(id)context
@@ -995,7 +989,34 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
             [appDelegate.metasync_timer invalidate];
         }            
     }   
+    
+    if ([appDelegate.event_thread isExecuting])
+    {
+        
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+        {
+            if (!appDelegate.isInternetConnectionAvailable)
+            {
+                break;
+            }
+            
+            if ([appDelegate.event_thread isFinished])
+            {
+                [appDelegate.event_timer invalidate];
+                break;
+            }
+        }
+    }
+    else
+    {
+        if (appDelegate.event_timer)
+        {
+            [appDelegate.event_timer invalidate];
+        }            
+    }   
 
+    
+    
     
     sqlite3_close(self.db);
 	
@@ -1013,6 +1034,10 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     [loginController.activity stopAnimating];
     [loginController enableControls];
 }
+
+
+
+
 
 -(void)callDataSync
 {
@@ -1410,6 +1435,11 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 - (void) metaSyncTimer
 {
+    [self performSelectorOnMainThread:@selector(callMetaSyncTimer) withObject:nil waitUntilDone:NO];
+}
+
+- (void) callMetaSyncTimer
+{
     if (metaSyncThread != nil)
     {
         if ([metaSyncThread isFinished] == YES)
@@ -1427,8 +1457,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     [metaSyncThread release]; 
     metaSyncThread = [[NSThread alloc] initWithTarget:self.dataBase selector:@selector(callIncrementalMetasync) object:nil];
     [metaSyncThread start];
-}
 
+}
 
 #pragma mark - End
 
