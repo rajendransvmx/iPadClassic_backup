@@ -560,5 +560,11 @@
 	<string>Close</string>
 	<key>IPAD014_TAG030</key>
 	<string>Synchronize Configuration Failed. Please Retry Again</string>
+	<key>IPAD018_TAG031</key>
+	<string>Internet connectivity lost. Please retry when connectivity is available</string>
+	<key>IPAD018_TAG032</key>
+	<string>Configuration sync is due</string>
+	<key>IPAD018_TAG033</key>
+	<string>Sync Now</string>
 </dict>
 </plist>
