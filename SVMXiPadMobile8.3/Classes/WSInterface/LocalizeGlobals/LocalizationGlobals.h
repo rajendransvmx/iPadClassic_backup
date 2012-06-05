@@ -324,6 +324,10 @@
 #define sync_hold                           @"IPAD018_TAG027"
 #define sync_undo                           @"IPAD018_TAG028"
 #define sync_full_data_synchronize          @"IPAD018_TAG030"
+#define sync_no_internet                    @"IPAD018_TAG031"
+#define sync_metasync_due                   @"IPAD018_TAG032"
+#define sync_metasync_start                 @"IPAD018_TAG033"
+
 #define alert_authentication_error_         @"IPAD011_TAG014"
 #define login_continue                      @"IPAD015_TAG010"
 
