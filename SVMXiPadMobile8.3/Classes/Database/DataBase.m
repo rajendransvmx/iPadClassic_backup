@@ -2361,6 +2361,8 @@
 
 - (void) insertValuesInToSettingsTable:(NSMutableDictionary *)settingsDictionary
 {
+    NSString * meta_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_meta_data_configuration];
+
     if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
     {
         if (appDelegate.isIncrementalMetaSyncInProgress &&!appDelegate.isInternetConnectionAvailable)
@@ -2371,7 +2373,7 @@
             [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
             [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
            
-            [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync:@"META SYNC" WithDB:tempDb];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync:meta_sync WithDB:tempDb];
             
             appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflictsForMetaSyncWithDB:appDelegate.dataBase.tempDb];
              [appDelegate.reloadTable ReloadSyncTable];
@@ -4645,6 +4647,10 @@
 #pragma mark - FULL DATA SYNC
 - (BOOL) startEventSync
 {
+    
+    NSString * event_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_events];
+    
+    BOOL retVal = TRUE;
     NSLog(@"SAMMAN DataSync WS Start: %@", [NSDate date]);
     appDelegate.wsInterface.didOpComplete = FALSE;
     
@@ -4659,7 +4665,31 @@
         {
             break; 
         }
+        
+        retVal = [appDelegate pingServer];
+        if(retVal == NO)
+        {
+            break;
+        }
+
     }
+    
+    if(retVal == NO)
+    {       
+        appDelegate.SyncStatus = SYNC_RED;
+        
+        [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+        [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+        [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+        
+        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:event_sync];
+        appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+        [appDelegate.reloadTable ReloadSyncTable];
+        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+            [MyPopoverDelegate performSelector:@selector(throwException)];
+        return FALSE;
+    }
+
     
     if (!appDelegate.isInternetConnectionAvailable)
     {
@@ -4669,7 +4699,7 @@
         [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
         [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
         
-        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"Event Sync"];
+        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:event_sync];
          appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
         [appDelegate.reloadTable ReloadSyncTable];
         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
@@ -4687,7 +4717,27 @@
         
         if (appDelegate.Incremental_sync_status == PUT_RECORDS_DONE)
             break; 
+        retVal = [appDelegate pingServer];
+        if(retVal == NO)
+        {
+            break;
+        }
     }
+    
+    if(retVal == NO)
+    {
+        appDelegate.SyncStatus = SYNC_RED;
+        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:event_sync];
+        [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+        [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+        [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+        appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+        [appDelegate.reloadTable ReloadSyncTable];
+        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+            [MyPopoverDelegate performSelector:@selector(throwException)];
+        return FALSE;
+    }
+
     
     if (!appDelegate.isInternetConnectionAvailable)
     {
@@ -4697,7 +4747,7 @@
         [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
         [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
 
-        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"Event Sync"];
+        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:event_sync];
         appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
         [appDelegate.reloadTable ReloadSyncTable];
         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
