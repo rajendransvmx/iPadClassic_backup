@@ -80,10 +80,21 @@
     {
         _productName = [appDelegate.calDataBase getProductNameFromDbWithID:productId];
         
-        array = [appDelegate.calDataBase getTroubleShootingForProductName:_productName];
-        
-        [array retain];
-        [tableView reloadData];
+        if([_productName length] == 0 || productName == nil)
+        {
+            UIAlertView * alert = [[UIAlertView alloc] initWithTitle:serviceMax message:noMatch delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
+            
+            [alert show];
+            [alert release];
+
+        }
+        else 
+        {
+            array = [appDelegate.calDataBase getTroubleShootingForProductName:_productName];
+            
+            [array retain];
+            [tableView reloadData];
+        }
     }
 
     else
@@ -128,6 +139,7 @@
     if (isReachable)
     {
         NSLog(@"Troubleshooting Internet Reachable");
+     
     }
     else
     {
