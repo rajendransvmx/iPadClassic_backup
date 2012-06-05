@@ -675,6 +675,8 @@ last_sync_time:(NSString *)last_sync_time
 
 -(void)DoIncrementalDataSync
 {
+    NSString * data_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_data_sync];
+    
     if (!appDelegate.isInternetConnectionAvailable)
     {
         return;
@@ -745,7 +747,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             //appDelegate.SyncStatus = SYNC_GREEN;
             appDelegate.SyncStatus = SYNC_RED;
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
             [self.refreshSyncStatusUIButton showSyncUIStatus];
@@ -758,7 +760,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             //appDelegate.SyncStatus = SYNC_GREEN;
             appDelegate.SyncStatus = SYNC_RED;
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
             [self.refreshSyncStatusUIButton showSyncUIStatus];
@@ -795,7 +797,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             //appDelegate.SyncStatus = SYNC_GREEN;
             appDelegate.SyncStatus = SYNC_RED;
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
             [self.refreshSyncStatusUIButton showSyncUIStatus];
@@ -808,7 +810,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             //appDelegate.SyncStatus = SYNC_GREEN;
             appDelegate.SyncStatus = SYNC_RED;
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
             [self.refreshSyncStatusUIButton showSyncUIStatus];
@@ -841,7 +843,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             //appDelegate.SyncStatus = SYNC_GREEN;
             appDelegate.SyncStatus = SYNC_RED;
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
             [self.refreshSyncStatusUIButton showSyncUIStatus];
@@ -855,7 +857,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             //appDelegate.SyncStatus = SYNC_GREEN;
             appDelegate.SyncStatus = SYNC_RED;
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
             [self.refreshSyncStatusUIButton showSyncUIStatus];
@@ -884,7 +886,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             //appDelegate.SyncStatus = SYNC_GREEN;
             appDelegate.SyncStatus = SYNC_RED;
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
             [self.refreshSyncStatusUIButton showSyncUIStatus];
@@ -908,7 +910,7 @@ last_sync_time:(NSString *)last_sync_time
     {
         //appDelegate.SyncStatus = SYNC_GREEN;
         appDelegate.SyncStatus = SYNC_RED;
-        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
         [refreshSyncButton showSyncStatusButton];
         [refreshModalStatusButton showModalSyncStatus];
         [self.refreshSyncStatusUIButton showSyncUIStatus];
@@ -948,7 +950,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             //appDelegate.SyncStatus = SYNC_GREEN;
             appDelegate.SyncStatus = SYNC_RED;
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
             [self.refreshSyncStatusUIButton showSyncUIStatus];
@@ -961,7 +963,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             //appDelegate.SyncStatus = SYNC_GREEN;
             appDelegate.SyncStatus = SYNC_RED;
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
             [self.refreshSyncStatusUIButton showSyncUIStatus];
@@ -998,7 +1000,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             //appDelegate.SyncStatus = SYNC_GREEN;
             appDelegate.SyncStatus = SYNC_RED;
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
             [self.refreshSyncStatusUIButton showSyncUIStatus];
@@ -1010,7 +1012,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             //appDelegate.SyncStatus = SYNC_GREEN;
             appDelegate.SyncStatus = SYNC_RED;
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
             [self.refreshSyncStatusUIButton showSyncUIStatus];
@@ -1047,7 +1049,7 @@ last_sync_time:(NSString *)last_sync_time
         if(retVal == NO)
         {
             appDelegate.SyncStatus = SYNC_RED;
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
             [self.refreshSyncStatusUIButton showSyncUIStatus];
@@ -1060,7 +1062,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             //appDelegate.SyncStatus = SYNC_GREEN;
             appDelegate.SyncStatus = SYNC_RED;
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
             [self.refreshSyncStatusUIButton showSyncUIStatus];
@@ -1095,7 +1097,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             //appDelegate.SyncStatus = SYNC_GREEN;
             appDelegate.SyncStatus = SYNC_RED;
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
             [self.refreshSyncStatusUIButton showSyncUIStatus];
@@ -1108,7 +1110,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             //appDelegate.SyncStatus = SYNC_GREEN;
             appDelegate.SyncStatus = SYNC_RED;
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
             [self.refreshSyncStatusUIButton showSyncUIStatus];
@@ -1134,7 +1136,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             //appDelegate.SyncStatus = SYNC_GREEN;
             appDelegate.SyncStatus = SYNC_RED;
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
             [self.refreshSyncStatusUIButton showSyncUIStatus];
@@ -1147,7 +1149,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             //appDelegate.SyncStatus = SYNC_GREEN;
             appDelegate.SyncStatus = SYNC_RED;
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
             [self.refreshSyncStatusUIButton showSyncUIStatus];
@@ -1184,7 +1186,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             //appDelegate.SyncStatus = SYNC_GREEN;
             appDelegate.SyncStatus = SYNC_RED;
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
             [self.refreshSyncStatusUIButton showSyncUIStatus];
@@ -1197,7 +1199,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             //appDelegate.SyncStatus = SYNC_GREEN;
             appDelegate.SyncStatus = SYNC_RED;
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
             [self.refreshSyncStatusUIButton showSyncUIStatus];
@@ -1232,7 +1234,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             //appDelegate.SyncStatus = SYNC_GREEN;
             appDelegate.SyncStatus = SYNC_RED;
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
             [self.refreshSyncStatusUIButton showSyncUIStatus];
@@ -1279,7 +1281,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             //appDelegate.SyncStatus = SYNC_GREEN;
             appDelegate.SyncStatus = SYNC_RED;
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
             [self.refreshSyncStatusUIButton showSyncUIStatus];
@@ -1293,7 +1295,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             //appDelegate.SyncStatus = SYNC_GREEN;
             appDelegate.SyncStatus = SYNC_RED;
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
             [self.refreshSyncStatusUIButton showSyncUIStatus];
@@ -1317,7 +1319,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             //appDelegate.SyncStatus = SYNC_GREEN;
             appDelegate.SyncStatus = SYNC_RED;
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
             [self.refreshSyncStatusUIButton showSyncUIStatus];
@@ -1330,7 +1332,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             //appDelegate.SyncStatus = SYNC_GREEN;
             appDelegate.SyncStatus = SYNC_RED;
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"DataSync"];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
             [refreshSyncButton showSyncStatusButton];
             [refreshModalStatusButton showModalSyncStatus];
             [self.refreshSyncStatusUIButton showSyncUIStatus];
@@ -4305,17 +4307,16 @@ last_sync_time:(NSString *)last_sync_time
         INTF_WebServicesDefServiceSvc_INTF_MetaSync_WSResponse * wsResponse = [response.bodyParts objectAtIndex:0];
         if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
         {
-            if (appDelegate.isIncrementalMetaSyncInProgress)
+           /* if (appDelegate.isIncrementalMetaSyncInProgress && !appDelegate.isInternetConnectionAvailable)
             {
                 appDelegate.SyncStatus = SYNC_RED;
                 
                 [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
                 [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
                 [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-                            
-                [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];
+                        
                 return;
-            }
+            }*/
 
             
             if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
