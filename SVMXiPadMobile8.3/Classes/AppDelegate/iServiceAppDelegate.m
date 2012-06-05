@@ -1126,7 +1126,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 		weekday = 7; //Sunday is the last day in our scheme
     
 	NSDateComponents *componentsToSubtract = [[[NSDateComponents alloc] init] autorelease];
-	[componentsToSubtract setDay: 0 - (weekday - 2)];
+	[componentsToSubtract setDay: 0 - (weekday - 1)];
 	
 	NSDate *beginningOfWeek = [gregorian dateByAddingComponents:componentsToSubtract toDate:today options:0];
 	
