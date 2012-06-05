@@ -114,7 +114,7 @@
 {
     [delegate dismisspopover];
     appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
-    
+     NSString * data_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_data_sync];
     [delegate activityStart];
     if(appDelegate.SyncStatus != SYNC_RED)
     {        
@@ -195,7 +195,7 @@
             [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
             [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
             [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:@"Data Sync"];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
             appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflictsForMetaSyncWithDB:appDelegate.dataBase.tempDb];
             [appDelegate.reloadTable ReloadSyncTable];
             return;
@@ -320,6 +320,9 @@
 - (void) startSyncConfiguration
 {
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+    
+    NSString * meta_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_meta_data_configuration];
+
 
     syncConfigurationFailed = FALSE;
     appDelegate.isIncrementalMetaSyncInProgress = FALSE;
@@ -426,7 +429,7 @@
             [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
             [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
             [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-            [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync:meta_sync WithDB:appDelegate.dataBase.tempDb];
             appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflictsForMetaSyncWithDB:appDelegate.dataBase.tempDb];
             [appDelegate.reloadTable ReloadSyncTable];
         }
@@ -455,15 +458,7 @@
         }
         if (!appDelegate.isInternetConnectionAvailable)
         {
-            appDelegate.SyncStatus = SYNC_RED;
-            
-            
-            [refreshMetaSyncDelegate refreshMetaSyncStatus];
-            [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
-            [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
-            [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-            
-            [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];     
+            [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync:meta_sync WithDB:appDelegate.dataBase.tempDb];     
             appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflictsForMetaSyncWithDB:appDelegate.dataBase.tempDb];
             
             [appDelegate.reloadTable ReloadSyncTable];
@@ -482,7 +477,15 @@
         
         if (!appDelegate.isInternetConnectionAvailable)
         {
-            [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync:@"META SYNC" WithDB:appDelegate.dataBase.tempDb];
+            appDelegate.SyncStatus = SYNC_RED;
+            
+            
+            [refreshMetaSyncDelegate refreshMetaSyncStatus];
+            [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+            [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+            [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+
+            [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync:meta_sync WithDB:appDelegate.dataBase.tempDb];
             
             appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflictsForMetaSyncWithDB:appDelegate.dataBase.tempDb];
             [appDelegate.reloadTable ReloadSyncTable];
@@ -501,11 +504,7 @@
             
         }
         
-        appDelegate.SyncStatus = SYNC_GREEN;
         
-        [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
-        [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
-        [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
     }
     @finally {
         [appDelegate ScheduleIncrementalDatasyncTimer];
@@ -571,13 +570,15 @@
     
     if (appDelegate == nil)
         appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+    NSString * event_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_events];
+    BOOL retVal;
     
     fullDataSyncFailed = FALSE;
     @try {
         
         [delegate dismisspopover];
        
-        BOOL retVal;
+        
         
         appDelegate.dataBase.MyPopoverDelegate = delegate;
         appDelegate.databaseInterface.MyPopoverDelegate = delegate;
@@ -656,8 +657,23 @@
                 [appDelegate.event_timer invalidate];
             }            
         }   
+    
+        if (!appDelegate.isInternetConnectionAvailable)
+        {
+            appDelegate.SyncStatus = SYNC_RED;
+            
+            
+            [refreshMetaSyncDelegate refreshMetaSyncStatus];
+            [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+            [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+            [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+            
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:event_sync];     
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            
+            [appDelegate.reloadTable ReloadSyncTable];
+        }
 
-        
         appDelegate.SyncStatus = SYNC_ORANGE;
         
         [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
@@ -685,21 +701,24 @@
         {
             
         }
-        else 
+        else if (appDelegate.isInternetConnectionAvailable || !appDelegate.isInternetConnectionAvailable)
         {
+            BOOL value = [appDelegate pingServer];
+            
             NSString * title  = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button1];
             NSString * cancel = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
             
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:[NSString stringWithFormat:@"%@", exception.description] delegate:self cancelButtonTitle:cancel otherButtonTitles: nil];
-            
+            if (value == NO)
+                appDelegate.SyncStatus = SYNC_RED;
+            else          
+                appDelegate.SyncStatus = SYNC_GREEN;
+            [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+            [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+            [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
             [alert show];
             [alert release];
         }
-        appDelegate.SyncStatus = SYNC_GREEN;
-        
-        [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
-        [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
-        [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
     }
     @finally {
         
