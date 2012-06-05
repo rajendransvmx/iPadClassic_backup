@@ -304,14 +304,29 @@
             UIButton * retry = [UIButton buttonWithType:UIButtonTypeCustom];
             [retry setFrame:CGRectMake(420, 17, 100, 30)];
             [retry setTitle:title forState:UIControlStateNormal];
-            [retry setBackgroundImage:[UIImage imageNamed:@"blue button.png"] forState:UIControlStateNormal];
             
+            retry.enabled = TRUE;
+            UIImage * normalBtnImg = [UIImage imageNamed:@"SFM-Screen-Action-Popover-Button.png"];
+            normalBtnImg = [normalBtnImg stretchableImageWithLeftCapWidth:12 topCapHeight:8];
+            
+            [retry setBackgroundImage:normalBtnImg forState:UIControlStateNormal];
+            
+            UIImage * highlightBtnImg = [UIImage imageNamed:@"SFM-Screen-Action-Popover-Button2.png"];
+            highlightBtnImg = [highlightBtnImg stretchableImageWithLeftCapWidth:12 topCapHeight:8];
+            [retry setBackgroundImage:highlightBtnImg forState:UIControlStateHighlighted];
         
-            if ([lbl.text isEqualToString:@"DataSync"])
+            NSString * data_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_data_sync];
+            NSString * event_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_events];
+            NSString * meta_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_meta_data_configuration];
+
+            if ([lbl.text isEqualToString:data_sync])
                 [retry addTarget:self action:@selector(retryDataSyncAgain) forControlEvents:UIControlEventTouchUpInside];
-            else if ([lbl.text isEqualToString:@"META SYNC"])
+            else if ([lbl.text isEqualToString:meta_sync])
                 [retry addTarget:self action:@selector(retryMetaDataSyncAgain) forControlEvents:UIControlEventTouchUpInside];
+            else if ([lbl.text isEqualToString:event_sync])
+                [retry addTarget:self action:@selector(retryEventSyncAgain) forControlEvents:UIControlEventTouchUpInside];
             
+            //retryEventSyncAgain
             
             [background addSubview:retry];            
             [cell.contentView addSubview:background];
@@ -451,14 +466,29 @@
             [title sizeWithFont:[UIFont fontWithName:@"HelveticaBold" size:19]];
             
             UIButton * retry = [UIButton buttonWithType:UIButtonTypeCustom];
-            [retry setFrame:CGRectMake(420, 17, 125, 32)];
+            [retry setFrame:CGRectMake(420, 17, 100, 30)];
             [retry setTitle:title forState:UIControlStateNormal];
-            [retry setBackgroundImage:[UIImage imageNamed:@"blue button.png"] forState:UIControlStateNormal];
             
-            if ([lbl.text isEqualToString:@"DataSync"])
+            retry.enabled = TRUE;
+            UIImage * normalBtnImg = [UIImage imageNamed:@"SFM-Screen-Action-Popover-Button.png"];
+            normalBtnImg = [normalBtnImg stretchableImageWithLeftCapWidth:12 topCapHeight:8];
+            
+            [retry setBackgroundImage:normalBtnImg forState:UIControlStateNormal];
+            
+            UIImage * highlightBtnImg = [UIImage imageNamed:@"SFM-Screen-Action-Popover-Button2.png"];
+            highlightBtnImg = [highlightBtnImg stretchableImageWithLeftCapWidth:12 topCapHeight:8];
+            [retry setBackgroundImage:highlightBtnImg forState:UIControlStateHighlighted];
+            
+            NSString * data_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_data_sync];
+            NSString * event_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_events];
+            NSString * meta_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_meta_data_configuration];
+            
+            if ([lbl.text isEqualToString:data_sync])
                 [retry addTarget:self action:@selector(retryDataSyncAgain) forControlEvents:UIControlEventTouchUpInside];
-            else if ([lbl.text isEqualToString:@"META SYNC"])
+            else if ([lbl.text isEqualToString:meta_sync])
                 [retry addTarget:self action:@selector(retryMetaDataSyncAgain) forControlEvents:UIControlEventTouchUpInside];
+            else if ([lbl.text isEqualToString:event_sync])
+                [retry addTarget:self action:@selector(retryEventSyncAgain) forControlEvents:UIControlEventTouchUpInside];
             
             [background addSubview:retry];            
 
@@ -1318,18 +1348,40 @@
 {
     BOOL retVal = [appDelegate pingServer];
     
+    if(retVal == YES)
+    {
+        
+        if ([self.internet_Conflicts count] > 0)
+        {
+            [appDelegate.calDataBase removeInternetConflicts];
+            [self.internet_Conflicts removeAllObjects];
+            [appDelegate.reloadTable ReloadSyncTable];
+        }
+
+        appDelegate.SyncStatus = SYNC_GREEN;
+        
+        [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+        [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+        [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+        [popOver_view synchronizeConfiguration];        
+    }
+
+}
+
+-(void) retryEventSyncAgain
+{
+    BOOL retVal = [appDelegate pingServer];
+    
     
     if(retVal == YES)
     {
         appDelegate.SyncStatus = SYNC_GREEN;
         [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
         [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
-        [popOver_view synchronizeConfiguration];        
+        [popOver_view startSyncEvents];        
     }
-
+    
 }
-
-
 
 - (void) didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -1371,6 +1423,7 @@
    NSException * exception = [NSException exceptionWithName:@"Error" reason: @"Synchronize Configuration Failed"
                                       userInfo: nil];
     appDelegate.isMetaSyncExceptionCalled = TRUE;
+    
     
     @throw exception;
 }
