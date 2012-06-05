@@ -3692,7 +3692,9 @@
 
 - (void) insertIntoConflictInternetErrorWithSyncType:(NSString *)sync_type
 {
-    NSString * insertQuery = [NSString stringWithFormat:@"Insert into internet_conflicts (sync_type, error_message, operation_type, error_type) Values ('%@', 'Internet Connectivity lost please retry when available', 'Sync', 'Conflict')", sync_type];
+    NSString * str = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_no_internet];
+    
+    NSString * insertQuery = [NSString stringWithFormat:@"Insert into internet_conflicts (sync_type, error_message, operation_type, error_type) Values ('%@', '%@', 'Sync', 'Conflict')", sync_type, str];
      char *err;
     
     if (synchronized_sqlite3_exec(appDelegate.db, [insertQuery UTF8String], NULL, NULL, &err) != SQLITE_OK){
@@ -3704,7 +3706,9 @@
 
 - (void) insertIntoConflictInternetErrorForMetaSync:(NSString *)sync_type WithDB:(sqlite3 *)db
 {
-    NSString * insertQuery = [NSString stringWithFormat:@"Insert into internet_conflicts (sync_type, error_message, operation_type, error_type) Values ('%@', 'Internet Connectivity lost please retry when available', 'Sync', 'Conflict')", sync_type];
+    NSString * str = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_no_internet];
+    
+    NSString * insertQuery = [NSString stringWithFormat:@"Insert into internet_conflicts (sync_type, error_message, operation_type, error_type) Values ('%@', '%@', 'Sync', 'Conflict')", sync_type, str];
     char *err;
     
     if (synchronized_sqlite3_exec(db, [insertQuery UTF8String], NULL, NULL, &err) != SQLITE_OK){
