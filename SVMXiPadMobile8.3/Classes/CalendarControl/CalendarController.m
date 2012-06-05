@@ -653,7 +653,7 @@
 	[newDay setMonth:selMonth];
 	[newDay setYear:selYear];
     
-    NSCalendar * gregorian = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+    NSCalendar * gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
 	NSDate * NEWDay = [gregorian dateFromComponents:newDay];
 	NSDateComponents * newDateComponents = [gregorian components:(NSWeekdayCalendarUnit | NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit) fromDate:NEWDay];
 	NSInteger newWeekday = [newDateComponents weekday]==1?7:[newDateComponents weekday]-1;
