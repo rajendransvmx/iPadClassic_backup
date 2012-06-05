@@ -1502,7 +1502,6 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         else 
         {
             NSLog(@"finished");
-            return;
         }
     }
     
