@@ -58,7 +58,7 @@
     self.tableView.backgroundColor = [UIColor clearColor];
     
     // Add a Back button to the detail
-    UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 37)] autorelease];
+    UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)] autorelease];
     [backButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Back-Arrow-Button"] forState:UIControlStateNormal];
     [backButton addTarget:self action:@selector(DismissSplitView:) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem * backBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:backButton] autorelease];
