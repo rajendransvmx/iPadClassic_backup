@@ -752,14 +752,16 @@
         }
     }
     @finally {
-        
-        if( appDelegate.queue_object == nil )
-        {
-            appDelegate.eventSyncRunning = NO;
-            appDelegate.queue_object = [self retain];
-            appDelegate.queue_selector = @selector(startSyncEvents);
-            return;
-        }
+         if([appDelegate.syncThread isExecuting] || [appDelegate.metaSyncThread isExecuting] )
+         {
+            if( appDelegate.queue_object == nil )
+            {
+                appDelegate.eventSyncRunning = NO;
+                appDelegate.queue_object = [self retain];
+                appDelegate.queue_selector = @selector(startSyncEvents);
+                return;
+            }
+         }
         
         [appDelegate ScheduleIncrementalDatasyncTimer];
         [appDelegate ScheduleIncrementalMetaSyncTimer];
