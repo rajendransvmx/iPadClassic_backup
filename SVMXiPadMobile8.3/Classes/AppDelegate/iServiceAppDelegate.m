@@ -311,6 +311,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize event_timer;
 @synthesize event_thread;
 
+@synthesize eventSyncRunning, metaSyncRunning, dataSyncRunning;
+@synthesize queue_object, queue_selector;
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.isBackground = FALSE;
@@ -944,7 +947,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     
     if([appDelegate.syncThread isExecuting])
     {
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
             if ([appDelegate.syncThread isFinished])
             {
@@ -968,7 +971,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     if ([appDelegate.metaSyncThread isExecuting])
     {
         
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
             if (!appDelegate.isInternetConnectionAvailable)
             {
@@ -993,7 +996,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     if ([appDelegate.event_thread isExecuting])
     {
         
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
             if (!appDelegate.isInternetConnectionAvailable)
             {
@@ -1198,7 +1201,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     self.dPicklist_retrieval_complete = FALSE;
     [self.databaseInterface fillDependencyPickListInfo];
     
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         //shrinivas -- 02/05/2012
         if (self.isForeGround == TRUE)
@@ -1478,11 +1481,11 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         eventTimeInterval = value * 60;
     }
     
-    event_timer = [NSTimer scheduledTimerWithTimeInterval:eventTimeInterval 
+    event_timer = [[NSTimer scheduledTimerWithTimeInterval:eventTimeInterval 
                                                    target:self 
                                                  selector:@selector(eventSyncTimer) 
                                                  userInfo:nil 
-                                                  repeats:YES];
+                                                  repeats:YES] retain];
 }
 
 - (void) eventSyncTimer
@@ -1492,6 +1495,12 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 - (void) callEventSyncTimer
 {
+    
+    if (!isInternetConnectionAvailable)
+    {
+        return;
+    }
+
     if (event_thread != nil)
     {
         if ([event_thread isExecuting])

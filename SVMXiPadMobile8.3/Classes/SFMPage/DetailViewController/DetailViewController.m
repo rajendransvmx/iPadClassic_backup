@@ -1883,7 +1883,7 @@
     [sp release];
     sp = nil;
     
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, FALSE))
+   while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         NSLog(@"didSubmitProcess In While Loop");
         if(appDelegate.isWorkinginOffline)
@@ -2357,7 +2357,7 @@
     
     if([appDelegate.syncThread isExecuting])
     {
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
             if (!appDelegate.isInternetConnectionAvailable)
             {
@@ -2384,7 +2384,7 @@
     if ([appDelegate.metaSyncThread isExecuting])
     {
         
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
             if (!appDelegate.isInternetConnectionAvailable)
             {
@@ -2412,7 +2412,7 @@
     if ([appDelegate.event_thread isExecuting])
     {
         
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
             if (!appDelegate.isInternetConnectionAvailable)
             {
@@ -2963,7 +2963,7 @@
     {
         [activity  startAnimating];
 
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, FALSE)) 
+       while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES)) 
         {
             NSLog(@"BackOnSave in while loop");
             if (!appDelegate.isInternetConnectionAvailable)
@@ -7403,7 +7403,7 @@
         wsinterface.add_WS = FALSE;
         [wsinterface  AddRecordForLines:process_id ForDetailLayoutId:layout_id];
 
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, FALSE)) 
+       while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES)) 
         {
             NSLog(@"accessoryTapped in while loop");
             if(appDelegate.isWorkinginOffline)
@@ -7987,7 +7987,7 @@
             wsinterface.add_WS = FALSE;
             [wsinterface  AddRecordForLines:process_id ForDetailLayoutId:layout_id];
             
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, FALSE)) 
+           while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES)) 
             {
                 NSLog(@"addMultiChildRows in while loop");
                 if(appDelegate.isWorkinginOffline)
@@ -11070,6 +11070,15 @@
 - (void) SeeMoreButtonClicked:(id)sender
 {
     
+    if (!appDelegate.isInternetConnectionAvailable)
+    {
+        [activity stopAnimating];
+        appDelegate.shouldShowConnectivityStatus = TRUE;
+        [appDelegate displayNoInternetAvailable];
+        return;
+    } 
+
+    
     [activity startAnimating];
     [appDelegate goOnlineIfRequired];
     
@@ -11078,7 +11087,7 @@
     if ([appDelegate.syncThread isExecuting])
     {
         
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
             if (!appDelegate.isInternetConnectionAvailable)
             {
@@ -11105,7 +11114,7 @@
     if ([appDelegate.metaSyncThread isExecuting])
     {
         
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
             if (!appDelegate.isInternetConnectionAvailable)
             {
@@ -11132,7 +11141,7 @@
     if ([appDelegate.event_thread isExecuting])
     {
         
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
             if (!appDelegate.isInternetConnectionAvailable)
             {
@@ -11155,14 +11164,7 @@
     }   
 
 
-    if (!appDelegate.isInternetConnectionAvailable)
-    {
-        [activity stopAnimating];
-        appDelegate.shouldShowConnectivityStatus = TRUE;
-        [appDelegate displayNoInternetAvailable];
-        return;
-    } 
-    
+       
     UIButton *button = (UIButton *)sender;
     NSLog(@"%d", button.tag);
     //shrinivas
@@ -11184,7 +11186,7 @@
         [appDelegate.wsInterface getProductHistoryForWorkOrderId:Id];
         
         appDelegate.wsInterface.didGetProductHistory = FALSE;
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
             if (appDelegate.wsInterface.didGetProductHistory == TRUE)
                 break;
@@ -11199,7 +11201,7 @@
     {
         [appDelegate.wsInterface getAccountHistoryForWorkOrderId:Id];
         appDelegate.wsInterface.didGetAccountHistory = FALSE;
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
             if (appDelegate.wsInterface.didGetAccountHistory == TRUE)
                 break;

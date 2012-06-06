@@ -381,7 +381,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
         [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(initDebriefData:error:context:) context:nil];
     }
     
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE)) 
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         //NSLog(@"Mapview initDebrief in while loop");
         if (!appDelegate.isInternetConnectionAvailable)
@@ -1279,7 +1279,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     
     [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didQueryTechnician:error:context:) context:nil];
     
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE)) 
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         //NSLog(@"Mapview initDebrief in while loop");
         if (!appDelegate.isInternetConnectionAvailable)

@@ -51,7 +51,6 @@
     ManualDataSyncDetail * detail;
     
     BOOL fullDataSyncFailed;
-    
 }
 
 @property (nonatomic , retain)  UIPopoverController * popover;

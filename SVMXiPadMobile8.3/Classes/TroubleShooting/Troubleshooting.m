@@ -162,7 +162,7 @@
     [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetProductName:error:context:) context:nil];
     
     didGetProductName = FALSE;
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         NSLog(@"Troubleshooting getProductNameForProductId in while loop");
         if (didGetProductName)

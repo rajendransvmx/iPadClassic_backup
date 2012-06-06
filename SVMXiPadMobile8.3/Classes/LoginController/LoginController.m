@@ -298,7 +298,7 @@
     } 
     
     didLoginCompleted = FALSE;
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         if (didLoginCompleted == TRUE)
             break;
@@ -337,7 +337,7 @@
     
     appDelegate.wsInterface.didOpComplete = FALSE;
     [appDelegate.wsInterface metaSyncWithEventName:SFM_METADATA eventType:INITIAL_SYNC values:nil];
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         //shrinivas
         if (appDelegate.isForeGround == TRUE)
@@ -362,7 +362,7 @@
     /*
     appDelegate.wsInterface.didOpSFMSearchComplete = FALSE;
     [appDelegate.wsInterface metaSyncWithEventName:SFM_SEARCH eventType:SYNC values:nil];
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         if (!appDelegate.isInternetConnectionAvailable)
             break;
@@ -392,7 +392,7 @@
    
     [appDelegate.wsInterface dataSyncWithEventName:EVENT_SYNC eventType:SYNC requestId:@""];
     
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         //shrinivas
         if (appDelegate.isForeGround == TRUE)
@@ -421,7 +421,7 @@
     NSLog(@"reqId%@" , appDelegate.initial_dataSync_reqid);
     [appDelegate.wsInterface dataSyncWithEventName:DOWNLOAD_CREITERIA_SYNC eventType:SYNC requestId:appDelegate.initial_dataSync_reqid];
     
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         //shrinivas
         if (appDelegate.isForeGround == TRUE)
@@ -439,7 +439,7 @@
         }
         if (!appDelegate.isInternetConnectionAvailable && appDelegate.data_sync_chunking == REQUEST_SENT)
         {
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
                 //shrinivas
                 if (appDelegate.isForeGround == TRUE)
@@ -481,7 +481,7 @@
     appDelegate.Incremental_sync_status = INCR_STARTS;
     
     [appDelegate.wsInterface PutAllTheRecordsForIds];
-      while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+      while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         //shrinivas
         if (appDelegate.isForeGround == TRUE)
@@ -799,7 +799,7 @@
     
     [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didQueryTechnician:error:context:) context:nil];
     
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE)) 
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         NSLog(@"LoginViewController initDebrief in while loop");
         if (!appDelegate.isInternetConnectionAvailable)

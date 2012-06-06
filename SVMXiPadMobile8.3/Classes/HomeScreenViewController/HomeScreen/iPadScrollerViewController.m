@@ -1196,7 +1196,7 @@ const float progress_ = 0.07;
     
     appDelegate.wsInterface.didOpComplete = FALSE;
     [appDelegate.wsInterface metaSyncWithEventName:SFM_METADATA eventType:INITIAL_SYNC values:nil];
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         //shrinivas
         if (appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED )
@@ -1235,7 +1235,7 @@ const float progress_ = 0.07;
     
     appDelegate.wsInterface.didOpSFMSearchComplete = FALSE;
     [appDelegate.wsInterface metaSyncWithEventName:SFM_SEARCH eventType:SYNC values:nil];
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         if (!appDelegate.isInternetConnectionAvailable)
         {
@@ -1310,7 +1310,7 @@ const float progress_ = 0.07;
     
     [appDelegate.wsInterface dataSyncWithEventName:EVENT_SYNC eventType:SYNC requestId:@""];
     
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         //shrinivas
         if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED)
@@ -1355,7 +1355,7 @@ const float progress_ = 0.07;
     NSLog(@"reqId%@" , appDelegate.initial_dataSync_reqid);
     [appDelegate.wsInterface dataSyncWithEventName:DOWNLOAD_CREITERIA_SYNC eventType:SYNC requestId:appDelegate.initial_dataSync_reqid];
     NSLog(@"DC Check1");
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         //shrinivas
         if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED)
@@ -1375,7 +1375,7 @@ const float progress_ = 0.07;
         }
         if (!appDelegate.isInternetConnectionAvailable && appDelegate.data_sync_chunking == REQUEST_SENT)
         {
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
                 NSLog(@"DC Check2");
                 //shrinivas
@@ -1454,7 +1454,7 @@ const float progress_ = 0.07;
     
     
     [appDelegate.wsInterface PutAllTheRecordsForIds];
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         if (appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED)
         {
@@ -1491,7 +1491,7 @@ const float progress_ = 0.07;
     appDelegate.Sync_check_in = FALSE;
     
     
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         if( appDelegate.Sync_check_in == TRUE)
         {
@@ -1510,7 +1510,7 @@ const float progress_ = 0.07;
     appDelegate.initial_sync_status = INITIAL_SYNC_COMPLETED;
     appDelegate.Sync_check_in = FALSE;
     
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         if( appDelegate.Sync_check_in == TRUE)
         {

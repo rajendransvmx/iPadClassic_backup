@@ -218,7 +218,7 @@
     didremoveallPdf = FALSE;
     
     [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetPDFList:error:context:) context:_query];
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, FALSE)) 
+   while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES)) 
     {
         if (!appDelegate.isInternetConnectionAvailable)
         {
@@ -243,7 +243,7 @@
         NSLog(@"1");
         didremoveallPdf = FALSE;
         [[ZKServerSwitchboard switchboard] delete:array target:self selector:@selector(didRemoveAllPDF:error:context:) context:nil];
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, FALSE)) 
+       while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES)) 
         {
             if (!appDelegate.isInternetConnectionAvailable)
             {
@@ -262,7 +262,7 @@
         NSLog(@"2");
         didremoveallPdf = FALSE;
         [self didRemoveAllPDF:nil error:nil context:nil];
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, FALSE)) 
+       while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES)) 
         {
             if (!appDelegate.isInternetConnectionAvailable)
             {

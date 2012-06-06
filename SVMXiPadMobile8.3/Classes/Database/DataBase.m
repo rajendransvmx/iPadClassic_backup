@@ -3922,7 +3922,7 @@
     
     appDelegate.wsInterface.didOpSFMSearchComplete = FALSE;
     [appDelegate.wsInterface metaSyncWithEventName:SFM_SEARCH eventType:SYNC values:nil];
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         if (!appDelegate.isInternetConnectionAvailable)
         {
@@ -4656,7 +4656,7 @@
     
     [appDelegate.wsInterface dataSyncWithEventName:EVENT_SYNC eventType:SYNC requestId:@""];
     
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         if (!appDelegate.isInternetConnectionAvailable)
             break;
@@ -4710,7 +4710,7 @@
     appDelegate.Incremental_sync_status = INCR_STARTS;
     
     [appDelegate.wsInterface PutAllTheRecordsForIds];
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         if (!appDelegate.isInternetConnectionAvailable)
             break;
@@ -4795,7 +4795,7 @@
     
     if (sqlite3_prepare_v2(tempDb, [queryStatement UTF8String], -1, &stmt, NULL) == SQLITE_OK){
         
-        while (sqlite3_step(stmt) == SQLITE_ROW) 
+        while (synchronized_sqlite3_step(stmt) == SQLITE_ROW) 
         {
             char * _object = (char *)sqlite3_column_text(stmt, 0);
             

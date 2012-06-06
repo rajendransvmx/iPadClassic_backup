@@ -333,7 +333,7 @@
     didRemovePreviousSignature = NO;
     [self removePreviousSignature:fileName];
     
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, FALSE))
+   while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         NSLog(@"setSignedImageData in while loop");
         if (!appDelegate.isInternetConnectionAvailable)
@@ -358,7 +358,7 @@
     
     attachNewSignature = NO;
     
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, FALSE))
+   while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         NSLog(@"setSignedImageData in while loop");
         if (!appDelegate.isInternetConnectionAvailable)

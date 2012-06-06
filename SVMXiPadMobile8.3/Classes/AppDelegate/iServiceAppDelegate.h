@@ -660,6 +660,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 @property (nonatomic, retain) NSTimer * event_timer;
 @property (nonatomic, retain) NSThread * event_thread;
 
+@property (nonatomic, assign) BOOL eventSyncRunning, metaSyncRunning, dataSyncRunning;
+@property (nonatomic, retain) id queue_object;
+@property (nonatomic, assign) SEL queue_selector;
 
 
 // get GUID 

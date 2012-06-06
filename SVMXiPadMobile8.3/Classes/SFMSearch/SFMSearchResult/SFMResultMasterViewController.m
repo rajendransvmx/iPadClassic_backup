@@ -323,7 +323,7 @@
     [ searchResultData addObject:criteria];
     [ searchResultData addObject:userFilterString];
     [appDelegate.wsInterface dataSyncWithEventName:@"SFM_SEARCH" eventType:@"SEARCH_RESULTS" values:searchResultData]; 
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {                
         if (appDelegate.wsInterface.didOpComplete == TRUE)
             break;   

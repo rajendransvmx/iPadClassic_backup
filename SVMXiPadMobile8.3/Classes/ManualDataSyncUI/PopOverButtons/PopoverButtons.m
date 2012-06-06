@@ -118,31 +118,35 @@
     [delegate activityStart];
     if(appDelegate.SyncStatus != SYNC_RED)
     {        
-        if([appDelegate.syncThread isExecuting])
-        {
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
-            {
-                if ([appDelegate.syncThread isFinished])
-                {
-                    [appDelegate.datasync_timer invalidate];
-                    break;
-                }
-                if (!appDelegate.isInternetConnectionAvailable)
-                    break;
-            }
-        }
-        else
-        {
-            if (appDelegate.datasync_timer)
-            {
-                [appDelegate.datasync_timer invalidate];
-            }
-            
-        }    
+        if (appDelegate.dataSyncRunning)
+            return;
+        appDelegate.dataSyncRunning = YES;
+        
+//        if([appDelegate.syncThread isExecuting])
+//        {
+//            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+//            {
+//                if ([appDelegate.syncThread isFinished])
+//                {
+//                    [appDelegate.datasync_timer invalidate];
+//                    break;
+//                }
+//                if (!appDelegate.isInternetConnectionAvailable)
+//                    break;
+//            }
+//        }
+//        else
+//        {
+//            if (appDelegate.datasync_timer)
+//            {
+//                [appDelegate.datasync_timer invalidate];
+//            }
+//            
+//        }    
         
         if ([appDelegate.metaSyncThread isExecuting])
         {
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
                 if (!appDelegate.isInternetConnectionAvailable)
                 {
@@ -166,8 +170,7 @@
         
         if ([appDelegate.event_thread isExecuting])
         {
-            
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
                 if (!appDelegate.isInternetConnectionAvailable)
                 {
@@ -202,6 +205,7 @@
         }
         
         [appDelegate callDataSync];
+        appDelegate.dataSyncRunning = NO;
         
     }
     
@@ -211,7 +215,7 @@
         
         if([appDelegate.syncThread isExecuting])
         {
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
                 if ([appDelegate.syncThread isFinished])
                 {
@@ -234,7 +238,7 @@
         if ([appDelegate.metaSyncThread isExecuting])
         {
             
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
                 if (!appDelegate.isInternetConnectionAvailable)
                 {
@@ -259,7 +263,7 @@
         if ([appDelegate.event_thread isExecuting])
         {
             
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
                 if (!appDelegate.isInternetConnectionAvailable)
                 {
@@ -284,7 +288,7 @@
         appDelegate.isSpecialSyncDone = FALSE;
         [appDelegate callSpecialIncrementalSync];
         
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
             if(appDelegate.isSpecialSyncDone)
                 break;
@@ -304,6 +308,7 @@
     [appDelegate ScheduleIncrementalMetaSyncTimer];
     [appDelegate ScheduleIncrementalDatasyncTimer];
     [appDelegate ScheduleTimerForEventSync];
+    
 }
 
 - (void) synchronizeConfiguration
@@ -319,7 +324,19 @@
 
 - (void) startSyncConfiguration
 {
+
+    appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+    
+    if (appDelegate.metaSyncRunning) 
+    {
+        [delegate dismisspopover];
+        return;
+    }
+
+    appDelegate.metaSyncRunning = YES;
+    
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+    
     
     NSString * meta_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_meta_data_configuration];
 
@@ -349,7 +366,7 @@
         
         if([appDelegate.syncThread isExecuting])
         {
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, YES))
+           while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
                 if ([appDelegate.syncThread isFinished])
                 {
@@ -371,7 +388,7 @@
         if ([appDelegate.metaSyncThread isExecuting])
         {
             
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, YES))
+           while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
                 if (!appDelegate.isInternetConnectionAvailable)
                 {
@@ -395,7 +412,7 @@
         
         if ([appDelegate.event_thread isExecuting])
         {
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
                 if (!appDelegate.isInternetConnectionAvailable)
                 {
@@ -447,7 +464,7 @@
         appDelegate.didincrementalmetasyncdone = FALSE;
         
         [appDelegate.dataBase StartIncrementalmetasync];
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, YES))
+       while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
             if (!appDelegate.isInternetConnectionAvailable)
             {
@@ -559,18 +576,26 @@
     }
     
     [pool release];
-
+    appDelegate.metaSyncRunning = NO;
     
 }
 
 
 - (void) startSyncEvents
 {
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-    
     if (appDelegate == nil)
         appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
-    NSString * event_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_events];
+
+    if(appDelegate.eventSyncRunning ) 
+    {
+        [delegate dismisspopover];
+        return;
+    }
+    appDelegate.eventSyncRunning = YES;
+    
+    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+    
+       NSString * event_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_events];
     BOOL retVal;
     
     fullDataSyncFailed = FALSE;
@@ -587,7 +612,8 @@
         [delegate activityStart];
         if([appDelegate.syncThread isExecuting])
         {
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            return;
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
                 if (!appDelegate.isInternetConnectionAvailable)
                 {
@@ -611,7 +637,7 @@
         if ([appDelegate.metaSyncThread isExecuting])
         {
             
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
                 if (!appDelegate.isInternetConnectionAvailable)
                 {
@@ -633,31 +659,32 @@
             }            
         }   
         
-        if ([appDelegate.event_thread isExecuting])
-        {
-            
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, NO))
-            {
-                if (!appDelegate.isInternetConnectionAvailable)
-                {
-                    break;
-                }
-                
-                if ([appDelegate.event_thread isFinished])
-                {
-                    [appDelegate.event_timer invalidate];
-                    break;
-                }
-            }
-        }
-        else
-        {
-            if (appDelegate.event_thread)
-            {
-                [appDelegate.event_timer invalidate];
-            }            
-        }   
-    
+//        if ([appDelegate.event_thread isExecuting])
+//        {
+//            
+//            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+//            {
+//                if (!appDelegate.isInternetConnectionAvailable)
+//                {
+//                    break;
+//                }
+//                
+//                if ([appDelegate.event_thread isFinished])
+//                {
+//                    [appDelegate.event_timer invalidate];
+//                    break;
+//                }
+//            }
+//        }
+//        else
+//        {
+//            if (appDelegate.event_timer)
+//            {
+//                [appDelegate.event_timer invalidate];
+//            }            
+//        }   
+
+        
         if (!appDelegate.isInternetConnectionAvailable)
         {
             appDelegate.SyncStatus = SYNC_RED;

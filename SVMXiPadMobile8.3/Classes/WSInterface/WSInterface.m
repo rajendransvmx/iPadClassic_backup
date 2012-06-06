@@ -4510,14 +4510,38 @@ last_sync_time:(NSString *)last_sync_time
                                 NSDictionary * dict = [NSDictionary dictionaryWithObjects:values forKeys:keys];
                                 [arr addObject:dict];
                                 [keys removeAllObjects];
-                                if ([values count] > 0)
-                                    [values removeAllObjects];
+                                [values removeAllObjects];
                             }
                             else if ([arr count] > 0)
                             {
-                                NSArray * valueArray = [NSArray arrayWithArray:arr];
+                                NSMutableArray * valueArray = [NSMutableArray arrayWithArray:arr];
                                 
-                                NSArray * getValues = [processDictionary objectForKey:keyValue];
+                                NSArray * allkeys_ = [processDictionary allKeys];
+                                BOOL key_exists= FALSE;
+                                
+                                for(NSString * str in allkeys_)
+                                {
+                                    if([str isEqualToString:keyValue])
+                                    {
+                                        key_exists = TRUE;
+                                        break;
+                                    }
+                                }
+                                
+                                if(key_exists)
+                                {
+                                    NSMutableArray * new_arr = [processDictionary objectForKey:keyValue];
+                                    for (NSDictionary * dict in valueArray)
+                                    {
+                                        [new_arr addObject:dict];
+                                    }
+
+                                }
+                                else
+                                {
+                                     [processDictionary setValue:valueArray forKey:keyValue];
+                                }
+                             /*   NSArray * getValues = [processDictionary objectForKey:keyValue];
                                 
                                 NSMutableArray * getValues_mutable = [NSMutableArray arrayWithArray:getValues];
                                 
@@ -4530,16 +4554,19 @@ last_sync_time:(NSString *)last_sync_time
                                     [processDictionary setValue:getValues forKey:keyValue];
                                 }
                                 else
-                                    [processDictionary setValue:valueArray forKey:keyValue];
+                                    [processDictionary setValue:valueArray forKey:keyValue];*/
+                                
+                                
                                 keyValue = nil;
-                                if ([arr count] > 0)
-                                    [arr removeAllObjects];
+                                [arr removeAllObjects];
                             }
                             
                         }
                         if ([arr count] > 0)
                         {
-                            NSArray * valueArray = [NSArray arrayWithArray:arr];
+                           /* NSArray * valueArray = [NSArray arrayWithArray:arr];
+                            
+                        
                             NSArray * getValues = [processDictionary objectForKey:keyValue];
                             
                             NSMutableArray * getValues_mutable = [NSMutableArray arrayWithArray:getValues];
@@ -4554,6 +4581,52 @@ last_sync_time:(NSString *)last_sync_time
                             }
                             else
                                 [processDictionary setValue:valueArray forKey:keyValue];
+                            keyValue = nil;
+                            [arr removeAllObjects];*/
+                            
+                            NSMutableArray * valueArray = [NSMutableArray arrayWithArray:arr];
+                            
+                            NSArray * allkeys_ = [processDictionary allKeys];
+                            BOOL key_exists= FALSE;
+                            
+                            for(NSString * str in allkeys_)
+                            {
+                                if([str isEqualToString:keyValue])
+                                {
+                                    key_exists = TRUE;
+                                    break;
+                                }
+                            }
+                            
+                            if(key_exists)
+                            {
+                                NSMutableArray * new_arr = [processDictionary objectForKey:keyValue];
+                                for (NSDictionary * dict in valueArray)
+                                {
+                                    [new_arr addObject:dict];
+                                }
+                                
+                            }
+                            else
+                            {
+                                [processDictionary setValue:valueArray forKey:keyValue];
+                            }
+                            /*   NSArray * getValues = [processDictionary objectForKey:keyValue];
+                             
+                             NSMutableArray * getValues_mutable = [NSMutableArray arrayWithArray:getValues];
+                             
+                             if ([getValues_mutable count] > 0)
+                             {
+                             for (NSDictionary * dict in valueArray)
+                             {
+                             [getValues_mutable addObject:dict];
+                             }
+                             [processDictionary setValue:getValues forKey:keyValue];
+                             }
+                             else
+                             [processDictionary setValue:valueArray forKey:keyValue];*/
+                            
+                            
                             keyValue = nil;
                             [arr removeAllObjects];
                         }
@@ -5057,7 +5130,7 @@ last_sync_time:(NSString *)last_sync_time
             {
                 didGetPageData = FALSE;
                 [self metaSyncWithEventName:SFM_PAGEDATA eventType:SYNC values:resultValues];
-                while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE))
+                while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
                 {
                     //shrinivas
                     if (appDelegate.isForeGround == TRUE)
@@ -5118,7 +5191,7 @@ last_sync_time:(NSString *)last_sync_time
             {
                 didGetPageDataDb = FALSE;
                 [appDelegate.dataBase insertValuesToProcessTable:processDictionary page:pageUiHistory];
-                while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE))
+                while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
                 {
                     if (appDelegate.isForeGround == TRUE)
                     {
@@ -5260,7 +5333,7 @@ last_sync_time:(NSString *)last_sync_time
             {
                 didGetPicklistValues = FALSE;
                 [self metaSyncWithEventName:SFM_PICKLIST_DEFINITIONS eventType:SYNC values:resultValues];
-                while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE))
+                while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
                 {
                     
                     //shrinivas
@@ -5327,7 +5400,7 @@ last_sync_time:(NSString *)last_sync_time
               //  didGetPicklistValueDb = FALSE;
                 didGetPicklistValues = FALSE;
                 [appDelegate.dataBase insertvaluesToPicklist:picklistObject fields:picklistField value:picklistValues];
-                while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, FALSE))
+               while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
                 {
                     if (!appDelegate.isInternetConnectionAvailable)
                     {
@@ -5535,7 +5608,7 @@ last_sync_time:(NSString *)last_sync_time
             didGetAddtionalObjDef = FALSE;
             NSMutableArray * objects = [NSMutableArray  arrayWithObjects:@"Task", @"Event", @"User", nil];
             [appDelegate.wsInterface metaSyncWithEventName:SFM_BATCH_OBJECT_DEFINITIONS eventType:SYNC values:objects]; 
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE))
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
                 //shrinivas
                 if (appDelegate.isForeGround == TRUE)
@@ -5595,7 +5668,7 @@ last_sync_time:(NSString *)last_sync_time
             }
             didGetObjectDef = FALSE;
             [appDelegate.dataBase insertValuesInToOBjDefTableWithObject:object definition:objectDefinitions]; 
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE))
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
                 
                 if (appDelegate.isForeGround == TRUE)
@@ -5879,7 +5952,7 @@ last_sync_time:(NSString *)last_sync_time
                     return;
                 }
             }
-          /*  while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE))
+          /*  while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
                 if (didGetWizards)
                 {
@@ -8371,7 +8444,7 @@ last_sync_time:(NSString *)last_sync_time
         RecordTypePickList = [[NSMutableArray alloc] init];
         recordTypeObjName = objName;
         [[ZKServerSwitchboard switchboard] describeLayout:objName target:self selector:@selector(didDescribeSObjectLayoutForObject:error:context:) context:nil];
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, FALSE))
+       while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
             //shrinivas
             if (appDelegate.isForeGround == TRUE)
