@@ -612,7 +612,6 @@
         [delegate activityStart];
         if([appDelegate.syncThread isExecuting])
         {
-            return;
             while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
                 if (!appDelegate.isInternetConnectionAvailable)
@@ -787,6 +786,7 @@
     [delegate activityStop];
     
     [pool release];
+    appDelegate.eventSyncRunning = NO;
 }
 
 @end
