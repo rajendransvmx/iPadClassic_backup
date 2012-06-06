@@ -119,7 +119,9 @@
     if(appDelegate.SyncStatus != SYNC_RED)
     {        
         if (appDelegate.dataSyncRunning)
+        {
             return;
+        }
         appDelegate.dataSyncRunning = YES;
         
 //        if([appDelegate.syncThread isExecuting])
@@ -612,6 +614,8 @@
         [delegate activityStart];
         if([appDelegate.syncThread isExecuting])
         {
+            return;
+            /*
             while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
                 if (!appDelegate.isInternetConnectionAvailable)
@@ -625,6 +629,7 @@
                     break;
                 }
             }
+             */
         }
         else{
             if (appDelegate.datasync_timer){
@@ -748,6 +753,14 @@
     }
     @finally {
         
+        if( appDelegate.queue_object == nil )
+        {
+            appDelegate.eventSyncRunning = NO;
+            appDelegate.queue_object = [self retain];
+            appDelegate.queue_selector = @selector(startSyncEvents);
+            return;
+        }
+        
         [appDelegate ScheduleIncrementalDatasyncTimer];
         [appDelegate ScheduleIncrementalMetaSyncTimer];
         [appDelegate ScheduleTimerForEventSync];
@@ -786,6 +799,12 @@
     [delegate activityStop];
     
     [pool release];
+    
+    if( appDelegate.queue_object != nil )
+    {
+        [appDelegate.queue_object release];
+        appDelegate.queue_object = nil;
+    }
     appDelegate.eventSyncRunning = NO;
 }
 

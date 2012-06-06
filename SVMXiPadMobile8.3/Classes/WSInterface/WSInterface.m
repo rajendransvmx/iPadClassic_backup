@@ -1504,6 +1504,12 @@ last_sync_time:(NSString *)last_sync_time
    
     AfterSaveEventsCalls = FALSE;
     [autoreleasePool release];
+    
+    if( appDelegate.queue_object != nil )
+    {
+        appDelegate.eventSyncRunning = NO;
+        [appDelegate.queue_object performSelectorOnMainThread:appDelegate.queue_selector withObject:nil waitUntilDone:NO];
+    }
 }
 
 
