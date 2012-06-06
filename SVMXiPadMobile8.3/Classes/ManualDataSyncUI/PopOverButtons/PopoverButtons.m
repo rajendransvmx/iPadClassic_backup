@@ -118,6 +118,10 @@
     [delegate activityStart];
     if(appDelegate.SyncStatus != SYNC_RED)
     {        
+        
+        if (appDelegate.eventSyncRunning)
+            return;
+        
         if (appDelegate.dataSyncRunning)
         {
             return;
@@ -727,7 +731,6 @@
         appDelegate.databaseInterface.MyPopoverDelegate = nil;
         appDelegate.wsInterface.MyPopoverDelegate = nil;
         
-        
         if ([appDelegate.event_thread isExecuting])
         {
             
@@ -752,11 +755,12 @@
         }
     }
     @finally {
+
+        appDelegate.eventSyncRunning = NO;
          if([appDelegate.syncThread isExecuting] || [appDelegate.metaSyncThread isExecuting] )
          {
             if( appDelegate.queue_object == nil )
             {
-                appDelegate.eventSyncRunning = NO;
                 appDelegate.queue_object = [self retain];
                 appDelegate.queue_selector = @selector(startSyncEvents);
                 return;
