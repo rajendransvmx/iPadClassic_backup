@@ -898,7 +898,10 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         return NO;
     }
     else
+    {
+        isInternetConnectionAvailable = YES;
         return YES;
+    }
 }
 
 - (void) didLoginForServer:(ZKLoginResult *)lr error:(NSError *)error context:(id)context
