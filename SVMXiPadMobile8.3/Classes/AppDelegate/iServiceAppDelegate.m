@@ -1535,14 +1535,15 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         [locationInfo setObject:[NSString stringWithFormat:@"%lf",location.coordinate.longitude] forKey:@"longitude"];
         [locationInfo setObject:[NSString stringWithFormat:@" "] forKey:@"additionalInfo"];
         [locationInfo setObject:[NSString stringWithFormat:@"%@",[NSDate date]] forKey:@"timestamp"];
-        [locationInfo setObject:[NSString stringWithFormat:@"Success",[NSDate date]] forKey:@"status"];
+        [locationInfo setObject:[NSString stringWithFormat:@"Success"] forKey:@"status"];
     }
     else 
     {
         [locationInfo setObject:[NSString stringWithFormat:@" "] forKey:@"latitude"];
         [locationInfo setObject:[NSString stringWithFormat:@" "] forKey:@"longitude"];
         [locationInfo setObject:[NSString stringWithFormat:@"Failed To Get the Location"] forKey:@"additionalInfo"];
-        [locationInfo setObject:[NSString stringWithFormat:@"Failure",[NSDate date]] forKey:@"status"];
+        [locationInfo setObject:[NSString stringWithFormat:@"%@",[NSDate date]] forKey:@"timestamp"];
+        [locationInfo setObject:[NSString stringWithFormat:@"Failure"] forKey:@"status"];
     }
     [self.dataBase insertrecordIntoTableNamed:locationInfo];
     [locationInfo release];
