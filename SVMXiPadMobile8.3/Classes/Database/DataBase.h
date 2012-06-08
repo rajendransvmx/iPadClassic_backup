@@ -46,6 +46,14 @@
     NSMutableArray * settingsInfoArray;
     NSMutableArray * settingsValueArray;
     NSMutableArray * reportEssentials;
+    
+    //Location Ping
+    NSMutableString * settingInfoIdForLocationPing;
+    NSMutableArray  * settingsInfoArrayForLocationPing;
+    NSMutableArray  * settingsValueArrayForLocationPing;
+    BOOL didUpdateTechnicianLocation;
+    NSString * appTechnicianId; 
+    NSString * appServiceTeamId;
     BOOL didGetReportEssentials;
    // int i;
     
@@ -140,6 +148,18 @@
 - (NSMutableArray *) getResults:(NSString *)object withConfigData:(NSDictionary *)dataForObject;
 - (NSString *) getFieldLabelForApiName:(NSString *)apiName;
 - (NSString *) getApiNameFromFieldLabel:(NSString *)apiName;
+
+// Location Ping
+- (void) didGetActiveGlobalProfileForLocationPing:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
+- (void) didGetSettingsInfoforLocationPing:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
+- (void) didGetLocationPingSettingsValue:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
+- (NSString *) getSettingValueWithName:(NSString *)settingName;
+- (void) createTableForLocationHistory;
+-(void) insertrecordIntoTableNamed:(NSDictionary *)locationInfo;
+- (void) purgeLocationPingTable;
+- (NSString *) getActiveTechnicainId;
+- (NSDictionary *)getUserLocation;
+
 //DataSync Methods
 - (void) insertDataInToTables:(NSMutableArray *)fieldValueArray;
 

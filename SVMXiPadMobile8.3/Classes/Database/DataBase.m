@@ -657,6 +657,380 @@
     return apiName;
     
 }
+#pragma mark - Location Ping
+- (void) didGetSettingsInfoforLocationPing:(ZKQueryResult *)result error:(NSError *)error context:(id)context
+{
+    if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
+    {
+        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+        {
+            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+            return;
+        }
+    }
+    
+    // Get the Active Global Profile
+    if ([[result records] count] > 0)
+    {
+        if(settingInfoIdForLocationPing) [settingInfoIdForLocationPing release];
+        if(settingsInfoArrayForLocationPing) [settingsInfoArrayForLocationPing release];
+        settingInfoIdForLocationPing = [[NSMutableString alloc] initWithCapacity:0];
+        settingsInfoArrayForLocationPing = [[NSMutableArray alloc] initWithCapacity:0];
+        for (int i = 0; i < [[result records] count]; i++)
+        {
+            ZKSObject * obj = [[result records] objectAtIndex:i];
+            
+            [settingsInfoArrayForLocationPing addObject:[obj fields]];
+            
+            if ([settingInfoIdForLocationPing length] == 0)
+                [settingInfoIdForLocationPing appendFormat:@"(\'%@\'", [[obj fields] objectForKey:@"Id"]];
+            else
+                [settingInfoIdForLocationPing appendFormat:@", \'%@\'", [[obj fields] objectForKey:@"Id"]];
+        }
+        [settingInfoIdForLocationPing appendString:@")"];
+        
+        NSString * _query = @"Select Id, SVMXC__Profile_Name__c, SVMXC__Active__c, SVMXC__IsDefault__c FROM SVMXC__ServiceMax_Config_Data__c WHERE SVMXC__RecordType_Name__c=\'Configuration Profile\' and SVMXC__Configuration_Type__c = \'Global\' and SVMXC__Active__c = true";
+        [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetActiveGlobalProfileForLocationPing:error:context:) context:nil];
+    }
+    else
+    {
+        // Continue logging in
+        didGetPDF = YES;
+    }
+    [self createTableForLocationHistory];
+}
+- (void) didGetActiveGlobalProfileForLocationPing:(ZKQueryResult *)result error:(NSError *)error context:(id)context
+{
+    if (!appDelegate.isInternetConnectionAvailable)
+    {
+        [appDelegate displayNoInternetAvailable];
+        return;
+    }
+    
+    // Get Settings value Info(query could return multiple rows)
+    if ([[result records] count] > 0)
+    {
+        ZKSObject * obj = [[result records] objectAtIndex:0];
+        NSString *ActiveGloProInfoId = [[[obj fields] objectForKey:@"Id"] retain];
+        NSString * _query = nil;
+        if ([settingInfoIdForLocationPing length] != 0)
+            _query = [NSString stringWithFormat:@"Select Id, SVMXC__Setting_Configuration_Profile__c, SVMXC__Setting_ID__c, SVMXC__Internal_Value__c, SVMXC__Display_Value__c, SVMXC__Active__c, SVMXC__IsDefault__c FROM SVMXC__ServiceMax_Config_Data__c WHERE SVMXC__Setting_Configuration_Profile__c = \'%@\' AND SVMXC__Setting_ID__c IN %@ AND RecordType.Name = \'SETTING VALUE\' ORDER BY SVMXC__Setting_Unique_ID__c", ActiveGloProInfoId, settingInfoIdForLocationPing];
+        else
+            _query = [NSString stringWithFormat:@"SELECT Id, SVMXC__Setting_Configuration_Profile__c, SVMXC__Setting_ID__c, SVMXC__Internal_Value__c, SVMXC__Display_Value__c, SVMXC__Active__c, SVMXC__IsDefault__c FROM SVMXC__ServiceMax_Config_Data__c WHERE SVMXC__Setting_Configuration_Profile__c = \'%@' AND RecordType.Name = \'SETTING VALUE\' ORDER BY SVMXC__Setting_Unique_ID__c", ActiveGloProInfoId];
+        [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetLocationPingSettingsValue:error:context:) context:nil];
+        
+    }
+    else
+    {
+        // Continue logging in
+        didGetPDF = YES;
+    }
+}
+- (void) didGetLocationPingSettingsValue:(ZKQueryResult *)result error:(NSError *)error context:(id)context
+{
+    if ([[result records] count] > 0)
+    {
+        if(settingsValueArrayForLocationPing) [settingsValueArrayForLocationPing release];
+        settingsValueArrayForLocationPing = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+        for (int i = 0; i < [[result records] count]; i++)
+        {
+            ZKSObject * obj = [[result records] objectAtIndex:i];
+            [settingsValueArrayForLocationPing addObject:[obj fields]];
+        }
+        NSMutableArray *locationPingSettingsInfoArray = [[NSMutableArray alloc] init];
+        NSMutableArray *locationPingSettingsValueArray = [[NSMutableArray alloc] init];
+        for (int i = 0; i < [settingsInfoArrayForLocationPing count]; i++)
+        {
+            NSMutableDictionary *locationPingSettingInfoDict = [[NSMutableDictionary alloc] init];
+            NSDictionary *infoDict = [settingsInfoArrayForLocationPing objectAtIndex:i];
+            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"Id"] forKey:@"Id"];
+            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__Active__c"] forKey:@"SVMXC__Active__c"];
+            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__Data_Type__c"] forKey:@"SVMXC__Data_Type__c"];
+            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__Default_Value__c"] forKey:@"SVMXC__Default_Value__c"];
+            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__Description__c"] forKey:@"SVMXC__Description__c"];
+            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__IsPrivate__c"]  forKey:@"SVMXC__IsPrivate__c"];
+            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__IsStandard__c"] forKey:@"SVMXC__IsStandard__c"];
+            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__Search_Order__c"] forKey:@"SVMXC__Search_Order__c"];
+            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__SettingID__c"] forKey:@"SVMXC__SettingID__c"];
+            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__Setting_Type__c"] forKey:@"SVMXC__Setting_Type__c"];
+            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__Setting_Unique_ID__c"] forKey:@"SVMXC__Setting_Unique_ID__c"];
+            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__Settings_Name__c"] forKey:@"SVMXC__Settings_Name__c"];
+            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__SubmoduleID__c"] forKey:@"SVMXC__SubmoduleID__c"];
+            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__Submodule__c"] forKey:@"SVMXC__Submodule__c"];
+            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__Values__c"] forKey:@"SVMXC__Values__c"];
+            
+            
+            for (int j = 0; j < [settingsValueArrayForLocationPing count]; j++)
+            {
+                NSString * settingsInfoSettingId = [[settingsInfoArrayForLocationPing objectAtIndex:i] objectForKey:@"Id"];
+                NSString * settingsValueSettingId = [[settingsValueArrayForLocationPing objectAtIndex:j] objectForKey:@"SVMXC__Setting_ID__c"];
+                
+                if ([settingsValueSettingId isEqualToString:settingsInfoSettingId])
+                {
+                    if ([[[settingsInfoArrayForLocationPing objectAtIndex:i] 
+                          objectForKey:@"SVMXC__Setting_Unique_ID__c"] Contains:@"IPAD007"])
+                    {
+                        NSMutableDictionary *locationPingSettingDict = [[NSMutableDictionary alloc] init];
+                        NSDictionary *valueDict = [settingsValueArrayForLocationPing objectAtIndex:j];
+                        [locationPingSettingDict setObject:[valueDict objectForKey:@"Id"] forKey:@"Id"];
+                        [locationPingSettingDict setObject:[valueDict objectForKey:@"SVMXC__Setting_Configuration_Profile__c"] forKey:@"SVMXC__Setting_Configuration_Profile__c"];
+                        [locationPingSettingDict setObject:[valueDict objectForKey:@"SVMXC__Setting_ID__c"] forKey:@"SVMXC__Setting_ID__c"];
+                        [locationPingSettingDict setObject:[valueDict objectForKey:@"SVMXC__Internal_Value__c"] forKey:@"SVMXC__Internal_Value__c"];
+                        [locationPingSettingDict setObject:[valueDict objectForKey:@"SVMXC__Display_Value__c"] forKey:@"SVMXC__Display_Value__c"];
+                        [locationPingSettingDict setObject:[valueDict objectForKey:@"SVMXC__Active__c"]  forKey:@"SVMXC__Active__c"];
+                        [locationPingSettingDict setObject:[valueDict objectForKey:@"SVMXC__IsDefault__c"] forKey:@"SVMXC__IsDefault__c"];
+                        
+                        [locationPingSettingsValueArray addObject:locationPingSettingDict];
+                        [locationPingSettingDict release];
+                    }
+                }
+            }
+            [locationPingSettingsInfoArray addObject:locationPingSettingInfoDict];
+            [locationPingSettingInfoDict release];
+        }
+        [self insertSettingsIntoTable:locationPingSettingsInfoArray:@"SettingsInfo"];        
+        [self insertSettingsIntoTable:locationPingSettingsValueArray:@"SettingsValue"];        
+    }
+}
+- (void) createTableForLocationHistory
+{
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS Location_History ('id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL UNIQUE DEFAULT  (0), 'latitude' VARCHAR,'longitude' VARCHAR,'time' VARCHAR,'additional_info' TEXT,'synched' VARCHAR,'synched_on' VARCHAR,'status'  VARCHAR)"]];
+    if(result == YES)
+        NSLog(@"Location_History Table Create Success");
+    else
+        NSLog(@"LocationHistory Table Create Failed");
+    
+}
+-(void) insertrecordIntoTableNamed:(NSDictionary *)locationInfo
+{
+    char *err;
+    [self purgeLocationPingTable];
+    NSString *latitude = [locationInfo objectForKey:@"latitude"];
+    NSString *longitude = [locationInfo objectForKey:@"longitude"];
+    NSString *time = [locationInfo objectForKey:@"timestamp"];
+    
+    NSString *additionalInfo = [locationInfo objectForKey:@"additionalInfo"];
+    NSString *status = [locationInfo objectForKey:@"status"];
+    
+    if(latitude == nil)
+        latitude = @"";
+    if(longitude == nil)
+        longitude = @"";
+    if(time == nil)
+        time = @"";
+    if(additionalInfo == nil)
+        additionalInfo = @"";
+    if(status == nil)
+        status = @"";
+    
+    
+    NSString *sql = [NSString stringWithFormat:@"INSERT OR REPLACE INTO Location_History ('id','latitude','longitude','time','additional_info','synched','synched_on','status') VALUES (NULL,'%@','%@','%@','%@','False',' ','%@')",latitude,longitude,time,additionalInfo,status];
+    
+    NSLog(@"Query = %@",sql);
+    if(appDelegate == nil)
+        appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+    if(sqlite3_exec(appDelegate.db, [sql UTF8String], NULL, NULL, &err) != SQLITE_OK)
+    {
+        sqlite3_close(appDelegate.db);
+        NSLog(@"Failed to Populate Table");
+    }
+    else
+        NSLog(@"Success to Insert Data in Table");
+}
+- (void) purgeLocationPingTable
+{   
+    NSString *sql = @"SELECT Count(*) FROM Location_History";
+    sqlite3_stmt *statement;
+    int field1;
+    char *field2;
+    if(sqlite3_prepare_v2(appDelegate.db, [sql UTF8String], -1, &statement, nil) == SQLITE_OK)
+    {
+        while (sqlite3_step(statement) == SQLITE_ROW) 
+        {
+            field1 = sqlite3_column_int(statement, 0);
+            NSLog(@"NO of location rows in DB %d",field1 );
+            
+        }
+        sqlite3_finalize(statement);
+    }
+    sqlite3_close(appDelegate.db);
+    //get limit from table
+    //NSString *limitLocationRecords = [appDelegate.dataBase getSettingValueWithName:@"IPAD007_SET003"];
+    NSString *limitLocationRecords = @"10";
+    if(field1 < [limitLocationRecords intValue])
+    {
+        return;
+    }
+    sql = @"select id from Location_History  asc limit 1";
+    NSString *field2Str;
+    
+    if(sqlite3_prepare_v2(appDelegate.db, [sql UTF8String], -1, &statement, nil) == SQLITE_OK)
+    {
+        while (sqlite3_step(statement) == SQLITE_ROW) 
+        {
+            field2 = (char *) sqlite3_column_text(statement, 0);
+            field2Str =   [[NSString alloc] initWithUTF8String:field2];
+            NSLog(@"id =%@",field2Str);
+            
+        }
+        
+        NSString * queryStatement = [NSString stringWithFormat:@"DELETE FROM Location_History where id=%@",field2Str];
+        
+        char * err;
+        
+        if (sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+        {
+            NSLog(@"Purging Failed to delete");
+        }
+    }
+    sqlite3_finalize(statement);
+    
+}
+
+- (NSString *) getSettingValueWithName:(NSString *)settingName
+{
+    NSString *settingValue = nil;
+    NSString *queryStatement = [NSString stringWithFormat:@"SELECT Id from SettingsInfo where SVMXC__Setting_Unique_ID__c = '%@'",settingName];
+    sqlite3_stmt * statement;
+    NSString *settingInfoValue = nil;
+    if(appDelegate == nil)
+        appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &statement, NULL) == SQLITE_OK)
+    {
+        if (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            const char * value = (char *)synchronized_sqlite3_column_text(statement, 0);
+            if (strlen(value))
+            {
+                settingInfoValue = [NSString stringWithUTF8String:value];   
+            }
+            else 
+            {
+                NSLog(@"Value is nil");
+            }
+        }
+        else 
+        {
+            NSLog(@"No Records Found");
+        }
+    }
+    else
+    {
+        NSLog(@"Query Execution Failed");
+    }
+    if(settingInfoValue!=nil)
+    {
+        queryStatement = [NSString stringWithFormat:@"SELECT SVMXC__Internal_Value__c from SettingsValue where SVMXC__Setting_ID__c = '%@'",settingInfoValue];
+        if (synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &statement, NULL) == SQLITE_OK)
+        {
+            if (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+            {
+                const char * value = (char *)synchronized_sqlite3_column_text(statement, 0);
+                if (strlen(value))
+                {
+                    settingValue = [NSString stringWithUTF8String:value];   
+                }
+                else 
+                {
+                    NSLog(@"Value is nil");
+                    return nil;
+                }
+            }
+            else 
+            {
+                NSLog(@"No Records Found");
+            }
+        }
+        else
+        {
+            NSLog(@"Query Execution Failed");
+        }
+    }
+    synchronized_sqlite3_finalize(statement);
+    return settingValue;
+}
+- (NSString *) getActiveTechnicainId
+{
+    if(appDelegate.isInternetConnectionAvailable)
+        [appDelegate goOnlineIfRequired];
+    if (appDelegate.loggedInUserId == nil)
+        appDelegate.loggedInUserId = [appDelegate.dataBase getLoggedInUserId:appDelegate.username];    
+    ZKUserInfo * userinfo = [[ZKServerSwitchboard switchboard] userInfo];    
+    NSString * userId = [userinfo userId];
+    
+    if ((appDelegate.loggedInUserId == nil) || ([appDelegate.loggedInUserId length] > 0))
+        appDelegate.loggedInUserId = userId;
+    
+    NSString * _query = [NSString stringWithFormat:@"SELECT Id, SVMXC__Service_Group__c, SVMXC__Inventory_Location__c  FROM SVMXC__Service_Group_Members__c WHERE SVMXC__Active__c = TRUE and SVMXC__Salesforce_User__c = '%@' limit 1", appDelegate.loggedInUserId];
+    
+    NSLog(@"Query = %@",_query);
+    didUpdateTechnicianLocation = NO;
+    [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(initDebriefDataLocationPing:error:context:) context:nil];
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE)) 
+    {
+        if (!appDelegate.isInternetConnectionAvailable)
+            break;
+        if (didUpdateTechnicianLocation)
+            break;
+    }
+    NSLog(@"Active Technician ID = %@",appTechnicianId);
+    return appTechnicianId;
+}
+- (void) initDebriefDataLocationPing:(ZKQueryResult *)result error:(NSError *)error context:(id)context
+{
+    didUpdateTechnicianLocation = YES;
+    if (!appDelegate.isInternetConnectionAvailable)
+    {
+        return;
+    }
+    NSArray * array = [result records];
+    
+    if([array count] == 0)
+    {
+        NSLog(@"No Active Technician Found");
+        appTechnicianId = nil;
+        appServiceTeamId = nil;
+        return;
+    }
+    
+    ZKSObject * obj = [array objectAtIndex:0];
+    if (appServiceTeamId != nil)
+    {
+        [appServiceTeamId release];
+        appServiceTeamId = nil;
+    }
+    appServiceTeamId = [[[obj fields] objectForKey:@"SVMXC__Service_Group__c"] retain];
+    
+    if (appTechnicianId != nil)
+    {
+        [appTechnicianId release];
+        appTechnicianId = nil;
+    }
+    appTechnicianId = [[[obj fields] objectForKey:@"Id"] retain];
+}
+- (NSDictionary *)getUserLocation
+{
+    NSMutableDictionary *location = [[NSMutableDictionary alloc] init];
+    NSString *sql = @"select latitude,longitude from Location_History  dsc limit 1";
+    sqlite3_stmt *statement;
+    char *longitude;
+    char *latitude;
+    if(sqlite3_prepare_v2(appDelegate.db, [sql UTF8String], -1, &statement, nil) == SQLITE_OK)
+    {
+        while (sqlite3_step(statement) == SQLITE_ROW) 
+        {
+            latitude  = (char *) sqlite3_column_text(statement, 0);
+            longitude = (char *) sqlite3_column_text(statement, 1);
+            if(longitude!=nil)
+                [location setObject:[NSString stringWithFormat:@"%s",longitude] forKey:@"longitude"];
+            if(latitude!=nil)
+                [location setObject:[NSString stringWithFormat:@"%s",latitude] forKey:@"latitude"];
+        }        
+    }
+    sqlite3_finalize(statement);
+    return [location autorelease];
+}
+
 #pragma mark - Initial MetaSync
 - (void) insertValuesInToOBjDefTableWithObject:(NSMutableArray *)object definition:(NSMutableArray *)objectDefinition
 {
@@ -3617,6 +3991,10 @@
     {
         NSString * _query = [NSString stringWithFormat:@"SELECT Id, SVMXC__SubmoduleID__c, SVMXC__SettingID__c, SVMXC__Setting_Unique_ID__c, SVMXC__Settings_Name__c, SVMXC__Data_Type__c, SVMXC__Values__c, SVMXC__Default_Value__c, SVMXC__Setting_Type__c, SVMXC__Search_Order__c, SVMXC__IsPrivate__c, SVMXC__Active__c, SVMXC__Description__c, SVMXC__IsStandard__c, SVMXC__Submodule__c FROM SVMXC__ServiceMax_Processes__c WHERE SVMXC__SubmoduleID__c = 'IPAD004' AND RecordType.Name = \'SETTINGS\' ORDER BY SVMXC__Setting_Unique_ID__c"];
         [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetSettingsInfo:error:context:) context:nil];
+        //Get the Location Ping Settings
+        _query = [NSString stringWithFormat:@"SELECT Id, SVMXC__SubmoduleID__c, SVMXC__SettingID__c, SVMXC__Setting_Unique_ID__c, SVMXC__Settings_Name__c, SVMXC__Data_Type__c, SVMXC__Values__c, SVMXC__Default_Value__c, SVMXC__Setting_Type__c, SVMXC__Search_Order__c, SVMXC__IsPrivate__c, SVMXC__Active__c, SVMXC__Description__c, SVMXC__IsStandard__c, SVMXC__Submodule__c FROM SVMXC__ServiceMax_Processes__c WHERE SVMXC__SubmoduleID__c = 'IPAD007' AND RecordType.Name = \'SETTINGS\' ORDER BY SVMXC__Setting_Unique_ID__c"];
+        [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetSettingsInfoforLocationPing:error:context:) context:nil];
+
     }
     else
     {
