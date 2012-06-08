@@ -21,7 +21,7 @@
 #import "DataBase.h"
 
 #define TableViewCellHeight 40
-
+#define kLastLocationUpdateTimestamp @"LastLocationUpdateTimestamp"
 @class iServiceViewController;
 @class LoginController;
 @class JobViewController;
@@ -30,7 +30,7 @@
 @class ZKLoginResult;
 @class ManualDataSync;    //btn merge
 @class DetailViewController;       ///can remove
-
+@class CLLocation;
 
 BOOL didSessionResume;
 
@@ -720,6 +720,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 - (void) eventSyncTimer;
 - (void) callEventSyncTimer;
 
+//Location Ping
+-(void)didUpdateToLocation:(CLLocation*)location;
 
 @end
 
