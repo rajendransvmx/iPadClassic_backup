@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <CoreLocation/CLLocationManager.h>
 #import "BSPreviewScrollView.h"
 #import "TapImage.h"
 #import "LocalizationGlobals.h"
@@ -15,7 +16,7 @@
 @class iServiceAppDelegate;
 
 @interface iPadScrollerViewController : UIViewController
-<BSPreviewScrollViewDelegate, TapImageDelegate,RefreshProgressBar>
+<BSPreviewScrollViewDelegate, TapImageDelegate,RefreshProgressBar,CLLocationManagerDelegate>
 {
 	NSMutableArray * scrollPages;
     IBOutlet UIView *ProgressView;
@@ -47,6 +48,9 @@
     NSInteger temp_percentage;
     
     UIAlertView * internet_alertView;
+    
+    //Location Ping
+    CLLocationManager *locationManager;
 }
 @property (nonatomic , retain) UIAlertView * internet_alertView;
 @property (nonatomic) NSInteger temp_percentage;
@@ -99,5 +103,8 @@
 -(void)showAlertViewForAppwasinBackground;
 - (void)continueMetaAndDataSync;
 -(void)RefreshProgressBarNativeMethod:(NSString *)sync;
+
+//Location Ping
+- (void) scheduleLocationPingService;
 #define NUM_CALLS_INTIAL_SYNC  15;
 @end

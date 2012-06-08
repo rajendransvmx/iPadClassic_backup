@@ -476,6 +476,7 @@ const NSUInteger kNumImages = 7;
         appDelegate.do_meta_data_sync = DONT_ALLOW_META_DATA_SYNC;
         appDelegate.IsLogedIn = ISLOGEDIN_FALSE;
         [self enableControls];
+        [self scheduleLocationPingService];
     }
     
 }
@@ -917,6 +918,26 @@ const NSUInteger kNumImages = 7;
 -(void)enableControls
 {
      self.view.userInteractionEnabled = TRUE;
+}
+- (void) scheduleLocationPingService
+{
+    NSString *enableLocationService = [appDelegate.dataBase getSettingValueWithName:@"IPAD007_SET002"];
+    if([enableLocationService boolValue])
+    {
+        NSDate *timeStamp = [NSDate date];
+        
+        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+        if (userDefaults) 
+        {            
+            [userDefaults setObject:timeStamp forKey:kLastLocationUpdateTimestamp];
+        }
+        locationManager = [[CLLocationManager alloc] init];
+        locationManager.delegate = self;
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+        locationManager.distanceFilter = kCLDistanceFilterNone; //500 meters
+        
+        [locationManager startUpdatingLocation];
+    }
 }
 - (BOOL)popoverControllerShouldDismissPopover:(UIPopoverController *)popoverController;
 {
@@ -1616,6 +1637,44 @@ const float progress_ = 0.07;
         //download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_data];//@"Initiating Sync From the Beginning";
         temp_percentage = percentage_ * 11; //temp_percentage + 5.8;
         total_progress = progress_ * 11;//total_progress + 0.058;
+    }
+}
+#pragma mark - CLLocation Delegate Implementation
+- (void)locationManager:(CLLocationManager *)manager
+       didFailWithError:(NSError *)error
+{
+    NSLog(@"Error =%@",[error userInfo]);
+    /*
+     UIAlertView *location_alert  = [[UIAlertView alloc] initWithTitle:@"Location Service Error" 
+     message:@"Location Service might be Disabled.Please Enable it" 
+     delegate:nil 
+     cancelButtonTitle:@"OK" 
+     otherButtonTitles:nil];
+     [location_alert show];
+     [location_alert release];
+     */
+}
+
+- (void)locationManager:(CLLocationManager *)manager
+	didUpdateToLocation:(CLLocation *)newLocation
+           fromLocation:(CLLocation *)oldLocation
+{
+    NSDate *newLocationTimestamp = newLocation.timestamp;
+    NSDate *lastLocationUpdateTiemstamp;
+    
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    if (userDefaults) {
+        
+        lastLocationUpdateTiemstamp = [userDefaults objectForKey:kLastLocationUpdateTimestamp];
+        NSString *enableLocationService = [appDelegate.dataBase getSettingValueWithName:@"IPAD007_SET002"];
+        if([enableLocationService boolValue])
+        {
+            NSString *frequencyLocationService = [appDelegate.dataBase getSettingValueWithName:@"IPAD007_SET001"];
+            if (!([newLocationTimestamp timeIntervalSinceDate:lastLocationUpdateTiemstamp] < ([frequencyLocationService intValue] * 60))) {
+                [appDelegate didUpdateToLocation:newLocation];
+                [userDefaults setObject:newLocationTimestamp forKey:kLastLocationUpdateTimestamp];
+            }
+        }
     }
 }
 
