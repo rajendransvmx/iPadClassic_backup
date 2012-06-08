@@ -51,6 +51,9 @@
     ManualDataSyncDetail * detail;
     
     BOOL fullDataSyncFailed;
+    
+    //Manual event sync thread
+    NSThread * manualEventThread;
 }
 
 @property (nonatomic , retain)  UIPopoverController * popover;

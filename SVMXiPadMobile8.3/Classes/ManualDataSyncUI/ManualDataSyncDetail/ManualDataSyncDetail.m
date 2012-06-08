@@ -1,3 +1,4 @@
+
 //
 //  ManualDataSyncDetail.m
 //  iService
@@ -17,7 +18,6 @@
 @implementation ManualDataSyncDetail
 
 @synthesize rootSyncDelegate;
-
 @synthesize  didAppearFromSFMScreen;
 @synthesize  toolbar = _toolbar;
 @synthesize  navigationBar; 
@@ -125,12 +125,10 @@
     self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:myToolBar] autorelease];
     [myToolBar release];
     
-    animatedImageView = [[UIImageView alloc] initWithFrame:CGRectMake(435, 8, 26, 26)];    
-    [self getStatusImage];
-    animatedImageView.animationDuration = 1.0f;
-    animatedImageView.animationRepeatCount = 0;
-    [animatedImageView startAnimating];
-    [self.navigationController.view addSubview:animatedImageView];
+        
+    //[appDelegate setSyncStatus:appDelegate.SyncStatus];
+    appDelegate.animatedImageView.center = CGPointMake(450,21);
+    [self.navigationController.view addSubview:appDelegate.animatedImageView];
 }
 
 - (void) showHelp
@@ -1274,51 +1272,7 @@
 
 -(void) showSyncUIStatus
 {
-    [self getStatusImage];
-}
-
-- (UIImage *) getStatusImage
-{
-    UIImage  * img;
-    if (appDelegate.SyncStatus == SYNC_RED)
-    {
-        [animatedImageView stopAnimating];
-        animatedImageView.animationImages = nil;
-        NSMutableArray * imgArr = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-        for ( int i = 1; i < 34; i++)
-        {
-            [imgArr addObject:[UIImage imageNamed:[NSString stringWithFormat:@"r%d.png", i]]];
-        }
-        
-        animatedImageView.animationImages = [NSArray arrayWithArray:imgArr];
-        animatedImageView.animationDuration = 1.0f;
-        animatedImageView.animationRepeatCount = 0;
-        [animatedImageView startAnimating];
-    }
-    else if (appDelegate.SyncStatus == SYNC_GREEN)
-    {
-        NSString * statusImage = @"green.png";
-        [animatedImageView stopAnimating];
-        animatedImageView.image = [UIImage imageNamed:@"green.png"];
-        img = [UIImage imageNamed:statusImage];
-        [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
-    }
-    else if (appDelegate.SyncStatus == SYNC_ORANGE)
-    {
-        animatedImageView.animationImages = nil;
-        NSMutableArray * imgArr = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-        for ( int i = 1; i < 34; i++)
-        {
-            [imgArr addObject:[UIImage imageNamed:[NSString stringWithFormat:@"o%d.png", i]]];
-        }
-        
-        animatedImageView.animationImages = [NSArray arrayWithArray:imgArr];
-        animatedImageView.animationDuration = 1.0f;
-        animatedImageView.animationRepeatCount = 0;
-        [animatedImageView startAnimating];
-    }
-    
-    return img;
+    [appDelegate setSyncStatus:appDelegate.SyncStatus];
 }
 
 
@@ -1336,9 +1290,10 @@
     
     if(retVal == YES)
     {
-        appDelegate.SyncStatus = SYNC_GREEN;
-        [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
-        [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+        //appDelegate.SyncStatus = SYNC_GREEN;
+        [appDelegate setSyncStatus:SYNC_GREEN];
+        //[appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+        //[appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
         [appDelegate callDataSync];
         
     }
@@ -1358,11 +1313,12 @@
             [appDelegate.reloadTable ReloadSyncTable];
         }
 
-        appDelegate.SyncStatus = SYNC_GREEN;
+        //appDelegate.SyncStatus = SYNC_GREEN;
         
-        [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
-        [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
-        [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+        [appDelegate setSyncStatus:SYNC_GREEN];
+        //[appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+        //[appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+        //[appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
         [popOver_view synchronizeConfiguration];        
     }
 
@@ -1375,9 +1331,11 @@
     
     if(retVal == YES)
     {
-        appDelegate.SyncStatus = SYNC_GREEN;
-        [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
-        [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+        //appDelegate.SyncStatus = SYNC_GREEN;
+        
+        [appDelegate setSyncStatus:SYNC_GREEN];
+        //[appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+        //[appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
         [popOver_view startSyncEvents];        
     }
     

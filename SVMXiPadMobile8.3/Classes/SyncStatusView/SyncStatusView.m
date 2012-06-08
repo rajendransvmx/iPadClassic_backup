@@ -1,4 +1,6 @@
-//
+
+
+
 //  SyncStatusView.m
 //  iService
 //
@@ -231,6 +233,8 @@
     
     _status = [[UILabel alloc] initWithFrame:CGRectMake(300, 124, 450, 45)];
     _status.backgroundColor = [UIColor clearColor];
+	
+	NSLog(@"%d", appDelegate.SyncStatus);
     _status.text = [self getSyncronisationStatus];
     [self.view addSubview:_status];
     
@@ -265,7 +269,7 @@
     
     lastSyncTime = [formatter4 stringFromDate:_gmtDate3];
     
-    NSLog(@"%@", lastSyncTime);;
+    NSLog(@"%@", lastSyncTime);
     
     NSString * str4 = nil;
     NSString * str5 = nil;
@@ -413,7 +417,7 @@
        syncStatus = @"";
        syncStatus =[appDelegate.wsInterface.tagsDictionary objectForKey:sync_failed];
     }else if (appDelegate.SyncStatus == SYNC_GREEN){
-       syncStatus = @"";
+        syncStatus = @"";
         syncStatus = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_succeeded];
     }else if (appDelegate.SyncStatus == SYNC_ORANGE){
        syncStatus = @"";
