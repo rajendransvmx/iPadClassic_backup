@@ -29,7 +29,9 @@
 @end
 
 @implementation DetailViewController
-@synthesize animatedImageView;
+
+
+@synthesize updateGreenButtonFlag;
 @synthesize parentReference;
 
 @synthesize delegate, calendarDelegate;
@@ -327,15 +329,8 @@
         self.navigationItem.leftBarButtonItem = backBarButtonItem;
         // ################################################### //
     }
-    
-    //Image View animation
-    //if(!showSyncUI)
-    //{
-    animatedImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 26, 26)];    
-    [self getStatusImage];
-    animatedImageView.animationDuration = 1.0f;
-    animatedImageView.animationRepeatCount = 0;
-    [animatedImageView startAnimating];
+      
+    //[appDelegate setSyncStatus:appDelegate.SyncStatus];
      showSyncUI = YES;
 }
 
@@ -373,6 +368,9 @@
     appDelegate.isDetailActive = YES;
     
     [self enableSFMUI];
+    
+    if( !self.parentReference )
+        [self addNavigationButtons:detailTitle];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -380,8 +378,10 @@
     [super viewDidAppear:animated];
     
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    
     appDelegate.isDetailActive = YES;
+    
+    //[appDelegate setSyncStatus:appDelegate.SyncStatus];
+
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -507,15 +507,9 @@
     toolBarWidth += 67; //Action Button Width
     NSMutableArray * buttons = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
     
-    if (animatedImageView) {
-        [animatedImageView release];
-        animatedImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 26, 26)];    
-    }
-    [self getStatusImage];
-    animatedImageView.animationDuration = 1.0f;
-    animatedImageView.animationRepeatCount = 0;
-    [animatedImageView startAnimating];
-    UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:animatedImageView];
+    //[appDelegate setSyncStatus:appDelegate.SyncStatus];
+    
+    UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:appDelegate.animatedImageView];
     [buttons addObject:syncBarButton];
     [syncBarButton setTarget:self];
     syncBarButton.width =26;
@@ -630,18 +624,10 @@
     //[buttons addObject:actionBtn];  -- Shrinivas
     
     //if (appDelegate.signatureCaptureUpload)
-    if(animatedImageView)
-    {
-        [animatedImageView release];
-        animatedImageView=[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 26, 26)];  
-    } 
-    [self getStatusImage];
+    //[appDelegate setSyncStatus:appDelegate.SyncStatus];
     showSyncUI=YES;
-    animatedImageView.animationDuration = 1.0f;
-    animatedImageView.animationRepeatCount = 0;
-    [animatedImageView startAnimating];
     
-    UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:animatedImageView];
+    UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:appDelegate.animatedImageView];
     [buttons addObject:syncBarButton];
     [syncBarButton setTarget:self];
     
@@ -5967,7 +5953,6 @@
     webView = nil;
     */
 	[super viewDidUnload];
-    animatedImageView = nil;
 	// Release any retained subviews of the main view.
 	// e.g. self.myOutlet = nil;
 	// self.popoverController = nil;
@@ -5984,7 +5969,7 @@
 
 #pragma mark - UINavigationController Delegate Method
 - (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated
-{    
+{
     if (self != viewController)
     {
         [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidShowNotification object:nil];
@@ -6008,6 +5993,7 @@
 
 - (void)navigationController:(UINavigationController *)navigationController didShowViewController:(UIViewController *)viewController animated:(BOOL)animated
 {
+    //[appDelegate setSyncStatus:appDelegate.SyncStatus];
     if(appDelegate.isWorkinginOffline)
     {
         
@@ -6018,9 +6004,6 @@
         {
             if (appDelegate.SFMPage != nil)
             {
-               // [appDelegate.SFMPage release];
-                //appDelegate.SFMPage = nil;
-
                     [self.tableView reloadData];
                     [appDelegate.sfmPageController.rootView refreshTable];
             }
@@ -6077,7 +6060,6 @@
     [super dealloc];
     [appDelegate.dict release];
     [backBtn release];
-    [animatedImageView release];
 }
 
 #pragma mark - Custom Controls' Delegate Method
@@ -7043,6 +7025,7 @@
     {
        
         [activity startAnimating];
+        
         // Create new line item with default values
         UIControl * control = (UIControl *)sender;
         NSInteger section = control.tag;
@@ -7331,17 +7314,10 @@
         UIBarButtonItem * helpBarButton = [[UIBarButtonItem alloc] initWithCustomView:actionButton];  
         
         NSMutableArray * buttons = [[NSMutableArray alloc] initWithCapacity:0];
-        if(animatedImageView)
-        {
-            [animatedImageView release];
-            animatedImageView=[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 26, 26)];  
-        }
-        [self getStatusImage];
         showSyncUI=YES;
-        animatedImageView.animationDuration = 1.0f;
-        animatedImageView.animationRepeatCount = 0;
-        [animatedImageView startAnimating];
-        UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:animatedImageView];
+        //[appDelegate setSyncStatus:appDelegate.SyncStatus];
+        
+        UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:appDelegate.animatedImageView];
         [buttons addObject:syncBarButton];
         [syncBarButton setTarget:self];
         //sahana offline
@@ -7586,17 +7562,10 @@
         UIBarButtonItem * helpBarButton = [[UIBarButtonItem alloc] initWithCustomView:actionButton];  
         
         NSMutableArray * buttons = [[NSMutableArray alloc] initWithCapacity:0];
-        if(animatedImageView)
-        {
-            [animatedImageView release];
-            animatedImageView=[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 26, 26)];  
-        }
-        [self getStatusImage];
+        //[appDelegate setSyncStatus:appDelegate.SyncStatus];
         showSyncUI=YES;
-        animatedImageView.animationDuration = 1.0f;
-        animatedImageView.animationRepeatCount = 0;
-        [animatedImageView startAnimating];
-        UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:animatedImageView];
+
+        UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:appDelegate.animatedImageView];
         [buttons addObject:syncBarButton];
         [syncBarButton setTarget:self];
         //sahana offline
@@ -8168,18 +8137,10 @@
     [actionButton setBackgroundImage:[UIImage imageNamed:@"iService-Screen-Help.png"] forState:UIControlStateNormal];
     [actionButton addTarget:self action:@selector(showHelp) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem * helpBarButton = [[UIBarButtonItem alloc] initWithCustomView:actionButton]; 
-    if(animatedImageView)
-    {
-        //loaded parts line
-        [animatedImageView release];
-        animatedImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 26, 26)];  
-    }
-    [self getStatusImage];
+    //[appDelegate setSyncStatus:appDelegate.SyncStatus];
     showSyncUI=YES;
-    animatedImageView.animationDuration = 1.0f;
-    animatedImageView.animationRepeatCount = 0;
-    [animatedImageView startAnimating];
-    UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:animatedImageView];
+
+    UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:appDelegate.animatedImageView];
     
     NSMutableArray * buttons = [[NSMutableArray alloc] initWithCapacity:0];
     [buttons addObject:syncBarButton];
@@ -10864,7 +10825,7 @@
 
         
     }
-    [self getStatusImage];
+    //[appDelegate setSyncStatus:appDelegate.SyncStatus];
     [self enableSFMUI];
     
 }
@@ -11841,52 +11802,6 @@
 
 }
 
-- (UIImage *) getStatusImage
-{
-    UIImage  * img;
-    if (appDelegate.SyncStatus == SYNC_RED)
-    {
-        [animatedImageView stopAnimating];
-        animatedImageView.animationImages = nil;
-        NSMutableArray * imgArr = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-        for ( int i = 1; i < 34; i++)
-        {
-            [imgArr addObject:[UIImage imageNamed:[NSString stringWithFormat:@"r%d.png", i]]];
-        }
-        
-        animatedImageView.animationImages = [NSArray arrayWithArray:imgArr];
-        animatedImageView.animationDuration = 1.0f;
-        animatedImageView.animationRepeatCount = 0;
-        [animatedImageView startAnimating];
-    }
-    else if (appDelegate.SyncStatus == SYNC_GREEN)
-    {
-        NSString * statusImage = @"green.png";
-        [animatedImageView stopAnimating];
-        animatedImageView.image = [UIImage imageNamed:@"green.png"];
-        img = [UIImage imageNamed:statusImage];
-        [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
-    }
-    else if (appDelegate.SyncStatus == SYNC_ORANGE)
-    {
-        animatedImageView.animationImages = nil;
-        NSMutableArray * imgArr = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-        for ( int i = 1; i < 34; i++)
-        {
-            [imgArr addObject:[UIImage imageNamed:[NSString stringWithFormat:@"o%d.png", i]]];
-        }
-        
-        
-        animatedImageView.animationImages = [NSArray arrayWithArray:imgArr];
-        animatedImageView.animationDuration = 1.0f;
-        animatedImageView.animationRepeatCount = 0;
-        [animatedImageView startAnimating];
-    }
-    
-    return img;
-}
-
-
 - (void) showManualSyncUI
 {
     //btn merge
@@ -11911,12 +11826,16 @@
 
 -(void) showSyncStatusButton
 {
-   [statusButton setBackgroundImage:[self getStatusImage] forState:UIControlStateNormal]; 
+//    [statusButton setBackgroundImage:[self getStatusImage] forState:UIControlStateNormal]; 
+    //[appDelegate setSyncStatus:appDelegate.SyncStatus];
 }
+
 - (void) refreshStatusImage
 {
-    [statusButton setBackgroundImage:[self getStatusImage] forState:UIControlStateNormal];
+//    [statusButton setBackgroundImage:[self getStatusImage] forState:UIControlStateNormal];
+    //[appDelegate setSyncStatus:appDelegate.SyncStatus];
 }
+
 -(void)pageLevelEventsForEvent:(NSString *)event_Name
 {
     NSMutableDictionary * headerDataDictionary = [appDelegate.SFMPage objectForKey:gHEADER];

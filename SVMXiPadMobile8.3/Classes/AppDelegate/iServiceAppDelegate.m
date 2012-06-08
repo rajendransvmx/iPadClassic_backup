@@ -132,7 +132,6 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 @synthesize _pingServer;
 
-
 @synthesize dataBase;
 @synthesize isIncrementalMetaSyncInProgress;
 @synthesize isMetaSyncExceptionCalled;
@@ -171,7 +170,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize incrementalSync_Failed;
 @synthesize datasync_timer;
 @synthesize Incremental_sync_status;
-@synthesize SyncStatus;
+@synthesize SyncStatus = _SyncStatus;
 @synthesize Incremental_sync,temp_incremental_sync;
 @synthesize dataSync_dict;
 @synthesize view_layout_array;
@@ -313,6 +312,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 @synthesize eventSyncRunning, metaSyncRunning, dataSyncRunning;
 @synthesize queue_object, queue_selector;
+
+@synthesize animatedImageView;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -500,12 +501,13 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         [self.calDataBase removeInternetConflicts];
         [self.internet_Conflicts removeAllObjects];
         
-        self.SyncStatus = SYNC_GREEN;
+        //self.SyncStatus = SYNC_GREEN;
         
         [self.reloadTable ReloadSyncTable];
-        [self.wsInterface.refreshSyncButton showSyncStatusButton]; 
-        [self.wsInterface.refreshModalStatusButton showModalSyncStatus];
-        [self.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+        [self setSyncStatus:SYNC_GREEN];
+        //[self.wsInterface.refreshSyncButton showSyncStatusButton]; 
+        //[self.wsInterface.refreshModalStatusButton showModalSyncStatus];
+        //[self.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
     }
     
 }
@@ -614,6 +616,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 - (void)dealloc
 {
+    [animatedImageView release];
     [sfmSearchTableArray release];
 	[onlineDataArray release];
     [wsInterface release];
@@ -1050,7 +1053,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc]init];
     
     [self goOnlineIfRequired];
-    if(SyncStatus == SYNC_RED)
+    if(_SyncStatus == SYNC_RED)
     {
         return;
     }
@@ -1486,7 +1489,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     
     event_timer = [[NSTimer scheduledTimerWithTimeInterval:eventTimeInterval 
                                                    target:self 
-                                                 selector:@selector(eventSyncTimer) 
+                                                 selector:@selector(callEventSyncTimer) 
                                                  userInfo:nil 
                                                   repeats:YES] retain];
 }
@@ -1523,6 +1526,54 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     
 }
 
+//upon changing the sync status, the animated image view has to change state automatically
+- (void) setSyncStatus:(SYNC_STATUS)_SyncStatus_
+{
+    UIImage *img;
+	
+	_SyncStatus = _SyncStatus_;
+    
+    if( animatedImageView == nil )
+    {
+        animatedImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 26, 26)];
+    }
+    
+    if (_SyncStatus == SYNC_RED)
+    {
+        [animatedImageView stopAnimating];
+        animatedImageView.animationImages = nil;
+        NSMutableArray * imgArr = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+        for ( int i = 1; i < 34; i++)
+        {
+            [imgArr addObject:[UIImage imageNamed:[NSString stringWithFormat:@"r%d.png", i]]];
+        }
+        animatedImageView.animationImages = [NSArray arrayWithArray:imgArr];
+        animatedImageView.animationDuration = 1.0f;
+        animatedImageView.animationRepeatCount = 0;
+        [animatedImageView startAnimating];
+    }
+    else if (_SyncStatus == SYNC_GREEN)
+    {
+        NSString * statusImage = @"green.png";
+        [animatedImageView stopAnimating];
+        animatedImageView.image = [UIImage imageNamed:@"green.png"];
+        img = [UIImage imageNamed:statusImage];
+        [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
+    }
+    else if (_SyncStatus == SYNC_ORANGE)
+    {
+        animatedImageView.animationImages = nil;
+        NSMutableArray * imgArr = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+        for ( int i = 1; i < 34; i++)
+        {
+            [imgArr addObject:[UIImage imageNamed:[NSString stringWithFormat:@"o%d.png", i]]];
+        }
+        animatedImageView.animationImages = [NSArray arrayWithArray:imgArr];
+        animatedImageView.animationDuration = 1.0f;
+        animatedImageView.animationRepeatCount = 0;
+        [animatedImageView startAnimating];
+    }
+}
 #pragma mark - Location Ping
 -(void)didUpdateToLocation:(CLLocation*)location
 {

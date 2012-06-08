@@ -287,7 +287,12 @@
                         }
                         if([label isEqualToString:@"" ]||[label isEqualToString:@" "] || label == nil)
                         {
-                            label = value;
+                            //Radha 2012june08
+                            label = [appDelegate.databaseInterface getLookUpNameForId:value];
+                            if([label isEqualToString:@"" ]||[label isEqualToString:@" "] || label == nil)
+                            {
+                                label = value;
+                            }
                         }
                         
                     }

@@ -32,8 +32,25 @@
 
 @synthesize didDismissalertview;
 
-- (void)viewWillAppear:(BOOL)animated
+- (void)viewWillLayoutSubviews
 {
+    [super viewWillLayoutSubviews];
+    [self.view addSubview:appDelegate.animatedImageView];
+    if( isShowingDailyView )
+    {
+		appDelegate.animatedImageView.frame = CGRectMake(784, 8, 26, 26);
+    }
+    else
+    {
+        appDelegate.animatedImageView.frame = CGRectMake(837, 8, 26, 26);
+    }
+	
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
     [self enableUI];
     // Samman 09 April, 2011
     if (appDelegate.refreshCalendar)
@@ -48,7 +65,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self)
     {
-       // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didInternetConnectionChange:) name:kInternetConnectionChanged object:nil];
+		// [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didInternetConnectionChange:) name:kInternetConnectionChanged object:nil];
     }
     
     return self;
@@ -60,11 +77,11 @@
     [super viewDidLoad];
     
     [self disableUI];
-
+	
     isActive = YES;
     appDelegate.showUI = TRUE;   //btn merge
     
-
+	
 	//pavaman 12th Jan 2011
 	didFirstTimeLoad = TRUE;
 	
@@ -79,7 +96,7 @@
     
     if (iOSObject == nil)
         iOSObject = [[iOSInterfaceObject alloc] initWithCaller:self];
-
+	
     if (calendar == nil)
     {   
         calendar = [[CalendarController alloc] initWithNibName:@"CalendarController" bundle:nil];
@@ -102,7 +119,7 @@
     }
     
     [leftPane addSubview:calendar.view];
-  
+	
     if (tasks == nil)
         tasks = [[NSMutableArray alloc] initWithCapacity:0];
     else
@@ -121,7 +138,7 @@
     // Set slider for landscape orientation
     [slider setThumbImage:[UIImage imageNamed:@"slider.png"] forState:UIControlStateNormal];
     [slider setThumbImage:[UIImage imageNamed:@"slider.png"] forState:UIControlStateHighlighted];
-
+	
     [slider setMinimumTrackImage:[UIImage imageNamed:@"blank.png"] forState:UIControlStateNormal];
     [slider setMinimumTrackImage:[UIImage imageNamed:@"blank.png"] forState:UIControlStateHighlighted];
     [slider setMaximumTrackImage:[UIImage imageNamed:@"blank.png"] forState:UIControlStateNormal];
@@ -135,7 +152,7 @@
     [portraitSlider setMinimumTrackImage:[UIImage imageNamed:@"blank.png"] forState:UIControlStateHighlighted];
     [portraitSlider setMaximumTrackImage:[UIImage imageNamed:@"blank.png"] forState:UIControlStateNormal];
     [portraitSlider setMaximumTrackImage:[UIImage imageNamed:@"blank.png"] forState:UIControlStateHighlighted];
-
+	
     // Changes for localization
     //Radha 20th April 2011
     ltaskLabel.text = [appDelegate.wsInterface.tagsDictionary objectForKey:LTASKLABEL];
@@ -157,20 +174,13 @@
     [segmentButton setImage:[UIImage imageNamed:@"iService-Week-Button-Up-State.png"] forSegmentAtIndex:1];
     
     /*statusButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    statusButton.frame = CGRectMake(815, 8, 26, 26);
-    [statusButton setBackgroundImage:[self getStatusImage] forState:UIControlStateNormal];
-    [statusButton addTarget:self action:@selector(showManualSyncUI) forControlEvents:UIControlEventTouchUpInside];
-    statusButton.enabled = NO;*/
-     
-    animatedImageView = [[UIImageView alloc] initWithFrame:CGRectMake(784, 8, 26, 26)]; 
-    [self getStatusImage];
-    animatedImageView.animationDuration = 1.0f;
-    animatedImageView.animationRepeatCount = 0;
-    [animatedImageView startAnimating];
-    [self.view addSubview:animatedImageView];
-
-
-    //[self.view addSubview:statusButton];
+	 statusButton.frame = CGRectMake(815, 8, 26, 26);
+	 [statusButton setBackgroundImage:[self getStatusImage] forState:UIControlStateNormal];
+	 [statusButton addTarget:self action:@selector(showManualSyncUI) forControlEvents:UIControlEventTouchUpInside];
+	 statusButton.enabled = NO;*/
+	
+    //[appDelegate setSyncStatus:appDelegate.SyncStatus];
+	
 }
 
 - (void) didInternetConnectionChange:(NSNotification *)notification
@@ -288,7 +298,7 @@
 {
     // Start a seperate thread and show activity indicator
     [activity startAnimating];
-
+	
     [self setupTasksForDate:date];
 }
 
@@ -302,7 +312,7 @@
     
     [eventViewArray removeAllObjects];
     [eventPositionArray removeAllObjects];
-
+	
     [activity stopAnimating];
 }
 
@@ -340,7 +350,7 @@
     NSString * time = endTime;
     
     NSString * startDate = [eventView.startDate substringToIndex:11];
- 
+	
     startTime = [NSString stringWithFormat:@"%@ %@", startDate, startTime];
     endTime = [NSString stringWithFormat:@"%@ %@", startDate, endTime];
     
@@ -356,7 +366,7 @@
         endTime = [endTime stringByReplacingOccurrencesOfString:oldString withString:newString];
         
     }
-
+	
     updateStartTime = startTime;
     updateEndTime = endTime;
     
@@ -372,7 +382,7 @@
     
     updatestartDateTime = [updatestartDateTime stringByReplacingOccurrencesOfString:@"T" withString:@" "];
     updatestartDateTime = [updatestartDateTime stringByReplacingOccurrencesOfString:@"Z" withString:@""];
-
+	
 } 
 //sahana 12th sept 2011
 - (void) Continuetherescheduling:(BOOL)continue_rescheduling;
@@ -394,7 +404,7 @@
     eventView.workOrderDetail = _workOrderDetails;
     
 }
- 
+
 - (void) deleteCacheDate
 {
     
@@ -403,16 +413,16 @@
 - (IBAction) refreshViews;
 {
     [self disableUI];
-   /* if (!appDelegate.isInternetConnectionAvailable && (offline == YES))
-    {
-        [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
-        return;
-    }*/
+	/* if (!appDelegate.isInternetConnectionAvailable && (offline == YES))
+	 {
+	 [activity stopAnimating];
+	 [appDelegate displayNoInternetAvailable];
+	 return;
+	 }*/
     
     didRunOperation = YES;
     didRefresh = YES;
-   
+	
     if (!isShowingDailyView)
     {
         [weekView.activity startAnimating];
@@ -427,11 +437,11 @@
         {
             [[array objectAtIndex:i] removeFromSuperview];
         } 
-
+		
         [self refresh];
         
         // Samman - 24 Sep, 2011 - Removed below code as it calls refresh twice. A MAJOR reason for crash scenarios 
-//        [NSThread detachNewThreadSelector:@selector(refresh) toTarget:self withObject:nil];
+		//        [NSThread detachNewThreadSelector:@selector(refresh) toTarget:self withObject:nil];
     }
     
     
@@ -442,7 +452,7 @@
     [self disableUI];
     // Samman - 24 Sep, 2011 - Need to call WSInterface Method to perform an actual REFRESH
     
-     NSMutableArray * weekBoundaries = [calendar getWeekBoundaries:appDelegate.dateClicked];
+	NSMutableArray * weekBoundaries = [calendar getWeekBoundaries:appDelegate.dateClicked];
     
     NSLog(@"%@ %@",appDelegate.wsInterface.startDate, appDelegate.wsInterface.endDate);
     NSString *startDate = [weekBoundaries objectAtIndex:0];
@@ -455,7 +465,7 @@
 
 - (void) reloadCalendar
 {
-//    [rightPaneParent setUserInteractionEnabled:NO];
+	//    [rightPaneParent setUserInteractionEnabled:NO];
     [self enableUI];
     NSLog(@"currentdate =  %@", currentDate);
     [self setEventsView:currentDate];
@@ -464,14 +474,14 @@
         [weekView populateWeekView];
         [weekView.activity stopAnimating];
     }
-//    [rightPaneParent setUserInteractionEnabled:YES];
+	//    [rightPaneParent setUserInteractionEnabled:YES];
     [self enableUI];
 }
 
 - (void) didUpdateObjects:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
 {
     NSLog(@"Updated objects");
-
+	
 	[self refreshCacheData];
     [self setupEventsOnView:rightPane];
 }
@@ -485,7 +495,7 @@
     [self refresh];
     
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-
+	
     NSString * serviceMax = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_TITLE];
     NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
     NSString * noEvents = [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_NO_EVENTS];
@@ -503,7 +513,7 @@
     {
         [appDelegate.workOrderEventArray removeAllObjects];
     }
-
+	
     // Add events to workOrderEventArray based on today
     for (int i = 0; i < [appDelegate.wsInterface.eventArray count]; i++)
     {
@@ -513,7 +523,7 @@
         [dateFormatter setDateFormat:@"yyyy-MM-dd"];
         NSString * activityDate = [dateFormatter stringFromDate:[dict objectForKey:STARTDATETIME]];
         NSString * apiName = [dict objectForKey:OBJECTAPINAME];
-
+		
         if ([appDelegate.dateClicked isEqualToString:activityDate])
         {
             if ([apiName isEqualToString:WORKORDER])
@@ -532,13 +542,13 @@
         {
             NSDictionary * obji = [appDelegate.workOrderEventArray objectAtIndex:i];
             NSDictionary * objj = [appDelegate.workOrderEventArray objectAtIndex:j];
-
+			
             NSString * objiDate = [dateFormatter stringFromDate:[obji objectForKey:STARTDATETIME]];
             NSString * objjDate = [dateFormatter stringFromDate:[objj objectForKey:STARTDATETIME]];
-
+			
             NSString * iDateStr = [objiDate isKindOfClass:[NSString class]]?objiDate:@"1970-01-01T00:00:00Z";
             NSString * jDateStr = [objjDate isKindOfClass:[NSString class]]?objjDate:@"1970-01-01T00:00:00Z";
-
+			
             iDateStr = [iOSInterfaceObject getLocalTimeFromGMT:iDateStr];
             iDateStr = [iDateStr stringByReplacingOccurrencesOfString:@"T" withString:@" "];
             iDateStr = [iDateStr stringByReplacingOccurrencesOfString:@"Z" withString:@""];
@@ -605,10 +615,10 @@
         }
         
     }
-
-
+	
+	
     NSLog(@"%@", appDelegate.workOrderEventArray);
-
+	
     if ([appDelegate.workOrderEventArray count] == 0)
     {
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle:serviceMax message:noEvents delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
@@ -623,7 +633,7 @@
             appDelegate.workOrderInfo = nil;
             appDelegate.workOrderInfo = [[NSMutableArray alloc] initWithCapacity:0];
         }
-       
+		
         BOOL status;
         status = [Reachability connectivityStatus];
         //write a query to retrieve the work order info 
@@ -647,11 +657,11 @@
 
 - (IBAction) ToggleLandscapeView
 {
-   /* if (!appDelegate.isInternetConnectionAvailable && (offline == YES))
-    {
-        //[appDelegate displayNoInternetAvailable];
-        //return;
-    }*/
+	/* if (!appDelegate.isInternetConnectionAvailable && (offline == YES))
+	 {
+	 //[appDelegate displayNoInternetAvailable];
+	 //return;
+	 }*/
     if (didTogglePortraitView)
     {
         didTogglePortraitView = NO;
@@ -674,7 +684,7 @@
             HomeButton.frame = homeButtonRect;
             refreshButton.frame = refreshButtontRect;
             //statusButton.frame = CGRectMake(815, 8, 26, 26);
-            animatedImageView.frame = CGRectMake(784, 8, 26, 26);
+            appDelegate.animatedImageView.frame = CGRectMake(784, 8, 26, 26);
             [UIView commitAnimations];
             isViewDirty = NO;
         }
@@ -691,7 +701,7 @@
             HomeButton.frame = homeButtonRect;
             refreshButton.frame = refreshButtontRect;
             //statusButton.frame = CGRectMake(815, 8, 26, 26);
-            animatedImageView.frame = CGRectMake(784, 8, 26, 26);
+            appDelegate.animatedImageView.frame = CGRectMake(784, 8, 26, 26);
             [UIView commitAnimations];
         }
         
@@ -733,7 +743,7 @@
                     didSetupWeekView = NO;
                 }
         }
-
+		
         [self.view addSubview:weekView.view];
         
         [UIView beginAnimations:@"ShowWeeklyView" context:nil];
@@ -748,7 +758,7 @@
         refreshButtontRect = refreshButton.frame;
         refreshButton.frame = refreshButtontRect;
         //statusButton.frame = CGRectMake(855, 8, 26, 26); //Check This  
-        animatedImageView.frame = CGRectMake(837, 8, 26, 26);
+        appDelegate.animatedImageView.frame = CGRectMake(837, 8, 26, 26);
         [UIView commitAnimations];
         
         [self disableUI];
@@ -799,12 +809,12 @@
 
 - (IBAction) AddTask:(id)sender
 {
-   /* if (!appDelegate.isInternetConnectionAvailable && (offline == YES))
-    {
-        [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
-        return;
-    }*/
+	/* if (!appDelegate.isInternetConnectionAvailable && (offline == YES))
+	 {
+	 [activity stopAnimating];
+	 [appDelegate displayNoInternetAvailable];
+	 return;
+	 }*/
     addTaskView = [[AddTaskController alloc] initWithNibName:@"AddTaskController" bundle:nil];
     addTaskView.taskView = taskView;
     UIPopoverController * popOver = [[UIPopoverController alloc] initWithContentViewController:addTaskView];
@@ -868,7 +878,7 @@
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation duration:(NSTimeInterval)duration
 {
     // NSLog(@"willAnimateRotationToInterfaceOrientation");
-
+	
     if (interfaceOrientation == UIInterfaceOrientationPortrait)
     {
         isPortrait = YES;
@@ -983,12 +993,12 @@
         // show portrait oriented weekview and call refresh on it
     }
 }
- 
+
 
 - (void) RefreshLandscapeEventPane
 {
     // Remove all subviews of portraitEventView first
-
+	
     NSArray * array = [rightPane subviews];
     for (int i = 0; i < [array count]; i++)
     {
@@ -1009,7 +1019,7 @@
     // Set calendar frame
     calendar.view.frame = CGRectMake(0, 0, 444, 216);
     [leftPane addSubview:calendar.view];
-  //  NSLog(@"%@", eventViewArray);
+	//  NSLog(@"%@", eventViewArray);
 }
 
 
@@ -1071,7 +1081,7 @@
     [super dealloc];
     
     isLoaded = NO;
-
+	
     [calendar release];
     
     [slider removeFromSuperview];
@@ -1092,7 +1102,7 @@
     [sliderDateView release];
     [weekView release];
     weekView = nil;
-
+	
     [eventViewArray release];
     [activity release];
     [workOrderId release];
@@ -1158,12 +1168,12 @@
 
 - (IBAction) SetToday
 {
-   /* if (!appDelegate.isInternetConnectionAvailable && (offline == YES))
-    {
-        [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
-        return;
-    }*/
+	/* if (!appDelegate.isInternetConnectionAvailable && (offline == YES))
+	 {
+	 [activity stopAnimating];
+	 [appDelegate displayNoInternetAvailable];
+	 return;
+	 }*/
     
     [calendar GoToToday];
 }
@@ -1183,7 +1193,7 @@
         slider.value = 0;
         portraitSlider.value = 0;
     }
-
+	
     // Set the slider dates
     switch (total)
     {
@@ -1242,7 +1252,7 @@
 		NSArray *week_bounds = [calendar getWeekBoundaries:currentDate];
         NSLog(@"%@", week_bounds);
 	}
-
+	
     NSString * _date = [calendar getTodayString];
     [self setupTasksForDate:_date];
     
@@ -1252,7 +1262,7 @@
     
     //Shrini 28-sep-2011   Start
     appDelegate.wsInterface.currentDateRange = [calendar getWeekBoundaries:currentDate];
-
+	
     NSMutableArray * currentDateRange = [appDelegate getWeekdates:currentDate];
     
     appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0] endDate:[currentDateRange objectAtIndex:1]];   //Shrinivas 
@@ -1266,7 +1276,7 @@
         {
             [[array objectAtIndex:i] removeFromSuperview];
         }    
-
+		
         if ([self isDate:currentDate inRange:appDelegate.wsInterface.currentDateRange])
         {
             didRunOperation = YES;
@@ -1275,11 +1285,11 @@
                 appDelegate.wsInterface.currentDateRange = [calendar getWeekBoundaries:currentDate];
                 appDelegate.wsInterface.startDate = [appDelegate.wsInterface.currentDateRange objectAtIndex:0];
                 appDelegate.wsInterface.endDate = [appDelegate.wsInterface.currentDateRange objectAtIndex:1];
-
+				
                 NSLog(@"%@ %@", appDelegate.wsInterface.startDate, appDelegate.wsInterface.endDate);
             }
             // Samman - 24 Sep, 2011 - Removed following WSInterface GetEvents call as it is a duplicate call
-//            [appDelegate.wsInterface getEventsForStartDate:appDelegate.wsInterface.startDate EndDate:appDelegate.wsInterface.endDate];
+			//            [appDelegate.wsInterface getEventsForStartDate:appDelegate.wsInterface.startDate EndDate:appDelegate.wsInterface.endDate];
             [self reloadCalendar];
         }
         else
@@ -1311,12 +1321,12 @@
 - (void) setEventsView:(NSString *)_date
 {
     NSLog(@"%@", appDelegate.wsInterface.eventArray);
-
+	
     EventViewController * events = nil;
     NSDictionary * dict;
     NSString * workOrderName;
     NSString * subject;
-       
+	
     NSLog(@"%@ %@", appDelegate.wsInterface.startDate, appDelegate.wsInterface.endDate);
     
     NSArray * array = [rightPane subviews];
@@ -1326,7 +1336,7 @@
     } 
     [eventPositionArray removeAllObjects];
     [eventViewArray removeAllObjects];
-
+	
     NSLog(@"%@", appDelegate.wsInterface.eventArray);
     for ( int i = 0; i < [appDelegate.wsInterface.eventArray count]; i++ )
     {
@@ -1339,12 +1349,12 @@
         
         NSDate * eventDateTime = [dict objectForKey:ACTIVITYDATE];
         NSLog(@"%@",eventDateTime);
-  
+		
         NSLog(@"Setdate = %@", _date);
         
         NSString * activtyDate  = [self dateStringConversion:eventDateTime];
         NSLog(@"%@",activtyDate);
-
+		
         
         eventDateTime = [dict objectForKey:ACTIVITYDTIME];
         NSLog(@"%@",eventDateTime);
@@ -1354,8 +1364,8 @@
         NSString * activityDateTime = dateString;
         NSLog(@"Activitydatetime = %@", activityDateTime);
         
-    //    NSString * eventDate = [activityDateTime substringToIndex:10];
-    //    NSLog(@"eventDate = %@", eventDate);
+		//    NSString * eventDate = [activityDateTime substringToIndex:10];
+		//    NSLog(@"eventDate = %@", eventDate);
         
         eventDateTime = [dict objectForKey:STARTDATETIME];
         NSLog(@"%@",eventDateTime);
@@ -1366,8 +1376,8 @@
         NSLog(@"Startdatetime = %@", startDateTime);
         
         NSString * eventDate = [startDateTime substringToIndex:10];
-            NSLog(@"eventDate = %@", eventDate);
-
+		NSLog(@"eventDate = %@", eventDate);
+		
         eventDateTime = [dict objectForKey:ENDDATETIME];
         NSLog(@"%@",eventDateTime);
         
@@ -1375,10 +1385,10 @@
         
         NSString * endDateTime = dateString;
         NSLog(@"Enddatetime = %@", endDateTime);
-
+		
         NSString * startime = [startDateTime substringFromIndex:11];
         [startime substringToIndex:2];
-     
+		
         NSLog(@"Starttime = %@", startime);
         
         NSString * duration = [dict objectForKey:DURATIONINMIN];
@@ -1438,7 +1448,7 @@
     }
     
     [activity stopAnimating];
-
+	
     [self didGetAllEvents];
 }
 
@@ -1489,12 +1499,12 @@
 
 - (IBAction) IncrDate
 {
-   /* if (!appDelegate.isInternetConnectionAvailable && (offline == YES))
-    {
-        [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
-        return;
-    }*/
+	/* if (!appDelegate.isInternetConnectionAvailable && (offline == YES))
+	 {
+	 [activity stopAnimating];
+	 [appDelegate displayNoInternetAvailable];
+	 return;
+	 }*/
     
     if (slider.value < slider.maximumValue)
         ++slider.value;
@@ -1517,19 +1527,19 @@
     {
         [[array objectAtIndex:i] removeFromSuperview];
     }
-
+	
 	//pavaman 3rd jan 2011 . call setdate instead
     [self setDate:slider.value];
 }
 
 - (IBAction) DecrDate
 {
-   /* if (!appDelegate.isInternetConnectionAvailable && (offline == YES))
-    {
-        [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
-        return;
-    }*/
+	/* if (!appDelegate.isInternetConnectionAvailable && (offline == YES))
+	 {
+	 [activity stopAnimating];
+	 [appDelegate displayNoInternetAvailable];
+	 return;
+	 }*/
     
     if (slider.value > slider.minimumValue)
         --slider.value;
@@ -1552,7 +1562,7 @@
     {
         [[array objectAtIndex:i] removeFromSuperview];
     }
-
+	
 	//pavaman 3rd jan 2011 . call setdate instead
     [self setDate:slider.value];
 }
@@ -1590,7 +1600,7 @@
     
     NSString * object_name = [event objectForKey:OBJECTAPINAME];
     appDelegate.sfmPageController.objectName = [event objectForKey:OBJECTAPINAME];
-        
+	
     NSString * recordId =  [event objectForKey:RECORDID];
     if(recordId == nil || [recordId length] == 0)
     {
@@ -1646,7 +1656,7 @@
     
     [appDelegate.sfmPageController release];
     [activity stopAnimating];
-        
+	
 }
 
 - (void) showJobWithEventDetail:(ZKSObject *)eventDetail WorkOrderDetail:(NSDictionary *)workOrderDetail
@@ -1740,10 +1750,10 @@
         {
             CGFloat diff = location.y - initialPoint.y;        
             rightPane.frame = CGRectMake(0, rightPane.frame.origin.y+diff, rightPane.frame.size.width, rightPane.frame.size.height);
-    
+			
             initialPoint = location;
         }
-
+		
         return;
     }
     
@@ -1757,12 +1767,12 @@
         {
             return;
         }
-
+		
         if (!CGRectEqualToRect(locationRect, eventView.view.frame))
         {
             if (((eventView.view.frame.origin.y + eventView.view.frame.size.height) >= (kTIMEFLOOR-kGAP)) &&
                 CGRectIntersectsRect(eventView.view.frame, locationRect))
-            
+				
             {
                 return;
             }
@@ -1854,10 +1864,10 @@
                         //sahana Event Update  to datatriler table
                         NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:eventView.eventId tableName:@"Event"];
                         //sahana 26/Feb
-                       // BOOL does_exists = [appDelegate.databaseInterface DoesTrailerContainTheRecord:local_id operation_type:UPDATE object_name:@"Event"];
-                      //  if(!does_exists)
+						// BOOL does_exists = [appDelegate.databaseInterface DoesTrailerContainTheRecord:local_id operation_type:UPDATE object_name:@"Event"];
+						//  if(!does_exists)
                         {
-
+							
                             [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:local_id SF_id:eventView.eventId record_type:MASTER operation:UPDATE object_name:@"Event" sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@""];
                             
                         }
@@ -1876,7 +1886,7 @@
                     NSMutableArray * currentDateRange = [appDelegate getWeekdates:currentDate];
                     
                     appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0] endDate:[currentDateRange objectAtIndex:1]];                     
-                                      
+					
                     if ([appDelegate.wsInterface.rescheduleEvent isEqualToString:@"SUCCESS"])
                     {
                         [activity stopAnimating];
@@ -1901,7 +1911,7 @@
         NSLog(@"touchesEnded: Finally Handled Exception.");
     }
     
-        [self enableUI];
+	[self enableUI];
 }
 
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
@@ -1950,7 +1960,7 @@
     
     NSString * object_name = [event objectForKey:OBJECTAPINAME];
     appDelegate.sfmPageController.objectName = [event objectForKey:OBJECTAPINAME];
-
+	
     
     NSString * recordId =  [event objectForKey:RECORDID];
     if(recordId == nil || [recordId length] == 0)
@@ -1969,7 +1979,7 @@
     NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:recordId tableName:object_name];
     appDelegate.sfmPageController.recordId = local_id;
     
-   
+	
     appDelegate.sfmPageController.activityDate = [event objectForKey:ACTIVITYDATE];
     appDelegate.sfmPageController.accountId = [event objectForKey:ACCOUNTID];
     appDelegate.sfmPageController.topLevelId = [event objectForKey:TOPLEVELID];
@@ -1978,16 +1988,16 @@
     [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
     
     didRunOperation = YES;
-   
+	
     didRunOperation = NO;
     
     //sahana - offline
     appDelegate.didsubmitModelView = FALSE;
- 
-   
+	
+	
     processInfo * pinfo =  [appDelegate getViewProcessForObject:object_name record_id:local_id processId:appDelegate.sfmPageController.processId isswitchProcess:FALSE];
     BOOL process_exist = pinfo.process_exists;
-        
+	
     //check For view process
     if(process_exist)
     {
@@ -2004,7 +2014,7 @@
         [activity stopAnimating];
         return;
     }
-      
+	
     [appDelegate.sfmPageController release];
     [activity stopAnimating];
 }
@@ -2065,64 +2075,20 @@
 
 - (void) disableUI
 {
-//    [calendar disableUI];
-//    [refreshButton setUserInteractionEnabled:NO] ;
-//    [incrDateBtn setUserInteractionEnabled:NO];
-//    [decrDateBtn setUserInteractionEnabled:NO];
-//    [todayBtn setUserInteractionEnabled:NO];
-//    [slider setUserInteractionEnabled:NO];
+	//    [calendar disableUI];
+	//    [refreshButton setUserInteractionEnabled:NO] ;
+	//    [incrDateBtn setUserInteractionEnabled:NO];
+	//    [decrDateBtn setUserInteractionEnabled:NO];
+	//    [todayBtn setUserInteractionEnabled:NO];
+	//    [slider setUserInteractionEnabled:NO];
     allowTouches = NO;
     [leftPane setUserInteractionEnabled:NO];
     [rightPane setUserInteractionEnabled:NO];
-//    [rightPaneParent setUserInteractionEnabled:NO];
-//    [self.view setUserInteractionEnabled:NO];
-//    [[super view] setUserInteractionEnabled:NO];
+	//    [rightPaneParent setUserInteractionEnabled:NO];
+	//    [self.view setUserInteractionEnabled:NO];
+	//    [[super view] setUserInteractionEnabled:NO];
 }
 
-- (UIImage *) getStatusImage
-{
-    UIImage  * img;
-    if (appDelegate.SyncStatus == SYNC_RED)
-    {
-        [animatedImageView stopAnimating];
-        animatedImageView.animationImages = nil;
-        NSMutableArray * imgArr = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-        for ( int i = 1; i < 34; i++)
-        {
-            [imgArr addObject:[UIImage imageNamed:[NSString stringWithFormat:@"r%d.png", i]]];
-        }
-        
-        animatedImageView.animationImages = [NSArray arrayWithArray:imgArr];
-        animatedImageView.animationDuration = 1.0f;
-        animatedImageView.animationRepeatCount = 0;
-        [animatedImageView startAnimating];
-    }
-    else if (appDelegate.SyncStatus == SYNC_GREEN)
-    {
-        NSString * statusImage = @"green.png";
-        [animatedImageView stopAnimating];
-        animatedImageView.image = [UIImage imageNamed:@"green.png"];
-        img = [UIImage imageNamed:statusImage];
-        [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
-    }
-    else if (appDelegate.SyncStatus == SYNC_ORANGE)
-    {
-        animatedImageView.animationImages = nil;
-        NSMutableArray * imgArr = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-        for ( int i = 1; i < 34; i++)
-        {
-            [imgArr addObject:[UIImage imageNamed:[NSString stringWithFormat:@"o%d.png", i]]];
-        }
-        
-        
-        animatedImageView.animationImages = [NSArray arrayWithArray:imgArr];
-        animatedImageView.animationDuration = 1.0f;
-        animatedImageView.animationRepeatCount = 0;
-        [animatedImageView startAnimating];
-    }
-    
-    return img;
-}
 
 
 - (void) showManualSyncUI
@@ -2138,7 +2104,7 @@
 
 -(void) showModalSyncStatus
 {
-    [statusButton setBackgroundImage:[self getStatusImage] forState:UIControlStateNormal];
+    [appDelegate setSyncStatus:appDelegate.SyncStatus];
 }
 
 

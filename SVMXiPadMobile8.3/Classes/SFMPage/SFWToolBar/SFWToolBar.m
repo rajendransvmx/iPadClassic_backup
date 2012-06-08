@@ -318,7 +318,6 @@
     {
         return 0;
     }
-    
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
@@ -327,6 +326,22 @@
     NSDictionary * dict = [array objectAtIndex:section];
    // NSString * wizard_description = [dict objectForKey:WIZARD_DESCRIPTION];
     NSString * wizard_description = [dict objectForKey:WIZARD_TITLE]; //RADHA
+    
+    NSString * wizard_id = [dict objectForKey:WIZARD_ID];
+    
+    NSArray * allKeys = [wizard_buttons allKeys];
+    for(int i = 0; i< [allKeys count]; i++)
+    {
+        NSString * key = [allKeys objectAtIndex:i];
+        if([key isEqualToString:wizard_id])
+        {
+            NSArray *  wizard = [wizard_buttons objectForKey:wizard_id];
+            if([wizard count] == 0)
+            {
+                return  @"";
+            }
+        }
+    }
     return wizard_description;
 }
 

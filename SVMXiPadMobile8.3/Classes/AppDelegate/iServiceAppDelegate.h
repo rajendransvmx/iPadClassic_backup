@@ -182,7 +182,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     NSArray * EventsArray;
     
     //sahana incremental Sync 
-    SYNC_STATUS SyncStatus;
+    SYNC_STATUS _SyncStatus;
     NSTimer * datasync_timer;
     INCREMENTAL_SYNC  Incremental_sync_status ;
     DATASYNC_CHUNCKING data_sync_chunking;
@@ -435,9 +435,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     //RADHA - EventSync
     NSTimer * event_timer;
     NSThread * event_thread;
-    
-    
 }
+
 
 @property (nonatomic) BOOL isSpecialSyncDone;
 
@@ -663,6 +662,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 @property (nonatomic, assign) BOOL eventSyncRunning, metaSyncRunning, dataSyncRunning;
 @property (nonatomic, retain) id queue_object;
 @property (nonatomic, assign) SEL queue_selector;
+
+@property (nonatomic, retain) UIImageView *animatedImageView;
 
 
 // get GUID 

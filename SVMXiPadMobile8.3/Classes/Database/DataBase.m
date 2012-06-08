@@ -2741,16 +2741,17 @@
     {
         if (appDelegate.isIncrementalMetaSyncInProgress &&!appDelegate.isInternetConnectionAvailable)
         {
-            appDelegate.SyncStatus = SYNC_RED;
+            //appDelegate.SyncStatus = SYNC_RED;
             
-            [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
-            [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
-            [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+            [appDelegate setSyncStatus:SYNC_RED];
+            //[appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+            //[appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+            //[appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
            
             [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync:meta_sync WithDB:tempDb];
             
             appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflictsForMetaSyncWithDB:appDelegate.dataBase.tempDb];
-             [appDelegate.reloadTable ReloadSyncTable];
+			[appDelegate.reloadTable ReloadSyncTable];
 
             if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                 [MyPopoverDelegate performSelector:@selector(throwException)];
@@ -2880,23 +2881,30 @@
         {
             for (int i = 0; i < [sfWizComponent count]; i++)
             {
-                NSDictionary * comp_dict = [sfWizComponent objectAtIndex:i];
+                wProcessId = @"";
                 
+                NSDictionary * comp_dict = [sfWizComponent objectAtIndex:i];
+                              
                 NSString * wizard_processId = ([comp_dict objectForKey:MPROCESS_ID] != nil)?[comp_dict objectForKey:MPROCESS_ID]:@"";
                 
-                for (int j = 0; j < [sfProcess count]; j++)
+                NSLog(@"%@", wizard_processId);
+                
+                if ([wizard_processId length] > 0)
                 {
-                    NSDictionary * dict  = [sfProcess objectAtIndex:j];
-                    
-                    NSString * process_id = ([dict objectForKey:MPROCESS_ID] != nil)?[dict objectForKey:MPROCESS_ID]:@"";
-                    
-                    if ([wizard_processId isEqualToString:process_id])
+                    for (int j = 0; j < [sfProcess count]; j++)
                     {
-                        wProcessId = ([dict objectForKey:MPROCESS_UNIQUE_ID] != nil)?[dict objectForKey:MPROCESS_UNIQUE_ID]:@"";
-                        break;
+                        NSDictionary * dict  = [sfProcess objectAtIndex:j];
+                        
+                        NSString * process_id = ([dict objectForKey:MPROCESS_ID] != nil)?[dict objectForKey:MPROCESS_ID]:@"";
+                        
+                        if ([wizard_processId isEqualToString:process_id])
+                        {
+                            wProcessId = ([dict objectForKey:MPROCESS_UNIQUE_ID] != nil)?[dict objectForKey:MPROCESS_UNIQUE_ID]:@"";
+                            break;
+                        }
                     }
                 }
-            
+                              
                 sqlite3_bind_text(bulkStmt, 1, [([comp_dict objectForKey:MWIZARD_ID] != nil)?[comp_dict objectForKey:MWIZARD_ID]:@"" UTF8String], [([comp_dict objectForKey:MWIZARD_ID] != nil)?[comp_dict objectForKey:MWIZARD_ID]:@"" length], SQLITE_TRANSIENT);
                 
                 sqlite3_bind_text(bulkStmt, 2, [emptyString UTF8String], [emptyString length], SQLITE_TRANSIENT);
@@ -3991,10 +3999,6 @@
     {
         NSString * _query = [NSString stringWithFormat:@"SELECT Id, SVMXC__SubmoduleID__c, SVMXC__SettingID__c, SVMXC__Setting_Unique_ID__c, SVMXC__Settings_Name__c, SVMXC__Data_Type__c, SVMXC__Values__c, SVMXC__Default_Value__c, SVMXC__Setting_Type__c, SVMXC__Search_Order__c, SVMXC__IsPrivate__c, SVMXC__Active__c, SVMXC__Description__c, SVMXC__IsStandard__c, SVMXC__Submodule__c FROM SVMXC__ServiceMax_Processes__c WHERE SVMXC__SubmoduleID__c = 'IPAD004' AND RecordType.Name = \'SETTINGS\' ORDER BY SVMXC__Setting_Unique_ID__c"];
         [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetSettingsInfo:error:context:) context:nil];
-        //Get the Location Ping Settings
-        _query = [NSString stringWithFormat:@"SELECT Id, SVMXC__SubmoduleID__c, SVMXC__SettingID__c, SVMXC__Setting_Unique_ID__c, SVMXC__Settings_Name__c, SVMXC__Data_Type__c, SVMXC__Values__c, SVMXC__Default_Value__c, SVMXC__Setting_Type__c, SVMXC__Search_Order__c, SVMXC__IsPrivate__c, SVMXC__Active__c, SVMXC__Description__c, SVMXC__IsStandard__c, SVMXC__Submodule__c FROM SVMXC__ServiceMax_Processes__c WHERE SVMXC__SubmoduleID__c = 'IPAD007' AND RecordType.Name = \'SETTINGS\' ORDER BY SVMXC__Setting_Unique_ID__c"];
-        [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetSettingsInfoforLocationPing:error:context:) context:nil];
-
     }
     else
     {
@@ -4524,7 +4528,7 @@
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS meta_sync_status ('sync_status' VARCHAR)"];  
     [self createTemporaryTable:query];
     
-    NSArray * tempTableArray = [NSArray arrayWithObjects:@"ChatterPostDetails",@"Document",@"ProductImage",@"SFSignatureData",@"UserImages",@"trobleshootdata",@"SFDataTrailer",@"SFDataTrailer_Temp",@"SYNC_HISTORY",@"sync_Records_Heap",@"LookUpFieldValue",@"Summary_PDF",@"sync_error_conflict", @"contact_images",@"internet_conflict", @"meta_sync_status", nil];
+    NSArray * tempTableArray = [NSArray arrayWithObjects:@"ChatterPostDetails",@"Document",@"ProductImage",@"SFSignatureData",@"UserImages",@"trobleshootdata",@"SFDataTrailer",@"SFDataTrailer_Temp",@"SYNC_HISTORY",@"sync_Records_Heap",@"LookUpFieldValue",@"Summary_PDF",@"sync_error_conflict", @"contact_images",@"internet_conflicts", @"meta_sync_status", nil];
     
     return tempTableArray;
 }
@@ -4650,6 +4654,17 @@
         [self createTable:finalQuery];
         
     }
+    //Radha 2012june08
+    
+    NSArray * tempArray = [self createTempTableForSummaryAndTroubleShooting];
+    
+    
+    for (NSString * table in tempArray)
+    {
+        NSString * temp_query = [NSString stringWithFormat:@"INSERT INTO %@ SELECT * FROM tempsfm.%@", table, table];
+        [self createTable:temp_query];
+    }
+    
 }
 - (void)deleteDatabase:(NSString *)databaseName
 {
@@ -5054,11 +5069,12 @@
     
     if(retVal == NO)
     {       
-        appDelegate.SyncStatus = SYNC_RED;
+        //appDelegate.SyncStatus = SYNC_RED;
         
-        [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
-        [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
-        [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+        [appDelegate setSyncStatus:SYNC_RED];
+        //[appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+        //[appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+        //[appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
         
         [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:event_sync];
         appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
@@ -5071,11 +5087,12 @@
     
     if (!appDelegate.isInternetConnectionAvailable)
     {
-        appDelegate.SyncStatus = SYNC_RED;
+        //appDelegate.SyncStatus = SYNC_RED;
         
-        [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
-        [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
-        [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+        [appDelegate setSyncStatus:SYNC_RED];
+        //[appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+        //[appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+        //[appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
         
         [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:event_sync];
          appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
@@ -5104,11 +5121,13 @@
     
     if(retVal == NO)
     {
-        appDelegate.SyncStatus = SYNC_RED;
+        //appDelegate.SyncStatus = SYNC_RED;
         [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:event_sync];
-        [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
-        [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
-        [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+        
+        [appDelegate setSyncStatus:SYNC_RED];
+        //[appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+        //[appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+        //[appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
         appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
         [appDelegate.reloadTable ReloadSyncTable];
         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
@@ -5119,11 +5138,12 @@
     
     if (!appDelegate.isInternetConnectionAvailable)
     {
-        appDelegate.SyncStatus = SYNC_RED;
+        //appDelegate.SyncStatus = SYNC_RED;
         
-        [appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
-        [appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
-        [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+        [appDelegate setSyncStatus:SYNC_RED];
+        //[appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+        //[appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+        //[appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
 
         [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:event_sync];
         appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];

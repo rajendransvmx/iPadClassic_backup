@@ -196,9 +196,13 @@ SFWToolBarDelegate,RefreshSyncStatusButton, RefreshForInternet>
     
     //Shrinivas
     UIButton  * statusButton;
-    UIImageView* animatedImageView;
 }
-@property (nonatomic, retain) UIImageView* animatedImageView;
+
+
+//0:uninitialized
+//1:first controller flag
+//2:second controller flag
+@property (nonatomic, assign) short int updateGreenButtonFlag;
 
 @property (nonatomic, retain) DetailViewController * parentReference;
 
