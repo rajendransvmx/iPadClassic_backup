@@ -477,6 +477,7 @@ const NSUInteger kNumImages = 7;
         appDelegate.IsLogedIn = ISLOGEDIN_FALSE;
         [self enableControls];
         [self scheduleLocationPingService];
+        [appDelegate startBackgroundThreadForLocationServiceSettings];
     }
     
 }
@@ -922,6 +923,7 @@ const NSUInteger kNumImages = 7;
 - (void) scheduleLocationPingService
 {
     NSString *enableLocationService = [appDelegate.dataBase getSettingValueWithName:@"IPAD007_SET002"];
+    enableLocationService = (enableLocationService != nil) ? enableLocationService : @"True";
     if([enableLocationService boolValue])
     {
         NSDate *timeStamp = [NSDate date];
@@ -1667,9 +1669,11 @@ const float progress_ = 0.07;
         
         lastLocationUpdateTiemstamp = [userDefaults objectForKey:kLastLocationUpdateTimestamp];
         NSString *enableLocationService = [appDelegate.dataBase getSettingValueWithName:@"IPAD007_SET002"];
+        enableLocationService = (enableLocationService != nil)?enableLocationService:@"True";
         if([enableLocationService boolValue])
         {
             NSString *frequencyLocationService = [appDelegate.dataBase getSettingValueWithName:@"IPAD007_SET001"];
+            frequencyLocationService = (frequencyLocationService != nil)?frequencyLocationService:@"10";
             if (!([newLocationTimestamp timeIntervalSinceDate:lastLocationUpdateTiemstamp] < ([frequencyLocationService intValue] * 60))) {
                 [appDelegate didUpdateToLocation:newLocation];
                 [userDefaults setObject:newLocationTimestamp forKey:kLastLocationUpdateTimestamp];
