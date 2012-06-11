@@ -794,7 +794,7 @@
 }
 - (void) createTableForLocationHistory
 {
-    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS Location_History ('id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL UNIQUE DEFAULT  (0), 'latitude' VARCHAR,'longitude' VARCHAR,'time' VARCHAR,'additional_info' TEXT,'synched' VARCHAR,'synched_on' VARCHAR,'status'  VARCHAR)"]];
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS Location_History ('id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL UNIQUE DEFAULT  (0),local_id VARCHAR, 'latitude' VARCHAR,'longitude' VARCHAR,'time' VARCHAR,'additional_info' TEXT,'synched' VARCHAR,'synched_on' VARCHAR,'status'  VARCHAR)"]];
     if(result == YES)
         NSLog(@"Location_History Table Create Success");
     else
@@ -822,9 +822,9 @@
         additionalInfo = @"";
     if(status == nil)
         status = @"";
+    NSString *localID = [iServiceAppDelegate GetUUID];
     
-    
-    NSString *sql = [NSString stringWithFormat:@"INSERT OR REPLACE INTO Location_History ('id','latitude','longitude','time','additional_info','synched','synched_on','status') VALUES (NULL,'%@','%@','%@','%@','False',' ','%@')",latitude,longitude,time,additionalInfo,status];
+    NSString *sql = [NSString stringWithFormat:@"INSERT OR REPLACE INTO Location_History ('id','local_id','latitude','longitude','time','additional_info','synched','synched_on','status') VALUES (NULL,'%@','%@','%@','%@','%@','False',' ','%@')",localID,latitude,longitude,time,additionalInfo,status];
     
     NSLog(@"Query = %@",sql);
     if(appDelegate == nil)
@@ -856,6 +856,7 @@
     sqlite3_close(appDelegate.db);
     //get limit from table
     NSString *limitLocationRecords = [appDelegate.dataBase getSettingValueWithName:@"IPAD007_SET003"];
+    limitLocationRecords = (limitLocationRecords!=nil)?limitLocationRecords:@"100";
     if(field1 < [limitLocationRecords intValue])
     {
         return;
@@ -4254,6 +4255,7 @@
     [self createBackUpDb];
     
     appDelegate.didincrementalmetasyncdone = TRUE;
+    //[appDelegate startBackgroundThreadForLocationServiceSettings];
     
 }
 
