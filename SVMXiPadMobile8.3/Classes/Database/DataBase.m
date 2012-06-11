@@ -855,8 +855,7 @@
     }
     sqlite3_close(appDelegate.db);
     //get limit from table
-    //NSString *limitLocationRecords = [appDelegate.dataBase getSettingValueWithName:@"IPAD007_SET003"];
-    NSString *limitLocationRecords = @"10";
+    NSString *limitLocationRecords = [appDelegate.dataBase getSettingValueWithName:@"IPAD007_SET003"];
     if(field1 < [limitLocationRecords intValue])
     {
         return;
@@ -4037,6 +4036,10 @@
         
         NSString * _query = @"Select Id, SVMXC__Profile_Name__c, SVMXC__Active__c, SVMXC__IsDefault__c FROM SVMXC__ServiceMax_Config_Data__c WHERE SVMXC__RecordType_Name__c=\'Configuration Profile\' and SVMXC__Configuration_Type__c = \'Global\' and SVMXC__Active__c = true";
         [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetActiveGlobalProfile:error:context:) context:nil];
+        //Get the Location Ping Settings
+        _query = [NSString stringWithFormat:@"SELECT Id, SVMXC__SubmoduleID__c, SVMXC__SettingID__c, SVMXC__Setting_Unique_ID__c, SVMXC__Settings_Name__c, SVMXC__Data_Type__c, SVMXC__Values__c, SVMXC__Default_Value__c, SVMXC__Setting_Type__c, SVMXC__Search_Order__c, SVMXC__IsPrivate__c, SVMXC__Active__c, SVMXC__Description__c, SVMXC__IsStandard__c, SVMXC__Submodule__c FROM SVMXC__ServiceMax_Processes__c WHERE SVMXC__SubmoduleID__c = 'IPAD007' AND RecordType.Name = \'SETTINGS\' ORDER BY SVMXC__Setting_Unique_ID__c"];
+        [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetSettingsInfoforLocationPing:error:context:) context:nil];
+
     }
     else
     {
