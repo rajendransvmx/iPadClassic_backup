@@ -314,7 +314,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize queue_object, queue_selector;
 
 @synthesize animatedImageView;
-
+@synthesize enableLocationService;
+@synthesize frequencyLocationService;
+@synthesize locationPingSettingTimer;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.isBackground = FALSE;
@@ -623,6 +625,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     [viewController release];
     [window release];
     [_manualDataSync release];
+    [frequencyLocationService release];
+    [locationPingSettingTimer invalidate];
     [super dealloc];
 }
 
@@ -1599,7 +1603,74 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     [self.dataBase insertrecordIntoTableNamed:locationInfo];
     [locationInfo release];
 }
+#pragma mark - RunBackground Thread for Location Service Settings
+- (void) startBackgroundThreadForLocationServiceSettings
+{
+    return; // Enable when the the Location Ping Module is Required
+    NSString *enableLocationServiceStatus = [dataBase getSettingValueWithName:@"IPAD007_SET002"];
+    enableLocationService = (enableLocationServiceStatus != nil)?[enableLocationServiceStatus boolValue]:TRUE;
+    frequencyLocationService = [[dataBase getSettingValueWithName:@"IPAD007_SET001"] retain]; 
+    frequencyLocationService = (frequencyLocationService != nil)?frequencyLocationService:@"10";
+    if(enableLocationService)
+    {
+        if(frequencyLocationService == nil)
+            frequencyLocationService = @"10";
+        NSTimeInterval scheduledTimer = 0;
+        scheduledTimer = [frequencyLocationService doubleValue] * 60;
+        if(!locationPingSettingTimer)
+        {    
+            [locationPingSettingTimer invalidate];
+            locationPingSettingTimer = nil;
+        }
+        locationPingSettingTimer = [[NSTimer scheduledTimerWithTimeInterval:scheduledTimer
+                                                                        target:self
+                                                                      selector:@selector(checkLocationServiceSetting)
+                                                                      userInfo:nil
+                                                                       repeats:NO] retain];
+    }
 
+}
+- (void) checkLocationServiceSetting
+{
+    NSDate *newTimestamp = [NSDate date];
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    if (userDefaults) 
+    {        
+        NSDate *lastLocationSettingUpdateTiemstamp = [userDefaults objectForKey:kLastLocationSettingUpdateTimestamp];
+        NSLog(@"Last Location Update From Thread  = %@",lastLocationSettingUpdateTiemstamp);
+    }
+    else 
+    {
+        NSLog(@"Failed to get the User Defaults");
+        return;
+    }
+    if(![CLLocationManager locationServicesEnabled])
+    {
+        NSMutableDictionary *locationInfo = [[NSMutableDictionary alloc] init];
+        [locationInfo setObject:[NSString stringWithFormat:@" "] forKey:@"latitude"];
+        [locationInfo setObject:[NSString stringWithFormat:@" "] forKey:@"longitude"];
+        [locationInfo setObject:[NSString stringWithFormat:@"Location Services Setting is disabled by the User"] forKey:@"additionalInfo"];
+        [locationInfo setObject:[NSString stringWithFormat:@"%@",newTimestamp ] forKey:@"timestamp"];
+        [locationInfo setObject:[NSString stringWithFormat:@"Failure"] forKey:@"status"];
+        NSLog(@"Location = %@",locationInfo);
+        [self.dataBase insertrecordIntoTableNamed:locationInfo];
+        [locationInfo release];
+    }
+    else if([CLLocationManager authorizationStatus] != kCLAuthorizationStatusAuthorized)
+    {
+        NSMutableDictionary *locationInfo = [[NSMutableDictionary alloc] init];
+        [locationInfo setObject:[NSString stringWithFormat:@" "] forKey:@"latitude"];
+        [locationInfo setObject:[NSString stringWithFormat:@" "] forKey:@"longitude"];
+        [locationInfo setObject:[NSString stringWithFormat:@"Application Location Service Setting is disabled by the User"] forKey:@"additionalInfo"];
+        [locationInfo setObject:[NSString stringWithFormat:@"%@",newTimestamp] forKey:@"timestamp"];
+        [locationInfo setObject:[NSString stringWithFormat:@"Failure"] forKey:@"status"];
+        NSLog(@"Location = %@",locationInfo);
+        [self.dataBase insertrecordIntoTableNamed:locationInfo];
+        [locationInfo release];
+    }
+    [userDefaults setObject:newTimestamp forKey:kLastLocationSettingUpdateTimestamp];
+    [self startBackgroundThreadForLocationServiceSettings];
+}
 @end
 
 @implementation processInfo
