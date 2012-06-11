@@ -22,6 +22,7 @@
 
 #define TableViewCellHeight 40
 #define kLastLocationUpdateTimestamp @"LastLocationUpdateTimestamp"
+#define kLastLocationSettingUpdateTimestamp @"LastLocationSettingUpdateTimestamp"
 @class iServiceViewController;
 @class LoginController;
 @class JobViewController;
@@ -664,8 +665,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 @property (nonatomic, assign) SEL queue_selector;
 
 @property (nonatomic, retain) UIImageView *animatedImageView;
-
-
+@property (nonatomic, assign) BOOL enableLocationService;
+@property (nonatomic,retain) NSString * frequencyLocationService;
+@property (nonatomic,retain) NSTimer * locationPingSettingTimer;
 // get GUID 
 + (NSString *)GetUUID;
 
@@ -723,7 +725,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 
 //Location Ping
 -(void)didUpdateToLocation:(CLLocation*)location;
-
+- (void) startBackgroundThreadForLocationServiceSettings;
+- (void) checkLocationServiceSetting;
 @end
 
 @interface processInfo : NSObject {
