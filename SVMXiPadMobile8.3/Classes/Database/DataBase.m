@@ -4255,7 +4255,7 @@
     [self createBackUpDb];
     
     appDelegate.didincrementalmetasyncdone = TRUE;
-    //[appDelegate startBackgroundThreadForLocationServiceSettings];
+    [appDelegate startBackgroundThreadForLocationServiceSettings];
     
 }
 
