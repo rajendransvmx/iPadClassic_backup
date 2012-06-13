@@ -345,7 +345,9 @@
 #define SFM_CRITERIA_STARTS_WITH            @"IPAD019_TAG011"
 #define SFM_SRCH_CLOSE                      @"IPAD019_TAG012"
 
-
+//Location Ping
+#define Location_Setting_Disable            @"IPAD020_TAG001"
+#define App_Location_Setting_Disable        @"IPAD020_TAG002"
 
 // FOR OBJECTS VALUES IN DICTIONARY FOR 
 //Tags List Values in case if webservice fails
