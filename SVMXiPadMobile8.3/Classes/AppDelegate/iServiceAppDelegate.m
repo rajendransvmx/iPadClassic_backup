@@ -1674,12 +1674,18 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         NSLog(@"Failed to get the User Defaults");
         return;
     }
+    if(metaSyncRunning||didincrementalmetasyncdone == FALSE)
+    {
+        NSLog(@"Meta Sync is Running");
+        return;
+    }
+    NSLog(@"Location Update");
     if(![CLLocationManager locationServicesEnabled])
     {
         NSMutableDictionary *locationInfo = [[NSMutableDictionary alloc] init];
         [locationInfo setObject:[NSString stringWithFormat:@" "] forKey:@"latitude"];
         [locationInfo setObject:[NSString stringWithFormat:@" "] forKey:@"longitude"];
-        [locationInfo setObject:[NSString stringWithFormat:@"Location Services Setting is disabled by the User"] forKey:@"additionalInfo"];
+        [locationInfo setObject:[wsInterface.tagsDictionary objectForKey:Location_Setting_Disable]forKey:@"additionalInfo"];
         [locationInfo setObject:[NSString stringWithFormat:@"%@",newTimestamp ] forKey:@"timestamp"];
         [locationInfo setObject:[NSString stringWithFormat:@"Failure"] forKey:@"status"];
         NSLog(@"Location = %@",locationInfo);
@@ -1691,7 +1697,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         NSMutableDictionary *locationInfo = [[NSMutableDictionary alloc] init];
         [locationInfo setObject:[NSString stringWithFormat:@" "] forKey:@"latitude"];
         [locationInfo setObject:[NSString stringWithFormat:@" "] forKey:@"longitude"];
-        [locationInfo setObject:[NSString stringWithFormat:@"Application Location Service Setting is disabled by the User"] forKey:@"additionalInfo"];
+        [locationInfo setObject:[wsInterface.tagsDictionary objectForKey:App_Location_Setting_Disable]forKey:@"additionalInfo"];
         [locationInfo setObject:[NSString stringWithFormat:@"%@",newTimestamp] forKey:@"timestamp"];
         [locationInfo setObject:[NSString stringWithFormat:@"Failure"] forKey:@"status"];
         NSLog(@"Location = %@",locationInfo);
