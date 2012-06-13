@@ -120,6 +120,10 @@
         self.navigationItem.leftBarButtonItem = selProcessBarButtonItem;
         [selectProcessButton release];
     }
+	else
+	{
+		self.navigationItem.leftBarButtonItem = nil;
+	}
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

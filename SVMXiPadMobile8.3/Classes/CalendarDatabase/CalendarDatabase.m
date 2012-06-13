@@ -3107,7 +3107,9 @@
 
 - (NSMutableArray *) getrecordIdsForObject:(NSString *)objectName
 {
-    NSArray  * keys = [NSArray arrayWithObjects:@"SFId",@"Error_message", @"record_type",@"sync_type",@"override_flag",@"error_type",nil];
+    
+    //Radha 2012june11 11:23 AM
+    NSArray  * keys = [NSArray arrayWithObjects:@"SFId",@"Error_message", @"record_type",@"sync_type",@"override_flag",@"error_type", @"local_id", nil];
     
     NSString * SFId = @"";
     
@@ -3121,9 +3123,11 @@
     
     NSString * error_type = @"";
     
+    NSString * local_id = @"";
     
     
-    NSString * selectQuery = [NSString stringWithFormat:@"Select sf_id, error_message, record_type, sync_type, override_flag, error_type from sync_error_conflict Where object_name = '%@'", objectName];
+    
+    NSString * selectQuery = [NSString stringWithFormat:@"Select sf_id, error_message, record_type, sync_type, override_flag, error_type, local_id from sync_error_conflict Where object_name = '%@'", objectName];
     
     sqlite3_stmt *stmt;
     
@@ -3132,19 +3136,14 @@
     int ret = synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, NULL);
     
     if(ret == SQLITE_OK)
-        
     {
-        
         while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
-            
         {
-            
             char * _records = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_1);
             
             if (_records != nil && strlen(_records))
                 
                 SFId = [NSString stringWithUTF8String:_records];
-            
             
             
             char * _errormsg = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_2);
@@ -3153,15 +3152,11 @@
                 
                 errormsg = [NSString stringWithUTF8String:_errormsg];
             
-            
-            
             char * _record_type = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_3);
             
             if (_record_type != nil && strlen(_record_type))
                 
                 record_type = [NSString stringWithUTF8String:_record_type];
-            
-            
             
             char * _sync_type = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_4);
             
@@ -3169,15 +3164,11 @@
                 
                 sync_type = [NSString stringWithUTF8String:_sync_type];
             
-            
-            
             char * _override = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_5);
             
             if (_override != nil && strlen(_override))
                 
                 overrideFlag = [NSString stringWithUTF8String:_override];
-            
-            
             
             char * _error_type = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_6);
             
@@ -3185,9 +3176,15 @@
                 
                 error_type = [NSString stringWithUTF8String:_error_type];
             
+            char * _local_id = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_7);
+            
+            if (_local_id != nil && strlen(_local_id))
+                
+                local_id = [NSString stringWithUTF8String:_local_id];
             
             
-            NSArray * object = [[NSArray arrayWithObjects:SFId, errormsg,record_type,sync_type,overrideFlag,error_type, nil] retain];
+            //RADHA 2012june11 11:27 AM
+            NSArray * object = [[NSArray arrayWithObjects:SFId, errormsg,record_type,sync_type,overrideFlag,error_type, local_id, nil] retain];
             
             NSMutableDictionary * mDict = [[NSMutableDictionary alloc] initWithObjects:object forKeys:keys];
             
@@ -3694,6 +3691,9 @@
 {
     NSString * str = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_no_internet];
     
+	[self removeInternetConflicts]; //Fix for Internet Conflicts : 12/06/212  12:43 PM
+
+	
     NSString * insertQuery = [NSString stringWithFormat:@"Insert into internet_conflicts (sync_type, error_message, operation_type, error_type) Values ('%@', '%@', 'Sync', 'Conflict')", sync_type, str];
      char *err;
     

@@ -221,6 +221,8 @@
 //sahana
 -(NSArray *)getAllObjectsFromHeap;
 
+-(BOOL)ContinueIncrementalDataSync;
+
 #define SERVER_OVERRIDE                     @"Server_Override"
 #define CLIENT_OVERRIDE                     @"Client_Override"
 #define UNDO                                @"Undo"

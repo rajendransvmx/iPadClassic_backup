@@ -196,7 +196,7 @@
 - (void) removecache;
 
 //May-24-2011
-- (void) startMetaSync;
+//- (void) startMetaSync;
 
 
 
@@ -245,5 +245,8 @@
 //RADHA only event sync
 - (BOOL) startEventSync;
 - (void) scheduleEventSync;
+
+//RADHA 2012june08
+- (BOOL) checkIfRecordExistForObject:(NSString *)tableName Id :(NSString *)Id;
 
 @end

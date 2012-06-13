@@ -75,6 +75,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+	
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refresh) name:NOTIFICATION_EVENT_DATA_SYNC object:nil];
     
     [self disableUI];
 	
@@ -454,9 +456,10 @@
     
 	NSMutableArray * weekBoundaries = [calendar getWeekBoundaries:appDelegate.dateClicked];
     
-    NSLog(@"%@ %@",appDelegate.wsInterface.startDate, appDelegate.wsInterface.endDate);
     NSString *startDate = [weekBoundaries objectAtIndex:0];
     NSMutableArray * currentDateRange = [appDelegate getWeekdates:currentDate];
+    
+    [self setupTasksForDate:appDelegate.dateClicked];
     
     appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0]  endDate:[currentDateRange objectAtIndex:1]];
     [self reloadCalendar];
@@ -1035,6 +1038,8 @@
 
 - (void)viewDidUnload
 {
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_EVENT_DATA_SYNC object:nil];
+	
     [leftPane release];
     leftPane = nil;
     [rightPane release];

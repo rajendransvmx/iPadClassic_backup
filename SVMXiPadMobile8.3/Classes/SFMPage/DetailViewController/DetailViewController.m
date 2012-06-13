@@ -787,7 +787,7 @@
     
     NSMutableArray * header_sections =  [_header objectForKey:@"hdr_Sections"];
     
-    NSMutableArray * api_names = [[NSMutableArray alloc ] initWithCapacity:0];
+    NSMutableArray * api_names = [[[NSMutableArray alloc ] initWithCapacity:0] autorelease];
     
     for(int i=0; i <[header_sections count] ;i++)
     {
@@ -843,7 +843,7 @@
         NSMutableDictionary * dict = [details objectAtIndex:j];
         NSMutableArray * filedsArray = [dict objectForKey:gDETAILS_FIELDS_ARRAY];
         NSString * detailObjectName = [dict objectForKey:gDETAIL_OBJECT_NAME];
-        NSMutableArray * details_api_keys = [[NSMutableArray alloc] initWithCapacity:0];
+        NSMutableArray * details_api_keys = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
         for(int k =0 ;k<[filedsArray count];k++)
         {
             NSMutableDictionary * detailFiled_info =[filedsArray objectAtIndex:k];
@@ -866,7 +866,7 @@
                 }
             }
         }
-        [details_api_keys release];
+//        [details_api_keys release];
     }
         
     if([process_type isEqualToString:@"VIEWRECORD"] )
@@ -1073,7 +1073,7 @@
             NSMutableDictionary * dict = [details objectAtIndex:j];
             NSMutableArray * filedsArray = [dict objectForKey:gDETAILS_FIELDS_ARRAY];
             NSMutableArray * detailValuesArray = [dict objectForKey:gDETAILS_VALUES_ARRAY];
-            NSMutableArray * details_api_keys = [[NSMutableArray alloc] initWithCapacity:0];
+            NSMutableArray * details_api_keys = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
             NSString * detailObjectName = [dict objectForKey:gDETAIL_OBJECT_NAME];
             NSString * detailaliasName = [dict objectForKey:gDETAIL_OBJECT_ALIAS_NAME];
             NSString * detail_layout_id = [dict objectForKey:gDETAILS_LAYOUT_ID];
@@ -1098,7 +1098,7 @@
                 
             }
             
-            [details_api_keys release];
+//            [details_api_keys release];
             
         }
         
@@ -1376,7 +1376,7 @@
         //[appDelegate.databaseInterface  getValueMappingForlayoutId:layout_id process_id:processId objectName:headerObjName];
         
         NSString * source_parent_object_name = [process_components objectForKey:SOURCE_OBJECT_NAME];
-        NSMutableArray * header_Value_array= [[appDelegate.databaseInterface getObjectMappingForMappingId:process_components source_record_id:appDelegate.sfmPageController.sourceRecordId field_name:@"local_id"] retain];
+        NSMutableArray * header_Value_array= [appDelegate.databaseInterface getObjectMappingForMappingId:process_components source_record_id:appDelegate.sfmPageController.sourceRecordId field_name:@"local_id"];
         NSMutableDictionary * headerValueDict = nil ;
         if([header_Value_array count] != 0)
         {
@@ -1565,7 +1565,7 @@
             NSMutableArray * filedsArray = [dict objectForKey:gDETAILS_FIELDS_ARRAY];
             NSMutableArray * detailValuesArray = [dict objectForKey:gDETAILS_VALUES_ARRAY];
             NSMutableArray * detail_Values_id = [dict objectForKey:gDETAIL_VALUES_RECORD_ID];
-            NSMutableArray * details_api_keys = [[NSMutableArray alloc] initWithCapacity:0];
+            NSMutableArray * details_api_keys = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
             NSString * detailObjectName = [dict objectForKey:gDETAIL_OBJECT_NAME];
             
             //NSString * detailaliasName = [dict objectForKey:gDETAIL_OBJECT_ALIAS_NAME];
@@ -1589,7 +1589,7 @@
             }
          
             
-            NSString * parent_column_name = [process_components objectForKey:PARENT_COLUMN_NAME];
+//            NSString * parent_column_name = [process_components objectForKey:PARENT_COLUMN_NAME];
             
             NSArray * detailkeys = [NSArray arrayWithObjects:gVALUE_FIELD_API_NAME,gVALUE_FIELD_VALUE_KEY,gVALUE_FIELD_VALUE_VALUE, nil];
             
@@ -1784,7 +1784,7 @@
             NSMutableArray * filedsArray = [dict objectForKey:gDETAILS_FIELDS_ARRAY];
             NSMutableArray * detailValuesArray = [dict objectForKey:gDETAILS_VALUES_ARRAY];
             NSMutableArray * detail_Values_id = [dict objectForKey:gDETAIL_VALUES_RECORD_ID];
-            NSMutableArray * details_api_keys = [[NSMutableArray alloc] initWithCapacity:0];
+            NSMutableArray * details_api_keys = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
             NSString * detailObjectName = [dict objectForKey:gDETAIL_OBJECT_NAME];
             NSString * detailaliasName = [dict objectForKey:gDETAIL_OBJECT_ALIAS_NAME];
             NSString * detail_layout_id = [dict objectForKey:gDETAILS_LAYOUT_ID];
@@ -1826,7 +1826,7 @@
                 }
             }
             
-            [details_api_keys release];
+//            [details_api_keys release];
             
         }
 
@@ -1968,11 +1968,11 @@
     sfwToolBar.delegate = self;
 
     
-    NSMutableArray * buttonsArray_offline = [[NSMutableArray alloc] initWithCapacity:0];
+    NSMutableArray * buttonsArray_offline = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
     
-    NSMutableDictionary * wizard_dict= [[NSMutableDictionary alloc] initWithCapacity:0];
+    NSMutableDictionary * wizard_dict= [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
     
-    NSMutableArray * ipad_only_array = [[NSMutableArray alloc] initWithCapacity:0];
+    NSMutableArray * ipad_only_array = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
         
     if ([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"VIEWRECORD"]) 
     {
@@ -2061,12 +2061,12 @@
 
         NSDictionary * header_dict = [appDelegate.SFMPage objectForKey:@"header"];
         
-        NSInteger value = 0;
+//        NSInteger value = 0;
         if ([headerButtons count] > 0)
         {
-            NSDictionary * button_dict = [headerButtons objectAtIndex:0];
-            NSNumber * enable = [button_dict objectForKey:@"Enable"];   
-            value = [enable integerValue];
+            //NSDictionary * button_dict = [headerButtons objectAtIndex:0];
+//            NSNumber * enable = [button_dict objectForKey:@"Enable"];   
+//            value = [enable integerValue];
         }
         
         NSString * hideQuickSave = [NSString stringWithFormat:@"%@", [header_dict objectForKey:gHEADER_SHOW_HIDE_QUICK_SAVE]];
@@ -2158,7 +2158,7 @@
         if ([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"VIEWRECORD"]) 
         {
             
-            NSMutableDictionary * wizard_buttons = [[NSMutableDictionary alloc] initWithCapacity:0];
+            NSMutableDictionary * wizard_buttons = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
             
             //shrinivas fix for defect #4333
             if ([ipad_only_array count] > 0)
@@ -2186,7 +2186,7 @@
             {
                 NSDictionary * dict = [array objectAtIndex:i];
                 NSString * wizard_id = [dict objectForKey:WIZARD_ID];
-                NSMutableArray * buttons_ = [[NSMutableArray alloc] initWithCapacity:0];
+                NSMutableArray * buttons_ = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
                 for(int j = 0 ; j < [buttonsArray_offline count];j++)
                 {
                     NSDictionary * dict = [buttonsArray_offline objectAtIndex:j];
@@ -2212,7 +2212,7 @@
                     if([key_id isEqualToString:wizard_id])
                     {
                         NSArray * wizard = [wizard_buttons objectForKey:key_id];
-                        int button_count = [wizard count];
+//                        int button_count = [wizard count];
                         int row; 
                         NSInteger quotient = [wizard count] / 6;
                         NSInteger reminder = [wizard count] % 6;
@@ -2272,7 +2272,7 @@
             }*/
             
 
-            UIPopoverController * popover = [[UIPopoverController alloc] initWithContentViewController:sfwToolBar];
+            UIPopoverController * popover = [[[UIPopoverController alloc] initWithContentViewController:sfwToolBar] autorelease];
             [popover setPopoverContentSize:CGSizeMake(1024, Total_height)];
             popover.delegate = self;
             CGPoint p ;
@@ -2281,7 +2281,7 @@
             
             p.x = appDelegate.sfmPageController.detailView.view.frame.origin.x;
             p.y = appDelegate.sfmPageController.detailView.view.frame.origin.y;
-             UIImageView * bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_left_panel_bg_main_2.png"]];
+             UIImageView * bgImage = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_left_panel_bg_main_2.png"]] autorelease];
             sfwToolBar.sfw_tableview.backgroundView = bgImage;
             sfwToolBar.ipad_only_view.backgroundColor = [UIColor whiteColor];
             [popover presentPopoverFromRect:CGRectMake(900, 21, 67, 20) inView:appDelegate.sfmPageController.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
@@ -2885,8 +2885,8 @@
 - (void) showTroubleshooting
 {
     Troubleshooting * troubleshooting = [[Troubleshooting alloc] initWithNibName:@"Troubleshooting" bundle:nil];
-    NSDictionary * headerDataDict = [appDelegate.SFMPage objectForKey:gHEADER];
-    NSDictionary * headerData = [headerDataDict objectForKey:gHEADER_DATA];
+//    NSDictionary * headerDataDict = [appDelegate.SFMPage objectForKey:gHEADER];
+//    NSDictionary * headerData = [headerDataDict objectForKey:gHEADER_DATA];
     
   /*  troubleshooting.productId = [self getObjectNameFromHeaderData:headerData forKey:gSVMXC__Product__c];
     troubleshooting.productName = [self getObjectNameFromHeaderData:headerData forKey:gSVMXC__Product_Name__c];*/
@@ -3279,6 +3279,7 @@
     [tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
 }
 
+/*
 - (void) getParts:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
     if (Parts != nil)
@@ -3337,6 +3338,7 @@
     
     didGetParts = YES;
 }
+*/
 
 - (void) getExpenses:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
@@ -4507,7 +4509,7 @@
 		//columns = [detail_fields count];
 		NSInteger field_width = background_width/columns;
         
-        NSMutableArray * lines_fields_array = [[NSMutableArray alloc] initWithCapacity:0];
+//        NSMutableArray * lines_fields_array = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
         
         BOOL allowEdit = [[detail objectForKey:gDETAILS_ALLOW_NEW_LINES] boolValue];
 		if (row == 0) //display the column titles
@@ -4520,7 +4522,7 @@
                 if ([detail_fields count] > j)//sahana
                 {
                     label_name = [[detail_fields objectAtIndex:j] objectForKey:gFIELD_LABEL];
-                    [lines_fields_array addObject:[[detail_fields objectAtIndex:j] objectForKey:gFIELD_API_NAME]];
+//                    [lines_fields_array addObject:[[detail_fields objectAtIndex:j] objectForKey:gFIELD_API_NAME]];
                 }
 				lbl.text = label_name;
                 lbl.textColor = [UIColor whiteColor];
@@ -4987,26 +4989,31 @@
                 custLabel.object_api_name = api_name;
                 
                 
+                //Radha 2012june08
+                BOOL recordExists = [appDelegate.dataBase checkIfRecordExistForObject:related_to_table_name Id:key];
                 
                 BOOL flag_ = FALSE;
-                for (int j = 0; j < [appDelegate.view_layout_array count]; j++)
+                
+                if (recordExists)
                 {
-                    NSDictionary * viewLayoutDict = [appDelegate.view_layout_array objectAtIndex:j];
-                    NSString * objName = [viewLayoutDict objectForKey:@"SVMXC__Source_Object_Name__c"];
-                    if ([objName isEqualToString:related_to_table_name])
+                    for (int j = 0; j < [appDelegate.view_layout_array count]; j++)
                     {
-                        flag_ = TRUE;
-                        break;
+                        NSDictionary * viewLayoutDict = [appDelegate.view_layout_array objectAtIndex:j];
+                        NSString * objName = [viewLayoutDict objectForKey:@"SVMXC__Source_Object_Name__c"];
+                        if ([objName isEqualToString:related_to_table_name])
+                        {
+                            flag_ = TRUE;
+                            break;
+                        }
+                    }
+                    if(flag_)
+                    {
+                        custLabel.textColor = [UIColor blueColor];
+                    }
+                    else
+                    {              
                     }
                 }
-                if(flag_)
-                {
-                    custLabel.textColor = [UIColor blueColor];
-                }
-                else
-                {              
-                }
-                
                 
                 [background addSubview:custLabel];
                 
@@ -5240,7 +5247,7 @@
             //Radha 29
             cell.userInteractionEnabled = TRUE;
             UITapGestureRecognizer * cellTap;
-            cellTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(celltapRecognizer:)];
+            cellTap = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(celltapRecognizer:)] autorelease];
             [cellTap setNumberOfTapsRequired:2];
             NSInteger cellCount = 10000;
             int section_ = index + 1;
@@ -5493,7 +5500,7 @@
                 NSString * Ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
 
                 
-                UIAlertView * alert_view = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:Ok otherButtonTitles:nil, nil];
+                UIAlertView * alert_view = [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:Ok otherButtonTitles:nil, nil] autorelease];
                 [alert_view  show];
                 
             }
@@ -5514,9 +5521,9 @@
     UIView * background = nil;
     if (cell == nil)
     {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellSelectionStyleNone reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        background = [[UIView alloc] initWithFrame:CGRectMake(0, 0, width, 28)];
+        background = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, width, 28)] autorelease];
 //        oldBackgroundView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, width, 28)] autorelease];
         [background setAutoresizingMask:( UIViewAutoresizingFlexibleRightMargin )];
         [background setAutoresizesSubviews:YES];
@@ -5609,7 +5616,7 @@
     NSMutableArray * details_Fields_Array = [Disclosure_dict objectForKey:gDETAILS_FIELDS_ARRAY];
     BOOL readOnly = [[[details_Fields_Array objectAtIndex:row] objectForKey:gFIELD_READ_ONLY] boolValue];
     
-    NSString * value = nil;
+    NSString * value = @"";
     NSString * keyValue = nil;
     
     for (int i = 0; i < [detail_values count]; i++)
@@ -5641,6 +5648,7 @@
             custLabel.backgroundColor = [UIColor clearColor];
             
             custLabel.text = value;
+            custLabel.tapRecgLabel = value;  //RADHA 2012june07 
             custLabel.controlDelegate = self;
             //custLabel.textColor = [UIColor blueColor];
             custLabel.font = [UIFont boldSystemFontOfSize:custLabel.font.pointSize];
@@ -5649,21 +5657,30 @@
             custLabel.refered_to_table_name = related_to_table_name;
             custLabel.object_api_name = api_name;
             
+            
+            //Radha 2012june08
+            BOOL recordExists = [appDelegate.dataBase checkIfRecordExistForObject:related_to_table_name Id:key];
+            
+            
             BOOL flag_ = FALSE;
-            for (int j = 0; j < [appDelegate.view_layout_array count]; j++)
+            
+            if (recordExists)
             {
-                NSDictionary * viewLayoutDict = [appDelegate.view_layout_array objectAtIndex:j];
-                NSString * objName = [viewLayoutDict objectForKey:@"SVMXC__Source_Object_Name__c"];
-                if ([objName isEqualToString:related_to_table_name])
+                for (int j = 0; j < [appDelegate.view_layout_array count]; j++)
                 {
-                    flag_ = TRUE;
-                    break;
+                    NSDictionary * viewLayoutDict = [appDelegate.view_layout_array objectAtIndex:j];
+                    NSString * objName = [viewLayoutDict objectForKey:@"SVMXC__Source_Object_Name__c"];
+                    if ([objName isEqualToString:related_to_table_name])
+                    {
+                        flag_ = TRUE;
+                        break;
+                    }
                 }
-            }
-            if(flag_)
-            {
-                custLabel.textColor = [UIColor blueColor];
-                
+                if(flag_)
+                {
+                    custLabel.textColor = [UIColor blueColor];
+                    
+                }
             }
             [background addSubview:custLabel];
             
@@ -5789,9 +5806,9 @@
             NSMutableArray * descObjArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
             NSMutableArray * descObjValidFor = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
             
-            NSMutableDictionary * _header =  [appDelegate.SFMPage objectForKey:@"header"];
+//            NSMutableDictionary * _header =  [appDelegate.SFMPage objectForKey:@"header"];
             
-            NSString * headerObjName = [_header objectForKey:gHEADER_OBJECT_NAME];
+//            NSString * headerObjName = [_header objectForKey:gHEADER_OBJECT_NAME];
             
             isdependentPicklist  = [[appDelegate.databaseInterface getPicklistINfo_isdependentOrControllername_For_field_name:DEPENDENT_PICKLIST field_api_name:fieldAPIName object_name:detail_objectName] boolValue];
             
@@ -5806,7 +5823,7 @@
             
             NSArray * allvalues = [picklistValues allValues];
             
-            NSMutableArray * allkeys_ordered = [[NSMutableArray alloc] initWithCapacity:0];
+            NSMutableArray * allkeys_ordered = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
             [allkeys_ordered addObject:@" "];
             
             //Abinash Fix
@@ -5846,8 +5863,8 @@
                 }
             }
             
-            arr = [[NSMutableArray  alloc] initWithArray:descObjArray];
-            validFor = [[NSMutableArray alloc] initWithArray:descObjValidFor];
+            arr = [[[NSMutableArray  alloc] initWithArray:descObjArray] autorelease];
+            validFor = [[[NSMutableArray alloc] initWithArray:descObjValidFor] autorelease];
 
         }
                
@@ -5861,7 +5878,7 @@
             NSMutableDictionary * picklistValues = [appDelegate.databaseInterface  getPicklistValuesForTheFiled:fieldAPIName tableName:SFPicklist objectName:detail_objectName];
             
             NSArray * allvalues = [picklistValues allValues];
-            arr = [[NSMutableArray  alloc] initWithArray:allvalues];
+            arr = [[[NSMutableArray  alloc] initWithArray:allvalues] autorelease];
         }
     }
    
@@ -7186,7 +7203,7 @@
                     else if([filedDataType isEqualToString:@"multipicklist"])
                     {
                         NSArray * valuearray = [key componentsSeparatedByString:@";"];
-                        NSMutableArray * labelArray = [[NSMutableArray alloc] initWithCapacity:0];
+                        NSMutableArray * labelArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
                         //query to acces the picklist values for lines 
                         NSMutableDictionary * picklistValues = [appDelegate.databaseInterface  getPicklistValuesForTheFiled:field_api_name tableName:SFPicklist objectName:detailObjectName];
                         
@@ -7326,16 +7343,16 @@
         // ################ DONE BUTTON HERE ################# //
         if(isInViewMode)
         {
-            actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 67, 31)];
-            [actionButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Done-Back-Button.png"] forState:UIControlStateNormal];
-            [actionButton addTarget:detailViewObject action:@selector(lineseditingDone) forControlEvents:UIControlEventTouchUpInside];
-            [actionButton.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
+			UIButton * doneButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 67, 31)] autorelease];
+            [doneButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Done-Back-Button.png"] forState:UIControlStateNormal];
+            [doneButton addTarget:detailViewObject action:@selector(lineseditingDone) forControlEvents:UIControlEventTouchUpInside];
+            [doneButton.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
             NSString * done = [appDelegate.wsInterface.tagsDictionary objectForKey:DONE_BUTTON_TITLE];
             
-            [actionButton setTitle:done forState:UIControlStateNormal];
-            [actionButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-            UIBarButtonItem * doneBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:actionButton];
-            [actionButton release];
+            [doneButton setTitle:done forState:UIControlStateNormal];
+            [doneButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+            UIBarButtonItem * doneBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:doneButton];
+//            [actionButton release];
             [buttons addObject:doneBarButtonItem];
             [doneBarButtonItem release];
             toolBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, 190, 44)] autorelease];
@@ -7531,7 +7548,7 @@
     [self fillDictionary:_indexPath];
     detailViewObject = [[DetailViewController alloc] initWithNibName:@"DetailView" bundle:nil];
     self.navigationController.delegate = self;
-    detailViewObject.selectedIndexPath = [_indexPath retain];
+    detailViewObject.selectedIndexPath = _indexPath;
     detailViewObject.selectedRowForDetailEdit = _indexPath.row-1;
     detailViewObject.isInEditDetail = YES;
     detailViewObject.isInViewMode = isInViewMode;
@@ -7574,7 +7591,7 @@
         // ################ DONE BUTTON HERE ################# //
         if(isInViewMode)
         {
-            actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 67, 31)];
+			UIButton * doneButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 67, 31)] autorelease];
             [actionButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Done-Back-Button.png"] forState:UIControlStateNormal];
             [actionButton addTarget:detailViewObject action:@selector(lineseditingDone) forControlEvents:UIControlEventTouchUpInside];
             [actionButton.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
@@ -7582,8 +7599,8 @@
             
             [actionButton setTitle:done forState:UIControlStateNormal];
             [actionButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-            UIBarButtonItem * doneBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:actionButton];
-            [actionButton release];
+            UIBarButtonItem * doneBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:doneButton];
+            //[actionButton release];
             [buttons addObject:doneBarButtonItem];
             [doneBarButtonItem release];
             toolBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, 200, 44)] autorelease];
@@ -7761,7 +7778,7 @@
 
     //calling the web service to add the rows to 
     NSString * process_id = currentProcessId;
-     NSArray * multi_add_result;
+     NSArray * multi_add_result = nil;
     if([multiLookArray count] != 0)
         multi_add_result = [multiLookArray allKeys];
     if(appDelegate.isWorkinginOffline)
@@ -7869,7 +7886,7 @@
                         else if([filedDataType isEqualToString:@"multipicklist"])
                         {
                             NSArray * valuearray = [key componentsSeparatedByString:@";"];
-                            NSMutableArray * labelArray = [[NSMutableArray alloc] initWithCapacity:0];
+                            NSMutableArray * labelArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
                             //query to acces the picklist values for lines 
                             NSMutableDictionary * picklistValues = [appDelegate.databaseInterface  getPicklistValuesForTheFiled:field_api_name tableName:SFPicklist objectName:detailObjectName];
                             
@@ -8150,16 +8167,16 @@
     // ################ DONE BUTTON HERE ################# //
     if(isInViewMode)
     {
-        actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 67, 31)];
-        [actionButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Done-Back-Button.png"] forState:UIControlStateNormal];
-        [actionButton addTarget:detailViewObject action:@selector(lineseditingDone) forControlEvents:UIControlEventTouchUpInside];
-        [actionButton.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
+		UIButton * doneButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 67, 31)] autorelease];
+        [doneButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Done-Back-Button.png"] forState:UIControlStateNormal];
+        [doneButton addTarget:detailViewObject action:@selector(lineseditingDone) forControlEvents:UIControlEventTouchUpInside];
+        [doneButton.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
         NSString * done = [appDelegate.wsInterface.tagsDictionary objectForKey:DONE_BUTTON_TITLE];
 
-        [actionButton setTitle:done forState:UIControlStateNormal];
-        [actionButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        UIBarButtonItem * doneBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:actionButton];
-        [actionButton release];
+        [doneButton setTitle:done forState:UIControlStateNormal];
+        [doneButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        UIBarButtonItem * doneBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:doneButton];
+        //[actionButton release];
         [buttons addObject:doneBarButtonItem];
         [doneBarButtonItem release];
         toolBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, 200, 44)] autorelease];
@@ -9026,12 +9043,12 @@
                                 BOOL changed =[self gettheChangedValue:view];
                                 if (changed)
                                 {
-                                    fieldValue = @"True";
+//                                    fieldValue = @"True";
                                     fieldValue = @"1";
                                 }
                                 else
                                 {
-                                    fieldValue = @"False";
+//                                    fieldValue = @"False";
                                     fieldValue = @"0";
                                 }
                             }
@@ -9040,7 +9057,7 @@
                             {
                                 NSMutableArray * keyVal	 = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
                                 NSString * keyValueString =[[[NSString alloc] init] autorelease];
-                                NSInteger len;
+//                                NSInteger len;
                                 
                                 if(appDelegate.isWorkinginOffline)
                                 {
@@ -9381,7 +9398,7 @@
                         {
                             NSMutableDictionary * dict = [details objectAtIndex:j];
                             NSMutableArray * filedsArray = [dict objectForKey:gDETAILS_FIELDS_ARRAY];
-                            NSMutableArray * details_api_keys = [[NSMutableArray alloc] initWithCapacity:0];
+                            NSMutableArray * details_api_keys = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
                             NSString * detailObjectName = [dict objectForKey:gDETAIL_OBJECT_NAME];
                             
                             //NSString * detailaliasName = [dict objectForKey:gDETAIL_OBJECT_ALIAS_NAME];
@@ -9397,12 +9414,12 @@
                             NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGETCHILD process_id:action_process_id layoutId:detail_layout_id objectName:detailObjectName];
                             
                             NSString * source_child_object_name = [process_components objectForKey:SOURCE_OBJECT_NAME];
-                            NSString * source_child_parent_column = [process_components objectForKey:SOURCE_CHILD_PARENT_COLUMN];
-                            
-                            if([source_child_parent_column isEqualToString:@""] || [source_child_parent_column length] == 0)
-                            {
-                                source_child_parent_column  =  [ appDelegate.databaseInterface getParentColumnNameFormChildInfoTable:SFChildRelationShip childApiName:source_child_object_name parentApiName:source_parent_object_name];
-                            }
+//                            NSString * source_child_parent_column = [process_components objectForKey:SOURCE_CHILD_PARENT_COLUMN];
+//                            
+//                            if([source_child_parent_column isEqualToString:@""] || [source_child_parent_column length] == 0)
+//                            {
+//                                source_child_parent_column  =  [ appDelegate.databaseInterface getParentColumnNameFormChildInfoTable:SFChildRelationShip childApiName:source_child_object_name parentApiName:source_parent_object_name];
+//                            }
                             
                             
                             NSMutableArray * source_child_ids = [appDelegate.databaseInterface getChildLocalIdForParentId:appDelegate.sfmPageController.sourceRecordId childTableName:source_child_object_name sourceTableName:source_parent_object_name];
@@ -9443,6 +9460,18 @@
                     }
                 
                 }
+            }
+            //RADHA 2012june07 
+            else 
+            {
+                NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_no_pagelayout];
+                NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
+                NSString * cancel_ = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
+                
+                UIAlertView * no_page_Layout = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:cancel_ otherButtonTitles:nil, nil];
+                
+                [no_page_Layout show];
+                [no_page_Layout release];
             }
                 
         }
@@ -9799,10 +9828,11 @@
         if([action_type isEqual:@"WEBSERVICE"])
         {
             
+			//Code change for get pirce  ---> 11/06/2012   --- Time: 1:23 PM.
             NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
-            NSString * targetCall = [[[[[hdr_object objectForKey:gHEADER_BUTTONS] objectAtIndex:0] objectForKey:@"button_Events"] objectAtIndex:0] objectForKey:@"button_Event_Target_Call"];
-            if ([targetCall isEqualToString:nil])
-                targetCall = @"";
+//            NSString * targetCall = [[[[[hdr_object objectForKey:gHEADER_BUTTONS] objectAtIndex:0] objectForKey:@"button_Events"] objectAtIndex:0] objectForKey:@"button_Event_Target_Call"];
+//            if ([targetCall isEqualToString:nil])
+//                targetCall = @"";
             
             
             if ([targetCall isEqualToString:@"Get Price"])
@@ -9813,7 +9843,9 @@
             {
                 appDelegate.wsInterface.webservice_call = TRUE;
             }
-            [self didInvokeWebService:targetCall event_name:GETPRICE];
+            [self didInvokeWebService:[[[[[hdr_object objectForKey:gHEADER_BUTTONS] objectAtIndex:0] objectForKey:@"button_Events"] objectAtIndex:0] valueForKey:@"button_Event_Target_Call"] event_name:GETPRICE];
+			//Code change for get pirce  ---> 11/06/2012   --- Time: 1:23 PM.
+			
             appDelegate.wsInterface.webservice_call = FALSE;
         }
         
@@ -9841,9 +9873,9 @@
             NSMutableDictionary * hdrData = [hdr_object objectForKey:gHEADER_DATA];
             NSString * processId = appDelegate.sfmPageController.processId;
         
-            NSMutableArray * sfmPageEvents = [hdr_object objectForKey:gPAGELEVEL_EVENTS];
+//            NSMutableArray * sfmPageEvents = [hdr_object objectForKey:gPAGELEVEL_EVENTS];
             
-            NSMutableDictionary * SFM_header_fields = [[NSMutableDictionary alloc] initWithCapacity:0];
+//            NSMutableDictionary * SFM_header_fields = [[NSMutableDictionary alloc] initWithCapacity:0];
             
             
             BOOL error = FALSE;
@@ -9856,15 +9888,15 @@
                     NSDictionary *section_field = [section_fields objectAtIndex:j];
                     
                     //add key values to SM_header_fields dictionary 
-                    NSString * field_api = [section_field objectForKey:gFIELD_API_NAME];
+                   // NSString * field_api = [section_field objectForKey:gFIELD_API_NAME];
                     NSString * value = [section_field objectForKey:gFIELD_VALUE_VALUE];
-                    NSString * key = [section_field objectForKey:gFIELD_VALUE_KEY];
+//                    NSString * key = [section_field objectForKey:gFIELD_VALUE_KEY];
                     NSString * dataType = [section_field objectForKey:gFIELD_DATA_TYPE];
-                    [SFM_header_fields setObject:key forKey:field_api];
-                    if(key == nil)
-                    {
-                        key = @"";
-                    }
+//                    [SFM_header_fields setObject:key forKey:field_api];
+//                    if(key == nil)
+//                    {
+//                        key = @"";
+//                    }
 
                     BOOL required = [[section_field objectForKey:gFIELD_REQUIRED] boolValue];
                     if(required)
@@ -10223,7 +10255,7 @@
                                 {
                                     //update  String SF_ID 
                                     
-                                    NSString * parent_SFId = [NSString stringWithFormat:@"SFID%@", id_value];
+                                   // NSString * parent_SFId = [NSString stringWithFormat:@"SFID%@", id_value];
                                     [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:line_local_id SF_id:@"" record_type:DETAIL operation:INSERT object_name:detail_object_name sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:currentRecordId];
                                 }
                                 else
@@ -10447,11 +10479,12 @@
         
         if([action_type isEqual:@"WEBSERVICE"])
         {
-            
+            //Code change for get pirce  ---> 11/06/2012   --- Time: 1:23 PM.
+			
                 NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
-                NSString * targetCall = [[[[[hdr_object objectForKey:gHEADER_BUTTONS] objectAtIndex:0] objectForKey:@"button_Events"] objectAtIndex:0] objectForKey:@"button_Event_Target_Call"];
-                if ([targetCall isEqualToString:nil])
-                    targetCall = @"";
+//                NSString * targetCall = [[[[[hdr_object objectForKey:gHEADER_BUTTONS] objectAtIndex:0] objectForKey:@"			button_Events"] objectAtIndex:0] objectForKey:@"button_Event_Target_Call"];
+//                if ([targetCall isEqualToString:nil])
+//                    targetCall = @"";
                 
             
             if ([targetCall isEqualToString:@"Get Price"])
@@ -10462,7 +10495,18 @@
             {
                 appDelegate.wsInterface.webservice_call = TRUE;
             }
-            [self didInvokeWebService:targetCall event_name:GETPRICE];
+			
+			NSArray * array1 = [hdr_object objectForKey:gHEADER_BUTTONS];
+			NSDictionary * dict = [array1 objectAtIndex:0];
+			array1 = [dict objectForKey:@"button_Events"];
+			dict = [array1 objectAtIndex:0];
+			
+			
+			NSString *methodname = [dict valueForKey:@"button_Event_Target_Call"];
+            [self didInvokeWebService:methodname event_name:GETPRICE];
+			//Code change for get pirce  ---> 11/06/2012   --- Time: 1:23 PM.
+			
+			
             appDelegate.wsInterface.webservice_call = FALSE;
         }
         if([targetCall isEqualToString:quick_save])
@@ -10704,9 +10748,9 @@
                 {
                     NSDictionary *detail = [details objectAtIndex:i];
                     
-                    NSArray * fields_array = [detail  objectForKey:gDETAILS_FIELDS_ARRAY];
+//                    NSArray * fields_array = [detail  objectForKey:gDETAILS_FIELDS_ARRAY];
                     NSArray *details_values = [detail objectForKey:gDETAILS_VALUES_ARRAY];
-                    NSString * detail_layout_id = [detail objectForKey:gDETAILS_LAYOUT_ID];
+//                    NSString * detail_layout_id = [detail objectForKey:gDETAILS_LAYOUT_ID];
                     NSString * detail_object_name = [detail objectForKey:gDETAIL_OBJECT_NAME];
                     NSString * header_reference_field_name = [detail objectForKey:gDETAIL_HEADER_REFERENCE_FIELD];
                     
@@ -10720,7 +10764,7 @@
                     {
                         NSArray * child_record_fields = [details_values objectAtIndex:j];
                         
-                        NSMutableDictionary * sfm_detail_field_keyValue = [[NSMutableDictionary alloc] initWithCapacity:0];
+                        NSMutableDictionary * sfm_detail_field_keyValue = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
                         
                         for (int k = 0; k < [child_record_fields count];k++) //fields of one part for instance
                         {
@@ -10804,11 +10848,12 @@
         }
         if([action_type isEqual:@"WEBSERVICE"])
         {
-            
+            //Code change for get pirce  ---> 11/06/2012   --- Time: 1:23 PM.
+			
             NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
-            NSString * targetCall = [[[[[hdr_object objectForKey:gHEADER_BUTTONS] objectAtIndex:0] objectForKey:@"button_Events"] objectAtIndex:0] objectForKey:@"button_Event_Target_Call"];
-            if ([targetCall isEqualToString:nil])
-                targetCall = @"";
+//            NSString * targetCall = [[[[[hdr_object objectForKey:gHEADER_BUTTONS] objectAtIndex:0] objectForKey:@"button_Events"] objectAtIndex:0] objectForKey:@"button_Event_Target_Call"];
+//            if ([targetCall isEqualToString:nil])
+//                targetCall = @"";
             
             
             if ([targetCall isEqualToString:@"Get Price"])
@@ -10819,7 +10864,9 @@
             {
                 appDelegate.wsInterface.webservice_call = TRUE;
             }
-            [self didInvokeWebService:targetCall event_name:GETPRICE];
+            [self didInvokeWebService:[[[[[hdr_object objectForKey:gHEADER_BUTTONS] objectAtIndex:0] objectForKey:@"button_Events"] objectAtIndex:0] valueForKey:@"button_Event_Target_Call"] event_name:GETPRICE];
+			//Code change for get pirce  ---> 11/06/2012   --- Time: 1:23 PM.
+			
             appDelegate.wsInterface.webservice_call = FALSE;
         }
 
@@ -10914,7 +10961,7 @@
     else if([field_data_type isEqualToString:@"multipicklist"])
     {
         NSArray * fieldKeys = [field_key componentsSeparatedByString:@";"];
-        NSMutableArray * valuesArray = [[NSMutableArray alloc] initWithCapacity:0];
+        NSMutableArray * valuesArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
         //query to acces the picklist values for lines 
         NSMutableDictionary * picklistValues = [appDelegate.databaseInterface  getPicklistValuesForTheFiled:filed_api_name tableName:SFPicklist objectName:object_name];
         
@@ -10958,13 +11005,13 @@
 -(void)SaveRecordIntoPlist:(NSString *)record_id objectName:(NSString *) object_name;
 {
     NSDate * date = [NSDate date];
-    NSDateFormatter * frm =[ [NSDateFormatter alloc] init];
+    NSDateFormatter * frm = [[[NSDateFormatter alloc] init] autorelease];
     [frm setDateFormat:DATETIMEFORMAT];
     NSString * date_str = [frm stringFromDate:date];
     
     NSString * object_label = [appDelegate.databaseInterface getObjectLabel:SFOBJECT objectApi_name:object_name];
     
-    NSMutableDictionary * created_object_info = [[NSMutableDictionary alloc] initWithCapacity:0];
+    NSMutableDictionary * created_object_info = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
     [created_object_info setObject:object_name forKey:OBJECT_NAME];
     NSString * process_id = @"";
   
@@ -11008,7 +11055,7 @@
 -(NSArray *)orderingAnArray:(NSArray *)array
 {
     NSArray * arr = nil;
-    NSMutableArray * sortedArray = [[NSMutableArray alloc] initWithArray:array];
+    NSMutableArray * sortedArray = [[[NSMutableArray alloc] initWithArray:array] autorelease];
     int i = 0;
     for (i = 0; i < [sortedArray count] - 1; i++)
     {
@@ -11271,14 +11318,13 @@
 }
 - (void) showManualSyncScreen
 {
-    ManualDataSync *manualDataSync = [[ManualDataSync alloc] initWithNibName:@"ManualDataSync" bundle:nil];
+    ManualDataSync *manualDataSync = [[[ManualDataSync alloc] initWithNibName:@"ManualDataSync" bundle:nil] autorelease];
     
     manualDataSync.modalPresentationStyle = UIModalPresentationFullScreen;
     manualDataSync.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     
     
     [(SFMPageController *)delegate presentModalViewController:manualDataSync animated:YES];
-   
 }
 
 -(void)singleTapOncusLabel:(id)cusLabel
@@ -11348,6 +11394,10 @@
         NSString * reffered_to_table_name = label.refered_to_table_name;
         NSString * temp_record_id = label.id_;
 
+        //Radha 2012june08 08:00
+        BOOL recordExists = [appDelegate.dataBase checkIfRecordExistForObject:reffered_to_table_name Id:temp_record_id];
+        if (recordExists == FALSE)
+            return;
     
         NSString * record_id = [appDelegate.databaseInterface  getLocalIdFromSFId:temp_record_id tableName:reffered_to_table_name];
         
@@ -11409,13 +11459,13 @@
         // update dictionary value for key (fieldAPIName)
         if (selectedSection == SHOW_HEADER_ROW || selectedSection == SHOWALL_HEADERS)
         {
-            int section = indexPath.section;
-            int index;
-            
-            if (isDefault)
-                index = section;
-            else
-                index = selectedRow;
+//            int section = indexPath.section;
+//            int index = 0;
+//            
+//            if (isDefault)
+//                index = section;
+//            else
+//                index = selectedRow;
             
          
             NSMutableDictionary *_header = [appDelegate.SFMPage objectForKey:gHEADER];
@@ -11595,15 +11645,15 @@
         // update dictionary value for key (fieldAPIName)
         if (selectedSection == SHOW_HEADER_ROW || selectedSection == SHOWALL_HEADERS)
         {
-            int row = indexPath.row;
-            int section = indexPath.section;
-            int index;
+//            int row = indexPath.row;
+//            int section = indexPath.section;
+//            int index;
             
-            if (isDefault)
-                index = section;
-            else
-                index = selectedRow;
-            
+//            if (isDefault)
+//                index = section;
+//            else
+//                index = selectedRow;
+//            
             NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
             NSString * headerObjName = [hdr_object objectForKey:gHEADER_OBJECT_NAME];
             
@@ -11664,13 +11714,13 @@
         if (selectedSection == SHOW_HEADER_ROW || selectedSection == SHOWALL_HEADERS)
         {
           
-            int section = indexPath.section;
-            int index;
-            
-            if (isDefault)
-                index = section;
-            else
-                index = selectedRow;
+//            int section = indexPath.section;
+//            int index;
+//            
+//            if (isDefault)
+//                index = section;
+//            else
+//                index = selectedRow;
            
             NSMutableDictionary *_header    = [appDelegate.SFMPage objectForKey:gHEADER];
             NSMutableArray *header_sections = [_header objectForKey:gHEADER_SECTIONS];
@@ -11681,11 +11731,13 @@
             NSMutableArray   * dependent_picklists = nil ;
             if([fieldApi_name isEqualToString:@"RecordTypeId"])
             {
-                dependent_picklists = [[appDelegate.databaseInterface getRtDependentPicklistsForObject:headerObjName recordtypeName:field_value] retain];
+//                dependent_picklists = [[appDelegate.databaseInterface getRtDependentPicklistsForObject:headerObjName recordtypeName:field_value] retain];
+				dependent_picklists = [appDelegate.databaseInterface getRtDependentPicklistsForObject:headerObjName recordtypeName:field_value];
             }
             else
             {
-                 dependent_picklists = [[appDelegate.databaseInterface   getAllDependentPicklistSWhenControllerValueChanged:headerObjName controller_name:fieldApi_name] retain];
+//                 dependent_picklists = [[appDelegate.databaseInterface   getAllDependentPicklistSWhenControllerValueChanged:headerObjName controller_name:fieldApi_name] retain];
+				dependent_picklists = [appDelegate.databaseInterface   getAllDependentPicklistSWhenControllerValueChanged:headerObjName controller_name:fieldApi_name];
             }
                
                        
@@ -11743,11 +11795,14 @@
         
         if([fieldApi_name isEqualToString:@"RecordTypeId"])
         {
-            dependent_picklists = [[appDelegate.databaseInterface getRtDependentPicklistsForObject:detailObjectName recordtypeName:field_value] retain];
+//            dependent_picklists = [[appDelegate.databaseInterface getRtDependentPicklistsForObject:detailObjectName recordtypeName:field_value] retain];
+			dependent_picklists = [appDelegate.databaseInterface getRtDependentPicklistsForObject:detailObjectName recordtypeName:field_value];
         }
         else
         {
-            dependent_picklists = [[appDelegate.databaseInterface   getAllDependentPicklistSWhenControllerValueChanged:detailObjectName controller_name:fieldApi_name] retain];
+//            dependent_picklists = [[appDelegate.databaseInterface   getAllDependentPicklistSWhenControllerValueChanged:detailObjectName controller_name:fieldApi_name] retain];
+				dependent_picklists = [appDelegate.databaseInterface   getAllDependentPicklistSWhenControllerValueChanged:detailObjectName controller_name:fieldApi_name];
+
         }
         
         for(int j = 0 ; j< [field_array count]; j++)
@@ -11805,12 +11860,10 @@
 - (void) showManualSyncUI
 {
     //btn merge
-    ManualDataSync * manualDataSync = [[ManualDataSync alloc] initWithNibName:@"ManualDataSync" bundle:nil];
+    ManualDataSync * manualDataSync = [[[ManualDataSync alloc] initWithNibName:@"ManualDataSync" bundle:nil] autorelease] ;
     manualDataSync.modalPresentationStyle = UIModalPresentationFullScreen;
     manualDataSync.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     appDelegate._manualDataSync.didAppearFromSFMScreen = YES;
-    [manualDataSync release];
-    //[(SFMPageController *)delegate presentModalViewController:manualDataSync animated:YES];
     
     if (appDelegate.showUI)
     {

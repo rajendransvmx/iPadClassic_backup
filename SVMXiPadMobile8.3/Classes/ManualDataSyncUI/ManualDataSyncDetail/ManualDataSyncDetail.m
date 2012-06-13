@@ -629,6 +629,7 @@
     NSString * objectAPIName = @"";
     NSString * sync_type     = @"";
     NSString * processId     = @"";
+    NSString * localId = @"";
     
     if (selectedSection == 0 && HeaderSelected == 0)
     {
@@ -637,13 +638,13 @@
         
         if ([sync_type isEqualToString:@"PUT_INSERT"])
         {
-            SFId = [[[objectsDict objectForKey:[objectsArray objectAtIndex:selectedRow]]objectAtIndex:indexPath.row] objectForKey:@"local_id"];
+            localId = [[[objectsDict objectForKey:[objectsArray objectAtIndex:selectedRow]]objectAtIndex:indexPath.row] objectForKey:@"local_id"];
         }
         else 
         {
             SFId = [[[objectsDict objectForKey:[objectsArray objectAtIndex:selectedRow]]objectAtIndex:indexPath.row] objectForKey:@"SFId"]; 
         }
-        NSString * localId = @"";
+       
         if ( [objectsDict count] > 0)
         {
             if ([[[[objectsDict objectForKey:[objectsArray objectAtIndex:selectedRow]]objectAtIndex:indexPath.row] objectForKey:@"record_type"] isEqualToString:@"MASTER"])
@@ -660,7 +661,9 @@
                         break;
                     }
                 }
-                NSString * localId = [self getlocalIdForSFId:SFId ForObject:objectAPIName];
+                //Radha 2012june11
+                if ([SFId length])
+                    localId = [self getlocalIdForSFId:SFId ForObject:objectAPIName];
                 [dataSync showSFMWithProcessId:processId recordId:localId objectName:objectAPIName];
                 
             }

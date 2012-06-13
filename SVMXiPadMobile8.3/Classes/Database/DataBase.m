@@ -4039,7 +4039,8 @@
         [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetActiveGlobalProfile:error:context:) context:nil];
         //Get the Location Ping Settings
         _query = [NSString stringWithFormat:@"SELECT Id, SVMXC__SubmoduleID__c, SVMXC__SettingID__c, SVMXC__Setting_Unique_ID__c, SVMXC__Settings_Name__c, SVMXC__Data_Type__c, SVMXC__Values__c, SVMXC__Default_Value__c, SVMXC__Setting_Type__c, SVMXC__Search_Order__c, SVMXC__IsPrivate__c, SVMXC__Active__c, SVMXC__Description__c, SVMXC__IsStandard__c, SVMXC__Submodule__c FROM SVMXC__ServiceMax_Processes__c WHERE SVMXC__SubmoduleID__c = 'IPAD007' AND RecordType.Name = \'SETTINGS\' ORDER BY SVMXC__Setting_Unique_ID__c"];
-        [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetSettingsInfoforLocationPing:error:context:) context:nil];
+        //Enable the location Ping module whenever it is required
+        //[[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetSettingsInfoforLocationPing:error:context:) context:nil];
 
     }
     else
@@ -4281,12 +4282,16 @@
     //we again start metasync here
 
     appDelegate.db = nil;
-    self.dbFilePath = nil;
+    self.dbFilePath = @"";
     [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+    
+    
     
     time_t t1;
     time(&t1);
 
+    
+    //RADHA 2012june12
     
     appDelegate.wsInterface.didOpComplete = FALSE;
     [appDelegate.wsInterface metaSyncWithEventName:SFM_METADATA eventType:INITIAL_SYNC values:nil];
@@ -4294,15 +4299,18 @@
     {
         if (!appDelegate.isInternetConnectionAvailable)
         {
-            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                [MyPopoverDelegate performSelector:@selector(throwException)];
             break;
         }
         
         if (appDelegate.wsInterface.didOpComplete == TRUE)
             break; 
     }
-
+    if (!appDelegate.isInternetConnectionAvailable)
+    {
+        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+            [MyPopoverDelegate performSelector:@selector(throwException)];
+        return;
+    }
     /*
      // Uncomment this when SFM Search Module is Required
     //SFM Search 
@@ -5047,7 +5055,7 @@
 {
     
     NSString * event_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_events];
-    
+ 
     BOOL retVal = TRUE;
     NSLog(@"SAMMAN DataSync WS Start: %@", [NSDate date]);
     appDelegate.wsInterface.didOpComplete = FALSE;
@@ -5157,8 +5165,11 @@
             [MyPopoverDelegate performSelector:@selector(throwException)];
         return FALSE;
     }
-    
-    
+	
+	//Radha 2012june12
+	[appDelegate.databaseInterface cleartable:@"Event"];
+	[appDelegate.databaseInterface cleartable:@"Task"];
+	    
     [appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
     
     
@@ -5223,7 +5234,7 @@
         metaSyncPopover = [[PopoverButtons alloc] init];
     
     [metaSyncPopover startSyncConfiguration];
-    
+
 }
 
 - (void) scheduleEventSync
@@ -5278,5 +5289,34 @@
     }    
 
 }
+
+
+//RADHA 2012june08
+#pragma mark - Check
+
+- (BOOL) checkIfRecordExistForObject:(NSString *)tableName Id :(NSString *)Id
+{
+    NSString * query = [NSString stringWithFormat:@"SELECT COUNT(*) FROM '%@' WHERE Id = '%@'", tableName, Id];
+    
+    sqlite3_stmt * stmt;
+    
+    int count = 0;
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        
+        while (sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            count = synchronized_sqlite3_column_int(stmt, 0);
+        }
+    }
+    
+    if (count > 0)
+        return TRUE;
+    else
+        return FALSE;
+}
+#pragma mark - END
+
 
 @end

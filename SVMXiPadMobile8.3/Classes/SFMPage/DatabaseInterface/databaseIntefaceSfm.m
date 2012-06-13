@@ -2628,7 +2628,7 @@
 
 -(NSMutableArray *)getObjectMappingForMappingId:(NSMutableDictionary *)process_components  source_record_id:(NSString *)source_record_id field_name:(NSString *)field_name
 {
-    NSMutableArray * final_array = [[NSMutableArray alloc] initWithCapacity:0];
+    NSMutableArray * final_array = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
     
     NSMutableDictionary * final_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
     NSMutableArray * local_array = [[NSMutableArray alloc] initWithCapacity:0];
@@ -5126,7 +5126,8 @@
             if(field_api_name != nil)
             {
                 record_type = [NSString stringWithUTF8String:field_api_name];
-                [array addObject:record_type];
+                if (![record_type isEqualToString:@"Master"])
+                    [array addObject:record_type];
             }
         }
     }
@@ -5310,4 +5311,30 @@
         [delete_Statement release];
     }
 }
+
+//sahana code starts    june8th
+-(BOOL)ContinueIncrementalDataSync
+{
+    sqlite3_stmt * statement;
+    int count = 0;
+    NSString * query = [[[NSString alloc] initWithFormat:@"SELECT COUNT(*) FROM SFDataTrailer WHERE record_sent = 'false'"] autorelease];
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String],-1, &statement, nil) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement)== SQLITE_ROW)
+        {
+             count =  sqlite3_column_int(statement, 0);
+            
+        }
+    }
+    if(count == 0)
+    {
+        return FALSE;
+    }
+    else
+        return TRUE;
+    
+}
+
+//sahana code ends    june8th
+
 @end

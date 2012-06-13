@@ -348,6 +348,15 @@
 
     appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
     
+	//new code to handle meta sync whenever the application is logged of the authentication module.
+	BOOL retVal = [appDelegate pingServer];
+    
+    if(retVal == NO)
+    {
+		[delegate dismisspopover];
+        return;
+    }
+
     if (appDelegate.metaSyncRunning) 
     {
         [delegate dismisspopover];
@@ -358,9 +367,7 @@
     
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
     
-    
     NSString * meta_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_meta_data_configuration];
-
 
     syncConfigurationFailed = FALSE;
     appDelegate.isIncrementalMetaSyncInProgress = FALSE;
@@ -368,7 +375,6 @@
     @try {
         
         [delegate dismisspopover];
-        
         
         if (!appDelegate.isInternetConnectionAvailable)
         {
@@ -455,6 +461,23 @@
             }            
         }   
         
+		if ([manualEventThread isExecuting])
+		{
+			
+			while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+			{
+				if (!appDelegate.isInternetConnectionAvailable)
+				{
+					break;
+				}
+				
+				if ([manualEventThread isFinished])
+				{
+					break;
+				}
+			}
+		}
+		
         if (!appDelegate.isInternetConnectionAvailable)
         {
             appDelegate.SyncStatus = SYNC_GREEN;
@@ -496,6 +519,7 @@
     }
     @catch (NSException * exception) {
         
+		appDelegate.metaSyncRunning = NO;
         exception = [NSException exceptionWithName:@"Error" reason:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_failed_try_again] userInfo: nil];
         syncConfigurationFailed = TRUE;
                
@@ -534,6 +558,9 @@
         
     }
     @finally {
+		//Radha 2012june12
+		appDelegate.settingsDict = [appDelegate.dataBase getSettingsDictionary];
+		
         [appDelegate ScheduleIncrementalDatasyncTimer];
         [appDelegate ScheduleIncrementalMetaSyncTimer];
         [appDelegate ScheduleTimerForEventSync];
@@ -691,6 +718,24 @@
 //                [appDelegate.event_timer invalidate];
 //            }            
 //        }   
+        
+        //RADHA 2012june12
+        if (appDelegate.metaSyncRunning)
+        {
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+            {
+                if (!appDelegate.isInternetConnectionAvailable)
+                {
+                    break;
+                }
+                
+                if (!appDelegate.metaSyncRunning)
+                {
+                    break;
+                }
+            }
+        }
+       
 
         
         if (!appDelegate.isInternetConnectionAvailable)
@@ -802,6 +847,7 @@
         //appDelegate.SyncStatus = SYNC_GREEN;
         
         [appDelegate setSyncStatus:SYNC_GREEN];
+		[appDelegate.wsInterface.updateSyncStatus refreshSyncStatus];
         //[appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
         //[appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
         //[appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
@@ -817,6 +863,9 @@
         appDelegate.queue_object = nil;
     }
     appDelegate.eventSyncRunning = NO;
+	
+	//fire a notification here to all subscribed objects about the completion of event-task sync
+	[[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_EVENT_DATA_SYNC object:nil];
 }
 
 @end

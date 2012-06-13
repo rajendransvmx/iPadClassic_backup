@@ -677,6 +677,10 @@ last_sync_time:(NSString *)last_sync_time
 
 -(void)DoIncrementalDataSync
 {
+    //RADHA 2012june12
+    if (appDelegate.metaSyncRunning)
+        return;
+    
     NSString * data_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_data_sync];
     
     if (!appDelegate.isInternetConnectionAvailable)
@@ -736,7 +740,7 @@ last_sync_time:(NSString *)last_sync_time
     dcobjects_incrementalSync = [[NSMutableDictionary alloc] initWithCapacity:0];
     
     [self GetDelete];
-    
+
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
         //shrinivas
@@ -772,6 +776,8 @@ last_sync_time:(NSString *)last_sync_time
         {
             break;
         }
+		
+		
     }
 	
 	
@@ -1471,6 +1477,16 @@ last_sync_time:(NSString *)last_sync_time
     AfterSaveEventsCalls = FALSE;
     [autoreleasePool release];
     
+    //sahana starts june 8
+    //check the database for false entries
+    //if entries still exist in the db, that means, the user has entered fresh data
+    //so, incremental datasync needs to continue on the "SAME THREAD"
+    if([appDelegate.databaseInterface ContinueIncrementalDataSync])
+    {
+        [self DoIncrementalDataSync];
+    }
+    //sahana ends june 8
+    
     if( appDelegate.queue_object != nil )
     {
         appDelegate.eventSyncRunning = NO;
@@ -1760,6 +1776,7 @@ last_sync_time:(NSString *)last_sync_time
                                   DebuggingHeader:debuggingHeader
                        AllowFieldTruncationHeader:allowFieldTruncationHeader delegate:self]; 
 }
+
 -(void)GetDelete
 {
     [INTF_WebServicesDefServiceSvc initialize];

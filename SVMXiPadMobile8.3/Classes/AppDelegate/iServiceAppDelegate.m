@@ -373,6 +373,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     isIncrementalMetaSyncInProgress = FALSE;
     isMetaSyncExceptionCalled = FALSE;
     isSpecialSyncDone = FALSE;
+    metaSyncRunning = NO;
     
     [self initWithDBName:DATABASENAME1 type:DATABASETYPE1];
         
@@ -883,7 +884,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     [[ZKServerSwitchboard switchboard] loginWithUsername:self.username password:self.password target:self selector:@selector(didLoginForServer:error:context:)];
     
     self.isServerInValid = FALSE;
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, YES))
     {
         if (!self.isInternetConnectionAvailable)
         {
@@ -1027,8 +1028,40 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
             [appDelegate.event_timer invalidate];
         }            
     }   
-
     
+    if (metaSyncRunning)
+    {
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        {
+            if (!appDelegate.isInternetConnectionAvailable)
+            {
+                break;
+            }
+            
+            if (!metaSyncRunning)
+            {
+                break;
+            }
+        }
+
+    }
+    
+	if (appDelegate.eventSyncRunning)
+	{
+		
+		while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+		{
+			if (!appDelegate.isInternetConnectionAvailable)
+			{
+				break;
+			}
+			
+			if (!appDelegate.eventSyncRunning)
+			{
+				break;
+			}
+		}
+	}
     
     
     sqlite3_close(self.db);
@@ -1039,6 +1072,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     self.isMetaSyncExceptionCalled = FALSE;
     self.isIncrementalMetaSyncInProgress = FALSE;
     self.isSpecialSyncDone = FALSE;
+    metaSyncRunning = NO;
+	eventSyncRunning = NO;
     [loginController readUsernameAndPasswordFromKeychain];
     if(!appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
     {
@@ -1462,6 +1497,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         else
         {
             NSLog(@"Meta Sync");
+            return;
         }
         
         
@@ -1544,23 +1580,17 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     
     if (_SyncStatus == SYNC_RED)
     {
+		NSString * statusImage = @"red.png";
         [animatedImageView stopAnimating];
-        animatedImageView.animationImages = nil;
-        NSMutableArray * imgArr = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-        for ( int i = 1; i < 34; i++)
-        {
-            [imgArr addObject:[UIImage imageNamed:[NSString stringWithFormat:@"r%d.png", i]]];
-        }
-        animatedImageView.animationImages = [NSArray arrayWithArray:imgArr];
-        animatedImageView.animationDuration = 1.0f;
-        animatedImageView.animationRepeatCount = 0;
-        [animatedImageView startAnimating];
+        animatedImageView.image = [UIImage imageNamed:statusImage];
+        img = [UIImage imageNamed:statusImage];
+        [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
     }
     else if (_SyncStatus == SYNC_GREEN)
     {
         NSString * statusImage = @"green.png";
         [animatedImageView stopAnimating];
-        animatedImageView.image = [UIImage imageNamed:@"green.png"];
+        animatedImageView.image = [UIImage imageNamed:statusImage];
         img = [UIImage imageNamed:statusImage];
         [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
     }
@@ -1568,9 +1598,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     {
         animatedImageView.animationImages = nil;
         NSMutableArray * imgArr = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-        for ( int i = 1; i < 34; i++)
+        for ( int i = 1; i < 26; i++)
         {
-            [imgArr addObject:[UIImage imageNamed:[NSString stringWithFormat:@"o%d.png", i]]];
+            [imgArr addObject:[UIImage imageNamed:[NSString stringWithFormat:@"ani%d.png", i]]];
         }
         animatedImageView.animationImages = [NSArray arrayWithArray:imgArr];
         animatedImageView.animationDuration = 1.0f;
