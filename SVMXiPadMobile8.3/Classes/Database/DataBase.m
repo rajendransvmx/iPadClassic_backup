@@ -730,7 +730,7 @@
 {
     if ([[result records] count] > 0)
     {
-        if(settingsValueArrayForLocationPing) [settingsValueArrayForLocationPing release];
+        //if(settingsValueArrayForLocationPing) [settingsValueArrayForLocationPing release];
         settingsValueArrayForLocationPing = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
         for (int i = 0; i < [[result records] count]; i++)
         {
@@ -794,11 +794,13 @@
 }
 - (void) createTableForLocationHistory
 {
-    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS Location_History ('id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL UNIQUE DEFAULT  (0),local_id VARCHAR, 'latitude' VARCHAR,'longitude' VARCHAR,'time' VARCHAR,'additional_info' TEXT,'synched' VARCHAR,'synched_on' VARCHAR,'status'  VARCHAR)"]];
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SVMXC__Location_History__c ('row_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL UNIQUE DEFAULT  (0),'local_id'VARCHAR, 'SVMXC__Latitude__c' VARCHAR,'SVMXC__Longitude__c' VARCHAR,'SVMXC__Time_Recorded__c' VARCHAR,'SVMXC__Additional_Info__c' TEXT,'SVMXC__Status__c'  VARCHAR,'SVMXC__User__c' VARCHAR,'SVMXC__Device_Type__c' VARCHAR )"]];
+    
+    //[self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS Location_History ('id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL UNIQUE DEFAULT  (0), 'latitude' VARCHAR,'longitude' VARCHAR,'time' VARCHAR,'additional_info' TEXT,'synched' VARCHAR,'synched_on' VARCHAR,'status'  VARCHAR)"]];
     if(result == YES)
-        NSLog(@"Location_History Table Create Success");
+        NSLog(@"SVMXC__Location_History__c Table Create Success");
     else
-        NSLog(@"LocationHistory Table Create Failed");
+        NSLog(@"SVMXC__Location_History__c Table Create Failed");
     
 }
 -(void) insertrecordIntoTableNamed:(NSDictionary *)locationInfo
@@ -822,9 +824,12 @@
         additionalInfo = @"";
     if(status == nil)
         status = @"";
-    NSString *localID = [iServiceAppDelegate GetUUID];
     
-    NSString *sql = [NSString stringWithFormat:@"INSERT OR REPLACE INTO Location_History ('id','local_id','latitude','longitude','time','additional_info','synched','synched_on','status') VALUES (NULL,'%@','%@','%@','%@','%@','False',' ','%@')",localID,latitude,longitude,time,additionalInfo,status];
+    NSString *id_value = [iServiceAppDelegate GetUUID];
+    NSString *device=@"iPad";
+    NSString *sql = [NSString stringWithFormat:@"INSERT OR REPLACE INTO SVMXC__Location_History__c ('row_id','local_id','SVMXC__Latitude__c','SVMXC__Longitude__c','SVMXC__Time_Recorded__c','SVMXC__Additional_Info__c','SVMXC__Status__c','SVMXC__User__c','SVMXC__Device_Type__c') VALUES (NULL,'%@','%@','%@','%@','%@','%@ ','','%@')",id_value,latitude,longitude,time,additionalInfo,status,device];
+    
+    //NSString *sql = [NSString stringWithFormat:@"INSERT OR REPLACE INTO Location_History ('id','latitude','longitude','time','additional_info','synched','synched_on','status') VALUES (NULL,'%@','%@','%@','%@','False',' ','%@')",latitude,longitude,time,additionalInfo,status];
     
     NSLog(@"Query = %@",sql);
     if(appDelegate == nil)
@@ -835,11 +840,16 @@
         NSLog(@"Failed to Populate Table");
     }
     else
+    {
         NSLog(@"Success to Insert Data in Table");
+        [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:id_value SF_id:@"" record_type:MASTER operation:INSERT object_name:@"SVMXC__Location_History__c" sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@""];
+        NSLog(@"insertion success");
+
+    }
 }
 - (void) purgeLocationPingTable
 {   
-    NSString *sql = @"SELECT Count(*) FROM Location_History";
+    NSString *sql = @"SELECT Count(*) FROM SVMXC__Location_History__c";
     sqlite3_stmt *statement;
     int field1;
     char *field2;
@@ -861,7 +871,7 @@
     {
         return;
     }
-    sql = @"select id from Location_History  asc limit 1";
+    sql = @"select id from SVMXC__Location_History__c  asc limit 1";
     NSString *field2Str;
     
     if(sqlite3_prepare_v2(appDelegate.db, [sql UTF8String], -1, &statement, nil) == SQLITE_OK)
@@ -874,7 +884,7 @@
             
         }
         
-        NSString * queryStatement = [NSString stringWithFormat:@"DELETE FROM Location_History where id=%@",field2Str];
+        NSString * queryStatement = [NSString stringWithFormat:@"DELETE FROM SVMXC__Location_History__c where id=%@",field2Str];
         
         char * err;
         
@@ -1011,7 +1021,7 @@
 - (NSDictionary *)getUserLocation
 {
     NSMutableDictionary *location = [[NSMutableDictionary alloc] init];
-    NSString *sql = @"select latitude,longitude from Location_History  dsc limit 1";
+    NSString *sql = @"select latitude,longitude from SVMXC__Location_History__c  dsc limit 1";
     sqlite3_stmt *statement;
     char *longitude;
     char *latitude;
@@ -4254,9 +4264,8 @@
     //This method fills the backup DB with all the data
     
     [self createBackUpDb];
-    
-    appDelegate.didincrementalmetasyncdone = TRUE;
     [appDelegate startBackgroundThreadForLocationServiceSettings];
+    appDelegate.didincrementalmetasyncdone = TRUE;
     
 }
 
