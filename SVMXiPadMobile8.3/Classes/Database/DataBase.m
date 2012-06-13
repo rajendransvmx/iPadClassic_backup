@@ -806,6 +806,15 @@
 -(void) insertrecordIntoTableNamed:(NSDictionary *)locationInfo
 {
     char *err;
+    if(appDelegate == nil)
+        appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+    
+    if(appDelegate.metaSyncRunning||appDelegate.didincrementalmetasyncdone == FALSE)
+    {
+        NSLog(@"Meta Sync is Running");
+        return;
+    }
+
     [self purgeLocationPingTable];
     NSString *latitude = [locationInfo objectForKey:@"latitude"];
     NSString *longitude = [locationInfo objectForKey:@"longitude"];
@@ -851,14 +860,14 @@
 {   
     NSString *sql = @"SELECT Count(*) FROM SVMXC__Location_History__c";
     sqlite3_stmt *statement;
-    int field1;
-    char *field2;
+    int row_count;
+    char *Id;
     if(sqlite3_prepare_v2(appDelegate.db, [sql UTF8String], -1, &statement, nil) == SQLITE_OK)
     {
         while (sqlite3_step(statement) == SQLITE_ROW) 
         {
-            field1 = sqlite3_column_int(statement, 0);
-            NSLog(@"NO of location rows in DB %d",field1 );
+            row_count = sqlite3_column_int(statement, 0);
+            NSLog(@"No of location records in DB %d",row_count );
             
         }
         sqlite3_finalize(statement);
@@ -867,24 +876,24 @@
     //get limit from table
     NSString *limitLocationRecords = [appDelegate.dataBase getSettingValueWithName:@"IPAD007_SET003"];
     limitLocationRecords = (limitLocationRecords!=nil)?limitLocationRecords:@"100";
-    if(field1 < [limitLocationRecords intValue])
+    if(row_count < [limitLocationRecords intValue])
     {
         return;
     }
-    sql = @"select id from SVMXC__Location_History__c  asc limit 1";
-    NSString *field2Str;
+    sql = @"select row_id from SVMXC__Location_History__c  asc limit 1";
+    NSString *strId;
     
     if(sqlite3_prepare_v2(appDelegate.db, [sql UTF8String], -1, &statement, nil) == SQLITE_OK)
     {
         while (sqlite3_step(statement) == SQLITE_ROW) 
         {
-            field2 = (char *) sqlite3_column_text(statement, 0);
-            field2Str =   [[NSString alloc] initWithUTF8String:field2];
-            NSLog(@"id =%@",field2Str);
+            Id = (char *) sqlite3_column_text(statement, 0);
+            strId =   [[NSString alloc] initWithUTF8String:Id];
+            NSLog(@"Id =%@",strId);
             
         }
         
-        NSString * queryStatement = [NSString stringWithFormat:@"DELETE FROM SVMXC__Location_History__c where id=%@",field2Str];
+        NSString * queryStatement = [NSString stringWithFormat:@"DELETE FROM SVMXC__Location_History__c where row_id=%@",strId];
         
         char * err;
         
@@ -1021,7 +1030,7 @@
 - (NSDictionary *)getUserLocation
 {
     NSMutableDictionary *location = [[NSMutableDictionary alloc] init];
-    NSString *sql = @"select latitude,longitude from SVMXC__Location_History__c  dsc limit 1";
+    NSString *sql = @"select SVMXC__Latitude__c,SVMXC__Longitude__c from SVMXC__Location_History__c  dsc limit 1";
     sqlite3_stmt *statement;
     char *longitude;
     char *latitude;

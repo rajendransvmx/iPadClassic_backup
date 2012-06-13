@@ -1662,6 +1662,14 @@ const float progress_ = 0.07;
 	didUpdateToLocation:(CLLocation *)newLocation
            fromLocation:(CLLocation *)oldLocation
 {
+	 NSLog(@"Location Update");
+    if(appDelegate == nil)
+        appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];    if(appDelegate.metaSyncRunning || appDelegate.didincrementalmetasyncdone ==FALSE)
+    {
+        NSLog(@"Meta Sync is Running");
+        return;
+    }
+
     NSDate *newLocationTimestamp = newLocation.timestamp;
     NSDate *lastLocationUpdateTiemstamp;
     
