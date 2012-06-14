@@ -1686,7 +1686,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         NSLog(@"Failed to get the User Defaults");
         return;
     }
-    if(metaSyncRunning||didincrementalmetasyncdone == FALSE)
+    if(metaSyncRunning)
     {
         NSLog(@"Meta Sync is Running");
         return;

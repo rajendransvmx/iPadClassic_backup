@@ -1664,7 +1664,9 @@ const float progress_ = 0.07;
 {
 	 NSLog(@"Location Update");
     if(appDelegate == nil)
-        appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];    if(appDelegate.metaSyncRunning || appDelegate.didincrementalmetasyncdone ==FALSE)
+        appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];  
+    
+    if(appDelegate.metaSyncRunning )
     {
         NSLog(@"Meta Sync is Running");
         return;

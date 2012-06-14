@@ -798,7 +798,17 @@
     
     //[self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS Location_History ('id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL UNIQUE DEFAULT  (0), 'latitude' VARCHAR,'longitude' VARCHAR,'time' VARCHAR,'additional_info' TEXT,'synched' VARCHAR,'synched_on' VARCHAR,'status'  VARCHAR)"]];
     if(result == YES)
+    {
         NSLog(@"SVMXC__Location_History__c Table Create Success");
+        NSString * queryStatement = [NSString stringWithFormat:@"delete from sqlite_sequence where name='SVMXC__Location_History__c'"];
+        
+        char * err;
+        
+        if (sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+        {
+            NSLog(@"Sequence Failed to delete");
+        }
+    }
     else
         NSLog(@"SVMXC__Location_History__c Table Create Failed");
     
@@ -809,7 +819,7 @@
     if(appDelegate == nil)
         appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
     
-    if(appDelegate.metaSyncRunning||appDelegate.didincrementalmetasyncdone == FALSE)
+    if(appDelegate.metaSyncRunning)
     {
         NSLog(@"Meta Sync is Running");
         return;
