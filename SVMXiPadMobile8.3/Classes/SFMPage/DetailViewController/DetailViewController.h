@@ -33,8 +33,6 @@
 @class TimerClass;
 @class ManualDataSyncDetail;
 
-//can remove
-@protocol RefreshForInternet;
 
 NSInteger multiAddFlag;
 NSString * objectLabel;
@@ -57,7 +55,7 @@ WSInterFaceDelegateForDetailView,
 SignatureDelegate,
 SummaryViewControllerDelegate,
 ChatterDelegate,
-SFWToolBarDelegate,RefreshSyncStatusButton, RefreshForInternet>
+SFWToolBarDelegate,RefreshSyncStatusButton>
 {
     id <DetailViewControllerDelegate> delegate;
     SFWToolBar * sfwToolBar;
