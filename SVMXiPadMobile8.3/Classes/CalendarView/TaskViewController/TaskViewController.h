@@ -26,7 +26,7 @@
 }
 
 @property (nonatomic, retain) NSMutableArray * tasks;
-@property (nonatomic, retain) CalendarController * calendar;
+@property (nonatomic, assign) CalendarController * calendar;
 
 - (void) refreshWithTasks:(NSMutableArray *)_tasks;
 - (void) AddTaskWithText:(NSMutableArray *)task;

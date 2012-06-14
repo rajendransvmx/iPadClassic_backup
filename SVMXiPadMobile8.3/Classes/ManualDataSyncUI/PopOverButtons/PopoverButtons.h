@@ -72,7 +72,7 @@
 - (void) Syncronise;
 - (void) synchronizeConfiguration;
 - (void) synchronizeEvents;
-- (void) schdulesynchronizeConfiguration;
+//- (void) schdulesynchronizeConfiguration;
 
 
 - (void) startSyncEvents;

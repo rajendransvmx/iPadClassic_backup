@@ -675,11 +675,25 @@ last_sync_time:(NSString *)last_sync_time
     appDelegate.initital_sync_object_name = @"";
 }
 
+//DATA SYNC METHOD
 -(void)DoIncrementalDataSync
 {
+    BOOL runEventSync = NO;
+    
     //RADHA 2012june12
     if (appDelegate.metaSyncRunning)
         return;
+    
+    if( appDelegate.eventSyncRunning )
+    {
+        //return this function if event sync is running and queue it
+        appDelegate.dataSyncRunning = NO;
+        appDelegate.queue_object = appDelegate;
+        appDelegate.queue_selector = @selector(callDataSync);
+        return;
+    }
+    
+    appDelegate.dataSyncRunning = YES;
     
     NSString * data_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_data_sync];
     
@@ -1487,11 +1501,14 @@ last_sync_time:(NSString *)last_sync_time
     }
     //sahana ends june 8
     
+    
     if( appDelegate.queue_object != nil )
     {
-        appDelegate.eventSyncRunning = NO;
+        appDelegate.dataSyncRunning = NO;
         [appDelegate.queue_object performSelectorOnMainThread:appDelegate.queue_selector withObject:nil waitUntilDone:NO];
     }
+    
+    appDelegate.dataSyncRunning = NO;
 }
 
 

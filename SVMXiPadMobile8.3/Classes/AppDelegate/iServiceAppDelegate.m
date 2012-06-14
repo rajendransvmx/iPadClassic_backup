@@ -429,6 +429,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         [self.calDataBase removeInternetConflicts];
     }
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timerHandler:) name:NOTIFICATION_TIMER_INVALIDATE object:nil];
+    
 	return YES;
 }
 
@@ -619,6 +621,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 - (void)dealloc
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_TIMER_INVALIDATE object:nil];
     [animatedImageView release];
     [sfmSearchTableArray release];
 	[onlineDataArray release];
@@ -962,7 +965,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         {
             if ([appDelegate.syncThread isFinished])
             {
-                [appDelegate.datasync_timer invalidate];
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
                 break;
             }
             if (!appDelegate.isInternetConnectionAvailable)
@@ -972,9 +975,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     }
     else
     {
-        if (appDelegate.datasync_timer)
+        if ([appDelegate.datasync_timer isValid])
         {
-            [appDelegate.datasync_timer invalidate];
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
         }
         
     }
@@ -991,16 +994,16 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
             
             if ([appDelegate.metaSyncThread isFinished])
             {
-                [appDelegate.metasync_timer invalidate];
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
                 break;
             }
         }
     }
     else
     {
-        if (appDelegate.metasync_timer)
+        if ([appDelegate.metasync_timer isValid])
         {
-            [appDelegate.metasync_timer invalidate];
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
         }            
     }   
     
@@ -1016,16 +1019,16 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
             
             if ([appDelegate.event_thread isFinished])
             {
-                [appDelegate.event_timer invalidate];
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
                 break;
             }
         }
     }
     else
     {
-        if (appDelegate.event_timer)
+        if ([appDelegate.event_timer isValid])
         {
-            [appDelegate.event_timer invalidate];
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
         }            
     }   
     
@@ -1140,11 +1143,14 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     else
         scheduledTimer = 600;
     
-    datasync_timer =  [[NSTimer scheduledTimerWithTimeInterval:scheduledTimer
-                                     target:self
-                                    selector:@selector(MethodForTimer:)
-                                   userInfo:nil
-                                    repeats:YES] retain];
+    if( ![self.datasync_timer isValid] )
+    {
+        self.datasync_timer =  [NSTimer scheduledTimerWithTimeInterval:scheduledTimer
+                                         target:self
+                                        selector:@selector(MethodForTimer:)
+                                       userInfo:nil
+                                        repeats:YES];
+    }
 }
 
 -(void)MethodForTimer:(NSTimer *)timer
@@ -1473,12 +1479,14 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     else
         return;
     
-    metasync_timer = [[NSTimer scheduledTimerWithTimeInterval:metaSyncTimeInterval 
-                                                     target:self 
-                                                   selector:@selector(metaSyncTimer) 
-                                                   userInfo:nil 
-                                                    repeats:YES] retain];
-
+    if( ![self.metasync_timer isValid] )
+    {
+        self.metasync_timer = [NSTimer scheduledTimerWithTimeInterval:metaSyncTimeInterval 
+                                                         target:self 
+                                                       selector:@selector(metaSyncTimer) 
+                                                       userInfo:nil 
+                                                        repeats:YES];
+    }
 }
 
 - (void) metaSyncTimer
@@ -1527,11 +1535,15 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         eventTimeInterval = value * 60;
     }
     
-    event_timer = [[NSTimer scheduledTimerWithTimeInterval:eventTimeInterval 
-                                                   target:self 
-                                                 selector:@selector(callEventSyncTimer) 
-                                                 userInfo:nil 
-                                                  repeats:YES] retain];
+    if( ![self.event_timer isValid] )
+    {
+        self.event_timer = [NSTimer scheduledTimerWithTimeInterval:eventTimeInterval 
+                                                       target:self 
+                                                     selector:@selector(callEventSyncTimer) 
+                                                     userInfo:nil 
+                                                      repeats:YES];
+    }
+    NSLog(@"%d", event_timer.retainCount);
 }
 
 - (void) eventSyncTimer
@@ -1706,6 +1718,31 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     }
     [userDefaults setObject:newTimestamp forKey:kLastLocationSettingUpdateTimestamp];
     [self startBackgroundThreadForLocationServiceSettings];
+}
+
+
+- (void) timerHandler:(NSNotification *)notification
+{
+    NSTimer *timerObject = (NSTimer *)[notification object];
+    
+    if( [timerObject isEqual:event_timer] )
+    {
+        NSLog(@"Invalidating EVENT TIMER");
+        [self.event_timer invalidate];
+        self.event_timer = nil;
+    }
+    if( [timerObject isEqual:datasync_timer] )
+    {
+        NSLog(@"Invalidating DATASYNC TIMER");
+        [self.datasync_timer invalidate];
+        self.datasync_timer = nil;
+    }
+    if( [timerObject isEqual:metasync_timer] )
+    {
+        NSLog(@"Invalidating METASYNC TIMER");
+        [self.metasync_timer invalidate];
+        self.metasync_timer = nil;
+    }
 }
 @end
 

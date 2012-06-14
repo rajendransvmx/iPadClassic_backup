@@ -115,7 +115,6 @@
     [delegate dismisspopover];
     appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
      NSString * data_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_data_sync];
-    [delegate activityStart];
     if(appDelegate.SyncStatus != SYNC_RED)
     {        
         
@@ -128,28 +127,6 @@
         }
         appDelegate.dataSyncRunning = YES;
         
-//        if([appDelegate.syncThread isExecuting])
-//        {
-//            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
-//            {
-//                if ([appDelegate.syncThread isFinished])
-//                {
-//                    [appDelegate.datasync_timer invalidate];
-//                    break;
-//                }
-//                if (!appDelegate.isInternetConnectionAvailable)
-//                    break;
-//            }
-//        }
-//        else
-//        {
-//            if (appDelegate.datasync_timer)
-//            {
-//                [appDelegate.datasync_timer invalidate];
-//            }
-//            
-//        }    
-        
         if ([appDelegate.metaSyncThread isExecuting])
         {
             while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
@@ -160,16 +137,16 @@
                 }
                 if ([appDelegate.metaSyncThread isFinished])
                 {
-                    [appDelegate.metasync_timer invalidate];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
                     break;
                 }
             }
         }
         else
         {
-            if (appDelegate.metasync_timer)		
+            if ([appDelegate.metasync_timer isValid])	
             {
-                [appDelegate.metasync_timer invalidate];
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
             }            
         }       
 
@@ -185,16 +162,16 @@
                 
                 if ([appDelegate.event_thread isFinished])
                 {
-                    [appDelegate.event_timer invalidate];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
                     break;
                 }
             }
         }
         else
         {
-            if (appDelegate.event_timer)
+            if ([appDelegate.event_timer isValid])
             {
-                [appDelegate.event_timer invalidate];
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
             }            
         }   
 
@@ -227,7 +204,7 @@
             {
                 if ([appDelegate.syncThread isFinished])
                 {
-                    [appDelegate.datasync_timer invalidate];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
                     break;
                 }
                 if (!appDelegate.isInternetConnectionAvailable)
@@ -236,9 +213,9 @@
         }
         else
         {
-            if (appDelegate.datasync_timer)
+            if ([appDelegate.datasync_timer isValid])
             {
-               [appDelegate.datasync_timer invalidate];
+               [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
             }
             
         }    
@@ -255,16 +232,16 @@
                 
                 if ([appDelegate.metaSyncThread isFinished])
                 {
-                    [appDelegate.metasync_timer invalidate];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
                     break;
                 }
             }
         }
         else
         {
-            if (appDelegate.metasync_timer)		
+            if ([appDelegate.metasync_timer isValid])		
             {
-                [appDelegate.metasync_timer invalidate];
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
             }            
         }       
         
@@ -280,16 +257,16 @@
                 
                 if ([appDelegate.event_thread isFinished])
                 {
-                    [appDelegate.event_timer invalidate];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
                     break;
                 }
             }
         }
         else
         {
-            if (appDelegate.event_timer)
+            if ([appDelegate.event_timer isValid])
             {
-                [appDelegate.event_timer invalidate];
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
             }            
         }   
 
@@ -312,7 +289,6 @@
             [appDelegate callDataSync];
         }
     }
-    [delegate activityStop];
     [appDelegate ScheduleIncrementalMetaSyncTimer];
     [appDelegate ScheduleIncrementalDatasyncTimer];
     [appDelegate ScheduleTimerForEventSync];
@@ -397,16 +373,16 @@
             {
                 if ([appDelegate.syncThread isFinished])
                 {
-                    [appDelegate.datasync_timer invalidate];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
                     break;
                 }
             }
         }
         else
         {
-            if (appDelegate.datasync_timer)
+            if ([appDelegate.datasync_timer isValid])
             {
-                [appDelegate.datasync_timer invalidate];
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
             }            
         }   
         
@@ -424,16 +400,16 @@
                 
                 if ([appDelegate.metaSyncThread isFinished])
                 {
-                    [appDelegate.metasync_timer invalidate];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
                     break;
                 }
             }
         }
         else
         {
-            if (appDelegate.metasync_timer)
+            if ([appDelegate.metasync_timer isValid])
             {
-                [appDelegate.metasync_timer invalidate];
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
             }            
         }   
         
@@ -448,16 +424,16 @@
                 
                 if ([appDelegate.event_thread isFinished])
                 {
-                    [appDelegate.event_timer invalidate];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
                     break;
                 }
             }
         }
         else
         {
-            if (appDelegate.event_timer)
+            if ([appDelegate.event_timer isValid])
             {
-                [appDelegate.event_timer invalidate];
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
             }            
         }   
         
@@ -613,7 +589,7 @@
     
 }
 
-
+//EVENT SYNC METHOD
 - (void) startSyncEvents
 {
     if (appDelegate == nil)
@@ -625,6 +601,16 @@
         return;
     }
     appDelegate.eventSyncRunning = YES;
+    
+    if( appDelegate.dataSyncRunning )
+    {
+        appDelegate.eventSyncRunning = NO;
+        //exit data sync and queue it right after this method
+        appDelegate.queue_object = appDelegate;
+        appDelegate.queue_selector = @selector(callEventSyncTimer);
+        [delegate dismisspopover];
+        return;
+    }
     
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
     
@@ -642,7 +628,6 @@
         appDelegate.databaseInterface.MyPopoverDelegate = delegate;
         appDelegate.wsInterface.MyPopoverDelegate = delegate;
         
-        [delegate activityStart];
         if([appDelegate.syncThread isExecuting])
         {
             return;
@@ -656,15 +641,16 @@
                 
                 if ([appDelegate.syncThread isFinished])
                 {
-                    [appDelegate.datasync_timer invalidate];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
                     break;
                 }
             }
              */
         }
         else{
-            if (appDelegate.datasync_timer){
-                [appDelegate.datasync_timer invalidate];
+            if ( [appDelegate.datasync_timer isValid] )
+            {
+               // [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
             }            
         } 
         
@@ -681,43 +667,19 @@
                 
                 if ([appDelegate.metaSyncThread isFinished])
                 {
-                    [appDelegate.metasync_timer invalidate];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
                     break;
                 }
             }
         }
         else
         {
-            if (appDelegate.metasync_timer)
+            if ([appDelegate.metasync_timer isValid])
             {
-                [appDelegate.metasync_timer invalidate];
+                //[[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE             object:appDelegate.metasync_timer];
             }            
         }   
         
-//        if ([appDelegate.event_thread isExecuting])
-//        {
-//            
-//            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
-//            {
-//                if (!appDelegate.isInternetConnectionAvailable)
-//                {
-//                    break;
-//                }
-//                
-//                if ([appDelegate.event_thread isFinished])
-//                {
-//                    [appDelegate.event_timer invalidate];
-//                    break;
-//                }
-//            }
-//        }
-//        else
-//        {
-//            if (appDelegate.event_timer)
-//            {
-//                [appDelegate.event_timer invalidate];
-//            }            
-//        }   
         
         //RADHA 2012june12
         if (appDelegate.metaSyncRunning)
@@ -740,29 +702,19 @@
         
         if (!appDelegate.isInternetConnectionAvailable)
         {
-            //appDelegate.SyncStatus = SYNC_RED;
-            
-            
             [refreshMetaSyncDelegate refreshMetaSyncStatus];
             
             [appDelegate setSyncStatus:SYNC_RED];
-            //[appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
-            //[appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
-           // [appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+            
             
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:event_sync];     
             appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
             
             [appDelegate.reloadTable ReloadSyncTable];
         }
-
-        //appDelegate.SyncStatus = SYNC_ORANGE;
         
         [appDelegate setSyncStatus:SYNC_ORANGE];
-        //[appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
-        //[appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
-        //[appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-        
+               
         [appDelegate goOnlineIfRequired];
         [appDelegate.databaseInterface cleartable:SYNC_RECORD_HEAP];
         
@@ -824,7 +776,6 @@
         appDelegate.databaseInterface.MyPopoverDelegate = nil;
         appDelegate.wsInterface.MyPopoverDelegate = nil;
         
-        [delegate activityStop];
         
     }
     if (fullDataSyncFailed == FALSE)
@@ -853,9 +804,14 @@
         //[appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
     }
     
-    [delegate activityStop];
     
     [pool release];
+    
+    if( appDelegate.queue_object != nil )
+    {
+        appDelegate.eventSyncRunning = NO;
+        [appDelegate.queue_object performSelectorOnMainThread:appDelegate.queue_selector withObject:nil waitUntilDone:NO];
+    }
     
     if( appDelegate.queue_object != nil )
     {

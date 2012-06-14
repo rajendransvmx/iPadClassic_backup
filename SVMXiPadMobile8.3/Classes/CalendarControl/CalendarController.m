@@ -660,7 +660,10 @@
     NSLog(@"Tag = %d WeekDay = %d",[dateButton tag],newWeekday);
     [newDay release];
     if (dateButton.titleLabel.text == nil)
+    {
+        [gregorian release];
         return;
+    }
     
     selectedDate = dateButton;
     

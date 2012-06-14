@@ -1078,12 +1078,12 @@
 
 - (void)dealloc
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_EVENT_DATA_SYNC object:nil];
     [ltaskLabel release];
     [ltaskLabel release];
     [rscheduleLabel release];
     [todayBtn release];
     [HomeButton release];
-    [super dealloc];
     
     isLoaded = NO;
 	
@@ -1123,6 +1123,8 @@
     [productId release];
     [currentDate release];
     [showMapButton release];
+    
+    [super dealloc];
 }
 
 #pragma mark -

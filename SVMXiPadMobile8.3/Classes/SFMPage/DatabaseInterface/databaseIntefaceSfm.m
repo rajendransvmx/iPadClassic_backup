@@ -5317,7 +5317,7 @@
 {
     sqlite3_stmt * statement;
     int count = 0;
-    NSString * query = [[[NSString alloc] initWithFormat:@"SELECT COUNT(*) FROM SFDataTrailer WHERE record_sent = 'false'"] autorelease];
+    NSString * query = [[[NSString alloc] initWithFormat:@"SELECT COUNT(*) FROM SFDataTrailer"] autorelease];
     if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String],-1, &statement, nil) == SQLITE_OK)
     {
         while (synchronized_sqlite3_step(statement)== SQLITE_ROW)

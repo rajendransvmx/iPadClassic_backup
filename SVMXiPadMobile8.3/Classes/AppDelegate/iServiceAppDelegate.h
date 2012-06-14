@@ -574,7 +574,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 
 // Refresh Calendar
 @property BOOL refreshCalendar;
-@property (nonatomic, retain) ModalViewController * modalCalendar;
+@property (nonatomic, assign) ModalViewController * modalCalendar;
 
 // SFM Page
 @property (nonatomic, retain) SFMPageController * sfmPageController;
@@ -727,6 +727,10 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 -(void)didUpdateToLocation:(CLLocation*)location;
 - (void) startBackgroundThreadForLocationServiceSettings;
 - (void) checkLocationServiceSetting;
+
+//Timer invalide handler
+- (void) timerHandler:(NSNotification *)notification;
+
 @end
 
 @interface processInfo : NSObject {
