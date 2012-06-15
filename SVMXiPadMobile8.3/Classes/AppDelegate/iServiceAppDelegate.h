@@ -436,8 +436,16 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     //RADHA - EventSync
     NSTimer * event_timer;
     NSThread * event_thread;
+    
+    
+    //Check For Profile
+    NSString * userProfileId;
+    BOOL didCheckProfile;
 }
 
+
+@property (nonatomic) BOOL didCheckProfile;
+@property (nonatomic, retain) NSString * userProfileId;
 
 @property (nonatomic) BOOL isSpecialSyncDone;
 

@@ -410,6 +410,11 @@ last_sync_time:(NSString *)last_sync_time;
 -(void)callsfMEventForAfterSaveOrupdateEvents:(INTF_WebServicesDefServiceSvc_INTF_PREQ_GetPrice_WS *) getThoonsEvent binding:(INTF_WebServicesDefBinding *) binding;
 
 - (NSString *) getGmtDateAndTime:(NSDate *)localTime;
+
+
+//Check For Profile
+- (void) checkIfProfileExistsWithEventName:(NSString *)eventName type:(NSString *)eventType;
+
 @end
 
 @protocol RefrehManualDataSyncUI <NSObject>

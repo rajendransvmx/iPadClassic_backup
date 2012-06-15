@@ -782,8 +782,7 @@
     NSString * headerObjName = [_header objectForKey:gHEADER_OBJECT_NAME];
     
     NSString * layout_id = [_header objectForKey:gHEADER_HEADER_LAYOUT_ID];
-    
-    NSString * process_id = processId;
+
     
     NSMutableArray * header_sections =  [_header objectForKey:@"hdr_Sections"];
     
@@ -1086,7 +1085,7 @@
             }
             
             NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGETCHILD process_id:processId layoutId:detail_layout_id objectName:detailObjectName];
-            //[appDelegate.databaseInterface  getValueMappingForlayoutId:detail_layout_id process_id:process_id objectName:detailObjectName];
+            
             NSString * expressionId = [process_components objectForKey:EXPRESSION_ID];
             NSString * parent_column_name = [dict objectForKey:gDETAIL_HEADER_REFERENCE_FIELD];
             
@@ -2354,16 +2353,16 @@
             
             if ([appDelegate.syncThread isFinished])
             {
-                [appDelegate.datasync_timer invalidate];
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
                 break;
             }
         }
     }
     else
     {
-        if (appDelegate.datasync_timer)
+        if ([appDelegate.datasync_timer isValid])
         {
-            [appDelegate.datasync_timer invalidate];
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
         }            
     }   
 
@@ -2381,16 +2380,16 @@
             
             if ([appDelegate.metaSyncThread isFinished])
             {
-                [appDelegate.metasync_timer invalidate];
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
                 break;
             }
         }
     }
     else
     {
-        if (appDelegate.metasync_timer)
+        if ([appDelegate.metasync_timer isValid])
         {
-            [appDelegate.metasync_timer invalidate];
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
         }            
     }   
 
@@ -2409,16 +2408,16 @@
             
             if ([appDelegate.event_thread isFinished])
             {
-                [appDelegate.event_timer invalidate];
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
                 break;
             }
         }
     }
     else
     {
-        if (appDelegate.event_timer)
+        if ([appDelegate.event_timer isValid])
         {
-            [appDelegate.event_timer invalidate];
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
         }            
     }   
     
@@ -9334,17 +9333,44 @@
                 
                 if([process_type isEqualToString:@"EDIT"])
                 {
-                    appDelegate.sfmPageController.sourceProcessId = appDelegate.sfmPageController.processId;
-                    appDelegate.sfmPageController.sourceRecordId = appDelegate.sfmPageController.recordId;
+                    //Deffect Num
+                    NSMutableDictionary * page_layoutInfo = [appDelegate.databaseInterface  queryProcessInfo:action_process_id object_name:@""];
                     
-                    appDelegate.sfmPageController.processId = action_process_id;
-                    appDelegate.sfmPageController.recordId  = appDelegate.sfmPageController.recordId ;
+                    NSMutableDictionary * _header =  [page_layoutInfo objectForKey:@"header"];
                     
-                    currentRecordId  = appDelegate.sfmPageController.recordId;
-                    currentProcessId = action_process_id;
-                    //check For view process - dont require
-                    [self fillSFMdictForOfflineforProcess:action_process_id forRecord:currentRecordId];
-                    [self didReceivePageLayoutOffline];
+                    NSString * headerObjName = [_header objectForKey:gHEADER_OBJECT_NAME];
+                    
+                    NSString * layout_id = [_header objectForKey:gHEADER_HEADER_LAYOUT_ID];
+                    
+                    NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGET process_id:action_process_id layoutId:layout_id objectName:headerObjName];
+                   // NSString * source_parent_object_name = [process_components objectForKey:SOURCE_OBJECT_NAME];
+                    NSString * expression_id = [process_components objectForKey:EXPRESSION_ID];
+                    
+                    BOOL Entry_criteria = [appDelegate.databaseInterface EntryCriteriaForRecordFortableName:headerObjName record_id:appDelegate.sfmPageController.recordId expression:expression_id];
+                    if(!Entry_criteria)
+                    {
+                        NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
+                        NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
+                        NSString * cancel_ = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
+                        
+                        UIAlertView * enty_criteris = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:cancel_ otherButtonTitles:nil, nil];
+                        [enty_criteris show];
+                        [enty_criteris release];
+                    }
+                    else
+                    {
+                        appDelegate.sfmPageController.sourceProcessId = appDelegate.sfmPageController.processId;
+                        appDelegate.sfmPageController.sourceRecordId = appDelegate.sfmPageController.recordId;
+                        
+                        appDelegate.sfmPageController.processId = action_process_id;
+                        appDelegate.sfmPageController.recordId  = appDelegate.sfmPageController.recordId ;
+                        
+                        currentRecordId  = appDelegate.sfmPageController.recordId;
+                        currentProcessId = action_process_id;
+                        //check For view process - dont require
+                        [self fillSFMdictForOfflineforProcess:action_process_id forRecord:currentRecordId];
+                        [self didReceivePageLayoutOffline];
+                    }
                 }
                 //Radha 15/5/11
                 if ([process_type isEqualToString:@"STANDALONECREATE"])
@@ -9381,84 +9407,101 @@
                     
                     NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGET process_id:action_process_id layoutId:layout_id objectName:headerObjName];
                     NSString * source_parent_object_name = [process_components objectForKey:SOURCE_OBJECT_NAME];
+                    NSString * expression_id = [process_components objectForKey:EXPRESSION_ID];
+
+                    BOOL Entry_criteria = [appDelegate.databaseInterface EntryCriteriaForRecordFortableName:source_parent_object_name record_id:appDelegate.sfmPageController.recordId expression:expression_id];
                     
-                    if ([source_parent_object_name length] == 0)
-                        source_parent_object_name = headerObjName;
                     
-                    NSString * parent_sf_id =  [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:source_parent_object_name local_id:appDelegate.sfmPageController.recordId];
-                    
-                    if([parent_sf_id isEqualToString:@""] || parent_sf_id == nil || [parent_sf_id length] ==0)
+                    if(!Entry_criteria)
                     {
-                        record_is_not_syncd = TRUE;
+                        NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
+                        NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
+                        NSString * cancel_ = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
                         
-                    }
-                    if(!record_is_not_syncd)
-                    {
-                        for(int j= 0; j < [details count]; j++)
-                        {
-                            NSMutableDictionary * dict = [details objectAtIndex:j];
-                            NSMutableArray * filedsArray = [dict objectForKey:gDETAILS_FIELDS_ARRAY];
-                            NSMutableArray * details_api_keys = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-                            NSString * detailObjectName = [dict objectForKey:gDETAIL_OBJECT_NAME];
-                            
-                            //NSString * detailaliasName = [dict objectForKey:gDETAIL_OBJECT_ALIAS_NAME];
-                            NSString * detail_layout_id = [dict objectForKey:gDETAILS_LAYOUT_ID];
-                            
-                            for(int k =0 ;k<[filedsArray count];k++)
-                            {
-                                NSMutableDictionary * detailFiled_info =[filedsArray objectAtIndex:k];
-                                NSString * api_name = [detailFiled_info objectForKey:gFIELD_API_NAME];
-                                [details_api_keys addObject:api_name];
-                            }
-                            
-                            NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGETCHILD process_id:action_process_id layoutId:detail_layout_id objectName:detailObjectName];
-                            
-                            NSString * source_child_object_name = [process_components objectForKey:SOURCE_OBJECT_NAME];
-//                            NSString * source_child_parent_column = [process_components objectForKey:SOURCE_CHILD_PARENT_COLUMN];
-//                            
-//                            if([source_child_parent_column isEqualToString:@""] || [source_child_parent_column length] == 0)
-//                            {
-//                                source_child_parent_column  =  [ appDelegate.databaseInterface getParentColumnNameFormChildInfoTable:SFChildRelationShip childApiName:source_child_object_name parentApiName:source_parent_object_name];
-//                            }
-                            
-                            
-                            NSMutableArray * source_child_ids = [appDelegate.databaseInterface getChildLocalIdForParentId:appDelegate.sfmPageController.sourceRecordId childTableName:source_child_object_name sourceTableName:source_parent_object_name];
-                            for(NSString * child_record_id in  source_child_ids)
-                            {
-                                NSString * Child_parent_sf_id = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:source_child_object_name local_id:child_record_id];
-                                if([Child_parent_sf_id isEqualToString:@""])
-                                {
-                                    record_is_not_syncd = TRUE;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    
-                    if(record_is_not_syncd)
-                    {
-                        NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_sync_error];
-                        NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_synchronize_error];
-                        NSString * Ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+                        UIAlertView * enty_criteris = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:cancel_ otherButtonTitles:nil, nil];
+                        [enty_criteris show];
+                        [enty_criteris release];
                         
-                        UIAlertView * alert_view = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:Ok otherButtonTitles:nil, nil];
-                        [alert_view show];
                     }
                     else
                     {
-                        appDelegate.sfmPageController.sourceProcessId = appDelegate.sfmPageController.processId;
-                        appDelegate.sfmPageController.sourceRecordId = appDelegate.sfmPageController.recordId;
+                        if ([source_parent_object_name length] == 0)
+                            source_parent_object_name = headerObjName;
                         
-                        appDelegate.sfmPageController.processId = action_process_id;
-                        appDelegate.sfmPageController.recordId  = nil;
+                        NSString * parent_sf_id =  [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:source_parent_object_name local_id:appDelegate.sfmPageController.recordId];
                         
-                        currentRecordId  = nil;
-                        currentProcessId = action_process_id;
-                        //check For view process  - dont require
-                        [self fillSFMdictForOfflineforProcess:action_process_id forRecord:currentRecordId];
-                        [self didReceivePageLayoutOffline];
+                        if([parent_sf_id isEqualToString:@""] || parent_sf_id == nil || [parent_sf_id length] ==0)
+                        {
+                            record_is_not_syncd = TRUE;
+                            
+                        }
+                        if(!record_is_not_syncd)
+                        {
+                            for(int j= 0; j < [details count]; j++)
+                            {
+                                NSMutableDictionary * dict = [details objectAtIndex:j];
+                                NSMutableArray * filedsArray = [dict objectForKey:gDETAILS_FIELDS_ARRAY];
+                                NSMutableArray * details_api_keys = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+                                NSString * detailObjectName = [dict objectForKey:gDETAIL_OBJECT_NAME];
+                                
+                                //NSString * detailaliasName = [dict objectForKey:gDETAIL_OBJECT_ALIAS_NAME];
+                                NSString * detail_layout_id = [dict objectForKey:gDETAILS_LAYOUT_ID];
+                                
+                                for(int k =0 ;k<[filedsArray count];k++)
+                                {
+                                    NSMutableDictionary * detailFiled_info =[filedsArray objectAtIndex:k];
+                                    NSString * api_name = [detailFiled_info objectForKey:gFIELD_API_NAME];
+                                    [details_api_keys addObject:api_name];
+                                }
+                                
+                                NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGETCHILD process_id:action_process_id layoutId:detail_layout_id objectName:detailObjectName];
+                                
+                                NSString * source_child_object_name = [process_components objectForKey:SOURCE_OBJECT_NAME];
+                    //                            NSString * source_child_parent_column = [process_components objectForKey:SOURCE_CHILD_PARENT_COLUMN];
+                    //                            
+                    //                            if([source_child_parent_column isEqualToString:@""] || [source_child_parent_column length] == 0)
+                    //                            {
+                    //                                source_child_parent_column  =  [ appDelegate.databaseInterface getParentColumnNameFormChildInfoTable:SFChildRelationShip childApiName:source_child_object_name parentApiName:source_parent_object_name];
+                    //                            }
+                                
+                                
+                                NSMutableArray * source_child_ids = [appDelegate.databaseInterface getChildLocalIdForParentId:appDelegate.sfmPageController.sourceRecordId childTableName:source_child_object_name sourceTableName:source_parent_object_name];
+                                for(NSString * child_record_id in  source_child_ids)
+                                {
+                                    NSString * Child_parent_sf_id = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:source_child_object_name local_id:child_record_id];
+                                    if([Child_parent_sf_id isEqualToString:@""])
+                                    {
+                                        record_is_not_syncd = TRUE;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        
+                        if(record_is_not_syncd)
+                        {
+                            NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_sync_error];
+                            NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_synchronize_error];
+                            NSString * Ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+                            
+                            UIAlertView * alert_view = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:Ok otherButtonTitles:nil, nil];
+                            [alert_view show];
+                        }
+                        else
+                        {
+                            appDelegate.sfmPageController.sourceProcessId = appDelegate.sfmPageController.processId;
+                            appDelegate.sfmPageController.sourceRecordId = appDelegate.sfmPageController.recordId;
+                            
+                            appDelegate.sfmPageController.processId = action_process_id;
+                            appDelegate.sfmPageController.recordId  = nil;
+                            
+                            currentRecordId  = nil;
+                            currentProcessId = action_process_id;
+                            //check For view process  - dont require
+                            [self fillSFMdictForOfflineforProcess:action_process_id forRecord:currentRecordId];
+                            [self didReceivePageLayoutOffline];
+                        }
                     }
-                
                 }
             }
             //RADHA 2012june07 
@@ -9992,9 +10035,7 @@
                                     [self enableSFMUI];
                                     return;
                                 }
-                                
                             }
-
                         }
                     }
                 }        
@@ -11104,16 +11145,16 @@
             
             if ([appDelegate.syncThread isFinished])
             {
-                [appDelegate.datasync_timer invalidate];
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
                 break;
             }
         }
     }
     else
     {
-        if (appDelegate.datasync_timer)
+        if ([appDelegate.datasync_timer isValid])
         {
-            [appDelegate.datasync_timer invalidate];
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
         }            
     }   
 
@@ -11131,16 +11172,16 @@
             
             if ([appDelegate.metaSyncThread isFinished])
             {
-                [appDelegate.metasync_timer invalidate];
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
                 break;
             }
         }
     }
     else
     {
-        if (appDelegate.metasync_timer)
+        if ([appDelegate.metasync_timer isValid])
         {
-            [appDelegate.metasync_timer invalidate];
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
         }            
     }   
     
@@ -11158,16 +11199,16 @@
             
             if ([appDelegate.event_thread isFinished])
             {
-                [appDelegate.event_timer invalidate];
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
                 break;
             }
         }
     }
     else
     {
-        if (appDelegate.event_timer)
+        if ([appDelegate.event_timer isValid])
         {
-            [appDelegate.event_timer invalidate];
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
         }            
     }   
 
@@ -11431,19 +11472,19 @@
             }
 
         }
-        else
-        {
-            NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_referred_record_error];
-            NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_synchronize_error];
-            NSString * Ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
-            
-            
-            UIAlertView * alert_view = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:Ok otherButtonTitles:nil, nil];
-            [alert_view  show];
-            [alert_view release];  //Inconsistent Crash
-
-            
-        }
+//        else
+//        {
+//            NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_referred_record_error];
+//            NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_synchronize_error];
+//            NSString * Ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+//            
+//            
+//            UIAlertView * alert_view = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:Ok otherButtonTitles:nil, nil];
+//            [alert_view  show];
+//            [alert_view release];  //Inconsistent Crash
+//
+//            
+//        }
     }
     
 }

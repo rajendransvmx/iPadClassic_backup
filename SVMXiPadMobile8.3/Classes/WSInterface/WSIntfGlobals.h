@@ -302,3 +302,8 @@
 #define CLIENT_TYPE                                     @"iPad"
 #define CLIENT_INFO                                     @""
 
+
+//Macro For profile check
+#define VALIDATE_PROFILE                                @"VALIDATE_PROFILE"
+#define GROUP_PROFILE                                   @"GROUP_PROFILE"
+

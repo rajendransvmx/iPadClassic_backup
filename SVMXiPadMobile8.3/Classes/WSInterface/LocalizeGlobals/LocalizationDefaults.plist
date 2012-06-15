@@ -570,5 +570,7 @@
 	<string>Location Services Setting is disabled by the User</string>
 	<key>IPAD020_TAG002</key>
 	<string>Application Location Service Setting is disabled by the User</string>
+	<key>IPAD015_TAG011</key>
+	<string>Your Salesforce Profile is not associated with any active ServiceMax Group Profile. Please contact your ServiceMax administrator to resolve this.</string>
 </dict>
 </plist>

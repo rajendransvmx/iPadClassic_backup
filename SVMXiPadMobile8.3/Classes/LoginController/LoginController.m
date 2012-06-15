@@ -232,11 +232,12 @@
     {
         [self loginWithUsernamePassword];
         
+        if (appDelegate.loginResult == nil) //RADHA 21/05/2011
+            return FALSE;
+        
         [appDelegate.dataBase deleteDatabase:DATABASENAME1];
         [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
 
-        if (appDelegate.loginResult == nil) //RADHA 21/05/2011
-            return FALSE;
       
         if(!appDelegate.isInternetConnectionAvailable)
         {
@@ -319,7 +320,7 @@
         }
 
     }
-
+    
 }
 
 
@@ -605,6 +606,39 @@
         return;
     }
     
+    appDelegate.didCheckProfile = FALSE;
+    appDelegate.userProfileId = @"";
+    
+    //Dont remove the code in the comments below
+    /*[appDelegate.wsInterface checkIfProfileExistsWithEventName:VALIDATE_PROFILE type:GROUP_PROFILE];
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+    {
+        if (!appDelegate.isInternetConnectionAvailable)
+        {
+            appDelegate.shouldShowConnectivityStatus = YES;
+            [appDelegate displayNoInternetAvailable];
+            [self enableControls];
+            return;
+        }
+        
+        if (appDelegate.didCheckProfile)
+        {
+            break;
+        }
+    }    
+
+    if ([appDelegate.userProfileId length] == 0)
+    {
+        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_TITLE] message:[appDelegate.wsInterface.tagsDictionary objectForKey:profile_error] delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+        [activity stopAnimating];
+        [self enableControls];
+        
+        return;
+    }*/
+    
+
     // before anything else, check for correct version
     BOOL isVersionCorrect = [self checkVersion];
     
@@ -921,7 +955,7 @@
             appDelegate.didFinishWithError = FALSE;
             [activity stopAnimating];
             [self enableControls];
-            return;
+            return NO;
         }
 
         if (!appDelegate.isInternetConnectionAvailable)

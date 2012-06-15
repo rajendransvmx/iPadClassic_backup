@@ -295,6 +295,9 @@
 #define login_incorrect_version             @"IPAD015_TAG007"
 #define login_ipad_app_version              @"IPAD015_TAG008"
 #define login_serivcemax_version            @"IPAD015_TAG009"
+
+#define profile_error                       @"IPAD015_TAG011"
+
 #define sync_login_error                    @"IPAD018_TAG001"
 #define sync_synchronize_button             @"IPAD018_TAG002"
 #define sync_status_button                  @"IPAD018_TAG003"

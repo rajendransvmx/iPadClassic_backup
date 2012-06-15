@@ -119,6 +119,10 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 @implementation iServiceAppDelegate
 
+
+@synthesize userProfileId;
+@synthesize didCheckProfile;
+
 @synthesize isSpecialSyncDone;
 
 @synthesize reloadTable;
@@ -374,6 +378,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     isMetaSyncExceptionCalled = FALSE;
     isSpecialSyncDone = FALSE;
     metaSyncRunning = NO;
+    
+    self.didCheckProfile = FALSE;
     
     [self initWithDBName:DATABASENAME1 type:DATABASETYPE1];
         

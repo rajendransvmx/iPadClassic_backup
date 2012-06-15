@@ -555,6 +555,55 @@ last_sync_time:(NSString *)last_sync_time
 
 }
 
+
+#pragma mark - CheckForProfile
+- (void) checkIfProfileExistsWithEventName:(NSString *)eventName type:(NSString *)eventType
+{
+    [INTF_WebServicesDefServiceSvc initialize];
+    
+    INTF_WebServicesDefServiceSvc_SessionHeader * session = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
+    session.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
+    
+    INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
+    callOptions.client = nil;
+    
+    INTF_WebServicesDefServiceSvc_DebuggingHeader * debuggingHeader = [[[INTF_WebServicesDefServiceSvc_DebuggingHeader alloc] init] autorelease];
+    debuggingHeader.debugLevel = 0;
+    
+    INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * allowFieldTruncationHeader = [[[INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader alloc] init] autorelease];
+    allowFieldTruncationHeader.allowFieldTruncation = NO;
+    
+    INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
+    binding.logXMLInOut = YES;
+    
+    INTF_WebServicesDefServiceSvc_INTF_MetaSync_WS * profileCheck = [[[INTF_WebServicesDefServiceSvc_INTF_MetaSync_WS alloc] init] autorelease];
+    
+    INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] autorelease];
+    
+    sfmRequest.eventName = eventName;
+    sfmRequest.eventType = eventType;
+    sfmRequest.userId = [appDelegate.loginResult userId];
+    sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
+    sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
+    sfmRequest.name = @"";
+
+        
+    [profileCheck setRequest:sfmRequest];  
+    
+    [[ZKServerSwitchboard switchboard] doCheckSession];
+    [binding INTF_MetaSync_WSAsyncUsingParameters:profileCheck 
+                                    SessionHeader:session 
+                                      CallOptions:callOptions 
+                                  DebuggingHeader:debuggingHeader 
+                       AllowFieldTruncationHeader:allowFieldTruncationHeader 
+                                         delegate:self];
+    
+
+}
+
+#pragma mark - End
+
+
 #pragma mark - incremental Data Sync
 -(void) PutAllTheRecordsForIds
 {
@@ -4418,6 +4467,15 @@ last_sync_time:(NSString *)last_sync_time
             [sfmProcessData release];
              
         }
+        
+        if ([wsResponse.result.eventName isEqualToString:VALIDATE_PROFILE])
+        {
+            appDelegate.userProfileId = [wsResponse.result.values objectAtIndex:0];
+            
+            appDelegate.didCheckProfile = TRUE;
+        }
+            
+        
         if ([wsResponse.result.eventName isEqualToString:SFM_METADATA])
         {            
             //NSLog(@"SAMMAN MetaSync SFM_METADATA received, processing starts: %@", [NSDate date]);
