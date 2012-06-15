@@ -5195,8 +5195,8 @@
     }
 	
 	//Radha 2012june12
-	[appDelegate.databaseInterface cleartable:@"Event"];
-	[appDelegate.databaseInterface cleartable:@"Task"];
+	//[appDelegate.databaseInterface cleartable:@"Event"];
+	//[appDelegate.databaseInterface cleartable:@"Task"];
 	    
     [appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
     

@@ -33,7 +33,6 @@
 @synthesize picklistValues;
 @synthesize pageUiHistory; 
 
-
 @synthesize refreshSyncStatusUIButton;
 @synthesize refreshModalStatusButton;
 @synthesize refreshSyncButton;
@@ -2286,8 +2285,9 @@ last_sync_time:(NSString *)last_sync_time
                     
                     if(appDelegate.speacialSyncIsGoingOn)
                     {
-                        if([sf_id isEqualToString:@""])
+                        if([sf_id length] == 0)
                         {
+                            
                             continue;
                         }
                     }
@@ -2296,8 +2296,9 @@ last_sync_time:(NSString *)last_sync_time
                         //check for id 
                         NSString * child_sf_id  = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:object_name local_id:local_id];
                         
-                        if([child_sf_id isEqualToString:@""])
+                        if([child_sf_id length] == 0)
                         {
+                            [appDelegate.databaseInterface DeleterecordFromTable:SFDATATRAILER Forlocal_id:local_id];
                             continue;
                         }
                     }
@@ -7917,7 +7918,6 @@ last_sync_time:(NSString *)last_sync_time
                                             }
                                             if(!flag)
                                             {
-                                                
                                                 NSMutableArray * strmap =[bubbleInfoDict objectForKey:bubbleInfoDictKey];
                                                 if([strmap count] > 0)
                                                 {
