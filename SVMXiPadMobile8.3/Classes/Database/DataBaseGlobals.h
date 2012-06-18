@@ -238,5 +238,6 @@
 #define MSFW_wizard_steps               @"SFW_wizard_steps"
 #define MASTERDETAILS                   @"MASTERDETAILS"
 
+#define METASYNCDUE                     @"meta_sync_due"
 
 

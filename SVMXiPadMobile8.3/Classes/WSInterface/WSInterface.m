@@ -33,6 +33,7 @@
 @synthesize picklistValues;
 @synthesize pageUiHistory; 
 
+
 @synthesize refreshSyncStatusUIButton;
 @synthesize refreshModalStatusButton;
 @synthesize refreshSyncButton;
@@ -726,7 +727,6 @@ last_sync_time:(NSString *)last_sync_time
 //DATA SYNC METHOD
 -(void)DoIncrementalDataSync
 {
-    BOOL runEventSync = NO;
     
     //RADHA 2012june12
     if (appDelegate.metaSyncRunning)
@@ -1618,7 +1618,7 @@ last_sync_time:(NSString *)last_sync_time
 
 -(void)copyTrailertoTempTrailer:(NSString *)operation_type
 {
-        [appDelegate.databaseInterface cleartable:SFDATATRAILER_TEMP];   //clear trailer temp
+    [appDelegate.databaseInterface cleartable:SFDATATRAILER_TEMP];   //clear trailer temp
     
     [appDelegate.databaseInterface copyTrailerTableToTempTrailerForOperationType:operation_type];    
     
@@ -4471,7 +4471,8 @@ last_sync_time:(NSString *)last_sync_time
         
         if ([wsResponse.result.eventName isEqualToString:VALIDATE_PROFILE])
         {
-            appDelegate.userProfileId = [wsResponse.result.values objectAtIndex:0];
+            if ([wsResponse.result.values count] > 0)
+                appDelegate.userProfileId = [wsResponse.result.values objectAtIndex:0];
             
             appDelegate.didCheckProfile = TRUE;
         }

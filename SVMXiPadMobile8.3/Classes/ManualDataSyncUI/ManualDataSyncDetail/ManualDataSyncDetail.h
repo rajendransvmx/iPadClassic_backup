@@ -72,6 +72,9 @@
 
 	//Shrinivas
     UIImageView* animatedImageView;
+    
+    //Radha 2012june16
+    UIImageView * syncDueView;
 }
 
 @property (nonatomic, assign)   id <SyncRootViewProtocolDelegate> rootSyncDelegate;
@@ -103,6 +106,7 @@
 - (NSString *) getlocalIdForSFId:(NSString *)SFId ForObject:(NSString *)Objectname;
 - (UIImage *) getStatusImage;
 
+- (void) moveTableView;
 
 @end
 

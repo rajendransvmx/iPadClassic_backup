@@ -3686,6 +3686,9 @@
     
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS meta_sync_status ('sync_status' VARCHAR)"];
     [self createTable:query];
+    
+    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS meta_sync_due ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0), 'description' VARCHAR)"];
+    [self createTable:query];
 }
 
 
@@ -4569,7 +4572,10 @@
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS meta_sync_status ('sync_status' VARCHAR)"];  
     [self createTemporaryTable:query];
     
-    NSArray * tempTableArray = [NSArray arrayWithObjects:@"ChatterPostDetails",@"Document",@"ProductImage",@"SFSignatureData",@"UserImages",@"trobleshootdata",@"SFDataTrailer",@"SFDataTrailer_Temp",@"SYNC_HISTORY",@"sync_Records_Heap",@"LookUpFieldValue",@"Summary_PDF",@"sync_error_conflict", @"contact_images",@"internet_conflicts", @"meta_sync_status", nil];
+    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS meta_sync_due ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0), 'description' VARCHAR)"];
+    [self createTemporaryTable:query];
+    
+    NSArray * tempTableArray = [NSArray arrayWithObjects:@"ChatterPostDetails",@"Document",@"ProductImage",@"SFSignatureData",@"UserImages",@"trobleshootdata",@"SFDataTrailer",@"SFDataTrailer_Temp",@"SYNC_HISTORY",@"sync_Records_Heap",@"LookUpFieldValue",@"Summary_PDF",@"sync_error_conflict", @"contact_images",@"internet_conflicts", @"meta_sync_status", @"meta_sync_due", nil];
     
     return tempTableArray;
 }
@@ -5346,5 +5352,45 @@
 }
 #pragma mark - END
 
+#pragma mark - MetaSyncDue
+//Radha 2012june16
+- (void) insertMetaSyncDue:(NSString *)description
+{
+    NSString * msg = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_metasync_due];
+    
+    NSString * query = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ ('description', 'local_id') VALUES ('%@', '1')",description,  msg];
+    
+    char * err; 
+    
+    if (synchronized_sqlite3_exec(appDelegate.db, [query UTF8String], NULL, NULL, &err) != SQLITE_OK)
+    {
+        NSLog(@"Failed to insert into duetable");
+    }
+}
 
+- (BOOL) checkIfSyncConfigDue
+{
+    NSString * query = [NSString stringWithFormat:@"SELECT COUNT(*) FROM '%@' WHERE local_id = '1'", METASYNCDUE];
+    
+    sqlite3_stmt * stmt;
+    
+    int count = 0;
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        
+        while (sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            count = synchronized_sqlite3_column_int(stmt, 0);
+        }
+    }
+    
+    if (count > 0)
+        return TRUE;
+    else
+        return FALSE;
+
+}
+ 
+#pragma mark - END
 @end

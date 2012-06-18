@@ -610,7 +610,7 @@
     appDelegate.userProfileId = @"";
     
     //Dont remove the code in the comments below
-    /*[appDelegate.wsInterface checkIfProfileExistsWithEventName:VALIDATE_PROFILE type:GROUP_PROFILE];
+    [appDelegate.wsInterface checkIfProfileExistsWithEventName:VALIDATE_PROFILE type:GROUP_PROFILE];
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         if (!appDelegate.isInternetConnectionAvailable)
@@ -636,7 +636,7 @@
         [self enableControls];
         
         return;
-    }*/
+    }
     
 
     // before anything else, check for correct version

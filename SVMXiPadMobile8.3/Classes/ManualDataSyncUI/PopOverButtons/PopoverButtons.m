@@ -297,7 +297,28 @@
 
 - (void) synchronizeConfiguration
 {
-    [self startSyncConfiguration];
+    
+    if ([appDelegate.dataBase checkIfSyncConfigDue])
+    {
+        [delegate resetTableview];
+        [appDelegate.databaseInterface cleartable:@"meta_sync_due"];
+    }
+    
+    
+    
+    if ([appDelegate.metaSyncThread isExecuting])
+    {
+        NSLog(@"Meta sync executing");
+    }
+    
+    else 
+    {
+        NSLog(@"Finished");
+    }
+    
+    [appDelegate.metaSyncThread release];
+    appDelegate.metaSyncThread = [[NSThread alloc] initWithTarget:self selector:@selector(startSyncConfiguration) object:nil];
+    [appDelegate.metaSyncThread start];
 }
 
 
@@ -386,33 +407,7 @@
             }            
         }   
         
-        
-        
-        if ([appDelegate.metaSyncThread isExecuting])
-        {
-            
-           while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
-            {
-                if (!appDelegate.isInternetConnectionAvailable)
-                {
-                    break;
-                }
-                
-                if ([appDelegate.metaSyncThread isFinished])
-                {
-                    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
-                    break;
-                }
-            }
-        }
-        else
-        {
-            if ([appDelegate.metasync_timer isValid])
-            {
-                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
-            }            
-        }   
-        
+    
         if ([appDelegate.event_thread isExecuting])
         {
             while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
@@ -536,6 +531,11 @@
     @finally {
 		//Radha 2012june12
 		appDelegate.settingsDict = [appDelegate.dataBase getSettingsDictionary];
+        
+        if ([appDelegate.metasync_timer isValid])
+        {
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
+        }      
 		
         [appDelegate ScheduleIncrementalDatasyncTimer];
         [appDelegate ScheduleIncrementalMetaSyncTimer];

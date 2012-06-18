@@ -1502,24 +1502,27 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 - (void) callMetaSyncTimer
 {
-    if (metaSyncThread != nil)
-    {
-        if ([metaSyncThread isFinished] == YES)
-        {
-            NSLog(@"Meta Sync");
-        }
-        else
-        {
-            NSLog(@"Meta Sync");
-            return;
-        }
-        
-        
-    }
+    //Radha 2012june16
     
-    [metaSyncThread release]; 
-    metaSyncThread = [[NSThread alloc] initWithTarget:self.dataBase selector:@selector(callIncrementalMetasync) object:nil];
-    [metaSyncThread start];
+    [dataBase insertMetaSyncDue:METASYNCDUE];
+//    if (metaSyncThread != nil)
+//    {
+//        if ([metaSyncThread isFinished] == YES)
+//        {
+//            NSLog(@"Meta Sync");
+//        }
+//        else
+//        {
+//            NSLog(@"Meta Sync");
+//            return;
+//        }
+//        
+//        
+//    }
+//    
+//    [metaSyncThread release]; 
+//    metaSyncThread = [[NSThread alloc] initWithTarget:self.dataBase selector:@selector(callIncrementalMetasync) object:nil];
+//    [metaSyncThread start];
 
 }
 

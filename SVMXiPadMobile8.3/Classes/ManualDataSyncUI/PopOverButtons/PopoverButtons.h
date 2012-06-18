@@ -18,6 +18,8 @@
 - (void) throwException;
 - (void) enableControls;
 - (void) disableControls;
+//Radha 2012june16
+- (void) resetTableview;
 
 @end
 

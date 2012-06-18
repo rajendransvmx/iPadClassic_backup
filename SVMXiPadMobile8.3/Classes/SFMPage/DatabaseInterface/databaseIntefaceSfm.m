@@ -223,11 +223,31 @@
     //fetch the parent  column name  in child table from  CHildInfo Table   -- IMP headerObjectName
     
     NSString * sql;
-    if([expression_ length ] != 0 && expression_ != nil)
-        
-        sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE %@ = '%@' and %@",fieldsString,detailObjectName,parent_column_name,local_record_id, expression_];
+    if([parent_column_name length] != 0)
+    {
+        if([expression_ length ] != 0 && expression_ != nil)
+            
+            sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE %@ = '%@' and %@",fieldsString,detailObjectName,parent_column_name,local_record_id, expression_];
+        else
+            sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE %@ = '%@'",fieldsString,detailObjectName,parent_column_name,local_record_id];
+    }
     else
-        sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE %@ = '%@'",fieldsString,detailObjectName,parent_column_name,local_record_id];
+    {
+        //sahana 16th June 2012
+        NSString * releated_column_name = [self getRefernceToFieldnameForObjct:detailObjectName reference_table:headerObjectName table_name:SF_REFERENCE_TO];
+        
+        NSString * SF_id = [self getSfid_For_LocalId_From_Object_table:headerObjectName local_id:local_record_id ];
+        
+        if([releated_column_name length] != 0)
+        {
+            if([expression_ length ] != 0 && expression_ != nil)
+                
+                sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE %@ = '%@' and %@",fieldsString,detailObjectName,releated_column_name,SF_id, expression_];
+            else
+                sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE %@ = '%@'",fieldsString,detailObjectName,releated_column_name,SF_id];
+        }
+         //sahana 16th June 2012
+    }
     NSLog(@" LineRecord %@",sql);
     
     sqlite3_stmt * sql_stmt;
@@ -270,7 +290,6 @@
                     if([value isEqualToString:@""] || value == nil || [value length] == 0 )
                     {
                         label = value;
-                        
                     }
                     else
                     {
@@ -4998,7 +5017,6 @@
                     
                     [self UpdateSFPicklist_validFor_For_Oject_Name:object_name field_api_name:field_api_name value:value valid_for_value:validFor  index:k];
                 }
-                
                  
             }
             if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
@@ -5009,7 +5027,6 @@
                     break;
                 }
             }
-            
         }
         
         if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
@@ -5020,7 +5037,6 @@
                 break;
             }
         }
-
     }
     
     if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
@@ -5333,6 +5349,27 @@
     else
         return TRUE;
     
+}
+
+ //sahana 16th June 2012
+-(NSString *)getRefernceToFieldnameForObjct:(NSString *) object_name reference_table:(NSString *)reference_table table_name:(NSString *)table_name;
+{
+    NSString * referencetoName = @"";
+    NSString * query = [NSString stringWithFormat:@"SELECT field_api_name  FROM '%@' where object_api_name = '%@' and reference_to = '%@'" ,table_name,object_name ,reference_table];
+    sqlite3_stmt * stmt ;
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK  )
+    {
+        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            char * temp_referenceToName = (char *)synchronized_sqlite3_column_text(stmt, 0);
+            if(temp_referenceToName != nil)
+            {
+                referencetoName = [NSString stringWithUTF8String:temp_referenceToName];
+            }
+        }
+    }
+    synchronized_sqlite3_finalize(stmt);
+    return referencetoName;
 }
 
 //sahana code ends    june8th

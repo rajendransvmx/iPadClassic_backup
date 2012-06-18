@@ -218,6 +218,8 @@
 -(void)deleteDownloadCriteriaObjects:(NSArray *)deleted_objects;
 -(NSMutableDictionary *)getAllFieldsAndItsDataTypesForObject:(NSString *)object_api_name tableName:(NSString *)tableName;
 
+ //sahana 16th June 2012
+-(NSString *)getRefernceToFieldnameForObjct:(NSString *) object_name reference_table:(NSString *)reference_table table_name:(NSString *)table_name;
 //sahana
 -(NSArray *)getAllObjectsFromHeap;
 

@@ -249,4 +249,9 @@
 //RADHA 2012june08
 - (BOOL) checkIfRecordExistForObject:(NSString *)tableName Id :(NSString *)Id;
 
+//Radha 2012june16
+- (void) insertMetaSyncDue:(NSString *)tableName;
+
+- (BOOL) checkIfSyncConfigDue;
+
 @end

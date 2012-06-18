@@ -59,8 +59,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+        
     
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+    
+    
     appDelegate.reloadTable = self;
     
     if ([appDelegate.internet_Conflicts count] == 0)
@@ -125,10 +128,18 @@
     self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:myToolBar] autorelease];
     [myToolBar release];
     
-        
     //[appDelegate setSyncStatus:appDelegate.SyncStatus];
     appDelegate.animatedImageView.center = CGPointMake(450,21);
     [self.navigationController.view addSubview:appDelegate.animatedImageView];
+    
+    //Radha 2012june16
+     if ([appDelegate.dataBase checkIfSyncConfigDue])
+     {
+         if (syncDueView != nil)
+             [syncDueView removeFromSuperview];
+         [self moveTableView];
+     }
+
 }
 
 - (void) showHelp
@@ -1401,6 +1412,34 @@
     [rootSyncDelegate enableRootControls];
 }
 
+
+-(void) resetTableview
+{
+    [syncDueView removeFromSuperview];
+    [syncDueView release];
+    self._tableView.frame = CGRectMake(0,0,self._tableView.frame.size.width, self.view.frame.size.height);
+}
+
+//Radha 2012june16
+#pragma mark - MetaSyncDue - Movetableview
+- (void) moveTableView
+{
+    syncDueView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM-Screen-Table-Strip.png"]];
+
+    syncDueView.frame = CGRectMake(0, 10, 800, 70);
+    
+    UITextView * textview = [[[UITextView alloc] initWithFrame:CGRectMake(180, 3, 250, 50)] autorelease];
+    textview.backgroundColor = [UIColor clearColor];
+    textview.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_metasync_due];
+    textview.font = [UIFont systemFontOfSize:19.0];
+    [syncDueView addSubview:textview];
+
+    
+    [self.view addSubview:syncDueView];
+    self._tableView.frame = CGRectMake(self._tableView.frame.origin.x, 100, self._tableView.frame.size.width, self.view.frame.size.height-100);
+}
+#pragma mark - End
+
 - (void)dealloc 
 {
     [self.popoverController release];
@@ -1410,6 +1449,7 @@
     [objectsArray release];
     [_tableView release];
     [activity release];
+    [syncDueView release];
     [super dealloc];
 }
 @end
