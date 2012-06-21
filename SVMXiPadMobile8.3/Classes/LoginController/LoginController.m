@@ -605,7 +605,18 @@
         
         return;
     }
+    // before anything else, check for correct version
+    BOOL isVersionCorrect = [self checkVersion];
     
+    if (!isVersionCorrect)
+    {
+        [[ZKServerSwitchboard switchboard] setApiUrl:nil];
+        
+        [self enableControls];
+        
+        return;
+    }
+
     appDelegate.didCheckProfile = FALSE;
     appDelegate.userProfileId = @"";
     
@@ -639,22 +650,7 @@
     }
     
 
-    // before anything else, check for correct version
-    BOOL isVersionCorrect = [self checkVersion];
-    
-    if (!isVersionCorrect)
-    {
-        [[ZKServerSwitchboard switchboard] setApiUrl:nil];
-        
-        [self enableControls];
-        
-        return;
-    }
-    
-   
     [self getTagsForTheFirstTime];
-    
-    
     
     didLoginCompleted = TRUE;
     appDelegate.didLoginAgain = TRUE;
