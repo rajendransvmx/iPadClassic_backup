@@ -1658,6 +1658,11 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 - (void) startBackgroundThreadForLocationServiceSettings
 {
     return; // Enable when the the Location Ping Module is Required
+     if(metaSyncRunning )
+    {
+        NSLog(@"Meta Sync is Running");
+        return;
+    }
     NSString *enableLocationServiceStatus = [dataBase getSettingValueWithName:@"IPAD007_SET002"];
     enableLocationService = (enableLocationServiceStatus != nil)?[enableLocationServiceStatus boolValue]:TRUE;
     frequencyLocationService = [[dataBase getSettingValueWithName:@"IPAD007_SET001"] retain]; 
@@ -1704,8 +1709,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     if(![CLLocationManager locationServicesEnabled])
     {
         NSMutableDictionary *locationInfo = [[NSMutableDictionary alloc] init];
-        [locationInfo setObject:[NSString stringWithFormat:@" "] forKey:@"latitude"];
-        [locationInfo setObject:[NSString stringWithFormat:@" "] forKey:@"longitude"];
+        [locationInfo setObject:[NSString stringWithFormat:@""] forKey:@"latitude"];
+        [locationInfo setObject:[NSString stringWithFormat:@""] forKey:@"longitude"];
         [locationInfo setObject:[wsInterface.tagsDictionary objectForKey:Location_Setting_Disable]forKey:@"additionalInfo"];
         [locationInfo setObject:[NSString stringWithFormat:@"%@",newTimestamp ] forKey:@"timestamp"];
         [locationInfo setObject:[NSString stringWithFormat:@"Failure"] forKey:@"status"];
@@ -1716,8 +1721,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     else if([CLLocationManager authorizationStatus] != kCLAuthorizationStatusAuthorized)
     {
         NSMutableDictionary *locationInfo = [[NSMutableDictionary alloc] init];
-        [locationInfo setObject:[NSString stringWithFormat:@" "] forKey:@"latitude"];
-        [locationInfo setObject:[NSString stringWithFormat:@" "] forKey:@"longitude"];
+        [locationInfo setObject:[NSString stringWithFormat:@""] forKey:@"latitude"];
+        [locationInfo setObject:[NSString stringWithFormat:@""] forKey:@"longitude"];
         [locationInfo setObject:[wsInterface.tagsDictionary objectForKey:App_Location_Setting_Disable]forKey:@"additionalInfo"];
         [locationInfo setObject:[NSString stringWithFormat:@"%@",newTimestamp] forKey:@"timestamp"];
         [locationInfo setObject:[NSString stringWithFormat:@"Failure"] forKey:@"status"];
