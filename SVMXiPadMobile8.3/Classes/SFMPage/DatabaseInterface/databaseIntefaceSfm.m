@@ -4104,7 +4104,18 @@
                         {
                             [final_dict removeObjectForKey:parent_column_name];
                         }
-                        update_flag = [self UpdateTableforId:local_id forObject:object_Name data:final_dict];
+                        if ([object_Name isEqualToString:@"SVMXC__Location_History__c"]) {
+                            BOOL delete_flag=[self DeleterecordFromTable:@"SVMXC__Location_History__c" Forlocal_id:local_id];
+                            [appDelegate.dataBase deleteSequenceofTable];
+                            if(!delete_flag)
+                            {
+                                NSLog(@"Failed to delete location record");
+                            }
+                        }
+                        else
+                        {
+                            update_flag = [self UpdateTableforId:local_id forObject:object_Name data:final_dict];
+                        }                        
                     }
                     
                     if(![sync_type isEqualToString:@"DATA_SYNC"])
