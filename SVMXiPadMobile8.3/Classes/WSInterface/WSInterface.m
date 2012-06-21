@@ -3020,6 +3020,33 @@ last_sync_time:(NSString *)last_sync_time
             [svmxcObject release];
         }
     }
+    if([eventName isEqualToString:@"TECH_LOCATION_UPDATE"] && [eventType isEqualToString:SYNC])
+    {
+        INTF_WebServicesDefServiceSvc_SVMXMap * svmxcField =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+        svmxcField.key=@"Fields";
+        svmxcField.value=@"";
+        INTF_WebServicesDefServiceSvc_SVMXMap * svmxcLatitude =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+        svmxcLatitude.key  = @"SVMXC__Latitude__c";
+        if([values objectAtIndex:0] != nil)
+            svmxcLatitude.value = [values objectAtIndex:0];
+        else
+            svmxcLatitude.value = @"";
+        [svmxcField.valueMap addObject:svmxcLatitude];
+        [svmxcLatitude release];
+        
+        INTF_WebServicesDefServiceSvc_SVMXMap * svmxcLongitude =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+        svmxcLongitude.key  = @"SVMXC__Longitude__c";
+        if([values objectAtIndex:1] != nil)
+            svmxcLongitude.value = [values objectAtIndex:1];
+        else
+            svmxcLongitude.value = @"";
+        [svmxcField.valueMap addObject:svmxcLongitude];
+        [svmxcLongitude release];
+        [sfmRequest.valueMap addObject:svmxcField];
+        [svmxcField release];
+        
+    }
+
     [dataSync setRequest:sfmRequest];
     //SFM Search End
     [[ZKServerSwitchboard switchboard] doCheckSession];
@@ -5667,7 +5694,7 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.Sync_check_in = FALSE;
             
             didGetAddtionalObjDef = FALSE;
-            NSMutableArray * objects = [NSMutableArray  arrayWithObjects:@"Task", @"Event", @"User", nil];
+            NSMutableArray * objects = [NSMutableArray  arrayWithObjects:@"Task", @"Event", @"User",@"SVMXC__Location_History__c",nil];
             [appDelegate.wsInterface metaSyncWithEventName:SFM_BATCH_OBJECT_DEFINITIONS eventType:SYNC values:objects]; 
             while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
