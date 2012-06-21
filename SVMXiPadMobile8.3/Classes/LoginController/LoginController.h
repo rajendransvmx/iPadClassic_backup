@@ -13,7 +13,7 @@
 
 @class ModalViewController;
 
-#define APPVERSION                                  8.30000
+#define APPVERSION                                  8.30009
 
 @interface LoginController : UIViewController <UIAlertViewDelegate>
 {

@@ -51,7 +51,7 @@
     NSMutableString * settingInfoIdForLocationPing;
     NSMutableArray  * settingsInfoArrayForLocationPing;
     NSMutableArray  * settingsValueArrayForLocationPing;
-    BOOL didUpdateTechnicianLocation;
+//    BOOL didUpdateTechnicianLocation;
     NSString * appTechnicianId; 
     NSString * appServiceTeamId;
     BOOL didGetReportEssentials;
@@ -154,11 +154,11 @@
 - (void) didGetSettingsInfoforLocationPing:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
 - (void) didGetLocationPingSettingsValue:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
 - (NSString *) getSettingValueWithName:(NSString *)settingName;
-- (void) createTableForLocationHistory;
+- (void) deleteSequenceofTable;
 -(void) insertrecordIntoTableNamed:(NSDictionary *)locationInfo;
 - (void) purgeLocationPingTable;
-- (NSString *) getActiveTechnicainId;
-- (NSDictionary *)getUserLocation;
+//- (NSString *) getActiveTechnicainId;
+- (void)getUserLocation;
 
 //DataSync Methods
 - (void) insertDataInToTables:(NSMutableArray *)fieldValueArray;

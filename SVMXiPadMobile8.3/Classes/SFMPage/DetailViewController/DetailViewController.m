@@ -4393,8 +4393,11 @@
                    NSMutableArray * allkeys_ordered = [[NSMutableArray alloc] initWithCapacity:0];
                    [allkeys_ordered addObject:@" "];
                    
-                   //Abinash Fix
-                   allvalues = [self orderingAnArray:allvalues];
+                   if ([allvalues count] > 0)
+                   {
+//                       allvalues = [self orderingAnArray:allvalues];
+                       allvalues = [allvalues sortedArrayUsingSelector:@selector(compare:)];
+                   }
                    for (NSString * str in allvalues ) 
                    {
                        [descObjArray addObject:str];
@@ -5826,8 +5829,14 @@
             [allkeys_ordered addObject:@" "];
             
             //Abinash Fix
-            allvalues = [self orderingAnArray:allvalues];
-            for (NSString * str in allvalues ) 
+            
+            if ([allvalues count] > 0)
+            {
+                //                       allvalues = [self orderingAnArray:allvalues];
+                allvalues = [allvalues sortedArrayUsingSelector:@selector(compare:)];
+            }
+
+                 for (NSString * str in allvalues ) 
             {
                 [descObjArray addObject:str];
                 

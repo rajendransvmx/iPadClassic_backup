@@ -923,6 +923,11 @@ const NSUInteger kNumImages = 7;
 - (void) scheduleLocationPingService
 {
     return;//Remove this whenever Locationb Ping Module is Required
+	if(appDelegate.metaSyncRunning )
+    {
+        NSLog(@"Meta Sync is Running");
+        return;
+    }
     NSString *enableLocationService = [appDelegate.dataBase getSettingValueWithName:@"IPAD007_SET002"];
     enableLocationService = (enableLocationService != nil) ? enableLocationService : @"True";
     if([enableLocationService boolValue])

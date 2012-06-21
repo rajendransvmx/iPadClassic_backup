@@ -108,7 +108,7 @@
         
             [self getProductNameForProductID:productId];
             NSLog(@"%@",productName);
-            [appDelegate.calDataBase updateProductTableWithProductName:productName WithId:productId];
+            //[appDelegate.calDataBase updateProductTableWithProductName:productName WithId:productId];
             didRunOperation = YES;
         
             

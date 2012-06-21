@@ -2269,11 +2269,6 @@
                     
                     if([operator_ length] != 0)
                     {
-                        /*component_expression = [component_expression stringByAppendingString:component_lhs];
-                        component_expression = [component_expression stringByAppendingString:operator_];
-                        component_expression = [component_expression stringByAppendingString:component_rhs];
-                        
-                        expression_ = [expression_ stringByReplacingOccurrencesOfString:component_number withString:component_expression];*/
                         if(component_rhs == nil)
                         {
                             component_rhs = @"";
@@ -2355,6 +2350,10 @@
                 component_expression = [NSString stringWithFormat:@" RecordTypeId   in   (select  record_type_id  from SFRecordType where record_type = '%@' )" , rhs];
                 
             }
+            else if (operator == @"!=")
+            {
+                component_expression = [NSString stringWithFormat:@" ( %@ isnull or %@ %@ '%@' ) ",lhs,lhs,operator,rhs];
+            }
             else
             {
                 component_expression = [component_expression stringByAppendingString:lhs];
@@ -2427,9 +2426,9 @@
     {
         NSString * query;
         if([expression length]!= 0 && expression != nil)
-            query = [NSString stringWithFormat:@"SELECT COUNT(*)  FROM '%@' where local_id = '%@' and %@ ",objectName, record_id, expression];
+            query = [NSString stringWithFormat:@"SELECT COUNT(*)  FROM '%@' where local_id = '%@' and ( %@ ) ",objectName, record_id, expression];
         else
-            query = [NSString stringWithFormat:@"SELECT COUNT(*)  FROM '%@' where local_id = '%@'",objectName, record_id];
+            query = [NSString stringWithFormat:@"SELECT COUNT(*)  FROM '%@' where local_id = '%@' ",objectName, record_id];
         
         sqlite3_stmt * stmt ;
         
@@ -2565,7 +2564,6 @@
         {
            
             NSString * query = [NSString stringWithFormat:@"SELECT action_id , action_description, expression_id , process_id ,action_type  FROM '%@' where wizard_id ='%@'" ,SFWizard_COMPONENT , wizard_id];
-            
             
             sqlite3_stmt * stmt ;
             
@@ -2731,6 +2729,7 @@
                 
                 if([mapping_component_type isEqualToString:VALUE_MAPPING])
                 {
+                    [final_dict  setObject:mapping_value forKey:target_field_name];
                     if(source_field_name != 0 && [source_field_name length] != 0)
                     {
                         [final_dict  setObject:mapping_value forKey:target_field_name];
