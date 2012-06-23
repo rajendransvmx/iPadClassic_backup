@@ -2149,6 +2149,9 @@
     
     
     NSArray * keys = [NSArray arrayWithObjects:@"component_lhs",@"component_rhs",@"component_operator",@"sequence", nil];
+    
+    NSString * lhs_value;
+    
     for(int j = 0 ; j<[components count]; j++)
     {
         NSString * component_number = [components objectAtIndex:j];
@@ -2170,7 +2173,6 @@
         
         NSString * operator_ = @"";
         
-        NSString * component_expression = @"";
         if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
         {
             while (synchronized_sqlite3_step(stmt)  == SQLITE_ROW) 
@@ -2260,9 +2262,10 @@
                     }
                     else if([component_operator  isEqualToString:@"isnull"])
                     {
-                            component_lhs = [NSString stringWithFormat:@"typeof(%@)", component_lhs];
-                            operator_ = @"=";
-                            component_rhs = @"null";
+                        lhs_value = component_lhs;
+                        component_lhs = [NSString stringWithFormat:@"typeof(%@)", component_lhs];
+                        operator_ = @"=";
+                        component_rhs = @"null";
                     }
                     
                     NSLog(@"%@" ,operator_ );
@@ -2354,6 +2357,12 @@
             {
                 component_expression = [NSString stringWithFormat:@" ( %@ isnull or %@ %@ '%@' ) ",lhs,lhs,operator,rhs];
             }
+            //Test
+            else if ([rhs isEqualToString:@"null"])
+            {
+                component_expression = [NSString stringWithFormat:@" ( %@ = '' or %@ %@ '%@' ) ",lhs_value,lhs,operator,rhs];            
+            }
+            
             else
             {
                 component_expression = [component_expression stringByAppendingString:lhs];
@@ -2408,6 +2417,7 @@
             
             NSString * concatinate_key = [NSString stringWithFormat:@"#$%@",key];
             
+            NSLog(@"%@", component_expression);
             
             regular_expression = [regular_expression stringByReplacingOccurrencesOfString:concatinate_key withString:component_expression];
             

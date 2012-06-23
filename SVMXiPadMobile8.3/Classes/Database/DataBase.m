@@ -4807,16 +4807,6 @@
         appDelegate.wsInterface.pageUiHistory = [[NSMutableArray alloc] initWithCapacity:0];
     }
     
-    if ((appDelegate.StandAloneCreateProcess != nil) && [appDelegate.StandAloneCreateProcess count] > 0)
-    {
-        [appDelegate.StandAloneCreateProcess removeAllObjects];
-    }
-
-    if ((appDelegate.view_layout_array != nil) && [appDelegate.view_layout_array count] > 0)
-    {
-        [appDelegate.view_layout_array removeAllObjects];
-    }
-            
 }
 
 #pragma Mark to get loggedInUserId
