@@ -142,14 +142,14 @@
                 }
             }
         }
-        else
-        {
-            if ([appDelegate.metasync_timer isValid])	
-            {
-                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
-            }            
-        }       
-
+//        else
+//        {
+//            if ([appDelegate.metasync_timer isValid])	
+//            {
+//                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
+//            }            
+//        }       
+//
         
         if ([appDelegate.event_thread isExecuting])
         {
@@ -167,22 +167,18 @@
                 }
             }
         }
-        else
-        {
-            if ([appDelegate.event_timer isValid])
-            {
-                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
-            }            
-        }   
+//        else
+//        {
+//            if ([appDelegate.event_timer isValid])
+//            {
+//                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
+//            }            
+//        }   
 
         if (!appDelegate.isInternetConnectionAvailable)
         {
-            //appDelegate.SyncStatus = SYNC_RED;
             
             [appDelegate setSyncStatus:SYNC_RED];
-            //[appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
-            //[appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
-            //[appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
             [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
             appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflictsForMetaSyncWithDB:appDelegate.dataBase.tempDb];
             [appDelegate.reloadTable ReloadSyncTable];
@@ -191,12 +187,13 @@
         
         [appDelegate callDataSync];
         appDelegate.dataSyncRunning = NO;
-        
-    }
+}
     
     else 
     {        
         [appDelegate.calDataBase selectUndoneRecords];
+        
+        appDelegate.SyncStatus = SYNC_ORANGE;
         
         if([appDelegate.syncThread isExecuting])
         {
@@ -211,14 +208,14 @@
                     break;
             }
         }
-        else
-        {
-            if ([appDelegate.datasync_timer isValid])
-            {
-               [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
-            }
-            
-        }    
+//        else
+//        {
+//            if ([appDelegate.datasync_timer isValid])
+//            {
+//               [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
+//            }
+//            
+//        }    
         
         if ([appDelegate.metaSyncThread isExecuting])
         {
@@ -237,13 +234,13 @@
                 }
             }
         }
-        else
-        {
-            if ([appDelegate.metasync_timer isValid])		
-            {
-                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
-            }            
-        }       
+//        else
+//        {
+//            if ([appDelegate.metasync_timer isValid])		
+//            {
+//                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
+//            }            
+//        }       
         
         if ([appDelegate.event_thread isExecuting])
         {
@@ -262,13 +259,13 @@
                 }
             }
         }
-        else
-        {
-            if ([appDelegate.event_timer isValid])
-            {
-                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
-            }            
-        }   
+//        else
+//        {
+//            if ([appDelegate.event_timer isValid])
+//            {
+//                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
+//            }            
+//        }   
 
         appDelegate.isSpecialSyncDone = FALSE;
         [appDelegate callSpecialIncrementalSync];
@@ -291,8 +288,9 @@
     }
     [appDelegate ScheduleIncrementalMetaSyncTimer];
     [appDelegate ScheduleIncrementalDatasyncTimer];
-    [appDelegate ScheduleTimerForEventSync];
+    [appDelegate ScheduleTimerForEventSync];    
     
+    [appDelegate.reloadTable ReloadSyncTable];
 }
 
 - (void) synchronizeConfiguration
@@ -342,10 +340,10 @@
 
 - (void) startSyncConfiguration
 {
-
-    appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+    [delegate dismisspopover];
     
-	//new code to handle meta sync whenever the application is logged of the authentication module.
+    appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+    	//new code to handle meta sync whenever the application is logged of the authentication module.
 	BOOL retVal = [appDelegate pingServer];
     
     if(retVal == NO)
@@ -370,8 +368,6 @@
     appDelegate.isIncrementalMetaSyncInProgress = FALSE;
     
     @try {
-        
-        [delegate dismisspopover];
         
         if (!appDelegate.isInternetConnectionAvailable)
         {
@@ -434,7 +430,6 @@
         
 		if ([manualEventThread isExecuting])
 		{
-			
 			while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
 			{
 				if (!appDelegate.isInternetConnectionAvailable)
@@ -578,7 +573,15 @@
         
         [appDelegate.calDataBase insertMetaSyncStatus:@"Green" WithDB:appDelegate.db];
         
-        [appDelegate setSyncStatus:SYNC_GREEN];
+        BOOL conflict_exists = [appDelegate.databaseInterface getConflictsStatus];
+        if(conflict_exists)
+        {
+            appDelegate.SyncStatus = SYNC_RED;
+        }
+        else
+        {
+            appDelegate.SyncStatus = SYNC_GREEN;
+        }
 
         [alert show];
         [alert release];
@@ -631,29 +634,8 @@
         if([appDelegate.syncThread isExecuting])
         {
             return;
-            /*
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
-            {
-                if (!appDelegate.isInternetConnectionAvailable)
-                {
-                    break;
-                }
-                
-                if ([appDelegate.syncThread isFinished])
-                {
-                    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
-                    break;
-                }
-            }
-             */
         }
-        else{
-            if ( [appDelegate.datasync_timer isValid] )
-            {
-               // [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
-            }            
-        } 
-        
+            
         
         if ([appDelegate.metaSyncThread isExecuting])
         {
@@ -672,15 +654,7 @@
                 }
             }
         }
-        else
-        {
-            if ([appDelegate.metasync_timer isValid])
-            {
-                //[[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE             object:appDelegate.metasync_timer];
-            }            
-        }   
-        
-        
+                
         //RADHA 2012june12
         if (appDelegate.metaSyncRunning)
         {
@@ -746,11 +720,6 @@
 				[appDelegate setSyncStatus:SYNC_RED];
             else          
                 [appDelegate setSyncStatus:SYNC_GREEN];
-            
-            //[appDelegate setSyncStatus:appDelegate.SyncStatus];
-            //[appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
-            //[appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
-            //[appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
             [alert show];
             [alert release];
         }
@@ -776,7 +745,6 @@
         appDelegate.databaseInterface.MyPopoverDelegate = nil;
         appDelegate.wsInterface.MyPopoverDelegate = nil;
         
-        
     }
     if (fullDataSyncFailed == FALSE)
     {
@@ -795,13 +763,18 @@
             [alert show];
             [alert release];
         }
-        //appDelegate.SyncStatus = SYNC_GREEN;
         
-        [appDelegate setSyncStatus:SYNC_GREEN];
+        BOOL conflict_exists = [appDelegate.databaseInterface getConflictsStatus];
+        if(conflict_exists)
+        {
+            appDelegate.SyncStatus = SYNC_RED;
+        }
+        else
+        {
+            appDelegate.SyncStatus = SYNC_GREEN;
+        }
+        
 		[appDelegate.wsInterface.updateSyncStatus refreshSyncStatus];
-        //[appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
-        //[appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
-        //[appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
     }
     
     

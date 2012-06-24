@@ -147,6 +147,8 @@
 - (void)insertContactImageIntoDatabase:(NSString *)contactId andContactImageData:(NSString *)imageData;
 
 - (NSString *)retrieveContactImageDataFromDb:(NSString *)contactId;
+- (NSString *)getFieldValueFromTable:(NSString *)field_name;
+- (NSString *)getValueFromLookupwithId:(NSString *)Id;
 
 
 //Radha
@@ -164,6 +166,10 @@
 //Shrinivas --- Status for Meta Sync
 -(void) insertMetaSyncStatus:(NSString *)status WithDB:(sqlite3 *)db;
 -(NSString *) retrieveMetaSyncStatus;
+
+
+//Shrinivas 
+- (NSString *) getApi_NameWithReference:(NSString *)reference_to;
 
 
 #define DATABASENAME   @"sfm"

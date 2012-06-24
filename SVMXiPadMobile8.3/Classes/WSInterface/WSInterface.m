@@ -430,30 +430,11 @@ last_sync_time:(NSString *)last_sync_time
     BOOL conflict_exists = [appDelegate.databaseInterface getConflictsStatus];
     if(conflict_exists)
     {
-        //appDelegate.SyncStatus = SYNC_RED ;
-        
-        
-       /* NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_failed_try_again];
-        NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button1];
-        NSString * cancel = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
-
-        
-        
-        UIAlertView *av = [[UIAlertView alloc]initWithTitle:title message:message delegate:self cancelButtonTitle:cancel otherButtonTitles: nil];
-        [av show];
-        [av release]; */
-        
         [appDelegate setSyncStatus:SYNC_RED];
         [updateSyncStatus refreshSyncStatus];
-        //[refreshSyncButton showSyncStatusButton];
-        //[refreshModalStatusButton showModalSyncStatus];
-        //[manualDataSyncUIDelegate refreshdataSyncUI];
-        //[refreshSyncStatusUIButton showSyncUIStatus];
     }
     else
-    {
-        //appDelegate.SyncStatus = SYNC_GREEN;
-        
+    {        
         [self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP"];
         while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
         {
@@ -472,10 +453,6 @@ last_sync_time:(NSString *)last_sync_time
         
         [appDelegate setSyncStatus:SYNC_GREEN];
         [updateSyncStatus refreshSyncStatus];
-        //[refreshSyncButton showSyncStatusButton];
-        //[refreshModalStatusButton showModalSyncStatus];
-        //[manualDataSyncUIDelegate refreshdataSyncUI];
-        //[refreshSyncStatusUIButton showSyncUIStatus];
     }
     
     appDelegate.isSpecialSyncDone = TRUE;
@@ -1557,6 +1534,7 @@ last_sync_time:(NSString *)last_sync_time
     }
     
     appDelegate.dataSyncRunning = NO;
+    
 }
 
 
@@ -7086,7 +7064,6 @@ last_sync_time:(NSString *)last_sync_time
                             [array addObject:dict];
                             [conflict_dict setObject:array forKey:object_name];
                         }
-                        
                     }
                 }
             }
@@ -7181,7 +7158,7 @@ last_sync_time:(NSString *)last_sync_time
                     [self downloadcriteriaplist:dict];
                     [autoreleasePool release];*/
 
-                    [self downloadcriteriaplist:dcobjects_incrementalSync];
+                   // [self downloadcriteriaplist:dcobjects_incrementalSync];
                   
                 }
                 else if([key isEqualToString:@"Object_Name"] ||[key isEqualToString:@"Parent_Object"] || [key isEqualToString:@"Child_Object"])
@@ -8533,7 +8510,7 @@ last_sync_time:(NSString *)last_sync_time
         RecordTypePickList = [[NSMutableArray alloc] init];
         recordTypeObjName = objName;
         [[ZKServerSwitchboard switchboard] describeLayout:objName target:self selector:@selector(didDescribeSObjectLayoutForObject:error:context:) context:nil];
-       while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
             //shrinivas
             if (appDelegate.isForeGround == TRUE)
@@ -8608,51 +8585,57 @@ last_sync_time:(NSString *)last_sync_time
     
     for(ZKRecordTypeMapping *recordType in recordTypeMappings)
     {
-        NSMutableDictionary *sub_dict =[[NSMutableDictionary alloc] init];
-         
-        [sub_dict setObject:[recordType name] forKey:@"RecorTypeName"];
-        [sub_dict setObject:[recordType layoutId] forKey:@"RecorTypeLayoutId"];
-        [sub_dict setObject:[recordType recordTypeId] forKey:@"RecorTypeId"];
+        //RADHA 23/06/2012
+        BOOL availabe = [recordType available];
         
-        
-        NSArray *pickLists = [recordType picklistsForRecordType];
-        NSMutableArray *pickList_Main_Array = [[NSMutableArray alloc] init];
-        
-        
-        for(ZKPicklistForRecordType *pickList in pickLists)
-        {            
-            NSArray *pickListValueArray = [pickList picklistValues];
-            NSMutableArray *pickListValue_array = [[NSMutableArray alloc] init];
-            NSMutableDictionary *pickListValue_dict = [[NSMutableDictionary alloc] init];
-            NSString *defaultLabel = @"";
-            NSString *defaultValue = @"";
-            for(ZKPicklistEntry *pickListValue in pickListValueArray)
-            {
-                NSMutableDictionary *pickList_value_Dict = [[NSMutableDictionary alloc] init];                   
-                [pickList_value_Dict setObject:[pickListValue label] forKey:@"label"];
-                [pickList_value_Dict setObject:[pickListValue value] forKey:@"value"]; 
-                if([pickListValue defaultValue])
+        if (availabe)
+        {
+            NSMutableDictionary *sub_dict =[[NSMutableDictionary alloc] init];
+             
+            [sub_dict setObject:[recordType name] forKey:@"RecorTypeName"];
+            [sub_dict setObject:[recordType layoutId] forKey:@"RecorTypeLayoutId"];
+            [sub_dict setObject:[recordType recordTypeId] forKey:@"RecorTypeId"];
+            
+            
+            NSArray *pickLists = [recordType picklistsForRecordType];
+            NSMutableArray *pickList_Main_Array = [[NSMutableArray alloc] init];
+            
+            
+            for(ZKPicklistForRecordType *pickList in pickLists)
+            {            
+                NSArray *pickListValueArray = [pickList picklistValues];
+                NSMutableArray *pickListValue_array = [[NSMutableArray alloc] init];
+                NSMutableDictionary *pickListValue_dict = [[NSMutableDictionary alloc] init];
+                NSString *defaultLabel = @"";
+                NSString *defaultValue = @"";
+                for(ZKPicklistEntry *pickListValue in pickListValueArray)
                 {
-                    defaultLabel = [pickListValue label];
-                    defaultValue = [pickListValue value];   
-                }
-                [pickListValue_array addObject:pickList_value_Dict];
-                [pickList_value_Dict release];
-            }            
-            [pickListValue_dict setObject:[pickList picklistName] forKey:@"PickListName"];
-            [pickListValue_dict setObject:pickListValue_array forKey:@"PickListValue"];
-            [pickListValue_dict setObject:defaultLabel forKey:@"PickListDefaultLabel"];
-            [pickListValue_dict setObject:defaultValue forKey:@"PickListDefaultValue"];
-            [pickListValue_array release];
-            [pickList_Main_Array addObject:pickListValue_dict];
-            [pickListValue_dict release];
+                    NSMutableDictionary *pickList_value_Dict = [[NSMutableDictionary alloc] init];                   
+                    [pickList_value_Dict setObject:[pickListValue label] forKey:@"label"];
+                    [pickList_value_Dict setObject:[pickListValue value] forKey:@"value"]; 
+                    if([pickListValue defaultValue])
+                    {
+                        defaultLabel = [pickListValue label];
+                        defaultValue = [pickListValue value];   
+                    }
+                    [pickListValue_array addObject:pickList_value_Dict];
+                    [pickList_value_Dict release];
+                }            
+                [pickListValue_dict setObject:[pickList picklistName] forKey:@"PickListName"];
+                [pickListValue_dict setObject:pickListValue_array forKey:@"PickListValue"];
+                [pickListValue_dict setObject:defaultLabel forKey:@"PickListDefaultLabel"];
+                [pickListValue_dict setObject:defaultValue forKey:@"PickListDefaultValue"];
+                [pickListValue_array release];
+                [pickList_Main_Array addObject:pickListValue_dict];
+                [pickListValue_dict release];
+            }
+            
+            [sub_dict setObject:pickList_Main_Array forKey:@"PickLists"];
+            [pickList_Main_Array release]; 
+            [RecordTypePickListForObject addObject:sub_dict];
+            [sub_dict release];
+            
         }
-        
-        [sub_dict setObject:pickList_Main_Array forKey:@"PickLists"];
-        [pickList_Main_Array release]; 
-        [RecordTypePickListForObject addObject:sub_dict];
-        [sub_dict release];
-        
     }
     if ([RecordTypePickListForObject count] > 0)
         [recordTypeDict setObject:RecordTypePickListForObject forKey:recordTypeObjName];
@@ -9521,7 +9504,7 @@ last_sync_time:(NSString *)last_sync_time
     {
         for(int x=0; x<[detailDataArray count]; x++)
         {
-            for(int y=0; y<[detailDataArray count]-1; y++)
+            for(int y=0; y < [detailDataArray count]-1; y++)
             {
                 NSDictionary * dict = [detailDataArray objectAtIndex:y];
                 NSString * sequence = [dict objectForKey:gDETAIL_SEQUENCE_NO];

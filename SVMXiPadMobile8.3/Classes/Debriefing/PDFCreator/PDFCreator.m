@@ -516,26 +516,28 @@
         if ([appDelegate.addressType isEqualToString:@"Account Bill To"])
         {
             NSDictionary * company = [self getObjectForKey:@"SVMXC__Company__c"];
-//            ZKSObject * company = [reportEssentialsDict objectForKey:@"SVMXC__Company__r"];
 
+            if ([company isKindOfClass:[NSDictionary class]])
+            {
                 _account = [NSArray arrayWithObjects:
                             [company objectForKey:@"BillingStreet"],
                             [company objectForKey:@"BillingCity"],
                             [company objectForKey:@"BillingState"],
                             [company objectForKey:@"BillingCountry"],
                             [company objectForKey:@"BillingPostalCode"], nil];
+            }
         }
         else if ([appDelegate.addressType isEqualToString:@"Account Ship To"])
         {
-            NSDictionary * company = [self getObjectForKey:@"SVMXC__Company__c"];
-//            ZKSObject * company = [reportEssentialsDict objectForKey:@"SVMXC__Company__r"];
+            NSDictionary * company = [self getObjectForKey:@"SVMXC__Company__c"];                
+            if ([company isKindOfClass:[NSDictionary class]])
             {
                 _account = [NSArray arrayWithObjects:
-                            [company objectForKey:@"ShippingStreet"],
-                            [company objectForKey:@"ShippingCity"], 
-                            [company objectForKey:@"ShippingState"], 
-                            [company objectForKey:@"ShippingCountry"], 
-                            [company objectForKey:@"ShippingPostalCode"], nil];
+                        [company objectForKey:@"ShippingStreet"],
+                        [company objectForKey:@"ShippingCity"], 
+                        [company objectForKey:@"ShippingState"], 
+                        [company objectForKey:@"ShippingCountry"], 
+                        [company objectForKey:@"ShippingPostalCode"], nil];
             }
         }
         else if ([appDelegate.addressType isEqualToString:@"Service Location"])
@@ -550,25 +552,21 @@
         else if ([appDelegate.addressType isEqualToString:@"Contact Address"])
         {
             NSDictionary * contact = [self getObjectForKey:@"SVMXC__Contact__c"];
-//            ZKSObject * contact = [reportEssentialsDict objectForKey:@"SVMXC__Contact__r"];
+            if ([contact isKindOfClass:[NSDictionary class]])
             {
+
                 _account = [NSArray arrayWithObjects:
-                            [contact objectForKey:@"MailingStreet"], 
-                            [contact objectForKey:@"MailingState"],
-                            [contact objectForKey:@"MailingPostalCode"], 
-                            [contact objectForKey:@"MailingCountry"], 
-                            [contact objectForKey:@"MailingCity"], nil];
+                        [contact objectForKey:@"MailingStreet"], 
+                        [contact objectForKey:@"MailingState"],
+                        [contact objectForKey:@"MailingPostalCode"], 
+                        [contact objectForKey:@"MailingCountry"], 
+                        [contact objectForKey:@"MailingCity"], nil];
             }
         }
 
         [self setAccount:_account];
     }
 
-   // ZKSObject * contact = [reportEssentialsDict objectForKey:CONTACT];
-    //Abinash
-   // NSDictionary * contact = [self getObjectForKey:@"SVMXC__Contact__c"];
-  //  NSDictionary * contact = [reportEssentialsDict objectForKey:@"Contact.Name"];
-   // NSString * contactName = [contact objectForKey:@"Name"];
     NSString * contactName = [reportEssentialsDict objectForKey:@"Contact.Name"];
     
     if (![contactName isKindOfClass:[NSString class]])

@@ -328,20 +328,71 @@
     NSData *data;
     
     NSLog(@"%@", array);
-    
-   // self.productName = [[array objectAtIndex:index] objectForKey:DOCUMENTS_NAME];
-    
     self.productId = [appDelegate.calDataBase getProductIdForName:self.productName];
     
     _index = index;
-    data = [appDelegate.calDataBase selectTroubleShootingDataFromDBwithID:[[array objectAtIndex:index]objectForKey:@"DocId"] andName:[[array objectAtIndex:index]objectForKey:@"Name"]];
-    
-    if ( data == NULL )
+	
+	//Change for Troubleshooting  22/07/2012.
+	if (!appDelegate.isInternetConnectionAvailable)
+	{
+		data = [appDelegate.calDataBase selectTroubleShootingDataFromDBwithID:[[array objectAtIndex:index]objectForKey:@"DocId"] andName:[[array objectAtIndex:index]objectForKey:@"Name"]];
+		
+		if ( data != NULL)
+		{
+			TroubleshootingCell * cell = (TroubleshootingCell *)[tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
+			cell.isClicked = NO;
+			[cell stopActivity];
+			
+			//Shrinivas
+			NSFileManager * fileManager = [NSFileManager defaultManager];
+			NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+			NSString * documentsDirectoryPath = [paths objectAtIndex:0]; 
+			
+			NSLog(@"%@", array);
+			NSLog(@"%@",[[array objectAtIndex:index]objectForKey:@"DocId"]);
+			
+			NSString * filePath = [documentsDirectoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@%@",[[array objectAtIndex:index]objectForKey:@"DocId"], @".zip"]];
+			
+			NSString * folderPath = [documentsDirectoryPath stringByAppendingPathComponent:[[array objectAtIndex:index]objectForKey:@"DocId"]];
+			
+			NSLog(@"%@, %@", folderPath, filePath);
+			
+			[fileManager createFileAtPath:filePath contents:data attributes:nil];
+			
+			[self unzipAndViewFile:[folderPath stringByAppendingString:@".zip"]];
+			
+			NSString * actualFilePath = [documentsDirectoryPath stringByAppendingPathComponent:[[array objectAtIndex:index]objectForKey:@"Name"]];
+			actualFilePath = [actualFilePath stringByAppendingPathComponent:@"index.html"];
+			
+			NSLog(@"%@", actualFilePath);
+			
+			NSURL * baseURL = [NSURL fileURLWithPath:[documentsDirectoryPath stringByAppendingPathComponent:[[array objectAtIndex:index]objectForKey:@"Name"]]];
+			NSError * error;
+			
+			NSString * fileContents = [NSString stringWithContentsOfFile:actualFilePath encoding:NSUTF8StringEncoding error:&error];
+			
+			NSLog(@"%@", fileContents);
+			
+			if (fileContents == nil)
+			{
+				NSString * filePath = [documentsDirectoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@%@", [[array objectAtIndex:index]objectForKey:@"DocId"], @".zip"]];
+				[self unzipAndViewFile:filePath];
+				fileContents = [NSString stringWithContentsOfFile:actualFilePath encoding:NSUTF8StringEncoding error:&error];
+				
+				NSLog(@"%@", fileContents);
+			}
+			
+			[webView loadHTMLString:fileContents baseURL:baseURL];
+		}
+		
+	}
+	
+    else
     {
         NSArray * keys = [[NSArray alloc] initWithObjects:FILEID, FILENAME, nil];
         NSArray * objects = [[NSArray alloc] initWithObjects:[[array objectAtIndex:index]objectForKey:@"DocId"] ,[[array objectAtIndex:index]objectForKey:@"Name"],nil];
+		
         NSDictionary * _dict = [[NSDictionary alloc] initWithObjects:objects forKeys:keys];
-        
         NSLog(@"%@", _dict);
         
         if (!appDelegate.isInternetConnectionAvailable)
@@ -353,6 +404,7 @@
             NSString * ok = [appDelegate.wsInterface.tagsDictionary objectForKey: ALERT_ERROR_OK ];
             
             UIAlertView * _alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:ok otherButtonTitles:nil];
+			
             [_alert show];
             [_alert release];
         }
@@ -367,57 +419,57 @@
         [objects release];
     }
     
-    else
-    {
-        //Display data here
-        TroubleshootingCell * cell = (TroubleshootingCell *)[tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
-        cell.isClicked = NO;
-        [cell stopActivity];
-        
-        //Shrinivas
-        NSFileManager * fileManager = [NSFileManager defaultManager];
-        NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-        NSString * documentsDirectoryPath = [paths objectAtIndex:0]; 
-        
-        NSLog(@"%@", array);
-        NSLog(@"%@",[[array objectAtIndex:index]objectForKey:@"DocId"]);
-        
-        NSString * filePath = [documentsDirectoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@%@",[[array objectAtIndex:index]objectForKey:@"DocId"], @".zip"]];
-
-        NSString * folderPath = [documentsDirectoryPath stringByAppendingPathComponent:[[array objectAtIndex:index]objectForKey:@"DocId"]];
-        
-        //[fileManager createFileAtPath:filePath contents:data attributes:nil];
-        
-        NSLog(@"%@, %@", folderPath, filePath);
-        
-        [fileManager createFileAtPath:filePath contents:data attributes:nil];
-        
-        [self unzipAndViewFile:[folderPath stringByAppendingString:@".zip"]];
-        
-        NSString * actualFilePath = [documentsDirectoryPath stringByAppendingPathComponent:[[array objectAtIndex:index]objectForKey:@"Name"]];
-        actualFilePath = [actualFilePath stringByAppendingPathComponent:@"index.html"];
-        
-        NSLog(@"%@", actualFilePath);
-        
-        NSURL * baseURL = [NSURL fileURLWithPath:[documentsDirectoryPath stringByAppendingPathComponent:[[array objectAtIndex:index]objectForKey:@"Name"]]];
-        NSError * error;
-        
-        NSString * fileContents = [NSString stringWithContentsOfFile:actualFilePath encoding:NSUTF8StringEncoding error:&error];
-        
-        NSLog(@"%@", fileContents);
-        
-        if (fileContents == nil)
-        {
-            NSString * filePath = [documentsDirectoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@%@", [[array objectAtIndex:index]objectForKey:@"DocId"], @".zip"]];
-            [self unzipAndViewFile:filePath];
-            fileContents = [NSString stringWithContentsOfFile:actualFilePath encoding:NSUTF8StringEncoding error:&error];
-            
-            NSLog(@"%@", fileContents);
-        }
-        
-        [webView loadHTMLString:fileContents baseURL:baseURL];
-        
-    }
+//    else
+//    {
+//        //Display data here
+//        TroubleshootingCell * cell = (TroubleshootingCell *)[tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
+//        cell.isClicked = NO;
+//        [cell stopActivity];
+//        
+//        //Shrinivas
+//        NSFileManager * fileManager = [NSFileManager defaultManager];
+//        NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+//        NSString * documentsDirectoryPath = [paths objectAtIndex:0]; 
+//        
+//        NSLog(@"%@", array);
+//        NSLog(@"%@",[[array objectAtIndex:index]objectForKey:@"DocId"]);
+//        
+//        NSString * filePath = [documentsDirectoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@%@",[[array objectAtIndex:index]objectForKey:@"DocId"], @".zip"]];
+//
+//        NSString * folderPath = [documentsDirectoryPath stringByAppendingPathComponent:[[array objectAtIndex:index]objectForKey:@"DocId"]];
+//        
+//        //[fileManager createFileAtPath:filePath contents:data attributes:nil];
+//        
+//        NSLog(@"%@, %@", folderPath, filePath);
+//        
+//        [fileManager createFileAtPath:filePath contents:data attributes:nil];
+//        
+//        [self unzipAndViewFile:[folderPath stringByAppendingString:@".zip"]];
+//        
+//        NSString * actualFilePath = [documentsDirectoryPath stringByAppendingPathComponent:[[array objectAtIndex:index]objectForKey:@"Name"]];
+//        actualFilePath = [actualFilePath stringByAppendingPathComponent:@"index.html"];
+//        
+//        NSLog(@"%@", actualFilePath);
+//        
+//        NSURL * baseURL = [NSURL fileURLWithPath:[documentsDirectoryPath stringByAppendingPathComponent:[[array objectAtIndex:index]objectForKey:@"Name"]]];
+//        NSError * error;
+//        
+//        NSString * fileContents = [NSString stringWithContentsOfFile:actualFilePath encoding:NSUTF8StringEncoding error:&error];
+//        
+//        NSLog(@"%@", fileContents);
+//        
+//        if (fileContents == nil)
+//        {
+//            NSString * filePath = [documentsDirectoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@%@", [[array objectAtIndex:index]objectForKey:@"DocId"], @".zip"]];
+//            [self unzipAndViewFile:filePath];
+//            fileContents = [NSString stringWithContentsOfFile:actualFilePath encoding:NSUTF8StringEncoding error:&error];
+//            
+//            NSLog(@"%@", fileContents);
+//        }
+//        
+//        [webView loadHTMLString:fileContents baseURL:baseURL];
+//        
+//    }
     
     return [[array objectAtIndex:index]objectForKey:@"DocId"];
     
@@ -444,19 +496,13 @@
     
         NSArray * _array = [result records];
         if ([_array count] == 0)
-            
         {
             [activity stopAnimating];
             return;
         }
     
         NSData * data;
-        //NSFileManager * fileManager = [NSFileManager defaultManager];
-
-        //NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-        //NSString * documentsDirectoryPath = [paths objectAtIndex:0];
-        //NSString * filePath = [documentsDirectoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@%@", _fileId, @".zip"]];
-    
+      
         NSString * fileBinary = [[[_array objectAtIndex:0] fields] objectForKey:@"Body"];
         // Need to decode data from Base64
         data = [Base64 decode:fileBinary];
@@ -472,11 +518,60 @@
         if (referenceCount == 0)
             [activity stopAnimating];
     
-        // Save the data in application sandbox' Document folder by the name in dataName
-        //[fileManager createFileAtPath:filePath contents:data attributes:nil];
     
-        if ([lastClickedFile isEqualToString:_fileName])
-            [self showTroubleshootingForIndex:lastClickedIndex];
+        if ([lastClickedFile isEqualToString:_fileName])   //Change for troubleshooting Date : 22/06/2012
+		{
+			//[self showTroubleshootingForIndex:lastClickedIndex];
+			
+			TroubleshootingCell * cell = (TroubleshootingCell *)[tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:lastClickedIndex inSection:0]];
+			
+			cell.isClicked = NO;
+			[cell stopActivity];
+			
+			//Shrinivas
+			NSFileManager * fileManager = [NSFileManager defaultManager];
+			NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+			NSString * documentsDirectoryPath = [paths objectAtIndex:0]; 
+			
+			NSLog(@"%@", array);
+			NSLog(@"%@",[[array objectAtIndex:lastClickedIndex]objectForKey:@"DocId"]);
+			
+			NSString * filePath = [documentsDirectoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@%@",[[array objectAtIndex:lastClickedIndex]objectForKey:@"DocId"], @".zip"]];
+			
+			NSString * folderPath = [documentsDirectoryPath stringByAppendingPathComponent:[[array objectAtIndex:lastClickedIndex]objectForKey:@"DocId"]];
+			
+			NSLog(@"%@, %@", folderPath, filePath);
+			
+			[fileManager createFileAtPath:filePath contents:data attributes:nil];
+			
+			[self unzipAndViewFile:[folderPath stringByAppendingString:@".zip"]];
+			
+			NSString * actualFilePath = [documentsDirectoryPath stringByAppendingPathComponent:[[array objectAtIndex:lastClickedIndex]objectForKey:@"Name"]];
+			actualFilePath = [actualFilePath stringByAppendingPathComponent:@"index.html"];
+			
+			NSLog(@"%@", actualFilePath);
+			
+			NSURL * baseURL = [NSURL fileURLWithPath:[documentsDirectoryPath stringByAppendingPathComponent:[[array objectAtIndex:lastClickedIndex]objectForKey:@"Name"]]];
+			NSError * error;
+			
+			NSString * fileContents = [NSString stringWithContentsOfFile:actualFilePath encoding:NSUTF8StringEncoding error:&error];
+			
+			NSLog(@"%@", fileContents);
+			
+			if (fileContents == nil)
+			{
+				NSString * filePath = [documentsDirectoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@%@", [[array objectAtIndex:lastClickedIndex]objectForKey:@"DocId"], @".zip"]];
+				
+				[self unzipAndViewFile:filePath];
+				fileContents = [NSString stringWithContentsOfFile:actualFilePath encoding:NSUTF8StringEncoding error:&error];
+				
+				NSLog(@"%@", fileContents);
+			}
+			
+			[webView loadHTMLString:fileContents baseURL:baseURL];
+
+		}
+            
     }
 }
 

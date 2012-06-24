@@ -2714,16 +2714,16 @@
     
     if(isworkingInOffline)
     {
-        //NSString * _currentRecordId = @"2";//@"a0tK0000000D1fFIAS";
-        // [dataBase startSummaryFetchFromDB:currentRecordId];
-        Parts = [appDelegate.calDataBase queryForParts:currentRecordId];
+		//Get Parts for the Work Order
+        Parts    = [appDelegate.calDataBase queryForParts:appDelegate.sfmPageController.recordId];
         
-        Expenses =[appDelegate.calDataBase queryForExpenses:currentRecordId];
+		//Get Expense for the Work Order
+        Expenses = [appDelegate.calDataBase queryForExpenses:appDelegate.sfmPageController.recordId];
         
+		//Get Labor
+        LabourValuesDictionary = [appDelegate.calDataBase  queryForLabor:appDelegate.sfmPageController.recordId];
         
-        LabourValuesDictionary = [appDelegate.calDataBase  queryForLabor:currentRecordId];
-        
-        reportEssentials  = [[appDelegate.calDataBase getReportEssentials:currentRecordId] retain];
+        reportEssentials  = [[appDelegate.calDataBase getReportEssentials:appDelegate.sfmPageController.recordId] retain];
         NSLog(@" reportEssentis array ==%@",reportEssentials);
         //Labor = nil;
     }
@@ -8505,9 +8505,9 @@
     {
         //Shrinivas --> Crash Fix
         NSInteger sections = [tableView numberOfSections];
-        NSInteger rows = [tableView numberOfRowsInSection:sections - 1];
+        NSInteger rows = [tableView numberOfRowsInSection:sections] - 1;
         NSLog(@"%d", rows);
-        int index = 0;
+        int index = 0;      
         
         for ( int i = 0; i < sections - 1; i++)
         {

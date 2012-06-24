@@ -892,7 +892,14 @@
             {         
                 SVMXC__Product__c = [[NSString alloc] initWithUTF8String:_SVMXC__Product__c];
                 nameField = [self getNameField:SVMXC__Product__c];
-            }  
+				
+				//Shrinivas   --- Change for service Report  -- 22/06/2012
+				if ( [nameField isEqualToString:@""])
+				{
+					nameField = [self getProductNameFromDbWithID:SVMXC__Product__c];
+				}
+            } 
+			
             char *_SVMXC__Actual_Quantity2__c = (char *) synchronized_sqlite3_column_text(statement1,2);
             NSString * SVMXC__Actual_Quantity2__c_ = @"";    
             if ((_SVMXC__Actual_Quantity2__c != nil) && strlen(_SVMXC__Actual_Quantity2__c))
@@ -1941,32 +1948,63 @@
     
     int count = 0;
     
-    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, [final_query UTF8String],-1, &statement5, nil) == SQLITE_OK )
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [final_query UTF8String],-1, &statement5, nil) == SQLITE_OK)
     {
         while(synchronized_sqlite3_step(statement5) == SQLITE_ROW)
         {
             NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithCapacity:0];
-            for(int k = 0 ; k < [all_fields count] ; k++)
+//            for(int k = 0 ; k < [all_fields count] ; k++)
+//            {
+//                char * field = (char *) synchronized_sqlite3_column_text(statement5, k);
+//                char * columnText = (char *) sqlite3_column_name(statement5, k);
+//                if(field != nil)
+//                {
+//                    NSString * field_value = [NSString stringWithUTF8String:field];
+//                    NSString * field_name = [NSString stringWithUTF8String:columnText];
+//                    field_name = [all_fields objectAtIndex:count++];
+//                    field_name = [field_name stringByReplacingOccurrencesOfString:@"SVMXC__Service_Order__c." withString:@""];
+//                    [dict setValue:field_value forKey:field_name];
+//                }
+//                else
+//                    count++;
+//            }
+			
+			for(int k = 0 ; k < [all_fields count] ; k++)
             {
                 char * field = (char *) synchronized_sqlite3_column_text(statement5, k);
-                char * columnText = (char *) sqlite3_column_name(statement5, k);
-                if(field != nil)
-                {
-                    NSString * field_value = [NSString stringWithUTF8String:field];
-                    NSString * field_name = [NSString stringWithUTF8String:columnText];
-                    field_name = [all_fields objectAtIndex:count++];
-                    field_name = [field_name stringByReplacingOccurrencesOfString:@"SVMXC__Service_Order__c." withString:@""];
-                    [dict setValue:field_value forKey:field_name];
-                }
-                else
-                    count++;
+
+				NSString * field_value = @"";
+				NSString * field_name = @"";
+				if ( field != nil)
+				{
+					field_value = [NSString stringWithUTF8String:field];
+				}
+				
+				field_name = [all_fields objectAtIndex:k];
+				field_name = [field_name stringByReplacingOccurrencesOfString:@"SVMXC__Service_Order__c." withString:@""];
+				
+				if ([field_value isEqualToString:@""] && [field_name Contains:@"."])   //Fix for PDF
+				{
+					NSString * referenceTo = [self getApi_NameWithReference:[field_name stringByReplacingOccurrencesOfString:@".Name" withString:@""]];
+				
+					NSString * Id = [self getFieldValueFromTable:referenceTo];
+					field_value = [self getValueFromLookupwithId:Id];
+					
+				}
+				
+				[dict setValue:field_value forKey:field_name];
             }
+
+			
             [reportEssentialArray addObject:dict];
             [dict release];
         }
     }
     synchronized_sqlite3_finalize(statement5);
+	
     NSLog(@"Report Essential Array %@", reportEssentialArray);
+	
+	
     
     NSMutableArray *  refernce_array = [appDelegate.calDataBase getreferncetableFieldsForReportEsentials:reportEssentialArray];
     
@@ -2017,7 +2055,6 @@
         }
         
         //these 2 lines of code has to be merged
-        
         table_name = [self getTableName:key];
         
         if([queryableFields length]!= 0)
@@ -2843,18 +2880,52 @@
 
 - (void) insertTroubleshootingIntoDB:(NSMutableArray *)troubleshooting
 {
+	//Change for Troubleshooting 22/06/2012
     for ( int i = 0; i < [troubleshooting count]; i++ )
     {
         NSMutableDictionary *dict = [troubleshooting objectAtIndex:i];
-        NSMutableString *insertQuery = [NSString stringWithFormat:@"Insert into Document (Id, Name, Keywords) Values ( '%@', '%@', '%@')",[dict objectForKey:DOCUMENTS_ID],
-                                        [dict objectForKey:DOCUMENTS_NAME],[dict objectForKey:DOCUMENTS_KEYWORDS]];
-        
-        char *err;
-        if (synchronized_sqlite3_exec(appDelegate.db, [insertQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
-        {
-            NSLog(@"Failed to update table");
-        }  
-    }
+		NSString * selectQuery = [NSString stringWithFormat:@"Select Name from Document where Id = '%@'", [dict objectForKey:DOCUMENTS_ID]];
+		
+		sqlite3_stmt * stmt;
+		NSString * docName = @"";
+		
+		if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+		{
+			if (synchronized_sqlite3_step(stmt) == SQLITE_ROW) 
+			{
+				const char * _docName = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_1);
+				if (_docName != nil)
+				{
+					docName = [NSString stringWithCString:_docName encoding:NSUTF8StringEncoding];
+				}
+			}
+		}
+		
+		
+		if ([[dict objectForKey:DOCUMENTS_NAME] isEqualToString:docName])
+		{
+			NSMutableString *insertQuery = [NSString stringWithFormat:@"Update Document Set Id = '%@', Name = '%@', Keywords = '%@' Where Id = '%@'",[dict objectForKey:DOCUMENTS_ID],
+											[dict objectForKey:DOCUMENTS_NAME],[dict objectForKey:DOCUMENTS_KEYWORDS],[dict objectForKey:DOCUMENTS_ID] ];
+			
+			char *err;
+			if (synchronized_sqlite3_exec(appDelegate.db, [insertQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
+			{
+				NSLog(@"Failed to update table");
+			}  
+
+		}else {
+			NSMutableString *insertQuery = [NSString stringWithFormat:@"Insert into Document (Id, Name, Keywords) Values ('%@', '%@', '%@')",[dict objectForKey:DOCUMENTS_ID],
+											[dict objectForKey:DOCUMENTS_NAME],[dict objectForKey:DOCUMENTS_KEYWORDS]];
+			
+			char *err;
+			if (synchronized_sqlite3_exec(appDelegate.db, [insertQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
+			{
+				NSLog(@"Failed to update table");
+			}  
+
+		}
+		
+	}
     
 }
 
@@ -3876,6 +3947,94 @@
     }
 
     return sync_Status;
+}
+
+- (NSString *) getApi_NameWithReference:(NSString *)reference_to
+{
+	NSString * api_name = @"";
+	NSString * label = @"";
+	NSString * final_api_name = @"";
+	
+	NSMutableArray * apiArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+	
+	NSString * selectQuery = [NSString stringWithFormat:@"Select DISTINCT api_name,label from SFObjectField where object_api_name = 'SVMXC__Service_Order__c' and reference_to = '%@'", reference_to];
+	
+	sqlite3_stmt * statement;
+    
+    const char * _selectQuery = [selectQuery UTF8String];
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, _selectQuery,-1, &statement, nil) == SQLITE_OK)
+    {
+        
+        while(synchronized_sqlite3_step(statement) == SQLITE_ROW){
+            char * field1 = (char *) synchronized_sqlite3_column_text(statement, COLUMN_1);
+            if (field1 != nil)
+			{
+                api_name = [[NSString alloc] initWithUTF8String:field1];
+				[apiArray addObject:api_name];
+			}
+			
+			char * field2 = (char *) synchronized_sqlite3_column_text(statement, COLUMN_2);
+            if (field2 != nil)
+			{
+                label = [[NSString alloc] initWithUTF8String:field2];
+				[apiArray addObject:label];
+			}
+            
+			if ([api_name Contains:@"SVMXC"] && [reference_to Contains:label])
+			{
+				final_api_name = api_name;
+			}
+        }
+        
+    }
+	
+	return final_api_name;
+}
+
+- (NSString *)getFieldValueFromTable:(NSString *)field_name
+{
+	NSString * value = @"";
+	NSString * selectQuery = [NSString stringWithFormat:@"Select %@ from SVMXC__Service_Order__c where local_id = '%@'", field_name, appDelegate.sfmPageController.recordId];
+	
+	sqlite3_stmt * statement;
+    const char * _selectQuery = [selectQuery UTF8String];
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, _selectQuery,-1, &statement, nil) == SQLITE_OK)
+    {
+        
+        while(synchronized_sqlite3_step(statement) == SQLITE_ROW){
+            char * field1 = (char *) synchronized_sqlite3_column_text(statement, COLUMN_1);
+            if (field1 != nil)
+                value = [[NSString alloc] initWithUTF8String:field1];
+            
+        }
+        
+    }
+	
+	return value;
+}
+
+- (NSString *)getValueFromLookupwithId:(NSString *)_Id
+{
+	NSString * Id = @"";
+	NSString * selectQuery = [NSString stringWithFormat:@"Select DISTINCT value from LookUpFieldValue where Id = '%@'", _Id];
+	
+	sqlite3_stmt * statement;
+    const char * _selectQuery = [selectQuery UTF8String];
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, _selectQuery,-1, &statement, nil) == SQLITE_OK)
+    {
+        
+        while(synchronized_sqlite3_step(statement) == SQLITE_ROW){
+            char * field1 = (char *) synchronized_sqlite3_column_text(statement, COLUMN_1);
+            if (field1 != nil)
+                Id = [[NSString alloc] initWithUTF8String:field1];
+            
+        }
+    }
+	
+	return Id;
 }
 
 
