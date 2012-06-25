@@ -38,11 +38,11 @@
     [self.view addSubview:appDelegate.animatedImageView];
     if( isShowingDailyView )
     {
-		appDelegate.animatedImageView.frame = CGRectMake(784, 8, 26, 26);
+		appDelegate.animatedImageView.frame = CGRectMake(834, 8, 26, 26);
     }
     else
     {
-        appDelegate.animatedImageView.frame = CGRectMake(837, 8, 26, 26);
+        appDelegate.animatedImageView.frame = CGRectMake(885, 8, 26, 26);
     }
 	
 }
@@ -687,7 +687,7 @@
             HomeButton.frame = homeButtonRect;
             refreshButton.frame = refreshButtontRect;
             //statusButton.frame = CGRectMake(815, 8, 26, 26);
-            appDelegate.animatedImageView.frame = CGRectMake(784, 8, 26, 26);
+            appDelegate.animatedImageView.frame = CGRectMake(834, 8, 26, 26);
             [UIView commitAnimations];
             isViewDirty = NO;
         }
@@ -704,7 +704,7 @@
             HomeButton.frame = homeButtonRect;
             refreshButton.frame = refreshButtontRect;
             //statusButton.frame = CGRectMake(815, 8, 26, 26);
-            appDelegate.animatedImageView.frame = CGRectMake(784, 8, 26, 26);
+            appDelegate.animatedImageView.frame = CGRectMake(834, 8, 26, 26);
             [UIView commitAnimations];
         }
         
@@ -761,7 +761,7 @@
         refreshButtontRect = refreshButton.frame;
         refreshButton.frame = refreshButtontRect;
         //statusButton.frame = CGRectMake(855, 8, 26, 26); //Check This  
-        appDelegate.animatedImageView.frame = CGRectMake(837, 8, 26, 26);
+        appDelegate.animatedImageView.frame = CGRectMake(885, 8, 26, 26);
         [UIView commitAnimations];
         
         [self disableUI];

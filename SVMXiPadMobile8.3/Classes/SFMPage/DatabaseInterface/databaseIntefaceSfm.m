@@ -2085,10 +2085,12 @@
     NSString * modified_expr = [expression_ stringByReplacingOccurrencesOfString:@"(" withString:@"#(#"];
     modified_expr = [modified_expr stringByReplacingOccurrencesOfString:@")" withString:@"#)#"];
     modified_expr  = [modified_expr stringByReplacingOccurrencesOfString:@"and" withString:@"#and#"];
+    modified_expr  = [modified_expr stringByReplacingOccurrencesOfString:@"AND" withString:@"#AND#"];
+    modified_expr  = [modified_expr stringByReplacingOccurrencesOfString:@"OR" withString:@"#OR#"];
     modified_expr = [modified_expr stringByReplacingOccurrencesOfString:@"or" withString:@"#or#"];
     
     NSArray * array = [modified_expr componentsSeparatedByString:@"#"];
-
+    
     
     NSMutableArray * components = [[NSMutableArray alloc] initWithCapacity:0];
     NSMutableArray * operators = [[NSMutableArray alloc] initWithCapacity:0];
@@ -2107,11 +2109,11 @@
         {
             [operators addObject:str];
         }
-        else if([str isEqualToString:@"or"])
+        else if([str isEqualToString:@"or"] || [str isEqualToString:@"OR"])
         {
             [operators addObject:str];
         }
-        else if([str isEqualToString:@"and"])
+        else if([str isEqualToString:@"and"] || [str isEqualToString:@"AND"])
         {
             [operators addObject:str];
         }

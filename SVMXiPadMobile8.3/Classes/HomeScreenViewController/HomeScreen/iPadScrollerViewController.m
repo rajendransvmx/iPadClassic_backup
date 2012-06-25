@@ -1252,12 +1252,7 @@ const float progress_ = 0.07;
         [self showAlertForInternetUnAvailability];
         return;
     }
-    if(appDelegate.isForeGround)
-    {
-        return;
-    }
-    
-    /*
+      /*
     //SFM Search 
     appDelegate.initial_sync_status = SYNC_SFM_SEARCH;
     appDelegate.Sync_check_in = FALSE;
@@ -1287,11 +1282,7 @@ const float progress_ = 0.07;
         [self showAlertForInternetUnAvailability];
         return;
     }
-    if(appDelegate.isForeGround)
-    {
-        return;
-    }
-    //SFM Search End
+       //SFM Search End
     
     
     NSLog(@"SAMMAN MetaSync WS End: %@", [NSDate date]);
@@ -1305,13 +1296,7 @@ const float progress_ = 0.07;
         [self showAlertForInternetUnAvailability];
         return;
     }
-    if(appDelegate.isForeGround)
-    {
-        appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
-        return;
-    }
-    
-    NSLog(@"META SYNC 1");
+      NSLog(@"META SYNC 1");
     
     if (appDelegate.didFinishWithError == TRUE)
     {
@@ -1369,11 +1354,7 @@ const float progress_ = 0.07;
         [self showAlertForInternetUnAvailability];
         return;
     }
-    if(appDelegate.isForeGround)
-    {
-        return;
-    }
-    
+      
     appDelegate.initial_sync_status = SYNC_DOWNLOAD_CRITERIA_SYNC;
     appDelegate.Sync_check_in = FALSE;
     
@@ -1426,12 +1407,7 @@ const float progress_ = 0.07;
             }
         }
     }
-    if(appDelegate.isForeGround)
-    {
-        appDelegate.initial_sync_succes_or_failed = DATA_SYNC_FAILED;
-        return;
-    }
-    NSLog(@"SAMMAN DataSync WS End: %@", [NSDate date]);
+      NSLog(@"SAMMAN DataSync WS End: %@", [NSDate date]);
     NSLog(@"SAMMAN Incremental DataSync WS Start: %@", [NSDate date]);
 
     txnstmt = @"END TRANSACTION";
@@ -1470,11 +1446,7 @@ const float progress_ = 0.07;
         [self showAlertForInternetUnAvailability];
         return;
     }
-    if(appDelegate.isForeGround)
-    {
-        return;
-    }
-   
+    
     appDelegate.initial_sync_status = SYNC_TX_FETCH;
     appDelegate.Sync_check_in = FALSE;
     
@@ -1510,12 +1482,7 @@ const float progress_ = 0.07;
         [self showAlertForInternetUnAvailability];
         return;
     }  
-    if(appDelegate.isForeGround)
-    {
-        appDelegate.initial_sync_succes_or_failed = TX_FETCH_FAILED;
-        return;
-    }
-    
+     
     appDelegate.initial_sync_status = SYNC_INSERTING_RECORDS_TO_LOCAL_DATABASE;
     appDelegate.Sync_check_in = FALSE;
     

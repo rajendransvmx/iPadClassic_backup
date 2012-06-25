@@ -186,6 +186,8 @@
     BOOL didCompleteAfterSaveEventCalls;
     BOOL webservice_call;
    
+    NSMutableArray *tempObjects, *tempObjects2;
+ 
 }
 //sahana
 @property (nonatomic) BOOL webservice_call;

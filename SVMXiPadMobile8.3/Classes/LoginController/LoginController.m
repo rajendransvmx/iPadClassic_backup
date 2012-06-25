@@ -21,7 +21,6 @@
 
 @implementation LoginController
 
-
 @synthesize didEnterAlertView;
 
 @synthesize eventInfoarray;
