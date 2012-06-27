@@ -377,7 +377,8 @@ last_sync_time:(NSString *)last_sync_time
     if(Insert_requestId == nil || [Insert_requestId isEqualToString:@""] )                                     
         Insert_requestId = [iServiceAppDelegate GetUUID];     
     
-    [self getAllRecordsForOperationTypeFromSYNCCONFLICT:PUT_INSERT OverRideFlag:NONE];
+//  [self getAllRecordsForOperationTypeFromSYNCCONFLICT:PUT_INSERT OverRideFlag:NONE];
+	[self getAllRecordsForOperationTypeFromSYNCCONFLICT:PUT_INSERT OverRideFlag:RETRY];  //change for new implementation.
     
     [self Put:PUT_INSERT];
     
@@ -394,7 +395,22 @@ last_sync_time:(NSString *)last_sync_time
         }
     }
 
-    
+	//put all deletes 
+	[self getAllRecordsForOperationTypeFromSYNCCONFLICT:PUT_DELETE OverRideFlag:RETRY];
+	[self Put:PUT_DELETE];
+	
+	while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    {
+        if (!appDelegate.isInternetConnectionAvailable)
+        {
+            return;
+        }
+        
+        if(appDelegate.Incremental_sync_status == PUT_DELETE_DONE || appDelegate.incrementalSync_Failed == TRUE)
+        {
+            break;
+        }
+    }
     [self getAllRecordsForOperationTypeFromSYNCCONFLICT:PUT_UPDATE OverRideFlag:CLIENT_OVERRIDE];
     [self Put:PUT_UPDATE];
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
@@ -411,7 +427,7 @@ last_sync_time:(NSString *)last_sync_time
     }
     
     [appDelegate.databaseInterface PutconflictRecordsIntoHeapFor:PUT_UPDATE override_flag:SERVER_OVERRIDE];
-    [appDelegate.databaseInterface PutconflictRecordsIntoHeapFor:PUT_DELETE override_flag:NONE];
+    [appDelegate.databaseInterface PutconflictRecordsIntoHeapFor:PUT_DELETE override_flag:SERVER_OVERRIDE];
     
     [self PutAllTheRecordsForIds];
     
@@ -2438,7 +2454,7 @@ last_sync_time:(NSString *)last_sync_time
     }
 
    else if([event_name isEqualToString:@"PUT_INSERT"] && [event_type isEqualToString:@"SYNC"])
-    {
+   {
         
         NSArray * masterObjects = [appDelegate.databaseInterface getAllObjectsForRecordType:MASTER  forOperation:INSERT];
         NSArray * detailObjects = [appDelegate.databaseInterface getAllObjectsForRecordType:DETAIL forOperation:INSERT];
@@ -2586,7 +2602,7 @@ last_sync_time:(NSString *)last_sync_time
                             
                             jsonWriter = [[SBJsonWriter alloc] init];
                             
-                            NSString * json_record= [ jsonWriter stringWithObject:each_record ];
+                            NSString * json_record = [jsonWriter stringWithObject:each_record];
                             testSVMXCMap.key = local_id;
                             testSVMXCMap.value = json_record;
                             
@@ -2599,7 +2615,7 @@ last_sync_time:(NSString *)last_sync_time
                             
                             if(appDelegate.speacialSyncIsGoingOn)
                             {
-                                [appDelegate.databaseInterface deleterecordsFromConflictTableForOperationType:PUT_INSERT overrideFlag:NONE table_name:SYNC_ERROR_CONFLICT id_value:local_id field_name:@"local_id"];
+                                [appDelegate.databaseInterface deleterecordsFromConflictTableForOperationType:PUT_INSERT overrideFlag:RETRY table_name:SYNC_ERROR_CONFLICT id_value:local_id field_name:@"local_id"];
                             }
                             
                         }
@@ -2709,14 +2725,19 @@ last_sync_time:(NSString *)last_sync_time
                 
                 testSVMXCMap.key = @"";
                 NSString * sf_id = [appDelegate.databaseInterface getSfid_For_LocalId_From_TrailerForlocal_id:local_id];
+				//Check the change
+				if ( sf_id == nil || [sf_id isEqualToString:@""])
+				{
+					sf_id = [[info_dict objectAtIndex:0] valueForKey:@"sf_id"];
+				}
                 testSVMXCMap.value = sf_id;
-                
+				
                 [record_svmxc.valueMap addObject:testSVMXCMap];
                 [testSVMXCMap release];
                 
                 if(appDelegate.speacialSyncIsGoingOn)
                 {
-                    [appDelegate.databaseInterface deleterecordsFromConflictTableForOperationType:PUT_DELETE overrideFlag:NONE table_name:SYNC_ERROR_CONFLICT id_value:sf_id field_name:@"sf_id"];
+                    [appDelegate.databaseInterface deleterecordsFromConflictTableForOperationType:PUT_DELETE overrideFlag:RETRY table_name:SYNC_ERROR_CONFLICT id_value:sf_id field_name:@"sf_id"];
                 }
                 
             }
@@ -2745,7 +2766,6 @@ last_sync_time:(NSString *)last_sync_time
             [svmxcmap release];
             [record_svmxc release];
             [iscallBack release];
-            
         }
         
     }
@@ -4048,9 +4068,7 @@ last_sync_time:(NSString *)last_sync_time
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl webService:webServiceClass];
-    NSLog(@"CurrentUrl %@",appDelegate.currentServerUrl);
-    NSLog(@"webservice %@",webServiceClass);
-    
+       
     binding.logXMLInOut = YES;
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
@@ -4080,7 +4098,7 @@ last_sync_time:(NSString *)last_sync_time
     
     [[ZKServerSwitchboard switchboard] doCheckSession];
     
-    if([event_name isEqualToString:ONLOAD] || [event_name isEqualToString:AFTERSAVE] || [event_name isEqualToString:GETPRICE])
+    if([event_name isEqualToString:ONLOAD] || [event_name isEqualToString:GETPRICE])
     {
         [binding INTF_PREQ_GetPrice_WSAsyncUsingParameters:getThoonsEvent
                                              SessionHeader:sessionHeader
@@ -4089,7 +4107,7 @@ last_sync_time:(NSString *)last_sync_time
                                             AllowFieldTruncationHeader:allowFieldTruncationHeader
                                             delegate:self];
     }
-    else if([event_name isEqualToString:BEFORESAVE])
+    else if([event_name isEqualToString:BEFORESAVE] || [event_name isEqualToString:AFTERSAVE])
     {
         if(appDelegate.afterSavePageLevelEvents == nil)
         {

@@ -25,9 +25,7 @@ static NSInteger MY_TAG = 0x666;
             label.backgroundColor = [UIColor clearColor];
             label.font = [UIFont boldSystemFontOfSize:16];
             label.textAlignment = UITextAlignmentCenter;
-            label.shadowColor = [UIColor blueColor];
             label.tag = MY_TAG;
-            
             [segmentView addSubview:label];
             [label release];
         }
@@ -68,14 +66,12 @@ static NSInteger MY_TAG = 0x666;
 
 - (void)setSubTitle:(NSString *)title forSegmentAtIndex:(NSUInteger)segment
 {
-   // NSLog(@"%@", title);
     [self layoutSubviews];
     
-    for (UIView *segmentView in self.subviews)
+    for (UIView * segmentView in self.subviews)
     {
         
         UILabel *segmentLabel = (UILabel *)[[segmentView subviews] objectAtIndex:0];
-        //NSLog(@"%@", segmentLabel.text);
         if ([segmentLabel.text isEqualToString:[self titleForSegmentAtIndex:segment]])
         {
             
@@ -83,6 +79,9 @@ static NSInteger MY_TAG = 0x666;
             if (myLabel) 
             {
                 myLabel.text = title;
+				myLabel.font = [UIFont systemFontOfSize:12.0];
+				[myLabel setBackgroundColor:[UIColor clearColor]];
+				[myLabel setTextColor:[UIColor whiteColor]];
             }
             break;
         }

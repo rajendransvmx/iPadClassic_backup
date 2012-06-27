@@ -14,6 +14,7 @@
 #import "ManualDataSyncRoot.h"
 #import "EventViewController.h"
 #import "ManualDataSync.h"
+#import "MultiLineController.h"
 
 @implementation ManualDataSyncDetail
 
@@ -59,13 +60,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-        
-    
+	
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    
-    
     appDelegate.reloadTable = self;
-    
+	
     if ([appDelegate.internet_Conflicts count] == 0)
         appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
     
@@ -297,7 +295,7 @@
             [background addSubview:lbl];
             lbl.userInteractionEnabled = YES;
             
-            UILabel *textView = [[UILabel alloc] initWithFrame:CGRectMake(180, 3, 200, 50)];
+            UILabel *textView = [[UILabel alloc] initWithFrame:CGRectMake(180, 3, 300, 50)];
             textView.font = [UIFont systemFontOfSize:19.0];
             textView.text = [[appDelegate.internet_Conflicts objectAtIndex:0] objectForKey:@"Error_message"];
             textView.userInteractionEnabled = YES;
@@ -308,7 +306,7 @@
             [textView addGestureRecognizer:tapMe3];
             [tapMe3 release];
             
-            NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_retry];
+          /*  NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_retry];
             
             UIButton * retry = [UIButton buttonWithType:UIButtonTypeCustom];
             [retry setFrame:CGRectMake(420, 17, 100, 30)];
@@ -337,7 +335,7 @@
             
             //retryEventSyncAgain
             
-            [background addSubview:retry];            
+            [background addSubview:retry];    */      
             [cell.contentView addSubview:background];
             [textView release];
             
@@ -379,56 +377,95 @@
         [lbl addGestureRecognizer:tapMe1];
         [tapMe1 release];
         
-        
-        NSString * mobile = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_mobile_select];
-        NSString * online = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_select_online];
-               
-        MySegmentedControl *mySegment = [[MySegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:online,mobile, nil]];
-        mySegment.frame = CGRectMake(420, 20, 150, 30);
+		//Change of implementation.
+		NSString * retry  = [NSString stringWithFormat:@"Retry"];
+		NSString * remove = [NSString stringWithFormat:@"Remove"];
+		NSString * hold   = [NSString stringWithFormat:@"Hold"];
+		NSString * force  = [NSString stringWithFormat:@"Apply My"];
+		NSString * get_from_online = [NSString stringWithFormat:@"Get From"];
+		
+		
+		
+		
+        MultiLineController * mySegment = [[MultiLineController alloc] initWithItems:[NSArray arrayWithObjects:force,get_from_online,hold, nil]];
+			
+		mySegment.frame = CGRectMake(395, 10, 185, mySegment.frame.size.height * 1);
         mySegment.segmentedControlStyle = UISegmentedControlStyleBar;
+		[mySegment setSubTitle:@"Changes" forSegmentAtIndex:0];
+		[mySegment setSubTitle:@"Online"  forSegmentAtIndex:1];
+				
+        MultiLineController * mySegment1 = [[MultiLineController alloc] initWithItems:[NSArray arrayWithObjects:retry,remove,hold,nil]];
+		
+        mySegment1.frame = CGRectMake(395, 10, 185, mySegment1.frame.size.height * 1);
+        mySegment1.segmentedControlStyle = UISegmentedControlStyleBar;
+		
+		MultiLineController * mySegment2 = [[MultiLineController alloc] initWithItems:[NSArray arrayWithObjects:retry,NSLocalizedString(get_from_online, nil),hold,nil]];
+		
+        mySegment2.frame = CGRectMake(395, 10, 185, mySegment2.frame.size.height * 1);
+        mySegment2.segmentedControlStyle = UISegmentedControlStyleBar;
+		[mySegment2 setSubTitle:@"Online"  forSegmentAtIndex:1];
         
-        UIColor *newTintColor = [appDelegate colorForHex:@"#C8C8C8"];
+		UIColor *newTintColor = [appDelegate colorForHex:@"#C8C8C8"];
         mySegment.tintColor = newTintColor;
-        
-        if ( [override_flag isEqualToString:@"Server_Override"])
+		mySegment1.tintColor = newTintColor;
+		mySegment2.tintColor = newTintColor;
+		
+		
+		
+		if ([syncType isEqualToString:@"PUT_INSERT"] || [syncType isEqualToString:@"GET_INSERT"])
+		{
+			[cell.contentView addSubview:mySegment1];
+		}
+		
+		if ([syncType isEqualToString:@"PUT_DELETE"] || [syncType isEqualToString:@"GET_DELETE"])
+		{
+			[cell.contentView addSubview:mySegment2];
+		}
+		
+		if (([syncType isEqualToString:@"PUT_UPDATE"] || [syncType isEqualToString:@"GET_UPDATE"])&& [error_type isEqualToString:@"ERROR"] )
+		{
+			[cell.contentView addSubview:mySegment2];
+		}
+		
+		if (([syncType isEqualToString:@"PUT_UPDATE"] || [syncType isEqualToString:@"GET_UPDATE"])&& [error_type isEqualToString:@"CONFLICT"] )
+		{
+			[cell.contentView addSubview:mySegment];
+		}
+
+        [mySegment  addTarget:self action:@selector(segmentControlSelected:) forControlEvents:UIControlEventValueChanged];
+        [mySegment1 addTarget:self action:@selector(segmentControlSelected1:) forControlEvents:UIControlEventValueChanged];
+		[mySegment2 addTarget:self action:@selector(segmentControlSelected2:) forControlEvents:UIControlEventValueChanged];
+        		
+		
+		if ( [override_flag isEqualToString:@"Client_Override"])
+        {
+            [[[mySegment subviews] objectAtIndex:2] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
+        }
+		else if ([override_flag isEqualToString:@"None"]||[override_flag isEqualToString:@""])
         {
             [[[mySegment subviews] objectAtIndex:0] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
+			[[[mySegment1 subviews] objectAtIndex:2] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
+			[[[mySegment2 subviews] objectAtIndex:0] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
         }
-        else if ( [override_flag isEqualToString:@"Client_Override"])
+        else if ([override_flag isEqualToString:@"Server_Override"]||[override_flag isEqualToString:@""])
         {
             [[[mySegment subviews] objectAtIndex:1] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
+			[[[mySegment2 subviews] objectAtIndex:1] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
         }
-            
-        NSString * undo = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_undo];
-        NSString * hold = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_hold];
-        
-        MySegmentedControl *mySegment1 = [[MySegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:undo,hold,nil]];
-        mySegment1.frame = CGRectMake(420, 20, 140, 30);
-        mySegment1.segmentedControlStyle = UISegmentedControlStyleBar;
-        mySegment1.tintColor = newTintColor;
-        
-        if ( [override_flag isEqualToString:@"Undo"])
+		else if ([override_flag isEqualToString:@"retry"]||[override_flag isEqualToString:@""])
         {
             [[[mySegment1 subviews] objectAtIndex:0] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
+			[[[mySegment2 subviews] objectAtIndex:2] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
         }
-        else if ([override_flag isEqualToString:@"None"]||[override_flag isEqualToString:@""])
+		else if ([override_flag isEqualToString:@"remove"]||[override_flag isEqualToString:@""])
         {
             [[[mySegment1 subviews] objectAtIndex:1] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
+			
         }
 
-        [mySegment addTarget:self action:@selector(segmentControlSelected:) forControlEvents:UIControlEventValueChanged];
-        [mySegment1 addTarget:self action:@selector(segmentControlSelected1:) forControlEvents:UIControlEventValueChanged];
-        
-        if ([error_type isEqualToString:@"ERROR"])
-        {
-            [cell.contentView addSubview:mySegment1];
-        }
-        else if ([error_type isEqualToString:@"CONFLICT"])
-        {
-            [cell.contentView addSubview:mySegment];
-        }
         [mySegment release];
         [mySegment1 release];
+		[mySegment2 release];
         
             
         UILabel *textView = [[UILabel alloc] initWithFrame:CGRectMake(180, 3, 200, 50)];
@@ -460,7 +497,7 @@
             [background addSubview:lbl];
             lbl.userInteractionEnabled = YES;
             
-            UILabel * textView = [[UILabel alloc] initWithFrame:CGRectMake(180, 3, 200, 50)];
+            UILabel * textView = [[UILabel alloc] initWithFrame:CGRectMake(180, 3, 300, 50)];
             textView.font = [UIFont systemFontOfSize:19.0];
             textView.text = [[appDelegate.internet_Conflicts objectAtIndex:0] objectForKey:@"sync_type"];
             textView.userInteractionEnabled = YES;
@@ -471,7 +508,8 @@
             [textView addGestureRecognizer:tapMe3];
             [tapMe3 release];
             
-            NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_retry];
+    
+         /*   NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_retry];
             [title sizeWithFont:[UIFont fontWithName:@"HelveticaBold" size:19]];
             
             UIButton * retry = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -499,7 +537,7 @@
             else if ([lbl.text isEqualToString:event_sync])
                 [retry addTarget:self action:@selector(retryEventSyncAgain) forControlEvents:UIControlEventTouchUpInside];
             
-            [background addSubview:retry];            
+            [background addSubview:retry]; */           
 
             
             [cell.contentView addSubview:background];
@@ -542,58 +580,95 @@
         [lbl addGestureRecognizer:tapMe];
         [tapMe release];
         
-        NSString * mobile = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_mobile_select];
-        NSString * online = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_select_online];
+		
+		//Change of implementation.
+		NSString * retry = [NSString stringWithFormat:@"Retry"];
+		NSString * remove = [NSString stringWithFormat:@"Remove"];
+		NSString * hold = [NSString stringWithFormat:@"Hold"];
+		NSString * force = [NSString stringWithFormat:@"Apply My"];
+		NSString * get_from_online = [NSString stringWithFormat:@"Get From"];
 
-        
-        MySegmentedControl *mySegment = [[MySegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:online,mobile, nil]];
-        mySegment.frame = CGRectMake(420, 20, 150, 30);
+
+		MultiLineController * mySegment = [[MultiLineController alloc] initWithItems:[NSArray arrayWithObjects:force,get_from_online,hold, nil]];
+		
+		mySegment.frame = CGRectMake(395, 10, 185, mySegment.frame.size.height * 1);
         mySegment.segmentedControlStyle = UISegmentedControlStyleBar;
-        
-        NSString * undo = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_undo];
-        NSString * hold = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_hold];
-                
-        MySegmentedControl *mySegment1 = [[MySegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:undo,hold,nil]];
-        mySegment1.frame = CGRectMake(420, 20, 140, 30);
+		[mySegment setSubTitle:@"Changes" forSegmentAtIndex:0];
+		[mySegment setSubTitle:@"Online"  forSegmentAtIndex:1];
+
+        MultiLineController * mySegment1 = [[MultiLineController alloc] initWithItems:[NSArray arrayWithObjects:retry,remove,hold,nil]];
+		
+        mySegment1.frame = CGRectMake(395, 10, 185, mySegment.frame.size.height * 1);
         mySegment1.segmentedControlStyle = UISegmentedControlStyleBar;
+		
+		MultiLineController * mySegment2 = [[MultiLineController alloc] initWithItems:[NSArray arrayWithObjects:retry,get_from_online,hold,nil]];
+		
+		mySegment2.segmentedControlStyle = UISegmentedControlStyleBar;
+        mySegment2.frame = CGRectMake(395, 10, 185, mySegment.frame.size.height *1);
+		[mySegment2 setSubTitle:@"Online"  forSegmentAtIndex:1];
         
-        if ([error_type isEqualToString:@"ERROR"])
-        {
-            [cell.contentView addSubview:mySegment1];
-        }
-        else if ([error_type isEqualToString:@"CONFLICT"])
-        {
-            [cell.contentView addSubview:mySegment];
-        }
+		if ([syncType isEqualToString:@"PUT_INSERT"] || [syncType isEqualToString:@"GET_INSERT"])
+		{
+			[cell.contentView addSubview:mySegment1];
+		}
+		
+		if ([syncType isEqualToString:@"PUT_DELETE"] || [syncType isEqualToString:@"GET_DELETE"])
+		{
+			[cell.contentView addSubview:mySegment2];
+		}
+
+		
+		if (([syncType isEqualToString:@"PUT_UPDATE"] || [syncType isEqualToString:@"GET_UPDATE"])&& [error_type isEqualToString:@"ERROR"] )
+		{
+			[cell.contentView addSubview:mySegment2];
+		}
+		
+		if (([syncType isEqualToString:@"PUT_UPDATE"] || [syncType isEqualToString:@"GET_UPDATE"])&& [error_type isEqualToString:@"CONFLICT"] )
+		{
+			[cell.contentView addSubview:mySegment];
+		}
+		
 
         UIColor *newTintColor = [appDelegate colorForHex:@"#C8C8C8"];
         mySegment.tintColor = newTintColor;
+		mySegment1.tintColor = newTintColor;
+		mySegment2.tintColor = newTintColor;
+		
+		
         [mySegment addTarget:self action:@selector(segmentControlSelected:) forControlEvents:UIControlEventValueChanged];
         
-        if ( [override_flag isEqualToString:@"Server_Override"])
+        [mySegment1 addTarget:self action:@selector(segmentControlSelected1:) forControlEvents:UIControlEventValueChanged];
+		[mySegment2 addTarget:self action:@selector(segmentControlSelected2:) forControlEvents:UIControlEventValueChanged];
+        
+		if ( [override_flag isEqualToString:@"Client_Override"])
+        {
+            [[[mySegment subviews] objectAtIndex:2] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
+        }
+		else if ([override_flag isEqualToString:@"None"]||[override_flag isEqualToString:@""])
         {
             [[[mySegment subviews] objectAtIndex:0] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
+			[[[mySegment1 subviews] objectAtIndex:2] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
+			[[[mySegment2 subviews] objectAtIndex:0] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
         }
-        else if ( [override_flag isEqualToString:@"Client_Override"])
+        else if ([override_flag isEqualToString:@"Server_Override"]||[override_flag isEqualToString:@""])
         {
             [[[mySegment subviews] objectAtIndex:1] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
+			[[[mySegment2 subviews] objectAtIndex:1] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
         }
-
-        
-        mySegment1.tintColor = newTintColor;
-        [mySegment1 addTarget:self action:@selector(segmentControlSelected1:) forControlEvents:UIControlEventValueChanged];
-        
-        if ( [override_flag isEqualToString:@"Undo"])
+		else if ([override_flag isEqualToString:@"retry"]||[override_flag isEqualToString:@""])
         {
             [[[mySegment1 subviews] objectAtIndex:0] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
+			[[[mySegment2 subviews] objectAtIndex:2] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
         }
-        else if ([override_flag isEqualToString:@"None"]||[override_flag isEqualToString:@""])
+		else if ([override_flag isEqualToString:@"remove"]||[override_flag isEqualToString:@""])
         {
             [[[mySegment1 subviews] objectAtIndex:1] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
+			
         }
-
+		
         [mySegment release];
         [mySegment1 release];
+		[mySegment2 release];
     
         UILabel *textView = [[UILabel alloc] initWithFrame:CGRectMake(180, 3, 200, 50)];
         textView.font = [UIFont systemFontOfSize:19.0];
@@ -1161,10 +1236,11 @@
         else
             [v setTintColor:[appDelegate colorForHex:@"#C8C8C8"]];
     }
+	
     if ([segmentedControl selectedSegmentIndex] == 0) 
-        [appDelegate.calDataBase updateOverrideFlagWithObjectName:objectName andSFId:SFId WithStatus:@"Server_Override"];
-    if ([segmentedControl selectedSegmentIndex] == 1) 
         [appDelegate.calDataBase updateOverrideFlagWithObjectName:objectName andSFId:SFId WithStatus:@"Client_Override"];
+    if ([segmentedControl selectedSegmentIndex] == 1) 
+        [appDelegate.calDataBase updateOverrideFlagWithObjectName:objectName andSFId:SFId WithStatus:@"Server_Override"];
     if ([segmentedControl selectedSegmentIndex] == 2) 
         [appDelegate.calDataBase updateOverrideFlagWithObjectName:objectName andSFId:SFId WithStatus:@"None"];
 
@@ -1172,6 +1248,51 @@
 }
 
 - (IBAction) segmentControlSelected1:(id)sender
+{  
+    NSString * objectName = @"";
+    NSString *SFId = @"";
+    MySegmentedControl *segmentedControl = (MySegmentedControl *) sender;
+    NSIndexPath *indexPath = [self._tableView indexPathForCell:(UITableViewCell *)[[sender superview] superview]];
+    UIColor * newSelectedTintColor = [appDelegate colorForHex:@"#1589FF"];
+    
+    NSLog(@"%@", objectsDict);
+	
+    if (HeaderSelected == 1)
+    {
+        SFId = [[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"SFId"];
+        objectName = [objectsArray objectAtIndex:indexPath.section];
+    }
+	
+    else if (HeaderSelected == 0)
+    {
+        objectName = [objectsArray objectAtIndex:selectedRow];
+        SFId = [[[objectsDict objectForKey:[objectsArray objectAtIndex:selectedRow]]objectAtIndex:indexPath.row] objectForKey:@"SFId"];
+    }
+    
+    for(id v in [segmentedControl subviews])
+    {
+        if([v isSelected])
+            [v setTintColor:newSelectedTintColor];
+        
+        else
+            [v setTintColor:[appDelegate colorForHex:@"#C8C8C8"]];
+    }   
+//    if ([segmentedControl selectedSegmentIndex] == 0) 
+//        [appDelegate.calDataBase updateOverrideFlagWithObjectName:objectName andSFId:SFId WithStatus:@"Undo"];
+//    if ([segmentedControl selectedSegmentIndex] == 1) 
+//        [appDelegate.calDataBase updateOverrideFlagWithObjectName:objectName andSFId:SFId WithStatus:@"None"];
+	
+	if ([segmentedControl selectedSegmentIndex] == 0) 
+        [appDelegate.calDataBase updateOverrideFlagWithObjectName:objectName andSFId:SFId WithStatus:@"retry"];
+    if ([segmentedControl selectedSegmentIndex] == 1) 
+        [appDelegate.calDataBase updateOverrideFlagWithObjectName:objectName andSFId:SFId WithStatus:@"remove"];
+	if ([segmentedControl selectedSegmentIndex] == 2) 
+        [appDelegate.calDataBase updateOverrideFlagWithObjectName:objectName andSFId:SFId WithStatus:@"None"];
+
+}
+
+
+- (IBAction) segmentControlSelected2:(id)sender
 {  
     NSString * objectName = @"";
     NSString *SFId = @"";
@@ -1200,11 +1321,20 @@
         else
             [v setTintColor:[appDelegate colorForHex:@"#C8C8C8"]];
     }   
-    if ([segmentedControl selectedSegmentIndex] == 0) 
-        [appDelegate.calDataBase updateOverrideFlagWithObjectName:objectName andSFId:SFId WithStatus:@"Undo"];
+//    if ([segmentedControl selectedSegmentIndex] == 0) 
+//        [appDelegate.calDataBase updateOverrideFlagWithObjectName:objectName andSFId:SFId WithStatus:@"Undo"];
+//    if ([segmentedControl selectedSegmentIndex] == 1) 
+//        [appDelegate.calDataBase updateOverrideFlagWithObjectName:objectName andSFId:SFId WithStatus:@"None"];
+	
+	if ([segmentedControl selectedSegmentIndex] == 0) 
+        [appDelegate.calDataBase updateOverrideFlagWithObjectName:objectName andSFId:SFId WithStatus:@"retry"];
     if ([segmentedControl selectedSegmentIndex] == 1) 
+        [appDelegate.calDataBase updateOverrideFlagWithObjectName:objectName andSFId:SFId WithStatus:@"Server_Override"];
+	if ([segmentedControl selectedSegmentIndex] == 2) 
         [appDelegate.calDataBase updateOverrideFlagWithObjectName:objectName andSFId:SFId WithStatus:@"None"];
+
 }
+
 
 - (void) deleteUndoneRecords
 {

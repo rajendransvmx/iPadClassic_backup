@@ -1101,7 +1101,10 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc]init];
     
     [self goOnlineIfRequired];
-    if(_SyncStatus == SYNC_RED)
+	
+	BOOL retVal = [self.calDataBase selectCountFromSync_Conflicts];
+	
+    if(retVal == TRUE)
     {
         return;
     }
@@ -1138,16 +1141,20 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 {
     NSString * timerValue = ([self.settingsDict objectForKey:@"Frequency of Master Data"] != nil)?[self.settingsDict objectForKey:@"Frequency of Master Data"]:@"";
     
+    int value = [timerValue intValue];
+    
+    if (value == 0)
+        return;
     NSTimeInterval scheduledTimer = 0;
     
-    if (![timerValue isEqualToString:@""])  
+    if (![timerValue isEqualToString:@""] && ([timerValue length] > 0) )  
     {
         double timeInterval = [timerValue doubleValue];
         
         scheduledTimer = timeInterval * 60;
     }
     else
-        scheduledTimer = 600;
+        return;
     
     if( ![self.datasync_timer isValid] )
     {
@@ -1473,9 +1480,14 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 {
     NSString * timerInterval = ([self.settingsDict objectForKey:@"Frequency of Application Changes"] != nil)?[self.settingsDict objectForKey:@"Frequency of Application Changes"]:@"";
     
+    int value = [timerInterval intValue];
+    
+    if (value == 0)
+        return;
+    
     NSTimeInterval  metaSyncTimeInterval = 0;
     
-    if (![timerInterval isEqualToString:@""])
+    if (![timerInterval isEqualToString:@""] && ([timerInterval length] > 0))
     {
         double interval = [timerInterval doubleValue];
         
@@ -1535,14 +1547,22 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     
     NSString * timerInterval = ([self.settingsDict objectForKey:@"Dataset Synchronization"] != nil)?[self.settingsDict objectForKey:@"Dataset Synchronization"]:@"";
     
+    
+    int value = [timerInterval intValue];
+    
+    if (value == 0)
+        return;
+    
     NSTimeInterval  eventTimeInterval = 0;
     
-    if (![timerInterval isEqualToString:@""])
+    if (![timerInterval isEqualToString:@""] && ([timerInterval length] > 0))
     {
         double value = [timerInterval doubleValue];
         
         eventTimeInterval = value * 60;
     }
+    else 
+        return;
     
     if( ![self.event_timer isValid] )
     {

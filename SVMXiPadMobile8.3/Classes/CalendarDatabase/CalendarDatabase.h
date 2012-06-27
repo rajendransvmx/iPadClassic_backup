@@ -170,6 +170,7 @@
 
 //Shrinivas 
 - (NSString *) getApi_NameWithReference:(NSString *)reference_to;
+- (BOOL) selectCountFromSync_Conflicts;
 
 
 #define DATABASENAME   @"sfm"

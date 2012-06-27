@@ -3316,7 +3316,8 @@
     NSString * sf_id = @"" , * local_id = @"";
     NSString * object_name = @"" , * sync_type = @"";
     
-    NSString * selectQuery = [NSString stringWithFormat:@"Select sf_id, object_name , local_id ,sync_type  from sync_error_conflict where override_flag = 'Undo'"];
+	//NEW QUERY TO SELECT THE RECORDS TO BE REMOVED FROM 
+	 NSString * selectQuery = [NSString stringWithFormat:@"Select sf_id, object_name , local_id ,sync_type  from sync_error_conflict where override_flag = 'remove'"];
     sqlite3_stmt *stmt;
     NSMutableArray * records = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
     int ret = synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, NULL);
@@ -4037,6 +4038,29 @@
     }
 	
 	return Id;
+}
+
+- (BOOL) selectCountFromSync_Conflicts
+{
+	NSString * query = [NSString stringWithFormat:@"SELECT COUNT(*) FROM sync_error_conflict"];
+	
+	sqlite3_stmt * statement;
+	
+    int count = 0;
+	
+	if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, NULL) == SQLITE_OK)
+	{
+		while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+		{
+			count = synchronized_sqlite3_column_int(statement, 0);
+		}
+	}
+	
+	if (count > 0)
+		return TRUE;
+	else 
+		return FALSE;
+
 }
 
 

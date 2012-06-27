@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "iServiceAppDelegate.h"
 
 @interface MultiLineController : UISegmentedControl
 {

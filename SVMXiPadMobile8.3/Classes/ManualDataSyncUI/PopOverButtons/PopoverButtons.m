@@ -112,12 +112,15 @@
 
 - (void) Syncronise
 {
+	BOOL retVal;
     [delegate dismisspopover];
     appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
      NSString * data_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_data_sync];
-    if(appDelegate.SyncStatus != SYNC_RED)
+	
+	retVal = [appDelegate.calDataBase selectCountFromSync_Conflicts];
+	
+    if(retVal == FALSE)
     {        
-        
         if (appDelegate.eventSyncRunning)
             return;
         
@@ -185,7 +188,9 @@
             return;
         }
         
+		[delegate activityStart];
         [appDelegate callDataSync];
+		[delegate activityStop];
         appDelegate.dataSyncRunning = NO;
 }
     
@@ -268,6 +273,8 @@
 //        }   
 
         appDelegate.isSpecialSyncDone = FALSE;
+		
+		[delegate activityStart];
         [appDelegate callSpecialIncrementalSync];
         
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
@@ -278,10 +285,9 @@
             if (!appDelegate.isInternetConnectionAvailable)
                 break;
         }
-
-        
-        
-        if (appDelegate.SyncStatus != SYNC_RED)
+		
+        retVal = [appDelegate.calDataBase selectCountFromSync_Conflicts];
+        if (retVal == FALSE)
         {
             [appDelegate callDataSync];
         }
@@ -290,6 +296,7 @@
     [appDelegate ScheduleIncrementalDatasyncTimer];
     [appDelegate ScheduleTimerForEventSync];    
     
+	[delegate activityStop];
     [appDelegate.reloadTable ReloadSyncTable];
 }
 

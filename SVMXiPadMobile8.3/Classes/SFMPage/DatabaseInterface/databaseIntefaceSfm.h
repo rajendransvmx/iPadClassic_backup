@@ -229,6 +229,7 @@
 #define CLIENT_OVERRIDE                     @"Client_Override"
 #define UNDO                                @"Undo"
 #define NONE                                @"None"
+#define RETRY								@"retry"
 
 #define SYNC_ERROR_CONFLICT                 @"sync_error_conflict"
 #define SFDATATRAILER_TEMP                  @"SFDataTrailer_Temp"

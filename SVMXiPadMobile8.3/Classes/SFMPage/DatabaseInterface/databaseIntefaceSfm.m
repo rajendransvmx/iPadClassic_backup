@@ -5340,7 +5340,8 @@
     for(NSString * str in deleted_objects)
     {
         char * err;
-        NSString * delete_Statement = [[NSString alloc] initWithFormat:@"DELETE FROM %@ where upper(Id) not in (SELECT upper(WhatId) FROM Event) and  upper(Id) not in (SELECT upper(Id) FROM LookUpFieldValue)",str];//@"DELETE FROM %@ where upper(Id) not in (SELECT upper(WhatId) FROM Event) and  upper(Id) not in (SELECT upper(Id) FROM LookUpFieldValue) "
+        NSString * delete_Statement = [[NSString alloc] initWithFormat:@"DELETE FROM '%@' where upper(Id) not in (SELECT upper(WhatId) FROM Event) and  upper(Id) not in (SELECT upper(Id) FROM LookUpFieldValue)",str];
+        
         NSLog(@"delete Statementb %@" , delete_Statement);
         if (synchronized_sqlite3_exec(appDelegate.db, [delete_Statement UTF8String], NULL, NULL, &err) != SQLITE_OK)
         {
