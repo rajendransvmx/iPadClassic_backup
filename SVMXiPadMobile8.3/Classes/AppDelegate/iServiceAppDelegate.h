@@ -166,7 +166,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 	///can remove
     id <ReloadSyncTable> reloadTable;
 
-   
+    BOOL connection_error;
     BOOL download_tags_done;
     BOOL firstTimeCallForTags;
     BOOL IsSSL_error;
@@ -441,9 +441,13 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     //Check For Profile
     NSString * userProfileId;
     BOOL didCheckProfile;
+    
+    //internet alert for  incremental meta sync
+    BOOL internetAlertFlag;
 }
+@property (nonatomic) BOOL internetAlertFlag;
 
-
+@property (nonatomic) BOOL connection_error;
 @property (nonatomic) BOOL didCheckProfile;
 @property (nonatomic, retain) NSString * userProfileId;
 

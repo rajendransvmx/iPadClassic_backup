@@ -218,18 +218,6 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    /*if (!appDelegate.isInternetConnectionAvailable)
-    {
-        [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
-        return;
-    }*/
-    
-  /*  activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    [activity setColor:[UIColor colorWithRed:98 green:189 blue:228 alpha:1.0]];
-    [activity startAnimating];
-    activity.frame = CGRectMake(self.view.frame.size.height/2, self.view.frame.size.width/2, activity.frame.size.width, activity.frame.size.height);
-    [self.view addSubview:activity];*/
     appDelegate.showUI = FALSE;
     
     NSMutableDictionary * dict = [array objectAtIndex:indexPath.row];
@@ -274,18 +262,8 @@
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
 {
-    /*if (!appDelegate.isInternetConnectionAvailable)
-    {
-        [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
-        return;
-    }*/
-    
-//    activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-//    [activity setColor:[UIColor colorWithRed:98 green:189 blue:228 alpha:1.0]];
     [activity startAnimating];
     activity.frame = CGRectMake(self.view.frame.size.height/2, self.view.frame.size.width/2, activity.frame.size.width, activity.frame.size.height);
-//    [self.view addSubview:activity];
     
     NSMutableDictionary * dict = [array objectAtIndex:indexPath.row];
     

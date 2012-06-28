@@ -2746,6 +2746,42 @@
                     {
                         [final_dict  setObject:mapping_value forKey:target_field_name];
                     }
+                    
+                    if([target_field_name isEqualToString:@"RecordTypeId"])
+                    {
+                        // NSString * value  =  ;
+                        //select  record_type_id  from SFRecordType where record_type = '%@' target_object_name
+                        
+                        NSString * query = [NSString stringWithFormat:@"SELECT record_type_id FROM  SFRecordType where object_api_name = '%@' and record_type = '%@'" ,target_object_name,mapping_value];
+                        NSString * record_type_id = @"";
+                        
+                        NSLog(@"RecordTypeId  valuemapping %@" ,query);
+                        sqlite3_stmt * recordTypeId_statement ;
+                        if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &recordTypeId_statement, nil) == SQLITE_OK)
+                        {
+                            while (synchronized_sqlite3_step(recordTypeId_statement) == SQLITE_ROW)
+                            {
+                                char * temp_record_type_id = (char *) synchronized_sqlite3_column_text(recordTypeId_statement, 0);
+                                if(temp_record_type_id != nil)
+                                {
+                                    record_type_id = [NSString stringWithUTF8String:temp_record_type_id];
+                                }
+                            }
+                        }
+                        synchronized_sqlite3_finalize(recordTypeId_statement);
+                        if(![record_type_id isEqualToString:@""])
+                        {
+                            mapping_value = record_type_id;
+                        }
+                        else
+                        {
+                            mapping_value = @"";
+                        }
+                        
+                        [final_dict  setObject:mapping_value forKey:target_field_name];
+                        
+                    }
+
                 }
                 
                 if([mapping_component_type isEqualToString:FIELD_MAPPING])
@@ -2899,6 +2935,41 @@
                             }
                             
                         }
+                        if([target_field_name isEqualToString:@"RecordTypeId"])
+                        {
+                            // NSString * value  =  ;
+                            //select  record_type_id  from SFRecordType where record_type = '%@' target_object_name
+                            
+                            NSString * query = [NSString stringWithFormat:@"SELECT record_type_id FROM  SFRecordType where object_api_name = '%@' and record_type = '%@'" ,target_object_name,mapping_value];
+                            NSString * record_type_id = @"";
+                            
+                            NSLog(@"RecordTypeId  valuemapping %@" ,query);
+                            sqlite3_stmt * recordTypeId_statement ;
+                            if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &recordTypeId_statement, nil) == SQLITE_OK)
+                            {
+                                while (synchronized_sqlite3_step(recordTypeId_statement) == SQLITE_ROW)
+                                {
+                                    char * temp_record_type_id = (char *) synchronized_sqlite3_column_text(recordTypeId_statement, 0);
+                                    if(temp_record_type_id != nil)
+                                    {
+                                        record_type_id = [NSString stringWithUTF8String:temp_record_type_id];
+                                    }
+                                }
+                            }
+                            synchronized_sqlite3_finalize(recordTypeId_statement);
+                            if(![record_type_id isEqualToString:@""])
+                            {
+                                mapping_value = record_type_id;
+                            }
+                            else
+                            {
+                                mapping_value = @"";
+                            }
+                            
+                            [final_dict  setObject:mapping_value forKey:target_field_name];
+                            
+                        }
+
                         
                         if ([mapping_value isEqualToString:MACRO_CURRENTUSER])
                         {
@@ -3322,10 +3393,7 @@
 
 -(void)updateAllRecordsToSyncRecordsHeap:(NSMutableDictionary *)sync_data
 {
-    if(appDelegate.isForeGround && appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
-    {
-        return;
-    }
+   
     NSLog(@"SAMMAN updateAllRecordsToSyncRecordsHeap Processing starts: %@  for count %d", [NSDate date],[sync_data count]);
     sync_data = [sync_data retain];
     NSArray * all_objects = [sync_data allKeys];
@@ -4771,7 +4839,6 @@
     }
 }
 
-
 -(void)deleteAllConflictedRecordsFrom:(NSString *)tableName
 {
     NSArray * sync_type_array = [NSArray arrayWithObjects:PUT_UPDATE ,PUT_DELETE, PUT_INSERT, nil];
@@ -4785,17 +4852,21 @@
             NSMutableDictionary * dict = [conflict_records objectAtIndex:i];
             NSArray * allkeys = [dict allKeys];
             NSString * sf_id = @"";
+            NSString * local_id = @"";
             for(NSString * key in allkeys)
             {
                 if([key isEqualToString:@"sf_id"])
                 {
                     sf_id = [dict objectForKey:key];
                 }
+                if([key isEqualToString:@"local_id"])
+                {
+                    local_id = [dict objectForKey:key];
+                }
             }
             if([sync_type isEqualToString:PUT_INSERT])
             {
-                [self DeleterecordFromTableWithSf_Id:tableName sf_id:sf_id withColumn:@"local_id"];
-                
+                [self DeleterecordFromTableWithSf_Id:tableName sf_id:local_id withColumn:@"local_id"];
             }
             else  if ([sync_type isEqualToString:PUT_UPDATE] || [sync_type isEqualToString:PUT_DELETE])
             {
@@ -4954,16 +5025,6 @@
     
     NSMutableArray * describeObjects = [[self getAllobjectsApiNameFromSFObjectField] retain];
     [[ZKServerSwitchboard switchboard] describeSObjects:describeObjects  target:self selector:@selector(didDescribeSObjects:error:context:) context:nil];
-    
-    if (appDelegate.isForeGround == TRUE)
-    {
-        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
-        {
-           // appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
-            return;
-        }
-    }
-   
 }
 
 -(NSMutableArray *)getAllobjectsApiNameFromSFObjectField
@@ -4988,17 +5049,13 @@
 
 -(void)didDescribeSObjects:(NSMutableArray *)result error:(NSError *)error context:(id)context
 {
-    if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
-    {
-        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
-        {
-            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
-            return;
-        }
-    }
-    
     [result retain];
-
+    
+    if(error != nil)
+    {
+        appDelegate.connection_error = TRUE;
+        return;
+    }
     for (int i = 0; i < [result count]; i++)
     {
         ZKDescribeSObject * descObj = [result objectAtIndex:i];
@@ -5041,33 +5098,7 @@
                 }
                  
             }
-            if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
-            {
-                if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
-                {
-                   // appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
-                    break;
-                }
-            }
-        }
-        
-        if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
-        {
-            if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
-            {
-                // appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
-                break;
-            }
-        }
-    }
-    
-    if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
-    {
-        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
-        {
-            // appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
-            return;
-        }
+         }
     }
 
     appDelegate.dPicklist_retrieval_complete = TRUE;

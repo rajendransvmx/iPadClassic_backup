@@ -379,7 +379,7 @@ const NSUInteger kNumImages = 7;
         {
             appDelegate.wsInterface.refreshProgressBarUIDelegate = self;
             Total_calls = 17;
-            
+            appDelegate.connection_error = FALSE;
             ProgressView.layer.cornerRadius = 5;
             ProgressView.frame = CGRectMake(300, 15, 474, 200);
             [self.view addSubview:transparent_layer];
@@ -416,7 +416,7 @@ const NSUInteger kNumImages = 7;
                             
                 return;
             }
-            else if (appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED && appDelegate.isForeGround == TRUE)
+            else if (appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED || appDelegate.connection_error == TRUE)
             {
                 NSLog(@"I dont come here -Control");
                 [initial_sync_timer invalidate];    //invalidate the timer
@@ -434,7 +434,7 @@ const NSUInteger kNumImages = 7;
                 return;
             }
             
-            else if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED && appDelegate.isForeGround == TRUE)
+            else if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED || appDelegate.connection_error == TRUE)
             {
 
                 [initial_sync_timer invalidate];    //invalidate the timer
@@ -452,7 +452,7 @@ const NSUInteger kNumImages = 7;
                  initial_sync_timer = nil;
                 return;
             }
-            else if(appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED && appDelegate.isForeGround == TRUE)
+            else if(appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED || appDelegate.connection_error == TRUE)
             {
                 [initial_sync_timer invalidate];    //invalidate the timer
                 initial_sync_timer = nil;
@@ -473,6 +473,7 @@ const NSUInteger kNumImages = 7;
             [self InitsyncSetting];
             [self initialDataSetUpAfterSyncOrLogin];
         }
+        appDelegate.connection_error = FALSE;
         appDelegate.do_meta_data_sync = DONT_ALLOW_META_DATA_SYNC;
         appDelegate.IsLogedIn = ISLOGEDIN_FALSE;
         [self enableControls];
@@ -757,8 +758,9 @@ const NSUInteger kNumImages = 7;
     NSLog(@"I will come here first");
    
     //again inititate
-    if(appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED)
+    if(appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED || appDelegate.connection_error == TRUE)
     {
+        appDelegate.connection_error = FALSE;
         [appDelegate.dataBase clearDatabase];
         appDelegate.isForeGround = FALSE;
         NSLog(@"I will come here first");
@@ -772,8 +774,9 @@ const NSUInteger kNumImages = 7;
         {
             appDelegate.initial_sync_status = INITIAL_SYNC_STARTS;
             initial_sync_timer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(updateProgressBar:) userInfo:nil repeats:YES];
-            
         }
+        
+        [appDelegate.dataBase removecache];
         [self doMetaSync];
         if (appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED && !appDelegate.isInternetConnectionAvailable)
         {
@@ -781,9 +784,8 @@ const NSUInteger kNumImages = 7;
             initial_sync_timer = nil;
             return;
         }
-        else if (appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED && appDelegate.isForeGround == TRUE)
+        else if (appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED || appDelegate.connection_error == TRUE)
         {
-
             [initial_sync_timer invalidate];    //invalidate the timer
             initial_sync_timer = nil;
             [self continueMetaAndDataSync];
@@ -797,7 +799,7 @@ const NSUInteger kNumImages = 7;
             initial_sync_timer = nil;
             return;
         }
-        else if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED && appDelegate.isForeGround == TRUE)
+        else if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED || appDelegate.connection_error == TRUE )
         {
             [initial_sync_timer invalidate];    //invalidate the timer
             initial_sync_timer = nil;
@@ -811,7 +813,7 @@ const NSUInteger kNumImages = 7;
             initial_sync_timer = nil;
             return;
         }
-        else if (appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED && appDelegate.isForeGround == TRUE)
+        else if (appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED || appDelegate.connection_error == TRUE)
         {
             [initial_sync_timer invalidate];    //invalidate the timer
             initial_sync_timer = nil;
@@ -821,6 +823,7 @@ const NSUInteger kNumImages = 7;
     }
     else if(appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED)
     {
+        appDelegate.connection_error = FALSE;
         [appDelegate.databaseInterface cleartable:SYNC_RECORD_HEAP];
         appDelegate.isForeGround = FALSE;
         appDelegate.isBackground = FALSE;
@@ -841,7 +844,7 @@ const NSUInteger kNumImages = 7;
             initial_sync_timer = nil;
             return;
         }
-        else if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED && appDelegate.isForeGround == TRUE)
+        else if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED || appDelegate.connection_error == TRUE)
         {
             [initial_sync_timer invalidate];    //invalidate the timer
             initial_sync_timer = nil;
@@ -856,7 +859,7 @@ const NSUInteger kNumImages = 7;
             initial_sync_timer = nil;
             return;
         }
-        else if (appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED && appDelegate.isForeGround == TRUE)
+        else if (appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED || appDelegate.connection_error == TRUE)
         {
             [initial_sync_timer invalidate];    //invalidate the timer
             initial_sync_timer = nil;
@@ -866,7 +869,7 @@ const NSUInteger kNumImages = 7;
     }
     else if(appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED)
     {
-        
+        appDelegate.connection_error = FALSE;
         appDelegate.isForeGround = FALSE;
         appDelegate.isBackground = FALSE;
         
@@ -884,7 +887,7 @@ const NSUInteger kNumImages = 7;
             initial_sync_timer = nil;
             return;
         }
-        else if (appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED && appDelegate.isForeGround == TRUE)
+        else if (appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED  || appDelegate.connection_error == TRUE)
         {
             [initial_sync_timer invalidate];    //invalidate the timer
             initial_sync_timer = nil;
@@ -1214,6 +1217,15 @@ const float progress_ = 0.07;
 
 -(void)doMetaSync
 {
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+    {
+        BOOL retvalue = [appDelegate pingServer];
+        if(!appDelegate.connection_error)
+        {
+            break;
+        }
+    }
+    
     NSString* txnstmt = @"BEGIN TRANSACTION";
     char * err ;
     int retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);    
@@ -1221,7 +1233,6 @@ const float progress_ = 0.07;
     
     appDelegate.initial_sync_status = INITIAL_SYNC_SFM_METADATA;
     appDelegate.Sync_check_in = FALSE;
-    
     
     appDelegate.wsInterface.didOpComplete = FALSE;
     [appDelegate.wsInterface metaSyncWithEventName:SFM_METADATA eventType:INITIAL_SYNC values:nil];
@@ -1242,6 +1253,10 @@ const float progress_ = 0.07;
         {
             appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
             break;
+        }
+        if(appDelegate.connection_error)
+        {
+            return;
         }
         
     }
@@ -1290,6 +1305,11 @@ const float progress_ = 0.07;
     appDelegate.Sync_check_in = FALSE;
     [appDelegate getDPpicklistInfo];
     
+    if(appDelegate.connection_error)
+    {
+        return;
+    }
+
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [self RefreshProgressBarNativeMethod:META_SYNC_];
@@ -1346,6 +1366,11 @@ const float progress_ = 0.07;
         {
             break; 
         }
+        if(appDelegate.connection_error)
+        {
+            return;
+        }
+
     }
     
     if (!appDelegate.isInternetConnectionAvailable)
@@ -1383,6 +1408,10 @@ const float progress_ = 0.07;
             NSLog(@"DC Check1 ComeOut");
             break; 
         }
+        if(appDelegate.connection_error)
+        {
+            return;
+        }
         if (!appDelegate.isInternetConnectionAvailable && appDelegate.data_sync_chunking == REQUEST_SENT)
         {
             while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
@@ -1404,6 +1433,10 @@ const float progress_ = 0.07;
                     [appDelegate.wsInterface dataSyncWithEventName:DOWNLOAD_CREITERIA_SYNC eventType:SYNC requestId:appDelegate.initial_dataSync_reqid];
                     break;
                 }
+                if(appDelegate.connection_error)
+                {
+                    return;
+                }
             }
         }
     }
@@ -1422,15 +1455,7 @@ const float progress_ = 0.07;
     [appDelegate.wsInterface cleanUpForRequestId:appDelegate.initial_dataSync_reqid forEventName:@"CLEAN_UP_SELECT"];
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
-        //shrinivas
-        if (appDelegate.isForeGround)
-        {
-           // appDelegate.didFinishWithError = FALSE;
-            // [activity stopAnimating];
-            //[self enableControls];
-            appDelegate.initial_sync_succes_or_failed = TX_FETCH_FAILED;
-            break;;
-        }  
+      
         if (!appDelegate.isInternetConnectionAvailable)
         {
             appDelegate.initial_sync_succes_or_failed = TX_FETCH_FAILED;
@@ -1439,6 +1464,10 @@ const float progress_ = 0.07;
         
         if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
             break;
+        if(appDelegate.connection_error)
+        {
+            return;
+        }
     }
     
     if (!appDelegate.isInternetConnectionAvailable)
@@ -1475,6 +1504,10 @@ const float progress_ = 0.07;
             NSLog(@"Break TxFetch");
             break; 
         }
+        if(appDelegate.connection_error)
+        {
+            return;
+        }
     }
     
     if (!appDelegate.isInternetConnectionAvailable)
@@ -1498,8 +1531,6 @@ const float progress_ = 0.07;
     
     NSLog(@"SAMMAN Update Sync Records Start: %@", [NSDate date]);
     
-    
-   // if (appDelegate.isForeGround == FALSE)
     [appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
     
     

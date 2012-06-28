@@ -159,7 +159,7 @@
 - (void) insertIntoConflictInternetErrorWithSyncType:(NSString *)sync_type;
 - (void) insertIntoConflictInternetErrorForMetaSync:(NSString *)sync_type WithDB:(sqlite3 *)db;
 - (NSMutableArray *) getInternetConflicts;
-- (NSMutableArray *) getInternetConflictsForMetaSyncWithDB:(sqlite3 *)db;
+//- (NSMutableArray *) getInternetConflictsForMetaSyncWithDB:(sqlite3 *)db;
 - (void) removeInternetConflicts;
 
 

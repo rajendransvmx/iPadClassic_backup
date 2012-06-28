@@ -34,8 +34,7 @@
 @synthesize objectDetailsArray,activity;
 @synthesize internet_Conflicts;
 
-
-
+PopoverButtons *popOver_view;
 
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -274,7 +273,7 @@
         } 
     }
     cell.accessoryView = nil;
-    cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
+    //cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
     if(background == nil){
         background = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, width, 28)] autorelease];
     }
@@ -482,7 +481,15 @@
         [cell.contentView addSubview:background];
         [textView release];
         
-        cell.textLabel.font = [UIFont fontWithName:@"HelveticaBold" size:19];  
+        cell.textLabel.font = [UIFont fontWithName:@"HelveticaBold" size:19]; 
+		
+		//New Code.
+		if ([syncType isEqualToString:@"PUT_DELETE"])
+		{
+			cell.accessoryType = UITableViewCellAccessoryNone;
+		}else{
+			cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
+		}
     }
     if ( selectedSection == 0 && HeaderSelected == 0)
     {
@@ -686,6 +693,15 @@
         [textView release];
         
         cell.textLabel.font = [UIFont fontWithName:@"HelveticaBold" size:19];
+		
+		//New Code.
+		if ([syncType isEqualToString:@"PUT_DELETE"])
+		{
+			cell.accessoryType = UITableViewCellAccessoryNone;
+		}else{
+			cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
+		}
+
     }
     return cell;
 }
@@ -983,7 +999,8 @@
 {
     [syncStatus.popOver dismissPopoverAnimated:YES];
     [popOver_view.popover dismissPopoverAnimated:YES];
-    popOver_view = [[PopoverButtons alloc] init];
+    if( popOver_view == nil )
+        popOver_view = [[PopoverButtons alloc] init];
     
     popOver_view.delegate = self;
     UIPopoverController * popoverController_temp = [[UIPopoverController alloc] initWithContentViewController:popOver_view];
@@ -1548,6 +1565,47 @@
     [syncDueView removeFromSuperview];
     [syncDueView release];
     self._tableView.frame = CGRectMake(0,0,self._tableView.frame.size.width, self.view.frame.size.height);
+}
+
+
+- (void) showInternetAletView
+{
+    NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
+    NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_INTERNET_NOT_AVAILABLE];
+    NSString *  retry = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_retry];
+    NSString * ll_try_later = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_i_ll_try];
+    
+    UIAlertView * internet_alertView = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:retry otherButtonTitles:ll_try_later, nil];
+    [internet_alertView show];
+    [internet_alertView release];
+}
+
+#pragma mark-AlertViewDelagate
+- (void) alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    
+    if (buttonIndex == 0)
+    {
+        if(!appDelegate.isInternetConnectionAvailable)
+        {
+            [self showInternetAletView];
+        }
+        else
+        {
+            [appDelegate.dataBase clearDatabase];
+            [appDelegate.dataBase callMetaSync];
+           
+        }
+    }
+    
+    
+    
+    if (buttonIndex == 1)
+    {
+        [appDelegate.dataBase clearDatabase];
+        [appDelegate.dataBase copyTempsqlToSfm];
+    }
+    
 }
 
 //Radha 2012june16

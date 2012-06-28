@@ -119,7 +119,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 @implementation iServiceAppDelegate
 
+@synthesize internetAlertFlag;
 
+@synthesize connection_error;
 @synthesize userProfileId;
 @synthesize didCheckProfile;
 
@@ -952,7 +954,14 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         self.didLoginAgain = TRUE;
         return;
     }
-    
+	
+	if ([self.internet_Conflicts count] > 0)
+	{
+		[self.internet_Conflicts removeAllObjects];
+		[self.calDataBase removeInternetConflicts];
+		[self.reloadTable ReloadSyncTable];
+	}
+    connection_error = FALSE;
     self._pingServer = FALSE;
     self.didLoginAgain = TRUE;
 }
@@ -1268,21 +1277,6 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         //shrinivas -- 02/05/2012
-        if (self.isForeGround == TRUE)
-        {
-            if(IsLogedIn == ISLOGEDIN_TRUE)
-            {
-                initial_sync_succes_or_failed = META_SYNC_FAILED;                    //sahana for background handling of app
-                break;
-            }
-            else
-            {
-                self.didFinishWithError = FALSE;
-                [loginController.activity stopAnimating];
-                [loginController enableControls];
-                return;
-            }
-        }
        
         if(self.dPicklist_retrieval_complete)
         {
@@ -1298,13 +1292,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
             }
             break;
         }
-    }
-    if (self.isForeGround == TRUE)
-    {
-        if(IsLogedIn == ISLOGEDIN_TRUE)
+        if(connection_error)
         {
-            initial_sync_succes_or_failed = META_SYNC_FAILED;
-            //sahana for background handling of app
             return;
         }
     }

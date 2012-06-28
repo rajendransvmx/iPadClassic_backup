@@ -10,7 +10,11 @@
 #import "ManualDataSyncDetail.h"
 #import "WSInterface.h"
 
+PopoverButtons *popOver_view;
+
 @implementation PopoverButtons
+
+@synthesize syncConfigurationFailed;
 
 @synthesize button, button1, button2;
 
@@ -21,6 +25,15 @@
 @synthesize popover;
 @synthesize refreshMetaSyncDelegate;
 
+- (id) init
+{
+    if( ( self = [super init] ) )
+    {
+        //some initialization to do here
+    }
+    popOver_view = [self retain];
+    return self;
+}
 
 - (void)loadView
 {
@@ -128,6 +141,17 @@
         {
             return;
         }
+        
+        if (!appDelegate.isInternetConnectionAvailable)
+        {
+            
+            [appDelegate setSyncStatus:SYNC_RED];
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            [appDelegate.reloadTable ReloadSyncTable];
+            return;
+        }
+        
         appDelegate.dataSyncRunning = YES;
         
         if ([appDelegate.metaSyncThread isExecuting])
@@ -178,15 +202,7 @@
 //            }            
 //        }   
 
-        if (!appDelegate.isInternetConnectionAvailable)
-        {
-            
-            [appDelegate setSyncStatus:SYNC_RED];
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
-            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflictsForMetaSyncWithDB:appDelegate.dataBase.tempDb];
-            [appDelegate.reloadTable ReloadSyncTable];
-            return;
-        }
+      
         
 		[delegate activityStart];
         [appDelegate callDataSync];
@@ -302,15 +318,6 @@
 
 - (void) synchronizeConfiguration
 {
-    
-    if ([appDelegate.dataBase checkIfSyncConfigDue])
-    {
-        [delegate resetTableview];
-        [appDelegate.databaseInterface cleartable:@"meta_sync_due"];
-    }
-    
-    
-    
     if ([appDelegate.metaSyncThread isExecuting])
     {
         NSLog(@"Meta sync executing");
@@ -347,6 +354,9 @@
 
 - (void) startSyncConfiguration
 {
+    appDelegate.internetAlertFlag = FALSE;
+    [appDelegate.dataBase clearTempDatabase];
+    
     [delegate dismisspopover];
     
     appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
@@ -369,8 +379,6 @@
     
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
     
-    NSString * meta_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_meta_data_configuration];
-
     syncConfigurationFailed = FALSE;
     appDelegate.isIncrementalMetaSyncInProgress = FALSE;
     
@@ -455,10 +463,8 @@
         {
             appDelegate.SyncStatus = SYNC_GREEN;
             [appDelegate setSyncStatus:SYNC_GREEN];
+            return;
 	
-            [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync:meta_sync WithDB:appDelegate.dataBase.tempDb];
-            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflictsForMetaSyncWithDB:appDelegate.dataBase.tempDb];
-            [appDelegate.reloadTable ReloadSyncTable];
         }
         
 
@@ -471,22 +477,19 @@
         appDelegate.didincrementalmetasyncdone = FALSE;
         
         [appDelegate.dataBase StartIncrementalmetasync];
-       while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
-        {
-            if (!appDelegate.isInternetConnectionAvailable)
-            {
-                break;
-            }
-            if (appDelegate.didincrementalmetasyncdone == TRUE)
-                break; 
-        }
-        if (!appDelegate.isInternetConnectionAvailable)
-        {
-            [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync:meta_sync WithDB:appDelegate.dataBase.tempDb];     
-            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflictsForMetaSyncWithDB:appDelegate.dataBase.tempDb];
-            
-            [appDelegate.reloadTable ReloadSyncTable];
-        }
+//        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+//        {
+//            if (!appDelegate.isInternetConnectionAvailable)
+//            {
+//                break;
+//            }
+//            if (appDelegate.didincrementalmetasyncdone == TRUE)
+//                break; 
+//        }
+//        if (!appDelegate.isInternetConnectionAvailable)
+//        {
+//           
+//        }
         
         
     }
@@ -495,24 +498,15 @@
 		appDelegate.metaSyncRunning = NO;
         exception = [NSException exceptionWithName:@"Error" reason:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_failed_try_again] userInfo: nil];
         syncConfigurationFailed = TRUE;
-               
-        [appDelegate.dataBase copyTempsqlToSfm];
+            
         
         [delegate enableControls];
         
 		[appDelegate.calDataBase insertMetaSyncStatus:@"Red" WithDB:appDelegate.db];
         if (!appDelegate.isInternetConnectionAvailable)
         {
-
-            
-            [appDelegate setSyncStatus:SYNC_GREEN];
-           
-            [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync:meta_sync WithDB:appDelegate.dataBase.tempDb];
-            
-            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflictsForMetaSyncWithDB:appDelegate.dataBase.tempDb];
-            [appDelegate.reloadTable ReloadSyncTable];
-            
-
+            appDelegate.internetAlertFlag = TRUE;
+         
         }
         else
         {
@@ -524,6 +518,7 @@
 			
             [alert show];
             [alert release];
+            [appDelegate.dataBase copyTempsqlToSfm];
             
             
         }
@@ -531,48 +526,38 @@
         
     }
     @finally {
-		//Radha 2012june12
-		appDelegate.settingsDict = [appDelegate.dataBase getSettingsDictionary];
         
-        if ([appDelegate.metasync_timer isValid])
+        if(appDelegate.internetAlertFlag == TRUE && (!appDelegate.isInternetConnectionAvailable))
         {
-            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
-        }      
-		
-        [appDelegate ScheduleIncrementalDatasyncTimer];
-        [appDelegate ScheduleIncrementalMetaSyncTimer];
-        [appDelegate ScheduleTimerForEventSync];
-        [appDelegate.dataBase deleteDatabase:TEMPDATABASENAME];
-        [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
-        
-        if ([appDelegate.StandAloneCreateProcess count] > 0)
-        {
-            [appDelegate.StandAloneCreateProcess  removeAllObjects];
-            NSMutableArray * createprocessArray = [appDelegate.databaseInterface getAllTheProcesses:@"STANDALONECREATE"];
-            [appDelegate getCreateProcessArray:createprocessArray];
+            appDelegate.internetAlertFlag = FALSE;
+            [delegate showInternetAletView];
+            return;
         }
-        
-        if ([appDelegate.view_layout_array count] > 0)
-        {
-            [appDelegate.view_layout_array removeAllObjects];
-            appDelegate.view_layout_array = [appDelegate.databaseInterface getAllTheProcesses:@"VIEWRECORD"]; 
-        }
-        
-        [delegate activityStop];
-        
-        appDelegate.isIncrementalMetaSyncInProgress = FALSE;
-        
-        appDelegate.dataBase.MyPopoverDelegate = nil;
-        appDelegate.databaseInterface.MyPopoverDelegate = nil;
-        appDelegate.wsInterface.MyPopoverDelegate = nil;
-        
     }
+ 
+    [pool release];
+    appDelegate.metaSyncRunning = NO;
+    
+}
+
+- (void) syncSuccess
+{
+    appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+    
+//    if (delegate == nil)
+//    {
+//        if (detail == nil)
+//        {
+//            detail = [[[ManualDataSyncDetail  alloc] init] autorelease];
+//        }
+//        delegate = detail;
+//    }
+    
+    [delegate activityStop];
+    [delegate enableControls];
     
     if (syncConfigurationFailed == FALSE)
     {
-        [delegate enableControls];
-        
-             
         NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button1];
         NSString * cancel = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
         
@@ -580,21 +565,40 @@
         
         [appDelegate.calDataBase insertMetaSyncStatus:@"Green" WithDB:appDelegate.db];
         
-        BOOL conflict_exists = [appDelegate.databaseInterface getConflictsStatus];
-        if(conflict_exists)
+        [alert show];
+        [alert release];
+        
+        if ([appDelegate.dataBase checkIfSyncConfigDue])
         {
-            appDelegate.SyncStatus = SYNC_RED;
+            [delegate resetTableview];
+            [appDelegate.databaseInterface cleartable:@"meta_sync_due"];
         }
-        else
-        {
-            appDelegate.SyncStatus = SYNC_GREEN;
-        }
-
+        
+    }
+    else
+    {
+        NSString * title  = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button1];
+        NSString * cancel = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_meta_sync_failed] delegate:self cancelButtonTitle:cancel otherButtonTitles: nil];
+        
+        
         [alert show];
         [alert release];
     }
     
-    [pool release];
+    BOOL conflict_exists = [appDelegate.databaseInterface getConflictsStatus];
+    if(conflict_exists)
+    {
+        appDelegate.SyncStatus = SYNC_RED;
+    }
+    else
+    {
+        appDelegate.SyncStatus = SYNC_GREEN;
+    }
+    appDelegate.dataBase.MyPopoverDelegate = nil;
+    appDelegate.databaseInterface.MyPopoverDelegate = nil;
+    appDelegate.wsInterface.MyPopoverDelegate = nil;
     appDelegate.metaSyncRunning = NO;
     
 }
@@ -605,12 +609,22 @@
     if (appDelegate == nil)
         appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
 
+	
+	BOOL retVal_ = [appDelegate pingServer];
+    if(retVal_ == NO)
+    {
+        appDelegate.SyncStatus = SYNC_GREEN;
+        [appDelegate setSyncStatus:SYNC_GREEN];
+		
+        return;
+    }
+
     if(appDelegate.eventSyncRunning ) 
     {
         [delegate dismisspopover];
         return;
     }
-    appDelegate.eventSyncRunning = YES;
+    
     
     if( appDelegate.dataSyncRunning )
     {
@@ -642,7 +656,20 @@
         {
             return;
         }
+         
+        if (!appDelegate.isInternetConnectionAvailable)
+        {
+            [refreshMetaSyncDelegate refreshMetaSyncStatus];
             
+            [appDelegate setSyncStatus:SYNC_RED];
+            
+            
+            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:event_sync];     
+            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+            
+            [appDelegate.reloadTable ReloadSyncTable];
+        }
+
         
         if ([appDelegate.metaSyncThread isExecuting])
         {
@@ -678,27 +705,12 @@
                 }
             }
         }
-       
-
-        
-        if (!appDelegate.isInternetConnectionAvailable)
-        {
-            [refreshMetaSyncDelegate refreshMetaSyncStatus];
-            
-            [appDelegate setSyncStatus:SYNC_RED];
-            
-            
-            [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:event_sync];     
-            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
-            
-            [appDelegate.reloadTable ReloadSyncTable];
-        }
-        
+      
         [appDelegate setSyncStatus:SYNC_ORANGE];
                
         [appDelegate goOnlineIfRequired];
         [appDelegate.databaseInterface cleartable:SYNC_RECORD_HEAP];
-        
+        appDelegate.eventSyncRunning = YES;
         retVal = [appDelegate.dataBase startEventSync];
         
         
@@ -715,7 +727,7 @@
         {
             
         }
-        else if (appDelegate.isInternetConnectionAvailable || !appDelegate.isInternetConnectionAvailable)
+        else if (appDelegate.isInternetConnectionAvailable )
         {
             BOOL value = [appDelegate pingServer];
             

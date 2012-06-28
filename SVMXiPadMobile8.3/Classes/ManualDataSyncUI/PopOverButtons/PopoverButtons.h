@@ -20,6 +20,7 @@
 - (void) disableControls;
 //Radha 2012june16
 - (void) resetTableview;
+- (void) showInternetAletView;
 
 @end
 
@@ -57,6 +58,7 @@
     //Manual event sync thread
     NSThread * manualEventThread;
 }
+@property (nonatomic) BOOL syncConfigurationFailed;
 
 @property (nonatomic , retain)  UIPopoverController * popover;
 
@@ -78,8 +80,11 @@
 
 
 - (void) startSyncEvents;
+- (void) syncSuccess;
 
 //RADHA 
 - (void) startSyncConfiguration;
 
 @end
+
+extern PopoverButtons *popOver_view;

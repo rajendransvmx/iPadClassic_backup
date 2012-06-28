@@ -660,15 +660,6 @@
 #pragma mark - Location Ping
 - (void) didGetSettingsInfoforLocationPing:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
-    if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
-    {
-        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
-        {
-            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
-            return;
-        }
-    }
-    
     // Get the Active Global Profile
     if ([[result records] count] > 0)
     {
@@ -2713,14 +2704,6 @@
 - (void) insertValuesInToTagsTable:(NSMutableDictionary *)tagsDictionary
 {
     
-    if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
-    {
-        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
-        {
-            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
-            return;
-        }
-    }
     NSLog(@"SAMMAN MetaSync insertValuesInToTagsTable starts: %@", [NSDate date]);
     int id_value = 0;
     BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS MobileDeviceTags ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'tag_id' VARCHAR, 'value' VARCHAR)"]];
@@ -2769,34 +2752,6 @@
 - (void) insertValuesInToSettingsTable:(NSMutableDictionary *)settingsDictionary
 {
     NSString * meta_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_meta_data_configuration];
-
-    if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
-    {
-        if (appDelegate.isIncrementalMetaSyncInProgress &&!appDelegate.isInternetConnectionAvailable)
-        {
-            //appDelegate.SyncStatus = SYNC_RED;
-            
-            [appDelegate setSyncStatus:SYNC_RED];
-            //[appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
-            //[appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
-            //[appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-           
-            [appDelegate.calDataBase insertIntoConflictInternetErrorForMetaSync:meta_sync WithDB:tempDb];
-            
-            appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflictsForMetaSyncWithDB:appDelegate.dataBase.tempDb];
-			[appDelegate.reloadTable ReloadSyncTable];
-
-            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                [MyPopoverDelegate performSelector:@selector(throwException)];
-            return;
-        }
-
-        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
-        {
-            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
-            return;
-        }
-    }
     NSLog(@"SAMMAN MetaSync insertValuesInToSettingsTable processing starts: %@", [NSDate date]);
     int id_value = 0;
     
@@ -4010,14 +3965,6 @@
 #pragma mark - PDF Settings
 - (void) generatePDFSettings
 {
-    if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
-    {
-        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
-        {
-            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
-            return;
-        }
-    }
     // Get details of the IPAD Module
     NSString * _query = @"SELECT Id, SVMXC__Name__c, SVMXC__Description__c, SVMXC__ModuleID__c, SVMXC__IsStandard__c FROM SVMXC__ServiceMax_Processes__c WHERE SVMXC__ModuleID__c = \'IPAD\' AND RecordType.Name = \'MODULE\'";
     [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetModuleInfo:error:context:) context:nil];
@@ -4025,14 +3972,6 @@
 
 - (void) didGetModuleInfo:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
-    if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
-    {
-        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
-        {
-            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
-            return;
-        }
-    }
     // Get Submodules Info (query could return multiple rows)
     if ([[result records] count] > 0)
     {
@@ -4049,14 +3988,6 @@
 
 - (void) didGetSubModuleInfo:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
-    if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
-    {
-        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
-        {
-            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
-            return;
-        }
-    }
     // Get Settings Info(query could return multiple rows)
     if ([[result records] count] > 0)
     {
@@ -4072,15 +4003,7 @@
 
 - (void) didGetSettingsInfo:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
-    if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
-    {
-        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
-        {
-            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
-            return;
-        }
-    }
-    // Get the Active Global Profile
+     // Get the Active Global Profile
     if ([[result records] count] > 0)
     {
        settingInfoId = [[NSMutableString alloc] initWithCapacity:0];
@@ -4115,14 +4038,6 @@
 
 - (void) didGetActiveGlobalProfile:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
-    if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
-    {
-        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
-        {
-            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
-            return;
-        }
-    }
     // Get Settings value Info(query could return multiple rows)
     if ([[result records] count] > 0)
     {
@@ -4144,14 +4059,6 @@
 
 - (void) didGetSettingsValue:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
-    if (appDelegate.isForeGround == TRUE || !appDelegate.isInternetConnectionAvailable)
-    {
-        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
-        {
-            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
-            return;
-        }
-    }
     if ([[result records] count] > 0)
     {
         appDelegate.serviceReport = [[NSMutableDictionary alloc] initWithCapacity:0];
@@ -4286,9 +4193,10 @@
 
 -(void)StartIncrementalmetasync
 {
+//    if (popOver_view == nil)
+//        popOver_view = [[PopoverButtons alloc] init];
+
     [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
-    
-    [self clearTempDatabase];
     
     //We are retriving the SFObjectField table here so that we can compare the fields of the tables of the two databases
     //not necessary
@@ -4303,7 +4211,6 @@
     }
     
     object_names = [[NSMutableArray alloc] initWithCapacity:0];
-    
     object_names = [self retreiveTableNamesFronDB:appDelegate.db];
     
     
@@ -4347,15 +4254,22 @@
     self.dbFilePath = @"";
     [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
     
+    [self callMetaSync];
     
-    
+}
+
+- (void) callMetaSync
+{
     time_t t1;
     time(&t1);
-
     
     //RADHA 2012june12
-    
+    [appDelegate.dataBase removecache];
     appDelegate.wsInterface.didOpComplete = FALSE;
+    appDelegate.connection_error = FALSE;
+
+   // [appDelegate goOnlineIfRequired];
+    [appDelegate pingServer];
     [appDelegate.wsInterface metaSyncWithEventName:SFM_METADATA eventType:INITIAL_SYNC values:nil];
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
@@ -4366,33 +4280,52 @@
         
         if (appDelegate.wsInterface.didOpComplete == TRUE)
             break; 
+        
+        
+        if (appDelegate.connection_error)
+            break;
     }
+    
+    
+    
+    //RADHA - If connection error start meta sync again
     if (!appDelegate.isInternetConnectionAvailable)
     {
         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
             [MyPopoverDelegate performSelector:@selector(throwException)];
         return;
     }
+    
+    if (appDelegate.connection_error && appDelegate.isInternetConnectionAvailable)
+    {
+        appDelegate.connection_error = FALSE;
+        [appDelegate.dataBase clearDatabase];
+        [appDelegate.dataBase callMetaSync];
+        return;
+    }
+    
+    
+    
     /*
      // Uncomment this when SFM Search Module is Required
-    //SFM Search 
-    
-    appDelegate.wsInterface.didOpSFMSearchComplete = FALSE;
-    [appDelegate.wsInterface metaSyncWithEventName:SFM_SEARCH eventType:SYNC values:nil];
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
-    {
-        if (!appDelegate.isInternetConnectionAvailable)
-        {
-            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                [MyPopoverDelegate performSelector:@selector(throwException)];
-            break;
-        }
-        if (appDelegate.wsInterface.didOpSFMSearchComplete == TRUE)
-            break; 
-    }
-    NSLog(@"MetaSync SFM Search End: %@", [NSDate date]);
-    
-    //SFM Search End
+     //SFM Search 
+     
+     appDelegate.wsInterface.didOpSFMSearchComplete = FALSE;
+     [appDelegate.wsInterface metaSyncWithEventName:SFM_SEARCH eventType:SYNC values:nil];
+     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+     {
+     if (!appDelegate.isInternetConnectionAvailable)
+     {
+     if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+     [MyPopoverDelegate performSelector:@selector(throwException)];
+     break;
+     }
+     if (appDelegate.wsInterface.didOpSFMSearchComplete == TRUE)
+     break; 
+     }
+     NSLog(@"MetaSync SFM Search End: %@", [NSDate date]);
+     
+     //SFM Search End
      */
     [appDelegate getDPpicklistInfo];
     NSLog(@"META SYNC 1");
@@ -4409,6 +4342,7 @@
     
     appDelegate.initialEventMappinArray = [appDelegate.dataBase checkForTheObjectWithRecordId:recordId];
     //Radha End
+
 }
 
 - (NSMutableArray *) retreiveTableNamesFronDB:(sqlite3 *)dbName
@@ -4443,6 +4377,8 @@
     if (object_names == nil)
         object_names = [[NSMutableArray alloc] initWithCapacity:0];
     
+    [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
+    
     object_names = [self retreiveTableNamesFronDB:tempDb];
     
     [appDelegate.dataBase clearDatabase];
@@ -4457,9 +4393,7 @@
     
     
     [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
-
-    
-    NSString * query1 = [NSString stringWithFormat:@"ATTACH DATABASE '%@' AS tempsfm",filepath];
+      NSString * query1 = [NSString stringWithFormat:@"ATTACH DATABASE '%@' AS tempsfm",filepath];
     [self createTable:query1];
     
     
@@ -4472,6 +4406,9 @@
         query1 = [NSString stringWithFormat:@"INSERT INTO %@ SELECT * FROM tempsfm.%@", objectName, objectName];
         [self createTable:query1];
     } 
+    appDelegate.internetAlertFlag = TRUE;
+    popOver_view.syncConfigurationFailed = TRUE;
+    [self settingAfterIncrementalMetaSync];
 
 }
 
@@ -4613,6 +4550,7 @@
 -(void)populateDatabaseFromBackUp
 {
     [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+    [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
      
     NSString * query1 = [NSString stringWithFormat:@"ATTACH DATABASE '%@' AS tempsfm",filepath];
     [self createTable:query1];
@@ -4742,6 +4680,10 @@
         NSString * temp_query = [NSString stringWithFormat:@"INSERT INTO %@ SELECT * FROM tempsfm.%@", table, table];
         [self createTable:temp_query];
     }
+    appDelegate.internetAlertFlag = TRUE;
+    
+    popOver_view.syncConfigurationFailed = FALSE;
+    [self settingAfterIncrementalMetaSync];
     
 }
 - (void)deleteDatabase:(NSString *)databaseName
@@ -4807,6 +4749,45 @@
         appDelegate.wsInterface.pageUiHistory = [[NSMutableArray alloc] initWithCapacity:0];
     }
 }
+
+#pragma mark - settingsAfterIncMetaSync
+//Call Finaally Method
+- (void) settingAfterIncrementalMetaSync
+{
+    appDelegate.settingsDict = [appDelegate.dataBase getSettingsDictionary];
+    
+    if ([appDelegate.metasync_timer isValid])
+    {
+        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
+    }      
+    
+    [appDelegate ScheduleIncrementalDatasyncTimer];
+    [appDelegate ScheduleIncrementalMetaSyncTimer];
+    [appDelegate ScheduleTimerForEventSync];
+    [appDelegate.dataBase deleteDatabase:TEMPDATABASENAME];
+    [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+    
+    if ([appDelegate.StandAloneCreateProcess count] > 0)
+    {
+        [appDelegate.StandAloneCreateProcess  removeAllObjects];
+        NSMutableArray * createprocessArray = [appDelegate.databaseInterface getAllTheProcesses:@"STANDALONECREATE"];
+        [appDelegate getCreateProcessArray:createprocessArray];
+    }
+    
+    if ([appDelegate.view_layout_array count] > 0)
+    {
+        [appDelegate.view_layout_array removeAllObjects];
+        appDelegate.view_layout_array = [appDelegate.databaseInterface getAllTheProcesses:@"VIEWRECORD"]; 
+    }
+
+    appDelegate.isIncrementalMetaSyncInProgress = FALSE;
+    
+    
+    [popOver_view syncSuccess];
+    
+}
+
+#pragma mark -END
 
 #pragma Mark to get loggedInUserId
 
@@ -5114,15 +5095,20 @@
 
 
 #pragma mark - FULL DATA SYNC
+-(void)setSyncStatus
+{
+    [appDelegate setSyncStatus:SYNC_GREEN];
+}
+
 - (BOOL) startEventSync
 {
     
     NSString * event_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_events];
- 
+    appDelegate.connection_error = FALSE;
     BOOL retVal = TRUE;
     NSLog(@"SAMMAN DataSync WS Start: %@", [NSDate date]);
     appDelegate.wsInterface.didOpComplete = FALSE;
-    
+
     [appDelegate.wsInterface dataSyncWithEventName:EVENT_SYNC eventType:SYNC requestId:@""];
     
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
@@ -5140,7 +5126,12 @@
         {
             break;
         }
-
+        if(appDelegate.connection_error)
+        {
+            appDelegate.SyncStatus = SYNC_GREEN;
+            [self performSelectorOnMainThread:@selector(setSyncStatus) withObject:nil waitUntilDone:NO];
+            return FALSE;
+        }
     }
     
     if(retVal == NO)
@@ -5193,8 +5184,30 @@
         {
             break;
         }
+        if(appDelegate.connection_error)
+        {
+            appDelegate.SyncStatus = SYNC_GREEN;
+            [self performSelectorOnMainThread:@selector(setSyncStatus) withObject:nil waitUntilDone:NO];
+             return FALSE;
+        }
     }
     
+    if (!appDelegate.isInternetConnectionAvailable)
+    {
+        //appDelegate.SyncStatus = SYNC_RED;
+        
+        [appDelegate setSyncStatus:SYNC_RED];
+        //[appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+        //[appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+        //[appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+        
+        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:event_sync];
+        appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+        [appDelegate.reloadTable ReloadSyncTable];
+        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+            [MyPopoverDelegate performSelector:@selector(throwException)];
+        return FALSE;
+    }
     if(retVal == NO)
     {
         //appDelegate.SyncStatus = SYNC_RED;
@@ -5210,25 +5223,7 @@
             [MyPopoverDelegate performSelector:@selector(throwException)];
         return FALSE;
     }
-
     
-    if (!appDelegate.isInternetConnectionAvailable)
-    {
-        //appDelegate.SyncStatus = SYNC_RED;
-        
-        [appDelegate setSyncStatus:SYNC_RED];
-        //[appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
-        //[appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
-        //[appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-
-        [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:event_sync];
-        appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
-        [appDelegate.reloadTable ReloadSyncTable];
-        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-            [MyPopoverDelegate performSelector:@selector(throwException)];
-        return FALSE;
-    }
-	
 	//Radha 2012june12
 	//[appDelegate.databaseInterface cleartable:@"Event"];
 	//[appDelegate.databaseInterface cleartable:@"Task"];
@@ -5293,25 +5288,27 @@
 #pragma mark - Incremental Meta And Event
 - (void) callIncrementalMetasync
 {
-    if (metaSyncPopover == nil)
-        metaSyncPopover = [[PopoverButtons alloc] init];
+    if (popOver_view == nil)
+        popOver_view = [[PopoverButtons alloc] init];
     
-    [metaSyncPopover startSyncConfiguration];
+    [popOver_view startSyncConfiguration];
 
 }
 
 - (void) scheduleEventSync
 {
-    if (metaSyncPopover == nil)
-        metaSyncPopover = [[PopoverButtons alloc] init];
+    if (popOver_view == nil)
+        popOver_view = [[PopoverButtons alloc] init];
     
-    [metaSyncPopover startSyncEvents];
+    [popOver_view startSyncEvents];
     
 }
 #pragma mark - END
 
 - (void) clearTempDatabase
 {
+    [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
+    
     sqlite3_stmt *stmt;
     NSMutableArray * tables = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
     
@@ -5360,6 +5357,29 @@
 - (BOOL) checkIfRecordExistForObject:(NSString *)tableName Id :(NSString *)Id
 {
     NSString * query = [NSString stringWithFormat:@"SELECT COUNT(*) FROM '%@' WHERE Id = '%@'", tableName, Id];
+    
+    sqlite3_stmt * stmt;
+    
+    int count = 0;
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        
+        while (sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            count = synchronized_sqlite3_column_int(stmt, 0);
+        }
+    }
+    
+    if (count > 0)
+        return TRUE;
+    else
+        return FALSE;
+}
+
+- (BOOL) checkIfRecordExistForObjectWithRecordId:(NSString *)tableName Id :(NSString *)Id
+{
+    NSString * query = [NSString stringWithFormat:@"SELECT COUNT(*) FROM '%@' WHERE local_id = '%@'", tableName, Id];
     
     sqlite3_stmt * stmt;
     

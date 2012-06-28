@@ -298,7 +298,7 @@
 - (void) getViewLayouts;
 - (void) getTasksForStartDate:(NSString *)startDate EndDate:(NSString *)endDate;
 - (void) getWorkOrderMapViewForWorkOrderId:(NSString *)workOrderId;
-
+-(void)internetConnectivityHandling:(NSString *)data_sync;
 // Wrapper Layer to extract REQUIRED data from response received from Web Service 
 
 - (void) getWrapperDictionary:(NSMutableDictionary *)bodyParts;

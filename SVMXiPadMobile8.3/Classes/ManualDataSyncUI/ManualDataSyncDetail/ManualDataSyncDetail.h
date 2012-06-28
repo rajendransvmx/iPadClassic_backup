@@ -22,7 +22,7 @@
 
 # define ERROR_MESSAGE   @"Error_message"
 
-@interface ManualDataSyncDetail : UIViewController <UIPopoverControllerDelegate, UITableViewDelegate, UITableViewDataSource, UISplitViewControllerDelegate, MyPopoverDelegate, ManualDataSyncRootDelegate, RefreshSyncUIStatusButton, ReloadSyncTable>
+@interface ManualDataSyncDetail : UIViewController <UIPopoverControllerDelegate, UITableViewDelegate, UITableViewDataSource, UISplitViewControllerDelegate, MyPopoverDelegate, ManualDataSyncRootDelegate, RefreshSyncUIStatusButton, ReloadSyncTable, UIAlertViewDelegate>
 {
     UITableView * tableView;
     

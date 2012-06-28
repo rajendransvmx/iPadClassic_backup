@@ -13,10 +13,14 @@
 
 #import "SBJsonParser.h"
 
+
+
 @class iServiceAppDelegate;
 @class PopoverButtons;
 
-@interface DataBase : NSObject 
+PopoverButtons *popOver_view;
+
+@interface DataBase : NSObject
 {
     //RADHA
     id MyPopoverDelegate;
@@ -253,5 +257,10 @@
 - (void) insertMetaSyncDue:(NSString *)tableName;
 
 - (BOOL) checkIfSyncConfigDue;
+- (BOOL) checkIfRecordExistForObjectWithRecordId:(NSString *)tableName Id :(NSString *)Id;
+
+- (void) callMetaSync;
+
+- (void) settingAfterIncrementalMetaSync;
 
 @end

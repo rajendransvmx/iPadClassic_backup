@@ -3842,7 +3842,7 @@
     return internetConflict;
 }
 
-- (NSMutableArray *) getInternetConflictsForMetaSyncWithDB:(sqlite3 *)db
+/*- (NSMutableArray *) getInternetConflictsForMetaSyncWithDB:(sqlite3 *)db
 {
     NSString * selectQuery = [NSString stringWithFormat:@"Select sync_type, error_message from internet_conflicts"];
     NSArray  * keys = [NSArray arrayWithObjects:@"Error_message",@"sync_type",nil];
@@ -3888,7 +3888,7 @@
     }
     return internetConflict;
 
-}
+}*/
 
 
 - (void) removeInternetConflicts

@@ -25,6 +25,7 @@
 #import "ZKSoapException.h"
 #import "NSObject+Additions.h"
 #import "NSURL+Additions.h"
+#import "iServiceAppDelegate.h"
 
 static NSString *SOAP_NS = @"http://schemas.xmlsoap.org/soap/envelope/";
 
@@ -117,6 +118,9 @@ static NSString *SOAP_NS = @"http://schemas.xmlsoap.org/soap/envelope/";
 
 - (void) connection: (NSURLConnection *)connection didFailWithError: (NSError *)error
 {
+    iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+    appDelegate.connection_error = TRUE;
+    
 	if (self.logXMLInOut) {
 		NSLog(@"ResponseError:\n%@", error);
         if ([self respondsToSelector:@selector(internetConnectionFailed)])
