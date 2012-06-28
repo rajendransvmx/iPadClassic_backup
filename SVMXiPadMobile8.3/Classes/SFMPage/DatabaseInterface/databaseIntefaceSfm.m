@@ -5183,6 +5183,7 @@
 -(NSMutableArray *)getRecordTypeValuesForObjectName:(NSString *)object_name
 {
     NSMutableArray * array = [[NSMutableArray alloc] initWithCapacity:0];
+    [array addObject:@""];
     NSString * query = [NSString stringWithFormat:@"SELECT DISTINCT recordtypename FROM SFRTPicklist Where object_api_name = '%@'",object_name];
     sqlite3_stmt * statement;
     NSString * record_type= @"";

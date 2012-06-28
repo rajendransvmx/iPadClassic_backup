@@ -2331,7 +2331,7 @@
 - (void) didInvokeWebService:(NSString *)targetCall  event_name:(NSString *)event_name
 {    
     didRunOperation = YES;
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (!appDelegate.isInternetConnectionAvailable && [event_name isEqualToString:GETPRICE])
     {
         [activity stopAnimating];
         appDelegate.shouldShowConnectivityStatus = TRUE; //shrinivas.

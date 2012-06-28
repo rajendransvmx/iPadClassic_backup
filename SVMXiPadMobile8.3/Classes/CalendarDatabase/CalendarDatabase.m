@@ -155,7 +155,7 @@
     
     NSString * subject = [[_tasks objectAtIndex:1] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     
-    NSString *sql = [NSString stringWithFormat: @"INSERT  INTO '%@' (local_id , Priority,Subject,ActivityDate) VALUES ('%@','%@',        '%@', '%@')", tableName, local_id, [_tasks objectAtIndex:0], subject, _date];
+    NSString *sql = [NSString stringWithFormat: @"INSERT  INTO '%@' (local_id , Priority,Subject,ActivityDate) VALUES ('%@','%@','%@', '%@')", tableName, local_id, [_tasks objectAtIndex:0], subject, _date];
     
     char *err;
     if (synchronized_sqlite3_exec(appDelegate.db, [sql UTF8String], NULL, NULL, &err) != SQLITE_OK)

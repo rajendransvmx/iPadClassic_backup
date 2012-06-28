@@ -67,8 +67,6 @@
     NSString *plistPath = [rootPath stringByAppendingPathComponent:OBJECT_HISTORY_PLIST];
     appDelegate.recentObject = [NSArray arrayWithContentsOfFile:plistPath];
     
-    //Radha 27/06/2012
-    //Check if record exists, else remove the record from the array
     NSMutableArray * countArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
     for (int rec = 0; rec < [appDelegate.recentObject count]; rec++)
     {
@@ -86,12 +84,14 @@
     }
     
     //Remove deleted record from recentObject
+    NSMutableIndexSet *indexSet = [NSMutableIndexSet indexSet];
     for (int del = 0; del < [countArray count]; del++)
     {
         int value = [[countArray objectAtIndex:del] intValue];
-        
-        [appDelegate.recentObject removeObjectAtIndex:value];
+        [indexSet addIndex:value];
+//        [appDelegate.recentObject removeObjectAtIndex:value];
     }
+    [appDelegate.recentObject removeObjectsAtIndexes:indexSet];
     
     
     NSMutableArray * recentObjectsArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];

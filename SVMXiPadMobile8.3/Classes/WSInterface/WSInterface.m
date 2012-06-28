@@ -4276,6 +4276,7 @@ last_sync_time:(NSString *)last_sync_time
     
    if (response.error != nil)
    {
+       didCompleteAfterSaveEventCalls = YES;
        appDelegate.connection_error = TRUE;
        return;
    }

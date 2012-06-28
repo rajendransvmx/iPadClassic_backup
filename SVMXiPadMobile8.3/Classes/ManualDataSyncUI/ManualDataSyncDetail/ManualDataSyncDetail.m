@@ -278,9 +278,11 @@ PopoverButtons *popOver_view;
         background = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, width, 28)] autorelease];
     }
     UIImageView * bgView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM-Screen-Table-Strip.png"]] autorelease];
-    [cell.contentView addSubview:background];
-    cell.backgroundView = bgView;
-    
+	
+	UIImageView * bgView1 = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM-Screen-Table-Strip.png"]] autorelease];
+	
+	UIImageView * bgView2 = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM-Screen-Table-Strip.png"]] autorelease];
+	
     if ( HeaderSelected == 1 )
     {
         if ([appDelegate.internet_Conflicts count] > 0)
@@ -291,6 +293,7 @@ PopoverButtons *popOver_view;
             lbl.font = [UIFont fontWithName:@"HelveticaBold" size:19];
             lbl.textColor = [UIColor blackColor];
             lbl.backgroundColor = [UIColor clearColor];
+			lbl.userInteractionEnabled = YES;
             [background addSubview:lbl];
             lbl.userInteractionEnabled = YES;
             
@@ -334,7 +337,11 @@ PopoverButtons *popOver_view;
             
             //retryEventSyncAgain
             
-            [background addSubview:retry];    */      
+            [background addSubview:retry];    */ 
+			
+			[bgView setBackgroundColor:[appDelegate colorForHex:@"#87AFC7"]];
+			cell.backgroundView = bgView;
+
             [cell.contentView addSubview:background];
             [textView release];
             
@@ -350,8 +357,6 @@ PopoverButtons *popOver_view;
         NSString * SFId = @"";
         NSString * error_type = @"";
     
-        
-        
        SFId = [[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"SFId"];
         api_name = [objectsArray objectAtIndex:indexPath.section];
         syncType = [[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"sync_type"];
@@ -384,8 +389,6 @@ PopoverButtons *popOver_view;
 		NSString * get_from_online = [NSString stringWithFormat:@"Get From"];
 		
 		
-		
-		
         MultiLineController * mySegment = [[MultiLineController alloc] initWithItems:[NSArray arrayWithObjects:force,get_from_online,hold, nil]];
 			
 		mySegment.frame = CGRectMake(395, 10, 185, mySegment.frame.size.height * 1);
@@ -410,24 +413,35 @@ PopoverButtons *popOver_view;
 		mySegment2.tintColor = newTintColor;
 		
 		
-		
 		if ([syncType isEqualToString:@"PUT_INSERT"] || [syncType isEqualToString:@"GET_INSERT"])
 		{
+			[bgView setBackgroundColor:[appDelegate colorForHex:@"#2895C1"]];
+			cell.backgroundView = bgView;
+			
 			[cell.contentView addSubview:mySegment1];
 		}
 		
 		if ([syncType isEqualToString:@"PUT_DELETE"] || [syncType isEqualToString:@"GET_DELETE"])
 		{
+			[bgView1 setBackgroundColor:[appDelegate colorForHex:@"#B4CFEC"]];
+			cell.backgroundView = bgView1;
+
 			[cell.contentView addSubview:mySegment2];
 		}
 		
 		if (([syncType isEqualToString:@"PUT_UPDATE"] || [syncType isEqualToString:@"GET_UPDATE"])&& [error_type isEqualToString:@"ERROR"] )
 		{
+			[bgView2 setBackgroundColor:[appDelegate colorForHex:@"#3EA99F"]];
+			cell.backgroundView = bgView2;
+
 			[cell.contentView addSubview:mySegment2];
 		}
 		
 		if (([syncType isEqualToString:@"PUT_UPDATE"] || [syncType isEqualToString:@"GET_UPDATE"])&& [error_type isEqualToString:@"CONFLICT"] )
 		{
+			[bgView2 setBackgroundColor:[appDelegate colorForHex:@"#3EA99F"]];
+			cell.backgroundView = bgView2;
+
 			[cell.contentView addSubview:mySegment];
 		}
 
@@ -544,14 +558,15 @@ PopoverButtons *popOver_view;
             else if ([lbl.text isEqualToString:event_sync])
                 [retry addTarget:self action:@selector(retryEventSyncAgain) forControlEvents:UIControlEventTouchUpInside];
             
-            [background addSubview:retry]; */           
+            [background addSubview:retry]; */   
+
+			[bgView setBackgroundColor:[appDelegate colorForHex:@"#87AFC7"]];
+			cell.backgroundView = bgView;        
 
             
             [cell.contentView addSubview:background];
             [textView release];
-            
-            cell.accessoryType = UITableViewCellAccessoryNone;
-            cell.textLabel.font = [UIFont fontWithName:@"HelveticaBold" size:19];
+           
             
             return cell;
         }
@@ -616,22 +631,33 @@ PopoverButtons *popOver_view;
         
 		if ([syncType isEqualToString:@"PUT_INSERT"] || [syncType isEqualToString:@"GET_INSERT"])
 		{
+			[bgView setBackgroundColor:[appDelegate colorForHex:@"#2895C1"]];
+			cell.backgroundView = bgView;
+			
 			[cell.contentView addSubview:mySegment1];
 		}
 		
 		if ([syncType isEqualToString:@"PUT_DELETE"] || [syncType isEqualToString:@"GET_DELETE"])
 		{
+			[bgView1 setBackgroundColor:[appDelegate colorForHex:@"#B4CFEC"]];
+			cell.backgroundView = bgView1;
+			
 			[cell.contentView addSubview:mySegment2];
 		}
-
 		
 		if (([syncType isEqualToString:@"PUT_UPDATE"] || [syncType isEqualToString:@"GET_UPDATE"])&& [error_type isEqualToString:@"ERROR"] )
 		{
+			[bgView2 setBackgroundColor:[appDelegate colorForHex:@"#3EA99F"]];
+			cell.backgroundView = bgView2;
+			
 			[cell.contentView addSubview:mySegment2];
 		}
 		
 		if (([syncType isEqualToString:@"PUT_UPDATE"] || [syncType isEqualToString:@"GET_UPDATE"])&& [error_type isEqualToString:@"CONFLICT"] )
 		{
+			[bgView2 setBackgroundColor:[appDelegate colorForHex:@"#3EA99F"]];
+			cell.backgroundView = bgView2;
+			
 			[cell.contentView addSubview:mySegment];
 		}
 		
