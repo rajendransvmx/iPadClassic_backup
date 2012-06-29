@@ -193,4 +193,12 @@
     self.view.userInteractionEnabled = YES;
     dataSyncRoot.tableView.userInteractionEnabled = YES;
 }
+
+-(void) reloadRootTable
+{
+	iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+
+	dataSyncRoot.objectsArray = [appDelegate.calDataBase getConflictObjects];
+	[dataSyncRoot.tableView reloadData];
+}
 @end
