@@ -3690,7 +3690,7 @@
     {
         sqlite3_stmt * statement;
         NSString  * object_name = @"";
-        NSString * query  = [NSString stringWithFormat:@"SELECT  object_name FROM '%@' WHERE operation = '%@' and record_type = '%@'" ,SYNC_ERROR_CONFLICT , PUT_INSERT , record_type ];
+        NSString * query  = [NSString stringWithFormat:@"SELECT  object_name FROM '%@' WHERE sync_type = '%@' and record_type = '%@'" ,SYNC_ERROR_CONFLICT , PUT_INSERT , record_type ];  //Change  Of Query.
         
         if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String],-1 , &statement , nil)  ==  SQLITE_OK)
         {

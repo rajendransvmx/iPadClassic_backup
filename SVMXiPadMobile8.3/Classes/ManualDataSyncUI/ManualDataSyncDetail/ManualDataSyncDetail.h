@@ -122,6 +122,7 @@
 
 - (void) disableRootControls;
 - (void) enableRootControls;
+- (void) reloadRootTable;
 
 @end
 

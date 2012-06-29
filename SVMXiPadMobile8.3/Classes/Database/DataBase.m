@@ -4254,11 +4254,11 @@
     self.dbFilePath = @"";
     [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
     
-    [self callMetaSync];
+    [self doMetaSync];
     
 }
 
-- (void) callMetaSync
+- (void) doMetaSync
 {
     time_t t1;
     time(&t1);
@@ -4269,45 +4269,11 @@
     appDelegate.connection_error = FALSE;
 
    // [appDelegate goOnlineIfRequired];
-    [appDelegate pingServer];
-    [appDelegate.wsInterface metaSyncWithEventName:SFM_METADATA eventType:INITIAL_SYNC values:nil];
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
-    {
-        if (!appDelegate.isInternetConnectionAvailable)
-        {
-            break;
-        }
-        
-        if (appDelegate.wsInterface.didOpComplete == TRUE)
-            break; 
-        
-        
-        if (appDelegate.connection_error)
-            break;
-    }
     
+    NSString * retVal = [self callMetaSync];
     
-    
-    //RADHA - If connection error start meta sync again
-    if (!appDelegate.isInternetConnectionAvailable)
-    {
-        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-            [MyPopoverDelegate performSelector:@selector(throwException)];
-        return;
-    }
-    
-    if (appDelegate.connection_error && appDelegate.isInternetConnectionAvailable)
-    {
-        appDelegate.connection_error = FALSE;
-        [appDelegate.dataBase clearDatabase];
-        [appDelegate.dataBase callMetaSync];
-        return;
-    }
-    
-    
-    
-    /*
-     // Uncomment this when SFM Search Module is Required
+
+ /*     // Uncomment this when SFM Search Module is Required
      //SFM Search 
      
      appDelegate.wsInterface.didOpSFMSearchComplete = FALSE;
@@ -4327,22 +4293,77 @@
      
      //SFM Search End
      */
-    [appDelegate getDPpicklistInfo];
-    NSLog(@"META SYNC 1");
     
-    time_t t2;
-    time(&t2);
-    double diff = difftime(t2,t1);
-    NSLog(@"time taken for meta and data sync = %f",diff);
-    
-    [self populateDatabaseFromBackUp];
-    
-    //Radha purging - 10/April/12
-    NSMutableArray * recordId = [appDelegate.dataBase getAllTheRecordIdsFromEvent];
-    
-    appDelegate.initialEventMappinArray = [appDelegate.dataBase checkForTheObjectWithRecordId:recordId];
+    if ([retVal isEqualToString:SUCCESS_])
+    {
+        [appDelegate getDPpicklistInfo];
+        NSLog(@"META SYNC 1");
+        
+        time_t t2;
+        time(&t2);
+        double diff = difftime(t2,t1);
+        NSLog(@"time taken for meta and data sync = %f",diff);
+        
+        [self populateDatabaseFromBackUp];
+        
+        //Radha purging - 10/April/12
+        NSMutableArray * recordId = [appDelegate.dataBase getAllTheRecordIdsFromEvent];
+        
+        appDelegate.initialEventMappinArray = [appDelegate.dataBase checkForTheObjectWithRecordId:recordId];
+        
+    }
     //Radha End
 
+}
+
+
+
+- (NSString *) callMetaSync
+{
+    appDelegate.wsInterface.didOpComplete = FALSE;
+    appDelegate.connection_error = FALSE;
+    
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+    {
+        [appDelegate pingServer];
+        if(!appDelegate.connection_error)
+        {
+            break;
+        }
+    }
+    [appDelegate pingServer];
+    [appDelegate.wsInterface metaSyncWithEventName:SFM_METADATA eventType:INITIAL_SYNC values:nil];
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    {
+        if (!appDelegate.isInternetConnectionAvailable)
+        {
+            break;
+        }
+        
+        if (appDelegate.wsInterface.didOpComplete == TRUE)
+            break; 
+        
+        
+        if (appDelegate.connection_error)
+            break;
+    }
+    
+    //RADHA - If connection error start meta sync again
+    if (!appDelegate.isInternetConnectionAvailable)
+    {
+        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+            [MyPopoverDelegate performSelector:@selector(throwException)];
+        return NOINTERNET;
+    }
+    
+    if (appDelegate.connection_error && appDelegate.isInternetConnectionAvailable)
+    {
+        appDelegate.connection_error = FALSE;
+        [self doMetaSync];
+        return CONNECTIONERROR;
+    }
+    
+    return SUCCESS_;
 }
 
 - (NSMutableArray *) retreiveTableNamesFronDB:(sqlite3 *)dbName

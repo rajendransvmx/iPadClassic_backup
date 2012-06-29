@@ -5653,7 +5653,7 @@
             custLabel.tapRecgLabel = value;  //RADHA 2012june07 
             custLabel.controlDelegate = self;
             //custLabel.textColor = [UIColor blueColor];
-            custLabel.font = [UIFont boldSystemFontOfSize:custLabel.font.pointSize];
+            //custLabel.font = [UIFont boldSystemFontOfSize:custLabel.font.pointSize];
             custLabel.userInteractionEnabled = TRUE;
             custLabel.id_ = key;
             custLabel.refered_to_table_name = related_to_table_name;

@@ -18,6 +18,7 @@
 - (void) throwException;
 - (void) enableControls;
 - (void) disableControls;
+- (void) refreshRootView;
 //Radha 2012june16
 - (void) resetTableview;
 - (void) showInternetAletView;

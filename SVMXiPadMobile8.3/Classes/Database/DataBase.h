@@ -14,6 +14,9 @@
 #import "SBJsonParser.h"
 
 
+# define SUCCESS_           @"SUCCESS_"
+# define NOINTERNET         @"NOINTERNET"
+# define CONNECTIONERROR    @"CONNECTIONERROR"
 
 @class iServiceAppDelegate;
 @class PopoverButtons;
@@ -259,7 +262,9 @@ PopoverButtons *popOver_view;
 - (BOOL) checkIfSyncConfigDue;
 - (BOOL) checkIfRecordExistForObjectWithRecordId:(NSString *)tableName Id :(NSString *)Id;
 
-- (void) callMetaSync;
+- (NSString *) callMetaSync;
+
+- (void) doMetaSync;
 
 - (void) settingAfterIncrementalMetaSync;
 
