@@ -167,6 +167,10 @@
         NSLog(@"Troubleshooting getProductNameForProductId in while loop");
         if (didGetProductName)
             break;
+        if (appDelegate.connection_error)
+        {
+            break;
+        }
     }
 }
 

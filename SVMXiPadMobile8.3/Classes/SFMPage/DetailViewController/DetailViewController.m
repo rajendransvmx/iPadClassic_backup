@@ -2330,41 +2330,51 @@
 
 - (void) didInvokeWebService:(NSString *)targetCall  event_name:(NSString *)event_name
 {    
-    didRunOperation = YES;
-    if (!appDelegate.isInternetConnectionAvailable && [event_name isEqualToString:GETPRICE])
+    if([event_name isEqualToString:BEFORESAVE] || [event_name isEqualToString:AFTERSAVE])
     {
-        [activity stopAnimating];
-        appDelegate.shouldShowConnectivityStatus = TRUE; //shrinivas.
-        [appDelegate displayNoInternetAvailable];
-        [self enableSFMUI];
-        return;
-    }    
-    
-    if([appDelegate.syncThread isExecuting])
-    {
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
-        {
-            if (!appDelegate.isInternetConnectionAvailable)
-            {
-                [activity stopAnimating];
-                [self enableSFMUI];
-                break;
-            }
-            
-            if ([appDelegate.syncThread isFinished])
-            {
-                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
-                break;
-            }
-        }
+        NSMutableDictionary * sfm_temp = [appDelegate.SFMPage mutableCopy];
+        NSArray * keys = [NSArray arrayWithObjects:WEBSERVICE_NAME, SFM_DICTIONARY, nil];
+        NSArray * objects = [NSArray arrayWithObjects:targetCall, sfm_temp, nil];
+        NSDictionary * dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
+        [appDelegate.wsInterface callSFMEvent:dict event_name:event_name];
     }
     else
     {
-        if ([appDelegate.datasync_timer isValid])
+        didRunOperation = YES;
+        if (!appDelegate.isInternetConnectionAvailable && [event_name isEqualToString:GETPRICE])
         {
-            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
-        }            
-    }   
+            [activity stopAnimating];
+            appDelegate.shouldShowConnectivityStatus = TRUE; //shrinivas.
+            [appDelegate displayNoInternetAvailable];
+            [self enableSFMUI];
+            return;
+        }    
+        
+       if([appDelegate.syncThread isExecuting])
+        {
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+            {
+                if (!appDelegate.isInternetConnectionAvailable)
+                {
+                    [activity stopAnimating];
+                    [self enableSFMUI];
+                    break;
+                }
+                
+                if ([appDelegate.syncThread isFinished])
+                {
+                    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
+                    break;
+                }
+            }
+        }
+        else
+        {
+            if ([appDelegate.datasync_timer isValid])
+            {
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
+            }            
+        }   
 
     if ([appDelegate.metaSyncThread isExecuting])
     {
@@ -2393,74 +2403,80 @@
         }            
     }   
 
-    
-    if ([appDelegate.event_thread isExecuting])
-    {
         
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        if ([appDelegate.event_thread isExecuting])
         {
-            if (!appDelegate.isInternetConnectionAvailable)
+            NSLog(@" evnt is executing");
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
-                [activity stopAnimating];
-                [self enableSFMUI];
-                break;
+                if (!appDelegate.isInternetConnectionAvailable)
+                {
+                    [activity stopAnimating];
+                    [self enableSFMUI];
+                    break;
+                }
+                
+                if ([appDelegate.event_thread isFinished])
+                {
+                    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
+                    break;
+                }
             }
-            
-            if ([appDelegate.event_thread isFinished])
+        }
+        else
+        {
+            if ([appDelegate.event_timer isValid])
             {
+                NSLog(@" evnt is NOT executing");
                 [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
-                break;
-            }
-        }
-    }
-    else
-    {
-        if ([appDelegate.event_timer isValid])
+            }            
+        }   
+        
+        [appDelegate goOnlineIfRequired];
+        NSLog(@" getPrice1");
+        NSMutableDictionary * sfm_temp = [appDelegate.SFMPage mutableCopy];
+        NSArray * keys = [NSArray arrayWithObjects:WEBSERVICE_NAME, SFM_DICTIONARY, nil];
+        NSArray * objects = [NSArray arrayWithObjects:targetCall, sfm_temp, nil];
+        NSDictionary * dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
+        [activity startAnimating];
+        appDelegate.wsInterface.getPrice = FALSE;
+        NSLog(@" getPrice2");
+        if (appDelegate.isInternetConnectionAvailable)
         {
-            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
-        }            
-    }   
-    
-    [appDelegate goOnlineIfRequired];
-    
-    NSArray * keys = [NSArray arrayWithObjects:WEBSERVICE_NAME, SFM_DICTIONARY, nil];
-    NSArray * objects = [NSArray arrayWithObjects:targetCall, appDelegate.SFMPage, nil];
-    NSDictionary * dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
-    [activity startAnimating];
-    appDelegate.wsInterface.getPrice = FALSE;
-
-    if (appDelegate.isInternetConnectionAvailable)
-    {
-        [appDelegate.wsInterface callSFMEvent:dict event_name:event_name];
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
-        {
-            if (!appDelegate.isInternetConnectionAvailable)
+            [appDelegate.wsInterface callSFMEvent:dict event_name:event_name];
+            while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
             {
-                appDelegate.wsInterface.getPrice = TRUE;
-                [activity stopAnimating];
-                //appDelegate.shouldShowConnectivityStatus = TRUE;
-                //[appDelegate displayNoInternetAvailable];
-                [self enableSFMUI];
-                return;
+                if (!appDelegate.isInternetConnectionAvailable)
+                {
+                    appDelegate.wsInterface.getPrice = TRUE;
+                    [activity stopAnimating];
+                    //appDelegate.shouldShowConnectivityStatus = TRUE;
+                    //[appDelegate displayNoInternetAvailable];
+                    [self enableSFMUI];
+                    return;
+                }
+                
+                if (appDelegate.wsInterface.getPrice == TRUE)
+                {
+                    appDelegate.wsInterface.getPrice = FALSE; 
+                    break;
+                }
             }
+     
+        }
+        
+        NSLog(@" getPrice3");
+        [self.tableView reloadData];
+        [appDelegate.sfmPageController.rootView refreshTable];
+        [self  didselectSection:0];    
+        [activity stopAnimating];
+        [appDelegate ScheduleIncrementalDatasyncTimer];
+        [appDelegate ScheduleIncrementalMetaSyncTimer];
+        [appDelegate ScheduleTimerForEventSync];
+        [self enableSFMUI];
+        NSLog(@" getPrice4");
             
-            if (appDelegate.wsInterface.getPrice == TRUE)
-            {
-                appDelegate.wsInterface.getPrice = FALSE; 
-                break;
-            }
-        }
- 
     }
-    
-    [self.tableView reloadData];
-    [appDelegate.sfmPageController.rootView refreshTable];
-    [self  didselectSection:0];    
-    [activity stopAnimating];
-    [appDelegate ScheduleIncrementalDatasyncTimer];
-    [appDelegate ScheduleIncrementalMetaSyncTimer];
-    [appDelegate ScheduleTimerForEventSync];
-    [self enableSFMUI];
 }
 
 /*- (void) didSubmitDefaultAction:(NSString *)defaultAction
@@ -7425,6 +7441,10 @@
             {
                 break;
             }
+            if (appDelegate.connection_error)
+            {
+                break;
+            }
         }
         
         NSMutableDictionary * insert_items = wsinterface.detail_addRecordItems;
@@ -7993,6 +8013,10 @@
                     
                 }
                 if(wsinterface.add_WS == TRUE)
+                {
+                    break;
+                }
+                if (appDelegate.connection_error)
                 {
                     break;
                 }
@@ -9905,7 +9929,6 @@
         {
             appDelegate.SFMPage = nil;
             appDelegate.SFMoffline = nil;
-            
             [delegate BackOnSave];
         }
     }
@@ -11250,6 +11273,10 @@
                 break;
             if (!appDelegate.isInternetConnectionAvailable)
                 break;
+            if (appDelegate.connection_error)
+            {
+                break;
+            }
         }
         
         if ([appDelegate.wsInterface.productHistory count] > 0)
@@ -11266,6 +11293,10 @@
             
             if (!appDelegate.isInternetConnectionAvailable)
                 break;
+            if (appDelegate.connection_error)
+            {
+                break;
+            }
         }
         if ([appDelegate.wsInterface.accountHistory count] > 0)
             [appDelegate.SFMPage setValue:appDelegate.wsInterface.accountHistory forKey:ACCOUNTHISTORY];

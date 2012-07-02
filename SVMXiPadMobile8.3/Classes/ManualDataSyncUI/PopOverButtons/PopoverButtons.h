@@ -85,7 +85,7 @@
 
 //RADHA 
 - (void) startSyncConfiguration;
-
+- (void) scheduletimer;
 @end
 
 extern PopoverButtons *popOver_view;

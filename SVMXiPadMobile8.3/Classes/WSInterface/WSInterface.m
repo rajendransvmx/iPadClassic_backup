@@ -393,6 +393,11 @@ last_sync_time:(NSString *)last_sync_time
         {
             break;
         }
+        if (appDelegate.connection_error)
+        {
+            break;
+        }
+
     }
 
 	//put all deletes 
@@ -410,6 +415,11 @@ last_sync_time:(NSString *)last_sync_time
         {
             break;
         }
+        
+        if (appDelegate.connection_error)
+        {
+            break;
+        }
     }
     [self getAllRecordsForOperationTypeFromSYNCCONFLICT:PUT_UPDATE OverRideFlag:CLIENT_OVERRIDE];
     [self Put:PUT_UPDATE];
@@ -424,6 +434,11 @@ last_sync_time:(NSString *)last_sync_time
         {
             break;
         }
+        if (appDelegate.connection_error)
+        {
+            break;
+        }
+
     }
     
     [appDelegate.databaseInterface PutconflictRecordsIntoHeapFor:PUT_UPDATE override_flag:SERVER_OVERRIDE];
@@ -437,6 +452,11 @@ last_sync_time:(NSString *)last_sync_time
         {
             break;
         }
+        if (appDelegate.connection_error)
+        {
+            break;
+        }
+
     }
     
     [appDelegate.databaseInterface  updateSyncRecordsIntoLocalDatabase];
@@ -456,6 +476,12 @@ last_sync_time:(NSString *)last_sync_time
         {
             if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
                 break;
+            
+            if (appDelegate.connection_error)
+            {
+                break;
+            }
+
         }
         [self setSyncReqId:@""];
         
@@ -4274,12 +4300,12 @@ last_sync_time:(NSString *)last_sync_time
     int ret;
     NSLog(@"OPERATION COMPLETED RESPONSE");
     
-   if (response.error != nil)
-   {
+    if (response.error != nil)
+    {
        didCompleteAfterSaveEventCalls = YES;
        appDelegate.connection_error = TRUE;
        return;
-   }
+    }
     else
     {
         appDelegate.connection_error = FALSE;
@@ -8994,13 +9020,17 @@ last_sync_time:(NSString *)last_sync_time
     NSMutableDictionary * header_all_fields = [appDelegate.databaseInterface getRecordsForRecordId:appDelegate.sfmPageController.recordId ForObjectName:hdr_object_name fields:field_string];
     
     NSArray *   header_All_fields_keys = [header_all_fields allKeys];
+    NSArray * headerData_keys = [hdrData allKeys];
     
     for(NSString * key in header_All_fields_keys)
     {
          NSString * value = [header_all_fields objectForKey:key];
-        [hdrData  setObject:value forKey:key];
+        
+        if(![headerData_keys containsObject:key])
+        {
+            [hdrData  setObject:value forKey:key];
+        }
     }
-         
         
     NSArray * allkeys_HeaderData = [hdrData allKeys];
     //Layout id
@@ -9167,7 +9197,7 @@ last_sync_time:(NSString *)last_sync_time
             
             for(NSString * detailRecordField in detailAllRecords)
             {
-                if([all_ApiNames_detail containsObject:detailRecordField])
+                if(![all_ApiNames_detail containsObject:detailRecordField])
                 {
                     NSString * key = [detail_all_fields   objectForKey:detailRecordField];
                     

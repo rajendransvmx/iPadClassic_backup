@@ -162,18 +162,11 @@ PopoverButtons *popOver_view;
     
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     
-    objectsArray = nil;
-    objectsDict = nil;
-    
-    if (objectsArray == nil)
-        objectsArray = [[NSMutableArray alloc] initWithCapacity:0];
-    
     if (objectsDict == nil)
         objectsDict = [[NSMutableDictionary alloc] initWithCapacity:0];
     
     objectsArray  = [appDelegate.calDataBase getConflictObjects];   
-//    [objectsArray retain];
-    
+
     for(int i=0; i < [objectsArray count]; i++)
     {
         objectDetailsArray = [appDelegate.calDataBase getrecordIdsForObject:[objectsArray objectAtIndex:i]];
@@ -1465,27 +1458,17 @@ PopoverButtons *popOver_view;
 //can remove 
 - (void) ReloadSyncTable
 {
-//	if ([objectsArray count] > 0)
-//	{
-//		[objectsArray removeAllObjects];
-//	}
-//	
-//	if ([objectsDict count] > 0)
-//	{
-//		[objectsDict removeAllObjects];
-//	}
-//	
-//	
-//	objectsArray  = [appDelegate.calDataBase getConflictObjects];   
-//    
-//    for(int i=0; i < [objectsArray count]; i++)
-//    {
-//        objectDetailsArray = [appDelegate.calDataBase getrecordIdsForObject:[objectsArray objectAtIndex:i]];
-//        
-//        [objectsDict setObject:objectDetailsArray forKey:[objectsArray objectAtIndex:i]];
-//    }   
-//
-//	[rootSyncDelegate reloadRootTable];
+    if ([appDelegate.internet_Conflicts count] == 0)
+    {
+        objectsArray  = [appDelegate.calDataBase getConflictObjects];  
+        for(int i = 0; i < [objectsArray count]; i++)
+        {
+            objectDetailsArray = [appDelegate.calDataBase getrecordIdsForObject:[objectsArray objectAtIndex:i]];
+            [objectsDict setObject:objectDetailsArray forKey:[objectsArray objectAtIndex:i]];
+        }  
+        
+        [rootSyncDelegate reloadRootTable];
+    }
     [self._tableView reloadData];
 }
 
@@ -1565,11 +1548,11 @@ PopoverButtons *popOver_view;
 -(void)dismisspopover
 {
     [popOver_view.popover dismissPopoverAnimated:YES];
-    if ([objectsArray count]>0)
-    {
-        [activity startAnimating];
-        //self._tableView.hidden = YES;
-    }
+//    if ([objectsArray count]>0)
+//    {
+//        [activity startAnimating];
+//        //self._tableView.hidden = YES;
+//    }
 }
 
 //Radha

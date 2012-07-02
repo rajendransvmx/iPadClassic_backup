@@ -3092,8 +3092,9 @@
             else
                 productId = @"";
         }
-    }
     synchronized_sqlite3_finalize(stmt);
+    }
+    
     sqlite3_stmt * stmt1;
     if ([productId isEqualToString:@""])
     {
@@ -3110,8 +3111,8 @@
                     productId = @"";
             }
         }
-    }
     synchronized_sqlite3_finalize(stmt1);
+    }
     return productId;
 }
 
@@ -3175,7 +3176,7 @@
                 [objects addObject:[NSString stringWithFormat:@""]];
         }
     }
-    return objects;
+    return [objects retain];
 }
 
 - (NSMutableArray *) getrecordIdsForObject:(NSString *)objectName

@@ -164,7 +164,7 @@ PopoverButtons *popOver_view;
                 }
                 if ([appDelegate.metaSyncThread isFinished])
                 {
-                    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
+                 //   [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
                     break;
                 }
             }
@@ -189,7 +189,7 @@ PopoverButtons *popOver_view;
                 
                 if ([appDelegate.event_thread isFinished])
                 {
-                    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
+                 //   [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
                     break;
                 }
             }
@@ -300,6 +300,11 @@ PopoverButtons *popOver_view;
             
             if (!appDelegate.isInternetConnectionAvailable)
                 break;
+            
+            if (appDelegate.connection_error)
+            {
+                break;
+            }
         }
 		
         retVal = [appDelegate.calDataBase selectCountFromSync_Conflicts];
@@ -308,9 +313,9 @@ PopoverButtons *popOver_view;
             [appDelegate callDataSync];
         }
     }
-    [appDelegate ScheduleIncrementalMetaSyncTimer];
-    [appDelegate ScheduleIncrementalDatasyncTimer];
-    [appDelegate ScheduleTimerForEventSync];    
+//    [appDelegate ScheduleIncrementalMetaSyncTimer];
+//    [appDelegate ScheduleIncrementalDatasyncTimer];
+//    [appDelegate ScheduleTimerForEventSync];    
     
 	[delegate activityStop];
     [appDelegate.reloadTable ReloadSyncTable];
@@ -543,16 +548,7 @@ PopoverButtons *popOver_view;
 - (void) syncSuccess
 {
     appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
-    
-//    if (delegate == nil)
-//    {
-//        if (detail == nil)
-//        {
-//            detail = [[[ManualDataSyncDetail  alloc] init] autorelease];
-//        }
-//        delegate = detail;
-//    }
-    
+        
     [delegate activityStop];
     [delegate enableControls];
     
@@ -601,6 +597,21 @@ PopoverButtons *popOver_view;
     appDelegate.wsInterface.MyPopoverDelegate = nil;
     appDelegate.metaSyncRunning = NO;
     
+    
+    if (appDelegate.event_thread != nil)
+    {
+        [appDelegate.event_thread release];
+    }
+
+    [self performSelectorOnMainThread:@selector(scheduletimer) withObject:nil waitUntilDone:NO];
+    
+}
+
+- (void) scheduletimer
+{
+    [appDelegate ScheduleIncrementalDatasyncTimer];
+    [appDelegate ScheduleIncrementalMetaSyncTimer];
+    [appDelegate ScheduleTimerForEventSync];
 }
 
 //EVENT SYNC METHOD
@@ -683,7 +694,7 @@ PopoverButtons *popOver_view;
                 
                 if ([appDelegate.metaSyncThread isFinished])
                 {
-                    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
+                //    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
                     break;
                 }
             }
@@ -756,9 +767,9 @@ PopoverButtons *popOver_view;
             }
          }
         
-        [appDelegate ScheduleIncrementalDatasyncTimer];
-        [appDelegate ScheduleIncrementalMetaSyncTimer];
-        [appDelegate ScheduleTimerForEventSync];
+//        [appDelegate ScheduleIncrementalDatasyncTimer];
+//        [appDelegate ScheduleIncrementalMetaSyncTimer];
+//        [appDelegate ScheduleTimerForEventSync];
         
         appDelegate.dataBase.MyPopoverDelegate = nil;
         appDelegate.databaseInterface.MyPopoverDelegate = nil;

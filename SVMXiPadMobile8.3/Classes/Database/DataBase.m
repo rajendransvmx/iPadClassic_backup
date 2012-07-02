@@ -4782,9 +4782,9 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
     }      
     
-    [appDelegate ScheduleIncrementalDatasyncTimer];
-    [appDelegate ScheduleIncrementalMetaSyncTimer];
-    [appDelegate ScheduleTimerForEventSync];
+//    [appDelegate ScheduleIncrementalDatasyncTimer];
+//    [appDelegate ScheduleIncrementalMetaSyncTimer];
+//    [appDelegate ScheduleTimerForEventSync];
     [appDelegate.dataBase deleteDatabase:TEMPDATABASENAME];
     [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
     

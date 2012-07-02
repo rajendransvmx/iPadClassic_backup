@@ -1060,6 +1060,10 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
             {
                 break;
             }
+            if (appDelegate.connection_error)
+            {
+                break;
+            }
         }
 
     }
@@ -1078,6 +1082,10 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 			{
 				break;
 			}
+            if (appDelegate.connection_error)
+            {
+                break;
+            }
 		}
 	}
     
@@ -1169,7 +1177,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     {
         self.datasync_timer =  [NSTimer scheduledTimerWithTimeInterval:scheduledTimer
                                          target:self
-                                        selector:@selector(MethodForTimer:)
+                                        selector:@selector(callDataSync)
                                        userInfo:nil
                                         repeats:YES];
     }
@@ -1582,11 +1590,12 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         if ([event_thread isExecuting])
         {
             NSLog(@"Executing");
-            
+            return;            
         }
         else 
         {
             NSLog(@"finished");
+                
         }
     }
     

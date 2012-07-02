@@ -344,6 +344,10 @@
         {
             break;
         }
+        if (appDelegate.connection_error)
+        {
+            break;
+        }
     }
     
     // Upload signature to attachments
@@ -366,6 +370,10 @@
             break;
         }
         if(attachNewSignature == YES)
+        {
+            break;
+        }
+        if (appDelegate.connection_error)
         {
             break;
         }

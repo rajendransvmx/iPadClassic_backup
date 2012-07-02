@@ -394,6 +394,10 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
         {
             break;
         }
+        if (appDelegate.connection_error)
+        {
+            break;
+        }
         //NSLog(@"3");
     }
     
@@ -1287,6 +1291,10 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
             break;
         }
         if (didQueryTechnician)
+        {
+            break;
+        }
+        if (appDelegate.connection_error)
         {
             break;
         }

@@ -317,6 +317,10 @@
             [self enableControls];
             break;
         }
+        if (appDelegate.connection_error)
+        {
+            break;
+        }
 
     }
     
@@ -635,6 +639,10 @@
         {
             break;
         }
+        if (appDelegate.connection_error)
+        {
+            break;
+        }
     }    
 
     if ([appDelegate.userProfileId length] == 0)
@@ -840,6 +848,11 @@
         {
             if (didQueryTechnician && didCreateSampleData)
                 break;
+        }
+        if (appDelegate.connection_error)
+        {
+            [activity stopAnimating];
+            break;
         }
         else
         {

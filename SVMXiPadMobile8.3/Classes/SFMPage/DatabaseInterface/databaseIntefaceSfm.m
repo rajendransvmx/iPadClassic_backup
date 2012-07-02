@@ -4673,11 +4673,11 @@
     NSMutableArray * array = [[NSMutableArray  alloc] initWithCapacity:0];
     NSArray * keys = [NSArray arrayWithObjects:@"local_id" ,@"object_name" , @"record_type" ,@"sf_id",@"override_flag",nil];
     
-    sqlite3_stmt * statement;
+    sqlite3_stmt * statement;   
     NSString * query ;
-    if([operation_type isEqualToString:PUT_UPDATE] && [override_flag_value isEqualToString:CLIENT_OVERRIDE])
+    if([operation_type isEqualToString:PUT_UPDATE] && ([override_flag_value isEqualToString:CLIENT_OVERRIDE] || [override_flag_value isEqualToString:RETRY]))
     {
-        query  = [NSString stringWithFormat:@"SELECT  local_id , object_name , record_type, sf_id ,override_flag FROM '%@' WHERE sync_type = '%@'   and (override_flag = '%@' or override_flag = '%@')" ,SYNC_ERROR_CONFLICT , operation_type , CLIENT_OVERRIDE,NONE];
+        query  = [NSString stringWithFormat:@"SELECT  local_id , object_name , record_type, sf_id ,override_flag FROM '%@' WHERE sync_type = '%@'   and (override_flag = '%@' or override_flag = '%@')" ,SYNC_ERROR_CONFLICT , operation_type , CLIENT_OVERRIDE,RETRY];
     }
     else 
     {

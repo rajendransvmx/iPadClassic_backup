@@ -143,7 +143,7 @@
     }
     else
     {
-        if (lastSelectedIndexPath == indexPath)
+        if ([lastSelectedIndexPath isEqual:indexPath])
         {
             UIImage * image = [UIImage imageNamed:@"SFM_left_button_selected.png"];
             image = [image stretchableImageWithLeftCapWidth:11 topCapHeight:8];
@@ -216,6 +216,46 @@
     [lastSelectedCellBGImage release];
     
     lastSelectedIndexPath = [indexPath retain];
+    
+//    if ([lastSelectedIndexPath isEqual:indexPath]) 
+//    {
+//        
+//        UITableViewCell * selectedCell = [tableView cellForRowAtIndexPath:indexPath];
+//        UIView * cellBackgroundView = selectedCell.backgroundView;
+//        UIImageView * bgImage = (UIImageView *)[cellBackgroundView viewWithTag:BGIMAGETAG];
+//        image = [UIImage imageNamed:@"SFM_left_button_selected.png"];
+//        image = [image stretchableImageWithLeftCapWidth:11 topCapHeight:8];
+//        [bgImage setImage:image];
+//        [bgImage setContentMode:UIViewContentModeScaleToFill];
+//        UILabel * selectedCellLabel = (UILabel *)[cellBackgroundView viewWithTag:CELLLABELTAG];
+//        selectedCellLabel.textColor = [UIColor whiteColor];
+//    }
+//    else
+//    {
+//        UITableViewCell * lastSelectedCell = [tableView cellForRowAtIndexPath:lastSelectedIndexPath];
+//        UIView * lastSelectedCellBackgroundView = lastSelectedCell.backgroundView;
+//        UIImageView * lastSelectedCellBGImage = (UIImageView *)[lastSelectedCellBackgroundView viewWithTag:BGIMAGETAG];
+//        image = [UIImage imageNamed:@"SFM_left_button_UP.png"];
+//        image = [image stretchableImageWithLeftCapWidth:8 topCapHeight:8];
+//        [lastSelectedCellBGImage setImage:image];
+//        [lastSelectedCellBGImage setContentMode:UIViewContentModeScaleToFill];
+//        UILabel * lastSelectedCellLabel = (UILabel *)[lastSelectedCellBackgroundView viewWithTag:CELLLABELTAG];
+//        lastSelectedCellLabel.textColor = [UIColor blackColor];
+//        
+//    }
+//    
+//    UITableViewCell * selectedCell = [tableView cellForRowAtIndexPath:indexPath];
+//    UIView * cellBackgroundView = selectedCell.backgroundView;
+//    UIImageView * bgImage = (UIImageView *)[cellBackgroundView viewWithTag:BGIMAGETAG];
+//    image = [UIImage imageNamed:@"SFM_left_button_selected.png"];
+//    image = [image stretchableImageWithLeftCapWidth:11 topCapHeight:8];
+//    [bgImage setImage:image];
+//    [bgImage setContentMode:UIViewContentModeScaleToFill];
+//    UILabel * selectedCellLabel = (UILabel *)[cellBackgroundView viewWithTag:CELLLABELTAG];
+//    selectedCellLabel.textColor = [UIColor whiteColor];
+//
+//    lastSelectedIndexPath = [indexPath retain];    
+
 }
 
 @end

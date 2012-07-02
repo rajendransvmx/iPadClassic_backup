@@ -228,6 +228,10 @@
         {
             break;
         }
+        if (appDelegate.connection_error)
+        {
+            break;
+        }
     }
 }
 
@@ -254,6 +258,10 @@
             {
                 break;
             }
+            if (appDelegate.connection_error)
+            {
+                break;
+            }
         }
 
     }
@@ -270,6 +278,10 @@
                 break;
             }
             if (didremoveallPdf) 
+            {
+                break;
+            }
+            if (appDelegate.connection_error)
             {
                 break;
             }
