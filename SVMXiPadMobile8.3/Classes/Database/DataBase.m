@@ -5073,7 +5073,7 @@
 
 }
 
-- (NSString *) getDateToDeleteEventsAndTask:(NSTimeInterval)Value
+- (NSString *) getDateToDeleteEventsAndTaskOlder:(NSTimeInterval)Value
 {
     NSDate * today = [NSDate date];
     
@@ -5092,7 +5092,27 @@
     return currentDate;
 }
 
-- (void) purgingDataOnSyncSettings:(NSString *)Date tableName:(NSString *)tableName
+- (NSString *) getDateToDeleteEventsAndTaskForNext:(NSTimeInterval)Value
+{
+    NSDate * today = [NSDate date];
+    
+    NSDateFormatter * formatter = [[[NSDateFormatter alloc] init] autorelease];
+    [formatter setDateFormat:@"yyyy-MM-dd hh:mm:ss"];
+    NSTimeZone *gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
+    [formatter setTimeZone:gmt];
+    
+    
+    NSDate * previousDate = [today dateByAddingTimeInterval:(+Value * 24 * 60 * 60)];
+    
+    NSString * currentDate = [formatter stringFromDate:previousDate];
+    
+    currentDate = [currentDate stringByReplacingCharactersInRange:NSMakeRange(11, 8) withString:@"00:00:00"];
+    return currentDate;
+}
+
+
+- (void) purgingDataOnSyncSettings:(NSString *)Date tableName:(NSString *)tableName 
+                            Action:(NSString*)Action
 {
     
     NSString * column = @"";
@@ -5102,7 +5122,15 @@
     else
         column = @"ActivityDate";
 
-    NSString * queryStatement = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ <= '%@'", tableName, column, Date];
+    NSString * queryStatement = @"";
+    if ([Action isEqualToString:@"LESSTHAN"])
+    {
+        queryStatement = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ <= '%@'", tableName, column, Date];   
+    }
+    else
+    {
+        queryStatement = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ > '%@'", tableName, column, Date];   
+    }
     
     char * err;
     

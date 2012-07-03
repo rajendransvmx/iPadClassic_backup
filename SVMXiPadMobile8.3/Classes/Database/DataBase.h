@@ -233,9 +233,12 @@ PopoverButtons *popOver_view;
 
 - (void) removeIdExistsInIntialEventMappingArray;
 
-- (NSString *) getDateToDeleteEventsAndTask:(NSTimeInterval)Value;
+- (NSString *) getDateToDeleteEventsAndTaskOlder:(NSTimeInterval)Value;
 
-- (void) purgingDataOnSyncSettings:(NSString *)Date tableName:(NSString *)tableName;
+//july 3
+- (NSString *) getDateToDeleteEventsAndTaskForNext:(NSTimeInterval)Value;
+
+- (void) purgingDataOnSyncSettings:(NSString *)Date tableName:(NSString *)tableName Action:(NSString*)Action;
 
 
 - (void) callIncrementalMetasync;

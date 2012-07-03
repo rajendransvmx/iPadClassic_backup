@@ -128,6 +128,12 @@ PopoverButtons *popOver_view;
 	BOOL retVal;
     [delegate dismisspopover];
     appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+    
+    if (!appDelegate.isInternetConnectionAvailable)
+    {
+        return;
+    }
+    
      NSString * data_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_data_sync];
 	
 	retVal = [appDelegate.calDataBase selectCountFromSync_Conflicts];
@@ -363,6 +369,11 @@ PopoverButtons *popOver_view;
     [appDelegate.dataBase clearTempDatabase];
     
     [delegate dismisspopover];
+    
+    if (!appDelegate.isInternetConnectionAvailable)
+    {
+        return;
+    }
     
     appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
     	//new code to handle meta sync whenever the application is logged of the authentication module.
@@ -620,7 +631,11 @@ PopoverButtons *popOver_view;
     if (appDelegate == nil)
         appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
 
-	
+	if (!appDelegate.isInternetConnectionAvailable)
+    {
+        return;
+    }
+    
 	BOOL retVal_ = [appDelegate pingServer];
     if(retVal_ == NO)
     {

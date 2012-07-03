@@ -2265,7 +2265,7 @@
                     else if([component_operator  isEqualToString:@"isnull"])
                     {
                         lhs_value = component_lhs;
-                        component_lhs = [NSString stringWithFormat:@"typeof(%@)", component_lhs];
+                        component_lhs = [NSString stringWithFormat:@"%@", component_lhs];
                         operator_ = @"=";
                         component_rhs = @"null";
                     }
@@ -2362,7 +2362,7 @@
             //Test
             else if ([rhs isEqualToString:@"null"])
             {
-                component_expression = [NSString stringWithFormat:@" ( %@ = '' or %@ %@ '%@' ) ",lhs_value,lhs,operator,rhs];            
+                component_expression = [NSString stringWithFormat:@" ( %@ = ' ' or typeof(%@) %@ '%@' or %@ = '' ) ",lhs,lhs,operator,rhs, lhs];            
             }
             
             else

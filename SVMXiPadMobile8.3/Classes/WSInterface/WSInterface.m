@@ -1426,12 +1426,29 @@ last_sync_time:(NSString *)last_sync_time
     
     NSTimeInterval value = [settingValue integerValue];
     
-    NSString * date = [appDelegate.dataBase getDateToDeleteEventsAndTask:value];
+    NSString * date = [appDelegate.dataBase getDateToDeleteEventsAndTaskOlder:value];
     
     
-    [appDelegate.dataBase purgingDataOnSyncSettings:date tableName:@"Event"];
+    [appDelegate.dataBase purgingDataOnSyncSettings:date tableName:@"Event" Action:@"LESSTHAN"];
     
-    [appDelegate.dataBase purgingDataOnSyncSettings:date tableName:@"Task"];
+    [appDelegate.dataBase purgingDataOnSyncSettings:date tableName:@"Task" Action:@"LESSTHAN"];
+    
+    //july 3
+    settingValue = @"";
+    
+    settingValue = [appDelegate.settingsDict objectForKey:@"Synchronization To Get Events"];
+    
+    value = [settingValue integerValue];
+    
+    date = [appDelegate.dataBase getDateToDeleteEventsAndTaskForNext:value];
+    
+    
+    [appDelegate.dataBase purgingDataOnSyncSettings:date tableName:@"Event" Action:@"GRETERTHAN"];
+    
+    [appDelegate.dataBase purgingDataOnSyncSettings:date tableName:@"Task" Action:@"GRETERTHAN"];
+    
+    
+    
 
     //Radha Purging End
     
