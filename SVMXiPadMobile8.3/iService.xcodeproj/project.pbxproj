@@ -802,6 +802,9 @@
 		8B97C7F215594C5C004914F7 /* SBJsonStreamWriterState.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B97C7E715594C5C004914F7 /* SBJsonStreamWriterState.m */; };
 		8B97C7F315594C5C004914F7 /* SBJsonTokeniser.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B97C7E915594C5C004914F7 /* SBJsonTokeniser.m */; };
 		8B97C7F415594C5C004914F7 /* SBJsonUTF8Stream.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B97C7EB15594C5C004914F7 /* SBJsonUTF8Stream.m */; };
+		A895DA4115A2CB710083204F /* sync-getOnline.png in Resources */ = {isa = PBXBuildFile; fileRef = A895DA3E15A2CB710083204F /* sync-getOnline.png */; };
+		A895DA4215A2CB710083204F /* sync-hold.png in Resources */ = {isa = PBXBuildFile; fileRef = A895DA3F15A2CB710083204F /* sync-hold.png */; };
+		A895DA4315A2CB710083204F /* sync-retry.png in Resources */ = {isa = PBXBuildFile; fileRef = A895DA4015A2CB710083204F /* sync-retry.png */; };
 		A8A8EECA155CB9AD00F43F67 /* OnlineRecord.png in Resources */ = {isa = PBXBuildFile; fileRef = A8A8EEC9155CB9AD00F43F67 /* OnlineRecord.png */; };
 		A8A8EECD155CB9E100F43F67 /* SFM-Screen-Disclosure-Button-Gray.png in Resources */ = {isa = PBXBuildFile; fileRef = A8A8EECC155CB9E100F43F67 /* SFM-Screen-Disclosure-Button-Gray.png */; };
 		A8A8EED3155CC13600F43F67 /* 8.png in Resources */ = {isa = PBXBuildFile; fileRef = A8A8EED2155CC13600F43F67 /* 8.png */; };
@@ -1914,6 +1917,9 @@
 		8B97C7EA15594C5C004914F7 /* SBJsonUTF8Stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonUTF8Stream.h; sourceTree = "<group>"; };
 		8B97C7EB15594C5C004914F7 /* SBJsonUTF8Stream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonUTF8Stream.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* iService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "iService-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
+		A895DA3E15A2CB710083204F /* sync-getOnline.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sync-getOnline.png"; sourceTree = "<group>"; };
+		A895DA3F15A2CB710083204F /* sync-hold.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sync-hold.png"; sourceTree = "<group>"; };
+		A895DA4015A2CB710083204F /* sync-retry.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sync-retry.png"; sourceTree = "<group>"; };
 		A8A8EEC9155CB9AD00F43F67 /* OnlineRecord.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OnlineRecord.png; sourceTree = "<group>"; };
 		A8A8EECC155CB9E100F43F67 /* SFM-Screen-Disclosure-Button-Gray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SFM-Screen-Disclosure-Button-Gray.png"; sourceTree = "<group>"; };
 		A8A8EED2155CC13600F43F67 /* 8.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 8.png; sourceTree = "<group>"; };
@@ -2474,6 +2480,9 @@
 				39C8F4BA1521ED9D00F81B51 /* status.jpg */,
 				39C8F4BB1521ED9D00F81B51 /* summary.png */,
 				39C8F4BC1521ED9D00F81B51 /* switchview.jpg */,
+				A895DA3E15A2CB710083204F /* sync-getOnline.png */,
+				A895DA3F15A2CB710083204F /* sync-hold.png */,
+				A895DA4015A2CB710083204F /* sync-retry.png */,
 				39C8F4BD1521ED9D00F81B51 /* sync-green.jpg */,
 				39C8F4BE1521ED9D00F81B51 /* sync-mobile.jpg */,
 				39C8F4BF1521ED9D00F81B51 /* sync-online.jpg */,
@@ -5945,6 +5954,9 @@
 				A8B4FFB1158777FA009650E5 /* ani25.png in Resources */,
 				A8B4FFB2158777FA009650E5 /* ani26.png in Resources */,
 				A8B4FFB415877803009650E5 /* green.png in Resources */,
+				A895DA4115A2CB710083204F /* sync-getOnline.png in Resources */,
+				A895DA4215A2CB710083204F /* sync-hold.png in Resources */,
+				A895DA4315A2CB710083204F /* sync-retry.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6208,8 +6220,8 @@
 				MACOSX_DEPLOYMENT_TARGET = "";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_NAME = "ServiceMax Mobile";
-				PROVISIONING_PROFILE = "49BBC051-125C-4A26-81E1-7DB5906315FD";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "49BBC051-125C-4A26-81E1-7DB5906315FD";
+				PROVISIONING_PROFILE = "C040CEF3-A894-4C8B-A2D1-8DAC99B164D3";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "C040CEF3-A894-4C8B-A2D1-8DAC99B164D3";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -6243,8 +6255,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				MACOSX_DEPLOYMENT_TARGET = "";
 				PRODUCT_NAME = "ServiceMax Mobile";
-				PROVISIONING_PROFILE = "49BBC051-125C-4A26-81E1-7DB5906315FD";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "49BBC051-125C-4A26-81E1-7DB5906315FD";
+				PROVISIONING_PROFILE = "C040CEF3-A894-4C8B-A2D1-8DAC99B164D3";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "C040CEF3-A894-4C8B-A2D1-8DAC99B164D3";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -6305,8 +6317,8 @@
 				MACOSX_DEPLOYMENT_TARGET = "";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_NAME = "ServiceMax Mobile";
-				PROVISIONING_PROFILE = "49BBC051-125C-4A26-81E1-7DB5906315FD";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "49BBC051-125C-4A26-81E1-7DB5906315FD";
+				PROVISIONING_PROFILE = "C040CEF3-A894-4C8B-A2D1-8DAC99B164D3";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "C040CEF3-A894-4C8B-A2D1-8DAC99B164D3";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = YES;
