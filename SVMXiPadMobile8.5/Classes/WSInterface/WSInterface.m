@@ -1382,7 +1382,8 @@ last_sync_time:(NSString *)last_sync_time
         
         return;
     }
-       
+    [appDelegate.dataBase updateTechnicianLocation];
+
     [appDelegate.databaseInterface  updateSyncRecordsIntoLocalDatabase];
     //check download criteria match
 /*******************************************************DOWNLOAD_CRITERIA_CHANGE*************************************************************************/
@@ -3059,7 +3060,8 @@ last_sync_time:(NSString *)last_sync_time
         [svmxcLongitude release];
         [sfmRequest.valueMap addObject:svmxcField];
         [svmxcField release];
-        
+        [appDelegate.dataBase setDidTechnicianLocationUpdated:TRUE];
+
     }
 
     [dataSync setRequest:sfmRequest];
@@ -5414,9 +5416,7 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.Sync_check_in = FALSE;
             
             didGetAddtionalObjDef = FALSE;
-            //NSMutableArray * objects = [NSMutableArray  arrayWithObjects:@"Task", @"Event", @"User",@"SVMXC__Location_History__c",nil];
-            NSMutableArray * objects = [NSMutableArray  arrayWithObjects:@"Task", @"Event", @"User",nil];
-            
+            NSMutableArray * objects = [NSMutableArray  arrayWithObjects:@"Task", @"Event", @"User",@"SVMXC__User_GPS_Log__c",nil];
             [appDelegate.wsInterface metaSyncWithEventName:SFM_BATCH_OBJECT_DEFINITIONS eventType:SYNC values:objects]; 
 
         }

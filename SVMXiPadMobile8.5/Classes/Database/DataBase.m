@@ -17,6 +17,7 @@
 @synthesize didInsertTable;
 @synthesize MyPopoverDelegate;
 @synthesize tempDb;
+@synthesize didTechnicianLocationUpdated;
 //@synthesize db;
 -(id)init
 {
@@ -783,47 +784,50 @@
     }
 }
 // delete seq
-- (void) deleteSequenceofTable
+- (void) deleteSequenceofTable:(NSString *)tableName 
 {
-    NSString *sql = @"SELECT name FROM sqlite_master WHERE type='table' AND name='SVMXC__Location_History__c'";
+    NSString *sql =[NSString stringWithFormat:@"SELECT name FROM sqlite_master WHERE type='table' AND name='%@'",tableName];
     sqlite3_stmt *statement;
     char *table_name;
     NSString *tblname;
-    if(sqlite3_prepare_v2(appDelegate.db, [sql UTF8String], -1, &statement, nil) == SQLITE_OK)
+    if(appDelegate == nil)
+        appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sql UTF8String], -1, &statement, nil) == SQLITE_OK)
     {
-        while (sqlite3_step(statement) == SQLITE_ROW) 
+        if (synchronized_sqlite3_step(statement) == SQLITE_ROW) 
         {
-            table_name  = (char *) sqlite3_column_text(statement, 0);
+            table_name  = (char *) synchronized_sqlite3_column_text(statement, 0);
             if(table_name!=nil)
                 tblname=[NSString stringWithFormat:@"%s",table_name];
                 
         }        
     }
-    sqlite3_finalize(statement);
+    synchronized_sqlite3_finalize(statement);
 
-    if([tblname isEqualToString:@"SVMXC__Location_History__c"])
+    if([tblname isEqualToString:tableName])
     {
-        NSLog(@"SVMXC__Location_History__c Table exist");
-        NSString * queryStatement = [NSString stringWithFormat:@"delete from sqlite_sequence where name='SVMXC__Location_History__c'"];
+        NSLog(@"%@ Table exist",tableName);
+        NSString * queryStatement = [NSString stringWithFormat:@"delete from sqlite_sequence where name='SVMXC__User_GPS_Log__c'"];
         
         char * err;
         
-        if (sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+        if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
         {
-            NSLog(@"Sequence Failed to delete");
+            NSLog(@"Sequence Failed to delete for Table");
         }
     }
    
 }
--(void) insertrecordIntoTableNamed:(NSDictionary *)locationInfo
+-(void) insertrecordIntoUserGPSLog:(NSDictionary *)locationInfo
 {
     char *err;
     if(appDelegate == nil)
         appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
     
-    if(appDelegate.metaSyncRunning)
+    if(appDelegate.metaSyncRunning||appDelegate.dataSyncRunning)
     {
-        NSLog(@"Meta Sync is Running");
+        NSLog(@"Sync is Running");
         return;
     }
 
@@ -834,8 +838,14 @@
     
     NSString *additionalInfo = [locationInfo objectForKey:@"additionalInfo"];
     NSString *status = [locationInfo objectForKey:@"status"];
-    if (appDelegate.loggedInUserId == nil)
-        appDelegate.loggedInUserId = [appDelegate.dataBase getLoggedInUserId:appDelegate.username];      
+    if(appDelegate == nil)
+        appDelegate = (iServiceAppDelegate *)[[ UIApplication sharedApplication] delegate];
+
+    if(appDelegate.loggedInUserId == nil)
+    {
+        appDelegate.loggedInUserId=[self getLoggedInUserId:appDelegate.username];
+    }
+    NSLog(@"Logged In User Id = %@",appDelegate.loggedInUserId);
     if(latitude == nil)
         latitude = @"";
     if(longitude == nil)
@@ -849,87 +859,95 @@
     
     NSString *id_value = [iServiceAppDelegate GetUUID];
     NSString *device=@"iPad";
-    NSString *sql = [NSString stringWithFormat:@"INSERT OR REPLACE INTO SVMXC__Location_History__c('local_id', 'SVMXC__Status__c','SVMXC__Latitude__c','SVMXC__User__c','CreatedDate','OwnerId','SVMXC__Device_Type__c', 'CreatedById','LastModifiedDate','Id','SVMXC__Additional_Info__c','SVMXC__Longitude__c','SVMXC__Time_Recorded__c','IsDeleted','Name','SystemModstamp','LastModifiedById','CurrencyIsoCode') VALUES ('%@','%@','%@','%@','%@','','%@','','%@','','%@','%@','%@','FALSE','','%@','','')",id_value,status,latitude,appDelegate.loggedInUserId,time,device,time,additionalInfo,longitude,time,time];
-    BOOL insert_or_not=TRUE;
+    NSString *sql = [NSString stringWithFormat:@"INSERT OR REPLACE INTO SVMXC__User_GPS_Log__c('local_id', 'SVMXC__Status__c','SVMXC__Latitude__c','SVMXC__User__c','CreatedDate','OwnerId','SVMXC__Device_Type__c', 'CreatedById','LastModifiedDate','Id','SVMXC__Additional_Info__c','SVMXC__Longitude__c','SVMXC__Time_Recorded__c','IsDeleted','Name','SystemModstamp','LastModifiedById','CurrencyIsoCode') VALUES ('%@','%@','%@','%@','%@','','%@','','%@','','%@','%@','%@','FALSE','','%@','','')",id_value,status,latitude,appDelegate.loggedInUserId,time,device,time,additionalInfo,longitude,time,time];
+    BOOL isInsertedIntoLocationTable=TRUE;
     NSLog(@"Query = %@",sql);
-    if(appDelegate == nil)
-        appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
     if(synchronized_sqlite3_exec(appDelegate.db, [sql UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
-        insert_or_not=FALSE;
+        isInsertedIntoLocationTable=FALSE;
         NSLog(@"Failed to Populate Table");
     }
    
-    if(insert_or_not)
+    if(isInsertedIntoLocationTable)
     {
         NSLog(@"Success to Insert Data in Table");
-        [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:id_value SF_id:@"" record_type:MASTER operation:INSERT object_name:@"SVMXC__Location_History__c" sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@""];
-        NSLog(@"insertion success");
-        [appDelegate callDataSync];
-        NSLog(@"Data Sync Completed");
-        [self getUserLocation];
+        [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:id_value SF_id:@"" record_type:MASTER operation:INSERT object_name:@"SVMXC__User_GPS_Log__c" sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@""];
+        NSLog(@"Insertion success");
+        [self updateTechnicianLocation];
     }
 }
 - (void) purgeLocationPingTable
 {   
-    NSString *sql = @"SELECT Count(*) FROM SVMXC__Location_History__c";
+    NSString *sql = @"SELECT Count(*) FROM SVMXC__User_GPS_Log__c";
     sqlite3_stmt *statement;
     int row_count;
-    char *Id;
-    if(sqlite3_prepare_v2(appDelegate.db, [sql UTF8String], -1, &statement, nil) == SQLITE_OK)
+    char *Id,*local_id;
+    if(appDelegate == nil)
+        appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+    
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sql UTF8String], -1, &statement, nil) == SQLITE_OK)
     {
-        while (sqlite3_step(statement) == SQLITE_ROW) 
+        if (synchronized_sqlite3_step(statement) == SQLITE_ROW) 
         {
-            row_count = sqlite3_column_int(statement, 0);
+            row_count = synchronized_sqlite3_column_int(statement, 0);
             NSLog(@"No of location records in DB %d",row_count );
             
         }
-        sqlite3_finalize(statement);
+        synchronized_sqlite3_finalize(statement);
     }
-    sqlite3_close(appDelegate.db);
     //get limit from table
-    NSString *limitLocationRecords = [appDelegate.dataBase getSettingValueWithName:@"IPAD007_SET003"];
+    NSString *limitLocationRecords = [appDelegate.dataBase getSettingValueWithName:MAX_LOCATION_RECORD];
     limitLocationRecords = (limitLocationRecords!=nil)?limitLocationRecords:@"100";
     if(row_count < [limitLocationRecords intValue])
     {
         return;
     }
-    while (row_count >=[limitLocationRecords intValue]) {
-        
-    
-    sql = @"select rowid from SVMXC__Location_History__c  asc limit 1";
-    NSString *strId;
-    
-    if(sqlite3_prepare_v2(appDelegate.db, [sql UTF8String], -1, &statement, nil) == SQLITE_OK)
+    while (row_count >=[limitLocationRecords intValue])
     {
-        while (sqlite3_step(statement) == SQLITE_ROW) 
+        sql = @"select rowid,local_id from SVMXC__User_GPS_Log__c  asc limit 1";
+        NSString *strId=nil,*strlocal_id=nil;
+        
+        if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sql UTF8String], -1, &statement, nil) == SQLITE_OK)
         {
-            Id = (char *) sqlite3_column_text(statement, 0);
-            strId =   [[NSString alloc] initWithUTF8String:Id];
-            NSLog(@"Id =%@",strId);
-            
+            if (synchronized_sqlite3_step(statement) == SQLITE_ROW) 
+            {
+                Id = (char *) sqlite3_column_text(statement, 0);
+                local_id = (char *) sqlite3_column_text(statement, 1);
+                
+                if (Id != nil && strlen(Id))
+                    strId =   [[NSString alloc] initWithUTF8String:Id];
+                NSLog(@"Id =%@",strId);
+                if (local_id != nil && strlen(local_id))
+                    strlocal_id =   [[NSString alloc] initWithUTF8String:local_id];
+                NSLog(@"local_id =%@",strlocal_id);
+            }
         }
         
-        NSString * queryStatement = [NSString stringWithFormat:@"DELETE FROM SVMXC__Location_History__c where rowid=%@",strId];
-        
+        NSString * queryStatementGPSLog = [NSString stringWithFormat:@"DELETE FROM SVMXC__User_GPS_Log__c where rowid=%@",strId];
+        BOOL isDataDeletedFromUser_GPS_Log=TRUE;
         char * err;
-        
-        if (sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+        if(strId != nil)
         {
-            NSLog(@"Purging Failed to delete");
+            if (synchronized_sqlite3_exec(appDelegate.db, [queryStatementGPSLog UTF8String], NULL, NULL, &err) != SQLITE_OK)
+            {
+                NSLog(@"Purging Failed to delete, for rowid= %@",strId);
+                isDataDeletedFromUser_GPS_Log=FALSE;
+            }
         }
-    }
-    sqlite3_finalize(statement);
+        if(isDataDeletedFromUser_GPS_Log)
+            [appDelegate.databaseInterface DeleterecordFromTable:@"SFDataTrailer" Forlocal_id:strlocal_id];        
+        sqlite3_finalize(statement);
         row_count--;
     }
     
 }
-
 - (NSString *) getSettingValueWithName:(NSString *)settingName
 {
 	NSString *settingValue = nil;
     NSString *queryStatement;
     sqlite3_stmt * statement;
+    if(appDelegate == nil)
+        appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
     if(appDelegate.metaSyncRunning )
     {
         NSLog(@"Meta Sync is Running");
@@ -1023,33 +1041,76 @@
 //    }
 //    appTechnicianId = [[[obj fields] objectForKey:@"Id"] retain];
 //}
-- (void)getUserLocation
+- (void)updateTechnicianLocation
 {
+    if(appDelegate == nil)
+        appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+
+    if(appDelegate.metaSyncRunning)
+    {
+        NSLog(@"Sync is Running");
+        return;
+    }    
     NSMutableArray *location = [[NSMutableArray alloc] init];
-    NSString *sql = @"select SVMXC__Latitude__c,SVMXC__Longitude__c from SVMXC__Location_History__c  dsc limit 1";
+    NSString *sql = @"select SVMXC__Latitude__c,SVMXC__Longitude__c from SVMXC__User_GPS_Log__c  ORDER BY rowid desc limit 1";
     sqlite3_stmt *statement;
     char *longitude;
     char *latitude;
-    if(sqlite3_prepare_v2(appDelegate.db, [sql UTF8String], -1, &statement, nil) == SQLITE_OK)
+    BOOL isLatitudeNull = YES;
+    BOOL isLongitudeNull = YES;
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sql UTF8String], -1, &statement, nil) == SQLITE_OK)
     {
-        while (sqlite3_step(statement) == SQLITE_ROW) 
+        if (synchronized_sqlite3_step(statement) == SQLITE_ROW) 
         {
-            latitude  = (char *) sqlite3_column_text(statement, 0);
-            longitude = (char *) sqlite3_column_text(statement, 1);
-            if(latitude!=nil)
+            latitude  = (char *) synchronized_sqlite3_column_text(statement, 0);
+            longitude = (char *) synchronized_sqlite3_column_text(statement, 1);
+            if(latitude!=nil && strlen(latitude))
+            {
                 [location addObject:[NSString stringWithFormat:@"%s",latitude]];
-            if(longitude!=nil)
+                isLatitudeNull = NO;
+            }
+            if(longitude!=nil && strlen(longitude))
+            {
                 [location addObject:[NSString stringWithFormat:@"%s",longitude]];
+                isLongitudeNull = NO;
+            }
         }        
+        else
+        {
+            NSLog(@"Records are not available. Not calling Tech Location Update");
+            return;
+        }
     }
     sqlite3_finalize(statement);
+    if(isLatitudeNull || isLongitudeNull)
+    {
+        NSLog(@"Latitude or Longitude data is null");
+        return;
+    }
     if (!appDelegate.isInternetConnectionAvailable)
     {
         return;
     }
     [appDelegate goOnlineIfRequired];
-
+    didTechnicianLocationUpdated=FALSE;
+    NSLog(@"Updating Technician Location");
     [appDelegate.wsInterface dataSyncWithEventName:@"TECH_LOCATION_UPDATE" eventType:SYNC values:location];
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+    {                
+        if (didTechnicianLocationUpdated == TRUE)
+            break;   
+        if (!appDelegate.isInternetConnectionAvailable)
+        {
+            break;
+        }
+        if (appDelegate.connection_error)
+        {
+            break;
+        }
+        
+        NSLog(@"Technician Location Updated");
+    }
+    [location release];
 }
 
 #pragma mark - Initial MetaSync
@@ -3132,6 +3193,23 @@
         }
     }
 }
+
+- (void) updateUserTable:(NSString *)UserId
+{
+    if(appDelegate == nil)
+        appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+    NSString *queryStatement = [NSString stringWithFormat:@"update User SET Id='%@' Where Username='%@' ",UserId , appDelegate.username];
+        
+        char * err;
+        if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+        {
+            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                [MyPopoverDelegate performSelector:@selector(throwException)];
+            NSLog(@"Failed to insert");
+        }
+
+}
+
 
 
 #pragma mark - Delete All Tables

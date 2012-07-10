@@ -349,8 +349,11 @@
 #define SFM_SRCH_CLOSE                      @"IPAD019_TAG012"
 
 //Location Ping
-#define Location_Setting_Disable            @"IPAD020_TAG001"
-#define App_Location_Setting_Disable        @"IPAD020_TAG002"
+#define Location_Setting_Disable            @"Location Services Setting is disabled by the User"
+#define App_Location_Setting_Disable        @"Application Location Service Setting is disabled by the User"
+#define Failure                             @"Failure"
+#define Location_Success                    @"Success"
+#define Failed_to_Get_Location              @"Failed to get the location"
 
 // FOR OBJECTS VALUES IN DICTIONARY FOR 
 //Tags List Values in case if webservice fails
@@ -530,6 +533,13 @@
 #define OBJECT_LABEL                        @"Object Label"
 #define OBJ_NAME                            @"OBJECT_NAME"
 #define NAME_FIELD                          @"Name Field"
+
+// Macros for Settings of Location Ping
+#define FREQ_LOCATION_TRACKING              @"IPAD007_SET001"
+#define ENABLE_LOCATION_UPDATE              @"IPAD007_SET002"
+#define MAX_LOCATION_RECORD                 @"IPAD007_SET003"
+
+
 
 //SFM Page ROOTViewControler
 

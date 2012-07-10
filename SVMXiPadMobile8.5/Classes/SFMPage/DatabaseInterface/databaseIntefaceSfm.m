@@ -4183,10 +4183,10 @@
                         {
                             [final_dict removeObjectForKey:parent_column_name];
                         }
-                        if ([object_Name isEqualToString:@"SVMXC__Location_History__c"]) {
-                            BOOL delete_flag=[self DeleterecordFromTable:@"SVMXC__Location_History__c" Forlocal_id:local_id];
-                            [appDelegate.dataBase deleteSequenceofTable];
-                            if(!delete_flag)
+                        if ([object_Name isEqualToString:@"SVMXC__User_GPS_Log__c"]) {
+                            BOOL isUser_GPS_LogTableDelete=[self DeleterecordFromTable:@"SVMXC__User_GPS_Log__c" Forlocal_id:local_id];
+                            [appDelegate.dataBase deleteSequenceofTable:@"SVMXC__User_GPS_Log__c"];
+                            if(!isUser_GPS_LogTableDelete)
                             {
                                 NSLog(@"Failed to delete location record");
                             }

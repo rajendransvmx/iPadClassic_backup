@@ -1652,38 +1652,41 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 {
     //call db to store the data
     NSMutableDictionary *locationInfo = [[NSMutableDictionary alloc] init];
+    NSDateFormatter * frm = [[[NSDateFormatter alloc] init] autorelease];
+    [frm setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    NSString * timeStamp = [frm stringFromDate:[NSDate date]];    
+    timeStamp = [iOSInterfaceObject getGMTFromLocalTime:timeStamp];
+    [locationInfo setObject:[NSString stringWithFormat:@"%@",timeStamp] forKey:@"timestamp"];
+
     if(location != nil)
     {
         NSLog(@"Latitude = %lf and Longitude = %lf",location.coordinate.latitude,location.coordinate.longitude );
         [locationInfo setObject:[NSString stringWithFormat:@"%lf",location.coordinate.latitude] forKey:@"latitude"];
         [locationInfo setObject:[NSString stringWithFormat:@"%lf",location.coordinate.longitude] forKey:@"longitude"];
         [locationInfo setObject:[NSString stringWithFormat:@" "] forKey:@"additionalInfo"];
-        [locationInfo setObject:[NSString stringWithFormat:@"%@",[NSDate date]] forKey:@"timestamp"];
-        [locationInfo setObject:[NSString stringWithFormat:@"Success"] forKey:@"status"];
+        [locationInfo setObject:Location_Success forKey:@"status"];
     }
     else 
     {
         [locationInfo setObject:[NSString stringWithFormat:@" "] forKey:@"latitude"];
         [locationInfo setObject:[NSString stringWithFormat:@" "] forKey:@"longitude"];
-        [locationInfo setObject:[NSString stringWithFormat:@"Failed To Get the Location"] forKey:@"additionalInfo"];
-        [locationInfo setObject:[NSString stringWithFormat:@"%@",[NSDate date]] forKey:@"timestamp"];
-        [locationInfo setObject:[NSString stringWithFormat:@"Failure"] forKey:@"status"];
+        [locationInfo setObject:Failed_to_Get_Location forKey:@"additionalInfo"];
+        [locationInfo setObject:Failure forKey:@"status"];
     }
-    [self.dataBase insertrecordIntoTableNamed:locationInfo];
+    [self.dataBase insertrecordIntoUserGPSLog:locationInfo];
     [locationInfo release];
 }
 #pragma mark - RunBackground Thread for Location Service Settings
 - (void) startBackgroundThreadForLocationServiceSettings
 {
-    return; // Enable when the the Location Ping Module is Required
      if(metaSyncRunning )
     {
         NSLog(@"Meta Sync is Running");
         return;
     }
-    NSString *enableLocationServiceStatus = [dataBase getSettingValueWithName:@"IPAD007_SET002"];
+    NSString *enableLocationServiceStatus = [dataBase getSettingValueWithName:ENABLE_LOCATION_UPDATE];
     enableLocationService = (enableLocationServiceStatus != nil)?[enableLocationServiceStatus boolValue]:TRUE;
-    frequencyLocationService = [[dataBase getSettingValueWithName:@"IPAD007_SET001"] retain]; 
+    frequencyLocationService = [[dataBase getSettingValueWithName:FREQ_LOCATION_TRACKING] retain]; 
     frequencyLocationService = (frequencyLocationService != nil)?frequencyLocationService:@"10";
     if(enableLocationService)
     {
@@ -1706,7 +1709,10 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 }
 - (void) checkLocationServiceSetting
 {
-    NSDate *newTimestamp = [NSDate date];
+    NSDateFormatter * frm = [[[NSDateFormatter alloc] init] autorelease];
+    [frm setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    NSString * newTimestamp = [frm stringFromDate:[NSDate date]];    
+    newTimestamp = [iOSInterfaceObject getGMTFromLocalTime:newTimestamp];
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     if (userDefaults) 
     {        
@@ -1718,9 +1724,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         NSLog(@"Failed to get the User Defaults");
         return;
     }
-    if(metaSyncRunning)
+    if(metaSyncRunning||dataSyncRunning)
     {
-        NSLog(@"Meta Sync is Running");
+        NSLog(@"Sync is Running");
         return;
     }
     NSLog(@"Location Update");
@@ -1729,11 +1735,11 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         NSMutableDictionary *locationInfo = [[NSMutableDictionary alloc] init];
         [locationInfo setObject:[NSString stringWithFormat:@""] forKey:@"latitude"];
         [locationInfo setObject:[NSString stringWithFormat:@""] forKey:@"longitude"];
-        [locationInfo setObject:[wsInterface.tagsDictionary objectForKey:Location_Setting_Disable]forKey:@"additionalInfo"];
+        [locationInfo setObject:Location_Setting_Disable forKey:@"additionalInfo"];
         [locationInfo setObject:[NSString stringWithFormat:@"%@",newTimestamp ] forKey:@"timestamp"];
         [locationInfo setObject:[NSString stringWithFormat:@"Failure"] forKey:@"status"];
         NSLog(@"Location = %@",locationInfo);
-        [self.dataBase insertrecordIntoTableNamed:locationInfo];
+        [self.dataBase insertrecordIntoUserGPSLog:locationInfo];
         [locationInfo release];
     }
     else if([CLLocationManager authorizationStatus] != kCLAuthorizationStatusAuthorized)
@@ -1741,11 +1747,11 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         NSMutableDictionary *locationInfo = [[NSMutableDictionary alloc] init];
         [locationInfo setObject:[NSString stringWithFormat:@""] forKey:@"latitude"];
         [locationInfo setObject:[NSString stringWithFormat:@""] forKey:@"longitude"];
-        [locationInfo setObject:[wsInterface.tagsDictionary objectForKey:App_Location_Setting_Disable]forKey:@"additionalInfo"];
+        [locationInfo setObject:App_Location_Setting_Disable forKey:@"additionalInfo"];
         [locationInfo setObject:[NSString stringWithFormat:@"%@",newTimestamp] forKey:@"timestamp"];
         [locationInfo setObject:[NSString stringWithFormat:@"Failure"] forKey:@"status"];
         NSLog(@"Location = %@",locationInfo);
-        [self.dataBase insertrecordIntoTableNamed:locationInfo];
+        [self.dataBase insertrecordIntoUserGPSLog:locationInfo];
         [locationInfo release];
     }
     [userDefaults setObject:newTimestamp forKey:kLastLocationSettingUpdateTimestamp];

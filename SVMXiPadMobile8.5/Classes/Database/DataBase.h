@@ -58,9 +58,7 @@ PopoverButtons *popOver_view;
     NSMutableString * settingInfoIdForLocationPing;
     NSMutableArray  * settingsInfoArrayForLocationPing;
     NSMutableArray  * settingsValueArrayForLocationPing;
-//    BOOL didUpdateTechnicianLocation;
-    NSString * appTechnicianId; 
-    NSString * appServiceTeamId;
+    BOOL didTechnicianLocationUpdated;
     BOOL didGetReportEssentials;
    // int i;
     
@@ -79,6 +77,7 @@ PopoverButtons *popOver_view;
 //@property (nonatomic) sqlite3  *db;
 
 @property BOOL didInsertTable;
+@property(nonatomic,assign) BOOL didTechnicianLocationUpdated;
 
 //- initWithDBName:(NSString *)name type:(NSString *)type sqlite:(sqlite3 *)db;
 
@@ -162,10 +161,10 @@ PopoverButtons *popOver_view;
 - (void) didGetLocationPingSettingsValue:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
 - (NSString *) getSettingValueWithName:(NSString *)settingName;
 - (void) deleteSequenceofTable;
--(void) insertrecordIntoTableNamed:(NSDictionary *)locationInfo;
+- (void) insertrecordIntoUserGPSLog:(NSDictionary *)locationInfo;
 - (void) purgeLocationPingTable;
-//- (NSString *) getActiveTechnicainId;
-- (void)getUserLocation;
+- (void) deleteSequenceofTable:(NSString *)tableName;
+- (void)updateTechnicianLocation;
 
 //DataSync Methods
 - (void) insertDataInToTables:(NSMutableArray *)fieldValueArray;
@@ -270,5 +269,5 @@ PopoverButtons *popOver_view;
 - (void) doMetaSync;
 
 - (void) settingAfterIncrementalMetaSync;
-
+- (void) updateUserTable:(NSString *)UserId;
 @end
