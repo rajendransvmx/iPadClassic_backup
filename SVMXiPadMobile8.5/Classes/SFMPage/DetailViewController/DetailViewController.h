@@ -55,7 +55,7 @@ WSInterFaceDelegateForDetailView,
 SignatureDelegate,
 SummaryViewControllerDelegate,
 ChatterDelegate,
-SFWToolBarDelegate,RefreshSyncStatusButton>
+SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate>
 {
     id <DetailViewControllerDelegate> delegate;
     SFWToolBar * sfwToolBar;
@@ -185,7 +185,9 @@ SFWToolBarDelegate,RefreshSyncStatusButton>
     BOOL didRunOperation;
     
     SummaryViewController * Summary;
-    
+    UIControl *control;
+    UIControl *multiControl;
+    MultiAddLookupView *multiAddLookup;
     //Drill Down
     DetailViewController * parentReference;
     
@@ -194,6 +196,7 @@ SFWToolBarDelegate,RefreshSyncStatusButton>
     
     //Shrinivas
     UIButton  * statusButton;
+    ZBarReaderViewController *reader;
 }
 
 
@@ -252,6 +255,7 @@ SFWToolBarDelegate,RefreshSyncStatusButton>
 @property (nonatomic, retain) NSDictionary * mLookupDictionary;
 
 @property (nonatomic, retain) NSMutableDictionary * LabourValuesDictionary;
+@property (nonatomic,assign)   UIPopoverController * multiLookupPopover;
 
 -(void)UpdateAlldeletedRecordsIntoSFTrailerTable:(NSArray *)deleted_record_array   object_name:(NSString *)object_name;
 - (id) getControl:(NSString *)controlType withRect:(CGRect )frame withData:(NSArray *)datasource withValue:(NSString *)value fieldType:(NSString *)fieldType labelValue:(NSString *)lableValue enabled:(BOOL)readOnly refObjName:(NSString *)refObjName referenceView:(UIView *)POView indexPath:(NSIndexPath *)indexPath required:(BOOL)required valueKeyValue:(NSString *)valueKeyValue lookUpSearchId:(NSString *)searchid overrideRelatedLookup:(NSNumber *)Override_Related_Lookup fieldLookupContext:(NSString *)Field_Lookup_Context fieldLookupQuery:(NSString *)Field_Lookup_Query   dependentPicklistControllerName:(NSString *)dependPick_controllerName picklistValidFor:(NSMutableArray *)validFor picklistIsdependent:(BOOL)isdependentPicklist;
@@ -310,6 +314,11 @@ SFWToolBarDelegate,RefreshSyncStatusButton>
 - (UIImage *) getStatusImage;
 - (void) refreshStatusImage;
 -(void)pageLevelEventsForEvent:(NSString *)event_Name;
+//Bar code
+-(void)launchBarcodeScanner;
+-(void) LaunchMultiAddPopover;
+-(void) reDrawBackground;
+
 
 #define SHOWALL_HEADERS                     0
 #define SHOW_HEADER_ROW                     1

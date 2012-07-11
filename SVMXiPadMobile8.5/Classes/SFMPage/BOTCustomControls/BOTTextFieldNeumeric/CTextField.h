@@ -11,7 +11,7 @@
 #import "BOTControlDelegate.h"
 
 @interface CTextField : UITextField
-<UITextFieldDelegate, CTextFieldHandlerNumDelegate>
+<UITextFieldDelegate, CTextFieldHandlerNumDelegate,ZBarReaderDelegate>
 {
     id <ControlDelegate> controlDelegate;
     CTextFieldHandlerNum * delegateHandler;

@@ -11,7 +11,7 @@
 #import "BOTControlDelegate.h"
 
 @interface LookupField : UITextField
-<UITextFieldDelegate, LookupFieldPopoverDelegate>
+<UITextFieldDelegate, LookupFieldPopoverDelegate,ZBarReaderDelegate>
 {
     id <ControlDelegate> controlDelegate;
     NSString * objectName, * searchId;
@@ -28,8 +28,9 @@
     NSString * Field_Lookup_Context, * Field_Lookup_Query;
     
     NSDictionary * Disclosure_dict;
+    ZBarReaderViewController *reader;
 }
-
+@property (nonatomic , retain) NSString * barCodeScannedData;
 @property (nonatomic , retain) NSString * first_idValue;
 @property (nonatomic , retain) NSString * idValue;
 @property (nonatomic , retain)     NSString * control_type;
@@ -51,5 +52,7 @@
 - (void) setReadOnly:(BOOL)flag;
 - (void) settextField:(NSString *)value;
 - (void) addObjectToHistory:(NSArray *)lookupObject withObjectName:(NSString *)value;
+- (void) launchBarcodeScanner;
+
 
 @end

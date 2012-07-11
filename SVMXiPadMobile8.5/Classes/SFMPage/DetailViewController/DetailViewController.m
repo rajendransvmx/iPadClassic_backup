@@ -80,6 +80,7 @@
 @synthesize mLookupDictionary;
 @synthesize LabourValuesDictionary;
 @synthesize showSyncUI;
+@synthesize multiLookupPopover;
 - (id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -4578,8 +4579,7 @@
             if([multi_add_search length] != 0 && [multi_add_seach_object length] != 0)
             {
                 UIImage * image1 = [UIImage imageNamed:@"multi_add.png"];
-//                CGRect accessoryViewFrame = cell.accessoryView.frame;
-                UIControl * control = [[UIControl alloc] initWithFrame:CGRectMake(width-36, 4, 23, 23)];
+                control = [[UIControl alloc] initWithFrame:CGRectMake(width-36, 4, 23, 23)];
                 control.backgroundColor = [UIColor clearColor];
                 control.tag = index;
                 control.layer.contents = (id)image1.CGImage;
@@ -4587,6 +4587,7 @@
                 //control.frame = CGRectMake(0, 0, 23, 23);
                 control.frame = CGRectMake(0, 0, 38, 31);
                 [addLinesView addSubview:control];
+                multiControl = [control retain];
                 [control release];
             }
             //multi add rows
@@ -7684,7 +7685,8 @@
     {
         
     }
-    UIControl *control = (UIControl *)sender;
+
+    control = (UIControl *)sender;
     NSInteger  _section = control.tag;
     NSLog(@"buttonclicked");
     NSMutableArray * details = [appDelegate.SFMPage objectForKey:gDETAILS];
@@ -7705,7 +7707,7 @@
         }
     }
     
-    MultiAddLookupView * multiAddLookup = [[MultiAddLookupView alloc] initWithNibName:@"MultiAddLookupView" bundle:nil];
+    multiAddLookup = [[MultiAddLookupView alloc] initWithNibName:@"MultiAddLookupView" bundle:nil];
     objectName = multiadd_seach_object;
     multiAddLookup.objectName = multiadd_seach_object;
     multiAddLookup.search_field = multiadd_search_filed;
@@ -8138,6 +8140,104 @@
     
     [activity stopAnimating];
 }
+#pragma MultiAddLookupViewDelegate
+-(void) dismissMultiaddLookup
+{
+    [multiLookupPopover dismissPopoverAnimated:YES];
+    [self launchBarcodeScanner];
+}
+
+#pragma Bar Code
+-(void)launchBarcodeScanner
+{
+    // ADD: present a barcode reader that scans from the camera feed
+    reader = [ZBarReaderViewController new];
+    reader.readerDelegate = self;
+    reader.supportedOrientationsMask = ZBarOrientationMaskAll;
+    
+    ZBarImageScanner *scanner = reader.scanner;
+    // TODO: (optional) additional reader configuration here
+    
+    // EXAMPLE: disable rarely used I2/5 to improve performance
+    [scanner setSymbology: ZBAR_I25
+                   config: ZBAR_CFG_ENABLE
+                       to: 0];
+    
+    // present and release the controller
+    if (appDelegate ==nil) 
+    {
+        appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+    }
+    [appDelegate.sfmPageController presentModalViewController: reader
+                                                     animated: YES];
+    [reader release];
+    NSLog(@"Launch Bar Code Scanner");
+
+}
+
+- (void) imagePickerController: (UIImagePickerController*) readerController
+ didFinishPickingMediaWithInfo: (NSDictionary*) info
+{
+    // ADD: get the decode results
+    id<NSFastEnumeration> results =[info objectForKey: ZBarReaderControllerResults];
+    NSLog(@"result=%@",results);
+    ZBarSymbol *symbol = nil;
+    for(symbol in results)
+        break;
+    // ADD: dismiss the controller (NB dismiss from the *reader*!)
+    [reader dismissModalViewControllerAnimated: YES];
+    [self performSelector:@selector(DismissBarCodeReader:) withObject:symbol.data afterDelay:0.1f];
+}
+
+- (void) DismissBarCodeReader:(NSString *)_text
+{
+    [self LaunchMultiAddPopover];
+    [multiAddLookup updateTxtField:_text];
+    NSLog(@"symbol.data=%@",_text);
+    [multiAddLookup searchBarcodeResult:_text];
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+    NSLog(@"Dismissing Barcode Scanner");
+    [reader dismissModalViewControllerAnimated: YES];
+    [multiAddLookup updateTxtField:@""];
+    [self performSelector:@selector(DismissBarCodeReader:) withObject:@"" afterDelay:0.1f];
+    [multiAddLookup searchBarcodeResult:@""];
+    
+}
+- (void) readerControllerDidFailToRead:(ZBarReaderController*)barcodeReader withRetry:(BOOL)retry
+{
+    NSLog(@"Failed to Scan the Barcode");
+    [barcodeReader dismissModalViewControllerAnimated: YES];
+    [multiAddLookup updateTxtField:@""];
+    [self performSelector:@selector(DismissBarCodeReader:) withObject:@"" afterDelay:0.1f];
+    [multiAddLookup searchBarcodeResult:@""];
+    
+}
+
+-(void) LaunchMultiAddPopover
+{
+    UINavigationController * navController = [[[UINavigationController alloc] initWithRootViewController:multiAddLookup] autorelease];
+    [multiAddLookup.view setBackgroundColor:[UIColor clearColor]];
+    [multiAddLookup.searchBar becomeFirstResponder];
+    multiLookupPopover = [[UIPopoverController alloc] initWithContentViewController:navController];
+    multiLookupPopover.delegate = self;
+    multiAddLookup.popOver = multiLookupPopover;
+    UIDeviceOrientation deviceOrientation = [[UIDevice currentDevice] orientation];
+    if (UIDeviceOrientationIsLandscape(deviceOrientation))
+    {
+        [multiLookupPopover presentPopoverFromRect:CGRectMake(5, 10, 10, 10) inView:multiControl permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    }
+    else
+    {
+        [multiLookupPopover presentPopoverFromRect:CGRectMake(5, 0, 10, 20) inView:multiControl permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    }
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+
+} 
 
 #pragma  mark - tableView delegate
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath

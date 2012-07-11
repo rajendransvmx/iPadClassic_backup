@@ -10,7 +10,8 @@
 #import "AlhaTextHandler.h"
 #import "BOTControlDelegate.h"
 
-@interface cusTextFieldAlpha : UITextField <setAlphaTextField , AlhaTextHandlerDelegate> 
+
+@interface cusTextFieldAlpha : UITextField <setAlphaTextField , AlhaTextHandlerDelegate,ZBarReaderDelegate> 
 {
     id <ControlDelegate> controlDelegate;
     AlhaTextHandler * delegatehandler;

@@ -15,7 +15,7 @@
 @protocol LookupViewDelegate;
 
 @interface LookupView : UIViewController
-<UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, LookupDetailsDelegate>
+<UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, LookupDetailsDelegate,ZBarReaderDelegate>
 {
     id <LookupViewDelegate> delegate;
     
@@ -32,10 +32,11 @@
     
     LookupDetails * lookupDetails;
     ZKDescribeSObject * describeObject;
-    
+    ZBarReaderViewController *reader;
     BOOL history, idAvailable;
     //sahana offline
     NSMutableDictionary * label_key;
+    UITextField *txtField;
 }
 @property (nonatomic , retain) NSMutableDictionary * label_key;
 @property (nonatomic, assign) id <LookupViewDelegate> delegate;
@@ -47,7 +48,9 @@
 - (void) reloadData;
 - (void) setLookupData:(NSDictionary *)_lookupDetails;
 - (IBAction) segmentChanged:(id)sender;
-
+-(void)DismissPopover;
+-(void) updateTxtField: (NSString *) barCodeData;
+- (void)searchBarCodeScannerData:(NSString *)_searchBartext;
 @end
 
 @protocol LookupViewDelegate
@@ -57,5 +60,6 @@
 //- (void) didSelectObject:(NSArray *)lookupObject;
 - (void) didSelectObject:(NSArray *)lookupObject defaultDisplayColumn:(NSString *)defaultdisplayColumn;
 - (void) getSearchIdandObjectName:(NSString *)keyword;
+- (void) DismissLookupFieldPopover;
 
 @end

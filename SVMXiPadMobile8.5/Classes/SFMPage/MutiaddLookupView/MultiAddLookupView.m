@@ -60,10 +60,64 @@
     
     objectSelected = [[NSMutableDictionary alloc] initWithCapacity:0];
     selectedObjDetails = [[NSMutableArray alloc] initWithCapacity:0];
+    if([appDelegate isCameraAvailable])
+    {
+        for (UIView *subview in searchBar.subviews)
+        {
+            if ([subview conformsToProtocol:@protocol(UITextInputTraits)])
+            {                
+                //[ setClearButtonMode:UITextFieldViewModeWhileEditing];
+                
+                UIView *barCodeView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 768, 46)];
+                barCodeView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"accessoryView_bg.png"]];
+                UIButton *barCodeButton = [[UIButton alloc] initWithFrame:CGRectMake(676, 4, 72, 37)];
+                [barCodeButton setBackgroundImage:[UIImage imageNamed:@"BarCodeButton.png"] forState:UIControlStateNormal];
+                barCodeButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;               
+                [barCodeButton addTarget:self 
+                                  action:@selector(DismissMultiAddView) 
+                        forControlEvents:UIControlEventTouchUpInside];
+                [barCodeView addSubview:barCodeButton];
+                
+                txtField = (UITextField *)subview;
+                txtField.inputAccessoryView = barCodeView;
+                
+            }
+            
+        }
+        
+    }
+
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
 }
 
+-(void) updateTxtField: (NSString *) barCodeData
+{
+    //  get the subView which is text field
+    // update the txt field text with barCodeData
+    if(appDelegate==nil)
+        appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+    
+    if([appDelegate isCameraAvailable])
+    {
+        for (UIView *subview in searchBar.subviews)
+        {
+            if ([subview conformsToProtocol:@protocol(UITextInputTraits)])
+            {                
+                txtField = (UITextField *)subview;
+                txtField.text=barCodeData;
+            }
+            
+        }
+        
+    }
+    
+}
+
+-(void) DismissMultiAddView 
+{
+    [delegate dismissMultiaddLookup];
+}
 
 #pragma mark - search bar  delegate method
 
@@ -107,6 +161,21 @@
     }
     
     
+}
+-(void) searchBarcodeResult:(NSString *) searchText
+{
+    if(appDelegate.isWorkinginOffline)
+    {
+        NSMutableDictionary * dict = [appDelegate.databaseInterface getDataForMultiAdd:objectName searchField:searchText];
+        [self setLookupData:dict];
+        
+    }
+    else
+    {
+        [appDelegate.wsInterface getLookUpFieldsWithKeyword:searchText forObject:self.objectName returnTo:self setting:FALSE overrideRelatedLookup:0 lookupContext:nil lookupQuery:nil];
+        [activity startAnimating];
+    }
+
 }
 
 - (void) setLookupData:(NSDictionary *)lookupDictionary

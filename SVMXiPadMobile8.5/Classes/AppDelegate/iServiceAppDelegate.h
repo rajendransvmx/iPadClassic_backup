@@ -739,6 +739,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 -(void)didUpdateToLocation:(CLLocation*)location;
 - (void) startBackgroundThreadForLocationServiceSettings;
 - (void) checkLocationServiceSetting;
+//Bar Code
+- (BOOL) isCameraAvailable;
+
 
 //Timer invalide handler
 - (void) timerHandler:(NSNotification *)notification;

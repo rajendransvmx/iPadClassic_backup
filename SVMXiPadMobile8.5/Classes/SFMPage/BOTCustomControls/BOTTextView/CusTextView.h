@@ -11,7 +11,7 @@
 #import "BOTControlDelegate.h"
 
 @interface CusTextView : UITextView
-<CusTextViewHandlerDelegate>
+<CusTextViewHandlerDelegate,ZBarReaderDelegate>
 {
     id <ControlDelegate> controlDelegate;
     BOOL readOnly;

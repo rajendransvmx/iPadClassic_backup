@@ -25,6 +25,7 @@
 @synthesize Override_Related_Lookup, Field_Lookup_Context, Field_Lookup_Query;
 @synthesize selectedIndexPath;
 @synthesize Disclosure_dict;
+@synthesize barCodeScannedData;
 
 -(id) initWithFrame:(CGRect)frame labelValue:(NSString *)labelValue inView:(UIView *)poview
 {
@@ -68,6 +69,7 @@
 
 -(void) dealloc
 {
+    [barCodeScannedData release];
     [super dealloc];
 }
 
@@ -188,5 +190,84 @@
     
     [controlDelegate addLookupHistory:lookupHistory forRelatedObjectName:objectName];
 }
+#pragma Zbar delegate Methods
+- (void) launchBarcodeScanner
+{
+    
+    // ADD: present a barcode reader that scans from the camera feed
+    reader = [ZBarReaderViewController new];
+    reader.readerDelegate = self;
+    reader.supportedOrientationsMask = ZBarOrientationMaskAll;
+    
+    ZBarImageScanner *scanner = reader.scanner;
+    // TODO: (optional) additional reader configuration here
+    
+    // EXAMPLE: disable rarely used I2/5 to improve performance
+    [scanner setSymbology: ZBAR_I25
+                   config: ZBAR_CFG_ENABLE
+                       to: 0];
+    
+    // present and release the controller
+    iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+
+    [appDelegate.sfmPageController presentModalViewController: reader
+                                                     animated: YES];
+    [reader release];
+    //[self dismissModalViewControllerAnimated:YES];
+    //[delegate DismissLookupFieldPopover];
+    NSLog(@"Launch Bar Code Scanner");
+}
+- (void) imagePickerController: (UIImagePickerController*) readerController
+ didFinishPickingMediaWithInfo: (NSDictionary*) info
+{
+    // ADD: get the decode results
+    id<NSFastEnumeration> results =[info objectForKey: ZBarReaderControllerResults];
+    NSLog(@"result=%@",results);
+    ZBarSymbol *symbol = nil;
+    for(symbol in results)
+        // EXAMPLE: just grab the first barcode
+        break;
+
+    // EXAMPLE: do something useful with the barcode data
+    self.barCodeScannedData = symbol.data;
+    self.backgroundColor=[UIColor redColor];
+     [reader dismissModalViewControllerAnimated: YES];
+    [self performSelector:@selector(DismissBarCodeReader:) withObject:symbol.data afterDelay:0.1f];
+    // EXAMPLE: do something useful with the barcode image
+    // ADD: dismiss the controller (NB dismiss from the *reader*!)
+
+}
+-(void) DismissBarCodeReader:(NSString *)_text
+{
+    NSString *_searchText=@"";
+    _searchText=[_searchText stringByAppendingFormat:@" %@",_text];
+    NSLog(@"Search Text =%@ lenght %d",_searchText,[_searchText length]);
+    [delegateHandler LaunchPopover];
+    [[self delegateHandler].lookupView updateTxtField:_text];
+    NSLog(@"Bar Code Scanned Text=%@",_text);
+    [[self delegateHandler].lookupView searchBarCodeScannerData:_searchText];
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+    NSLog(@"Dismissing Barcode Scanner");
+    [reader dismissModalViewControllerAnimated: YES];
+    NSString *nilBarcodeData = [NSString stringWithFormat:@" "];
+    [self performSelector:@selector(DismissBarCodeReader:) withObject:nilBarcodeData afterDelay:0.1f];
+    [[self delegateHandler].lookupView updateTxtField:nilBarcodeData];
+    [[self delegateHandler].lookupView searchBarCodeScannerData:nilBarcodeData];
+
+}
+- (void) readerControllerDidFailToRead:(ZBarReaderController*)barcodeReader withRetry:(BOOL)retry
+{
+    NSLog(@"Failed to Scan the Barcode");
+    [barcodeReader dismissModalViewControllerAnimated: YES];
+    NSString *nilBarcodeData = [NSString stringWithFormat:@" "];
+    [self performSelector:@selector(DismissBarCodeReader:) withObject:nilBarcodeData afterDelay:0.1f];
+    [[self delegateHandler].lookupView updateTxtField:nilBarcodeData];
+    [[self delegateHandler].lookupView searchBarCodeScannerData:nilBarcodeData];
+
+}
+
 
 @end

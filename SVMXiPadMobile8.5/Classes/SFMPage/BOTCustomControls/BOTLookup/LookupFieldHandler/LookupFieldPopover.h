@@ -13,7 +13,7 @@
 
 @protocol LookupFieldPopoverDelegate;
 
-@interface LookupFieldPopover : NSObject <UITextFieldDelegate, LookupViewDelegate, UIPopoverControllerDelegate>
+@interface LookupFieldPopover : NSObject <UITextFieldDelegate, LookupViewDelegate, UIPopoverControllerDelegate,ZBarReaderDelegate>
 {
     id <LookupFieldPopoverDelegate> lookupDelegate;
     iServiceAppDelegate * appDelegate;
@@ -33,6 +33,7 @@
 }
 
 @property (nonatomic, assign) id <LookupFieldPopoverDelegate> lookupDelegate;
+@property (nonatomic,assign) LookupView * lookupView;
 @property (nonatomic, retain) UIView * POView;
 @property (nonatomic, assign) NSString * lableValue;
 @property (nonatomic, retain) UIPopoverController * POC;
@@ -41,6 +42,8 @@
 
 @property (nonatomic, retain) NSString *searchId;
 @property (nonatomic, retain) NSString *relatedObjectName;
+-(void) LaunchPopover;
+
 
 @end
 

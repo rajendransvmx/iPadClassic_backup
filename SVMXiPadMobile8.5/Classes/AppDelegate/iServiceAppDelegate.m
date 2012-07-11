@@ -1782,6 +1782,10 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         self.metasync_timer = nil;
     }
 }
+- (BOOL) isCameraAvailable
+{
+    return [UIImagePickerController isSourceTypeAvailable: UIImagePickerControllerSourceTypeCamera];
+}
 @end
 
 @implementation processInfo

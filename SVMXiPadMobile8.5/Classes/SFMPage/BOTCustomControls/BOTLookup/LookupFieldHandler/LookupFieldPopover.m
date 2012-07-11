@@ -21,7 +21,7 @@
 @synthesize lookupDelegate;
 @synthesize lableValue;
 @synthesize POView;
-
+@synthesize lookupView;
 @synthesize searchId;
 @synthesize relatedObjectName;
 
@@ -122,6 +122,38 @@
     return NO;
 }
 
+-(void) LaunchPopover
+{
+    LookupField * parent = (LookupField *)lookupDelegate;
+
+    UINavigationController * navController = [[UINavigationController alloc] initWithRootViewController:lookupView];
+    
+    popOver = [[UIPopoverController alloc] initWithContentViewController:navController];
+    
+    [parent.controlDelegate setLookupPopover:popOver];
+    
+    popOver.delegate = self;
+    lookupView.popover = popOver;
+    
+    appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+    
+    UIDeviceOrientation deviceOrientation = [[UIDevice currentDevice] orientation];
+    
+    if (UIDeviceOrientationIsLandscape(deviceOrientation))
+    {
+        [popOver presentPopoverFromRect:CGRectMake(768, 0, 0, 0) inView:POView permittedArrowDirections:0 animated:YES];
+        [popOver release];
+    }
+    else
+    {
+        [popOver presentPopoverFromRect:CGRectMake(768, 0, 0, 0) inView:POView permittedArrowDirections:0 animated:YES];
+        [popOver release];
+    }
+    
+    [parent.controlDelegate controlIndexPath:parent.indexPath];
+    [parent.controlDelegate selectControlAtIndexPath:parent.indexPath];
+}
+
 #pragma mark - LookupView Delegate Method
 - (void) searchObject:(NSString *)keyword withObjectName:(NSString *)objectName returnTo:(id)caller setting:(BOOL)idAvailable
 {
@@ -215,6 +247,12 @@
     dict = [appDelegate.databaseInterface getLookupDataFromDBWith:self.searchId referenceTo:self.relatedObjectName searchFor:keyword];
     NSLog(@"%@", dict);
     [lookupView setLookupData:dict];
+}
+-(void) DismissLookupFieldPopover
+{
+    [lookupView.popover dismissPopoverAnimated:YES];
+    LookupField * lookupField = (LookupField *)lookupDelegate;
+    [lookupField launchBarcodeScanner];
 }
 
 @end

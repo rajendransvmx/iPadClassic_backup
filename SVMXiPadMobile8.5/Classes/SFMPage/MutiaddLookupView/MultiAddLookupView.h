@@ -36,7 +36,9 @@
     NSMutableArray * selectedObjDetails;
     NSMutableDictionary * objectSelected;
     //sahana offline code for multiadd
-    NSString * search_field;    
+    NSString * search_field;  
+    UITextField *txtField;
+    ZBarReaderViewController *reader;
 }
 @property (nonatomic , retain)  NSMutableArray * mappingArray;
 - (IBAction)doneButtonClicked:(id)sender;
@@ -54,6 +56,9 @@
 - (void) setLookupData:(NSDictionary *)_lookupDetails;
 - (void) reloadData;
 - (void) selectObjectValue:(NSArray *)objectHistory;
+-(void) searchBarcodeResult:(NSString *) searchText;
+-(void) updateTxtField: (NSString *) barCodeData;
+
 
 #define CHECK       @"true"
 #define NOTCHECK    @"false"
@@ -63,5 +68,5 @@
 
 @optional
 - (void) addMultiChildRows:(NSMutableDictionary *)array forIndex:(NSInteger) index;
-
+- (void) dismissMultiaddLookup;
 @end
