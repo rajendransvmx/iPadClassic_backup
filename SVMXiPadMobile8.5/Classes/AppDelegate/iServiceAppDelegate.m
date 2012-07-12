@@ -1668,8 +1668,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     }
     else 
     {
-        [locationInfo setObject:[NSString stringWithFormat:@" "] forKey:@"latitude"];
-        [locationInfo setObject:[NSString stringWithFormat:@" "] forKey:@"longitude"];
+        [locationInfo setObject:[NSString stringWithFormat:@""] forKey:@"latitude"];
+        [locationInfo setObject:[NSString stringWithFormat:@""] forKey:@"longitude"];
         [locationInfo setObject:Failed_to_Get_Location forKey:@"additionalInfo"];
         [locationInfo setObject:Failure forKey:@"status"];
     }
