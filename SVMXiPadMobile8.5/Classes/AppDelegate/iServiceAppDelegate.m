@@ -1088,7 +1088,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
             }
 		}
 	}
-    
+    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.locationPingSettingTimer];
+
     
     sqlite3_close(self.db);
 	
@@ -1780,7 +1781,14 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         NSLog(@"Invalidating METASYNC TIMER");
         [self.metasync_timer invalidate];
         self.metasync_timer = nil;
+    }    
+    if( [timerObject isEqual:locationPingSettingTimer] )
+    {
+        NSLog(@"Invalidating LocationPing TIMER");
+        [self.locationPingSettingTimer invalidate];
+        self.locationPingSettingTimer = nil;
     }
+
 }
 - (BOOL) isCameraAvailable
 {

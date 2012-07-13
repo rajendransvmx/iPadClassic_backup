@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "SFMFullResultViewController.h"
+#import "LabelPOContentView.h"
 @class SFMResultMasterViewController;
 @class iServiceAppDelegate;
 
@@ -16,9 +17,12 @@
 - (void) DismissSplitViewController;
 @end
 
-@interface SFMResultDetailViewController : UIViewController <UITableViewDataSource,UITableViewDelegate,SFMFullResultViewControllerDelegate>
+@interface SFMResultDetailViewController : UIViewController <UITableViewDataSource,UITableViewDelegate,SFMFullResultViewControllerDelegate,UIPopoverControllerDelegate>
 {
-  iServiceAppDelegate * appDelegate;
+    iServiceAppDelegate * appDelegate;
+    SFMFullResultViewController *resultViewController;
+    UIPopoverController * label_popOver;
+    LabelPOContentView * label_popOver_content;
 
 }
 @property (nonatomic, retain) IBOutlet SFMResultMasterViewController *masterView;

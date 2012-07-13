@@ -15,7 +15,7 @@
 #define SHADOW_HEIGHT 20.0
 #define SHADOW_INVERSE_HEIGHT 10.0
 #define SHADOW_RATIO (SHADOW_INVERSE_HEIGHT / SHADOW_HEIGHT)
-#define kNoOFModules 8
+#define kNoOFModules 9
 @implementation BSPreviewScrollView
 @synthesize scrollView, pageSize, dropShadow, delegate;
 

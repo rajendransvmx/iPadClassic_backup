@@ -12,7 +12,7 @@
 #import "SFMResultMasterViewController.h"
 #import "iServiceAppDelegate.h"
 #import "SFMPageController.h"
-#define TableViewResultViewCellHeight 50
+#define TableViewResultViewCellHeight 31
 @interface SFMResultDetailViewController ()
 @property (nonatomic, retain) NSMutableArray          *configData;
 @property (nonatomic, retain) NSMutableArray          *tableDataArray;
@@ -114,30 +114,39 @@
  
     UIView * view = nil;
     UILabel * label ;
-       int no_of_fields=3;
-    view = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 100)] autorelease];
-    UIImageView * imageView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_section_header_bg.png"]] autorelease];
-    imageView.frame = CGRectMake(0, 48, tableView.frame.size.width, 48);
+    int no_of_fields=3;
+    view = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, TableViewResultViewCellHeight*2)] autorelease];
+    UIImageView * sectionImageView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_section_header_bg.png"]] autorelease];
+    sectionImageView.frame = CGRectMake(20, 0, tableView.frame.size.width-40, TableViewResultViewCellHeight);
+    UIImageView * imageView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM-Screen-Table-Header.png"]] autorelease];
+    imageView.frame = CGRectMake(40, TableViewResultViewCellHeight, tableView.frame.size.width-80, TableViewResultViewCellHeight);
     
     UILabel * sectionName = [[[UILabel alloc] init] autorelease];
-    sectionName.frame = CGRectMake(0, 0, tableView.frame.size.width, 48);
-    sectionName.backgroundColor = [UIColor lightGrayColor];  
-    sectionName.font = [UIFont boldSystemFontOfSize:18];     
+    sectionName.frame = CGRectMake(40, 0, tableView.frame.size.width, TableViewResultViewCellHeight);
+    sectionName.font = [UIFont boldSystemFontOfSize:16];     
     sectionName.text=[[tableDataArray objectAtIndex:section ] objectForKey:@"ObjectName"];
     sectionName.textColor=[appDelegate colorForHex:@"2d5d83"];
+    sectionName.backgroundColor = [UIColor clearColor];
     
+    [view addSubview:sectionImageView];
     [view addSubview:imageView];
     [view addSubview:sectionName];
+
     for(int i=0;i<[[[tableDataArray objectAtIndex:section ] objectForKey:@"TableHeader"]count] && i <no_of_fields;i++)
     {
         label = [[[UILabel alloc] init] autorelease];
          if(no_of_fields)
-        label.frame = CGRectMake((5+i*(640/no_of_fields)), 48,210, 48);
+        label.frame = CGRectMake((60+i*(640/no_of_fields)), TableViewResultViewCellHeight,190, TableViewResultViewCellHeight);
         label.backgroundColor = [UIColor clearColor];      
-        label.font = [UIFont boldSystemFontOfSize:18];  
+        label.font = [UIFont boldSystemFontOfSize:16];  
         label.text=[[[tableDataArray objectAtIndex:section ] objectForKey:@"TableHeader"]objectAtIndex:i];
         label.textAlignment = UITextAlignmentLeft;
-        label.textColor=[appDelegate colorForHex:@"2d5d83"];
+        label.textColor=[UIColor whiteColor];
+        label.userInteractionEnabled = TRUE;
+        UITapGestureRecognizer * tapObject = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapRecognized:)];
+        [label addGestureRecognizer:tapObject];
+        [tapObject release];
+
         [view addSubview:label]; 
     }
     //Create header view and add label as a subview
@@ -185,7 +194,7 @@
     }
     NSArray *cellArray = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"Values"] ;
     [cell clearsContextBeforeDrawing];
-    UIButton * button = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 40)] autorelease];
+    UIButton * button = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, TableViewResultViewCellHeight, TableViewResultViewCellHeight)] autorelease];
     NSString *objname=[[tableDataArray objectAtIndex:indexPath.section ] objectForKey:@"ObjectName"];
     NSLog(@"objname =%@",objname);
     objname = [appDelegate.dataBase getApiNameFromFieldLabel:objname];
@@ -217,9 +226,9 @@
         {
             for(int j=0;j<[tableHeader count] && j < no_of_fields;j++)
             {
-                labelForObjects=[[UILabel alloc]initWithFrame:CGRectMake((20+j*(640/no_of_fields)),0,210, 48)]; 
+                labelForObjects=[[UILabel alloc]initWithFrame:CGRectMake((20+j*(640/no_of_fields)),0,210, TableViewResultViewCellHeight)]; 
                 labelForObjects.backgroundColor = [UIColor clearColor];      
-                labelForObjects.font = [UIFont boldSystemFontOfSize:18];  
+                labelForObjects.font = [UIFont boldSystemFontOfSize:16];  
                 if(indexPath.row < [cellArray count])
                     labelForObjects.text=[[cellArray  objectAtIndex:indexPath.row] objectForKey:[tableHeader objectAtIndex:j]];
                 labelForObjects.textAlignment = UITextAlignmentLeft;
@@ -248,9 +257,9 @@
             NSDictionary *mDict = [onlineDataArray  objectAtIndex:(indexPath.row - [cellArray count])];
             for(int j=0;j<[tableHeader count] && j < no_of_fields;j++)
             {
-                labelForObjects=[[UILabel alloc]initWithFrame:CGRectMake((20+j*(640/no_of_fields)),0,210, 48)]; 
+                labelForObjects=[[UILabel alloc]initWithFrame:CGRectMake((20+j*(640/no_of_fields)),0,210, TableViewResultViewCellHeight)]; 
                 labelForObjects.backgroundColor = [UIColor clearColor];      
-                labelForObjects.font = [UIFont boldSystemFontOfSize:18];  
+                labelForObjects.font = [UIFont boldSystemFontOfSize:16];  
                 labelForObjects.text=[mDict objectForKey:[tableHeader objectAtIndex:j]];
                 labelForObjects.textAlignment = UITextAlignmentLeft;
                 
@@ -271,9 +280,9 @@
     {
         for(int j=0;j<[tableHeader count] && j < no_of_fields;j++)
         {
-            labelForObjects=[[UILabel alloc]initWithFrame:CGRectMake((20+j*(640/no_of_fields)),0,210, 48)]; 
+            labelForObjects=[[UILabel alloc]initWithFrame:CGRectMake((20+j*(640/no_of_fields)),0,210, TableViewResultViewCellHeight)]; 
             labelForObjects.backgroundColor = [UIColor clearColor];      
-            labelForObjects.font = [UIFont boldSystemFontOfSize:18];  
+            labelForObjects.font = [UIFont boldSystemFontOfSize:16];  
             if(indexPath.row < [cellArray count])
                 labelForObjects.text=[[cellArray  objectAtIndex:indexPath.row] objectForKey:[tableHeader objectAtIndex:j]];
             labelForObjects.textAlignment = UITextAlignmentLeft;
@@ -567,6 +576,7 @@
     [self.view addSubview:bgImage];
     self.detailTable.backgroundView = bgImage;
     [bgImage release];
+    [detailTable setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     [self.view addSubview:detailTable];
 }
 - (NSArray *) constructTableHeader : (NSArray *)data
@@ -819,7 +829,8 @@
 #pragma mark - SFM Full Result View Delegate
 - (void) DismissSplitViewControllerByLaunchingSFMProcess
 {
-    NSLog(@"Launch SFM Process");
+       [resultViewController dismissModalViewControllerAnimated:YES];
+   /* NSLog(@"Launch SFM Process");
 
     
     if(appDelegate){
@@ -848,7 +859,62 @@
     //sahana - offline
     appDelegate.didsubmitModelView = FALSE;
     
-    [appDelegate.sfmPageController release];
+    [appDelegate.sfmPageController release];*/
+}
+-(void)tapRecognized:(id)sender
+{ 
+    UITapGestureRecognizer * tap = sender;
+    if ([tap.view isKindOfClass:[UILabel  class]])    
+    {
+        UILabel * label = (UILabel *) tap.view;
+        if(label.text == nil)
+            return;
+        //if the text length is 0 then dont show the popover
+        if([label.text length] == 0)
+            return;
+        
+        // content View class
+        label_popOver_content = [[LabelPOContentView alloc ] init];
+        
+        // calculating the size for the popover
+        UIFont * font = [UIFont systemFontOfSize:17.0];
+        CGSize size =[label.text  sizeWithFont:font];
+        
+        //subview for the content view
+        UITextView * contentView_textView;
+        if(size.width > 240)
+        {
+            label_popOver_content.view.frame = CGRectMake(0, 0, label_popOver_content.view.frame.size.width, 90);
+            contentView_textView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, label_popOver_content.view.frame.size.width, 90)];
+        }
+        else
+        {
+            label_popOver_content.view.frame = CGRectMake(0, 0, label_popOver_content.view.frame.size.width, 34);
+            contentView_textView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, label_popOver_content.view.frame.size.width, 34)];  
+        }
+        
+        contentView_textView.text = label.text;
+        contentView_textView.font = font;
+        contentView_textView.userInteractionEnabled = YES;
+        contentView_textView.editable = NO;
+        contentView_textView.textAlignment = UITextAlignmentCenter;
+        [label_popOver_content.view addSubview:contentView_textView];
+        
+        CGSize size_po = CGSizeMake(label_popOver_content.view.frame.size.width, label_popOver_content.view.frame.size.height);
+        label_popOver = [[UIPopoverController alloc] initWithContentViewController:label_popOver_content];
+        [label_popOver setPopoverContentSize:size_po animated:YES];
+        
+        label_popOver.delegate = self;
+        if(label.tag == 0)
+            [label_popOver presentPopoverFromRect:CGRectMake(label.frame.size.width/2,0, 10, 10) inView:label permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+        else
+            if(label.tag == 1)
+                [label_popOver presentPopoverFromRect:CGRectMake(0,0, 10, 10) inView:label permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+        
+        [contentView_textView release];
+        [label_popOver_content release];
+        
+    }
 }
 @end
 

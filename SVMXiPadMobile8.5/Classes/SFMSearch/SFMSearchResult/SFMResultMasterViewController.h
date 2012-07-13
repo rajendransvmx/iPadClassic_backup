@@ -11,7 +11,7 @@
 
 @class iServiceAppDelegate;
 @class SFMResultDetailViewController;
-@interface SFMResultMasterViewController : UIViewController <UITableViewDataSource,UITableViewDelegate,setTextFieldPopover,UITextFieldDelegate>{
+@interface SFMResultMasterViewController : UIViewController <UITableViewDataSource,UITableViewDelegate,setTextFieldPopover,UITextFieldDelegate,ZBarReaderDelegate>{
  NSIndexPath * lastSelectedIndexPath;
     iServiceAppDelegate * appDelegate;
 }
@@ -31,6 +31,7 @@
 @property (nonatomic, retain) NSArray *pickerData;
 @property (nonatomic, assign) BOOL switchStatus;
 @property(nonatomic,retain) IBOutlet UIButton *actionButton;
+@property (readwrite, retain) UIView *inputAccessoryView;
 - (IBAction)refineSearch:(id)sender;
 -(void) didSelectHeader:(id)sender;
 - (void) reloadTableData;

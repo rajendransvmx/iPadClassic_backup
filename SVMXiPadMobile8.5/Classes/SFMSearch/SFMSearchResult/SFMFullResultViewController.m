@@ -41,7 +41,9 @@
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     [actionButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Done-Back-Button.png"] forState:UIControlStateNormal];
     [actionButton setTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_SRCH_CLOSE] forState:UIControlStateNormal];
-    [detailButton setFrame:CGRectMake(500, 0, 40, 40)];
+    [actionButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [[actionButton titleLabel] setFont:[UIFont boldSystemFontOfSize:16]];
+    [detailButton setFrame:CGRectMake(500, 6, 31, 31)];
     
     if(self.isOnlineRecord)
     {
@@ -54,7 +56,7 @@
         [onlineImageView setImage:nil];
     }
     [resultTableView setBackgroundColor:[UIColor clearColor]];
-    TitleForResultWindow.font=[UIFont boldSystemFontOfSize:18];
+    TitleForResultWindow.font=[UIFont boldSystemFontOfSize:16];
     if([data objectForKey:[tableHeaderArray objectAtIndex:0]])
     {
         if (objectName) 
@@ -140,6 +142,15 @@
     [ fullMainDelegate DismissSplitViewControllerByLaunchingSFMProcess];
     [self dismissModalViewControllerAnimated:YES];
 }
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSLog(@"Row Tapped");
+}
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [self performSelector:@selector(tapRecognizer:)];
+}
+
 
 - (void)viewDidUnload
 {
@@ -182,17 +193,29 @@
         }
     }
     [cell setBackgroundColor:[UIColor clearColor]];
-    lblObjects =[[UILabel alloc]initWithFrame:CGRectMake(20, 0, 200, TableViewResultViewCellHeight)];
+    lblObjects =[[UILabel alloc]initWithFrame:CGRectMake(20, 0, 270, TableViewResultViewCellHeight)];
     lblObjects.text= [tableHeaderArray objectAtIndex:indexPath.row];
     lblObjects.textAlignment=UITextAlignmentLeft;
     [lblObjects setBackgroundColor:[UIColor clearColor]];
+    lblObjects.userInteractionEnabled = TRUE;
+    lblObjects.tag  = 0;
+    UITapGestureRecognizer * tapObject = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapRecognized:)];
+    [lblObjects addGestureRecognizer:tapObject];
+    [tapObject release];
     [cell addSubview:lblObjects];
-    lblValues=[[UILabel alloc]initWithFrame:CGRectMake(250, 0, 500, TableViewResultViewCellHeight)];
+    lblValues=[[UILabel alloc]initWithFrame:CGRectMake(290, 0, 500, TableViewResultViewCellHeight)];
     [lblValues setBackgroundColor:[UIColor clearColor]];
     lblValues.text=[data objectForKey:[tableHeaderArray objectAtIndex:indexPath.row]];
-    lblObjects.textColor = [appDelegate colorForHex:@"2d5d83"];  
+    lblValues.textColor = [appDelegate colorForHex:@"2d5d83"];  
     lblValues.textAlignment=UITextAlignmentLeft;
-    [cell addSubview:lblValues];    
+    lblValues.userInteractionEnabled = TRUE;
+    lblValues.tag  = 1;
+    UITapGestureRecognizer * tapValues = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapRecognized:)];
+    [lblValues addGestureRecognizer:tapValues];
+    [tapValues release];
+
+    [cell addSubview:lblValues];  
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     [lblObjects release];
     [lblValues release];
     return cell;
@@ -211,5 +234,60 @@
     [data release];
     [onlineImageView release];
     [super dealloc];
+}
+-(void)tapRecognized:(id)sender
+{ 
+    UITapGestureRecognizer * tap = sender;
+    if ([tap.view isKindOfClass:[UILabel  class]])    
+    {
+        UILabel * label = (UILabel *) tap.view;
+        if(label.text == nil)
+            return;
+        //if the text length is 0 then dont show the popover
+        if([label.text length] == 0)
+            return;
+        
+        // content View class
+        label_popOver_content = [[LabelPOContentView alloc ] init];
+        
+        // calculating the size for the popover
+        UIFont * font = [UIFont systemFontOfSize:17.0];
+        CGSize size =[label.text  sizeWithFont:font];
+        
+        //subview for the content view
+        UITextView * contentView_textView;
+        if(size.width > 240)
+        {
+            label_popOver_content.view.frame = CGRectMake(0, 0, label_popOver_content.view.frame.size.width, 90);
+            contentView_textView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, label_popOver_content.view.frame.size.width, 90)];
+        }
+        else
+        {
+            label_popOver_content.view.frame = CGRectMake(0, 0, label_popOver_content.view.frame.size.width, 34);
+            contentView_textView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, label_popOver_content.view.frame.size.width, 34)];  
+        }
+        
+        contentView_textView.text = label.text;
+        contentView_textView.font = font;
+        contentView_textView.userInteractionEnabled = YES;
+        contentView_textView.editable = NO;
+        contentView_textView.textAlignment = UITextAlignmentCenter;
+        [label_popOver_content.view addSubview:contentView_textView];
+        
+        CGSize size_po = CGSizeMake(label_popOver_content.view.frame.size.width, label_popOver_content.view.frame.size.height);
+        label_popOver = [[UIPopoverController alloc] initWithContentViewController:label_popOver_content];
+        [label_popOver setPopoverContentSize:size_po animated:YES];
+        
+        label_popOver.delegate = self;
+        if(label.tag == 0)
+        [label_popOver presentPopoverFromRect:CGRectMake(label.frame.size.width/2,0, 10, 10) inView:label permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+        else
+        if(label.tag == 1)
+        [label_popOver presentPopoverFromRect:CGRectMake(0,0, 10, 10) inView:label permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+        
+        [contentView_textView release];
+        [label_popOver_content release];
+        
+    }
 }
 @end

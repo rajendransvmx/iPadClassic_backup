@@ -9,7 +9,7 @@
 #import "SFMResultMasterViewController.h"
 #import "SFMResultDetailViewController.h"
 #import "iServiceAppDelegate.h"
-#define ResultTableViewCellHeight 50
+#define ResultTableViewCellHeight 45
 @interface SFMResultMasterViewController ()
 
 @end
@@ -29,6 +29,7 @@
 @synthesize activity;
 @synthesize searchCriteriaLabel;
 @synthesize includeOnlineResultLabel;
+@synthesize inputAccessoryView;
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
     if([textField tag] == 0)
@@ -114,6 +115,61 @@
                                              selector:@selector(reachabilityChanged:) 
                                                  name:kReachabilityChangedNotification
                                                object:nil];
+    if([appDelegate isCameraAvailable])
+    {
+        UIView *barCodeView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 768, 46)];
+        barCodeView.backgroundColor=[UIColor clearColor];
+        barCodeView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"accessoryView_bg.png"]];
+        UIButton *barCodeButton = [[UIButton alloc] initWithFrame:CGRectMake(676, 4, 72, 37)];
+        [barCodeButton setBackgroundImage:[UIImage imageNamed:@"BarCodeButton.png"] forState:UIControlStateNormal];
+        barCodeButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
+        [barCodeButton addTarget:self 
+                          action:@selector(launchBarcodeScanner:) 
+                forControlEvents:UIControlEventTouchUpInside];
+        [barCodeView addSubview:barCodeButton];
+        self.inputAccessoryView = barCodeView;
+    }
+}
+- (IBAction) launchBarcodeScanner:(id)sender
+{
+    
+    [self resignFirstResponder];
+    // ADD: present a barcode reader that scans from the camera feed
+    ZBarReaderViewController *reader = [ZBarReaderViewController new];
+    reader.readerDelegate = self;
+    reader.supportedOrientationsMask = ZBarOrientationMaskAll;
+    
+    ZBarImageScanner *scanner = reader.scanner;
+    // TODO: (optional) additional reader configuration here
+    
+    // EXAMPLE: disable rarely used I2/5 to improve performance
+    [scanner setSymbology: ZBAR_I25
+                   config: ZBAR_CFG_ENABLE
+                       to: 0];
+    
+    // present and release the controller
+    [self presentModalViewController: reader animated: YES];
+    [reader release];
+    NSLog(@"Launch Bar Code Scanner");
+}
+
+#pragma mark - ZBar Delegate Methods
+
+- (void) imagePickerController: (UIImagePickerController*) reader
+ didFinishPickingMediaWithInfo: (NSDictionary*) info
+{
+    // ADD: get the decode results
+    id<NSFastEnumeration> results =[info objectForKey: ZBarReaderControllerResults];
+    NSLog(@"result=%@",results);
+    ZBarSymbol *symbol = nil;
+    for(symbol in results)
+        break;
+    
+    searchString.text = symbol.data;    
+    NSLog(@"symbol.data=%@",symbol.data);    
+    // ADD: dismiss the controller (NB dismiss from the *reader*!)
+    [reader dismissModalViewControllerAnimated: YES];
+    [self performSelector:@selector(refineSearch:)];
 }
 - (void) reloadTableData
 {
@@ -193,8 +249,8 @@
     [bgImage setContentMode:UIViewContentModeScaleToFill];
     
     cell.backgroundView = bgImage;
-    cell.textLabel.font = [UIFont boldSystemFontOfSize:18];
-    cell.textLabel.textColor =[appDelegate colorForHex:@"2d5d83"];
+    cell.textLabel.font = [UIFont systemFontOfSize:16];
+    cell.textLabel.textColor =[UIColor blackColor];
         
     [bgImage release];
     
@@ -219,7 +275,7 @@
     UIImageView * bgImage = [[UIImageView alloc] initWithImage:image];
     [bgImage setContentMode:UIViewContentModeScaleToFill];
     selectedCell.backgroundView = bgImage;
-    selectedCell.textLabel.font = [UIFont boldSystemFontOfSize:18];
+    selectedCell.textLabel.font = [UIFont boldSystemFontOfSize:16];
     selectedCell.textLabel.textColor = [UIColor whiteColor];
     [bgImage release];
     
@@ -230,7 +286,7 @@
     UIImageView * lastSelectedCellBGImage = [[UIImageView alloc] initWithImage:image];
     [lastSelectedCellBGImage setContentMode:UIViewContentModeScaleToFill];
     lastSelectedCell.backgroundView = lastSelectedCellBGImage;
-    lastSelectedCell.textLabel.font = [UIFont boldSystemFontOfSize:18];    
+    lastSelectedCell.textLabel.font = [UIFont boldSystemFontOfSize:16];    
     lastSelectedCell.textLabel.textColor = [appDelegate colorForHex:@"2d5d83"];    
     [lastSelectedCellBGImage release];
     
@@ -252,7 +308,7 @@
     label.backgroundColor = [UIColor clearColor];
    label.textColor = [UIColor whiteColor];
     
-    label.font = [UIFont boldSystemFontOfSize:18];
+    label.font = [UIFont boldSystemFontOfSize:16];
     label.text = sectionTitle;
     
     // Create header view and add label as a subview
@@ -261,7 +317,7 @@
     view.image = [UIImage imageNamed:@"SFM-View-line-header-bg.png"];
     [view addSubview:label];
     
-    UIButton * header_button = [[[UIButton alloc] initWithFrame:CGRectMake(270, 7, 28, 28)] autorelease];
+    UIButton * header_button = [[[UIButton alloc] initWithFrame:CGRectMake(290, 7, 28, 28)] autorelease];
     header_button.tag = section;
     [header_button  setBackgroundImage:[UIImage imageNamed:@"SFM-View-showall-icon_mod.png"] forState:UIControlStateNormal];
     [header_button addTarget:self action:@selector(didSelectHeader:) forControlEvents:UIControlEventTouchUpInside];
@@ -283,7 +339,7 @@
     UIImageView * lastSelectedCellBGImage = [[UIImageView alloc] initWithImage:image];
     [lastSelectedCellBGImage setContentMode:UIViewContentModeScaleToFill];
     lastSelectedCell.backgroundView = lastSelectedCellBGImage;
-    lastSelectedCell.textLabel.font = [UIFont boldSystemFontOfSize:18];    
+    lastSelectedCell.textLabel.font = [UIFont boldSystemFontOfSize:16];    
     lastSelectedCell.textLabel.textColor = [appDelegate colorForHex:@"2d5d83"];    
     [lastSelectedCellBGImage release];
     

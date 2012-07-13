@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "iServiceAppDelegate.h"
+#import "LabelPOContentView.h"
 #define SectionHeaderHeight      45 
 @protocol SFMFullResultViewControllerDelegate
 @optional
@@ -15,9 +16,11 @@
 @end
 
 @class iServiceAppDelegate;
-@interface SFMFullResultViewController : UIViewController<SFMFullResultViewControllerDelegate,UITableViewDataSource,UITableViewDelegate>
+@interface SFMFullResultViewController : UIViewController<SFMFullResultViewControllerDelegate,UITableViewDataSource,UITableViewDelegate,UIPopoverControllerDelegate>
 {
     iServiceAppDelegate * appDelegate;
+    UIPopoverController * label_popOver;
+    LabelPOContentView * label_popOver_content;
 }
 @property (nonatomic, retain) NSDictionary *data;
 @property (nonatomic, retain) NSString *objectName;

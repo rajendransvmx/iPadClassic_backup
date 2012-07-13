@@ -362,8 +362,7 @@
     
     NSLog(@"SAMMAN MetaSync WS End: %@", [NSDate date]);
     //SFM Search 
-    //Uncomment this when SFM Search Module is Required
-    /*
+    
     appDelegate.wsInterface.didOpSFMSearchComplete = FALSE;
     [appDelegate.wsInterface metaSyncWithEventName:SFM_SEARCH eventType:SYNC values:nil];
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
@@ -377,7 +376,7 @@
     NSLog(@"SAMMAN MetaSync SFM Search End: %@", [NSDate date]);
     
     //SFM Search End
-     */
+    
     [appDelegate getDPpicklistInfo];
     NSLog(@"META SYNC 1");
     

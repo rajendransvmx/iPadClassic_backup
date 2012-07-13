@@ -21,6 +21,7 @@
 @synthesize pickerData;
 @synthesize searchCriteriaLabel;
 @synthesize includeOnlineResultLabel;
+@synthesize inputAccessoryView; 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
     if([textField tag] == 0)
@@ -105,6 +106,63 @@
     searchString.placeholder = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_SRCH_ENTER_TEXT];
     searchCriteriaLabel.text = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_SRCH_Criteria];
     includeOnlineResultLabel.text = [appDelegate.wsInterface.tagsDictionary objectForKey:INCLUDE_ONLINE_RESULTS];
+    
+    if([appDelegate isCameraAvailable])
+    {
+        UIView *barCodeView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 768, 46)];
+        barCodeView.backgroundColor=[UIColor clearColor];
+        barCodeView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"accessoryView_bg.png"]];
+        UIButton *barCodeButton = [[UIButton alloc] initWithFrame:CGRectMake(676, 4, 72, 37)];
+        [barCodeButton setBackgroundImage:[UIImage imageNamed:@"BarCodeButton.png"] forState:UIControlStateNormal];
+        barCodeButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
+        [barCodeButton addTarget:self 
+                          action:@selector(launchBarcodeScanner:) 
+                forControlEvents:UIControlEventTouchUpInside];
+        [barCodeView addSubview:barCodeButton];
+        self.inputAccessoryView = barCodeView;
+    }
+
+}
+- (IBAction) launchBarcodeScanner:(id)sender
+{
+    
+    [self resignFirstResponder];
+    // ADD: present a barcode reader that scans from the camera feed
+    ZBarReaderViewController *reader = [ZBarReaderViewController new];
+    reader.readerDelegate = self;
+    reader.supportedOrientationsMask = ZBarOrientationMaskAll;
+    
+    ZBarImageScanner *scanner = reader.scanner;
+    // TODO: (optional) additional reader configuration here
+    
+    // EXAMPLE: disable rarely used I2/5 to improve performance
+    [scanner setSymbology: ZBAR_I25
+                   config: ZBAR_CFG_ENABLE
+                       to: 0];
+    
+    // present and release the controller
+    [[self parentViewController]     presentModalViewController: reader
+                                                     animated: YES];
+    [reader release];
+    NSLog(@"Launch Bar Code Scanner");
+}
+
+#pragma mark - ZBar Delegate Methods
+
+- (void) imagePickerController: (UIImagePickerController*) reader
+ didFinishPickingMediaWithInfo: (NSDictionary*) info
+{
+    // ADD: get the decode results
+    id<NSFastEnumeration> results =[info objectForKey: ZBarReaderControllerResults];
+    NSLog(@"result=%@",results);
+    ZBarSymbol *symbol = nil;
+    for(symbol in results)
+        break;
+    
+    searchString.text = symbol.data;
+    NSLog(@"symbol.data=%@",symbol.data);    
+    // ADD: dismiss the controller (NB dismiss from the *reader*!)
+    [reader dismissModalViewControllerAnimated: YES];
 }
 
 - (void)viewDidUnload

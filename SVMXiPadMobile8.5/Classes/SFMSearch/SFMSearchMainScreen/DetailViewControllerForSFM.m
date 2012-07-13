@@ -178,11 +178,13 @@
         cell.detailTextLabel.text =DescriptionText;
     else
         cell.detailTextLabel.text =@"";
-    UIButton * button = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 20, 21)] autorelease];
+    //UIButton * button = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 20, 21)] autorelease];
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    [button setFrame:CGRectMake(0, 0, 20, 21)];
     [button setTitle:@"Search" forState:UIControlStateNormal];
     [button setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"] 
                       forState:UIControlStateNormal];
-    [button setBackgroundColor:[UIColor lightGrayColor]];
+    [button setBackgroundColor:[UIColor clearColor]];
     [button addTarget:self action:@selector(searchButtonTapped:withEvent:)  forControlEvents:UIControlEventTouchUpInside];
     cell.accessoryView = button;
     //[button release];
