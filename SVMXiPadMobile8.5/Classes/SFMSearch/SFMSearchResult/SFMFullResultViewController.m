@@ -142,16 +142,6 @@
     [ fullMainDelegate DismissSplitViewControllerByLaunchingSFMProcess];
     [self dismissModalViewControllerAnimated:YES];
 }
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    NSLog(@"Row Tapped");
-}
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    [self performSelector:@selector(tapRecognizer:)];
-}
-
-
 - (void)viewDidUnload
 {
     [super viewDidUnload];

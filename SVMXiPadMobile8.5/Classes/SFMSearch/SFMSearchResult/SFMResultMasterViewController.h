@@ -36,4 +36,5 @@
 -(void) didSelectHeader:(id)sender;
 - (void) reloadTableData;
 - (IBAction) backgroundSelected:(id)sender;
+- (void)deselectRowAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;
 @end

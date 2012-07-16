@@ -33,7 +33,7 @@
 @property (nonatomic, retain) NSString *sfmConfigName;
 @property (nonatomic, assign) id<SFMResultDetailViewControllerDelegate> splitViewDelegate;
 
-//- (NSDictionary *) getResultPlist:(NSString *)objectName withConfiguration:(NSArray *)config;
+- (void)tapRecognized:(id)sender;
 - (BOOL) isRecordFound:(NSString *)value ;
 - (void) createTable;
 - (void) showHelp;

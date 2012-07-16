@@ -232,29 +232,62 @@
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UIImage * image = nil;
-    NSString *identifier = @"identifier";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
-    if(cell == nil)
+     static NSString *CellIdentifier = @"Cell";
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    if (cell == nil)
     {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
     }
-    cell.textLabel.text = [[tableArray objectAtIndex:indexPath.row] objectForKey:@"ObjectName"];
-     cell.backgroundColor = [UIColor clearColor];  
+    else
+    {
+        NSArray * subViews = [cell.contentView subviews];
+        for (int i = 0; i < [subViews count]; i++)
+        {
+            [[subViews objectAtIndex:i] removeFromSuperview];
+        }
+        cell.backgroundView = nil;
+    }
+    
+    UILabel * cellLabel = [[[UILabel alloc] init] autorelease];
+    cellLabel.backgroundColor = [UIColor clearColor];
+    cellLabel.frame = CGRectMake(10, 0, 270, 44);
+    
+    UIView * bgView = nil;
     UIImageView * bgImage = nil;
-        
-    image = [UIImage imageNamed:@"SFM_left_button_UP.png"];
-    image = [image stretchableImageWithLeftCapWidth:8 topCapHeight:8];
-    bgImage = [[UIImageView alloc] initWithImage:image];
+    UIImage * image = nil;
+    
+    bgView = [[[UIView alloc] initWithFrame:CGRectMake(10, 0, 300, ResultTableViewCellHeight)] autorelease];
+    cellLabel.text = [[tableArray objectAtIndex:indexPath.row] objectForKey:@"ObjectName"];
+    if ([indexPath isEqual:lastSelectedIndexPath])
+    {
+        image = [UIImage imageNamed:@"SFM_left_button_selected.png"];
+        cellLabel.textColor = [UIColor whiteColor];
+    }
+    else
+    {
+        image = [UIImage imageNamed:@"SFM_left_button_UP.png"];
+        cellLabel.textColor = [UIColor blackColor];
+    }
+    image = [image stretchableImageWithLeftCapWidth:11 topCapHeight:8];
+    bgImage = [[[UIImageView alloc] initWithImage:image] autorelease];
+
     [bgImage setContentMode:UIViewContentModeScaleToFill];
     
-    cell.backgroundView = bgImage;
-    cell.textLabel.font = [UIFont systemFontOfSize:16];
-    cell.textLabel.textColor =[UIColor blackColor];
-        
-    [bgImage release];
+    if ([cellLabel.text length] > 0)
+    {
+        bgImage.frame = CGRectMake(0, 0, 300, ResultTableViewCellHeight);
+        [bgView addSubview:bgImage];
+        bgImage.tag = BGIMAGETAG;
+        cellLabel.center = bgView.center;
+        cellLabel.tag = CELLLABELTAG;
+        [bgView addSubview:cellLabel];
+        [cell.contentView addSubview:bgView];
+    }
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     return cell;
+
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -263,37 +296,53 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [searchString resignFirstResponder];
+    NSLog(@"Last Selected Index Path Row = %d",lastSelectedIndexPath.row);
     [tableView deselectRowAtIndexPath:lastSelectedIndexPath animated:YES];
     [tableView deselectRowAtIndexPath:indexPath animated:YES];    
     UIImage * image = nil;
     
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];    
     
+    if (lastSelectedIndexPath == indexPath)
+    {
+        UITableViewCell * selectedCell = [tableView cellForRowAtIndexPath:indexPath];
+        UIView * cellBackgroundView = selectedCell.contentView;
+        UIImageView * bgImage = (UIImageView *)[cellBackgroundView viewWithTag:BGIMAGETAG];
+        image = [UIImage imageNamed:@"SFM_left_button_selected.png"];
+        image = [image stretchableImageWithLeftCapWidth:11 topCapHeight:8];
+        [bgImage setImage:image];
+        [bgImage setContentMode:UIViewContentModeScaleToFill];
+        UILabel * selectedCellLabel = (UILabel *)[cellBackgroundView viewWithTag:CELLLABELTAG];
+        selectedCellLabel.textColor = [UIColor whiteColor]; 
+    }
+    else
+    {
+        
+        UITableViewCell * lastSelectedCell = [tableView cellForRowAtIndexPath:lastSelectedIndexPath];
+        UIView * lastSelectedCellBackgroundView = lastSelectedCell.contentView;
+        UIImageView * lastSelectedCellBGImage = (UIImageView *)[lastSelectedCellBackgroundView viewWithTag:BGIMAGETAG];
+        image = [UIImage imageNamed:@"SFM_left_button_UP.png"];
+        image = [image stretchableImageWithLeftCapWidth:11 topCapHeight:8];
+        [lastSelectedCellBGImage setImage:image];
+        [lastSelectedCellBGImage setContentMode:UIViewContentModeScaleToFill];
+        UILabel * lastSelectedCellLabel = (UILabel *)[lastSelectedCellBackgroundView viewWithTag:CELLLABELTAG];
+        lastSelectedCellLabel.textColor = [UIColor blackColor];
+    }
+    
     UITableViewCell * selectedCell = [tableView cellForRowAtIndexPath:indexPath];
+    UIView * cellBackgroundView = selectedCell.contentView;
+    UIImageView * bgImage = (UIImageView *)[cellBackgroundView viewWithTag:BGIMAGETAG];
     image = [UIImage imageNamed:@"SFM_left_button_selected.png"];
     image = [image stretchableImageWithLeftCapWidth:11 topCapHeight:8];
-    UIImageView * bgImage = [[UIImageView alloc] initWithImage:image];
+    [bgImage setImage:image];
     [bgImage setContentMode:UIViewContentModeScaleToFill];
-    selectedCell.backgroundView = bgImage;
-    selectedCell.textLabel.font = [UIFont boldSystemFontOfSize:16];
-    selectedCell.textLabel.textColor = [UIColor whiteColor];
-    [bgImage release];
-    
-    
-    UITableViewCell * lastSelectedCell = [tableView cellForRowAtIndexPath:lastSelectedIndexPath];
-    image = [UIImage imageNamed:@"SFM_left_button_UP.png"];
-    image = [image stretchableImageWithLeftCapWidth:11 topCapHeight:8];
-    UIImageView * lastSelectedCellBGImage = [[UIImageView alloc] initWithImage:image];
-    [lastSelectedCellBGImage setContentMode:UIViewContentModeScaleToFill];
-    lastSelectedCell.backgroundView = lastSelectedCellBGImage;
-    lastSelectedCell.textLabel.font = [UIFont boldSystemFontOfSize:16];    
-    lastSelectedCell.textLabel.textColor = [appDelegate colorForHex:@"2d5d83"];    
-    [lastSelectedCellBGImage release];
+    UILabel * selectedCellLabel = (UILabel *)[cellBackgroundView viewWithTag:CELLLABELTAG];
+    selectedCellLabel.textColor = [UIColor whiteColor];
     
     lastSelectedIndexPath = [indexPath retain];
-
     [resultDetailView setSfmConfigName:tableHeader];
     [resultDetailView showObjects:[NSArray arrayWithObject:[tableArray objectAtIndex:indexPath.row]] forAllObjects:NO];
+    [searchMasterTable reloadData];
 }
 
 - (UIView *) tableView:(UITableView *)_tableView viewForHeaderInSection:(NSInteger)section
@@ -334,16 +383,16 @@
     [searchString resignFirstResponder];
     UIImage *image =nil;
     UITableViewCell * lastSelectedCell = [searchMasterTable cellForRowAtIndexPath:lastSelectedIndexPath];
+    UIView * lastSelectedCellBackgroundView = lastSelectedCell.contentView;
+    UIImageView * lastSelectedCellBGImage = (UIImageView *)[lastSelectedCellBackgroundView viewWithTag:BGIMAGETAG];
     image = [UIImage imageNamed:@"SFM_left_button_UP.png"];
     image = [image stretchableImageWithLeftCapWidth:11 topCapHeight:8];
-    UIImageView * lastSelectedCellBGImage = [[UIImageView alloc] initWithImage:image];
+    [lastSelectedCellBGImage setImage:image];
     [lastSelectedCellBGImage setContentMode:UIViewContentModeScaleToFill];
-    lastSelectedCell.backgroundView = lastSelectedCellBGImage;
-    lastSelectedCell.textLabel.font = [UIFont boldSystemFontOfSize:16];    
-    lastSelectedCell.textLabel.textColor = [appDelegate colorForHex:@"2d5d83"];    
-    [lastSelectedCellBGImage release];
+    UILabel * lastSelectedCellLabel = (UILabel *)[lastSelectedCellBackgroundView viewWithTag:CELLLABELTAG];
+    lastSelectedCellLabel.textColor = [UIColor blackColor];
     
-    lastSelectedIndexPath = 0;
+    lastSelectedIndexPath = nil;
 
     [resultDetailView setSfmConfigName:tableHeader];
     [resultDetailView showObjects:tableArray forAllObjects:YES];

@@ -59,13 +59,31 @@
     [backButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     UIBarButtonItem * backBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:backButton] autorelease];
     self.navigationItem.leftBarButtonItem = backBarButtonItem;
-    UIButton * helpButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)] autorelease];
-    [helpButton setBackgroundImage:[UIImage imageNamed:@"iService-Screen-Help"] forState:UIControlStateNormal];
-    [helpButton addTarget:self action:@selector(showHelp) forControlEvents:UIControlEventTouchUpInside];
-    [helpButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    UIBarButtonItem * addButton = [[[UIBarButtonItem alloc] initWithCustomView:helpButton] autorelease];
-    self.navigationItem.rightBarButtonItem = addButton;
-     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];    
+    NSMutableArray * buttons = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    if(appDelegate == nil)
+        appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+    UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:appDelegate.animatedImageView];
+    [buttons addObject:syncBarButton];
+    [syncBarButton setTarget:self];
+    syncBarButton.width =26;
+    [syncBarButton release];
+    
+    UIButton *actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)];
+    [actionButton setImage:[UIImage imageNamed:@"iService-Screen-Help.png"] forState:UIControlStateNormal];
+    actionButton.alpha = 1.0;
+    [actionButton addTarget:self action:@selector(showHelp) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIBarButtonItem * helpBarButton = [[UIBarButtonItem alloc] initWithCustomView:actionButton];
+    [helpBarButton setTarget:self];
+    [helpBarButton setAction:@selector(showHelp)];
+    [buttons addObject:helpBarButton];
+    [helpBarButton release];
+    [actionButton release];
+    
+    UIToolbar* toolbar = [[[UIToolbar alloc] initWithFrame:CGRectMake(600, 0, 90, 44)] autorelease];
+    [toolbar setItems:buttons];
+    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:toolbar] autorelease];
+         
     UIImageView * bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_right_panel_bg_main_top.png"]];
   
     bgImage.frame = CGRectMake(0, -12, bgImage.frame.size.width, bgImage.frame.size.height+12);
@@ -150,8 +168,6 @@
         [view addSubview:label]; 
     }
     //Create header view and add label as a subview
-
-        
     return view;
 
 }
@@ -175,26 +191,35 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *identifier = @"identifier";
-    appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+    if(appDelegate == nil)
+        appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     appDelegate.sfmPageController = [[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE];
     UILabel *labelForObjects;
     int no_of_fields=3;
+    UIView *backgroundView = [[[UIView alloc] initWithFrame:CGRectMake(40, 0, 630, TableViewResultViewCellHeight)] autorelease];
+    UIImageView * bgView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM-Screen-Table-Strip.png"]] autorelease];
+    [bgView setFrame:CGRectMake(0, 0, 630, TableViewResultViewCellHeight)];
+    [backgroundView addSubview:bgView];
+
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     if(cell == nil)
     {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
     else
-    {
-        NSArray *subLabelViews = [cell subviews];
-        for(UIView *txtView in subLabelViews)
+    {        
+        NSArray *subViews = [cell.contentView subviews];
+        for(UIView *subView in subViews)
         {
-            [txtView removeFromSuperview];
-        }
+            [subView removeFromSuperview];
+        }         
     }
     NSArray *cellArray = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"Values"] ;
     [cell clearsContextBeforeDrawing];
-    UIButton * button = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, TableViewResultViewCellHeight, TableViewResultViewCellHeight)] autorelease];
+//    UIButton * button = [[[UIButton alloc] initWithFrame:CGRectMake(tableView.frame.size.width-110, 0, TableViewResultViewCellHeight, TableViewResultViewCellHeight)] autorelease];
+    UIButton * button = [[[UIButton alloc] initWithFrame:CGRectMake(tableView.frame.size.width-110, 0, 30, 30)] autorelease];
+
+    button.userInteractionEnabled = TRUE;
     NSString *objname=[[tableDataArray objectAtIndex:indexPath.section ] objectForKey:@"ObjectName"];
     NSLog(@"objname =%@",objname);
     objname = [appDelegate.dataBase getApiNameFromFieldLabel:objname];
@@ -230,7 +255,10 @@
                 labelForObjects.backgroundColor = [UIColor clearColor];      
                 labelForObjects.font = [UIFont boldSystemFontOfSize:16];  
                 if(indexPath.row < [cellArray count])
+                {
                     labelForObjects.text=[[cellArray  objectAtIndex:indexPath.row] objectForKey:[tableHeader objectAtIndex:j]];
+                    labelForObjects.textColor = [appDelegate colorForHex:@"2d5d83"];
+                }
                 labelForObjects.textAlignment = UITextAlignmentLeft;
                 if(processAvailbleForRecord)
                 {
@@ -244,7 +272,7 @@
                                       forState:UIControlStateNormal];
                 }
 
-                [cell addSubview:labelForObjects];
+                [backgroundView addSubview:labelForObjects];
                 [labelForObjects release];
             }
         }
@@ -262,16 +290,16 @@
                 labelForObjects.font = [UIFont boldSystemFontOfSize:16];  
                 labelForObjects.text=[mDict objectForKey:[tableHeader objectAtIndex:j]];
                 labelForObjects.textAlignment = UITextAlignmentLeft;
-                
-                [cell addSubview:labelForObjects];
+                labelForObjects.textColor = [appDelegate colorForHex:@"2d5d83"];
+                [backgroundView addSubview:labelForObjects];
                 [labelForObjects release];
             }
 
             // Online Image Indicator
             UIImage *onlineImage = [UIImage imageNamed:@"OnlineRecord.png"];
             UIImageView *onlineImgView  = [[[UIImageView alloc] initWithImage:onlineImage] autorelease];
-            [onlineImgView setFrame:CGRectMake(0, 0,10, 50)];
-            [cell addSubview:onlineImgView];
+            [onlineImgView setFrame:CGRectMake(0, 2,10, TableViewResultViewCellHeight-4)];
+            [backgroundView addSubview:onlineImgView];
             [button setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button-Gray.png"] 
                               forState:UIControlStateNormal];
         }
@@ -284,10 +312,12 @@
             labelForObjects.backgroundColor = [UIColor clearColor];      
             labelForObjects.font = [UIFont boldSystemFontOfSize:16];  
             if(indexPath.row < [cellArray count])
-                labelForObjects.text=[[cellArray  objectAtIndex:indexPath.row] objectForKey:[tableHeader objectAtIndex:j]];
+            {   labelForObjects.text=[[cellArray  objectAtIndex:indexPath.row] objectForKey:[tableHeader objectAtIndex:j]];
+                labelForObjects.textColor = [appDelegate colorForHex:@"2d5d83"];
+            }
             labelForObjects.textAlignment = UITextAlignmentLeft;
             
-            [cell addSubview:labelForObjects];
+            [backgroundView addSubview:labelForObjects];
             [labelForObjects release];
         }
         if(processAvailbleForRecord)
@@ -303,9 +333,10 @@
 
         }
     }
-    cell.accessoryView = button;
+    [backgroundView addSubview:button];
+    [cell.contentView addSubview:backgroundView];
     cell.backgroundColor = [UIColor clearColor];
-
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     return cell;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -328,51 +359,38 @@
     NSString *objectId = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"ObjectId"];
     NSArray *headerArray =[[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"TableHeader"];
     NSString *objectName = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"ObjectName"];
-    SFMFullResultViewController *resultViewController = [[SFMFullResultViewController alloc] initWithNibName:@"SFMFullResultViewController" bundle:nil];
-    resultViewController.fullMainDelegate = self;
-    resultViewController.tableHeaderArray = headerArray;
+    SFMFullResultViewController *resultController = [[SFMFullResultViewController alloc] initWithNibName:@"SFMFullResultViewController" bundle:nil];
+    resultController.fullMainDelegate = self;
+    resultController.tableHeaderArray = headerArray;
     if([self.masterView.searchFilterSwitch isOn])
     {
         if(indexPath.row < [cellArray count])
         {
             fullDataDict = [cellArray objectAtIndex:indexPath.row]; 
-            resultViewController.isOnlineRecord = NO;
-            resultViewController.objectName = objectName;
+            resultController.isOnlineRecord = NO;
+            resultController.objectName = objectName;
         }
         else 
         {
             int onlineIndex =  indexPath.row - [cellArray count];
             NSDictionary *rowData = [[onlineDataDict objectForKey:objectId] objectAtIndex:onlineIndex];
             fullDataDict = rowData;
-            resultViewController.isOnlineRecord = YES;
-            //fullDataDict = [onlineDataArray objectAtIndex:(count-indexPath.row)];
-            /*
-            for(NSDictionary *dict in onlineDataArray)
-            {
-                NSString *searchObjectId = [dict objectForKey:@"SearchObjectId"];
-                if( ([searchObjectId isEqualToString:objectId]) && (count == onlineIndex))
-                {
-                    fullDataDict = dict;
-                    resultViewController.isOnlineRecord = YES;
-                    break;
-                }
-            }
-             */
+            resultController.isOnlineRecord = YES;
         }
     }
     else 
     {
         fullDataDict = [cellArray objectAtIndex:indexPath.row];
-        resultViewController.isOnlineRecord = NO;
-        resultViewController.objectName = objectName;
+        resultController.isOnlineRecord = NO;
+        resultController.objectName = objectName;
         NSLog(@"Data = %@",fullDataDict);
     }
     
-     resultViewController.modalPresentationStyle = UIModalPresentationFormSheet;
-     resultViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;    
-    resultViewController.data = fullDataDict;
-     [self presentModalViewController:resultViewController animated:YES];
-     [resultViewController release];
+     resultController.modalPresentationStyle = UIModalPresentationFormSheet;
+     resultController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;    
+     resultController.data = fullDataDict;
+     [self presentModalViewController:resultController animated:YES];
+     [resultController release];
 }
 
 #pragma mark - Custom Methods
@@ -750,8 +768,7 @@
 }
 - (void) accessoryButtonTapped:(id)sender
 {
-   
-    UITableViewCell *ownerCell = (UITableViewCell*)[sender superview];
+    UITableViewCell *ownerCell = (UITableViewCell*)[[[sender superview] superview] superview];
     NSIndexPath *ownerCellIndexPath;
     if (ownerCell != nil)
     {
@@ -763,14 +780,13 @@
     NSDictionary *dataDict = [[dict objectForKey:@"Values"] objectAtIndex:ownerCellIndexPath.row]; 
     NSString *objectName = [appDelegate.dataBase getApiNameFromFieldLabel:[dict objectForKey:@"ObjectName"]];
      char *field1;
-    appDelegate.showUI = FALSE;   //btn merge
-    if(appDelegate.sfmPageController)
-        [appDelegate.sfmPageController release];
-    appDelegate.sfmPageController = [[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE];
-    
     NSMutableString * queryStatement1 = [[NSMutableString alloc]initWithCapacity:0];
     NSString *recordId = [dataDict objectForKey:@"Id"];
     queryStatement1 = [NSMutableString stringWithFormat:@"Select local_id FROM '%@' where Id = '%@'",objectName,recordId];    
+    if(appDelegate.sfmPageController)
+        [appDelegate.sfmPageController release];
+    appDelegate.sfmPageController = [[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE];
+
     sqlite3_stmt * labelstmt;
     const char *selectStatement = [queryStatement1 UTF8String];
     
@@ -809,59 +825,24 @@
     }
     appDelegate.sfmPageController.processId = processId;
     appDelegate.sfmPageController.objectName = objectName;
-    
-    //appDelegate.sfmPageController.recordId = [NSString stringWithFormat:@"%s", field1];
-    //appDelegate.sfmPageController.activityDate = [array2 objectAtIndex:(ownerCellIndexPath.row)];
-    //appDelegate.sfmPageController.accountId = @"";
     appDelegate.sfmPageController.topLevelId = nil;
     appDelegate.sfmPageController.recordId = localId;    
-    [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
+    //[appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
     [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
-    [appDelegate.sfmPageController.detailView view];
     [self presentModalViewController:appDelegate.sfmPageController animated:YES];
     [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];
-    appDelegate.didsubmitModelView = FALSE;
     [appDelegate.sfmPageController release];
     synchronized_sqlite3_finalize(labelstmt);
     synchronized_sqlite3_finalize(labelstmt2);
+
 
 }
 #pragma mark - SFM Full Result View Delegate
 - (void) DismissSplitViewControllerByLaunchingSFMProcess
 {
-       [resultViewController dismissModalViewControllerAnimated:YES];
-   /* NSLog(@"Launch SFM Process");
-
-    
-    if(appDelegate){
-        appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    }
-    
-    appDelegate.showUI = FALSE;   //btn merge
-    appDelegate.sfmPageController = [[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE];
-    
-    
-    appDelegate.sfmPageController.processId = @"IPAD-012";
-    
-    appDelegate.sfmPageController.objectName = @"SVMXC__Service_Order__c";
-    
-    
-    appDelegate.sfmPageController.accountId = @"";
-    appDelegate.sfmPageController.topLevelId = nil;
-    
-    [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
-    [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
-    [appDelegate.sfmPageController.detailView view];
-    [self presentModalViewController:appDelegate.sfmPageController animated:YES];
-    [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];
-    
-    
-    //sahana - offline
-    appDelegate.didsubmitModelView = FALSE;
-    
-    [appDelegate.sfmPageController release];*/
+    [resultViewController dismissModalViewControllerAnimated:YES];
 }
--(void)tapRecognized:(id)sender
+- (void)tapRecognized:(id)sender
 { 
     UITapGestureRecognizer * tap = sender;
     if ([tap.view isKindOfClass:[UILabel  class]])    
