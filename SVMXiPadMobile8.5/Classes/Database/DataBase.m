@@ -757,6 +757,33 @@
     return apiName;
     
 }
+- (NSString*) getLabelFromApiName:(NSString*)api_name objectName:(NSString*) objectName
+{ 
+    NSString *queryStatement = [NSString stringWithFormat:@"SELECT label from SFObjectField where api_name ='%@' and object_api_name='%@'",api_name,objectName];
+    NSLog(@"Query Statement = %@",queryStatement);
+    sqlite3_stmt * statement;
+    NSString *apiLabel = api_name;
+    if(appDelegate == nil)
+        appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &statement, NULL) == SQLITE_OK)
+    {
+        if (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            const char * label = (char *)synchronized_sqlite3_column_text(statement, 0);
+            if (strlen(label))
+            {
+                apiLabel = [NSString stringWithUTF8String:label];   
+                NSLog(@"Label Name = %@",apiLabel);
+                
+            }
+        }
+    }
+    
+    synchronized_sqlite3_finalize(statement);
+    return apiLabel;
+    
+}
+
 #pragma mark - Location Ping
 - (void) didGetSettingsInfoforLocationPing:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {

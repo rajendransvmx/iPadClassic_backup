@@ -43,7 +43,7 @@
     [actionButton setTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_SRCH_CLOSE] forState:UIControlStateNormal];
     [actionButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [[actionButton titleLabel] setFont:[UIFont boldSystemFontOfSize:16]];
-    [detailButton setFrame:CGRectMake(500, 6, 31, 31)];
+    [detailButton setFrame:CGRectMake(503, 6, 31, 31)];
     
     if(self.isOnlineRecord)
     {
@@ -184,7 +184,12 @@
     }
     [cell setBackgroundColor:[UIColor clearColor]];
     lblObjects =[[UILabel alloc]initWithFrame:CGRectMake(20, 0, 270, TableViewResultViewCellHeight)];
-    lblObjects.text= [tableHeaderArray objectAtIndex:indexPath.row];
+    NSString *objectString = [tableHeaderArray objectAtIndex:indexPath.row];
+    NSArray *objectComponents = [objectString componentsSeparatedByString:@"."];
+    lblObjects.text = [objectComponents objectAtIndex:([objectComponents count]-1)];
+    lblObjects.text = [appDelegate.dataBase getLabelFromApiName:lblObjects.text
+                                                     objectName:[appDelegate.dataBase getApiNameFromFieldLabel:[objectComponents objectAtIndex:0]]];
+    lblObjects.font = [UIFont boldSystemFontOfSize:16];
     lblObjects.textAlignment=UITextAlignmentLeft;
     [lblObjects setBackgroundColor:[UIColor clearColor]];
     lblObjects.userInteractionEnabled = TRUE;
@@ -193,9 +198,10 @@
     [lblObjects addGestureRecognizer:tapObject];
     [tapObject release];
     [cell addSubview:lblObjects];
-    lblValues=[[UILabel alloc]initWithFrame:CGRectMake(290, 0, 500, TableViewResultViewCellHeight)];
+    lblValues=[[UILabel alloc]initWithFrame:CGRectMake(300, 0, 500, TableViewResultViewCellHeight)];
     [lblValues setBackgroundColor:[UIColor clearColor]];
     lblValues.text=[data objectForKey:[tableHeaderArray objectAtIndex:indexPath.row]];
+    lblValues.font = [UIFont boldSystemFontOfSize:16];
     lblValues.textColor = [appDelegate colorForHex:@"2d5d83"];  
     lblValues.textAlignment=UITextAlignmentLeft;
     lblValues.userInteractionEnabled = TRUE;

@@ -154,7 +154,7 @@ PopoverButtons *popOver_view;
 - (NSMutableArray *) getResults:(NSString *)object withConfigData:(NSDictionary *)dataForObject;
 - (NSString *) getFieldLabelForApiName:(NSString *)apiName;
 - (NSString *) getApiNameFromFieldLabel:(NSString *)apiName;
-
+- (NSString*) getLabelFromApiName:(NSString*)api_name objectName:(NSString*) objectName;
 // Location Ping
 - (void) didGetActiveGlobalProfileForLocationPing:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
 - (void) didGetSettingsInfoforLocationPing:(ZKQueryResult *)result error:(NSError *)error context:(id)context;

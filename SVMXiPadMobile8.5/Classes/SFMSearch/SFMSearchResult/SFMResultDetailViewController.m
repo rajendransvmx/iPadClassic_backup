@@ -132,6 +132,7 @@
  
     UIView * view = nil;
     UILabel * label ;
+    NSString *object_name,*apiHeaderName,*formated_header_objectName;
     int no_of_fields=3;
     view = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, TableViewResultViewCellHeight*2)] autorelease];
     UIImageView * sectionImageView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_section_header_bg.png"]] autorelease];
@@ -156,8 +157,20 @@
          if(no_of_fields)
         label.frame = CGRectMake((60+i*(640/no_of_fields)), TableViewResultViewCellHeight,190, TableViewResultViewCellHeight);
         label.backgroundColor = [UIColor clearColor];      
-        label.font = [UIFont boldSystemFontOfSize:16];  
-        label.text=[[[tableDataArray objectAtIndex:section ] objectForKey:@"TableHeader"]objectAtIndex:i];
+        label.font = [UIFont boldSystemFontOfSize:16];
+        NSString *formated_header= [[[tableDataArray objectAtIndex:section ] objectForKey:@"TableHeader"]objectAtIndex:i];
+        if([formated_header rangeOfString:@"."].length > 0)
+        {
+            NSRange range=[formated_header rangeOfString:@"."];
+            NSLog(@"%@",[NSString stringWithFormat:@"%@",[formated_header substringFromIndex:range.location+1]]);
+            NSLog(@"%@",[NSString stringWithFormat:@"%@",[formated_header substringToIndex:range.location]]);
+            apiHeaderName=[formated_header substringFromIndex:range.location+1];
+            object_name =[formated_header substringToIndex:range.location];
+            formated_header_objectName=[appDelegate.dataBase getLabelFromApiName:apiHeaderName
+                                                      objectName:[appDelegate.dataBase getApiNameFromFieldLabel:object_name]];
+        }
+        //label.text=[NSString stringWithFormat:@"%@.%@",object_name,formated_header_objectName];//[[[tableDataArray objectAtIndex:section ] objectForKey:@"TableHeader"]objectAtIndex:i];
+        label.text=formated_header_objectName;//
         label.textAlignment = UITextAlignmentLeft;
         label.textColor=[UIColor whiteColor];
         label.userInteractionEnabled = TRUE;
