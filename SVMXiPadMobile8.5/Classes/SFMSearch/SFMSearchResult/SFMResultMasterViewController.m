@@ -115,6 +115,8 @@
                                              selector:@selector(reachabilityChanged:) 
                                                  name:kReachabilityChangedNotification
                                                object:nil];
+    [activity startAnimating];
+    activity.hidesWhenStopped=YES;
     if([appDelegate isCameraAvailable])
     {
         UIView *barCodeView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 768, 46)];

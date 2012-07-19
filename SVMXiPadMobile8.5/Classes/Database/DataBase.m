@@ -416,13 +416,15 @@
         [queryFields appendString:@","];
         NSString *fieldName = [[displayArray objectAtIndex:i] objectForKey:@"SVMXC__Field_Name__c"];
         NSString *TableName = [[displayArray objectAtIndex:i] objectForKey:@"SVMXC__Object_Name2__c"];
-        fieldName = [self getApiNameFromFieldLabel:fieldName];
-        TableName = [self getApiNameFromFieldLabel:TableName];
-
-        [queryFields appendFormat:@"'%@'.%@",TableName,fieldName];
-        [displayFieldsArray addObject:fieldName];
-        if(![TableArray containsObject:TableName])
-        [TableArray addObject:TableName];
+       NSString *ApifieldName = [self getApiNameFromFieldLabel:fieldName];
+        NSString *ApiTableName = [self getApiNameFromFieldLabel:TableName];
+        [queryFields appendFormat:@"'%@'.%@",ApiTableName,ApifieldName];
+        [displayFieldsArray addObject:ApifieldName];
+        if(![ApiTableName isEqualToString:TableName])
+        {
+            if(![TableArray containsObject:TableName])
+                [TableArray addObject:TableName];
+        }
         fieldsCount++;
     }
     for(int i=0; i<[searchableArray count]; i++)
@@ -443,13 +445,17 @@
             }
         }
 		NSString *searchableFieldTableName;
-		if(field1)
+		if(strlen(field1))
 	       searchableFieldTableName = [self getApiNameFromFieldLabel:[NSString stringWithFormat:@"%s",field1]];
 	    else
 	       searchableFieldTableName = @"";	
-	    
-        if(![TableArray containsObject:searchableFieldTableName])
-        [TableArray addObject:searchableFieldTableName];
+        
+	    if(![searchableFieldTableName isEqualToString:[NSString stringWithFormat:@"%s",field1]])
+           {
+               if(![TableArray containsObject:searchableFieldTableName])
+                   [TableArray addObject:searchableFieldTableName];
+           }
+        
         if(![displayFieldsArray containsObject:searchableField])
         {
             [queryFields appendString:@","];
@@ -466,7 +472,6 @@
  
      
         NSMutableString * conditionqueryStatement = [[NSMutableString alloc]initWithCapacity:0];
-     //   NSMutableString *conditionFields=[[NSMutableString alloc]initWithCapacity:0];
         conditionqueryStatement = [NSMutableString stringWithFormat:@"SELECT SVMXC__Advance_Expression__c from SFM_Search_Objects where ObjectID='%@'",objectId];    
         sqlite3_stmt * conditionlabelstmt;
         const char *conditionselectStatement = [conditionqueryStatement UTF8String];
@@ -544,12 +549,7 @@
         }
         for(int j=0;j<[criteriaArray count]; j++)
         {
-            /*
-             "SVMXC__Field_Name__c" = Status;
-             "SVMXC__Object_Name2__c" = Case;
-             "SVMXC__Operand__c" = Closed;
-             "SVMXC__Operator__c" = ne;
-             */
+            
             NSString *fieldName,*TableName;
             NSDictionary *dict = [criteriaArray objectAtIndex:j];
             NSString *displayType = [dict objectForKey:@"SVMXC__Display_Type__c"];
@@ -642,17 +642,17 @@
                         
                     }
                 }
+                synchronized_sqlite3_finalize(labelstmt);
+
                 if([[NSString stringWithFormat:@"%s",type]isEqualToString:@"reference"] && ![[NSString stringWithFormat:@"%s",relationshipName] isEqualToString:[NSString stringWithFormat:@"%s",reference_to]]  )
                 {
                     [joinFields appendFormat:@" LEFT OUTER JOIN"];
                     [joinFields appendFormat:@" '%@'",[TableArray objectAtIndex:i]];
                     [joinFields appendFormat:@" ON"];
-                    [joinFields appendFormat:@" %@.%@ = '%@'.Id",object,[NSString stringWithFormat:@"%s", apiName],[TableArray objectAtIndex:i]];
+                    [joinFields appendFormat:@" %@.%@ = '%@'.Id",object,[NSString stringWithFormat:@"%s", apiName],[self getApiNameFromFieldLabel:[TableArray objectAtIndex:i]]];
                 }
             }
-        }
-        synchronized_sqlite3_finalize(labelstmt);
-        
+      }        
     if([finalQuery length] > 0)
             queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE %@ COLLATE NOCASE",queryFields,object,joinFields,finalQuery];
         else
@@ -666,6 +666,7 @@
         while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
         {
             NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+            NSString *value=nil,*refrenceValue=nil;
             for(int j=0; j< fieldsCount; j++)
             {
                 const char * _type = (char *)synchronized_sqlite3_column_text(statement, j);
@@ -673,7 +674,7 @@
                 {
                     _type = "";
                 }
-                NSString *value = [NSString stringWithUTF8String:_type];
+                value = [NSString stringWithUTF8String:_type];
                 if(j==0)
                 {
                     [dict setObject:value forKey:@"Id"];
@@ -688,14 +689,40 @@
                     if(j<([displayArray count] +2))
                     {
                         NSDictionary *object = [displayArray objectAtIndex:j-2];
-                        [dict setObject:value forKey:[NSString stringWithFormat:@"%@.%@",[object 
+                        NSLog(@"%@",value);
+                        if([value length])
+                        {
+                            refrenceValue=[self getvalueforReference:object value:value];
+                            if(refrenceValue)
+                            {
+                                [dict setObject:refrenceValue forKey:[NSString stringWithFormat:@"%@.%@",[object objectForKey:@"SVMXC__Object_Name2__c"],[object objectForKey:@"SVMXC__Field_Name__c"]]];
+                            }
+                            else
+                            {
+                                [dict setObject:value forKey:[NSString stringWithFormat:@"%@.%@",[object objectForKey:@"SVMXC__Object_Name2__c"],[object objectForKey:@"SVMXC__Field_Name__c"]]];
+                            }
+                            
+                        }
+                        else
+                        {
+                            [dict setObject:value forKey:[NSString stringWithFormat:@"%@.%@",[object 
                                                       objectForKey:@"SVMXC__Object_Name2__c"],[object 
                                                       objectForKey:@"SVMXC__Field_Name__c"]]];
+                        }
                     }
                      else
                      {
                          int indexValue = j - [displayArray count] - 2;
-                         [dict setObject:value forKey:[[searchableArray objectAtIndex:indexValue ] objectForKey:@"SVMXC__Field_Name__c"]];                      
+                         refrenceValue=[self getvalueforReference:[searchableArray objectAtIndex:indexValue ]  value:value];
+                         if(refrenceValue)
+                         {
+                             [dict setObject:refrenceValue forKey:[NSString stringWithFormat:@"%@.%@",[[searchableArray objectAtIndex:indexValue ] objectForKey:@"SVMXC__Object_Name2__c"],[[searchableArray objectAtIndex:indexValue ] objectForKey:@"SVMXC__Field_Name__c"]]];
+                         }
+                         else
+                         {
+                             [dict setObject:value forKey:[NSString stringWithFormat:@"%@.%@",[[searchableArray objectAtIndex:indexValue ] objectForKey:@"SVMXC__Object_Name2__c"],[[searchableArray objectAtIndex:indexValue ] objectForKey:@"SVMXC__Field_Name__c"]]]; 
+                         }
+
                      }
                 }
             }
@@ -705,6 +732,86 @@
     synchronized_sqlite3_finalize(statement);
     return [results autorelease];
 }
+-(NSString *)getvalueforReference:(NSDictionary*) tableArray value:(NSString*)value
+{
+    NSMutableString * queryStatement1 = [[NSMutableString alloc]initWithCapacity:0];
+    queryStatement1 = [NSMutableString stringWithFormat:@"SELECT type,reference_to FROM SFObjectField where object_api_name = '%@'and api_name='%@'",[appDelegate.dataBase getApiNameFromFieldLabel:[tableArray objectForKey:@"SVMXC__Object_Name2__c"]],[appDelegate.dataBase getApiNameFromFieldLabel:[tableArray objectForKey:@"SVMXC__Field_Name__c"]]];
+    sqlite3_stmt * labelstmt;
+    const char *selectStatement = [queryStatement1 UTF8String];
+    char *type,*refrence_to,*name_field; 
+    NSString *strName_field=nil,*namefiled;
+    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &labelstmt, nil) == SQLITE_OK )
+    {
+        if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
+        {
+            type = (char *) synchronized_sqlite3_column_text(labelstmt,0);
+            refrence_to = (char *) synchronized_sqlite3_column_text(labelstmt,1);
+        }
+    }
+    
+    if([[NSString stringWithFormat:@"%s",type] isEqualToString:@"reference"]&& strlen(refrence_to) )
+    {
+        
+        queryStatement1 = [NSMutableString stringWithFormat:@"SELECT api_name FROM SFObjectField where name_field='TRUE' and object_api_name='%s'",refrence_to];    
+        sqlite3_stmt * labelstmt;
+        const char *selectStatement = [queryStatement1 UTF8String];
+        if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &labelstmt, nil) == SQLITE_OK )
+        {
+            if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
+            {
+                name_field = (char *) synchronized_sqlite3_column_text(labelstmt,0);
+                if (strlen(name_field))
+                    namefiled=[NSString stringWithFormat:@"%s",name_field];
+            }
+        }
+        NSString *queryRefrefield = [NSMutableString stringWithFormat:@"SELECT %@ FROM '%@' where Id='%@'",namefiled,[NSString stringWithFormat:@"%s",refrence_to],value];    
+        sqlite3_stmt * queryRefrefieldstmt;
+        const char *queryRefrefieldselectStatement = [queryRefrefield UTF8String];
+        char *obejctFiled;
+        NSString *refrenceObject=nil;
+        if ( synchronized_sqlite3_prepare_v2(appDelegate.db, queryRefrefieldselectStatement,-1, &queryRefrefieldstmt, nil) == SQLITE_OK )
+        {
+            if(synchronized_sqlite3_step(queryRefrefieldstmt) == SQLITE_ROW)
+            {
+                obejctFiled = (char *) synchronized_sqlite3_column_text(queryRefrefieldstmt,0);
+                if (strlen(obejctFiled))
+                {
+                    refrenceObject=[NSString stringWithFormat:@"%s",obejctFiled];
+                    strName_field=refrenceObject;
+                }
+            }
+        }
+        if(!refrenceObject)
+        {
+           strName_field=[self getValueFromLookupwithId:value];
+        }
+
+    }
+    return strName_field;
+
+}
+- (NSString *)getValueFromLookupwithId:(NSString *)_Id
+{
+    NSString * Id = @"";
+	NSString * selectQuery = [NSString stringWithFormat:@"Select DISTINCT value from LookUpFieldValue where Id = '%@'", _Id];
+	
+	sqlite3_stmt * statement;
+    const char * _selectQuery = [selectQuery UTF8String];
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, _selectQuery,-1, &statement, nil) == SQLITE_OK)
+    {
+        
+        while(synchronized_sqlite3_step(statement) == SQLITE_ROW){
+            char * field1 = (char *) synchronized_sqlite3_column_text(statement, COLUMN_1);
+            if (field1 != nil)
+                Id = [[NSString alloc] initWithUTF8String:field1];
+            
+        }
+    }
+	
+	return Id;
+}
+ 
 - (NSString *) getFieldLabelForApiName:(NSString *)apiName
 {
     NSString *queryStatement = [NSString stringWithFormat:@"SELECT label from SFObject where api_name = '%@'",apiName];

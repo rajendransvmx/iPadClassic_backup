@@ -639,7 +639,7 @@
         BOOL found = NO;
         for(NSDictionary *searchableDict in searchableArray)
         {
-            NSString *value = [dict objectForKey:[searchableDict objectForKey:@"SVMXC__Field_Name__c"]];
+            NSString *value =[dict objectForKey:[NSString stringWithFormat:@"%@.%@",[searchableDict objectForKey:      @"SVMXC__Object_Name2__c"],[searchableDict objectForKey:@"SVMXC__Field_Name__c"]]];
             if([self isRecordFound:value])
             {
                 found =YES;
@@ -752,7 +752,10 @@
             {
                 break;
             }
-
+            if (appDelegate.connection_error)
+            {
+                break;
+            }
             NSLog(@"Retreiving Online Reccords");
         }
         [activityIndicator stopAnimating];

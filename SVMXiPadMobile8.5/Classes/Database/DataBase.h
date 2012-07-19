@@ -270,4 +270,6 @@ PopoverButtons *popOver_view;
 
 - (void) settingAfterIncrementalMetaSync;
 - (void) updateUserTable:(NSString *)UserId;
+- (NSString *) getValueFromLookupwithId:(NSString *)Id;
+- (NSString *) getvalueforReference:(NSDictionary*) tableArray value:(NSString*)value;
 @end

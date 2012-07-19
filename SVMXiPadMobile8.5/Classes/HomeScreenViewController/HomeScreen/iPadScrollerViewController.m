@@ -1291,6 +1291,10 @@ const float progress_ = 0.07;
         {
             break;
         }
+        if (appDelegate.connection_error)
+        {
+            break;
+        }
         
         if (appDelegate.wsInterface.didOpSFMSearchComplete == TRUE)
             break; 

@@ -32,6 +32,6 @@
 @property(nonatomic,retain) IBOutlet UIButton *actionButton,*detailButton;
 - (IBAction)dismissView:(id)sender;
 - (IBAction) accessoryButtonTapped:(id)sender;
--(void)tapRecognized:(id)sender;
+- (void) tapRecognized:(id)sender;
 @property(nonatomic,retain) IBOutlet UILabel *TitleForResultWindow;
 @end
