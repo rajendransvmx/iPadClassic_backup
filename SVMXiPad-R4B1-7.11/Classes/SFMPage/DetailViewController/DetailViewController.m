@@ -1978,7 +1978,7 @@ extern void SVMXLog(NSString *format, ...);
         
         NSString * numPartsUsed = [dict objectForKey:gSVMXC__Actual_Quantity2__c];
         if ([numPartsUsed isKindOfClass:[NSString class]])
-            [Part setObject:[NSString stringWithFormat:@"%d", [numPartsUsed intValue]] forKey:gPartsUsed];
+            [Part setObject:[NSString stringWithFormat:@"%f", [numPartsUsed floatValue]] forKey:gPartsUsed];
         
         NSString * description = [dict objectForKey:gSVMXC__Work_Description__c];
         if ([description isKindOfClass:[NSString class]])
