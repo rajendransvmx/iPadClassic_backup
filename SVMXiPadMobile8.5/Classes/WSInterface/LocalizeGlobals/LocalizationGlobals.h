@@ -535,9 +535,9 @@
 #define NAME_FIELD                          @"Name Field"
 
 // Macros for Settings of Location Ping
-#define FREQ_LOCATION_TRACKING              @"IPAD007_SET001"
-#define ENABLE_LOCATION_UPDATE              @"IPAD007_SET002"
-#define MAX_LOCATION_RECORD                 @"IPAD007_SET003"
+#define FREQ_LOCATION_TRACKING              @"Frequency of Location Tracking"
+#define ENABLE_LOCATION_UPDATE              @"Enable Location Tracking"
+#define MAX_LOCATION_RECORD                 @"Maximum number of location history records to cache in iPad"
 
 
 

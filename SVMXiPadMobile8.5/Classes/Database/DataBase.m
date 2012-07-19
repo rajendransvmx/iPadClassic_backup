@@ -1022,7 +1022,7 @@
         synchronized_sqlite3_finalize(statement);
     }
     //get limit from table
-    NSString *limitLocationRecords = [appDelegate.dataBase getSettingValueWithName:MAX_LOCATION_RECORD];
+    NSString *limitLocationRecords = [appDelegate.settingsDict objectForKey:MAX_LOCATION_RECORD];
     limitLocationRecords = (limitLocationRecords!=nil)?limitLocationRecords:@"100";
     if(row_count < [limitLocationRecords intValue])
     {

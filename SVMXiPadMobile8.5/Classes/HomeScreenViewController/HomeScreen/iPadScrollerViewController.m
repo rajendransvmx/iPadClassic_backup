@@ -938,7 +938,7 @@ const NSUInteger kNumImages = 7;
         NSLog(@"Meta Sync is Running");
         return;
     }
-    NSString *enableLocationService = [appDelegate.dataBase getSettingValueWithName:ENABLE_LOCATION_UPDATE];
+    NSString *enableLocationService = [appDelegate.settingsDict objectForKey:ENABLE_LOCATION_UPDATE];
     enableLocationService = (enableLocationService != nil) ? enableLocationService : @"True";
     if([enableLocationService boolValue])
     {
@@ -1663,12 +1663,12 @@ const float progress_ = 0.07;
     {
         
         lastLocationUpdateTiemstamp = [userDefaults objectForKey:kLastLocationUpdateTimestamp];
-        NSString *enableLocationService = [appDelegate.dataBase getSettingValueWithName:ENABLE_LOCATION_UPDATE];
+        NSString *enableLocationService = [appDelegate.settingsDict objectForKey:ENABLE_LOCATION_UPDATE];
         enableLocationService = (enableLocationService != nil)?enableLocationService:@"True";
         if([enableLocationService boolValue])
         {
             //call db to store the data            
-            NSString *frequencyLocationService = [appDelegate.dataBase getSettingValueWithName:FREQ_LOCATION_TRACKING];
+            NSString *frequencyLocationService = [appDelegate.settingsDict objectForKey:FREQ_LOCATION_TRACKING];
             frequencyLocationService = (frequencyLocationService != nil)?frequencyLocationService:@"10";
             if (!([newLocationTimestamp timeIntervalSinceDate:lastLocationUpdateTiemstamp] < ([frequencyLocationService intValue] * 60))) 
             {
@@ -1699,11 +1699,11 @@ const float progress_ = 0.07;
     if (userDefaults) {
         
         lastLocationUpdateTiemstamp = [userDefaults objectForKey:kLastLocationUpdateTimestamp];
-        NSString *enableLocationService = [appDelegate.dataBase getSettingValueWithName:ENABLE_LOCATION_UPDATE];
+        NSString *enableLocationService = [appDelegate.settingsDict objectForKey:ENABLE_LOCATION_UPDATE];
         enableLocationService = (enableLocationService != nil)?enableLocationService:@"True";
         if([enableLocationService boolValue])
         {
-            NSString *frequencyLocationService = [appDelegate.dataBase getSettingValueWithName:FREQ_LOCATION_TRACKING];
+            NSString *frequencyLocationService = [appDelegate.settingsDict objectForKey:FREQ_LOCATION_TRACKING];
             frequencyLocationService = (frequencyLocationService != nil)?frequencyLocationService:@"10";
             if (!([newLocationTimestamp timeIntervalSinceDate:lastLocationUpdateTiemstamp] < ([frequencyLocationService intValue] * 60))) {
                 [appDelegate didUpdateToLocation:newLocation];

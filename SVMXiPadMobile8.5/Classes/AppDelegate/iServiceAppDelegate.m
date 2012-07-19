@@ -1685,9 +1685,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         NSLog(@"Meta Sync is Running");
         return;
     }
-    NSString *enableLocationServiceStatus = [dataBase getSettingValueWithName:ENABLE_LOCATION_UPDATE];
+    NSString *enableLocationServiceStatus = [self.settingsDict objectForKey:ENABLE_LOCATION_UPDATE];
     enableLocationService = (enableLocationServiceStatus != nil)?[enableLocationServiceStatus boolValue]:TRUE;
-    frequencyLocationService = [[dataBase getSettingValueWithName:FREQ_LOCATION_TRACKING] retain]; 
+    frequencyLocationService = [[self.settingsDict objectForKey:FREQ_LOCATION_TRACKING] retain]; 
     frequencyLocationService = (frequencyLocationService != nil)?frequencyLocationService:@"10";
     if(enableLocationService)
     {
