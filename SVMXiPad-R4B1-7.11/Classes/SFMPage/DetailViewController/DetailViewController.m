@@ -2041,6 +2041,11 @@ extern void SVMXLog(NSString *format, ...);
     for (int j = 0; j < [array count]; j++)
     {
         ZKSObject * obj = [array objectAtIndex:j];
+        if([[obj fields] objectForKey:@"SVMXC__Activity_Type__c"] == [NSNull null])
+        {
+            NSLog(@"Activity Type is NULL");
+            continue;
+        }
         if ([[[obj fields] objectForKey:@"SVMXC__Activity_Type__c"] isEqualToString:CALIBRATION])
         {
             [LabourValuesDictionary setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_CALIBRATION];

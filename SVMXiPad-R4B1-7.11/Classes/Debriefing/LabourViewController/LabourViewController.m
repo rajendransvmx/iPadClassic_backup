@@ -274,8 +274,12 @@ extern void SVMXLog(NSString *format, ...);
 		ZKSObject * obj = [array objectAtIndex:i];
         
         NSString *key, *value;
+        if([[obj fields] objectForKey:@"SVMXC__Activity_Type__c"] == [NSNull null])
+        {
+            NSLog(@"Activity Type is NULL");
+            continue;
+        }
 		key = [[obj fields] objectForKey:@"SVMXC__Activity_Type__c"];
-        
         [linePriceItems addObject:key];
         
         BOOL isKeyDuplicate = NO;
