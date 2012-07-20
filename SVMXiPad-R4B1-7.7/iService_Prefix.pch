@@ -1,9 +1,0 @@
-//
-// Prefix header for all source files of the 'iService' target in the 'iService' project
-//
-
-#ifdef __OBJC__
-    #import <Foundation/Foundation.h>
-    #import <UIKit/UIKit.h>
-#define NSLog(...) SVMXLog(__VA_ARGS__)
-#endif
