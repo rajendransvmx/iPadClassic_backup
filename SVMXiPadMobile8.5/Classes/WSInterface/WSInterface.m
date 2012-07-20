@@ -1484,9 +1484,6 @@ last_sync_time:(NSString *)last_sync_time
         }
         
         [self setSyncReqId:@""];
-        appDelegate.SyncStatus = SYNC_GREEN;
-        [updateSyncStatus refreshSyncStatus];
-  
     }
     
     [appDelegate.dataBase updateRecentsPlist];
@@ -1512,7 +1509,22 @@ last_sync_time:(NSString *)last_sync_time
         if (didWritePDF == YES)
             break;
     }
+    if(conflict_exists)
+    {
+        appDelegate.SyncStatus = SYNC_RED;
+        [updateSyncStatus refreshSyncStatus];
+        
+        [appDelegate setSyncStatus:SYNC_RED];
+        
+    }
+    else 
+    {
+        appDelegate.SyncStatus = SYNC_GREEN;
+        [updateSyncStatus refreshSyncStatus];
+    }
     
+    
+
     AfterSaveEventsCalls = TRUE;
    
     NSArray * all_ids =  [appDelegate.afterSavePageLevelEvents allKeys];

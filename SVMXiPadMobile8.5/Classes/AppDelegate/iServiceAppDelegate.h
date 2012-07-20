@@ -166,6 +166,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 	///can remove
     id <ReloadSyncTable> reloadTable;
 
+	NSString * current_userId; 
     BOOL connection_error;
     BOOL download_tags_done;
     BOOL firstTimeCallForTags;
@@ -444,7 +445,14 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     
     //internet alert for  incremental meta sync
     BOOL internetAlertFlag;
+    
+    
+    //Service Report
+    NSMutableDictionary * serviceReportReference;
 }
+@property (nonatomic, retain) NSMutableDictionary * serviceReportReference;
+
+@property (nonatomic, retain) NSString * current_userId;
 @property (nonatomic) BOOL internetAlertFlag;
 
 @property (nonatomic) BOOL connection_error;

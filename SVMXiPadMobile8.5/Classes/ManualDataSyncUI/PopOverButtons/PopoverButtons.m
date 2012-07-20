@@ -131,6 +131,15 @@ PopoverButtons *popOver_view;
     
     if (!appDelegate.isInternetConnectionAvailable)
     {
+        appDelegate.shouldShowConnectivityStatus = TRUE;
+        [appDelegate displayNoInternetAvailable];
+        return;
+    }
+    
+    retVal = [appDelegate pingServer];
+    
+    if(retVal == NO)
+    {
         return;
     }
     
@@ -208,7 +217,10 @@ PopoverButtons *popOver_view;
 //            }            
 //        }   
 
-      
+        if ([appDelegate.metasync_timer isValid])
+        {
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
+        }      
         
 		[delegate activityStart];
         [appDelegate callDataSync];
@@ -347,6 +359,15 @@ PopoverButtons *popOver_view;
 
 - (void) synchronizeEvents
 {
+    if (!appDelegate.isInternetConnectionAvailable)
+    {
+        [delegate dismisspopover];
+        appDelegate.shouldShowConnectivityStatus = TRUE;
+        [appDelegate displayNoInternetAvailable];
+        return;
+    }
+
+    
     if ([manualEventThread isExecuting])
     {
         NSLog(@"Manual event sync executing");
@@ -366,16 +387,18 @@ PopoverButtons *popOver_view;
 - (void) startSyncConfiguration
 {
     appDelegate.internetAlertFlag = FALSE;
-    [appDelegate.dataBase clearTempDatabase];
+    appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
     
     [delegate dismisspopover];
     
     if (!appDelegate.isInternetConnectionAvailable)
     {
+        appDelegate.shouldShowConnectivityStatus = TRUE;
+        [appDelegate displayNoInternetAvailable];
         return;
     }
     
-    appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+   
     	//new code to handle meta sync whenever the application is logged of the authentication module.
 	BOOL retVal = [appDelegate pingServer];
     
@@ -390,7 +413,7 @@ PopoverButtons *popOver_view;
         [delegate dismisspopover];
         return;
     }
-
+    [appDelegate.dataBase clearTempDatabase];
     appDelegate.metaSyncRunning = YES;
     
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
@@ -639,6 +662,7 @@ PopoverButtons *popOver_view;
 	BOOL retVal_ = [appDelegate pingServer];
     if(retVal_ == NO)
     {
+        [delegate dismisspopover];
         appDelegate.SyncStatus = SYNC_GREEN;
         [appDelegate setSyncStatus:SYNC_GREEN];
 		
@@ -793,11 +817,11 @@ PopoverButtons *popOver_view;
     }
     if (fullDataSyncFailed == FALSE)
     {
-        if ([appDelegate.event_thread isExecuting])
-        {
-            
-        }
-        else
+//        if ([appDelegate.event_thread isExecuting])
+//        {
+//            
+//        }
+//        else
         {
         
             NSString * title  = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button1];

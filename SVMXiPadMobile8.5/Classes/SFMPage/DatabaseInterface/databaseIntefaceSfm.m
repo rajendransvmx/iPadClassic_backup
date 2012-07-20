@@ -2233,7 +2233,8 @@
                     }
                     else if([component_operator isEqualToString:@"isnotnull"])
                     {
-                        operator_ = @"!=";
+						//#4722 defect fix for wizard billing type null
+                        operator_ = @"isnotnull";
                         component_rhs = @"";
                     }
                     else if([component_operator isEqualToString:@"contains"])
@@ -2359,6 +2360,12 @@
             {
                 component_expression = [NSString stringWithFormat:@" ( %@ isnull or %@ %@ '%@' ) ",lhs,lhs,operator,rhs];
             }
+			else if([operator isEqualToString:@"isnotnull"]) //#4722 defect fix for wizard billing type null
+			{
+				//#4722 defect fix for wizard billing type null
+				operator = @"!=";
+				component_expression = [NSString stringWithFormat:@" ( %@ %@ null or trim(%@) %@ '' ) ",lhs,operator,lhs,operator];
+			}
             //Test
             else if ([rhs isEqualToString:@"null"])
             {

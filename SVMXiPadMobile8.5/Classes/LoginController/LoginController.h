@@ -95,8 +95,11 @@
     BOOL continueFalg;
     BOOL didDismissalertview;
     BOOL didEnterAlertView;
-    
+ 
+    //sahana
+    BOOL checkIn;
 }
+@property (nonatomic)BOOL checkIn;
 
 @property (nonatomic ) BOOL didEnterAlertView;
 
@@ -119,6 +122,10 @@
 @property (nonatomic, retain) IBOutlet UIActivityIndicatorView * activity;
 
 
+//sahana 
+-(void)autologin;
+-(void) doinitialSettings;
+-(NSString *)getUSerInfoForKey:(NSString *)key;
 
 //Radha 27th April 2011
 //-(void) callModalViewController;

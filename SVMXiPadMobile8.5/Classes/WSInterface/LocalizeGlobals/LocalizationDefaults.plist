@@ -568,5 +568,17 @@
 	<string>Sync Now</string>
 	<key>IPAD015_TAG011</key>
 	<string>Your Salesforce Profile is not associated with any active ServiceMax Group Profile. Please contact your ServiceMax administrator to resolve this.</string>
+	<key>IPAD018_TAG040</key>
+	<string>Retry</string>
+	<key>IPAD018_TAG037</key>
+	<string>Retry</string>
+	<key>IPAD018_TAG035</key>
+	<string>Remove</string>
+	<key>IPAD018_TAG039</key>
+	<string>Hold</string>
+	<key>IPAD018_TAG043</key>
+	<string>Apply My</string>
+	<key>IPAD018_TAG038</key>
+	<string>Get From</string>
 </dict>
 </plist>

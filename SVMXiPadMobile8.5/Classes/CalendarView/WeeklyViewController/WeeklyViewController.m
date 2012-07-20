@@ -239,7 +239,8 @@
         events.createdDate = ([dict objectForKey:CREATEDDATE] != nil)?[dict objectForKey:CREATEDDATE]:@"";
         events.accountId = ([dict objectForKey:ACCOUNTID] != nil)?[dict objectForKey:ACCOUNTID]:@"";
         events.startDate = [self dateToStringConversion:[dict objectForKey:STARTDATETIME]];
-        events.endDate = [self dateToStringConversion:[dict objectForKey:ENDDATETIME]];                    
+        events.endDate = [self dateToStringConversion:[dict objectForKey:ENDDATETIME]];    
+        events.activityDate = ([dict objectForKey:ACTIVITYDATE] != nil)?[dict objectForKey:ACTIVITYDATE]:@"";
         
         
         NSString * objectAPIName = [dict objectForKey:OBJECTAPINAME];
@@ -1420,8 +1421,8 @@
         NSString * noView = [appDelegate.wsInterface.tagsDictionary objectForKey:NO_VIEW_PROCESS];
         if (!didMoveEvent)
         {
-            NSArray * keys = [NSArray arrayWithObjects:PROCESSID, RECORDID, OBJECTAPINAME, CREATEDDATE, ACCOUNTID, nil];
-            NSArray * objects = [NSArray arrayWithObjects:eventView.processId, eventView.recordId, eventView.objectName, eventView.createdDate, eventView.accountId, nil];
+            NSArray * keys = [NSArray arrayWithObjects:PROCESSID, RECORDID, OBJECTAPINAME, CREATEDDATE, ACCOUNTID, ACTIVITYDATE, nil];
+            NSArray * objects = [NSArray arrayWithObjects:eventView.processId, eventView.recordId, eventView.objectName, eventView.createdDate, eventView.accountId, eventView.activityDate, nil];
             NSDictionary * _dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
             [activity startAnimating];
                         
@@ -1434,6 +1435,7 @@
             else
             {
                 [self disableUI];
+                
                 didRunOperation = YES;
                 [delegate showSFMForWeek:_dict];
                 didRunOperation = NO;

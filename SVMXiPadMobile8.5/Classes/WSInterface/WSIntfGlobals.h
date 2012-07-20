@@ -16,6 +16,11 @@
 
 //sahana
 
+//sahana initial sync crash fix
+#define USER_INFO_PLIST                                 @"USER_INFO_PLIST"
+#define USER_NAME_AUTHANTICATED                         @"USER_NAME_AUTHENTICATED"
+#define INITIAL_SYNC_LOGIN_SATUS                        @"INITIAL_SYNC_LOGIN_SATUS"
+
 #define META_SYNC_                                      @"meta_sync"
 #define DATA_SYNC_                                     @"data_sync"
 #define TX_FETCH_                                       @"tx_fetch"

@@ -119,8 +119,10 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 @implementation iServiceAppDelegate
 
-@synthesize internetAlertFlag;
+@synthesize serviceReportReference;
 
+@synthesize internetAlertFlag;
+@synthesize current_userId;
 @synthesize connection_error;
 @synthesize userProfileId;
 @synthesize didCheckProfile;
@@ -375,6 +377,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     
     if (newEventMappinArray == nil)
         newEventMappinArray = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    if (reference_field_names == nil)
+        reference_field_names = [[NSMutableDictionary alloc] initWithCapacity:0];
     
     isIncrementalMetaSyncInProgress = FALSE;
     isMetaSyncExceptionCalled = FALSE;
@@ -938,6 +943,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     self.currentServerUrl = [[NSString stringWithFormat:@"%@", server] retain];
     
     ZKUserInfo * userInfo = [lr userInfo];
+	
+	 current_userId = userInfo.userId;
     
     if (self.currentUserName != nil)
     {

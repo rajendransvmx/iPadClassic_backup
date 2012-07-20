@@ -88,6 +88,16 @@
     
 }
 
+//Fix for defect #4825  -- Sync Indicator Vanishes.
+-(void) viewDidAppear:(BOOL)animated
+{
+	[super viewDidAppear:YES];
+	
+	iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+	appDelegate.animatedImageView.center = CGPointMake(450, 21);
+    [dataSyncDetail.navigationController.view addSubview:appDelegate.animatedImageView];
+}
+
 - (void) showSFMWithProcessId:(NSString *)processId recordId:(NSString *)recordId objectName:(NSString *)objectName
 {
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];

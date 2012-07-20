@@ -173,6 +173,10 @@
 - (BOOL) selectCountFromSync_Conflicts;
 
 
+//Sorting the PickList Array using indexes.
+-(NSArray *) sortPickListUsingIndexes:(NSArray *)pickListArray WithfieldAPIName:(NSString *)fieldAPIName tableName:(NSString *)_SFPicklist objectName:(NSString *)headerObjName;
+
+
 #define DATABASENAME   @"sfm"
 #define DATABASETYPE   @"sqlite"
 //Abinash

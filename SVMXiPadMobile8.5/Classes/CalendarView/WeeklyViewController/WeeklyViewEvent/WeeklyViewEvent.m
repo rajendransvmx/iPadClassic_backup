@@ -22,7 +22,7 @@
 
 @synthesize eventDetail, eventId, workOrderDetail;
 
-@synthesize processName, processId, recordId, objectName, createdDate, accountId, startDate, endDate;
+@synthesize processName, processId, recordId, objectName, createdDate, accountId, startDate, endDate, activityDate;
 
 + (void) addEventRect:(CGRect)rect
 {

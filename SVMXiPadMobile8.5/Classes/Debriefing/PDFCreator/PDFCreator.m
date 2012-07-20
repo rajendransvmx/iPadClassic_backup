@@ -208,10 +208,15 @@
 #else
     [self removeAllPDF:saveFileName];
 #endif
+	
+	//Call Agressive data Sync.  -- 10/07/2012 #4740
+	[appDelegate callDataSync];
 }
 
 - (void) removeAllPDF:(NSString *)pdf
 {
+//    NSString * _query = [NSString stringWithFormat:@"SELECT Id FROM Attachment WHERE Name = '%@' and OwnerId = '%@'", pdf, appDelegate.current_userId];
+    
     NSString * _query = [NSString stringWithFormat:@"SELECT Id FROM Attachment WHERE Name = '%@'", pdf];
     
     didremovepdf = FALSE;
@@ -304,8 +309,6 @@
 
 - (void) attachPDF:(NSString *)pdf
 {
-        
-    
     NSString * SFId = @"";
     ZKSObject * obj = [[ZKSObject alloc] initWithType:@"Attachment"];
     NSString * fileName = [pdf stringByDeletingLastPathComponent];
@@ -318,6 +321,7 @@
     NSData * fileData = [NSData dataWithContentsOfFile:pdf];
     NSString * fileString = [Base64 encode:fileData];
     
+//	[obj setFieldValue:appDelegate.current_userId field:@"OwnerId"];
     [obj setFieldValue:fileString field:@"Body"];
     [obj setFieldValue:SFId field:@"ParentId"];     
     [obj setFieldValue:@"False" field:@"isPrivate"];
@@ -840,7 +844,7 @@
 
 - (NSString*) getValueFromDisplayValue:(NSString *)displayValue
 {
-    NSString * internalValue = nil;
+   /* NSString * internalValue = nil;
     for (int i = 0; i < [appDelegate.serviceReportValueMapping count]; i++)
     {
         NSDictionary * dict = [appDelegate.serviceReportValueMapping objectAtIndex:i];
@@ -864,11 +868,11 @@
         //Abinash
         internalValue = [appDelegate.calDataBase getTableName:internalValue]; 
         if ([internalValue isEqualToString:@"Case"])
-            internalValue = @"''";
+            internalValue = @"'Case'";  //Service report fix : Radha
         internalValue = [NSString stringWithFormat:@"%@.%@", internalValue, [_array objectAtIndex:1]];
     }
     
-    NSString * value = @"";
+    
 
     for (NSMutableDictionary * dictionary in reportEssentials)
     {
@@ -889,6 +893,42 @@
             NSString * key = [NSString stringWithFormat:@"%@.%@", [_array objectAtIndex:0], [_array objectAtIndex:1]];
             value = [finalDict objectForKey:key];
         }
+    } */
+    NSString * value = @"";    
+    NSString * internalValue = @"";
+    
+    
+    
+    
+    
+    for (int i = 0; i < [appDelegate.serviceReportValueMapping count]; i++)
+    {
+        NSDictionary * dict = [appDelegate.serviceReportValueMapping objectAtIndex:i];
+        NSArray * allKeys = [dict allKeys];
+        NSString * key = [allKeys objectAtIndex:0];
+        if ([key isKindOfClass:[NSNull class]])
+            key = @"";
+        if ([key isEqualToString:displayValue])
+        {
+            internalValue = [dict objectForKey:key];
+            if ([internalValue isKindOfClass:[NSNull class]])
+                internalValue = @"";
+            break;
+        }
+    }
+    
+    NSArray * _array = [internalValue componentsSeparatedByString:@"."];
+    if ([_array count] == 2)
+    {
+        value = [appDelegate.calDataBase getFieldValueFromTable:displayValue];
+        NSString * field_value = [appDelegate.calDataBase getValueFromLookupwithId:value];
+        if ([field_value length] > 0)
+            return field_value;
+    }
+    else 
+    {
+        value = [appDelegate.calDataBase getFieldValueFromTable:displayValue];
+        return value;
     }
     
     return @"";

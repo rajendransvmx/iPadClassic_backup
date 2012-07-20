@@ -1726,6 +1726,28 @@
         //NSLog(" record id %@" ,appDelegate.sfmPageController.recordId);
         NSMutableDictionary * headerValueDict = [appDelegate.databaseInterface queryDataFromObjectTable:api_names tableName:headerObjName record_id:appDelegate.sfmPageController.recordId expression:expression_id];
         
+		//Change of Code for quick save. --> 10/07/2012  -- #4665
+		BOOL Entry_criteria = [appDelegate.databaseInterface EntryCriteriaForRecordFortableName:headerObjName record_id:appDelegate.sfmPageController.recordId expression:expression_id];
+        
+        if(!Entry_criteria)
+        {
+			NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
+            NSString * headerObjName = [hdr_object objectForKey:gHEADER_OBJECT_NAME];
+            
+            [self initAllrequriredDetailsForProcessId:appDelegate.sfmPageController.sourceProcessId recordId:appDelegate.sfmPageController.recordId object_name:headerObjName];
+            [self fillSFMdictForOfflineforProcess:appDelegate.sfmPageController.sourceProcessId forRecord:appDelegate.sfmPageController.recordId ];
+            [self didReceivePageLayoutOffline]; 
+			
+            NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
+            NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
+            NSString * cancel_ = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
+			
+            UIAlertView * enty_criteris = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:cancel_ otherButtonTitles:nil, nil];
+            [enty_criteris show];
+            [enty_criteris release];
+			return;
+        }
+		
         NSArray * all_Keys_values = [headerValueDict allKeys];
         
         for(int i=0; i <[header_sections count] ;i++)
@@ -4407,15 +4429,19 @@
                    
                    NSArray * allvalues = [picklistValues allValues];
                    
+				   //Fix for Defect #4656
+				   allvalues = [appDelegate.calDataBase sortPickListUsingIndexes:allvalues WithfieldAPIName:fieldAPIName tableName:SFPicklist objectName:headerObjName];
+					
                    NSMutableArray * allkeys_ordered = [[NSMutableArray alloc] initWithCapacity:0];
                    [allkeys_ordered addObject:@" "];
                    
-                   if ([allvalues count] > 0)
-                   {
-//                       allvalues = [self orderingAnArray:allvalues];
-                       allvalues = [allvalues sortedArrayUsingSelector:@selector(compare:)];
-                   }
-                   for (NSString * str in allvalues ) 
+//                   if ([allvalues count] > 0)
+//                   {
+//                     allvalues = [self orderingAnArray:allvalues];
+//                     allvalues = [allvalues sortedArrayUsingSelector:@selector(compare:)];
+//                   }
+				   
+                   for (NSString * str in allvalues) 
                    {
                        [descObjArray addObject:str];
                        
@@ -5153,10 +5179,24 @@
             NSInteger ValueCount;
 			NSMutableArray * detail_values = [[detail objectForKey:gDETAILS_VALUES_ARRAY] objectAtIndex:row-1];
              NSString * record_id  = @"";
-            
-            NSMutableArray * array  =  [detail objectForKey:gDETAIL_VALUES_RECORD_ID];
+                        
+            /*NSMutableArray * array  =  [detail objectForKey:@"local_id"];
             if ([array count] > 0)
-                record_id  =  [array objectAtIndex:row-1];
+                record_id  =  [array objectAtIndex:row-1];*/
+            
+            //#4683 - Radha
+            for (int i = 0; i < [detail_values count]; i++)
+            {
+                NSDictionary * dict = [detail_values objectAtIndex:i];
+                
+                NSString * value_Field_API_Name = [dict objectForKey:@"value_Field_API_Name"];
+                
+                if ([value_Field_API_Name isEqualToString:@"local_id"])
+                {
+                    record_id = [dict objectForKey:@"value_Field_Value_key"];
+                }
+                
+            }
 
            
             NSString * objectName_  =  [detail objectForKey:gDETAIL_OBJECT_NAME];
@@ -5230,7 +5270,7 @@
                 [background addSubview:lbl2];
                 
 
-                [background addSubview:lbl2];
+               // [background addSubview:lbl2];
                 
                 
                 if ( [field_data_type isEqualToString:@"boolean"] )
@@ -5453,7 +5493,7 @@
 
 -(void)celltapRecognizer:(id)sender
 {
-    if (isInViewMode)
+    if (!isInViewMode)
     {       
         NSLog(@"cell being tapped ");
         UITapGestureRecognizer * tap = sender;
@@ -5470,19 +5510,39 @@
             NSLog(@"%d %d" , row , section);
             
             
-            
             NSMutableArray * details = [appDelegate.SFMPage objectForKey:gDETAILS];
             NSMutableDictionary * detail = [details objectAtIndex:section-1];
             
-            NSMutableArray * array  =  [detail objectForKey:gDETAIL_VALUES_RECORD_ID];
+            //#4683 - RADHA
             NSString * temp_record_id  = @"";
+            
+            NSArray * detailArray = [detail objectForKey:@"details_Values_Array"];
+            
+            NSArray * array = [detailArray objectAtIndex:row - 1];
+            
+            
+            for (NSDictionary * detailDict in array)
+            {
+                NSString * value_Field_API_Name = [detailDict objectForKey:@"value_Field_API_Name"];
+                
+                if ([value_Field_API_Name isEqualToString:@"local_id"])
+                {
+                    temp_record_id = [detailDict objectForKey:@"value_Field_Value_key"];
+                }
+            }
+
+            
+           /* NSMutableArray * array  =  [detail objectForKey:gDETAIL_VALUES_RECORD_ID];
+           
             if ([array count] > 0)
-               temp_record_id =  [array objectAtIndex:row-1];
+               temp_record_id =  [array objectAtIndex:row-1];  */
+            
+                    
             
             NSString * objectName_  =  [detail objectForKey:gDETAIL_OBJECT_NAME];;
-            NSString * record_id = [appDelegate.databaseInterface  getLocalIdFromSFId:temp_record_id tableName:objectName_];
+          //  NSString * record_id = [appDelegate.databaseInterface  getLocalIdFromSFId:temp_record_id tableName:objectName_];
             
-            
+            NSString * record_id = temp_record_id;
            
             NSString * newProcessId = @"";
             
@@ -5512,7 +5572,7 @@
                 [self didReceivePageLayoutOffline];
                 return;
             }
-            else
+           /* else
             {
                 NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_referred_record_error];
                 NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_synchronize_error];
@@ -5522,7 +5582,7 @@
                 UIAlertView * alert_view = [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:Ok otherButtonTitles:nil, nil] autorelease];
                 [alert_view  show];
                 
-            }
+            } */
             [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
             
         }
@@ -5847,13 +5907,17 @@
             
             //Abinash Fix
             
-            if ([allvalues count] > 0)
-            {
-                //                       allvalues = [self orderingAnArray:allvalues];
-                allvalues = [allvalues sortedArrayUsingSelector:@selector(compare:)];
-            }
+//            if ([allvalues count] > 0)
+//            {
+//                //                       allvalues = [self orderingAnArray:allvalues];
+//                allvalues = [allvalues sortedArrayUsingSelector:@selector(compare:)];
+//            }
 
-                 for (NSString * str in allvalues ) 
+			
+			//Fix for Defect #4656
+			allvalues = [appDelegate.calDataBase sortPickListUsingIndexes:allvalues WithfieldAPIName:fieldAPIName tableName:SFPicklist objectName:detail_objectName];
+			
+			for (NSString * str in allvalues ) 
             {
                 [descObjArray addObject:str];
                 

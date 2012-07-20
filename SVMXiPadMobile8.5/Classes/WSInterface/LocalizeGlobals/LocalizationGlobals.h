@@ -301,7 +301,6 @@
 #define sync_login_error                    @"IPAD018_TAG001"
 #define sync_synchronize_button             @"IPAD018_TAG002"
 #define sync_status_button                  @"IPAD018_TAG003"
-#define sync_select_online                  @"IPAD018_TAG004"
 #define sync_mobile_select                  @"IPAD018_TAG005"
 #define sync_recordId_label                 @"IPAD018_TAG006"
 #define sync_error_message                  @"IPAD018_TAG007"
@@ -415,6 +414,17 @@
 # define CALDAY5LABEL   @"IPAD006_TAG013"
 # define CALDAY6LABEL   @"IPAD006_TAG014"
 # define CALDAY7LABEL   @"IPAD006_TAG015"
+
+//Conflict
+#define conflict_retry           @"IPAD018_TAG037"
+#define conflict_remove          @"IPAD018_TAG035"
+#define conflict_hold            @"IPAD018_TAG039"
+#define conflict_applymy         @"IPAD018_TAG043"
+#define conflict_getFrom         @"IPAD018_TAG038"
+#define sync_select_online       @"IPAD018_TAG004"
+
+
+
 
 //Values For Dictionary
 # define MON    @"Mon"
@@ -535,9 +545,9 @@
 #define NAME_FIELD                          @"Name Field"
 
 // Macros for Settings of Location Ping
-#define FREQ_LOCATION_TRACKING              @"Frequency of Location Tracking"
+#define FREQ_LOCATION_TRACKING              @"Location Tracking Frequency"
 #define ENABLE_LOCATION_UPDATE              @"Enable Location Tracking"
-#define MAX_LOCATION_RECORD                 @"Maximum number of location history records to cache in iPad"
+#define MAX_LOCATION_RECORD                 @"Location History Records to cache"
 
 
 

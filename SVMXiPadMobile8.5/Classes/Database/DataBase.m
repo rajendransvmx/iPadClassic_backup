@@ -3984,7 +3984,7 @@
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS meta_sync_status ('sync_status' VARCHAR)"];
     [self createTable:query];
     
-    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS meta_sync_due ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0), 'description' VARCHAR)"];
+    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS meta_sync_due ('local_id' INTEGER PRIMARY KEY  NOT NULL UNIQUE, 'description' VARCHAR)"];
     [self createTable:query];
 }
 
@@ -4871,7 +4871,7 @@
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS meta_sync_status ('sync_status' VARCHAR)"];  
     [self createTemporaryTable:query];
     
-    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS meta_sync_due ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0), 'description' VARCHAR)"];
+    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS meta_sync_due ('local_id' INTEGER PRIMARY KEY  NOT NULL  UNIQUE, 'description' VARCHAR)"];
     [self createTemporaryTable:query];
     
     NSArray * tempTableArray = [NSArray arrayWithObjects:@"ChatterPostDetails",@"Document",@"ProductImage",@"SFSignatureData",@"UserImages",@"trobleshootdata",@"SFDataTrailer",@"SFDataTrailer_Temp",@"SYNC_HISTORY",@"sync_Records_Heap",@"LookUpFieldValue",@"Summary_PDF",@"sync_error_conflict", @"contact_images",@"internet_conflicts", @"meta_sync_status", @"meta_sync_due", nil];
@@ -5087,12 +5087,14 @@
 {
     appDelegate.settingsDict = [appDelegate.dataBase getSettingsDictionary];
     
-    if ([appDelegate.metasync_timer isValid])
-    {
-        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
-    }      
     
-//    [appDelegate ScheduleIncrementalDatasyncTimer];
+    if (appDelegate.wsInterface.tagsDictionary != nil)
+        [appDelegate.wsInterface.tagsDictionary removeAllObjects];
+    appDelegate.wsInterface.tagsDictionary = [appDelegate.dataBase getTagsDictionary];
+    NSMutableDictionary * temp_dict = [appDelegate.wsInterface fillEmptyTags:appDelegate.wsInterface.tagsDictionary];
+    appDelegate.wsInterface.tagsDictionary = temp_dict;
+    
+  //    [appDelegate ScheduleIncrementalDatasyncTimer];
 //    [appDelegate ScheduleIncrementalMetaSyncTimer];
 //    [appDelegate ScheduleTimerForEventSync];
     [appDelegate.dataBase deleteDatabase:TEMPDATABASENAME];
@@ -5110,6 +5112,11 @@
         [appDelegate.view_layout_array removeAllObjects];
         appDelegate.view_layout_array = [appDelegate.databaseInterface getAllTheProcesses:@"VIEWRECORD"]; 
     }
+    
+    if (appDelegate.soqlQuery != nil)
+        appDelegate.soqlQuery = nil;
+    
+    [appDelegate.calDataBase startQueryConfiguration];
 
     appDelegate.isIncrementalMetaSyncInProgress = FALSE;
     
@@ -5428,18 +5435,23 @@
     NSString * column = @"";
     
     if ([tableName isEqualToString:@"Event"])
+    {
         column = @"EndDateTime";
+    }
     else
+    {
+        Date = [Date substringToIndex:10];
         column = @"ActivityDate";
+    }
 
     NSString * queryStatement = @"";
     if ([Action isEqualToString:@"LESSTHAN"])
     {
-        queryStatement = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ <= '%@'", tableName, column, Date];   
+        queryStatement = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ < '%@'", tableName, column, Date];   
     }
     else
     {
-        queryStatement = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ > '%@'", tableName, column, Date];   
+        queryStatement = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ >= '%@'", tableName, column, Date];   
     }
     
     char * err;
@@ -5769,10 +5781,17 @@
     NSString * query = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ ('description', 'local_id') VALUES ('%@', '1')",description,  msg];
     
     char * err; 
-    
-    if (synchronized_sqlite3_exec(appDelegate.db, [query UTF8String], NULL, NULL, &err) != SQLITE_OK)
+        
+    if ([appDelegate.metaSyncThread isExecuting])
     {
-        NSLog(@"Failed to insert into duetable");
+        
+    }
+    else 
+    {
+        if (synchronized_sqlite3_exec(appDelegate.db, [query UTF8String], NULL, NULL, &err) != SQLITE_OK)
+        {
+            NSLog(@"Failed to insert into duetable");
+        }
     }
 }
 

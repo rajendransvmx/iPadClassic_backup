@@ -354,6 +354,7 @@
     ZKSObject * obj = [[ZKSObject alloc] initWithType:@"Attachment"];
     [obj setFieldValue:fileName field:@"Name"];
     NSString * fileString = [Base64 encode:imageData];
+//	[obj setFieldValue:appDelegate.current_userId field:@"OwnerId"];
     [obj setFieldValue:fileString field:@"Body"];
     [obj setFieldValue:SFId field:@"ParentId"];
     [obj setFieldValue:@"False" field:@"isPrivate"];
@@ -402,8 +403,9 @@
 
 - (void) removePreviousSignature:(NSString *)signatureName
 {
+//    NSString * _query = [NSString stringWithFormat:@"SELECT Id FROM Attachment WHERE Name = '%@' and OwnerId = '%@'", signatureName,appDelegate.current_userId];
     NSString * _query = [NSString stringWithFormat:@"SELECT Id FROM Attachment WHERE Name = '%@'", signatureName];
-    
+
     [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetSignatureList:error:context:) context:_query];
 }
 

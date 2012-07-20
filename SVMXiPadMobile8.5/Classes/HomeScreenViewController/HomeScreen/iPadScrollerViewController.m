@@ -318,6 +318,17 @@ const NSUInteger kNumImages = 7;
 
 
 #pragma mark - View lifecycle
+- (void) viewWillAppear:(BOOL)animated
+{
+    [self refreshArray];
+    
+    self.scrollPages = [self getScrollViewNames];
+    [scrollViewPreview setBackgroundColor:[UIColor clearColor]];
+	scrollViewPreview.pageSize = CGSizeMake(269, 299);
+	// Important to listen to the delegate methods.
+	scrollViewPreview.delegate = self;
+    
+}
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
@@ -334,36 +345,36 @@ const NSUInteger kNumImages = 7;
             appDelegate.wsInterface.tagsDictionary = [temp_dict retain];
         }
     }
-    itemArray = [[NSArray arrayWithObjects:
-                 [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CALENDAR],
-                 [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_MAP],
-                 [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CREATENEW],
-                 [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_RECENTS],
-                 [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_TASKS],
-                 [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_HELP],
-                 [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_sync_label], 
-                 [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_label],
-                 [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search], 
-                 nil] retain];
-
-    descriptionArray = [[NSArray arrayWithObjects:
-                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CALENDAR_TEXT],
-                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_MAP_TEXT],
-                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CREATENEW_TEXT],
-                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_RECENTS_TEXT],
-                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_TASKS_TEXT],
-                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_HELP_TEXT],
-                         [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_sync_text], 
-                         [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_text],
-                         [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search_Description],
-                         nil] retain];
+//    itemArray = [[NSArray arrayWithObjects:
+//                 [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CALENDAR],
+//                 [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_MAP],
+//                 [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CREATENEW],
+//                 [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_RECENTS],
+//                 [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_TASKS],
+//                 [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_HELP],
+//                 [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_sync_label], 
+//                  [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_label],
+//                  //[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search], 
+//                 nil] retain];
+//
+//    descriptionArray = [[NSArray arrayWithObjects:
+//                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CALENDAR_TEXT],
+//                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_MAP_TEXT],
+//                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CREATENEW_TEXT],
+//                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_RECENTS_TEXT],
+//                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_TASKS_TEXT],
+//                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_HELP_TEXT],
+//                         [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_sync_text], 
+//                         [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_text],
+//                         //[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search_Description],
+//                         nil] retain];
     
-    self.scrollPages = [self getScrollViewNames];
-    [scrollViewPreview setBackgroundColor:[UIColor clearColor]];
-	scrollViewPreview.pageSize = CGSizeMake(269, 299);
-	// Important to listen to the delegate methods.
-	scrollViewPreview.delegate = self;
-
+//    self.scrollPages = [self getScrollViewNames];
+//    [scrollViewPreview setBackgroundColor:[UIColor clearColor]];
+//	scrollViewPreview.pageSize = CGSizeMake(269, 299);
+//	// Important to listen to the delegate methods.
+//	scrollViewPreview.delegate = self;
+//
     animateImage.image = [UIImage imageNamed:@"logo.png"];
     animateImage.alpha = 0.0;
 
@@ -378,6 +389,9 @@ const NSUInteger kNumImages = 7;
        
         if(appDelegate.do_meta_data_sync == ALLOW_META_AND_DATA_SYNC)
         {
+            
+            [self createUserInfoPlist];
+            
             appDelegate.wsInterface.refreshProgressBarUIDelegate = self;
             Total_calls = 17;
             appDelegate.connection_error = FALSE;
@@ -489,6 +503,21 @@ const NSUInteger kNumImages = 7;
         [appDelegate startBackgroundThreadForLocationServiceSettings];
     }
     
+}
+
+-(void)createUserInfoPlist
+{
+    NSDictionary * dict = [[NSDictionary alloc] initWithObjects:[NSArray arrayWithObjects:appDelegate.username,@"false", nil] forKeys:[NSArray arrayWithObjects:USER_NAME_AUTHANTICATED,INITIAL_SYNC_LOGIN_SATUS, nil]];
+    NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:USER_INFO_PLIST];
+    [dict writeToFile:plistPath_SYNHIST atomically:YES];
+}
+-(void)clearuserinfoPlist
+{
+    NSDictionary * dict = [[NSDictionary alloc] initWithObjects:[NSArray arrayWithObjects:@"",@"", nil] forKeys:[NSArray arrayWithObjects:USER_NAME_AUTHANTICATED,INITIAL_SYNC_LOGIN_SATUS, nil]];
+    NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:USER_INFO_PLIST];
+    [dict writeToFile:plistPath_SYNHIST atomically:YES];
 }
 - (void) didInternetConnectionChange:(NSNotification *)notification
 {
@@ -1557,6 +1586,9 @@ const float progress_ = 0.07;
 }
 -(void)doAfterSyncSetttings
 {
+    //sahana once sync is done succesfully reset the USERINFO plist
+    [self clearuserinfoPlist];
+    
     //Radha purging - 10/April/12
     NSMutableArray * recordId = [appDelegate.dataBase getAllTheRecordIdsFromEvent];
     
@@ -1715,6 +1747,33 @@ const float progress_ = 0.07;
             }
         }
     }
+}
+- (void) refreshArray
+{
+    itemArray = [[NSArray arrayWithObjects:
+                  [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CALENDAR],
+                  [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_MAP],
+                  [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CREATENEW],
+                  [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_RECENTS],
+                  [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_TASKS],
+                  [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_HELP],
+                  [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_sync_label], 
+                  [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_label],
+                  [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search], 
+                  nil] retain];
+    
+    descriptionArray = [[NSArray arrayWithObjects:
+                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CALENDAR_TEXT],
+                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_MAP_TEXT],
+                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CREATENEW_TEXT],
+                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_RECENTS_TEXT],
+                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_TASKS_TEXT],
+                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_HELP_TEXT],
+                         [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_sync_text], 
+                         [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_text],
+                         [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search_Description],
+                         nil] retain];
+
 }
 
 @end

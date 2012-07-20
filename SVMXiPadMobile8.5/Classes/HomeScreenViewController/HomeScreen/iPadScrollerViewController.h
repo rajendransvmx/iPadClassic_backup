@@ -69,6 +69,10 @@
 @property (nonatomic , retain)  IBOutlet UILabel *progressTitle;
 @property (nonatomic, retain) NSArray * scrollPages;
 
+//sahana
+-(void)clearuserinfoPlist;
+-(void)createUserInfoPlist;
+
 
 - (NSMutableArray *) getScrollViewNames;
 - (NSMutableArray *) getScrollViews;
@@ -91,6 +95,8 @@
 -(void)enableControls;
 -(void)InitsyncSetting;
 -(void)initialDataSetUpAfterSyncOrLogin;
+
+- (void) refreshArray;
 
 
 //sahana

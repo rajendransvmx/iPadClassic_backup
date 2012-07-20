@@ -126,8 +126,8 @@ PopoverButtons *popOver_view;
     [myToolBar release];
     
     //[appDelegate setSyncStatus:appDelegate.SyncStatus];
-    appDelegate.animatedImageView.center = CGPointMake(450,21);
-    [self.navigationController.view addSubview:appDelegate.animatedImageView];
+//    appDelegate.animatedImageView.center = CGPointMake(450,21);
+//    [self.navigationController.view addSubview:appDelegate.animatedImageView];
     
     //Radha 2012june16
      if ([appDelegate.dataBase checkIfSyncConfigDue])
@@ -374,11 +374,12 @@ PopoverButtons *popOver_view;
         [tapMe1 release];
         
 		//Change of implementation.
-		NSString * retry  = [NSString stringWithFormat:@"Retry"];
-		NSString * remove = [NSString stringWithFormat:@"Remove"];
-		NSString * hold   = [NSString stringWithFormat:@"Hold"];
-		NSString * force  = [NSString stringWithFormat:@"Apply My"];
-		NSString * get_from_online = [NSString stringWithFormat:@"Get From"];
+		NSString * retry  = [appDelegate.wsInterface.tagsDictionary objectForKey:conflict_retry];
+		NSString * remove = [appDelegate.wsInterface.tagsDictionary objectForKey:conflict_remove];
+		NSString * hold   = [appDelegate.wsInterface.tagsDictionary objectForKey:conflict_hold];
+		NSString * force  = [appDelegate.wsInterface.tagsDictionary objectForKey:conflict_applymy];
+		NSString * get_from_online = [appDelegate.wsInterface.tagsDictionary objectForKey:conflict_getFrom];
+        NSString * online = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_select_online];
 		
 		
         MultiLineController * mySegment = [[MultiLineController alloc] initWithItems:[NSArray arrayWithObjects:force,get_from_online,hold, nil]];
@@ -386,7 +387,7 @@ PopoverButtons *popOver_view;
 		mySegment.frame = CGRectMake(395, 10, 185, mySegment.frame.size.height * 1);
         mySegment.segmentedControlStyle = UISegmentedControlStyleBar;
 		[mySegment setSubTitle:@"Changes" forSegmentAtIndex:0];
-		[mySegment setSubTitle:@"Online"  forSegmentAtIndex:1];
+		[mySegment setSubTitle:online  forSegmentAtIndex:1];
 				
         MultiLineController * mySegment1 = [[MultiLineController alloc] initWithItems:[NSArray arrayWithObjects:retry,remove,hold,nil]];
 		
@@ -397,7 +398,7 @@ PopoverButtons *popOver_view;
 		
         mySegment2.frame = CGRectMake(395, 10, 185, mySegment2.frame.size.height * 1);
         mySegment2.segmentedControlStyle = UISegmentedControlStyleBar;
-		[mySegment2 setSubTitle:@"Online"  forSegmentAtIndex:1];
+		[mySegment2 setSubTitle:online  forSegmentAtIndex:1];
         
 		UIColor *newTintColor = [appDelegate colorForHex:@"#C8C8C8"];
         mySegment.tintColor = newTintColor;
@@ -596,11 +597,12 @@ PopoverButtons *popOver_view;
         
 		
 		//Change of implementation.
-		NSString * retry = [NSString stringWithFormat:@"Retry"];
-		NSString * remove = [NSString stringWithFormat:@"Remove"];
-		NSString * hold = [NSString stringWithFormat:@"Hold"];
-		NSString * force = [NSString stringWithFormat:@"Apply My"];
-		NSString * get_from_online = [NSString stringWithFormat:@"Get From"];
+		NSString * retry  = [appDelegate.wsInterface.tagsDictionary objectForKey:conflict_retry];
+		NSString * remove = [appDelegate.wsInterface.tagsDictionary objectForKey:conflict_remove];
+		NSString * hold   = [appDelegate.wsInterface.tagsDictionary objectForKey:conflict_hold];
+		NSString * force  = [appDelegate.wsInterface.tagsDictionary objectForKey:conflict_applymy];
+		NSString * get_from_online = [appDelegate.wsInterface.tagsDictionary objectForKey:conflict_getFrom];
+        NSString * online = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_select_online];
 
 
 		MultiLineController * mySegment = [[MultiLineController alloc] initWithItems:[NSArray arrayWithObjects:force,get_from_online,hold, nil]];
@@ -608,7 +610,7 @@ PopoverButtons *popOver_view;
 		mySegment.frame = CGRectMake(395, 10, 185, mySegment.frame.size.height * 1);
         mySegment.segmentedControlStyle = UISegmentedControlStyleBar;
 		[mySegment setSubTitle:@"Changes" forSegmentAtIndex:0];
-		[mySegment setSubTitle:@"Online"  forSegmentAtIndex:1];
+		[mySegment setSubTitle:online  forSegmentAtIndex:1];
 
         MultiLineController * mySegment1 = [[MultiLineController alloc] initWithItems:[NSArray arrayWithObjects:retry,remove,hold,nil]];
 		
@@ -619,7 +621,7 @@ PopoverButtons *popOver_view;
 		
 		mySegment2.segmentedControlStyle = UISegmentedControlStyleBar;
         mySegment2.frame = CGRectMake(395, 10, 185, mySegment.frame.size.height *1);
-		[mySegment2 setSubTitle:@"Online"  forSegmentAtIndex:1];
+		[mySegment2 setSubTitle:online  forSegmentAtIndex:1];
         
 		if ([syncType isEqualToString:@"PUT_INSERT"] || [syncType isEqualToString:@"GET_INSERT"])
 		{

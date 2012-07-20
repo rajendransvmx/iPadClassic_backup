@@ -22,7 +22,7 @@
 @implementation LoginController
 
 @synthesize didEnterAlertView;
-
+@synthesize checkIn;
 @synthesize eventInfoarray;
 
 @synthesize txtUsernamePortrait;
@@ -569,7 +569,8 @@
    // [appDelegate.currentServerUrl retain];
     
     ZKUserInfo * userInfo = [lr userInfo];
-    
+    appDelegate.current_userId = userInfo.userId;
+	
     if (appDelegate.currentUserName != nil)
     {
         [appDelegate.currentUserName release];
@@ -1050,6 +1051,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    //sahana initial sync crash fix
+    checkIn = TRUE;
     
     didRunProcess = NO;
     
@@ -1760,7 +1764,80 @@
 //    }
     didRetrieveReportSettings = YES;
 }
+-(void)viewDidAppear:(BOOL)animated
+{
+    if(checkIn)
+    {
+        [self autologin];
+    }
+}
+-(void)autologin
+{
+    checkIn = FALSE;
+    NSString * plist_user_name = [self getUSerInfoForKey:USER_NAME_AUTHANTICATED];
+    NSString * status = [self getUSerInfoForKey:INITIAL_SYNC_LOGIN_SATUS];
+    if([_username isEqualToString:plist_user_name] && [status isEqualToString:@"false"])
+    {
+        [self doinitialSettings];
+    }
+}
 
+-(void) doinitialSettings
+{
+    [self disableControls];
+    
+    appDelegate.IsSSL_error = FALSE;
+    appDelegate.IsLogedIn = ISLOGEDIN_TRUE;
+    appDelegate.wsInterface.didOpComplete = FALSE;
+    //shrinivas
+    if (appDelegate.isBackground == TRUE)
+        appDelegate.isBackground = FALSE;
+    
+    if (appDelegate.isForeGround == TRUE)
+        appDelegate.isForeGround = FALSE;
+    
+    [self disableControls];
+    
+    didRunProcess = YES;
+    didEnterAlertView = FALSE;
+    
+    [txtUsernameLandscape resignFirstResponder];
+    [txtPasswordLandscape resignFirstResponder];
+    
+    appDelegate.username = txtUsernameLandscape.text;
+    appDelegate.password = txtPasswordLandscape.text;
+    
+    [activity startAnimating];
+    
+    appDelegate.last_initial_data_sync_time = nil;
+    appDelegate.do_meta_data_sync = DONT_ALLOW_META_DATA_SYNC;
+    [self loginWithUsernamePassword];
+    
+    BOOL ContinueLogin = [self CheckForUserNamePassword];  //SYNC_HISTORY PLIST  check should be done before calling to the
+    if(ContinueLogin)
+    {
+        [self showHomeScreenviewController];
+    }
+    else
+    {
+        [self enableControls];
+        return;
+    }
+
+}
+-(NSString *)getUSerInfoForKey:(NSString *)key
+{
+    NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:USER_INFO_PLIST];
+    NSDictionary * dict = [[[NSDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST] autorelease];
+    NSArray * allkeys = [dict allKeys];
+    for(NSString * str in allkeys)
+    {
+        NSLog(@"str-%@",str);
+    }
+    NSString * value = [[dict objectForKey:key] retain];
+    return value;
+}
 
 - (void) readUsernameAndPasswordFromKeychain
 {

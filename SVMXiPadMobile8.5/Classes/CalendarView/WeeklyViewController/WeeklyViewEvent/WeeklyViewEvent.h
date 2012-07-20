@@ -40,7 +40,7 @@ NSMutableArray * weeklyEventPositionArray;
     IBOutlet UILabel * subject;
     IBOutlet UILabel *workOrderName;
     NSString * processName;
-    NSString * processId, * recordId, * objectName, * createdDate, * accountId, * startDate, * endDate;
+    NSString * processId, * recordId, * objectName, * createdDate, * accountId, * startDate, * endDate,  * activityDate;
     //sahana 12th Sept
     BOOL didDismissAlertView , continue_reshceduling;
 }
@@ -58,7 +58,7 @@ NSMutableArray * weeklyEventPositionArray;
 @property (nonatomic) BOOL didDismissAlertView , continue_reshceduling;
 
 @property (nonatomic, retain) NSString * processName;
-@property (nonatomic, retain) NSString * processId, * recordId, * objectName, * createdDate, * accountId, * startDate, * endDate;
+@property (nonatomic, retain) NSString * processId, * recordId, * objectName, * createdDate, * accountId, * startDate, * endDate,  * activityDate;
 @property (nonatomic, retain) id <WeeklyViewEventDelegate> delegate;
 
 @property NSUInteger time;

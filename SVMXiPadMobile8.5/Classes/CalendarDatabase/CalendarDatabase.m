@@ -1521,6 +1521,9 @@
                     if (appDelegate.soqlQuery == nil)
                         appDelegate.soqlQuery = [[NSMutableString alloc] initWithCapacity:0];
                     
+                    if (appDelegate.serviceReportReference == nil)
+                        appDelegate.serviceReportReference = [[NSMutableDictionary alloc] initWithCapacity:0];
+                    
                     if ([[[settingsInfoArray objectAtIndex:i] objectForKey:@"SVMXC__Setting_Unique_ID__c"] Contains:@"IPAD004"])
                     {
                         NSString * subModuleSettingKey = [[settingsInfoArray objectAtIndex:i] objectForKey:@"SVMXC__Setting_Unique_ID__c"];
@@ -1568,12 +1571,27 @@
                                 }
                                 synchronized_sqlite3_finalize(statement);
                                 
-                                for(int i = 1; i <[arr count]; i++)
+                                NSArray * allkeysFromclause = [fromClause allKeys];
+                                
+                                if ([allkeysFromclause containsObject:api_name])
                                 {
-                                    
-                                    NSString * selectField = [NSString stringWithFormat:@"%@.%@", api_name, [arr objectAtIndex:i]];
-                                    [selectClause setValue:selectField forKey:selectField];
+                                     NSString * val = [NSString stringWithFormat:@"SVMXC__Service_Order__c.%@", displayValue];
+                                    [selectClause setValue:val forKey:val];
+                                    [appDelegate.serviceReportReference setValue:displayValue forKey:val];
+
                                 }
+                                else 
+                                {
+                                    for(int i = 1; i <[arr count]; i++)
+                                    {
+                                        NSString * selectField = [NSString stringWithFormat:@"%@.%@", api_name, [arr objectAtIndex:i]];
+                                        
+                                        [selectClause setValue:selectField forKey:selectField];
+                                        [appDelegate.serviceReportReference setValue:displayValue forKey:selectField];
+
+                                    }
+                                }
+                               
                                 
                                 // FROM CLAUSE
                                 
@@ -1582,7 +1600,8 @@
                                 // WHERE CLAUSE
                                 NSString * where = [NSString stringWithFormat:@"%@.Id = SVMXC__Service_Order__c.%@", api_name, displayValue];
                                 [whereClause addObject:where];
-                            }
+                                
+                                                            }
                             
                             else
                             {
@@ -1602,17 +1621,17 @@
                             [self getAllReferenceFields:arr];
                             
                             // [appDelegate.soqlQuery appendFormat:@", %@", @"SVMXC__Company__c"];
-                            [selectClause setValue:@"SVMXC__Company__c" forKey:@"SVMXC__Company__c"];
+                            [selectClause setValue:@"SVMXC__Service_Order__c.SVMXC__Company__c" forKey:@"SVMXC__Service_Order__c.SVMXC__Company__c"];  //Service report fix : Radha
                             continue;
                         }
                         else if ([queryField isEqualToString:@"Account Bill To"]) // SVMXC__Company__r
                         {
-                            NSArray * arr = [NSArray arrayWithObjects: @"SVMXC__Company__r.BillingCountry",@"SVMXC__Company__r.BillingPostalCode",@"SVMXC__Company__r.BillingState", @"SVMXC__Company__r.BillingCity", @"SVMXC__Company__r.BillingStreet", nil];
-                            
+                            NSArray * arr = [NSArray arrayWithObjects: @"SVMXC__Company__r.BillingCountry",@"SVMXC__Company__r.BillingPostalCode",@"SVMXC__Company__r.BillingState", @"SVMXC__Company__r.BillingCity", @"SVMXC__Company__r.BillingStreet", nil];//Service report fix : Radha
+
                             [self getAllReferenceFields:arr];
                             
                             // [appDelegate.soqlQuery appendFormat:@", %@",  @"SVMXC__Company__c"];
-                            [selectClause setValue:@"SVMXC__Company__c" forKey:@"SVMXC__Company__c"];
+                            [selectClause setValue:@"SVMXC__Service_Order__c.SVMXC__Company__c" forKey:@"SVMXC__Service_Order__c.SVMXC__Company__c"];//Service report fix : Radha
                         }
                         else if ([queryField isEqualToString:@"Account Ship To"]) // SVMXC__Company__r
                         {
@@ -1621,17 +1640,18 @@
                             [self getAllReferenceFields:arr];
                             
                             // [appDelegate.soqlQuery appendFormat:@", %@", @"SVMXC__Company__c"];
-                            [selectClause setValue:@"SVMXC__Company__c" forKey:@"SVMXC__Company__c"];
+                            [selectClause setValue:@"SVMXC__Service_Order__c.SVMXC__Company__c" forKey:@"SVMXC__Service_Order__c.SVMXC__Company__c"]; //Service report fix : Radha
                         }
                         else if ([queryField isEqualToString:@"Service Location"]) // SVMXC__Service_Order__c
                         {
                             
                             // [appDelegate.soqlQuery appendFormat:@", %@", @"SVMXC__Street__c, SVMXC__City__c, SVMXC__State__c, SVMXC__Zip__c, SVMXC__Country__c"];
-                            [selectClause setValue:@"SVMXC__Street__c" forKey:@"SVMXC__Street__c"];
-                            [selectClause setValue:@"SVMXC__City__c" forKey:@"SVMXC__City__c"];
-                            [selectClause setValue:@"SVMXC__State__c" forKey:@"SVMXC__State__c"];
-                            [selectClause setValue:@"SVMXC__Zip__c" forKey:@"SVMXC__Zip__c"];
-                            [selectClause setValue:@"SVMXC__Country__c" forKey:@"SVMXC__Country__c"];
+                            [selectClause setValue:@"SVMXC__Service_Order__c.SVMXC__Street__c" forKey:@"SVMXC__Service_Order__c.SVMXC__Street__c"];
+                            [selectClause setValue:@"SVMXC__Service_Order__c.SVMXC__City__c" forKey:@"SVMXC__Service_Order__c.SVMXC__City__c"];
+                            [selectClause setValue:@"SVMXC__Service_Order__c.SVMXC__State__c" forKey:@"SVMXC__Service_Order__c.SVMXC__State__c"];
+                            [selectClause setValue:@"SVMXC__Service_Order__c.SVMXC__Zip__c" forKey:@"SVMXC__Service_Order__c.SVMXC__Zip__c"];
+                            [selectClause setValue:@"SVMXC__Service_Order__c.SVMXC__Country__c" forKey:@"SVMXC__Service_Order__c.SVMXC__Country__c"];//Service report fix : Radha
+
                         }
                         else if ([queryField isEqualToString:@"Contact Address"]) // SVMXC__Contact__c
                         {
@@ -1640,7 +1660,7 @@
                             [self getAllReferenceFields:arr];
                             
                             // [appDelegate.soqlQuery appendFormat:@", %@", @"SVMXC__Contact__c"];
-                            //[selectClause setValue:@"SVMXC__Contact__c" forKey:@"SVMXC__Contact__c"]; Commented By Abinash
+                            [selectClause setValue:@"SVMXC__Service_Order__c.SVMXC__Contact__c" forKey:@"SVMXC__Service_Order__c.SVMXC__Contact__c"]; //Service report fix : Radha
                         }
                         if (appDelegate.addressType != nil)
                             [appDelegate.addressType release];
@@ -1726,11 +1746,7 @@
             if ([str isEqualToString:@"Case"])
                 str = [str stringByReplacingOccurrencesOfString:@"Case" withString:@"'Case'"];
             
-          /*  if (count == 0)
-                [appDelegate.soqlQuery appendString:[NSString stringWithFormat:@"SELECT %@", [selectClauseKeys objectAtIndex:count]]];
-            else
-                [appDelegate.soqlQuery appendString:[NSString stringWithFormat:@",%@", [selectClauseKeys objectAtIndex:count]]];*/
-            
+                     
             if (count == 0)
                 [appDelegate.soqlQuery appendString:[NSString stringWithFormat:@"SELECT %@", str]];
             else
@@ -1747,24 +1763,9 @@
             if ([str isEqualToString:@"Case"] || [str isEqualToString:@"Case."] )
                 str = [str stringByReplacingOccurrencesOfString:@"Case" withString:@"'Case'"];
 
-            
             [appDelegate.soqlQuery appendString:@" LEFT OUTER JOIN "];
             [appDelegate.soqlQuery appendString:[NSString stringWithFormat:@"%@ ON ", str]];
             
-           /* for (int i = 0; i < [whereClause count]; i++)
-            {
-                NSString * where = [whereClause objectAtIndex:i];
-                NSArray * array = [where componentsSeparatedByString:@".Id"];
-                
-                NSString * left = [allFromKeys objectAtIndex:count];
-                NSString * right = [array objectAtIndex:0];
-                
-                if ([left isEqualToString:right])
-                {
-                    [appDelegate.soqlQuery appendString:[NSString stringWithFormat:@"%@ ", where]];
-                    break;
-                }
-            }*/
             for (int i = 0; i < [whereClause count]; i++)
             {
                 NSString * where = [whereClause objectAtIndex:i];
@@ -1795,9 +1796,6 @@
         [appDelegate.calDataBase getAllReferenceFields:query_fields_array];
         
         
-       /* NSLog(@"----------query_fields_array ------------- %@", query_fields_array);
-        NSLog(@" ============================refernce_field_array==============================================%@",appDelegate.reference_field_names);
-        NSLog(@"----SOQL_QUERY----%@",appDelegate.soqlQuery); */
     }
     
     NSMutableArray *WorkOrderFields = [[NSMutableArray alloc]initWithCapacity:0];    
@@ -1947,29 +1945,12 @@
     }
     
     sqlite3_stmt *statement5;
-    
-    int count = 0;
-    
+        
     if (synchronized_sqlite3_prepare_v2(appDelegate.db, [final_query UTF8String],-1, &statement5, nil) == SQLITE_OK)
     {
         while(synchronized_sqlite3_step(statement5) == SQLITE_ROW)
         {
             NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithCapacity:0];
-//            for(int k = 0 ; k < [all_fields count] ; k++)
-//            {
-//                char * field = (char *) synchronized_sqlite3_column_text(statement5, k);
-//                char * columnText = (char *) sqlite3_column_name(statement5, k);
-//                if(field != nil)
-//                {
-//                    NSString * field_value = [NSString stringWithUTF8String:field];
-//                    NSString * field_name = [NSString stringWithUTF8String:columnText];
-//                    field_name = [all_fields objectAtIndex:count++];
-//                    field_name = [field_name stringByReplacingOccurrencesOfString:@"SVMXC__Service_Order__c." withString:@""];
-//                    [dict setValue:field_value forKey:field_name];
-//                }
-//                else
-//                    count++;
-//            }
 			
 			for(int k = 0 ; k < [all_fields count] ; k++)
             {
@@ -1985,9 +1966,21 @@
 				field_name = [all_fields objectAtIndex:k];
 				field_name = [field_name stringByReplacingOccurrencesOfString:@"SVMXC__Service_Order__c." withString:@""];
 				
-				if ([field_value isEqualToString:@""] && [field_name Contains:@"."])   //Fix for PDF
-				{
-					NSString * referenceTo = [self getApi_NameWithReference:[field_name stringByReplacingOccurrencesOfString:@".Name" withString:@""]];
+				if ([field_value isEqualToString:@""] && [field_name Contains:@"."] && [field_name Contains:@"Name"])   //Fix for PDF
+				{                    
+                    NSArray * referencekeys = [appDelegate.serviceReportReference allKeys];
+                    NSString * referenceTo = @"";
+                    
+                    for (NSString * string in referencekeys)
+                    {
+                        if ([string isEqualToString:field_name])
+                        {
+                            referenceTo = [appDelegate.serviceReportReference objectForKey:field_name];
+                            break;
+                        }
+                    }
+                    
+				//	NSString * referenceTo = [self getApi_NameWithReference:[field_name stringByReplacingOccurrencesOfString:@".Name" withString:@""]];
 				
 					NSString * Id = [self getFieldValueFromTable:referenceTo];
 					field_value = [self getValueFromLookupwithId:Id];
@@ -2006,8 +1999,6 @@
 	
     NSLog(@"Report Essential Array %@", reportEssentialArray);
 	
-	
-    
     NSMutableArray *  refernce_array = [appDelegate.calDataBase getreferncetableFieldsForReportEsentials:reportEssentialArray];
     
     for(NSDictionary * dict in refernce_array)
@@ -2547,7 +2538,14 @@
     if (ret != SQLITE_OK)
     {
         NSLog(@"Failed to insert in to table");
-    }                                                      
+    }  
+	
+	//10/07/2012  - Agreesive Sync for Work Order Signature.  #4740
+	if ([sign_type isEqualToString:@"ViewWorkOrder"])
+	{
+		[appDelegate callDataSync];
+	}
+
 }
 
 - (BOOL) isSignatureExists:(NSString *)local_id type:(NSString *)sign_type tableName:(NSString *)tableName
@@ -4062,6 +4060,41 @@
 	else 
 		return FALSE;
 
+}
+
+-(NSArray *) sortPickListUsingIndexes:(NSArray *)pickListArray WithfieldAPIName:(NSString *)fieldAPIName tableName:(NSString *)_SFPicklist objectName:(NSString *)headerObjName
+{
+	NSString * selectQuery = [NSString stringWithFormat:@"SELECT label , value, index_value  FROM '%@' WHERE object_api_name = '%@'  and field_api_name = '%@' ",_SFPicklist , headerObjName, fieldAPIName];
+	
+	NSMutableArray * allValuesArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+	
+	sqlite3_stmt * stmt ;
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, nil) == SQLITE_OK  )
+    {
+        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            NSString * label = @"" , * value = @"";
+			
+            char * temp_label = (char *)synchronized_sqlite3_column_text(stmt, 0);
+            char * temp_value = (char *)(char*)synchronized_sqlite3_column_text(stmt, 1);
+			int index = synchronized_sqlite3_column_int(stmt, 2);
+			
+            if(temp_label != nil)
+            {
+                label = [NSString stringWithUTF8String:temp_label];
+            }
+            if(temp_value != nil)
+            {
+                value = [NSString stringWithUTF8String:temp_value];
+            }
+            
+            [allValuesArray insertObject:label atIndex:index];
+        }
+		
+		synchronized_sqlite3_finalize(stmt);
+    }
+    
+    return [allValuesArray retain];
 }
 
 

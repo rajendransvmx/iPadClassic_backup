@@ -209,6 +209,29 @@
     NSString * _processId =  [appDelegate.switchViewLayouts objectForKey:objectName];
     appDelegate.sfmPageController.processId = (_processId != nil)?_processId:processId;
     
+    NSString * activityDate = @"";
+    for (NSDictionary * recentDict in appDelegate.recentObject)
+    {
+        NSString * Id = [recentDict objectForKey:@"resultIds"];
+        
+        if ([Id isEqualToString:recordId])
+        {
+            activityDate = [recentDict objectForKey:@"todays_date"];
+            break;
+        }
+        
+    }
+    
+    NSDateFormatter * format = [[NSDateFormatter alloc] init];
+    [format setDateFormat:@"EEE, dd MMM yyyy hh:mm:ss a"];
+    NSTimeZone *gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
+    [format setTimeZone:gmt];
+    
+    NSDate * date = [format dateFromString:activityDate];
+    
+    [format release];
+    
+    appDelegate.sfmPageController.activityDate = (NSString *)date;
     appDelegate.sfmPageController.recordId = recordId;
     appDelegate.sfmPageController.objectName = objectName;
     
