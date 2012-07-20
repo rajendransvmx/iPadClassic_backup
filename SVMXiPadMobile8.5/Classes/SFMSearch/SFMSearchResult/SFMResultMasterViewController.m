@@ -40,8 +40,8 @@
         searchPicker.pickerDelegate = self;
         CGRect frame = [textField frame];
         frame = CGRectMake(0, 0, frame.size.width, frame.size.height);
+        [pop setPopoverContentSize:searchPicker.view.frame.size];
         [pop presentPopoverFromRect:frame inView:searchCriteria permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
-        [pop setPopoverContentSize:CGSizeMake(320, 216)];
         NSInteger indexOfText = [searchPicker.pickerData indexOfObject:textField.text];
         [searchPicker.picker selectRow:indexOfText inComponent:0 animated:YES];
         
