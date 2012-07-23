@@ -191,25 +191,25 @@
             NSMutableDictionary *processDict = [[NSMutableDictionary alloc] init];
 
             const char * name = (char *)synchronized_sqlite3_column_text(statement, 0);
-            if (strlen(name))
+            if ((name !=nil) && strlen(name))
                 [processDict setObject:[NSString stringWithUTF8String:name] forKey:@"Name"] ;
             else
                 [processDict setObject:@"" forKey:@"Name"] ;
 
             const char * description = (char *)synchronized_sqlite3_column_text(statement, 1);
-            if (strlen(description))
+            if ((description != nil) && strlen(description))
                 [processDict setObject:[NSString stringWithUTF8String:description] forKey:@"SVMXC__Description__c"] ;
             else
                 [processDict setObject:@"" forKey:@"SVMXC__Description__c"] ;
 
             const char * search_process_name = (char *)synchronized_sqlite3_column_text(statement, 2);
-            if (strlen(search_process_name))
+            if ((search_process_name != nil) && strlen(search_process_name))
                 [processDict setObject:[NSString stringWithUTF8String:search_process_name] forKey:@"SVMXC__Name__c"] ;
             else
                 [processDict setObject:@"" forKey:@"SVMXC__Name__c"] ;
             
             const char * processId = (char *)synchronized_sqlite3_column_text(statement, 3);
-            if (strlen(processId))
+            if ((processId != nil) && strlen(processId))
                 [processDict setObject:[NSString stringWithUTF8String:processId] forKey:@"Id"] ;
             else
                 [processDict setObject:@"" forKey:@"Id"] ;
@@ -226,13 +226,13 @@
                 {
                     NSMutableDictionary *objectDict = [[NSMutableDictionary alloc] init];
                     const char * object_processid = (char *)synchronized_sqlite3_column_text(objectStatement, 0);
-                    if (strlen(object_processid))
+                    if ((object_processid != nil)&& strlen(object_processid))
                         [objectDict setObject:[NSString stringWithUTF8String:object_processid] forKey:@"ObjectId"] ;
                     else
                         [objectDict setObject:@"" forKey:@"ObjectId"] ;
                     
                     const char * object_name = (char *)synchronized_sqlite3_column_text(objectStatement, 1);
-                    if (strlen(object_name))
+                    if ((object_name!=nil)&&strlen(object_name))
                         [objectDict setObject:[NSString stringWithUTF8String:object_name] forKey:@"ObjectName"] ;
                     else
                         [objectDict setObject:@"" forKey:@"ObjectName"] ;
@@ -436,7 +436,7 @@
         queryStatement1 = [NSMutableString stringWithFormat:@"SELECT label FROM SFObjectField where object_api_name = '%@'and api_name='%@'",object,searchableField];    
         sqlite3_stmt * labelstmt;
         const char *selectStatement = [queryStatement1 UTF8String];
-        char *field1;        
+        char *field1=nil;        
         if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &labelstmt, nil) == SQLITE_OK )
         {
             if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
@@ -445,7 +445,7 @@
             }
         }
 		NSString *searchableFieldTableName;
-		if(strlen(field1))
+		if((field1 !=nil) && strlen(field1))
 	       searchableFieldTableName = [self getApiNameFromFieldLabel:[NSString stringWithFormat:@"%s",field1]];
 	    else
 	       searchableFieldTableName = @"";	
@@ -475,16 +475,19 @@
         conditionqueryStatement = [NSMutableString stringWithFormat:@"SELECT SVMXC__Advance_Expression__c from SFM_Search_Objects where ObjectID='%@'",objectId];    
         sqlite3_stmt * conditionlabelstmt;
         const char *conditionselectStatement = [conditionqueryStatement UTF8String];
-        char *fieldforCondition;        
+        char *fieldforCondition=nil;    
+        NSString *strfieldforCondition=@""; 
         if ( synchronized_sqlite3_prepare_v2(appDelegate.db, conditionselectStatement,-1, &conditionlabelstmt, nil) == SQLITE_OK )
         {
             if(synchronized_sqlite3_step(conditionlabelstmt) == SQLITE_ROW)
             {
                 fieldforCondition = (char *) synchronized_sqlite3_column_text(conditionlabelstmt,0);
+                if((fieldforCondition !=nil) && strlen(fieldforCondition))
+                strfieldforCondition=[NSString stringWithFormat:@"%s",fieldforCondition] ;
             }
         }
      
-        if(![[NSString stringWithFormat:@"%s",fieldforCondition] isEqualToString:@"(null)"])
+        if(![strfieldforCondition isEqualToString:@"(null)"])
         {
             NSString *Expression=[NSString stringWithFormat:@"%s",fieldforCondition];
             NSLog(@"%@",Expression);
@@ -507,15 +510,18 @@
                             sqlite3_stmt * labelstmtForRefrence;
                             const char *selectStatementForRefrence = [queryStatementForRefrence UTF8String];
                             char *field1;        
+                            NSString *referenceObjectName=@"";
                             if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatementForRefrence,-1, &labelstmtForRefrence, nil) == SQLITE_OK )
                             {
                                 if(synchronized_sqlite3_step(labelstmtForRefrence) == SQLITE_ROW)
                                 {
                                     field1 = (char *) synchronized_sqlite3_column_text(labelstmtForRefrence,0);
+                                    if((field1 !=nil) && strlen(field1))
+                                    referenceObjectName =[NSString stringWithFormat:@"%s",field1];
                                 }
                             }
                             
-                            NSString *referenceObjectName =[NSString stringWithFormat:@"%s",field1];//get reference object name
+//                            referenceObjectName =[NSString stringWithFormat:@"%s",field1];//get reference object name
                             [finalQuery appendString:referenceObjectName];
                             [finalQuery appendString:@"."];
                         }
@@ -550,7 +556,7 @@
         for(int j=0;j<[criteriaArray count]; j++)
         {
             
-            NSString *fieldName,*TableName;
+            NSString *fieldName=@"",*TableName=@"";
             NSDictionary *dict = [criteriaArray objectAtIndex:j];
             NSString *displayType = [dict objectForKey:@"SVMXC__Display_Type__c"];
             if ([displayType isEqualToString:@"REFERENCE"]) 
@@ -559,43 +565,41 @@
                 queryStatement1 = [NSMutableString stringWithFormat:@"SELECT reference_to FROM SFObjectField where api_name='%@' and object_api_name='%@'",[dict objectForKey:@"SVMXC__Field_Name__c"],object];    
                 sqlite3_stmt * labelstmt;
                 const char *selectStatement = [queryStatement1 UTF8String];
-                char *reference_to_field;        
+                char *reference_to_field=nil;        
                 if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &labelstmt, nil) == SQLITE_OK )
                 {
                     if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
                     {
                         reference_to_field = (char *) synchronized_sqlite3_column_text(labelstmt,0);
+                        if((reference_to_field != nil) && strlen(reference_to_field))
+                        TableName = [NSString stringWithFormat:@"%s",reference_to_field];
+
                     }
                 }
                
-                    NSMutableString * queryStatement2 = [[NSMutableString alloc]initWithCapacity:0];
-                    queryStatement2 = [NSMutableString stringWithFormat:@"SELECT api_name FROM SFObjectField where name_field='TRUE' and object_api_name='%@'",object];    
-                    sqlite3_stmt * labelstmt2;
-                    const char *selectStatement2 = [queryStatement2 UTF8String];
-                    char *nameofObjectField;        
-                    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement2,-1, &labelstmt2, nil) == SQLITE_OK )
+                NSMutableString * queryStatement2 = [[NSMutableString alloc]initWithCapacity:0];
+                queryStatement2 = [NSMutableString stringWithFormat:@"SELECT api_name FROM SFObjectField where name_field='TRUE' and object_api_name='%@'",object];    
+                sqlite3_stmt * labelstmt2;
+                const char *selectStatement2 = [queryStatement2 UTF8String];
+                char *nameofObjectField;        
+                if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement2,-1, &labelstmt2, nil) == SQLITE_OK )
                     {
                         if(synchronized_sqlite3_step(labelstmt2) == SQLITE_ROW)
                         {
                             nameofObjectField = (char *) synchronized_sqlite3_column_text(labelstmt2,0);
+                            if((nameofObjectField !=nil)&&strlen(nameofObjectField))
+                                fieldName = [NSString stringWithFormat:@"%s",nameofObjectField];
+
                         }
                     }
-                if(nameofObjectField)
-                    fieldName = [NSString stringWithFormat:@"%s",nameofObjectField];
-                else
-                    fieldName = [NSString stringWithFormat:@""];
-                
-                if(reference_to_field)
-                    TableName = [NSString stringWithFormat:@"%s",reference_to_field];
-                else
-                    TableName = [NSString stringWithFormat:@""];
-                TableName = [self getApiNameFromFieldLabel:TableName];
-               if(![TableArray containsObject:TableName])
-                [TableArray addObject:TableName];
+                    if ([TableName length]>0) 
+                        TableName = [self getApiNameFromFieldLabel:TableName];
+                    if(![TableArray containsObject:TableName])
+                        [TableArray addObject:TableName];
                // operand = [dict objectForKey:@"SVMXC__Operand__c"];
               //  operator = [dict objectForKey:@"SVMXC__Operator__c"]; 
-                synchronized_sqlite3_finalize(labelstmt);
-                synchronized_sqlite3_finalize(labelstmt2);
+                    synchronized_sqlite3_finalize(labelstmt);
+                    synchronized_sqlite3_finalize(labelstmt2);
             }
         }
 //            else
@@ -624,32 +628,37 @@
         sqlite3_stmt * labelstmt;
         for (int i=0; i<[TableArray count]; i++) {
             if(![[TableArray objectAtIndex:i]isEqual:object]){
-                
                 NSMutableString * queryStatement1 = [[NSMutableString alloc]initWithCapacity:0];
-                
                 queryStatement1 = [NSMutableString stringWithFormat:@"SELECT api_name,type,relationship_name,reference_to FROM SFObjectField where object_api_name = '%@'and label='%@'",object, [self getFieldLabelForApiName:[TableArray objectAtIndex:i]]];    
-                
                 const char *selectStatement = [queryStatement1 UTF8String];
-                char *apiName,*type,*relationshipName,*reference_to;        
+                char *apiName=nil,*type=nil,*relationshipName=nil,*reference_to=nil;   
+                NSString *strapiName=@"",*strtype=@"",*strrelationshipName=@"",*strreference_to=@"";
                 if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &labelstmt, nil) == SQLITE_OK )
                 {
                     if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
                     {
                         apiName = (char *) synchronized_sqlite3_column_text(labelstmt,0);
+                        if((apiName !=nil) && strlen(apiName))
+                           strapiName=[NSString stringWithFormat:@"%s",apiName];
                         type = (char *) synchronized_sqlite3_column_text(labelstmt,1);
+                        if((type !=nil) && strlen(type))
+                            strtype=[NSString stringWithFormat:@"%s",type];
                         relationshipName = (char *) synchronized_sqlite3_column_text(labelstmt,2);
+                        if((relationshipName !=nil) && strlen(relationshipName))
+                            strrelationshipName=[NSString stringWithFormat:@"%s",relationshipName];
                         reference_to =(char *) synchronized_sqlite3_column_text(labelstmt,3);
-                        
+                        if((reference_to !=nil) && strlen(reference_to))
+                            strreference_to=[NSString stringWithFormat:@"%s",reference_to];
                     }
                 }
                 synchronized_sqlite3_finalize(labelstmt);
 
-                if([[NSString stringWithFormat:@"%s",type]isEqualToString:@"reference"] && ![[NSString stringWithFormat:@"%s",relationshipName] isEqualToString:[NSString stringWithFormat:@"%s",reference_to]]  )
+                if([strtype isEqualToString:@"reference"] && ![strrelationshipName isEqualToString:strreference_to]  )
                 {
                     [joinFields appendFormat:@" LEFT OUTER JOIN"];
                     [joinFields appendFormat:@" '%@'",[TableArray objectAtIndex:i]];
                     [joinFields appendFormat:@" ON"];
-                    [joinFields appendFormat:@" %@.%@ = '%@'.Id",object,[NSString stringWithFormat:@"%s", apiName],[self getApiNameFromFieldLabel:[TableArray objectAtIndex:i]]];
+                    [joinFields appendFormat:@" %@.%@ = '%@'.Id",object,strapiName,[self getApiNameFromFieldLabel:[TableArray objectAtIndex:i]]];
                 }
             }
       }        
@@ -748,11 +757,19 @@
             refrence_to = (char *) synchronized_sqlite3_column_text(labelstmt,1);
         }
     }
-    
-    if([[NSString stringWithFormat:@"%s",type] isEqualToString:@"reference"]&& strlen(refrence_to) )
+    NSString *strType,*strRefrence_to;
+    if((type != nil)&& strlen(type))
+        strType=[NSString stringWithFormat:@"%s",type];
+    else
+        strType=@" ";
+    if((refrence_to != nil)&& strlen(refrence_to))
+        strRefrence_to=[NSString stringWithFormat:@"%s",refrence_to];
+    else
+        strRefrence_to=@" ";
+    if([strType isEqualToString:@"reference"])
     {
         
-        queryStatement1 = [NSMutableString stringWithFormat:@"SELECT api_name FROM SFObjectField where name_field='TRUE' and object_api_name='%s'",refrence_to];    
+        queryStatement1 = [NSMutableString stringWithFormat:@"SELECT api_name FROM SFObjectField where name_field='TRUE' and object_api_name='%@'",strRefrence_to];    
         sqlite3_stmt * labelstmt;
         const char *selectStatement = [queryStatement1 UTF8String];
         if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &labelstmt, nil) == SQLITE_OK )
@@ -760,7 +777,7 @@
             if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
             {
                 name_field = (char *) synchronized_sqlite3_column_text(labelstmt,0);
-                if (strlen(name_field))
+                if ((name_field !=nil) && strlen(name_field))
                     namefiled=[NSString stringWithFormat:@"%s",name_field];
             }
         }
@@ -774,7 +791,7 @@
             if(synchronized_sqlite3_step(queryRefrefieldstmt) == SQLITE_ROW)
             {
                 obejctFiled = (char *) synchronized_sqlite3_column_text(queryRefrefieldstmt,0);
-                if (strlen(obejctFiled))
+                if ((obejctFiled !=nil) && strlen(obejctFiled))
                 {
                     refrenceObject=[NSString stringWithFormat:@"%s",obejctFiled];
                     strName_field=refrenceObject;
@@ -825,7 +842,7 @@
         if (synchronized_sqlite3_step(statement) == SQLITE_ROW)
         {
             const char * label = (char *)synchronized_sqlite3_column_text(statement, 0);
-            if (strlen(label))
+            if ((label != nil) && strlen(label))
             {
               apiLabel = [NSString stringWithUTF8String:label];   
                 NSLog(@"Label Name = %@",apiLabel);
@@ -851,7 +868,7 @@
         if (synchronized_sqlite3_step(statement) == SQLITE_ROW)
         {
             const char * label = (char *)synchronized_sqlite3_column_text(statement, 0);
-            if (strlen(label))
+            if ((label !=nil) && strlen(label))
             {
                 apiName = [NSString stringWithUTF8String:label];   
                 NSLog(@"Label Name = %@",apiName);
@@ -877,7 +894,7 @@
         if (synchronized_sqlite3_step(statement) == SQLITE_ROW)
         {
             const char * label = (char *)synchronized_sqlite3_column_text(statement, 0);
-            if (strlen(label))
+            if ((label != nil) && strlen(label))
             {
                 apiLabel = [NSString stringWithUTF8String:label];   
                 NSLog(@"Label Name = %@",apiLabel);
@@ -1192,7 +1209,7 @@
             if (synchronized_sqlite3_step(statement) == SQLITE_ROW)
             {
                 const char * value = (char *)synchronized_sqlite3_column_text(statement, 0);
-                if (strlen(value))
+                if ((value !=nil) && strlen(value))
                 {
                     settingValue = [NSString stringWithUTF8String:value];   
                 }
@@ -1376,7 +1393,7 @@
                 objectName = ([dict valueForKey:OBJECT] != nil)?[dict valueForKey:OBJECT]:@"";
            
                 
-                NSDictionary * objectDict = [objectDefinition objectAtIndex:i];
+              /*  NSDictionary * objectDict = [objectDefinition objectAtIndex:i];
                 NSArray * keys = [objectDict allKeys];
                 for (int k = 0; k < [keys count]; k++)
                 {
@@ -1385,11 +1402,34 @@
                         objectArray = [objectDict objectForKey:[keys objectAtIndex:k]];
                         break;
                     }
+                } */
+                
+                
+                BOOL OBJFLAG = FALSE;
+                
+                for (NSDictionary * tempdict in objectDefinition)
+                {
+                    NSArray * tempKeys = [tempdict allKeys];
+                    
+                    for (int k = 0; k < [tempKeys count]; k++)
+                    {
+                        if ([objectName isEqualToString:[tempKeys objectAtIndex:k]])
+                        {
+                            objectArray = [tempdict objectForKey:[tempKeys objectAtIndex:k]];
+                            OBJFLAG = TRUE;
+                            break;
+                        }
+                    }
+                    if (OBJFLAG)
+                        break;
+                    
                 }
+
+                
                 for (int m = 0; m < [objectArray count]; m++)
                 {
                     NSDictionary * dictionary = [objectArray objectAtIndex:m];
-                    keys = [dictionary allKeys];
+                    NSArray * keys = [dictionary allKeys];
                     for (int j = 0; j < [keys count]; j++)
                     {
                         if ( [[keys objectAtIndex:j] isEqualToString:MFIELDPROPERTY])
@@ -1468,9 +1508,7 @@
     
     if (result == YES)
     {
-        int id_Value = 1;
-        NSMutableArray * objectArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-      
+        int id_Value = 1;      
         
         NSString * objectName = @"";
         
@@ -1489,7 +1527,7 @@
             
             objectName = ([dict valueForKey:OBJECT] != nil)?[dict valueForKey:OBJECT]:@"";
               
-            NSDictionary * objectDict = [objectDefinition objectAtIndex:i];
+           /* NSDictionary * objectDict = [objectDefinition objectAtIndex:i];
             NSArray * keys = [objectDict allKeys];
             for (int k = 0; k < [keys count]; k++)
             {
@@ -1499,13 +1537,36 @@
                     break;
                 }
             }
-            NSLog(@"%d", [objectArray count]);
+            NSLog(@"%d", [objectArray count]);*/
+            
+            BOOL OBJFLAG = FALSE;
+            
+            NSArray * objectArray = [[[NSArray alloc] init] autorelease];
+            for (NSDictionary * tempdict in objectDefinition)
+            {
+                NSArray * tempKeys = [tempdict allKeys];
+                
+                for (int k = 0; k < [tempKeys count]; k++)
+                {
+                    if ([objectName isEqualToString:[tempKeys objectAtIndex:k]])
+                    {
+                        objectArray = [tempdict objectForKey:[tempKeys objectAtIndex:k]];
+                        OBJFLAG = TRUE;
+                        break;
+                    }
+                }
+                if (OBJFLAG)
+                    break;
+                
+            }
+            
+
             
             NSArray * fieldArray = [[[NSArray alloc] init] autorelease];
             for (int m = 0; m < [objectArray count]; m++)
             {
                 NSDictionary * dictionary = [objectArray objectAtIndex:m];
-                keys = [dictionary allKeys];
+                 NSArray * keys = [dictionary allKeys];
                 for (int j = 0; j < [keys count]; j++)
                 {
                     if ( [[keys objectAtIndex:j] isEqualToString:MFIELDPROPERTY])
@@ -1579,7 +1640,7 @@
             
             objectName = ([dict valueForKey:OBJECT] != nil)?[dict valueForKey:OBJECT]:@"";
             
-            NSDictionary * objectDict = [objectDefinition objectAtIndex:i];
+           /* NSDictionary * objectDict = [objectDefinition objectAtIndex:i];
             
             NSArray * objectArray = [[[NSArray alloc] init] autorelease];
             NSArray * keys = [objectDict allKeys];
@@ -1590,13 +1651,36 @@
                     objectArray = [objectDict objectForKey:[keys objectAtIndex:k]];
                     break;
                 }
+            }*/
+            
+            BOOL OBJFLAG = FALSE;
+            
+            NSArray * objectArray = [[[NSArray alloc] init] autorelease];
+            for (NSDictionary * tempdict in objectDefinition)
+            {
+                NSArray * tempKeys = [tempdict allKeys];
+                
+                for (int k = 0; k < [tempKeys count]; k++)
+                {
+                    if ([objectName isEqualToString:[tempKeys objectAtIndex:k]])
+                    {
+                        objectArray = [tempdict objectForKey:[tempKeys objectAtIndex:k]];
+                        OBJFLAG = TRUE;
+                        break;
+                    }
+                }
+                if (OBJFLAG)
+                    break;
+                
             }
+            
+
             
             NSMutableArray * propertyArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
             for (int m = 0; m < [objectArray count]; m++)
             {
                 NSDictionary * dictionary = [objectArray objectAtIndex:m];
-                keys = [dictionary allKeys];
+                NSArray * keys = [dictionary allKeys];
                 for (int j = 0; j < [keys count]; j++)
                 {
                     if ( [[keys objectAtIndex:j] isEqualToString:MOBJECTPROPERTY])
@@ -1612,7 +1696,7 @@
             {
                 
                 NSDictionary * dict = [propertyArray objectAtIndex:m];
-                keys = [dict allKeys];
+                NSArray * keys = [dict allKeys];
                 for (int j = 0; j < [keys count]; j++)
                 {
                     if ( [[keys objectAtIndex:j] isEqualToString:MRECORDTYPE])
@@ -1682,8 +1766,31 @@
                 NSDictionary * dict = [object objectAtIndex:i];
                 objectName = ([dict valueForKey:OBJECT] != nil)?[dict valueForKey:OBJECT]:@"";
                 
+                BOOL OBJFLAG = FALSE;
+                                
+                NSArray * objectArray = [[[NSArray alloc] init] autorelease];
+                for (NSDictionary * tempdict in objectDefintion)
+                {
+                    NSArray * tempKeys = [tempdict allKeys];
+                    
+                    for (int k = 0; k < [tempKeys count]; k++)
+                    {
+                        if ([objectName isEqualToString:[tempKeys objectAtIndex:k]])
+                        {
+                            objectArray = [tempdict objectForKey:[tempKeys objectAtIndex:k]];
+                            OBJFLAG = TRUE;
+                            break;
+                        }
+                    }
+                    if (OBJFLAG)
+                        break;
+                    
+                }
+
                 
-                NSDictionary * objectDict = [objectDefintion objectAtIndex:i];
+                
+                
+                /*NSDictionary * objectDict = [objectDefintion objectAtIndex:i];
                 
                 NSArray * objectArray = [[[NSArray alloc] init] autorelease];
                 NSArray * keys = [objectDict allKeys];
@@ -1694,14 +1801,16 @@
                         objectArray = [objectDict objectForKey:[keys objectAtIndex:k]];
                         break;
                     }
-                }
+                }*/
+                
+                
                 
                 NSMutableArray * propertyArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
                 
                 for (int m = 0; m < [objectArray count]; m++)
                 {
                     NSDictionary * dictionary = [objectArray objectAtIndex:m];
-                    keys = [dictionary allKeys];
+                    NSArray * keys = [dictionary allKeys];
                     for (int j = 0; j < [keys count]; j++)
                     {
                         if ( [[keys objectAtIndex:j] isEqualToString:MOBJECTPROPERTY])
@@ -1716,7 +1825,7 @@
                 {
                     
                     NSDictionary * dict = [propertyArray objectAtIndex:m];
-                    keys = [dict allKeys];
+                    NSArray * keys = [dict allKeys];
                     for (int j = 0; j < [keys count]; j++)
                     {
                         if ( [[keys objectAtIndex:j] isEqualToString:MOBJECTDEFINITION])
@@ -1778,7 +1887,7 @@
                 objectName = ([dict valueForKey:OBJECT] != nil)?[dict valueForKey:OBJECT]:@"";
                 
                 
-                NSDictionary * objectDict = [objectDefinition objectAtIndex:i];
+               /* NSDictionary * objectDict = [objectDefinition objectAtIndex:i];
                 
                 NSArray * objectArray = [[[NSArray alloc] init] autorelease];
                 NSArray * keys = [objectDict allKeys];
@@ -1789,12 +1898,35 @@
                         objectArray = [objectDict objectForKey:[keys objectAtIndex:k]];
                         break;
                     }
+                } */
+                
+                
+                BOOL OBJFLAG = FALSE;
+                
+                NSArray * objectArray = [[[NSArray alloc] init] autorelease];
+                for (NSDictionary * tempdict in objectDefinition)
+                {
+                    NSArray * tempKeys = [tempdict allKeys];
+                    
+                    for (int k = 0; k < [tempKeys count]; k++)
+                    {
+                        if ([objectName isEqualToString:[tempKeys objectAtIndex:k]])
+                        {
+                            objectArray = [tempdict objectForKey:[tempKeys objectAtIndex:k]];
+                            OBJFLAG = TRUE;
+                            break;
+                        }
+                    }
+                    if (OBJFLAG)
+                        break;
+                    
                 }
+                
                 NSMutableArray * propertyArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
                 for (int m = 0; m < [objectArray count]; m++)
                 {
                     NSDictionary * dictionary = [objectArray objectAtIndex:m];
-                    keys = [dictionary allKeys];
+                    NSArray * keys = [dictionary allKeys];
                     for (int j = 0; j < [keys count]; j++)
                     {
                         if ( [[keys objectAtIndex:j] isEqualToString:MOBJECTPROPERTY])
@@ -1809,7 +1941,7 @@
                 {
                     
                     NSDictionary * dict = [propertyArray objectAtIndex:m];
-                    keys = [dict allKeys];
+                    NSArray * keys = [dict allKeys];
                     for (int j = 0; j < [keys count]; j++)
                     {
                         if ( [[keys objectAtIndex:j] isEqualToString:MOBJECTDEFINITION])
@@ -1865,7 +1997,7 @@
         
         objectName = ([dict valueForKey:OBJECT] != nil)?[dict valueForKey:OBJECT]:@"";
         
-        NSDictionary * objectDict = [columns objectAtIndex:i];
+      /*  NSDictionary * objectDict = [columns objectAtIndex:i];
         NSArray * keys = [objectDict allKeys];
         for (int k = 0; k < [keys count]; k++)
         {
@@ -1874,13 +2006,34 @@
                 objectArray = [objectDict objectForKey:[keys objectAtIndex:k]];
                 break;
             }
+        } */
+        
+        
+        BOOL OBJFLAG = FALSE;
+        
+        for (NSDictionary * tempdict in columns)
+        {
+            NSArray * tempKeys = [tempdict allKeys];
+            
+            for (int k = 0; k < [tempKeys count]; k++)
+            {
+                if ([objectName isEqualToString:[tempKeys objectAtIndex:k]])
+                {
+                    objectArray = [tempdict objectForKey:[tempKeys objectAtIndex:k]];
+                    OBJFLAG = TRUE;
+                    break;
+                }
+            }
+            if (OBJFLAG)
+                break;
+            
         }
         
         NSMutableArray * fieldArray = [[[NSMutableArray alloc] init] autorelease];
         for (int m = 0; m < [objectArray count]; m++)
         {
             NSDictionary * dictionary = [objectArray objectAtIndex:m];
-            keys = [dictionary allKeys];
+            NSArray * keys = [dictionary allKeys];
             for (int j = 0; j < [keys count]; j++)
             {
                 if ( [[keys objectAtIndex:j] isEqualToString:MFIELDPROPERTY])

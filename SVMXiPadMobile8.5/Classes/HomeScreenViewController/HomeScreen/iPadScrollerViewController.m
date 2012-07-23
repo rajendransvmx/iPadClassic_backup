@@ -1758,8 +1758,8 @@ const float progress_ = 0.07;
                   [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_TASKS],
                   [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_HELP],
                   [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_sync_label], 
-                  [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_label],
                   [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search], 
+                  [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_label],
                   nil] retain];
     
     descriptionArray = [[NSArray arrayWithObjects:
@@ -1770,8 +1770,8 @@ const float progress_ = 0.07;
                          [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_TASKS_TEXT],
                          [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_HELP_TEXT],
                          [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_sync_text], 
-                         [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_text],
                          [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search_Description],
+                         [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_text],
                          nil] retain];
 
 }
