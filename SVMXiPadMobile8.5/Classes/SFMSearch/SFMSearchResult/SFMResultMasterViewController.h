@@ -37,4 +37,5 @@
 - (void) reloadTableData;
 - (IBAction) backgroundSelected:(id)sender;
 - (void)deselectRowAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated;
+- (void)setState:(id)sender;
 @end

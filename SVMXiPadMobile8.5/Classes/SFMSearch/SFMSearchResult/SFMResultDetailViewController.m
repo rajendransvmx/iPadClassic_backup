@@ -230,7 +230,7 @@
     NSArray *cellArray = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"Values"] ;
     [cell clearsContextBeforeDrawing];
 //    UIButton * button = [[[UIButton alloc] initWithFrame:CGRectMake(tableView.frame.size.width-110, 0, TableViewResultViewCellHeight, TableViewResultViewCellHeight)] autorelease];
-    UIButton * button = [[[UIButton alloc] initWithFrame:CGRectMake(tableView.frame.size.width-110, 0, 30, 30)] autorelease];
+    UIButton * button = [[[UIButton alloc] initWithFrame:CGRectMake(tableView.frame.size.width-103, 5, 20, 21)] autorelease];
 
     button.userInteractionEnabled = TRUE;
     NSString *objname=[[tableDataArray objectAtIndex:indexPath.section ] objectForKey:@"ObjectName"];

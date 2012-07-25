@@ -107,6 +107,7 @@
         [searchFilterSwitch setOn:NO];
         searchFilterSwitch.enabled=FALSE;
     }
+    [searchFilterSwitch addTarget:self action:@selector(setState:) forControlEvents:UIControlEventValueChanged];
     UIImageView * bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_left_panel_bg_main_top.png"]];
     searchMasterTable.backgroundView = bgImage;
     searchMasterTable.backgroundColor = [UIColor clearColor];       
@@ -134,6 +135,20 @@
         self.inputAccessoryView = barCodeView;
     }
 }
+
+- (void)setState:(id)sender 
+{
+    BOOL state = [sender isOn];
+    NSString *rez = state == YES ? @"YES" : @"NO";
+    NSLog(@"%@",rez);
+    if( state == NO)
+    {
+        [resultDetailView.detailTable reloadData];
+        [resultDetailView reloadInputViews];
+    }
+
+}
+
 - (IBAction) launchBarcodeScanner:(id)sender
 {
     

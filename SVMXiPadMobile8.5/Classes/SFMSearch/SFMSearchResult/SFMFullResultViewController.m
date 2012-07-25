@@ -43,7 +43,7 @@
     [actionButton setTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_SRCH_CLOSE] forState:UIControlStateNormal];
     [actionButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [[actionButton titleLabel] setFont:[UIFont boldSystemFontOfSize:16]];
-    [detailButton setFrame:CGRectMake(503, 6, 31, 31)];
+    [detailButton setFrame:CGRectMake(509, 10, 20, 21)];
     
     if(self.isOnlineRecord)
     {
@@ -183,7 +183,7 @@
         }
     }
     [cell setBackgroundColor:[UIColor clearColor]];
-    lblObjects =[[UILabel alloc]initWithFrame:CGRectMake(20, 0, 270, TableViewResultViewCellHeight)];
+    lblObjects =[[UILabel alloc]initWithFrame:CGRectMake(20, 0, 235, TableViewResultViewCellHeight)];
     NSString *objectString = [tableHeaderArray objectAtIndex:indexPath.row];
     NSArray *objectComponents = [objectString componentsSeparatedByString:@"."];
     lblObjects.text = [objectComponents objectAtIndex:([objectComponents count]-1)];
@@ -198,7 +198,7 @@
     [lblObjects addGestureRecognizer:tapObject];
     [tapObject release];
     [cell addSubview:lblObjects];
-    lblValues=[[UILabel alloc]initWithFrame:CGRectMake(300, 0, 500, TableViewResultViewCellHeight)];
+    lblValues=[[UILabel alloc]initWithFrame:CGRectMake(275, 0, 235, TableViewResultViewCellHeight)];
     [lblValues setBackgroundColor:[UIColor clearColor]];
     lblValues.text=[data objectForKey:[tableHeaderArray objectAtIndex:indexPath.row]];
     lblValues.font = [UIFont boldSystemFontOfSize:16];
