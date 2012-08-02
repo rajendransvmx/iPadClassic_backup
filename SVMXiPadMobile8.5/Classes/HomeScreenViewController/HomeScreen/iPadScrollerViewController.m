@@ -19,6 +19,8 @@
 #import "MainViewController.h"
 #import <QuartzCore/QuartzCore.h>
 
+iServiceAppDelegate *appDelegate;
+
 @implementation iPadScrollerViewController
 @synthesize Sync_status;
 @synthesize internet_alertView;
@@ -64,13 +66,7 @@ const NSUInteger kNumImages = 7;
 #pragma mark - 
 - (void) showTasks
 {
-    /*if (!appDelegate.isInternetConnectionAvailable)
-    {
-        [appDelegate displayNoInternetAvailable];
-        return;
-    }*/
-
-    appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+//    appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     appDelegate.modalCalendar = [[ModalViewController alloc] initWithNibName:@"ModalViewController" bundle:nil];
     appDelegate.modalCalendar.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal; //UIModalTransitionStyleFlipHorizontal;
     [self presentModalViewController:appDelegate.modalCalendar animated:YES];
@@ -102,7 +98,7 @@ const NSUInteger kNumImages = 7;
         return;
     }*/
 
-    appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+//    appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     appDelegate.modalCalendar = [[ModalViewController alloc] initWithNibName:@"ModalViewController" bundle:nil];
     appDelegate.modalCalendar.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     [self presentModalViewController:appDelegate.modalCalendar animated:YES];
@@ -123,7 +119,7 @@ const NSUInteger kNumImages = 7;
         [calendar view];
     }
     
-    appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+//    appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     
     if ( appDelegate.wsInterface.eventArray == nil || [appDelegate.wsInterface.eventArray count] == 0 )
     {
@@ -318,23 +314,35 @@ const NSUInteger kNumImages = 7;
 
 
 #pragma mark - View lifecycle
-- (void) viewWillAppear:(BOOL)animated
+
+- (id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
-    [self refreshArray];
-    
-    self.scrollPages = [self getScrollViewNames];
-    [scrollViewPreview setBackgroundColor:[UIColor clearColor]];
-	scrollViewPreview.pageSize = CGSizeMake(269, 299);
-	// Important to listen to the delegate methods.
-	scrollViewPreview.delegate = self;
-    
+    if( ( self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil] ) )
+    {
+        //initialize everything here if you please
+        [self refreshArray];
+        self.scrollPages = [self getScrollViewNames];
+    }
+    return self;
 }
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+    
+    [scrollViewPreview setBackgroundColor:[UIColor clearColor]];
+    scrollViewPreview.pageSize = CGSizeMake(269, 299);
+    scrollViewPreview.delegate = self;
+    
+//    [self refreshArray];
+//    self.scrollPages = [self getScrollViewNames];
+//    [scrollViewPreview setBackgroundColor:[UIColor clearColor]];
+//	scrollViewPreview.pageSize = CGSizeMake(269, 299);
+//	// Important to listen to the delegate methods.
+//	scrollViewPreview.delegate = self;
+    
+//    appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     
     if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
     {
@@ -345,36 +353,7 @@ const NSUInteger kNumImages = 7;
             appDelegate.wsInterface.tagsDictionary = [temp_dict retain];
         }
     }
-//    itemArray = [[NSArray arrayWithObjects:
-//                 [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CALENDAR],
-//                 [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_MAP],
-//                 [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CREATENEW],
-//                 [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_RECENTS],
-//                 [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_TASKS],
-//                 [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_HELP],
-//                 [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_sync_label], 
-//                  [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_label],
-//                  //[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search], 
-//                 nil] retain];
-//
-//    descriptionArray = [[NSArray arrayWithObjects:
-//                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CALENDAR_TEXT],
-//                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_MAP_TEXT],
-//                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CREATENEW_TEXT],
-//                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_RECENTS_TEXT],
-//                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_TASKS_TEXT],
-//                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_HELP_TEXT],
-//                         [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_sync_text], 
-//                         [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_text],
-//                         //[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search_Description],
-//                         nil] retain];
     
-//    self.scrollPages = [self getScrollViewNames];
-//    [scrollViewPreview setBackgroundColor:[UIColor clearColor]];
-//	scrollViewPreview.pageSize = CGSizeMake(269, 299);
-//	// Important to listen to the delegate methods.
-//	scrollViewPreview.delegate = self;
-//
     animateImage.image = [UIImage imageNamed:@"logo.png"];
     animateImage.alpha = 0.0;
 
@@ -383,6 +362,9 @@ const NSUInteger kNumImages = 7;
 
 -(void)viewDidAppear:(BOOL)animated
 {
+
+    [self refreshArray];
+    
     if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
     {
         [self disableControls];
@@ -521,7 +503,7 @@ const NSUInteger kNumImages = 7;
 }
 - (void) didInternetConnectionChange:(NSNotification *)notification
 {
-    appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+//    appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     NSNumber * currentReach = (NSNumber *) notification.object;
     BOOL isReachable = [currentReach boolValue];
     if (isReachable)
@@ -642,10 +624,10 @@ const NSUInteger kNumImages = 7;
         [self showHelp];
     else if ([itemSelected isEqualToString:[appDelegate.wsInterface.tagsDictionary objectForKey:ipad_sync_label]]) 
         [self sync];
-    else if ([itemSelected isEqualToString:[appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_label]])
-        [self logout];
     else if ([itemSelected isEqualToString:[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search]])
         [self showSearch];
+    else if ([itemSelected isEqualToString:[appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_label]])
+        [self logout];
 
 }
 
@@ -1750,6 +1732,12 @@ const float progress_ = 0.07;
 }
 - (void) refreshArray
 {
+    if (itemArray != nil)
+        [itemArray release];
+    
+    if (descriptionArray != nil)
+        [descriptionArray release];
+
     itemArray = [[NSArray arrayWithObjects:
                   [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CALENDAR],
                   [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_MAP],
@@ -1758,8 +1746,8 @@ const float progress_ = 0.07;
                   [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_TASKS],
                   [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_HELP],
                   [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_sync_label], 
-                  [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search], 
-                  [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_label],
+                  [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search],
+                  [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_label], 
                   nil] retain];
     
     descriptionArray = [[NSArray arrayWithObjects:

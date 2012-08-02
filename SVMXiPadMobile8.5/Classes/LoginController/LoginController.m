@@ -757,7 +757,6 @@
     
     if ([array count] == 0)
     {
-        appDelegate.serviceReportLogo = [UIImage imageNamed:@"header_image.png"];
         didGetServiceReportLogo = YES;
         return;
     }

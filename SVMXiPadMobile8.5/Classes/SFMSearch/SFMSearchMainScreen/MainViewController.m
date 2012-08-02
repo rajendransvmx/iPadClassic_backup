@@ -9,6 +9,8 @@
 #import "MainViewController.h"
 #import "DetailViewControllerForSFM.h"
 #import "MasterViewController.h"
+#import "iServiceAppDelegate.h"
+
 @interface MainViewController ()
 
 @end
@@ -29,11 +31,12 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
-    MasterViewController * masterView = [[MasterViewController alloc] initWithNibName:@"MasterViewController" bundle:nil];
+    masterView = [[MasterViewController alloc] initWithNibName:@"MasterViewController" bundle:nil];
     UINavigationController * masterNav = [[[UINavigationController alloc] initWithRootViewController:masterView] autorelease];
     
     DetailViewControllerForSFM * detailView = [[[DetailViewControllerForSFM alloc] initWithNibName:@"DetailViewControllerForSFM" bundle:nil] autorelease];
     detailView.splitViewDelegate = self;
+    detailView.mainView = self;
     UINavigationController * detailNav = [[[UINavigationController alloc] initWithRootViewController:detailView] autorelease];
     detailView.masterView = masterView;
     
@@ -45,6 +48,24 @@
 
 }
 
+-(void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+    
+    if(appDelegate.isInternetConnectionAvailable && [appDelegate pingServer])
+    {
+        masterView.searchFilterSwitch.enabled=TRUE;
+    }
+    else
+    {
+        [masterView.searchFilterSwitch setOn:NO];
+        masterView.searchFilterSwitch.enabled=FALSE;
+    }
+    
+}
+
+
 - (void)viewDidUnload
 {
     [super viewDidUnload];
@@ -54,7 +75,7 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-	return (interfaceOrientation == UIInterfaceOrientationLandscapeLeft||
+    return (interfaceOrientation == UIInterfaceOrientationLandscapeLeft||
             interfaceOrientation == UIInterfaceOrientationLandscapeRight);
 }
 #pragma mark - SplitViewController Delegate

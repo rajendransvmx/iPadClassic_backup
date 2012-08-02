@@ -9,5 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "DetailViewControllerForSFM.h"
 @interface MainViewController : UIViewController<UISplitViewControllerDelegate,DetailViewControllerMainDelegate>
-
+{
+    MasterViewController * masterView;
+}
 @end

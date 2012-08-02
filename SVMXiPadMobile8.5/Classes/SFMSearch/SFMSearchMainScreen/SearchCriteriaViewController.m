@@ -15,6 +15,7 @@
 @implementation SearchCriteriaViewController
 @synthesize picker;
 @synthesize pickerData;
+@synthesize tag;
 @synthesize pickerDelegate;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -68,7 +69,7 @@
 {
     NSString * str = nil;
     str = [pickerData objectAtIndex:row];
-    [pickerDelegate setTextField:str];
+    [pickerDelegate setTextField:str withTag:tag];
 }
 
 - (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController

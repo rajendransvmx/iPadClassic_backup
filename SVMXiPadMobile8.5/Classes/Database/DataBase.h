@@ -66,6 +66,8 @@ PopoverButtons *popOver_view;
     
     PopoverButtons * metaSyncPopover;
     
+    BOOL didGetServiceReportLogo;
+    
 }
 
 //RADHA
@@ -78,6 +80,7 @@ PopoverButtons *popOver_view;
 
 @property BOOL didInsertTable;
 @property(nonatomic,assign) BOOL didTechnicianLocationUpdated;
+@property(nonatomic,assign) BOOL didUserGPSLocationUpdated;
 
 //- initWithDBName:(NSString *)name type:(NSString *)type sqlite:(sqlite3 *)db;
 
@@ -155,17 +158,19 @@ PopoverButtons *popOver_view;
 - (NSString *) getFieldLabelForApiName:(NSString *)apiName;
 - (NSString *) getApiNameFromFieldLabel:(NSString *)apiName;
 - (NSString*) getLabelFromApiName:(NSString*)api_name objectName:(NSString*) objectName;
+- (NSString *) getSearchQueryPartFromArray:(NSArray *)objectsArray withSearchString:(NSString *)searchString withUserData:(NSString *)criteriaString;
+- (NSString *) getSearchCriteriaStringFromUserData:(NSString *)criteriaString withSearchString:searchString;
+- (NSArray *) getConfigurationForProcess:(NSString *) processName ;
 // Location Ping
-- (void) didGetActiveGlobalProfileForLocationPing:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
-- (void) didGetSettingsInfoforLocationPing:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
-- (void) didGetLocationPingSettingsValue:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
+- (void) createUserGPSTable;
 - (NSString *) getSettingValueWithName:(NSString *)settingName;
 - (void) deleteSequenceofTable;
 - (void) insertrecordIntoUserGPSLog:(NSDictionary *)locationInfo;
 - (void) purgeLocationPingTable;
 - (void) deleteSequenceofTable:(NSString *)tableName;
-- (void)updateTechnicianLocation;
-
+- (void) updateTechnicianLocation;
+- (void) updateUserGPSLocation;
+- (void) deleteRecordFromUserGPSTable:(NSString *) localId;
 //DataSync Methods
 - (void) insertDataInToTables:(NSMutableArray *)fieldValueArray;
 
@@ -177,6 +182,9 @@ PopoverButtons *popOver_view;
 
 - (NSString *) getNameFieldForObject:(NSString *)headerObjectName WithRecordId:(NSString *)recordId;
 
+- (NSString *) getApiNameForNameField:(NSString *)headerObjectName;
+
+- (NSString *) getReferenceObjectNameForPdf:(NSString *)ObjectName Field:(NSString *)FieldName Id:(NSString *)Id;
 
 //generate PDF Settings
 //Abinash
@@ -204,7 +212,7 @@ PopoverButtons *popOver_view;
 //May-24-2011
 //- (void) startMetaSync;
 
-
+- (NSString *) getDataTypeFor:(NSString *)objectName inArray:(NSArray *)dataArray;
 
 
 //update plist
@@ -264,6 +272,11 @@ PopoverButtons *popOver_view;
 - (BOOL) checkIfSyncConfigDue;
 - (BOOL) checkIfRecordExistForObjectWithRecordId:(NSString *)tableName Id :(NSString *)Id;
 
+//ServiceReportLogo
+- (void) getImageForServiceReportLogo;
+- (void) didGetServiceReportLogo:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
+
+
 - (NSString *) callMetaSync;
 
 - (void) doMetaSync;
@@ -272,4 +285,11 @@ PopoverButtons *popOver_view;
 - (void) updateUserTable:(NSString *)UserId;
 - (NSString *) getValueFromLookupwithId:(NSString *)Id;
 - (NSString *) getvalueforReference:(NSDictionary*) tableArray value:(NSString*)value;
+-(NSMutableDictionary*) getupdatedToken:(NSMutableDictionary*)dictforparsing;
+
+//Checkbox
+-(NSString *) getfieldTypeForApi:(NSString *)tableName fieldName:(NSString *)fieldName;
+-(NSMutableDictionary*) occurenceOfBraces:(NSString*)token;
+- (NSString *) getSearchCriteriaStringFromUserData:(NSString *)criteriaString withSearchString:searchString;
+
 @end

@@ -1383,6 +1383,7 @@ last_sync_time:(NSString *)last_sync_time
         return;
     }
     [appDelegate.dataBase updateTechnicianLocation];
+    [appDelegate.dataBase updateUserGPSLocation];
 
     [appDelegate.databaseInterface  updateSyncRecordsIntoLocalDatabase];
     //check download criteria match
@@ -3031,22 +3032,30 @@ last_sync_time:(NSString *)last_sync_time
         [svmxcUserFilterString release];
         
         NSArray *objectList = [values objectAtIndex:1];
-        NSArray *objectResultList = [values objectAtIndex:2];
-        
         for(int i=0; i<[objectList count]; i++)
         {
-            NSArray *resultsArray = [objectResultList objectAtIndex:i];            
             INTF_WebServicesDefServiceSvc_SVMXMap * svmxcObject =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
             
             svmxcObject.key  = @"ObjectId";
             svmxcObject.value = [objectList objectAtIndex:i];
+            /*
             for(int j=0; j< [resultsArray count]; j++)
             {
                 [svmxcObject addValues:[resultsArray objectAtIndex:j]];
             }
+             */
             [sfmRequest.valueMap addObject:svmxcObject];            
             [svmxcObject release];
         }
+         
+        NSString *limit = [values objectAtIndex:2];
+        INTF_WebServicesDefServiceSvc_SVMXMap * svmxcLimitObject =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+        
+        svmxcLimitObject.key  = @"RecordLimit";
+        svmxcLimitObject.value = limit;
+        [sfmRequest.valueMap addObject:svmxcLimitObject];
+        [svmxcLimitObject release];
+        
     }
     if([eventName isEqualToString:@"TECH_LOCATION_UPDATE"] && [eventType isEqualToString:SYNC])
     {
@@ -3075,7 +3084,68 @@ last_sync_time:(NSString *)last_sync_time
         [appDelegate.dataBase setDidTechnicianLocationUpdated:TRUE];
 
     }
+    else if([eventName isEqualToString:@"LOCATION_HISTORY"] && [eventType isEqualToString:SYNC])
+    {
+        [[ZKServerSwitchboard switchboard] setLogXMLInOut:YES];
+        for(NSDictionary *dict in values)
+        {
+            INTF_WebServicesDefServiceSvc_SVMXMap * svmxcField =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+            svmxcField.key=@"Record";
+            svmxcField.value=@"";
+            INTF_WebServicesDefServiceSvc_SVMXMap * svmxcLocalID =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+            svmxcLocalID.key  = @"localId";
+            svmxcLocalID.value = [dict objectForKey:@"localId"];
+            [svmxcField.valueMap addObject:svmxcLocalID];
+            [svmxcLocalID release];
 
+            INTF_WebServicesDefServiceSvc_SVMXMap * svmxcLatitude =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+            svmxcLatitude.key  = @"SVMXC__Latitude__c";
+            svmxcLatitude.value = [dict objectForKey:@"SVMXC__Latitude__c"];
+            [svmxcField.valueMap addObject:svmxcLatitude];
+            [svmxcLatitude release];
+            
+            INTF_WebServicesDefServiceSvc_SVMXMap * svmxcLongitude =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+            svmxcLongitude.key  = @"SVMXC__Longitude__c";
+            svmxcLongitude.value = [dict objectForKey:@"SVMXC__Longitude__c"];
+            [svmxcField.valueMap addObject:svmxcLongitude];
+            [svmxcLongitude release];
+
+            INTF_WebServicesDefServiceSvc_SVMXMap * svmxcStatus =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+            svmxcStatus.key  = @"SVMXC__Status__c";
+            svmxcStatus.value = [dict objectForKey:@"SVMXC__Status__c"];
+            [svmxcField.valueMap addObject:svmxcStatus];
+            [svmxcStatus release];
+
+            INTF_WebServicesDefServiceSvc_SVMXMap * svmxcUser =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+            svmxcUser.key  = @"SVMXC__User__c";
+            svmxcUser.value = [dict objectForKey:@"SVMXC__User__c"];
+            [svmxcField.valueMap addObject:svmxcUser];
+            [svmxcUser release];
+            
+            INTF_WebServicesDefServiceSvc_SVMXMap * svmxcDeviceType =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+            svmxcDeviceType.key  = @"SVMXC__Device_Type__c";
+            svmxcDeviceType.value = [dict objectForKey:@"SVMXC__Device_Type__c"];
+            [svmxcField.valueMap addObject:svmxcDeviceType];
+            [svmxcDeviceType release];
+            
+            INTF_WebServicesDefServiceSvc_SVMXMap * svmxcAdditionalInfo =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+            svmxcAdditionalInfo.key  = @"SVMXC__Additional_Info__c";
+            svmxcAdditionalInfo.value = [dict objectForKey:@"SVMXC__Additional_Info__c"];
+            [svmxcField.valueMap addObject:svmxcAdditionalInfo];
+            [svmxcAdditionalInfo release];
+            
+            INTF_WebServicesDefServiceSvc_SVMXMap * svmxcTimeRecorded =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+            svmxcTimeRecorded.key  = @"SVMXC__Time_Recorded__c";
+            svmxcTimeRecorded.value = [dict objectForKey:@"SVMXC__Time_Recorded__c"];
+            [svmxcField.valueMap addObject:svmxcTimeRecorded];
+            [svmxcTimeRecorded release];
+
+
+            [sfmRequest.valueMap addObject:svmxcField];
+            [svmxcField release];
+        }
+        
+    }
     [dataSync setRequest:sfmRequest];
     //SFM Search End
     [[ZKServerSwitchboard switchboard] doCheckSession];
@@ -5428,7 +5498,7 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.Sync_check_in = FALSE;
             
             didGetAddtionalObjDef = FALSE;
-            NSMutableArray * objects = [NSMutableArray  arrayWithObjects:@"Task", @"Event", @"User",@"SVMXC__User_GPS_Log__c",nil];
+            NSMutableArray * objects = [NSMutableArray  arrayWithObjects:@"Task", @"Event", @"User",nil];
             [appDelegate.wsInterface metaSyncWithEventName:SFM_BATCH_OBJECT_DEFINITIONS eventType:SYNC values:objects]; 
 
         }
@@ -5689,6 +5759,25 @@ last_sync_time:(NSString *)last_sync_time
     {
         INTF_WebServicesDefServiceSvc_INTF_DataSync_WSResponse * wsResponse = [response.bodyParts objectAtIndex:0];
       
+		if ([wsResponse.result.eventName isEqualToString:@"LOCATION_HISTORY"] && [wsResponse.result.eventType isEqualToString:SYNC]
+            )
+        {
+            [appDelegate.dataBase setDidUserGPSLocationUpdated:YES];
+            NSLog(@"Sent GPS Logs to Server");
+            NSMutableArray * array = [wsResponse.result valueMap]; 
+            for(int i=0;i<[array count];i++)
+            {
+                INTF_WebServicesDefServiceSvc_SVMXMap * mapForObjectId = [array objectAtIndex:i];
+                if([mapForObjectId.value length] > 0 )
+                {
+                    NSString *localId = mapForObjectId.key;
+                    [appDelegate.dataBase deleteRecordFromUserGPSTable:localId];
+                }
+                //get the local_id and sfid 
+                //if sfid is there delete the record from gps table 
+            }
+        }
+        
 		if ([wsResponse.result.eventName isEqualToString:@"SFM_SEARCH"] && [wsResponse.result.eventType isEqualToString:@"SEARCH_RESULTS"]
             )
         {
@@ -5714,6 +5803,12 @@ last_sync_time:(NSString *)last_sync_time
                     fieldsForTableHeader=[filedForObjectID objectForKey:mapForObjectId.key];
                     INTF_WebServicesDefServiceSvc_SVMXMap * mapForResult = [resultMap objectAtIndex:j];
                     [resultDict setObject:mapForResult.value forKey:[fieldsForTableHeader objectAtIndex:j]];
+                    if(j ==0)
+                    {
+                        NSArray *resultIDMapArray = [mapForResult valueMap];                    
+                        INTF_WebServicesDefServiceSvc_SVMXMap * mapForID = [resultIDMapArray objectAtIndex:0];
+                        [resultDict setObject:mapForID.value forKey:@"Id"];
+                    }
                 }
                 [resultsArray addObject:resultDict];
                 [resultDict release];
@@ -7901,7 +7996,13 @@ last_sync_time:(NSString *)last_sync_time
     {
         NSDictionary * dict = [object objectAtIndex:i];
         NSString * str = [dict objectForKey:@"OBJECT"];
-        [result addObject:str];
+        //RADHA
+        if ([str length] > 0)
+        {
+            if (![result containsObject:str])
+                [result addObject:str];
+        }
+        
     }
     return result;
 }

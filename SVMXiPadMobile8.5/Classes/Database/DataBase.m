@@ -18,6 +18,7 @@
 @synthesize MyPopoverDelegate;
 @synthesize tempDb;
 @synthesize didTechnicianLocationUpdated;
+@synthesize didUserGPSLocationUpdated;
 //@synthesize db;
 -(id)init
 {
@@ -36,7 +37,7 @@
     else
         NSLog(@"SFM_Search_Process Table Create Failed");
 
-    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFM_Search_Objects ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0),'SVMXC__Module__c' VARCHAR,'SVMXC__ProcessID__c' VARCHAR,'SVMXC__Target_Object_Name__c' VARCHAR,'ProcessName' VARCHAR,'ProcessId' VARCHAR,'ObjectID' VARCHAR,'SVMXC__Advance_Expression__c' VARCHAR)"]];
+    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFM_Search_Objects ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0),'SVMXC__Module__c' VARCHAR,'SVMXC__ProcessID__c' VARCHAR,'SVMXC__Target_Object_Name__c' VARCHAR,'ProcessName' VARCHAR,'ProcessId' VARCHAR,'ObjectID' VARCHAR,'SVMXC__Advance_Expression__c' VARCHAR,'SVMXC__Name__c' VARCHAR)"]];
     if(result == YES)
         NSLog(@"SFM_Search_Objects Table Create Success");
     else
@@ -135,7 +136,7 @@
             }
             NSString *targetObjectNameFull = [objectDict objectForKey:@"SVMXC__Target_Object_Name__c"];
             NSString *targetObjectName = [self getFieldLabelForApiName:targetObjectNameFull];
-            NSString  *queryStatement =  [NSString stringWithFormat:@"INSERT INTO SFM_Search_Objects ('SVMXC__Module__c','SVMXC__ProcessID__c','SVMXC__Target_Object_Name__c','ProcessName','ProcessId','ObjectId','SVMXC__Advance_Expression__c') VALUES ('%@','%@','%@','%@','%@','%@','%@')",[objectDict objectForKey:@"SVMXC__Module__c"],[objectDict objectForKey:@"SVMXC__ProcessID__c"],targetObjectName,processName,processId,[objectDict objectForKey:@"Id"] ,str];
+            NSString  *queryStatement =  [NSString stringWithFormat:@"INSERT INTO SFM_Search_Objects ('SVMXC__Module__c','SVMXC__ProcessID__c','SVMXC__Target_Object_Name__c','ProcessName','ProcessId','ObjectId','SVMXC__Advance_Expression__c','SVMXC__Name__c') VALUES ('%@','%@','%@','%@','%@','%@','%@','%@')",[objectDict objectForKey:@"SVMXC__Module__c"],[objectDict objectForKey:@"SVMXC__ProcessID__c"],targetObjectName,processName,processId,[objectDict objectForKey:@"Id"] ,str,[objectDict objectForKey:@"SVMXC__Name__c"]];
             
             char * err;
             if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
@@ -215,11 +216,9 @@
                 [processDict setObject:@"" forKey:@"Id"] ;
 
             
-            NSString *objectQuery = [NSString stringWithFormat:@"SELECT ObjectId,SVMXC__Target_Object_Name__c FROM SFM_Search_Objects where ProcessName = '%@'",[processDict objectForKey:@"Name"]];
-            NSLog(@"Object Query = %@",objectQuery);
+            /*
             sqlite3_stmt * objectStatement;
             NSMutableArray *objectArray = [[NSMutableArray alloc] init];
-                                
             if (synchronized_sqlite3_prepare_v2(appDelegate.db, [objectQuery UTF8String], -1, &objectStatement, NULL) == SQLITE_OK)
             {
                 while (synchronized_sqlite3_step(objectStatement) == SQLITE_ROW)
@@ -236,6 +235,12 @@
                         [objectDict setObject:[NSString stringWithUTF8String:object_name] forKey:@"ObjectName"] ;
                     else
                         [objectDict setObject:@"" forKey:@"ObjectName"] ;
+                    
+                    const char * object_Description = (char *)synchronized_sqlite3_column_text(objectStatement, 2);
+                    if ((object_Description!=nil)&&strlen(object_Description))
+                        [objectDict setObject:[NSString stringWithUTF8String:object_Description] forKey:@"ObjectDescription"] ;
+                    else
+                        [objectDict setObject:@"" forKey:@"ObjectDescription"] ;
                     // get searchable fields
                     NSMutableArray *searchableFieldsArray = [[self getSearchableFieldsForObject:[objectDict objectForKey:@"ObjectId"]] retain];
                     [objectDict setObject:searchableFieldsArray forKey:@"SearchableFields"] ;
@@ -253,17 +258,68 @@
                     [objectDict release];
                 }
             }
+             synchronized_sqlite3_finalize(objectStatement);
+             
             [processDict setObject:objectArray forKey:@"Objects"];
             [objectArray release];
-            synchronized_sqlite3_finalize(objectStatement);
+             */
             [configSettings addObject:processDict];
             [processDict release];
         }
     }
     
     synchronized_sqlite3_finalize(statement);
-    NSLog(@"Config Settings = %@",configSettings);
+//    NSLog(@"Config Settings = %@",configSettings);
     return [configSettings autorelease];
+}
+- (NSArray *) getConfigurationForProcess:(NSString *) processName 
+{
+    sqlite3_stmt * objectStatement;
+    NSString *objectQuery = [NSString stringWithFormat:@"SELECT ObjectId,SVMXC__Target_Object_Name__c,SVMXC__Name__c FROM SFM_Search_Objects where ProcessName = '%@'",processName];
+    NSLog(@"Object Query = %@",objectQuery);
+    NSMutableArray *objectArray = [[NSMutableArray alloc] init];
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [objectQuery UTF8String], -1, &objectStatement, NULL) == SQLITE_OK)
+    {
+        while(synchronized_sqlite3_step(objectStatement) == SQLITE_ROW)
+        {
+            NSMutableDictionary *objectDict = [[NSMutableDictionary alloc] init];
+            const char * object_processid = (char *)synchronized_sqlite3_column_text(objectStatement, 0);
+            if ((object_processid != nil)&& strlen(object_processid))
+                [objectDict setObject:[NSString stringWithUTF8String:object_processid] forKey:@"ObjectId"] ;
+            else
+                [objectDict setObject:@"" forKey:@"ObjectId"] ;
+            
+            const char * object_name = (char *)synchronized_sqlite3_column_text(objectStatement, 1);
+            if ((object_name!=nil)&&strlen(object_name))
+                [objectDict setObject:[NSString stringWithUTF8String:object_name] forKey:@"ObjectName"] ;
+            else
+                [objectDict setObject:@"" forKey:@"ObjectName"] ;
+            
+            const char * object_Description = (char *)synchronized_sqlite3_column_text(objectStatement, 2);
+            if ((object_Description!=nil)&&strlen(object_Description))
+                [objectDict setObject:[NSString stringWithUTF8String:object_Description] forKey:@"ObjectDescription"] ;
+            else
+                [objectDict setObject:@"" forKey:@"ObjectDescription"] ;
+            // get searchable fields
+            NSMutableArray *searchableFieldsArray = [[self getSearchableFieldsForObject:[objectDict objectForKey:@"ObjectId"]] retain];
+            [objectDict setObject:searchableFieldsArray forKey:@"SearchableFields"] ;
+            [searchableFieldsArray release];
+            //get display fields
+            NSMutableArray *displayFieldsArray = [[self getDisplayFieldsForObject:[objectDict objectForKey:@"ObjectId"]] retain];
+            [objectDict setObject:displayFieldsArray forKey:@"DisplayFields"] ;
+            [displayFieldsArray release];
+            //get search criteria fields
+            NSMutableArray *searchCriteriaArray = [[self getSearchCriteriaForObject:[objectDict objectForKey:@"ObjectId"]] retain];
+            [objectDict setObject:searchCriteriaArray forKey:@"SearchCriteriaFields"] ;
+            [searchCriteriaArray release];
+            
+            [objectArray addObject:objectDict];
+            [objectDict release];
+        }
+    }
+    synchronized_sqlite3_finalize(objectStatement);
+    
+    return [objectArray autorelease];
 }
 - (NSMutableArray *) getSearchableFieldsForObject:(NSString *)objectId
 {
@@ -396,8 +452,9 @@
 - (NSMutableArray *) getResults:(NSString *)object withConfigData:(NSDictionary *)dataForObject
 {
     NSArray *searchableArray = [dataForObject objectForKey:@"SearchableFields"];
+    NSDictionary *uiControlsValue=[dataForObject objectForKey:@"uiControls"];
     NSArray *displayArray = [dataForObject objectForKey:@"DisplayFields"];
-    NSMutableArray *displayFieldsArray = [[NSMutableArray alloc] init] ;
+    NSMutableArray *displayFieldsArray = [[NSMutableArray alloc] init];
     NSMutableArray *TableArray = [[NSMutableArray alloc] init];
     NSMutableDictionary *tableArrayDict=[[NSMutableDictionary alloc]init];
     NSArray *criteriaArray = [dataForObject objectForKey:@"SearchCriteriaFields"];
@@ -408,6 +465,11 @@
     NSMutableString *joinFields = [[NSMutableString alloc] init];
     NSDictionary *dict;
     NSString *objectId=[dataForObject  objectForKey:@"ObjectId"];
+    NSMutableDictionary *dictforparsing=[[NSMutableDictionary alloc]init];
+    NSDictionary *logicalParsingResult=[[NSDictionary alloc ]init];
+    NSMutableArray *searchFieldsArr=[[NSMutableArray alloc]init];
+    NSMutableString *customizeSearch=[[NSMutableString alloc]init];
+    [dictforparsing setObject:object forKey:@"object"]; 
     int fieldsCount = 2;
     [queryFields appendString:[NSString stringWithFormat:@"'%@'.Id",object]];
     [queryFields appendString:@","];
@@ -549,19 +611,34 @@
                    [tableArrayDict setObject:searchableField forKey:searchableFieldTableName ];
 
            }
-        
+        NSString * searchfield=[NSString stringWithFormat:@"'%@'.%@",[self getApiNameFromFieldLabel:[[searchableArray objectAtIndex:i] objectForKey:@"SVMXC__Object_Name2__c"]],searchableField];
+        [searchFieldsArr addObject:searchfield];
+        NSLog(@"%@",searchFieldsArr);
         if(![displayFieldsArray containsObject:searchableField])
         {
             [queryFields appendString:@","];
             [queryFields appendFormat:@"'%@'.%@",[self getApiNameFromFieldLabel:[[searchableArray objectAtIndex:i] objectForKey:@"SVMXC__Object_Name2__c"]],searchableField];
-            fieldsCount++;
         }
+        fieldsCount++;
     }
     [displayFieldsArray release];
     NSString *queryStatement;
+    //for adding search field in the where clause
+    for (int i=0; i<[searchFieldsArr count]; i++)
+    {
+        if(i !=0)
+            [customizeSearch appendString:@" OR "];
+        [customizeSearch appendString:[searchFieldsArr objectAtIndex:i]];
+        [customizeSearch appendString:@" LIKE "];
+        NSString *strSearchCriteria=[self getSearchCriteriaStringFromUserData:[uiControlsValue objectForKey:@"searchCriteria"] withSearchString:[uiControlsValue objectForKey:@"searchString"]];
+        [customizeSearch appendFormat:@"'%@'",strSearchCriteria];
+        // get the picklist value 
+        // get the text field value
+    }
     if([criteriaArray count] == 0 )
-        queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@'",queryFields,object];
-
+    {
+        queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE %@ LIMIT %@",queryFields,object,customizeSearch,[uiControlsValue objectForKey:@"searchLimitString"]];
+    }
     else 
     {
  
@@ -584,149 +661,87 @@
                     strTargetObject=[NSString stringWithFormat:@"%s",TargetObject] ;
             }
         }
-     
-    if(![Expression isEqualToString:@"(null)"])
-    {
-        NSArray *operatorArray = [NSArray arrayWithObjects:@"!=",@"<=",@">=",@"<>",@"=",@"<",@">", nil];
-        NSLog(@"%@",Expression);
-        NSArray *spaceSet = [Expression componentsSeparatedByString:@" "];
-        NSLog(@"Space Set = %@",spaceSet); 
-        int Count=-1;
-        NSMutableArray  *tokens = [[NSMutableArray alloc] init];
-        NSMutableArray  *alltokens = [[NSMutableArray alloc] init];
-        NSArray *logicalArray = [NSArray arrayWithObjects:@"AND ",@"OR ", nil];
-        int index = 0;
-        if([Expression rangeOfString:[logicalArray objectAtIndex:index]].length > 0)
-        {    
-            NSArray *logicalTokens = [Expression componentsSeparatedByString:[logicalArray objectAtIndex:index]];
-            NSLog(@"Tokens = %@ Length = %d",logicalTokens,[logicalTokens count]);
-            for(int i=0; i<[logicalTokens count]; i++)
-            {
-                NSString *token = [logicalTokens objectAtIndex:i];
-                if(i)
-                    [tokens addObject:[logicalArray objectAtIndex:index]];
-                [tokens addObject:token];
-            }
-        }
-        NSLog(@"Tokens = %@",tokens);
-        index++;
-        for(NSString *data in tokens)
+        NSLog(@"Adv Exp = %@",Expression);
+        if(![Expression isEqualToString:@"(null)"])
         {
-            if([data rangeOfString:[logicalArray objectAtIndex:index]].length > 0)
-            {   
-                NSArray *logicalTokens = [data componentsSeparatedByString:[logicalArray objectAtIndex:index]];
-                NSLog(@"Tokens = %@ Length = %d",logicalTokens,[logicalTokens count]);
-                for(int i=0; i<[logicalTokens count]; i++)
-                {
-                    NSString *token = [logicalTokens objectAtIndex:i];
-                    if(i)
-                        [alltokens addObject:[logicalArray objectAtIndex:index]];
-                    [alltokens addObject:token];
+                NSLog(@"%@",Expression);
+//                NSArray *spaceSet = [Expression componentsSeparatedByString:@" "];
+//                NSLog(@"Space Set = %@",spaceSet); 
+                NSMutableArray  *tokens = [[NSMutableArray alloc] init];
+                NSMutableArray  *alltokens = [[NSMutableArray alloc] init];
+                NSArray *logicalArray = [NSArray arrayWithObjects:@"AND",@"OR", nil];
+                int index = 0;
+                if([Expression rangeOfString:[logicalArray objectAtIndex:index]].length > 0)
+                {    
+                    NSArray *logicalTokens = [Expression componentsSeparatedByString:[logicalArray objectAtIndex:index]];
+//                    NSLog(@"Tokens = %@ Length = %d",logicalTokens,[logicalTokens count]);
+                    for(int i=0; i<[logicalTokens count]; i++)
+                    {
+                        NSString *token = [logicalTokens objectAtIndex:i];
+                        if(i)
+                            [tokens addObject:[logicalArray objectAtIndex:index]];
+                        [tokens addObject:token];
+                    }
                 }
-            }
-            else
-            {
-                [alltokens addObject:data];
-            }
-        }
-        NSLog(@"AllTokens = %@",alltokens);
-        for(NSString *token in alltokens)
-        {  
-            if([token Contains:@"AND "]||([token Contains:@"OR "]))
-            {
-                [finalQuery appendString:token];
-                continue;
-            }
-            for(NSString *operator in operatorArray)
-            {
-                if([token rangeOfString:operator].length > 0)
+//                NSLog(@"Tokens = %@",tokens);
+                index++;
+                for(NSString *data in tokens)
                 {
-                    Count++;
-                    NSArray *operatorTokens = [token componentsSeparatedByString:operator];
-                    NSString *objectDef   = [operatorTokens objectAtIndex:0];
-                    NSString *objectValue = [operatorTokens objectAtIndex:1];
-                    if([objectDef rangeOfString:@"."].length >0)
-                    {
-                        NSLog(@"Table Name is there");
-                        NSArray *fieldArray = [objectDef componentsSeparatedByString:@"."];
-                        NSString *tableName = [fieldArray objectAtIndex:0];
-                        NSString *fieldName = [fieldArray objectAtIndex:1];
-                        tableName = [tableName stringByReplacingOccurrencesOfString:@" " withString:@""];
-                        fieldName = [fieldName stringByReplacingOccurrencesOfString:@" " withString:@""];
-
-                        if([tableName rangeOfString:@"__r"].length >0)
+                    if([data rangeOfString:[logicalArray objectAtIndex:index]].length > 0)
+                    {   
+                        NSArray *logicalTokens = [data componentsSeparatedByString:[logicalArray objectAtIndex:index]];
+//                        NSLog(@"Tokens = %@ Length = %d",logicalTokens,[logicalTokens count]);
+                        for(int i=0; i<[logicalTokens count]; i++)
                         {
-                            NSMutableString * queryStatementForRefrence = [[NSMutableString alloc]initWithCapacity:0];
-                            queryStatementForRefrence = [NSMutableString stringWithFormat:@"SELECT reference_to from SFObjectField where object_api_name='%@' and relationship_name='%@'",object,tableName];    
-                            sqlite3_stmt * labelstmtForRefrence;
-                            const char *selectStatementForRefrence = [queryStatementForRefrence UTF8String];
-                            char *field1;        
-                            NSString *referenceObjectName=@"";
-                            if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatementForRefrence,-1, &labelstmtForRefrence, nil) == SQLITE_OK )
-                            {
-                                if(synchronized_sqlite3_step(labelstmtForRefrence) == SQLITE_ROW)
-                                {
-                                    field1 = (char *) synchronized_sqlite3_column_text(labelstmtForRefrence,0);
-                                    if((field1 !=nil) && strlen(field1))
-                                    referenceObjectName =[NSString stringWithFormat:@"%s",field1];
-                                }
-                            }
-                            [finalQuery appendString:referenceObjectName];
-                            [finalQuery appendString:@"."];
-                            [finalQuery appendString:fieldName];
+                            NSString *token = [logicalTokens objectAtIndex:i];
+                            if(i)
+                                [alltokens addObject:[logicalArray objectAtIndex:index]];
+                            [alltokens addObject:token];
                         }
-                        else
-                        {
-                            [finalQuery appendFormat:@"'%@'.%@",tableName,fieldName];
-                            if(![TableArray containsObject:tableName])
-                            {
-                                [TableArray addObject:tableName];
-                                [tableArrayDict setObject:[[criteriaArray objectAtIndex:Count] objectForKey:@"SVMXC__Field_Name__c"]  forKey:tableName ];
-                            }
-                        }
-                        
-                        [finalQuery appendString:@" "];
                     }
-                    else 
-                    {
-                        NSLog(@"Table Name is not there. Append Object Name as Table Name");
-                        [finalQuery appendFormat:@"'%@'",[self getApiNameFromFieldLabel:strTargetObject]];
-                        [finalQuery appendString:@"."];
-                        [finalQuery appendString:objectDef];
-                    }
-                    if([objectValue isEqualToString:@"null"])
-                    {
-                        [finalQuery appendString:operator];
-                        [finalQuery appendString:@"'"];
-                        [finalQuery appendString:objectValue];
-                        [finalQuery appendString:@"'"]; 
-                    }
-                    else if([objectValue rangeOfString:@"True"options:NSCaseInsensitiveSearch].length >0)
-                    {
-                        [finalQuery appendString:operator];
-                        objectValue=[objectValue stringByReplacingOccurrencesOfString:@"True"withString:@"1"];
-                        [finalQuery appendString:objectValue];
-                    }
-                    else if([objectValue rangeOfString:@"False"options:NSCaseInsensitiveSearch].length>0)
-                    {
-                        [finalQuery appendString:operator];
-                        objectValue=[objectValue stringByReplacingOccurrencesOfString:@"False"withString:@"0"];
-                        [finalQuery appendString:objectValue];
-                    }   
                     else
                     {
-                        [finalQuery appendString:operator];
-                        [finalQuery appendString:objectValue];
+                        [alltokens addObject:data];
                     }
-                        NSLog(@"Final Query = %@",finalQuery);
-                    break;    
-                }    
-            }
+                }
+                [dictforparsing setObject:TableArray forKey:@"TableArray"];
+                [dictforparsing setObject:tableArrayDict forKey:@"tableArrayDict"];
+                [dictforparsing setObject:strTargetObject forKey:@"strTargetObject"];
+                [dictforparsing setObject:criteriaArray forKey:@"criteriaArray"];
+                NSLog(@"AllTokens = %@",alltokens);
+                if(!([alltokens count]>0))
+                {
+                    alltokens=[NSString stringWithFormat:@"%@",Expression];
+                    [dictforparsing setObject:finalQuery forKey:@"finalQuery"];
+                    [dictforparsing setObject:alltokens forKey:@"token"];
+                    logicalParsingResult= [self getupdatedToken:dictforparsing];
+                    TableArray=[logicalParsingResult objectForKey:@"TableArray"];
+                    tableArrayDict=[logicalParsingResult objectForKey:@"tableArrayDict"];
+                    finalQuery=[logicalParsingResult objectForKey:@"finalQuery"];
+                }
+                else
+                {
+                    for(NSString *token in alltokens)
+                    {  
+                        if([token Contains:@"AND"]||([token Contains:@"OR"]))
+                        {
+                            [finalQuery appendFormat:@" %@ ",token];
+//                            [finalQuery appendString:token];
+                            continue;
+                        }
+                        
+                        [dictforparsing setObject:finalQuery forKey:@"finalQuery"];
+                        [dictforparsing setObject:token forKey:@"token"];
+                        logicalParsingResult= [self getupdatedToken:dictforparsing];
+                        TableArray=[logicalParsingResult objectForKey:@"TableArray"];
+                        tableArrayDict=[logicalParsingResult objectForKey:@"tableArrayDict"];
+                        finalQuery=[logicalParsingResult objectForKey:@"finalQuery"];
+
+                    }
+                    [alltokens release];
+                    [tokens release];
+                }
         }
-        [alltokens release];
-        [tokens release];
-    }
-        NSLog(@"Final Query = %@",finalQuery);
         for(int j=0;j<[criteriaArray count]; j++)
         {
             NSString *fieldName=@"",*TableName=@"";
@@ -780,7 +795,8 @@
             }
         }
 
-        for (int i=0; i<[TableArray count]; i++) {
+        for (int i=0; i<[TableArray count]; i++)
+        {
             if(![[TableArray objectAtIndex:i]isEqual:object]){
                 sqlite3_stmt * labelstmtforlabel;
                 NSMutableString * queryStatementforLabel= [[NSMutableString alloc]initWithCapacity:0];
@@ -873,9 +889,11 @@
       }   
             
     if([finalQuery length] > 0)
-            queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE %@ COLLATE NOCASE",queryFields,object,joinFields,finalQuery];
+    {
+            queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE %@ AND %@ COLLATE NOCASE LIMIT %@",queryFields,object,joinFields,finalQuery,customizeSearch,[uiControlsValue objectForKey:@"searchLimitString"]];
+    }
         else
-            queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@'%@",queryFields,object,joinFields];
+            queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@'%@ WHERE %@ LIMIT %@",queryFields,object,joinFields,customizeSearch,[uiControlsValue objectForKey:@"searchLimitString"]];
     }
     [queryFields release];
     sqlite3_stmt * statement;
@@ -908,7 +926,6 @@
                     if(j<([displayArray count] +2))
                     {
                         NSDictionary *object = [displayArray objectAtIndex:j-2];
-                        NSLog(@"%@",value);
                         if([value length])
                         {
                             refrenceValue=[self getvalueforReference:object value:value];
@@ -932,7 +949,10 @@
                      else
                      {
                          int indexValue = j - [displayArray count] - 2;
-                         if(![[dict allKeys] containsObject:[NSString stringWithFormat:@"%@.%@",[[searchableArray objectAtIndex:indexValue ] objectForKey:@"SVMXC__Object_Name2__c"],[[searchableArray objectAtIndex:indexValue ] objectForKey:@"SVMXC__Field_Name__c"]]])
+                         NSString *object_name_2 = [[searchableArray objectAtIndex:indexValue ] objectForKey:@"SVMXC__Object_Name2__c"];
+                         NSString *field_name = [[searchableArray objectAtIndex:indexValue ] objectForKey:@"SVMXC__Field_Name__c"];
+                         NSString *key = [NSString stringWithFormat:@"%@.%@",object_name_2,field_name];
+                         if(![[dict allKeys] containsObject:key])
                          {
                              refrenceValue=[self getvalueforReference:[searchableArray objectAtIndex:indexValue ]  value:value];
                              if(refrenceValue)
@@ -953,6 +973,425 @@
     }
     synchronized_sqlite3_finalize(statement);
     return [results autorelease];
+}
+- (NSString *) getDataTypeFor:(NSString *)objectName inArray:(NSArray *)dataArray
+{
+    NSString *dataType = nil;
+    for(NSDictionary *dict in dataArray)
+    {
+        NSString *objName = [dict objectForKey:@"SVMXC__Field_Name__c"];
+        if([objName isEqualToString:objectName])
+        {
+            dataType = [dict objectForKey:@"SVMXC__Display_Type__c"];
+            break;
+        }
+    }
+    return dataType;
+}
+- (NSString *) getSearchCriteriaStringFromUserData:(NSString *)criteriaString withSearchString:searchString
+{
+    NSString *resultSearchString = nil;
+    NSLog(@"Criteria String = :%@:",criteriaString);
+    NSLog(@"Criteria String From Dict = :%@:",[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_CRITERIA_CONTAINS]);
+    if([criteriaString isEqualToString:[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_CRITERIA_CONTAINS]])
+    {
+        resultSearchString = [NSString stringWithFormat:@"%%%@%%",searchString];
+        NSLog(@"Matched Contains");
+    }
+    if([criteriaString isEqualToString:[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_CRITERIA_EXTACT_MATCH]])
+    {
+        resultSearchString = searchString;
+    }
+    if([criteriaString isEqualToString:[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_CRITERIA_ENDS_WITH]])
+    {
+        resultSearchString = [NSString stringWithFormat:@"%%%@",searchString];
+    }
+    if([criteriaString isEqualToString:[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_CRITERIA_STARTS_WITH]])
+    {
+        resultSearchString = [NSString stringWithFormat:@"%@%%",searchString];
+    }
+    return resultSearchString;
+}
+
+-(NSMutableDictionary*) getupdatedToken:(NSMutableDictionary*)dictforparsing
+{
+    NSArray *operatorArray = [NSArray arrayWithObjects:@"!=",@"<=",@">=",@"<>",@"=",@"<",@">",@"NOT LIKE",@" LIKE ",@" NOT IN ",@" IN ", nil];
+    int Count=-1; 
+    NSMutableArray *TableArray = [dictforparsing objectForKey:@"TableArray"];
+    NSMutableDictionary *tableArrayDict=[dictforparsing objectForKey:@"tableArrayDict"];
+    NSMutableDictionary *resultDict=[[NSMutableDictionary alloc]init ];
+    NSMutableString *finalQuery=[dictforparsing objectForKey:@"finalQuery"];
+    NSString *token=[dictforparsing objectForKey:@"token"];
+    
+    NSArray * criteria_array  = [dictforparsing objectForKey:@"criteriaArray"];
+    NSDictionary * criteria_dict = [criteria_array objectAtIndex:0];
+    NSArray * criteria_ALl_keys = [criteria_dict allKeys];
+    NSString * data_type = @"";
+    for(NSString * str in criteria_ALl_keys)
+    {
+        if([str isEqualToString:@"SVMXC__Display_Type__c"])
+        {
+            data_type = [criteria_dict objectForKey:str];
+            break;
+        }
+    }
+
+    NSString * NotOp = @"NOT(";
+    
+    if([token rangeOfString:NotOp].length >0)
+    {
+        
+        token = [token stringByReplacingOccurrencesOfString:@"(NOT(" withString:@" "];
+        token = [token stringByReplacingOccurrencesOfString:@"LIKE" withString:@"NOT LIKE"];
+       // token = [token stringByReplacingOccurrencesOfString:@")" withString:@" "];
+        if([token rangeOfString:@")"].length >0)
+        {
+            NSRange  range = [token rangeOfString:@")"];
+            NSUInteger location= range.location;
+            token = [token stringByReplacingCharactersInRange:NSMakeRange(location, 2) withString:@""];
+        }
+    }
+    
+    for(NSString *operator in operatorArray)
+    {
+        if([token rangeOfString:operator].length > 0)
+        {
+            Count++;
+            NSArray *operatorTokens = [token componentsSeparatedByString:operator];
+            NSString *objectDef   = [operatorTokens objectAtIndex:0];
+            NSString *objectValue = [operatorTokens objectAtIndex:1];
+            NSString *objectDefWithoutBrace=[objectDef stringByReplacingOccurrencesOfString:@"(" withString:@""];      
+            objectDefWithoutBrace=[objectDefWithoutBrace stringByReplacingOccurrencesOfString:@")" withString:@""];
+            NSString *objectValueBrace=[objectValue stringByReplacingOccurrencesOfString:@"(" withString:@""];
+            objectValueBrace=[objectValueBrace stringByReplacingOccurrencesOfString:@")" withString:@""];
+            NSString *fieldName=@"",*tableName=@"";
+            if([objectDef rangeOfString:@"."].length >0)
+            {
+                NSLog(@"Table Name is there");
+                NSArray *fieldArray = [objectDef componentsSeparatedByString:@"."];
+                tableName = [fieldArray objectAtIndex:0];
+                //NSString *fieldName = [fieldArray objectAtIndex:1];
+                fieldName = [fieldArray objectAtIndex:1];
+                tableName = [tableName stringByReplacingOccurrencesOfString:@" " withString:@""];
+                fieldName = [fieldName stringByReplacingOccurrencesOfString:@" " withString:@""];
+                if([tableName rangeOfString:@"__r"].length >0)
+                {
+                    NSDictionary *countDict=[self occurenceOfBraces:tableName];
+                    tableName=[tableName stringByReplacingOccurrencesOfString:@"(" withString:@""];
+                    tableName=[tableName stringByReplacingOccurrencesOfString:@")" withString:@""];
+                    NSMutableString * queryStatementForRefrence = [[NSMutableString alloc]initWithCapacity:0];
+                    queryStatementForRefrence = [NSMutableString stringWithFormat:@"SELECT reference_to from SFObjectField where object_api_name='%@' and relationship_name='%@'",[dictforparsing objectForKey:@"object"],tableName];    
+                    sqlite3_stmt * labelstmtForRefrence;
+                    const char *selectStatementForRefrence = [queryStatementForRefrence UTF8String];
+                    char *field1;        
+                    NSString *referenceObjectName=@"";
+                    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatementForRefrence,-1, &labelstmtForRefrence, nil) == SQLITE_OK )
+                    {
+                        if(synchronized_sqlite3_step(labelstmtForRefrence) == SQLITE_ROW)
+                        {
+                            field1 = (char *) synchronized_sqlite3_column_text(labelstmtForRefrence,0);
+                            if((field1 !=nil) && strlen(field1))
+                                referenceObjectName =[NSString stringWithFormat:@"%s",field1];
+                        }
+                    }
+                    synchronized_sqlite3_finalize(labelstmtForRefrence);
+
+                    for (int i=0; i<[[countDict objectForKey:@"rightBraces"] intValue]; i++) 
+                    {
+                        [finalQuery appendFormat:@"("];
+                    }
+                    if([objectValue rangeOfString:@"null"options:NSCaseInsensitiveSearch].length >0 &&([operator isEqualToString:@"!="] || [operator isEqualToString:@"<>"]) )
+                    {
+                        [finalQuery appendFormat:@"trim(%@.%@)",referenceObjectName,fieldName];
+                    }
+                    else
+                    {
+                        [finalQuery appendString:referenceObjectName];
+                        [finalQuery appendString:@"."];
+                        [finalQuery appendString:fieldName];
+                    }
+                    
+                    
+                    for (int i=0; i<[[countDict objectForKey:@"leftBraces"] intValue]; i++) 
+                    {
+                        [finalQuery appendFormat:@")"];
+                    }
+                }
+                else
+                {
+                   
+                    NSDictionary *countBracesintableName=[self occurenceOfBraces:tableName];
+                    NSDictionary *countBracesinFiledName=[self occurenceOfBraces:fieldName];
+                    for (int i=0; i<[[countBracesintableName objectForKey:@"rightBraces"] intValue]; i++) 
+                    {
+                        [finalQuery appendFormat:@"("];
+                    }
+                    NSString * objectName = [dictforparsing objectForKey:@"object"];
+                    if([tableName isEqualToString:@"RecordType"])
+                    {
+                        
+                        NSString * component_expression = [NSString stringWithFormat:@"%@.RecordTypeId   in   (select  record_type_id  from SFRecordType where record_type %@ %@ )" , objectName, operator,objectValue]; 
+                        [finalQuery appendFormat:@"%@" , component_expression];
+                    }
+                    else
+                    {
+                        
+                        if([objectValue rangeOfString:@"null"options:NSCaseInsensitiveSearch].length >0 &&([operator isEqualToString:@"!="] || [operator isEqualToString:@"<>"]) )
+                        {
+                            [finalQuery appendFormat:@"trim(%@.%@)",tableName,fieldName];
+                        }
+                        else
+                        {
+                            [finalQuery appendFormat:@"'%@'.%@",tableName,fieldName];
+                        }
+                        for (int i=0; i<[[countBracesinFiledName objectForKey:@"leftBraces"] intValue]; i++) 
+                        {
+                            [finalQuery appendFormat:@")"];
+                        }
+                        if(![TableArray containsObject:tableName])
+                        {
+                            [TableArray addObject:tableName];
+                            [tableArrayDict setObject:[[[dictforparsing objectForKey:@"criteriaArray"] objectAtIndex: Count] objectForKey:@"SVMXC__Field_Name__c"]  forKey:tableName ];
+                        }
+                    }
+                }
+                
+                [finalQuery appendString:@" "];
+            }
+            else 
+            {
+                NSLog(@"Table Name is not there. Append Object Name as Table Name");
+                NSDictionary *dictforBraces=[self occurenceOfBraces:objectDef];
+                for (int i=0; i<[[dictforBraces objectForKey:@"rightBraces"] intValue]; i++) 
+                {
+                    [finalQuery appendFormat:@"("];
+                }
+                if([objectValue rangeOfString:@"null"options:NSCaseInsensitiveSearch].length >0 &&([operator isEqualToString:@"!="] || [operator isEqualToString:@"<>"]) )
+                {
+                    
+                    [finalQuery appendFormat:@"trim(%@.%@)",[self getApiNameFromFieldLabel:[dictforparsing objectForKey:@"strTargetObject"]],objectDefWithoutBrace];
+                    
+                }
+                else
+                {
+                    [finalQuery appendFormat:@"'%@'",[self getApiNameFromFieldLabel:[dictforparsing objectForKey:@"strTargetObject"]]];
+                    [finalQuery appendString:@"."];
+                    [finalQuery appendString:objectDefWithoutBrace];
+                }
+                fieldName = objectDefWithoutBrace;
+                fieldName = [fieldName stringByReplacingOccurrencesOfString:@" " withString:@""];
+                for (int i=0; i<[[dictforBraces objectForKey:@"leftBraces"] intValue]; i++) 
+                {
+                    [finalQuery appendFormat:@")"];
+                }
+            }
+            if([objectValue rangeOfString:@"null"options:NSCaseInsensitiveSearch].length >0)
+            {
+                NSDictionary *Bracesinvalue=[self occurenceOfBraces:objectValue];
+                if([objectValueBrace isEqualToString:@" null"] &&([operator isEqualToString:@"!="] || [operator isEqualToString:@"<>"]) )
+                {
+                    [finalQuery appendFormat:@" != '' "];
+                }
+                else
+                {
+                    [finalQuery appendString:@" isnull"];
+                }
+                
+                
+                for (int i=0; i<[[Bracesinvalue objectForKey:@"leftBraces"] intValue]; i++) 
+                {
+                    [finalQuery appendFormat:@")"];
+                }
+            }
+            
+            else if(([[self getDataTypeFor:fieldName inArray:criteria_array] isEqualToString:BOOLEAN]) && ([objectValue rangeOfString:@"True"options:NSCaseInsensitiveSearch].length >0))
+            {
+                NSDictionary *Bracesinvalue=[self occurenceOfBraces:objectValue];
+                [finalQuery appendString:operator];
+                objectValueBrace=[objectValueBrace stringByReplacingOccurrencesOfString:@"True"withString:@"1"];
+                [finalQuery appendString:objectValueBrace];
+                for (int i=0; i<[[Bracesinvalue objectForKey:@"leftBraces"] intValue]; i++) 
+                {
+                    [finalQuery appendFormat:@")"];
+                }
+            }
+            else if(([[self getDataTypeFor:fieldName inArray:criteria_array] isEqualToString:BOOLEAN]) && ([objectValue rangeOfString:@"False"options:NSCaseInsensitiveSearch].length>0))
+            {
+                NSDictionary *Bracesinvalue=[self occurenceOfBraces:objectValue];
+                [finalQuery appendString:operator];
+                objectValueBrace=[objectValueBrace stringByReplacingOccurrencesOfString:@"False"withString:@"0"];
+                [finalQuery appendString:objectValueBrace];
+                for (int i=0; i<[[Bracesinvalue objectForKey:@"leftBraces"] intValue]; i++) 
+                {
+                    [finalQuery appendFormat:@")"];
+                }
+            }   
+//            else if ([objectValue isEqualToString:@"TODAY"] || [objectValue isEqualToString:@"TOMORROW"] || [objectValue isEqualToString:@"YESTERDAY"] )
+            else if ([objectValue compare:@"TODAY" options:NSCaseInsensitiveSearch] || [objectValue compare:@"TOMORROW" options:NSCaseInsensitiveSearch] || [objectValue compare:@"YESTERDAY" options:NSCaseInsensitiveSearch] )
+            {
+                NSDictionary *Bracesinvalue=[self occurenceOfBraces:objectValue];
+                [finalQuery appendString:operator];
+                [finalQuery appendString:@"'"];
+                
+                NSTimeInterval secondsPerDay = 24 * 60 * 60;
+                
+                NSString * today_Date ,* tomorow_date ,* yesterday_date;
+                
+                NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
+                //[dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+                
+                NSDate *today = [NSDate date];;
+                
+                NSDate *tomorrow, *yesterday;
+                
+                tomorrow = [today dateByAddingTimeInterval: secondsPerDay];
+                
+                yesterday = [today dateByAddingTimeInterval: -secondsPerDay];
+                
+                
+                //for macros expantion
+                if([data_type isEqualToString:@"DATE"])
+                {
+                    [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+                    
+                    today_Date = [dateFormatter stringFromDate:today];
+                    tomorow_date = [dateFormatter stringFromDate:tomorrow];
+                    yesterday_date = [dateFormatter stringFromDate:yesterday];
+                    
+                    if([objectValue isEqualToString:@"TODAY"])
+                    {
+                        [finalQuery appendString:today_Date];
+                        
+                    }
+                    if([objectValue isEqualToString:@"TOMORROW"])
+                    {
+                       [finalQuery appendString:tomorow_date];
+                        
+                    }
+                    if([objectValue isEqualToString:@"YESTERDAY"])
+                    {
+                        [finalQuery appendString:today_Date];
+                    }
+                    for (int i=0; i<[[Bracesinvalue objectForKey:@"leftBraces"] intValue]; i++) 
+                    {
+                        [finalQuery appendFormat:@")"];
+                    }
+                    
+                }
+                
+                if([data_type isEqualToString:@"DATETIME"])
+                {
+                    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+                    
+                    today_Date = [dateFormatter stringFromDate:today];
+                    tomorow_date = [dateFormatter stringFromDate:tomorrow];
+                    yesterday_date = [dateFormatter stringFromDate:yesterday];
+                    
+                    if([objectValue isEqualToString:@"NOW"])
+                    {
+                        [finalQuery appendString:today_Date];
+                    }
+                    
+                    if([objectValue isEqualToString:@"TODAY"])
+                    {
+                        [finalQuery appendString:today_Date];
+                    }
+                    
+                    if([objectValue isEqualToString:@"TOMORROW"])
+                    {
+                       [finalQuery appendString:tomorow_date];
+                    }
+                    
+                    if([objectValue isEqualToString:@"YESTERDAY"])
+                    {
+                        [finalQuery appendString:yesterday_date];
+                    }
+                    for (int i=0; i<[[Bracesinvalue objectForKey:@"leftBraces"] intValue]; i++) 
+                    {
+                        [finalQuery appendFormat:@")"];
+                    }
+                }
+                [finalQuery appendString:@"'"];
+            }
+            else
+            {
+                NSDictionary *valueBracesOccurence=[self occurenceOfBraces:objectValue];
+                if(![tableName isEqualToString:@"RecordType"])
+                {
+                    if([operator isEqualToString:@" NOT IN "] || [operator isEqualToString:@" IN "])
+                    {
+                        [finalQuery appendString:operator];
+                         [finalQuery appendString:@"("];
+                        [finalQuery appendString:objectValueBrace];
+
+                    }
+                    else
+                    {
+                        [finalQuery appendString:operator];
+                        [finalQuery appendString:objectValueBrace];
+                    }
+                    for (int i=0; i<[[valueBracesOccurence objectForKey:@"leftBraces"] intValue]; i++) 
+                    {
+                        [finalQuery appendFormat:@")"];
+                    }
+                }
+                                
+            }
+            [resultDict setObject:TableArray forKey:@"TableArray"];
+            [resultDict setObject:tableArrayDict forKey:@"tableArrayDict"];
+            [resultDict setObject:finalQuery forKey:@"finalQuery"];
+            break;    
+        }    
+    }
+    return resultDict;
+}
+-(NSMutableDictionary*) occurenceOfBraces:(NSString*)token
+{
+    NSUInteger countRight = 0,countLeft=0;
+    NSMutableDictionary *bracesCount=[[NSMutableDictionary alloc]init];
+    if([token Contains:@"("])
+    {
+        NSUInteger length = [token length];
+        NSRange range = NSMakeRange(0, length); 
+        while(range.location != NSNotFound)
+        {
+            range = [token rangeOfString: @"(" options:0 range:range];
+            if(range.location != NSNotFound)
+            {
+                range = NSMakeRange(range.location + range.length, length - (range.location + range.length));
+                countRight++; 
+            }
+        }
+        
+        [bracesCount setObject:[NSString stringWithFormat:@"%d",countRight] forKey:@"rightBraces"];
+    }
+    else
+    {
+        [bracesCount setObject:[NSString stringWithFormat:@"%d",countRight] forKey:@"rightBraces"];
+
+    }
+    if([token Contains:@")"])
+    {
+            NSUInteger length = [token length];
+            NSRange range = NSMakeRange(0, length); 
+            while(range.location != NSNotFound)
+            {
+                range = [token rangeOfString: @")" options:0 range:range];
+                if(range.location != NSNotFound)
+                {
+                    range = NSMakeRange(range.location + range.length, length - (range.location + range.length));
+                    countLeft++; 
+                }
+            }
+            [bracesCount setObject:[NSString stringWithFormat:@"%d",countLeft] forKey:@"leftBraces"];
+    }
+    else
+    {
+        [bracesCount setObject:[NSString stringWithFormat:@"%d",countLeft] forKey:@"leftBraces"];
+
+    }
+   
+    return bracesCount;
 }
 -(NSString *)getvalueforReference:(NSDictionary*) tableArray value:(NSString*)value
 {
@@ -1045,7 +1484,7 @@
 - (NSString *) getFieldLabelForApiName:(NSString *)apiName
 {
     NSString *queryStatement = [NSString stringWithFormat:@"SELECT label from SFObject where api_name = '%@'",apiName];
-    NSLog(@"Query Statement = %@",queryStatement);
+    //    NSLog(@"Query Statement = %@",queryStatement);
     sqlite3_stmt * statement;
     NSString *apiLabel = apiName;
     if(appDelegate == nil)
@@ -1054,24 +1493,24 @@
     {
         if (synchronized_sqlite3_step(statement) == SQLITE_ROW)
         {
-            const char * label = (char *)synchronized_sqlite3_column_text(statement, 0);
+//            const char * label = (char *)synchronized_sqlite3_column_text(statement, 0);
+            char * label = (char *)synchronized_sqlite3_column_text(statement, 0);
             if ((label != nil) && strlen(label))
             {
-              apiLabel = [NSString stringWithUTF8String:label];   
-                NSLog(@"Label Name = %@",apiLabel);
-            
+                NSLog(@"Value = %s",label);
+                //apiLabel = [NSString stringWithUTF8String:label];
+                apiLabel = [NSString stringWithFormat:@"%s",label];
             }
         }
     }
     
     synchronized_sqlite3_finalize(statement);
     return apiLabel;
-    
+       
 }
 - (NSString *) getApiNameFromFieldLabel:(NSString *)labelName
 {
     NSString *queryStatement = [NSString stringWithFormat:@"SELECT api_name from SFObject where label = '%@'",labelName];
-    NSLog(@"Query Statement = %@",queryStatement);
     sqlite3_stmt * statement;
     NSString *apiName = labelName;
     if(appDelegate == nil)
@@ -1080,24 +1519,26 @@
     {
         if (synchronized_sqlite3_step(statement) == SQLITE_ROW)
         {
-            const char * label = (char *)synchronized_sqlite3_column_text(statement, 0);
+//            const char * label = (char *)synchronized_sqlite3_column_text(statement, 0);
+            char * label = (char *)synchronized_sqlite3_column_text(statement, 0);
             if ((label !=nil) && strlen(label))
             {
-                apiName = [NSString stringWithUTF8String:label];   
-                NSLog(@"Label Name = %@",apiName);
-                
+                NSLog(@"Value = %s",label);
+//                apiName = [NSString stringWithUTF8String:label]; 
+                apiName = [NSString stringWithFormat:@"%s",label];
+
             }
         }
+        synchronized_sqlite3_finalize(statement);
     }
     
-    synchronized_sqlite3_finalize(statement);
-    return apiName;
+    
+    return [apiName retain];
     
 }
 - (NSString*) getLabelFromApiName:(NSString*)api_name objectName:(NSString*) objectName
 { 
     NSString *queryStatement = [NSString stringWithFormat:@"SELECT label from SFObjectField where api_name ='%@' and object_api_name='%@'",api_name,objectName];
-    NSLog(@"Query Statement = %@",queryStatement);
     sqlite3_stmt * statement;
     NSString *apiLabel = api_name;
     if(appDelegate == nil)
@@ -1106,12 +1547,10 @@
     {
         if (synchronized_sqlite3_step(statement) == SQLITE_ROW)
         {
-            const char * label = (char *)synchronized_sqlite3_column_text(statement, 0);
+            char * label = (char *)synchronized_sqlite3_column_text(statement, 0);
             if ((label != nil) && strlen(label))
             {
                 apiLabel = [NSString stringWithUTF8String:label];   
-                NSLog(@"Label Name = %@",apiLabel);
-                
             }
         }
     }
@@ -1122,130 +1561,27 @@
 }
 
 #pragma mark - Location Ping
-- (void) didGetSettingsInfoforLocationPing:(ZKQueryResult *)result error:(NSError *)error context:(id)context
+- (void) createUserGPSTable
 {
-    // Get the Active Global Profile
-    if ([[result records] count] > 0)
-    {
-        if(settingInfoIdForLocationPing) [settingInfoIdForLocationPing release];
-        if(settingsInfoArrayForLocationPing) [settingsInfoArrayForLocationPing release];
-        settingInfoIdForLocationPing = [[NSMutableString alloc] initWithCapacity:0];
-        settingsInfoArrayForLocationPing = [[NSMutableArray alloc] initWithCapacity:0];
-        for (int i = 0; i < [[result records] count]; i++)
-        {
-            ZKSObject * obj = [[result records] objectAtIndex:i];
-            
-            [settingsInfoArrayForLocationPing addObject:[obj fields]];
-            
-            if ([settingInfoIdForLocationPing length] == 0)
-                [settingInfoIdForLocationPing appendFormat:@"(\'%@\'", [[obj fields] objectForKey:@"Id"]];
-            else
-                [settingInfoIdForLocationPing appendFormat:@", \'%@\'", [[obj fields] objectForKey:@"Id"]];
-        }
-        [settingInfoIdForLocationPing appendString:@")"];
-        
-        NSString * _query = @"Select Id, SVMXC__Profile_Name__c, SVMXC__Active__c, SVMXC__IsDefault__c FROM SVMXC__ServiceMax_Config_Data__c WHERE SVMXC__RecordType_Name__c=\'Configuration Profile\' and SVMXC__Configuration_Type__c = \'Global\' and SVMXC__Active__c = true";
-        [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetActiveGlobalProfileForLocationPing:error:context:) context:nil];
-    }
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SVMXC__User_GPS_Log__c ('local_id' VARCHAR PRIMARY KEY  NOT NULL  DEFAULT (0), 'SVMXC__Status__c' TEXT, 'SVMXC__Latitude__c' VARCHAR, SVMXC__User__c 'TEXT', 'OwnerId' TEXT, 'SVMXC__Device_Type__c' TEXT, 'CreatedById' TEXT, 'SVMXC__Additional_Info__c' VARCHAR, 'SVMXC__Time_Recorded__c' VARCHAR, 'SVMXC__Longitude__c' VARCHAR)"]];
+    if(result == YES)
+        NSLog(@"SVMXC__User_GPS_Log__c Table Create Success");
     else
-    {
-        // Continue logging in
-        didGetPDF = YES;
-    }
+        NSLog(@"SVMXC__User_GPS_Log__c Table Create Failed");
 }
-- (void) didGetActiveGlobalProfileForLocationPing:(ZKQueryResult *)result error:(NSError *)error context:(id)context
+- (void) deleteRecordFromUserGPSTable:(NSString *) localId
 {
-    if (!appDelegate.isInternetConnectionAvailable)
+    NSString * queryStatementGPSLog = [NSString stringWithFormat:@"DELETE FROM SVMXC__User_GPS_Log__c where local_id='%@'",localId];
+    char * err;
+    if(localId != nil)
     {
-        [appDelegate displayNoInternetAvailable];
-        return;
-    }
-    
-    // Get Settings value Info(query could return multiple rows)
-    if ([[result records] count] > 0)
-    {
-        ZKSObject * obj = [[result records] objectAtIndex:0];
-        NSString *ActiveGloProInfoId = [[[obj fields] objectForKey:@"Id"] retain];
-        NSString * _query = nil;
-        if ([settingInfoIdForLocationPing length] != 0)
-            _query = [NSString stringWithFormat:@"Select Id, SVMXC__Setting_Configuration_Profile__c, SVMXC__Setting_ID__c, SVMXC__Internal_Value__c, SVMXC__Display_Value__c, SVMXC__Active__c, SVMXC__IsDefault__c FROM SVMXC__ServiceMax_Config_Data__c WHERE SVMXC__Setting_Configuration_Profile__c = \'%@\' AND SVMXC__Setting_ID__c IN %@ AND RecordType.Name = \'SETTING VALUE\' ORDER BY SVMXC__Setting_Unique_ID__c", ActiveGloProInfoId, settingInfoIdForLocationPing];
-        else
-            _query = [NSString stringWithFormat:@"SELECT Id, SVMXC__Setting_Configuration_Profile__c, SVMXC__Setting_ID__c, SVMXC__Internal_Value__c, SVMXC__Display_Value__c, SVMXC__Active__c, SVMXC__IsDefault__c FROM SVMXC__ServiceMax_Config_Data__c WHERE SVMXC__Setting_Configuration_Profile__c = \'%@' AND RecordType.Name = \'SETTING VALUE\' ORDER BY SVMXC__Setting_Unique_ID__c", ActiveGloProInfoId];
-        [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetLocationPingSettingsValue:error:context:) context:nil];
-        
-    }
-    else
-    {
-        // Continue logging in
-        didGetPDF = YES;
+        if (synchronized_sqlite3_exec(appDelegate.db, [queryStatementGPSLog UTF8String], NULL, NULL, &err) != SQLITE_OK)
+        {
+            NSLog(@"Failed to delete, for rowid= %@",localId);
+        }
     }
 }
-- (void) didGetLocationPingSettingsValue:(ZKQueryResult *)result error:(NSError *)error context:(id)context
-{
-    if ([[result records] count] > 0)
-    {
-        //if(settingsValueArrayForLocationPing) [settingsValueArrayForLocationPing release];
-        settingsValueArrayForLocationPing = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-        for (int i = 0; i < [[result records] count]; i++)
-        {
-            ZKSObject * obj = [[result records] objectAtIndex:i];
-            [settingsValueArrayForLocationPing addObject:[obj fields]];
-        }
-        NSMutableArray *locationPingSettingsInfoArray = [[NSMutableArray alloc] init];
-        NSMutableArray *locationPingSettingsValueArray = [[NSMutableArray alloc] init];
-        for (int i = 0; i < [settingsInfoArrayForLocationPing count]; i++)
-        {
-            NSMutableDictionary *locationPingSettingInfoDict = [[NSMutableDictionary alloc] init];
-            NSDictionary *infoDict = [settingsInfoArrayForLocationPing objectAtIndex:i];
-            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"Id"] forKey:@"Id"];
-            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__Active__c"] forKey:@"SVMXC__Active__c"];
-            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__Data_Type__c"] forKey:@"SVMXC__Data_Type__c"];
-            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__Default_Value__c"] forKey:@"SVMXC__Default_Value__c"];
-            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__Description__c"] forKey:@"SVMXC__Description__c"];
-            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__IsPrivate__c"]  forKey:@"SVMXC__IsPrivate__c"];
-            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__IsStandard__c"] forKey:@"SVMXC__IsStandard__c"];
-            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__Search_Order__c"] forKey:@"SVMXC__Search_Order__c"];
-            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__SettingID__c"] forKey:@"SVMXC__SettingID__c"];
-            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__Setting_Type__c"] forKey:@"SVMXC__Setting_Type__c"];
-            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__Setting_Unique_ID__c"] forKey:@"SVMXC__Setting_Unique_ID__c"];
-            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__Settings_Name__c"] forKey:@"SVMXC__Settings_Name__c"];
-            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__SubmoduleID__c"] forKey:@"SVMXC__SubmoduleID__c"];
-            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__Submodule__c"] forKey:@"SVMXC__Submodule__c"];
-            [locationPingSettingInfoDict setObject:[infoDict objectForKey:@"SVMXC__Values__c"] forKey:@"SVMXC__Values__c"];
-            
-            
-            for (int j = 0; j < [settingsValueArrayForLocationPing count]; j++)
-            {
-                NSString * settingsInfoSettingId = [[settingsInfoArrayForLocationPing objectAtIndex:i] objectForKey:@"Id"];
-                NSString * settingsValueSettingId = [[settingsValueArrayForLocationPing objectAtIndex:j] objectForKey:@"SVMXC__Setting_ID__c"];
-                
-                if ([settingsValueSettingId isEqualToString:settingsInfoSettingId])
-                {
-                    if ([[[settingsInfoArrayForLocationPing objectAtIndex:i] 
-                          objectForKey:@"SVMXC__Setting_Unique_ID__c"] Contains:@"IPAD007"])
-                    {
-                        NSMutableDictionary *locationPingSettingDict = [[NSMutableDictionary alloc] init];
-                        NSDictionary *valueDict = [settingsValueArrayForLocationPing objectAtIndex:j];
-                        [locationPingSettingDict setObject:[valueDict objectForKey:@"Id"] forKey:@"Id"];
-                        [locationPingSettingDict setObject:[valueDict objectForKey:@"SVMXC__Setting_Configuration_Profile__c"] forKey:@"SVMXC__Setting_Configuration_Profile__c"];
-                        [locationPingSettingDict setObject:[valueDict objectForKey:@"SVMXC__Setting_ID__c"] forKey:@"SVMXC__Setting_ID__c"];
-                        [locationPingSettingDict setObject:[valueDict objectForKey:@"SVMXC__Internal_Value__c"] forKey:@"SVMXC__Internal_Value__c"];
-                        [locationPingSettingDict setObject:[valueDict objectForKey:@"SVMXC__Display_Value__c"] forKey:@"SVMXC__Display_Value__c"];
-                        [locationPingSettingDict setObject:[valueDict objectForKey:@"SVMXC__Active__c"]  forKey:@"SVMXC__Active__c"];
-                        [locationPingSettingDict setObject:[valueDict objectForKey:@"SVMXC__IsDefault__c"] forKey:@"SVMXC__IsDefault__c"];
-                        
-                        [locationPingSettingsValueArray addObject:locationPingSettingDict];
-                        [locationPingSettingDict release];
-                    }
-                }
-            }
-            [locationPingSettingsInfoArray addObject:locationPingSettingInfoDict];
-            [locationPingSettingInfoDict release];
-        }
-        [self insertSettingsIntoTable:locationPingSettingsInfoArray:@"SettingsInfo"];        
-        [self insertSettingsIntoTable:locationPingSettingsValueArray:@"SettingsValue"];        
-    }
-}
+
 // delete seq
 - (void) deleteSequenceofTable:(NSString *)tableName 
 {
@@ -1334,9 +1670,11 @@
     if(isInsertedIntoLocationTable)
     {
         NSLog(@"Success to Insert Data in Table");
-        [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:id_value SF_id:@"" record_type:MASTER operation:INSERT object_name:@"SVMXC__User_GPS_Log__c" sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@""];
+        /*
+        [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:id_value SF_id:@"" record_type:MASTER operation:INSERT object_name:@"SVMXC__User_GPS_Log__c" sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@""];*/
         NSLog(@"Insertion success");
         [self updateTechnicianLocation];
+        [self updateUserGPSLocation];
     }
 }
 - (void) purgeLocationPingTable
@@ -1397,8 +1735,10 @@
                 isDataDeletedFromUser_GPS_Log=FALSE;
             }
         }
+        /*
         if(isDataDeletedFromUser_GPS_Log)
             [appDelegate.databaseInterface DeleterecordFromTable:@"SFDataTrailer" Forlocal_id:strlocal_id];        
+         */
         sqlite3_finalize(statement);
         row_count--;
     }
@@ -1445,65 +1785,162 @@
     synchronized_sqlite3_finalize(statement);
     return settingValue;
 }
-//- (NSString *) getActiveTechnicainId
-//{
-//    if(appDelegate.isInternetConnectionAvailable)
-//        [appDelegate goOnlineIfRequired];
-//    if (appDelegate.loggedInUserId == nil)
-//        appDelegate.loggedInUserId = [appDelegate.dataBase getLoggedInUserId:appDelegate.username];    
-//    ZKUserInfo * userinfo = [[ZKServerSwitchboard switchboard] userInfo];    
-//    NSString * userId = [userinfo userId];
-//    
-//    if ((appDelegate.loggedInUserId == nil) || ([appDelegate.loggedInUserId length] > 0))
-//        appDelegate.loggedInUserId = userId;
-//    
-//    NSString * _query = [NSString stringWithFormat:@"SELECT Id, SVMXC__Service_Group__c, SVMXC__Inventory_Location__c  FROM SVMXC__Service_Group_Members__c WHERE SVMXC__Active__c = TRUE and SVMXC__Salesforce_User__c = '%@' limit 1", appDelegate.loggedInUserId];
-//    
-//    NSLog(@"Query = %@",_query);
-//    didUpdateTechnicianLocation = NO;
-//    [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(initDebriefDataLocationPing:error:context:) context:nil];
-//    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE)) 
-//    {
-//        if (!appDelegate.isInternetConnectionAvailable)
-//            break;
-//        if (didUpdateTechnicianLocation)
-//            break;
-//    }
-//    NSLog(@"Active Technician ID = %@",appTechnicianId);
-//    return appTechnicianId;
-//}
-//- (void) initDebriefDataLocationPing:(ZKQueryResult *)result error:(NSError *)error context:(id)context
-//{
-//    didUpdateTechnicianLocation = YES;
-//    if (!appDelegate.isInternetConnectionAvailable)
-//    {
-//        return;
-//    }
-//    NSArray * array = [result records];
-//    
-//    if([array count] == 0)
-//    {
-//        NSLog(@"No Active Technician Found");
-//        appTechnicianId = nil;
-//        appServiceTeamId = nil;
-//        return;
-//    }
-//    
-//    ZKSObject * obj = [array objectAtIndex:0];
-//    if (appServiceTeamId != nil)
-//    {
-//        [appServiceTeamId release];
-//        appServiceTeamId = nil;
-//    }
-//    appServiceTeamId = [[[obj fields] objectForKey:@"SVMXC__Service_Group__c"] retain];
-//    
-//    if (appTechnicianId != nil)
-//    {
-//        [appTechnicianId release];
-//        appTechnicianId = nil;
-//    }
-//    appTechnicianId = [[[obj fields] objectForKey:@"Id"] retain];
-//}
+- (void)updateUserGPSLocation
+{
+    if(appDelegate == nil)
+        appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+    
+    if(appDelegate.metaSyncRunning)
+    {
+        NSLog(@"Sync is Running");
+        return;
+    }    
+    
+    NSString *sql = @"SELECT SVMXC__Latitude__c,SVMXC__Longitude__c,SVMXC__Status__c,SVMXC__User__c,SVMXC__Device_Type__c,SVMXC__Additional_Info__c,SVMXC__Time_Recorded__c,local_id FROM SVMXC__User_GPS_Log__c  ORDER BY rowid desc";
+    sqlite3_stmt *statement;
+    char *_longitude = NULL;
+    char *_latitude = NULL;
+    char *_status = NULL;
+    char *_user = NULL;
+    char *_deviceType = NULL;
+    char *_additional_info = NULL;
+    char *_timeRecorded = NULL;
+    char *_local_id = NULL;
+    
+    NSString *longitude = nil;
+    NSString *latitude = nil;
+    NSString *status = nil;
+    NSString *user = nil;
+    NSString *deviceType = nil;
+    NSString *additional_info = nil;
+    NSString *timeRecorded = nil;
+    NSString *localId = nil;    
+    
+    NSMutableArray *resultArray = [[NSMutableArray alloc] init];
+
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sql UTF8String], -1, &statement, nil) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW) 
+        {
+            _latitude  = (char *) synchronized_sqlite3_column_text(statement, 0);
+            _longitude = (char *) synchronized_sqlite3_column_text(statement, 1);
+            _status = (char *) synchronized_sqlite3_column_text(statement, 2);
+            _user = (char *) synchronized_sqlite3_column_text(statement, 3);
+            _deviceType = (char *) synchronized_sqlite3_column_text(statement, 4);
+            _additional_info = (char *) synchronized_sqlite3_column_text(statement, 5);
+            _timeRecorded = (char *) synchronized_sqlite3_column_text(statement, 6);
+            _local_id = (char *) synchronized_sqlite3_column_text(statement, 7);
+            if(_latitude!=nil && strlen(_latitude))
+            {
+                latitude = [NSString stringWithFormat:@"%s",_latitude];
+            }
+            else
+            {
+                latitude = @"";
+            }
+            if(_longitude!=nil && strlen(_longitude))
+            {
+                longitude = [NSString stringWithFormat:@"%s",_longitude];
+            }
+            else
+            {
+                longitude = @"";
+            }
+
+            if(_status!=nil && strlen(_status))
+            {
+                status = [NSString stringWithFormat:@"%s",_status];
+            }
+            else
+            {
+                status = @"";
+            }
+            
+            if(_user!=nil && strlen(_user))
+            {
+                user = [NSString stringWithFormat:@"%s",_user];
+            }
+            else
+            {
+                user = @"";
+            }
+
+            if(_deviceType!=nil && strlen(_deviceType))
+            {
+                deviceType = [NSString stringWithFormat:@"%s",_deviceType];
+            }
+            else
+            {
+                deviceType = @"";
+            }
+
+            if(_additional_info!=nil && strlen(_additional_info))
+            {
+                additional_info = [NSString stringWithFormat:@"%s",_additional_info];
+            }
+            else
+            {
+                additional_info = @"";
+            }
+
+            if(_timeRecorded!=nil && strlen(_timeRecorded))
+            {
+                timeRecorded = [NSString stringWithFormat:@"%s",_timeRecorded];
+                timeRecorded = [timeRecorded stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+                timeRecorded = [timeRecorded stringByReplacingOccurrencesOfString:@"Z" withString:@""];
+            }
+            else
+            {
+                timeRecorded = @"";
+            }
+
+            
+            if(_local_id!=nil && strlen(_local_id))
+            {
+                localId = [NSString stringWithFormat:@"%s",_local_id];
+            }
+            else
+            {
+                continue;
+            }
+            NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+            [dict setObject:status forKey:@"SVMXC__Status__c"];
+            [dict setObject:latitude forKey:@"SVMXC__Latitude__c"];
+            [dict setObject:longitude forKey:@"SVMXC__Longitude__c"];
+            [dict setObject:user forKey:@"SVMXC__User__c"];
+            [dict setObject:deviceType forKey:@"SVMXC__Device_Type__c"];
+            [dict setObject:additional_info forKey:@"SVMXC__Additional_Info__c"];
+            [dict setObject:timeRecorded forKey:@"SVMXC__Time_Recorded__c"];
+            [dict setObject:localId forKey:@"localId"];
+            [resultArray addObject:dict];
+            [dict release];
+        }        
+    }
+    sqlite3_finalize(statement);
+    if (!appDelegate.isInternetConnectionAvailable)
+    {
+        [resultArray release];
+        return;
+    }
+    [appDelegate goOnlineIfRequired];
+    didUserGPSLocationUpdated=FALSE;
+    NSLog(@"Updating User GPS Location Table");
+    [appDelegate.wsInterface dataSyncWithEventName:@"LOCATION_HISTORY" eventType:SYNC values:resultArray];
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+    {                
+        if (didUserGPSLocationUpdated == TRUE)
+            break;   
+        if (!appDelegate.isInternetConnectionAvailable)
+        {
+            break;
+        }
+        if (appDelegate.connection_error)
+        {
+            break;
+        }
+    }
+    [resultArray release];
+}
 - (void)updateTechnicianLocation
 {
     if(appDelegate == nil)
@@ -4352,6 +4789,11 @@
     
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS meta_sync_due ('local_id' INTEGER PRIMARY KEY  NOT NULL UNIQUE, 'description' VARCHAR)"];
     [self createTable:query];
+    
+    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS servicereprt_logo ('logo' VARCHAR)"];
+    [self createTable:query];
+    
+    [self createUserGPSTable];
 }
 
 
@@ -4700,10 +5142,6 @@
         
         NSString * _query = @"Select Id, SVMXC__Profile_Name__c, SVMXC__Active__c, SVMXC__IsDefault__c FROM SVMXC__ServiceMax_Config_Data__c WHERE SVMXC__RecordType_Name__c=\'Configuration Profile\' and SVMXC__Configuration_Type__c = \'Global\' and SVMXC__Active__c = true";
         [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetActiveGlobalProfile:error:context:) context:nil];
-        //Get the Location Ping Settings
-        _query = [NSString stringWithFormat:@"SELECT Id, SVMXC__SubmoduleID__c, SVMXC__SettingID__c, SVMXC__Setting_Unique_ID__c, SVMXC__Settings_Name__c, SVMXC__Data_Type__c, SVMXC__Values__c, SVMXC__Default_Value__c, SVMXC__Setting_Type__c, SVMXC__Search_Order__c, SVMXC__IsPrivate__c, SVMXC__Active__c, SVMXC__Description__c, SVMXC__IsStandard__c, SVMXC__Submodule__c FROM SVMXC__ServiceMax_Processes__c WHERE SVMXC__SubmoduleID__c = 'IPAD007' AND RecordType.Name = \'SETTINGS\' ORDER BY SVMXC__Setting_Unique_ID__c"];
-        [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetSettingsInfoforLocationPing:error:context:) context:nil];
-
     }
     else
     {
@@ -4750,6 +5188,9 @@
     }
     [self insertSettingsIntoTable:settingsValueArray:@"SettingsValue"];
     [self insertSettingsIntoTable:settingsInfoArray:@"SettingsInfo"];
+    
+    
+    [self getImageForServiceReportLogo];
     
     appDelegate.wsInterface.didOpComplete = TRUE;
     NSLog(@"IComeOUTHere didgetsettings");
@@ -4842,11 +5283,16 @@
 {
     NSString * queryStatement = @"";
     
-    if ([headerObjectName isEqualToString:@"Case"])
-        queryStatement = [NSString stringWithFormat:@"SELECT CaseNumber From '%@' WHERE local_id = '%@'", headerObjectName, recordId];
-    else
-        queryStatement = [NSString stringWithFormat:@"SELECT Name From %@ WHERE local_id = '%@'", headerObjectName, recordId];
+    NSString * Name = [appDelegate.dataBase getApiNameForNameField:headerObjectName];
     
+//    if ([headerObjectName isEqualToString:@"Case"])
+//        queryStatement = [NSString stringWithFormat:@"SELECT %@ From '%@' WHERE local_id = '%@'", headerObjectName, recordId];
+//    else
+//        queryStatement = [NSString stringWithFormat:@"SELECT Name From %@ WHERE local_id = '%@'", headerObjectName, recordId];
+    
+    
+    queryStatement = [NSString stringWithFormat:@"SELECT %@ From '%@' WHERE local_id = '%@'" , Name, headerObjectName, recordId];
+
     
     sqlite3_stmt * stmt;
     NSString * nameField = @"";
@@ -5239,6 +5685,10 @@
     
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS meta_sync_due ('local_id' INTEGER PRIMARY KEY  NOT NULL  UNIQUE, 'description' VARCHAR)"];
     [self createTemporaryTable:query];
+    
+    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS servicereprt_logo ('logo' VARCHAR)"];
+    [self createTemporaryTable:query];
+
     
     NSArray * tempTableArray = [NSArray arrayWithObjects:@"ChatterPostDetails",@"Document",@"ProductImage",@"SFSignatureData",@"UserImages",@"trobleshootdata",@"SFDataTrailer",@"SFDataTrailer_Temp",@"SYNC_HISTORY",@"sync_Records_Heap",@"LookUpFieldValue",@"Summary_PDF",@"sync_error_conflict", @"contact_images",@"internet_conflicts", @"meta_sync_status", @"meta_sync_due", nil];
     
@@ -6186,4 +6636,144 @@
 }
  
 #pragma mark - END
+
+-(NSString *) getfieldTypeForApi:(NSString *)tableName fieldName:(NSString *)fieldName
+{
+    NSString * query = [NSString stringWithFormat:@"SELECT type from SFobjectField where object_api_name = '%@' and api_name = '%@'",[self getApiNameFromFieldLabel:tableName], fieldName];
+    
+    
+    sqlite3_stmt * stmt;
+    
+    NSString * type = @"";
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        
+        while (sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            char * _type = (char *)synchronized_sqlite3_column_text(stmt, 0);
+            
+            if (_type != nil && strlen(_type))
+            {
+                type = [NSString stringWithUTF8String:_type];
+            }
+            
+        }
+        synchronized_sqlite3_finalize(stmt);
+    }
+    
+    
+    return type;
+
+}
+- (NSString *) getApiNameForNameField:(NSString *)headerObjectName
+{
+    NSString * fieldName = @"";
+    NSString * query = [NSString stringWithFormat:@"SELECT api_name FROM 'SFObjectField' where object_api_name = '%@' and name_field = 'TRUE'",headerObjectName];
+    sqlite3_stmt * stmt ;
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK  )
+    {
+        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            char * temp_fieldName = (char *)synchronized_sqlite3_column_text(stmt, 0);
+            if(temp_fieldName != nil)
+            {
+                fieldName = [NSString stringWithUTF8String:temp_fieldName];
+            }
+        }
+    }
+    synchronized_sqlite3_finalize(stmt);
+    return fieldName;
+    
+}
+
+
+- (NSString *) getReferenceObjectNameForPdf:(NSString *)ObjectName Field:(NSString *)FieldName Id:(NSString *)Id
+{
+    NSString * query = [NSString stringWithFormat:@"SELECT %@ FROM '%@' where Id = '%@' ",FieldName, ObjectName, Id];
+    
+    NSString * name = @"";
+    
+    sqlite3_stmt * stmt;
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            char * temp_fieldName = (char *)synchronized_sqlite3_column_text(stmt, 0);
+            if(temp_fieldName != nil)
+            {
+                name = [NSString stringWithUTF8String:temp_fieldName];
+            }
+        }
+
+    }
+    synchronized_sqlite3_finalize(stmt);
+    return name;
+    
+}
+
+
+#pragma mark - ServiceReportLogo
+- (void) getImageForServiceReportLogo
+{
+    NSString * _query = [NSString stringWithFormat:@"SELECT Body FROM Document Where Name = 'ServiceMax_iPad_CompanyLogo'"];
+    
+    [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetServiceReportLogo:error:context:) context:nil];
+    
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE)) 
+    {
+        if (!appDelegate.isInternetConnectionAvailable || appDelegate.connection_error)
+               break;
+        if (didGetServiceReportLogo)
+               break;
+    }
+    
+    
+}
+
+- (void) didGetServiceReportLogo:(ZKQueryResult *)result error:(NSError *)error context:(id)context
+{
+    // Store the image in a appDelegate UIImage
+    
+    NSArray * array = [result records];
+    
+    if ([array count] == 0)
+    {
+        didGetServiceReportLogo = YES;
+        return;
+    }
+    
+    NSString * dataString = [[[array objectAtIndex:0] fields] objectForKey:@"Body"];
+    
+   // NSData * data = [Base64 decode:dataString];
+    
+    // Decode data from Base64
+    if (dataString != nil && [dataString length] > 0)
+    {        
+        // Save the image to the application bundle
+//        NSFileManager * fileManager = [NSFileManager defaultManager];
+//        
+//        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+//        NSString *saveDirectory = [paths objectAtIndex:0];	
+//        NSString * filePath = [saveDirectory stringByAppendingPathComponent:@"header_image.png"];
+//        
+//        [fileManager createFileAtPath:filePath contents:data attributes:nil];
+        
+        NSString * query = [NSString stringWithFormat:@"INSERT INTO servicereprt_logo VALUES ('%@')", dataString];
+        
+        char * err;
+        if (synchronized_sqlite3_exec(appDelegate.db, [query UTF8String], NULL, NULL, &err) != SQLITE_OK)
+        {
+            NSLog(@"FAILED TO INSERT LOGO");
+        }
+        
+        
+    
+    }
+        
+    didGetServiceReportLogo = YES;
+}
+
+#pragma mark - END
+
 @end

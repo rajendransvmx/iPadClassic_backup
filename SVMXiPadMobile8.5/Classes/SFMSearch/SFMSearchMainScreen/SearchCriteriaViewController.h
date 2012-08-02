@@ -7,12 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-@protocol setTextFieldPopover <NSObject>
+@protocol setTextFieldPopoverForSFMSearch <NSObject>
 @optional
-- (void) setTextField:(NSString *)value;
+- (void) setTextField:(NSString *)value withTag:(int)tag;
 @end
 @interface SearchCriteriaViewController : UIViewController
 @property (nonatomic, retain) IBOutlet UIPickerView *picker;
 @property (nonatomic, retain) NSArray *pickerData;
-@property (nonatomic , assign)  id <setTextFieldPopover> pickerDelegate;
+@property (nonatomic, assign) int tag;
+@property (nonatomic , assign)  id <setTextFieldPopoverForSFMSearch> pickerDelegate;
 @end

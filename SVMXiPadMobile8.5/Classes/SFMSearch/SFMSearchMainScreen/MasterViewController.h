@@ -10,13 +10,17 @@
 #import "SearchCriteriaViewController.h"
 #import "DetailViewControllerForSFM.h"
 
-@interface MasterViewController : UIViewController <UITextFieldDelegate,setTextFieldPopover,ZBarReaderDelegate> 
+@interface MasterViewController : UIViewController <UITextFieldDelegate,setTextFieldPopoverForSFMSearch,ZBarReaderDelegate> 
 @property (nonatomic, retain) IBOutlet UILabel *includeOnlineResultLabel;
 @property (nonatomic, retain) IBOutlet UILabel      *searchCriteriaLabel;
+@property (nonatomic, retain) IBOutlet UILabel      *limitShowLabel;
+@property (nonatomic, retain) IBOutlet UILabel      *limitRecordLabel;
 @property (nonatomic, retain) IBOutlet UITextField *searchCriteria;
 @property (nonatomic, retain) IBOutlet UITextField *searchString;
+@property (nonatomic, retain) IBOutlet UITextField *searchLimitString;
 @property (nonatomic, retain) IBOutlet UISwitch    *searchFilterSwitch;
 @property (nonatomic, retain) NSArray *pickerData;
+@property (nonatomic, retain) NSArray *searchLimitData;
 @property (readwrite, retain) UIView *inputAccessoryView;
 - (IBAction) backgroundSelected:(id)sender;
 @end

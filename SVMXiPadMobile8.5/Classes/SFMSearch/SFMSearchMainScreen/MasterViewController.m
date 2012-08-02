@@ -16,11 +16,14 @@
 
 @implementation MasterViewController
 @synthesize sfmArray = _sfmArray;
-@synthesize searchCriteria,searchString;
+@synthesize searchCriteria,searchString,searchLimitString;
 @synthesize searchFilterSwitch;
 @synthesize pickerData;
+@synthesize searchLimitData;
 @synthesize searchCriteriaLabel;
 @synthesize includeOnlineResultLabel;
+@synthesize limitShowLabel;
+@synthesize limitRecordLabel;
 @synthesize inputAccessoryView; 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
@@ -28,6 +31,7 @@
     {
         SearchCriteriaViewController *searchPicker = [[SearchCriteriaViewController alloc] init];
         searchPicker.pickerData = pickerData ;
+        searchPicker.tag = [textField tag];
         UIPopoverController *pop = [[UIPopoverController alloc] initWithContentViewController:searchPicker];
         searchPicker.pickerDelegate = self;
         CGRect frame = [textField frame];
@@ -42,6 +46,25 @@
 
         return NO;
     }
+    if([textField tag] == 2)
+    {
+        SearchCriteriaViewController *searchPicker = [[SearchCriteriaViewController alloc] init];
+        searchPicker.pickerData = searchLimitData ;
+        searchPicker.tag = [textField tag];
+        UIPopoverController *pop = [[UIPopoverController alloc] initWithContentViewController:searchPicker];
+        searchPicker.pickerDelegate = self;
+        CGRect frame = [textField frame];
+        frame = CGRectMake(0, 0, frame.size.width, frame.size.height);
+        [pop setPopoverContentSize:searchPicker.view.frame.size];
+        [pop presentPopoverFromRect:frame inView:searchLimitString permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+        
+        NSInteger indexOfText = [searchPicker.pickerData indexOfObject:textField.text];
+        [searchPicker.picker selectRow:indexOfText inComponent:0 animated:YES];        
+        [searchPicker release];
+        
+        return NO;
+    }
+
     return YES;
 }
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -56,12 +79,17 @@
         NSString *ends_with = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_CRITERIA_ENDS_WITH];
         NSString *starts_with = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_CRITERIA_STARTS_WITH];
         pickerData = [[NSArray alloc] initWithObjects:contains,exact_match,ends_with,starts_with, nil];
+        searchLimitData = [[NSArray alloc] initWithObjects:@"25",@"50",@"75",@"100", nil];
     }
     return self;
 }
 							
 - (void)dealloc
 {
+    [limitShowLabel release];
+    [limitRecordLabel release];
+    [searchLimitString release];
+    [searchLimitData release];
     [searchCriteriaLabel release];
     [searchFilterSwitch release];
     [searchString release];
@@ -75,8 +103,17 @@
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     if(appDelegate.isInternetConnectionAvailable)
     {
-        NSLog(@"Internet is Available");
-        searchFilterSwitch.enabled=TRUE;
+        if([appDelegate pingServer])
+        {
+            NSLog(@"Internet is Available");
+            searchFilterSwitch.enabled=TRUE;
+        }
+        else
+        {
+            NSLog(@"Internet is Not Available");
+            [searchFilterSwitch setOn:NO];
+            searchFilterSwitch.enabled=FALSE;
+        }
     }
     else
     {
@@ -91,13 +128,14 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     [searchCriteria setText:[pickerData objectAtIndex:0]];
+    [searchLimitString setText:[searchLimitData objectAtIndex:0]];
     
     [[NSNotificationCenter defaultCenter] addObserver:self 
                                              selector:@selector(reachabilityChanged:) 
                                                  name:kReachabilityChangedNotification
                                                object:nil];
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    if(appDelegate.isInternetConnectionAvailable)
+    if(appDelegate.isInternetConnectionAvailable && [appDelegate pingServer])
     {
         searchFilterSwitch.enabled=TRUE;
     }
@@ -177,13 +215,18 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
+//    return YES;
+    
     return (interfaceOrientation == UIInterfaceOrientationLandscapeLeft||
             interfaceOrientation == UIInterfaceOrientationLandscapeRight);
 }
 
--(void) setTextField :(NSString *)str
+-(void) setTextField :(NSString *)str withTag:tag
 {
-    searchCriteria.text = str;
+    if(tag == 0)
+        searchCriteria.text = str;
+    else if(tag == 2)
+        searchLimitString.text = str;
 }
 - (IBAction) backgroundSelected:(id)sender
 {

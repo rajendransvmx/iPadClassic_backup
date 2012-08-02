@@ -184,6 +184,9 @@
 
 - (NSDictionary *) getObjectForKey:(NSString *)key;
 
+//RADHA - ServiceReportLogo
+- (NSString *) getLogoFromDatabase;
+
 @end
 
 #define CFONTNAME           "Verdana"

@@ -802,6 +802,7 @@
 		8B97C7F215594C5C004914F7 /* SBJsonStreamWriterState.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B97C7E715594C5C004914F7 /* SBJsonStreamWriterState.m */; };
 		8B97C7F315594C5C004914F7 /* SBJsonTokeniser.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B97C7E915594C5C004914F7 /* SBJsonTokeniser.m */; };
 		8B97C7F415594C5C004914F7 /* SBJsonUTF8Stream.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B97C7EB15594C5C004914F7 /* SBJsonUTF8Stream.m */; };
+		A80D295E15C126AB00E5838F /* SFM-Screen-Table-Strip-Selected.png in Resources */ = {isa = PBXBuildFile; fileRef = A80D295D15C126AB00E5838F /* SFM-Screen-Table-Strip-Selected.png */; };
 		A830EA4615AC4DE20071DEF0 /* accessoryView_bg.png in Resources */ = {isa = PBXBuildFile; fileRef = A830EA4415AC4DE20071DEF0 /* accessoryView_bg.png */; };
 		A830EA4715AC4DE20071DEF0 /* BarCodeButton.png in Resources */ = {isa = PBXBuildFile; fileRef = A830EA4515AC4DE20071DEF0 /* BarCodeButton.png */; };
 		A830EA4A15AC4E0D0071DEF0 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A830EA4815AC4E0D0071DEF0 /* CoreMedia.framework */; };
@@ -1927,6 +1928,7 @@
 		8B97C7EA15594C5C004914F7 /* SBJsonUTF8Stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonUTF8Stream.h; sourceTree = "<group>"; };
 		8B97C7EB15594C5C004914F7 /* SBJsonUTF8Stream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonUTF8Stream.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* iService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "iService-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
+		A80D295D15C126AB00E5838F /* SFM-Screen-Table-Strip-Selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SFM-Screen-Table-Strip-Selected.png"; sourceTree = "<group>"; };
 		A830EA4415AC4DE20071DEF0 /* accessoryView_bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = accessoryView_bg.png; sourceTree = "<group>"; };
 		A830EA4515AC4DE20071DEF0 /* BarCodeButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BarCodeButton.png; sourceTree = "<group>"; };
 		A830EA4815AC4E0D0071DEF0 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
@@ -4592,6 +4594,7 @@
 				A8A8EECC155CB9E100F43F67 /* SFM-Screen-Disclosure-Button-Gray.png */,
 				A8A8EEC9155CB9AD00F43F67 /* OnlineRecord.png */,
 				A8FBA64E155A503600F52346 /* SFMFullResultViewController.h */,
+				A80D295D15C126AB00E5838F /* SFM-Screen-Table-Strip-Selected.png */,
 				A8FBA64F155A503600F52346 /* SFMFullResultViewController.m */,
 				A8FBA650155A503600F52346 /* SFMFullResultViewController.xib */,
 				A8FBA651155A503600F52346 /* SFMResultDetailViewController.h */,
@@ -6077,6 +6080,7 @@
 				A8C1B0C315AD7D3E00E5B76D /* zbar-help.html in Resources */,
 				A8C1B0C415AD7D3E00E5B76D /* zbar-helpicons.png in Resources */,
 				A8C1B0C515AD7D3E00E5B76D /* zbar-samples.png in Resources */,
+				A80D295E15C126AB00E5838F /* SFM-Screen-Table-Strip-Selected.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6320,8 +6324,8 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"ARCHS[sdk=iphoneos*]" = "$(ARCHS_STANDARD_32_BIT)";
 				"ARCHS[sdk=iphonesimulator*]" = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: ServiceMax Inc";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: ServiceMax Inc";
 				COPY_PHASE_STRIP = YES;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_GC = unsupported;
@@ -6344,8 +6348,8 @@
 				MACOSX_DEPLOYMENT_TARGET = "";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_NAME = "ServiceMax Mobile";
-				PROVISIONING_PROFILE = "B7F92DC3-9A4D-4390-9EC3-67CA62BC0BD8";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "B7F92DC3-9A4D-4390-9EC3-67CA62BC0BD8";
+				PROVISIONING_PROFILE = "22AC909D-BE8E-406C-97DD-E7D566990D8E";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "22AC909D-BE8E-406C-97DD-E7D566990D8E";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -6361,8 +6365,8 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"ARCHS[sdk=iphoneos*]" = "$(ARCHS_STANDARD_32_BIT)";
 				"ARCHS[sdk=iphonesimulator*]" = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: ServiceMax Inc";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: ServiceMax Inc";
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_INPUT_FILETYPE = automatic;
@@ -6383,8 +6387,8 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = "";
 				PRODUCT_NAME = "ServiceMax Mobile";
-				PROVISIONING_PROFILE = "B7F92DC3-9A4D-4390-9EC3-67CA62BC0BD8";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "B7F92DC3-9A4D-4390-9EC3-67CA62BC0BD8";
+				PROVISIONING_PROFILE = "22AC909D-BE8E-406C-97DD-E7D566990D8E";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "22AC909D-BE8E-406C-97DD-E7D566990D8E";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -6426,8 +6430,8 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"ARCHS[sdk=iphoneos*]" = "$(ARCHS_STANDARD_32_BIT)";
 				"ARCHS[sdk=iphonesimulator*]" = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: ServiceMax Inc";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: ServiceMax Inc";
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_INPUT_FILETYPE = automatic;
@@ -6449,8 +6453,8 @@
 				MACOSX_DEPLOYMENT_TARGET = "";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_NAME = "ServiceMax Mobile";
-				PROVISIONING_PROFILE = "B7F92DC3-9A4D-4390-9EC3-67CA62BC0BD8";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "B7F92DC3-9A4D-4390-9EC3-67CA62BC0BD8";
+				PROVISIONING_PROFILE = "22AC909D-BE8E-406C-97DD-E7D566990D8E";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "22AC909D-BE8E-406C-97DD-E7D566990D8E";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = YES;

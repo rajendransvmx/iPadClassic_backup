@@ -13,6 +13,7 @@
 @protocol SFMFullResultViewControllerDelegate
 @optional
 - (void) DismissSplitViewControllerByLaunchingSFMProcess;
+-(void)LoadResultDetailViewController;
 @end
 
 @class iServiceAppDelegate;

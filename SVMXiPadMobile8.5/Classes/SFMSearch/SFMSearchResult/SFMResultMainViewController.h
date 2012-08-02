@@ -17,6 +17,7 @@
 }
 @property (nonatomic, retain) NSString *filterString;
 @property (nonatomic, retain) NSString *searchCriteriaString;
+@property (nonatomic, retain) NSString *searchCriteriaLimitString;
 @property (nonatomic, retain) NSString *masterTableHeader;
 @property (nonatomic, retain) NSString *sfmConfiguration;
 @property (nonatomic, retain) NSString *processId;

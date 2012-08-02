@@ -844,62 +844,8 @@
 
 - (NSString*) getValueFromDisplayValue:(NSString *)displayValue
 {
-   /* NSString * internalValue = nil;
-    for (int i = 0; i < [appDelegate.serviceReportValueMapping count]; i++)
-    {
-        NSDictionary * dict = [appDelegate.serviceReportValueMapping objectAtIndex:i];
-        NSArray * allKeys = [dict allKeys];
-        NSString * key = [allKeys objectAtIndex:0];
-        if ([key isKindOfClass:[NSNull class]])
-            key = @"";
-        if ([key isEqualToString:displayValue])
-        {
-            internalValue = [dict objectForKey:key];
-            if ([internalValue isKindOfClass:[NSNull class]])
-                internalValue = @"";
-            break;
-        }
-    }
-    
-    NSArray * _array = [internalValue componentsSeparatedByString:@"."];
-    if ([_array count] == 2)
-    {
-        internalValue = [[_array objectAtIndex:0] stringByReplacingOccurrencesOfString:@"__r" withString:@"__c"];
-        //Abinash
-        internalValue = [appDelegate.calDataBase getTableName:internalValue]; 
-        if ([internalValue isEqualToString:@"Case"])
-            internalValue = @"'Case'";  //Service report fix : Radha
-        internalValue = [NSString stringWithFormat:@"%@.%@", internalValue, [_array objectAtIndex:1]];
-    }
-    
-    
-
-    for (NSMutableDictionary * dictionary in reportEssentials)
-    {
-        value = [dictionary objectForKey:internalValue];
-        if ([value isKindOfClass:[NSString class]])
-            return value;
-        else if ([value isKindOfClass:[NSDictionary class]])
-        {
-            NSArray * _array = [internalValue componentsSeparatedByString:@"."];
-            if ([_array count] == 2)
-            {
-                internalValue = [_array objectAtIndex:0];
-            }
-            NSDictionary * _value = [dictionary objectForKey:internalValue];
-            
-            NSDictionary * finalDict = [_value objectForKey:internalValue];
-            
-            NSString * key = [NSString stringWithFormat:@"%@.%@", [_array objectAtIndex:0], [_array objectAtIndex:1]];
-            value = [finalDict objectForKey:key];
-        }
-    } */
     NSString * value = @"";    
     NSString * internalValue = @"";
-    
-    
-    
-    
     
     for (int i = 0; i < [appDelegate.serviceReportValueMapping count]; i++)
     {
@@ -921,9 +867,28 @@
     if ([_array count] == 2)
     {
         value = [appDelegate.calDataBase getFieldValueFromTable:displayValue];
-        NSString * field_value = [appDelegate.calDataBase getValueFromLookupwithId:value];
-        if ([field_value length] > 0)
-            return field_value;
+        
+        if (([value length] > 0) && value != nil)
+        {
+            NSString * tableNmae = [appDelegate.calDataBase getTableName:displayValue];
+            
+            NSString * api_name = [appDelegate.dataBase getApiNameForNameField:tableNmae];
+            
+            NSString * name = [appDelegate.dataBase getReferenceObjectNameForPdf:tableNmae Field:api_name Id:value];
+            
+            if ([name length] == 0)
+            {
+                NSString * field_value = [appDelegate.calDataBase getValueFromLookupwithId:value];
+                if ([field_value length] > 0)
+                    value = field_value;
+                    
+            }
+            else 
+                value = name;
+        }
+        
+        return value;
+               
     }
     else 
     {
@@ -1423,14 +1388,17 @@
 {
     // This code block will create an image that we then draw to the page
 	// const char *picture = "customer_signature";
-	CGImageRef image;
+    CGImageRef image;
     CGDataProviderRef provider;
 
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-	NSString *saveDirectory = [paths objectAtIndex:0];
-
-    NSString * filePath = [saveDirectory stringByAppendingPathComponent:@"header_image.png"];
+//    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+//	NSString *saveDirectory = [paths objectAtIndex:0];
+//
+//    NSString * filePath = [saveDirectory stringByAppendingPathComponent:@"header_image.png"];
 	NSFileManager * fileManager = [NSFileManager defaultManager];
+    
+    NSString * filePath = [self getLogoFromDatabase];
+    
     BOOL retVal = [fileManager fileExistsAtPath:filePath];
     // if (pictureURL != nil)
     if (retVal)
@@ -1445,7 +1413,59 @@
         [self newLine:CGImageGetHeight(image)];
         // CGImageRelease (image);
     }
+    
+    NSError *delete_error;
+	if ([fileManager fileExistsAtPath:filePath] == YES)
+	{
+		[fileManager removeItemAtPath:filePath error:&delete_error];		
+	}
+    
 }
+
+
+//RADHA - servicereportlogo
+- (NSString *) getLogoFromDatabase
+{
+    
+    NSString * query = [NSString stringWithFormat:@"SELECT logo FROM servicereprt_logo"];
+    
+    sqlite3_stmt * stmt;
+    
+    NSString * imageData = @"";
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+       while (synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+       {
+           char * data = (char *)synchronized_sqlite3_column_text(stmt, 0);
+           
+           if ((data != nil) && strlen(data))
+           {
+               imageData = [NSString stringWithUTF8String:data];
+           }
+           
+       }
+        
+    }
+
+    if ([imageData length] > 0)
+    {
+        NSData * data = [Base64 decode:imageData];
+        
+        NSFileManager * fileManager = [NSFileManager defaultManager];
+        
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *saveDirectory = [paths objectAtIndex:0];	
+        NSString * filePath = [saveDirectory stringByAppendingPathComponent:@"header_image.png"];
+        [fileManager createFileAtPath:filePath contents:data attributes:nil];
+        
+        return filePath;
+
+    }
+    
+    return @"";
+}
+
 
 - (void) setServiceReportImage
 {

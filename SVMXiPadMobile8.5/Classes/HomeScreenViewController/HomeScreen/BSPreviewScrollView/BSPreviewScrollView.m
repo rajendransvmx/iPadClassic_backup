@@ -19,6 +19,14 @@
 @implementation BSPreviewScrollView
 @synthesize scrollView, pageSize, dropShadow, delegate;
 
+-(id) initWithCoder:(NSCoder *)aDecoder
+{
+    if( ( self = [super initWithCoder:aDecoder] ) )
+    {
+        //do some initialization
+    }
+    return self;
+}
 
 - (void)awakeFromNib
 {

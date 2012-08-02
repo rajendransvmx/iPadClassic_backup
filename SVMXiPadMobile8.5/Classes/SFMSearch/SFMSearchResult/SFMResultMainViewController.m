@@ -19,6 +19,7 @@
 @synthesize resultdetailView;
 @synthesize masterTableData;
 @synthesize searchCriteriaString;
+@synthesize searchCriteriaLimitString;
 @synthesize masterTableHeader;
 @synthesize switchStatus;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -48,7 +49,7 @@
     UINavigationController * detailNav = [[[UINavigationController alloc] initWithRootViewController:resultdetailView] autorelease];
   
     resultdetailView.masterView = resultmasterView;
-    
+    resultdetailView.mainView = self;
     UISplitViewController * splitView = [[UISplitViewController alloc] init];
     splitView.viewControllers = [NSArray arrayWithObjects:masterNav, detailNav, nil];
     splitView.delegate = self;
@@ -56,11 +57,14 @@
     self.view = splitView.view;
     [resultmasterView setSearchData:filterString];
     [resultmasterView setSearchCriteriaString:searchCriteriaString];
+    [resultmasterView setSearchCriteriaLimitString:searchCriteriaLimitString];
     [resultmasterView setTableHeader:masterTableHeader];
     [resultmasterView setTableArray:masterTableData];
     [resultmasterView setProcessId:processId];
     //resultmasterView.searchFilterSwitch.on = switchStatus;
     [resultmasterView setSwitchStatus:switchStatus];
+
+    [resultdetailView setSfmConfigName:masterTableHeader];
 
 }
 - (void)viewDidAppear:(BOOL)animated
@@ -78,12 +82,14 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
+    //return YES;
 	return (interfaceOrientation == UIInterfaceOrientationLandscapeLeft||
             interfaceOrientation == UIInterfaceOrientationLandscapeRight);
 }
 
 - (void) dealloc
 {
+    [searchCriteriaLimitString release];
     [searchCriteriaString release];
     [masterTableData release];
     [masterTableHeader release];

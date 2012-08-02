@@ -11,6 +11,8 @@
 #import "LocalizationGlobals.h"
 #import "ManualDataSync.h"
 
+iServiceAppDelegate *appDelegate;
+
 #pragma mark - SYNCHRONIZATION METHODS
 NSString * syncString = @"synchronized";
 int synchronized_sqlite3_prepare_v2(
@@ -327,6 +329,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize locationPingSettingTimer;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    appDelegate = self;
+    
     self.isBackground = FALSE;
     // Check for internet connection here
     [[UIApplication sharedApplication] setIdleTimerDisabled:YES];

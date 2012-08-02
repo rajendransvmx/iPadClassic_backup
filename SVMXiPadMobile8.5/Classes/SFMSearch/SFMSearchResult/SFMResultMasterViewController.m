@@ -15,27 +15,34 @@
 @end
 
 @implementation SFMResultMasterViewController
-@synthesize searchString,searchCriteria,searchFilterSwitch;
-@synthesize tableHeader;
+
+@synthesize onlineRecordDict;
+@synthesize searchString,searchCriteria,searchFilterSwitch,searchLimitString;
+@synthesize tableHeader,ObjectDescription;
 @synthesize tableArray;
 @synthesize searchData;
 @synthesize searchMasterTable;
 @synthesize resultDetailView;
 @synthesize pickerData;
+@synthesize searchLimitData;
 @synthesize searchCriteriaString;
+@synthesize searchCriteriaLimitString;
 @synthesize switchStatus;
 @synthesize actionButton;
 @synthesize processId;
 @synthesize activity;
 @synthesize searchCriteriaLabel;
 @synthesize includeOnlineResultLabel;
+@synthesize limitShowLabel;
+@synthesize limitRecordLabel;
 @synthesize inputAccessoryView;
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
     if([textField tag] == 0)
-    {
+    {        
         SearchCriteriaViewController *searchPicker = [[SearchCriteriaViewController alloc] init];
         searchPicker.pickerData = pickerData ;
+        searchPicker.tag = [textField tag];
         UIPopoverController *pop = [[UIPopoverController alloc] initWithContentViewController:searchPicker];
         searchPicker.pickerDelegate = self;
         CGRect frame = [textField frame];
@@ -49,6 +56,25 @@
         
         return NO;
     }
+    if([textField tag] == 2)
+    {
+        SearchCriteriaViewController *searchPicker = [[SearchCriteriaViewController alloc] init];
+        searchPicker.pickerData = searchLimitData ;
+        searchPicker.tag = [textField tag];
+        UIPopoverController *pop = [[UIPopoverController alloc] initWithContentViewController:searchPicker];
+        searchPicker.pickerDelegate = self;
+        CGRect frame = [textField frame];
+        frame = CGRectMake(0, 0, frame.size.width, frame.size.height);
+        [pop setPopoverContentSize:searchPicker.view.frame.size];
+        [pop presentPopoverFromRect:frame inView:searchLimitString permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+        
+        NSInteger indexOfText = [searchPicker.pickerData indexOfObject:textField.text];
+        [searchPicker.picker selectRow:indexOfText inComponent:0 animated:YES];        
+        [searchPicker release];
+        
+        return NO;
+    }
+
     return YES;
 }
 
@@ -65,6 +91,7 @@
         NSString *ends_with = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_CRITERIA_ENDS_WITH];
         NSString *starts_with = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_CRITERIA_STARTS_WITH];
         pickerData = [[NSArray alloc] initWithObjects:contains,exact_match,ends_with,starts_with, nil];
+        searchLimitData = [[NSArray alloc] initWithObjects:@"25",@"50",@"75",@"100", nil];
     }
     return self;
 }
@@ -73,8 +100,18 @@
     NSLog(@"Notification :-%@",[notification name]);
     if(appDelegate.isInternetConnectionAvailable)
     {
-        NSLog(@"Internet is Available");
-        searchFilterSwitch.enabled=TRUE;
+        if([appDelegate pingServer])
+        {
+            NSLog(@"Internet is Available");
+            searchFilterSwitch.enabled=TRUE;
+        }
+        else
+        {
+            NSLog(@"Internet is Not Available");
+            [searchFilterSwitch setOn:NO];
+            searchFilterSwitch.enabled=FALSE;
+        }
+
     }
     else
     {
@@ -96,8 +133,9 @@
 
     searchString.text = searchData;
     searchCriteria.text = searchCriteriaString;
+    searchLimitString.text = searchCriteriaLimitString;
     
-    if(appDelegate.isInternetConnectionAvailable)
+    if(appDelegate.isInternetConnectionAvailable &&[appDelegate pingServer])
     {
         searchFilterSwitch.enabled=TRUE;
          [searchFilterSwitch setOn:switchStatus];
@@ -140,13 +178,30 @@
 {
     BOOL state = [sender isOn];
     NSString *rez = state == YES ? @"YES" : @"NO";
-    NSLog(@"%@",rez);
+//    NSLog(@"%@",rez);
     if( state == NO)
     {
         [resultDetailView.detailTable reloadData];
         [resultDetailView reloadInputViews];
     }
+    if(appDelegate.isInternetConnectionAvailable && [appDelegate pingServer])
+    {
+        searchFilterSwitch.enabled=TRUE;
+        
+    }
+    else
+    {
+        [searchFilterSwitch setOn:NO];
+        searchFilterSwitch.enabled=FALSE;
+    }
 
+	//Enahncement change for showing the record count.
+	if ([onlineRecordDict count] > 0)
+	{
+		[onlineRecordDict removeAllObjects];
+	}
+	
+	[self.searchMasterTable reloadData];
 }
 
 - (IBAction) launchBarcodeScanner:(id)sender
@@ -196,6 +251,7 @@
     [activity startAnimating];
     if([tableArray count] > 0)
     {
+        [resultDetailView showObjects:tableArray forAllObjects:YES];
         [self didSelectHeader:nil];
     }
     [activity stopAnimating];
@@ -211,14 +267,32 @@
     self.searchCriteriaLabel = nil;
     self.includeOnlineResultLabel = nil;
 }
-
+-(void) viewDidAppear:(BOOL)animated
+{
+    
+    if(appDelegate.isInternetConnectionAvailable && [appDelegate pingServer])
+    {
+        searchFilterSwitch.enabled=TRUE;
+    }
+    else
+    {
+        searchFilterSwitch.enabled=FALSE;
+    }
+    
+}
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
+    //return YES;
 	return (interfaceOrientation == UIInterfaceOrientationLandscapeLeft||
             interfaceOrientation == UIInterfaceOrientationLandscapeRight);
 }
 - (void) dealloc
 {
+    [limitShowLabel release];
+    [limitRecordLabel release];
+    [searchCriteriaLimitString release];
+    [searchLimitData release];
+    [searchLimitString release];
     [includeOnlineResultLabel release];
     [searchCriteriaLabel release];
     [activity release];
@@ -227,11 +301,13 @@
     [resultDetailView release];
     [searchData release];
     [tableArray release];
+    [ObjectDescription release];
     [tableHeader release];
     [searchString release];
     [searchCriteria release];
     [searchFilterSwitch release];
     [searchCriteriaString release];
+	[onlineRecordDict release];
     [super dealloc];
 }
 #pragma mark - table view delegate methods
@@ -277,7 +353,31 @@
     UIImage * image = nil;
     
     bgView = [[[UIView alloc] initWithFrame:CGRectMake(10, 0, 300, ResultTableViewCellHeight)] autorelease];
-    cellLabel.text = [[tableArray objectAtIndex:indexPath.row] objectForKey:@"ObjectName"];
+    SFMResultDetailViewController * searchDetailViewSFM = [[SFMResultDetailViewController alloc] init];
+    NSDictionary * dict = [tableArray objectAtIndex:indexPath.row];
+	NSString * objectName = [dict objectForKey:@"ObjectName"];
+    NSString *objDescription = [dict objectForKey:@"ObjectDescription"];
+	
+	int numberOfRecords = 0;
+    NSDictionary *resultDict = [[resultDetailView resultArray] objectAtIndex:indexPath.row];
+    numberOfRecords = [[resultDict objectForKey:@"Values"] count];
+    
+	NSArray * objectArray = [onlineRecordDict objectForKey:[dict valueForKey:@"ObjectId"]];
+	if ([objectArray count] > 0)
+	{
+		if ([[dict valueForKey:@"ObjectId"] isEqualToString:[[objectArray objectAtIndex:0] valueForKey:@"SearchObjectId"]]) 
+		{
+			numberOfRecords = (numberOfRecords + [objectArray count]);
+		}
+		
+	}
+    if([objDescription isEqualToString:@"(null)"])
+        cellLabel.text = [NSString stringWithFormat:@"%@ (%d)",objectName, numberOfRecords];//@"";
+    else
+        cellLabel.text = [NSString stringWithFormat:@"%@ (%d)",objDescription, numberOfRecords];
+    
+	[searchDetailViewSFM release];
+	
     if ([indexPath isEqual:lastSelectedIndexPath])
     {
         image = [UIImage imageNamed:@"SFM_left_button_selected.png"];
@@ -314,6 +414,8 @@
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+	[activity setHidden:FALSE];
+	[activity startAnimating];
     [searchString resignFirstResponder];
     NSLog(@"Last Selected Index Path Row = %d",lastSelectedIndexPath.row);
     [tableView deselectRowAtIndexPath:lastSelectedIndexPath animated:YES];
@@ -322,7 +424,7 @@
     
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];    
     
-    if (lastSelectedIndexPath == indexPath)
+    if ([lastSelectedIndexPath isEqual:indexPath])
     {
         UITableViewCell * selectedCell = [tableView cellForRowAtIndexPath:indexPath];
         UIView * cellBackgroundView = selectedCell.contentView;
@@ -360,8 +462,17 @@
     
     lastSelectedIndexPath = [indexPath retain];
     [resultDetailView setSfmConfigName:tableHeader];
-    [resultDetailView showObjects:[NSArray arrayWithObject:[tableArray objectAtIndex:indexPath.row]] forAllObjects:NO];
+    [resultDetailView updateResultArray:indexPath.row];
+    //[resultDetailView showObjects:[NSArray arrayWithObject:[tableArray objectAtIndex:indexPath.row]] forAllObjects:NO];
     [searchMasterTable reloadData];
+	NSTimer* myTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 target: self
+													  selector: @selector(stopAnimatingTheIndicator) userInfo: nil repeats:NO];
+
+}
+
+-(void) stopAnimatingTheIndicator
+{
+	[activity stopAnimating];
 }
 
 - (UIView *) tableView:(UITableView *)_tableView viewForHeaderInSection:(NSInteger)section
@@ -412,9 +523,9 @@
     lastSelectedCellLabel.textColor = [UIColor blackColor];
     
     lastSelectedIndexPath = nil;
-
+    int index = -1;
+    [resultDetailView updateResultArray:index];
     [resultDetailView setSfmConfigName:tableHeader];
-    [resultDetailView showObjects:tableArray forAllObjects:YES];
 }
 - (IBAction)refineSearch:(id)sender
 {
@@ -422,49 +533,33 @@
     [activity setHidden:FALSE];
     [activity startAnimating];
     [searchFilterSwitch setEnabled:FALSE];
+    [resultDetailView showObjects:tableArray forAllObjects:YES];
     [self performSelector:@selector(didSelectHeader:)];
-    if(appDelegate.isInternetConnectionAvailable)
+    if(appDelegate.isInternetConnectionAvailable && [appDelegate pingServer])
     {
         [searchFilterSwitch setEnabled:TRUE];
     }
     [activity stopAnimating];
     [activity setHidden:TRUE];
-    /*
-    NSMutableArray *searchResultData = [[NSMutableArray alloc] init];
-    NSString *processID = @"a0a70000000fsduAAA";
-
-    NSArray  *objectList = [NSArray arrayWithObjects:@"a0a70000000fse8",@"a0a70000000fse9",@"a0a70000000fseB", nil];
-    NSArray  *subResultList1 = [NSArray arrayWithObjects:@"a0s70000001H8hk", nil];
-    NSArray  *subResultList3 = [NSArray arrayWithObjects:@"5007000000Ly2Tz", nil];
-    NSArray  *subResultList4 = [NSArray arrayWithObjects:@"", nil];
-    NSArray  *resultList = [NSArray arrayWithObjects:subResultList1,subResultList3,subResultList4, nil];
-    
-    NSString *criteria = @"Contains";
-    NSString *userFilterString = @"acc";
-    [ searchResultData addObject:processID];
-    [ searchResultData addObject:objectList];
-    [ searchResultData addObject:resultList];
-    [ searchResultData addObject:criteria];
-    [ searchResultData addObject:userFilterString];
-    [appDelegate.wsInterface dataSyncWithEventName:@"SFM_SEARCH" eventType:@"SEARCH_RESULTS" values:searchResultData]; 
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
-    {                
-        if (appDelegate.wsInterface.didOpComplete == TRUE)
-            break;   
-        NSLog(@"Retreiving Online Reccords");
-    }
-
-    [searchResultData release];
-    NSLog(@"Online Records = %@",appDelegate.onlineDataArray);
-     */
 }
 - (IBAction) backgroundSelected:(id)sender
 {
     [searchString resignFirstResponder];
 }
 #pragma mark - PopOver Delegate Methods
--(void) setTextField :(NSString *)str
+-(void) setTextField :(NSString *)str withTag:(int)tag
 {
-    searchCriteria.text = str;
+    if(tag == 0)
+        searchCriteria.text = str;
+    else
+        searchLimitString.text = str;
 }
+
+- (void) reloadTableWithOnlineData:(NSMutableDictionary *)_onlineDict
+{
+	onlineRecordDict = _onlineDict;
+	NSLog(@"%@", onlineRecordDict);
+	[self.searchMasterTable reloadData];
+}
+
 @end

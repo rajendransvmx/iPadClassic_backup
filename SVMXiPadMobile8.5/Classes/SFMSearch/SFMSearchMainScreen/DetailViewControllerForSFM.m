@@ -27,6 +27,7 @@
 @synthesize sfmArray = _sfmArray;
 @synthesize masterView;
 @synthesize splitViewDelegate;
+@synthesize mainView;
 - (void)dealloc
 {
     [masterView release];
@@ -114,7 +115,8 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    return (interfaceOrientation == UIInterfaceOrientationLandscapeLeft||
+//    return YES;
+   return (interfaceOrientation == UIInterfaceOrientationLandscapeLeft||
             interfaceOrientation == UIInterfaceOrientationLandscapeRight);
 }
 
@@ -156,7 +158,7 @@
 }
 - (void) DismissViewController: (id) sender
 {
-    NSLog(@"Dismiss Detail View Controller");
+//    NSLog(@"Dismiss Detail View Controller");
     [splitViewDelegate DismissSplitViewController];
 }
 #pragma mark - table view delegate methods
@@ -199,7 +201,7 @@
 - (void) searchButtonTapped:(id)sender withEvent:(UIEvent *) event
 {
     
-    NSLog(@"Button Tapped");
+//    NSLog(@"Button Tapped");
     UIButton *button = sender;
      /*
     CGPoint correctedPoint = [button convertPoint:button.bounds.origin toView:self.detailTable]; 
@@ -219,8 +221,11 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [self.masterView.searchString resignFirstResponder];
-    NSArray *objects = [[_sfmArray objectAtIndex:indexPath.row] objectForKey:@"Objects"];
-    NSString *processId = [[_sfmArray objectAtIndex:indexPath.row] objectForKey:@"Id"];
+    NSDictionary *processDict = [_sfmArray objectAtIndex:indexPath.row];
+    
+    NSString *processName = [processDict objectForKey:@"Name"];
+    NSArray *objects = [appDelegate.dataBase getConfigurationForProcess:processName];
+    NSString *processId = [processDict objectForKey:@"Id"];
     
    // NSLog(@"User Search Data = %@",self.masterViewController.searchString.text);
     SFMResultMainViewController *resultViewController = [[SFMResultMainViewController alloc] initWithNibName:@"SFMResultMainViewController" bundle:nil];
@@ -228,15 +233,16 @@
     resultViewController.processId = processId;
     NSLog(@"Process ID = %@",processId);
     resultViewController.searchCriteriaString = self.masterView.searchCriteria.text;
+    resultViewController.searchCriteriaLimitString = self.masterView.searchLimitString.text;
     resultViewController.masterTableData = objects;
-    resultViewController.masterTableHeader = [[_sfmArray objectAtIndex:indexPath.row] objectForKey:@"SVMXC__Name__c"];
-    NSLog(@"Master Table Header Value = %@",resultViewController.masterTableHeader);
+    resultViewController.masterTableHeader = [processDict objectForKey:@"SVMXC__Name__c"];
+    //NSLog(@"Master Table Header Value = %@",resultViewController.masterTableHeader);
     resultViewController.switchStatus = self.masterView.searchFilterSwitch.on;
-    NSLog(@"Switch Value = %d",resultViewController.switchStatus);
+    //NSLog(@"Switch Value = %d",resultViewController.switchStatus);
     //[tableData release];
     resultViewController.modalPresentationStyle = UIModalPresentationFullScreen;
     resultViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    [self presentModalViewController:resultViewController animated:YES];
+    [self.mainView presentModalViewController:resultViewController animated:YES];
     [resultViewController release];
 }
 

@@ -5047,7 +5047,13 @@
             object_api = @"";
             char * temp_object_api_name = (char *) synchronized_sqlite3_column_text(statement,0);
             object_api = [NSString stringWithUTF8String:temp_object_api_name];
-            [objects_list addObject:object_api];
+            
+            if ([object_api length] > 0)
+            {
+                if (![objects_list containsObject:object_api])
+                    [objects_list addObject:object_api];
+            }
+    
         }
     }
     

@@ -37,7 +37,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    NSLog(@"Display Values = %@",data);
+//    NSLog(@"Display Values = %@",data);
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     [actionButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Done-Back-Button.png"] forState:UIControlStateNormal];
     [actionButton setTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_SRCH_CLOSE] forState:UIControlStateNormal];
@@ -45,14 +45,41 @@
     [[actionButton titleLabel] setFont:[UIFont boldSystemFontOfSize:16]];
     [detailButton setFrame:CGRectMake(509, 10, 20, 21)];
     
+    NSMutableString * queryStatement1 = [[NSMutableString alloc]initWithCapacity:0];
+    queryStatement1 =[NSMutableString stringWithFormat:@"Select process_id from SFProcess where object_api_name is  '%@' and process_type is 'VIEWRECORD'",objectName]; 
+    sqlite3_stmt * labelstmt;
+    char *field1;
+    const char *selectStatement = [queryStatement1 UTF8String];
+    BOOL processAvailbleForRecord = NO;
+    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &labelstmt, nil) == SQLITE_OK )
+    {
+        if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
+        {
+            field1 = (char *) synchronized_sqlite3_column_text(labelstmt,0);           
+            if(field1 != nil)
+            {
+                processAvailbleForRecord = YES;
+            }
+            
+        }
+        synchronized_sqlite3_finalize(labelstmt);
+    }
+    
+    
     if(self.isOnlineRecord)
     {
-        [detailButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button-Gray.png"] forState:UIControlStateNormal];
+        /*[detailButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button-Gray.png"] forState:UIControlStateNormal];*/
+        [detailButton setBackgroundImage:nil forState:UIControlStateNormal];
         [onlineImageView setImage:[UIImage imageNamed:@"OnlineRecord.png"]];
     }
-    else 
+    else if(processAvailbleForRecord)
     {
         [detailButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"] forState:UIControlStateNormal];
+        [onlineImageView setImage:nil];
+    }
+    else
+    {
+        [detailButton setBackgroundImage:nil forState:UIControlStateNormal];
         [onlineImageView setImage:nil];
     }
     [resultTableView setBackgroundColor:[UIColor clearColor]];
@@ -78,7 +105,8 @@
 { 
     if(isOnlineRecord)
         return;
-    objectName = [appDelegate.dataBase getApiNameFromFieldLabel:objectName];
+    NSString *objName = [objectName retain];
+    objName = [appDelegate.dataBase getApiNameFromFieldLabel:objName];
     char *field1;
     appDelegate.showUI = FALSE;   //btn merge
     if(appDelegate.sfmPageController)
@@ -87,7 +115,7 @@
     
     NSMutableString * queryStatement1 = [[NSMutableString alloc]initWithCapacity:0];
     NSString *recordId = [data objectForKey:@"Id"];
-    queryStatement1 = [NSMutableString stringWithFormat:@"Select local_id FROM '%@' where Id = '%@'",objectName,recordId];    
+    queryStatement1 = [NSMutableString stringWithFormat:@"Select local_id FROM '%@' where Id = '%@'",objName,recordId];    
     sqlite3_stmt * labelstmt;
     const char *selectStatement = [queryStatement1 UTF8String];
     
@@ -98,7 +126,7 @@
         if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
         {
             field1 = (char *) synchronized_sqlite3_column_text(labelstmt,0);
-            NSLog(@"%s",field1);
+//            NSLog(@"%s",field1);
             if(field1)
                 localId = [NSString stringWithFormat:@"%s", field1];
             else
@@ -106,7 +134,7 @@
         }
     }
     
-    NSString * queryStatement2 = [NSMutableString stringWithFormat:@"Select process_id FROM SFProcess where process_type = 'VIEWRECORD' and object_api_name = '%@'",objectName];   
+    NSString * queryStatement2 = [NSMutableString stringWithFormat:@"Select process_id FROM SFProcess where process_type = 'VIEWRECORD' and object_api_name = '%@'",objName];   
     const char *selectStatement2 = [queryStatement2 UTF8String];
     
     NSString *processId =nil;
@@ -116,7 +144,7 @@
         if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
         {
             field1 = (char *) synchronized_sqlite3_column_text(labelstmt,0);
-            NSLog(@"%s",field1);
+//            NSLog(@"%s",field1);
             if(field1)
                 processId = [NSString stringWithFormat:@"%s", field1];
         }
@@ -124,7 +152,7 @@
     if(!processId)
         return;
     appDelegate.sfmPageController.processId = processId;
-    appDelegate.sfmPageController.objectName = objectName;
+    appDelegate.sfmPageController.objectName = objName;
     
     //appDelegate.sfmPageController.recordId = [NSString stringWithFormat:@"%s", field1];
     //appDelegate.sfmPageController.activityDate = [array2 objectAtIndex:(ownerCellIndexPath.row)];
@@ -137,10 +165,11 @@
     [self presentModalViewController:appDelegate.sfmPageController animated:YES];
     [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];
     appDelegate.didsubmitModelView = FALSE;
-    [appDelegate.sfmPageController release];
-
-    [ fullMainDelegate DismissSplitViewControllerByLaunchingSFMProcess];
-    [self dismissModalViewControllerAnimated:YES];
+    //[appDelegate.sfmPageController release];
+    
+    //[ fullMainDelegate DismissSplitViewControllerByLaunchingSFMProcess];
+    //[self dismissModalViewControllerAnimated:YES];
+    //[objName release];
 }
 - (void)viewDidUnload
 {
@@ -154,7 +183,9 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-	return YES;
+//	return YES;
+    return (interfaceOrientation == UIInterfaceOrientationLandscapeLeft||
+            interfaceOrientation == UIInterfaceOrientationLandscapeRight);
 }
 - (IBAction)dismissView:(id)sender
 {
@@ -200,7 +231,65 @@
     [cell addSubview:lblObjects];
     lblValues=[[UILabel alloc]initWithFrame:CGRectMake(275, 0, 235, TableViewResultViewCellHeight)];
     [lblValues setBackgroundColor:[UIColor clearColor]];
-    lblValues.text=[data objectForKey:[tableHeaderArray objectAtIndex:indexPath.row]];
+    
+    //Keerthi checkbox
+    
+    NSString * string = [tableHeaderArray objectAtIndex:indexPath.row];
+    NSArray * array = [string componentsSeparatedByString:@"."];
+    
+    NSString * type = [appDelegate.dataBase getfieldTypeForApi:[array objectAtIndex:0] fieldName:[array objectAtIndex:1]];
+    
+    if ([type isEqualToString:@"boolean"])
+    {
+        UIImageView *v1;
+        NSString * value = [data objectForKey:[tableHeaderArray objectAtIndex:indexPath.row]];
+        lblValues.frame = CGRectMake(275, 15, 235, TableViewResultViewCellHeight);
+        if ([value isEqualToString:@"True"] || [value isEqualToString:@"true"] || [value isEqualToString:@"1"] ) 
+        {
+            v1 = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM-Screen-boolean-tick-Icon.png"]] autorelease];
+            v1.backgroundColor = [UIColor clearColor];
+            v1.contentMode = UIViewContentModeCenter;
+            [lblValues addSubview:v1];
+        }
+        else
+        {  
+            v1 = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM-Screen-boolean-Cancel-Icon.png"]] autorelease];
+            v1.backgroundColor = [UIColor clearColor];
+            v1.contentMode = UIViewContentModeCenter;
+            [lblValues addSubview:v1];
+        }
+        
+    }
+    else if([type isEqualToString:@"datetime"])
+    {
+        NSString * value = [data objectForKey:[tableHeaderArray objectAtIndex:indexPath.row]];
+        value = [value stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+        value = [value stringByReplacingOccurrencesOfString:@".000Z" withString:@""];
+        value = [iOSInterfaceObject getLocalTimeFromGMT:value];
+        value = [value stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+        value = [value stringByReplacingOccurrencesOfString:@"Z" withString:@""];
+        NSDateFormatter * frm = [[[NSDateFormatter alloc] init] autorelease];
+        [frm setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
+        NSDate * date = [frm dateFromString:value];
+        [frm  setDateFormat:DATETIMEFORMAT];
+        value = [frm stringFromDate:date];
+        lblValues.text = value;
+        
+    }
+    else if([type isEqualToString:@"date"])
+    {
+        NSString * value = [data objectForKey:[tableHeaderArray objectAtIndex:indexPath.row]];
+        NSDateFormatter * formatter = [[[NSDateFormatter alloc] init] autorelease];
+        [formatter setDateFormat:@"yyyy-MM-dd"];
+        NSDate * date = [formatter dateFromString:value];
+        [formatter setDateFormat:DATEFORMAT];
+        value = [formatter stringFromDate:date];
+        lblValues.text = value;
+    }
+    else
+    {
+        lblValues.text=[data objectForKey:[tableHeaderArray objectAtIndex:indexPath.row]];
+    }
     lblValues.font = [UIFont boldSystemFontOfSize:16];
     lblValues.textColor = [appDelegate colorForHex:@"2d5d83"];  
     lblValues.textAlignment=UITextAlignmentLeft;

@@ -38,8 +38,6 @@
     
     CalendarController * calendar;
     
-    iServiceAppDelegate * appDelegate;
-    
     BOOL isInternetAvailable;
     NSTimer * initial_sync_timer;
     float total_progress;

@@ -10,6 +10,7 @@
 #import "SFMFullResultViewController.h"
 #import "LabelPOContentView.h"
 @class SFMResultMasterViewController;
+@class SFMResultMainViewController;
 @class iServiceAppDelegate;
 
 @protocol SFMResultDetailViewControllerDelegate
@@ -23,7 +24,7 @@
     SFMFullResultViewController *resultViewController;
     UIPopoverController * label_popOver;
     LabelPOContentView * label_popOver_content;
-
+    NSIndexPath         *lastSelectedIndexPath;
 }
 @property (nonatomic, retain) IBOutlet SFMResultMasterViewController *masterView;
 @property (nonatomic, retain) IBOutlet UIActivityIndicatorView *activityIndicator;
@@ -32,13 +33,20 @@
 @property (nonatomic, retain) NSMutableDictionary *onlineDataDict;
 @property (nonatomic, retain) NSString *sfmConfigName;
 @property (nonatomic, assign) id<SFMResultDetailViewControllerDelegate> splitViewDelegate;
+@property (nonatomic, assign) SFMResultMainViewController *mainView;
+@property (nonatomic, retain) NSMutableArray          *tableDataArray;
+@property (nonatomic, retain) NSMutableArray          *resultArray;
 
 - (void)tapRecognized:(id)sender;
-- (BOOL) isRecordFound:(NSString *)value ;
 - (void) createTable;
 - (void) showHelp;
 - (void) showObjects:(NSArray *)tableData forAllObjects:(BOOL) makeOnlineSearch;
+- (void) updateResultArray:(int) index;
 - (void) accessoryButtonTapped:(id)sender;
+- (int) getTagForRow:(int) row;
+- (BOOL) isRecordPresentInOfflineResults:(NSArray *) offlineRecords record:(NSString *) onlineRecordId;
+- (NSArray *) getOfflineRecordsForObjectID:(NSString *) objectID;
 - (NSMutableArray *)getResultsForObject:(NSString *)object withConfigData:(NSDictionary *)dataForObject;
 - (NSArray *) constructTableHeader : (NSArray *)data;
+-(void) initilizeToolBar;
 @end
