@@ -1065,6 +1065,9 @@ extern void SVMXLog(NSString *format, ...);
     [activity startAnimating];
     appDelegate.wsInterface.getPrice = FALSE;
     [appDelegate.wsInterface callSFMEvent:dict];
+    
+    
+    
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
     {
         SMLog(@"didInvokeWebService In While Loop");
@@ -1078,7 +1081,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"Hello");
         if (appDelegate.wsInterface.getPrice == TRUE)
         {
-            appDelegate.wsInterface.getPrice = FALSE; 
+           // appDelegate.wsInterface.getPrice = FALSE; 
             break;
         }
     }
@@ -1427,7 +1430,7 @@ extern void SVMXLog(NSString *format, ...);
             return;
         }
         SMLog(@"Waiting for summary data...");
-        if (didGetParts && didGetExpenses && didGetLabor)
+        if (didGetParts && didGetExpenses && didGetLabor && didGetReportEssentials)
             break;
         if (clickedBack)
         {
@@ -1978,7 +1981,7 @@ extern void SVMXLog(NSString *format, ...);
         
         NSString * numPartsUsed = [dict objectForKey:gSVMXC__Actual_Quantity2__c];
         if ([numPartsUsed isKindOfClass:[NSString class]])
-            [Part setObject:[NSString stringWithFormat:@"%f", [numPartsUsed floatValue]] forKey:gPartsUsed];
+            [Part setObject:[NSString stringWithFormat:@"%.2f", [numPartsUsed floatValue]] forKey:gPartsUsed];
         
         NSString * description = [dict objectForKey:gSVMXC__Work_Description__c];
         if ([description isKindOfClass:[NSString class]])
@@ -3027,12 +3030,26 @@ extern void SVMXLog(NSString *format, ...);
                                 ZKPicklistEntry * picklistEntry = [pickListEntryArray objectAtIndex:k];
                                 NSString * validFor = [picklistEntry validFor];
                                 [descObjValidFor addObject:validFor];
+                                NSString * key = [[pickListEntryArray objectAtIndex:k] label];
+                                //Radha - PicklistFix
+                                NSString * pick_value = [[pickListEntryArray objectAtIndex:k] value];
+                                if ([pick_value isEqualToString:value])
+                                {
+                                    value = key;
+                                }
                                 SMLog(@"%@", validFor);
                             }
                             else
                             {
-                                [descObjArray addObject:[[pickListEntryArray objectAtIndex:k] label]];
+                                [descObjArray addObject:[[pickListEntryArray objectAtIndex:k] label]];                                
                                 NSString * key = [[pickListEntryArray objectAtIndex:k] label];
+                                //Radha - PicklistFix
+                                NSString * pick_value = [[pickListEntryArray objectAtIndex:k] value];
+                                if ([pick_value isEqualToString:value])
+                                {
+                                    value = key;
+                                }
+                                
                                 SMLog(@"%@",key);
                             }
                         }
@@ -3088,60 +3105,6 @@ extern void SVMXLog(NSString *format, ...);
                         [arr addObject:[[RecordTypePickList objectAtIndex:k] objectForKey:@"RecorTypeName"]];
                     SMLog(@"Data = %@",[[RecordTypePickList objectAtIndex:k] objectForKey:@"RecorTypeName"]);
                 }
-               /* appDelegate.wsInterface.didGetRecordTypeId = FALSE;
-                if([refObjSearchId isEqualToString:@""])
-                {
-                    // Pass a 0 here for overrideRelatedLookup field
-                    [appDelegate.wsInterface getLookUpFieldsWithKeyword:@"" forObject:refObjName returnTo:self setting:FALSE overrideRelatedLookup:0 lookupContext:nil lookupQuery:nil];
-                    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE)) 
-                    {
-                        SMLog(@"SFMEditCellForTable in while loop");
-                        if (!appDelegate.isInternetConnectionAvailable)
-                        {
-                            [activity stopAnimating];
-                            appDelegate.wsInterface.sfm_response = FALSE;
-                            [appDelegate displayNoInternetAvailable];
-                            break;
-                        }
-                        if (appDelegate.wsInterface.didGetRecordTypeId)
-                            break;
-                    }
-                }
-                else
-                {
-                    [appDelegate.wsInterface getLookUpFieldsWithKeyword:@"" forObject:refObjSearchId returnTo:self setting:TRUE overrideRelatedLookup:0 lookupContext:nil lookupQuery:nil];
-                }
-                arr = [[NSMutableArray alloc] initWithCapacity:0];
-                NSArray * array = [lookupData objectForKey:@"DATA"];
-                NSString * name = @"";
-                for (int i = 0; i < [array count]; i++)
-                {
-                    NSArray * data = [array objectAtIndex:i];
-                    for (int j = 0; j < [data count]; j++)
-                    {
-                        NSDictionary * _dict = [data objectAtIndex:j];
-                        NSString * sobjectName = [_dict objectForKey:@"key"];
-                        if([sobjectName isEqualToString:@"SobjectType"])
-                        {
-                            NSString * object_name = [_dict objectForKey:@"value"];
-                            if([object_name isEqualToString:hdr_object_name])
-                            {
-                                for (int k = 0; k<[data count]; k++) 
-                                {
-                                    NSDictionary * _dict1 = [data objectAtIndex:k];
-                                    NSString * keyValue = [_dict1 objectForKey:@"key"];
-                                    if ([keyValue isEqualToString:@"Name"])
-                                    {
-                                        name = [_dict1 objectForKey:@"value"];
-                                        [arr insertObject:name atIndex:k++];
-                                        break;
-                                    }
-                                }
-                                break;
-                            }
-                        }
-                    }
-                }*/
             }
             SMLog(@"%@", arr);
             // Special handling for Lookup Additional Filter
@@ -3306,6 +3269,49 @@ extern void SVMXLog(NSString *format, ...);
                             {
                                 recordTypeID_Value = value;
                             }
+                            
+                            if ([control_type isEqualToString:@"picklist"])
+                            {
+                                NSString * key_ = @"";
+                                BOOL picklistFlag = FALSE;
+                                
+                                for (int p = 0; p < [appDelegate.describeObjectsArray count]; p++)
+                                {
+                                    ZKDescribeSObject * descObj = [appDelegate.describeObjectsArray objectAtIndex:p];
+                                    ZKDescribeField * descField = [descObj fieldWithName:api_name];
+                                    
+                                    if (descField == nil)
+                                        continue;
+                                    
+                                    NSArray * pickListEntryArray = [descField picklistValues];
+                                    for (int k = 0; k < [pickListEntryArray count]; k++)
+                                    {
+                                        
+                                        for (int i = 0; i < [detail_values count]; i++)
+                                        {
+                                            NSString * value_Field_API = [[detail_values objectAtIndex:i] objectForKey:gVALUE_FIELD_API_NAME];
+                                            if ([api_name isEqualToString:value_Field_API])
+                                            {
+                                                value = [[detail_values objectAtIndex:i] objectForKey:@"value_Field_Value_key"];
+                                            }
+                                        }
+                                        
+                                        NSString * val_ = [[pickListEntryArray objectAtIndex:k] value];
+                                        
+                                        if ([val_ isEqualToString:value])
+                                        {
+                                            picklistFlag = TRUE;
+                                            key_ = [[pickListEntryArray objectAtIndex:k] label];
+                                            break;
+                                        }
+                                    }
+                                    if (picklistFlag)
+                                        break;
+                                }
+                                value = key_;
+
+                            }
+                            
                             if([control_type isEqualToString:@"datetime"])
                             {
                                 value = [value stringByReplacingOccurrencesOfString:@"T" withString:@" "];
@@ -3747,8 +3753,40 @@ extern void SVMXLog(NSString *format, ...);
                 [lbl1 addGestureRecognizer:tapMe_Value];
                 [tapMe_Value release];
             
-            
-           
+                if([field_data_type isEqualToString:@"picklist"])
+                {
+                    NSString * key_ = @"";
+                    lbl1.text = @"";
+                    BOOL picklistFlag = FALSE;
+                    
+                    NSString * fieldName = [[field_columns objectAtIndex:j] objectForKey:@"Field_API_Name"];
+                    NSString * pick_value = [[field_columns objectAtIndex:j] objectForKey:gFIELD_VALUE_VALUE];
+                    for (int p = 0; p < [appDelegate.describeObjectsArray count]; p++)
+                    {
+                        ZKDescribeSObject * descObj = [appDelegate.describeObjectsArray objectAtIndex:p];
+                        ZKDescribeField * descField = [descObj fieldWithName:fieldName];
+                                                
+                        if (descField == nil)
+                            continue;
+                        
+                        NSArray * pickListEntryArray = [descField picklistValues];
+                        for (int k = 0; k < [pickListEntryArray count]; k++)
+                        {
+                            NSString * val_ = [[pickListEntryArray objectAtIndex:k] value];
+                            
+                            if ([val_ isEqualToString:pick_value])
+                            {
+                                picklistFlag = TRUE;
+                                key_ = [[pickListEntryArray objectAtIndex:k] label];
+                                break;
+                            }
+                        }
+                        if (picklistFlag)
+                            break;
+                    }
+                    value = key_;
+                } 
+                
                 
                 
                 UIImageView * v1 = nil;
@@ -3899,6 +3937,42 @@ extern void SVMXLog(NSString *format, ...);
                 //else
                 //{
                 lbl2 = [[UILabel alloc]initWithFrame:frame];
+                
+                
+                
+                if([field_data_type isEqualToString:@"picklist"])
+                {
+                    NSString * key_ = @"";
+                    BOOL picklistFlag = FALSE;
+                    
+                    NSString * fieldName = [[detail_fields objectAtIndex:j] objectForKey:@"Field_API_Name"];
+                    for (int p = 0; p < [appDelegate.describeObjectsArray count]; p++)
+                    {
+                        ZKDescribeSObject * descObj = [appDelegate.describeObjectsArray objectAtIndex:p];
+                        ZKDescribeField * descField = [descObj fieldWithName:fieldName];
+                        
+                        if (descField == nil)
+                            continue;
+                        
+                        NSArray * pickListEntryArray = [descField picklistValues];
+                        for (int k = 0; k < [pickListEntryArray count]; k++)
+                        {
+                            NSString * val_ = [[pickListEntryArray objectAtIndex:k] value];
+                            if ([val_ isEqualToString:value])
+                            {
+                                picklistFlag = TRUE;
+                                key_ = [[pickListEntryArray objectAtIndex:k] label];
+                                break;
+                            }
+                        }
+                        if (picklistFlag)
+                            break;
+                    }
+                    value = key_;
+                } 
+
+                
+                
                 if([field_data_type isEqualToString:@"datetime"])
                 {
                     value = [value stringByReplacingOccurrencesOfString:@"T" withString:@" "];
@@ -4356,6 +4430,41 @@ extern void SVMXLog(NSString *format, ...);
 
             
         }
+        if ([control_type isEqualToString:@"picklist"])
+        {
+            
+            NSString * key_ = @"";
+            BOOL picklistFlag = FALSE;
+            
+            for (int p = 0; p < [appDelegate.describeObjectsArray count]; p++)
+            {
+                ZKDescribeSObject * descObj = [appDelegate.describeObjectsArray objectAtIndex:p];
+                ZKDescribeField * descField = [descObj fieldWithName:field_API_Name];
+                
+                if (descField == nil)
+                    continue;
+                
+                NSArray * pickListEntryArray = [descField picklistValues];
+                for (int k = 0; k < [pickListEntryArray count]; k++)
+                {
+                    NSString * val_ = [[pickListEntryArray objectAtIndex:k] value];
+                    
+                    if ([val_ isEqualToString:value])
+                    {
+                        picklistFlag = TRUE;
+                        key_ = [[pickListEntryArray objectAtIndex:k] label];
+                        break;
+                    }
+                }
+                if (picklistFlag)
+                    break;
+            }
+            UILabel * value_lbl = [[[UILabel alloc] initWithFrame:idFrame] autorelease];
+            
+            value_lbl.backgroundColor = [UIColor clearColor];
+            value_lbl.text = key_;
+            [background addSubview:value_lbl];
+        }
         else
         {
         
@@ -4495,10 +4604,26 @@ extern void SVMXLog(NSString *format, ...);
                         ZKPicklistEntry * picklistEntry = [pickListEntryArray objectAtIndex:k];
                         NSString * validFor = [picklistEntry validFor];
                         [descObjValidFor addObject:validFor];
+                        NSString * key = [[pickListEntryArray objectAtIndex:k] label];
+                        NSString * pick_value  = [[pickListEntryArray objectAtIndex:k] value];
+                        if ([pick_value isEqualToString:value])
+                        {
+                            value = key;
+                        }
                         SMLog(@"%@", validFor);
                     }
                     else
+                    {
                         [descObjArray addObject:[[pickListEntryArray objectAtIndex:k] label]];
+                        
+                        NSString * key = [[pickListEntryArray objectAtIndex:k] label];
+                        NSString * pick_value  = [[pickListEntryArray objectAtIndex:k] value];
+                        if ([pick_value isEqualToString:value])
+                        {
+                            value = key;
+                        }
+                        
+                    }
                 }
                 
                 break;
@@ -7678,10 +7803,10 @@ extern void SVMXLog(NSString *format, ...);
         }
         NSArray * all_api_names = [field_dataType_dict allKeys];
         
-        for (int i = 0; i < [detail_values count]; i++)
+        for (int j = 0; j < [detail_values count]; j++)
         {
             
-            NSString * value_Field_API = [[detail_values objectAtIndex:i] objectForKey:gVALUE_FIELD_API_NAME];
+            NSString * value_Field_API = [[detail_values objectAtIndex:j] objectForKey:gVALUE_FIELD_API_NAME];
             NSString * control_type = @"";
             for(NSString * api in all_api_names)
             {
@@ -7690,13 +7815,12 @@ extern void SVMXLog(NSString *format, ...);
                     control_type = [field_dataType_dict objectForKey:api];
                 }
             }
-            
              
             if([control_type isEqualToString:@"picklist"])
             {
-                for (int i = 0; i < [appDelegate.describeObjectsArray count]; i++)
+                for (int k = 0; k < [appDelegate.describeObjectsArray count]; k++)
                 {
-                    ZKDescribeSObject * descObj = [appDelegate.describeObjectsArray objectAtIndex:i];
+                    ZKDescribeSObject * descObj = [appDelegate.describeObjectsArray objectAtIndex:k];
                     ZKDescribeField * descField = [descObj fieldWithName:value_Field_API];
                     BOOL isdependent = [descField dependentPicklist];
                     NSString * controller_type = [descField controllerName];
@@ -7704,8 +7828,8 @@ extern void SVMXLog(NSString *format, ...);
                         continue;
                     if(isdependent && [controller_type isEqualToString:fieldApi_name])
                     {
-                        [[detail_values objectAtIndex:i] setValue:@"" forKey:gVALUE_FIELD_VALUE_VALUE];
-                        [[detail_values objectAtIndex:i] setValue:@"" forKey:gVALUE_FIELD_VALUE_KEY];
+                        [[detail_values objectAtIndex:j] setValue:@"" forKey:gVALUE_FIELD_VALUE_VALUE];
+                        [[detail_values objectAtIndex:j] setValue:@"" forKey:gVALUE_FIELD_VALUE_KEY];
                         break;
                     }
                     

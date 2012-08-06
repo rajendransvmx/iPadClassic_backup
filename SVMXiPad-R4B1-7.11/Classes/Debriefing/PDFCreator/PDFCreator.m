@@ -1713,11 +1713,13 @@ extern void SVMXLog(NSString *format, ...);
 - (void) setWorkPerformed:(NSString *)workPerformed;
 {
 	// Draw the header for work performed first (based on the current graphics context position)
+    /*
     [self setImageWithName:@"workperformed"];
     
     CGContextSelectFont (pdfContext, CFONTNAME, 12, kCGEncodingMacRoman);
 	CGContextSetTextDrawingMode (pdfContext, kCGTextFill);
 	CGContextSetRGBFillColor (pdfContext, 0, 0, 0, 1);
+     */
 	const char *text = [workPerformed cStringUsingEncoding:NSUTF8StringEncoding];
 
 	CGSize maxsize;
@@ -1732,14 +1734,31 @@ extern void SVMXLog(NSString *format, ...);
     wp.font = font;
     wp.text = wfText;
 
-	UIGraphicsBeginImageContext(wp.bounds.size);
+
+    float yCoOrdinate = pageRect.size.height-currentPoint.y-wp.bounds.size.height;
+    NSLog(@"Y = %f",currentPoint.y);
+    if(yCoOrdinate < 0)
+    {
+        [self PDFPageEnd];
+        [self PDFPageBegin];        
+    }
+    NSLog(@"Y = %f",currentPoint.y);    
+    [self setImageWithName:@"workperformed"];
+    
+    CGContextSelectFont (pdfContext, CFONTNAME, 12, kCGEncodingMacRoman);
+	CGContextSetTextDrawingMode (pdfContext, kCGTextFill);
+	CGContextSetRGBFillColor (pdfContext, 0, 0, 0, 1);
+     
+    UIGraphicsBeginImageContext(wp.bounds.size);
 	CALayer *layer = [wp layer];
 	CGContextRef current_ctx = UIGraphicsGetCurrentContext();
 	[layer renderInContext:current_ctx];
 	UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
 	UIGraphicsEndImageContext();
 
-	CGRect imageRect = CGRectMake(55, pageRect.size.height-currentPoint.y-image.size.height, image.size.width, image.size.height);
+    yCoOrdinate = pageRect.size.height-currentPoint.y-image.size.height;
+    NSLog(@"Y = %f",yCoOrdinate);
+	CGRect imageRect = CGRectMake(55, yCoOrdinate, image.size.width, image.size.height);
 	CGContextDrawImage(pdfContext, imageRect, [image CGImage]);
 	[wp release];
 
@@ -1813,7 +1832,7 @@ extern void SVMXLog(NSString *format, ...);
     
     text = [qty cStringUsingEncoding:NSUTF8StringEncoding];
     if (text == nil) text = "";
-    CGContextShowTextAtPoint (pdfContext, currentPoint.x + spaceBuffer*28, pageRect.size.height-currentPoint.y, text, strlen(text));
+    CGContextShowTextAtPoint (pdfContext, currentPoint.x + spaceBuffer*28 - 20, pageRect.size.height-currentPoint.y, text, strlen(text));
     
     text = [unitprice cStringUsingEncoding:NSUTF8StringEncoding];
     if (text == nil) text = "";

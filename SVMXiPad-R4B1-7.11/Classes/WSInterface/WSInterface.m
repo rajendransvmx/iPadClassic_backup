@@ -1624,13 +1624,13 @@ extern void SVMXLog(NSString *format, ...);
                     NSDictionary * dict = [NSDictionary dictionaryWithObject:(key != nil)?key:@"" forKey:@"key"];
                     NSDictionary * dict1 ;
                     NSString * final_value = @"";
-                    if(value != nil)
-                    {
-                        final_value = value;
-                    }
-                    else if (value == nil && value1 != nil)
+                    if(value1 != nil)
                     {
                         final_value = value1;
+                    }
+                    else if (value != nil && value1 == nil)
+                    {
+                        final_value = value;
                     }
                     else 
                     {
