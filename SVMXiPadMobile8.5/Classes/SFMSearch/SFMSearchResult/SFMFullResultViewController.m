@@ -46,7 +46,7 @@
     [detailButton setFrame:CGRectMake(509, 10, 20, 21)];
     
     NSMutableString * queryStatement1 = [[NSMutableString alloc]initWithCapacity:0];
-    queryStatement1 =[NSMutableString stringWithFormat:@"Select process_id from SFProcess where object_api_name is  '%@' and process_type is 'VIEWRECORD'",objectName]; 
+    queryStatement1 =[NSMutableString stringWithFormat:@"Select process_id from SFProcess where object_api_name is  '%@' and process_type is 'VIEWRECORD'",[appDelegate.dataBase getApiNameFromFieldLabel:objectName]]; 
     sqlite3_stmt * labelstmt;
     char *field1;
     const char *selectStatement = [queryStatement1 UTF8String];

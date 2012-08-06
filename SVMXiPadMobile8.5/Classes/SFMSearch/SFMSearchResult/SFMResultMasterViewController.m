@@ -100,18 +100,8 @@
     NSLog(@"Notification :-%@",[notification name]);
     if(appDelegate.isInternetConnectionAvailable)
     {
-        if([appDelegate pingServer])
-        {
-            NSLog(@"Internet is Available");
-            searchFilterSwitch.enabled=TRUE;
-        }
-        else
-        {
-            NSLog(@"Internet is Not Available");
-            [searchFilterSwitch setOn:NO];
-            searchFilterSwitch.enabled=FALSE;
-        }
-
+        NSLog(@"Internet is Available");
+        searchFilterSwitch.enabled=TRUE;
     }
     else
     {
@@ -135,7 +125,7 @@
     searchCriteria.text = searchCriteriaString;
     searchLimitString.text = searchCriteriaLimitString;
     
-    if(appDelegate.isInternetConnectionAvailable &&[appDelegate pingServer])
+    if(appDelegate.isInternetConnectionAvailable)
     {
         searchFilterSwitch.enabled=TRUE;
          [searchFilterSwitch setOn:switchStatus];
@@ -184,7 +174,7 @@
         [resultDetailView.detailTable reloadData];
         [resultDetailView reloadInputViews];
     }
-    if(appDelegate.isInternetConnectionAvailable && [appDelegate pingServer])
+    if(appDelegate.isInternetConnectionAvailable )
     {
         searchFilterSwitch.enabled=TRUE;
         
@@ -270,7 +260,7 @@
 -(void) viewDidAppear:(BOOL)animated
 {
     
-    if(appDelegate.isInternetConnectionAvailable && [appDelegate pingServer])
+    if(appDelegate.isInternetConnectionAvailable )
     {
         searchFilterSwitch.enabled=TRUE;
     }
@@ -535,7 +525,7 @@
     [searchFilterSwitch setEnabled:FALSE];
     [resultDetailView showObjects:tableArray forAllObjects:YES];
     [self performSelector:@selector(didSelectHeader:)];
-    if(appDelegate.isInternetConnectionAvailable && [appDelegate pingServer])
+    if(appDelegate.isInternetConnectionAvailable)
     {
         [searchFilterSwitch setEnabled:TRUE];
     }

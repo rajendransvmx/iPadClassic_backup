@@ -1070,7 +1070,6 @@
                 NSLog(@"Table Name is there");
                 NSArray *fieldArray = [objectDef componentsSeparatedByString:@"."];
                 tableName = [fieldArray objectAtIndex:0];
-                //NSString *fieldName = [fieldArray objectAtIndex:1];
                 fieldName = [fieldArray objectAtIndex:1];
                 tableName = [tableName stringByReplacingOccurrencesOfString:@" " withString:@""];
                 fieldName = [fieldName stringByReplacingOccurrencesOfString:@" " withString:@""];
@@ -1226,8 +1225,7 @@
                     [finalQuery appendFormat:@")"];
                 }
             }   
-//            else if ([objectValue isEqualToString:@"TODAY"] || [objectValue isEqualToString:@"TOMORROW"] || [objectValue isEqualToString:@"YESTERDAY"] )
-            else if ([objectValue compare:@"TODAY" options:NSCaseInsensitiveSearch] || [objectValue compare:@"TOMORROW" options:NSCaseInsensitiveSearch] || [objectValue compare:@"YESTERDAY" options:NSCaseInsensitiveSearch] )
+            else if ( ([objectValue rangeOfString:@"TODAY"options:NSCaseInsensitiveSearch].length>0) ||  ([objectValue rangeOfString:@"TOMORROW"options:NSCaseInsensitiveSearch].length>0) ||  ([objectValue rangeOfString:@"YESTERDAY"options:NSCaseInsensitiveSearch].length>0)||([objectValue rangeOfString:@"NOW"options:NSCaseInsensitiveSearch].length>0) )
             {
                 NSDictionary *Bracesinvalue=[self occurenceOfBraces:objectValue];
                 [finalQuery appendString:operator];
@@ -1248,6 +1246,7 @@
                 
                 yesterday = [today dateByAddingTimeInterval: -secondsPerDay];
                 
+        
                 
                 //for macros expantion
                 if([data_type isEqualToString:@"DATE"])
@@ -1270,7 +1269,7 @@
                     }
                     if([objectValue isEqualToString:@"YESTERDAY"])
                     {
-                        [finalQuery appendString:today_Date];
+                        [finalQuery appendString:yesterday_date];
                     }
                     for (int i=0; i<[[Bracesinvalue objectForKey:@"leftBraces"] intValue]; i++) 
                     {
@@ -1287,6 +1286,16 @@
                     tomorow_date = [dateFormatter stringFromDate:tomorrow];
                     yesterday_date = [dateFormatter stringFromDate:yesterday];
                     
+                    today_Date = [today_Date stringByReplacingOccurrencesOfString:@" " withString:@"T"];
+                    today_Date = [today_Date stringByAppendingFormat:@".000+0000"];
+                    
+                    tomorow_date = [tomorow_date stringByReplacingOccurrencesOfString:@" " withString:@"T"];
+                    tomorow_date = [tomorow_date stringByAppendingFormat:@".000+0000"];
+                    
+                    
+                    yesterday_date=[yesterday_date stringByReplacingOccurrencesOfString:@" " withString:@"T"];
+                    yesterday_date = [yesterday_date stringByAppendingFormat:@".000+0000"];
+
                     if([objectValue isEqualToString:@"NOW"])
                     {
                         [finalQuery appendString:today_Date];
@@ -1497,7 +1506,6 @@
             char * label = (char *)synchronized_sqlite3_column_text(statement, 0);
             if ((label != nil) && strlen(label))
             {
-                NSLog(@"Value = %s",label);
                 //apiLabel = [NSString stringWithUTF8String:label];
                 apiLabel = [NSString stringWithFormat:@"%s",label];
             }
@@ -1523,7 +1531,6 @@
             char * label = (char *)synchronized_sqlite3_column_text(statement, 0);
             if ((label !=nil) && strlen(label))
             {
-                NSLog(@"Value = %s",label);
 //                apiName = [NSString stringWithUTF8String:label]; 
                 apiName = [NSString stringWithFormat:@"%s",label];
 
@@ -4792,8 +4799,8 @@
     
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS servicereprt_logo ('logo' VARCHAR)"];
     [self createTable:query];
-    
-    [self createUserGPSTable];
+    if([appDelegate enableGPS_SFMSearch])
+        [self createUserGPSTable];
 }
 
 
@@ -5391,30 +5398,30 @@
     appDelegate.connection_error = FALSE;
 
    // [appDelegate goOnlineIfRequired];
-    
+    [appDelegate updateInstalledPackageVersion];    
     NSString * retVal = [self callMetaSync];
-    
 
      // Uncomment this when SFM Search Module is Required
      //SFM Search 
-     
-     appDelegate.wsInterface.didOpSFMSearchComplete = FALSE;
-     [appDelegate.wsInterface metaSyncWithEventName:SFM_SEARCH eventType:SYNC values:nil];
-     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+     if([appDelegate enableGPS_SFMSearch])
      {
-     if (!appDelegate.isInternetConnectionAvailable)
-     {
-     if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-     [MyPopoverDelegate performSelector:@selector(throwException)];
-     break;
+         appDelegate.wsInterface.didOpSFMSearchComplete = FALSE;
+         [appDelegate.wsInterface metaSyncWithEventName:SFM_SEARCH eventType:SYNC values:nil];
+         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+         {
+         if (!appDelegate.isInternetConnectionAvailable)
+         {
+         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+         [MyPopoverDelegate performSelector:@selector(throwException)];
+         break;
+         }
+         if (appDelegate.wsInterface.didOpSFMSearchComplete == TRUE)
+         break; 
+         }
+         NSLog(@"MetaSync SFM Search End: %@", [NSDate date]);
+         
+         //SFM Search End
      }
-     if (appDelegate.wsInterface.didOpSFMSearchComplete == TRUE)
-     break; 
-     }
-     NSLog(@"MetaSync SFM Search End: %@", [NSDate date]);
-     
-     //SFM Search End
-     
     
     if ([retVal isEqualToString:SUCCESS_])
     {
@@ -6308,11 +6315,11 @@
             break; 
         }
         
-        retVal = [appDelegate pingServer];
-        if(retVal == NO)
-        {
-            break;
-        }
+//        retVal = [appDelegate pingServer];
+//        if(retVal == NO)
+//        {
+//            break;
+//        }
         if(appDelegate.connection_error)
         {
             appDelegate.SyncStatus = SYNC_GREEN;
@@ -6366,11 +6373,11 @@
         
         if (appDelegate.Incremental_sync_status == PUT_RECORDS_DONE)
             break; 
-        retVal = [appDelegate pingServer];
-        if(retVal == NO)
-        {
-            break;
-        }
+//        retVal = [appDelegate pingServer];
+//        if(retVal == NO)
+//        {
+//            break;
+//        }
         if(appDelegate.connection_error)
         {
             appDelegate.SyncStatus = SYNC_GREEN;

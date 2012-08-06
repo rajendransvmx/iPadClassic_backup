@@ -11,6 +11,7 @@
 //
 
 #import "BSPreviewScrollView.h"
+#import "iServiceAppDelegate.h"
 
 #define SHADOW_HEIGHT 20.0
 #define SHADOW_INVERSE_HEIGHT 10.0
@@ -109,6 +110,13 @@
 - (void)layoutSubviews
 {
 	// We need to do some setup once the view is visible. This will only be done once.
+    if(appDelegate.metaSyncCompleted == YES)
+    {
+        appDelegate.metaSyncCompleted = NO;
+        UIView *scrollViewWithTag = [self viewWithTag:100];
+        [scrollViewWithTag removeFromSuperview];
+        firstLayout = YES;                             
+    }
 	if(firstLayout)
 	{
 		// Add drop shadow to add that 3d effect
@@ -148,7 +156,7 @@
 		scrollView.showsHorizontalScrollIndicator = NO;
 		scrollView.showsVerticalScrollIndicator = NO;
 		scrollView.delegate = self;
-		
+		scrollView.tag = 100;
 		[self addSubview:scrollView];
 		
 		int pageCount = [delegate itemCount:self];
@@ -163,8 +171,12 @@
 		// Calculate the size of all combined views that we are scrolling through
         self.scrollView.contentSize = CGSizeMake([delegate itemCount:self] * pageSize.width, scrollView.frame.size.height);
 		
+        int numberOfModules = 8;
+        iServiceAppDelegate *appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+        if([appDelegate enableGPS_SFMSearch])
+            numberOfModules = 9;
 		// Load the first n pages
-        for (int i = 0; i < kNoOFModules; i++)
+        for (int i = 0; i < numberOfModules; i++)
             [self loadPage:i];
 		
 		firstLayout = NO;

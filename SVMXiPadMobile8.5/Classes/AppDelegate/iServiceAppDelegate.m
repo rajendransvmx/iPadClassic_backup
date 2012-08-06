@@ -327,6 +327,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize enableLocationService;
 @synthesize frequencyLocationService;
 @synthesize locationPingSettingTimer;
+@synthesize metaSyncCompleted;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     appDelegate = self;
@@ -1662,6 +1663,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 #pragma mark - Location Ping
 -(void)didUpdateToLocation:(CLLocation*)location
 {
+    if(![appDelegate enableGPS_SFMSearch])
+        return;
     //call db to store the data
     NSMutableDictionary *locationInfo = [[NSMutableDictionary alloc] init];
     NSDateFormatter * frm = [[[NSDateFormatter alloc] init] autorelease];
@@ -1691,6 +1694,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 #pragma mark - RunBackground Thread for Location Service Settings
 - (void) startBackgroundThreadForLocationServiceSettings
 {
+    if(![appDelegate enableGPS_SFMSearch])
+        return;
      if(metaSyncRunning )
     {
         NSLog(@"Meta Sync is Running");
@@ -1804,6 +1809,44 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 - (BOOL) isCameraAvailable
 {
     return [UIImagePickerController isSourceTypeAvailable: UIImagePickerControllerSourceTypeCamera];
+}
+
+- (BOOL) enableGPS_SFMSearch
+{
+    BOOL status = NO;
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    NSString *packgeVersion;
+    if (userDefaults) 
+    {            
+        packgeVersion = [userDefaults objectForKey:kPkgVersionCheckForGPS_AND_SFM_SEARCH];
+        NSLog(@"Pkg Version = %@",packgeVersion);
+        int _stringNumber = [packgeVersion intValue];
+        if(_stringNumber >= (kMinPkgForGPS_AND_SFMSEARCH * 100000))
+            status = YES;
+
+    }
+    return status;
+}
+- (void) updateInstalledPackageVersion
+{
+    didGetVersion = FALSE;
+    [self.wsInterface getSvmxVersion];
+    
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    {
+        if (!self.isInternetConnectionAvailable)
+            break;
+        if (self.didGetVersion)
+            break;
+    }
+    
+    NSString * stringNumber = [self.SVMX_Version stringByReplacingOccurrencesOfString:@"." withString:@""];
+    NSLog(@"Latest Installed Package = %@",stringNumber);
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    if (userDefaults) 
+    {            
+        [userDefaults setObject:stringNumber forKey:kPkgVersionCheckForGPS_AND_SFM_SEARCH];
+    }
 }
 @end
 

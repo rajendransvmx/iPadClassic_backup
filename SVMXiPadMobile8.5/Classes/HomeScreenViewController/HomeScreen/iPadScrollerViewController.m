@@ -364,6 +364,7 @@ const NSUInteger kNumImages = 7;
 {
 
     [self refreshArray];
+    [scrollViewPreview layoutSubviews];
     
     if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
     {
@@ -558,6 +559,9 @@ const NSUInteger kNumImages = 7;
 #pragma mark BSPreviewScrollViewDelegate methods
 -(UIView*)viewForItemAtIndex:(BSPreviewScrollView*)scrollView index:(int)index
 {
+    if(![appDelegate enableGPS_SFMSearch] && (index == 7))
+        index = 8; // Disable Location Ping and SFM Search
+    
 	// Note that the images are actually smaller than the image view frame, each image
 	// is 210x280. Images are centered and because they are smaller than the actual 
 	// view it creates a padding between each image. 
@@ -578,7 +582,8 @@ const NSUInteger kNumImages = 7;
     seperator.frame = CGRectMake(269, 0, seperator.frame.size.width, seperator.frame.size.height);
     [imageView addSubview:seperator];
     [seperator release];
-    
+
+
     UILabel * label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 269, 31)];
     label.backgroundColor = [UIColor clearColor];
     label.textAlignment = UITextAlignmentCenter;
@@ -602,12 +607,19 @@ const NSUInteger kNumImages = 7;
 -(int)itemCount:(BSPreviewScrollView*)scrollView
 {
 	// Return the number of pages we intend to display
-	return [self.scrollPages count];
+    int count = [self.scrollPages count];
+    if(![appDelegate enableGPS_SFMSearch])
+        count = count -1;
+    return count;
 }
 
 #pragma mark - TapImage Delegate Method
 - (void) tappedImageWithIndex:(int)index
 {
+    if(![appDelegate enableGPS_SFMSearch] && (index == 7))
+    {
+        index = 8;
+    }
     NSLog(@"%@", [itemArray objectAtIndex:index]);
     NSString * itemSelected = [itemArray objectAtIndex:index];
     if ([itemSelected isEqualToString:[appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CALENDAR]])
@@ -944,6 +956,9 @@ const NSUInteger kNumImages = 7;
 }
 - (void) scheduleLocationPingService
 {
+    if(![appDelegate enableGPS_SFMSearch])
+        return;
+    
 	if(appDelegate.metaSyncRunning )
     {
         NSLog(@"Meta Sync is Running");
@@ -1286,31 +1301,34 @@ const float progress_ = 0.07;
         return;
     }
     //SFM Search 
-    appDelegate.initial_sync_status = SYNC_SFM_SEARCH;
-    appDelegate.Sync_check_in = FALSE;
-    
-    appDelegate.wsInterface.didOpSFMSearchComplete = FALSE;
-    [appDelegate.wsInterface metaSyncWithEventName:SFM_SEARCH eventType:SYNC values:nil];
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+    if([appDelegate enableGPS_SFMSearch])
     {
-        if (!appDelegate.isInternetConnectionAvailable)
-        {
-            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
-            break;
-        }
-        if(appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED)
-        {
-            break;
-        }
-        if (appDelegate.connection_error)
-        {
-            break;
-        }
+        appDelegate.initial_sync_status = SYNC_SFM_SEARCH;
+        appDelegate.Sync_check_in = FALSE;
         
-        if (appDelegate.wsInterface.didOpSFMSearchComplete == TRUE)
-            break; 
+        appDelegate.wsInterface.didOpSFMSearchComplete = FALSE;
+        [appDelegate.wsInterface metaSyncWithEventName:SFM_SEARCH eventType:SYNC values:nil];
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        {
+            if (!appDelegate.isInternetConnectionAvailable)
+            {
+                appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+                break;
+            }
+            if(appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED)
+            {
+                break;
+            }
+            if (appDelegate.connection_error)
+            {
+                break;
+            }
+            
+            if (appDelegate.wsInterface.didOpSFMSearchComplete == TRUE)
+                break; 
+        }
+        NSLog(@"SAMMAN MetaSync SFM Search End: %@", [NSDate date]);
     }
-    NSLog(@"SAMMAN MetaSync SFM Search End: %@", [NSDate date]);
     if (!appDelegate.isInternetConnectionAvailable)
     {
         [self RefreshProgressBarNativeMethod:META_SYNC_];

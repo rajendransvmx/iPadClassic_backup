@@ -361,22 +361,24 @@
     }
     
     NSLog(@"SAMMAN MetaSync WS End: %@", [NSDate date]);
-    //SFM Search 
-    
-    appDelegate.wsInterface.didOpSFMSearchComplete = FALSE;
-    [appDelegate.wsInterface metaSyncWithEventName:SFM_SEARCH eventType:SYNC values:nil];
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+    if([appDelegate enableGPS_SFMSearch])
     {
-        if (!appDelegate.isInternetConnectionAvailable)
-            break;
+        //SFM Search 
+        
+        appDelegate.wsInterface.didOpSFMSearchComplete = FALSE;
+        [appDelegate.wsInterface metaSyncWithEventName:SFM_SEARCH eventType:SYNC values:nil];
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        {
+            if (!appDelegate.isInternetConnectionAvailable)
+                break;
 
-        if (appDelegate.wsInterface.didOpSFMSearchComplete == TRUE)
-            break; 
-    }
-    NSLog(@"SAMMAN MetaSync SFM Search End: %@", [NSDate date]);
-    
-    //SFM Search End
-    
+            if (appDelegate.wsInterface.didOpSFMSearchComplete == TRUE)
+                break; 
+        }
+        NSLog(@"SAMMAN MetaSync SFM Search End: %@", [NSDate date]);
+        
+        //SFM Search End
+    }    
     [appDelegate getDPpicklistInfo];
     NSLog(@"META SYNC 1");
     
@@ -980,6 +982,17 @@
     {
         NSLog(@"greater than %f", APPVERSION);
         appDelegate.wsInterface.isLoggedIn = YES;
+        NSLog(@"Installed Package Version = %@",stringNumber);
+        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+        if (userDefaults) 
+        {            
+            [userDefaults setObject:stringNumber forKey:kPkgVersionCheckForGPS_AND_SFM_SEARCH];
+            NSLog(@"Installed Package Version = %@",stringNumber);
+        }
+        else 
+        {
+            NSLog(@"Getting User Defaults Failed");
+        }
         return YES;
     }
     else

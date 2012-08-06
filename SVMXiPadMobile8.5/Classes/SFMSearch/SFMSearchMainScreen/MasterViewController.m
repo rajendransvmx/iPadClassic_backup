@@ -103,17 +103,8 @@
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     if(appDelegate.isInternetConnectionAvailable)
     {
-        if([appDelegate pingServer])
-        {
             NSLog(@"Internet is Available");
             searchFilterSwitch.enabled=TRUE;
-        }
-        else
-        {
-            NSLog(@"Internet is Not Available");
-            [searchFilterSwitch setOn:NO];
-            searchFilterSwitch.enabled=FALSE;
-        }
     }
     else
     {
@@ -135,7 +126,7 @@
                                                  name:kReachabilityChangedNotification
                                                object:nil];
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    if(appDelegate.isInternetConnectionAvailable && [appDelegate pingServer])
+    if(appDelegate.isInternetConnectionAvailable)
     {
         searchFilterSwitch.enabled=TRUE;
     }

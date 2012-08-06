@@ -575,6 +575,7 @@ PopoverButtons *popOver_view;
     }
  
     [pool release];
+    appDelegate.metaSyncCompleted = YES;
     appDelegate.metaSyncRunning = NO;
     
 }

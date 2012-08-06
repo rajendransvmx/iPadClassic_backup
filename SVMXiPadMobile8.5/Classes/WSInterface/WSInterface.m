@@ -609,7 +609,7 @@ last_sync_time:(NSString *)last_sync_time
         
     [profileCheck setRequest:sfmRequest];  
     
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_MetaSync_WSAsyncUsingParameters:profileCheck 
                                     SessionHeader:session 
                                       CallOptions:callOptions 
@@ -706,7 +706,7 @@ last_sync_time:(NSString *)last_sync_time
     
     
     NSLog(@"SAMMAN TX_FETCH Request Sent: %@", [NSDate date]);
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_DataSync_WSAsyncUsingParameters:datasync 
                                     SessionHeader:sessionHeader 
                                       CallOptions:callOptions
@@ -812,14 +812,14 @@ last_sync_time:(NSString *)last_sync_time
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
         //shrinivas
-        retVal = [appDelegate pingServer];
-        if(retVal == NO)
-        {
-             appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
-            return;
-        }
+//        retVal = [appDelegate pingServer];
+//        if(retVal == NO)
+//        {
+//             appDelegate.dataSyncRunning = NO;
+//            [self internetConnectivityHandling:data_sync];
+//            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
+//            return;
+//        }
         
         if (!appDelegate.isInternetConnectionAvailable)
         {
@@ -857,14 +857,14 @@ last_sync_time:(NSString *)last_sync_time
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
         //shrinivas
-        retVal = [appDelegate pingServer];
-        if(retVal == NO)
-        {
-             appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
-            return;
-        }
+//        retVal = [appDelegate pingServer];
+//        if(retVal == NO)
+//        {
+//             appDelegate.dataSyncRunning = NO;
+//            [self internetConnectivityHandling:data_sync];
+//            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
+//            return;
+//        }
 
         if (!appDelegate.isInternetConnectionAvailable)
         {
@@ -899,14 +899,14 @@ last_sync_time:(NSString *)last_sync_time
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
         //shrinivas
-        retVal = [appDelegate pingServer];
-        if(retVal == NO)
-        {
-            appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
-            return;
-        }
+//        retVal = [appDelegate pingServer];
+//        if(retVal == NO)
+//        {
+//            appDelegate.dataSyncRunning = NO;
+//            [self internetConnectivityHandling:data_sync];
+//            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
+//            return;
+//        }
         
         if (!appDelegate.isInternetConnectionAvailable)
         {
@@ -944,15 +944,15 @@ last_sync_time:(NSString *)last_sync_time
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
         //shrinivas
-        retVal = [appDelegate pingServer];
-        if(retVal == NO)
-        {
-            appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
-            
-            return;
-        }
+//        retVal = [appDelegate pingServer];
+//        if(retVal == NO)
+//        {
+//            appDelegate.dataSyncRunning = NO;
+//            [self internetConnectivityHandling:data_sync];
+//            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
+//            
+//            return;
+//        }
 
         if (!appDelegate.isInternetConnectionAvailable)
         {
@@ -1003,14 +1003,14 @@ last_sync_time:(NSString *)last_sync_time
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
         //shrinivas
-        retVal = [appDelegate pingServer];
-        if(retVal == NO)
-        {
-            appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
-            return;
-        }
+//        retVal = [appDelegate pingServer];
+//        if(retVal == NO)
+//        {
+//            appDelegate.dataSyncRunning = NO;
+//            [self internetConnectivityHandling:data_sync];
+//            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
+//            return;
+//        }
         
         if (!appDelegate.isInternetConnectionAvailable)
         {
@@ -1047,14 +1047,14 @@ last_sync_time:(NSString *)last_sync_time
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
         //shrinivas
-        retVal = [appDelegate pingServer];
-        if(retVal == NO)
-        {
-            appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
-            return;
-        }
+//        retVal = [appDelegate pingServer];
+//        if(retVal == NO)
+//        {
+//            appDelegate.dataSyncRunning = NO;
+//            [self internetConnectivityHandling:data_sync];
+//            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
+//            return;
+//        }
         if (!appDelegate.isInternetConnectionAvailable)
         {
             appDelegate.dataSyncRunning = NO;
@@ -1091,14 +1091,14 @@ last_sync_time:(NSString *)last_sync_time
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
         //shrinivas
-        retVal = [appDelegate pingServer];
-        if(retVal == NO)
-        {
-            appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
-            return;
-        }
+//        retVal = [appDelegate pingServer];
+//        if(retVal == NO)
+//        {
+//            appDelegate.dataSyncRunning = NO;
+//            [self internetConnectivityHandling:data_sync];
+//            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
+//            return;
+//        }
 
         if (!appDelegate.isInternetConnectionAvailable)
         {
@@ -1134,14 +1134,14 @@ last_sync_time:(NSString *)last_sync_time
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
         //shrinivas
-        retVal = [appDelegate pingServer];
-        if(retVal == NO)
-        {
-            appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
-            return;
-        }
+//        retVal = [appDelegate pingServer];
+//        if(retVal == NO)
+//        {
+//            appDelegate.dataSyncRunning = NO;
+//            [self internetConnectivityHandling:data_sync];
+//            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
+//            return;
+//        }
 
         if (!appDelegate.isInternetConnectionAvailable)
         {
@@ -1176,14 +1176,14 @@ last_sync_time:(NSString *)last_sync_time
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
         //shrinivas
-        retVal = [appDelegate pingServer];
-        if(retVal == NO)
-        {
-            appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
-            return;
-        }
+//        retVal = [appDelegate pingServer];
+//        if(retVal == NO)
+//        {
+//            appDelegate.dataSyncRunning = NO;
+//            [self internetConnectivityHandling:data_sync];
+//            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
+//            return;
+//        }
 
         if (!appDelegate.isInternetConnectionAvailable)
         {
@@ -1220,14 +1220,14 @@ last_sync_time:(NSString *)last_sync_time
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
         //shrinivas
-        retVal = [appDelegate pingServer];
-        if(retVal == NO)
-        {
-            appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
-            return;
-        }
+//        retVal = [appDelegate pingServer];
+//        if(retVal == NO)
+//        {
+//            appDelegate.dataSyncRunning = NO;
+//            [self internetConnectivityHandling:data_sync];
+//            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
+//            return;
+//        }
 
         if (!appDelegate.isInternetConnectionAvailable)
         {
@@ -1263,14 +1263,14 @@ last_sync_time:(NSString *)last_sync_time
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
         //shrinivas
-        retVal = [appDelegate pingServer];
-        if(retVal == NO)
-        {
-            appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
-            return;
-        }
+//        retVal = [appDelegate pingServer];
+//        if(retVal == NO)
+//        {
+//            appDelegate.dataSyncRunning = NO;
+//            [self internetConnectivityHandling:data_sync];
+//            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
+//            return;
+//        }
 
         if (!appDelegate.isInternetConnectionAvailable)
         {
@@ -1305,14 +1305,14 @@ last_sync_time:(NSString *)last_sync_time
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
         //shrinivas
-        retVal = [appDelegate pingServer];
-        if(retVal == NO)
-        {
-            appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
-            return;
-        }
+//        retVal = [appDelegate pingServer];
+//        if(retVal == NO)
+//        {
+//            appDelegate.dataSyncRunning = NO;
+//            [self internetConnectivityHandling:data_sync];
+//            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
+//            return;
+//        }
 
         if ( !appDelegate.isInternetConnectionAvailable)
         {
@@ -1345,14 +1345,14 @@ last_sync_time:(NSString *)last_sync_time
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
         //shrinivas
-        retVal = [appDelegate pingServer];
-        if(retVal == NO)
-        {
-            appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
-            return;
-        }
+//        retVal = [appDelegate pingServer];
+//        if(retVal == NO)
+//        {
+//            appDelegate.dataSyncRunning = NO;
+//            [self internetConnectivityHandling:data_sync];
+//            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
+//            return;
+//        }
 
         if (!appDelegate.isInternetConnectionAvailable)
         {
@@ -1382,9 +1382,11 @@ last_sync_time:(NSString *)last_sync_time
         
         return;
     }
-    [appDelegate.dataBase updateTechnicianLocation];
-    [appDelegate.dataBase updateUserGPSLocation];
-
+    if([appDelegate enableGPS_SFMSearch])
+    {
+        [appDelegate.dataBase updateTechnicianLocation];
+        [appDelegate.dataBase updateUserGPSLocation];
+    }
     [appDelegate.databaseInterface  updateSyncRecordsIntoLocalDatabase];
     //check download criteria match
 /*******************************************************DOWNLOAD_CRITERIA_CHANGE*************************************************************************/
@@ -1798,7 +1800,7 @@ last_sync_time:(NSString *)last_sync_time
     
     
     binding.logXMLInOut = YES;
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_DataSync_WSAsyncUsingParameters:datasync 
                                     SessionHeader:sessionHeader 
                                       CallOptions:callOptions
@@ -1865,7 +1867,7 @@ last_sync_time:(NSString *)last_sync_time
     
     
     binding.logXMLInOut = YES;
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_DataSync_WSAsyncUsingParameters:datasync 
                                     SessionHeader:sessionHeader 
                                       CallOptions:callOptions
@@ -1932,7 +1934,7 @@ last_sync_time:(NSString *)last_sync_time
     
     
     binding.logXMLInOut = YES;
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_DataSync_WSAsyncUsingParameters:datasync 
                                     SessionHeader:sessionHeader 
                                       CallOptions:callOptions
@@ -1983,7 +1985,7 @@ last_sync_time:(NSString *)last_sync_time
     
     
     binding.logXMLInOut = YES;
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_DataSync_WSAsyncUsingParameters:datasync 
                                     SessionHeader:sessionHeader 
                                       CallOptions:callOptions
@@ -2121,7 +2123,7 @@ last_sync_time:(NSString *)last_sync_time
     
     
     binding.logXMLInOut = YES;
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_DataSync_WSAsyncUsingParameters:datasync 
                                     SessionHeader:sessionHeader 
                                       CallOptions:callOptions
@@ -2820,7 +2822,7 @@ last_sync_time:(NSString *)last_sync_time
     
     binding.logXMLInOut = YES;
     
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     
     [binding INTF_DataSync_WSAsyncUsingParameters:datasync 
                                     SessionHeader:sessionHeader 
@@ -2858,7 +2860,7 @@ last_sync_time:(NSString *)last_sync_time
     
     binding.logXMLInOut = YES;
 
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding SVMX_GetSvmxVersionAsyncUsingParameters:getVersion
                                        SessionHeader:session
                                          CallOptions:callOptions
@@ -2939,7 +2941,7 @@ last_sync_time:(NSString *)last_sync_time
     
     [metaSync setRequest:sfmRequest];  
     
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_MetaSync_WSAsyncUsingParameters:metaSync 
                                     SessionHeader:session 
                                       CallOptions:callOptions 
@@ -3148,7 +3150,7 @@ last_sync_time:(NSString *)last_sync_time
     }
     [dataSync setRequest:sfmRequest];
     //SFM Search End
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_DataSync_WSAsyncUsingParameters:dataSync 
                                     SessionHeader:sessionHeader 
                                       CallOptions:callOptions
@@ -3232,7 +3234,7 @@ last_sync_time:(NSString *)last_sync_time
     [sfmRequest addClientInfo:client];
     [dataSync setRequest:sfmRequest];
     
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     NSLog(@"SAMMAN Incremental DataSync Request sent: %@", [NSDate date]);
     
   
@@ -3283,7 +3285,7 @@ last_sync_time:(NSString *)last_sync_time
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
     binding.logXMLInOut = YES;
     
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_Get_Tags_WSAsyncUsingParameters:getTags
                                     SessionHeader:session
                                       CallOptions:callOptions
@@ -3316,7 +3318,7 @@ last_sync_time:(NSString *)last_sync_time
     INTF_WebServicesDefServiceSvc_INTF_Get_StandaloneCreate_Layouts * getCreateProcesses = [[[INTF_WebServicesDefServiceSvc_INTF_Get_StandaloneCreate_Layouts alloc] init] autorelease];
     
     // Get Standalone create processes
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_Get_StandaloneCreate_LayoutsAsyncUsingParameters:getCreateProcesses 
                                                      SessionHeader:sessionHeader
                                                        CallOptions:callOptions
@@ -3349,7 +3351,7 @@ last_sync_time:(NSString *)last_sync_time
     
     INTF_WebServicesDefServiceSvc_INTF_Get_View_Layouts_WS * getViewLayouts = [[[INTF_WebServicesDefServiceSvc_INTF_Get_View_Layouts_WS alloc] init] autorelease];
     
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_Get_View_Layouts_WSAsyncUsingParameters:getViewLayouts
                                             SessionHeader:sessionHeader 
                                               CallOptions:callOptions
@@ -3406,7 +3408,7 @@ last_sync_time:(NSString *)last_sync_time
 
     [getTasks setIPadReqTask:requestForTasks];
     
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_Get_Tasks_WSAsyncUsingParameters:getTasks
                                      SessionHeader:sessionHeader
                                        CallOptions:callOptions
@@ -3472,7 +3474,7 @@ last_sync_time:(NSString *)last_sync_time
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
     binding.logXMLInOut = YES;
     
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_getPageLayout_WSAsyncUsingParameters:getPageLayout
                                          SessionHeader:session
                                            CallOptions:callOptions
@@ -3560,7 +3562,7 @@ last_sync_time:(NSString *)last_sync_time
     
     [savePageLayout setPmaxReqPageUI:savePageReq];
     
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_SavePageLayout_WSAsyncUsingParameters:savePageLayout
                                           SessionHeader:sessionHeader
                                             CallOptions:callOptions
@@ -3632,7 +3634,7 @@ last_sync_time:(NSString *)last_sync_time
     
     [getEvents setIPadReqEvent:reqEvents];
     
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_Get_Events_WSAsyncUsingParameters:(INTF_WebServicesDefServiceSvc_INTF_Get_Events_WS *)getEvents 
                                       SessionHeader:sessionHeader
                                         CallOptions:callOptions
@@ -3683,7 +3685,7 @@ last_sync_time:(NSString *)last_sync_time
     
     [getUpdateEvents.request addObject:eventWP];
     
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_Update_Events_WSAsyncUsingParameters:(INTF_WebServicesDefServiceSvc_INTF_Update_Events_WS *) getUpdateEvents
                                          SessionHeader:(INTF_WebServicesDefServiceSvc_SessionHeader *)sessionHeader 
                                            CallOptions: (INTF_WebServicesDefServiceSvc_CallOptions *)callOptions 
@@ -3749,7 +3751,7 @@ last_sync_time:(NSString *)last_sync_time
     
     [getWordOrderMapView setRequest:request];
     
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_Get_WorkOrderMapView_WSAsyncUsingParameters:getWordOrderMapView
                                                 SessionHeader:sessionHeader
                                                   CallOptions:callOptions
@@ -3840,7 +3842,7 @@ last_sync_time:(NSString *)last_sync_time
     
     getLookUpData.prequest = lookUpReq;
     
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_getLookUpConfigWithData_WSAsyncUsingParameters:getLookUpData
                                                    SessionHeader:sessionHeader
                                                      CallOptions:callOptions
@@ -3986,7 +3988,7 @@ last_sync_time:(NSString *)last_sync_time
     
     [getAccountHistory setAccHistoryRequest:reqAccountHistory];
     
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_Get_Account_History_WSAsyncUsingParameters:getAccountHistory
                                                SessionHeader:sessionHeader
                                                  CallOptions:callOptions
@@ -4033,7 +4035,7 @@ last_sync_time:(NSString *)last_sync_time
     
     [getProductHistory setProdHistoryRequest:reqProductHistory];
     
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_Get_Product_History_WSAsyncUsingParameters:getProductHistory
                                                SessionHeader:sessionHeader
                                                  CallOptions:callOptions
@@ -4096,7 +4098,7 @@ last_sync_time:(NSString *)last_sync_time
     [targetRecord setHeaderRecord:headerRecord];
     [targetRecord setSfmProcessId:@"CREATEWO"];
     
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding SFM_SaveTargetRecords_WSAsyncUsingParameters:saveTargetRecords
                                             SessionHeader:sessionHeader
                                               CallOptions:callOptions
@@ -4135,7 +4137,7 @@ last_sync_time:(NSString *)last_sync_time
 
     [saveTargetRecords setRequest:targetRecord];
 
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding SFM_SaveTargetRecords_WSAsyncUsingParameters:saveTargetRecords
                                             SessionHeader:sessionHeader
                                               CallOptions:callOptions
@@ -4190,7 +4192,7 @@ last_sync_time:(NSString *)last_sync_time
     [getThoonsEvent setRequest:targetRecord];
     
     
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     
     if([event_name isEqualToString:ONLOAD] || [event_name isEqualToString:GETPRICE])
     {
@@ -4273,7 +4275,7 @@ last_sync_time:(NSString *)last_sync_time
     
     [AddRecordWS setPrequest:request];
    
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_AddRecords_WSAsyncUsingParameters:AddRecordWS
                                             SessionHeader:sessionHeader
                                               CallOptions:callOptions
@@ -4387,7 +4389,7 @@ last_sync_time:(NSString *)last_sync_time
     [sfmRequest addClientInfo:svmxc_client];
     [datasync setRequest:sfmRequest];
     
-    [[ZKServerSwitchboard switchboard] doCheckSession];
+    //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_DataSync_WSAsyncUsingParameters:datasync 
                                     SessionHeader:sessionHeader 
                                       CallOptions:callOptions

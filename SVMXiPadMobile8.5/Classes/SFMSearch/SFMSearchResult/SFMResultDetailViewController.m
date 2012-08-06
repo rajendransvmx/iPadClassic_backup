@@ -802,6 +802,9 @@ enum  {
         appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     object = [appDelegate.dataBase getApiNameFromFieldLabel:object];
     NSMutableDictionary *uiControls=[[NSMutableDictionary alloc]init];
+    NSString *searchString = self.masterView.searchString.text;
+    if(searchString == nil)
+        searchString = @"";
     [uiControls setObject:self.masterView.searchLimitString.text forKey:@"searchLimitString"];
     [uiControls setObject:self.masterView.searchCriteria.text forKey:@"searchCriteria"];
     [uiControls setObject:self.masterView.searchString.text forKey:@"searchString"];
@@ -997,6 +1000,24 @@ enum  {
         ownerCellIndexPath = [self.detailTable indexPathForCell:ownerCell];
 //        NSLog(@"Accessory in index path is tapped. Index path = %d", ownerCellIndexPath.row);
     }
+       if(lastSelectedIndexPath != nil)
+    {
+        UITableViewCell *lastSelectedCell = [detailTable cellForRowAtIndexPath:lastSelectedIndexPath];
+        UIImageView *bgView = (UIImageView *)[lastSelectedCell viewWithTag:backgroundImage];
+        [bgView setImage:[UIImage imageNamed:@"SFM-Screen-Table-Strip.png"]];            
+        // change the textcolor of lastindex 
+        UILabel *txtFieldLabel1 = (UILabel *)[lastSelectedCell viewWithTag:textLabel1];
+        UILabel *txtFieldLabel2 = (UILabel *)[lastSelectedCell viewWithTag:textLabel2];
+        UILabel *txtFieldLabel3 = (UILabel *)[lastSelectedCell viewWithTag:textLabel3];
+        
+        [txtFieldLabel1 setTextColor:[appDelegate colorForHex:@"2d5d83"]];
+        [txtFieldLabel2 setTextColor:[appDelegate colorForHex:@"2d5d83"]];
+        [txtFieldLabel3 setTextColor:[appDelegate colorForHex:@"2d5d83"]];             
+    }
+    lastSelectedIndexPath = [ownerCellIndexPath retain];
+
+    UIImageView *bgView = (UIImageView *)[ownerCell viewWithTag:backgroundImage];
+    [bgView setImage:[UIImage imageNamed:@"SFM-Screen-Table-Strip-Selected.png"]];
     NSDictionary *dict = [tableDataArray objectAtIndex:ownerCellIndexPath.section];
     NSDictionary *dataDict = [[dict objectForKey:@"Values"] objectAtIndex:ownerCellIndexPath.row]; 
     NSString *objectName = [appDelegate.dataBase getApiNameFromFieldLabel:[dict objectForKey:@"ObjectName"]];

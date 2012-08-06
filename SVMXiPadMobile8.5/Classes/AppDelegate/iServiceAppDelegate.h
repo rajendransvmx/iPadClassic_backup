@@ -23,6 +23,9 @@
 #define TableViewCellHeight 40
 #define kLastLocationUpdateTimestamp @"LastLocationUpdateTimestamp"
 #define kLastLocationSettingUpdateTimestamp @"LastLocationSettingUpdateTimestamp"
+#define kPkgVersionCheckForGPS_AND_SFM_SEARCH   @"PackageVersionCheckForGPSandSFMSearch"
+#define kMinPkgForGPS_AND_SFMSEARCH             9.1
+
 @class iServiceViewController;
 @class LoginController;
 @class JobViewController;
@@ -346,7 +349,6 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     //sahana 25th August
     NSString * SVMX_Version;
     BOOL didGetVersion;
-    
     BOOL connectionAvailable;
     
     //Radha
@@ -540,7 +542,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 @property BOOL didProcessWorkOrderData;
 @property (nonatomic, retain) NSMutableArray * fieldNameTypeArray;
 @property (nonatomic, retain) NSMutableArray * workOrderUpdateData;
-@property (nonatomic, retain) NSMutableArray * workOrderData;@property (nonatomic) BOOL didGetVersion;
+@property (nonatomic, retain) NSMutableArray * workOrderData;
+@property (nonatomic) BOOL didGetVersion;
 @property (nonatomic , retain) NSString * SVMX_Version;
 @property (nonatomic , retain)  NSString * newProcessId;
 @property (nonatomic , retain) NSString * newRecordId;
@@ -688,6 +691,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 @property (nonatomic, assign) BOOL enableLocationService;
 @property (nonatomic,retain) NSString * frequencyLocationService;
 @property (nonatomic,retain) NSTimer * locationPingSettingTimer;
+@property (nonatomic, assign) BOOL metaSyncCompleted;
 // get GUID 
 + (NSString *)GetUUID;
 
@@ -747,6 +751,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 -(void)didUpdateToLocation:(CLLocation*)location;
 - (void) startBackgroundThreadForLocationServiceSettings;
 - (void) checkLocationServiceSetting;
+- (BOOL) enableGPS_SFMSearch;
+- (void) updateInstalledPackageVersion;
 //Bar Code
 - (BOOL) isCameraAvailable;
 

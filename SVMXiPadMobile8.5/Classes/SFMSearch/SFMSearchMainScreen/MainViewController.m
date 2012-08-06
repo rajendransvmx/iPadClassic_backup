@@ -48,24 +48,6 @@
 
 }
 
--(void) viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    
-    if(appDelegate.isInternetConnectionAvailable && [appDelegate pingServer])
-    {
-        masterView.searchFilterSwitch.enabled=TRUE;
-    }
-    else
-    {
-        [masterView.searchFilterSwitch setOn:NO];
-        masterView.searchFilterSwitch.enabled=FALSE;
-    }
-    
-}
-
-
 - (void)viewDidUnload
 {
     [super viewDidUnload];

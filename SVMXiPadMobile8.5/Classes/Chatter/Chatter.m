@@ -47,7 +47,7 @@
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     
     //Shrinivas
-    //[[ZKServerSwitchboard switchboard] doCheckSession];
+    ////[[ZKServerSwitchboard switchboard] doCheckSession];
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     [appDelegate goOnlineIfRequired];
     if ( !appDelegate.isInternetConnectionAvailable ) 
