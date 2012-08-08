@@ -189,6 +189,7 @@
 }
 - (IBAction)dismissView:(id)sender
 {
+    [ fullMainDelegate LoadResultDetailViewController];
     [self dismissModalViewControllerAnimated:YES];
 }
 

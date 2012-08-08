@@ -341,7 +341,7 @@
         float costPerPart = 0.0;
         costPerPart = [[dict objectForKey:KEY_COSTPERPART] floatValue];
         float discount = [[dict valueForKey:@"Discount"] floatValue];
-        double cost = [[dict valueForKey:KEY_PARTSUSED] intValue] * costPerPart * (1 - (discount/100));//#3014
+        double cost = [[dict valueForKey:KEY_PARTSUSED] floatValue] * costPerPart * (1 - (discount/100));//#3014
         totalCost += cost;
     }
     

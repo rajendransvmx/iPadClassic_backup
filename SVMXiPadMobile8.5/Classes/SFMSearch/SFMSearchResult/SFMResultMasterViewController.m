@@ -362,9 +362,21 @@
 		
 	}
     if([objDescription isEqualToString:@"(null)"])
-        cellLabel.text = [NSString stringWithFormat:@"%@ (%d)",objectName, numberOfRecords];//@"";
+        cellLabel.text = [NSString stringWithFormat:@"%@ (%d)",objectName, numberOfRecords];
     else
-        cellLabel.text = [NSString stringWithFormat:@"%@ (%d)",objDescription, numberOfRecords];
+        { 
+            NSString *tempObjDesc=@"";
+            if([objDescription length]>26)
+            {
+                tempObjDesc=[[objDescription substringToIndex:26] stringByAppendingFormat:@"..."];
+            }
+            else
+            {
+                tempObjDesc=objDescription;
+            }
+            cellLabel.text = [NSString stringWithFormat:@"%@ (%d)",tempObjDesc, numberOfRecords];
+        }
+
     
 	[searchDetailViewSFM release];
 	

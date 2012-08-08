@@ -3102,13 +3102,22 @@ last_sync_time:(NSString *)last_sync_time
 
             INTF_WebServicesDefServiceSvc_SVMXMap * svmxcLatitude =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
             svmxcLatitude.key  = @"SVMXC__Latitude__c";
-            svmxcLatitude.value = [dict objectForKey:@"SVMXC__Latitude__c"];
+            NSString *latitude = [dict objectForKey:@"SVMXC__Latitude__c"];
+            if(latitude != nil)
+                svmxcLatitude.value = latitude;
+            else
+                svmxcLatitude.value = @"";
+
             [svmxcField.valueMap addObject:svmxcLatitude];
             [svmxcLatitude release];
             
             INTF_WebServicesDefServiceSvc_SVMXMap * svmxcLongitude =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
             svmxcLongitude.key  = @"SVMXC__Longitude__c";
-            svmxcLongitude.value = [dict objectForKey:@"SVMXC__Longitude__c"];
+            NSString *longitude = [dict objectForKey:@"SVMXC__Longitude__c"];
+            if(longitude != nil)
+                svmxcLongitude.value = longitude;
+            else
+                svmxcLongitude.value = @"";
             [svmxcField.valueMap addObject:svmxcLongitude];
             [svmxcLongitude release];
 
@@ -4467,7 +4476,7 @@ last_sync_time:(NSString *)last_sync_time
         appDelegate.didFinishWithError = TRUE;
         
         appDelegate.isSpecialSyncDone = TRUE;
-        
+        [appDelegate.dataBase setDidUserGPSLocationUpdated:YES];
     
         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
         {
@@ -7160,12 +7169,14 @@ last_sync_time:(NSString *)last_sync_time
             didCompleteAfterSaveEventCalls = NO;
             return;
         }
+        /*
         else if (appDelegate.wsInterface.webservice_call == TRUE)
         {
             appDelegate.wsInterface.getPrice = TRUE;
             appDelegate.wsInterface.webservice_call = FALSE;
             return;
         }
+         */
         // Do something
         NSArray * bodyParts = [response bodyParts];
         if ([bodyParts count] == 0)

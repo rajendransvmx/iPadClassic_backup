@@ -58,55 +58,6 @@ enum  {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
-    //Back Button
-//    UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)] autorelease];
-//       [backButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Back-Arrow-Button"] forState:UIControlStateNormal];
-//    [backButton addTarget:self action:@selector(DismissViewController:) forControlEvents:UIControlEventTouchUpInside];
-//    [backButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-//    UIBarButtonItem * backBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:backButton] autorelease];
-//    self.navigationItem.leftBarButtonItem = backBarButtonItem;
-//    NSMutableArray * buttons = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-//    if(appDelegate == nil)
-//        appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-//    UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:appDelegate.animatedImageView];
-//    [buttons addObject:syncBarButton];
-//    [syncBarButton setTarget:self];
-//    syncBarButton.width =26;
-//    [syncBarButton release];
-//    
-//    UIButton *actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)];
-//    [actionButton setImage:[UIImage imageNamed:@"iService-Screen-Help.png"] forState:UIControlStateNormal];
-//    actionButton.alpha = 1.0;
-//    [actionButton addTarget:self action:@selector(showHelp) forControlEvents:UIControlEventTouchUpInside];
-//    
-//    UIBarButtonItem * helpBarButton = [[UIBarButtonItem alloc] initWithCustomView:actionButton];
-//    [helpBarButton setTarget:self];
-//    [helpBarButton setAction:@selector(showHelp)];
-//    [buttons addObject:helpBarButton];
-//    [helpBarButton release];
-//    [actionButton release];
-//    
-//    UIToolbar* toolbar = [[[UIToolbar alloc] initWithFrame:CGRectMake(600, 0, 90, 44)] autorelease];
-//    [toolbar setItems:buttons];
-//    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:toolbar] autorelease];
-//         
-//    UIImageView * bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_right_panel_bg_main_top.png"]];
-//  
-//    bgImage.frame = CGRectMake(0, -12, bgImage.frame.size.width, bgImage.frame.size.height+12);
-//     [self.view addSubview:bgImage];
-//    self.detailTable.backgroundView = bgImage;
-//    [bgImage release];
-//     
-//      // Set title for detail
-//    UILabel * titleLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, 200, 44)] autorelease];
-//    titleLabel.textAlignment = UITextAlignmentCenter;
-//    if(sfmConfigName == nil)
-//        titleLabel.text = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_SRCH_RESULTS];
-//    else
-//        titleLabel.text = sfmConfigName;
-//    titleLabel.font = [UIFont boldSystemFontOfSize:15];
-//    titleLabel.backgroundColor = [UIColor clearColor];
-//    self.navigationItem.titleView = titleLabel;
     [self initilizeToolBar];
     [self createTable];
     
@@ -114,6 +65,11 @@ enum  {
 -(void) LoadResultDetailViewController
 {
     [self initilizeToolBar];
+}
+-(void) viewDidAppear:(BOOL)animated
+{
+    [self initilizeToolBar];
+
 }
 -(void) initilizeToolBar 
 {
@@ -233,14 +189,11 @@ enum  {
         if([formated_header rangeOfString:@"."].length > 0)
         {
             NSRange range=[formated_header rangeOfString:@"."];
-//            NSLog(@"%@",[NSString stringWithFormat:@"%@",[formated_header substringFromIndex:range.location+1]]);
-//            NSLog(@"%@",[NSString stringWithFormat:@"%@",[formated_header substringToIndex:range.location]]);
             apiHeaderName=[formated_header substringFromIndex:range.location+1];
             object_name =[formated_header substringToIndex:range.location];
             formated_header_objectName=[appDelegate.dataBase getLabelFromApiName:apiHeaderName
                                                       objectName:[appDelegate.dataBase getApiNameFromFieldLabel:object_name]];
         }
-        //label.text=[NSString stringWithFormat:@"%@.%@",object_name,formated_header_objectName];//[[[tableDataArray objectAtIndex:section ] objectForKey:@"TableHeader"]objectAtIndex:i];
         label.text=formated_header_objectName;//
         label.textAlignment = UITextAlignmentLeft;
         label.textColor=[UIColor whiteColor];
@@ -251,7 +204,6 @@ enum  {
 
         [view addSubview:label]; 
     }
-    //Create header view and add label as a subview
     return view;
 
 }
@@ -260,7 +212,6 @@ enum  {
     NSArray *cellArray = [[tableDataArray objectAtIndex:section] objectForKey:@"Values"];
     if([self.masterView.searchFilterSwitch isOn])
     {
-       // NSArray *onlineCellArray = [[tableDataArray objectAtIndex:section] objectForKey:@"OnlineResults"];
         NSDictionary *sectionDict = [tableDataArray objectAtIndex:section];
         NSString *sectionObjectId = [sectionDict objectForKey:@"ObjectId"];
         int onlineCount = 0;
@@ -307,7 +258,6 @@ enum  {
     }
     NSArray *cellArray = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"Values"] ;
     [cell clearsContextBeforeDrawing];
-    //    UIButton * button = [[[UIButton alloc] initWithFrame:CGRectMake(tableView.frame.size.width-110, 0, TableViewResultViewCellHeight, TableViewResultViewCellHeight)] autorelease];
     UIButton * button = [[[UIButton alloc] initWithFrame:CGRectMake(tableView.frame.size.width-103, 5, 20, 21)] autorelease];
     
     button.userInteractionEnabled = TRUE;

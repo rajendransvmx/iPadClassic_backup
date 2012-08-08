@@ -684,6 +684,10 @@
                     }
                 }
 //                NSLog(@"Tokens = %@",tokens);
+                if([tokens count] == 0)
+                {
+                    [tokens addObject:Expression];
+                }
                 index++;
                 for(NSString *data in tokens)
                 {
@@ -718,6 +722,7 @@
                     TableArray=[logicalParsingResult objectForKey:@"TableArray"];
                     tableArrayDict=[logicalParsingResult objectForKey:@"tableArrayDict"];
                     finalQuery=[logicalParsingResult objectForKey:@"finalQuery"];
+                    [finalQuery appendString:@" COLLATE NOCASE"]; 
                 }
                 else
                 {
@@ -736,6 +741,7 @@
                         TableArray=[logicalParsingResult objectForKey:@"TableArray"];
                         tableArrayDict=[logicalParsingResult objectForKey:@"tableArrayDict"];
                         finalQuery=[logicalParsingResult objectForKey:@"finalQuery"];
+                        [finalQuery appendString:@" COLLATE NOCASE"]; 
 
                     }
                     [alltokens release];
@@ -890,7 +896,7 @@
             
     if([finalQuery length] > 0)
     {
-            queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE %@ AND %@ COLLATE NOCASE LIMIT %@",queryFields,object,joinFields,finalQuery,customizeSearch,[uiControlsValue objectForKey:@"searchLimitString"]];
+            queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE %@ AND (%@) COLLATE NOCASE LIMIT %@",queryFields,object,joinFields,finalQuery,customizeSearch,[uiControlsValue objectForKey:@"searchLimitString"]];
     }
         else
             queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@'%@ WHERE %@ LIMIT %@",queryFields,object,joinFields,customizeSearch,[uiControlsValue objectForKey:@"searchLimitString"]];
@@ -1017,6 +1023,7 @@
 {
     NSArray *operatorArray = [NSArray arrayWithObjects:@"!=",@"<=",@">=",@"<>",@"=",@"<",@">",@"NOT LIKE",@" LIKE ",@" NOT IN ",@" IN ", nil];
     int Count=-1; 
+
     NSMutableArray *TableArray = [dictforparsing objectForKey:@"TableArray"];
     NSMutableDictionary *tableArrayDict=[dictforparsing objectForKey:@"tableArrayDict"];
     NSMutableDictionary *resultDict=[[NSMutableDictionary alloc]init ];
@@ -1026,7 +1033,7 @@
     NSArray * criteria_array  = [dictforparsing objectForKey:@"criteriaArray"];
     NSDictionary * criteria_dict = [criteria_array objectAtIndex:0];
     NSArray * criteria_ALl_keys = [criteria_dict allKeys];
-    NSString * data_type = @"";
+    NSString * data_type = @"",*rhs=@"";
     for(NSString * str in criteria_ALl_keys)
     {
         if([str isEqualToString:@"SVMXC__Display_Type__c"])
@@ -1101,10 +1108,12 @@
                     }
                     if([objectValue rangeOfString:@"null"options:NSCaseInsensitiveSearch].length >0 &&([operator isEqualToString:@"!="] || [operator isEqualToString:@"<>"]) )
                     {
-                        [finalQuery appendFormat:@"trim(%@.%@)",referenceObjectName,fieldName];
+                        rhs=[NSString stringWithFormat:@"'%@'.%@",referenceObjectName,fieldName];
+                        [finalQuery appendFormat:@"trim('%@'.%@)",referenceObjectName,fieldName];
                     }
                     else
                     {
+                        rhs=[NSString stringWithFormat:@"%@",referenceObjectName];
                         [finalQuery appendString:referenceObjectName];
                         [finalQuery appendString:@"."];
                         [finalQuery appendString:fieldName];
@@ -1137,7 +1146,7 @@
                         
                         if([objectValue rangeOfString:@"null"options:NSCaseInsensitiveSearch].length >0 &&([operator isEqualToString:@"!="] || [operator isEqualToString:@"<>"]) )
                         {
-                            [finalQuery appendFormat:@"trim(%@.%@)",tableName,fieldName];
+                            [finalQuery appendFormat:@"trim('%@'.%@)",tableName,fieldName];
                         }
                         else
                         {
@@ -1168,11 +1177,12 @@
                 if([objectValue rangeOfString:@"null"options:NSCaseInsensitiveSearch].length >0 &&([operator isEqualToString:@"!="] || [operator isEqualToString:@"<>"]) )
                 {
                     
-                    [finalQuery appendFormat:@"trim(%@.%@)",[self getApiNameFromFieldLabel:[dictforparsing objectForKey:@"strTargetObject"]],objectDefWithoutBrace];
+                    [finalQuery appendFormat:@"trim('%@'.%@)",[self getApiNameFromFieldLabel:[dictforparsing objectForKey:@"strTargetObject"]],objectDefWithoutBrace];
                     
                 }
                 else
                 {
+                    rhs=[NSString stringWithFormat:@"'%@'.%@",[self getApiNameFromFieldLabel:[dictforparsing objectForKey:@"strTargetObject"]],objectDefWithoutBrace];
                     [finalQuery appendFormat:@"'%@'",[self getApiNameFromFieldLabel:[dictforparsing objectForKey:@"strTargetObject"]]];
                     [finalQuery appendString:@"."];
                     [finalQuery appendString:objectDefWithoutBrace];
@@ -1187,13 +1197,14 @@
             if([objectValue rangeOfString:@"null"options:NSCaseInsensitiveSearch].length >0)
             {
                 NSDictionary *Bracesinvalue=[self occurenceOfBraces:objectValue];
-                if([objectValueBrace isEqualToString:@" null"] &&([operator isEqualToString:@"!="] || [operator isEqualToString:@"<>"]) )
+                if([objectValueBrace Contains:@"null"] &&([operator isEqualToString:@"!="] || [operator isEqualToString:@"<>"]) )
                 {
                     [finalQuery appendFormat:@" != '' "];
                 }
                 else
                 {
-                    [finalQuery appendString:@" isnull"];
+//                    [finalQuery appendString:@" isnull"];
+                      [finalQuery appendFormat:@"= '' "];
                 }
                 
                 
@@ -1228,8 +1239,7 @@
             else if ( ([objectValue rangeOfString:@"TODAY"options:NSCaseInsensitiveSearch].length>0) ||  ([objectValue rangeOfString:@"TOMORROW"options:NSCaseInsensitiveSearch].length>0) ||  ([objectValue rangeOfString:@"YESTERDAY"options:NSCaseInsensitiveSearch].length>0)||([objectValue rangeOfString:@"NOW"options:NSCaseInsensitiveSearch].length>0) )
             {
                 NSDictionary *Bracesinvalue=[self occurenceOfBraces:objectValue];
-                [finalQuery appendString:operator];
-                [finalQuery appendString:@"'"];
+                
                 
                 NSTimeInterval secondsPerDay = 24 * 60 * 60;
                 
@@ -1249,8 +1259,11 @@
         
                 
                 //for macros expantion
-                if([data_type isEqualToString:@"DATE"])
+                if([[self getDataTypeFor:fieldName inArray:criteria_array] isEqualToString:@"DATE"])
                 {
+                    [finalQuery appendString:operator];
+                    [finalQuery appendString:@"'"];
+                    
                     [dateFormatter setDateFormat:@"yyyy-MM-dd"];
                     
                     today_Date = [dateFormatter stringFromDate:today];
@@ -1278,42 +1291,72 @@
                     
                 }
                 
-                if([data_type isEqualToString:@"DATETIME"])
+                if([[self getDataTypeFor:fieldName inArray:criteria_array] isEqualToString:@"DATETIME"])
                 {
-                    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-                    
+                    [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+                    NSString *start_datetime,*end_datetime;
                     today_Date = [dateFormatter stringFromDate:today];
                     tomorow_date = [dateFormatter stringFromDate:tomorrow];
                     yesterday_date = [dateFormatter stringFromDate:yesterday];
-                    
-                    today_Date = [today_Date stringByReplacingOccurrencesOfString:@" " withString:@"T"];
-                    today_Date = [today_Date stringByAppendingFormat:@".000+0000"];
-                    
-                    tomorow_date = [tomorow_date stringByReplacingOccurrencesOfString:@" " withString:@"T"];
-                    tomorow_date = [tomorow_date stringByAppendingFormat:@".000+0000"];
-                    
-                    
-                    yesterday_date=[yesterday_date stringByReplacingOccurrencesOfString:@" " withString:@"T"];
-                    yesterday_date = [yesterday_date stringByAppendingFormat:@".000+0000"];
 
-                    if([objectValue isEqualToString:@"NOW"])
+                    if([objectValue isEqualToString:@"TODAY"]||[objectValue isEqualToString:@"NOW"])
                     {
-                        [finalQuery appendString:today_Date];
-                    }
-                    
-                    if([objectValue isEqualToString:@"TODAY"])
-                    {
-                        [finalQuery appendString:today_Date];
+                        start_datetime = [today_Date stringByAppendingFormat:@"T00:00:00.000+0000"];
+                        end_datetime   = [today_Date stringByAppendingFormat:@"T24:00:00.000+0000"];  
+                        if([operator isEqualToString:@"="])
+                        {
+                                        
+                            [finalQuery appendString:@" >= "];
+                            [finalQuery appendFormat:@"'%@'",start_datetime];
+                            [finalQuery appendFormat:@" AND %@",rhs];
+                            [finalQuery appendFormat:@" < '%@",end_datetime];
+                        }
+                        else 
+                        {
+                            [finalQuery appendFormat:@" %@",operator];
+                            [finalQuery appendFormat:@"'%@",start_datetime];
+                        
+                        }
                     }
                     
                     if([objectValue isEqualToString:@"TOMORROW"])
                     {
-                       [finalQuery appendString:tomorow_date];
+                        start_datetime = [tomorow_date stringByAppendingFormat:@"T00:00:00.000+0000"];
+                        end_datetime   = [tomorow_date stringByAppendingFormat:@"T24:00:00.000+0000"];  
+                        if([operator isEqualToString:@"="])
+                        {
+                            
+                            [finalQuery appendString:@" >= "];
+                            [finalQuery appendFormat:@"'%@'",start_datetime];
+                            [finalQuery appendFormat:@" AND %@",rhs];
+                            [finalQuery appendFormat:@" < '%@",end_datetime];
+                        }
+                        else 
+                        {
+                            [finalQuery appendFormat:@" %@",operator];
+                            [finalQuery appendFormat:@"'%@",start_datetime];
+                            
+                        }
                     }
                     
                     if([objectValue isEqualToString:@"YESTERDAY"])
                     {
-                        [finalQuery appendString:yesterday_date];
+                        start_datetime = [yesterday_date stringByAppendingFormat:@"T00:00:00.000+0000"];
+                        end_datetime   = [yesterday_date stringByAppendingFormat:@"T24:00:00.000+0000"];  
+                        if([operator isEqualToString:@"="])
+                        {
+                            
+                            [finalQuery appendString:@" >= "];
+                            [finalQuery appendFormat:@"'%@'",start_datetime];
+                            [finalQuery appendFormat:@" AND %@",rhs];
+                            [finalQuery appendFormat:@" < '%@",end_datetime];
+                        }
+                        else 
+                        {
+                            [finalQuery appendFormat:@" %@",operator];
+                            [finalQuery appendFormat:@"'%@",start_datetime];
+                            
+                        }
                     }
                     for (int i=0; i<[[Bracesinvalue objectForKey:@"leftBraces"] intValue]; i++) 
                     {

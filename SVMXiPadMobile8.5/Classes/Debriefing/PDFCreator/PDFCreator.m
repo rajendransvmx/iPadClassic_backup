@@ -624,7 +624,7 @@
        //     float linePrice = [[[_parts objectAtIndex:i] objectForKey:@"CostPerPart"] intValue];
        //     Abinash 28th december
             float linePrice = [[[_parts objectAtIndex:i] objectForKey:@"CostPerPart"] floatValue];
-            linePrice *= [[[_parts objectAtIndex:i] objectForKey:@"PartsUsed"] intValue];
+            linePrice *= [[[_parts objectAtIndex:i] objectForKey:@"PartsUsed"] floatValue];
             linePrice *= (1 - ([[[_parts objectAtIndex:i] objectForKey:@"Discount"] floatValue]/100));
             {
                 NSDictionary * obj = [_parts objectAtIndex:i];
@@ -2085,11 +2085,13 @@
 - (void) setWorkPerformed:(NSString *)workPerformed;
 {
 	// Draw the header for work performed first (based on the current graphics context position)
+    /*
     [self setImageWithName:@"workperformed"];
     
     CGContextSelectFont (pdfContext, CFONTNAME, 12, kCGEncodingMacRoman);
 	CGContextSetTextDrawingMode (pdfContext, kCGTextFill);
 	CGContextSetRGBFillColor (pdfContext, 0, 0, 0, 1);
+     */
 	const char *text = [workPerformed cStringUsingEncoding:NSUTF8StringEncoding];
 
 	CGSize maxsize;
@@ -2104,19 +2106,35 @@
     wp.font = font;
     wp.text = wfText;
 
-	UIGraphicsBeginImageContext(wp.bounds.size);
+    float yCoOrdinate = pageRect.size.height-currentPoint.y-wp.bounds.size.height;
+    NSLog(@"Y = %f",currentPoint.y);
+    if(yCoOrdinate < 0)
+    {
+        [self PDFPageEnd];
+        [self PDFPageBegin];        
+    }
+    NSLog(@"Y = %f",currentPoint.y);    
+    [self setImageWithName:@"workperformed"];
+    
+    CGContextSelectFont (pdfContext, CFONTNAME, 12, kCGEncodingMacRoman);
+	CGContextSetTextDrawingMode (pdfContext, kCGTextFill);
+	CGContextSetRGBFillColor (pdfContext, 0, 0, 0, 1);
+    
+    UIGraphicsBeginImageContext(wp.bounds.size);
 	CALayer *layer = [wp layer];
 	CGContextRef current_ctx = UIGraphicsGetCurrentContext();
 	[layer renderInContext:current_ctx];
 	UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
 	UIGraphicsEndImageContext();
-
-	CGRect imageRect = CGRectMake(55, pageRect.size.height-currentPoint.y-image.size.height, image.size.width, image.size.height);
+    
+    yCoOrdinate = pageRect.size.height-currentPoint.y-image.size.height;
+    NSLog(@"Y = %f",yCoOrdinate);
+	CGRect imageRect = CGRectMake(55, yCoOrdinate, image.size.width, image.size.height);
 	CGContextDrawImage(pdfContext, imageRect, [image CGImage]);
 	[wp release];
-
+    
     [self newLine:image.size.height];
-
+    
     if (currentPoint.y > 850)
     {
         [self PDFPageEnd];
@@ -2143,7 +2161,7 @@
     
     text = [qty cStringUsingEncoding:NSUTF8StringEncoding];
     if (text == nil) text = "";
-    CGContextShowTextAtPoint (pdfContext, currentPoint.x + spaceBuffer*36, pageRect.size.height-currentPoint.y, text, strlen(text));
+    CGContextShowTextAtPoint (pdfContext, currentPoint.x + spaceBuffer*35, pageRect.size.height-currentPoint.y, text, strlen(text));
     
     text = [unitprice cStringUsingEncoding:NSUTF8StringEncoding];
     if (text == nil) text = "";
@@ -2185,7 +2203,7 @@
     
     text = [qty cStringUsingEncoding:NSUTF8StringEncoding];
     if (text == nil) text = "";
-    CGContextShowTextAtPoint (pdfContext, currentPoint.x + spaceBuffer*28, pageRect.size.height-currentPoint.y, text, strlen(text));
+    CGContextShowTextAtPoint (pdfContext, currentPoint.x + spaceBuffer*26, pageRect.size.height-currentPoint.y, text, strlen(text));
     
     text = [unitprice cStringUsingEncoding:NSUTF8StringEncoding];
     if (text == nil) text = "";

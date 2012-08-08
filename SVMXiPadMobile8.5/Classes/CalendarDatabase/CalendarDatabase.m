@@ -947,7 +947,7 @@
             
             NSString * numPartsUsed = [dictionary objectForKey:gSVMXC__Actual_Quantity2__c];
             if ([numPartsUsed isKindOfClass:[NSString class]] && numPartsUsed != nil)
-                numPartsUsed = [NSString stringWithFormat:@"%d", [numPartsUsed intValue]];
+                numPartsUsed = [NSString stringWithFormat:@"%0.2f", [numPartsUsed floatValue]];
             
             NSString * description = [dictionary objectForKey:gSVMXC__Work_Description__c];
             if ([description isKindOfClass:[NSString class]])

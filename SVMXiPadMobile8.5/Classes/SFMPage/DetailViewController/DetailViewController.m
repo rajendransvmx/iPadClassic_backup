@@ -10074,7 +10074,7 @@
 //            if ([targetCall isEqualToString:nil])
 //                targetCall = @"";
             
-            
+            /*
             if ([targetCall isEqualToString:@"Get Price"])
             {
                 
@@ -10083,6 +10083,7 @@
             {
                 appDelegate.wsInterface.webservice_call = TRUE;
             }
+             */
             [self didInvokeWebService:[[[[[hdr_object objectForKey:gHEADER_BUTTONS] objectAtIndex:0] objectForKey:@"button_Events"] objectAtIndex:0] valueForKey:@"button_Event_Target_Call"] event_name:GETPRICE];
 			//Code change for get pirce  ---> 11/06/2012   --- Time: 1:23 PM.
 			
@@ -10723,7 +10724,7 @@
 //                if ([targetCall isEqualToString:nil])
 //                    targetCall = @"";
                 
-            
+            /*
             if ([targetCall isEqualToString:@"Get Price"])
             {
                 
@@ -10732,6 +10733,7 @@
             {
                 appDelegate.wsInterface.webservice_call = TRUE;
             }
+             */
 			
 			NSArray * array1 = [hdr_object objectForKey:gHEADER_BUTTONS];
 			NSDictionary * dict = [array1 objectAtIndex:0];
@@ -11092,7 +11094,7 @@
 //            if ([targetCall isEqualToString:nil])
 //                targetCall = @"";
             
-            
+            /*
             if ([targetCall isEqualToString:@"Get Price"])
             {
                 
@@ -11101,6 +11103,7 @@
             {
                 appDelegate.wsInterface.webservice_call = TRUE;
             }
+             */
             [self didInvokeWebService:[[[[[hdr_object objectForKey:gHEADER_BUTTONS] objectAtIndex:0] objectForKey:@"button_Events"] objectAtIndex:0] valueForKey:@"button_Event_Target_Call"] event_name:GETPRICE];
 			//Code change for get pirce  ---> 11/06/2012   --- Time: 1:23 PM.
 			
