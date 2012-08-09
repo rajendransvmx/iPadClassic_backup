@@ -813,9 +813,12 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         //Radha
         if (page_layoutInfo == nil) 
         {
+            /*
             process_exists = FALSE;
             final_process_id = process_id;
             break;
+             */
+            continue;
         }
         NSMutableDictionary * _header =  [page_layoutInfo objectForKey:@"header"];
         

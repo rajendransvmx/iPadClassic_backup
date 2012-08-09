@@ -665,11 +665,13 @@
         if(![Expression isEqualToString:@"(null)"])
         {
                 NSLog(@"%@",Expression);
+            Expression=[Expression stringByReplacingOccurrencesOfString:@")" withString:@" ) "];
+            Expression=[Expression stringByReplacingOccurrencesOfString:@"(" withString:@" ( "];
 //                NSArray *spaceSet = [Expression componentsSeparatedByString:@" "];
 //                NSLog(@"Space Set = %@",spaceSet); 
                 NSMutableArray  *tokens = [[NSMutableArray alloc] init];
                 NSMutableArray  *alltokens = [[NSMutableArray alloc] init];
-                NSArray *logicalArray = [NSArray arrayWithObjects:@"AND",@"OR", nil];
+                NSArray *logicalArray = [NSArray arrayWithObjects:@" AND ",@" OR ", nil];
                 int index = 0;
                 if([Expression rangeOfString:[logicalArray objectAtIndex:index]].length > 0)
                 {    
@@ -728,7 +730,7 @@
                 {
                     for(NSString *token in alltokens)
                     {  
-                        if([token Contains:@"AND"]||([token Contains:@"OR"]))
+                        if([token Contains:@" AND "]||([token Contains:@" OR "]))
                         {
                             [finalQuery appendFormat:@" %@ ",token];
 //                            [finalQuery appendString:token];
@@ -1029,7 +1031,8 @@
     NSMutableDictionary *resultDict=[[NSMutableDictionary alloc]init ];
     NSMutableString *finalQuery=[dictforparsing objectForKey:@"finalQuery"];
     NSString *token=[dictforparsing objectForKey:@"token"];
-    
+    token=[token stringByReplacingOccurrencesOfString:@" ( " withString:@"("];
+    token=[token stringByReplacingOccurrencesOfString:@" ) " withString:@")"];
     NSArray * criteria_array  = [dictforparsing objectForKey:@"criteriaArray"];
     NSDictionary * criteria_dict = [criteria_array objectAtIndex:0];
     NSArray * criteria_ALl_keys = [criteria_dict allKeys];

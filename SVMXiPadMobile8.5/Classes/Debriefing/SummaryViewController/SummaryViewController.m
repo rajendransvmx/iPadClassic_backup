@@ -450,7 +450,7 @@
             NSString * keyPartsUsedStr = [dict valueForKey:KEY_PARTSUSED];
             if (![keyPartsUsedStr isKindOfClass:[NSString class]])
                 keyPartsUsedStr = @"";
-			double cost = [keyPartsUsedStr intValue] * costPerPart * (1 - (discount/100));
+			double cost = [keyPartsUsedStr floatValue] * costPerPart * (1 - (discount/100));
 			LblTotalCost.text = [NSString stringWithFormat:@"%@%@",AppDelegate.workOrderCurrency, [self getFormattedCost:totalCost]];
             partcell.LinePrice.text = [self getFormattedCost:cost];
 			view = partcell;
