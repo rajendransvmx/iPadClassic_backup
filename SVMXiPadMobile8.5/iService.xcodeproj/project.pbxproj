@@ -848,6 +848,9 @@
 		A8C1B0C315AD7D3E00E5B76D /* zbar-help.html in Resources */ = {isa = PBXBuildFile; fileRef = A8C1B0BE15AD7D3E00E5B76D /* zbar-help.html */; };
 		A8C1B0C415AD7D3E00E5B76D /* zbar-helpicons.png in Resources */ = {isa = PBXBuildFile; fileRef = A8C1B0BF15AD7D3E00E5B76D /* zbar-helpicons.png */; };
 		A8C1B0C515AD7D3E00E5B76D /* zbar-samples.png in Resources */ = {isa = PBXBuildFile; fileRef = A8C1B0C015AD7D3E00E5B76D /* zbar-samples.png */; };
+		A8DA42E715D903A00050CF04 /* barcode-scanning.html in Resources */ = {isa = PBXBuildFile; fileRef = A8DA42E615D903A00050CF04 /* barcode-scanning.html */; };
+		A8DA42EA15D903B40050CF04 /* gps-tracking.html in Resources */ = {isa = PBXBuildFile; fileRef = A8DA42E915D903B40050CF04 /* gps-tracking.html */; };
+		A8DA42EC15D903BE0050CF04 /* sfm-search.html in Resources */ = {isa = PBXBuildFile; fileRef = A8DA42EB15D903BE0050CF04 /* sfm-search.html */; };
 		A8FBA65A155A503600F52346 /* DataBase.plist in Resources */ = {isa = PBXBuildFile; fileRef = A8FBA63F155A503600F52346 /* DataBase.plist */; };
 		A8FBA65B155A503600F52346 /* DetailViewControllerForSFM.m in Sources */ = {isa = PBXBuildFile; fileRef = A8FBA641155A503600F52346 /* DetailViewControllerForSFM.m */; };
 		A8FBA65C155A503600F52346 /* DetailViewControllerForSFM.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8FBA642155A503600F52346 /* DetailViewControllerForSFM.xib */; };
@@ -1994,6 +1997,9 @@
 		A8C1B0BE15AD7D3E00E5B76D /* zbar-help.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "zbar-help.html"; sourceTree = "<group>"; };
 		A8C1B0BF15AD7D3E00E5B76D /* zbar-helpicons.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "zbar-helpicons.png"; sourceTree = "<group>"; };
 		A8C1B0C015AD7D3E00E5B76D /* zbar-samples.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "zbar-samples.png"; sourceTree = "<group>"; };
+		A8DA42E615D903A00050CF04 /* barcode-scanning.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "barcode-scanning.html"; sourceTree = "<group>"; };
+		A8DA42E915D903B40050CF04 /* gps-tracking.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "gps-tracking.html"; sourceTree = "<group>"; };
+		A8DA42EB15D903BE0050CF04 /* sfm-search.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "sfm-search.html"; sourceTree = "<group>"; };
 		A8FBA63F155A503600F52346 /* DataBase.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DataBase.plist; sourceTree = "<group>"; };
 		A8FBA640155A503600F52346 /* DetailViewControllerForSFM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailViewControllerForSFM.h; sourceTree = "<group>"; };
 		A8FBA641155A503600F52346 /* DetailViewControllerForSFM.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailViewControllerForSFM.m; sourceTree = "<group>"; };
@@ -2383,10 +2389,12 @@
 			children = (
 				39C8F4491521ED9D00F81B51 /* _css */,
 				39C8F44B1521ED9D00F81B51 /* _js */,
+				A8DA42E615D903A00050CF04 /* barcode-scanning.html */,
 				39C8F44D1521ED9D00F81B51 /* chatter.html */,
 				39C8F44E1521ED9D00F81B51 /* create-edit-record.html */,
 				39C8F44F1521ED9D00F81B51 /* create-new.html */,
 				39C8F4501521ED9D00F81B51 /* day-view.html */,
+				A8DA42E915D903B40050CF04 /* gps-tracking.html */,
 				39C8F4511521ED9D00F81B51 /* home.html */,
 				39C8F4521521ED9D00F81B51 /* images */,
 				39C8F4CC1521ED9D00F81B51 /* lookup.html */,
@@ -2395,6 +2403,7 @@
 				39C8F4CF1521ED9D00F81B51 /* recents.html */,
 				39C8F4D01521ED9D00F81B51 /* service-report.html */,
 				39C8F4D11521ED9D00F81B51 /* setup-requirements.html */,
+				A8DA42EB15D903BE0050CF04 /* sfm-search.html */,
 				39C8F4D21521ED9D00F81B51 /* summary.html */,
 				39C8F4D31521ED9D00F81B51 /* sync.html */,
 				39C8F4D41521ED9D00F81B51 /* troubleshooting.html */,
@@ -6081,6 +6090,9 @@
 				A8C1B0C415AD7D3E00E5B76D /* zbar-helpicons.png in Resources */,
 				A8C1B0C515AD7D3E00E5B76D /* zbar-samples.png in Resources */,
 				A80D295E15C126AB00E5838F /* SFM-Screen-Table-Strip-Selected.png in Resources */,
+				A8DA42E715D903A00050CF04 /* barcode-scanning.html in Resources */,
+				A8DA42EA15D903B40050CF04 /* gps-tracking.html in Resources */,
+				A8DA42EC15D903BE0050CF04 /* sfm-search.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
