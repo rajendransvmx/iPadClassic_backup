@@ -48,7 +48,7 @@ enum  {
     HelpController * help = [[HelpController alloc] initWithNibName:@"HelpController" bundle:nil];
     help.modalPresentationStyle = UIModalPresentationFullScreen;
     help.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    help.helpString = @"home.html";  
+    help.helpString = @"sfm-search.html";  
     [self presentModalViewController:help animated:YES];
     [help release];
 }
