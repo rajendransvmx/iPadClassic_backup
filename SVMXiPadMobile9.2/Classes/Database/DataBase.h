@@ -67,6 +67,7 @@ PopoverButtons *popOver_view;
     PopoverButtons * metaSyncPopover;
     
     BOOL didGetServiceReportLogo;
+    BOOL RecordTypeflag;
     
 }
 
@@ -292,4 +293,7 @@ PopoverButtons *popOver_view;
 -(NSMutableDictionary*) occurenceOfBraces:(NSString*)token;
 - (NSString *) getSearchCriteriaStringFromUserData:(NSString *)criteriaString withSearchString:searchString;
 
+//sahana Aug 16th
+-(void)getRecordTypeValuesForObject:(NSArray *)allObjects;
+-(void)UpdateSFRecordTypeForId:(NSString *)_id value:(NSString *)valueField;
 @end

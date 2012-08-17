@@ -94,6 +94,7 @@
 #define _LABEL                   @"LABEL"
 
 //SFRecordType
+#define MRECORDTYPE_LABEL        @"recordtype_label"
 #define MRECORD_TYPE             @"record_type"
 #define MRECORD_TYPE_ID          @"record_type_id"
 

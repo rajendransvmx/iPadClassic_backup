@@ -1533,6 +1533,11 @@
                         NSInteger intNumVal = [keyNumVal intValue];
                         NSLog(@"%@",keyNumVal);
                         
+                        //Fix for 5152.Change for Signature Capture. Shrinivas  --> 14/08/2012
+                        if (intNumVal == 23)
+                        {
+                            appDelegate.signatureCaptureUpload = [[[settingsValueArray objectAtIndex:j] objectForKey:@"SVMXC__Internal_Value__c"] boolValue];
+                        }                        
                         if (intNumVal >= 11 && intNumVal <= 20)
                         {
                             NSString * queryField = [[settingsValueArray objectAtIndex:j] objectForKey:@"SVMXC__Internal_Value__c"];

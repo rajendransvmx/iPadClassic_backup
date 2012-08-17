@@ -5508,9 +5508,16 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.initial_sync_status = SYNC_SFM_BATCH_OBJECT_DEFINITIONS;
             appDelegate.Sync_check_in = FALSE;
             
+            NSMutableArray * getAllObject = [wsResponse.result values];
+            if ([getAllObject count] == 0)
+            {
+                getAllObject = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+            }
+            
             didGetAddtionalObjDef = FALSE;
             NSMutableArray * objects = [NSMutableArray  arrayWithObjects:@"Task", @"Event", @"User",nil];
-            [appDelegate.wsInterface metaSyncWithEventName:SFM_BATCH_OBJECT_DEFINITIONS eventType:SYNC values:objects]; 
+            [getAllObject addObjectsFromArray:(NSArray *)objects];
+            [appDelegate.wsInterface metaSyncWithEventName:SFM_BATCH_OBJECT_DEFINITIONS eventType:SYNC values:getAllObject]; 
 
         }
         else if ([wsResponse.result.eventName isEqualToString:SFM_BATCH_OBJECT_DEFINITIONS])
@@ -5623,20 +5630,33 @@ last_sync_time:(NSString *)last_sync_time
                     [arr removeAllObjects];
             }
             
-            didGetAddtionalObjDef = TRUE;
             
-            [appDelegate.dataBase insertValuesInToOBjDefTableWithObject:object definition:objectDefinitions]; 
+            NSArray * getAllObject = nil;
             
-            NSMutableArray * pickListObj = [self collectPickListObject];
+            getAllObject = [wsResponse.result values];
             
-            // NSLog(@"SAMMAN MetaSync SFM_OBJECT_DEFINITIONS received, processing ends: %@", [NSDate date]);
-            
-            appDelegate.initial_sync_status = SYNC_SFM_PICKLIST_DEFINITIONS;
-            appDelegate.Sync_check_in = FALSE;
-            
-            [self metaSyncWithEventName:SFM_PICKLIST_DEFINITIONS eventType:SYNC values:pickListObj];   
-        
+            if ([getAllObject count] > 0)
+            {
+                [self metaSyncWithEventName:SFM_BATCH_OBJECT_DEFINITIONS eventType:SYNC  values:(NSMutableArray *)getAllObject];
+            }
+            else 
+            {
+                didGetAddtionalObjDef = TRUE;
+                
+                [appDelegate.dataBase insertValuesInToOBjDefTableWithObject:object definition:objectDefinitions]; 
+                
+                NSMutableArray * pickListObj = [self collectPickListObject];
 
+	            //sahana Aug 16th
+    	        [appDelegate.dataBase getRecordTypeValuesForObject:pickListObj];
+                
+                // NSLog(@"SAMMAN MetaSync SFM_OBJECT_DEFINITIONS received, processing ends: %@", [NSDate date]);
+                
+                appDelegate.initial_sync_status = SYNC_SFM_PICKLIST_DEFINITIONS;
+                appDelegate.Sync_check_in = FALSE;
+                
+                [self metaSyncWithEventName:SFM_PICKLIST_DEFINITIONS eventType:SYNC values:pickListObj];   
+            }
         }
 
         else if ([wsResponse.result.eventName isEqualToString:SFW_METADATA])

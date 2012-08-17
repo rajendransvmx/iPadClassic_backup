@@ -2069,6 +2069,7 @@
 #pragma mark - Initial MetaSync
 - (void) insertValuesInToOBjDefTableWithObject:(NSMutableArray *)object definition:(NSMutableArray *)objectDefinition
 {
+
     BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFObjectField ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0) ,'object_api_name' VARCHAR,'api_name' VARCHAR,'label' VARCHAR,'precision' DOUBLE,'length' INTEGER,'type' VARCHAR,'reference_to' VARCHAR,'nillable' BOOL,'unique' BOOL,'restricted_picklist' BOOL,'calculated' BOOL,'defaulted_on_create' BOOL,'name_field' BOOL, 'relationship_name' VARCHAR , 'dependent_picklist' BOOL ,'controler_field' VARCHAR)"]];
     
     if (result == YES)
@@ -2323,14 +2324,14 @@
 - (void) insertValuesInToRecordType:(NSMutableArray *)object defintion:(NSMutableArray *)objectDefinition
 {
     
-    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFRecordType ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0) ,'record_type_id' VARCHAR,'object_api_name' VARCHAR,'record_type' VARCHAR)"]];
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFRecordType ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0) ,'record_type_id' VARCHAR,'object_api_name' VARCHAR,'record_type' VARCHAR , 'recordtype_label' VARCHAR)"]];
     
     if (result == YES)
     {
         NSString * objectName = @"";
         int id_Value =  1;
                 
-        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@') VALUES (?1, ?2,   ?3, ?4)", SFRECORDTYPE, MRECORD_TYPE_ID, MOBJECT_API_NAME, MRECORD_TYPE, MLOCAL_ID];
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@') VALUES (?1, ?2,   ?3, ?4)", SFRECORDTYPE, MRECORD_TYPE_ID, MOBJECT_API_NAME, MRECORDTYPE_LABEL, MLOCAL_ID];
         
         sqlite3_stmt * bulkStmt;
         
@@ -6820,13 +6821,100 @@
             NSLog(@"FAILED TO INSERT LOGO");
         }
         
-        
     
     }
         
     didGetServiceReportLogo = YES;
 }
 
-#pragma mark - END
 
+//sahana Aug 16th ----------*********** start*************
+-(void)getRecordTypeValuesForObject:(NSArray *)allObjects
+{
+
+    NSString * objectList = @"";
+    
+    for(int i = 0 ; i < [allObjects count];i++)
+    {
+       
+        NSString * object_name = [allObjects objectAtIndex:i];
+        if(i == 0)
+        {
+             objectList = [objectList stringByAppendingFormat:@" '%@' ",object_name];
+        }
+        else
+        {
+             objectList = [objectList stringByAppendingFormat:@", '%@' ",object_name];
+        }
+    }
+    
+     RecordTypeflag = FALSE;
+    NSString * _query = [NSString stringWithFormat:@"SELECT Id, Name ,SobjectType FROM RecordType WHERE SobjectType in (%@) ",objectList];
+    
+    [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didgetRecordtypeInfo:error:context:) context:nil];
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES)) 
+    {
+        if(RecordTypeflag)
+        {
+            break;
+        }
+        if (!appDelegate.isInternetConnectionAvailable)
+        {
+            appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
+            break;
+        }
+        if(appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED)
+        {
+            break;
+        }
+        if (appDelegate.connection_error)
+        {
+            break;
+        }
+    }
+    
+}
+
+//sahana RecordType fix  - Aug 16th 2012
+- (void) didgetRecordtypeInfo:(ZKQueryResult *)result error:(NSError *)error context:(id)context
+{
+    //sahana RecordType fix  - Aug 16th 2012
+    NSLog(@"RecordTypeInfo");
+       if ([[result records] count] > 0)
+    {
+        NSArray * resultArray = [result records];
+        
+        for(int i = 0 ; i< [resultArray count]; i++)
+        {
+            ZKSObject * sobj = [resultArray objectAtIndex:i];
+            NSDictionary * fields = sobj.fields;
+            NSArray * allkeys = [fields allKeys];
+            if([allkeys containsObject:@"Id"] && [allkeys containsObject:@"Name"])
+            {
+                NSString * _id = [fields objectForKey:@"Id"];
+                NSString * Name = [fields objectForKey:@"Name"];
+                [self UpdateSFRecordTypeForId:_id value:Name];
+            }
+        }      
+    }
+    
+    RecordTypeflag = TRUE;
+    
+
+}
+#pragma mark - END
+-(void)UpdateSFRecordTypeForId:(NSString *)_id value:(NSString *)valueField
+{
+    //sahana RecordType fix  - Aug 16th 2012
+    NSString * update_statement = [NSString stringWithFormat:@"UPDATE %@ SET %@ = '%@' WHERE record_type_id = '%@'",SFRecordType ,MRECORD_TYPE,valueField,_id];
+    char * err;
+    
+    if(synchronized_sqlite3_exec(appDelegate.db, [update_statement UTF8String],NULL, NULL, &err) != SQLITE_OK)
+    {
+       
+        NSLog(@"ERROR IN UPDATING");
+    }
+   // [update_statement release];
+}
+//sahana Aug 16th ----------*********** end *************
 @end
