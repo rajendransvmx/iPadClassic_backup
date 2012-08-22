@@ -8758,12 +8758,20 @@
     NSLog(@"%d", index);
     NSLog(@"%d", currentEditRow.row);
     NSArray * visible = [self.tableView visibleCells];
+    /*
     UITableViewCell * cell = [visible objectAtIndex:index];
     if ( currentEditRow.section != 0)
         [self.tableView scrollRectToVisible:cell.frame animated:YES];
-    
+    */
     //CGRect rowRect = [tableView rectForRowAtIndexPath:self.currentEditRow];
     //[tableView scrollRectToVisible:rowRect animated:YES];
+    //Shrinivas 21/Aug/2012
+    if ([visible count] > index)
+    {
+        UITableViewCell * cell = [visible objectAtIndex:index];
+        if ( currentEditRow.section != 0)
+            [self.tableView scrollRectToVisible:cell.frame animated:YES];
+    }
     currentEditRow = nil;
 }
 

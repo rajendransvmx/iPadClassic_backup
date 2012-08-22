@@ -121,6 +121,7 @@
     }
     
     NSArray * allKeys = [appDelegate.serviceReport allKeys];
+    allKeys = [allKeys sortedArrayUsingSelector:@selector(compare:)];
     for (NSString * key in allKeys)
     {
         NSString * keyNumStr = [key stringByReplacingOccurrencesOfString:@"IPAD004_SET" withString:@""];

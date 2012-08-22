@@ -162,6 +162,7 @@ PopoverButtons *popOver_view;
 - (NSString *) getSearchQueryPartFromArray:(NSArray *)objectsArray withSearchString:(NSString *)searchString withUserData:(NSString *)criteriaString;
 - (NSString *) getSearchCriteriaStringFromUserData:(NSString *)criteriaString withSearchString:searchString;
 - (NSArray *) getConfigurationForProcess:(NSString *) processName ;
+-(NSString*) getRefrenceToField:(NSString*)objectName relationship:(NSString*) relationship_name;
 // Location Ping
 - (void) createUserGPSTable;
 - (NSString *) getSettingValueWithName:(NSString *)settingName;
