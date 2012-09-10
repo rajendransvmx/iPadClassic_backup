@@ -10,6 +10,7 @@
 #import "SummaryViewController.h"
 #import "iServiceAppDelegate.h"
 #import "NSData-AES.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation SignatureViewController
 
@@ -214,7 +215,7 @@
                    constrainedToSize:CGSizeMake(MAX_WIDTH, MAX_HEIGHT)
                    
                        lineBreakMode:UILineBreakModeWordWrap];
-        NSLog(@"Range Position = %d Data Length = %d",range.location,[data length]);
+        SMLog(@"Range Position = %d Data Length = %d",range.location,[data length]);
         if(range.location >= [data length])
         {
             range.location = 0;

@@ -12,6 +12,7 @@
 #import "iServiceAppDelegate.h"
 #import "NSData-AES.h"
 #import "PDFCreator.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation CalendarDatabase
 @synthesize dbFilePath;
@@ -160,7 +161,7 @@
     char *err;
     if (synchronized_sqlite3_exec(appDelegate.db, [sql UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
-        NSLog(@"error");
+        SMLog(@"error");
         return FALSE;
     }
     return TRUE;
@@ -667,7 +668,7 @@
     
     if (synchronized_sqlite3_exec(appDelegate.db, selectStatement, NULL, NULL, &err) != SQLITE_OK)
     {
-        NSLog(@"Failed to delete task");
+        SMLog(@"Failed to delete task");
     }
     
 }
@@ -1230,7 +1231,7 @@
         }
         
     }     
-    NSLog(@"%@",LabourValuesDictionary);
+    SMLog(@"%@",LabourValuesDictionary);
     
     return LabourValuesDictionary;
 }
@@ -1246,7 +1247,7 @@
         
     queryStatement2 = [NSMutableString stringWithFormat:@"SELECT Id, SVMXC__SubmoduleID__c, SVMXC__SettingID__c, SVMXC__Setting_Unique_ID__c, SVMXC__Settings_Name__c, SVMXC__Data_Type__c, SVMXC__Values__c, SVMXC__Default_Value__c, SVMXC__Setting_Type__c, SVMXC__Search_Order__c, SVMXC__IsPrivate__c, SVMXC__Active__c, SVMXC__Description__c, SVMXC__IsStandard__c, SVMXC__Submodule__c FROM SettingsInfo"]; 
                            
-    NSLog(@"%@", queryStatement2);
+    SMLog(@"%@", queryStatement2);
     
     const char * _query2 = [queryStatement2 UTF8String];
     NSArray * keys2 = [NSArray arrayWithObjects:
@@ -1397,7 +1398,7 @@
 
     
     queryStatement4 = [NSMutableString stringWithFormat:@"Select Id, SVMXC__Setting_Configuration_Profile__c, SVMXC__Setting_ID__c, SVMXC__Internal_Value__c, SVMXC__Display_Value__c, SVMXC__Active__c, SVMXC__IsDefault__c FROM SettingsValue"];           
-    NSLog(@"%@", queryStatement4);
+    SMLog(@"%@", queryStatement4);
     
     const char * _query4 = [queryStatement4 UTF8String];
     NSArray * keys4 = [NSArray arrayWithObjects:
@@ -1485,13 +1486,13 @@
             if (appDelegate.serviceReportValueMapping == nil)
             {
                 appDelegate.serviceReportValueMapping = [[NSMutableArray alloc] initWithCapacity:0];
-                NSLog(@"%@",appDelegate.serviceReportValueMapping);
+                SMLog(@"%@",appDelegate.serviceReportValueMapping);
             }
             else
             {
                 NSDictionary * dict = [NSDictionary dictionaryWithObject:[obj6 objectForKey:@"SVMXC__Internal_Value__c"] forKey:[obj6 objectForKey:@"SVMXC__Display_Value__c"]];
                 [appDelegate.serviceReportValueMapping addObject:dict];
-                NSLog(@"%@",appDelegate.serviceReportValueMapping);
+                SMLog(@"%@",appDelegate.serviceReportValueMapping);
                 
             }
         }
@@ -1531,7 +1532,7 @@
                         NSString * keyNumVal = [subModuleSettingKey stringByReplacingOccurrencesOfString:@"IPAD004_SET" withString:@""];
                         
                         NSInteger intNumVal = [keyNumVal intValue];
-                        NSLog(@"%@",keyNumVal);
+                        SMLog(@"%@",keyNumVal);
                         
                         //Fix for 5152.Change for Signature Capture. Shrinivas  --> 14/08/2012
                         if (intNumVal == 23)
@@ -1541,7 +1542,7 @@
                         if (intNumVal >= 11 && intNumVal <= 20)
                         {
                             NSString * queryField = [[settingsValueArray objectAtIndex:j] objectForKey:@"SVMXC__Internal_Value__c"];
-                            NSLog(@"QUERY FIELD %@", queryField);
+                            SMLog(@"QUERY FIELD %@", queryField);
                             if ([queryField isKindOfClass:[NSNull class]] || [queryField isEqualToString:@""])
                                 continue;
                             NSArray * arr = [queryField componentsSeparatedByString:@"."];
@@ -1808,7 +1809,7 @@
         sqlite3_stmt *statement9;
         NSMutableString *queryStatement9 = [[NSMutableString alloc]initWithCapacity:0];
         queryStatement9 = [NSMutableString stringWithFormat:@"SELECT api_name,label,type FROM SFObjectField WHERE object_api_name = 'SVMXC__Service_Order__c' "];
-        NSLog(@"%@", queryStatement9);
+        SMLog(@"%@", queryStatement9);
         
         const char * _query9 = [queryStatement9 UTF8String];
         NSArray * keys9 = [NSArray arrayWithObjects:
@@ -1817,7 +1818,7 @@
                            TYPE,
                            nil];
         int ret = synchronized_sqlite3_prepare_v2(appDelegate.db, _query9,-1, &statement9, nil);
-        NSLog(@"%d", ret);
+        SMLog(@"%d", ret);
         
         
         if ( synchronized_sqlite3_prepare_v2(appDelegate.db, _query9,-1, &statement9, nil) == SQLITE_OK )
@@ -1854,7 +1855,7 @@
             }
         }
         
-        NSLog(@"%@",WorkOrderFields);
+        SMLog(@"%@",WorkOrderFields);
         appDelegate.WorkDescription = [WorkOrderFields retain];
         synchronized_sqlite3_finalize(statement9);
    }  
@@ -1865,7 +1866,7 @@
     for (int j= 0 ; j< [fields_array count]; j++)
     {
         NSString * queryField = [fields_array objectAtIndex:j];
-        NSLog(@"QUERY FIELD %@", queryField);
+        SMLog(@"QUERY FIELD %@", queryField);
         if ([queryField isKindOfClass:[NSNull class]])
             continue;
         NSArray * arr = [queryField componentsSeparatedByString:@"."];
@@ -1936,7 +1937,7 @@
     NSMutableString * clean_Query = [appDelegate.calDataBase removeDuplicatesFromSOQL:appDelegate.soqlQuery withString:query];
     NSString * final_query = [NSString stringWithFormat:@"%@ SVMXC__Service_Order__c.local_id = '%@'", clean_Query, record_id];
     
-    NSLog( @"final query %@",final_query);
+    SMLog( @"final query %@",final_query);
     
     NSArray * leftOfFrom = [final_query componentsSeparatedByString:@"FROM"];
     NSString * selectStatement = [leftOfFrom objectAtIndex:0];
@@ -2002,7 +2003,7 @@
     }
     synchronized_sqlite3_finalize(statement5);
 	
-    NSLog(@"Report Essential Array %@", reportEssentialArray);
+    SMLog(@"Report Essential Array %@", reportEssentialArray);
 	
     NSMutableArray *  refernce_array = [appDelegate.calDataBase getreferncetableFieldsForReportEsentials:reportEssentialArray];
     
@@ -2010,7 +2011,7 @@
     {
         [reportEssentialArray addObject:dict];
     }
-    NSLog(@"%@",reportEssentialArray);
+    SMLog(@"%@",reportEssentialArray);
     
     return reportEssentialArray;
 }
@@ -2027,7 +2028,7 @@
         NSString * table_name = @"";
         NSMutableArray * fields_array = [appDelegate.reference_field_names objectForKey:key];
         
-        NSLog(@"======================Field_array==============================%@" ,fields_array);
+        SMLog(@"======================Field_array==============================%@" ,fields_array);
         NSString * queryableFields = @"";
         for(int i = 0 ; i<[fields_array count]; i++)
         {
@@ -2038,7 +2039,7 @@
             queryableFields = [queryableFields stringByAppendingString:[fields_array objectAtIndex:i]];
         }
         
-        NSLog(@" ------queryFields %@", queryableFields);
+        SMLog(@" ------queryFields %@", queryableFields);
         if([key isEqualToString:@"SVMXC__Company__c"])
         {
             table_name = @"Account";
@@ -2062,7 +2063,7 @@
             for(int j = 0 ; j<[array count] ; j++)
             {
                 NSDictionary * dict = [array objectAtIndex:j];
-                NSLog(@"dict  - %@ ", dict);
+                SMLog(@"dict  - %@ ", dict);
                 
                 
                 NSArray * arr1_allkeys = [dict allKeys];
@@ -2071,7 +2072,7 @@
                     NSString * arr1_key = [arr1_allkeys objectAtIndex:x];
                     
                     arr1_key = [arr1_key   stringByReplacingOccurrencesOfString:@" " withString:@""];
-                    NSLog(@" arr1_allkeys  %@   key  %@ ", arr1_key, key);
+                    SMLog(@" arr1_allkeys  %@   key  %@ ", arr1_key, key);
                     if([key isEqualToString:arr1_key])
                     {
                         refernce_id =  [dict valueForKey:key];
@@ -2084,7 +2085,7 @@
             
             NSString * query = [NSString stringWithFormat:@"SELECT %@ FROM %@ Where id = '%@'" , queryableFields , table_name , refernce_id];
             
-            NSLog(@" query --%@" , query);
+            SMLog(@" query --%@" , query);
             sqlite3_stmt * statement5;
             
             NSMutableDictionary * dict = nil;
@@ -2105,7 +2106,7 @@
                             //                            NSString *  key_ = [NSString stringWithFormat:@"%@.%@",key,field_key];
                             NSString *  key_ = [NSString stringWithFormat:@"%@",field_key];
                             [dict setValue:field_value forKey:key_];
-                            NSLog(@" getAllField values %@", dict); 
+                            SMLog(@" getAllField values %@", dict); 
                         }
                     }
                     NSDictionary * finalDict = [NSDictionary dictionaryWithObject:dict forKey:key];
@@ -2119,7 +2120,7 @@
     }
     
     
-    NSLog(@" ------------------ get All field values%@", getAll_field_values);
+    SMLog(@" ------------------ get All field values%@", getAll_field_values);
     return getAll_field_values;
     
 }
@@ -2185,7 +2186,7 @@
             [result appendString:[NSString stringWithFormat:@"%@, ", [array3 objectAtIndex:count]]];
     }
     
-    NSLog(@"%@", result);
+    SMLog(@"%@", result);
     return result;
 }
 
@@ -2244,15 +2245,15 @@
     NSMutableString *queryString = [NSMutableString stringWithFormat:@"Update '%@' Set '%@' = '%@' Where DocId = '%@' and ProductName = '%@'", @"trobleshootdata", @"Product_Doc", 
                                     stringData, docID, productName];
     
-    NSLog(@"%@", queryString);
+    SMLog(@"%@", queryString);
     
     char *err;
     int retVal = synchronized_sqlite3_exec(appDelegate.db, [queryString UTF8String], NULL, NULL, &err);
-    NSLog(@"%d", retVal);
+    SMLog(@"%d", retVal);
     
     if (retVal != SQLITE_OK)
     {
-        NSLog(@"Failed to insert in to table");
+        SMLog(@"Failed to insert in to table");
     }
     
 }
@@ -2269,7 +2270,7 @@
         char *err;
         if (synchronized_sqlite3_exec(appDelegate.db, [queryString UTF8String], NULL, NULL, &err) != SQLITE_OK)
         {
-            NSLog(@"Failed to insert in to table");
+            SMLog(@"Failed to insert in to table");
         }  
     }
 }
@@ -2280,9 +2281,9 @@
 
 - (void) insertChatterDetailsIntoDBForWithId:(NSString *)productId andChatterDetails:(NSMutableArray *)chatterDetails
 {
-    NSLog(@"Hi I am in Chatter....");
+    SMLog(@"Hi I am in Chatter....");
     
-    NSLog(@"%@", chatterDetails);
+    SMLog(@"%@", chatterDetails);
     
     NSString *deleteQuery = [NSString stringWithFormat:@"Delete From ChatterPostDetails where ProductId = '%@'", productId];
     sqlite3_stmt *statement;
@@ -2291,7 +2292,7 @@
     { 
         while ( synchronized_sqlite3_step(statement) != SQLITE_DONE )
         {
-            NSLog(@"Failed to delete");
+            SMLog(@"Failed to delete");
         }
     }
     
@@ -2300,15 +2301,15 @@
         NSMutableString *insertStatement = [NSString stringWithFormat:@"Insert into ChatterPostDetails (ProductId, Body, CreatedById, CreatedDate, Id, POSTTYPE, Username, Email, FeedPostId, FullPhotoUrl) Values ('%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@')", productId, [[chatterDetails objectAtIndex:i]objectForKey:BODY],[[chatterDetails objectAtIndex:i]objectForKey:CREATEDBYID],[[chatterDetails objectAtIndex:i]objectForKey:CREATEDDATE], [[chatterDetails objectAtIndex:i]objectForKey:_USERID], [[chatterDetails objectAtIndex:i]objectForKey:POSTTYPE], [[chatterDetails objectAtIndex:i]objectForKey:USERNAME_CHATTER],[[chatterDetails objectAtIndex:i]objectForKey:EMAIL],[[chatterDetails objectAtIndex:i]objectForKey:FEEDPOSTID],[[chatterDetails objectAtIndex:i]objectForKey:FULLPHOTOURL]];
         
         
-        NSLog(@"%@", insertStatement);
+        SMLog(@"%@", insertStatement);
         
         char *err;
         int retVal = synchronized_sqlite3_exec(appDelegate.db, [insertStatement UTF8String], NULL, NULL, &err);
-        NSLog(@"%d", retVal);
+        SMLog(@"%d", retVal);
         
         if (retVal != SQLITE_OK)
         {
-            NSLog(@"Failed to insert in to table");
+            SMLog(@"Failed to insert in to table");
         }  
         
     }
@@ -2323,7 +2324,7 @@
     sqlite3_stmt *statement;
     NSMutableString *queryString = [NSString stringWithFormat:@"Select Body, CreatedById, CreatedDate, Id, POSTTYPE, Username, Email, FeedPostId,FullPhotoUrl From ChatterPostDetails            where productId = '%@'", productId];
     
-    NSLog(@"%@", queryString);
+    SMLog(@"%@", queryString);
     
     if ( synchronized_sqlite3_prepare_v2(appDelegate.db, [queryString UTF8String], -1, &statement, nil ) == SQLITE_OK )
     { 
@@ -2387,7 +2388,7 @@
     }
     synchronized_sqlite3_finalize(statement);
     
-    NSLog(@"%@", chatterArray);
+    SMLog(@"%@", chatterArray);
     
     return  chatterArray;
     
@@ -2403,7 +2404,7 @@
     { 
         while ( synchronized_sqlite3_step(statement) != SQLITE_DONE )
         {
-            NSLog(@"Failed to delete");
+            SMLog(@"Failed to delete");
         }
     }
     synchronized_sqlite3_finalize(statement);
@@ -2412,15 +2413,15 @@
     // UserImages (username, userimage)  Values('%@','%@')", UserName, imageData
     NSMutableString *queryString = [NSMutableString stringWithFormat:@"Insert into UserImages (username, userimage) Values ('%@', '%@')", UserName, stringData];
     
-    NSLog(@"%@", queryString);
+    SMLog(@"%@", queryString);
     
     char *err;
     int retVal = synchronized_sqlite3_exec(appDelegate.db, [queryString UTF8String], NULL, NULL, &err);
-    NSLog(@"%d", retVal);
+    SMLog(@"%d", retVal);
     
     if (retVal != SQLITE_OK)
     {
-        NSLog(@"Failed to insert in to table");
+        SMLog(@"Failed to insert in to table");
     }
 }
 
@@ -2460,22 +2461,22 @@
     { 
         while ( synchronized_sqlite3_step(statement) != SQLITE_DONE )
         {
-            NSLog(@"Failed to delete");
+            SMLog(@"Failed to delete");
         }
     }
     
     synchronized_sqlite3_finalize(statement);
     
     NSMutableString *insertQuery = [NSString stringWithFormat:@"Insert into ProductImage (productId, productImage) Values ('%@', '%@')", productId, pictureData];
-    NSLog(@"%@", insertQuery);
+    SMLog(@"%@", insertQuery);
     
     char *err;
     int retVal = synchronized_sqlite3_exec(appDelegate.db, [insertQuery UTF8String], NULL, NULL, &err);
-    NSLog(@"%d", retVal);
+    SMLog(@"%d", retVal);
     
     if (retVal != SQLITE_OK)
     {
-        NSLog(@"Failed to insert in to table");
+        SMLog(@"Failed to insert in to table");
     }
 }
 
@@ -2484,7 +2485,7 @@
 {
     NSMutableString *query = [NSString stringWithFormat:@"Select productImage from ProductImage where productId = '%@'", productId];
     sqlite3_stmt *statement;
-    NSLog(@"%@", query);
+    SMLog(@"%@", query);
     
     NSData *data = [[NSData alloc]init];
     
@@ -2498,17 +2499,76 @@
         }
     }
     synchronized_sqlite3_finalize(statement);
-    NSLog(@"%@", data);
+    SMLog(@"%@", data);
     if ( data != nil )
         return data;
     else
         return NULL;
 }
 
+-(NSString *)getOperationTypeForSignature:(NSString *)recordId  forObject:(NSString *)object_name
+{
+    
+    NSString *  id_value  =  [appDelegate.databaseInterface  checkforSalesForceIdForlocalId:object_name local_id:recordId];
+    
+    id_value = [id_value stringByReplacingOccurrencesOfString:@" " withString:@""];
+    
+    BOOL isSalesForceRecord = FALSE;
+    
+    if([id_value length] != 0)
+    {
+        // return TRUE;
+        isSalesForceRecord = TRUE;
+    }
+    else
+    {
+        //return FALSE;
+        isSalesForceRecord = FALSE;
+        
+    }
+
+    if(isSalesForceRecord)
+    {
+        
+        NSString * operationType = [self getRecordoperationTypeforSignaturewithRecordId:recordId objectApiNAme:object_name];
+        return operationType;
+    }
+    else
+    {
+        return SIG_AFTERSYNC;
+    }
+}
+
+-(NSString *)getRecordoperationTypeforSignaturewithRecordId:(NSString *)recordId  objectApiNAme:(NSString *)apiname
+{
+    NSString * query = [NSString stringWithFormat:@"SELECT COUNT(*) FROM %@ WHERE local_id = '%@' and operation = 'UPDATE' and object_name = '%@'", SFDATATRAILER, recordId, apiname];
+    
+    sqlite3_stmt * statement;
+    
+    int count = 0;
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, NULL) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            count = synchronized_sqlite3_column_int(statement, 0);
+        }
+    }
+    
+    if (count > 0)
+        return SIG_AFTERUPDATE;
+    else 
+        return SIG_BEFOREUPDATE;
+    
+}
+
 #pragma mark - Signature Controller
 
-- (void) insertSignatureData:(NSData *)signatureData WithId:(NSString *)signatureId RecordId:(NSString *)recordId                  apiName:(NSString *)oApiName WONumber:(NSString *)WONumber flag:(NSString *)sign_type
+- (void) insertSignatureData:(NSData *)signatureData WithId:(NSString *)signatureId RecordId:(NSString *)recordId  apiName:(NSString *)oApiName WONumber:(NSString *)WONumber flag:(NSString *)sign_type
 {
+    
+    NSString * operation_type = [self getOperationTypeForSignature:recordId forObject:oApiName];
+    
     NSString * queryStatement = @"";
     
     BOOL does_viewexists = FALSE;
@@ -2523,17 +2583,17 @@
     
     if (does_viewexists)
     {
-        queryStatement =[NSString stringWithFormat:@"UPDATE %@ SET %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@' WHERE record_id = '%@' AND sign_type = '%@'", @"SFSignatureData", @"sig_Id", signatureId , @"object_api_name",oApiName, @"signature_data", stringData, @"WorkOrderNumber", WONumber,  @"record_Id", recordId, @"sign_type", sign_type, recordId, sign_type];
+        queryStatement =[NSString stringWithFormat:@"UPDATE %@ SET %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@' ,operation_type = '%@' WHERE record_id = '%@' AND sign_type = '%@'", @"SFSignatureData", @"sig_Id", signatureId , @"object_api_name",oApiName, @"signature_data", stringData, @"WorkOrderNumber", WONumber,  @"record_Id", recordId, @"sign_type", sign_type, operation_type, recordId, sign_type];
     }
     else
     {
         if (does_reportexists)
         {
-            queryStatement =[NSString stringWithFormat:@"UPDATE %@ SET %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@' WHERE record_id = '%@' AND sign_type = '%@'", @"SFSignatureData", @"sig_Id", signatureId , @"object_api_name",oApiName, @"signature_data", stringData, @"WorkOrderNumber", WONumber,  @"record_Id", recordId, @"sign_type", sign_type, recordId, sign_type];
+            queryStatement =[NSString stringWithFormat:@"UPDATE %@ SET %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@' ,operation_type = '%@' WHERE record_id = '%@' AND sign_type = '%@'", @"SFSignatureData", @"sig_Id", signatureId , @"object_api_name",oApiName, @"signature_data", stringData, @"WorkOrderNumber", WONumber,  @"record_Id", recordId, @"sign_type", sign_type, operation_type,recordId, sign_type];
         }
         else
         {
-            queryStatement = [NSString stringWithFormat:@"INSERT INTO %@ ('%@', '%@', '%@', '%@', '%@' ,'%@') VALUES ('%@','%@', '%@', '%@', '%@', '%@')", @"SFSignatureData", @"sig_Id", @"object_api_name", @"signature_data", @"WorkOrderNumber", @"sign_type",  @"record_Id", signatureId, oApiName, stringData, WONumber, sign_type, recordId];
+            queryStatement = [NSString stringWithFormat:@"INSERT INTO %@ ('%@', '%@', '%@', '%@', '%@' ,'%@' ,'%@') VALUES ('%@','%@', '%@', '%@', '%@', '%@','%@')", @"SFSignatureData", @"sig_Id", @"object_api_name", @"signature_data", @"WorkOrderNumber", @"sign_type",  @"record_Id",@"operation_type", signatureId, oApiName, stringData, WONumber, sign_type, recordId,operation_type];
         }
     }
     
@@ -2542,7 +2602,7 @@
     int ret = synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err);
     if (ret != SQLITE_OK)
     {
-        NSLog(@"Failed to insert in to table");
+        SMLog(@"Failed to insert in to table");
     }  
 	
 	//10/07/2012  - Agreesive Sync for Work Order Signature.  #4740
@@ -2613,28 +2673,28 @@
     char *err;
     if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
-        NSLog(@"Failed to insert in to table");
+        SMLog(@"Failed to insert in to table");
     }                                                      
     
 }
 
-- (void) deleteAllSignatureData
+- (void) deleteAllSignatureData:(NSString *)operationTYpe
 {
-    NSString * queryStatement = [NSString stringWithFormat:@"DELETE From SFSignatureData"];
+    NSString * queryStatement = [NSString stringWithFormat:@"DELETE From SFSignatureData where operation_type = '%@' ",operationTYpe];
     
     char * err;
     if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
-        NSLog(@"Failed to delete rows");
+        SMLog(@"Failed to delete rows");
     }
 }
 
 //####################################################################################//
                         //PLEASE CALL THIS METHODS ONCE DATA SYNC IS OVER
 //Shrinivas - This method to be only called when Data Sync Over.
-- (void) getAllLocalIdsForSignature
+- (void) getAllLocalIdsForSignature:(NSString *)operation_type
 {
-    NSString *selectQuery = [NSString stringWithFormat:@"Select record_Id, object_api_name From SFSignatureData Where sign_type = 'ViewWorkOrder'"]; 
+    NSString *selectQuery = [NSString stringWithFormat:@"Select record_Id, object_api_name From SFSignatureData Where sign_type = 'ViewWorkOrder' and operation_type = '%@'",operation_type]; 
     sqlite3_stmt * stmt;
     
     NSString  * recordId = @"";
@@ -2664,7 +2724,7 @@
     {
         [self getSFIdForSignature:[allkeys objectAtIndex:i] objectName:[signatureData objectForKey:[allkeys objectAtIndex:i]]];
     }
-    [self deleteAllSignatureData];
+    [self deleteAllSignatureData:operation_type];
     appDelegate.wsInterface.didWriteSignature = YES;
 }
 
@@ -2689,7 +2749,7 @@
     char *err;
     if (synchronized_sqlite3_exec(appDelegate.db, [updateQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
-        NSLog(@"Failed to update table");
+        SMLog(@"Failed to update table");
         return;
     }
     else
@@ -2745,7 +2805,7 @@
 
 - (void) didQueryAttachmentForSignature:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
 {
-    NSLog(@"%@", result);
+    SMLog(@"%@", result);
     //Check if signature is Present If Present Delete the signature from Ipad.
 }
 
@@ -2756,7 +2816,7 @@
 #pragma mark - Product Manual
 - (void) insertProductManualNameInDB:(NSDictionary *)manualInfo WithID:(NSString *)productID
 {
-    NSLog(@"%@", manualInfo);
+    SMLog(@"%@", manualInfo);
     for ( int i = 0; i < [manualInfo count]; i++ )
     {
        // NSMutableString *queryString = [NSMutableString stringWithFormat:@"Update trobleshootdata Set prod_manual_Id = '%@', prod_manual_name = '%@' Where ProductId = '%@'", 
@@ -2766,7 +2826,7 @@
         char *err;
         if (synchronized_sqlite3_exec(appDelegate.db, [deleteQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
         {
-            NSLog(@"Failed to update table");
+            SMLog(@"Failed to update table");
         } 
         
         
@@ -2775,7 +2835,7 @@
         
         if (synchronized_sqlite3_exec(appDelegate.db, [queryString UTF8String], NULL, NULL, &err) != SQLITE_OK)
         {
-            NSLog(@"Failed to update table");
+            SMLog(@"Failed to update table");
         }  
     } 
 }
@@ -2787,7 +2847,7 @@
     char *err;
     if (synchronized_sqlite3_exec(appDelegate.db, [updateString UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
-        NSLog(@"Failed to update table");
+        SMLog(@"Failed to update table");
     }  
 }
 
@@ -2827,7 +2887,7 @@
         }
     }
     synchronized_sqlite3_finalize(stmt);
-    NSLog(@"%@", manualInfo);
+    SMLog(@"%@", manualInfo);
     return manualInfo;
 }
 
@@ -2870,7 +2930,7 @@
     char *err;
     if (synchronized_sqlite3_exec(appDelegate.db, [deleteQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
-        NSLog(@"Failed to delete row");
+        SMLog(@"Failed to delete row");
     } 
     
     NSMutableString *query = [NSString stringWithFormat:@"INSERT OR REPLACE INTO Product2 (Id, Name) VALUES ('%@', '%@')", productId, Name];
@@ -2878,7 +2938,7 @@
     
     if (synchronized_sqlite3_exec(appDelegate.db, [query UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
-        NSLog(@"Failed to update table");
+        SMLog(@"Failed to update table");
     }  
 }
 
@@ -2915,7 +2975,7 @@
 			char *err;
 			if (synchronized_sqlite3_exec(appDelegate.db, [insertQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
 			{
-				NSLog(@"Failed to update table");
+				SMLog(@"Failed to update table");
 			}  
 
 		}else {
@@ -2925,7 +2985,7 @@
 			char *err;
 			if (synchronized_sqlite3_exec(appDelegate.db, [insertQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
 			{
-				NSLog(@"Failed to update table");
+				SMLog(@"Failed to update table");
 			}  
 
 		}
@@ -2943,7 +3003,7 @@
     char *err;
     if (synchronized_sqlite3_exec(appDelegate.db, [queryString UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
-        NSLog(@"Failed to Update row");
+        SMLog(@"Failed to Update row");
     } 
     
 }
@@ -2956,7 +3016,7 @@
     sqlite3_stmt *statement;
     NSMutableString *query = [NSString stringWithFormat:@"Select Body from Document where Id = '%@' and Name = '%@'", docID, name];
     
-    NSLog(@"%@", query);
+    SMLog(@"%@", query);
     
     NSData *data = nil;
     
@@ -2984,12 +3044,12 @@
 
 - (NSString *) getProductNameFromDbWithID:(NSString *)productId
 {
-    NSLog(@"%@", productId);
+    SMLog(@"%@", productId);
     
     sqlite3_stmt *statement;
     NSMutableString *query = [NSString stringWithFormat:@"Select Name from Product2 where Id = '%@'", productId];
     
-    NSLog(@"%@", query);
+    SMLog(@"%@", query);
     NSString *productName = @"";
     if ( synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, nil ) == SQLITE_OK )
     { 
@@ -3037,7 +3097,7 @@
     sqlite3_stmt *statement;
     NSString * query = [NSString stringWithFormat:@"SELECT Id, Name, Keywords from Document WHERE Keywords LIKE '%%%@%%'", productString];
     
-    NSLog(@"%@", query);
+    SMLog(@"%@", query);
     
     if ( synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, nil ) == SQLITE_OK )
     { 
@@ -3069,7 +3129,7 @@
         }
     }
     synchronized_sqlite3_finalize(statement);
-    NSLog(@"%@", productInfo);
+    SMLog(@"%@", productInfo);
     
     if ( [productInfo count] > 0 )
         return productInfo;
@@ -3265,7 +3325,7 @@
             
             NSMutableDictionary * mDict = [[NSMutableDictionary alloc] initWithObjects:object forKeys:keys];
             
-            NSLog(@"%@", mDict);
+            SMLog(@"%@", mDict);
             
             [records addObject:mDict];
             
@@ -3277,7 +3337,7 @@
         
     }
     
-    NSLog(@"%@", records);
+    SMLog(@"%@", records);
     
     return records;
 }
@@ -3285,11 +3345,11 @@
 - (void) updateOverrideFlagWithObjectName:(NSString *)objectName andSFId:(NSString *)SFId WithStatus:(NSString *)status
 {
     NSString * updateQuery = [NSString stringWithFormat:@"Update sync_error_conflict Set override_flag = '%@' Where object_name = '%@' and sf_id = '%@'",status, objectName, SFId]; 
-    NSLog(@"%@" , updateQuery);
+    SMLog(@"%@" , updateQuery);
     char *err;
     if (synchronized_sqlite3_exec(appDelegate.db, [updateQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
-        NSLog(@"Failed to update table");
+        SMLog(@"Failed to update table");
     }  
 }
 
@@ -3348,14 +3408,14 @@
             
             NSArray * object = [[NSArray arrayWithObjects:sf_id, object_name,local_id, sync_type,nil] retain];
             NSMutableDictionary * mDict = [[NSMutableDictionary alloc] initWithObjects:object forKeys:keys];
-            NSLog(@"%@", mDict);
+            SMLog(@"%@", mDict);
             [records addObject:mDict];
             
             [mDict release];
         }
     }
     
-    NSLog(@"%@", records);
+    SMLog(@"%@", records);
     for( int i=0; i < [records count]; i++)
     {
         NSString * temp_sf_id = [[records objectAtIndex:i]objectForKey:@"sf_id"];
@@ -3395,12 +3455,12 @@
     char *err;
     if (synchronized_sqlite3_exec(appDelegate.db, [deleteQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
-        NSLog(@"Failed to delete");
+        SMLog(@"Failed to delete");
     } 
     
     if (synchronized_sqlite3_exec(appDelegate.db, [_deleteQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
-        NSLog(@"Failed to delete");
+        SMLog(@"Failed to delete");
     }
     
     
@@ -3408,7 +3468,7 @@
     NSString * delete_from_trailer = [NSString  stringWithFormat:@"DELETE FROM SFDataTrailer WHERE %@ = '%@' and object_name = '%@' ",field_name, ID, objectname];
     if(synchronized_sqlite3_exec(appDelegate.db, [delete_from_trailer UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
-         NSLog(@"Failed to delete FROM trailer");
+         SMLog(@"Failed to delete FROM trailer");
     }
     
 }
@@ -3439,7 +3499,7 @@
     int ret = synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err);
     if (ret != SQLITE_OK)
     {
-        NSLog(@"Failed to insert in to table");
+        SMLog(@"Failed to insert in to table");
     } 
 }
 
@@ -3468,7 +3528,7 @@
             [PDF_Data setValue:objectapiName forKey:recordId];
         }
     }
-    NSLog(@"%@", PDF_Data);
+    SMLog(@"%@", PDF_Data);
     synchronized_sqlite3_finalize(stmt);
     NSArray * allkeys = [PDF_Data allKeys];
     
@@ -3500,7 +3560,7 @@
         }
     }
 
-    NSLog(@"%@", SFID);
+    SMLog(@"%@", SFID);
     for (int i = 0; i < [SFID count]; i++)
     {
         NSString * deleteQuery = [NSString stringWithFormat:@"Delete from Summary_PDF where PDF_Id = '%@'",[SFID objectAtIndex:i]];
@@ -3508,7 +3568,7 @@
         char *err;
         if (synchronized_sqlite3_exec(appDelegate.db, [deleteQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
         {
-            NSLog(@"Failed to delete table");
+            SMLog(@"Failed to delete table");
             return;
         }
     }
@@ -3543,7 +3603,7 @@
     char *err;
     if (synchronized_sqlite3_exec(appDelegate.db, [updateQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
-        NSLog(@"Failed to update table");
+        SMLog(@"Failed to update table");
         return;
     }
     else
@@ -3625,7 +3685,7 @@
     
     if (fileExists)
     {
-        NSLog(@"FILE EXISTS");
+        SMLog(@"FILE EXISTS");
     }
     else
     {
@@ -3658,7 +3718,7 @@
     char * err;
     if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
-        NSLog(@"Failed to delete rows");
+        SMLog(@"Failed to delete rows");
     }
 }
     
@@ -3711,7 +3771,7 @@
     
     char *err;
     if (synchronized_sqlite3_exec(appDelegate.db, [insertQuery UTF8String], NULL, NULL, &err) != SQLITE_OK){
-        NSLog(@"error:Failed to insert into database");
+        SMLog(@"error:Failed to insert into database");
     }
 
     
@@ -3777,7 +3837,7 @@
     
     if (synchronized_sqlite3_exec(appDelegate.db, [insertQuery UTF8String], NULL, NULL, &err) != SQLITE_OK){
         
-        NSLog(@"error:Failed to insert into database");
+        SMLog(@"error:Failed to insert into database");
         
     }
 }
@@ -3791,7 +3851,7 @@
     
     if (synchronized_sqlite3_exec(db, [insertQuery UTF8String], NULL, NULL, &err) != SQLITE_OK){
         
-        NSLog(@"error:Failed to insert into database");
+        SMLog(@"error:Failed to insert into database");
         
     }
 
@@ -3834,7 +3894,7 @@
         
         
         
-        NSLog(@"%@", mDict);
+        SMLog(@"%@", mDict);
         [internetConflict addObject:mDict];
                 
         [mDict release];
@@ -3881,7 +3941,7 @@
             
             
             
-            NSLog(@"%@", mDict);
+            SMLog(@"%@", mDict);
             [internetConflict addObject:mDict];
             
             [mDict release];
@@ -3903,7 +3963,7 @@
     
     if (synchronized_sqlite3_exec(appDelegate.db, [deleteQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
-        NSLog(@"error:Failed to delete from database");
+        SMLog(@"error:Failed to delete from database");
     }
 
 }
@@ -3917,7 +3977,7 @@
     
     if (synchronized_sqlite3_exec(db, [deleteQuery UTF8String], NULL, NULL, &err) != SQLITE_OK){
         
-        NSLog(@"error:Failed to delete");
+        SMLog(@"error:Failed to delete");
         
     }
 
@@ -3926,7 +3986,7 @@
     
     if (synchronized_sqlite3_exec(db, [insertQuery UTF8String], NULL, NULL, &err) != SQLITE_OK){
         
-        NSLog(@"error:Failed to insert into database");
+        SMLog(@"error:Failed to insert into database");
         
     }
 

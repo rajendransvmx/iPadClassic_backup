@@ -187,6 +187,7 @@ PopoverButtons *popOver_view;
 - (NSString *) getApiNameForNameField:(NSString *)headerObjectName;
 
 - (NSString *) getReferenceObjectNameForPdf:(NSString *)ObjectName Field:(NSString *)FieldName Id:(NSString *)Id;
+- (NSMutableString *) getJoinFields:(NSDictionary*)dict;
 
 //generate PDF Settings
 //Abinash

@@ -8,6 +8,7 @@
 
 #import "CreateObjectDetail.h"
 #import "CreateObject.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation CreateObjectDetail
 
@@ -260,7 +261,7 @@
     NSDictionary * dict = [[appDelegate.StandAloneCreateProcess objectAtIndex:selectedRootViewRow] objectAtIndex:indexPath.row];
     NSString * processTitle = [dict objectForKey:SVMXC_Name];
     processId = [dict objectForKey:SVMXC_ProcessID];
-    NSLog(@"%@", processId);
+    SMLog(@"%@", processId);
     
     //sahana offline
     NSString * object_name = [dict objectForKey:SVMXC_OBJECT_NAME];
@@ -288,7 +289,7 @@
     NSDictionary * dict = [[appDelegate.StandAloneCreateProcess objectAtIndex:selectedRootViewRow] objectAtIndex:indexPath.row];
     NSString * processTitle = [dict objectForKey:SVMXC_Name];
     processId = [dict objectForKey:SVMXC_ProcessID];
-    NSLog(@"%@", processId);
+    SMLog(@"%@", processId);
     
     //sahana offline
     NSString * object_name = [dict objectForKey:SVMXC_OBJECT_NAME];

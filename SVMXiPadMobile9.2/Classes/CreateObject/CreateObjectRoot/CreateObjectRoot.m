@@ -7,6 +7,7 @@
 //
 
 #import "CreateObjectRoot.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation CreateObjectRoot
 
@@ -275,7 +276,7 @@
     }
     @catch (NSException * error)
     {
-        NSLog(@"Create Object Error: %@", error.description);
+        SMLog(@"Create Object Error: %@", error.description);
     }
 }
 

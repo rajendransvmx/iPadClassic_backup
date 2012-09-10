@@ -12,6 +12,7 @@
 #import "iServiceAppDelegate.h"
 #import "DateTimeFormatter.h"
 #import "About.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation PDFCreator
 
@@ -108,8 +109,8 @@
     
     if (appDelegate.serviceReport != nil)
     {
-        NSLog(@"%@",appDelegate.serviceReport);
-        NSLog(@"%@", reportEssentials);
+        SMLog(@"%@",appDelegate.serviceReport);
+        SMLog(@"%@", reportEssentials);
         srShowContactPhone = [[appDelegate.serviceReport objectForKey:@"IPAD004_SET003"] boolValue];
         srShowProblemDescription = [[appDelegate.serviceReport objectForKey:@"IPAD004_SET004"] boolValue];
         srShowWorkPerformed = [[appDelegate.serviceReport objectForKey:@"IPAD004_SET005"] boolValue];
@@ -150,7 +151,7 @@
     NSString * serviceReport = [appDelegate.wsInterface.tagsDictionary objectForKey:PDF_SERVICE_REPORT];
 	saveFileName = [[NSString stringWithFormat:@"%@_%@.pdf",serviceReport, _wonumber] retain];
 	newFilePath = [[saveDirectory stringByAppendingPathComponent:saveFileName] retain];
-    NSLog(@"%@", newFilePath);
+    SMLog(@"%@", newFilePath);
 #ifdef DEBUG
     // ######################################### //
     // YIKES - REMOVE THIS CODE BEFORE DEPLOYING //
@@ -174,11 +175,11 @@
     BOOL isReachable = [currentReach boolValue];
     if (isReachable)
     {
-        NSLog(@"ModalViewController Internet Reachable");
+        SMLog(@"ModalViewController Internet Reachable");
     }
     else
     {
-        NSLog(@"ModalViewController Internet Not Reachable");
+        SMLog(@"ModalViewController Internet Not Reachable");
         
         if (didRunOperation)
         {
@@ -250,7 +251,7 @@
     }
     if ([array count] > 0)
     {
-        NSLog(@"1");
+        SMLog(@"1");
         didremoveallPdf = FALSE;
         [[ZKServerSwitchboard switchboard] delete:array target:self selector:@selector(didRemoveAllPDF:error:context:) context:nil];
        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES)) 
@@ -273,7 +274,7 @@
     }
     else
     {
-        NSLog(@"2");
+        SMLog(@"2");
         didremoveallPdf = FALSE;
         [self didRemoveAllPDF:nil error:nil context:nil];
        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES)) 
@@ -338,8 +339,8 @@
 
 - (void) didAttachPDF:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
-    NSLog(@"Attach PDF successful");
-    NSLog(@"%@", [error description]);
+    SMLog(@"Attach PDF successful");
+    SMLog(@"%@", [error description]);
       
     sendMailButton.enabled = YES;
     [self showServiceReportForId:woId fileName:saveFileName];
@@ -621,7 +622,7 @@
         
         for (int i = 0; i < [_parts count]; i++)
         {
-            NSLog(@"%@", [_parts objectAtIndex:i]);
+            SMLog(@"%@", [_parts objectAtIndex:i]);
        //     float linePrice = [[[_parts objectAtIndex:i] objectForKey:@"CostPerPart"] intValue];
        //     Abinash 28th december
             float linePrice = [[[_parts objectAtIndex:i] objectForKey:@"CostPerPart"] floatValue];
@@ -677,7 +678,7 @@
         for (int j = 0; j < [_labor count]; j++)
         {
             NSDictionary * labor = [_labor objectAtIndex:j];
-            NSLog(@"%@", labor);
+            SMLog(@"%@", labor);
             NSString * tLabor, * tHours, * tRate, * tLinePrice;
 
             tLabor = [labor objectForKey:SVMXC__Activity_Type__c];
@@ -706,7 +707,7 @@
         for (int k = 0; k < [_expenses count]; k++)
         {
             NSDictionary * expenses = [_expenses objectAtIndex:k];
-            NSLog(@"%@", expenses);
+            SMLog(@"%@", expenses);
             
             NSString * expenseType = [expenses objectForKey:@"SVMXC__Expense_Type__c"];
             if (![expenseType isKindOfClass:[NSString class]])
@@ -923,7 +924,7 @@
                 
                 if ([[customFields objectAtIndex:i] isEqualToString:[dict objectForKey:@"api_name"]])
                 {
-                   // NSLog(@"%@ :: %@ (%@) -> %@", [field name], [field label], [field type], [reportEssentialsDict objectForKey:[field name]]);
+                   // SMLog(@"%@ :: %@ (%@) -> %@", [field name], [field label], [field type], [reportEssentialsDict objectForKey:[field name]]);
                     
                     CGContextSelectFont (pdfContext, "Verdana-Bold", 14, kCGEncodingMacRoman);
                     CGContextSetTextDrawingMode (pdfContext, kCGTextFill);
@@ -951,7 +952,7 @@
                 CGPoint memoryPoint = currentPoint;
                 if ([[customFields objectAtIndex:i] isEqualToString:[dict objectForKey:@"api_name"]])
                 {
-                   // NSLog(@"%@ :: %@ (%@) -> %@", [field name], [field label], [field type], [reportEssentialsDict objectForKey:[field name]]);
+                   // SMLog(@"%@ :: %@ (%@) -> %@", [field name], [field label], [field type], [reportEssentialsDict objectForKey:[field name]]);
                     
                     CGContextSelectFont (pdfContext, "Verdana-Bold", 14, kCGEncodingMacRoman);
                     CGContextSetTextDrawingMode (pdfContext, kCGTextFill);
@@ -1076,7 +1077,7 @@
                         UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
                         UIGraphicsEndImageContext();
                         
-                        NSLog(@"%f, %f", currentPoint.x, currentPoint.y);
+                        SMLog(@"%f, %f", currentPoint.x, currentPoint.y);
                         
                         CGRect imageRect = CGRectMake((startingPoint.x + customTextSize.width), pageRect.size.height-currentPoint.y-image.size.height+2*newLineBuffer+6, image.size.width, image.size.height);
                         CGContextDrawImage(pdfContext, imageRect, [image CGImage]);
@@ -1134,7 +1135,7 @@
                     ZKDescribeField * field = [[appDelegate.workOrderDescription fields] objectAtIndex:j];
                     if ([[customFields objectAtIndex:i] isEqualToString:[field name]])
                     {
-                        NSLog(@"%@ :: %@ (%@) -> %@", [field name], [field label], [field type], [reportEssentialsDict objectForKey:[field name]]);
+                        SMLog(@"%@ :: %@ (%@) -> %@", [field name], [field label], [field type], [reportEssentialsDict objectForKey:[field name]]);
                         
                         CGContextSelectFont (pdfContext, "Verdana-Bold", 14, kCGEncodingMacRoman);
                         CGContextSetTextDrawingMode (pdfContext, kCGTextFill);
@@ -1165,7 +1166,7 @@
                 CGPoint memoryPoint = currentPoint;
                 if ([[customFields objectAtIndex:i] isEqualToString:[field name]])
                 {
-                    NSLog(@"%@ :: %@ (%@) -> %@", [field name], [field label], [field type], [reportEssentialsDict objectForKey:[field name]]);
+                    SMLog(@"%@ :: %@ (%@) -> %@", [field name], [field label], [field type], [reportEssentialsDict objectForKey:[field name]]);
                     
                     CGContextSelectFont (pdfContext, "Verdana-Bold", 14, kCGEncodingMacRoman);
                     CGContextSetTextDrawingMode (pdfContext, kCGTextFill);
@@ -1290,7 +1291,7 @@
                         UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
                         UIGraphicsEndImageContext();
                         
-                        NSLog(@"%f, %f", currentPoint.x, currentPoint.y);
+                        SMLog(@"%f, %f", currentPoint.x, currentPoint.y);
                         
                         CGRect imageRect = CGRectMake((startingPoint.x + customTextSize.width), pageRect.size.height-currentPoint.y-image.size.height+2*newLineBuffer+6, image.size.width, image.size.height);
                         CGContextDrawImage(pdfContext, imageRect, [image CGImage]);
@@ -2068,7 +2069,7 @@
 	UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
 	UIGraphicsEndImageContext();
     
-    NSLog(@"%f, %f", currentPoint.x, currentPoint.y);
+    SMLog(@"%f, %f", currentPoint.x, currentPoint.y);
     
 	CGRect imageRect = CGRectMake(55, pageRect.size.height-currentPoint.y-image.size.height, image.size.width, image.size.height);
 	CGContextDrawImage(pdfContext, imageRect, [image CGImage]);
@@ -2108,13 +2109,13 @@
     wp.text = wfText;
 
     float yCoOrdinate = pageRect.size.height-currentPoint.y-wp.bounds.size.height;
-    NSLog(@"Y = %f",currentPoint.y);
+    SMLog(@"Y = %f",currentPoint.y);
     if(yCoOrdinate < 0)
     {
         [self PDFPageEnd];
         [self PDFPageBegin];        
     }
-    NSLog(@"Y = %f",currentPoint.y);    
+    SMLog(@"Y = %f",currentPoint.y);    
     [self setImageWithName:@"workperformed"];
     
     CGContextSelectFont (pdfContext, CFONTNAME, 12, kCGEncodingMacRoman);
@@ -2129,7 +2130,7 @@
 	UIGraphicsEndImageContext();
     
     yCoOrdinate = pageRect.size.height-currentPoint.y-image.size.height;
-    NSLog(@"Y = %f",yCoOrdinate);
+    SMLog(@"Y = %f",yCoOrdinate);
 	CGRect imageRect = CGRectMake(55, yCoOrdinate, image.size.width, image.size.height);
 	CGContextDrawImage(pdfContext, imageRect, [image CGImage]);
 	[wp release];

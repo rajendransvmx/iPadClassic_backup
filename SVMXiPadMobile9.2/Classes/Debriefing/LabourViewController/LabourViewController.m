@@ -7,7 +7,7 @@
 //
 
 #import "LabourViewController.h"
-
+extern void SVMXLog(NSString *format, ...);
 
 @implementation LabourViewController
 
@@ -178,7 +178,7 @@
 	UISlider *slider = (UISlider *)sender;
 	float val = slider.value;
 	int roundedval = roundf(val);
-	NSLog(@"%d", roundedval);
+	SMLog(@"%d", roundedval);
 	[slider setValue:roundedval];
 	
 	//get key for selected slider
@@ -292,7 +292,7 @@
             continue;
 		
 		// Check the query. use dictionary value extraction technique, for e.g.
-		NSLog(@"%@", [[obj fields] objectForKey:@"SVMXC__Activity_Type__c"]);
+		SMLog(@"%@", [[obj fields] objectForKey:@"SVMXC__Activity_Type__c"]);
 		[md setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:[[obj fields] objectForKey:@"SVMXC__Activity_Type__c"]];
         
 		value = [[[obj fields] objectForKey:@"SVMXC__Work_Description__c"] isKindOfClass:[NSString class]]?[[obj fields] objectForKey:@"SVMXC__Work_Description__c"]:@"";
@@ -423,7 +423,7 @@
 		ZKSObject * obj = [array objectAtIndex:i];
 		
 		// Check the query. use dictionary value extraction technique, for e.g.
-		NSLog(@"%@", [[obj fields] objectForKey:@"SVMXC__Billable_Cost2__c"]);
+		SMLog(@"%@", [[obj fields] objectForKey:@"SVMXC__Billable_Cost2__c"]);
 		// [md setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:[[obj fields] objectForKey:@"SVMXC__Activity_Type__c"]];
 	}
 	
@@ -493,7 +493,7 @@
 		ZKSObject * obj = [array objectAtIndex:i];
 		
 		// Check the query. use dictionary value extraction technique, for e.g.
-		NSLog(@"%@", [[obj fields] objectForKey:@"SVMXC__Billable_Cost2__c"]);
+		SMLog(@"%@", [[obj fields] objectForKey:@"SVMXC__Billable_Cost2__c"]);
 		//[md setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:[[obj fields] objectForKey:@"SVMXC__Activity_Type__c"]];
 		rate = [[[obj fields] objectForKey:@"SVMXC__Billable_Cost2__c"] retain];
         if (rate == nil || [rate isKindOfClass:[NSNull class]])

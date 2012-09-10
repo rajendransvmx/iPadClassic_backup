@@ -8,6 +8,7 @@
 
 #import "HelpController.h"
 #import "iServiceAppDelegate.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation HelpController
 
@@ -58,11 +59,11 @@
     BOOL isReachable = [currentReach boolValue];
     if (isReachable)
     {
-        NSLog(@"ModalViewController Internet Reachable");
+        SMLog(@"ModalViewController Internet Reachable");
     }
     else
     {
-        NSLog(@"ModalViewController Internet Not Reachable");
+        SMLog(@"ModalViewController Internet Not Reachable");
         [activity stopAnimating];
         //[appDelegate displayNoInternetAvailable];
     }

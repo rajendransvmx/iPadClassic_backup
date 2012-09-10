@@ -8,6 +8,7 @@
 
 #import "ExpenseViewController.h"
 
+extern void SVMXLog(NSString *format, ...);
 
 @implementation ExpenseViewController
 
@@ -182,7 +183,7 @@
 		ZKSObject * obj = [array objectAtIndex:i];
 		
 		// Check the query. use dictionary value extraction technique, for e.g.
-		NSLog(@"%@", [[obj fields] objectForKey:@"SVMXC__Expense_Type__c"]);
+		SMLog(@"%@", [[obj fields] objectForKey:@"SVMXC__Expense_Type__c"]);
 		[md setValue:[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] forKey:[[obj fields] objectForKey:@"SVMXC__Expense_Type__c"]];
 		NSString *key, *value;
 		key = [[obj fields] objectForKey:@"SVMXC__Expense_Type__c"];
@@ -197,7 +198,7 @@
 	NSArray *dict_keys = [ExpenseDictionary allKeys];
 	for (int i =0; i < [dict_keys count];i++)
 	{
-		NSLog(@"%@",[dict_keys objectAtIndex:i]); 
+		SMLog(@"%@",[dict_keys objectAtIndex:i]); 
 		NSString *value;
 		value = [md valueForKey:[dict_keys objectAtIndex:i]];
 		if (value == nil)

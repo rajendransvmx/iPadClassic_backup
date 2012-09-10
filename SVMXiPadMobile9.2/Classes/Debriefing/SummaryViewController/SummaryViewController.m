@@ -11,6 +11,7 @@
 #import "PDFCreator.h"
 #import "HelpController.h"
 #import "About.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation SummaryViewController
 
@@ -165,7 +166,7 @@
 			continue;
         if( [key Contains:MODIFY] )
 			continue;
-		NSLog(@"%@", [_Expenses valueForKey:key]);
+		SMLog(@"%@", [_Expenses valueForKey:key]);
 		if([[_Expenses valueForKey:key] isKindOfClass:[NSString class]] && ![[_Expenses valueForKey:key] floatValue] == 0.0 )
 		{
 			NSDictionary *dict = [NSDictionary dictionaryWithObject:[_Expenses valueForKey:key] forKey:key];

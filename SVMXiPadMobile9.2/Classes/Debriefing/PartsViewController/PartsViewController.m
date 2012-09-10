@@ -7,6 +7,7 @@
 //
 
 #import "PartsViewController.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation PartsViewController
 
@@ -165,8 +166,8 @@
 		ZKSObject * obj = [array objectAtIndex:i];
 		NSDictionary * dict = [obj fields];
 		// Check the query. use dictionary value extraction technique, for e.g.
-		//NSLog(@"SVMXC__Product__r.Name = %@", [[[[obj fields] objectForKey:@"SVMXC__Product__r"] fields] objectForKey:@"Name"] );
-		NSLog(@"SVMXC__Product__c = %@", [[obj fields] objectForKey:@"SVMXC__Product__c"] );
+		//SMLog(@"SVMXC__Product__r.Name = %@", [[[[obj fields] objectForKey:@"SVMXC__Product__r"] fields] objectForKey:@"Name"] );
+		SMLog(@"SVMXC__Product__c = %@", [[obj fields] objectForKey:@"SVMXC__Product__c"] );
         NSMutableDictionary *Part = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
         
         ZKSObject * obj2 = [[obj fields] objectForKey:@"SVMXC__Product__r"];
@@ -288,7 +289,7 @@
 		ZKSObject * obj = [array objectAtIndex:i];
 
 		// Check the query. use dictionary value extraction technique, for e.g.
-		NSLog(@"Pricebook Id = %@", [[obj fields] objectForKey:@"Id"]);
+		SMLog(@"Pricebook Id = %@", [[obj fields] objectForKey:@"Id"]);
 		pricebookId = [[obj fields] objectForKey:@"Id"];
 	}	
 

@@ -10,6 +10,7 @@
 #import "Base64.h"
 #import "HTMLBrowser.h"
 #import "LocalizationGlobals.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation ChatterURLConnection
 
@@ -77,7 +78,7 @@
             [_alert release];
         }
         
-        NSLog(@"%@", chatterArray);
+        SMLog(@"%@", chatterArray);
         
         [self loadChatter];
     }
@@ -112,11 +113,11 @@
     BOOL isReachable = [currentReach boolValue];
     if (isReachable)
     {
-        NSLog(@"Chatter Internet Reachable");
+        SMLog(@"Chatter Internet Reachable");
     }
     else
     {
-        NSLog(@"Chatter Internet Not Reachable");
+        SMLog(@"Chatter Internet Not Reachable");
         if (didRunOperation)
         {
             [activity stopAnimating];
@@ -283,7 +284,7 @@
     for (int i = 0; i < count; i++)
     {
         ZKSObject * obj = [chatterQueryArray objectAtIndex:i];
-        NSLog(@"%dth Object \r %@", i, [obj fields]);
+        SMLog(@"%dth Object \r %@", i, [obj fields]);
         
         NSArray * postObjects;
         NSDictionary * postDict;
@@ -418,7 +419,7 @@
         urlConnection.userName = userName;
     }
 
-    NSLog(@"%@  %d", chatterArray, [chatterArray count]);
+    SMLog(@"%@  %d", chatterArray, [chatterArray count]);
     [appDelegate.calDataBase insertChatterDetailsIntoDBForWithId:productId andChatterDetails:chatterArray];
     
     [self loadChatter];
@@ -432,7 +433,7 @@
 {
     ChatterURLConnection * curlConnection = (ChatterURLConnection *)connection;
     NSString * userName = curlConnection.userName;
-    NSLog(@"didReceiveData %@", userName);
+    SMLog(@"didReceiveData %@", userName);
     
     // Save the image data
     NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -455,7 +456,7 @@
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
     // do something with the data - for e.g. save it
-    NSLog(@"connectionDidFinishLoading %@", ((ChatterURLConnection*)connection).userName);
+    SMLog(@"connectionDidFinishLoading %@", ((ChatterURLConnection*)connection).userName);
     
     NSString *userName = ((ChatterURLConnection*)connection).userName;
     
@@ -463,10 +464,10 @@
     NSString * documentsDirectoryPath = [paths objectAtIndex:0];
     NSString * filePath = [documentsDirectoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@%@", userName, @".png"]];
     
-    NSLog(@"%@", filePath);
+    SMLog(@"%@", filePath);
     
     NSData * data = [NSData dataWithContentsOfFile:filePath];
-    NSLog(@"%@", chatterArray);
+    SMLog(@"%@", chatterArray);
     
     [appDelegate.calDataBase insertImageDataInChatterDetailsForUserName:userName WithData:data];
 }
@@ -535,7 +536,7 @@
             [chatterArrayForTable retain];
         }
         
-        NSLog(@"%@", chatterArrayForTable);
+        SMLog(@"%@", chatterArrayForTable);
         if (isChatterAlive && !didEditRow)
             if (!isKeyboardShowing)
                 [chatTable reloadData];
@@ -590,7 +591,7 @@
 - (void) didCreateObjects:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
 {
     didRunOperation = NO;
-    NSLog(@"Created objects");
+    SMLog(@"Created objects");
     
     // Need to fetch post result first and then call fetchPosts
     
@@ -639,7 +640,7 @@
     {
         NSError * error = nil;
         
-        NSLog(@"%@", chatterArrayForTable);
+        SMLog(@"%@", chatterArrayForTable);
         for ( int i = 0; i < [chatterArrayForTable count]; i++ )
         {
             NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -650,7 +651,7 @@
         }
     }
     
-    NSLog(@"%@", userNameImageList);
+    SMLog(@"%@", userNameImageList);
     NSError * error = nil;
     for (NSString * userName in userNameImageList)
     {
@@ -868,7 +869,7 @@
 
         // Cell data
         cell.CreatedById = [postDict objectForKey:POSTCREATEDBYID];
-        NSLog(@"%@", cell.CreatedById);
+        SMLog(@"%@", cell.CreatedById);
         cell.FeedPostId = [postDict objectForKey:FEEDPOSTID];
         // match userrecord with id
         NSString * username;
@@ -876,14 +877,14 @@
         
         if ( !appDelegate.isInternetConnectionAvailable )
         {
-            NSLog(@"%@", [[chatterArrayForTable objectAtIndex:indexPath.row]objectForKey:@"Username"]);
+            SMLog(@"%@", [[chatterArrayForTable objectAtIndex:indexPath.row]objectForKey:@"Username"]);
             
             image = [imageCache getImage:[NSString stringWithFormat:@"%@.png", [[chatterArrayForTable objectAtIndex:indexPath.row]objectForKey:@"Username"]]];
             
             if (image == nil)
             {
                 NSData *imageData = [appDelegate.calDataBase getImageDataForUserName:[[chatterArrayForTable objectAtIndex:indexPath.row]objectForKey:@"Username"]];
-                NSLog(@"%d", [imageData length]);
+                SMLog(@"%d", [imageData length]);
                 
                 NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
                 NSString * documentsDirectoryPath = [paths objectAtIndex:0];
@@ -938,7 +939,7 @@
         if ( !appDelegate.isInternetConnectionAvailable )
         {
             NSData *imageData = [appDelegate.calDataBase getImageDataForUserName:[[chatterArrayForTable objectAtIndex:indexPath.row]objectForKey:@"Username"]];
-            NSLog(@"%d", [imageData length]);
+            SMLog(@"%d", [imageData length]);
             
             NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
             NSString * documentsDirectoryPath = [paths objectAtIndex:0];
@@ -975,7 +976,7 @@
         }
         cell.delegate = self;
         cell.feedCommentId = [postDict objectForKey:PRODUCT2FEEDID];
-        // NSLog(@"%@", [postDict objectForKey:PRODUCT2FEEDID]);
+        // SMLog(@"%@", [postDict objectForKey:PRODUCT2FEEDID]);
     }
     
     if ([postType isEqualToString:TYPECHATSEPERATOR])
@@ -989,7 +990,7 @@
     }
     
     if (cell == nil)
-    NSLog(@"%@", cell);
+    SMLog(@"%@", cell);
     return cell;
 }
 

@@ -8,6 +8,7 @@
 
 #import "CreateObject.h"
 #import "About.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation CreateObject
 
@@ -179,7 +180,7 @@
 //        backgroundView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, cell.frame.size.height)] autorelease];
 
     CGRect rect = cell.frame;
-    NSLog(@"%@",rect);
+    SMLog(@"%@",rect);
     NSDictionary * dict = [[appDelegate.StandAloneCreateProcess objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     NSString * row_tittle = [dict objectForKey:SVMXC_Name];
     
@@ -243,7 +244,7 @@
     NSDictionary * dict = [[appDelegate.StandAloneCreateProcess objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     NSString * processTitle = [dict objectForKey:SVMXC_Name];
     processId = [dict objectForKey:SVMXC_ProcessID];
-    NSLog(@"%@", processId);
+    SMLog(@"%@", processId);
     [self showSFMCreateObjectWithProcessID:processId processTitle:processTitle];
     
 }

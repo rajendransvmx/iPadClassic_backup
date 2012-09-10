@@ -12,6 +12,7 @@
 
 #import "BSPreviewScrollView.h"
 #import "iServiceAppDelegate.h"
+extern void SVMXLog(NSString *format, ...);
 
 #define SHADOW_HEIGHT 20.0
 #define SHADOW_INVERSE_HEIGHT 10.0
@@ -62,12 +63,12 @@
 	// Sanity checks
     if (page < 0)
     {
-        // NSLog(@"page < 0");
+        // SMLog(@"page < 0");
         return;
     }
     if (page >= [scrollViewPages count])
     {
-        // NSLog(@"page >= maxcount");
+        // SMLog(@"page >= maxcount");
         return;
     }
 	
