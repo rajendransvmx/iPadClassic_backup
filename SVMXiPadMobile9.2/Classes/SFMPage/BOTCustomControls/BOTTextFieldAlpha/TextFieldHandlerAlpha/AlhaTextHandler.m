@@ -9,8 +9,7 @@
 #import "AlhaTextHandler.h"
 #import "cusTextFieldAlpha.h"
 #import "iServiceAppDelegate.h"
-
-
+extern void SVMXLog(NSString *format, ...);
 @implementation AlhaTextHandler
 
 @synthesize delegate;
@@ -59,7 +58,7 @@
         }
         else if ([textField.text length] > 0 )
         {
-            NSLog(@"email not in proper format");
+            SMLog(@"email not in proper format");
             UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:warning message:invalidEmail delegate:self cancelButtonTitle:alert_ok otherButtonTitles:nil, nil];
             [alertView show];
             [alertView release];

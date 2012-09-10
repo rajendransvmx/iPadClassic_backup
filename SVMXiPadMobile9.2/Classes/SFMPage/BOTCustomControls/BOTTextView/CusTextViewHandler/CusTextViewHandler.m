@@ -26,10 +26,17 @@
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
+	//Code change for keyboard retracting ---> 31/08/2012
     if ( [textView.text length] >= 255)
     {
-        [textView resignFirstResponder];
-        return NO;
+		if ([text isEqualToString:@""])
+		{
+			//[delegate didChangeText:text];
+		}else{
+//			[textView resignFirstResponder];
+			return NO;
+		}
+      
     }
     NSString * currentText = textView.text;
     if ([text length] != 0)

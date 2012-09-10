@@ -9,6 +9,7 @@
 #import "SpinnerTFhandler.h"
 #import "BotSpinnerTextField.h"
 #import "iServiceAppDelegate.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation SpinnerTFhandler
 @synthesize contentView;
@@ -79,7 +80,7 @@
     {
         contentView.spinnerData  = [setSpinnerValuedelegate  getValuesForDependentPickList];
         if (ISRTDEPPicklist){
-            NSLog(@"Oh God Even this is Possible");
+            SMLog(@"Oh God Even this is Possible");
             if ([textField.text isEqualToString:@""]){
                  defaultValue = [appDelegate.databaseInterface getDefaultValueForRTPicklistDependency:SFM_ObjectName recordtypeId:RecordTypeId field_api_name:parent.fieldAPIName];
                 
@@ -93,7 +94,7 @@
     }else if(ISRTDEPPicklist && ![parent.fieldAPIName isEqualToString:@"RecordTypeId"]){
         
         defaultValue = [appDelegate.databaseInterface getDefaultValueForRTPicklistDependency:SFM_ObjectName recordtypeId:RecordTypeId field_api_name:parent.fieldAPIName];
-        NSLog(@"%@ %@", contentView.spinnerData, spinnerData);
+        SMLog(@"%@ %@", contentView.spinnerData, spinnerData);
         if ([textField.text isEqualToString:@""])
             indexOfText = [contentView.spinnerData indexOfObject:defaultValue];
         else
@@ -101,7 +102,7 @@
         
     }else{
         
-        NSLog(@"%@ %@", contentView.spinnerData, spinnerData);
+        SMLog(@"%@ %@", contentView.spinnerData, spinnerData);
         indexOfText = [contentView.spinnerData indexOfObject:textField.text];
     }
 

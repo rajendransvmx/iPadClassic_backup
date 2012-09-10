@@ -9,6 +9,7 @@
 #import "MultiAddLookupView.h"
 #import "iServiceAppDelegate.h"
 #import "DetailViewController.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation MultiAddLookupView
 
@@ -190,7 +191,7 @@
         for (int i = 0; i < [[lookupData objectForKey:@"DATA"] count]; i++)
         {
             NSArray * eachLookUp = [[lookupData objectForKey:@"DATA"] objectAtIndex:i];
-            NSLog(@"lookup = %@",eachLookUp);
+            SMLog(@"lookup = %@",eachLookUp);
             NSString *Id = @"";
             NSString *name = @"";
             for(NSDictionary *dict in eachLookUp)
@@ -238,7 +239,7 @@
 
 - (IBAction)doneButtonClicked:(id)sender 
 {
-    NSLog(@"Mutable Array = %@",mappingArray);
+    SMLog(@"Mutable Array = %@",mappingArray);
     for(NSDictionary *dict in mappingArray)
     {
         if([[dict objectForKey:@"Value"] isEqualToString:CHECK])
@@ -246,7 +247,7 @@
             [objectSelected  setObject:[dict objectForKey:@"Name"] forKey:[dict objectForKey:@"Id"]];
         }
     }
-    NSLog(@"Objects Selected  = %@",objectSelected);
+    SMLog(@"Objects Selected  = %@",objectSelected);
     [delegate addMultiChildRows:objectSelected forIndex:index];
 }
 
@@ -315,7 +316,7 @@
         NSMutableDictionary *dict = [mappingArray objectAtIndex:indexPath.row];
         [dict setObject:NOTCHECK forKey:@"Value"];
     }
-    NSLog(@"Mapping Array = %@",mappingArray);
+    SMLog(@"Mapping Array = %@",mappingArray);
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
     
 }

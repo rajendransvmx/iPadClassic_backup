@@ -8,6 +8,7 @@
 
 #import "LookupField.h"
 #import "iServiceAppDelegate.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation LookupField
 
@@ -215,14 +216,14 @@
     [reader release];
     //[self dismissModalViewControllerAnimated:YES];
     //[delegate DismissLookupFieldPopover];
-    NSLog(@"Launch Bar Code Scanner");
+    SMLog(@"Launch Bar Code Scanner");
 }
 - (void) imagePickerController: (UIImagePickerController*) readerController
  didFinishPickingMediaWithInfo: (NSDictionary*) info
 {
     // ADD: get the decode results
     id<NSFastEnumeration> results =[info objectForKey: ZBarReaderControllerResults];
-    NSLog(@"result=%@",results);
+    SMLog(@"result=%@",results);
     ZBarSymbol *symbol = nil;
     for(symbol in results)
         // EXAMPLE: just grab the first barcode
@@ -241,16 +242,16 @@
 {
     NSString *_searchText=@"";
     _searchText=[_searchText stringByAppendingFormat:@" %@",_text];
-    NSLog(@"Search Text =%@ lenght %d",_searchText,[_searchText length]);
+    SMLog(@"Search Text =%@ lenght %d",_searchText,[_searchText length]);
     [delegateHandler LaunchPopover];
     [[self delegateHandler].lookupView updateTxtField:_text];
-    NSLog(@"Bar Code Scanned Text=%@",_text);
+    SMLog(@"Bar Code Scanned Text=%@",_text);
     [[self delegateHandler].lookupView searchBarCodeScannerData:_searchText];
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
-    NSLog(@"Dismissing Barcode Scanner");
+    SMLog(@"Dismissing Barcode Scanner");
     [reader dismissModalViewControllerAnimated: YES];
     NSString *nilBarcodeData = [NSString stringWithFormat:@" "];
     [self performSelector:@selector(DismissBarCodeReader:) withObject:nilBarcodeData afterDelay:0.1f];
@@ -260,7 +261,7 @@
 }
 - (void) readerControllerDidFailToRead:(ZBarReaderController*)barcodeReader withRetry:(BOOL)retry
 {
-    NSLog(@"Failed to Scan the Barcode");
+    SMLog(@"Failed to Scan the Barcode");
     [barcodeReader dismissModalViewControllerAnimated: YES];
     NSString *nilBarcodeData = [NSString stringWithFormat:@" "];
     [self performSelector:@selector(DismissBarCodeReader:) withObject:nilBarcodeData afterDelay:0.1f];

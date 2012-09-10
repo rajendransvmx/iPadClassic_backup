@@ -8,6 +8,7 @@
 
 #import "BitSet.h"
 #import "Base64.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation BitSet
 -(id)initWithData:(NSString *) inputData
@@ -17,7 +18,7 @@
            nsstr = inputData;
            //nsdata = [nsstr dataUsingEncoding:NSUTF8StringEncoding];
            nsdata = [Base64 decode:inputData];
-           NSLog(@"%@",nsdata);
+           SMLog(@"%@",nsdata);
        }
        return self;
 }
@@ -27,7 +28,7 @@
     int index = n >> 3;
     
     Byte * data = (Byte *)[nsdata bytes];//[nsstr characterAtIndex:index];
-    NSLog(@"data =========%@",nsdata);
+    SMLog(@"data =========%@",nsdata);
     return (data[index] & (0x80 >> n % 8)) != 0;
 }
 
@@ -36,7 +37,7 @@
     int length;
     length = [nsstr length] * 8;
     //length = [nsdata length] ;
-    NSLog(@"Length = %d",length);
+    SMLog(@"Length = %d",length);
     return length;
 }
 @end

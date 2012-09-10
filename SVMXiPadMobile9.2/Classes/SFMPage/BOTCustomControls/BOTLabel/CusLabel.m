@@ -7,6 +7,7 @@
 //
 
 #import "CusLabel.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation CusLabel
 
@@ -83,7 +84,7 @@
 {
     if ((tapCount.intValue == 1) && !isDoubleTap)
     {
-        NSLog(@"Single Tap");
+        SMLog(@"Single Tap");
         [controlDelegate singleTapOncusLabel:self];
     }
     
@@ -91,7 +92,7 @@
     {
         isDoubleTap = YES;
         [self performSelector:@selector(doubleTapped) withObject:nil afterDelay:DOUBLE_TAP_DELAY];
-        NSLog(@"Double Tap");
+        SMLog(@"Double Tap");
     }
 }
 

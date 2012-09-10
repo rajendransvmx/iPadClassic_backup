@@ -9,6 +9,8 @@
 #import "CusTextView.h"
 #import <QuartzCore/QuartzCore.h>
 #import "iServiceAppDelegate.h"
+extern void SVMXLog(NSString *format, ...);
+
 @implementation CusTextView
 
 @synthesize controlDelegate;
@@ -77,7 +79,7 @@
     [appDelegate.sfmPageController presentModalViewController: reader
                                                      animated: YES];
     [reader release];
-    NSLog(@"Launch Bar Code Scanner");
+    SMLog(@"Launch Bar Code Scanner");
 }
 
 - (BOOL) getReadOnly
@@ -91,13 +93,13 @@
 {
     // ADD: get the decode results
     id<NSFastEnumeration> results =[info objectForKey: ZBarReaderControllerResults];
-    NSLog(@"result=%@",results);
+    SMLog(@"result=%@",results);
     ZBarSymbol *symbol = nil;
     for(symbol in results)
     // Grab the first barcode
         break;
     self.text = symbol.data;
-    NSLog(@"symbol.data=%@",symbol.data);
+    SMLog(@"symbol.data=%@",symbol.data);
     [self didChangeText:symbol.data];
     // ADD: dismiss the controller (NB dismiss from the *reader*!)
     [reader dismissModalViewControllerAnimated: YES];
@@ -138,7 +140,7 @@
 #pragma mark - CusTextViewHandler Delegate
 - (void) didChangeText:(NSString *)_text
 {  
-    NSLog(@"%@ %d", _text, [_text length]);
+    SMLog(@"%@ %d", _text, [_text length]);
     
     [self.controlDelegate updateDictionaryForCellAtIndexPath:indexPath fieldAPIName:fieldAPIName fieldValue:_text fieldKeyValue:_text controlType:self.control_type];
 }

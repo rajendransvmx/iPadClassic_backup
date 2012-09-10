@@ -9,6 +9,7 @@
 #import "CTextField.h"
 #import <QuartzCore/QuartzCore.h>
 #import "iServiceAppDelegate.h"
+extern void SVMXLog(NSString *format, ...);
 
 
 @implementation CTextField
@@ -92,7 +93,7 @@
     [appDelegate.sfmPageController presentModalViewController: reader
                                                      animated: YES];
     [reader release];
-    NSLog(@"Launch Bar Code Scanner");
+    SMLog(@"Launch Bar Code Scanner");
 }
 
 
@@ -130,12 +131,12 @@
 {
     // ADD: get the decode results
     id<NSFastEnumeration> results =[info objectForKey: ZBarReaderControllerResults];
-    NSLog(@"result=%@",results);
+    SMLog(@"result=%@",results);
     ZBarSymbol *symbol = nil;
     for(symbol in results)
         break;
     self.text= symbol.data;
-    NSLog(@"symbol.data=%@",symbol.data);
+    SMLog(@"symbol.data=%@",symbol.data);
     [self didChangeText:symbol.data];    
     // ADD: dismiss the controller (NB dismiss from the *reader*!)
     [reader dismissModalViewControllerAnimated: YES];

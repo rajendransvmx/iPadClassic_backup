@@ -12,6 +12,7 @@
 #import "iServiceAppDelegate.h"
 #import "databaseIntefaceSfm.h"
 
+extern void SVMXLog(NSString *format, ...);
 
 @implementation LookupFieldPopover
 
@@ -245,7 +246,7 @@
 {
     NSDictionary *dict;
     dict = [appDelegate.databaseInterface getLookupDataFromDBWith:self.searchId referenceTo:self.relatedObjectName searchFor:keyword];
-    NSLog(@"%@", dict);
+    SMLog(@"%@", dict);
     [lookupView setLookupData:dict];
 }
 -(void) DismissLookupFieldPopover

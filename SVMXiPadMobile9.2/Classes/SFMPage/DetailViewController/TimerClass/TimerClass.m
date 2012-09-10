@@ -8,6 +8,7 @@
 
 #import "TimerClass.h"
 #import "WSIntfGlobals.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation TimerClass
 
@@ -119,7 +120,7 @@
         secondLabel.text = [NSString stringWithFormat:@"0%d", seconds_value];
     else
         secondLabel.text = [NSString stringWithFormat:@"%d", seconds_value];
-    NSLog(@"Day = %@ Hour = %@ Min = %@ Sec = %@",dayLabel.text,hourLabel.text,minuteLabel.text,secondLabel.text);
+    SMLog(@"Day = %@ Hour = %@ Min = %@ Sec = %@",dayLabel.text,hourLabel.text,minuteLabel.text,secondLabel.text);
 }
 
 - (void) ResetTimer

@@ -9,6 +9,7 @@
 #import "LookupView.h"
 #import "WSInterface.h"
 #import "iServiceAppDelegate.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation LookupView
 
@@ -214,7 +215,7 @@
 
 - (void) setLookupData:(NSDictionary *)lookupDictionary
 {
-    NSLog(@"%@", lookupDictionary);
+    SMLog(@"%@", lookupDictionary);
     if(appDelegate.isWorkinginOffline)
     {
         lookupData = [lookupDictionary retain];

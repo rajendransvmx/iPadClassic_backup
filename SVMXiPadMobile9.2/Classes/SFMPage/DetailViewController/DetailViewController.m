@@ -21,6 +21,7 @@
 #import "Chatter.h"
 #import "databaseIntefaceSfm.h"
 #import "ManualDataSync.h"
+extern void SVMXLog(NSString *format, ...);
 
 
 @interface DetailViewController ()
@@ -306,7 +307,7 @@
     {
         /*BOOL status;
         status = [Reachability connectivityStatus];
-        NSLog(@"%@", appDelegate.offline);
+        SMLog(@"%@", appDelegate.offline);
         if ( status == YES )
         {
             [self didSubmitProcess:currentProcessId forRecord:currentRecordId];
@@ -342,11 +343,11 @@
     BOOL isReachable = [currentReach boolValue];
     if (isReachable)
     {
-        NSLog(@"ModalViewController Internet Reachable");
+        SMLog(@"ModalViewController Internet Reachable");
     }
     else
     {
-        NSLog(@"ModalViewController Internet Not Reachable");
+        SMLog(@"ModalViewController Internet Not Reachable");
         
         if (didRunOperation)
         {
@@ -419,14 +420,14 @@
 {
     appDelegate.showUI = TRUE;     //btn merge
     clickedBack = YES;
-    if ([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"EDIT"]) 
+    if ([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"EDIT"] || [[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"SOURCETOTARGETONLYCHILDROWS"]) 
     {
         [activity startAnimating];
         appDelegate.sfmPageController.processId = appDelegate.sfmPageController.sourceProcessId;
         appDelegate.sfmPageController.recordId  = appDelegate.sfmPageController.sourceRecordId ;
 
         
-        NSLog(@"%@",appDelegate.sfmPageController.sourceProcessId);
+        SMLog(@"%@",appDelegate.sfmPageController.sourceProcessId);
         [self fillSFMdictForOfflineforProcess:appDelegate.sfmPageController.sourceProcessId  forRecord:appDelegate.sfmPageController.sourceRecordId];
         [self didReceivePageLayoutOffline];
     }
@@ -496,7 +497,7 @@
 	label.textAlignment = UITextAlignmentCenter;
 	label.textColor = [UIColor blackColor];
 	label.text = detailTitle;	
-    NSLog(@"%@",detailTitle);
+    SMLog(@"%@",detailTitle);
     // Adding the action Button
     if (actionBtn == nil)
     {
@@ -557,7 +558,7 @@
     }
     //Add help button Radha - 26 August, 2011 - END
     
-    NSLog(@"Tool Bar Width = %d",toolBarWidth);
+    SMLog(@"Tool Bar Width = %d",toolBarWidth);
     
         UIToolbar* toolbar;
     if (appDelegate.signatureCaptureUpload && !isInEditDetail && !isStandAloneCreate && !isInViewMode){
@@ -570,7 +571,7 @@
 
     }
    
-    NSLog(@"Tool Bar Frame x = %f y = %f w = %f h = %f",[toolbar frame].origin.x,[toolbar frame].origin.y,[toolbar frame].size.width,[toolbar frame].size.height);
+    SMLog(@"Tool Bar Frame x = %f y = %f w = %f h = %f",[toolbar frame].origin.x,[toolbar frame].origin.y,[toolbar frame].size.width,[toolbar frame].size.height);
 
       [toolbar setItems:buttons];
     self.navigationItem.titleView = label;
@@ -603,7 +604,7 @@
 	label.textAlignment = UITextAlignmentCenter;
 	label.textColor = [UIColor blackColor];
 	label.text = detailTitle;	
-    NSLog(@"%@",detailTitle);
+    SMLog(@"%@",detailTitle);
     //adding the action Button
     if (actionBtn == nil)
     {
@@ -806,7 +807,7 @@
     // NSMutableDictionary * dict = [database queryTheObjectInfoTable:api_names tableName:SFOBJECTFIELD objectName:@""];
     NSMutableDictionary * descibeDict = [appDelegate.databaseInterface queryTheObjectInfoTable:api_names tableName:SFOBJECTFIELD object_name:headerObjName];
     
-    NSLog(@"Header  describe dict %@" , descibeDict);
+    SMLog(@"Header  describe dict %@" , descibeDict);
     
     NSArray * allKeys = [descibeDict allKeys];
     
@@ -833,7 +834,7 @@
             }
             
             [filed_info setObject:field_label forKey:gFIELD_LABEL];
-            NSLog(@"fiel Info   %@", filed_info);
+            SMLog(@"fiel Info   %@", filed_info);
         }
     }
     
@@ -1182,7 +1183,92 @@
             }
         }
     }
-    
+    else if ([process_type isEqualToString:@"SOURCETOTARGETONLYCHILDROWS"])
+    {
+        NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGET process_id:processId layoutId:layout_id objectName:headerObjName];
+        //[appDelegate.databaseInterface  getValueMappingForlayoutId:layout_id process_id:processId objectName:headerObjName];
+        
+        NSString * expression_id = [process_components objectForKey:EXPRESSION_ID];
+        //SMLog(" record id %@" ,appDelegate.sfmPageController.recordId);
+        NSMutableDictionary * headerValueDict = [appDelegate.databaseInterface queryDataFromObjectTable:api_names tableName:headerObjName record_id:appDelegate.sfmPageController.recordId expression:expression_id];
+        
+		//Change of Code for quick save. --> 10/07/2012  -- #4665
+		BOOL Entry_criteria = [appDelegate.databaseInterface EntryCriteriaForRecordFortableName:headerObjName record_id:appDelegate.sfmPageController.recordId expression:expression_id];
+        
+        if(!Entry_criteria)
+        {
+			NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
+            NSString * headerObjName = [hdr_object objectForKey:gHEADER_OBJECT_NAME];
+            
+            [self initAllrequriredDetailsForProcessId:appDelegate.sfmPageController.sourceProcessId recordId:appDelegate.sfmPageController.recordId object_name:headerObjName];
+            [self fillSFMdictForOfflineforProcess:appDelegate.sfmPageController.sourceProcessId forRecord:appDelegate.sfmPageController.recordId ];
+            [self didReceivePageLayoutOffline]; 
+			
+            NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
+            NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
+            NSString * cancel_ = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
+			
+            UIAlertView * enty_criteris = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:cancel_ otherButtonTitles:nil, nil];
+            [enty_criteris show];
+            [enty_criteris release];
+			return;
+        }
+		
+        NSArray * all_Keys_values = [headerValueDict allKeys];
+        
+        for(int i=0; i <[header_sections count] ;i++)
+        {
+            NSDictionary * section_info = [header_sections objectAtIndex:i];
+            NSMutableArray * sectionFileds= [section_info objectForKey:@"section_Fields"];
+            
+            for(int j= 0;j<[sectionFileds count]; j++)
+            {
+                NSMutableDictionary * filed_info =[sectionFileds objectAtIndex:j];
+                NSString * filed_api_name = [filed_info objectForKey:gFIELD_API_NAME];
+                NSString * field_data_type = [filed_info objectForKey:gFIELD_DATA_TYPE];
+                NSString * field_value = @"";
+                NSString * field_key = @"";
+                
+                for(int k=0;k < [all_Keys_values count];k++)
+                {
+                    NSString * key = [all_Keys_values objectAtIndex:k];
+                    if([key isEqualToString:filed_api_name])
+                    {
+                        field_key = [headerValueDict objectForKey:[all_Keys_values objectAtIndex:k]];
+                        if([field_key length] != 0)
+                        {
+                            field_value = [self getValueForApiName:filed_api_name dataType:field_data_type object_name:headerObjName field_key:field_key];
+                            
+                            if([field_data_type isEqualToString:@"datetime"] || [field_data_type isEqualToString:@"date"])
+                            {
+                                field_key = field_value ;
+                            }
+                            else if([field_data_type isEqualToString:@"multipicklist"])
+                            {
+                            }
+                            else if([field_data_type isEqualToString:@"reference"])
+                            {
+                                
+                            } 
+                            else if([field_data_type isEqualToString:@"picklist"])
+                            {
+                            }
+                            else
+                            {
+                                field_value = field_key; 
+                            }
+                        }
+                    }
+                }
+                
+                [filed_info setObject:field_key forKey:gFIELD_VALUE_KEY];
+                [filed_info setObject:field_value forKey:gFIELD_VALUE_VALUE];
+            }
+        }
+        
+        
+        
+    }
     else if ([process_type isEqualToString:@"STANDALONECREATE"])
     {
         //HEADER VALUE MAPPING
@@ -1370,7 +1456,7 @@
         
     }
     
-    else if ([process_type isEqualToString:@"SOURCETOTARGET"] || [process_type isEqualToString:@"SOURCETOTARGETONLYCHILDROWS"])
+    else if ([process_type isEqualToString:@"SOURCETOTARGET"] )
     {
         NSMutableDictionary * process_components =  [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGET process_id:processId layoutId:layout_id objectName:headerObjName];
         //[appDelegate.databaseInterface  getValueMappingForlayoutId:layout_id process_id:processId objectName:headerObjName];
@@ -1723,7 +1809,7 @@
         //[appDelegate.databaseInterface  getValueMappingForlayoutId:layout_id process_id:processId objectName:headerObjName];
         
         NSString * expression_id = [process_components objectForKey:EXPRESSION_ID];
-        //NSLog(" record id %@" ,appDelegate.sfmPageController.recordId);
+        //SMLog(" record id %@" ,appDelegate.sfmPageController.recordId);
         NSMutableDictionary * headerValueDict = [appDelegate.databaseInterface queryDataFromObjectTable:api_names tableName:headerObjName record_id:appDelegate.sfmPageController.recordId expression:expression_id];
         
 		//Change of Code for quick save. --> 10/07/2012  -- #4665
@@ -1853,7 +1939,7 @@
         }
 
     }
-    NSLog(@"%@",page_layoutInfo);
+    SMLog(@"%@",page_layoutInfo);
     appDelegate.SFMoffline = page_layoutInfo;
 
     appDelegate.didsubmitModelView = TRUE;
@@ -1893,7 +1979,7 @@
     
    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
-        NSLog(@"didSubmitProcess In While Loop");
+        SMLog(@"didSubmitProcess In While Loop");
         if(appDelegate.isWorkinginOffline)
         {
             
@@ -2076,7 +2162,7 @@
             
         }
     }
-    if ([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"EDIT"]) 
+    if ([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"EDIT"] || [[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"SOURCETOTARGETONLYCHILDROWS"]) 
     {
         //[buttonsArray_offline  addObject:];
         appDelegate.wsInterface.refreshSyncButton = self;
@@ -2131,7 +2217,7 @@
         }*/
         
     }
-    if([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"STANDALONECREATE"] || [[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"SOURCETOTARGET"]||[[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"SOURCETOTARGETONLYCHILDROWS"])
+    if([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"STANDALONECREATE"] || [[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"SOURCETOTARGET"])
     {
         
         NSDictionary * header_dict = [appDelegate.SFMPage objectForKey:@"header"];
@@ -2165,7 +2251,7 @@
     if (appDelegate.SFMPage != nil)
     {
         
-        NSLog(@" action buttons %@",actionMenu.buttons);
+        SMLog(@" action buttons %@",actionMenu.buttons);
         
         if([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"EDIT"]||[[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"STANDALONECREATE"] || [[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"SOURCETOTARGET"]||[[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"SOURCETOTARGETONLYCHILDROWS"])
         {
@@ -2319,11 +2405,11 @@
 {
     [activity stopAnimating];
     NSString *   soap_fault =  sFault.faultstring;
-    if([soap_fault Contains:@"System.LimitException"])
-    {
-        soap_fault = @"Meta Sync Failed Due To Too Many Script. Please contact your System Administrator.";
-       // appDelegate.didFinishWithError = TRUE;
-    }
+//    if([soap_fault Contains:@"System.LimitException"])
+//    {
+//        soap_fault = @"Meta Sync Failed Due To Too Many Script. Please contact your System Administrator.";
+//       // appDelegate.didFinishWithError = TRUE;
+//    }
 
     NSString * response_error = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_RESPONSE_ERROR];
     NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
@@ -2429,7 +2515,7 @@
         
         if ([appDelegate.event_thread isExecuting])
         {
-            NSLog(@" evnt is executing");
+            SMLog(@" evnt is executing");
             while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
                 if (!appDelegate.isInternetConnectionAvailable)
@@ -2450,20 +2536,20 @@
         {
             if ([appDelegate.event_timer isValid])
             {
-                NSLog(@" evnt is NOT executing");
+                SMLog(@" evnt is NOT executing");
                 [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
             }            
         }   
         
         [appDelegate goOnlineIfRequired];
-        NSLog(@" getPrice1");
+        SMLog(@" getPrice1");
         NSMutableDictionary * sfm_temp = [appDelegate.SFMPage mutableCopy];
         NSArray * keys = [NSArray arrayWithObjects:WEBSERVICE_NAME, SFM_DICTIONARY, nil];
         NSArray * objects = [NSArray arrayWithObjects:targetCall, sfm_temp, nil];
         NSDictionary * dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
         [activity startAnimating];
         appDelegate.wsInterface.getPrice = FALSE;
-        NSLog(@" getPrice2");
+        SMLog(@" getPrice2");
         if (appDelegate.isInternetConnectionAvailable)
         {
             [appDelegate.wsInterface callSFMEvent:dict event_name:event_name];
@@ -2488,7 +2574,7 @@
      
         }
         
-        NSLog(@" getPrice3");
+        SMLog(@" getPrice3");
         [self.tableView reloadData];
         [appDelegate.sfmPageController.rootView refreshTable];
         [self  didselectSection:0];    
@@ -2497,7 +2583,7 @@
         [appDelegate ScheduleIncrementalMetaSyncTimer];
         [appDelegate ScheduleTimerForEventSync];
         [self enableSFMUI];
-        NSLog(@" getPrice4");
+        SMLog(@" getPrice4");
             
     }
 }
@@ -2763,7 +2849,7 @@
         LabourValuesDictionary = [appDelegate.calDataBase  queryForLabor:appDelegate.sfmPageController.recordId];
         
         reportEssentials  = [[appDelegate.calDataBase getReportEssentials:appDelegate.sfmPageController.recordId] retain];
-        NSLog(@" reportEssentis array ==%@",reportEssentials);
+        SMLog(@" reportEssentis array ==%@",reportEssentials);
         //Labor = nil;
     }
     else
@@ -2786,7 +2872,7 @@
         
         while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
         {
-            NSLog(@"startSummaryDataFetch in while loop");
+            SMLog(@"startSummaryDataFetch in while loop");
             /*if (!appDelegate.isInternetConnectionAvailable)
             {
                 [activity stopAnimating];
@@ -2797,7 +2883,7 @@
                 
                 return;
             }*/
-            NSLog(@"Waiting for summary data...");
+            SMLog(@"Waiting for summary data...");
             if (didGetParts && didGetExpenses && didGetLabor)
                 break;
             if (clickedBack)
@@ -2814,7 +2900,7 @@
     Summary.delegate = self;
     Summary.reportEssentials = reportEssentials;
     
-    NSLog(@"%@",reportEssentials);
+    SMLog(@"%@",reportEssentials);
     NSDictionary * headerDict = [appDelegate.SFMPage objectForKey:gHEADER];
     NSDictionary * headerDataDict = [headerDict objectForKey:gHEADER_DATA];
     Summary.workDescription = [self getObjectNameFromHeaderData:headerDataDict forKey:PROBLEMSUMMARY];
@@ -2822,8 +2908,8 @@
     Summary.Expenses = Expenses;
     Summary.recordId = currentRecordId;
     Summary.objectApiName = appDelegate.sfmPageController.objectName;
-    NSLog(@"%@",Parts);
-    NSLog(@"%@",Expenses);
+    SMLog(@"%@",Parts);
+    SMLog(@"%@",Expenses);
     NSArray * _keys = [NSArray arrayWithObjects:SVMXC__Activity_Type__c, SVMXC__Actual_Price2__c, SVMXC__Actual_Quantity2__c, nil];
     // Calculate Labor
     NSArray * allKeys = [LabourValuesDictionary allKeys];
@@ -2846,7 +2932,7 @@
             }
         }
     }
-    NSLog(@"%@",Labor);
+    SMLog(@"%@",Labor);
     Summary.Labour = Labor;
     
     Summary.view.frame = CGRectMake(0, 20, 768, 1004);
@@ -2989,7 +3075,7 @@
 
        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES)) 
         {
-            NSLog(@"BackOnSave in while loop");
+            SMLog(@"BackOnSave in while loop");
             if (!appDelegate.isInternetConnectionAvailable)
             {
                 [activity stopAnimating];
@@ -3339,7 +3425,7 @@
 		ZKSObject * obj = [array objectAtIndex:i];
 		NSDictionary * dict = [obj fields];
 
-		NSLog(@"SVMXC__Product__c = %@", [dict objectForKey:gSVMXC__Product__c] );
+		SMLog(@"SVMXC__Product__c = %@", [dict objectForKey:gSVMXC__Product__c] );
         NSMutableDictionary *Part = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
         
         ZKSObject * obj2 = [[obj fields] objectForKey:gSVMXC__Product__r];
@@ -3498,7 +3584,7 @@
 		ZKSObject * obj = [array objectAtIndex:i];
 		
 		// Check the query. use dictionary value extraction technique, for e.g.
-		NSLog(@"%@", [[obj fields] objectForKey:@"SVMXC__Billable_Cost2__c"]);
+		SMLog(@"%@", [[obj fields] objectForKey:@"SVMXC__Billable_Cost2__c"]);
 		rate = [[[obj fields] objectForKey:@"SVMXC__Billable_Cost2__c"] retain];
         if (rate == nil || [rate isKindOfClass:[NSNull class]])
 			rate = @"0.0";
@@ -3642,12 +3728,7 @@
     {
         isInViewMode = NO;
         
-        /*NSDictionary * dict = [appDelegate.SFMPage objectForKey:gHEADER];
-        NSDictionary * headerData = [dict objectForKey:gHEADER_DATA];
-        NSString * objName = [self getObjectNameFromHeaderData:headerData forKey:gName]; // [headerData objectForKey:gName];
-        NSString * objectType = [dict objectForKey:gHEADER_OBJECT_NAME];
-        NSString * object_label =[self getLabelForObject:objectType];*/
-        
+                
         NSMutableDictionary * header =  [appDelegate.SFMPage objectForKey:@"header"];
         NSString * headerObjName = [header objectForKey:gHEADER_OBJECT_NAME];
         
@@ -3667,16 +3748,10 @@
             detailTitle = @"";
         
     }
-    else if ([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"EDIT"])
+    else if ([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"EDIT"] ||[[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"SOURCETOTARGETONLYCHILDROWS"])
     {
         isInViewMode = YES; //CRAZZZZY STUFF - PLEASE CHANGE THE SEMANTICS OF isInViewMode to the reverse of what it is now - pavaman
-       /* NSDictionary * dict = [appDelegate.SFMPage objectForKey:gHEADER];
-        NSDictionary * headerData = [dict objectForKey:gHEADER_DATA];
-        NSString * objName = [self getObjectNameFromHeaderData:headerData forKey:gName]; // [headerData objectForKey:gName];
-        NSString * title = editTitle;
-        title = [title stringByAppendingString:[NSString stringWithFormat:@" (%@)", objName]];
-        detailTitle = title;*/
-        
+             
         NSMutableDictionary * header =  [appDelegate.SFMPage objectForKey:@"header"];
         NSString * headerObjName = [header objectForKey:gHEADER_OBJECT_NAME];
         
@@ -3785,7 +3860,7 @@
     for (int i = 0; i < [appDelegate.describeObjectsArray count]; i++)
     {
         ZKDescribeSObject * descObj = [appDelegate.describeObjectsArray objectAtIndex:i];
-        NSLog(@"%@", [descObj name]);
+        SMLog(@"%@", [descObj name]);
         if ([objName isEqualToString:[descObj name]])
         {
             retVal = [descObj label];
@@ -4355,7 +4430,7 @@
             CGFloat width1 = (CGFloat)field_width-8;
             UILabel * lbl;
             CGRect label_frame = CGRectMake(x, 0, width1, 31);
-            NSLog(@"Label Frame %f %f %f %f",label_frame.origin.x,label_frame.origin.y,label_frame.size.width,label_frame.size.height);
+            SMLog(@"Label Frame %f %f %f %f",label_frame.origin.x,label_frame.origin.y,label_frame.size.width,label_frame.size.height);
             if (label_name == nil )
             {
                 lbl = [[UILabel alloc] initWithFrame:label_frame];
@@ -4380,7 +4455,7 @@
             // Retrieve  values for to get the control
            
             CGRect  frame = CGRectMake((2*j+1)*field_width - 5, 6, field_width,control_height-3);//sahana 13th sept control_height-6
-               NSLog(@"control Frame %f %f %f %f",frame.origin.x,frame.origin.y,frame.size.width,frame.size.height);
+               SMLog(@"control Frame %f %f %f %f",frame.origin.x,frame.origin.y,frame.size.width,frame.size.height);
             if(control_height == 90 )
             {
                 if([field_datatype isEqualToString:@"textarea"])
@@ -4434,12 +4509,7 @@
 					
                    NSMutableArray * allkeys_ordered = [[NSMutableArray alloc] initWithCapacity:0];
                    [allkeys_ordered addObject:@" "];
-                   
-//                   if ([allvalues count] > 0)
-//                   {
-//                     allvalues = [self orderingAnArray:allvalues];
-//                     allvalues = [allvalues sortedArrayUsingSelector:@selector(compare:)];
-//                   }
+        
 				   
                    for (NSString * str in allvalues) 
                    {
@@ -4508,7 +4578,7 @@
                              
             }
             
-            NSLog(@"%@", arr);
+            SMLog(@"%@", arr);
             // Special handling for Lookup Additional Filter
             NSNumber * overrideRelatedLookUp = 0;
             NSString * lookupContext = nil, * lookupQuery = nil;
@@ -4672,7 +4742,7 @@
                         else
                         {
                             lbl2 = [[UILabel alloc]initWithFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)];
-                            NSLog(@"%@", value);
+                            SMLog(@"%@", value);
 
                             if([control_type isEqualToString:@"datetime"])
                             {
@@ -4817,7 +4887,7 @@
         {
             NSDictionary * header_dict = [appDelegate.SFMPage objectForKey:gHEADER];
             
-            NSLog(@"%@", header_dict);
+            SMLog(@"%@", header_dict);
             
             if (row == 0)
             {
@@ -5208,10 +5278,10 @@
                 NSDictionary * viewLayoutDict = [appDelegate.view_layout_array objectAtIndex:j];
                 NSString * objName = [viewLayoutDict objectForKey:VIEW_OBJECTNAME];
                 
-                NSLog(@"%@ %@", objName , objectName_);
+                SMLog(@"%@ %@", objName , objectName_);
                 if ([objName isEqualToString:objectName_])
                 {
-                    NSLog(@" after %@ %@", objName , objectName_);
+                    SMLog(@" after %@ %@", objName , objectName_);
                     newProcessId = [viewLayoutDict objectForKey:@"SVMXC__ProcessID__c"];
                     break;
                 }
@@ -5495,7 +5565,7 @@
 {
     if (!isInViewMode)
     {       
-        NSLog(@"cell being tapped ");
+        SMLog(@"cell being tapped ");
         UITapGestureRecognizer * tap = sender;
         if ([tap.view isKindOfClass:[UITableViewCell class]])    
         {
@@ -5504,10 +5574,10 @@
             [cell setSelectionStyle:UITableViewCellSelectionStyleBlue];
             
             NSInteger indexpath = cell.tag;
-            NSLog(@"%d",indexpath);
+            SMLog(@"%d",indexpath);
             NSInteger row     = indexpath % 10000;
             NSInteger section = indexpath /10000;
-            NSLog(@"%d %d" , row , section);
+            SMLog(@"%d %d" , row , section);
             
             
             NSMutableArray * details = [appDelegate.SFMPage objectForKey:gDETAILS];
@@ -5551,10 +5621,10 @@
                 NSDictionary * viewLayoutDict = [appDelegate.view_layout_array objectAtIndex:j];
                 NSString * objName = [viewLayoutDict objectForKey:VIEW_OBJECTNAME];
                 
-                NSLog(@"%@ %@", objName , objectName_);
+                SMLog(@"%@ %@", objName , objectName_);
                 if ([objName isEqualToString:objectName_])
                 {
-                    NSLog(@" after %@ %@", objName , objectName_);
+                    SMLog(@" after %@ %@", objName , objectName_);
                     newProcessId = [viewLayoutDict objectForKey:@"SVMXC__ProcessID__c"];
                     break;
                 }
@@ -5711,7 +5781,7 @@
     }
 
     CGRect frame = CGRectMake(p.x+250, 6, tableView.frame.size.width-256-20,control_height);
-    NSLog(@"%f %f %f %f", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
+    SMLog(@"%f %f %f %f", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
 
     [background addSubview:lbl];
     // the process type is in View Mode 
@@ -6203,7 +6273,7 @@
 - (void) controlIndexPath:(NSIndexPath *)indexPath
 {
     currentEditRow = [indexPath retain];
-    NSLog(@"%@", currentEditRow);
+    SMLog(@"%@", currentEditRow);
 }
 
 // This one's ONLY for LOOKUP
@@ -6220,7 +6290,7 @@
 {
     // Obtain the section and row for the control being edited curently
     // Modify the field according to the Field_API_Name
-    NSLog(@"%@", value);
+    SMLog(@"%@", value);
 }
 
 // Store values per session
@@ -6433,7 +6503,7 @@
                             fieldValue = @"";
                             fieldKeyValue = @"";
                         }
-                        NSLog(@"%@",date);
+                        SMLog(@"%@",date);
                     }
                     if([fieldAPI isEqualToString:@"RecordTypeId"])
                     {
@@ -6587,7 +6657,7 @@
                             fieldValue = @"";
                             fieldKeyValue = @"";
                         }
-                        NSLog(@"%@",date);
+                        SMLog(@"%@",date);
                     }
                     if([fieldAPI isEqualToString:@"RecordTypeId"])
                     {
@@ -6638,7 +6708,7 @@
             {
                 botSpinner.enabled = readOnly;
             }
-            NSLog(@"%@", value);
+            SMLog(@"%@", value);
             botSpinner.indexPath = indexPath;
             botSpinner.fieldAPIName = fieldType;
             botSpinner.required = required;
@@ -6647,7 +6717,7 @@
             botSpinner.TFHandler.isdependentPicklist =isdependentPicklist;
             botSpinner.TFHandler.validFor = validFor;
             botSpinner.TFHandler.controllerName = dependPick_controllerName;
-            NSLog(@" isdepentent value  validFor%@  controlType %@" , validFor , controlType);
+            SMLog(@" isdepentent value  validFor%@  controlType %@" , validFor , controlType);
             return botSpinner;
         }
     }
@@ -7487,7 +7557,7 @@
 
        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES)) 
         {
-            NSLog(@"accessoryTapped in while loop");
+            SMLog(@"accessoryTapped in while loop");
             if(appDelegate.isWorkinginOffline)
             {
                 
@@ -7752,7 +7822,7 @@
 
     control = (UIControl *)sender;
     NSInteger  _section = control.tag;
-    NSLog(@"buttonclicked");
+    SMLog(@"buttonclicked");
     NSMutableArray * details = [appDelegate.SFMPage objectForKey:gDETAILS];
     
     NSString * multiadd_search_filed = [[details objectAtIndex:_section] objectForKey:gDETAIL_MULTIADD_SEARCH];
@@ -7855,9 +7925,9 @@
 #pragma mark - MultiLookUpView Delegate Method
 - (void) addMultiChildRows:(NSMutableDictionary *)_array forIndex:(NSInteger)index  
 {
-    NSLog(@"%@", appDelegate.SFMPage);
+    SMLog(@"%@", appDelegate.SFMPage);
     multiLookArray = _array;
-    NSLog(@"%@", multiLookArray);
+    SMLog(@"%@", multiLookArray);
     multiAddFlag  = 1;
     [multiLookupPopover dismissPopoverAnimated:YES];
     
@@ -8069,7 +8139,7 @@
             
            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES)) 
             {
-                NSLog(@"addMultiChildRows in while loop");
+                SMLog(@"addMultiChildRows in while loop");
                 if(appDelegate.isWorkinginOffline)
                 {
                     
@@ -8128,7 +8198,7 @@
                         
                     }
                 }
-                NSLog(@"%@",multi_add_search);
+                SMLog(@"%@",multi_add_search);
                 if( [field_api_name isEqualToString:multiadd_search_filed])
                 {
                     value = [_array  objectForKey:[multi_add_result objectAtIndex:i]];
@@ -8235,7 +8305,7 @@
     [appDelegate.sfmPageController presentModalViewController: reader
                                                      animated: YES];
     [reader release];
-    NSLog(@"Launch Bar Code Scanner");
+    SMLog(@"Launch Bar Code Scanner");
 
 }
 
@@ -8244,7 +8314,7 @@
 {
     // ADD: get the decode results
     id<NSFastEnumeration> results =[info objectForKey: ZBarReaderControllerResults];
-    NSLog(@"result=%@",results);
+    SMLog(@"result=%@",results);
     ZBarSymbol *symbol = nil;
     for(symbol in results)
         break;
@@ -8257,13 +8327,13 @@
 {
     [self LaunchMultiAddPopover];
     [multiAddLookup updateTxtField:_text];
-    NSLog(@"symbol.data=%@",_text);
+    SMLog(@"symbol.data=%@",_text);
     [multiAddLookup searchBarcodeResult:_text];
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
-    NSLog(@"Dismissing Barcode Scanner");
+    SMLog(@"Dismissing Barcode Scanner");
     [reader dismissModalViewControllerAnimated: YES];
     [multiAddLookup updateTxtField:@""];
     [self performSelector:@selector(DismissBarCodeReader:) withObject:@"" afterDelay:0.1f];
@@ -8272,7 +8342,7 @@
 }
 - (void) readerControllerDidFailToRead:(ZBarReaderController*)barcodeReader withRetry:(BOOL)retry
 {
-    NSLog(@"Failed to Scan the Barcode");
+    SMLog(@"Failed to Scan the Barcode");
     [barcodeReader dismissModalViewControllerAnimated: YES];
     [multiAddLookup updateTxtField:@""];
     [self performSelector:@selector(DismissBarCodeReader:) withObject:@"" afterDelay:0.1f];
@@ -8465,7 +8535,7 @@
             }
              
         }
-        NSLog(@"Values Altered Successfully");
+        SMLog(@"Values Altered Successfully");
     }
     
     if(reqiredFieldCount >0)
@@ -8694,7 +8764,7 @@
         //Shrinivas --> Crash Fix
         NSInteger sections = [tableView numberOfSections];
         NSInteger rows = [tableView numberOfRowsInSection:sections] - 1;
-        NSLog(@"%d", rows);
+        SMLog(@"%d", rows);
         int index = 0;      
         
         for ( int i = 0; i < sections - 1; i++)
@@ -8710,7 +8780,7 @@
                
             }
         }
-        NSLog(@"%d", index);
+        SMLog(@"%d", index);
         
         NSArray * visible = [self.tableView visibleCells];
         UITableViewCell * cell = [visible objectAtIndex:index];
@@ -8738,7 +8808,7 @@
     //Shrinivas --> Crash Fix
     NSInteger sections = [tableView numberOfSections];
     NSInteger rows = [tableView numberOfRowsInSection:sections - 1];
-    NSLog(@"%d", rows);
+    SMLog(@"%d", rows);
     int index = 0;
     
     for ( int i = 0; i < sections - 1; i++)
@@ -8755,8 +8825,8 @@
         }
     }
     
-    NSLog(@"%d", index);
-    NSLog(@"%d", currentEditRow.row);
+    SMLog(@"%d", index);
+    SMLog(@"%d", currentEditRow.row);
     NSArray * visible = [self.tableView visibleCells];
     /*
     UITableViewCell * cell = [visible objectAtIndex:index];
@@ -8838,7 +8908,7 @@
     lookupData = _lookupDetails;
     [lookupData retain];
     appDelegate.wsInterface.didGetRecordTypeId = TRUE;
-    NSLog(@"%@", lookupData);
+    SMLog(@"%@", lookupData);
 }
 -(void)tapRecognized:(id)sender
 { 
@@ -8896,7 +8966,7 @@
 {
     
     
-    NSLog(@"Tapped");
+    SMLog(@"Tapped");
 }
 
 #pragma mark -  Action Delegate Method
@@ -9042,13 +9112,13 @@
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     
     NSDate *date1 = [dateFormatter dateFromString:toDate];
-    NSLog(@"Date 1 = %@",date1);
+    SMLog(@"Date 1 = %@",date1);
     
     NSDate *date2 = [dateFormatter dateFromString:fromDate];
-    NSLog(@"Date 2 = %@",date2);
+    SMLog(@"Date 2 = %@",date2);
     
     NSTimeInterval diff_time = [date2 timeIntervalSinceDate:date1];
-    NSLog(@"Difference = %f",diff_time);
+    SMLog(@"Difference = %f",diff_time);
     
     [dateFormatter release];
     
@@ -9217,7 +9287,7 @@
                                 {
                                     fieldValue = @"";
                                 }
-                                NSLog(@"%@",date);
+                                SMLog(@"%@",date);
                             }
                             if([control_type isEqualToString: @"date"])
                             {
@@ -9341,7 +9411,7 @@
                     }
                 }
             }
-            NSLog(@"Values Altered Successfully");
+            SMLog(@"Values Altered Successfully");
         }
     }
     [activity stopAnimating];
@@ -9536,7 +9606,7 @@
                 
                 NSString * process_type = [appDelegate.databaseInterface getprocessTypeForProcessId:action_process_id];
                 
-                if([process_type isEqualToString:@"EDIT"])
+                if([process_type isEqualToString:@"EDIT"] || [process_type isEqualToString:@"SOURCETOTARGETONLYCHILDROWS"])
                 {
                     //Deffect Num
                     NSMutableDictionary * page_layoutInfo = [appDelegate.databaseInterface  queryProcessInfo:action_process_id object_name:@""];
@@ -9594,7 +9664,7 @@
                     [self didReceivePageLayoutOffline];
                 }
                     
-                if([process_type isEqualToString:@"SOURCETOTARGET"] || [process_type isEqualToString:@"SOURCETOTARGETONLYCHILDROWS"])
+                if([process_type isEqualToString:@"SOURCETOTARGET"] )
                 {
                     
                     //check out the record any child or parent  local_id
@@ -9662,14 +9732,6 @@
                                 NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGETCHILD process_id:action_process_id layoutId:detail_layout_id objectName:detailObjectName];
                                 
                                 NSString * source_child_object_name = [process_components objectForKey:SOURCE_OBJECT_NAME];
-                    //                            NSString * source_child_parent_column = [process_components objectForKey:SOURCE_CHILD_PARENT_COLUMN];
-                    //                            
-                    //                            if([source_child_parent_column isEqualToString:@""] || [source_child_parent_column length] == 0)
-                    //                            {
-                    //                                source_child_parent_column  =  [ appDelegate.databaseInterface getParentColumnNameFormChildInfoTable:SFChildRelationShip childApiName:source_child_object_name parentApiName:source_parent_object_name];
-                    //                            }
-                                
-                                
                                 NSMutableArray * source_child_ids = [appDelegate.databaseInterface getChildLocalIdForParentId:appDelegate.sfmPageController.sourceRecordId childTableName:source_child_object_name sourceTableName:source_parent_object_name];
                                 for(NSString * child_record_id in  source_child_ids)
                                 {
@@ -9943,7 +10005,6 @@
             {
                 //fill the detail tables
                 //***************************************************** DETAIL SECTION ***************************************************
-                //NSString * header_record_local_id = [appDelegate.databaseInterface getTheRecordIdOfnewlyInsertedRecord:headerObjName];
                 
                 //blank
                 [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:header_record_local_id SF_id:@"" record_type:MASTER operation:INSERT object_name:headerObjName sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@""];
@@ -10046,16 +10107,14 @@
                         
                         if(data_inserted )
                         {
-                            NSLog(@"insertion success");
-                            
-                          //  NSString * detail_record_local_id = [appDelegate.databaseInterface getTheRecordIdOfnewlyInsertedRecord:detail_object_name];
-                            //headerobject  header_record_local_id
+                            SMLog(@"insertion success");
+                          
                             [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:detail_record_local_id SF_id:@"" record_type:DETAIL  operation:INSERT object_name:detail_object_name sync_flag:@"false"  parentObjectName:headerObjName parent_loacl_id:header_record_local_id];
 
                         }
                         else
                         {
-                            NSLog(@"insertion failed");
+                            SMLog(@"insertion failed");
                         }
                         
                     }
@@ -10078,20 +10137,6 @@
             
 			//Code change for get pirce  ---> 11/06/2012   --- Time: 1:23 PM.
             NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
-//            NSString * targetCall = [[[[[hdr_object objectForKey:gHEADER_BUTTONS] objectAtIndex:0] objectForKey:@"button_Events"] objectAtIndex:0] objectForKey:@"button_Event_Target_Call"];
-//            if ([targetCall isEqualToString:nil])
-//                targetCall = @"";
-            
-            /*
-            if ([targetCall isEqualToString:@"Get Price"])
-            {
-                
-            }
-            else
-            {
-                appDelegate.wsInterface.webservice_call = TRUE;
-            }
-             */
             [self didInvokeWebService:[[[[[hdr_object objectForKey:gHEADER_BUTTONS] objectAtIndex:0] objectForKey:@"button_Events"] objectAtIndex:0] valueForKey:@"button_Event_Target_Call"] event_name:GETPRICE];
 			//Code change for get pirce  ---> 11/06/2012   --- Time: 1:23 PM.
 			
@@ -10106,7 +10151,7 @@
         }
     }
     
-    if([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"EDIT"])
+    if([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"EDIT"] || [[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"SOURCETOTARGETONLYCHILDROWS"])
     {
         if([targetCall isEqualToString:save] || [targetCall isEqualToString:quick_save])
         {
@@ -10120,11 +10165,7 @@
             NSString * layout_id = [hdr_object objectForKey:gHEADER_HEADER_LAYOUT_ID];
             NSMutableDictionary * hdrData = [hdr_object objectForKey:gHEADER_DATA];
             NSString * processId = appDelegate.sfmPageController.processId;
-        
-//            NSMutableArray * sfmPageEvents = [hdr_object objectForKey:gPAGELEVEL_EVENTS];
-            
-//            NSMutableDictionary * SFM_header_fields = [[NSMutableDictionary alloc] initWithCapacity:0];
-            
+                
             
             BOOL error = FALSE;
             for (int i=0;i<[header_sections count];i++)
@@ -10136,15 +10177,8 @@
                     NSDictionary *section_field = [section_fields objectAtIndex:j];
                     
                     //add key values to SM_header_fields dictionary 
-                   // NSString * field_api = [section_field objectForKey:gFIELD_API_NAME];
                     NSString * value = [section_field objectForKey:gFIELD_VALUE_VALUE];
-//                    NSString * key = [section_field objectForKey:gFIELD_VALUE_KEY];
                     NSString * dataType = [section_field objectForKey:gFIELD_DATA_TYPE];
-//                    [SFM_header_fields setObject:key forKey:field_api];
-//                    if(key == nil)
-//                    {
-//                        key = @"";
-//                    }
 
                     BOOL required = [[section_field objectForKey:gFIELD_REQUIRED] boolValue];
                     if(required)
@@ -10367,7 +10401,7 @@
         
             if(success_flag)
             {
-                NSLog(@"Success");
+                SMLog(@"Success");
                 
                 for (int i=0;i<[details count];i++) //parts, labor, expense for instance
                 {
@@ -10496,7 +10530,7 @@
                             
                             if(data_inserted )
                             {
-                                NSLog(@"insertion success");
+                                SMLog(@"insertion success");
                                 if(isSalesForceRecord)
                                 {
                                     //update  String SF_ID 
@@ -10511,7 +10545,7 @@
                             }
                             else
                             {
-                                NSLog(@"insertion failed");
+                                SMLog(@"insertion failed");
                             }
                         
                         }
@@ -10616,7 +10650,7 @@
                                 
                                 if(data_inserted )
                                 {
-                                    NSLog(@"insertion success");
+                                    SMLog(@"insertion success");
                                     if(isSalesForceRecord)
                                     {
                                         //update  String SF_ID 
@@ -10629,7 +10663,7 @@
                                 }
                                 else
                                 {
-                                    NSLog(@"insertion failed");
+                                    SMLog(@"insertion failed");
                                 }
                                 //Save on Get Price Implementation Ends 
                             }
@@ -10639,7 +10673,7 @@
                                 BOOL detail_success_flag = [appDelegate.databaseInterface  UpdateTableforId:line_record_id forObject:detail_object_name data:sfm_detail_field_keyValue];
                                 if(detail_success_flag)
                                 {
-                                    NSLog(@"detail Update succeded");
+                                    SMLog(@"detail Update succeded");
                                     //check whether the record is Salesforce record if it is insert into Data Trailer table
                                     
                                     NSString * childSfId = [appDelegate.databaseInterface checkforSalesForceIdForlocalId:detail_object_name local_id:line_record_id];
@@ -10682,7 +10716,7 @@
                                 }
                                 else
                                 {
-                                    NSLog(@"detail Update failed");
+                                    SMLog(@"detail Update failed");
                                 }
                             }
                         }
@@ -10697,7 +10731,7 @@
             }
             else
             {
-                  NSLog(@"failed");
+                  SMLog(@"failed");
             }
             
         }
@@ -11069,11 +11103,11 @@
                         if(data_inserted )
                         {
                              [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:detail_local_id SF_id:@"" record_type:DETAIL operation:INSERT object_name:detail_object_name sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:header_record_local_id];
-                            NSLog(@"insertion success");
+                            SMLog(@"insertion success");
                         }
                         else
                         {
-                            NSLog(@"insertion failed");
+                            SMLog(@"insertion failed");
                         }
                         
                     }
@@ -11098,20 +11132,6 @@
             //Code change for get pirce  ---> 11/06/2012   --- Time: 1:23 PM.
 			
             NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
-//            NSString * targetCall = [[[[[hdr_object objectForKey:gHEADER_BUTTONS] objectAtIndex:0] objectForKey:@"button_Events"] objectAtIndex:0] objectForKey:@"button_Event_Target_Call"];
-//            if ([targetCall isEqualToString:nil])
-//                targetCall = @"";
-            
-            /*
-            if ([targetCall isEqualToString:@"Get Price"])
-            {
-                
-            }
-            else
-            {
-                appDelegate.wsInterface.webservice_call = TRUE;
-            }
-             */
             [self didInvokeWebService:[[[[[hdr_object objectForKey:gHEADER_BUTTONS] objectAtIndex:0] objectForKey:@"button_Events"] objectAtIndex:0] valueForKey:@"button_Event_Target_Call"] event_name:GETPRICE];
 			//Code change for get pirce  ---> 11/06/2012   --- Time: 1:23 PM.
 			
@@ -11120,7 +11140,6 @@
 
         
     }
-    //[appDelegate setSyncStatus:appDelegate.SyncStatus];
     [self enableSFMUI];
     
 }
@@ -11352,7 +11371,7 @@
             
             if ([appDelegate.syncThread isFinished])
             {
-                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
+               // [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
                 break;
             }
         }
@@ -11379,7 +11398,7 @@
             
             if ([appDelegate.metaSyncThread isFinished])
             {
-                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
+                //[[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
                 break;
             }
         }
@@ -11406,7 +11425,7 @@
             
             if ([appDelegate.event_thread isFinished])
             {
-                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
+               // [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
                 break;
             }
         }
@@ -11422,7 +11441,7 @@
 
        
     UIButton *button = (UIButton *)sender;
-    NSLog(@"%d", button.tag);
+    SMLog(@"%d", button.tag);
     //shrinivas
     NSString * Id = @"";
     NSString *query = [NSString stringWithFormat:@"Select Id From SVMXC__Service_Order__c Where local_id = '%@'", appDelegate.sfmPageController.recordId];
@@ -11744,7 +11763,7 @@
                     {
                         if([control_type isEqualToString:@"picklist"])
                         {
-                            NSLog(@"DictValue %@" , dict_value);
+                            SMLog(@"DictValue %@" , dict_value);
                             /*for (int i = 0; i < [appDelegate.describeObjectsArray count]; i++)
                             {
                                 ZKDescribeSObject * descObj = [appDelegate.describeObjectsArray objectAtIndex:i];
@@ -12028,7 +12047,7 @@
                                 [filed_info setValue:@"" forKey:gFIELD_VALUE_VALUE];
                                 [filed_info setValue:@"" forKey:gFIELD_VALUE_KEY];
                             }
-                            NSLog(@"Fields Info ========= %@" , filed_info);
+                            SMLog(@"Fields Info ========= %@" , filed_info);
                         }
                         
                         

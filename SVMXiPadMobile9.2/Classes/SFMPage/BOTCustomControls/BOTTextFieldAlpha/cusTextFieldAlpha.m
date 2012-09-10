@@ -8,6 +8,7 @@
 
 #import "cusTextFieldAlpha.h"
 #import "iServiceAppDelegate.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation cusTextFieldAlpha
 
@@ -86,7 +87,7 @@
 - (void) selector:(NSNotification *) notification
 {
     // cusTextFieldAlpha * field = [notification object];
-    // NSLog(@"%@", field.text);
+    // SMLog(@"%@", field.text);
 }
 
 -(void) dealloc
@@ -116,7 +117,7 @@
     [appDelegate.sfmPageController presentModalViewController: reader
                             animated: YES];
     [reader release];
-    NSLog(@"Launch Bar Code Scanner");
+    SMLog(@"Launch Bar Code Scanner");
 }
 
 #pragma mark - ZBar Delegate Methods
@@ -126,13 +127,13 @@
 {
     // ADD: get the decode results
     id<NSFastEnumeration> results =[info objectForKey: ZBarReaderControllerResults];
-    NSLog(@"result=%@",results);
+    SMLog(@"result=%@",results);
     ZBarSymbol *symbol = nil;
     for(symbol in results)
         break;
     
     self.text = symbol.data;
-    NSLog(@"symbol.data=%@",symbol.data);
+    SMLog(@"symbol.data=%@",symbol.data);
     [self didChangeText:symbol.data];
     
     // ADD: dismiss the controller (NB dismiss from the *reader*!)

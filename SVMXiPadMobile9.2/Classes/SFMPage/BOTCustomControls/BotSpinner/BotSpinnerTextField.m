@@ -8,6 +8,7 @@
 
 #import "BotSpinnerTextField.h"
 #import "BitSet.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation BotSpinnerTextField
 
@@ -86,9 +87,9 @@
 
 -(NSArray *)getValuesForDependentPickList
 {
-    NSLog(@"%@" ,TFHandler.controllerName);
+    SMLog(@"%@" ,TFHandler.controllerName);
    NSUInteger count = [self.controlDelegate getControlFieldPickListIndexForControlledPicklist:TFHandler.controllerName atIndexPath:indexPath controlType:control_type];
-    NSLog(@"%d", count);
+    SMLog(@"%d", count);
    if(count == 9999999)
    {
        return spinnerData;
@@ -99,17 +100,17 @@
    
     for(int j = 0 ; j< [TFHandler.spinnerData count];j++)
     {
-        NSLog(@"--");
+        SMLog(@"--");
         NSString * obj = [TFHandler.validFor objectAtIndex:j];
-        NSLog(@"object :%@", obj);
+        SMLog(@"object :%@", obj);
         obj = [obj stringByReplacingOccurrencesOfString:@" " withString:@""];
         if(obj == nil || [obj isEqualToString:@""])
         {
-           // NSLog(@" object  %@" , obj);
+           // SMLog(@" object  %@" , obj);
             continue;
         }
-        NSLog(@" valid For %@" , TFHandler.validFor);
-        NSLog(@"spinner data %@ " , TFHandler.spinnerData);
+        SMLog(@" valid For %@" , TFHandler.validFor);
+        SMLog(@"spinner data %@ " , TFHandler.spinnerData);
         
         BitSet *bitObj = [[BitSet alloc] initWithData:obj];
         for (int k = 0; k < [bitObj size]; k++)
@@ -120,11 +121,11 @@
                 // for the controlling entry at index k
                 if(count == k)
                 {
-                    NSLog(@"Index of %@ = %d",obj,k);
+                    SMLog(@"Index of %@ = %d",obj,k);
                     
                     //add to cityData
                     [spinner_Array addObject:[TFHandler.spinnerData objectAtIndex:j]];
-                    NSLog(@"SpinnerData %@", [TFHandler.spinnerData objectAtIndex:j]);
+                    SMLog(@"SpinnerData %@", [TFHandler.spinnerData objectAtIndex:j]);
                     break;
                 }
             }

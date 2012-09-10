@@ -10,6 +10,7 @@
 #import "WSIntfGlobals.h"
 #import "iServiceAppDelegate.h"
 #import "databaseIntefaceSfm.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation ActionMenu
 
@@ -27,7 +28,7 @@
 
 - (void)dealloc
 {
-    NSLog(@"ActionMenu dealloc");
+    SMLog(@"ActionMenu dealloc");
     [cancel release];
     [save release];
     [quick_save release];

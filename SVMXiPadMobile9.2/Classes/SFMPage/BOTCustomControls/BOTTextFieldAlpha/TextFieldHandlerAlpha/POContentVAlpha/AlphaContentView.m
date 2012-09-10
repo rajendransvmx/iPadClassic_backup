@@ -14,6 +14,7 @@
 @synthesize cVdelegate;
 @synthesize relesePOdelegate;
 @synthesize AlphaLabel;
+extern void SVMXLog(NSString *format, ...);
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
