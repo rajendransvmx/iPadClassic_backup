@@ -2002,6 +2002,8 @@
 		A8DA42EF15D906810050CF04 /* gps-tracking.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "gps-tracking.png"; sourceTree = "<group>"; };
 		A8DA42F115D906980050CF04 /* sfm-search.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sfm-search.png"; sourceTree = "<group>"; };
 		A8DA42F315D906AF0050CF04 /* barcode-scanning.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "barcode-scanning.png"; sourceTree = "<group>"; };
+		A8E07D8715FDD93C00070821 /* CustomLibXml.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomLibXml.h; sourceTree = "<group>"; };
+		A8E07D8815FDD93C00070821 /* CustomLibXml.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomLibXml.m; sourceTree = "<group>"; };
 		A8FBA63F155A503600F52346 /* DataBase.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DataBase.plist; sourceTree = "<group>"; };
 		A8FBA640155A503600F52346 /* DetailViewControllerForSFM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailViewControllerForSFM.h; sourceTree = "<group>"; };
 		A8FBA641155A503600F52346 /* DetailViewControllerForSFM.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailViewControllerForSFM.m; sourceTree = "<group>"; };
@@ -4625,6 +4627,8 @@
 		FA0F7B6F14F58BBC00052BD6 /* WSDL2OBJC */ = {
 			isa = PBXGroup;
 			children = (
+				A8E07D8715FDD93C00070821 /* CustomLibXml.h */,
+				A8E07D8815FDD93C00070821 /* CustomLibXml.m */,
 				FA0F7B7014F58C1400052BD6 /* ___INTF_WebServicesDefServiceSvc___m___l7j8pj */,
 				FA0F7B7114F58C1400052BD6 /* ___INTF_WebServicesDefServiceSvc___m___Riwcoq */,
 				FA0F7B7214F58C1400052BD6 /* INTF_WebServicesDefServiceSvc.h */,
