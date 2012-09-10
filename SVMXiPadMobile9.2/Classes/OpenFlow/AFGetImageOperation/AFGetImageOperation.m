@@ -24,6 +24,7 @@
  */
 #import "AFGetImageOperation.h"
 #import "UIImageExtras.h"
+extern void SVMXLog(NSString *format, ...);
 
 
 @implementation AFGetImageOperation
@@ -69,7 +70,7 @@
 												 withObject:[NSArray arrayWithObjects:theImage, [NSNumber numberWithInt:photoIndex], nil] 
 											  waitUntilDone:YES];
 		} else
-			NSLog(@"Unable to find sample image: %@", imageName);
+			SMLog(@"Unable to find sample image: %@", imageName);
 		[imageName release];
 	}
 	

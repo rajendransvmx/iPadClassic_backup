@@ -9,6 +9,7 @@
 #import "iOSInterfaceObject.h"
 #import "iServiceAppDelegate.h"
 #import "ModalViewController.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation iOSInterfaceObject
 
@@ -328,14 +329,14 @@
     }
     
     fileName = [NSString stringWithFormat:@"%@_sign.png", fileName];
-    NSLog(@"%@", fileName);
+    SMLog(@"%@", fileName);
     
     didRemovePreviousSignature = NO;
     [self removePreviousSignature:fileName];
     
    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
-        NSLog(@"setSignedImageData in while loop");
+        SMLog(@"setSignedImageData in while loop");
         if (!appDelegate.isInternetConnectionAvailable)
         {
             break;
@@ -365,7 +366,7 @@
     
    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
-        NSLog(@"setSignedImageData in while loop");
+        SMLog(@"setSignedImageData in while loop");
         if (!appDelegate.isInternetConnectionAvailable)
         {
             break;
@@ -387,7 +388,7 @@
         char * err;
         if (synchronized_sqlite3_exec(appDelegate.db, [query UTF8String], NULL, NULL, &err) != SQLITE_OK)
         {
-            NSLog(@"Failed To delete");
+            SMLog(@"Failed To delete");
         }
     }
     

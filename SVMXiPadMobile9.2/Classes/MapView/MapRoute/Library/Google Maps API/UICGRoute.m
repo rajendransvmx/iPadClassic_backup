@@ -52,7 +52,7 @@
 		CLLocationDegrees latitude  = [[coordinates objectAtIndex:1] doubleValue];
 		endLocation = [[CLLocation alloc] initWithLatitude:latitude longitude:longitude];
 		summaryHtml = [k objectForKey:@"summaryHtml"];
-        // NSLog(@"## %@", summaryHtml);
+        // SMLog(@"## %@", summaryHtml);
 		polylineEndIndex = [[k objectForKey:@"polylineEndIndex"] integerValue];
 	}
 	return self;

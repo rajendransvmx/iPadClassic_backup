@@ -18,6 +18,7 @@
 
 #define degreesToRadian(x) (M_PI * x / 180.0)
 #define KEYCHAIN_SERVICE_NAME               @"ServiceMaxEnterprise"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation LoginController
 
@@ -218,7 +219,7 @@
     {
         while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 0, FALSE))
         {
-            NSLog(@"alert for switch user");
+            SMLog(@"alert for switch user");
             if (didDismissalertview == TRUE)
             {
                 didDismissalertview = FALSE;
@@ -329,7 +330,7 @@
 
 - (void) doMetaAndDataSync
 {
-    NSLog(@"SAMMAN MetaSync WS Start: %@", [NSDate date]);
+    SMLog(@"SAMMAN MetaSync WS Start: %@", [NSDate date]);
     
     time_t t1;
     time(&t1);
@@ -360,7 +361,7 @@
         
     }
     
-    NSLog(@"SAMMAN MetaSync WS End: %@", [NSDate date]);
+    SMLog(@"SAMMAN MetaSync WS End: %@", [NSDate date]);
     if([appDelegate enableGPS_SFMSearch])
     {
         //SFM Search 
@@ -375,12 +376,12 @@
             if (appDelegate.wsInterface.didOpSFMSearchComplete == TRUE)
                 break; 
         }
-        NSLog(@"SAMMAN MetaSync SFM Search End: %@", [NSDate date]);
+        SMLog(@"SAMMAN MetaSync SFM Search End: %@", [NSDate date]);
         
         //SFM Search End
     }    
     [appDelegate getDPpicklistInfo];
-    NSLog(@"META SYNC 1");
+    SMLog(@"META SYNC 1");
     
     if (appDelegate.didFinishWithError == TRUE)
     {
@@ -390,7 +391,7 @@
         return;
     }
     
-    NSLog(@"SAMMAN DataSync WS Start: %@", [NSDate date]);
+    SMLog(@"SAMMAN DataSync WS Start: %@", [NSDate date]);
     appDelegate.wsInterface.didOpComplete = FALSE;
   
     //sahaan generate client req id for initital data sync                                                                                                                                                                                                                                                                     
@@ -423,7 +424,7 @@
     
     appDelegate.initial_dataSync_reqid = [iServiceAppDelegate GetUUID];
     
-    NSLog(@"reqId%@" , appDelegate.initial_dataSync_reqid);
+    SMLog(@"reqId%@" , appDelegate.initial_dataSync_reqid);
     [appDelegate.wsInterface dataSyncWithEventName:DOWNLOAD_CREITERIA_SYNC eventType:SYNC requestId:appDelegate.initial_dataSync_reqid];
     
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
@@ -463,8 +464,8 @@
             }
         }
     }
-    NSLog(@"SAMMAN DataSync WS End: %@", [NSDate date]);
-    NSLog(@"SAMMAN Incremental DataSync WS Start: %@", [NSDate date]);
+    SMLog(@"SAMMAN DataSync WS End: %@", [NSDate date]);
+    SMLog(@"SAMMAN Incremental DataSync WS Start: %@", [NSDate date]);
     
     [appDelegate.wsInterface cleanUpForRequestId:appDelegate.initial_dataSync_reqid forEventName:@"CLEAN_UP_SELECT"];
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
@@ -504,9 +505,9 @@
     }
     
             
-    NSLog(@"SAMMAN Incremental DataSync WS End: %@", [NSDate date]);
+    SMLog(@"SAMMAN Incremental DataSync WS End: %@", [NSDate date]);
     
-    NSLog(@"SAMMAN Update Sync Records Start: %@", [NSDate date]);
+    SMLog(@"SAMMAN Update Sync Records Start: %@", [NSDate date]);
 
     if (appDelegate.isForeGround == FALSE)
         [appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
@@ -518,7 +519,7 @@
     //Radha End
 
     
-    NSLog(@"SAMMAN Update Sync Records End: %@", [NSDate date]);
+    SMLog(@"SAMMAN Update Sync Records End: %@", [NSDate date]);
     //remove recents
     NSFileManager * fileManager = [NSFileManager defaultManager];
     NSString * rootPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
@@ -538,7 +539,7 @@
     time_t t2;
     time(&t2);
     double diff = difftime(t2,t1);
-    NSLog(@"time taken for meta and data sync = %f",diff);
+    SMLog(@"time taken for meta and data sync = %f",diff);
     
 }
 
@@ -602,7 +603,7 @@
         [activity stopAnimating];
         
         appDelegate.wsInterface.didOpComplete = TRUE;
-        NSLog(@"IComeOUTHere login");
+        SMLog(@"IComeOUTHere login");
         didLoginCompleted  = TRUE;
         appDelegate.didLoginAgain = TRUE;
         
@@ -817,7 +818,7 @@
 	{
 		ZKSObject * obj = [array objectAtIndex:i];
         
-        NSLog(@"SVMXC__Service_Group__c = %@", [[obj fields] objectForKey:@"SVMXC__Service_Group__c"]);
+        SMLog(@"SVMXC__Service_Group__c = %@", [[obj fields] objectForKey:@"SVMXC__Service_Group__c"]);
         if (appDelegate.appServiceTeamId != nil)
         {
             [appDelegate.appServiceTeamId release];
@@ -839,7 +840,7 @@
     
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
-        NSLog(@"LoginViewController initDebrief in while loop");
+        SMLog(@"LoginViewController initDebrief in while loop");
         if (!appDelegate.isInternetConnectionAvailable)
         {
             [activity stopAnimating];
@@ -860,7 +861,7 @@
             if (didQueryTechnician)
                 break;
         }
-        NSLog(@"3");
+        SMLog(@"3");
     }
 
     if (isSampleDataButtonChecked)
@@ -926,7 +927,7 @@
         
         appDelegate.technicianAddress = address;
         
-        NSLog(@"Technician Address = %@", appDelegate.technicianAddress);
+        SMLog(@"Technician Address = %@", appDelegate.technicianAddress);
     }
     else
         appDelegate.technicianAddress = @"";  
@@ -951,8 +952,7 @@
 
 - (BOOL) checkVersion
 {
-    NSDictionary * dict = [appDelegate.wsInterface getDefaultTags];
-    
+        
     appDelegate.didGetVersion = FALSE;
     [appDelegate.wsInterface getSvmxVersion];
     
@@ -969,10 +969,10 @@
 
         if (!appDelegate.isInternetConnectionAvailable)
             return NO;
-        NSLog(@"LoginViewController checkVersion in while loop");
+        SMLog(@"LoginViewController checkVersion in while loop");
         if (appDelegate.didGetVersion)
             break;
-        NSLog(@"4");
+        SMLog(@"4");
     }
     
     NSString * stringNumber = [appDelegate.SVMX_Version stringByReplacingOccurrencesOfString:@"." withString:@""];
@@ -980,18 +980,18 @@
     int version = (APPVERSION * 100000);
     if(_stringNumber >= version)
     {
-        NSLog(@"greater than %f", APPVERSION);
+        SMLog(@"greater than %f", APPVERSION);
         appDelegate.wsInterface.isLoggedIn = YES;
-        NSLog(@"Installed Package Version = %@",stringNumber);
+        SMLog(@"Installed Package Version = %@",stringNumber);
         NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
         if (userDefaults) 
         {            
             [userDefaults setObject:stringNumber forKey:kPkgVersionCheckForGPS_AND_SFM_SEARCH];
-            NSLog(@"Installed Package Version = %@",stringNumber);
+            SMLog(@"Installed Package Version = %@",stringNumber);
         }
         else 
         {
-            NSLog(@"Getting User Defaults Failed");
+            SMLog(@"Getting User Defaults Failed");
         }
         return YES;
     }
@@ -1010,7 +1010,7 @@
         UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:title message:message  delegate:self cancelButtonTitle:ALERT_ERROR_OK_DEFAULT otherButtonTitles:nil, nil];
         [alertView show];
         [alertView release];
-        NSLog(@"lesser than %f", APPVERSION);
+        SMLog(@"lesser than %f", APPVERSION);
         [activity stopAnimating];
         
         [UIView beginAnimations:@"showProgress" context:nil];
@@ -1073,13 +1073,13 @@
     
     NSString * kRestoreLocationKey = [NSString stringWithFormat:@"RestoreLocation"];
     NSMutableArray * temp = [[NSUserDefaults standardUserDefaults] objectForKey:kRestoreLocationKey];
-    NSLog(@"%@", temp);
+    SMLog(@"%@", temp);
     
     appDelegate.priceBookName = @"Standard Price Book";
     
     NSError * error = nil;
     _username = [SFHFKeychainUtils getPasswordForUsername:@"username" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
-    NSLog(@"%@", _username);
+    SMLog(@"%@", _username);
     if ((_username == nil) && (temp != nil))
     {
         _username = [[temp objectAtIndex:0] objectForKey:@"username"];
@@ -1089,7 +1089,7 @@
     // Retrieve password from keychain
     
     _password = [SFHFKeychainUtils getPasswordForUsername:@"password" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
-    NSLog(@"%@", _password);
+    SMLog(@"%@", _password);
     if ((_password == nil) && (appDelegate.savedReference != nil))
     {
         _password = [[appDelegate.savedReference objectAtIndex:0] objectForKey:@"password"];
@@ -1120,7 +1120,7 @@
     BOOL isReachable = [currentReach boolValue];
     if (isReachable)
     {
-        NSLog(@"Re-enabling Login controls");
+        SMLog(@"Re-enabling Login controls");
         [self enableControls];
     }
     else
@@ -1177,7 +1177,7 @@
 {
     if (interfaceOrientation == UIInterfaceOrientationPortrait)
     {
-        // NSLog(@"Portrait");
+        // SMLog(@"Portrait");
         // LoginController * selfView = [self getViewForOrientation:@"Portrait"];
         self.view = portrait;
         self.view.transform = CGAffineTransformIdentity; 
@@ -1186,7 +1186,7 @@
     }
     else if (interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown)
     {
-        // NSLog(@"Portrait");
+        // SMLog(@"Portrait");
         // LoginController * selfView = [self getViewForOrientation:@"Portrait"];
         self.view = portrait;
         self.view.transform = CGAffineTransformIdentity; 
@@ -1195,7 +1195,7 @@
     }
     else if (interfaceOrientation == UIInterfaceOrientationLandscapeLeft)
     {
-        // NSLog(@"Landscape");
+        // SMLog(@"Landscape");
         // LoginController * selfView = [self getViewForOrientation:@"Landscape"];
         self.view = landscape;
         self.view.transform = CGAffineTransformIdentity; 
@@ -1310,7 +1310,7 @@
     }
     
     NSArray * _array = [NSTimeZone knownTimeZoneNames];
-    NSLog(@"%@", _array);
+    SMLog(@"%@", _array);
     // <timezone>current string that you are putting</timezone><GMTOffset>+05:30</GMTOffset>//
     NSTimeZone * _timeZone = [NSTimeZone defaultTimeZone];
     NSInteger secondsFromGMT = [_timeZone secondsFromGMT];
@@ -1470,9 +1470,9 @@
     
     NSError * error = nil;
     [SFHFKeychainUtils storeUsername:@"username" andPassword:appDelegate.username forServiceName:KEYCHAIN_SERVICE_NAME updateExisting:YES error:&error];
-    NSLog(@"%@", error.description);
+    SMLog(@"%@", error.description);
     [SFHFKeychainUtils storeUsername:@"password" andPassword:appDelegate.password forServiceName:KEYCHAIN_SERVICE_NAME updateExisting:YES error:&error];
-    NSLog(@"%@", error.description);
+    SMLog(@"%@", error.description);
 }
 
 - (void) updateSampleDataCreationProgress;
@@ -1760,15 +1760,15 @@
         return;
     }
     
-    NSLog(@"%@", [result fields]);
+    SMLog(@"%@", [result fields]);
     appDelegate.workOrderDescription = [result retain];
 //    for (int i = 0; i < [[result fields] count]; i++)
 //    {
 //        ZKDescribeField * field = [[appDelegate.workOrderDescription fields] objectAtIndex:i];
-//        NSLog(@"%@", [field type]);
-//        NSLog(@"%@", [field name]);
-//        NSLog(@"%@", [field description]);
-//        NSLog(@"%@", [field relationshipName]);
+//        SMLog(@"%@", [field type]);
+//        SMLog(@"%@", [field name]);
+//        SMLog(@"%@", [field description]);
+//        SMLog(@"%@", [field relationshipName]);
 //        
 //        NSArray * keys = [NSArray arrayWithObjects:FIELDNAME, TYPE, nil];
 //        NSArray * objects = [NSArray arrayWithObjects:[field name], [field type], nil];
@@ -1845,7 +1845,7 @@
     NSArray * allkeys = [dict allKeys];
     for(NSString * str in allkeys)
     {
-        NSLog(@"str-%@",str);
+        SMLog(@"str-%@",str);
     }
     NSString * value = [[dict objectForKey:key] retain];
     return value;
@@ -1855,13 +1855,13 @@
 {
     NSString * kRestoreLocationKey = [NSString stringWithFormat:@"RestoreLocation"];
     NSMutableArray * temp = [[NSUserDefaults standardUserDefaults] objectForKey:kRestoreLocationKey];
-    NSLog(@"%@", temp);
+    SMLog(@"%@", temp);
     
     appDelegate.priceBookName = @"Standard Price Book";
     
     NSError * error = nil;
     _username = [SFHFKeychainUtils getPasswordForUsername:@"username" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
-    NSLog(@"%@", _username);
+    SMLog(@"%@", _username);
     if ((_username == nil) && (temp != nil))
     {
         _username = [[temp objectAtIndex:0] objectForKey:@"username"];
@@ -1871,7 +1871,7 @@
     // Retrieve password from keychain
     
     _password = [SFHFKeychainUtils getPasswordForUsername:@"password" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
-    NSLog(@"%@", _password);
+    SMLog(@"%@", _password);
     if ((_password == nil) && (appDelegate.savedReference != nil))
     {
         _password = [[appDelegate.savedReference objectAtIndex:0] objectForKey:@"password"];

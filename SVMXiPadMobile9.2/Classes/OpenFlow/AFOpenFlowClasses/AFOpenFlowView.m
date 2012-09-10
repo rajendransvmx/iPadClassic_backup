@@ -25,6 +25,7 @@
 #import "AFOpenFlowView.h"
 #import "AFOpenFlowConstants.h"
 #import "AFUIImageReflection.h"
+extern void SVMXLog(NSString *format, ...);
 
 
 @interface AFOpenFlowView (hidden)

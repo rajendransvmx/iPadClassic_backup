@@ -13,6 +13,7 @@
 #import "RecentsViewController.h"
 #import "CreateObject.h"
 #import "SearchViewController.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation OpenFlowAppViewController
 
@@ -212,7 +213,7 @@
 
 - (void)didSelectItem:(int)index
 {
-    NSLog(@"Selected item %@", [itemList objectAtIndex:index]);
+    SMLog(@"Selected item %@", [itemList objectAtIndex:index]);
     switch (index) {
         case 0:
             [self showTasks];

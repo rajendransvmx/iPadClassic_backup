@@ -56,7 +56,7 @@
 }
 
 - (void)webView:(UIWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(id)frame {
-	//NSLog(@"%@", message);
+	//SMLog(@"%@", message);
 	id JSONValue = [message JSONValue];
 	if (!JSONValue) {
 		if ([self.delegate respondsToSelector:@selector(goolgeMapsAPI:didFailWithMessage:)]) {

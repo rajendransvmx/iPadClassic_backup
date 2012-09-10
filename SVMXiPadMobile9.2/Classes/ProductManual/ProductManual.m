@@ -11,6 +11,7 @@
 #import "ProductManualCell.h"
 #import "MoviePlayer.h"
 #import "HTMLBrowser.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation ProductManual
 
@@ -85,11 +86,11 @@
     BOOL isReachable = [currentReach boolValue];
     if (isReachable)
     {
-        NSLog(@"Product Manual Internet Reachable");
+        SMLog(@"Product Manual Internet Reachable");
     }
     else
     {
-        NSLog(@"Product Manual Internet Not Reachable");
+        SMLog(@"Product Manual Internet Not Reachable");
         if (didRunOperation)
         {
             [activity stopAnimating];
@@ -104,7 +105,7 @@
     //Shrinivas
     NSArray *_array;
     _array = [[result records] retain];  //Check leak here
-    NSLog(@"%d", [_array count]);
+    SMLog(@"%d", [_array count]);
     
     array = [[NSMutableArray alloc]initWithCapacity:0];
     NSArray *keys = [[[NSArray alloc]initWithObjects:@"ManId", @"ManName",nil] autorelease];
@@ -170,7 +171,7 @@
     
     for (int i = 0; i < [bodyArray count]; i++)
     {
-        NSLog(@"%@", array);
+        SMLog(@"%@", array);
         //ZKSObject * obj = [array objectAtIndex:i];
         //NSDictionary * dict = [obj fields];
         
@@ -238,7 +239,7 @@
     
     if (!retVal)
     {
-        // NSLog(@"UnzipOpenFile encountered an error.");
+        // SMLog(@"UnzipOpenFile encountered an error.");
         return NO;
     }
     
@@ -260,7 +261,7 @@
     
     if (!retVal)
     {
-        // NSLog(@"Unzip encountered an error.");
+        // SMLog(@"Unzip encountered an error.");
         return NO;
     }
     
@@ -491,7 +492,7 @@
         cell = [self createCustomCellWithId:CellIdentifier];
     }
     
-    NSLog(@"%@", array);
+    SMLog(@"%@", array);
     //Shrinivas
     if ( [[[array objectAtIndex:indexPath.row]objectForKey:@"ManName"] isKindOfClass:[NSString class]] )
     {

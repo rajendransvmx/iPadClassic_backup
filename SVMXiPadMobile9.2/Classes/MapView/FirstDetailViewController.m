@@ -22,6 +22,7 @@
 #import "Reachability.h"
 #import "DataBase.h"
 #import "ZKSforce.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation FirstDetailViewController
 
@@ -78,7 +79,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 {
     NSDictionary * workOrder = [annotationObject workOrder];
     
-    //NSLog(@"%@", workOrder);
+    //SMLog(@"%@", workOrder);
     locationPop = [[[LocationPopOver alloc] initWithNibName:@"LocationPopOver" bundle:nil] autorelease];
     locationPop.delegate = self;
     locationPop.workOrder = [workOrder objectForKey:OBJECTLABEL];
@@ -146,8 +147,8 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     
     locationPop.popOver = popOver;
     [popOver presentPopoverFromRect:locationPop.view.frame inView:mapView permittedArrowDirections:UIPopoverArrowDirectionRight animated:YES];
-    //NSLog(@"%f, %f", point.x, point.y);
-    //NSLog(@"%f, %f", popOver.contentViewController.view.frame.origin.x, popOver.contentViewController.view.frame.origin.y);
+    //SMLog(@"%f, %f", point.x, point.y);
+    //SMLog(@"%f, %f", popOver.contentViewController.view.frame.origin.x, popOver.contentViewController.view.frame.origin.y);
 //    [locationPop release];
 }
 
@@ -242,7 +243,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
                 [address appendString:[NSString stringWithFormat:@"%@", woCountry]];
         }
         
-        //NSLog(@"adddress = %@", address);
+        //SMLog(@"adddress = %@", address);
         
 //        NSString * str = [[appDelegate.workOrderEventArray objectAtIndex:i] objectForKey:ADDITIONALINFO];
 //        if (str != nil)
@@ -250,7 +251,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
         NSString * workOrderNumber = @"";
         workOrderNumber  = ([[appDelegate.workOrderInfo objectAtIndex:i] objectForKey:NAME])?[[appDelegate.workOrderInfo objectAtIndex:i]objectForKey:NAME]:@"";
         NSArray *objects = [NSArray arrayWithObjects:workOrderNumber,address, nil];
-        //NSLog(@"%@", objects);
+        //SMLog(@"%@", objects);
         NSDictionary * dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
         [array addObject:dict];
         
@@ -346,7 +347,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     
     eventsArray = [[NSMutableArray alloc] initWithArray:appDelegate.wsInterface.eventArray];
-    //NSLog(@"%@", eventsArray);
+    //SMLog(@"%@", eventsArray);
     
     if (imageCache == nil)
         imageCache = [[ImageCacheClass alloc] init];
@@ -376,14 +377,14 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
         
         
         NSString * _query = [NSString stringWithFormat:@"SELECT Id, SVMXC__Service_Group__c, SVMXC__Inventory_Location__c  FROM SVMXC__Service_Group_Members__c WHERE SVMXC__Salesforce_User__c = '%@'", appDelegate.loggedInUserId];
-        NSLog(@"%@", appDelegate.loggedInUserId);
+        SMLog(@"%@", appDelegate.loggedInUserId);
         
         [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(initDebriefData:error:context:) context:nil];
     }
     
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
-        //NSLog(@"Mapview initDebrief in while loop");
+        //SMLog(@"Mapview initDebrief in while loop");
         if (!appDelegate.isInternetConnectionAvailable)
         {
             [self setContactImage];
@@ -398,7 +399,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
         {
             break;
         }
-        //NSLog(@"3");
+        //SMLog(@"3");
     }
     
     
@@ -424,14 +425,14 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     BOOL isReachable = [currentReach boolValue];
     if (isReachable)
     {
-        NSLog(@"Map Internet Reachable");
+        SMLog(@"Map Internet Reachable");
         [self setupMapView];
         [self setContactImage];
     }
     else
     {
                 
-        NSLog(@"Map Internet Not Reachable");
+        SMLog(@"Map Internet Not Reachable");
         if (didRunOperation)
         {
             [imageActivity stopAnimating];
@@ -458,7 +459,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     
     controller = [[MapDirectionsViewController alloc] init];
     controller.frame = mapView.bounds;
-    NSLog(@"%f, %f, %f, %f", mapView.bounds.origin.x,mapView.bounds.origin.y,mapView.bounds.size.width, mapView.bounds.size.height);
+    SMLog(@"%f, %f, %f, %f", mapView.bounds.origin.x,mapView.bounds.origin.y,mapView.bounds.size.width, mapView.bounds.size.height);
     controller.delegate = self;
 
     NSMutableString * address = nil;
@@ -509,17 +510,17 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
                 [address appendString:[NSString stringWithFormat:@"%@", woCountry]];
         }
         
-        //NSLog(@"adddress = %@", address);
+        //SMLog(@"adddress = %@", address);
         [array addObject:address];
     }
 
-    //NSLog(@"addressarray = %@", array);
+    //SMLog(@"addressarray = %@", array);
     
     controller.wayPoints = array; 
     
     wayPoints = array;
 
-    //NSLog(@"%@", controller.wayPoints);
+    //SMLog(@"%@", controller.wayPoints);
     
     controller.travelMode = UICGTravelModeDriving;
     controller.workOrderArray = appDelegate.workOrderEventArray;
@@ -594,7 +595,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     {
         _query = [[NSString stringWithFormat:@"SELECT ParentId, Body FROM Attachment Where ParentId IN ('%@') AND Name LIKE '%%PICTURE%%'", companyId] retain]; // AND Name LIKE '%%PICTURE%%'
         
-        // NSLog(@"%@", _query);
+        // SMLog(@"%@", _query);
         
         [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didQueryCompanyImagesForAccount:error:context:) context:nil];
         
@@ -995,32 +996,32 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     NSDictionary * dict = [appDelegate.workOrderEventArray objectAtIndex:row];
     // START TIME
     NSDate * startime = [dict objectForKey:STARTDATETIME];
-    NSLog(@"%@", startime);
+    SMLog(@"%@", startime);
     
       // First convert the time to local
     NSString * woStartTiming = [dateFormatter stringFromDate:startime];
-    NSLog(@"%@", woStartTiming);
+    SMLog(@"%@", woStartTiming);
   
 
     // Then extract the actual time
     woStartTiming = [woStartTiming substringFromIndex:11];
-    NSLog(@"%@", woStartTiming);
+    SMLog(@"%@", woStartTiming);
    
     
     [dateFormatter setDateFormat:@"HH:mm:ss"];
     date = [dateFormatter dateFromString:woStartTiming];
-    NSLog(@"%@", date);
+    SMLog(@"%@", date);
     [dateFormatter setDateFormat:@"hh:mm a"];
     woStartTiming = [dateFormatter stringFromDate:date];
-    NSLog(@"%@", woStartTiming);
+    SMLog(@"%@", woStartTiming);
     
     // END TIME
     NSDate * endtime = [dict objectForKey:ENDDATETIME];
-    NSLog(@"%@", endtime);
+    SMLog(@"%@", endtime);
     
      // First convert the time to local
     NSString * woEndTiming = [dateFormatter stringFromDate:endtime];
-    NSLog(@"%@", woEndTiming);
+    SMLog(@"%@", woEndTiming);
     
     //radha
     NSString * colorCode = [appDelegate.calDataBase getColorCodeForPriority:[dict objectForKey:WHATID]];
@@ -1177,7 +1178,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     // NSTimeInterval howRecent = [eventDate timeIntervalSinceNow];
     // if (abs(howRecent) < 15.0)
     {
-        // NSLog(@"latitude %+.6f, longitude %+.6f\n", newLocation.coordinate.latitude, newLocation.coordinate.longitude);
+        // SMLog(@"latitude %+.6f, longitude %+.6f\n", newLocation.coordinate.latitude, newLocation.coordinate.longitude);
         
         // Immediately use reverse geocoder to find out current location
         [self reverseGeocodeWithCoordinate:newLocation];
@@ -1200,15 +1201,15 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 
 - (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFailWithError:(NSError *)error
 {
-    // NSLog(@"Reverse Geocoder error = %@", error.description);
+    // SMLog(@"Reverse Geocoder error = %@", error.description);
     MKPlacemark * placemark = geocoder.placemark;
-    //NSLog(@"%@", placemark.addressDictionary);
+    //SMLog(@"%@", placemark.addressDictionary);
 }
 
 - (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFindPlacemark:(MKPlacemark *)placemark
 {
-    // NSLog(@"Address Dictionary = %@", [placemark addressDictionary]);
-    //NSLog(@"The geocoder has returned: %@", [placemark addressDictionary]);
+    // SMLog(@"Address Dictionary = %@", [placemark addressDictionary]);
+    //SMLog(@"The geocoder has returned: %@", [placemark addressDictionary]);
     NSDictionary * placeMarkDict = [placemark addressDictionary];
     
     NSArray * formattedAddressLines = [placeMarkDict objectForKey:@"FormattedAddressLines"];
@@ -1233,7 +1234,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
                         [placeMarkDict objectForKey:@"State"],
                         [placeMarkDict objectForKey:@"Thouroughfare"]
                         ] retain];
-    //NSLog(@"%@", currentLocation);
+    //SMLog(@"%@", currentLocation);
 }
 
 #pragma mark - Launch SmartVan
@@ -1256,13 +1257,13 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     }
     
     NSArray * array = [result records];
-    NSLog(@"hello hi = %@",array);
+    SMLog(@"hello hi = %@",array);
         
     for (int i = 0; i < [array count]; i++)
 	{
 		ZKSObject * obj = [array objectAtIndex:i];
         
-        NSLog(@"SVMXC__Service_Group__c = %@", [[obj fields] objectForKey:@"SVMXC__Service_Group__c"]);
+        SMLog(@"SVMXC__Service_Group__c = %@", [[obj fields] objectForKey:@"SVMXC__Service_Group__c"]);
         if (appDelegate.appServiceTeamId != nil)
         {
             [appDelegate.appServiceTeamId release];
@@ -1279,13 +1280,13 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 	}
     
     NSString * _query = [NSString stringWithFormat:@"Select SVMXC__Street__c, SVMXC__City__c, SVMXC__State__c, SVMXC__Zip__c, SVMXC__Country__c FROM SVMXC__Service_Group_Members__c WHERE Id = '%@'", appDelegate.appTechnicianId];
-    NSLog(@"my query = %@",_query);
+    SMLog(@"my query = %@",_query);
     
     [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didQueryTechnician:error:context:) context:nil];
     
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
-        //NSLog(@"Mapview initDebrief in while loop");
+        //SMLog(@"Mapview initDebrief in while loop");
         if (!appDelegate.isInternetConnectionAvailable)
         {
             break;
@@ -1298,7 +1299,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
         {
             break;
         }
-        //NSLog(@"3");
+        //SMLog(@"3");
     }
     
     didDebriefData = YES;
@@ -1358,7 +1359,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
         
         appDelegate.technicianAddress = address;
         
-        NSLog(@"Technician Address = %@", appDelegate.technicianAddress);
+        SMLog(@"Technician Address = %@", appDelegate.technicianAddress);
     }
     else
         appDelegate.technicianAddress = @"";  

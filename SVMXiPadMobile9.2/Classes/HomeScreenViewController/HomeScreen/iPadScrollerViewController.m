@@ -18,6 +18,7 @@
 #import "ManualDataSync.h"
 #import "MainViewController.h"
 #import <QuartzCore/QuartzCore.h>
+extern void SVMXLog(NSString *format, ...);
 
 iServiceAppDelegate *appDelegate;
 
@@ -416,7 +417,7 @@ const NSUInteger kNumImages = 7;
             }
             else if (appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED || appDelegate.connection_error == TRUE)
             {
-                NSLog(@"I dont come here -Control");
+                SMLog(@"I dont come here -Control");
                 [initial_sync_timer invalidate];    //invalidate the timer
                 initial_sync_timer = nil;
                 [self continueMetaAndDataSync];
@@ -620,7 +621,7 @@ const NSUInteger kNumImages = 7;
     {
         index = 8;
     }
-    NSLog(@"%@", [itemArray objectAtIndex:index]);
+    SMLog(@"%@", [itemArray objectAtIndex:index]);
     NSString * itemSelected = [itemArray objectAtIndex:index];
     if ([itemSelected isEqualToString:[appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CALENDAR]])
         [self showCalendar];
@@ -786,7 +787,7 @@ const NSUInteger kNumImages = 7;
 }
 - (void)continueMetaAndDataSync
 {
-    NSLog(@"I will come here first");
+    SMLog(@"I will come here first");
    
     //again inititate
     if(appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED || appDelegate.connection_error == TRUE)
@@ -794,7 +795,7 @@ const NSUInteger kNumImages = 7;
         appDelegate.connection_error = FALSE;
         [appDelegate.dataBase clearDatabase];
         appDelegate.isForeGround = FALSE;
-        NSLog(@"I will come here first");
+        SMLog(@"I will come here first");
         appDelegate.isBackground = FALSE;
         
         appDelegate.initial_sync_succes_or_failed = INITIAL_SYNC_SUCCESS;
@@ -961,7 +962,7 @@ const NSUInteger kNumImages = 7;
     
 	if(appDelegate.metaSyncRunning )
     {
-        NSLog(@"Meta Sync is Running");
+        SMLog(@"Meta Sync is Running");
         return;
     }
     NSString *enableLocationService = [appDelegate.settingsDict objectForKey:ENABLE_LOCATION_UPDATE];
@@ -994,7 +995,7 @@ const float progress_ = 0.07;
 {
    //sahana i have to remove harcoding and make it configurable
     
-    //NSLog(@"timer");
+    //SMLog(@"timer");
     if(appDelegate.initial_sync_status == INITIAL_SYNC_SFM_METADATA && appDelegate.Sync_check_in == FALSE)
     {
         current_num_of_call = 1;
@@ -1003,7 +1004,7 @@ const float progress_ = 0.07;
         description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_metadata_desc];
        
         //Downloading SFM MetaData
-        NSLog(@"1");
+        SMLog(@"1");
       
     }
     else if(appDelegate.initial_sync_status == SYNC_SFM_METADATA  && appDelegate.Sync_check_in == FALSE)
@@ -1018,7 +1019,7 @@ const float progress_ = 0.07;
         description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_metadata_desc];
        // [description_label sizeToFit];
        
-        NSLog(@"Downloading SFM MetaData2");
+        SMLog(@"Downloading SFM MetaData2");
     }
     else if(appDelegate.initial_sync_status == SYNC_SFM_PAGEDATA  && appDelegate.Sync_check_in == FALSE)
     {
@@ -1031,7 +1032,7 @@ const float progress_ = 0.07;
         description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_pagedata_desc];
        // [description_label sizeToFit];
         
-        NSLog(@"3");
+        SMLog(@"3");
         //Downloading SFM Object Definitions
     }
     else if(appDelegate.initial_sync_status == SYNC_SFMOBJECT_DEFINITIONS  && appDelegate.Sync_check_in == FALSE)
@@ -1046,7 +1047,7 @@ const float progress_ = 0.07;
         description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_obj_definition_desc];
         //[description_label sizeToFit];
      
-         NSLog(@"4");
+         SMLog(@"4");
     }
     else if(appDelegate.initial_sync_status == SYNC_SFM_BATCH_OBJECT_DEFINITIONS  && appDelegate.Sync_check_in == FALSE)
     {
@@ -1060,7 +1061,7 @@ const float progress_ = 0.07;
         description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_batch_definition_desc];
         
        // [description_label sizeToFit];
-         NSLog(@"5");
+         SMLog(@"5");
     }
     else if(appDelegate.initial_sync_status == SYNC_SFM_PICKLIST_DEFINITIONS  && appDelegate.Sync_check_in == FALSE)
     {
@@ -1074,7 +1075,7 @@ const float progress_ = 0.07;
         description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_picklist_definition_desc];
         
        // [description_label sizeToFit];
-        NSLog(@"6");
+        SMLog(@"6");
     }
     else if(appDelegate.initial_sync_status == SYNC_RT_DP_PICKLIST_INFO  && appDelegate.Sync_check_in == FALSE)
     {
@@ -1088,7 +1089,7 @@ const float progress_ = 0.07;
         description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_RT_picklist_desc];
         
        // [description_label sizeToFit];
-        NSLog(@"7");
+        SMLog(@"7");
     }
     else if (appDelegate.initial_sync_status == SYNC_SFW_METADATA  && appDelegate.Sync_check_in == FALSE)
     {
@@ -1101,11 +1102,11 @@ const float progress_ = 0.07;
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_SFW_metadata];//@"Downloading SFW Metadata ";
         description_label.text =  [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_SFW_metadata_desc];
        // [description_label sizeToFit];
-        NSLog(@"8");
+        SMLog(@"8");
     }
     else if(appDelegate.initial_sync_status == SYNC_MOBILE_DEVICE_TAGS  && appDelegate.Sync_check_in == FALSE)
     {
-         NSLog(@"9");
+         SMLog(@"9");
     }
     else if(appDelegate.initial_sync_status == SYNC_MOBILE_DEVICE_SETTINGS  && appDelegate.Sync_check_in == FALSE)
     {
@@ -1118,11 +1119,11 @@ const float progress_ = 0.07;
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_mob_settings];// @"Downloading Mobile Device Settings";
         description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_mob_settings_desc];
         // [description_label sizeToFit];
-         NSLog(@"10");
+         SMLog(@"10");
     }
     else if(appDelegate.initial_sync_status == SYNC_SFM_SEARCH  && appDelegate.Sync_check_in == FALSE)
     {
-         NSLog(@"11");
+         SMLog(@"11");
     }
    
     else if(appDelegate.initial_sync_status == SYNC_DP_PICKLIST_INFO  && appDelegate.Sync_check_in == FALSE)
@@ -1136,7 +1137,7 @@ const float progress_ = 0.07;
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_dp_picklist];//@"Downloading Dependent Picklist ";
         description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_dp_picklist_desc]; 
         // [description_label sizeToFit];
-         NSLog(@"12");
+         SMLog(@"12");
     }
     else if(appDelegate.initial_sync_status == SYNC_EVENT_SYNC  && appDelegate.Sync_check_in == FALSE)
     {
@@ -1149,7 +1150,7 @@ const float progress_ = 0.07;
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_event_sync];//@"Downloading Event and task related record id's";
         description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_event_sync_desc];
        // [description_label sizeToFit];
-        NSLog(@"13");
+        SMLog(@"13");
      
     }
     else if(appDelegate.initial_sync_status == SYNC_DOWNLOAD_CRITERIA_SYNC  && appDelegate.Sync_check_in == FALSE)
@@ -1162,7 +1163,7 @@ const float progress_ = 0.07;
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_dc_sync];//@"Downloading download criteria Objects record id's";
         description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_dc_sync_desc];
        //  [description_label sizeToFit];
-         NSLog(@"14");
+         SMLog(@"14");
     }
     else if(appDelegate.initial_sync_status == SYNC_CLEANUP_SELECT  && appDelegate.Sync_check_in == FALSE)
     {
@@ -1174,7 +1175,7 @@ const float progress_ = 0.07;
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_cleanup];//@"Clean up call";
         description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_cleanup_desc];
        //  [description_label sizeToFit];
-         NSLog(@"15");
+         SMLog(@"15");
         
     }
     else if(appDelegate.initial_sync_status == SYNC_TX_FETCH  && appDelegate.Sync_check_in == FALSE)
@@ -1187,7 +1188,7 @@ const float progress_ = 0.07;
         download_desc_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_tx_fetch];//@"Downloading Events , Tasks and Download criteria records";
         description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_tx_fetch_desc];
        //  [description_label sizeToFit];
-        NSLog(@"16");
+        SMLog(@"16");
     }
     else if(appDelegate.initial_sync_status == SYNC_INSERTING_RECORDS_TO_LOCAL_DATABASE  && appDelegate.Sync_check_in == FALSE)
     {
@@ -1237,7 +1238,7 @@ const float progress_ = 0.07;
     NSString *  retry = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_retry];
     NSString * ll_try_later = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_i_ll_try];
 
-    // NSLog(@"2nd-later will come to showalertview");
+    // SMLog(@"2nd-later will come to showalertview");
     if(internet_alertView == nil)
     {
         internet_alertView = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:retry otherButtonTitles:ll_try_later, nil];
@@ -1327,7 +1328,7 @@ const float progress_ = 0.07;
             if (appDelegate.wsInterface.didOpSFMSearchComplete == TRUE)
                 break; 
         }
-        NSLog(@"SAMMAN MetaSync SFM Search End: %@", [NSDate date]);
+        SMLog(@"SAMMAN MetaSync SFM Search End: %@", [NSDate date]);
     }
     if (!appDelegate.isInternetConnectionAvailable)
     {
@@ -1338,7 +1339,7 @@ const float progress_ = 0.07;
        //SFM Search End
     
     
-    NSLog(@"SAMMAN MetaSync WS End: %@", [NSDate date]);
+    SMLog(@"SAMMAN MetaSync WS End: %@", [NSDate date]);
     appDelegate.initial_sync_status = SYNC_DP_PICKLIST_INFO;
     appDelegate.Sync_check_in = FALSE;
     [appDelegate getDPpicklistInfo];
@@ -1354,7 +1355,7 @@ const float progress_ = 0.07;
         [self showAlertForInternetUnAvailability];
         return;
     }
-      NSLog(@"META SYNC 1");
+      SMLog(@"META SYNC 1");
     
     if (appDelegate.didFinishWithError == TRUE)
     {
@@ -1374,7 +1375,7 @@ const float progress_ = 0.07;
     char * err ;
     int retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);   
     
-    NSLog(@"SAMMAN DataSync WS Start: %@", [NSDate date]);
+    SMLog(@"SAMMAN DataSync WS Start: %@", [NSDate date]);
     appDelegate.wsInterface.didOpComplete = FALSE;
     
     appDelegate.initial_sync_status = SYNC_EVENT_SYNC;
@@ -1425,9 +1426,9 @@ const float progress_ = 0.07;
     
     appDelegate.initial_dataSync_reqid = [iServiceAppDelegate GetUUID];
     
-    NSLog(@"reqId%@" , appDelegate.initial_dataSync_reqid);
+    SMLog(@"reqId%@" , appDelegate.initial_dataSync_reqid);
     [appDelegate.wsInterface dataSyncWithEventName:DOWNLOAD_CREITERIA_SYNC eventType:SYNC requestId:appDelegate.initial_dataSync_reqid];
-    NSLog(@"DC Check1");
+    SMLog(@"DC Check1");
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         //shrinivas
@@ -1443,7 +1444,7 @@ const float progress_ = 0.07;
         
         if (appDelegate.wsInterface.didOpComplete == TRUE)
         {
-            NSLog(@"DC Check1 ComeOut");
+            SMLog(@"DC Check1 ComeOut");
             break; 
         }
         if(appDelegate.connection_error)
@@ -1454,7 +1455,7 @@ const float progress_ = 0.07;
         {
             while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
-                NSLog(@"DC Check2");
+                SMLog(@"DC Check2");
                 //shrinivas
                 if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED)
                 {
@@ -1478,8 +1479,8 @@ const float progress_ = 0.07;
             }
         }
     }
-      NSLog(@"SAMMAN DataSync WS End: %@", [NSDate date]);
-    NSLog(@"SAMMAN Incremental DataSync WS Start: %@", [NSDate date]);
+      SMLog(@"SAMMAN DataSync WS End: %@", [NSDate date]);
+    SMLog(@"SAMMAN Incremental DataSync WS Start: %@", [NSDate date]);
 
     txnstmt = @"END TRANSACTION";
     retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err); 
@@ -1526,20 +1527,20 @@ const float progress_ = 0.07;
     {
         if (appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED)
         {
-            NSLog(@"Break TxFetch");
+            SMLog(@"Break TxFetch");
             appDelegate.initial_sync_succes_or_failed = TX_FETCH_FAILED;
             break;
         }  
         if (!appDelegate.isInternetConnectionAvailable)
         {  
-            NSLog(@"Break TxFetch");
+            SMLog(@"Break TxFetch");
             appDelegate.initial_sync_succes_or_failed = TX_FETCH_FAILED;
             break;
         }
         
         if (appDelegate.Incremental_sync_status == PUT_RECORDS_DONE)
         {
-            NSLog(@"Break TxFetch");
+            SMLog(@"Break TxFetch");
             break; 
         }
         if(appDelegate.connection_error)
@@ -1565,9 +1566,9 @@ const float progress_ = 0.07;
             break;
         }
     }
-    NSLog(@"SAMMAN Incremental DataSync WS End: %@", [NSDate date]);
+    SMLog(@"SAMMAN Incremental DataSync WS End: %@", [NSDate date]);
     
-    NSLog(@"SAMMAN Update Sync Records Start: %@", [NSDate date]);
+    SMLog(@"SAMMAN Update Sync Records Start: %@", [NSDate date]);
     
     [appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
     
@@ -1596,7 +1597,7 @@ const float progress_ = 0.07;
     //Radha End
     
     
-    NSLog(@"SAMMAN Update Sync Records End: %@", [NSDate date]);
+    SMLog(@"SAMMAN Update Sync Records End: %@", [NSDate date]);
     //remove recents
     NSFileManager * fileManager = [NSFileManager defaultManager];
     NSString * rootPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
@@ -1616,9 +1617,9 @@ const float progress_ = 0.07;
 {
     if(buttonIndex == 0)
     {
-       NSLog(@"index 0");
+       SMLog(@"index 0");
         
-        NSLog(@"index 1");
+        SMLog(@"index 1");
         if(!appDelegate.isInternetConnectionAvailable)
         {
             [self showAlertForInternetUnAvailability];
@@ -1638,7 +1639,7 @@ const float progress_ = 0.07;
             appDelegate.initial_sync_succes_or_failed = INITIAL_SYNC_SUCCESS;
         }
         [self logout];
-        NSLog(@"index 1");
+        SMLog(@"index 1");
     }
 }
 -(void)RefreshProgressBarNativeMethod:(NSString *)sync
@@ -1690,7 +1691,7 @@ const float progress_ = 0.07;
 - (void)locationManager:(CLLocationManager *)manager
        didFailWithError:(NSError *)error
 {
-    NSLog(@"Error =%@",[error userInfo]);
+    SMLog(@"Error =%@",[error userInfo]);
     NSDate *newLocationTimestamp = [NSDate date];
     NSDate *lastLocationUpdateTiemstamp;
     
@@ -1724,7 +1725,7 @@ const float progress_ = 0.07;
     
     if(appDelegate.metaSyncRunning||appDelegate.dataSyncRunning )
     {
-        NSLog(@"Sync is Running");
+        SMLog(@"Sync is Running");
         return;
     }
 

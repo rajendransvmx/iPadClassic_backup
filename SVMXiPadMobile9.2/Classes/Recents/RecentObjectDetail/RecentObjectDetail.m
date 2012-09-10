@@ -10,6 +10,7 @@
 #import "RecentsViewController.h"
 
 @implementation RecentObjectDetail
+extern void SVMXLog(NSString *format, ...);
 
 @synthesize delegate, tableView;
 @synthesize recentObjectsArray;
@@ -171,7 +172,7 @@
     
     if ([recentObjectsArray count] != 0)
     {
-        NSLog(@"%@", [recentObjectsArray objectAtIndex:selectedRootViewRow]);
+        SMLog(@"%@", [recentObjectsArray objectAtIndex:selectedRootViewRow]);
         NSMutableDictionary * dictionary = [recentObjectsArray objectAtIndex:selectedRootViewRow];
         NSString * key = [[dictionary allKeys] objectAtIndex:0];
         array = [dictionary objectForKey:key]; 

@@ -11,6 +11,7 @@
 #import "UICRouteAnnotation.h"
 #import "EventAnnotation.h"
 #import "RouteListViewController.h"
+extern void SVMXLog(NSString *format, ...);
 
 static NSString* const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 
@@ -57,7 +58,7 @@ static NSString* const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 	diretions = [UICGDirections sharedDirections];
 	diretions.delegate = self;
     
-    //NSLog(@"%@", workOrderArray);
+    //SMLog(@"%@", workOrderArray);
 }
 
 - (void)viewDidLoad
@@ -201,7 +202,7 @@ static NSString* const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
             NSDictionary * endGeocode = [route endGeocode];
             NSString * address = [endGeocode objectForKey:@"address"];
             CLLocationCoordinate2D coord = [location coordinate];
-            //NSLog(@"%@, %f, %f", address, coord.latitude, coord.longitude);
+            //SMLog(@"%@, %f, %f", address, coord.latitude, coord.longitude);
             // SAMMAN - BEGIN - Ensure duplicate addresses are not used
             if ([latitudeList containsObject:[NSNumber numberWithDouble:coord.latitude]])
             {
@@ -289,17 +290,17 @@ static NSString* const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
                        context:(void *)context
 {
     NSString *action = (NSString*)context;
-    NSLog(@"Call Custom Callout");
+    SMLog(@"Call Custom Callout");
     if([action isEqualToString:GMAP_ANNOTATION_SELECTED])
     {
         BOOL annotationAppeared = [[change valueForKey:@"new"] boolValue];
         // do something
         // if (annotationAppeared)
-            // NSLog(@"MKAnnotationView Clicked = %d", annotationAppeared);
+            // SMLog(@"MKAnnotationView Clicked = %d", annotationAppeared);
         
         CGPoint point = [routeMapView convertCoordinate:[object coordinate] toPointToView:self.view];
         // if (annotationAppeared)
-            // NSLog(@"x = %f, y = %f", point.x, point.y);
+            // SMLog(@"x = %f, y = %f", point.x, point.y);
         
         UICRouteAnnotation * annotationObject = (UICRouteAnnotation *)[object annotation];
         
@@ -318,12 +319,12 @@ static NSString* const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 
 - (void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view
 {
-    NSLog(@"Selected annotation");
+    SMLog(@"Selected annotation");
 }
 
 - (void)deselectAnnotation:(id < MKAnnotation >)annotation animated:(BOOL)animated
 {
-    NSLog(@"Deselected annotation");
+    SMLog(@"Deselected annotation");
 }
 
 - (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control

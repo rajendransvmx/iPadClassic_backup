@@ -9,6 +9,7 @@
 #import "RouteController.h"
 #import "UICGRoute.h"
 #import "UICGStep.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation RouteController
 
@@ -37,7 +38,7 @@
     UICGRoute *route = [directionArray objectAtIndex:section];
     if(![route numberOfSteps])
     {
-        NSLog(@"[%@]Route Data is NULL",NSStringFromSelector(_cmd));
+        SMLog(@"[%@]Route Data is NULL",NSStringFromSelector(_cmd));
         return;
     } 
     // scroll to annotationIndexth section

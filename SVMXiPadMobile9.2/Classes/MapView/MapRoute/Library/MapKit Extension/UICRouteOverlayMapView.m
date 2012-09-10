@@ -20,7 +20,7 @@
 - (id)initWithMapView:(MKMapView *)mapView
 {
 	self = [super initWithFrame:CGRectMake(0.0f, 0.0f, mapView.frame.size.width, mapView.frame.size.height)];
-    //NSLog(@"%f, %f", mapView.frame.size .width, mapView.frame.size.height);
+    //SMLog(@"%f, %f", mapView.frame.size .width, mapView.frame.size.height);
 	if (self != nil)
     {
 		self.inMapView = mapView;
@@ -60,8 +60,8 @@
         {
             // SAMMAN
             CLLocation * route = [self.routes objectAtIndex:i];
-            //NSLog(@"%f, %f", route.coordinate.latitude, route.coordinate.longitude);
-            //NSLog(@"%f, %f", firstDestinationCoordinate.latitude, firstDestinationCoordinate.longitude);
+            //SMLog(@"%f, %f", route.coordinate.latitude, route.coordinate.longitude);
+            //SMLog(@"%f, %f", firstDestinationCoordinate.latitude, firstDestinationCoordinate.longitude);
             if (
                 (route.coordinate.latitude == firstDestinationCoordinate.latitude)
                 &&

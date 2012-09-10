@@ -13,6 +13,7 @@
 #import "SBJsonParser.h"
 #import "ZKPicklistEntry.h"
 #import "NSObject+SBJson.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation databaseIntefaceSfm
 
@@ -58,7 +59,7 @@
                                                                errorDescription:&errorStr];
             if(propertyList) 
             {
-                NSLog(@"No error creating XML data.");
+                SMLog(@"No error creating XML data.");
                 [propertyList writeToFile:filePath atomically:YES];
                 NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithContentsOfFile:filePath];
 	synchronized_sqlite3_finalize(stmt);
@@ -114,7 +115,7 @@
         BOOL flag = FALSE;
         NSString *  query = [NSString stringWithFormat:@"SELECT COUNT(*) FROM '%@' where %@ = '%@' and %@",tableName,@"local_id", recordId,expression_];
         sqlite3_stmt * stmt ;
-        NSLog(@" query  %@", query);
+        SMLog(@" query  %@", query);
         if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK  )
         {
             while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
@@ -168,7 +169,7 @@
         sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' where %@ = '%@'",fieldsString,tableName,@"local_id", recordId];
     
     sqlite3_stmt * sql_stmt;
-     NSLog(@" query header %@",sql);
+     SMLog(@" query header %@",sql);
     if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sql UTF8String], -1, &sql_stmt, nil)== SQLITE_OK)
     {
         while(synchronized_sqlite3_step(sql_stmt) == SQLITE_ROW)
@@ -248,7 +249,7 @@
         }
          //sahana 16th June 2012
     }
-    NSLog(@" LineRecord %@",sql);
+    SMLog(@" LineRecord %@",sql);
     
     sqlite3_stmt * sql_stmt;
     if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sql UTF8String], -1, &sql_stmt, nil)== SQLITE_OK)
@@ -1201,7 +1202,7 @@
         {
             query = [NSString stringWithFormat:@"SELECT object_mapping_id ,expression_id,source_object_name,target_object_name,parent_column ,value_mapping_id  , source_child_parent_column FROM '%@' WHERE process_id = '%@' and component_type = '%@'",PROCESS_COMPONENT , processId ,componentType];
         }
-        NSLog(@" process component%@ ",query );
+        SMLog(@" process component%@ ",query );
         sqlite3_stmt * stmt ;
         if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
         {
@@ -1392,7 +1393,7 @@
                             NSString * query = [NSString stringWithFormat:@"SELECT record_type_id FROM  SFRecordType where object_api_name = '%@' and record_type = '%@'" ,target_object_name,mapping_value];
                             NSString * record_type_id = @"";
                             
-                            NSLog(@"RecordTypeId  valuemapping %@" ,query);
+                            SMLog(@"RecordTypeId  valuemapping %@" ,query);
                             sqlite3_stmt * recordTypeId_statement ;
                             if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &recordTypeId_statement, nil) == SQLITE_OK)
                             {
@@ -1565,7 +1566,7 @@
       
     if(synchronized_sqlite3_exec(appDelegate.db, [insert_statement UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
-        NSLog(@"Insert Failed");
+        SMLog(@"Insert Failed");
         success = FALSE;
     }
     else
@@ -1733,7 +1734,7 @@
         //Shrinivas for R4B2 - 20/04/2012
         NSString * _searchForString = [searchForString substringFromIndex:1];
         NSString * querystring2 = @"";
-        NSLog(@"%d", [searchForString length]);
+        SMLog(@"%d", [searchForString length]);
         if ([searchForString length] > 1)
         {
             querystring2 = [NSString stringWithFormat:@"Select %@ , Id from '%@'  WHERE  Id  NOT NULL   AND Id != '' and %@ LIKE '%%%@%%' ", default_column_name, object, default_column_name, _searchForString];
@@ -2018,7 +2019,7 @@
         
         
         finalDict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:each_record, sequenceArray,default_display_column, nil] forKeys:_dictKeys];
-    //    NSLog(@"%@", finalDict);
+    //    SMLog(@"%@", finalDict);
         
         
     }
@@ -2055,7 +2056,7 @@
     
     NSString * final_expr = @"";
     //iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    NSLog(@"%@", query);
+    SMLog(@"%@", query);
     
     if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
     {
@@ -2163,8 +2164,8 @@
         
         NSString * query = [NSString stringWithFormat:@"SELECT component_lhs , component_rhs , operator  FROM '%@' where expression_id = '%@'  and component_sequence_number = '%@'",SFEXPRESSION_COMPONENT, expression_id ,appended_component_number];
         
-    //     NSLog(@"%@", query);
-        NSLog(@"%@",query);
+    //     SMLog(@"%@", query);
+        SMLog(@"%@",query);
         sqlite3_stmt * stmt ;
         
         NSString * component_lhs = @"";
@@ -2205,7 +2206,7 @@
                 if([component_lhs length] != 0 && [component_operator length] != 0)
                 {
                     
-                    NSLog(@"component_operator %@",component_operator);
+                    SMLog(@"component_operator %@",component_operator);
                     
                     if([component_operator isEqualToString:@"eq"])
                     {
@@ -2271,7 +2272,7 @@
                         component_rhs = @"null";
                     }
                     
-                    NSLog(@"%@" ,operator_ );
+                    SMLog(@"%@" ,operator_ );
                     
                     if([operator_ length] != 0)
                     {
@@ -2311,7 +2312,7 @@
                         }
                         
                     }
-                    NSLog(@"%@",expression_);
+                    SMLog(@"%@",expression_);
                 }
                 
             }
@@ -2320,7 +2321,7 @@
         
     }
 
-    NSLog(@" final component array %@",final_Comonent_array);
+    SMLog(@" final component array %@",final_Comonent_array);
     
     NSString * regular_expression = expression_;
     for(int k = 0 ; k<[components count]; k++)
@@ -2426,7 +2427,7 @@
             
             NSString * concatinate_key = [NSString stringWithFormat:@"#$%@",key];
             
-            NSLog(@"%@", component_expression);
+            SMLog(@"%@", component_expression);
             
             regular_expression = [regular_expression stringByReplacingOccurrencesOfString:concatinate_key withString:component_expression];
             
@@ -2434,7 +2435,7 @@
         
     }
     
- //   NSLog(@"%@",regular_expression);
+ //   SMLog(@"%@",regular_expression);
     return regular_expression;
 }
 
@@ -2762,7 +2763,7 @@
                         NSString * query = [NSString stringWithFormat:@"SELECT record_type_id FROM  SFRecordType where object_api_name = '%@' and record_type = '%@'" ,target_object_name,mapping_value];
                         NSString * record_type_id = @"";
                         
-                        NSLog(@"RecordTypeId  valuemapping %@" ,query);
+                        SMLog(@"RecordTypeId  valuemapping %@" ,query);
                         sqlite3_stmt * recordTypeId_statement ;
                         if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &recordTypeId_statement, nil) == SQLITE_OK)
                         {
@@ -2950,7 +2951,7 @@
                             NSString * query = [NSString stringWithFormat:@"SELECT record_type_id FROM  SFRecordType where object_api_name = '%@' and record_type = '%@'" ,target_object_name,mapping_value];
                             NSString * record_type_id = @"";
                             
-                            NSLog(@"RecordTypeId  valuemapping %@" ,query);
+                            SMLog(@"RecordTypeId  valuemapping %@" ,query);
                             sqlite3_stmt * recordTypeId_statement ;
                             if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &recordTypeId_statement, nil) == SQLITE_OK)
                             {
@@ -3031,12 +3032,12 @@
         if(expression_ != nil && [expression_ length] != 0)
         {
             query = [NSString stringWithFormat:@"SELECT %@ FROM '%@' where %@ = '%@' and %@",query_field_names, source_object_name,field_name, source_record_id,expression_];
-            NSLog(@"SOURCETOTARGET %@", query);
+            SMLog(@"SOURCETOTARGET %@", query);
         }
         else
         {
             query = [NSString stringWithFormat:@"SELECT %@ FROM '%@' where %@ = '%@' ",query_field_names, source_object_name,field_name, source_record_id];
-            NSLog(@"SOURCETOTARGET %@", query);
+            SMLog(@"SOURCETOTARGET %@", query);
         }
        
         
@@ -3089,7 +3090,7 @@
            
     }
     
-    NSLog(@" Final array SOURCETOTARGET%@", final_array);
+    SMLog(@" Final array SOURCETOTARGET%@", final_array);
     
     return final_array;
 }
@@ -3220,7 +3221,7 @@
     if(synchronized_sqlite3_exec(appDelegate.db, [update_statement UTF8String],NULL, NULL, &err) != SQLITE_OK)
     {
         success = FALSE;
-        NSLog(@"ERROR IN UPDATING");
+        SMLog(@"ERROR IN UPDATING");
     }
     else
     {
@@ -3285,7 +3286,7 @@
     {
         success = FALSE;
         
-        NSLog(@"ERROR IN UPDATING %@" ,update_statement );
+        SMLog(@"ERROR IN UPDATING %@" ,update_statement );
     }
     else
     {
@@ -3394,14 +3395,14 @@
     }
     
     [Objects_Array release];
-    //NSLog(@"putApllRecords For ids %d %@",[dict count],dict);
+    //SMLog(@"putApllRecords For ids %d %@",[dict count],dict);
     return dict;
 }
 
 -(void)updateAllRecordsToSyncRecordsHeap:(NSMutableDictionary *)sync_data
 {
    
-    NSLog(@"SAMMAN updateAllRecordsToSyncRecordsHeap Processing starts: %@  for count %d", [NSDate date],[sync_data count]);
+    SMLog(@"SAMMAN updateAllRecordsToSyncRecordsHeap Processing starts: %@  for count %d", [NSDate date],[sync_data count]);
     sync_data = [sync_data retain];
     NSArray * all_objects = [sync_data allKeys];
     
@@ -3413,7 +3414,7 @@
     for(NSString * object_name in  all_objects)
     {
         NSMutableArray *  object_info = [sync_data objectForKey:object_name];
-        NSLog(@" no of records %d", [object_info count]);
+        SMLog(@" no of records %d", [object_info count]);
        // NSString* txnstmt = @"BEGIN TRANSACTION";
       
         for (int i = 0 ; i < [object_info count]; i++) 
@@ -3450,7 +3451,7 @@
             
             if(synchronized_sqlite3_exec(appDelegate.db, [update_query UTF8String],NULL, NULL, &err) != SQLITE_OK)
             {
-                NSLog(@"UNSUCCESS"); //RADHA TODAY
+                SMLog(@"UNSUCCESS"); //RADHA TODAY
               
             }
             [autorelease drain];
@@ -3462,7 +3463,7 @@
         
     }
     [sync_data release];
-    NSLog(@"SAMMAN updateAllRecordsToSyncRecordsHeap Processing ends: %@", [NSDate date]);
+    SMLog(@"SAMMAN updateAllRecordsToSyncRecordsHeap Processing ends: %@", [NSDate date]);
 }
 
 -(void)PutconflictRecordsIntoHeapFor:(NSString *)sync_type override_flag:(NSString *)override_flag_value
@@ -3474,7 +3475,7 @@
     NSString * local_id = @"", * object_name = @""  , * record_type = @"" , * sf_id = @"" ;
     NSString * query  = [NSString stringWithFormat:@"SELECT  local_id , object_name , record_type, sf_id  FROM '%@' WHERE sync_type = '%@'   and override_flag = '%@'" ,SYNC_ERROR_CONFLICT , sync_type , override_flag_value];
     
-   // NSLog(@" getAllRecords  %@", query);
+   // SMLog(@" getAllRecords  %@", query);
     if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1 , &statement , nil)  ==  SQLITE_OK)
     {
         while (synchronized_sqlite3_step(statement)== SQLITE_ROW)
@@ -3534,7 +3535,7 @@
 
 -(void)insertRecordIdsIntosyncRecordHeap:(NSMutableDictionary *)sync_data
 {
-    NSLog(@"SAMMAN insertRecordIdsIntosyncRecordHeap starts: %@", [NSDate date]);
+    SMLog(@"SAMMAN insertRecordIdsIntosyncRecordHeap starts: %@", [NSDate date]);
     sync_data = [sync_data retain];
     NSArray * all_objects = [sync_data allKeys];
     for(NSString * object_name in  all_objects)
@@ -3578,7 +3579,7 @@
             
             if(synchronized_sqlite3_exec(appDelegate.db, [update_query UTF8String],NULL, NULL, &err) != SQLITE_OK)
             {
-                NSLog(@"UNSUCCESS");
+                SMLog(@"UNSUCCESS");
             }
              [autorelesePool release];
         }
@@ -3587,10 +3588,10 @@
 
 
  
-    NSLog(@" sync_data %d",[sync_data retainCount]);
+    SMLog(@" sync_data %d",[sync_data retainCount]);
     [sync_data release];
-    NSLog(@"IComeOUTHere databaseinterface");
-    NSLog(@"SAMMAN insertRecordIdsIntosyncRecordHeap ends: %@", [NSDate date]);
+    SMLog(@"IComeOUTHere databaseinterface");
+    SMLog(@"SAMMAN insertRecordIdsIntosyncRecordHeap ends: %@", [NSDate date]);
 }
 
 #pragma mark query for trailer table
@@ -3618,7 +3619,7 @@
     NSString * local_id = @"", * object_name = @"" , * parent_object_name = @"" , *parent_local_id = @"" , * time_stamp= @"" , * record_type = @"";
     NSString * query  = [NSString stringWithFormat:@"SELECT  local_id , object_name  , parent_object_name, parent_local_id , timestamp , record_type  FROM '%@' WHERE operation = '%@' and sync_flag = 'false' and timestamp <= '%@' and record_sent = 'false'" ,SFDATATRAILER_TEMP , operation_type,request_time];
     
- //   NSLog(@" getAllRecords  %@", query);
+ //   SMLog(@" getAllRecords  %@", query);
     if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String],-1 , &statement , nil)  ==  SQLITE_OK)
     {
         
@@ -3669,7 +3670,7 @@
     
     today_Date = [dateFormatter stringFromDate:date];
     
- //   NSLog(@"%@  sf_id %@" , local_id, sf_id);
+ //   SMLog(@"%@  sf_id %@" , local_id, sf_id);
     
     
     NSString * insert_statement;
@@ -3830,7 +3831,7 @@
     char * err ;
     if(synchronized_sqlite3_exec(appDelegate.db, [update_statement UTF8String], nil, nil, &err) != SQLITE_OK)
     {
-        NSLog(@" failed to update ");
+        SMLog(@" failed to update ");
     }
     
 }
@@ -3842,7 +3843,7 @@
     char * err ;
     if(synchronized_sqlite3_exec(appDelegate.db, [query UTF8String], nil, nil, &err) != SQLITE_OK)
     {
-        NSLog(@" failed to insert into  SFDataTrailer_temp table");
+        SMLog(@" failed to insert into  SFDataTrailer_temp table");
     }
 }
 
@@ -3852,7 +3853,7 @@
     NSString *  queryStatemnt = [NSString stringWithFormat:@"DELETE FROM  '%@'", table_name];
     if (synchronized_sqlite3_exec(appDelegate.db, [queryStatemnt UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
-        NSLog(@"Failed to drop");
+        SMLog(@"Failed to drop");
     }
 
     
@@ -4195,7 +4196,7 @@
                             [appDelegate.dataBase deleteSequenceofTable:@"SVMXC__User_GPS_Log__c"];
                             if(!isUser_GPS_LogTableDelete)
                             {
-                                NSLog(@"Failed to delete location record");
+                                SMLog(@"Failed to delete location record");
                             }
                         }
                         else
@@ -4224,14 +4225,14 @@
                         }
                         else
                         {
-                            NSLog(@" trailer table Delete Not succeded");
+                            SMLog(@" trailer table Delete Not succeded");
                         }
                     }
                     count++;
                         
                         [final_dict release];
                     [new_local_id release];
-                    NSLog(@"Record %d" ,count );
+                    SMLog(@"Record %d" ,count );
                     
                 }
             }
@@ -4314,7 +4315,7 @@
     
     if (synchronized_sqlite3_exec(appDelegate.db, [updateStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
-       NSLog(@"Failed to UPDATE Childrelationship");
+       SMLog(@"Failed to UPDATE Childrelationship");
     }
 }
 
@@ -4405,7 +4406,7 @@
      
     if (synchronized_sqlite3_exec(appDelegate.db, [update UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
-        NSLog(@"Failed to drop");
+        SMLog(@"Failed to drop");
         return FALSE;
     }
     return TRUE;
@@ -4526,7 +4527,7 @@
     
     sqlite3_stmt * stmt ;
     
-    NSLog(@" IschildObject ----%@" , query);
+    SMLog(@" IschildObject ----%@" , query);
     if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK  )
     {
         while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
@@ -4556,7 +4557,7 @@
     char * err ;
     if(synchronized_sqlite3_exec(appDelegate.db, [delete_query UTF8String], NULL, NULL, &err))
     {
-        NSLog(@"Failed to DELETE");
+        SMLog(@"Failed to DELETE");
         return FALSE;
     }
     return YES;
@@ -4564,7 +4565,7 @@
 
 -(void)insertSyncConflictsIntoSYNC_CONFLICT:(NSMutableDictionary *)conflictDict
 {
-    NSLog(@"SAMMAN insertSyncConflictsIntoSYNC_CONFLICT Processing starts: %@", [NSDate date]);
+    SMLog(@"SAMMAN insertSyncConflictsIntoSYNC_CONFLICT Processing starts: %@", [NSDate date]);
     NSArray * all_objects = [conflictDict allKeys];
     for(NSString * object_name in  all_objects)
     {
@@ -4609,13 +4610,13 @@
             
             if(synchronized_sqlite3_exec(appDelegate.db, [insert_query UTF8String],NULL, NULL, &err) != SQLITE_OK)
             {
-                NSLog(@"INSERTION INTO CONFLICT TABLE UNSUCCESS");
+                SMLog(@"INSERTION INTO CONFLICT TABLE UNSUCCESS");
             
             }
             
         }
     }
-    NSLog(@"SAMMAN insertSyncConflictsIntoSYNC_CONFLICT Processing ends: %@", [NSDate date]);
+    SMLog(@"SAMMAN insertSyncConflictsIntoSYNC_CONFLICT Processing ends: %@", [NSDate date]);
 }
 
 -(BOOL)DoesTrailerContainTheRecord:(NSString *)local_id  operation_type:(NSString *)operation_type  object_name:(NSString *)object_name
@@ -4695,7 +4696,7 @@
     NSString * local_id = @"", * object_name = @""  , * record_type = @"" , * sf_id = @"" , * override_flag = @"" ;
      
     
-    NSLog(@" getAllRecords  %@", query);
+    SMLog(@" getAllRecords  %@", query);
     if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1 , &statement , nil)  ==  SQLITE_OK)
     {
         while (synchronized_sqlite3_step(statement)== SQLITE_ROW)
@@ -4838,11 +4839,11 @@
 -(void) DeleterecordFromTableWithSf_Id:(NSString *)object_name sf_id:(NSString *)sf_id withColumn:(NSString *)columnName
 {
     NSString * delete_query = [NSString stringWithFormat:@"DELETE FROM '%@' WHERE %@ = '%@'" ,object_name, columnName, sf_id];
-    NSLog(@"delete_query - - %@",delete_query);
+    SMLog(@"delete_query - - %@",delete_query);
     char * err ;
     if(synchronized_sqlite3_exec(appDelegate.db, [delete_query UTF8String], NULL, NULL, &err))
     {
-        NSLog(@"Failed to DELETE ");
+        SMLog(@"Failed to DELETE ");
     }
 }
 
@@ -4898,7 +4899,7 @@
     
     NSString * local_id = @"", * object_name = @""  , * record_type = @"" , * sf_id = @"" , * override_flag = @"" ;
     
-    NSLog(@" getAllRecords  %@", query);
+    SMLog(@" getAllRecords  %@", query);
     if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1 , &statement , nil)  ==  SQLITE_OK)
     {
         while (synchronized_sqlite3_step(statement)== SQLITE_ROW)
@@ -4968,7 +4969,7 @@
     char * err ;
     if(synchronized_sqlite3_exec(appDelegate.db, [delete_stmt UTF8String], NULL, NULL, &err))
     {
-        NSLog(@"Failed to DELETE ");
+        SMLog(@"Failed to DELETE ");
     }
     
 }
@@ -5124,7 +5125,7 @@
     char * err ;
     if(synchronized_sqlite3_exec(appDelegate.db, [query UTF8String], NULL, NULL, &err))
     {
-        NSLog(@"Failed to UPDATE SFOBJECTFIELD ");
+        SMLog(@"Failed to UPDATE SFOBJECTFIELD ");
         return FALSE;
     }
     return TRUE;
@@ -5145,7 +5146,7 @@
     char * err ;
     if(synchronized_sqlite3_exec(appDelegate.db, [query UTF8String], NULL, NULL, &err))
     {
-        NSLog(@"Failed to UPDATE SFPicklist ");
+        SMLog(@"Failed to UPDATE SFPicklist ");
         return FALSE;
     }
     return TRUE;
@@ -5387,10 +5388,10 @@
         char * err;
         NSString * delete_Statement = [[NSString alloc] initWithFormat:@"DELETE FROM '%@' where upper(Id) not in (SELECT upper(WhatId) FROM Event) and  upper(Id) not in (SELECT upper(Id) FROM LookUpFieldValue)",str];
         
-        NSLog(@"delete Statementb %@" , delete_Statement);
+        SMLog(@"delete Statementb %@" , delete_Statement);
         if (synchronized_sqlite3_exec(appDelegate.db, [delete_Statement UTF8String], NULL, NULL, &err) != SQLITE_OK)
         {
-            NSLog(@"Unsucces deleteDownloadCriteriaObjects");
+            SMLog(@"Unsucces deleteDownloadCriteriaObjects");
         }
         [delete_Statement release];
     }
