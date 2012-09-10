@@ -17,6 +17,7 @@
 #import "ManualDataSync.h"
 #import "SFMPageController.h"
 #import "ManualDataSync.h"
+extern void SVMXLog(NSString *format, ...);
 
 
 #define VAL 2
@@ -192,14 +193,14 @@
     BOOL isReachable = [currentReach boolValue];
     if (isReachable)
     {
-        NSLog(@"ModalViewController Internet Reachable");
+        SMLog(@"ModalViewController Internet Reachable");
         // Special Handling
         // Enable slider
         [slider setUserInteractionEnabled:YES];
     }
     else
     {
-        NSLog(@"ModalViewController Internet Not Reachable");
+        SMLog(@"ModalViewController Internet Not Reachable");
         // Special Handling
         // Disable slider
         [slider setUserInteractionEnabled:NO];
@@ -224,7 +225,7 @@
 
 - (void) removeCrashProtector
 {
-    NSLog(@"Removed Crash Protector");
+    SMLog(@"Removed Crash Protector");
     
     [self enableUI];
 }
@@ -246,13 +247,13 @@
 #pragma mark Setup Tasks
 - (void) setupTasksForDate:(NSString *)date
 {
-    NSLog(@"SetupTask");
+    SMLog(@"SetupTask");
     //[iOSObject queryTasksForDate:date];
     
     //Shrinivas
     NSMutableArray * _tasks = [[[NSMutableArray alloc] initWithCapacity:0]autorelease]; 
     _tasks = [appDelegate.calDataBase didGetTaskFromDB:date];
-    NSLog(@"%@", _tasks);
+    SMLog(@"%@", _tasks);
     if (taskView == nil)
         taskView = [[TaskViewController alloc] initWithNibName:@"TaskViewController" bundle:nil];
     [taskView refreshWithTasks:_tasks];
@@ -261,7 +262,7 @@
 // Callback Method
 - (void) didQueryTasksForDate:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
-    NSLog(@"didQueryTasks");
+    SMLog(@"didQueryTasks");
     NSMutableArray * _tasks = [[NSMutableArray alloc] initWithCapacity:0];
     
     NSArray * taskArray = [result records];
@@ -344,7 +345,7 @@
 {
     [activity startAnimating];
     NSDictionary * startEndTime = [event getEventStartEndTime];
-    NSLog(@"%@", startEndTime);
+    SMLog(@"%@", startEndTime);
     
     NSString * startTime = [startEndTime objectForKey:STARTTIME];
     NSString * endTime = [startEndTime objectForKey:ENDTIME];
@@ -470,7 +471,7 @@
 {
 	//    [rightPaneParent setUserInteractionEnabled:NO];
     [self enableUI];
-    NSLog(@"currentdate =  %@", currentDate);
+    SMLog(@"currentdate =  %@", currentDate);
     [self setEventsView:currentDate];
     if ((weekView != nil) && ([weekView retainCount] > 0))
     {
@@ -483,7 +484,7 @@
 
 - (void) didUpdateObjects:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
 {
-    NSLog(@"Updated objects");
+    SMLog(@"Updated objects");
 	
 	[self refreshCacheData];
     [self setupEventsOnView:rightPane];
@@ -620,7 +621,7 @@
     }
 	
 	
-    NSLog(@"%@", appDelegate.workOrderEventArray);
+    SMLog(@"%@", appDelegate.workOrderEventArray);
 	
     if ([appDelegate.workOrderEventArray count] == 0)
     {
@@ -860,27 +861,27 @@
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-    // NSLog(@"willRotateToInterfaceOrientation");
+    // SMLog(@"willRotateToInterfaceOrientation");
 }
 
 - (void)willAnimateFirstHalfOfRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-    // NSLog(@"willAnimateFirstHalfOfRotationToInterfaceOrientation");
+    // SMLog(@"willAnimateFirstHalfOfRotationToInterfaceOrientation");
 }
 
 - (void)didAnimateFirstHalfOfRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
 {
-    // NSLog(@"didAnimateFirstHalfOfRotationToInterfaceOrientation");
+    // SMLog(@"didAnimateFirstHalfOfRotationToInterfaceOrientation");
 }
 
 - (void)willAnimateSecondHalfOfRotationFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation duration:(NSTimeInterval)duration
 {
-    // NSLog(@"willAnimateSecondHalfOfRotationFromInterfaceOrientation");
+    // SMLog(@"willAnimateSecondHalfOfRotationFromInterfaceOrientation");
 }
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation duration:(NSTimeInterval)duration
 {
-    // NSLog(@"willAnimateRotationToInterfaceOrientation");
+    // SMLog(@"willAnimateRotationToInterfaceOrientation");
 	
     if (interfaceOrientation == UIInterfaceOrientationPortrait)
     {
@@ -1022,7 +1023,7 @@
     // Set calendar frame
     calendar.view.frame = CGRectMake(0, 0, 444, 216);
     [leftPane addSubview:calendar.view];
-	//  NSLog(@"%@", eventViewArray);
+	//  SMLog(@"%@", eventViewArray);
 }
 
 
@@ -1248,8 +1249,8 @@
     }
     currentDate = [[calendar getTodayString] retain];
 	
-	NSLog(@" SetDate - %@",currentDate);
-    NSLog(@"%d", date);
+	SMLog(@" SetDate - %@",currentDate);
+    SMLog(@"%d", date);
     
     appDelegate.dateClicked = currentDate;
 	//pavaman 12th Jan 2011
@@ -1257,7 +1258,7 @@
 	{
 		didFirstTimeLoad = FALSE;		
 		NSArray *week_bounds = [calendar getWeekBoundaries:currentDate];
-        NSLog(@"%@", week_bounds);
+        SMLog(@"%@", week_bounds);
 	}
 	
     NSString * _date = [calendar getTodayString];
@@ -1273,7 +1274,7 @@
     NSMutableArray * currentDateRange = [appDelegate getWeekdates:currentDate];
     
     appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0] endDate:[currentDateRange objectAtIndex:1]];   //Shrinivas 
-    NSLog(@"app = %@", appDelegate.wsInterface.eventArray);
+    SMLog(@"app = %@", appDelegate.wsInterface.eventArray);
     
     
     if ( (appDelegate.wsInterface.eventArray != nil ) && [appDelegate.wsInterface.eventArray count] > 0 )
@@ -1293,7 +1294,7 @@
                 appDelegate.wsInterface.startDate = [appDelegate.wsInterface.currentDateRange objectAtIndex:0];
                 appDelegate.wsInterface.endDate = [appDelegate.wsInterface.currentDateRange objectAtIndex:1];
 				
-                NSLog(@"%@ %@", appDelegate.wsInterface.startDate, appDelegate.wsInterface.endDate);
+                SMLog(@"%@ %@", appDelegate.wsInterface.startDate, appDelegate.wsInterface.endDate);
             }
             // Samman - 24 Sep, 2011 - Removed following WSInterface GetEvents call as it is a duplicate call
 			//            [appDelegate.wsInterface getEventsForStartDate:appDelegate.wsInterface.startDate EndDate:appDelegate.wsInterface.endDate];
@@ -1307,7 +1308,7 @@
             
             appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0] endDate:[currentDateRange objectAtIndex:1]]; 
             //Shrinivas 
-            NSLog(@"app = %@", appDelegate.wsInterface.eventArray);
+            SMLog(@"app = %@", appDelegate.wsInterface.eventArray);
             [self reloadCalendar];
         }
     }
@@ -1320,21 +1321,21 @@
         NSMutableArray * currentDateRange = [appDelegate getWeekdates:currentDate];
         
         appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0] endDate:[currentDateRange objectAtIndex:1]]; 
-        NSLog(@"app = %@", appDelegate.wsInterface.eventArray);
+        SMLog(@"app = %@", appDelegate.wsInterface.eventArray);
         [self reloadCalendar];
     }
 }
 
 - (void) setEventsView:(NSString *)_date
 {
-    NSLog(@"%@", appDelegate.wsInterface.eventArray);
+    SMLog(@"%@", appDelegate.wsInterface.eventArray);
 	
     EventViewController * events = nil;
     NSDictionary * dict;
     NSString * workOrderName;
     NSString * subject;
 	
-    NSLog(@"%@ %@", appDelegate.wsInterface.startDate, appDelegate.wsInterface.endDate);
+    SMLog(@"%@ %@", appDelegate.wsInterface.startDate, appDelegate.wsInterface.endDate);
     
     NSArray * array = [rightPane subviews];
     for (int i = 0; i < [array count]; i++)
@@ -1344,59 +1345,59 @@
     [eventPositionArray removeAllObjects];
     [eventViewArray removeAllObjects];
 	
-    NSLog(@"%@", appDelegate.wsInterface.eventArray);
+    SMLog(@"%@", appDelegate.wsInterface.eventArray);
     for ( int i = 0; i < [appDelegate.wsInterface.eventArray count]; i++ )
     {
         dict = [appDelegate.wsInterface.eventArray objectAtIndex:i];
-        NSLog(@"%@", dict);
+        SMLog(@"%@", dict);
         workOrderName = [dict objectForKey:ADDITIONALINFO];
         subject = [dict objectForKey:SUBJECT];
         
-        NSLog(@"%@ %@", workOrderName, subject);
+        SMLog(@"%@ %@", workOrderName, subject);
         
         NSDate * eventDateTime = [dict objectForKey:ACTIVITYDATE];
-        NSLog(@"%@",eventDateTime);
+        SMLog(@"%@",eventDateTime);
 		
-        NSLog(@"Setdate = %@", _date);
+        SMLog(@"Setdate = %@", _date);
         
         NSString * activtyDate  = [self dateStringConversion:eventDateTime];
-        NSLog(@"%@",activtyDate);
+        SMLog(@"%@",activtyDate);
 		
         
         eventDateTime = [dict objectForKey:ACTIVITYDTIME];
-        NSLog(@"%@",eventDateTime);
+        SMLog(@"%@",eventDateTime);
         
         NSString * dateString = [self dateStringConversion:eventDateTime];
         
         NSString * activityDateTime = dateString;
-        NSLog(@"Activitydatetime = %@", activityDateTime);
+        SMLog(@"Activitydatetime = %@", activityDateTime);
         
 		//    NSString * eventDate = [activityDateTime substringToIndex:10];
-		//    NSLog(@"eventDate = %@", eventDate);
+		//    SMLog(@"eventDate = %@", eventDate);
         
         eventDateTime = [dict objectForKey:STARTDATETIME];
-        NSLog(@"%@",eventDateTime);
+        SMLog(@"%@",eventDateTime);
         
         dateString = [self dateStringConversion:eventDateTime];
         
         NSString * startDateTime = dateString;
-        NSLog(@"Startdatetime = %@", startDateTime);
+        SMLog(@"Startdatetime = %@", startDateTime);
         
         NSString * eventDate = [startDateTime substringToIndex:10];
-		NSLog(@"eventDate = %@", eventDate);
+		SMLog(@"eventDate = %@", eventDate);
 		
         eventDateTime = [dict objectForKey:ENDDATETIME];
-        NSLog(@"%@",eventDateTime);
+        SMLog(@"%@",eventDateTime);
         
         dateString = [self dateStringConversion:eventDateTime];
         
         NSString * endDateTime = dateString;
-        NSLog(@"Enddatetime = %@", endDateTime);
+        SMLog(@"Enddatetime = %@", endDateTime);
 		
         NSString * startime = [startDateTime substringFromIndex:11];
         [startime substringToIndex:2];
 		
-        NSLog(@"Starttime = %@", startime);
+        SMLog(@"Starttime = %@", startime);
         
         NSString * duration = [dict objectForKey:DURATIONINMIN];
         
@@ -1404,7 +1405,7 @@
         events.delegate = self;
         
         // processName, processId, recordId, objectName, createdDate, accountId;
-        NSLog(@"%@", [dict objectForKey:WHATID]);
+        SMLog(@"%@", [dict objectForKey:WHATID]);
         
         
         events.view.tag = [eventViewArray count];
@@ -1428,7 +1429,7 @@
             NSDictionary * dict = [appDelegate.view_layout_array objectAtIndex:v];
             NSString * object_label = [dict objectForKey:VIEW_OBJECTNAME];
             object_label = [object_label uppercaseString];
-            NSLog(@"%@ %@", object_label, objectAPIName);
+            SMLog(@"%@ %@", object_label, objectAPIName);
             if ([object_label isEqualToString:objectAPIName])
             {
                 events.processId = ([dict objectForKey:VIEW_SVMXC_ProcessID]!=nil)?[dict objectForKey:VIEW_SVMXC_ProcessID]:@"";
@@ -1441,11 +1442,11 @@
         //NSString * colourCode = [dict objectForKey:COLORCODE];
         NSString * colourCode = [appDelegate.calDataBase getColorCodeForPriority:([dict objectForKey:WHATID] != nil)?[dict objectForKey:WHATID]:@""];
         UIColor * color = [appDelegate colorForHex:colourCode];
-        NSLog(@"%@", color);
+        SMLog(@"%@", color);
         
         if ( [_date isEqualToString:eventDate] == TRUE )
         {
-            NSLog(@"%@ %@", [rightPane description], events.processName);
+            SMLog(@"%@ %@", [rightPane description], events.processName);
             [rightPane addSubview:events.view];
             [events setEvent:workOrderName Time:startime Duration:(CGFloat)[duration intValue]/60 Color:color];
             [events setLabelWorkorder:workOrderName Subject:subject];  
@@ -1726,12 +1727,12 @@
     }
     @catch (NSException *exception)
     {
-        NSLog(@"touchesBegan: Caught & Handled Exception.");
+        SMLog(@"touchesBegan: Caught & Handled Exception.");
         [activity stopAnimating];
     }
     @finally
     {
-        NSLog(@"touchesBegan: Finally Handled Exception.");
+        SMLog(@"touchesBegan: Finally Handled Exception.");
         [activity stopAnimating];
     }
 }
@@ -1752,7 +1753,7 @@
     if ([touch view] == rightPane)
     {
         CGPoint location = [touch locationInView:rightPaneParent];
-        // // NSLog(@"Right pane y = %f", rightPane.frame.origin.y);
+        // // SMLog(@"Right pane y = %f", rightPane.frame.origin.y);
         if ((rightPane.frame.origin.y <= 0) && (rightPane.frame.origin.y >= (-1 * rightPane.frame.size.height + rightPaneParent.frame.size.height)))
         {
             CGFloat diff = location.y - initialPoint.y;        
@@ -1864,8 +1865,8 @@
                     didRunOperation = YES;
                     if ([updatestartDateTime length] > 0 && [updateendDateTime length] > 0)
                     {
-                        NSLog(@"%@", updatestartDateTime);
-                        NSLog(@"%@", eventView.eventId);
+                        SMLog(@"%@", updatestartDateTime);
+                        SMLog(@"%@", eventView.eventId);
                         [appDelegate.calDataBase updateMovedEventWithStartTime:updatestartDateTime EndDate:updateendDateTime RecordID:eventView.eventId];
                         
                         //sahana Event Update  to datatriler table
@@ -1889,7 +1890,7 @@
                     
                     //Shrinivas
                     
-                    NSLog(@"%@ %@",appDelegate.wsInterface.startDate, appDelegate.wsInterface.endDate);
+                    SMLog(@"%@ %@",appDelegate.wsInterface.startDate, appDelegate.wsInterface.endDate);
                     NSMutableArray * currentDateRange = [appDelegate getWeekdates:currentDate];
                     
                     appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0] endDate:[currentDateRange objectAtIndex:1]];                     
@@ -1911,11 +1912,11 @@
     }
     @catch (NSException *exception)
     {
-        NSLog(@"touchesEnded: Caught & Handled Exception.");
+        SMLog(@"touchesEnded: Caught & Handled Exception.");
     }
     @finally
     {
-        NSLog(@"touchesEnded: Finally Handled Exception.");
+        SMLog(@"touchesEnded: Finally Handled Exception.");
     }
     
 	[self enableUI];
@@ -1941,11 +1942,11 @@
     }
     @catch (NSException *exception)
     {
-        NSLog(@"touchesCancelled: Caught & Handled Exception.");
+        SMLog(@"touchesCancelled: Caught & Handled Exception.");
     }
     @finally
     {
-        NSLog(@"touchesCancelled: Finally Handled Exception.");
+        SMLog(@"touchesCancelled: Finally Handled Exception.");
     }
 }
 
