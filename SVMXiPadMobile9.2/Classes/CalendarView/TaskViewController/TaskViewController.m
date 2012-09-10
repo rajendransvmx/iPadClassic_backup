@@ -7,6 +7,7 @@
 //
 
 #import "TaskViewController.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation TaskViewController
 
@@ -51,7 +52,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    NSLog(@"%@", tasks);
+    SMLog(@"%@", tasks);
     return [tasks count];
 }
 
@@ -146,15 +147,15 @@
     didGetId = FALSE;
     //[iOSObject create:objects];
     
-    NSLog(@"%@", task);
-    NSLog(@"%@", resultId);
-    NSLog(@"%@", [task objectAtIndex:1]);
+    SMLog(@"%@", task);
+    SMLog(@"%@", resultId);
+    SMLog(@"%@", [task objectAtIndex:1]);
 
     if (resultId != nil)
         [task addObject:resultId];
-    NSLog(@"%@", task);
+    SMLog(@"%@", task);
 
-    NSLog(@"%@", tasks);
+    SMLog(@"%@", tasks);
 
     [objects release];
     [cObj release];
@@ -180,7 +181,7 @@
 {
     NSArray * arr = (NSArray*)result;
     
-    NSLog(@"%@", [arr objectAtIndex:0]);
+    SMLog(@"%@", [arr objectAtIndex:0]);
     NSString * str = (NSString*) [arr objectAtIndex:0];
     
     resultId = [[NSString alloc] initWithFormat:@"%@", (NSString*)str];

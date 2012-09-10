@@ -9,6 +9,7 @@
 #import "SFMFullResultViewController.h"
 #import "iServiceAppDelegate.h"
 #define TableViewResultViewCellHeight 50
+extern void SVMXLog(NSString *format, ...);
 
 @interface SFMFullResultViewController ()
 
@@ -37,7 +38,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-//    NSLog(@"Display Values = %@",data);
+//    SMLog(@"Display Values = %@",data);
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     [actionButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Done-Back-Button.png"] forState:UIControlStateNormal];
     [actionButton setTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_SRCH_CLOSE] forState:UIControlStateNormal];
@@ -126,7 +127,7 @@
         if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
         {
             field1 = (char *) synchronized_sqlite3_column_text(labelstmt,0);
-//            NSLog(@"%s",field1);
+//            SMLog(@"%s",field1);
             if(field1)
                 localId = [NSString stringWithFormat:@"%s", field1];
             else
@@ -144,7 +145,7 @@
         if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
         {
             field1 = (char *) synchronized_sqlite3_column_text(labelstmt,0);
-//            NSLog(@"%s",field1);
+//            SMLog(@"%s",field1);
             if(field1)
                 processId = [NSString stringWithFormat:@"%s", field1];
         }

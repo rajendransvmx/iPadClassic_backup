@@ -10,6 +10,8 @@
 #import "SFMResultDetailViewController.h"
 #import "iServiceAppDelegate.h"
 #define ResultTableViewCellHeight 45
+extern void SVMXLog(NSString *format, ...);
+
 @interface SFMResultMasterViewController ()
 
 @end
@@ -97,15 +99,15 @@
 }
 - (void) reachabilityChanged: (NSNotification* )notification 
 {
-    NSLog(@"Notification :-%@",[notification name]);
+    SMLog(@"Notification :-%@",[notification name]);
     if(appDelegate.isInternetConnectionAvailable)
     {
-        NSLog(@"Internet is Available");
+        SMLog(@"Internet is Available");
         searchFilterSwitch.enabled=TRUE;
     }
     else
     {
-        NSLog(@"Internet is Not Available");
+        SMLog(@"Internet is Not Available");
         [searchFilterSwitch setOn:NO];
         searchFilterSwitch.enabled=FALSE;
     }
@@ -114,7 +116,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    NSLog(@"Data = %@",searchData);
+    SMLog(@"Data = %@",searchData);
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
 
     [activity setHidden:TRUE];
@@ -168,7 +170,7 @@
 {
     BOOL state = [sender isOn];
     NSString *rez = state == YES ? @"YES" : @"NO";
-//    NSLog(@"%@",rez);
+//    SMLog(@"%@",rez);
     if( state == NO)
     {
         [resultDetailView.detailTable reloadData];
@@ -214,7 +216,7 @@
     // present and release the controller
     [self presentModalViewController: reader animated: YES];
     [reader release];
-    NSLog(@"Launch Bar Code Scanner");
+    SMLog(@"Launch Bar Code Scanner");
 }
 
 #pragma mark - ZBar Delegate Methods
@@ -224,13 +226,13 @@
 {
     // ADD: get the decode results
     id<NSFastEnumeration> results =[info objectForKey: ZBarReaderControllerResults];
-    NSLog(@"result=%@",results);
+    SMLog(@"result=%@",results);
     ZBarSymbol *symbol = nil;
     for(symbol in results)
         break;
     
     searchString.text = symbol.data;    
-    NSLog(@"symbol.data=%@",symbol.data);    
+    SMLog(@"symbol.data=%@",symbol.data);    
     // ADD: dismiss the controller (NB dismiss from the *reader*!)
     [reader dismissModalViewControllerAnimated: YES];
     [self performSelector:@selector(refineSearch:)];
@@ -419,7 +421,7 @@
 	[activity setHidden:FALSE];
 	[activity startAnimating];
     [searchString resignFirstResponder];
-    NSLog(@"Last Selected Index Path Row = %d",lastSelectedIndexPath.row);
+    SMLog(@"Last Selected Index Path Row = %d",lastSelectedIndexPath.row);
     [tableView deselectRowAtIndexPath:lastSelectedIndexPath animated:YES];
     [tableView deselectRowAtIndexPath:indexPath animated:YES];    
     UIImage * image = nil;
@@ -560,7 +562,7 @@
 - (void) reloadTableWithOnlineData:(NSMutableDictionary *)_onlineDict
 {
 	onlineRecordDict = _onlineDict;
-	NSLog(@"%@", onlineRecordDict);
+	SMLog(@"%@", onlineRecordDict);
 	[self.searchMasterTable reloadData];
 }
 

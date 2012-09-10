@@ -11,6 +11,7 @@
 #import "iOSInterfaceObject.h"
 
 #import <QuartzCore/QuartzCore.h>
+extern void SVMXLog(NSString *format, ...);
 
 
 @implementation EventViewController
@@ -33,14 +34,14 @@
 //Radha 4th April 2011
 - (void) setLabelWorkorder:(NSString *)name Subject:(NSString *)_name
 {
-    NSLog(@"%@ %@", name, _name);
+    SMLog(@"%@ %@", name, _name);
     label.text = name;
     if (self.view.frame.size.height < 42)
         subject1.text = _name;
     else
         subject.text = _name;
     
-    NSLog(@"%@ %@", label.text, subject.text);
+    SMLog(@"%@ %@", label.text, subject.text);
 }
 
 + (void) addEventRect:(CGRect)rect
@@ -73,7 +74,7 @@
     time = [self getTimeMultipleFromStringTime:_time];
     duration = _duration;
     label.text = event;
-    NSLog(@"label = %@  duration = %f, time = %f", label.text, duration, time );
+    SMLog(@"label = %@  duration = %f, time = %f", label.text, duration, time );
     
     imageView.layer.cornerRadius = 10;
     imageView.alpha = 0.75;
@@ -103,10 +104,10 @@
     // X = 77
     // Height = duration * 27 + duration * kGAP
     CGFloat y = [self setYBasedOnTime:time];
-    // NSLog(@"Y Coord = %f", y);
+    // SMLog(@"Y Coord = %f", y);
     CGFloat durationFactor = (duration<1.0)?1.0:(duration/0.5);
     CGFloat height = (duration * kTIMEMULTIPLE * 2) + ((durationFactor - 1) * kGAP);
-    // NSLog(@"Height = %f", height);
+    // SMLog(@"Height = %f", height);
     CGRect frame = CGRectMake(EVENTX, y, EVENTWIDTH, height);
     
     self.view.frame = frame;
@@ -216,7 +217,7 @@
     
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 0, FALSE))
     {
-        NSLog(@"EventViewController moveTo in while loop");
+        SMLog(@"EventViewController moveTo in while loop");
         if (didDismissalertview == TRUE)
         {
             didDismissalertview = FALSE;

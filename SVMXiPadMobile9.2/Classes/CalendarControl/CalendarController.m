@@ -10,6 +10,7 @@
 #import "LocalizationGlobals.h"
 
 #import "iServiceAppDelegate.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation CalendarController
 
@@ -577,7 +578,7 @@
 	for (int i = weekday-1; i < numDays + weekday - 1; i++)
         // for (int i = 0; i < numDays; i++)
 	{
-        // // NSLog(@"Date inserted = %@", [NSString stringWithFormat:@"%d", dayCount]);
+        // // SMLog(@"Date inserted = %@", [NSString stringWithFormat:@"%d", dayCount]);
 		[dates insertObject:[NSString stringWithFormat:@"%d", dayCount++] atIndex:i];
 		UIButton * button = [buttonArray objectAtIndex:i];
 		[button setTitle:[dates objectAtIndex:i] forState:UIControlStateNormal];
@@ -657,7 +658,7 @@
 	NSDate * NEWDay = [gregorian dateFromComponents:newDay];
 	NSDateComponents * newDateComponents = [gregorian components:(NSWeekdayCalendarUnit | NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit) fromDate:NEWDay];
 	NSInteger newWeekday = [newDateComponents weekday]==1?7:[newDateComponents weekday]-1;
-    NSLog(@"Tag = %d WeekDay = %d",[dateButton tag],newWeekday);
+    SMLog(@"Tag = %d WeekDay = %d",[dateButton tag],newWeekday);
     [newDay release];
     if (dateButton.titleLabel.text == nil)
     {
@@ -668,7 +669,7 @@
     selectedDate = dateButton;
     
     selDate = [selectedDate.titleLabel.text intValue];
-    // NSLog(@"%d", selDate);
+    // SMLog(@"%d", selDate);
     
     NSDateComponents * dayOne = [[NSDateComponents alloc] init];
     NSUInteger selectedDt = [selectedDate.titleLabel.text intValue];

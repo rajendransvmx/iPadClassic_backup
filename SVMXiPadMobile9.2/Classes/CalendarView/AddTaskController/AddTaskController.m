@@ -8,6 +8,7 @@
 
 #import "AddTaskController.h"
 #import "CalendarController.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation AddTaskController
 
@@ -87,7 +88,7 @@
     NSString *trimmed = [rawString stringByTrimmingCharactersInSet:whitespace];
     
     if ([trimmed length] == 0) {
-        NSLog(@"Empty String");
+        SMLog(@"Empty String");
     }
 
     if ([textView.text length] > 0 && [trimmed length] != 0)

@@ -10,6 +10,8 @@
 #import "DetailViewControllerForSFM.h"
 #import "SearchCriteriaViewController.h"
 #import "iServiceAppDelegate.h"
+extern void SVMXLog(NSString *format, ...);
+
 @interface MasterViewController ()
 @property(retain, nonatomic) NSMutableArray *sfmArray;
 @end
@@ -99,16 +101,16 @@
 }
 - (void) reachabilityChanged: (NSNotification* )notification 
 {
-    NSLog(@"Notification :-%@",[notification name]);
+    SMLog(@"Notification :-%@",[notification name]);
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     if(appDelegate.isInternetConnectionAvailable)
     {
-            NSLog(@"Internet is Available");
+            SMLog(@"Internet is Available");
             searchFilterSwitch.enabled=TRUE;
     }
     else
     {
-        NSLog(@"Internet is Not Available");
+        SMLog(@"Internet is Not Available");
         [searchFilterSwitch setOn:NO];
         searchFilterSwitch.enabled=FALSE;
     }
@@ -176,7 +178,7 @@
     [[self parentViewController]     presentModalViewController: reader
                                                      animated: YES];
     [reader release];
-    NSLog(@"Launch Bar Code Scanner");
+    SMLog(@"Launch Bar Code Scanner");
 }
 
 #pragma mark - ZBar Delegate Methods
@@ -186,13 +188,13 @@
 {
     // ADD: get the decode results
     id<NSFastEnumeration> results =[info objectForKey: ZBarReaderControllerResults];
-    NSLog(@"result=%@",results);
+    SMLog(@"result=%@",results);
     ZBarSymbol *symbol = nil;
     for(symbol in results)
         break;
     
     searchString.text = symbol.data;
-    NSLog(@"symbol.data=%@",symbol.data);    
+    SMLog(@"symbol.data=%@",symbol.data);    
     // ADD: dismiss the controller (NB dismiss from the *reader*!)
     [reader dismissModalViewControllerAnimated: YES];
 }

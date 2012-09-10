@@ -10,6 +10,7 @@
 #import "HTMLBrowser.h"
 #import "LocalizationGlobals.h"
 #import <QuartzCore/QuartzCore.h>
+extern void SVMXLog(NSString *format, ...);
 
 @implementation WeeklyViewController
 
@@ -95,12 +96,12 @@
     BOOL isReachable = [currentReach boolValue];
     if (isReachable)
     {
-        NSLog(@"Reachable");
+        SMLog(@"Reachable");
         isInternetConnectionAvailable = YES;
     }
     else
     {
-        NSLog(@"Not Reachable");
+        SMLog(@"Not Reachable");
         isInternetConnectionAvailable = NO;
         
         if (didRunOperation)
@@ -124,7 +125,7 @@
 
 - (void) removeCrashProtector
 {
-    NSLog(@"Removed Crash Protector");
+    SMLog(@"Removed Crash Protector");
     
     [self enableUI];
 }
@@ -146,7 +147,7 @@
     
     [self clearWeekView];
 
-    NSLog(@"%@", appDelegate.wsInterface.eventArray);
+    SMLog(@"%@", appDelegate.wsInterface.eventArray);
     for ( int i = 0; i < [appDelegate.wsInterface.eventArray count]; i++ )
     {
         dict = [appDelegate.wsInterface.eventArray objectAtIndex:i];
@@ -230,7 +231,7 @@
         
         events.view.tag = [eventViewArray count];
        
-        NSLog(@"%@", [dict objectForKey:SUBJECT]);
+        SMLog(@"%@", [dict objectForKey:SUBJECT]);
         events.processId = @"";
         events.eventId = ([dict objectForKey:EVENTID] != nil)?[dict objectForKey:EVENTID]:@"";
         
@@ -263,6 +264,17 @@
         
         NSString * colourCode = [appDelegate.calDataBase getColorCodeForPriority:([dict objectForKey:WHATID] != nil)?[dict objectForKey:WHATID]:@""];
         UIColor * color = [appDelegate colorForHex:colourCode];
+        
+        int _duration = [duration intValue];
+        if (_duration != 0)
+        {
+            NSString * colourCode = [appDelegate.calDataBase getColorCodeForPriority:([dict objectForKey:WHATID] != nil)?[dict objectForKey:WHATID]:@""];
+            color = [appDelegate colorForHex:colourCode];
+        }
+        else
+        {
+            color = [UIColor clearColor];
+        }
     
         
         if (flag)
@@ -292,12 +304,12 @@
 
 - (void) viewWillDisappear:(BOOL)animated
 {
-    // NSLog(@"viewWillDisappear");
+    // SMLog(@"viewWillDisappear");
 }
 
 - (void) viewDidDisappear:(BOOL)animated
 {
-    // NSLog(@"viewDidDisappear");
+    // SMLog(@"viewDidDisappear");
 }
 
 #pragma mark -
@@ -503,7 +515,7 @@
     NSUInteger index = [[weekDetails objectForKey:wWEEK] intValue]-1;
     NSMutableArray * array = [weeksArray objectAtIndex:index];
     
-    NSLog(@"%@", array);
+    SMLog(@"%@", array);
     currentWeek = index;
     // Do not get confused by the assignment below, sunday corresponds to monday's label, monday corresponds to 
     // tuesday's label and so on.
@@ -652,7 +664,7 @@
         
         if (!CGRectContainsRect(locationRect, sliderImage.frame))
         {
-            // NSLog(@"Location contains Rect %f, %f, %f, %f", sliderImage.frame.origin.x, sliderImage.frame.origin.y, sliderImage.frame.size.width, sliderImage.frame.size.height);
+            // SMLog(@"Location contains Rect %f, %f, %f, %f", sliderImage.frame.origin.x, sliderImage.frame.origin.y, sliderImage.frame.size.width, sliderImage.frame.size.height);
             [UIView beginAnimations:@"moveslider" context:nil];
             [UIView setAnimationDuration:0.3];
             [UIView setAnimationDelegate:self];
@@ -702,7 +714,7 @@
         
         if (!CGRectContainsRect(locationRect, sliderImage.frame))
         {
-            // NSLog(@"Location contains Rect %f, %f, %f, %f", sliderImage.frame.origin.x, sliderImage.frame.origin.y, sliderImage.frame.size.width, sliderImage.frame.size.height);
+            // SMLog(@"Location contains Rect %f, %f, %f, %f", sliderImage.frame.origin.x, sliderImage.frame.origin.y, sliderImage.frame.size.width, sliderImage.frame.size.height);
             [UIView beginAnimations:@"moveslider" context:nil];
             [UIView setAnimationDuration:0.3];
             [UIView setAnimationDelegate:self];
@@ -809,7 +821,7 @@
     NSString * _currentDate = [startEnd objectAtIndex:START_DATE];
   //  startDate = [startEnd objectAtIndex:START_DATE];
    // endDate = [startEnd objectAtIndex:END_DATE];
- //   NSLog(@"%@ %@", startDate, endDate);
+ //   SMLog(@"%@ %@", startDate, endDate);
     currenSliderPositionMoved = NO;
     
     // Samman - Thu Aug 4, 2011 - CLEAR eventPositionArray before display
@@ -1025,7 +1037,7 @@
     //new start time and end time
     [activity startAnimating];
     NSDictionary * startEndTime = [event getEventStartEndTime];
-    NSLog(@"%@", startEndTime);
+    SMLog(@"%@", startEndTime);
     
     NSString * startTime = [startEndTime objectForKey:STARTTIME];
     NSString * endTime = [startEndTime objectForKey:ENDTIME];
@@ -1055,7 +1067,7 @@
         date = [NSString stringWithFormat:@"0%d", [date intValue]];
     NSRange range = {8,2};
     int prevDate = [[startTime substringWithRange:range] intValue];  
-    NSLog(@"PrevDate = %d and Next Date =%d",prevDate,[date intValue]);
+    SMLog(@"PrevDate = %d and Next Date =%d",prevDate,[date intValue]);
     int diff = ([date intValue] > prevDate)?([date intValue] - prevDate):(prevDate - [date intValue]);
     if(diff > 7)
     {
@@ -1175,14 +1187,14 @@
 
 - (void) didUpdateObjects:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
 {
-    NSLog(@"Updated objects");
+    SMLog(@"Updated objects");
     
     [self setupEvents];
 }
 
 - (void) didCreateObjects:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
 {
-    NSLog(@"Created objects");
+    SMLog(@"Created objects");
 }
 
 - (CGRect) getSliderRectForLocation:(CGPoint)location
@@ -1217,7 +1229,7 @@
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation duration:(NSTimeInterval)duration
 {
-    // NSLog(@"week view - willAnimateRotationToInterfaceOrientation");
+    // SMLog(@"week view - willAnimateRotationToInterfaceOrientation");
 }
 
 - (void) setRotation:(UIInterfaceOrientation)_interfaceOrientation
@@ -1253,7 +1265,7 @@
             initialPosition = eventView.view.frame;
             flag = YES;
             didTap = YES;
-            // NSLog(@"EventView %d tapped", i);
+            // SMLog(@"EventView %d tapped", i);
             [weekViewPane bringSubviewToFront:eventView.view];
             break;
         }
@@ -1464,7 +1476,7 @@
         else
         {
             [self disableUI];
-            NSLog(@"%@", weeklyEventPositionArray);
+            SMLog(@"%@", weeklyEventPositionArray);
             CGRect oldRect = eventView.selfFrame;
             [eventView moveTo:eventView.view.frame];
 
@@ -1472,7 +1484,7 @@
             {
 
                 NSString * _currentDate;
-                NSLog(@"%@", weeklyEventPositionArray);
+                SMLog(@"%@", weeklyEventPositionArray);
                 if ([updatestartDateTime length] > 0 && [updateendDateTime length] > 0)
                 {
                     //Shrinivas 

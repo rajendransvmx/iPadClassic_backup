@@ -11,6 +11,8 @@
 #import "SFMResultMainViewController.h"
 #import "iPadScrollerViewController.h"
 #import "iServiceAppDelegate.h"
+extern void SVMXLog(NSString *format, ...);
+
 
 @interface DetailViewControllerForSFM ()
 @property(retain, nonatomic) UIPopoverController *masterPopoverController;
@@ -158,7 +160,7 @@
 }
 - (void) DismissViewController: (id) sender
 {
-//    NSLog(@"Dismiss Detail View Controller");
+//    SMLog(@"Dismiss Detail View Controller");
     [splitViewDelegate DismissSplitViewController];
 }
 #pragma mark - table view delegate methods
@@ -201,12 +203,12 @@
 - (void) searchButtonTapped:(id)sender withEvent:(UIEvent *) event
 {
     
-//    NSLog(@"Button Tapped");
+//    SMLog(@"Button Tapped");
     UIButton *button = sender;
      /*
     CGPoint correctedPoint = [button convertPoint:button.bounds.origin toView:self.detailTable]; 
     NSIndexPath *indexPath = [self.detailTable indexPathForRowAtPoint:correctedPoint]; 
-    NSLog(@"Button tapped in row %d", indexPath.row);
+    SMLog(@"Button tapped in row %d", indexPath.row);
     */
     NSIndexPath * indexPath = [self.detailTable indexPathForRowAtPoint: [[[event touchesForView:button] anyObject] locationInView: self.detailTable]];
     if ( indexPath == nil )
@@ -227,18 +229,18 @@
     NSArray *objects = [appDelegate.dataBase getConfigurationForProcess:processName];
     NSString *processId = [processDict objectForKey:@"Id"];
     
-   // NSLog(@"User Search Data = %@",self.masterViewController.searchString.text);
+   // SMLog(@"User Search Data = %@",self.masterViewController.searchString.text);
     SFMResultMainViewController *resultViewController = [[SFMResultMainViewController alloc] initWithNibName:@"SFMResultMainViewController" bundle:nil];
     resultViewController.filterString = self.masterView.searchString.text;
     resultViewController.processId = processId;
-    NSLog(@"Process ID = %@",processId);
+    SMLog(@"Process ID = %@",processId);
     resultViewController.searchCriteriaString = self.masterView.searchCriteria.text;
     resultViewController.searchCriteriaLimitString = self.masterView.searchLimitString.text;
     resultViewController.masterTableData = objects;
     resultViewController.masterTableHeader = [processDict objectForKey:@"SVMXC__Name__c"];
-    //NSLog(@"Master Table Header Value = %@",resultViewController.masterTableHeader);
+    //SMLog(@"Master Table Header Value = %@",resultViewController.masterTableHeader);
     resultViewController.switchStatus = self.masterView.searchFilterSwitch.on;
-    //NSLog(@"Switch Value = %d",resultViewController.switchStatus);
+    //SMLog(@"Switch Value = %d",resultViewController.switchStatus);
     //[tableData release];
     resultViewController.modalPresentationStyle = UIModalPresentationFullScreen;
     resultViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;

@@ -11,6 +11,7 @@
 #import "iOSInterfaceObject.h"
 
 #import <QuartzCore/QuartzCore.h>
+extern void SVMXLog(NSString *format, ...);
 
 @implementation WeeklyViewEvent
 
@@ -72,11 +73,11 @@
 
 -(void) setLabelsweeklyview:(NSArray *)event
 {
-    NSLog(@"%@",event);
-    NSLog(@"%@", workOrderName.text);
+    SMLog(@"%@",event);
+    SMLog(@"%@", workOrderName.text);
     subject.text = [event objectAtIndex:0];
     workOrderName.text = [event objectAtIndex:1];
-    NSLog(@"%@",subject.text);
+    SMLog(@"%@",subject.text);
 }
 - (CGFloat) getTimeMultipleFromStringTime:(NSString *)_time
 {
@@ -99,7 +100,16 @@
     CGFloat y = [self setYBasedOnTime:time];
 
     //RADHA FIX 19/01/12
-    CGFloat height = (duration * wEVENTHEIGHT) + ((duration - 1) * kwYGAP) - 10;
+    CGFloat height= 0;
+    if (duration != 0)
+    {
+        height = (duration * wEVENTHEIGHT) + ((duration - 1) * kwYGAP) - 10;
+    }
+    else
+    {
+        height = 0.0;
+    }
+
     CGRect frame = CGRectMake(x, y, wEVENTWIDTH, height);
     
     self.view.frame = frame;
@@ -220,7 +230,7 @@
     
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 0, FALSE))
     { 
-        NSLog(@"WeeklyViewEvent moveTo in while loop");
+        SMLog(@"WeeklyViewEvent moveTo in while loop");
         if ( didDismissAlertView == TRUE )
         {
             didDismissAlertView = FALSE;
@@ -415,7 +425,7 @@
     // return CGRectZero
     // else
     // return obtained CGRect
-    // NSLog(@"%f", self.view.frame.size.height);
+    // SMLog(@"%f", self.view.frame.size.height);
     CGRect bottomLocation = CGRectMake(location.origin.x, location.origin.y + self.view.frame.size.height, location.size.width, location.size.height);
     int iteration = 0;
     while (1)
@@ -458,7 +468,7 @@
     // return CGRectZero
     // else
     // return obtained CGRect
-    // NSLog(@"%f", self.view.frame.size.height);
+    // SMLog(@"%f", self.view.frame.size.height);
     CGRect bottomLocation = CGRectMake(location.origin.x, location.origin.y + self.view.frame.size.height, location.size.width, location.size.height);
     int iteration = 0;
     while (1)
@@ -620,8 +630,8 @@
             break;
     }
     
-    // NSLog(@"Rect = %d, %d, %d, %d", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
-    // NSLog(@"(X, Y) = %d, %d", x, y);
+    // SMLog(@"Rect = %d, %d, %d, %d", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+    // SMLog(@"(X, Y) = %d, %d", x, y);
     
     return rect;
 }
@@ -673,7 +683,7 @@
         }
     }
     
-    // NSLog(@"Can Move = %@", flag?@"YES":@"NO");
+    // SMLog(@"Can Move = %@", flag?@"YES":@"NO");
     return flag;
 }
 

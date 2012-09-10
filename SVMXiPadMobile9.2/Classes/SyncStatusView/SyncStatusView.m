@@ -10,6 +10,7 @@
 
 #import "SyncStatusView.h"
 #import "iServiceAppDelegate.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation SyncStatusView
 
@@ -67,7 +68,7 @@
     
     NSString * fooPath = [documentsPath stringByAppendingPathComponent:@"SYNC_HISTORY.plist"];
     NSDictionary * dictionary = [[NSDictionary alloc] initWithContentsOfFile:fooPath];
-    NSLog(@"%@", dictionary);
+    SMLog(@"%@", dictionary);
     
     lastSyncTime = @"";
     lastSyncTime = [dictionary objectForKey:@"last_initial_sync_time"];
@@ -76,7 +77,7 @@
     
     lastSyncTime = [formatter1 stringFromDate:_gmtDate];
     
-    NSLog(@"%@", lastSyncTime);;
+    SMLog(@"%@", lastSyncTime);;
     
     NSString * str1 = nil;
     NSString * str2 = nil;
@@ -93,9 +94,9 @@
         i = i - 12;
     }
     str3 = [NSString stringWithFormat:@"%d", i];
-    NSLog(@"%@", str3);
+    SMLog(@"%@", str3);
     NSRange range = NSMakeRange(17,2);
-    NSLog(@"%@", [lastSyncTime stringByReplacingCharactersInRange:range withString:str3]);
+    SMLog(@"%@", [lastSyncTime stringByReplacingCharactersInRange:range withString:str3]);
     lastSyncTime = [lastSyncTime stringByReplacingCharactersInRange:range withString:str3];
     
     //Header Label 1
@@ -208,9 +209,9 @@
         j = j - 12;
     }
     _str3 = [NSString stringWithFormat:@"%d", j];
-    NSLog(@"%@", _str3);
+    SMLog(@"%@", _str3);
     NSRange _range = NSMakeRange(17,2);
-    NSLog(@"%@", [lastSyncTime stringByReplacingCharactersInRange:_range withString:_str3]);
+    SMLog(@"%@", [lastSyncTime stringByReplacingCharactersInRange:_range withString:_str3]);
     nextSyncTime = [nextSyncTime stringByReplacingCharactersInRange:_range withString:_str3];
     
     nextSync = [[UILabel alloc] initWithFrame:CGRectMake(300, 76, 450, 45)];
@@ -234,7 +235,7 @@
     _status = [[UILabel alloc] initWithFrame:CGRectMake(300, 124, 450, 45)];
     _status.backgroundColor = [UIColor clearColor];
 	
-	NSLog(@"%d", appDelegate.SyncStatus);
+	SMLog(@"%d", appDelegate.SyncStatus);
     _status.text = [self getSyncronisationStatus];
     [self.view addSubview:_status];
     
@@ -260,7 +261,7 @@
 
     [formatter3 setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     
-    NSLog(@"%@",[dictionary objectForKey:LAST_INITIAL_META_SYNC_TIME]);
+    SMLog(@"%@",[dictionary objectForKey:LAST_INITIAL_META_SYNC_TIME]);
     
     lastSyncTime = @"";
     lastSyncTime = [dictionary objectForKey:LAST_INITIAL_META_SYNC_TIME];
@@ -269,7 +270,7 @@
     
     lastSyncTime = [formatter4 stringFromDate:_gmtDate3];
     
-    NSLog(@"%@", lastSyncTime);
+    SMLog(@"%@", lastSyncTime);
     
     NSString * str4 = nil;
     NSString * str5 = nil;
@@ -288,9 +289,9 @@
     }
     
     str6 = [NSString stringWithFormat:@"%d", k];
-    NSLog(@"%@", str6);
+    SMLog(@"%@", str6);
     NSRange range1 = NSMakeRange(17,2);
-    NSLog(@"%@", [lastSyncTime stringByReplacingCharactersInRange:range1 withString:str6]);
+    SMLog(@"%@", [lastSyncTime stringByReplacingCharactersInRange:range1 withString:str6]);
     lastSyncTime = [lastSyncTime stringByReplacingCharactersInRange:range1 withString:str6];
 
     lastSync = [[UILabel alloc] initWithFrame:CGRectMake(300, 192, 450, 45)];
@@ -355,9 +356,9 @@
     }
     
     _str6 = [NSString stringWithFormat:@"%d", p];
-    NSLog(@"%@", _str6);
+    SMLog(@"%@", _str6);
     NSRange range_MS = NSMakeRange(17,2);
-    NSLog(@"%@", [lastSyncTime stringByReplacingCharactersInRange:range_MS withString:_str6]);
+    SMLog(@"%@", [lastSyncTime stringByReplacingCharactersInRange:range_MS withString:_str6]);
     nextSyncTime = [nextSyncTime stringByReplacingCharactersInRange:range_MS withString:_str6];
     
     nextSync = [[UILabel alloc] initWithFrame:CGRectMake(300, 238, 450, 45)];
@@ -400,8 +401,8 @@
 
 -(void)refreshSyncStatus
 {
-    NSLog(@"Synchronization ..");
-    NSLog(@"%d", appDelegate.SyncStatus);
+    SMLog(@"Synchronization ..");
+    SMLog(@"%d", appDelegate.SyncStatus);
     
     _status.text = [self getSyncronisationStatus];
 } 

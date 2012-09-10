@@ -38,6 +38,11 @@
 - initWithDBName;
 //- (BOOL) isUsernamePresent:(NSString *)username password:(NSString *)passWord;
 
+//sahana  SIgnature change
+-(NSString *)getRecordoperationTypeforSignaturewithRecordId:(NSString *)recordId  objectApiNAme:(NSString *)apiname;
+-(NSString *)getOperationTypeForSignature:(NSString *)recordId  forObject:(NSString *)object_name;
+
+
 - (NSMutableArray*) getProcessFromDatabase;
 //- (NSMutableArray*) getViewLayoutsFromDB;
 - (NSMutableArray*) GetEventsFromDBWithStartDate:(NSString*)startdate endDate:(NSString*)endDate;
@@ -105,12 +110,12 @@
 - (void) insertSignatureData:(NSData *)signatureData WithId:(NSString *)signatureId RecordId:(NSString *)recordId                  apiName:(NSString *)oApiName WONumber:(NSString *)WONumber flag:(NSString *)sign_type;
 - (NSData *) retreiveSignatureimage:(NSString *)WONumber recordId:(NSString *)recordId;
 - (void) deleteSignature:(NSString *)WONumber;
-- (void) deleteAllSignatureData;
+- (void) deleteAllSignatureData:(NSString *) operationType;
 //shrinivas
 - (void) getSFIdForSignature:(NSString *)localId objectName:(NSString *)objectName;   //Method to be called only after Data Sync 
 - (void) retrieveSignatureFromSFDC:(NSString *)ID;
 - (void) writeSignatureToSFDC:(NSString *)SFId;
-- (void) getAllLocalIdsForSignature;
+- (void) getAllLocalIdsForSignature:(NSString *)operation_type;
 
 - (void) deletePDFF;
 

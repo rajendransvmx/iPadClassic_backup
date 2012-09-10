@@ -10,6 +10,7 @@
 #import "LoginController.h" 
 #import "LocalizationGlobals.h"
 #import "ManualDataSync.h"
+extern void SVMXLog(NSString *format, ...);
 
 iServiceAppDelegate *appDelegate;
 
@@ -440,7 +441,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     _manualDataSync = [[ManualDataSync alloc] init];   //btn merge
     
     self.internet_Conflicts = [self.calDataBase getInternetConflicts];
-    NSLog(@"%@", self.internet_Conflicts);
+    SMLog(@"%@", self.internet_Conflicts);
     
     if ([self.internet_Conflicts count] > 0 )
     {
@@ -584,7 +585,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     NSString *settingsBundle = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"bundle"];
     if(!settingsBundle) 
     {
-        //NSLog(@"Could not find Settings.bundle");
+        //SMLog(@"Could not find Settings.bundle");
         return;
     }
     
@@ -610,12 +611,14 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 - (void) didFinishWithError:(SOAPFault *)sFault
 {
     NSString *   soap_fault =  sFault.faultstring;
-    if([soap_fault Contains:@"System.LimitException"])
-    {
-        soap_fault = @"Meta Sync Failed Due To Too Many Script. Please contact your System Administrator.";
-       // self.didFinishWithError = TRUE;
-    }
-    UIAlertView * _alert = [[UIAlertView alloc] initWithTitle:@"Response Error" message:soap_fault delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+//    if([soap_fault Contains:@"System.LimitException"])
+//    {
+//        soap_fault = @"Meta Sync Failed Due To Too Many Script. Please contact your System Administrator.";
+//       // self.didFinishWithError = TRUE;
+//    }
+    NSString * response_error = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_RESPONSE_ERROR];
+    NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+    UIAlertView * _alert = [[UIAlertView alloc] initWithTitle:response_error message:soap_fault delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
     [_alert show];
     [_alert release];
 }
@@ -738,7 +741,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     if ( success)
     { 
         didBackUpDatabase = FALSE;
-        NSLog(@"\n db exist in the path");		
+        SMLog(@"\n db exist in the path");		
     }
     else    //didn't find db, need to copy
     {
@@ -746,19 +749,19 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         NSString *backupDbPath = [[NSBundle mainBundle] pathForResource:DATABASENAME1 ofType:DATABASETYPE1]; 
         if (backupDbPath == nil) 
         {
-            NSLog(@"\n db not able to create error");   
+            SMLog(@"\n db not able to create error");   
         }
         else 
         { 
             BOOL copiedBackupDb = [[NSFileManager defaultManager] copyItemAtPath:backupDbPath toPath:dataBase.dbFilePath error:&error]; 
             if (!copiedBackupDb) 
             {
-                NSLog(@"Failed to create writable database");
+                SMLog(@"Failed to create writable database");
                 NSAssert1(0, @"Failed to create writable database file with message '%@'.", [error localizedDescription]);
             }
             else
             {
-                NSLog(@"DATABASE IS SUCCESSUFULLY CREATED");
+                SMLog(@"DATABASE IS SUCCESSUFULLY CREATED");
             }
         } 
         didBackUpDatabase = TRUE;
@@ -767,7 +770,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     int ret = sqlite3_open ([dataBase.dbFilePath UTF8String],&db);
     if( ret != SQLITE_OK)
     { 
-        NSLog (@"couldn't open db:");
+        SMLog (@"couldn't open db:");
         NSAssert(0, @"Database failed to open.");		//throw another exception here
         return;
     }
@@ -883,14 +886,14 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         if (isSessionInavalid == YES)
         {
             didLoginAgain = NO;
-           [[ZKServerSwitchboard switchboard] loginWithUsername:self.username password:self.password target:loginController selector:@selector(didLogin:error:context:)]; 
+           [[ZKServerSwitchboard switchboard] loginWithUsername:self.username password:self.password target:self selector:@selector(didLogin:error:context:)]; 
             while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
             {
                 if (!self.isInternetConnectionAvailable)
                 {
                     break;
                 }                
-                NSLog(@"ReLogin");
+                SMLog(@"ReLogin");
                 if (didLoginAgain)
                     break;
             }
@@ -959,7 +962,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         [self.currentUserName release];
         self.currentUserName = nil;
     }
-    self.currentUserName = [[userInfo fullName] mutableCopy];
+    if( userInfo != nil )
+        self.currentUserName = [[userInfo fullName] mutableCopy];
     
     //Shrinivas -- code for firewall
     if (lr == nil && self._pingServer == TRUE)
@@ -1151,11 +1155,11 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     {
         if ([syncThread isFinished] == YES)
         {
-            NSLog(@"thread finished its work");
+            SMLog(@"thread finished its work");
         }
         else
         {
-            NSLog(@"thread is not finished its work");
+            SMLog(@"thread is not finished its work");
             return; //Please don't comment return
         }
         
@@ -1276,11 +1280,11 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     {
         if ([special_incremental_thread isFinished] == YES)
         {
-            NSLog(@"Specialthread  finished its work");
+            SMLog(@"Specialthread  finished its work");
         }
         else
         {
-            NSLog(@"Specialthread is not finished its work");
+            SMLog(@"Specialthread is not finished its work");
            // return;
         }
         
@@ -1413,7 +1417,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         _dict = nil;
     }
     
-    NSLog(@"%@", self.objectLabelName_array);
+    SMLog(@"%@", self.objectLabelName_array);
     
     if ( [self.objectLabelName_array count] > 1 )
     {
@@ -1534,11 +1538,11 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 //    {
 //        if ([metaSyncThread isFinished] == YES)
 //        {
-//            NSLog(@"Meta Sync");
+//            SMLog(@"Meta Sync");
 //        }
 //        else
 //        {
-//            NSLog(@"Meta Sync");
+//            SMLog(@"Meta Sync");
 //            return;
 //        }
 //        
@@ -1585,7 +1589,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
                                                      userInfo:nil 
                                                       repeats:YES];
     }
-    NSLog(@"%d", event_timer.retainCount);
+    SMLog(@"%d", event_timer.retainCount);
 }
 
 - (void) eventSyncTimer
@@ -1605,12 +1609,12 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     {
         if ([event_thread isExecuting])
         {
-            NSLog(@"Executing");
+            SMLog(@"Executing");
             return;            
         }
         else 
         {
-            NSLog(@"finished");
+            SMLog(@"finished");
                 
         }
     }
@@ -1678,7 +1682,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
     if(location != nil)
     {
-        NSLog(@"Latitude = %lf and Longitude = %lf",location.coordinate.latitude,location.coordinate.longitude );
+        SMLog(@"Latitude = %lf and Longitude = %lf",location.coordinate.latitude,location.coordinate.longitude );
         [locationInfo setObject:[NSString stringWithFormat:@"%lf",location.coordinate.latitude] forKey:@"latitude"];
         [locationInfo setObject:[NSString stringWithFormat:@"%lf",location.coordinate.longitude] forKey:@"longitude"];
         [locationInfo setObject:[NSString stringWithFormat:@" "] forKey:@"additionalInfo"];
@@ -1701,7 +1705,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         return;
      if(metaSyncRunning )
     {
-        NSLog(@"Meta Sync is Running");
+        SMLog(@"Meta Sync is Running");
         return;
     }
     NSString *enableLocationServiceStatus = [self.settingsDict objectForKey:ENABLE_LOCATION_UPDATE];
@@ -1737,19 +1741,19 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     if (userDefaults) 
     {        
         NSDate *lastLocationSettingUpdateTiemstamp = [userDefaults objectForKey:kLastLocationSettingUpdateTimestamp];
-        NSLog(@"Last Location Update From Thread  = %@",lastLocationSettingUpdateTiemstamp);
+        SMLog(@"Last Location Update From Thread  = %@",lastLocationSettingUpdateTiemstamp);
     }
     else 
     {
-        NSLog(@"Failed to get the User Defaults");
+        SMLog(@"Failed to get the User Defaults");
         return;
     }
     if(metaSyncRunning||dataSyncRunning)
     {
-        NSLog(@"Sync is Running");
+        SMLog(@"Sync is Running");
         return;
     }
-    NSLog(@"Location Update");
+    SMLog(@"Location Update");
     if(![CLLocationManager locationServicesEnabled])
     {
         NSMutableDictionary *locationInfo = [[NSMutableDictionary alloc] init];
@@ -1758,7 +1762,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         [locationInfo setObject:Location_Setting_Disable forKey:@"additionalInfo"];
         [locationInfo setObject:[NSString stringWithFormat:@"%@",newTimestamp ] forKey:@"timestamp"];
         [locationInfo setObject:[NSString stringWithFormat:@"Failure"] forKey:@"status"];
-        NSLog(@"Location = %@",locationInfo);
+        SMLog(@"Location = %@",locationInfo);
         [self.dataBase insertrecordIntoUserGPSLog:locationInfo];
         [locationInfo release];
     }
@@ -1770,7 +1774,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         [locationInfo setObject:App_Location_Setting_Disable forKey:@"additionalInfo"];
         [locationInfo setObject:[NSString stringWithFormat:@"%@",newTimestamp] forKey:@"timestamp"];
         [locationInfo setObject:[NSString stringWithFormat:@"Failure"] forKey:@"status"];
-        NSLog(@"Location = %@",locationInfo);
+        SMLog(@"Location = %@",locationInfo);
         [self.dataBase insertrecordIntoUserGPSLog:locationInfo];
         [locationInfo release];
     }
@@ -1785,25 +1789,25 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     
     if( [timerObject isEqual:event_timer] )
     {
-        NSLog(@"Invalidating EVENT TIMER");
+        SMLog(@"Invalidating EVENT TIMER");
         [self.event_timer invalidate];
         self.event_timer = nil;
     }
     if( [timerObject isEqual:datasync_timer] )
     {
-        NSLog(@"Invalidating DATASYNC TIMER");
+        SMLog(@"Invalidating DATASYNC TIMER");
         [self.datasync_timer invalidate];
         self.datasync_timer = nil;
     }
     if( [timerObject isEqual:metasync_timer] )
     {
-        NSLog(@"Invalidating METASYNC TIMER");
+        SMLog(@"Invalidating METASYNC TIMER");
         [self.metasync_timer invalidate];
         self.metasync_timer = nil;
     }    
     if( [timerObject isEqual:locationPingSettingTimer] )
     {
-        NSLog(@"Invalidating LocationPing TIMER");
+        SMLog(@"Invalidating LocationPing TIMER");
         [self.locationPingSettingTimer invalidate];
         self.locationPingSettingTimer = nil;
     }
@@ -1822,7 +1826,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     if (userDefaults) 
     {            
         packgeVersion = [userDefaults objectForKey:kPkgVersionCheckForGPS_AND_SFM_SEARCH];
-        NSLog(@"Pkg Version = %@",packgeVersion);
+        SMLog(@"Pkg Version = %@",packgeVersion);
         int _stringNumber = [packgeVersion intValue];
         if(_stringNumber >= (kMinPkgForGPS_AND_SFMSEARCH * 100000))
             status = YES;
@@ -1844,7 +1848,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     }
     
     NSString * stringNumber = [self.SVMX_Version stringByReplacingOccurrencesOfString:@"." withString:@""];
-    NSLog(@"Latest Installed Package = %@",stringNumber);
+    SMLog(@"Latest Installed Package = %@",stringNumber);
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     if (userDefaults) 
     {            

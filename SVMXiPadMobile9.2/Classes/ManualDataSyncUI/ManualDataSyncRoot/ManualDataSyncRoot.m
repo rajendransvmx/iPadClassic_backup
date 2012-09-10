@@ -10,6 +10,7 @@
 #import "iServiceAppDelegate.h"
 
 #import "ManualDataSyncDetail.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation ManualDataSyncRoot
 
@@ -178,7 +179,7 @@
         cell.backgroundView = bgView;
     }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    NSLog(@"Title = %@",cellLabel.text);
+    SMLog(@"Title = %@",cellLabel.text);
     return cell;
 }
 

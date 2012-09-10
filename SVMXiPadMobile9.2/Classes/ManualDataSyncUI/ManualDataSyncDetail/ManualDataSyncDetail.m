@@ -15,6 +15,7 @@
 #import "EventViewController.h"
 #import "ManualDataSync.h"
 #import "MultiLineController.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation ManualDataSyncDetail
 
@@ -300,37 +301,7 @@ PopoverButtons *popOver_view;
             [textView addGestureRecognizer:tapMe3];
             [tapMe3 release];
             
-          /*  NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_retry];
-            
-            UIButton * retry = [UIButton buttonWithType:UIButtonTypeCustom];
-            [retry setFrame:CGRectMake(420, 17, 100, 30)];
-            [retry setTitle:title forState:UIControlStateNormal];
-            
-            retry.enabled = TRUE;
-            UIImage * normalBtnImg = [UIImage imageNamed:@"SFM-Screen-Action-Popover-Button.png"];
-            normalBtnImg = [normalBtnImg stretchableImageWithLeftCapWidth:12 topCapHeight:8];
-            
-            [retry setBackgroundImage:normalBtnImg forState:UIControlStateNormal];
-            
-            UIImage * highlightBtnImg = [UIImage imageNamed:@"SFM-Screen-Action-Popover-Button2.png"];
-            highlightBtnImg = [highlightBtnImg stretchableImageWithLeftCapWidth:12 topCapHeight:8];
-            [retry setBackgroundImage:highlightBtnImg forState:UIControlStateHighlighted];
-        
-            NSString * data_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_data_sync];
-            NSString * event_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_events];
-            NSString * meta_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_meta_data_configuration];
-
-            if ([lbl.text isEqualToString:data_sync])
-                [retry addTarget:self action:@selector(retryDataSyncAgain) forControlEvents:UIControlEventTouchUpInside];
-            else if ([lbl.text isEqualToString:meta_sync])
-                [retry addTarget:self action:@selector(retryMetaDataSyncAgain) forControlEvents:UIControlEventTouchUpInside];
-            else if ([lbl.text isEqualToString:event_sync])
-                [retry addTarget:self action:@selector(retryEventSyncAgain) forControlEvents:UIControlEventTouchUpInside];
-            
-            //retryEventSyncAgain
-            
-            [background addSubview:retry];    */ 
-			
+         			
 			[bgView setBackgroundColor:[appDelegate colorForHex:@"#87AFC7"]];
 			cell.backgroundView = bgView;
 
@@ -380,13 +351,13 @@ PopoverButtons *popOver_view;
 		NSString * force  = [appDelegate.wsInterface.tagsDictionary objectForKey:conflict_applymy];
 		NSString * get_from_online = [appDelegate.wsInterface.tagsDictionary objectForKey:conflict_getFrom];
         NSString * online = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_select_online];
-		
+		NSString * changes = [appDelegate.wsInterface.tagsDictionary objectForKey:conflict_changes];
 		
         MultiLineController * mySegment = [[MultiLineController alloc] initWithItems:[NSArray arrayWithObjects:force,get_from_online,hold, nil]];
 			
 		mySegment.frame = CGRectMake(395, 10, 185, mySegment.frame.size.height * 1);
         mySegment.segmentedControlStyle = UISegmentedControlStyleBar;
-		[mySegment setSubTitle:@"Changes" forSegmentAtIndex:0];
+		[mySegment setSubTitle:changes forSegmentAtIndex:0];
 		[mySegment setSubTitle:online  forSegmentAtIndex:1];
 				
         MultiLineController * mySegment1 = [[MultiLineController alloc] initWithItems:[NSArray arrayWithObjects:retry,remove,hold,nil]];
@@ -523,35 +494,7 @@ PopoverButtons *popOver_view;
             [tapMe3 release];
             
     
-         /*   NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_retry];
-            [title sizeWithFont:[UIFont fontWithName:@"HelveticaBold" size:19]];
-            
-            UIButton * retry = [UIButton buttonWithType:UIButtonTypeCustom];
-            [retry setFrame:CGRectMake(420, 17, 100, 30)];
-            [retry setTitle:title forState:UIControlStateNormal];
-            
-            retry.enabled = TRUE;
-            UIImage * normalBtnImg = [UIImage imageNamed:@"SFM-Screen-Action-Popover-Button.png"];
-            normalBtnImg = [normalBtnImg stretchableImageWithLeftCapWidth:12 topCapHeight:8];
-            
-            [retry setBackgroundImage:normalBtnImg forState:UIControlStateNormal];
-            
-            UIImage * highlightBtnImg = [UIImage imageNamed:@"SFM-Screen-Action-Popover-Button2.png"];
-            highlightBtnImg = [highlightBtnImg stretchableImageWithLeftCapWidth:12 topCapHeight:8];
-            [retry setBackgroundImage:highlightBtnImg forState:UIControlStateHighlighted];
-            
-            NSString * data_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_data_sync];
-            NSString * event_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_events];
-            NSString * meta_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_meta_data_configuration];
-            
-            if ([lbl.text isEqualToString:data_sync])
-                [retry addTarget:self action:@selector(retryDataSyncAgain) forControlEvents:UIControlEventTouchUpInside];
-            else if ([lbl.text isEqualToString:meta_sync])
-                [retry addTarget:self action:@selector(retryMetaDataSyncAgain) forControlEvents:UIControlEventTouchUpInside];
-            else if ([lbl.text isEqualToString:event_sync])
-                [retry addTarget:self action:@selector(retryEventSyncAgain) forControlEvents:UIControlEventTouchUpInside];
-            
-            [background addSubview:retry]; */   
+          
 
 			[bgView setBackgroundColor:[appDelegate colorForHex:@"#87AFC7"]];
 			cell.backgroundView = bgView;        
@@ -577,7 +520,7 @@ PopoverButtons *popOver_view;
         syncType = [[[objectsDict objectForKey:[objectsArray objectAtIndex:selectedRow]]objectAtIndex:indexPath.row] objectForKey:@"sync_type"];
          error_type = [[[objectsDict objectForKey:[objectsArray objectAtIndex:selectedRow]]objectAtIndex:indexPath.row] objectForKey:@"error_type"];
         override_flag = ([appDelegate.calDataBase getOverrideFlagStatusForId:SFId])?[appDelegate.calDataBase getOverrideFlagStatusForId:SFId]:@"";
-        NSLog(@"%@", override_flag);
+        SMLog(@"%@", override_flag);
         
         
         UILabel * lbl;
@@ -603,13 +546,14 @@ PopoverButtons *popOver_view;
 		NSString * force  = [appDelegate.wsInterface.tagsDictionary objectForKey:conflict_applymy];
 		NSString * get_from_online = [appDelegate.wsInterface.tagsDictionary objectForKey:conflict_getFrom];
         NSString * online = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_select_online];
+        NSString * changes = [appDelegate.wsInterface.tagsDictionary objectForKey:conflict_changes];
 
 
 		MultiLineController * mySegment = [[MultiLineController alloc] initWithItems:[NSArray arrayWithObjects:force,get_from_online,hold, nil]];
 		
 		mySegment.frame = CGRectMake(395, 10, 185, mySegment.frame.size.height * 1);
         mySegment.segmentedControlStyle = UISegmentedControlStyleBar;
-		[mySegment setSubTitle:@"Changes" forSegmentAtIndex:0];
+		[mySegment setSubTitle:changes forSegmentAtIndex:0];
 		[mySegment setSubTitle:online  forSegmentAtIndex:1];
 
         MultiLineController * mySegment1 = [[MultiLineController alloc] initWithItems:[NSArray arrayWithObjects:retry,remove,hold,nil]];
@@ -771,12 +715,12 @@ PopoverButtons *popOver_view;
         {
             if ([[[[objectsDict objectForKey:[objectsArray objectAtIndex:selectedRow]]objectAtIndex:indexPath.row] objectForKey:@"record_type"] isEqualToString:@"MASTER"])
             {
-                NSLog(@"%@", appDelegate.view_layout_array);
+                SMLog(@"%@", appDelegate.view_layout_array);
                 for (int v = 0; v < [appDelegate.view_layout_array count]; v++)
                 {
                     NSDictionary * dict = [appDelegate.view_layout_array objectAtIndex:v];
                     NSString * object_label = [dict objectForKey:VIEW_OBJECTNAME];
-                    NSLog(@"%@ %@", object_label, objectAPIName);
+                    SMLog(@"%@ %@", object_label, objectAPIName);
                     if ([object_label isEqualToString:objectAPIName])
                     {
                         processId = ([dict objectForKey:VIEW_SVMXC_ProcessID]!=nil)?[dict objectForKey:VIEW_SVMXC_ProcessID]:@"";
@@ -794,9 +738,9 @@ PopoverButtons *popOver_view;
                 NSString *parent_obj_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectAPIName field_name:@"parent_name"];
                 NSString * parent_column_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectAPIName field_name:@"parent_column_name"];
                 
-                NSLog(@"%@ %@", parent_obj_name, parent_column_name);
+                SMLog(@"%@ %@", parent_obj_name, parent_column_name);
                 localId = [appDelegate.databaseInterface selectLocalIdFrom:objectAPIName WithId:SFId andParentColumnName:parent_column_name andSyncType:sync_type];
-                NSLog(@"%@", localId);
+                SMLog(@"%@", localId);
                 
                 for (int v = 0; v < [appDelegate.view_layout_array count]; v++)
                 {
@@ -821,7 +765,7 @@ PopoverButtons *popOver_view;
         objectAPIName = [objectsArray objectAtIndex:indexPath.section];
         sync_type = [[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"sync_type"];
         
-        NSLog(@"%@", objectsDict);
+        SMLog(@"%@", objectsDict);
         if ([sync_type isEqualToString:@"PUT_INSERT"])
         {
             SFId = [[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"local_id"];
@@ -835,12 +779,12 @@ PopoverButtons *popOver_view;
         {
             if ([[[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"record_type"] isEqualToString:@"MASTER"])
             {
-                NSLog(@"%@", appDelegate.view_layout_array);
+                SMLog(@"%@", appDelegate.view_layout_array);
                 for (int v = 0; v < [appDelegate.view_layout_array count]; v++)
                 {
                     NSDictionary * dict = [appDelegate.view_layout_array objectAtIndex:v];
                     NSString * object_label = [dict objectForKey:VIEW_OBJECTNAME];
-                    NSLog(@"%@ %@", object_label, objectAPIName);
+                    SMLog(@"%@ %@", object_label, objectAPIName);
                     if ([object_label isEqualToString:objectAPIName])
                     {
                         processId = ([dict objectForKey:VIEW_SVMXC_ProcessID]!=nil)?[dict objectForKey:VIEW_SVMXC_ProcessID]:@"";
@@ -857,9 +801,9 @@ PopoverButtons *popOver_view;
                 NSString *parent_obj_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectAPIName field_name:@"parent_name"];
                 NSString * parent_column_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectAPIName field_name:@"parent_column_name"];
                 
-                NSLog(@"%@ %@", parent_obj_name, parent_column_name);
+                SMLog(@"%@ %@", parent_obj_name, parent_column_name);
                 localId = [appDelegate.databaseInterface selectLocalIdFrom:objectAPIName WithId:SFId andParentColumnName:parent_column_name andSyncType:sync_type];
-                NSLog(@"%@", localId);
+                SMLog(@"%@", localId);
                 
                 for (int v = 0; v < [appDelegate.view_layout_array count]; v++)
                 {
@@ -892,7 +836,7 @@ PopoverButtons *popOver_view;
     
     label.font = [UIFont boldSystemFontOfSize:16];
     
-    NSLog(@"%d", section);
+    SMLog(@"%d", section);
         
     //Create header view and add label as a subview
     view = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, _tableView.frame.size.width, 31)] autorelease];
@@ -991,13 +935,13 @@ PopoverButtons *popOver_view;
 
 - (void) custom_Button
 {
-    NSLog(@"I have Selected Custom button");
+    SMLog(@"I have Selected Custom button");
 }
 
 
 - (void) custom_Button1
 {
-    NSLog(@"I have Selected Custom button");
+    SMLog(@"I have Selected Custom button");
 }
 
 
@@ -1071,12 +1015,12 @@ PopoverButtons *popOver_view;
             {
                 if ([[[[objectsDict objectForKey:[objectsArray objectAtIndex:selectedRow]]objectAtIndex:indexPath.row] objectForKey:@"record_type"] isEqualToString:@"MASTER"])
                 {
-                    NSLog(@"%@", appDelegate.view_layout_array);
+                    SMLog(@"%@", appDelegate.view_layout_array);
                     for (int v = 0; v < [appDelegate.view_layout_array count]; v++)
                     {
                         NSDictionary * dict = [appDelegate.view_layout_array objectAtIndex:v];
                         NSString * object_label = [dict objectForKey:VIEW_OBJECTNAME];
-                        NSLog(@"%@ %@", object_label, objectAPIName);
+                        SMLog(@"%@ %@", object_label, objectAPIName);
                         if ([object_label isEqualToString:objectAPIName])
                         {
                             processId = ([dict objectForKey:VIEW_SVMXC_ProcessID]!=nil)?[dict objectForKey:VIEW_SVMXC_ProcessID]:@"";
@@ -1092,9 +1036,9 @@ PopoverButtons *popOver_view;
                     NSString *parent_obj_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectAPIName field_name:@"parent_name"];
                     NSString * parent_column_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectAPIName field_name:@"parent_column_name"];
                     
-                    NSLog(@"%@ %@", parent_obj_name, parent_column_name);
+                    SMLog(@"%@ %@", parent_obj_name, parent_column_name);
                     localId = [appDelegate.databaseInterface selectLocalIdFrom:objectAPIName WithId:SFId andParentColumnName:parent_column_name andSyncType:sync_type];
-                    NSLog(@"%@", localId);
+                    SMLog(@"%@", localId);
                     
                     for (int v = 0; v < [appDelegate.view_layout_array count]; v++)
                     {
@@ -1119,7 +1063,7 @@ PopoverButtons *popOver_view;
             objectAPIName = [objectsArray objectAtIndex:indexPath.section];
             sync_type = [[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"sync_type"];
             
-            NSLog(@"%@", objectsDict);
+            SMLog(@"%@", objectsDict);
             if ([sync_type isEqualToString:@"PUT_INSERT"])
             {
                 SFId = [[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"local_id"];
@@ -1133,12 +1077,12 @@ PopoverButtons *popOver_view;
             {
                 if ([[[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"record_type"] isEqualToString:@"MASTER"])
                 {
-                    NSLog(@"%@", appDelegate.view_layout_array);
+                    SMLog(@"%@", appDelegate.view_layout_array);
                     for (int v = 0; v < [appDelegate.view_layout_array count]; v++)
                     {
                         NSDictionary * dict = [appDelegate.view_layout_array objectAtIndex:v];
                         NSString * object_label = [dict objectForKey:VIEW_OBJECTNAME];
-                        NSLog(@"%@ %@", object_label, objectAPIName);
+                        SMLog(@"%@ %@", object_label, objectAPIName);
                         if ([object_label isEqualToString:objectAPIName])
                         {
                             processId = ([dict objectForKey:VIEW_SVMXC_ProcessID]!=nil)?[dict objectForKey:VIEW_SVMXC_ProcessID]:@"";
@@ -1155,9 +1099,9 @@ PopoverButtons *popOver_view;
                     NSString *parent_obj_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectAPIName field_name:@"parent_name"];
                     NSString * parent_column_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectAPIName field_name:@"parent_column_name"];
                     
-                    NSLog(@"%@ %@", parent_obj_name, parent_column_name);
+                    SMLog(@"%@ %@", parent_obj_name, parent_column_name);
                     localId = [appDelegate.databaseInterface selectLocalIdFrom:objectAPIName WithId:SFId andParentColumnName:parent_column_name andSyncType:sync_type];
-                    NSLog(@"%@", localId);
+                    SMLog(@"%@", localId);
                     
                     for (int v = 0; v < [appDelegate.view_layout_array count]; v++)
                     {
@@ -1292,7 +1236,7 @@ PopoverButtons *popOver_view;
     NSIndexPath *indexPath = [self._tableView indexPathForCell:(UITableViewCell *)[[sender superview] superview]];
     UIColor * newSelectedTintColor = [appDelegate colorForHex:@"#1589FF"];
     
-    NSLog(@"%@", objectsDict);
+    SMLog(@"%@", objectsDict);
 	
     if (HeaderSelected == 1)
     {
@@ -1314,10 +1258,7 @@ PopoverButtons *popOver_view;
         else
             [v setTintColor:[appDelegate colorForHex:@"#C8C8C8"]];
     }   
-//    if ([segmentedControl selectedSegmentIndex] == 0) 
-//        [appDelegate.calDataBase updateOverrideFlagWithObjectName:objectName andSFId:SFId WithStatus:@"Undo"];
-//    if ([segmentedControl selectedSegmentIndex] == 1) 
-//        [appDelegate.calDataBase updateOverrideFlagWithObjectName:objectName andSFId:SFId WithStatus:@"None"];
+
 	
 	if ([segmentedControl selectedSegmentIndex] == 0) 
         [appDelegate.calDataBase updateOverrideFlagWithObjectName:objectName andSFId:SFId WithStatus:@"retry"];
@@ -1337,7 +1278,7 @@ PopoverButtons *popOver_view;
     NSIndexPath *indexPath = [self._tableView indexPathForCell:(UITableViewCell *)[[sender superview] superview]];
     UIColor *newSelectedTintColor = [appDelegate colorForHex:@"#1589FF"];
     
-    NSLog(@"%@", objectsDict);
+    SMLog(@"%@", objectsDict);
     if (HeaderSelected == 1)
     {
         SFId = [[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"SFId"];

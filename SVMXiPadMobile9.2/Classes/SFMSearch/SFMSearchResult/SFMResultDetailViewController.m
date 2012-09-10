@@ -12,7 +12,9 @@
 #import "SFMResultMasterViewController.h"
 #import "iServiceAppDelegate.h"
 #import "SFMPageController.h"
-#define TableViewResultViewCellHeight 31
+#define TableViewResultViewCellHeight 35
+extern void SVMXLog(NSString *format, ...);
+
 @interface SFMResultDetailViewController ()
 @property (nonatomic, retain) NSMutableArray          *configData;
 @end
@@ -258,7 +260,7 @@ enum  {
     }
     NSArray *cellArray = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"Values"] ;
     [cell clearsContextBeforeDrawing];
-    UIButton * button = [[[UIButton alloc] initWithFrame:CGRectMake(tableView.frame.size.width-103, 5, 20, 21)] autorelease];
+    UIButton * button = [[[UIButton alloc] initWithFrame:CGRectMake(tableView.frame.size.width-103, 7, 20, 21)] autorelease];
     
     button.userInteractionEnabled = TRUE;
     NSString *objname=[[tableDataArray objectAtIndex:indexPath.section ] objectForKey:@"ObjectName"];
@@ -599,7 +601,7 @@ enum  {
 }
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-//    NSLog(@"Sections Data = %d",[tableDataArray count]);
+//    SMLog(@"Sections Data = %d",[tableDataArray count]);
     return [tableDataArray count];
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -615,7 +617,7 @@ enum  {
     
     if(lastSelectedIndexPath && (lastSelectedIndexPath.row == indexPath.row) && (lastSelectedIndexPath.section == indexPath.section))
     {
-        NSLog(@"Selected the same cell");
+        SMLog(@"Selected the same cell");
     }
     else
     {
@@ -633,9 +635,9 @@ enum  {
             [txtFieldLabel2 setTextColor:[appDelegate colorForHex:@"2d5d83"]];
             [txtFieldLabel3 setTextColor:[appDelegate colorForHex:@"2d5d83"]];             
             
-//            NSLog(@"Tag1 = %d",[txtFieldLabel1 tag]);
-//            NSLog(@"Tag2 = %d",[txtFieldLabel2 tag]);
-//            NSLog(@"Tag3 = %d",[txtFieldLabel3 tag]);
+//            SMLog(@"Tag1 = %d",[txtFieldLabel1 tag]);
+//            SMLog(@"Tag2 = %d",[txtFieldLabel2 tag]);
+//            SMLog(@"Tag3 = %d",[txtFieldLabel3 tag]);
 
         }
         UITableViewCell *selectedCell = [tableView cellForRowAtIndexPath:indexPath];
@@ -647,9 +649,9 @@ enum  {
         UILabel *txtFieldLabel2 = (UILabel *)[selectedCell viewWithTag:textLabel2];
         UILabel *txtFieldLabel3 = (UILabel *)[selectedCell viewWithTag:textLabel3];
 
-//        NSLog(@"Tag1 = %d",[txtFieldLabel1 tag]);
-//        NSLog(@"Tag2 = %d",[txtFieldLabel2 tag]);
-//        NSLog(@"Tag3 = %d",[txtFieldLabel3 tag]);
+//        SMLog(@"Tag1 = %d",[txtFieldLabel1 tag]);
+//        SMLog(@"Tag2 = %d",[txtFieldLabel2 tag]);
+//        SMLog(@"Tag3 = %d",[txtFieldLabel3 tag]);
         
         [txtFieldLabel1 setTextColor:[UIColor whiteColor]];
         [txtFieldLabel2 setTextColor:[UIColor whiteColor]];
@@ -677,7 +679,7 @@ enum  {
         fullDataDict = [cellArray objectAtIndex:indexPath.row];
         resultController.isOnlineRecord = NO;
         resultController.objectName = objectName;
-//        NSLog(@"Data = %@",fullDataDict);
+//        SMLog(@"Data = %@",fullDataDict);
     }
     
      resultController.modalPresentationStyle = UIModalPresentationFormSheet;
@@ -708,7 +710,7 @@ enum  {
 }
 - (void) DismissViewController: (id) sender
 {
-//    NSLog(@"Dismiss SFM Result Detail View Controller");
+//    SMLog(@"Dismiss SFM Result Detail View Controller");
     if([activityIndicator isAnimating])
         [activityIndicator stopAnimating];
     [splitViewDelegate DismissSplitViewController];
@@ -823,7 +825,7 @@ enum  {
     {
         if([resultArray count] == [[[self.masterView searchLimitString] text] intValue])
         {
-            NSLog(@"Offline DB has more or equal number records specified by the limit");
+            SMLog(@"Offline DB has more or equal number records specified by the limit");
             return;
         }
         //Make a WebService Call 
@@ -881,7 +883,7 @@ enum  {
             {
                 break;
             }
-            NSLog(@"Retreiving Online Reccords");
+            SMLog(@"Retreiving Online Reccords");
         }
         [activityIndicator stopAnimating];
         //[objectResultList release];
@@ -948,7 +950,7 @@ enum  {
     {
         /* Now we will retrieve the index path of the cell which contains the section and the row of the cell */
         ownerCellIndexPath = [self.detailTable indexPathForCell:ownerCell];
-//        NSLog(@"Accessory in index path is tapped. Index path = %d", ownerCellIndexPath.row);
+//        SMLog(@"Accessory in index path is tapped. Index path = %d", ownerCellIndexPath.row);
     }
        if(lastSelectedIndexPath != nil)
     {
@@ -989,7 +991,7 @@ enum  {
         if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
         {
             field1 = (char *) synchronized_sqlite3_column_text(labelstmt,0);
-//            NSLog(@"%s",field1);
+//            SMLog(@"%s",field1);
             if(field1)
                 localId = [NSString stringWithFormat:@"%s", field1];
             else
@@ -1008,7 +1010,7 @@ enum  {
         if(synchronized_sqlite3_step(labelstmt2) == SQLITE_ROW)
         {
             field1 = (char *) synchronized_sqlite3_column_text(labelstmt2,0);
-//            NSLog(@"%s",field1);
+//            SMLog(@"%s",field1);
             if(field1)
                 processId = [NSString stringWithFormat:@"%s", field1];
             else

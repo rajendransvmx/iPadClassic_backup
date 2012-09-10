@@ -33,7 +33,7 @@
 @class ManualDataSyncDetail;
 
 
-@interface PopoverButtons : UIViewController <UIPopoverControllerDelegate>
+@interface PopoverButtons : UIViewController <UIPopoverControllerDelegate, UIAlertViewDelegate>
 {
     id<MyPopoverDelegate> delegate;
     id<RefreshMetaSyncStatus> refreshMetaSyncDelegate;
@@ -58,6 +58,10 @@
     
     //Manual event sync thread
     NSThread * manualEventThread;
+    
+    //flag for metasync
+    BOOL continueFalg;
+    BOOL didDismissAlertView;
 }
 @property (nonatomic) BOOL syncConfigurationFailed;
 
@@ -86,6 +90,7 @@
 //RADHA 
 - (void) startSyncConfiguration;
 - (void) scheduletimer;
+- (void) setSyncStatus;
 @end
 
 extern PopoverButtons *popOver_view;
