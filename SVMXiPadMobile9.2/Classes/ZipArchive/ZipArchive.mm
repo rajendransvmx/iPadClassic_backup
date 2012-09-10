@@ -157,7 +157,7 @@
 		unz_global_info  globalInfo = {0};
 		if( unzGetGlobalInfo(_unzFile, &globalInfo )==UNZ_OK )
 		{
-			// NSLog(@"%@", [NSString stringWithFormat:@"%d entries in the zip file",globalInfo.number_entry]);
+			// SMLog(@"%@", [NSString stringWithFormat:@"%d entries in the zip file",globalInfo.number_entry]);
 		}
 	}
 	return _unzFile!=NULL;
@@ -226,9 +226,9 @@
 			// [fman createDirectoryAtPath:[fullPath stringByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:&error];
             [fman createDirectoryAtPath:[fullPath stringByDeletingLastPathComponent] attributes:nil];
         
-        // NSLog(@"%@", [fullPath stringByDeletingLastPathComponent]);
+        // SMLog(@"%@", [fullPath stringByDeletingLastPathComponent]);
         if (error != nil)
-            // NSLog(@"%@", [error description]);
+            // SMLog(@"%@", [error description]);
         
 		if( [fman fileExistsAtPath:fullPath] && !isDirectory && !overwrite )
 		{
@@ -287,7 +287,7 @@
 				if( ![[NSFileManager defaultManager] setAttributes:attr ofItemAtPath:fullPath error:nil] )
 				{
 					// cann't set attributes 
-					// NSLog(@"Failed to set attributes");
+					// SMLog(@"Failed to set attributes");
 				}
 				
 			}

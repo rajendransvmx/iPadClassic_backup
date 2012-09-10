@@ -422,6 +422,8 @@
 #define conflict_applymy         @"IPAD018_TAG043"
 #define conflict_getFrom         @"IPAD018_TAG038"
 #define sync_select_online       @"IPAD018_TAG004"
+#define conflict_changes         @"IPAD018_TAG044"
+#define syncconfig_confirm       @"IPAD018_TAG041"
 
 
 

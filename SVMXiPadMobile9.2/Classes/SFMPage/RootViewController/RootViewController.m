@@ -11,6 +11,7 @@
 #import "iServiceAppDelegate.h"
 #import "WSIntfGlobals.h"
 #import "SFMPageController.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation RootViewController
 	
@@ -29,7 +30,7 @@
 {
     if (result && !error)
     {
-        NSLog(@"Hey, we logged in (with the new switchboard)!");
+        SMLog(@"Hey, we logged in (with the new switchboard)!");
         
         didLogin = YES;
         
@@ -58,7 +59,7 @@
 
 - (void)describeSObjectResult:(id)result error:(NSError *)error context:(id)context
 {
-    NSLog(@"describeSObjectResult: %@ error: %@ context: %@", result, error, context);
+    SMLog(@"describeSObjectResult: %@ error: %@ context: %@", result, error, context);
     if (result && !error)
     {
     }
@@ -70,7 +71,7 @@
 
 - (void)describeSObjectsResult:(id)result error:(NSError *)error context:(id)context
 {
-    NSLog(@"describeSObjectsResult: %@ error: %@ context: %@", result, error, context);
+    SMLog(@"describeSObjectsResult: %@ error: %@ context: %@", result, error, context);
     if (result && !error)
     {
     }
@@ -567,7 +568,7 @@
                 }
             
                 cellLabel.text = section_title;
-                NSLog(@"%@", cellLabel.text);
+                SMLog(@"%@", cellLabel.text);
             }
             if ([indexPath isEqual:lastSelectedIndexPath])
             {

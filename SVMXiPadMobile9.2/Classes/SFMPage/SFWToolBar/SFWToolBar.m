@@ -9,6 +9,7 @@
 #import "SFWToolBar.h"
 #import "cusButton.h"
 #import "databaseIntefaceSfm.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation SFWToolBar
 @synthesize buttonsArray_offline;
@@ -74,10 +75,10 @@
 
 -(void)showIpadOnlyButtons;
 {
-    NSLog(@"%@", ipad_only_array);                      
+    SMLog(@"%@", ipad_only_array);                      
                                  
                                  
-    NSLog(@"%f, %f", ipad_only_view.frame.size.width, ipad_only_view.frame.size.height);
+    SMLog(@"%f, %f", ipad_only_view.frame.size.width, ipad_only_view.frame.size.height);
     ipad_only_view.frame = CGRectMake(10, 0, 1024, 62);
     CGPoint p = CGPointZero;
     p.x  = ipad_only_view.frame.origin.x;
@@ -130,7 +131,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
 {
-    NSLog(@" buttonsArray_offline %@ ", buttonsArray_offline);
+    SMLog(@" buttonsArray_offline %@ ", buttonsArray_offline);
     
     NSMutableArray * array = [wizard_info objectForKey:SFW_WIZARD_INFO];
     NSDictionary * dict = [array objectAtIndex:section];

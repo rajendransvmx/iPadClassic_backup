@@ -36,8 +36,8 @@
 #import "NSDate+Additions.h"
 #import "ZKMessageEnvelope.h"
 #import "ZKMessageElement.h"
-
 #import "iServiceAppDelegate.h"
+extern void SVMXLog(NSString *format, ...);
 
 static const int MAX_SESSION_AGE = 10 * 60; // 10 minutes.  15 minutes is the minimum length that you can set sessions to last to, so 10 should be safe.
 static ZKServerSwitchboard * sharedSwitchboard =  nil;
@@ -162,7 +162,7 @@ static ZKServerSwitchboard * sharedSwitchboard =  nil;
     NSString *groupIdentifier = [defaults objectForKey:kFirstTimeLogin];
     if (!groupIdentifier)
     {
-        NSLog(@"First time login.");
+        SMLog(@"First time login.");
         [defaults setValue:@"kFirstTimeLogin" forKey:kFirstTimeLogin];
         //enabled = YES; //Siva Manne #3811
         //[defaults setBool:enabled forKey:@"enabled_preference"];
@@ -171,7 +171,7 @@ static ZKServerSwitchboard * sharedSwitchboard =  nil;
     else
     {
         //enabled = [defaults boolForKey:@"enabled_preference"];
-        NSLog(@"Not a first time login.");
+        SMLog(@"Not a first time login.");
     }
     
     enabled = [defaults boolForKey:@"enabled_preference"];
@@ -449,13 +449,13 @@ static ZKServerSwitchboard * sharedSwitchboard =  nil;
 	[request setHTTPMethod:@"POST"];
 	[request addValue:@"text/xml; charset=UTF-8" forHTTPHeaderField:@"content-type"];	
 	[request addValue:@"\"\"" forHTTPHeaderField:@"SOAPAction"];
-    NSLog(@"request = %@", request);
+    SMLog(@"request = %@", request);
 	NSData *data = [payload dataUsingEncoding:NSUTF8StringEncoding];
 	[request setHTTPBody:data];
     
 	if(self.logXMLInOut) {
-		NSLog(@"OutputHeaders:\n%@", [request allHTTPHeaderFields]);
-		NSLog(@"OutputBody:\n%@", payload);
+		SMLog(@"OutputHeaders:\n%@", [request allHTTPHeaderFields]);
+		SMLog(@"OutputBody:\n%@", payload);
 	}
     
     [self _sendRequest:request target:target selector:sel context:context];

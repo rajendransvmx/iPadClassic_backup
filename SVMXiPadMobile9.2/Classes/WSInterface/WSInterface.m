@@ -9,6 +9,7 @@
 #import "WSInterface.h"
 #import "iServiceAppDelegate.h"
 #import "LoginController.h"
+extern void SVMXLog(NSString *format, ...);
 
 //sahana Note 
 //write an incremental Sync Method to clean up all data related to incremental Sync 
@@ -280,7 +281,7 @@ last_sync_time:(NSString *)last_sync_time
     {
         for(NSString *  str in allkeys)
         {
-            NSLog(@"%@" ,current_gmt_time);
+            SMLog(@"%@" ,current_gmt_time);
             if([str isEqualToString:LAST_INSERT_REQUEST_TIME])
             {
                 [dict setObject:current_gmt_time forKey:LAST_INSERT_REQUEST_TIME];
@@ -485,13 +486,13 @@ last_sync_time:(NSString *)last_sync_time
         }
         [self setSyncReqId:@""];
         
-        NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_completed];
-        NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button1];
-        NSString * cancel = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
-
-        UIAlertView *av = [[UIAlertView alloc]initWithTitle:title message:message delegate:self cancelButtonTitle:cancel otherButtonTitles: nil];
-        [av show];
-        [av release];
+//        NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_completed];
+//        NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button1];
+//        NSString * cancel = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+//
+//        UIAlertView *av = [[UIAlertView alloc]initWithTitle:title message:message delegate:self cancelButtonTitle:cancel otherButtonTitles: nil];
+//        [av show];
+//        [av release];
         
         [appDelegate setSyncStatus:SYNC_GREEN];
         [updateSyncStatus refreshSyncStatus];
@@ -661,7 +662,7 @@ last_sync_time:(NSString *)last_sync_time
     //If no records exists dont send the response
     if([allKeys count] == 0)
     {
-        NSLog(@"NO getRecords ");
+        SMLog(@"NO getRecords ");
         //update all the records in the heap table to 
         appDelegate.Incremental_sync_status = PUT_RECORDS_DONE;
         return;
@@ -705,7 +706,7 @@ last_sync_time:(NSString *)last_sync_time
     [datasync setRequest:sfmRequest];
     
     
-    NSLog(@"SAMMAN TX_FETCH Request Sent: %@", [NSDate date]);
+    SMLog(@"SAMMAN TX_FETCH Request Sent: %@", [NSDate date]);
     //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_DataSync_WSAsyncUsingParameters:datasync 
                                     SessionHeader:sessionHeader 
@@ -1167,6 +1168,17 @@ last_sync_time:(NSString *)last_sync_time
         return;
     }
     
+    
+    didWriteSignature = NO;
+    [appDelegate.calDataBase getAllLocalIdsForSignature:SIG_BEFOREUPDATE];
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    {
+        SMLog(@"Signature to SFDC");
+        if (didWriteSignature == YES)
+            break;
+    }
+    
+    
     //call update 
     [self copyTrailertoTempTrailer:UPDATE]; 
     [self  getAllRecordsForOperationType:UPDATE];
@@ -1213,7 +1225,19 @@ last_sync_time:(NSString *)last_sync_time
         return;
     }
     
+   
     [self resetSyncLastindexAndObjectName];  //sahana
+    
+    
+    didWriteSignature = NO;
+    [appDelegate.calDataBase getAllLocalIdsForSignature:SIG_AFTERUPDATE];
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    {
+        SMLog(@"Signature to SFDC");
+        if (didWriteSignature == YES)
+            break;
+    }
+    
     
     [self GetUpdate];
     
@@ -1495,10 +1519,10 @@ last_sync_time:(NSString *)last_sync_time
     //Shrinivas 
     //Sync signature to server
     didWriteSignature = NO;
-    [appDelegate.calDataBase getAllLocalIdsForSignature];
+    [appDelegate.calDataBase getAllLocalIdsForSignature:SIG_AFTERSYNC];
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
-        NSLog(@"Signature to SFDC");
+        SMLog(@"Signature to SFDC");
         if (didWriteSignature == YES)
             break;
     }
@@ -1508,7 +1532,7 @@ last_sync_time:(NSString *)last_sync_time
     [appDelegate.calDataBase getAllLocalIdsForPDF];
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
-        NSLog(@"PDF to SFDC");
+        SMLog(@"PDF to SFDC");
         if (didWritePDF == YES)
             break;
     }
@@ -1540,7 +1564,7 @@ last_sync_time:(NSString *)last_sync_time
         [self callsfMEventForAfterSaveOrupdateEvents:request binding:binding];
         while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
         {
-            NSLog(@"PDF to SFDC");
+            SMLog(@"PDF to SFDC");
             if (didCompleteAfterSaveEventCalls == YES)
                 break;
         }
@@ -2376,7 +2400,7 @@ last_sync_time:(NSString *)last_sync_time
                     
                     NSArray * all_keys = [each_record allKeys];
                     
-                    NSLog(@"parent local id %@  parent sf id %@ " , parent_local_id , parent_SF_Id);
+                    SMLog(@"parent local id %@  parent sf id %@ " , parent_local_id , parent_SF_Id);
                     for(NSString * str in all_keys)
                     {
                         if([str isEqualToString:parent_column_name])
@@ -3206,7 +3230,7 @@ last_sync_time:(NSString *)last_sync_time
     [sfmRequest.valueMap addObject:SVMXCMap_startTime];
     [sfmRequest.valueMap addObject:SVMXCMap_endTime];
     
-    NSLog(@"SAMMAN Incremental DataSync request looping  starts: %@", [NSDate date]);
+    SMLog(@"SAMMAN Incremental DataSync request looping  starts: %@", [NSDate date]);
     if([eventName isEqualToString:DOWNLOAD_CREITERIA_SYNC])
     {
         INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_last_index =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
@@ -3224,7 +3248,7 @@ last_sync_time:(NSString *)last_sync_time
             }
         }
     }
-    NSLog(@"SAMMAN Incremental DataSync request looping  ends: %@", [NSDate date]);
+    SMLog(@"SAMMAN Incremental DataSync request looping  ends: %@", [NSDate date]);
     client.clientType = @"iPad";
     [client.clientInfo addObject:@"OS:iPadOS"];
     [client.clientInfo addObject:@"R4B2"];
@@ -3244,7 +3268,7 @@ last_sync_time:(NSString *)last_sync_time
     [dataSync setRequest:sfmRequest];
     
     //[[ZKServerSwitchboard switchboard] doCheckSession];
-    NSLog(@"SAMMAN Incremental DataSync Request sent: %@", [NSDate date]);
+    SMLog(@"SAMMAN Incremental DataSync Request sent: %@", [NSDate date]);
     
   
     [binding INTF_DataSync_WSAsyncUsingParameters:dataSync 
@@ -4230,7 +4254,7 @@ last_sync_time:(NSString *)last_sync_time
         [appDelegate.afterSavePageEventsBinging setObject:binding forKey:appDelegate.sfmPageController.recordId];
         
         
-        NSLog(@" count %d", [appDelegate.afterSavePageLevelEvents count]);
+        SMLog(@" count %d", [appDelegate.afterSavePageLevelEvents count]);
         appDelegate.wsInterface.getPrice = TRUE;
     }
 }
@@ -4410,7 +4434,7 @@ last_sync_time:(NSString *)last_sync_time
 - (void) operation:(INTF_WebServicesDefBindingOperation *)operation completedWithResponse:(INTF_WebServicesDefBindingResponse *)response
 {
     int ret;
-    NSLog(@"OPERATION COMPLETED RESPONSE");
+    SMLog(@"OPERATION COMPLETED RESPONSE");
     
     if (response.error != nil)
     {
@@ -4433,8 +4457,8 @@ last_sync_time:(NSString *)last_sync_time
         didCompleteAfterSaveEventCalls = YES;
         appDelegate.incrementalSync_Failed = TRUE;
         SOAPFault * sFault = [response.bodyParts objectAtIndex:0];
-        NSLog(@"%@", sFault.faultcode);
-        NSLog(@"%@", sFault.faultstring);
+        SMLog(@"%@", sFault.faultcode);
+        SMLog(@"%@", sFault.faultstring);
         
         NSString * faultString = sFault.faultstring;
         if ([faultString Contains:@"SVMX_GetSvmxVersion"])
@@ -4446,7 +4470,7 @@ last_sync_time:(NSString *)last_sync_time
         if (!tagsDictionary)
         {
             tagsDictionary = [[self getDefaultTags] retain];
-            NSLog (@"%@", tagsDictionary);
+            SMLog (@"%@", tagsDictionary);
         }
         
         //Radha
@@ -4481,7 +4505,7 @@ last_sync_time:(NSString *)last_sync_time
         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
         {
             if ([appDelegate.syncThread isExecuting])
-                NSLog(@"Data Sync");
+                SMLog(@"Data Sync");
             else
                 [MyPopoverDelegate performSelector:@selector(throwException)]; 
             
@@ -4505,7 +4529,7 @@ last_sync_time:(NSString *)last_sync_time
         if ([wsResponse.result.eventName isEqualToString:SFM_SEARCH] && [wsResponse.result.eventType isEqualToString:SYNC])
         {
             didOpSFMSearchComplete = TRUE;
-           // NSLog(@" MetaSync SFM_SEARCH received, processing starts: %@", [NSDate date]);
+           // SMLog(@" MetaSync SFM_SEARCH received, processing starts: %@", [NSDate date]);
              [appDelegate.dataBase createTablesForSFMSearch];
             
             NSArray * array = [wsResponse.result valueMap];
@@ -4548,7 +4572,7 @@ last_sync_time:(NSString *)last_sync_time
                          //2nd for Config Data. save this in array of dicts
                          INTF_WebServicesDefServiceSvc_SVMXMap * mapObjectConfig = [detailsArray objectAtIndex:l+1];
                          NSArray *configMapArray = [mapObjectConfig valueMap];
-                        // NSLog(@"Count = %d",[configMapArray count]);
+                        // SMLog(@"Count = %d",[configMapArray count]);
                          NSMutableArray *configMutableArray = [[NSMutableArray alloc] init];
                          for(int n=0; n<[configMapArray count]; n++)
                          {
@@ -4569,15 +4593,15 @@ last_sync_time:(NSString *)last_sync_time
                          [objectInfoDict release];
                      }                          
                  }
-              //   NSLog(@"Object Data = %@",sfmObjectData);
+              //   SMLog(@"Object Data = %@",sfmObjectData);
                  [processInfoDict setObject:sfmObjectData forKey:@"Objects"];
                  [sfmProcessData addObject:processInfoDict];
                  [processInfoDict release];
              }
-         //   NSLog(@" MetaSync SFM_SEARCH processing End: %@", [NSDate date]);
+         //   SMLog(@" MetaSync SFM_SEARCH processing End: %@", [NSDate date]);
             //Call Data Base with data to store the info in table
             [appDelegate.dataBase insertValuesintoSFMProcessTable:sfmProcessData];
-           // NSLog(@"SFM Search Configuration = %@",sfmProcessData);
+           // SMLog(@"SFM Search Configuration = %@",sfmProcessData);
             [sfmProcessData release];
              
         }
@@ -4593,7 +4617,7 @@ last_sync_time:(NSString *)last_sync_time
         
         if ([wsResponse.result.eventName isEqualToString:SFM_METADATA])
         {            
-            //NSLog(@"SAMMAN MetaSync SFM_METADATA received, processing starts: %@", [NSDate date]);
+            //SMLog(@"SAMMAN MetaSync SFM_METADATA received, processing starts: %@", [NSDate date]);
             NSMutableArray * keys = [[NSMutableArray alloc] initWithCapacity:0];
             NSMutableArray * values = [[NSMutableArray alloc] initWithCapacity:0];
             NSMutableArray * arr = [[NSMutableArray alloc] initWithCapacity:0];
@@ -5052,7 +5076,7 @@ last_sync_time:(NSString *)last_sync_time
                     
                     hdrButtons = [NSMutableArray arrayWithArray:buttons_array];
                     
-                   // NSLog(@"buttons");
+                   // SMLog(@"buttons");
                 }
 
                 
@@ -5289,7 +5313,7 @@ last_sync_time:(NSString *)last_sync_time
         {
            
             FisrtTime_response = FALSE;
-            //NSLog(@"SAMMAN MetaSync SFM_PICKLIST_DEFINITIONS received, processing starts: %@", [NSDate date]);
+            //SMLog(@"SAMMAN MetaSync SFM_PICKLIST_DEFINITIONS received, processing starts: %@", [NSDate date]);
             didGetPicklistValues = TRUE;
             NSMutableArray * arr;
             NSMutableArray * Fields = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
@@ -5377,7 +5401,7 @@ last_sync_time:(NSString *)last_sync_time
                 }
                 
                                
-                //NSLog(@"SAMMAN MetaSync SFM_PICKLIST_DEFINITIONS received, processing ends: %@", [NSDate date]);
+                //SMLog(@"SAMMAN MetaSync SFM_PICKLIST_DEFINITIONS received, processing ends: %@", [NSDate date]);
                 if([allObjects count] > 0)
                 {
                     appDelegate.initial_sync_status =  SYNC_RT_DP_PICKLIST_INFO;
@@ -5392,7 +5416,7 @@ last_sync_time:(NSString *)last_sync_time
         else if ([wsResponse.result.eventName isEqualToString:SFM_OBJECT_DEFINITIONS])
         {
            
-           // NSLog(@"SAMMAN MetaSync SFM_OBJECT_DEFINITIONS received, processing starts: %@", [NSDate date]);
+           // SMLog(@"SAMMAN MetaSync SFM_OBJECT_DEFINITIONS received, processing starts: %@", [NSDate date]);
             int m = 0;
             NSMutableArray * arr = [[[NSMutableArray alloc] initWithCapacity:0] retain];
             NSMutableArray * object_array = [[[NSMutableArray alloc] initWithCapacity:0] retain];
@@ -5523,7 +5547,7 @@ last_sync_time:(NSString *)last_sync_time
         else if ([wsResponse.result.eventName isEqualToString:SFM_BATCH_OBJECT_DEFINITIONS])
         {
 
-            //NSLog(@"SAMMAN MetaSync SFM_BATCH_OBJECT_DEFINITIONS received, processing starts: %@", [NSDate date]);
+            //SMLog(@"SAMMAN MetaSync SFM_BATCH_OBJECT_DEFINITIONS received, processing starts: %@", [NSDate date]);
             NSMutableArray * arr = [[[NSMutableArray alloc] initWithCapacity:0] retain];
             NSMutableArray * object_array = [[[NSMutableArray alloc] initWithCapacity:0] retain];
             NSMutableArray * array1;
@@ -5650,7 +5674,7 @@ last_sync_time:(NSString *)last_sync_time
 	            //sahana Aug 16th
     	        [appDelegate.dataBase getRecordTypeValuesForObject:pickListObj];
                 
-                // NSLog(@"SAMMAN MetaSync SFM_OBJECT_DEFINITIONS received, processing ends: %@", [NSDate date]);
+                // SMLog(@"SAMMAN MetaSync SFM_OBJECT_DEFINITIONS received, processing ends: %@", [NSDate date]);
                 
                 appDelegate.initial_sync_status = SYNC_SFM_PICKLIST_DEFINITIONS;
                 appDelegate.Sync_check_in = FALSE;
@@ -5662,7 +5686,7 @@ last_sync_time:(NSString *)last_sync_time
         else if ([wsResponse.result.eventName isEqualToString:SFW_METADATA])
         {
            
-           // NSLog(@"SAMMAN MetaSync SFW_METADATA received, processing starts: %@", [NSDate date]);
+           // SMLog(@"SAMMAN MetaSync SFW_METADATA received, processing starts: %@", [NSDate date]);
             wizardDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
             
             NSMutableArray * array = [wsResponse.result valueMap];
@@ -5743,7 +5767,7 @@ last_sync_time:(NSString *)last_sync_time
       else if ([wsResponse.result.eventName isEqualToString:MOBILE_DEVICE_TAGS])
       {
           
-         // NSLog(@"SAMMAN MetaSync MOBILE_DEVICE_TAGS processing starts: %@", [NSDate date]);
+         // SMLog(@"SAMMAN MetaSync MOBILE_DEVICE_TAGS processing starts: %@", [NSDate date]);
           mobileDeviceTagsDict = [[NSMutableDictionary alloc] initWithCapacity:0];
           NSMutableArray * array = [wsResponse.result valueMap];
         
@@ -5794,7 +5818,7 @@ last_sync_time:(NSString *)last_sync_time
             )
         {
             [appDelegate.dataBase setDidUserGPSLocationUpdated:YES];
-            NSLog(@"Sent GPS Logs to Server");
+            SMLog(@"Sent GPS Logs to Server");
             NSMutableArray * array = [wsResponse.result valueMap]; 
             for(int i=0;i<[array count];i++)
             {
@@ -5814,12 +5838,12 @@ last_sync_time:(NSString *)last_sync_time
         {
            
             didOpComplete = YES;         
-            NSLog(@"SFM Search Results Got");
+            SMLog(@"SFM Search Results Got");
             NSArray *tableField=appDelegate.sfmSearchTableArray;
             NSArray *fieldsForTableHeader=[[[NSArray alloc]init ]autorelease];
-            NSLog(@"%@",tableField);
+            SMLog(@"%@",tableField);
             NSDictionary *filedForObjectID=[[NSDictionary alloc]initWithObjects:[tableField valueForKey:@"TableHeader"] forKeys:[tableField valueForKey:@"ObjectId"]];
-            NSLog(@"%@",filedForObjectID);
+            SMLog(@"%@",filedForObjectID);
             NSMutableArray * array = [wsResponse.result valueMap]; 
             NSMutableArray *resultsArray = [[[NSMutableArray alloc] init] autorelease];
             for(int i=0;i<[array count];i++)
@@ -5844,7 +5868,7 @@ last_sync_time:(NSString *)last_sync_time
                 [resultsArray addObject:resultDict];
                 [resultDict release];
             }
-            NSLog(@"Results = %@",resultsArray);
+            SMLog(@"Results = %@",resultsArray);
             [appDelegate setOnlineDataArray:resultsArray];
         }
         else if ([wsResponse.result.eventName isEqualToString:EVENT_SYNC] || [wsResponse.result.eventName isEqualToString:DOWNLOAD_CREITERIA_SYNC])
@@ -5853,7 +5877,7 @@ last_sync_time:(NSString *)last_sync_time
             
             NSAutoreleasePool * autoreleasePool = [[NSAutoreleasePool alloc] init];
             appDelegate.data_sync_chunking = RESPONSE_RECIEVED; //sahana IMP 
-            NSLog(@"SAMMAN Incremental DataSync response recieved: %@", [NSDate date]);
+            SMLog(@"SAMMAN Incremental DataSync response recieved: %@", [NSDate date]);
             
            // NSString * event_name = wsResponse.result.eventName;
     
@@ -5864,7 +5888,7 @@ last_sync_time:(NSString *)last_sync_time
             
             NSArray * keys_ =[[NSArray alloc] initWithObjects:@"LOCAL_ID",@"JSON_RECORD",@"SF_ID", @"SYNC_TYPE", @"RECORD_TYPE", nil];
             
-            NSLog(@"SAMMAN Incremental DataSync response parsing starts: %@", [NSDate date]);
+            SMLog(@"SAMMAN Incremental DataSync response parsing starts: %@", [NSDate date]);
             for (int i = 0; i < [array count]; i++)
             {
                 INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [array objectAtIndex:i];
@@ -5967,22 +5991,22 @@ last_sync_time:(NSString *)last_sync_time
                         [values release];
                     }
                     
-                    NSLog(@"valueMap %d",[valueMap retainCount]);
+                    SMLog(@"valueMap %d",[valueMap retainCount]);
                 }
             }
             [keys_ release];
             
-            NSLog(@"array %d",[array retainCount]);
+            SMLog(@"array %d",[array retainCount]);
             
-            NSLog(@"SAMMAN Incremental DataSync response parsing starts: %@", [NSDate date]);
+            SMLog(@"SAMMAN Incremental DataSync response parsing starts: %@", [NSDate date]);
             [appDelegate.databaseInterface insertRecordIdsIntosyncRecordHeap:record_dict];
            
-            NSLog(@"record_dict %d" , [record_dict retainCount]);
+            SMLog(@"record_dict %d" , [record_dict retainCount]);
             [record_dict release]; 
 
             if(call_Back)
             {
-                NSLog(@"NxtCallDC");
+                SMLog(@"NxtCallDC");
                  appDelegate.wsInterface.didOpComplete = FALSE;
                 [appDelegate.wsInterface dataSyncWithEventName:DOWNLOAD_CREITERIA_SYNC eventType:@"SYNC" requestId:appDelegate.initial_dataSync_reqid];
                 appDelegate.data_sync_chunking = REQUEST_SENT;  // sahana imp 
@@ -5990,9 +6014,9 @@ last_sync_time:(NSString *)last_sync_time
             }
             else
             {
-                NSLog(@"NxtCallDC1");
+                SMLog(@"NxtCallDC1");
                 appDelegate.wsInterface.didOpComplete = TRUE;
-                NSLog(@"IComeOUTHere wsinterface");
+                SMLog(@"IComeOUTHere wsinterface");
             }
             
             [autoreleasePool release];
@@ -6003,8 +6027,8 @@ last_sync_time:(NSString *)last_sync_time
         {
           
             NSAutoreleasePool * autoreleasePool = [[NSAutoreleasePool alloc] init];
-            NSLog(@"SAMMAN TX_FETCH Response recived: %@", [NSDate date]);
-            NSLog(@"SAMMAN TX_FETCH Processing starts: %@", [NSDate date]);
+            SMLog(@"SAMMAN TX_FETCH Response recived: %@", [NSDate date]);
+            SMLog(@"SAMMAN TX_FETCH Processing starts: %@", [NSDate date]);
             NSMutableDictionary * record_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
             NSMutableArray * array = [wsResponse.result valueMap];
             
@@ -6062,7 +6086,7 @@ last_sync_time:(NSString *)last_sync_time
             }
             
             [keys_ release];
-            NSLog(@"SAMMAN TX_FETCH Processing ends: %@", [NSDate date]);
+            SMLog(@"SAMMAN TX_FETCH Processing ends: %@", [NSDate date]);
             
             [appDelegate.databaseInterface updateAllRecordsToSyncRecordsHeap:record_dict];
             [record_dict release];
@@ -6074,7 +6098,7 @@ last_sync_time:(NSString *)last_sync_time
         }
         else if ([wsResponse.result.eventName isEqualToString:@"PUT_INSERT"] )//INSERT
         {
-            NSLog(@"SAMMAN GET_INSERT/PUT_INSERT Processing starts: %@", [NSDate date]);
+            SMLog(@"SAMMAN GET_INSERT/PUT_INSERT Processing starts: %@", [NSDate date]);
             NSString * event_name = wsResponse.result.eventName;
             NSMutableDictionary * record_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
             NSMutableDictionary * conflict_dict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
@@ -6251,7 +6275,7 @@ last_sync_time:(NSString *)last_sync_time
                     }
                 }
             }
-            NSLog(@"SAMMAN GET_INSERT/PUT_INSERT Processing ends: %@", [NSDate date]);
+            SMLog(@"SAMMAN GET_INSERT/PUT_INSERT Processing ends: %@", [NSDate date]);
             [appDelegate.databaseInterface insertRecordIdsIntosyncRecordHeap:record_dict];
             [appDelegate.databaseInterface insertSyncConflictsIntoSYNC_CONFLICT:conflict_dict];
             
@@ -6463,7 +6487,7 @@ last_sync_time:(NSString *)last_sync_time
                 }
             }
             
-            NSLog(@"UPDATE %@", record_dict);
+            SMLog(@"UPDATE %@", record_dict);
             [appDelegate.databaseInterface  insertRecordIdsIntosyncRecordHeap:record_dict];
             [appDelegate.databaseInterface  insertSyncConflictsIntoSYNC_CONFLICT:conflict_dict];
             if([wsResponse.result.eventName isEqualToString:@"GET_UPDATE"])
@@ -6733,7 +6757,7 @@ last_sync_time:(NSString *)last_sync_time
                         {
                             NSString * objectName =[arr objectAtIndex:0];
                             NSString * whereclause = [arr objectAtIndex:1];
-                            NSLog(@"class - %@" ,[dcobjects_incrementalSync class]);
+                            SMLog(@"class - %@" ,[dcobjects_incrementalSync class]);
                             [dcobjects_incrementalSync setObject:whereclause forKey:objectName];
                         }
                     }
@@ -6741,7 +6765,7 @@ last_sync_time:(NSString *)last_sync_time
                    /* NSAutoreleasePool * autoreleasePool = [[NSAutoreleasePool alloc]init];
                     SBJsonParser * parser = [[[SBJsonParser alloc] init] autorelease];
                     NSDictionary * dict = [[parser objectWithString:svmxMap.value] retain];
-                    NSLog(@"%@",dict);
+                    SMLog(@"%@",dict);
                     [self downloadcriteriaplist:dict];
                     [autoreleasePool release];*/
 
@@ -6818,7 +6842,7 @@ last_sync_time:(NSString *)last_sync_time
                 }
             }
             
-            NSLog(@"UPDATE %@", record_dict);
+            SMLog(@"UPDATE %@", record_dict);
             [appDelegate.databaseInterface  insertRecordIdsIntosyncRecordHeap:record_dict];
             if([event_name isEqualToString:GET_UPDATE])
             {
@@ -6858,7 +6882,7 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.Incremental_sync_status = CLEANUP_DONE;
         }
               
-        NSLog(@"DataSync End: %@", [NSDate date]);
+        SMLog(@"DataSync End: %@", [NSDate date]);
     }
     
     if([operation isKindOfClass:[INTF_WebServicesDefBinding_SVMX_GetSvmxVersion class]])
@@ -6875,12 +6899,12 @@ last_sync_time:(NSString *)last_sync_time
        // [self metaSync];
         
         
-        NSLog( @"getVersion");
+        SMLog( @"getVersion");
     }
     // for addrecode_ws
     if([operation isKindOfClass:[INTF_WebServicesDefBinding_INTF_Update_Events_WS class]])
     {
-        NSLog(@"Update_Events");
+        SMLog(@"Update_Events");
         INTF_WebServicesDefServiceSvc_INTF_Update_Events_WSResponse * wsResponse = [response.bodyParts objectAtIndex:0];
         
         if (rescheduleEvent != nil)
@@ -6896,7 +6920,7 @@ last_sync_time:(NSString *)last_sync_time
     
     if([operation isKindOfClass:[INTF_WebServicesDefBinding_INTF_AddRecords_WS class]])
     {
-        NSLog(@"%@",response);
+        SMLog(@"%@",response);
         if (detail_addRecordItems != nil)
         {
             [detail_addRecordItems release];
@@ -6943,7 +6967,7 @@ last_sync_time:(NSString *)last_sync_time
             
             while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
             {
-                NSLog(@"WSInterface operation in while loop");
+                SMLog(@"WSInterface operation in while loop");
                 /*if (!appDelegate.isInternetConnectionAvailable)
                 {
                     didGetProcessId = TRUE;
@@ -6958,7 +6982,7 @@ last_sync_time:(NSString *)last_sync_time
                     
                     return;
                 }*/
-                NSLog(@"SaveResponse");
+                SMLog(@"SaveResponse");
                 if (didGetProcessId)
                 {
                     didGetProcessId = FALSE;
@@ -6967,7 +6991,7 @@ last_sync_time:(NSString *)last_sync_time
             }
 
             [appDelegate.createObjectContext setValue:appDelegate.currentProcessID forKey:PROCESSID];
-            NSLog(@"%@", appDelegate.createObjectContext); 
+            SMLog(@"%@", appDelegate.createObjectContext); 
         }
         
         if ([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"SOURCETOTARGET"])
@@ -6979,7 +7003,7 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.createObjectContext = [self getSaveTargetRecords:response];
             while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
             {
-                NSLog(@"WSInterface operation in while loop");
+                SMLog(@"WSInterface operation in while loop");
                 /*if (!appDelegate.isInternetConnectionAvailable)
                 {
                     didGetProcessId = TRUE;
@@ -6994,7 +7018,7 @@ last_sync_time:(NSString *)last_sync_time
                     
                     return;
                 }*/
-                NSLog(@"SaveResponse");
+                SMLog(@"SaveResponse");
                 if (didGetProcessId)
                 {
                     didGetProcessId = FALSE;
@@ -7002,7 +7026,7 @@ last_sync_time:(NSString *)last_sync_time
                 }
             }
             [appDelegate.createObjectContext setValue:appDelegate.currentProcessID forKey:PROCESSID];
-            NSLog(@"%@", appDelegate.createObjectContext); 
+            SMLog(@"%@", appDelegate.createObjectContext); 
 
         }
         // sahana 14th sept
@@ -7017,7 +7041,7 @@ last_sync_time:(NSString *)last_sync_time
     {
         tagsDictionary = [[self getTagsdisplay:response] retain];
         responseError = 0;
-        //   NSLog(@"%@", appDelegate.tagsDictionary);
+        //   SMLog(@"%@", appDelegate.tagsDictionary);
         [self getCreateProcesses];
     }
     
@@ -7030,7 +7054,7 @@ last_sync_time:(NSString *)last_sync_time
     if ([operation isKindOfClass:[INTF_WebServicesDefBinding_INTF_Get_View_Layouts_WS class]])
     {
         viewLayoutsArray = [self getViewLayoutArray:response];
-        NSLog(@"%@", viewLayoutsArray);
+        SMLog(@"%@", viewLayoutsArray);
         [viewLayoutsArray retain];
         NSDate *date = [NSDate date];
         NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
@@ -7042,7 +7066,7 @@ last_sync_time:(NSString *)last_sync_time
     
     if ([operation isKindOfClass:[INTF_WebServicesDefBinding_INTF_Get_WorkOrderMapView_WS class]])
     {
-        NSLog(@"Mapview");
+        SMLog(@"Mapview");
         NSMutableDictionary * dict = [self getWorkOrderDetails:response];
         [appDelegate.workOrderInfo addObject:dict];
     }
@@ -7056,7 +7080,7 @@ last_sync_time:(NSString *)last_sync_time
     
     if ([operation isKindOfClass:[INTF_WebServicesDefBinding_INTF_Get_Events_WS class]])
     {
-        NSLog(@"Get Events Completed");
+        SMLog(@"Get Events Completed");
         //Radha 30th April 2011
         responseError = 0;
         eventArray = [self getEventdisplay:response];
@@ -7164,7 +7188,7 @@ last_sync_time:(NSString *)last_sync_time
             accountHistory = nil;
         }
         accountHistory = [[self getAccountHistoryFromResponse:response] retain];
-        NSLog(@"%@", accountHistory);
+        SMLog(@"%@", accountHistory);
         didGetAccountHistory = YES;
     }
     
@@ -7177,7 +7201,7 @@ last_sync_time:(NSString *)last_sync_time
             productHistory = nil;
         }
         productHistory = [[self getProductHistoryFromResponse:response] retain];
-        NSLog(@"%@", productHistory);
+        SMLog(@"%@", productHistory);
         didGetProductHistory = YES;
     }
     
@@ -7233,7 +7257,7 @@ last_sync_time:(NSString *)last_sync_time
                 {
                     INTF_WebServicesDefServiceSvc_INTF_BubbleWrapper * bubbleWrapper = [bubbleInfo objectAtIndex:k];
                     NSString * field_api_name = bubbleWrapper.fieldapiname ; 
-                    NSLog(@"Field API Name = %@",field_api_name);
+                    SMLog(@"Field API Name = %@",field_api_name);
                     INTF_WebServicesDefServiceSvc_INTF_StringMap * stringMap = bubbleWrapper.fieldvalue;
                     NSString * key = stringMap.key;
                     NSString * value = stringMap.value;
@@ -7246,7 +7270,7 @@ last_sync_time:(NSString *)last_sync_time
                     //sahana 30th July
                     else if([field_api_name isEqualToString:@"SequenceNo_for_Record"])
                     {
-                        NSLog(@" key %@  loopValue %d",key,k);
+                        SMLog(@" key %@  loopValue %d",key,k);
                         if(key == nil)
                         {
                             recordNO = 99999;
@@ -7257,7 +7281,7 @@ last_sync_time:(NSString *)last_sync_time
                         }
                     }
                     
-                    NSLog(@" key %@  loopValue %@",key,value);
+                    SMLog(@" key %@  loopValue %@",key,value);
                     
                     NSMutableArray  * arr = [[NSMutableArray alloc] initWithCapacity:0];
                     
@@ -7287,7 +7311,7 @@ last_sync_time:(NSString *)last_sync_time
                 }
                 
                 
-                NSLog(@"   NUm  %d" ,recordNO);
+                SMLog(@"   NUm  %d" ,recordNO);
                 NSString * str_record_num = [NSString stringWithFormat:@"%d" , recordNO];
                 NSString * str_record_id = @"";
                 if(Record_Id != nil)
@@ -7298,7 +7322,7 @@ last_sync_time:(NSString *)last_sync_time
                 NSDictionary * dict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:str_record_id,str_record_num, nil] forKeys:record_key];
                 [event_Record_id_set addObject:dict];
                 
-                NSLog(@" event_Record_id_set :%@", event_Record_id_set);
+                SMLog(@" event_Record_id_set :%@", event_Record_id_set);
                 
                 //sahana 30th July
                 if(Record_Id == nil)
@@ -7321,12 +7345,12 @@ last_sync_time:(NSString *)last_sync_time
                                 if([rec_id isEqualToString:@""])
                                 {
                                     
-                                    NSLog(@"  Record_Id --> %d  rec_id --> %d",emptyRecId_count , recordNO);
+                                    SMLog(@"  Record_Id --> %d  rec_id --> %d",emptyRecId_count , recordNO);
                                     if (emptyRecId_count == recordNO)
                                     {
                                         NSMutableArray * detailValuesArray = [detail_values_array objectAtIndex:p];
                                         NSArray * allkeys = [bubbleInfoDict allKeys];
-                                        NSLog(@"%@", bubbleInfoDict);
+                                        SMLog(@"%@", bubbleInfoDict);
                                         for(int q = 0 ; q < [allkeys count]; q++)
                                         {
                                             BOOL flag = FALSE;
@@ -7339,7 +7363,7 @@ last_sync_time:(NSString *)last_sync_time
                                                 keyValueDict =[detailValuesArray objectAtIndex:q];
                                                 NSString * api_name = [keyValueDict objectForKey:gVALUE_FIELD_API_NAME];
                                                 //collect all keys from bubbleinfo dict 
-                                                NSLog(@"%@ %@",bubbleInfoDictKey , api_name);
+                                                SMLog(@"%@ %@",bubbleInfoDictKey , api_name);
                                                 if([bubbleInfoDictKey isEqualToString:api_name])
                                                 {
                                                     flag = TRUE;
@@ -7359,7 +7383,7 @@ last_sync_time:(NSString *)last_sync_time
                                                     NSMutableDictionary * key_dict1 = [strmap objectAtIndex:1];
                                                     NSString * value = [key_dict1 objectForKey:@"value"];
                                                     
-                                                    NSLog(@"present  bubbleInfoDictKey %@ key %@ value %@", bubbleInfoDictKey,key,value);
+                                                    SMLog(@"present  bubbleInfoDictKey %@ key %@ value %@", bubbleInfoDictKey,key,value);
                                                     [keyValueDict setValue:key forKey:gVALUE_FIELD_VALUE_KEY];
                                                     [keyValueDict setValue:value forKey:gVALUE_FIELD_VALUE_VALUE];
                                                 }
@@ -7383,7 +7407,7 @@ last_sync_time:(NSString *)last_sync_time
                                                                              gVALUE_FIELD_VALUE_KEY,
                                                                              gVALUE_FIELD_VALUE_VALUE,
                                                                              nil];
-                                                    NSLog(@"bubbleInfoDictKey %@ key %@ value %@", bubbleInfoDictKey,key,value);
+                                                    SMLog(@"bubbleInfoDictKey %@ key %@ value %@", bubbleInfoDictKey,key,value);
                                                     
                                                     NSMutableArray * objects = [NSMutableArray arrayWithObjects:bubbleInfoDictKey, key, value, nil];
                                                     NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:objects forKeys:keys];
@@ -7445,8 +7469,8 @@ last_sync_time:(NSString *)last_sync_time
                                 }
                             }
                             
-                            NSLog(@"valuearray%@", detail_values_array);
-                            NSLog(@" record_id ---%@",details_record_ids);
+                            SMLog(@"valuearray%@", detail_values_array);
+                            SMLog(@" record_id ---%@",details_record_ids);
                         }
                         
                     }
@@ -7479,7 +7503,7 @@ last_sync_time:(NSString *)last_sync_time
                                 if((local_id != nil) && (rec_id != nil))
                                 {
                                     
-                                    NSLog(@"  Record_Id --> %@  rec_id --> %@",Record_Id , rec_id);
+                                    SMLog(@"  Record_Id --> %@  rec_id --> %@",Record_Id , rec_id);
                                     if([local_id isEqualToString:rec_id])
                                     {
                                         NSMutableArray * detailValuesArray = [detail_values_array objectAtIndex:p];
@@ -7505,7 +7529,7 @@ last_sync_time:(NSString *)last_sync_time
                                                 keyValueDict =[detailValuesArray objectAtIndex:q];
                                                 NSString * api_name = [keyValueDict objectForKey:gVALUE_FIELD_API_NAME];
                                                 //collect all keys from bubbleinfo dict 
-                                                NSLog(@"Idbubble info dict key %@ api_name %@ ", bubbleInfoDictKey , api_name);
+                                                SMLog(@"Idbubble info dict key %@ api_name %@ ", bubbleInfoDictKey , api_name);
                                                 if([bubbleInfoDictKey isEqualToString:api_name])
                                                 {
                                                     flag = TRUE;
@@ -7634,8 +7658,8 @@ last_sync_time:(NSString *)last_sync_time
                                 
                             }
                             
-                            NSLog(@"valuearray%@", detail_values_array);
-                            NSLog(@" record_id ---%@",details_record_ids);
+                            SMLog(@"valuearray%@", detail_values_array);
+                            SMLog(@" record_id ---%@",details_record_ids);
                         }
                     } 
                     
@@ -7678,7 +7702,7 @@ last_sync_time:(NSString *)last_sync_time
                         if([dict count] != 0)
                         {
                             NSString * value = [dict objectForKey:@"RecordId"];
-                            NSLog(@"value %@  record id %@", value , id_);
+                            SMLog(@"value %@  record id %@", value , id_);
                             if([value isEqualToString:sf_id])
                             {
                                 isrecord_exist = TRUE;                        
@@ -7692,7 +7716,7 @@ last_sync_time:(NSString *)last_sync_time
                     {                        
                         [records_to_be_deleted addObject:id_];
                     }
-                    NSLog(@"after deleting each item  %@", details_record_ids);
+                    SMLog(@"after deleting each item  %@", details_record_ids);
                 }
             }
             
@@ -7715,7 +7739,7 @@ last_sync_time:(NSString *)last_sync_time
             
             NSMutableArray * local_deletedRecord_array = [[NSMutableArray alloc] initWithCapacity:0];
             
-            NSLog(@"details record id --------%@",deleted_details_array);
+            SMLog(@"details record id --------%@",deleted_details_array);
             for(int q = 0; q < [detail_values_array count]; q++)
             {
                 NSMutableArray * detailValuesArray = [detail_values_array objectAtIndex:q];
@@ -7758,7 +7782,7 @@ last_sync_time:(NSString *)last_sync_time
                         {
                             if(flag)
                             {
-                                NSLog(@"present");
+                                SMLog(@"present");
                                 
                             }
                             else
@@ -7773,7 +7797,7 @@ last_sync_time:(NSString *)last_sync_time
                 }
             }
             
-            NSLog(@"local_deletedRecord_array --------%@",local_deletedRecord_array);
+            SMLog(@"local_deletedRecord_array --------%@",local_deletedRecord_array);
             
             
             for(int m = 0 ; m < [local_deletedRecord_array count]; m++)
@@ -7806,7 +7830,7 @@ last_sync_time:(NSString *)last_sync_time
             }
             
             
-            NSLog(@"details record id --------%@",deleted_details_array);
+            SMLog(@"details record id --------%@",deleted_details_array);
             
             
             for(int y = 0 ; y< [details_record_ids count]; y++)
@@ -7820,8 +7844,8 @@ last_sync_time:(NSString *)last_sync_time
                 }
             }
             
-            NSLog(@"final  record_id array : %@ ",details_record_ids);
-            NSLog(@" event_Record_id_set :%@", event_Record_id_set);
+            SMLog(@"final  record_id array : %@ ",details_record_ids);
+            SMLog(@" event_Record_id_set :%@", event_Record_id_set);
             
         }
         
@@ -7871,7 +7895,7 @@ last_sync_time:(NSString *)last_sync_time
         NSMutableArray *header_sections = [hdr_object objectForKey:gHEADER_SECTIONS];
         
         
-        NSLog(@"BEFORE HDRE_DATA %@", header_data);
+        SMLog(@"BEFORE HDRE_DATA %@", header_data);
         NSArray * allkeys = [bubbleInfoDict_hdr allKeys];
         
         for(NSString * str in allkeys)
@@ -7906,14 +7930,14 @@ last_sync_time:(NSString *)last_sync_time
                     [header_data  setObject:key forKey:str];
                     //retrieving value from dict
                     
-                    NSLog(@"BEFOREEVENT %@  AFTEREVENT %@",temp_value,key);
+                    SMLog(@"BEFOREEVENT %@  AFTEREVENT %@",temp_value,key);
                 }
                 
             }
             
         }
         
-        NSLog(@"AFTER HDRE_DATA %@", header_data);
+        SMLog(@"AFTER HDRE_DATA %@", header_data);
         
         
         for (int i=0;i<[header_sections count];i++)
@@ -8422,7 +8446,7 @@ last_sync_time:(NSString *)last_sync_time
 {
     INTF_WebServicesDefBindingResponse * response = (INTF_WebServicesDefBindingResponse *) context;
     NSMutableDictionary * lookupDetails = [self getLookUpFromResponse:response];
-    NSLog(@"%@", lookupDetails);
+    SMLog(@"%@", lookupDetails);
     if (lookupDetails == nil)
     {
         if ([lookupCaller respondsToSelector:@selector(setLookupData:)])
@@ -8439,7 +8463,7 @@ last_sync_time:(NSString *)last_sync_time
 - (void) didDescribeSObjects:(NSMutableArray *)result error:(NSError *)error context:(id)context
 {
     [result retain];
-    NSLog(@"%@", result);
+    SMLog(@"%@", result);
     
     [self getDictionaryFromPageLayout:context withDescribedObjects:result];
 }
@@ -9079,7 +9103,7 @@ last_sync_time:(NSString *)last_sync_time
                          nil];
     
     NSMutableDictionary * pageLayout = [[NSMutableDictionary dictionaryWithObjects:objects forKeys:keys] retain];
-    NSLog(@"%@", pageLayout);
+    SMLog(@"%@", pageLayout);
     
     // SLA Clock Values
     NSMutableArray * mapStringMap = [response MapStringMap];
@@ -9122,8 +9146,8 @@ last_sync_time:(NSString *)last_sync_time
         {
             if (!appDelegate.isInternetConnectionAvailable)
                 return;
-            NSLog(@"WSInterface getDictionaryFromPageLayout in while loop");
-            NSLog(@"Hello");
+            SMLog(@"WSInterface getDictionaryFromPageLayout in while loop");
+            SMLog(@"Hello");
             if ((didGetAccountHistory == YES) && (didGetProductHistory == YES))
                 break;
         }
@@ -9762,7 +9786,7 @@ last_sync_time:(NSString *)last_sync_time
         ret = [[response.bodyParts objectAtIndex:i] isKindOfClass:[SOAPFault class]];
         if ( ret )
         {
-            NSLog(@"ERROR: IN THE RESPONSE RECEIVED");
+            SMLog(@"ERROR: IN THE RESPONSE RECEIVED");
             break;
         }
         else
@@ -9779,8 +9803,8 @@ last_sync_time:(NSString *)last_sync_time
             break;
         }
     }
-    NSLog(@"%d", [response.bodyParts count]);
-    NSLog(@"%@", array);
+    SMLog(@"%d", [response.bodyParts count]);
+    SMLog(@"%@", array);
     
     if ([array count] == 0)
     {
@@ -9796,7 +9820,7 @@ last_sync_time:(NSString *)last_sync_time
         }
     }
     
-    NSLog(@"%@", _tagsDictionary);
+    SMLog(@"%@", _tagsDictionary);
     // Samman
     _tagsDictionary = [self fillEmptyTags:_tagsDictionary];
     return _tagsDictionary;
@@ -9973,7 +9997,7 @@ last_sync_time:(NSString *)last_sync_time
         
         [arr addObject:dict];
     }
-    NSLog(@"arr = %@", arr); 
+    SMLog(@"arr = %@", arr); 
     return arr;
 }
 
@@ -10042,17 +10066,17 @@ last_sync_time:(NSString *)last_sync_time
         }
         
     }
-    NSLog(@ "appdelegate---objectNames_array %@",objectNames_array);
+    SMLog(@ "appdelegate---objectNames_array %@",objectNames_array);
 
     [[ZKServerSwitchboard switchboard] describeSObjects:objectNames_array target:self selector:@selector(didGetNameFields:error:context:) context:nil];
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
     {
-        NSLog(@"WSInterface getCreateProcessDictionaryArray in while loop");
+        SMLog(@"WSInterface getCreateProcessDictionaryArray in while loop");
         if ( didGetObjectName == TRUE )
             break;
     }
 
-    NSLog(@"appdelegate---objectNames_array %@",appDelegate.objectLabel_array);
+    SMLog(@"appdelegate---objectNames_array %@",appDelegate.objectLabel_array);
     
     section_for_createObjects = [[NSMutableArray alloc] initWithCapacity:0];
     for(int i=0 ;i< [objectNames_array count]; i++)
@@ -10075,13 +10099,13 @@ last_sync_time:(NSString *)last_sync_time
     //create a
     appDelegate.StandAloneCreateProcess = [section_for_createObjects retain];
     appDelegate.objectNames_array = [objectNames_array retain];
-     //  NSLog(@"viewLayouts = %@", dict);
-    NSLog(@"viewLayouts= %@", array);
-    //NSLog(@"%@" , objectNames_array);
-    //NSLog(@"%@" ,section_for_createObjects);
-    NSLog(@ "appdelegate--- %@",appDelegate.StandAloneCreateProcess);
-    NSLog(@"apdelegate-----%@",appDelegate.objectNames_array);
-    NSLog(@"%@", appDelegate.objectLabel_array);
+     //  SMLog(@"viewLayouts = %@", dict);
+    SMLog(@"viewLayouts= %@", array);
+    //SMLog(@"%@" , objectNames_array);
+    //SMLog(@"%@" ,section_for_createObjects);
+    SMLog(@ "appdelegate--- %@",appDelegate.StandAloneCreateProcess);
+    SMLog(@"apdelegate-----%@",appDelegate.objectNames_array);
+    SMLog(@"%@", appDelegate.objectLabel_array);
     
     
     //Radha for sorting 
@@ -10098,7 +10122,7 @@ last_sync_time:(NSString *)last_sync_time
         _dict = nil;
     }
     
-    NSLog(@"%@", appDelegate.objectLabelName_array);
+    SMLog(@"%@", appDelegate.objectLabelName_array);
     
     if ( [appDelegate.objectLabelName_array count] > 1 )
     {
@@ -10123,9 +10147,9 @@ last_sync_time:(NSString *)last_sync_time
         }
     }
     
-    NSLog(@"%@", appDelegate.objectLabelName_array);
+    SMLog(@"%@", appDelegate.objectLabelName_array);
 
-    NSLog(@"appdelegate---objectNames_array %@",appDelegate.objectLabel_array);
+    SMLog(@"appdelegate---objectNames_array %@",appDelegate.objectLabel_array);
 
     section_for_createObjects = [[NSMutableArray alloc] initWithCapacity:0];
     for(int i=0 ;i< [objectNames_array count]; i++)
@@ -10191,11 +10215,11 @@ last_sync_time:(NSString *)last_sync_time
                                          nil];
             dict = [NSDictionary dictionaryWithObjects:viewInfoObjects forKeys:viewInfokeys];
             
-            NSLog(@"%@", dict);
+            SMLog(@"%@", dict);
             [array addObject:dict];
         }
     }
-    NSLog(@"%@", array);
+    SMLog(@"%@", array);
     return array;
 }
 
@@ -10289,7 +10313,7 @@ last_sync_time:(NSString *)last_sync_time
         }
 
         
-        NSLog(@"WSInterface getNameFieldForCreateProcess in while loop");
+        SMLog(@"WSInterface getNameFieldForCreateProcess in while loop");
         if (!appDelegate.isInternetConnectionAvailable)
         {
             didGetProcessId = TRUE;
@@ -10311,19 +10335,19 @@ last_sync_time:(NSString *)last_sync_time
     NSDictionary * dict = nil ;       
     NSString * str = nil ;
     
-    NSLog(@"%@", array);
+    SMLog(@"%@", array);
     
     if ([array count] > 0)
     {
         ZKSObject * obj = [array objectAtIndex:0];
         dict = [obj fields]; 
         str = [dict valueForKey:@"Name"];
-        NSLog(@"%@", dict);
-        NSLog(@"%@",str);
+        SMLog(@"%@", dict);
+        SMLog(@"%@",str);
     }
     
     [appDelegate.createObjectContext setObject:(str != nil)?str:@"" forKey:NAME_FIELD];
-    NSLog(@"%@", appDelegate.createObjectContext);
+    SMLog(@"%@", appDelegate.createObjectContext);
     
     NSString * objectName = [appDelegate.createObjectContext objectForKey:OBJECT_NAME];
     for (int j = 0; j < [appDelegate.wsInterface.viewLayoutsArray count]; j++)
@@ -10374,11 +10398,11 @@ last_sync_time:(NSString *)last_sync_time
         
         if (array == nil)
             array = [[NSMutableArray alloc] initWithCapacity:0];
-        NSLog(@"%@", array);
+        SMLog(@"%@", array);
         
         int count = [array count];
         
-        NSLog(@"%d", count);
+        SMLog(@"%d", count);
         
         if (count > VALUE) 
         {
@@ -10393,7 +10417,7 @@ last_sync_time:(NSString *)last_sync_time
     }
     else 
     {
-        NSLog(@"%@",error);
+        SMLog(@"%@",error);
         [error release];
     }
 }
@@ -10438,7 +10462,7 @@ last_sync_time:(NSString *)last_sync_time
             [dictionary setValue:([[valueMap objectAtIndex:j] value] != nil)?[[valueMap objectAtIndex:j] value]:@"" forKey:[[valueMap objectAtIndex:j] key]];
         }
     }
-    NSLog(@"%@", dictionary);
+    SMLog(@"%@", dictionary);
     didGetWorkOder = TRUE;
     return dictionary;
 }
@@ -10480,7 +10504,7 @@ last_sync_time:(NSString *)last_sync_time
     endDate = [[dateFormatter stringFromDate:endOfWeek] retain];
 //	[bounds insertObject:endDate atIndex:1];
 
-//    NSLog(@"%@", bounds);
+//    SMLog(@"%@", bounds);
 
     if (currentDateRange != nil)
         [currentDateRange release];
@@ -10521,7 +10545,7 @@ last_sync_time:(NSString *)last_sync_time
         [self loginWithUsername:appDelegate.username password:appDelegate.password target:self selector:@selector(sessionDidResume:error:)];
         while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
         {
-            NSLog(@"WSInterface doCheckSession in while loop");
+            SMLog(@"WSInterface doCheckSession in while loop");
             if (didSessionResume)
                 break;
         }
@@ -10541,12 +10565,12 @@ last_sync_time:(NSString *)last_sync_time
     appDelegate.currentServerUrl = server;
     if (error)
     {
-        NSLog(@"There was an error resuming the session: %@", error);
+        SMLog(@"There was an error resuming the session: %@", error);
         didSessionResume = YES;
         isSessionInavalid = YES;
     }
     else {
-        NSLog(@"Session Resumed Successfully!");
+        SMLog(@"Session Resumed Successfully!");
         didSessionResume = YES;
         isSessionInavalid = NO;
     }

@@ -26,6 +26,7 @@
 #import "NSObject+Additions.h"
 #import "NSURL+Additions.h"
 #import "iServiceAppDelegate.h"
+extern void SVMXLog(NSString *format, ...);
 
 static NSString *SOAP_NS = @"http://schemas.xmlsoap.org/soap/envelope/";
 
@@ -54,8 +55,8 @@ static NSString *SOAP_NS = @"http://schemas.xmlsoap.org/soap/envelope/";
 	[request setHTTPBody:data];
     
 	if(self.logXMLInOut) {
-		NSLog(@"OutputHeaders:\n%@", [request allHTTPHeaderFields]);
-		NSLog(@"OutputBody:\n%@", payload);
+		SMLog(@"OutputHeaders:\n%@", [request allHTTPHeaderFields]);
+		SMLog(@"OutputBody:\n%@", payload);
 	}
     
     return [self _sendRequest:request target:target selector:sel context:context];
@@ -103,8 +104,8 @@ static NSString *SOAP_NS = @"http://schemas.xmlsoap.org/soap/envelope/";
     
     if(self.logXMLInOut) 
     {
-        NSLog(@"ResponseStatus: %u\n", [response statusCode]);
-		NSLog(@"ResponseHeaders:\n%@", [response allHeaderFields]);
+        SMLog(@"ResponseStatus: %u\n", [response statusCode]);
+		SMLog(@"ResponseHeaders:\n%@", [response allHeaderFields]);
 	}
     
     [targetInfo setValue: response forKey: @"response"];
@@ -122,7 +123,7 @@ static NSString *SOAP_NS = @"http://schemas.xmlsoap.org/soap/envelope/";
     appDelegate.connection_error = TRUE;
     
 	if (self.logXMLInOut) {
-		NSLog(@"ResponseError:\n%@", error);
+		SMLog(@"ResponseError:\n%@", error);
         if ([self respondsToSelector:@selector(internetConnectionFailed)])
             [self performSelector:@selector(internetConnectionFailed)];
 	}
@@ -156,7 +157,7 @@ static NSString *SOAP_NS = @"http://schemas.xmlsoap.org/soap/envelope/";
 	NSMutableData * data = (id)CFDictionaryGetValue(connectionsData, connection);
 	
 	if (self.logXMLInOut) {
-		NSLog(@"ResponseBody:\n%@", [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease]);
+		SMLog(@"ResponseBody:\n%@", [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease]);
 	}
 	
 	id target = [targetInfo valueForKey: @"target"];
@@ -213,10 +214,10 @@ static NSString *SOAP_NS = @"http://schemas.xmlsoap.org/soap/envelope/";
 {
     if (error)
     {
-        NSLog(@"There was an error resuming the session: %@", error);
+        SMLog(@"There was an error resuming the session: %@", error);
     }
     else {
-        NSLog(@"Session Resumed Successfully!");
+        SMLog(@"Session Resumed Successfully!");
     }
     
 }
@@ -225,12 +226,12 @@ static NSString *SOAP_NS = @"http://schemas.xmlsoap.org/soap/envelope/";
 {
     if (!clientId)
     {
-        NSLog(@"can't refresh OAuth Access Token without a client id set");
+        SMLog(@"can't refresh OAuth Access Token without a client id set");
         return;
     }
     if (!oAuthRefreshToken)
     {
-        NSLog(@"can't refresh OAuth Access Token without oAuthRefreshToken set");
+        SMLog(@"can't refresh OAuth Access Token without oAuthRefreshToken set");
     }
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"https://login.salesforce.com/services/oauth2/token"]];

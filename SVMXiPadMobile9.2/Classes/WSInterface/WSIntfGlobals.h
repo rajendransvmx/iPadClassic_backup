@@ -15,6 +15,10 @@
 @end
 
 //sahana
+//signature 
+#define SIG_AFTERUPDATE                                 @"AFTER_UPDATE"
+#define SIG_BEFOREUPDATE                                @"BEFORE_UPDATE"
+#define SIG_AFTERSYNC                                   @"AFTER_SYNC"
 
 //sahana initial sync crash fix
 #define USER_INFO_PLIST                                 @"USER_INFO_PLIST"

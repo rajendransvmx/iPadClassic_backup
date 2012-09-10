@@ -20,6 +20,7 @@
 //
 
 #import "ZKEmailMessage.h"
+extern void SVMXLog(NSString *format, ...);
 
 @interface ZKEmailMessage (Private)
 
@@ -67,7 +68,7 @@
         [super setFieldValue:[self _priorityStringForValue:newPriority] field:@"emailPriority"];
     }
     else {
-        NSLog(@"can't set priority to %d, not a valid value.", newPriority);
+        SMLog(@"can't set priority to %d, not a valid value.", newPriority);
     }
 }
 

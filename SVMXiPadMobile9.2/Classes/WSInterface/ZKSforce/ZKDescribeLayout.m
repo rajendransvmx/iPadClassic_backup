@@ -25,38 +25,39 @@
 #import "ZKDescribeLayoutSection.h"
 #import "ZKDescribeLayoutButtonSection.h"
 #import "ZKParser.h"
+extern void SVMXLog(NSString *format, ...);
 
 /*
  * sample code to dump layouts to debug window
  *
  *
 for ( ZKDescribeLayout *layout in layouts ) {
-	NSLog(@"layout ID %@",[layout Id]);
+	SMLog(@"layout ID %@",[layout Id]);
 	
 	ZKDescribeLayoutButtonSection *lbs = [layout buttonLayoutSection];
 	for (ZKDescribeLayoutButton *bl in [lbs detailButtons]) {
-		NSLog(@"button  %@ %@ %@",[bl name],[bl label],[bl custom]?@"true":@"false");
+		SMLog(@"button  %@ %@ %@",[bl name],[bl label],[bl custom]?@"true":@"false");
 	}
 	
 	for (ZKDescribeLayoutSection *section in [layout detailLayoutSections]) {
 		
-		NSLog(@"detail section %@",[section heading]);
-		NSLog(@"columns %d, rows %d",[section columns], [section rows]);
+		SMLog(@"detail section %@",[section heading]);
+		SMLog(@"columns %d, rows %d",[section columns], [section rows]);
 		
 		for( ZKDescribeLayoutRow *dlr in [section layoutRows]) {
-			NSLog(@"num items %d",[dlr numItems]);
+			SMLog(@"num items %d",[dlr numItems]);
 			for ( ZKDescribeLayoutItem *item in [dlr layoutItems] ) {
 				
 				BOOL ph = [item placeholder];
-				NSLog(@"placeholder %@", ph?@"true":@"false");
+				SMLog(@"placeholder %@", ph?@"true":@"false");
 				
 				if ( !ph ) { // no label on placeholders
-					NSLog(@"label %@",[item label]);
+					SMLog(@"label %@",[item label]);
 				}
 				// may have a list of layout components
 				for (ZKDescribeLayoutComponent *comp in [item layoutComponents]) {
 					if ( [[comp type] isEqualToString:@"Field"] ){
-						NSLog(@"field : ",[comp value]);
+						SMLog(@"field : ",[comp value]);
 					}
 				}	
 			}
@@ -64,7 +65,7 @@ for ( ZKDescribeLayout *layout in layouts ) {
 	}
 	
 	for (ZKDescribeLayoutSection *edit in [layout editLayoutSections]) {
-		NSLog(@"edit layout section %@",[edit heading]);
+		SMLog(@"edit layout section %@",[edit heading]);
 	}
 	
 }*/

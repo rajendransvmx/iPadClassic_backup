@@ -2,6 +2,8 @@
 #import "USAdditions.h"
 #import <libxml/tree.h>
 #import "USGlobals.h"
+#import "CustomLibXml.h"
+
 @class iServiceAppDelegate;
 
 

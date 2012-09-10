@@ -14,6 +14,8 @@
 #ifndef DEFAULT_TIME_SEPARATOR
 #	define DEFAULT_TIME_SEPARATOR ':'
 #endif
+extern void SVMXLog(NSString *format, ...);
+
 unichar ISO8601ParserDefaultTimeSeparatorCharacter = DEFAULT_TIME_SEPARATOR;
 
 static unsigned read_segment(const unsigned char *str, const unsigned char **next, unsigned *out_num_digits) {
@@ -376,7 +378,7 @@ static BOOL is_leap_year(unsigned year) {
                 } else {
                   //Get month and/or date.
                   segment = read_segment_4digits(ch, &ch, &num_digits);
-                  NSLog(@"(%@) parsing month; segment is %u and ch is %s", str, segment, ch);
+                  SMLog(@"(%@) parsing month; segment is %u and ch is %s", str, segment, ch);
                   switch(num_digits) {
                     case 4: //YY-MMDD
                       day = segment % 100U;
@@ -433,7 +435,7 @@ static BOOL is_leap_year(unsigned year) {
               break;
               
             case 1:; //-YY; -YY-MM (implicit century)
-              NSLog(@"(%@) found %u digits and one hyphen, so this is either -YY or -YY-MM; segment (year) is %u", str, num_digits, segment);
+              SMLog(@"(%@) found %u digits and one hyphen, so this is either -YY or -YY-MM; segment (year) is %u", str, num_digits, segment);
               unsigned current_year = [dateComps year];
               unsigned century = (current_year % 100U);
               year = segment + (current_year - century);
@@ -443,7 +445,7 @@ static BOOL is_leap_year(unsigned year) {
               if(*ch == '-') {
                 ++ch;
                 month_or_week = read_segment_2digits(ch, &ch);
-                NSLog(@"(%@) month is %u", str, month_or_week);
+                SMLog(@"(%@) month is %u", str, month_or_week);
               } else {
                 month_or_week = 1U;
               }

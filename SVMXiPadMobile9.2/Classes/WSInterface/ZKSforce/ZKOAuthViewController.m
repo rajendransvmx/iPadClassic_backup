@@ -21,6 +21,7 @@
 
 #import "ZKOAuthViewController.h"
 #import "NSURL+Additions.h"
+extern void SVMXLog(NSString *format, ...);
 
 @interface ZKOAuthViewController (Private)
 
@@ -131,7 +132,7 @@
     NSString *urlTemplate = @"https://login.salesforce.com/services/oauth2/authorize?response_type=token&client_id=%@&redirect_uri=%@&display=%@";
     NSString *urlString = [NSString stringWithFormat:urlTemplate, clientId, redirectUri, display];
     NSURL *url = [NSURL URLWithString:urlString];
-    //NSLog(@"loginURL = %@", url);
+    //SMLog(@"loginURL = %@", url);
     return url;
 }
 

@@ -580,5 +580,11 @@
 	<string>Apply My</string>
 	<key>IPAD018_TAG038</key>
 	<string>Get From</string>
+	<key>IPAD018_TAG044</key>
+	<string>changes</string>
+	<key> IPAD018_TAG041</key>
+	<string>Are you sure you want to synchronize configuration?</string>
+	<key>IPAD012_TAG057</key>
+	<string>Meta sync failed due to too many script. Please contact your system administrator.</string>
 </dict>
 </plist>

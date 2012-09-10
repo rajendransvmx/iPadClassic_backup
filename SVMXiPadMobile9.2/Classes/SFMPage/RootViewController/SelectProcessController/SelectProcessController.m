@@ -10,6 +10,7 @@
 #import "iServiceAppDelegate.h"
 #import "Reachability.h"
 #import "databaseIntefaceSfm.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation SelectProcessController
 
@@ -173,7 +174,7 @@
     
     // Configure the cell...
     NSDictionary * dict = [array objectAtIndex:indexPath.row];
-    NSLog(@"%@", dict);
+    SMLog(@"%@", dict);
     
     // Configure the cell...
     UIButton * button = [UIButton buttonWithType:UIButtonTypeCustom];

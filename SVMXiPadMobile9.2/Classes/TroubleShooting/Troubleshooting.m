@@ -17,6 +17,7 @@
 #import "About.h"
 #import "DataBase.h"
 #import "NSData-AES.h"
+extern void SVMXLog(NSString *format, ...);
 
 //Radha 22nd April 2011
 # import "LocalizationGlobals.h"
@@ -107,7 +108,7 @@
             didRunOperation = YES;
         
             [self getProductNameForProductID:productId];
-            NSLog(@"%@",productName);
+            SMLog(@"%@",productName);
             //[appDelegate.calDataBase updateProductTableWithProductName:productName WithId:productId];
             didRunOperation = YES;
         
@@ -138,12 +139,12 @@
     BOOL isReachable = [currentReach boolValue];
     if (isReachable)
     {
-        NSLog(@"Troubleshooting Internet Reachable");
+        SMLog(@"Troubleshooting Internet Reachable");
      
     }
     else
     {
-        NSLog(@"Troubleshooting Internet Not Reachable");
+        SMLog(@"Troubleshooting Internet Not Reachable");
         if (didRunOperation)
         {
             [activity stopAnimating];
@@ -164,7 +165,7 @@
     didGetProductName = FALSE;
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
-        NSLog(@"Troubleshooting getProductNameForProductId in while loop");
+        SMLog(@"Troubleshooting getProductNameForProductId in while loop");
         if (didGetProductName)
             break;
         if (appDelegate.connection_error)
@@ -218,7 +219,7 @@
     //Shrinivas
     NSArray *_array;
     _array = [[result records] retain];  //Check leak here
-    NSLog(@"%d", [_array count]);
+    SMLog(@"%d", [_array count]);
     
     array = [[NSMutableArray alloc]initWithCapacity:0];
     NSArray *keys = [[[NSArray alloc]initWithObjects:@"DocId", @"Name",@"Keywords",nil] autorelease];
@@ -226,7 +227,7 @@
     for (int i = 0; i < [_array count]; i++ )
     {
         NSArray *objects = [[NSArray alloc]initWithObjects:[[[_array objectAtIndex:i] fields]objectForKey:@"Id"],[[[_array objectAtIndex:i] fields]objectForKey:@"Name"],[[[_array objectAtIndex:i] fields]objectForKey:@"Keywords"], nil]; 
-        NSLog(@"%@", objects);
+        SMLog(@"%@", objects);
         NSDictionary * _dict = [[NSDictionary alloc] initWithObjects:objects forKeys:keys];
         [array addObject:_dict];
         
@@ -241,11 +242,11 @@
     [activity stopAnimating];
     
     array = [[result records] retain];
-    NSLog(@"%@", array);
+    SMLog(@"%@", array);
     if ([array count] > 0)
     {
         subject.text = [[[array objectAtIndex:0] fields] objectForKey:@"Name"];
-        NSLog(@"%@", subject.text);
+        SMLog(@"%@", subject.text);
     }
     else
     {
@@ -331,7 +332,7 @@
     //Shrinivas
     NSData *data;
     
-    NSLog(@"%@", array);
+    SMLog(@"%@", array);
     self.productId = [appDelegate.calDataBase getProductIdForName:self.productName];
     
     _index = index;
@@ -352,14 +353,14 @@
 			NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 			NSString * documentsDirectoryPath = [paths objectAtIndex:0]; 
 			
-			NSLog(@"%@", array);
-			NSLog(@"%@",[[array objectAtIndex:index]objectForKey:@"DocId"]);
+			SMLog(@"%@", array);
+			SMLog(@"%@",[[array objectAtIndex:index]objectForKey:@"DocId"]);
 			
 			NSString * filePath = [documentsDirectoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@%@",[[array objectAtIndex:index]objectForKey:@"DocId"], @".zip"]];
 			
 			NSString * folderPath = [documentsDirectoryPath stringByAppendingPathComponent:[[array objectAtIndex:index]objectForKey:@"DocId"]];
 			
-			NSLog(@"%@, %@", folderPath, filePath);
+			SMLog(@"%@, %@", folderPath, filePath);
 			
 			[fileManager createFileAtPath:filePath contents:data attributes:nil];
 			
@@ -368,14 +369,14 @@
 			NSString * actualFilePath = [documentsDirectoryPath stringByAppendingPathComponent:[[array objectAtIndex:index]objectForKey:@"Name"]];
 			actualFilePath = [actualFilePath stringByAppendingPathComponent:@"index.html"];
 			
-			NSLog(@"%@", actualFilePath);
+			SMLog(@"%@", actualFilePath);
 			
 			NSURL * baseURL = [NSURL fileURLWithPath:[documentsDirectoryPath stringByAppendingPathComponent:[[array objectAtIndex:index]objectForKey:@"Name"]]];
 			NSError * error;
 			
 			NSString * fileContents = [NSString stringWithContentsOfFile:actualFilePath encoding:NSUTF8StringEncoding error:&error];
 			
-			NSLog(@"%@", fileContents);
+			SMLog(@"%@", fileContents);
 			
 			if (fileContents == nil)
 			{
@@ -383,7 +384,7 @@
 				[self unzipAndViewFile:filePath];
 				fileContents = [NSString stringWithContentsOfFile:actualFilePath encoding:NSUTF8StringEncoding error:&error];
 				
-				NSLog(@"%@", fileContents);
+				SMLog(@"%@", fileContents);
 			}
 			
 			[webView loadHTMLString:fileContents baseURL:baseURL];
@@ -397,7 +398,7 @@
         NSArray * objects = [[NSArray alloc] initWithObjects:[[array objectAtIndex:index]objectForKey:@"DocId"] ,[[array objectAtIndex:index]objectForKey:@"Name"],nil];
 		
         NSDictionary * _dict = [[NSDictionary alloc] initWithObjects:objects forKeys:keys];
-        NSLog(@"%@", _dict);
+        SMLog(@"%@", _dict);
         
         if (!appDelegate.isInternetConnectionAvailable)
         {
@@ -435,8 +436,8 @@
 //        NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 //        NSString * documentsDirectoryPath = [paths objectAtIndex:0]; 
 //        
-//        NSLog(@"%@", array);
-//        NSLog(@"%@",[[array objectAtIndex:index]objectForKey:@"DocId"]);
+//        SMLog(@"%@", array);
+//        SMLog(@"%@",[[array objectAtIndex:index]objectForKey:@"DocId"]);
 //        
 //        NSString * filePath = [documentsDirectoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@%@",[[array objectAtIndex:index]objectForKey:@"DocId"], @".zip"]];
 //
@@ -444,7 +445,7 @@
 //        
 //        //[fileManager createFileAtPath:filePath contents:data attributes:nil];
 //        
-//        NSLog(@"%@, %@", folderPath, filePath);
+//        SMLog(@"%@, %@", folderPath, filePath);
 //        
 //        [fileManager createFileAtPath:filePath contents:data attributes:nil];
 //        
@@ -453,14 +454,14 @@
 //        NSString * actualFilePath = [documentsDirectoryPath stringByAppendingPathComponent:[[array objectAtIndex:index]objectForKey:@"Name"]];
 //        actualFilePath = [actualFilePath stringByAppendingPathComponent:@"index.html"];
 //        
-//        NSLog(@"%@", actualFilePath);
+//        SMLog(@"%@", actualFilePath);
 //        
 //        NSURL * baseURL = [NSURL fileURLWithPath:[documentsDirectoryPath stringByAppendingPathComponent:[[array objectAtIndex:index]objectForKey:@"Name"]]];
 //        NSError * error;
 //        
 //        NSString * fileContents = [NSString stringWithContentsOfFile:actualFilePath encoding:NSUTF8StringEncoding error:&error];
 //        
-//        NSLog(@"%@", fileContents);
+//        SMLog(@"%@", fileContents);
 //        
 //        if (fileContents == nil)
 //        {
@@ -468,7 +469,7 @@
 //            [self unzipAndViewFile:filePath];
 //            fileContents = [NSString stringWithContentsOfFile:actualFilePath encoding:NSUTF8StringEncoding error:&error];
 //            
-//            NSLog(@"%@", fileContents);
+//            SMLog(@"%@", fileContents);
 //        }
 //        
 //        [webView loadHTMLString:fileContents baseURL:baseURL];
@@ -511,7 +512,7 @@
         // Need to decode data from Base64
         data = [Base64 decode:fileBinary];
         
-        NSLog(@"%@", data);
+        SMLog(@"%@", data);
         
         if ( data != nil )
         {
@@ -537,14 +538,14 @@
 			NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 			NSString * documentsDirectoryPath = [paths objectAtIndex:0]; 
 			
-			NSLog(@"%@", array);
-			NSLog(@"%@",[[array objectAtIndex:lastClickedIndex]objectForKey:@"DocId"]);
+			SMLog(@"%@", array);
+			SMLog(@"%@",[[array objectAtIndex:lastClickedIndex]objectForKey:@"DocId"]);
 			
 			NSString * filePath = [documentsDirectoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@%@",[[array objectAtIndex:lastClickedIndex]objectForKey:@"DocId"], @".zip"]];
 			
 			NSString * folderPath = [documentsDirectoryPath stringByAppendingPathComponent:[[array objectAtIndex:lastClickedIndex]objectForKey:@"DocId"]];
 			
-			NSLog(@"%@, %@", folderPath, filePath);
+			SMLog(@"%@, %@", folderPath, filePath);
 			
 			[fileManager createFileAtPath:filePath contents:data attributes:nil];
 			
@@ -553,14 +554,14 @@
 			NSString * actualFilePath = [documentsDirectoryPath stringByAppendingPathComponent:[[array objectAtIndex:lastClickedIndex]objectForKey:@"Name"]];
 			actualFilePath = [actualFilePath stringByAppendingPathComponent:@"index.html"];
 			
-			NSLog(@"%@", actualFilePath);
+			SMLog(@"%@", actualFilePath);
 			
 			NSURL * baseURL = [NSURL fileURLWithPath:[documentsDirectoryPath stringByAppendingPathComponent:[[array objectAtIndex:lastClickedIndex]objectForKey:@"Name"]]];
 			NSError * error;
 			
 			NSString * fileContents = [NSString stringWithContentsOfFile:actualFilePath encoding:NSUTF8StringEncoding error:&error];
 			
-			NSLog(@"%@", fileContents);
+			SMLog(@"%@", fileContents);
 			
 			if (fileContents == nil)
 			{
@@ -569,7 +570,7 @@
 				[self unzipAndViewFile:filePath];
 				fileContents = [NSString stringWithContentsOfFile:actualFilePath encoding:NSUTF8StringEncoding error:&error];
 				
-				NSLog(@"%@", fileContents);
+				SMLog(@"%@", fileContents);
 			}
 			
 			[webView loadHTMLString:fileContents baseURL:baseURL];
@@ -594,7 +595,7 @@
     if (zip == nil)
         zip = [[ZipArchive alloc] init];
     
-    NSLog(@"%@", _file);
+    SMLog(@"%@", _file);
     BOOL retVal = [zip UnzipOpenFile:_file];
     
     if (!retVal)
@@ -605,13 +606,13 @@
     // Directory Path to unzip file to...
     NSString * docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     
-    NSLog(@"%@", docDir);
+    SMLog(@"%@", docDir);
     
     // Create "dataName" directory in Documents
     NSFileManager * fm = [NSFileManager defaultManager];
     NSError * error = nil;
     
-    NSLog(@"%@", folderNameToCreate);
+    SMLog(@"%@", folderNameToCreate);
     
     [fm createDirectoryAtPath:[docDir stringByAppendingPathComponent:folderNameToCreate]
   withIntermediateDirectories:YES 
@@ -653,7 +654,7 @@
     [super didReceiveMemoryWarning];
     
     // Release any cached data, images, etc that aren't in use.
-    NSLog(@"didReceiveMemoryWarning");
+    SMLog(@"didReceiveMemoryWarning");
 }
 
 

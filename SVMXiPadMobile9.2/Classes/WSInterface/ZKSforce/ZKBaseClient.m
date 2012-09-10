@@ -23,6 +23,7 @@
 #import "ZKSoapException.h"
 #import "ZKParser.h"
 
+extern void SVMXLog(NSString *format, ...);
 
 @implementation ZKBaseClient
 
@@ -85,13 +86,13 @@ NSString * const TEXTXML_CONTENTTYPE = @"text/xml";
 // fail, we give up on the transfer.
 - (void)connection:(ZKURLConnection *)conn didReceiveResponse:(NSURLResponse *)response
 {
-    NSLog(@"didReceiveResponse");
+    SMLog(@"didReceiveResponse");
     
     self.httpResponse = (NSHTTPURLResponse *) response;
     assert( [self.httpResponse isKindOfClass:[NSHTTPURLResponse class]] );
     
 	if ((self.httpResponse.statusCode / 100) != 2) {
-		NSLog(@"Bad status code.");
+		SMLog(@"Bad status code.");
 		//[self _stopReceiveWithStatus:[NSString stringWithFormat:@"HTTP error %zd", (ssize_t) httpResponse.statusCode] withConnection:conn];
     } else {
 		NSString *  fileMIMEType;
@@ -99,13 +100,13 @@ NSString * const TEXTXML_CONTENTTYPE = @"text/xml";
 		fileMIMEType = [[self.httpResponse MIMEType] lowercaseString];
 		
 		if (fileMIMEType == nil) {
-			NSLog(@"Bad MIME type.");
+			SMLog(@"Bad MIME type.");
 			[self _stopReceiveWithStatus:@"No Content-Type!" withConnection:conn];
 		} else if ( ! [fileMIMEType isEqualToString:TEXTXML_CONTENTTYPE] ) {
-			NSLog(@"Unsupported Content-Type");
+			SMLog(@"Unsupported Content-Type");
 			[self _stopReceiveWithStatus:[NSString stringWithFormat:@"Unsupported Content-Type (%@)", fileMIMEType] withConnection:conn];
 		} else {
-			NSLog(@"Response was OK.");
+			SMLog(@"Response was OK.");
 			//[self _updateStatus:@"Response OK."];
 		}
     }    
@@ -115,7 +116,7 @@ NSString * const TEXTXML_CONTENTTYPE = @"text/xml";
 // write the data to the file.
 - (void)connection:(ZKURLConnection *)conn didReceiveData:(NSData *)data
 {
-	NSLog(@"Data Received.");
+	SMLog(@"Data Received.");
 	
 	//TODO call some event hook or a block method.
 	[conn.receivedData appendData:data];

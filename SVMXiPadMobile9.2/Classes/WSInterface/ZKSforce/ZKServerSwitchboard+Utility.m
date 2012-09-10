@@ -32,6 +32,7 @@
 #import "ZKMessageEnvelope.h"
 #import "ZKMessageElement.h"
 #import "ZKUserInfo.h"
+extern void SVMXLog(NSString *format, ...);
 
 @interface ZKServerSwitchboard (UtilityWrappers)
 
@@ -121,7 +122,7 @@
 
 - (void)sendEmail:(NSArray *)emails target:(id)target selector:(SEL)selector context:(id)context
 {
-    NSLog(@"Warning sendEmail doesn't seem to work just yet.");
+    SMLog(@"Warning sendEmail doesn't seem to work just yet.");
     [self _checkSession];
     
     /*

@@ -25,6 +25,7 @@
 #import "ZKChildRelationship.h"
 #import "ZKRecordTypeInfo.h"
 #import "ZKParser.h"
+extern void SVMXLog(NSString *format, ...);
 
 @implementation ZKDescribeSObject
 
@@ -131,8 +132,8 @@
 	// and related name fields ( note: must have a Name)
 	for (ZKDescribeField  *fieldNode in [self fields] ) {
 		if ( [[fieldNode referenceTo] count] > 0 ) {
-//			NSLog(@"%@",[fieldNode description]);
-//			NSLog(@"%@",[fieldNode relationshipName]);
+//			SMLog(@"%@",[fieldNode description]);
+//			SMLog(@"%@",[fieldNode relationshipName]);
 			NSString *fn = [fieldNode relationshipName];
 			fn = [fn stringByAppendingFormat:@".Name"];
 			ret = [ret stringByAppendingFormat:@" %@,", fn];
