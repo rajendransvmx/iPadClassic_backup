@@ -852,6 +852,7 @@
 		A8DA42F015D906810050CF04 /* gps-tracking.png in Resources */ = {isa = PBXBuildFile; fileRef = A8DA42EF15D906810050CF04 /* gps-tracking.png */; };
 		A8DA42F215D906980050CF04 /* sfm-search.png in Resources */ = {isa = PBXBuildFile; fileRef = A8DA42F115D906980050CF04 /* sfm-search.png */; };
 		A8DA42F415D906AF0050CF04 /* barcode-scanning.png in Resources */ = {isa = PBXBuildFile; fileRef = A8DA42F315D906AF0050CF04 /* barcode-scanning.png */; };
+		A8E07D8F15FDDECC00070821 /* CustomLibXml.m in Sources */ = {isa = PBXBuildFile; fileRef = A8E07D8815FDD93C00070821 /* CustomLibXml.m */; };
 		A8FBA65A155A503600F52346 /* DataBase.plist in Resources */ = {isa = PBXBuildFile; fileRef = A8FBA63F155A503600F52346 /* DataBase.plist */; };
 		A8FBA65B155A503600F52346 /* DetailViewControllerForSFM.m in Sources */ = {isa = PBXBuildFile; fileRef = A8FBA641155A503600F52346 /* DetailViewControllerForSFM.m */; };
 		A8FBA65C155A503600F52346 /* DetailViewControllerForSFM.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8FBA642155A503600F52346 /* DetailViewControllerForSFM.xib */; };
@@ -2004,6 +2005,7 @@
 		A8DA42F315D906AF0050CF04 /* barcode-scanning.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "barcode-scanning.png"; sourceTree = "<group>"; };
 		A8E07D8715FDD93C00070821 /* CustomLibXml.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomLibXml.h; sourceTree = "<group>"; };
 		A8E07D8815FDD93C00070821 /* CustomLibXml.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomLibXml.m; sourceTree = "<group>"; };
+		A8E07D8D15FDDCE200070821 /* LoggingController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoggingController.h; sourceTree = "<group>"; };
 		A8FBA63F155A503600F52346 /* DataBase.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DataBase.plist; sourceTree = "<group>"; };
 		A8FBA640155A503600F52346 /* DetailViewControllerForSFM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailViewControllerForSFM.h; sourceTree = "<group>"; };
 		A8FBA641155A503600F52346 /* DetailViewControllerForSFM.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailViewControllerForSFM.m; sourceTree = "<group>"; };
@@ -2994,6 +2996,7 @@
 		3E34672D13E95C4C00B5790F /* HelpController */ = {
 			isa = PBXGroup;
 			children = (
+				A8E07D8D15FDDCE200070821 /* LoggingController.h */,
 				3E34672E13E95C4C00B5790F /* HelpController.h */,
 				3E34672F13E95C4C00B5790F /* HelpController.m */,
 				3E34673013E95C4C00B5790F /* HelpController.xib */,
@@ -6111,6 +6114,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A8E07D8F15FDDECC00070821 /* CustomLibXml.m in Sources */,
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				3E34699413E95C4D00B5790F /* About.m in Sources */,
 				3E34699713E95C4D00B5790F /* iServiceAppDelegate.m in Sources */,
