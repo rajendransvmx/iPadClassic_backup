@@ -17,7 +17,9 @@ NSMutableArray * weeklyEventPositionArray;
 {
     id <WeeklyViewEventDelegate> delegate;
     
-    NSUInteger day, time, duration;
+    NSUInteger day, time;//, duration;
+	CGFloat duration;
+	
     IBOutlet UIImageView * imageView;
     IBOutlet UILabel * label;
     IBOutlet UITextView * text;

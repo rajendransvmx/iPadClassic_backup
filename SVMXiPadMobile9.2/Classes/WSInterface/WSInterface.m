@@ -791,6 +791,10 @@ last_sync_time:(NSString *)last_sync_time
     
     request_time = nil;  
     
+    
+    //getCurrentSyncTime
+    NSDate * current_dateTime = [NSDate date];
+    
     //get the last sync status
     
     
@@ -1409,6 +1413,22 @@ last_sync_time:(NSString *)last_sync_time
     if([appDelegate enableGPS_SFMSearch])
     {
         [appDelegate.dataBase updateTechnicianLocation];
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        {                
+            if (appDelegate.dataBase.didTechnicianLocationUpdated == TRUE)
+                break;   
+            if (!appDelegate.isInternetConnectionAvailable)
+            {
+                break;
+            }
+            if (appDelegate.connection_error)
+            {
+                break;
+            }
+            
+            SMLog(@"Technician Location Updated");
+        }
+
         [appDelegate.dataBase updateUserGPSLocation];
     }
     [appDelegate.databaseInterface  updateSyncRecordsIntoLocalDatabase];
@@ -1553,28 +1573,35 @@ last_sync_time:(NSString *)last_sync_time
     
 
     AfterSaveEventsCalls = TRUE;
-   
-    NSArray * all_ids =  [appDelegate.afterSavePageLevelEvents allKeys];
-    for(int i = 0; i< [all_ids count]; i++)
+    
+    NSArray * alleventsTime = [appDelegate.allpagelevelEventsWithTimestamp allKeys];
+    NSMutableArray * timesNeedtobeDeleted = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    for(int j = 0; j < [alleventsTime count] ; j++)
     {
-       INTF_WebServicesDefServiceSvc_INTF_PREQ_GetPrice_WS *  request= [appDelegate.afterSavePageLevelEvents objectForKey:[all_ids objectAtIndex:i]];
-        
-        INTF_WebServicesDefBinding * binding = [appDelegate.afterSavePageEventsBinging objectForKey:[all_ids objectAtIndex:i]];
-        didCompleteAfterSaveEventCalls = NO;
-        [self callsfMEventForAfterSaveOrupdateEvents:request binding:binding];
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+        NSDate * timeStamp = [alleventsTime objectAtIndex:j];
+        NSDictionary * aftersavePagelevelEvent = [appDelegate.allpagelevelEventsWithTimestamp objectForKey:timeStamp];
+    
+        if( [current_dateTime compare:timeStamp] == NSOrderedDescending)
         {
-            SMLog(@"PDF to SFDC");
-            if (didCompleteAfterSaveEventCalls == YES)
-                break;
+            [timesNeedtobeDeleted addObject:timeStamp];
+            
+            INTF_WebServicesDefServiceSvc_INTF_PREQ_GetPrice_WS *  request =  [aftersavePagelevelEvent objectForKey:AFTERSAVEPAGELEVELEVENT];
+            INTF_WebServicesDefBinding * binding = [aftersavePagelevelEvent objectForKey:AFTERSAVEPAQGELEVELBINDING];
+            didCompleteAfterSaveEventCalls = NO;
+            [self callsfMEventForAfterSaveOrupdateEvents:request binding:binding];
+            while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+            {
+                SMLog(@"pagelevel events");
+                if (didCompleteAfterSaveEventCalls == YES)
+                    break;
+            }
         }
-        
     }
     
-    for(NSString * Id_ in all_ids)
+    for(NSString * Id_ in timesNeedtobeDeleted)
     {
-        [appDelegate.afterSavePageEventsBinging removeObjectForKey:Id_];
-        [appDelegate.afterSavePageLevelEvents  removeObjectForKey:Id_];
+        [appDelegate.allpagelevelEventsWithTimestamp removeObjectForKey:Id_];
     }
    
     AfterSaveEventsCalls = FALSE;
@@ -4238,23 +4265,27 @@ last_sync_time:(NSString *)last_sync_time
     }
     else if([event_name isEqualToString:BEFORESAVE] || [event_name isEqualToString:AFTERSAVE])
     {
-        if(appDelegate.afterSavePageLevelEvents == nil)
+        
+        if(appDelegate.allpagelevelEventsWithTimestamp == nil)
         {
-            appDelegate.afterSavePageLevelEvents = [[NSMutableDictionary alloc] initWithCapacity:0];
-        }
-        if(appDelegate.afterSavePageEventsBinging == nil)
-        {
-            appDelegate.afterSavePageEventsBinging = [[NSMutableDictionary alloc] initWithCapacity:0];
+           appDelegate.allpagelevelEventsWithTimestamp = [[NSMutableDictionary alloc] initWithCapacity:0];
         }
         if (appDelegate.sfmPageController.recordId == nil)
             appDelegate.sfmPageController.recordId = @"";
         
         
-        [appDelegate.afterSavePageLevelEvents setObject:getThoonsEvent forKey:appDelegate.sfmPageController.recordId];
-        [appDelegate.afterSavePageEventsBinging setObject:binding forKey:appDelegate.sfmPageController.recordId];
+        NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+        [dict setObject:getThoonsEvent forKey:AFTERSAVEPAGELEVELEVENT];
+        [dict setObject:binding forKey:AFTERSAVEPAQGELEVELBINDING];
+        
+        NSDate * current_dateTime = [NSDate date];
         
         
-        SMLog(@" count %d", [appDelegate.afterSavePageLevelEvents count]);
+        [appDelegate.allpagelevelEventsWithTimestamp setObject:dict forKey:current_dateTime];
+        
+
+        [dict release];
+       // SMLog(@" count %d", [appDelegate.afterSavePageLevelEvents count]);
         appDelegate.wsInterface.getPrice = TRUE;
     }
 }

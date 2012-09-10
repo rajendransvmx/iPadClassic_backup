@@ -1939,7 +1939,6 @@ extern void SVMXLog(NSString *format, ...);
         }
 
     }
-    SMLog(@"%@",page_layoutInfo);
     appDelegate.SFMoffline = page_layoutInfo;
 
     appDelegate.didsubmitModelView = TRUE;
@@ -2588,230 +2587,6 @@ extern void SVMXLog(NSString *format, ...);
     }
 }
 
-/*- (void) didSubmitDefaultAction:(NSString *)defaultAction
-{
-        
-    [self disableSFMUI];
-    
-    didRunOperation = YES;
-      
-    if (defaultAction == nil || [defaultAction isKindOfClass:[NSNull class]] || [defaultAction isEqualToString:@""])
-        return;
-    
-    // Check for Required Fields - NOT SAVE ACTION
-    if([defaultAction isEqualToString:quick_save ] || [defaultAction isEqualToString:save])
-    {
-        NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
-        
-        NSArray * header_sections = [hdr_object objectForKey:@"hdr_Sections"];
-        BOOL error = FALSE;
-        for (int i=0;i<[header_sections count];i++)
-        {
-            NSDictionary * section = [header_sections objectAtIndex:i];
-            NSArray *section_fields = [section objectForKey:@"section_Fields"];
-            for (int j=0;j<[section_fields count];j++)
-            {
-                NSDictionary *section_field = [section_fields objectAtIndex:j];
-                NSString * value = [section_field objectForKey:gFIELD_VALUE_VALUE];
-                BOOL required = [[section_field objectForKey:gFIELD_REQUIRED] boolValue];
-                if(required)
-                {
-                    if([value length] == 0 )
-                    {
-                        error = TRUE;
-                        break;
-                    }
-                }
-            }        
-        }
-        if(error == TRUE)
-        {
-            [self requireFieldWarning];
-            requiredFieldCheck = TRUE;
-            
-            [self enableSFMUI];
-            
-            return;
-        }
-        
-        //child records
-        BOOL line_error = FALSE;
-        NSArray *details = [appDelegate.SFMPage objectForKey:gDETAILS]; //as many as number of lines sections
-        for (int i=0;i<[details count];i++) //parts, labor, expense for instance
-        {
-            NSDictionary *detail = [details objectAtIndex:i];
-            
-            NSArray * fields_array = [detail  objectForKey:gDETAILS_FIELDS_ARRAY];
-            NSArray *details_values = [detail objectForKey:gDETAILS_VALUES_ARRAY];
-                           
-            for (int j=0;j<[details_values count];j++) //parts for instance
-            {
-                NSArray *child_record_fields = [details_values objectAtIndex:j];
-                for (int k=0;k<[child_record_fields count];k++) //fields of one part for instance
-                {
-                    NSDictionary * field = [child_record_fields objectAtIndex:k];
-                    NSString * detail_api_name = [field objectForKey:gVALUE_FIELD_API_NAME];
-                    NSString * deatil_value = [field objectForKey:gVALUE_FIELD_VALUE_VALUE];
-                    for(int l = 0 ;l < [fields_array count]; l++)
-                    {
-                        NSDictionary *field_array_value = [fields_array  objectAtIndex:l];
-                        BOOL required  = [[field_array_value objectForKey:gFIELD_REQUIRED]boolValue];
-                        NSString * api_name = [field_array_value objectForKey:gFIELD_API_NAME];
-                        if([api_name isEqualToString:detail_api_name])
-                        {
-                            if(required)
-                            {
-                                if([deatil_value length]== 0)
-                                {
-                                    line_error = TRUE; 
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }        
-        }
-        
-        if(line_error)
-        {
-            [self requireFieldWarning];
-            requiredFieldCheck = TRUE;
-            
-            [self enableSFMUI];
-            
-            return;
-        }
-    
-    }
-    if ([defaultAction isEqualToString:quick_save])
-    {
-        //sahana 2nd Aug  sfmEvents
-        NSMutableDictionary * headerDataDictionary = [appDelegate.SFMPage objectForKey:gHEADER];
-        NSMutableArray * pageLevelEvents = [[[headerDataDictionary objectForKey:gPAGELEVEL_EVENTS] mutableCopy] autorelease];
-        for(int i = 0; i< [pageLevelEvents count];i++)
-        {
-            NSDictionary * eventsDictionary = [pageLevelEvents objectAtIndex:i];
-            if ([eventsDictionary count]> 0)
-            {
-                NSString * eventType = [eventsDictionary objectForKey:gEVENT_TYPE];
-                NSString * TargetCall = [eventsDictionary objectForKey:gEVENT_TARGET_CALL];
-                
-                if([eventType isEqualToString:@"Before Save/Update"])
-                {
-                    if([TargetCall isEqualToString:@""])
-                    {
-                        
-                    }
-                    else
-                    {
-                        [self didInvokeWebService:TargetCall];
-                    }
-                }
-                if([eventType isEqualToString:@"Before Save/Insert"])
-                {
-                    if([TargetCall isEqualToString:@""])
-                    {
-                    }
-                    else
-                    {
-                        [self didInvokeWebService:TargetCall];
-                    }
-                }      
-            }
-
-        }
-        
-        [activity startAnimating];
-
-        [appDelegate setCurrentProcessID:currentProcessId];
-        appDelegate.wsInterface.detailDelegate = self;
-        
-        appDelegate.sfmSave = FALSE;
-        
-        didRunOperation = YES;
-        [appDelegate.wsInterface SaveSFMData:appDelegate.SFMPage];
-    }
-    if ([defaultAction isEqualToString:save])
-    {
-        NSMutableDictionary * headerDataDictionary = [appDelegate.SFMPage objectForKey:gHEADER];
-        NSMutableArray * pageLevelEvents = [[[headerDataDictionary objectForKey:gPAGELEVEL_EVENTS] mutableCopy] autorelease];
-        for(int i = 0; i< [pageLevelEvents count];i++)
-        {
-            NSDictionary * eventsDictionary = [pageLevelEvents objectAtIndex:i];
-            if ([eventsDictionary count]> 0)
-            {
-                NSString * eventType = [eventsDictionary objectForKey:gEVENT_TYPE];
-                NSString * TargetCall = [eventsDictionary objectForKey:gEVENT_TARGET_CALL];
-                
-                if([eventType isEqualToString:@"Before Save/Update"])
-                {
-                    if([TargetCall isEqualToString:@""])
-                    {
-                    }
-                    else
-                    {
-                        [self didInvokeWebService:TargetCall];
-                    }
-                }
-                if([eventType isEqualToString:@"Before Save/Insert"])
-                {
-                    if([TargetCall isEqualToString:@""])
-                    {
-                    }
-                    else
-                    {
-                        [self didInvokeWebService:TargetCall];
-                    }
-                } 
-            }
-        }
-
-        [activity startAnimating];
-
-        [appDelegate setCurrentProcessID:currentProcessId];
-        appDelegate.wsInterface.detailDelegate = self;
-
-        appDelegate.sfmSave = FALSE;
-        
-       
-        
-        didRunOperation = YES;
-
-        [appDelegate.wsInterface SaveSFMData:appDelegate.SFMPage];
-    }
-
-    if ([defaultAction isEqualToString:summary])
-    {
-        [activity startAnimating];
-        didRunOperation = YES;
-        [self startSummaryDataFetch];
-        appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-        appDelegate.isDetailActive = NO;
-    }
-    
-    if ([defaultAction isEqualToString:troubleShooting])
-    {
-        // Special handling
-        didRunOperation = NO;
-        [activity startAnimating];
-        [self showTroubleshooting];
-        appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-        appDelegate.isDetailActive = NO;
-    }
-    
-    if ([defaultAction isEqualToString:chatter])
-    {
-        // Special handling
-        didRunOperation = NO;
-        [activity startAnimating];
-        [self showChatter];
-        appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-        appDelegate.isDetailActive = NO;
-    }
-    
-    [self enableSFMUI];
-}*/
 
 - (void) startSummaryDataFetch
 {
@@ -2820,14 +2595,7 @@ extern void SVMXLog(NSString *format, ...);
     BOOL isworkingInOffline = TRUE;
     clickedBack = NO;
     
-    /*if (!appDelegate.isInternetConnectionAvailable)
-     {
-     [activity stopAnimating];
-     [appDelegate displayNoInternetAvailable];
-     
-     [self enableSFMUI];
-     return;
-     }*/
+
     
     didGetParts = didGetExpenses = didGetLabor = didGetReportEssentials = NO;
     
@@ -9572,13 +9340,12 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void)offlineActions:(NSDictionary *)buttonDict
 {  
+
+    [self dismissActionMenu];
     NSString * warning = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_WARNING];
     NSString * invalidEmail = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_TEXT_INVALID_EMAIL]; 
     NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
     
-    //appDelegate.showUI = FALSE;
-    
-    [self dismissActionMenu];
     [self disableSFMUI];
     
     NSString * targetCall = [buttonDict objectForKey:SFW_ACTION_DESCRIPTION];
@@ -9792,7 +9559,6 @@ extern void SVMXLog(NSString *format, ...);
     {
         if([targetCall isEqualToString:save])
         {
-            
             [self pageLevelEventsForEvent:BEFORESAVE];
             [self pageLevelEventsForEvent:AFTERSAVE];
            
@@ -10155,6 +9921,11 @@ extern void SVMXLog(NSString *format, ...);
     {
         if([targetCall isEqualToString:save] || [targetCall isEqualToString:quick_save])
         {
+            if ([targetCall isEqualToString:quick_save])
+            {
+                [activity startAnimating];
+            }
+            
             [self pageLevelEventsForEvent:BEFORESAVE];
             [self pageLevelEventsForEvent:AFTERSAVE];
             
@@ -10726,7 +10497,6 @@ extern void SVMXLog(NSString *format, ...);
                     
                     [self UpdateAlldeletedRecordsIntoSFTrailerTable:detail_deleted_records  object_name:detail_object_name];
                 }
-                
                 [appDelegate callDataSync];
             }
             else
@@ -10792,9 +10562,11 @@ extern void SVMXLog(NSString *format, ...);
         }
         if([targetCall isEqualToString:quick_save])
         {
+            [activity startAnimating];
             [self fillSFMdictForOfflineforProcess:appDelegate.sfmPageController.processId forRecord:appDelegate.sfmPageController.recordId ];
             [self didReceivePageLayoutOffline];
         }
+        [activity stopAnimating];
     }
     
     if([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"SOURCETOTARGET"] || [[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"SOURCETOTARGETONLYCHILDROWS"])

@@ -262,21 +262,18 @@ extern void SVMXLog(NSString *format, ...);
         
         NSString * duration = [dict objectForKey:DURATIONINMIN];
         
-        NSString * colourCode = [appDelegate.calDataBase getColorCodeForPriority:([dict objectForKey:WHATID] != nil)?[dict objectForKey:WHATID]:@""];
-        UIColor * color = [appDelegate colorForHex:colourCode];
-        
-        int _duration = [duration intValue];
-        if (_duration != 0)
-        {
-            NSString * colourCode = [appDelegate.calDataBase getColorCodeForPriority:([dict objectForKey:WHATID] != nil)?[dict objectForKey:WHATID]:@""];
-            color = [appDelegate colorForHex:colourCode];
-        }
-        else
-        {
-            color = [UIColor clearColor];
-        }
-    
-        
+		
+		//30 minute event 8/sept/2012   ----> Changes for 30 min Event Defect.
+		UIColor * color;
+		int _duration = [duration intValue];
+		if (_duration != 0)
+		{
+			NSString * colourCode = [appDelegate.calDataBase getColorCodeForPriority:([dict objectForKey:WHATID] != nil)?[dict objectForKey:WHATID]:@""];
+			color = [appDelegate colorForHex:colourCode];
+		}else{
+			color = [UIColor clearColor];
+		}
+		
         if (flag)
         {
             [weekViewPane addSubview:events.view];

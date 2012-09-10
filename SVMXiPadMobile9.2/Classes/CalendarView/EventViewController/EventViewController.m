@@ -36,9 +36,9 @@ extern void SVMXLog(NSString *format, ...);
 {
     SMLog(@"%@ %@", name, _name);
     label.text = name;
-    if (self.view.frame.size.height < 42)
-        subject1.text = _name;
-    else
+//    if (self.view.frame.size.height < 42)
+//        subject1.text = _name;
+//    else
         subject.text = _name;
     
     SMLog(@"%@ %@", label.text, subject.text);

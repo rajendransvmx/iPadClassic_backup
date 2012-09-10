@@ -57,6 +57,7 @@ extern void SVMXLog(NSString *format, ...);
     
     if(appDelegate.isWorkinginOffline)
     {
+        [delegate dismissActionMenu];
         [delegate offlineActions:buttonDict];
         return;
     }

@@ -123,7 +123,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @implementation iServiceAppDelegate
 
 @synthesize serviceReportReference;
-
+@synthesize allpagelevelEventsWithTimestamp;
 @synthesize internetAlertFlag;
 @synthesize current_userId;
 @synthesize connection_error;
@@ -886,7 +886,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         if (isSessionInavalid == YES)
         {
             didLoginAgain = NO;
-           [[ZKServerSwitchboard switchboard] loginWithUsername:self.username password:self.password target:self selector:@selector(didLogin:error:context:)]; 
+//           [[ZKServerSwitchboard switchboard] loginWithUsername:self.username password:self.password target:self selector:@selector(didLogin:error:context:)]; 
+            [[ZKServerSwitchboard switchboard] loginWithUsername:self.username password:self.password target:self selector:@selector(didLoginForServer:error:context:)];
             while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
             {
                 if (!self.isInternetConnectionAvailable)
@@ -1166,7 +1167,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     }
     
     [syncThread release];
-    
+    [self setSyncStatus:SYNC_ORANGE];
     syncThread = [[NSThread alloc] initWithTarget:self.wsInterface selector:@selector(DoIncrementalDataSync) object:nil];
     [NSThread sleepForTimeInterval:0.1];
     [syncThread start];

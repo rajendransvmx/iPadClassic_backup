@@ -166,6 +166,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 @interface iServiceAppDelegate : NSObject
 <UIApplicationDelegate, UIActionSheetDelegate, WSInterfaceDelegate>
 {
+    NSMutableDictionary * allpagelevelEventsWithTimestamp;
 	///can remove
     id <ReloadSyncTable> reloadTable;
 
@@ -452,6 +453,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     //Service Report
     NSMutableDictionary * serviceReportReference;
 }
+@property (nonatomic , retain) NSMutableDictionary * allpagelevelEventsWithTimestamp;
 @property (nonatomic, retain) NSMutableDictionary * serviceReportReference;
 
 @property (nonatomic, retain) NSString * current_userId;

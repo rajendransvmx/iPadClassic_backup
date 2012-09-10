@@ -403,12 +403,14 @@ PopoverButtons *popOver_view;
     if(retVal == NO)
     {
 		[delegate dismisspopover];
+        [appDelegate setSyncStatus:SYNC_GREEN];
         return;
     }
 
     if (appDelegate.metaSyncRunning) 
     {
         [delegate dismisspopover];
+        [appDelegate setSyncStatus:SYNC_GREEN];
         return;
     }
      [delegate disableControls];

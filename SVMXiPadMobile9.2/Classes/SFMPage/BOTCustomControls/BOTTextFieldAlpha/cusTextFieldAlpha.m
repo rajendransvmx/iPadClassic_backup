@@ -18,6 +18,7 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize fieldAPIName;
 @synthesize required;
 @synthesize control_type;
+extern void SVMXLog(NSString *format, ...);
 
 -(id) initWithFrame:(CGRect)frame control_type:(NSString *)_control_type isInViewMode:(BOOL)mode
 {
