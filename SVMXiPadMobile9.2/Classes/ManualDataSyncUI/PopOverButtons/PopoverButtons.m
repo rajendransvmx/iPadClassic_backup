@@ -573,14 +573,14 @@ PopoverButtons *popOver_view;
     
     if (syncConfigurationFailed == TRUE)
     {
-        [appDelegate setSyncStatus:SYNC_RED];
+        [appDelegate setSyncStatus:SYNC_GREEN];
         
-        if ([appDelegate.dataBase checkIfSyncConfigDue])
-        {
-            [delegate resetTableview];
-            [appDelegate.databaseInterface cleartable:@"meta_sync_due"];
-        }
-        
+//        if ([appDelegate.dataBase checkIfSyncConfigDue])
+//        {
+//            [delegate resetTableview];
+//            [appDelegate.databaseInterface cleartable:@"meta_sync_due"];
+//        }
+//        
     }
     else
     {
@@ -594,6 +594,12 @@ PopoverButtons *popOver_view;
         {
             appDelegate.SyncStatus = SYNC_GREEN;
         }
+        if ([appDelegate.dataBase checkIfSyncConfigDue])
+        {
+            [delegate resetTableview];
+            [appDelegate.databaseInterface cleartable:@"meta_sync_due"];
+        }
+
 
     }
     

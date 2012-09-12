@@ -285,7 +285,12 @@ extern void SVMXLog(NSString *format, ...);
         
        if(appDelegate.isWorkinginOffline){
            
-           fieldLabel = field;
+           fieldLabel = [appDelegate.dataBase getLabelFromApiName:field objectName:objectName];
+           if ([fieldLabel length] == 0)
+           {
+               fieldLabel = field;
+           }
+           
        }else{
             fieldLabel = [[describeObject fieldWithName:field] label];
        }

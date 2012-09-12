@@ -1772,16 +1772,8 @@ extern void SVMXLog(NSString *format, ...);
                 {
                     field2 = @"";
                 }
-                
-                NSString * field_name = [appDelegate.dataBase getLabelFromApiName:default_column objectName:object];
-                
-                if ([field_name length] == 0)
-                {
-                    field_name = default_column;
-                }
-                
-                
-                NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:field_name,field1, nil] forKeys:[NSArray   arrayWithObjects:@"key",@"value",nil]];
+                                
+                NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:default_column,field1, nil] forKeys:[NSArray   arrayWithObjects:@"key",@"value",nil]];
                 NSMutableDictionary * dict1 = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"Id",field2, nil] forKeys:[NSArray   arrayWithObjects:@"key",@"value",nil]];
                 [subdataArray addObject:dict];
                 [subdataArray addObject:dict1];
@@ -1794,14 +1786,7 @@ extern void SVMXLog(NSString *format, ...);
         
         NSMutableArray *sequenceArray = [[NSMutableArray alloc]initWithCapacity:0];
         
-        NSString * field_name = [appDelegate.dataBase getLabelFromApiName:default_column_name objectName:object];
-        
-        if ([field_name length] == 0)
-        {
-            field_name = default_column_name;
-        }
-        
-        NSMutableDictionary *sequence_dict = [NSMutableDictionary dictionaryWithObject:field_name forKey:@"1"];
+        NSMutableDictionary *sequence_dict = [NSMutableDictionary dictionaryWithObject:default_column_name forKey:@"1"];
         [sequenceArray addObject:sequence_dict];
         
         finalDict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:each_record,sequenceArray,default_column_name, nil] forKeys:_dictKeys];
@@ -1956,15 +1941,8 @@ extern void SVMXLog(NSString *format, ...);
                     {
                         field1 = @"";
                     }
-                    
-                    NSString * key = [appDelegate.dataBase getLabelFromApiName:[results_array objectAtIndex:i] objectName:object];
-                    
-                    if ([key length] == 0)
-                    {
-                        key = [results_array objectAtIndex:i];
-                    }
-                    
-                    NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:key,field1, nil] forKeys:[NSArray   arrayWithObjects:@"key",@"value",nil]];
+                                        
+                    NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:[results_array objectAtIndex:i],field1, nil] forKeys:[NSArray   arrayWithObjects:@"key",@"value",nil]];
                     [subdataArray addObject:dict];
                 }
                 
@@ -2024,15 +2002,8 @@ extern void SVMXLog(NSString *format, ...);
             NSDictionary * dict = [fields_array objectAtIndex:j];
             NSString * dict_field_name = [dict objectForKey:LOOK_UP_FIELDNAME];
             NSString * dict_sequence = [dict objectForKey:LOOK_UP_SEQUENCE];
-            
-            NSString * field_name = [appDelegate.dataBase getLabelFromApiName:dict_field_name objectName:object];
-            
-            if ([field_name length] == 0)
-            {
-                field_name = [dict objectForKey:LOOK_UP_FIELDNAME];
-            }
-            
-            NSMutableDictionary *sequence_dict = [NSMutableDictionary dictionaryWithObject:field_name forKey:dict_sequence];
+                        
+            NSMutableDictionary *sequence_dict = [NSMutableDictionary dictionaryWithObject:dict_field_name forKey:dict_sequence];
             [sequenceArray addObject:sequence_dict];
         }
         NSString * default_display_column = @"";
@@ -2048,9 +2019,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         
         
-        finalDict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:each_record, sequenceArray,default_display_column, nil] forKeys:_dictKeys];
-    //    SMLog(@"%@", finalDict);
-        
+        finalDict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:each_record, sequenceArray,default_display_column, nil] forKeys:_dictKeys];        
         
     }
     

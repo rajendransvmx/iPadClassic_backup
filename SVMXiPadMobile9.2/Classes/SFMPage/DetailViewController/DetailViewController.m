@@ -8600,10 +8600,21 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%d", index);
         
         NSArray * visible = [self.tableView visibleCells];
-        UITableViewCell * cell = [visible objectAtIndex:index];
-        
-        if ( currentEditRow.section != 0)
-            [self.tableView scrollRectToVisible:cell.frame animated:YES];
+		NSLog(@"%d", [visible count]);
+		
+		//New fix for a suspected crash --> 
+		if ([visible count] > index)
+		{
+			UITableViewCell * cell = [visible objectAtIndex:index];
+			
+			if ( currentEditRow.section != 0)
+				[self.tableView scrollRectToVisible:cell.frame animated:YES];
+		}
+		
+//        UITableViewCell * cell = [visible objectAtIndex:index];
+//        
+//        if ( currentEditRow.section != 0)
+//            [self.tableView scrollRectToVisible:cell.frame animated:YES];
         
         //CGRect rowRect = [tableView rectForRowAtIndexPath:currentEditRow];
         //[tableView scrollRectToVisible:rowRect animated:YES];
@@ -10645,9 +10656,9 @@ extern void SVMXLog(NSString *format, ...);
                     NSDictionary *section_field = [section_fields objectAtIndex:j];
                     
                     //add key values to SM_header_fields dictionary 
-                    NSString * field_api = [section_field objectForKey:gFIELD_API_NAME];
+                    NSString * field_api = ([section_field objectForKey:gFIELD_API_NAME] != nil)?[section_field objectForKey:gFIELD_API_NAME]:@"";
                     NSString * value = [section_field objectForKey:gFIELD_VALUE_VALUE];
-                    NSString * key = [section_field objectForKey:gFIELD_VALUE_KEY];
+                    NSString * key = ([section_field objectForKey:gFIELD_VALUE_KEY] != nil)?[section_field objectForKey:gFIELD_VALUE_KEY]:@"";
                     NSString * dataType = [section_field objectForKey:gFIELD_DATA_TYPE];
                     [SFM_header_fields setObject:key forKey:field_api];
                     BOOL readOnly = [[section_field objectForKey:gFIELD_READ_ONLY] boolValue];

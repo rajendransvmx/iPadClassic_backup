@@ -572,7 +572,13 @@ extern void SVMXLog(NSString *format, ...);
    // [appDelegate.currentServerUrl retain];
     
     ZKUserInfo * userInfo = [lr userInfo];
-    appDelegate.current_userId = userInfo.userId;
+    if (appDelegate.current_userId != nil)
+    {
+        appDelegate.current_userId = nil;
+    }
+    
+    appDelegate.current_userId = [NSString stringWithFormat:@"%@", userInfo.userId];
+    NSLog(@"usetId = %@", appDelegate.current_userId);
 	
     if (appDelegate.currentUserName != nil)
     {

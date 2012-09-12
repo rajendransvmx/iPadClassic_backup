@@ -955,8 +955,14 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     self.currentServerUrl = [[NSString stringWithFormat:@"%@", server] retain];
     
     ZKUserInfo * userInfo = [lr userInfo];
+    
+    if (self.current_userId != nil)
+    {
+        self.current_userId = nil;
+    }
+    
+    self.current_userId = [NSString stringWithFormat:@"%@", userInfo.userId];
 	
-	 current_userId = userInfo.userId;
     
     if (self.currentUserName != nil)
     {
