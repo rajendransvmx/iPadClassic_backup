@@ -580,7 +580,16 @@ extern void SVMXLog(NSString *format, ...);
         appDelegate.currentUserName = nil;
     }
     appDelegate.currentUserName = [[userInfo fullName] mutableCopy];
-    
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    if (userDefaults)
+    {
+        [userDefaults setObject:appDelegate.currentUserName forKey:@"UserFullName"];
+    }
+    else
+    {
+        SMLog(@"Failed to get the User Defaults");
+        return;
+    }
     NSDictionary * defaultTags = [appDelegate.wsInterface getDefaultTags];
     
    // NSString * serviceMax = [defaultTags objectForKey:ALERT_ERROR_TITLE];

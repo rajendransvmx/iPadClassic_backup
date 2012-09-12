@@ -173,6 +173,8 @@ PopoverButtons *popOver_view;
 - (void) updateTechnicianLocation;
 - (void) updateUserGPSLocation;
 - (void) deleteRecordFromUserGPSTable:(NSString *) localId;
+-(NSString*) getLoggedInUser:(NSString *)username;
+
 //DataSync Methods
 - (void) insertDataInToTables:(NSMutableArray *)fieldValueArray;
 
@@ -188,6 +190,7 @@ PopoverButtons *popOver_view;
 
 - (NSString *) getReferenceObjectNameForPdf:(NSString *)ObjectName Field:(NSString *)FieldName Id:(NSString *)Id;
 - (NSMutableString *) getJoinFields:(NSDictionary*)dict;
+- (NSMutableDictionary *) getNameFieldForRefrenceObject:(NSDictionary*)tableArray;
 
 //generate PDF Settings
 //Abinash

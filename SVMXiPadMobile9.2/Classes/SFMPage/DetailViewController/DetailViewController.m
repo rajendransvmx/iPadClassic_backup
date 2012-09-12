@@ -1266,14 +1266,63 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
         
-        
-        
+        for(int j= 0; j < [details count]; j++)
+        {
+            NSMutableDictionary * dict = [details objectAtIndex:j];
+            NSMutableArray * filedsArray = [dict objectForKey:gDETAILS_FIELDS_ARRAY];
+            NSMutableArray * detailValuesArray = [dict objectForKey:gDETAILS_VALUES_ARRAY];
+            NSMutableArray * detail_Values_id = [dict objectForKey:gDETAIL_VALUES_RECORD_ID];
+            NSMutableArray * details_api_keys = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+            NSString * detailObjectName = [dict objectForKey:gDETAIL_OBJECT_NAME];
+            NSString * detailaliasName = [dict objectForKey:gDETAIL_OBJECT_ALIAS_NAME];
+            NSString * detail_layout_id = [dict objectForKey:gDETAILS_LAYOUT_ID];
+            
+            for(int k =0 ;k<[filedsArray count];k++)
+            {
+                NSMutableDictionary * detailFiled_info =[filedsArray objectAtIndex:k];
+                NSString * api_name = [detailFiled_info objectForKey:gFIELD_API_NAME];
+                [details_api_keys addObject:api_name];
+            }
+            
+            NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGETCHILD process_id:processId layoutId:detail_layout_id objectName:detailObjectName];
+            
+            NSString * expressionId = [process_components objectForKey:EXPRESSION_ID];
+            NSString * parent_column_name = [dict objectForKey:gDETAIL_HEADER_REFERENCE_FIELD];
+            
+            NSMutableArray * detail_values = [appDelegate.databaseInterface queryLinesInfo:details_api_keys detailObjectName:detailObjectName headerObjectName:headerObjName detailaliasName:detailaliasName headerRecordId:appDelegate.sfmPageController.recordId expressionId:expressionId parent_column_name:parent_column_name];
+            
+            for(int l = 0 ;l < [detail_values count]; l++)
+            {
+                [detailValuesArray addObject:[detail_values objectAtIndex:l]];
+                NSMutableArray *  eachArray = [detail_values objectAtIndex:l];
+                BOOL value_id_flag = FALSE;
+                NSString  * id_ = @"";
+                for(int m = 0 ; m < [eachArray count];m++)
+                {
+                    NSDictionary * dict = [eachArray objectAtIndex:m];
+                    NSString * api_name = [dict objectForKey:gVALUE_FIELD_API_NAME];
+                    NSString * key = [dict objectForKey:gVALUE_FIELD_VALUE_KEY];
+                    if([api_name isEqualToString:@"local_id"])
+                    {
+                        id_ = key;
+                        value_id_flag = TRUE;
+                    }
+                }
+                if(value_id_flag)
+                {
+                    [detail_Values_id addObject:id_];
+                }
+            }
+            
+            //            [details_api_keys release];
+            
+        }
     }
     else if ([process_type isEqualToString:@"STANDALONECREATE"])
     {
         //HEADER VALUE MAPPING
         //fetch all value for value mapping 
-        
+            
         NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGET process_id:processId layoutId:layout_id objectName:headerObjName];//[appDelegate.databaseInterface  getValueMappingForlayoutId:layout_id process_id:processId objectName:headerObjName];
        
         NSMutableDictionary * object_mapping_dict = [appDelegate.databaseInterface getObjectMappingForMappingId:process_components mappingType:VALUE_MAPPING];
