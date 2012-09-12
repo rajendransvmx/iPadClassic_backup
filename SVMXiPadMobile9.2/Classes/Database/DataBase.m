@@ -2232,6 +2232,7 @@ extern void SVMXLog(NSString *format, ...);
 
     if(appDelegate.metaSyncRunning)
     {
+        didTechnicianLocationUpdated=TRUE;
         SMLog(@"Sync is Running");
         return;
     }    
@@ -2261,6 +2262,7 @@ extern void SVMXLog(NSString *format, ...);
         }        
         else
         {
+            didTechnicianLocationUpdated=TRUE;
             SMLog(@"Records are not available. Not calling Tech Location Update");
             return;
         }
@@ -2268,11 +2270,13 @@ extern void SVMXLog(NSString *format, ...);
     sqlite3_finalize(statement);
     if(isLatitudeNull || isLongitudeNull)
     {
+        didTechnicianLocationUpdated=TRUE;
         SMLog(@"Latitude or Longitude data is null");
         return;
     }
     if (!appDelegate.isInternetConnectionAvailable)
     {
+        didTechnicianLocationUpdated=TRUE;
         return;
     }
     [appDelegate goOnlineIfRequired];
