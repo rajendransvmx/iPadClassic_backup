@@ -49,12 +49,17 @@
 
 - (void) setObjectName:(NSString *)_objectName
 {
-    objectName = _objectName;
+    if( objectName != nil )
+    {
+        [objectName release];
+    }
+    objectName = [_objectName copy];
     detailView.objectAPIName = _objectName;
 }
 
 - (void)dealloc
 {
+    [objectName release];
     [splitView release];
     [popover release];
     [super dealloc];

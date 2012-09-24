@@ -874,11 +874,13 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     return ( NSString *)string;
 }
 
-- (void) goOnlineIfRequired
+- (BOOL) goOnlineIfRequired
 {    
+    _pingServer = TRUE;
+    self.isServerInValid = FALSE;
     if (!self.isInternetConnectionAvailable)
     {
-        return;
+        return FALSE;
     }
     else
     {        
@@ -897,8 +899,19 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
                 SMLog(@"ReLogin");
                 if (didLoginAgain)
                     break;
+                
+                if (self.isServerInValid == TRUE)
+                {
+                    break;
+                }
             }
+            
+            
         }
+        if (self.isServerInValid)
+            return FALSE;
+        else 
+            return TRUE;
        
     }
 }
@@ -942,35 +955,38 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 - (void) didLoginForServer:(ZKLoginResult *)lr error:(NSError *)error context:(id)context
 {
-    self.loginResult = lr;
-    
-    NSString * serverUrl = [lr serverUrl];
-    NSArray  * array = [serverUrl pathComponents];
-    NSString * server = [NSString stringWithFormat:@"%@//%@", [array objectAtIndex:0], [array objectAtIndex:1]];
-    
-    if (self.currentServerUrl != nil)
+    if (lr != nil)
     {
-        self.currentServerUrl = nil;
+        self.loginResult = lr;
+        NSString * serverUrl = [lr serverUrl];
+        NSArray  * array = [serverUrl pathComponents];
+        NSString * server = [NSString stringWithFormat:@"%@//%@", [array objectAtIndex:0], [array objectAtIndex:1]];
+        
+        if (self.currentServerUrl != nil && lr != nil)
+        {
+            self.currentServerUrl = nil;
+        }
+        
+            self.currentServerUrl = [[NSString stringWithFormat:@"%@", server] retain];
+        
+        ZKUserInfo * userInfo = [lr userInfo];
+        
+        if (self.current_userId != nil)
+        {
+            self.current_userId = nil;
+        }
+        
+        self.current_userId = [NSString stringWithFormat:@"%@", userInfo.userId];
+        
+        
+        if (self.currentUserName != nil)
+        {
+            [self.currentUserName release];
+            self.currentUserName = nil;
+        }
+        if( userInfo != nil )
+            self.currentUserName = [[userInfo fullName] mutableCopy];
     }
-    self.currentServerUrl = [[NSString stringWithFormat:@"%@", server] retain];
-    
-    ZKUserInfo * userInfo = [lr userInfo];
-    
-    if (self.current_userId != nil)
-    {
-        self.current_userId = nil;
-    }
-    
-    self.current_userId = [NSString stringWithFormat:@"%@", userInfo.userId];
-	
-    
-    if (self.currentUserName != nil)
-    {
-        [self.currentUserName release];
-        self.currentUserName = nil;
-    }
-    if( userInfo != nil )
-        self.currentUserName = [[userInfo fullName] mutableCopy];
     
     //Shrinivas -- code for firewall
     if (lr == nil && self._pingServer == TRUE)

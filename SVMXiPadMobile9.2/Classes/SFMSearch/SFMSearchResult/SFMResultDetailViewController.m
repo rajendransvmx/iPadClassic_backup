@@ -1018,7 +1018,7 @@ enum  {
         }
     }
     appDelegate.sfmPageController.processId = processId;
-    appDelegate.sfmPageController.objectName = objectName;
+    appDelegate.sfmPageController.objectName = [NSString stringWithFormat:@"%@",objectName];
     appDelegate.sfmPageController.topLevelId = nil;
     appDelegate.sfmPageController.recordId = localId;    
     //[appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];

@@ -454,10 +454,7 @@ extern void SVMXLog(NSString *format, ...);
 {
     [self disableUI];
     // Samman - 24 Sep, 2011 - Need to call WSInterface Method to perform an actual REFRESH
-    
-	NSMutableArray * weekBoundaries = [calendar getWeekBoundaries:appDelegate.dateClicked];
-    
-    NSString *startDate = [weekBoundaries objectAtIndex:0];
+        
     NSMutableArray * currentDateRange = [appDelegate getWeekdates:currentDate];
     
     [self setupTasksForDate:appDelegate.dateClicked];
@@ -475,7 +472,8 @@ extern void SVMXLog(NSString *format, ...);
     [self setEventsView:currentDate];
     if ((weekView != nil) && ([weekView retainCount] > 0))
     {
-        [weekView populateWeekView];
+        //[weekView populateWeekView];
+        [weekView setupEvents];
         [weekView.activity stopAnimating];
     }
 	//    [rightPaneParent setUserInteractionEnabled:YES];

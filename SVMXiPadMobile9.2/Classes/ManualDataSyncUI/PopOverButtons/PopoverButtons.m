@@ -137,7 +137,7 @@ PopoverButtons *popOver_view;
         return;
     }
     
-    retVal = [appDelegate pingServer];
+    retVal = [appDelegate goOnlineIfRequired];
     
     if(retVal == NO)
     {
@@ -398,7 +398,7 @@ PopoverButtons *popOver_view;
     
    
     	//new code to handle meta sync whenever the application is logged of the authentication module.
-	BOOL retVal = [appDelegate pingServer];
+	BOOL retVal = [appDelegate goOnlineIfRequired];
     
     if(retVal == NO)
     {
@@ -636,7 +636,7 @@ PopoverButtons *popOver_view;
         return;
     }
     
-	BOOL retVal_ = [appDelegate pingServer];
+	BOOL retVal_ = [appDelegate goOnlineIfRequired];
     if(retVal_ == NO)
     {
         [delegate dismisspopover];
@@ -755,7 +755,7 @@ PopoverButtons *popOver_view;
         }
         else if (appDelegate.isInternetConnectionAvailable )
         {
-            BOOL value = [appDelegate pingServer];
+            BOOL value = [appDelegate goOnlineIfRequired];
             
             if (value == NO)
 				[appDelegate setSyncStatus:SYNC_RED];

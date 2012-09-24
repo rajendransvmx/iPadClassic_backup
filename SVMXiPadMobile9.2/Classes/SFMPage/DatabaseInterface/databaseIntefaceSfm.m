@@ -1793,6 +1793,15 @@ extern void SVMXLog(NSString *format, ...);
     }
     else
     {
+		//Sahana Fixed
+        if([searchForString isEqualToString:@" "] )
+        {
+            searchForString = [searchForString stringByReplacingOccurrencesOfString:@" " withString:@""];
+        }else{  //shrinivas fixed for search -- R4B2
+            if([searchForString length] > 0)
+				searchForString = [searchForString substringFromIndex:1];
+        }
+
         NSString *querystring1 = [NSString stringWithFormat:@"Select field_name,search_object_field_type,sequence,field_type,field_relationship_name from '%@' where named_search = '%@'",SFNAMEDSEACHCOMPONENT, lookupID];
         NSString * field_name = @"";
         NSString * sequence   = @"";
@@ -1819,7 +1828,7 @@ extern void SVMXLog(NSString *format, ...);
                 char * temp_field_seach_type = (char *) synchronized_sqlite3_column_text(stmt, 1);
                 if ( temp_field_seach_type != nil ) 
                 {
-                    field_seach_type= [NSString stringWithUTF8String:temp_field_seach_type];
+                    field_seach_type = [NSString stringWithUTF8String:temp_field_seach_type];
                 }
                 char * temp_sequence = (char *) synchronized_sqlite3_column_text(stmt, 2);
                 if ( temp_sequence != nil ) 
@@ -1879,7 +1888,8 @@ extern void SVMXLog(NSString *format, ...);
         {
             searchForString = [searchForString stringByReplacingOccurrencesOfString:@" " withString:@""];
         }else{  //shrinivas fixed for search -- R4B2
-            searchForString = [searchForString substringFromIndex:1];
+			if([searchForString length] > 0)
+				searchForString = [searchForString substringFromIndex:1];
         }
         
         
@@ -1888,21 +1898,50 @@ extern void SVMXLog(NSString *format, ...);
         
         NSMutableString  * newSearch_string  = [[NSMutableString alloc] initWithCapacity:0];
         [newSearch_string appendFormat:@"%%%@%%",searchForString];
-        // NSString * keyword = [];
+        
+		//Shrinivas Change for look Up search start
+		NSMutableDictionary * field_referenceDict = [[NSMutableDictionary alloc] initWithCapacity:0];
+
+		
+		for(NSString * fieldName in searchable_fields)
+		{
+			NSMutableArray * refernceTo = [self getReferenceToForField:fieldName objectapiName:object tableName:SFREFERENCETO];
+			if([refernceTo  count] > 0)
+			{
+				NSString * referenceToFieldName = [refernceTo objectAtIndex:0];
+				[field_referenceDict setObject:referenceToFieldName forKey:fieldName];
+				
+			}
+		}
+		
+		
+		NSArray * referenceFields = [field_referenceDict allKeys];
         for(int j = 0 ; j < [searchable_fields count]; j++)
         {
             NSString * search_field = [searchable_fields objectAtIndex:j];
-            
-            
-            if([search_field length] != 0 && [newSearch_string length] != 0 && newSearch_string != nil )
+			NSString * cus_searchField = @"";
+			if([search_field length] != 0 && [newSearch_string length] != 0 && newSearch_string != nil )
             {
-                if(j==0 )
+				if([referenceFields containsObject:search_field])
+				{
+					NSString * referenceTo = [field_referenceDict objectForKey:search_field];
+					cus_searchField = [NSString stringWithFormat:@" %@ In (SELECT  Id From %@ Where Name LIKE '%@') " , search_field,referenceTo,newSearch_string];
+				}
+				else
+				{
+					cus_searchField = [NSString stringWithFormat:@" %@ LIKE '%@' ",search_field,newSearch_string];
+				}
+				
+                if(j == 0 )
                 {
-                    [searchFieldNames appendFormat:@"( %@ LIKE '%@' ",search_field ,newSearch_string]; 
+					
+                   // [searchFieldNames appendFormat:@"( %@ LIKE '%@' ",search_field ,newSearch_string];
+					[searchFieldNames appendFormat:@"( %@  ",cus_searchField];
                 }
                 else
                 {
-                    [searchFieldNames appendFormat:@"  OR %@ LIKE '%@' ",search_field ,newSearch_string];
+                   // [searchFieldNames appendFormat:@"  OR %@ LIKE '%@' ",search_field ,newSearch_string];
+					[searchFieldNames appendFormat:@"  OR %@  ",cus_searchField];
                 }
                 
                 
@@ -3237,7 +3276,7 @@ extern void SVMXLog(NSString *format, ...);
 {
     BOOL success = FALSE;
     NSArray * allkeys = [dict allKeys];
-    NSMutableString *  updateValue = [[NSMutableString alloc] initWithCapacity:0];
+    NSMutableString *  updateValue = [[[NSMutableString alloc] initWithCapacity:0] autorelease]; // sahana sep 13th
     for(int i = 0 ; i < [allkeys count]; i++)
     {
         NSString * key = [allkeys objectAtIndex:i];
@@ -3570,6 +3609,13 @@ extern void SVMXLog(NSString *format, ...);
                     record_type = [dict objectForKey:@"RECORD_TYPE"];
                 }
                 
+            }
+            
+            BOOL isChild = [self IsChildObject:object_name];
+            
+            if (isChild)
+            {
+                record_type = DETAIL;
             }
             
             NSString * update_query = [NSString stringWithFormat:@"INSERT INTO '%@' (local_id , json_record, sf_id, sync_flag,object_name,sync_type,record_type) VALUES ('%@','%@','%@','false','%@','%@','%@')", SYNC_RECORD_HEAP,local_id , json_record , sf_id, object_name, sync_type, record_type];
@@ -3930,7 +3976,7 @@ extern void SVMXLog(NSString *format, ...);
 
 -(NSMutableDictionary *)getAllFieldsAndItsDataTypesForObject:(NSString *)object_api_name tableName:(NSString *)tableName
 {
-    NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+    NSMutableDictionary * dict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
     NSString * field_api_name = @"", *data_type = @"";
     if(object_api_name != nil || [object_api_name length ] != 0)
     {
@@ -4017,6 +4063,8 @@ extern void SVMXLog(NSString *format, ...);
                 while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
                 {   
                     local_id = @"",sf_id = @"", object_Name = @"" ,  json_record = @"" ,  record_type = @"", sync_type = @"";
+                    
+                    NSAutoreleasePool * autorelease = [[NSAutoreleasePool alloc] init];
                     char * temp_sf_id = (char *)synchronized_sqlite3_column_text(statement, 0);
                     if(temp_sf_id != nil)
                     {
@@ -4212,6 +4260,10 @@ extern void SVMXLog(NSString *format, ...);
                         if([sync_type isEqualToString:PUT_INSERT ])
                         {
                             delete_id = local_id;
+							//sahana  15th September Start
+							[self updatedataTrailerTAbleForLocal_id:local_id sf_id:sf_id];
+							//sahana  15th September ends
+
                         }
                         else if ([sync_type isEqualToString:PUT_UPDATE] ||  [sync_type isEqualToString:PUT_DELETE])
                         {
@@ -4232,7 +4284,7 @@ extern void SVMXLog(NSString *format, ...);
                         [final_dict release];
                     [new_local_id release];
                     SMLog(@"Record %d" ,count );
-                    
+                    [autorelease release];
                 }
             }
         }
@@ -4294,10 +4346,19 @@ extern void SVMXLog(NSString *format, ...);
                 if ([record_type isEqualToString:DETAIL])
                 {
                     NSString *parent_obj_name = [self getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_Name field_name:@"parent_name"];
-                    NSString * parent_column_name = [self getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_Name field_name:@"parent_column_name"];
-                    NSString * parent_local_id = [self getParentLocalIdForChildSFID:sf_id parentObject_name:parent_obj_name parent_column_name:parent_column_name child_object_name:object_Name];
+                    SMLog(@"parent_obj_name = %@", parent_obj_name );
+                    NSString * parent_column_name1 = [self getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_Name field_name:@"parent_column_name"];
+                    NSString * parent_local_id = [self getParentLocalIdForChildSFID:sf_id parentObject_name:parent_obj_name parent_column_name:parent_column_name1 child_object_name:object_Name];
                     
-                    [self updateParentColumnNameInChildTableWithParentLocalId:object_Name parent_column_name:parent_column_name parent_local_id:parent_local_id child_sf_id:sf_id];
+                    BOOL duplicateRecord = [appDelegate.dataBase checkForDuplicateId:object_Name sfId:sf_id];
+                    
+                    NSString * value = [appDelegate.dataBase getParentColumnValueFromchild:parent_column_name1 childTable:object_Name sfId:sf_id];
+                    
+                    if (!duplicateRecord && (![value isEqualToString:parent_local_id]) && ([parent_local_id length] > 0))
+                    {
+                        [self updateParentColumnNameInChildTableWithParentLocalId:object_Name parent_column_name:parent_column_name1 parent_local_id:parent_local_id child_sf_id:sf_id];
+                    }
+                                        
                 }
             }
         }
@@ -4307,6 +4368,17 @@ extern void SVMXLog(NSString *format, ...);
     
 }
 
+-(void)updatedataTrailerTAbleForLocal_id:(NSString *)local_id  sf_id:(NSString *)sf_id
+{
+    char * err ;
+    NSString * updateStatement = [NSString stringWithFormat:@"UPDATE '%@' SET %@ = '%@'  WHERE (local_id = '%@' )", SFDATATRAILER, @"sf_id" , sf_id,local_id ];
+    
+    if (synchronized_sqlite3_exec(appDelegate.db, [updateStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+    {
+        SMLog(@"Failed to UPDATE Childrelationship");
+    }
+    
+}
 -(void)updateParentColumnNameInChildTableWithParentLocalId:(NSString *)child_objectName parent_column_name:(NSString *)parent_column_name   parent_local_id:(NSString *)parent_local_id  child_sf_id:(NSString *)child_sfId
 {
     char * err ;

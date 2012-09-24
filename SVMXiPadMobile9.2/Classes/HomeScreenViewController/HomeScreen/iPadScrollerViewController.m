@@ -1253,7 +1253,7 @@ const float progress_ = 0.07;
 {
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
-        BOOL retvalue = [appDelegate pingServer];
+        BOOL retvalue = [appDelegate goOnlineIfRequired];
         if(!appDelegate.connection_error)
         {
             break;

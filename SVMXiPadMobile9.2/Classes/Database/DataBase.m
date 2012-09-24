@@ -483,7 +483,7 @@ extern void SVMXLog(NSString *format, ...);
     NSMutableString *customizeSearch=[[NSMutableString alloc]init];
     [dictforparsing setObject:object forKey:@"object"]; 
     int fieldsCount = 2;
-    [queryFields appendString:[NSString stringWithFormat:@"'%@'.Id",object]];
+    [queryFields appendString:[NSString stringWithFormat:@"'%@'.Id",object]]; // Change it to 1st searchable field
     [queryFields appendString:@","];
     [queryFields appendString:[NSString stringWithFormat:@"'%@'.local_id",object]];
     for(int i=0; i<[displayArray count]; i++)
@@ -1577,7 +1577,7 @@ extern void SVMXLog(NSString *format, ...);
     queryStatementForRefrence = [NSMutableString stringWithFormat:@"SELECT reference_to from SFObjectField where object_api_name='%@' and relationship_name='%@'",objectName,relationship_name];    
     sqlite3_stmt * labelstmtForRefrence;
     const char *selectStatementForRefrence = [queryStatementForRefrence UTF8String];
-    char *field1;        
+    char *field1=nil;
     NSString *referenceObjectName=@"";
     if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatementForRefrence,-1, &labelstmtForRefrence, nil) == SQLITE_OK )
     {
@@ -1647,7 +1647,7 @@ extern void SVMXLog(NSString *format, ...);
     queryStatement1 = [NSMutableString stringWithFormat:@"SELECT type,reference_to FROM SFObjectField where object_api_name = '%@'and api_name='%@'",[appDelegate.dataBase getApiNameFromFieldLabel:[tableArray objectForKey:@"SVMXC__Object_Name2__c"]],[appDelegate.dataBase getApiNameFromFieldLabel:[tableArray objectForKey:@"SVMXC__Field_Name__c"]]];
     sqlite3_stmt * labelstmt;
     const char *selectStatement = [queryStatement1 UTF8String];
-    char *type,*refrence_to,*name_field; 
+    char *type=nil,*refrence_to=nil,*name_field=nil;
     NSString *strName_field=nil,*namefiled;
     if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &labelstmt, nil) == SQLITE_OK )
     {
@@ -2275,6 +2275,8 @@ extern void SVMXLog(NSString *format, ...);
     
     if (result == YES)
     {
+        
+        result = [self createTable:[NSString stringWithFormat:@"CREATE INDEX IF NOT EXISTS SFObjectFieldIndex ON SFObjectField (object_api_name, api_name, label)"]];
         int id_value = 1;
         
         NSMutableArray * objectArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
@@ -3945,6 +3947,9 @@ extern void SVMXLog(NSString *format, ...);
     BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFNamedSearch ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'default_lookup_column' VARCHAR, 'search_name' VARCHAR, 'object_name' VARCHAR, 'search_type' VARCHAR, 'named_search_id' VARCHAR, 'no_of_lookup_records' VARCHAR, 'is_default' VARCHAR, 'is_standard' VARCHAR)"]];
     if (result == YES)
     {
+        result = [self createTable:[NSString stringWithFormat:@"CREATE INDEX IF NOT EXISTS SFNamedSearchIndex ON SFNamedSearch (default_lookup_column, object_name, is_default,is_standard)"]];
+
+        
         NSArray * sfNamedSearch = [processDictionary objectForKey:MSFNAMEDSEARCH];
         
         char *err;
@@ -4001,6 +4006,8 @@ extern void SVMXLog(NSString *format, ...);
     id_value = 0;
     if (result == YES)
     {
+        result = [self createTable:[NSString stringWithFormat:@"CREATE INDEX IF NOT EXISTS SFNamedSearchComponentIndex ON SFNamedSearchComponent (field_name, search_object_field_type, sequence,field_type,field_relationship_name )"]];
+
         NSArray * sfNameSearchComp = [processDictionary objectForKey:MSFNAMEDSEARCH_COMPONENT];
         
         char * err;
@@ -5747,13 +5754,12 @@ extern void SVMXLog(NSString *format, ...);
     
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
-        [appDelegate pingServer];
+        [appDelegate goOnlineIfRequired];
         if(!appDelegate.connection_error)
         {
             break;
         }
     }
-    [appDelegate pingServer];
     [appDelegate.wsInterface metaSyncWithEventName:SFM_METADATA eventType:INITIAL_SYNC values:nil];
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
@@ -7074,6 +7080,65 @@ extern void SVMXLog(NSString *format, ...);
         
     didGetServiceReportLogo = YES;
 }
+
+
+
+//RADHA
+- (NSString *) getParentColumnValueFromchild:(NSString *)parentColumn childTable:(NSString *)objectName sfId:(NSString *)sf_id
+{
+    
+    NSString * value = @"";
+    
+    sqlite3_stmt * stmt = nil;
+    
+    NSString * query = [NSString stringWithFormat:@"SELECT %@ FROM %@ Where Id = '%@'", parentColumn, objectName, sf_id];
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            char * temp_fieldName = (char *)synchronized_sqlite3_column_text(stmt, 0);
+            if(temp_fieldName != nil)
+            {
+                value = [NSString stringWithUTF8String:temp_fieldName];
+            }
+        }
+        
+    }
+    synchronized_sqlite3_finalize(stmt);
+    
+    
+    return value;
+}
+
+
+- (NSString *) getParentlocalIdchild:(NSString *)parentColumn childTable:(NSString *)objectName local_id:(NSString *)local_id
+{
+    
+    NSString * value = @"";
+    
+    sqlite3_stmt * stmt = nil;
+    
+    NSString * query = [NSString stringWithFormat:@"SELECT %@ FROM %@ Where local_id = '%@'", parentColumn, objectName, local_id];
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            char * temp_fieldName = (char *)synchronized_sqlite3_column_text(stmt, 0);
+            if(temp_fieldName != nil)
+            {
+                value = [NSString stringWithUTF8String:temp_fieldName];
+            }
+        }
+        
+    }
+    synchronized_sqlite3_finalize(stmt);
+    
+    
+    return value;
+}
+
 
 
 //sahana Aug 16th ----------*********** start*************

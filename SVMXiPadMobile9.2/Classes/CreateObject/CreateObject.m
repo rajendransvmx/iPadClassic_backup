@@ -60,7 +60,7 @@ extern void SVMXLog(NSString *format, ...);
     appDelegate.sfmPageController.processId = processId;
     appDelegate.sfmPageController.recordId = nil;
     //sahana offline
-    appDelegate.sfmPageController.objectName = objectName;
+    appDelegate.sfmPageController.objectName = [NSString stringWithFormat:@"%@",objectName];
     
     appDelegate.sfmPageController.detailView.detailTitle = processTitle;
     [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];

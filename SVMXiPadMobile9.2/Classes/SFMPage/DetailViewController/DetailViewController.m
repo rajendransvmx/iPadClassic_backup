@@ -1295,26 +1295,23 @@ extern void SVMXLog(NSString *format, ...);
             {
                 [detailValuesArray addObject:[detail_values objectAtIndex:l]];
                 NSMutableArray *  eachArray = [detail_values objectAtIndex:l];
-                BOOL value_id_flag = FALSE;
-                NSString  * id_ = @"";
                 for(int m = 0 ; m < [eachArray count];m++)
                 {
+//                    NSMutableDictionary * dict = [eachArray objectAtIndex:m];
+//                    NSString * api_name = [dict objectForKey:gVALUE_FIELD_API_NAME];
+//					[dict setObject:@"" forKey:gVALUE_FIELD_VALUE_VALUE];
+//					[dict setObject:@"" forKey:gVALUE_FIELD_VALUE_KEY];
                     NSDictionary * dict = [eachArray objectAtIndex:m];
                     NSString * api_name = [dict objectForKey:gVALUE_FIELD_API_NAME];
-                    NSString * key = [dict objectForKey:gVALUE_FIELD_VALUE_KEY];
-                    if([api_name isEqualToString:@"local_id"])
+					if([api_name isEqualToString:@"local_id"])
                     {
-                        id_ = key;
-                        value_id_flag = TRUE;
+                        [eachArray  removeObjectAtIndex:m];
                     }
                 }
-                if(value_id_flag)
-                {
-                    [detail_Values_id addObject:id_];
-                }
+                
+                [detail_Values_id addObject:@""];
             }
             
-            //            [details_api_keys release];
             
         }
     }
@@ -8493,54 +8490,59 @@ extern void SVMXLog(NSString *format, ...);
 // Override to support editing the table view.
 - (void) tableView:(UITableView *)_tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [tableView beginUpdates];
     
-        if (editingStyle == UITableViewCellEditingStyleDelete)
+    if (editingStyle == UITableViewCellEditingStyleDelete)
+    {
+        NSInteger index;
+        NSInteger section = indexPath.section;
+        if (isDefault)
+            index = section;
+        else
+            index = selectedRow;
+       
+        NSIndexPath * _indexPath = [NSIndexPath indexPathForRow:indexPath.row inSection:index];
+
+        
+        // Delete the row from the data source.
+        NSMutableArray * details = [appDelegate.SFMPage objectForKey:@"details"];
+        NSMutableDictionary * detail = [details objectAtIndex:_indexPath.section];
+        NSMutableArray * detail_values = [detail objectForKey:gDETAILS_VALUES_ARRAY];
+        NSMutableArray * detail_record_id = [detail objectForKey:gDETAIL_VALUES_RECORD_ID];
+        NSMutableArray * deleted_detail_records = [detail objectForKey:gDETAIL_DELETED_RECORDS];
+        //code for delete the records
+        
+        NSString * deleted_record = @"";
+        if ([detail_record_id count] > 0)
         {
-            NSInteger index;
-            NSInteger section = indexPath.section;
-            if (isDefault)
-                index = section;
-            else
-                index = selectedRow;
-           
-            NSIndexPath * _indexPath = [NSIndexPath indexPathForRow:indexPath.row inSection:index];
+            deleted_record = [detail_record_id objectAtIndex:_indexPath.row-1];
+            [detail_values removeObjectAtIndex:_indexPath.row-1];
+        }
+        
+        if([deleted_record isEqualToString:@""])
+        {
+            // Sahana - 29 July, 2011 - removed the following code
+            // // Samman - 29 July, 2011 - added the following code
+//            [detail_values removeObjectAtIndex:_indexPath.row-1];
+        }
+        else
+        {
+            [deleted_detail_records addObject:deleted_record];
+        }
+        
+        // Sahana - 29 July, 2011
+        if ([detail_record_id count] > 0)
+        {
+            [detail_record_id removeObjectAtIndex:_indexPath.row-1];
+        }
+        
+        NSInteger  a = [tableView numberOfRowsInSection:indexPath.section];
+        NSLog(@"%d", a);
 
-            
-            // Delete the row from the data source.
-            NSMutableArray * details = [appDelegate.SFMPage objectForKey:@"details"];
-            NSMutableDictionary * detail = [details objectAtIndex:_indexPath.section];
-            NSMutableArray * detail_values = [detail objectForKey:gDETAILS_VALUES_ARRAY];
-            NSMutableArray * detail_record_id = [detail objectForKey:gDETAIL_VALUES_RECORD_ID];
-            NSMutableArray * deleted_detail_records = [detail objectForKey:gDETAIL_DELETED_RECORDS];
-            //code for delete the records
-            
-            NSString * deleted_record = @"";
-            if ([detail_record_id count] > 0)
-            {
-                deleted_record = [detail_record_id objectAtIndex:_indexPath.row-1];
-                [detail_values removeObjectAtIndex:_indexPath.row-1];
-            }
-            
-            if([deleted_record isEqualToString:@""])
-            {
-                // Sahana - 29 July, 2011 - removed the following code
-                // // Samman - 29 July, 2011 - added the following code
-                // [detail_values removeObjectAtIndex:_indexPath.row-1];
-            }
-            else
-            {
-                [deleted_detail_records addObject:deleted_record];
-            }
-            
-            // Sahana - 29 July, 2011
-            if ([detail_record_id count] > 0)
-            {
-                [detail_record_id removeObjectAtIndex:_indexPath.row-1];
-            }
-
-            [tableView deleteRowsAtIndexPaths:[NSMutableArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-        }   
+        [tableView deleteRowsAtIndexPaths:[NSMutableArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    }
     
+    [tableView endUpdates];
 }
 
 #pragma mark - KeyBoard notification
@@ -8600,7 +8602,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%d", index);
         
         NSArray * visible = [self.tableView visibleCells];
-		NSLog(@"%d", [visible count]);
+		SMLog(@"%d", [visible count]);
 		
 		//New fix for a suspected crash --> 
 		if ([visible count] > index)
@@ -10629,7 +10631,7 @@ extern void SVMXLog(NSString *format, ...);
         [activity stopAnimating];
     }
     
-    if([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"SOURCETOTARGET"] || [[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"SOURCETOTARGETONLYCHILDROWS"])
+    if([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"SOURCETOTARGET"])
     {
         //write a method to  save the header and lines 
         if([targetCall isEqualToString:save])

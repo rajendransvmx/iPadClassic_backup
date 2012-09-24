@@ -215,7 +215,6 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) setLookupData:(NSDictionary *)lookupDictionary
 {
-    SMLog(@"%@", lookupDictionary);
     if(appDelegate.isWorkinginOffline)
     {
         lookupData = [lookupDictionary retain];

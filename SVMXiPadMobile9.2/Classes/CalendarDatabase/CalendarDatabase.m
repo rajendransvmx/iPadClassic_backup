@@ -798,7 +798,7 @@ extern void SVMXLog(NSString *format, ...);
     NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
     Expenses = [[NSMutableArray alloc] initWithCapacity:0];
     sqlite3_stmt *statement1;
-    queryStatement = [NSString stringWithFormat:@"SELECT Id, SVMXC__Expense_Type__c, SVMXC__Actual_Quantity2__c, SVMXC__Actual_Price2__c, SVMXC__Work_Description__c FROM SVMXC__Service_Order_Line__c WHERE SVMXC__Line_Type__c = 'Expenses' AND SVMXC__Service_Order__c = '%@' AND (SVMXC__Is_Billable__c = 'true' or  SVMXC__Is_Billable__c = 'True' or SVMXC__Is_Billable__c = '1')", currentRecordId];
+    queryStatement = [NSString stringWithFormat:@"SELECT Id, SVMXC__Expense_Type__c, SVMXC__Actual_Quantity2__c, SVMXC__Actual_Price2__c, SVMXC__Work_Description__c FROM SVMXC__Service_Order_Line__c WHERE SVMXC__Line_Type__c = 'Expenses' AND SVMXC__Service_Order__c = '%@' AND (SVMXC__Is_Billable__c = 'true' or  SVMXC__Is_Billable__c = 'True' or SVMXC__Is_Billable__c = '1') AND RecordTypeId   in   (select  record_type_id  from SFRecordType where record_type = 'Usage/Consumption' )", currentRecordId];
     const char * _query = [queryStatement UTF8String];
     NSArray * keys = [NSArray arrayWithObjects:
                       _ID,
@@ -866,7 +866,7 @@ extern void SVMXLog(NSString *format, ...);
     
     Parts = [[NSMutableArray alloc] initWithCapacity:0];
     
-    queryStatement = [NSString stringWithFormat:@"SELECT Id, SVMXC__Product__c,SVMXC__Actual_Quantity2__c, SVMXC__Actual_Price2__c, SVMXC__Work_Description__c, SVMXC__Discount__c, Name FROM SVMXC__Service_Order_Line__c WHERE SVMXC__Line_Type__c = 'Parts' AND SVMXC__Service_Order__c = '%@' AND SVMXC__Actual_Quantity2__c > 0 AND SVMXC__Actual_Price2__c >= 0 AND (SVMXC__Is_Billable__c = 'true' or  SVMXC__Is_Billable__c = 'True' or SVMXC__Is_Billable__c = '1')", currentRecordId];
+    queryStatement = [NSString stringWithFormat:@"SELECT Id, SVMXC__Product__c,SVMXC__Actual_Quantity2__c, SVMXC__Actual_Price2__c, SVMXC__Work_Description__c, SVMXC__Discount__c, Name FROM SVMXC__Service_Order_Line__c WHERE SVMXC__Line_Type__c = 'Parts' AND SVMXC__Service_Order__c = '%@' AND SVMXC__Actual_Quantity2__c > 0 AND SVMXC__Actual_Price2__c >= 0 AND (SVMXC__Is_Billable__c = 'true' or  SVMXC__Is_Billable__c = 'True' or SVMXC__Is_Billable__c = '1') AND RecordTypeId   in   (select  record_type_id  from SFRecordType where record_type = 'Usage/Consumption' )", currentRecordId];
     const char * _query = [queryStatement UTF8String];
     if ( synchronized_sqlite3_prepare_v2(appDelegate.db, _query,-1, &statement1, nil) == SQLITE_OK )
     {
@@ -988,7 +988,7 @@ extern void SVMXLog(NSString *format, ...);
     NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
     sqlite3_stmt *statement1;
     
-    queryStatement = [NSString stringWithFormat:@"SELECT Id, SVMXC__Activity_Type__c, SVMXC__Actual_Quantity2__c, SVMXC__Actual_Price2__c, SVMXC__Work_Description__c FROM SVMXC__Service_Order_Line__c WHERE SVMXC__Line_Type__c = 'Labor' AND SVMXC__Service_Order__c = '%@' AND SVMXC__Actual_Quantity2__c > 0 AND SVMXC__Actual_Price2__c >= 0 AND (SVMXC__Is_Billable__c = 'true' or  SVMXC__Is_Billable__c = 'True' or SVMXC__Is_Billable__c = '1')", currentRecordId];
+    queryStatement = [NSString stringWithFormat:@"SELECT Id, SVMXC__Activity_Type__c, SVMXC__Actual_Quantity2__c, SVMXC__Actual_Price2__c, SVMXC__Work_Description__c FROM SVMXC__Service_Order_Line__c WHERE SVMXC__Line_Type__c = 'Labor' AND SVMXC__Service_Order__c = '%@' AND SVMXC__Actual_Quantity2__c > 0 AND SVMXC__Actual_Price2__c >= 0 AND (SVMXC__Is_Billable__c = 'true' or  SVMXC__Is_Billable__c = 'True' or SVMXC__Is_Billable__c = '1') AND RecordTypeId   in   (select  record_type_id  from SFRecordType where record_type = 'Usage/Consumption' )", currentRecordId];
     const char * _query = [queryStatement UTF8String];
     NSArray * keys = [NSArray arrayWithObjects:
                       _ID,
@@ -2429,10 +2429,15 @@ extern void SVMXLog(NSString *format, ...);
 
 - (NSData *) getImageDataForUserName:(NSString *)userName
 {
+    if ([userName length] == 0)
+    {
+        return NULL;
+    }
+
+    NSData * _data = nil;
     NSMutableString *query = [NSString stringWithFormat:@"Select userimage from UserImages where username = '%@'", userName];
     sqlite3_stmt *statement;
     
-    NSData *data;
     
     if ( synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, nil ) == SQLITE_OK )
     { 
@@ -2440,12 +2445,13 @@ extern void SVMXLog(NSString *format, ...);
         {
             const char * raw_data = (char *)synchronized_sqlite3_column_text(statement, 0);
             NSString * dataString = [NSString stringWithCString:raw_data encoding:NSUTF8StringEncoding];
-            data = [Base64 decode:dataString];
+            _data = [Base64 decode:dataString];
         }
     }
     synchronized_sqlite3_finalize(statement);
-    if ( [data length] != 0 )
-        return data;
+    
+    if ( [_data length] != 0 )
+        return _data;
     else
         return NULL;
 }

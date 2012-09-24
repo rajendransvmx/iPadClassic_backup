@@ -233,7 +233,7 @@
     
     appDelegate.sfmPageController.activityDate = (NSString *)date;
     appDelegate.sfmPageController.recordId = recordId;
-    appDelegate.sfmPageController.objectName = objectName;
+    appDelegate.sfmPageController.objectName = [NSString stringWithFormat:@"%@",objectName];
     
     if ([appDelegate.SFMPage retainCount] > 0)
     {

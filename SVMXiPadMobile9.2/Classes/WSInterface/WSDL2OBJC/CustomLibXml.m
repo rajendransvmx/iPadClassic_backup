@@ -7,6 +7,7 @@
 //
 
 #import "CustomLibXml.h"
+extern void SVMXLog(NSString *format, ...);
 
 malloc_zone_t * zonePtr = NULL;
 
@@ -38,14 +39,14 @@ void custom_create()
 // Custom destroy should be called everytime a malloc zone has to be destroyed
 void custom_destroy()
 {
-    NSLog(@"Zone Memory Size Before Destroy: %zd, %.2f", malloc_size(zonePtr), ((float)zone_size/1024/1024));
+    SMLog(@"Zone Memory Size Before Destroy: %zd, %.2f", malloc_size(zonePtr), ((float)zone_size/1024/1024));
 
     malloc_destroy_zone(zonePtr);
     zonePtr = NULL;
     
     xmlMemSetup(freeFunc, mallocFunc, reallocFunc, strdupFunc);
     
-    NSLog(@"Zone Memory Size After Destroy: %zd", malloc_size(zonePtr));
+    SMLog(@"Zone Memory Size After Destroy: %zd", malloc_size(zonePtr));
 }
 
 void custom_xmlFreeFunc (void * mem)

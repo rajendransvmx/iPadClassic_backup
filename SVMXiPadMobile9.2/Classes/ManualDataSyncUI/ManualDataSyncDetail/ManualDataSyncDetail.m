@@ -739,14 +739,25 @@ PopoverButtons *popOver_view;
                 NSString * parent_column_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectAPIName field_name:@"parent_column_name"];
                 
                 SMLog(@"%@ %@", parent_obj_name, parent_column_name);
-                localId = [appDelegate.databaseInterface selectLocalIdFrom:objectAPIName WithId:SFId andParentColumnName:parent_column_name andSyncType:sync_type];
+                
+                NSLog(@"%@", SFId);
+                
+                if ([SFId length] > 0 && SFId != nil && [SFId isEqualToString:@""])
+                {
+//                    localId = [appDelegate.databaseInterface selectLocalIdFrom:objectAPIName WithId:SFId andParentColumnName:parent_column_name andSyncType:sync_type];
+                    localId = [appDelegate.dataBase getParentColumnValueFromchild:parent_obj_name childTable:objectAPIName sfId:SFId];
+                }
+                else 
+                {
+                    localId = [appDelegate.dataBase getParentlocalIdchild:parent_obj_name childTable:objectAPIName local_id:localId];
+                }
                 SMLog(@"%@", localId);
                 
                 for (int v = 0; v < [appDelegate.view_layout_array count]; v++)
                 {
                     NSDictionary * dict = [appDelegate.view_layout_array objectAtIndex:v];
                     NSString * object_label = [dict objectForKey:VIEW_OBJECTNAME];
-                    if ([object_label isEqualToString:objectAPIName])
+                    if ([object_label isEqualToString:parent_obj_name])
                     {
                         processId = ([dict objectForKey:VIEW_SVMXC_ProcessID]!=nil)?[dict objectForKey:VIEW_SVMXC_ProcessID]:@"";
                         break;
@@ -802,19 +813,28 @@ PopoverButtons *popOver_view;
                 NSString * parent_column_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectAPIName field_name:@"parent_column_name"];
                 
                 SMLog(@"%@ %@", parent_obj_name, parent_column_name);
-                localId = [appDelegate.databaseInterface selectLocalIdFrom:objectAPIName WithId:SFId andParentColumnName:parent_column_name andSyncType:sync_type];
+                if ([SFId length] > 0 && SFId != nil && [SFId isEqualToString:@""])
+                {
+                    //                    localId = [appDelegate.databaseInterface selectLocalIdFrom:objectAPIName WithId:SFId andParentColumnName:parent_column_name andSyncType:sync_type];
+                    localId = [appDelegate.dataBase getParentColumnValueFromchild:parent_obj_name childTable:objectAPIName sfId:SFId];
+                }
+                else 
+                {
+                    localId = [appDelegate.dataBase getParentlocalIdchild:parent_obj_name childTable:objectAPIName local_id:localId];
+                }
                 SMLog(@"%@", localId);
                 
                 for (int v = 0; v < [appDelegate.view_layout_array count]; v++)
                 {
                     NSDictionary * dict = [appDelegate.view_layout_array objectAtIndex:v];
                     NSString * object_label = [dict objectForKey:VIEW_OBJECTNAME];
-                    if ([object_label isEqualToString:objectAPIName])
+                    if ([object_label isEqualToString:parent_obj_name])
                     {
                         processId = ([dict objectForKey:VIEW_SVMXC_ProcessID]!=nil)?[dict objectForKey:VIEW_SVMXC_ProcessID]:@"";
                         break;
                     }
                 }
+                
                 [dataSync showSFMWithProcessId:processId recordId:localId objectName:parent_obj_name];
                 
             }
@@ -1416,63 +1436,63 @@ PopoverButtons *popOver_view;
 }
 
 
-- (void) retryDataSyncAgain
-{
-    BOOL retVal = [appDelegate pingServer];
-    
-    
-    if(retVal == YES)
-    {
-        //appDelegate.SyncStatus = SYNC_GREEN;
-        [appDelegate setSyncStatus:SYNC_GREEN];
-        //[appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
-        //[appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
-        [appDelegate callDataSync];
-        
-    }
-}
-
--(void) retryMetaDataSyncAgain
-{
-    BOOL retVal = [appDelegate pingServer];
-    
-    if(retVal == YES)
-    {
-        
-        if ([self.internet_Conflicts count] > 0)
-        {
-            [appDelegate.calDataBase removeInternetConflicts];
-            [self.internet_Conflicts removeAllObjects];
-            [appDelegate.reloadTable ReloadSyncTable];
-        }
-
-        //appDelegate.SyncStatus = SYNC_GREEN;
-        
-        [appDelegate setSyncStatus:SYNC_GREEN];
-        //[appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
-        //[appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
-        //[appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
-        [popOver_view synchronizeConfiguration];        
-    }
-
-}
-
--(void) retryEventSyncAgain
-{
-    BOOL retVal = [appDelegate pingServer];
-    
-    
-    if(retVal == YES)
-    {
-        //appDelegate.SyncStatus = SYNC_GREEN;
-        
-        [appDelegate setSyncStatus:SYNC_GREEN];
-        //[appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
-        //[appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
-        [popOver_view startSyncEvents];        
-    }
-    
-}
+//- (void) retryDataSyncAgain
+//{
+//    BOOL retVal = [appDelegate pingServer];
+//    
+//    
+//    if(retVal == YES)
+//    {
+//        //appDelegate.SyncStatus = SYNC_GREEN;
+//        [appDelegate setSyncStatus:SYNC_GREEN];
+//        //[appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+//        //[appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+//        [appDelegate callDataSync];
+//        
+//    }
+//}
+//
+//-(void) retryMetaDataSyncAgain
+//{
+//    BOOL retVal = [appDelegate pingServer];
+//    
+//    if(retVal == YES)
+//    {
+//        
+//        if ([self.internet_Conflicts count] > 0)
+//        {
+//            [appDelegate.calDataBase removeInternetConflicts];
+//            [self.internet_Conflicts removeAllObjects];
+//            [appDelegate.reloadTable ReloadSyncTable];
+//        }
+//
+//        //appDelegate.SyncStatus = SYNC_GREEN;
+//        
+//        [appDelegate setSyncStatus:SYNC_GREEN];
+//        //[appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+//        //[appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+//        //[appDelegate.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
+//        [popOver_view synchronizeConfiguration];        
+//    }
+//
+//}
+//
+//-(void) retryEventSyncAgain
+//{
+//    BOOL retVal = [appDelegate pingServer];
+//    
+//    
+//    if(retVal == YES)
+//    {
+//        //appDelegate.SyncStatus = SYNC_GREEN;
+//        
+//        [appDelegate setSyncStatus:SYNC_GREEN];
+//        //[appDelegate.wsInterface.refreshSyncButton showSyncStatusButton];
+//        //[appDelegate.wsInterface.refreshModalStatusButton showModalSyncStatus];
+//        [popOver_view startSyncEvents];        
+//    }
+//    
+//}
 
 - (void) didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {

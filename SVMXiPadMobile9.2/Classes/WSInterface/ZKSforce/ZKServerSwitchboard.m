@@ -179,13 +179,16 @@ static ZKServerSwitchboard * sharedSwitchboard =  nil;
     if (enabled)
     {
         appDelegate.loggedInOrg = [NSMutableString stringWithString:@"Production"];
+        SMLog(@"[TEST LOGIN URL] https://www.salesforce.com");
         return @"https://www.salesforce.com";
     }
     else
     {
         appDelegate.loggedInOrg = [NSMutableString stringWithString:@"Sandbox"];
+        SMLog(@"[TEST LOGIN URL] https://test.salesforce.com");
         return @"https://test.salesforce.com";
     }
+    SMLog(@"[TEST LOGIN URL] https://www.salesforce.com");
     return @"https://www.salesforce.com";
 }
 

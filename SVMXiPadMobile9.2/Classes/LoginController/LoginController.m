@@ -578,7 +578,7 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     appDelegate.current_userId = [NSString stringWithFormat:@"%@", userInfo.userId];
-    NSLog(@"usetId = %@", appDelegate.current_userId);
+    SMLog(@"usetId = %@", appDelegate.current_userId);
 	
     if (appDelegate.currentUserName != nil)
     {

@@ -714,7 +714,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 -(void)callSpecialIncrementalSync;
 
 //Shrinivas
-- (void) goOnlineIfRequired;
+- (BOOL) goOnlineIfRequired;
 - (BOOL) pingServer;
 
 // Get Color from HEX

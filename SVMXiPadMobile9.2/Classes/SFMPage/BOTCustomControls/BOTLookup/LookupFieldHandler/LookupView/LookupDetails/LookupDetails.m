@@ -17,6 +17,7 @@
 
 - (void)dealloc
 {
+    [lookupDetailTable release];
     [super dealloc];
 }
 
@@ -40,13 +41,13 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
-    CGSize size = {320, 600}; // size of view in popover
-    self.contentSizeForViewInPopover = size;
-    
-    _tableView = [[UITableView alloc] initWithFrame:self.view.frame style:UITableViewStylePlain];
-    _tableView.dataSource = self;
-    _tableView.delegate = self;
-    [self.view addSubview:_tableView];
+//    CGSize size = {320, 600}; // size of view in popover
+//    self.contentSizeForViewInPopover = size;
+//    
+//    _tableView = [[UITableView alloc] initWithFrame:self.view.frame style:UITableViewStylePlain];
+//    _tableView.dataSource = self;
+//    _tableView.delegate = self;
+//    [self.view addSubview:_tableView];
     
     /*
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -76,6 +77,8 @@
 
 - (void)viewDidUnload
 {
+    [lookupDetailTable release];
+    lookupDetailTable = nil;
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -200,7 +203,7 @@
 {
     // Navigation logic may go here. Create and push another view controller.
     /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
+     DetailViewController *detailViewController = [[DetailViewController alloc] initWithNibName:@"Nib name" bundle:nil];
      // ...
      // Pass the selected object to the new view controller.
      [self.navigationController pushViewController:detailViewController animated:YES];

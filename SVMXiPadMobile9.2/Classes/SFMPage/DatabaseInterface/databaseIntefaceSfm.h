@@ -22,6 +22,9 @@
 
 @property (nonatomic, retain) id MyPopoverDelegate;
 
+//sahana 15th sep
+-(void)updatedataTrailerTAbleForLocal_id:(NSString *)local_id  sf_id:(NSString *)sf_id;
+
 -(NSString *) filePath:(NSString *)dataBaseName;
 
 //method to  get the processInfo ( page layout information) 

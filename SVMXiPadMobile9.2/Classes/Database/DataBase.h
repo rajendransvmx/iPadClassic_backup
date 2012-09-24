@@ -301,4 +301,9 @@ PopoverButtons *popOver_view;
 //sahana Aug 16th
 -(void)getRecordTypeValuesForObject:(NSArray *)allObjects;
 -(void)UpdateSFRecordTypeForId:(NSString *)_id value:(NSString *)valueField;
+
+
+- (NSString *) getParentColumnValueFromchild:(NSString *)parentColumn childTable:(NSString *)objectName sfId:(NSString *)sf_id;
+- (NSString *) getParentlocalIdchild:(NSString *)parentColumn childTable:(NSString *)objectName local_id:(NSString *)local_id;
+
 @end

@@ -17,6 +17,7 @@
     UITableView * _tableView;
     NSArray * lookupDetailsArray;
     NSIndexPath * indexPath;
+    IBOutlet UITableView *lookupDetailTable;
 }
 
 @property (nonatomic, assign) id <LookupDetailsDelegate> delegate;

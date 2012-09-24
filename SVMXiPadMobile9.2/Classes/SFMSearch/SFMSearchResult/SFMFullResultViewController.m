@@ -153,7 +153,7 @@ extern void SVMXLog(NSString *format, ...);
     if(!processId)
         return;
     appDelegate.sfmPageController.processId = processId;
-    appDelegate.sfmPageController.objectName = objName;
+    appDelegate.sfmPageController.objectName = [NSString stringWithFormat:@"%@",objectName];
     
     //appDelegate.sfmPageController.recordId = [NSString stringWithFormat:@"%s", field1];
     //appDelegate.sfmPageController.activityDate = [array2 objectAtIndex:(ownerCellIndexPath.row)];
