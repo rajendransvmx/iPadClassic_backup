@@ -176,6 +176,27 @@ extern void SVMXLog(NSString *format, ...);
     
     sqlite3_stmt * statement;
     
+	int value  = [[startdate substringWithRange:NSMakeRange(8, 2)] intValue];
+	NSString * string = nil;
+	
+	if (value >= 0 && value <= 10)
+		string = [NSString stringWithFormat:@"0%d", --value];
+	else 
+		string = [NSString stringWithFormat:@"%d", --value];
+		
+	startdate = [startdate stringByReplacingCharactersInRange:NSMakeRange(8, 2) withString:string];
+	
+	value = [[endDate substringWithRange:NSMakeRange(8, 2)] intValue];
+	
+	if (value >= 0 && value <= 8)
+		string = [NSString stringWithFormat:@"0%d", ++value];
+	else 
+		string = [NSString stringWithFormat:@"%d", ++value];
+
+	
+	endDate = [endDate stringByReplacingCharactersInRange:NSMakeRange(8, 2) withString:string];
+
+	
     queryStatement = [NSString stringWithFormat:@"SELECT  ActivityDate, ActivityDateTime,DurationInMinutes,EndDateTime,StartDateTime,Subject,WhatId,Id  FROM Event where ((StartDateTime >= '%@' and StartDateTime < '%@') or (EndDateTime >= '%@' and EndDateTime < '%@'))", startdate, endDate, startdate, endDate];
         
     const char * selectStatement = [queryStatement UTF8String];

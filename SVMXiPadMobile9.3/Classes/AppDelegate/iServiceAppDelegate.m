@@ -1266,8 +1266,14 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     NSDateComponents *weekdayComponents = [gregorian components:unitFlags fromDate:today];
     
     NSDateComponents *componentsToSubtract = [[NSDateComponents alloc] init];
-    [componentsToSubtract setDay: 0 - ([weekdayComponents weekday] - firstDayOfWeek)];
-    
+	
+	
+	
+	int diff = ([weekdayComponents weekday] - firstDayOfWeek);
+	if(diff == -1) 
+		diff = 6;
+	[componentsToSubtract setDay:( 0 - diff)];
+	
     NSDate *beginningOfWeek = [gregorian dateByAddingComponents:componentsToSubtract toDate:today options:0];
     
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
