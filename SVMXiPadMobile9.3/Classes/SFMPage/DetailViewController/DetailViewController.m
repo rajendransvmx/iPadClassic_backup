@@ -3558,7 +3558,7 @@ extern void SVMXLog(NSString *format, ...);
         
         if (appDelegate.sfmPageController.conflictExists)
         {
-            NSMutableString *Confilct= [appDelegate isConflictInEvent:appDelegate.sfmPageController.objectName local_id:appDelegate.sfmPageController.recordId];
+            NSMutableString *Confilct= [appDelegate isConflictInEvent:[appDelegate.dataBase getApiNameFromFieldLabel: appDelegate.sfmPageController.objectName] local_id:appDelegate.sfmPageController.recordId];
             if([Confilct length]>0)
             {
                // [self.webView removeFromSuperview];

@@ -78,10 +78,10 @@ extern void SVMXLog(NSString *format, ...);
     {
         conflict=[appDelegate.dataBase checkIfConflictsExistsForEvent:[data objectForKey:@"Id"] objectName:[appDelegate.dataBase getApiNameFromFieldLabel:objectName]];
         
-        if (!conflict)
-        {
-            conflict = [appDelegate.dataBase checkIfChildConflictexist:[data objectForKey:@"Id"] sfId:[appDelegate.dataBase getApiNameFromFieldLabel:objectName]];
-        }
+//        if (!conflict)
+//        {
+//            conflict = [appDelegate.dataBase checkIfChildConflictexist:[data objectForKey:@"Id"] sfId:[appDelegate.dataBase getApiNameFromFieldLabel:objectName]];
+//        }
 
         [detailButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"] forState:UIControlStateNormal];
         [onlineImageView setImage:nil];
@@ -168,15 +168,15 @@ extern void SVMXLog(NSString *format, ...);
         return;
     appDelegate.sfmPageController.conflictExists = FALSE;
     
+    appDelegate.From_SFM_Search=FROM_SFM_SEARCH;
+    NSString * sfid = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:[appDelegate.dataBase getApiNameFromFieldLabel:objectName] local_id:localId];
     
-    NSString * sfid = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:objectName local_id:localId];
+    conflict = [appDelegate.dataBase checkIfConflictsExistsForEvent:sfid objectName:[appDelegate.dataBase getApiNameFromFieldLabel:objectName]];
     
-    conflict = [appDelegate.dataBase checkIfConflictsExistsForEvent:sfid objectName:objectName];
-    
-    if (!conflict)
-    {
-        conflict = [appDelegate.dataBase checkIfChildConflictexist:sfid sfId:objectName];
-    }
+//    if (!conflict)
+//    {
+//        conflict = [appDelegate.dataBase checkIfChildConflictexist:sfid sfId:[appDelegate.dataBase getApiNameFromFieldLabel:objectName]];
+//    }
 
     
     appDelegate.sfmPageController.processId = processId;

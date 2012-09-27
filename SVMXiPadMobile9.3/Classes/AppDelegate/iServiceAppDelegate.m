@@ -329,6 +329,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize frequencyLocationService;
 @synthesize locationPingSettingTimer;
 @synthesize metaSyncCompleted;
+@synthesize From_SFM_Search;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     appDelegate = self;
@@ -391,6 +392,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     isMetaSyncExceptionCalled = FALSE;
     isSpecialSyncDone = FALSE;
     metaSyncRunning = NO;
+    self.From_SFM_Search = @"";
     
     self.didCheckProfile = FALSE;
     

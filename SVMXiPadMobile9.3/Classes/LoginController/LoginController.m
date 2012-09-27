@@ -197,6 +197,27 @@ extern void SVMXLog(NSString *format, ...);
             homeScreenView = nil;
         return TRUE;
     }
+    
+    //RADHA login without awitch user
+    else if ([txtUsernameLandscape.text isEqualToString:_username] && (![txtPasswordLandscape.text isEqualToString:_password] && (![_password isEqualToString:nil]) && (![_password isEqualToString:@""])))
+    {
+        [self loginWithUsernamePassword];
+        
+        if (appDelegate.loginResult == nil) //RADHA 21/05/2011
+            return FALSE;
+        
+        if (!appDelegate.isInternetConnectionAvailable)
+            return FALSE;
+        
+        if (homeScreenView)
+            homeScreenView = nil;
+        
+        return TRUE;
+
+        
+    }
+             
+    
     else if ((![txtUsernameLandscape.text isEqualToString:_username] && (![_username isEqualToString:nil]) && (![_username isEqualToString:@""])) || (![txtPasswordLandscape.text isEqualToString:_password] && (![_password isEqualToString:nil]) && (![_password isEqualToString:@""])) ) //switch user
     {
                

@@ -7338,41 +7338,43 @@ extern void SVMXLog(NSString *format, ...);
     {
         [conflictMessage appendString:[NSString stringWithFormat:@"%@", value]];
     }
-
-    NSString * childColumn = [self getChildColumnForParent:ObjectName];
-
-    NSMutableArray * childId = [appDelegate.databaseInterface getChildLocalIdForParentId:local_id childTableName:childColumn sourceTableName:ObjectName];
-    
-    query = nil;
-    sfid = nil;
-
-
-    for (int i = 0; i < [childId count]; i++)
+    if(![appDelegate.From_SFM_Search isEqualToString:FROM_SFM_SEARCH])
     {
+        NSString * childColumn = [self getChildColumnForParent:ObjectName];
+
+        NSMutableArray * childId = [appDelegate.databaseInterface getChildLocalIdForParentId:local_id childTableName:childColumn sourceTableName:ObjectName];
         
-        sfid = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:childColumn local_id:[childId objectAtIndex:i]];
-        
-        query = [NSString stringWithFormat:@"SELECT error_message FROM sync_error_conflict Where object_name = '%@' and (sf_id = '%@' or local_id = '%@')", childColumn, sfid, [childId objectAtIndex:i]];
-        
-        if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+        query = nil;
+        sfid = nil;
+
+
+        for (int i = 0; i < [childId count]; i++)
         {
-            while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+            
+            sfid = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:childColumn local_id:[childId objectAtIndex:i]];
+            
+            query = [NSString stringWithFormat:@"SELECT error_message FROM sync_error_conflict Where object_name = '%@' and (sf_id = '%@' or local_id = '%@')", childColumn, sfid, [childId objectAtIndex:i]];
+            
+            if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, NULL) == SQLITE_OK)
             {
-                char * temp_fieldName = (char *)synchronized_sqlite3_column_text(stmt, 0);
-                if(temp_fieldName != nil)
+                while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
                 {
-                    value = [NSString stringWithUTF8String:temp_fieldName];
+                    char * temp_fieldName = (char *)synchronized_sqlite3_column_text(stmt, 0);
+                    if(temp_fieldName != nil)
+                    {
+                        value = [NSString stringWithUTF8String:temp_fieldName];
+                    }
+                    if ([value length] > 0)
+                    {
+                        [conflictMessage appendString:[NSString stringWithFormat:@"\n%@", value]];
+                    }
                 }
-                if ([value length] > 0)
-                {
-                    [conflictMessage appendString:[NSString stringWithFormat:@"\n%@", value]];
-                }
+                
+
+                
             }
             
-
-            
         }
-        
     }
 
     return conflictMessage;

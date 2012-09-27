@@ -694,6 +694,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 @property (nonatomic,retain) NSString * frequencyLocationService;
 @property (nonatomic,retain) NSTimer * locationPingSettingTimer;
 @property (nonatomic, assign) BOOL metaSyncCompleted;
+// SFM Search conflict status
+@property (nonatomic, assign) NSString *From_SFM_Search;
+
 // get GUID 
 + (NSString *)GetUUID;
 

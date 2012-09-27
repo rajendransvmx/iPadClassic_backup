@@ -1601,6 +1601,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) showSFMForWeek:(NSDictionary *)event
 {
+    appDelegate.From_SFM_Search=@"";
     appDelegate.showUI = FALSE;    //btn merge
     [activity startAnimating];
     appDelegate.sfmPageController = [[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE];
@@ -1966,6 +1967,7 @@ extern void SVMXLog(NSString *format, ...);
 #pragma mark - SFM Page Display Mathod
 - (void) showSFMWithDayEvent:(NSDictionary *)event
 {
+    appDelegate.From_SFM_Search=@"";
     appDelegate.showUI = FALSE;   //btn merge
     [activity startAnimating];
     appDelegate.sfmPageController = [[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE];

@@ -110,6 +110,15 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"Internet is Not Available");
         [searchFilterSwitch setOn:NO];
         searchFilterSwitch.enabled=FALSE;
+        [resultDetailView.detailTable reloadData];
+        [resultDetailView reloadInputViews];
+        if ([onlineRecordDict count] > 0)
+        {
+            [onlineRecordDict removeAllObjects];
+        }
+        
+        [self.searchMasterTable reloadData];
+
     }
 }
 - (void)viewDidLoad

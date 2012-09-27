@@ -265,11 +265,16 @@ enum  {
     button.userInteractionEnabled = TRUE;
     NSString *objname=[[tableDataArray objectAtIndex:indexPath.section ] objectForKey:@"ObjectName"];
     objname = [appDelegate.dataBase getApiNameFromFieldLabel:objname];
-    conflict=[appDelegate.dataBase checkIfConflictsExistsForEvent:[[cellArray objectAtIndex:indexPath.row] objectForKey:@"Id"] objectName:objname];
-    if (!conflict)
+    if(([cellArray count]>0) && (indexPath.row < [cellArray count]))
     {
-        conflict = [appDelegate.dataBase checkIfChildConflictexist:[[cellArray objectAtIndex:indexPath.row] objectForKey:@"Id"] 
-                                                              sfId:objname];
+        SMLog(@"Array Count = %d",[cellArray count]);
+        NSString *sfId = [[cellArray objectAtIndex:indexPath.row] objectForKey:@"Id"];
+        conflict=[appDelegate.dataBase checkIfConflictsExistsForEvent:sfId objectName:objname];
+//        if (!conflict)
+//        {
+//            conflict = [appDelegate.dataBase checkIfChildConflictexist:[[cellArray objectAtIndex:indexPath.section] objectForKey:@"Id"] 
+//                                                                  sfId:objname];
+//        }
     }
         
     
@@ -1035,16 +1040,16 @@ enum  {
     }
     appDelegate.sfmPageController.conflictExists = FALSE;
     appDelegate.sfmPageController.processId = processId;
-    
+    appDelegate.From_SFM_Search=FROM_SFM_SEARCH;
     
     NSString * sfid = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:objectName local_id:localId];
     
     conflict = [appDelegate.dataBase checkIfConflictsExistsForEvent:sfid objectName:objectName];
     
-    if (!conflict)
-    {
-        conflict = [appDelegate.dataBase checkIfChildConflictexist:sfid sfId:objectName];
-    }
+//    if (!conflict)
+//    {
+//        conflict = [appDelegate.dataBase checkIfChildConflictexist:sfid sfId:objectName];
+//    }
     
     appDelegate.sfmPageController.objectName = [NSString stringWithFormat:@"%@",objectName];
     appDelegate.sfmPageController.topLevelId = nil;
