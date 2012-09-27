@@ -839,11 +839,11 @@ extern void SVMXLog(NSString *format, ...);
     startDate = [appDelegate.wsInterface.currentDateRange objectAtIndex:0];
     endDate = [appDelegate.wsInterface.currentDateRange objectAtIndex:1];
 
-    NSString * dateString = [startDate substringToIndex:10];
     
-    NSMutableArray * currentDateRange = [appDelegate getWeekdates:_currentDate];
+    NSMutableArray * currentDateRange = [[appDelegate getWeekdates:_currentDate] retain];
     
-    appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0]  endDate:[currentDateRange objectAtIndex:1]];    
+    appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0]  endDate:[currentDateRange objectAtIndex:1]];  
+	[currentDateRange release];
     [self populateWeekView];
     
     //[appDelegate.wsInterface getEventsForStartDate:startDate EndDate:endDate];
@@ -1515,9 +1515,10 @@ extern void SVMXLog(NSString *format, ...);
                     endDate = [weekBound objectAtIndex:1];
                     
                                         
-                    NSMutableArray * currentDateRange = [appDelegate getWeekdates:_currentDate];
+                    NSMutableArray * currentDateRange = [[appDelegate getWeekdates:_currentDate] retain];
                     
-                    appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0]  endDate:[currentDateRange objectAtIndex:1]];                
+                    appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0]  endDate:[currentDateRange objectAtIndex:1]];     
+					[currentDateRange release];
                 }
                 
                 updatestartDateTime = @"";
@@ -1536,9 +1537,10 @@ extern void SVMXLog(NSString *format, ...);
                 NSArray * startEnd = [self getWeekStartEndDatesAtOptionalIndex:[NSString stringWithFormat:@"%d", currentSliderPositionIndex]];
                 date = [startEnd objectAtIndex:START_DATE];
                 
-                NSMutableArray * currentDateRange = [appDelegate getWeekdates:date];
+                NSMutableArray * currentDateRange = [[appDelegate getWeekdates:date] retain];
                 
-                appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0]  endDate:[currentDateRange objectAtIndex:1]];                               
+                appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0]  endDate:[currentDateRange objectAtIndex:1]];   
+				[currentDateRange release];
                 if ([appDelegate.wsInterface.rescheduleEvent isEqualToString:@"SUCCESS"])
                 {
                     [activity stopAnimating];

@@ -742,9 +742,8 @@ PopoverButtons *popOver_view;
                 
                 NSLog(@"%@", SFId);
                 
-                if ([SFId length] > 0 && SFId != nil && [SFId isEqualToString:@""])
+                if ([SFId length] > 0 && SFId != nil && ![SFId isEqualToString:@""])
                 {
-//                    localId = [appDelegate.databaseInterface selectLocalIdFrom:objectAPIName WithId:SFId andParentColumnName:parent_column_name andSyncType:sync_type];
                     localId = [appDelegate.dataBase getParentColumnValueFromchild:parent_obj_name childTable:objectAPIName sfId:SFId];
                 }
                 else 
@@ -773,19 +772,19 @@ PopoverButtons *popOver_view;
     
     else if (HeaderSelected == 1)
     {
+		NSString * local_Id = @"";
         objectAPIName = [objectsArray objectAtIndex:indexPath.section];
         sync_type = [[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"sync_type"];
         
         SMLog(@"%@", objectsDict);
         if ([sync_type isEqualToString:@"PUT_INSERT"])
         {
-            SFId = [[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"local_id"];
+            local_Id = [[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"local_id"];
         }
         else 
         {
             SFId = [[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"SFId"]; 
         }
-        NSString * localId = @"";
         if ( [objectsDict count] > 0)
         {
             if ([[[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"record_type"] isEqualToString:@"MASTER"])
@@ -802,25 +801,27 @@ PopoverButtons *popOver_view;
                         break;
                     }
                 }
-                NSString * localId = [self getlocalIdForSFId:SFId ForObject:objectAPIName];
-                [dataSync showSFMWithProcessId:processId recordId:localId objectName:objectAPIName];
-                
-            }
+				
+				if ([SFId length] && ([local_Id isEqualToString:@""] || local_Id == nil))
+                    local_Id = [self getlocalIdForSFId:SFId ForObject:objectAPIName];
+				
+                [dataSync showSFMWithProcessId:processId recordId:local_Id objectName:objectAPIName];                
+            }	
             
             else if ([[[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"record_type"] isEqualToString:@"DETAIL"])
             {
                 NSString *parent_obj_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectAPIName field_name:@"parent_name"];
+				
                 NSString * parent_column_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectAPIName field_name:@"parent_column_name"];
                 
                 SMLog(@"%@ %@", parent_obj_name, parent_column_name);
-                if ([SFId length] > 0 && SFId != nil && [SFId isEqualToString:@""])
+                if ([SFId length] > 0 && SFId != nil && ![SFId isEqualToString:@""])
                 {
-                    //                    localId = [appDelegate.databaseInterface selectLocalIdFrom:objectAPIName WithId:SFId andParentColumnName:parent_column_name andSyncType:sync_type];
                     localId = [appDelegate.dataBase getParentColumnValueFromchild:parent_obj_name childTable:objectAPIName sfId:SFId];
                 }
                 else 
                 {
-                    localId = [appDelegate.dataBase getParentlocalIdchild:parent_obj_name childTable:objectAPIName local_id:localId];
+                    localId = [appDelegate.dataBase getParentlocalIdchild:parent_obj_name childTable:objectAPIName local_id:local_Id];
                 }
                 SMLog(@"%@", localId);
                 
@@ -836,7 +837,6 @@ PopoverButtons *popOver_view;
                 }
                 
                 [dataSync showSFMWithProcessId:processId recordId:localId objectName:parent_obj_name];
-                
             }
             
         }

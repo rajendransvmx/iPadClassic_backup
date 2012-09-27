@@ -988,6 +988,14 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         }
         if( userInfo != nil )
             self.currentUserName = [[userInfo fullName] mutableCopy];
+		
+        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+        if (userDefaults)
+        {
+            [userDefaults setObject:appDelegate.currentUserName forKey:@"UserFullName"];
+            [userDefaults setObject:appDelegate.currentServerUrl forKey:SERVERURL];
+        }
+
     }
     
     //Shrinivas -- code for firewall
@@ -1238,65 +1246,45 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 - (NSMutableArray *) getWeekdates:(NSString *)date
 {
-    NSMutableArray * currentDateRange = nil;
-	NSDateFormatter * dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
-    
-    [dateFormatter setDateFormat:@"yyyy-MM-dd"];
-    if ([date length] > 10)
-        date = [date substringToIndex:10];
-    NSDate * today = [dateFormatter dateFromString:date];
+	NSDate *todayDate = [NSDate date];//temporary date from system to get timezone
+	//calendar parameters
+	NSUInteger unitFlags = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit | NSWeekdayCalendarUnit | NSTimeZoneCalendarUnit;
+    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    const int firstDayOfWeek = 2;
+    [gregorian setFirstWeekday:firstDayOfWeek];
+	//today's date components
+	NSDateComponents *todayDateComponents = [gregorian components:unitFlags fromDate:todayDate];
 	
-	NSCalendar *gregorian = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+	//argument date string converted to date using specified calendar and timezone
+	NSDateFormatter *formatter1 = [[NSDateFormatter alloc] init];
+    [formatter1 setDateFormat:@"yyyy-MM-dd"];
+	[formatter1 setTimeZone:[todayDateComponents timeZone]];
+	NSDate *today = [formatter1 dateFromString:date];
+	[formatter1 release];
+	formatter1 = nil;
 	
-	// Get the weekday component of the current date
-	NSDateComponents *weekdayComponents = [gregorian components:NSWeekdayCalendarUnit fromDate:today];
-	NSUInteger weekday =  [weekdayComponents weekday]-1;
-	if (weekday < 1)
-		weekday = 7; //Sunday is the last day in our scheme
+    NSDateComponents *weekdayComponents = [gregorian components:unitFlags fromDate:today];
     
-	NSDateComponents *componentsToSubtract = [[[NSDateComponents alloc] init] autorelease];
-	[componentsToSubtract setDay: 0 - (weekday - 1)];
+    NSDateComponents *componentsToSubtract = [[NSDateComponents alloc] init];
+    [componentsToSubtract setDay: 0 - ([weekdayComponents weekday] - firstDayOfWeek)];
+    
+    NSDate *beginningOfWeek = [gregorian dateByAddingComponents:componentsToSubtract toDate:today options:0];
+    
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"yyyy-MM-dd 00:00:00"];
+    [formatter setTimeZone:[weekdayComponents timeZone]];
+    
+    NSString *start = [formatter stringFromDate:beginningOfWeek];
+    
+    NSDate *endOfWeek = [beginningOfWeek dateByAddingTimeInterval:86400*6];
+    NSString *end = [formatter stringFromDate:endOfWeek];
 	
-	NSDate *beginningOfWeek = [gregorian dateByAddingComponents:componentsToSubtract toDate:today options:0];
+	[gregorian release];
+	gregorian = nil;
+	[formatter release];
+	formatter = nil;
 	
-	[componentsToSubtract setDay:8-weekday];
-	NSDate *endOfWeek = [gregorian dateByAddingComponents:componentsToSubtract toDate:today options:0];
-	
-	NSDateComponents *minus_onesec = [[[NSDateComponents alloc] init] autorelease];
-	[minus_onesec setSecond:-1];
-	endOfWeek = [gregorian dateByAddingComponents:minus_onesec toDate:endOfWeek options:0];
-    
-	[dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-	[dateFormatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
-    NSString * startDate = [[dateFormatter stringFromDate:beginningOfWeek] retain];
-   
-    NSString * endDate = [[dateFormatter stringFromDate:endOfWeek] retain];
-    
-
-    NSString * dateValue = [endDate substringWithRange:NSMakeRange(8, 2)];
-    NSInteger  value = [dateValue integerValue];
-    ++value;
-    
-    dateValue = @"";
-    dateValue = [NSString stringWithFormat:@"%d", value];
-    
-    endDate = [endDate stringByReplacingCharactersInRange:NSMakeRange(8, 2) withString:dateValue];
-    
-    startDate = [iOSInterfaceObject getGMTFromLocalTime:startDate];
-    endDate = [iOSInterfaceObject getGMTFromLocalTime:endDate];
-    startDate = [startDate stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-    startDate = [startDate stringByReplacingOccurrencesOfString:@"Z" withString:@""];
-    endDate = [endDate stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-    endDate = [endDate stringByReplacingOccurrencesOfString:@"Z" withString:@""]; 
-    
-    startDate = [startDate stringByReplacingCharactersInRange:NSMakeRange(11, 8) withString:@"00:00:00"];
-    endDate = [endDate stringByReplacingCharactersInRange:NSMakeRange(11, 8) withString:@"00:00:00"];
-
-    if (currentDateRange != nil)
-        [currentDateRange release];
-    currentDateRange = [[NSMutableArray arrayWithObjects:startDate, endDate, nil] retain];
-    
-    return currentDateRange;
+	return [NSMutableArray arrayWithObjects:start, end, nil];
 }
 
 -(void)callSpecialIncrementalSync

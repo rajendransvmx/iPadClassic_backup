@@ -774,14 +774,15 @@ const NSUInteger kNumImages = 7;
         
         NSDate *date =  [NSDate date];
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        [dateFormatter  setDateFormat:@"YYYY-MM-dd HH:mm:ss"];
+        [dateFormatter  setDateFormat:@"YYYY-MM-dd"];
         NSString * dateString = [dateFormatter stringFromDate:date];
         
         [appDelegate.calDataBase startQueryConfiguration];
-        NSMutableArray * currentDateRange = [appDelegate getWeekdates:dateString];
+        NSMutableArray * currentDateRange = [[appDelegate getWeekdates:dateString] retain];
         
         appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0]  endDate:[currentDateRange objectAtIndex:1]];
         [dateFormatter release];
+		[currentDateRange release];
     }
 
 }

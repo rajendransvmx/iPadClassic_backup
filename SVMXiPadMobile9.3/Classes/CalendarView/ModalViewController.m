@@ -455,11 +455,12 @@ extern void SVMXLog(NSString *format, ...);
     [self disableUI];
     // Samman - 24 Sep, 2011 - Need to call WSInterface Method to perform an actual REFRESH
         
-    NSMutableArray * currentDateRange = [appDelegate getWeekdates:currentDate];
+    NSMutableArray * currentDateRange = [[appDelegate getWeekdates:currentDate] retain];
     
     [self setupTasksForDate:appDelegate.dateClicked];
     
     appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0]  endDate:[currentDateRange objectAtIndex:1]];
+	[currentDateRange release];
     [self reloadCalendar];
     
 }
@@ -1269,9 +1270,10 @@ extern void SVMXLog(NSString *format, ...);
     //Shrini 28-sep-2011   Start
     appDelegate.wsInterface.currentDateRange = [calendar getWeekBoundaries:currentDate];
 	
-    NSMutableArray * currentDateRange = [appDelegate getWeekdates:currentDate];
+    NSMutableArray * currentDateRange = [[appDelegate getWeekdates:currentDate] retain];
     
     appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0] endDate:[currentDateRange objectAtIndex:1]];   //Shrinivas 
+	[currentDateRange release];
     SMLog(@"app = %@", appDelegate.wsInterface.eventArray);
     
     
@@ -1302,10 +1304,11 @@ extern void SVMXLog(NSString *format, ...);
         {
             appDelegate.wsInterface.currentDateRange = [calendar getWeekBoundaries:currentDate];
             
-            NSMutableArray * currentDateRange = [appDelegate getWeekdates:[appDelegate.wsInterface.currentDateRange objectAtIndex:0]];
+            NSMutableArray * currentDateRange = [[appDelegate getWeekdates:[appDelegate.wsInterface.currentDateRange objectAtIndex:0]] retain];
             
             appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0] endDate:[currentDateRange objectAtIndex:1]]; 
             //Shrinivas 
+			[currentDateRange release];
             SMLog(@"app = %@", appDelegate.wsInterface.eventArray);
             [self reloadCalendar];
         }
@@ -1316,9 +1319,10 @@ extern void SVMXLog(NSString *format, ...);
         appDelegate.wsInterface.startDate = [appDelegate.wsInterface.currentDateRange objectAtIndex:0];
         appDelegate.wsInterface.endDate = [appDelegate.wsInterface.currentDateRange objectAtIndex:1];
         
-        NSMutableArray * currentDateRange = [appDelegate getWeekdates:currentDate];
+        NSMutableArray * currentDateRange = [[appDelegate getWeekdates:currentDate] retain];
         
         appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0] endDate:[currentDateRange objectAtIndex:1]]; 
+		[currentDateRange release];
         SMLog(@"app = %@", appDelegate.wsInterface.eventArray);
         [self reloadCalendar];
     }
@@ -1606,6 +1610,11 @@ extern void SVMXLog(NSString *format, ...);
     [activity startAnimating];
     appDelegate.sfmPageController = [[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE];
     
+    NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+    NSString * warning = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_WARNING];
+    NSString * noView = [appDelegate.wsInterface.tagsDictionary objectForKey:NO_VIEW_PROCESS];
+
+    
     if ([appDelegate.SFMPage retainCount] > 0)
     {
         [appDelegate.SFMPage release];
@@ -1666,7 +1675,7 @@ extern void SVMXLog(NSString *format, ...);
     }
     else
     {
-        UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:@"" message:@"No View Process is associated with the Record" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+        UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:warning message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
         [alert1 show];
         [alert1 release];
         [activity stopAnimating];
@@ -1856,10 +1865,6 @@ extern void SVMXLog(NSString *format, ...);
                 NSDictionary * _dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
                 NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
                 
-                [self disableUI];
-                [self showSFMWithDayEvent:_dict];
-                
-                
                 if ([_dict objectForKey:PROCESSID] == @"" || [_dict objectForKey:PROCESSID] == nil)
                 {
                     NSString * noView = [appDelegate.wsInterface.tagsDictionary objectForKey:NO_VIEW_PROCESS];
@@ -1867,6 +1872,14 @@ extern void SVMXLog(NSString *format, ...);
                     [alert show];
                     [alert release];
                 }
+                else
+                {
+                    [self disableUI];
+
+                    [self showSFMWithDayEvent:_dict];
+                }
+                
+                
             }
             else
             {
@@ -1905,9 +1918,10 @@ extern void SVMXLog(NSString *format, ...);
                     //Shrinivas
                     
                     SMLog(@"%@ %@",appDelegate.wsInterface.startDate, appDelegate.wsInterface.endDate);
-                    NSMutableArray * currentDateRange = [appDelegate getWeekdates:currentDate];
+                    NSMutableArray * currentDateRange = [[appDelegate getWeekdates:currentDate] retain];
                     
-                    appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0] endDate:[currentDateRange objectAtIndex:1]];                     
+                    appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0] endDate:[currentDateRange objectAtIndex:1]];  
+					[currentDateRange release];
 					
                     if ([appDelegate.wsInterface.rescheduleEvent isEqualToString:@"SUCCESS"])
                     {
@@ -1977,6 +1991,12 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate.SFMPage release];
         appDelegate.SFMPage = nil;
     }   
+
+    NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+    NSString * warning = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_WARNING];
+    NSString * noView = [appDelegate.wsInterface.tagsDictionary objectForKey:NO_VIEW_PROCESS];
+    
+
     
     NSString * processId =  [appDelegate.switchViewLayouts objectForKey:[event objectForKey:OBJECTAPINAME]];
     appDelegate.sfmPageController.processId = (processId != nil)?processId:[event objectForKey:PROCESSID];
@@ -2032,7 +2052,7 @@ extern void SVMXLog(NSString *format, ...);
     }
     else
     {
-        UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:@"" message:@"No View Process is associated with the Record" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+        UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:warning message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];        
         [alert1 show];
         [alert1 release];
         [activity stopAnimating];

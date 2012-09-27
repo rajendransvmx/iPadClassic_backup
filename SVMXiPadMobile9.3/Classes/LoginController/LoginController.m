@@ -132,8 +132,7 @@ extern void SVMXLog(NSString *format, ...);
     BOOL ContinueLogin = [self CheckForUserNamePassword];  //SYNC_HISTORY PLIST  check should be done before calling to the
     if(ContinueLogin)
     {
-        [appDelegate pingServer];
-         [self showHomeScreenviewController];
+        [self showHomeScreenviewController];
     }
     else
     {
@@ -195,6 +194,11 @@ extern void SVMXLog(NSString *format, ...);
         }
         if (homeScreenView)
             homeScreenView = nil;
+        
+		//Refresh the current server URl
+		NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+		appDelegate.currentServerUrl = [userDefaults objectForKey:SERVERURL];
+		
         return TRUE;
     }
     
@@ -610,6 +614,7 @@ extern void SVMXLog(NSString *format, ...);
         appDelegate.currentUserName = nil;
     }
     appDelegate.currentUserName = [[userInfo fullName] mutableCopy];
+	
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     if (userDefaults)
     {
@@ -1868,7 +1873,6 @@ extern void SVMXLog(NSString *format, ...);
     BOOL ContinueLogin = [self CheckForUserNamePassword];  //SYNC_HISTORY PLIST  check should be done before calling to the
     if(ContinueLogin)
     {
-        [appDelegate pingServer];
         [self showHomeScreenviewController];
     }
     else
