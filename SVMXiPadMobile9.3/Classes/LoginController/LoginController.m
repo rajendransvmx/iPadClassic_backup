@@ -129,6 +129,9 @@ extern void SVMXLog(NSString *format, ...);
     appDelegate.last_initial_data_sync_time = nil;
     appDelegate.do_meta_data_sync = DONT_ALLOW_META_DATA_SYNC;
     
+//    [self loginWithUsernamePassword];
+//    [appDelegate.wsInterface getOnDemandRecords:@"SVMXC__Service_Order__c" record_id:@"a1E70000000gtbiEAA"];
+    
     BOOL ContinueLogin = [self CheckForUserNamePassword];  //SYNC_HISTORY PLIST  check should be done before calling to the
     if(ContinueLogin)
     {
@@ -1959,6 +1962,10 @@ extern void SVMXLog(NSString *format, ...);
         [IncrementalMetasync setBackgroundImage:[UIImage imageNamed:@"login-checkbox-nonselected.png"] forState:UIControlStateNormal];
     }
     
+}
+-(void)scheduleLocationPing
+{
+    [homeScreenView scheduleLocationPingService];
 }
 
 

@@ -230,7 +230,18 @@
     NSDate * date = [format dateFromString:activityDate];
     
     [format release];
-    
+	
+	appDelegate.From_SFM_Search = @"";
+	
+	NSString * sfid = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:objectName local_id:recordId];
+	
+	BOOL conflict = [appDelegate.dataBase checkIfConflictsExistsForEvent:sfid objectName:objectName local_id:recordId];
+	
+	if (!conflict)
+	{
+		conflict = [appDelegate.dataBase checkIfChildConflictexist:objectName sfId:sfid];
+	}
+    appDelegate.sfmPageController.conflictExists = conflict;
     appDelegate.sfmPageController.activityDate = (NSString *)date;
     appDelegate.sfmPageController.recordId = recordId;
     appDelegate.sfmPageController.objectName = [NSString stringWithFormat:@"%@",objectName];

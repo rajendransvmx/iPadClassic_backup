@@ -52,14 +52,20 @@ extern void SVMXLog(NSString *format, ...);
     
     [self.view addSubview:bgImage];
     [bgImage release];
+	
+	
+	
+	NSUInteger unitFlags = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit | NSWeekdayCalendarUnit | NSTimeZoneCalendarUnit;
+    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+	NSDateComponents * todayDateComponents = [gregorian components:unitFlags fromDate:[NSDate date]];
+
+	
     
     NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
     NSDateFormatter * formatter1 = [[NSDateFormatter alloc] init];
     [formatter1 setDateFormat:@"EEE, dd MMM yyyy HH:mm:ss a"];
-    [formatter1 setTimeZone:[NSTimeZone defaultTimeZone]];
-    //[formatter1 setTimeStyle:NSDateFormatterMediumStyle];
-    //[formatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
-    [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    [formatter1 setTimeZone:[todayDateComponents timeZone]];
+        [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     
     
     //Read from the plist
@@ -166,12 +172,15 @@ extern void SVMXLog(NSString *format, ...);
     
     NSDateFormatter * format = [[NSDateFormatter alloc] init];
     [format setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+	[format setTimeZone:[todayDateComponents timeZone]];
     NSString *str = [dictionary objectForKey:@"last_initial_sync_time"];
     NSDate * gmtDate = [format dateFromString:str];
     [format release];
     
     NSDateFormatter * formatter2 = [[NSDateFormatter alloc] init];
+	[formatter2 setTimeZone:[todayDateComponents timeZone]];
     [formatter2 setDateFormat:@"EEE, dd MMM yyyy HH:mm:ss a"];
+	
     
     
     NSString * timerValue = ([appDelegate.settingsDict objectForKey:@"Frequency of Master Data"]) != nil?[appDelegate.settingsDict objectForKey:@"Frequency of Master Data"]:@"";
@@ -257,9 +266,10 @@ extern void SVMXLog(NSString *format, ...);
     NSDateFormatter * formatter4 = [[NSDateFormatter alloc] init];
     
     [formatter4 setDateFormat:@"EEE, dd MMM yyyy HH:mm:ss a"];
-    [formatter4 setTimeZone:[NSTimeZone defaultTimeZone]];
+    [formatter4 setTimeZone:[todayDateComponents timeZone]];
 
     [formatter3 setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+	[formatter3 setTimeZone:[todayDateComponents timeZone]];
     
     SMLog(@"%@",[dictionary objectForKey:LAST_INITIAL_META_SYNC_TIME]);
     
@@ -315,12 +325,14 @@ extern void SVMXLog(NSString *format, ...);
     
     NSDateFormatter * format_MS = [[NSDateFormatter alloc] init];
     [format_MS setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+	[format_MS setTimeZone:[todayDateComponents timeZone]];
     NSString * _str = [dictionary objectForKey:LAST_INITIAL_META_SYNC_TIME];
     NSDate * gmtDate_ = [format_MS dateFromString:_str];
     [format_MS release];
     
     NSDateFormatter * formatter2_MS = [[NSDateFormatter alloc] init];
     [formatter2_MS setDateFormat:@"EEE, dd MMM yyyy HH:mm:ss a"];
+	[formatter2_MS setTimeZone:[todayDateComponents timeZone]];
     
     
     NSString *  timerValue_MS = ([appDelegate.settingsDict objectForKey:@"Frequency of Application Changes"]) != nil?[appDelegate.settingsDict objectForKey:@"Frequency of Application Changes"]:@"";
@@ -346,7 +358,7 @@ extern void SVMXLog(NSString *format, ...);
     if ( [nextSyncTime length] > 17)
         _str4 = [nextSyncTime substringFromIndex:17];
     if ( [_str4 length] > 2)
-        _str5 = [_str1 substringToIndex:2];
+        _str5 = [_str4 substringToIndex:2];
     
     int p;
     p = [_str5 intValue];
@@ -386,10 +398,12 @@ extern void SVMXLog(NSString *format, ...);
     NSString * Status = @"";
     Status = [appDelegate.calDataBase retrieveMetaSyncStatus];
     
-    if ([Status isEqualToString:@"Green"])
-        _statusForMetaSync.text = syncStatus = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_succeeded];
-    else if ([Status isEqualToString:@"Red"])
-        _statusForMetaSync.text = syncStatus = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_failed];
+	BOOL retval = [appDelegate.dataBase checkIfSyncConfigDue];
+	
+	if (retval)
+		_statusForMetaSync.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_failed];
+	else 
+		_statusForMetaSync.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_succeeded];
     
     
     [self.view addSubview:_statusForMetaSync];
@@ -409,7 +423,12 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void)refreshMetaSyncStatus
 {
-    _statusForMetaSync.text = [self getSyncronisationStatus];
+	BOOL retval = [appDelegate.dataBase checkIfSyncConfigDue];
+	
+	if (retval)
+		_statusForMetaSync.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_failed];
+	else 
+		_statusForMetaSync.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_succeeded];
 }
 
 -(NSString *)getSyncronisationStatus  

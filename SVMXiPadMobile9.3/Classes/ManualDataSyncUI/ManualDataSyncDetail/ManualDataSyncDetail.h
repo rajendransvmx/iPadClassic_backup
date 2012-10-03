@@ -24,6 +24,7 @@
 
 @interface ManualDataSyncDetail : UIViewController <UIPopoverControllerDelegate, UITableViewDelegate, UITableViewDataSource, UISplitViewControllerDelegate, MyPopoverDelegate, ManualDataSyncRootDelegate, RefreshSyncUIStatusButton, ReloadSyncTable, UIAlertViewDelegate>
 {
+	UIAlertView * resetAnApplication;
     UITableView * tableView;
     
     id <SFMPageDelegate> delegate;

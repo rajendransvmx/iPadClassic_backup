@@ -112,7 +112,8 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) displaySwitchViews
 {
-    if ([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"VIEWRECORD"])
+    
+      if ([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"VIEWRECORD"])
     {
         UIButton * selectProcessButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)];
         [selectProcessButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Switch-Views-button"] forState:UIControlStateNormal];
@@ -120,11 +121,91 @@ extern void SVMXLog(NSString *format, ...);
         selProcessBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:selectProcessButton];
         self.navigationItem.leftBarButtonItem = selProcessBarButtonItem;
         [selectProcessButton release];
+        
+        
     }
 	else
 	{
 		self.navigationItem.leftBarButtonItem = nil;
 	}
+}
+
+
+- (void) showLastModifiedTimeForSFMRecord
+{
+    
+	//Adding the label to display the timestamp.
+    if(lastModifiedTime == nil)
+    {
+        lastModifiedTime = [[UILabel alloc] initWithFrame:CGRectMake(65, -10, 250, 45)];
+        lastModifiedTime.backgroundColor = [UIColor clearColor];
+        lastModifiedTime.font=[UIFont fontWithName:@"Verdana" size:12];
+        lastModifiedTime.text = [appDelegate.wsInterface.tagsDictionary objectForKey:Last_updated_on];//@"Last Updated On:";
+        lastModifiedTime.textColor = [appDelegate colorForHex:@"2d5d83"];
+        [self.navigationController.view addSubview:lastModifiedTime];
+        [lastModifiedTime release];
+ 
+    }
+    
+    if(timeStamp == nil)
+    {
+        timeStamp = [[UILabel alloc] initWithFrame:CGRectMake(65, 4, 250, 50)];//2
+        timeStamp.text = @"";
+        timeStamp.backgroundColor = [UIColor clearColor];
+        
+        [self.navigationController.view addSubview:timeStamp];
+        [timeStamp release];
+    }
+    
+    BOOL check_On_demand = [appDelegate.databaseInterface checkOndemandRecord:appDelegate.sfmPageController.recordId];
+    if(check_On_demand)
+    {
+        NSString * recordTimeStamp = @"";
+            
+        NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
+        NSDateFormatter * formatter1 = [[NSDateFormatter alloc] init];
+        
+        [formatter1 setDateFormat:@"EEE, dd MMM yyyy HH:mm:ss a"];
+        [formatter1 setTimeZone:[NSTimeZone defaultTimeZone]];
+        [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+        
+        recordTimeStamp = [appDelegate.databaseInterface getTimeLastModifiedTimeOfTheRecordForRecordId:appDelegate.sfmPageController.recordId];
+        NSDate * _gmtDate = [formatter dateFromString:recordTimeStamp];
+        recordTimeStamp = [formatter1 stringFromDate:_gmtDate];
+        
+        NSString * str1 = nil;
+        NSString * str2 = nil;
+        NSString * str3 = nil;
+        if ( [recordTimeStamp length] > 17)
+            str1 = [recordTimeStamp substringFromIndex:17];
+        if ( [str1 length] > 2)
+            str2 = [str1 substringToIndex:2];
+        
+        int i;
+        i = [str2 intValue];
+        if (i > 12)
+        {
+            i = i - 12;
+        }
+        str3 = [NSString stringWithFormat:@"%d", i];
+        SMLog(@"%@", str3);
+        NSRange range = NSMakeRange(17,2);
+        SMLog(@"%@", [recordTimeStamp stringByReplacingCharactersInRange:range withString:str3]);
+        recordTimeStamp = [recordTimeStamp stringByReplacingCharactersInRange:range withString:str3];
+        timeStamp.backgroundColor = [UIColor clearColor];
+        timeStamp.font=[UIFont fontWithName:@"Verdana" size:12];
+        timeStamp.textColor = [appDelegate colorForHex:@"2d5d83"];
+        timeStamp.text = recordTimeStamp;
+            [formatter release];
+            [formatter1 release];
+	}
+    else
+    {
+        lastModifiedTime.text = @"";
+        timeStamp.text = @"";
+    }
+    
+
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

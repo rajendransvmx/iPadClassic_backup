@@ -989,7 +989,7 @@ PopoverButtons *popOver_view;
     popOver_view.delegate = self;
     UIPopoverController * popoverController_temp = [[UIPopoverController alloc] initWithContentViewController:popOver_view];
     
-    [popoverController_temp setPopoverContentSize:CGSizeMake(214, 175) animated:YES];
+    [popoverController_temp setPopoverContentSize:CGSizeMake(214, 234) animated:YES];// sahana  25thsept
     popoverController_temp.delegate = self;
     
     popOver_view.popover = popoverController_temp;
@@ -1525,29 +1525,58 @@ PopoverButtons *popOver_view;
 #pragma mark-AlertViewDelagate
 - (void) alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    
-    if (buttonIndex == 0)
-    {
-        if(!appDelegate.isInternetConnectionAvailable)
-        {
-            [self showInternetAletView];
-        }
-        else
-        {
-            [appDelegate.dataBase clearDatabase];
-            [appDelegate.dataBase doMetaSync];
-           
-        }
+    if([resetAnApplication isEqual:alertView])
+	{
+		if (buttonIndex == 0)
+		{
+			
+			[appDelegate invalidateAllTimers];
+			[appDelegate.dataBase removecache];
+			appDelegate.wsInterface.didOpComplete = FALSE;
+			
+			appDelegate.isMetaSyncExceptionCalled = FALSE;
+			appDelegate.isIncrementalMetaSyncInProgress = FALSE;
+			appDelegate.isSpecialSyncDone = FALSE;
+			appDelegate.metaSyncRunning = NO;
+			appDelegate.eventSyncRunning = NO;
+			
+			//[appDelegate.dataBase clearDatabase];
+			//Remove database
+			[appDelegate.dataBase deleteDatabase:DATABASENAME1];
+			[appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+			appDelegate.IsLogedIn = ISLOGEDIN_TRUE;
+			appDelegate.do_meta_data_sync = ALLOW_META_AND_DATA_SYNC;
+			[dataSync dissmisController];
+
+		}
+		else if(buttonIndex == 1)
+		{
+					
+		}
+	}
+	else
+	{
+		if (buttonIndex == 0)
+		{
+			if(!appDelegate.isInternetConnectionAvailable)
+			{
+				[self showInternetAletView];
+			}
+			else
+			{
+				[appDelegate.dataBase clearDatabase];
+				[appDelegate.dataBase doMetaSync];
+			   
+			}
+		}
+		
+		
+		if (buttonIndex == 1)
+		{
+			[appDelegate.dataBase clearDatabase];
+			[appDelegate.dataBase copyTempsqlToSfm];
+		}
     }
-    
-    
-    
-    if (buttonIndex == 1)
-    {
-        [appDelegate.dataBase clearDatabase];
-        [appDelegate.dataBase copyTempsqlToSfm];
-    }
-    
 }
 
 //Radha 2012june16
@@ -1581,5 +1610,22 @@ PopoverButtons *popOver_view;
     [activity release];
     [syncDueView release];
     [super dealloc];
+}
+
+//Sahana seprt 25th 2012
+-(void)dismissSyncScreen
+{
+	[popOver_view.popover dismissPopoverAnimated:YES];
+	
+	NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_TITLE];
+    NSString * cancel = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
+    NSString * continue_ = [appDelegate.wsInterface.tagsDictionary objectForKey:login_continue];
+	NSString * message = @"Are you sure you want to synchronize configuration?";
+
+	resetAnApplication = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:continue_ otherButtonTitles:cancel, nil];
+	
+	[resetAnApplication show];
+	
+	
 }
 @end

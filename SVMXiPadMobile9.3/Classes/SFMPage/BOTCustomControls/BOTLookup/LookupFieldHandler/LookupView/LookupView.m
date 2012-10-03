@@ -293,10 +293,21 @@ extern void SVMXLog(NSString *format, ...);
        }else{
             fieldLabel = [[describeObject fieldWithName:field] label];
        }
+		
+		//RADHA check for duplicates
+		NSMutableArray * array2=[[NSMutableArray alloc]init];
+		for (NSDictionary * obj in array) 
+		{
+			if (![array2 containsObject:obj]) 
+			{
+				[array2 addObject:obj];
+			}
+		}
+
         
-       for (int j = 0; j < [array count]; j++)
+       for (int j = 0; j < [array2 count]; j++)
        {
-            rowDict = [array objectAtIndex:j];
+            rowDict = [array2 objectAtIndex:j];
             if ([[rowDict objectForKey:@"key"] isEqualToString:field])
             {
                 NSString * fieldValue = [rowDict objectForKey:@"value"];

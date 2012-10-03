@@ -587,8 +587,11 @@ extern void SVMXLog(NSString *format, ...);
                 NSString * iWhatId = [[appDelegate.workOrderEventArray objectAtIndex:i] objectForKey:WHATID];
                 NSString * jWhatId = [[appDelegate.workOrderEventArray objectAtIndex:j] objectForKey:WHATID];
                 
-                NSString * iPriority = [appDelegate.calDataBase getPriorityForWhatId:iWhatId];
-                NSString * jPriority = [appDelegate.calDataBase getPriorityForWhatId:jWhatId];
+                NSString * iObjectName = [[appDelegate.workOrderEventArray objectAtIndex:i] objectForKey:OBJECTAPINAME];
+				NSString * jObjectname = [[appDelegate.workOrderEventArray objectAtIndex:j] objectForKey:OBJECTAPINAME];
+                
+                NSString * iPriority = [appDelegate.calDataBase getPriorityForWhatId:iWhatId objectname:iObjectName];
+                NSString * jPriority = [appDelegate.calDataBase getPriorityForWhatId:jWhatId objectname:jObjectname];
                 
                 if ([iPriority isEqualToString:@"High"] && ([jPriority isEqualToString:@"Medium"]||[jPriority isEqualToString:@"Low"]))
                 {
@@ -1442,7 +1445,7 @@ extern void SVMXLog(NSString *format, ...);
         
         //Shrinivas && Abinash
         //NSString * colourCode = [dict objectForKey:COLORCODE];
-        NSString * colourCode = [appDelegate.calDataBase getColorCodeForPriority:([dict objectForKey:WHATID] != nil)?[dict objectForKey:WHATID]:@""];
+        NSString * colourCode = [appDelegate.calDataBase getColorCodeForPriority:([dict objectForKey:WHATID] != nil)?[dict objectForKey:WHATID]:@"" objectname:([dict objectForKey:OBJECTAPINAME] != nil)?[dict objectForKey:OBJECTAPINAME]:@""] ;
         UIColor * color = [appDelegate colorForHex:colourCode];
         SMLog(@"%@", color);
         
@@ -1450,7 +1453,9 @@ extern void SVMXLog(NSString *format, ...);
         
         if ( [_date isEqualToString:eventDate] == TRUE )
         {
-            BOOL conflictExists = [appDelegate.dataBase checkIfConflictsExistsForEvent:events.recordId objectName:[dict objectForKey:OBJECTAPINAME]];
+			NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:events.recordId tableName:[dict objectForKey:OBJECTAPINAME]];
+			
+            BOOL conflictExists = [appDelegate.dataBase checkIfConflictsExistsForEvent:events.recordId objectName:[dict objectForKey:OBJECTAPINAME] local_id:local_id];
             
             if (conflictExists == FALSE)
             {

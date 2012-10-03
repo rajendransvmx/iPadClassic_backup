@@ -1,3 +1,4 @@
+
 //
 //  databaseIntefaceSfm.m
 //  iService
@@ -1802,7 +1803,7 @@ extern void SVMXLog(NSString *format, ...);
 				searchForString = [searchForString substringFromIndex:1];
         }
 
-        NSString *querystring1 = [NSString stringWithFormat:@"Select field_name,search_object_field_type,sequence,field_type,field_relationship_name from '%@' where named_search = '%@'",SFNAMEDSEACHCOMPONENT, lookupID];
+        NSString *querystring1 = [NSString stringWithFormat:@"Select DISTINCT field_name,search_object_field_type,sequence,field_type,field_relationship_name from '%@' where named_search = '%@'",SFNAMEDSEACHCOMPONENT, lookupID];
         NSString * field_name = @"";
         NSString * sequence   = @"";
         NSString * field_seach_type = @"";
@@ -3297,9 +3298,12 @@ extern void SVMXLog(NSString *format, ...);
 }
 
 
--(BOOL)UpdateTableforSFId:(NSString *)sf_id  forObject:(NSString *)objectName  data:(NSDictionary *)dict;
+-(BOOL)UpdateTableforSFId:(NSString *)sf_id  forObject:(NSString *)objectName  data:(NSDictionary *)dict1;
 {
-    BOOL success = FALSE;
+	NSMutableDictionary * dict = [self updateEmptyFieldValuesForDict:dict1 objectName:objectName];
+	
+	
+	BOOL success = FALSE;
     NSArray * allkeys = [dict allKeys];
     NSMutableString *  updateValue = [[[NSMutableString alloc] initWithCapacity:0] autorelease]; // sahana sep 13th
     for(int i = 0 ; i < [allkeys count]; i++)
@@ -3324,6 +3328,7 @@ extern void SVMXLog(NSString *format, ...);
                     value = @"0";
                 }
             }
+			
             if(i== 0)
                 [updateValue  appendFormat:@" %@ = '%@' ",key ,value ];
             else
@@ -3357,9 +3362,38 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     return success;
-    
-    
 }
+
+
+
+#pragma mark - updateNullValue
+- (NSMutableDictionary *) updateEmptyFieldValuesForDict:(NSDictionary *)dict objectName:(NSString *)objectName
+{
+	NSMutableDictionary * allFieldsDict = [self getAllObjectFields:objectName tableName:@"SFObjectField"];
+	
+	NSArray * allfield = [allFieldsDict allKeys];
+	NSMutableArray * valueFields =  (NSMutableArray*)[dict allKeys];
+	
+	NSMutableDictionary * mDict  = [NSMutableDictionary dictionaryWithDictionary:dict];
+	
+	for (NSString * valueField in allfield)
+	{
+		if ([valueFields containsObject:valueField])
+		{
+			continue;
+		}
+		else
+		{
+			[mDict setValue:@"" forKey:valueField];
+		}
+		
+	}
+	
+	return mDict;
+}
+
+
+#pragma mark -END
 
 
 -(NSString *)getLookUpNameForId:(NSString *)id_ 
@@ -4277,6 +4311,16 @@ extern void SVMXLog(NSString *format, ...);
                         }                        
                     }
                     
+                    if([sync_type isEqualToString:GET_INSERT] || [sync_type isEqualToString:GET_UPDATE] )
+                    {
+                        [self deleteAllOndemandRecordsPartOfDownloadCriteriaForSfId:sf_id];
+                    }
+                    if([sync_type isEqualToString:PUT_UPDATE])
+                    {
+                        [self updateOndemandRecordForId:sf_id];
+                    }
+                    
+                    
                     if(![sync_type isEqualToString:@"DATA_SYNC"])
                     {
                     
@@ -4534,9 +4578,13 @@ extern void SVMXLog(NSString *format, ...);
             
             if (range.location != NSNotFound)
             {
-                // NSDictionary * attDict = [dict objectForKey:@"attributes"];
+				//RADHA 27/Sep/2012
+				NSDictionary * attDict = [dict objectForKey:@"attributes"];
+				NSString * object = [attDict objectForKey:@"type"];
+				NSString * Name = [appDelegate.dataBase getApiNameForNameField:object];
+				
                 [lookUpDict setValue:[dict objectForKey:@"Id"] forKey:@"Id"];
-                [lookUpDict setValue:[dict objectForKey:@"Name"] forKey:@"Name"];
+                [lookUpDict setValue:[dict objectForKey:Name] forKey:@"Name"];
                 [lookUpDict setValue:[dict objectForKey:@"type"] forKey:@"type"];
                 [appDelegate.dataBase addvaluesToLookUpFieldTable:lookUpDict WithId:lookUp_id];
             }                        
@@ -5536,7 +5584,326 @@ extern void SVMXLog(NSString *format, ...);
     synchronized_sqlite3_finalize(stmt);
     return referencetoName;
 }
+-(BOOL)checkOndemandRecord:(NSString *)local_id
+{
+    sqlite3_stmt * statement;
+    int count = 0;
+    NSString * query = [[[NSString alloc] initWithFormat:@"SELECT COUNT(*) FROM on_demand_download where local_id  = '%@'",local_id] autorelease];
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String],-1, &statement, nil) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement)== SQLITE_ROW)
+        {
+            count =  sqlite3_column_int(statement, 0);
+            
+        }
+    }
+    if(count == 0)
+    {
+        return FALSE;
+    }
+    else
+        return TRUE;
+}
 
+-(void)deleteAllOndemandRecordsPartOfDownloadCriteriaForSfId:(NSString *)sf_id
+{
+    
+    //For mass delete
+
+//    NSArray * list_ids = [self getAllIdsFromDatabaseForSyncType:sync_type];
+//    
+//    
+//    NSMutableString * ids_string = [[NSMutableString alloc] initWithCapacity:0];
+//    
+//    for (int i = 0 ; i < [list_ids count]; i++)
+//    {
+//        NSString * sf_id = [list_ids objectAtIndex:i];
+//        if(i == 0)
+//            [ids_string  appendFormat:@"'%@' ", sf_id];
+//        else
+//            [ids_string  appendFormat:@" , '%@' ", sf_id];
+//    }
+    
+    NSString * delete_statement = [NSString stringWithFormat:@"DELETE FROM on_demand_download  WHERE sf_id = '%@'",sf_id];
+    char * err;
+    
+    if (synchronized_sqlite3_exec(appDelegate.db, [delete_statement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+    {
+        SMLog(@"Unsucces deleteAllOndemandRecords");
+    }
+    
+}
+-(NSMutableArray *)getAllOndemandObejcts
+{
+    NSString * query = [[NSString alloc] initWithFormat:@"SELECT DISTINCT object_name FROM on_demand_download"];
+    NSMutableArray * ondemand_objects = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    sqlite3_stmt * statement;
+    
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String],-1, &statement, nil) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement)== SQLITE_ROW)
+        {
+            NSString * object_name = @"";
+            char * temp_referenceToName = (char *)synchronized_sqlite3_column_text(statement, 0);
+            if(temp_referenceToName != nil)
+            {
+                object_name = [NSString stringWithUTF8String:temp_referenceToName];
+                [ondemand_objects addObject:object_name];
+            }
+        }
+        synchronized_sqlite3_finalize(statement);
+    }
+    
+    
+    if([ondemand_objects retainCount] == 1)
+        [ondemand_objects retain];
+    return ondemand_objects;
+    
+}
+
+-(NSArray *)getAllIdsFromDatabaseForSyncType:(NSString *)sync_type
+{
+    
+    NSString * str = [[NSString alloc] initWithFormat:@"SELECT sf_id FROM sync_Records_Heap WHERE sync_type = '%@' " , sync_type];
+    NSString * default_value = @"";
+    
+    NSMutableArray * array = [[[NSMutableArray alloc] initWithCapacity:0]autorelease];
+    sqlite3_stmt * statement;
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [str UTF8String], -1 , &statement , nil)  ==  SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement)== SQLITE_ROW)
+        {
+            default_value = @"";
+            char * temp_id_value = (char *) synchronized_sqlite3_column_text(statement, 0);
+            if(temp_id_value != nil)
+            {
+                default_value = [NSString stringWithUTF8String:temp_id_value];
+                [array addObject:default_value];
+            }
+        }
+    }
+    
+    [str release];
+    synchronized_sqlite3_finalize(statement);
+    return array;
+}
+
+-(void)updateOndemandRecordForId:(NSString *)record_id
+{
+    NSDate * date = [NSDate date];
+    NSString * today_Date = @"";
+    NSDateFormatter * dateFormatter  = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    today_Date = [dateFormatter stringFromDate:date];
+    
+    NSString * update_query = [NSString stringWithFormat:@"UPDATE on_demand_download SET time_stamp = '%@' where sf_id = '%@'", today_Date,record_id];
+    char * err;
+    
+    if (synchronized_sqlite3_exec(appDelegate.db, [update_query UTF8String], NULL, NULL, &err) != SQLITE_OK)
+    {
+        SMLog(@"Unsucces deleteAllOndemandRecords");
+    }
+    
+    [dateFormatter release];
+}
+-(NSString *)getTimeLastModifiedTimeOfTheRecordForRecordId:(NSString *)record_id
+{
+    NSString * query = [[NSString alloc] initWithFormat:@"SELECT time_stamp FROM on_demand_download where local_id = '%@'",record_id];
+    sqlite3_stmt * statement;
+    NSString * time_stamp = @"";
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String],-1, &statement, nil) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement)== SQLITE_ROW)
+        {
+            
+            char * temp_referenceToName = (char *)synchronized_sqlite3_column_text(statement, 0);
+            if(temp_referenceToName != nil)
+            {
+                time_stamp = [NSString stringWithUTF8String:temp_referenceToName];
+            }
+        }
+        synchronized_sqlite3_finalize(statement);
+    }
+    return time_stamp;
+}
 //sahana code ends    june8th
+-(BOOL)isSFObject:(NSString*)objectName
+{
+    sqlite3_stmt * statement;
+    int count = 0;
+    NSString * query = [[[NSString alloc] initWithFormat:@"SELECT COUNT(*) FROM SFObject where api_name= '%@'",objectName] autorelease];
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String],-1, &statement, nil) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement)== SQLITE_ROW)
+        {
+            count =  sqlite3_column_int(statement, 0);
+            
+        }
+    }
+    if(count == 0)
+    {
+        return FALSE;
+    }
+    else
+        return TRUE;
+}
+
+-(NSDictionary *)getAllChildRelationShipForObject:(NSString *)object_name
+{
+    NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+    NSString * query = [[NSString  alloc ]  initWithFormat:@"SELECT  object_api_name_child ,field_api_name FROM SFChildRelationship where  object_api_name_parent = '%@' ",object_name];
+    sqlite3_stmt * stmt ;
+    
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK  )
+    {
+        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            NSString *childtName = @"" ,*fieldName = @"";
+            char * temp_ObjapiName= (char *)synchronized_sqlite3_column_text(stmt, 0);
+             char * temp_fieldName = (char *)synchronized_sqlite3_column_text(stmt, 1);
+            if(temp_ObjapiName != nil)
+            {
+                childtName = [NSString stringWithUTF8String:temp_ObjapiName];
+            }
+            if(temp_fieldName != nil)
+            {
+                fieldName = [NSString stringWithUTF8String:temp_fieldName];
+            }
+            [dict setObject:fieldName forKey:childtName];
+            
+        }
+    }
+    synchronized_sqlite3_finalize(stmt);
+    [query release];
+    return dict;
+}
+
+-(void)insertOndemandRecords:(NSMutableDictionary *)record_dict
+{
+    [record_dict retain];
+    NSArray * allkeys = [record_dict allKeys];
+   // NSMutableArray *  allChild_ids = [[NSMutableArray alloc] initWithCapacity:0];
+    NSMutableDictionary * child_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+    NSString * master_object_name = @"" , * master_local_id = @"";
+    
+    for(NSString * recordType in allkeys)
+    {
+        NSDictionary * dict = [record_dict objectForKey:recordType];
+        
+        NSArray * allObjects = [dict allKeys];
+        NSString * object_name = @"";
+        
+        if([allObjects count] > 0)
+          object_name =  [allObjects objectAtIndex:0];
+        
+        NSArray * allrecords = [dict objectForKey:object_name];
+        
+        for(NSString * json_record in allrecords)
+        {
+            NSMutableDictionary * final_dict = [self getDictForJsonString:json_record];
+            
+            NSString * local_id = @"";
+           
+            NSString * sf_id = [final_dict objectForKey:@"Id"];
+            BOOL check_flag = [appDelegate.dataBase checkForDuplicateId:object_name sfId:sf_id];
+            //call insert method 
+            if(check_flag)
+            {
+                 NSString * guid_id = [iServiceAppDelegate GetUUID];
+                local_id = guid_id;
+                [final_dict setObject:guid_id forKey:@"local_id"];
+                [self insertdataIntoTable:object_name data:final_dict];
+                if([recordType isEqualToString:MASTER])
+                {
+                    master_object_name = object_name;
+                    master_local_id = guid_id;
+                }
+               
+            }
+            else
+            {
+                NSString * existing_local_id = [self getLocalIdFromSFId:sf_id tableName:object_name];
+                local_id = existing_local_id;
+                if([recordType isEqualToString:MASTER])
+                {
+                    master_object_name = object_name;
+                    master_local_id = existing_local_id;
+                }
+                
+                BOOL flag = [self UpdateTableforSFId:sf_id forObject:object_name data:final_dict];
+                if(flag)
+                {
+                }
+            }
+            
+            [self insertrecordintoOnDemandTableForId:sf_id  recordType:recordType local_id:local_id json_record:json_record object_name:object_name];
+            
+            if([recordType isEqualToString:DETAIL])
+            {
+                NSArray * all_child_objects = [child_dict allKeys];
+                if([all_child_objects containsObject:object_name])
+                {
+                    NSMutableArray * child_ids = [child_dict objectForKey:object_name]; 
+                    [child_ids addObject:sf_id];
+                }
+                else
+                {
+                    NSMutableArray * allChild_ids  = [[NSMutableArray alloc] initWithCapacity:0];
+                    [allChild_ids addObject:sf_id];
+                    [child_dict setObject:allChild_ids forKey:object_name];
+                    [allChild_ids release];
+                    
+                }
+               
+                
+            }
+            
+                 
+            [final_dict release];
+        }
+        
+    }
+    
+    if(![master_object_name isEqualToString:@""] && ![master_local_id isEqualToString:@""] && [child_dict count] > 0 )
+    {
+        [self updateChildParentColumnNameForParentObject:master_object_name masterLocalId:master_local_id child_info:child_dict];
+    }
+    [record_dict release];
+}
+
+-(void)updateChildParentColumnNameForParentObject:(NSString *)master_object masterLocalId:(NSString *)masterLocal_id child_info:(NSMutableDictionary *)child_info
+{
+    NSArray * all_child_objects = [child_info allKeys];
+    
+    for(NSString * child_object in all_child_objects)
+    {
+        NSArray * all_child_ids = [child_info objectForKey:child_object];
+        for(NSString * child_id in all_child_ids)
+        {
+            NSString * parent_column_name = [self getParentColumnNameFormChildInfoTable:SFChildRelationShip childApiName:child_object parentApiName:master_object];
+            
+            [self updateParentColumnNameInChildTableWithParentLocalId:child_object parent_column_name:parent_column_name parent_local_id:masterLocal_id child_sf_id:child_id];
+        }
+        
+    }
+    
+}
+
+-(void)insertrecordintoOnDemandTableForId:(NSString *)sf_id recordType:(NSString *)RecordType local_id:(NSString *)local_id json_record:(NSString *)json_record object_name:(NSString *)object_name
+{
+    NSDate * date = [NSDate date];
+    NSString * today_Date = @"";
+    NSDateFormatter * dateFormatter  = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    today_Date = [dateFormatter stringFromDate:date];
+    NSString * insert_query = [NSString stringWithFormat:@"INSERT OR REPLACE INTO 'on_demand_download' ('object_name','sf_id','time_stamp','local_id','record_type','json_record') VALUES ('%@','%@','%@','%@','%@','%@')" , object_name,sf_id,today_Date,local_id,RecordType,json_record ];
+    char * err;
+    
+    if(synchronized_sqlite3_exec(appDelegate.db, [insert_query UTF8String], NULL, NULL, &err) != SQLITE_OK)
+    {
+        SMLog(@"Insert Failed");
+    }
+
+}
 
 @end

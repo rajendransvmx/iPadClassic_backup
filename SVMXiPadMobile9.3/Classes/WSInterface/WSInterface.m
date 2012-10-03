@@ -771,6 +771,16 @@ last_sync_time:(NSString *)last_sync_time
     retVal = [appDelegate goOnlineIfRequired];
     
     NSLog(@"%@, %d",appDelegate.currentServerUrl, [appDelegate.currentServerUrl length] );
+	
+	
+	
+	if ([appDelegate.currentServerUrl Contains:@"null"] || [appDelegate.currentServerUrl length] == 0 || appDelegate.currentServerUrl == nil)
+	{
+		NSUserDefaults * userdefaults = [NSUserDefaults standardUserDefaults];
+		
+		appDelegate.currentServerUrl = [userdefaults objectForKey:SERVERURL];
+	}
+		
     
     if(retVal == NO || [appDelegate.currentServerUrl Contains:@"null"])
     {
@@ -846,6 +856,7 @@ last_sync_time:(NSString *)last_sync_time
         if (appDelegate.isInternetConnectionAvailable)
             [appDelegate setSyncStatus:SYNC_GREEN];
 		
+		appDelegate.dataSyncRunning = NO;
         return;
     }
     
@@ -879,6 +890,7 @@ last_sync_time:(NSString *)last_sync_time
 		if (appDelegate.isInternetConnectionAvailable)
 			appDelegate.SyncStatus = SYNC_GREEN;
         
+		appDelegate.dataSyncRunning = NO;
         return;
     }    
     
@@ -908,6 +920,7 @@ last_sync_time:(NSString *)last_sync_time
     }
     if (!appDelegate.isInternetConnectionAvailable)
     {
+		appDelegate.dataSyncRunning = NO;
         return;
     }
     
@@ -951,6 +964,7 @@ last_sync_time:(NSString *)last_sync_time
         if (appDelegate.isInternetConnectionAvailable)
             [appDelegate setSyncStatus:SYNC_GREEN];
         
+		appDelegate.dataSyncRunning = NO;
 		[updateSyncStatus refreshSyncStatus];
         return;
     }
@@ -994,6 +1008,7 @@ last_sync_time:(NSString *)last_sync_time
         if (appDelegate.isInternetConnectionAvailable)
             appDelegate.SyncStatus = SYNC_GREEN;
 
+		appDelegate.dataSyncRunning = NO;
         return;
     }
     
@@ -1028,6 +1043,7 @@ last_sync_time:(NSString *)last_sync_time
         if (appDelegate.isInternetConnectionAvailable)
             [appDelegate setSyncStatus:SYNC_GREEN];
 	
+		appDelegate.dataSyncRunning = NO;
         return;
     }                                                             //call delete
                                                                         //call Update
@@ -1063,6 +1079,7 @@ last_sync_time:(NSString *)last_sync_time
         if (appDelegate.isInternetConnectionAvailable)
             [appDelegate setSyncStatus:SYNC_GREEN];
 	
+		appDelegate.dataSyncRunning = NO;	
         return;
     }    
     
@@ -1091,6 +1108,7 @@ last_sync_time:(NSString *)last_sync_time
     }
     if (!appDelegate.isInternetConnectionAvailable)
     {
+		appDelegate.dataSyncRunning = NO;
         return;
     }
     
@@ -1138,6 +1156,7 @@ last_sync_time:(NSString *)last_sync_time
         if (appDelegate.isInternetConnectionAvailable)
             [appDelegate setSyncStatus:SYNC_GREEN];
 
+		appDelegate.dataSyncRunning = NO;
         return;
     }
     
@@ -1185,6 +1204,7 @@ last_sync_time:(NSString *)last_sync_time
         if (appDelegate.isInternetConnectionAvailable)
             [appDelegate setSyncStatus:SYNC_GREEN];
         
+		appDelegate.dataSyncRunning = NO;
         return;
     }
     
@@ -1218,6 +1238,7 @@ last_sync_time:(NSString *)last_sync_time
         if (appDelegate.isInternetConnectionAvailable)
             [appDelegate setSyncStatus:SYNC_GREEN];
     
+		appDelegate.dataSyncRunning = NO;
         return;
     }
     
@@ -1246,6 +1267,7 @@ last_sync_time:(NSString *)last_sync_time
     }
     if ( !appDelegate.isInternetConnectionAvailable)
     {
+		appDelegate.dataSyncRunning = NO;
         return;
     }
     [appDelegate.databaseInterface deleteAllConflictedRecordsFrom:SYNC_RECORD_HEAP];
@@ -1280,10 +1302,12 @@ last_sync_time:(NSString *)last_sync_time
         if (appDelegate.isInternetConnectionAvailable)
             [appDelegate setSyncStatus:SYNC_GREEN];
         
+		appDelegate.dataSyncRunning = NO;
         return;
     }
     if([appDelegate enableGPS_SFMSearch])
     {
+		 [appDelegate.dataBase createUserGPSTable];
         [appDelegate.dataBase updateTechnicianLocation];
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {                
@@ -1651,6 +1675,180 @@ last_sync_time:(NSString *)last_sync_time
     }
 }
 
+-(void)getOnDemandRecords:(NSString*)objectName record_id:(NSString*)record_id
+{
+    [INTF_WebServicesDefServiceSvc initialize];
+    
+    INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
+    sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
+    
+    INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
+    callOptions.client = nil;
+    
+    INTF_WebServicesDefServiceSvc_DebuggingHeader * debuggingHeader = [[[INTF_WebServicesDefServiceSvc_DebuggingHeader alloc] init] autorelease];
+    debuggingHeader.debugLevel = 0;
+    
+    INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * allowFieldTruncationHeader = [[[INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader alloc] init] autorelease];
+    allowFieldTruncationHeader.allowFieldTruncation = NO;
+    
+    INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
+    binding.logXMLInOut = YES;
+    
+    
+    INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] autorelease];
+    
+    INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] autorelease];
+    sfmRequest.eventName = @"DATA_ON_DEMAND";
+    sfmRequest.eventType = @"GET_DATA";
+    sfmRequest.userId = [appDelegate.loginResult userId];
+    sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
+    sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
+    
+    //ADD SVMXClient
+    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
+    
+    svmxc_client.clientType = @"iPad";
+    [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
+    [svmxc_client.clientInfo addObject:@"R4B2"];
+    
+    //find out whether the object is MASTER/DETAIL
+    NSDictionary *dict_child=[appDelegate.databaseInterface getAllChildRelationShipForObject:objectName];
+    BOOL IsParent = TRUE ;
+    if(IsParent)
+    {
+  
+        
+        INTF_WebServicesDefServiceSvc_SVMXMap *valueMapforObject=[[[INTF_WebServicesDefServiceSvc_SVMXMap alloc]init]autorelease];
+        
+        valueMapforObject.key=@"Object_Name";
+        valueMapforObject.value=objectName;
+        
+        INTF_WebServicesDefServiceSvc_SVMXMap *valueMapId=[[[INTF_WebServicesDefServiceSvc_SVMXMap alloc]init]autorelease];
+        valueMapId.key=@"Id";
+        valueMapId.value = record_id;
+        
+        NSDictionary * fields_dict = [appDelegate.databaseInterface getAllObjectFields:objectName tableName:SFOBJECTFIELD];
+        NSArray * fields_array ;
+        fields_array = [fields_dict allKeys];
+        
+        NSString * field_string = @"";
+        for(int i = 0 ; i< [fields_array count]; i++)
+        {
+            NSString * field = [fields_array objectAtIndex:i];
+            if (i == 0)
+                field_string = [field_string stringByAppendingFormat:@"%@",field];
+            else
+                field_string = [field_string stringByAppendingFormat:@",%@",field];
+        }
+
+        
+        INTF_WebServicesDefServiceSvc_SVMXMap *valueMapFields=[[[INTF_WebServicesDefServiceSvc_SVMXMap alloc]init]autorelease];
+        valueMapFields.key=@"Fields";
+        valueMapFields.value = field_string;
+        
+        
+        INTF_WebServicesDefServiceSvc_SVMXMap *valueMapParentField_for_parent=[[[INTF_WebServicesDefServiceSvc_SVMXMap alloc]init]autorelease];
+        valueMapParentField_for_parent.key =@"Parent_Reference_Field";
+        valueMapParentField_for_parent.value = nil;
+
+        
+        [valueMapforObject.valueMap addObject:valueMapParentField_for_parent];
+        [valueMapforObject.valueMap addObject:valueMapId];
+        [valueMapforObject.valueMap addObject:valueMapFields];
+        
+        [sfmRequest.valueMap addObject:valueMapforObject];
+        
+        
+        
+        NSMutableArray * FinalChild = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+        NSArray * allChildObject = [dict_child allKeys];
+        
+        for(NSString * str in allChildObject)
+        {
+            BOOL ifExists = [appDelegate.databaseInterface isSFObject:str];
+            if(![str isEqualToString:@"Event"]  && ![str isEqualToString:@"Task"]  && ifExists)
+            {
+                 [FinalChild addObject:str];
+            }
+        }
+        
+        for (int i = 0 ; i < [FinalChild count]; i++)
+        {
+            
+            NSString * child_object = [FinalChild objectAtIndex:i];
+            INTF_WebServicesDefServiceSvc_SVMXMap *valueMapChildObject=[[[INTF_WebServicesDefServiceSvc_SVMXMap alloc]init]autorelease];
+            
+            valueMapChildObject.key=@"Object_Name";
+            valueMapChildObject.value=child_object;
+            
+            INTF_WebServicesDefServiceSvc_SVMXMap *valueMapChildId=[[[INTF_WebServicesDefServiceSvc_SVMXMap alloc]init]autorelease];
+            valueMapChildId.key=@"Id";
+            valueMapChildId.value = record_id;
+            NSDictionary * fields_child_dict = [appDelegate.databaseInterface getAllObjectFields:child_object tableName:SFOBJECTFIELD];
+            NSArray * fields_child_array ;
+            fields_child_array = [fields_child_dict allKeys];
+            
+            NSString * field_child_string = @"";
+            for(int i = 0 ; i< [fields_child_array count]; i++)
+            {
+                NSString * field = [fields_child_array objectAtIndex:i];
+                if (i == 0)
+                    field_child_string = [field_child_string stringByAppendingFormat:@"%@",field];
+                else
+                    field_child_string = [field_child_string stringByAppendingFormat:@",%@",field];
+            }
+            
+
+            INTF_WebServicesDefServiceSvc_SVMXMap *valueMapchildFields=[[[INTF_WebServicesDefServiceSvc_SVMXMap alloc]init]autorelease];
+            valueMapchildFields.key=@"Fields";
+            valueMapchildFields.value = field_child_string;
+            
+            INTF_WebServicesDefServiceSvc_SVMXMap *valueMapParentField=[[[INTF_WebServicesDefServiceSvc_SVMXMap alloc]init]autorelease];
+            valueMapParentField.key =@"Parent_Reference_Field";
+            valueMapParentField.value = [dict_child objectForKey:child_object];
+            
+            [valueMapChildObject.valueMap addObject:valueMapChildId];
+            [valueMapChildObject.valueMap addObject:valueMapchildFields];
+            [valueMapChildObject.valueMap addObject:valueMapParentField];
+            [sfmRequest.valueMap addObject:valueMapChildObject];
+
+        }
+        
+
+    }
+    else
+    {
+        
+//        INTF_WebServicesDefServiceSvc_SVMXMap *valueMapforParent=[[[INTF_WebServicesDefServiceSvc_SVMXMap alloc]init]autorelease];
+//        
+//        INTF_WebServicesDefServiceSvc_SVMXMap *valueMapforObject=[[[INTF_WebServicesDefServiceSvc_SVMXMap alloc]init]autorelease];
+//        
+//        valueMapforObject.key=@"Object_Name";
+//        valueMapforObject.value=objectName;
+//        
+//        INTF_WebServicesDefServiceSvc_SVMXMap *valueMapId=[[[INTF_WebServicesDefServiceSvc_SVMXMap init]alloc]autorelease];
+//        valueMapId.key=@"Id";
+//        valueMapId.value = record_id;
+//        INTF_WebServicesDefServiceSvc_SVMXMap *valueMapFields=[[[INTF_WebServicesDefServiceSvc_SVMXMap init]alloc]autorelease];
+//        valueMapFields.key=@"fields";
+//        valueMapFields.value = @"";
+//        [valueMapforObject.valueMap addObject:valueMapId];
+//        [valueMapforObject.valueMap addObject:valueMapFields];
+//        
+//        [sfmRequest.valueMap addObject:valueMapforObject];
+    }
+       
+    [sfmRequest addClientInfo:svmxc_client];
+    [datasync setRequest:sfmRequest];
+    
+    
+    binding.logXMLInOut = YES;
+    [binding INTF_DataSync_WSAsyncUsingParameters:datasync
+                                    SessionHeader:sessionHeader
+                                      CallOptions:callOptions
+                                  DebuggingHeader:debuggingHeader
+                       AllowFieldTruncationHeader:allowFieldTruncationHeader delegate:self];
+}
 -(void)GetInsert
 {
     [INTF_WebServicesDefServiceSvc initialize];
@@ -5786,6 +5984,10 @@ last_sync_time:(NSString *)last_sync_time
     {
         INTF_WebServicesDefServiceSvc_INTF_DataSync_WSResponse * wsResponse = [response.bodyParts objectAtIndex:0];
       
+        if(wsResponse.result.eventName == nil && wsResponse.result.eventType == nil )
+        {
+            appDelegate.connection_error = TRUE;
+        }
 		if ([wsResponse.result.eventName isEqualToString:@"LOCATION_HISTORY"] && [wsResponse.result.eventType isEqualToString:SYNC]
             )
         {
@@ -5825,16 +6027,22 @@ last_sync_time:(NSString *)last_sync_time
                 NSArray *resultMap = [mapForObjectId valueMap];
                 NSMutableDictionary *resultDict = [[NSMutableDictionary alloc] init];
                 [resultDict setObject:mapForObjectId.key forKey:@"SearchObjectId"];
+			
+				
+				NSString * idValue = (mapForObjectId.value != nil)?mapForObjectId.value:@"";
+				
+
                 for(int j=0; j<[resultMap count]; j++)
                 {
                     fieldsForTableHeader=[filedForObjectID objectForKey:mapForObjectId.key];
                     INTF_WebServicesDefServiceSvc_SVMXMap * mapForResult = [resultMap objectAtIndex:j];
+										
                     [resultDict setObject:mapForResult.value forKey:[fieldsForTableHeader objectAtIndex:j]];
                     if(j ==0)
                     {
                         NSArray *resultIDMapArray = [mapForResult valueMap];                    
                         INTF_WebServicesDefServiceSvc_SVMXMap * mapForID = [resultIDMapArray objectAtIndex:0];
-                        [resultDict setObject:mapForID.value forKey:@"Id"];
+                        [resultDict setObject:idValue forKey:@"Id"];
                     }
                 }
                 [resultsArray addObject:resultDict];
@@ -6018,11 +6226,16 @@ last_sync_time:(NSString *)last_sync_time
                     NSString * key = (record_map.key!= nil) ?record_map.key:@"";//local_id
                     NSString * json_record = record_map.value;
                     
-                    //fetch id from the record 
-                    NSString * SF_id = [self getIdFromJsonString:json_record];
+                  //  NSString * temp_json_string = [[NSString alloc] initWithString:json_record];
                     
-                      
-                    json_record = [self escapeSIngleQute:json_record];
+                    NSMutableString * temp_json_string = [[NSMutableString alloc] initWithString:json_record];
+                    //fetch id from the record 
+                    NSString * SF_id = [self getIdFromJsonString:temp_json_string];
+                    
+                    ;
+                 // temp_json_string = [self escapeSIngleQute:temp_json_string];
+                    NSInteger val =  [temp_json_string replaceOccurrencesOfString:@"'" withString:@"''" options:NSCaseInsensitiveSearch range: NSMakeRange(0, [temp_json_string length])];
+                    NSLog(@"%d" , val);
                     
                     NSArray * allkeys = [record_dict allKeys];
                     BOOL flag = FALSE;
@@ -6037,23 +6250,26 @@ last_sync_time:(NSString *)last_sync_time
                     }
                     if(flag)
                     {
-                        NSArray * objects = [[NSArray alloc] initWithObjects:key, json_record,SF_id, nil];
+                        NSArray * objects = [[NSArray alloc] initWithObjects:key, temp_json_string,SF_id, nil];
                         NSDictionary * dict = [[NSDictionary alloc] initWithObjects:objects forKeys:keys_];
                         NSMutableArray * array1 = [record_dict objectForKey:object_name];
                         [array1 addObject:dict];
                         [dict release];
+                        [objects release];
                     }
                     else
                     {
-                        NSArray * objects = [[NSArray alloc] initWithObjects:key, json_record,SF_id, nil];
+                        NSArray * objects = [[NSArray alloc] initWithObjects:key, temp_json_string,SF_id, nil];
                         NSDictionary * dict = [[NSDictionary alloc] initWithObjects:objects forKeys:keys_];
                         NSMutableArray * array1 = [[NSMutableArray alloc] initWithCapacity:0];
                         [array1 addObject:dict];
                         [record_dict setObject:array1 forKey:object_name];
                         [array1 release];
                         [dict release];
+                        [objects release];
                     }
                     [SF_id release];
+                    [temp_json_string release];
                 }
             }
             
@@ -6853,7 +7069,83 @@ last_sync_time:(NSString *)last_sync_time
         {
             appDelegate.Incremental_sync_status = CLEANUP_DONE;
         }
-              
+        else if ([wsResponse.result.eventName isEqualToString:@"DATA_ON_DEMAND"] || [wsResponse.result.eventName isEqualToString:@"GET_DATA"])
+        {
+            appDelegate.dod_status = RETRIEVING_DATA;
+            appDelegate.Sync_check_in = FALSE;
+            
+            NSMutableDictionary * record_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+            NSMutableArray * array = [wsResponse.result valueMap];
+            for(int i = 0 ;i< [array count]; i++)
+            {
+                INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [array objectAtIndex:i];
+                
+              //  NSString * key = (svmxMap.key != nil)?(svmxMap.key):@"";
+                NSString * object_name = (svmxMap.value != nil)?(svmxMap.value):@"";
+                
+                            
+                NSArray * records = svmxMap.valueMap;
+                
+                for(int j = 0 ; j < [records count]; j++)
+                {
+                    INTF_WebServicesDefServiceSvc_SVMXMap * recordLevel_map = [records objectAtIndex:j];
+                    NSString * master_or_detail = recordLevel_map.key;
+                    NSString * json_record = recordLevel_map.value;
+                    
+                    if([master_or_detail isEqualToString:@"Parent_Record"])
+                    {
+                        NSMutableDictionary * Tempdict = [[NSMutableDictionary alloc] initWithCapacity:0];
+                        NSMutableArray * tempArray  = [[NSMutableArray alloc] initWithCapacity:0];
+                        [tempArray addObject:json_record];
+                        [Tempdict setObject:tempArray forKey:object_name];
+                        [record_dict setObject:Tempdict forKey:MASTER];
+                        [Tempdict release];
+                        [tempArray release];
+                    }
+                    else if([master_or_detail isEqualToString:@"Child_Record"])
+                    {
+                        NSArray * all_keys = [record_dict allKeys];
+                        BOOL does_key_exist = FALSE;
+                       if( [all_keys containsObject:DETAIL])
+                       {
+                           does_key_exist = TRUE;
+                       }
+                        if(does_key_exist)
+                        {
+                            NSMutableDictionary * tempDict = [record_dict objectForKey:DETAIL];
+                            NSMutableArray * temparray= [ tempDict objectForKey:object_name];
+                            [temparray addObject:json_record];
+                        }
+                        else
+                        {
+                            NSMutableDictionary * Tempdict = [[NSMutableDictionary alloc] initWithCapacity:0];
+                            NSMutableArray * Temp_array = [[NSMutableArray alloc] initWithCapacity:0];
+                            [Temp_array addObject:json_record];
+                            [Tempdict setObject:Temp_array forKey:object_name];
+                            [record_dict setObject:Tempdict forKey:DETAIL];
+                            [Temp_array release];
+                            [Tempdict release];
+                        }
+                    }
+                    
+                }
+                
+                
+            }
+          
+            
+            NSLog(@"record_dict %@",record_dict);
+            [appDelegate.databaseInterface insertOndemandRecords:record_dict];
+            
+            appDelegate.dod_status = SAVING_DATA;
+            appDelegate.Sync_check_in = FALSE;
+            
+            [record_dict release];
+            appDelegate.dod_req_response_ststus = DOD_RESPONSE_RECIEVED;
+        }
+             
+        
+        
         SMLog(@"DataSync End: %@", [NSDate date]);
     }
     
@@ -10587,5 +10879,6 @@ last_sync_time:(NSString *)last_sync_time
     appDelegate.isInternetConnectionAvailable = NO;
     [[NSNotificationCenter defaultCenter] postNotificationName:kInternetConnectionChanged object:[NSNumber numberWithInt:0] userInfo:nil];
 }
+
 
 @end

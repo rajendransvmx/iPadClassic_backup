@@ -84,6 +84,8 @@ PopoverButtons *popOver_view;
 
 //- initWithDBName:(NSString *)name type:(NSString *)type sqlite:(sqlite3 *)db;
 
+
+-(BOOL)isHeaderRecord:(NSString*)objectName;
 //Insert InTo Table Methods
 - (void) insertValuesInToOBjDefTableWithObject:(NSMutableArray *)object definition:(NSMutableArray *)objectDefinition;
 - (void) insertValuesInToReferenceTable:(NSMutableArray *)object definition:(NSMutableArray *)objectDefinition;
@@ -162,6 +164,9 @@ PopoverButtons *popOver_view;
 - (NSString *) getSearchCriteriaStringFromUserData:(NSString *)criteriaString withSearchString:searchString;
 - (NSArray *) getConfigurationForProcess:(NSString *) processName ;
 -(NSString*) getRefrenceToField:(NSString*)objectName relationship:(NSString*) relationship_name;
+-(NSString*) getNameFiled:(NSString*)obejctName;
+-(BOOL)isTableEmpty:(NSString*)tableName;
+
 // Location Ping
 - (void) createUserGPSTable;
 - (NSString *) getSettingValueWithName:(NSString *)settingName;
@@ -173,6 +178,7 @@ PopoverButtons *popOver_view;
 - (void) updateUserGPSLocation;
 - (void) deleteRecordFromUserGPSTable:(NSString *) localId;
 -(NSString*) getLoggedInUser:(NSString *)username;
+-(NSString*)getReferencetoFiledForObject:(NSString*)objectName api_Name:(NSString*)api_name;
 
 //DataSync Methods
 - (void) insertDataInToTables:(NSMutableArray *)fieldValueArray;
@@ -307,11 +313,13 @@ PopoverButtons *popOver_view;
 
 
 //Conflicts for event
-- (BOOL) checkIfConflictsExistsForEvent:(NSString *)SF_Id objectName:(NSString *)objectName;
+- (BOOL) checkIfConflictsExistsForEvent:(NSString *)SF_Id objectName:(NSString *)objectName local_id:(NSString *)local_id;
 - (BOOL) checkIfChildConflictexist:(NSString *)objectName sfId:(NSString *)SF_Id;
 - (NSString *) getChildColumnForParent:(NSString *)objectName;
 - (NSString *) getchildSfIdOrLocalId:(NSString *)tablename Id:(NSString *)Id  parentColumn:(NSString *)parentColumn  Key:(NSString *)key;
 - (BOOL) checkIfConflictsExistsForEventWithLocalId:(NSString *)local_id objectName:(NSString *)objectName;
 - (NSMutableString *) getAllTheConflictRecordsForObject:(NSString *)ObjectName local_id:(NSString *)local_id;
+- (BOOL) checkIfConflictsExistsForEventWithSFID:(NSString *)sfid objectName:(NSString *)objectName;
+-(BOOL)isTabelExistInDB:(NSString*)tableName;
 
 @end

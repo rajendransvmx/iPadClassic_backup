@@ -29,7 +29,23 @@
     BOOL _viewMode;
     
     BOOL conflictExists;
+    int total_progress;
+    int Total_calls;
+    NSTimer *initial_sync_timer;
+    int temp_percentage;
+
 }
+
+@property (retain, nonatomic) IBOutlet UIView *progressView;
+@property (retain, nonatomic) IBOutlet UILabel *progressTitle;
+@property (retain, nonatomic) IBOutlet UILabel *display_percentage;
+@property (retain, nonatomic) IBOutlet UILabel *download_desc_label;
+@property (retain, nonatomic) IBOutlet UILabel *description_label;
+@property (retain, nonatomic) IBOutlet UIProgressView *ProgressBar;
+@property (retain, nonatomic) IBOutlet UIView *ProgressBarViewController;
+
+@property (retain, nonatomic) IBOutlet UIView *titleBackground;
+
 
 @property (nonatomic , assign) BOOL conflictExists;
 
@@ -43,6 +59,7 @@
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil mode:(BOOL)viewMode;
 
+-(void)fillNumberOfStepsCompletedLabel;
 @end
 
 @protocol SFMPageDelegate

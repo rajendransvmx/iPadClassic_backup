@@ -25,6 +25,8 @@
 <UISplitViewControllerDelegate,
 SelectProcessControllerDelegate>
 {
+    UILabel * timeStamp ;
+    UILabel * lastModifiedTime;
     id<RootViewControllerDelegate> delegate;
     iServiceAppDelegate * appDelegate;
     BOOL didLogin;
@@ -58,6 +60,7 @@ SelectProcessControllerDelegate>
 
 - (void) refreshTable;
 - (void) displaySwitchViews;
+- (void) showLastModifiedTimeForSFMRecord;
 
 @end
 

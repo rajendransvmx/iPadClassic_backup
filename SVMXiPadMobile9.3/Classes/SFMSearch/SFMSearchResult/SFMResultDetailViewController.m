@@ -65,9 +65,12 @@ enum  {
     [self createTable];
     
 }
--(void) LoadResultDetailViewController
+-(void) LoadResultDetailViewController:(BOOL)isondemand
 {
     [self initilizeToolBar];
+    if(isondemand)
+    [masterView performSelector:@selector(refineSearch:)withObject:nil afterDelay:0.01];
+    
 }
 -(void) viewDidAppear:(BOOL)animated
 {
@@ -269,7 +272,9 @@ enum  {
     {
         SMLog(@"Array Count = %d",[cellArray count]);
         NSString *sfId = [[cellArray objectAtIndex:indexPath.row] objectForKey:@"Id"];
-        conflict=[appDelegate.dataBase checkIfConflictsExistsForEvent:sfId objectName:objname];
+		NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:sfId tableName:objname];
+		
+        conflict=[appDelegate.dataBase checkIfConflictsExistsForEvent:sfId objectName:objname local_id:local_id];
 //        if (!conflict)
 //        {
 //            conflict = [appDelegate.dataBase checkIfChildConflictexist:[[cellArray objectAtIndex:indexPath.section] objectForKey:@"Id"] 
@@ -405,6 +410,7 @@ enum  {
                 [backgroundView addSubview:labelForObjects];
                 [labelForObjects release];
             }
+             [backgroundView addSubview:button];
         }
         else 
         {
@@ -494,13 +500,53 @@ enum  {
                 [labelForObjects release];
             }
             
+            NSArray * allkeys = [mDict allKeys];
+            NSString * sf_id = @"";
+            for(NSString * str in allkeys)
+            {
+                if([str isEqualToString:@"Id"])
+                {
+                    sf_id = [mDict objectForKey:@"Id"];
+                    break;
+                }
+            }
+            
             // Online Image Indicator
             UIImage *onlineImage = [UIImage imageNamed:@"OnlineRecord.png"];
-            UIImageView *onlineImgView  = [[[UIImageView alloc] initWithImage:onlineImage] autorelease];
+            UIImageView *onlineImgView = [[[UIImageView alloc] initWithImage:onlineImage] autorelease];
             [onlineImgView setFrame:CGRectMake(0, 2,10, TableViewResultViewCellHeight-4)];
-            [backgroundView addSubview:onlineImgView];
-            [button setBackgroundImage:nil forState:UIControlStateNormal];
+            [backgroundView addSubview:onlineImgView];            
+            BOOL tabel_Exists=[appDelegate.dataBase isTabelExistInDB:@"on_demand_download"];
+            BOOL isparent=[appDelegate.dataBase isHeaderRecord:objname];
+            BOOL recordExists = [appDelegate.dataBase checkForDuplicateId:objname sfId:sf_id];
+            if(tabel_Exists && isparent && recordExists)
+            {
+                UIImage * image1 = [UIImage imageNamed:@"download.png"];
+                UIControl *control = [[UIControl alloc] initWithFrame:CGRectMake(tableView.frame.size.width-103, 7, 20, 21)];
+                control.backgroundColor = [UIColor clearColor];
+                control.tag = indexPath.section;
+                control.layer.contents = (id)image1.CGImage;
+                [control addTarget:self action:@selector(onDemandDataFecthing:) forControlEvents:UIControlEventTouchUpInside];
+                [backgroundView addSubview:control];
+                [control release];
+            }
+            else if(processAvailbleForRecord)
+            {
+                
+                UIImage * image1 = [UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"];
+                UIControl *control = [[UIControl alloc] initWithFrame:CGRectMake(tableView.frame.size.width-103, 7, 20, 21)];
+                control.backgroundColor = [UIColor clearColor];
+                control.tag = indexPath.section;
+                control.layer.contents = (id)image1.CGImage;
+                [control addTarget:self action:@selector(onDemandDataFecthing:) forControlEvents:UIControlEventTouchUpInside];
+                [backgroundView addSubview:control];
+                [control release];
+              
+            }
+             
+         
         }
+
     }
     else 
     {
@@ -600,17 +646,19 @@ enum  {
         }
         else
         {
-
             [button setBackgroundImage:nil forState:UIControlStateNormal];
-            
         }
+           
+        [backgroundView addSubview:button];
     }
-    [backgroundView addSubview:button];
+
+   // [backgroundView addSubview:button];
     [cell.contentView addSubview:backgroundView];
     cell.backgroundColor = [UIColor clearColor];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     return cell;
 }
+
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return TableViewResultViewCellHeight;
@@ -691,6 +739,7 @@ enum  {
             int onlineIndex =  indexPath.row - [cellArray count];
             NSDictionary *rowData = [[onlineDataDict objectForKey:objectId] objectAtIndex:onlineIndex];
             fullDataDict = rowData;
+            resultController.objectName = objectName;
             resultController.isOnlineRecord = YES;
         }
     }
@@ -699,7 +748,6 @@ enum  {
         fullDataDict = [cellArray objectAtIndex:indexPath.row];
         resultController.isOnlineRecord = NO;
         resultController.objectName = objectName;
-//        SMLog(@"Data = %@",fullDataDict);
     }
     
      resultController.modalPresentationStyle = UIModalPresentationFormSheet;
@@ -962,6 +1010,187 @@ enum  {
     }
     return NO;
 }
+- (void) enableSFMUI
+{
+    [self.masterView.view setUserInteractionEnabled:YES];
+    self.navigationItem.leftBarButtonItem.enabled=TRUE;
+    self.navigationItem.rightBarButtonItem.enabled=TRUE;
+    [self.view setUserInteractionEnabled:YES];
+    [[super view] setUserInteractionEnabled:YES];
+}
+- (void) disableSFMUI
+{
+    [self.masterView.view setUserInteractionEnabled:NO];
+    self.navigationItem.leftBarButtonItem.enabled=FALSE;
+    self.navigationItem.rightBarButtonItem.enabled=FALSE;
+    [self.view setUserInteractionEnabled:NO];
+    [[super view] setUserInteractionEnabled:NO];
+}
+- (void) onDemandDataFecthing:(id)sender
+{
+    
+    if(!appDelegate.isInternetConnectionAvailable)
+    {
+         appDelegate.shouldShowConnectivityStatus = TRUE;
+        [appDelegate displayNoInternetAvailable];
+        return;
+    }
+
+    UITableViewCell *ownerCell = (UITableViewCell*)[[[sender superview] superview] superview];
+    NSIndexPath *ownerCellIndexPath;
+    if (ownerCell != nil)
+    {
+        /* Now we will retrieve the index path of the cell which contains the section and the row of the cell */
+        ownerCellIndexPath = [self.detailTable indexPathForCell:ownerCell];
+    }
+    if(lastSelectedIndexPath != nil)
+    {
+        UITableViewCell *lastSelectedCell = [detailTable cellForRowAtIndexPath:lastSelectedIndexPath];
+        UIImageView *bgView = (UIImageView *)[lastSelectedCell viewWithTag:backgroundImage];
+        [bgView setImage:[UIImage imageNamed:@"SFM-Screen-Table-Strip.png"]];
+        // change the textcolor of lastindex
+        UILabel *txtFieldLabel1 = (UILabel *)[lastSelectedCell viewWithTag:textLabel1];
+        UILabel *txtFieldLabel2 = (UILabel *)[lastSelectedCell viewWithTag:textLabel2];
+        UILabel *txtFieldLabel3 = (UILabel *)[lastSelectedCell viewWithTag:textLabel3];
+        
+        [txtFieldLabel1 setTextColor:[appDelegate colorForHex:@"2d5d83"]];
+        [txtFieldLabel2 setTextColor:[appDelegate colorForHex:@"2d5d83"]];
+        [txtFieldLabel3 setTextColor:[appDelegate colorForHex:@"2d5d83"]];
+    }
+    lastSelectedIndexPath = [ownerCellIndexPath retain];
+    
+    UIImageView *bgView = (UIImageView *)[ownerCell viewWithTag:backgroundImage];
+    [bgView setImage:[UIImage imageNamed:@"SFM-Screen-Table-Strip-Selected.png"]];
+    NSArray *cellArray = [[tableDataArray objectAtIndex:ownerCellIndexPath.section] objectForKey:@"Values"];
+    NSString *objectName = [[tableDataArray objectAtIndex:ownerCellIndexPath.section] objectForKey:@"ObjectName"];    
+    NSDictionary *sectionDict = [tableDataArray objectAtIndex:ownerCellIndexPath.section];
+    NSString *sectionObjectId = [sectionDict objectForKey:@"ObjectId"];
+    NSMutableArray *onlineDataArray = [onlineDataDict objectForKey:sectionObjectId]; 
+    NSDictionary *mDict = [onlineDataArray  objectAtIndex:(ownerCellIndexPath.row - [cellArray count])];
+    NSString * recordId = @"";
+    if([mDict count ]> 0)
+    {
+        recordId = [mDict objectForKey:@"Id"];
+    }
+    
+    NSString * object_api_name = [appDelegate.dataBase getApiNameFromFieldLabel:objectName];
+    
+     BOOL recordExists = [appDelegate.dataBase checkForDuplicateId:object_api_name sfId:recordId];
+    if(recordExists)
+    {
+        [self disableSFMUI];
+        [splitViewDelegate presentProgressBar:object_api_name sf_id:recordId reocrd_name:objectName];
+        [masterView performSelector:@selector(refineSearch:)withObject:nil afterDelay:0.01];
+        [self enableSFMUI];
+    }
+    else{
+        appDelegate.sfmPageController = [[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE];
+        
+        sqlite3_stmt * labelstmt;
+        NSMutableString * queryStatement1 = [[NSMutableString alloc]initWithCapacity:0];
+        queryStatement1 = [NSMutableString stringWithFormat:@"Select local_id FROM '%@' where Id = '%@'",object_api_name,recordId];
+        if(appDelegate.sfmPageController)
+            [appDelegate.sfmPageController release];
+        const char *selectStatement = [queryStatement1 UTF8String];
+        char *field1=nil; 
+        NSString *localId = @"";
+        
+        if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &labelstmt, nil) == SQLITE_OK )
+        {
+            if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
+            {
+                field1 = (char *) synchronized_sqlite3_column_text(labelstmt,0);
+                if(field1)
+                    localId = [NSString stringWithFormat:@"%s", field1];
+                else
+                    localId = @"";
+            }
+        }
+        
+        NSString * queryStatement2 = [NSMutableString stringWithFormat:@"Select process_id FROM SFProcess where process_type = 'VIEWRECORD' and object_api_name = '%@'",object_api_name];
+        sqlite3_stmt * labelstmt2;
+        const char *selectStatement2 = [queryStatement2 UTF8String];
+        
+        NSString *processId = @"";
+        
+        if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement2,-1, &labelstmt2, nil) == SQLITE_OK )
+        {
+            if(synchronized_sqlite3_step(labelstmt2) == SQLITE_ROW)
+            {
+                field1 = (char *) synchronized_sqlite3_column_text(labelstmt2,0);
+                //            SMLog(@"%s",field1);
+                if(field1)
+                    processId = [NSString stringWithFormat:@"%s", field1];
+                else
+                    processId = @"";
+            }
+        }
+        appDelegate.sfmPageController.conflictExists = FALSE;
+        appDelegate.sfmPageController.processId = processId;
+        appDelegate.From_SFM_Search=FROM_SFM_SEARCH;
+        
+        NSString * sfid = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:objectName local_id:localId];
+        
+        conflict = [appDelegate.dataBase checkIfConflictsExistsForEvent:sfid objectName:objectName local_id:localId];
+        
+        //    if (!conflict)
+        //    {
+        //        conflict = [appDelegate.dataBase checkIfChildConflictexist:sfid sfId:objectName];
+        //    }
+        
+        appDelegate.sfmPageController.objectName = [NSString stringWithFormat:@"%@",objectName];
+        appDelegate.sfmPageController.topLevelId = nil;
+        appDelegate.sfmPageController.recordId = localId;
+        
+        appDelegate.sfmPageController.conflictExists = conflict;
+        
+        //[appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
+        [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
+        [self presentModalViewController:appDelegate.sfmPageController animated:YES];
+        [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];
+        [appDelegate.sfmPageController release];
+        synchronized_sqlite3_finalize(labelstmt);
+        synchronized_sqlite3_finalize(labelstmt2);
+
+    }
+    
+    
+
+}
+//- (void) presentProgressbarForFulview
+//{
+////    UITableViewCell *ownerCell =lastSelectedIndexPath;
+////    if (ownerCell != nil)
+////    {
+////        /* Now we will retrieve the index path of the cell which contains the section and the row of the cell */
+////        ownerCellIndexPath = [self.detailTable indexPathForCell:ownerCell];
+////    }
+//    
+//    NSArray *cellArray = [[tableDataArray objectAtIndex:lastSelectedIndexPath.section] objectForKey:@"Values"];
+//    //  NSString *recordId = [[tableDataArray objectAtIndex:ownerCellIndexPath.section] objectForKey:@"ObjectId"];
+//    //NSArray *headerArray =[[tableDataArray objectAtIndex:ownerCellIndexPath.section] objectForKey:@"TableHeader"];
+//    NSString *objectName = [[tableDataArray objectAtIndex:lastSelectedIndexPath.section] objectForKey:@"ObjectName"];
+//    
+//    NSDictionary *sectionDict = [tableDataArray objectAtIndex:lastSelectedIndexPath.section];
+//    NSString *sectionObjectId = [sectionDict objectForKey:@"ObjectId"];
+//    NSMutableArray *onlineDataArray = [onlineDataDict objectForKey:sectionObjectId];
+//    NSDictionary *mDict = [onlineDataArray  objectAtIndex:(lastSelectedIndexPath.row - [cellArray count])];
+//    NSString * recordId = @"";
+//    if([mDict count ]> 0)
+//    {
+//        recordId = [mDict objectForKey:@"Id"];
+//    }
+//    
+//    //
+//    NSString * object_api_name = [appDelegate.dataBase getApiNameFromFieldLabel:objectName];
+//    [self disableSFMUI];
+//    
+//    [splitViewDelegate presentProgressBar:object_api_name sf_id:recordId reocrd_name:objectName];
+//    [masterView performSelector:@selector(refineSearch:)withObject:nil afterDelay:0.1];
+//    [self enableSFMUI];
+//    
+//}
+
 - (void) accessoryButtonTapped:(id)sender
 {
     UITableViewCell *ownerCell = (UITableViewCell*)[[[sender superview] superview] superview];
@@ -1044,7 +1273,7 @@ enum  {
     
     NSString * sfid = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:objectName local_id:localId];
     
-    conflict = [appDelegate.dataBase checkIfConflictsExistsForEvent:sfid objectName:objectName];
+    conflict = [appDelegate.dataBase checkIfConflictsExistsForEvent:sfid objectName:objectName local_id:localId];
     
 //    if (!conflict)
 //    {

@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "SFMFullResultViewController.h"
 #import "LabelPOContentView.h"
+#import <QuartzCore/QuartzCore.h>
+
 @class SFMResultMasterViewController;
 @class SFMResultMainViewController;
 @class iServiceAppDelegate;
@@ -16,6 +18,8 @@
 @protocol SFMResultDetailViewControllerDelegate
 @optional
 - (void) DismissSplitViewController;
+-(void)presentProgressBar:(NSString *)object_name sf_id:(NSString *)sf_id reocrd_name:(NSString *)record_name;
+-(void)dismissProgressBar;
 @end
 
 @interface SFMResultDetailViewController : UIViewController <UITableViewDataSource,UITableViewDelegate,SFMFullResultViewControllerDelegate,UIPopoverControllerDelegate>
@@ -44,10 +48,15 @@
 - (void) showObjects:(NSArray *)tableData forAllObjects:(BOOL) makeOnlineSearch;
 - (void) updateResultArray:(int) index;
 - (void) accessoryButtonTapped:(id)sender;
+- (void) onDemandDataFecthing:(id)sender;
 - (int) getTagForRow:(int) row;
 - (BOOL) isRecordPresentInOfflineResults:(NSArray *) offlineRecords record:(NSString *) onlineRecordId;
 - (NSArray *) getOfflineRecordsForObjectID:(NSString *) objectID;
 - (NSMutableArray *)getResultsForObject:(NSString *)object withConfigData:(NSDictionary *)dataForObject;
 - (NSArray *) constructTableHeader : (NSArray *)data;
 -(void) initilizeToolBar;
+- (void) disableSFMUI;
+- (void) enableSFMUI;
+//- (void) presentProgressbarForFulview;
+
 @end

@@ -122,7 +122,8 @@
 @property (nonatomic, retain) IBOutlet UIActivityIndicatorView * activity;
 
 
-//sahana 
+//sahana
+-(void)scheduleLocationPing;
 -(void)autologin;
 -(void) doinitialSettings;
 -(NSString *)getUSerInfoForKey:(NSString *)key;

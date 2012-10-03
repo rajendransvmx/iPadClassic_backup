@@ -41,6 +41,15 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+	
+	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+	if (userDefaults)
+	{
+		appDelegate.currentUserName = [userDefaults objectForKey:@"UserFullName"];
+		appDelegate.loggedInOrg = [userDefaults objectForKey:@"loggedInOrg"];
+	}
+	
+
     userNameLabel.text = appDelegate.currentUserName;
     userLoginLabel.text = appDelegate.username;
     NSString * version = [appDelegate.wsInterface.tagsDictionary objectForKey:ABOUT_VERSION_TITLE];

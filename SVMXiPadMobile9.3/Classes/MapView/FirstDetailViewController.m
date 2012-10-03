@@ -1024,7 +1024,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     SMLog(@"%@", woEndTiming);
     
     //radha
-    NSString * colorCode = [appDelegate.calDataBase getColorCodeForPriority:[dict objectForKey:WHATID]];
+    NSString * colorCode = [appDelegate.calDataBase getColorCodeForPriority:[dict objectForKey:WHATID] objectname:([dict objectForKey:OBJECTAPINAME] != nil)?[dict objectForKey:OBJECTAPINAME]:@""];
     UIColor * color = [appDelegate colorForHex:colorCode];
     
     // DURATION

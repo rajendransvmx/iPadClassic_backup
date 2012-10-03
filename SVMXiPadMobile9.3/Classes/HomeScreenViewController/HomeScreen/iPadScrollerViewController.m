@@ -208,9 +208,12 @@ const NSUInteger kNumImages = 7;
             {
                 NSString * iWhatId = [[appDelegate.workOrderEventArray objectAtIndex:i] objectForKey:WHATID];
                 NSString * jWhatId = [[appDelegate.workOrderEventArray objectAtIndex:j] objectForKey:WHATID];
+				
+				NSString * iObjectName = [[appDelegate.workOrderEventArray objectAtIndex:i] objectForKey:OBJECTAPINAME];
+				NSString * jObjectname = [[appDelegate.workOrderEventArray objectAtIndex:j] objectForKey:OBJECTAPINAME];
                 
-                NSString * iPriority = [appDelegate.calDataBase getPriorityForWhatId:iWhatId];
-                NSString * jPriority = [appDelegate.calDataBase getPriorityForWhatId:jWhatId];
+                NSString * iPriority = [appDelegate.calDataBase getPriorityForWhatId:iWhatId objectname:iObjectName];
+                NSString * jPriority = [appDelegate.calDataBase getPriorityForWhatId:jWhatId objectname:jObjectname];
                 
                 if ([iPriority isEqualToString:@"High"] && ([jPriority isEqualToString:@"Medium"]||[jPriority isEqualToString:@"Low"]))
                 {
@@ -402,6 +405,8 @@ const NSUInteger kNumImages = 7;
             titleBackground.layer.cornerRadius=5;
             progressBar.progress = 0.0;
             total_progress = 0.0;
+			display_pecentage.text = @"0%";
+			
             if(initial_sync_timer == nil)
                 initial_sync_timer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(updateProgressBar:) userInfo:nil repeats:YES];
             
@@ -1522,8 +1527,11 @@ const float progress_ = 0.07;
     
     appDelegate.Incremental_sync_status = INCR_STARTS;
     
+    NSAutoreleasePool * tx_fetch_pool = [[NSAutoreleasePool alloc] init];
     
     [appDelegate.wsInterface PutAllTheRecordsForIds];
+    
+    [tx_fetch_pool drain];
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         if (appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED)

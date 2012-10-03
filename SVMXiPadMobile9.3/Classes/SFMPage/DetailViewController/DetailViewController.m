@@ -286,7 +286,7 @@ extern void SVMXLog(NSString *format, ...);
     summary = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_ACTIONPOPOVER_LIST_3];
     troubleShooting = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_TROUBLESHOOTING];
     chatter = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_ACTIONPOPOVER_LIST_1];
-
+    dod_title = [appDelegate.wsInterface.tagsDictionary objectForKey:Refresh_from_SalesForce];
     
     UIImageView * bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_right_panel_bg_main_top.png"]];
     bgImage.frame = CGRectMake(0, -12, bgImage.frame.size.width, bgImage.frame.size.height+12);
@@ -2150,6 +2150,14 @@ extern void SVMXLog(NSString *format, ...);
     objects_event = [NSArray arrayWithObjects:@"",troubleShooting,@"",@"",gBUTTON_TYPE_TDM_IPAD_ONLY ,@"",@"true",nil];
     keys_event = [NSArray arrayWithObjects:SFW_ACTION_ID,SFW_ACTION_DESCRIPTION,SFW_EXPRESSION_ID,SFW_PROCESS_ID,SFW_ACTION_TYPE ,SFW_WIZARD_ID,SFW_ENABLE_ACTION_BUTTON,nil]; 
     NSMutableDictionary * dict_events_troubleShooting = [NSMutableDictionary dictionaryWithObjects:objects_event forKeys:keys_event];
+	
+	//New Wizard buttons fro refreshing the record.
+    
+   
+	objects_event = [NSArray arrayWithObjects:@"",dod_title,@"",@"",gBUTTON_TYPE_TDM_IPAD_ONLY ,@"",@"true",nil];
+    keys_event = [NSArray arrayWithObjects:SFW_ACTION_ID,SFW_ACTION_DESCRIPTION,SFW_EXPRESSION_ID,SFW_PROCESS_ID,SFW_ACTION_TYPE ,SFW_WIZARD_ID,SFW_ENABLE_ACTION_BUTTON,nil];
+    NSMutableDictionary * dict_refresh_record = [NSMutableDictionary dictionaryWithObjects:objects_event forKeys:keys_event];
+
     
     objects_event = [NSArray arrayWithObjects:@"",quick_save,@"",@"",gBUTTON_TYPE_TDM_IPAD_ONLY ,@"",@"true",nil];
     keys_event = [NSArray arrayWithObjects:SFW_ACTION_ID,SFW_ACTION_DESCRIPTION,SFW_EXPRESSION_ID,SFW_PROCESS_ID,SFW_ACTION_TYPE ,SFW_WIZARD_ID,SFW_ENABLE_ACTION_BUTTON,nil]; 
@@ -2204,10 +2212,16 @@ extern void SVMXLog(NSString *format, ...);
             {
                 [ipad_only_array addObject:dict_events_summury];
             }
-            
+          
+        }
+    
+        BOOL check_On_demand = [appDelegate.databaseInterface checkOndemandRecord:currentRecordId];
+        if(check_On_demand)
+        {
+            [ipad_only_array addObject:dict_refresh_record];
         }
     }
-    if ([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"EDIT"] || [[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"SOURCETOTARGETONLYCHILDROWS"]) 
+    if ([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"EDIT"] || [[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"SOURCETOTARGETONLYCHILDROWS"])
     {
         //[buttonsArray_offline  addObject:];
         appDelegate.wsInterface.refreshSyncButton = self;
@@ -3646,6 +3660,7 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     [appDelegate.sfmPageController.rootView displaySwitchViews];
+    [appDelegate.sfmPageController.rootView showLastModifiedTimeForSFMRecord];
     [self enableSFMUI];
 
 }
@@ -9400,6 +9415,9 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) enableSFMUI
 {
+    self.navigationItem.leftBarButtonItem.enabled = TRUE;
+    rootViewController.navigationItem.leftBarButtonItem.enabled=TRUE;
+    self.navigationItem.rightBarButtonItem.enabled = TRUE;
     [rootViewController.view setUserInteractionEnabled:YES];
     [self.view setUserInteractionEnabled:YES];
     [[super view] setUserInteractionEnabled:YES];
@@ -9407,9 +9425,13 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) disableSFMUI
 {
+    self.navigationItem.leftBarButtonItem.enabled = FALSE;
+    self.navigationItem.rightBarButtonItem.enabled = FALSE;
+    rootViewController.navigationItem.leftBarButtonItem.enabled=FALSE;
     [rootViewController.view setUserInteractionEnabled:NO];
     [self.view setUserInteractionEnabled:NO];
     [[super view] setUserInteractionEnabled:NO];
+    
 }
 
 -(void)offlineActions:(NSDictionary *)buttonDict
@@ -9436,6 +9458,30 @@ extern void SVMXLog(NSString *format, ...);
                 [self startSummaryDataFetch];
                 appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
                 appDelegate.isDetailActive = NO;
+            }
+            else if([targetCall isEqualToString:dod_title])
+            {
+                
+                if(!appDelegate.isInternetConnectionAvailable)
+                {
+                    [self enableSFMUI];
+                    appDelegate.shouldShowConnectivityStatus = TRUE;
+                    [appDelegate displayNoInternetAvailable];
+                    return;
+                }
+                
+                NSString * obejct_name = [appDelegate.dataBase  getFieldLabelForApiName:appDelegate.sfmPageController.objectName];
+                [self disableSFMUI];
+                
+                NSString * sf_id = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:appDelegate.sfmPageController.objectName local_id:appDelegate.sfmPageController.recordId];
+                [delegate presentProgressBar:appDelegate.sfmPageController.objectName sf_id:sf_id reocrd_name:obejct_name];
+                [self enableSFMUI];
+                [self fillSFMdictForOfflineforProcess:appDelegate.sfmPageController.processId   forRecord:appDelegate.sfmPageController.recordId];
+                [self didReceivePageLayoutOffline];
+                [self.tableView reloadData];
+                [appDelegate.sfmPageController.rootView refreshTable];
+               
+                
             }
             else if ([targetCall isEqualToString:troubleShooting])
             {
@@ -12207,7 +12253,7 @@ extern void SVMXLog(NSString *format, ...);
     [UIView setAnimationDuration:0.3];
     [UIView setAnimationDelegate:self];
     [UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:context:)];
-    self.webView.frame = CGRectMake(0, 0, self.view.frame.size.width, 100);
+    self.webView.frame = CGRectMake(0, 0, 700, 100);
     self.webView.alpha = 1.0;
    // self.webView.backgroundColor = [UIColor redColor];
     

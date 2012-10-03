@@ -103,6 +103,8 @@
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     appDelegate.sfmPageController = [[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE];
     
+	appDelegate.sfmPageController.conflictExists = TRUE;
+	appDelegate.From_SFM_Search = @"";
     appDelegate.sfmPageController.processId = processId;
     appDelegate.sfmPageController.recordId = recordId;
     appDelegate.sfmPageController.objectName = [NSString stringWithFormat:@"%@",objectName];

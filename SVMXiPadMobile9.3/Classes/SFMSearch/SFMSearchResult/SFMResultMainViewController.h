@@ -14,7 +14,21 @@
 @interface SFMResultMainViewController : UIViewController<UISplitViewControllerDelegate,SFMResultDetailViewControllerDelegate>
 {
     iServiceAppDelegate * appDelegate;
+    int total_progress;
+    int Total_calls;
+    NSTimer *initial_sync_timer;
+    int temp_percentage;
 }
+@property (retain, nonatomic) IBOutlet UIView *progressView;
+@property (retain, nonatomic) IBOutlet UILabel *progressTitle;
+@property (retain, nonatomic) IBOutlet UILabel *display_percentage;
+@property (retain, nonatomic) IBOutlet UILabel *download_desc_label;
+@property (retain, nonatomic) IBOutlet UILabel *description_label;
+@property (retain, nonatomic) IBOutlet UIProgressView *ProgressBar;
+@property (retain, nonatomic) IBOutlet UIView *ProgressBarViewController;
+
+@property (retain, nonatomic) IBOutlet UIView *titleBackground;
+
 @property (nonatomic, retain) NSString *filterString;
 @property (nonatomic, retain) NSString *searchCriteriaString;
 @property (nonatomic, retain) NSString *searchCriteriaLimitString;
@@ -25,4 +39,6 @@
 @property (nonatomic, retain) SFMResultDetailViewController *resultdetailView;
 @property (nonatomic, retain) NSArray *masterTableData;
 @property (nonatomic, assign) BOOL switchStatus;
+-(void)ShowProgressBar;
+-(void)fillNumberOfStepsCompletedLabel;
 @end

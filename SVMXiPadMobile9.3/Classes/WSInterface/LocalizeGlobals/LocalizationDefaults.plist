@@ -4,6 +4,20 @@
 <dict>
 	<key>ALERT_FILL_REQUIRED_FIELD</key>
 	<string>Please fill the required fields</string>
+	<key>IPAD018_TAG045</key>
+	<string>Connecting to Salesforce...</string>
+	<key>IPAD018_TAG046</key>
+	<string>Retrieving data from Salesforce...</string>
+	<key>IPAD018_TAG047</key>
+	<string>Saving data for offline use....</string>
+	<key>IPAD018_TAG048</key>
+	<string>Data On Demand (DOD): Preparing for DOD download</string>
+	<key>IPAD018_TAG049</key>
+	<string>Downloading</string>
+	<key>IPAD018_TAG050</key>
+	<string>Last Updated On:</string>
+	<key>IPAD018_TAG051</key>
+	<string>Refresh from Salesforce</string>
 	<key>CANCEL_BUTTON</key>
 	<string>Cancel</string>
 	<key>IPAD004_TAG001</key>

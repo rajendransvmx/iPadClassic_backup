@@ -22,6 +22,10 @@
 
 @property (nonatomic, retain) id MyPopoverDelegate;
 
+-(void)updateChildParentColumnNameForParentObject:(NSString *)master_object masterLocalId:(NSString *)masterLocal_id child_info:(NSMutableDictionary *)child_info;
+-(void)insertOndemandRecords:(NSMutableDictionary *)record_dict;
+-(void)insertrecordintoOnDemandTableForId:(NSString *)sf_id recordType:(NSString *)RecordType local_id:(NSString *)local_id json_record:(NSString *)json_record object_name:(NSString *)object_name;
+
 //sahana 15th sep
 -(void)updatedataTrailerTAbleForLocal_id:(NSString *)local_id  sf_id:(NSString *)sf_id;
 
@@ -222,11 +226,23 @@
 -(NSMutableDictionary *)getAllFieldsAndItsDataTypesForObject:(NSString *)object_api_name tableName:(NSString *)tableName;
 
  //sahana 16th June 2012
--(NSString *)getRefernceToFieldnameForObjct:(NSString *) object_name reference_table:(NSString *)reference_table table_name:(NSString *)table_name;
+-(NSString *) getRefernceToFieldnameForObjct:(NSString *) object_name reference_table:(NSString *)reference_table table_name:(NSString *)table_name;
 //sahana
--(NSArray *)getAllObjectsFromHeap;
+-(NSArray *) getAllObjectsFromHeap;
 
--(BOOL)ContinueIncrementalDataSync;
+- (BOOL) ContinueIncrementalDataSync;
+//On Demand Data
+- (BOOL) checkOndemandRecord:(NSString *)local_id;
+- (void) deleteAllOndemandRecordsPartOfDownloadCriteriaForSfId:(NSString *)sync_type;
+- (NSArray *) getAllIdsFromDatabaseForSyncType:(NSString *)sync_type;
+- (void) updateOndemandRecordForId:(NSString *)record_id;
+- (NSString *) getTimeLastModifiedTimeOfTheRecordForRecordId:(NSString *)record_id;
+-(NSDictionary *)getAllChildRelationShipForObject:(NSString *)object_name;
+-(BOOL)isSFObject:(NSString*)objectName;
+
+
+//Update null vaue
+- (NSMutableDictionary *) updateEmptyFieldValuesForDict:(NSDictionary *)dict objectName:(NSString *)objectName;
 
 #define SERVER_OVERRIDE                     @"Server_Override"
 #define CLIENT_OVERRIDE                     @"Client_Override"

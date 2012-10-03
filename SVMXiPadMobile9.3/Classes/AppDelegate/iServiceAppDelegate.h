@@ -38,11 +38,27 @@
 
 BOOL didSessionResume;
 
+typedef enum DOD_STATUS{
+    CONNECTING_TO_SALESFORCE = 0,
+    RETRIEVING_DATA = 1,
+    SAVING_DATA = 2,
+    
+}DOD_STATUS;
+
+typedef enum DOD_REQUEST_RESPONSE_STATUS
+{
+    DOD_REQUEST_SENT = 0,
+    DOD_RESPONSE_RECIEVED = 1 
+    
+}DOD_REQUEST_RESPONSE_STATUS;
+
 typedef enum SYNC_STATUS {
     SYNC_GREEN = 0,
     SYNC_ORANGE = 1,
     SYNC_RED = 2
     } SYNC_STATUS;
+
+
 typedef enum  INCREMENTAL_SYNC{
     INCR_STARTS     = 0, 
     PUT_INSERT_DONE = 1,
@@ -169,7 +185,6 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     NSMutableDictionary * allpagelevelEventsWithTimestamp;
 	///can remove
     id <ReloadSyncTable> reloadTable;
-
 	NSString * current_userId; 
     BOOL connection_error;
     BOOL download_tags_done;
@@ -191,6 +206,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     SYNC_STATUS _SyncStatus;
     NSTimer * datasync_timer;
     INCREMENTAL_SYNC  Incremental_sync_status ;
+    DOD_STATUS dod_status;
+    DOD_REQUEST_RESPONSE_STATUS dod_req_response_ststus;
     DATASYNC_CHUNCKING data_sync_chunking;
     DO_INITIAL_META_DATA_SYNC  do_meta_data_sync;
     ISLOGEDIN IsLogedIn;
@@ -449,10 +466,11 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     //internet alert for  incremental meta sync
     BOOL internetAlertFlag;
     
-    
     //Service Report
     NSMutableDictionary * serviceReportReference;
 }
+@property (nonatomic)  DOD_REQUEST_RESPONSE_STATUS dod_req_response_ststus;
+@property (nonatomic)  DOD_STATUS dod_status;
 @property (nonatomic , retain) NSMutableDictionary * allpagelevelEventsWithTimestamp;
 @property (nonatomic, retain) NSMutableDictionary * serviceReportReference;
 
@@ -700,6 +718,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 // get GUID 
 + (NSString *)GetUUID;
 
+-(void)invalidateAllTimers;
 -(NSMutableArray *) getWeekdates:(NSString *)date;
 
 -(void)initWithDBName:(NSString *)name type:(NSString *)type ;
@@ -737,6 +756,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 
 
 -(void) getCreateProcessArray:(NSMutableArray *)processes_array;
+
+//locationPing
+-(void)scheduleLocationPingTimer;
 
 
 //Radha - IncrementalMetasync

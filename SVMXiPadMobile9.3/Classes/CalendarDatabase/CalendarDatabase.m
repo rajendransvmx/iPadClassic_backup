@@ -344,9 +344,12 @@ extern void SVMXLog(NSString *format, ...);
             }
             
             BOOL retVal, retVal1;
-            retVal = [self isWorkOrder:whatId1];
+           // retVal = [self isWorkOrder:whatId1];
+			
+			retVal = [self isWorkOrderOrCase:whatId1 objectName:@"SVMXC__Service_Order__c"];
             
-            retVal1 = [self isCase:whatId1];
+            retVal1 = [self isWorkOrderOrCase:whatId1 objectName:@"Case"];
+			
             if ( retVal == YES && (whatId1 != @"" || whatId1 != nil) )
             {
                 NSString *subject1  = @"";
@@ -543,40 +546,73 @@ extern void SVMXLog(NSString *format, ...);
 }
 
 //Radha Changed Method
-- (BOOL) isWorkOrder:(NSString *)whatId
-{
-    NSString * str = @"";
-    if (![whatId isEqualToString:@""])
-        str = [whatId substringToIndex:3];
-    
-    NSString * query = [NSString stringWithFormat:@"SELECT api_name FROM SFObject WHERE key_prefix = '%@'", str];
-    
-    sqlite3_stmt * stmt;
-    NSString * objectName = @"";
-    
-    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, NULL) == SQLITE_OK)
-    {
-        if (synchronized_sqlite3_step(stmt) ==  SQLITE_ROW)
-        {
-            char * _api_name = (char *) synchronized_sqlite3_column_text(stmt, 0);
-            if ((_api_name != nil) && strlen(_api_name))
-                 objectName = [NSString stringWithUTF8String:_api_name];
-        }
-    }
-    
-    if ([objectName isEqualToString:@"SVMXC__Service_Order__c"])
-    {
-        objectApiName = objectName;
-        return YES;
-    }
-    synchronized_sqlite3_finalize(stmt);
-    return NO;
-        
-}
+//- (BOOL) isWorkOrder:(NSString *)whatId
+//{
+//    NSString * str = @"";
+//    if (![whatId isEqualToString:@""])
+//        str = [whatId substringToIndex:3];
+//    
+//    NSString * query = [NSString stringWithFormat:@"SELECT api_name FROM SFObject WHERE key_prefix = '%@'", str];
+//    
+//    sqlite3_stmt * stmt;
+//    NSString * objectName = @"";
+//    
+//    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+//    {
+//        if (synchronized_sqlite3_step(stmt) ==  SQLITE_ROW)
+//        {
+//            char * _api_name = (char *) synchronized_sqlite3_column_text(stmt, 0);
+//            if ((_api_name != nil) && strlen(_api_name))
+//                 objectName = [NSString stringWithUTF8String:_api_name];
+//        }
+//    }
+//    synchronized_sqlite3_finalize(stmt);
+//
+//    if ([objectName isEqualToString:@"SVMXC__Service_Order__c"])
+//    {
+//        objectApiName = objectName;
+//        return YES;
+//    }
+//        return NO;
+//        
+//}
+//
+//- (BOOL) isCase:(NSString *)whatId
+//{
+//    NSString * str = @"";
+//    if (![whatId isEqualToString:@""])
+//        str = [whatId substringToIndex:3];
+//    
+//    NSString * query = [NSString stringWithFormat:@"SELECT api_name FROM SFObject WHERE key_prefix = '%@'", str];
+//    
+//    sqlite3_stmt * stmt;
+//    NSString * objectName = @"";
+//    
+//    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+//    {
+//        if (synchronized_sqlite3_step(stmt) ==  SQLITE_ROW)
+//        {
+//            char * _api_name = (char *) synchronized_sqlite3_column_text(stmt, 0);
+//            if ((_api_name != nil) && strlen(_api_name))
+//                objectName = [NSString stringWithUTF8String:_api_name];
+//        }
+//    }
+//    
+//    if ([objectName isEqualToString:@"Case"])
+//    {
+//        objectApiName = objectName;
+//        return YES;
+//    }
+//    synchronized_sqlite3_finalize(stmt);
+//    return NO;
+//    
+//}
 
-- (BOOL) isCase:(NSString *)whatId
+
+//28/Sep/2012
+- (BOOL) isWorkOrderOrCase:(NSString *)whatId objectName:(NSString *)_ObjectName
 {
-    NSString * str = @"";
+	NSString * str = @"";
     if (![whatId isEqualToString:@""])
         str = [whatId substringToIndex:3];
     
@@ -594,15 +630,20 @@ extern void SVMXLog(NSString *format, ...);
                 objectName = [NSString stringWithUTF8String:_api_name];
         }
     }
-    
-    if ([objectName isEqualToString:@"Case"])
+    synchronized_sqlite3_finalize(stmt);
+    if ([objectName isEqualToString:@"SVMXC__Service_Order__c"])
     {
         objectApiName = objectName;
         return YES;
     }
-    synchronized_sqlite3_finalize(stmt);
-    return NO;
+	else if ([objectName isEqualToString:@"Case"])
+	{
+		objectApiName = objectName;
+        return YES;
+	}
     
+    return NO;
+
 }
 
 
@@ -612,16 +653,21 @@ extern void SVMXLog(NSString *format, ...);
 }
 
 
-- (NSString *)getColorCodeForPriority:(NSString *)whatId
+- (NSString *)getColorCodeForPriority:(NSString *)whatId objectname:(NSString *)objectName
 {
     BOOL retVal;
     sqlite3_stmt * colorStatement;
     NSString *priority  = @"";
-    retVal = [self isWorkOrder:whatId];
+ //   retVal = [self isWorkOrder:whatId];
+	retVal = [self  isWorkOrderOrCase:whatId objectName:objectName];
     if ( retVal == YES )
     {
         NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
-        queryStatement = [NSString stringWithFormat:@"SELECT SVMXC__Priority__c from SVMXC__Service_Order__c where Id = '%@'", whatId];
+		
+		if ([objectName isEqualToString:@"Case"])
+			 queryStatement = [NSString stringWithFormat:@"SELECT Priority from '%@' where Id = '%@'", objectName, whatId];
+		else
+			queryStatement = [NSString stringWithFormat:@"SELECT SVMXC__Priority__c from '%@' where Id = '%@'", objectName, whatId];
         const char * selectStatement = [queryStatement UTF8String];
         if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &colorStatement, nil) == SQLITE_OK )
         {
@@ -636,29 +682,38 @@ extern void SVMXLog(NSString *format, ...);
                 }
                 
             }
-        }                 
+        }  
+		
+		sqlite3_finalize(colorStatement);
+		
+		if ( [priority isEqualToString:@"High"])
+			return [appDelegate.settingsDict objectForKey:@"SET001"];
+		else if ( [priority isEqualToString:@"Medium"]) 
+			return  [appDelegate.settingsDict objectForKey:@"SET002"];
+		else if ( [priority isEqualToString:@"Low"]) 
+			return [appDelegate.settingsDict objectForKey:@"SET003"];
+		else
+			return [appDelegate.settingsDict objectForKey:@"SET004"];
     }    
-    if ( [priority isEqualToString:@"High"])
-        return @"#F75D59";
-    else if ( [priority isEqualToString:@"Medium"]) 
-        return @"#ADDFFF";
-    else if ( [priority isEqualToString:@"Low"]) 
-        return @"#C9BE62";
-    else
-        return @"";
+	
+	return @"";
+
 }
 
 
-- (NSString *) getPriorityForWhatId:(NSString *)whatId
+- (NSString *) getPriorityForWhatId:(NSString *)whatId objectname:(NSString *)objectName
 {
     BOOL retVal;
     sqlite3_stmt * colorStatement;
     NSString *priority  = @"";
-    retVal = [self isWorkOrder:whatId];
+    //retVal = [self isWorkOrder:whatId];
+	
+	retVal = [self isWorkOrderOrCase:whatId objectName:objectName];
+	
     if ( retVal == YES )
     {
         NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
-        queryStatement = [NSString stringWithFormat:@"SELECT SVMXC__Priority__c from SVMXC__Service_Order__c where Id = '%@'", whatId];
+        queryStatement = [NSString stringWithFormat:@"SELECT SVMXC__Priority__c from %@ where Id = '%@'",objectName, whatId];
         const char * selectStatement = [queryStatement UTF8String];
         if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &colorStatement, nil) == SQLITE_OK )
         {

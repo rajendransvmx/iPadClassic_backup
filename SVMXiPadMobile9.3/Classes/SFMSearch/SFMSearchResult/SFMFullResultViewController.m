@@ -26,6 +26,15 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize onlineImageView;
 @synthesize TitleForResultWindow;
 @synthesize conflict;
+@synthesize download_on_demand;
+@synthesize progressView;
+@synthesize progressTitle;
+@synthesize display_percentage;
+@synthesize download_desc_label;
+@synthesize description_label;
+@synthesize ProgressBar;
+@synthesize ProgressBarViewController;
+@synthesize titleBackground;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -40,13 +49,14 @@ extern void SVMXLog(NSString *format, ...);
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
 //    SMLog(@"Display Values = %@",data);
+    isOndemandRecord=FALSE;
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     [actionButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Done-Back-Button.png"] forState:UIControlStateNormal];
     [actionButton setTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_SRCH_CLOSE] forState:UIControlStateNormal];
     [actionButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [[actionButton titleLabel] setFont:[UIFont boldSystemFontOfSize:16]];
     [detailButton setFrame:CGRectMake(509, 10, 20, 21)];
-    
+    [download_on_demand setFrame:CGRectMake(500, 10, 20, 20)];
     NSMutableString * queryStatement1 = [[NSMutableString alloc]initWithCapacity:0];
     queryStatement1 =[NSMutableString stringWithFormat:@"Select process_id from SFProcess where object_api_name is  '%@' and process_type is 'VIEWRECORD'",[appDelegate.dataBase getApiNameFromFieldLabel:objectName]]; 
     sqlite3_stmt * labelstmt;
@@ -66,17 +76,45 @@ extern void SVMXLog(NSString *format, ...);
         }
         synchronized_sqlite3_finalize(labelstmt);
     }
-    
-    
-    if(self.isOnlineRecord)
+       
+    if(self.isOnlineRecord&&!isOndemandRecord)
     {
-        /*[detailButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button-Gray.png"] forState:UIControlStateNormal];*/
-        [detailButton setBackgroundImage:nil forState:UIControlStateNormal];
+        
+
+        BOOL tabel_Exists=[appDelegate.dataBase isTabelExistInDB:@"on_demand_download"];
+        NSString * object_api_name = [appDelegate.dataBase getApiNameFromFieldLabel:objectName];
+        BOOL isparent=[appDelegate.dataBase isHeaderRecord:object_api_name];
+        BOOL recordExists = [appDelegate.dataBase checkForDuplicateId:[appDelegate.dataBase getApiNameFromFieldLabel:objectName] sfId:[data objectForKey:@"Id"]];
+        if(tabel_Exists&&recordExists&&isparent)
+        {
+             [detailButton removeTarget:self action:@selector(accessoryButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+            [detailButton setBackgroundImage:[UIImage imageNamed:@"download.png"] forState:UIControlStateNormal];
+            [detailButton addTarget:self action:@selector(onlineDemandData:) forControlEvents:UIControlEventTouchUpInside];
+             [self.view reloadInputViews];
+        }
+        else if(processAvailbleForRecord &&!recordExists)
+        {
+            isOndemandRecord = TRUE;
+            NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:[data objectForKey:@"Id"] tableName:[appDelegate.dataBase getApiNameFromFieldLabel:objectName]];
+            
+            conflict=[appDelegate.dataBase checkIfConflictsExistsForEvent:[data objectForKey:@"Id"] objectName:[appDelegate.dataBase getApiNameFromFieldLabel:objectName] local_id:local_id];
+                      [detailButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"] forState:UIControlStateNormal];
+            [onlineImageView setImage:nil];
+            if (conflict)
+            {
+                onlineImageView.frame=CGRectMake(89, 6, 30, 30);
+                [onlineImageView setImage:[UIImage imageNamed:@"red.png"]];
+                
+            }
+        }
         [onlineImageView setImage:[UIImage imageNamed:@"OnlineRecord.png"]];
+        
     }
     else if(processAvailbleForRecord)
     {
-        conflict=[appDelegate.dataBase checkIfConflictsExistsForEvent:[data objectForKey:@"Id"] objectName:[appDelegate.dataBase getApiNameFromFieldLabel:objectName]];
+		NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:[data objectForKey:@"Id"] tableName:[appDelegate.dataBase getApiNameFromFieldLabel:objectName]];
+		
+        conflict=[appDelegate.dataBase checkIfConflictsExistsForEvent:[data objectForKey:@"Id"] objectName:[appDelegate.dataBase getApiNameFromFieldLabel:objectName] local_id:local_id];
         
 //        if (!conflict)
 //        {
@@ -114,11 +152,17 @@ extern void SVMXLog(NSString *format, ...);
         TitleForResultWindow.text=@"";
 
 }
-
-
+-(void)onlineDemandData:(id)sender
+{
+    NSString *objName = [objectName retain];
+    NSString *objNameApiName = [appDelegate.dataBase getApiNameFromFieldLabel:objName];
+    NSString *recordId = [data objectForKey:@"Id"];
+    [self presentProgressBar:objNameApiName sf_id:recordId reocrd_name:objName];
+    
+}
 - (void) accessoryButtonTapped:(id)sender
 { 
-    if(isOnlineRecord)
+    if(isOnlineRecord && !isOndemandRecord)
         return;
     NSString *objName = [objectName retain];
     objName = [appDelegate.dataBase getApiNameFromFieldLabel:objName];
@@ -171,7 +215,7 @@ extern void SVMXLog(NSString *format, ...);
     appDelegate.From_SFM_Search=FROM_SFM_SEARCH;
     NSString * sfid = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:[appDelegate.dataBase getApiNameFromFieldLabel:objectName] local_id:localId];
     
-    conflict = [appDelegate.dataBase checkIfConflictsExistsForEvent:sfid objectName:[appDelegate.dataBase getApiNameFromFieldLabel:objectName]];
+    conflict = [appDelegate.dataBase checkIfConflictsExistsForEvent:sfid objectName:[appDelegate.dataBase getApiNameFromFieldLabel:objectName] local_id:localId];
     
 //    if (!conflict)
 //    {
@@ -181,10 +225,6 @@ extern void SVMXLog(NSString *format, ...);
     
     appDelegate.sfmPageController.processId = processId;
     appDelegate.sfmPageController.objectName = [NSString stringWithFormat:@"%@",objectName];
-    
-    //appDelegate.sfmPageController.recordId = [NSString stringWithFormat:@"%s", field1];
-    //appDelegate.sfmPageController.activityDate = [array2 objectAtIndex:(ownerCellIndexPath.row)];
-    //appDelegate.sfmPageController.accountId = @"";
     appDelegate.sfmPageController.topLevelId = nil;
     appDelegate.sfmPageController.recordId = localId;    
     appDelegate.sfmPageController.conflictExists = conflict;
@@ -196,11 +236,6 @@ extern void SVMXLog(NSString *format, ...);
     [self presentModalViewController:appDelegate.sfmPageController animated:YES];
     [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];
     appDelegate.didsubmitModelView = FALSE;
-    //[appDelegate.sfmPageController release];
-    
-    //[ fullMainDelegate DismissSplitViewControllerByLaunchingSFMProcess];
-    //[self dismissModalViewControllerAnimated:YES];
-    //[objName release];
 }
 - (void)viewDidUnload
 {
@@ -208,6 +243,14 @@ extern void SVMXLog(NSString *format, ...);
     resultTableView = nil;
     onlineImageView = nil;
     TitleForResultWindow = nil;
+    [self setProgressBarViewController:nil];
+    [self setProgressBar:nil];
+    [self setDescription_label:nil];
+    [self setDownload_desc_label:nil];
+    [self setDisplay_percentage:nil];
+    [self setProgressTitle:nil];
+    [self setProgressView:nil];
+    [self setTitleBackground:nil];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
 }
@@ -220,8 +263,9 @@ extern void SVMXLog(NSString *format, ...);
 }
 - (IBAction)dismissView:(id)sender
 {
-    [ fullMainDelegate LoadResultDetailViewController];
+    [ fullMainDelegate LoadResultDetailViewController:isOndemandRecord];
     [self dismissModalViewControllerAnimated:YES];
+    
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -264,7 +308,7 @@ extern void SVMXLog(NSString *format, ...);
     lblValues=[[UILabel alloc]initWithFrame:CGRectMake(275, 0, 235, TableViewResultViewCellHeight)];
     [lblValues setBackgroundColor:[UIColor clearColor]];
     
-    //Keerthi checkbox
+    //Keerti checkbox
     
     NSString * string = [tableHeaderArray objectAtIndex:indexPath.row];
     NSArray * array = [string componentsSeparatedByString:@"."];
@@ -350,6 +394,15 @@ extern void SVMXLog(NSString *format, ...);
     [tableHeaderArray release];
     [data release];
     [onlineImageView release];
+    [ProgressBarViewController release];
+    [ProgressBar release];
+    [description_label release];
+    [download_desc_label release];
+    [display_percentage release];
+    [progressTitle release];
+    [progressView release];
+    [titleBackground release];
+
     [super dealloc];
 }
 -(void)tapRecognized:(id)sender
@@ -406,5 +459,175 @@ extern void SVMXLog(NSString *format, ...);
         [label_popOver_content release];
         
     }
+}
+#pragma progress bar
+-(void)presentProgressBar:(NSString *)object_name sf_id:(NSString *)sf_id  reocrd_name:(NSString *)record_name
+{
+    
+    if (!appDelegate.isInternetConnectionAvailable)
+    {
+        //  [appDelegate displayNoInternetAvailable];
+        return;
+    }
+    
+    [appDelegate invalidateAllTimers];
+    
+    Total_calls = 3;
+    appDelegate.connection_error = FALSE;
+    ProgressBarViewController.layer.cornerRadius = 5;
+    ProgressBarViewController.frame = CGRectMake(60,100,420, 200);
+    
+    [self.view addSubview:ProgressBarViewController];
+    
+    description_label.numberOfLines = 3;
+    description_label.font =  [UIFont systemFontOfSize:14.0];
+    description_label.textAlignment = UITextAlignmentCenter;
+    
+    download_desc_label.font =  [UIFont systemFontOfSize:16.0];
+    download_desc_label.textAlignment = UITextAlignmentCenter;
+    NSString * download_string = [NSString stringWithFormat:@" Downloading %@ ",record_name];
+    download_desc_label.text = download_string;
+    ProgressBarViewController.backgroundColor = [appDelegate colorForHex:@"BDEAF9"];;//[UIColor clearColor];
+    ProgressBarViewController.layer.borderColor = [UIColor blackColor].CGColor;
+    ProgressBarViewController.layer.borderWidth = 1.0f;
+    [ProgressBarViewController bringSubviewToFront:ProgressBar];
+    [ProgressBarViewController bringSubviewToFront:progressTitle];
+    self.progressTitle.text =  @"Data On Demand (DOD): Preparing for DOD download";
+    progressTitle.backgroundColor = [UIColor clearColor];
+    progressTitle.layer.cornerRadius = 8;
+    titleBackground.layer.cornerRadius=5;
+    ProgressBar.progress = 0.0;
+    temp_percentage = 0;
+    // total_progress = 0.0;
+    display_percentage.text = @"0%";
+    
+    if(initial_sync_timer == nil)
+        initial_sync_timer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(updateProgressBar:) userInfo:nil repeats:YES];
+    
+    BOOL flag = [appDelegate goOnlineIfRequired];
+    if ([appDelegate.currentServerUrl Contains:@"null"] || [appDelegate.currentServerUrl length] == 0 || appDelegate.currentServerUrl == nil)
+    {
+        NSUserDefaults * userdefaults = [NSUserDefaults standardUserDefaults];
+        
+        appDelegate.currentServerUrl = [userdefaults objectForKey:SERVERURL];
+    }
+    if(flag)
+    {
+        appDelegate.dod_req_response_ststus = DOD_REQUEST_SENT;
+        appDelegate.Sync_check_in = FALSE;
+        appDelegate.dod_status = CONNECTING_TO_SALESFORCE;
+        [appDelegate.wsInterface getOnDemandRecords:object_name record_id:sf_id];
+        
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+        {
+            if( appDelegate.dod_req_response_ststus == DOD_RESPONSE_RECIEVED || appDelegate.connection_error || !appDelegate.isInternetConnectionAvailable)
+            {
+                break;
+            }
+        }
+    }
+    
+    [initial_sync_timer invalidate];
+    initial_sync_timer = nil;
+    [ProgressBarViewController removeFromSuperview];
+    
+    [appDelegate ScheduleIncrementalDatasyncTimer];
+    [appDelegate ScheduleIncrementalMetaSyncTimer];
+    [appDelegate ScheduleTimerForEventSync];
+    [appDelegate scheduleLocationPingTimer];
+     [self.view reloadInputViews];
+    isOndemandRecord=TRUE;
+    
+    NSMutableString * queryStatement1 = [[NSMutableString alloc]initWithCapacity:0];
+    queryStatement1 =[NSMutableString stringWithFormat:@"Select process_id from SFProcess where object_api_name is  '%@' and process_type is 'VIEWRECORD'",[appDelegate.dataBase getApiNameFromFieldLabel:objectName]];
+    sqlite3_stmt * labelstmt;
+    char *field1;
+    const char *selectStatement = [queryStatement1 UTF8String];
+    BOOL processAvailbleForRecord = NO;
+    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &labelstmt, nil) == SQLITE_OK )
+    {
+        if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
+        {
+            field1 = (char *) synchronized_sqlite3_column_text(labelstmt,0);
+            if(field1 != nil)
+            {
+                processAvailbleForRecord = YES;
+            }
+            
+        }
+        synchronized_sqlite3_finalize(labelstmt);
+    }
+    
+    if(processAvailbleForRecord)
+    {
+		NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:[data objectForKey:@"Id"] tableName:[appDelegate.dataBase getApiNameFromFieldLabel:objectName]];
+		
+        conflict=[appDelegate.dataBase checkIfConflictsExistsForEvent:[data objectForKey:@"Id"] objectName:[appDelegate.dataBase getApiNameFromFieldLabel:objectName] local_id:local_id];
+        
+        //        if (!conflict)
+        //        {
+        //            conflict = [appDelegate.dataBase checkIfChildConflictexist:[data objectForKey:@"Id"] sfId:[appDelegate.dataBase getApiNameFromFieldLabel:objectName]];
+        //        }
+        [detailButton setBackgroundImage:nil forState:UIControlStateNormal];
+       //  [detailButton addTarget:nil action:nil forControlEvents:nil];
+        
+        [detailButton removeTarget:self action:@selector(onlineDemandData:) forControlEvents:UIControlEventTouchUpInside];
+        [detailButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"] forState:UIControlStateNormal];
+       
+        [detailButton addTarget:self action:@selector(accessoryButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+        [onlineImageView setImage:nil];
+        if (conflict)
+        {
+            onlineImageView.frame=CGRectMake(89, 6, 30, 30);
+            [onlineImageView setImage:[UIImage imageNamed:@"red.png"]];
+            
+        }
+    }
+
+    
+}
+const int percentage_SFMResult = 30;
+const float progress_SFMResult = 0.33;
+#pragma mark - timer method to update progressbar
+-(void)updateProgressBar:(id)sender
+{
+    
+    if(appDelegate.dod_status == CONNECTING_TO_SALESFORCE && appDelegate.Sync_check_in == FALSE)
+    {
+        temp_percentage = percentage_SFMResult;
+        appDelegate.Sync_check_in = TRUE;
+        total_progress =  progress_SFMResult ;
+        ProgressBar.progress = 0.33;
+        // download_desc_label.text = @"";//
+        description_label.text = @"Connecting to Salesforce...";
+    }
+    else if(appDelegate.dod_status == RETRIEVING_DATA  && appDelegate.Sync_check_in == FALSE)
+    {
+        temp_percentage = percentage_SFMResult * 2  ;
+        appDelegate.Sync_check_in = TRUE;
+        total_progress =  progress_SFMResult * 2;
+        ProgressBar.progress = 0.66 ;
+        //download_desc_label.text = @"";
+        description_label.text =@"Retrieving data from Salesforce...";
+    }
+    else if(appDelegate.dod_status == SAVING_DATA  && appDelegate.Sync_check_in == FALSE)
+    {
+        temp_percentage = percentage_SFMResult *3 + 10 ;
+        appDelegate.Sync_check_in = TRUE;
+        total_progress = 1.0;
+        ProgressBar.progress = total_progress ;
+        //download_desc_label.text = @"";
+        description_label.text = @"Saving data for offline use....";
+    }
+    
+    [self fillNumberOfStepsCompletedLabel];
+}
+
+-(void)fillNumberOfStepsCompletedLabel
+{
+    
+    NSString * _percentagetext = [[NSString alloc] initWithFormat:@"%d%%", temp_percentage];
+    display_percentage.text = _percentagetext;
+    [_percentagetext release];
 }
 @end

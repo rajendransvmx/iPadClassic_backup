@@ -1014,6 +1014,8 @@
 		FAE64EEA14F61023002548E6 /* DataSyncLabelPopover.m in Sources */ = {isa = PBXBuildFile; fileRef = FAE64EE814F61023002548E6 /* DataSyncLabelPopover.m */; };
 		FAE64EEB14F61023002548E6 /* DataSyncLabelPopover.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAE64EE914F61023002548E6 /* DataSyncLabelPopover.xib */; };
 		FAF3CE0C14DCF04E00CCD5CA /* sfm.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = FAF3CE0B14DCF04E00CCD5CA /* sfm.sqlite */; };
+		FEA7E6031616FF0E002235E6 /* download.png in Resources */ = {isa = PBXBuildFile; fileRef = FEA7E6021616FF0E002235E6 /* download.png */; };
+		FEA7E6061616FF27002235E6 /* progressbar-bg.png in Resources */ = {isa = PBXBuildFile; fileRef = FEA7E6051616FF27002235E6 /* progressbar-bg.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -2287,6 +2289,8 @@
 		FAE64EE814F61023002548E6 /* DataSyncLabelPopover.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataSyncLabelPopover.m; sourceTree = "<group>"; };
 		FAE64EE914F61023002548E6 /* DataSyncLabelPopover.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DataSyncLabelPopover.xib; sourceTree = "<group>"; };
 		FAF3CE0B14DCF04E00CCD5CA /* sfm.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = sfm.sqlite; sourceTree = "<group>"; };
+		FEA7E6021616FF0E002235E6 /* download.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = download.png; sourceTree = "<group>"; };
+		FEA7E6051616FF27002235E6 /* progressbar-bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "progressbar-bg.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -4027,6 +4031,7 @@
 		7B00216712282B08002E1770 /* images */ = {
 			isa = PBXGroup;
 			children = (
+				FEA7E6051616FF27002235E6 /* progressbar-bg.png */,
 				FA4592F81532C659001FAC50 /* Animation Images */,
 				3E6732C01408FB14001564AD /* Delete_red.png */,
 				A830EA4415AC4DE20071DEF0 /* accessoryView_bg.png */,
@@ -4578,6 +4583,7 @@
 		A8FBA63D155A503600F52346 /* SFMSearch */ = {
 			isa = PBXGroup;
 			children = (
+				FEA7E6021616FF0E002235E6 /* download.png */,
 				A8FBA63E155A503600F52346 /* SFMSearchMainScreen */,
 				A8FBA64D155A503600F52346 /* SFMSearchResult */,
 			);
@@ -6104,6 +6110,8 @@
 				A8DA42F015D906810050CF04 /* gps-tracking.png in Resources */,
 				A8DA42F215D906980050CF04 /* sfm-search.png in Resources */,
 				A8DA42F415D906AF0050CF04 /* barcode-scanning.png in Resources */,
+				FEA7E6031616FF0E002235E6 /* download.png in Resources */,
+				FEA7E6061616FF27002235E6 /* progressbar-bg.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6372,8 +6380,8 @@
 				MACOSX_DEPLOYMENT_TARGET = "";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_NAME = "ServiceMax Mobile";
-				PROVISIONING_PROFILE = "2D99D876-925B-4917-A198-B5CFB5D95AB3";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "2D99D876-925B-4917-A198-B5CFB5D95AB3";
+				PROVISIONING_PROFILE = "9793D1EC-76BE-4838-9892-8D472D8EBF77";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "9793D1EC-76BE-4838-9892-8D472D8EBF77";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -6411,8 +6419,8 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = "";
 				PRODUCT_NAME = "ServiceMax Mobile";
-				PROVISIONING_PROFILE = "2D99D876-925B-4917-A198-B5CFB5D95AB3";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "2D99D876-925B-4917-A198-B5CFB5D95AB3";
+				PROVISIONING_PROFILE = "9793D1EC-76BE-4838-9892-8D472D8EBF77";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "9793D1EC-76BE-4838-9892-8D472D8EBF77";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -6477,8 +6485,8 @@
 				MACOSX_DEPLOYMENT_TARGET = "";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_NAME = "ServiceMax Mobile";
-				PROVISIONING_PROFILE = "2D99D876-925B-4917-A198-B5CFB5D95AB3";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "2D99D876-925B-4917-A198-B5CFB5D95AB3";
+				PROVISIONING_PROFILE = "9793D1EC-76BE-4838-9892-8D472D8EBF77";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "9793D1EC-76BE-4838-9892-8D472D8EBF77";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = YES;

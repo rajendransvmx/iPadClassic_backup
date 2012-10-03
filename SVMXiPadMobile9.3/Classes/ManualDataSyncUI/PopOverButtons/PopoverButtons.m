@@ -17,7 +17,7 @@ PopoverButtons *popOver_view;
 
 @synthesize syncConfigurationFailed;
 
-@synthesize button, button1, button2;
+@synthesize button, button1, button2, button3;
 
 @synthesize objectsArray;
 @synthesize objectsDict;
@@ -84,12 +84,25 @@ PopoverButtons *popOver_view;
     [button2 addTarget:self action:@selector(synchronizeEvents)forControlEvents:UIControlEventTouchUpInside];
 
     
+	
+	//label3
+	UILabel *label3 = [[[UILabel alloc] initWithFrame:CGRectMake(10, 0, 200, 50)] autorelease];
+    label3.backgroundColor = [UIColor clearColor];
+    //label2.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_full_data_synchronize];
+    label3.text =  @"Reset Application";//[appDelegate.wsInterface.tagsDictionary objectForKey:@"Reset Application"];
+    button3 = [UIButton buttonWithType:UIButtonTypeCustom];
+    button3.frame = CGRectMake(0, 175, 214, 59);
+    [button3 addSubview:label3];
+    [button3 setImage:buttonBkground forState:UIControlStateNormal];
+    [button3 addTarget:self action:@selector(resetApplication)forControlEvents:UIControlEventTouchUpInside];
+	
     self.view.backgroundColor = [UIColor clearColor];
     [self.view addSubview:bgImage];
     
     [self.view addSubview:button];
     [self.view addSubview:button2];
     [self.view addSubview:button1];
+	[self.view addSubview:button3];
 }
 
 
@@ -123,7 +136,18 @@ PopoverButtons *popOver_view;
 {
     
 }
+-(void)resetApplication
+{
+	if (!appDelegate.isInternetConnectionAvailable)
+    {
+        [delegate dismisspopover];
+        appDelegate.shouldShowConnectivityStatus = TRUE;
+        [appDelegate displayNoInternetAvailable];
+        return;
+    }
 
+	[delegate dismissSyncScreen];
+}
 - (void) Syncronise
 {
 	BOOL retVal;
@@ -385,7 +409,7 @@ PopoverButtons *popOver_view;
 - (void) startSyncConfiguration
 {
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-    
+	    
     appDelegate.internetAlertFlag = FALSE;
     appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
         
@@ -399,8 +423,16 @@ PopoverButtons *popOver_view;
    
     	//new code to handle meta sync whenever the application is logged of the authentication module.
 	BOOL retVal = [appDelegate goOnlineIfRequired];
+	
+	if ([appDelegate.currentServerUrl Contains:@"null"] || [appDelegate.currentServerUrl length] == 0 || appDelegate.currentServerUrl == nil)
+	{
+		NSUserDefaults * userdefaults = [NSUserDefaults standardUserDefaults];
+		
+		appDelegate.currentServerUrl = [userdefaults objectForKey:SERVERURL];
+	}
+	
     
-    if(retVal == NO)
+    if(retVal == NO || [appDelegate.currentServerUrl Contains:@"null"])
     {
 		[delegate dismisspopover];
         [appDelegate setSyncStatus:SYNC_GREEN];
@@ -580,6 +612,7 @@ PopoverButtons *popOver_view;
 //            [delegate resetTableview];
 //            [appDelegate.databaseInterface cleartable:@"meta_sync_due"];
 //        }
+		[appDelegate.wsInterface.updateSyncStatus refreshMetaSyncStatus];
 //        
     }
     else
@@ -599,6 +632,9 @@ PopoverButtons *popOver_view;
             [delegate resetTableview];
             [appDelegate.databaseInterface cleartable:@"meta_sync_due"];
         }
+		
+		[self refreshMetaSyncTimeStamp];
+		[appDelegate.wsInterface.updateSyncStatus refreshMetaSyncStatus];
 
 
     }
@@ -637,7 +673,14 @@ PopoverButtons *popOver_view;
     }
     
 	BOOL retVal_ = [appDelegate goOnlineIfRequired];
-    if(retVal_ == NO)
+	
+	if ([appDelegate.currentServerUrl Contains:@"null"] || [appDelegate.currentServerUrl length] == 0 || appDelegate.currentServerUrl == nil)
+	{
+		NSUserDefaults * userdefaults = [NSUserDefaults standardUserDefaults];
+		
+		appDelegate.currentServerUrl = [userdefaults objectForKey:SERVERURL];
+	}
+    if(retVal_ == NO || [appDelegate.currentServerUrl Contains:@"null"] )
     {
         [delegate dismisspopover];
         appDelegate.SyncStatus = SYNC_GREEN;
@@ -822,6 +865,32 @@ PopoverButtons *popOver_view;
     appDelegate.SyncStatus = SYNC_RED;
 }
 
+
+//Radha 28/Sep/2012
+- (void) refreshMetaSyncTimeStamp
+{
+	NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:SYNC_HISTORY];
+    
+    NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST];
+    NSArray * allkeys= [dict allKeys];
+    
+    NSDate * current_dateTime = [NSDate date];
+    
+    NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    
+	for(NSString *  str in allkeys)
+    {
+        if([str isEqualToString:LAST_INITIAL_META_SYNC_TIME])
+        {
+            NSString * last_sync_time = [dateFormatter stringFromDate:current_dateTime];
+            [dict  setObject:last_sync_time forKey:LAST_INITIAL_META_SYNC_TIME];
+        }
+    }
+    [dict writeToFile:plistPath_SYNHIST atomically:YES];
+
+}
 
 
 #pragma mark - AlertView Delegate Methods

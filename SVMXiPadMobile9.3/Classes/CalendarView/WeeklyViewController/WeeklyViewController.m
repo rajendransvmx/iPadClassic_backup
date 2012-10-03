@@ -268,13 +268,15 @@ extern void SVMXLog(NSString *format, ...);
 		int _duration = [duration intValue];
 		if (_duration != 0)
 		{
-			NSString * colourCode = [appDelegate.calDataBase getColorCodeForPriority:([dict objectForKey:WHATID] != nil)?[dict objectForKey:WHATID]:@""];
+			NSString * colourCode = [appDelegate.calDataBase getColorCodeForPriority:([dict objectForKey:WHATID] != nil)?[dict objectForKey:WHATID]:@"" objectname:([dict objectForKey:OBJECTAPINAME] != nil)?[dict objectForKey:OBJECTAPINAME]:@""];
 			color = [appDelegate colorForHex:colourCode];
 		}else{
 			color = [UIColor clearColor];
 		}
 		
-        BOOL conflictExists = [appDelegate.dataBase checkIfConflictsExistsForEvent:events.recordId objectName:[dict objectForKey:OBJECTAPINAME]];
+		NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:events.recordId tableName:[dict objectForKey:OBJECTAPINAME]];
+		
+        BOOL conflictExists = [appDelegate.dataBase checkIfConflictsExistsForEvent:events.recordId objectName:[dict objectForKey:OBJECTAPINAME] local_id:local_id];
         
         if (conflictExists == FALSE)
         {

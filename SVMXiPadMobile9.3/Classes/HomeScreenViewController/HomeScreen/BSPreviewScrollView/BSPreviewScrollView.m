@@ -175,7 +175,11 @@ extern void SVMXLog(NSString *format, ...);
         int numberOfModules = 8;
         iServiceAppDelegate *appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
         if([appDelegate enableGPS_SFMSearch])
+		{
+			[appDelegate.dataBase createUserGPSTable];
             numberOfModules = 9;
+			
+		}
 		// Load the first n pages
         for (int i = 0; i < numberOfModules; i++)
             [self loadPage:i];

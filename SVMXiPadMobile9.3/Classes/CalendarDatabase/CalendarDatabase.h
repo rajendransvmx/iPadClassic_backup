@@ -49,15 +49,21 @@
 - (NSMutableArray*) didGetTaskFromDB:(NSString *)_date;
 - (BOOL) insertTasksIntoDB:(NSArray *)_tasks WithDate:(NSString*)_date local_id:(NSString *)local_id;
 - (void) updateMovedEventWithStartTime:(NSString *)_startDT EndDate:(NSString *)_endDT RecordID:(NSString *)_recordId;
-- (BOOL) isWorkOrder:(NSString *)__whatId;
-- (NSString *)getColorCodeForPriority:(NSString *)whatId;
+//- (BOOL) isWorkOrder:(NSString *)__whatId;
+- (NSString *)getColorCodeForPriority:(NSString *)whatId objectname:(NSString *)objectName;
 - (void)deleteTaskFromDB:(NSString *)taskId;
 - (NSString *)getTableName:(NSString *)key;
 - (NSString *) retreiveCurrentTaskIdCreated;
-- (NSString *) getPriorityForWhatId:(NSString *)whatId;
+
+//28/Sep/2012 - ADD objectname
+- (NSString *) getPriorityForWhatId:(NSString *)whatId  objectname:(NSString *)objectName;
 
 //radha and abinash
-- (BOOL) isCase:(NSString *)whatId;
+//- (BOOL) isCase:(NSString *)whatId;
+
+//28/Sep/2012
+- (BOOL) isWorkOrderOrCase:(NSString *)whatId objectName:(NSString *)_ObjectName;
+
 
 - (NSString *) getTableNameForWhatId:(NSString *)whatId;
 //ServiceReportEssentialMethods

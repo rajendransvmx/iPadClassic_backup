@@ -554,6 +554,7 @@ extern void SVMXLog(NSString *format, ...);
     }
     [activity stopAnimating];
     [activity setHidden:TRUE];
+    [resultDetailView enableSFMUI];
 }
 - (IBAction) backgroundSelected:(id)sender
 {

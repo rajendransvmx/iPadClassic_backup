@@ -22,6 +22,8 @@
 //Radha 2012june16
 - (void) resetTableview;
 - (void) showInternetAletView;
+//sahana 25th September
+-(void)dismissSyncScreen;
 
 @end
 
@@ -41,6 +43,7 @@
     UIButton *button;
     UIButton *button1;
     UIButton *button2;
+	UIButton *button3;
     
     NSMutableArray * objectsArray;
     NSMutableDictionary * objectsDict;
@@ -73,7 +76,7 @@
 @property (nonatomic, retain) UIButton *button;
 @property (nonatomic, retain) UIButton *button1;
 @property (nonatomic, retain) UIButton *button2;
-
+@property (nonatomic, retain) UIButton *button3;
 @property (nonatomic, retain) NSMutableDictionary * objectsDict;
 @property (nonatomic, retain) NSMutableArray * objectDetailsArray;
 @property (nonatomic, retain) NSMutableArray * objectsArray;
@@ -91,6 +94,10 @@
 - (void) startSyncConfiguration;
 - (void) scheduletimer;
 - (void) setSyncStatus;
+
+//Radha 
+- (void) refreshMetaSyncTimeStamp;
+
 @end
 
 extern PopoverButtons *popOver_view;

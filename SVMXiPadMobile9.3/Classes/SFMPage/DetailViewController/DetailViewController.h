@@ -154,7 +154,7 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate>
     BOOL sourceToTarget, isEditingDetail;
     BOOL requiredFieldCheck;
     
-    NSString * cancel, * save, * quick_save, * summary, * troubleShooting, * chatter;
+    NSString * cancel, * save, * quick_save, * summary, * troubleShooting, * chatter ,* dod_title;
     
     BOOL clickedBack;
     
@@ -344,6 +344,8 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate>
 #define BEFORESAVE                          @"BeforeSave"
 #define ONLOAD                              @"Onload"
 #define GETPRICE                            @"GETPRICE"
+
+#define DOD_BUTTON                          @"Refresh from Salesforce"
 #pragma mark = offline
 //sahana and shrinivas 3rd November
 -(void)fillSFMdictForOfflineforProcess:(NSString *) processId forRecord:(NSString *)recordId;
@@ -363,6 +365,7 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate>
 @protocol DetailViewControllerDelegate
 
 @optional
+-(void)presentProgressBar:(NSString *)object_name sf_id:(NSString *)sf_id  reocrd_name:(NSString *)record_name;
 - (void) Back:(id)sender;
 - (void) BackOnSave;
 @end

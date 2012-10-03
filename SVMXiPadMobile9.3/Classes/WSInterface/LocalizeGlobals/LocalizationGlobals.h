@@ -329,6 +329,13 @@
 #define sync_no_internet                    @"IPAD018_TAG031"
 #define sync_metasync_due                   @"IPAD018_TAG032"
 #define sync_metasync_start                 @"IPAD018_TAG033"
+#define CONNECTING_TO_SALESFORCE_TAG        @"IPAD018_TAG045"
+#define Retrieving_Data                     @"IPAD018_TAG046"
+#define Saving_Data_offline                 @"IPAD018_TAG047"
+#define Data_On_Demand                      @"IPAD018_TAG048"
+#define Downloading                         @"IPAD018_TAG049"
+#define Last_updated_on                     @"IPAD018_TAG050"
+#define Refresh_from_SalesForce             @"IPAD018_TAG051"
 
 #define alert_authentication_error_         @"IPAD011_TAG014"
 #define login_continue                      @"IPAD015_TAG010"

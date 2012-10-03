@@ -121,7 +121,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 
 @implementation iServiceAppDelegate
-
+@synthesize dod_status,dod_req_response_ststus;
 @synthesize serviceReportReference;
 @synthesize allpagelevelEventsWithTimestamp;
 @synthesize internetAlertFlag;
@@ -427,11 +427,11 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     // Restore operation for memory warnings
     if (lastSelectedDate == nil)
         lastSelectedDate = [[NSMutableArray alloc] initWithCapacity:0];
-    
+   
+//    a1E70000000gtbiEAA
     refreshCalendar = NO;
     
     allURLConnectionsArray = [[NSMutableArray alloc] initWithCapacity:0];
-
     
     //sahana  - Data Sync
     syncThread = nil;
@@ -1162,7 +1162,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     [loginController enableControls];
 }
 
-
+#pragma mark - END
 
 
 
@@ -1875,37 +1875,135 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     }
 }
 
+-(void)invalidateAllTimers
+{
+    if([appDelegate.syncThread isExecuting])
+    {
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        {
+            if ([appDelegate.syncThread isFinished])
+            {
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
+                break;
+            }
+            if (!appDelegate.isInternetConnectionAvailable)
+                break;
+        }
+		
+    }
+    else
+    {
+        if ([appDelegate.datasync_timer isValid])
+        {
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
+        }
+		
+    }
+	
+    if ([appDelegate.metaSyncThread isExecuting])
+    {
+		
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        {
+            if (!appDelegate.isInternetConnectionAvailable)
+            {
+                break;
+            }
+			
+            if ([appDelegate.metaSyncThread isFinished])
+            {
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
+                break;
+            }
+        }
+    }
+    else
+    {
+        if ([appDelegate.metasync_timer isValid])
+        {
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
+        }
+    }
+	
+    if ([appDelegate.event_thread isExecuting])
+    {
+		
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        {
+            if (!appDelegate.isInternetConnectionAvailable)
+            {
+                break;
+            }
+			
+            if ([appDelegate.event_thread isFinished])
+            {
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
+                break;
+            }
+        }
+    }
+    else
+    {
+        if ([appDelegate.event_timer isValid])
+        {
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
+        }
+    }
+	
+    if (metaSyncRunning)
+    {
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        {
+            if (!appDelegate.isInternetConnectionAvailable)
+            {
+                break;
+            }
+			
+            if (!metaSyncRunning)
+            {
+                break;
+            }
+            if (appDelegate.connection_error)
+            {
+                break;
+            }
+        }
+		
+    }
+	
+    if (appDelegate.eventSyncRunning)
+    {
+		
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        {
+            if (!appDelegate.isInternetConnectionAvailable)
+            {
+                break;
+            }
+			
+            if (!appDelegate.eventSyncRunning)
+            {
+                break;
+            }
+            if (appDelegate.connection_error)
+            {
+                break;
+            }
+        }
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.locationPingSettingTimer];
+	
+}
 
-
+-(void)scheduleLocationPingTimer
+{
+    [loginController scheduleLocationPing];
+    
+}
 #pragma mark - GETCONFLICTRECORD
 
 -(NSMutableString*)isConflictInEvent:(NSString*)objName local_id:(NSString *)local_id
 {
-    //    NSString *strError=@"";
-    //    NSMutableArray *objectsArray  = [appDelegate.calDataBase getConflictObjects];
-    //    for(int i=0; i < [objectsArray count]; i++)
-    //    {   
-    //        
-    //        NSMutableArray *objectDetailsArray = [appDelegate.calDataBase getrecordIdsForObject:[objectsArray objectAtIndex:i]];
-    //        NSLog(@"%@",objectDetailsArray);
-    //        for(int j=0;j<[objectDetailsArray count];j++)
-    //        {
-    //            
-    //            NSString *SF_Id=[[objectDetailsArray objectAtIndex:j]objectForKey:@"SFId"];
-    //            SMLog(@"SF_Id = %@",SF_Id);
-    //            
-    //            NSString *apiName=[objectsArray objectAtIndex:i];
-    //            NSString *_apiName = [appDelegate.databaseInterface getFieldNameForReferenceTable:apiName tableName:@"SFObjectField"];
-    //            NSString *EventObject = [appDelegate.calDataBase getnameFieldForObject:apiName WithId:SF_Id WithApiName:_apiName];
-    //            
-    //            if([EventObject isEqualToString:objName])
-    //            {
-    //                strError=[[objectDetailsArray objectAtIndex:i]objectForKey:@"Error_message"];
-    //                
-    //            }
-    //        }
-    //    }
-    //    return strError;
     
     NSMutableString * conflictMessage =  [appDelegate.dataBase getAllTheConflictRecordsForObject:objName local_id:local_id];
     
