@@ -701,15 +701,27 @@ extern void SVMXLog(NSString *format, ...);
         joinFields=[self getJoinFields:dict_Join_field];
      if([joinFields length]>0)
      {
-         if([customizeSearch length]>0) 
-             queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE %@ LIMIT %@",queryFields,object,joinFields,customizeSearch,[uiControlsValue objectForKey:@"searchLimitString"]];
+         if([customizeSearch length]>0)
+         {
+             if([[uiControlsValue objectForKey:@"searchString"] length]>0)
+                 queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE %@ LIMIT %@",queryFields,object,joinFields,customizeSearch,[uiControlsValue objectForKey:@"searchLimitString"]];
+             else
+                 queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ LIMIT %@",queryFields,object,joinFields,[uiControlsValue objectForKey:@"searchLimitString"]];
+
+         }
          else
              queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@",queryFields,object,joinFields];
      }
      else
      {
-        if([customizeSearch length]>0) 
-        queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE %@ LIMIT %@",queryFields,object,customizeSearch,[uiControlsValue objectForKey:@"searchLimitString"]];
+        if([customizeSearch length]>0)
+        {
+            if([[uiControlsValue objectForKey:@"searchString"] length]>0)
+                queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE %@ LIMIT %@",queryFields,object,customizeSearch,[uiControlsValue objectForKey:@"searchLimitString"]];
+            else
+                queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' LIMIT %@",queryFields,object,[uiControlsValue objectForKey:@"searchLimitString"]];
+
+        }
         else
             queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@'",queryFields,object];
      }
@@ -887,7 +899,11 @@ extern void SVMXLog(NSString *format, ...);
         {
             if([customizeSearch length]>0)
             {
+                if([[uiControlsValue objectForKey:@"searchString"] length]>0)
                     queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE (%@) AND (%@) COLLATE NOCASE LIMIT %@",queryFields,object,joinFields,finalQuery,customizeSearch,[uiControlsValue objectForKey:@"searchLimitString"]];
+                else
+                    queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE (%@) COLLATE NOCASE LIMIT %@",queryFields,object,joinFields,finalQuery,[uiControlsValue objectForKey:@"searchLimitString"]];
+
             }
             else
                 queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE (%@) COLLATE NOCASE LIMIT %@",queryFields,object,joinFields,finalQuery,[uiControlsValue objectForKey:@"searchLimitString"]];
@@ -895,9 +911,14 @@ extern void SVMXLog(NSString *format, ...);
         }
         else
         {
-            if([customizeSearch length]>0) 
-                queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@'%@ WHERE (%@) LIMIT %@",queryFields,object,joinFields,customizeSearch,[uiControlsValue objectForKey:@"searchLimitString"]];        
-            else 
+            if([customizeSearch length]>0)
+            {
+                if([[uiControlsValue objectForKey:@"searchString"] length]>0)
+                    queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@'%@ WHERE (%@) LIMIT %@",queryFields,object,joinFields,customizeSearch,[uiControlsValue objectForKey:@"searchLimitString"]];
+                else
+                    queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@'%@ LIMIT %@",queryFields,object,joinFields,[uiControlsValue objectForKey:@"searchLimitString"]];
+            }
+            else
             queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@'%@ LIMIT %@",queryFields,object,joinFields,[uiControlsValue objectForKey:@"searchLimitString"]];
 
         }

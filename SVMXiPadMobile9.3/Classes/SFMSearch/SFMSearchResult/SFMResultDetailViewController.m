@@ -1129,16 +1129,16 @@ enum  {
         appDelegate.sfmPageController.processId = processId;
         appDelegate.From_SFM_Search=FROM_SFM_SEARCH;
         
-        NSString * sfid = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:objectName local_id:localId];
+        NSString * sfid = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:object_api_name local_id:localId];
         
-        conflict = [appDelegate.dataBase checkIfConflictsExistsForEvent:sfid objectName:objectName local_id:localId];
+        conflict = [appDelegate.dataBase checkIfConflictsExistsForEvent:sfid objectName:object_api_name local_id:localId];
         
         //    if (!conflict)
         //    {
         //        conflict = [appDelegate.dataBase checkIfChildConflictexist:sfid sfId:objectName];
         //    }
         
-        appDelegate.sfmPageController.objectName = [NSString stringWithFormat:@"%@",objectName];
+        appDelegate.sfmPageController.objectName = [NSString stringWithFormat:@"%@",object_api_name];
         appDelegate.sfmPageController.topLevelId = nil;
         appDelegate.sfmPageController.recordId = localId;
         

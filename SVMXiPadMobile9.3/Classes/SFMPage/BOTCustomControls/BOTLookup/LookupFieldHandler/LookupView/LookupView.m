@@ -391,6 +391,8 @@ extern void SVMXLog(NSString *format, ...);
             name = @"";
     }
 
+	if ([name length] == 0)
+		return cell;
     cell.textLabel.text = name;
     
     cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;

@@ -4680,7 +4680,8 @@ last_sync_time:(NSString *)last_sync_time
                 [MyPopoverDelegate performSelector:@selector(throwException)]; 
             
         }
-        
+
+         appDelegate.connection_error = TRUE;
         responseError = 1;
         [self didFinishGetEventsWithFault:sFault];
         return;

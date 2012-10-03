@@ -11056,6 +11056,7 @@ extern void SVMXLog(NSString *format, ...);
         [dict setObject:methodName forKey:@"method_name"];
 
         NSDictionary *dataDict = [appDelegate.SFMPage copy];
+		[appDelegate goOnlineIfRequired];
         [appDelegate.wsInterface callCustomSFMAction:dataDict withData:dict];
         [dataDict release];
         //Code change for get pirce  ---> 11/06/2012   --- Time: 1:23 PM.
@@ -11080,10 +11081,16 @@ extern void SVMXLog(NSString *format, ...);
                 appDelegate.wsInterface.getPrice = FALSE; 
                 break;
             }
+			
+			if (appDelegate.connection_error)
+			{
+				break;
+			}
+			
         }
         
         BOOL performSync = [[buttonDict objectForKey:@"perform_sync"] boolValue];
-        if(performSync)
+        if(performSync && !(appDelegate.connection_error))
         {
             if([appDelegate dataSyncRunning])
             {
