@@ -3195,7 +3195,7 @@ extern void SVMXLog(NSString *format, ...);
             process_name = [process_name stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
             
             NSString * queryStatement = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@') VALUES ('%@', '%@', '%@', '%@', '%@', '%d')", SFPROCESS, MPROCESS_ID, MPROCESS_TYPE, MPROCESS_NAME, 
-                                         MPROCESS_DESCRIPTION, @"page_layout_id", MLOCAL_ID, 
+                        MPROCESS_DESCRIPTION, @"page_layout_id", MLOCAL_ID, 
                    process_id, 
                     process_type, 
                    process_name, 
@@ -3221,6 +3221,8 @@ extern void SVMXLog(NSString *format, ...);
             
             NSString * pageId = [dict objectForKey:MPAGE_LAYOUT_ID];
             NSString * process_id = [dict objectForKey:MPROCESS_UNIQUE_ID];
+            
+            process_id = [process_id stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
             
             for (int i = 0; i < [pageHistory count]; i++)
             {

@@ -3301,7 +3301,8 @@ extern void SVMXLog(NSString *format, ...);
 -(BOOL)UpdateTableforSFId:(NSString *)sf_id  forObject:(NSString *)objectName  data:(NSDictionary *)dict1;
 {
 	NSMutableDictionary * dict = [self updateEmptyFieldValuesForDict:dict1 objectName:objectName];
-	
+    NSString *  parent_column_name = [self getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectName field_name:@"parent_column_name"];
+    [dict removeObjectForKey:parent_column_name];
 	
 	BOOL success = FALSE;
     NSArray * allkeys = [dict allKeys];
@@ -4364,6 +4365,33 @@ extern void SVMXLog(NSString *format, ...);
     txnstmt = @"END TRANSACTION";
     retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);    
     
+     //Sahana Fixed memory oct4th
+    NSMutableDictionary * parent_obejct_dict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
+    NSMutableDictionary * parent_column_dict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
+    statement = nil;
+    NSString  * getObjects_sql = [NSString stringWithFormat:@"SELECT DISTINCT object_name  FROM 'sync_Records_Heap'  where sync_flag = 'true'  AND record_type = 'DETAIL'"];
+    NSString * temp_child_object_name = @"";
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [getObjects_sql UTF8String], -1, &statement, nil) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            
+            temp_child_object_name = @"";
+            char * temp_object_name = (char *)synchronized_sqlite3_column_text(statement, 0);
+            if(temp_object_name != nil)
+            {
+                temp_child_object_name = [NSString stringWithUTF8String:temp_object_name];
+                NSString *parent_obj_name = [self getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:temp_child_object_name field_name:@"parent_name"];
+                SMLog(@"parent_obj_name = %@", parent_obj_name );
+                NSString * parent_column_name = [self getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:temp_child_object_name field_name:@"parent_column_name"];
+                [parent_obejct_dict setValue:parent_obj_name forKey:temp_child_object_name];
+                [parent_column_dict setValue:parent_column_name forKey:temp_child_object_name];
+            }
+            
+        }
+    }
+    
+
     statement = nil;
     
     NSString  * sql2 = [NSString stringWithFormat:@"SELECT sf_id ,local_id, object_name , json_record ,record_type,sync_type FROM 'sync_Records_Heap'  where sync_flag = 'true'  AND record_type = 'DETAIL'"];
@@ -4403,33 +4431,46 @@ extern void SVMXLog(NSString *format, ...);
                 sync_type = [NSString stringWithUTF8String:temp_sync_type];
             }
             
-            NSString * parent_column_name = @"";
-            
-            if ([record_type isEqualToString:DETAIL])
-            {
-                parent_column_name = [appDelegate.databaseInterface  getParentColumnNameFormChildInfoTable:SFChildRelationShip childApiName:object_Name parentApiName:@""];
-            }
-            
-            if( [sync_type isEqualToString:GET_INSERT] || [sync_type isEqualToString:@"DATA_SYNC"])
+            if( [sync_type isEqualToString:GET_INSERT] )
             {
                 if ([record_type isEqualToString:DETAIL])
                 {
-                    NSString *parent_obj_name = [self getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_Name field_name:@"parent_name"];
-                    SMLog(@"parent_obj_name = %@", parent_obj_name );
-                    NSString * parent_column_name1 = [self getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_Name field_name:@"parent_column_name"];
-                    NSString * parent_local_id = [self getParentLocalIdForChildSFID:sf_id parentObject_name:parent_obj_name parent_column_name:parent_column_name1 child_object_name:object_Name];
+                    NSString *parent_obj_name = [parent_obejct_dict objectForKey:object_Name];
+                    NSString * parent_column_name1 = [parent_column_dict objectForKey:object_Name];
+                    
+                    
+                    NSString * parent_local_id = [self getParentLocalIdForChildSFID:sf_id parentObject_name:parent_obj_name parent_column_name:parent_column_name1 child_object_name:object_Name]; //sahana Intro Autorelease
                     
                     BOOL duplicateRecord = [appDelegate.dataBase checkForDuplicateId:object_Name sfId:sf_id];
                     
-                    NSString * value = [appDelegate.dataBase getParentColumnValueFromchild:parent_column_name1 childTable:object_Name sfId:sf_id];
+                    NSString * value = [appDelegate.dataBase getParentColumnValueFromchild:parent_column_name1 childTable:object_Name sfId:sf_id];//sahana Intro Autorelease
                     
                     if (!duplicateRecord && (![value isEqualToString:parent_local_id]) && ([parent_local_id length] > 0))
                     {
                         [self updateParentColumnNameInChildTableWithParentLocalId:object_Name parent_column_name:parent_column_name1 parent_local_id:parent_local_id child_sf_id:sf_id];
                     }
-                                        
+                    
                 }
             }
+             //Sahana Fixed memory oct4th
+            if( [sync_type isEqualToString:@"DATA_SYNC"])
+            {
+                if ([record_type isEqualToString:DETAIL])
+                {
+                    
+                    NSString *parent_obj_name = [parent_obejct_dict objectForKey:object_Name];
+                    NSString * parent_column_name1 = [parent_column_dict objectForKey:object_Name];
+                    
+                    NSString * parent_local_id = [self getParentLocalIdForChildSFID:sf_id parentObject_name:parent_obj_name parent_column_name:parent_column_name1 child_object_name:object_Name]; 
+                    
+                    if([parent_local_id length] > 0)
+                    {
+                        [self updateParentColumnNameInChildTableWithParentLocalId:object_Name parent_column_name:parent_column_name1 parent_local_id:parent_local_id child_sf_id:sf_id];
+                    }
+                    
+                }
+            }
+
         }
     }
      
@@ -4461,8 +4502,11 @@ extern void SVMXLog(NSString *format, ...);
 
 -(NSString *)getParentLocalIdForChildSFID:(NSString *)childSF_Id parentObject_name:(NSString *)parentObjectName parent_column_name:(NSString *)parent_column_name child_object_name:(NSString *)child_obj_name  
 {
-    NSString * query = [NSString stringWithFormat:@"SELECT local_id FROM '%@' WHERE Id in (SELECT %@ FROM '%@' WHERE Id = '%@')" ,parentObjectName,parent_column_name ,child_obj_name , childSF_Id];
-    NSString * child_local_id = @"";
+    //Sahana Fixed memory oct4th
+    NSString * Parent_Sf_id = @"";
+    
+    NSString * query = [[NSString alloc ] initWithFormat:@"SELECT %@ FROM '%@' WHERE Id = '%@'" ,parent_column_name ,child_obj_name , childSF_Id];
+    
     sqlite3_stmt * stmt ;
     if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK  )
     {
@@ -4471,11 +4515,32 @@ extern void SVMXLog(NSString *format, ...);
             char * temp_fieldName = (char *)synchronized_sqlite3_column_text(stmt, 0);
             if(temp_fieldName != nil)
             {
-                child_local_id = [NSString stringWithUTF8String:temp_fieldName];
+                Parent_Sf_id = [NSString stringWithUTF8String:temp_fieldName];
             }
         }
     }
-    return child_local_id;
+    synchronized_sqlite3_finalize(stmt);
+    [query release];
+    
+    
+    NSString * paren_local_id = @"";
+    NSString * query1 = [[NSString alloc ] initWithFormat:@"SELECT local_id FROM '%@' WHERE Id = '%@'" ,parentObjectName,Parent_Sf_id];
+    sqlite3_stmt * stmt1 ;
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query1 UTF8String], -1, &stmt1, nil) == SQLITE_OK  )
+    {
+        while( synchronized_sqlite3_step(stmt1) == SQLITE_ROW)
+        {
+            char * temp_fieldName = (char *)synchronized_sqlite3_column_text(stmt1, 0);
+            if(temp_fieldName != nil && strlen(temp_fieldName))
+            {
+                paren_local_id = [NSString stringWithUTF8String:temp_fieldName];
+            }
+        }
+    }
+    [query1 release];
+    synchronized_sqlite3_finalize(stmt1);
+    return paren_local_id;
+
 }
 
 
@@ -4747,6 +4812,8 @@ extern void SVMXLog(NSString *format, ...);
                     error_type = [dict objectForKey:@"ERROR_TYPE"];
                 }
             }
+            
+            error_message=[error_message stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
             
             NSString * insert_query = [NSString stringWithFormat:@"INSERT INTO '%@' (local_id , sf_id, object_name, sync_type,record_type,error_message,error_type) VALUES ('%@','%@','%@','%@','%@','%@','%@')", SYNC_ERROR_CONFLICT, local_id , sf_id, object_name, sync_type, record_type, error_message, error_type];
             
