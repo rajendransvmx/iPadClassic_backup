@@ -1067,18 +1067,35 @@ extern void SVMXLog(NSString *format, ...);
                 {
                     if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
                     {
+                        NSMutableDictionary *dictRefrenceFileds=[[[NSMutableDictionary alloc]init]autorelease];
                         apiName = (char *) synchronized_sqlite3_column_text(labelstmt,0);
                         if((apiName !=nil) && strlen(apiName))
+                        {
                             strapiName=[NSString stringWithFormat:@"%s",apiName];
+                            [dictRefrenceFileds setObject:strapiName forKey:@"apiName"];
+                        }
                         type = (char *) synchronized_sqlite3_column_text(labelstmt,1);
                         if((type !=nil) && strlen(type))
+                        {
                             strtype=[NSString stringWithFormat:@"%s",type];
+                            [dictRefrenceFileds setObject:strtype forKey:@"type"];
+
+                        }
                         relationshipName = (char *) synchronized_sqlite3_column_text(labelstmt,2);
                         if((relationshipName !=nil) && strlen(relationshipName))
+                        {
                             strrelationshipName=[NSString stringWithFormat:@"%s",relationshipName];
+                            [dictRefrenceFileds setObject:strrelationshipName forKey:@"relationshipName"];
+
+                        }
                         reference_to =(char *) synchronized_sqlite3_column_text(labelstmt,3);
                         if((reference_to !=nil) && strlen(reference_to))
+                        {
                             strreference_to=[NSString stringWithFormat:@"%s",reference_to];
+                            [dictRefrenceFileds setObject:strreference_to forKey:@"reference_to"];
+
+                        }
+                        [arrayForApiName addObject:dictRefrenceFileds];
                     }
                 }
                 synchronized_sqlite3_finalize(labelstmt);
@@ -1127,15 +1144,7 @@ extern void SVMXLog(NSString *format, ...);
                     }
                 }
                 synchronized_sqlite3_finalize(labelstmt);
-                if([arrayForApiName count]>1)
-                {
-                    NSString* ObjectApiName =[[dict objectForKey:@"tableArrayDict"] objectForKey:[self getApiNameFromFieldLabel:[TableArray objectAtIndex:i]]];
-                    for(NSDictionary *apiName in arrayForApiName)
-                    {
-                        if([[apiName objectForKey:@"apiName"] Contains:ObjectApiName]&& [strtype isEqualToString:@"reference"])
-                        strapiName=ObjectApiName;
-                    }
-                }
+
             }
             
             if([strtype isEqualToString:@"reference"])
@@ -1156,20 +1165,19 @@ extern void SVMXLog(NSString *format, ...);
 						else 
 						{
                             if([[refDict objectForKey:@"type"] isEqualToString:@"reference"])
-                               {
-                                   [joinFields appendFormat:@" or '%@'.%@ = '%@'.Id",[dict objectForKey:@"object"],[refDict objectForKey:@"apiName"],[self getApiNameFromFieldLabel:[TableArray objectAtIndex:i]]];
-                               }
+                            {
+                                [joinFields appendFormat:@" or '%@'.%@ = '%@'.Id",[dict objectForKey:@"object"],[refDict objectForKey:@"apiName"],[self getApiNameFromFieldLabel:[TableArray objectAtIndex:i]]];
+                            }
 						}
 						
 						
 					}
                     [joinFields appendFormat:@" )"];
-					
 				}
-				else 
-				{
-					[joinFields appendFormat:@" '%@'.%@ = '%@'.Id ",[dict objectForKey:@"object"],strapiName,[self getApiNameFromFieldLabel:[TableArray objectAtIndex:i]]];
-				}
+//				else 
+//				{
+//					[joinFields appendFormat:@" '%@'.%@ = '%@'.Id ",[dict objectForKey:@"object"],strapiName,[self getApiNameFromFieldLabel:[TableArray objectAtIndex:i]]];
+//				}
                
             }
         }

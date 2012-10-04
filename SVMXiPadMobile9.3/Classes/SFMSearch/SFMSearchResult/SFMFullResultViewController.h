@@ -54,5 +54,6 @@
 - (void) tapRecognized:(id)sender;
 -(void)fillNumberOfStepsCompletedLabel;
 -(void)presentProgressBar:(NSString *)object_name sf_id:(NSString *)sf_id  reocrd_name:(NSString *)record_name;
-
+-(void)enableControl;
+-(void)disableControl;
 @end

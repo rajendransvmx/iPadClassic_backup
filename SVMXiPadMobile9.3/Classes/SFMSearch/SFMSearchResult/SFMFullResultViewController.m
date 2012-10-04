@@ -472,6 +472,7 @@ extern void SVMXLog(NSString *format, ...);
     
     [appDelegate invalidateAllTimers];
     
+    [self disableControl];
     Total_calls = 3;
     appDelegate.connection_error = FALSE;
     ProgressBarViewController.layer.cornerRadius = 5;
@@ -535,7 +536,7 @@ extern void SVMXLog(NSString *format, ...);
     [appDelegate ScheduleIncrementalMetaSyncTimer];
     [appDelegate ScheduleTimerForEventSync];
     [appDelegate scheduleLocationPingTimer];
-     [self.view reloadInputViews];
+//     [self.view reloadInputViews];
     isOndemandRecord=TRUE;
     
     NSMutableString * queryStatement1 = [[NSMutableString alloc]initWithCapacity:0];
@@ -583,7 +584,7 @@ extern void SVMXLog(NSString *format, ...);
             
         }
     }
-
+    [self enableControl];
     
 }
 const int percentage_SFMResult = 30;
@@ -629,5 +630,13 @@ const float progress_SFMResult = 0.33;
     NSString * _percentagetext = [[NSString alloc] initWithFormat:@"%d%%", temp_percentage];
     display_percentage.text = _percentagetext;
     [_percentagetext release];
+}
+-(void)enableControl
+{
+    [self.view setUserInteractionEnabled:YES];
+}
+-(void)disableControl
+{
+    [self.view setUserInteractionEnabled:NO];
 }
 @end
