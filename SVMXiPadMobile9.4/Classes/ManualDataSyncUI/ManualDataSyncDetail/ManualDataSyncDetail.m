@@ -57,34 +57,21 @@ PopoverButtons *popOver_view;
 
 #pragma mark - View lifecycle
 
-- (void)viewDidLoad
+- (void) Layout
 {
-    [super viewDidLoad];
-	
-	CGRect rect = self.view.frame;
-	self.navigationController.navigationBar.frame = CGRectMake(0, 0, rect.size.width, self.navigationController.navigationBar.frame.size.height);
-	
-    appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    appDelegate.reloadTable = self;
-	
-    if ([appDelegate.internet_Conflicts count] == 0)
-        appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
-    
-    appDelegate.wsInterface.refreshSyncStatusUIButton = self;
-
-    UIImageView * bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_right_panel_bg_main.png"]];
+	UIImageView * bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_right_panel_bg_main.png"]];
     self._tableView.backgroundView = bgImage;
     [bgImage release];
 	
 	self._tableView.backgroundColor = [UIColor clearColor];
-
+	
 	UIImage *image = [UIImage imageNamed:@"SFM-Screen-Back-Arrow-Button"];
 	UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, image.size.width, image.size.height)] autorelease];
 	[backButton setBackgroundImage:image forState:UIControlStateNormal];
 	[backButton addTarget:self action:@selector(DismissSplitView:) forControlEvents:UIControlEventTouchUpInside];
 	UIBarButtonItem * backBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:backButton] autorelease];
 	self.navigationItem.leftBarButtonItem = backBarButtonItem;
-
+	
 	UILabel * titleLabel = [[[UILabel alloc] initWithFrame:CGRectZero] autorelease];
 	titleLabel.textAlignment = UITextAlignmentCenter;
 	titleLabel.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_conflicts];
@@ -92,16 +79,16 @@ PopoverButtons *popOver_view;
 	titleLabel.backgroundColor = [UIColor clearColor];
 	[titleLabel sizeToFit];
 	self.navigationItem.titleView = titleLabel;
-
+	
 	NSMutableArray *arrayForRightBarButton = [[NSMutableArray alloc] initWithCapacity:0];
 	
 	NSInteger toolBarWidth = 0;
 	const int SPACE_BUFFER = 4;
-
+	
 	UIBarButtonItem *activityButton = [[[UIBarButtonItem alloc] initWithCustomView:appDelegate.animatedImageView] autorelease];
 	[arrayForRightBarButton addObject:activityButton];
 	toolBarWidth += appDelegate.animatedImageView.frame.size.width + SPACE_BUFFER;
-
+	
 	button = [UIButton buttonWithType:UIButtonTypeCustom];
 	button.backgroundColor = [UIColor clearColor];
 	[button setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Done-Back-Button"] forState:UIControlStateNormal];
@@ -145,6 +132,22 @@ PopoverButtons *popOver_view;
 	
 	[arrayForRightBarButton release];
 	arrayForRightBarButton = nil;
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+	
+	CGRect rect = self.view.frame;
+	self.navigationController.navigationBar.frame = CGRectMake(0, 0, rect.size.width, self.navigationController.navigationBar.frame.size.height);
+	
+    appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+    appDelegate.reloadTable = self;
+	
+    if ([appDelegate.internet_Conflicts count] == 0)
+        appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+    
+    appDelegate.wsInterface.refreshSyncStatusUIButton = self;
     
     //[appDelegate setSyncStatus:appDelegate.SyncStatus];
 	//    appDelegate.animatedImageView.center = CGPointMake(450,21);
@@ -198,6 +201,8 @@ PopoverButtons *popOver_view;
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+	
+	[self Layout];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -263,8 +268,7 @@ PopoverButtons *popOver_view;
 {
     static NSString *CellIdentifier = @"Cell";
     
-    NSInteger width = 0;
-	width = 660;
+    NSInteger width = 660;
     UIView *background = nil;
     
     UITableViewCell *cell = [self._tableView dequeueReusableCellWithIdentifier:CellIdentifier];
@@ -295,26 +299,37 @@ PopoverButtons *popOver_view;
 	
 	UIImageView * bgView2 = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM-Screen-Table-Strip.png"]] autorelease];
 	
+	CGPoint cellContentViewCenter = CGPointMake(self._tableView.center.x, background.center.y);
+	cellContentViewCenter.y += 40;
+	
+	CGFloat borderRight = 124;
+	
     if ( HeaderSelected == 1 )
     {
         if ([appDelegate.internet_Conflicts count] > 0)
         {
             UILabel * lbl;
-            lbl = [[[UILabel alloc] initWithFrame:CGRectMake(10, 9, 300, 30)] autorelease];
+            lbl = [[[UILabel alloc] initWithFrame:CGRectZero] autorelease];
             lbl.text = [[appDelegate.internet_Conflicts objectAtIndex:0] objectForKey:@"sync_type"];
             lbl.font = [UIFont fontWithName:@"HelveticaBold" size:19];
             lbl.textColor = [UIColor blackColor];
             lbl.backgroundColor = [UIColor clearColor];
 			lbl.userInteractionEnabled = YES;
+			[lbl sizeToFit];
             [background addSubview:lbl];
             lbl.userInteractionEnabled = YES;
             
-            UILabel *textView = [[UILabel alloc] initWithFrame:CGRectMake(180, 3, 300, 50)];
+            UILabel *textView = [[UILabel alloc] initWithFrame:CGRectZero];
             textView.font = [UIFont systemFontOfSize:19.0];
             textView.text = [[appDelegate.internet_Conflicts objectAtIndex:0] objectForKey:@"Error_message"];
             textView.userInteractionEnabled = YES;
             textView.backgroundColor = [UIColor clearColor];
+			[textView sizeToFit];
             [background addSubview:textView];
+			
+			CGPoint backgroundCenter = background.center;
+			lbl.center = CGPointMake(backgroundCenter.x/2, backgroundCenter.y);
+			textView.center = CGPointMake(3*backgroundCenter.x/2, backgroundCenter.y);
             
             UITapGestureRecognizer * tapMe3 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapRecognized:)];
             [textView addGestureRecognizer:tapMe3];
@@ -372,24 +387,18 @@ PopoverButtons *popOver_view;
         NSString * online = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_select_online];
 		NSString * changes = [appDelegate.wsInterface.tagsDictionary objectForKey:conflict_changes];
 		
-        MultiLineController * mySegment = [[MultiLineController alloc] initWithItems:[NSArray arrayWithObjects:force,get_from_online,hold, nil]];
-			
-		mySegment.frame = CGRectMake(395, 10, 185, mySegment.frame.size.height * 1);
-        mySegment.segmentedControlStyle = UISegmentedControlStyleBar;
-		[mySegment setSubTitle:changes forSegmentAtIndex:0];
-		[mySegment setSubTitle:online  forSegmentAtIndex:1];
+        UISegmentedControl * mySegment = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:[NSString stringWithFormat:@"%@ %@", force, changes],[NSString stringWithFormat:@"%@ %@", get_from_online, online],hold, nil]];
+		mySegment.segmentedControlStyle = UISegmentedControlStyleBar;
+		[mySegment sizeToFit];
 				
-        MultiLineController * mySegment1 = [[MultiLineController alloc] initWithItems:[NSArray arrayWithObjects:retry,remove,hold,nil]];
-		
-        mySegment1.frame = CGRectMake(395, 10, 185, mySegment1.frame.size.height * 1);
-        mySegment1.segmentedControlStyle = UISegmentedControlStyleBar;
-		
-		MultiLineController * mySegment2 = [[MultiLineController alloc] initWithItems:[NSArray arrayWithObjects:retry,NSLocalizedString(get_from_online, nil),hold,nil]];
-		
-        mySegment2.frame = CGRectMake(395, 10, 185, mySegment2.frame.size.height * 1);
-        mySegment2.segmentedControlStyle = UISegmentedControlStyleBar;
-		[mySegment2 setSubTitle:online  forSegmentAtIndex:1];
-        
+        UISegmentedControl * mySegment1 = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:retry,remove,hold,nil]];
+		mySegment1.segmentedControlStyle = UISegmentedControlStyleBar;
+		[mySegment1 sizeToFit];
+				
+		UISegmentedControl * mySegment2 = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:retry, [NSString stringWithFormat:@"%@ %@", get_from_online, online],hold,nil]];
+		mySegment2.segmentedControlStyle = UISegmentedControlStyleBar;
+		[mySegment2 sizeToFit];
+
 		UIColor *newTintColor = [appDelegate colorForHex:@"#C8C8C8"];
         mySegment.tintColor = newTintColor;
 		mySegment1.tintColor = newTintColor;
@@ -459,11 +468,23 @@ PopoverButtons *popOver_view;
 			
         }
 
+		cellContentViewCenter.x = (self._tableView.frame.size.width - mySegment.frame.size.width/2) - borderRight;
+		mySegment.center = cellContentViewCenter;
+		
+		cellContentViewCenter.x = (self._tableView.frame.size.width - mySegment1.frame.size.width/2) - borderRight;
+		mySegment1.center = cellContentViewCenter;
+		
+		cellContentViewCenter.x = (self._tableView.frame.size.width - mySegment2.frame.size.width/2) - borderRight;
+		mySegment2.center = cellContentViewCenter;
+
         [mySegment release];
         [mySegment1 release];
 		[mySegment2 release];
+		
+		mySegment = nil;
+		mySegment1 = nil;
+		mySegment2 = nil;
         
-            
         UILabel *textView = [[UILabel alloc] initWithFrame:CGRectMake(180, 3, 200, 50)];
         textView.font = [UIFont systemFontOfSize:19.0];
         textView.text = [[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"Error_message"];
@@ -543,13 +564,14 @@ PopoverButtons *popOver_view;
         
         
         UILabel * lbl;
-        lbl = [[[UILabel alloc] initWithFrame:CGRectMake(10, 9, 300, 30)] autorelease];
+        lbl = [[[UILabel alloc] initWithFrame:CGRectZero] autorelease];
         _apiName = [appDelegate.databaseInterface getFieldNameForReferenceTable:api_name tableName:@"SFObjectField"];
         name = [appDelegate.calDataBase getnameFieldForObject:api_name WithId:SFId WithApiName:_apiName];
         lbl.text = name;
         lbl.font = [UIFont fontWithName:@"HelveticaBold" size:19];
         lbl.textColor = [UIColor blackColor];
         lbl.backgroundColor = [UIColor clearColor];
+		[lbl sizeToFit];
         [background addSubview:lbl];
         lbl.userInteractionEnabled = YES;
         
@@ -568,24 +590,17 @@ PopoverButtons *popOver_view;
         NSString * changes = [appDelegate.wsInterface.tagsDictionary objectForKey:conflict_changes];
 
 
-		MultiLineController * mySegment = [[MultiLineController alloc] initWithItems:[NSArray arrayWithObjects:force,get_from_online,hold, nil]];
-		
-		mySegment.frame = CGRectMake(395, 10, 185, mySegment.frame.size.height * 1);
-        mySegment.segmentedControlStyle = UISegmentedControlStyleBar;
-		[mySegment setSubTitle:changes forSegmentAtIndex:0];
-		[mySegment setSubTitle:online  forSegmentAtIndex:1];
+		UISegmentedControl * mySegment =[[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:[NSString stringWithFormat:@"%@ %@", force, changes],[NSString stringWithFormat:@"%@ %@", get_from_online, online],hold, nil]];
+		mySegment.segmentedControlStyle = UISegmentedControlStyleBar;
 
-        MultiLineController * mySegment1 = [[MultiLineController alloc] initWithItems:[NSArray arrayWithObjects:retry,remove,hold,nil]];
+        UISegmentedControl * mySegment1 = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:retry,remove,hold,nil]];
+		mySegment1.segmentedControlStyle = UISegmentedControlStyleBar;
+		[mySegment1 sizeToFit];
 		
-        mySegment1.frame = CGRectMake(395, 10, 185, mySegment.frame.size.height * 1);
-        mySegment1.segmentedControlStyle = UISegmentedControlStyleBar;
-		
-		MultiLineController * mySegment2 = [[MultiLineController alloc] initWithItems:[NSArray arrayWithObjects:retry,get_from_online,hold,nil]];
-		
+		UISegmentedControl * mySegment2 = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:retry,[NSString stringWithFormat:@"%@ %@", get_from_online, online],hold,nil]];
 		mySegment2.segmentedControlStyle = UISegmentedControlStyleBar;
-        mySegment2.frame = CGRectMake(395, 10, 185, mySegment.frame.size.height *1);
-		[mySegment2 setSubTitle:online  forSegmentAtIndex:1];
-        
+		[mySegment2 sizeToFit];
+
 		if ([syncType isEqualToString:@"PUT_INSERT"] || [syncType isEqualToString:@"GET_INSERT"])
 		{
 			[bgView setBackgroundColor:[appDelegate colorForHex:@"#2895C1"]];
@@ -656,16 +671,30 @@ PopoverButtons *popOver_view;
 			
         }
 		
+		cellContentViewCenter.x = (self._tableView.frame.size.width - mySegment.frame.size.width/2) - borderRight;
+		mySegment.center = cellContentViewCenter;
+		
+		cellContentViewCenter.x = (self._tableView.frame.size.width - mySegment1.frame.size.width/2) - borderRight;
+		mySegment1.center = cellContentViewCenter;
+		
+		cellContentViewCenter.x = (self._tableView.frame.size.width - mySegment2.frame.size.width/2) - borderRight;
+		mySegment2.center = cellContentViewCenter;
+		
         [mySegment release];
         [mySegment1 release];
 		[mySegment2 release];
+		
+		mySegment = nil;
+		mySegment1 = nil;
+		mySegment2 = nil;
     
-        UILabel *textView = [[UILabel alloc] initWithFrame:CGRectMake(180, 3, 200, 50)];
+        UILabel *textView = [[UILabel alloc] initWithFrame:CGRectZero];
         textView.font = [UIFont systemFontOfSize:19.0];
      
         textView.text = [[[objectsDict objectForKey:[objectsArray objectAtIndex:selectedRow]]objectAtIndex:indexPath.row] objectForKey:@"Error_message"];
         textView.userInteractionEnabled = YES;
         textView.backgroundColor = [UIColor clearColor];
+		[textView sizeToFit];
         
         UITapGestureRecognizer * _tapMe = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapRecognized:)];
         [textView addGestureRecognizer:_tapMe];
@@ -674,6 +703,18 @@ PopoverButtons *popOver_view;
         [background addSubview:textView];
         [cell.contentView addSubview:background];
         [textView release];
+		
+		CGRect rect = lbl.frame;
+		rect.size.width = 250;
+		lbl.frame = rect;
+		
+		rect = textView.frame;
+		rect.size.width = 350;
+		textView.frame = rect;
+		
+		CGPoint backgroundCenter = background.center;
+		lbl.center = CGPointMake(backgroundCenter.x/2 - 40, backgroundCenter.y);
+		textView.center = CGPointMake(3*backgroundCenter.x/2 - 80, backgroundCenter.y);
         
         cell.textLabel.font = [UIFont fontWithName:@"HelveticaBold" size:19];
 		
@@ -759,7 +800,7 @@ PopoverButtons *popOver_view;
                 
                 SMLog(@"%@ %@", parent_obj_name, parent_column_name);
                 
-                NSLog(@"%@", SFId);
+                SMLog(@"%@", SFId);
                 
                 if ([SFId length] > 0 && SFId != nil && ![SFId isEqualToString:@""])
                 {
@@ -882,33 +923,40 @@ PopoverButtons *popOver_view;
     UIImageView * imageView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_section_header_bg.png"]] autorelease];
     imageView.frame = CGRectMake(12, 0, _tableView.frame.size.width, 31);
     [view addSubview:imageView];
-    [view addSubview:label];
+//    [view addSubview:label];
     
     //if ( selectedSection == 0 )
     //{
-        UILabel *headerLabel1   = [[UILabel alloc] initWithFrame:CGRectMake(53, 10, 75, 20)];
-        headerLabel1.backgroundColor = [UIColor clearColor];
-        headerLabel1.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_recordId_label];
-        headerLabel1.textColor = [UIColor blackColor];
-        [headerLabel1 setFont:[UIFont fontWithName:@"Arial" size:17]];
-        [view addSubview:headerLabel1];
-        [headerLabel1 release];
+	UILabel *headerLabel1   = [[UILabel alloc] initWithFrame:CGRectZero];
+	headerLabel1.backgroundColor = [UIColor clearColor];
+	headerLabel1.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_recordId_label];
+	headerLabel1.textColor = [UIColor blackColor];
+	[headerLabel1 setFont:[UIFont fontWithName:@"Arial" size:17]];
+	[headerLabel1 sizeToFit];
+	[view addSubview:headerLabel1];
+	[headerLabel1 release];
         
-        UILabel *headerLabel2   = [[UILabel alloc] initWithFrame:CGRectMake(220, 10, 140, 20)];
-        headerLabel2.backgroundColor = [UIColor clearColor];
-        headerLabel2.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_error_message];
-        headerLabel2.textColor = [UIColor blackColor];
-        [headerLabel2 setFont:[UIFont fontWithName:@"Arial" size:17]];
-        [view addSubview:headerLabel2];
-        [headerLabel2 release];
+	UILabel *headerLabel2   = [[UILabel alloc] initWithFrame:CGRectZero];
+	headerLabel2.backgroundColor = [UIColor clearColor];
+	headerLabel2.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_error_message];
+	headerLabel2.textColor = [UIColor blackColor];
+	[headerLabel2 setFont:[UIFont fontWithName:@"Arial" size:17]];
+	[headerLabel2 sizeToFit];
+	[view addSubview:headerLabel2];
+	[headerLabel2 release];
+	
+	CGPoint viewCenter = view.center;
+	
+	headerLabel1.center = CGPointMake(viewCenter.x/2 - 80, viewCenter.y );
+	headerLabel2.center = CGPointMake(3*viewCenter.x/2 - 100, viewCenter.y );
         
-        UILabel *headerLabel3   = [[UILabel alloc] initWithFrame:CGRectMake(460, 10, 185, 20)];
-        headerLabel3.backgroundColor = [UIColor clearColor];
-        headerLabel3.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_apply_changes];
-        headerLabel3.textColor = [UIColor blackColor];
-        [headerLabel3 setFont:[UIFont fontWithName:@"Arial" size:17]];
-        [view addSubview:headerLabel3];
-        [headerLabel3 release];
+//        UILabel *headerLabel3   = [[UILabel alloc] initWithFrame:CGRectMake(460, 10, 185, 20)];
+//        headerLabel3.backgroundColor = [UIColor clearColor];
+//        headerLabel3.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_apply_changes];
+//        headerLabel3.textColor = [UIColor blackColor];
+//        [headerLabel3 setFont:[UIFont fontWithName:@"Arial" size:17]];
+//        [view addSubview:headerLabel3];
+//        [headerLabel3 release];
      //}
     
     return view;

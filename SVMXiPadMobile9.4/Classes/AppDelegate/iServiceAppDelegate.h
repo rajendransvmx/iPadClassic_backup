@@ -493,6 +493,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 ///can remove
 @property (nonatomic, assign) id <ReloadSyncTable> reloadTable;
 @property (nonatomic) BOOL isIncrementalMetaSyncInProgress;
+@property (nonatomic) BOOL isInitialMetaSyncInProgress;
 @property (nonatomic) BOOL isMetaSyncExceptionCalled;
 
 @property (nonatomic) BOOL IsSSL_error;

@@ -161,9 +161,11 @@ extern void SVMXLog(NSString *format, ...);
     [self presentProgressBar:objNameApiName sf_id:recordId reocrd_name:objName];
     
 }
-
 - (void) accessoryButtonTapped:(id)sender
-{ 
+{
+    NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+    NSString * warning = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_WARNING];
+    NSString * noView = [appDelegate.wsInterface.tagsDictionary objectForKey:NO_VIEW_PROCESS];
     if(isOnlineRecord && !isOndemandRecord)
         return;
     NSString *objName = [objectName retain];
@@ -195,58 +197,61 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     
-    NSString * queryStatement2 = [NSMutableString stringWithFormat:@"Select process_id FROM SFProcess where process_type = 'VIEWRECORD' and object_api_name = '%@'",objName];   
-    const char *selectStatement2 = [queryStatement2 UTF8String];
-    
     NSString *processId =nil;
     
-    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement2,-1, &labelstmt, nil) == SQLITE_OK )
+    for (int v = 0; v < [appDelegate.view_layout_array count]; v++)
     {
-        if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
+        NSDictionary * dict = [appDelegate.view_layout_array objectAtIndex:v];
+        NSString * object_label = [dict objectForKey:VIEW_OBJECTNAME];
+        if ([object_label isEqualToString:objName])
         {
-            field1 = (char *) synchronized_sqlite3_column_text(labelstmt,0);
-//            SMLog(@"%s",field1);
-            if(field1)
-                processId = [NSString stringWithFormat:@"%s", field1];
+            processId = ([dict objectForKey:VIEW_SVMXC_ProcessID]!=nil)?[dict objectForKey:VIEW_SVMXC_ProcessID]:@"";
+            break;
         }
     }
-    if(!processId)
+//    if(!processId)
+//        return;
+    NSString * processId_ =  [appDelegate.switchViewLayouts objectForKey:objName];
+    appDelegate.sfmPageController.processId = (processId_ != nil)?processId_:processId;
+    
+
+    processInfo * pinfo =  [appDelegate getViewProcessForObject:objName record_id:localId processId:appDelegate.sfmPageController.processId isswitchProcess:FALSE];
+    if(pinfo.process_exists)
+    {
+        appDelegate.sfmPageController.conflictExists = FALSE;
+        
+        appDelegate.From_SFM_Search=FROM_SFM_SEARCH;
+        NSString * sfid = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:objName local_id:localId];
+        
+        conflict = [appDelegate.dataBase checkIfConflictsExistsForEvent:sfid objectName:objName local_id:localId];
+        
+        //    if (!conflict)
+        //    {
+        //        conflict = [appDelegate.dataBase checkIfChildConflictexist:sfid sfId:[appDelegate.dataBase getApiNameFromFieldLabel:objectName]];
+        //    }
+        
+        
+        appDelegate.sfmPageController.processId = pinfo.process_id;
+        appDelegate.sfmPageController.objectName = [NSString stringWithFormat:@"%@",objName];
+        appDelegate.sfmPageController.topLevelId = nil;
+        appDelegate.sfmPageController.recordId = localId;
+        appDelegate.sfmPageController.conflictExists = conflict;
+        
+        [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
+        [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
+        [appDelegate.sfmPageController.detailView view];
+        
+        [self presentModalViewController:appDelegate.sfmPageController animated:YES];
+        appDelegate.didsubmitModelView = FALSE;
+    }
+    else
+    {
+        UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:warning message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
+        [alert1 show];
+        [alert1 release];
         return;
-    appDelegate.sfmPageController.conflictExists = FALSE;
-    
-    appDelegate.From_SFM_Search=FROM_SFM_SEARCH;
-    NSString * sfid = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:[appDelegate.dataBase getApiNameFromFieldLabel:objectName] local_id:localId];
-    
-    conflict = [appDelegate.dataBase checkIfConflictsExistsForEvent:sfid objectName:[appDelegate.dataBase getApiNameFromFieldLabel:objectName] local_id:localId];
-    
-//    if (!conflict)
-//    {
-//        conflict = [appDelegate.dataBase checkIfChildConflictexist:sfid sfId:[appDelegate.dataBase getApiNameFromFieldLabel:objectName]];
-//    }
+    }
 
-    
-    appDelegate.sfmPageController.processId = processId;
-    appDelegate.sfmPageController.objectName = [NSString stringWithFormat:@"%@",objectName];
-    
-    //appDelegate.sfmPageController.recordId = [NSString stringWithFormat:@"%s", field1];
-    //appDelegate.sfmPageController.activityDate = [array2 objectAtIndex:(ownerCellIndexPath.row)];
-    //appDelegate.sfmPageController.accountId = @"";
-    appDelegate.sfmPageController.topLevelId = nil;
-    appDelegate.sfmPageController.recordId = localId;    
-    appDelegate.sfmPageController.conflictExists = conflict;
-    
-    [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
-    [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
-    [appDelegate.sfmPageController.detailView view];
-
-    [self presentViewController:appDelegate.sfmPageController animated:YES completion:nil];
-    [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];
-    appDelegate.didsubmitModelView = FALSE;
-    //[appDelegate.sfmPageController release];
-    
-    //[ fullMainDelegate DismissSplitViewControllerByLaunchingSFMProcess];
-    //[self dismissModalViewControllerAnimated:YES];
-    //[objName release];
 }
 - (void)viewDidUnload
 {

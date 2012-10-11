@@ -770,7 +770,7 @@ last_sync_time:(NSString *)last_sync_time
     //shrinivas
     retVal = [appDelegate goOnlineIfRequired];
     
-    NSLog(@"%@, %d",appDelegate.currentServerUrl, [appDelegate.currentServerUrl length] );
+    SMLog(@"%@, %d",appDelegate.currentServerUrl, [appDelegate.currentServerUrl length] );
 	
 	
 	
@@ -6231,7 +6231,7 @@ last_sync_time:(NSString *)last_sync_time
                     ;
                  // temp_json_string = [self escapeSIngleQute:temp_json_string];
                     NSInteger val =  [temp_json_string replaceOccurrencesOfString:@"'" withString:@"''" options:NSCaseInsensitiveSearch range: NSMakeRange(0, [temp_json_string length])];
-                    NSLog(@"%d" , val);
+                    SMLog(@"%d" , val);
                     
                     NSArray * allkeys = [record_dict allKeys];
                     BOOL flag = FALSE;
@@ -7130,7 +7130,7 @@ last_sync_time:(NSString *)last_sync_time
             }
           
             
-            NSLog(@"record_dict %@",record_dict);
+            SMLog(@"record_dict %@",record_dict);
             [appDelegate.databaseInterface insertOndemandRecords:record_dict];
             
             appDelegate.dod_status = SAVING_DATA;

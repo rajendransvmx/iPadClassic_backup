@@ -10,6 +10,9 @@
 #import "DetailViewControllerForSFM.h"
 #import "MasterViewController.h"
 #import "iServiceAppDelegate.h"
+extern void SVMXLog(NSString *format, ...);
+
+#define DOD         9.3
 
 @interface MainViewController ()
 
@@ -52,12 +55,11 @@
     if (userDefaults)
     {
         packgeVersion = [userDefaults objectForKey:kPkgVersionCheckForGPS_AND_SFM_SEARCH];
-        SMLog(@"Pkg Version = %@",packgeVersion);
         int _stringNumber = [packgeVersion intValue];
 		
-		int check = (kMinPkgForGPS_AND_SFMSEARCH * 100000);
-		NSLog(@"%d", check);
-        if(_stringNumber >= (kMinPkgForGPS_AND_SFMSEARCH * 100000))
+		int check = (DOD * 100000);
+		SMLog(@"%d", check);
+        if(_stringNumber >= check)
 		{
 			NSString * query =  [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS on_demand_download ('object_name' VARCHAR , 'sf_id' VARCHAR PRIMARY KEY  NOT NULL UNIQUE, 'time_stamp' DATETIME ,'local_id' VARCHAR, 'record_type' VARCHAR, 'json_record' VARCHAR) "];
 			[appDelegate.dataBase createTable:query];

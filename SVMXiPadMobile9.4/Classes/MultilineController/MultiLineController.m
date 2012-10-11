@@ -70,8 +70,16 @@ static NSInteger MY_TAG = 0x666;
     
     for (UIView * segmentView in self.subviews)
     {
-        
-        UILabel *segmentLabel = (UILabel *)[[segmentView subviews] objectAtIndex:0];
+        UILabel *segmentLabel = nil;
+        for( id view in segmentView.subviews )
+        {
+            if( [view isKindOfClass:[UILabel class]] )
+            {
+                segmentLabel = view;
+                break;
+            }
+        }
+//        UILabel *segmentLabel = (UILabel *)[[segmentView subviews] objectAtIndex:1];
         if ([segmentLabel.text isEqualToString:[self titleForSegmentAtIndex:segment]])
         {
             

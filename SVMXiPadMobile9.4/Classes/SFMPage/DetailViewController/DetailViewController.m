@@ -313,6 +313,7 @@ extern void SVMXLog(NSString *format, ...);
         appDelegate.isWorkinginOffline = TRUE;
         [self fillSFMdictForOfflineforProcess:currentProcessId forRecord:currentRecordId];
         [self didReceivePageLayoutOffline];
+		SMLog(@"%@", CGRectCreateDictionaryRepresentation(self.navigationController.navigationBar.frame));
         // ################ BACK BUTTON HERE ################# //
         UIImage *image = [UIImage imageNamed:@"SFM-Screen-Back-Arrow-Button"];
 		UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, image.size.width, image.size.height)] autorelease];
@@ -362,11 +363,10 @@ extern void SVMXLog(NSString *format, ...);
     
     [self enableSFMUI];
     
-    /*
+    
     if( !self.parentReference )
         [self addNavigationButtons:detailTitle];
-     */
-	[self addNavigationButtons:nil];
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -2147,12 +2147,12 @@ extern void SVMXLog(NSString *format, ...);
 	//New Wizard buttons fro refreshing the record.
     
    
-	objects_event = [NSArray arrayWithObjects:@"",DOD_BUTTON,@"",@"",gBUTTON_TYPE_TDM_IPAD_ONLY ,@"",@"true",nil];
+	objects_event = [NSArray arrayWithObjects:@"",dod_title,@"",@"",gBUTTON_TYPE_TDM_IPAD_ONLY ,@"",@"true",nil];
     keys_event = [NSArray arrayWithObjects:SFW_ACTION_ID,SFW_ACTION_DESCRIPTION,SFW_EXPRESSION_ID,SFW_PROCESS_ID,SFW_ACTION_TYPE ,SFW_WIZARD_ID,SFW_ENABLE_ACTION_BUTTON,nil];
     NSMutableDictionary * dict_refresh_record = [NSMutableDictionary dictionaryWithObjects:objects_event forKeys:keys_event];
 
     
-	objects_event = [NSArray arrayWithObjects:@"",dod_title,@"",@"",gBUTTON_TYPE_TDM_IPAD_ONLY ,@"",@"true",nil];
+	objects_event = [NSArray arrayWithObjects:@"",quick_save,@"",@"",gBUTTON_TYPE_TDM_IPAD_ONLY ,@"",@"true",nil];
     keys_event = [NSArray arrayWithObjects:SFW_ACTION_ID,SFW_ACTION_DESCRIPTION,SFW_EXPRESSION_ID,SFW_PROCESS_ID,SFW_ACTION_TYPE ,SFW_WIZARD_ID,SFW_ENABLE_ACTION_BUTTON,nil];
     NSMutableDictionary * dict_events_quicksave = [NSMutableDictionary dictionaryWithObjects:objects_event forKeys:keys_event];
     
@@ -2205,12 +2205,13 @@ extern void SVMXLog(NSString *format, ...);
             {
                 [ipad_only_array addObject:dict_events_summury];
             }
-            
-            BOOL check_On_demand = [appDelegate.databaseInterface checkOndemandRecord:currentRecordId];
-            if(check_On_demand)
-            {
-                [ipad_only_array addObject:dict_refresh_record];
-            }
+          
+        }
+    
+        BOOL check_On_demand = [appDelegate.databaseInterface checkOndemandRecord:currentRecordId];
+        if(check_On_demand)
+        {
+            [ipad_only_array addObject:dict_refresh_record];
         }
     }
     if ([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"EDIT"] || [[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"SOURCETOTARGETONLYCHILDROWS"]) 
@@ -3517,6 +3518,7 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void) didReceivePageLayoutOffline
 {
+	SMLog(@"%@", CGRectCreateDictionaryRepresentation(self.navigationController.navigationBar.frame));
     didRunOperation = NO;
     if (isShowingSaveError)
     {
@@ -3638,13 +3640,14 @@ extern void SVMXLog(NSString *format, ...);
     
     [self  didselectSection:0];    
     
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 400, 44)];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
 	label.backgroundColor = [UIColor clearColor];
 	label.font = [UIFont boldSystemFontOfSize:14.0];
 	label.shadowColor = [UIColor colorWithWhite:0.0 alpha:0.5];
 	label.textAlignment = UITextAlignmentCenter;
 	label.textColor = [UIColor blackColor];
-	label.text = detailTitle;	
+	label.text = detailTitle;
+	[label sizeToFit];
 	self.navigationItem.titleView = label;
 	[label release];
     
@@ -3662,7 +3665,7 @@ extern void SVMXLog(NSString *format, ...);
     [appDelegate.sfmPageController.rootView displaySwitchViews];
     [appDelegate.sfmPageController.rootView showLastModifiedTimeForSFMRecord];
     [self enableSFMUI];
-
+	SMLog(@"%@", CGRectCreateDictionaryRepresentation(self.navigationController.navigationBar.frame));
 }
 
 - (void) didFinishWithSuccess:(NSString *) response_msg
@@ -4255,7 +4258,7 @@ extern void SVMXLog(NSString *format, ...);
             if([field_datatype isEqualToString:@"textarea"])
             {
                 control_height = 90;
-                [background initWithFrame:CGRectMake(0, 0, width, 90)];
+                background.frame = CGRectMake(0, 0, width, 90);
                 field_width =  background_width/(2*coloumns);
             }
         }
@@ -5578,7 +5581,7 @@ extern void SVMXLog(NSString *format, ...);
     {
         if([control_type isEqualToString:  @"textarea"])
         {
-            [background initWithFrame:CGRectMake(0, 0, width, 90)];
+            background.frame = CGRectMake(0, 0, width, 90);
             lableframe = CGRectMake(background.frame.origin.x, background.frame.origin.y,240,90);
             idFrame = CGRectMake(background.frame.origin.x+250, background.frame.origin.y, 350, 90);
         }
@@ -7311,22 +7314,24 @@ extern void SVMXLog(NSString *format, ...);
         detailViewObject.Disclosure_Fields = self.Disclosure_Fields;
         detailViewObject.Disclosure_Details = self.Disclosure_Details;
         detailViewObject.showSyncUI = self.showSyncUI;
-        //sahana navigation custom button
+        //sahana navigation custom butto
         detailViewObject.navigationItem.leftBarButtonItem = nil;
         [detailViewObject.navigationItem setHidesBackButton:YES animated:YES];
         
         // ################ BACK BUTTON HERE ################# //
-        UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)] autorelease];
+        UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectZero] autorelease];
         [backButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Back-Arrow-Button"] forState:UIControlStateNormal];
         [backButton addTarget:detailViewObject action:@selector(PopNavigationController:) forControlEvents:UIControlEventTouchUpInside];
         [backButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+		[backButton sizeToFit];
         UIBarButtonItem * backBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:backButton] autorelease];
         detailViewObject.navigationItem.leftBarButtonItem = backBarButtonItem;
         // ################################################### //
         
         //Radha 20th august 2011
-        UIButton * actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)];
+        UIButton * actionButton = [[UIButton alloc] initWithFrame:CGRectZero];
         [actionButton setBackgroundImage:[UIImage imageNamed:@"iService-Screen-Help.png"] forState:UIControlStateNormal];
+		[actionButton sizeToFit];
         [actionButton addTarget:self action:@selector(showHelp) forControlEvents:UIControlEventTouchUpInside];
         UIBarButtonItem * helpBarButton = [[UIBarButtonItem alloc] initWithCustomView:actionButton];  
         
@@ -7343,10 +7348,11 @@ extern void SVMXLog(NSString *format, ...);
         // ################ DONE BUTTON HERE ################# //
         if(isInViewMode)
         {
-			UIButton * doneButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 67, 31)] autorelease];
+			UIButton * doneButton = [[[UIButton alloc] initWithFrame:CGRectZero] autorelease];
             [doneButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Done-Back-Button.png"] forState:UIControlStateNormal];
             [doneButton addTarget:detailViewObject action:@selector(lineseditingDone) forControlEvents:UIControlEventTouchUpInside];
             [doneButton.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
+			[doneButton sizeToFit];
             NSString * done = [appDelegate.wsInterface.tagsDictionary objectForKey:DONE_BUTTON_TITLE];
             
             [doneButton setTitle:done forState:UIControlStateNormal];
@@ -7355,11 +7361,15 @@ extern void SVMXLog(NSString *format, ...);
 //            [actionButton release];
             [buttons addObject:doneBarButtonItem];
             [doneBarButtonItem release];
+			
             toolBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, 190, 44)] autorelease];
+			 //toolBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, actionButton.frame.size.width + syncBarButton.width + doneButton.frame.size.width, 44)] autorelease];
         }
         // ################################################### //
         else
-            toolBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, 90, 44)] autorelease];
+		{
+            toolBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, actionButton.frame.size.width + syncBarButton.width, 44)] autorelease];
+		}
         [buttons addObject:helpBarButton];
         [toolBar setItems:buttons];
         [helpBarButton release];
@@ -7367,6 +7377,8 @@ extern void SVMXLog(NSString *format, ...);
         [syncBarButton release];
         [buttons release];
         
+		SMLog(@"%@", CGRectCreateDictionaryRepresentation(self.navigationController.navigationBar.frame));
+		detailViewObject.navigationController.navigationBar.frame = self.navigationController.navigationBar.frame;
         detailViewObject.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:toolBar] autorelease];
         showSyncUI=YES;
         [self.navigationController pushViewController:detailViewObject animated:YES];
@@ -8564,7 +8576,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         
         NSInteger  a = [tableView numberOfRowsInSection:indexPath.section];
-        NSLog(@"%d", a);
+        SMLog(@"%d", a);
 
         [tableView deleteRowsAtIndexPaths:[NSMutableArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }

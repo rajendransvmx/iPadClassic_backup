@@ -174,11 +174,12 @@
 - (void) Back:(id)sender
 {
     [self dismissViewControllerAnimated:YES completion:^(void){}];
+	[delegate Back:nil];
 }
 -(void) BackOnSave
 {
     [self dismissViewControllerAnimated:YES completion:^(void){}];
-    
+    [delegate Back:nil];
 }
 #pragma progress bar
 -(void)presentProgressBar:(NSString *)object_name sf_id:(NSString *)sf_id  reocrd_name:(NSString *)record_name

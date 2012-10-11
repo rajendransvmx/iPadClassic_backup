@@ -140,7 +140,10 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 {
 	id obj = self.viewControllers.lastObject;
 	if( [obj isKindOfClass:[SummaryViewController class]] )
+	{
+		[[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationPortrait];
 		return UIInterfaceOrientationPortrait;
+	}
 	UIInterfaceOrientation orient = [obj preferredInterfaceOrientationForPresentation];
 	return orient;
 }
@@ -173,6 +176,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 @synthesize dataBase;
 @synthesize isIncrementalMetaSyncInProgress;
+@synthesize isInitialMetaSyncInProgress;
 @synthesize isMetaSyncExceptionCalled;
 @synthesize firstTimeCallForTags;
 @synthesize afterSavePageEventsBinging;
@@ -366,7 +370,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 -(NSUInteger)supportedInterfaceOrientations
 {
-    return UIInterfaceOrientationMaskLandscapeRight | UIInterfaceOrientationMaskLandscapeLeft;
+    return (UIInterfaceOrientationMaskLandscapeRight || UIInterfaceOrientationMaskLandscapeLeft);
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -427,6 +431,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     if (reference_field_names == nil)
         reference_field_names = [[NSMutableDictionary alloc] initWithCapacity:0];
     
+    isInitialMetaSyncInProgress = FALSE;
     isIncrementalMetaSyncInProgress = FALSE;
     isMetaSyncExceptionCalled = FALSE;
     isSpecialSyncDone = FALSE;
@@ -1191,6 +1196,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     loginController.didEnterAlertView = FALSE;
     self.isMetaSyncExceptionCalled = FALSE;
     self.isIncrementalMetaSyncInProgress = FALSE;
+    self.isInitialMetaSyncInProgress = FALSE; 
     self.isSpecialSyncDone = FALSE;
     metaSyncRunning = NO;
 	eventSyncRunning = NO;

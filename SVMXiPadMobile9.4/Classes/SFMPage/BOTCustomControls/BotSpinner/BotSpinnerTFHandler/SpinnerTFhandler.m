@@ -79,17 +79,25 @@ extern void SVMXLog(NSString *format, ...);
     if(isdependentPicklist && [controllerName length] != 0 && [validFor count] != 0)
     {
         contentView.spinnerData  = [setSpinnerValuedelegate  getValuesForDependentPickList];
-        if (ISRTDEPPicklist){
+        if (ISRTDEPPicklist)
+        {
             SMLog(@"Oh God Even this is Possible");
-            if ([textField.text isEqualToString:@""]){
+            if ([textField.text isEqualToString:@""])
+            {
                  defaultValue = [appDelegate.databaseInterface getDefaultValueForRTPicklistDependency:SFM_ObjectName recordtypeId:RecordTypeId field_api_name:parent.fieldAPIName];
                 
                 indexOfText = [contentView.spinnerData indexOfObject:defaultValue];
             }else
                 indexOfText = [contentView.spinnerData indexOfObject:textField.text];
         }else{
-            
-            indexOfText = [contentView.spinnerData indexOfObject:textField.text];
+            if ([textField.text isEqualToString:@""])
+            {
+                indexOfText = 0;
+            }
+            else
+            {
+                indexOfText = [contentView.spinnerData indexOfObject:textField.text];
+            }
         }
     }else if(ISRTDEPPicklist && ![parent.fieldAPIName isEqualToString:@"RecordTypeId"]){
         

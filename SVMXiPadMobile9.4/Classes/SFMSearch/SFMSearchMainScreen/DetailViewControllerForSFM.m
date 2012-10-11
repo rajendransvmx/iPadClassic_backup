@@ -18,6 +18,7 @@ extern void SVMXLog(NSString *format, ...);
 @property(retain, nonatomic) UIPopoverController *masterPopoverController;
 @property(retain, nonatomic) NSMutableDictionary *dictionaries;
 @property(retain, nonatomic) NSMutableArray *sfmArray;
+- (void) readPlist;
 @end
 
 @implementation DetailViewControllerForSFM
@@ -71,40 +72,76 @@ extern void SVMXLog(NSString *format, ...);
     [help release];
 
 }
-- (void)viewDidLoad
+
+- (void) Layout
 {
-    [super viewDidLoad];
+	CGRect rect = self.view.frame;
+	self.navigationController.navigationBar.frame = CGRectMake(0, 0, rect.size.width, self.navigationController.navigationBar.frame.size.height);
+	
 	// Do any additional setup after loading the view, typically from a nib.
+    //[self readPlist];
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     _sfmArray = [[appDelegate.dataBase getSFMSearchConfigurationSettings] retain];
     
-    //Back Button
-    UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)] autorelease];
-    [backButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Back-Arrow-Button"] forState:UIControlStateNormal];
-    [backButton addTarget:self action:@selector(DismissViewController:) forControlEvents:UIControlEventTouchUpInside];
-    [backButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    UIBarButtonItem * backBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:backButton] autorelease];
-    self.navigationItem.leftBarButtonItem = backBarButtonItem;
-    //Help Button
-    UIButton * helpButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)] autorelease];
-    [helpButton setBackgroundImage:[UIImage imageNamed:@"iService-Screen-Help"] forState:UIControlStateNormal];
-    [helpButton addTarget:self action:@selector(showHelp) forControlEvents:UIControlEventTouchUpInside];
-    [helpButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    UIBarButtonItem * addButton = [[[UIBarButtonItem alloc] initWithCustomView:helpButton] autorelease];
-    self.navigationItem.rightBarButtonItem = addButton;
-    UILabel * titleLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, 200, 44)] autorelease];
-    titleLabel.textAlignment = UITextAlignmentCenter;
-    
-    titleLabel.text = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search];
-    titleLabel.font = [UIFont boldSystemFontOfSize:15];
-    titleLabel.backgroundColor = [UIColor clearColor];
-    self.navigationItem.titleView = titleLabel;
     UIImageView * bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_right_panel_bg_main_top.png"]];
-    // UIView * bgImageView = [[UIView alloc] initWithFrame:bgImage.frame];
-    bgImage.frame = CGRectMake(0, -12, bgImage.frame.size.width, bgImage.frame.size.height+12);
-    [self.view addSubview:bgImage];
-    self.detailTable.backgroundView = bgImage;
-    [bgImage release];
+	bgImage.frame = CGRectMake(0, -12, bgImage.frame.size.width, bgImage.frame.size.height+12);
+	//	[self.view addSubview:bgImage];
+	[bgImage release];
+	
+	UIImage *image = [UIImage imageNamed:@"SFM-Screen-Back-Arrow-Button"];
+	UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, image.size.width, image.size.height)] autorelease];
+	[backButton setBackgroundImage:image forState:UIControlStateNormal];
+	[backButton addTarget:self action:@selector(DismissViewController:) forControlEvents:UIControlEventTouchUpInside];
+	UIBarButtonItem * backBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:backButton] autorelease];
+	self.navigationItem.leftBarButtonItem = backBarButtonItem;
+	
+	UILabel * titleLabel = [[[UILabel alloc] initWithFrame:CGRectZero] autorelease];
+	titleLabel.textAlignment = UITextAlignmentCenter;
+	titleLabel.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_conflicts];
+	titleLabel.font = [UIFont boldSystemFontOfSize:15];
+	titleLabel.backgroundColor = [UIColor clearColor];
+	[titleLabel sizeToFit];
+	self.navigationItem.titleView = titleLabel;
+	
+	NSMutableArray *arrayForRightBarButton = [[NSMutableArray alloc] initWithCapacity:0];
+	
+	NSInteger toolBarWidth = 0;
+	const int SPACE_BUFFER = 4;
+	
+	UIBarButtonItem *activityButton = [[[UIBarButtonItem alloc] initWithCustomView:appDelegate.animatedImageView] autorelease];
+	[arrayForRightBarButton addObject:activityButton];
+	toolBarWidth += appDelegate.animatedImageView.frame.size.width + SPACE_BUFFER;
+	
+	UIButton *helpButton = [UIButton buttonWithType:UIButtonTypeCustom];
+	helpButton.backgroundColor = [UIColor clearColor];
+	[helpButton setBackgroundImage:[UIImage imageNamed:@"iService-Screen-Help"] forState:UIControlStateNormal];
+	[helpButton addTarget:self action:@selector(showHelp) forControlEvents:UIControlEventTouchUpInside];
+	[helpButton sizeToFit];
+	toolBarWidth += helpButton.frame.size.width + SPACE_BUFFER;
+	UIBarButtonItem * helpBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:helpButton] autorelease];
+	[arrayForRightBarButton addObject:helpBarButtonItem];
+	
+	UIToolbar *myToolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, toolBarWidth + 30, 44)];
+    myToolBar.backgroundColor = [UIColor clearColor];
+    [myToolBar setItems:arrayForRightBarButton];
+	UIView *view = myToolBar;
+	SMLog(@"%f %f", view.frame.size.width, view.frame.size.height);
+	self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:myToolBar] autorelease];
+    [myToolBar release];
+	
+	[arrayForRightBarButton release];
+	arrayForRightBarButton = nil;
+}
+
+- (void) viewWillAppear:(BOOL)animated
+{
+	[super viewWillAppear:animated];
+	[self Layout];
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
 }
 
 - (void)viewDidUnload
@@ -149,16 +186,25 @@ extern void SVMXLog(NSString *format, ...);
 {
     
 }
+- (void) readPlist
+{
+    NSBundle *MainBundle = [NSBundle mainBundle];    
+    NSString *dataBundlePath = [MainBundle pathForResource:@"DataBase" ofType:@"plist"];
+    _dictionaries =  [[NSMutableDictionary alloc] initWithContentsOfFile:dataBundlePath];
+    _sfmArray = [_dictionaries objectForKey:@"SFM Search"];
+}
 - (void) DismissViewController: (id) sender
 {
 //    SMLog(@"Dismiss Detail View Controller");
     [splitViewDelegate DismissSplitViewController];
 }
+
 #pragma mark - table view delegate methods
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return [_sfmArray count];
 }
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *identifier = @"identifier";
@@ -173,6 +219,8 @@ extern void SVMXLog(NSString *format, ...);
         cell.detailTextLabel.text =DescriptionText;
     else
         cell.detailTextLabel.text =@"";
+	cell.textLabel.backgroundColor = [UIColor clearColor];
+	cell.detailTextLabel.backgroundColor = [UIColor clearColor];
     //UIButton * button = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 20, 21)] autorelease];
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     [button setFrame:CGRectMake(0, 0, 20, 21)];
@@ -185,6 +233,7 @@ extern void SVMXLog(NSString *format, ...);
     //[button release];
      
     UIImageView * bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM-Screen-Table-Strip.png"]];
+    bgImage.backgroundColor=[UIColor clearColor];
     bgImage.frame = cell.frame;
     cell.backgroundView = bgImage;
     [bgImage release];

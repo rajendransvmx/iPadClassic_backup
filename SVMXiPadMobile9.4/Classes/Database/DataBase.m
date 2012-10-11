@@ -1067,18 +1067,35 @@ extern void SVMXLog(NSString *format, ...);
                 {
                     if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
                     {
+                        NSMutableDictionary *dictRefrenceFileds=[[[NSMutableDictionary alloc]init]autorelease];
                         apiName = (char *) synchronized_sqlite3_column_text(labelstmt,0);
                         if((apiName !=nil) && strlen(apiName))
+                        {
                             strapiName=[NSString stringWithFormat:@"%s",apiName];
+                            [dictRefrenceFileds setObject:strapiName forKey:@"apiName"];
+                        }
                         type = (char *) synchronized_sqlite3_column_text(labelstmt,1);
                         if((type !=nil) && strlen(type))
+                        {
                             strtype=[NSString stringWithFormat:@"%s",type];
+                            [dictRefrenceFileds setObject:strtype forKey:@"type"];
+
+                        }
                         relationshipName = (char *) synchronized_sqlite3_column_text(labelstmt,2);
                         if((relationshipName !=nil) && strlen(relationshipName))
+                        {
                             strrelationshipName=[NSString stringWithFormat:@"%s",relationshipName];
+                            [dictRefrenceFileds setObject:strrelationshipName forKey:@"relationshipName"];
+
+                        }
                         reference_to =(char *) synchronized_sqlite3_column_text(labelstmt,3);
                         if((reference_to !=nil) && strlen(reference_to))
+                        {
                             strreference_to=[NSString stringWithFormat:@"%s",reference_to];
+                            [dictRefrenceFileds setObject:strreference_to forKey:@"reference_to"];
+
+                        }
+                        [arrayForApiName addObject:dictRefrenceFileds];
                     }
                 }
                 synchronized_sqlite3_finalize(labelstmt);
@@ -1127,15 +1144,7 @@ extern void SVMXLog(NSString *format, ...);
                     }
                 }
                 synchronized_sqlite3_finalize(labelstmt);
-                if([arrayForApiName count]>1)
-                {
-                    NSString* ObjectApiName =[[dict objectForKey:@"tableArrayDict"] objectForKey:[self getApiNameFromFieldLabel:[TableArray objectAtIndex:i]]];
-                    for(NSDictionary *apiName in arrayForApiName)
-                    {
-                        if([[apiName objectForKey:@"apiName"] Contains:ObjectApiName]&& [strtype isEqualToString:@"reference"])
-                        strapiName=ObjectApiName;
-                    }
-                }
+
             }
             
             if([strtype isEqualToString:@"reference"])
@@ -1165,10 +1174,10 @@ extern void SVMXLog(NSString *format, ...);
 					}
                     [joinFields appendFormat:@" )"];
 				}
-				else 
-				{
-					[joinFields appendFormat:@" '%@'.%@ = '%@'.Id ",[dict objectForKey:@"object"],strapiName,[self getApiNameFromFieldLabel:[TableArray objectAtIndex:i]]];
-				}
+//				else 
+//				{
+//					[joinFields appendFormat:@" '%@'.%@ = '%@'.Id ",[dict objectForKey:@"object"],strapiName,[self getApiNameFromFieldLabel:[TableArray objectAtIndex:i]]];
+//				}
                
             }
         }
@@ -2321,7 +2330,7 @@ extern void SVMXLog(NSString *format, ...);
     if(appDelegate == nil)
         appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
 
-    if(appDelegate.metaSyncRunning)
+    if(appDelegate.metaSyncRunning || appDelegate.isInitialMetaSyncInProgress)
     {
         didTechnicianLocationUpdated=TRUE;
         SMLog(@"Sync is Running");
@@ -5214,8 +5223,8 @@ extern void SVMXLog(NSString *format, ...);
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS meta_sync_due ('local_id' INTEGER PRIMARY KEY  NOT NULL UNIQUE, 'description' VARCHAR)"];
     [self createTable:query];
     
-    query =  [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS on_demand_download ('object_name' VARCHAR , 'sf_id' VARCHAR PRIMARY KEY  NOT NULL UNIQUE, 'time_stamp' DATETIME ,'local_id' VARCHAR, 'record_type' VARCHAR, 'json_record' VARCHAR) "];
-    [self createTable:query];
+//    query =  [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS on_demand_download ('object_name' VARCHAR , 'sf_id' VARCHAR PRIMARY KEY  NOT NULL UNIQUE, 'time_stamp' DATETIME ,'local_id' VARCHAR, 'record_type' VARCHAR, 'json_record' VARCHAR) "];
+//    [self createTable:query];
 
     
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS servicereprt_logo ('logo' VARCHAR)"];
@@ -6158,8 +6167,8 @@ extern void SVMXLog(NSString *format, ...);
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS servicereprt_logo ('logo' VARCHAR)"];
     [self createTemporaryTable:query];
     
-    query =  [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS on_demand_download ('object_name' VARCHAR , 'sf_id' VARCHAR  PRIMARY KEY  NOT NULL UNIQUE, 'time_stamp' DATETIME ,'local_id' VARCHAR, 'record_type' VARCHAR, 'json_record' VARCHAR)"];
-    [self createTemporaryTable:query];
+//    query =  [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS on_demand_download ('object_name' VARCHAR , 'sf_id' VARCHAR  PRIMARY KEY  NOT NULL UNIQUE, 'time_stamp' DATETIME ,'local_id' VARCHAR, 'record_type' VARCHAR, 'json_record' VARCHAR)"];
+//    [self createTemporaryTable:query];
     
     
     [self createTemporaryTable:query];

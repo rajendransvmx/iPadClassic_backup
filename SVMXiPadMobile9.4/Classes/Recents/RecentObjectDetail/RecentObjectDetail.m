@@ -100,7 +100,7 @@ extern void SVMXLog(NSString *format, ...);
     myToolBar.backgroundColor = [UIColor clearColor];
     [myToolBar setItems:arrayForRightBarButton];
 	UIView *view = myToolBar;
-	NSLog(@"%f %f", view.frame.size.width, view.frame.size.height);
+	SMLog(@"%f %f", view.frame.size.width, view.frame.size.height);
 	self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:myToolBar] autorelease];
     [myToolBar release];
 	

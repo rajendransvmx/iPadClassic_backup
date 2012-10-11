@@ -65,16 +65,24 @@ enum  {
     [self createTable];
     
 }
+
+- (void) viewWillAppear:(BOOL)animated
+{
+	[super viewWillAppear:animated];
+	[self initilizeToolBar];
+}
+
 -(void) LoadResultDetailViewController:(BOOL)isondemand
 {
     [self initilizeToolBar];
     if(isondemand)
         [masterView performSelector:@selector(refineSearch:)withObject:nil afterDelay:0.01];
 }
+
 -(void) viewDidAppear:(BOOL)animated
 {
+	[super viewDidAppear:animated];
     [self initilizeToolBar];
-
 }
 -(void) initilizeToolBar 
 {
@@ -517,29 +525,32 @@ enum  {
             BOOL tabel_Exists=[appDelegate.dataBase isTabelExistInDB:@"on_demand_download"];
             BOOL isparent=[appDelegate.dataBase isHeaderRecord:objname];
             BOOL recordExists = [appDelegate.dataBase checkForDuplicateId:objname sfId:sf_id];
-            if(tabel_Exists && isparent && recordExists)
+            if (tabel_Exists)
             {
-                UIImage * image1 = [UIImage imageNamed:@"download.png"];
-                UIControl *control = [[UIControl alloc] initWithFrame:CGRectMake(tableView.frame.size.width-103, 7, 20, 21)];
-                control.backgroundColor = [UIColor clearColor];
-                control.tag = indexPath.section;
-                control.layer.contents = (id)image1.CGImage;
-                [control addTarget:self action:@selector(onDemandDataFecthing:) forControlEvents:UIControlEventTouchUpInside];
-                [backgroundView addSubview:control];
-                [control release];
-            }
-            else if(processAvailbleForRecord)
-            {
-                
-                UIImage * image1 = [UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"];
-                UIControl *control = [[UIControl alloc] initWithFrame:CGRectMake(tableView.frame.size.width-103, 7, 20, 21)];
-                control.backgroundColor = [UIColor clearColor];
-                control.tag = indexPath.section;
-                control.layer.contents = (id)image1.CGImage;
-                [control addTarget:self action:@selector(onDemandDataFecthing:) forControlEvents:UIControlEventTouchUpInside];
-                [backgroundView addSubview:control];
-                [control release];
-                
+                if( isparent && recordExists)
+                {
+                    UIImage * image1 = [UIImage imageNamed:@"download.png"];
+                    UIControl *control = [[UIControl alloc] initWithFrame:CGRectMake(tableView.frame.size.width-103, 7, 20, 21)];
+                    control.backgroundColor = [UIColor clearColor];
+                    control.tag = indexPath.section;
+                    control.layer.contents = (id)image1.CGImage;
+                    [control addTarget:self action:@selector(onDemandDataFecthing:) forControlEvents:UIControlEventTouchUpInside];
+                    [backgroundView addSubview:control];
+                    [control release];
+                }
+                else if(processAvailbleForRecord)
+                {
+                    
+                    UIImage * image1 = [UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"];
+                    UIControl *control = [[UIControl alloc] initWithFrame:CGRectMake(tableView.frame.size.width-103, 7, 20, 21)];
+                    control.backgroundColor = [UIColor clearColor];
+                    control.tag = indexPath.section;
+                    control.layer.contents = (id)image1.CGImage;
+                    [control addTarget:self action:@selector(onDemandDataFecthing:) forControlEvents:UIControlEventTouchUpInside];
+                    [backgroundView addSubview:control];
+                    [control release];
+                    
+                }
             }
         }
 
@@ -1187,8 +1198,16 @@ enum  {
 //    
 //}
 
+- (void) Back:(id)sender
+{
+	[self initilizeToolBar];
+}
+
 - (void) accessoryButtonTapped:(id)sender
 {
+    NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+    NSString * warning = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_WARNING];
+    NSString * noView = [appDelegate.wsInterface.tagsDictionary objectForKey:NO_VIEW_PROCESS];
     UITableViewCell *ownerCell = (UITableViewCell*)[[[sender superview] superview] superview];
     NSIndexPath *ownerCellIndexPath;
     if (ownerCell != nil)
@@ -1226,6 +1245,7 @@ enum  {
     if(appDelegate.sfmPageController)
         [appDelegate.sfmPageController release];
     appDelegate.sfmPageController = [[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE];
+	appDelegate.sfmPageController.delegate = (id<SFMPageDelegate>)self;
 
     sqlite3_stmt * labelstmt;
     const char *selectStatement = [queryStatement1 UTF8String];
@@ -1244,52 +1264,61 @@ enum  {
                 localId = @"";
         }
     }
-
-    NSString * queryStatement2 = [NSMutableString stringWithFormat:@"Select process_id FROM SFProcess where process_type = 'VIEWRECORD' and object_api_name = '%@'",objectName];   
-    sqlite3_stmt * labelstmt2;
-    const char *selectStatement2 = [queryStatement2 UTF8String];
-    
     NSString *processId = @"";
-    
-    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement2,-1, &labelstmt2, nil) == SQLITE_OK )
+        
+    for (int v = 0; v < [appDelegate.view_layout_array count]; v++)
     {
-        if(synchronized_sqlite3_step(labelstmt2) == SQLITE_ROW)
+        NSDictionary * dict = [appDelegate.view_layout_array objectAtIndex:v];
+        NSString * object_label = [dict objectForKey:VIEW_OBJECTNAME];
+        if ([object_label isEqualToString:objectName])
         {
-            field1 = (char *) synchronized_sqlite3_column_text(labelstmt2,0);
-//            SMLog(@"%s",field1);
-            if(field1)
-                processId = [NSString stringWithFormat:@"%s", field1];
-            else
-                processId = @"";
+            processId = ([dict objectForKey:VIEW_SVMXC_ProcessID]!=nil)?[dict objectForKey:VIEW_SVMXC_ProcessID]:@"";
+            break;
         }
     }
-    appDelegate.sfmPageController.conflictExists = FALSE;
-    appDelegate.sfmPageController.processId = processId;
-    appDelegate.From_SFM_Search=FROM_SFM_SEARCH;
-    
-    NSString * sfid = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:objectName local_id:localId];
-    
-    conflict = [appDelegate.dataBase checkIfConflictsExistsForEvent:sfid objectName:objectName local_id:localId];
-    
-//    if (!conflict)
-//    {
-//        conflict = [appDelegate.dataBase checkIfChildConflictexist:sfid sfId:objectName];
-//    }
-    
-    appDelegate.sfmPageController.objectName = [NSString stringWithFormat:@"%@",objectName];
-    appDelegate.sfmPageController.topLevelId = nil;
-    appDelegate.sfmPageController.recordId = localId;
-    
-    appDelegate.sfmPageController.conflictExists = conflict;
 
-    //[appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
-    [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
-    [self presentViewController:appDelegate.sfmPageController animated:YES completion:nil];
-    [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];
+    
+    NSString * processId_ =  [appDelegate.switchViewLayouts objectForKey:objectName];
+    appDelegate.sfmPageController.processId = (processId_ != nil)?processId_:processId;
+    processInfo * pinfo =  [appDelegate getViewProcessForObject:objectName record_id:localId processId:appDelegate.sfmPageController.processId isswitchProcess:FALSE];
+
+    if(pinfo.process_exists)
+    {
+        appDelegate.sfmPageController.conflictExists = FALSE;
+        appDelegate.sfmPageController.processId = pinfo.process_id;
+        appDelegate.From_SFM_Search=FROM_SFM_SEARCH;
+        
+        NSString * sfid = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:objectName local_id:localId];
+        
+        conflict = [appDelegate.dataBase checkIfConflictsExistsForEvent:sfid objectName:objectName local_id:localId];
+        
+    //    if (!conflict)
+    //    {
+    //        conflict = [appDelegate.dataBase checkIfChildConflictexist:sfid sfId:objectName];
+    //    }
+        
+        appDelegate.sfmPageController.objectName = [NSString stringWithFormat:@"%@",objectName];
+        appDelegate.sfmPageController.topLevelId = nil;
+        appDelegate.sfmPageController.recordId = localId;
+        
+        appDelegate.sfmPageController.conflictExists = conflict;
+
+        //[appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
+        [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
+        [self presentModalViewController:appDelegate.sfmPageController animated:YES];
+       
+    }
+    else
+    {
+        UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:warning message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
+        [alert1 show];
+        [alert1 release];
+        return;
+
+    }
     [appDelegate.sfmPageController release];
+        
     synchronized_sqlite3_finalize(labelstmt);
-    synchronized_sqlite3_finalize(labelstmt2);
-
 
 }
 #pragma mark - SFM Full Result View Delegate

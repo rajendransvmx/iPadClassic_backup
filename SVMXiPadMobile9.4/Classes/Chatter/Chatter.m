@@ -133,7 +133,7 @@ extern void SVMXLog(NSString *format, ...);
     help.modalPresentationStyle = UIModalPresentationFullScreen;
     help.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     help.helpString = @"chatter.html";
-    [self presentViewController:help animated:YES completion:nil completion:nil];
+    [self presentViewController:help animated:YES completion:nil];
     [help release];
 }
 
@@ -1008,7 +1008,8 @@ extern void SVMXLog(NSString *format, ...);
     HTMLBrowser * htmlBrowser = [[HTMLBrowser alloc] initWithURLString:@"http://www.thesmartvan.com"];
     htmlBrowser.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     htmlBrowser.modalPresentationStyle = UIModalPresentationFullScreen;
-    [self presentViewController:htmlBrowser animated:YES completion:nil completion:nil];
+    [self presentViewController:htmlBrowser animated:YES completion:nil];
+//    [self presentViewController:htmlBrowser animated:YES completion:nil completion:nil];
     [htmlBrowser release];
 }
 
