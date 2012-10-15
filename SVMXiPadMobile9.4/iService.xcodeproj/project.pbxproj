@@ -6378,6 +6378,7 @@
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = YES;
 				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = armv7;
 			};
 			name = Debug;
 		};
@@ -6417,6 +6418,7 @@
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = YES;
 				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = armv7;
 			};
 			name = Release;
 		};
@@ -6483,6 +6485,7 @@
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = YES;
 				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = armv7;
 			};
 			name = Distribution;
 		};
