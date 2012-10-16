@@ -138,7 +138,7 @@ PopoverButtons *popOver_view;
 }
 -(void)resetApplication
 {
-	if (!appDelegate.isInternetConnectionAvailable)
+	if (![appDelegate isInternetConnectionAvailable])
     {
         [delegate dismisspopover];
         appDelegate.shouldShowConnectivityStatus = TRUE;
@@ -154,7 +154,7 @@ PopoverButtons *popOver_view;
     [delegate dismisspopover];
     appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
     
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         appDelegate.shouldShowConnectivityStatus = TRUE;
         [appDelegate displayNoInternetAvailable];
@@ -182,7 +182,7 @@ PopoverButtons *popOver_view;
             return;
         }
         
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             
             [appDelegate setSyncStatus:SYNC_RED];
@@ -198,7 +198,7 @@ PopoverButtons *popOver_view;
         {
             while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
-                if (!appDelegate.isInternetConnectionAvailable)
+                if (![appDelegate isInternetConnectionAvailable])
                 {
                     break;
                 }
@@ -213,7 +213,7 @@ PopoverButtons *popOver_view;
         {
             while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
-                if (!appDelegate.isInternetConnectionAvailable)
+                if (![appDelegate isInternetConnectionAvailable])
                 {
                     break;
                 }
@@ -251,7 +251,7 @@ PopoverButtons *popOver_view;
                     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
                     break;
                 }
-                if (!appDelegate.isInternetConnectionAvailable)
+                if (![appDelegate isInternetConnectionAvailable])
                     break;
             }
         }        
@@ -260,7 +260,7 @@ PopoverButtons *popOver_view;
             
             while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
-                if (!appDelegate.isInternetConnectionAvailable)
+                if (![appDelegate isInternetConnectionAvailable])
                 {
                     break;
                 }
@@ -278,7 +278,7 @@ PopoverButtons *popOver_view;
             
             while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
-                if (!appDelegate.isInternetConnectionAvailable)
+                if (![appDelegate isInternetConnectionAvailable])
                 {
                     break;
                 }
@@ -300,7 +300,7 @@ PopoverButtons *popOver_view;
             if(appDelegate.isSpecialSyncDone)
                 break;
             
-            if (!appDelegate.isInternetConnectionAvailable)
+            if (![appDelegate isInternetConnectionAvailable])
                 break;
             
             if (appDelegate.connection_error)
@@ -324,7 +324,7 @@ PopoverButtons *popOver_view;
 {
     [delegate dismisspopover];
     
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [delegate dismisspopover];
         appDelegate.shouldShowConnectivityStatus = TRUE;
@@ -380,7 +380,7 @@ PopoverButtons *popOver_view;
 - (void) synchronizeEvents
 {
     [delegate dismisspopover];
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [delegate dismisspopover];
         appDelegate.shouldShowConnectivityStatus = TRUE;
@@ -413,7 +413,7 @@ PopoverButtons *popOver_view;
     appDelegate.internetAlertFlag = FALSE;
     appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
         
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         appDelegate.shouldShowConnectivityStatus = TRUE;
         [appDelegate displayNoInternetAvailable];
@@ -457,7 +457,7 @@ PopoverButtons *popOver_view;
     
     @try {
         
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             return;
         }
@@ -494,7 +494,7 @@ PopoverButtons *popOver_view;
         {
             while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
-                if (!appDelegate.isInternetConnectionAvailable)
+                if (![appDelegate isInternetConnectionAvailable])
                 {
                     break;
                 }
@@ -518,7 +518,7 @@ PopoverButtons *popOver_view;
 //		{
 //			while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
 //			{
-//				if (!appDelegate.isInternetConnectionAvailable)
+//				if (![appDelegate isInternetConnectionAvailable])
 //				{
 //					break;
 //				}
@@ -530,7 +530,7 @@ PopoverButtons *popOver_view;
 //			}
 //		}
 //		
-//        if (!appDelegate.isInternetConnectionAvailable)
+//        if (![appDelegate isInternetConnectionAvailable])
 //        {
 //            appDelegate.SyncStatus = SYNC_GREEN;
 //            [appDelegate setSyncStatus:SYNC_GREEN];
@@ -560,7 +560,7 @@ PopoverButtons *popOver_view;
         [delegate enableControls];
         
 		[appDelegate.calDataBase insertMetaSyncStatus:@"Red" WithDB:appDelegate.db];
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.internetAlertFlag = TRUE;
          
@@ -581,7 +581,7 @@ PopoverButtons *popOver_view;
     }
     @finally {
         
-        if(appDelegate.internetAlertFlag == TRUE && (!appDelegate.isInternetConnectionAvailable))
+        if(appDelegate.internetAlertFlag == TRUE && (![appDelegate isInternetConnectionAvailable]))
         {
             appDelegate.internetAlertFlag = FALSE;
             [delegate showInternetAletView];
@@ -667,7 +667,7 @@ PopoverButtons *popOver_view;
     if (appDelegate == nil)
         appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
 
-	if (!appDelegate.isInternetConnectionAvailable)
+	if (![appDelegate isInternetConnectionAvailable])
     {
         return;
     }
@@ -727,7 +727,7 @@ PopoverButtons *popOver_view;
             return;
         }
          
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             [refreshMetaSyncDelegate refreshMetaSyncStatus];
             
@@ -746,7 +746,7 @@ PopoverButtons *popOver_view;
             
             while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
-                if (!appDelegate.isInternetConnectionAvailable)
+                if (![appDelegate isInternetConnectionAvailable])
                 {
                     break;
                 }
@@ -764,7 +764,7 @@ PopoverButtons *popOver_view;
         {
             while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
-                if (!appDelegate.isInternetConnectionAvailable)
+                if (![appDelegate isInternetConnectionAvailable])
                 {
                     break;
                 }
@@ -796,7 +796,7 @@ PopoverButtons *popOver_view;
         {
             
         }
-        else if (appDelegate.isInternetConnectionAvailable )
+        else if ([appDelegate isInternetConnectionAvailable] )
         {
             BOOL value = [appDelegate goOnlineIfRequired];
             

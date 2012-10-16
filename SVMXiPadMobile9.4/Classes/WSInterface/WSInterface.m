@@ -361,7 +361,7 @@ last_sync_time:(NSString *)last_sync_time
 
 -(void)DoSpecialIncrementalSync
 {
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         appDelegate.isSpecialSyncDone = TRUE;
         return;
@@ -385,7 +385,7 @@ last_sync_time:(NSString *)last_sync_time
     
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             return;
         }
@@ -407,7 +407,7 @@ last_sync_time:(NSString *)last_sync_time
 	
 	while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             return;
         }
@@ -426,7 +426,7 @@ last_sync_time:(NSString *)last_sync_time
     [self Put:PUT_UPDATE];
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             return;
         }
@@ -759,7 +759,7 @@ last_sync_time:(NSString *)last_sync_time
     
     NSString * data_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_data_sync];
     
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         return;
     }
@@ -828,7 +828,7 @@ last_sync_time:(NSString *)last_sync_time
 
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
              appDelegate.dataSyncRunning = NO;
             [self internetConnectivityHandling:data_sync];
@@ -836,7 +836,7 @@ last_sync_time:(NSString *)last_sync_time
             break;
         }
 
-        if (!appDelegate.isInternetConnectionAvailable || appDelegate.Incremental_sync_status == GET_DELETE_DONE || appDelegate.incrementalSync_Failed == TRUE)
+        if (![appDelegate isInternetConnectionAvailable] || appDelegate.Incremental_sync_status == GET_DELETE_DONE || appDelegate.incrementalSync_Failed == TRUE)
         {
             break;
         }
@@ -851,9 +851,9 @@ last_sync_time:(NSString *)last_sync_time
 		
     }
 	
-    if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
+    if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
     {
-        if (appDelegate.isInternetConnectionAvailable)
+        if ([appDelegate isInternetConnectionAvailable])
             [appDelegate setSyncStatus:SYNC_GREEN];
 		
 		appDelegate.dataSyncRunning = NO;
@@ -864,7 +864,7 @@ last_sync_time:(NSString *)last_sync_time
     
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
              appDelegate.dataSyncRunning = NO;
             [self internetConnectivityHandling:data_sync];
@@ -872,7 +872,7 @@ last_sync_time:(NSString *)last_sync_time
         
             break;
         }
-        if(appDelegate.Incremental_sync_status == GET_DELETE_DC_DONE || appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
+        if(appDelegate.Incremental_sync_status == GET_DELETE_DC_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
         {
             break;
         }
@@ -885,9 +885,9 @@ last_sync_time:(NSString *)last_sync_time
             return;
         }
     }
-    if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
+    if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
     {
-		if (appDelegate.isInternetConnectionAvailable)
+		if ([appDelegate isInternetConnectionAvailable])
 			appDelegate.SyncStatus = SYNC_GREEN;
         
 		appDelegate.dataSyncRunning = NO;
@@ -897,7 +897,7 @@ last_sync_time:(NSString *)last_sync_time
     [self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP_SELECT"];
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {        
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.dataSyncRunning = NO;
             [self internetConnectivityHandling:data_sync];
@@ -918,7 +918,7 @@ last_sync_time:(NSString *)last_sync_time
         }
         
     }
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
 		appDelegate.dataSyncRunning = NO;
         return;
@@ -933,12 +933,12 @@ last_sync_time:(NSString *)last_sync_time
     
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.dataSyncRunning = NO;
             break;
         }
-        if(appDelegate.Incremental_sync_status == PUT_DELETE_DONE || appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
+        if(appDelegate.Incremental_sync_status == PUT_DELETE_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
         {
             break;
         }
@@ -951,7 +951,7 @@ last_sync_time:(NSString *)last_sync_time
             return;
         }
     }
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         
         [self internetConnectivityHandling:data_sync];
@@ -959,9 +959,9 @@ last_sync_time:(NSString *)last_sync_time
         
     }
 
-    if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
+    if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
     {
-        if (appDelegate.isInternetConnectionAvailable)
+        if ([appDelegate isInternetConnectionAvailable])
             [appDelegate setSyncStatus:SYNC_GREEN];
         
 		appDelegate.dataSyncRunning = NO;
@@ -982,7 +982,7 @@ last_sync_time:(NSString *)last_sync_time
     
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {        
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             [self internetConnectivityHandling:data_sync];
             //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
@@ -990,7 +990,7 @@ last_sync_time:(NSString *)last_sync_time
             break;
         }
 
-        if(appDelegate.Incremental_sync_status == PUT_INSERT_DONE || appDelegate.incrementalSync_Failed == TRUE  || appDelegate.isInternetConnectionAvailable == FALSE)
+        if(appDelegate.Incremental_sync_status == PUT_INSERT_DONE || appDelegate.incrementalSync_Failed == TRUE  || [appDelegate isInternetConnectionAvailable] == FALSE)
         {
             break;
         }
@@ -1003,9 +1003,9 @@ last_sync_time:(NSString *)last_sync_time
             return;
         }
     }
-    if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
+    if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
     {
-        if (appDelegate.isInternetConnectionAvailable)
+        if ([appDelegate isInternetConnectionAvailable])
             appDelegate.SyncStatus = SYNC_GREEN;
 
 		appDelegate.dataSyncRunning = NO;
@@ -1017,7 +1017,7 @@ last_sync_time:(NSString *)last_sync_time
     
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.dataSyncRunning = NO;
             [self internetConnectivityHandling:data_sync];
@@ -1025,7 +1025,7 @@ last_sync_time:(NSString *)last_sync_time
             break;
         }
 
-        if(appDelegate.Incremental_sync_status == GET_INSERT_DONE ||  appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
+        if(appDelegate.Incremental_sync_status == GET_INSERT_DONE ||  appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
         {
             break;
         }
@@ -1038,9 +1038,9 @@ last_sync_time:(NSString *)last_sync_time
             return;
         }
     }  
-    if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
+    if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
     {
-        if (appDelegate.isInternetConnectionAvailable)
+        if ([appDelegate isInternetConnectionAvailable])
             [appDelegate setSyncStatus:SYNC_GREEN];
 	
 		appDelegate.dataSyncRunning = NO;
@@ -1053,7 +1053,7 @@ last_sync_time:(NSString *)last_sync_time
     
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.dataSyncRunning = NO;
             [self internetConnectivityHandling:data_sync];
@@ -1061,7 +1061,7 @@ last_sync_time:(NSString *)last_sync_time
             
             break;
         }
-        if(appDelegate.Incremental_sync_status == GET_INSERT_DC_DONE || appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
+        if(appDelegate.Incremental_sync_status == GET_INSERT_DC_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
         {
             break;
         }
@@ -1074,9 +1074,9 @@ last_sync_time:(NSString *)last_sync_time
             return;
         }
     }
-    if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
+    if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
     {
-        if (appDelegate.isInternetConnectionAvailable)
+        if ([appDelegate isInternetConnectionAvailable])
             [appDelegate setSyncStatus:SYNC_GREEN];
 	
 		appDelegate.dataSyncRunning = NO;	
@@ -1087,7 +1087,7 @@ last_sync_time:(NSString *)last_sync_time
     
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.dataSyncRunning = NO;
             [self internetConnectivityHandling:data_sync];
@@ -1106,7 +1106,7 @@ last_sync_time:(NSString *)last_sync_time
             return;
         }
     }
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
 		appDelegate.dataSyncRunning = NO;
         return;
@@ -1131,14 +1131,14 @@ last_sync_time:(NSString *)last_sync_time
     
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.dataSyncRunning = NO;
             [self internetConnectivityHandling:data_sync];
             //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
             break;
         }
-        if(appDelegate.Incremental_sync_status == PUT_UPDATE_DONE  || appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
+        if(appDelegate.Incremental_sync_status == PUT_UPDATE_DONE  || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
         {
             break;
         }
@@ -1151,9 +1151,9 @@ last_sync_time:(NSString *)last_sync_time
             return;
         }
     }
-    if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
+    if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
     {
-        if (appDelegate.isInternetConnectionAvailable)
+        if ([appDelegate isInternetConnectionAvailable])
             [appDelegate setSyncStatus:SYNC_GREEN];
 
 		appDelegate.dataSyncRunning = NO;
@@ -1178,14 +1178,14 @@ last_sync_time:(NSString *)last_sync_time
     
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.dataSyncRunning = NO;
             [self internetConnectivityHandling:data_sync];
             //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
             break;
         }
-        if(appDelegate.Incremental_sync_status == GET_UPDATE_DONE || appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
+        if(appDelegate.Incremental_sync_status == GET_UPDATE_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
         {
             break;
         }
@@ -1199,9 +1199,9 @@ last_sync_time:(NSString *)last_sync_time
         }
     }
     
-    if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
+    if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
     {
-        if (appDelegate.isInternetConnectionAvailable)
+        if ([appDelegate isInternetConnectionAvailable])
             [appDelegate setSyncStatus:SYNC_GREEN];
         
 		appDelegate.dataSyncRunning = NO;
@@ -1212,7 +1212,7 @@ last_sync_time:(NSString *)last_sync_time
     
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.dataSyncRunning = NO;
             [self internetConnectivityHandling:data_sync];
@@ -1220,7 +1220,7 @@ last_sync_time:(NSString *)last_sync_time
             
             break;
         }
-        if(appDelegate.Incremental_sync_status == GET_UPDATE_DC_DONE || appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
+        if(appDelegate.Incremental_sync_status == GET_UPDATE_DC_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
         {
             break;
         }
@@ -1233,9 +1233,9 @@ last_sync_time:(NSString *)last_sync_time
             return;
         }
     }
-    if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
+    if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
     {
-        if (appDelegate.isInternetConnectionAvailable)
+        if ([appDelegate isInternetConnectionAvailable])
             [appDelegate setSyncStatus:SYNC_GREEN];
     
 		appDelegate.dataSyncRunning = NO;
@@ -1245,7 +1245,7 @@ last_sync_time:(NSString *)last_sync_time
     [self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP_SELECT"];
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
-        if ( !appDelegate.isInternetConnectionAvailable)
+        if ( ![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.dataSyncRunning = NO;
             [self internetConnectivityHandling:data_sync];
@@ -1265,7 +1265,7 @@ last_sync_time:(NSString *)last_sync_time
             return;
         }
     }
-    if ( !appDelegate.isInternetConnectionAvailable)
+    if ( ![appDelegate isInternetConnectionAvailable])
     {
 		appDelegate.dataSyncRunning = NO;
         return;
@@ -1276,14 +1276,14 @@ last_sync_time:(NSString *)last_sync_time
     
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.dataSyncRunning = NO;
             [self internetConnectivityHandling:data_sync];
             //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
             break;
         }
-        if(appDelegate.Incremental_sync_status == PUT_RECORDS_DONE || appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
+        if(appDelegate.Incremental_sync_status == PUT_RECORDS_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
         {
             break;
         }
@@ -1297,9 +1297,9 @@ last_sync_time:(NSString *)last_sync_time
         }
     }
     
-    if(appDelegate.incrementalSync_Failed == TRUE || appDelegate.isInternetConnectionAvailable == FALSE)
+    if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
     {
-        if (appDelegate.isInternetConnectionAvailable)
+        if ([appDelegate isInternetConnectionAvailable])
             [appDelegate setSyncStatus:SYNC_GREEN];
         
 		appDelegate.dataSyncRunning = NO;
@@ -1313,7 +1313,7 @@ last_sync_time:(NSString *)last_sync_time
         {                
             if (appDelegate.dataBase.didTechnicianLocationUpdated == TRUE)
                 break;   
-            if (!appDelegate.isInternetConnectionAvailable)
+            if (![appDelegate isInternetConnectionAvailable])
             {
                 break;
             }
@@ -1418,7 +1418,7 @@ last_sync_time:(NSString *)last_sync_time
         [self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP"];
         while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
         {
-            if ( !appDelegate.isInternetConnectionAvailable)
+            if ( ![appDelegate isInternetConnectionAvailable])
             {
                 [appDelegate setSyncStatus:SYNC_GREEN];
             }
@@ -4689,7 +4689,7 @@ last_sync_time:(NSString *)last_sync_time
 
     if ([response.error isKindOfClass:[NSURLErrorDomain class]])
     {
-        appDelegate.isInternetConnectionAvailable = NO;
+        //[appDelegate isInternetConnectionAvailable] = NO;
         [[NSNotificationCenter defaultCenter] postNotificationName:kInternetConnectionChanged object:[NSNumber numberWithInt:0] userInfo:nil];
     }
 
@@ -7228,7 +7228,7 @@ last_sync_time:(NSString *)last_sync_time
             while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
             {
                 SMLog(@"WSInterface operation in while loop");
-                /*if (!appDelegate.isInternetConnectionAvailable)
+                /*if (![appDelegate isInternetConnectionAvailable])
                 {
                     didGetProcessId = TRUE;
                     appDelegate.sfmSave = TRUE;
@@ -7264,7 +7264,7 @@ last_sync_time:(NSString *)last_sync_time
             while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
             {
                 SMLog(@"WSInterface operation in while loop");
-                /*if (!appDelegate.isInternetConnectionAvailable)
+                /*if (![appDelegate isInternetConnectionAvailable])
                 {
                     didGetProcessId = TRUE;
                     appDelegate.sfmSave = TRUE;
@@ -9404,7 +9404,7 @@ last_sync_time:(NSString *)last_sync_time
         
         while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
         {
-            if (!appDelegate.isInternetConnectionAvailable)
+            if (![appDelegate isInternetConnectionAvailable])
                 return;
             SMLog(@"WSInterface getDictionaryFromPageLayout in while loop");
             SMLog(@"Hello");
@@ -10574,7 +10574,7 @@ last_sync_time:(NSString *)last_sync_time
 
         
         SMLog(@"WSInterface getNameFieldForCreateProcess in while loop");
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             didGetProcessId = TRUE;
             didGetNameField = TRUE;
@@ -10841,7 +10841,7 @@ last_sync_time:(NSString *)last_sync_time
 - (void) internetConnectionFailed
 {
 //    iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-//    appDelegate.isInternetConnectionAvailable = NO;
+//    [appDelegate isInternetConnectionAvailable] = NO;
 }
 
 @end
@@ -10856,7 +10856,7 @@ last_sync_time:(NSString *)last_sync_time
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
     iServiceAppDelegate * appDelegate_ = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
-    appDelegate_.isInternetConnectionAvailable = NO;
+    //appDelegate_.isInternetConnectionAvailable = NO;
     [[NSNotificationCenter defaultCenter] postNotificationName:kInternetConnectionChanged object:[NSNumber numberWithInt:0] userInfo:nil];
 }
 
@@ -10872,7 +10872,7 @@ last_sync_time:(NSString *)last_sync_time
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
-    appDelegate.isInternetConnectionAvailable = NO;
+    //[appDelegate isInternetConnectionAvailable] = NO;
     [[NSNotificationCenter defaultCenter] postNotificationName:kInternetConnectionChanged object:[NSNumber numberWithInt:0] userInfo:nil];
 }
 

@@ -372,7 +372,6 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     //Radha
     CalendarDatabase * calDataBase;
     
-    BOOL isInternetConnectionAvailable;
     NSMutableArray * allURLConnectionsArray;
     
     
@@ -684,8 +683,6 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 
 @property BOOL connectionAvailable;
 
-@property BOOL isInternetConnectionAvailable;
-
 @property (nonatomic, retain) NSMutableArray * allURLConnectionsArray;
 
 //databse
@@ -716,6 +713,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 // SFM Search conflict status
 @property (nonatomic, assign) NSString *From_SFM_Search;
 
+- (BOOL) isInternetConnectionAvailable;
 // get GUID 
 + (NSString *)GetUUID;
 

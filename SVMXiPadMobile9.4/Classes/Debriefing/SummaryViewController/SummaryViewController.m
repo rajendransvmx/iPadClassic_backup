@@ -186,7 +186,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (IBAction) createPDF;
 {
-   /* if (!AppDelegate.isInternetConnectionAvailable)
+   /* if (![appDelegate isInternetConnectionAvailable])
     {
         [AppDelegate displayNoInternetAvailable];
         return;
@@ -267,7 +267,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (IBAction) Done
 {
-    /*if (!AppDelegate.isInternetConnectionAvailable)
+    /*if (![appDelegate isInternetConnectionAvailable])
     {
         [AppDelegate displayNoInternetAvailable];
         return;

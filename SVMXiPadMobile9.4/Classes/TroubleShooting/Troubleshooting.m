@@ -77,7 +77,7 @@ extern void SVMXLog(NSString *format, ...);
 
     count = 0;
     NSString * _productName;
-    if (!appDelegate.isInternetConnectionAvailable )
+    if (![appDelegate isInternetConnectionAvailable] )
     {
         _productName = [appDelegate.calDataBase getProductNameFromDbWithID:productId];
         
@@ -118,7 +118,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         else
         {
-            if (appDelegate.isInternetConnectionAvailable)
+            if ([appDelegate isInternetConnectionAvailable])
             {
                 UIAlertView * alert = [[UIAlertView alloc] initWithTitle:serviceMax message:noMatch delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
                 
@@ -251,7 +251,7 @@ extern void SVMXLog(NSString *format, ...);
     else
     {
         subject.text = @"";
-        if (appDelegate.isInternetConnectionAvailable)
+        if ([appDelegate isInternetConnectionAvailable])
         {
             UIAlertView * alert = [[UIAlertView alloc] initWithTitle:serviceMax message:noMatch delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
             [alert show];
@@ -275,7 +275,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         /*##Offline Search##*/
         
@@ -338,7 +338,7 @@ extern void SVMXLog(NSString *format, ...);
     _index = index;
 	
 	//Change for Troubleshooting  22/07/2012.
-	if (!appDelegate.isInternetConnectionAvailable)
+	if (![appDelegate isInternetConnectionAvailable])
 	{
 		data = [appDelegate.calDataBase selectTroubleShootingDataFromDBwithID:[[array objectAtIndex:index]objectForKey:@"DocId"] andName:[[array objectAtIndex:index]objectForKey:@"Name"]];
 		
@@ -400,7 +400,7 @@ extern void SVMXLog(NSString *format, ...);
         NSDictionary * _dict = [[NSDictionary alloc] initWithObjects:objects forKeys:keys];
         SMLog(@"%@", _dict);
         
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             [activity stopAnimating];
             
@@ -689,7 +689,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (IBAction) Done
 {
-    /*if (!appDelegate.isInternetConnectionAvailable)
+    /*if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [appDelegate displayNoInternetAvailable];
@@ -871,7 +871,7 @@ extern void SVMXLog(NSString *format, ...);
     // Navigation logic may go here. Create and push another view controller.
     
     
-    /*if (!appDelegate.isInternetConnectionAvailable)
+    /*if (![appDelegate isInternetConnectionAvailable])
     {
         [appDelegate displayNoInternetAvailable];
         return;

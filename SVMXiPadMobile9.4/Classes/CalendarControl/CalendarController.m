@@ -290,7 +290,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (IBAction) NextMonth
 {
-    /*if (!appDelegate.isInternetConnectionAvailable)
+    /*if (![appDelegate isInternetConnectionAvailable])
     {
         [appDelegate displayNoInternetAvailable];
         return;
@@ -308,7 +308,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (IBAction) PrevMonth
 {
-    /*if (!appDelegate.isInternetConnectionAvailable)
+    /*if (![appDelegate isInternetConnectionAvailable])
     {
         [appDelegate displayNoInternetAvailable];
         return;

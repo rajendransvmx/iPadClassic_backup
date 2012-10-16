@@ -653,7 +653,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (IBAction) NextWeek
 {
-   /* if (!appDelegate.isInternetConnectionAvailable)
+   /* if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [appDelegate displayNoInternetAvailable];
@@ -701,7 +701,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (IBAction) PrevWeek
 {
-    /*if (!appDelegate.isInternetConnectionAvailable)
+    /*if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [appDelegate displayNoInternetAvailable];
@@ -774,7 +774,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (IBAction) goToCurrentWeek
 {
-    /*if (!appDelegate.isInternetConnectionAvailable)
+    /*if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [appDelegate displayNoInternetAvailable];
@@ -1295,7 +1295,7 @@ extern void SVMXLog(NSString *format, ...);
         
         if (!CGRectContainsRect(locationRect, sliderImage.frame))
         {
-           /* if (!appDelegate.isInternetConnectionAvailable)
+           /* if (![appDelegate isInternetConnectionAvailable])
             {
                 [activity stopAnimating];
                 [appDelegate displayNoInternetAvailable];
@@ -1340,7 +1340,7 @@ extern void SVMXLog(NSString *format, ...);
 	
     if ([touch view] == sliderImage)
     {
-        /*if (!appDelegate.isInternetConnectionAvailable)
+        /*if (![appDelegate isInternetConnectionAvailable])
         {
             [activity stopAnimating];
             return;
@@ -1592,7 +1592,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) RefreshLandscape
 {
-    /*if (!appDelegate.isInternetConnectionAvailable)
+    /*if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [appDelegate displayNoInternetAvailable];

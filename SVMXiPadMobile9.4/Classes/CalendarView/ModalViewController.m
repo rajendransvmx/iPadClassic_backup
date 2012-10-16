@@ -416,7 +416,7 @@ extern void SVMXLog(NSString *format, ...);
 - (IBAction) refreshViews;
 {
     [self disableUI];
-	/* if (!appDelegate.isInternetConnectionAvailable && (offline == YES))
+	/* if (![appDelegate isInternetConnectionAvailable] && (offline == YES))
 	 {
 	 [activity stopAnimating];
 	 [appDelegate displayNoInternetAvailable];
@@ -663,7 +663,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (IBAction) ToggleLandscapeView
 {
-	/* if (!appDelegate.isInternetConnectionAvailable && (offline == YES))
+	/* if (![appDelegate isInternetConnectionAvailable] && (offline == YES))
 	 {
 	 //[appDelegate displayNoInternetAvailable];
 	 //return;
@@ -815,7 +815,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (IBAction) AddTask:(id)sender
 {
-	/* if (!appDelegate.isInternetConnectionAvailable && (offline == YES))
+	/* if (![appDelegate isInternetConnectionAvailable] && (offline == YES))
 	 {
 	 [activity stopAnimating];
 	 [appDelegate displayNoInternetAvailable];
@@ -1178,7 +1178,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (IBAction) SetToday
 {
-	/* if (!appDelegate.isInternetConnectionAvailable && (offline == YES))
+	/* if (![appDelegate isInternetConnectionAvailable] && (offline == YES))
 	 {
 	 [activity stopAnimating];
 	 [appDelegate displayNoInternetAvailable];
@@ -1524,7 +1524,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (IBAction) IncrDate
 {
-	/* if (!appDelegate.isInternetConnectionAvailable && (offline == YES))
+	/* if (![appDelegate isInternetConnectionAvailable] && (offline == YES))
 	 {
 	 [activity stopAnimating];
 	 [appDelegate displayNoInternetAvailable];
@@ -1559,7 +1559,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (IBAction) DecrDate
 {
-	/* if (!appDelegate.isInternetConnectionAvailable && (offline == YES))
+	/* if (![appDelegate isInternetConnectionAvailable] && (offline == YES))
 	 {
 	 [activity stopAnimating];
 	 [appDelegate displayNoInternetAvailable];

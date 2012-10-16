@@ -951,7 +951,7 @@ enum  {
         {                
             if (appDelegate.wsInterface.didOpComplete == TRUE)
                 break;   
-            if (!appDelegate.isInternetConnectionAvailable)
+            if (![appDelegate isInternetConnectionAvailable])
             {
                 break;
             }
@@ -1037,7 +1037,7 @@ enum  {
 - (void) onDemandDataFecthing:(id)sender
 {
     
-    if(!appDelegate.isInternetConnectionAvailable)
+    if(![appDelegate isInternetConnectionAvailable])
     {
          appDelegate.shouldShowConnectivityStatus = TRUE;
         [appDelegate displayNoInternetAvailable];

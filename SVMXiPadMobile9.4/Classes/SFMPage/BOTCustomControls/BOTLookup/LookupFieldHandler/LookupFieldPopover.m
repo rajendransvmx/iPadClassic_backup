@@ -158,7 +158,7 @@ extern void SVMXLog(NSString *format, ...);
 #pragma mark - LookupView Delegate Method
 - (void) searchObject:(NSString *)keyword withObjectName:(NSString *)objectName returnTo:(id)caller setting:(BOOL)idAvailable
 {
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         //[appDelegate displayNoInternetAvailable];
         return;

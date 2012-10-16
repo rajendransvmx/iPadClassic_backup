@@ -100,7 +100,7 @@ extern void SVMXLog(NSString *format, ...);
 - (void) reachabilityChanged: (NSNotification* )notification 
 {
     SMLog(@"Notification :-%@",[notification name]);
-    if(appDelegate.isInternetConnectionAvailable)
+    if([appDelegate isInternetConnectionAvailable])
     {
         SMLog(@"Internet is Available");
         searchFilterSwitch.enabled=TRUE;
@@ -136,7 +136,7 @@ extern void SVMXLog(NSString *format, ...);
     searchCriteria.text = searchCriteriaString;
     searchLimitString.text = searchCriteriaLimitString;
     
-    if(appDelegate.isInternetConnectionAvailable)
+    if([appDelegate isInternetConnectionAvailable])
     {
         searchFilterSwitch.enabled=TRUE;
          [searchFilterSwitch setOn:switchStatus];
@@ -185,7 +185,7 @@ extern void SVMXLog(NSString *format, ...);
         [resultDetailView.detailTable reloadData];
         [resultDetailView reloadInputViews];
     }
-    if(appDelegate.isInternetConnectionAvailable )
+    if([appDelegate isInternetConnectionAvailable] )
     {
         searchFilterSwitch.enabled=TRUE;
         
@@ -271,7 +271,7 @@ extern void SVMXLog(NSString *format, ...);
 -(void) viewDidAppear:(BOOL)animated
 {
     
-    if(appDelegate.isInternetConnectionAvailable )
+    if([appDelegate isInternetConnectionAvailable] )
     {
         searchFilterSwitch.enabled=TRUE;
     }
@@ -548,7 +548,7 @@ extern void SVMXLog(NSString *format, ...);
     [searchFilterSwitch setEnabled:FALSE];
     [resultDetailView showObjects:tableArray forAllObjects:YES];
     [self performSelector:@selector(didSelectHeader:)];
-    if(appDelegate.isInternetConnectionAvailable)
+    if([appDelegate isInternetConnectionAvailable])
     {
         [searchFilterSwitch setEnabled:TRUE];
     }

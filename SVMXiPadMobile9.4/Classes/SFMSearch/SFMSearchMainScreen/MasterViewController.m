@@ -103,7 +103,7 @@ extern void SVMXLog(NSString *format, ...);
 {
     SMLog(@"Notification :-%@",[notification name]);
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    if(appDelegate.isInternetConnectionAvailable)
+    if([appDelegate isInternetConnectionAvailable])
     {
             SMLog(@"Internet is Available");
             searchFilterSwitch.enabled=TRUE;
@@ -128,7 +128,7 @@ extern void SVMXLog(NSString *format, ...);
                                                  name:kReachabilityChangedNotification
                                                object:nil];
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    if(appDelegate.isInternetConnectionAvailable)
+    if([appDelegate isInternetConnectionAvailable])
     {
         searchFilterSwitch.enabled=TRUE;
     }

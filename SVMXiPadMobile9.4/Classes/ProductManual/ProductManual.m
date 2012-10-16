@@ -46,7 +46,7 @@ extern void SVMXLog(NSString *format, ...);
     
     lastIndex = 0;
     
-    if ( !appDelegate.isInternetConnectionAvailable )
+    if ( ![appDelegate isInternetConnectionAvailable] )
     {
         array = [appDelegate.calDataBase retrieveManualsForProductWithId:productId];
         if ([array count] == 0)
@@ -112,7 +112,7 @@ extern void SVMXLog(NSString *format, ...);
     
     if ([_array count] == 0)
     {
-        if (appDelegate.isInternetConnectionAvailable)
+        if ([appDelegate isInternetConnectionAvailable])
         {
             UIAlertView * alert = [[UIAlertView alloc] initWithTitle:serviceMax message:productManual delegate:self cancelButtonTitle:alert_ok otherButtonTitles:nil];
             [alert show];
@@ -139,7 +139,7 @@ extern void SVMXLog(NSString *format, ...);
         
     if ([array count] == 0)
     {
-        if (appDelegate.isInternetConnectionAvailable)
+        if ([appDelegate isInternetConnectionAvailable])
         {
             UIAlertView * alert = [[UIAlertView alloc] initWithTitle:serviceMax message:productManual delegate:self cancelButtonTitle:alert_ok otherButtonTitles:nil];
             [alert show];
@@ -156,7 +156,7 @@ extern void SVMXLog(NSString *format, ...);
     didRunOperation = NO;
     if ([[result records] count] == 0)
     {
-        if (appDelegate.isInternetConnectionAvailable)
+        if ([appDelegate isInternetConnectionAvailable])
         {
             UIAlertView * alert = [[UIAlertView alloc] initWithTitle:serviceMax message:productManual delegate:self cancelButtonTitle:alert_ok otherButtonTitles:nil];
             [alert show];

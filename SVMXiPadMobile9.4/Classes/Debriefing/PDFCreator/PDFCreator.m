@@ -38,7 +38,7 @@ extern void SVMXLog(NSString *format, ...);
     {
 //        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didInternetConnectionChange:) name:kInternetConnectionChanged object:nil];
         appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-       // appDelegate.isInternetConnectionAvailable = YES;
+       // [appDelegate isInternetConnectionAvailable] = YES;
     }
     
     return self;
@@ -66,7 +66,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (IBAction) Close
 {
-  /*  if (!appDelegate.isInternetConnectionAvailable)
+  /*  if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [appDelegate displayNoInternetAvailable];
@@ -227,7 +227,7 @@ extern void SVMXLog(NSString *format, ...);
     [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetPDFList:error:context:) context:_query];
    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES)) 
     {
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             break;
         }
@@ -256,7 +256,7 @@ extern void SVMXLog(NSString *format, ...);
         [[ZKServerSwitchboard switchboard] delete:array target:self selector:@selector(didRemoveAllPDF:error:context:) context:nil];
        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES)) 
         {
-            if (!appDelegate.isInternetConnectionAvailable)
+            if (![appDelegate isInternetConnectionAvailable])
             {
                 didremoveallPdf = TRUE;
                 break;
@@ -279,7 +279,7 @@ extern void SVMXLog(NSString *format, ...);
         [self didRemoveAllPDF:nil error:nil context:nil];
        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES)) 
         {
-            if (!appDelegate.isInternetConnectionAvailable)
+            if (![appDelegate isInternetConnectionAvailable])
             {
                 didremoveallPdf = TRUE;
                 break;
@@ -416,7 +416,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (IBAction) sendMail
 {
-   /* if (!appDelegate.isInternetConnectionAvailable)
+   /* if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [appDelegate displayNoInternetAvailable];

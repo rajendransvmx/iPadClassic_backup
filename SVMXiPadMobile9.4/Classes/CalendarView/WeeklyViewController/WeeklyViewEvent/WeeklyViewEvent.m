@@ -231,7 +231,7 @@ extern void SVMXLog(NSString *format, ...);
 - (void) moveTo:(CGRect)location
 {
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-   /* if(!appDelegate.isInternetConnectionAvailable)
+   /* if(![appDelegate isInternetConnectionAvailable])
     {
         [UIView beginAnimations:@"move" context:nil];
         [UIView setAnimationDuration:0.3];

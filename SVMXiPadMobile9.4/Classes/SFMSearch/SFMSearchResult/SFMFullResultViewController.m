@@ -480,7 +480,7 @@ extern void SVMXLog(NSString *format, ...);
 -(void)presentProgressBar:(NSString *)object_name sf_id:(NSString *)sf_id  reocrd_name:(NSString *)record_name
 {
     
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         //  [appDelegate displayNoInternetAvailable];
         return;
@@ -537,7 +537,7 @@ extern void SVMXLog(NSString *format, ...);
         
         while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
         {
-            if( appDelegate.dod_req_response_ststus == DOD_RESPONSE_RECIEVED || appDelegate.connection_error || !appDelegate.isInternetConnectionAvailable)
+            if( appDelegate.dod_req_response_ststus == DOD_RESPONSE_RECIEVED || appDelegate.connection_error || ![appDelegate isInternetConnectionAvailable])
             {
                 break;
             }

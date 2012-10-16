@@ -358,7 +358,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     didQueryTechnician = FALSE;
     didDebriefData = FALSE;
     
-    if (appDelegate.isInternetConnectionAvailable)
+    if ([appDelegate isInternetConnectionAvailable])
     {
         [appDelegate goOnlineIfRequired];
         
@@ -385,7 +385,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         //SMLog(@"Mapview initDebrief in while loop");
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             [self setContactImage];
             //[appDelegate displayNoInternetAvailable];
@@ -525,7 +525,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     controller.travelMode = UICGTravelModeDriving;
     controller.workOrderArray = appDelegate.workOrderEventArray;
 
-    if (appDelegate.isInternetConnectionAvailable )
+    if ([appDelegate isInternetConnectionAvailable] )
     {
         [mapView addSubview:controller.view];
     }
@@ -571,7 +571,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 {
     NSString * _query;
     //Shrinivas --> Contact Picture Offline Implementation
-    if(!appDelegate.isInternetConnectionAvailable){
+    if(![appDelegate isInternetConnectionAvailable]){
         NSString * imageDataString = [appDelegate.calDataBase retrieveContactImageDataFromDb:contactId];
         contactImage.image = [UIImage imageWithData:[Base64 decode:imageDataString]];
         if (contactImage.image == nil)
@@ -813,7 +813,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 - (IBAction) ShowModal
 {
     
-    /*if (!appDelegate.isInternetConnectionAvailable)
+    /*if (![appDelegate isInternetConnectionAvailable])
     {
         [imageActivity stopAnimating];
         [appDelegate displayNoInternetAvailable];
@@ -1251,7 +1251,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 #pragma mark - Query For Technicianaddress
 - (void) initDebriefData:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         return;
     }
@@ -1287,7 +1287,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         //SMLog(@"Mapview initDebrief in while loop");
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             break;
         }

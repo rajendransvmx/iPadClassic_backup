@@ -146,7 +146,7 @@ extern void SVMXLog(NSString *format, ...);
 #pragma mark - UISearchBar Delegate Method
 - (void)searchBarSearchButtonClicked:(UISearchBar *)_searchBar
 {
-    /*if (!appDelegate.isInternetConnectionAvailable)
+    /*if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [appDelegate displayNoInternetAvailable];
@@ -178,7 +178,7 @@ extern void SVMXLog(NSString *format, ...);
 }
 - (void)searchBarCodeScannerData:(NSString *)_searchBartext
 {
-    /*if (!appDelegate.isInternetConnectionAvailable)
+    /*if (![appDelegate isInternetConnectionAvailable])
      {
      [activity stopAnimating];
      [appDelegate displayNoInternetAvailable];

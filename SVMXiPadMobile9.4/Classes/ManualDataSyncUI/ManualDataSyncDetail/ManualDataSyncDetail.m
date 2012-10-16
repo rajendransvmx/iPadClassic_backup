@@ -1633,7 +1633,7 @@ PopoverButtons *popOver_view;
 	{
 		if (buttonIndex == 0)
 		{
-			if(!appDelegate.isInternetConnectionAvailable)
+			if(![appDelegate isInternetConnectionAvailable])
 			{
 				[self showInternetAletView];
 			}

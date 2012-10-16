@@ -2024,7 +2024,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         else
         {
-            if (!appDelegate.isInternetConnectionAvailable)
+            if (![appDelegate isInternetConnectionAvailable])
             {
                 [activity stopAnimating];
                 appDelegate.wsInterface.sfm_response = FALSE;
@@ -2502,7 +2502,7 @@ extern void SVMXLog(NSString *format, ...);
     else
     {
         didRunOperation = YES;
-        if (!appDelegate.isInternetConnectionAvailable && [event_name isEqualToString:GETPRICE])
+        if (![appDelegate isInternetConnectionAvailable] && [event_name isEqualToString:GETPRICE])
         {
             [activity stopAnimating];
             appDelegate.shouldShowConnectivityStatus = TRUE; //shrinivas.
@@ -2515,7 +2515,7 @@ extern void SVMXLog(NSString *format, ...);
         {
             while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
-                if (!appDelegate.isInternetConnectionAvailable)
+                if (![appDelegate isInternetConnectionAvailable])
                 {
                     [activity stopAnimating];
                     [self enableSFMUI];
@@ -2542,7 +2542,7 @@ extern void SVMXLog(NSString *format, ...);
         
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
-            if (!appDelegate.isInternetConnectionAvailable)
+            if (![appDelegate isInternetConnectionAvailable])
             {
                 [activity stopAnimating];
                 [self enableSFMUI];
@@ -2570,7 +2570,7 @@ extern void SVMXLog(NSString *format, ...);
             SMLog(@" evnt is executing");
             while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
-                if (!appDelegate.isInternetConnectionAvailable)
+                if (![appDelegate isInternetConnectionAvailable])
                 {
                     [activity stopAnimating];
                     [self enableSFMUI];
@@ -2602,12 +2602,12 @@ extern void SVMXLog(NSString *format, ...);
         [activity startAnimating];
         appDelegate.wsInterface.getPrice = FALSE;
         SMLog(@" getPrice2");
-        if (appDelegate.isInternetConnectionAvailable)
+        if ([appDelegate isInternetConnectionAvailable])
         {
             [appDelegate.wsInterface callSFMEvent:dict event_name:event_name];
             while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
             {
-                if (!appDelegate.isInternetConnectionAvailable)
+                if (![appDelegate isInternetConnectionAvailable])
                 {
                     appDelegate.wsInterface.getPrice = TRUE;
                     [activity stopAnimating];
@@ -2694,7 +2694,7 @@ extern void SVMXLog(NSString *format, ...);
         while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
         {
             SMLog(@"startSummaryDataFetch in while loop");
-            /*if (!appDelegate.isInternetConnectionAvailable)
+            /*if (![appDelegate isInternetConnectionAvailable])
             {
                 [activity stopAnimating];
                 [appDelegate displayNoInternetAvailable];
@@ -2902,7 +2902,7 @@ extern void SVMXLog(NSString *format, ...);
        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES)) 
         {
             SMLog(@"BackOnSave in while loop");
-            if (!appDelegate.isInternetConnectionAvailable)
+            if (![appDelegate isInternetConnectionAvailable])
             {
                 [activity stopAnimating];
                 appDelegate.wsInterface.sfm_response = FALSE;
@@ -6020,7 +6020,7 @@ extern void SVMXLog(NSString *format, ...);
     }
     else
     {
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             if (appDelegate.SFMPage != nil)
             {
@@ -7417,7 +7417,7 @@ extern void SVMXLog(NSString *format, ...);
             }
             else
             {
-                if (!appDelegate.isInternetConnectionAvailable)
+                if (![appDelegate isInternetConnectionAvailable])
                 {
                     [activity stopAnimating];
                     //[appDelegate displayNoInternetAvailable];
@@ -7634,7 +7634,7 @@ extern void SVMXLog(NSString *format, ...);
         detailViewObject.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:toolBar] autorelease];
         
         
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             if (appDelegate.SFMPage != nil)
             {
@@ -8319,7 +8319,7 @@ extern void SVMXLog(NSString *format, ...);
     }
     else
     {
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             if (appDelegate.SFMPage != nil)
             {
@@ -9360,7 +9360,7 @@ extern void SVMXLog(NSString *format, ...);
 {
     isShowingSignatureCapture = NO;
 
-    /*if (!appDelegate.isInternetConnectionAvailable)
+    /*if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [appDelegate displayNoInternetAvailable];
@@ -9474,7 +9474,7 @@ extern void SVMXLog(NSString *format, ...);
             else if([targetCall isEqualToString:dod_title])
             {
                 
-                if(!appDelegate.isInternetConnectionAvailable)
+                if(![appDelegate isInternetConnectionAvailable])
                 {
                     [self enableSFMUI];
                     appDelegate.shouldShowConnectivityStatus = TRUE;
@@ -11049,7 +11049,7 @@ extern void SVMXLog(NSString *format, ...);
     {
     	// Custom Actions for SFM Wizard
         SMLog(@"Call Custom Action ");
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             [activity stopAnimating];
             appDelegate.shouldShowConnectivityStatus = TRUE;
@@ -11080,7 +11080,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@" getPrice2");
         while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
         {
-            if (!appDelegate.isInternetConnectionAvailable)
+            if (![appDelegate isInternetConnectionAvailable])
             {
                 appDelegate.wsInterface.getPrice = TRUE;
                 [activity stopAnimating];
@@ -11119,7 +11119,7 @@ extern void SVMXLog(NSString *format, ...);
             [appDelegate callDataSync];
             while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
             {
-                if (!appDelegate.isInternetConnectionAvailable)
+                if (![appDelegate isInternetConnectionAvailable])
                 {
                     [activity stopAnimating];
                     SMLog(@"Data Sync stopper due to Internet Connection Failure");
@@ -11353,7 +11353,7 @@ extern void SVMXLog(NSString *format, ...);
 - (void) SeeMoreButtonClicked:(id)sender
 {
     
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         appDelegate.shouldShowConnectivityStatus = TRUE;
@@ -11372,7 +11372,7 @@ extern void SVMXLog(NSString *format, ...);
         
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
-            if (!appDelegate.isInternetConnectionAvailable)
+            if (![appDelegate isInternetConnectionAvailable])
             {
                 break;
             }
@@ -11399,7 +11399,7 @@ extern void SVMXLog(NSString *format, ...);
         
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
-            if (!appDelegate.isInternetConnectionAvailable)
+            if (![appDelegate isInternetConnectionAvailable])
             {
                 break;
             }
@@ -11426,7 +11426,7 @@ extern void SVMXLog(NSString *format, ...);
         
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
-            if (!appDelegate.isInternetConnectionAvailable)
+            if (![appDelegate isInternetConnectionAvailable])
             {
                 break;
             }
@@ -11473,7 +11473,7 @@ extern void SVMXLog(NSString *format, ...);
         {
             if (appDelegate.wsInterface.didGetProductHistory == TRUE)
                 break;
-            if (!appDelegate.isInternetConnectionAvailable)
+            if (![appDelegate isInternetConnectionAvailable])
                 break;
             if (appDelegate.connection_error)
             {
@@ -11493,7 +11493,7 @@ extern void SVMXLog(NSString *format, ...);
             if (appDelegate.wsInterface.didGetAccountHistory == TRUE)
                 break;
             
-            if (!appDelegate.isInternetConnectionAvailable)
+            if (![appDelegate isInternetConnectionAvailable])
                 break;
             if (appDelegate.connection_error)
             {

@@ -291,7 +291,7 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 
 + (BOOL) connectivityStatus
 {
-    Reachability *r = [Reachability reachabilityWithHostName:@"www.google.com"];
+    Reachability *r = [Reachability reachabilityWithHostName:@"www.salesforce.com"];
 	NetworkStatus internetStatus = [r currentReachabilityStatus];
 	if ((internetStatus != ReachableViaWiFi) && (internetStatus != ReachableViaWWAN))
 	{

@@ -11,6 +11,8 @@
 #import "LocalizationGlobals.h"
 #import "ManualDataSync.h"
 #import "SummaryViewController.h"
+#import <SystemConfiguration/SystemConfiguration.h>
+
 extern void SVMXLog(NSString *format, ...);
 
 iServiceAppDelegate *appDelegate;
@@ -328,8 +330,6 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 @synthesize connectionAvailable;
 
-@synthesize isInternetConnectionAvailable;
-
 @synthesize allURLConnectionsArray;
 @synthesize db;
 //Database
@@ -544,7 +544,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         case NotReachable:
         {
             statusString = @"Access Not Available";
-            isInternetConnectionAvailable = NO;
+            //isInternetConnectionAvailable = NO;
             [self PostInternetNotificationUnavailable];
             break;
         }
@@ -552,7 +552,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
             statusString = @"Reachable WWAN";
         case ReachableViaWiFi:
             statusString = @"Reachable WiFi";
-            isInternetConnectionAvailable = YES;
+            //isInternetConnectionAvailable = YES;
             [self PostInternetNotificationAvailable];
             break;
     }
@@ -653,7 +653,11 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaultsToRegister];
     [defaultsToRegister release];
 }
-
+- (BOOL) isInternetConnectionAvailable
+{
+    BOOL status = [Reachability connectivityStatus];
+    return status;    
+}
 
 #pragma mark - wsInterface Delegate Methods
 - (void) didFinishWithError:(SOAPFault *)sFault
@@ -926,7 +930,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 {    
     _pingServer = TRUE;
     self.isServerInValid = FALSE;
-    if (!self.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         return FALSE;
     }
@@ -940,7 +944,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
             [[ZKServerSwitchboard switchboard] loginWithUsername:self.username password:self.password target:self selector:@selector(didLoginForServer:error:context:)];
             while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
             {
-                if (!self.isInternetConnectionAvailable)
+                if (![appDelegate isInternetConnectionAvailable])
                 {
                     break;
                 }                
@@ -975,7 +979,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     self.isServerInValid = FALSE;
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, YES))
     {
-        if (!self.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable ])
         {
             break;
         }  
@@ -996,7 +1000,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     }
     else
     {
-        isInternetConnectionAvailable = YES;
+        //isInternetConnectionAvailable = YES;
         return YES;
     }
 }
@@ -1081,7 +1085,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
                 [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
                 break;
             }
-            if (!appDelegate.isInternetConnectionAvailable)
+            if (![appDelegate isInternetConnectionAvailable])
                 break;
         }
         
@@ -1100,7 +1104,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
-            if (!appDelegate.isInternetConnectionAvailable)
+            if (![appDelegate isInternetConnectionAvailable])
             {
                 break;
             }
@@ -1125,7 +1129,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
-            if (!appDelegate.isInternetConnectionAvailable)
+            if (![appDelegate isInternetConnectionAvailable])
             {
                 break;
             }
@@ -1149,7 +1153,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     {
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
-            if (!appDelegate.isInternetConnectionAvailable)
+            if (![appDelegate isInternetConnectionAvailable])
             {
                 break;
             }
@@ -1171,7 +1175,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 		
 		while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
 		{
-			if (!appDelegate.isInternetConnectionAvailable)
+			if (![appDelegate isInternetConnectionAvailable])
 			{
 				break;
 			}
@@ -1226,7 +1230,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         return;
     }
     
-    if (!isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         return;
     }
@@ -1378,7 +1382,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
             break;
         }
         
-        if (!isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             if(IsLogedIn == ISLOGEDIN_TRUE)
             {
@@ -1666,7 +1670,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 - (void) callEventSyncTimer
 {
     
-    if (!isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         return;
     }
@@ -1907,7 +1911,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
-        if (!self.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
             break;
         if (self.didGetVersion)
             break;
@@ -1933,7 +1937,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
                 [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
                 break;
             }
-            if (!appDelegate.isInternetConnectionAvailable)
+            if (![appDelegate isInternetConnectionAvailable])
                 break;
         }
 		
@@ -1952,7 +1956,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 		
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
-            if (!appDelegate.isInternetConnectionAvailable)
+            if (![appDelegate isInternetConnectionAvailable])
             {
                 break;
             }
@@ -1977,7 +1981,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 		
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
-            if (!appDelegate.isInternetConnectionAvailable)
+            if (![appDelegate isInternetConnectionAvailable])
             {
                 break;
             }
@@ -2001,7 +2005,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     {
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
-            if (!appDelegate.isInternetConnectionAvailable)
+            if (![appDelegate isInternetConnectionAvailable])
             {
                 break;
             }
@@ -2023,7 +2027,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 		
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
-            if (!appDelegate.isInternetConnectionAvailable)
+            if (![appDelegate isInternetConnectionAvailable])
             {
                 break;
             }

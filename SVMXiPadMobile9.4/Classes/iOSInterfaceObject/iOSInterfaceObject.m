@@ -337,7 +337,7 @@ extern void SVMXLog(NSString *format, ...);
    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         SMLog(@"setSignedImageData in while loop");
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             break;
         }
@@ -367,7 +367,7 @@ extern void SVMXLog(NSString *format, ...);
    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         SMLog(@"setSignedImageData in while loop");
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             break;
         }

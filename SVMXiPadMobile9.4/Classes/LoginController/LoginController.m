@@ -50,7 +50,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (IBAction) signup:(id)sender
 {
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [appDelegate displayNoInternetAvailable];
@@ -155,7 +155,7 @@ extern void SVMXLog(NSString *format, ...);
         {
             [appDelegate.dataBase clearDatabase];
         }
-        if(!appDelegate.isInternetConnectionAvailable)
+        if(![appDelegate isInternetConnectionAvailable])
         {
             return FALSE;
         }
@@ -181,7 +181,7 @@ extern void SVMXLog(NSString *format, ...);
                 [appDelegate.dataBase clearDatabase];
             }
             
-            if(!appDelegate.isInternetConnectionAvailable)
+            if(![appDelegate isInternetConnectionAvailable])
             {
                 return FALSE;
             }
@@ -213,7 +213,7 @@ extern void SVMXLog(NSString *format, ...);
         if (appDelegate.loginResult == nil) //RADHA 21/05/2011
             return FALSE;
         
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
             return FALSE;
         
         if (homeScreenView)
@@ -270,12 +270,12 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
 
       
-        if(!appDelegate.isInternetConnectionAvailable)
+        if(![appDelegate isInternetConnectionAvailable])
         {
             return FALSE;
         }
         
-        if (appDelegate.isForeGround == FALSE && !appDelegate.isInternetConnectionAvailable)
+        if (appDelegate.isForeGround == FALSE && ![appDelegate isInternetConnectionAvailable])
             [self readUsernameAndPasswordFromKeychain];
         
         didEnterAlertView = FALSE;
@@ -299,13 +299,13 @@ extern void SVMXLog(NSString *format, ...);
 - (void) loginWithUsernamePassword
 {
     //Siva Manne #3547
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [appDelegate updateInterfaceWithReachability:appDelegate.hostReach];	
         [appDelegate updateInterfaceWithReachability:appDelegate.internetReach];
     }
     
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         appDelegate.shouldShowConnectivityStatus = YES;
@@ -320,7 +320,7 @@ extern void SVMXLog(NSString *format, ...);
     [ZKServerSwitchboard switchboard].logXMLInOut = YES;
     [[ZKServerSwitchboard switchboard] loginWithUsername:txtUsernameLandscape.text password:txtPasswordLandscape.text target:self selector:@selector(didLogin:error:context:)];
     
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         appDelegate.shouldShowConnectivityStatus = YES;
@@ -342,7 +342,7 @@ extern void SVMXLog(NSString *format, ...);
             [self enableControls];
             return;
         }
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.shouldShowConnectivityStatus = YES;
             [appDelegate displayNoInternetAvailable];
@@ -387,7 +387,7 @@ extern void SVMXLog(NSString *format, ...);
         if (appDelegate.wsInterface.didOpComplete == TRUE)
             break; 
         
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
             break;
         
     }
@@ -401,7 +401,7 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate.wsInterface metaSyncWithEventName:SFM_SEARCH eventType:SYNC values:nil];
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
-            if (!appDelegate.isInternetConnectionAvailable)
+            if (![appDelegate isInternetConnectionAvailable])
                 break;
 
             if (appDelegate.wsInterface.didOpSFMSearchComplete == TRUE)
@@ -440,7 +440,7 @@ extern void SVMXLog(NSString *format, ...);
             return;
         }   
         
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
             break;
         
 
@@ -474,7 +474,7 @@ extern void SVMXLog(NSString *format, ...);
         {
             break; 
         }
-        if (!appDelegate.isInternetConnectionAvailable && appDelegate.data_sync_chunking == REQUEST_SENT)
+        if (![appDelegate isInternetConnectionAvailable] && appDelegate.data_sync_chunking == REQUEST_SENT)
         {
             while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
@@ -486,7 +486,7 @@ extern void SVMXLog(NSString *format, ...);
                     [self enableControls];
                     return;
                 }  
-                if (appDelegate.isInternetConnectionAvailable)
+                if ([appDelegate isInternetConnectionAvailable])
                 {
                     [appDelegate goOnlineIfRequired];
                     [appDelegate.wsInterface dataSyncWithEventName:DOWNLOAD_CREITERIA_SYNC eventType:SYNC requestId:appDelegate.initial_dataSync_reqid];
@@ -509,7 +509,7 @@ extern void SVMXLog(NSString *format, ...);
             [self enableControls];
             return;
         }  
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
             break;
         
         if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
@@ -528,7 +528,7 @@ extern void SVMXLog(NSString *format, ...);
             [self enableControls];
             return;
         }  
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
             break;
 
         if (appDelegate.Incremental_sync_status == PUT_RECORDS_DONE)
@@ -576,7 +576,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) didLogin:(ZKLoginResult *)lr error:(NSError *)error context:(id)context
 {
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [appDelegate displayNoInternetAvailable];
@@ -678,7 +678,7 @@ extern void SVMXLog(NSString *format, ...);
     [appDelegate.wsInterface checkIfProfileExistsWithEventName:VALIDATE_PROFILE type:GROUP_PROFILE];
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.shouldShowConnectivityStatus = YES;
             [appDelegate displayNoInternetAvailable];
@@ -735,7 +735,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) checkFavoritesUser
 {
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [appDelegate displayNoInternetAvailable];
@@ -759,7 +759,7 @@ extern void SVMXLog(NSString *format, ...);
 - (void) deleteFavoritesCache
 {
     // Delete all contents present in the Documents folder
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [appDelegate displayNoInternetAvailable];
@@ -787,7 +787,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) getServiceReportLogo
 {
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [appDelegate displayNoInternetAvailable];
@@ -838,7 +838,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) initDebriefData:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [self enableControls];
@@ -889,7 +889,7 @@ extern void SVMXLog(NSString *format, ...);
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
         SMLog(@"LoginViewController initDebrief in while loop");
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             [activity stopAnimating];
             break;
@@ -987,7 +987,7 @@ extern void SVMXLog(NSString *format, ...);
 {
     didRunProcess = NO;
     
-    /*if (!appDelegate.isInternetConnectionAvailable)
+    /*if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [appDelegate displayNoInternetAvailable];
@@ -1015,7 +1015,7 @@ extern void SVMXLog(NSString *format, ...);
             return NO;
         }
 
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
             return NO;
         SMLog(@"LoginViewController checkVersion in while loop");
         if (appDelegate.didGetVersion)
@@ -1353,7 +1353,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) createSampleData;
 {
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [self enableControls];
@@ -1409,7 +1409,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) didCreateDummyRecord:(NSArray *)result error:(NSError *)error context:(id)context;
 {
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [self enableControls];
@@ -1437,7 +1437,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) getSampleDataCreationProgressForServiceMax_List_Id:(NSString *)Id;
 {
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [self enableControls];
@@ -1452,7 +1452,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) didGetProgress:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [self enableControls];
@@ -1489,7 +1489,7 @@ extern void SVMXLog(NSString *format, ...);
     }
     else
     {
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             [activity stopAnimating];
             [self enableControls];
@@ -1535,7 +1535,7 @@ extern void SVMXLog(NSString *format, ...);
 #pragma mark Settings Info
 - (void) startQueryConfiguration
 {
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [self enableControls];
@@ -1548,7 +1548,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) didGetModuleInfo:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [self enableControls];
@@ -1572,7 +1572,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) didGetSubModuleInfo:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [self enableControls];
@@ -1594,7 +1594,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) didGetSettingsInfo:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [self enableControls];
@@ -1631,7 +1631,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) didGetActiveGlobalProfile:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [self enableControls];
@@ -1659,7 +1659,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) didGetSettingsValue:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [self enableControls];
@@ -1791,7 +1791,7 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         [self enableControls];
@@ -1803,7 +1803,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) didDescribeSObject:(ZKDescribeSObject *)result error:(NSError *)error context:(id)context
 {
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         //[appDelegate displayNoInternetAvailable];

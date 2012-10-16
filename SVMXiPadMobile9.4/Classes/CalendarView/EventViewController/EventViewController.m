@@ -218,7 +218,7 @@ extern void SVMXLog(NSString *format, ...);
 - (void) moveTo:(CGRect)location
 {
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-   /* if (!appDelegate.isInternetConnectionAvailable)
+   /* if (![appDelegate isInternetConnectionAvailable])
     {
         [self restorePositionToRect:selfFrame];
         [appDelegate displayNoInternetAvailable];

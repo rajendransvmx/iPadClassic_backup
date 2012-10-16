@@ -118,7 +118,7 @@ extern void SVMXLog(NSString *format, ...);
 {
     if (task == nil) return;
     
-   /* if (!appDelegate.isInternetConnectionAvailable)
+   /* if (![appDelegate isInternetConnectionAvailable])
     {
         [appDelegate displayNoInternetAvailable];
         return;

@@ -2301,7 +2301,7 @@ extern void SVMXLog(NSString *format, ...);
         }        
     }
     sqlite3_finalize(statement);
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [resultArray release];
         return;
@@ -2314,7 +2314,7 @@ extern void SVMXLog(NSString *format, ...);
     {                
         if (didUserGPSLocationUpdated == TRUE)
             break;   
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             break;
         }
@@ -2374,7 +2374,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"Latitude or Longitude data is null");
         return;
     }
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         didTechnicianLocationUpdated=TRUE;
         return;
@@ -2387,7 +2387,7 @@ extern void SVMXLog(NSString *format, ...);
     {                
         if (didTechnicianLocationUpdated == TRUE)
             break;   
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             break;
         }
@@ -5881,7 +5881,7 @@ extern void SVMXLog(NSString *format, ...);
          [appDelegate.wsInterface metaSyncWithEventName:SFM_SEARCH eventType:SYNC values:nil];
          while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
          {
-         if (!appDelegate.isInternetConnectionAvailable)
+         if (![appDelegate isInternetConnectionAvailable])
          {
          if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
          [MyPopoverDelegate performSelector:@selector(throwException)];
@@ -5935,7 +5935,7 @@ extern void SVMXLog(NSString *format, ...);
     [appDelegate.wsInterface metaSyncWithEventName:SFM_METADATA eventType:INITIAL_SYNC values:nil];
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             break;
         }
@@ -5949,14 +5949,14 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     //RADHA - If connection error start meta sync again
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
             [MyPopoverDelegate performSelector:@selector(throwException)];
         return NOINTERNET;
     }
     
-    if (appDelegate.connection_error && appDelegate.isInternetConnectionAvailable)
+    if (appDelegate.connection_error && [appDelegate isInternetConnectionAvailable])
     {
         appDelegate.connection_error = FALSE;
         [self doMetaSync];
@@ -6807,7 +6807,7 @@ extern void SVMXLog(NSString *format, ...);
     
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
             break;
         
         if (appDelegate.wsInterface.didOpComplete == TRUE)
@@ -6837,7 +6837,7 @@ extern void SVMXLog(NSString *format, ...);
     }
 
     
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         
         [appDelegate setSyncStatus:SYNC_RED];
@@ -6855,7 +6855,7 @@ extern void SVMXLog(NSString *format, ...);
     [appDelegate.wsInterface PutAllTheRecordsForIds];
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
     {
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
             break;
         
         if (appDelegate.Incremental_sync_status == PUT_RECORDS_DONE)
@@ -6868,7 +6868,7 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         
         [appDelegate setSyncStatus:SYNC_RED];
@@ -7208,7 +7208,7 @@ extern void SVMXLog(NSString *format, ...);
     
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE)) 
     {
-        if (!appDelegate.isInternetConnectionAvailable || appDelegate.connection_error)
+        if (![appDelegate isInternetConnectionAvailable] || appDelegate.connection_error)
                break;
         if (didGetServiceReportLogo)
                break;
@@ -7617,7 +7617,7 @@ extern void SVMXLog(NSString *format, ...);
         {
             break;
         }
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
             break;

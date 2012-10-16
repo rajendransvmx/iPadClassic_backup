@@ -93,7 +93,7 @@ const NSUInteger kNumImages = 7;
 
 - (void) showCalendar
 {
-  /*if (!appDelegate.isInternetConnectionAvailable)
+  /*if (![appDelegate isInternetConnectionAvailable])
     {
         [appDelegate displayNoInternetAvailable];
         return;
@@ -413,7 +413,7 @@ const NSUInteger kNumImages = 7;
             appDelegate.initial_sync_succes_or_failed = INITIAL_SYNC_SUCCESS;
             [self doMetaSync];
             
-            if(appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED && !appDelegate.isInternetConnectionAvailable)
+            if(appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED && ![appDelegate isInternetConnectionAvailable])
             {
                 [initial_sync_timer invalidate];    //invalidate the timer
                 initial_sync_timer = nil;
@@ -431,7 +431,7 @@ const NSUInteger kNumImages = 7;
             
             [self doDataSync];
             
-            if(appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED && !appDelegate.isInternetConnectionAvailable)
+            if(appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED && ![appDelegate isInternetConnectionAvailable])
             {
                 [initial_sync_timer invalidate];    //invalidate the timer
                  initial_sync_timer = nil;
@@ -450,7 +450,7 @@ const NSUInteger kNumImages = 7;
 
             [self doTxFetch];
             
-            if(appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED && !appDelegate.isInternetConnectionAvailable)
+            if(appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED && ![appDelegate isInternetConnectionAvailable])
             {
                 [initial_sync_timer invalidate];    //invalidate the timer
                  initial_sync_timer = nil;
@@ -816,7 +816,7 @@ const NSUInteger kNumImages = 7;
         
         [appDelegate.dataBase removecache];
         [self doMetaSync];
-        if (appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED && !appDelegate.isInternetConnectionAvailable)
+        if (appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED && ![appDelegate isInternetConnectionAvailable])
         {
             [initial_sync_timer invalidate];
             initial_sync_timer = nil;
@@ -831,7 +831,7 @@ const NSUInteger kNumImages = 7;
         }
         
         [self doDataSync];
-        if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED && !appDelegate.isInternetConnectionAvailable)
+        if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED && ![appDelegate isInternetConnectionAvailable])
         {
             [initial_sync_timer invalidate];
             initial_sync_timer = nil;
@@ -845,7 +845,7 @@ const NSUInteger kNumImages = 7;
             return;
         }
         [self doTxFetch];
-        if (appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED && !appDelegate.isInternetConnectionAvailable)
+        if (appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED && ![appDelegate isInternetConnectionAvailable])
         {
             [initial_sync_timer invalidate];
             initial_sync_timer = nil;
@@ -876,7 +876,7 @@ const NSUInteger kNumImages = 7;
         }
         
         [self doDataSync];
-        if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED && !appDelegate.isInternetConnectionAvailable)
+        if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED && ![appDelegate isInternetConnectionAvailable])
         {
             [initial_sync_timer invalidate];
             initial_sync_timer = nil;
@@ -891,7 +891,7 @@ const NSUInteger kNumImages = 7;
         }
         
         [self doTxFetch];
-        if (appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED && !appDelegate.isInternetConnectionAvailable)
+        if (appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED && ![appDelegate isInternetConnectionAvailable])
         {
             [initial_sync_timer invalidate];
             initial_sync_timer = nil;
@@ -919,7 +919,7 @@ const NSUInteger kNumImages = 7;
             
         }
         [self doTxFetch];
-        if (appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED && !appDelegate.isInternetConnectionAvailable)
+        if (appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED && ![appDelegate isInternetConnectionAvailable])
         {
             [initial_sync_timer invalidate];
             initial_sync_timer = nil;
@@ -1289,7 +1289,7 @@ const float progress_ = 0.07;
         if (appDelegate.wsInterface.didOpComplete == TRUE)
             break; 
         
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
             break;
@@ -1301,7 +1301,7 @@ const float progress_ = 0.07;
         
     }
     
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [self RefreshProgressBarNativeMethod:META_SYNC_];
         [self showAlertForInternetUnAvailability];
@@ -1317,7 +1317,7 @@ const float progress_ = 0.07;
         [appDelegate.wsInterface metaSyncWithEventName:SFM_SEARCH eventType:SYNC values:nil];
         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
         {
-            if (!appDelegate.isInternetConnectionAvailable)
+            if (![appDelegate isInternetConnectionAvailable])
             {
                 appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
                 break;
@@ -1336,7 +1336,7 @@ const float progress_ = 0.07;
         }
         SMLog(@"SAMMAN MetaSync SFM Search End: %@", [NSDate date]);
     }
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [self RefreshProgressBarNativeMethod:META_SYNC_];
         [self showAlertForInternetUnAvailability];
@@ -1355,7 +1355,7 @@ const float progress_ = 0.07;
         return;
     }
 
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [self RefreshProgressBarNativeMethod:META_SYNC_];
         [self showAlertForInternetUnAvailability];
@@ -1401,7 +1401,7 @@ const float progress_ = 0.07;
             return;
         }   
         
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.initial_sync_succes_or_failed = DATA_SYNC_FAILED;
             break;
@@ -1418,7 +1418,7 @@ const float progress_ = 0.07;
 
     }
     
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [self RefreshProgressBarNativeMethod:DATA_SYNC_];
         [self showAlertForInternetUnAvailability];
@@ -1457,7 +1457,7 @@ const float progress_ = 0.07;
         {
             return;
         }
-        if (!appDelegate.isInternetConnectionAvailable && appDelegate.data_sync_chunking == REQUEST_SENT)
+        if (![appDelegate isInternetConnectionAvailable] && appDelegate.data_sync_chunking == REQUEST_SENT)
         {
             while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
             {
@@ -1472,7 +1472,7 @@ const float progress_ = 0.07;
                     break;
                     //return;
                 }  
-                if (appDelegate.isInternetConnectionAvailable)
+                if ([appDelegate isInternetConnectionAvailable])
                 {
                     [appDelegate goOnlineIfRequired];
                     [appDelegate.wsInterface dataSyncWithEventName:DOWNLOAD_CREITERIA_SYNC eventType:SYNC requestId:appDelegate.initial_dataSync_reqid];
@@ -1501,7 +1501,7 @@ const float progress_ = 0.07;
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
     {
       
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.initial_sync_succes_or_failed = TX_FETCH_FAILED;
             break;
@@ -1515,7 +1515,7 @@ const float progress_ = 0.07;
         }
     }
     
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [self showAlertForInternetUnAvailability];
         return;
@@ -1540,7 +1540,7 @@ const float progress_ = 0.07;
             appDelegate.initial_sync_succes_or_failed = TX_FETCH_FAILED;
             break;
         }  
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {  
             SMLog(@"Break TxFetch");
             appDelegate.initial_sync_succes_or_failed = TX_FETCH_FAILED;
@@ -1558,7 +1558,7 @@ const float progress_ = 0.07;
         }
     }
     
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [self showAlertForInternetUnAvailability];
         return;
@@ -1629,7 +1629,7 @@ const float progress_ = 0.07;
        SMLog(@"index 0");
         
         SMLog(@"index 1");
-        if(!appDelegate.isInternetConnectionAvailable)
+        if(![appDelegate isInternetConnectionAvailable])
         {
             [self showAlertForInternetUnAvailability];
         }

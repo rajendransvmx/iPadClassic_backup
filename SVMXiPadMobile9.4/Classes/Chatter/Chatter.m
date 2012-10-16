@@ -51,7 +51,7 @@ extern void SVMXLog(NSString *format, ...);
     ////[[ZKServerSwitchboard switchboard] doCheckSession];
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     [appDelegate goOnlineIfRequired];
-    if ( !appDelegate.isInternetConnectionAvailable ) 
+    if ( ![appDelegate isInternetConnectionAvailable] ) 
     { 
         NSData *data; 
         data = [appDelegate.calDataBase getProductPictureForProductId:productId];
@@ -159,7 +159,7 @@ extern void SVMXLog(NSString *format, ...);
     productPicture.image = image;
     productNameLabel.text = productName;
     
-    if (appDelegate.isInternetConnectionAvailable)
+    if ([appDelegate isInternetConnectionAvailable])
         [self fetchPosts];
 }
 
@@ -219,7 +219,7 @@ extern void SVMXLog(NSString *format, ...);
     if (isKeyboardShowing)
         return;
 
-    if (appDelegate.isInternetConnectionAvailable)
+    if ([appDelegate isInternetConnectionAvailable])
         [iOSObject queryChatterForProductId:productId];
 }
 
@@ -258,7 +258,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) processUsrStringArray
 {
-    if (appDelegate.isInternetConnectionAvailable)
+    if ([appDelegate isInternetConnectionAvailable])
         [iOSObject getUserNameFromId:usrStringArray];
 }
 
@@ -531,7 +531,7 @@ extern void SVMXLog(NSString *format, ...);
             [chatterArrayForTable release];
         chatterArrayForTable = [chatterArray retain];
         
-        if (!appDelegate.isInternetConnectionAvailable)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             [chatterArrayForTable retain];
         }
@@ -543,7 +543,7 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     
-    if (appDelegate.isInternetConnectionAvailable)
+    if ([appDelegate isInternetConnectionAvailable])
     {
         [self resetAndStartTimer];
     }
@@ -551,7 +551,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) resetAndStartTimer
 {
-    if (appDelegate.isInternetConnectionAvailable)
+    if ([appDelegate isInternetConnectionAvailable])
         if (isChatterAlive && !didEditRow)
             if (!isKeyboardShowing)
                [NSTimer scheduledTimerWithTimeInterval:TIMERINTERVAL target:self selector:@selector(fetchPosts) userInfo:nil repeats:NO];
@@ -559,7 +559,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (IBAction) postNewChat
 {
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         appDelegate.shouldShowConnectivityStatus = TRUE;
@@ -602,7 +602,7 @@ extern void SVMXLog(NSString *format, ...);
 #pragma mark ChatterCell Delegate
 - (void) postComment:(NSString *)_comment forFeedCommentId:(NSString *)_feedCommentId;
 {
-    if (!appDelegate.isInternetConnectionAvailable)
+    if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
         appDelegate.shouldShowConnectivityStatus = TRUE;
@@ -636,7 +636,7 @@ extern void SVMXLog(NSString *format, ...);
 - (IBAction) Done
 {
     
-    if ( !appDelegate.isInternetConnectionAvailable )
+    if ( ![appDelegate isInternetConnectionAvailable] )
     {
         NSError * error = nil;
         
@@ -875,7 +875,7 @@ extern void SVMXLog(NSString *format, ...);
         NSString * username;
         UIImage * image = nil;
         
-        if ( !appDelegate.isInternetConnectionAvailable )
+        if ( ![appDelegate isInternetConnectionAvailable] )
         {
             SMLog(@"%@", [[chatterArrayForTable objectAtIndex:indexPath.row]objectForKey:@"Username"]);
             
@@ -936,7 +936,7 @@ extern void SVMXLog(NSString *format, ...);
         NSString * username;
         UIImage * image = nil;
         
-        if ( !appDelegate.isInternetConnectionAvailable )
+        if ( ![appDelegate isInternetConnectionAvailable] )
         {
             NSData *imageData = [appDelegate.calDataBase getImageDataForUserName:[[chatterArrayForTable objectAtIndex:indexPath.row]objectForKey:@"Username"]];
             SMLog(@"%d", [imageData length]);
