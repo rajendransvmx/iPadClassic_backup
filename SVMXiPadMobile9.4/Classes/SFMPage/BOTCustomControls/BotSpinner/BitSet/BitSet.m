@@ -11,7 +11,7 @@
 extern void SVMXLog(NSString *format, ...);
 
 @implementation BitSet
--(id)initWithData:(NSString *) inputData
+-(id)initWithString:(NSString *) inputData
 {
     if([super init])
        {

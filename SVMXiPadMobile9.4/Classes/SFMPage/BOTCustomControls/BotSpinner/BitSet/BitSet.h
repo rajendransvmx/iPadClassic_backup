@@ -14,7 +14,7 @@
     NSString *nsstr;
     NSData   *nsdata;
 }
--(id)initWithData:(NSString *) inputData;
+-(id)initWithString:(NSString *) inputData;
 -(Boolean) testBit:(int) n;
 -(int) size;
 @end

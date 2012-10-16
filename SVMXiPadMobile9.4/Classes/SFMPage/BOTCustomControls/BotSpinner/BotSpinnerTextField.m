@@ -97,7 +97,8 @@ extern void SVMXLog(NSString *format, ...);
     //get the count and 
     NSMutableArray * spinner_Array = [[NSMutableArray alloc] initWithCapacity:0];
     [spinner_Array addObject:@""];
-   
+    SMLog(@"spinner data %@ " , TFHandler.spinnerData);
+
     for(int j = 0 ; j< [TFHandler.spinnerData count];j++)
     {
         SMLog(@"--");
@@ -110,36 +111,18 @@ extern void SVMXLog(NSString *format, ...);
             continue;
         }
         SMLog(@" valid For %@" , TFHandler.validFor);
-        SMLog(@"spinner data %@ " , TFHandler.spinnerData);
-        
-        BitSet *bitObj = [[BitSet alloc] initWithData:obj];
-        for (int k = 0; k < [bitObj size]; k++)
+        BitSet *bitObj = [[BitSet alloc] initWithString:obj];
+        if([bitObj testBit:count])
         {
-            if ([bitObj testBit:k]) 
-            {
-                // if bit k is set, this entry is valid for the
-                // for the controlling entry at index k
-                if(count == k)
-                {
-                    SMLog(@"Index of %@ = %d",obj,k);
-                    
-                    //add to cityData
-                    [spinner_Array addObject:[TFHandler.spinnerData objectAtIndex:j]];
-                    SMLog(@"SpinnerData %@", [TFHandler.spinnerData objectAtIndex:j]);
-                    break;
-                }
-            }
+            //add to cityData
+            [spinner_Array addObject:[TFHandler.spinnerData objectAtIndex:j]];
+            SMLog(@"SpinnerData %@", [TFHandler.spinnerData objectAtIndex:j]);
         }
-        
+
         [bitObj release];
+         
     }
-    
     return spinner_Array;
-    
-    /*if([spinner_Array count] == 1)
-        return spinnerData;//spinner_Array;
-    else
-        return spinner_Array;*/
 }
 
 
