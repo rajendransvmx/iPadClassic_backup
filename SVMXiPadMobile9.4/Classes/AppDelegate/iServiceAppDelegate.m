@@ -656,7 +656,18 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 - (BOOL) isInternetConnectionAvailable
 {
     BOOL status = [Reachability connectivityStatus];
-    return status;    
+    if(!status)
+    {
+        NSURL *url = [NSURL URLWithString:@"http://www.salesforce.com"];
+        NSURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+        NSHTTPURLResponse *response = nil;
+        [NSURLConnection sendSynchronousRequest:request
+                              returningResponse:&response error:NULL];
+        if(response != nil)
+            status = TRUE;
+        SMLog(@"Internet is not reachable");
+    }
+    return status;
 }
 
 #pragma mark - wsInterface Delegate Methods
