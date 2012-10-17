@@ -366,14 +366,14 @@ const NSUInteger kNumImages = 7;
 
 -(void)viewDidAppear:(BOOL)animated
 {
-
+    
     [self refreshArray];
     [scrollViewPreview layoutSubviews];
     
     if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
     {
         [self disableControls];
-       
+        
         if(appDelegate.do_meta_data_sync == ALLOW_META_AND_DATA_SYNC)
         {
             
@@ -386,14 +386,14 @@ const NSUInteger kNumImages = 7;
             ProgressView.frame = CGRectMake(300, 15, 474, 200);
             [self.view addSubview:transparent_layer];
             [self.view addSubview:ProgressView];
-           
+            
             description_label.numberOfLines = 3;
             description_label.font =  [UIFont systemFontOfSize:14.0];
             description_label.textAlignment = UITextAlignmentCenter;
-       
+            
             download_desc_label.font =  [UIFont systemFontOfSize:16.0];
             download_desc_label.textAlignment = UITextAlignmentCenter;
-                    
+            
             ProgressView.backgroundColor = [UIColor clearColor];
             ProgressView.layer.borderColor = [UIColor blackColor].CGColor;
             ProgressView.layer.borderWidth = 1.0f;
@@ -417,7 +417,7 @@ const NSUInteger kNumImages = 7;
             {
                 [initial_sync_timer invalidate];    //invalidate the timer
                 initial_sync_timer = nil;
-                            
+                
                 return;
             }
             else if (appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED || appDelegate.connection_error == TRUE)
@@ -434,26 +434,26 @@ const NSUInteger kNumImages = 7;
             if(appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED && ![appDelegate isInternetConnectionAvailable])
             {
                 [initial_sync_timer invalidate];    //invalidate the timer
-                 initial_sync_timer = nil;
+                initial_sync_timer = nil;
                 return;
             }
             
             else if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED || appDelegate.connection_error == TRUE)
             {
-
+                
                 [initial_sync_timer invalidate];    //invalidate the timer
                 initial_sync_timer = nil;
                 //[self showAlertViewForAppwasinBackground];
                 [self continueMetaAndDataSync];
                 return;
             }
-
+            
             [self doTxFetch];
             
             if(appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED && ![appDelegate isInternetConnectionAvailable])
             {
                 [initial_sync_timer invalidate];    //invalidate the timer
-                 initial_sync_timer = nil;
+                initial_sync_timer = nil;
                 return;
             }
             else if(appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED || appDelegate.connection_error == TRUE)
@@ -465,7 +465,7 @@ const NSUInteger kNumImages = 7;
             }
             
             [self doAfterSyncSetttings];
-           
+            
             [self InitsyncSetting];
             [self initialDataSetUpAfterSyncOrLogin];
             appDelegate.isInitialMetaSyncInProgress = FALSE;
@@ -476,6 +476,41 @@ const NSUInteger kNumImages = 7;
         {
             [self InitsyncSetting];
             [self initialDataSetUpAfterSyncOrLogin];
+			
+			NSFileManager * fileManager = [NSFileManager defaultManager];
+			
+			NSString * flag = @"";
+			
+			//create SYNC_HISTORY PLIST
+			NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+			NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:SYNC_HISTORY];
+			
+			NSMutableDictionary * plistdict = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST];
+			NSArray * allkeys= [plistdict allKeys];
+			
+			if ([fileManager fileExistsAtPath:plistPath_SYNHIST])
+			{
+				for(NSString * str in allkeys)
+				{
+					
+					if([str isEqualToString:SYNC_FAILED])
+					{
+						flag = [plistdict objectForKey:SYNC_FAILED];
+						break;
+						
+					}
+				}
+			}
+			if ([flag isEqualToString:STRUE])
+			{
+				BOOL ConflictExists = [appDelegate.databaseInterface getConflictsStatus];
+				if (!ConflictExists && [appDelegate isInternetConnectionAvailable])
+				{
+					[appDelegate callDataSync];
+				}
+				
+			}
+            
         }
         appDelegate.connection_error = FALSE;
         appDelegate.do_meta_data_sync = DONT_ALLOW_META_DATA_SYNC;
@@ -486,45 +521,12 @@ const NSUInteger kNumImages = 7;
         {
             [appDelegate.dataBase updateUserTable:appDelegate.loggedInUserId];
         }
-
+        
         [self enableControls];
         [self scheduleLocationPingService];
         [appDelegate startBackgroundThreadForLocationServiceSettings];
     }
-	else
-	{
-		NSFileManager * fileManager = [NSFileManager defaultManager];
-		
-		NSString * flag = @"";
-		
-		//create SYNC_HISTORY PLIST
-		NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-		NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:SYNC_HISTORY];
-		
-		NSMutableDictionary * plistdict = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST];
-		NSArray * allkeys= [plistdict allKeys];
-
-		if (![fileManager fileExistsAtPath:plistPath_SYNHIST])
-		{
-			for(NSString * str in allkeys)
-			{
-				
-				if([str isEqualToString:SYNC_FAILED])
-				{
-					flag = [plistdict objectForKey:SYNC_FAILED];
-					break;
-					
-				}
-			}
-		}
-		if ([flag isEqualToString:STRUE])
-		{
-			[appDelegate callDataSync];
-		}
-	}
-    
 }
-
 -(void)createUserInfoPlist
 {
     NSDictionary * dict = [[NSDictionary alloc] initWithObjects:[NSArray arrayWithObjects:appDelegate.username,@"false", nil] forKeys:[NSArray arrayWithObjects:USER_NAME_AUTHANTICATED,INITIAL_SYNC_LOGIN_SATUS, nil]];
