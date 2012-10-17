@@ -789,6 +789,7 @@ last_sync_time:(NSString *)last_sync_time
         return;
     }
 
+	[appDelegate updateSyncFailedFlag:STRUE];
     appDelegate.dataSyncRunning = YES;
     appDelegate.connection_error = FALSE;
     
@@ -1399,7 +1400,10 @@ last_sync_time:(NSString *)last_sync_time
     [appDelegate.databaseInterface deleteAllConflictedRecordsFrom:SFDATATRAILER];
     
     
-    [self setLastSyncTime];   // update the plist to last sync time 
+    [self setLastSyncTime];   // update the plist to last sync time
+	
+	//Radha updatesyncflag
+	[appDelegate updateSyncFailedFlag:SFALSE];
     
     [appDelegate.databaseInterface cleartable:SYNC_RECORD_HEAP];
 

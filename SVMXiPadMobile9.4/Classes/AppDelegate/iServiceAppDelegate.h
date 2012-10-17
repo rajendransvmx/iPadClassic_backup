@@ -788,6 +788,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 
 -(NSMutableString*)isConflictInEvent:(NSString*)objName local_id:(NSString *)local_id;
 
+//Radha - Auto Data sync
+- (void) updateSyncFailedFlag:(NSString *)flag;
+
 @end
 
 @interface processInfo : NSObject {

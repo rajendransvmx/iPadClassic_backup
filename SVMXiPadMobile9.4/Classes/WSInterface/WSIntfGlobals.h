@@ -46,6 +46,14 @@
 
 #define LAST_INITIAL_META_SYNC_TIME                      @"last_initial_meta_sync"
 
+
+//Radha Data sync
+#define SYNC_FAILED										 @"sync_failed"
+
+#define STRUE	@"true"
+#define SFALSE	@"false"
+
+
 // INSERT
 #define LAST_INSERT_REQUEST_TIME                        @"last_insert_request_time"
 #define LAST_INSERT_RESONSE_TIME                        @"last_insert_response_time"

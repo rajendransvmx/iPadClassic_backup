@@ -1207,6 +1207,10 @@ extern void SVMXLog(NSString *format, ...);
 			return;
         }
 		
+		NSMutableDictionary * value_mapping_dict = [appDelegate.databaseInterface getObjectMappingForMappingId:process_components mappingType:VALUE_MAPPING];
+		
+		NSArray * valueMapping_keys = [value_mapping_dict allKeys];
+
         NSArray * all_Keys_values = [headerValueDict allKeys];
         
         for(int i=0; i <[header_sections count] ;i++)
@@ -1253,6 +1257,38 @@ extern void SVMXLog(NSString *format, ...);
                         }
                     }
                 }
+				for(int e = 0 ; e <[valueMapping_keys count]; e++)
+				{
+					NSString * key = [valueMapping_keys objectAtIndex:e];
+                    if([key isEqualToString:filed_api_name])
+                    {
+                        field_key = [value_mapping_dict objectForKey:key];
+                        if([field_key length] != 0)
+                        {
+                            field_value = [self getValueForApiName:filed_api_name dataType:field_data_type object_name:headerObjName field_key:field_key];
+                            
+                            if([field_data_type isEqualToString:@"datetime"] || [field_data_type isEqualToString:@"date"])
+                            {
+                                field_key = field_value ;
+                            }
+                            else if([field_data_type isEqualToString:@"multipicklist"])
+                            {
+                            }
+                            else if([field_data_type isEqualToString:@"reference"])
+                            {
+                                
+                            } 
+                            else if([field_data_type isEqualToString:@"picklist"])
+                            {
+                            }
+                            else
+                            {
+                                field_value = field_key; 
+                            }
+                        }
+                    }
+				}
+				
                 
                 [filed_info setObject:field_key forKey:gFIELD_VALUE_KEY];
                 [filed_info setObject:field_value forKey:gFIELD_VALUE_VALUE];
@@ -1278,7 +1314,12 @@ extern void SVMXLog(NSString *format, ...);
             }
             
             NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGETCHILD process_id:processId layoutId:detail_layout_id objectName:detailObjectName];
-            
+            NSMutableDictionary * detail_value_mapping_dict = [appDelegate.databaseInterface getObjectMappingForMappingId:process_components mappingType:VALUE_MAPPING];
+			
+			NSArray * detail_value_mapping_keys = [detail_value_mapping_dict allKeys];
+			
+			NSMutableDictionary * api_name_dataType = [appDelegate.databaseInterface getAllFieldsAndItsDataTypesForObject:detailObjectName tableName:SFOBJECTFIELD];
+			
             NSString * expressionId = [process_components objectForKey:EXPRESSION_ID];
             NSString * parent_column_name = [dict objectForKey:gDETAIL_HEADER_REFERENCE_FIELD];
             
@@ -1294,12 +1335,30 @@ extern void SVMXLog(NSString *format, ...);
 //                    NSString * api_name = [dict objectForKey:gVALUE_FIELD_API_NAME];
 //					[dict setObject:@"" forKey:gVALUE_FIELD_VALUE_VALUE];
 //					[dict setObject:@"" forKey:gVALUE_FIELD_VALUE_KEY];
-                    NSDictionary * dict = [eachArray objectAtIndex:m];
+                    NSMutableDictionary * dict = [eachArray objectAtIndex:m];
                     NSString * api_name = [dict objectForKey:gVALUE_FIELD_API_NAME];
 					if([api_name isEqualToString:@"local_id"])
                     {
                         [eachArray  removeObjectAtIndex:m];
                     }
+					
+					for(int e = 0 ; e < [detail_value_mapping_keys count]; e++)
+					{
+						NSString  * detail_value_api = [detail_value_mapping_keys objectAtIndex:e];
+						if([detail_value_api isEqualToString:api_name])
+						{
+							if([detail_value_api length] != 0)
+							{
+								NSString *  detail_value_key  =  [detail_value_mapping_dict objectForKey:detail_value_api];
+								NSString * field_data_type  = [api_name_dataType objectForKey:detail_value_api];
+								NSString * detil_value_value = [self getValueForApiName:detail_value_api dataType:field_data_type object_name:headerObjName field_key:detail_value_key];
+								[dict setObject:detail_value_key forKey:gVALUE_FIELD_VALUE_KEY];
+								[dict setObject:detil_value_value forKey:gVALUE_FIELD_VALUE_VALUE];
+							}
+							break;
+						}
+						
+					}
                 }
                 
                 [detail_Values_id addObject:@""];
@@ -1873,6 +1932,12 @@ extern void SVMXLog(NSString *format, ...);
 			return;
         }
 		
+		
+		NSMutableDictionary * value_mapping_dict = [appDelegate.databaseInterface getObjectMappingForMappingId:process_components mappingType:VALUE_MAPPING];
+		
+		NSArray * valueMapping_keys = [value_mapping_dict allKeys];
+
+		
         NSArray * all_Keys_values = [headerValueDict allKeys];
         
         for(int i=0; i <[header_sections count] ;i++)
@@ -1920,6 +1985,40 @@ extern void SVMXLog(NSString *format, ...);
                     }
                 }
                 
+				
+				for(int e = 0 ; e <[valueMapping_keys count]; e++)
+				{
+					NSString * key = [valueMapping_keys objectAtIndex:e];
+                    if([key isEqualToString:filed_api_name])
+                    {
+                        field_key = [value_mapping_dict objectForKey:key];
+                        if([field_key length] != 0)
+                        {
+                            field_value = [self getValueForApiName:filed_api_name dataType:field_data_type object_name:headerObjName field_key:field_key];
+                            
+                            if([field_data_type isEqualToString:@"datetime"] || [field_data_type isEqualToString:@"date"])
+                            {
+                                field_key = field_value ;
+                            }
+                            else if([field_data_type isEqualToString:@"multipicklist"])
+                            {
+                            }
+                            else if([field_data_type isEqualToString:@"reference"])
+                            {
+                                
+                            } 
+                            else if([field_data_type isEqualToString:@"picklist"])
+                            {
+                            }
+                            else
+                            {
+                                field_value = field_key; 
+                            }
+                        }
+                    }
+				}
+				
+				
                 [filed_info setObject:field_key forKey:gFIELD_VALUE_KEY];
                 [filed_info setObject:field_value forKey:gFIELD_VALUE_VALUE];
             }
@@ -1944,12 +2043,17 @@ extern void SVMXLog(NSString *format, ...);
             }
             
             NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGETCHILD process_id:processId layoutId:detail_layout_id objectName:detailObjectName];
-            
+			NSMutableDictionary * detail_value_mapping_dict = [appDelegate.databaseInterface getObjectMappingForMappingId:process_components mappingType:VALUE_MAPPING];
+			
+			NSArray * detail_value_mapping_keys = [detail_value_mapping_dict allKeys];
             NSString * expressionId = [process_components objectForKey:EXPRESSION_ID];
             NSString * parent_column_name = [dict objectForKey:gDETAIL_HEADER_REFERENCE_FIELD];
             
             NSMutableArray * detail_values = [appDelegate.databaseInterface queryLinesInfo:details_api_keys detailObjectName:detailObjectName headerObjectName:headerObjName detailaliasName:detailaliasName headerRecordId:appDelegate.sfmPageController.recordId expressionId:expressionId parent_column_name:parent_column_name];
             
+			NSMutableDictionary * api_name_dataType = [appDelegate.databaseInterface getAllFieldsAndItsDataTypesForObject:detailObjectName tableName:SFOBJECTFIELD];
+			
+			
             for(int l = 0 ;l < [detail_values count]; l++)
             {
                 [detailValuesArray addObject:[detail_values objectAtIndex:l]]; 
@@ -1958,7 +2062,7 @@ extern void SVMXLog(NSString *format, ...);
                 NSString  * id_ = @"";
                 for(int m = 0 ; m < [eachArray count];m++)
                 {   
-                    NSDictionary * dict = [eachArray objectAtIndex:m];
+                    NSMutableDictionary * dict = [eachArray objectAtIndex:m];
                     NSString * api_name = [dict objectForKey:gVALUE_FIELD_API_NAME];
                     NSString * key = [dict objectForKey:gVALUE_FIELD_VALUE_KEY];
                     if([api_name isEqualToString:@"local_id"])
@@ -1966,7 +2070,26 @@ extern void SVMXLog(NSString *format, ...);
                         id_ = key;
                         value_id_flag = TRUE;
                     }
+					
+					for(int e = 0 ; e < [detail_value_mapping_keys count]; e++)
+					{
+						NSString  * detail_value_api = [detail_value_mapping_keys objectAtIndex:e];
+					
+						if([detail_value_api isEqualToString:api_name])
+						{
+							if([detail_value_api length] != 0)
+							{
+								NSString *  detail_value_key  =  [detail_value_mapping_dict objectForKey:detail_value_api];
+								NSString * field_data_type  = [api_name_dataType objectForKey:detail_value_api];
+								NSString * detil_value_value = [self getValueForApiName:detail_value_api dataType:field_data_type object_name:headerObjName field_key:detail_value_key];
+								[dict setObject:detail_value_key forKey:gVALUE_FIELD_VALUE_KEY];
+								[dict setObject:detil_value_value forKey:gVALUE_FIELD_VALUE_VALUE];
+								break;
+							}
+						}
+					}
                 }
+				
                 if(value_id_flag)
                 {
                     [detail_Values_id addObject:id_];
@@ -10242,7 +10365,8 @@ extern void SVMXLog(NSString *format, ...);
                        if([key isEqualToString:mapping_key])
                        {
                            NSString * value = [all_header_fields objectForKey:mapping_key];
-                           if([value length] == 0 || value == nil)
+						   NSString * temp_value = [value stringByReplacingOccurrencesOfString:@" " withString:@""];
+                           if([temp_value length] == 0 || temp_value == nil )
                            {
                                [ all_header_fields setObject:mapping_value forKey:mapping_key];
                            }

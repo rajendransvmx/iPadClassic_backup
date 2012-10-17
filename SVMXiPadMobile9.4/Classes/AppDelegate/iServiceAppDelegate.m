@@ -2073,6 +2073,26 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     
 }
 
+//Radha - Auto Data sync
+- (void) updateSyncFailedFlag:(NSString *)flag
+{
+	NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:SYNC_HISTORY];
+    
+    NSMutableDictionary * plistdict = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST];
+    NSArray * allkeys= [plistdict allKeys];
+	
+	for(NSString * str in allkeys)
+    {
+        if([str isEqualToString:SYNC_FAILED])
+        {
+            [plistdict setObject:flag forKey:SYNC_FAILED];
+        }
+    }
+    [plistdict writeToFile:plistPath_SYNHIST atomically:YES];
+
+}
+
 #pragma mark - END
 
 @end

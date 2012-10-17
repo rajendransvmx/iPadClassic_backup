@@ -281,6 +281,8 @@ extern void SVMXLog(NSString *format, ...);
         didEnterAlertView = FALSE;
         
         appDelegate.do_meta_data_sync = ALLOW_META_AND_DATA_SYNC;            //sahana9May
+		
+		[appDelegate updateSyncFailedFlag:SFALSE];
         
         return TRUE;                                                                                    //sahana9May
         

@@ -491,6 +491,37 @@ const NSUInteger kNumImages = 7;
         [self scheduleLocationPingService];
         [appDelegate startBackgroundThreadForLocationServiceSettings];
     }
+	else
+	{
+		NSFileManager * fileManager = [NSFileManager defaultManager];
+		
+		NSString * flag = @"";
+		
+		//create SYNC_HISTORY PLIST
+		NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+		NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:SYNC_HISTORY];
+		
+		NSMutableDictionary * plistdict = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST];
+		NSArray * allkeys= [plistdict allKeys];
+
+		if (![fileManager fileExistsAtPath:plistPath_SYNHIST])
+		{
+			for(NSString * str in allkeys)
+			{
+				
+				if([str isEqualToString:SYNC_FAILED])
+				{
+					flag = [plistdict objectForKey:SYNC_FAILED];
+					break;
+					
+				}
+			}
+		}
+		if ([flag isEqualToString:STRUE])
+		{
+			[appDelegate callDataSync];
+		}
+	}
     
 }
 
@@ -726,8 +757,8 @@ const NSUInteger kNumImages = 7;
             current_gmt_time = [dateFormatter stringFromDate:current_dateTime];
         }
         
-        NSArray * sync_hist_keys = [NSArray arrayWithObjects:LAST_INITIAL_SYNC_IME, REQUEST_ID, LAST_INSERT_REQUEST_TIME,LAST_INSERT_RESONSE_TIME,LAST_UPDATE_REQUEST_TIME,LAST_UPDATE_RESONSE_TIME, LAST_DELETE_REQUEST_TIME, LAST_DELETE_RESPONSE_TIME,INSERT_SUCCESS,UPDATE_SUCCESS,DELETE_SUCCESS, LAST_INITIAL_META_SYNC_TIME, nil];
-        NSMutableDictionary * sync_info = [[[NSMutableDictionary alloc] initWithObjects:[NSArray arrayWithObjects:current_gmt_time,@"",current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,@"true",@"",@"", current_gmt_time, nil] forKeys:sync_hist_keys] autorelease];
+        NSArray * sync_hist_keys = [NSArray arrayWithObjects:LAST_INITIAL_SYNC_IME, REQUEST_ID, LAST_INSERT_REQUEST_TIME,LAST_INSERT_RESONSE_TIME,LAST_UPDATE_REQUEST_TIME,LAST_UPDATE_RESONSE_TIME, LAST_DELETE_REQUEST_TIME, LAST_DELETE_RESPONSE_TIME,INSERT_SUCCESS,UPDATE_SUCCESS,DELETE_SUCCESS, LAST_INITIAL_META_SYNC_TIME, SYNC_FAILED, nil];
+        NSMutableDictionary * sync_info = [[[NSMutableDictionary alloc] initWithObjects:[NSArray arrayWithObjects:current_gmt_time,@"",current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,@"true",@"",@"", current_gmt_time, @"false", nil] forKeys:sync_hist_keys] autorelease];
         [sync_info writeToFile:plistPath_SYNHIST atomically:YES];
     }
     
