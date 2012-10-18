@@ -953,12 +953,18 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
             didLoginAgain = NO;
 //           [[ZKServerSwitchboard switchboard] loginWithUsername:self.username password:self.password target:self selector:@selector(didLogin:error:context:)]; 
             [[ZKServerSwitchboard switchboard] loginWithUsername:self.username password:self.password target:self selector:@selector(didLoginForServer:error:context:)];
-            while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
+            while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, FALSE))
             {
+#ifdef kPrintLogsDuringWebServiceCall
+                SMLog(@"iServiceAppDelegate.m : doOnlineIfRequired: ZKS Check For Session");
+#endif
+
                 if (![appDelegate isInternetConnectionAvailable])
                 {
                     break;
-                }                
+                }
+                if(appDelegate.connection_error)
+                    break;
                 SMLog(@"ReLogin");
                 if (didLoginAgain)
                     break;
@@ -988,8 +994,12 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     [[ZKServerSwitchboard switchboard] loginWithUsername:self.username password:self.password target:self selector:@selector(didLoginForServer:error:context:)];
     
     self.isServerInValid = FALSE;
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, YES))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"iServiceAppDelegate.m : pingServer: ZKS Check For Session");
+#endif
+
         if (![appDelegate isInternetConnectionAvailable ])
         {
             break;
@@ -999,7 +1009,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         {
             break;
         }
-                    
+        if(appDelegate.connection_error)
+            break;
         if (didLoginAgain)
             break;
     }
@@ -1056,7 +1067,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
             [userDefaults setObject:appDelegate.currentUserName forKey:@"UserFullName"];
             [userDefaults setObject:appDelegate.currentServerUrl forKey:SERVERURL];
         }
-
+        connection_error = FALSE;
     }
     
     //Shrinivas -- code for firewall
@@ -1065,6 +1076,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         self._pingServer = FALSE;
         self.isServerInValid = TRUE;
         self.didLoginAgain = TRUE;
+        connection_error = TRUE;
         return;
     }
 	
@@ -1089,8 +1101,12 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     
     if([appDelegate.syncThread isExecuting])
     {
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
         {
+#ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"iServiceAppDelegate.m : showLoginScreen: Check For Data Sync Thread Status");
+#endif
+
             if ([appDelegate.syncThread isFinished])
             {
                 [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
@@ -1113,8 +1129,12 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     if ([appDelegate.metaSyncThread isExecuting])
     {
         
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
         {
+#ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"iServiceAppDelegate.m : showLoginScreen: Check For Meta Sync Thread Status");
+#endif
+
             if (![appDelegate isInternetConnectionAvailable])
             {
                 break;
@@ -1138,8 +1158,12 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     if ([appDelegate.event_thread isExecuting])
     {
         
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
         {
+#ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"iServiceAppDelegate.m : showLoginScreen: Check For Event Sync Thread Status");
+#endif
+
             if (![appDelegate isInternetConnectionAvailable])
             {
                 break;
@@ -1162,8 +1186,12 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     
     if (metaSyncRunning)
     {
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
         {
+#ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"iServiceAppDelegate.m : showLoginScreen: Check For Meta Sync Thread Status2");
+#endif
+
             if (![appDelegate isInternetConnectionAvailable])
             {
                 break;
@@ -1184,8 +1212,12 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 	if (appDelegate.eventSyncRunning)
 	{
 		
-		while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+		while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
 		{
+#ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"iServiceAppDelegate.m : showLoginScreen: Check For Event Sync Thread Status2");
+#endif
+
 			if (![appDelegate isInternetConnectionAvailable])
 			{
 				break;
@@ -1383,10 +1415,13 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     self.dPicklist_retrieval_complete = FALSE;
     [self.databaseInterface fillDependencyPickListInfo];
     
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
         //shrinivas -- 02/05/2012
-       
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"iServiceAppDelegate.m : getDPpicklistInfo: Dependent Picklist");
+#endif
+
         if(self.dPicklist_retrieval_complete)
         {
             self.dPicklist_retrieval_complete = FALSE;
@@ -1920,11 +1955,17 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     didGetVersion = FALSE;
     [self.wsInterface getSvmxVersion];
     
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"iServiceAppDelegate.m : updateInstalledPackageVersion: Check for installed pkg version ");
+#endif
+
         if (![appDelegate isInternetConnectionAvailable])
             break;
         if (self.didGetVersion)
+            break;
+        if(connection_error)
             break;
     }
     
@@ -1941,8 +1982,12 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 {
     if([appDelegate.syncThread isExecuting])
     {
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
         {
+#ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"iServiceAppDelegate.m : invalidateAllTimers: Data Sync thread status");
+#endif
+
             if ([appDelegate.syncThread isFinished])
             {
                 [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
@@ -1965,8 +2010,12 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     if ([appDelegate.metaSyncThread isExecuting])
     {
 		
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
         {
+#ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"iServiceAppDelegate.m : invalidateAllTimers: Meta Sync thread status");
+#endif
+
             if (![appDelegate isInternetConnectionAvailable])
             {
                 break;
@@ -1990,8 +2039,12 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     if ([appDelegate.event_thread isExecuting])
     {
 		
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
         {
+#ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"iServiceAppDelegate.m : invalidateAllTimers: Event Sync thread status");
+#endif
+
             if (![appDelegate isInternetConnectionAvailable])
             {
                 break;
@@ -2014,8 +2067,12 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 	
     if (metaSyncRunning)
     {
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
         {
+#ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"iServiceAppDelegate.m : invalidateAllTimers: Meta Sync thread status 2");
+#endif
+
             if (![appDelegate isInternetConnectionAvailable])
             {
                 break;
@@ -2036,8 +2093,12 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     if (appDelegate.eventSyncRunning)
     {
 		
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
         {
+#ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"iServiceAppDelegate.m : invalidateAllTimers: Event Sync thread status2");
+#endif
+
             if (![appDelegate isInternetConnectionAvailable])
             {
                 break;

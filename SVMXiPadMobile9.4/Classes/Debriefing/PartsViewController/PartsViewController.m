@@ -106,9 +106,9 @@ extern void SVMXLog(NSString *format, ...);
 	dataloaded = NO;
 	[self initDebriefData];
 	
-//	while( CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, TRUE) && !dataloaded);
+//	while( CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, TRUE) && !dataloaded);
 	while (!dataloaded) {
-		CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, TRUE);
+		CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, TRUE);
 	}
 
 	// Before loading PartsTable make sure there are no NSNull entries

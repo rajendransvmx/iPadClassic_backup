@@ -163,12 +163,16 @@ extern void SVMXLog(NSString *format, ...);
     [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetProductName:error:context:) context:nil];
     
     didGetProductName = FALSE;
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
         SMLog(@"Troubleshooting getProductNameForProductId in while loop");
         if (didGetProductName)
             break;
         if (appDelegate.connection_error)
+        {
+            break;
+        }
+        if (![appDelegate isInternetConnectionAvailable])
         {
             break;
         }

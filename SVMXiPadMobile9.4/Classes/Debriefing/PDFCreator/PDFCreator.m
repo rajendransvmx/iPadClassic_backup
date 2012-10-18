@@ -225,8 +225,12 @@ extern void SVMXLog(NSString *format, ...);
     didremoveallPdf = FALSE;
     
     [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetPDFList:error:context:) context:_query];
-   while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES)) 
+   while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES)) 
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"PDFCreator.m : removeAllPDF: ZKS call");
+#endif
+
         if (![appDelegate isInternetConnectionAvailable])
         {
             break;
@@ -254,8 +258,12 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"1");
         didremoveallPdf = FALSE;
         [[ZKServerSwitchboard switchboard] delete:array target:self selector:@selector(didRemoveAllPDF:error:context:) context:nil];
-       while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES)) 
+       while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES)) 
         {
+#ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"PDFCreator.m : didGetPDFList: ZKS call");
+#endif
+
             if (![appDelegate isInternetConnectionAvailable])
             {
                 didremoveallPdf = TRUE;
@@ -277,8 +285,12 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"2");
         didremoveallPdf = FALSE;
         [self didRemoveAllPDF:nil error:nil context:nil];
-       while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES)) 
+       while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES)) 
         {
+#ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"PDFCreator.m : didGetPDFList: ZKS call 2");
+#endif
+
             if (![appDelegate isInternetConnectionAvailable])
             {
                 didremoveallPdf = TRUE;

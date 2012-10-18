@@ -52,7 +52,7 @@ extern void SVMXLog(NSString *format, ...);
         [self InitExpenseData];
 		while (!dataloaded)
         {
-			CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, TRUE);
+			CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, TRUE);
 		}
     }
 	

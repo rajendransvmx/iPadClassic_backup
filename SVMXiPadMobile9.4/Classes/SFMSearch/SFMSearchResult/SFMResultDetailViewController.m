@@ -947,8 +947,12 @@ enum  {
         appDelegate.wsInterface.didOpComplete = FALSE;
         [appDelegate.wsInterface dataSyncWithEventName:@"SFM_SEARCH" eventType:@"SEARCH_RESULTS" values:searchResultData]; 
 
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
-        {                
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
+        {
+#ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"SFMResultDetailViewController.m : showObject: SFM Search");
+#endif
+
             if (appDelegate.wsInterface.didOpComplete == TRUE)
                 break;   
             if (![appDelegate isInternetConnectionAvailable])

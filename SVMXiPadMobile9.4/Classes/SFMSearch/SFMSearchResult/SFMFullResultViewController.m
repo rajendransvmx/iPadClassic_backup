@@ -535,8 +535,12 @@ extern void SVMXLog(NSString *format, ...);
         appDelegate.dod_status = CONNECTING_TO_SALESFORCE;
         [appDelegate.wsInterface getOnDemandRecords:object_name record_id:sf_id];
         
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
         {
+#ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"SFMFullResultViewController.m : presentProgressBar: DOD");
+#endif
+
             if( appDelegate.dod_req_response_ststus == DOD_RESPONSE_RECIEVED || appDelegate.connection_error || ![appDelegate isInternetConnectionAvailable])
             {
                 break;

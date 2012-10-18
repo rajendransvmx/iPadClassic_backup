@@ -2138,7 +2138,7 @@ extern void SVMXLog(NSString *format, ...);
     [sp release];
     sp = nil;
     
-   while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+   while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
         SMLog(@"didSubmitProcess In While Loop");
         if(appDelegate.isWorkinginOffline)
@@ -2636,8 +2636,12 @@ extern void SVMXLog(NSString *format, ...);
         
        if([appDelegate.syncThread isExecuting])
         {
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
             {
+#ifdef kPrintLogsDuringWebServiceCall
+                SMLog(@"DetailViewController.m : didInvokeWebService: GetPrice1");
+#endif
+
                 if (![appDelegate isInternetConnectionAvailable])
                 {
                     [activity stopAnimating];
@@ -2663,8 +2667,12 @@ extern void SVMXLog(NSString *format, ...);
     if ([appDelegate.metaSyncThread isExecuting])
     {
         
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
         {
+#ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"DetailViewController.m : didInvokeWebService: GetPrice2");
+#endif
+
             if (![appDelegate isInternetConnectionAvailable])
             {
                 [activity stopAnimating];
@@ -2691,8 +2699,12 @@ extern void SVMXLog(NSString *format, ...);
         if ([appDelegate.event_thread isExecuting])
         {
             SMLog(@" evnt is executing");
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
             {
+#ifdef kPrintLogsDuringWebServiceCall
+                SMLog(@"DetailViewController.m : didInvokeWebService: GetPrice3");
+#endif
+
                 if (![appDelegate isInternetConnectionAvailable])
                 {
                     [activity stopAnimating];
@@ -2728,8 +2740,12 @@ extern void SVMXLog(NSString *format, ...);
         if ([appDelegate isInternetConnectionAvailable])
         {
             [appDelegate.wsInterface callSFMEvent:dict event_name:event_name];
-            while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
+            while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, FALSE))
             {
+#ifdef kPrintLogsDuringWebServiceCall
+                SMLog(@"DetailViewController.m : didInvokeWebService: customwebservicecall");
+#endif
+
                 if (![appDelegate isInternetConnectionAvailable])
                 {
                     appDelegate.wsInterface.getPrice = TRUE;
@@ -2739,7 +2755,11 @@ extern void SVMXLog(NSString *format, ...);
                     [self enableSFMUI];
                     return;
                 }
-                
+                if (appDelegate.connection_error)
+                {
+                    break;
+                }
+
                 if (appDelegate.wsInterface.getPrice == TRUE)
                 {
                     appDelegate.wsInterface.getPrice = FALSE; 
@@ -2814,7 +2834,7 @@ extern void SVMXLog(NSString *format, ...);
         // query = [NSString stringWithFormat:@"%@%@ FROM SVMXC__Service_Order__c WHERE Id = '%@'", query, cleanQuery, currentRecordId];
         [[ZKServerSwitchboard switchboard] query:cleanQuery target:self selector:@selector(getReportEssentials:error:context:) context:nil];
         
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, FALSE))
         {
             SMLog(@"startSummaryDataFetch in while loop");
             /*if (![appDelegate isInternetConnectionAvailable])
@@ -3022,7 +3042,7 @@ extern void SVMXLog(NSString *format, ...);
     {
         [activity  startAnimating];
 
-       while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES)) 
+       while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES)) 
         {
             SMLog(@"BackOnSave in while loop");
             if (![appDelegate isInternetConnectionAvailable])
@@ -7531,7 +7551,7 @@ extern void SVMXLog(NSString *format, ...);
         wsinterface.add_WS = FALSE;
         [wsinterface  AddRecordForLines:process_id ForDetailLayoutId:layout_id];
 
-       while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES)) 
+       while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
         {
             SMLog(@"accessoryTapped in while loop");
             if(appDelegate.isWorkinginOffline)
@@ -8113,7 +8133,7 @@ extern void SVMXLog(NSString *format, ...);
             wsinterface.add_WS = FALSE;
             [wsinterface  AddRecordForLines:process_id ForDetailLayoutId:layout_id];
             
-           while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES)) 
+           while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
             {
                 SMLog(@"addMultiChildRows in while loop");
                 if(appDelegate.isWorkinginOffline)
@@ -11202,8 +11222,12 @@ extern void SVMXLog(NSString *format, ...);
         [activity startAnimating];
         appDelegate.wsInterface.getPrice = FALSE;
         SMLog(@" getPrice2");
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, FALSE))
         {
+#ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"DetailViewController.m : offlineActions: customAction");
+#endif
+
             if (![appDelegate isInternetConnectionAvailable])
             {
                 appDelegate.wsInterface.getPrice = TRUE;
@@ -11230,8 +11254,12 @@ extern void SVMXLog(NSString *format, ...);
             if([appDelegate dataSyncRunning])
             {
                 SMLog(@"Wait For Data Sync to Finish");
-                while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
+                while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, FALSE))
                 {
+#ifdef kPrintLogsDuringWebServiceCall
+                    SMLog(@"DetailViewController.m : offlineActions: datasync thread status check");
+#endif
+
                     if (appDelegate.dataSyncRunning == NO)
                     {
                         break;
@@ -11241,8 +11269,12 @@ extern void SVMXLog(NSString *format, ...);
             appDelegate.dataSyncRunning = YES;
             [activity startAnimating];
             [appDelegate callDataSync];
-            while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
+            while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, FALSE))
             {
+#ifdef kPrintLogsDuringWebServiceCall
+                SMLog(@"DetailViewController.m : offlineActions: datasync thread status check 2");
+#endif
+
                 if (![appDelegate isInternetConnectionAvailable])
                 {
                     [activity stopAnimating];
@@ -11255,6 +11287,11 @@ extern void SVMXLog(NSString *format, ...);
                     SMLog(@"Data Sync Completed ");
                     break;
                 }
+                if (appDelegate.connection_error)
+                {
+                    break;
+                }
+
             }
             [self.tableView reloadData];
             [appDelegate.sfmPageController.rootView refreshTable];
@@ -11494,8 +11531,12 @@ extern void SVMXLog(NSString *format, ...);
     if ([appDelegate.syncThread isExecuting])
     {
         
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
         {
+#ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"DetailViewController.m : seeMoreButtonsClicked: checkfor Data Sync");
+#endif
+
             if (![appDelegate isInternetConnectionAvailable])
             {
                 break;
@@ -11521,8 +11562,12 @@ extern void SVMXLog(NSString *format, ...);
     if ([appDelegate.metaSyncThread isExecuting])
     {
         
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
         {
+#ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"DetailViewController.m : seeMoreButtonsClicked: checkfor Meta Sync");
+#endif
+
             if (![appDelegate isInternetConnectionAvailable])
             {
                 break;
@@ -11548,8 +11593,12 @@ extern void SVMXLog(NSString *format, ...);
     if ([appDelegate.event_thread isExecuting])
     {
         
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
         {
+#ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"DetailViewController.m : seeMoreButtonsClicked: checkfor Event Sync");
+#endif
+
             if (![appDelegate isInternetConnectionAvailable])
             {
                 break;
@@ -11593,8 +11642,12 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate.wsInterface getProductHistoryForWorkOrderId:Id];
         
         appDelegate.wsInterface.didGetProductHistory = FALSE;
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
         {
+#ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"DetailViewController.m : seeMoreButtonsClicked: product History");
+#endif
+
             if (appDelegate.wsInterface.didGetProductHistory == TRUE)
                 break;
             if (![appDelegate isInternetConnectionAvailable])
@@ -11612,8 +11665,12 @@ extern void SVMXLog(NSString *format, ...);
     {
         [appDelegate.wsInterface getAccountHistoryForWorkOrderId:Id];
         appDelegate.wsInterface.didGetAccountHistory = FALSE;
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
         {
+#ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"DetailViewController.m : seeMoreButtonsClicked: account history");
+#endif
+
             if (appDelegate.wsInterface.didGetAccountHistory == TRUE)
                 break;
             

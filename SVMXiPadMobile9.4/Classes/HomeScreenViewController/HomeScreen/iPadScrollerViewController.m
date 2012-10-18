@@ -1290,7 +1290,7 @@ const float progress_ = 0.07;
 
 -(void)doMetaSync
 {
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
         BOOL retvalue = [appDelegate goOnlineIfRequired];
         if(!appDelegate.connection_error)
@@ -1309,8 +1309,12 @@ const float progress_ = 0.07;
     
     appDelegate.wsInterface.didOpComplete = FALSE;
     [appDelegate.wsInterface metaSyncWithEventName:SFM_METADATA eventType:INITIAL_SYNC values:nil];
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"iPadScrollerViewController.m : doMetaSync: Inital Sync");
+#endif
+
         //shrinivas
         if (appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED )
         {
@@ -1348,8 +1352,12 @@ const float progress_ = 0.07;
         
         appDelegate.wsInterface.didOpSFMSearchComplete = FALSE;
         [appDelegate.wsInterface metaSyncWithEventName:SFM_SEARCH eventType:SYNC values:nil];
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
         {
+#ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"iPadScrollerViewController.m : doMetaSync: Sfm Search");
+#endif
+
             if (![appDelegate isInternetConnectionAvailable])
             {
                 appDelegate.initial_sync_succes_or_failed = META_SYNC_FAILED;
@@ -1422,8 +1430,12 @@ const float progress_ = 0.07;
     
     [appDelegate.wsInterface dataSyncWithEventName:EVENT_SYNC eventType:SYNC requestId:@""];
     
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"iPadScrollerViewController.m : doDetaSync: EventSync");
+#endif
+
         //shrinivas
         if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED)
         {
@@ -1468,8 +1480,12 @@ const float progress_ = 0.07;
     SMLog(@"reqId%@" , appDelegate.initial_dataSync_reqid);
     [appDelegate.wsInterface dataSyncWithEventName:DOWNLOAD_CREITERIA_SYNC eventType:SYNC requestId:appDelegate.initial_dataSync_reqid];
     SMLog(@"DC Check1");
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"iPadScrollerViewController.m : doMetaSync: Download Criteria Sync");
+#endif
+
         //shrinivas
         if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED)
         {
@@ -1486,13 +1502,17 @@ const float progress_ = 0.07;
             SMLog(@"DC Check1 ComeOut");
             break; 
         }
+        if (![appDelegate isInternetConnectionAvailable])
+        {
+            break;
+        }
         if(appDelegate.connection_error)
         {
             return;
         }
         if (![appDelegate isInternetConnectionAvailable] && appDelegate.data_sync_chunking == REQUEST_SENT)
         {
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
             {
                 SMLog(@"DC Check2");
                 //shrinivas
@@ -1531,9 +1551,12 @@ const float progress_ = 0.07;
     appDelegate.Sync_check_in = FALSE;
     
     [appDelegate.wsInterface cleanUpForRequestId:appDelegate.initial_dataSync_reqid forEventName:@"CLEAN_UP_SELECT"];
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
-      
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"iPadScrollerViewController.m : doTxFetch: Cleanup Select");
+#endif
+
         if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.initial_sync_succes_or_failed = TX_FETCH_FAILED;
@@ -1565,8 +1588,12 @@ const float progress_ = 0.07;
     [appDelegate.wsInterface PutAllTheRecordsForIds];
     
     [tx_fetch_pool drain];
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"iPadScrollerViewController.m : doTxFetch: Put Tx Fetch");
+#endif
+
         if (appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED)
         {
             SMLog(@"Break TxFetch");
@@ -1601,8 +1628,12 @@ const float progress_ = 0.07;
     appDelegate.Sync_check_in = FALSE;
     
     
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"iPadScrollerViewController.m : doTxFetch: Unknown Check");
+#endif
+
         if( appDelegate.Sync_check_in == TRUE)
         {
             break;
@@ -1618,8 +1649,12 @@ const float progress_ = 0.07;
     appDelegate.initial_sync_status = INITIAL_SYNC_COMPLETED;
     appDelegate.Sync_check_in = FALSE;
     
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"iPadScrollerViewController.m : doTxFetch: Unknow Check 2");
+#endif
+
         if( appDelegate.Sync_check_in == TRUE)
         {
             break;

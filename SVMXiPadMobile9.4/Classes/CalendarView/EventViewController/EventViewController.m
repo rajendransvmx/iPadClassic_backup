@@ -236,7 +236,7 @@ extern void SVMXLog(NSString *format, ...);
     [alertView show];
     [alertView release];
     
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 0, FALSE))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, FALSE))
     {
         SMLog(@"EventViewController moveTo in while loop");
         if (didDismissalertview == TRUE)

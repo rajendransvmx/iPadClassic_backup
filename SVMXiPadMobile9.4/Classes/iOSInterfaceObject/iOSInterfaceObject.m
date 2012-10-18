@@ -334,7 +334,7 @@ extern void SVMXLog(NSString *format, ...);
     didRemovePreviousSignature = NO;
     [self removePreviousSignature:fileName];
     
-   while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+   while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
         SMLog(@"setSignedImageData in while loop");
         if (![appDelegate isInternetConnectionAvailable])
@@ -364,7 +364,7 @@ extern void SVMXLog(NSString *format, ...);
     
     attachNewSignature = NO;
     
-   while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+   while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
         SMLog(@"setSignedImageData in while loop");
         if (![appDelegate isInternetConnectionAvailable])

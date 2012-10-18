@@ -2310,8 +2310,12 @@ extern void SVMXLog(NSString *format, ...);
     didUserGPSLocationUpdated=FALSE;
     SMLog(@"Updating User GPS Location Table");
     [appDelegate.wsInterface dataSyncWithEventName:@"LOCATION_HISTORY" eventType:SYNC values:resultArray];
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
-    {                
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
+    {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"Datebase.m : updateUserGPSLocation: LocationHistory");
+#endif
+        
         if (didUserGPSLocationUpdated == TRUE)
             break;   
         if (![appDelegate isInternetConnectionAvailable])
@@ -2383,8 +2387,11 @@ extern void SVMXLog(NSString *format, ...);
     didTechnicianLocationUpdated=FALSE;
     SMLog(@"Updating Technician Location");
     [appDelegate.wsInterface dataSyncWithEventName:@"TECH_LOCATION_UPDATE" eventType:SYNC values:location];
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
-    {                
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
+    {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"Datebase.m : updateTechinicianLocation: TECH_LOCATION_UPDATE");
+#endif
         if (didTechnicianLocationUpdated == TRUE)
             break;   
         if (![appDelegate isInternetConnectionAvailable])
@@ -5879,16 +5886,24 @@ extern void SVMXLog(NSString *format, ...);
      {
          appDelegate.wsInterface.didOpSFMSearchComplete = FALSE;
          [appDelegate.wsInterface metaSyncWithEventName:SFM_SEARCH eventType:SYNC values:nil];
-         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+         while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
          {
-         if (![appDelegate isInternetConnectionAvailable])
-         {
-         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-         [MyPopoverDelegate performSelector:@selector(throwException)];
-         break;
-         }
-         if (appDelegate.wsInterface.didOpSFMSearchComplete == TRUE)
-         break; 
+#ifdef kPrintLogsDuringWebServiceCall
+             SMLog(@"Datebase.m : doMetaSync: SFM_SEARCH");
+#endif
+             if (![appDelegate isInternetConnectionAvailable])
+             {
+             if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+             [MyPopoverDelegate performSelector:@selector(throwException)];
+             break;
+             }
+             if (appDelegate.wsInterface.didOpSFMSearchComplete == TRUE)
+             break;
+             if (appDelegate.connection_error)
+             {
+                 break;
+             }
+
          }
          SMLog(@"MetaSync SFM Search End: %@", [NSDate date]);
          
@@ -5924,7 +5939,7 @@ extern void SVMXLog(NSString *format, ...);
     appDelegate.wsInterface.didOpComplete = FALSE;
     appDelegate.connection_error = FALSE;
     
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
         [appDelegate goOnlineIfRequired];
         if(!appDelegate.connection_error)
@@ -5933,8 +5948,12 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     [appDelegate.wsInterface metaSyncWithEventName:SFM_METADATA eventType:INITIAL_SYNC values:nil];
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"Datebase.m : callMetaSync: SFM_METADATA");
+#endif
+
         if (![appDelegate isInternetConnectionAvailable])
         {
             break;
@@ -6805,8 +6824,11 @@ extern void SVMXLog(NSString *format, ...);
 
     [appDelegate.wsInterface dataSyncWithEventName:EVENT_SYNC eventType:SYNC requestId:@""];
     
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"Datebase.m : startEventSync: EVENT_SYNC");
+#endif
         if (![appDelegate isInternetConnectionAvailable])
             break;
         
@@ -6853,8 +6875,12 @@ extern void SVMXLog(NSString *format, ...);
     appDelegate.Incremental_sync_status = INCR_STARTS;
     
     [appDelegate.wsInterface PutAllTheRecordsForIds];
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"Datebase.m : startEventSync: TX_FETCH");
+#endif
+
         if (![appDelegate isInternetConnectionAvailable])
             break;
         
@@ -7206,8 +7232,13 @@ extern void SVMXLog(NSString *format, ...);
     
     [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetServiceReportLogo:error:context:) context:nil];
     
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, FALSE)) 
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, FALSE))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"Datebase.m : getImageForServiceReportLogo: ZKs ServiceReportLogo");
+#endif
+        
+
         if (![appDelegate isInternetConnectionAvailable] || appDelegate.connection_error)
                break;
         if (didGetServiceReportLogo)
@@ -7611,8 +7642,12 @@ extern void SVMXLog(NSString *format, ...);
     NSString * _query = [NSString stringWithFormat:@"SELECT Id, Name ,SobjectType FROM RecordType WHERE SobjectType in (%@) ",objectList];
     
     [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didgetRecordtypeInfo:error:context:) context:nil];
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES)) 
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES)) 
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"Datebase.m : getRecordTypeValuesForObject: ZKs get record type");
+#endif
+
         if(RecordTypeflag)
         {
             break;

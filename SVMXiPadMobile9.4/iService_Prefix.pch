@@ -11,4 +11,7 @@
 #define NOTIFICATION_TIMER_INVALIDATE @"NOTIFICATION_TIMER_INVALIDATE" 
 #define FROM_SFM_SEARCH @"FROM_SFM_SEARCH"
 #define SERVERURL       @"serverurl"
+#define kPrintLogsDuringWebServiceCall
+//#undef kPrintLogsDuringWebServiceCall
+#define kRunLoopTimeInterval   1
 #endif

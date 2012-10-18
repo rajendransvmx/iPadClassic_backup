@@ -248,7 +248,7 @@ extern void SVMXLog(NSString *format, ...);
     didDismissalertview = FALSE;
     if (didEnterAlertView)
     {
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 0, FALSE))
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, FALSE))
         {
             SMLog(@"alert for switch user");
             if (didDismissalertview == TRUE)
@@ -332,7 +332,7 @@ extern void SVMXLog(NSString *format, ...);
     } 
     
     didLoginCompleted = FALSE;
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
         if (didLoginCompleted == TRUE)
             break;
@@ -375,7 +375,7 @@ extern void SVMXLog(NSString *format, ...);
     
     appDelegate.wsInterface.didOpComplete = FALSE;
     [appDelegate.wsInterface metaSyncWithEventName:SFM_METADATA eventType:INITIAL_SYNC values:nil];
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
         //shrinivas
         if (appDelegate.isForeGround == TRUE)
@@ -401,7 +401,7 @@ extern void SVMXLog(NSString *format, ...);
         
         appDelegate.wsInterface.didOpSFMSearchComplete = FALSE;
         [appDelegate.wsInterface metaSyncWithEventName:SFM_SEARCH eventType:SYNC values:nil];
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
         {
             if (![appDelegate isInternetConnectionAvailable])
                 break;
@@ -431,7 +431,7 @@ extern void SVMXLog(NSString *format, ...);
    
     [appDelegate.wsInterface dataSyncWithEventName:EVENT_SYNC eventType:SYNC requestId:@""];
     
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
         //shrinivas
         if (appDelegate.isForeGround == TRUE)
@@ -460,7 +460,7 @@ extern void SVMXLog(NSString *format, ...);
     SMLog(@"reqId%@" , appDelegate.initial_dataSync_reqid);
     [appDelegate.wsInterface dataSyncWithEventName:DOWNLOAD_CREITERIA_SYNC eventType:SYNC requestId:appDelegate.initial_dataSync_reqid];
     
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
         //shrinivas
         if (appDelegate.isForeGround == TRUE)
@@ -478,7 +478,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         if (![appDelegate isInternetConnectionAvailable] && appDelegate.data_sync_chunking == REQUEST_SENT)
         {
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
             {
                 //shrinivas
                 if (appDelegate.isForeGround == TRUE)
@@ -501,7 +501,7 @@ extern void SVMXLog(NSString *format, ...);
     SMLog(@"SAMMAN Incremental DataSync WS Start: %@", [NSDate date]);
     
     [appDelegate.wsInterface cleanUpForRequestId:appDelegate.initial_dataSync_reqid forEventName:@"CLEAN_UP_SELECT"];
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
         //shrinivas
         if (appDelegate.isForeGround == TRUE)
@@ -520,7 +520,7 @@ extern void SVMXLog(NSString *format, ...);
     appDelegate.Incremental_sync_status = INCR_STARTS;
     
     [appDelegate.wsInterface PutAllTheRecordsForIds];
-      while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+      while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
         //shrinivas
         if (appDelegate.isForeGround == TRUE)
@@ -678,7 +678,7 @@ extern void SVMXLog(NSString *format, ...);
     
     //Dont remove the code in the comments below
     [appDelegate.wsInterface checkIfProfileExistsWithEventName:VALIDATE_PROFILE type:GROUP_PROFILE];
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
         if (![appDelegate isInternetConnectionAvailable])
         {
@@ -727,7 +727,7 @@ extern void SVMXLog(NSString *format, ...);
     appDelegate.download_tags_done = FALSE;
     appDelegate.firstTimeCallForTags = TRUE;
     [appDelegate.wsInterface metaSyncWithEventName:MOBILE_DEVICE_TAGS eventType:SYNC values:nil];
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
         if(appDelegate.download_tags_done)
             break;
@@ -888,7 +888,7 @@ extern void SVMXLog(NSString *format, ...);
     
     [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didQueryTechnician:error:context:) context:nil];
     
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
         SMLog(@"LoginViewController initDebrief in while loop");
         if (![appDelegate isInternetConnectionAvailable])
@@ -1006,7 +1006,7 @@ extern void SVMXLog(NSString *format, ...);
     appDelegate.didGetVersion = FALSE;
     [appDelegate.wsInterface getSvmxVersion];
     
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
         //shrinivas
         if (appDelegate.isForeGround == TRUE)

@@ -196,8 +196,12 @@ PopoverButtons *popOver_view;
         
         if ([appDelegate.metaSyncThread isExecuting])
         {
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
             {
+#ifdef kPrintLogsDuringWebServiceCall
+                SMLog(@"popoverButtons.m : synchronise: check for meta sync thread");
+#endif
+
                 if (![appDelegate isInternetConnectionAvailable])
                 {
                     break;
@@ -211,8 +215,12 @@ PopoverButtons *popOver_view;
         
         if ([appDelegate.event_thread isExecuting])
         {
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
             {
+#ifdef kPrintLogsDuringWebServiceCall
+                SMLog(@"popoverButtons.m : synchronise: check for event sync thread");
+#endif
+
                 if (![appDelegate isInternetConnectionAvailable])
                 {
                     break;
@@ -244,8 +252,12 @@ PopoverButtons *popOver_view;
         
         if([appDelegate.syncThread isExecuting])
         {
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
             {
+#ifdef kPrintLogsDuringWebServiceCall
+                SMLog(@"popoverButtons.m : synchronise: check for data sync thread");
+#endif
+
                 if ([appDelegate.syncThread isFinished])
                 {
                     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
@@ -258,8 +270,12 @@ PopoverButtons *popOver_view;
         if ([appDelegate.metaSyncThread isExecuting])
         {
             
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
             {
+#ifdef kPrintLogsDuringWebServiceCall
+                SMLog(@"popoverButtons.m : synchronise: check for meta sync thread 2");
+#endif
+
                 if (![appDelegate isInternetConnectionAvailable])
                 {
                     break;
@@ -276,8 +292,12 @@ PopoverButtons *popOver_view;
         if ([appDelegate.event_thread isExecuting])
         {
             
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
             {
+#ifdef kPrintLogsDuringWebServiceCall
+                SMLog(@"popoverButtons.m : synchronise: check for Event sync thread 2");
+#endif
+
                 if (![appDelegate isInternetConnectionAvailable])
                 {
                     break;
@@ -295,8 +315,12 @@ PopoverButtons *popOver_view;
 		[delegate activityStart];
         [appDelegate callSpecialIncrementalSync];
         
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
         {
+#ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"popoverButtons.m : synchronise: check for special inc sync");
+#endif
+
             if(appDelegate.isSpecialSyncDone)
                 break;
             
@@ -346,7 +370,7 @@ PopoverButtons *popOver_view;
     [syncConfigAlert release];
     
     didDismissAlertView = FALSE;
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
         if (didDismissAlertView)
             break;        
@@ -451,7 +475,7 @@ PopoverButtons *popOver_view;
     //RADHA AUG 30/2012
     [appDelegate.dataBase deleteDatabase:TEMPDATABASENAME];    
     appDelegate.metaSyncRunning = YES;
-        
+    
     syncConfigurationFailed = FALSE;
     appDelegate.isIncrementalMetaSyncInProgress = FALSE;
     
@@ -472,8 +496,12 @@ PopoverButtons *popOver_view;
         
         if([appDelegate.syncThread isExecuting])
         {
-           while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+           while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
             {
+#ifdef kPrintLogsDuringWebServiceCall
+                SMLog(@"popoverButtons.m : startSyncConfiguration: check for Data sync thread");
+#endif
+
                 if ([appDelegate.syncThread isFinished])
                 {
                     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
@@ -492,8 +520,12 @@ PopoverButtons *popOver_view;
     
         if ([appDelegate.event_thread isExecuting])
         {
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
             {
+#ifdef kPrintLogsDuringWebServiceCall
+                SMLog(@"popoverButtons.m : startSyncConfiguration: check for Event sync thread");
+#endif
+
                 if (![appDelegate isInternetConnectionAvailable])
                 {
                     break;
@@ -516,7 +548,7 @@ PopoverButtons *popOver_view;
         
 //		if ([manualEventThread isExecuting])
 //		{
-//			while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+//			while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
 //			{
 //				if (![appDelegate isInternetConnectionAvailable])
 //				{
@@ -744,8 +776,12 @@ PopoverButtons *popOver_view;
         if ([appDelegate.metaSyncThread isExecuting])
         {
             
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
             {
+#ifdef kPrintLogsDuringWebServiceCall
+                SMLog(@"popoverButtons.m : startSyncEvents: check for Meta sync thread");
+#endif
+
                 if (![appDelegate isInternetConnectionAvailable])
                 {
                     break;
@@ -762,7 +798,7 @@ PopoverButtons *popOver_view;
         //RADHA 2012june12
         if (appDelegate.metaSyncRunning)
         {
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
             {
                 if (![appDelegate isInternetConnectionAvailable])
                 {

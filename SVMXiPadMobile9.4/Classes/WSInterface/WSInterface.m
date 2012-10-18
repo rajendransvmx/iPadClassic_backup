@@ -383,8 +383,12 @@ last_sync_time:(NSString *)last_sync_time
     
     [self Put:PUT_INSERT];
     
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"WSinterface.m : DoSplIncSync: PUT_INSERT");
+#endif
+
         if (![appDelegate isInternetConnectionAvailable])
         {
             return;
@@ -405,8 +409,12 @@ last_sync_time:(NSString *)last_sync_time
 	[self getAllRecordsForOperationTypeFromSYNCCONFLICT:PUT_DELETE OverRideFlag:RETRY];
 	[self Put:PUT_DELETE];
 	
-	while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+	while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"WSinterface.m : DoSplIncSync: PUT_DELETE");
+#endif
+
         if (![appDelegate isInternetConnectionAvailable])
         {
             return;
@@ -424,8 +432,12 @@ last_sync_time:(NSString *)last_sync_time
     }
     [self getAllRecordsForOperationTypeFromSYNCCONFLICT:PUT_UPDATE OverRideFlag:CLIENT_OVERRIDE];
     [self Put:PUT_UPDATE];
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"WSinterface.m : DoSplIncSync: PUT_UPDATE");
+#endif
+
         if (![appDelegate isInternetConnectionAvailable])
         {
             return;
@@ -447,16 +459,23 @@ last_sync_time:(NSString *)last_sync_time
     
     [self PutAllTheRecordsForIds];
     
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"WSinterface.m : DoSplIncSync: TX_FETCH");
+#endif
+
         if(appDelegate.Incremental_sync_status == PUT_RECORDS_DONE || appDelegate.incrementalSync_Failed == TRUE)
         {
             break;
         }
-        if (appDelegate.connection_error)
+        if (![appDelegate isInternetConnectionAvailable])
         {
             break;
         }
+        if(appDelegate.connection_error)
+            break;
+        
 
     }
     
@@ -473,15 +492,21 @@ last_sync_time:(NSString *)last_sync_time
     else
     {        
         [self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP"];
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
         {
+#ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"WSinterface.m : DoSplIncSync: CLEAN_UP");
+#endif
+
             if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
                 break;
             
-            if (appDelegate.connection_error)
+            if (![appDelegate isInternetConnectionAvailable])
             {
                 break;
             }
+            if(appDelegate.connection_error)
+                break;
 
         }
         [self setSyncReqId:@""];
@@ -769,7 +794,9 @@ last_sync_time:(NSString *)last_sync_time
     
     //shrinivas
     retVal = [appDelegate goOnlineIfRequired];
-    
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    appDelegate.currentServerUrl = [userDefaults objectForKey:SERVERURL];
+
     SMLog(@"%@, %d",appDelegate.currentServerUrl, [appDelegate.currentServerUrl length] );
 	
 	
@@ -827,8 +854,12 @@ last_sync_time:(NSString *)last_sync_time
     
     [self GetDelete];
 
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"WSinterface.m : DOINC_DATA_SYNC: GET_DELETE");
+#endif
+
         if (![appDelegate isInternetConnectionAvailable])
         {
              appDelegate.dataSyncRunning = NO;
@@ -863,8 +894,12 @@ last_sync_time:(NSString *)last_sync_time
     
     [self GETDownloadCriteriaRecordsFor:GET_DELETE_DOWNLOAD_CRITERIA];
     
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"WSinterface.m : DOINC_DATA_SYNC: GET_DELETE_DWN_CRIT");
+#endif
+
         if (![appDelegate isInternetConnectionAvailable])
         {
              appDelegate.dataSyncRunning = NO;
@@ -896,8 +931,12 @@ last_sync_time:(NSString *)last_sync_time
     }    
     
     [self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP_SELECT"];
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
-    {        
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+    {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"WSinterface.m : DOINC_DATA_SYNC: CLEAN_UP_SELECT 1");
+#endif
+
         if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.dataSyncRunning = NO;
@@ -932,8 +971,12 @@ last_sync_time:(NSString *)last_sync_time
     
     [self Put:PUT_DELETE];
     
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"WSinterface.m : DOINC_DATA_SYNC: PUT_DELETE");
+#endif
+
         if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.dataSyncRunning = NO;
@@ -981,8 +1024,12 @@ last_sync_time:(NSString *)last_sync_time
     
     [self Put:PUT_INSERT];   //call incremental insert
     
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
-    {        
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+    {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"WSinterface.m : DOINC_DATA_SYNC: PUT_INSERT");
+#endif
+
         if (![appDelegate isInternetConnectionAvailable])
         {
             [self internetConnectivityHandling:data_sync];
@@ -1016,8 +1063,12 @@ last_sync_time:(NSString *)last_sync_time
     [self resetSyncLastindexAndObjectName];  //sahana
     [self GetInsert];                        //once all insertion is over call call reverse insert  method 
     
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"WSinterface.m : DOINC_DATA_SYNC: GET_INSERT");
+#endif
+
         if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.dataSyncRunning = NO;
@@ -1052,8 +1103,12 @@ last_sync_time:(NSString *)last_sync_time
 
     [self GETDownloadCriteriaRecordsFor:GET_INSERT_DOWNLOAD_CRITERIA];
     
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"WSinterface.m : DOINC_DATA_SYNC: GET_INSERT_DWN_CRIT");
+#endif
+
         if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.dataSyncRunning = NO;
@@ -1086,8 +1141,12 @@ last_sync_time:(NSString *)last_sync_time
     
     [self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP_SELECT"];
     
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"WSinterface.m : DOINC_DATA_SYNC: CLEAN_UP_SELECT 2");
+#endif
+
         if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.dataSyncRunning = NO;
@@ -1116,22 +1175,32 @@ last_sync_time:(NSString *)last_sync_time
     
     didWriteSignature = NO;
     [appDelegate.calDataBase getAllLocalIdsForSignature:SIG_BEFOREUPDATE];
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
         SMLog(@"Signature to SFDC");
         if (didWriteSignature == YES)
             break;
+        if (![appDelegate isInternetConnectionAvailable])
+        {
+            break;
+        }
+        if(appDelegate.connection_error)
+            break;
     }
     
     
-    //call update 
-    [self copyTrailertoTempTrailer:UPDATE]; 
+    //call update
+    [self copyTrailertoTempTrailer:UPDATE];
     [self  getAllRecordsForOperationType:UPDATE];
     
     [self Put:PUT_UPDATE];
     
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"WSinterface.m : DOINC_DATA_SYNC: PUT_UPDATE");
+#endif
+
         if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.dataSyncRunning = NO;
@@ -1167,7 +1236,7 @@ last_sync_time:(NSString *)last_sync_time
     
     didWriteSignature = NO;
     [appDelegate.calDataBase getAllLocalIdsForSignature:SIG_AFTERUPDATE];
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
         SMLog(@"Signature to SFDC");
         if (didWriteSignature == YES)
@@ -1177,8 +1246,12 @@ last_sync_time:(NSString *)last_sync_time
     
     [self GetUpdate];
     
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"WSinterface.m : DOINC_DATA_SYNC: GET_UPDATE");
+#endif
+
         if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.dataSyncRunning = NO;
@@ -1211,8 +1284,12 @@ last_sync_time:(NSString *)last_sync_time
     
     [self GETDownloadCriteriaRecordsFor:GET_UPDATE_DOWNLOAD_CRITERIA];
     
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"WSinterface.m : DOINC_DATA_SYNC: GET_UPDATE_DWN_CRIT");
+#endif
+
         if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.dataSyncRunning = NO;
@@ -1244,8 +1321,12 @@ last_sync_time:(NSString *)last_sync_time
     }
     
     [self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP_SELECT"];
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"WSinterface.m : DOINC_DATA_SYNC: CLN_UP_SELECT 3");
+#endif
+
         if ( ![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.dataSyncRunning = NO;
@@ -1275,8 +1356,12 @@ last_sync_time:(NSString *)last_sync_time
     [self PutAllTheRecordsForIds];                                    //After update or delere ,insert are done  ,call getallrecords
     //After Insert Claer the trailer_temp table
     
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
+#ifdef kPrintLogsDuringWebServiceCall
+        SMLog(@"WSinterface.m : DOINC_DATA_SYNC: TX_FETCH");
+#endif
+
         if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.dataSyncRunning = NO;
@@ -1310,8 +1395,8 @@ last_sync_time:(NSString *)last_sync_time
     {
         [appDelegate.dataBase createUserGPSTable];
         [appDelegate.dataBase updateTechnicianLocation];
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, YES))
-        {                
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
+        {
             if (appDelegate.dataBase.didTechnicianLocationUpdated == TRUE)
                 break;   
             if (![appDelegate isInternetConnectionAvailable])
@@ -1420,14 +1505,21 @@ last_sync_time:(NSString *)last_sync_time
     {
         //sahana
         [self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP"];
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
         {
+#ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"WSinterface.m : DOINC_DATA_SYNC: CLEAN_UP");
+#endif
+
             if ( ![appDelegate isInternetConnectionAvailable])
             {
                 [appDelegate setSyncStatus:SYNC_GREEN];
             }
             if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
                 break;
+            if(appDelegate.connection_error)
+                break;
+
         }
         
         [self setSyncReqId:@""];
@@ -1440,21 +1532,34 @@ last_sync_time:(NSString *)last_sync_time
     //Sync signature to server
     didWriteSignature = NO;
     [appDelegate.calDataBase getAllLocalIdsForSignature:SIG_AFTERSYNC];
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
         SMLog(@"Signature to SFDC");
         if (didWriteSignature == YES)
+            break;
+        if (![appDelegate isInternetConnectionAvailable])
+        {
+            break;
+        }
+        if(appDelegate.connection_error)
             break;
     }
     
     //Sync PDF to SFDC
     didWritePDF = NO;
     [appDelegate.calDataBase getAllLocalIdsForPDF];
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
         SMLog(@"PDF to SFDC");
         if (didWritePDF == YES)
             break;
+        if (![appDelegate isInternetConnectionAvailable])
+        {
+            break;
+        }
+        if(appDelegate.connection_error)
+            break;
+
     }
     if(conflict_exists)
     {
@@ -1490,11 +1595,18 @@ last_sync_time:(NSString *)last_sync_time
             INTF_WebServicesDefBinding * binding = [aftersavePagelevelEvent objectForKey:AFTERSAVEPAQGELEVELBINDING];
             didCompleteAfterSaveEventCalls = NO;
             [self callsfMEventForAfterSaveOrupdateEvents:request binding:binding];
-            while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+            while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
             {
                 SMLog(@"pagelevel events");
                 if (didCompleteAfterSaveEventCalls == YES)
                     break;
+                if (![appDelegate isInternetConnectionAvailable])
+                {
+                    break;
+                }
+                if(appDelegate.connection_error)
+                    break;
+
             }
         }
     }
@@ -1577,10 +1689,23 @@ last_sync_time:(NSString *)last_sync_time
     else
     {
         [self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP_SELECT"];
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
         {
+#ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"WSinterface.m : generateRequestId: CLEAN_UP_SELECT");
+#endif
+
             if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
                 break;
+            if (![appDelegate isInternetConnectionAvailable])
+            {
+                return;
+            }
+            if (appDelegate.connection_error)
+            {
+                break;
+            }
+
         }
     }
     
@@ -7229,7 +7354,7 @@ last_sync_time:(NSString *)last_sync_time
             
             appDelegate.createObjectContext = [self getSaveTargetRecords:response];
             
-            while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+            while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
             {
                 SMLog(@"WSInterface operation in while loop");
                 /*if (![appDelegate isInternetConnectionAvailable])
@@ -7265,7 +7390,7 @@ last_sync_time:(NSString *)last_sync_time
             // Sahana - 5th Aug, 2011
             
             appDelegate.createObjectContext = [self getSaveTargetRecords:response];
-            while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+            while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
             {
                 SMLog(@"WSInterface operation in while loop");
                 /*if (![appDelegate isInternetConnectionAvailable])
@@ -9406,7 +9531,7 @@ last_sync_time:(NSString *)last_sync_time
         [self getProductHistoryForWorkOrderId:appDelegate.sfmPageController.recordId];
         [self getAccountHistoryForWorkOrderId:appDelegate.sfmPageController.recordId];
         
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, NO))
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
         {
             if (![appDelegate isInternetConnectionAvailable])
                 return;
@@ -10333,7 +10458,7 @@ last_sync_time:(NSString *)last_sync_time
     SMLog(@ "appdelegate---objectNames_array %@",objectNames_array);
 
     [[ZKServerSwitchboard switchboard] describeSObjects:objectNames_array target:self selector:@selector(didGetNameFields:error:context:) context:nil];
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, FALSE))
     {
         SMLog(@"WSInterface getCreateProcessDictionaryArray in while loop");
         if ( didGetObjectName == TRUE )
@@ -10562,7 +10687,7 @@ last_sync_time:(NSString *)last_sync_time
     NSString * _query = [NSString stringWithFormat:@"SELECT %@ From %@ WHERE ID = '%@'",name, objname, ID]; 
     [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetNameField:error:context:) context:nil];
     
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, FALSE))
     {
         //shrinivas
         if (appDelegate.isForeGround == TRUE)
@@ -10807,7 +10932,7 @@ last_sync_time:(NSString *)last_sync_time
         didSessionResume = NO;
         iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
         [self loginWithUsername:appDelegate.username password:appDelegate.password target:self selector:@selector(sessionDidResume:error:)];
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, FALSE))
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, FALSE))
         {
             SMLog(@"WSInterface doCheckSession in while loop");
             if (didSessionResume)
@@ -10826,15 +10951,21 @@ last_sync_time:(NSString *)last_sync_time
     NSString * serverUrl = [loginResult serverUrl];
     NSArray * array = [serverUrl pathComponents];
     NSString * server = [NSString stringWithFormat:@"%@//%@", [array objectAtIndex:0], [array objectAtIndex:1]];
-    appDelegate.currentServerUrl = server;
     if (error)
     {
         SMLog(@"There was an error resuming the session: %@", error);
+		NSUserDefaults * userdefaults = [NSUserDefaults standardUserDefaults];
+		appDelegate.currentServerUrl = [userdefaults objectForKey:SERVERURL];
         didSessionResume = YES;
         isSessionInavalid = YES;
     }
     else {
         SMLog(@"Session Resumed Successfully!");
+        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+        if (userDefaults)
+        {
+            [userDefaults setObject:server forKey:SERVERURL];
+        }
         didSessionResume = YES;
         isSessionInavalid = NO;
     }

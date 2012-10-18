@@ -108,7 +108,7 @@ extern void SVMXLog(NSString *format, ...);
     {
         [self InitLaborData];
 		while (!dataloaded) {
-			CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, TRUE);
+			CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, TRUE);
 		}
     }
 	
