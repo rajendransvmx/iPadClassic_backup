@@ -9,6 +9,7 @@
 #import "SFMResultMainViewController.h"
 #import "SFMResultDetailViewController.h"
 #import "SFMResultMasterViewController.h"
+extern void SVMXLog(NSString *format, ...);
 @interface SFMResultMainViewController ()
 
 @end

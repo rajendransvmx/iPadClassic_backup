@@ -8,7 +8,7 @@
 
 #import "SFMPageController.h"
 #import "iServiceAppDelegate.h"
-
+extern void SVMXLog(NSString *format, ...);
 @implementation SFMPageController
 @synthesize sourceProcessId,sourceRecordId;
 @synthesize delegate, rootView, detailView;
