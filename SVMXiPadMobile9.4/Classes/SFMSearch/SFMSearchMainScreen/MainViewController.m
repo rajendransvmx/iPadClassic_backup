@@ -36,13 +36,12 @@ extern void SVMXLog(NSString *format, ...);
     
     masterView = [[MasterViewController alloc] initWithNibName:@"MasterViewController" bundle:nil];
     UINavigationController * masterNav = [[[UINavigationController alloc] initWithRootViewController:masterView] autorelease];
-    
     DetailViewControllerForSFM * detailView = [[[DetailViewControllerForSFM alloc] initWithNibName:@"DetailViewControllerForSFM" bundle:nil] autorelease];
     detailView.splitViewDelegate = self;
     detailView.mainView = self;
+    masterView.detailView = detailView;
     UINavigationController * detailNav = [[[UINavigationController alloc] initWithRootViewController:detailView] autorelease];
     detailView.masterView = masterView;
-    
     UISplitViewController * splitView = [[UISplitViewController alloc] init];
     splitView.viewControllers = [NSArray arrayWithObjects:masterNav, detailNav, nil];
     splitView.delegate = self;
@@ -56,7 +55,6 @@ extern void SVMXLog(NSString *format, ...);
     {
         packgeVersion = [userDefaults objectForKey:kPkgVersionCheckForGPS_AND_SFM_SEARCH];
         int _stringNumber = [packgeVersion intValue];
-		
 		int check = (DOD * 100000);
 		SMLog(@"%d", check);
         if(_stringNumber >= check)

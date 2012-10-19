@@ -504,7 +504,7 @@ extern void SVMXLog(NSString *format, ...);
     download_desc_label.textAlignment = UITextAlignmentCenter;
     NSString * download_string = [NSString stringWithFormat:@" Downloading %@ ",record_name];
     download_desc_label.text = download_string;
-    ProgressBarViewController.backgroundColor = [appDelegate colorForHex:@"BDEAF9"];;//[UIColor clearColor];
+    ProgressBarViewController.backgroundColor =[UIColor clearColor];
     ProgressBarViewController.layer.borderColor = [UIColor blackColor].CGColor;
     ProgressBarViewController.layer.borderWidth = 1.0f;
     [ProgressBarViewController bringSubviewToFront:ProgressBar];

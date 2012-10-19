@@ -26,7 +26,8 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize includeOnlineResultLabel;
 @synthesize limitShowLabel;
 @synthesize limitRecordLabel;
-@synthesize inputAccessoryView; 
+@synthesize inputAccessoryView;
+@synthesize detailView;
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
     if([textField tag] == 0)
@@ -175,8 +176,8 @@ extern void SVMXLog(NSString *format, ...);
                        to: 0];
     
     // present and release the controller
-    [[self parentViewController]     presentViewController: reader
-                                                     animated: YES completion:nil];
+    [self.detailView.mainView  presentViewController: reader
+                        animated: YES completion:nil];
     [reader release];
     SMLog(@"Launch Bar Code Scanner");
 }

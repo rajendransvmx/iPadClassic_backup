@@ -223,7 +223,7 @@ extern void SVMXLog(NSString *format, ...);
                        to: 0];
     
     // present and release the controller
-    [self presentViewController: reader animated: YES completion:nil];
+    [self.resultDetailView.mainView presentViewController: reader animated: YES completion:nil];
     [reader release];
     SMLog(@"Launch Bar Code Scanner");
 }

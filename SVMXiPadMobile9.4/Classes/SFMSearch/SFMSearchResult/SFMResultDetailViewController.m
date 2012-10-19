@@ -525,9 +525,7 @@ enum  {
             BOOL tabel_Exists=[appDelegate.dataBase isTabelExistInDB:@"on_demand_download"];
             BOOL isparent=[appDelegate.dataBase isHeaderRecord:objname];
             BOOL recordExists = [appDelegate.dataBase checkForDuplicateId:objname sfId:sf_id];
-            if (tabel_Exists)
-            {
-                if( isparent && recordExists)
+                if( isparent && recordExists &&tabel_Exists)
                 {
                     UIImage * image1 = [UIImage imageNamed:@"download.png"];
                     UIControl *control = [[UIControl alloc] initWithFrame:CGRectMake(tableView.frame.size.width-103, 7, 20, 21)];
@@ -538,7 +536,7 @@ enum  {
                     [backgroundView addSubview:control];
                     [control release];
                 }
-                else if(processAvailbleForRecord)
+                else if(processAvailbleForRecord&&!recordExists)
                 {
                     
                     UIImage * image1 = [UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"];
@@ -551,7 +549,6 @@ enum  {
                     [control release];
                     
                 }
-            }
         }
 
     }
@@ -1157,9 +1154,8 @@ enum  {
         
         appDelegate.sfmPageController.conflictExists = conflict;
         
-        //[appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
         [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
-        [self presentModalViewController:appDelegate.sfmPageController animated:YES];
+        [self.mainView presentViewController:appDelegate.sfmPageController animated:YES completion:nil];
         [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];
         [appDelegate.sfmPageController release];
         synchronized_sqlite3_finalize(labelstmt);
@@ -1309,8 +1305,7 @@ enum  {
 
         //[appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
         [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
-        [self presentModalViewController:appDelegate.sfmPageController animated:YES];
-       
+        [self.mainView presentViewController:appDelegate.sfmPageController animated:YES completion:nil];
     }
     else
     {
