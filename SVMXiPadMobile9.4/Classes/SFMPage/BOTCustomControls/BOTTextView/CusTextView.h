@@ -29,6 +29,9 @@
 @property (nonatomic, retain) NSIndexPath * indexPath;
 @property (nonatomic, retain) NSString * fieldAPIName;
 @property (nonatomic) BOOL required;
+//Radha DefectFix - 5721
+@property (nonatomic , retain)  NSString * object_api_name;
+
 
 - (void) setReadOnly:(BOOL)flag;
 - (void) setShouldResizeAutomatically:(BOOL)_shouldResizeAutomatically;

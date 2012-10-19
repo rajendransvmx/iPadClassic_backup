@@ -8,6 +8,7 @@
 
 #import "CusTextViewHandler.h"
 #import "CusTextView.h"
+#import "iServiceAppDelegate.h"
 
 @implementation CusTextViewHandler
 @synthesize POP;
@@ -15,19 +16,29 @@
 @synthesize popOverView;
 @synthesize lableValue;
 
+//Radha DefectFix - 5721
+@synthesize textlength;
+
 
 - (BOOL)textViewShouldBeginEditing:(UITextView *)textView
 {
-    CusTextView * parent = delegate;
+	CusTextView * parent = delegate;
     [parent.controlDelegate controlIndexPath:parent.indexPath];
-    
+
+	//Radha DefectFix - 5721
+	iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+	self.textlength = [appDelegate.dataBase getTextareaLengthForFieldApiName:parent.fieldAPIName objectName:parent.object_api_name];
+
+        
     return YES;
 }
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
+	//Radha DefectFix - 5721
+	NSLog(@"%d", self.textlength);
 	//Code change for keyboard retracting ---> 31/08/2012
-    if ( [textView.text length] >= 255)
+    if ( [textView.text length] >= self.textlength)
     {
 		if ([text isEqualToString:@""])
 		{

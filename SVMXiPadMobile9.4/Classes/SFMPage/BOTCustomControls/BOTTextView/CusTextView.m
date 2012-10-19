@@ -21,6 +21,8 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize required;
 @synthesize control_type;
 
+@synthesize object_api_name;
+
 -(id) initWithFrame:(CGRect)frame lableValue:(NSString *)lableValue
 {
     

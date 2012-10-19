@@ -322,4 +322,6 @@ PopoverButtons *popOver_view;
 - (BOOL) checkIfConflictsExistsForEventWithSFID:(NSString *)sfid objectName:(NSString *)objectName;
 -(BOOL)isTabelExistInDB:(NSString*)tableName;
 
+//Radha DefectFix - 5721
+- (NSInteger) getTextareaLengthForFieldApiName:(NSString *)api_name objectName:(NSString *)objectName;
 @end

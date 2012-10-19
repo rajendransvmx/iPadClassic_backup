@@ -22,6 +22,7 @@
 @property (nonatomic , retain) UIView *popOverView;
 @property (nonatomic ,retain) UIPopoverController * POP;
 @property (nonatomic , assign) NSString * lableValue;
+@property (nonatomic, assign) NSInteger textlength;// Radha #5721
 @end
 
 @protocol CusTextViewHandlerDelegate <NSObject>

@@ -7772,6 +7772,33 @@ extern void SVMXLog(NSString *format, ...);
 
 }
 #pragma mark - END
+
+
+
+//Radha DefectFix - 5721
+- (NSInteger) getTextareaLengthForFieldApiName:(NSString *)api_name objectName:(NSString *)objectName;
+{
+	NSInteger textLength = 0;
+	
+	NSString * query = [NSString stringWithFormat:@"SELECT length FROM SFobjectField WHERE api_name = '%@' and object_api_name = '%@'", api_name, objectName];
+	
+	
+	sqlite3_stmt * stmt = nil;
+	
+	if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+	{
+		if (synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+		{
+			textLength = synchronized_sqlite3_column_int(stmt, 0);
+		}
+		
+		synchronized_sqlite3_finalize(stmt);
+	}
+
+	return textLength;
+}
+
+
 -(void)UpdateSFRecordTypeForId:(NSString *)_id value:(NSString *)valueField
 {
     //sahana RecordType fix  - Aug 16th 2012
@@ -7802,6 +7829,7 @@ extern void SVMXLog(NSString *format, ...);
                 isTabel=TRUE;
             }
         }
+		synchronized_sqlite3_finalize(labelstmt);
     }
     return isTabel;
 

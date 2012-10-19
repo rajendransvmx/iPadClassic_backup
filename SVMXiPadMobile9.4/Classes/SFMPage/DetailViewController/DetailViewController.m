@@ -4580,8 +4580,10 @@ extern void SVMXLog(NSString *format, ...);
 
             BOOL readOnly = [[dict objectForKey:gFIELD_READ_ONLY] boolValue];
             BOOL required = [[dict objectForKey:gFIELD_REQUIRED] boolValue];
+			
+			NSString * object_api_name	=  [[appDelegate.SFMPage objectForKey:@"header"] objectForKey:gHEADER_OBJECT_NAME];
             
-            id_Type = [self getControl:field_datatype withRect:frame withData:arr withValue:value fieldType:fieldAPIName labelValue:label_name enabled:!readOnly refObjName:refObjName referenceView:self.view indexPath:indexPath required:required valueKeyValue:keyValue lookUpSearchId:refObjSearchId overrideRelatedLookup:overrideRelatedLookUp fieldLookupContext:lookupContext fieldLookupQuery:lookupQuery dependentPicklistControllerName:dependPick_controllerName picklistValidFor:validFor picklistIsdependent:isdependentPicklist];
+            id_Type = [self getControl:field_datatype withRect:frame withData:arr withValue:value fieldType:fieldAPIName labelValue:label_name enabled:!readOnly refObjName:refObjName referenceView:self.view indexPath:indexPath required:required valueKeyValue:keyValue lookUpSearchId:refObjSearchId overrideRelatedLookup:overrideRelatedLookUp fieldLookupContext:lookupContext fieldLookupQuery:lookupQuery dependentPicklistControllerName:dependPick_controllerName picklistValidFor:validFor picklistIsdependent:isdependentPicklist objectAPIName:object_api_name];
             id_Type.tag = tag;
             tag++;
             [background addSubview:lbl];
@@ -6051,8 +6053,10 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     BOOL required = [[[Disclosure_Details objectAtIndex:row] objectForKey:gFIELD_REQUIRED] boolValue];
+	
+	NSString * object_api_name = [Disclosure_dict objectForKey:@"detail_object_name"];
     
-    id_Type = [self getControl:control_type withRect:idFrame withData:arr withValue:value fieldType:fieldAPIName labelValue:label_name enabled:!readOnly refObjName:refObjName referenceView:self.view indexPath:indexPath required:required valueKeyValue:keyValue lookUpSearchId:refObjSearchId overrideRelatedLookup:Override_Related_Lookup fieldLookupContext:Field_Lookup_Context fieldLookupQuery:Field_Lookup_Query dependentPicklistControllerName:dependPick_controllerName picklistValidFor:validFor picklistIsdependent:isdependentPicklist];
+    id_Type = [self getControl:control_type withRect:idFrame withData:arr withValue:value fieldType:fieldAPIName labelValue:label_name enabled:!readOnly refObjName:refObjName referenceView:self.view indexPath:indexPath required:required valueKeyValue:keyValue lookUpSearchId:refObjSearchId overrideRelatedLookup:Override_Related_Lookup fieldLookupContext:Field_Lookup_Context fieldLookupQuery:Field_Lookup_Query dependentPicklistControllerName:dependPick_controllerName picklistValidFor:validFor picklistIsdependent:isdependentPicklist objectAPIName:object_api_name];
 
     id_Type.tag = 1;
 
@@ -6671,7 +6675,7 @@ extern void SVMXLog(NSString *format, ...);
 
 
 #pragma mark - getControls to tableView cell
--(id)getControl:(NSString *)controlType withRect:(CGRect)frame withData:(NSArray *)datasource withValue:(NSString *)value fieldType:(NSString *)fieldType labelValue:(NSString *)labelValue enabled:(BOOL)readOnly refObjName:(NSString *)refObjName referenceView:(UIView *)POView indexPath:(NSIndexPath *)indexPath required:(BOOL)required valueKeyValue:(NSString *)valueKeyValue lookUpSearchId:(NSString *)searchid overrideRelatedLookup:(NSNumber *)Override_Related_Lookup fieldLookupContext:(NSString *)Field_Lookup_Context fieldLookupQuery:(NSString *)Field_Lookup_Query dependentPicklistControllerName:(NSString *)dependPick_controllerName picklistValidFor:(NSMutableArray *)validFor picklistIsdependent:(BOOL)isdependentPicklist
+-(id)getControl:(NSString *)controlType withRect:(CGRect)frame withData:(NSArray *)datasource withValue:(NSString *)value fieldType:(NSString *)fieldType labelValue:(NSString *)labelValue enabled:(BOOL)readOnly refObjName:(NSString *)refObjName referenceView:(UIView *)POView indexPath:(NSIndexPath *)indexPath required:(BOOL)required valueKeyValue:(NSString *)valueKeyValue lookUpSearchId:(NSString *)searchid overrideRelatedLookup:(NSNumber *)Override_Related_Lookup fieldLookupContext:(NSString *)Field_Lookup_Context fieldLookupQuery:(NSString *)Field_Lookup_Query dependentPicklistControllerName:(NSString *)dependPick_controllerName picklistValidFor:(NSMutableArray *)validFor picklistIsdependent:(BOOL)isdependentPicklist objectAPIName:(NSString *)object_api_name
 {
     if([controlType isEqualToString:@"picklist"])
     {
@@ -6831,6 +6835,7 @@ extern void SVMXLog(NSString *format, ...);
             textarea.editable = readOnly;
         textarea.indexPath = indexPath;
         textarea.text=value;
+	    textarea.object_api_name = object_api_name;
         textarea.font = [UIFont fontWithName:@"Helvetica" size:14];
         textarea.layer.cornerRadius = 5;
         textarea.fieldAPIName = fieldType;
