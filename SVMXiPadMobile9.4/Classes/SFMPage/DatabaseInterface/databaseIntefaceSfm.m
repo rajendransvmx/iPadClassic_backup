@@ -2396,7 +2396,7 @@ extern void SVMXLog(NSString *format, ...);
                 component_expression = [NSString stringWithFormat:@" RecordTypeId   in   (select  record_type_id  from SFRecordType where record_type = '%@' )" , rhs];
                 
             }
-            else if (operator == @"!=")
+            else if ([operator isEqualToString: @"!="])
             {
                 component_expression = [NSString stringWithFormat:@" ( %@ isnull or %@ %@ '%@' ) ",lhs,lhs,operator,rhs];
             }

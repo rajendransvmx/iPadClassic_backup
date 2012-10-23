@@ -3531,7 +3531,7 @@ extern void SVMXLog(NSString *format, ...);
             if( !NSEqualRanges(range, NSMakeRange(NSNotFound, 0)) )
             {
                 if (calculateLaborPrice)
-                    if ([LabourValuesDictionary valueForKey:[keys objectAtIndex:i]] == @"0.0")
+                    if ([[LabourValuesDictionary valueForKey:[keys objectAtIndex:i]] isEqualToString: @"0.0"])
                         [LabourValuesDictionary setValue:rate forKey:[keys objectAtIndex:i]];
             }
         }

@@ -155,7 +155,7 @@
     
     cell.textLabel.text=[pickListContent  objectAtIndex:row];
     
-    if([[dictArray objectAtIndex:row] objectForKey:[pickListContent  objectAtIndex:row]]== @"1")
+    if([[[dictArray objectAtIndex:row] objectForKey:[pickListContent  objectAtIndex:row]]isEqualToString: @"1"])
     {
           cell.accessoryType =UITableViewCellAccessoryCheckmark;
     }
@@ -180,7 +180,7 @@
         
         for( i=0;i< [pickListContent count];i++)
         {
-            if([pickListContent objectAtIndex:i] == cell.textLabel.text)
+            if([[pickListContent objectAtIndex:i] isEqualToString: cell.textLabel.text])
             {
                 ++pickListcount;
                 break;                            
@@ -198,7 +198,7 @@
         
         for(j=0;j< [pickListContent count];j++)
         {
-            if([pickListContent objectAtIndex:j] == cell.textLabel.text)
+            if([[pickListContent objectAtIndex:j] isEqualToString: cell.textLabel.text])
             {
                 break;                            
             }

@@ -70,7 +70,7 @@
         dict=[values objectAtIndex:i]; 
         str = [dict valueForKey:[TextFieldDelegate.pickerContent objectAtIndex:i]];
         //Radha 9th Aug 2011
-        if(str == @"1")
+        if([str isEqualToString:@"1"])
         {
             if ([textFieldValue length] > 0)
                 textFieldValue = [textFieldValue stringByAppendingString:[NSString stringWithFormat:@";%@", [TextFieldDelegate.pickerContent objectAtIndex:i]]];

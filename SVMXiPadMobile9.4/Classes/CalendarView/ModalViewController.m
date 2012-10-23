@@ -1870,7 +1870,7 @@ extern void SVMXLog(NSString *format, ...);
                 NSDictionary * _dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
                 NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
                 
-                if ([_dict objectForKey:PROCESSID] == @"" || [_dict objectForKey:PROCESSID] == nil)
+                if ([[_dict objectForKey:PROCESSID] isEqualToString:@""] || [_dict objectForKey:PROCESSID] == nil)
                 {
                     NSString * noView = [appDelegate.wsInterface.tagsDictionary objectForKey:NO_VIEW_PROCESS];
                     UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Warning" message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];

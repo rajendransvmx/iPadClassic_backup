@@ -350,7 +350,7 @@ extern void SVMXLog(NSString *format, ...);
             
             retVal1 = [self isWorkOrderOrCase:whatId1 objectName:@"Case"];
 			
-            if ( retVal == YES && (whatId1 != @"" || whatId1 != nil) )
+            if ( retVal == YES && (!([whatId1 isEqualToString:@""]) || whatId1 != nil) )
             {
                 NSString *subject1  = @"";
                 NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
@@ -446,7 +446,7 @@ extern void SVMXLog(NSString *format, ...);
                 synchronized_sqlite3_finalize(labelstmt);
             }
             //Case 
-            else if ( retVal1 == YES && (whatId1 != @"" || whatId1 != nil) )             
+            else if( retVal == YES && (!([whatId1 isEqualToString:@""]) || whatId1 != nil) )
             {
                 NSString * subject1  = @"";
                 NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
@@ -1301,7 +1301,7 @@ extern void SVMXLog(NSString *format, ...);
             if( !NSEqualRanges(range, NSMakeRange(NSNotFound, 0)) )
             {
                 if (calculateLaborPrice)
-                    if ([LabourValuesDictionary valueForKey:[keys objectAtIndex:i]] == @"0.0")
+                    if ([[LabourValuesDictionary valueForKey:[keys objectAtIndex:i]] isEqualToString:@"0.0"])
                         [LabourValuesDictionary setValue:rate forKey:[keys objectAtIndex:i]];
             }
         }
