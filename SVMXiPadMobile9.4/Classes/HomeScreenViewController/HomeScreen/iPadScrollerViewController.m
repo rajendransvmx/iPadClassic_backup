@@ -1433,7 +1433,7 @@ const float progress_ = 0.07;
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
 #ifdef kPrintLogsDuringWebServiceCall
-        SMLog(@"iPadScrollerViewController.m : doDetaSync: EventSync");
+        SMLog(@"iPadScrollerViewController.m : doDataSync: EventSync");
 #endif
 
         //shrinivas
@@ -1483,7 +1483,7 @@ const float progress_ = 0.07;
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
 #ifdef kPrintLogsDuringWebServiceCall
-        SMLog(@"iPadScrollerViewController.m : doMetaSync: Download Criteria Sync");
+        SMLog(@"iPadScrollerViewController.m : doDataSync: Download Criteria Sync");
 #endif
 
         //shrinivas
