@@ -467,6 +467,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     
     //Service Report
     NSMutableDictionary * serviceReportReference;
+    NSTimer * locationPingSettingTimer;
 }
 @property (nonatomic)  DOD_REQUEST_RESPONSE_STATUS dod_req_response_ststus;
 @property (nonatomic)  DOD_STATUS dod_status;
@@ -708,7 +709,6 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 @property (nonatomic, retain) UIImageView *animatedImageView;
 @property (nonatomic, assign) BOOL enableLocationService;
 @property (nonatomic,retain) NSString * frequencyLocationService;
-@property (nonatomic,retain) NSTimer * locationPingSettingTimer;
 @property (nonatomic, assign) BOOL metaSyncCompleted;
 // SFM Search conflict status
 @property (nonatomic, assign) NSString *From_SFM_Search;
@@ -777,6 +777,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 -(void)didUpdateToLocation:(CLLocation*)location;
 - (void) startBackgroundThreadForLocationServiceSettings;
 - (void) checkLocationServiceSetting;
+- (void) checkLocationServiceSettingBackground;
 - (BOOL) enableGPS_SFMSearch;
 - (void) updateInstalledPackageVersion;
 //Bar Code

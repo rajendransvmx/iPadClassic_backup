@@ -359,7 +359,6 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize animatedImageView;
 @synthesize enableLocationService;
 @synthesize frequencyLocationService;
-@synthesize locationPingSettingTimer;
 @synthesize metaSyncCompleted;
 @synthesize From_SFM_Search;
 
@@ -1233,7 +1232,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
             }
 		}
 	}
-    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.locationPingSettingTimer];
+    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:locationPingSettingTimer];
 
     
     sqlite3_close(self.db);
@@ -1839,27 +1838,28 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
             [locationPingSettingTimer invalidate];
             locationPingSettingTimer = nil;
         }
-        locationPingSettingTimer = [[NSTimer scheduledTimerWithTimeInterval:scheduledTimer
+        locationPingSettingTimer = [NSTimer scheduledTimerWithTimeInterval:scheduledTimer
                                                                         target:self
                                                                       selector:@selector(checkLocationServiceSetting)
                                                                       userInfo:nil
-                                                                       repeats:NO] retain];
+                                                                       repeats:YES];
     }
-
 }
-- (void) checkLocationServiceSetting
+
+- (void) checkLocationServiceSettingBackground
 {
+    NSAutoreleasePool *thepool = [[NSAutoreleasePool alloc] init];
     NSDateFormatter * frm = [[[NSDateFormatter alloc] init] autorelease];
     [frm setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-    NSString * newTimestamp = [frm stringFromDate:[NSDate date]];    
+    NSString * newTimestamp = [frm stringFromDate:[NSDate date]];
     newTimestamp = [iOSInterfaceObject getGMTFromLocalTime:newTimestamp];
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    if (userDefaults) 
-    {        
+    if (userDefaults)
+    {
         NSDate *lastLocationSettingUpdateTiemstamp = [userDefaults objectForKey:kLastLocationSettingUpdateTimestamp];
         SMLog(@"Last Location Update From Thread  = %@",lastLocationSettingUpdateTiemstamp);
     }
-    else 
+    else
     {
         SMLog(@"Failed to get the User Defaults");
         return;
@@ -1895,7 +1895,12 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         [locationInfo release];
     }
     [userDefaults setObject:newTimestamp forKey:kLastLocationSettingUpdateTimestamp];
-    [self startBackgroundThreadForLocationServiceSettings];
+    [thepool drain];
+}
+
+- (void) checkLocationServiceSetting
+{
+    [self performSelectorInBackground:@selector(checkLocationServiceSettingBackground) withObject:nil];
 }
 
 
@@ -1924,8 +1929,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     if( [timerObject isEqual:locationPingSettingTimer] )
     {
         SMLog(@"Invalidating LocationPing TIMER");
-        [self.locationPingSettingTimer invalidate];
-        self.locationPingSettingTimer = nil;
+        [locationPingSettingTimer invalidate];
+        locationPingSettingTimer = nil;
     }
 
 }
@@ -2114,7 +2119,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
             }
         }
     }
-    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.locationPingSettingTimer];
+    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:locationPingSettingTimer];
 	
 }
 

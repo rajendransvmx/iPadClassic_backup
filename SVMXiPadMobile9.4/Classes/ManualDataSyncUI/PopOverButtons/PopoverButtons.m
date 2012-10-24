@@ -887,7 +887,6 @@ PopoverButtons *popOver_view;
     
     if( appDelegate.queue_object != nil )
     {
-        [appDelegate.queue_object release];
         appDelegate.queue_object = nil;
     }
     appDelegate.eventSyncRunning = NO;
