@@ -173,8 +173,10 @@ extern void SVMXLog(NSString *format, ...);
     char *field1;
     appDelegate.showUI = FALSE;   //btn merge
     if(appDelegate.sfmPageController)
-        [appDelegate.sfmPageController release];
-    appDelegate.sfmPageController = [[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE];
+    {
+		 appDelegate.sfmPageController = nil;
+	}
+    appDelegate.sfmPageController = [[[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE] autorelease];
     
     NSMutableString * queryStatement1 = [[NSMutableString alloc]initWithCapacity:0];
     NSString *recordId = [data objectForKey:@"Id"];
@@ -189,7 +191,6 @@ extern void SVMXLog(NSString *format, ...);
         if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
         {
             field1 = (char *) synchronized_sqlite3_column_text(labelstmt,0);
-//            SMLog(@"%s",field1);
             if(field1)
                 localId = [NSString stringWithFormat:@"%s", field1];
             else
@@ -209,8 +210,6 @@ extern void SVMXLog(NSString *format, ...);
             break;
         }
     }
-//    if(!processId)
-//        return;
     NSString * processId_ =  [appDelegate.switchViewLayouts objectForKey:objName];
     appDelegate.sfmPageController.processId = (processId_ != nil)?processId_:processId;
     
@@ -224,13 +223,7 @@ extern void SVMXLog(NSString *format, ...);
         NSString * sfid = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:objName local_id:localId];
         
         conflict = [appDelegate.dataBase checkIfConflictsExistsForEvent:sfid objectName:objName local_id:localId];
-        
-        //    if (!conflict)
-        //    {
-        //        conflict = [appDelegate.dataBase checkIfChildConflictexist:sfid sfId:[appDelegate.dataBase getApiNameFromFieldLabel:objectName]];
-        //    }
-        
-        
+            
         appDelegate.sfmPageController.processId = pinfo.process_id;
         appDelegate.sfmPageController.objectName = [NSString stringWithFormat:@"%@",objName];
         appDelegate.sfmPageController.topLevelId = nil;
@@ -240,8 +233,7 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
         [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
         [appDelegate.sfmPageController.detailView view];
-        
-        [self presentModalViewController:appDelegate.sfmPageController animated:YES];
+        [self presentViewController:appDelegate.sfmPageController animated:YES completion:nil];
         appDelegate.didsubmitModelView = FALSE;
     }
     else

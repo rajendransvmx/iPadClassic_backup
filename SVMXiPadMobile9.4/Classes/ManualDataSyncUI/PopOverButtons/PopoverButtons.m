@@ -232,12 +232,6 @@ PopoverButtons *popOver_view;
                 }
             }
         }
-
-        if ([appDelegate.metasync_timer isValid])
-        {
-            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
-        }      
-        
 		[delegate activityStart];
         [appDelegate callDataSync];
 		[delegate activityStop];
@@ -390,7 +384,7 @@ PopoverButtons *popOver_view;
             SMLog(@"Finished");
         }
         [appDelegate setSyncStatus:SYNC_ORANGE];
-        [appDelegate.metaSyncThread release];
+		appDelegate.metaSyncThread = nil;
         appDelegate.metaSyncThread = [[NSThread alloc] initWithTarget:self selector:@selector(startSyncConfiguration) object:nil];
         [appDelegate.metaSyncThread start];
     }
@@ -679,7 +673,7 @@ PopoverButtons *popOver_view;
     
     if (appDelegate.event_thread != nil)
     {
-        [appDelegate.event_thread release];
+		appDelegate.event_thread = nil;
     }
 
     [self performSelectorOnMainThread:@selector(scheduletimer) withObject:nil waitUntilDone:NO];

@@ -164,12 +164,8 @@ PopoverButtons *popOver_view;
 
 - (void) showHelp
 {
-    HelpController * help = [[HelpController alloc] initWithNibName:@"HelpController" bundle:nil];
-    help.modalPresentationStyle = UIModalPresentationFullScreen;
-    help.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    help.helpString = @"sync.html";
-    [self presentViewController:help animated:YES completion:^(void){}];
-    [help release];
+    [dataSync showHelp];
+
 }
 
 
@@ -1676,9 +1672,9 @@ PopoverButtons *popOver_view;
 
 - (void)dealloc 
 {
-    [self.popoverController release];
-    [syncStatus.popOver release];
-    [popOver_view.popover release];
+	self.popoverController = nil;
+    syncStatus.popOver = nil;
+    popOver_view.popover = nil;
     [popOver_view release];
     [objectsArray release];
     [_tableView release];

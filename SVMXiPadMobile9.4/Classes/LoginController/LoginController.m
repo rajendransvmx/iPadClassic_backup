@@ -615,7 +615,6 @@ extern void SVMXLog(NSString *format, ...);
 	
     if (appDelegate.currentUserName != nil)
     {
-        [appDelegate.currentUserName release];
         appDelegate.currentUserName = nil;
     }
     appDelegate.currentUserName = [[userInfo fullName] mutableCopy];
@@ -871,14 +870,12 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"SVMXC__Service_Group__c = %@", [[obj fields] objectForKey:@"SVMXC__Service_Group__c"]);
         if (appDelegate.appServiceTeamId != nil)
         {
-            [appDelegate.appServiceTeamId release];
             appDelegate.appServiceTeamId = nil;
         }
 		appDelegate.appServiceTeamId = [[[obj fields] objectForKey:@"SVMXC__Service_Group__c"] retain];
         
         if (appDelegate.appTechnicianId != nil)
         {
-            [appDelegate.appTechnicianId release];
             appDelegate.appTechnicianId = nil;
         }
         appDelegate.appTechnicianId = [[[obj fields] objectForKey:@"Id"] retain];
@@ -1739,7 +1736,7 @@ extern void SVMXLog(NSString *format, ...);
                         else if ([queryField isEqualToString:@"Contact Address"]) // SVMXC__Contact__c
                             [appDelegate.soqlQuery appendFormat:@",%@", @"SVMXC__Contact__r.MailingStreet,SVMXC__Contact__r.MailingState,SVMXC__Contact__r.MailingPostalCode,SVMXC__Contact__r.MailingCountry,SVMXC__Contact__r.MailingCity"];
                         if (appDelegate.addressType != nil)
-                            [appDelegate.addressType release];
+							appDelegate.addressType = nil;
                         appDelegate.addressType = [queryField retain];
                     }
                 }

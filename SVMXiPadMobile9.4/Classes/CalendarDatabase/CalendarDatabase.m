@@ -686,15 +686,15 @@ extern void SVMXLog(NSString *format, ...);
 		
 		sqlite3_finalize(colorStatement);
 		
-		if ( [priority isEqualToString:@"High"])
-			return [appDelegate.settingsDict objectForKey:@"SET001"];
-		else if ( [priority isEqualToString:@"Medium"]) 
-			return  [appDelegate.settingsDict objectForKey:@"SET002"];
-		else if ( [priority isEqualToString:@"Low"]) 
-			return [appDelegate.settingsDict objectForKey:@"SET003"];
+		if ([priority isEqualToString:@"High"])
+			return [appDelegate.settingsDict objectForKey:@"IPAD006_SET001"];
+		else if ([priority isEqualToString:@"Medium"]) 
+			return  [appDelegate.settingsDict objectForKey:@"IPAD006_SET002"];
+		else if ([priority isEqualToString:@"Low"]) 
+			return [appDelegate.settingsDict objectForKey:@"IPAD006_SET003"];
 		else
-			return [appDelegate.settingsDict objectForKey:@"SET004"];
-    }    
+			return [appDelegate.settingsDict objectForKey:@"IPAD006_SET004"];
+    }
 	
 	return @"";
 
@@ -1745,7 +1745,7 @@ extern void SVMXLog(NSString *format, ...);
                             [selectClause setValue:@"SVMXC__Service_Order__c.SVMXC__Contact__c" forKey:@"SVMXC__Service_Order__c.SVMXC__Contact__c"]; //Service report fix : Radha
                         }
                         if (appDelegate.addressType != nil)
-                            [appDelegate.addressType release];
+                            appDelegate.addressType = nil;
                         appDelegate.addressType = [(NSMutableString *) queryField retain];
                     }
                 }

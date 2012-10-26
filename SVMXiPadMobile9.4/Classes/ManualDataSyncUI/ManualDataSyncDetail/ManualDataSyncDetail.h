@@ -116,6 +116,7 @@
 - (void) dissmisController;
 - (void) showSFMWithProcessId:(NSString *)processId recordId:(NSString *)recordId objectName:(NSString *)objectName;
 - (void) throwException;
+- (void)showHelp;
 
 @end
 

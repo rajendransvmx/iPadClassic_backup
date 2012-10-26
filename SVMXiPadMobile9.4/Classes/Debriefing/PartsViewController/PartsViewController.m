@@ -205,7 +205,6 @@ extern void SVMXLog(NSString *format, ...);
     
     if (appDelegate.Parts != nil)
     {
-        [appDelegate.Parts release];
         appDelegate.Parts = nil;
     }
     appDelegate.Parts = [Parts retain];

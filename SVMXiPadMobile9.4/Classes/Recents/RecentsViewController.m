@@ -250,7 +250,6 @@
     
     if ([appDelegate.SFMPage retainCount] > 0)
     {
-        [appDelegate.SFMPage release];
         appDelegate.SFMPage = nil;
     }
     

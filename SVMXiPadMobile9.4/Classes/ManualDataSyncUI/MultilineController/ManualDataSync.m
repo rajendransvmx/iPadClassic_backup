@@ -113,7 +113,6 @@
     
     if ([appDelegate.SFMPage retainCount] > 0)
     {
-        [appDelegate.SFMPage release];
         appDelegate.SFMPage = nil;
     }
     
@@ -214,5 +213,16 @@
 
 	dataSyncRoot.objectsArray = [appDelegate.calDataBase getConflictObjects];
 	[dataSyncRoot.tableView reloadData];
+}
+#pragma delegate ManualDetail
+-(void)showHelp
+{
+    HelpController * help = [[HelpController alloc] initWithNibName:@"HelpController" bundle:nil];
+    help.modalPresentationStyle = UIModalPresentationFullScreen;
+    help.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    help.helpString = @"sync.html";
+    [self presentViewController:help animated:YES completion:^(void){}];
+    [help release];
+
 }
 @end

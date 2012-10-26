@@ -751,26 +751,26 @@ extern void SVMXLog(NSString *format, ...);
          if([customizeSearch length]>0)
          {
              if([[uiControlsValue objectForKey:@"searchString"] length]>0)
-                 queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE %@ LIMIT %@",queryFields,object,joinFields,customizeSearch,[uiControlsValue objectForKey:@"searchLimitString"]];
+                 queryStatement = [NSString stringWithFormat:@"SELECT DISTINCT %@ FROM '%@' %@ WHERE %@ LIMIT %@",queryFields,object,joinFields,customizeSearch,[uiControlsValue objectForKey:@"searchLimitString"]];
              else
-                 queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ LIMIT %@",queryFields,object,joinFields,[uiControlsValue objectForKey:@"searchLimitString"]];
+                 queryStatement = [NSString stringWithFormat:@"SELECT DISTINCT %@ FROM '%@' %@ LIMIT %@",queryFields,object,joinFields,[uiControlsValue objectForKey:@"searchLimitString"]];
 
          }
          else
-             queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@",queryFields,object,joinFields];
+             queryStatement = [NSString stringWithFormat:@"SELECT DISTINCT %@ FROM '%@' %@",queryFields,object,joinFields];
      }
      else
      {
         if([customizeSearch length]>0)
         {
             if([[uiControlsValue objectForKey:@"searchString"] length]>0)
-                queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE %@ LIMIT %@",queryFields,object,customizeSearch,[uiControlsValue objectForKey:@"searchLimitString"]];
+                queryStatement = [NSString stringWithFormat:@"SELECT DISTINCT %@ FROM '%@' WHERE %@ LIMIT %@",queryFields,object,customizeSearch,[uiControlsValue objectForKey:@"searchLimitString"]];
             else
-                queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' LIMIT %@",queryFields,object,[uiControlsValue objectForKey:@"searchLimitString"]];
+                queryStatement = [NSString stringWithFormat:@"SELECT DISTINCT %@ FROM '%@' LIMIT %@",queryFields,object,[uiControlsValue objectForKey:@"searchLimitString"]];
 
         }
         else
-            queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@'",queryFields,object];
+            queryStatement = [NSString stringWithFormat:@"SELECT DISTINCT %@ FROM '%@'",queryFields,object];
      }
     }
     else 
@@ -955,13 +955,13 @@ extern void SVMXLog(NSString *format, ...);
             if([customizeSearch length]>0)
             {
                 if([[uiControlsValue objectForKey:@"searchString"] length]>0)
-                    queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE (%@) AND (%@) COLLATE NOCASE LIMIT %@",queryFields,object,joinFields,finalQuery,customizeSearch,[uiControlsValue objectForKey:@"searchLimitString"]];
+                    queryStatement = [NSString stringWithFormat:@"SELECT DISTINCT %@ FROM '%@' %@ WHERE (%@) AND (%@) COLLATE NOCASE LIMIT %@",queryFields,object,joinFields,finalQuery,customizeSearch,[uiControlsValue objectForKey:@"searchLimitString"]];
                 else
-                    queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE (%@) COLLATE NOCASE LIMIT %@",queryFields,object,joinFields,finalQuery,[uiControlsValue objectForKey:@"searchLimitString"]];
+                    queryStatement = [NSString stringWithFormat:@"SELECT DISTINCT %@ FROM '%@' %@ WHERE (%@) COLLATE NOCASE LIMIT %@",queryFields,object,joinFields,finalQuery,[uiControlsValue objectForKey:@"searchLimitString"]];
 
             }
             else
-                queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE (%@) COLLATE NOCASE LIMIT %@",queryFields,object,joinFields,finalQuery,[uiControlsValue objectForKey:@"searchLimitString"]];
+                queryStatement = [NSString stringWithFormat:@"SELECT DISTINCT %@ FROM '%@' %@ WHERE (%@) COLLATE NOCASE LIMIT %@",queryFields,object,joinFields,finalQuery,[uiControlsValue objectForKey:@"searchLimitString"]];
 
         }
         else
@@ -969,12 +969,12 @@ extern void SVMXLog(NSString *format, ...);
             if([customizeSearch length]>0)
             {
                 if([[uiControlsValue objectForKey:@"searchString"] length]>0)
-                    queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@'%@ WHERE (%@) LIMIT %@",queryFields,object,joinFields,customizeSearch,[uiControlsValue objectForKey:@"searchLimitString"]];
+                    queryStatement = [NSString stringWithFormat:@"SELECT DISTINCT %@ FROM '%@'%@ WHERE (%@) LIMIT %@",queryFields,object,joinFields,customizeSearch,[uiControlsValue objectForKey:@"searchLimitString"]];
                 else
-                    queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@'%@ LIMIT %@",queryFields,object,joinFields,[uiControlsValue objectForKey:@"searchLimitString"]];
+                    queryStatement = [NSString stringWithFormat:@"SELECT DISTINCT %@ FROM '%@'%@ LIMIT %@",queryFields,object,joinFields,[uiControlsValue objectForKey:@"searchLimitString"]];
             }
             else
-            queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@'%@ LIMIT %@",queryFields,object,joinFields,[uiControlsValue objectForKey:@"searchLimitString"]];
+            queryStatement = [NSString stringWithFormat:@"SELECT DISTINCT %@ FROM '%@'%@ LIMIT %@",queryFields,object,joinFields,[uiControlsValue objectForKey:@"searchLimitString"]];
 
         }
 
@@ -1089,9 +1089,10 @@ extern void SVMXLog(NSString *format, ...);
     NSMutableArray *TableArray = [dict objectForKey:@"TableArray"];
     NSMutableString *joinFields = [[NSMutableString alloc] init];
 	 NSMutableArray *arrayForApiName=[[[NSMutableArray alloc]init]autorelease];
-    NSMutableArray *arrApiName=[[[NSMutableArray alloc]init]autorelease];
    for (int i=0; i<[TableArray count]; i++)
    {
+       NSMutableArray *arrApiName=[[[NSMutableArray alloc]init]autorelease];
+
         if(![[TableArray objectAtIndex:i]isEqual:[dict objectForKey:@"object"]])
         {
             sqlite3_stmt * labelstmtforlabel;
@@ -6433,44 +6434,37 @@ extern void SVMXLog(NSString *format, ...);
     if ((appDelegate.wsInterface.processDictionary != nil) && [appDelegate.wsInterface.processDictionary count] > 0)
     {
         appDelegate.wsInterface.processDictionary = nil;
-        [appDelegate.wsInterface.processDictionary release];
         appDelegate.wsInterface.processDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
     }
     
     if ((appDelegate.wsInterface.objectDefinitions != nil) && [appDelegate.wsInterface.objectDefinitions count] > 0)
     {
         appDelegate.wsInterface.objectDefinitions = nil;
-        [appDelegate.wsInterface.objectDefinitions release];
         appDelegate.wsInterface.objectDefinitions = [[NSMutableArray alloc] initWithCapacity:0];
     }
     if ((appDelegate.wsInterface.object != nil) && [appDelegate.wsInterface.object count] > 0)
     {
         appDelegate.wsInterface.object = nil;
-        [appDelegate.wsInterface.object release];
         appDelegate.wsInterface.object = [[NSMutableArray alloc] initWithCapacity:0];
     }
     if ((appDelegate.wsInterface.picklistObject != nil) && [appDelegate.wsInterface.picklistObject count] > 0)
     {
         appDelegate.wsInterface.picklistObject = nil;
-        [appDelegate.wsInterface.picklistObject release];
         appDelegate.wsInterface.picklistObject = [[NSMutableArray alloc] initWithCapacity:0];
     }
     if ((appDelegate.wsInterface.picklistField != nil) && [appDelegate.wsInterface.picklistField count] > 0)
     {
         appDelegate.wsInterface.picklistField = nil;
-        [appDelegate.wsInterface.picklistField release];
         appDelegate.wsInterface.picklistField = [[NSMutableArray alloc] initWithCapacity:0];
     }
     if ((appDelegate.wsInterface.picklistValues != nil) && [appDelegate.wsInterface.picklistValues count] > 0)
     {
         appDelegate.wsInterface.picklistValues = nil;
-        [appDelegate.wsInterface.picklistValues release];
         appDelegate.wsInterface.picklistValues = [[NSMutableArray alloc] initWithCapacity:0];
     }
     if ((appDelegate.wsInterface.pageUiHistory != nil) && [appDelegate.wsInterface.pageUiHistory count] > 0)
     {
         appDelegate.wsInterface.pageUiHistory = nil;
-        [appDelegate.wsInterface.pageUiHistory release];
         appDelegate.wsInterface.pageUiHistory = [[NSMutableArray alloc] initWithCapacity:0];
     }
 }

@@ -52,11 +52,10 @@ extern void SVMXLog(NSString *format, ...);
 {
     if ([appDelegate.SFMPage retainCount] > 0)
     {
-        [appDelegate.SFMPage release];
         appDelegate.SFMPage = nil;
     }
     
-    appDelegate.sfmPageController = [[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:NO];
+    appDelegate.sfmPageController = [[[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:NO] autorelease];
     appDelegate.sfmPageController.processId = processId;
     appDelegate.sfmPageController.recordId = nil;
     //sahana offline
@@ -68,10 +67,7 @@ extern void SVMXLog(NSString *format, ...);
     
     [self presentViewController:appDelegate.sfmPageController animated:YES completion:^(void){}];
     [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline ];
-    [appDelegate.sfmPageController release];
-    
-//    [activity stopAnimating];
-//    [activity release];
+
 }
 
 #pragma mark - View lifecycle

@@ -936,52 +936,59 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     return ( NSString *)string;
 }
 
+NSString * GO_Online = @"GO_Online";
 - (BOOL) goOnlineIfRequired
-{    
-    _pingServer = TRUE;
-    self.isServerInValid = FALSE;
-    if (![appDelegate isInternetConnectionAvailable])
-    {
-        return FALSE;
-    }
-    else
-    {        
-        [[ZKServerSwitchboard switchboard] doCheckSession];
-        if (isSessionInavalid == YES)
-        {
-            didLoginAgain = NO;
-//           [[ZKServerSwitchboard switchboard] loginWithUsername:self.username password:self.password target:self selector:@selector(didLogin:error:context:)]; 
-            [[ZKServerSwitchboard switchboard] loginWithUsername:self.username password:self.password target:self selector:@selector(didLoginForServer:error:context:)];
-            while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, FALSE))
-            {
-#ifdef kPrintLogsDuringWebServiceCall
-                SMLog(@"iServiceAppDelegate.m : doOnlineIfRequired: ZKS Check For Session");
-#endif
+{
 
-                if (![appDelegate isInternetConnectionAvailable])
-                {
-                    break;
-                }
-                if(appDelegate.connection_error)
-                    break;
-                SMLog(@"ReLogin");
-                if (didLoginAgain)
-                    break;
-                
-                if (self.isServerInValid == TRUE)
-                {
-                    break;
-                }
-            }
-            
-            
-        }
-        if (self.isServerInValid)
-            return FALSE;
-        else 
-            return TRUE;
-       
-    }
+	@synchronized(GO_Online)
+	{
+		_pingServer = TRUE;
+		self.isServerInValid = FALSE;
+		if (![appDelegate isInternetConnectionAvailable])
+		{
+			return FALSE;
+		}
+		else
+		{
+			
+			[[ZKServerSwitchboard switchboard] doCheckSession];
+			if (isSessionInavalid == YES)
+			{
+				didLoginAgain = NO;
+
+				[[ZKServerSwitchboard switchboard] loginWithUsername:self.username password:self.password target:self selector:@selector(didLoginForServer:error:context:)];
+				
+				while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, FALSE))
+				{
+	#ifdef kPrintLogsDuringWebServiceCall
+					SMLog(@"iServiceAppDelegate.m : doOnlineIfRequired: ZKS Check For Session");
+	#endif
+
+					if (![appDelegate isInternetConnectionAvailable])
+					{
+						break;
+					}
+					if(appDelegate.connection_error)
+						break;
+					SMLog(@"ReLogin");
+					if (didLoginAgain)
+						break;
+					
+					if (self.isServerInValid == TRUE)
+					{
+						break;
+					}
+				}
+				
+				
+			}
+			if (self.isServerInValid)
+				return FALSE;
+			else 
+				return TRUE;
+		   
+		}
+	}
 }
 
 - (BOOL) pingServer
@@ -1054,7 +1061,6 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         
         if (self.currentUserName != nil)
         {
-            [self.currentUserName release];
             self.currentUserName = nil;
         }
         if( userInfo != nil )
@@ -1263,7 +1269,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc]init];
     
-    [self goOnlineIfRequired];
+    [self performSelectorInBackground:@selector(goOnlineIfRequired) withObject:nil];
+//[self goOnlineIfRequired];
 	
 	BOOL retVal = [self.calDataBase selectCountFromSync_Conflicts];
 	
@@ -1833,7 +1840,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
             frequencyLocationService = @"10";
         NSTimeInterval scheduledTimer = 0;
         scheduledTimer = [frequencyLocationService doubleValue] * 60;
-        if(!locationPingSettingTimer)
+        if( [locationPingSettingTimer isValid] )
         {    
             [locationPingSettingTimer invalidate];
             locationPingSettingTimer = nil;
@@ -1911,22 +1918,31 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     if( [timerObject isEqual:event_timer] )
     {
         SMLog(@"Invalidating EVENT TIMER");
-        [self.event_timer invalidate];
-        self.event_timer = nil;
+		if ([self.event_timer isValid])
+		{
+			[self.event_timer invalidate];
+			event_timer = nil;
+		}
     }
     if( [timerObject isEqual:datasync_timer] )
     {
         SMLog(@"Invalidating DATASYNC TIMER");
-        [self.datasync_timer invalidate];
-        self.datasync_timer = nil;
+		if ([self.datasync_timer isValid])
+		{
+			[self.datasync_timer invalidate];
+			datasync_timer = nil;
+		}
     }
     if( [timerObject isEqual:metasync_timer] )
     {
         SMLog(@"Invalidating METASYNC TIMER");
-        [self.metasync_timer invalidate];
-        self.metasync_timer = nil;
-    }    
-    if( [timerObject isEqual:locationPingSettingTimer] )
+		if ([self.metasync_timer isValid])
+		{
+			[self.metasync_timer invalidate];
+			metasync_timer = nil;
+		}
+    }
+    if( [timerObject isEqual:locationPingSettingTimer] && [locationPingSettingTimer isValid] )
     {
         SMLog(@"Invalidating LocationPing TIMER");
         [locationPingSettingTimer invalidate];

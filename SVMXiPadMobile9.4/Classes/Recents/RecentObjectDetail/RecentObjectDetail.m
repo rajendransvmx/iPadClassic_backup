@@ -149,7 +149,7 @@ extern void SVMXLog(NSString *format, ...);
 - (void) showSFMWithProcessId:(NSString *)processId recordId:(NSString *)recordId
 {
     [activity startAnimating];
-    appDelegate.sfmPageController = [[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE];
+    appDelegate.sfmPageController = [[[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE] autorelease];
     
     appDelegate.sfmPageController.processId = processId;
     appDelegate.sfmPageController.recordId = recordId;
@@ -161,7 +161,7 @@ extern void SVMXLog(NSString *format, ...);
         [(RecentObjectDetail *)delegate presentViewController:appDelegate.sfmPageController animated:YES completion:^(void){}];
     else
         appDelegate.wsInterface.errorLoadingSFM = FALSE;
-    [appDelegate.sfmPageController release];
+        
     [activity stopAnimating];
 }
 

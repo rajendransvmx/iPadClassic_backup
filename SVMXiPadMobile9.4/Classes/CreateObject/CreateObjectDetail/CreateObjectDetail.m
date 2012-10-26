@@ -151,7 +151,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) showSFMCreateObjectWithProcessID:(NSString *)processId processTitle:(NSString *)processTitle object_name:(NSString *)objectName
 {
-    appDelegate.sfmPageController = [[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:NO];
+    appDelegate.sfmPageController = [[[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:NO] autorelease];
     appDelegate.sfmPageController.processId = processId;
     appDelegate.sfmPageController.recordId = nil;
     appDelegate.sfmPageController.detailView.detailTitle = processTitle;
@@ -159,9 +159,7 @@ extern void SVMXLog(NSString *format, ...);
     [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
     
     [(CreateObjectDetail *)delegate presentViewController:appDelegate.sfmPageController animated:YES completion:^(void){}];
-    [appDelegate.sfmPageController.detailView  didReceivePageLayoutOffline];
-    [appDelegate.sfmPageController release];
-    
+    [appDelegate.sfmPageController.detailView  didReceivePageLayoutOffline];    
     [activity stopAnimating];
 }
 

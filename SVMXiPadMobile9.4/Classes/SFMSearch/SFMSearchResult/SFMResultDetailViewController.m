@@ -52,7 +52,7 @@ enum  {
     help.modalPresentationStyle = UIModalPresentationFullScreen;
     help.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     help.helpString = @"sfm-search.html";  
-    [self presentViewController:help animated:YES completion:nil];
+    [self.mainView presentViewController:help animated:YES completion:nil];
     [help release];
 }
 
@@ -1094,13 +1094,11 @@ enum  {
         [self enableSFMUI];
     }
     else{
-        appDelegate.sfmPageController = [[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE];
+        appDelegate.sfmPageController = [[[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE] autorelease];
         
         sqlite3_stmt * labelstmt;
         NSMutableString * queryStatement1 = [[NSMutableString alloc]initWithCapacity:0];
         queryStatement1 = [NSMutableString stringWithFormat:@"Select local_id FROM '%@' where Id = '%@'",object_api_name,recordId];
-        if(appDelegate.sfmPageController)
-            [appDelegate.sfmPageController release];
         const char *selectStatement = [queryStatement1 UTF8String];
         char *field1=nil;
         NSString *localId = @"";
@@ -1128,7 +1126,6 @@ enum  {
             if(synchronized_sqlite3_step(labelstmt2) == SQLITE_ROW)
             {
                 field1 = (char *) synchronized_sqlite3_column_text(labelstmt2,0);
-                //            SMLog(@"%s",field1);
                 if(field1)
                     processId = [NSString stringWithFormat:@"%s", field1];
                 else
@@ -1143,12 +1140,7 @@ enum  {
         
         conflict = [appDelegate.dataBase checkIfConflictsExistsForEvent:sfid objectName:object_api_name local_id:localId];
         
-        //    if (!conflict)
-        //    {
-        //        conflict = [appDelegate.dataBase checkIfChildConflictexist:sfid sfId:objectName];
-        //    }
-        
-        appDelegate.sfmPageController.objectName = [NSString stringWithFormat:@"%@",object_api_name];
+		appDelegate.sfmPageController.objectName = [NSString stringWithFormat:@"%@",object_api_name];
         appDelegate.sfmPageController.topLevelId = nil;
         appDelegate.sfmPageController.recordId = localId;
         
@@ -1156,8 +1148,9 @@ enum  {
         
         [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
         [self.mainView presentViewController:appDelegate.sfmPageController animated:YES completion:nil];
-        [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];
-        [appDelegate.sfmPageController release];
+//        [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];
+//[appDelegate.sfmPageController release];
+		 //appDelegate.sfmPageController = nil;
         synchronized_sqlite3_finalize(labelstmt);
         synchronized_sqlite3_finalize(labelstmt2);
         
@@ -1243,8 +1236,9 @@ enum  {
     queryStatement1 = [NSMutableString stringWithFormat:@"Select local_id FROM '%@' where Id = '%@'",objectName,recordId];
 //    BOOL conflict_flag=[appDelegate.dataBase checkIfConflictsExistsForEvent:recordId objectName:objectName];
     if(appDelegate.sfmPageController)
-        [appDelegate.sfmPageController release];
-    appDelegate.sfmPageController = [[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE];
+		 appDelegate.sfmPageController = nil;
+//[appDelegate.sfmPageController release];
+    appDelegate.sfmPageController = [[[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE] autorelease];
 	appDelegate.sfmPageController.delegate = (id<SFMPageDelegate>)self;
 
     sqlite3_stmt * labelstmt;
@@ -1315,8 +1309,9 @@ enum  {
         return;
 
     }
-    [appDelegate.sfmPageController release];
-        
+    //[appDelegate.sfmPageController release];
+	// //appDelegate.sfmPageController = nil;
+    
     synchronized_sqlite3_finalize(labelstmt);
 
 }

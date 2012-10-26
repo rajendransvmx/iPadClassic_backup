@@ -68,7 +68,7 @@ extern void SVMXLog(NSString *format, ...);
     help.modalPresentationStyle = UIModalPresentationFullScreen;
     help.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     help.helpString = @"sfm-search.html";  
-    [self presentViewController:help animated:YES completion:^(void){}];
+    [self.mainView presentViewController:help animated:YES completion:^(void){}];
     [help release];
 
 }
@@ -97,7 +97,7 @@ extern void SVMXLog(NSString *format, ...);
 	
 	UILabel * titleLabel = [[[UILabel alloc] initWithFrame:CGRectZero] autorelease];
 	titleLabel.textAlignment = UITextAlignmentCenter;
-	titleLabel.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_conflicts];
+	titleLabel.text = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search];
 	titleLabel.font = [UIFont boldSystemFontOfSize:15];
 	titleLabel.backgroundColor = [UIColor clearColor];
 	[titleLabel sizeToFit];

@@ -1613,7 +1613,7 @@ extern void SVMXLog(NSString *format, ...);
     appDelegate.From_SFM_Search=@"";
     appDelegate.showUI = FALSE;    //btn merge
     [activity startAnimating];
-    appDelegate.sfmPageController = [[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE];
+    appDelegate.sfmPageController = [[[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE] autorelease];
     
     NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
     NSString * warning = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_WARNING];
@@ -1622,7 +1622,6 @@ extern void SVMXLog(NSString *format, ...);
     
     if ([appDelegate.SFMPage retainCount] > 0)
     {
-        [appDelegate.SFMPage release];
         appDelegate.SFMPage = nil;
     }
     
@@ -1687,7 +1686,6 @@ extern void SVMXLog(NSString *format, ...);
         return;
     }
     
-    [appDelegate.sfmPageController release];
     [activity stopAnimating];
 	
 }
@@ -1989,11 +1987,10 @@ extern void SVMXLog(NSString *format, ...);
     appDelegate.From_SFM_Search=@"";
     appDelegate.showUI = FALSE;   //btn merge
     [activity startAnimating];
-    appDelegate.sfmPageController = [[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE];
+    appDelegate.sfmPageController = [[[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE] autorelease];
     
     if ([appDelegate.SFMPage retainCount] > 0)
     {
-        [appDelegate.SFMPage release];
         appDelegate.SFMPage = nil;
     }   
 
@@ -2064,7 +2061,6 @@ extern void SVMXLog(NSString *format, ...);
         return;
     }
 	
-    [appDelegate.sfmPageController release];
     [activity stopAnimating];
 }
 

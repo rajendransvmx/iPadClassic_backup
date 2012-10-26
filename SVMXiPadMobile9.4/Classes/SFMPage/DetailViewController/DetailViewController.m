@@ -6224,9 +6224,8 @@ extern void SVMXLog(NSString *format, ...);
     [indicatorForAddRow release];
     indicatorForAddRow = nil;
     [webView release];
-    [super dealloc];
-    [appDelegate.dict release];
     [backBtn release];
+	[super dealloc];
 }
 
 #pragma mark - Custom Controls' Delegate Method
