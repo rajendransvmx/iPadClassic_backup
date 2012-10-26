@@ -158,8 +158,10 @@ extern void SVMXLog(NSString *format, ...);
     if ((interfaceOrientation == UIInterfaceOrientationPortrait) || (interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown))
     {
         // Do something
-        detailView.view.frame = self.view.frame;
-        [detailView splitViewController:splitView willHideViewController:masterView withBarButtonItem:barButton forPopoverController:popover];
+//        detailView.view.frame = self.view.frame;
+//        [detailView splitViewController:splitView willHideViewController:masterView withBarButtonItem:barButton forPopoverController:popover];
+		
+		return NO;
     }
     
     if ((interfaceOrientation == UIInterfaceOrientationLandscapeLeft) || (interfaceOrientation == UIInterfaceOrientationLandscapeRight))

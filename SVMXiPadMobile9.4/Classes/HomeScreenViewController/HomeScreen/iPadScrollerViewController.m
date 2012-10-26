@@ -68,10 +68,10 @@ const NSUInteger kNumImages = 7;
 - (void) showTasks
 {
 //    appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    appDelegate.modalCalendar = [[ModalViewController alloc] initWithNibName:@"ModalViewController" bundle:nil];
+    appDelegate.modalCalendar = [[[ModalViewController alloc] initWithNibName:@"ModalViewController" bundle:nil] autorelease];
     appDelegate.modalCalendar.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal; //UIModalTransitionStyleFlipHorizontal;
     [self presentViewController:appDelegate.modalCalendar animated:YES completion:nil];
-    [appDelegate.modalCalendar release];
+   // [appDelegate.modalCalendar release];
 }
 - (void) showCreateObject
 {
@@ -100,10 +100,10 @@ const NSUInteger kNumImages = 7;
     }*/
 
 //    appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    appDelegate.modalCalendar = [[ModalViewController alloc] initWithNibName:@"ModalViewController" bundle:nil];
+    appDelegate.modalCalendar = [[[ModalViewController alloc] initWithNibName:@"ModalViewController" bundle:nil] autorelease];
     appDelegate.modalCalendar.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     [self presentViewController:appDelegate.modalCalendar animated:YES completion:nil];
-    [appDelegate.modalCalendar release];
+  //  [appDelegate.modalCalendar release];
 }
 - (void) showChatter
 {

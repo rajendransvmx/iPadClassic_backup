@@ -701,9 +701,9 @@ extern void SVMXLog(NSString *format, ...);
 // (This method is only called on the leftmost view controller and only discriminates portrait from landscape.)
 - (BOOL)splitViewController: (UISplitViewController*)svc shouldHideViewController:(UIViewController *)vc inOrientation:(UIInterfaceOrientation)orientation
 {
-    UIDeviceOrientation deviceOrientation = [[UIDevice currentDevice] orientation];
-    if (deviceOrientation == UIInterfaceOrientationPortrait || deviceOrientation == UIInterfaceOrientationPortraitUpsideDown)
-        return YES;
+//    UIDeviceOrientation deviceOrientation = [[UIDevice currentDevice] orientation];
+//    if (deviceOrientation == UIInterfaceOrientationPortrait || deviceOrientation == UIInterfaceOrientationPortraitUpsideDown)
+//        return YES;
     return NO;
 }
 
@@ -6100,6 +6100,19 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (!isInEditDetail)
+    {
+        if (selectedSection == SHOW_LINES_ROW || selectedSection == SHOWALL_LINES)
+        {
+
+            NSInteger i =  indexPath.row ;
+            if(i == 0)
+            {
+                currentEditRow = nil;
+                return;
+            }
+        }
+    }
      currentEditRow = [indexPath retain];
 }
 
@@ -8823,6 +8836,11 @@ extern void SVMXLog(NSString *format, ...);
     
     //Shrinivas --> Crash Fix
     NSInteger sections = [tableView numberOfSections];
+    
+    if(sections == 0)
+    {
+        return;
+    }
     NSInteger rows = [tableView numberOfRowsInSection:sections - 1];
     SMLog(@"%d", rows);
     int index = 0;
