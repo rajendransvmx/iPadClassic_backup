@@ -398,13 +398,7 @@ extern void SVMXLog(NSString *format, ...);
     NSString * Status = @"";
     Status = [appDelegate.calDataBase retrieveMetaSyncStatus];
     
-	BOOL retval = [appDelegate.dataBase checkIfSyncConfigDue];
-	
-	if (retval)
-		_statusForMetaSync.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_failed];
-	else 
-		_statusForMetaSync.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_succeeded];
-    
+    _statusForMetaSync.text = [dictionary objectForKey:META_SYNC_STATUS];
     
     [self.view addSubview:_statusForMetaSync];
 
@@ -423,12 +417,13 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void)refreshMetaSyncStatus
 {
-	BOOL retval = [appDelegate.dataBase checkIfSyncConfigDue];
-	
-	if (retval)
-		_statusForMetaSync.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_failed];
-	else 
-		_statusForMetaSync.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_succeeded];
+	NSArray  * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString * documentsPath = [paths objectAtIndex:0];
+    
+    NSString * fooPath = [documentsPath stringByAppendingPathComponent:@"SYNC_HISTORY.plist"];
+    NSDictionary * dictionary = [[NSDictionary alloc] initWithContentsOfFile:fooPath];
+
+	 _statusForMetaSync.text = [dictionary objectForKey:META_SYNC_STATUS];
 }
 
 -(NSString *)getSyncronisationStatus  

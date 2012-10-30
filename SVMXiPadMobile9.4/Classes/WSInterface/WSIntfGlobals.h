@@ -50,6 +50,9 @@
 //Radha Data sync
 #define SYNC_FAILED										 @"sync_failed"
 
+//META SYNC STATUS
+#define META_SYNC_STATUS								 @"meta_sync_status"
+
 #define STRUE	@"true"
 #define SFALSE	@"false"
 

@@ -89,6 +89,7 @@
 
 - (void) startSyncEvents;
 - (void) syncSuccess;
+- (void) updateMetsSyncStatus:(NSString*)Status;
 
 //RADHA 
 - (void) startSyncConfiguration;

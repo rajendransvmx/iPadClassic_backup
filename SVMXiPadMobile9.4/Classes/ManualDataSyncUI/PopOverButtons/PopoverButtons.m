@@ -160,6 +160,15 @@ PopoverButtons *popOver_view;
         [appDelegate displayNoInternetAvailable];
         return;
     }
+	else
+	{
+		if ([appDelegate.internet_Conflicts count] == 1)
+		{
+			[appDelegate.calDataBase removeInternetConflicts];
+			[appDelegate.internet_Conflicts removeAllObjects];
+			[appDelegate.reloadTable ReloadSyncTable];
+		}
+	}
     
     retVal = [appDelegate goOnlineIfRequired];
     
@@ -464,7 +473,6 @@ PopoverButtons *popOver_view;
         return;
     }
      [delegate disableControls];
-//    [appDelegate.dataBase clearTempDatabase];
     
     //RADHA AUG 30/2012
     [appDelegate.dataBase deleteDatabase:TEMPDATABASENAME];    
@@ -540,29 +548,6 @@ PopoverButtons *popOver_view;
             }            
         }   
         
-//		if ([manualEventThread isExecuting])
-//		{
-//			while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
-//			{
-//				if (![appDelegate isInternetConnectionAvailable])
-//				{
-//					break;
-//				}
-//				
-//				if ([manualEventThread isFinished])
-//				{
-//					break;
-//				}
-//			}
-//		}
-//		
-//        if (![appDelegate isInternetConnectionAvailable])
-//        {
-//            appDelegate.SyncStatus = SYNC_GREEN;
-//            [appDelegate setSyncStatus:SYNC_GREEN];
-//            return;
-//	
-//        }
         
 
         [refreshMetaSyncDelegate refreshMetaSyncStatus];
@@ -639,7 +624,7 @@ PopoverButtons *popOver_view;
 //            [appDelegate.databaseInterface cleartable:@"meta_sync_due"];
 //        }
 		[appDelegate.wsInterface.updateSyncStatus refreshMetaSyncStatus];
-//        
+		[self updateMetsSyncStatus:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_failed]];
     }
     else
     {
@@ -661,6 +646,7 @@ PopoverButtons *popOver_view;
 		
 		[self refreshMetaSyncTimeStamp];
 		[appDelegate.wsInterface.updateSyncStatus refreshMetaSyncStatus];
+		[self updateMetsSyncStatus:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_succeeded]];
 
 
     }
@@ -680,6 +666,30 @@ PopoverButtons *popOver_view;
     
 }
 
+//Update meta sync status
+- (void) updateMetsSyncStatus:(NSString*)Status
+{
+    //create SYNC_HISTORY PLIST
+    NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:SYNC_HISTORY];
+	
+	NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST];
+    NSArray * allkeys= [dict allKeys];
+    
+	
+    for(NSString *  str in allkeys)
+    {
+        if([str isEqualToString:META_SYNC_STATUS])
+        {
+			[dict  setObject:Status forKey:META_SYNC_STATUS];
+			break;
+        }
+    }
+    [dict writeToFile:plistPath_SYNHIST atomically:YES];
+
+}
+
+
 - (void) scheduletimer
 {
     [appDelegate ScheduleIncrementalDatasyncTimer];
@@ -697,6 +707,15 @@ PopoverButtons *popOver_view;
     {
         return;
     }
+	else
+	{
+		if ([appDelegate.internet_Conflicts count] == 1)
+		{
+			[appDelegate.calDataBase removeInternetConflicts];
+			[appDelegate.internet_Conflicts removeAllObjects];
+			[appDelegate.reloadTable ReloadSyncTable];
+		}
+	}
     
 	BOOL retVal_ = [appDelegate goOnlineIfRequired];
 	

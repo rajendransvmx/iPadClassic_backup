@@ -864,7 +864,6 @@ last_sync_time:(NSString *)last_sync_time
         {
              appDelegate.dataSyncRunning = NO;
             [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
             break;
         }
 
@@ -877,7 +876,6 @@ last_sync_time:(NSString *)last_sync_time
              appDelegate.dataSyncRunning = NO;
             appDelegate.SyncStatus = SYNC_GREEN;
             [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
             return;
         }
 		
@@ -903,9 +901,7 @@ last_sync_time:(NSString *)last_sync_time
         if (![appDelegate isInternetConnectionAvailable])
         {
              appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
-        
+            [self internetConnectivityHandling:data_sync];        
             break;
         }
         if(appDelegate.Incremental_sync_status == GET_DELETE_DC_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
@@ -917,7 +913,6 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.dataSyncRunning = NO;
             appDelegate.connection_error = TRUE;
             [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
             return;
         }
     }
@@ -940,9 +935,7 @@ last_sync_time:(NSString *)last_sync_time
         if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
-            
+            [self internetConnectivityHandling:data_sync];            
             break;
         }
 
@@ -953,7 +946,6 @@ last_sync_time:(NSString *)last_sync_time
         {
             appDelegate.dataSyncRunning = NO;
             [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
             return;
         }
         
@@ -991,16 +983,12 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.dataSyncRunning = NO;
             appDelegate.SyncStatus = SYNC_GREEN;
             [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
             return;
         }
     }
     if (![appDelegate isInternetConnectionAvailable])
     {
-        
-        [self internetConnectivityHandling:data_sync];
-        //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
-        
+        [self internetConnectivityHandling:data_sync];        
     }
 
     if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
@@ -1033,7 +1021,6 @@ last_sync_time:(NSString *)last_sync_time
         if (![appDelegate isInternetConnectionAvailable])
         {
             [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
             appDelegate.dataSyncRunning = NO;
             break;
         }
@@ -1047,7 +1034,6 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.dataSyncRunning = NO;
             appDelegate.SyncStatus = SYNC_GREEN;
             [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
             return;
         }
     }
@@ -1073,7 +1059,6 @@ last_sync_time:(NSString *)last_sync_time
         {
             appDelegate.dataSyncRunning = NO;
             [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
             break;
         }
 
@@ -1086,7 +1071,6 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.dataSyncRunning = NO;
             appDelegate.SyncStatus = SYNC_GREEN;
             [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
             return;
         }
     }  
@@ -1112,9 +1096,7 @@ last_sync_time:(NSString *)last_sync_time
         if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
-            
+            [self internetConnectivityHandling:data_sync];            
             break;
         }
         if(appDelegate.Incremental_sync_status == GET_INSERT_DC_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
@@ -1126,7 +1108,6 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.dataSyncRunning = NO;
             appDelegate.SyncStatus = SYNC_GREEN;
             [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
             return;
         }
     }
@@ -1151,7 +1132,6 @@ last_sync_time:(NSString *)last_sync_time
         {
             appDelegate.dataSyncRunning = NO;
             [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
             break;
         }
         
@@ -1162,7 +1142,6 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.dataSyncRunning = NO;
             appDelegate.SyncStatus = SYNC_GREEN;
             [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
             return;
         }
     }
@@ -1205,7 +1184,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             appDelegate.dataSyncRunning = NO;
             [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
+             
             break;
         }
         if(appDelegate.Incremental_sync_status == PUT_UPDATE_DONE  || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
@@ -1217,7 +1196,7 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.dataSyncRunning = NO;
             appDelegate.SyncStatus = SYNC_GREEN;
             [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
+             
             return;
         }
     }
@@ -1256,7 +1235,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             appDelegate.dataSyncRunning = NO;
             [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
+             
             break;
         }
         if(appDelegate.Incremental_sync_status == GET_UPDATE_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
@@ -1268,7 +1247,7 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.dataSyncRunning = NO;
             appDelegate.SyncStatus = SYNC_GREEN;
             [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
+             
             return;
         }
     }
@@ -1294,7 +1273,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             appDelegate.dataSyncRunning = NO;
             [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
+             
             
             break;
         }
@@ -1307,7 +1286,7 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.dataSyncRunning = NO;
             appDelegate.SyncStatus = SYNC_GREEN;
             [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
+             
             return;
         }
     }
@@ -1331,7 +1310,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             appDelegate.dataSyncRunning = NO;
             [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
+             
             break;
         }
         
@@ -1343,7 +1322,7 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.dataSyncRunning = NO;
             appDelegate.SyncStatus = SYNC_GREEN;
             [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
+             
             return;
         }
     }
@@ -1366,7 +1345,7 @@ last_sync_time:(NSString *)last_sync_time
         {
             appDelegate.dataSyncRunning = NO;
             [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
+             
             break;
         }
         if(appDelegate.Incremental_sync_status == PUT_RECORDS_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
@@ -1378,7 +1357,7 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.dataSyncRunning = NO;
             appDelegate.SyncStatus = SYNC_GREEN;
             [self internetConnectivityHandling:data_sync];
-            //[self performSelectorOnMainThread:@selector(internetConnectivityHandling:) withObject:data_sync waitUntilDone:YES];
+            
             return;
         }
     }
@@ -1648,12 +1627,15 @@ last_sync_time:(NSString *)last_sync_time
 
 -(void)internetConnectivityHandling:(NSString *)data_sync
 {
-    appDelegate.SyncStatus = SYNC_RED;
-    [updateSyncStatus refreshSyncStatus];
-    [appDelegate setSyncStatus:SYNC_RED];
-    [appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
-    appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
-    [appDelegate.reloadTable ReloadSyncTable];
+	if (![appDelegate isInternetConnectionAvailable])
+	{
+		appDelegate.SyncStatus = SYNC_RED;
+		[updateSyncStatus refreshSyncStatus];
+		[appDelegate setSyncStatus:SYNC_RED];
+		[appDelegate.calDataBase insertIntoConflictInternetErrorWithSyncType:data_sync];
+		appDelegate.internet_Conflicts = [appDelegate.calDataBase getInternetConflicts];
+		[appDelegate.reloadTable ReloadSyncTable];
+	}
 }
 
 -(void)callsfMEventForAfterSaveOrupdateEvents:(INTF_WebServicesDefServiceSvc_INTF_PREQ_GetPrice_WS *) getThoonsEvent binding:(INTF_WebServicesDefBinding *)binding 
