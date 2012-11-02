@@ -10910,7 +10910,7 @@ last_sync_time:(NSString *)last_sync_time
 - (void)doCheckSession
 {
 	NSLog(@"Session Expiry : %@", sessionExpiry);
-    if ([sessionExpiry timeIntervalSinceNow] < 0)
+    if ([sessionExpiry timeIntervalSinceNow] < 5)
     {
         didSessionResume = NO;
         iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
