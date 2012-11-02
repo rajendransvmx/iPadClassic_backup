@@ -2199,7 +2199,7 @@ extern void SVMXLog(NSString *format, ...);
         if(isDataDeletedFromUser_GPS_Log)
             [appDelegate.databaseInterface DeleterecordFromTable:@"SFDataTrailer" Forlocal_id:strlocal_id];        
          */
-        sqlite3_finalize(statement);
+        synchronized_sqlite3_finalize(statement);
         row_count--;
     }
     
@@ -2376,7 +2376,7 @@ extern void SVMXLog(NSString *format, ...);
             [dict release];
         }        
     }
-    sqlite3_finalize(statement);
+    synchronized_sqlite3_finalize(statement);
     if (![appDelegate isInternetConnectionAvailable])
     {
         [resultArray release];
@@ -2447,7 +2447,7 @@ extern void SVMXLog(NSString *format, ...);
             return;
         }
     }
-    sqlite3_finalize(statement);
+    synchronized_sqlite3_finalize(statement);
     if(isLatitudeNull || isLongitudeNull)
     {
         didTechnicianLocationUpdated=TRUE;
@@ -6701,7 +6701,7 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
-    sqlite3_finalize(statement);
+    synchronized_sqlite3_finalize(statement);
     
     return objectNames;
 }
@@ -7045,7 +7045,7 @@ extern void SVMXLog(NSString *format, ...);
         
     }
     
-    sqlite3_finalize(stmt);
+    synchronized_sqlite3_finalize(stmt);
     
     return array;
     

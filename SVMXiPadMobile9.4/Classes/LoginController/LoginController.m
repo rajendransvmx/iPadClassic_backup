@@ -596,40 +596,24 @@ extern void SVMXLog(NSString *format, ...);
     NSArray * array = [serverUrl pathComponents];
     NSString * server = [NSString stringWithFormat:@"%@//%@", [array objectAtIndex:0], [array objectAtIndex:1]];
     
-    if (appDelegate.currentServerUrl != nil)
-    {
-        appDelegate.currentServerUrl = nil;
-    }
-    appDelegate.currentServerUrl = [[NSString stringWithFormat:@"%@", server] retain];
-    
-   // [appDelegate.currentServerUrl retain];
+	appDelegate.currentServerUrl = @"";
+	
+	if( ![server Contains:@"null"] )
+		appDelegate.currentServerUrl = [[NSString stringWithFormat:@"%@", server] retain];
+	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+	[userDefaults setObject:appDelegate.currentUserName forKey:@"UserFullName"];
+	[userDefaults setObject:appDelegate.currentServerUrl forKey:SERVERURL];
+	[userDefaults synchronize];
     
     ZKUserInfo * userInfo = [lr userInfo];
-    if (appDelegate.current_userId != nil)
-    {
-        appDelegate.current_userId = nil;
-    }
-    
-    appDelegate.current_userId = [NSString stringWithFormat:@"%@", userInfo.userId];
-    SMLog(@"usetId = %@", appDelegate.current_userId);
 	
-    if (appDelegate.currentUserName != nil)
-    {
-        appDelegate.currentUserName = nil;
-    }
-    appDelegate.currentUserName = [[userInfo fullName] mutableCopy];
+	if (userInfo)
+	{
+		appDelegate.current_userId = [NSString stringWithFormat:@"%@", userInfo.userId];
+		SMLog(@"usetId = %@", appDelegate.current_userId);
+		appDelegate.currentUserName = [[userInfo fullName] mutableCopy];
+	}
 	
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    if (userDefaults)
-    {
-        [userDefaults setObject:appDelegate.currentUserName forKey:@"UserFullName"];
-        [userDefaults setObject:appDelegate.currentServerUrl forKey:@"serverurl"];
-    }
-    else
-    {
-        SMLog(@"Failed to get the User Defaults");
-        return;
-    }
     NSDictionary * defaultTags = [appDelegate.wsInterface getDefaultTags];
     
    // NSString * serviceMax = [defaultTags objectForKey:ALERT_ERROR_TITLE];

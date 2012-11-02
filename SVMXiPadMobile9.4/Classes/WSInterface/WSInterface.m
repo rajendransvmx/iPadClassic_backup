@@ -486,8 +486,8 @@ last_sync_time:(NSString *)last_sync_time
     BOOL conflict_exists = [appDelegate.databaseInterface getConflictsStatus];
     if(conflict_exists)
     {
-        [appDelegate setSyncStatus:SYNC_RED];
-        [updateSyncStatus refreshSyncStatus];
+		[appDelegate setSyncStatus:SYNC_RED];
+		[updateSyncStatus refreshSyncStatus];
     }
     else
     {        
@@ -10909,7 +10909,8 @@ last_sync_time:(NSString *)last_sync_time
 
 - (void)doCheckSession
 {
-    if ([sessionExpiry timeIntervalSinceNow] < 5)
+	NSLog(@"Session Expiry : %@", sessionExpiry);
+    if ([sessionExpiry timeIntervalSinceNow] < 0)
     {
         didSessionResume = NO;
         iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -10937,17 +10938,21 @@ last_sync_time:(NSString *)last_sync_time
     {
         SMLog(@"There was an error resuming the session: %@", error);
 		NSUserDefaults * userdefaults = [NSUserDefaults standardUserDefaults];
-		appDelegate.currentServerUrl = [userdefaults objectForKey:SERVERURL];
+		NSString * url = [userdefaults objectForKey:SERVERURL];
+		if (![url Contains:@"null"])
+			appDelegate.currentServerUrl = server;
         didSessionResume = YES;
         isSessionInavalid = YES;
     }
     else {
         SMLog(@"Session Resumed Successfully!");
         NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-        if (userDefaults)
-        {
-            [userDefaults setObject:server forKey:SERVERURL];
-        }
+		if (![server Contains:@"null"])
+		{
+			[userDefaults setObject:server forKey:SERVERURL];
+			appDelegate.currentServerUrl = server;
+			[userDefaults synchronize];
+		}
         didSessionResume = YES;
         isSessionInavalid = NO;
     }

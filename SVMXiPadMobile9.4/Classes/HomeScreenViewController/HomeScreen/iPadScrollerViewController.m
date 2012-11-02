@@ -764,6 +764,11 @@ const NSUInteger kNumImages = 7;
         [sync_info writeToFile:plistPath_SYNHIST atomically:YES];
     }
     
+	
+	NSUserDefaults * userDefaults = [NSUserDefaults standardUserDefaults];
+	
+	appDelegate.currentServerUrl = [userDefaults objectForKey:SERVERURL];
+		
     BOOL conflict_exists = [appDelegate.databaseInterface getConflictsStatus];
     if(conflict_exists)
     {
@@ -1292,7 +1297,7 @@ const float progress_ = 0.07;
 {
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
-        BOOL retvalue = [appDelegate goOnlineIfRequired];
+		[appDelegate goOnlineIfRequired];
         if(!appDelegate.connection_error)
         {
             break;

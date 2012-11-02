@@ -654,6 +654,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 }
 - (BOOL) isInternetConnectionAvailable
 {
+    NSDate *date = [NSDate date];
     BOOL status = [Reachability connectivityStatus];
     if(!status)
     {
@@ -664,8 +665,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
                               returningResponse:&response error:NULL];
         if(response != nil)
             status = TRUE;
-        SMLog(@"Internet is not reachable");
     }
+    NSString *internetStatus = status?@"Internet is reachable":@"Internet is not reachable";
+    SMLog(@"[%f] %@",[[NSDate date] timeIntervalSinceDate:date],internetStatus);
     return status;
 }
 
@@ -939,7 +941,6 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 NSString * GO_Online = @"GO_Online";
 - (BOOL) goOnlineIfRequired
 {
-
 	@synchronized(GO_Online)
 	{
 		_pingServer = TRUE;
@@ -950,7 +951,6 @@ NSString * GO_Online = @"GO_Online";
 		}
 		else
 		{
-			
 			[[ZKServerSwitchboard switchboard] doCheckSession];
 			if (isSessionInavalid == YES)
 			{
@@ -982,7 +982,7 @@ NSString * GO_Online = @"GO_Online";
 				
 				
 			}
-			if (self.isServerInValid)
+			if (isServerInValid)
 				return FALSE;
 			else 
 				return TRUE;
@@ -1041,38 +1041,26 @@ NSString * GO_Online = @"GO_Online";
         NSString * serverUrl = [lr serverUrl];
         NSArray  * array = [serverUrl pathComponents];
         NSString * server = [NSString stringWithFormat:@"%@//%@", [array objectAtIndex:0], [array objectAtIndex:1]];
-        
-        if (self.currentServerUrl != nil && lr != nil)
-        {
-            self.currentServerUrl = nil;
-        }
-        
-            self.currentServerUrl = [[NSString stringWithFormat:@"%@", server] retain];
-        
-        ZKUserInfo * userInfo = [lr userInfo];
-        
-        if (self.current_userId != nil)
-        {
-            self.current_userId = nil;
-        }
-        
-        self.current_userId = [NSString stringWithFormat:@"%@", userInfo.userId];
-        
-        
-        if (self.currentUserName != nil)
-        {
-            self.currentUserName = nil;
-        }
-        if( userInfo != nil )
-            self.currentUserName = [[userInfo fullName] mutableCopy];
 		
-        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-        if (userDefaults)
-        {
-            [userDefaults setObject:appDelegate.currentUserName forKey:@"UserFullName"];
-            [userDefaults setObject:appDelegate.currentServerUrl forKey:SERVERURL];
+		self.currentServerUrl = @"";
+		NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+
+		if( ![server Contains:@"null"] )
+		{
+			self.currentServerUrl = [NSString stringWithFormat:@"%@", server];
+			[userDefaults setObject:self.currentServerUrl forKey:SERVERURL];
+			[userDefaults synchronize];
+		}
+		
+        ZKUserInfo * userInfo = [lr userInfo];
+		
+		if(userInfo)
+		{
+			self.current_userId = [NSString stringWithFormat:@"%@", userInfo.userId];
+			self.currentUserName = [[userInfo fullName] mutableCopy];
+			[userDefaults setObject:appDelegate.currentUserName forKey:@"UserFullName"];
         }
-        connection_error = FALSE;
+		connection_error = FALSE;
     }
     
     //Shrinivas -- code for firewall
@@ -1747,12 +1735,9 @@ NSString * GO_Online = @"GO_Online";
     
 }
 
-//upon changing the sync status, the animated image view has to change state automatically
-- (void) setSyncStatus:(SYNC_STATUS)_SyncStatus_
+- (void) setSyncStatus2
 {
-    UIImage *img;
-	
-	_SyncStatus = _SyncStatus_;
+	UIImage *img;
     
     if( animatedImageView == nil )
     {
@@ -1789,6 +1774,14 @@ NSString * GO_Online = @"GO_Online";
         [animatedImageView startAnimating];
     }
 }
+
+//upon changing the sync status, the animated image view has to change state automatically
+- (void) setSyncStatus:(SYNC_STATUS)_SyncStatus_
+{
+	_SyncStatus = _SyncStatus_;
+	[self performSelectorOnMainThread:@selector(setSyncStatus2) withObject:nil waitUntilDone:NO];
+}
+
 #pragma mark - Location Ping
 -(void)didUpdateToLocation:(CLLocation*)location
 {

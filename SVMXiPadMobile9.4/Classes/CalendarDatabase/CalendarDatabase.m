@@ -684,7 +684,7 @@ extern void SVMXLog(NSString *format, ...);
             }
         }  
 		
-		sqlite3_finalize(colorStatement);
+        synchronized_sqlite3_finalize(colorStatement);
 		
 		if ([priority isEqualToString:@"High"])
 			return [appDelegate.settingsDict objectForKey:@"IPAD006_SET001"];

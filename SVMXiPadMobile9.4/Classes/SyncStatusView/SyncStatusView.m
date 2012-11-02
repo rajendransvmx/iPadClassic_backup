@@ -412,7 +412,7 @@ extern void SVMXLog(NSString *format, ...);
     SMLog(@"Synchronization ..");
     SMLog(@"%d", appDelegate.SyncStatus);
     
-    _status.text = [self getSyncronisationStatus];
+	[_status performSelectorOnMainThread:@selector(setText:) withObject:[self getSyncronisationStatus] waitUntilDone:NO];
 } 
 
 -(void)refreshMetaSyncStatus
