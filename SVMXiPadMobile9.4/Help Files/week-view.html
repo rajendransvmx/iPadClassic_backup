@@ -51,15 +51,18 @@
 <div class="BlockcontainerLeft"><center><img src="week-view.png" alt="" width="945" height="726" border="0" usemap="#Map" onClick="UnTip()">
 <map name="Map" id="Map">
 <area shape="circle" coords="277,705,21" href="javascript:void(0);" onClick="TagToTip('Span1', FOLLOWMOUSE, false)" onBlur="UnTip()" />
-<span id="Span1">Hold and scroll the slider bar to view events in a required week. You can also use the arrow buttons on either side of the bar to navigate across weeks.
+<span id="Span1">Hold and scroll the slider bar to view events in a required week. 
 </span>
 <area shape="circle" coords="256,339,21" href="javascript:void(0);" onClick="TagToTip('Span2',  HEIGHT, '-50', FOLLOWMOUSE, false)" onBlur="UnTip()" />
 <span id="Span2">Touch any white space in the schedule area, hold and scroll to see events outside the displayed time window.</span>
 <area shape="circle" coords="203,218,22"href="javascript:void(0);" onClick="TagToTip('Span3', FOLLOWMOUSE, false)" onBlur="UnTip()" />
-<span id="Span3">Tap on an existing event to see the record related to the event. Hold and drag an event to a different time to reschedule the event.
+<span id="Span3">Tap on an existing event to see the record related to the event. Hold and drag an event to a different time to reschedule the event. You can also use the arrow buttons on either side of the bar to navigate across weeks. 
 </span>
 <area shape="circle" coords="816,686,21"href="javascript:void(0);" onClick="TagToTip('Span4', WIDTH, '2', FOLLOWMOUSE, false)" onBlur="UnTip()" />
 <span id="Span4">Tap on it to view current week’s events directly.
+</span>
+<area shape="circle" coords="515,335,21"href="javascript:void(0);" onClick="TagToTip('Span5', WIDTH, '2', FOLLOWMOUSE, false)" onBlur="UnTip()" />
+<span id="Span5"> Indicates a synchronization conflict. Tap on it to see details.
 </span>
 </map>
 </center>
@@ -130,6 +133,12 @@
 <div class="BlockcontainerBottomHeaderDescriptionright">
 							<div class="RightBlockleftNew"><img src="sync-green.jpg" height="25" width="25" /></div>
 							<div class="RightBlockrightText" style="padding-top:14px">Indicates synchronization completed successfully.</div>
+						
+<div class="BlockcontainerBottomHeaderDescriptionrightNew">
+							<div class="RightBlockleftNew"><img src="sync-red.jpg" height="25" width="25" /></div>
+							<div class="RightBlockrightText" style="padding-top:14px">Indicates a conflict in the synchronization process.</div>					
+						
+						
 						</div>
 
 </div>
