@@ -1351,7 +1351,8 @@ extern void SVMXLog(NSString *format, ...);
 							{
 								NSString *  detail_value_key  =  [detail_value_mapping_dict objectForKey:detail_value_api];
 								NSString * field_data_type  = [api_name_dataType objectForKey:detail_value_api];
-								NSString * detil_value_value = [self getValueForApiName:detail_value_api dataType:field_data_type object_name:headerObjName field_key:detail_value_key];
+                                // Sahana fix for defect 5826
+								NSString * detil_value_value = [self getValueForApiName:detail_value_api dataType:field_data_type object_name:detailObjectName field_key:detail_value_key];
 								[dict setObject:detail_value_key forKey:gVALUE_FIELD_VALUE_KEY];
 								[dict setObject:detil_value_value forKey:gVALUE_FIELD_VALUE_VALUE];
 							}
@@ -2081,7 +2082,8 @@ extern void SVMXLog(NSString *format, ...);
 							{
 								NSString *  detail_value_key  =  [detail_value_mapping_dict objectForKey:detail_value_api];
 								NSString * field_data_type  = [api_name_dataType objectForKey:detail_value_api];
-								NSString * detil_value_value = [self getValueForApiName:detail_value_api dataType:field_data_type object_name:headerObjName field_key:detail_value_key];
+                                // Sahana fix for defect 5826
+								NSString * detil_value_value = [self getValueForApiName:detail_value_api dataType:field_data_type object_name:detailObjectName field_key:detail_value_key];
 								[dict setObject:detail_value_key forKey:gVALUE_FIELD_VALUE_KEY];
 								[dict setObject:detil_value_value forKey:gVALUE_FIELD_VALUE_VALUE];
 								break;
@@ -10199,9 +10201,28 @@ extern void SVMXLog(NSString *format, ...);
             if([action_type isEqual:@"WEBSERVICE"])
             {
                 
+                // sahana Fix For Defect #5747
+                
                 //Code change for get pirce  ---> 11/06/2012   --- Time: 1:23 PM.
                 NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
-                [self didInvokeWebService:[[[[[hdr_object objectForKey:gHEADER_BUTTONS] objectAtIndex:0] objectForKey:@"button_Events"] objectAtIndex:0] valueForKey:@"button_Event_Target_Call"] event_name:GETPRICE];
+                NSArray * pagelevel_events = [hdr_object objectForKey:gHEADER_BUTTONS];
+                NSString * action_desc = [buttonDict objectForKey:@"action_description"];
+
+
+                for(int i = 0 ; i < [pagelevel_events count]; i++)
+                {
+                    NSDictionary * dict = [pagelevel_events objectAtIndex:i];
+                    NSArray * local_ = [dict objectForKey:@"button_Events"];
+                    NSDictionary * button_info  = [local_ objectAtIndex:0];
+                    NSString * webServiceName = [button_info objectForKey:@"button_Event_Target_Call"];
+                    NSString * title =  [dict objectForKey:@"button_Title"];
+                    if([action_desc isEqualToString:title])
+                    {
+                        [self didInvokeWebService:webServiceName event_name:GETPRICE];
+                        break;
+                    }
+                }
+                               
                 //Code change for get pirce  ---> 11/06/2012   --- Time: 1:23 PM.
                 
                 appDelegate.wsInterface.webservice_call = FALSE;
@@ -10829,33 +10850,25 @@ extern void SVMXLog(NSString *format, ...);
             if([action_type isEqual:@"WEBSERVICE"])
             {
                 //Code change for get pirce  ---> 11/06/2012   --- Time: 1:23 PM.
+                // sahana Fix For Defect #5747
+                NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
+                NSArray * pagelevel_events = [hdr_object objectForKey:gHEADER_BUTTONS];
+                NSString * action_desc = [buttonDict objectForKey:@"action_description"];
                 
-                    NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
-    //                NSString * targetCall = [[[[[hdr_object objectForKey:gHEADER_BUTTONS] objectAtIndex:0] objectForKey:@"			button_Events"] objectAtIndex:0] objectForKey:@"button_Event_Target_Call"];
-    //                if ([targetCall isEqualToString:nil])
-    //                    targetCall = @"";
-                    
-                /*
-                if ([targetCall isEqualToString:@"Get Price"])
+                
+                for(int i = 0 ; i < [pagelevel_events count]; i++)
                 {
-                    
+                    NSDictionary * dict = [pagelevel_events objectAtIndex:i];
+                    NSArray * local_ = [dict objectForKey:@"button_Events"];
+                    NSDictionary * button_info  = [local_ objectAtIndex:0];
+                    NSString * webServiceName = [button_info objectForKey:@"button_Event_Target_Call"];
+                    NSString * title =  [dict objectForKey:@"button_Title"];
+                    if([action_desc isEqualToString:title])
+                    {
+                        [self didInvokeWebService:webServiceName event_name:GETPRICE];
+                        break;
+                    }
                 }
-                else
-                {
-                    appDelegate.wsInterface.webservice_call = TRUE;
-                }
-                 */
-                
-                NSArray * array1 = [hdr_object objectForKey:gHEADER_BUTTONS];
-                NSDictionary * dict = [array1 objectAtIndex:0];
-                array1 = [dict objectForKey:@"button_Events"];
-                dict = [array1 objectAtIndex:0];
-                
-                
-                NSString *methodname = [dict valueForKey:@"button_Event_Target_Call"];
-                [self didInvokeWebService:methodname event_name:GETPRICE];
-                //Code change for get pirce  ---> 11/06/2012   --- Time: 1:23 PM.
-                
                 
                 appDelegate.wsInterface.webservice_call = FALSE;
             }
@@ -11201,10 +11214,25 @@ extern void SVMXLog(NSString *format, ...);
             if([action_type isEqual:@"WEBSERVICE"])
             {
                 //Code change for get pirce  ---> 11/06/2012   --- Time: 1:23 PM.
-                
+                // sahana Fix For Defect #5747
                 NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
-                [self didInvokeWebService:[[[[[hdr_object objectForKey:gHEADER_BUTTONS] objectAtIndex:0] objectForKey:@"button_Events"] objectAtIndex:0] valueForKey:@"button_Event_Target_Call"] event_name:GETPRICE];
-                //Code change for get pirce  ---> 11/06/2012   --- Time: 1:23 PM.
+                NSArray * pagelevel_events = [hdr_object objectForKey:gHEADER_BUTTONS];
+                NSString * action_desc = [buttonDict objectForKey:@"action_description"];
+                
+                for(int i = 0 ; i < [pagelevel_events count]; i++)
+                {
+                    NSDictionary * dict = [pagelevel_events objectAtIndex:i];
+                    NSArray * local_ = [dict objectForKey:@"button_Events"];
+                    NSDictionary * button_info  = [local_ objectAtIndex:0];
+                    NSString * webServiceName = [button_info objectForKey:@"button_Event_Target_Call"];
+                    NSString * title =  [dict objectForKey:@"button_Title"];
+                    if([action_desc isEqualToString:title])
+                    {
+                        [self didInvokeWebService:webServiceName event_name:GETPRICE];
+                        break;
+                    }
+                }
+                
                 
                 appDelegate.wsInterface.webservice_call = FALSE;
             }

@@ -4945,7 +4945,8 @@ extern void SVMXLog(NSString *format, ...);
 -(NSString *) getParentIdFrom:(NSString *)tablename WithId:(NSString *)Id_ andParentColumnName:(NSString *)parent_column_name id_type:(NSString *)id_type
 {
     
-    NSString * selectQuery = [NSString stringWithFormat:@"Select '%@' From '%@' Where %@ = '%@'",parent_column_name, tablename,id_type, Id_];
+//Sahana fix for defect #5818
+    NSString * selectQuery = [NSString stringWithFormat:@"Select %@ From '%@' Where %@ = '%@'",parent_column_name, tablename,id_type, Id_];
     
     sqlite3_stmt * stmt ;
     
