@@ -403,7 +403,7 @@ PopoverButtons *popOver_view;
 		
 		if ([syncType isEqualToString:@"PUT_INSERT"] || [syncType isEqualToString:@"GET_INSERT"])
 		{
-			[bgView setBackgroundColor:[appDelegate colorForHex:@"#2895C1"]];
+			[bgView setBackgroundColor:[appDelegate colorForHex:[appDelegate.settingsDict objectForKey:@"IPAD018_SET001"]]]; 
 			cell.backgroundView = bgView;
 			
 			[cell.contentView addSubview:mySegment1];
@@ -411,7 +411,7 @@ PopoverButtons *popOver_view;
 		
 		if ([syncType isEqualToString:@"PUT_DELETE"] || [syncType isEqualToString:@"GET_DELETE"])
 		{
-			[bgView1 setBackgroundColor:[appDelegate colorForHex:@"#B4CFEC"]];
+			[bgView1 setBackgroundColor:[appDelegate colorForHex:[appDelegate.settingsDict objectForKey:@"IPAD018_SET003"]]];
 			cell.backgroundView = bgView1;
 
 			[cell.contentView addSubview:mySegment2];
@@ -419,7 +419,7 @@ PopoverButtons *popOver_view;
 		
 		if (([syncType isEqualToString:@"PUT_UPDATE"] || [syncType isEqualToString:@"GET_UPDATE"])&& [error_type isEqualToString:@"ERROR"] )
 		{
-			[bgView2 setBackgroundColor:[appDelegate colorForHex:@"#3EA99F"]];
+			[bgView2 setBackgroundColor:[appDelegate colorForHex:[appDelegate.settingsDict objectForKey:@"IPAD018_SET002"]]];
 			cell.backgroundView = bgView2;
 
 			[cell.contentView addSubview:mySegment2];
@@ -427,7 +427,7 @@ PopoverButtons *popOver_view;
 		
 		if (([syncType isEqualToString:@"PUT_UPDATE"] || [syncType isEqualToString:@"GET_UPDATE"])&& [error_type isEqualToString:@"CONFLICT"] )
 		{
-			[bgView2 setBackgroundColor:[appDelegate colorForHex:@"#3EA99F"]];
+			[bgView2 setBackgroundColor:[appDelegate colorForHex:[appDelegate.settingsDict objectForKey:@"IPAD018_SET002"]]];
 			cell.backgroundView = bgView2;
 
 			[cell.contentView addSubview:mySegment];
@@ -599,7 +599,7 @@ PopoverButtons *popOver_view;
 
 		if ([syncType isEqualToString:@"PUT_INSERT"] || [syncType isEqualToString:@"GET_INSERT"])
 		{
-			[bgView setBackgroundColor:[appDelegate colorForHex:@"#2895C1"]];
+			[bgView setBackgroundColor:[appDelegate colorForHex:[appDelegate.settingsDict objectForKey:@"IPAD018_SET001"]]];
 			cell.backgroundView = bgView;
 			
 			[cell.contentView addSubview:mySegment1];
@@ -607,7 +607,7 @@ PopoverButtons *popOver_view;
 		
 		if ([syncType isEqualToString:@"PUT_DELETE"] || [syncType isEqualToString:@"GET_DELETE"])
 		{
-			[bgView1 setBackgroundColor:[appDelegate colorForHex:@"#B4CFEC"]];
+			[bgView1 setBackgroundColor:[appDelegate colorForHex:[appDelegate.settingsDict objectForKey:@"IPAD018_SET003"]]];
 			cell.backgroundView = bgView1;
 			
 			[cell.contentView addSubview:mySegment2];
@@ -615,7 +615,7 @@ PopoverButtons *popOver_view;
 		
 		if (([syncType isEqualToString:@"PUT_UPDATE"] || [syncType isEqualToString:@"GET_UPDATE"])&& [error_type isEqualToString:@"ERROR"] )
 		{
-			[bgView2 setBackgroundColor:[appDelegate colorForHex:@"#3EA99F"]];
+			[bgView2 setBackgroundColor:[appDelegate colorForHex:[appDelegate.settingsDict objectForKey:@"IPAD018_SET002"]]];
 			cell.backgroundView = bgView2;
 			
 			[cell.contentView addSubview:mySegment2];
@@ -623,7 +623,7 @@ PopoverButtons *popOver_view;
 		
 		if (([syncType isEqualToString:@"PUT_UPDATE"] || [syncType isEqualToString:@"GET_UPDATE"])&& [error_type isEqualToString:@"CONFLICT"] )
 		{
-			[bgView2 setBackgroundColor:[appDelegate colorForHex:@"#3EA99F"]];
+			[bgView2 setBackgroundColor:[appDelegate colorForHex:[appDelegate.settingsDict objectForKey:@"IPAD018_SET002"]]];
 			cell.backgroundView = bgView2;
 			
 			[cell.contentView addSubview:mySegment];

@@ -1063,9 +1063,20 @@ NSString * GO_Online = @"GO_Online";
 		connection_error = FALSE;
     }
     
+	
+	NSString * description = [[error userInfo] objectForKey:@"faultstring"];
+	NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+
     //Shrinivas -- code for firewall
     if (lr == nil && self._pingServer == TRUE)
     {
+		if ([description Contains:@"INVALID_LOGIN"])
+		{
+			UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:alert_authentication_error_] message:description delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
+			[alertView show];
+			[alertView release];
+		}
+		
         self._pingServer = FALSE;
         self.isServerInValid = TRUE;
         self.didLoginAgain = TRUE;
