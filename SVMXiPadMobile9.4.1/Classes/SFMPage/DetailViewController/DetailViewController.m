@@ -11396,7 +11396,11 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
-    
+    else if([field_data_type isEqualToString:@"reference"] && [filed_api_name isEqualToString:@"RecordTypeId"])
+    {
+        field_value = [appDelegate.databaseInterface getRecordTypeNameForObject:object_name forId:field_key];
+        
+    }
     else if([field_data_type isEqualToString:@"reference"])
     {
         if([field_key isEqualToString:@""] || [field_key length ] == 0 || field_key == nil )

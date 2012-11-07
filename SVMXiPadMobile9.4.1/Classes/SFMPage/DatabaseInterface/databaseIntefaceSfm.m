@@ -33,6 +33,7 @@ extern void SVMXLog(NSString *format, ...);
     return self;
 }
 
+
 -(NSMutableDictionary *)queryProcessInfo:(NSString * )Process_id  object_name:(NSString *)object_name 
 {
     NSString * sql = [NSString stringWithFormat:@"SELECT process_info FROM SFProcess where process_id = '%@'",Process_id];
@@ -285,6 +286,14 @@ extern void SVMXLog(NSString *format, ...);
                             label =[picklistValues objectForKey:value];
                             break;
                         }
+                    }
+                }
+                else if([filedDataType isEqualToString:@"reference"] && [[apiNames objectAtIndex:j] isEqualToString:@"RecordTypeId"])
+                {
+                    label = [appDelegate.databaseInterface getRecordTypeNameForObject:detailObjectName forId:value];
+                    if([label isEqualToString:@"" ]||[label isEqualToString:@" "] || label == nil)
+                    {
+                        label = value;
                     }
                 }
                 else if([filedDataType isEqualToString:@"reference"])
@@ -5973,4 +5982,26 @@ extern void SVMXLog(NSString *format, ...);
 
 }
 
+-(NSString *)getRecordTypeNameForObject:(NSString *)object_name forId:(NSString *)recordTYpeId
+{
+    NSString * recordTypeName = @"";
+    NSString * query = [NSString stringWithFormat:@"SELECT record_type  FROM  SFRecordType where object_api_name = '%@' and record_type_id = '%@'" ,object_name,recordTYpeId];
+    //NSString * record_type_id = @"";
+    
+    SMLog(@"RecordTypeId  valuemapping %@" ,query);
+    sqlite3_stmt * recordTypeId_statement ;
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &recordTypeId_statement, nil) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(recordTypeId_statement) == SQLITE_ROW)
+        {
+            char * temp_record_type_id = (char *) synchronized_sqlite3_column_text(recordTypeId_statement, 0);
+            if(temp_record_type_id != nil)
+            {
+                recordTypeName = [NSString stringWithUTF8String:temp_record_type_id];
+            }
+        }
+    }
+    synchronized_sqlite3_finalize(recordTypeId_statement);
+    return recordTypeName;
+}
 @end
