@@ -34,7 +34,7 @@ extern void SVMXLog(NSString *format, ...);
     
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     
-    NSString * tmpDate = [gmtDate substringToIndex:[gmtDate length]-1];
+    NSString * tmpDate = [gmtDate substringToIndex:[gmtDate length]-0];
     tmpDate = [tmpDate stringByReplacingOccurrencesOfString:@"T" withString:@" "];
     tmpDate = [tmpDate stringByReplacingOccurrencesOfString:@"Z" withString:@""];
     tmpDate = [tmpDate stringByDeletingPathExtension];
@@ -65,7 +65,7 @@ extern void SVMXLog(NSString *format, ...);
     
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     
-    NSString * tmpDate = [localTime substringToIndex:[localTime length]-1];
+    NSString * tmpDate = [localTime substringToIndex:[localTime length]-0];
     tmpDate = [tmpDate stringByReplacingOccurrencesOfString:@"T" withString:@" "];
     tmpDate = [tmpDate stringByReplacingOccurrencesOfString:@"Z" withString:@""];
     tmpDate = [tmpDate stringByDeletingPathExtension];

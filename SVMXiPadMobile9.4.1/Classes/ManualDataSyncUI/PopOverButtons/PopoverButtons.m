@@ -654,7 +654,7 @@ PopoverButtons *popOver_view;
     appDelegate.dataBase.MyPopoverDelegate = nil;
     appDelegate.databaseInterface.MyPopoverDelegate = nil;
     appDelegate.wsInterface.MyPopoverDelegate = nil;
-    appDelegate.metaSyncRunning = NO;
+//    appDelegate.metaSyncRunning = NO;
     
     
     if (appDelegate.event_thread != nil)

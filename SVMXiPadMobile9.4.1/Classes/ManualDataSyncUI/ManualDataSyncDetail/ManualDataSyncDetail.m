@@ -438,15 +438,15 @@ PopoverButtons *popOver_view;
 		[mySegment2 addTarget:self action:@selector(segmentControlSelected2:) forControlEvents:UIControlEventValueChanged];
         		
 		
-		if ( [override_flag isEqualToString:@"Client_Override"])
+        if ( [override_flag isEqualToString:@"Client_Override"])
         {
-            [[[mySegment subviews] objectAtIndex:2] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
+            [[[mySegment subviews] objectAtIndex:0] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
         }
 		else if ([override_flag isEqualToString:@"None"]||[override_flag isEqualToString:@""])
         {
-            [[[mySegment subviews] objectAtIndex:0] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
+            [[[mySegment subviews] objectAtIndex:2] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
 			[[[mySegment1 subviews] objectAtIndex:2] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
-			[[[mySegment2 subviews] objectAtIndex:0] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
+			[[[mySegment2 subviews] objectAtIndex:2] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
         }
         else if ([override_flag isEqualToString:@"Server_Override"]||[override_flag isEqualToString:@""])
         {
@@ -456,14 +456,13 @@ PopoverButtons *popOver_view;
 		else if ([override_flag isEqualToString:@"retry"]||[override_flag isEqualToString:@""])
         {
             [[[mySegment1 subviews] objectAtIndex:0] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
-			[[[mySegment2 subviews] objectAtIndex:2] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
+			[[[mySegment2 subviews] objectAtIndex:0] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
         }
 		else if ([override_flag isEqualToString:@"remove"]||[override_flag isEqualToString:@""])
         {
             [[[mySegment1 subviews] objectAtIndex:1] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
 			
         }
-
 		cellContentViewCenter.x = (self._tableView.frame.size.width - mySegment.frame.size.width/2) - borderRight;
 		mySegment.center = cellContentViewCenter;
 		
@@ -641,15 +640,15 @@ PopoverButtons *popOver_view;
         [mySegment1 addTarget:self action:@selector(segmentControlSelected1:) forControlEvents:UIControlEventValueChanged];
 		[mySegment2 addTarget:self action:@selector(segmentControlSelected2:) forControlEvents:UIControlEventValueChanged];
         
-		if ( [override_flag isEqualToString:@"Client_Override"])
+        if ( [override_flag isEqualToString:@"Client_Override"])
         {
-            [[[mySegment subviews] objectAtIndex:2] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
+            [[[mySegment subviews] objectAtIndex:0] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
         }
 		else if ([override_flag isEqualToString:@"None"]||[override_flag isEqualToString:@""])
         {
-            [[[mySegment subviews] objectAtIndex:0] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
+            [[[mySegment subviews] objectAtIndex:2] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
 			[[[mySegment1 subviews] objectAtIndex:2] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
-			[[[mySegment2 subviews] objectAtIndex:0] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
+			[[[mySegment2 subviews] objectAtIndex:2] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
         }
         else if ([override_flag isEqualToString:@"Server_Override"]||[override_flag isEqualToString:@""])
         {
@@ -659,14 +658,13 @@ PopoverButtons *popOver_view;
 		else if ([override_flag isEqualToString:@"retry"]||[override_flag isEqualToString:@""])
         {
             [[[mySegment1 subviews] objectAtIndex:0] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
-			[[[mySegment2 subviews] objectAtIndex:2] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
+			[[[mySegment2 subviews] objectAtIndex:0] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
         }
 		else if ([override_flag isEqualToString:@"remove"]||[override_flag isEqualToString:@""])
         {
             [[[mySegment1 subviews] objectAtIndex:1] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
 			
         }
-		
 		cellContentViewCenter.x = (self._tableView.frame.size.width - mySegment.frame.size.width/2) - borderRight;
 		mySegment.center = cellContentViewCenter;
 		
