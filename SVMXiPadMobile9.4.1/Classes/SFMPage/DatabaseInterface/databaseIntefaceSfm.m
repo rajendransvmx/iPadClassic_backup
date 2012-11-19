@@ -1477,10 +1477,16 @@ extern void SVMXLog(NSString *format, ...);
                         if([data_type isEqualToString:@"datetime"])
                         {
                             [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+                            [dateFormatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
                             
                             today_Date = [dateFormatter stringFromDate:today];
+                            today_Date = [today_Date stringByReplacingOccurrencesOfString:@" " withString:@"T"];
+                            
                             tomorow_date = [dateFormatter stringFromDate:tomorrow];
+                            tomorow_date = [tomorow_date stringByReplacingOccurrencesOfString:@" " withString:@"T"];
+                            
                             yesterday_date = [dateFormatter stringFromDate:yesterday];
+                            yesterday_date = [yesterday_date stringByReplacingOccurrencesOfString:@" " withString:@"T"];
                             
                             if([mapping_value isEqualToString:MACRO_NOW])
                             {
@@ -2483,8 +2489,21 @@ extern void SVMXLog(NSString *format, ...);
         
     }
     
+   // regular_expression = [NSString stringWithFormat:@"(%@)", regular_expression];
+    
+    NSString * retExpression = @"";
+    
+    if ([regular_expression length] > 0)
+    {
+        retExpression = [NSString stringWithFormat:@"(%@)", regular_expression];
+    }
+    else
+    {
+        retExpression = [NSString stringWithFormat:@"%@", regular_expression];
+    }
+    
  //   SMLog(@"%@",regular_expression);
-    return regular_expression;
+    return retExpression;
 }
 
 -(BOOL)validateTheExpressionForRecordId:(NSString *)record_id objectName:(NSString *)objectName expression:(NSString *)expression
