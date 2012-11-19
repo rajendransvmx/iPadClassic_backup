@@ -2488,9 +2488,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         
     }
-    
-   // regular_expression = [NSString stringWithFormat:@"(%@)", regular_expression];
-    
+        
     NSString * retExpression = @"";
     
     if ([regular_expression length] > 0)
@@ -2985,6 +2983,7 @@ extern void SVMXLog(NSString *format, ...);
                         {
                             [dateFormatter setDateFormat:@"yyyy-MM-dd"];
                             
+
                             today_Date = [dateFormatter stringFromDate:today];
                             tomorow_date = [dateFormatter stringFromDate:tomorrow];
                             yesterday_date = [dateFormatter stringFromDate:yesterday];
@@ -3010,9 +3009,20 @@ extern void SVMXLog(NSString *format, ...);
                         {
                             [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
                             
+							[dateFormatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+                            
                             today_Date = [dateFormatter stringFromDate:today];
+                            today_Date = [today_Date stringByReplacingOccurrencesOfString:@" " withString:@"T"];
+                            
                             tomorow_date = [dateFormatter stringFromDate:tomorrow];
+                            tomorow_date = [tomorow_date stringByReplacingOccurrencesOfString:@" " withString:@"T"];
+                            
                             yesterday_date = [dateFormatter stringFromDate:yesterday];
+                            yesterday_date = [yesterday_date stringByReplacingOccurrencesOfString:@" " withString:@"T"];
+
+//                            today_Date = [dateFormatter stringFromDate:today];
+//                            tomorow_date = [dateFormatter stringFromDate:tomorrow];
+//                            yesterday_date = [dateFormatter stringFromDate:yesterday];
                             
                             if([mapping_value isEqualToString:MACRO_NOW])
                             {
