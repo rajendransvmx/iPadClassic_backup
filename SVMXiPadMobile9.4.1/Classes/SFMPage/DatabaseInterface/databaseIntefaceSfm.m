@@ -2839,44 +2839,183 @@ extern void SVMXLog(NSString *format, ...);
                 
                 if([mapping_component_type isEqualToString:VALUE_MAPPING])
                 {
-                    [final_dict  setObject:mapping_value forKey:target_field_name];
-                    if(source_field_name != 0 && [source_field_name length] != 0)
-                    {
-                        [final_dict  setObject:mapping_value forKey:target_field_name];
-                    }
+//                    [final_dict  setObject:mapping_value forKey:target_field_name];
+//                    if(source_field_name != 0 && [source_field_name length] != 0)
+//                    {
+//                        [final_dict  setObject:mapping_value forKey:target_field_name];
+//                    }
+//                    
+//                    
+//                    if([target_field_name isEqualToString:@"RecordTypeId"])
+//                    {
+//                        // NSString * value  =  ;
+//                        //select  record_type_id  from SFRecordType where record_type = '%@' target_object_name
+//                        
+//                        NSString * query = [NSString stringWithFormat:@"SELECT record_type_id FROM  SFRecordType where object_api_name = '%@' and record_type = '%@'" ,target_object_name,mapping_value];
+//                        NSString * record_type_id = @"";
+//                        
+//                        SMLog(@"RecordTypeId  valuemapping %@" ,query);
+//                        sqlite3_stmt * recordTypeId_statement ;
+//                        if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &recordTypeId_statement, nil) == SQLITE_OK)
+//                        {
+//                            while (synchronized_sqlite3_step(recordTypeId_statement) == SQLITE_ROW)
+//                            {
+//                                char * temp_record_type_id = (char *) synchronized_sqlite3_column_text(recordTypeId_statement, 0);
+//                                if(temp_record_type_id != nil)
+//                                {
+//                                    record_type_id = [NSString stringWithUTF8String:temp_record_type_id];
+//                                }
+//                            }
+//                        }
+//                        synchronized_sqlite3_finalize(recordTypeId_statement);
+//                        if(![record_type_id isEqualToString:@""])
+//                        {
+//                            mapping_value = record_type_id;
+//                        }
+//                        else
+//                        {
+//                            mapping_value = @"";
+//                        }
+//                        
+//                        [final_dict  setObject:mapping_value forKey:target_field_name];
+//                        
+//                    }
                     
-                    if([target_field_name isEqualToString:@"RecordTypeId"])
+                    if(target_field_name != 0 && [target_field_name length] != 0)
                     {
-                        // NSString * value  =  ;
-                        //select  record_type_id  from SFRecordType where record_type = '%@' target_object_name
                         
-                        NSString * query = [NSString stringWithFormat:@"SELECT record_type_id FROM  SFRecordType where object_api_name = '%@' and record_type = '%@'" ,target_object_name,mapping_value];
-                        NSString * record_type_id = @"";
+                        [final_dict  setObject:mapping_value forKey:target_field_name];
                         
-                        SMLog(@"RecordTypeId  valuemapping %@" ,query);
-                        sqlite3_stmt * recordTypeId_statement ;
-                        if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &recordTypeId_statement, nil) == SQLITE_OK)
+                        NSString * data_type = [appDelegate.databaseInterface getFieldDataType:target_object_name filedName:target_field_name];
+                        
+                        NSTimeInterval secondsPerDay = 24 * 60 * 60;
+                        
+                        NSString * today_Date ,* tomorow_date ,* yesterday_date;
+                        
+                        NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
+                        //[dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+                        
+                        NSDate *today = [[[NSDate alloc] init] autorelease];;
+                        
+                        NSDate *tomorrow, *yesterday;
+                        
+                        tomorrow = [today dateByAddingTimeInterval: secondsPerDay];
+                        
+                        yesterday = [today dateByAddingTimeInterval: -secondsPerDay];
+                        
+                        
+                        
+                        //for macros expantion
+                        if([data_type isEqualToString:@"date"])
                         {
-                            while (synchronized_sqlite3_step(recordTypeId_statement) == SQLITE_ROW)
+                            [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+                            
+                            
+                            today_Date = [dateFormatter stringFromDate:today];
+                            tomorow_date = [dateFormatter stringFromDate:tomorrow];
+                            yesterday_date = [dateFormatter stringFromDate:yesterday];
+                            
+                            if([mapping_value isEqualToString:MACRO_TODAY])
                             {
-                                char * temp_record_type_id = (char *) synchronized_sqlite3_column_text(recordTypeId_statement, 0);
-                                if(temp_record_type_id != nil)
+                                [final_dict setObject:today_Date forKey:target_field_name];
+                                
+                            }
+                            if([mapping_value isEqualToString:MACRO_TOMMOROW])
+                            {
+                                [final_dict setObject:tomorow_date forKey:target_field_name];
+                                
+                            }
+                            if([mapping_value isEqualToString:MACRO_YESTERDAY])
+                            {
+                                [final_dict setObject:yesterday_date forKey:target_field_name];
+                            }
+                            
+                        }
+                        
+                        if([data_type isEqualToString:@"datetime"])
+                        {
+                            [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+                            
+							[dateFormatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+                            
+                            today_Date = [dateFormatter stringFromDate:today];
+                            today_Date = [today_Date stringByReplacingOccurrencesOfString:@" " withString:@"T"];
+                            
+                            tomorow_date = [dateFormatter stringFromDate:tomorrow];
+                            tomorow_date = [tomorow_date stringByReplacingOccurrencesOfString:@" " withString:@"T"];
+                            
+                            yesterday_date = [dateFormatter stringFromDate:yesterday];
+                            yesterday_date = [yesterday_date stringByReplacingOccurrencesOfString:@" " withString:@"T"];
+                            
+                            //                            today_Date = [dateFormatter stringFromDate:today];
+                            //                            tomorow_date = [dateFormatter stringFromDate:tomorrow];
+                            //                            yesterday_date = [dateFormatter stringFromDate:yesterday];
+                            
+                            if([mapping_value isEqualToString:MACRO_NOW])
+                            {
+                                [final_dict setObject:today_Date forKey:target_field_name];
+                            }
+                            
+                            if([mapping_value isEqualToString:MACRO_TODAY])
+                            {
+                                [final_dict setObject:today_Date forKey:target_field_name];
+                            }
+                            
+                            if([mapping_value isEqualToString:MACRO_TOMMOROW])
+                            {
+                                [final_dict setObject:tomorow_date forKey:target_field_name];
+                            }
+                            
+                            if([mapping_value isEqualToString:MACRO_YESTERDAY])
+                            {
+                                [final_dict setObject:yesterday_date forKey:target_field_name];
+                            }
+                            
+                        }
+                        if([target_field_name isEqualToString:@"RecordTypeId"])
+                        {
+                            // NSString * value  =  ;
+                            //select  record_type_id  from SFRecordType where record_type = '%@' target_object_name
+                            
+                            NSString * query = [NSString stringWithFormat:@"SELECT record_type_id FROM  SFRecordType where object_api_name = '%@' and record_type = '%@'" ,target_object_name,mapping_value];
+                            NSString * record_type_id = @"";
+                            
+                            SMLog(@"RecordTypeId  valuemapping %@" ,query);
+                            sqlite3_stmt * recordTypeId_statement ;
+                            if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &recordTypeId_statement, nil) == SQLITE_OK)
+                            {
+                                while (synchronized_sqlite3_step(recordTypeId_statement) == SQLITE_ROW)
                                 {
-                                    record_type_id = [NSString stringWithUTF8String:temp_record_type_id];
+                                    char * temp_record_type_id = (char *) synchronized_sqlite3_column_text(recordTypeId_statement, 0);
+                                    if(temp_record_type_id != nil)
+                                    {
+                                        record_type_id = [NSString stringWithUTF8String:temp_record_type_id];
+                                    }
                                 }
                             }
-                        }
-                        synchronized_sqlite3_finalize(recordTypeId_statement);
-                        if(![record_type_id isEqualToString:@""])
-                        {
-                            mapping_value = record_type_id;
-                        }
-                        else
-                        {
-                            mapping_value = @"";
+                            synchronized_sqlite3_finalize(recordTypeId_statement);
+                            if(![record_type_id isEqualToString:@""])
+                            {
+                                mapping_value = record_type_id;
+                            }
+                            else
+                            {
+                                mapping_value = @"";
+                            }
+                            
+                            [final_dict  setObject:mapping_value forKey:target_field_name];
+                            
                         }
                         
-                        [final_dict  setObject:mapping_value forKey:target_field_name];
+                        
+                        if ([mapping_value isEqualToString:MACRO_CURRENTUSER])
+                        {
+                            [final_dict setObject:appDelegate.username forKey:target_field_name];
+                        }
+                        if ([mapping_value isEqualToString:MACRO_RECORDOWNER])
+                        {
+                            [final_dict setObject:MACRO_RECORDOWNER forKey:target_field_name];
+                        }
                         
                     }
 
@@ -2968,7 +3107,7 @@ extern void SVMXLog(NSString *format, ...);
                         NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
                         //[dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
                         
-                        NSDate *today = [[NSDate alloc] init];
+                        NSDate *today = [[[NSDate alloc] init] autorelease];;
                         
                         NSDate *tomorrow, *yesterday;
                         
@@ -2976,7 +3115,7 @@ extern void SVMXLog(NSString *format, ...);
                         
                         yesterday = [today dateByAddingTimeInterval: -secondsPerDay];
                         
-                        [today release];
+                       
                         
                         //for macros expantion
                         if([data_type isEqualToString:@"date"])
@@ -3026,12 +3165,12 @@ extern void SVMXLog(NSString *format, ...);
                             
                             if([mapping_value isEqualToString:MACRO_NOW])
                             {
-                                [final_dict setObject:today forKey:target_field_name];
+                                [final_dict setObject:today_Date forKey:target_field_name];
                             }
                             
                             if([mapping_value isEqualToString:MACRO_TODAY])
                             {
-                                [final_dict setObject:today forKey:target_field_name];
+                                [final_dict setObject:today_Date forKey:target_field_name];
                             }
                             
                             if([mapping_value isEqualToString:MACRO_TOMMOROW])
@@ -3041,7 +3180,7 @@ extern void SVMXLog(NSString *format, ...);
                             
                             if([mapping_value isEqualToString:MACRO_YESTERDAY])
                             {
-                                [final_dict setObject:yesterday forKey:target_field_name];
+                                [final_dict setObject:yesterday_date forKey:target_field_name];
                             }
                             
                         }
