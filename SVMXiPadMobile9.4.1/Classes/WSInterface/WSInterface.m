@@ -532,6 +532,11 @@ last_sync_time:(NSString *)last_sync_time
 {
     NSMutableArray * object_array = [[appDelegate.databaseInterface getAllRecordsFromConflictTableForOperationType:operationType overrideFlag:overrideFlag] retain];
     
+	if(appDelegate.dataSync_dict != nil)
+	{
+		appDelegate.dataSync_dict = nil;
+	}
+	
     if( appDelegate.dataSync_dict == nil)
         appDelegate.dataSync_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
     
