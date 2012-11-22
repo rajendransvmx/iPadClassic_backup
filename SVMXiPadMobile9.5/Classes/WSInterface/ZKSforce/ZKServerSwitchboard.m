@@ -56,7 +56,7 @@ static ZKServerSwitchboard * sharedSwitchboard =  nil;
 @end
 
 @implementation ZKServerSwitchboard
-
+@synthesize sessionExpiry;
 @synthesize apiUrl;
 @synthesize clientId;
 @synthesize sessionId;
