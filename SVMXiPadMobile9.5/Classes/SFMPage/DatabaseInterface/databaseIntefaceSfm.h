@@ -344,7 +344,7 @@
 
 
 //VALUE MAPPING THINGS 
-#define MACRO_TODAY                  @"TODAY"      //@"TODAY"
+#define MACRO_TODAY                  @"Today"      //@"TODAY"
 #define MACRO_TOMMOROW               @"Tomorrow"   //@"TOMMOrROW"
 #define MACRO_YESTERDAY              @"Yesterday"  //@"YESTERDAY"
 

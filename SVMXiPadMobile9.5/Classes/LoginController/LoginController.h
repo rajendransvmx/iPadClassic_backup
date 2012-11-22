@@ -98,6 +98,9 @@
  
     //sahana
     BOOL checkIn;
+	
+	//RADHA
+	BOOL shouldAppRelogin;
 }
 @property (nonatomic)BOOL checkIn;
 

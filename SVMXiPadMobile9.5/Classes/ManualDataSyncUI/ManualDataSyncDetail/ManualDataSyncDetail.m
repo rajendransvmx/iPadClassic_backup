@@ -1587,8 +1587,8 @@ PopoverButtons *popOver_view;
     NSString * ll_try_later = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_i_ll_try];
     
     UIAlertView * internet_alertView = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:retry otherButtonTitles:ll_try_later, nil];
-    [internet_alertView show];
-    [internet_alertView release];
+	[internet_alertView performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
+	[internet_alertView release];
 }
 
 #pragma mark-AlertViewDelagate

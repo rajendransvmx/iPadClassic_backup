@@ -50,6 +50,7 @@
 @property (nonatomic, copy) NSString *apiUrl;
 @property (nonatomic, copy) NSString *clientId;
 @property (nonatomic, copy) NSString *sessionId;
+@property (nonatomic, retain) NSDate *sessionExpiry;
 @property (nonatomic, copy) NSString *oAuthRefreshToken;
 @property (nonatomic, retain) ZKUserInfo *userInfo;
 @property (nonatomic, assign) BOOL updatesMostRecentlyUsed;

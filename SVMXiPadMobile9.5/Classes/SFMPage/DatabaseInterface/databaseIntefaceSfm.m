@@ -1457,17 +1457,17 @@ extern void SVMXLog(NSString *format, ...);
                             tomorow_date = [dateFormatter stringFromDate:tomorrow];
                             yesterday_date = [dateFormatter stringFromDate:yesterday];
                             
-                            if([mapping_value isEqualToString:MACRO_TODAY])
+                            if([mapping_value caseInsensitiveCompare:MACRO_TODAY] == NSOrderedSame)
                             {
                                [dict setObject:today_Date forKey:target_field_name];
                                 
                             }
-                            if([mapping_value isEqualToString:MACRO_TOMMOROW])
+                            if([mapping_value caseInsensitiveCompare:MACRO_TOMMOROW] == NSOrderedSame)
                             {
                                 [dict setObject:tomorow_date forKey:target_field_name];
 
                             }
-                            if([mapping_value isEqualToString:MACRO_YESTERDAY])
+                            if([mapping_value caseInsensitiveCompare:MACRO_YESTERDAY] == NSOrderedSame)
                             {
                                 [dict setObject:yesterday_date forKey:target_field_name];
                             }
@@ -1488,29 +1488,31 @@ extern void SVMXLog(NSString *format, ...);
                             yesterday_date = [dateFormatter stringFromDate:yesterday];
                             yesterday_date = [yesterday_date stringByReplacingOccurrencesOfString:@" " withString:@"T"];
                             
-                            if([mapping_value isEqualToString:MACRO_NOW])
+                            
+                            
+                            if([mapping_value caseInsensitiveCompare:MACRO_NOW]== NSOrderedSame)
                             {
                                 [dict setObject:today_Date forKey:target_field_name];
                             }
                             
-                            if([mapping_value isEqualToString:MACRO_TODAY])
+                            if([mapping_value caseInsensitiveCompare:MACRO_TODAY] == NSOrderedSame)
                             {
                                 [dict setObject:today_Date forKey:target_field_name];
                             }
                             
-                            if([mapping_value isEqualToString:MACRO_TOMMOROW])
+                            if([mapping_value caseInsensitiveCompare:MACRO_TOMMOROW] == NSOrderedSame)
                             {
                                 [dict setObject:tomorow_date forKey:target_field_name];
                             }
                             
-                            if([mapping_value isEqualToString:MACRO_YESTERDAY])
+                            if([mapping_value caseInsensitiveCompare:MACRO_YESTERDAY] == NSOrderedSame)
                             {
                                 [dict setObject:yesterday_date forKey:target_field_name]; //RADHA
                             }
                             
                         }
                         
-                        if ([mapping_value isEqualToString:MACRO_CURRENTUSER])
+                        if ([mapping_value caseInsensitiveCompare:MACRO_CURRENTUSER] == NSOrderedSame)
                         {
                              [dict setObject:appDelegate.username forKey:target_field_name];
                         }
@@ -2915,17 +2917,17 @@ extern void SVMXLog(NSString *format, ...);
                             tomorow_date = [dateFormatter stringFromDate:tomorrow];
                             yesterday_date = [dateFormatter stringFromDate:yesterday];
                             
-                            if([mapping_value isEqualToString:MACRO_TODAY])
+                            if([mapping_value caseInsensitiveCompare:MACRO_TODAY]== NSOrderedSame)
                             {
                                 [final_dict setObject:today_Date forKey:target_field_name];
                                 
                             }
-                            if([mapping_value isEqualToString:MACRO_TOMMOROW])
+                            if([mapping_value caseInsensitiveCompare:MACRO_TOMMOROW] == NSOrderedSame)
                             {
                                 [final_dict setObject:tomorow_date forKey:target_field_name];
                                 
                             }
-                            if([mapping_value isEqualToString:MACRO_YESTERDAY])
+                            if([mapping_value caseInsensitiveCompare:MACRO_YESTERDAY] == NSOrderedSame)
                             {
                                 [final_dict setObject:yesterday_date forKey:target_field_name];
                             }
@@ -2951,22 +2953,22 @@ extern void SVMXLog(NSString *format, ...);
                             //                            tomorow_date = [dateFormatter stringFromDate:tomorrow];
                             //                            yesterday_date = [dateFormatter stringFromDate:yesterday];
                             
-                            if([mapping_value isEqualToString:MACRO_NOW])
+                            if([mapping_value caseInsensitiveCompare:MACRO_NOW] == NSOrderedSame)
                             {
                                 [final_dict setObject:today_Date forKey:target_field_name];
                             }
                             
-                            if([mapping_value isEqualToString:MACRO_TODAY])
+                            if([mapping_value caseInsensitiveCompare:MACRO_TODAY] == NSOrderedSame)
                             {
                                 [final_dict setObject:today_Date forKey:target_field_name];
                             }
                             
-                            if([mapping_value isEqualToString:MACRO_TOMMOROW])
+                            if([mapping_value caseInsensitiveCompare:MACRO_TOMMOROW] == NSOrderedSame)
                             {
                                 [final_dict setObject:tomorow_date forKey:target_field_name];
                             }
                             
-                            if([mapping_value isEqualToString:MACRO_YESTERDAY])
+                            if([mapping_value caseInsensitiveCompare:MACRO_YESTERDAY] == NSOrderedSame)
                             {
                                 [final_dict setObject:yesterday_date forKey:target_field_name];
                             }

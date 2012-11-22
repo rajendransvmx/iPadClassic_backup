@@ -2591,8 +2591,9 @@ extern void SVMXLog(NSString *format, ...);
     NSString * response_error = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_RESPONSE_ERROR];
     NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
     UIAlertView * _alert = [[UIAlertView alloc] initWithTitle:response_error message:soap_fault delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
-    [_alert show];
-    [_alert release];
+	
+	[_alert performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
+	[_alert release];
 }
 
 #pragma mark - ActionMenu Delegate Method
@@ -8767,12 +8768,18 @@ extern void SVMXLog(NSString *format, ...);
     if ((interfaceOrientation == UIInterfaceOrientationPortrait) || (interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown))
     {
         keyboardHeight = boundRect.size.height;
-        frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - keyboardHeight);
+		if(appDelegate.sfmPageController.conflictExists && !isEditingDetail)
+			frame = CGRectMake(0, 100, self.view.frame.size.width, self.view.frame.size.height - keyboardHeight-100);
+		else
+			frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - keyboardHeight);
     }
     else
     {
         keyboardHeight = boundRect.size.width;
-        frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - keyboardHeight);
+		if(appDelegate.sfmPageController.conflictExists && !isEditingDetail)
+			frame = CGRectMake(0, 100, self.view.frame.size.width, self.view.frame.size.height - keyboardHeight-100);
+		else
+			frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - keyboardHeight);
     }
     
     tableView.frame = frame;
@@ -8783,13 +8790,13 @@ extern void SVMXLog(NSString *format, ...);
     {
         //Shrinivas --> Crash Fix
         NSInteger sections = [tableView numberOfSections];
-        NSInteger rows = [tableView numberOfRowsInSection:sections] - 1;
-        SMLog(@"%d", rows);
+        
         int index = 0;      
         
         for ( int i = 0; i < sections - 1; i++)
         {
-            for ( int j = 0; j < [tableView numberOfRowsInSection:i]; j++)
+			int j;
+            for ( j = 0; j < [tableView numberOfRowsInSection:i]; j++)
             {
                if (i == currentEditRow.section && j == currentEditRow.row)
                {
@@ -8799,28 +8806,27 @@ extern void SVMXLog(NSString *format, ...);
                }
                
             }
+			
+			if (i == currentEditRow.section && j == currentEditRow.row)
+				break;
         }
-        SMLog(@"%d", index);
-        
-        NSArray * visible = [self.tableView visibleCells];
-		SMLog(@"%d", [visible count]);
 		
-		//New fix for a suspected crash --> 
+        NSArray * visible = [self.tableView visibleCells];
+		
+		//New fix for a suspected crash -->
+		UITableViewCell * cell = [self.tableView cellForRowAtIndexPath:currentEditRow];
 		if ([visible count] > index)
 		{
-			UITableViewCell * cell = [visible objectAtIndex:index];
+			if ( currentEditRow.section != 0)
+				[self.tableView scrollRectToVisible:cell.frame animated:YES];
+			
+		}else{
 			
 			if ( currentEditRow.section != 0)
 				[self.tableView scrollRectToVisible:cell.frame animated:YES];
+			
 		}
 		
-//        UITableViewCell * cell = [visible objectAtIndex:index];
-//        
-//        if ( currentEditRow.section != 0)
-//            [self.tableView scrollRectToVisible:cell.frame animated:YES];
-        
-        //CGRect rowRect = [tableView rectForRowAtIndexPath:currentEditRow];
-        //[tableView scrollRectToVisible:rowRect animated:YES];
     }
     
     isKeyboardShowing = YES;
@@ -8835,50 +8841,38 @@ extern void SVMXLog(NSString *format, ...);
 {
     if (currentEditRow == nil)
         return;
+	
+	currentEditRow = nil;
     
-    //Shrinivas --> Crash Fix
-    NSInteger sections = [tableView numberOfSections];
-    
-    if(sections == 0)
-    {
-        return;
-    }
-    NSInteger rows = [tableView numberOfRowsInSection:sections - 1];
-    SMLog(@"%d", rows);
-    int index = 0;
-    
-    for ( int i = 0; i < sections - 1; i++)
-    {
-        for ( int j = 0; j < [tableView numberOfRowsInSection:i]; j++)
-        {
-            if (i == currentEditRow.section && j == currentEditRow.row)
-            {
-                break;
-            }else{
-                index ++;
-            }
-            
-        }
-    }
-    
-    SMLog(@"%d", index);
-    SMLog(@"%d", currentEditRow.row);
-    NSArray * visible = [self.tableView visibleCells];
-    /*
-    UITableViewCell * cell = [visible objectAtIndex:index];
-    if ( currentEditRow.section != 0)
-        [self.tableView scrollRectToVisible:cell.frame animated:YES];
-    */
-    //CGRect rowRect = [tableView rectForRowAtIndexPath:self.currentEditRow];
-    //[tableView scrollRectToVisible:rowRect animated:YES];
-    //Shrinivas 21/Aug/2012
-    if ([visible count] > index)
-    {
-        UITableViewCell * cell = [visible objectAtIndex:index];
-        if ( currentEditRow.section != 0)
-            [self.tableView scrollRectToVisible:cell.frame animated:YES];
-    }
-    currentEditRow = nil;
+//    //Shrinivas --> Crash Fix
+//    NSInteger sections = [tableView numberOfSections];
+//    
+//    if(sections == 0)
+//    {
+//        return;
+//    }
+//    NSInteger rows = [tableView numberOfRowsInSection:sections - 1];
+//    SMLog(@"%d", rows);
+//    int index = 0;
+//    
+//    for ( int i = 0; i < sections - 1; i++)
+//    {
+//		int j;
+//        for ( j = 0; j < [tableView numberOfRowsInSection:i]; j++)
+//        {
+//            if (i == currentEditRow.section && j == currentEditRow.row)
+//            {
+//                break;
+//            }else{
+//                index ++;
+//            }
+//            
+//        }
+//		
+//		if (i == currentEditRow.section && j == currentEditRow.row)
+//			break;
+//    }
+	
 }
 
 - (void) shrinkTableFromRow:(NSIndexPath *)indexPath
@@ -8922,6 +8916,18 @@ extern void SVMXLog(NSString *format, ...);
             [lookupPopover setPopoverContentSize:CGSizeMake(320, self.tableView.frame.size.height) animated:YES];
         }
     }
+	
+	//Shrinivas Fix for #005845
+	if (appDelegate.sfmPageController.conflictExists)
+	{
+		NSMutableString *Confilct= [appDelegate isConflictInEvent:[appDelegate.dataBase getApiNameFromFieldLabel: appDelegate.sfmPageController.objectName] local_id:appDelegate.sfmPageController.recordId];
+		
+		if([Confilct length]>0)
+		{
+			[self moveTableViewforDisplayingConflict:Confilct];
+		}
+	}
+
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath

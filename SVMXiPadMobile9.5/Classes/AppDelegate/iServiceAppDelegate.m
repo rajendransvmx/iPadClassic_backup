@@ -683,7 +683,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     NSString * response_error = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_RESPONSE_ERROR];
     NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
     UIAlertView * _alert = [[UIAlertView alloc] initWithTitle:response_error message:soap_fault delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
-    [_alert show];
+    [_alert performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
     [_alert release];
 }
 

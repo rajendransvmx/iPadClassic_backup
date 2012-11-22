@@ -105,6 +105,7 @@ extern void SVMXLog(NSString *format, ...);
 {	
     appDelegate.IsSSL_error = FALSE;
 	 appDelegate.IsLogedIn = ISLOGEDIN_TRUE;
+	shouldAppRelogin = NO;
     appDelegate.wsInterface.didOpComplete = FALSE;
     //shrinivas
     if (appDelegate.isBackground == TRUE)
@@ -129,12 +130,43 @@ extern void SVMXLog(NSString *format, ...);
     appDelegate.last_initial_data_sync_time = nil;
     appDelegate.do_meta_data_sync = DONT_ALLOW_META_DATA_SYNC;
     
-//    [self loginWithUsernamePassword];
-//    [appDelegate.wsInterface getOnDemandRecords:@"SVMXC__Service_Order__c" record_id:@"a1E70000000gtbiEAA"];
-    
     BOOL ContinueLogin = [self CheckForUserNamePassword];  //SYNC_HISTORY PLIST  check should be done before calling to the
     if(ContinueLogin)
     {
+		shouldAppRelogin = NO;
+		if( [[ZKServerSwitchboard switchboard] sessionId] )
+		{
+			//session id string is not nil
+			NSDate *sessionExpiry = [[ZKServerSwitchboard switchboard] sessionExpiry];
+			if( sessionExpiry )
+			{
+				if( [sessionExpiry timeIntervalSinceNow] < 0 )
+				{
+					//time to relogin using web service call
+					shouldAppRelogin = YES;
+				}
+				else
+				{
+					//no need to login macha
+				}
+			}
+			else
+			{
+				//time to relogin using web service call
+				shouldAppRelogin = YES;
+			}
+		}
+		else
+		{
+			//session id string is nil
+			shouldAppRelogin = YES;
+		}
+		if( shouldAppRelogin )
+		{
+			//call the web service for login da
+			[self loginWithUsernamePassword];
+		}
+
         [self showHomeScreenviewController];
     }
     else
@@ -644,57 +676,60 @@ extern void SVMXLog(NSString *format, ...);
         
         return;
     }
-    // before anything else, check for correct version
-    BOOL isVersionCorrect = [self checkVersion];
-    
-    if (!isVersionCorrect)
-    {
-        [[ZKServerSwitchboard switchboard] setApiUrl:nil];
-        
-        [self enableControls];
-        
-        return;
+	
+	if (!shouldAppRelogin)
+	{
+		// before anything else, check for correct version
+		BOOL isVersionCorrect = [self checkVersion];
+		
+		if (!isVersionCorrect)
+		{
+			[[ZKServerSwitchboard switchboard] setApiUrl:nil];
+			
+			[self enableControls];
+			
+			return;
+		}
+
+		appDelegate.didCheckProfile = FALSE;
+		appDelegate.userProfileId = @"";
+		
+		//Dont remove the code in the comments below
+		[appDelegate.wsInterface checkIfProfileExistsWithEventName:VALIDATE_PROFILE type:GROUP_PROFILE];
+		while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
+		{
+			if (![appDelegate isInternetConnectionAvailable])
+			{
+				appDelegate.shouldShowConnectivityStatus = YES;
+				[appDelegate displayNoInternetAvailable];
+				[self enableControls];
+				return;
+			}
+			
+			if (appDelegate.didCheckProfile)
+			{
+				break;
+			}
+			if (appDelegate.connection_error)
+			{
+				break;
+			}
+		}    
+
+		if ([appDelegate.userProfileId length] == 0)
+		{
+			UIAlertView * alert = [[UIAlertView alloc] initWithTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_TITLE] message:[appDelegate.wsInterface.tagsDictionary objectForKey:profile_error] delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
+			[alert show];
+			[alert release];
+			[activity stopAnimating];
+			[self enableControls];
+			
+			return;
+		}
+		
+
+		[self getTagsForTheFirstTime];
     }
-
-    appDelegate.didCheckProfile = FALSE;
-    appDelegate.userProfileId = @"";
-    
-    //Dont remove the code in the comments below
-    [appDelegate.wsInterface checkIfProfileExistsWithEventName:VALIDATE_PROFILE type:GROUP_PROFILE];
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
-    {
-        if (![appDelegate isInternetConnectionAvailable])
-        {
-            appDelegate.shouldShowConnectivityStatus = YES;
-            [appDelegate displayNoInternetAvailable];
-            [self enableControls];
-            return;
-        }
-        
-        if (appDelegate.didCheckProfile)
-        {
-            break;
-        }
-        if (appDelegate.connection_error)
-        {
-            break;
-        }
-    }    
-
-    if ([appDelegate.userProfileId length] == 0)
-    {
-        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_TITLE] message:[appDelegate.wsInterface.tagsDictionary objectForKey:profile_error] delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
-        [alert show];
-        [alert release];
-        [activity stopAnimating];
-        [self enableControls];
-        
-        return;
-    }
-    
-
-    [self getTagsForTheFirstTime];
-    
     didLoginCompleted = TRUE;
     appDelegate.didLoginAgain = TRUE;
     

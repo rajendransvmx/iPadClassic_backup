@@ -324,6 +324,15 @@ const NSUInteger kNumImages = 7;
     if( ( self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil] ) )
     {
         //initialize everything here if you please
+        if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
+        {
+            if(appDelegate.do_meta_data_sync != ALLOW_META_AND_DATA_SYNC)
+            {
+                appDelegate.wsInterface.tagsDictionary = [appDelegate.dataBase getTagsDictionary];
+                NSMutableDictionary * temp_dict = [appDelegate.wsInterface fillEmptyTags:appDelegate.wsInterface.tagsDictionary];
+                appDelegate.wsInterface.tagsDictionary = [temp_dict retain];
+            }
+        }
         [self refreshArray];
         self.scrollPages = [self getScrollViewNames];
     }
