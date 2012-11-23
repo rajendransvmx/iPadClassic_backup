@@ -1691,7 +1691,10 @@ PopoverButtons *popOver_view;
     NSString * continue_ = [appDelegate.wsInterface.tagsDictionary objectForKey:login_continue];
 	NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:RESET_APPLICATION];
 	NSString * message_ = @"Are you sure you want to reset application?";
-	if([message isEqualToString:@"Hold"])
+
+	NSString * version = [appDelegate serverPackageVersion];
+	int _stringNumber = [version intValue];
+	if(_stringNumber < (kMinPkgForRESETTag * 100000))
 	{
 		message = message_;
 	}

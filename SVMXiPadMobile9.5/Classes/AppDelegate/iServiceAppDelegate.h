@@ -25,6 +25,7 @@
 #define kLastLocationSettingUpdateTimestamp @"LastLocationSettingUpdateTimestamp"
 #define kPkgVersionCheckForGPS_AND_SFM_SEARCH   @"PackageVersionCheckForGPSandSFMSearch"
 #define kMinPkgForGPS_AND_SFMSEARCH             9.1
+#define kMinPkgForRESETTag						9.40003
 
 @class iServiceViewController;
 @class LoginController;
@@ -791,6 +792,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 
 //Radha - Auto Data sync
 - (void) updateSyncFailedFlag:(NSString *)flag;
+- (NSString *) serverPackageVersion;
 
 @end
 

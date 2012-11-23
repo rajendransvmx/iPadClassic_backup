@@ -1975,6 +1975,19 @@ NSString * GO_Online = @"GO_Online";
     }
     return status;
 }
+- (NSString *) serverPackageVersion
+{
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    NSString *packageVersion = nil;
+    if (userDefaults)
+    {
+        packageVersion = [userDefaults objectForKey:kPkgVersionCheckForGPS_AND_SFM_SEARCH];
+        SMLog(@"Pkg Version = %@",packageVersion);
+    }
+    return packageVersion;
+}
+
+
 - (void) updateInstalledPackageVersion
 {
     didGetVersion = FALSE;
