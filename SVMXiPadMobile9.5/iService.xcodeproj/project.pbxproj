@@ -6348,8 +6348,8 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"ARCHS[sdk=iphoneos*]" = "$(ARCHS_STANDARD_32_BIT)";
 				"ARCHS[sdk=iphonesimulator*]" = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Distribution: ServiceMax Inc";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: ServiceMax Inc";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = YES;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_GC = unsupported;
@@ -6364,7 +6364,7 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "iService-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Classes/SFMPage/ZBarSDK\"",
@@ -6372,8 +6372,8 @@
 				MACOSX_DEPLOYMENT_TARGET = "";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_NAME = "ServiceMax Mobile";
-				PROVISIONING_PROFILE = "59DE5ADB-21C2-462A-B3EF-9EE7593FCB1F";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "59DE5ADB-21C2-462A-B3EF-9EE7593FCB1F";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -6390,8 +6390,8 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"ARCHS[sdk=iphoneos*]" = "$(ARCHS_STANDARD_32_BIT)";
 				"ARCHS[sdk=iphonesimulator*]" = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Distribution: ServiceMax Inc";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: ServiceMax Inc";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_INPUT_FILETYPE = automatic;
@@ -6405,15 +6405,15 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "iService-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Classes/SFMPage/ZBarSDK\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = "";
 				PRODUCT_NAME = "ServiceMax Mobile";
-				PROVISIONING_PROFILE = "59DE5ADB-21C2-462A-B3EF-9EE7593FCB1F";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "59DE5ADB-21C2-462A-B3EF-9EE7593FCB1F";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -6456,8 +6456,8 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"ARCHS[sdk=iphoneos*]" = "$(ARCHS_STANDARD_32_BIT)";
 				"ARCHS[sdk=iphonesimulator*]" = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Distribution: ServiceMax Inc";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: ServiceMax Inc";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_INPUT_FILETYPE = automatic;
@@ -6471,7 +6471,7 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "iService-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Classes/SFMPage/ZBarSDK\"",
@@ -6479,8 +6479,8 @@
 				MACOSX_DEPLOYMENT_TARGET = "";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_NAME = "ServiceMax Mobile";
-				PROVISIONING_PROFILE = "59DE5ADB-21C2-462A-B3EF-9EE7593FCB1F";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "59DE5ADB-21C2-462A-B3EF-9EE7593FCB1F";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = YES;

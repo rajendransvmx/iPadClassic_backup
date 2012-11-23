@@ -12,6 +12,8 @@
 
 //FOR KEY VALUES IN DICTIONARY
 
+
+#define RESET_APPLICATION					@"IPAD018_TAG042"
 #define SFMDATABASE_NAME                    @"sfm.sqlite"
 //Tags List
 

@@ -3366,13 +3366,32 @@ extern void SVMXLog(NSString *format, ...);
     [UIView setAnimationDuration:0.3];
     [UIView setAnimationDelegate:self];
     [UIView setAnimationDidStopSelector:@selector(animation1DidStop:finished:context:)];
-    self.tableView.frame = CGRectMake(self.tableView.frame.origin.x, 100, self.tableView.frame.size.width, self.view.frame.size.height-100);
+	
+	if (detailViewObject.isInEditDetail)
+	{
+		detailViewObject.tableView.frame = CGRectMake(detailViewObject.tableView.frame.origin.x, 100, detailViewObject.tableView.frame.size.width, detailViewObject.view.frame.size.height-100);
+	}
+	else
+	{
+		self.tableView.frame = CGRectMake(self.tableView.frame.origin.x, 100, self.tableView.frame.size.width, self.view.frame.size.height-100);
+	}
+    
     [UIView commitAnimations];
 }
 
 - (void) animation1DidStop:(NSString *)animationID finished:(NSNumber *)finished context:(void *)context
 {
-    [tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+	if (detailViewObject.isInEditDetail)
+	{
+		[detailViewObject.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+
+	}
+	else
+	{
+		[tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+
+	}
+
 }
 
 /*
@@ -7545,6 +7564,15 @@ extern void SVMXLog(NSString *format, ...);
         detailViewObject.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:toolBar] autorelease];
         showSyncUI=YES;
         [self.navigationController pushViewController:detailViewObject animated:YES];
+		if (appDelegate.sfmPageController.conflictExists)
+		{
+			NSMutableString *Confilct= [appDelegate isConflictInEvent:[appDelegate.dataBase getApiNameFromFieldLabel: appDelegate.sfmPageController.objectName] local_id:appDelegate.sfmPageController.recordId];
+			
+			if([Confilct length]>0)
+			{
+				[self moveTableViewforDisplayingConflict:Confilct];
+			}
+		}
         [self enableSFMUI];
         
     }
@@ -8502,6 +8530,16 @@ extern void SVMXLog(NSString *format, ...);
     detailViewObject.showSyncUI = self.showSyncUI;
     showSyncUI=YES;
     [self.navigationController pushViewController:detailViewObject animated:YES];
+	if (appDelegate.sfmPageController.conflictExists)
+	{
+		NSMutableString *Confilct= [appDelegate isConflictInEvent:[appDelegate.dataBase getApiNameFromFieldLabel: appDelegate.sfmPageController.objectName] local_id:appDelegate.sfmPageController.recordId];
+		
+		if([Confilct length]>0)
+		{
+			[self moveTableViewforDisplayingConflict:Confilct];
+		}
+	}
+
 }
 
 -(void)backForNavigation:(id)sender
@@ -8769,7 +8807,7 @@ extern void SVMXLog(NSString *format, ...);
     {
         keyboardHeight = boundRect.size.height;
 		if(appDelegate.sfmPageController.conflictExists && !isEditingDetail)
-			frame = CGRectMake(0, 100, self.view.frame.size.width, self.view.frame.size.height - keyboardHeight-100);
+			frame = CGRectMake(0, 100, self.view.frame.size.width, self.view.frame.size.height - keyboardHeight - 100);
 		else
 			frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - keyboardHeight);
     }
@@ -8777,15 +8815,65 @@ extern void SVMXLog(NSString *format, ...);
     {
         keyboardHeight = boundRect.size.width;
 		if(appDelegate.sfmPageController.conflictExists && !isEditingDetail)
-			frame = CGRectMake(0, 100, self.view.frame.size.width, self.view.frame.size.height - keyboardHeight-100);
+			frame = CGRectMake(0, 100, self.view.frame.size.width, self.view.frame.size.height - keyboardHeight - 100);
 		else
 			frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - keyboardHeight);
     }
     
-    tableView.frame = frame;
+	if ( detailViewObject.isInEditDetail )
+		 detailViewObject.tableView.frame = frame;
+	else
+		tableView.frame = frame;
+		
 
 	[UIView commitAnimations];
     
+	//Check for lines :
+	if (detailViewObject.currentEditRow != nil)
+    {
+        //Shrinivas --> Crash Fix
+        NSInteger sections = [detailViewObject.tableView numberOfSections];
+        
+        int index = 0;
+        
+        for ( int i = 0; i < sections - 1; i++)
+        {
+			int j;
+            for ( j = 0; j < [detailViewObject.tableView numberOfRowsInSection:i]; j++)
+            {
+				if (i == detailViewObject.currentEditRow.section && j == detailViewObject.currentEditRow.row)
+				{
+					break;
+				}else{
+					index ++;
+				}
+				
+            }
+			
+			if (i == detailViewObject.currentEditRow.section && j == detailViewObject.currentEditRow.row)
+				break;
+        }
+		
+        NSArray * visible = [detailViewObject.tableView visibleCells];
+		
+		//New fix for a suspected crash -->
+		UITableViewCell * cell = [detailViewObject.tableView cellForRowAtIndexPath:detailViewObject.currentEditRow];
+		if ([visible count] > index)
+		{
+//			if ( detailViewObject.currentEditRow.section != 0)
+				[detailViewObject.tableView scrollRectToVisible:cell.frame animated:YES];
+			
+		}else{
+			
+//			if ( detailViewObject.currentEditRow.section != 0)
+				[detailViewObject.tableView scrollRectToVisible:cell.frame animated:YES];
+			
+		}
+		
+    }
+	//Check for lines:
+	
+	
     if (currentEditRow != nil)
     {
         //Shrinivas --> Crash Fix
@@ -12512,12 +12600,25 @@ extern void SVMXLog(NSString *format, ...);
     [UIView setAnimationDuration:0.3];
     [UIView setAnimationDelegate:self];
     [UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:context:)];
-    self.webView.frame = CGRectMake(0, 0, self.view.frame.size.width, 100);
-    self.webView.alpha = 1.0;
-   // self.webView.backgroundColor = [UIColor redColor];
     
+   // self.webView.backgroundColor = [UIColor redColor];
+    CGRect frame;
+	if (detailViewObject.isInEditDetail)
+	{
+		detailViewObject.webView.frame = CGRectMake(0, 0, detailViewObject.view.frame.size.width, 100);
+		detailViewObject.webView.alpha = 1.0;
+		frame = CGRectMake(10, 10, detailViewObject.webView.frame.size.width, 90);
+	}
+	else
+	{
+		frame = CGRectMake(10, 10, self.webView.frame.size.width, 90);
+		self.webView.frame = CGRectMake(0, 0, self.view.frame.size.width, 100);
+		self.webView.alpha = 1.0;
+	}
+	
+	
     [UIView commitAnimations];
-    CGRect frame = CGRectMake(10, 10, self.webView.frame.size.width, 90);
+	
     UITextView * view = [[[UITextView alloc] initWithFrame:frame] autorelease];
     view.text = error;
     view.font = [UIFont boldSystemFontOfSize:18.0];
@@ -12527,8 +12628,17 @@ extern void SVMXLog(NSString *format, ...);
     UIColor * color = [appDelegate colorForHex:colourCode];
     
     view.backgroundColor = color;
+	if (detailViewObject.isInEditDetail)
+	{
+		[detailViewObject.webView addSubview:view];
+	}
+	else
+	{
+		[self.webView addSubview:view];
+	}
+	
    
-    [self.webView addSubview:view];
+    
 }
 
 

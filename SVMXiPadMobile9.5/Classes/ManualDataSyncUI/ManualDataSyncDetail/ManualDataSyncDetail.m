@@ -1689,7 +1689,12 @@ PopoverButtons *popOver_view;
 	NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_TITLE];
     NSString * cancel = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
     NSString * continue_ = [appDelegate.wsInterface.tagsDictionary objectForKey:login_continue];
-	NSString * message = @"Are you sure you want to synchronize configuration?";
+	NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:RESET_APPLICATION];
+	NSString * message_ = @"Are you sure you want to reset application?";
+	if([message isEqualToString:@"Hold"])
+	{
+		message = message_;
+	}
 
 	resetAnApplication = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:continue_ otherButtonTitles:cancel, nil];
 	

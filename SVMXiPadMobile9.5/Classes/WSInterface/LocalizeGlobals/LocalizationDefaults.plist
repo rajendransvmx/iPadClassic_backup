@@ -598,6 +598,8 @@
 	<string>changes</string>
 	<key> IPAD018_TAG041</key>
 	<string>Are you sure you want to synchronize configuration?</string>
+	<key> IPAD018_TAG042</key>
+	<string>Are you sure you want to reset application?</string>
 	<key>IPAD012_TAG057</key>
 	<string>Meta sync failed due to too many script. Please contact your system administrator.</string>
 </dict>
