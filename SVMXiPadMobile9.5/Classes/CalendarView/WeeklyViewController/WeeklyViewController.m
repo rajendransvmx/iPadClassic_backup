@@ -1080,7 +1080,7 @@ extern void SVMXLog(NSString *format, ...);
     {
         if( prevDate > [date intValue] )
         {
-            NSRange monthRange = {6,2};
+            NSRange monthRange = {5,2};
             int newMonth = [[startTime substringWithRange:monthRange] intValue]; 
             newMonth = newMonth + 1;
             if(newMonth == 13 )
@@ -1113,7 +1113,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         else
         {
-            NSRange monthRange = {6,2};
+            NSRange monthRange = {5,2};
             int newMonth = [[startTime substringWithRange:monthRange] intValue]; 
             newMonth = newMonth -1;
             if(newMonth == 0 )
