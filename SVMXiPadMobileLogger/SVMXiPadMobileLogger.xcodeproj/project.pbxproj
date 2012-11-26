@@ -1,0 +1,360 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A89A6368164A77E400211AE8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A89A6367164A77E400211AE8 /* UIKit.framework */; };
+		A89A636A164A77E400211AE8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A89A6369164A77E400211AE8 /* Foundation.framework */; };
+		A89A636C164A77E400211AE8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A89A636B164A77E400211AE8 /* CoreGraphics.framework */; };
+		A89A6372164A77E400211AE8 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A89A6370164A77E400211AE8 /* InfoPlist.strings */; };
+		A89A6374164A77E400211AE8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A89A6373164A77E400211AE8 /* main.m */; };
+		A89A6378164A77E400211AE8 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A89A6377164A77E400211AE8 /* AppDelegate.m */; };
+		A89A637A164A77E400211AE8 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = A89A6379164A77E400211AE8 /* Default.png */; };
+		A89A637C164A77E400211AE8 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A89A637B164A77E400211AE8 /* Default@2x.png */; };
+		A89A637E164A77E400211AE8 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A89A637D164A77E400211AE8 /* Default-568h@2x.png */; };
+		A89A6381164A77E400211AE8 /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A89A6380164A77E400211AE8 /* MasterViewController.m */; };
+		A89A6384164A77E400211AE8 /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A89A6383164A77E400211AE8 /* DetailViewController.m */; };
+		A89A6387164A77E400211AE8 /* MasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A89A6385164A77E400211AE8 /* MasterViewController.xib */; };
+		A89A638A164A77E400211AE8 /* DetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A89A6388164A77E400211AE8 /* DetailViewController.xib */; };
+		A89A6392164A7CB000211AE8 /* AppLogsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A89A6391164A7CB000211AE8 /* AppLogsViewController.m */; };
+		A89A6395164A8AB300211AE8 /* save.png in Resources */ = {isa = PBXBuildFile; fileRef = A89A6394164A8AB300211AE8 /* save.png */; };
+		A89A6398164A8ABF00211AE8 /* email.png in Resources */ = {isa = PBXBuildFile; fileRef = A89A6396164A8ABF00211AE8 /* email.png */; };
+		A89A6399164A8ABF00211AE8 /* referesh.png in Resources */ = {isa = PBXBuildFile; fileRef = A89A6397164A8ABF00211AE8 /* referesh.png */; };
+		A8F95192164B93450093D2BA /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8F95191164B93450093D2BA /* MessageUI.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A89A6363164A77E400211AE8 /* SVMXiPadMobileLogger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SVMXiPadMobileLogger.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A89A6367164A77E400211AE8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		A89A6369164A77E400211AE8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		A89A636B164A77E400211AE8 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		A89A636F164A77E400211AE8 /* SVMXiPadMobileLogger-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SVMXiPadMobileLogger-Info.plist"; sourceTree = "<group>"; };
+		A89A6371164A77E400211AE8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		A89A6373164A77E400211AE8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		A89A6375164A77E400211AE8 /* SVMXiPadMobileLogger-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SVMXiPadMobileLogger-Prefix.pch"; sourceTree = "<group>"; };
+		A89A6376164A77E400211AE8 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		A89A6377164A77E400211AE8 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		A89A6379164A77E400211AE8 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+		A89A637B164A77E400211AE8 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
+		A89A637D164A77E400211AE8 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		A89A637F164A77E400211AE8 /* MasterViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MasterViewController.h; sourceTree = "<group>"; };
+		A89A6380164A77E400211AE8 /* MasterViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MasterViewController.m; sourceTree = "<group>"; };
+		A89A6382164A77E400211AE8 /* DetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailViewController.h; sourceTree = "<group>"; };
+		A89A6383164A77E400211AE8 /* DetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailViewController.m; sourceTree = "<group>"; };
+		A89A6386164A77E400211AE8 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MasterViewController.xib; sourceTree = "<group>"; };
+		A89A6389164A77E400211AE8 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/DetailViewController.xib; sourceTree = "<group>"; };
+		A89A6390164A7CAF00211AE8 /* AppLogsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppLogsViewController.h; sourceTree = "<group>"; };
+		A89A6391164A7CB000211AE8 /* AppLogsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppLogsViewController.m; sourceTree = "<group>"; };
+		A89A6394164A8AB300211AE8 /* save.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = save.png; sourceTree = "<group>"; };
+		A89A6396164A8ABF00211AE8 /* email.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = email.png; sourceTree = "<group>"; };
+		A89A6397164A8ABF00211AE8 /* referesh.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = referesh.png; sourceTree = "<group>"; };
+		A8F95191164B93450093D2BA /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A89A6360164A77E400211AE8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A8F95192164B93450093D2BA /* MessageUI.framework in Frameworks */,
+				A89A6368164A77E400211AE8 /* UIKit.framework in Frameworks */,
+				A89A636A164A77E400211AE8 /* Foundation.framework in Frameworks */,
+				A89A636C164A77E400211AE8 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A89A6358164A77E400211AE8 = {
+			isa = PBXGroup;
+			children = (
+				A8F95191164B93450093D2BA /* MessageUI.framework */,
+				A89A636D164A77E400211AE8 /* SVMXiPadMobileLogger */,
+				A89A6366164A77E400211AE8 /* Frameworks */,
+				A89A6364164A77E400211AE8 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A89A6364164A77E400211AE8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A89A6363164A77E400211AE8 /* SVMXiPadMobileLogger.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A89A6366164A77E400211AE8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A89A6367164A77E400211AE8 /* UIKit.framework */,
+				A89A6369164A77E400211AE8 /* Foundation.framework */,
+				A89A636B164A77E400211AE8 /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A89A636D164A77E400211AE8 /* SVMXiPadMobileLogger */ = {
+			isa = PBXGroup;
+			children = (
+				A89A6393164A8AA700211AE8 /* images */,
+				A89A6376164A77E400211AE8 /* AppDelegate.h */,
+				A89A6377164A77E400211AE8 /* AppDelegate.m */,
+				A89A637F164A77E400211AE8 /* MasterViewController.h */,
+				A89A6380164A77E400211AE8 /* MasterViewController.m */,
+				A89A6382164A77E400211AE8 /* DetailViewController.h */,
+				A89A6383164A77E400211AE8 /* DetailViewController.m */,
+				A89A6390164A7CAF00211AE8 /* AppLogsViewController.h */,
+				A89A6391164A7CB000211AE8 /* AppLogsViewController.m */,
+				A89A6385164A77E400211AE8 /* MasterViewController.xib */,
+				A89A6388164A77E400211AE8 /* DetailViewController.xib */,
+				A89A636E164A77E400211AE8 /* Supporting Files */,
+			);
+			path = SVMXiPadMobileLogger;
+			sourceTree = "<group>";
+		};
+		A89A636E164A77E400211AE8 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				A89A636F164A77E400211AE8 /* SVMXiPadMobileLogger-Info.plist */,
+				A89A6370164A77E400211AE8 /* InfoPlist.strings */,
+				A89A6373164A77E400211AE8 /* main.m */,
+				A89A6375164A77E400211AE8 /* SVMXiPadMobileLogger-Prefix.pch */,
+				A89A6379164A77E400211AE8 /* Default.png */,
+				A89A637B164A77E400211AE8 /* Default@2x.png */,
+				A89A637D164A77E400211AE8 /* Default-568h@2x.png */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		A89A6393164A8AA700211AE8 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				A89A6396164A8ABF00211AE8 /* email.png */,
+				A89A6397164A8ABF00211AE8 /* referesh.png */,
+				A89A6394164A8AB300211AE8 /* save.png */,
+			);
+			name = images;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A89A6362164A77E400211AE8 /* SVMXiPadMobileLogger */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A89A638D164A77E400211AE8 /* Build configuration list for PBXNativeTarget "SVMXiPadMobileLogger" */;
+			buildPhases = (
+				A89A635F164A77E400211AE8 /* Sources */,
+				A89A6360164A77E400211AE8 /* Frameworks */,
+				A89A6361164A77E400211AE8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SVMXiPadMobileLogger;
+			productName = SVMXiPadMobileLogger;
+			productReference = A89A6363164A77E400211AE8 /* SVMXiPadMobileLogger.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A89A635A164A77E400211AE8 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0450;
+				ORGANIZATIONNAME = "Siva Manne";
+			};
+			buildConfigurationList = A89A635D164A77E400211AE8 /* Build configuration list for PBXProject "SVMXiPadMobileLogger" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = A89A6358164A77E400211AE8;
+			productRefGroup = A89A6364164A77E400211AE8 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A89A6362164A77E400211AE8 /* SVMXiPadMobileLogger */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A89A6361164A77E400211AE8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A89A6372164A77E400211AE8 /* InfoPlist.strings in Resources */,
+				A89A637A164A77E400211AE8 /* Default.png in Resources */,
+				A89A637C164A77E400211AE8 /* Default@2x.png in Resources */,
+				A89A637E164A77E400211AE8 /* Default-568h@2x.png in Resources */,
+				A89A6387164A77E400211AE8 /* MasterViewController.xib in Resources */,
+				A89A638A164A77E400211AE8 /* DetailViewController.xib in Resources */,
+				A89A6395164A8AB300211AE8 /* save.png in Resources */,
+				A89A6398164A8ABF00211AE8 /* email.png in Resources */,
+				A89A6399164A8ABF00211AE8 /* referesh.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A89A635F164A77E400211AE8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A89A6374164A77E400211AE8 /* main.m in Sources */,
+				A89A6378164A77E400211AE8 /* AppDelegate.m in Sources */,
+				A89A6381164A77E400211AE8 /* MasterViewController.m in Sources */,
+				A89A6384164A77E400211AE8 /* DetailViewController.m in Sources */,
+				A89A6392164A7CB000211AE8 /* AppLogsViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		A89A6370164A77E400211AE8 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A89A6371164A77E400211AE8 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		A89A6385164A77E400211AE8 /* MasterViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A89A6386164A77E400211AE8 /* en */,
+			);
+			name = MasterViewController.xib;
+			sourceTree = "<group>";
+		};
+		A89A6388164A77E400211AE8 /* DetailViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A89A6389164A77E400211AE8 /* en */,
+			);
+			name = DetailViewController.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		A89A638B164A77E400211AE8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Debug;
+		};
+		A89A638C164A77E400211AE8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A89A638E164A77E400211AE8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Distribution: ServiceMax Inc";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: ServiceMax Inc";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SVMXiPadMobileLogger/SVMXiPadMobileLogger-Prefix.pch";
+				INFOPLIST_FILE = "SVMXiPadMobileLogger/SVMXiPadMobileLogger-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "BC4B5E7E-D950-4B3F-804B-79C3748D0DFC";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "BC4B5E7E-D950-4B3F-804B-79C3748D0DFC";
+				VALID_ARCHS = armv7;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		A89A638F164A77E400211AE8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Distribution: ServiceMax Inc";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: ServiceMax Inc";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SVMXiPadMobileLogger/SVMXiPadMobileLogger-Prefix.pch";
+				INFOPLIST_FILE = "SVMXiPadMobileLogger/SVMXiPadMobileLogger-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "BC4B5E7E-D950-4B3F-804B-79C3748D0DFC";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "BC4B5E7E-D950-4B3F-804B-79C3748D0DFC";
+				VALID_ARCHS = armv7;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A89A635D164A77E400211AE8 /* Build configuration list for PBXProject "SVMXiPadMobileLogger" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A89A638B164A77E400211AE8 /* Debug */,
+				A89A638C164A77E400211AE8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A89A638D164A77E400211AE8 /* Build configuration list for PBXNativeTarget "SVMXiPadMobileLogger" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A89A638E164A77E400211AE8 /* Debug */,
+				A89A638F164A77E400211AE8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A89A635A164A77E400211AE8 /* Project object */;
+}
