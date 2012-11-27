@@ -794,6 +794,10 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 - (void) updateSyncFailedFlag:(NSString *)flag;
 - (NSString *) serverPackageVersion;
 
+
+//RADHA //26/Nov/2012
+- (char *) convertStringIntoChar:(NSString *)data;
+
 @end
 
 @interface processInfo : NSObject {

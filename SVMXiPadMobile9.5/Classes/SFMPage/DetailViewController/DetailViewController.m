@@ -8820,8 +8820,8 @@ extern void SVMXLog(NSString *format, ...);
 			frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - keyboardHeight);
     }
     
-	if ( detailViewObject.isInEditDetail )
-		 detailViewObject.tableView.frame = frame;
+	if ( self.isInEditDetail )  //Shrinivas detailViewObject.isInEditDetail changed
+		 self.tableView.frame = frame;
 	else
 		tableView.frame = frame;
 		
@@ -8858,21 +8858,22 @@ extern void SVMXLog(NSString *format, ...);
 		
 		//New fix for a suspected crash -->
 		UITableViewCell * cell = [detailViewObject.tableView cellForRowAtIndexPath:detailViewObject.currentEditRow];
-		if ([visible count] > index)
+		
+		if (cell != nil)
 		{
-//			if ( detailViewObject.currentEditRow.section != 0)
+			if ([visible count] > index){
+				
 				[detailViewObject.tableView scrollRectToVisible:cell.frame animated:YES];
-			
-		}else{
-			
-//			if ( detailViewObject.currentEditRow.section != 0)
+				
+			}else{
+				
 				[detailViewObject.tableView scrollRectToVisible:cell.frame animated:YES];
-			
+				
+			}
+
 		}
 		
     }
-	//Check for lines:
-	
 	
     if (currentEditRow != nil)
     {
@@ -8903,15 +8904,17 @@ extern void SVMXLog(NSString *format, ...);
 		
 		//New fix for a suspected crash -->
 		UITableViewCell * cell = [self.tableView cellForRowAtIndexPath:currentEditRow];
-		if ([visible count] > index)
+		if (cell != nil)
 		{
-			if ( currentEditRow.section != 0)
+			if ([visible count] > index){
+				
 				[self.tableView scrollRectToVisible:cell.frame animated:YES];
-			
-		}else{
-			
-			if ( currentEditRow.section != 0)
+				
+			}else{
+				
 				[self.tableView scrollRectToVisible:cell.frame animated:YES];
+				
+			}
 			
 		}
 		

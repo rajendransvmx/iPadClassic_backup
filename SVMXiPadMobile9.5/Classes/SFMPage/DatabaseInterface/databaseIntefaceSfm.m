@@ -4428,6 +4428,8 @@ extern void SVMXLog(NSString *format, ...);
                                 {
                                     final_value = @"";
                                 }
+								
+								char * _finalValue = [appDelegate convertStringIntoChar:final_value];
                                 
                                 if([columnType isEqualToString:DOUBLE])
                                 {
@@ -4439,19 +4441,19 @@ extern void SVMXLog(NSString *format, ...);
                                 }
                                 else if([columnType isEqualToString:DATETIME])
                                 {
-                                    sqlite3_bind_text(bulk_statement, column_num, [final_value UTF8String], [final_value length], SQLITE_TRANSIENT);
+                                    sqlite3_bind_text(bulk_statement, column_num, _finalValue, strlen(_finalValue), SQLITE_TRANSIENT);
                                 }
                                 else if([columnType isEqualToString:VARCHAR])
                                 {
-                                    sqlite3_bind_text(bulk_statement, column_num, [final_value UTF8String], [final_value length], SQLITE_TRANSIENT);
+                                    sqlite3_bind_text(bulk_statement, column_num, _finalValue, strlen(_finalValue), SQLITE_TRANSIENT);
                                 }
                                 else if([columnType isEqualToString:_BOOL])
                                 {
-                                    sqlite3_bind_text(bulk_statement, column_num, [final_value UTF8String], [final_value length], SQLITE_TRANSIENT);
+                                    sqlite3_bind_text(bulk_statement, column_num, _finalValue, strlen(_finalValue), SQLITE_TRANSIENT);
                                 }
                                 else
                                 {
-                                    sqlite3_bind_text(bulk_statement, column_num, [final_value UTF8String], [final_value length], SQLITE_TRANSIENT);
+                                    sqlite3_bind_text(bulk_statement, column_num, _finalValue, strlen(_finalValue), SQLITE_TRANSIENT);
                                 }
                             }
                             
@@ -5532,8 +5534,8 @@ extern void SVMXLog(NSString *format, ...);
         value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     
     NSString * query = [NSString stringWithFormat:@"UPDATE  '%@' SET  valid_for = '%@' , index_value = '%d'  WHERE  object_api_name = '%@' AND field_api_name = '%@'  AND value = '%@'" , SFPicklist , valid_for_value ,index_value, object_name , field_api_name , value ];
-    
-    char * err ;
+	
+	char * err ;
     if(synchronized_sqlite3_exec(appDelegate.db, [query UTF8String], NULL, NULL, &err))
     {
         SMLog(@"Failed to UPDATE SFPicklist ");

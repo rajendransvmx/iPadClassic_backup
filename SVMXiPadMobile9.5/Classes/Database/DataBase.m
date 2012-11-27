@@ -2516,19 +2516,6 @@ extern void SVMXLog(NSString *format, ...);
                 
                 objectName = ([dict valueForKey:OBJECT] != nil)?[dict valueForKey:OBJECT]:@"";
            
-                
-              /*  NSDictionary * objectDict = [objectDefinition objectAtIndex:i];
-                NSArray * keys = [objectDict allKeys];
-                for (int k = 0; k < [keys count]; k++)
-                {
-                    if ([objectName isEqualToString:[keys objectAtIndex:k]])
-                    {
-                        objectArray = [objectDict objectForKey:[keys objectAtIndex:k]];
-                        break;
-                    }
-                } */
-                
-                
                 BOOL OBJFLAG = FALSE;
                 
                 for (NSDictionary * tempdict in objectDefinition)
@@ -2580,32 +2567,50 @@ extern void SVMXLog(NSString *format, ...);
                     
                     NSString * type = ([obj objectForKey:_TYPE] != nil)?[obj objectForKey:_TYPE]:@"";
                     type = [type lowercaseString];
+					               
+					char * _objectName = [appDelegate convertStringIntoChar:objectName];
+					
+                    sqlite3_bind_text(bulkStmt, 1, _objectName, strlen(_objectName), SQLITE_TRANSIENT);
+					
+					char * _field = [appDelegate convertStringIntoChar:([obj objectForKey:FIELD] != nil)?[obj objectForKey:FIELD]:@""];
                     
-                    sqlite3_bind_text(bulkStmt, 1, [objectName UTF8String], [objectName length], SQLITE_TRANSIENT);
+                    sqlite3_bind_text(bulkStmt, 2, _field, strlen(_field), SQLITE_TRANSIENT);
+					
+					char * _length = [appDelegate convertStringIntoChar:([obj objectForKey:_LENGTH] != nil)?[obj objectForKey:_LENGTH]:@""];
                     
-                    sqlite3_bind_text(bulkStmt, 2, [([obj objectForKey:FIELD] != nil)?[obj objectForKey:FIELD]:@"" UTF8String], [([obj objectForKey:FIELD] != nil)?[obj objectForKey:FIELD]:@"" length], SQLITE_TRANSIENT);
+                    sqlite3_bind_text(bulkStmt, 3, _length, strlen(_length), SQLITE_TRANSIENT);
+					
+					char * _type = [appDelegate convertStringIntoChar:type];
                     
-                    sqlite3_bind_text(bulkStmt, 3, [([obj objectForKey:_LENGTH] != nil)?[obj objectForKey:_LENGTH]:@"" UTF8String], [([obj objectForKey:_LENGTH] != nil)?[obj objectForKey:_LENGTH]:@"" length], SQLITE_TRANSIENT);
+                    sqlite3_bind_text(bulkStmt, 4, _type, strlen(_type), SQLITE_TRANSIENT);
+					
+					char * _reference_to = [appDelegate convertStringIntoChar:([obj objectForKey:_REFERENCETO] != nil)?[obj objectForKey:_REFERENCETO]:@""];
                     
-                    sqlite3_bind_text(bulkStmt, 4, [type UTF8String], [type length], SQLITE_TRANSIENT);
+                    sqlite3_bind_text(bulkStmt, 5, _reference_to, strlen(_reference_to), SQLITE_TRANSIENT);
+					
+					char * _relationshipName = [appDelegate convertStringIntoChar:([obj objectForKey:_RELATIONSHIPNAME] != nil)?[obj objectForKey:_RELATIONSHIPNAME]:@""];
                     
-                    sqlite3_bind_text(bulkStmt, 5, [([obj objectForKey:_REFERENCETO] != nil)?[obj objectForKey:_REFERENCETO]:@"" UTF8String], [([obj objectForKey:_REFERENCETO] != nil)?[obj objectForKey:_REFERENCETO]:@"" length], SQLITE_TRANSIENT);
+                    sqlite3_bind_text(bulkStmt, 6, _relationshipName, strlen(_relationshipName), SQLITE_TRANSIENT);
+					
+					char * _label = [appDelegate convertStringIntoChar:label];
                     
-                    sqlite3_bind_text(bulkStmt, 6, [([obj objectForKey:_RELATIONSHIPNAME] != nil)?[obj objectForKey:_RELATIONSHIPNAME]:@"" UTF8String], [([obj objectForKey:_RELATIONSHIPNAME] != nil)?[obj objectForKey:_RELATIONSHIPNAME]:@"" length], SQLITE_TRANSIENT);
+                    sqlite3_bind_text(bulkStmt, 7, _label, strlen(_label), SQLITE_TRANSIENT);
+					
+					char * _emptyString = [appDelegate convertStringIntoChar:label];
                     
-                    sqlite3_bind_text(bulkStmt, 7, [label UTF8String], [label length], SQLITE_TRANSIENT);
+                    sqlite3_bind_text(bulkStmt, 8, _emptyString, strlen(_emptyString), SQLITE_TRANSIENT);
                     
-                    sqlite3_bind_text(bulkStmt, 8, [emptyString UTF8String], [emptyString length], SQLITE_TRANSIENT);
+                    sqlite3_bind_text(bulkStmt, 9, _emptyString, strlen(_emptyString), SQLITE_TRANSIENT);
                     
-                    sqlite3_bind_text(bulkStmt, 9, [emptyString UTF8String], [emptyString length], SQLITE_TRANSIENT);
+                    sqlite3_bind_text(bulkStmt, 10, _emptyString, strlen(_emptyString), SQLITE_TRANSIENT);
                     
-                    sqlite3_bind_text(bulkStmt, 10, [emptyString UTF8String], [emptyString length], SQLITE_TRANSIENT);
+                    sqlite3_bind_text(bulkStmt, 11, _emptyString, strlen(_emptyString), SQLITE_TRANSIENT);
                     
-                    sqlite3_bind_text(bulkStmt, 11, [emptyString UTF8String], [emptyString length], SQLITE_TRANSIENT);
+                    sqlite3_bind_text(bulkStmt, 12, _emptyString, strlen(_emptyString), SQLITE_TRANSIENT);
+					
+					char * _nameField = [appDelegate convertStringIntoChar:([obj objectForKey:_NAMEFIELD] != nil)?[obj objectForKey:_NAMEFIELD]:@""];
                     
-                    sqlite3_bind_text(bulkStmt, 12, [emptyString UTF8String], [emptyString length], SQLITE_TRANSIENT);
-                    
-                    sqlite3_bind_text(bulkStmt, 13, [([obj objectForKey:_NAMEFIELD] != nil)?[obj objectForKey:_NAMEFIELD]:@"" UTF8String], [([obj objectForKey:_NAMEFIELD] != nil)?[obj objectForKey:_NAMEFIELD]:@"" length], SQLITE_TRANSIENT);
+                    sqlite3_bind_text(bulkStmt, 13, _nameField, strlen(_nameField), SQLITE_TRANSIENT);
                     
                     sqlite3_bind_int(bulkStmt, 14, id_value++);
                     
@@ -2651,19 +2656,7 @@ extern void SVMXLog(NSString *format, ...);
             
             objectName = ([dict valueForKey:OBJECT] != nil)?[dict valueForKey:OBJECT]:@"";
               
-           /* NSDictionary * objectDict = [objectDefinition objectAtIndex:i];
-            NSArray * keys = [objectDict allKeys];
-            for (int k = 0; k < [keys count]; k++)
-            {
-                if ([objectName isEqualToString:[keys objectAtIndex:k]])
-                {
-                    objectArray = [objectDict objectForKey:[keys objectAtIndex:k]];
-                    break;
-                }
-            }
-            SMLog(@"%d", [objectArray count]);*/
-            
-            BOOL OBJFLAG = FALSE;
+			BOOL OBJFLAG = FALSE;
             
             NSArray * objectArray = [[[NSArray alloc] init] autorelease];
             for (NSDictionary * tempdict in objectDefinition)
@@ -2717,11 +2710,17 @@ extern void SVMXLog(NSString *format, ...);
                 
                     if (!([referenceName isEqualToString:@""]))
                     {
-                        sqlite3_bind_text(bulkStmt, 1, [objectName UTF8String], [objectName length], SQLITE_TRANSIENT);
+						char * _objectName = [appDelegate convertStringIntoChar:objectName];
+						
+                        sqlite3_bind_text(bulkStmt, 1, _objectName, strlen(_objectName), SQLITE_TRANSIENT);
+						
+						char * _field = [appDelegate convertStringIntoChar:([obj objectForKey:FIELD] != nil)?[obj objectForKey:FIELD]:@""];
                         
-                        sqlite3_bind_text(bulkStmt, 2, [([obj objectForKey:FIELD] != nil)?[obj objectForKey:FIELD]:@"" UTF8String], [ ([obj objectForKey:FIELD] != nil)?[obj objectForKey:FIELD]:@"" length], SQLITE_TRANSIENT);
+                        sqlite3_bind_text(bulkStmt, 2, _field, strlen(_field), SQLITE_TRANSIENT);
+						
+						char * _reference_to = [appDelegate convertStringIntoChar:([obj objectForKey:_REFERENCETO] != nil)?[obj objectForKey:_REFERENCETO]:@""];
                         
-                        sqlite3_bind_text(bulkStmt, 3, [([obj objectForKey:_REFERENCETO] != nil)?[obj objectForKey:_REFERENCETO]:@"" UTF8String], [([obj objectForKey:_REFERENCETO] != nil)?[obj objectForKey:_REFERENCETO]:@"" length], SQLITE_TRANSIENT);
+                        sqlite3_bind_text(bulkStmt, 3, _reference_to, strlen(_reference_to), SQLITE_TRANSIENT);
                         
                         sqlite3_bind_int(bulkStmt, 4, id_Value++);
                         
@@ -2764,19 +2763,7 @@ extern void SVMXLog(NSString *format, ...);
             
             objectName = ([dict valueForKey:OBJECT] != nil)?[dict valueForKey:OBJECT]:@"";
             
-           /* NSDictionary * objectDict = [objectDefinition objectAtIndex:i];
-            
-            NSArray * objectArray = [[[NSArray alloc] init] autorelease];
-            NSArray * keys = [objectDict allKeys];
-            for (int k = 0; k < [keys count]; k++)
-            {
-                if ([objectName isEqualToString:[keys objectAtIndex:k]])
-                {
-                    objectArray = [objectDict objectForKey:[keys objectAtIndex:k]];
-                    break;
-                }
-            }*/
-            
+					
             BOOL OBJFLAG = FALSE;
             
             NSArray * objectArray = [[[NSArray alloc] init] autorelease];
@@ -2841,12 +2828,17 @@ extern void SVMXLog(NSString *format, ...);
                 {
                     if (![[recordKeys objectAtIndex:r] isEqualToString:MRECORDTYPE])
                     {
+						char * _recordKeys = [appDelegate convertStringIntoChar:[recordKeys objectAtIndex:r]];
                         
-                        sqlite3_bind_text(bulkStmt, 1, [[recordKeys objectAtIndex:r] UTF8String], [[recordKeys objectAtIndex:r] length], SQLITE_TRANSIENT);
+                        sqlite3_bind_text(bulkStmt, 1, _recordKeys, strlen(_recordKeys), SQLITE_TRANSIENT);
+						
+						char * _objectName = [appDelegate convertStringIntoChar:objectName];
                         
-                        sqlite3_bind_text(bulkStmt, 2, [objectName UTF8String], [objectName length], SQLITE_TRANSIENT);
+                        sqlite3_bind_text(bulkStmt, 2, _objectName, strlen(_objectName), SQLITE_TRANSIENT);
+						
+						char * _recordValues = [appDelegate convertStringIntoChar:[recordValues objectAtIndex:r]];
                         
-                        sqlite3_bind_text(bulkStmt, 3, [[recordValues objectAtIndex:r] UTF8String], [[recordValues objectAtIndex:r] length], SQLITE_TRANSIENT);
+                        sqlite3_bind_text(bulkStmt, 3, _recordValues, strlen(_recordValues), SQLITE_TRANSIENT);
                         
                         sqlite3_bind_int(bulkStmt, 4, id_Value++);
                         
@@ -2911,24 +2903,6 @@ extern void SVMXLog(NSString *format, ...);
                     
                 }
 
-                
-                
-                
-                /*NSDictionary * objectDict = [objectDefintion objectAtIndex:i];
-                
-                NSArray * objectArray = [[[NSArray alloc] init] autorelease];
-                NSArray * keys = [objectDict allKeys];
-                for (int k = 0; k < [keys count]; k++)
-                {
-                    if ([objectName isEqualToString:[keys objectAtIndex:k]])
-                    {
-                        objectArray = [objectDict objectForKey:[keys objectAtIndex:k]];
-                        break;
-                    }
-                }*/
-                
-                
-                
                 NSMutableArray * propertyArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
                 
                 for (int m = 0; m < [objectArray count]; m++)
@@ -2959,14 +2933,22 @@ extern void SVMXLog(NSString *format, ...);
                         }
                     }            
                 }
-                        
-                sqlite3_bind_text(bulkStmt, 1, [([objDef objectForKey:_MKEYPREFIX]!= nil)?[objDef objectForKey:_MKEYPREFIX]:@"" UTF8String], [([objDef objectForKey:_MKEYPREFIX]!= nil)?[objDef objectForKey:_MKEYPREFIX]:@"" length], SQLITE_TRANSIENT);
                 
-                sqlite3_bind_text(bulkStmt, 2, [([objDef objectForKey:_LABEL]!= nil)?[objDef objectForKey:_LABEL]:@"" UTF8String], [([objDef objectForKey:_LABEL]!= nil)?[objDef objectForKey:_LABEL]:@"" length], SQLITE_TRANSIENT);
+				char * _keyprefix = [appDelegate convertStringIntoChar:([objDef objectForKey:_MKEYPREFIX]!= nil)?[objDef objectForKey:_MKEYPREFIX]:@""];
+				
+                sqlite3_bind_text(bulkStmt, 1, _keyprefix, strlen(_keyprefix), SQLITE_TRANSIENT);
+				
+				char * _label = [appDelegate convertStringIntoChar:([objDef objectForKey:_LABEL]!= nil)?[objDef objectForKey:_LABEL]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 3, [([objDef objectForKey:_MPLURALLABEL]!= nil)?[objDef objectForKey:_MPLURALLABEL]:@"" UTF8String], [([objDef objectForKey:_MPLURALLABEL]!= nil)?[objDef objectForKey:_MPLURALLABEL]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 2, _label, strlen(_label), SQLITE_TRANSIENT);
+				
+				char * _plurallabel = [appDelegate convertStringIntoChar:([objDef objectForKey:_MPLURALLABEL]!= nil)?[objDef objectForKey:_MPLURALLABEL]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 4, [objectName UTF8String], [objectName length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 3, _plurallabel, strlen(_plurallabel), SQLITE_TRANSIENT);
+				
+				char * _objectName = [appDelegate convertStringIntoChar:objectName];
+                
+                sqlite3_bind_text(bulkStmt, 4, _objectName, strlen(_objectName), SQLITE_TRANSIENT);
                 
                 sqlite3_bind_int(bulkStmt, 5, ++id_Value);
                 
@@ -3011,21 +2993,7 @@ extern void SVMXLog(NSString *format, ...);
                 objectName = ([dict valueForKey:OBJECT] != nil)?[dict valueForKey:OBJECT]:@"";
                 
                 
-               /* NSDictionary * objectDict = [objectDefinition objectAtIndex:i];
-                
-                NSArray * objectArray = [[[NSArray alloc] init] autorelease];
-                NSArray * keys = [objectDict allKeys];
-                for (int k = 0; k < [keys count]; k++)
-                {
-                    if ([objectName isEqualToString:[keys objectAtIndex:k]])
-                    {
-                        objectArray = [objectDict objectForKey:[keys objectAtIndex:k]];
-                        break;
-                    }
-                } */
-                
-                
-                BOOL OBJFLAG = FALSE;
+				BOOL OBJFLAG = FALSE;
                 
                 NSArray * objectArray = [[[NSArray alloc] init] autorelease];
                 for (NSDictionary * tempdict in objectDefinition)
@@ -3084,13 +3052,21 @@ extern void SVMXLog(NSString *format, ...);
                 
                 for (int val = 0; val < [masterDetailKeys count]; val++)
                 {
-                    sqlite3_bind_text(bulkStmt, 1, [objectName UTF8String], [objectName length], SQLITE_TRANSIENT);
+					char * _objectName = [appDelegate convertStringIntoChar:objectName];
+					
+                    sqlite3_bind_text(bulkStmt, 1, _objectName, strlen(_objectName), SQLITE_TRANSIENT);
+					
+					char * _masterDetailKeys = [appDelegate convertStringIntoChar:[masterDetailKeys objectAtIndex:val]];
                     
-                    sqlite3_bind_text(bulkStmt, 2, [[masterDetailKeys objectAtIndex:val] UTF8String], [[masterDetailKeys objectAtIndex:val] length], SQLITE_TRANSIENT);
+                    sqlite3_bind_text(bulkStmt, 2, _masterDetailKeys, strlen(_masterDetailKeys), SQLITE_TRANSIENT);
+					
+					char * _emptyString = [appDelegate convertStringIntoChar:emptyString];
                     
-                    sqlite3_bind_text(bulkStmt, 3, [emptyString UTF8String], [emptyString length], SQLITE_TRANSIENT);
+                    sqlite3_bind_text(bulkStmt, 3, _emptyString, strlen(_emptyString), SQLITE_TRANSIENT);
+					
+					char * _mastetDetaiValues = [appDelegate convertStringIntoChar:[mastetDetaiValues objectAtIndex:val]];
                     
-                    sqlite3_bind_text(bulkStmt, 4, [[mastetDetaiValues objectAtIndex:val] UTF8String], [[mastetDetaiValues objectAtIndex:val] length], SQLITE_TRANSIENT);
+                    sqlite3_bind_text(bulkStmt, 4, _mastetDetaiValues, strlen(_mastetDetaiValues), SQLITE_TRANSIENT);
                     
                     sqlite3_bind_int(bulkStmt, 5, ++id_value);
                     
@@ -3120,18 +3096,6 @@ extern void SVMXLog(NSString *format, ...);
         NSDictionary * dict = [object objectAtIndex:i];
         
         objectName = ([dict valueForKey:OBJECT] != nil)?[dict valueForKey:OBJECT]:@"";
-        
-      /*  NSDictionary * objectDict = [columns objectAtIndex:i];
-        NSArray * keys = [objectDict allKeys];
-        for (int k = 0; k < [keys count]; k++)
-        {
-            if ([objectName isEqualToString:[keys objectAtIndex:k]])
-            {
-                objectArray = [objectDict objectForKey:[keys objectAtIndex:k]];
-                break;
-            }
-        } */
-        
         
         BOOL OBJFLAG = FALSE;
         
@@ -3402,23 +3366,41 @@ extern void SVMXLog(NSString *format, ...);
                     value = ([dict objectForKey:@"value_mapping_id"] != nil)?[dict objectForKey:@"value_mapping_id"]:@"";
                 }
                 
-                sqlite3_bind_text(bulkStmt, 1, [processId UTF8String], strlen([processId UTF8String]), SQLITE_TRANSIENT);  
+				char * _processId = [appDelegate convertStringIntoChar:processId];
+				
+                sqlite3_bind_text(bulkStmt, 1, _processId, strlen(_processId), SQLITE_TRANSIENT);
+				
+				char * _layoutId = [appDelegate convertStringIntoChar:([dict objectForKey:MLAYOUT_ID] != nil)?[dict objectForKey:MLAYOUT_ID]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 2, [([dict objectForKey:MLAYOUT_ID] != nil)?[dict objectForKey:MLAYOUT_ID]:@"" UTF8String], [([dict objectForKey:MLAYOUT_ID] != nil)?[dict objectForKey:MLAYOUT_ID]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 2, _layoutId, strlen(_layoutId), SQLITE_TRANSIENT);
+				
+				char * _object_name = [appDelegate convertStringIntoChar:([dict objectForKey:MOBJECT_NAME] != nil)?[dict objectForKey:MOBJECT_NAME]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 3, [([dict objectForKey:MOBJECT_NAME] != nil)?[dict objectForKey:MOBJECT_NAME]:@"" UTF8String], [([dict objectForKey:MOBJECT_NAME] != nil)?[dict objectForKey:MOBJECT_NAME]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 3, _object_name, strlen(_object_name), SQLITE_TRANSIENT);
+				
+				char * _expressionId = [appDelegate convertStringIntoChar:([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 4, [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" UTF8String], [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 4, _expressionId, strlen(_expressionId), SQLITE_TRANSIENT);
+				
+				char * _objectMappingId = [appDelegate convertStringIntoChar:([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 5, [([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@"" UTF8String], [([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 5, _objectMappingId, strlen(_objectMappingId), SQLITE_TRANSIENT);
+				
+				char * _componentType = [appDelegate convertStringIntoChar:([dict objectForKey:MCOMPONENT_TYPE] != nil)?[dict objectForKey:MCOMPONENT_TYPE]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 6, [([dict objectForKey:MCOMPONENT_TYPE] != nil)?[dict objectForKey:MCOMPONENT_TYPE]:@"" UTF8String], [([dict objectForKey:MCOMPONENT_TYPE] != nil)?[dict objectForKey:MCOMPONENT_TYPE]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 6, _componentType, strlen(_componentType), SQLITE_TRANSIENT);
+				
+				char * _parentcolumn = [appDelegate convertStringIntoChar:([dict objectForKey:MPARENT_COLUMN] != nil)?[dict objectForKey:MPARENT_COLUMN]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 7, [([dict objectForKey:MPARENT_COLUMN] != nil)?[dict objectForKey:MPARENT_COLUMN]:@"" UTF8String], [ ([dict objectForKey:MPARENT_COLUMN] != nil)?[dict objectForKey:MPARENT_COLUMN]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 7, _parentcolumn, strlen(_parentcolumn), SQLITE_TRANSIENT);
+				
+				char * _valueMappingId = [appDelegate convertStringIntoChar:([dict objectForKey:MVALUE_MAPPING_ID] != nil)?[dict objectForKey:MVALUE_MAPPING_ID]: @""];
                 
-                sqlite3_bind_text(bulkStmt, 8, [([dict objectForKey:MVALUE_MAPPING_ID] != nil)?[dict objectForKey:MVALUE_MAPPING_ID]: @"" UTF8String], [([dict objectForKey:MVALUE_MAPPING_ID] != nil)?[dict objectForKey:MVALUE_MAPPING_ID] :@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 8, _valueMappingId, strlen(_valueMappingId), SQLITE_TRANSIENT);
+				
+				char * _parentObject = [appDelegate convertStringIntoChar:([dict objectForKey:MPARENT_OBJECT] != nil)?[dict objectForKey:MPARENT_OBJECT]: @""];
                 
-                sqlite3_bind_text(bulkStmt, 9, [([dict objectForKey:MPARENT_OBJECT] != nil)?[dict objectForKey:MPARENT_OBJECT]:@"" UTF8String], [([dict objectForKey:MPARENT_OBJECT] != nil)?[dict objectForKey:MPARENT_OBJECT]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 9, _parentObject, strlen(_parentObject), SQLITE_TRANSIENT);
                 
                 sqlite3_bind_int(bulkStmt, 10, ++id_value);
                 
@@ -3654,27 +3636,45 @@ extern void SVMXLog(NSString *format, ...);
             {
                 NSDictionary * dict = [process_comp_array objectAtIndex:i];
                 
-                sqlite3_bind_text(bulkStmt, 1, [([dict objectForKey:MPROCESS_ID] != nil)?[dict objectForKey:MPROCESS_ID]:@"" UTF8String], [([dict objectForKey:MPROCESS_ID] != nil)?[dict objectForKey:MPROCESS_ID]:@"" length], SQLITE_TRANSIENT);
+				char * _processId = [appDelegate convertStringIntoChar:([dict objectForKey:MPROCESS_ID] != nil)?[dict objectForKey:MPROCESS_ID]:@""];
+				
+                sqlite3_bind_text(bulkStmt, 1, _processId, strlen(_processId), SQLITE_TRANSIENT);
+				
+				char * _layoutId = [appDelegate convertStringIntoChar:([dict objectForKey:MLAYOUT_ID] != nil)?[dict objectForKey:MLAYOUT_ID]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 2, [([dict objectForKey:MLAYOUT_ID] != nil)?[dict objectForKey:MLAYOUT_ID]:@""  UTF8String], [([dict objectForKey:MLAYOUT_ID] != nil)?[dict objectForKey:MLAYOUT_ID]:@"" length], 
-                                    SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 2, _layoutId, strlen(_layoutId), SQLITE_TRANSIENT);
+				
+				char * _targetObjectName = [appDelegate convertStringIntoChar:([dict objectForKey:MTARGET_OBJECT_NAME] != nil)?[dict objectForKey:MTARGET_OBJECT_NAME]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 3, [([dict objectForKey:MTARGET_OBJECT_NAME] != nil)?[dict objectForKey:MTARGET_OBJECT_NAME]:@""  UTF8String], [([dict objectForKey:MTARGET_OBJECT_NAME] != nil)?[dict objectForKey:MTARGET_OBJECT_NAME]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 3, _targetObjectName, strlen(_targetObjectName), SQLITE_TRANSIENT);
+				
+				char * _sourceObjectName = [appDelegate convertStringIntoChar:([dict objectForKey:MSOURCE_OBJECT_NAME] != nil)?[dict objectForKey:MSOURCE_OBJECT_NAME]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 4, [([dict objectForKey:MSOURCE_OBJECT_NAME] != nil)?[dict objectForKey:MSOURCE_OBJECT_NAME]:@""  UTF8String], [([dict objectForKey:MSOURCE_OBJECT_NAME] != nil)?[dict objectForKey:MSOURCE_OBJECT_NAME]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 4, _sourceObjectName, strlen(_sourceObjectName), SQLITE_TRANSIENT);
+				
+                char * _expressionId = [appDelegate convertStringIntoChar:([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@""];
                 
+                sqlite3_bind_text(bulkStmt, 5, _expressionId, strlen(_expressionId), SQLITE_TRANSIENT);
+				
+				char * _objectMappingId = [appDelegate convertStringIntoChar:([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 5, [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@""  UTF8String], [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 6, _objectMappingId, strlen(_objectMappingId), SQLITE_TRANSIENT);
+				
+				char * _componentType = [appDelegate convertStringIntoChar:([dict objectForKey:MCOMPONENT_TYPE] != nil)?[dict objectForKey:MCOMPONENT_TYPE]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 6, [([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@""  UTF8String], [([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 7, _componentType, strlen(_componentType), SQLITE_TRANSIENT);
+				
+				char * _parentColumn = [appDelegate convertStringIntoChar:([dict objectForKey:MPARENT_COLUMN] != nil)?[dict objectForKey:MPARENT_COLUMN]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 7, [([dict objectForKey:MCOMPONENT_TYPE] != nil)?[dict objectForKey:MCOMPONENT_TYPE]:@""  UTF8String], [([dict objectForKey:MCOMPONENT_TYPE] != nil)?[dict objectForKey:MCOMPONENT_TYPE]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 8, _parentColumn, strlen(_parentColumn), SQLITE_TRANSIENT);
+				
+				char * _valueMappingId = [appDelegate convertStringIntoChar:([dict objectForKey:MVALUE_MAPPING_ID] != nil)?[dict objectForKey:MVALUE_MAPPING_ID]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 8, [([dict objectForKey:MPARENT_COLUMN] != nil)?[dict objectForKey:MPARENT_COLUMN]:@""  UTF8String], [([dict objectForKey:MPARENT_COLUMN] != nil)?[dict objectForKey:MPARENT_COLUMN]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 9, _valueMappingId, strlen(_valueMappingId), SQLITE_TRANSIENT);
+				
+				char * _emptyString = [appDelegate convertStringIntoChar:emptyString];
                 
-                sqlite3_bind_text(bulkStmt, 9, [([dict objectForKey:MVALUE_MAPPING_ID] != nil)?[dict objectForKey:MVALUE_MAPPING_ID]:@""  UTF8String], [([dict objectForKey:MVALUE_MAPPING_ID] != nil)?[dict objectForKey:MVALUE_MAPPING_ID]:@"" length], SQLITE_TRANSIENT);
-                
-                sqlite3_bind_text(bulkStmt, 10, [emptyString  UTF8String], [emptyString length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 10, _emptyString, strlen(_emptyString), SQLITE_TRANSIENT);
                 
                 sqlite3_bind_int(bulkStmt, 11, ++id_value);
                 
@@ -3724,6 +3724,11 @@ extern void SVMXLog(NSString *format, ...);
             for (int i = 0; i < [object count]; i++)
             {
                 NSString * objectName = [[object objectAtIndex:i] objectForKey:OBJECT];
+				
+				if ([objectName isEqualToString:@"SVMXC__Service_Order__c"])
+				{
+					NSLog(@"SVMXC__Service_Order__c");
+				}
                 
                 NSDictionary * fieldDict = [fields objectAtIndex:i];
                 
@@ -3775,19 +3780,29 @@ extern void SVMXLog(NSString *format, ...);
                                     defautPickValue = @"";
                                 }
                             }
+							
+							char * _objectName = [appDelegate convertStringIntoChar:objectName];
+							
+                            sqlite3_bind_text(bulkStmt, 1, _objectName, strlen(_objectName), SQLITE_TRANSIENT);
+							
+							char * _fieldName = [appDelegate convertStringIntoChar:fieldName];
                             
-                            sqlite3_bind_text(bulkStmt, 1, [objectName UTF8String], [objectName length], SQLITE_TRANSIENT);
+                            sqlite3_bind_text(bulkStmt, 2, _fieldName, strlen(_fieldName), SQLITE_TRANSIENT);
+							
+							char * _pickLabel = [appDelegate convertStringIntoChar:pickLabel];
                             
-                            sqlite3_bind_text(bulkStmt, 2, [fieldName UTF8String], [fieldName length], SQLITE_TRANSIENT);
+                            sqlite3_bind_text(bulkStmt, 3, _pickLabel, strlen(_pickLabel), SQLITE_TRANSIENT);
+							
+							char * _pickValue = [appDelegate convertStringIntoChar:pickValue];
                             
-                            sqlite3_bind_text(bulkStmt, 3, [pickLabel UTF8String], [pickLabel length], SQLITE_TRANSIENT);
+                            sqlite3_bind_text(bulkStmt, 4, _pickValue, strlen(_pickValue), SQLITE_TRANSIENT);
+							
+							char * _defautPickValue = [appDelegate convertStringIntoChar:defautPickValue];
                             
-                            sqlite3_bind_text(bulkStmt, 4, [pickValue UTF8String], [pickValue length], SQLITE_TRANSIENT);
-                            
-                            sqlite3_bind_text(bulkStmt, 5, [defautPickValue UTF8String], [defautPickValue length], SQLITE_TRANSIENT);
+                            sqlite3_bind_text(bulkStmt, 5, _defautPickValue, strlen(_defautPickValue), SQLITE_TRANSIENT);
                             
                             sqlite3_bind_int(bulkStmt, 6, id_value++);
-                                                        
+                            
                             if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                             {
                                 printf("Commit Failed!\n");
@@ -3870,23 +3885,41 @@ extern void SVMXLog(NSString *format, ...);
                             label = [label stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
                             value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
                             
-                            sqlite3_bind_text(bulkStmt, 1, [objectName UTF8String], [objectName length], SQLITE_TRANSIENT);
+							char * _objectName = [appDelegate convertStringIntoChar:objectName];
+							
+                            sqlite3_bind_text(bulkStmt, 1, _objectName, strlen(_objectName), SQLITE_TRANSIENT);
+							
+							char * _api_name = [appDelegate convertStringIntoChar:api_name];
                             
-                            sqlite3_bind_text(bulkStmt, 2, [api_name UTF8String], [api_name length], SQLITE_TRANSIENT);
+                            sqlite3_bind_text(bulkStmt, 2, _api_name, strlen(_api_name), SQLITE_TRANSIENT);
+							
+							char * _label = [appDelegate convertStringIntoChar:label];
                             
-                            sqlite3_bind_text(bulkStmt, 3, [label UTF8String], [label length], SQLITE_TRANSIENT);
+                            sqlite3_bind_text(bulkStmt, 3, _label, strlen(_label), SQLITE_TRANSIENT);
+							
+							char * _value = [appDelegate convertStringIntoChar:value];
                             
-                            sqlite3_bind_text(bulkStmt, 4, [value UTF8String], [value length], SQLITE_TRANSIENT);
+                            sqlite3_bind_text(bulkStmt, 4, _value, strlen(_value), SQLITE_TRANSIENT);
+							
+							char * _defaultLabel = [appDelegate convertStringIntoChar:defaultLabel];
                             
-                            sqlite3_bind_text(bulkStmt, 5, [defaultLabel UTF8String], [defaultLabel length], SQLITE_TRANSIENT);
+                            sqlite3_bind_text(bulkStmt, 5, defaultLabel, strlen(defaultLabel), SQLITE_TRANSIENT);
+							
+							char * _defaultValue = [appDelegate convertStringIntoChar:defaultValue];
                             
-                            sqlite3_bind_text(bulkStmt, 6, [defaultValue UTF8String], [defaultValue length], SQLITE_TRANSIENT);
+                            sqlite3_bind_text(bulkStmt, 6, _defaultValue, strlen(_defaultValue), SQLITE_TRANSIENT);
+							
+							char * _recordTypeName = [appDelegate convertStringIntoChar:recordTypeName];
                             
-                            sqlite3_bind_text(bulkStmt, 7, [recordTypeName UTF8String], [recordTypeName length], SQLITE_TRANSIENT);
+                            sqlite3_bind_text(bulkStmt, 7, _recordTypeName, strlen(_recordTypeName), SQLITE_TRANSIENT);
+							
+							char * _recordTypeID = [appDelegate convertStringIntoChar:recordTypeID];
                             
-                            sqlite3_bind_text(bulkStmt, 8, [recordTypeID UTF8String], [recordTypeID length], SQLITE_TRANSIENT);
+                            sqlite3_bind_text(bulkStmt, 8, _recordTypeID, strlen(_recordTypeID), SQLITE_TRANSIENT);
+							
+							char * _recordTypeLayoutId = [appDelegate convertStringIntoChar:recordTypeLayoutId];
                             
-                            sqlite3_bind_text(bulkStmt, 9, [recordTypeLayoutId UTF8String], [recordTypeLayoutId length], SQLITE_TRANSIENT);
+                            sqlite3_bind_text(bulkStmt, 9, _recordTypeLayoutId, strlen(_recordTypeLayoutId), SQLITE_TRANSIENT);
                             
                             sqlite3_bind_int(bulkStmt, 10, ++id_value);
                             
@@ -3943,12 +3976,18 @@ extern void SVMXLog(NSString *format, ...);
             for (int i = 0; i < [sfExpression count]; i++)
             {
                 NSDictionary * dict = [sfExpression objectAtIndex:i];
+				
+				char * _expressionId = [appDelegate convertStringIntoChar:([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 1, [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" UTF8String], [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 1, _expressionId, strlen(_expressionId), SQLITE_TRANSIENT);
+				
+				char * _expressionName = [appDelegate convertStringIntoChar:([dict objectForKey:MEXPRESSION_NAME] != nil)?[dict objectForKey:MEXPRESSION_NAME]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 2, [([dict objectForKey:MEXPRESSION_NAME] != nil)?[dict objectForKey:MEXPRESSION_NAME]:@"" UTF8String], [([dict objectForKey:MEXPRESSION_NAME] != nil)?[dict objectForKey:MEXPRESSION_NAME]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 2, _expressionName, strlen(_expressionName), SQLITE_TRANSIENT);
+				
+				char * _advanceExpression = [appDelegate convertStringIntoChar:([dict objectForKey:MADVANCE_EXPRESSION] != nil)?[dict objectForKey:MADVANCE_EXPRESSION]:@"" ];
                 
-                sqlite3_bind_text(bulkStmt, 3, [([dict objectForKey:MADVANCE_EXPRESSION] != nil)?[dict objectForKey:MADVANCE_EXPRESSION]:@"" UTF8String], [([dict objectForKey:MADVANCE_EXPRESSION] != nil)?[dict objectForKey:MADVANCE_EXPRESSION]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 3, _advanceExpression, strlen(_advanceExpression), SQLITE_TRANSIENT);
                 
                 sqlite3_bind_int(bulkStmt, 4, ++id_value);
                                 
@@ -3991,16 +4030,26 @@ extern void SVMXLog(NSString *format, ...);
             for (int i = 0; i < [sfExpression_com count]; i++)
             {
                 NSDictionary * dict = [sfExpression_com objectAtIndex:i];
+				
+				char * _expressionId = [appDelegate convertStringIntoChar:([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 1, [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" UTF8String], [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 1, _expressionId, strlen(_expressionId), SQLITE_TRANSIENT);
+				
+				char * _sequence = [appDelegate convertStringIntoChar:([dict objectForKey:MSEQUENCE] != nil)?[dict objectForKey:MSEQUENCE]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 2, [([dict objectForKey:MSEQUENCE] != nil)?[dict objectForKey:MSEQUENCE]:@"" UTF8String], [([dict objectForKey:MSEQUENCE] != nil)?[dict objectForKey:MSEQUENCE]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 2, _sequence, strlen(_sequence), SQLITE_TRANSIENT);
+				
+				char * _sourceFieldName = [appDelegate convertStringIntoChar:([dict objectForKey:MSOURCE_FIELD_NAME] != nil)?[dict objectForKey:MSOURCE_FIELD_NAME]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 3, [([dict objectForKey:MSOURCE_FIELD_NAME] != nil)?[dict objectForKey:MSOURCE_FIELD_NAME]:@"" UTF8String], [([dict objectForKey:MSOURCE_FIELD_NAME] != nil)?[dict objectForKey:MSOURCE_FIELD_NAME]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 3, _sourceFieldName, strlen(_sourceFieldName), SQLITE_TRANSIENT);
+				
+				char * _value = [appDelegate convertStringIntoChar:([dict objectForKey:MVALUEM] != nil)?[dict objectForKey:MVALUEM]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 4, [([dict objectForKey:MVALUEM] != nil)?[dict objectForKey:MVALUEM]:@"" UTF8String], [([dict objectForKey:MVALUEM] != nil)?[dict objectForKey:MVALUEM]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 4, _value, strlen(_value), SQLITE_TRANSIENT);
+				
+				char * _operator = [appDelegate convertStringIntoChar:([dict objectForKey:MOPERATOR] != nil)?[dict objectForKey:MOPERATOR]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 5, [([dict objectForKey:MOPERATOR] != nil)?[dict objectForKey:MOPERATOR]:@"" UTF8String], [([dict objectForKey:MOPERATOR] != nil)?[dict objectForKey:MOPERATOR]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 5, _operator, strlen(_operator), SQLITE_TRANSIENT);
                 
                 sqlite3_bind_int(bulkStmt, 6, ++id_value);
                 
@@ -4053,12 +4102,19 @@ extern void SVMXLog(NSString *format, ...);
             for (int i = 0; i < [sfobjectMap count]; i++)
             {
                 NSDictionary * dict = [sfobjectMap objectAtIndex:i];
+				
+				char * _objectMappingId = [appDelegate convertStringIntoChar:([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 1, [([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@"" UTF8String], [([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 1, _objectMappingId, strlen(_objectMappingId), SQLITE_TRANSIENT);
+				
+				char * _sourceObjectName = [appDelegate convertStringIntoChar:([dict objectForKey:MSOURCE_OBJECT_NAME] != nil)?[dict objectForKey:MSOURCE_OBJECT_NAME]:@""];
+
                 
-                sqlite3_bind_text(bulkStmt, 2, [([dict objectForKey:MSOURCE_OBJECT_NAME] != nil)?[dict objectForKey:MSOURCE_OBJECT_NAME]:@"" UTF8String], [([dict objectForKey:MSOURCE_OBJECT_NAME] != nil)?[dict objectForKey:MSOURCE_OBJECT_NAME]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 2, _sourceObjectName, strlen(_sourceObjectName), SQLITE_TRANSIENT);
+				
+				char * _targetObjectName = [appDelegate convertStringIntoChar:([dict objectForKey:MTARGET_OBJECT_NAME] != nil)?[dict objectForKey:MTARGET_OBJECT_NAME]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 3, [([dict objectForKey:MTARGET_OBJECT_NAME] != nil)?[dict objectForKey:MTARGET_OBJECT_NAME]:@"" UTF8String], [([dict objectForKey:MTARGET_OBJECT_NAME] != nil)?[dict objectForKey:MTARGET_OBJECT_NAME]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 3, _targetObjectName, strlen(_targetObjectName), SQLITE_TRANSIENT);
                 
                 sqlite3_bind_int(bulkStmt, 4, ++id_value);
                 
@@ -4127,18 +4183,30 @@ extern void SVMXLog(NSString *format, ...);
                     value = MFIELDMAPPING;
                 }
                 
+				
+				char * _objectMappingid = [appDelegate convertStringIntoChar:([dict_ objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict_ objectForKey:MOBJECT_MAPPING_ID]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 1, [([dict_ objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict_ objectForKey:MOBJECT_MAPPING_ID]:@"" UTF8String], [([dict_ objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict_ objectForKey:MOBJECT_MAPPING_ID]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 1, _objectMappingid, strlen(_objectMappingid), SQLITE_TRANSIENT);
+				
+				char * _sourceFieldName = [appDelegate convertStringIntoChar:([dict_ objectForKey:MSOURCE_FIELD_NAME] != nil)?[dict_ objectForKey:MSOURCE_FIELD_NAME]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 2, [([dict_ objectForKey:MSOURCE_FIELD_NAME] != nil)?[dict_ objectForKey:MSOURCE_FIELD_NAME]:@"" UTF8String], [([dict_ objectForKey:MSOURCE_FIELD_NAME] != nil)?[dict_ objectForKey:MSOURCE_FIELD_NAME]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 2, _sourceFieldName, strlen(_sourceFieldName), SQLITE_TRANSIENT);
+				
+				char * _targetFieldName = [appDelegate convertStringIntoChar:([dict_ objectForKey:MTARGET_FIELD_NAME] != nil)?[dict_ objectForKey:MTARGET_FIELD_NAME]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 3, [([dict_ objectForKey:MTARGET_FIELD_NAME] != nil)?[dict_ objectForKey:MTARGET_FIELD_NAME]:@"" UTF8String], [([dict_ objectForKey:MTARGET_FIELD_NAME] != nil)?[dict_ objectForKey:MTARGET_FIELD_NAME]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 3, _targetFieldName, strlen(_targetFieldName), SQLITE_TRANSIENT);
+				
+				char * _mappingValue = [appDelegate convertStringIntoChar:([dict_ objectForKey:MMAPPING_VALUE] != nil)?[dict_ objectForKey:MMAPPING_VALUE]:@""];
+				
+                sqlite3_bind_text(bulkStmt, 4, _mappingValue, strlen(_mappingValue), SQLITE_TRANSIENT);
+				
+				char * _value = [appDelegate convertStringIntoChar:value];
                 
-                sqlite3_bind_text(bulkStmt, 4, [([dict_ objectForKey:MMAPPING_VALUE] != nil)?[dict_ objectForKey:MMAPPING_VALUE]:@"" UTF8String], [([dict_ objectForKey:MMAPPING_VALUE] != nil)?[dict_ objectForKey:MMAPPING_VALUE]:@""  length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 5, _value, strlen(_value), SQLITE_TRANSIENT);
+				
+				char * _flag = [appDelegate convertStringIntoChar:flag];
                 
-                sqlite3_bind_text(bulkStmt, 5, [value UTF8String], [value length], SQLITE_TRANSIENT);
-                
-                sqlite3_bind_text(bulkStmt, 6, [flag UTF8String], [flag length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 6, _flag, strlen(_flag), SQLITE_TRANSIENT);
                 
                 sqlite3_bind_int(bulkStmt, 7, ++id_value);
                 
@@ -4187,22 +4255,40 @@ extern void SVMXLog(NSString *format, ...);
             for (int i = 0; i < [sfNamedSearch count]; i++)
             {
                 NSDictionary * nameSearchDict = [sfNamedSearch objectAtIndex:i];
+				
+				char * _defaultLookupColumn = [appDelegate convertStringIntoChar:([nameSearchDict objectForKey:MDEFAULT_LOOKUP_COLUMN] != nil)?[nameSearchDict objectForKey:MDEFAULT_LOOKUP_COLUMN]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 1, [([nameSearchDict objectForKey:MDEFAULT_LOOKUP_COLUMN] != nil)?[nameSearchDict objectForKey:MDEFAULT_LOOKUP_COLUMN]:@"" UTF8String], [([nameSearchDict objectForKey:MDEFAULT_LOOKUP_COLUMN] != nil)?[nameSearchDict objectForKey:MDEFAULT_LOOKUP_COLUMN]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 1, _defaultLookupColumn, strlen(_defaultLookupColumn), SQLITE_TRANSIENT);
+				
+				char * _objectName = [appDelegate convertStringIntoChar:([nameSearchDict objectForKey:MOBJECT_NAME] != nil)?[nameSearchDict objectForKey:MOBJECT_NAME]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 2, [([nameSearchDict objectForKey:MOBJECT_NAME] != nil)?[nameSearchDict objectForKey:MOBJECT_NAME]:@"" UTF8String], [([nameSearchDict objectForKey:MOBJECT_NAME] != nil)?[nameSearchDict objectForKey:MOBJECT_NAME]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 2, _objectName, strlen(_objectName), SQLITE_TRANSIENT);
+				
+				char * _searchName = [appDelegate convertStringIntoChar:([nameSearchDict objectForKey:MSEARCH_NAME] != nil)?[nameSearchDict objectForKey:MSEARCH_NAME]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 3, [([nameSearchDict objectForKey:MSEARCH_NAME] != nil)?[nameSearchDict objectForKey:MSEARCH_NAME]:@"" UTF8String], [([nameSearchDict objectForKey:MSEARCH_NAME] != nil)?[nameSearchDict objectForKey:MSEARCH_NAME]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 3, _searchName, strlen(_searchName), SQLITE_TRANSIENT);
+				
+				
+				char * _searchType = [appDelegate convertStringIntoChar:([nameSearchDict objectForKey:MSEARCH_TYPE] != nil)?[nameSearchDict objectForKey:MSEARCH_TYPE]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 4, [([nameSearchDict objectForKey:MSEARCH_TYPE] != nil)?[nameSearchDict objectForKey:MSEARCH_TYPE]:@"" UTF8String], [([nameSearchDict objectForKey:MSEARCH_TYPE] != nil)?[nameSearchDict objectForKey:MSEARCH_TYPE]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 4, _searchType, strlen(_searchType), SQLITE_TRANSIENT);
+				
+				
+				char * _nameSearchID = [appDelegate convertStringIntoChar:([nameSearchDict objectForKey:MNAMED_SEARCHID] != nil)?[nameSearchDict objectForKey:MNAMED_SEARCHID]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 5, [([nameSearchDict objectForKey:MNAMED_SEARCHID] != nil)?[nameSearchDict objectForKey:MNAMED_SEARCHID]:@"" UTF8String], [([nameSearchDict objectForKey:MNAMED_SEARCHID] != nil)?[nameSearchDict objectForKey:MNAMED_SEARCHID]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 5, _nameSearchID, strlen(_nameSearchID), SQLITE_TRANSIENT);
+				
+				char * _lookupRecords = [appDelegate convertStringIntoChar:([nameSearchDict objectForKey:MNO_OF_LOOKUP_RECORDS] != nil)?[nameSearchDict objectForKey:MNO_OF_LOOKUP_RECORDS]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 6, [([nameSearchDict objectForKey:MNO_OF_LOOKUP_RECORDS] != nil)?[nameSearchDict objectForKey:MNO_OF_LOOKUP_RECORDS]:@"" UTF8String], [([nameSearchDict objectForKey:MNO_OF_LOOKUP_RECORDS] != nil)?[nameSearchDict objectForKey:MNO_OF_LOOKUP_RECORDS]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 6, _lookupRecords, strlen(_lookupRecords), SQLITE_TRANSIENT);
+				
+				char * _misDefault = [appDelegate convertStringIntoChar:([nameSearchDict objectForKey:MIS_DEFAULT] != nil)?[nameSearchDict objectForKey:MIS_DEFAULT]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 7, [([nameSearchDict objectForKey:MIS_DEFAULT] != nil)?[nameSearchDict objectForKey:MIS_DEFAULT]:@"" UTF8String], [([nameSearchDict objectForKey:MIS_DEFAULT] != nil)?[nameSearchDict objectForKey:MIS_DEFAULT]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 7, _misDefault, strlen(_misDefault), SQLITE_TRANSIENT);
+				
+				char * _misStandard = [appDelegate convertStringIntoChar:([nameSearchDict objectForKey:MIS_STANDARD] != nil)?[nameSearchDict objectForKey:MIS_STANDARD]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 8, [([nameSearchDict objectForKey:MIS_STANDARD] != nil)?[nameSearchDict objectForKey:MIS_STANDARD]:@"" UTF8String], [([nameSearchDict objectForKey:MIS_STANDARD] != nil)?[nameSearchDict objectForKey:MIS_STANDARD]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 8, _misStandard, strlen(_misStandard), SQLITE_TRANSIENT);
                 
                 sqlite3_bind_int(bulkStmt, 10, ++id_value);
                 
@@ -4249,20 +4335,33 @@ extern void SVMXLog(NSString *format, ...);
                 NSString * relationshipName = ([nameSearchComp objectForKey:MFIELD_RELATIONSHIPNAME] != nil)?[nameSearchComp objectForKey:MFIELD_RELATIONSHIPNAME]:@"";
                 if (![relationshipName isEqualToString:@""])
                     relationshipName = [relationshipName stringByReplacingOccurrencesOfString:@"__r" withString:@"__c"];
+				
+				char * _expressionType = [appDelegate convertStringIntoChar:([nameSearchComp objectForKey:MEXPRESSION_TYPE] != nil)?[nameSearchComp objectForKey:MEXPRESSION_TYPE]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 1, [([nameSearchComp objectForKey:MEXPRESSION_TYPE] != nil)?[nameSearchComp objectForKey:MEXPRESSION_TYPE]:@"" UTF8String], [([nameSearchComp objectForKey:MEXPRESSION_TYPE] != nil)?[nameSearchComp objectForKey:MEXPRESSION_TYPE]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 1, _expressionType, strlen(_expressionType), SQLITE_TRANSIENT);
+				
+				char * _fieldName = [appDelegate convertStringIntoChar:([nameSearchComp objectForKey:MFIELD_NAME] != nil)?[nameSearchComp objectForKey:MFIELD_NAME]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 2, [([nameSearchComp objectForKey:MFIELD_NAME] != nil)?[nameSearchComp objectForKey:MFIELD_NAME]:@"" UTF8String], [([nameSearchComp objectForKey:MFIELD_NAME] != nil)?[nameSearchComp objectForKey:MFIELD_NAME]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 2, _fieldName, strlen(_fieldName), SQLITE_TRANSIENT);
+				
+				char * _namedSearch = [appDelegate convertStringIntoChar:([nameSearchComp objectForKey:MNAMED_SEARCH] != nil)?[nameSearchComp objectForKey:MNAMED_SEARCH]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 3, [([nameSearchComp objectForKey:MNAMED_SEARCH] != nil)?[nameSearchComp objectForKey:MNAMED_SEARCH]:@"" UTF8String], [([nameSearchComp objectForKey:MNAMED_SEARCH] != nil)?[nameSearchComp objectForKey:MNAMED_SEARCH]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 3, _namedSearch, strlen(_namedSearch), SQLITE_TRANSIENT);
+				
+				char * _searchObjectField = [appDelegate convertStringIntoChar:([nameSearchComp objectForKey:MSEARCH_OBJECT_FIELD] != nil)?[nameSearchComp objectForKey:MSEARCH_OBJECT_FIELD]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 4, [([nameSearchComp objectForKey:MSEARCH_OBJECT_FIELD] != nil)?[nameSearchComp objectForKey:MSEARCH_OBJECT_FIELD]:@"" UTF8String], [([nameSearchComp objectForKey:MSEARCH_OBJECT_FIELD] != nil)?[nameSearchComp objectForKey:MSEARCH_OBJECT_FIELD]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 4, _searchObjectField, strlen(_searchObjectField), SQLITE_TRANSIENT);
+				
+				char * _fieldType = [appDelegate convertStringIntoChar:([nameSearchComp objectForKey:MFIELD_TYPE] != nil)?[nameSearchComp objectForKey:MFIELD_TYPE]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 5, [([nameSearchComp objectForKey:MFIELD_TYPE] != nil)?[nameSearchComp objectForKey:MFIELD_TYPE]:@"" UTF8String], [([nameSearchComp objectForKey:MFIELD_TYPE] != nil)?[nameSearchComp objectForKey:MFIELD_TYPE]:@"" length], SQLITE_TRANSIENT);
-                
-                sqlite3_bind_text(bulkStmt, 6, [relationshipName UTF8String], [relationshipName length], SQLITE_TRANSIENT);
-                
-                sqlite3_bind_text(bulkStmt, 7, [([nameSearchComp objectForKey:MSEQUENCE] != nil)?[nameSearchComp objectForKey:MSEQUENCE]:@"" UTF8String], [([nameSearchComp objectForKey:MSEQUENCE] != nil)?[nameSearchComp objectForKey:MSEQUENCE]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 5, _fieldType, strlen(_fieldType), SQLITE_TRANSIENT);
+																		
+				char * _relationshipName = [appDelegate convertStringIntoChar:relationshipName];														
+                sqlite3_bind_text(bulkStmt, 6, _relationshipName, strlen(_relationshipName), SQLITE_TRANSIENT);
+				
+				char * _sequence = [appDelegate convertStringIntoChar:([nameSearchComp objectForKey:MSEQUENCE] != nil)?[nameSearchComp objectForKey:MSEQUENCE]:@""];
+																		
+                sqlite3_bind_text(bulkStmt, 7, _sequence, strlen(_sequence), SQLITE_TRANSIENT);
                 
                 sqlite3_bind_int(bulkStmt, 8, ++id_value);
                 
@@ -4307,10 +4406,13 @@ extern void SVMXLog(NSString *format, ...);
                 NSString * value = ([values objectAtIndex:i] != nil)?[values objectAtIndex:i]:@"";
                 value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
             
+				char * _keys = [appDelegate convertStringIntoChar:[keys objectAtIndex:i]];
                 
-                sqlite3_bind_text(bulkStmt, 1, [[keys objectAtIndex:i] UTF8String], [[keys objectAtIndex:i] length],  SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 1, _keys, strlen(_keys),  SQLITE_TRANSIENT);
+				
+				char * _value = [appDelegate convertStringIntoChar:value];
                 
-                sqlite3_bind_text(bulkStmt, 2, [value UTF8String], [value length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 2, _value, strlen(_value), SQLITE_TRANSIENT);
                 
                 sqlite3_bind_int(bulkStmt, 3, ++id_value);
                 
@@ -4331,7 +4433,6 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) insertValuesInToSettingsTable:(NSMutableDictionary *)settingsDictionary
 {
-    NSString * meta_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_meta_data_configuration];
     SMLog(@"SAMMAN MetaSync insertValuesInToSettingsTable processing starts: %@", [NSDate date]);
     int id_value = 0;
     
@@ -4353,11 +4454,16 @@ extern void SVMXLog(NSString *format, ...);
         {
             for (int i = 0; i < [keys count]; i++)
             {
-                sqlite3_bind_text(bulkStmt, 1, [[keys objectAtIndex:i] UTF8String], [[keys objectAtIndex:i] length],  SQLITE_TRANSIENT);
+				
+				char * _keys = [appDelegate convertStringIntoChar:[keys objectAtIndex:i]];
+                				
+                sqlite3_bind_text(bulkStmt, 1, _keys, strlen(_keys),  SQLITE_TRANSIENT);
+				
+				char * _value = [appDelegate convertStringIntoChar:[values objectAtIndex:i]];
                 
-                sqlite3_bind_text(bulkStmt, 2, [[values objectAtIndex:i] UTF8String], [[values objectAtIndex:i] length], 
-                                    SQLITE_TRANSIENT);
-                sqlite3_bind_int(bulkStmt, 3, ++id_value);
+                sqlite3_bind_text(bulkStmt, 2, _value, strlen(_value), SQLITE_TRANSIENT);
+
+				sqlite3_bind_int(bulkStmt, 3, ++id_value);
                 
                 if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
@@ -4404,16 +4510,27 @@ extern void SVMXLog(NSString *format, ...);
                 NSDictionary * dict = [sfWizard objectAtIndex:i];
                 
                 _objectName = ([dict objectForKey:MOBJECT_NAME] != nil)?[dict objectForKey:MOBJECT_NAME]:@"";
+				
+				char * _objectName_temp = [appDelegate convertStringIntoChar:_objectName];
                
-                sqlite3_bind_text(bulkStmt, 1, [_objectName UTF8String], [_objectName length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 1, _objectName_temp, strlen(_objectName_temp), SQLITE_TRANSIENT);
+				
+				char * _WizardId = [appDelegate convertStringIntoChar:([dict objectForKey:MWIZARD_ID] != nil)?[dict objectForKey:MWIZARD_ID]:@""];
+				
+                sqlite3_bind_text(bulkStmt, 2, _WizardId, strlen(_WizardId), SQLITE_TRANSIENT);
+				
+				char * _expressionId = [appDelegate convertStringIntoChar:([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 2, [([dict objectForKey:MWIZARD_ID] != nil)?[dict objectForKey:MWIZARD_ID]:@"" UTF8String], [([dict objectForKey:MWIZARD_ID] != nil)?[dict objectForKey:MWIZARD_ID]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 3, _expressionId, strlen(_expressionId), SQLITE_TRANSIENT);
+				
+				char * _wizardDescription = [appDelegate convertStringIntoChar:([dict objectForKey:MWIZARD_DESCRIPTION] != nil)?[dict objectForKey:MWIZARD_DESCRIPTION]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 3, [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" UTF8String], [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 4, _wizardDescription, strlen(_wizardDescription), SQLITE_TRANSIENT);
+				
+				
+				char * _wizardName = [appDelegate convertStringIntoChar:([dict objectForKey:MWIZARD_NAME] != nil)?[dict objectForKey:MWIZARD_NAME]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 4, [([dict objectForKey:MWIZARD_DESCRIPTION] != nil)?[dict objectForKey:MWIZARD_DESCRIPTION]:@"" UTF8String], [([dict objectForKey:MWIZARD_DESCRIPTION] != nil)?[dict objectForKey:MWIZARD_DESCRIPTION]:@"" length], SQLITE_TRANSIENT);
-                
-                sqlite3_bind_text(bulkStmt, 5, [([dict objectForKey:MWIZARD_NAME] != nil)?[dict objectForKey:MWIZARD_NAME]:@"" UTF8String], [([dict objectForKey:MWIZARD_NAME] != nil)?[dict objectForKey:MWIZARD_NAME]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 5, _wizardName, strlen(_wizardName), SQLITE_TRANSIENT);
                 
                 sqlite3_bind_int(bulkStmt, 6, ++id_value);
                 
@@ -4499,26 +4616,46 @@ extern void SVMXLog(NSString *format, ...);
                         }
                     }
                 }
-                NSString *performSync = [comp_dict objectForKey:MPERFORM_SYNC];              
-                sqlite3_bind_text(bulkStmt, 1, [([comp_dict objectForKey:MWIZARD_ID] != nil)?[comp_dict objectForKey:MWIZARD_ID]:@"" UTF8String], [([comp_dict objectForKey:MWIZARD_ID] != nil)?[comp_dict objectForKey:MWIZARD_ID]:@"" length], SQLITE_TRANSIENT);
+                NSString *performSync = [comp_dict objectForKey:MPERFORM_SYNC];
+				
+				
+				char * _wizardId = [appDelegate convertStringIntoChar:([comp_dict objectForKey:MWIZARD_ID] != nil)?[comp_dict objectForKey:MWIZARD_ID]:@""];
+				
+                sqlite3_bind_text(bulkStmt, 1, _wizardId, strlen(_wizardId), SQLITE_TRANSIENT);
+				
+				char * _emptyString = [appDelegate convertStringIntoChar:emptyString];
                 
-                sqlite3_bind_text(bulkStmt, 2, [emptyString UTF8String], [emptyString length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 2, _emptyString, strlen(_emptyString), SQLITE_TRANSIENT);
+				
+				char * _wizardStepName = [appDelegate convertStringIntoChar:([comp_dict objectForKey:MWIZARD_STEP_NAME]!= nil)?[comp_dict objectForKey:MWIZARD_STEP_NAME]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 3, [([comp_dict objectForKey:MWIZARD_STEP_NAME]!= nil)?[comp_dict objectForKey:MWIZARD_STEP_NAME]:@"" UTF8String], [([comp_dict objectForKey:MWIZARD_STEP_NAME]!= nil)?[comp_dict objectForKey:MWIZARD_STEP_NAME]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 3, _wizardStepName, strlen(_wizardStepName), SQLITE_TRANSIENT);
+				
+				char * _expressionId = [appDelegate convertStringIntoChar:([comp_dict objectForKey:MEXPRESSION_ID] != nil)?[comp_dict objectForKey:MEXPRESSION_ID]:@""];
                 
-                sqlite3_bind_text(bulkStmt, 4, [([comp_dict objectForKey:MEXPRESSION_ID] != nil)?[comp_dict objectForKey:MEXPRESSION_ID]:@"" UTF8String], [([comp_dict objectForKey:MEXPRESSION_ID] != nil)?[comp_dict objectForKey:MEXPRESSION_ID]:@"" length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 4, _expressionId, strlen(_expressionId), SQLITE_TRANSIENT);
+				
+				char * _wProcessId = [appDelegate convertStringIntoChar:wProcessId];
                 
-                sqlite3_bind_text(bulkStmt, 5, [wProcessId UTF8String], [wProcessId length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 5, _wProcessId, strlen(_wProcessId), SQLITE_TRANSIENT);
                 if(isCustomAction)
+					
                     sqlite3_bind_text(bulkStmt, 6, [SFW_Custom_Actions UTF8String], [SFW_Custom_Actions length], SQLITE_TRANSIENT);
                 else
                     sqlite3_bind_text(bulkStmt, 6, [SFM UTF8String], [SFM length], SQLITE_TRANSIENT);
                 
                 sqlite3_bind_int(bulkStmt, 7, ++id_value);
+				char * _performSync = [appDelegate convertStringIntoChar:performSync];
                 
-                sqlite3_bind_text(bulkStmt, 8, [performSync UTF8String], [performSync length], SQLITE_TRANSIENT);
-                sqlite3_bind_text(bulkStmt, 9, [className UTF8String], [className length], SQLITE_TRANSIENT);
-                sqlite3_bind_text(bulkStmt, 10, [methodName UTF8String], [methodName length], SQLITE_TRANSIENT);
+                sqlite3_bind_text(bulkStmt, 8, _performSync, strlen(_performSync), SQLITE_TRANSIENT);
+				
+				char * _className = [appDelegate convertStringIntoChar:className];
+				
+                sqlite3_bind_text(bulkStmt, 9, _className, strlen(_className), SQLITE_TRANSIENT);
+				
+				char * _methodName = [appDelegate convertStringIntoChar:methodName];
+				
+                sqlite3_bind_text(bulkStmt, 10, _methodName, strlen(_methodName), SQLITE_TRANSIENT);
                 
                 if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
@@ -4558,12 +4695,19 @@ extern void SVMXLog(NSString *format, ...);
         for (int i = 0; i < [sfExpression count]; i++)
         {
             NSDictionary * dict = [sfExpression objectAtIndex:i];
+			
+			
+			char * _expressionId = [appDelegate convertStringIntoChar:([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@""];
             
-            sqlite3_bind_text(bulkStmt, 1, [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" UTF8String], [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" length], SQLITE_TRANSIENT);
+            sqlite3_bind_text(bulkStmt, 1, _expressionId, strlen(_expressionId), SQLITE_TRANSIENT);
+			
+			char * _expressionName = [appDelegate convertStringIntoChar:([dict objectForKey:MEXPRESSION_NAME] != nil)?[dict objectForKey:MEXPRESSION_NAME]:@""];
             
-            sqlite3_bind_text(bulkStmt, 2, [([dict objectForKey:MEXPRESSION_NAME] != nil)?[dict objectForKey:MEXPRESSION_NAME]:@"" UTF8String], [([dict objectForKey:MEXPRESSION_NAME] != nil)?[dict objectForKey:MEXPRESSION_NAME]:@"" length], SQLITE_TRANSIENT);
+            sqlite3_bind_text(bulkStmt, 2, _expressionName, strlen(_expressionName), SQLITE_TRANSIENT);
+			
+			char * _advanceExpression = [appDelegate convertStringIntoChar:([dict objectForKey:MADVANCE_EXPRESSION] != nil)?[dict objectForKey:MADVANCE_EXPRESSION]:@""];
             
-            sqlite3_bind_text(bulkStmt, 3, [([dict objectForKey:MADVANCE_EXPRESSION] != nil)?[dict objectForKey:MADVANCE_EXPRESSION]:@"" UTF8String], [([dict objectForKey:MADVANCE_EXPRESSION] != nil)?[dict objectForKey:MADVANCE_EXPRESSION]:@"" length], SQLITE_TRANSIENT);
+            sqlite3_bind_text(bulkStmt, 3, _advanceExpression, strlen(_advanceExpression), SQLITE_TRANSIENT);
             
             sqlite3_bind_int(bulkStmt, 4, ++id_value);
             
@@ -4604,16 +4748,27 @@ extern void SVMXLog(NSString *format, ...);
         for (int i = 0; i < [sfExpression_com count]; i++)
         {
             NSDictionary * dict = [sfExpression_com objectAtIndex:i];
+			
+			char * _expressionId = [appDelegate convertStringIntoChar:([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@""];
         
-            sqlite3_bind_text(bulkStmt, 1, [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" UTF8String], [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" length], SQLITE_TRANSIENT);
+            sqlite3_bind_text(bulkStmt, 1, _expressionId, strlen(_expressionId), SQLITE_TRANSIENT);
+			
+			char * _sequence = [appDelegate convertStringIntoChar:([dict objectForKey:MSEQUENCE] != nil)?[dict objectForKey:MSEQUENCE]:@""];
             
-            sqlite3_bind_text(bulkStmt, 2, [([dict objectForKey:MSEQUENCE] != nil)?[dict objectForKey:MSEQUENCE]:@"" UTF8String], [([dict objectForKey:MSEQUENCE] != nil)?[dict objectForKey:MSEQUENCE]:@"" length], SQLITE_TRANSIENT);
+            sqlite3_bind_text(bulkStmt, 2, _sequence, strlen(_sequence), SQLITE_TRANSIENT);
+			
+			
+			char * _sourceFieldName = [appDelegate convertStringIntoChar:([dict objectForKey:MSOURCE_FIELD_NAME] != nil)?[dict objectForKey:MSOURCE_FIELD_NAME]:@""];
             
-            sqlite3_bind_text(bulkStmt, 3, [([dict objectForKey:MSOURCE_FIELD_NAME] != nil)?[dict objectForKey:MSOURCE_FIELD_NAME]:@"" UTF8String], [([dict objectForKey:MSOURCE_FIELD_NAME] != nil)?[dict objectForKey:MSOURCE_FIELD_NAME]:@"" length], SQLITE_TRANSIENT);
+            sqlite3_bind_text(bulkStmt, 3, _sourceFieldName, strlen(_sourceFieldName), SQLITE_TRANSIENT);
+			
+			char * _value = [appDelegate convertStringIntoChar:([dict objectForKey:MVALUEM] != nil)?[dict objectForKey:MVALUEM]:@""];
             
-            sqlite3_bind_text(bulkStmt, 4, [([dict objectForKey:MVALUEM] != nil)?[dict objectForKey:MVALUEM]:@"" UTF8String], [([dict objectForKey:MVALUEM] != nil)?[dict objectForKey:MVALUEM]:@"" length], SQLITE_TRANSIENT);
+            sqlite3_bind_text(bulkStmt, 4, _value, strlen(_value), SQLITE_TRANSIENT);
+			
+			char * _operator = [appDelegate convertStringIntoChar:([dict objectForKey:MOPERATOR] != nil)?[dict objectForKey:MOPERATOR]:@""];
             
-            sqlite3_bind_text(bulkStmt, 5, [([dict objectForKey:MOPERATOR] != nil)?[dict objectForKey:MOPERATOR]:@"" UTF8String], [([dict objectForKey:MOPERATOR] != nil)?[dict objectForKey:MOPERATOR]:@"" length], SQLITE_TRANSIENT);
+            sqlite3_bind_text(bulkStmt, 5, _operator, strlen(_operator), SQLITE_TRANSIENT);
             
             sqlite3_bind_int(bulkStmt, 6, ++id_value);
             
@@ -5165,25 +5320,47 @@ extern void SVMXLog(NSString *format, ...);
     {
         for (NSDictionary * dict in process_info)
         {
-            sqlite3_bind_text(bulkStmt, 1, [([dict objectForKey:MPROCESS_ID] != nil)?[dict objectForKey:MPROCESS_ID]:@"" UTF8String], [([dict objectForKey:MPROCESS_ID] != nil)?[dict objectForKey:MPROCESS_ID]:@"" length], SQLITE_TRANSIENT);
+			
+			char * _processId = [appDelegate convertStringIntoChar:([dict objectForKey:MPROCESS_ID] != nil)?[dict objectForKey:MPROCESS_ID]:@""];
+			
+            sqlite3_bind_text(bulkStmt, 1, _processId, strlen(_processId), SQLITE_TRANSIENT);
+			
+			
+			char * _layoutId = [appDelegate convertStringIntoChar:([dict objectForKey:MLAYOUT_ID] != nil)?[dict objectForKey:MLAYOUT_ID]:@""];
             
-            sqlite3_bind_text(bulkStmt, 2, [([dict objectForKey:MLAYOUT_ID] != nil)?[dict objectForKey:MLAYOUT_ID]:@"" UTF8String], [([dict objectForKey:MLAYOUT_ID] != nil)?[dict objectForKey:MLAYOUT_ID]:@"" length], SQLITE_TRANSIENT);
+            sqlite3_bind_text(bulkStmt, 2, _layoutId, strlen(_layoutId), SQLITE_TRANSIENT);
+			
+			char * _targetObjectName = [appDelegate convertStringIntoChar:([dict objectForKey:MTARGET_OBJECT_NAME] != nil)?[dict objectForKey:MTARGET_OBJECT_NAME]:@""];
             
-            sqlite3_bind_text(bulkStmt, 3, [([dict objectForKey:MTARGET_OBJECT_NAME] != nil)?[dict objectForKey:MTARGET_OBJECT_NAME]:@"" UTF8String], [([dict objectForKey:MTARGET_OBJECT_NAME] != nil)?[dict objectForKey:MTARGET_OBJECT_NAME]:@"" length], SQLITE_TRANSIENT);
+            sqlite3_bind_text(bulkStmt, 3, _targetObjectName, strlen(_targetObjectName), SQLITE_TRANSIENT);
+										
+			char * _sourceObjectName = [appDelegate convertStringIntoChar:([dict objectForKey:MSOURCE_OBJECT_NAME] != nil)?[dict objectForKey:MSOURCE_OBJECT_NAME]:@""];
             
-            sqlite3_bind_text(bulkStmt, 4, [([dict objectForKey:MSOURCE_OBJECT_NAME] != nil)?[dict objectForKey:MSOURCE_OBJECT_NAME]:@"" UTF8String], [([dict objectForKey:MSOURCE_OBJECT_NAME] != nil)?[dict objectForKey:MSOURCE_OBJECT_NAME]:@"" length], SQLITE_TRANSIENT);
+            sqlite3_bind_text(bulkStmt, 4, _sourceObjectName, strlen(_sourceObjectName), SQLITE_TRANSIENT);
+										
+			char * _expressionId = [appDelegate convertStringIntoChar:([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@""];
             
-            sqlite3_bind_text(bulkStmt, 5, [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" UTF8String], [([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@"" length], SQLITE_TRANSIENT);
+            sqlite3_bind_text(bulkStmt, 5, _expressionId, strlen(_expressionId), SQLITE_TRANSIENT);
+										
+			char * _objectmappingId = [appDelegate convertStringIntoChar:([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@""];
+										
+            sqlite3_bind_text(bulkStmt, 6, _objectmappingId, strlen(_objectmappingId), SQLITE_TRANSIENT);
+										
+			char * _componentType = [appDelegate convertStringIntoChar:([dict objectForKey:MCOMPONENT_TYPE] != nil)?[dict objectForKey:MCOMPONENT_TYPE]:@""];
+										
+            sqlite3_bind_text(bulkStmt, 7, _componentType, strlen(_componentType), SQLITE_TRANSIENT);
+										
+			char * _parentColumn = [appDelegate convertStringIntoChar:([dict objectForKey:MPARENT_COLUMN] != nil)?[dict objectForKey:MPARENT_COLUMN]:@""];
+										
+            sqlite3_bind_text(bulkStmt, 8, _parentColumn, strlen(_parentColumn), SQLITE_TRANSIENT);
+			
+            char * _valueMappingId = [appDelegate convertStringIntoChar:([dict objectForKey:MVALUE_MAPPING_ID] != nil)?[dict objectForKey:MVALUE_MAPPING_ID]:@""];
+										
+            sqlite3_bind_text(bulkStmt, 9, _valueMappingId, strlen(_valueMappingId), SQLITE_TRANSIENT);
+										
+			char * _sourceChildParentcolumn = [appDelegate convertStringIntoChar:([dict objectForKey:@"source_child_parent_column"] != nil)?[dict objectForKey:@"source_child_parent_column"]:@""];
             
-            sqlite3_bind_text(bulkStmt, 6, [([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@"" UTF8String], [([dict objectForKey:MOBJECT_MAPPING_ID] != nil)?[dict objectForKey:MOBJECT_MAPPING_ID]:@"" length], SQLITE_TRANSIENT);
-            
-            sqlite3_bind_text(bulkStmt, 7, [([dict objectForKey:MCOMPONENT_TYPE] != nil)?[dict objectForKey:MCOMPONENT_TYPE]:@"" UTF8String], [([dict objectForKey:MCOMPONENT_TYPE] != nil)?[dict objectForKey:MCOMPONENT_TYPE]:@"" length], SQLITE_TRANSIENT);
-            
-            sqlite3_bind_text(bulkStmt, 8, [([dict objectForKey:MPARENT_COLUMN] != nil)?[dict objectForKey:MPARENT_COLUMN]:@"" UTF8String], [([dict objectForKey:MPARENT_COLUMN] != nil)?[dict objectForKey:MPARENT_COLUMN]:@"" length], SQLITE_TRANSIENT);
-            
-            sqlite3_bind_text(bulkStmt, 9, [([dict objectForKey:MVALUE_MAPPING_ID] != nil)?[dict objectForKey:MVALUE_MAPPING_ID]:@"" UTF8String], [([dict objectForKey:MVALUE_MAPPING_ID] != nil)?[dict objectForKey:MVALUE_MAPPING_ID]:@"" length], SQLITE_TRANSIENT);
-            
-            sqlite3_bind_text(bulkStmt,  10, [([dict objectForKey:@"source_child_parent_column"] != nil)?[dict objectForKey:@"source_child_parent_column"]:@"" UTF8String], [([dict objectForKey:@"source_child_parent_column"] != nil)?[dict objectForKey:@"source_child_parent_column"]:@"" length], SQLITE_TRANSIENT);
+            sqlite3_bind_text(bulkStmt,  10, _sourceChildParentcolumn, strlen(_sourceChildParentcolumn), SQLITE_TRANSIENT);
             
             sqlite3_bind_int(bulkStmt, 11, ++id_value);
             

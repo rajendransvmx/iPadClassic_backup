@@ -2191,6 +2191,17 @@ NSString * GO_Online = @"GO_Online";
     [plistdict writeToFile:plistPath_SYNHIST atomically:YES];
 
 }
+//RADHA  26/Nov/2012
+- (char *) convertStringIntoChar:(NSString *)data
+{
+	char * _data = (char *) [data UTF8String];
+	
+	if (_data == nil)
+		_data = "";
+	
+	return _data;
+}
+
 
 #pragma mark - END
 
