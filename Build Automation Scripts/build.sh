@@ -26,6 +26,7 @@ function check_assembla()
 	if [ $? -ne 0 ]
 	then
 		echo "Assembla Not Reachable.";
+		exit 1;
 	else
 		echo "Assembla is Reachable.";
 	fi
@@ -34,16 +35,16 @@ function check_assembla()
 # See if old project is there. Delete the folder if the folder exists
 function remove_old_project()
 {	
-	test -d $DIRECTORY_NAME;
+	test -d $LOCAL_PROJECT_PATH;
 	if [ $? -ne 0 ]
 	then
-		echo "$DIRECTORY_NAME is not available ..";
+		echo "$LOCAL_PROJECT_PATH is not available ..";
 	else
-		echo "Removing Directory $DIRECTORY_NAME ..";
-		rm -rf $DIRECTORY_NAME;
+		echo "Removing Directory $LOCAL_PROJECT_PATH ..";
+		rm -rf $LOCAL_PROJECT_PATH;
 		if [ $? -ne 0 ]
 		then
-			echo "Unable to delete the folder $DIRECTORY_NAME";
+			echo "Unable to delete the folder $LOCAL_PROJECT_PATH";
 			exit 1;
 		fi
 		
@@ -57,7 +58,8 @@ function check_out_latest_source_code()
 	svn co $SVN_PATH $LOCAL_PROJECT_PATH;
 	if [ $? -ne 0 ]
 	then
-		echo "Source Code Not Check-Out Properly.";
+		echo "Source Code could't Check-Out Properly.";
+		exit 1;
 	else
 		echo "Successfully Check-out the Source Code";
 	fi
@@ -69,10 +71,11 @@ function do_build()
 	#/usr/bin/xcodebuild -project "$LOCAL_PROJECT_PATH/SVMXiPadMobileLogger.xcodeproj" -target "SVMXiPadMobileLogger" -configuration "Release" CODE_SIGN_IDENTITY='iPhone Distribution: ServiceMax Inc'  	clean build
 	if [ $? -ne 0 ]
 	then
-			echo "Source Code Not Compiled.";
-		else
-			echo "Source Compiled Successfully";
-		fi
+		echo "Source Code Not Compiled.";
+		exit 1;
+	else
+		echo "Source Compiled Successfully";
+	fi
 }
 
 function create_ipa()
@@ -82,6 +85,7 @@ function create_ipa()
 	if [ $? -ne 0 ]
 	then
 		echo "Unable to Create ipa file.";
+		exit 1;
 	else
 		echo "Successfully Create $APP_NAME.ipa";
 	fi
@@ -97,6 +101,7 @@ curl http://testflightapp.com/api/builds.json -F file=@"$LOCAL_PROJECT_PATH/$APP
 	if [ $? -ne 0 ]
 	then
 		echo "Unable to upload the build to TestFlight.";
+		exit 1;
 	else
 		echo "Successfully uploaded the build to Test Flight";
 	fi
