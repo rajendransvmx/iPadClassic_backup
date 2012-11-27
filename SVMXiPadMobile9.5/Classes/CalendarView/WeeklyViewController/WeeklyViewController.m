@@ -1398,7 +1398,7 @@ extern void SVMXLog(NSString *format, ...);
 	
     if (!allowTouches)
         return;
-    
+    WeeklyViewEvent *calEvent = [eventView retain];
 	UITouch *touch = [touches anyObject];
     
     if ([touch view] == weekViewPane)
@@ -1431,7 +1431,7 @@ extern void SVMXLog(NSString *format, ...);
         return;
     }
 
-    if (([touch view] == eventView.view) && didTap && !didMove)
+    if (([touch view] == calEvent.view) && didTap && !didMove)
     {
         // Tapped the view, so do something
         didTap = didMove = NO;
@@ -1440,10 +1440,10 @@ extern void SVMXLog(NSString *format, ...);
         NSString * noView = [appDelegate.wsInterface.tagsDictionary objectForKey:NO_VIEW_PROCESS];
         if (!didMoveEvent)
         {
-            NSString * confictStr = [NSString stringWithFormat:@"%d",eventView.conflictFlag];
+            NSString * confictStr = [NSString stringWithFormat:@"%d",calEvent.conflictFlag];
         
             NSArray * keys = [NSArray arrayWithObjects:PROCESSID, RECORDID, OBJECTAPINAME, CREATEDDATE, ACCOUNTID, ACTIVITYDATE, ISCONFLICT, nil];
-            NSArray * objects = [NSArray arrayWithObjects:eventView.processId, eventView.recordId, eventView.objectName, eventView.createdDate, eventView.accountId, eventView.activityDate,confictStr, nil];
+            NSArray * objects = [NSArray arrayWithObjects:calEvent.processId, calEvent.recordId, calEvent.objectName, calEvent.createdDate, calEvent.accountId, calEvent.activityDate,confictStr, nil];
             NSDictionary * _dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
             [activity startAnimating];
                         
@@ -1466,16 +1466,16 @@ extern void SVMXLog(NSString *format, ...);
         else
         {
             [self disableUI];
-            [eventView moveTo:eventView.view.frame];
+            [calEvent moveTo:calEvent.view.frame];
         }
 
         didTap = didMove = NO;
-        
+        [calEvent release];
         [self enableUI];
         return;
     }
 
-    if ([touch view] == eventView.view)
+    if ([touch view] == calEvent.view)
     {
         // CGPoint location = [touch locationInView:rightPane];
 		// Disable user interaction so subsequent touches don't interfere with animation
@@ -1486,8 +1486,8 @@ extern void SVMXLog(NSString *format, ...);
         {
             [self disableUI];
             SMLog(@"%@", weeklyEventPositionArray);
-            CGRect oldRect = eventView.selfFrame;
-            [eventView moveTo:eventView.view.frame];
+            CGRect oldRect = calEvent.selfFrame;
+            [calEvent moveTo:calEvent.view.frame];
 
             if(ContinueRescheduling == TRUE)
             {
@@ -1496,16 +1496,17 @@ extern void SVMXLog(NSString *format, ...);
                 SMLog(@"%@", weeklyEventPositionArray);
                 if ([updatestartDateTime length] > 0 && [updateendDateTime length] > 0)
                 {
+                    NSLog(@"Start Time = %@ and End Time = %@",updatestartDateTime,updateendDateTime);
                     //Shrinivas 
-                    [appDelegate.calDataBase updateMovedEventWithStartTime:updatestartDateTime EndDate:updateendDateTime RecordID:eventView.eventId];
+                    [appDelegate.calDataBase updateMovedEventWithStartTime:updatestartDateTime EndDate:updateendDateTime RecordID:calEvent.eventId];
                     
-                   NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:eventView.eventId tableName:@"Event"];
-                    
+                   NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:calEvent.eventId tableName:@"Event"];
+                    NSLog(@"Local Id = %@ For Event Id = %@",local_id,calEvent.eventId);
                     //sahana 26/Feb
                     BOOL does_exists = [appDelegate.databaseInterface DoesTrailerContainTheRecord:local_id operation_type:UPDATE object_name:@"Event"];
                     if(!does_exists)
                     {
-                        [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:local_id SF_id:eventView.eventId record_type:MASTER operation:UPDATE object_name:@"Event" sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@""]; 
+                        [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:local_id SF_id:calEvent.eventId record_type:MASTER operation:UPDATE object_name:@"Event" sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@""];
                     }
                     [appDelegate callDataSync];
                     
@@ -1553,14 +1554,13 @@ extern void SVMXLog(NSString *format, ...);
             }
             else
             {
-                
             }
             
         }
 	}
     didMoveEvent = NO;
     didTap = didMove = NO;
-    
+    [calEvent release];
     [self enableUI];
 }
 

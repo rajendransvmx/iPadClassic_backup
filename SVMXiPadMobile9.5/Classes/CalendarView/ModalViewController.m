@@ -1853,17 +1853,17 @@ extern void SVMXLog(NSString *format, ...);
                 [UIView commitAnimations];
             }
         }
-        
+        EventViewController *calEventView = [eventView retain];
         // If the touch was in the placardView, bounce it back to the center
-        if ([touch view] == eventView.view)
+        if ([touch view] == calEventView.view)
         {
             if (!didMoveEvent)
             {
                 
-                NSString * confictStr = [NSString stringWithFormat:@"%d",eventView.conflictFlag];
+                NSString * confictStr = [NSString stringWithFormat:@"%d",calEventView.conflictFlag];
                 
                 NSArray * keys = [NSArray arrayWithObjects:PROCESSID, RECORDID, OBJECTAPINAME, ACTIVITYDATE, ACCOUNTID, ISCONFLICT, nil];
-                NSArray * objects = [NSArray arrayWithObjects:eventView.processId, eventView.recordId, eventView.objectName, eventView.activityDate, eventView.accountId, confictStr, nil];
+                NSArray * objects = [NSArray arrayWithObjects:calEventView.processId, calEventView.recordId, calEventView.objectName, calEventView.activityDate, calEventView.accountId, confictStr, nil];
                 
                 NSDictionary * _dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
                 NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
@@ -1887,8 +1887,8 @@ extern void SVMXLog(NSString *format, ...);
             else
             {
                 [self disableUI];
-                oldEventRect = eventView.selfFrame;
-                [eventView moveTo:eventView.view.frame];
+                oldEventRect = calEventView.selfFrame;
+                [calEventView moveTo:calEventView.view.frame];
                 
                 if(Continue_rescheduling)
                 {
@@ -1896,17 +1896,17 @@ extern void SVMXLog(NSString *format, ...);
                     if ([updatestartDateTime length] > 0 && [updateendDateTime length] > 0)
                     {
                         SMLog(@"%@", updatestartDateTime);
-                        SMLog(@"%@", eventView.eventId);
-                        [appDelegate.calDataBase updateMovedEventWithStartTime:updatestartDateTime EndDate:updateendDateTime RecordID:eventView.eventId];
+                        SMLog(@"%@", calEventView.eventId);
+                        [appDelegate.calDataBase updateMovedEventWithStartTime:updatestartDateTime EndDate:updateendDateTime RecordID:calEventView.eventId];
                         
                         //sahana Event Update  to datatriler table
-                        NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:eventView.eventId tableName:@"Event"];
+                        NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:calEventView.eventId tableName:@"Event"];
                         //sahana 26/Feb
 						// BOOL does_exists = [appDelegate.databaseInterface DoesTrailerContainTheRecord:local_id operation_type:UPDATE object_name:@"Event"];
 						//  if(!does_exists)
                         {
 							
-                            [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:local_id SF_id:eventView.eventId record_type:MASTER operation:UPDATE object_name:@"Event" sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@""];
+                            [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:local_id SF_id:calEventView.eventId record_type:MASTER operation:UPDATE object_name:@"Event" sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@""];
                             
                         }
                         [appDelegate callDataSync];
@@ -1940,6 +1940,7 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
         didMoveEvent = NO;
+        [calEventView release];
     }
     @catch (NSException *exception)
     {
@@ -1949,7 +1950,6 @@ extern void SVMXLog(NSString *format, ...);
     {
         SMLog(@"touchesEnded: Finally Handled Exception.");
     }
-    
 	[self enableUI];
 }
 
