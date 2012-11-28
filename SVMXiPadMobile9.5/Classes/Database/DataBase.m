@@ -2596,7 +2596,7 @@ extern void SVMXLog(NSString *format, ...);
                     
                     sqlite3_bind_text(bulkStmt, 7, _label, strlen(_label), SQLITE_TRANSIENT);
 					
-					char * _emptyString = [appDelegate convertStringIntoChar:label];
+					char * _emptyString = [appDelegate convertStringIntoChar:emptyString];
                     
                     sqlite3_bind_text(bulkStmt, 8, _emptyString, strlen(_emptyString), SQLITE_TRANSIENT);
                     
@@ -3903,7 +3903,7 @@ extern void SVMXLog(NSString *format, ...);
 							
 							char * _defaultLabel = [appDelegate convertStringIntoChar:defaultLabel];
                             
-                            sqlite3_bind_text(bulkStmt, 5, defaultLabel, strlen(defaultLabel), SQLITE_TRANSIENT);
+                            sqlite3_bind_text(bulkStmt, 5, _defaultLabel, strlen(_defaultLabel), SQLITE_TRANSIENT);
 							
 							char * _defaultValue = [appDelegate convertStringIntoChar:defaultValue];
                             
