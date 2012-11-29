@@ -1342,24 +1342,24 @@ extern void SVMXLog(NSString *format, ...);
                         [eachArray  removeObjectAtIndex:m];
                     }
 					
-					for(int e = 0 ; e < [detail_value_mapping_keys count]; e++)
-					{
-						NSString  * detail_value_api = [detail_value_mapping_keys objectAtIndex:e];
-						if([detail_value_api isEqualToString:api_name])
-						{
-							if([detail_value_api length] != 0)
-							{
-								NSString *  detail_value_key  =  [detail_value_mapping_dict objectForKey:detail_value_api];
-								NSString * field_data_type  = [api_name_dataType objectForKey:detail_value_api];
-                                // Sahana fix for defect 5826
-								NSString * detil_value_value = [self getValueForApiName:detail_value_api dataType:field_data_type object_name:detailObjectName field_key:detail_value_key];
-								[dict setObject:detail_value_key forKey:gVALUE_FIELD_VALUE_KEY];
-								[dict setObject:detil_value_value forKey:gVALUE_FIELD_VALUE_VALUE];
-							}
-							break;
-						}
-						
-					}
+//					for(int e = 0 ; e < [detail_value_mapping_keys count]; e++)
+//					{
+//						NSString  * detail_value_api = [detail_value_mapping_keys objectAtIndex:e];
+//						if([detail_value_api isEqualToString:api_name])
+//						{
+//							if([detail_value_api length] != 0)
+//							{
+//								NSString *  detail_value_key  =  [detail_value_mapping_dict objectForKey:detail_value_api];
+//								NSString * field_data_type  = [api_name_dataType objectForKey:detail_value_api];
+//                                // Sahana fix for defect 5826
+//								NSString * detil_value_value = [self getValueForApiName:detail_value_api dataType:field_data_type object_name:detailObjectName field_key:detail_value_key];
+//								[dict setObject:detail_value_key forKey:gVALUE_FIELD_VALUE_KEY];
+//								[dict setObject:detil_value_value forKey:gVALUE_FIELD_VALUE_VALUE];
+//							}
+//							break;
+//						}
+//						
+//					}
                 }
                 
                 [detail_Values_id addObject:@""];
@@ -2072,24 +2072,24 @@ extern void SVMXLog(NSString *format, ...);
                         value_id_flag = TRUE;
                     }
 					
-					for(int e = 0 ; e < [detail_value_mapping_keys count]; e++)
-					{
-						NSString  * detail_value_api = [detail_value_mapping_keys objectAtIndex:e];
-					
-						if([detail_value_api isEqualToString:api_name])
-						{
-							if([detail_value_api length] != 0)
-							{
-								NSString *  detail_value_key  =  [detail_value_mapping_dict objectForKey:detail_value_api];
-								NSString * field_data_type  = [api_name_dataType objectForKey:detail_value_api];
-                                // Sahana fix for defect 5826
-								NSString * detil_value_value = [self getValueForApiName:detail_value_api dataType:field_data_type object_name:detailObjectName field_key:detail_value_key];
-								[dict setObject:detail_value_key forKey:gVALUE_FIELD_VALUE_KEY];
-								[dict setObject:detil_value_value forKey:gVALUE_FIELD_VALUE_VALUE];
-								break;
-							}
-						}
-					}
+//					for(int e = 0 ; e < [detail_value_mapping_keys count]; e++)
+//					{
+//						NSString  * detail_value_api = [detail_value_mapping_keys objectAtIndex:e];
+//					
+//						if([detail_value_api isEqualToString:api_name])
+//						{
+//							if([detail_value_api length] != 0)
+//							{
+//								NSString *  detail_value_key  =  [detail_value_mapping_dict objectForKey:detail_value_api];
+//								NSString * field_data_type  = [api_name_dataType objectForKey:detail_value_api];
+//                                // Sahana fix for defect 5826
+//								NSString * detil_value_value = [self getValueForApiName:detail_value_api dataType:field_data_type object_name:detailObjectName field_key:detail_value_key];
+//								[dict setObject:detail_value_key forKey:gVALUE_FIELD_VALUE_KEY];
+//								[dict setObject:detil_value_value forKey:gVALUE_FIELD_VALUE_VALUE];
+//								break;
+//							}
+//						}
+//					}
                 }
 				
                 if(value_id_flag)
@@ -3367,7 +3367,7 @@ extern void SVMXLog(NSString *format, ...);
     [UIView setAnimationDelegate:self];
     [UIView setAnimationDidStopSelector:@selector(animation1DidStop:finished:context:)];
 	
-	if (detailViewObject.isInEditDetail)
+	if (detailViewObject.isInEditDetail)  //Shrinivas detailViewObject.isInEditDetail changed
 	{
 		detailViewObject.tableView.frame = CGRectMake(detailViewObject.tableView.frame.origin.x, 100, detailViewObject.tableView.frame.size.width, detailViewObject.view.frame.size.height-100);
 	}
@@ -3381,7 +3381,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) animation1DidStop:(NSString *)animationID finished:(NSNumber *)finished context:(void *)context
 {
-	if (detailViewObject.isInEditDetail)
+	if (detailViewObject.isInEditDetail)  //Shrinivas detailViewObject.isInEditDetail
 	{
 		[detailViewObject.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
 
@@ -10638,6 +10638,7 @@ extern void SVMXLog(NSString *format, ...);
                                 }
                                 
                                 //fill for each row
+								//FILL OBJECTMAPPING VALUE 
                                 NSArray * detail_field_keys = [detail_fields_dict allKeys];
                                 for(int p = 0 ; p < [detail_field_keys count]; p++)
                                 {
@@ -10752,33 +10753,34 @@ extern void SVMXLog(NSString *format, ...);
                                     [sfm_detail_field_keyValue setObject:deatail_value forKey:detail_api_name];
                                 }
 
-                                NSArray * all_keys = [sfm_detail_field_keyValue allKeys];
-                                for(NSString * mapping_key in detail_object_mapping_keys)
-                                {
-                                    NSString * mapping_value = [ detail_object_mapping_dict objectForKey:mapping_key];
-                                    BOOL mapping_flag = FALSE;
-                                    for(NSString * key in all_keys)
-                                    {
-                                        if([key isEqualToString:mapping_key])
-                                        {
-                                            NSString * value = [sfm_detail_field_keyValue objectForKey:mapping_key];
-                                            if([value length] == 0 || value == nil)
-                                            {
-                                                [ sfm_detail_field_keyValue setObject:value forKey:mapping_key];
-                                            }
-                                            mapping_flag = TRUE;
-                                        }
-                                    }
-                                    if(!mapping_flag)
-                                    {
-                                        if(mapping_value == nil)
-                                        {
-                                            mapping_value = @"";
-                                        }
-
-                                        [sfm_detail_field_keyValue setObject:mapping_value forKey:mapping_key];
-                                    }
-                                }
+								//PLZ DONT DELETE THIS COMMENTED CODE
+//                                NSArray * all_keys = [sfm_detail_field_keyValue allKeys];
+//                                for(NSString * mapping_key in detail_object_mapping_keys)
+//                                {
+//                                    NSString * mapping_value = [ detail_object_mapping_dict objectForKey:mapping_key];
+//                                    BOOL mapping_flag = FALSE;
+//                                    for(NSString * key in all_keys)
+//                                    {
+//                                        if([key isEqualToString:mapping_key])
+//                                        {
+//                                            NSString * value = [sfm_detail_field_keyValue objectForKey:mapping_key];
+//                                            if([value length] == 0 || value == nil)
+//                                            {
+//                                                [ sfm_detail_field_keyValue setObject:value forKey:mapping_key];
+//                                            }
+//                                            mapping_flag = TRUE;
+//                                        }
+//                                    }
+//                                    if(!mapping_flag)
+//                                    {
+//                                        if(mapping_value == nil)
+//                                        {
+//                                            mapping_value = @"";
+//                                        }
+//
+//                                        [sfm_detail_field_keyValue setObject:mapping_value forKey:mapping_key];
+//                                    }
+//                                }
                                 
                                 
                                 NSArray * allkeys_sfm_detail_dict = [[sfm_detail_field_keyValue allKeys] retain];
