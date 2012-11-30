@@ -85,11 +85,25 @@ extern void SVMXLog(NSString *format, ...);
             if ([textField.text isEqualToString:@""])
             {
                  defaultValue = [appDelegate.databaseInterface getDefaultValueForRTPicklistDependency:SFM_ObjectName recordtypeId:RecordTypeId field_api_name:parent.fieldAPIName];
-                
-                indexOfText = [contentView.spinnerData indexOfObject:defaultValue];
-            }else
+               
+//                indexOfText = [contentView.spinnerData indexOfObject:defaultValue];
+				
+				if ([defaultValue isEqualToString:@""])
+				{
+					indexOfText = 0;
+				}
+				else
+				{
+					indexOfText = [contentView.spinnerData indexOfObject:defaultValue];
+				}
+            }
+			else
+			{
                 indexOfText = [contentView.spinnerData indexOfObject:textField.text];
-        }else{
+			}
+        }
+		else
+		{
             if ([textField.text isEqualToString:@""])
             {
                 indexOfText = 0;
