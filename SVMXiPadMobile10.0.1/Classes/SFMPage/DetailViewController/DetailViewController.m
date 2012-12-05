@@ -4569,6 +4569,9 @@ extern void SVMXLog(NSString *format, ...);
                     
                     NSMutableDictionary * picklistValues = [appDelegate.databaseInterface  getPicklistValuesForTheFiled:fieldAPIName tableName:SFPicklist objectName:headerObjName];
                     NSArray * allvalues = [picklistValues allValues];
+				
+					//Shrinivas Fix for Defect : 6011.
+					allvalues = [appDelegate.calDataBase sortPickListUsingIndexes:allvalues WithfieldAPIName:fieldAPIName tableName:SFPicklist objectName:headerObjName];
                     
                     arr = [[NSMutableArray  alloc] initWithArray:allvalues];
                    
@@ -6048,6 +6051,10 @@ extern void SVMXLog(NSString *format, ...);
             NSMutableDictionary * picklistValues = [appDelegate.databaseInterface  getPicklistValuesForTheFiled:fieldAPIName tableName:SFPicklist objectName:detail_objectName];
             
             NSArray * allvalues = [picklistValues allValues];
+			
+			//Shrinivas Fix for Defect : 6011.
+			allvalues = [appDelegate.calDataBase sortPickListUsingIndexes:allvalues WithfieldAPIName:fieldAPIName tableName:SFPicklist objectName:detail_objectName];
+			
             arr = [[[NSMutableArray  alloc] initWithArray:allvalues] autorelease];
         }
     }
@@ -9327,6 +9334,14 @@ extern void SVMXLog(NSString *format, ...);
                         {
                             if([control_type isEqualToString:@"reference"])
                             {
+								NSString * field_api_name_temp = [dict objectForKey:gVALUE_FIELD_API_NAME];
+								//Fix for defect : 6028 Shrinivas
+								if([field_api_name_temp  isEqualToString:@"RecordTypeId"])
+								{
+									NSString * detailObjectName = [Disclosure_dict objectForKey:gDETAIL_OBJECT_NAME];
+									id_type =  [appDelegate.databaseInterface getRecordTypeIdForRecordTypename:fieldValue objectApi_name:detailObjectName];
+									
+								}
                                 if(id_type == nil)
                                 {
                                     id_type = @"";

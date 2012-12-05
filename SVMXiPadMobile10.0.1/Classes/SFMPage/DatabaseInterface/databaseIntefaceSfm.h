@@ -244,6 +244,9 @@
 - (NSMutableDictionary *) updateEmptyFieldValuesForDict:(NSDictionary *)dict objectName:(NSString *)objectName;
 -(NSString *)getRecordTypeNameForObject:(NSString *)object_name forId:(NSString *)recordTYpeId;
 
+//Shrinivas : method for multiselect
+-(void) UpdateSFPicklistForMultiSelect_IndexValue_For_Oject_Name:(NSString *)object_name  field_api_name:(NSString *)field_api_name value:(NSString *)value  index:(int)index_value;
+
 #define SERVER_OVERRIDE                     @"Server_Override"
 #define CLIENT_OVERRIDE                     @"Client_Override"
 #define UNDO                                @"Undo"

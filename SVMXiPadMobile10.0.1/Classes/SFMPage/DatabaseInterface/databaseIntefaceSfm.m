@@ -1732,6 +1732,7 @@ extern void SVMXLog(NSString *format, ...);
             [lookup_object_info addObject:dict];
         }
     }
+	
     
  	synchronized_sqlite3_finalize(stmt_);
     if(lookupID == nil || [lookupID isEqualToString:@""])
@@ -2045,6 +2046,7 @@ extern void SVMXLog(NSString *format, ...);
                             }
                             else
                             {
+								
                                 [dict setObject:label forKey:@"value"];
                             }
                         }
@@ -2063,12 +2065,16 @@ extern void SVMXLog(NSString *format, ...);
             NSMutableDictionary *sequence_dict = [NSMutableDictionary dictionaryWithObject:dict_field_name forKey:dict_sequence];
             [sequenceArray addObject:sequence_dict];
         }
+		
         NSString * default_display_column = @"";
         for(int k = 0 ; k< [lookup_object_info count]; k++)
         {
             NSDictionary * look_up =  [lookup_object_info objectAtIndex:k];
             
-            NSString * is_standard  = [look_up objectForKey:LOOKUP_IS_STANDARD];
+//            NSString * is_standard  = [look_up objectForKey:LOOKUP_IS_STANDARD];
+			
+			//Shrinivas : Fix for defect : 5916
+			NSString * is_standard  = [look_up objectForKey:LOOkUP_IS_DEFAULT]; //Please verufy this change before commiting contact coder : Shrinivas D
             if([is_standard boolValue])
             {
                 default_display_column = [look_up objectForKey:LOOKUP_DEFAULT_LOOK_UP_CLMN];
@@ -2103,6 +2109,8 @@ extern void SVMXLog(NSString *format, ...);
     synchronized_sqlite3_finalize(stmt);
     return field_name;
 }
+
+
 
 -(NSString *)queryForExpression:(NSString *)expression_id;
 {
@@ -5474,6 +5482,25 @@ extern void SVMXLog(NSString *format, ...);
             NSString * field_api_name = [field_describe name];
             NSString * type = [field_describe  type];
             
+			//Shrinvas : Fix for Defect : 6011
+			if ([type isEqualToString:@"multipicklist"])
+			{
+				if ([field_api_name isEqualToString:@"multipicklist_multiplelenght__c"])
+				{
+					NSLog(@"STOP");
+				}
+				NSArray * multipickListEntryArray = [field_describe picklistValues];
+				
+                for (int k = 0; k < [multipickListEntryArray count]; k++)
+                {
+					
+                    NSString * value = [[multipickListEntryArray objectAtIndex:k] value];
+                    
+                    [self UpdateSFPicklistForMultiSelect_IndexValue_For_Oject_Name:object_name field_api_name:field_api_name value:value index:k];
+                }
+
+			}
+			
             if([type isEqualToString:@"picklist"])
             {
                 BOOL  isdependentPicklist = [field_describe dependentPicklist];
@@ -5504,6 +5531,7 @@ extern void SVMXLog(NSString *format, ...);
                 }
                  
             }
+			
          }
     }
 
@@ -5522,6 +5550,25 @@ extern void SVMXLog(NSString *format, ...);
     }
     return TRUE;
 }
+
+
+//Shrinivas : method for multiselect
+-(void) UpdateSFPicklistForMultiSelect_IndexValue_For_Oject_Name:(NSString *)object_name  field_api_name:(NSString *)field_api_name value:(NSString *)value  index:(int)index_value
+{    
+    if([value isKindOfClass:[NSString class]])
+        value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+    
+    NSString * query = [NSString stringWithFormat:@"UPDATE  '%@' SET   index_value = '%d'  WHERE  object_api_name = '%@' AND field_api_name = '%@'  AND value = '%@'" , SFPicklist  ,index_value, object_name , field_api_name , value ];
+	
+	char * err ;
+    if(synchronized_sqlite3_exec(appDelegate.db, [query UTF8String], NULL, NULL, &err))
+    {
+        SMLog(@"Failed to UPDATE SFPicklist ");
+        
+    }
+    
+}
+
 
 -(BOOL)UpdateSFPicklist_validFor_For_Oject_Name:(NSString *)object_name  field_api_name:(NSString *)field_api_name value:(NSString *)value  valid_for_value:(NSString *)valid_for_value  index:(int)index_value
 {
