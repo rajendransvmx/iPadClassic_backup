@@ -18,7 +18,7 @@ extern void SVMXLog(NSString *format, ...);
            nsstr = inputData;
            //nsdata = [nsstr dataUsingEncoding:NSUTF8StringEncoding];
            nsdata = [Base64 decode:inputData];
-           SMLog(@"%@",nsdata);
+           //SMLog(@"%@",nsdata);
        }
        return self;
 }
@@ -28,7 +28,7 @@ extern void SVMXLog(NSString *format, ...);
     int index = n >> 3;
     
     Byte * data = (Byte *)[nsdata bytes];//[nsstr characterAtIndex:index];
-    SMLog(@"data =========%@",nsdata);
+    //SMLog(@"data =========%@",nsdata);
     return (data[index] & (0x80 >> n % 8)) != 0;
 }
 
@@ -37,7 +37,7 @@ extern void SVMXLog(NSString *format, ...);
     int length;
     length = [nsstr length] * 8;
     //length = [nsdata length] ;
-    SMLog(@"Length = %d",length);
+    //SMLog(@"Length = %d",length);
     return length;
 }
 @end

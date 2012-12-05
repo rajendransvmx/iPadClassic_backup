@@ -78,7 +78,6 @@ extern void SVMXLog(NSString *format, ...);
     //10/04/2012 --> Changes made please integrate
     if(isdependentPicklist && [controllerName length] != 0 && [validFor count] != 0)
     {
-        contentView.spinnerData  = [setSpinnerValuedelegate  getValuesForDependentPickList];
         if (ISRTDEPPicklist)
         {
             SMLog(@"Oh God Even this is Possible");

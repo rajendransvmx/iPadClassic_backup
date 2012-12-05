@@ -98,27 +98,30 @@ extern void SVMXLog(NSString *format, ...);
     NSMutableArray * spinner_Array = [[NSMutableArray alloc] initWithCapacity:0];
     [spinner_Array addObject:@""];
     SMLog(@"spinner data %@ " , TFHandler.spinnerData);
-
+    SMLog(@" valid For %@" , TFHandler.validFor);
     for(int j = 0 ; j< [TFHandler.spinnerData count];j++)
     {
-        SMLog(@"--");
         NSString * obj = [TFHandler.validFor objectAtIndex:j];
-        SMLog(@"object :%@", obj);
         obj = [obj stringByReplacingOccurrencesOfString:@" " withString:@""];
         if(obj == nil || [obj isEqualToString:@""])
         {
            // SMLog(@" object  %@" , obj);
             continue;
         }
-        SMLog(@" valid For %@" , TFHandler.validFor);
+        
         BitSet *bitObj = [[BitSet alloc] initWithString:obj];
-        if([bitObj testBit:count])
+        for(int k=0; k< [bitObj size]; k++)
         {
-            //add to cityData
-            [spinner_Array addObject:[TFHandler.spinnerData objectAtIndex:j]];
-            SMLog(@"SpinnerData %@", [TFHandler.spinnerData objectAtIndex:j]);
+            if(k < count)
+                continue;
+            if(( k == count) && ([bitObj testBit:count]))
+            {
+                //add to cityData
+                [spinner_Array addObject:[TFHandler.spinnerData objectAtIndex:j]];
+                SMLog(@"SpinnerData %@", [TFHandler.spinnerData objectAtIndex:j]);
+                break;
+            }
         }
-
         [bitObj release];
          
     }
