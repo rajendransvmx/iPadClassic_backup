@@ -210,7 +210,6 @@ extern void SVMXLog(NSString *format, ...);
 {
     didRunOperation = YES;
     NSString * newProcess = [objectDictionary objectForKey:gPROCESS_ID];
-    didSelectViewLayout = YES;
     self.objectAPIName = [objectDictionary objectForKey:VIEW_OBJECTNAME];
     //check For view process
     
@@ -220,6 +219,7 @@ extern void SVMXLog(NSString *format, ...);
     if(process_exist)
     {
         //check For view process
+        didSelectViewLayout = YES;
         appDelegate.sfmPageController.processId = pinfo.process_id;
         [self fillSFMdictForOfflineforProcess:newProcess forRecord:appDelegate.sfmPageController.recordId];
         [self didReceivePageLayoutOffline];
