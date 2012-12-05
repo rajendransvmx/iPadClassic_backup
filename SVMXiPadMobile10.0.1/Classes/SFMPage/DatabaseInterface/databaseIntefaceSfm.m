@@ -2259,6 +2259,18 @@ extern void SVMXLog(NSString *format, ...);
                 if(rhs != nil)
                 {
                     component_rhs = [NSString stringWithUTF8String:rhs];
+                    if([component_rhs rangeOfString:@"true" options:NSCaseInsensitiveSearch].length>0 )
+                    {
+                        component_rhs=[component_rhs lowercaseString];
+                        component_rhs=[component_rhs stringByReplacingOccurrencesOfString:@"true" withString:@"1" ];
+                        
+                    }
+                    else if([component_rhs rangeOfString:@"false" options:NSCaseInsensitiveSearch].length>0)
+                    {
+                        component_rhs=[component_rhs lowercaseString];
+                        component_rhs=[component_rhs stringByReplacingOccurrencesOfString:@"false" withString:@"0"];
+
+                    }
                 }
                 
                 char * operator = (char *)synchronized_sqlite3_column_text(stmt, 2);
@@ -2354,8 +2366,10 @@ extern void SVMXLog(NSString *format, ...);
                             {
                                 NSString * seq = [NSString stringWithFormat:@"%d",count];
                                 NSMutableString * temp = [[NSMutableString alloc] initWithCapacity:0];
+                                if(count >0)
                                 [temp appendString:@"%%,"];
                                 [temp appendFormat:@"%@",value];
+                                if(count >0)
                                 [temp appendString:@",%%"];
                                 component_rhs = [temp retain];
                                 NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:component_lhs,component_rhs,operator_ ,seq,nil] forKeys:keys];
