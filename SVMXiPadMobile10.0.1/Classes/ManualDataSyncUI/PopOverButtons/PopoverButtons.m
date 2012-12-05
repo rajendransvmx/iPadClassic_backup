@@ -645,6 +645,7 @@ PopoverButtons *popOver_view;
         }
 		
 		[self refreshMetaSyncTimeStamp];
+        [appDelegate updateMetasyncTimeinSynchistory];
 		[appDelegate.wsInterface.updateSyncStatus refreshMetaSyncStatus];
 		[self updateMetsSyncStatus:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_succeeded]];
 

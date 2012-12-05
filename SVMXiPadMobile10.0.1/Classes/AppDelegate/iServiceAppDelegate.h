@@ -714,6 +714,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 // SFM Search conflict status
 @property (nonatomic, assign) NSString *From_SFM_Search;
 
+//sahana dec 4th
+-(void)updateMetasyncTimeinSynchistory;
+
 - (BOOL) isInternetConnectionAvailable;
 // get GUID 
 + (NSString *)GetUUID;

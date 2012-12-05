@@ -124,6 +124,9 @@
 
 @property (nonatomic, retain) IBOutlet UIActivityIndicatorView * activity;
 
+//sahana
+-(void)removeSyncHistoryPlist;
+
 
 //sahana
 -(void)scheduleLocationPing;

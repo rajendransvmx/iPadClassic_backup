@@ -768,8 +768,8 @@ const NSUInteger kNumImages = 7;
             current_gmt_time = [dateFormatter stringFromDate:current_dateTime];
         }
         
-        NSArray * sync_hist_keys = [NSArray arrayWithObjects:LAST_INITIAL_SYNC_IME, REQUEST_ID, LAST_INSERT_REQUEST_TIME,LAST_INSERT_RESONSE_TIME,LAST_UPDATE_REQUEST_TIME,LAST_UPDATE_RESONSE_TIME, LAST_DELETE_REQUEST_TIME, LAST_DELETE_RESPONSE_TIME,INSERT_SUCCESS,UPDATE_SUCCESS,DELETE_SUCCESS, LAST_INITIAL_META_SYNC_TIME, SYNC_FAILED, META_SYNC_STATUS, nil];
-        NSMutableDictionary * sync_info = [[[NSMutableDictionary alloc] initWithObjects:[NSArray arrayWithObjects:current_gmt_time,@"",current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,@"true",@"",@"", current_gmt_time, @"false", [appDelegate.wsInterface.tagsDictionary objectForKey:sync_succeeded], nil] forKeys:sync_hist_keys] autorelease];
+        NSArray * sync_hist_keys = [NSArray arrayWithObjects:LAST_INITIAL_SYNC_IME, REQUEST_ID, LAST_INSERT_REQUEST_TIME,LAST_INSERT_RESONSE_TIME,LAST_UPDATE_REQUEST_TIME,LAST_UPDATE_RESONSE_TIME, LAST_DELETE_REQUEST_TIME, LAST_DELETE_RESPONSE_TIME,INSERT_SUCCESS,UPDATE_SUCCESS,DELETE_SUCCESS, LAST_INITIAL_META_SYNC_TIME, SYNC_FAILED, META_SYNC_STATUS,NEXT_META_SYNC_TIME, nil];
+        NSMutableDictionary * sync_info = [[[NSMutableDictionary alloc] initWithObjects:[NSArray arrayWithObjects:current_gmt_time,@"",current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,@"true",@"",@"", current_gmt_time, @"false", [appDelegate.wsInterface.tagsDictionary objectForKey:sync_succeeded],@"", nil] forKeys:sync_hist_keys] autorelease];
         [sync_info writeToFile:plistPath_SYNHIST atomically:YES];
     }
     
@@ -837,6 +837,9 @@ const NSUInteger kNumImages = 7;
 		[currentDateRange release];
     }
 
+    
+    //sahana dec 4th2012
+	[appDelegate updateMetasyncTimeinSynchistory];
 }
 - (void)continueMetaAndDataSync
 {

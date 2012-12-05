@@ -299,6 +299,9 @@ extern void SVMXLog(NSString *format, ...);
             return FALSE;
         
         [appDelegate.dataBase deleteDatabase:DATABASENAME1];
+        //sahana dec 4 2012
+        [self removeSyncHistoryPlist];
+        
         [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
 
       
@@ -330,6 +333,18 @@ extern void SVMXLog(NSString *format, ...);
     return FALSE;
 }
 
+-(void)removeSyncHistoryPlist
+{
+    NSFileManager * fileManager = [NSFileManager defaultManager];
+    NSString * rootPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString * plistPath = [rootPath stringByAppendingPathComponent:SYNC_HISTORY];
+    NSError *delete_error;
+    if ([fileManager fileExistsAtPath:plistPath] == YES)
+    {
+        [fileManager removeItemAtPath:plistPath error:&delete_error];
+    }
+    
+}
 - (void) loginWithUsernamePassword
 {
     //Siva Manne #3547

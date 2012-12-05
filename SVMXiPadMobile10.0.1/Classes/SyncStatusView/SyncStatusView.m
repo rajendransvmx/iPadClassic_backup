@@ -326,7 +326,7 @@ extern void SVMXLog(NSString *format, ...);
     NSDateFormatter * format_MS = [[NSDateFormatter alloc] init];
     [format_MS setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
 	[format_MS setTimeZone:[todayDateComponents timeZone]];
-    NSString * _str = [dictionary objectForKey:LAST_INITIAL_META_SYNC_TIME];
+    NSString * _str = [dictionary objectForKey:NEXT_META_SYNC_TIME];
     NSDate * gmtDate_ = [format_MS dateFromString:_str];
     [format_MS release];
     
@@ -335,21 +335,8 @@ extern void SVMXLog(NSString *format, ...);
 	[formatter2_MS setTimeZone:[todayDateComponents timeZone]];
     
     
-    NSString *  timerValue_MS = ([appDelegate.settingsDict objectForKey:@"Frequency of Application Changes"]) != nil?[appDelegate.settingsDict objectForKey:@"Frequency of Application Changes"]:@"";
-    
-    NSTimeInterval scheduledTimer_MS = 0;
-    
-    if (![timerValue_MS isEqualToString:@""])  
-    {
-        double timeInterval = [timerValue_MS doubleValue];
-        scheduledTimer_MS = timeInterval * 60;
-    }
-    else
-        scheduledTimer_MS = 600;
-    
-    NSDate * dateAhead_MS = [gmtDate_ dateByAddingTimeInterval:scheduledTimer_MS];
     nextSyncTime = @"";
-    nextSyncTime = [formatter2_MS stringFromDate:dateAhead_MS];
+    nextSyncTime = [formatter2_MS stringFromDate:gmtDate_];
     [formatter2_MS release];
     
     NSString * _str4 = nil;

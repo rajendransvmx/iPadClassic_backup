@@ -1655,6 +1655,7 @@ NSString * GO_Online = @"GO_Online";
     //Radha 2012june16
     
     [dataBase insertMetaSyncDue:METASYNCDUE];
+    [self updateMetasyncTimeinSynchistory];
 //    if (metaSyncThread != nil)
 //    {
 //        if ([metaSyncThread isFinished] == YES)
@@ -1673,6 +1674,53 @@ NSString * GO_Online = @"GO_Online";
 //    [metaSyncThread release]; 
 //    metaSyncThread = [[NSThread alloc] initWithTarget:self.dataBase selector:@selector(callIncrementalMetasync) object:nil];
 //    [metaSyncThread start];
+
+}
+-(void)updateMetasyncTimeinSynchistory
+{
+    NSString * timerInterval = ([self.settingsDict objectForKey:@"Frequency of Application Changes"] != nil)?[self.settingsDict objectForKey:@"Frequency of Application Changes"]:@"";
+    
+    int value = [timerInterval intValue];
+    
+    if (value == 0)
+        return;
+    
+    NSTimeInterval  metaSyncTimeInterval = 0;
+    
+    if (![timerInterval isEqualToString:@""] && ([timerInterval length] > 0))
+    {
+        double interval = [timerInterval doubleValue];
+        
+        metaSyncTimeInterval = interval * 60;
+    }
+    
+    
+//    refreshMetaSyncTimeStamp
+   
+    NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:SYNC_HISTORY];
+
+    NSMutableDictionary * dict_temp = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST];
+    NSArray * allkeys= [dict_temp allKeys];
+
+    
+
+    NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+
+    NSDate * current_date = [NSDate date];
+
+    for(NSString *  str in allkeys)
+    {
+        if([str isEqualToString:NEXT_META_SYNC_TIME])
+        {
+            NSDate * next_sync_dateTime = [NSDate dateWithTimeInterval:metaSyncTimeInterval sinceDate:current_date];
+            NSString * next_sync = [dateFormatter stringFromDate:next_sync_dateTime];
+            [dict_temp  setObject:next_sync forKey:NEXT_META_SYNC_TIME];
+        }
+    }
+    [dict_temp writeToFile:plistPath_SYNHIST atomically:YES];
+    [dict_temp release];
 
 }
 

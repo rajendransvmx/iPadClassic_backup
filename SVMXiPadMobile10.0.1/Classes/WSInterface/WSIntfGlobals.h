@@ -45,7 +45,7 @@
 #define REQUEST_ID                                       @"request_id"
 
 #define LAST_INITIAL_META_SYNC_TIME                      @"last_initial_meta_sync"
-
+#define NEXT_META_SYNC_TIME                              @"next_meta_sync_time"
 
 //Radha Data sync
 #define SYNC_FAILED										 @"sync_failed"
