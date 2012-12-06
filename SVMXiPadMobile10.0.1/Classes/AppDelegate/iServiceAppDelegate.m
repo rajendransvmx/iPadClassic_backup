@@ -1710,15 +1710,11 @@ NSString * GO_Online = @"GO_Online";
 
     NSDate * current_date = [NSDate date];
 
-    for(NSString *  str in allkeys)
-    {
-        if([str isEqualToString:NEXT_META_SYNC_TIME])
-        {
-            NSDate * next_sync_dateTime = [NSDate dateWithTimeInterval:metaSyncTimeInterval sinceDate:current_date];
-            NSString * next_sync = [dateFormatter stringFromDate:next_sync_dateTime];
-            [dict_temp  setObject:next_sync forKey:NEXT_META_SYNC_TIME];
-        }
-    }
+    NSDate * next_sync_dateTime = [NSDate dateWithTimeInterval:metaSyncTimeInterval sinceDate:current_date];
+    NSString * next_sync = [dateFormatter stringFromDate:next_sync_dateTime];
+    [dict_temp  setObject:next_sync forKey:NEXT_META_SYNC_TIME];
+    
+    
     [dict_temp writeToFile:plistPath_SYNHIST atomically:YES];
     [dict_temp release];
 
