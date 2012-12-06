@@ -111,8 +111,8 @@
 //get the lookup information from database 
 - (NSDictionary *) getLookupDataFromDBWith:(NSString *)lookupID referenceTo:(NSString *)object searchFor:(NSString *)searchForString;
 
--(NSString *)queryForExpression:(NSString *)expression_id;
--(NSString *) queryForExpressionComponent:(NSString *)expression expression_id:(NSString *)expression_id;
+-(NSString *)queryForExpression:(NSString *)expression_id forObject:(NSString *)object_name;
+-(NSString *) queryForExpressionComponent:(NSString *)expression expression_id:(NSString *)expression_id object_name:(NSString *) object_name;
 
 -(NSString *)getTheDefaultDisplayColumnForLookUpId:(NSString *)lookup_id;
 

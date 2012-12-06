@@ -111,7 +111,7 @@ extern void SVMXLog(NSString *format, ...);
 
 -(BOOL)EntryCriteriaForRecordFortableName:(NSString *)tableName record_id:(NSString *) recordId  expression:(NSString *)expression
 {
-    NSString * expression_ = [appDelegate.databaseInterface  queryForExpression:expression];
+    NSString * expression_ = [appDelegate.databaseInterface  queryForExpression:expression forObject:tableName];
     if([expression_ length] != 0 && expression_ != nil)
     {
         BOOL flag = FALSE;
@@ -148,7 +148,7 @@ extern void SVMXLog(NSString *format, ...);
 {
     
     //iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    NSString * expression_ = [appDelegate.databaseInterface  queryForExpression:expression];
+    NSString * expression_ = [appDelegate.databaseInterface  queryForExpression:expression forObject:tableName];
     
     NSString * fieldsString =@"";
     NSString * singleField = @"";
@@ -206,7 +206,7 @@ extern void SVMXLog(NSString *format, ...);
     //iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     NSString * parent_column_name = @"";
     
-    NSString * expression_ = [appDelegate.databaseInterface  queryForExpression:expression_id];
+    NSString * expression_ = [appDelegate.databaseInterface  queryForExpression:expression_id forObject:detailObjectName];
     parent_column_name = parent_column;
     
     NSString * local_record_id = record_id; //[appDelegate.databaseInterface getLocalIdFromSFId:record_id tableName:headerObjectName];
@@ -2110,9 +2110,7 @@ extern void SVMXLog(NSString *format, ...);
     return field_name;
 }
 
-
-
--(NSString *)queryForExpression:(NSString *)expression_id;
+-(NSString *)queryForExpression:(NSString *)expression_id forObject:(NSString *)object_name;
 {
     NSString * query = [NSString stringWithFormat:@"SELECT expression FROM '%@' where expression_id = '%@'",SFEXPRESSION, expression_id];
     sqlite3_stmt * stmt ;
@@ -2135,14 +2133,14 @@ extern void SVMXLog(NSString *format, ...);
     }
     synchronized_sqlite3_finalize(stmt);
 
-    final_expr = [appDelegate.databaseInterface queryForExpressionComponent:expression expression_id:expression_id];
+    final_expr = [appDelegate.databaseInterface queryForExpressionComponent:expression expression_id:expression_id object_name:object_name];
 
     return final_expr;
     
 }
 
 
--(NSString *) queryForExpressionComponent:(NSString *)expression expression_id:(NSString *)expression_id;
+-(NSString *) queryForExpressionComponent:(NSString *)expression expression_id:(NSString *)expression_id object_name:(NSString *)object_name;
 {
    
     NSString  * expression_ = expression;
@@ -2288,6 +2286,14 @@ extern void SVMXLog(NSString *format, ...);
                     {
                         operator_  = @"=";
                     }
+                    else if([component_operator isEqualToString:@"gt"])
+                    {
+                        operator_  = @">";
+                    }
+                    else if([component_operator isEqualToString:@"lt"])
+                    {
+                          operator_  = @"<";
+                    }
                     /*else if([component_operator isEqualToString:@"Starts With"])
                     {
                         operator_ = @"";
@@ -2428,11 +2434,21 @@ extern void SVMXLog(NSString *format, ...);
                        
             NSString * component_expression = @"";
             
+            NSString * data_type = [[appDelegate.databaseInterface getFieldDataType:object_name filedName:lhs] lowercaseString];
+
+            
+            
             // This check is for RecordTypeId
             
             if([lhs isEqualToString:@"RecordTypeId"])
             {
                 component_expression = [NSString stringWithFormat:@" RecordTypeId   in   (select  record_type_id  from SFRecordType where record_type = '%@' )" , rhs];
+                
+            }
+            else if([data_type isEqualToString:@"reference"])
+            {
+                 NSString * referenceToTable = [appDelegate.dataBase getReferencetoFiledForObject:object_name api_Name:lhs];
+                component_expression = [NSString stringWithFormat:@" %@   in   (select  Id  from %@ where Name %@ '%@' )" , lhs,referenceToTable , operator ,rhs];
                 
             }
             else if ([operator isEqualToString: @"!="])
@@ -2621,7 +2637,7 @@ extern void SVMXLog(NSString *format, ...);
             
             if([expression_id length] != 0)
             {
-                NSString * expression = [appDelegate.databaseInterface queryForExpression:expression_id];
+                NSString * expression = [appDelegate.databaseInterface queryForExpression:expression_id forObject:objectName];
                 BOOL flag = [appDelegate.databaseInterface validateTheExpressionForRecordId:record_id objectName:objectName expression:expression];
                 if(flag)
                 {
@@ -2745,7 +2761,7 @@ extern void SVMXLog(NSString *format, ...);
                     {
                         //iServiceAppDelegate * appdelegate =(iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
                         
-                        NSString * expression = [appDelegate.databaseInterface queryForExpression:expression_id];
+                        NSString * expression = [appDelegate.databaseInterface queryForExpression:expression_id forObject:objectName];
                         
                         BOOL flag = [appDelegate.databaseInterface validateTheExpressionForRecordId:record_id objectName:objectName expression:expression];
                         
@@ -2789,9 +2805,7 @@ extern void SVMXLog(NSString *format, ...);
     NSString * expression_id = [process_components objectForKey:EXPRESSION_ID];
    
     
-   // iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    NSString * expression_ = [appDelegate.databaseInterface  queryForExpression:expression_id];
-    
+       
     
     NSString * source_object_name = [process_components objectForKey:SOURCE_OBJECT_NAME]; 
     NSString * target_object_name = [process_components objectForKey:TARGET_OBJECT_NAME];
@@ -2801,6 +2815,9 @@ extern void SVMXLog(NSString *format, ...);
     NSString * mapping_value_flag = @"";
     NSString * mapping_component_type = @"";
     
+    // iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+    NSString * expression_ = [appDelegate.databaseInterface  queryForExpression:expression_id forObject:source_object_name];
+
     
     if(object_mapping_id != nil || [object_mapping_id length] != 0 )
     {

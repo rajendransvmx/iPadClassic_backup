@@ -60,14 +60,40 @@ extern void SVMXLog(NSString *format, ...);
     {
         contentView.spinnerData = spinnerData;
     }
+    int Max_length=25;
+
+    for(int i=0;i<[spinnerData count] ;i++)
+    {
+        NSString  * picklist_value =[spinnerData objectAtIndex:i];
+        int Maxlength=[picklist_value length];
+        if(Maxlength >25)
+        {
+            if(Maxlength >=40)
+            {
+                Max_length=40;
+                break;
+            }
+            else
+            {
+                Max_length=Maxlength;
+            }
+        }
+        SMLog(@"Picklist Max Size %d",Max_length);
     
+    }
     contentView.spinnerDelegate = delegate;
     setSpinnerValuedelegate = delegate;
-     
     [setSpinnerValuedelegate setSpinnerValue];
     
     POC = [[UIPopoverController alloc] initWithContentViewController:contentView];
-    [POC setPopoverContentSize:contentView.view.frame.size animated:YES];
+    if (Max_length>25)
+    {
+        [POC setPopoverContentSize:CGSizeMake(((Max_length*13)-30), contentView.view.frame.size.height) animated:YES];
+    }
+    else
+    {
+        [POC setPopoverContentSize:contentView.view.frame.size animated:YES];
+    }
     POC.delegate = contentView;
     [POC presentPopoverFromRect:CGRectMake(0, 0, rect.size.width, rect.size.height) inView:TextfieldView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
    
