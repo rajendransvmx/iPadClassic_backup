@@ -59,11 +59,11 @@ extern void SVMXLog(NSString *format, ...);
     BOOL isReachable = [currentReach boolValue];
     if (isReachable)
     {
-        SMLog(@"ModalViewController Internet Reachable");
+        SMLog(@"HelpController Internet Reachable");
     }
     else
     {
-        SMLog(@"ModalViewController Internet Not Reachable");
+        SMLog(@"HelpController Internet Not Reachable");
         [activity stopAnimating];
         //[appDelegate displayNoInternetAvailable];
     }

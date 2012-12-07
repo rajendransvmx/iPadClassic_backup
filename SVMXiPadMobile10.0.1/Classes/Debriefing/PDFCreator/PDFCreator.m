@@ -175,11 +175,11 @@ extern void SVMXLog(NSString *format, ...);
     BOOL isReachable = [currentReach boolValue];
     if (isReachable)
     {
-        SMLog(@"ModalViewController Internet Reachable");
+        SMLog(@"PDFCreator Internet Reachable");
     }
     else
     {
-        SMLog(@"ModalViewController Internet Not Reachable");
+        SMLog(@"PDFCreator Internet Not Reachable");
         
         if (didRunOperation)
         {
