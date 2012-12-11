@@ -652,7 +652,45 @@ last_sync_time:(NSString *)last_sync_time
 }
 
 #pragma mark - End
+#pragma mark - Client Version
+- (NSString *) getClientVersionString
+{
+    NSString *iPadVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
 
+    NSArray *components = [iPadVersion componentsSeparatedByString:@"."];
+    NSString *finalString = [[[NSString alloc] init] autorelease];
+    NSString *finalString2 = [[[NSString alloc] init] autorelease];
+    if([components count] <= 2)
+    {
+        NSString *secondString = [components objectAtIndex:1];
+        int buffer = 4 - [secondString length];
+        for(int k=0; k<buffer; k++)
+            secondString = [secondString stringByAppendingString:@"0"];
+        finalString2 = [finalString2 stringByAppendingFormat:@"%@%@",[components objectAtIndex:0],secondString];
+    }
+    else
+    {
+        int count  = 0;
+        for(NSString *obj in components)
+        {
+            finalString  = [finalString stringByAppendingString:obj];
+            if(count == 0)
+                finalString  = [finalString stringByAppendingString:@"."];
+            count ++;
+        }
+        components = nil;
+        components = [finalString componentsSeparatedByString:@"."];
+        if([components count] == 2)
+        {
+            NSString *secondString = [components objectAtIndex:1];
+            int buffer = 4 - [secondString length];
+            for(int k=0; k<buffer; k++)
+                secondString = [secondString stringByAppendingString:@"0"];
+            finalString2 = [finalString2 stringByAppendingFormat:@"%@%@",[components objectAtIndex:0],secondString];
+        }
+    }
+    return finalString2;
+}
 
 #pragma mark - incremental Data Sync
 -(void) PutAllTheRecordsForIds
@@ -3167,16 +3205,10 @@ last_sync_time:(NSString *)last_sync_time
     {
         INTF_WebServicesDefServiceSvc_SVMXClient * client_iPad_Version = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
         client_iPad_Version.clientType = @"iPad_Version";
-        NSString *iPadVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
-        iPadVersion = [iPadVersion stringByReplacingOccurrencesOfString:@"." withString:@""];
-        int bufferCount = 5 - [iPadVersion length];
-        while(bufferCount)
-        {
-            iPadVersion = [iPadVersion stringByAppendingString:@"0"];
-            bufferCount --;
-        }
+        NSString *iPadVersion = [[self getClientVersionString] retain];
         [client_iPad_Version.clientInfo addObject:iPadVersion];
         [sfmRequest addClientInfo:client_iPad_Version];
+        [iPadVersion release];
     }
 
     [metaSync setRequest:sfmRequest];  

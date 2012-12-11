@@ -418,6 +418,7 @@ last_sync_time:(NSString *)last_sync_time;
 //Check For Profile
 - (void) checkIfProfileExistsWithEventName:(NSString *)eventName type:(NSString *)eventType;
 -(void)getOnDemandRecords:(NSString*)objectName record_id:(NSString*)record_id;
+- (NSString *) getClientVersionString;
 
 @end
 
