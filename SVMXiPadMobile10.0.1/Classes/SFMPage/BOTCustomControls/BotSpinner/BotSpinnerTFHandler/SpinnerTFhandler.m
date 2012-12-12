@@ -78,8 +78,23 @@ extern void SVMXLog(NSString *format, ...);
                 Max_length=Maxlength;
             }
         }
-        SMLog(@"Picklist Max Size %d",Max_length);
-    
+        CGSize size;
+        if (Max_length>25)
+        {
+            size=[picklist_value sizeWithFont:[UIFont systemFontOfSize:20] constrainedToSize:CGSizeMake(((Max_length*13)-30),21)];
+        }
+        else
+        {
+             size=[picklist_value sizeWithFont:[UIFont systemFontOfSize:20] constrainedToSize:CGSizeMake(contentView.view.frame.size.width,21)];
+
+        }
+        int max=size.width;
+        if(max ==0 && Max_length>25)
+        {
+            Max_length=45;
+        }
+        SMLog(@"Size ====== %d",max);
+        SMLog(@"Picklist Max Size %d",Max_length);        
     }
     contentView.spinnerDelegate = delegate;
     setSpinnerValuedelegate = delegate;

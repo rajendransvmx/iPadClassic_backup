@@ -19,6 +19,7 @@
 @synthesize     str;
 @synthesize     pickListValues;
 @synthesize     flag;
+extern void SVMXLog(NSString *format, ...);
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
@@ -29,6 +30,46 @@
     //sahana 9th Aug
     contentView.initialString = parent.text;;
     contentView.pickListContent=pickerContent;
+    int Max_Length=25;
+    if([pickerContent count]>0)
+    {
+        for (int i=0; i<[pickerContent count]; i++)
+        {
+            NSString *stringLength=[pickerContent objectAtIndex:i];
+            int Length=[stringLength length];
+            if(Length >25)
+            {
+                if(Length >=40)
+                {
+                    Max_Length=40;
+                    break;
+                }
+                else
+                {
+                    Max_Length=Length;
+                }
+            }
+            CGSize size=CGSizeMake(0,0);
+            if (Max_Length>25)
+            {
+                size=[stringLength sizeWithFont:[UIFont systemFontOfSize:20] constrainedToSize:CGSizeMake(((Max_Length*13)-30),21)];
+            }
+            else
+            {
+                size=[stringLength sizeWithFont:[UIFont systemFontOfSize:20] constrainedToSize:CGSizeMake(contentView.view.frame.size.width,21)];
+                
+            }
+            int max=size.width;
+            if(max ==0 && Max_Length>25)
+            {
+                Max_Length=45;
+            }
+        }
+       
+        SMLog(@"Multi-Picklist Max Size %d",Max_Length);
+
+    }
+    
     contentView.MPickerDelegate=delegate;
     contentView.releasPODelegate=self;
     contentView.lookUp=str;
@@ -46,8 +87,14 @@
     }
     poc = [[UIPopoverController alloc] initWithContentViewController:contentView];
     poc.delegate = contentView;
-    [poc setPopoverContentSize:contentView.view.frame.size animated:YES];
-    
+    if(Max_Length>25)
+    {
+        [poc setPopoverContentSize:CGSizeMake(((Max_Length*13)-30), contentView.view.frame.size.height) animated:YES];
+    }
+    else
+    {
+        [poc setPopoverContentSize:contentView.view.frame.size animated:YES];
+    }
     CGRect rect=CGRectMake(0 , 0, pickerrect.size.width, pickerrect.size.height);
     
     [poc presentPopoverFromRect:rect    inView:view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
