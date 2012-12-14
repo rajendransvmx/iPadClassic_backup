@@ -1,0 +1,35 @@
+//
+// Prefix header for all source files of the 'CustomLogging' target in the 'CustomLogging' project
+//
+
+#import <Availability.h>
+
+#ifndef __IPHONE_4_0
+#warning "This project uses features only available in iOS SDK 4.0 and later."
+#endif
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+    #import "SMLogger.h"
+
+
+
+#define SMLogError(...)     SMLog(LOG_ERROR,__VA_ARGS__)
+#define SMLogWarn(...)      SMLog(LOG_WARN,__VA_ARGS__)
+#define SMLogInfo(...)      SMLog(LOG_INFO,__VA_ARGS__)
+#define SMLogDebug(...)     SMLog(LOG_DEBUG,__VA_ARGS__)
+#define SMLogFine(...)      SMLog(LOG_FINE,__VA_ARGS__)
+#define SMLogFiner(...)     SMLog(LOG_FINER,__VA_ARGS__)
+#define SMLogFinest(...)    SMLog(LOG_FINEST,__VA_ARGS__)
+
+#define SMFunctionStart SMFunctionStatus(@"Method Started")
+#define SMFunctionEnd   SMFunctionStatus(@"Method End")
+
+#define SMFunctionStatus(message) {SMLogger *logger = [SMLogger  sharedInstance];\
+[logger logMessageWithLevel:LOG_DEBUG onFunction:__PRETTY_FUNCTION__ lineNumber:__LINE__ withMessage:message];}
+
+#define SMLog(level,...) {SMLogger *logger = [SMLogger  sharedInstance];\
+[logger logMessageWithLevel:level onFunction:__PRETTY_FUNCTION__ lineNumber:__LINE__ withMessage:__VA_ARGS__];}
+
+#endif
