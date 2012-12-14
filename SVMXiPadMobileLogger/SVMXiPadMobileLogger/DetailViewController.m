@@ -105,7 +105,7 @@ enum logLocation
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        self.title = NSLocalizedString(@"Device Log", @"Device Log");
+        self.title = NSLocalizedString(@"Device Log - (ServiceMax Inernal Usage Only)", @"Device Log- (ServiceMax Inernal Usage Only)");
     }
     return self;
 }
@@ -168,7 +168,7 @@ enum logLocation
         MFMailComposeViewController *mailer = [[MFMailComposeViewController alloc] init];
         mailer.mailComposeDelegate = self;
         [mailer setSubject:@"ServiceMax Mobile App Log"];
-        NSArray *toRecipients = [NSArray arrayWithObjects:@"siva.chaitanya@servicemax.com", nil];
+        NSArray *toRecipients = [NSArray arrayWithObjects:nil];
         [mailer setToRecipients:toRecipients];
         NSString *fileData = [self.detailDescriptionLabel text];
         NSData * data = [fileData dataUsingEncoding:NSUTF8StringEncoding];
