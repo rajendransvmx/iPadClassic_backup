@@ -56,7 +56,7 @@ extern void SVMXLog(NSString *format, ...);
             }
             else
             {
-                size=[stringLength sizeWithFont:[UIFont systemFontOfSize:20] constrainedToSize:CGSizeMake(contentView.view.frame.size.width,21)];
+                size=[stringLength sizeWithFont:[UIFont systemFontOfSize:20] constrainedToSize:CGSizeMake(319,21)];
                 
             }
             int max=size.width;
