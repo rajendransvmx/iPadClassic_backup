@@ -14,6 +14,11 @@
 
 @end
 
+#define KMinPkgForScheduleEvents                       10.20000
+
+#define NOT_OWNERLESSTHAN                               @"NOT_OWNERLESSTHAN"
+#define NOT_OWNER_GREATERTHAN                           @"NOT_OWNER_GREATERTHAN"
+
 #define AFTERSAVEPAGELEVELEVENT                        @"AFTERSAVEPAGELEVELEVENT"
 #define AFTERSAVEPAQGELEVELBINDING                     @"AFTERSAVEPAGELEVELBINDING"
 //sahana

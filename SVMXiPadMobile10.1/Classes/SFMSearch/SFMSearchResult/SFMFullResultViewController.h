@@ -28,6 +28,7 @@
     int temp_percentage;
     BOOL isOndemandRecord;
 }
+@property (retain, nonatomic) IBOutlet UIButton *createEvent;
 @property (retain, nonatomic) IBOutlet UIView *progressView;
 @property (retain, nonatomic) IBOutlet UILabel *progressTitle;
 @property (retain, nonatomic) IBOutlet UILabel *display_percentage;
@@ -49,6 +50,7 @@
 @property (nonatomic, assign) BOOL conflict;
 
 @property(nonatomic,retain) IBOutlet UILabel *TitleForResultWindow;
+- (IBAction)createEventS2T:(id)sender;
 
 - (IBAction)dismissView:(id)sender;
 - (IBAction) accessoryButtonTapped:(id)sender;

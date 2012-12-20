@@ -10,6 +10,8 @@
 #import "sqlite3.h"
 #import "offlineGlobles.h"
 #import "iOSInterfaceObject.h"
+
+@protocol databaseInterfaceProtocol;
 @class iServiceAppDelegate;
 @interface databaseIntefaceSfm : NSObject
 {
@@ -18,9 +20,18 @@
     
     //sqlite3 * db;
     iServiceAppDelegate * appDelegate;
+    id <databaseInterfaceProtocol> databaseInterfaceDelegate;
 }
 
+@property (nonatomic , assign)  id  <databaseInterfaceProtocol> databaseInterfaceDelegate;
 @property (nonatomic, retain) id MyPopoverDelegate;
+
+
+//Sahana Dec 7th 2012
+-(void)InsertInto_User_created_event_for_local_id:(NSString *)local_id sf_id:(NSString *)sf_id;
+-(void)insertIntoEventsLocal_ids:(NSString *)local_id;
+-(NSString *)getLocal_idFrom_Event_local_id;
+-(void)deleteRecordsFromEventLocalIds;
 
 -(void)updateChildParentColumnNameForParentObject:(NSString *)master_object masterLocalId:(NSString *)masterLocal_id child_info:(NSMutableDictionary *)child_info;
 -(void)insertOndemandRecords:(NSMutableDictionary *)record_dict;
@@ -247,6 +258,7 @@
 //Shrinivas : method for multiselect
 -(void) UpdateSFPicklistForMultiSelect_IndexValue_For_Oject_Name:(NSString *)object_name  field_api_name:(NSString *)field_api_name value:(NSString *)value  index:(int)index_value;
 
+-(NSArray *)getEventProcessIdForProcessType:(NSString *)process_type SourceObject:(NSString *)sourceobjectName;
 #define SERVER_OVERRIDE                     @"Server_Override"
 #define CLIENT_OVERRIDE                     @"Client_Override"
 #define UNDO                                @"Undo"
@@ -379,5 +391,12 @@
 #define DEPENDENT_PICKLIST       @"dependent_picklist"
 #define CONTROLLER_FIRLD         @"controler_field"
 #define VALID_FOR                @"valid_for"
+
+@end
+
+@protocol databaseInterfaceProtocol <NSObject>
+
+@optional
+-(void)displayALertViewinSFMDetailview:(char *)excp_message;
 
 @end

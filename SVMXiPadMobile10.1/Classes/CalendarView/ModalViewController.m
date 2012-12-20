@@ -30,7 +30,8 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize HomeButton;
 @synthesize offline;
 @synthesize updateStartTime, updateEndTime;
-
+@synthesize Event_edit_flag;
+@synthesize Add_event_Button;
 @synthesize didDismissalertview;
 
 - (void)viewWillLayoutSubviews
@@ -39,7 +40,20 @@ extern void SVMXLog(NSString *format, ...);
     [self.view addSubview:appDelegate.animatedImageView];
     if( isShowingDailyView )
     {
-		appDelegate.animatedImageView.frame = CGRectMake(834, 8, 26, 26);
+        //sahana  dec 14th
+        NSString * version = [appDelegate serverPackageVersion];
+        int _stringNumber = [version intValue];
+        
+        if(_stringNumber >=  (KMinPkgForScheduleEvents * 100000))
+        {
+            appDelegate.animatedImageView.frame = CGRectMake(776, 8, 26, 26);
+        }
+        else
+        {
+            appDelegate.animatedImageView.frame = CGRectMake(834, 8, 26, 26);
+        }
+//		appDelegate.animatedImageView.frame = CGRectMake(834, 8, 26, 26);
+//        appDelegate.animatedImageView.frame = CGRectMake(776, 8, 26, 26);
     }
     else
     {
@@ -183,6 +197,17 @@ extern void SVMXLog(NSString *format, ...);
 	 statusButton.enabled = NO;*/
 	
     //[appDelegate setSyncStatus:appDelegate.SyncStatus];
+    
+    NSString * version = [appDelegate serverPackageVersion];
+	int _stringNumber = [version intValue];    
+    if(_stringNumber  < (KMinPkgForScheduleEvents * 100000))
+    {
+        //sahana dec 14th
+        Add_event_Button.enabled = NO;
+        Add_event_Button.alpha = 0.0;
+    }
+
+    
 	
 }
 
@@ -393,6 +418,10 @@ extern void SVMXLog(NSString *format, ...);
     Continue_rescheduling = continue_rescheduling;
 }
 
+-(void) EditEvent:(BOOL)edit_flag
+{
+    Event_edit_flag = edit_flag;
+}
 - (void) refreshCacheData
 {
     [weekView setupWeeks];
@@ -707,7 +736,20 @@ extern void SVMXLog(NSString *format, ...);
             HomeButton.frame = homeButtonRect;
             refreshButton.frame = refreshButtontRect;
             //statusButton.frame = CGRectMake(815, 8, 26, 26);
-            appDelegate.animatedImageView.frame = CGRectMake(834, 8, 26, 26);
+            
+            NSString * version = [appDelegate serverPackageVersion];
+            int _stringNumber = [version intValue];
+            
+            if(_stringNumber >=  (KMinPkgForScheduleEvents * 100000))
+            {
+                  appDelegate.animatedImageView.frame = CGRectMake(776, 8, 26, 26);
+            }
+            else
+            {
+                appDelegate.animatedImageView.frame = CGRectMake(834, 8, 26, 26);
+            }
+            
+          
             [UIView commitAnimations];
         }
         
@@ -763,8 +805,20 @@ extern void SVMXLog(NSString *format, ...);
         HomeButton.frame = showMapButton.frame;
         refreshButtontRect = refreshButton.frame;
         refreshButton.frame = refreshButtontRect;
-        //statusButton.frame = CGRectMake(855, 8, 26, 26); //Check This  
-        appDelegate.animatedImageView.frame = CGRectMake(885, 8, 26, 26);
+        //statusButton.frame = CGRectMake(855, 8, 26, 26); //Check This
+        NSString * version = [appDelegate serverPackageVersion];
+        int _stringNumber = [version intValue];
+        
+        if(_stringNumber >=  (KMinPkgForScheduleEvents * 100000))
+        {
+             appDelegate.animatedImageView.frame = CGRectMake(776, 8, 26, 26);
+        }
+        else
+        {
+             appDelegate.animatedImageView.frame = CGRectMake(885, 8, 26, 26);
+        }
+       
+       
         [UIView commitAnimations];
         
         [self disableUI];
@@ -832,6 +886,31 @@ extern void SVMXLog(NSString *format, ...);
     popOverController = popOver;
 }
 
+-(IBAction)AddEvent:(id)sender
+{
+    if ([appDelegate.SFMPage retainCount] > 0)
+    {
+        appDelegate.SFMPage = nil;
+    }
+    
+    NSArray * processids_array = [appDelegate.databaseInterface getEventProcessIdForProcessType:STANDALONECREATE SourceObject:@""];
+    
+    if([processids_array count] > 0)
+    {
+        NSString * process_id = [processids_array objectAtIndex:0];
+        appDelegate.sfmPageController = [[[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:NO] autorelease];
+        appDelegate.sfmPageController.processId = process_id;
+        appDelegate.sfmPageController.recordId = nil;
+        //sahana offline
+        appDelegate.sfmPageController.objectName = @"Event";
+        
+        [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
+        [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
+        
+        [self presentViewController:appDelegate.sfmPageController animated:YES completion:^(void){}];
+        [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline ];
+    }
+}
 - (void) dismissSelf:(UIPopoverController *)popOver
 {
     [popOver dismissPopoverAnimated:YES];
@@ -1071,6 +1150,8 @@ extern void SVMXLog(NSString *format, ...);
     segmentButton = nil;
     [todayBtn release];
     todayBtn = nil;
+    [Add_event_Button release];
+    Add_event_Button = nil;
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -1127,6 +1208,7 @@ extern void SVMXLog(NSString *format, ...);
     [currentDate release];
     [showMapButton release];
     
+    [Add_event_Button release];
     [super dealloc];
 }
 
@@ -1357,7 +1439,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", dict);
         workOrderName = [dict objectForKey:ADDITIONALINFO];
         subject = [dict objectForKey:SUBJECT];
-        
+        NSDate * temp_start_date_time , *temp_end_date_time ;
         SMLog(@"%@ %@", workOrderName, subject);
         
         NSDate * eventDateTime = [dict objectForKey:ACTIVITYDATE];
@@ -1381,6 +1463,7 @@ extern void SVMXLog(NSString *format, ...);
 		//    SMLog(@"eventDate = %@", eventDate);
         
         eventDateTime = [dict objectForKey:STARTDATETIME];
+        temp_start_date_time = [dict objectForKey:STARTDATETIME];
         SMLog(@"%@",eventDateTime);
         
         dateString = [self dateStringConversion:eventDateTime];
@@ -1392,6 +1475,8 @@ extern void SVMXLog(NSString *format, ...);
 		SMLog(@"eventDate = %@", eventDate);
 		
         eventDateTime = [dict objectForKey:ENDDATETIME];
+        temp_end_date_time =  [dict objectForKey:ENDDATETIME];
+        
         SMLog(@"%@",eventDateTime);
         
         dateString = [self dateStringConversion:eventDateTime];
@@ -1405,7 +1490,22 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"Starttime = %@", startime);
         
         NSString * duration = [dict objectForKey:DURATIONINMIN];
-        
+        NSTimeInterval interval;
+        if([duration length] == 0)
+        {
+            if([duration intValue] == 0)
+            {
+                 interval = [temp_end_date_time timeIntervalSinceDate:temp_start_date_time];
+                
+            }
+            if(interval > 0)
+            {
+                int duration_temp = interval/60;
+                duration = @"";
+                duration = [duration stringByAppendingFormat:@"%d",duration_temp];// [NSString stringWithFormat:@"%d",duration_temp];
+            }
+            
+        }
         events = [[EventViewController alloc] initWithNibName:[EventViewController description] bundle:nil];
         events.delegate = self;
         
@@ -1423,7 +1523,7 @@ extern void SVMXLog(NSString *format, ...);
         events.objectName = ([dict objectForKey:OBJECTAPINAME] != nil)?[dict objectForKey:OBJECTAPINAME]:@"";
         events.activityDate = ([dict objectForKey:ACTIVITYDATE] != nil)?[dict objectForKey:ACTIVITYDATE]:@"";
         events.accountId = ([dict objectForKey:ACCOUNTID] != nil)?[dict objectForKey:ACCOUNTID]:@"";
-        
+        events.local_id = ([dict objectForKey:EVENT_LOCAL_ID] != nil)?[dict objectForKey:EVENT_LOCAL_ID]:@"";
         NSString * objectAPIName = [dict objectForKey:OBJECTAPINAME];
         if ([objectAPIName isEqualToString:@"service_order__c"])
             objectAPIName = [NSString stringWithFormat:@"%@__%@",SVMX_ORG_PREFIX,objectAPIName];
@@ -1466,7 +1566,16 @@ extern void SVMXLog(NSString *format, ...);
             SMLog(@"%@ %@", [rightPane description], events.processName);
             [rightPane addSubview:events.view];
             [events setEvent:workOrderName Time:startime Duration:(CGFloat)[duration intValue]/60 Color:color];
-            [events setLabelWorkorder:workOrderName Subject:subject];  
+            [events setLabelWorkorder:workOrderName Subject:subject];
+            
+            
+            events.view.userInteractionEnabled = TRUE;
+            UISwipeGestureRecognizer * swipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(EvntgestureRecognizer:)];
+            swipeRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
+            [events.view addGestureRecognizer:swipeRecognizer];
+            
+            [swipeRecognizer release];
+            
             [eventViewArray addObject:events];
             [events release];
         }
@@ -1477,6 +1586,22 @@ extern void SVMXLog(NSString *format, ...);
     [self didGetAllEvents];
 }
 
+
+-(void)EvntgestureRecognizer:(id)sender
+{
+    NSLog(@"swiped on Event");
+    UIGestureRecognizer * gestureRecog = sender;
+    if([gestureRecog.view isKindOfClass:[EventViewController class]])
+    {
+//        EventViewController * gesture_view = (EventViewController *)gestureRecog.view;
+//        [self SFMeditEvent:gesture_view.recordId];
+        
+        NSLog(@"its a view controller");
+        
+        }
+    
+    
+}
 - (void) didGetAllEvents
 {
     calendarDidLoad = YES;
@@ -1716,6 +1841,11 @@ extern void SVMXLog(NSString *format, ...);
 
 #pragma mark -
 #pragma mark EventViews Touch Methods
+
+- (NSSet *)touchesForGestureRecognizer:(UIGestureRecognizer *)gesture
+{
+    
+}
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
     @try
@@ -1933,6 +2063,11 @@ extern void SVMXLog(NSString *format, ...);
                     else
                         [activity stopAnimating];
                 }
+                else if(Event_edit_flag)
+                {
+                    NSString * local_id = calEventView.local_id;
+                    [self SFMeditEvent:local_id];
+                }
                 else
                 {
                     
@@ -1979,6 +2114,88 @@ extern void SVMXLog(NSString *format, ...);
     {
         SMLog(@"touchesCancelled: Finally Handled Exception.");
     }
+}
+
+-(void) SFMEditForWeekView:(NSDictionary  *)dict
+{
+    
+    if ([appDelegate.SFMPage retainCount] > 0)
+    {
+        appDelegate.SFMPage = nil;
+    }
+    
+    NSString * local_id = [dict objectForKey:EVENT_LOCAL_ID];
+    NSArray * processids_array = [appDelegate.databaseInterface getEventProcessIdForProcessType:EDIT SourceObject:@""];
+    
+    if([processids_array count] > 0)
+    {
+        NSString * process_id = [processids_array objectAtIndex:0];
+        appDelegate.sfmPageController = [[[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:NO] autorelease];
+        appDelegate.sfmPageController.processId = process_id;
+        appDelegate.sfmPageController.recordId = local_id;
+        //sahana offline
+        appDelegate.sfmPageController.objectName = @"Event";
+        
+        [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
+        [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
+        
+        [self presentViewController:appDelegate.sfmPageController animated:YES completion:^(void){}];
+        [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline ];
+    }
+    else
+    {
+        NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+        NSString * warning = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_WARNING];
+        NSString * noView = [appDelegate.wsInterface.tagsDictionary objectForKey:NO_VIEW_PROCESS];
+        UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:warning message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
+        [alert1 show];
+        [alert1 release];
+        [activity stopAnimating];
+        return;
+        
+    }
+    
+
+}
+
+-(void) SFMeditEvent:(NSString *)record_id
+{
+    if ([appDelegate.SFMPage retainCount] > 0)
+    {
+        appDelegate.SFMPage = nil;
+    }
+    
+    NSArray * processids_array = [appDelegate.databaseInterface getEventProcessIdForProcessType:EDIT SourceObject:@""];
+    
+    if([processids_array count] > 0)
+    {
+        NSString * process_id = [processids_array objectAtIndex:0];
+        appDelegate.sfmPageController = [[[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:NO] autorelease];
+        appDelegate.sfmPageController.processId = process_id;
+        appDelegate.sfmPageController.recordId = record_id;
+        //sahana offline
+        appDelegate.sfmPageController.objectName = @"Event";
+        
+        [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
+        [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
+        
+        [self presentViewController:appDelegate.sfmPageController animated:YES completion:^(void){}];
+        [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline ];
+    }
+    else
+    {
+        NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+        NSString * warning = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_WARNING];
+        NSString * noView = [appDelegate.wsInterface.tagsDictionary objectForKey:NO_VIEW_PROCESS];
+        UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:warning message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
+        [alert1 show];
+        [alert1 release];
+        [activity stopAnimating];
+        return;
+        
+    }
+    
+
 }
 
 #pragma mark - SFM Page Display Mathod

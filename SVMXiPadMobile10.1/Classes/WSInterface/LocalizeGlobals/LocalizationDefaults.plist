@@ -88,6 +88,8 @@
 	<string>Product information not available on the work order.</string>
 	<key>IPAD005_TAG003</key>
 	<string>No view process available for the logged in user</string>
+	<key>IPAD014_TAG030</key>
+	<string>This schedule is overlapping with the following event(s). Are you sure you want to continue?</string>
 	<key>IPAD006_TAG001</key>
 	<string>Tasks</string>
 	<key>IPAD006_TAG002</key>
@@ -572,8 +574,6 @@
 	<string>Starts With</string>
 	<key>IPAD019_TAG012</key>
 	<string>Close</string>
-	<key>IPAD014_TAG030</key>
-	<string>Synchronize Configuration Failed. Please Retry Again</string>
 	<key>IPAD018_TAG031</key>
 	<string>Internet connectivity lost. Please retry when connectivity is available</string>
 	<key>IPAD018_TAG032</key>
@@ -602,5 +602,7 @@
 	<string>Are you sure you want to reset application?</string>
 	<key>IPAD012_TAG057</key>
 	<string>Meta sync failed due to too many script. Please contact your system administrator.</string>
+	<key>IPAD006_TAG040</key>
+	<string>Edit Event</string>
 </dict>
 </plist>

@@ -42,9 +42,10 @@ NSMutableArray * weeklyEventPositionArray;
     IBOutlet UILabel * subject;
     IBOutlet UILabel *workOrderName;
     NSString * processName;
-    NSString * processId, * recordId, * objectName, * createdDate, * accountId, * startDate, * endDate,  * activityDate;
+    NSString * processId, * recordId, * objectName, * createdDate, * accountId, * startDate, * endDate,  * activityDate, * local_id ;
     //sahana 12th Sept
     BOOL didDismissAlertView , continue_reshceduling;
+    BOOL edit_event;
     
     BOOL conflictFlag;
 }
@@ -59,6 +60,8 @@ NSMutableArray * weeklyEventPositionArray;
  Minimum size frame = 132, 32
  
 */
+@property (nonatomic) BOOL edit_event;
+@property (nonatomic , retain) NSString * local_id;
 @property (nonatomic, assign) BOOL conflictFlag;
 
 @property (nonatomic) BOOL didDismissAlertView , continue_reshceduling;
@@ -146,7 +149,7 @@ NSMutableArray * weeklyEventPositionArray;
 - (void) movedEvent:(WeeklyViewEvent *)event;
 - (void) rescheduleEvent:(BOOL)continueReschedule;
 - (void) setTouchesDisabled;
-
+- (void)EditEvent:(BOOL)event_edit_flag;
 @end
 
 // Color Constants

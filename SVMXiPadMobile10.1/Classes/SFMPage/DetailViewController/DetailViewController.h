@@ -19,6 +19,7 @@
 #import "SignatureViewController.h"
 #import "offlineGlobles.h"
 #import "SFWToolBar.h"
+#import "databaseIntefaceSfm.h"
 
 
 
@@ -55,7 +56,7 @@ WSInterFaceDelegateForDetailView,
 SignatureDelegate,
 SummaryViewControllerDelegate,
 ChatterDelegate,
-SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate>
+SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceProtocol>
 {
     id <DetailViewControllerDelegate> delegate;
     SFWToolBar * sfwToolBar;

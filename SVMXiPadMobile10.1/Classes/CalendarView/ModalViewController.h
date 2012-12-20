@@ -132,6 +132,7 @@ DetailViewControllerDelegate, RefreshModalSyncStatusButton>
     //sahana 9th Sept 
    
     BOOL Continue_rescheduling;
+    BOOL Event_edit_flag;
     BOOL didDismissalertview;
     BOOL isActive;
 
@@ -143,6 +144,7 @@ DetailViewControllerDelegate, RefreshModalSyncStatusButton>
     CGRect oldEventRect;
     
     BOOL offline;
+    IBOutlet UIButton *Add_event_Button;
     
     NSString *updateStartTime, *updateEndTime;
     
@@ -151,12 +153,12 @@ DetailViewControllerDelegate, RefreshModalSyncStatusButton>
     UIImageView* animatedImageView;
 }
 
-
+@property (nonatomic) BOOL Event_edit_flag;
 @property (nonatomic,retain) NSString *updateStartTime, *updateEndTime;
 @property (nonatomic) BOOL offline;
 @property (nonatomic) BOOL didDismissalertview;
 @property (nonatomic) BOOL Continue_rescheduling;
-
+@property (nonatomic, retain)  IBOutlet UIButton *Add_event_Button;
 @property (nonatomic ,retain) IBOutlet UIButton *HomeButton;
 @property (nonatomic, retain) WeeklyViewController * weekView;
 @property (nonatomic, retain) NSArray * eventDetails;
@@ -166,6 +168,10 @@ DetailViewControllerDelegate, RefreshModalSyncStatusButton>
 //Radha 5th April 2011
 @property (nonatomic, retain) EventViewController * eventView;
 //@property (nonatomic, retain) LoginController * login;
+
+
+//sahana
+-(void) SFMeditEvent:(NSString *)record_id;
 
 //Radha 3rd April 2011
 //set up the events
@@ -197,6 +203,7 @@ DetailViewControllerDelegate, RefreshModalSyncStatusButton>
 - (IBAction) ToggleLandscapeView;
 
 - (IBAction) goToHomePage:(id)sender;
+-(IBAction)AddEvent:(id)sender;
 
 - (void) setDate:(NSUInteger)date;
 //- (void) setEventsFromWeekCache:(NSString *)_date;

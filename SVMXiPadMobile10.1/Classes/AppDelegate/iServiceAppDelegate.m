@@ -154,6 +154,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 //================================================================
 
 @implementation iServiceAppDelegate
+@synthesize get_trigger_code;
 @synthesize dod_status,dod_req_response_ststus;
 @synthesize serviceReportReference;
 @synthesize allpagelevelEventsWithTimestamp;
@@ -1446,6 +1447,37 @@ NSString * GO_Online = @"GO_Online";
             return;
         }
     }
+    
+    NSString * version = [appDelegate serverPackageVersion];
+	int _stringNumber = [version intValue];
+    if(_stringNumber >=  (KMinPkgForScheduleEvents * 100000))
+    {
+        [self getTriggerCode];
+    }
+}
+
+-(void)getTriggerCode
+{
+    appDelegate.get_trigger_code = FALSE;
+    [appDelegate.wsInterface metaSyncWithEventName:@"CODE_SNIPPET" eventType:@"SYNC" values:nil];
+    while(CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
+    {
+        if(appDelegate.get_trigger_code)
+        {
+            break;
+        }
+        if (![appDelegate isInternetConnectionAvailable])
+        {
+            break;
+        }
+        if (appDelegate.connection_error)
+        {
+            break;
+        }
+        
+    }
+    appDelegate.get_trigger_code = FALSE;
+
 }
 
 -(void) getCreateProcessArray:(NSMutableArray *)processes_array

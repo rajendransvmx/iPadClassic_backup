@@ -15,6 +15,7 @@ extern void SVMXLog(NSString *format, ...);
 
 @implementation WeeklyViewEvent
 
+@synthesize edit_event;
 @synthesize conflictFlag;
 
 @synthesize delegate;
@@ -22,6 +23,7 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize time, imageView, label;
 @synthesize selfFrame;
 @synthesize dayFrame;
+@synthesize local_id;
 
 @synthesize eventDetail, eventId, workOrderDetail;
 
@@ -219,11 +221,19 @@ extern void SVMXLog(NSString *format, ...);
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if(buttonIndex == 0)
+    {
         continue_reshceduling = FALSE;
-    else
+        edit_event = FALSE;
+    }
+    else if(buttonIndex == 1)
     {
         continue_reshceduling = TRUE;
         [delegate setTouchesDisabled];
+    }
+    else if(buttonIndex == 2)
+    {
+        edit_event = TRUE;
+        continue_reshceduling = FALSE;
     }
     didDismissAlertView = TRUE;
 }
@@ -243,11 +253,26 @@ extern void SVMXLog(NSString *format, ...);
 
     didDismissAlertView = FALSE;
     continue_reshceduling = FALSE;
-    UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:@"" 
+    edit_event = FALSE;
+    UIAlertView * alertView = nil;
+    NSString * version = [appDelegate serverPackageVersion];
+	int _stringNumber = [version intValue];
+    if(_stringNumber >=  (KMinPkgForScheduleEvents * 100000))
+    {
+        alertView = [[UIAlertView alloc] initWithTitle:@"" 
                                                          message:[appDelegate.wsInterface.tagsDictionary objectForKey:EVENT_RESCHEDULE_PROMPT] 
                                                         delegate:self 
                                                cancelButtonTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:EVENT_RESCHEDULE_NO] 
-                                               otherButtonTitles:[appDelegate.wsInterface.tagsDictionary objectForKey:EVENT_RESCHEDULE_YES], nil];
+                                               otherButtonTitles:[appDelegate.wsInterface.tagsDictionary objectForKey:EVENT_RESCHEDULE_YES],[appDelegate.wsInterface.tagsDictionary objectForKey:EDIT_EVENT], nil];
+    }
+    else
+    {
+        alertView = [[UIAlertView alloc] initWithTitle:@""
+                                               message:[appDelegate.wsInterface.tagsDictionary objectForKey:EVENT_RESCHEDULE_PROMPT]
+                                              delegate:self
+                                     cancelButtonTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:EVENT_RESCHEDULE_NO]
+                                     otherButtonTitles:[appDelegate.wsInterface.tagsDictionary objectForKey:EVENT_RESCHEDULE_YES], nil];
+    }
     [alertView show];
     [alertView release];
     
@@ -264,6 +289,17 @@ extern void SVMXLog(NSString *format, ...);
     if(continue_reshceduling)
     {
         [delegate rescheduleEvent:TRUE];
+        [delegate EditEvent:FALSE];
+    }
+    else if(edit_event)
+    {
+        [UIView beginAnimations:@"move" context:nil];
+        [UIView setAnimationDuration:0.3];
+        self.view.frame = selfFrame;
+        [UIView commitAnimations];
+        [delegate rescheduleEvent:FALSE];
+        [delegate EditEvent:TRUE];
+        return;
     }
     else
     {
@@ -273,6 +309,7 @@ extern void SVMXLog(NSString *format, ...);
         self.view.frame = selfFrame;
         [UIView commitAnimations];
         [delegate rescheduleEvent:FALSE];
+        [delegate EditEvent:FALSE];
         return;
     }
     

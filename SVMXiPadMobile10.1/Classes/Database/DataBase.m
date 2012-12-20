@@ -4481,6 +4481,7 @@ extern void SVMXLog(NSString *format, ...);
 
     
     [self generatePDFSettings];
+    
 }
 
 - (void) insertValuesInToSFWizardsTable:(NSDictionary *)wizardDict
@@ -5486,6 +5487,12 @@ extern void SVMXLog(NSString *format, ...);
 //    query =  [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS on_demand_download ('object_name' VARCHAR , 'sf_id' VARCHAR PRIMARY KEY  NOT NULL UNIQUE, 'time_stamp' DATETIME ,'local_id' VARCHAR, 'record_type' VARCHAR, 'json_record' VARCHAR) "];
 //    [self createTable:query];
 
+    query =  [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS %@ ('object_name' VARCHAR , 'sf_id' VARCHAR PRIMARY KEY  NOT NULL UNIQUE, 'time_stamp' DATETIME ,'local_id' VARCHAR ) ",User_created_events];
+    [self createTable:query];
+    
+    query =  [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS %@ ('object_name' VARCHAR ,'local_id' VARCHAR ) ",Event_local_Ids];
+    [self createTable:query];
+    
     
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS servicereprt_logo ('logo' VARCHAR)"];
     [self createTable:query];
@@ -5886,6 +5893,12 @@ extern void SVMXLog(NSString *format, ...);
     [self insertSettingsIntoTable:settingsValueArray:@"SettingsValue"];
     [self insertSettingsIntoTable:settingsInfoArray:@"SettingsInfo"];
     
+    NSString * version = [appDelegate serverPackageVersion];
+	int _stringNumber = [version intValue];
+    if(_stringNumber >=  (KMinPkgForScheduleEvents * 100000))
+    {
+        [self getCodeSnippetSetting];
+    }
     
     [self getImageForServiceReportLogo];
     
@@ -6442,6 +6455,12 @@ extern void SVMXLog(NSString *format, ...);
 //    query =  [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS on_demand_download ('object_name' VARCHAR , 'sf_id' VARCHAR  PRIMARY KEY  NOT NULL UNIQUE, 'time_stamp' DATETIME ,'local_id' VARCHAR, 'record_type' VARCHAR, 'json_record' VARCHAR)"];
 //    [self createTemporaryTable:query];
     
+    
+    query =  [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS %@ ('object_name' VARCHAR , 'sf_id' VARCHAR PRIMARY KEY  NOT NULL UNIQUE, 'time_stamp' DATETIME ,'local_id' VARCHAR ) ",User_created_events];
+    [self createTable:query];
+    
+    query =  [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS %@ ('object_name' VARCHAR ,'local_id' VARCHAR ) ",Event_local_Ids];
+    [self createTable:query];
     
     [self createTemporaryTable:query];
 
@@ -7033,15 +7052,48 @@ extern void SVMXLog(NSString *format, ...);
     }
 
     NSString * queryStatement = @"";
-    if ([Action isEqualToString:@"LESSTHAN"])
+    NSString * version = [appDelegate serverPackageVersion];
+	int _stringNumber = [version intValue];
+    
+    if(_stringNumber >=  (KMinPkgForScheduleEvents * 100000))
     {
-        queryStatement = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ < '%@'", tableName, column, Date];   
+        if ([Action isEqualToString:@"LESSTHAN"])
+        {
+            queryStatement = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ < '%@' and Id not in (SELECT sf_id  FROM user_created_events) and Id != '' ", tableName, column, Date];   
+        }
+        else if([Action isEqualToString:NOT_OWNER_GREATERTHAN]) //sahana dec 14 2012
+        {
+            if(appDelegate.loggedInUserId == nil)
+            {
+                appDelegate.loggedInUserId=[self getLoggedInUserId:appDelegate.username];
+            }
+            queryStatement = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ >= '%@' and Id  in (SELECT sf_id  FROM user_created_events) and OwnerId != '%@'", tableName, column, Date ,appDelegate.loggedInUserId];
+            
+        }
+        else if([Action isEqualToString:NOT_OWNERLESSTHAN]) //sahana dec 14 2012
+        {
+            if(appDelegate.loggedInUserId == nil)
+            {
+                appDelegate.loggedInUserId=[self getLoggedInUserId:appDelegate.username];
+            }
+            queryStatement = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ <'%@' and Id  in (SELECT sf_id  FROM user_created_events) and OwnerId != '%@'", tableName, column, Date ,appDelegate.loggedInUserId];
+        }
+        else
+        {
+              queryStatement = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ >= '%@' and Id not in (SELECT sf_id  FROM user_created_events) and Id != '' ", tableName, column, Date];  
+        }
     }
     else
     {
-        queryStatement = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ >= '%@'", tableName, column, Date];   
+        if ([Action isEqualToString:@"LESSTHAN"])
+        {
+            queryStatement = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ < '%@'", tableName, column, Date];
+        }
+        else
+        {
+            queryStatement = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ >= '%@'", tableName, column, Date];
+        }
     }
-    
     char * err;
     
     if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
@@ -8056,4 +8108,82 @@ extern void SVMXLog(NSString *format, ...);
 }
 
 //sahana Aug 16th ----------*********** end *************
+-(void)getCodeSnippetSetting
+{
+    appDelegate.get_trigger_code = FALSE;
+    NSString * _query = @"SELECT SVMXC__Setting_Unique_ID__c, SVMXC__SubmoduleID__c, SVMXC__SettingID__c, SVMXC__Settings_Name__c, SVMXC__Data_Type__c, SVMXC__Values__c, SVMXC__Default_Value__c, SVMXC__Setting_Type__c, SVMXC__Search_Order__c, SVMXC__IsPrivate__c, SVMXC__Active__c, SVMXC__Description__c, SVMXC__IsStandard__c, SVMXC__Submodule__c FROM SVMXC__ServiceMax_Processes__c WHERE SVMXC__SubmoduleID__c = 'IPAD007' AND SVMXC__SettingID__c = 'SET005'";
+    [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(getCodeSnippetInfo:error:context:) context:nil];
+    
+    while(CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
+    {
+        if(appDelegate.get_trigger_code)
+        {
+           
+            break;
+        }
+        if (![appDelegate isInternetConnectionAvailable])
+        { 
+            break;
+        }
+        if (appDelegate.connection_error)
+        {
+            break;
+        }
+        
+    }
+    appDelegate.get_trigger_code = FALSE;
+    
+}
+
+- (void) getCodeSnippetInfo:(ZKQueryResult *)result error:(NSError *)error context:(id)context
+{
+    if(error != nil)
+    {
+        appDelegate.get_trigger_code = TRUE;
+    }
+    NSMutableArray * settings_Array = [[NSMutableArray alloc] initWithCapacity:0];
+    if ([[result records] count] > 0)
+    {
+        ZKSObject * obj = [[result records] objectAtIndex:0];
+    
+        NSDictionary * dict = [obj fields];
+        [settings_Array addObject:dict];
+        [self insertSettingsIntoTable:settings_Array:@"SettingsInfo"];
+       
+    }
+  
+    appDelegate.get_trigger_code = TRUE;
+   
+    
+}
+-(NSString *)getSettingUniqueIdForSettingId:(NSString *)setting_id submodule_id:(NSString *)submodule_id
+{
+    sqlite3_stmt * statement;
+    NSString * Setting_Unique_ID__c = @"";
+    NSString  * select_stmt = [NSString stringWithFormat:@"SELECT SVMXC__Values__c FROM  SettingsInfo WHERE SVMXC__SettingID__c = '%@' AND SVMXC__SubmoduleID__c = '%@'",setting_id , submodule_id];
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [select_stmt UTF8String], -1, &statement, NULL) == SQLITE_OK)
+    {
+        if (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            char * temp_field_name_value = (char *) synchronized_sqlite3_column_text(statement, 0);
+            if(temp_field_name_value != nil)
+            {
+                Setting_Unique_ID__c = [NSString stringWithUTF8String:temp_field_name_value];
+            }
+            
+        }
+    }
+    return Setting_Unique_ID__c;
+}
+
+-(void)createEventTrigger:(NSString *)code_snippet;
+{
+
+//    NSString * query = [NSString stringWithFormat:@"CREATE TRIGGER 'Event_trigger' BEFORE INSERT ON 'Event' FOR EACH ROW WHEN NEW.Id = '' AND              (SELECT NOT COUNT(*) FROm Event_local_Ids where local_id = NEW.local_id)  AND (SELECT  COUNT(*)  from  Event where(strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  (NEW.StartDatetime,'+0000','Z'))  <=  strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') ) AND strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  (NEW.EndDateTime,'+0000','Z') )   > strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') ) ) OR (strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  (NEW.StartDatetime,'+0000','Z') ) <  strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( EndDateTime, '+0000','Z') )   AND strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  (NEW.EndDateTime, '+0000','Z') ) >= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( EndDateTime, '+0000','Z') ))  OR (strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  (NEW.StartDatetime, '+0000','Z') ) <= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') ) AND strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  (NEW.EndDateTime, '+0000','Z') ) >= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( EndDateTime, '+0000','Z') )) OR (strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  (NEW.StartDatetime,'+0000','Z') ) >= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') )  and strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  (NEW.EndDateTime, '+0000','Z') ) <= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  (EndDateTime, '+0000','Z') ))) BEGIN  SELECT RAISE(ABORT,'StartDate Time and EndDate Time'); END"];
+    
+//    NSString * query = [NSString stringWithFormat:@"%@",code_snippet];
+  
+    [self createTable:code_snippet];
+}
 @end

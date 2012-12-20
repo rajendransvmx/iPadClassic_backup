@@ -416,6 +416,19 @@ extern void SVMXLog(NSString *format, ...);
     if ([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"EDIT"] || [[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"SOURCETOTARGETONLYCHILDROWS"]) 
     {
         [activity startAnimating];
+        if([appDelegate.sfmPageController.sourceProcessId length] == 0 && [appDelegate.sfmPageController.sourceRecordId length] == 0)
+        {
+            NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
+            NSString * headerObjName = [hdr_object objectForKey:gHEADER_OBJECT_NAME];
+            if([headerObjName isEqualToString:@"Event"])
+            {
+                appDelegate.SFMPage = nil;
+                appDelegate.SFMoffline = nil;
+                [delegate Back:sender];
+                return;
+            }
+        }
+        
         appDelegate.sfmPageController.processId = appDelegate.sfmPageController.sourceProcessId;
         appDelegate.sfmPageController.recordId  = appDelegate.sfmPageController.sourceRecordId ;
 
@@ -10177,8 +10190,24 @@ extern void SVMXLog(NSString *format, ...);
                 NSString * header_record_local_id = [iServiceAppDelegate GetUUID];
                 [header_fields_dict setObject:header_record_local_id forKey:@"local_id"];
                 
+                if([headerObjName isEqualToString:@"Event"])
+                {
+                    appDelegate.databaseInterface.databaseInterfaceDelegate = self;
+                    NSString * event_local_id = [appDelegate.databaseInterface getLocal_idFrom_Event_local_id];
+                    if([event_local_id length] != 0)
+                    {
+                        header_record_local_id = event_local_id;
+                        [header_fields_dict setObject:header_record_local_id forKey:@"local_id"];
+                    }
+                    
+                }
+                
                 BOOL data_inserted = [appDelegate.databaseInterface insertdataIntoTable:headerObjName data:header_fields_dict];
                 
+                if([headerObjName isEqualToString:@"Event"])
+                {
+                    appDelegate.databaseInterface.databaseInterfaceDelegate = nil;;
+                }
                 if(data_inserted)
                 {
                     //fill the detail tables
@@ -10943,6 +10972,16 @@ extern void SVMXLog(NSString *format, ...);
             {
                 NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
                 NSString * headerObjName = [hdr_object objectForKey:gHEADER_OBJECT_NAME];
+                if([appDelegate.sfmPageController.sourceProcessId length] == 0 && [appDelegate.sfmPageController.sourceRecordId length] == 0)
+                {
+                    if([headerObjName isEqualToString:@"Event"])
+                    {
+                        appDelegate.SFMPage = nil;
+                        appDelegate.SFMoffline = nil;
+                        [delegate BackOnSave];
+                        return;
+                    }
+                }
                 
                 [self initAllrequriredDetailsForProcessId:appDelegate.sfmPageController.sourceProcessId recordId:appDelegate.sfmPageController.recordId object_name:headerObjName];
                 [self fillSFMdictForOfflineforProcess:appDelegate.sfmPageController.sourceProcessId forRecord:appDelegate.sfmPageController.recordId ];
@@ -11215,6 +11254,17 @@ extern void SVMXLog(NSString *format, ...);
                 header_record_local_id = [iServiceAppDelegate GetUUID];
                 [header_fields_dict  setObject:header_record_local_id forKey:@"local_id"];
                 
+                if([headerObjName isEqualToString:@"Event"])
+                {
+                    appDelegate.databaseInterface.databaseInterfaceDelegate = self;
+                    NSString * event_local_id = [appDelegate.databaseInterface getLocal_idFrom_Event_local_id];
+                    if([event_local_id length] != 0)
+                    {
+                        header_record_local_id = event_local_id;
+                        [header_fields_dict setObject:header_record_local_id forKey:@"local_id"];
+                    }
+                    
+                }
                 BOOL data_inserted = [appDelegate.databaseInterface insertdataIntoTable:headerObjName data:header_fields_dict];
 
                 if(data_inserted)
@@ -12657,12 +12707,40 @@ extern void SVMXLog(NSString *format, ...);
 		[self.webView addSubview:view];
 	}
 	
-   
     
 }
 
 
 #pragma End
+-(void)displayALertViewinSFMDetailview:(char *)excp_message
+{
+    NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:EVENT_OVERLAP];
+    
+//    [[NSString  alloc] initWithUTF8String:excp_message];
+    UIAlertView * exeption_alert = [[UIAlertView alloc] initWithTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_error_message] message:message delegate:self cancelButtonTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:EVENT_RESCHEDULE_NO] otherButtonTitles:[appDelegate.wsInterface.tagsDictionary objectForKey:EVENT_RESCHEDULE_YES], nil];
+
+    [exeption_alert performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:NO];
+    [exeption_alert release];
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
+{
+    if(buttonIndex == 1)
+    {
+//        [appDelegate.databaseInterface insertdataIntoTable:@"Event" data:appDelegate.insert_event_dict];
+//        appDelegate.insert_event_dict = nil;
+        NSMutableArray  *keys_event = nil, *objects_event = nil;
+        objects_event = [NSArray arrayWithObjects:@"",save,@"",@"",gBUTTON_TYPE_TDM_IPAD_ONLY ,@"",@"true",nil];
+        keys_event = [NSArray arrayWithObjects:SFW_ACTION_ID,SFW_ACTION_DESCRIPTION,SFW_EXPRESSION_ID,SFW_PROCESS_ID,SFW_ACTION_TYPE ,SFW_WIZARD_ID,SFW_ENABLE_ACTION_BUTTON,nil];
+        NSMutableDictionary * dict_events_save = [NSMutableDictionary dictionaryWithObjects:objects_event forKeys:keys_event];
+        [self offlineActions:dict_events_save];
+        
+    }
+     else if(buttonIndex == 0){
+         [appDelegate.databaseInterface deleteRecordsFromEventLocalIds];
+    }
+    
+}
 
 
 @end

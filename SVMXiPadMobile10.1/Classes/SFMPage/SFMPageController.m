@@ -177,11 +177,16 @@ extern void SVMXLog(NSString *format, ...);
 {
     [self dismissViewControllerAnimated:YES completion:^(void){}];
 	[delegate Back:nil];
+     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_EVENT_DATA_SYNC object:nil];
+    [appDelegate.databaseInterface deleteRecordsFromEventLocalIds];
 }
 -(void) BackOnSave
 {
     [self dismissViewControllerAnimated:YES completion:^(void){}];
     [delegate Back:nil];
+     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_EVENT_DATA_SYNC object:nil];
+    [appDelegate.databaseInterface deleteRecordsFromEventLocalIds];
+   
 }
 #pragma progress bar
 -(void)presentProgressBar:(NSString *)object_name sf_id:(NSString *)sf_id  reocrd_name:(NSString *)record_name

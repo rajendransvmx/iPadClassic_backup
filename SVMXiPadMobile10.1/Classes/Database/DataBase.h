@@ -84,7 +84,10 @@ PopoverButtons *popOver_view;
 
 //- initWithDBName:(NSString *)name type:(NSString *)type sqlite:(sqlite3 *)db;
 
-
+//sahana
+-(NSString *)getSettingUniqueIdForSettingId:(NSString *)setting_id submodule_id:(NSString *)submodule_id;
+-(void)getCodeSnippetSetting;
+-(void)createEventTrigger:(NSString *)code_snippet;
 -(BOOL)isHeaderRecord:(NSString*)objectName;
 //Insert InTo Table Methods
 - (void) insertValuesInToOBjDefTableWithObject:(NSMutableArray *)object definition:(NSMutableArray *)objectDefinition;

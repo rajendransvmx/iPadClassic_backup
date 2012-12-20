@@ -197,7 +197,7 @@ extern void SVMXLog(NSString *format, ...);
 	endDate = [endDate stringByReplacingCharactersInRange:NSMakeRange(8, 2) withString:string];
 
 	
-    queryStatement = [NSString stringWithFormat:@"SELECT  ActivityDate, ActivityDateTime,DurationInMinutes,EndDateTime,StartDateTime,Subject,WhatId,Id  FROM Event where ((StartDateTime >= '%@' and StartDateTime < '%@') or (EndDateTime >= '%@' and EndDateTime < '%@'))", startdate, endDate, startdate, endDate];
+    queryStatement = [NSString stringWithFormat:@"SELECT  ActivityDate, ActivityDateTime,DurationInMinutes,EndDateTime,StartDateTime,Subject,WhatId,Id ,local_id FROM Event where ((StartDateTime >= '%@' and StartDateTime < '%@') or (EndDateTime >= '%@' and EndDateTime < '%@'))", startdate, endDate, startdate, endDate];
         
     const char * selectStatement = [queryStatement UTF8String];
     
@@ -230,6 +230,7 @@ extern void SVMXLog(NSString *format, ...);
                           STREET,
                           STATE,
                           COUNTRY,
+                          EVENT_LOCAL_ID,
                           nil];
         
         ret = synchronized_sqlite3_step(statement);
@@ -342,6 +343,15 @@ extern void SVMXLog(NSString *format, ...);
             {
                 eventId = [NSString stringWithUTF8String: _eventId];
             }
+            
+            
+            char *_local_id= (char *) synchronized_sqlite3_column_text(statement,8);
+            NSString * event_local_Id = @"";
+            if ((_local_id != nil) && strlen(_local_id))
+            {
+                event_local_Id = [NSString stringWithUTF8String: _local_id];
+            }
+            
             
             BOOL retVal, retVal1;
            // retVal = [self isWorkOrder:whatId1];
@@ -521,7 +531,7 @@ extern void SVMXLog(NSString *format, ...);
             NSMutableArray * objects = [[NSArray arrayWithObjects:activityDate,
                                          activityDateTime,durationInMins,
                                          endDateTime,startDateTime,subject,additonalInfo,
-                                         whatId,eventId, objectApiName,City,Zip,Street,State,Country, nil] retain];
+                                         whatId,eventId, objectApiName,City,Zip,Street,State,Country,event_local_Id, nil] retain];
             
             NSDictionary * dictionary = [[NSDictionary alloc] initWithObjects:objects forKeys:keys];
             NSDictionary * dict = [NSDictionary dictionaryWithDictionary:dictionary];

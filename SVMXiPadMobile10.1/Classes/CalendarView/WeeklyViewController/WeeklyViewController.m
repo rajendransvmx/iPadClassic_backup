@@ -33,6 +33,7 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize didLoadWeekData;
 
 @synthesize didMoveEvent;
+@synthesize edit_event;
 
 - (id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -150,6 +151,7 @@ extern void SVMXLog(NSString *format, ...);
     SMLog(@"%@", appDelegate.wsInterface.eventArray);
     for ( int i = 0; i < [appDelegate.wsInterface.eventArray count]; i++ )
     {
+        NSDate * temp_start_date_time , *temp_end_date_time ;
         dict = [appDelegate.wsInterface.eventArray objectAtIndex:i];
         
         workOrderName = [dict objectForKey:ADDITIONALINFO];
@@ -163,12 +165,15 @@ extern void SVMXLog(NSString *format, ...);
         NSString * dateString = [self dateToStringConversion:eventDateTime];
         
         eventDateTime = [dict objectForKey:STARTDATETIME];
+        temp_start_date_time = [dict objectForKey:STARTDATETIME];
+        
         
         dateString = [self dateToStringConversion:eventDateTime];
         
         NSString * startDateTime = dateString;
         
         eventDateTime = [dict objectForKey:ENDDATETIME];
+        temp_end_date_time = [dict objectForKey:ENDDATETIME];
         
         dateString = [self dateToStringConversion:eventDateTime];
         
@@ -242,7 +247,7 @@ extern void SVMXLog(NSString *format, ...);
         events.startDate = [self dateToStringConversion:[dict objectForKey:STARTDATETIME]];
         events.endDate = [self dateToStringConversion:[dict objectForKey:ENDDATETIME]];    
         events.activityDate = ([dict objectForKey:ACTIVITYDATE] != nil)?[dict objectForKey:ACTIVITYDATE]:@"";
-        
+        events.local_id = ([dict objectForKey:EVENT_LOCAL_ID] != nil)?[dict objectForKey:EVENT_LOCAL_ID]:@"";
         
         NSString * objectAPIName = [dict objectForKey:OBJECTAPINAME];
         
@@ -262,6 +267,21 @@ extern void SVMXLog(NSString *format, ...);
         
         NSString * duration = [dict objectForKey:DURATIONINMIN];
         
+        NSTimeInterval interval;
+        if([duration length] == 0)
+        {
+            if([duration intValue] == 0)
+            {
+                interval = [temp_end_date_time timeIntervalSinceDate:temp_start_date_time];
+            }
+            if(interval > 0)
+            {
+                int duration_temp = interval/60;
+                duration = @"";
+                duration = [duration stringByAppendingFormat:@"%d",duration_temp];// [NSString stringWithFormat:@"%d",duration_temp];
+            }
+        }
+
 		
 		//30 minute event 8/sept/2012   ----> Changes for 30 min Event Defect.
 		UIColor * color;
@@ -286,6 +306,11 @@ extern void SVMXLog(NSString *format, ...);
         
         if (flag)
         {
+            
+            UISwipeGestureRecognizer * swipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(EvntgestureRecognizer)];
+            swipeRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
+            [events.view addGestureRecognizer:swipeRecognizer];
+            
             [weekViewPane addSubview:events.view];
             [events setEvent:event Day:dayIndex Time:startime Duration:(CGFloat)[duration intValue]/60*2 Color:color];
             [events setLabelsweeklyview:event];
@@ -300,6 +325,10 @@ extern void SVMXLog(NSString *format, ...);
     [self didAllDataLoad];
 }
 
+-(void)EvntgestureRecognizer
+{
+    NSLog(@"Swipe Recorgnized weeklyview");
+}
 - (NSString *)dateToStringConversion:(NSDate*)date 
 {
     NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
@@ -893,6 +922,8 @@ extern void SVMXLog(NSString *format, ...);
     
     for (int i = 0; i < [workOrderArray count]; i++)
     {
+        
+        NSDate * temp_end_date_time , *temp_start_date_time;
         NSArray * event = [[NSArray arrayWithObjects:
                         [[[workOrderArray objectAtIndex:i] objectForKey:WORKORDERNAME] isKindOfClass:[NSString class]]?[[workOrderArray objectAtIndex:i] objectForKey:WORKORDERNAME]:@"",
                         [[[workOrderArray objectAtIndex:i] objectForKey:WORKORDERTYPE] isKindOfClass:[NSString class]]?[[workOrderArray objectAtIndex:i] objectForKey:WORKORDERTYPE]:@"",
@@ -942,6 +973,8 @@ extern void SVMXLog(NSString *format, ...);
         
         // Obtain duration
         NSString * duration = [[workOrderArray objectAtIndex:i] objectForKey:DURATION];
+      
+        
         
         // Obtain color coding
         NSString * priority = [[workOrderArray objectAtIndex:i] objectForKey:WORKORDERPRIORITY];
@@ -1190,6 +1223,10 @@ extern void SVMXLog(NSString *format, ...);
 - (void) rescheduleEvent:(BOOL)continueReschedule;
 {
     ContinueRescheduling = continueReschedule;
+}
+- (void)EditEvent:(BOOL)event_edit_flag
+{
+    edit_event = event_edit_flag;
 }
 
 - (void) didUpdateObjects:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
@@ -1551,6 +1588,14 @@ extern void SVMXLog(NSString *format, ...);
                 else
                     [activity stopAnimating];
 
+            }
+            else if(!ContinueRescheduling && edit_event)
+            {
+                NSString * confictStr = [NSString stringWithFormat:@"%d",calEvent.conflictFlag];
+                NSArray * keys = [NSArray arrayWithObjects:PROCESSID, RECORDID, OBJECTAPINAME, CREATEDDATE, ACCOUNTID, ACTIVITYDATE, ISCONFLICT,EVENT_LOCAL_ID, nil];
+                NSArray * objects = [NSArray arrayWithObjects:calEvent.processId, calEvent.recordId, calEvent.objectName, calEvent.createdDate, calEvent.accountId, calEvent.activityDate,confictStr,calEvent.local_id, nil];
+                NSDictionary * _dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
+                [delegate SFMEditForWeekView:_dict];
             }
             else
             {

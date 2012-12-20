@@ -16,6 +16,7 @@ extern void SVMXLog(NSString *format, ...);
 
 @implementation EventViewController
 
+@synthesize local_id;
 @synthesize conflictFlag;
 
 @synthesize delegate;
@@ -30,6 +31,8 @@ extern void SVMXLog(NSString *format, ...);
 
 //sahana 12th september
 @synthesize Continue_rescheduling,didDismissalertview;
+//sahana 13th Dec
+@synthesize edit_event;
 
 @synthesize processName, processId, recordId, objectName, activityDate, accountId, startDate, endDate;
 
@@ -192,10 +195,21 @@ extern void SVMXLog(NSString *format, ...);
 //sahana 12th sept 2011
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
 {
-    if(buttonIndex == 0)
+    if(buttonIndex == 0) //cancel
+    {
         Continue_rescheduling = FALSE;
-    else
+        edit_event = FALSE;
+    }
+    else if(buttonIndex == 1) //reschedule Event
+    {
         Continue_rescheduling = TRUE;
+        edit_event = FALSE;
+    }
+    else if(buttonIndex == 2) //Edit Event
+    {
+        Continue_rescheduling = FALSE;
+        edit_event = TRUE;
+    }
     
 }
 - (void)alertViewCancel:(UIAlertView *)alertView;
@@ -228,11 +242,29 @@ extern void SVMXLog(NSString *format, ...);
     
     didDismissalertview = FALSE;
     Continue_rescheduling = FALSE;
-    UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:@"" 
-                                                         message:[appDelegate.wsInterface.tagsDictionary objectForKey:EVENT_RESCHEDULE_PROMPT] 
-                                                        delegate:self 
-                                               cancelButtonTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:EVENT_RESCHEDULE_NO] 
-                                               otherButtonTitles:[appDelegate.wsInterface.tagsDictionary objectForKey:EVENT_RESCHEDULE_YES], nil];
+    edit_event = FALSE;
+    
+    NSString * version = [appDelegate serverPackageVersion];
+	int _stringNumber = [version intValue];
+    UIAlertView * alertView = nil;
+    
+    if(_stringNumber >=  (KMinPkgForScheduleEvents * 100000))
+    {
+        alertView  = [[UIAlertView alloc] initWithTitle:@"" 
+                                        message:[appDelegate.wsInterface.tagsDictionary objectForKey:EVENT_RESCHEDULE_PROMPT]
+                                                            delegate:self 
+                                                   cancelButtonTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:EVENT_RESCHEDULE_NO] 
+                                                   otherButtonTitles:[appDelegate.wsInterface.tagsDictionary objectForKey:EVENT_RESCHEDULE_YES],[appDelegate.wsInterface.tagsDictionary objectForKey:EDIT_EVENT], nil];
+       
+    }
+    else
+    { 
+        alertView  = [[UIAlertView alloc] initWithTitle:@""
+                                                message:[appDelegate.wsInterface.tagsDictionary objectForKey:EVENT_RESCHEDULE_PROMPT]
+                                               delegate:self
+                                      cancelButtonTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:EVENT_RESCHEDULE_NO]
+                                      otherButtonTitles:[appDelegate.wsInterface.tagsDictionary objectForKey:EVENT_RESCHEDULE_YES], nil];
+    }
     [alertView show];
     [alertView release];
     
@@ -249,8 +281,18 @@ extern void SVMXLog(NSString *format, ...);
     if(Continue_rescheduling)
     {
         [delegate Continuetherescheduling:TRUE];
+        [delegate EditEvent:FALSE];
     }
-    else
+    else if(edit_event)
+    {
+        [UIView beginAnimations:@"move" context:nil];
+        [UIView setAnimationDuration:0.3];
+        self.view.frame = selfFrame;
+        [UIView commitAnimations];
+        [delegate EditEvent:TRUE];
+        return;
+    }
+    else 
     {
         // revert back to original selfRect
         [UIView beginAnimations:@"move" context:nil];
@@ -258,6 +300,7 @@ extern void SVMXLog(NSString *format, ...);
         self.view.frame = selfFrame;
         [UIView commitAnimations];
         [delegate Continuetherescheduling:FALSE];
+        [delegate EditEvent:FALSE];
         return;
     }
  

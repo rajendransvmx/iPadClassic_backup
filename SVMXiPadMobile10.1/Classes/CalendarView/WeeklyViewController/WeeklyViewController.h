@@ -21,6 +21,7 @@
 - (void) showJobWithEventDetail:(ZKSObject *)eventDetail WorkOrderDetail:(NSDictionary *)workOrderDetail;
 - (void) showSFMForWeek:(NSDictionary *)event;
 - (void) enableRefreshButton:(BOOL)flag;
+-(void) SFMEditForWeekView:(NSDictionary *)dict;
 
 @end
 
@@ -126,12 +127,14 @@
     
     //Shrinivas
     NSString *updateStartTime, *updateEndTime;
+    BOOL edit_event;
 
 }
 
 @property (nonatomic, retain)  NSString *updateStartTime, *updateEndTime;
 @property (nonatomic) BOOL didDismissAlertView;
 @property (nonatomic) BOOL ContinueRescheduling;
+@property (nonatomic)  BOOL edit_event;
 
 @property (nonatomic) BOOL didMoveEvent;
 @property (nonatomic, assign) id <WeeklyViewControllerDelegate> delegate;

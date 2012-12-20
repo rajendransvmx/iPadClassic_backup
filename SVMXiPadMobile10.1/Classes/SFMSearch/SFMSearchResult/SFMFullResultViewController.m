@@ -27,6 +27,7 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize TitleForResultWindow;
 @synthesize conflict;
 @synthesize download_on_demand;
+@synthesize createEvent;
 @synthesize progressView;
 @synthesize progressTitle;
 @synthesize display_percentage;
@@ -151,6 +152,33 @@ extern void SVMXLog(NSString *format, ...);
     }
     else 
         TitleForResultWindow.text=@"";
+    
+    
+    NSString * object_api_name = [appDelegate.dataBase getApiNameFromFieldLabel:objectName];
+    BOOL recordExists = [appDelegate.dataBase checkForDuplicateId:[appDelegate.dataBase getApiNameFromFieldLabel:objectName] sfId:[data objectForKey:@"Id"]];
+    
+    if(!recordExists)
+    {
+        NSArray * processids_array = [appDelegate.databaseInterface getEventProcessIdForProcessType:SOURCETOTARGET SourceObject:object_api_name];
+        NSString * version = [appDelegate serverPackageVersion];
+        int _stringNumber = [version intValue];
+        if(_stringNumber >=  (KMinPkgForScheduleEvents * 100000))
+        {
+            if([processids_array count] > 0)
+            {
+                [createEvent setBackgroundImage:[UIImage imageNamed:@"plus-72-dpi.png"] forState:UIControlStateNormal];
+            }
+            else
+            {
+                [createEvent removeTarget:self action:@selector(createEventS2T:) forControlEvents:UIControlEventTouchUpInside];
+            }
+        }
+        else
+        {
+            [createEvent removeTarget:self action:@selector(createEventS2T:) forControlEvents:UIControlEventTouchUpInside];
+            [createEvent setBackgroundImage:nil forState:UIControlStateNormal];
+        }
+    }
 
 }
 -(void)onlineDemandData:(id)sender
@@ -247,6 +275,7 @@ extern void SVMXLog(NSString *format, ...);
 }
 - (void)viewDidUnload
 {
+    [self setCreateEvent:nil];
     [super viewDidUnload];
     resultTableView = nil;
     onlineImageView = nil;
@@ -269,6 +298,154 @@ extern void SVMXLog(NSString *format, ...);
     return (interfaceOrientation == UIInterfaceOrientationLandscapeLeft||
             interfaceOrientation == UIInterfaceOrientationLandscapeRight);
 }
+- (IBAction)createEventS2T:(id)sender
+{
+    //new implementation S2T
+    
+   
+    NSString *objName = [objectName retain];
+    objName = [appDelegate.dataBase getApiNameFromFieldLabel:objName];
+    NSString * source_object_api_name = [appDelegate.dataBase getApiNameFromFieldLabel:objectName];
+    NSString * source_object_recordId = [data objectForKey:@"Id"];
+    NSString * source_object_local_id = [appDelegate.databaseInterface getLocalIdFromSFId:source_object_recordId tableName:source_object_api_name];
+    
+      //check out the record any child or parent  local_id
+ 
+    NSArray * processids_array = [appDelegate.databaseInterface getEventProcessIdForProcessType:SOURCETOTARGET SourceObject:source_object_api_name];
+       
+    
+    BOOL record_is_not_syncd = FALSE;
+    BOOL Entry_criteria = FALSE;
+    NSString * final_process_id = @"";
+
+    for(NSString * process_id in processids_array)
+    {
+        NSMutableDictionary * page_layoutInfo = [appDelegate.databaseInterface  queryProcessInfo:process_id object_name:@""];
+        
+        NSMutableDictionary * _header =  [page_layoutInfo objectForKey:@"header"];
+        
+        NSString * headerObjName = [_header objectForKey:gHEADER_OBJECT_NAME];
+        
+        NSString * layout_id = [_header objectForKey:gHEADER_HEADER_LAYOUT_ID];
+        NSMutableArray * details = [page_layoutInfo objectForKey:gDETAILS];
+        
+        NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGET process_id:process_id layoutId:layout_id objectName:headerObjName];
+        NSString * source_parent_object_name = [process_components objectForKey:SOURCE_OBJECT_NAME];
+        NSString * expression_id = [process_components objectForKey:EXPRESSION_ID];
+        
+        Entry_criteria = [appDelegate.databaseInterface EntryCriteriaForRecordFortableName:source_parent_object_name record_id:source_object_local_id expression:expression_id];
+
+   
+    
+        if(Entry_criteria)
+        {
+                       
+            if ([source_parent_object_name length] == 0)
+                source_parent_object_name = headerObjName;
+            
+
+            for(int j= 0; j < [details count]; j++)
+            {
+                NSMutableDictionary * dict = [details objectAtIndex:j];
+                NSMutableArray * filedsArray = [dict objectForKey:gDETAILS_FIELDS_ARRAY];
+                NSMutableArray * details_api_keys = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+                NSString * detailObjectName = [dict objectForKey:gDETAIL_OBJECT_NAME];
+                
+                //NSString * detailaliasName = [dict objectForKey:gDETAIL_OBJECT_ALIAS_NAME];
+                NSString * detail_layout_id = [dict objectForKey:gDETAILS_LAYOUT_ID];
+                
+                for(int k =0 ;k<[filedsArray count];k++)
+                {
+                    NSMutableDictionary * detailFiled_info =[filedsArray objectAtIndex:k];
+                    NSString * api_name = [detailFiled_info objectForKey:gFIELD_API_NAME];
+                    [details_api_keys addObject:api_name];
+                }
+                
+                NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGETCHILD process_id:process_id layoutId:detail_layout_id objectName:detailObjectName];
+                
+                NSString * source_child_object_name = [process_components objectForKey:SOURCE_OBJECT_NAME];
+                NSMutableArray * source_child_ids = [appDelegate.databaseInterface getChildLocalIdForParentId:appDelegate.sfmPageController.sourceRecordId childTableName:source_child_object_name sourceTableName:source_parent_object_name];
+                for(NSString * child_record_id in  source_child_ids)
+                {
+                    NSString * Child_parent_sf_id = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:source_child_object_name local_id:child_record_id];
+                    if([Child_parent_sf_id isEqualToString:@""])
+                    {
+                        record_is_not_syncd = TRUE;
+                        break;
+                    }
+                }
+            }
+            if(Entry_criteria && !record_is_not_syncd)
+            {
+               final_process_id = process_id;
+                break;
+            }
+  
+        }
+    }
+    
+    
+    if(Entry_criteria && !record_is_not_syncd)
+    {
+    
+        if(appDelegate.sfmPageController)
+        {
+            appDelegate.sfmPageController = nil;
+        }
+        
+        appDelegate.sfmPageController = [[[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE] autorelease];
+
+        appDelegate.sfmPageController.sourceProcessId = @"";
+        appDelegate.sfmPageController.sourceRecordId = source_object_local_id;
+        
+        appDelegate.sfmPageController.processId = final_process_id;
+        appDelegate.sfmPageController.recordId  = nil;
+        
+        appDelegate.sfmPageController.detailView.currentRecordId  = nil;
+        appDelegate.sfmPageController.detailView.currentProcessId = final_process_id;
+     
+        
+        appDelegate.From_SFM_Search=FROM_SFM_SEARCH;
+        
+        
+        BOOL conflict = [appDelegate.dataBase checkIfConflictsExistsForEvent:source_object_recordId objectName:source_object_api_name local_id:source_object_local_id];
+        
+        appDelegate.sfmPageController.conflictExists = conflict;
+        
+        [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
+        [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
+        [appDelegate.sfmPageController.detailView view];
+        [self presentViewController:appDelegate.sfmPageController animated:YES completion:nil];
+        appDelegate.didsubmitModelView = FALSE;
+        
+    }
+    else
+    {
+        if(!Entry_criteria)
+        {
+            NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
+            NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
+            NSString * cancel_ = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
+            
+            UIAlertView * enty_criteris = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:cancel_ otherButtonTitles:nil, nil];
+            [enty_criteris show];
+            [enty_criteris release];
+        }
+        else if(record_is_not_syncd)
+        {
+            
+            NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_sync_error];
+            NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_synchronize_error];
+            NSString * Ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+            
+            UIAlertView * alert_view = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:Ok otherButtonTitles:nil, nil];
+            [alert_view show];
+        }
+        
+    }
+    
+}
+
 - (IBAction)dismissView:(id)sender
 {
     [ fullMainDelegate LoadResultDetailViewController:isOndemandRecord];
@@ -411,6 +588,7 @@ extern void SVMXLog(NSString *format, ...);
     [progressView release];
     [titleBackground release];
     
+    [createEvent release];
     [super dealloc];
 }
 -(void)tapRecognized:(id)sender

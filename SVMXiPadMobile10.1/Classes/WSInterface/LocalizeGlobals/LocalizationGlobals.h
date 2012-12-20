@@ -15,6 +15,11 @@
 
 #define RESET_APPLICATION					@"IPAD018_TAG042"
 #define SFMDATABASE_NAME                    @"sfm.sqlite"
+
+
+
+#define EDIT_EVENT          @"IPAD006_TAG040"
+#define EVENT_OVERLAP       @"IPAD014_TAG030"
 //Tags List
 
 // HOME PAGE
@@ -522,6 +527,7 @@
 #define ZIP                                 @"Zip"
 #define LATITUDE                            @"Latitude"
 #define LONGITUDE                           @"Longitude"
+#define EVENT_LOCAL_ID                      @"EVENT_LOCAL_ID"
 
 //Marcos for createProcess
 

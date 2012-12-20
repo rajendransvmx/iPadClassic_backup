@@ -13,6 +13,10 @@
 
 #endif
 
+
+#define User_created_events         @"user_created_events"
+#define Event_local_Ids             @"Event_local_ids"
+
 //Macros For Database
 #define DATABASENAME1               @"sfm"
 #define DATABASETYPE1                @"sqlite"

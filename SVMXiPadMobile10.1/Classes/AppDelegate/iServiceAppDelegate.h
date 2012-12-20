@@ -183,6 +183,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 @interface iServiceAppDelegate : NSObject
 <UIApplicationDelegate, UIActionSheetDelegate, WSInterfaceDelegate>
 {
+    BOOL get_trigger_code;
+    
     NSMutableDictionary * allpagelevelEventsWithTimestamp;
 	///can remove
     id <ReloadSyncTable> reloadTable;
@@ -470,6 +472,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     NSMutableDictionary * serviceReportReference;
     NSTimer * locationPingSettingTimer;
 }
+@property (nonatomic) BOOL get_trigger_code;
 @property (nonatomic)  DOD_REQUEST_RESPONSE_STATUS dod_req_response_ststus;
 @property (nonatomic)  DOD_STATUS dod_status;
 @property (nonatomic , retain) NSMutableDictionary * allpagelevelEventsWithTimestamp;
@@ -800,6 +803,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 
 //RADHA //26/Nov/2012
 - (char *) convertStringIntoChar:(NSString *)data;
+
+-(void)getTriggerCode;
 
 @end
 

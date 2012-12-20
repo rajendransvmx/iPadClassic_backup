@@ -38,18 +38,19 @@ NSMutableArray * eventPositionArray;
     
     //Radha 10th May 2011
     NSString * processName;
-    NSString * processId, * recordId, * objectName, * activityDate, * accountId, * startDate, * endDate;
+    NSString * processId, * recordId, * objectName, * activityDate, * accountId, * startDate, * endDate, * local_id;
     
     BOOL conflictFlag;
     
     //sahana 12th sept 
     BOOL didDismissalertview ;
     BOOL Continue_rescheduling;
-    
+    BOOL edit_event;
     
     
 }
-
+@property (nonatomic ,retain) NSString * local_id;
+@property (nonatomic)  BOOL edit_event;
 @property (nonatomic, assign) BOOL conflictFlag;
 
 @property (nonatomic) BOOL didDismissalertview ;
@@ -137,6 +138,7 @@ NSMutableArray * eventPositionArray;
 @optional
 - (void) movedEvent:(EventViewController *)event;
 - (void) Continuetherescheduling:(BOOL)continue_rescheduling;
+-(void) EditEvent:(BOOL)edit_flag;
 
 @end
 

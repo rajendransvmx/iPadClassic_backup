@@ -18,7 +18,7 @@ extern void SVMXLog(NSString *format, ...);
 
 @implementation databaseIntefaceSfm
 
-@synthesize MyPopoverDelegate;
+@synthesize MyPopoverDelegate , databaseInterfaceDelegate;
 
 -(NSString *) filePath:(NSString *)dataBaseName
 { 
@@ -1547,7 +1547,7 @@ extern void SVMXLog(NSString *format, ...);
     for(NSString * field in fields_array)
     {
         NSString * value = [valuesDict objectForKey:field];
-        if(value != nil && [value length] != 0)
+        if(value != nil && [value length] != 0) 
         {
             //RADHA
             value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
@@ -1574,6 +1574,13 @@ extern void SVMXLog(NSString *format, ...);
             count ++;
         }
     }
+    
+   if([[valuesDict objectForKey:@"Id"] length] == 0  && [tableName isEqualToString:@"Event"])
+    {
+        values_string = [values_string stringByAppendingFormat:@",''"];
+        fields_string = [fields_string stringByAppendingFormat:@",Id"];
+    }
+    
     NSString * insert_statement;
     if([values_string length] != 0 && [fields_string length] != 0)
         insert_statement = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' (%@) VALUES (%@)",tableName , fields_string , values_string];
@@ -1586,6 +1593,13 @@ extern void SVMXLog(NSString *format, ...);
     {
         SMLog(@"Insert Failed");
         success = FALSE;
+        if([tableName isEqualToString:@"Event"])
+        {
+            NSString * local_id = [valuesDict objectForKey:@"local_id"];
+            [self insertIntoEventsLocal_ids:local_id];
+            [databaseInterfaceDelegate displayALertViewinSFMDetailview:err];
+        }
+        
     }
     else
     {
@@ -4552,6 +4566,10 @@ extern void SVMXLog(NSString *format, ...);
                             delete_id = local_id;
 							//sahana  15th September Start
 							[self updatedataTrailerTAbleForLocal_id:local_id sf_id:sf_id];
+                            if([object_Name isEqualToString:@"Event"])
+                            {
+                                [self InsertInto_User_created_event_for_local_id:local_id sf_id:sf_id];
+                            }
 							//sahana  15th September ends
                             
                         }
@@ -4696,6 +4714,29 @@ extern void SVMXLog(NSString *format, ...);
     
     synchronized_sqlite3_finalize(statement);
     
+}
+-(void)InsertInto_User_created_event_for_local_id:(NSString *)local_id sf_id:(NSString *)sf_id
+{
+    
+    NSString * version = [appDelegate serverPackageVersion];
+	int _stringNumber = [version intValue];
+    
+    if(_stringNumber >=  (KMinPkgForScheduleEvents * 100000))
+    {
+        NSDate * date = [NSDate date];
+        NSString * today_Date = @"";
+        NSDateFormatter * dateFormatter  = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+        today_Date = [dateFormatter stringFromDate:date];
+        NSString * insert_query = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ ('object_name','sf_id','time_stamp','local_id') VALUES ('%@','%@','%@','%@')" , User_created_events,@"Event",sf_id,today_Date,local_id ];
+        char * err;
+        
+        if(synchronized_sqlite3_exec(appDelegate.db, [insert_query UTF8String], NULL, NULL, &err) != SQLITE_OK)
+        {
+            SMLog(@"Insert Failed");
+        }
+    }
+
 }
 
 -(void)updatedataTrailerTAbleForLocal_id:(NSString *)local_id  sf_id:(NSString *)sf_id
@@ -6253,5 +6294,131 @@ extern void SVMXLog(NSString *format, ...);
     }
     synchronized_sqlite3_finalize(recordTypeId_statement);
     return recordTypeName;
+}
+-(NSArray *)getEventProcessIdForProcessType:(NSString *)process_type SourceObject:(NSString *)sourceobjectName
+{
+    NSMutableArray * processIds_array = [[NSMutableArray alloc] initWithCapacity:0];
+    NSString * process_id = @"";
+    if([process_type isEqualToString:STANDALONECREATE])
+    {
+        
+        NSString * query = [NSString stringWithFormat:@"SELECT process_id  FROM '%@' WHERE process_type = '%@' AND object_api_name = 'Event'",SFPROCESS, process_type];
+        
+        sqlite3_stmt * stmt;
+        if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+        {
+            while (synchronized_sqlite3_step(stmt)== SQLITE_ROW)
+            {
+                char * temp_process_id = (char *)synchronized_sqlite3_column_text(stmt, 0);
+                if(temp_process_id != nil)
+                {
+                    process_id =[NSString stringWithUTF8String:temp_process_id];
+                    if(process_id!= nil)
+                    {
+                        [processIds_array addObject:process_id];
+                    }
+                    
+                }
+            }
+        }
+        synchronized_sqlite3_finalize(stmt);
+       
+    }
+    else if([process_type isEqualToString:SOURCETOTARGET])
+    {
+       NSString * query = [NSString stringWithFormat:@"SELECT process_id FROM '%@' WHERE component_type = '%@' and source_object_name = '%@' and target_object_name = 'Event'",PROCESS_COMPONENT , TARGET , sourceobjectName];
+        sqlite3_stmt * stmt;
+        if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+        {
+            if (synchronized_sqlite3_step(stmt)== SQLITE_ROW)
+            {
+                char * temp_process_id = (char *)synchronized_sqlite3_column_text(stmt, 0);
+                if(temp_process_id != nil)
+                {
+                    process_id =[NSString stringWithUTF8String:temp_process_id];
+                    if(process_id!= nil)
+                    {
+                        [processIds_array addObject:process_id];
+                    }
+                    
+                }
+            }
+        }
+        synchronized_sqlite3_finalize(stmt);
+    }
+    if([process_type isEqualToString:EDIT])
+    {
+        NSString * query = [NSString stringWithFormat:@"SELECT process_id  FROM '%@' WHERE process_type = '%@' AND object_api_name = 'Event'",SFPROCESS, process_type];
+        
+        sqlite3_stmt * stmt;
+        if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+        {
+            while (synchronized_sqlite3_step(stmt)== SQLITE_ROW)
+            {
+                char * temp_process_id = (char *)synchronized_sqlite3_column_text(stmt, 0);
+                if(temp_process_id != nil)
+                {
+                    process_id =[NSString stringWithUTF8String:temp_process_id];
+                    if(process_id!= nil)
+                    {
+                        [processIds_array addObject:process_id];
+                    }
+                    
+                }
+            }
+        }
+        synchronized_sqlite3_finalize(stmt);
+
+    }
+    return processIds_array;
+}
+
+-(void)insertIntoEventsLocal_ids:(NSString *)local_id
+{
+    
+    //delete before created event
+    [self deleteRecordsFromEventLocalIds];
+    
+    
+    NSString * insert_query = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ ('object_name','local_id') VALUES ('%@','%@')" , Event_local_Ids,@"Event",local_id ];
+    char * err;
+    
+    if(synchronized_sqlite3_exec(appDelegate.db, [insert_query UTF8String], NULL, NULL, &err) != SQLITE_OK)
+    {
+        SMLog(@"Insert Failed Event_local_Ids");
+    }
+}
+
+-(NSString *)getLocal_idFrom_Event_local_id
+{
+    NSString * local_id = @"";
+    NSString * query = [NSString stringWithFormat:@"SELECT local_id FROM Event_local_Ids"];
+    sqlite3_stmt * stmt;
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+    {
+        if (synchronized_sqlite3_step(stmt)== SQLITE_ROW)
+        {
+            char * temp_local_id = (char *)synchronized_sqlite3_column_text(stmt, 0);
+            if(temp_local_id != nil)
+            {
+                local_id =[NSString stringWithUTF8String:temp_local_id];
+                                
+            }
+        }
+    }
+    synchronized_sqlite3_finalize(stmt);
+    return local_id;
+}
+
+-(void)deleteRecordsFromEventLocalIds
+{
+    NSString * delete_query = [NSString stringWithFormat:@"DELETE FROM %@",Event_local_Ids];
+    char * err_delete;
+    
+    if(synchronized_sqlite3_exec(appDelegate.db, [delete_query UTF8String], NULL, NULL, &err_delete) != SQLITE_OK)
+    {
+        SMLog(@"delete Failed Event_local_Ids");
+    }
+    
 }
 @end

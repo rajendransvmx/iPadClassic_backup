@@ -1485,6 +1485,8 @@ last_sync_time:(NSString *)last_sync_time
     
     [appDelegate.dataBase purgingDataOnSyncSettings:date tableName:@"Task" Action:@"LESSTHAN"];
     
+    //sahana dec 14 2012
+    [appDelegate.dataBase purgingDataOnSyncSettings:date tableName:@"Event" Action:NOT_OWNERLESSTHAN];
     //july 3
     settingValue = @"";
     
@@ -1499,8 +1501,9 @@ last_sync_time:(NSString *)last_sync_time
     
     [appDelegate.dataBase purgingDataOnSyncSettings:date tableName:@"Task" Action:@"GRETERTHAN"];
     
-    
-    
+    //sahana dec 14 2012
+    [appDelegate.dataBase purgingDataOnSyncSettings:date tableName:@"Event" Action:NOT_OWNER_GREATERTHAN];
+
 
     //Radha Purging End
     
@@ -3161,8 +3164,8 @@ last_sync_time:(NSString *)last_sync_time
     INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] autorelease];
     
     
-    INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
-    svmxMap = NULL;
+INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
+//    svmxMap = NULL;
     
     INTF_WebServicesDefServiceSvc_SVMXClient * client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
     
@@ -3179,7 +3182,13 @@ last_sync_time:(NSString *)last_sync_time
         sfmRequest.value = @"";
         [sfmRequest.values addObjectsFromArray:values];
     }
-    
+    else if([eventName isEqualToString:@"CODE_SNIPPET"] )
+    {
+        NSString * setting_id = [appDelegate.dataBase getSettingUniqueIdForSettingId:@"SET005" submodule_id:@"IPAD007"];
+        sfmRequest.value = setting_id;
+       svmxMap.key = @"TYPE";
+       svmxMap.value = @"SQL";//unique id
+    }
     else
     {
         client.clientType = @"iPad";
@@ -3197,6 +3206,11 @@ last_sync_time:(NSString *)last_sync_time
     sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
     sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
     sfmRequest.name = @"";
+    
+    if(![eventName isEqualToString:@"CODE_SNIPPET"] )
+    {
+        svmxMap = NULL;
+    }
     [sfmRequest addValueMap:svmxMap];
     
 
@@ -4756,12 +4770,14 @@ last_sync_time:(NSString *)last_sync_time
     
     if (response.error != nil)
     {
+       
        didCompleteAfterSaveEventCalls = YES;
        appDelegate.connection_error = TRUE;
        return;
     }
     else
     {
+        appDelegate.get_trigger_code = TRUE;
         appDelegate.connection_error = FALSE;
     }
     if(AfterSaveEventsCalls)
@@ -4772,6 +4788,7 @@ last_sync_time:(NSString *)last_sync_time
     ret = [[response.bodyParts objectAtIndex:0] isKindOfClass:[SOAPFault class]];
     if (ret)
     {
+        appDelegate.get_trigger_code = TRUE;
         didCompleteAfterSaveEventCalls = YES;
         appDelegate.incrementalSync_Failed = TRUE;
         SOAPFault * sFault = [response.bodyParts objectAtIndex:0];
@@ -6125,6 +6142,29 @@ last_sync_time:(NSString *)last_sync_time
             }          
            
             [appDelegate.dataBase insertValuesInToSettingsTable:mobileDeviceSettingsDict];
+
+        }
+        else if([wsResponse.result.eventName isEqualToString:@"CODE_SNIPPET"])
+        {
+            NSArray * valueMaps  = [wsResponse.result valueMap];
+            NSString * code_snippet = @"";
+            for (int i = 0; i < [valueMaps count]; i++)
+            {
+                INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [valueMaps objectAtIndex:i];
+                NSString * key = (svmxMap.key)!=nil?(svmxMap.key):@"";
+                
+                if([key isEqualToString:@"CODE_SNIPPET_DATA"])
+                {
+                    code_snippet = svmxMap.value;
+                    NSLog(@"%@",code_snippet);
+                    
+                    [appDelegate.dataBase createEventTrigger:code_snippet];
+                    
+                    
+                }
+              
+            }
+            appDelegate.get_trigger_code = TRUE;
 
         }
     }
