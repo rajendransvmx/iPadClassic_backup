@@ -7067,7 +7067,7 @@ extern void SVMXLog(NSString *format, ...);
             {
                 appDelegate.loggedInUserId=[self getLoggedInUserId:appDelegate.username];
             }
-            queryStatement = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ >= '%@' and Id  in (SELECT sf_id  FROM user_created_events) and OwnerId != '%@'", tableName, column, Date ,appDelegate.loggedInUserId];
+            queryStatement = [NSString stringWithFormat:@"DELETE FROM %@ WHERE  Id  in (SELECT sf_id  FROM user_created_events) and OwnerId != '%@'", tableName ,appDelegate.loggedInUserId];
             
         }
         else if([Action isEqualToString:NOT_OWNERLESSTHAN]) //sahana dec 14 2012
@@ -7076,7 +7076,7 @@ extern void SVMXLog(NSString *format, ...);
             {
                 appDelegate.loggedInUserId=[self getLoggedInUserId:appDelegate.username];
             }
-            queryStatement = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ <'%@' and Id  in (SELECT sf_id  FROM user_created_events) and OwnerId != '%@'", tableName, column, Date ,appDelegate.loggedInUserId];
+            queryStatement = [NSString stringWithFormat:@"DELETE FROM %@ WHERE  Id  in (SELECT sf_id  FROM user_created_events) and OwnerId != '%@'", tableName,appDelegate.loggedInUserId];
         }
         else
         {

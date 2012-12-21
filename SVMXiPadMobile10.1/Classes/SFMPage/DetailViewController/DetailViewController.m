@@ -10601,7 +10601,59 @@ extern void SVMXLog(NSString *format, ...);
                         [all_header_fields removeObjectForKey:header_key];
                     }
                 }
+                
+                if([headerObjName isEqualToString:@"Event"])
+                {
+                    NSArray * all_event_keys = [all_header_fields allKeys];
+                    if([all_event_keys containsObject:@"StartDateTime"] && [all_event_keys containsObject:@"EndDateTime"])
+                    {
+                
+                        NSString * startDaterTime = [all_header_fields objectForKey:@"StartDateTime"];
+                        NSString * endDateTime = [all_header_fields objectForKey:@"EndDateTime"];
+                        NSDate * temp_startDateTime, * temp_enddatetime;
+                        [all_header_fields setObject:startDaterTime forKey:@"ActivityDateTime"];
+                        NSString * DurationInMinutes;
+                        NSString * tmp_st_time = [[NSString alloc] initWithString:startDaterTime];
+                        NSString * tmp_end_time = [[NSString alloc] initWithString:endDateTime];
+                        tmp_st_time = [tmp_st_time stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+                        tmp_st_time = [tmp_st_time stringByReplacingOccurrencesOfString:@".000Z" withString:@" "];
+                        
+                        tmp_end_time = [tmp_end_time stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+                        tmp_end_time = [tmp_end_time stringByReplacingOccurrencesOfString:@".000Z" withString:@" "];
+                        
+                        NSDateFormatter * datetimeFormatter=[[[NSDateFormatter alloc]init]autorelease];
+                        [datetimeFormatter  setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+                        NSTimeZone * gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
+                        [datetimeFormatter setTimeZone:gmt];
+                        temp_startDateTime = [datetimeFormatter dateFromString:tmp_st_time];
+                        temp_enddatetime = [datetimeFormatter dateFromString:tmp_end_time];
+                        
+                        NSTimeInterval interval;
+                       
+                        interval = [temp_enddatetime timeIntervalSinceDate:temp_startDateTime];
+                    
+                        [tmp_st_time release];
+                        [tmp_end_time release];
+                        if(interval > 0)
+                        {
+                            int duration_temp = interval/60;
+                            DurationInMinutes = @"";
+                            DurationInMinutes = [DurationInMinutes stringByAppendingFormat:@"%d",duration_temp];// [NSString stringWithFormat:@"%d",duration_temp];
                             
+                            [all_header_fields setObject:DurationInMinutes forKey:@"DurationInMinutes"];
+                        }
+                        else
+                        {
+                            UIAlertView * Event_alert = [[UIAlertView alloc] initWithTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_error_message]  message:@"EndateTime is greater than StartDateTime Please" delegate:nil cancelButtonTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:EVENT_RESCHEDULE_NO]  otherButtonTitles:nil, nil];
+                            [Event_alert show];
+                            [Event_alert release];
+                            
+                            [self enableSFMUI];
+                            return;
+                        }
+                    }
+                }
+                    
                 BOOL success_flag = [appDelegate.databaseInterface  UpdateTableforId:currentRecordId forObject:headerObjName data:all_header_fields];
                 
                 NSString *  id_value  =  [appDelegate.databaseInterface  checkforSalesForceIdForlocalId:headerObjName local_id:currentRecordId];
