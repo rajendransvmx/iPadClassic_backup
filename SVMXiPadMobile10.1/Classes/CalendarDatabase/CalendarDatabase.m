@@ -1065,9 +1065,13 @@ extern void SVMXLog(NSString *format, ...);
 }
 
 //For Labour
-- (NSMutableDictionary *) queryForLabor:(NSString *)currentRecordId    
+- (NSMutableArray *) queryForLabor:(NSString *)currentRecordId
 { 
-    NSMutableDictionary * LabourValuesDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
+    NSMutableDictionary * LabourValuesDictionary = nil;
+	
+	//RADHA 3214
+	NSMutableArray * LaborArray = [[NSMutableArray alloc] initWithCapacity:0];
+	
     NSMutableArray * linePriceItems = [[NSMutableArray alloc] initWithCapacity:0];
     
     Labor = [[NSMutableArray alloc] initWithCapacity:0];
@@ -1087,6 +1091,8 @@ extern void SVMXLog(NSString *format, ...);
     {
         while(synchronized_sqlite3_step(statement1) == SQLITE_ROW)
         {
+			LabourValuesDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
+			
             char *_Id = (char *) synchronized_sqlite3_column_text(statement1,0);
             NSString * Id = @"";    
             if ((_Id != nil) && strlen(_Id))
@@ -1153,6 +1159,9 @@ extern void SVMXLog(NSString *format, ...);
                 [LabourValuesDictionary setValue:[dictionary objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_SERVICE];
                 [LabourValuesDictionary setValue:[dictionary objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_SERVICE];
             }
+			
+			[LaborArray addObject:LabourValuesDictionary];
+			
         }
         synchronized_sqlite3_finalize(statement1);
     }
@@ -1247,54 +1256,59 @@ extern void SVMXLog(NSString *format, ...);
             settingsPresent = YES;
         else
             settingsPresent = NO;
-        
-        NSArray *keys = [LabourValuesDictionary allKeys];
-        if (settingsPresent)
-        {
-            if (groupCostsPresent)
-            {
-                if (calculateLaborPrice)
-                {
-                    for( int i = 0; i < [keys count]; i++ )
-                    {
-                        NSRange range = [(NSString *)[keys objectAtIndex:i] rangeOfString:@"Rate_"];
-                        if( !NSEqualRanges(range, NSMakeRange(NSNotFound, 0)) )
-                        {
-                            BOOL _flag = NO;
-                            for (int j = 0; j < [linePriceItems count]; j++)
-                            {
-                                NSString * str = [NSString stringWithFormat:@"Rate_%@", [linePriceItems objectAtIndex:j]];
-                                if ([[keys objectAtIndex:i] isEqualToString:str])
-                                {
-                                    _flag = YES;
-                                    break;
-                                }
-                            }
-                            if (!_flag)
-                                [LabourValuesDictionary setValue:rate forKey:[keys objectAtIndex:i]];
-                        }
-                    }
-                }
-            }
-        }
-        else
-        {
-            if (groupCostsPresent)
-            {
-                for( int i = 0; i < [keys count]; i++ )
-                {
-                    NSRange range = [(NSString *)[keys objectAtIndex:i] rangeOfString:@"Rate_"];
-                    if( !NSEqualRanges(range, NSMakeRange(NSNotFound, 0)) )
-                    {
-                        // Overwrite only if Rate value = 0
-                        float _rate = [[LabourValuesDictionary objectForKey:[keys objectAtIndex:i]] floatValue];
-                        if (_rate == 0.0 && calculateLaborPrice)
-                            [LabourValuesDictionary setValue:rate forKey:[keys objectAtIndex:i]];
-                    }
-                }
-                
-            }
-        } 
+		
+		for (int count = 0; count < [LaborArray count]; count++)
+		{
+			NSMutableDictionary * LabourValuesDictionary = (NSMutableDictionary *) [LaborArray objectAtIndex:count];
+			
+			NSArray *keys = [LabourValuesDictionary allKeys];
+			if (settingsPresent)
+			{
+				if (groupCostsPresent)
+				{
+					if (calculateLaborPrice)
+					{
+						for( int i = 0; i < [keys count]; i++ )
+						{
+							NSRange range = [(NSString *)[keys objectAtIndex:i] rangeOfString:@"Rate_"];
+							if( !NSEqualRanges(range, NSMakeRange(NSNotFound, 0)) )
+							{
+								BOOL _flag = NO;
+								for (int j = 0; j < [linePriceItems count]; j++)
+								{
+									NSString * str = [NSString stringWithFormat:@"Rate_%@", [linePriceItems objectAtIndex:j]];
+									if ([[keys objectAtIndex:i] isEqualToString:str])
+									{
+										_flag = YES;
+										break;
+									}
+								}
+								if (!_flag)
+									[LabourValuesDictionary setValue:rate forKey:[keys objectAtIndex:i]];
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				if (groupCostsPresent)
+				{
+					for( int i = 0; i < [keys count]; i++ )
+					{
+						NSRange range = [(NSString *)[keys objectAtIndex:i] rangeOfString:@"Rate_"];
+						if( !NSEqualRanges(range, NSMakeRange(NSNotFound, 0)) )
+						{
+							// Overwrite only if Rate value = 0
+							float _rate = [[LabourValuesDictionary objectForKey:[keys objectAtIndex:i]] floatValue];
+							if (_rate == 0.0 && calculateLaborPrice)
+								[LabourValuesDictionary setValue:rate forKey:[keys objectAtIndex:i]];
+						}
+					}
+					
+				}
+			}
+		}
 	}
 	else
 	{
@@ -1304,22 +1318,29 @@ extern void SVMXLog(NSString *format, ...);
 		if (rate == nil || [rate isKindOfClass:[NSNull class]])
 			rate = @"0.0";
         
-		NSArray *keys = [LabourValuesDictionary allKeys];
-        for( int i = 0; i < [keys count]; i++ )
-        {
-            NSRange range = [(NSString *)[keys objectAtIndex:i] rangeOfString:@"Rate_"];
-            if( !NSEqualRanges(range, NSMakeRange(NSNotFound, 0)) )
-            {
-                if (calculateLaborPrice)
-                    if ([[LabourValuesDictionary valueForKey:[keys objectAtIndex:i]] isEqualToString:@"0.0"])
-                        [LabourValuesDictionary setValue:rate forKey:[keys objectAtIndex:i]];
-            }
-        }
-        
-    }     
-    SMLog(@"%@",LabourValuesDictionary);
+		for (int count = 0; count < [LaborArray count]; count++)
+		{
+			NSMutableDictionary * LabourValuesDictionary = (NSMutableDictionary *) [LaborArray objectAtIndex:count];
+			
+			NSArray *keys = [LabourValuesDictionary allKeys];
+			for( int i = 0; i < [keys count]; i++ )
+			{
+				NSRange range = [(NSString *)[keys objectAtIndex:i] rangeOfString:@"Rate_"];
+				if( !NSEqualRanges(range, NSMakeRange(NSNotFound, 0)) )
+				{
+					if (calculateLaborPrice)
+						if ([[LabourValuesDictionary valueForKey:[keys objectAtIndex:i]] isEqualToString:@"0.0"])
+							[LabourValuesDictionary setValue:rate forKey:[keys objectAtIndex:i]];
+				}
+			}
+
+		}
+		
+		      
+    }
+    SMLog(@"%@",LaborArray);
     
-    return LabourValuesDictionary;
+    return LaborArray;
 }
 
 #pragma mark - Summary

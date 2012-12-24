@@ -172,6 +172,10 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
     NSDictionary * mLookupDictionary;
     
     NSMutableDictionary * LabourValuesDictionary;
+	
+	//Radha #3214
+	NSMutableArray * LaborArray;
+	
     NSMutableArray * linePriceItems;
     BOOL groupCostsPresent;
     NSString *rate;

@@ -2826,7 +2826,7 @@ extern void SVMXLog(NSString *format, ...);
         Expenses = [appDelegate.calDataBase queryForExpenses:appDelegate.sfmPageController.recordId];
         
 		//Get Labor
-        LabourValuesDictionary = [appDelegate.calDataBase  queryForLabor:appDelegate.sfmPageController.recordId];
+		LaborArray = [appDelegate.calDataBase  queryForLabor:appDelegate.sfmPageController.recordId];
         
         reportEssentials  = [[appDelegate.calDataBase getReportEssentials:appDelegate.sfmPageController.recordId] retain];
         SMLog(@" reportEssentis array ==%@",reportEssentials);
@@ -2892,27 +2892,34 @@ extern void SVMXLog(NSString *format, ...);
     SMLog(@"%@",Expenses);
     NSArray * _keys = [NSArray arrayWithObjects:SVMXC__Activity_Type__c, SVMXC__Actual_Price2__c, SVMXC__Actual_Quantity2__c, nil];
     // Calculate Labor
-    NSArray * allKeys = [LabourValuesDictionary allKeys];
-    for (NSString * key in allKeys)
-    {
-        if ([key Contains:@"QTY_"])
-        {
-            NSString * quantity = [LabourValuesDictionary objectForKey:key];
-            float _quantity = [quantity floatValue]; //#3736
-            if (_quantity)
-            {
-                NSString * item = [key stringByReplacingOccurrencesOfString:@"QTY_" withString:@""];
-                NSString * _rate = [LabourValuesDictionary objectForKey:[NSString stringWithFormat:@"Rate_%@", item]];
-                NSArray * _objects = [NSArray arrayWithObjects:item, _rate, quantity, nil];
-                
-                if (Labor == nil)
-                    Labor = [[NSMutableArray alloc] initWithCapacity:0];
-                NSDictionary * laborDictionary = [NSDictionary dictionaryWithObjects:_objects forKeys:_keys];
-                [Labor addObject:laborDictionary];
-            }
-        }
-    }
-    SMLog(@"%@",Labor);
+	
+	
+	for (LabourValuesDictionary in LaborArray)
+	{
+		NSArray * allKeys = [LabourValuesDictionary allKeys];
+		for (NSString * key in allKeys)
+		{
+			if ([key Contains:@"QTY_"])
+			{
+				NSString * quantity = [LabourValuesDictionary objectForKey:key];
+				float _quantity = [quantity floatValue]; //#3736
+				if (_quantity)
+				{
+					NSString * item = [key stringByReplacingOccurrencesOfString:@"QTY_" withString:@""];
+					NSString * _rate = [LabourValuesDictionary objectForKey:[NSString stringWithFormat:@"Rate_%@", item]];
+					NSArray * _objects = [NSArray arrayWithObjects:item, _rate, quantity, nil];
+					
+					if (Labor == nil)
+						Labor = [[NSMutableArray alloc] initWithCapacity:0];
+					NSDictionary * laborDictionary = [NSDictionary dictionaryWithObjects:_objects forKeys:_keys];
+					[Labor addObject:laborDictionary];
+				}
+			}
+		}
+
+	}
+	
+	SMLog(@"%@",Labor);
     Summary.Labour = Labor;
     
     Summary.view.frame = CGRectMake(0, 20, 768, 1004);

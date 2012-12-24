@@ -80,7 +80,7 @@
 - (NSString *)getNameField:(NSString *)SVMXC__Product__c;
 - (NSMutableArray *) queryForParts:(NSString *)currentRecordId;
 - (NSMutableArray *) queryForExpenses:(NSString *)currentRecordId;
-- (NSMutableDictionary *) queryForLabor:(NSString *)currentRecordId;
+- (NSMutableArray *) queryForLabor:(NSString *)currentRecordId;
 - (void) startQueryConfiguration;
 - (NSString *) getNameFieldForCreateProcessFromDB:(NSString *)ID;
 
