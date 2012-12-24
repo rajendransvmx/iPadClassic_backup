@@ -1493,6 +1493,7 @@ last_sync_time:(NSString *)last_sync_time
     settingValue = [appDelegate.settingsDict objectForKey:@"Synchronization To Get Events"];
     
     value = [settingValue integerValue];
+	value = value + 1;
     
     date = [appDelegate.dataBase getDateToDeleteEventsAndTaskForNext:value];
     

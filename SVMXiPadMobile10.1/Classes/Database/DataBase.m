@@ -7083,7 +7083,7 @@ extern void SVMXLog(NSString *format, ...);
               queryStatement = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ >= '%@' and Id not in (SELECT sf_id  FROM user_created_events) and Id != '' ", tableName, column, Date];  
         }
     }
-    else
+    else if (!([Action isEqualToString:NOT_OWNERLESSTHAN] || [Action isEqualToString:NOT_OWNER_GREATERTHAN]))
     {
         if ([Action isEqualToString:@"LESSTHAN"])
         {
@@ -7091,7 +7091,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         else
         {
-            queryStatement = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ >= '%@'", tableName, column, Date];
+            queryStatement = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ > '%@'", tableName, column, Date];
         }
     }
     char * err;
