@@ -48,16 +48,18 @@
 				<div class="BlockcontainerRightHeaderDescriptionHeading"><a name="DeviceRequirements">Device requirements</a></div>
 			</div>
 			<div class="BlockcontainerRightHeaderDescriptionConfig">
-				ServiceMax iPad client will work with all models of iPad. The minimum configuration is iOS v4.2. Internet connectivity is required, either through 3G or Wi-Fi.  If there is a proxy or firewall in your network, the iPad must be configured to get the appropriate access to salesforce.com. 
+				ServiceMax iPad client will work with all models of iPad except iPad1. The minimum configuration is iOS v4.2. Internet connectivity is required, either through 3G or Wi-Fi.  If there is a proxy or firewall in your network, the iPad must be configured to get the appropriate access to salesforce.com. 
 			</div>
 
 		<div class="BlockcontainerTopBorder"><img src="iService-help1_with-slices_17.gif" width="984" height="7" alt=""></div>
 		<div class="BlockcontainerRightHeaderNewConfig">
 			<div class="BlockcontainerRightHeaderDescriptionHeading"><a name="Synchronization">Synchronization</a></div>
 		</div>
+		<!-- Aruna 25/Dec/2012, IMO this is wrong. Commenting this for now. Will re-check and delete this --
 		<div class="BlockcontainerRightHeaderDescriptionConfig">
-			<span style="padding-right:5px;"><img src="arrow.gif" align="top" /></span> Events from the current day and week are cached locally for better performance. The cache can be refreshed manually by tapping on the Refresh button in the Day View of the calendar or by navigating to a day in a different week. The cache is local to the device and the user.
-			</div>
+		
+			<span style="padding-right:5px;"><img src="arrow.gif" align="top" /></span> Events from the current day and week are cached locally for better performance. The cache can be refreshed manually by tapping on the Refresh button in the Day View of the calendar or by navigating to a day in a different week. The cache is local to the device and the user. 
+			</div> -->
 
 			<div class="BlockcontainerRightHeaderDescriptionConfig" style="background:#F2F3F5">
 				<span style="padding-right:5px;"><img src="arrow.gif" align="top" /></span> Updates made from iPad client to work orders and other objects are saved to Salesforce immediately and synchronized back to the local database if there is online connectivity.
@@ -146,7 +148,7 @@
 		<ol>
 			<li>Create a folder whose name <i>exactly</i> matches the title of the KB article.</li>
 			<li>Create <i>index.html</i> page in which hyperlinks, images and video files can be embedded in the folder. The hyperlinks can be relative local paths or web-based URLs.</li>
-			<li>Zip the folder. For optimum performance, make sure the zip file size does not exceed 3 MB.</li>
+			<li>Zip the folder.</li>
 			<li>Login to Salesforce and navigate to Documents tab.</li>
 			<li>If a dedicated document folder does not exist for KB articles, create a folder first.</li>
 			<li>Create a new document as follows:
@@ -154,7 +156,7 @@
 					<li>Document Name = Title of the KB article.</li>
 					<li>Folder = Name of the folder created in step #5.</li>
 					<li>Description = Detailed description of this solution.</li>
-					<li>Keywords = Comma-separated list of keywords that must contain the exact product name, can be used to locate this document. Typically product name, family, problem type etc..</li>
+					<li>Keywords = Comma-separated list of keywords that must contain the exact product name, can be used to locate this document. Typically product name, family, problem type etc.</li>
 					<li>Choose the Zip file created in step #3.</li>
 				</ol>
 			</li>
