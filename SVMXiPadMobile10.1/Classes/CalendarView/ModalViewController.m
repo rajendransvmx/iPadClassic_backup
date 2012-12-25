@@ -1744,7 +1744,6 @@ extern void SVMXLog(NSString *format, ...);
     NSString * warning = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_WARNING];
     NSString * noView = [appDelegate.wsInterface.tagsDictionary objectForKey:NO_VIEW_PROCESS];
 
-    
     if ([appDelegate.SFMPage retainCount] > 0)
     {
         appDelegate.SFMPage = nil;
@@ -1759,58 +1758,95 @@ extern void SVMXLog(NSString *format, ...);
     NSString * recordId =  [event objectForKey:RECORDID];
     if(recordId == nil || [recordId length] == 0)
     {
-        NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:cal_day_week_view_view_Id];
-        NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
-        NSString * Ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
-        
-        UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:Ok otherButtonTitles:nil];
-        [alert1 show];
-        [alert1 release];
-        [activity stopAnimating];
-        return;
-    }
-    
-    appDelegate.sfmPageController.conflictExists  = FALSE;
-    NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:recordId tableName:object_name];
-    appDelegate.sfmPageController.recordId = local_id;
-    
-    
-    appDelegate.sfmPageController.activityDate = [event objectForKey:ACTIVITYDATE];
-    appDelegate.sfmPageController.accountId = [event objectForKey:ACCOUNTID];
-    appDelegate.sfmPageController.topLevelId = [event objectForKey:TOPLEVELID];
-    appDelegate.sfmPageController.conflictExists = [[event objectForKey:ISCONFLICT] boolValue];
-    
-    [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
-    [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
-    
-    didRunOperation = YES;
-    
-    didRunOperation = NO;
-    
-    //sahana - offline
-    appDelegate.didsubmitModelView = FALSE;
-    
-    
-    processInfo * pinfo =  [appDelegate getViewProcessForObject:object_name record_id:local_id processId:appDelegate.sfmPageController.processId isswitchProcess:FALSE];
-    BOOL process_exist = pinfo.process_exists;
-    
-    //check For view process
-    if(process_exist)
-    {
-        appDelegate.sfmPageController.processId = pinfo.process_id;
-        [appDelegate.sfmPageController.detailView view];
-        [self presentViewController:appDelegate.sfmPageController animated:YES completion:nil];
-        [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];
+        NSString * version = [appDelegate serverPackageVersion];
+        int _stringNumber = [version intValue];
+        if(_stringNumber >=  (KMinPkgForScheduleEvents * 100000))
+        {
+            NSArray * processids_array = [appDelegate.databaseInterface getEventProcessIdForProcessType:VIEWRECORD SourceObject:@""];
+            
+            if([processids_array count] > 0)
+            {
+                NSString * event_local_id = [event objectForKey:EVENT_LOCAL_ID];
+                NSString * event_process_id = [processids_array objectAtIndex:0];
+                appDelegate.sfmPageController = [[[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:NO] autorelease];
+                appDelegate.sfmPageController.processId = event_process_id;
+                appDelegate.sfmPageController.recordId = event_local_id;
+                //sahana offline
+                appDelegate.sfmPageController.objectName = @"Event";
+                
+                [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
+                [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
+                
+                [appDelegate.sfmPageController.detailView view];
+                [self presentViewController:appDelegate.sfmPageController animated:YES completion:nil];
+                [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];
+                
+            }
+            else
+            {
+                UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:warning message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
+                [alert1 show];
+                [alert1 release];
+            }
+            
+        }
+        else
+        {
+            NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:cal_day_week_view_view_Id];
+            NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
+            NSString * Ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+            
+            UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:Ok otherButtonTitles:nil];
+            [alert1 show];
+            [alert1 release];
+            [activity stopAnimating];
+            return;
+        }
+
     }
     else
     {
-        UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:warning message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
-        [alert1 show];
-        [alert1 release];
-        [activity stopAnimating];
-        return;
+        appDelegate.sfmPageController.conflictExists  = FALSE;
+        NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:recordId tableName:object_name];
+        appDelegate.sfmPageController.recordId = local_id;
+        
+        
+        appDelegate.sfmPageController.activityDate = [event objectForKey:ACTIVITYDATE];
+        appDelegate.sfmPageController.accountId = [event objectForKey:ACCOUNTID];
+        appDelegate.sfmPageController.topLevelId = [event objectForKey:TOPLEVELID];
+        appDelegate.sfmPageController.conflictExists = [[event objectForKey:ISCONFLICT] boolValue];
+        
+        [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
+        [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
+        
+        didRunOperation = YES;
+        
+        didRunOperation = NO;
+        
+        //sahana - offline
+        appDelegate.didsubmitModelView = FALSE;
+        
+        
+        processInfo * pinfo =  [appDelegate getViewProcessForObject:object_name record_id:local_id processId:appDelegate.sfmPageController.processId isswitchProcess:FALSE];
+        BOOL process_exist = pinfo.process_exists;
+        
+        //check For view process
+        if(process_exist)
+        {
+            appDelegate.sfmPageController.processId = pinfo.process_id;
+            [appDelegate.sfmPageController.detailView view];
+            [self presentViewController:appDelegate.sfmPageController animated:YES completion:nil];
+            [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];
+        }
+        else
+        {
+            UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:warning message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
+            [alert1 show];
+            [alert1 release];
+            [activity stopAnimating];
+            return;
+        }
     }
-    
     [activity stopAnimating];
 	
 }
@@ -1989,29 +2025,12 @@ extern void SVMXLog(NSString *format, ...);
         {
             if (!didMoveEvent)
             {
-                
                 NSString * confictStr = [NSString stringWithFormat:@"%d",calEventView.conflictFlag];
-                
-                NSArray * keys = [NSArray arrayWithObjects:PROCESSID, RECORDID, OBJECTAPINAME, ACTIVITYDATE, ACCOUNTID, ISCONFLICT, nil];
-                NSArray * objects = [NSArray arrayWithObjects:calEventView.processId, calEventView.recordId, calEventView.objectName, calEventView.activityDate, calEventView.accountId, confictStr, nil];
-                
+                NSArray * keys = [NSArray arrayWithObjects:PROCESSID, RECORDID, OBJECTAPINAME, ACTIVITYDATE, ACCOUNTID, ISCONFLICT, EVENT_LOCAL_ID,nil];
+                NSArray * objects = [NSArray arrayWithObjects:calEventView.processId, calEventView.recordId, calEventView.objectName, calEventView.activityDate, calEventView.accountId, confictStr,calEventView.local_id, nil];
                 NSDictionary * _dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
-                NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
-                
-                if ([[_dict objectForKey:PROCESSID] isEqualToString:@""] || [_dict objectForKey:PROCESSID] == nil)
-                {
-                    NSString * noView = [appDelegate.wsInterface.tagsDictionary objectForKey:NO_VIEW_PROCESS];
-                    UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Warning" message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
-                    [alert show];
-                    [alert release];
-                }
-                else
-                {
-                    [self disableUI];
-
-                    [self showSFMWithDayEvent:_dict];
-                }
-                
+                [self disableUI];
+                [self showSFMWithDayEvent:_dict];
                 
             }
             else
@@ -2225,59 +2244,98 @@ extern void SVMXLog(NSString *format, ...);
 	
     
     NSString * recordId =  [event objectForKey:RECORDID];
+    
     if(recordId == nil || [recordId length] == 0)
     {
-        NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:cal_day_week_view_view_Id];
-        NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
-        NSString * Ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+        NSString * version = [appDelegate serverPackageVersion];
+        int _stringNumber = [version intValue];
+        if(_stringNumber >=  (KMinPkgForScheduleEvents * 100000))
+        {
+            NSArray * processids_array = [appDelegate.databaseInterface getEventProcessIdForProcessType:VIEWRECORD SourceObject:@""];
+
+            if([processids_array count] > 0)
+            {
+                NSString * event_local_id = [event objectForKey:EVENT_LOCAL_ID];
+                NSString * event_process_id = [processids_array objectAtIndex:0];
+                appDelegate.sfmPageController = [[[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:NO] autorelease];
+                appDelegate.sfmPageController.processId = event_process_id;
+                appDelegate.sfmPageController.recordId = event_local_id;
+                //sahana offline
+                appDelegate.sfmPageController.objectName = @"Event";
+                
+                [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
+                [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
+                
+                [self presentViewController:appDelegate.sfmPageController animated:YES completion:^(void){}];
+                [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline ];
+                
+            }
+            else
+            {
+                UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:warning message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
+                [alert1 show];
+                [alert1 release];
+            }
+             
+        }
+        else
+        {
+            NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:cal_day_week_view_view_Id];
+            NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
+            NSString * Ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+            
+            UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:Ok otherButtonTitles:nil];
+            [alert1 show];
+            [alert1 release];
+            [activity stopAnimating];
+            return;
+        }
         
-        UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:Ok otherButtonTitles:nil];
-        [alert1 show];
-        [alert1 release];
-        [activity stopAnimating];
-        return;
-    }
-    appDelegate.sfmPageController.conflictExists = FALSE;
-    NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:recordId tableName:object_name];
-    appDelegate.sfmPageController.recordId = local_id;
-    
-	
-    appDelegate.sfmPageController.activityDate = [event objectForKey:ACTIVITYDATE];
-    appDelegate.sfmPageController.accountId = [event objectForKey:ACCOUNTID];
-    appDelegate.sfmPageController.topLevelId = [event objectForKey:TOPLEVELID];
-    appDelegate.sfmPageController.conflictExists = [[event objectForKey:ISCONFLICT] boolValue];
-    
-    [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
-    [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
-    
-    didRunOperation = YES;
-	
-    didRunOperation = NO;
-    
-    //sahana - offline
-    appDelegate.didsubmitModelView = FALSE;
-	
-	
-    processInfo * pinfo =  [appDelegate getViewProcessForObject:object_name record_id:local_id processId:appDelegate.sfmPageController.processId isswitchProcess:FALSE];
-    BOOL process_exist = pinfo.process_exists;
-	
-    //check For view process
-    if(process_exist)
-    {
-        appDelegate.sfmPageController.processId = pinfo.process_id;
-        [appDelegate.sfmPageController.detailView view];
-        [self presentViewController:appDelegate.sfmPageController animated:YES completion:nil];
-        [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];
     }
     else
     {
-        UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:warning message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];        
-        [alert1 show];
-        [alert1 release];
-        [activity stopAnimating];
-        return;
-    }
+        appDelegate.sfmPageController.conflictExists = FALSE;
+        NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:recordId tableName:object_name];
+        appDelegate.sfmPageController.recordId = local_id;
+        
+        
+        appDelegate.sfmPageController.activityDate = [event objectForKey:ACTIVITYDATE];
+        appDelegate.sfmPageController.accountId = [event objectForKey:ACCOUNTID];
+        appDelegate.sfmPageController.topLevelId = [event objectForKey:TOPLEVELID];
+        appDelegate.sfmPageController.conflictExists = [[event objectForKey:ISCONFLICT] boolValue];
+        
+        [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
+        [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
+        
+        didRunOperation = YES;
+        
+        didRunOperation = NO;
+        
+        //sahana - offline
+        appDelegate.didsubmitModelView = FALSE;
+        
+        
+        processInfo * pinfo =  [appDelegate getViewProcessForObject:object_name record_id:local_id processId:appDelegate.sfmPageController.processId isswitchProcess:FALSE];
+        BOOL process_exist = pinfo.process_exists;
+        
+        //check For view process
+        if(process_exist)
+        {
+            appDelegate.sfmPageController.processId = pinfo.process_id;
+            [appDelegate.sfmPageController.detailView view];
+            [self presentViewController:appDelegate.sfmPageController animated:YES completion:nil];
+            [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];
+        }
+        else
+        {
+            UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:warning message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];        
+            [alert1 show];
+            [alert1 release];
+            [activity stopAnimating];
+            return;
+        }
 	
+    }
     [activity stopAnimating];
 }
 

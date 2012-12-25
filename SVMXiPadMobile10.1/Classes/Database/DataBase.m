@@ -8144,9 +8144,28 @@ extern void SVMXLog(NSString *format, ...);
     NSMutableArray * settings_Array = [[NSMutableArray alloc] initWithCapacity:0];
     if ([[result records] count] > 0)
     {
+        
         ZKSObject * obj = [[result records] objectAtIndex:0];
     
         NSDictionary * dict = [obj fields];
+        
+        NSArray * all_unique_keys = [dict allKeys];
+        if([all_unique_keys containsObject:@"SVMXC__Values__c"])
+        {
+            NSString * value_string = [dict objectForKey:@"SVMXC__Values__c"];
+           
+            NSArray  *  comma_seperatedValues  =  [value_string componentsSeparatedByString:@","];
+            for(NSString * str in comma_seperatedValues)
+            {
+                
+                if(appDelegate.code_snippet_ids == nil)
+                {
+                    appDelegate.code_snippet_ids = [[NSMutableArray alloc] initWithCapacity:0];
+                }
+                [appDelegate.code_snippet_ids addObject:str];
+            }
+        }
+        
         [settings_Array addObject:dict];
         [self insertSettingsIntoTable:settings_Array:@"SettingsInfo"];
        

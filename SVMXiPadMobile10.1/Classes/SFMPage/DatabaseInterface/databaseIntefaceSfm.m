@@ -6346,7 +6346,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         synchronized_sqlite3_finalize(stmt);
     }
-    if([process_type isEqualToString:EDIT])
+    else if([process_type isEqualToString:EDIT])
     {
         NSString * query = [NSString stringWithFormat:@"SELECT process_id  FROM '%@' WHERE process_type = '%@' AND object_api_name = 'Event'",SFPROCESS, process_type];
         
@@ -6369,6 +6369,29 @@ extern void SVMXLog(NSString *format, ...);
         }
         synchronized_sqlite3_finalize(stmt);
 
+    }
+    else if([process_type isEqualToString:VIEWRECORD])
+    {
+        NSString * query = [NSString stringWithFormat:@"SELECT process_id  FROM '%@' WHERE process_type = '%@' AND object_api_name = 'Event'",SFPROCESS, process_type];
+        
+        sqlite3_stmt * stmt;
+        if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+        {
+            while (synchronized_sqlite3_step(stmt)== SQLITE_ROW)
+            {
+                char * temp_process_id = (char *)synchronized_sqlite3_column_text(stmt, 0);
+                if(temp_process_id != nil)
+                {
+                    process_id =[NSString stringWithUTF8String:temp_process_id];
+                    if(process_id!= nil)
+                    {
+                        [processIds_array addObject:process_id];
+                    }
+                }
+            }
+        }
+        synchronized_sqlite3_finalize(stmt);
+        
     }
     return processIds_array;
 }

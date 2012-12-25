@@ -3185,10 +3185,13 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     }
     else if([eventName isEqualToString:@"CODE_SNIPPET"] )
     {
-        NSString * setting_id = [appDelegate.dataBase getSettingUniqueIdForSettingId:@"SET005" submodule_id:@"IPAD007"];
-        sfmRequest.value = setting_id;
-       svmxMap.key = @"TYPE";
-       svmxMap.value = @"SQL";//unique id
+        
+            for(NSString * codesnippet_id in appDelegate.code_snippet_ids)
+            {
+                [sfmRequest.values addObject:codesnippet_id];
+            }
+            svmxMap.key = @"TYPE";
+            svmxMap.value = @"SQL";//unique id
     }
     else
     {
@@ -6151,22 +6154,15 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             NSString * code_snippet = @"";
             for (int i = 0; i < [valueMaps count]; i++)
             {
-                INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [valueMaps objectAtIndex:i];
-                NSString * key = (svmxMap.key)!=nil?(svmxMap.key):@"";
-                
-                if([key isEqualToString:@"CODE_SNIPPET_DATA"])
-                {
+                    INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [valueMaps objectAtIndex:i];
+                    NSString * key = (svmxMap.key)!=nil?(svmxMap.key):@"";
                     code_snippet = svmxMap.value;
                     NSLog(@"%@",code_snippet);
-                    
                     [appDelegate.dataBase createEventTrigger:code_snippet];
-                    
-                    
-                }
-              
             }
             appDelegate.get_trigger_code = TRUE;
-
+            [appDelegate.code_snippet_ids removeAllObjects];
+            appDelegate.code_snippet_ids = nil;
         }
     }
     

@@ -604,5 +604,7 @@
 	<string>Meta sync failed due to too many script. Please contact your system administrator.</string>
 	<key>IPAD006_TAG040</key>
 	<string>Edit Event</string>
+	<key>IPAD014_TAG031</key>
+	<string>Related To</string>
 </dict>
 </plist>

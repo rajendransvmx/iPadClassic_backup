@@ -183,6 +183,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 @interface iServiceAppDelegate : NSObject
 <UIApplicationDelegate, UIActionSheetDelegate, WSInterfaceDelegate>
 {
+    
+    NSMutableArray * code_snippet_ids;
     BOOL get_trigger_code;
     
     NSMutableDictionary * allpagelevelEventsWithTimestamp;
@@ -472,6 +474,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     NSMutableDictionary * serviceReportReference;
     NSTimer * locationPingSettingTimer;
 }
+@property (nonatomic,retain) NSMutableArray * code_snippet_ids;
 @property (nonatomic) BOOL get_trigger_code;
 @property (nonatomic)  DOD_REQUEST_RESPONSE_STATUS dod_req_response_ststus;
 @property (nonatomic)  DOD_STATUS dod_status;

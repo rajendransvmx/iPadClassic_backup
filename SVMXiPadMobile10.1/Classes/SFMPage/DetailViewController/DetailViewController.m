@@ -838,6 +838,10 @@ extern void SVMXLog(NSString *format, ...);
                     break;
                 }
             }
+            if([filed_api_name isEqualToString:@"WhatId"] && [headerObjName isEqualToString:@"Event"])
+            {
+                field_label = [appDelegate.wsInterface.tagsDictionary objectForKey:Opportunity_Account];
+            }
             
             [filed_info setObject:field_label forKey:gFIELD_LABEL];
             SMLog(@"fiel Info   %@", filed_info);
@@ -946,17 +950,33 @@ extern void SVMXLog(NSString *format, ...);
                             }
                             else
                             {
-                                NSMutableArray * referenceTotableNames = [appDelegate.databaseInterface getReferenceToForField:filed_api_name objectapiName:headerObjName tableName:SF_REFERENCE_TO];
                                 
-                                
-                                if([referenceTotableNames count ] > 0)
+                                if([filed_api_name isEqualToString:@"WhatId"])
                                 {
-                                    NSString * reference_to_tableName = [referenceTotableNames objectAtIndex:0];
+                                    //   below code is the correct way of finding out the referece field name
+                                    NSString * keyPrefix = [field_key substringWithRange:NSMakeRange(0, 3)];
                                     
-                                    NSString * referenceTo_Table_fieldName = [appDelegate.databaseInterface getFieldNameForReferenceTable:reference_to_tableName tableName:SFOBJECTFIELD];
+                                    NSString * referencetoObject = [appDelegate.databaseInterface getTheObjectApiNameForThePrefix:keyPrefix tableName:SFOBJECT];
                                     
-                                    field_value = [appDelegate.databaseInterface getReferenceValueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:field_key];
+                                    NSString * Name_field  = [appDelegate.dataBase getApiNameForNameField:referencetoObject];
                                     
+                                    field_value = [appDelegate.databaseInterface getReferenceValueFromReferenceToTable:referencetoObject field_name:Name_field record_id:field_key];
+                                    
+                                }
+                                else
+                                {
+                                    NSMutableArray * referenceTotableNames = [appDelegate.databaseInterface getReferenceToForField:filed_api_name objectapiName:headerObjName tableName:SF_REFERENCE_TO];
+                                    
+                                    
+                                    if([referenceTotableNames count ] > 0)
+                                    {
+                                        NSString * reference_to_tableName = [referenceTotableNames objectAtIndex:0];
+                                        
+                                        NSString * referenceTo_Table_fieldName = [appDelegate.databaseInterface getFieldNameForReferenceTable:reference_to_tableName tableName:SFOBJECTFIELD];
+                                        
+                                        field_value = [appDelegate.databaseInterface getReferenceValueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:field_key];
+                                        
+                                    }
                                 }
                                 if([field_value isEqualToString:@"" ]||[field_value isEqualToString:@" "] || field_value == nil)
                                 {
@@ -10611,54 +10631,8 @@ extern void SVMXLog(NSString *format, ...);
                 
                 if([headerObjName isEqualToString:@"Event"])
                 {
-                    NSArray * all_event_keys = [all_header_fields allKeys];
-                    if([all_event_keys containsObject:@"StartDateTime"] && [all_event_keys containsObject:@"EndDateTime"])
-                    {
-                
-                        NSString * startDaterTime = [all_header_fields objectForKey:@"StartDateTime"];
-                        NSString * endDateTime = [all_header_fields objectForKey:@"EndDateTime"];
-                        NSDate * temp_startDateTime, * temp_enddatetime;
-                        [all_header_fields setObject:startDaterTime forKey:@"ActivityDateTime"];
-                        NSString * DurationInMinutes;
-                        NSString * tmp_st_time = [[NSString alloc] initWithString:startDaterTime];
-                        NSString * tmp_end_time = [[NSString alloc] initWithString:endDateTime];
-                        tmp_st_time = [tmp_st_time stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-                        tmp_st_time = [tmp_st_time stringByReplacingOccurrencesOfString:@".000Z" withString:@" "];
-                        
-                        tmp_end_time = [tmp_end_time stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-                        tmp_end_time = [tmp_end_time stringByReplacingOccurrencesOfString:@".000Z" withString:@" "];
-                        
-                        NSDateFormatter * datetimeFormatter=[[[NSDateFormatter alloc]init]autorelease];
-                        [datetimeFormatter  setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-                        NSTimeZone * gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
-                        [datetimeFormatter setTimeZone:gmt];
-                        temp_startDateTime = [datetimeFormatter dateFromString:tmp_st_time];
-                        temp_enddatetime = [datetimeFormatter dateFromString:tmp_end_time];
-                        
-                        NSTimeInterval interval;
-                       
-                        interval = [temp_enddatetime timeIntervalSinceDate:temp_startDateTime];
                     
-                        [tmp_st_time release];
-                        [tmp_end_time release];
-                        if(interval > 0)
-                        {
-                            int duration_temp = interval/60;
-                            DurationInMinutes = @"";
-                            DurationInMinutes = [DurationInMinutes stringByAppendingFormat:@"%d",duration_temp];// [NSString stringWithFormat:@"%d",duration_temp];
-                            
-                            [all_header_fields setObject:DurationInMinutes forKey:@"DurationInMinutes"];
-                        }
-                        else
-                        {
-                            UIAlertView * Event_alert = [[UIAlertView alloc] initWithTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_error_message]  message:@"EndateTime is greater than StartDateTime Please" delegate:nil cancelButtonTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:EVENT_RESCHEDULE_NO]  otherButtonTitles:nil, nil];
-                            [Event_alert show];
-                            [Event_alert release];
-                            
-                            [self enableSFMUI];
-                            return;
-                        }
-                    }
+                      [all_header_fields setObject:@"" forKey:@"DurationInMinutes"];
                 }
                     
                 BOOL success_flag = [appDelegate.databaseInterface  UpdateTableforId:currentRecordId forObject:headerObjName data:all_header_fields];
@@ -11632,17 +11606,35 @@ extern void SVMXLog(NSString *format, ...);
         }
         else
         {
-            NSMutableArray * referenceTotableNames = [appDelegate.databaseInterface getReferenceToForField:filed_api_name objectapiName:object_name tableName:SF_REFERENCE_TO];
             
-                       
-            if([referenceTotableNames count ] > 0)
+            if([filed_api_name isEqualToString:@"WhatId"])
             {
-                NSString * reference_to_tableName = [referenceTotableNames objectAtIndex:0];
+                //   below code is the correct way of finding out the referece field name 
+                NSString * keyPrefix = [field_key substringWithRange:NSMakeRange(0, 3)];
                 
-                NSString * referenceTo_Table_fieldName = [appDelegate.databaseInterface getFieldNameForReferenceTable:reference_to_tableName tableName:SFOBJECTFIELD];
+                NSString * referencetoObject = [appDelegate.databaseInterface getTheObjectApiNameForThePrefix:keyPrefix tableName:SFOBJECT];
                 
-                //field_value = [appDelegate.databaseInterface getReferencefield_valueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:field_key];
-                field_value = [appDelegate.databaseInterface getReferenceValueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:field_key];
+                NSString * Name_field  = [appDelegate.dataBase getApiNameForNameField:referencetoObject];
+                
+                field_value = [appDelegate.databaseInterface getReferenceValueFromReferenceToTable:referencetoObject field_name:Name_field record_id:field_key];
+               
+            }
+            else
+            {
+               
+                //sahana - wrong way of handling reference fields
+                NSMutableArray * referenceTotableNames = [appDelegate.databaseInterface getReferenceToForField:filed_api_name objectapiName:object_name tableName:SF_REFERENCE_TO];
+                           
+                if([referenceTotableNames count ] > 0)
+                {
+                    
+                    NSString * reference_to_tableName = [referenceTotableNames objectAtIndex:0];
+                    
+                    NSString * referenceTo_Table_fieldName = [appDelegate.databaseInterface getFieldNameForReferenceTable:reference_to_tableName tableName:SFOBJECTFIELD];
+                    
+                    //field_value = [appDelegate.databaseInterface getReferencefield_valueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:field_key];
+                    field_value = [appDelegate.databaseInterface getReferenceValueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:field_key];
+                }
             }
             if([field_value isEqualToString:@"" ]||[field_value isEqualToString:@" "] || field_value == nil)
             {

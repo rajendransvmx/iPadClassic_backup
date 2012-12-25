@@ -1472,25 +1472,25 @@ extern void SVMXLog(NSString *format, ...);
     {
         // Tapped the view, so do something
         didTap = didMove = NO;
-        NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
-        NSString * warning = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_WARNING];
-        NSString * noView = [appDelegate.wsInterface.tagsDictionary objectForKey:NO_VIEW_PROCESS];
+//        NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+//        NSString * warning = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_WARNING];
+//        NSString * noView = [appDelegate.wsInterface.tagsDictionary objectForKey:NO_VIEW_PROCESS];
         if (!didMoveEvent)
         {
             NSString * confictStr = [NSString stringWithFormat:@"%d",calEvent.conflictFlag];
         
-            NSArray * keys = [NSArray arrayWithObjects:PROCESSID, RECORDID, OBJECTAPINAME, CREATEDDATE, ACCOUNTID, ACTIVITYDATE, ISCONFLICT, nil];
-            NSArray * objects = [NSArray arrayWithObjects:calEvent.processId, calEvent.recordId, calEvent.objectName, calEvent.createdDate, calEvent.accountId, calEvent.activityDate,confictStr, nil];
+            NSArray * keys = [NSArray arrayWithObjects:PROCESSID, RECORDID, OBJECTAPINAME, CREATEDDATE, ACCOUNTID, ACTIVITYDATE, ISCONFLICT,EVENT_LOCAL_ID, nil];
+            NSArray * objects = [NSArray arrayWithObjects:calEvent.processId, calEvent.recordId, calEvent.objectName, calEvent.createdDate, calEvent.accountId, calEvent.activityDate,confictStr, calEvent.local_id,nil];
             NSDictionary * _dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
             [activity startAnimating];
                         
-            if ([[_dict objectForKey:PROCESSID] isEqualToString:@""] || [_dict objectForKey:PROCESSID] == nil)
-            {
-                UIAlertView * alert = [[UIAlertView alloc] initWithTitle:warning message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
-                [alert show];
-                [alert release];
-            }
-            else
+//            if ([[_dict objectForKey:PROCESSID] isEqualToString:@""] || [_dict objectForKey:PROCESSID] == nil)
+//            {
+//                UIAlertView * alert = [[UIAlertView alloc] initWithTitle:warning message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
+//                [alert show];
+//                [alert release];
+//            }
+//            else
             {
                 [self disableUI];
                 

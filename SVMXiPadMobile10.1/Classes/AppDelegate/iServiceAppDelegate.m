@@ -154,6 +154,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 //================================================================
 
 @implementation iServiceAppDelegate
+@synthesize code_snippet_ids;
 @synthesize get_trigger_code;
 @synthesize dod_status,dod_req_response_ststus;
 @synthesize serviceReportReference;
@@ -376,7 +377,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     appDelegate = self;
-    
+    appDelegate.code_snippet_ids = nil;
     self.isBackground = FALSE;
     // Check for internet connection here
     [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
