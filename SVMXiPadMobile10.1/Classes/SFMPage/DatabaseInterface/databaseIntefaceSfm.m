@@ -649,14 +649,17 @@ extern void SVMXLog(NSString *format, ...);
 //get the work order name like WO -000000020
 -(NSString *) getObjectName: (NSString *) tablename recordId:(NSString *)recordId;
 {
+	//Fix for the defect : #6238
+	NSString * nameField = [appDelegate.databaseInterface getFieldNameForReferenceTable:tablename tableName:SFOBJECTFIELD];
     NSString * fieldName = @"";
     if(recordId != nil)
     {
         NSString * query = @"";
         if ([tablename isEqualToString:@"Case"])
-            query = [NSString stringWithFormat:@"SELECT CaseNumber FROM '%@' where local_id = '%@' ",tablename,recordId];
+			
+            query = [NSString stringWithFormat:@"SELECT %@ FROM '%@' where local_id = '%@' ",nameField,tablename,recordId];
         else
-            query = [NSString stringWithFormat:@"SELECT Name FROM '%@' where local_id = '%@' ",tablename,recordId];
+            query = [NSString stringWithFormat:@"SELECT %@ FROM '%@' where local_id = '%@' ",nameField,tablename,recordId];
         sqlite3_stmt * stmt ;
         if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK  )
         {

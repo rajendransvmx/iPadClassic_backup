@@ -2145,10 +2145,44 @@ extern void SVMXLog(NSString *format, ...);
     
     NSString * local_id = [dict objectForKey:EVENT_LOCAL_ID];
     NSArray * processids_array = [appDelegate.databaseInterface getEventProcessIdForProcessType:EDIT SourceObject:@""];
-    
-    if([processids_array count] > 0)
+    NSString * process_id = @"";
+    for(NSString * temp_process_id in processids_array)
     {
-        NSString * process_id = [processids_array objectAtIndex:0];
+        BOOL whatid_exist = FALSE;
+        NSMutableDictionary * page_layoutInfo = [appDelegate.databaseInterface  queryProcessInfo:temp_process_id object_name:@"Event"];
+        NSMutableDictionary * _header =  [page_layoutInfo objectForKey:@"header"];
+        NSMutableArray * header_sections =  [_header objectForKey:@"hdr_Sections"];
+        for(int i=0; i <[header_sections count] ;i++)
+        {
+            NSDictionary * section_info = [header_sections objectAtIndex:i];
+            NSMutableArray * sectionFileds= [section_info objectForKey:@"section_Fields"];
+            
+            for(int j= 0;j<[sectionFileds count]; j++)
+            {
+                NSDictionary * filed_info =[sectionFileds objectAtIndex:j];
+                NSString * field_api_name = [filed_info objectForKey:gFIELD_API_NAME];
+                if([field_api_name isEqualToString:@"WhatId"])
+                {
+                    whatid_exist = TRUE;
+                    break;
+                }
+                
+            }
+        }
+        if(whatid_exist)
+        {
+            continue;
+        }
+        else
+        {
+            process_id = temp_process_id;
+            break;
+        }
+        
+    }
+    
+    if([process_id length] > 0)
+    {
         appDelegate.sfmPageController = [[[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:NO] autorelease];
         appDelegate.sfmPageController.processId = process_id;
         appDelegate.sfmPageController.recordId = local_id;
@@ -2185,10 +2219,45 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     NSArray * processids_array = [appDelegate.databaseInterface getEventProcessIdForProcessType:EDIT SourceObject:@""];
-    
-    if([processids_array count] > 0)
+    NSString * process_id = @"";
+    for(NSString * temp_process_id in processids_array)
     {
-        NSString * process_id = [processids_array objectAtIndex:0];
+        BOOL whatid_exist = FALSE;
+        NSMutableDictionary * page_layoutInfo = [appDelegate.databaseInterface  queryProcessInfo:temp_process_id object_name:@"Event"];
+        NSMutableDictionary * _header =  [page_layoutInfo objectForKey:@"header"];
+        NSMutableArray * header_sections =  [_header objectForKey:@"hdr_Sections"];
+        for(int i=0; i <[header_sections count] ;i++)
+        {
+            NSDictionary * section_info = [header_sections objectAtIndex:i];
+            NSMutableArray * sectionFileds= [section_info objectForKey:@"section_Fields"];
+            
+            for(int j= 0;j<[sectionFileds count]; j++)
+            {
+                NSDictionary * filed_info =[sectionFileds objectAtIndex:j];
+                NSString * field_api_name = [filed_info objectForKey:gFIELD_API_NAME];
+                if([field_api_name isEqualToString:@"WhatId"])
+                {
+                    whatid_exist = TRUE;
+                    break;
+                }
+            
+            }
+        }
+        if(whatid_exist)
+        {
+            continue;
+        }
+        else
+        {
+            process_id = temp_process_id;
+            break;
+        }
+
+    }
+    
+    if([process_id length] > 0)
+    {
+//        NSString * process_id = [processids_array objectAtIndex:0];
         appDelegate.sfmPageController = [[[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:NO] autorelease];
         appDelegate.sfmPageController.processId = process_id;
         appDelegate.sfmPageController.recordId = record_id;

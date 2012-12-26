@@ -422,6 +422,7 @@ extern void SVMXLog(NSString *format, ...);
             NSString * headerObjName = [hdr_object objectForKey:gHEADER_OBJECT_NAME];
             if([headerObjName isEqualToString:@"Event"])
             {
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_EVENT_DATA_SYNC object:nil];
                 appDelegate.SFMPage = nil;
                 appDelegate.SFMoffline = nil;
                 [delegate Back:sender];
@@ -439,6 +440,16 @@ extern void SVMXLog(NSString *format, ...);
     }
     else
     {
+        
+        if([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"SOURCETOTARGET"] || [[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"STANDALONECREATE"] || [[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"VIEWRECORD"])
+        {
+            NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
+            NSString * headerObjName = [hdr_object objectForKey:gHEADER_OBJECT_NAME];
+            if([headerObjName isEqualToString:@"Event"])
+            {
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_EVENT_DATA_SYNC object:nil];
+            }
+        }
         appDelegate.SFMPage = nil;
         appDelegate.SFMoffline = nil;
         [delegate Back:sender];
@@ -1646,24 +1657,40 @@ extern void SVMXLog(NSString *format, ...);
                             }
                             else
                             {
-                                NSMutableArray * referenceTotableNames = [appDelegate.databaseInterface getReferenceToForField:filed_api_name objectapiName:headerObjName tableName:SF_REFERENCE_TO];
                                 
-                                
-                                if([referenceTotableNames count ] > 0)
+                                if([filed_api_name isEqualToString:@"WhatId"])
                                 {
-                                    NSString * reference_to_tableName = [referenceTotableNames objectAtIndex:0];
+                                    //   below code is the correct way of finding out the referece field name
+                                    NSString * keyPrefix = [field_key substringWithRange:NSMakeRange(0, 3)];
                                     
-                                    NSString * referenceTo_Table_fieldName = [appDelegate.databaseInterface getFieldNameForReferenceTable:reference_to_tableName tableName:SFOBJECTFIELD];
+                                    NSString * referencetoObject = [appDelegate.databaseInterface getTheObjectApiNameForThePrefix:keyPrefix tableName:SFOBJECT];
                                     
-                                    field_value = [appDelegate.databaseInterface getReferenceValueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:field_key];
+                                    NSString * Name_field  = [appDelegate.dataBase getApiNameForNameField:referencetoObject];
+                                    
+                                    field_value = [appDelegate.databaseInterface getReferenceValueFromReferenceToTable:referencetoObject field_name:Name_field record_id:field_key];
                                     
                                 }
-                                if([field_value isEqualToString:@"" ]||[field_value isEqualToString:@" "] || field_value == nil)
+                                else
                                 {
-                                    field_value = [appDelegate.databaseInterface getLookUpNameForId:field_key];
+                                    NSMutableArray * referenceTotableNames = [appDelegate.databaseInterface getReferenceToForField:filed_api_name objectapiName:headerObjName tableName:SF_REFERENCE_TO];
+                                    
+                                    
+                                    if([referenceTotableNames count ] > 0)
+                                    {
+                                        NSString * reference_to_tableName = [referenceTotableNames objectAtIndex:0];
+                                        
+                                        NSString * referenceTo_Table_fieldName = [appDelegate.databaseInterface getFieldNameForReferenceTable:reference_to_tableName tableName:SFOBJECTFIELD];
+                                        
+                                        field_value = [appDelegate.databaseInterface getReferenceValueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:field_key];
+                                        
+                                    }
                                     if([field_value isEqualToString:@"" ]||[field_value isEqualToString:@" "] || field_value == nil)
                                     {
-                                        field_value = field_key;
+                                        field_value = [appDelegate.databaseInterface getLookUpNameForId:field_key];
+                                        if([field_value isEqualToString:@"" ]||[field_value isEqualToString:@" "] || field_value == nil)
+                                        {
+                                            field_value = field_key;
+                                        }
                                     }
                                 }
                                 break;
@@ -11009,6 +11036,7 @@ extern void SVMXLog(NSString *format, ...);
                 {
                     if([headerObjName isEqualToString:@"Event"])
                     {
+                        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_EVENT_DATA_SYNC object:nil];
                         appDelegate.SFMPage = nil;
                         appDelegate.SFMoffline = nil;
                         [delegate BackOnSave];
