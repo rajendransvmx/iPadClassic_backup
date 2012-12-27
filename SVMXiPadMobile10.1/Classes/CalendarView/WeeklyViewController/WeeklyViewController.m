@@ -1223,12 +1223,10 @@ extern void SVMXLog(NSString *format, ...);
 - (void) rescheduleEvent:(BOOL)continueReschedule;
 {
     ContinueRescheduling = continueReschedule;
-    edit_event = FALSE;
 }
 - (void)EditEvent:(BOOL)event_edit_flag
 {
     edit_event = event_edit_flag;
-    ContinueRescheduling = FALSE;
 }
 
 - (void) didUpdateObjects:(ZKQueryResult *)result error:(NSError *)error context:(id)context;

@@ -416,13 +416,11 @@ extern void SVMXLog(NSString *format, ...);
 - (void) Continuetherescheduling:(BOOL)continue_rescheduling;
 {
     Continue_rescheduling = continue_rescheduling;
-    Event_edit_flag = FALSE;
 }
 
 -(void) EditEvent:(BOOL)edit_flag
 {
     Event_edit_flag = edit_flag;
-    Continue_rescheduling = FALSE;
 }
 - (void) refreshCacheData
 {

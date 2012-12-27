@@ -290,6 +290,7 @@ extern void SVMXLog(NSString *format, ...);
         self.view.frame = selfFrame;
         [UIView commitAnimations];
         [delegate EditEvent:TRUE];
+        [delegate Continuetherescheduling:FALSE];
         return;
     }
     else 
