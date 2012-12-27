@@ -296,7 +296,7 @@ PopoverButtons *popOver_view;
 - (void) doMetaSync;
 
 - (void) settingAfterIncrementalMetaSync;
-- (void) updateUserTable:(NSString *)UserId;
+- (void) updateUserTable:(NSString *)UserId Name:(NSString*)name;
 - (NSString *) getValueFromLookupwithId:(NSString *)Id;
 - (NSString *) getvalueforReference:(NSDictionary*) tableArray value:(NSString*)value;
 -(NSMutableDictionary*) getupdatedToken:(NSMutableDictionary*)dictforparsing;

@@ -526,9 +526,24 @@ const NSUInteger kNumImages = 7;
         appDelegate.IsLogedIn = ISLOGEDIN_FALSE;
         if(appDelegate == nil)
             appDelegate = (iServiceAppDelegate *)[[ UIApplication sharedApplication] delegate];
-        if(appDelegate.loggedInUserId != nil)
+        NSString *UserFullName=@"";
+        if(![appDelegate.currentUserName length]>0)
         {
-            [appDelegate.dataBase updateUserTable:appDelegate.loggedInUserId];
+            NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+            if (userDefaults)
+            {
+                UserFullName = [userDefaults objectForKey:@"UserFullName"];
+                SMLog(@"User Full Name  = %@",UserFullName);
+            }
+            
+        }
+        else
+        {
+            UserFullName=appDelegate.currentUserName;
+        }
+        if(appDelegate.loggedInUserId != nil && UserFullName!=nil)
+        {
+            [appDelegate.dataBase updateUserTable:appDelegate.loggedInUserId Name:UserFullName];
         }
         
         [self enableControls];

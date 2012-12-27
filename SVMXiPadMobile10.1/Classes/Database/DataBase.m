@@ -1404,7 +1404,10 @@ extern void SVMXLog(NSString *format, ...);
 
                     for (int i=0; i<[[countDict objectForKey:@"rightBraces"] intValue]; i++) 
                     {
-                        [finalQuery appendFormat:@"("];
+                        if(!((i==0) && ([objectValue Contains:@"SVMX.CURRENTUSER"] || [objectValue Contains:@"SVMX.OWNER"])))
+                        {
+                            [finalQuery appendFormat:@"("];
+                        }
                     }
                     if([objectValue rangeOfString:@"null"options:NSCaseInsensitiveSearch].length >0 &&([operator isEqualToString:@"!="] || [operator isEqualToString:@"<>"]) )
                     {
@@ -1412,7 +1415,8 @@ extern void SVMXLog(NSString *format, ...);
                         [finalQuery appendFormat:@"trim('%@'.%@)",referenceObjectName,fieldName];
                         for (int i=0; i<[[countDict objectForKey:@"leftBraces"] intValue]; i++)
                         {
-                            [finalQuery appendFormat:@" COLLATE NOCASE )"];
+                        	if(!((i==0) && ([objectValue Contains:@"SVMX.CURRENTUSER"] || [objectValue Contains:@"SVMX.OWNER"])))
+	                            [finalQuery appendFormat:@" COLLATE NOCASE )"];
                         }
                     }
                     else if(![objectValue Contains:@"SVMX.CURRENTUSER"] && ![objectValue Contains:@"SVMX.OWNER"]&&![refrence_to isEqualToString:@"User"])
@@ -1443,7 +1447,10 @@ extern void SVMXLog(NSString *format, ...);
                     refrence_to=[self getRefrenceToField:objectName relationship:[tableName stringByReplacingOccurrencesOfString:@"(" withString:@""]];
                     for (int i=0; i<[[countBracesintableName objectForKey:@"rightBraces"] intValue]; i++) 
                     {
-                        [finalQuery appendFormat:@"("];
+                        if(!((i==0) && ([operator isEqualToString:@" NOT IN "] || [operator isEqualToString:@" IN "])))
+                        {
+                            [finalQuery appendFormat:@"("];
+                        }
                     }
                     if([tableName isEqualToString:@"RecordType"])
                     {
@@ -1464,7 +1471,10 @@ extern void SVMXLog(NSString *format, ...);
                         }
                         for (int i=0; i<[[countBracesinFiledName objectForKey:@"leftBraces"] intValue]; i++) 
                         {
-                            [finalQuery appendFormat:@")"];
+                            if(!((i==0) && ([objectValue Contains:@"SVMX.CURRENTUSER"] || [objectValue Contains:@"SVMX.OWNER"])))
+                            {
+                                [finalQuery appendFormat:@")"];
+                            }
                         }
                         if(![TableArray containsObject:tableName] && [tableName length] > 0)
                         {
@@ -1483,7 +1493,10 @@ extern void SVMXLog(NSString *format, ...);
                 NSDictionary *dictforBraces=[self occurenceOfBraces:objectDef];
                 for (int i=0; i<[[dictforBraces objectForKey:@"rightBraces"] intValue]; i++) 
                 {
-                    [finalQuery appendFormat:@"("];
+                    if(!((i==0) && ([objectValue Contains:@"SVMX.CURRENTUSER"]||[objectValue Contains:@"SVMX.OWNER"])))
+                    {
+                        [finalQuery appendFormat:@"("];
+                    }
                 }
                 
                 if([objectValue rangeOfString:@"null"options:NSCaseInsensitiveSearch].length >0 &&([operator isEqualToString:@"!="] || [operator isEqualToString:@"<>"]) )
@@ -1503,7 +1516,10 @@ extern void SVMXLog(NSString *format, ...);
                 fieldName = [fieldName stringByReplacingOccurrencesOfString:@" " withString:@""];
                 for (int i=0; i<[[dictforBraces objectForKey:@"leftBraces"] intValue]; i++) 
                 {
-                    [finalQuery appendFormat:@" COLLATE NOCASE )"];
+                    if(!((i==0) && ([objectValue Contains:@"SVMX.CURRENTUSER"] || [objectValue Contains:@"SVMX.OWNER"])))
+                    {
+                        [finalQuery appendFormat:@" COLLATE NOCASE )"];
+                    }
                 }
             }
             if([objectValue rangeOfString:@"null"options:NSCaseInsensitiveSearch].length >0)
@@ -1522,7 +1538,10 @@ extern void SVMXLog(NSString *format, ...);
                 
                 for (int i=0; i<[[Bracesinvalue objectForKey:@"leftBraces"] intValue]; i++) 
                 {
-                    [finalQuery appendFormat:@" COLLATE NOCASE )"];
+                    if(!((i==0) && ([objectValue Contains:@"SVMX.CURRENTUSER"] || [objectValue Contains:@"SVMX.OWNER"])))
+                    {
+                        [finalQuery appendFormat:@" COLLATE NOCASE )"];
+                    }
                 }
             }
             else if([refrence_to isEqualToString:@"User"]||[objectValue Contains:@"SVMX.CURRENTUSER"] || [objectValue Contains:@"SVMX.OWNER"])
@@ -1538,20 +1557,38 @@ extern void SVMXLog(NSString *format, ...);
                     if(![Objecttype isEqualToString:@"refrence"]||![Objecttype isEqualToString:@"refrence"])
                     {
                         
-                        NSString *UserFullName=@"";
+                        NSString *UserFullName=@"", *UserNameValue=@"";
                         if(![appDelegate.currentUserName length]>0)
                         {
                             NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-                            if (userDefaults)
+                            if ([[userDefaults objectForKey:@"UserFullName"] length]>0)
                             {
                                 UserFullName = [userDefaults objectForKey:@"UserFullName"];
                                 SMLog(@"User Full Name  = %@",UserFullName);
                             }
-                            
+                            else
+                            {
+                                UserFullName=[self getLoggedInUser:appDelegate.username];
+                            }
                         }
                         else
+                        {
                             UserFullName=appDelegate.currentUserName;
-                        component_expression = [NSString stringWithFormat:@"'%@'.%@ %@ '%@'" , refrence_to,fieldName, operator,UserFullName];
+                        }
+                        if([UserFullName length]>0)
+                        {
+                            UserNameValue=[objectValue stringByReplacingOccurrencesOfString:@"SVMX.CURRENTUSER" withString:UserFullName];
+                        }
+
+                        if([refrence_to length]>0)
+                        {
+                                component_expression = [NSString stringWithFormat:@"'%@'.%@ %@ %@" , refrence_to,fieldName, operator,UserNameValue];
+                        }
+                        else
+                        {
+                                component_expression = [NSString stringWithFormat:@"'%@'.%@ %@ %@" ,[dictforparsing objectForKey:@"object"] ,fieldName, operator,UserNameValue];
+
+                        }
                         [finalQuery appendString:component_expression];
                         
                     }
@@ -1576,7 +1613,11 @@ extern void SVMXLog(NSString *format, ...);
 
                 for (int i=0; i<[[valueBracesOccurence objectForKey:@"leftBraces"] intValue]; i++)
                 {
-                    [finalQuery appendFormat:@" COLLATE NOCASE )"];
+
+                    if(!([objectValue Contains:@"SVMX.CURRENTUSER"] || [objectValue Contains:@"SVMX.OWNER"]))
+                    {
+                        [finalQuery appendFormat:@" COLLATE NOCASE )"];
+                    }
                 }
             }
 
@@ -1588,7 +1629,10 @@ extern void SVMXLog(NSString *format, ...);
                 [finalQuery appendString:objectValueBrace];
                 for (int i=0; i<[[Bracesinvalue objectForKey:@"leftBraces"] intValue]; i++) 
                 {
-                    [finalQuery appendFormat:@" COLLATE NOCASE )"];
+                    if(!((i==0) && ([operator isEqualToString:@" NOT IN "] || [operator isEqualToString:@" IN "])))
+                    {
+                        [finalQuery appendFormat:@" COLLATE NOCASE )"];
+                    }
                 }
             }
             else if(([[self getDataTypeFor:fieldName inArray:criteria_array] isEqualToString:BOOLEAN]) && ([objectValue rangeOfString:@"False"options:NSCaseInsensitiveSearch].length>0))
@@ -1599,7 +1643,10 @@ extern void SVMXLog(NSString *format, ...);
                 [finalQuery appendString:objectValueBrace];
                 for (int i=0; i<[[Bracesinvalue objectForKey:@"leftBraces"] intValue]; i++) 
                 {
-                    [finalQuery appendFormat:@" COLLATE NOCASE )"];
+                    if(!((i==0) && ([operator isEqualToString:@" NOT IN "] || [operator isEqualToString:@" IN "])))
+                    {
+                        [finalQuery appendFormat:@" COLLATE NOCASE )"];
+                    }
                 }
             }   
             else if ( ([objectValue rangeOfString:@"TODAY"options:NSCaseInsensitiveSearch].length>0) ||  ([objectValue rangeOfString:@"TOMORROW"options:NSCaseInsensitiveSearch].length>0) ||  ([objectValue rangeOfString:@"YESTERDAY"options:NSCaseInsensitiveSearch].length>0)||([objectValue rangeOfString:@"NOW"options:NSCaseInsensitiveSearch].length>0) )
@@ -1652,7 +1699,8 @@ extern void SVMXLog(NSString *format, ...);
                     }
                     for (int i=0; i<[[Bracesinvalue objectForKey:@"leftBraces"] intValue]; i++) 
                     {
-                        [finalQuery appendFormat:@"  COLLATE NOCASE )"];
+                        if(!((i==0) && ([operator isEqualToString:@" NOT IN "] || [operator isEqualToString:@" IN "])))
+	                        [finalQuery appendFormat:@"  COLLATE NOCASE )"];
                     }
                     
                 }
@@ -1744,7 +1792,10 @@ extern void SVMXLog(NSString *format, ...);
                     }
                     for (int i=0; i<[[Bracesinvalue objectForKey:@"leftBraces"] intValue]; i++) 
                     {
-                        [finalQuery appendFormat:@")"];
+                        if(!((i==0) && ([operator isEqualToString:@" NOT IN "] || [operator isEqualToString:@" IN "])))
+                        {
+                            [finalQuery appendFormat:@")"];
+                        }
                     }
                 }
                 [finalQuery appendString:@"'"];
@@ -1768,7 +1819,10 @@ extern void SVMXLog(NSString *format, ...);
                     }
                     for (int i=0; i<[[valueBracesOccurence objectForKey:@"leftBraces"] intValue]; i++) 
                     {
-                        [finalQuery appendFormat:@" COLLATE NOCASE )"];
+                        if(!((i==0) && ([operator isEqualToString:@" NOT IN "] || [operator isEqualToString:@" IN "])))
+                        {
+                            [finalQuery appendFormat:@" COLLATE NOCASE )"];
+                        }
                     }
                 }
                                 
@@ -4902,20 +4956,46 @@ extern void SVMXLog(NSString *format, ...);
     }
 }
 
-- (void) updateUserTable:(NSString *)UserId
+- (void) updateUserTable:(NSString *)UserId Name:(NSString*)name
 {
     if(appDelegate == nil)
         appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
-    NSString *queryStatement = [NSString stringWithFormat:@"update User SET Id='%@' Where Username='%@' ",UserId , appDelegate.username];
-        
-        char * err;
-        if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+    NSString * queryStatement = [NSString stringWithFormat:@"SELECT Name,Id FROM User Where Username='%@'",appDelegate.username];
+    sqlite3_stmt * stmt;
+    BOOL flag=FALSE;
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        if (synchronized_sqlite3_step(stmt) == SQLITE_ROW)
         {
-            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                [MyPopoverDelegate performSelector:@selector(throwException)];
-            SMLog(@"Failed to insert");
-        }
+            char * _name = (char *) synchronized_sqlite3_column_text(stmt, 0);
+            if ((_name != nil) && strlen(_name))
+            {
+                flag=TRUE;
+            }
+            
+            char * _id = (char *) synchronized_sqlite3_column_text(stmt, 1);
+            if ((_id != nil) && strlen(_id))
+            {
+                flag=TRUE;
+                
+            }
+                
 
+        }
+    }
+    synchronized_sqlite3_finalize(stmt);
+    if(!flag)
+    {
+        NSString *queryStatementUpdate = [NSString stringWithFormat:@"update User SET Id='%@',Name='%@' Where Username='%@' ",UserId ,name, appDelegate.username];
+            
+            char * err;
+            if (synchronized_sqlite3_exec(appDelegate.db, [queryStatementUpdate UTF8String], NULL, NULL, &err) != SQLITE_OK)
+            {
+                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                    [MyPopoverDelegate performSelector:@selector(throwException)];
+                SMLog(@"Failed to insert");
+            }
+    }
 }
 
 
