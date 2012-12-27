@@ -7301,10 +7301,11 @@ extern void SVMXLog(NSString *format, ...);
         return FALSE;
     }
     
-	//Radha 2012june12
-	//[appDelegate.databaseInterface cleartable:@"Event"];
-	//[appDelegate.databaseInterface cleartable:@"Task"];
-	    
+	//Radha #6176
+	NSMutableString * eventId = [self getAllEventRelatedIdFromSyncRecordHeap];
+	
+	[self deleteEventNotRelatedToLoggedInUser:eventId tableName:@"Event"];
+	
     [appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
     
     
@@ -8099,6 +8100,68 @@ extern void SVMXLog(NSString *format, ...);
 	}
 
 	return textLength;
+}
+
+
+- (NSMutableString *) getAllEventRelatedIdFromSyncRecordHeap
+{
+	NSMutableString * Id = [[[NSMutableString alloc] initWithCapacity:0] autorelease];
+	
+	NSString * query = [NSString stringWithFormat:@"SELECT sf_id from %@ WHERE object_name = 'Event'", SYNC_RECORD_HEAP];
+	
+	sqlite3_stmt * stmt = nil;
+	
+	if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+	{
+		while (synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+		{
+			char * eventId = (char *) synchronized_sqlite3_column_text(stmt, 0);
+			
+			if ([Id length] == 0)
+			{
+				[Id appendString:[NSMutableString stringWithFormat:@"'%@'", [NSMutableString stringWithUTF8String:eventId]]];
+			}
+			else
+			{
+				[Id appendString:[NSMutableString stringWithFormat:@" ,'%@'", [NSMutableString stringWithUTF8String:eventId]]];
+			}
+		}
+		
+		synchronized_sqlite3_finalize(stmt);
+	}
+	
+	
+	return Id;
+	
+	
+}
+- (void) deleteEventNotRelatedToLoggedInUser:(NSMutableString *)Id tableName:(NSString *)tableName
+{
+	NSString * settingValue = [appDelegate.settingsDict objectForKey:@"Synchronization To Remove Events"];
+    
+    NSTimeInterval value = [settingValue integerValue];
+	value = value - 1;
+    
+    NSString * startDate = [self getDateToDeleteEventsAndTaskOlder:value];
+	
+	settingValue = @"";
+    
+    settingValue = [appDelegate.settingsDict objectForKey:@"Synchronization To Get Events"];
+    
+    value = [settingValue integerValue];
+	value = value + 1;
+    
+    NSString * endDate = [appDelegate.dataBase getDateToDeleteEventsAndTaskForNext:value];
+
+	
+	NSString * query = [NSString stringWithFormat:@"DELETE FROM %@ where StartDateTime >= '%@' AND EndDateTime <= '%@' AND Id not in (%@) AND (Id != ' ' AND ID NOT NULL AND Id != '')", tableName,startDate, endDate, Id];
+	
+    char * err;
+	
+	if (synchronized_sqlite3_exec(appDelegate.db, [query UTF8String], NULL, NULL, &err) != SQLITE_OK)
+	{
+		SMLog(@"Failed to delete");
+	}
 }
 
 
