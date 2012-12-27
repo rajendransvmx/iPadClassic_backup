@@ -171,7 +171,7 @@ DetailViewControllerDelegate, RefreshModalSyncStatusButton>
 
 
 //sahana
--(void) SFMeditEvent:(NSString *)record_id;
+-(void) SFMeditEvent:(NSString *)record_id  what_id:(NSString *)what_id;
 
 //Radha 3rd April 2011
 //set up the events

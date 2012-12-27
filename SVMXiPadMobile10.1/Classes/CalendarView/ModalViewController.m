@@ -2087,7 +2087,7 @@ extern void SVMXLog(NSString *format, ...);
                 else if(Event_edit_flag)
                 {
                     NSString * local_id = calEventView.local_id;
-                    [self SFMeditEvent:local_id];
+                    [self SFMeditEvent:local_id what_id:calEventView.recordId];
                 }
                 else
                 {
@@ -2144,10 +2144,11 @@ extern void SVMXLog(NSString *format, ...);
     {
         appDelegate.SFMPage = nil;
     }
-    
+    NSString * what_id = [dict objectForKey:RECORDID];
     NSString * local_id = [dict objectForKey:EVENT_LOCAL_ID];
     NSArray * processids_array = [appDelegate.databaseInterface getEventProcessIdForProcessType:EDIT SourceObject:@""];
     NSString * process_id = @"";
+    NSString * referenceto_process_id = @"";
     for(NSString * temp_process_id in processids_array)
     {
         BOOL whatid_exist = FALSE;
@@ -2173,6 +2174,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         if(whatid_exist)
         {
+            referenceto_process_id = temp_process_id;
             continue;
         }
         else
@@ -2186,7 +2188,34 @@ extern void SVMXLog(NSString *format, ...);
     if([process_id length] > 0)
     {
         appDelegate.sfmPageController = [[[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:NO] autorelease];
-        appDelegate.sfmPageController.processId = process_id;
+        if([what_id length] == 0 )
+        {
+            appDelegate.sfmPageController.processId = process_id;
+            if([process_id length] ==0)
+            {
+                
+                NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+                NSString * warning = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_WARNING];
+                NSString * noView = [appDelegate.wsInterface.tagsDictionary objectForKey:NO_VIEW_PROCESS];
+                UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:warning message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
+                [alert1 show];
+                [alert1 release];
+                [activity stopAnimating];
+                return;
+            }
+        }
+        else
+        {
+            if([referenceto_process_id length] == 0)
+            {
+                 appDelegate.sfmPageController.processId = process_id;
+            }
+            else
+            {
+                appDelegate.sfmPageController.processId = referenceto_process_id;
+            }
+        }
+        
         appDelegate.sfmPageController.recordId = local_id;
         //sahana offline
         appDelegate.sfmPageController.objectName = @"Event";
@@ -2213,7 +2242,7 @@ extern void SVMXLog(NSString *format, ...);
 
 }
 
--(void) SFMeditEvent:(NSString *)record_id
+-(void) SFMeditEvent:(NSString *)record_id what_id:(NSString *)what_id
 {
     if ([appDelegate.SFMPage retainCount] > 0)
     {
@@ -2222,6 +2251,7 @@ extern void SVMXLog(NSString *format, ...);
     
     NSArray * processids_array = [appDelegate.databaseInterface getEventProcessIdForProcessType:EDIT SourceObject:@""];
     NSString * process_id = @"";
+     NSString * referenceto_process_id = @"";
     for(NSString * temp_process_id in processids_array)
     {
         BOOL whatid_exist = FALSE;
@@ -2247,6 +2277,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         if(whatid_exist)
         {
+            referenceto_process_id = temp_process_id;
             continue;
         }
         else
@@ -2255,13 +2286,41 @@ extern void SVMXLog(NSString *format, ...);
             break;
         }
 
+
     }
     
     if([process_id length] > 0)
     {
 //        NSString * process_id = [processids_array objectAtIndex:0];
         appDelegate.sfmPageController = [[[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:NO] autorelease];
-        appDelegate.sfmPageController.processId = process_id;
+        if([what_id length] == 0 )
+        {
+            appDelegate.sfmPageController.processId = process_id;
+            if([process_id length] ==0)
+            {
+                
+                NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+                NSString * warning = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_WARNING];
+                NSString * noView = [appDelegate.wsInterface.tagsDictionary objectForKey:NO_VIEW_PROCESS];
+                UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:warning message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
+                [alert1 show];
+                [alert1 release];
+                [activity stopAnimating];
+                return;
+            }
+            
+        }
+        else
+        {
+            if([referenceto_process_id length] == 0)
+            {
+                appDelegate.sfmPageController.processId = process_id;
+            }
+            else
+            {
+                appDelegate.sfmPageController.processId = referenceto_process_id;
+            }
+        }
         appDelegate.sfmPageController.recordId = record_id;
         //sahana offline
         appDelegate.sfmPageController.objectName = @"Event";
