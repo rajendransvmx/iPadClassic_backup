@@ -328,8 +328,8 @@ PopoverButtons *popOver_view;
 //Radha DefectFix - 5721
 - (NSInteger) getTextareaLengthForFieldApiName:(NSString *)api_name objectName:(NSString *)objectName;
 
-//Radha #6176
-- (NSMutableString *) getAllEventRelatedIdFromSyncRecordHeap;
-- (void) deleteEventNotRelatedToLoggedInUser:(NSMutableString *)Id tableName:(NSString *)tableName;
+////Radha #6176
+//- (NSMutableString *) getAllEventRelatedIdFromSyncRecordHeap;
+//- (void) deleteEventNotRelatedToLoggedInUser:(NSMutableString *)Id tableName:(NSString *)tableName;
 
 @end
