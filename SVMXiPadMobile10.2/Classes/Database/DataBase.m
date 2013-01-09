@@ -7301,12 +7301,7 @@ extern void SVMXLog(NSString *format, ...);
         return FALSE;
     }
     
-//	//Radha #6176
-//	NSMutableString * eventId = [self getAllEventRelatedIdFromSyncRecordHeap];
-//	
-//	[self deleteEventNotRelatedToLoggedInUser:eventId tableName:@"Event"];
-//	
-//    [appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
+    [appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
     
     
     return TRUE;
