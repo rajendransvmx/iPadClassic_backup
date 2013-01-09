@@ -2046,7 +2046,7 @@ extern void SVMXLog(NSString *format, ...);
                     {
                         SMLog(@"%@", updatestartDateTime);
                         SMLog(@"%@", calEventView.eventId);
-                        [appDelegate.calDataBase updateMovedEventWithStartTime:updatestartDateTime EndDate:updateendDateTime RecordID:calEventView.eventId];
+                        [appDelegate.calDataBase updateMovedEventWithStartTime:updatestartDateTime EndDate:updateendDateTime RecordID:calEventView.eventId event_localId:calEventView.local_id];
                         
                         //sahana Event Update  to datatriler table
                         NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:calEventView.eventId tableName:@"Event"];

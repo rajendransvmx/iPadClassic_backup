@@ -1535,7 +1535,7 @@ extern void SVMXLog(NSString *format, ...);
                 {
                     NSLog(@"Start Time = %@ and End Time = %@",updatestartDateTime,updateendDateTime);
                     //Shrinivas 
-                    [appDelegate.calDataBase updateMovedEventWithStartTime:updatestartDateTime EndDate:updateendDateTime RecordID:calEvent.eventId];
+                    [appDelegate.calDataBase updateMovedEventWithStartTime:updatestartDateTime EndDate:updateendDateTime RecordID:calEvent.eventId event_localId:calEvent.local_id];
                     
                    NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:calEvent.eventId tableName:@"Event"];
                     NSLog(@"Local Id = %@ For Event Id = %@",local_id,calEvent.eventId);
