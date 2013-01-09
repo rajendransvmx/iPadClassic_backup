@@ -7742,12 +7742,12 @@ extern void SVMXLog(NSString *format, ...);
         
     }
     
+    synchronized_sqlite3_finalize(stmt);
+    
     if (count > 0)
        return TRUE;
     else
         return FALSE;
-    synchronized_sqlite3_finalize(stmt);
-    
     
 }
 
@@ -7767,12 +7767,12 @@ extern void SVMXLog(NSString *format, ...);
         }
         
     }
+    synchronized_sqlite3_finalize(stmt);
     
     if (count > 0)
         return TRUE;
     else
-        return FALSE;
-    synchronized_sqlite3_finalize(stmt);
+        return FALSE;    
 }
 
 
@@ -7792,12 +7792,12 @@ extern void SVMXLog(NSString *format, ...);
         }
         
     }
+    synchronized_sqlite3_finalize(stmt);
     
     if (count > 0)
         return TRUE;
     else
         return FALSE;
-    synchronized_sqlite3_finalize(stmt);
 }
 
 

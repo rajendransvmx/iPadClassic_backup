@@ -9,6 +9,8 @@
 #import "SFMFullResultViewController.h"
 #import "iServiceAppDelegate.h"
 #define TableViewResultViewCellHeight 50
+const int percentage_SFMResult = 30;
+const float progress_SFMResult = 0.33;
 extern void SVMXLog(NSString *format, ...);
 
 @interface SFMFullResultViewController ()
@@ -59,8 +61,7 @@ extern void SVMXLog(NSString *format, ...);
     [[actionButton titleLabel] setFont:[UIFont boldSystemFontOfSize:16]];
     [detailButton setFrame:CGRectMake(509, 10, 20, 21)];
     [download_on_demand setFrame:CGRectMake(500, 10, 20, 20)];
-    NSMutableString * queryStatement1 = [[NSMutableString alloc]initWithCapacity:0];
-    queryStatement1 =[NSMutableString stringWithFormat:@"Select process_id from SFProcess where object_api_name is  '%@' and process_type is 'VIEWRECORD'",[appDelegate.dataBase getApiNameFromFieldLabel:objectName]]; 
+    NSString *queryStatement1 =[NSString stringWithFormat:@"Select process_id from SFProcess where object_api_name is  '%@' and process_type is 'VIEWRECORD'",[appDelegate.dataBase getApiNameFromFieldLabel:objectName]];
     sqlite3_stmt * labelstmt;
     char *field1;
     const char *selectStatement = [queryStatement1 UTF8String];
@@ -117,11 +118,6 @@ extern void SVMXLog(NSString *format, ...);
 		NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:[data objectForKey:@"Id"] tableName:[appDelegate.dataBase getApiNameFromFieldLabel:objectName]];
 		
         conflict=[appDelegate.dataBase checkIfConflictsExistsForEvent:[data objectForKey:@"Id"] objectName:[appDelegate.dataBase getApiNameFromFieldLabel:objectName] local_id:local_id];
-        
-//        if (!conflict)
-//        {
-//            conflict = [appDelegate.dataBase checkIfChildConflictexist:[data objectForKey:@"Id"] sfId:[appDelegate.dataBase getApiNameFromFieldLabel:objectName]];
-//        }
 
         [detailButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"] forState:UIControlStateNormal];
         [onlineImageView setImage:nil];
@@ -129,7 +125,6 @@ extern void SVMXLog(NSString *format, ...);
         {
             onlineImageView.frame=CGRectMake(89, 6, 30, 30);
             [onlineImageView setImage:[UIImage imageNamed:@"red.png"]];
-
         }
     }
     else
@@ -189,6 +184,7 @@ extern void SVMXLog(NSString *format, ...);
     [self presentProgressBar:objNameApiName sf_id:recordId reocrd_name:objName];
     
 }
+
 - (void) accessoryButtonTapped:(id)sender
 {
     NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
@@ -206,9 +202,8 @@ extern void SVMXLog(NSString *format, ...);
 	}
     appDelegate.sfmPageController = [[[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:TRUE] autorelease];
     
-    NSMutableString * queryStatement1 = [[NSMutableString alloc]initWithCapacity:0];
     NSString *recordId = [data objectForKey:@"Id"];
-    queryStatement1 = [NSMutableString stringWithFormat:@"Select local_id FROM '%@' where Id = '%@'",objName,recordId];    
+    NSString *queryStatement1 = [NSString stringWithFormat:@"Select local_id FROM '%@' where Id = '%@'",objName,recordId];
     sqlite3_stmt * labelstmt;
     const char *selectStatement = [queryStatement1 UTF8String];
     
@@ -269,9 +264,8 @@ extern void SVMXLog(NSString *format, ...);
         UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:warning message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
         [alert1 show];
         [alert1 release];
-        return;
     }
-
+    [objName release];
 }
 - (void)viewDidUnload
 {
@@ -294,15 +288,13 @@ extern void SVMXLog(NSString *format, ...);
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-//	return YES;
     return (interfaceOrientation == UIInterfaceOrientationLandscapeLeft||
             interfaceOrientation == UIInterfaceOrientationLandscapeRight);
 }
+
 - (IBAction)createEventS2T:(id)sender
 {
     //new implementation S2T
-    
-   
     NSString *objName = [objectName retain];
     objName = [appDelegate.dataBase getApiNameFromFieldLabel:objName];
     NSString * source_object_api_name = [appDelegate.dataBase getApiNameFromFieldLabel:objectName];
@@ -408,9 +400,9 @@ extern void SVMXLog(NSString *format, ...);
         appDelegate.From_SFM_Search=FROM_SFM_SEARCH;
         
         
-        BOOL conflict = [appDelegate.dataBase checkIfConflictsExistsForEvent:source_object_recordId objectName:source_object_api_name local_id:source_object_local_id];
+        BOOL conflict_for_event = [appDelegate.dataBase checkIfConflictsExistsForEvent:source_object_recordId objectName:source_object_api_name local_id:source_object_local_id];
         
-        appDelegate.sfmPageController.conflictExists = conflict;
+        appDelegate.sfmPageController.conflictExists = conflict_for_event;
         
         [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
         [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
@@ -440,6 +432,7 @@ extern void SVMXLog(NSString *format, ...);
             
             UIAlertView * alert_view = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:Ok otherButtonTitles:nil, nil];
             [alert_view show];
+            [alert_view release];
         }
         
     }
@@ -448,15 +441,15 @@ extern void SVMXLog(NSString *format, ...);
 
 - (IBAction)dismissView:(id)sender
 {
-    [ fullMainDelegate LoadResultDetailViewController:isOndemandRecord];
+    [fullMainDelegate LoadResultDetailViewController:isOndemandRecord];
     [self dismissViewControllerAnimated:YES completion:nil];
-    
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return [tableHeaderArray count];
 }
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UILabel *lblObjects,*lblValues;
@@ -478,7 +471,6 @@ extern void SVMXLog(NSString *format, ...);
     lblObjects =[[UILabel alloc]initWithFrame:CGRectMake(20, 0, 235, TableViewResultViewCellHeight)];
     NSString *objectString = [tableHeaderArray objectAtIndex:indexPath.row];
     NSArray *objectComponents = [objectString componentsSeparatedByString:@"."];
-    lblObjects.text = [objectComponents objectAtIndex:([objectComponents count]-1)];
     lblObjects.text = [appDelegate.dataBase getLabelFromApiName:lblObjects.text
                                                      objectName:[appDelegate.dataBase getApiNameFromFieldLabel:[objectComponents objectAtIndex:0]]];
     lblObjects.font = [UIFont boldSystemFontOfSize:16];
@@ -558,19 +550,19 @@ extern void SVMXLog(NSString *format, ...);
     lblValues.tag  = 1;
     UITapGestureRecognizer * tapValues = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapRecognized:)];
     [lblValues addGestureRecognizer:tapValues];
-    [tapValues release];
-
+    
     [cell addSubview:lblValues];  
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    [tapValues release];
     [lblObjects release];
     [lblValues release];
     return cell;
 }
+
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return TableViewResultViewCellHeight;
 }
-
 
 -(void) dealloc
 {
@@ -587,10 +579,10 @@ extern void SVMXLog(NSString *format, ...);
     [progressTitle release];
     [progressView release];
     [titleBackground release];
-    
     [createEvent release];
     [super dealloc];
 }
+
 -(void)tapRecognized:(id)sender
 { 
     UITapGestureRecognizer * tap = sender;
@@ -646,13 +638,13 @@ extern void SVMXLog(NSString *format, ...);
         
     }
 }
+
 #pragma progress bar
 -(void)presentProgressBar:(NSString *)object_name sf_id:(NSString *)sf_id  reocrd_name:(NSString *)record_name
 {
-    
     if (![appDelegate isInternetConnectionAvailable])
     {
-        //  [appDelegate displayNoInternetAvailable];
+        [appDelegate displayNoInternetAvailable];
         return;
     }
     
@@ -679,8 +671,7 @@ extern void SVMXLog(NSString *format, ...);
     ProgressBarViewController.layer.borderWidth = 1.0f;
     [ProgressBarViewController bringSubviewToFront:ProgressBar];
     [ProgressBarViewController bringSubviewToFront:progressTitle];
-    self.progressTitle.text =  @"Data On Demand (DOD): Preparing for DOD download";
-    progressTitle.backgroundColor = [UIColor clearColor];
+    self.progressTitle.text = [appDelegate.wsInterface.tagsDictionary objectForKey:Data_On_Demand];    progressTitle.backgroundColor = [UIColor clearColor];
     progressTitle.layer.cornerRadius = 8;
     titleBackground.layer.cornerRadius=5;
     ProgressBar.progress = 0.0;
@@ -726,11 +717,9 @@ extern void SVMXLog(NSString *format, ...);
     [appDelegate ScheduleIncrementalMetaSyncTimer];
     [appDelegate ScheduleTimerForEventSync];
     [appDelegate scheduleLocationPingTimer];
-    //     [self.view reloadInputViews];
     isOndemandRecord=TRUE;
     
-    NSMutableString * queryStatement1 = [[NSMutableString alloc]initWithCapacity:0];
-    queryStatement1 =[NSMutableString stringWithFormat:@"Select process_id from SFProcess where object_api_name is  '%@' and process_type is 'VIEWRECORD'",[appDelegate.dataBase getApiNameFromFieldLabel:objectName]];
+    NSString *queryStatement1 =[NSString stringWithFormat:@"Select process_id from SFProcess where object_api_name is  '%@' and process_type is 'VIEWRECORD'",[appDelegate.dataBase getApiNameFromFieldLabel:objectName]];
     sqlite3_stmt * labelstmt;
     char *field1;
     const char *selectStatement = [queryStatement1 UTF8String];
@@ -755,30 +744,48 @@ extern void SVMXLog(NSString *format, ...);
 		
         conflict=[appDelegate.dataBase checkIfConflictsExistsForEvent:[data objectForKey:@"Id"] objectName:[appDelegate.dataBase getApiNameFromFieldLabel:objectName] local_id:local_id];
         
-        //        if (!conflict)
-        //        {
-        //            conflict = [appDelegate.dataBase checkIfChildConflictexist:[data objectForKey:@"Id"] sfId:[appDelegate.dataBase getApiNameFromFieldLabel:objectName]];
-        //        }
         [detailButton setBackgroundImage:nil forState:UIControlStateNormal];
-        //  [detailButton addTarget:nil action:nil forControlEvents:nil];
         
         [detailButton removeTarget:self action:@selector(onlineDemandData:) forControlEvents:UIControlEventTouchUpInside];
         [detailButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"] forState:UIControlStateNormal];
         
+        NSArray * processids_array = [appDelegate.databaseInterface getEventProcessIdForProcessType:SOURCETOTARGET SourceObject:[appDelegate.dataBase getApiNameFromFieldLabel:objectName]];
+        NSString * version = [appDelegate serverPackageVersion];
+        int _stringNumber = [version intValue];
+        if(_stringNumber >=  (KMinPkgForScheduleEvents * 100000))
+        {
+            if([processids_array count] > 0)
+            {
+                [createEvent setBackgroundImage:[UIImage imageNamed:@"plus-72-dpi.png"] forState:UIControlStateNormal];
+            }
+            else
+            {
+                [createEvent removeTarget:self action:@selector(createEventS2T:) forControlEvents:UIControlEventTouchUpInside];
+            }
+        }
+        else
+        {
+            [createEvent removeTarget:self action:@selector(createEventS2T:) forControlEvents:UIControlEventTouchUpInside];
+            [createEvent setBackgroundImage:nil forState:UIControlStateNormal];
+        }
         [detailButton addTarget:self action:@selector(accessoryButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
         [onlineImageView setImage:nil];
         if (conflict)
         {
             onlineImageView.frame=CGRectMake(89, 6, 30, 30);
             [onlineImageView setImage:[UIImage imageNamed:@"red.png"]];
-            
         }
+    }
+    else
+    {
+        [detailButton removeTarget:self action:@selector(onlineDemandData:) forControlEvents:UIControlEventTouchUpInside];
+        [detailButton setBackgroundImage:nil forState:UIControlStateNormal];
+         [onlineImageView setImage:nil];
     }
     [self enableControl];
     
 }
-const int percentage_SFMResult = 30;
-const float progress_SFMResult = 0.33;
+
 #pragma mark - timer method to update progressbar
 -(void)updateProgressBar:(id)sender
 {
@@ -789,8 +796,7 @@ const float progress_SFMResult = 0.33;
         appDelegate.Sync_check_in = TRUE;
         total_progress =  progress_SFMResult ;
         ProgressBar.progress = 0.33;
-        // download_desc_label.text = @"";//
-        description_label.text = @"Connecting to Salesforce...";
+        description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:CONNECTING_TO_SALESFORCE_TAG];
     }
     else if(appDelegate.dod_status == RETRIEVING_DATA  && appDelegate.Sync_check_in == FALSE)
     {
@@ -798,8 +804,7 @@ const float progress_SFMResult = 0.33;
         appDelegate.Sync_check_in = TRUE;
         total_progress =  progress_SFMResult * 2;
         ProgressBar.progress = 0.66 ;
-        //download_desc_label.text = @"";
-        description_label.text =@"Retrieving data from Salesforce...";
+        description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:Retrieving_Data];
     }
     else if(appDelegate.dod_status == SAVING_DATA  && appDelegate.Sync_check_in == FALSE)
     {
@@ -807,8 +812,7 @@ const float progress_SFMResult = 0.33;
         appDelegate.Sync_check_in = TRUE;
         total_progress = 1.0;
         ProgressBar.progress = total_progress ;
-        //download_desc_label.text = @"";
-        description_label.text = @"Saving data for offline use....";
+        description_label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:Saving_Data_offline];
     }
     
     [self fillNumberOfStepsCompletedLabel];
@@ -821,10 +825,12 @@ const float progress_SFMResult = 0.33;
     display_percentage.text = _percentagetext;
     [_percentagetext release];
 }
+
 -(void)enableControl
 {
     [self.view setUserInteractionEnabled:YES];
 }
+
 -(void)disableControl
 {
     [self.view setUserInteractionEnabled:NO];
