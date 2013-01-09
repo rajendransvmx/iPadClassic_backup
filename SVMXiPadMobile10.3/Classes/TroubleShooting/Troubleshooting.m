@@ -159,6 +159,7 @@ extern void SVMXLog(NSString *format, ...);
 - (void) getProductNameForProductID:(NSString *)productTd
 {
     NSString * _query = [NSString stringWithFormat:@"SELECT Name From Product2 WHERE Id = '%@'", productId];
+	SVMXLog(@"getProductNameForProductID = %@", _query);
     
     [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetProductName:error:context:) context:nil];
     

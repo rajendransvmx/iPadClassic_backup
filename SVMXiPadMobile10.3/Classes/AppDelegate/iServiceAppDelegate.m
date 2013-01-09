@@ -2279,6 +2279,13 @@ NSString * GO_Online = @"GO_Online";
 	return _data;
 }
 
+//PRINTING ERROR MESSEGES:
+- (void) printIfError:(NSString *)err ForQuery:(NSString *)query
+{
+	SMLog(@"%@ :", query);
+	SMLog(@"ERROR :%@", err);
+}
+
 
 #pragma mark - END
 

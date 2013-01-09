@@ -79,6 +79,9 @@ extern void SVMXLog(NSString *format, ...);
         }
         synchronized_sqlite3_finalize(labelstmt);
     }
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement1];
+
     
     
     if(self.isOnlineRecord&&!isOndemandRecord)
@@ -219,7 +222,11 @@ extern void SVMXLog(NSString *format, ...);
             else
                 localId = @"";
         }
+		synchronized_sqlite3_finalize(labelstmt);
     }
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement1];
+
     
     NSString *processId =nil;
     

@@ -309,6 +309,9 @@ enum  {
         }
         synchronized_sqlite3_finalize(labelstmt);
     }
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement1];
     
     
     NSArray *tableHeader = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"TableHeader"];
@@ -1115,6 +1118,9 @@ enum  {
             }
         }
         
+		const char * error = sqlite3_errmsg(appDelegate.db);
+		[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement1];
+		
         NSString * queryStatement2 = [NSMutableString stringWithFormat:@"Select process_id FROM SFProcess where process_type = 'VIEWRECORD' and object_api_name = '%@'",object_api_name];
         sqlite3_stmt * labelstmt2;
         const char *selectStatement2 = [queryStatement2 UTF8String];
@@ -1132,6 +1138,11 @@ enum  {
                     processId = @"";
             }
         }
+		
+		error = sqlite3_errmsg(appDelegate.db);
+		[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement2];
+		
+
         appDelegate.sfmPageController.conflictExists = FALSE;
         appDelegate.sfmPageController.processId = processId;
         appDelegate.From_SFM_Search=FROM_SFM_SEARCH;
@@ -1258,6 +1269,11 @@ enum  {
                 localId = @"";
         }
     }
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement1];
+	
+
+	
     NSString *processId = @"";
         
     for (int v = 0; v < [appDelegate.view_layout_array count]; v++)

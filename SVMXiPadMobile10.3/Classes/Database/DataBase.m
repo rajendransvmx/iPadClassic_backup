@@ -98,7 +98,9 @@ extern void SVMXLog(NSString *format, ...);
         {
             if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                 [MyPopoverDelegate performSelector:@selector(throwException)];
-            SMLog(@"Failed to insert");
+            SMLog(@"%@", queryStatement);
+			SMLog(@"METHOD: insertValuesintoSFMProcessTable");
+			SMLog(@"ERROR IN INSERTING %s", err);
         }
         [valueFields release];
     }
@@ -155,7 +157,9 @@ extern void SVMXLog(NSString *format, ...);
             {
                 if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                     [MyPopoverDelegate performSelector:@selector(throwException)];
-                SMLog(@"Failed to insert data in table SFM_Search_Objects");
+                SMLog(@"%@", queryStatement);
+				SMLog(@"METHOD: insertValuesintoSFMObjectTable");
+				SMLog(@"ERROR IN INSERTING %s", err);
             }
             NSArray *objectConfigDataArray = [objectDict objectForKey:@"ConfigData"];
             for(int n=0; n<[objectConfigDataArray count]; n++)
@@ -183,7 +187,9 @@ extern void SVMXLog(NSString *format, ...);
                 {
                     if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                         [MyPopoverDelegate performSelector:@selector(throwException)];
-                    SMLog(@"Failed to insert data in table SFM_Search_Filter_Criteria or SFM_Search_Field");
+                    SMLog(@"%@", queryStatement);
+					SMLog(@"METHOD: insertValuesintoSFMObjectTable");
+					SMLog(@"ERROR IN INSERTING %s", err);
                 }
                 
 
@@ -278,9 +284,12 @@ extern void SVMXLog(NSString *format, ...);
             [configSettings addObject:processDict];
             [processDict release];
         }
+		synchronized_sqlite3_finalize(statement);
     }
-    
-    synchronized_sqlite3_finalize(statement);
+    const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:processQuery];
+	
+   
 //    SMLog(@"Config Settings = %@",configSettings);
     return [configSettings autorelease];
 }
@@ -328,8 +337,11 @@ extern void SVMXLog(NSString *format, ...);
             [objectArray addObject:objectDict];
             [objectDict release];
         }
+		synchronized_sqlite3_finalize(objectStatement);
     }
-    synchronized_sqlite3_finalize(objectStatement);
+   
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:objectQuery];
     
     return [objectArray autorelease];
 }
@@ -365,8 +377,12 @@ extern void SVMXLog(NSString *format, ...);
             [searchableArray addObject:searchDict];
             [searchDict release];
         }
+		synchronized_sqlite3_finalize(objectStatement);
     }
-    synchronized_sqlite3_finalize(objectStatement);
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:objectQuery];
+    
     return [searchableArray autorelease];
     
 }
@@ -402,8 +418,11 @@ extern void SVMXLog(NSString *format, ...);
             [displayFieldsArray addObject:displayDict];
             [displayDict release];
         }
+		synchronized_sqlite3_finalize(objectStatement);
     }
-    synchronized_sqlite3_finalize(objectStatement);
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:objectQuery];
+   
     return [displayFieldsArray autorelease];
 }
 - (NSMutableArray *) getSearchCriteriaForObject:(NSString *)objectId
@@ -456,8 +475,12 @@ extern void SVMXLog(NSString *format, ...);
             [searchCriteriaArray addObject:searchCriteriaDict];
             [searchCriteriaDict release];
         }
+		synchronized_sqlite3_finalize(objectStatement);
     }
-    synchronized_sqlite3_finalize(objectStatement);
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:objectQuery];
+	
+    
     return [searchCriteriaArray autorelease];
 
 }
@@ -527,6 +550,9 @@ extern void SVMXLog(NSString *format, ...);
                        
                 }
             }
+			const char * error = sqlite3_errmsg(appDelegate.db);
+			[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatementIstable];
+			
             if(!(fieldIsTable != nil &&strlen(fieldIsTable)))
             {
                 sqlite3_stmt * labelstmtGetTableName;
@@ -545,8 +571,13 @@ extern void SVMXLog(NSString *format, ...);
                             strTableName=[NSString stringWithFormat:@"%s",TableName];
                         }
                     }
+					synchronized_sqlite3_finalize(labelstmtGetTableName);
                 }
-                synchronized_sqlite3_finalize(labelstmtGetTableName);
+                
+				
+				const char * error = sqlite3_errmsg(appDelegate.db);
+				[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatementGetTableName];
+				
                 if([strTableName length]>0)
                 {
                     if(![TableArray containsObject:strTableName]&& [strTableName length]>0)
@@ -626,6 +657,8 @@ extern void SVMXLog(NSString *format, ...);
                     searchableFieldTableName = @"";
             }
         }
+		const char * error = sqlite3_errmsg(appDelegate.db);
+		[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement1];
         
         NSMutableString * queryStatementIstable = [[NSMutableString alloc]initWithCapacity:0];
         queryStatementIstable = [NSMutableString stringWithFormat:@"SELECT name FROM sqlite_master WHERE type='table' AND name='%@'",searchableFieldTableName];    
@@ -640,6 +673,10 @@ extern void SVMXLog(NSString *format, ...);
                 
             }
         }
+		
+		error = sqlite3_errmsg(appDelegate.db);
+		[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatementIstable];
+		
         if(!(fieldIsTable != nil &&strlen(fieldIsTable)))
         {
             sqlite3_stmt * labelstmtGetTableName;
@@ -659,8 +696,11 @@ extern void SVMXLog(NSString *format, ...);
                         searchableFieldTableName=strTableName; 
                     }
                 }
+				synchronized_sqlite3_finalize(labelstmtGetTableName);
             }
-            synchronized_sqlite3_finalize(labelstmtGetTableName);        
+			
+			const char * error = sqlite3_errmsg(appDelegate.db);
+			[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatementGetTableName];
         }
         
         NSMutableString * queryStatementIstable2 = [[NSMutableString alloc]initWithCapacity:0];
@@ -676,6 +716,10 @@ extern void SVMXLog(NSString *format, ...);
                 
             }
         }
+		
+		error = sqlite3_errmsg(appDelegate.db);
+		[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatementIstable2];
+		
 	    if((fieldIsTable2 != nil &&strlen(fieldIsTable2))||(fieldIsTable != nil &&strlen(fieldIsTable)))
            {
                if([searchableFieldTableName length] > 0)
@@ -795,6 +839,10 @@ extern void SVMXLog(NSString *format, ...);
                     strTargetObject=[NSString stringWithFormat:@"%s",TargetObject] ;
             }
         }
+		const char * error = sqlite3_errmsg(appDelegate.db);
+		[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:conditionqueryStatement];
+
+		
         SMLog(@"Adv Exp = %@",Expression);
         if(![Expression isEqualToString:@"(null)"])
         {
@@ -904,22 +952,26 @@ extern void SVMXLog(NSString *format, ...);
 
                     }
                 }
-               
+				const char * error = sqlite3_errmsg(appDelegate.db);
+				[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement1];
+				
                 NSMutableString * queryStatement2 = [[NSMutableString alloc]initWithCapacity:0];
                 queryStatement2 = [NSMutableString stringWithFormat:@"SELECT api_name FROM SFObjectField where name_field='TRUE' and object_api_name='%@'",object];    
                 sqlite3_stmt * labelstmt2;
                 const char *selectStatement2 = [queryStatement2 UTF8String];
                 char *nameofObjectField;        
                 if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement2,-1, &labelstmt2, nil) == SQLITE_OK )
-                    {
-                        if(synchronized_sqlite3_step(labelstmt2) == SQLITE_ROW)
-                        {
-                            nameofObjectField = (char *) synchronized_sqlite3_column_text(labelstmt2,0);
-                            if((nameofObjectField !=nil)&&strlen(nameofObjectField))
-                                fieldName = [NSString stringWithFormat:@"%s",nameofObjectField];
+				{
+					if(synchronized_sqlite3_step(labelstmt2) == SQLITE_ROW)
+					{
+						nameofObjectField = (char *) synchronized_sqlite3_column_text(labelstmt2,0);
+						if((nameofObjectField !=nil)&&strlen(nameofObjectField))
+							fieldName = [NSString stringWithFormat:@"%s",nameofObjectField];
 
-                        }
-                    }
+					}
+				}
+				error = sqlite3_errmsg(appDelegate.db);
+				[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement2];
                 
                     if ([TableName length]>0) 
                         TableName = [self getApiNameFromFieldLabel:TableName];
@@ -1058,8 +1110,13 @@ extern void SVMXLog(NSString *format, ...);
             }
             [results addObject:dict];
         }
+		synchronized_sqlite3_finalize(statement);
     }
-    synchronized_sqlite3_finalize(statement);
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement];
+	
+    
     return [results autorelease];
 }
 -(NSString*) getNameFiled:(NSString*)obejctName
@@ -1079,8 +1136,12 @@ extern void SVMXLog(NSString *format, ...);
                 fieldName = [NSString stringWithFormat:@"%s",nameofObjectField];
             
         }
+		synchronized_sqlite3_finalize(labelstmtName);
     }
-    synchronized_sqlite3_finalize(labelstmtName);
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatementName];
+   
     return fieldName;
     
 }
@@ -1113,8 +1174,11 @@ extern void SVMXLog(NSString *format, ...);
                     }
                     [labelForObject addObject:strlabel];
                 }
+				synchronized_sqlite3_finalize(labelstmtforlabel);
             }
-            synchronized_sqlite3_finalize(labelstmtforlabel);
+			
+			const char * error = sqlite3_errmsg(appDelegate.db);
+			[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatementforLabel];
             
             char *apiName=nil,*type=nil,*relationshipName=nil,*reference_to=nil;   
             NSString *strapiName=@"",*strtype=@"",*strrelationshipName=@"",*strreference_to=@"";
@@ -1158,8 +1222,11 @@ extern void SVMXLog(NSString *format, ...);
                         }
                         [arrApiName addObject:dictRefrenceFileds];
                     }
+					synchronized_sqlite3_finalize(labelstmt);
                 }
-                synchronized_sqlite3_finalize(labelstmt);
+				const char * error = sqlite3_errmsg(appDelegate.db);
+				[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement1];
+                
             }
             else
             {
@@ -1203,8 +1270,13 @@ extern void SVMXLog(NSString *format, ...);
                         }
                         [arrayForApiName addObject:dictRefrenceFileds];
                     }
+					synchronized_sqlite3_finalize(labelstmt);
                 }
-                synchronized_sqlite3_finalize(labelstmt);
+				
+				const char * error = sqlite3_errmsg(appDelegate.db);
+				[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement1];
+				
+                
                 if([arrayForApiName count]>0)
                 {
                     NSString *objectApiName=[self getApiNameFromFieldLabel:[TableArray objectAtIndex:i]];
@@ -1290,6 +1362,9 @@ extern void SVMXLog(NSString *format, ...);
             refrence_to = (char *) synchronized_sqlite3_column_text(labelstmt,0);
         }
     }
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement1];
+	
     if((refrence_to != nil)&& strlen(refrence_to))
         strRefrence_to=[NSString stringWithFormat:@"%s",refrence_to];
     else
@@ -1399,8 +1474,12 @@ extern void SVMXLog(NSString *format, ...);
                             if((field1 !=nil) && strlen(field1))
                                 referenceObjectName =[NSString stringWithFormat:@"%s",field1];
                         }
+						synchronized_sqlite3_finalize(labelstmtForRefrence);
                     }
-                    synchronized_sqlite3_finalize(labelstmtForRefrence);
+					
+					const char * error = sqlite3_errmsg(appDelegate.db);
+					[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatementForRefrence];
+					
 
                     for (int i=0; i<[[countDict objectForKey:@"rightBraces"] intValue]; i++) 
                     {
@@ -1851,8 +1930,13 @@ extern void SVMXLog(NSString *format, ...);
             if((field1 !=nil) && strlen(field1))
                 referenceObjectName =[NSString stringWithFormat:@"%s",field1];
         }
+		synchronized_sqlite3_finalize(labelstmtForRefrence);
     }
-    synchronized_sqlite3_finalize(labelstmtForRefrence);
+    
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatementForRefrence];
+	
     return referenceObjectName;
 
 }
@@ -1921,6 +2005,11 @@ extern void SVMXLog(NSString *format, ...);
             refrence_to = (char *) synchronized_sqlite3_column_text(labelstmt,1);
         }
     }
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement1];
+
+	
     NSString *strType,*strRefrence_to;
     if((type != nil)&& strlen(type))
         strType=[NSString stringWithFormat:@"%s",type];
@@ -1945,6 +2034,9 @@ extern void SVMXLog(NSString *format, ...);
                     namefiled=[NSString stringWithFormat:@"%s",name_field];
             }
         }
+		const char * error = sqlite3_errmsg(appDelegate.db);
+		[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement1];
+		
         NSString *queryRefrefield = [NSMutableString stringWithFormat:@"SELECT %@ FROM '%@' where Id='%@'",namefiled,[NSString stringWithFormat:@"%s",refrence_to],value];    
         sqlite3_stmt * queryRefrefieldstmt;
         const char *queryRefrefieldselectStatement = [queryRefrefield UTF8String];
@@ -1962,6 +2054,10 @@ extern void SVMXLog(NSString *format, ...);
                 }
             }
         }
+		
+		error = sqlite3_errmsg(appDelegate.db);
+		[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryRefrefield];
+		
         if(!refrenceObject)
         {
            strName_field=[self getValueFromLookupwithId:value];
@@ -1993,7 +2089,9 @@ extern void SVMXLog(NSString *format, ...);
             
         }
     }
-	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:selectQuery];
+
 	return Id;
 }
  
@@ -2017,9 +2115,12 @@ extern void SVMXLog(NSString *format, ...);
                 apiLabel = [NSString stringWithFormat:@"%s",label];
             }
         }
+		synchronized_sqlite3_finalize(statement);
     }
     
-    synchronized_sqlite3_finalize(statement);
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement];
+    
     return apiLabel;
        
 }
@@ -2045,7 +2146,8 @@ extern void SVMXLog(NSString *format, ...);
         }
         synchronized_sqlite3_finalize(statement);
     }
-    
+    const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement];
     
     return [apiName retain];
     
@@ -2067,9 +2169,12 @@ extern void SVMXLog(NSString *format, ...);
                 apiLabel = [NSString stringWithUTF8String:label];   
             }
         }
+		synchronized_sqlite3_finalize(statement);
     }
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement];
     
-    synchronized_sqlite3_finalize(statement);
     return apiLabel;
     
 }
@@ -2091,7 +2196,10 @@ extern void SVMXLog(NSString *format, ...);
     {
         if (synchronized_sqlite3_exec(appDelegate.db, [queryStatementGPSLog UTF8String], NULL, NULL, &err) != SQLITE_OK)
         {
-            SMLog(@"Failed to delete, for rowid= %@",localId);
+            SMLog(@"%@", queryStatementGPSLog);
+			SMLog(@"METHOD:deleteRecordFromUserGPSTable");
+			SMLog(@"ERROR IN DELETE %s", err);
+      
         }
     }
 }
@@ -2114,9 +2222,13 @@ extern void SVMXLog(NSString *format, ...);
             if(table_name!=nil)
                 tblname=[NSString stringWithFormat:@"%s",table_name];
                 
-        }        
+        }
+		synchronized_sqlite3_finalize(statement);
     }
-    synchronized_sqlite3_finalize(statement);
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:sql];
+	
+    
 
     if([tblname isEqualToString:tableName])
     {
@@ -2127,7 +2239,10 @@ extern void SVMXLog(NSString *format, ...);
         
         if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
         {
-            SMLog(@"Sequence Failed to delete for Table");
+            SMLog(@"%@", queryStatement);
+			SMLog(@"METHOD:deleteSequenceofTable");
+			SMLog(@"ERROR IN DELETE %s", err);
+      
         }
     }
    
@@ -2178,7 +2293,9 @@ extern void SVMXLog(NSString *format, ...);
     if(synchronized_sqlite3_exec(appDelegate.db, [sql UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
         isInsertedIntoLocationTable=FALSE;
-        SMLog(@"Failed to Populate Table");
+        SMLog(@"%@", sql);
+		SMLog(@"METHOD: insertrecordIntoUserGPSLog");
+        SMLog(@"ERROR IN INSERTING %s", err);
     }
    
     if(isInsertedIntoLocationTable)
@@ -2210,6 +2327,9 @@ extern void SVMXLog(NSString *format, ...);
         }
         synchronized_sqlite3_finalize(statement);
     }
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:sql];
+	
     //get limit from table
     NSString *limitLocationRecords = [appDelegate.settingsDict objectForKey:MAX_LOCATION_RECORD];
     limitLocationRecords = (limitLocationRecords!=nil)?limitLocationRecords:@"100";
@@ -2238,6 +2358,9 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
         
+		const char * error = sqlite3_errmsg(appDelegate.db);
+		[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:sql];
+		
         NSString * queryStatementGPSLog = [NSString stringWithFormat:@"DELETE FROM SVMXC__User_GPS_Log__c where rowid=%@",strId];
         BOOL isDataDeletedFromUser_GPS_Log=TRUE;
         char * err;
@@ -2245,7 +2368,10 @@ extern void SVMXLog(NSString *format, ...);
         {
             if (synchronized_sqlite3_exec(appDelegate.db, [queryStatementGPSLog UTF8String], NULL, NULL, &err) != SQLITE_OK)
             {
-                SMLog(@"Purging Failed to delete, for rowid= %@",strId);
+                SMLog(@"%@", queryStatementGPSLog);
+				SMLog(@"METHOD:purgeLocationPingTable");
+				SMLog(@"ERROR IN DELETE %s", err);
+
                 isDataDeletedFromUser_GPS_Log=FALSE;
             }
         }
@@ -2295,7 +2421,8 @@ extern void SVMXLog(NSString *format, ...);
         {
             SMLog(@"Query Execution Failed");
         }
-    
+    const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement];
     synchronized_sqlite3_finalize(statement);
     return settingValue;
 }
@@ -2428,9 +2555,14 @@ extern void SVMXLog(NSString *format, ...);
             [dict setObject:localId forKey:@"localId"];
             [resultArray addObject:dict];
             [dict release];
-        }        
+        }
+		synchronized_sqlite3_finalize(statement);
     }
-    synchronized_sqlite3_finalize(statement);
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:sql];
+	
+    
     if (![appDelegate isInternetConnectionAvailable])
     {
         [resultArray release];
@@ -2500,8 +2632,14 @@ extern void SVMXLog(NSString *format, ...);
             SMLog(@"Records are not available. Not calling Tech Location Update");
             return;
         }
+		synchronized_sqlite3_finalize(statement);
     }
-    synchronized_sqlite3_finalize(statement);
+    
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:sql];
+	
+	
     if(isLatitudeNull || isLongitudeNull)
     {
         didTechnicianLocationUpdated=TRUE;
@@ -2671,6 +2809,9 @@ extern void SVMXLog(NSString *format, ...);
                     if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                     {
                         printf("Commit Failed!\n");
+						SMLog(@"%@", bulkQueryStmt);
+						SMLog(@"METHOD: insertValuesInToOBjDefTableWithObject");
+						SMLog(@"ERROR IN INSERTING %s", sqlite3_errmsg(appDelegate.db));
                     }
                     
                     sqlite3_reset(bulkStmt);
@@ -2781,6 +2922,9 @@ extern void SVMXLog(NSString *format, ...);
                         if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                         {
                             printf("Commit Failed!\n");
+							SMLog(@"%@", bulkQueryStmt);
+							SMLog(@"METHOD: insertValuesInToReferenceTable");
+							SMLog(@"ERROR IN INSERTING %s", sqlite3_errmsg(appDelegate.db));
                         }
                         
                         sqlite3_reset(bulkStmt);
@@ -2899,6 +3043,9 @@ extern void SVMXLog(NSString *format, ...);
                         if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                         {
                             printf("Commit Failed!\n");
+							SMLog(@"%@", bulkQueryStmt);
+							SMLog(@"METHOD: insertValuesInToRecordType");
+							SMLog(@"ERROR IN INSERTING %s", sqlite3_errmsg(appDelegate.db));
                         }
                         
                         sqlite3_reset(bulkStmt);
@@ -3009,6 +3156,9 @@ extern void SVMXLog(NSString *format, ...);
                 if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
+					SMLog(@"%@", bulkQueryStmt);
+					SMLog(@"METHOD: insertValuesInToObjectTable");
+					SMLog(@"ERROR IN INSERTING %s", sqlite3_errmsg(appDelegate.db));
                 }
                 
                 sqlite3_reset(bulkStmt);
@@ -3127,6 +3277,9 @@ extern void SVMXLog(NSString *format, ...);
                     if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                     {
                         printf("Commit Failed!\n");
+						SMLog(@"%@", bulkQueryStmt);
+						SMLog(@"METHOD: insertValuesInToChildRelationshipTable");
+						SMLog(@"ERROR IN INSERTING %s", sqlite3_errmsg(appDelegate.db));
                     }
                     
                     sqlite3_reset(bulkStmt);
@@ -3308,7 +3461,10 @@ extern void SVMXLog(NSString *format, ...);
             {
                 if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                     [MyPopoverDelegate performSelector:@selector(throwException)];
-                SMLog(@"Failed to insert");
+                SMLog(@"%@", queryStatement);
+				SMLog(@"METHOD:insertValuesToProcessTable");
+				SMLog(@"ERROR IN INSERTING %s", err);
+
             }
         }
         process_type = @"";
@@ -3349,6 +3505,8 @@ extern void SVMXLog(NSString *format, ...);
                                 process_type = [NSString stringWithUTF8String:_type];
                         }
                     }
+					const char * error = sqlite3_errmsg(appDelegate.db);
+					[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement];
                     
                     [page_dict setValue:process_type forKey:MPROCESSTYPE];
                     
@@ -3365,7 +3523,11 @@ extern void SVMXLog(NSString *format, ...);
             {
                 if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                     [MyPopoverDelegate performSelector:@selector(throwException)];
-                SMLog(@"Failed to insert");
+				
+                SMLog(@"%@", queryStatement);
+				SMLog(@"METHOD:insertValuesToProcessTable " );
+				SMLog(@"ERROR IN UPDATING %s", err);
+
             }
         } 
     }
@@ -3461,6 +3623,9 @@ extern void SVMXLog(NSString *format, ...);
                 if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
+					SMLog(@"%@", bulkQueryStmt);
+					SMLog(@"METHOD: insertValuesToProcessTable");
+					SMLog(@"ERROR IN INSERTING %s", sqlite3_errmsg(appDelegate.db));
                 }
                 
                 sqlite3_reset(bulkStmt);
@@ -3488,9 +3653,10 @@ extern void SVMXLog(NSString *format, ...);
                 if (strlen(_type))
                     processType = [NSString stringWithUTF8String:_type];
             }
+			synchronized_sqlite3_finalize(statement);
         }
-        
-        synchronized_sqlite3_finalize(statement);
+        const char * error = sqlite3_errmsg(appDelegate.db);
+		[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement];
         
         NSArray * keys = [NSArray arrayWithObjects:MPROCESS_ID, MLAYOUT_ID, TARGET_OBJECT_NAME, SOURCE_OBJECT_NAME, EXPRESSION_ID, OBJECT_MAPPING_ID, MCOMPONENT_TYPE, MPARENT_COLUMN, MVALUE_MAPPING_ID, nil];
         NSString * processId = @"", * layoutId = @"", * sourceName = @"", * expressionId = @"", * oMappingId = @"",* componentType = @"", * parentColumn = @"", * targetName = @"", * vMappingid = @"";
@@ -3546,9 +3712,11 @@ extern void SVMXLog(NSString *format, ...);
                     [process_comp_array addObjectsFromArray:arr];
                     processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"";
                 }
-                
+                synchronized_sqlite3_finalize(viewstatement);
             }
-            synchronized_sqlite3_finalize(viewstatement);
+			const char * error = sqlite3_errmsg(appDelegate.db);
+			[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement];
+            
         }
         else if ([processType isEqualToString:EDIT])
         {
@@ -3601,9 +3769,11 @@ extern void SVMXLog(NSString *format, ...);
                     [process_comp_array addObjectsFromArray:arr];
                     processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"";
                 }
-               
+				synchronized_sqlite3_finalize(editstatement);
             }
-            synchronized_sqlite3_finalize(editstatement);
+			const char * error = sqlite3_errmsg(appDelegate.db);
+			[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement];
+            
         }
         else if ([processType isEqualToString:STANDALONECREATE])
         {
@@ -3656,9 +3826,11 @@ extern void SVMXLog(NSString *format, ...);
                     [process_comp_array addObjectsFromArray:arr];
                     processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"";
                 }
+				synchronized_sqlite3_finalize(createstatement);
                 
             }
-            synchronized_sqlite3_finalize(createstatement);
+			const char * error = sqlite3_errmsg(appDelegate.db);
+			[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement];
 
         }
               
@@ -3735,6 +3907,9 @@ extern void SVMXLog(NSString *format, ...);
                 if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
+					SMLog(@"%@", bulkQueryStmt);
+					SMLog(@"METHOD: insertValuesToProcessTable");
+					SMLog(@"ERROR IN INSERTING %s", sqlite3_errmsg(appDelegate.db));
                 }
                 
                 sqlite3_reset(bulkStmt);                
@@ -3860,6 +4035,9 @@ extern void SVMXLog(NSString *format, ...);
                             if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                             {
                                 printf("Commit Failed!\n");
+								SMLog(@"%@", bulkQueryStmt);
+								SMLog(@"METHOD: insertvaluesToPicklist");
+								SMLog(@"ERROR IN INSERTING %s", sqlite3_errmsg(appDelegate.db));
                             }
                             
                             sqlite3_reset(bulkStmt);
@@ -3980,6 +4158,9 @@ extern void SVMXLog(NSString *format, ...);
                             if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                             {
                                 printf("Commit Failed!\n");
+								SMLog(@"%@", bulkQueryStmt);
+								SMLog(@"METHOD: insertValuesInToRTPicklistTableForObject");
+								SMLog(@"ERROR IN INSERTING %s", sqlite3_errmsg(appDelegate.db));
                             }
                             
                             sqlite3_reset(bulkStmt);
@@ -4048,6 +4229,9 @@ extern void SVMXLog(NSString *format, ...);
                 if ( synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
+					SMLog(@"%@", bulkQueryStmt);
+					SMLog(@"METHOD: ");
+					SMLog(@"ERROR IN INSERTING %s", sqlite3_errmsg(appDelegate.db));
                 }
                 
                 sqlite3_reset(bulkStmt);
@@ -4110,6 +4294,9 @@ extern void SVMXLog(NSString *format, ...);
                 if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
+					SMLog(@"%@", bulkQueryStmt);
+					SMLog(@"METHOD: insertValuesInToExpressionTables");
+					SMLog(@"ERROR IN INSERTING %s", sqlite3_errmsg(appDelegate.db));
                 }
                 
                 sqlite3_reset(bulkStmt);
@@ -4175,6 +4362,9 @@ extern void SVMXLog(NSString *format, ...);
                 if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
+					SMLog(@"%@", bulkQueryStmt);
+					SMLog(@"METHOD: ");
+					SMLog(@"ERROR IN INSERTING %s", sqlite3_errmsg(appDelegate.db));
                 }
                 
                 sqlite3_reset(bulkStmt);
@@ -4267,6 +4457,9 @@ extern void SVMXLog(NSString *format, ...);
                 if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
+					SMLog(@"%@", bulkQueryStmt);
+					SMLog(@"METHOD: insertValuesInToObjectMappingTable");
+					SMLog(@"ERROR IN INSERTING %s", sqlite3_errmsg(appDelegate.db));
                 }
                 
                 sqlite3_reset(bulkStmt);
@@ -4349,6 +4542,9 @@ extern void SVMXLog(NSString *format, ...);
                 if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
+					SMLog(@"%@", bulkQueryStmt);
+					SMLog(@"METHOD: insertValuesInToLookUpTable");
+					SMLog(@"ERROR IN INSERTING %s", sqlite3_errmsg(appDelegate.db));
                 }
                 
                 sqlite3_reset(bulkStmt);
@@ -4422,6 +4618,9 @@ extern void SVMXLog(NSString *format, ...);
                 if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
+					SMLog(@"%@", bulkQueryStmt);
+					SMLog(@"METHOD: insertValuesInToLookUpTable");
+					SMLog(@"ERROR IN INSERTING %s", sqlite3_errmsg(appDelegate.db));
                 }
                 
                 sqlite3_reset(bulkStmt);
@@ -4473,6 +4672,9 @@ extern void SVMXLog(NSString *format, ...);
                 if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
+					SMLog(@"%@", bulkQueryStmt);
+					SMLog(@"METHOD: insertValuesInToTagsTable");
+					SMLog(@"ERROR IN INSERTING %s", sqlite3_errmsg(appDelegate.db));
                 }
                 
                 sqlite3_reset(bulkStmt);                
@@ -4522,6 +4724,9 @@ extern void SVMXLog(NSString *format, ...);
                 if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
+					SMLog(@"%@", bulkQueryStmt);
+					SMLog(@"METHOD: insertValuesInToSettingsTable");
+					SMLog(@"ERROR IN INSERTING %s", sqlite3_errmsg(appDelegate.db));
                 }
                 
                 sqlite3_reset(bulkStmt);   
@@ -4592,6 +4797,9 @@ extern void SVMXLog(NSString *format, ...);
                 if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
+					SMLog(@"%@", bulkQueryStmt);
+					SMLog(@"METHOD: insertValuesInToSFWizardsTable");
+					SMLog(@"ERROR IN INSERTING %s", sqlite3_errmsg(appDelegate.db));
                 }
                 
                 sqlite3_reset(bulkStmt);
@@ -4715,6 +4923,9 @@ extern void SVMXLog(NSString *format, ...);
                 if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
+					SMLog(@"%@", bulkQueryStmt);
+					SMLog(@"METHOD: insertValuesInToSFWizardsTable");
+					SMLog(@"ERROR IN INSERTING %s", sqlite3_errmsg(appDelegate.db));
                 }
                 
                 sqlite3_reset(bulkStmt);
@@ -4734,8 +4945,11 @@ extern void SVMXLog(NSString *format, ...);
             count = synchronized_sqlite3_column_int(statement, 0);
         }
     }
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
+
     id_value = count;
-    synchronized_sqlite3_finalize(statement);
+    
     NSArray * sfExpression = [wizardDict objectForKey:MSFExpression];
     
     
@@ -4769,6 +4983,9 @@ extern void SVMXLog(NSString *format, ...);
             if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
             {
                 printf("Commit Failed!\n");
+				SMLog(@"%@", bulkQueryStmt);
+				SMLog(@"METHOD: insertValuesInToSFWizardsTable");
+				SMLog(@"ERROR IN INSERTING %s", sqlite3_errmsg(appDelegate.db));
             }
             
             sqlite3_reset(bulkStmt);            
@@ -4784,9 +5001,14 @@ extern void SVMXLog(NSString *format, ...);
         {
             count1 = synchronized_sqlite3_column_int(stmt, 0);
         }
+		synchronized_sqlite3_finalize(stmt);
     }
+	error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
+
+	
     id_value = count1;
-    synchronized_sqlite3_finalize(stmt);
+    
     
     NSArray * sfExpression_com = [wizardDict objectForKey:MSFExpression_component];
     bulkQueryStmt = @"";
@@ -4830,6 +5052,9 @@ extern void SVMXLog(NSString *format, ...);
             if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
             {
                 printf("Commit Failed!\n");
+				SMLog(@"%@", bulkQueryStmt);
+				SMLog(@"METHOD: insertValuesInToSFWizardsTable");
+				SMLog(@"ERROR IN INSERTING %s", sqlite3_errmsg(appDelegate.db));
             }
             
             sqlite3_reset(bulkStmt);
@@ -4873,6 +5098,9 @@ extern void SVMXLog(NSString *format, ...);
                 [tagDict setValue:value forKey:key];
         }
     }
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement];
+	
     return tagDict;
 }
 #pragma End
@@ -4909,6 +5137,9 @@ extern void SVMXLog(NSString *format, ...);
                 [SeetingsDict setValue:value forKey:key];
         }
     }
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement];
+
     return SeetingsDict;
 }
 
@@ -4936,9 +5167,13 @@ extern void SVMXLog(NSString *format, ...);
                 break;
             }
         }
+		synchronized_sqlite3_finalize(stmt);
     }
+    const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement];
+
+	
     
-    synchronized_sqlite3_finalize(stmt);
     
     if (!flag)
     {
@@ -4951,7 +5186,9 @@ extern void SVMXLog(NSString *format, ...);
         {
             if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                 [MyPopoverDelegate performSelector:@selector(throwException)];
-            SMLog(@"Failed to insert");
+			SMLog(@"%@", queryStatement);
+			SMLog(@"METHOD: insertUsernameToUserTable");
+			SMLog(@"ERROR IN INSERTING %s", err);
         }
     }
 }
@@ -4993,7 +5230,9 @@ extern void SVMXLog(NSString *format, ...);
             {
                 if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                     [MyPopoverDelegate performSelector:@selector(throwException)];
-                SMLog(@"Failed to insert");
+                SMLog(@"%@", queryStatementUpdate);
+			SMLog(@"METHOD:updateUserTable " );
+			SMLog(@"ERROR IN UPDATING %s", err);
             }
     }
 }
@@ -5022,11 +5261,12 @@ extern void SVMXLog(NSString *format, ...);
             }
             
         }
+		synchronized_sqlite3_finalize(stmt);
     }
     
-    synchronized_sqlite3_finalize(stmt);
-    
-    
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatemnt];
+	
     char * err;
     
     for (int i = 0; i < [tables count]; i++)
@@ -5061,8 +5301,13 @@ extern void SVMXLog(NSString *format, ...);
                 if (strlen(_type))
                     processType = [NSString stringWithUTF8String:_type];
             }
+			synchronized_sqlite3_finalize(statement);
         }
-        synchronized_sqlite3_finalize(statement);
+		
+		const char * error = sqlite3_errmsg(appDelegate.db);
+		[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement];
+		
+        
         NSArray * keys = [NSArray arrayWithObjects:MPROCESS_ID, MLAYOUT_ID, TARGET_OBJECT_NAME, SOURCE_OBJECT_NAME, EXPRESSION_ID, OBJECT_MAPPING_ID, MCOMPONENT_TYPE, MPARENT_COLUMN, MVALUE_MAPPING_ID, @"source_child_parent_column", nil];
         NSString * processId = @"", * layoutId = @"", * sourceName = @"", * expressionId = @"", * oMappingId = @"",* componentType = @"", * parentColumn = @"", * targetName = @"", * vMappingid = @"", * source_child_column = @"";
         NSArray * objects;
@@ -5162,6 +5407,9 @@ extern void SVMXLog(NSString *format, ...);
                 [process_info addObject:dict];
                 
             }
+			
+			const char * error = sqlite3_errmsg(appDelegate.db);
+			[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
             
             [mappingArray release];
             processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"";
@@ -5217,9 +5465,13 @@ extern void SVMXLog(NSString *format, ...);
                     [process_info addObject:dict];
                     processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"";
                 }
+				synchronized_sqlite3_finalize(stmt);
                 
             }
-            synchronized_sqlite3_finalize(stmt);
+			
+			error = sqlite3_errmsg(appDelegate.db);
+			[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
+            
         }
         else if ([processType isEqualToString:SOURCETOTARGETONLYCHILDROWS])
         {
@@ -5316,6 +5568,9 @@ extern void SVMXLog(NSString *format, ...);
                 [process_info addObject:dict];
                 
             }
+			const char * error = sqlite3_errmsg(appDelegate.db);
+			[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
+
             
             [mappingArray release];
             processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"";
@@ -5371,9 +5626,12 @@ extern void SVMXLog(NSString *format, ...);
                     [process_info addObject:dict];
                     processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"";
                 }
-                
+                synchronized_sqlite3_finalize(stmt);
             }
-            synchronized_sqlite3_finalize(stmt);
+			
+			error = sqlite3_errmsg(appDelegate.db);
+			[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
+            
         }
     }
     
@@ -5386,8 +5644,12 @@ extern void SVMXLog(NSString *format, ...);
         {
             count = synchronized_sqlite3_column_int(stmt, 0);
         }
+		synchronized_sqlite3_finalize(stmt);
     }
-    synchronized_sqlite3_finalize(stmt);
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
+	
+    
     int id_value = count;
     
     
@@ -5448,6 +5710,9 @@ extern void SVMXLog(NSString *format, ...);
             if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
             {
                 printf("Commit Failed!\n");
+				SMLog(@"%@", bulkQueryStmt);
+				SMLog(@"METHOD: insertSourceToTargetInToSFProcessComponent");
+				SMLog(@"ERROR IN INSERTING %s", sqlite3_errmsg(appDelegate.db));
             }
             
             sqlite3_reset(bulkStmt);
@@ -5474,8 +5739,13 @@ extern void SVMXLog(NSString *format, ...);
             if ((name != nil) && strlen(name))
                 objectName = [NSString stringWithUTF8String:name];
         }
+		synchronized_sqlite3_finalize(stmt);
     }
-    synchronized_sqlite3_finalize(stmt);
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:qurey];
+	
+    
     return objectName;
 }
 
@@ -5496,9 +5766,12 @@ extern void SVMXLog(NSString *format, ...);
             if ((name != nil) && strlen(name))
                 objectName = [NSString stringWithUTF8String:name];            
         }
+		synchronized_sqlite3_finalize(stmt);
     }
-    synchronized_sqlite3_finalize(stmt);
-    return objectName;
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:qurey];
+
+	return objectName;
 }
  
 #pragma mark - Create Extra Tables For TroubleShooting and Summary
@@ -5589,7 +5862,9 @@ extern void SVMXLog(NSString *format, ...);
     {
         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
             [MyPopoverDelegate performSelector:@selector(throwException)];
-        SMLog(@"Failed");
+        SMLog(@"%@", statement);
+		SMLog(@"METHOD: createTable");
+        SMLog(@"ERROR IN INSERTING %s", err);
         return NO;
     }
     return YES;
@@ -5685,7 +5960,9 @@ extern void SVMXLog(NSString *format, ...);
                     {  
                         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                             [MyPopoverDelegate performSelector:@selector(throwException)];
-                        SMLog(@"Failed to insert");
+                        SMLog(@"%@", query);
+						SMLog(@"METHOD: insertDataInToTables");
+						SMLog(@"ERROR IN INSERTING %s", err);
                     }
                 }
             }
@@ -5712,7 +5989,9 @@ extern void SVMXLog(NSString *format, ...);
     {
         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
             [MyPopoverDelegate performSelector:@selector(throwException)];
-        SMLog(@"Failed to insert");
+        SMLog(@"%@", query);
+		SMLog(@"METHOD: addvaluesToLookUpFieldTable");
+        SMLog(@"ERROR IN INSERTING %s", err);
     }
     
 }
@@ -5741,11 +6020,11 @@ extern void SVMXLog(NSString *format, ...);
                 if ((_parent_object != nil) && strlen(_parent_object))
                     parent_object = [NSString stringWithUTF8String:_parent_object];
             }
+			synchronized_sqlite3_finalize(statement);
         }
-        
-        synchronized_sqlite3_finalize(statement);
-        
-                
+		const char * error = sqlite3_errmsg(appDelegate.db);
+		[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
+
         
         sqlite3_stmt * stmt;
         NSString * queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM %@", parentColumn, objectName];
@@ -5782,9 +6061,13 @@ extern void SVMXLog(NSString *format, ...);
                 }
                 
             }
+			synchronized_sqlite3_finalize(stmt);
         }
-           
-        synchronized_sqlite3_finalize(stmt);
+        
+		error = sqlite3_errmsg(appDelegate.db);
+		[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement];
+
+        
         
         for (NSString * id_ in sfid_array)
         {
@@ -5820,19 +6103,29 @@ extern void SVMXLog(NSString *format, ...);
                                 {
                                     if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                                         [MyPopoverDelegate performSelector:@selector(throwException)];
-                                    SMLog(@"Failed to update");
+									
+                                    SMLog(@"%@", queryStatement3);
+									SMLog(@"METHOD:updateChildSfIdWithParentLocalId" );
+									SMLog(@"ERROR IN UPDATING %s", err);
+
                                 }
 
                             }
+							synchronized_sqlite3_finalize(stmt);
                                             
                         }
+						const char * error = sqlite3_errmsg(appDelegate.db);
+						[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement2];
                     }
-                                    
+					
                 }
-            } //kdfjbjdkfg
+				const char * error = sqlite3_errmsg(appDelegate.db);
+				[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement1];
+            } 
+		
+		
             
-        synchronized_sqlite3_finalize(stmt);
-    }
+		}
     appDelegate.wsInterface.didOpComplete = TRUE;
     SMLog(@"IComeOUTHere Databse");
 }
@@ -5855,8 +6148,12 @@ extern void SVMXLog(NSString *format, ...);
         {
             count = synchronized_sqlite3_column_int(stmt, 0); 
         }
+		synchronized_sqlite3_finalize(stmt);
     }
-    synchronized_sqlite3_finalize(stmt);
+    
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
+	
     [query release];
     if (count > 0)
         return FALSE;
@@ -5870,6 +6167,8 @@ extern void SVMXLog(NSString *format, ...);
 {
     // Get details of the IPAD Module
     NSString * _query = @"SELECT Id, SVMXC__Name__c, SVMXC__Description__c, SVMXC__ModuleID__c, SVMXC__IsStandard__c FROM SVMXC__ServiceMax_Processes__c WHERE SVMXC__ModuleID__c = \'IPAD\' AND RecordType.Name = \'MODULE\'";
+	SVMXLog(@"GeneratePDfSeetings = %@", _query);
+	
     [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetModuleInfo:error:context:) context:nil];
 }
 
@@ -5881,6 +6180,8 @@ extern void SVMXLog(NSString *format, ...);
         ZKSObject * obj = [[result records] objectAtIndex:0];
         NSString * moduleInfo = [[obj fields] objectForKey:@"Id"];
         NSString * _query = [NSString stringWithFormat:@"SELECT Id, SVMXC__ModuleID__c, SVMXC__SubmoduleID__c, SVMXC__Name__c, SVMXC__Description__c, SVMXC__IsStandard__c FROM SVMXC__ServiceMax_Processes__c WHERE SVMXC__Module__c = \'%@\' AND RecordType.Name = \'SUBMODULE\'", moduleInfo];
+		SVMXLog(@"DidGetModuleInfo = %@", _query);
+		
         [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetSubModuleInfo:error:context:) context:nil];
     }
     else
@@ -5895,6 +6196,7 @@ extern void SVMXLog(NSString *format, ...);
     if ([[result records] count] > 0)
     {
         NSString * _query = [NSString stringWithFormat:@"SELECT Id, SVMXC__SubmoduleID__c, SVMXC__SettingID__c, SVMXC__Setting_Unique_ID__c, SVMXC__Settings_Name__c, SVMXC__Data_Type__c, SVMXC__Values__c, SVMXC__Default_Value__c, SVMXC__Setting_Type__c, SVMXC__Search_Order__c, SVMXC__IsPrivate__c, SVMXC__Active__c, SVMXC__Description__c, SVMXC__IsStandard__c, SVMXC__Submodule__c FROM SVMXC__ServiceMax_Processes__c WHERE SVMXC__SubmoduleID__c = 'IPAD004' AND RecordType.Name = \'SETTINGS\' ORDER BY SVMXC__Setting_Unique_ID__c"];
+		SVMXLog(@"didGetSubModuleInfo = %@", _query);
         [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetSettingsInfo:error:context:) context:nil];
     }
     else
@@ -5925,6 +6227,7 @@ extern void SVMXLog(NSString *format, ...);
         [settingInfoId appendString:@")"];
         
         NSString * _query = @"Select Id, SVMXC__Profile_Name__c, SVMXC__Active__c, SVMXC__IsDefault__c FROM SVMXC__ServiceMax_Config_Data__c WHERE SVMXC__RecordType_Name__c=\'Configuration Profile\' and SVMXC__Configuration_Type__c = \'Global\' and SVMXC__Active__c = true";
+		SVMXLog(@"didGetSettingsInfo = %@", _query);
         [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetActiveGlobalProfile:error:context:) context:nil];
     }
     else
@@ -5946,6 +6249,8 @@ extern void SVMXLog(NSString *format, ...);
             _query = [NSString stringWithFormat:@"Select Id, SVMXC__Setting_Configuration_Profile__c, SVMXC__Setting_ID__c, SVMXC__Internal_Value__c, SVMXC__Display_Value__c, SVMXC__Active__c, SVMXC__IsDefault__c FROM SVMXC__ServiceMax_Config_Data__c WHERE SVMXC__Setting_Configuration_Profile__c = \'%@\' AND SVMXC__Setting_ID__c IN %@ AND RecordType.Name = \'SETTING VALUE\' ORDER BY SVMXC__Setting_Unique_ID__c", ActiveGloProInfoId, settingInfoId];
         else
             _query = [NSString stringWithFormat:@"SELECT Id, SVMXC__Setting_Configuration_Profile__c, SVMXC__Setting_ID__c, SVMXC__Internal_Value__c, SVMXC__Display_Value__c, SVMXC__Active__c, SVMXC__IsDefault__c FROM SVMXC__ServiceMax_Config_Data__c WHERE SVMXC__Setting_Configuration_Profile__c = \'%@' AND RecordType.Name = \'SETTING VALUE\' ORDER BY SVMXC__Setting_Unique_ID__c", ActiveGloProInfoId];
+		
+		SVMXLog(@"didGetActiveGlobalProfile = %@", _query);
         [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetSettingsValue:error:context:) context:nil];
     }
     else
@@ -6085,6 +6390,10 @@ extern void SVMXLog(NSString *format, ...);
             refrence_to = (char *) synchronized_sqlite3_column_text(labelstmt,1);
         }
     }
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement1];
+	
     NSString *strType,*strRefrence_to;
     if((type != nil)&& strlen(type))
         strType=[NSString stringWithFormat:@"%s",type];
@@ -6112,6 +6421,8 @@ extern void SVMXLog(NSString *format, ...);
         }
 
     }
+	error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement1];
     return NameFieldDict;
 }
 - (NSString *) getNameFieldForObject:(NSString *)headerObjectName WithRecordId:(NSString *)recordId
@@ -6141,8 +6452,12 @@ extern void SVMXLog(NSString *format, ...);
             if (name != nil && strlen(name))
                 nameField = [NSString stringWithUTF8String:name];
         }
+		synchronized_sqlite3_finalize(stmt);
     }
-    synchronized_sqlite3_finalize(stmt);
+    
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement];
+	
     return nameField;
 }
 
@@ -6353,7 +6668,8 @@ extern void SVMXLog(NSString *format, ...);
             }                   
         }
     }
-    
+    const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
     return array;
 }
 
@@ -6454,8 +6770,13 @@ extern void SVMXLog(NSString *format, ...);
                 queryStatement = [NSString stringWithFormat:@"%@",field1Str];
             }
         }
+		synchronized_sqlite3_finalize(stmt);
     }
-    synchronized_sqlite3_finalize(stmt);
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
+	
+    
     
     return queryStatement;
 }
@@ -6467,7 +6788,9 @@ extern void SVMXLog(NSString *format, ...);
     {
         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
             [MyPopoverDelegate performSelector:@selector(throwException)];
-        SMLog(@"Failed");
+        SMLog(@"%@", statement);
+		SMLog(@"METHOD: createTemporaryTable");
+        SMLog(@"ERROR IN INSERTING %s", err);
         return NO;
     }
     return YES;
@@ -6577,6 +6900,9 @@ extern void SVMXLog(NSString *format, ...);
             
         }
     }
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement];
     
     for (NSString * tableName in objects)
     {
@@ -6809,8 +7135,11 @@ extern void SVMXLog(NSString *format, ...);
                 queryStatement = [NSString stringWithFormat:@"%@",field1Str];
             }
         }
+		synchronized_sqlite3_finalize(stmt);
     }
-    synchronized_sqlite3_finalize(stmt);
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
     
     return queryStatement;
 }
@@ -6835,8 +7164,11 @@ extern void SVMXLog(NSString *format, ...);
                     queryStatement = [NSString stringWithFormat:@"%@",field1Str];
                 }
             }
+			synchronized_sqlite3_finalize(stmt);
         }
-        synchronized_sqlite3_finalize(stmt);
+       
+		const char * error = sqlite3_errmsg(appDelegate.db);
+		[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement];
         
         return queryStatement;
     }
@@ -6865,8 +7197,12 @@ extern void SVMXLog(NSString *format, ...);
                 value = [NSString stringWithFormat:@"%@",field1Str];
             }
         }
+		synchronized_sqlite3_finalize(stmt);
     }
-    synchronized_sqlite3_finalize(stmt);
+   
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
     
     return value;
 }
@@ -6894,9 +7230,13 @@ extern void SVMXLog(NSString *format, ...);
                 [recordId addObject:whatId];
             }
         }
+		synchronized_sqlite3_finalize(statement);
     }
-    synchronized_sqlite3_finalize(statement);
-    
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement];
+	
+       
     return recordId;
     
 }
@@ -6976,8 +7316,11 @@ extern void SVMXLog(NSString *format, ...);
                 [objectNames addObject:name];
             }
         }
+		synchronized_sqlite3_finalize(statement);
     }
-    synchronized_sqlite3_finalize(statement);
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement];
     
     return objectNames;
 }
@@ -6997,6 +7340,8 @@ extern void SVMXLog(NSString *format, ...);
             count = synchronized_sqlite3_column_int(statement, 0);
         }
     }
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement];
     
     if (count)
         return TRUE;
@@ -7037,6 +7382,9 @@ extern void SVMXLog(NSString *format, ...);
                 
         }
     }
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement];
+	
     return recordIds;
 }
 
@@ -7178,7 +7526,10 @@ extern void SVMXLog(NSString *format, ...);
     
     if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
-        SMLog(@"Purging Failed to delete");
+        SMLog(@"%@", queryStatement);
+		SMLog(@"METHOD:purgingDataOnSyncSettings");
+		SMLog(@"ERROR IN DELETE %s", err);
+      
     }
     
 }
@@ -7301,11 +7652,10 @@ extern void SVMXLog(NSString *format, ...);
         return FALSE;
     }
     
-	//Radha #6176
-	NSMutableString * eventId = [self getAllEventRelatedIdFromSyncRecordHeap];
-	
-	[self deleteEventNotRelatedToLoggedInUser:eventId tableName:@"Event"];
-	
+	//Radha 2012june12
+	//[appDelegate.databaseInterface cleartable:@"Event"];
+	//[appDelegate.databaseInterface cleartable:@"Task"];
+	    
     [appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
     
     
@@ -7352,10 +7702,11 @@ extern void SVMXLog(NSString *format, ...);
             if (_object != nil && strlen(_object))
                 [array addObject:[NSString stringWithUTF8String:_object]];
         }
-        
+        synchronized_sqlite3_finalize(stmt);
     }
     
-    synchronized_sqlite3_finalize(stmt);
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatement];
     
     return array;
     
@@ -7406,10 +7757,13 @@ extern void SVMXLog(NSString *format, ...);
             }
             
         }
+		synchronized_sqlite3_finalize(stmt);
     }
     
-    synchronized_sqlite3_finalize(stmt);
-    
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatemnt];
+	
+        
     
     char * err;
     
@@ -7448,6 +7802,9 @@ extern void SVMXLog(NSString *format, ...);
             count = synchronized_sqlite3_column_int(stmt, 0);
         }
     }
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
     
     if (count > 0)
         return TRUE;
@@ -7472,6 +7829,9 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
+	
     if (count > 0)
         return TRUE;
     else
@@ -7497,7 +7857,9 @@ extern void SVMXLog(NSString *format, ...);
     {
         if (synchronized_sqlite3_exec(appDelegate.db, [query UTF8String], NULL, NULL, &err) != SQLITE_OK)
         {
-            SMLog(@"Failed to insert into duetable");
+            SMLog(@"%@", query);
+			SMLog(@"METHOD: insertMetaSyncDue");
+			SMLog(@"ERROR IN INSERTING %s", err);
         }
     }
 }
@@ -7519,6 +7881,9 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
+	
     if (count > 0)
         return TRUE;
     else
@@ -7553,6 +7918,8 @@ extern void SVMXLog(NSString *format, ...);
         synchronized_sqlite3_finalize(stmt);
     }
     
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
     
     return type;
 
@@ -7572,8 +7939,12 @@ extern void SVMXLog(NSString *format, ...);
                 fieldName = [NSString stringWithUTF8String:temp_fieldName];
             }
         }
+		synchronized_sqlite3_finalize(stmt);
     }
-    synchronized_sqlite3_finalize(stmt);
+    	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
+	
     return fieldName;
     
 }
@@ -7596,9 +7967,13 @@ extern void SVMXLog(NSString *format, ...);
                 name = [NSString stringWithUTF8String:temp_fieldName];
             }
         }
-
+		synchronized_sqlite3_finalize(stmt);
     }
-    synchronized_sqlite3_finalize(stmt);
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
+	
+    
     return name;
     
 }
@@ -7608,6 +7983,8 @@ extern void SVMXLog(NSString *format, ...);
 - (void) getImageForServiceReportLogo
 {
     NSString * _query = [NSString stringWithFormat:@"SELECT Body FROM Document Where Name = 'ServiceMax_iPad_CompanyLogo'"];
+	
+	SVMXLog(@"getImageForServiceReportLogo = %@", _query);
     
     [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetServiceReportLogo:error:context:) context:nil];
     
@@ -7660,7 +8037,9 @@ extern void SVMXLog(NSString *format, ...);
         char * err;
         if (synchronized_sqlite3_exec(appDelegate.db, [query UTF8String], NULL, NULL, &err) != SQLITE_OK)
         {
-            SMLog(@"FAILED TO INSERT LOGO");
+            SMLog(@"%@", query);
+			SMLog(@"METHOD: didGetServiceReportLogo");
+			SMLog(@"ERROR IN INSERTING %s", err);
         }
         
     
@@ -7691,9 +8070,11 @@ extern void SVMXLog(NSString *format, ...);
                 value = [NSString stringWithUTF8String:temp_fieldName];
             }
         }
-        
+        synchronized_sqlite3_finalize(stmt);
     }
-    synchronized_sqlite3_finalize(stmt);
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
     
     
     return value;
@@ -7719,10 +8100,12 @@ extern void SVMXLog(NSString *format, ...);
                 value = [NSString stringWithUTF8String:temp_fieldName];
             }
         }
-        
+        synchronized_sqlite3_finalize(stmt);
     }
-    synchronized_sqlite3_finalize(stmt);
-    
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
+	
     
     return value;
 }
@@ -7746,6 +8129,9 @@ extern void SVMXLog(NSString *format, ...);
         }
         
     }
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
     
     if (count > 0)
        return TRUE;
@@ -7772,6 +8158,9 @@ extern void SVMXLog(NSString *format, ...);
         }
         
     }
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
     
     if (count > 0)
         return TRUE;
@@ -7795,14 +8184,17 @@ extern void SVMXLog(NSString *format, ...);
         {
             count = synchronized_sqlite3_column_int(stmt, 0);
         }
-        
+        synchronized_sqlite3_finalize(stmt);
     }
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
     
     if (count > 0)
         return TRUE;
     else
         return FALSE;
-    synchronized_sqlite3_finalize(stmt);
+    
 }
 
 
@@ -7868,11 +8260,12 @@ extern void SVMXLog(NSString *format, ...);
                 value = [NSString stringWithUTF8String:temp_fieldName];
             }
         }
+		synchronized_sqlite3_finalize(stmt);
         
     }
-    
-    synchronized_sqlite3_finalize(stmt);
-    
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
+        
     return value;
 
 }
@@ -7901,6 +8294,10 @@ extern void SVMXLog(NSString *format, ...);
         }
         
     }
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
+
     if ([value length] > 0)
     {
         [conflictMessage appendString:[NSString stringWithFormat:@"%@", value]];
@@ -7936,10 +8333,9 @@ extern void SVMXLog(NSString *format, ...);
                         [conflictMessage appendString:[NSString stringWithFormat:@"\n%@", value]];
                     }
                 }
-                
-
-                
             }
+			const char * error = sqlite3_errmsg(appDelegate.db);
+			[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
             
         }
     }
@@ -8019,6 +8415,8 @@ extern void SVMXLog(NSString *format, ...);
     
      RecordTypeflag = FALSE;
     NSString * _query = [NSString stringWithFormat:@"SELECT Id, Name ,SobjectType FROM RecordType WHERE SobjectType in (%@) ",objectList];
+	
+	SVMXLog(@"getRecordTypeValuesForObject = %@", _query);
     
     [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didgetRecordtypeInfo:error:context:) context:nil];
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES)) 
@@ -8098,6 +8496,9 @@ extern void SVMXLog(NSString *format, ...);
 		
 		synchronized_sqlite3_finalize(stmt);
 	}
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
 
 	return textLength;
 }
@@ -8175,8 +8576,10 @@ extern void SVMXLog(NSString *format, ...);
     
     if(synchronized_sqlite3_exec(appDelegate.db, [update_statement UTF8String],NULL, NULL, &err) != SQLITE_OK)
     {
-       
-        SMLog(@"ERROR IN UPDATING");
+        SMLog(@"%@", update_statement);
+		SMLog(@"METHOD:UpdateSFRecordTypeForId" );
+		SMLog(@"ERROR IN UPDATING %s", err);
+
     }
    // [update_statement release];
 }
@@ -8199,6 +8602,11 @@ extern void SVMXLog(NSString *format, ...);
         }
 		synchronized_sqlite3_finalize(labelstmt);
     }
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:queryStatementIstable];
+
+	
     return isTabel;
 
 }
@@ -8221,6 +8629,10 @@ extern void SVMXLog(NSString *format, ...);
         }
         synchronized_sqlite3_finalize(statement);
     }
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:sql];
+	
     if(row_count == 0)
         return TRUE;
     else
@@ -8245,6 +8657,10 @@ extern void SVMXLog(NSString *format, ...);
         }
         synchronized_sqlite3_finalize(statement);
     }
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:sql];
+	
     if(row_count == 0)
         return FALSE;
     else

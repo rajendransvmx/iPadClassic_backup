@@ -1177,8 +1177,12 @@ extern void SVMXLog(NSString *format, ...);
                             if (_id != nil && strlen(_id))
                                 Id = [NSString stringWithUTF8String:_id];
                         }
+						synchronized_sqlite3_finalize(stmt);
                     }
                     
+					const char * error = sqlite3_errmsg(appDelegate.db);
+					[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
+					
                     NSMutableArray * accountHistory = [appDelegate.databaseInterface getAccountHistoryForanWorkOrder:Id account_id:account_id tableName:headerObjName ];
                     if(accountHistory != nil)
                     {
@@ -1202,7 +1206,12 @@ extern void SVMXLog(NSString *format, ...);
                         if (_id != nil && strlen(_id))
                             Id = [NSString stringWithUTF8String:_id];
                     }
+					synchronized_sqlite3_finalize(stmt);
+
                 }
+				
+				const char * error = sqlite3_errmsg(appDelegate.db);
+				[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
 
                 NSMutableArray * productHistory = nil;
                 if(toplevelId != nil && [toplevelId length] != 0)
@@ -2895,12 +2904,15 @@ extern void SVMXLog(NSString *format, ...);
     else
     {
         NSString *query = [NSString stringWithFormat:@"SELECT Id, SVMXC__Product__c, SVMXC__Product__r.Name, SVMXC__Actual_Quantity2__c, SVMXC__Actual_Price2__c, SVMXC__Work_Description__c, SVMXC__Discount__c FROM SVMXC__Service_Order_Line__c WHERE SVMXC__Line_Type__c = 'Parts' AND SVMXC__Service_Order__c = '%@' AND SVMXC__Actual_Quantity2__c > 0 AND SVMXC__Actual_Price2__c >= 0 AND SVMXC__Is_Billable__c = true", currentRecordId];
+		SVMXLog(@"startSummaryDataFetch = %@", query);
         [[ZKServerSwitchboard switchboard] query:query target:self selector:@selector(getParts:error:context:) context:nil];
         
         query = [NSString stringWithFormat:@"SELECT Id, SVMXC__Activity_Type__c, SVMXC__Actual_Quantity2__c, SVMXC__Actual_Price2__c, SVMXC__Work_Description__c FROM SVMXC__Service_Order_Line__c WHERE SVMXC__Line_Type__c = 'Labor' AND SVMXC__Service_Order__c = '%@' AND SVMXC__Actual_Quantity2__c > 0 AND SVMXC__Actual_Price2__c >= 0 AND SVMXC__Is_Billable__c = true", currentRecordId];
+		SVMXLog(@"startSummaryDataFetch = %@", query);
         [[ZKServerSwitchboard switchboard] query:query target:self selector:@selector(getExistingLabor:error:context:) context:nil];
         
         query = [NSString stringWithFormat:@"SELECT Id, SVMXC__Expense_Type__c, SVMXC__Actual_Quantity2__c, SVMXC__Actual_Price2__c, SVMXC__Work_Description__c FROM SVMXC__Service_Order_Line__c WHERE SVMXC__Line_Type__c = 'Expenses' AND SVMXC__Service_Order__c = '%@' AND SVMXC__Is_Billable__c = true", currentRecordId];
+		SVMXLog(@"startSummaryDataFetch = %@", query);
         [[ZKServerSwitchboard switchboard] query:query target:self selector:@selector(getExpenses:error:context:) context:nil];
         
         // Service Report Essentials
@@ -2908,6 +2920,7 @@ extern void SVMXLog(NSString *format, ...);
         query = @""; // [NSString stringWithFormat:@"Name,SVMXC__Problem_Description__c,SVMXC__Contact__r.Name,SVMXC__Contact__r.Phone,SVMXC__Work_Performed__c"];
         NSString * cleanQuery = [self removeDuplicatesFromSOQL:appDelegate.soqlQuery withString:query];
         // query = [NSString stringWithFormat:@"%@%@ FROM SVMXC__Service_Order__c WHERE Id = '%@'", query, cleanQuery, currentRecordId];
+		SVMXLog(@"startSummaryDataFetch = %@", cleanQuery);
         [[ZKServerSwitchboard switchboard] query:cleanQuery target:self selector:@selector(getReportEssentials:error:context:) context:nil];
         
         while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, FALSE))
@@ -3600,6 +3613,7 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     NSString * query = [NSString stringWithFormat:@"SELECT SVMXC__Billable_Cost2__c FROM SVMXC__Service_Group_Costs__c	WHERE SVMXC__Group_Member__c = '%@' AND SVMXC__Cost_Category__c = 'Straight' LIMIT 1", appDelegate.appTechnicianId];
+	SVMXLog(@"getExistingLabor = %@", query);
     [[ZKServerSwitchboard switchboard] query:query target:self selector:@selector(getPriceForLabor:error:context:) context:nil];
 }
 
@@ -3616,6 +3630,7 @@ extern void SVMXLog(NSString *format, ...);
 	{
 		//25th jan 2011 pavaman - multicurrency handling
 		NSString * query = [NSString stringWithFormat:@"SELECT SVMXC__Billable_Cost2__c FROM SVMXC__Service_Group_Costs__c WHERE SVMXC__Service_Group__c = '%@' AND SVMXC__Cost_Category__c = 'Straight' LIMIT 1", appDelegate.appServiceTeamId];
+		SVMXLog(@"getPriceForLabor = %@", query);
         [[ZKServerSwitchboard switchboard] query:query target:self selector:@selector(getPriceForServiceTeam:error:context:) context:nil];
 	}
 	else
@@ -11945,7 +11960,11 @@ extern void SVMXLog(NSString *format, ...);
             if (_id != nil && strlen(_id))
                 Id = [NSString stringWithUTF8String:_id];
         }
+		synchronized_sqlite3_finalize(stmt);
     }
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
+
 
     if (button.tag == 1)
     {
@@ -12016,8 +12035,13 @@ extern void SVMXLog(NSString *format, ...);
              if (_productId != nil && strlen(_productId))
                 productId = [NSString stringWithUTF8String:_productId];
         }
+		synchronized_sqlite3_finalize(stmt);
     }
-        
+	
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
+
+	
     return productId;
 }
 
@@ -12038,7 +12062,12 @@ extern void SVMXLog(NSString *format, ...);
             else
                 productName = @"";
         }
+		synchronized_sqlite3_finalize(stmt);
     }
+	const char * error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
+	
+	stmt = nil;
     
     if ([productName isEqualToString:@""])
     {
@@ -12055,7 +12084,12 @@ extern void SVMXLog(NSString *format, ...);
                     productName = @"";
             }
         }
+		synchronized_sqlite3_finalize(stmt);
     }
+	
+	error = sqlite3_errmsg(appDelegate.db);
+	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
+
     return productName;
 }
 

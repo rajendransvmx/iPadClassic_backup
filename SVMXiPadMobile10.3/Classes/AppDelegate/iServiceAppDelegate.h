@@ -807,6 +807,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 //RADHA //26/Nov/2012
 - (char *) convertStringIntoChar:(NSString *)data;
 
+//METHOD FOR SELECT ERROR MESSEGES
+- (void) printIfError:(NSString *)err ForQuery:(NSString *)query;
+
 -(void)getTriggerCode;
 
 @end

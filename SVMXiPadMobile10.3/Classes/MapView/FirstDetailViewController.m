@@ -378,6 +378,8 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
         
         NSString * _query = [NSString stringWithFormat:@"SELECT Id, SVMXC__Service_Group__c, SVMXC__Inventory_Location__c  FROM SVMXC__Service_Group_Members__c WHERE SVMXC__Salesforce_User__c = '%@'", appDelegate.loggedInUserId];
         SMLog(@"%@", appDelegate.loggedInUserId);
+		
+		SVMXLog(@"viewDidLoad, Mapview = %@", _query);
         
         [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(initDebriefData:error:context:) context:nil];
     }
@@ -586,6 +588,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     {
         _query = [[NSString stringWithFormat:@"SELECT ParentId, Body FROM Attachment Where ParentId IN ('%@') AND Name LIKE '%%PICTURE%%'", contactId] retain]; // AND Name LIKE '%%PICTURE%%'
         
+		SVMXLog(@"queryImagesForAccount = %@", _query);
         [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didQueryContactImagesForAccount:error:context:) context:nil];
         
         [_query release];
@@ -596,6 +599,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
         _query = [[NSString stringWithFormat:@"SELECT ParentId, Body FROM Attachment Where ParentId IN ('%@') AND Name LIKE '%%PICTURE%%'", companyId] retain]; // AND Name LIKE '%%PICTURE%%'
         
         // SMLog(@"%@", _query);
+		SVMXLog(@"queryImagesForAccount = %@", _query);
         
         [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didQueryCompanyImagesForAccount:error:context:) context:nil];
         
@@ -1281,6 +1285,8 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     
     NSString * _query = [NSString stringWithFormat:@"Select SVMXC__Street__c, SVMXC__City__c, SVMXC__State__c, SVMXC__Zip__c, SVMXC__Country__c FROM SVMXC__Service_Group_Members__c WHERE Id = '%@'", appDelegate.appTechnicianId];
     SMLog(@"my query = %@",_query);
+	
+	SVMXLog(@"initDebriefData, Mapview = %@", _query);
     
     [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didQueryTechnician:error:context:) context:nil];
     
