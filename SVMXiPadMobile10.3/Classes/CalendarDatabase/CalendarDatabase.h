@@ -35,6 +35,7 @@
 //@property (nonatomic, retain) NSString *whatId1;
 //@property (nonatomic, retain) NSString *subject;
 
+- (NSString *) getNameFieldForEventLocal_id:(NSString *)eventId;
 - initWithDBName;
 //- (BOOL) isUsernamePresent:(NSString *)username password:(NSString *)passWord;
 
@@ -48,7 +49,7 @@
 - (NSMutableArray*) GetEventsFromDBWithStartDate:(NSString*)startdate endDate:(NSString*)endDate;
 - (NSMutableArray*) didGetTaskFromDB:(NSString *)_date;
 - (BOOL) insertTasksIntoDB:(NSArray *)_tasks WithDate:(NSString*)_date local_id:(NSString *)local_id;
-- (void) updateMovedEventWithStartTime:(NSString *)_startDT EndDate:(NSString *)_endDT RecordID:(NSString *)_recordId;
+- (void) updateMovedEventWithStartTime:(NSString *)_startDT EndDate:(NSString *)_endDT RecordID:(NSString *)_recordId event_localId:(NSString *)event_LocalId;
 //- (BOOL) isWorkOrder:(NSString *)__whatId;
 - (NSString *)getColorCodeForPriority:(NSString *)whatId objectname:(NSString *)objectName;
 - (void)deleteTaskFromDB:(NSString *)taskId;

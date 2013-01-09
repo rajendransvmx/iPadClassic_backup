@@ -521,8 +521,18 @@ extern void SVMXLog(NSString *format, ...);
                     }
                 }
                 synchronized_sqlite3_finalize(stmt);
+        
                 if ([whatId1 isEqualToString:@""])
-                    subject = [self getNameFieldForEvent:eventId];
+                {
+                    if([eventId length] > 0)
+                    {
+                        subject = [self getNameFieldForEvent:eventId];
+                    }
+                    else
+                    {
+                        subject = [self getNameFieldForEventLocal_id:event_local_Id];
+                    }
+                }
                 
                 objectApiName = tableName;
                 
@@ -545,9 +555,17 @@ extern void SVMXLog(NSString *format, ...);
 }
 
 
-- (void) updateMovedEventWithStartTime:(NSString *)_startDT EndDate:(NSString *)_endDT RecordID:_recordId
+- (void) updateMovedEventWithStartTime:(NSString *)_startDT EndDate:(NSString *)_endDT RecordID:_recordId event_localId:(NSString *)event_LocalId
 {
-    NSString *sql = [NSString stringWithFormat: @"Update Event Set StartDateTime = '%@', EndDateTime = '%@', ActivityDateTime = '%@' Where Id = '%@'", _startDT, _endDT,_startDT, _recordId];
+    NSString *sql = @"";
+    if([_recordId length] != 0)
+    {
+        sql = [NSString stringWithFormat: @"Update Event Set StartDateTime = '%@', EndDateTime = '%@', ActivityDateTime = '%@' Where Id = '%@'", _startDT, _endDT,_startDT, _recordId];
+    }
+    else
+    {
+        sql = [NSString stringWithFormat: @"Update Event Set StartDateTime = '%@', EndDateTime = '%@', ActivityDateTime = '%@' Where local_id = '%@'", _startDT, _endDT,_startDT, event_LocalId];
+    }
     char *err;
     if (synchronized_sqlite3_exec(appDelegate.db, [sql UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
@@ -833,6 +851,26 @@ extern void SVMXLog(NSString *format, ...);
 - (NSString *) getNameFieldForEvent:(NSString *)eventId
 {
     NSString * query = [NSString stringWithFormat:@"SELECT subject FROM Event WHERE Id = '%@'", eventId];
+    
+    sqlite3_stmt * stmt;
+    NSString * subject = @"";
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        if (synchronized_sqlite3_step(stmt) ==  SQLITE_ROW)
+        {
+            char * _subject = (char *) synchronized_sqlite3_column_text(stmt, 0);
+            if ((_subject != nil) && strlen(_subject))
+                subject = [NSString stringWithUTF8String:_subject];
+        }
+    }
+    synchronized_sqlite3_finalize(stmt);
+    return subject;
+    
+}
+- (NSString *) getNameFieldForEventLocal_id:(NSString *)eventId
+{
+    NSString * query = [NSString stringWithFormat:@"SELECT subject FROM Event WHERE local_id = '%@'", eventId];
     
     sqlite3_stmt * stmt;
     NSString * subject = @"";
