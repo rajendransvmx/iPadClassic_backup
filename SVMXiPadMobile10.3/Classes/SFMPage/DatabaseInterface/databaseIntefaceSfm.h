@@ -27,6 +27,7 @@
 @property (nonatomic, retain) id MyPopoverDelegate;
 
 
+-(NSString *)getallOverLappingEventsForStartDateTime:(NSString *)startDateTime EndDateTime:(NSString *)endDateTime;
 //Sahana Dec 7th 2012
 -(void)InsertInto_User_created_event_for_local_id:(NSString *)local_id sf_id:(NSString *)sf_id;
 -(void)insertIntoEventsLocal_ids:(NSString *)local_id;
@@ -397,6 +398,6 @@
 @protocol databaseInterfaceProtocol <NSObject>
 
 @optional
--(void)displayALertViewinSFMDetailview:(char *)excp_message;
+-(void)displayALertViewinSFMDetailview:(NSString *)excp_message;
 
 @end

@@ -1590,9 +1590,12 @@ extern void SVMXLog(NSString *format, ...);
         success = FALSE;
         if([tableName isEqualToString:@"Event"])
         {
+            NSString * startDateTime = [valuesDict objectForKey:@"StartDateTime"];
+            NSString * enddatetime = [valuesDict objectForKey:@"EndDateTime"];
+            NSString * overlappingEvent = [appDelegate.databaseInterface getallOverLappingEventsForStartDateTime:startDateTime EndDateTime:enddatetime];
             NSString * local_id = [valuesDict objectForKey:@"local_id"];
             [self insertIntoEventsLocal_ids:local_id];
-            [databaseInterfaceDelegate displayALertViewinSFMDetailview:err];
+            [databaseInterfaceDelegate displayALertViewinSFMDetailview:overlappingEvent];
         }
         
     }
@@ -6170,5 +6173,49 @@ extern void SVMXLog(NSString *format, ...);
     {
         SMLog(@"delete Failed Event_local_Ids");
     }
+}
+
+-(NSString * )getallOverLappingEventsForStartDateTime:(NSString *)startDateTime EndDateTime:(NSString *)endDateTime
+{
+    NSString * overlapping_events = nil;
+    NSMutableString * mutable_str = [[NSMutableString alloc] initWithCapacity:0];
+    NSMutableArray * events = [[NSMutableArray alloc] initWithCapacity:0];
+    NSString * query_str = [NSString stringWithFormat:@"SELECT Subject,WhatId  from  Event where(strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@','+0000','Z'))  <=  strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') ) AND strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@','+0000','Z') )   > strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') ) ) OR (strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@','+0000','Z') ) <  strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( EndDateTime, '+0000','Z') )   AND strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@', '+0000','Z') ) >= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( EndDateTime, '+0000','Z') ))  OR (strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@', '+0000','Z') ) <= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') ) AND strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@', '+0000','Z') ) >= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( EndDateTime, '+0000','Z') )) OR (strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@','+0000','Z') ) >= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') )  and strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@', '+0000','Z') ) <= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  (EndDateTime, '+0000','Z') ))",startDateTime,endDateTime,startDateTime,endDateTime,startDateTime,endDateTime,startDateTime,endDateTime];
+    NSString * subject = nil , * relatedTo = nil ;
+    sqlite3_stmt * stmt;
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query_str UTF8String], -1, &stmt, nil) == SQLITE_OK)
+    {
+        while(synchronized_sqlite3_step(stmt)== SQLITE_ROW)
+        {
+            char * temp_subject = (char *)synchronized_sqlite3_column_text(stmt, 0);
+            if(temp_subject != nil)
+            {
+                subject =[NSString stringWithUTF8String:temp_subject];
+            }
+            char * temp_relatedTo = (char *)synchronized_sqlite3_column_text(stmt, 1);
+            if(temp_relatedTo != nil) 
+            {
+                relatedTo =[NSString stringWithUTF8String:temp_relatedTo];
+            }
+            if([relatedTo length] > 0 && relatedTo != nil)
+            {
+                [events addObject:relatedTo];
+            }
+            else if([subject length] >0 && subject != nil)
+            {
+                [events addObject:subject];
+            }
+        }
+    }
+    NSLog(@" overlapping events%@",events);
+    synchronized_sqlite3_finalize(stmt);
+     [mutable_str appendFormat:@"\n"];
+    for(NSString * event_temp in events)
+    {
+        [mutable_str appendFormat:@"%@\n",event_temp];
+    }
+    overlapping_events = [[NSString alloc]  initWithFormat:@"%@",mutable_str];
+    [mutable_str release];
+    return overlapping_events;
 }
 @end

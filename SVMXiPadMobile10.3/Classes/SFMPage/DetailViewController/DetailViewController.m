@@ -12804,10 +12804,10 @@ extern void SVMXLog(NSString *format, ...);
 
 
 #pragma End
--(void)displayALertViewinSFMDetailview:(char *)excp_message
+-(void)displayALertViewinSFMDetailview:(NSString *)excp_message
 {
     NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:EVENT_OVERLAP];
-    
+    message = [message stringByAppendingFormat:@"%@",excp_message];
 //    [[NSString  alloc] initWithUTF8String:excp_message];
     UIAlertView * exeption_alert = [[UIAlertView alloc] initWithTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_error_message] message:message delegate:self cancelButtonTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:EVENT_RESCHEDULE_NO] otherButtonTitles:[appDelegate.wsInterface.tagsDictionary objectForKey:EVENT_RESCHEDULE_YES], nil];
 
@@ -12819,8 +12819,6 @@ extern void SVMXLog(NSString *format, ...);
 {
     if(buttonIndex == 1)
     {
-//        [appDelegate.databaseInterface insertdataIntoTable:@"Event" data:appDelegate.insert_event_dict];
-//        appDelegate.insert_event_dict = nil;
         NSMutableArray  *keys_event = nil, *objects_event = nil;
         objects_event = [NSArray arrayWithObjects:@"",save,@"",@"",gBUTTON_TYPE_TDM_IPAD_ONLY ,@"",@"true",nil];
         keys_event = [NSArray arrayWithObjects:SFW_ACTION_ID,SFW_ACTION_DESCRIPTION,SFW_EXPRESSION_ID,SFW_PROCESS_ID,SFW_ACTION_TYPE ,SFW_WIZARD_ID,SFW_ENABLE_ACTION_BUTTON,nil];
