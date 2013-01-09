@@ -1,4 +1,4 @@
-
+	
 //
 //  databaseIntefaceSfm.m
 //  iService
@@ -84,7 +84,6 @@ extern void SVMXLog(NSString *format, ...);
     for(int i = 0; i <[api_names count]; i++)
     {
         NSString * sql =[NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE %@ = '%@' and %@ ='%@' ",@"label",tableName ,@"api_name",[api_names objectAtIndex:i],@"object_api_name",objectName];
-        // NSString * sql =[NSString stringWithFormat:@"SELECT * FROM %@ ",tableName];
         
         sqlite3_stmt * sql_stmt;
         
@@ -146,8 +145,6 @@ extern void SVMXLog(NSString *format, ...);
 }
 -(NSMutableDictionary *)queryDataFromObjectTable:(NSMutableArray *)api_names tableName:(NSString *)tableName record_id:(NSString *) recordId  expression:(NSString *)expression
 {
-    
-    //iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     NSString * expression_ = [appDelegate.databaseInterface  queryForExpression:expression forObject:tableName];
     
     NSString * fieldsString =@"";
@@ -203,7 +200,6 @@ extern void SVMXLog(NSString *format, ...);
     NSInteger fieldsCount = [apiNames count];
     NSArray * detailkeys = [NSArray arrayWithObjects:gVALUE_FIELD_API_NAME,gVALUE_FIELD_VALUE_KEY,gVALUE_FIELD_VALUE_VALUE, nil];
     
-    //iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     NSString * parent_column_name = @"";
     
     NSString * expression_ = [appDelegate.databaseInterface  queryForExpression:expression_id forObject:detailObjectName];
@@ -220,9 +216,6 @@ extern void SVMXLog(NSString *format, ...);
         }
         fieldsString = [fieldsString stringByAppendingString:singleField];
     }
-    
-    
-    
     //fetch the parent  column name  in child table from  CHildInfo Table   -- IMP headerObjectName
     
     NSString * sql;
@@ -408,7 +401,6 @@ extern void SVMXLog(NSString *format, ...);
     
     synchronized_sqlite3_finalize(sql_stmt);
     return array;
-    
 }
 
 -(NSMutableArray *) selectProcessFromDB:(NSString *)currentObject
@@ -457,6 +449,7 @@ extern void SVMXLog(NSString *format, ...);
     synchronized_sqlite3_finalize(stmt);
     return view_process;
 }
+
 -(NSMutableDictionary *)getPicklistValuesForTheFiled:(NSString *)fieldname  tableName:(NSString *)tablename objectName:(NSString *)objectName;
 {
     
@@ -512,7 +505,6 @@ extern void SVMXLog(NSString *format, ...);
 }
 
 //methods to query for Reference field
-
 -(NSMutableArray *)getReferenceToForField:(NSString *)field_apiname  objectapiName:(NSString *)objectApiName tableName:(NSString *)tableName ;
 {
     NSMutableArray * referenceToTableNames = [[NSMutableArray alloc] initWithCapacity:0];
@@ -584,8 +576,7 @@ extern void SVMXLog(NSString *format, ...);
 -(NSString *)getReferenceValueFromReferenceToTable:(NSString *)tableName field_name:(NSString *) filed_name record_id:(NSString *)record_id
 {
     NSString * fieldvalue = @"";
-   // iServiceAppDelegate *appdelegate =(iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
-     BOOL isTableExists = [appDelegate.databaseInterface checkForTheTableInTheDataBase:tableName];
+	BOOL isTableExists = [appDelegate.databaseInterface checkForTheTableInTheDataBase:tableName];
     if(isTableExists)
     {
         NSString * query = [NSString stringWithFormat:@"SELECT %@ FROM '%@' where id = '%@'",filed_name,tableName,record_id];
@@ -623,7 +614,6 @@ extern void SVMXLog(NSString *format, ...);
     synchronized_sqlite3_finalize(statement_Chk_table_exist);
     
     return flag;
-
 }
 
 -(NSString *) getObjectLabel:(NSString *)tableName objectApi_name:(NSString *)objectApiName;//SFObject
@@ -675,11 +665,9 @@ extern void SVMXLog(NSString *format, ...);
         synchronized_sqlite3_finalize(stmt);
     }
     return fieldName;
-
 }
 
 // Get the child parent column name in child relationship table
-
 -(NSString *)getParentColumnNameFormChildInfoTable:(NSString *)tableName  childApiName:(NSString *)objectApiNameChild parentApiName:(NSString *)objectApiNameParent
 {
     NSString * fieldName = @"";
@@ -743,7 +731,6 @@ extern void SVMXLog(NSString *format, ...);
     NSString * pausedTime = @"";
     if(record_id != nil)
     {
-        /* NSString * query = [NSString stringWithFormat:@"SELECT SVMXC__Restoration_Customer_By__c, SVMXC__Resolution_Customer_By__c FROM '%@' where local_id = '%@'", tableName ,record_id];*/
         NSString * query = [NSString stringWithFormat:@"SELECT SVMXC__Restoration_Customer_By__c, SVMXC__Resolution_Customer_By__c,Svmxc__Sla_Clock_Paused__C,Svmxc__Actual_Resolution__C,Svmxc__Actual_Restoration__C,Svmxc__Restoration_Customer_By__C,Svmxc__Resolution_Customer_By__C,Svmxc__Sla_Clock_Pause_Time__C FROM '%@' where local_id = '%@'", tableName ,record_id];
         
         sqlite3_stmt * stmt ;
@@ -885,7 +872,6 @@ extern void SVMXLog(NSString *format, ...);
 
     if(record_id != nil && account_id != nil && dateString != nil)
     {
-      //  NSString * query =  [NSString stringWithFormat:@"SELECT  SVMXC__Problem_Description__c, CreatedDate FROM '%@' WHERE CreatedDate <= '%@' AND SVMXC__Order_Status__c = 'Closed' AND local_id != '%@' AND SVMXC__Company__c = '%@'",tablename, dateString, record_id, account_id];
         NSString * query =  [NSString stringWithFormat:@"SELECT  SVMXC__Problem_Description__c, CreatedDate FROM '%@' WHERE CreatedDate <= '%@' AND SVMXC__Order_Status__c = 'Closed' AND Id != '%@' AND SVMXC__Company__c = '%@'",tablename, dateString, record_id, account_id];
 
         sqlite3_stmt * stmt ;
@@ -929,7 +915,6 @@ extern void SVMXLog(NSString *format, ...);
 -(NSMutableArray *)getProductHistoryForanWorkOrder:(NSString *)record_id  filedName:(NSString *)fieldName tableName:(NSString *)tablename  fieldValue:(NSString *)fieldValue
 {
     NSMutableArray * product_history = [[NSMutableArray alloc] initWithCapacity:0];
-   // NSArray * keys = [NSArray arrayWithObjects:@"",@"" nil];
     NSArray * keys = [NSArray arrayWithObjects:@"CreatedDate" ,@"SVMXC__Problem_Description__c",nil];
     
     NSDate * _date = [NSDate date];
@@ -943,10 +928,7 @@ extern void SVMXLog(NSString *format, ...);
     
     if(record_id != nil && fieldValue != nil && dateString != nil)
     {
-       // NSString * query =  [NSString stringWithFormat:@"SELECT  SVMXC__Problem_Description__c, CreatedDate FROM '%@' WHERE CreatedDate <= '%@' AND SVMXC__Order_Status__c = 'Closed' AND local_id != '%@' AND %@ = '%@'",tablename, dateString, record_id,fieldName, fieldValue];
-        
         NSString * query =  [NSString stringWithFormat:@"SELECT  SVMXC__Problem_Description__c, CreatedDate FROM '%@' WHERE CreatedDate <= '%@' AND SVMXC__Order_Status__c = 'Closed' AND Id != '%@' AND %@ = '%@'",tablename, dateString, record_id,fieldName, fieldValue];
-        
         sqlite3_stmt * stmt ;
         
         NSDateFormatter * datetimeFormatter=[[[NSDateFormatter alloc]init]autorelease];
@@ -1009,15 +991,12 @@ extern void SVMXLog(NSString *format, ...);
         if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK  )
         {
             while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
-            {
-                //int  temp_local_id = synchronized_sqlite3_column_int(stmt, 0);
-                
+            {   
                 char * temp_local_id = (char *)synchronized_sqlite3_column_text(stmt, 0);
                 if(temp_local_id != nil)
                 {
                     local_id = [NSString stringWithUTF8String:temp_local_id];
                 }
-                //local_id = temp_local_id;
             }
         }
         
@@ -1048,9 +1027,7 @@ extern void SVMXLog(NSString *format, ...);
         if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK  )
         {
             while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
-            {
-                //int  temp_local_id = synchronized_sqlite3_column_int(stmt, 0);
-                
+            {   
                 char * temp_Phone  = (char *)synchronized_sqlite3_column_text(stmt, 0);
                 
                 if(temp_Phone!= nil) 
@@ -1087,14 +1064,10 @@ extern void SVMXLog(NSString *format, ...);
                 [dict  setObject:workOrderProblemDescription forKey:@"SVMXC__Problem_Description__c"];
                 [dict  setObject:workOrderOrderType forKey:@"SVMXC__Order_Type__c"];
                 [dict  setObject:contact_Id forKey:@"SVMXC__Contact__c"]; //shrinivas
-                
             }
-            
         }
-        
         synchronized_sqlite3_finalize(stmt);
     }
-    
     return dict;
 }
 
@@ -1187,6 +1160,7 @@ extern void SVMXLog(NSString *format, ...);
 
 -(NSMutableDictionary *)getProcessComponentsForComponentType:(NSString *)componentType process_id:(NSString *)processId  layoutId:(NSString *)layoutId  objectName:(NSString *)objectName  
 {
+	
     if([componentType isEqualToString:TARGET])
     {
         layoutId = nil;
@@ -1345,10 +1319,12 @@ extern void SVMXLog(NSString *format, ...);
 
 -(NSMutableDictionary *)getObjectMappingForMappingId:(NSMutableDictionary *)process_components mappingType:(NSString *)mapping_type
 {
-    NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+    NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithCapacity:0];
     NSString * value_mapping_id = [process_components objectForKey:VALUE_MAPPING_ID];
-   // NSString * source_object_name = [process_components objectForKey:SOURCE_OBJECT_NAME];
     NSString * target_object_name = [process_components objectForKey:TARGET_OBJECT_NAME];
+	
+	NSString * objectMappingId = [process_components objectForKey:OBJECT_MAPPING_ID];
+	
     NSString * source_field_name = @"";
     NSString * mapping_value = @"";
     NSString * mapping_value_flag = @"";
@@ -1400,9 +1376,6 @@ extern void SVMXLog(NSString *format, ...);
                         
                         if([target_field_name isEqualToString:@"RecordTypeId"])
                         {
-                           // NSString * value  =  ;
-                            //select  record_type_id  from SFRecordType where record_type = '%@' target_object_name
-                            
                             NSString * query = [NSString stringWithFormat:@"SELECT record_type_id FROM  SFRecordType where object_api_name = '%@' and record_type = '%@'" ,target_object_name,mapping_value];
                             NSString * record_type_id = @"";
                             
@@ -1431,8 +1404,7 @@ extern void SVMXLog(NSString *format, ...);
                             
                         }
                         
-                         [dict setObject:mapping_value forKey:target_field_name];
-                       // iServiceAppDelegate *appdelegate =(iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+						[dict setObject:mapping_value forKey:target_field_name];
                         NSString * data_type = [[appDelegate.databaseInterface getFieldDataType:target_object_name filedName:target_field_name] lowercaseString];
                         
                         NSTimeInterval secondsPerDay = 24 * 60 * 60;
@@ -1440,43 +1412,36 @@ extern void SVMXLog(NSString *format, ...);
                         NSString * today_Date ,* tomorow_date ,* yesterday_date;
                         
                         NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
-                        //[dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
                         
-                        NSDate *today = [NSDate date];;
+                        NSDate *today = [NSDate date];
                         
                         NSDate *tomorrow, *yesterday;
                         
                         tomorrow = [today dateByAddingTimeInterval: secondsPerDay];
                         
                         yesterday = [today dateByAddingTimeInterval: -secondsPerDay];
-                        
-                        
+						
                         //for macros expantion
                         if([data_type isEqualToString:@"date"])
                         {
                             [dateFormatter setDateFormat:@"yyyy-MM-dd"];
-                            
                             today_Date = [dateFormatter stringFromDate:today];
                             tomorow_date = [dateFormatter stringFromDate:tomorrow];
                             yesterday_date = [dateFormatter stringFromDate:yesterday];
-                            
+							
                             if([mapping_value caseInsensitiveCompare:MACRO_TODAY] == NSOrderedSame)
                             {
                                [dict setObject:today_Date forKey:target_field_name];
-                                
                             }
-                            if([mapping_value caseInsensitiveCompare:MACRO_TOMMOROW] == NSOrderedSame)
+                            else if([mapping_value caseInsensitiveCompare:MACRO_TOMMOROW] == NSOrderedSame)
                             {
                                 [dict setObject:tomorow_date forKey:target_field_name];
-
                             }
-                            if([mapping_value caseInsensitiveCompare:MACRO_YESTERDAY] == NSOrderedSame)
+                            else if([mapping_value caseInsensitiveCompare:MACRO_YESTERDAY] == NSOrderedSame)
                             {
                                 [dict setObject:yesterday_date forKey:target_field_name];
                             }
-                            
                         }
-                        
                         if([data_type isEqualToString:@"datetime"])
                         {
                             [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
@@ -1491,48 +1456,75 @@ extern void SVMXLog(NSString *format, ...);
                             yesterday_date = [dateFormatter stringFromDate:yesterday];
                             yesterday_date = [yesterday_date stringByReplacingOccurrencesOfString:@" " withString:@"T"];
                             
-                            
-                            
                             if([mapping_value caseInsensitiveCompare:MACRO_NOW]== NSOrderedSame)
                             {
                                 [dict setObject:today_Date forKey:target_field_name];
                             }
-                            
-                            if([mapping_value caseInsensitiveCompare:MACRO_TODAY] == NSOrderedSame)
+                            else if([mapping_value caseInsensitiveCompare:MACRO_TODAY] == NSOrderedSame)
                             {
                                 [dict setObject:today_Date forKey:target_field_name];
                             }
-                            
-                            if([mapping_value caseInsensitiveCompare:MACRO_TOMMOROW] == NSOrderedSame)
+                            else if([mapping_value caseInsensitiveCompare:MACRO_TOMMOROW] == NSOrderedSame)
                             {
                                 [dict setObject:tomorow_date forKey:target_field_name];
                             }
-                            
-                            if([mapping_value caseInsensitiveCompare:MACRO_YESTERDAY] == NSOrderedSame)
+                            else if([mapping_value caseInsensitiveCompare:MACRO_YESTERDAY] == NSOrderedSame)
                             {
                                 [dict setObject:yesterday_date forKey:target_field_name]; //RADHA
                             }
-                            
+                            [dateFormatter release];
                         }
                         
                         if ([mapping_value caseInsensitiveCompare:MACRO_CURRENTUSER] == NSOrderedSame)
                         {
                              [dict setObject:appDelegate.username forKey:target_field_name];
                         }
-                        if ([mapping_value isEqualToString:MACRO_RECORDOWNER])
+                        else if ([mapping_value isEqualToString:MACRO_RECORDOWNER])
                         {
                              [dict setObject:MACRO_RECORDOWNER forKey:target_field_name];
                         }
                     }
-                    
-                    
+            
                 }
+
             }
             
             synchronized_sqlite3_finalize(stmt);
         }
     }
     
+	
+	//6279 - DefectFix
+	else if ([mapping_type isEqualToString:FIELD_MAPPING])
+	{
+		if(objectMappingId != nil || [objectMappingId length] != 0 )
+        {
+             NSString * query = [NSString stringWithFormat:@"SELECT source_field_name,target_field_name  FROM '%@' where mapping_component_type = '%@' and object_mapping_id = '%@'",OBJECT_MAPPING_COMPONENT,FIELD_MAPPING, objectMappingId];
+			
+			sqlite3_stmt * stmt ;
+            if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+            {
+                while (synchronized_sqlite3_step(stmt)  == SQLITE_ROW)
+                {
+					source_field_name = @"";
+                    target_field_name = @"";
+					
+					char * temp_source_field_name = (char *)synchronized_sqlite3_column_text(stmt, 0);
+                    if(temp_source_field_name != nil)
+                    {
+                        source_field_name = [NSString stringWithUTF8String:temp_source_field_name];
+                    }
+					char * temp_target_field_name = (char *)synchronized_sqlite3_column_text(stmt, 1);
+                    if(temp_target_field_name != nil)
+                    {
+                        target_field_name = [NSString stringWithUTF8String:temp_target_field_name];
+                    }
+					[dict setObject:source_field_name forKey:target_field_name];
+				}
+			}
+			
+		}
+	}
     
     return dict;
 }
@@ -1578,7 +1570,7 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     
-   if([[valuesDict objectForKey:@"Id"] length] == 0  && [tableName isEqualToString:@"Event"])
+	if([[valuesDict objectForKey:@"Id"] length] == 0  && [tableName isEqualToString:@"Event"])
     {
         values_string = [values_string stringByAppendingFormat:@",''"];
         fields_string = [fields_string stringByAppendingFormat:@",Id"];
@@ -1611,7 +1603,6 @@ extern void SVMXLog(NSString *format, ...);
    
     [autorelease_pool release];
     return success;
-    
 }
 
 -(NSString *)getTheRecordIdOfnewlyInsertedRecord:(NSString *)tableName
@@ -1642,9 +1633,12 @@ extern void SVMXLog(NSString *format, ...);
     NSMutableArray * eachRow = [[NSMutableArray alloc] initWithCapacity:0];
     
     NSString * query = @"";
-    if ([search_field length] > 0){
+    if ([search_field length] > 0)
+	{
         query = [NSString stringWithFormat:@"SELECT Id , %@ FROM '%@' Where Name LIKE '%%%@%%'",@"Name" , object_name, search_field];
-    }else{
+    }
+	else
+	{
         query = [NSString stringWithFormat:@"SELECT Id , %@ FROM '%@'",@"Name" , object_name];
     }
     
@@ -1691,19 +1685,16 @@ extern void SVMXLog(NSString *format, ...);
 
 - (NSDictionary *) getLookupDataFromDBWith:(NSString *)lookupID referenceTo:(NSString *)object  searchFor:(NSString *)searchForString
 {
-    //lookupID = @"a0WA0000005yGL8MAM";
     NSMutableDictionary * finalDict = [[NSMutableDictionary alloc] initWithCapacity:0];
     NSMutableArray * fields_array = [[NSMutableArray alloc] initWithCapacity:0];
     NSMutableArray * each_record = [[NSMutableArray alloc] initWithCapacity:0];
     NSMutableArray * searchable_fields = [[NSMutableArray alloc] initWithCapacity:0];
     NSMutableArray * lookup_object_info = [[NSMutableArray alloc] initWithCapacity:0];
     NSMutableArray * results_array = [[NSMutableArray alloc] initWithCapacity:0];
-    //NSString * default_column_name = @"";
     
     NSArray * field_keys = [NSArray arrayWithObjects:LOOK_UP_FIELDNAME,SEARCH_OBJECT_FIELD_TYPE,LOOK_UP_SEQUENCE,LOOK_UP_FIELD_TYPE,LU_FIELD_RELATED_TO, nil];
     
     NSMutableArray *_dictKeys = [NSMutableArray arrayWithObjects:@"DATA", @"SEQUENCE", @"SVMXC__Default_Lookup_Column__c", nil];
-    
     
     //query for look_up_object_info from SFNamedSearch table
     NSString * default_column = @"";
@@ -1774,13 +1765,11 @@ extern void SVMXLog(NSString *format, ...);
         if ([searchForString length] > 1)
         {
             querystring2 = [NSString stringWithFormat:@"Select %@ , Id from '%@'  WHERE  Id  NOT NULL   AND Id != '' and %@ LIKE '%%%@%%' ", default_column_name, object, default_column_name, _searchForString];
-            
-        }else {
-            
+        }
+		else
+		{
             querystring2 = [NSString stringWithFormat:@"Select %@ , Id from '%@'  WHERE  Id  NOT NULL   AND Id != '' ", default_column_name, object];
         }
-       
-        // NSMutableArray * _keys = [NSMutableArray arrayWithObjects:@"key", @"value", nil];
         
         sqlite3_stmt * stmt;
         
@@ -1833,9 +1822,11 @@ extern void SVMXLog(NSString *format, ...);
         if([searchForString isEqualToString:@" "] )
         {
             searchForString = [searchForString stringByReplacingOccurrencesOfString:@" " withString:@""];
-        }else{  //shrinivas fixed for search -- R4B2
+        }
+		else
+		{  //shrinivas fixed for search -- R4B2
             if([searchForString length] > 0)
-				searchForString = [searchForString substringFromIndex:1];
+				searchForString = [searchForString substringFromIndex:0];
         }
 
         NSString *querystring1 = [NSString stringWithFormat:@"Select DISTINCT field_name,search_object_field_type,sequence,field_type,field_relationship_name from '%@' where named_search = '%@'",SFNAMEDSEACHCOMPONENT, lookupID];
@@ -1847,7 +1838,6 @@ extern void SVMXLog(NSString *format, ...);
         sqlite3_stmt * stmt;
         if(synchronized_sqlite3_prepare_v2(appDelegate.db, [querystring1 UTF8String], -1, &stmt, nil) == SQLITE_OK  ) 
         {
-            
             while(synchronized_sqlite3_step(stmt) == SQLITE_ROW) 
             {
                 field_name = @"";
@@ -1887,7 +1877,7 @@ extern void SVMXLog(NSString *format, ...);
                 {
                     [searchable_fields addObject:field_name];
                 }
-                if([field_seach_type isEqualToString:@"Result"])
+                else if([field_seach_type isEqualToString:@"Result"])
                 {
                     [results_array addObject:field_name];
                     
@@ -1900,12 +1890,9 @@ extern void SVMXLog(NSString *format, ...);
         [results_array addObject:@"Id"];
         NSMutableString *result_fieldNames = [[NSMutableString alloc]initWithCapacity:0];
         
-        
         for ( int i = 0; i < [results_array count]; i++ )
         {
-            
             NSString * field = [results_array objectAtIndex:i];
-            
             if ( [field length] !=  0)
             {
                 if ( i == 0 ) 
@@ -1923,22 +1910,21 @@ extern void SVMXLog(NSString *format, ...);
         if([searchForString isEqualToString:@" "] )
         {
             searchForString = [searchForString stringByReplacingOccurrencesOfString:@" " withString:@""];
-        }else{  //shrinivas fixed for search -- R4B2
+        }
+		else
+		{
+			//shrinivas fixed for search -- R4B2
 			if([searchForString length] > 0)
 				searchForString = [searchForString substringFromIndex:1];
         }
-        
-        
-        
+
         NSMutableString * searchFieldNames  = [[NSMutableString alloc] initWithCapacity:0];
-        
         NSMutableString  * newSearch_string  = [[NSMutableString alloc] initWithCapacity:0];
         [newSearch_string appendFormat:@"%%%@%%",searchForString];
         
 		//Shrinivas Change for look Up search start
 		NSMutableDictionary * field_referenceDict = [[NSMutableDictionary alloc] initWithCapacity:0];
 
-		
 		for(NSString * fieldName in searchable_fields)
 		{
 			NSMutableArray * refernceTo = [self getReferenceToForField:fieldName objectapiName:object tableName:SFREFERENCETO];
@@ -1946,10 +1932,8 @@ extern void SVMXLog(NSString *format, ...);
 			{
 				NSString * referenceToFieldName = [refernceTo objectAtIndex:0];
 				[field_referenceDict setObject:referenceToFieldName forKey:fieldName];
-				
 			}
 		}
-		
 		
 		NSArray * referenceFields = [field_referenceDict allKeys];
         for(int j = 0 ; j < [searchable_fields count]; j++)
@@ -1970,19 +1954,13 @@ extern void SVMXLog(NSString *format, ...);
 				
                 if(j == 0 )
                 {
-					
-                   // [searchFieldNames appendFormat:@"( %@ LIKE '%@' ",search_field ,newSearch_string];
 					[searchFieldNames appendFormat:@"( %@  ",cus_searchField];
                 }
                 else
                 {
-                   // [searchFieldNames appendFormat:@"  OR %@ LIKE '%@' ",search_field ,newSearch_string];
 					[searchFieldNames appendFormat:@"  OR %@  ",cus_searchField];
                 }
-                
-                
             }
-            
         }
         
         if([searchable_fields count] > 0)
@@ -1995,10 +1973,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         
         NSString * querystring2 = [NSString stringWithFormat:@"Select %@ from '%@'  where %@ ", result_fieldNames, object, searchFieldNames];
-        // NSMutableArray * _keys = [NSMutableArray arrayWithObjects:@"key", @"value", nil];
-        
-        
-        
+              
         if(synchronized_sqlite3_prepare_v2(appDelegate.db, [querystring2 UTF8String], -1, &stmt, nil) == SQLITE_OK)
         {
             while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
@@ -2087,8 +2062,6 @@ extern void SVMXLog(NSString *format, ...);
         for(int k = 0 ; k< [lookup_object_info count]; k++)
         {
             NSDictionary * look_up =  [lookup_object_info objectAtIndex:k];
-            
-//            NSString * is_standard  = [look_up objectForKey:LOOKUP_IS_STANDARD];
 			
 			//Shrinivas : Fix for defect : 5916
 			NSString * is_standard  = [look_up objectForKey:LOOkUP_IS_DEFAULT]; //Please verufy this change before commiting contact coder : Shrinivas D
@@ -2098,10 +2071,10 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
         
-        
         finalDict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:each_record, sequenceArray,default_display_column, nil] forKeys:_dictKeys];        
         
     }
+	[each_record release];
     
     return finalDict;
 }
@@ -2134,7 +2107,6 @@ extern void SVMXLog(NSString *format, ...);
     NSString * expression = @"";
     
     NSString * final_expr = @"";
-    //iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     SMLog(@"%@", query);
     
     if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
@@ -2223,10 +2195,7 @@ extern void SVMXLog(NSString *format, ...);
             {
                 [components addObject:str];
             }
-            
-            
-        }
-        
+        } 
     }
     
     
@@ -2243,7 +2212,7 @@ extern void SVMXLog(NSString *format, ...);
         
         NSString * query = [NSString stringWithFormat:@"SELECT component_lhs , component_rhs , operator  FROM '%@' where expression_id = '%@'  and component_sequence_number = '%@'",SFEXPRESSION_COMPONENT, expression_id ,appended_component_number];
         
-    //     SMLog(@"%@", query);
+		//SMLog(@"%@", query);
         SMLog(@"%@",query);
         sqlite3_stmt * stmt ;
         
@@ -2311,10 +2280,6 @@ extern void SVMXLog(NSString *format, ...);
                     {
                           operator_  = @"<";
                     }
-                    /*else if([component_operator isEqualToString:@"Starts With"])
-                    {
-                        operator_ = @"";
-                    }*/
                     else if([component_operator isEqualToString:@"Less or Equal To"])
                     {
                         
@@ -2401,9 +2366,7 @@ extern void SVMXLog(NSString *format, ...);
                                 
                                 [temp release];
                                 count ++;
-                            }
-                            //component_rhs = [temp retain];
-                            
+                            }  
                         }
                         else
                         {
@@ -2411,15 +2374,12 @@ extern void SVMXLog(NSString *format, ...);
                             NSMutableDictionary * component_dict = [NSMutableDictionary dictionaryWithObject:dict forKey:component_number];
                             [final_Comonent_array addObject:component_dict];
                         }
-                        
                     }
                     SMLog(@"%@",expression_);
                 }
-                
             }
         }
         synchronized_sqlite3_finalize(stmt);
-        
     }
 
     SMLog(@" final component array %@",final_Comonent_array);
@@ -2450,13 +2410,9 @@ extern void SVMXLog(NSString *format, ...);
             
                        
             NSString * component_expression = @"";
-            
             NSString * data_type = [[appDelegate.databaseInterface getFieldDataType:object_name filedName:lhs] lowercaseString];
 
-            
-            
             // This check is for RecordTypeId
-            
             if([lhs isEqualToString:@"RecordTypeId"])
             {
                 component_expression = [NSString stringWithFormat:@" RecordTypeId   in   (select  record_type_id  from SFRecordType where record_type = '%@' )" , rhs];
@@ -2464,8 +2420,16 @@ extern void SVMXLog(NSString *format, ...);
             }
             else if([data_type isEqualToString:@"reference"])
             {
-                 NSString * referenceToTable = [appDelegate.dataBase getReferencetoFiledForObject:object_name api_Name:lhs];
-                component_expression = [NSString stringWithFormat:@" %@   in   (select  Id  from %@ where Name %@ '%@' )" , lhs,referenceToTable , operator ,rhs];
+				NSString * referenceToTable = [appDelegate.dataBase getReferencetoFiledForObject:object_name api_Name:lhs];
+				if([operator isEqualToString:@"isnotnull"]) //#4722 defect fix for wizard billing type null
+				{
+					NSString * temp_operator = @"is not null";
+					component_expression = [NSString stringWithFormat:@" %@   in   (select  Id  from %@ where Name %@ )" , lhs,referenceToTable , temp_operator ];
+				}
+				else
+				{
+					component_expression = [NSString stringWithFormat:@" %@   in   (select  Id  from %@ where Name %@ '%@' )" , lhs,referenceToTable , operator ,rhs];
+				}
                 
             }
             else if ([operator isEqualToString: @"!="])
@@ -2476,14 +2440,15 @@ extern void SVMXLog(NSString *format, ...);
 			{
 				//#4722 defect fix for wizard billing type null
 				operator = @"!=";
-				component_expression = [NSString stringWithFormat:@" ( %@ %@ null or trim(%@) %@ '' ) ",lhs,operator,lhs,operator];
+				NSString * temp_operator = @"is not null";
+				
+				component_expression = [NSString stringWithFormat:@" ( %@ %@ null or trim(%@) %@ or ( trim(%@) != '') ) ",lhs,operator,lhs,temp_operator, lhs];
 			}
             //Test
             else if ([rhs isEqualToString:@"null"])
             {
                 component_expression = [NSString stringWithFormat:@" ( %@ = ' ' or typeof(%@) %@ '%@' or %@ = '' ) ",lhs,lhs,operator,rhs, lhs];            
             }
-            
             else
             {
                 component_expression = [component_expression stringByAppendingString:lhs];
@@ -2503,7 +2468,6 @@ extern void SVMXLog(NSString *format, ...);
                     
                     if([key isEqualToString:key_test])
                     {
-                       
                         NSDictionary * values_dict_test = [dict_test objectForKey:key];
                         NSString * lhs_ = [values_dict_test objectForKey:@"component_lhs"];
                         NSString * rhs_ = [values_dict_test objectForKey:@"component_rhs"];
@@ -2528,26 +2492,16 @@ extern void SVMXLog(NSString *format, ...);
                             component_expression = [component_expression stringByAppendingString:rhs_];
                         }
                     }
-
                 }
             }
-            
-            
-            
             //for the key concatinate #$ and replace it with the expression
-            
             NSString * concatinate_key = [NSString stringWithFormat:@"#$%@",key];
-            
             SMLog(@"%@", component_expression);
-            
             regular_expression = [regular_expression stringByReplacingOccurrencesOfString:concatinate_key withString:component_expression];
-            
         }
-        
     }
         
     NSString * retExpression = @"";
-    
     if ([regular_expression length] > 0)
     {
         retExpression = [NSString stringWithFormat:@"(%@)", regular_expression];
@@ -2557,7 +2511,6 @@ extern void SVMXLog(NSString *format, ...);
         retExpression = [NSString stringWithFormat:@"%@", regular_expression];
     }
     
- //   SMLog(@"%@",regular_expression);
     return retExpression;
 }
 
@@ -2591,37 +2544,28 @@ extern void SVMXLog(NSString *format, ...);
                     flag = FALSE;
             }
         }
-        
         synchronized_sqlite3_finalize(stmt);
         return flag;
     }
-   
     else
     {
         return flag;
     }
-    
 }
 
 //For Action Buttons 
 -(NSMutableDictionary *)getWizardInformationForObjectname:(NSString *) objectName  record_id:(NSString *)record_id
 {
     NSMutableDictionary * wizard_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
-    
-    
     NSMutableArray * wizard_array = [[NSMutableArray alloc] initWithCapacity:0];
     NSMutableArray * wizard_ids_array = [[NSMutableArray alloc] initWithCapacity:0];
     NSMutableArray * wizard_buttons_array = [[NSMutableArray alloc] initWithCapacity:0]; 
-    
     NSString * query = [NSString stringWithFormat:@"SELECT wizard_id , expression_id , wizard_description, wizard_name  FROM '%@' where object_name = '%@'" ,SFWIZARD , objectName];
-    
     NSString * wizard_id = @"";
     NSString * expression_id = @"";
     NSString * wizard_description = @"";
     NSString * wizard_title = @"";  //RADHA
-    
     NSArray * keys = [NSArray arrayWithObjects:WIZARD_ID,WIZARD_DESCRIPTION, WIZARD_TITLE, nil];
-    
     sqlite3_stmt * stmt ;
     
     if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK  )
@@ -2682,12 +2626,10 @@ extern void SVMXLog(NSString *format, ...);
     [wizard_dict  setObject:wizard_buttons_array forKey:SFW_WIZARD_BUTTONS];
     
     return wizard_dict;
-    
 }
 
 -(NSMutableArray *)getButtonsForWizardInformation:(NSMutableArray *)wizard_ids_array  record_id:(NSString *)record_id  object_name:(NSString *)objectName
 {
-
     NSString * action_id = @"";
     NSString * action_description = @"";
     NSString * expression_id = @"";
@@ -2772,12 +2714,8 @@ extern void SVMXLog(NSString *format, ...);
                             method_name = [NSString stringWithUTF8String:temp_method_name];
                     }
                     
-                    
-                    
                     if([expression_id length] != 0)
                     {
-                        //iServiceAppDelegate * appdelegate =(iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-                        
                         NSString * expression = [appDelegate.databaseInterface queryForExpression:expression_id forObject:objectName];
                         
                         BOOL flag = [appDelegate.databaseInterface validateTheExpressionForRecordId:record_id objectName:objectName expression:expression];
@@ -2798,9 +2736,7 @@ extern void SVMXLog(NSString *format, ...);
                     {
                         NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:action_id,action_description , expression_id, process_id, action_type , wizard_id, @"true",perfom_sync, class_name,method_name, nil] forKeys:keys];
                         [buttons_array addObject:dict];
-                        
                     }
-                    
                 }
             }
             synchronized_sqlite3_finalize(stmt);
@@ -2820,10 +2756,6 @@ extern void SVMXLog(NSString *format, ...);
     NSString * object_mapping_id = [process_components objectForKey:OBJECT_MAPPING_ID];
     NSString * value_mapping_id = [process_components objectForKey:VALUE_MAPPING_ID];
     NSString * expression_id = [process_components objectForKey:EXPRESSION_ID];
-   
-    
-       
-    
     NSString * source_object_name = [process_components objectForKey:SOURCE_OBJECT_NAME]; 
     NSString * target_object_name = [process_components objectForKey:TARGET_OBJECT_NAME];
     NSString * source_field_name = @"";
@@ -2831,10 +2763,7 @@ extern void SVMXLog(NSString *format, ...);
     NSString * mapping_value = @"";
     NSString * mapping_value_flag = @"";
     NSString * mapping_component_type = @"";
-    
-    // iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     NSString * expression_ = [appDelegate.databaseInterface  queryForExpression:expression_id forObject:source_object_name];
-
     
     if(object_mapping_id != nil || [object_mapping_id length] != 0 )
     {
@@ -2893,52 +2822,8 @@ extern void SVMXLog(NSString *format, ...);
                         
                     }
                 }
-                
-                
                 if([mapping_component_type isEqualToString:VALUE_MAPPING])
                 {
-//                    [final_dict  setObject:mapping_value forKey:target_field_name];
-//                    if(source_field_name != 0 && [source_field_name length] != 0)
-//                    {
-//                        [final_dict  setObject:mapping_value forKey:target_field_name];
-//                    }
-//                    
-//                    
-//                    if([target_field_name isEqualToString:@"RecordTypeId"])
-//                    {
-//                        // NSString * value  =  ;
-//                        //select  record_type_id  from SFRecordType where record_type = '%@' target_object_name
-//                        
-//                        NSString * query = [NSString stringWithFormat:@"SELECT record_type_id FROM  SFRecordType where object_api_name = '%@' and record_type = '%@'" ,target_object_name,mapping_value];
-//                        NSString * record_type_id = @"";
-//                        
-//                        SMLog(@"RecordTypeId  valuemapping %@" ,query);
-//                        sqlite3_stmt * recordTypeId_statement ;
-//                        if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &recordTypeId_statement, nil) == SQLITE_OK)
-//                        {
-//                            while (synchronized_sqlite3_step(recordTypeId_statement) == SQLITE_ROW)
-//                            {
-//                                char * temp_record_type_id = (char *) synchronized_sqlite3_column_text(recordTypeId_statement, 0);
-//                                if(temp_record_type_id != nil)
-//                                {
-//                                    record_type_id = [NSString stringWithUTF8String:temp_record_type_id];
-//                                }
-//                            }
-//                        }
-//                        synchronized_sqlite3_finalize(recordTypeId_statement);
-//                        if(![record_type_id isEqualToString:@""])
-//                        {
-//                            mapping_value = record_type_id;
-//                        }
-//                        else
-//                        {
-//                            mapping_value = @"";
-//                        }
-//                        
-//                        [final_dict  setObject:mapping_value forKey:target_field_name];
-//                        
-//                    }
-                    
                     if(target_field_name != 0 && [target_field_name length] != 0)
                     {
                         
@@ -2951,7 +2836,6 @@ extern void SVMXLog(NSString *format, ...);
                         NSString * today_Date ,* tomorow_date ,* yesterday_date;
                         
                         NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
-                        //[dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
                         
                         NSDate *today = [[[NSDate alloc] init] autorelease];;
                         
@@ -2961,14 +2845,10 @@ extern void SVMXLog(NSString *format, ...);
                         
                         yesterday = [today dateByAddingTimeInterval: -secondsPerDay];
                         
-                        
-                        
                         //for macros expantion
                         if([data_type isEqualToString:@"date"])
                         {
                             [dateFormatter setDateFormat:@"yyyy-MM-dd"];
-                            
-                            
                             today_Date = [dateFormatter stringFromDate:today];
                             tomorow_date = [dateFormatter stringFromDate:tomorrow];
                             yesterday_date = [dateFormatter stringFromDate:yesterday];
@@ -2978,12 +2858,12 @@ extern void SVMXLog(NSString *format, ...);
                                 [final_dict setObject:today_Date forKey:target_field_name];
                                 
                             }
-                            if([mapping_value caseInsensitiveCompare:MACRO_TOMMOROW] == NSOrderedSame)
+                            else if([mapping_value caseInsensitiveCompare:MACRO_TOMMOROW] == NSOrderedSame)
                             {
                                 [final_dict setObject:tomorow_date forKey:target_field_name];
                                 
                             }
-                            if([mapping_value caseInsensitiveCompare:MACRO_YESTERDAY] == NSOrderedSame)
+                            else if([mapping_value caseInsensitiveCompare:MACRO_YESTERDAY] == NSOrderedSame)
                             {
                                 [final_dict setObject:yesterday_date forKey:target_field_name];
                             }
@@ -3005,36 +2885,25 @@ extern void SVMXLog(NSString *format, ...);
                             yesterday_date = [dateFormatter stringFromDate:yesterday];
                             yesterday_date = [yesterday_date stringByReplacingOccurrencesOfString:@" " withString:@"T"];
                             
-                            //                            today_Date = [dateFormatter stringFromDate:today];
-                            //                            tomorow_date = [dateFormatter stringFromDate:tomorrow];
-                            //                            yesterday_date = [dateFormatter stringFromDate:yesterday];
-                            
                             if([mapping_value caseInsensitiveCompare:MACRO_NOW] == NSOrderedSame)
                             {
                                 [final_dict setObject:today_Date forKey:target_field_name];
                             }
-                            
-                            if([mapping_value caseInsensitiveCompare:MACRO_TODAY] == NSOrderedSame)
+                            else if([mapping_value caseInsensitiveCompare:MACRO_TODAY] == NSOrderedSame)
                             {
                                 [final_dict setObject:today_Date forKey:target_field_name];
                             }
-                            
-                            if([mapping_value caseInsensitiveCompare:MACRO_TOMMOROW] == NSOrderedSame)
+                            else if([mapping_value caseInsensitiveCompare:MACRO_TOMMOROW] == NSOrderedSame)
                             {
                                 [final_dict setObject:tomorow_date forKey:target_field_name];
                             }
-                            
-                            if([mapping_value caseInsensitiveCompare:MACRO_YESTERDAY] == NSOrderedSame)
+                            else if([mapping_value caseInsensitiveCompare:MACRO_YESTERDAY] == NSOrderedSame)
                             {
                                 [final_dict setObject:yesterday_date forKey:target_field_name];
                             }
-                            
                         }
                         if([target_field_name isEqualToString:@"RecordTypeId"])
-                        {
-                            // NSString * value  =  ;
-                            //select  record_type_id  from SFRecordType where record_type = '%@' target_object_name
-                            
+                        {   
                             NSString * query = [NSString stringWithFormat:@"SELECT record_type_id FROM  SFRecordType where object_api_name = '%@' and record_type = '%@'" ,target_object_name,mapping_value];
                             NSString * record_type_id = @"";
                             
@@ -3070,13 +2939,11 @@ extern void SVMXLog(NSString *format, ...);
                         {
                             [final_dict setObject:appDelegate.username forKey:target_field_name];
                         }
-                        if ([mapping_value isEqualToString:MACRO_RECORDOWNER])
+                        else if ([mapping_value isEqualToString:MACRO_RECORDOWNER])
                         {
                             [final_dict setObject:MACRO_RECORDOWNER forKey:target_field_name];
                         }
-                        
                     }
-
                 }
                 
                 if([mapping_component_type isEqualToString:FIELD_MAPPING])
@@ -3148,12 +3015,8 @@ extern void SVMXLog(NSString *format, ...);
                 //check whether the value is 
                 if([mapping_component_type isEqualToString:VALUE_MAPPING])
                 {
-                    
-                    //if([mapping_value isEqualToString:])
-                    
                     if(target_field_name != 0 && [target_field_name length] != 0)
                     {
-                       
                         [final_dict  setObject:mapping_value forKey:target_field_name];
                         
                         NSString * data_type = [appDelegate.databaseInterface getFieldDataType:target_object_name filedName:target_field_name];
@@ -3163,7 +3026,6 @@ extern void SVMXLog(NSString *format, ...);
                         NSString * today_Date ,* tomorow_date ,* yesterday_date;
                         
                         NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
-                        //[dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
                         
                         NSDate *today = [[[NSDate alloc] init] autorelease];;
                         
@@ -3172,14 +3034,10 @@ extern void SVMXLog(NSString *format, ...);
                         tomorrow = [today dateByAddingTimeInterval: secondsPerDay];
                         
                         yesterday = [today dateByAddingTimeInterval: -secondsPerDay];
-                        
-                       
-                        
                         //for macros expantion
                         if([data_type isEqualToString:@"date"])
                         {
                             [dateFormatter setDateFormat:@"yyyy-MM-dd"];
-                            
 
                             today_Date = [dateFormatter stringFromDate:today];
                             tomorow_date = [dateFormatter stringFromDate:tomorrow];
@@ -3190,12 +3048,12 @@ extern void SVMXLog(NSString *format, ...);
                                 [final_dict setObject:today_Date forKey:target_field_name];
                                 
                             }
-                            if([mapping_value isEqualToString:MACRO_TOMMOROW])
+                            else if([mapping_value isEqualToString:MACRO_TOMMOROW])
                             {
                                 [final_dict setObject:tomorow_date forKey:target_field_name];
                                 
                             }
-                            if([mapping_value isEqualToString:MACRO_YESTERDAY])
+                            else if([mapping_value isEqualToString:MACRO_YESTERDAY])
                             {
                                 [final_dict setObject:yesterday_date forKey:target_field_name];
                             }
@@ -3216,27 +3074,20 @@ extern void SVMXLog(NSString *format, ...);
                             
                             yesterday_date = [dateFormatter stringFromDate:yesterday];
                             yesterday_date = [yesterday_date stringByReplacingOccurrencesOfString:@" " withString:@"T"];
-
-//                            today_Date = [dateFormatter stringFromDate:today];
-//                            tomorow_date = [dateFormatter stringFromDate:tomorrow];
-//                            yesterday_date = [dateFormatter stringFromDate:yesterday];
                             
                             if([mapping_value isEqualToString:MACRO_NOW])
                             {
                                 [final_dict setObject:today_Date forKey:target_field_name];
                             }
-                            
-                            if([mapping_value isEqualToString:MACRO_TODAY])
+                            else if([mapping_value isEqualToString:MACRO_TODAY])
                             {
                                 [final_dict setObject:today_Date forKey:target_field_name];
                             }
-                            
-                            if([mapping_value isEqualToString:MACRO_TOMMOROW])
+                            else if([mapping_value isEqualToString:MACRO_TOMMOROW])
                             {
                                 [final_dict setObject:tomorow_date forKey:target_field_name];
                             }
-                            
-                            if([mapping_value isEqualToString:MACRO_YESTERDAY])
+                            else if([mapping_value isEqualToString:MACRO_YESTERDAY])
                             {
                                 [final_dict setObject:yesterday_date forKey:target_field_name];
                             }
@@ -3244,9 +3095,6 @@ extern void SVMXLog(NSString *format, ...);
                         }
                         if([target_field_name isEqualToString:@"RecordTypeId"])
                         {
-                            // NSString * value  =  ;
-                            //select  record_type_id  from SFRecordType where record_type = '%@' target_object_name
-                            
                             NSString * query = [NSString stringWithFormat:@"SELECT record_type_id FROM  SFRecordType where object_api_name = '%@' and record_type = '%@'" ,target_object_name,mapping_value];
                             NSString * record_type_id = @"";
                             
@@ -3272,9 +3120,7 @@ extern void SVMXLog(NSString *format, ...);
                             {
                                 mapping_value = @"";
                             }
-                            
                             [final_dict  setObject:mapping_value forKey:target_field_name];
-                            
                         }
 
                         
@@ -3282,7 +3128,7 @@ extern void SVMXLog(NSString *format, ...);
                         {
                             [final_dict setObject:appDelegate.username forKey:target_field_name];
                         }
-                        if ([mapping_value isEqualToString:MACRO_RECORDOWNER])
+                        else if ([mapping_value isEqualToString:MACRO_RECORDOWNER])
                         {
                             [final_dict setObject:MACRO_RECORDOWNER forKey:target_field_name];
                         }
@@ -3358,9 +3204,7 @@ extern void SVMXLog(NSString *format, ...);
                         field_value = [NSString stringWithUTF8String:temp_field_value];
                     }
                     [dict setObject:field_value forKey:[target_field_names  objectAtIndex:k]];
-                   // [final_dict setObject:field_value forKey:[target_field_names  objectAtIndex:k]];
                 }
-                
                 
                 for(int p = 0 ; p < [allkeys count]; p++ )
                 {
@@ -3384,13 +3228,10 @@ extern void SVMXLog(NSString *format, ...);
                 [final_array addObject:dict];
             }
         }
-        
         synchronized_sqlite3_finalize(stmt);
-           
     }
     
     SMLog(@" Final array SOURCETOTARGET%@", final_array);
-    
     return final_array;
 }
 
@@ -3409,16 +3250,14 @@ extern void SVMXLog(NSString *format, ...);
             
         }
     }
+	
     return id_value;
-    
 }
 
 -(NSMutableArray *)getChildLocalIdForParentId:(NSString *)parent_id childTableName:(NSString *)childObjectName sourceTableName:(NSString *)sourceObjectName
 {
     NSMutableArray * source_child_ids = [[NSMutableArray alloc] initWithCapacity:0];
     NSString * source_child_id ;
-    
-   // iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     
     NSString * parent_column_name = [appDelegate.databaseInterface getParentColumnNameFormChildInfoTable:SFChildRelationShip childApiName:childObjectName parentApiName:sourceObjectName];
 
@@ -3445,6 +3284,7 @@ extern void SVMXLog(NSString *format, ...);
     synchronized_sqlite3_finalize(stmt);
     return source_child_ids;
 }
+
 -(NSString *)getprocessTypeForProcessId:(NSString *)process_id;
 {
     NSString * process_Type = @"";
@@ -3499,7 +3339,6 @@ extern void SVMXLog(NSString *format, ...);
             else
                 [updateValue  appendFormat:@" , %@ = '%@' ",key ,value ];
         }
-        
     }
     
     NSString * update_statement;
@@ -3513,7 +3352,6 @@ extern void SVMXLog(NSString *format, ...);
         return FALSE;
     else
         return TRUE;
-       
     
     char * err;
     
@@ -3528,8 +3366,6 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     return success;
-    
-    
 }
 
 
@@ -3590,7 +3426,6 @@ extern void SVMXLog(NSString *format, ...);
     if(synchronized_sqlite3_exec(appDelegate.db, [update_statement UTF8String],NULL, NULL, &err) != SQLITE_OK)
     {
         success = FALSE;
-        
         SMLog(@"ERROR IN UPDATING %@" ,update_statement );
     }
     else
@@ -3599,7 +3434,6 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     return success;
-
 }
 
 #pragma mark - updateNullValue
@@ -3630,7 +3464,6 @@ extern void SVMXLog(NSString *format, ...);
 
 
 #pragma mark -END
-
 -(NSString *)getLookUpNameForId:(NSString *)id_ 
 {
     NSString * query = [NSString  stringWithFormat:@"SELECT value from LookUpFieldValue where Id = '%@'" ,id_ ];
@@ -3655,7 +3488,6 @@ extern void SVMXLog(NSString *format, ...);
     NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithCapacity:0];
     
     NSMutableArray * Objects_Array  = [[NSMutableArray alloc] initWithCapacity:0];
-    //NSString * query_ = [NSString  stringWithFormat:@"SELECT DISTINCT object_name from sync_Records_Heap where sync_flag = 'false'"];
     NSString * query_ = [[NSString alloc ]initWithFormat:@"SELECT DISTINCT object_name from sync_Records_Heap where sync_flag = 'false'"];                 //18Apr 
      sqlite3_stmt * stmt_;
     NSString * object_name_temp =@"";
@@ -3669,7 +3501,6 @@ extern void SVMXLog(NSString *format, ...);
             {
                 object_name_temp =[NSString stringWithUTF8String:temp_object_name];
             }
-            
             [Objects_Array addObject:object_name_temp];
         }
     }
@@ -3703,7 +3534,6 @@ extern void SVMXLog(NSString *format, ...);
                 NSArray * allkeys = [dict allKeys];
                 BOOL flag = FALSE;
                 
-                //  NSString * sfId = (NSString *)sf_id;
                 for( NSString * temp in allkeys )
                 {
                     if([temp isEqualToString:object_name])
@@ -3727,7 +3557,6 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     [Objects_Array release];
-    //SMLog(@"putApllRecords For ids %d %@",[dict count],dict);
     return dict;
 }
 
@@ -3738,31 +3567,20 @@ extern void SVMXLog(NSString *format, ...);
     sync_data = [sync_data retain];
     NSArray * all_objects = [sync_data allKeys];
     
-  //  sqlite3_exec(appDelegate.db, "PRAGMA cache_size=500000;", nil, nil, nil);
-    //sqlite3_exec(appDelegate.db, "PRAGMA synchronous=OFF", nil, nil, nil);
-    //sqlite3_exec(appDelegate.db, "PRAGMA count_changes=OFF", nil, nil, nil);
-    //sqlite3_exec(appDelegate.db, "PRAGMA temp_store=MEMORY", nil, nil, nil);
-    
     for(NSString * object_name in  all_objects)
     {
         NSMutableArray *  object_info = [sync_data objectForKey:object_name];
         SMLog(@" no of records %d", [object_info count]);
-       // NSString* txnstmt = @"BEGIN TRANSACTION";
       
         for (int i = 0 ; i < [object_info count]; i++) 
         {
-            
-         /*   NSString* txnstmt = @"BEGIN TRANSACTION";
-            char * err1 ;
-            int retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err1);  */
-            
             NSAutoreleasePool * autorelease = [[NSAutoreleasePool alloc] init];
             NSDictionary * dict = [ object_info objectAtIndex:i];
             NSArray * all_keys = [dict allKeys];
             NSString * sf_id = @"", * local_id = @"", *json_record = @"";
             for(NSString * key in all_keys)
             {
-               // @"LOCAL_ID",@"JSON_RECORD",@"SF_ID",
+                // @"LOCAL_ID",@"JSON_RECORD",@"SF_ID",
                 if([key isEqualToString:@"LOCAL_ID"])
                 {
                     local_id = [dict objectForKey:@"LOCAL_ID"];
@@ -3787,12 +3605,7 @@ extern void SVMXLog(NSString *format, ...);
               
             }
             [autorelease drain];
-           /* txnstmt = @"END TRANSACTION";
-            int retval1 = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err1);  */
-
-           
         }
-        
     }
     [sync_data release];
     SMLog(@"SAMMAN updateAllRecordsToSyncRecordsHeap Processing ends: %@", [NSDate date]);
@@ -3807,7 +3620,7 @@ extern void SVMXLog(NSString *format, ...);
     NSString * local_id = @"", * object_name = @""  , * record_type = @"" , * sf_id = @"" ;
     NSString * query  = [NSString stringWithFormat:@"SELECT  local_id , object_name , record_type, sf_id  FROM '%@' WHERE sync_type = '%@'   and override_flag = '%@'" ,SYNC_ERROR_CONFLICT , sync_type , override_flag_value];
     
-   // SMLog(@" getAllRecords  %@", query);
+    // SMLog(@" getAllRecords  %@", query);
     if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1 , &statement , nil)  ==  SQLITE_OK)
     {
         while (synchronized_sqlite3_step(statement)== SQLITE_ROW)
@@ -3924,9 +3737,6 @@ extern void SVMXLog(NSString *format, ...);
         }
         
     }
-
-
- 
     SMLog(@" sync_data %d",[sync_data retainCount]);
     [sync_data release];
     SMLog(@"IComeOUTHere databaseinterface");
@@ -3958,7 +3768,7 @@ extern void SVMXLog(NSString *format, ...);
     NSString * local_id = @"", * object_name = @"" , * parent_object_name = @"" , *parent_local_id = @"" , * time_stamp= @"" , * record_type = @"";
     NSString * query  = [NSString stringWithFormat:@"SELECT  local_id , object_name  , parent_object_name, parent_local_id , timestamp , record_type  FROM '%@' WHERE operation = '%@' and sync_flag = 'false' and timestamp <= '%@' and record_sent = 'false'" ,SFDATATRAILER_TEMP , operation_type,request_time];
     
- //   SMLog(@" getAllRecords  %@", query);
+	// SMLog(@" getAllRecords  %@", query);
     if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String],-1 , &statement , nil)  ==  SQLITE_OK)
     {
         
@@ -4009,9 +3819,7 @@ extern void SVMXLog(NSString *format, ...);
     
     today_Date = [dateFormatter stringFromDate:date];
     
- //   SMLog(@"%@  sf_id %@" , local_id, sf_id);
-    
-    
+	// SMLog(@"%@  sf_id %@" , local_id, sf_id);
     NSString * insert_statement;
     insert_statement = [NSString stringWithFormat:@"INSERT INTO '%@' (local_id ,sf_id ,record_type, operation, object_name, sync_flag, parent_object_name, parent_local_id,timestamp,record_sent) VALUES ('%@' , '%@' , '%@' , '%@' , '%@' ,'%@', '%@', '%@','%@','false')",SFDATATRAILER,local_id , sf_id , record_type, operation ,Object_name , sync, parentObjectName, parent_local_id,today_Date];
     
@@ -4062,10 +3870,8 @@ extern void SVMXLog(NSString *format, ...);
                 {
                     [array addObject:object_name];
                 }
-                
             }
         }
-
     }
     else
     {
@@ -4117,7 +3923,6 @@ extern void SVMXLog(NSString *format, ...);
     
     if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, nil) ==  SQLITE_OK)
     {
-        
         while (synchronized_sqlite3_step(statement) == SQLITE_ROW) 
         {
             for(int i = 0 ; i < [fields_array count] ; i++)
@@ -4129,7 +3934,6 @@ extern void SVMXLog(NSString *format, ...);
                 {
                     value  = [NSString stringWithUTF8String:temp_column];
                 }
-                
                 
                 //Radha
                 NSString * field_data_type = [self getFieldDataType:object_name filedName:field];
@@ -4153,18 +3957,15 @@ extern void SVMXLog(NSString *format, ...);
                 {
                     [dict setValue:value forKey:field];
                 }
-                
             }
         }
     }
     synchronized_sqlite3_finalize(statement);
     return dict;
-    
 }
 
 -(void)updateDataTrailer_RecordSentForlocalId:(NSString *)local_id operation_type:(NSString *)operationType
 {
-    
     NSString * update_statement = [NSString stringWithFormat:@"UPDATE '%@' SET record_sent = 'true' WHERE local_id = '%@' and operation = '%@' " ,SFDATATRAILER_TEMP , local_id , operationType];
     
     char * err ;
@@ -4172,11 +3973,10 @@ extern void SVMXLog(NSString *format, ...);
     {
         SMLog(@" failed to update ");
     }
-    
 }
+
 -(void)copyTrailerTableToTempTrailerForOperationType:(NSString *)operation_type
 {
-    
     NSString * query = [NSString stringWithFormat:@"INSERT INTO '%@' (timestamp ,  local_id , sf_id ,  record_type ,  operation ,  object_name ,  sync_flag  ,  parent_object_name   , parent_local_id   ,  record_sent )   SELECT timestamp ,  local_id , sf_id ,  record_type ,  operation ,  object_name ,  sync_flag  ,  parent_object_name   , parent_local_id   ,  record_sent  from  '%@' WHERE operation = '%@'",SFDATATRAILER_TEMP,SFDATATRAILER,operation_type];
     
     char * err ;
@@ -4194,10 +3994,9 @@ extern void SVMXLog(NSString *format, ...);
     {
         SMLog(@"Failed to drop");
     }
-
-    
 }
 
+//unused 
 -(NSMutableArray *) getAllSyncRecordsFromSYNCHeap
 {
     NSArray * keys = [NSArray arrayWithObjects:@"sf_id",@"local_id", @"object_name",@"json_record",@"record_type",@"sync_type" ,nil];
@@ -4241,11 +4040,11 @@ extern void SVMXLog(NSString *format, ...);
             }
             
             NSDictionary * dict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:sf_id,local_id,object_name,json_record, record_type, sync_type,nil] forKeys:keys];
-                      
         }
     }
-   
+	return [NSMutableArray arrayWithCapacity:0];
 }
+
 -(NSArray *)getAllObjectsFromHeap
 {
     NSString  * sql = [NSString stringWithFormat:@"SELECT DISTINCT object_name FROM 'sync_Records_Heap'  where sync_flag = 'true'"];
@@ -4299,9 +4098,9 @@ extern void SVMXLog(NSString *format, ...);
     }
     return dict;
 }
+
 -(void)updateSyncRecordsIntoLocalDatabase
 {
-    
     NSArray * objects_names = [self getAllObjectsFromHeap];
     
     NSString* txnstmt = @"BEGIN TRANSACTION";
@@ -4467,10 +4266,8 @@ extern void SVMXLog(NSString *format, ...);
                         //call insert method 
                         if(check_flag)
                         {
-                            
                             //temp change
                             [final_dict setObject:new_local_id forKey:@"local_id"];
-                            /*insert_flag = [self insertdataIntoTable:object_Name data:final_dict];*/
                             
                             for(int x = 0; x < [all_keys_object_api_names count]; x++)
                             {
@@ -4601,8 +4398,6 @@ extern void SVMXLog(NSString *format, ...);
         }
         synchronized_sqlite3_finalize(statement);
     }
-    
-    
     txnstmt = @"END TRANSACTION";
     retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);    
     
@@ -4616,7 +4411,6 @@ extern void SVMXLog(NSString *format, ...);
     {
         while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
         {
-            
             temp_child_object_name = @"";
             char * temp_object_name = (char *)synchronized_sqlite3_column_text(statement, 0);
             if(temp_object_name != nil)
@@ -4631,8 +4425,6 @@ extern void SVMXLog(NSString *format, ...);
             
         }
     }
-    
-    
     statement = nil;
     
     NSString  * sql2 = [NSString stringWithFormat:@"SELECT sf_id ,local_id, object_name , json_record ,record_type,sync_type FROM 'sync_Records_Heap'  where sync_flag = 'true'  AND record_type = 'DETAIL'"];
@@ -4711,16 +4503,14 @@ extern void SVMXLog(NSString *format, ...);
                     
                 }
             }
-            
         }
     }
     
     synchronized_sqlite3_finalize(statement);
-    
 }
+
 -(void)InsertInto_User_created_event_for_local_id:(NSString *)local_id sf_id:(NSString *)sf_id
 {
-    
     NSString * version = [appDelegate serverPackageVersion];
 	int _stringNumber = [version intValue];
     
@@ -4739,7 +4529,6 @@ extern void SVMXLog(NSString *format, ...);
             SMLog(@"Insert Failed");
         }
     }
-
 }
 
 -(void)updatedataTrailerTAbleForLocal_id:(NSString *)local_id  sf_id:(NSString *)sf_id
@@ -4786,8 +4575,6 @@ extern void SVMXLog(NSString *format, ...);
     }
     synchronized_sqlite3_finalize(stmt);
     [query release];
-    
-    
     NSString * paren_local_id = @"";
     NSString * query1 = [[NSString alloc ] initWithFormat:@"SELECT local_id FROM '%@' WHERE Id = '%@'" ,parentObjectName,Parent_Sf_id];
     sqlite3_stmt * stmt1 ;
@@ -4839,9 +4626,7 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     return fieldName;
-
 }
-
 
 -(BOOL)DeleteDataTrailerTableAfterSync:(NSString *)local_id forObject:(NSString *)object  sync_type:(NSString *)sync_type
 {
@@ -4883,11 +4668,9 @@ extern void SVMXLog(NSString *format, ...);
 
 -(NSMutableDictionary *)getDictForJsonString:(NSString *)json_record
 {
-    
     NSAutoreleasePool * autoreleasePool = [[NSAutoreleasePool alloc] init];
     SBJsonParser * jsonParser = [[[SBJsonParser alloc] init] autorelease];
     NSDictionary * json_dict = [jsonParser objectWithString:json_record];
-    
 
     NSMutableDictionary * lookUpDict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
     NSMutableDictionary * final_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
@@ -4990,11 +4773,10 @@ extern void SVMXLog(NSString *format, ...);
     }
     return Id_;
 }
-//-(int)countOfChildObjectInSFChildRelationship:(NSString *)object_name
+
 -(BOOL)IsChildObject:(NSString *)object_name
 {
     int count = 0;
-    
     NSAutoreleasePool * autoreleasePool = [[NSAutoreleasePool alloc] init];
     NSString * query = [NSString stringWithFormat:@"SELECT COUNT(*) FROM '%@'  WHERE object_api_name_child = '%@'" ,SFCHILDRELATIONSHIP,object_name ];
     
@@ -5050,7 +4832,6 @@ extern void SVMXLog(NSString *format, ...);
             NSString * sf_id = @"", * local_id = @"", * sync_type = @"" , * record_type = @"" , * error_message = @"" , * error_type = @"";
             for(NSString * key in all_keys)
             {
-
                 if([key isEqualToString:@"LOCAL_ID"])
                 {
                     local_id = [dict objectForKey:@"LOCAL_ID"];
@@ -5106,8 +4887,6 @@ extern void SVMXLog(NSString *format, ...);
             count = temp_count;
         }
     }
-    
-    
     synchronized_sqlite3_finalize(stmt);
     if(count == 0)
     {
@@ -5166,9 +4945,7 @@ extern void SVMXLog(NSString *format, ...);
         query  = [NSString stringWithFormat:@"SELECT  local_id , object_name , record_type, sf_id ,override_flag FROM '%@' WHERE sync_type = '%@'   and override_flag = '%@'" ,SYNC_ERROR_CONFLICT , operation_type , override_flag_value];
     }
     
-    
     NSString * local_id = @"", * object_name = @""  , * record_type = @"" , * sf_id = @"" , * override_flag = @"" ;
-     
     
     SMLog(@" getAllRecords  %@", query);
     if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1 , &statement , nil)  ==  SQLITE_OK)
@@ -5196,7 +4973,6 @@ extern void SVMXLog(NSString *format, ...);
             char * temp_override = (char *) synchronized_sqlite3_column_text(statement, 4);
             if(temp_override != nil)
                 override_flag = [NSString stringWithUTF8String:temp_override];
-
             
             NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:local_id, object_name ,record_type,sf_id,override_flag,nil] forKeys:keys];
             [array addObject:dict];
@@ -5208,8 +4984,7 @@ extern void SVMXLog(NSString *format, ...);
 
 -(NSString *) getParentIdFrom:(NSString *)tablename WithId:(NSString *)Id_ andParentColumnName:(NSString *)parent_column_name id_type:(NSString *)id_type
 {
-    
-//Sahana fix for defect #5818
+	//Sahana fix for defect #5818
     NSString * selectQuery = [NSString stringWithFormat:@"Select %@ From '%@' Where %@ = '%@'",parent_column_name, tablename,id_type, Id_];
     
     sqlite3_stmt * stmt ;
@@ -5229,15 +5004,12 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     return local_Id;
-    
 }
 
 -(void) deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:(NSString *)sync_type ; 
 {
     NSMutableDictionary * delete_list = [[NSMutableDictionary alloc] initWithCapacity:0];
     NSString * query = [NSString stringWithFormat:@"SELECT sf_id ,object_name FROM  '%@' WHERE  sync_type = '%@'" , SYNC_RECORD_HEAP,sync_type];
-    
-    
     sqlite3_stmt * stmt ;
     NSString * sf_id = @"" , * object_name = @"";
     if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
@@ -5269,20 +5041,16 @@ extern void SVMXLog(NSString *format, ...);
             if(object_exists)
             {
                 NSMutableArray * array  = [delete_list objectForKey:object_name];
-              //  NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:sf_id, nil] forKeys:keys];
                 [array addObject:sf_id];
                 
             }
             else
             {
                 NSMutableArray * array = [[NSMutableArray alloc] initWithCapacity:0];
-              //  NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:sf_id, nil] forKeys:keys];
                 [array addObject:sf_id];
                 [delete_list setObject:array forKey:object_name];
-                
             }
         }
-        
     }
     
     [self deleteAllrecordsWithSF_ID:delete_list];
@@ -5367,8 +5135,6 @@ extern void SVMXLog(NSString *format, ...);
     
     sqlite3_stmt * statement;
     NSString * query ;
-   
-  //  query  = [NSString stringWithFormat:@"SELECT  local_id , object_name , record_type, sf_id ,override_flag FROM '%@' WHERE sync_type = '%@'   and error_type = '%@'" ,SYNC_ERROR_CONFLICT , operation_type ,errorType];
 
     query  = [NSString stringWithFormat:@"SELECT  local_id , object_name , record_type, sf_id ,override_flag FROM '%@' WHERE sync_type = '%@'   " ,SYNC_ERROR_CONFLICT , operation_type ];
     
@@ -5440,13 +5206,11 @@ extern void SVMXLog(NSString *format, ...);
         delete_stmt = [NSString stringWithFormat:@"DELETE FROM %@  WHERE sync_type = '%@'  and override_flag ='%@' and %@ = '%@'",table_name,opeation_type,override_flag, field_name , id_];
     }
     
-    
     char * err ;
     if(synchronized_sqlite3_exec(appDelegate.db, [delete_stmt UTF8String], NULL, NULL, &err))
     {
         SMLog(@"Failed to DELETE ");
     }
-    
 }
 
 
@@ -5505,7 +5269,6 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void)fillDependencyPickListInfo
 {
-    
     NSMutableArray * describeObjects = [[self getAllobjectsApiNameFromSFObjectField] retain];
     [[ZKServerSwitchboard switchboard] describeSObjects:describeObjects  target:self selector:@selector(didDescribeSObjects:error:context:) context:nil];
 }
@@ -5573,7 +5336,6 @@ extern void SVMXLog(NSString *format, ...);
                     
                     [self UpdateSFPicklistForMultiSelect_IndexValue_For_Oject_Name:object_name field_api_name:field_api_name value:value index:k];
                 }
-
 			}
 			
             if([type isEqualToString:@"picklist"])
@@ -5586,12 +5348,10 @@ extern void SVMXLog(NSString *format, ...);
                 //update the controller type for the object anf field_name 
                 if(isdependentPicklist)
                 {
-                    
                     [self UpdateSFObjectField_For_Picklist_TypeObject:object_name field_api_name:field_api_name dependent_picklist:dependent_value controler_field_name:controller_name];
                 }
                 else
                 {
-                    
                     [self UpdateSFObjectField_For_Picklist_TypeObject:object_name field_api_name:field_api_name dependent_picklist:@"false" controler_field_name:@""];
                 }
                 NSArray * pickListEntryArray = [field_describe picklistValues];
@@ -5604,14 +5364,11 @@ extern void SVMXLog(NSString *format, ...);
                     
                     [self UpdateSFPicklist_validFor_For_Oject_Name:object_name field_api_name:field_api_name value:value valid_for_value:validFor  index:k];
                 }
-                 
             }
-			
-         }
+		}
     }
 
     appDelegate.dPicklist_retrieval_complete = TRUE;
-    
 }
 
 -(BOOL)UpdateSFObjectField_For_Picklist_TypeObject:(NSString *)object_api_name field_api_name:(NSString *)field_api_name  dependent_picklist:(NSString *)dependent_value  controler_field_name:(NSString *)controler_field
@@ -5639,9 +5396,7 @@ extern void SVMXLog(NSString *format, ...);
     if(synchronized_sqlite3_exec(appDelegate.db, [query UTF8String], NULL, NULL, &err))
     {
         SMLog(@"Failed to UPDATE SFPicklist ");
-        
     }
-    
 }
 
 
@@ -5680,7 +5435,6 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     return index_value;
-    
 }
 
 -(NSMutableArray *)getAllDependentPicklistSWhenControllerValueChanged:(NSString *)object_name controller_name:(NSString*)controllername
@@ -5773,6 +5527,7 @@ extern void SVMXLog(NSString *format, ...);
     }
     return RTPicklistValues;
 }
+
 -(NSString *)getRecordTypeIdForRecordTypename:(NSString *)recorTypeName objectApi_name:(NSString *)objectApiName
 {
     NSString * picklist_value = @"";
@@ -5817,6 +5572,7 @@ extern void SVMXLog(NSString *format, ...);
     }
     return RTPicklistValues;
 }
+
 -(NSString *)getDefaultValueForRTPicklist:(NSString *)objectName recordtypeName:(NSString *)recordtypeName  field_api_name:(NSString *)field_api_name  type:(NSString *)returnField
 {
     NSString * query =@"";
@@ -5868,10 +5624,8 @@ extern void SVMXLog(NSString *format, ...);
     return defaultValue;
 }
 
-
 -(NSArray *)getAllIdsFromDatabase:(NSString *)sync_type forObjectName:(NSString *)object_name
 {   
-  
     NSString * str = [[NSString alloc] initWithFormat:@"SELECT sf_id FROM sync_Records_Heap WHERE sync_type = '%@' and object_name = '%@'" , sync_type, object_name];
     NSString * default_value = @"";
     
@@ -5895,6 +5649,7 @@ extern void SVMXLog(NSString *format, ...);
     synchronized_sqlite3_finalize(statement);
     return array;
 }
+
 -(void)deleteDownloadCriteriaObjects:(NSArray *)deleted_objects
 {
     for(NSString * str in deleted_objects)
@@ -5931,7 +5686,6 @@ extern void SVMXLog(NSString *format, ...);
     }
     else
         return TRUE;
-    
 }
 
  //sahana 16th June 2012
@@ -5954,6 +5708,7 @@ extern void SVMXLog(NSString *format, ...);
     synchronized_sqlite3_finalize(stmt);
     return referencetoName;
 }
+
 -(BOOL)checkOndemandRecord:(NSString *)local_id
 {
     sqlite3_stmt * statement;
@@ -5977,23 +5732,6 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void)deleteAllOndemandRecordsPartOfDownloadCriteriaForSfId:(NSString *)sf_id
 {
-    
-    //For mass delete
-
-//    NSArray * list_ids = [self getAllIdsFromDatabaseForSyncType:sync_type];
-//    
-//    
-//    NSMutableString * ids_string = [[NSMutableString alloc] initWithCapacity:0];
-//    
-//    for (int i = 0 ; i < [list_ids count]; i++)
-//    {
-//        NSString * sf_id = [list_ids objectAtIndex:i];
-//        if(i == 0)
-//            [ids_string  appendFormat:@"'%@' ", sf_id];
-//        else
-//            [ids_string  appendFormat:@" , '%@' ", sf_id];
-//    }
-    
     NSString * delete_statement = [NSString stringWithFormat:@"DELETE FROM on_demand_download  WHERE sf_id = '%@'",sf_id];
     char * err;
     
@@ -6023,7 +5761,6 @@ extern void SVMXLog(NSString *format, ...);
         }
         synchronized_sqlite3_finalize(statement);
     }
-    
     
     if([ondemand_objects retainCount] == 1)
         [ondemand_objects retain];
@@ -6076,6 +5813,7 @@ extern void SVMXLog(NSString *format, ...);
     
     [dateFormatter release];
 }
+
 -(NSString *)getTimeLastModifiedTimeOfTheRecordForRecordId:(NSString *)record_id
 {
     NSString * query = [[NSString alloc] initWithFormat:@"SELECT time_stamp FROM on_demand_download where local_id = '%@'",record_id];
@@ -6097,6 +5835,7 @@ extern void SVMXLog(NSString *format, ...);
     return time_stamp;
 }
 //sahana code ends    june8th
+
 -(BOOL)isSFObject:(NSString*)objectName
 {
     sqlite3_stmt * statement;
@@ -6107,7 +5846,6 @@ extern void SVMXLog(NSString *format, ...);
         while (synchronized_sqlite3_step(statement)== SQLITE_ROW)
         {
             count =  sqlite3_column_int(statement, 0);
-            
         }
     }
     if(count == 0)
@@ -6152,7 +5890,6 @@ extern void SVMXLog(NSString *format, ...);
 {
     [record_dict retain];
     NSArray * allkeys = [record_dict allKeys];
-   // NSMutableArray *  allChild_ids = [[NSMutableArray alloc] initWithCapacity:0];
     NSMutableDictionary * child_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
     NSString * master_object_name = @"" , * master_local_id = @"";
     
@@ -6223,17 +5960,12 @@ extern void SVMXLog(NSString *format, ...);
                     [child_dict setObject:allChild_ids forKey:object_name];
                     [allChild_ids release];
                     
-                }
-               
-                
-            }
-            
-                 
+                }  
+            }   
             [final_dict release];
         }
         
     }
-    
     if(![master_object_name isEqualToString:@""] && ![master_local_id isEqualToString:@""] && [child_dict count] > 0 )
     {
         [self updateChildParentColumnNameForParentObject:master_object_name masterLocalId:master_local_id child_info:child_dict];
@@ -6254,9 +5986,7 @@ extern void SVMXLog(NSString *format, ...);
             
             [self updateParentColumnNameInChildTableWithParentLocalId:child_object parent_column_name:parent_column_name parent_local_id:masterLocal_id child_sf_id:child_id];
         }
-        
     }
-    
 }
 
 -(void)insertrecordintoOnDemandTableForId:(NSString *)sf_id recordType:(NSString *)RecordType local_id:(NSString *)local_id json_record:(NSString *)json_record object_name:(NSString *)object_name
@@ -6280,7 +6010,6 @@ extern void SVMXLog(NSString *format, ...);
 {
     NSString * recordTypeName = @"";
     NSString * query = [NSString stringWithFormat:@"SELECT record_type  FROM  SFRecordType where object_api_name = '%@' and record_type_id = '%@'" ,object_name,recordTYpeId];
-    //NSString * record_type_id = @"";
     
     SMLog(@"RecordTypeId  valuemapping %@" ,query);
     sqlite3_stmt * recordTypeId_statement ;
@@ -6298,6 +6027,7 @@ extern void SVMXLog(NSString *format, ...);
     synchronized_sqlite3_finalize(recordTypeId_statement);
     return recordTypeName;
 }
+
 -(NSArray *)getEventProcessIdForProcessType:(NSString *)process_type SourceObject:(NSString *)sourceobjectName
 {
     NSMutableArray * processIds_array = [[NSMutableArray alloc] initWithCapacity:0];
@@ -6371,7 +6101,6 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
         synchronized_sqlite3_finalize(stmt);
-
     }
     else if([process_type isEqualToString:VIEWRECORD])
     {
@@ -6394,18 +6123,14 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
         synchronized_sqlite3_finalize(stmt);
-        
     }
     return processIds_array;
 }
 
 -(void)insertIntoEventsLocal_ids:(NSString *)local_id
 {
-    
     //delete before created event
     [self deleteRecordsFromEventLocalIds];
-    
-    
     NSString * insert_query = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ ('object_name','local_id') VALUES ('%@','%@')" , Event_local_Ids,@"Event",local_id ];
     char * err;
     
@@ -6445,6 +6170,5 @@ extern void SVMXLog(NSString *format, ...);
     {
         SMLog(@"delete Failed Event_local_Ids");
     }
-    
 }
 @end

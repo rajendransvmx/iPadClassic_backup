@@ -1358,15 +1358,24 @@ extern void SVMXLog(NSString *format, ...);
             }
             
             NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGETCHILD process_id:processId layoutId:detail_layout_id objectName:detailObjectName];
-            NSMutableDictionary * detail_value_mapping_dict = [appDelegate.databaseInterface getObjectMappingForMappingId:process_components mappingType:VALUE_MAPPING];
-			
-			NSArray * detail_value_mapping_keys = [detail_value_mapping_dict allKeys];
-			
-			NSMutableDictionary * api_name_dataType = [appDelegate.databaseInterface getAllFieldsAndItsDataTypesForObject:detailObjectName tableName:SFOBJECTFIELD];
 			
             NSString * expressionId = [process_components objectForKey:EXPRESSION_ID];
             NSString * parent_column_name = [dict objectForKey:gDETAIL_HEADER_REFERENCE_FIELD];
-            
+			
+			//6279 - DefectFix
+			
+			NSMutableDictionary * detailFieldMappingDict = [appDelegate.databaseInterface getObjectMappingForMappingId:process_components mappingType:FIELD_MAPPING];
+					
+			NSArray * field_values = [detailFieldMappingDict allValues];
+			
+			for (int val = 0;  val < [field_values count]; val++)
+			{
+				if (![details_api_keys containsObject:[field_values objectAtIndex:val]])
+				{
+					[details_api_keys addObject:[field_values objectAtIndex:val]];
+				}
+			}
+			
             NSMutableArray * detail_values = [appDelegate.databaseInterface queryLinesInfo:details_api_keys detailObjectName:detailObjectName headerObjectName:headerObjName detailaliasName:detailaliasName headerRecordId:appDelegate.sfmPageController.recordId expressionId:expressionId parent_column_name:parent_column_name];
             
             for(int l = 0 ;l < [detail_values count]; l++)
@@ -1375,36 +1384,40 @@ extern void SVMXLog(NSString *format, ...);
                 NSMutableArray *  eachArray = [detail_values objectAtIndex:l];
                 for(int m = 0 ; m < [eachArray count];m++)
                 {
-//                    NSMutableDictionary * dict = [eachArray objectAtIndex:m];
-//                    NSString * api_name = [dict objectForKey:gVALUE_FIELD_API_NAME];
-//					[dict setObject:@"" forKey:gVALUE_FIELD_VALUE_VALUE];
-//					[dict setObject:@"" forKey:gVALUE_FIELD_VALUE_KEY];
                     NSMutableDictionary * dict = [eachArray objectAtIndex:m];
                     NSString * api_name = [dict objectForKey:gVALUE_FIELD_API_NAME];
+					
+					//6279 - Defect Fix
+					if ([details_api_keys containsObject:api_name])
+					{
+						NSString * value = [detailFieldMappingDict objectForKey:api_name];
+						
+						NSString * fieldMappingValue = @"";
+						
+						for(int t = 0 ; t < [eachArray count];t++)
+						{
+							NSDictionary * tempDict = [eachArray objectAtIndex:t];
+							
+							if ([value isEqualToString:[tempDict objectForKey:gVALUE_FIELD_API_NAME]])
+							{
+								fieldMappingValue = [tempDict objectForKey:gVALUE_FIELD_VALUE_VALUE];
+								if (![value isEqualToString:api_name])
+								{
+									[dict setValue:fieldMappingValue forKey:gVALUE_FIELD_VALUE_KEY];
+								}
+								[dict setValue:fieldMappingValue forKey:gVALUE_FIELD_VALUE_VALUE];
+								break;
+							}
+							
+						}
+
+					}
+					
 					if([api_name isEqualToString:@"local_id"])
                     {
                         [eachArray  removeObjectAtIndex:m];
                     }
-					
-//					for(int e = 0 ; e < [detail_value_mapping_keys count]; e++)
-//					{
-//						NSString  * detail_value_api = [detail_value_mapping_keys objectAtIndex:e];
-//						if([detail_value_api isEqualToString:api_name])
-//						{
-//							if([detail_value_api length] != 0)
-//							{
-//								NSString *  detail_value_key  =  [detail_value_mapping_dict objectForKey:detail_value_api];
-//								NSString * field_data_type  = [api_name_dataType objectForKey:detail_value_api];
-//                                // Sahana fix for defect 5826
-//								NSString * detil_value_value = [self getValueForApiName:detail_value_api dataType:field_data_type object_name:detailObjectName field_key:detail_value_key];
-//								[dict setObject:detail_value_key forKey:gVALUE_FIELD_VALUE_KEY];
-//								[dict setObject:detil_value_value forKey:gVALUE_FIELD_VALUE_VALUE];
-//							}
-//							break;
-//						}
-//						
-//					}
-                }
+				}
                 
                 [detail_Values_id addObject:@""];
             }
