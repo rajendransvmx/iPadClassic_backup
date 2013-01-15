@@ -57,7 +57,17 @@ extern void SVMXLog(NSString *format, ...);
     }
     else
     {
-        appDelegate.animatedImageView.frame = CGRectMake(885, 8, 26, 26);
+        NSString * version = [appDelegate serverPackageVersion];
+        int _stringNumber = [version intValue];
+        
+        if(_stringNumber >=  (KMinPkgForScheduleEvents * 100000))
+        {
+              appDelegate.animatedImageView.frame = CGRectMake(835, 8, 26, 26);
+        }
+        else
+        {
+            appDelegate.animatedImageView.frame = CGRectMake(885, 8, 26, 26);
+        }
     }
 	
 }
@@ -719,7 +729,18 @@ extern void SVMXLog(NSString *format, ...);
             HomeButton.frame = homeButtonRect;
             refreshButton.frame = refreshButtontRect;
             //statusButton.frame = CGRectMake(815, 8, 26, 26);
-            appDelegate.animatedImageView.frame = CGRectMake(834, 8, 26, 26);
+            NSString * version = [appDelegate serverPackageVersion];
+            int _stringNumber = [version intValue];
+            
+            if(_stringNumber >=  (KMinPkgForScheduleEvents * 100000))
+            {
+                Add_event_Button.frame = AddEventButtonRect;
+                appDelegate.animatedImageView.frame = CGRectMake(776, 8, 26, 26);
+            }
+            else
+            {
+                appDelegate.animatedImageView.frame = CGRectMake(834, 8, 26, 26);
+            }
             [UIView commitAnimations];
             isViewDirty = NO;
         }
@@ -742,7 +763,8 @@ extern void SVMXLog(NSString *format, ...);
             
             if(_stringNumber >=  (KMinPkgForScheduleEvents * 100000))
             {
-                  appDelegate.animatedImageView.frame = CGRectMake(776, 8, 26, 26);
+                Add_event_Button.frame = AddEventButtonRect;
+                appDelegate.animatedImageView.frame = CGRectMake(776, 8, 26, 26);
             }
             else
             {
@@ -811,7 +833,11 @@ extern void SVMXLog(NSString *format, ...);
         
         if(_stringNumber >=  (KMinPkgForScheduleEvents * 100000))
         {
-             appDelegate.animatedImageView.frame = CGRectMake(776, 8, 26, 26);
+            AddEventButtonRect  = Add_event_Button.frame;
+            syncindicatorRect = appDelegate.animatedImageView.frame;
+            Add_event_Button.frame = homeButtonRect;
+            appDelegate.animatedImageView.frame = CGRectMake(835, 8, 26, 26);
+            
         }
         else
         {

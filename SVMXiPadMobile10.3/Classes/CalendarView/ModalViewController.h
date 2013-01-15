@@ -127,6 +127,8 @@ DetailViewControllerDelegate, RefreshModalSyncStatusButton>
     
     CGRect homeButtonRect;
     CGRect refreshButtontRect;
+    CGRect AddEventButtonRect;
+    CGRect syncindicatorRect;
     
     NSString * updatestartDateTime, * updateendDateTime;
     //sahana 9th Sept 
