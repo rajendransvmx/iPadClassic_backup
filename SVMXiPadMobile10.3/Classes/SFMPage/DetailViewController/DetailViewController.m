@@ -1177,12 +1177,8 @@ extern void SVMXLog(NSString *format, ...);
                             if (_id != nil && strlen(_id))
                                 Id = [NSString stringWithUTF8String:_id];
                         }
-						synchronized_sqlite3_finalize(stmt);
                     }
                     
-					const char * error = sqlite3_errmsg(appDelegate.db);
-					[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
-					
                     NSMutableArray * accountHistory = [appDelegate.databaseInterface getAccountHistoryForanWorkOrder:Id account_id:account_id tableName:headerObjName ];
                     if(accountHistory != nil)
                     {
@@ -1206,12 +1202,7 @@ extern void SVMXLog(NSString *format, ...);
                         if (_id != nil && strlen(_id))
                             Id = [NSString stringWithUTF8String:_id];
                     }
-					synchronized_sqlite3_finalize(stmt);
-
                 }
-				
-				const char * error = sqlite3_errmsg(appDelegate.db);
-				[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
 
                 NSMutableArray * productHistory = nil;
                 if(toplevelId != nil && [toplevelId length] != 0)
@@ -11962,9 +11953,6 @@ extern void SVMXLog(NSString *format, ...);
         }
 		synchronized_sqlite3_finalize(stmt);
     }
-	const char * error = sqlite3_errmsg(appDelegate.db);
-	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
-
 
     if (button.tag == 1)
     {
@@ -12035,13 +12023,8 @@ extern void SVMXLog(NSString *format, ...);
              if (_productId != nil && strlen(_productId))
                 productId = [NSString stringWithUTF8String:_productId];
         }
-		synchronized_sqlite3_finalize(stmt);
     }
-	
-	const char * error = sqlite3_errmsg(appDelegate.db);
-	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
-
-	
+        
     return productId;
 }
 
@@ -12062,12 +12045,7 @@ extern void SVMXLog(NSString *format, ...);
             else
                 productName = @"";
         }
-		synchronized_sqlite3_finalize(stmt);
     }
-	const char * error = sqlite3_errmsg(appDelegate.db);
-	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
-	
-	stmt = nil;
     
     if ([productName isEqualToString:@""])
     {
@@ -12084,12 +12062,7 @@ extern void SVMXLog(NSString *format, ...);
                     productName = @"";
             }
         }
-		synchronized_sqlite3_finalize(stmt);
     }
-	
-	error = sqlite3_errmsg(appDelegate.db);
-	[appDelegate printIfError:[NSString stringWithUTF8String:error] ForQuery:query];
-
     return productName;
 }
 
