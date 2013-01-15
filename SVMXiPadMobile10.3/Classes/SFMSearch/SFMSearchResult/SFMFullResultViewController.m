@@ -471,7 +471,7 @@ extern void SVMXLog(NSString *format, ...);
     lblObjects =[[UILabel alloc]initWithFrame:CGRectMake(20, 0, 235, TableViewResultViewCellHeight)];
     NSString *objectString = [tableHeaderArray objectAtIndex:indexPath.row];
     NSArray *objectComponents = [objectString componentsSeparatedByString:@"."];
-    lblObjects.text = [appDelegate.dataBase getLabelFromApiName:lblObjects.text
+    lblObjects.text = [appDelegate.dataBase getLabelFromApiName:[objectComponents objectAtIndex:([objectComponents count]-1)]
                                                      objectName:[appDelegate.dataBase getApiNameFromFieldLabel:[objectComponents objectAtIndex:0]]];
     lblObjects.font = [UIFont boldSystemFontOfSize:16];
     lblObjects.textAlignment=UITextAlignmentLeft;
