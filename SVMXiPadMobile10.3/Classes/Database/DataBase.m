@@ -798,7 +798,7 @@ extern void SVMXLog(NSString *format, ...);
                 if((fieldforCondition !=nil) && strlen(fieldforCondition))
                 Expression=[NSString stringWithFormat:@"%s",fieldforCondition] ;
                 if((TargetObject !=nil) && strlen(TargetObject))
-                    strTargetObject=[NSString stringWithFormat:@"%s",TargetObject] ;
+                    strTargetObject=[NSString stringWithUTF8String:TargetObject] ;
             }
         }
         SMLog(@"Adv Exp = %@",Expression);
@@ -1082,7 +1082,7 @@ extern void SVMXLog(NSString *format, ...);
         {
             nameofObjectField = (char *) synchronized_sqlite3_column_text(labelstmtName,0);
             if((nameofObjectField !=nil)&&strlen(nameofObjectField))
-                fieldName = [NSString stringWithFormat:@"%s",nameofObjectField];
+                fieldName = [NSString stringWithUTF8String:nameofObjectField];
             
         }
     }
@@ -2019,8 +2019,8 @@ extern void SVMXLog(NSString *format, ...);
             char * label = (char *)synchronized_sqlite3_column_text(statement, 0);
             if ((label != nil) && strlen(label))
             {
-                //apiLabel = [NSString stringWithUTF8String:label];
-                apiLabel = [NSString stringWithFormat:@"%s",label];
+                apiLabel = [NSString stringWithUTF8String:label];
+//                apiLabel = [NSString stringWithFormat:@"%s",label];
             }
         }
     }
@@ -2044,8 +2044,8 @@ extern void SVMXLog(NSString *format, ...);
             char * label = (char *)synchronized_sqlite3_column_text(statement, 0);
             if ((label !=nil) && strlen(label))
             {
-//                apiName = [NSString stringWithUTF8String:label]; 
-                apiName = [NSString stringWithFormat:@"%s",label];
+                apiName = [NSString stringWithUTF8String:label];
+//                apiName = [NSString stringWithFormat:@"%s",label];
 
             }
         }
