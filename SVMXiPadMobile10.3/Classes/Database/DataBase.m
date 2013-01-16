@@ -1344,7 +1344,6 @@ extern void SVMXLog(NSString *format, ...);
     token=[token stringByReplacingOccurrencesOfString:@" ( " withString:@"("];
     token=[token stringByReplacingOccurrencesOfString:@" ) " withString:@")"];
     NSArray * criteria_array  = [dictforparsing objectForKey:@"criteriaArray"];
-    NSDictionary * criteria_dict = [criteria_array objectAtIndex:0];
     NSString *rhs=@"";
     NSString *NameFiled=@"",*Objecttype=@"";
     NSString *refrence_to=@"";
@@ -1374,8 +1373,9 @@ extern void SVMXLog(NSString *format, ...);
             NSString *objectValue = [operatorTokens objectAtIndex:1];
             NSString *objectDefWithoutBrace=[objectDef stringByReplacingOccurrencesOfString:@"(" withString:@""];      
             objectDefWithoutBrace=[objectDefWithoutBrace stringByReplacingOccurrencesOfString:@")" withString:@""];
-            NSString *objectValueBrace=[objectValue stringByReplacingOccurrencesOfString:@"(" withString:@""];
-            objectValueBrace=[objectValueBrace stringByReplacingOccurrencesOfString:@")" withString:@""];
+            NSString *objectValueWithoutBrace=[objectValue stringByReplacingOccurrencesOfString:@"(" withString:@""];
+            objectValueWithoutBrace=[objectValueWithoutBrace stringByReplacingOccurrencesOfString:@")" withString:@""];
+            NSString *svmxLiterals=[objectValueWithoutBrace stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
             NSString *fieldName=@"",*tableName=@"";
             if([objectDef rangeOfString:@"."].length >0)
             {
@@ -1531,7 +1531,7 @@ extern void SVMXLog(NSString *format, ...);
             if([objectValue rangeOfString:@"null"options:NSCaseInsensitiveSearch].length >0)
             {
                 NSDictionary *Bracesinvalue=[self occurenceOfBraces:objectValue];
-                if([objectValueBrace Contains:@"null"] &&([operator isEqualToString:@"!="] || [operator isEqualToString:@"<>"]) )
+                if([objectValueWithoutBrace Contains:@"null"] &&([operator isEqualToString:@"!="] || [operator isEqualToString:@"<>"]) )
                 {
                     [finalQuery appendFormat:@" != '' "];
                 }
@@ -1631,8 +1631,8 @@ extern void SVMXLog(NSString *format, ...);
             {
                 NSDictionary *Bracesinvalue=[self occurenceOfBraces:objectValue];
                 [finalQuery appendString:operator];
-                objectValueBrace=[objectValueBrace stringByReplacingOccurrencesOfString:@"True"withString:@"1"];
-                [finalQuery appendString:objectValueBrace];
+                objectValueWithoutBrace=[objectValueWithoutBrace stringByReplacingOccurrencesOfString:@"True"withString:@"1"];
+                [finalQuery appendString:objectValueWithoutBrace];
                 for (int i=0; i<[[Bracesinvalue objectForKey:@"leftBraces"] intValue]; i++) 
                 {
                     if(!((i==0) && ([operator isEqualToString:@" NOT IN "] || [operator isEqualToString:@" IN "])))
@@ -1645,8 +1645,8 @@ extern void SVMXLog(NSString *format, ...);
             {
                 NSDictionary *Bracesinvalue=[self occurenceOfBraces:objectValue];
                 [finalQuery appendString:operator];
-                objectValueBrace=[objectValueBrace stringByReplacingOccurrencesOfString:@"False"withString:@"0"];
-                [finalQuery appendString:objectValueBrace];
+                objectValueWithoutBrace=[objectValueWithoutBrace stringByReplacingOccurrencesOfString:@"False"withString:@"0"];
+                [finalQuery appendString:objectValueWithoutBrace];
                 for (int i=0; i<[[Bracesinvalue objectForKey:@"leftBraces"] intValue]; i++) 
                 {
                     if(!((i==0) && ([operator isEqualToString:@" NOT IN "] || [operator isEqualToString:@" IN "])))
@@ -1655,7 +1655,10 @@ extern void SVMXLog(NSString *format, ...);
                     }
                 }
             }   
-            else if ( ([objectValue rangeOfString:@"TODAY"options:NSCaseInsensitiveSearch].length>0) ||  ([objectValue rangeOfString:@"TOMORROW"options:NSCaseInsensitiveSearch].length>0) ||  ([objectValue rangeOfString:@"YESTERDAY"options:NSCaseInsensitiveSearch].length>0)||([objectValue rangeOfString:@"NOW"options:NSCaseInsensitiveSearch].length>0) )
+          else if (([svmxLiterals caseInsensitiveCompare:MACRO_TODAY]== NSOrderedSame) ||
+                 ([svmxLiterals caseInsensitiveCompare:MACRO_TOMMOROW]== NSOrderedSame) ||
+                 ([svmxLiterals caseInsensitiveCompare:MACRO_YESTERDAY]== NSOrderedSame)||
+                 ([svmxLiterals caseInsensitiveCompare:MACRO_NOW]== NSOrderedSame ))
             {
                 NSDictionary *Bracesinvalue=[self occurenceOfBraces:objectValue];
                 
@@ -1689,17 +1692,17 @@ extern void SVMXLog(NSString *format, ...);
                     tomorow_date = [dateFormatter stringFromDate:tomorrow];
                     yesterday_date = [dateFormatter stringFromDate:yesterday];
                     
-                    if([objectValue rangeOfString:@"TODAY" options:NSCaseInsensitiveSearch ].length>0)
+                    if([svmxLiterals caseInsensitiveCompare:MACRO_TODAY]== NSOrderedSame)
                     {
                         [finalQuery appendString:today_Date];
                         
                     }
-                    if([objectValue rangeOfString:@"TOMORROW"options:NSCaseInsensitiveSearch ].length>0)
+                    if([svmxLiterals caseInsensitiveCompare:MACRO_TOMMOROW]== NSOrderedSame)
                     {
                        [finalQuery appendString:tomorow_date];
                         
                     }
-                    if([objectValue rangeOfString:@"YESTERDAY"options:NSCaseInsensitiveSearch ].length>0)
+                    if([svmxLiterals caseInsensitiveCompare:MACRO_YESTERDAY]== NSOrderedSame)
                     {
                         [finalQuery appendString:yesterday_date];
                     }
@@ -1719,7 +1722,8 @@ extern void SVMXLog(NSString *format, ...);
                     tomorow_date = [dateFormatter stringFromDate:tomorrow];
                     yesterday_date = [dateFormatter stringFromDate:yesterday];
 
-                    if([objectValue rangeOfString:@"TODAY"options:NSCaseInsensitiveSearch ].length>0||[objectValue rangeOfString:@"NOW"options:NSCaseInsensitiveSearch ].length>0)
+                    if(([svmxLiterals caseInsensitiveCompare:MACRO_TODAY]== NSOrderedSame)||
+                       ([svmxLiterals caseInsensitiveCompare:MACRO_NOW]== NSOrderedSame) )
                     {
                         start_datetime = [today_Date stringByAppendingFormat:@"T00:00:00.000+0000"];
                         end_datetime   = [today_Date stringByAppendingFormat:@"T24:00:00.000+0000"];  
@@ -1735,7 +1739,6 @@ extern void SVMXLog(NSString *format, ...);
                         {
                             [finalQuery appendFormat:@" %@",operator];
                             [finalQuery appendFormat:@"'%@",start_datetime];
-                            
                         }
                         else if([operator isEqualToString:@">"] || [operator isEqualToString:@">="])
                         {
@@ -1745,7 +1748,7 @@ extern void SVMXLog(NSString *format, ...);
                         }
                     }
                     
-                    if([objectValue rangeOfString:@"TOMORROW"options:NSCaseInsensitiveSearch ].length>0)
+                    if([svmxLiterals caseInsensitiveCompare:MACRO_TOMMOROW] == NSOrderedSame)
                     {
                         start_datetime = [tomorow_date stringByAppendingFormat:@"T00:00:00.000+0000"];
                         end_datetime   = [tomorow_date stringByAppendingFormat:@"T24:00:00.000+0000"];  
@@ -1771,7 +1774,7 @@ extern void SVMXLog(NSString *format, ...);
                         }
                     }
                     
-                    if([objectValue rangeOfString:@"YESTERDAY"options:NSCaseInsensitiveSearch ].length>0)
+                    if([svmxLiterals caseInsensitiveCompare:MACRO_YESTERDAY] == NSOrderedSame)
                     {
                         start_datetime = [yesterday_date stringByAppendingFormat:@"T00:00:00.000+0000"];
                         end_datetime   = [yesterday_date stringByAppendingFormat:@"T24:00:00.000+0000"];  
@@ -1815,13 +1818,13 @@ extern void SVMXLog(NSString *format, ...);
                     {
                         [finalQuery appendString:operator];
                          [finalQuery appendString:@"("];
-                        [finalQuery appendString:objectValueBrace];
+                        [finalQuery appendString:objectValueWithoutBrace];
 
                     }
                     else
                     {
                         [finalQuery appendString:operator];
-                        [finalQuery appendString:objectValueBrace];
+                        [finalQuery appendString:objectValueWithoutBrace];
                     }
                     for (int i=0; i<[[valueBracesOccurence objectForKey:@"leftBraces"] intValue]; i++) 
                     {
@@ -2040,12 +2043,10 @@ extern void SVMXLog(NSString *format, ...);
     {
         if (synchronized_sqlite3_step(statement) == SQLITE_ROW)
         {
-//            const char * label = (char *)synchronized_sqlite3_column_text(statement, 0);
             char * label = (char *)synchronized_sqlite3_column_text(statement, 0);
             if ((label !=nil) && strlen(label))
             {
                 apiName = [NSString stringWithUTF8String:label];
-//                apiName = [NSString stringWithFormat:@"%s",label];
 
             }
         }
