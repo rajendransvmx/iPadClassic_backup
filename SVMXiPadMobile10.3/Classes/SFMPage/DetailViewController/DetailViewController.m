@@ -10101,6 +10101,7 @@ extern void SVMXLog(NSString *format, ...);
                         }
                         if ([dataType isEqualToString:@"email"] )  //Shrinivas Fix for Email Validation 03/04/2012
                         {
+                            /*
                             BOOL result;
                             NSString * emailRegEx = @"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}";
                             NSPredicate * emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegEx];
@@ -10114,7 +10115,7 @@ extern void SVMXLog(NSString *format, ...);
 
                                 [self enableSFMUI];
                                 return;
-                            }
+                            }*/
                             
                         }
                     }        
@@ -10496,6 +10497,7 @@ extern void SVMXLog(NSString *format, ...);
                         
                         if ([dataType isEqualToString:@"email"] )  //Shrinivas Fix for Email Validation 03/04/2012
                         {
+                            /*
                             BOOL result;
                             NSString * emailRegEx = @"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}";
                             NSPredicate * emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegEx];
@@ -10510,6 +10512,7 @@ extern void SVMXLog(NSString *format, ...);
                                 [self enableSFMUI];
                                 return;
                             }
+                             */
                             
                         }
 
@@ -11164,6 +11167,7 @@ extern void SVMXLog(NSString *format, ...);
                         
                         if ([dataType isEqualToString:@"email"] )  //Shrinivas Fix for Email Validation 03/04/2012
                         {
+                            /*
                             BOOL result;
                             NSString * emailRegEx = @"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}";
                             NSPredicate * emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegEx];
@@ -11178,7 +11182,7 @@ extern void SVMXLog(NSString *format, ...);
                                 [self enableSFMUI];
                                 return;
                             }
-                            
+                            */
                         }
                     }        
                 }
