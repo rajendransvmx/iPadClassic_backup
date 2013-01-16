@@ -26,7 +26,8 @@
 @property (nonatomic , assign)  id  <databaseInterfaceProtocol> databaseInterfaceDelegate;
 @property (nonatomic, retain) id MyPopoverDelegate;
 
-
+//sahana 16th Jan for alerting overlapping events fix
+-(NSString *)getNameForSFId:(NSString *)sfId;
 -(NSString *)getallOverLappingEventsForStartDateTime:(NSString *)startDateTime EndDateTime:(NSString *)endDateTime;
 //Sahana Dec 7th 2012
 -(void)InsertInto_User_created_event_for_local_id:(NSString *)local_id sf_id:(NSString *)sf_id;

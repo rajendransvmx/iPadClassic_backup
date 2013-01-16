@@ -6273,13 +6273,14 @@ extern void SVMXLog(NSString *format, ...);
     NSString * overlapping_events = nil;
     NSMutableString * mutable_str = [[NSMutableString alloc] initWithCapacity:0];
     NSMutableArray * events = [[NSMutableArray alloc] initWithCapacity:0];
-    NSString * query_str = [NSString stringWithFormat:@"SELECT Subject,WhatId  from  Event where(strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@','+0000','Z'))  <=  strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') ) AND strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@','+0000','Z') )   > strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') ) ) OR (strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@','+0000','Z') ) <  strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( EndDateTime, '+0000','Z') )   AND strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@', '+0000','Z') ) >= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( EndDateTime, '+0000','Z') ))  OR (strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@', '+0000','Z') ) <= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') ) AND strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@', '+0000','Z') ) >= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( EndDateTime, '+0000','Z') )) OR (strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@','+0000','Z') ) >= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') )  and strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@', '+0000','Z') ) <= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  (EndDateTime, '+0000','Z') ))",startDateTime,endDateTime,startDateTime,endDateTime,startDateTime,endDateTime,startDateTime,endDateTime];
+    NSString * query_str = [NSString stringWithFormat:@"SELECT DISTINCT Subject,WhatId  from  Event where(strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@','+0000','Z'))  <=  strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') ) AND strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@','+0000','Z') )   > strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') ) ) OR (strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@','+0000','Z') ) <  strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( EndDateTime, '+0000','Z') )   AND strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@', '+0000','Z') ) >= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( EndDateTime, '+0000','Z') ))  OR (strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@', '+0000','Z') ) <= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') ) AND strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@', '+0000','Z') ) >= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( EndDateTime, '+0000','Z') )) OR (strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@','+0000','Z') ) >= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') )  and strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@', '+0000','Z') ) <= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  (EndDateTime, '+0000','Z') ))",startDateTime,endDateTime,startDateTime,endDateTime,startDateTime,endDateTime,startDateTime,endDateTime];
     NSString * subject = nil , * relatedTo = nil ;
     sqlite3_stmt * stmt;
     if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query_str UTF8String], -1, &stmt, nil) == SQLITE_OK)
     {
         while(synchronized_sqlite3_step(stmt)== SQLITE_ROW)
         {
+            relatedTo = @"" ,subject = @"";
             char * temp_subject = (char *)synchronized_sqlite3_column_text(stmt, 0);
             if(temp_subject != nil)
             {
@@ -6292,7 +6293,8 @@ extern void SVMXLog(NSString *format, ...);
             }
             if([relatedTo length] > 0 && relatedTo != nil)
             {
-                [events addObject:relatedTo];
+                NSString * nameField = [self getNameForSFId:relatedTo];
+                [events addObject:nameField];
             }
             else if([subject length] >0 && subject != nil)
             {
@@ -6312,4 +6314,21 @@ extern void SVMXLog(NSString *format, ...);
     return overlapping_events;
 }
 
+-(NSString *)getNameForSFId:(NSString *)sfId
+{
+    NSString * new_sf_id = [[NSString alloc] initWithString:sfId];
+    NSString * keyPrefix = [new_sf_id substringWithRange:NSMakeRange(0, 3)];
+    
+    NSString * referencetoObject = [appDelegate.databaseInterface getTheObjectApiNameForThePrefix:keyPrefix tableName:SFOBJECT];
+    
+    NSString * name_field = @"";
+    
+    if([referencetoObject length] > 0)
+    {
+        NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:sfId tableName:referencetoObject];
+        name_field =  [appDelegate.databaseInterface  getObjectName:referencetoObject recordId:local_id];
+    }
+    [new_sf_id release];
+    return name_field;
+}
 @end
