@@ -2435,9 +2435,15 @@ extern void SVMXLog(NSString *format, ...);
 				NSString * referenceToTable = [appDelegate.dataBase getReferencetoFiledForObject:object_name api_Name:lhs];
 				if([operator isEqualToString:@"isnotnull"]) //#4722 defect fix for wizard billing type null
 				{
-					NSString * temp_operator = @"is not null";
-					component_expression = [NSString stringWithFormat:@" %@   in   (select  Id  from %@ where Name %@ )" , lhs,referenceToTable , temp_operator ];
+                    operator = @"!=";
+                    NSString * temp_operator = @"is not null";
+                    
+                    component_expression = [NSString stringWithFormat:@" ( %@ %@ null or trim(%@) %@ or ( trim(%@) != '') ) ",lhs,operator,lhs,temp_operator, lhs];
 				}
+                else if ([rhs isEqualToString:@"null"])
+                {
+                     component_expression = [NSString stringWithFormat:@" ( %@ = ' ' or typeof(%@) %@ '%@' or %@ = '' ) ",lhs,lhs,operator,rhs, lhs]; 
+                }
 				else
 				{
 					component_expression = [NSString stringWithFormat:@" %@   in   (select  Id  from %@ where Name %@ '%@' )" , lhs,referenceToTable , operator ,rhs];
