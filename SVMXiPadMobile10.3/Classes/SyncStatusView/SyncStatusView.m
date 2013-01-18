@@ -152,7 +152,7 @@ extern void SVMXLog(NSString *format, ...);
     [label1 addSubview:bgView];
     [self.view addSubview:label1];
     
-    lastSync = [[UILabel alloc] initWithFrame:CGRectMake(300, 28, 450, 45)];
+    lastSync = [[UILabel alloc] initWithFrame:CGRectMake(320, 28, 450, 45)];
     [lastSync setBackgroundColor:[UIColor clearColor]];
     lastSync.text = lastSyncTime;
     [self.view addSubview:lastSync];
@@ -223,7 +223,7 @@ extern void SVMXLog(NSString *format, ...);
     SMLog(@"%@", [lastSyncTime stringByReplacingCharactersInRange:_range withString:_str3]);
     nextSyncTime = [nextSyncTime stringByReplacingCharactersInRange:_range withString:_str3];
     
-    nextSync = [[UILabel alloc] initWithFrame:CGRectMake(300, 76, 450, 45)];
+    nextSync = [[UILabel alloc] initWithFrame:CGRectMake(320, 76, 450, 45)];
     [nextSync setBackgroundColor:[UIColor clearColor]];
     nextSync.text = nextSyncTime;
     [self.view addSubview:nextSync];
@@ -240,8 +240,8 @@ extern void SVMXLog(NSString *format, ...);
     label3.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_last_status];
     [label3 addSubview:bgView3];
     [self.view addSubview:label3];
-    
-    _status = [[UILabel alloc] initWithFrame:CGRectMake(300, 124, 450, 45)];
+	    
+    _status = [[UILabel alloc] initWithFrame:CGRectMake(320, 124, 450, 45)];
     _status.backgroundColor = [UIColor clearColor];
 	
 	SMLog(@"%d", appDelegate.SyncStatus);
@@ -304,7 +304,7 @@ extern void SVMXLog(NSString *format, ...);
     SMLog(@"%@", [lastSyncTime stringByReplacingCharactersInRange:range1 withString:str6]);
     lastSyncTime = [lastSyncTime stringByReplacingCharactersInRange:range1 withString:str6];
 
-    lastSync = [[UILabel alloc] initWithFrame:CGRectMake(300, 192, 450, 45)];
+    lastSync = [[UILabel alloc] initWithFrame:CGRectMake(320, 192, 450, 45)];
     [lastSync setBackgroundColor:[UIColor clearColor]];
     lastSync.text = lastSyncTime;
     [self.view addSubview:lastSync];
@@ -360,7 +360,7 @@ extern void SVMXLog(NSString *format, ...);
     SMLog(@"%@", [lastSyncTime stringByReplacingCharactersInRange:range_MS withString:_str6]);
     nextSyncTime = [nextSyncTime stringByReplacingCharactersInRange:range_MS withString:_str6];
     
-    nextSync = [[UILabel alloc] initWithFrame:CGRectMake(300, 238, 450, 45)];
+    nextSync = [[UILabel alloc] initWithFrame:CGRectMake(320, 238, 450, 45)];
     [nextSync setBackgroundColor:[UIColor clearColor]];
     nextSync.text = nextSyncTime;
     [self.view addSubview:nextSync];
@@ -378,7 +378,7 @@ extern void SVMXLog(NSString *format, ...);
     [self.view addSubview:label6];
     
     
-    _statusForMetaSync = [[UILabel alloc] initWithFrame:CGRectMake(300, 286, 450, 45)];
+    _statusForMetaSync = [[UILabel alloc] initWithFrame:CGRectMake(320, 286, 450, 45)];
     _statusForMetaSync.backgroundColor = [UIColor clearColor];
 
    

@@ -12,7 +12,6 @@
 @implementation LocationPopOver
 
 @synthesize delegate;
-
 @synthesize popOver;
 @synthesize workOrder, workOrderDetail, workOrderContact;
 @synthesize annotationIndex;
@@ -42,6 +41,7 @@
     }
     
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+	_homeLocation.text = [appDelegate.wsInterface.tagsDictionary objectForKey:MAP_HOMELOC_TITLE];
     [drivingDirectionsButton setTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:MAP_POPOVER_DRIVING_DIRECTION_BUTTON] forState:UIControlStateNormal];
     [jobDetailsButton setTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:MAP_POPOVER_JOB_DETAILS_BUTTON] forState:UIControlStateNormal];
     [homeLocationDrivingDirections setTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:MAP_POPOVER_DRIVING_DIRECTION_BUTTON] forState:UIControlStateNormal];
@@ -79,6 +79,9 @@
 
 
 - (void)viewDidUnload {
+	[_homeLocation release];
+	_homeLocation = nil;
+	[self set_homeLocation:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -94,6 +97,7 @@
     [workOrderDetail release];
     [workOrderContact release];
     
+	[_homeLocation release];
     [super dealloc];
 }
 

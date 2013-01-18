@@ -11,6 +11,7 @@
 #import <MessageUI/MessageUI.h>
 #import "MessageUI/MFMailComposeViewController.h"
 #import "iOSInterfaceObject.h"
+#include <CoreText/CoreText.h>
 
 @protocol PDFCreatorDelegate
 

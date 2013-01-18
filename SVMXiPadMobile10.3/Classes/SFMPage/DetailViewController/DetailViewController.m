@@ -497,8 +497,10 @@ extern void SVMXLog(NSString *format, ...);
 {
     int toolBarWidth = 0;
     // Adding the Back button
+	
+	NSString *action = [appDelegate.wsInterface.tagsDictionary objectForKey:ACTIONS];
     UIButton * actionButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 67, 37)] autorelease];
-    [actionButton setTitle:@"Actions" forState:UIControlStateNormal];
+    [actionButton setTitle:action forState:UIControlStateNormal];
 
     UIImage * actionImage = [UIImage imageNamed:@"SFM-Screen-Done-Back-Button"];
     [actionImage stretchableImageWithLeftCapWidth:9 topCapHeight:9];
@@ -539,8 +541,9 @@ extern void SVMXLog(NSString *format, ...);
     BOOL isStandAloneCreate = [[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"STANDALONECREATE"];
     if (appDelegate.signatureCaptureUpload && !isInEditDetail && !isStandAloneCreate && !isInViewMode)
     {
+		NSString *act = [appDelegate.wsInterface.tagsDictionary objectForKey:ACTIONS];
         actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)];
-        [actionButton setTitle:@"Actions" forState:UIControlStateNormal];
+        [actionButton setTitle:act forState:UIControlStateNormal];
         [actionButton setImage:[UIImage imageNamed:@"sfm_signature_capture"] forState:UIControlStateNormal];
         [actionButton addTarget:self action:@selector(ShowSignature) forControlEvents:UIControlEventTouchUpInside];
     
@@ -2867,8 +2870,6 @@ extern void SVMXLog(NSString *format, ...);
     BOOL isworkingInOffline = TRUE;
     clickedBack = NO;
     
-
-    
     didGetParts = didGetExpenses = didGetLabor = didGetReportEssentials = NO;
     
     if (Labor != nil)
@@ -2883,6 +2884,7 @@ extern void SVMXLog(NSString *format, ...);
         Parts    = [appDelegate.calDataBase queryForParts:appDelegate.sfmPageController.recordId];
         
 		//Get Expense for the Work Order
+		
         Expenses = [appDelegate.calDataBase queryForExpenses:appDelegate.sfmPageController.recordId];
         
 		//Get Labor
@@ -4180,7 +4182,7 @@ extern void SVMXLog(NSString *format, ...);
     {
         UILabel *title = [[UILabel alloc] initWithFrame:CGRectMake(7, 4, 80, 20)];
         title.backgroundColor = [UIColor clearColor];
-        title.text = @"See More";
+        title.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_SeeMore];
         title.textColor = [UIColor whiteColor];
         seeMoreButton = [UIButton buttonWithType:UIButtonTypeCustom];
         seeMoreButton.frame = CGRectMake(550, 2, 100, 30);
@@ -5508,7 +5510,9 @@ extern void SVMXLog(NSString *format, ...);
 		{
             int columns_count  = 2;
             
-            NSArray * array = [[[NSArray alloc] initWithObjects:@"Problem Description",@"Created Date", nil] autorelease];
+			NSString *probDes = [appDelegate.wsInterface.tagsDictionary objectForKey:SERVICE_REPORT_PROBLEM_DESCRIPTION];
+			NSString *createdDate = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_CreatedDate];
+            NSArray * array = [[[NSArray alloc] initWithObjects:probDes,createdDate, nil] autorelease];
             // If fields are not present - ERROR CONDITION - then columns should not be added
             if ([additional_dict count] > 0)
             {

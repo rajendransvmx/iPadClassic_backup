@@ -16,7 +16,9 @@
     
     IBOutlet UITextView * textView;
     IBOutlet UIPickerView * picker;
+	IBOutlet UILabel *enterTaskLabel;
     
+	IBOutlet UILabel *setPriorityLable;
     NSArray * pickerValues;
     
     UIPopoverController * popOverController;

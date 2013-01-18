@@ -4893,7 +4893,14 @@ extern void SVMXLog(NSString *format, ...);
             {
                value = [NSString stringWithUTF8String:_value];
             }
-            
+			
+	
+			//Handling for tags having same key and value.
+            if ([value isEqualToString:key])
+			{
+				value = @"";
+			}
+			
             if (![key isEqualToString:@""])
                 [tagDict setValue:value forKey:key];
         }

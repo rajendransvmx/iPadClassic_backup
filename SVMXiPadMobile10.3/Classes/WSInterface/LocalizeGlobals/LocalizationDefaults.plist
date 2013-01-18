@@ -500,18 +500,16 @@
 	<string>Now downloading SFM wizards</string>
 	<key>IPAD012_TAG031</key>
 	<string>Downloading Mobile Configuration</string>
-	<key>IPAD012_TAG032</key>
-	<string></string>
 	<key>IPAD012_TAG033</key>
-	<string></string>
+	<string>Created Date</string>
 	<key>IPAD012_TAG034</key>
 	<string>Now downloading configuration settings</string>
 	<key>IPAD012_TAG035</key>
 	<string>Downloading Mobile Configuration</string>
 	<key>IPAD012_TAG036</key>
 	<string></string>
-	<key>IPAD012_TAG037</key>
-	<string></string>
+	<key>IPAD012_TAG032</key>
+	<string>See More</string>
 	<key>IPAD012_TAG038</key>
 	<string>Now downloading dependent picklists</string>
 	<key>IPAD012_TAG039</key>
@@ -606,5 +604,7 @@
 	<string>Edit Event</string>
 	<key>IPAD014_TAG031</key>
 	<string>Related To</string>
+	<key>IPAD018_TAG034</key>
+	<string>Reset Application</string>
 </dict>
 </plist>

@@ -44,6 +44,10 @@ extern void SVMXLog(NSString *format, ...);
     NSString * normal = [appDelegate.wsInterface.tagsDictionary objectForKey:ADD_TASKS_PRIORITY_NORMAL];
     // Set Picker to have only 3 values High, Medium, Low
     pickerValues = [[NSArray alloc] initWithObjects:low, normal, high, nil];
+	
+	[setPriorityLable setText:[appDelegate.wsInterface.tagsDictionary objectForKey:ADD_TASKS_SET_PRIORITY_TITLE]];
+	[enterTaskLabel setText:[appDelegate.wsInterface.tagsDictionary objectForKey:ADD_TASKS_PROMPT]];
+	enterTaskLabel.font = [UIFont fontWithName:@"helvetica" size:20];
     
 }
 
@@ -75,6 +79,10 @@ extern void SVMXLog(NSString *format, ...);
     taskPrompt = nil;
     [priority release];
     priority = nil;
+	[enterTaskLabel release];
+	enterTaskLabel = nil;
+	[setPriorityLable release];
+	setPriorityLable = nil;
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -105,6 +113,8 @@ extern void SVMXLog(NSString *format, ...);
     [doneButton release];
     [taskPrompt release];
     [priority release];
+	[enterTaskLabel release];
+	[setPriorityLable release];
     [super dealloc];
 }
 

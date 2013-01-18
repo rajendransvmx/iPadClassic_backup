@@ -88,9 +88,21 @@ PopoverButtons *popOver_view;
 	//label3
 	UILabel *label3 = [[[UILabel alloc] initWithFrame:CGRectMake(10, 0, 200, 50)] autorelease];
     label3.backgroundColor = [UIColor clearColor];
-    //label2.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_full_data_synchronize];
-    label3.text =  @"Reset Application";//[appDelegate.wsInterface.tagsDictionary objectForKey:@"Reset Application"];
-    button3 = [UIButton buttonWithType:UIButtonTypeCustom];
+	
+	NSString *str37 = [appDelegate.wsInterface.tagsDictionary objectForKey:conflict_retry];
+	NSString *str34 = [appDelegate.wsInterface.tagsDictionary objectForKey:SYNC_RESETAPPLICATION];
+ 	
+	if ([str37 isEqualToString:str34])
+	{
+		label3.text = @"Reset Application";
+	}
+	else
+	{
+		label3.text =  [appDelegate.wsInterface.tagsDictionary objectForKey:SYNC_RESETAPPLICATION];
+
+	}
+	
+	button3 = [UIButton buttonWithType:UIButtonTypeCustom];
     button3.frame = CGRectMake(0, 175, 214, 59);
     [button3 addSubview:label3];
     [button3 setImage:buttonBkground forState:UIControlStateNormal];
@@ -362,10 +374,8 @@ PopoverButtons *popOver_view;
     NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_TITLE];
     NSString * cancel = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
     NSString * continue_ = [appDelegate.wsInterface.tagsDictionary objectForKey:login_continue];
-//    NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:syncconfig_confirm];
-//    
-//    if ([message length] == 0)
-       NSString * message = @"Are you sure you want to synchronize configuration?";
+    NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:syncconfig_confirm];
+
     
     UIAlertView * syncConfigAlert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:continue_ otherButtonTitles:cancel, nil];
     

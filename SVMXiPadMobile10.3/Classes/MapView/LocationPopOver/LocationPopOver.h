@@ -39,9 +39,12 @@
     IBOutlet UITextView * homeLocationAddress;
     
     IBOutlet UIButton * homeLocationDrivingDirections;
+	
+	IBOutlet UILabel *_homeLocation;
 }
 
 @property (nonatomic, retain) id <LocationPopOverDelegate> delegate;
+
 
 @property (nonatomic, retain) UIPopoverController * popOver;
 

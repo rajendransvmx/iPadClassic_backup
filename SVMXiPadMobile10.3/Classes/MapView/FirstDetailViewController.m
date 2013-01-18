@@ -175,6 +175,8 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
         [routeView scrollToSection:[NSNumber numberWithUnsignedInt:annotationIndex]];
         return;
     }
+	
+	directionLabel.text = [appDelegate.wsInterface.tagsDictionary objectForKey:MAP_POPOVER_DRIVING_DIRECTION_BUTTON];
     routeView = [[RouteController alloc] initWithNibName:@"RouteController" bundle:nil];
     routeView.directionArray = controller.diretions.routes;
     // Form the workOrderArray to be passed to routeView

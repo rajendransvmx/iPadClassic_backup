@@ -12,6 +12,8 @@
 #import "iServiceAppDelegate.h"
 #import "DateTimeFormatter.h"
 #import "About.h"
+
+
 extern void SVMXLog(NSString *format, ...);
 
 @implementation PDFCreator
@@ -1554,8 +1556,37 @@ extern void SVMXLog(NSString *format, ...);
     
     // Calculate dimensions of text based on text font properties
     CGSize textSize = [detailsTitle sizeWithFont:[UIFont fontWithName:@"Verdana-Bold" size:18]];
-    
-	CGContextShowTextAtPoint (pdfContext, (pageRect.size.width/2) - (textSize.width/2), pageRect.size.height-currentPoint.y, text, strlen(text));
+//    
+//	CGContextShowTextAtPoint (pdfContext, (pageRect.size.width/2) - (textSize.width/2), pageRect.size.height-currentPoint.y, text, strlen(text));
+	
+	
+	//
+	// Prepare font
+	CTFontRef sfont = CTFontCreateWithName(CFSTR("Verdana-Bold"), 18, NULL);
+	
+	// Create an attributed string
+	CFStringRef keys[] = { kCTFontAttributeName };
+	CFTypeRef values[] = { sfont };
+	CFDictionaryRef attr = CFDictionaryCreate(NULL, (const void **)&keys, (const void **)&values,
+											  sizeof(keys) / sizeof(keys[0]), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+	//CFAttributedStringRef attrString = CFAttributedStringCreate(NULL, CFSTR("Hello, World!"), attr);
+	CFAttributedStringRef attrString = CFAttributedStringCreate(NULL, (CFStringRef)detailsTitle, attr);
+	CFRelease(attr);
+	
+	// Draw the string
+	CTLineRef line = CTLineCreateWithAttributedString(attrString);
+	CGContextSetTextMatrix(pdfContext, CGAffineTransformIdentity);  //Use this one when using standard view coordinates
+	//CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1.0, -1.0)); //Use this one if the view's coordinates are flipped
+	
+	CGContextSetTextPosition(pdfContext, (pageRect.size.width/2) - (textSize.width/2), pageRect.size.height-currentPoint.y);
+	CTLineDraw(line, pdfContext);
+	
+	// Clean up
+	CFRelease(line);
+	CFRelease(attrString);
+	CFRelease(sfont);
+	//
+
     
     [self newLine:(textSize.height > 0)?textSize.height:16];
     
@@ -1839,14 +1870,45 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) setWorkOrder:(NSString *)wonumber
 {
-    NSString * workOrderNumber = @"Work Order Number:";
+    NSString * workOrderNumber = [NSString stringWithFormat:@"%@:",[appDelegate.wsInterface.tagsDictionary objectForKey:SERVICE_REPORT_WORK_ORDER_NUMBER]];
     CGContextSelectFont (pdfContext, CBOLDFONTNAME, 14, kCGEncodingMacRoman);
 	CGContextSetTextDrawingMode (pdfContext, kCGTextFill);
 	CGContextSetRGBFillColor (pdfContext, 0, 0, 0, 1);
-	const char * workOrderNumberText = [workOrderNumber cStringUsingEncoding:NSUTF8StringEncoding];
-    
-    CGContextShowTextAtPoint (pdfContext, currentPoint.x, pageRect.size.height-currentPoint.y-10, workOrderNumberText, strlen(workOrderNumberText));
-    
+//	const wchar_t * workOrderNumberText = (wchar_t *)[workOrderNumber cStringUsingEncoding:NSUTF16StringEncoding];
+//    NSLog(@"%S", (const wchar_t *)workOrderNumberText);
+//	UIGraphicsPushContext(pdfContext);
+//	UIGraphicsPopContext();
+	
+    //
+	// Prepare font
+	CTFontRef sfont = CTFontCreateWithName(CFSTR("Verdana-Bold"), 14, NULL);
+	
+	// Create an attributed string
+	CFStringRef keys[] = { kCTFontAttributeName };
+	CFTypeRef values[] = { sfont };
+	CFDictionaryRef attr = CFDictionaryCreate(NULL, (const void **)&keys, (const void **)&values,
+											  sizeof(keys) / sizeof(keys[0]), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+	//CFAttributedStringRef attrString = CFAttributedStringCreate(NULL, CFSTR("Hello, World!"), attr);
+	CFAttributedStringRef attrString = CFAttributedStringCreate(NULL, (CFStringRef)workOrderNumber, attr);
+	CFRelease(attr);
+	
+	// Draw the string
+	CTLineRef line = CTLineCreateWithAttributedString(attrString);
+	CGContextSetTextMatrix(pdfContext, CGAffineTransformIdentity);  //Use this one when using standard view coordinates
+	//CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1.0, -1.0)); //Use this one if the view's coordinates are flipped
+	
+	CGContextSetTextPosition(pdfContext, currentPoint.x, pageRect.size.height-currentPoint.y-10);
+	CTLineDraw(line, pdfContext);
+	
+	// Clean up
+	CFRelease(line);
+	CFRelease(attrString);
+	CFRelease(sfont);
+	//
+	
+    //CGContextShowTextAtPoint (pdfContext, currentPoint.x, pageRect.size.height-currentPoint.y-10,(const wchar_t *)workOrderNumberText, strlen(workOrderNumberText));
+	
+
     UIFont * font = [UIFont fontWithName:@"Verdana-Bold" size:14];
     CGSize textSize = [workOrderNumber sizeWithFont:font];
     currentPoint = CGPointMake(currentPoint.x + textSize.width, currentPoint.y);
@@ -1869,14 +1931,39 @@ extern void SVMXLog(NSString *format, ...);
     
     currentPoint = CGPointMake(425, currentPoint.y);
     
-    NSString * workOrderNumber = @"Date:    ";
-    CGContextSelectFont (pdfContext, CBOLDFONTNAME, 14, kCGEncodingMacRoman);
-	CGContextSetTextDrawingMode (pdfContext, kCGTextFill);
-	CGContextSetRGBFillColor (pdfContext, 0, 0, 0, 1);
-	const char * workOrderNumberText = [workOrderNumber cStringUsingEncoding:NSUTF8StringEncoding];
-    
-    CGContextShowTextAtPoint (pdfContext, currentPoint.x, pageRect.size.height-currentPoint.y-10, workOrderNumberText, strlen(workOrderNumberText));
-    
+    NSString * workOrderNumber = [NSString stringWithFormat:@"%@:    ",[appDelegate.wsInterface.tagsDictionary objectForKey:SERVICE_REPORT_DATE]];
+//    CGContextSelectFont (pdfContext, CBOLDFONTNAME, 14, kCGEncodingMacRoman);
+//	CGContextSetTextDrawingMode (pdfContext, kCGTextFill);
+//	CGContextSetRGBFillColor (pdfContext, 0, 0, 0, 1);
+//	const char * workOrderNumberText = [workOrderNumber cStringUsingEncoding:NSUTF8StringEncoding];
+//    
+//    CGContextShowTextAtPoint (pdfContext, currentPoint.x, pageRect.size.height-currentPoint.y-10, workOrderNumberText, strlen(workOrderNumberText));
+	
+	
+	CTFontRef sfont = CTFontCreateWithName(CFSTR("Verdana-Bold"), 14, NULL);
+	
+	// Create an attributed string
+	CFStringRef keys[] = { kCTFontAttributeName };
+	CFTypeRef values[] = { sfont };
+	CFDictionaryRef attr = CFDictionaryCreate(NULL, (const void **)&keys, (const void **)&values,
+											  sizeof(keys) / sizeof(keys[0]), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+	//CFAttributedStringRef attrString = CFAttributedStringCreate(NULL, CFSTR("Hello, World!"), attr);
+	CFAttributedStringRef attrString = CFAttributedStringCreate(NULL, (CFStringRef)workOrderNumber, attr);
+	CFRelease(attr);
+	
+	// Draw the string
+	CTLineRef line = CTLineCreateWithAttributedString(attrString);
+	CGContextSetTextMatrix(pdfContext, CGAffineTransformIdentity);  //Use this one when using standard view coordinates
+	//CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1.0, -1.0)); //Use this one if the view's coordinates are flipped
+	
+	CGContextSetTextPosition(pdfContext, currentPoint.x, pageRect.size.height-currentPoint.y-10);
+	CTLineDraw(line, pdfContext);
+	
+	// Clean up
+	CFRelease(line);
+	CFRelease(attrString);
+	CFRelease(sfont);
+
     UIFont * font = [UIFont fontWithName:@"Verdana-Bold" size:14];
     CGSize textSize = [workOrderNumber sizeWithFont:font];
     currentPoint = CGPointMake(currentPoint.x + textSize.width, currentPoint.y);
@@ -1900,13 +1987,48 @@ extern void SVMXLog(NSString *format, ...);
         return;
     }
     
-    NSString * workOrderNumber = @"Address:";
-    CGContextSelectFont (pdfContext, CBOLDFONTNAME, 14, kCGEncodingMacRoman);
-	CGContextSetTextDrawingMode (pdfContext, kCGTextFill);
-	CGContextSetRGBFillColor (pdfContext, 0, 0, 0, 1);
-	const char * workOrderNumberText = [workOrderNumber cStringUsingEncoding:NSUTF8StringEncoding];
-    
-    CGContextShowTextAtPoint (pdfContext, currentPoint.x, pageRect.size.height-currentPoint.y-10, workOrderNumberText, strlen(workOrderNumberText));
+    NSString * workOrderNumber = [NSString stringWithFormat:@"%@:",[appDelegate.wsInterface.tagsDictionary objectForKey:SERVICE_REPORT_ADDRESS]];
+//    CGContextSelectFont (pdfContext, CBOLDFONTNAME, 14, kCGEncodingMacRoman);
+//	CGContextSetTextDrawingMode (pdfContext, kCGTextFill);
+//	CGContextSetRGBFillColor (pdfContext, 0, 0, 0, 1);
+//	const char * workOrderNumberText = [workOrderNumber cStringUsingEncoding:NSUTF8StringEncoding];
+//    
+//    CGContextShowTextAtPoint (pdfContext, currentPoint.x, pageRect.size.height-currentPoint.y-10, workOrderNumberText, strlen(workOrderNumberText));
+	
+	
+	//    CGContextSelectFont (pdfContext, CBOLDFONTNAME, 14, kCGEncodingMacRoman);
+	//	CGContextSetTextDrawingMode (pdfContext, kCGTextFill);
+	//	CGContextSetRGBFillColor (pdfContext, 0, 0, 0, 1);
+	//	const char * workOrderNumberText = [workOrderNumber cStringUsingEncoding:NSUTF8StringEncoding];
+	//
+	//    CGContextShowTextAtPoint (pdfContext, currentPoint.x, pageRect.size.height-currentPoint.y-10, workOrderNumberText, strlen(workOrderNumberText));
+	
+	
+	CTFontRef sfont = CTFontCreateWithName(CFSTR("Verdana-Bold"), 14, NULL);
+	
+	// Create an attributed string
+	CFStringRef keys[] = { kCTFontAttributeName };
+	CFTypeRef values[] = { sfont };
+	CFDictionaryRef attr = CFDictionaryCreate(NULL, (const void **)&keys, (const void **)&values,
+											  sizeof(keys) / sizeof(keys[0]), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+	//CFAttributedStringRef attrString = CFAttributedStringCreate(NULL, CFSTR("Hello, World!"), attr);
+	CFAttributedStringRef attrString = CFAttributedStringCreate(NULL, (CFStringRef)workOrderNumber, attr);
+	CFRelease(attr);
+	
+	// Draw the string
+	CTLineRef line = CTLineCreateWithAttributedString(attrString);
+	CGContextSetTextMatrix(pdfContext, CGAffineTransformIdentity);  //Use this one when using standard view coordinates
+	//CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1.0, -1.0)); //Use this one if the view's coordinates are flipped
+	
+	CGContextSetTextPosition(pdfContext, currentPoint.x, pageRect.size.height-currentPoint.y-10);
+	CTLineDraw(line, pdfContext);
+	
+	// Clean up
+	CFRelease(line);
+	CFRelease(attrString);
+	CFRelease(sfont);
+
+	
     
     UIFont * font = [UIFont fontWithName:@"Verdana-Bold" size:14];
     CGSize textSize = [workOrderNumber sizeWithFont:font];
@@ -1963,24 +2085,77 @@ extern void SVMXLog(NSString *format, ...);
 {
     currentPoint = CGPointMake(425, currentPoint.y);
     
-    NSString * workOrderNumber = @"Contact:";
-    CGContextSelectFont (pdfContext, CBOLDFONTNAME, 14, kCGEncodingMacRoman);
-	CGContextSetTextDrawingMode (pdfContext, kCGTextFill);
-	CGContextSetRGBFillColor (pdfContext, 0, 0, 0, 1);
-	const char * workOrderNumberText = [workOrderNumber cStringUsingEncoding:NSUTF8StringEncoding];
+    NSString * workOrderNumber = [NSString stringWithFormat:@"%@:",[appDelegate.wsInterface.tagsDictionary objectForKey:SERVICE_REPORT_CONTACT]];
+//    CGContextSelectFont (pdfContext, CBOLDFONTNAME, 14, kCGEncodingMacRoman);
+//	CGContextSetTextDrawingMode (pdfContext, kCGTextFill);
+//	CGContextSetRGBFillColor (pdfContext, 0, 0, 0, 1);
+//	const char * workOrderNumberText = [workOrderNumber cStringUsingEncoding:NSUTF8StringEncoding];
+//    
+//    CGContextShowTextAtPoint (pdfContext, currentPoint.x, pageRect.size.height-currentPoint.y-10, workOrderNumberText, strlen(workOrderNumberText));
     
-    CGContextShowTextAtPoint (pdfContext, currentPoint.x, pageRect.size.height-currentPoint.y-10, workOrderNumberText, strlen(workOrderNumberText));
-    
+	
+	CTFontRef sfont = CTFontCreateWithName(CFSTR("Verdana-Bold"), 14, NULL);
+	
+	// Create an attributed string
+	CFStringRef keys[] = { kCTFontAttributeName };
+	CFTypeRef values[] = { sfont };
+	CFDictionaryRef attr = CFDictionaryCreate(NULL, (const void **)&keys, (const void **)&values,
+											  sizeof(keys) / sizeof(keys[0]), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+	//CFAttributedStringRef attrString = CFAttributedStringCreate(NULL, CFSTR("Hello, World!"), attr);
+	CFAttributedStringRef attrString = CFAttributedStringCreate(NULL, (CFStringRef)workOrderNumber, attr);
+	CFRelease(attr);
+	
+	// Draw the string
+	CTLineRef line = CTLineCreateWithAttributedString(attrString);
+	CGContextSetTextMatrix(pdfContext, CGAffineTransformIdentity);  //Use this one when using standard view coordinates
+	//CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1.0, -1.0)); //Use this one if the view's coordinates are flipped
+	
+	CGContextSetTextPosition(pdfContext, currentPoint.x, pageRect.size.height-currentPoint.y-10);
+	CTLineDraw(line, pdfContext);
+	
+	// Clean up
+	CFRelease(line);
+	CFRelease(attrString);
+	CFRelease(sfont);
+
+	
+	
     UIFont * font = [UIFont fontWithName:@"Verdana-Bold" size:14];
     CGSize textSize = [workOrderNumber sizeWithFont:font];
     currentPoint = CGPointMake(currentPoint.x + textSize.width, currentPoint.y);
     
-    CGContextSelectFont (pdfContext, CFONTNAME, 12, kCGEncodingMacRoman);
-	CGContextSetTextDrawingMode (pdfContext, kCGTextFill);
-	CGContextSetRGBFillColor (pdfContext, 0, 0, 0, 1);
-	const char *text = [contact cStringUsingEncoding:NSUTF8StringEncoding];
-    
-	CGContextShowTextAtPoint (pdfContext, currentPoint.x+10, pageRect.size.height-currentPoint.y-10, text, strlen(text));
+//    CGContextSelectFont (pdfContext, CFONTNAME, 12, kCGEncodingMacRoman);
+//	CGContextSetTextDrawingMode (pdfContext, kCGTextFill);
+//	CGContextSetRGBFillColor (pdfContext, 0, 0, 0, 1);
+//	const char *text = [contact cStringUsingEncoding:NSUTF8StringEncoding];
+//    
+//	CGContextShowTextAtPoint (pdfContext, currentPoint.x+10, pageRect.size.height-currentPoint.y-10, text, strlen(text));
+	
+	
+	CTFontRef sfont1 = CTFontCreateWithName(CFSTR("Verdana-Bold"), 14, NULL);
+	
+	// Create an attributed string
+	CFStringRef keys1[] = { kCTFontAttributeName };
+	CFTypeRef values1[] = { sfont1 };
+	CFDictionaryRef attr1 = CFDictionaryCreate(NULL, (const void **)&keys1, (const void **)&values1,
+											  sizeof(keys1) / sizeof(keys1[0]), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+	//CFAttributedStringRef attrString = CFAttributedStringCreate(NULL, CFSTR("Hello, World!"), attr);
+	CFAttributedStringRef attrString1 = CFAttributedStringCreate(NULL, (CFStringRef)contact, attr1);
+	CFRelease(attr1);
+	
+	// Draw the string
+	CTLineRef line1 = CTLineCreateWithAttributedString(attrString1);
+	CGContextSetTextMatrix(pdfContext, CGAffineTransformIdentity);  //Use this one when using standard view coordinates
+	//CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1.0, -1.0)); //Use this one if the view's coordinates are flipped
+	
+	CGContextSetTextPosition(pdfContext, currentPoint.x+10, pageRect.size.height-currentPoint.y-10);
+	CTLineDraw(line1, pdfContext);
+	
+	// Clean up
+	CFRelease(line1);
+	CFRelease(attrString1);
+	CFRelease(sfont1);
+
     textSize = [contact sizeWithFont:[UIFont fontWithName:FONTNAME size:12]];
     
     phoneNewLine = CGPointMake(currentPoint.x, currentPoint.y+newLineBuffer+textSize.height);
@@ -1995,13 +2170,39 @@ extern void SVMXLog(NSString *format, ...);
 {
     currentPoint = CGPointMake(425, currentPoint.y);
     
-    NSString * workOrderNumber = @"Phone:";
-    CGContextSelectFont (pdfContext, CBOLDFONTNAME, 14, kCGEncodingMacRoman);
-	CGContextSetTextDrawingMode (pdfContext, kCGTextFill);
-	CGContextSetRGBFillColor (pdfContext, 0, 0, 0, 1);
-	const char * workOrderNumberText = [workOrderNumber cStringUsingEncoding:NSUTF8StringEncoding];
-    
-    CGContextShowTextAtPoint (pdfContext, currentPoint.x, pageRect.size.height-phoneNewLine.y-20, workOrderNumberText, strlen(workOrderNumberText));
+    NSString * workOrderNumber = [NSString stringWithFormat:@"%@:",[appDelegate.wsInterface.tagsDictionary objectForKey:SERVICE_REPORT_PHONE]];
+//    CGContextSelectFont (pdfContext, CBOLDFONTNAME, 14, kCGEncodingMacRoman);
+//	CGContextSetTextDrawingMode (pdfContext, kCGTextFill);
+//	CGContextSetRGBFillColor (pdfContext, 0, 0, 0, 1);
+//	const char * workOrderNumberText = [workOrderNumber cStringUsingEncoding:NSUTF8StringEncoding];
+//    
+//    CGContextShowTextAtPoint (pdfContext, currentPoint.x, pageRect.size.height-phoneNewLine.y-20, workOrderNumberText, strlen(workOrderNumberText));
+	
+	
+	CTFontRef sfont1 = CTFontCreateWithName(CFSTR("Verdana-Bold"), 14, NULL);
+	
+	// Create an attributed string
+	CFStringRef keys1[] = { kCTFontAttributeName };
+	CFTypeRef values1[] = { sfont1 };
+	CFDictionaryRef attr1 = CFDictionaryCreate(NULL, (const void **)&keys1, (const void **)&values1,
+											   sizeof(keys1) / sizeof(keys1[0]), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+	//CFAttributedStringRef attrString = CFAttributedStringCreate(NULL, CFSTR("Hello, World!"), attr);
+	CFAttributedStringRef attrString1 = CFAttributedStringCreate(NULL, (CFStringRef)workOrderNumber, attr1);
+	CFRelease(attr1);
+	
+	// Draw the string
+	CTLineRef line1 = CTLineCreateWithAttributedString(attrString1);
+	CGContextSetTextMatrix(pdfContext, CGAffineTransformIdentity);  //Use this one when using standard view coordinates
+	//CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1.0, -1.0)); //Use this one if the view's coordinates are flipped
+	
+	CGContextSetTextPosition(pdfContext, currentPoint.x, pageRect.size.height-phoneNewLine.y-20);
+	CTLineDraw(line1, pdfContext);
+	
+	// Clean up
+	CFRelease(line1);
+	CFRelease(attrString1);
+	CFRelease(sfont1);
+
     
     UIFont * font = [UIFont fontWithName:@"Verdana-Bold" size:14];
     CGSize textSize = CGSizeZero; // [workOrderNumber sizeWithFont:font];

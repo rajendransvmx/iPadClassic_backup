@@ -13,7 +13,9 @@
 extern void SVMXLog(NSString *format, ...);
 
 @implementation SignatureViewController
+@synthesize _cancelButt;
 
+@synthesize doneButton;
 @synthesize delegate;
 @synthesize imageData, parent;
 
@@ -142,6 +144,12 @@ extern void SVMXLog(NSString *format, ...);
     
     done_button .titleLabel.text = [appDelegte.wsInterface.tagsDictionary objectForKey:SFM_SIGNATURE_DONE_BUTTON];
     cancel_button.titleLabel.text = [appDelegte.wsInterface.tagsDictionary objectForKey:SFM_SIGNATURE_CANCEL_BUTTON];
+//	doneButton.titleLabel.text = [appDelegte.wsInterface.tagsDictionary objectForKey:SFM_SIGNATURE_DONE_BUTTON];
+//	cancelButton.titleLabel.text = [appDelegte.wsInterface.tagsDictionary objectForKey:SFM_SIGNATURE_CANCEL_BUTTON];
+	[doneButton setTitle:[appDelegte.wsInterface.tagsDictionary objectForKey:SFM_SIGNATURE_DONE_BUTTON] forState:UIControlStateNormal];
+	[_cancelButt setTitle:[appDelegte.wsInterface.tagsDictionary objectForKey:SFM_SIGNATURE_CANCEL_BUTTON] forState:UIControlStateNormal];
+	
+	
     
     // ################################ //
     // Fill the marker with marker text
@@ -267,6 +275,10 @@ extern void SVMXLog(NSString *format, ...);
     cancel_button = nil;
     [done_button release];
     done_button = nil;
+    [self setDoneButton:nil];
+	[cancelButton release];
+	cancelButton = nil;
+	[self set_cancelButt:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -276,6 +288,9 @@ extern void SVMXLog(NSString *format, ...);
 - (void)dealloc {
     [cancel_button release];
     [done_button release];
+    [doneButton release];
+	[cancelButton release];
+	[_cancelButt release];
     [super dealloc];
 }
 

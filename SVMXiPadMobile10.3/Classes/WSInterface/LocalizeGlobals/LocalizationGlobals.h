@@ -46,9 +46,9 @@
 #define sync_progress_picklist_definition      @"IPAD012_TAG027"
 #define sync_progress_RT_picklist              @"IPAD012_TAG029"
 #define sync_progress_SFW_metadata             @"IPAD012_TAG031"
-#define sync_progress_mob_tags                 @"IPAD012_TAG033"
+#define sfm_CreatedDate						   @"IPAD012_TAG033"
 #define sync_progress_mob_settings             @"IPAD012_TAG035"
-#define sync_progress_sfm_search               @"IPAD012_TAG037"
+//#define sfm_SeeMore							   @"IPAD012_TAG037"
 #define sync_progress_dp_picklist              @"IPAD012_TAG039"
 #define sync_progress_event_sync               @"IPAD012_TAG041"
 #define sync_progress_dc_sync                  @"IPAD012_TAG043"
@@ -71,7 +71,7 @@
 #define sync_progress_picklist_definition_desc      @"IPAD012_TAG026"
 #define sync_progress_RT_picklist_desc              @"IPAD012_TAG028"
 #define sync_progress_SFW_metadata_desc             @"IPAD012_TAG030"
-#define sync_progress_mob_tags_desc                 @"IPAD012_TAG032"
+#define sfm_SeeMore                                 @"IPAD012_TAG032"
 #define sync_progress_mob_settings_desc             @"IPAD012_TAG034"
 #define sync_progress_sfm_search_desc               @"IPAD012_TAG036"
 #define sync_progress_dp_picklist_desc              @"IPAD012_TAG038"
@@ -347,6 +347,8 @@
 
 #define alert_authentication_error_         @"IPAD011_TAG014"
 #define login_continue                      @"IPAD015_TAG010"
+
+#define SYNC_RESETAPPLICATION				@"IPAD018_TAG034"
 
 //SFM Search
 #define SFM_Search                          @"IPAD019_TAG001"

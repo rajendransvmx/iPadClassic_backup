@@ -31,9 +31,11 @@
     IBOutlet UIButton * cancel_button;
     IBOutlet UIButton *done_button;
     
+	IBOutlet UIButton *cancelButton;
     IBOutlet UIView * watermarkedSignature;
     IBOutlet UITextView * watermark;
 }
+@property (retain, nonatomic) IBOutlet UIButton *doneButton;
 
 @property (nonatomic, assign) id <SignatureDelegate> delegate;
 
@@ -44,6 +46,7 @@
 - (IBAction) Done;
 - (IBAction) Erase;
 - (void) SetImage;
+@property (retain, nonatomic) IBOutlet UIButton *_cancelButt;
 - (NSString *) getRandomString;
 - (NSString *) getWrappedStringFromString:(NSString *)data;
 
