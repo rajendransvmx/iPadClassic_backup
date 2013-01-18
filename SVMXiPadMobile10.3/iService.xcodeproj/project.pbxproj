@@ -723,6 +723,7 @@
 		A8C1B0C315AD7D3E00E5B76D /* zbar-help.html in Resources */ = {isa = PBXBuildFile; fileRef = A8C1B0BE15AD7D3E00E5B76D /* zbar-help.html */; };
 		A8C1B0C415AD7D3E00E5B76D /* zbar-helpicons.png in Resources */ = {isa = PBXBuildFile; fileRef = A8C1B0BF15AD7D3E00E5B76D /* zbar-helpicons.png */; };
 		A8C1B0C515AD7D3E00E5B76D /* zbar-samples.png in Resources */ = {isa = PBXBuildFile; fileRef = A8C1B0C015AD7D3E00E5B76D /* zbar-samples.png */; };
+		A8C4687D16A9564C0053753C /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8C4687C16A9564C0053753C /* CoreText.framework */; };
 		A8DA42E715D903A00050CF04 /* barcode-scanning.html in Resources */ = {isa = PBXBuildFile; fileRef = A8DA42E615D903A00050CF04 /* barcode-scanning.html */; };
 		A8DA42EA15D903B40050CF04 /* gps-tracking.html in Resources */ = {isa = PBXBuildFile; fileRef = A8DA42E915D903B40050CF04 /* gps-tracking.html */; };
 		A8DA42EC15D903BE0050CF04 /* sfm-search.html in Resources */ = {isa = PBXBuildFile; fileRef = A8DA42EB15D903BE0050CF04 /* sfm-search.html */; };
@@ -1752,6 +1753,7 @@
 		A8C1B0BE15AD7D3E00E5B76D /* zbar-help.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "zbar-help.html"; sourceTree = "<group>"; };
 		A8C1B0BF15AD7D3E00E5B76D /* zbar-helpicons.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "zbar-helpicons.png"; sourceTree = "<group>"; };
 		A8C1B0C015AD7D3E00E5B76D /* zbar-samples.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "zbar-samples.png"; sourceTree = "<group>"; };
+		A8C4687C16A9564C0053753C /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		A8DA42E615D903A00050CF04 /* barcode-scanning.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "barcode-scanning.html"; sourceTree = "<group>"; };
 		A8DA42E915D903B40050CF04 /* gps-tracking.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "gps-tracking.html"; sourceTree = "<group>"; };
 		A8DA42EB15D903BE0050CF04 /* sfm-search.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "sfm-search.html"; sourceTree = "<group>"; };
@@ -2051,6 +2053,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A8C4687D16A9564C0053753C /* CoreText.framework in Frameworks */,
 				A830EA4D15AC4E130071DEF0 /* libiconv.dylib in Frameworks */,
 				A830EA4A15AC4E0D0071DEF0 /* CoreMedia.framework in Frameworks */,
 				A830EA4B15AC4E0D0071DEF0 /* CoreVideo.framework in Frameworks */,
@@ -2088,6 +2091,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				A8C4687C16A9564C0053753C /* CoreText.framework */,
 				A830EA4C15AC4E130071DEF0 /* libiconv.dylib */,
 				A830EA4815AC4E0D0071DEF0 /* CoreMedia.framework */,
 				A830EA4915AC4E0D0071DEF0 /* CoreVideo.framework */,
