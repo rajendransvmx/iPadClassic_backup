@@ -280,13 +280,14 @@
 #define chatter_no_posts                    @"IPAD008_TAG009"
 #define chatter_facetime                    @"IPAD008_TAG010"
 #define chatter_face_time_config            @"IPAD008_TAG010"
-#define alert_authentication_error          @"IPAD011_TAG007"
+#define alert_authentication_error_         @"IPAD011_TAG007"
 #define alert_connection_error              @"IPAD011_TAG008"
 #define alert_switch_user                   @"IPAD011_TAG009"
 #define alert_ipad_error                    @"IPAD011_TAG010"
 #define alert_application_error             @"IPAD011_TAG011"
 #define alert_synchronize_error             @"IPAD011_TAG012"
 #define alert_invalid_error                 @"IPAD011_TAG013"
+#define Copy_to_Clipboard                   @"IPAD011_TAG014"
 #define System_Error                        @"IPAD011_TAG015"
 #define Functional_Error                    @"IPAD011_TAG016"
 #define Type_of_Error                       @"IPAD011_TAG017"
@@ -349,7 +350,6 @@
 #define Last_updated_on                     @"IPAD018_TAG050"
 #define Refresh_from_SalesForce             @"IPAD018_TAG051"
 
-#define alert_authentication_error_         @"IPAD011_TAG014"
 #define login_continue                      @"IPAD015_TAG010"
 
 #define SYNC_RESETAPPLICATION				@"IPAD018_TAG034"
