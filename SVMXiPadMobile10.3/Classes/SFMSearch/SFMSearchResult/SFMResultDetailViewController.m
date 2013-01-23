@@ -222,25 +222,26 @@ enum  {
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	@try{
     NSArray *cellArray = [[tableDataArray objectAtIndex:section] objectForKey:@"Values"];
+    NSInteger noOfRows;
     if([self.masterView.searchFilterSwitch isOn])
     {
+        @try{
         NSDictionary *sectionDict = [tableDataArray objectAtIndex:section];
         NSString *sectionObjectId = [sectionDict objectForKey:@"ObjectId"];
         int onlineCount = 0;
         NSMutableArray *objectSectionData = [onlineDataDict objectForKey:sectionObjectId];
         onlineCount = [objectSectionData count];
-        return [cellArray count] + onlineCount;
+        noOfRows =  [cellArray count] + onlineCount;
+        }@catch (NSException *exp) {
+        SMLog(@"Exception Name SFMResultDetailViewController :numberOfRowsInSection %@",exp.name);
+        SMLog(@"Exception Reason SFMResultDetailViewController :numberOfRowsInSection %@",exp.reason);
+        }
     }
     else {
-        return [cellArray count];
+        noOfRows = [cellArray count];
     }
-	}@catch (NSException *exp) {
-	SMLog(@"Exception Name SFMResultDetailViewController :numberOfRowsInSection %@",exp.name);
-	SMLog(@"Exception Reason SFMResultDetailViewController :numberOfRowsInSection %@",exp.reason);
-    }
-
+    return noOfRows;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {

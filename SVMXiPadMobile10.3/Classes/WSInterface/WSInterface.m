@@ -154,56 +154,51 @@ extern void SVMXLog(NSString *format, ...);
         appDelegate.settingsDict = [appDelegate.dataBase getSettingsDictionary];
     
     int no_of_days ;
-    
-    NSString * timeInterval = @"";
-@try
-{
-    if([time isEqualToString:START_TIME])
-        timeInterval = ([appDelegate.settingsDict objectForKey:@"Synchronization To Remove Events"]) != nil?[appDelegate.settingsDict objectForKey:@"Synchronization To Remove Events"]:@"";
-    else
-        timeInterval = ([appDelegate.settingsDict objectForKey:@"Synchronization To Get Events"]) != nil?[appDelegate.settingsDict objectForKey:@"Synchronization To Get Events"]:@"";
-        
-    if([timeInterval isEqualToString:@""])
-    {
-        no_of_days = 15;    
-    }
-    else
-    {
-        no_of_days = [timeInterval intValue]; 
-    }
-    
-    
-    NSTimeInterval secondsPerDay = no_of_days * 24 * 60 * 60;
-    
     NSDate * today = [NSDate date];
     NSDate * tomorrow, *yesterday;
-
-    
     NSDateFormatter * format = [[NSDateFormatter alloc] init];
-    [format setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"IST"]];
-    [format setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-    NSString * date_ = [format stringFromDate:today];
-     date_ = [date_ stringByReplacingCharactersInRange:NSMakeRange(11, 8) withString:@"00:00:00"];
-    NSDate * localDate = [format dateFromString:date_];
-   
+    NSString * timeInterval = @"";
+    NSString * current_gmt_time=@"";
+    NSDate * localDate;
+    NSTimeInterval secondsPerDay;
     
-    [format release];
-    
+    @try{
+        if([time isEqualToString:START_TIME])
+            timeInterval = ([appDelegate.settingsDict objectForKey:@"Synchronization To Remove Events"]) != nil?[appDelegate.settingsDict objectForKey:@"Synchronization To Remove Events"]:@"";
+        else
+            timeInterval = ([appDelegate.settingsDict objectForKey:@"Synchronization To Get Events"]) != nil?[appDelegate.settingsDict objectForKey:@"Synchronization To Get Events"]:@"";
+        
+        if([timeInterval isEqualToString:@""])
+        {
+            no_of_days = 15;
+        }
+        else
+        {
+            no_of_days = [timeInterval intValue];
+        }
+        
+        secondsPerDay = no_of_days * 24 * 60 * 60;
+        [format setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"IST"]];
+        [format setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+        NSString * date_ = [format stringFromDate:today];
+        date_ = [date_ stringByReplacingCharactersInRange:NSMakeRange(11, 8) withString:@"00:00:00"];
+        localDate = [format dateFromString:date_];
+        [format release];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getSyncTimeStampWithTheIntervalof15days %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getSyncTimeStampWithTheIntervalof15days %@",exp.reason);
+    }
     if([time isEqualToString:START_TIME])
     {
         tomorrow = [localDate dateByAddingTimeInterval:-secondsPerDay];
-        NSString * current_gmt_time = [self getGmtDateAndTime:tomorrow];
+        current_gmt_time = [self getGmtDateAndTime:tomorrow];
         return current_gmt_time;
     }
     else
     {
         yesterday = [localDate dateByAddingTimeInterval: secondsPerDay];
-        NSString * current_gmt_time = [self getGmtDateAndTime:yesterday];
+        current_gmt_time = [self getGmtDateAndTime:yesterday];
         return current_gmt_time;
-    }
-    }@catch (NSException *exp) {
-        SMLog(@"Exception Name WSInterface :getSyncTimeStampWithTheIntervalof15days %@",exp.name);
-        SMLog(@"Exception Reason WSInterface :getSyncTimeStampWithTheIntervalof15days %@",exp.reason);
     }
     
 }
