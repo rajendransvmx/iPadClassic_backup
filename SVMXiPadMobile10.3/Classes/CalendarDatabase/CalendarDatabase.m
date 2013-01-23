@@ -2497,7 +2497,6 @@ extern void SVMXLog(NSString *format, ...);
 {
     
     NSMutableString *deleteQuery = [NSString stringWithFormat:@"Delete From UserImages Where username = '%@'", UserName];
-    sqlite3_stmt *statement;
     
 	char *err;
     if (synchronized_sqlite3_exec(appDelegate.db, [deleteQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
@@ -2561,7 +2560,6 @@ extern void SVMXLog(NSString *format, ...);
 {
     
     NSMutableString *deleteQuery = [NSString stringWithFormat:@"Delete From ProductImage Where productId = '%@'", productId];
-    sqlite3_stmt *statement;
     
     char *err;
     if (synchronized_sqlite3_exec(appDelegate.db, [deleteQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
@@ -2571,7 +2569,6 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"ERROR IN INSERTING %s", err);
     }
     
-    synchronized_sqlite3_finalize(statement);
     
     NSMutableString *insertQuery = [NSString stringWithFormat:@"Insert into ProductImage (productId, productImage) Values ('%@', '%@')", productId, pictureData];
     SMLog(@"%@", insertQuery);
