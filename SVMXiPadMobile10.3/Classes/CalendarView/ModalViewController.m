@@ -298,6 +298,7 @@ extern void SVMXLog(NSString *format, ...);
 - (void) didQueryTasksForDate:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
     SMLog(@"didQueryTasks");
+    @try{
     NSMutableArray * _tasks = [[NSMutableArray alloc] initWithCapacity:0];
     
     NSArray * taskArray = [result records];
@@ -317,6 +318,11 @@ extern void SVMXLog(NSString *format, ...);
     [_tasks release];
     
     [self performSelector:@selector(didGetAllTasks) withObject:nil afterDelay:0.3];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name ModalViewController :didQueryTasksForDate %@",exp.name);
+        SMLog(@"Exception Reason ModalViewController :didQueryTasksForDate %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
 }
 
 - (void) didGetAllTasks
@@ -379,6 +385,7 @@ extern void SVMXLog(NSString *format, ...);
 - (void) movedEvent:(EventViewController *)event
 {
     [activity startAnimating];
+    @try{
     NSDictionary * startEndTime = [event getEventStartEndTime];
     SMLog(@"%@", startEndTime);
     
@@ -420,7 +427,11 @@ extern void SVMXLog(NSString *format, ...);
     
     updatestartDateTime = [updatestartDateTime stringByReplacingOccurrencesOfString:@"T" withString:@" "];
     updatestartDateTime = [updatestartDateTime stringByReplacingOccurrencesOfString:@"Z" withString:@""];
-	
+	}@catch (NSException *exp) {
+        SMLog(@"Exception Name ModalViewController :movedEvent %@",exp.name);
+        SMLog(@"Exception Reason ModalViewController :movedEvent %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];;
+    }
 } 
 //sahana 12th sept 2011
 - (void) Continuetherescheduling:(BOOL)continue_rescheduling;
@@ -533,6 +544,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (IBAction) ShowMap
 {
+	@try{	
     //Radha - 24/March  
     [self refresh];
     
@@ -697,7 +709,12 @@ extern void SVMXLog(NSString *format, ...);
         [self presentViewController:mapView animated:YES completion:nil];
         [mapView release];
     }
-    
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name ModalViewController :ShowMap %@",exp.name);
+	SMLog(@"Exception Reason ModalViewController :ShowMap %@",exp.reason);
+	 [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
 }
 
 - (IBAction) ToggleLandscapeView
@@ -1334,6 +1351,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) setDate:(NSUInteger)date
 {
+	@try{
     didRunOperation = YES;
     
     [activity startAnimating];
@@ -1437,6 +1455,11 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"app = %@", appDelegate.wsInterface.eventArray);
         [self reloadCalendar];
     }
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name ModalViewController :setDate %@",exp.name);
+        SMLog(@"Exception Reason ModalViewController :setDate %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
 }
 
 - (void) setEventsView:(NSString *)_date
@@ -1449,7 +1472,7 @@ extern void SVMXLog(NSString *format, ...);
     NSString * subject;
 	
     SMLog(@"%@ %@", appDelegate.wsInterface.startDate, appDelegate.wsInterface.endDate);
-    
+    @try{
     NSArray * array = [rightPane subviews];
     for (int i = 0; i < [array count]; i++)
     {
@@ -1606,10 +1629,17 @@ extern void SVMXLog(NSString *format, ...);
             [events release];
         }
     }
-    
+     }@catch (NSException *exp) {
+        SMLog(@"Exception Name ModalViewController :setEventsView %@",exp.name);
+        SMLog(@"Exception Reason ModalViewController :setEventsView %@",exp.reason);
+         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+    @finally
+    {
     [activity stopAnimating];
 	
     [self didGetAllEvents];
+     }
 }
 
 
@@ -1774,7 +1804,7 @@ extern void SVMXLog(NSString *format, ...);
     {
         appDelegate.SFMPage = nil;
     }
-    
+    @try{
     NSString * processId =  [appDelegate.switchViewLayouts objectForKey:[event objectForKey:OBJECTAPINAME]];
     appDelegate.sfmPageController.processId = (processId != nil)?processId:[event objectForKey:PROCESSID];
     
@@ -1873,6 +1903,12 @@ extern void SVMXLog(NSString *format, ...);
             return;
         }
     }
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name ModalViewController :showSFMForWeek %@",exp.name);
+	SMLog(@"Exception Reason ModalViewController :showSFMForWeek %@",exp.reason);
+	[appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
     [activity stopAnimating];
 	
 }
@@ -2383,13 +2419,10 @@ extern void SVMXLog(NSString *format, ...);
     {
         appDelegate.SFMPage = nil;
     }   
-
+	@try{
     NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
     NSString * warning = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_WARNING];
     NSString * noView = [appDelegate.wsInterface.tagsDictionary objectForKey:NO_VIEW_PROCESS];
-    
-
-    
     NSString * processId =  [appDelegate.switchViewLayouts objectForKey:[event objectForKey:OBJECTAPINAME]];
     appDelegate.sfmPageController.processId = (processId != nil)?processId:[event objectForKey:PROCESSID];
     
@@ -2490,7 +2523,14 @@ extern void SVMXLog(NSString *format, ...);
         }
 	
     }
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name ModalViewController :showSFMWithDayEvent %@",exp.name);
+        SMLog(@"Exception Reason ModalViewController :showSFMWithDayEvent %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+    @finally {
     [activity stopAnimating];
+	}
 }
 
 - (IBAction) displayUser:(id)sender

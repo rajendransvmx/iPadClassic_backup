@@ -11,6 +11,8 @@
 #import "MPTextFHandler.h"
 #import "MPickContent.h"
 #import "BOTControlDelegate.h"
+extern void SVMXLog(NSString *format, ...);
+
 
 @interface BMPTextView : UITextField <setTextfield>
 {

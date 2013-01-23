@@ -222,6 +222,7 @@ enum  {
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+	@try{
     NSArray *cellArray = [[tableDataArray objectAtIndex:section] objectForKey:@"Values"];
     if([self.masterView.searchFilterSwitch isOn])
     {
@@ -235,6 +236,11 @@ enum  {
     else {
         return [cellArray count];
     }
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name SFMResultDetailViewController :numberOfRowsInSection %@",exp.name);
+	SMLog(@"Exception Reason SFMResultDetailViewController :numberOfRowsInSection %@",exp.reason);
+    }
+
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -269,6 +275,7 @@ enum  {
             [subView removeFromSuperview];
         }         
     }
+    @try{
     NSArray *cellArray = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"Values"] ;
     [cell clearsContextBeforeDrawing];
     UIButton * button = [[[UIButton alloc] initWithFrame:CGRectMake(tableView.frame.size.width-103, 7, 20, 21)] autorelease];
@@ -655,6 +662,10 @@ enum  {
            
         [backgroundView addSubview:button];
     }
+	}@catch (NSException *exp) {
+        SMLog(@"Exception Name SFMResultDetailViewController :cellForRowAtIndexPath %@",exp.name);
+        SMLog(@"Exception Reason SFMResultDetailViewController :cellForRowAtIndexPath %@",exp.reason);
+    }
 
    // [backgroundView addSubview:button];
     [cell.contentView addSubview:backgroundView];
@@ -686,7 +697,7 @@ enum  {
     SFMFullResultViewController *resultController = [[SFMFullResultViewController alloc] initWithNibName:@"SFMFullResultViewController" bundle:nil];
     resultController.fullMainDelegate = self;
     resultController.tableHeaderArray = headerArray;
-    
+    @try{
     if(lastSelectedIndexPath && (lastSelectedIndexPath.row == indexPath.row) && (lastSelectedIndexPath.section == indexPath.section))
     {
         SMLog(@"Selected the same cell");
@@ -759,7 +770,13 @@ enum  {
      resultController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;    
      resultController.data = fullDataDict;
      [self.mainView presentViewController:resultController animated:YES completion:nil];
+	 }@catch (NSException *exp) {
+		SMLog(@"Exception Name SFMResultDetailViewController :didSelectRowAtIndexPath %@",exp.name);
+		SMLog(@"Exception Reason SFMResultDetailViewController :didSelectRowAtIndexPath %@",exp.reason);    
+       }
+    @finally {
      [resultController release];
+	}
 }
 
 #pragma mark - Custom Methods
@@ -809,10 +826,14 @@ enum  {
 - (NSArray *) constructTableHeader : (NSArray *)data
 {
     NSMutableArray *header = [[NSMutableArray alloc] init];
-    
+    @try{
     for(NSDictionary *obj in data)
     {
         [header addObject:[NSString stringWithFormat:@"%@.%@",[obj objectForKey:@"SVMXC__Object_Name2__c"],[obj objectForKey:@"SVMXC__Field_Name__c"]]];
+    }
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name SFMResultDetailViewController :constructTableHeader %@",exp.name);
+	SMLog(@"Exception Reason SFMResultDetailViewController :constructTableHeader %@",exp.reason);
     }
     return [header autorelease];
 
@@ -835,6 +856,7 @@ enum  {
     [uiControls setObject:self.masterView.searchString.text forKey:@"searchString"];
     [dataForObject setValue:uiControls forKey:@"uiControls"];
     NSMutableArray *result = [[appDelegate.dataBase getResults:object withConfigData:dataForObject] retain];
+    @try{
     for(NSDictionary *dict in result)
     {   
         count++;
@@ -850,7 +872,14 @@ enum  {
         if(count == [[[self.masterView searchLimitString] text] intValue])
             break;
     }
-    [result release];
+    }@catch (NSException *exp) {
+            SMLog(@"Exception Name SFMResultDetailViewController :getResultsForObject %@",exp.name);
+            SMLog(@"Exception Reason SFMResultDetailViewController :getResultsForObject %@",exp.reason);
+
+    }@finally
+    {
+        [result release];
+    }
     return [results autorelease];
 }
 - (void) updateResultArray:(int) index
@@ -869,6 +898,7 @@ enum  {
     if(resultArray)
         [resultArray release];
     resultArray = [[NSMutableArray alloc] init];
+    @try{
     for(NSDictionary *objectDetails in sections)
     {
         NSString *objectName = [objectDetails objectForKey:@"ObjectName"];
@@ -996,9 +1026,15 @@ enum  {
 
 	//Enhancement change for showing the number of records.
 	[mainView.resultmasterView reloadTableWithOnlineData:onlineDataDict];
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name SFMResultDetailViewController :showObjects %@",exp.name);
+	SMLog(@"Exception Reason SFMResultDetailViewController :showObjects %@",exp.reason);
+    }
+
 }
 - (NSArray *) getOfflineRecordsForObjectID:(NSString *) objectID
 {
+	@try{
     for(NSDictionary *dict in resultArray)
     {
         NSString *objId = [dict objectForKey:@"ObjectId"];
@@ -1007,16 +1043,27 @@ enum  {
             return [dict objectForKey:@"Values"];
         }
     }
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name SFMResultDetailViewController :getOfflineRecordsForObjectID %@",exp.name);
+	SMLog(@"Exception Reason SFMResultDetailViewController :getOfflineRecordsForObjectID %@",exp.reason);
+    }
+
     return nil;
 }
 - (BOOL) isRecordPresentInOfflineResults:(NSArray *) offlineRecords record:(NSString *) onlineRecordId
 {
+	@try{
     for(NSDictionary *dict in offlineRecords)
     {
         NSString *offlineRecordId = [dict objectForKey:@"Id"];
         if([onlineRecordId isEqualToString:offlineRecordId])
             return YES;
     }
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name SFMResultDetailViewController :isRecordPresentInOfflineResults %@",exp.name);
+	SMLog(@"Exception Reason SFMResultDetailViewController :isRecordPresentInOfflineResults %@",exp.reason);
+    }
+
     return NO;
 }
 - (void) enableSFMUI
@@ -1070,6 +1117,7 @@ enum  {
     
     UIImageView *bgView = (UIImageView *)[ownerCell viewWithTag:backgroundImage];
     [bgView setImage:[UIImage imageNamed:@"SFM-Screen-Table-Strip-Selected.png"]];
+    @try{
     NSArray *cellArray = [[tableDataArray objectAtIndex:ownerCellIndexPath.section] objectForKey:@"Values"];
     NSString *objectName = [[tableDataArray objectAtIndex:ownerCellIndexPath.section] objectForKey:@"ObjectName"];    
     NSDictionary *sectionDict = [tableDataArray objectAtIndex:ownerCellIndexPath.section];
@@ -1155,6 +1203,10 @@ enum  {
         synchronized_sqlite3_finalize(labelstmt2);
         
     }
+	 }@catch (NSException *exp) {
+        SMLog(@"Exception Name SFMResultDetailViewController :onDemandDataFecthing %@",exp.name);
+        SMLog(@"Exception Reason SFMResultDetailViewController :onDemandDataFecthing %@",exp.reason);
+    }
 
 }
 //- (void) presentProgressbarForFulview
@@ -1227,6 +1279,7 @@ enum  {
 
     UIImageView *bgView = (UIImageView *)[ownerCell viewWithTag:backgroundImage];
     [bgView setImage:[UIImage imageNamed:@"SFM-Screen-Table-Strip-Selected.png"]];
+    @try{
     NSDictionary *dict = [tableDataArray objectAtIndex:ownerCellIndexPath.section];
     NSDictionary *dataDict = [[dict objectForKey:@"Values"] objectAtIndex:ownerCellIndexPath.row]; 
     NSString *objectName = [appDelegate.dataBase getApiNameFromFieldLabel:[dict objectForKey:@"ObjectName"]];
@@ -1313,6 +1366,11 @@ enum  {
 	// //appDelegate.sfmPageController = nil;
     
     synchronized_sqlite3_finalize(labelstmt);
+	 }@catch (NSException *exp) {
+        SMLog(@"Exception Name SFMResultDetailViewController :accessoryButtonTapped %@",exp.name);
+        SMLog(@"Exception Reason SFMResultDetailViewController :accessoryButtonTapped %@",exp.reason);
+
+    }
 
 }
 #pragma mark - SFM Full Result View Delegate

@@ -234,6 +234,7 @@ extern void SVMXLog(NSString *format, ...);
  didFinishPickingMediaWithInfo: (NSDictionary*) info
 {
     // ADD: get the decode results
+    @try{
     id<NSFastEnumeration> results =[info objectForKey: ZBarReaderControllerResults];
     SMLog(@"result=%@",results);
     ZBarSymbol *symbol = nil;
@@ -245,6 +246,10 @@ extern void SVMXLog(NSString *format, ...);
     // ADD: dismiss the controller (NB dismiss from the *reader*!)
     [reader dismissViewControllerAnimated: YES completion:nil];
     [self performSelector:@selector(refineSearch:)];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name SFMResultMasterViewController :imagePickerController %@",exp.name);
+        SMLog(@"Exception Reason SFMResultMasterViewController :imagePickerController %@",exp.reason);
+    }
 }
 - (void) reloadTableData
 {
@@ -354,6 +359,7 @@ extern void SVMXLog(NSString *format, ...);
     UIImage * image = nil;
     
     bgView = [[[UIView alloc] initWithFrame:CGRectMake(10, 0, 300, ResultTableViewCellHeight)] autorelease];
+    @try{
     SFMResultDetailViewController * searchDetailViewSFM = [[SFMResultDetailViewController alloc] init];
     NSDictionary * dict = [tableArray objectAtIndex:indexPath.row];
 	NSString * objectName = [dict objectForKey:@"ObjectName"];
@@ -417,7 +423,11 @@ extern void SVMXLog(NSString *format, ...);
         [cell.contentView addSubview:bgView];
     }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name SFMResultMasterViewController :cellForRowAtIndexPath %@",exp.name);
+	SMLog(@"Exception Reason SFMResultMasterViewController :cellForRowAtIndexPath %@",exp.reason);
+    }
+
     return cell;
 
 }

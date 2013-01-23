@@ -777,7 +777,7 @@ extern void SVMXLog(NSString *format, ...);
         [self enableControls];
         return;
     }
-    
+    @try{
     NSDictionary * dict = [appDelegate.savedReference objectAtIndex:0];
     NSString * savedUsername = [dict objectForKey:@"username"];
     
@@ -789,6 +789,12 @@ extern void SVMXLog(NSString *format, ...);
     {
         [self deleteFavoritesCache];
     }
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name LoginController :checkFavoritesUser %@",exp.name);
+	SMLog(@"Exception Reason LoginController :checkFavoritesUser %@",exp.reason);
+	[appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
 }
 
 - (void) deleteFavoritesCache
@@ -956,7 +962,7 @@ extern void SVMXLog(NSString *format, ...);
 - (void) didQueryTechnician:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
     NSArray * array = [result records];
-    
+    @try{
     if ([array count] > 0)
     {
         ZKSObject * obj = [array objectAtIndex:0];
@@ -1013,7 +1019,15 @@ extern void SVMXLog(NSString *format, ...);
     else
         appDelegate.technicianAddress = @"";  
     
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name LoginController :didQueryTechnician %@",exp.name);
+        SMLog(@"Exception Reason LoginController :didQueryTechnician %@",exp.reason);
+         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+    @finally {
+    
     didQueryTechnician = YES;
+	}
 }
 
 - (void) showModalViewController
@@ -1151,7 +1165,7 @@ extern void SVMXLog(NSString *format, ...);
     didRunProcess = NO;
     
     appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
-    
+    @try{
     NSString * kRestoreLocationKey = [NSString stringWithFormat:@"RestoreLocation"];
     NSMutableArray * temp = [[NSUserDefaults standardUserDefaults] objectForKey:kRestoreLocationKey];
     SMLog(@"%@", temp);
@@ -1190,7 +1204,11 @@ extern void SVMXLog(NSString *format, ...);
     didDebriefData = FALSE;
     didQueryTechnician = FALSE;
     didEnterAlertView = FALSE;  
-
+	}@catch (NSException *exp) {
+        SMLog(@"Exception Name LoginController :viewDidLoad %@",exp.name);
+        SMLog(@"Exception Reason LoginController :viewDidLoad %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
     
 }
 
@@ -1536,6 +1554,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) storeLoginDetails
 {
+	@try{
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     [appDelegate.savedReference removeAllObjects];
 
@@ -1557,6 +1576,11 @@ extern void SVMXLog(NSString *format, ...);
     SMLog(@"%@", error.description);
     [SFHFKeychainUtils storeUsername:@"password" andPassword:appDelegate.password forServiceName:KEYCHAIN_SERVICE_NAME updateExisting:YES error:&error];
     SMLog(@"%@", error.description);
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name LoginController :storeLoginDetails %@",exp.name);
+        SMLog(@"Exception Reason LoginController :storeLoginDetails %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
 }
 
 - (void) updateSampleDataCreationProgress;
@@ -1627,6 +1651,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) didGetSettingsInfo:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
+	@try{
     if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
@@ -1659,6 +1684,12 @@ extern void SVMXLog(NSString *format, ...);
     {
         // Continue logging in
         didRetrieveReportSettings = YES;
+    }
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name LoginController :didGetSettingsInfo %@",exp.name);
+        SMLog(@"Exception Reason LoginController :didGetSettingsInfo %@",exp.reason);
+          [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+
     }
 }
 
@@ -1698,7 +1729,8 @@ extern void SVMXLog(NSString *format, ...);
         [self enableControls];
         return;
     }
-    
+    @try{
+
     if ([[result records] count] > 0)
     {
         appDelegate.serviceReport = [[NSMutableDictionary alloc] initWithCapacity:0];
@@ -1823,7 +1855,11 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
-    
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name LoginController :didGetSettingsValue %@",exp.name);
+        SMLog(@"Exception Reason LoginController :didGetSettingsValue %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
     if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
@@ -1937,6 +1973,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) readUsernameAndPasswordFromKeychain
 {
+	@try{
     NSString * kRestoreLocationKey = [NSString stringWithFormat:@"RestoreLocation"];
     NSMutableArray * temp = [[NSUserDefaults standardUserDefaults] objectForKey:kRestoreLocationKey];
     SMLog(@"%@", temp);
@@ -1961,7 +1998,11 @@ extern void SVMXLog(NSString *format, ...);
         _password = [[appDelegate.savedReference objectAtIndex:0] objectForKey:@"password"];
     }
     txtPasswordLandscape.text = _password;
-    
+  	}@catch (NSException *exp) {
+        SMLog(@"Exception Name LoginController :readUsernameAndPasswordFromKeychain %@",exp.name);
+        SMLog(@"Exception Reason LoginController :readUsernameAndPasswordFromKeychain %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }  
 }
 
 #pragma mark - Initial Meta Sync

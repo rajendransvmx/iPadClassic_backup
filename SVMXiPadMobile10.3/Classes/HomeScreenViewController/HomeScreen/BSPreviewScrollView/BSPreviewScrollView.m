@@ -111,6 +111,7 @@ extern void SVMXLog(NSString *format, ...);
 - (void)layoutSubviews
 {
 	// We need to do some setup once the view is visible. This will only be done once.
+	@try{
     if(appDelegate.metaSyncCompleted == YES)
     {
         appDelegate.metaSyncCompleted = NO;
@@ -187,6 +188,12 @@ extern void SVMXLog(NSString *format, ...);
         // scrollLooper = 5;
         // [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(scrollForth) userInfo:nil repeats:NO];
 	}
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name BSPreviewScrollView :layoutSubviews %@",exp.name);
+	SMLog(@"Exception Reason BSPreviewScrollView :layoutSubviews %@",exp.reason);
+	[appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
 }
 
 - (void) scrollToIndex:(NSInteger)index

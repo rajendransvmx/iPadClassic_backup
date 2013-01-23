@@ -96,6 +96,7 @@ const static CGFloat kReflectionFraction = 0.85;
 
 - (void)updateCoverImage:(AFItemView *)aCover
 {
+	@try{
 	NSNumber *coverNumber = [NSNumber numberWithInt:aCover.number];
 	UIImage *coverImage = (UIImage *)[coverImages objectForKey:coverNumber];
 	if (coverImage) {
@@ -106,6 +107,11 @@ const static CGFloat kReflectionFraction = 0.85;
 		[aCover setImage:defaultImage originalImageHeight:defaultImageHeight reflectionFraction:kReflectionFraction];
 		[self.dataSource openFlowView:self requestImageForIndex:aCover.number];
 	}
+	}@catch (NSException *exp) {
+        SMLog(@"Exception Name AFOpenFlowView :updateCoverImage %@",exp.name);
+        SMLog(@"Exception Reason AFOpenFlowView :updateCoverImage %@",exp.reason);
+    }
+
 }
 
 - (AFItemView *)dequeueReusableCover
@@ -157,12 +163,18 @@ const static CGFloat kReflectionFraction = 0.85;
 - (void)layoutCovers:(int)selected fromCover:(int)lowerBound toCover:(int)upperBound {
 	AFItemView *cover;
 	NSNumber *coverNumber;
+	@try{
 	for (int i = lowerBound; i <= upperBound; i++) {
 		coverNumber = [[NSNumber alloc] initWithInt:i];
 		cover = (AFItemView *)[onscreenCovers objectForKey:coverNumber];
 		[coverNumber release];
 		[self layoutCover:cover selectedCover:selected animated:YES];
 	}
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name WSInterface :layoutCovers %@",exp.name);
+	SMLog(@"Exception Reason WSInterface :layoutCovers %@",exp.reason);
+    }
+
 }
 
 - (AFItemView *)findCoverOnscreen:(CALayer *)targetLayer {
@@ -254,6 +266,7 @@ const static CGFloat kReflectionFraction = 0.85;
 
 - (void)setImage:(UIImage *)image forIndex:(int)index
 {
+	@try{
 	// Create a reflection for this image.
 	UIImage *imageWithReflection = [image addImageReflection:kReflectionFraction];
 	NSNumber *coverNumber = [NSNumber numberWithInt:index];
@@ -267,6 +280,11 @@ const static CGFloat kReflectionFraction = 0.85;
 		[aCover setImage:imageWithReflection originalImageHeight:image.size.height*1.4 reflectionFraction:kReflectionFraction];
 		[self layoutCover:aCover selectedCover:selectedCoverView.number animated:NO];
 	}
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name WSInterface :setImage %@",exp.name);
+	SMLog(@"Exception Reason WSInterface :setImage %@",exp.reason);
+    }
+
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event

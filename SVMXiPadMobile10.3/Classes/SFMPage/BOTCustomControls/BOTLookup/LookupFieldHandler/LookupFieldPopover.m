@@ -163,7 +163,7 @@ extern void SVMXLog(NSString *format, ...);
         //[appDelegate displayNoInternetAvailable];
         return;
     }
-
+	@try{
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     keyword = [keyword stringByReplacingCharactersInRange:NSMakeRange(0, 1) withString:@""];
     
@@ -212,6 +212,12 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     [appDelegate.wsInterface getLookUpFieldsWithKeyword:keyword forObject:objectName returnTo:caller setting:idAvailable overrideRelatedLookup:lookupField.Override_Related_Lookup lookupContext:Field_Lookup_Context_Value lookupQuery:lookupField.Field_Lookup_Query];
+	}@catch (NSException *exp) {
+        SMLog(@"Exception Name LookupFieldPopover :searchObject %@",exp.name);
+        SMLog(@"Exception Reason LookupFieldPopover :searchObject %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
 }
 //sahana 23rd sept 2011
 - (void) didSelectObject:(NSArray *)lookupObject defaultDisplayColumn:(NSString *)defaultdisplayColumn

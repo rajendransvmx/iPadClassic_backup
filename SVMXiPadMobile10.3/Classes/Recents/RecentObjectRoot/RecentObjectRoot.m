@@ -121,6 +121,7 @@
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
     }
     
+    @try{
     // Configure the cell...
     NSDictionary * dictionary = [recentObjectsArray objectAtIndex:indexPath.row];
     
@@ -166,7 +167,11 @@
             [bgImage release];
         }
     }
-    
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name RecentObjectRoot :cellForRowAtIndexPath %@",exp.name);
+	SMLog(@"Exception Reason RecentObjectRoot :cellForRowAtIndexPath %@",exp.reason);
+    }
+
     return cell;
 }
 

@@ -287,6 +287,10 @@
 #define alert_application_error             @"IPAD011_TAG011"
 #define alert_synchronize_error             @"IPAD011_TAG012"
 #define alert_invalid_error                 @"IPAD011_TAG013"
+#define System_Error                        @"IPAD011_TAG015"
+#define Functional_Error                    @"IPAD011_TAG016"
+#define Type_of_Error                       @"IPAD011_TAG017"
+
 #define ipad_sync_label                     @"IPAD012_TAG014"
 #define ipad_sync_text                      @"IPAD012_TAG015"
 #define ipad_logout_label                   @"IPAD012_TAG016"

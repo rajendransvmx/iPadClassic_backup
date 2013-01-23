@@ -99,6 +99,7 @@ extern void SVMXLog(NSString *format, ...);
     [spinner_Array addObject:@""];
     SMLog(@"spinner data %@ " , TFHandler.spinnerData);
     SMLog(@" valid For %@" , TFHandler.validFor);
+    @try{
     for(int j = 0 ; j< [TFHandler.spinnerData count];j++)
     {
         NSString * obj = [TFHandler.validFor objectAtIndex:j];
@@ -125,6 +126,11 @@ extern void SVMXLog(NSString *format, ...);
         [bitObj release];
          
     }
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name BotSpinnerTextField :getValuesForDependentPickList %@",exp.name);
+	SMLog(@"Exception Reason BotSpinnerTextField :getValuesForDependentPickList %@",exp.reason);
+    }
+
     return spinner_Array;
 }
 

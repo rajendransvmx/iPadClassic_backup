@@ -215,6 +215,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) setLookupData:(NSDictionary *)lookupDictionary
 {
+	@try{
     if(appDelegate.isWorkinginOffline)
     {
         lookupData = [lookupDictionary retain];
@@ -239,7 +240,11 @@ extern void SVMXLog(NSString *format, ...);
         describeObject = [[lookupDictionary objectForKey:gLOOKUP_DESCRIBEOBJECT] retain];
         lookupData = _lookupDetails;
     }
-   
+   }@catch (NSException *exp) {
+        SMLog(@"Exception Name LookupView :setLookupData %@",exp.name);
+        SMLog(@"Exception Reason LookupView :setLookupData %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
     [self reloadData];
     
     [activity stopAnimating];
@@ -275,7 +280,7 @@ extern void SVMXLog(NSString *format, ...);
     NSDictionary * rowDict = nil; // [array objectAtIndex:indexPath.row];
     NSMutableArray * _array = [[NSMutableArray alloc] initWithCapacity:0];
     NSArray * sequenceArray = [lookupData objectForKey:@"SEQUENCE"];
-    
+    @try{
     for (int i = 0; i < [sequenceArray count]; i++)
     {
         NSDictionary * dict = [sequenceArray objectAtIndex:i];
@@ -317,7 +322,11 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
-
+	 }@catch (NSException *exp) {
+        SMLog(@"Exception Name LookupView :accessoryButtonTappedForRowWithIndexPath %@",exp.name);
+        SMLog(@"Exception Reason LookupView :accessoryButtonTappedForRowWithIndexPath %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
     lookupDetails = [[LookupDetails alloc] initWithNibName:@"LookupDetails" bundle:nil];
     lookupDetails.delegate = self;
     lookupDetails.indexPath = indexPath;
@@ -356,7 +365,7 @@ extern void SVMXLog(NSString *format, ...);
     {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId] autorelease];
     }
-
+	@try{
     NSArray * super_array = [lookupData objectForKey:@"DATA"];
     NSArray * array = [super_array objectAtIndex:indexPath.row];
     NSString * defaultLookupColumn = [lookupData objectForKey:DEFAULT_LOOKUP_COLUMN];
@@ -394,7 +403,11 @@ extern void SVMXLog(NSString *format, ...);
     cell.textLabel.text = name;
     
     cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
-    
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name LookupView :cellForRowAtIndexPath %@",exp.name);
+        SMLog(@"Exception Reason LookupView :cellForRowAtIndexPath %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
     return cell;
 }
 

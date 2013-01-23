@@ -56,7 +56,7 @@ extern void SVMXLog(NSString *format, ...);
 	self.navigationController.navigationBar.frame = CGRectMake(0, 0, rect.size.width, self.navigationController.navigationBar.frame.size.height);
     
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    
+    @try{
     UIImageView * bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_right_panel_bg_main_top.png"]];
 	bgImage.frame = CGRectMake(0, -12, bgImage.frame.size.width, bgImage.frame.size.height+12);
 	self.tableView.backgroundView = bgImage;
@@ -106,6 +106,10 @@ extern void SVMXLog(NSString *format, ...);
 	
 	[arrayForRightBarButton release];
 	arrayForRightBarButton = nil;
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name RecentObjectDetail :viewDidLoad %@",exp.name);
+        SMLog(@"Exception Reason RecentObjectDetail :viewDidLoad %@",exp.reason);
+    }
 }
 
 - (void)viewDidUnload
@@ -189,7 +193,7 @@ extern void SVMXLog(NSString *format, ...);
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    
+    @try{
     if ([recentObjectsArray count] != 0)
     {
         SMLog(@"%@", [recentObjectsArray objectAtIndex:selectedRootViewRow]);
@@ -197,7 +201,11 @@ extern void SVMXLog(NSString *format, ...);
         NSString * key = [[dictionary allKeys] objectAtIndex:0];
         array = [dictionary objectForKey:key]; 
     }
-    
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name RecentObjectDetail :numberOfRowsInSection %@",exp.name);
+	SMLog(@"Exception Reason RecentObjectDetail :numberOfRowsInSection %@",exp.reason);
+    }
+
     return [array count];
 }
 
@@ -209,7 +217,7 @@ extern void SVMXLog(NSString *format, ...);
     if (cell == nil) {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
     }
-    
+    @try{
     // Configure the cell...
     NSMutableDictionary * dict = [array objectAtIndex:indexPath.row];
     
@@ -231,7 +239,10 @@ extern void SVMXLog(NSString *format, ...);
     bgImage.frame = cell.frame;
     cell.backgroundView = bgImage;
     [bgImage release];
-    
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name RecentObjectDetail :cellForRowAtIndexPath %@",exp.name);
+	SMLog(@"Exception Reason RecentObjectDetail :cellForRowAtIndexPath %@",exp.reason);
+    }
     return cell;
 }
 
@@ -249,6 +260,7 @@ extern void SVMXLog(NSString *format, ...);
     
    
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+    @try{
      if(processId == nil || [processId length] == 0)
      {
         for (NSDictionary * dict in appDelegate.view_layout_array)
@@ -279,6 +291,11 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name RecentObejctDetail :didSelectRowAtIndexPath %@",exp.name);
+	SMLog(@"Exception Reason RecentObejctDetail :didSelectRowAtIndexPath %@",exp.reason);
+    }
+
 }
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
@@ -292,6 +309,7 @@ extern void SVMXLog(NSString *format, ...);
     NSString * processId = [dict objectForKey:@"SVMXC__ProcessID__c"];
     
     BOOL status = [Reachability connectivityStatus];
+    @try{
     if(status)
     {
         appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -322,11 +340,18 @@ extern void SVMXLog(NSString *format, ...);
         [delegate showSFMWithProcessId:processId recordId:[dict objectForKey:RESULTID] objectName:objectName];
     }
     
-    [activity stopAnimating];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name RecentObejctDetail :accessoryButtonTappedForRowWithIndexPath %@",exp.name);
+        SMLog(@"Exception Reason RecentObejctDetail :accessoryButtonTappedForRowWithIndexPath %@",exp.reason);
+    }
+    @finally {
+        [activity stopAnimating];
+    }
 }
 
 - (void) didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+	@try{
     appDelegate.showUI = FALSE;
     selectedRootViewRow = indexPath.row;
     
@@ -335,6 +360,11 @@ extern void SVMXLog(NSString *format, ...);
     array = [dictionary objectForKey:key];
     
     [self.tableView reloadData];
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name RecentObjectDetail :didSelectRowAtIndexPath %@",exp.name);
+	SMLog(@"Exception Reason RecentObjectDetail :didSelectRowAtIndexPath %@",exp.reason);
+    }
+
 }
 
      

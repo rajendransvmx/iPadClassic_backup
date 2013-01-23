@@ -34,7 +34,7 @@ extern void SVMXLog(NSString *format, ...);
 	NSMutableDictionary *Dictionaries = AppDelegate.Dictionaries;
     
     calculateLaborPrice = laborPriceEditable = YES;
-    
+    @try{
     if ([AppDelegate.timeAndMaterial count] > 0)
     {
         // Settings are present
@@ -154,6 +154,12 @@ extern void SVMXLog(NSString *format, ...);
     */
 
     rateCalibration.delegate = rateCleanup.delegate = rateInstallation.delegate = rateRepair.delegate = rateService.delegate = self;
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name LabourViewController :viewDidLoad %@",exp.name);
+	SMLog(@"Exception Reason LabourViewController :viewDidLoad %@",exp.reason);
+	[appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
 }
 
 -(BOOL)textFieldShouldBeginEditing:(UITextField *)textField
@@ -262,6 +268,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) getExistingLabor:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
+	@try{
 	NSArray * array = [result records];
     AppDelegate.laborZKSArray = [array retain];
 
@@ -407,12 +414,18 @@ extern void SVMXLog(NSString *format, ...);
         query = [NSString stringWithFormat:@"SELECT SVMXC__Billable_Cost2__c FROM SVMXC__Service_Group_Costs__c	WHERE SVMXC__Group_Member__c = '%@' AND SVMXC__Cost_Category__c = 'Straight' LIMIT 1", AppDelegate.appTechnicianId]; // a0oA0000000UXEsIAO
     
     [[ZKServerSwitchboard switchboard] query:query target:self selector:@selector(getPriceForLabor:error:context:) context:nil];
+	 }@catch (NSException *exp) {
+	SMLog(@"Exception Name LabourViewController :getExistingLabor %@",exp.name);
+	SMLog(@"Exception Reason LabourViewController :getExistingLabor %@",exp.reason);
+	 [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
 }
 
 - (void) getPriceForLabor:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
 	NSArray * array = [result records];
-    
+    @try{
     if ((array == nil) || ([array count] == 0))
         groupCostsPresent = NO;
     else
@@ -477,10 +490,17 @@ extern void SVMXLog(NSString *format, ...);
         
         dataloaded = YES;
 	}
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name LabourViewController :getPriceForLabor %@",exp.name);
+	SMLog(@"Exception Reason LabourViewController :getPriceForLabor %@",exp.reason);
+	  [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
 }
 
 - (void) getPriceForServiceTeam:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
+@try{
 	NSArray * array = [result records];
     
     if ((array == nil) || ([array count] == 0))
@@ -614,6 +634,11 @@ extern void SVMXLog(NSString *format, ...);
 	[AppDelegate.Dictionaries writeToFile:RootPlistPath atomically:YES];
 	
 	dataloaded = YES;
+	}@catch (NSException *exp) {
+        SMLog(@"Exception Name LabourViewController :getPriceForServiceTeam %@",exp.name);
+        SMLog(@"Exception Reason LabourViewController :getPriceForServiceTeam %@",exp.reason);
+       [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
 }
 
 - (NSString *) GetLaborRate

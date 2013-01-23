@@ -38,7 +38,7 @@ extern void SVMXLog(NSString *format, ...);
     }
     else if (error)
     {
-        [self receivedErrorFromAPICall: error];
+            [appDelegate CustomizeAletView:error alertType:SOAP_ERROR Dict:nil exception:nil];
     }
 }
 
@@ -65,7 +65,7 @@ extern void SVMXLog(NSString *format, ...);
     }
     else if (error)
     {
-        [self receivedErrorFromAPICall: error];
+        [appDelegate CustomizeAletView:error alertType:SOAP_ERROR Dict:nil exception:nil];
     }
 }
 
@@ -77,7 +77,7 @@ extern void SVMXLog(NSString *format, ...);
     }
     else if (error)
     {
-        [self receivedErrorFromAPICall:error];
+	    [appDelegate CustomizeAletView:error alertType:SOAP_ERROR Dict:nil exception:nil];
     }
 }
 
@@ -283,6 +283,7 @@ extern void SVMXLog(NSString *format, ...);
     
     UIImageView * view = nil;
     NSString * sectionTitle = nil;
+    @try{
     switch (section) 
     {
         case 0:
@@ -427,6 +428,11 @@ extern void SVMXLog(NSString *format, ...);
         default:
             break;
     }
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name RootViewController :viewForHeaderInSection %@",exp.name);
+	SMLog(@"Exception Reason RootViewController :viewForHeaderInSection %@",exp.reason);
+    }
+
     return view;
   
 }
@@ -467,7 +473,7 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     //check whether the product history and Account history has to be added 
-    
+    @try{
     NSDictionary * header = [appDelegate.SFMPage objectForKey:@"header"];
     NSString * header_object_name = [header objectForKey:gHEADER_OBJECT_NAME];
     if([header_object_name hasSuffix:@"Service_Order__c"])
@@ -497,13 +503,18 @@ extern void SVMXLog(NSString *format, ...);
             
     if ([details count] == 0)
         return gNUM_SECTIONS_IN_TABLE - 1;
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name RootViewController :numberOfSectionsInTableView %@",exp.name);
+	SMLog(@"Exception Reason RootViewController :numberOfSectionsInTableView %@",exp.reason);
+    }
 
     return gNUM_SECTIONS_IN_TABLE;
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
+{	
+	@try{
     switch (section) 
     {
         case 0:
@@ -553,7 +564,11 @@ extern void SVMXLog(NSString *format, ...);
         default:
             break;
     }
-    
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name RootViewController :numberOfRowsInSection %@",exp.name);
+	SMLog(@"Exception Reason RootViewController :numberOfRowsInSection %@",exp.reason);
+    }
+
     return 1;
     
     
@@ -615,6 +630,7 @@ extern void SVMXLog(NSString *format, ...);
     UIImageView * bgImage = nil;
     UIImage * image = nil;
     
+    @try{
     switch (indexPath.section)
     {
         case 0:
@@ -717,7 +733,11 @@ extern void SVMXLog(NSString *format, ...);
         default:
             break;
     }
-    
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name RootViewController :cellForRowAtIndexPath %@",exp.name);
+	SMLog(@"Exception Reason RootViewController :cellForRowAtIndexPath %@",exp.reason);
+    }
+
     if ([cellLabel.text length] > 0)
     {
         bgImage.frame = CGRectMake(0, 0, 300, SectionHeaderHeight);

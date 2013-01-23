@@ -43,7 +43,7 @@ extern void SVMXLog(NSString *format, ...);
 		NSString *RootPlistPath = [SettingsBundle pathForResource:@"Root" ofType:@"plist"];
 		Dictionaries = AppDelegate.Dictionaries = [[NSMutableDictionary alloc] initWithContentsOfFile:RootPlistPath];
 	}
-	
+	@try{
 	ExpenseDictionary = [(NSDictionary *)[(NSDictionary *)[Dictionaries valueForKey:@"Dictionaries"] valueForKey:@"Expenses"] retain];
 	
 	dataloaded = NO;
@@ -66,6 +66,12 @@ extern void SVMXLog(NSString *format, ...);
 	Gas.text = [[ExpenseDictionary valueForKey:GAS] isKindOfClass:[NSString class]]?[ExpenseDictionary valueForKey:GAS]:@"";
 	Mileage.text = [[ExpenseDictionary valueForKey:MILEAGE] isKindOfClass:[NSString class]]?[ExpenseDictionary valueForKey:MILEAGE]:@"";
 	Parts.text = [[ExpenseDictionary valueForKey:PARTS] isKindOfClass:[NSString class]]?[ExpenseDictionary valueForKey:PARTS]:@"";
+	}@catch (NSException *exp) {
+        SMLog(@"Exception Name ExpenseViewController :viewDidLoad %@",exp.name);
+        SMLog(@"Exception Reason ExpenseViewController :viewDidLoad %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
 }
 
 - (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController

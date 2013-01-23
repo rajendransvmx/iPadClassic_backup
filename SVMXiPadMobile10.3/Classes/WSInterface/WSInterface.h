@@ -419,6 +419,7 @@ last_sync_time:(NSString *)last_sync_time;
 - (void) checkIfProfileExistsWithEventName:(NSString *)eventName type:(NSString *)eventType;
 -(void)getOnDemandRecords:(NSString*)objectName record_id:(NSString*)record_id;
 - (NSString *) getClientVersionString;
+-(void)settingFlags;
 
 @end
 

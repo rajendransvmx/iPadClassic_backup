@@ -410,7 +410,7 @@ extern void SVMXLog(NSString *format, ...);
     NSString * query = [NSString stringWithFormat:@"Select process_name, process_id from SFProcess  where process_type = '%@' and object_api_name = '%@' ", @"VIEWRECORD",currentObject];
     
     sqlite3_stmt * stmt;
-    
+    @try{
     if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK  )
     {
         while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
@@ -447,6 +447,11 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     synchronized_sqlite3_finalize(stmt);
+	}@catch (NSException *exp) {
+        SMLog(@"Exception Name Database :selectProcessFromDB %@",exp.name);
+        SMLog(@"Exception Reason Database :selectProcessFromDB %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
     return view_process;
 }
 
@@ -1717,6 +1722,7 @@ extern void SVMXLog(NSString *format, ...);
     NSArray * lookUp_info_object_keys = [NSArray arrayWithObjects:LOOKUP_DEFAULT_LOOK_UP_CLMN,LOOKUP_OBJECT_NAME,LOOkUP_IS_DEFAULT,LOOKUP_IS_STANDARD, nil];
     
     sqlite3_stmt * stmt_;
+    @try{
     if(synchronized_sqlite3_prepare_v2(appDelegate.db, [querystring2 UTF8String], -1, &stmt_, nil) == SQLITE_OK  ) 
     {
         while(synchronized_sqlite3_step(stmt_) == SQLITE_ROW) 
@@ -2086,7 +2092,11 @@ extern void SVMXLog(NSString *format, ...);
         
     }
 	[each_record release];
-    
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name Database :getLookupDataFromDBWith %@",exp.name);
+        SMLog(@"Exception Reason Database :getLookupDataFromDBWith %@",exp.reason);
+         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
     return finalDict;
 }
 
@@ -2160,7 +2170,10 @@ extern void SVMXLog(NSString *format, ...);
     
     
     NSMutableArray * final_Comonent_array = [[NSMutableArray alloc] initWithCapacity:0];
-    
+    NSString * retExpression = @"";
+    @try
+    {
+
     for(int i = 0 ; i<[array count]; i++)
     {
         NSString * str = [array objectAtIndex:i];
@@ -2519,7 +2532,6 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
         
-    NSString * retExpression = @"";
     if ([regular_expression length] > 0)
     {
         retExpression = [NSString stringWithFormat:@"(%@)", regular_expression];
@@ -2528,7 +2540,12 @@ extern void SVMXLog(NSString *format, ...);
     {
         retExpression = [NSString stringWithFormat:@"%@", regular_expression];
     }
-    
+     }@catch (NSException *exp) {
+        SMLog(@"Exception Name Database :queryForExpressionComponent %@",exp.name);
+        SMLog(@"Exception Reason Database :queryForExpressionComponent %@",exp.reason);
+         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
     return retExpression;
 }
 
@@ -3332,6 +3349,7 @@ extern void SVMXLog(NSString *format, ...);
     BOOL success = FALSE;
     NSArray * allkeys = [dict allKeys];
     NSMutableString *  updateValue = [[NSMutableString alloc] initWithCapacity:0];
+    @try{
     for(int i = 0 ; i < [allkeys count]; i++)
     {
         NSString * key = [allkeys objectAtIndex:i];
@@ -3362,7 +3380,12 @@ extern void SVMXLog(NSString *format, ...);
                 [updateValue  appendFormat:@" , %@ = '%@' ",key ,value ];
         }
     }
-    
+    }@catch (NSException *exp)
+    {
+        SMLog(@"Exception Name databaseInterfaceSfm :UpdateTableforId %@",exp.name);
+        SMLog(@"Exception Reason databaseInterfaceSfm :UpdateTableforId %@",exp.reason);
+    }
+
     NSString * update_statement;
     
     if ([objectName isEqualToString:@"Case"])
@@ -3403,6 +3426,7 @@ extern void SVMXLog(NSString *format, ...);
 	BOOL success = FALSE;
     NSArray * allkeys = [dict allKeys];
     NSMutableString *  updateValue = [[[NSMutableString alloc] initWithCapacity:0] autorelease]; // sahana sep 13th
+    @try{
     for(int i = 0 ; i < [allkeys count]; i++)
     {
         NSString * key = [allkeys objectAtIndex:i];
@@ -3433,7 +3457,12 @@ extern void SVMXLog(NSString *format, ...);
         }
         
     }
-    
+	}@catch (NSException *exp) {
+        SMLog(@"Exception Name databaseInterfaceSfm :UpdateTableforSFId %@",exp.name);
+        SMLog(@"Exception Reason databaseInterfaceSfm :UpdateTableforSFId %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
     if ([objectName isEqualToString:@"Case"])
         objectName = @"'Case'";
     
@@ -3454,7 +3483,7 @@ extern void SVMXLog(NSString *format, ...);
 		SMLog(@"%@", update_statement);
 		SMLog(@"METHOD:UpdateTableforSFId " );
 		SMLog(@"ERROR IN UPDATING %s", err);
-
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:update_statement type:UPDATEQUERY];
     }
     else
     {
@@ -3594,7 +3623,7 @@ extern void SVMXLog(NSString *format, ...);
     SMLog(@"SAMMAN updateAllRecordsToSyncRecordsHeap Processing starts: %@  for count %d", [NSDate date],[sync_data count]);
     sync_data = [sync_data retain];
     NSArray * all_objects = [sync_data allKeys];
-    
+    @try{
     for(NSString * object_name in  all_objects)
     {
         NSMutableArray *  object_info = [sync_data objectForKey:object_name];
@@ -3632,11 +3661,18 @@ extern void SVMXLog(NSString *format, ...);
                 SMLog(@"%@", update_query);
 				SMLog(@"METHOD:updateAllRecordsToSyncRecordsHeap " );
 				SMLog(@"ERROR IN UPDATING %s", err); //RADHA TODAY
-              
+                [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:update_query type:UPDATEQUERY]; //RADHA TODAY
+
             }
             [autorelease drain];
         }
     }
+     }@catch (NSException *exp) {
+        SMLog(@"Exception Name databaseInterfaceSfm :updateAllRecordsToSyncRecordsHeap %@",exp.name);
+        SMLog(@"Exception Reason databaseInterfaceSfm :updateAllRecordsToSyncRecordsHeap %@",exp.reason);
+         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
     [sync_data release];
     SMLog(@"SAMMAN updateAllRecordsToSyncRecordsHeap Processing ends: %@", [NSDate date]);
 }
@@ -3713,6 +3749,7 @@ extern void SVMXLog(NSString *format, ...);
     SMLog(@"SAMMAN insertRecordIdsIntosyncRecordHeap starts: %@", [NSDate date]);
     sync_data = [sync_data retain];
     NSArray * all_objects = [sync_data allKeys];
+    @try{
     for(NSString * object_name in  all_objects)
     {
         NSMutableArray *  object_info = [sync_data objectForKey:object_name];
@@ -3764,11 +3801,17 @@ extern void SVMXLog(NSString *format, ...);
                 SMLog(@"%@", update_query);
 				SMLog(@"METHOD: insertRecordIdsIntosyncRecordHeap");
 				SMLog(@"ERROR IN INSERTING %s", err);
+				[appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:update_query type:INSERTQUERY];
             }
              [autorelesePool release];
-        }
-        
+        }        
     }
+	 }@catch (NSException *exp) {
+        SMLog(@"Exception Name databaseInterfaceSfm :insertRecordIdsIntosyncRecordHeap %@",exp.name);
+        SMLog(@"Exception Reason databaseInterfaceSfm :insertRecordIdsIntosyncRecordHeap %@",exp.reason);
+         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
     SMLog(@" sync_data %d",[sync_data retainCount]);
     [sync_data release];
     SMLog(@"IComeOUTHere databaseinterface");
@@ -3862,12 +3905,8 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", insert_statement);
 		SMLog(@"METHOD: insertdataIntoTrailerTableForRecord");
         SMLog(@"ERROR IN INSERTING %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:insert_statement type:INSERTQUERY];
     }
-    else
-    {
-        
-    }
-    
 }
 
 -(NSArray *)getAllObjectsForRecordType:(NSString *)record_type  forOperation:(NSString *)operation_type;
@@ -4011,6 +4050,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", update_statement);
 		SMLog(@"METHOD:updateDataTrailer_RecordSentForlocalId " );
 		SMLog(@"ERROR IN UPDATING %s", err);
+		[appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:update_statement type:UPDATEQUERY];
     }
 }
 
@@ -4024,6 +4064,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", query);
 		SMLog(@"METHOD: copyTrailerTableToTempTrailerForOperationType");
         SMLog(@"ERROR IN INSERTING %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:query type:INSERTQUERY];
     }
 }
 
@@ -4036,7 +4077,7 @@ extern void SVMXLog(NSString *format, ...);
 		SMLog(@"%@", queryStatemnt);
 		SMLog(@"METHOD:cleartable");
 		SMLog(@"ERROR IN DELETE %s", err);
-
+		[appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryStatemnt type:DELETEQUERY];
     }
 }
 
@@ -4047,7 +4088,7 @@ extern void SVMXLog(NSString *format, ...);
     NSString  * sql = [NSString stringWithFormat:@"SELECT sf_id ,local_id, object_name , json_record ,record_type,sync_type FROM 'sync_Records_Heap'  where sync_flag = 'true'"];
     sqlite3_stmt * statement ;
     NSString  * local_id = nil , *sf_id = nil, * object_name = nil , * json_record = nil , * record_type = nil, *sync_type = nil;
-      
+    @try{
     if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sql UTF8String], -1, &statement, nil) == SQLITE_OK)
     {
         while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
@@ -4087,7 +4128,12 @@ extern void SVMXLog(NSString *format, ...);
                       
         }
     }
-   
+   }@catch (NSException *exp) {
+        SMLog(@"Exception Name databaseInterfaceSfm :getAllSyncRecordsFromSYNCHeap %@",exp.name);
+        SMLog(@"Exception Reason databaseInterfaceSfm :getAllSyncRecordsFromSYNCHeap %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
 }
 
 -(NSArray *)getAllObjectsFromHeap
@@ -4580,6 +4626,9 @@ extern void SVMXLog(NSString *format, ...);
         if(synchronized_sqlite3_exec(appDelegate.db, [insert_query UTF8String], NULL, NULL, &err) != SQLITE_OK)
         {
             SMLog(@"Insert Failed");
+            SMLog(@"METHOD:InsertInto_User_created_event_for_local_id " );
+            SMLog(@"ERROR IN INSERTING %s", err);
+            [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:insert_query type:INSERTQUERY];
         }
     }
 }
@@ -4594,6 +4643,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", updateStatement);
 		SMLog(@"METHOD:updatedataTrailerTAbleForLocal_id " );
 		SMLog(@"ERROR IN UPDATING %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:updateStatement type:UPDATEQUERY];
 
     }
     
@@ -4608,6 +4658,7 @@ extern void SVMXLog(NSString *format, ...);
 		SMLog(@"%@", updateStatement);
 		SMLog(@"METHOD:updateParentColumnNameInChildTableWithParentLocalId " );
 		SMLog(@"ERROR IN UPDATING %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:updateStatement type:UPDATEQUERY];
 
     }
 }
@@ -4725,6 +4776,7 @@ extern void SVMXLog(NSString *format, ...);
 		SMLog(@"%@", update);
 		SMLog(@"METHOD:DeleteDataTrailerTableAfterSync");
 		SMLog(@"ERROR IN DELETE %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:update type:DELETEQUERY];
 
         return FALSE;
     }
@@ -4741,6 +4793,7 @@ extern void SVMXLog(NSString *format, ...);
     NSMutableDictionary * final_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
     NSArray * json_allkeys = [json_dict allKeys];
     NSInteger lookUp_id = 0;
+    @try{
     for (int f = 0; f < [json_allkeys count]; f++)
     {
         NSString * json_key = [json_allkeys objectAtIndex:f];
@@ -4772,8 +4825,14 @@ extern void SVMXLog(NSString *format, ...);
             [final_dict setObject:value forKey:json_key];
         }
     }
-    
-    [autoreleasePool release];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name databaseInterfaceSfm :getDictForJsonString %@",exp.name);
+        SMLog(@"Exception Reason databaseInterfaceSfm :getDictForJsonString %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];    }
+    @finally
+    {
+        [autoreleasePool release];
+    }
     return final_dict;
 }   
 
@@ -4880,6 +4939,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", delete_query);
 		SMLog(@"METHOD:DeleterecordFromTable");
 		SMLog(@"ERROR IN DELETE %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:delete_query type:DELETEQUERY];
 
         return FALSE;
     }
@@ -4890,6 +4950,7 @@ extern void SVMXLog(NSString *format, ...);
 {
     SMLog(@"SAMMAN insertSyncConflictsIntoSYNC_CONFLICT Processing starts: %@", [NSDate date]);
     NSArray * all_objects = [conflictDict allKeys];
+    @try{
     for(NSString * object_name in  all_objects)
     {
         NSMutableArray *  object_info = [conflictDict objectForKey:object_name];
@@ -4936,11 +4997,18 @@ extern void SVMXLog(NSString *format, ...);
                 SMLog(@"%@", insert_query);
 				SMLog(@"METHOD: insertSyncConflictsIntoSYNC_CONFLICT");
 				SMLog(@"ERROR IN INSERTING %s", err);
-            
+                [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:insert_query type:INSERTQUERY];
+
             }
             
         }
     }
+	}@catch (NSException *exp) {
+        SMLog(@"Exception Name databaseInterfaceSfm :insertSyncConflictsIntoSYNC_CONFLICT %@",exp.name);
+        SMLog(@"Exception Reason databaseInterfaceSfm :insertSyncConflictsIntoSYNC_CONFLICT %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
     SMLog(@"SAMMAN insertSyncConflictsIntoSYNC_CONFLICT Processing ends: %@", [NSDate date]);
 }
 
@@ -5162,6 +5230,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", delete_query);
 		SMLog(@"METHOD:DeleterecordFromTableWithSf_Id");
 		SMLog(@"ERROR IN DELETE %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:delete_query type:DELETEQUERY];
 
     }
 }
@@ -5288,6 +5357,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", delete_stmt);
 		SMLog(@"METHOD:deleterecordsFromConflictTableForOperationType");
 		SMLog(@"ERROR IN DELETE %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:delete_stmt type:DELETEQUERY];
 
     }
 }
@@ -5459,6 +5529,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", query);
 		SMLog(@"METHOD:UpdateSFObjectField_For_Picklist_TypeObject " );
 		SMLog(@"ERROR IN UPDATING %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:query type:UPDATEQUERY];
 
         return FALSE;
     }
@@ -5480,6 +5551,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", query);
 		SMLog(@"METHOD:UpdateSFPicklistForMultiSelect_IndexValue_For_Oject_Name " );
 		SMLog(@"ERROR IN UPDATING %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:query type:UPDATEQUERY];
 
         
     }
@@ -5504,6 +5576,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", query);
 		SMLog(@"METHOD:UpdateSFPicklist_validFor_For_Oject_Name " );
 		SMLog(@"ERROR IN UPDATING %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:query type:UPDATEQUERY];
 
         return FALSE;
     }
@@ -5752,7 +5825,8 @@ extern void SVMXLog(NSString *format, ...);
 			SMLog(@"%@", delete_Statement);
 			SMLog(@"METHOD:deleteDownloadCriteriaObjects");
 			SMLog(@"ERROR IN DELETE %s", err);
-      
+            [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:delete_Statement type:DELETEQUERY];
+
 		}
         [delete_Statement release];
     }
@@ -5832,7 +5906,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", delete_statement);
 		SMLog(@"METHOD:deleteAllOndemandRecordsPartOfDownloadCriteriaForSfId");
 		SMLog(@"ERROR IN DELETE %s", err);
-      
+      	[appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:delete_statement type:DELETEQUERY];
     }
     
 }
@@ -5907,7 +5981,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", update_query);
 		SMLog(@"METHOD:updateOndemandRecordForId " );
 		SMLog(@"ERROR IN UPDATING %s", err);
-
+		[appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:update_query type:UPDATEQUERY];
     }
     
     [dateFormatter release];
@@ -5991,7 +6065,7 @@ extern void SVMXLog(NSString *format, ...);
     NSArray * allkeys = [record_dict allKeys];
     NSMutableDictionary * child_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
     NSString * master_object_name = @"" , * master_local_id = @"";
-    
+    @try{
     for(NSString * recordType in allkeys)
     {
         NSDictionary * dict = [record_dict objectForKey:recordType];
@@ -6069,7 +6143,13 @@ extern void SVMXLog(NSString *format, ...);
     {
         [self updateChildParentColumnNameForParentObject:master_object_name masterLocalId:master_local_id child_info:child_dict];
     }
-    [record_dict release];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name databaseInterfaceSfm :insertOndemandRecords %@",exp.name);
+        SMLog(@"Exception Reason databaseInterfaceSfm :insertOndemandRecords %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];    }
+    @finally {
+        [record_dict release];
+    }
 }
 
 -(void)updateChildParentColumnNameForParentObject:(NSString *)master_object masterLocalId:(NSString *)masterLocal_id child_info:(NSMutableDictionary *)child_info
@@ -6239,6 +6319,9 @@ extern void SVMXLog(NSString *format, ...);
     if(synchronized_sqlite3_exec(appDelegate.db, [insert_query UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
         SMLog(@"Insert Failed Event_local_Ids");
+        SMLog(@"METHOD:insertIntoEventsLocal_ids " );
+        SMLog(@"ERROR IN INSERTING %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:insert_query type:INSERTQUERY];
     }
 }
 
@@ -6271,6 +6354,10 @@ extern void SVMXLog(NSString *format, ...);
     if(synchronized_sqlite3_exec(appDelegate.db, [delete_query UTF8String], NULL, NULL, &err_delete) != SQLITE_OK)
     {
         SMLog(@"delete Failed Event_local_Ids");
+        SMLog(@"%@", delete_query);
+		SMLog(@"METHOD:deleteRecordsFromEventLocalIds");
+		SMLog(@"ERROR IN DELETE %s", err_delete);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err_delete] ForQuery:delete_query type:DELETEQUERY];
     }
 }
 

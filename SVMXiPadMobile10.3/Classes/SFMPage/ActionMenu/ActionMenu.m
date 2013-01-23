@@ -49,7 +49,7 @@ extern void SVMXLog(NSString *format, ...);
 - (void) buttonClicked:(id)sender
 {
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    
+    @try{
     UIButton * button = (UIButton *)sender;
     // get button tag
     NSInteger tag = button.tag;
@@ -110,6 +110,14 @@ extern void SVMXLog(NSString *format, ...);
             [delegate dismissActionMenu];
         }
     }
+    }@catch (NSException *e)
+    {
+        SMLog(@"Exception Name Action Menu :buttonClicked %@",e.name);
+        SMLog(@"Exception Reason Action Menu :buttonClicked %@",e.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:e];
+        
+    }
+
 }
 
 #pragma mark - View lifecycle
@@ -137,6 +145,7 @@ extern void SVMXLog(NSString *format, ...);
     maxSize = 0;
     for (int i = 0; i < [buttons count]; i++)
     {
+    	@try{
         NSDictionary * buttonDict = [buttons objectAtIndex:i];
         NSString * title = @"";
         if(appDelegate.isWorkinginOffline)
@@ -153,6 +162,12 @@ extern void SVMXLog(NSString *format, ...);
         
         if (size.width > maxSize)
             maxSize = size.width;
+        }@catch (NSException *exp) {
+            SMLog(@"Exception Name Action Menu :viewDidLoad %@",exp.name);
+            SMLog(@"Exception Reason Action Menu :viewDidLoad %@",exp.reason);
+            [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+        }
+
     }
     
     CGSize size = CGSizeMake(maxSize, height);
@@ -241,7 +256,7 @@ extern void SVMXLog(NSString *format, ...);
     [button setBackgroundImage:highlightBtnImg forState:UIControlStateHighlighted];
     
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    
+    @try{
     if(appDelegate.isWorkinginOffline)
     {
         NSDictionary * buttonDict = [buttons objectAtIndex:indexPath.row];
@@ -253,9 +268,6 @@ extern void SVMXLog(NSString *format, ...);
         [button setTitle:title forState:UIControlStateNormal];
         [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         button.enabled = [enable boolValue];
-        
-        
-
     }
     else
     {
@@ -305,6 +317,13 @@ extern void SVMXLog(NSString *format, ...);
         }
     
     }
+    }@catch (NSException *exp)
+    {
+        SMLog(@"Exception Name Action Menu :cellForRowAtIndexPath %@",exp.name);
+        SMLog(@"Exception Reason Action Menu :cellForRowAtIndexPath %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
     [button addTarget:self action:@selector(buttonClicked:) forControlEvents:UIControlEventTouchUpInside];
     button.tag = indexPath.row;
 

@@ -16,6 +16,8 @@
 #import "Reachability.h"
 #import "CalendarDatabase.h"
 #import "databaseIntefaceSfm.h"
+#import <MessageUI/MessageUI.h>
+#import "MessageUI/MFMailComposeViewController.h"
 #include  <sqlite3.h>
 //Radha
 #import "DataBase.h"
@@ -46,6 +48,21 @@ typedef enum DOD_STATUS{
     
 }DOD_STATUS;
 
+typedef enum SQL_QUERY {
+    SELECTQUERY  = 0,
+    INSERTQUERY = 1,
+    UPDATEQUERY = 2,
+    DELETEQUERY = 3,
+    
+}SQL_QUERY;
+typedef  enum ALERT_VIEW_ERROR
+{
+    DATABASE_ERROR=0,
+    RES_ERROR=1,
+    SOAP_ERROR=2,
+    APPLICATION_ERROR=3,
+
+}ALERT_VIEW_ERROR;
 typedef enum DOD_REQUEST_RESPONSE_STATUS
 {
     DOD_REQUEST_SENT = 0,
@@ -181,7 +198,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 
 
 @interface iServiceAppDelegate : NSObject
-<UIApplicationDelegate, UIActionSheetDelegate, WSInterfaceDelegate>
+<UIApplicationDelegate, UIActionSheetDelegate, WSInterfaceDelegate,MFMailComposeViewControllerDelegate,DetailViewControllerDelegate>
 {
     
     NSMutableArray * code_snippet_ids;
@@ -473,6 +490,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     //Service Report
     NSMutableDictionary * serviceReportReference;
     NSTimer * locationPingSettingTimer;
+	NSString *errorDescription;
 }
 @property (nonatomic,retain) NSMutableArray * code_snippet_ids;
 @property (nonatomic) BOOL get_trigger_code;
@@ -719,6 +737,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 @property (nonatomic, assign) BOOL metaSyncCompleted;
 // SFM Search conflict status
 @property (nonatomic, assign) NSString *From_SFM_Search;
+@property (nonatomic, assign) NSString *errorDescription;
+
+
 
 //sahana dec 4th
 -(void)updateMetasyncTimeinSynchistory;
@@ -806,9 +827,12 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 
 //RADHA //26/Nov/2012
 - (char *) convertStringIntoChar:(NSString *)data;
+- (void)CustomizeAletView:(NSError*)error alertType:(ALERT_VIEW_ERROR)type Dict:(NSMutableDictionary*)errorDict exception:(NSException *)exp;
 
-//METHOD FOR SELECT ERROR MESSEGES
-- (void) printIfError:(NSString *)err ForQuery:(NSString *)query;
+- (void) printIfError:(NSString *)err ForQuery:(NSString *)query type:(SQL_QUERY)type;
+
+- (void) copyToClipboard:(UIAlertView*)alertview;
+- (void) sendingEmail:(UIAlertView*)alertView;
 
 -(void)getTriggerCode;
 

@@ -60,6 +60,7 @@ extern void SVMXLog(NSString *format, ...);
 	self.navigationController.delegate = self;
     
     AppDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+    @try{
     NSString * serviceReport = [AppDelegate.wsInterface.tagsDictionary objectForKey:SFM_SUMMARY_BACK_HEADER];
     totalAmount.text = [AppDelegate.wsInterface.tagsDictionary objectForKey:SFM_SUMMARY_TOTAL_AMT];
     
@@ -100,7 +101,10 @@ extern void SVMXLog(NSString *format, ...);
     
     //delete all rows in the sinature table
     //[AppDelegate.calDataBase deleteAllSignatureData];
-    
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name SummaryViewController :viewDidLoad %@",exp.name);
+	SMLog(@"Exception Reason SummaryViewController :viewDidLoad %@",exp.reason);
+    }
 	
 }
 
@@ -126,7 +130,7 @@ extern void SVMXLog(NSString *format, ...);
 	NSMutableArray *_Parts = [(NSMutableArray *)[(NSDictionary *)[Dictionaries valueForKey:@"Dictionaries"] valueForKey:@"Parts"]retain];
 	NSMutableDictionary *_Labour = [(NSMutableDictionary *)[(NSDictionary *)[Dictionaries valueForKey:@"Dictionaries"] valueForKey:@"Labour"]retain];
 	NSMutableDictionary *_Expenses = [(NSMutableDictionary *)[(NSDictionary *)[Dictionaries valueForKey:@"Dictionaries"] valueForKey:@"Expenses"]retain];
-
+	@try{
 	for( int i = 0; i < [_Parts count]; i++ )
 	{
 		{
@@ -178,10 +182,16 @@ extern void SVMXLog(NSString *format, ...);
 		}
 	}
     
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name SummaryViewController :PopulateData %@",exp.name);
+        SMLog(@"Exception Reason SummaryViewController :PopulateData %@",exp.reason);
+    }
     // Analyser
-    [_Parts release];
-    [_Labour release];
-    [_Expenses release];
+    @finally {
+        [_Parts release];
+        [_Labour release];
+        [_Expenses release];
+    }
 }
 
 - (IBAction) createPDF;
@@ -194,6 +204,7 @@ extern void SVMXLog(NSString *format, ...);
     
     //sahana Aug 16th 
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+    @try{
      NSDictionary *  header_sfm = [appDelegate.SFMPage objectForKey:@"header"];
    
     //temp change commented the enable_summary_generation flag
@@ -242,6 +253,11 @@ extern void SVMXLog(NSString *format, ...);
         
         [self presentViewController:pdfCreator animated:YES completion:nil];
     }
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name SummaryViewController :createPDF %@",exp.name);
+	SMLog(@"Exception Reason SummaryViewController :createPDF %@",exp.reason);
+    }
+
 }
 
 - (NSString *) getFormattedDate:(NSString *)date
@@ -335,6 +351,7 @@ extern void SVMXLog(NSString *format, ...);
 - (void) setTotalCost
 {
     NSUInteger count = [Parts count];
+    @try{
     for (int i = 0; i < count; i++)
     {
         NSDictionary *dict = [Parts objectAtIndex:i];
@@ -385,6 +402,11 @@ extern void SVMXLog(NSString *format, ...);
         double cost = [actualPrice floatValue] * [actualQuantity floatValue];
         totalCost += cost;
     }
+	}@catch (NSException *exp) {
+		SMLog(@"Exception Name SmmaryViewController :setTotalCost %@",exp.name);
+		SMLog(@"Exception Reason SummaryViewController :setTotalCost %@",exp.reason);
+    }
+
 }
 
 // Customize the appearance of table view cells.
@@ -399,7 +421,7 @@ extern void SVMXLog(NSString *format, ...);
     }
 	
 	UIView *view = nil;
-	
+	@try{
 	switch (indexPath.section)
 	{
         case 0:
@@ -519,6 +541,11 @@ extern void SVMXLog(NSString *format, ...);
 	cell.opaque = NO;
 	cell.selectionStyle = UITableViewCellSelectionStyleNone;
 	[cell.contentView addSubview:view];
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name SummaryViewController :cellForRowAtIndexPath %@",exp.name);
+	SMLog(@"Exception Reason SummaryViewController :cellForRowAtIndexPath %@",exp.reason);
+    }
+
 	return cell;
 }
 
@@ -526,6 +553,7 @@ extern void SVMXLog(NSString *format, ...);
 {
     NSMutableString * decimalCostStr = [NSMutableString stringWithFormat:@"%d", (int)cost];
     int strLength = [decimalCostStr length];
+    @try{
     for (int i = 0; i < strLength; i++)
     {
         if ((i > 0) && (i%3 == 0))
@@ -540,6 +568,11 @@ extern void SVMXLog(NSString *format, ...);
     NSMutableString * floatStr = [NSMutableString stringWithFormat:@"%.2f", cost];
     [floatStr replaceOccurrencesOfString:@"0." withString:@"." options:NSCaseInsensitiveSearch range:NSMakeRange(0, [floatStr length])];
     [decimalCostStr appendString:floatStr];
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name SummaryViewController :getFormattedCost %@",exp.name);
+	SMLog(@"Exception Reason SummaryViewController :getFormattedCost %@",exp.reason);
+    }
+
     return decimalCostStr;
 }
 
@@ -551,6 +584,7 @@ extern void SVMXLog(NSString *format, ...);
 	if (indexPath.section == 0) 
 	{
 		NSString * wfText = [[workOrderDetails objectForKey:SVMXCWORKPERFORMED] isKindOfClass:[NSString class]]?[workOrderDetails objectForKey:SVMXCWORKPERFORMED]:@"";
+		@try{
         if ([wfText length] == 0)
         {
             if ([reportEssentials count] > 0)
@@ -566,6 +600,11 @@ extern void SVMXLog(NSString *format, ...);
 		maxsize.width = 637;
 		CGSize textsize = [wfText sizeWithFont:wfFont constrainedToSize:maxsize];
 		return textsize.height;
+		}@catch (NSException *exp) {
+		SMLog(@"Exception Name SmmaryViewController :setTotalCost %@",exp.name);
+		SMLog(@"Exception Reason SummaryViewController :setTotalCost %@",exp.reason);
+		}
+
 	}
 	
 	else {
@@ -640,6 +679,7 @@ extern void SVMXLog(NSString *format, ...);
 	signature.image = [UIImage imageWithData:signimagedata];
     NSString * WONumner = @"";
     NSString * workOrderNumber = @"";
+    @try{
     if ([reportEssentials count] > 0)
     {
         NSDictionary * dict = [reportEssentials objectAtIndex:0];
@@ -650,6 +690,11 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     [AppDelegate.calDataBase insertSignatureData:encryptedImage WithId:WONumner RecordId:recordId apiName:objectApiName WONumber:WONumner flag:@"ServiceReport"];
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name SmmaryViewController :setTotalCost %@",exp.name);
+	SMLog(@"Exception Reason SummaryViewController :setTotalCost %@",exp.reason);
+    }
+
 }
 
 #pragma mark -

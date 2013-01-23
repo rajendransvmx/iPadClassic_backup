@@ -127,6 +127,7 @@ extern void SVMXLog(NSString *format, ...);
  didFinishPickingMediaWithInfo: (NSDictionary*) info
 {
     // ADD: get the decode results
+    @try{
     id<NSFastEnumeration> results =[info objectForKey: ZBarReaderControllerResults];
     SMLog(@"result=%@",results);
     ZBarSymbol *symbol = nil;
@@ -139,6 +140,12 @@ extern void SVMXLog(NSString *format, ...);
     
     // ADD: dismiss the controller (NB dismiss from the *reader*!)
     [reader dismissViewControllerAnimated: YES completion:nil];
+	}@catch (NSException *exp) {
+        SMLog(@"Exception Name cusTextFieldAlpha :imagePickerController %@",exp.name);
+        SMLog(@"Exception Reason cusTextFieldAlpha :imagePickerController %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
 }
 
 #pragma mark - AlhaTextHandlerDelegate Method

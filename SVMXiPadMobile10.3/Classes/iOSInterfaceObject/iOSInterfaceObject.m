@@ -389,6 +389,11 @@ extern void SVMXLog(NSString *format, ...);
         if (synchronized_sqlite3_exec(appDelegate.db, [query UTF8String], NULL, NULL, &err) != SQLITE_OK)
         {
             SMLog(@"Failed To delete");
+            SMLog(@"%@", query);
+            SMLog(@"METHOD:deleteRecordsFromEventLocalIds");
+            SMLog(@"ERROR IN DELETE %s", err);
+            [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:query type:DELETEQUERY];
+            
         }
     }
     

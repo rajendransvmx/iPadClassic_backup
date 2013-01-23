@@ -37,7 +37,7 @@ extern void SVMXLog(NSString *format, ...);
     
     // Set Default Value
     userCanChangePartsPrice = YES;
-    
+    @try{
     if ([appDelegate.timeAndMaterial count] > 0)
     {
         for (int i = 0; i < [appDelegate.timeAndMaterial count]; i++)
@@ -95,6 +95,11 @@ extern void SVMXLog(NSString *format, ...);
 	}
 
 	[NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(run) userInfo:nil repeats:NO];
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name PartsViewController :viewDidLoad %@",exp.name);
+	SMLog(@"Exception Reason PartsViewController :viewDidLoad %@",exp.reason);
+    }
+
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -161,6 +166,7 @@ extern void SVMXLog(NSString *format, ...);
 {
 	NSArray * array = [result records];
     appDelegate.partsZKSArray = [array retain];
+    @try{
 	for (int i = 0; i < [array count]; i++)
 	{
 		ZKSObject * obj = [array objectAtIndex:i];
@@ -202,7 +208,11 @@ extern void SVMXLog(NSString *format, ...);
         
         [Parts addObject:Part];
 	}
-    
+ 	}@catch (NSException *exp) {
+	SMLog(@"Exception Name PartsViewController :getParts %@",exp.name);
+	SMLog(@"Exception Reason PartsViewController :getParts %@",exp.reason);
+	}
+
     if (appDelegate.Parts != nil)
     {
         appDelegate.Parts = nil;
@@ -322,7 +332,7 @@ extern void SVMXLog(NSString *format, ...);
     
     ZKQueryResult * productPrices = (ZKQueryResult *)context;
     NSArray * productPriceArray = [productPrices records];
-    
+    @try{
     for (int i = 0; i < [partsArray count]; i++)
     {
         NSDictionary * partsDict = [[partsArray objectAtIndex:i] fields];
@@ -361,9 +371,15 @@ extern void SVMXLog(NSString *format, ...);
         
         [Parts addObject:Part];
     }
+ 	}@catch (NSException *exp) {
+        SMLog(@"Exception Name PartsViewController :didGetProductDetails %@",exp.name);
+        SMLog(@"Exception Reason PartsViewController :didGetProductDetails %@",exp.reason);
+    }
+	@finally {
     appDelegate.Parts = [Parts retain];
     [PartsTable reloadData];
     [activity stopAnimating];
+	}
     
     if([self.parent respondsToSelector:@selector(PopulateData)])
 	{

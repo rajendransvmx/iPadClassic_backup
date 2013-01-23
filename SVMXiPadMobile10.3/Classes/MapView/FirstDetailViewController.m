@@ -77,6 +77,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 
 - (void) customCallOutForAnnotation:(UICRouteAnnotation *)annotationObject AtPosition:(CGPoint)point;
 {
+	@try{
     NSDictionary * workOrder = [annotationObject workOrder];
     
     //SMLog(@"%@", workOrder);
@@ -150,6 +151,12 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     //SMLog(@"%f, %f", point.x, point.y);
     //SMLog(@"%f, %f", popOver.contentViewController.view.frame.origin.x, popOver.contentViewController.view.frame.origin.y);
 //    [locationPop release];
+	}
+@catch (NSException *exp) {
+        SMLog(@"Exception Name FirstDetailViewController :customCallOutForAnnotation %@",exp.name);
+        SMLog(@"Exception Reason FirstDetailViewController :customCallOutForAnnotation %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
 }
 
 #pragma mark -
@@ -200,7 +207,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 {
     NSMutableArray * array = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
     NSArray * keys = [NSArray arrayWithObjects:@"WorkOrderNumber", @"WorkOrderAddress", nil];
-    
+    @try{
     for (int i = 0; i < [appDelegate.workOrderEventArray count]; i++)
     {        
         NSMutableString * address = nil;
@@ -263,7 +270,11 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     NSArray * homeObjects = [NSArray arrayWithObjects:[appDelegate.wsInterface.tagsDictionary objectForKey:MAP_HOMELOC_TITLE], appDelegate.technicianAddress, nil];
     NSDictionary * homeDict = [NSDictionary dictionaryWithObjects:homeObjects forKeys:keys];
     [array addObject:homeDict];
-    
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name FirstDetailViewController :getWorkOrderArray %@",exp.name);
+        SMLog(@"Exception Reason FirstDetailViewController :getWorkOrderArray %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];;;
+    }
     return array;
 }
 
@@ -473,7 +484,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     NSMutableArray * array = [[NSMutableArray alloc] initWithCapacity:0];
     
     NSString * woStreet = nil, * woCity = nil, * woState = nil, * woZip = nil, * woCountry = nil;
-    
+    @try{
     for (int i = 0; i < [appDelegate.workOrderEventArray count]; i++)
     {
         address = [[[NSMutableString alloc] initWithCapacity:0] autorelease];
@@ -543,6 +554,12 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
         
         [message release];
     }
+    }@catch (NSException *exp)
+    {
+        SMLog(@"Exception Name FirstDetailViewController :setupMapView %@",exp.name);
+        SMLog(@"Exception Reason FirstDetailViewController :setupMapView %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];;
+    }
 }
 
 - (void) setJobDetailsForWorkOrder:(NSDictionary *)workOrderDetails workOrderInfo:(NSDictionary *)workOrderInfo
@@ -552,14 +569,19 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     currentWorkOrderDetails = workOrderDetails;
     
     currentWorkOrderInfo = workOrderInfo;
-    
+    @try{
     WONumber.text = [workOrderInfo objectForKey:NAME];
     contactName.text = [workOrderInfo objectForKey:SVMXC__CONTACT_NAME];
     contactEmail.text = [workOrderInfo objectForKey:SVMXC__CONTACT_EMAIL];
     contactAddress.text = [workOrderInfo objectForKey:SVMXC__CONTACT_PHONE];
     problemDescription.text = [workOrderInfo objectForKey:SVMXC__PROBLEM_DESCRIPTION];
     WODescription.text = [workOrderInfo objectForKey:SVMXC__ORDER_TYPE];
-
+	}
+    @catch (NSException *exp) {
+        SMLog(@"Exception Name FirstDetailViewController :setJobDetailsForWorkOrder %@",exp.name);
+        SMLog(@"Exception Reason FirstDetailViewController :setJobDetailsForWorkOrder %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
     [imageActivity startAnimating];
     [self setContactImage];
     
@@ -985,7 +1007,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
         cell = [self createCustomCellWithId:CellIdentifier];
     }
     
-    
+    @try{
     NSString * str = [[appDelegate.workOrderEventArray objectAtIndex:indexPath.row] objectForKey:ADDITIONALINFO];
     if (str != nil)
         str = [str stringByReplacingOccurrencesOfString:[appDelegate.wsInterface.tagsDictionary objectForKey:MAP_POPOVER_TITLE] withString:@""];
@@ -1039,7 +1061,13 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     timing = [NSString stringWithFormat:@"%@ %@ %@ (%@ %@)", woStartTiming, [appDelegate.wsInterface.tagsDictionary objectForKey:MAP_WO_TO], woEndTiming,  duration, [appDelegate.wsInterface.tagsDictionary objectForKey:MAP_WO_MINUTES]];
 
     [cell setCellLabel:event Color:color Timing:timing];
-
+	}
+    @catch (NSException *exp)
+    {
+        SMLog(@"Exception Name FirstDetailViewController :cellForRowAtIndexPath %@",exp.name);
+        SMLog(@"Exception Reason FirstDetailViewController :cellForRowAtIndexPath %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
     return cell;
 }
 
@@ -1216,6 +1244,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 {
     // SMLog(@"Address Dictionary = %@", [placemark addressDictionary]);
     //SMLog(@"The geocoder has returned: %@", [placemark addressDictionary]);
+    @try{
     NSDictionary * placeMarkDict = [placemark addressDictionary];
     
     NSArray * formattedAddressLines = [placeMarkDict objectForKey:@"FormattedAddressLines"];
@@ -1240,7 +1269,11 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
                         [placeMarkDict objectForKey:@"State"],
                         [placeMarkDict objectForKey:@"Thouroughfare"]
                         ] retain];
-    //SMLog(@"%@", currentLocation);
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name FirstDetailViewController :reverseGeocoder %@",exp.name);
+        SMLog(@"Exception Reason FirstDetailViewController :reverseGeocoder %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
 }
 
 #pragma mark - Launch SmartVan
@@ -1315,7 +1348,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 - (void) didQueryTechnician:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
     NSArray * array = [result records];
-    
+    @try{
     if ([array count] > 0)
     {
         ZKSObject * obj = [array objectAtIndex:0];
@@ -1371,8 +1404,15 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     }
     else
         appDelegate.technicianAddress = @"";  
-    
-    didQueryTechnician = YES;
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name FirstDetailViewController :didQueryTechnician %@",exp.name);
+        SMLog(@"Exception Reason FirstDetailViewController :didQueryTechnician %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+    @finally {
+        didQueryTechnician = YES;
+
+    }
 }
 
 

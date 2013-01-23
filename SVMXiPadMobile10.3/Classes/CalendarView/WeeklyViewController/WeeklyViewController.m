@@ -149,6 +149,7 @@ extern void SVMXLog(NSString *format, ...);
     [self clearWeekView];
 
     SMLog(@"%@", appDelegate.wsInterface.eventArray);
+    @try{
     for ( int i = 0; i < [appDelegate.wsInterface.eventArray count]; i++ )
     {
         NSDate * temp_start_date_time , *temp_end_date_time ;
@@ -319,7 +320,13 @@ extern void SVMXLog(NSString *format, ...);
             events = nil;
         }
     }
+	 }@catch (NSException *exp) {
+        SMLog(@"Exception Name WeeklyViewController :populateWeekView %@",exp.name);
+        SMLog(@"Exception Reason WeeklyViewController :populateWeekView %@",exp.reason);
+    }
+	@finally {
     [activity stopAnimating];
+	}
     
     calendarDidLoad = YES;
     [self didAllDataLoad];
@@ -405,7 +412,14 @@ extern void SVMXLog(NSString *format, ...);
 - (NSArray *) getWeekStartEndDatesAtOptionalIndex:(NSString *)optionalIndex
 {
     NSUInteger index = 0;
-    
+     int startMonth,endMonth;
+    int startYear,endYear;
+    NSString * startMonthString;
+    NSString * endMonthString;
+    NSUInteger month = [[weekDetails objectForKey:wMONTHNUMBER] intValue];
+    NSUInteger year = [[weekDetails objectForKey:wYEAR] intValue];
+    NSString * _startDate = @"", * _endDate = @"";
+    @try{
     if (optionalIndex == nil)
         index = [[weekDetails objectForKey:wWEEK] intValue]-1;
     else
@@ -432,7 +446,6 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     
-    NSString * _startDate = @"", * _endDate = @"";
     
     if (start < 10)
         _startDate = [NSString stringWithFormat:@"0%d", start];
@@ -445,12 +458,6 @@ extern void SVMXLog(NSString *format, ...);
         _endDate = [NSString stringWithFormat:@"%d", end];
     
     // Retrieve current month and year
-    int startMonth,endMonth;
-    int startYear,endYear;
-    NSString * startMonthString;
-    NSString * endMonthString;
-    NSUInteger month = [[weekDetails objectForKey:wMONTHNUMBER] intValue];
-    NSUInteger year = [[weekDetails objectForKey:wYEAR] intValue];
     
     startYear = endYear = year;
     startMonth =endMonth = month;
@@ -490,7 +497,11 @@ extern void SVMXLog(NSString *format, ...);
     else
         endMonthString = [NSString stringWithFormat:@"%d", endMonth];
     
-    
+     }@catch (NSException *exp) {
+	SMLog(@"Exception Name WeeklyViewController :getWeekStartEndDatesAtOptionalIndex %@",exp.name);
+	SMLog(@"Exception Reason WeeklyViewController :getWeekStartEndDatesAtOptionalIndex %@",exp.reason);
+    }
+
     NSString * weekStart = [NSString stringWithFormat:@"%d-%@-%@", startYear, startMonthString, _startDate];
     NSString * weekEnd = [NSString stringWithFormat:@"%d-%@-%@", endYear, endMonthString, _endDate];
     
@@ -548,6 +559,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) setDays
 {
+	@try{
     NSUInteger index = [[weekDetails objectForKey:wWEEK] intValue]-1;
     NSMutableArray * array = [weeksArray objectAtIndex:index];
     
@@ -589,10 +601,16 @@ extern void SVMXLog(NSString *format, ...);
         [weekViewModify addSubview:label];
         [label release];
     }
+    }@catch (NSException *exp) {
+	SMLog(@"Exception Name WeeklyViewController :setDays %@",exp.name);
+	SMLog(@"Exception Reason WeeklyViewController :setDays %@",exp.reason);
+    }
+
 }
 
 - (void) setDaysAtSliderLocationIndex:(NSUInteger)index
 {
+	@try{
     currentWeek = index;
 
     NSMutableArray * array = [weeksArray objectAtIndex:index];
@@ -606,12 +624,17 @@ extern void SVMXLog(NSString *format, ...);
     saturday.text = [array objectAtIndex:6];
     
     [self setupEvents];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WeeklyViewController :setDaysAtSliderLocationIndex %@",exp.name);
+        SMLog(@"Exception Reason WeeklyViewController :setDaysAtSliderLocationIndex %@",exp.reason);
+    }
 }
 
 - (NSString *) getFirstLastFromWeek:(NSMutableArray *)array
 {
     NSString * formattedString = nil;
     NSUInteger index = -1;
+    @try{
     for (int i = 0; i < 7; i++)
     {
         if (![[array objectAtIndex:i] isEqualToString:@""])
@@ -638,7 +661,11 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
-    
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WeeklyViewController :getFirstLastFromWeek %@",exp.name);
+        SMLog(@"Exception Reason WeeklyViewController :getFirstLastFromWeek %@",exp.reason);
+    }
+
     return formattedString;
 }
 
@@ -853,6 +880,7 @@ extern void SVMXLog(NSString *format, ...);
 #define END_DATE            1
 - (void) setupEvents
 {
+	@try{
     NSArray * startEnd = [self getWeekStartEndDatesAtOptionalIndex:[NSString stringWithFormat:@"%d", currentSliderPositionIndex]];
     NSString * _currentDate = [startEnd objectAtIndex:START_DATE];
   //  startDate = [startEnd objectAtIndex:START_DATE];
@@ -878,6 +906,11 @@ extern void SVMXLog(NSString *format, ...);
     [self populateWeekView];
     
     //[appDelegate.wsInterface getEventsForStartDate:startDate EndDate:endDate];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WeeklyViewController :setupEvents %@",exp.name);
+        SMLog(@"Exception Reason WeeklyViewController :setupEvents %@",exp.reason);
+    }
+
 }
 
 - (void) stopActivity
@@ -891,6 +924,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) clearWeekView
 {
+	@try{
     // remove all events from view if any are present
     NSArray * array = [weekViewPane subviews];
     for (int i = 0; i < [array count]; i++)
@@ -903,6 +937,11 @@ extern void SVMXLog(NSString *format, ...);
     
     [eventViewArray removeAllObjects];
     [weeklyEventPositionArray removeAllObjects];
+     }@catch (NSException *exp) {
+        SMLog(@"Exception Name WeeklyViewController :clearWeekView %@",exp.name);
+        SMLog(@"Exception Reason WeeklyViewController :clearWeekView %@",exp.reason);
+    }
+
 }
 
 - (void) didQueryWorkOrder:(NSDictionary *)dictionary
@@ -913,7 +952,7 @@ extern void SVMXLog(NSString *format, ...);
         workOrderDictionary = nil;
     }
     workOrderDictionary = [dictionary retain];
-    
+    @try{
     eventsArray = [dictionary objectForKey:EVENTARRAY];
     NSArray * workOrderArray = [dictionary objectForKey:WORKORDERARRAY];
     NSArray * workOrderDetailsArray = [[dictionary objectForKey:WORKORDERDETAILSARRAY] copy];
@@ -1020,7 +1059,11 @@ extern void SVMXLog(NSString *format, ...);
 	
 	//pavaman 21st Jan 2011		
 	didLoadWeekData = TRUE;
-	
+	}@catch (NSException *exp) {
+            SMLog(@"Exception Name WeeklyViewController :didQueryWorkOrder %@",exp.name);
+            SMLog(@"Exception Reason WeeklyViewController :didQueryWorkOrder %@",exp.reason);
+    }
+
 }
 
 - (NSString *) getLocalTimeFromGMT:(NSString *)gmtDate
@@ -1075,6 +1118,7 @@ extern void SVMXLog(NSString *format, ...);
 - (void) movedEvent:(WeeklyViewEvent *)event
 {
     //new start time and end time
+    @try{
     [activity startAnimating];
     NSDictionary * startEndTime = [event getEventStartEndTime];
     SMLog(@"%@", startEndTime);
@@ -1217,7 +1261,13 @@ extern void SVMXLog(NSString *format, ...);
     updatestartDateTime = [updatestartDateTime stringByReplacingOccurrencesOfString:@"T" withString:@" "];
     updatestartDateTime = [updatestartDateTime stringByReplacingOccurrencesOfString:@"Z" withString:@""];
     
+	 }@catch (NSException *exp) {
+        SMLog(@"Exception Name WeeklyViewController :movedEvent %@",exp.name);
+        SMLog(@"Exception Reason WeeklyViewController :movedEvent %@",exp.reason);
+    }
+     @finally {
     [self enableUI];
+	 }
 }
 //sahana 12th Sept 2011
 - (void) rescheduleEvent:(BOOL)continueReschedule;
@@ -1437,7 +1487,7 @@ extern void SVMXLog(NSString *format, ...);
         return;
     WeeklyViewEvent *calEvent = [eventView retain];
 	UITouch *touch = [touches anyObject];
-    
+    @try{
     if ([touch view] == weekViewPane)
     {
         if (weekViewPane.frame.origin.y > 0)
@@ -1603,6 +1653,11 @@ extern void SVMXLog(NSString *format, ...);
             
         }
 	}
+	 }@catch (NSException *exp) {
+        SMLog(@"Exception Name WeeklyViewController :touchesEnded %@",exp.name);
+        SMLog(@"Exception Reason WeeklyViewController :touchesEnded %@",exp.reason);
+    }
+
     didMoveEvent = NO;
     didTap = didMove = NO;
     [calEvent release];

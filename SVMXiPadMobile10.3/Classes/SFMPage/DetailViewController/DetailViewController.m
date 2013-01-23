@@ -208,6 +208,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) didSwitchProcess:(NSDictionary *)objectDictionary
 {
+	@try{
     didRunOperation = YES;
     NSString * newProcess = [objectDictionary objectForKey:gPROCESS_ID];
     self.objectAPIName = [objectDictionary objectForKey:VIEW_OBJECTNAME];
@@ -235,6 +236,12 @@ extern void SVMXLog(NSString *format, ...);
         [alert1 release];
         return;
     }
+	}@catch (NSException *exp) {
+        SMLog(@"Exception Name databaseInterfaceSfm :didSwitchProcess %@",exp.name);
+        SMLog(@"Exception Reason databaseInterfaceSfm :didSwitchProcess %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
 }
 
 /*
@@ -767,6 +774,7 @@ extern void SVMXLog(NSString *format, ...);
 #pragma mark = fill the sfmData equivalent for didsubmitProcess method in offline
 -(void)fillSFMdictForOfflineforProcess:(NSString *) processId forRecord:(NSString *)recordId
 {
+	@try{
     appDelegate.isWorkinginOffline = TRUE;
     
    // databaseIntefaceSfm * database = [[databaseIntefaceSfm alloc] init];
@@ -2182,7 +2190,12 @@ extern void SVMXLog(NSString *format, ...);
     appDelegate.SFMoffline = page_layoutInfo;
 
     appDelegate.didsubmitModelView = TRUE;
-    
+	}@catch (NSException *exp) {
+        SMLog(@"Exception Name DetailViewController :fillSFMdictForOfflineforProcess %@",exp.name);
+        SMLog(@"Exception Reason DetailViewController :fillSFMdictForOfflineforProcess %@",exp.reason);
+         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+     }
+
     
 }
 
@@ -2320,7 +2333,7 @@ extern void SVMXLog(NSString *format, ...);
     NSMutableDictionary * wizard_dict= [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
     
     NSMutableArray * ipad_only_array = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-        
+    @try{    
     if ([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"VIEWRECORD"]) 
     {
          wizard_dict =[appDelegate.databaseInterface getWizardInformationForObjectname:heder_object_name record_id:appDelegate.sfmPageController.recordId];
@@ -2651,6 +2664,12 @@ extern void SVMXLog(NSString *format, ...);
 
         }
     }
+	}@catch (NSException *exp) {
+        SMLog(@"Exception Name DetailViewController :action %@",exp.name);
+        SMLog(@"Exception Reason DetailViewController :action %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
 }
     
 #pragma mark - wsInterface Delegate Methods
@@ -2693,6 +2712,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) didInvokeWebService:(NSString *)targetCall  event_name:(NSString *)event_name
 {    
+	@try{
     if([event_name isEqualToString:BEFORESAVE] || [event_name isEqualToString:AFTERSAVE])
     {
         NSMutableDictionary * sfm_temp = [appDelegate.SFMPage mutableCopy];
@@ -2858,13 +2878,19 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate ScheduleTimerForEventSync];
         [self enableSFMUI];
         SMLog(@" getPrice4");
-            
     }
+	}@catch (NSException *exp) {
+        SMLog(@"Exception Name DetailViewController :didInvokeWebService %@",exp.name);
+        SMLog(@"Exception Reason DetailViewController :didInvokeWebService %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
 }
 
 
 - (void) startSummaryDataFetch
 {
+	@try{
     [self disableSFMUI];
     
     BOOL isworkingInOffline = TRUE;
@@ -2998,14 +3024,22 @@ extern void SVMXLog(NSString *format, ...);
 	navController.navigationBar.hidden = YES;
     [(SFMPageController *)delegate presentViewController:navController animated:YES completion:nil];
     
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name DetailViewController :startSummaryDataFetch %@",exp.name);
+        SMLog(@"Exception Reason DetailViewController :startSummaryDataFetch %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+    @finally {
     [activity stopAnimating];
     didRunOperation = NO;
     
     [self enableSFMUI];
+	}
 }
 
 - (NSString *) getObjectNameFromHeaderData:(NSDictionary *)dictionary forKey:(NSString *)key
 {
+	@try{
     NSArray * allKeys = [dictionary allKeys];
     for (NSString * _key in allKeys)
     {
@@ -3017,6 +3051,11 @@ extern void SVMXLog(NSString *format, ...);
             // Found correct key, retrieve value for key and return
             return [dictionary objectForKey:_key];
         }
+    }
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name DetailViewController :getObjectNameFromHeaderData %@",exp.name);
+        SMLog(@"Exception Reason DetailViewController :getObjectNameFromHeaderData %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
     }
 
     return @"";
@@ -3088,7 +3127,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) showChatter
 {
-       
+    @try{
     [self disableSFMUI];
     
     Chatter * _chatter = [[Chatter alloc] initWithNibName:@"Chatter" bundle:nil];
@@ -3102,9 +3141,16 @@ extern void SVMXLog(NSString *format, ...);
     [(SFMPageController *)delegate presentViewController:_chatter animated:YES completion:nil];
     [_chatter release];
     
-    [activity stopAnimating];
-    
-    [self enableSFMUI];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name DetailViewController :showChatter %@",exp.name);
+        SMLog(@"Exception Reason DetailViewController :showChatter %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+    @finally
+    {
+        [activity stopAnimating];
+        [self enableSFMUI];
+    }
 }
 
 /*- (void) BackOnSave:(NSString *)targetCall
@@ -3547,13 +3593,19 @@ extern void SVMXLog(NSString *format, ...);
         [Expenses release];
     Expenses = [[NSMutableArray alloc] initWithCapacity:0];
 	NSArray * array = [result records];
+	@try{
 	for (int i = 0; i < [array count]; i++)
     {
         ZKSObject * obj = [array objectAtIndex:i];
         NSDictionary * fields = [obj fields];
         [Expenses addObject:fields];
     }
-    
+	}@catch (NSException *exp) {
+        SMLog(@"Exception Name DetailViewController :getExpenses %@",exp.name);
+        SMLog(@"Exception Reason DetailViewController :getExpenses %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
     didGetExpenses = YES;
 }
 

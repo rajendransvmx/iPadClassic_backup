@@ -183,18 +183,26 @@ extern void SVMXLog(NSString *format, ...);
 - (void) didGetProductName:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {    
     NSArray * records = [result records];
+    @try{
     if([records count] > 0)
     {
         ZKSObject * obj = [records objectAtIndex:0];
         NSDictionary * fields = [obj fields];
         productName = [[fields objectForKey:@"Name"] retain];
     }   
+     }@catch (NSException *exp) {
+        SMLog(@"Exception Name Troubleshooting :didGetProductName %@",exp.name);
+        SMLog(@"Exception Reason Troubleshooting :didGetProductName %@",exp.reason);
+    }
+    @finally { 
     didGetProductName = TRUE;
+	}
 }
 
 - (void) didSelectProductName:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
     NSArray * records = [result records];
+    @try{
     if([records count] > 0)
     {
         array = [[result records] retain];
@@ -205,7 +213,13 @@ extern void SVMXLog(NSString *format, ...);
         productName = navBar.title = [fields objectForKey:@"Name"];
         [tableView reloadData];
     }
+     }@catch (NSException *exp) {
+        SMLog(@"Exception Name Troubleshooting :didSelectProductName %@",exp.name);
+        SMLog(@"Exception Reason Troubleshooting :didSelectProductName %@",exp.reason);
+    }
+    @finally {
     [activity stopAnimating];
+	}
 }
 
 - (IBAction) Help;
@@ -228,7 +242,7 @@ extern void SVMXLog(NSString *format, ...);
     
     array = [[NSMutableArray alloc]initWithCapacity:0];
     NSArray *keys = [[[NSArray alloc]initWithObjects:@"DocId", @"Name",@"Keywords",nil] autorelease];
-    
+    @try{
     for (int i = 0; i < [_array count]; i++ )
     {
         NSArray *objects = [[NSArray alloc]initWithObjects:[[[_array objectAtIndex:i] fields]objectForKey:@"Id"],[[[_array objectAtIndex:i] fields]objectForKey:@"Name"],[[[_array objectAtIndex:i] fields]objectForKey:@"Keywords"], nil]; 
@@ -239,7 +253,10 @@ extern void SVMXLog(NSString *format, ...);
         [_dict release];
         [objects release];
     }
-    
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name Troubleshooting :didQueryTroubleshootingForProductName %@",exp.name);
+        SMLog(@"Exception Reason Troubleshooting :didQueryTroubleshootingForProductName %@",exp.reason);
+    }
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
@@ -266,10 +283,10 @@ extern void SVMXLog(NSString *format, ...);
         }
         return;
     }*/
-    
-    [activity stopAnimating];
-    
-    [tableView reloadData];
+    @finally {
+        [activity stopAnimating];
+        [tableView reloadData];
+    }
 }
 
 - (void) showFirstTroubleshooting
@@ -341,7 +358,7 @@ extern void SVMXLog(NSString *format, ...);
     self.productId = [appDelegate.calDataBase getProductIdForName:self.productName];
     
     _index = index;
-	
+	@try{
 	//Change for Troubleshooting  22/07/2012.
 	if (![appDelegate isInternetConnectionAvailable])
 	{
@@ -428,7 +445,11 @@ extern void SVMXLog(NSString *format, ...);
         [_dict release];
         [objects release];
     }
-    
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name Troubleshooting :showTroubleshootingForIndex %@",exp.name);
+	SMLog(@"Exception Reason Troubleshooting :showTroubleshootingForIndex %@",exp.reason);
+    }
+
 //    else
 //    {
 //        //Display data here
@@ -492,6 +513,7 @@ extern void SVMXLog(NSString *format, ...);
     didRunOperation = NO;
     NSString * _fileId = nil, * _fileName = nil;
     NSDictionary * dict = (NSDictionary *)context;
+    @try{
     if ([dict isKindOfClass:[NSDictionary class]])
     {
         _fileId = [dict objectForKey:FILEID];
@@ -579,10 +601,13 @@ extern void SVMXLog(NSString *format, ...);
 			}
 			
 			[webView loadHTMLString:fileContents baseURL:baseURL];
-
-		}
-            
+		}            
     }
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name Troubleshooting :didQueryTroubleshootingBodyForDocument %@",exp.name);
+	SMLog(@"Exception Reason Troubleshooting :didQueryTroubleshootingBodyForDocument %@",exp.reason);
+    }
+
 }
 
 - (IBAction) goPrev;

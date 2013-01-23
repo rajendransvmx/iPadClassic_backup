@@ -680,6 +680,7 @@ PopoverButtons *popOver_view;
 //Update meta sync status
 - (void) updateMetsSyncStatus:(NSString*)Status
 {
+	@try{
     //create SYNC_HISTORY PLIST
     NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:SYNC_HISTORY];
@@ -697,6 +698,10 @@ PopoverButtons *popOver_view;
         }
     }
     [dict writeToFile:plistPath_SYNHIST atomically:YES];
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name PopoverButtons :updateMetsSyncStatus %@",exp.name);
+	SMLog(@"Exception Reason PopoverButtons :updateMetsSyncStatus %@",exp.reason);
+    }
 
 }
 

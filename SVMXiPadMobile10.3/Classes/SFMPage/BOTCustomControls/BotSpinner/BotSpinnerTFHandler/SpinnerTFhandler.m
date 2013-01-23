@@ -28,6 +28,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
+	@try{
     BotSpinnerTextField * parent = (BotSpinnerTextField *)delegate;
     [parent.controlDelegate controlIndexPath:parent.indexPath];
     
@@ -172,6 +173,11 @@ extern void SVMXLog(NSString *format, ...);
     }
 
     [contentView.valuePicker selectRow:indexOfText inComponent:0 animated:YES];
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name SpinnerTFhandler :textFieldShouldBeginEditing %@",exp.name);
+	SMLog(@"Exception Reason SpinnerTFhandler :cetextFieldShouldBeginEditingllForRowAtIndexPath %@",exp.reason);
+    }
+
     return NO;
 }
 

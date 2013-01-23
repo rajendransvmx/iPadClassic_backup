@@ -165,6 +165,8 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) keyboardWillShow:(NSNotification *)notification
 {
+    @try
+    {
     NSDictionary *info = [notification userInfo];
     NSValue *keyBounds = [info objectForKey:UIKeyboardFrameEndUserInfoKey];
 	
@@ -182,6 +184,11 @@ extern void SVMXLog(NSString *format, ...);
 	[UIView commitAnimations];
     
     isKeyboardShowing = YES;
+}@catch (NSException *exp) {
+        SMLog(@"Exception Name Chatter :keyboardWillShow %@",exp.name);
+        SMLog(@"Exception Reason Chatter :keyboardWillShow %@",exp.reason);
+    [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
 }
 
 - (void) honeyIShrunkTheTable:(NSString *)animationID finished:(BOOL)finished context:(void *)context
@@ -280,7 +287,8 @@ extern void SVMXLog(NSString *format, ...);
     NSString * product2FeedId;
     
     int count = [chatterQueryArray count];
-    
+    @try
+    {
     for (int i = 0; i < count; i++)
     {
         ZKSObject * obj = [chatterQueryArray objectAtIndex:i];
@@ -423,6 +431,12 @@ extern void SVMXLog(NSString *format, ...);
     [appDelegate.calDataBase insertChatterDetailsIntoDBForWithId:productId andChatterDetails:chatterArray];
     
     [self loadChatter];
+}@catch (NSException *exp)
+    {
+        SMLog(@"Exception Name Chatter :didGetUserNameFromId %@",exp.name);
+        SMLog(@"Exception Reason Chatter :didGetUserNameFromId %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
@@ -431,6 +445,7 @@ extern void SVMXLog(NSString *format, ...);
 //sahana 17th Aug 2011
 - (void) connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
+@try{
     ChatterURLConnection * curlConnection = (ChatterURLConnection *)connection;
     NSString * userName = curlConnection.userName;
     SMLog(@"didReceiveData %@", userName);
@@ -451,6 +466,11 @@ extern void SVMXLog(NSString *format, ...);
     {
         // Create file
         [fileManager createFileAtPath:filePath contents:data attributes:nil];
+    }
+}@catch (NSException *exp) {
+        SMLog(@"Exception Name Chatter :connection %@",exp.name);
+        SMLog(@"Exception Reason Chatter :connection %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
     }
 }
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
@@ -476,7 +496,8 @@ extern void SVMXLog(NSString *format, ...);
 {
     userRecordArray = (NSArray *)context;
     [userRecordArray retain];
-    
+    @try
+    {
     NSArray * array = [result records];
     for (int i = 0; i < [array count]; i++)
     {
@@ -492,7 +513,11 @@ extern void SVMXLog(NSString *format, ...);
         // Create file
         [fileManager createFileAtPath:filePath contents:imageData attributes:nil];
     }
-    
+     }@catch (NSException *exp) {
+        SMLog(@"Exception Name Chatter :didGetImagesForIds %@",exp.name);
+        SMLog(@"Exception Reason Chatter :didGetImagesForIds %@",exp.reason);
+         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
     if (chatterArray != nil)
         [self loadChatter];
 }
@@ -501,9 +526,18 @@ extern void SVMXLog(NSString *format, ...);
 {
     for (int i = 0; i < [userArray count]; i++)
     {
-        NSDictionary * dict = [[userArray objectAtIndex:i] fields];
-        if ([[dict objectForKey:@"Id"] isEqualToString:usrString])
-            return [dict objectForKey:USERNAME_CHATTER]; // USERNAME
+     @try
+        {
+            NSDictionary * dict = [[userArray objectAtIndex:i] fields];
+            if ([[dict objectForKey:@"Id"] isEqualToString:usrString])
+            {
+                return [dict objectForKey:USERNAME_CHATTER]; // USERNAME
+            }
+        }@catch (NSException *exp) {
+            SMLog(@"Exception Name Chatter :getUserNameFromArray %@",exp.name);
+            SMLog(@"Exception Reason Chatter :getUserNameFromArray %@",exp.reason);
+            [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+        }
     }
     return @"";
 }
@@ -843,45 +877,99 @@ extern void SVMXLog(NSString *format, ...);
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSUInteger row = [indexPath row];
-    
-    NSDictionary * postDict = [chatterArrayForTable objectAtIndex:row];
-    
     ChatterCell * cell = nil;
-    
-    // Find out type of post
-    NSString * postType = [postDict objectForKey:POSTTYPE];
-    
-    if ([postType isEqualToString:TYPEFEED])
+    @try
     {
-        cell = (ChatterCell *) [tableView dequeueReusableCellWithIdentifier:@"ChatterPostCell"];
-        if (cell == nil)
+        NSDictionary * postDict = [chatterArrayForTable objectAtIndex:row];
+        // Find out type of post
+        NSString * postType = [postDict objectForKey:POSTTYPE];
+        
+        if ([postType isEqualToString:TYPEFEED])
         {
-            cell = [self createCustomCellWithId:@"ChatterPostCell"];
+            cell = (ChatterCell *) [tableView dequeueReusableCellWithIdentifier:@"ChatterPostCell"];
+            if (cell == nil)
+            {
+                cell = [self createCustomCellWithId:@"ChatterPostCell"];
+            }
+
+            [cell resetImages];
+            
+            NSString * dateTime = [postDict objectForKey:POSTDATESTAMP];
+            dateTime = [iOSInterfaceObject getLocalTimeFromGMT:dateTime];
+            
+            dateTime = [dateTime stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+            dateTime = [dateTime stringByReplacingOccurrencesOfString:@"Z" withString:@""];
+
+            // Cell data
+            cell.CreatedById = [postDict objectForKey:POSTCREATEDBYID];
+            SMLog(@"%@", cell.CreatedById);
+            cell.FeedPostId = [postDict objectForKey:FEEDPOSTID];
+            // match userrecord with id
+            NSString * username;
+            UIImage * image = nil;
+            
+            if ( ![appDelegate isInternetConnectionAvailable] )
+            {
+                SMLog(@"%@", [[chatterArrayForTable objectAtIndex:indexPath.row]objectForKey:@"Username"]);
+                
+                image = [imageCache getImage:[NSString stringWithFormat:@"%@.png", [[chatterArrayForTable objectAtIndex:indexPath.row]objectForKey:@"Username"]]];
+                
+                if (image == nil)
+                {
+                    NSData *imageData = [appDelegate.calDataBase getImageDataForUserName:[[chatterArrayForTable objectAtIndex:indexPath.row]objectForKey:@"Username"]];
+                    SMLog(@"%d", [imageData length]);
+                    
+                    NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+                    NSString * documentsDirectoryPath = [paths objectAtIndex:0];
+                    NSString * filePath = [documentsDirectoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@%@", [[chatterArrayForTable objectAtIndex:indexPath.row]objectForKey:@"Username"], @".png"]];
+                    NSFileManager * fileManager = [NSFileManager defaultManager];
+                    
+                    [fileManager createFileAtPath:filePath contents:imageData attributes:nil];
+                    
+                    image = [imageCache getImage:[NSString stringWithFormat:@"%@.png", [[chatterArrayForTable objectAtIndex:indexPath.row]objectForKey:@"Username"]]];
+                }
+            }
+
+            for (int i = 0; i < [userRecordArray count]; i++)
+            {
+                if ([[[[userRecordArray objectAtIndex:i] fields] objectForKey:@"Id"] isEqualToString:cell.CreatedById])
+                {
+                    username = [[[userRecordArray objectAtIndex:i] fields] objectForKey:@"Username"];
+                    image = [imageCache getImage:[NSString stringWithFormat:@"%@.png", username]];
+                    break;
+                }
+            }
+            [cell setPostUserName:[postDict objectForKey:USERNAME_CHATTER] 
+                  ChatText:[postDict objectForKey:FEEDPOSTBODY] 
+                  DateTime:dateTime
+                  UserImage:image];
+            cell.email = [postDict objectForKey:CHATTEREMAIL];
         }
-
-        [cell resetImages];
         
-        NSString * dateTime = [postDict objectForKey:POSTDATESTAMP];
-        dateTime = [iOSInterfaceObject getLocalTimeFromGMT:dateTime];
-        
-        dateTime = [dateTime stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-        dateTime = [dateTime stringByReplacingOccurrencesOfString:@"Z" withString:@""];
-
-        // Cell data
-        cell.CreatedById = [postDict objectForKey:POSTCREATEDBYID];
-        SMLog(@"%@", cell.CreatedById);
-        cell.FeedPostId = [postDict objectForKey:FEEDPOSTID];
-        // match userrecord with id
-        NSString * username;
-        UIImage * image = nil;
-        
-        if ( ![appDelegate isInternetConnectionAvailable] )
+        if ([postType isEqualToString:TYPECOMMENT])
         {
-            SMLog(@"%@", [[chatterArrayForTable objectAtIndex:indexPath.row]objectForKey:@"Username"]);
+            cell = (ChatterCell *) [tableView dequeueReusableCellWithIdentifier:@"ChatterCommentCell"];
+            if (cell == nil)
+            {
+                cell = [self createCustomCellWithId:@"ChatterCommentCell"];
+            }
             
-            image = [imageCache getImage:[NSString stringWithFormat:@"%@.png", [[chatterArrayForTable objectAtIndex:indexPath.row]objectForKey:@"Username"]]];
+            [cell resetImages];
             
-            if (image == nil)
+            NSString * dateTime = [postDict objectForKey:POSTDATESTAMP];
+            dateTime = [iOSInterfaceObject getLocalTimeFromGMT:dateTime];
+            
+            dateTime = [dateTime stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+            dateTime = [dateTime stringByReplacingOccurrencesOfString:@"Z" withString:@""];
+            
+            // Cell data
+            cell.CreatedById = [postDict objectForKey:POSTCREATEDBYID];
+            // cell.feedCommentId = [postDict objectForKey:FEEDPOSTID];
+            // match userrecord with id
+            NSString * username;
+            UIImage * image = nil;
+            
+            if ( ![appDelegate isInternetConnectionAvailable] )
             {
                 NSData *imageData = [appDelegate.calDataBase getImageDataForUserName:[[chatterArrayForTable objectAtIndex:indexPath.row]objectForKey:@"Username"]];
                 SMLog(@"%d", [imageData length]);
@@ -891,104 +979,53 @@ extern void SVMXLog(NSString *format, ...);
                 NSString * filePath = [documentsDirectoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@%@", [[chatterArrayForTable objectAtIndex:indexPath.row]objectForKey:@"Username"], @".png"]];
                 NSFileManager * fileManager = [NSFileManager defaultManager];
                 
-                [fileManager createFileAtPath:filePath contents:imageData attributes:nil];
-                
+                // Create file
+                [fileManager createFileAtPath:filePath contents:imageData attributes:nil]; 
                 image = [imageCache getImage:[NSString stringWithFormat:@"%@.png", [[chatterArrayForTable objectAtIndex:indexPath.row]objectForKey:@"Username"]]];
             }
-        }
 
-        for (int i = 0; i < [userRecordArray count]; i++)
-        {
-            if ([[[[userRecordArray objectAtIndex:i] fields] objectForKey:@"Id"] isEqualToString:cell.CreatedById])
+            for (int i = 0; i < [userRecordArray count]; i++)
             {
-                username = [[[userRecordArray objectAtIndex:i] fields] objectForKey:@"Username"];
-                image = [imageCache getImage:[NSString stringWithFormat:@"%@.png", username]];
-                break;
+                if ([[[[userRecordArray objectAtIndex:i] fields] objectForKey:@"Id"] isEqualToString:cell.CreatedById])
+                {
+                    username = [[[userRecordArray objectAtIndex:i] fields] objectForKey:@"Username"];
+                    image = [imageCache getImage:[NSString stringWithFormat:@"%@.png", username]];
+                    break;
+                }
             }
-        }
-        [cell setPostUserName:[postDict objectForKey:USERNAME_CHATTER] 
-              ChatText:[postDict objectForKey:FEEDPOSTBODY] 
-              DateTime:dateTime
-              UserImage:image];
-        cell.email = [postDict objectForKey:CHATTEREMAIL];
-    }
-    
-    if ([postType isEqualToString:TYPECOMMENT])
-    {
-        cell = (ChatterCell *) [tableView dequeueReusableCellWithIdentifier:@"ChatterCommentCell"];
-        if (cell == nil)
-        {
-            cell = [self createCustomCellWithId:@"ChatterCommentCell"];
+            [cell setCommentUserName:[postDict objectForKey:USERNAME_CHATTER] 
+                  ChatText:[postDict objectForKey:FEEDPOSTBODY] 
+                  DateTime:dateTime 
+                  UserImage:image];
+            cell.email = [postDict objectForKey:CHATTEREMAIL];
         }
         
-        [cell resetImages];
-        
-        NSString * dateTime = [postDict objectForKey:POSTDATESTAMP];
-        dateTime = [iOSInterfaceObject getLocalTimeFromGMT:dateTime];
-        
-        dateTime = [dateTime stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-        dateTime = [dateTime stringByReplacingOccurrencesOfString:@"Z" withString:@""];
-        
-        // Cell data
-        cell.CreatedById = [postDict objectForKey:POSTCREATEDBYID];
-        // cell.feedCommentId = [postDict objectForKey:FEEDPOSTID];
-        // match userrecord with id
-        NSString * username;
-        UIImage * image = nil;
-        
-        if ( ![appDelegate isInternetConnectionAvailable] )
+        if ([postType isEqualToString:TYPECOMMENTPOST])
         {
-            NSData *imageData = [appDelegate.calDataBase getImageDataForUserName:[[chatterArrayForTable objectAtIndex:indexPath.row]objectForKey:@"Username"]];
-            SMLog(@"%d", [imageData length]);
-            
-            NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-            NSString * documentsDirectoryPath = [paths objectAtIndex:0];
-            NSString * filePath = [documentsDirectoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@%@", [[chatterArrayForTable objectAtIndex:indexPath.row]objectForKey:@"Username"], @".png"]];
-            NSFileManager * fileManager = [NSFileManager defaultManager];
-            
-            // Create file
-            [fileManager createFileAtPath:filePath contents:imageData attributes:nil]; 
-            image = [imageCache getImage:[NSString stringWithFormat:@"%@.png", [[chatterArrayForTable objectAtIndex:indexPath.row]objectForKey:@"Username"]]];
-        }
-
-        for (int i = 0; i < [userRecordArray count]; i++)
-        {
-            if ([[[[userRecordArray objectAtIndex:i] fields] objectForKey:@"Id"] isEqualToString:cell.CreatedById])
+            cell = (ChatterCell *) [tableView dequeueReusableCellWithIdentifier:@"ChatterPostCommentCell"];
+            if (cell == nil)
             {
-                username = [[[userRecordArray objectAtIndex:i] fields] objectForKey:@"Username"];
-                image = [imageCache getImage:[NSString stringWithFormat:@"%@.png", username]];
-                break;
+                cell = [self createCustomCellWithId:@"ChatterPostCommentCell"];
             }
+            cell.delegate = self;
+            cell.feedCommentId = [postDict objectForKey:PRODUCT2FEEDID];
+            // SMLog(@"%@", [postDict objectForKey:PRODUCT2FEEDID]);
         }
-        [cell setCommentUserName:[postDict objectForKey:USERNAME_CHATTER] 
-              ChatText:[postDict objectForKey:FEEDPOSTBODY] 
-              DateTime:dateTime 
-              UserImage:image];
-        cell.email = [postDict objectForKey:CHATTEREMAIL];
-    }
-    
-    if ([postType isEqualToString:TYPECOMMENTPOST])
-    {
-        cell = (ChatterCell *) [tableView dequeueReusableCellWithIdentifier:@"ChatterPostCommentCell"];
-        if (cell == nil)
+        
+        if ([postType isEqualToString:TYPECHATSEPERATOR])
         {
-            cell = [self createCustomCellWithId:@"ChatterPostCommentCell"];
+            cell = (ChatterCell *) [tableView dequeueReusableCellWithIdentifier:@"ChatterSeperatorCell"];
+            if (cell == nil)
+            {
+                cell = [self createCustomCellWithId:@"ChatterSeperatorCell"];
+            }
+           cell.dayLabel.text = [[postDict objectForKey:FEEDPOSTBODY] isKindOfClass:[NSString class]]?[postDict objectForKey:FEEDPOSTBODY]:@"";
         }
-        cell.delegate = self;
-        cell.feedCommentId = [postDict objectForKey:PRODUCT2FEEDID];
-        // SMLog(@"%@", [postDict objectForKey:PRODUCT2FEEDID]);
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name Chatter :cellForRowAtIndexPath %@",exp.name);
+        SMLog(@"Exception Reason Chatter :cellForRowAtIndexPath %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
     }
-    
-    if ([postType isEqualToString:TYPECHATSEPERATOR])
-    {
-        cell = (ChatterCell *) [tableView dequeueReusableCellWithIdentifier:@"ChatterSeperatorCell"];
-        if (cell == nil)
-        {
-            cell = [self createCustomCellWithId:@"ChatterSeperatorCell"];
-        }
-       cell.dayLabel.text = [[postDict objectForKey:FEEDPOSTBODY] isKindOfClass:[NSString class]]?[postDict objectForKey:FEEDPOSTBODY]:@"";
-    }
-    
     if (cell == nil)
     SMLog(@"%@", cell);
     return cell;
@@ -1018,9 +1055,16 @@ extern void SVMXLog(NSString *format, ...);
 {
     for (int i = 0; i < [userArray count]; i++)
     {
-        NSDictionary * dict = [[userArray objectAtIndex:i] fields];
-        if ([[dict objectForKey:@"Id"] isEqualToString:usrString])
-            return [dict objectForKey:FULLPHOTOURL];
+        @try
+        {
+            NSDictionary * dict = [[userArray objectAtIndex:i] fields];
+            if ([[dict objectForKey:@"Id"] isEqualToString:usrString])
+                return [dict objectForKey:FULLPHOTOURL];
+        }@catch (NSException *exp) {
+            SMLog(@"Exception Name Chatter :getFullPhotoUrlFromArray %@",exp.name);
+            SMLog(@"Exception Reason Chatter :getFullPhotoUrlFromArray %@",exp.reason);
+            [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+        }
     }
     return @"";
 }

@@ -87,7 +87,7 @@ extern void SVMXLog(NSString *format, ...);
     [super viewDidLoad];
     
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-
+	@try{
     [sendMailButton setTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:PDF_EMAIL] forState:UIControlStateNormal];
     NSDictionary * dict = [appDelegate.SFMPage objectForKey:gHEADER];
     woId = [dict objectForKey:gHEADER_ID];
@@ -139,7 +139,10 @@ extern void SVMXLog(NSString *format, ...);
                 [customFields addObject:val];
         }
     }
-    
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name PDFCreater :viewDidLoad %@",exp.name);
+        SMLog(@"Exception Reason PDFCreater :viewDidLoad %@",exp.reason);
+    }
     if (iOSObject == nil)
         iOSObject = [[iOSInterfaceObject alloc] initWithCaller:self];
     
@@ -251,6 +254,7 @@ extern void SVMXLog(NSString *format, ...);
 - (void) didGetPDFList:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
     NSMutableArray * array = [[NSMutableArray alloc] initWithCapacity:0];
+    @try{
     for (int i = 0; i < [[result records] count]; i++)
     {
         [array addObject:[[[[result records] objectAtIndex:i] fields] objectForKey:@"Id"]];
@@ -310,9 +314,16 @@ extern void SVMXLog(NSString *format, ...);
 
     }
     
+ }@catch (NSException *exp) {
+        SMLog(@"Exception Name PDFCreator :didGetPDFList %@",exp.name);
+        SMLog(@"Exception Reason PDFCreator :didGetPDFList %@",exp.reason);
+    }
+    
     // Analyser
+ @finally {
     [array release];
     didremovepdf = TRUE;
+  }
     
 }
 
@@ -539,6 +550,7 @@ extern void SVMXLog(NSString *format, ...);
     [self setServiceReportImage];   // This method now only sets the top seperator
     [self setWorkOrder:_wonumber];
     [self setDate:appDelegate.sfmPageController.activityDate];
+    @try{
     if (appDelegate.addressType != nil && [appDelegate.addressType length] == 0)
     {
         // [self setAccount:_account];
@@ -841,10 +853,16 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name PDFCreator :createMainPage %@",exp.name);
+	SMLog(@"Exception Reason PDFCreator :createMainPage %@",exp.reason);
+    }
+
 }
 
 - (NSDictionary *) getObjectForKey:(NSString *)key
 {
+	@try{
     for (NSDictionary * dict in reportEssentials)
     {
         NSArray * allkeys = [dict allKeys];
@@ -855,6 +873,11 @@ extern void SVMXLog(NSString *format, ...);
                 return [dict objectForKey:key];
         }
     }
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name PDFCreator :getObjectForKey %@",exp.name);
+	SMLog(@"Exception Reason PDFCreator :getObjectForKey %@",exp.reason);
+    }
+
     return nil;
 }
 
@@ -862,7 +885,7 @@ extern void SVMXLog(NSString *format, ...);
 {
     NSString * value = @"";    
     NSString * internalValue = @"";
-    
+    @try{
     for (int i = 0; i < [appDelegate.serviceReportValueMapping count]; i++)
     {
         NSDictionary * dict = [appDelegate.serviceReportValueMapping objectAtIndex:i];
@@ -878,7 +901,11 @@ extern void SVMXLog(NSString *format, ...);
             break;
         }
     }
-    
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name PDFCreator :getValueFromDisplayValue %@",exp.name);
+	SMLog(@"Exception Reason PDFCreator :getValueFromDisplayValue %@",exp.reason);
+    }
+
     NSArray * _array = [internalValue componentsSeparatedByString:@"."];
     if ([_array count] == 2)
     {
@@ -925,7 +952,7 @@ extern void SVMXLog(NSString *format, ...);
     CGPoint startingPoint = currentPoint;
     
     BOOL isWorkinginOFFline = TRUE;
-    
+    @try{
     if(isWorkinginOFFline)
     {
         
@@ -1349,6 +1376,11 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
+	}@catch (NSException *exp) {
+    SMLog(@"Exception Name PDFCreator :createCustomFields %@",exp.name);
+    SMLog(@"Exception Reason PDFCreator :createCustomFields %@",exp.reason);
+    }
+
 }
 
 - (void) setBOOLImage:(BOOL)flag atXLocation:(CGFloat)location
@@ -1463,7 +1495,7 @@ extern void SVMXLog(NSString *format, ...);
        }
         
     }
-
+	@try{
     if ([imageData length] > 0)
     {
         NSData * data = [Base64 decode:imageData];
@@ -1478,7 +1510,11 @@ extern void SVMXLog(NSString *format, ...);
         return filePath;
 
     }
-    
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name PDFCreator :getLogoFromDatabase %@",exp.name);
+	SMLog(@"Exception Reason PDFCreator :getLogoFromDatabase %@",exp.reason);
+    }
+
     return @"";
 }
 
@@ -1748,6 +1784,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) setSignature
 {
+	@try{
     // This code block will create an image that we then draw to the page
 	// const char *picture = "customer_signature";
 	CGImageRef image;
@@ -1786,6 +1823,11 @@ extern void SVMXLog(NSString *format, ...);
 	{
 		[fileManager removeItemAtPath:filePath error:&delete_error];		
 	}
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name PDFCreator :setSignature %@",exp.name);
+	SMLog(@"Exception Reason PDFCreator :setSignature %@",exp.reason);
+    }
+
 }
 
 - (void) setTotalCost:(NSString *)totalCost
@@ -1981,6 +2023,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) setAccount:(NSArray *)account;
 {
+	@try{
     if ([account count] == 0)
     {
         [self newLine:yBuffer];
@@ -2079,6 +2122,12 @@ extern void SVMXLog(NSString *format, ...);
 	[wp release];
 
     lastHeight = imageRect.size;
+     }@catch (NSException *exp) {
+        SMLog(@"Exception Name PDFCreator :setAccount %@",exp.name);
+        SMLog(@"Exception Reason PDFCreator :setAccount %@",exp.reason);
+
+    }
+
 }
 
 - (void) setContact:(NSString *)contact;

@@ -51,7 +51,7 @@ extern void SVMXLog(NSString *format, ...);
     
     wizard_buttons = [[NSMutableDictionary alloc] initWithCapacity:0];
     
-
+	@try{
     NSMutableArray * array = [wizard_info objectForKey:SFW_WIZARD_INFO];
     
     for(int i = 0; i < [array count]; i++)
@@ -71,7 +71,11 @@ extern void SVMXLog(NSString *format, ...);
         
         [wizard_buttons setObject:buttons_ forKey:wizard_id];
     }
-    
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name SFWToolBar :viewDidLoad %@",exp.name);
+	SMLog(@"Exception Reason SFWToolBar :viewDidLoad %@",exp.reason);
+    }
+
     
 }
 
@@ -86,7 +90,7 @@ extern void SVMXLog(NSString *format, ...);
     p.x  = ipad_only_view.frame.origin.x;
     p.y = ipad_only_view.frame.origin.y;
     float field_width = 160;
-    
+    @try{
     for (int i = 0 ; i <[ipad_only_array count] ; i++) 
     {
         NSDictionary * dict = [ipad_only_array objectAtIndex:i];
@@ -111,6 +115,10 @@ extern void SVMXLog(NSString *format, ...);
         [btn addTarget:self action:@selector(buttonClicked:) forControlEvents:UIControlEventTouchUpInside];
         [ipad_only_view addSubview:btn];
     }
+     }@catch (NSException *exp) {
+        SMLog(@"Exception Name SFWToolBar :showIpadOnlyButtons %@",exp.name);
+        SMLog(@"Exception Reason SFWToolBar :showIpadOnlyButtons %@",exp.reason);
+    }
 }
 
 
@@ -134,7 +142,7 @@ extern void SVMXLog(NSString *format, ...);
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
 {
     SMLog(@" buttonsArray_offline %@ ", buttonsArray_offline);
-    
+    @try{
     NSMutableArray * array = [wizard_info objectForKey:SFW_WIZARD_INFO];
     NSDictionary * dict = [array objectAtIndex:section];
     NSString * wizard_id = [dict objectForKey:WIZARD_ID];
@@ -159,6 +167,10 @@ extern void SVMXLog(NSString *format, ...);
            }
             
         }
+    }
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name SFWToolBar :numberOfRowsInSection %@",exp.name);
+	SMLog(@"Exception Reason SFWToolBar :numberOfRowsInSection %@",exp.reason);
     }
 
     return 1;
@@ -212,7 +224,7 @@ extern void SVMXLog(NSString *format, ...);
     CGFloat final_height = 0;
     CGFloat temp_height  = 0;
 
-    
+    @try{
     NSMutableArray * array = [wizard_info objectForKey:SFW_WIZARD_INFO];
     NSDictionary * dict = [array objectAtIndex:section];
     NSString * wizard_id = [dict objectForKey:WIZARD_ID];
@@ -317,7 +329,11 @@ extern void SVMXLog(NSString *format, ...);
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     [cell addSubview:background];   
-    
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name SFWToolBar :cellForRowAtIndexPath %@",exp.name);
+	SMLog(@"Exception Reason SFWToolBar :cellForRowAtIndexPath %@",exp.reason);
+    }
+
     return cell;
 }
 
@@ -336,10 +352,14 @@ extern void SVMXLog(NSString *format, ...);
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
 {
+    NSString * wizard_description=@"";
+    @try
+    {
+
     NSMutableArray * array = [wizard_info objectForKey:SFW_WIZARD_INFO];
     NSDictionary * dict = [array objectAtIndex:section];
    // NSString * wizard_description = [dict objectForKey:WIZARD_DESCRIPTION];
-    NSString * wizard_description = [dict objectForKey:WIZARD_TITLE]; //RADHA
+    wizard_description = [dict objectForKey:WIZARD_TITLE]; //RADHA
     
     NSString * wizard_id = [dict objectForKey:WIZARD_ID];
     
@@ -356,6 +376,11 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name SFWToolBar :titleForHeaderInSection %@",exp.name);
+	SMLog(@"Exception Reason SFWToolBar :titleForHeaderInSection %@",exp.reason);
+    }
+
     return wizard_description;
 }
 
@@ -386,7 +411,7 @@ extern void SVMXLog(NSString *format, ...);
     
     CGFloat final_height = 0;
     CGFloat temp_height  = 0;
-    
+    @try{
     NSArray * allKeys = [wizard_buttons allKeys];
     for(int i = 0; i< [allKeys count]; i++)
     {
@@ -426,7 +451,11 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
-    
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name SFWToolBar :cellForRowAtIndexPath %@",exp.name);
+	SMLog(@"Exception Reason SFWToolBar :cellForRowAtIndexPath %@",exp.reason);
+    }
+
     if(final_height < 40)
         return 60;
     else

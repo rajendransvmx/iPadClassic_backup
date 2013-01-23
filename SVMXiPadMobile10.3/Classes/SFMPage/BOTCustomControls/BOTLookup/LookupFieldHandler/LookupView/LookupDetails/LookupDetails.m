@@ -143,6 +143,7 @@
     }
     
     // Configure the cell...
+    @try{
     NSDictionary * fieldDictionary = [lookupDetailsArray objectAtIndex:_indexPath.row];
     UILabel * fieldLabel_Label = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 22)] autorelease];
     fieldLabel_Label.font = [UIFont fontWithName:@"Verdana-Bold" size:16];
@@ -154,7 +155,11 @@
     
     [cell.contentView addSubview:fieldLabel_Label];
     [cell.contentView addSubview:fieldValue_Label];
-    
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name LookupDetails :cellForRowAtIndexPath %@",exp.name);
+	SMLog(@"Exception Reason LookupDetails :cellForRowAtIndexPath %@",exp.reason);
+    }
+
     return cell;
 }
 

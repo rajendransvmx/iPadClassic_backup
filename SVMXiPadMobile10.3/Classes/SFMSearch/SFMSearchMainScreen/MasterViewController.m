@@ -188,6 +188,7 @@ extern void SVMXLog(NSString *format, ...);
  didFinishPickingMediaWithInfo: (NSDictionary*) info
 {
     // ADD: get the decode results
+    @try{
     id<NSFastEnumeration> results =[info objectForKey: ZBarReaderControllerResults];
     SMLog(@"result=%@",results);
     ZBarSymbol *symbol = nil;
@@ -198,6 +199,11 @@ extern void SVMXLog(NSString *format, ...);
     SMLog(@"symbol.data=%@",symbol.data);    
     // ADD: dismiss the controller (NB dismiss from the *reader*!)
     [reader dismissViewControllerAnimated: YES completion:nil];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name MasterViewController :imagePickerController %@",exp.name);
+        SMLog(@"Exception Reason MasterViewController :imagePickerController %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
 }
 
 - (void)viewDidUnload

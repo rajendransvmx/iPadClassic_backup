@@ -65,6 +65,7 @@
     NSString * textFieldValue=[[[NSString alloc] init] autorelease];
     NSMutableDictionary *dict;
     int i;
+    @try{
     for(i = 0; i < [values count]; i++)
     {
         dict=[values objectAtIndex:i]; 
@@ -120,6 +121,12 @@
     [keyVal release];
     
     [self.controlDelegate updateDictionaryForCellAtIndexPath:indexPath fieldAPIName:fieldAPIName fieldValue:textFieldValue fieldKeyValue:keyValueString controlType:control_type];
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name BMPTextView :setTextfield %@",exp.name);
+	SMLog(@"Exception Reason BMPTextView :setTextfield %@",exp.reason);
+	[appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
 }
 
 -(void)dealloc

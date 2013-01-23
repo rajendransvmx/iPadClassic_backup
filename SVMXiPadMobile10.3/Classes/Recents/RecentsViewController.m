@@ -68,6 +68,7 @@
     appDelegate.recentObject = [NSArray arrayWithContentsOfFile:plistPath];
     
     NSMutableArray * countArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    @try{
     for (int rec = 0; rec < [appDelegate.recentObject count]; rec++)
     {
         NSDictionary * recentDict = [appDelegate.recentObject objectAtIndex:rec];
@@ -175,6 +176,12 @@
 	splitView.view.autoresizingMask = UIViewAutoresizingNone;
     [self.view addSubview:splitView.view];
 	splitView.view.frame = self.view.frame;
+	}@catch (NSException *exp)
+    {
+        SMLog(@"Exception Name RecentViewController :viewDidLoad %@",exp.name);
+        SMLog(@"Exception Reason RecentViewController :viewDidLoad %@",exp.reason);
+    }
+
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -212,6 +219,7 @@
     appDelegate.sfmPageController.processId = (_processId != nil)?_processId:processId;
     
     NSString * activityDate = @"";
+    @try{
     for (NSDictionary * recentDict in appDelegate.recentObject)
     {
         NSString * Id = [recentDict objectForKey:@"resultIds"];
@@ -274,6 +282,12 @@
         [enty_criteris release];
         return;
     }
+	}@catch (NSException *exp)
+    {
+        SMLog(@"Exception Name RecentsViewController :showSFMWithProcessId %@",exp.name);
+        SMLog(@"Exception Reason RecentsViewController :showSFMWithProcessId %@",exp.reason);
+    }
+
     [activity stopAnimating];
 }
 
@@ -281,6 +295,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSInteger count = [appDelegate.recentObject count];
+    @try{
     for (int i = 0; i < [appDelegate.recentObject count]; i++)
     {
         BOOL shouldShowObject = NO;
@@ -299,6 +314,12 @@
         if (!shouldShowObject)
             count--;
     }
+	}@catch (NSException *exp)
+    {
+        SMLog(@"Exception Name RecentViewController :numberOfRowsInSection %@",exp.name);
+        SMLog(@"Exception Reason RecentViewController :numberOfRowsInSection %@",exp.reason);
+    }
+
     return count;
 }
 
@@ -317,7 +338,7 @@
     }
 
     NSDictionary * dict = nil;
-
+	@try{
     for (int i = 0; i < [appDelegate.recentObject count]; i++)
     {
         BOOL shouldShowObject = NO;
@@ -347,7 +368,12 @@
         return cell;
     }
     cell.textLabel.text = [NSString stringWithFormat:@"%@ %@", [dict objectForKey:OBJECT_LABEL], [dict objectForKey:NAME_FIELD]];
-   
+   }@catch (NSException *exp)
+    {
+        SMLog(@"Exception Name RecentsViewController :cellForRowAtIndexPath %@",exp.name);
+        SMLog(@"Exception Reason RecentsViewController :cellForRowAtIndexPath %@",exp.reason);
+    }
+
     return cell;
 }
 
@@ -359,18 +385,32 @@
 #pragma mark - UITableViewDelegate Methods
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+	@try{
     NSDictionary * dict = [appDelegate.recentObject objectAtIndex:indexPath.row];    
     
     [self showSFMWithProcessId:[dict objectForKey:PROCESSID] recordId:[dict objectForKey:RESULTID]];
 
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+	}@catch (NSException *exp)
+    {
+        SMLog(@"Exception Name RecentsViewController :didSelectRowAtIndexPath %@",exp.name);
+        SMLog(@"Exception Reason RecentsViewController :didSelectRowAtIndexPath %@",exp.reason);
+    }
+
 }
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
 {
+	@try{
     NSDictionary * dict = [appDelegate.recentObject objectAtIndex:indexPath.row];    
     
     [self showSFMWithProcessId:[dict objectForKey:PROCESSID] recordId:[dict objectForKey:RESULTID]];
+	}@catch (NSException *exp)
+    {
+        SMLog(@"Exception Name RecentsViewController :accessoryButtonTappedForRowWithIndexPath %@",exp.name);
+        SMLog(@"Exception Reason RecentsViewController :accessoryButtonTappedForRowWithIndexPath %@",exp.reason);
+    }
+
 }
 
 

@@ -569,7 +569,8 @@ extern void SVMXLog(NSString *format, ...);
 - (CGRect) getIntersectedEventWithLocation:(CGPoint)point
 {
     CGRect rect = CGRectZero;
-    
+   @try
+    { 
     // Calculate all rects which are used up
     NSMutableArray * eventPositions = [WeeklyViewEvent getEventPositions];
     
@@ -585,6 +586,11 @@ extern void SVMXLog(NSString *format, ...);
             break;
         else
             rect = CGRectZero;
+    }
+}@catch (NSException *exp) {
+        SMLog(@"Exception Name WeeklyViewEvent :getIntersectedEventWithLocation %@",exp.name);
+        SMLog(@"Exception Reason WeeklyViewEvent :getIntersectedEventWithLocation %@",exp.reason);
+
     }
     
     return rect;
@@ -699,7 +705,8 @@ extern void SVMXLog(NSString *format, ...);
 - (BOOL) isEventInRect:(CGRect)_rect
 {
     BOOL flag = NO;
-    
+    @try
+    {
     // Calculate all rects which are used up
     NSMutableArray * eventPositions = [WeeklyViewEvent getEventPositions];
     
@@ -717,6 +724,11 @@ extern void SVMXLog(NSString *format, ...);
             break;
         }
     }
+}@catch (NSException *exp) {
+        SMLog(@"Exception Name WeeklyViewEvent :isEventInRect %@",exp.name);
+        SMLog(@"Exception Reason WeeklyViewEvent :isEventInRect %@",exp.reason);
+
+    }
     
     return flag;
 }
@@ -724,7 +736,8 @@ extern void SVMXLog(NSString *format, ...);
 - (BOOL) canMoveToLocation
 {
     BOOL flag = YES;
-    
+    @try
+    {
     // Calculate all rects which are used up
     NSMutableArray * eventPositions = [WeeklyViewEvent getEventPositions];
     
@@ -742,7 +755,11 @@ extern void SVMXLog(NSString *format, ...);
             break;
         }
     }
-    
+ }@catch (NSException *exp) {
+        SMLog(@"Exception Name WeeklyViewEvent :canMoveToLocation %@",exp.name);
+        SMLog(@"Exception Reason WeeklyViewEvent :canMoveToLocation %@",exp.reason);
+
+    }   
     // SMLog(@"Can Move = %@", flag?@"YES":@"NO");
     return flag;
 }

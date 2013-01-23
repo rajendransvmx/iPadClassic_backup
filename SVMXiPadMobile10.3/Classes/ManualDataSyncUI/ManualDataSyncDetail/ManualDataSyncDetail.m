@@ -178,7 +178,7 @@ PopoverButtons *popOver_view;
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
+    @try{
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     
     if (objectsDict == nil)
@@ -191,7 +191,12 @@ PopoverButtons *popOver_view;
         objectDetailsArray = [appDelegate.calDataBase getrecordIdsForObject:[objectsArray objectAtIndex:i]];
         
         [objectsDict setObject:objectDetailsArray forKey:[objectsArray objectAtIndex:i]];
-    }   
+    } 
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name ManualDataSyncDetail :viewWillAppear %@",exp.name);
+        SMLog(@"Exception Reason ManualDataSyncDetail :viewWillAppear %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }  
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -750,7 +755,7 @@ PopoverButtons *popOver_view;
     NSString * sync_type     = @"";
     NSString * processId     = @"";
     NSString * localId = @"";
-    
+    @try{
     if (selectedSection == 0 && HeaderSelected == 0)
     {
         objectAPIName = [objectsArray objectAtIndex:selectedRow];
@@ -896,7 +901,11 @@ PopoverButtons *popOver_view;
         }
         
     }
-
+	}@catch (NSException *exp) {
+        SMLog(@"Exception Name ManualDataSync :accessoryButtonTappedForRowWithIndexPath %@",exp.name);
+        SMLog(@"Exception Reason ManualDataSync :accessoryButtonTappedForRowWithIndexPath %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
 }
 
 
@@ -1085,7 +1094,7 @@ PopoverButtons *popOver_view;
         NSString * objectAPIName = @"";
         NSString * sync_type     = @"";
         NSString * processId     = @"";
-        
+        @try{
         if (selectedSection == 0 && HeaderSelected == 0)
         {
             objectAPIName = [objectsArray objectAtIndex:selectedRow];
@@ -1208,6 +1217,11 @@ PopoverButtons *popOver_view;
                 
             }
 
+        }
+        }@catch (NSException *exp) {
+            SMLog(@"Exception Name ManualDataSync :DisclosureButtonTapped %@",exp.name);
+            SMLog(@"Exception Reason ManualDataSync :DisclosureButtonTapped %@",exp.reason);
+            [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
         }
     }
  }

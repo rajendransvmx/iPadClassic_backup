@@ -147,6 +147,7 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void) searchBarSearchButtonClicked:(UISearchBar *)_searchBar
 {
+	@try{
     //call the delegate method
     NSString * keyword = [_searchBar.text stringByReplacingCharactersInRange:NSMakeRange(0, 1) withString:@""];
     if(appDelegate.isWorkinginOffline)
@@ -160,7 +161,10 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate.wsInterface getLookUpFieldsWithKeyword:keyword forObject:self.objectName returnTo:self setting:FALSE overrideRelatedLookup:0 lookupContext:nil lookupQuery:nil];
         [activity startAnimating];
     }
-    
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name MultiAddLookupView :searchBarSearchButtonClicked %@",exp.name);
+        SMLog(@"Exception Reason MultiAddLookupView :searchBarSearchButtonClicked %@",exp.reason);
+    }
     
 }
 -(void) searchBarcodeResult:(NSString *) searchText
@@ -183,6 +187,7 @@ extern void SVMXLog(NSString *format, ...);
 {
     
     [activity stopAnimating];
+    @try{
     if(appDelegate.isWorkinginOffline)
     {
         lookupData = [lookupDictionary retain];
@@ -226,8 +231,14 @@ extern void SVMXLog(NSString *format, ...);
             lookupData = _lookupDetails;
     }
     
-    [self reloadData];
-    [searchBar resignFirstResponder];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name MultiAddLookupView :setLookupData %@",exp.name);
+        SMLog(@"Exception Reason MultiAddLookupView :setLookupData %@",exp.reason);
+    }
+    @finally {
+        [self reloadData];
+        [searchBar resignFirstResponder];
+    }
 }
 
 - (void) reloadData
@@ -240,6 +251,7 @@ extern void SVMXLog(NSString *format, ...);
 - (IBAction)doneButtonClicked:(id)sender 
 {
     SMLog(@"Mutable Array = %@",mappingArray);
+    @try{
     for(NSDictionary *dict in mappingArray)
     {
         if([[dict objectForKey:@"Value"] isEqualToString:CHECK])
@@ -249,6 +261,11 @@ extern void SVMXLog(NSString *format, ...);
     }
     SMLog(@"Objects Selected  = %@",objectSelected);
     [delegate addMultiChildRows:objectSelected forIndex:index];
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name MultiAddLookupView :doneButtonClicked %@",exp.name);
+	SMLog(@"Exception Reason MultiAddLookupView :doneButtonClicked %@",exp.reason);
+    }
+
 }
 
 
@@ -276,7 +293,7 @@ extern void SVMXLog(NSString *format, ...);
     {
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
-
+	@try{
     NSDictionary *dict = [mappingArray objectAtIndex:indexPath.row];
     if([[dict objectForKey:@"Value"] isEqualToString:CHECK])
     {
@@ -287,6 +304,11 @@ extern void SVMXLog(NSString *format, ...);
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
     cell.textLabel.text = [dict objectForKey:@"Name"];
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name MultiAddLookupView :cellForRowAtIndexPath %@",exp.name);
+	SMLog(@"Exception Reason MultiAddLookupView :cellForRowAtIndexPath %@",exp.reason);
+    }
+
     return cell;
 }
 
@@ -300,6 +322,7 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+	@try{
     UITableViewCell * cell = [_tableView cellForRowAtIndexPath:indexPath];
     NSString * cellText = cell.textLabel.text ;
    
@@ -318,7 +341,10 @@ extern void SVMXLog(NSString *format, ...);
     }
     SMLog(@"Mapping Array = %@",mappingArray);
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name MultiAddLookupView :didSelectRowAtIndexPath %@",exp.name);
+        SMLog(@"Exception Reason MultiAddLookupView :didSelectRowAtIndexPath %@",exp.reason);
+    }
 }
 
 #pragma mark - Multilookup Methods
@@ -326,6 +352,7 @@ extern void SVMXLog(NSString *format, ...);
 {
     NSString * value = nil;
     NSString * id_value = nil;
+    @try{
     for (int i = 0; i < [objectHistory count]; i++)
     {
         NSDictionary * dict = [objectHistory objectAtIndex:i];
@@ -350,6 +377,11 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     [objectSelected  setObject:value forKey:id_value];
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name MultiAddLookupView :selectObjectValue %@",exp.name);
+	SMLog(@"Exception Reason MultiAddLookupView :selectObjectValue %@",exp.reason);
+    }
+
 }
 
 @end

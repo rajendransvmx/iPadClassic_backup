@@ -55,7 +55,7 @@ extern void SVMXLog(NSString *format, ...);
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+	@try{
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     
     NSDictionary *  header_sfm = [appDelegate.SFMPage objectForKey:@"header"];
@@ -96,6 +96,11 @@ extern void SVMXLog(NSString *format, ...);
     }
     CGSize size = CGSizeMake(maxSize, height);
     self.contentSizeForViewInPopover = size;
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name SelectProcessController :viewDidLoad %@",exp.name);
+	SMLog(@"Exception Reason SelectProcessController :viewDidLoad %@",exp.reason);
+    }
+
 }
 
 - (void)viewDidUnload
@@ -133,6 +138,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) buttonClicked:(id)sender
 {
+	@try{
     UIButton * button = (UIButton *)sender;
     // get button tag
     NSInteger tag = button.tag;
@@ -142,6 +148,11 @@ extern void SVMXLog(NSString *format, ...);
     [delegate didSwitchProcess:dict];
     
     [popOver dismissPopoverAnimated:YES];
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name SelectProcessController :buttonClicked %@",exp.name);
+	SMLog(@"Exception Reason SelectProcessController :buttonClicked %@",exp.reason);
+    }
+
 }
 
 #pragma mark - Table view data source
@@ -173,6 +184,7 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     // Configure the cell...
+    @try{
     NSDictionary * dict = [array objectAtIndex:indexPath.row];
     SMLog(@"%@", dict);
     
@@ -198,7 +210,11 @@ extern void SVMXLog(NSString *format, ...);
     [cell.contentView addSubview:button];
     
     cell.selectionStyle = UITableViewCellEditingStyleNone;
-    
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name SelectProcessController :cellForRowAtIndexPath %@",exp.name);
+	SMLog(@"Exception Reason SelectProcessController :cellForRowAtIndexPath %@",exp.reason);
+    }
+
     return cell;
 }
 

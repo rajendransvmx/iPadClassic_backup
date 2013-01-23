@@ -49,6 +49,7 @@
 
 - (void)viewDidLoad
 {
+	@try{
     //new code
     if(flag == TRUE)
     {
@@ -87,7 +88,14 @@
     } 
 
     [super viewDidLoad];
-    
+    }@catch (NSException *exp)
+    {
+            SMLog(@"Exception Name MPickContent :viewDidLoad %@",exp.name);
+            SMLog(@"Exception Reason MPickContent :viewDidLoad %@",exp.reason);
+
+
+    }
+
 }
 
 - (void) showEmptyList
@@ -152,20 +160,26 @@
     
     //cell.accessoryType=UITableViewCellAccessoryNone;
 
-    
+    @try{
     cell.textLabel.text=[pickListContent  objectAtIndex:row];
     
     if([[[dictArray objectAtIndex:row] objectForKey:[pickListContent  objectAtIndex:row]]isEqualToString: @"1"])
     {
           cell.accessoryType =UITableViewCellAccessoryCheckmark;
     }
-    
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name MPickContent :cellForRowAtIndexPath %@",exp.name);
+	SMLog(@"Exception Reason MPickContent :cellForRowAtIndexPath %@",exp.reason);
+
+    }
+
         
     return cell;
            
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+	@try{
     NSInteger row = indexPath.row;    
     
     UITableViewCell * cell = [tableView cellForRowAtIndexPath:indexPath];
@@ -209,6 +223,12 @@
     }
         
     [tableView deselectRowAtIndexPath:indexPath animated:YES];    
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name MPickContent :didSelectRowAtIndexPath %@",exp.name);
+	SMLog(@"Exception Reason MPickContent :didSelectRowAtIndexPath %@",exp.reason);
+
+    }
+
 }
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView 
 {

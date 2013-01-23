@@ -130,7 +130,7 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     // Configure the cell...
-    
+    @try{
     NSDictionary * dict = [appDelegate.objectLabelName_array objectAtIndex:indexPath.row];
     NSArray * arr = [dict allValues];
     NSString * objectName = @"";
@@ -184,6 +184,11 @@ extern void SVMXLog(NSString *format, ...);
     }
 
     [bgImage release];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name CreateObjectRoot :cellForRowAtIndexPath %@",exp.name);
+        SMLog(@"Exception Reason CreateObjectRoot :cellForRowAtIndexPath %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
 
     return cell;
 }
@@ -277,6 +282,7 @@ extern void SVMXLog(NSString *format, ...);
     @catch (NSException * error)
     {
         SMLog(@"Create Object Error: %@", error.description);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
     }
 }
 

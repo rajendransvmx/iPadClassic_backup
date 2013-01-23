@@ -207,7 +207,7 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     // Configure the cell...
-    
+    @try{
     NSDictionary * dict = [[appDelegate.StandAloneCreateProcess objectAtIndex:selectedRootViewRow] objectAtIndex:indexPath.row];
     NSString * row_tittle = [dict objectForKey:SVMXC_Name];
 
@@ -252,7 +252,12 @@ extern void SVMXLog(NSString *format, ...);
     bgImage.frame = cell.frame;
     cell.backgroundView = bgImage;
     [bgImage release];
-    
+	 }@catch (NSException *exp) {
+        SMLog(@"Exception Name CreateObjectDetail :cellForRowAtIndexPath %@",exp.name);
+        SMLog(@"Exception Reason CreateObjectDetail :cellForRowAtIndexPath %@",exp.reason);
+         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
     return cell;
 }
 
@@ -275,7 +280,7 @@ extern void SVMXLog(NSString *format, ...);
             break;
         }
     }
-    
+    @try{
     NSDictionary * dict = [[appDelegate.StandAloneCreateProcess objectAtIndex:selectedRootViewRow] objectAtIndex:indexPath.row];
     NSString * processTitle = [dict objectForKey:SVMXC_Name];
     processId = [dict objectForKey:SVMXC_ProcessID];
@@ -285,6 +290,12 @@ extern void SVMXLog(NSString *format, ...);
     NSString * object_name = [dict objectForKey:SVMXC_OBJECT_NAME];
     //NSString * object_name = appDelegate.sfmPageController.objectName;
    [delegate showSFMCreateObjectWithProcessID:processId processTitle:processTitle object_name:object_name];
+	 }@catch (NSException *exp) {
+        SMLog(@"Exception Name CreateObjectDetail :didSelectRowAtIndexPath %@",exp.name);
+        SMLog(@"Exception Reason CreateObjectDetail :didSelectRowAtIndexPath %@",exp.reason);
+          [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
     [activity stopAnimating];
 }
 
@@ -303,7 +314,7 @@ extern void SVMXLog(NSString *format, ...);
             break;
         }
     }
-    
+    @try{
     NSDictionary * dict = [[appDelegate.StandAloneCreateProcess objectAtIndex:selectedRootViewRow] objectAtIndex:indexPath.row];
     NSString * processTitle = [dict objectForKey:SVMXC_Name];
     processId = [dict objectForKey:SVMXC_ProcessID];
@@ -312,6 +323,12 @@ extern void SVMXLog(NSString *format, ...);
     //sahana offline
     NSString * object_name = [dict objectForKey:SVMXC_OBJECT_NAME];
     [delegate showSFMCreateObjectWithProcessID:processId processTitle:processTitle object_name:object_name];
+	 }@catch (NSException *exp) {
+        SMLog(@"Exception Name CreateObjectDetail :accessoryButtonTappedForRowWithIndexPath %@",exp.name);
+        SMLog(@"Exception Reason CreateObjectDetail :accessoryButtonTappedForRowWithIndexPath %@",exp.reason);
+         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
     [activity stopAnimating];
 }
 

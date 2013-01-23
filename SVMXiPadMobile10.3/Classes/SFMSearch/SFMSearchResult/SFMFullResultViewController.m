@@ -187,6 +187,8 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) accessoryButtonTapped:(id)sender
 {
+@try
+    {
     NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
     NSString * warning = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_WARNING];
     NSString * noView = [appDelegate.wsInterface.tagsDictionary objectForKey:NO_VIEW_PROCESS];
@@ -266,6 +268,10 @@ extern void SVMXLog(NSString *format, ...);
         [alert1 release];
     }
     [objName release];
+}@catch (NSException *exp) {
+        SMLog(@"Exception Name SFMFullResultViewController :accessoryButtonTapped %@",exp.name);
+        SMLog(@"Exception Reason SFMFullResultViewController :accessoryButtonTapped %@",exp.reason);
+    }
 }
 - (void)viewDidUnload
 {

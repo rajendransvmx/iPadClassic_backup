@@ -262,6 +262,7 @@ extern void SVMXLog(NSString *format, ...);
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+	@try{
     [self.masterView.searchString resignFirstResponder];
     NSDictionary *processDict = [_sfmArray objectAtIndex:indexPath.row];
     
@@ -286,6 +287,12 @@ extern void SVMXLog(NSString *format, ...);
     resultViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     [self.mainView presentViewController:resultViewController animated:YES completion:^(void){}];
     //[resultViewController release];
+	}@catch (NSException *exp) {
+        SMLog(@"Exception Name DetailViewControllerForSFM :didSelectRowAtIndexPath %@",exp.name);
+        SMLog(@"Exception Reason DetailViewControllerForSFM :didSelectRowAtIndexPath %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
 }
 
 @end

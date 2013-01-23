@@ -363,6 +363,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize frequencyLocationService;
 @synthesize metaSyncCompleted;
 @synthesize From_SFM_Search;
+@synthesize errorDescription;
 
 -(BOOL)shouldAutorotate
 {
@@ -856,7 +857,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         [process_id_array  insertObject:LastprocessId_ atIndex:0];
     processInfo * pinfo = [[[processInfo alloc] init] autorelease];
     BOOL  process_exists = FALSE;
-    
+    @try{
     for (NSDictionary * dict_ in self.view_layout_array)
     {
         NSString * process_id_temp = @"";
@@ -928,7 +929,11 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
         pinfo.process_exists = FALSE;
         pinfo.process_id = @"";
     }
-    
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name iServiceAppDelegate :insertvaluesToPicklist %@",exp.name);
+        SMLog(@"Exception Reason iServiceAppDelegate :insertvaluesToPicklist %@",exp.reason);
+        [self CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
     return pinfo;
 
 }
@@ -1491,6 +1496,7 @@ NSString * GO_Online = @"GO_Online";
     NSMutableArray * _objectNames_array;
     //collect all the object names in an array arrange it in the alpha order 
     _objectNames_array = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    @try{
     for(int i = 0 ;i<[processes_array count]; i++)
     {
         NSDictionary * dictionary = [processes_array objectAtIndex:i];
@@ -1642,7 +1648,12 @@ NSString * GO_Online = @"GO_Online";
         [createobjects release];
     }
     self.StandAloneCreateProcess = section_for_createObjects;
-    
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name iServiceAppDelegate :getCreateProcessArray %@",exp.name);
+	SMLog(@"Exception Reason iServiceAppDelegate :getCreateProcessArray %@",exp.reason);
+	[appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
 }
 
 #pragma mark - Schedule IncrementalMetaSync
@@ -2280,15 +2291,240 @@ NSString * GO_Online = @"GO_Online";
 }
 
 //PRINTING ERROR MESSEGES:
-- (void) printIfError:(NSString *)err ForQuery:(NSString *)query
+- (void) printIfError:(NSString *)err ForQuery:(NSString *)query type:(SQL_QUERY)type
 {
-	SMLog(@"%@ :", query);
-	SMLog(@"ERROR :%@", err);
+    @try
+    {
+        SMLog(@"%@ :", query);
+        SMLog(@"ERROR :%@", err);
+        NSMutableDictionary *errorDict=[[NSMutableDictionary alloc]init];
+        if([err length]>0)
+        {
+            [errorDict setObject:err forKey:@"ExpReason"];
+            [errorDict setObject:query forKey:@"UserInfo"];
+        }
+        switch (type)
+        {
+            case SELECTQUERY:
+                SMLog(@"Select Query");
+//            if(!([err Contains:@"unknown error"]))
+//                [self CustomizeAletView:nil alertType:DATABASE_ERROR Dict:errorDict exception:nil];
+                break;
+            case UPDATEQUERY:
+                SMLog(@"Error in Database update query");
+                [errorDict setObject:@"Error in Update" forKey:@"ExpName"];
+                break;
+            case INSERTQUERY:
+                SMLog(@"Error in Database insert query");
+                [errorDict setObject:@"Error in Insert" forKey:@"ExpName"];
+                break;
+            case DELETEQUERY:
+                SMLog(@"Error in Database delete query");
+                [errorDict setObject:@"Error in Delete" forKey:@"ExpName"];
+                break;
+            default:
+                break;
+                
+        }
+        [self CustomizeAletView:nil alertType:DATABASE_ERROR Dict:errorDict exception:nil];
+
+    }@catch (NSException *exp)
+    {
+        SMLog(@"Exception Name iServiceAppDelegate :printIfError %@",exp.name);
+        SMLog(@"Exception Reason iServiceAppDelegate :printIfError %@",exp.reason);
+        [self CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
 }
 
+-(void)CustomizeAletView:(NSError*)error alertType:(ALERT_VIEW_ERROR)type Dict:(NSMutableDictionary*)errorDict exception:(NSException *)exp
+{
+    @try
+    {
+        NSString * CopytoClipboard = @"Copy to Clipboard";//[appDelegate.wsInterface.tagsDictionary objectForKey:Copy_to_Clipboard];
+        NSString * eMail = [appDelegate.wsInterface.tagsDictionary objectForKey:PDF_EMAIL];
+        NSString * Ok= [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+        NSString * tag1 = [appDelegate.wsInterface.tagsDictionary objectForKey:Type_of_Error];
+        NSString * tag2 = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_error_message];
+        NSString * errorMessage=@"",* errorType=@"",* detail_desc=@"",*title=@"";
+
+        switch (type)
+        {
+                
+            case DATABASE_ERROR:
+                SMLog(@"DATABASE_ERROR");
+                errorType =[errorDict objectForKey:@"ExpName"];
+                
+                errorMessage = [errorDict objectForKey:@"ExpReason"];
+                
+                detail_desc=[errorDict objectForKey:@"userInfo"];
+                title=[appDelegate.wsInterface.tagsDictionary objectForKey:alert_application_error];
+                break;
+                
+            case RES_ERROR:
+                SMLog(@"Response Error");
+                
+                errorType =[errorDict objectForKey:@"ExpName"];
+                
+                errorMessage = [errorDict objectForKey:@"ExpReason"];
+                
+                detail_desc=[[errorDict objectForKey:@"userInfo"]objectForKey:@"userInfo"];
+
+                title=[appDelegate.wsInterface.tagsDictionary objectForKey:Functional_Error];
+                break;
+                
+            case SOAP_ERROR:
+                SMLog(@"Soap Error");
+                NSDictionary * user_info_error = [error userInfo];
+                errorType = [user_info_error objectForKey:@"faultcode"];
+                errorMessage = [user_info_error objectForKey:@"faultstring"];
+                title=[appDelegate.wsInterface.tagsDictionary objectForKey:System_Error];
+                break;
+            case APPLICATION_ERROR:
+                SMLog(@"Application Error");
+                errorType=[exp name];
+                errorMessage=[exp description];
+                title=[appDelegate.wsInterface.tagsDictionary objectForKey:alert_application_error];
+                break;
+
+        }
+        
+        NSMutableString *message = [NSString stringWithFormat:@"%@:\t%@\n\n%@:\t%@\n",tag1,errorType,tag2,errorMessage];
+        UIAlertView * customize_alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:Ok otherButtonTitles:eMail,CopytoClipboard, nil];
+        errorDescription=detail_desc;
+//        errDescArray=[self stringConversion:errorDescription];
+        NSArray *subViewArray = customize_alert.subviews;
+        
+        for(int x=0;x<[subViewArray count];x++)
+        {
+            if([[[subViewArray objectAtIndex:x] class] isSubclassOfClass:[UILabel class]] && x > 0)
+                
+            {
+                UILabel *label = [subViewArray objectAtIndex:x];
+                label.textAlignment = UITextAlignmentLeft;
+//                UITapGestureRecognizer * tapObject = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapRecognized:)];
+//                [label addGestureRecognizer:tapObject];
+//                [tapObject release];
+            }
+        }
+        [customize_alert performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
+
+        [customize_alert release];
+    } @catch (NSException *exp)
+    {
+        SMLog(@"Exception Name iServiceAppDelegate :CustomizeAletView %@",exp.name);
+        SMLog(@"Exception Reason iServiceAppDelegate :CustomizeAletView %@",exp.reason);
+//        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+}
 
 #pragma mark - END
 
+#pragma CustomizeAlertView
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex;  // after animation
+{
+    if(buttonIndex==1)
+    {
+        NSLog(@"Copy To clipBoard");
+       [self sendingEmail:alertView];
+        
+    }
+    else if (buttonIndex==2)
+    {
+        NSLog(@"Email");
+        [self copyToClipboard:alertView];
+    }
+}
+
+-(void) sendingEmail:(UIAlertView*)alertview
+{
+    @try
+    {
+        BOOL canSendMail = [MFMailComposeViewController canSendMail];
+        if (canSendMail)
+        {
+            MFMailComposeViewController * mailComposer = [[MFMailComposeViewController alloc] init];
+            mailComposer.mailComposeDelegate = self;
+            NSString *errType=@"",*errMessage=@"";
+            [mailComposer setSubject:[NSString stringWithFormat:@"Error Report"]];
+            NSRange range=[alertview.message rangeOfString:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_error_message] options:NSCaseInsensitiveSearch];
+            if(range.location != NSNotFound)
+            {
+                errType=[alertview.message substringToIndex:range.location];
+                errMessage=[alertview.message substringFromIndex:range.location];
+            }
+            NSMutableString *emailBody = [NSString stringWithFormat: @"<Head> %@ </Head><br/>================\n<br/> %@ <br/> <br/> %@ <br/><br/> %@<br/>",alertview.title,errType,errMessage,errorDescription];
+            [mailComposer setMessageBody:emailBody isHTML:YES];
+            [mailComposer supportedInterfaceOrientations];
+            [mailComposer shouldAutorotate];
+            [mailComposer.view sizeToFit];
+            
+            UIViewController *someViewController =  [[[[UIApplication sharedApplication] delegate]window]rootViewController];
+           
+            UIViewController  *focusedViewController = someViewController;
+            int count = 10;
+            while(focusedViewController.presentedViewController != nil && count > 0){
+              
+                focusedViewController = focusedViewController.presentedViewController;
+                count--;
+            }
+            [focusedViewController presentModalViewController:mailComposer animated:YES];
+
+            
+        }
+        else
+        {
+            UIAlertView * alertForMail = [[UIAlertView alloc] initWithTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:SERVICE_REPORT_EMAIL_ERROR] message:[appDelegate.wsInterface.tagsDictionary objectForKey:SERVICE_REPORT_PLEASE_SET_UP_EMAIL_FIRST] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alertForMail show];
+            [alertForMail release];
+        }
+    } @catch (NSException *exp)
+    {
+        SMLog(@"Exception Name iServiceAppDelegate :sendingEmail %@",exp.name);
+        SMLog(@"Exception Reason iServiceAppDelegate :sendingEmail %@",exp.reason);
+    }
+}
+
+- (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error
+{
+    // Notifies users about errors associated with the interface
+    [controller dismissViewControllerAnimated:YES completion:nil];
+
+    
+}
+-(NSArray*)stringConversion:(NSString*)errorDes
+{
+//    char *buffer = errorDescription;
+//    NSString *str = [NSString stringWithCString:buffer encoding:NSUTF8StringEncoding];
+    NSArray *arr = [errorDes componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+    NSLog(@"arr: %@", arr);
+    return arr;
+
+}
+
+-(void)copyToClipboard:(UIAlertView*)alertview
+{
+    @try
+    {
+        NSString *errType=@"",*errMessage=@"";
+        NSRange range=[alertview.message rangeOfString:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_error_message] options:NSCaseInsensitiveSearch];
+        if(range.location != NSNotFound)
+        {
+        errType=[alertview.message substringToIndex:range.location];
+        errMessage=[alertview.message substringFromIndex:range.location];
+        }
+        NSString *emailBody = [NSString stringWithFormat: @"\n %@ \n ================ \n%@\n%@ \n%@",alertview.title,errType,errMessage,errorDescription];
+
+        NSLog(@"Copy to clipboard %@",emailBody);
+        UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+        pasteboard.string = emailBody;
+    } @catch (NSException *exp)
+    {
+        SMLog(@"Exception Name iServiceAppDelegate :copyToClipboard %@",exp.name);
+        SMLog(@"Exception Reason iServiceAppDelegate :copyToClipboard %@",exp.reason);
+    }
+}
 @end
 
 @implementation processInfo

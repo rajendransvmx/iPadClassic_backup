@@ -472,6 +472,12 @@
 	<string>Continue</string>
 	<key>IPAD011_TAG014</key>
 	<string>Authentication Error</string>
+	<key>IPAD011_TAG015</key>
+	<string>System Error</string>
+    <key>IPAD011_TAG016</key>
+	<string>Functional Error</string>
+    <key>IPAD011_TAG017</key>
+	<string>Type of Error</string>
 	<key>IPAD012_TAG018</key>
 	<string>Now downloading SFM Transactions</string>
 	<key>IPAD012_TAG019</key>

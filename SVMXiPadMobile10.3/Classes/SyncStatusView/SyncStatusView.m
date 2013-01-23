@@ -69,6 +69,7 @@ extern void SVMXLog(NSString *format, ...);
     
     
     //Read from the plist
+    @try{
     NSArray  * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString * documentsPath = [paths objectAtIndex:0];
     
@@ -392,6 +393,11 @@ extern void SVMXLog(NSString *format, ...);
     
     [label6 release];
     [view release];
+	} @catch (NSException *exp) {
+	SMLog(@"Exception Name SyncStatusView :viewDidLoad %@",exp.name);
+	SMLog(@"Exception Reason SyncStatusView :viewDidLoad %@",exp.reason);
+    }
+
 }
 
 -(void)refreshSyncStatus
@@ -404,6 +410,7 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void)refreshMetaSyncStatus
 {
+	@try{
 	NSArray  * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString * documentsPath = [paths objectAtIndex:0];
     
@@ -411,6 +418,11 @@ extern void SVMXLog(NSString *format, ...);
     NSDictionary * dictionary = [[NSDictionary alloc] initWithContentsOfFile:fooPath];
 
 	 _statusForMetaSync.text = [dictionary objectForKey:META_SYNC_STATUS];
+	 }@catch (NSException *exp) {
+	SMLog(@"Exception Name SyncStatusView :refreshMetaSyncStatus %@",exp.name);
+	SMLog(@"Exception Reason SyncStatusView :refreshMetaSyncStatus %@",exp.reason);
+    }
+
 }
 
 -(NSString *)getSyncronisationStatus  

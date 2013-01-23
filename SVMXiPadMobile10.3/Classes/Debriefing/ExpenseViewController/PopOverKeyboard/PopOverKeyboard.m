@@ -48,6 +48,7 @@
 
 - (IBAction) EnterNumber:(id)sender
 {
+	@try{
 	if( editingBegun )
 	{
         if (!didErasePreviousNum)
@@ -91,12 +92,18 @@
 			}
 		}
 	}
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name PopOverKeyboard :EnterNumber %@",exp.name);
+	SMLog(@"Exception Reason PopOverKeyboard :EnterNumber %@",exp.reason);
+    }
+
     if ([delegate respondsToSelector:@selector(didKeyboardEditOccur)])
         [delegate didKeyboardEditOccur];
 }
 
 - (IBAction) BackSpace:(id)sender
 {
+	@try{
 	if( editingBegun )
 	{
         didErasePreviousNum = YES;
@@ -119,6 +126,11 @@
 		}
 		txtField.text = final;
 	}
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name PopOverKeyboard :BackSpace %@",exp.name);
+	SMLog(@"Exception Reason PopOverKeyboard :BackSpace %@",exp.reason);
+    }
+
     if ([delegate respondsToSelector:@selector(didKeyboardEditOccur)])
         [delegate didKeyboardEditOccur];
 }

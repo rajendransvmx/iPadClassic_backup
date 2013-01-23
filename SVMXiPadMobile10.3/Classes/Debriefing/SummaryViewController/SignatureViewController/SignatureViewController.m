@@ -141,7 +141,8 @@ extern void SVMXLog(NSString *format, ...);
 {
     [super viewDidLoad];
     iServiceAppDelegate * appDelegte = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    
+    @try
+    {
     done_button .titleLabel.text = [appDelegte.wsInterface.tagsDictionary objectForKey:SFM_SIGNATURE_DONE_BUTTON];
     cancel_button.titleLabel.text = [appDelegte.wsInterface.tagsDictionary objectForKey:SFM_SIGNATURE_CANCEL_BUTTON];
 //	doneButton.titleLabel.text = [appDelegte.wsInterface.tagsDictionary objectForKey:SFM_SIGNATURE_DONE_BUTTON];
@@ -186,6 +187,10 @@ extern void SVMXLog(NSString *format, ...);
         [markerString appendString:@"\n"];
     }
     watermark.text = markerString;
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name SignatureViewController :viewDidLoad %@",exp.name);
+	SMLog(@"Exception Reason SignatureViewController :viewDidLoad %@",exp.reason);
+    }
     // ################################ //
 }
 - (NSString *) getWrappedStringFromString:(NSString *)data

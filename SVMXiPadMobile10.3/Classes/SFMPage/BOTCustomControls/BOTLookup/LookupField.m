@@ -97,6 +97,7 @@ extern void SVMXLog(NSString *format, ...);
     NSString * value = nil;
     NSString * id_value = nil;
     BOOL flag = FALSE;
+    @try{
     for (int i = 0; i < [lookupObject count]; i++)
     {
         NSDictionary * dict = [lookupObject objectAtIndex:i];
@@ -144,6 +145,11 @@ extern void SVMXLog(NSString *format, ...);
     [self addObjectToHistory:lookupObject withObjectName:value];
     
     [controlDelegate didUpdateLookUp:value fieldApiName:fieldAPIName valueKey:id_value];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name LookupField :didSelectObject %@",exp.name);
+        SMLog(@"Exception Reason LookupField :didSelectObject %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
 }
 //sahana Aug 10th
 -(void) deleteLookUpTextFieldValue
@@ -162,6 +168,7 @@ extern void SVMXLog(NSString *format, ...);
         lookupHistory = [[NSMutableArray alloc] initWithCapacity:0];
     
     // Check if lookup already exists. if yes, then DO NOT add lookup object to History
+    @try{
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     NSMutableArray * _lookupHistory = [appDelegate.lookupHistory objectForKey:objectName];
     
@@ -188,7 +195,12 @@ extern void SVMXLog(NSString *format, ...);
     
     if (flag)
         [lookupHistory addObject:lookupObject];
-    
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name LookupField :addObjectToHistory %@",exp.name);
+	SMLog(@"Exception Reason LookupField :addObjectToHistory %@",exp.reason);
+	[appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
     [controlDelegate addLookupHistory:lookupHistory forRelatedObjectName:objectName];
 }
 #pragma Zbar delegate Methods
@@ -222,6 +234,7 @@ extern void SVMXLog(NSString *format, ...);
  didFinishPickingMediaWithInfo: (NSDictionary*) info
 {
     // ADD: get the decode results
+    @try{
     id<NSFastEnumeration> results =[info objectForKey: ZBarReaderControllerResults];
     SMLog(@"result=%@",results);
     ZBarSymbol *symbol = nil;
@@ -234,6 +247,12 @@ extern void SVMXLog(NSString *format, ...);
     self.backgroundColor=[UIColor redColor];
      [reader dismissViewControllerAnimated: YES completion:nil];
     [self performSelector:@selector(DismissBarCodeReader:) withObject:symbol.data afterDelay:0.1f];
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name LookupField :imagePickerController %@",exp.name);
+	SMLog(@"Exception Reason LookupField :imagePickerController %@",exp.reason);
+	[appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
     // EXAMPLE: do something useful with the barcode image
     // ADD: dismiss the controller (NB dismiss from the *reader*!)
 

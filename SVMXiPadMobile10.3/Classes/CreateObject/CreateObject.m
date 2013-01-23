@@ -173,7 +173,7 @@ extern void SVMXLog(NSString *format, ...);
     }
 //    if(backgroundView == nil)
 //        backgroundView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, cell.frame.size.height)] autorelease];
-
+	@try{
     CGRect rect = cell.frame;
     SMLog(@"%@",rect);
     NSDictionary * dict = [[appDelegate.StandAloneCreateProcess objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
@@ -211,6 +211,12 @@ extern void SVMXLog(NSString *format, ...);
     cell.backgroundColor = [UIColor clearColor];
     
     [cell setAccessoryType:UITableViewCellAccessoryDetailDisclosureButton];
+	 }@catch (NSException *exp) {
+	SMLog(@"Exception Name CreateObject :cellForRowAtIndexPath %@",exp.name);
+	SMLog(@"Exception Reason CreateObject :cellForRowAtIndexPath %@",exp.reason);
+	 [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
     return cell;
 }
 
@@ -235,13 +241,18 @@ extern void SVMXLog(NSString *format, ...);
             break;
         }
     }
-
+	@try{
     NSDictionary * dict = [[appDelegate.StandAloneCreateProcess objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     NSString * processTitle = [dict objectForKey:SVMXC_Name];
     processId = [dict objectForKey:SVMXC_ProcessID];
     SMLog(@"%@", processId);
     [self showSFMCreateObjectWithProcessID:processId processTitle:processTitle];
-    
+	}@catch (NSException *exp) {
+        SMLog(@"Exception Name CreateObject :accessoryButtonTappedForRowWithIndexPath %@",exp.name);
+        SMLog(@"Exception Reason CreateObject :accessoryButtonTappedForRowWithIndexPath %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath

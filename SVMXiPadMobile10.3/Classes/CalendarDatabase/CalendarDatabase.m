@@ -164,7 +164,7 @@ extern void SVMXLog(NSString *format, ...);
 		SMLog(@"%@", sql);
 		SMLog(@"METHOD: insertTasksIntoDB");
         SMLog(@"ERROR IN INSERTING %s", err);
-			
+		[appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:sql type:INSERTQUERY];
         return FALSE;
     }
     return TRUE;
@@ -199,7 +199,7 @@ extern void SVMXLog(NSString *format, ...);
 	
 	endDate = [endDate stringByReplacingCharactersInRange:NSMakeRange(8, 2) withString:string];
 
-	
+	@try{
     queryStatement = [NSString stringWithFormat:@"SELECT  ActivityDate, ActivityDateTime,DurationInMinutes,EndDateTime,StartDateTime,Subject,WhatId,Id ,local_id FROM Event where ((StartDateTime >= '%@' and StartDateTime < '%@') or (EndDateTime >= '%@' and EndDateTime < '%@'))", startdate, endDate, startdate, endDate];
         
     const char * selectStatement = [queryStatement UTF8String];
@@ -553,6 +553,14 @@ extern void SVMXLog(NSString *format, ...);
         }
         synchronized_sqlite3_finalize(statement);
     }
+	}@catch (NSException *exp)
+    {
+        SMLog(@"Exception Name CalendarDatabase :GetEventsFromDBWithStartDate %@",exp.name);
+        SMLog(@"Exception Reason CalendarDatabase :GetEventsFromDBWithStartDate %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+        
+    }
+
     return resultSet;
 }
 
@@ -877,7 +885,7 @@ extern void SVMXLog(NSString *format, ...);
                       SVMXC__ACTUAL_PRICE2__C,
                       SVMXC__WORK_DESCRIPTION__C,
                       nil];
-    
+    @try{
     if ( synchronized_sqlite3_prepare_v2(appDelegate.db, _query,-1, &statement1, nil) == SQLITE_OK )
     {
         while(synchronized_sqlite3_step(statement1) == SQLITE_ROW)
@@ -923,6 +931,12 @@ extern void SVMXLog(NSString *format, ...);
         }
     } 
     synchronized_sqlite3_finalize(statement1);
+    }@catch (NSException *exp)
+    {
+        SMLog(@"Exception Name CalendarDatabase :queryForExpenses %@",exp.name);
+        SMLog(@"Exception Reason CalendarDatabase :queryForExpenses %@",exp.reason);
+    }
+
     return Expenses;
 }
 
@@ -937,6 +951,7 @@ extern void SVMXLog(NSString *format, ...);
     Parts = [[NSMutableArray alloc] initWithCapacity:0];
     
     queryStatement = [NSString stringWithFormat:@"SELECT Id, SVMXC__Product__c,SVMXC__Actual_Quantity2__c, SVMXC__Actual_Price2__c, SVMXC__Work_Description__c, SVMXC__Discount__c, Name FROM SVMXC__Service_Order_Line__c WHERE SVMXC__Line_Type__c = 'Parts' AND SVMXC__Service_Order__c = '%@' AND SVMXC__Actual_Quantity2__c > 0 AND SVMXC__Actual_Price2__c >= 0 AND (SVMXC__Is_Billable__c = 'true' or  SVMXC__Is_Billable__c = 'True' or SVMXC__Is_Billable__c = '1') AND RecordTypeId   in   (select  record_type_id  from SFRecordType where record_type = 'Usage/Consumption' )", currentRecordId];
+    @try{
     const char * _query = [queryStatement UTF8String];
     if ( synchronized_sqlite3_prepare_v2(appDelegate.db, _query,-1, &statement1, nil) == SQLITE_OK )
     {
@@ -1045,6 +1060,12 @@ extern void SVMXLog(NSString *format, ...);
         }
     } 
     synchronized_sqlite3_finalize(statement1);
+    }@catch (NSException *exp)
+    {
+        SMLog(@"Exception Name CalendarDatabase :queryForParts %@",exp.name);
+        SMLog(@"Exception Reason CalendarDatabase :queryForParts %@",exp.reason);
+    }
+
     return Parts;
 }
 
@@ -1061,7 +1082,7 @@ extern void SVMXLog(NSString *format, ...);
     Labor = [[NSMutableArray alloc] initWithCapacity:0];
     NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
     sqlite3_stmt *statement1;
-    
+    @try{
     queryStatement = [NSString stringWithFormat:@"SELECT Id, SVMXC__Activity_Type__c, SVMXC__Actual_Quantity2__c, SVMXC__Actual_Price2__c, SVMXC__Work_Description__c FROM SVMXC__Service_Order_Line__c WHERE SVMXC__Line_Type__c = 'Labor' AND SVMXC__Service_Order__c = '%@' AND SVMXC__Actual_Quantity2__c > 0 AND SVMXC__Actual_Price2__c >= 0 AND (SVMXC__Is_Billable__c = 'true' or  SVMXC__Is_Billable__c = 'True' or SVMXC__Is_Billable__c = '1') AND RecordTypeId   in   (select  record_type_id  from SFRecordType where record_type = 'Usage/Consumption' )", currentRecordId];
     const char * _query = [queryStatement UTF8String];
     NSArray * keys = [NSArray arrayWithObjects:
@@ -1323,7 +1344,11 @@ extern void SVMXLog(NSString *format, ...);
 		      
     }
     SMLog(@"%@",LaborArray);
-    
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name CalendarDatabase :queryForParts %@",exp.name);
+	SMLog(@"Exception Reason CalendarDatabase :queryForParts %@",exp.reason);
+	[appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
     return LaborArray;
 }
 
@@ -1358,6 +1383,7 @@ extern void SVMXLog(NSString *format, ...);
                        SVMXC__ISSTANDARD__C,
                        SVMXC__SUBMODULE__C,
                        nil];
+    @try{
     if ( synchronized_sqlite3_prepare_v2(appDelegate.db, _query2,-1, &statement2, nil) == SQLITE_OK )
     {
         while(synchronized_sqlite3_step(statement2) == SQLITE_ROW)
@@ -1950,6 +1976,12 @@ extern void SVMXLog(NSString *format, ...);
         appDelegate.WorkDescription = [WorkOrderFields retain];
         synchronized_sqlite3_finalize(statement9);
    }  
+   }@catch (NSException *exp) {
+	SMLog(@"Exception Name CalendarDatabase :startQueryConfiguration %@",exp.name);
+	SMLog(@"Exception Reason CalendarDatabase :startQueryConfiguration %@",exp.reason);
+	[appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
 }
 
 -(void) getAllReferenceFields:(NSArray *)fields_array
@@ -2025,6 +2057,7 @@ extern void SVMXLog(NSString *format, ...);
     NSMutableArray * reportEssentialArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
     
     NSString * query = @"";
+    @try{
     NSMutableString * clean_Query = [appDelegate.calDataBase removeDuplicatesFromSOQL:appDelegate.soqlQuery withString:query];
     NSString * final_query = [NSString stringWithFormat:@"%@ SVMXC__Service_Order__c.local_id = '%@'", clean_Query, record_id];
     
@@ -2103,7 +2136,12 @@ extern void SVMXLog(NSString *format, ...);
         [reportEssentialArray addObject:dict];
     }
     SMLog(@"%@",reportEssentialArray);
-    
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name CalendarDatabase :getReportEssentials %@",exp.name);
+	SMLog(@"Exception Reason CalendarDatabase :getReportEssentials %@",exp.reason);
+	[appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
     return reportEssentialArray;
 }
 
@@ -2112,6 +2150,7 @@ extern void SVMXLog(NSString *format, ...);
     NSMutableArray *  getAll_field_values = [[NSMutableArray alloc] initWithCapacity:0];
     
     NSArray * allkeys = [appDelegate.reference_field_names allKeys];
+    @try{
     for(int k= 0 ; k<[allkeys count]; k++)
     {
         NSString * key = [allkeys objectAtIndex:k];
@@ -2209,7 +2248,11 @@ extern void SVMXLog(NSString *format, ...);
             synchronized_sqlite3_finalize(statement5);
         }
     }
-    
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name CalendarDatabase :getreferncetableFieldsForReportEsentials %@",exp.name);
+	SMLog(@"Exception Reason CalendarDatabase :getreferncetableFieldsForReportEsentials %@",exp.reason);
+	[appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
     
     SMLog(@" ------------------ get All field values%@", getAll_field_values);
     return getAll_field_values;
@@ -3136,6 +3179,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) insertTroubleShoot:(NSMutableArray *)troubleshooting Body:(NSString *)Body
 {
+	@try{
     NSDictionary *dict = [troubleshooting objectAtIndex:0];
     NSMutableString *queryString = [NSString stringWithFormat:@"Update Document Set Body = '%@' Where Name = '%@' and Id = '%@'",Body,
                                     [dict objectForKey:DOCUMENTS_NAME],[dict objectForKey:DOCUMENTS_ID]]; 
@@ -3146,9 +3190,14 @@ extern void SVMXLog(NSString *format, ...);
 		SMLog(@"%@", queryString);
 		SMLog(@"METHOD: insertTroubleShoot" );
 		SMLog(@"ERROR IN UPDATING %s", err);
-
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryString type:UPDATEQUERY];
     }
-    
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name CalendarDatabase :insertTroubleShoot %@",exp.name);
+	SMLog(@"Exception Reason CalendarDatabase :insertTroubleShoot %@",exp.reason);
+	[appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
 }
 
 

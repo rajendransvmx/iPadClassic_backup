@@ -156,7 +156,8 @@ extern void SVMXLog(NSString *format, ...);
     int no_of_days ;
     
     NSString * timeInterval = @"";
-    
+@try
+{
     if([time isEqualToString:START_TIME])
         timeInterval = ([appDelegate.settingsDict objectForKey:@"Synchronization To Remove Events"]) != nil?[appDelegate.settingsDict objectForKey:@"Synchronization To Remove Events"]:@"";
     else
@@ -200,6 +201,10 @@ extern void SVMXLog(NSString *format, ...);
         NSString * current_gmt_time = [self getGmtDateAndTime:yesterday];
         return current_gmt_time;
     }
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getSyncTimeStampWithTheIntervalof15days %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getSyncTimeStampWithTheIntervalof15days %@",exp.reason);
+    }
     
 }
 
@@ -219,6 +224,7 @@ extern void SVMXLog(NSString *format, ...);
 //sahana 26/feb
 -(void)setSyncReqId:(NSString *)req_id
 {
+@try{
     NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:SYNC_HISTORY];
     
@@ -233,6 +239,10 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     [dict writeToFile:plistPath_SYNHIST atomically:YES];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :setSyncReqId %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :setSyncReqId %@",exp.reason);
+    }
 }
 
 -(BOOL)getSyncStatusForRequestId
@@ -243,7 +253,7 @@ extern void SVMXLog(NSString *format, ...);
     NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST];
     NSArray * allkeys= [dict allKeys];
     
-    
+    @try{
     for(NSString *  str in allkeys)
     {   
         if ([str isEqualToString:INSERT_SUCCESS])
@@ -258,6 +268,10 @@ extern void SVMXLog(NSString *format, ...);
                 return NO;
             }
         }
+    }
+     }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getSyncStatusForRequestId %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getSyncStatusForRequestId %@",exp.reason);
     }
     
     return NO;
@@ -275,7 +289,7 @@ last_sync_time:(NSString *)last_sync_time
     
            
     NSString * current_gmt_time = [self requestSnapShot] ;//[dateFormatter stringFromDate:current_dateTime];
-
+@try{
     
     if([sync_type isEqualToString:INSERT] && [operation_type isEqualToString:REQUEST])
     {
@@ -354,7 +368,10 @@ last_sync_time:(NSString *)last_sync_time
            
         }
     }
-      
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.reason);
+    }  
     [dict writeToFile:plistPath_SYNHIST atomically:YES];
     [dict release];                    //sahana30April
 }
@@ -541,7 +558,7 @@ last_sync_time:(NSString *)last_sync_time
         appDelegate.dataSync_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
     
     NSArray * keys_all =  [NSArray arrayWithObjects:@"local_id" ,@"object_name" , @"record_type" ,@"sf_id", @"override_flag",nil];
-    
+    @try{
     for(int i = 0 ; i < [object_array count] ; i++)
     {
         NSDictionary * dict = [object_array objectAtIndex:i];
@@ -602,6 +619,10 @@ last_sync_time:(NSString *)last_sync_time
         }
         
     }
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.reason);
+    }
 
 }
 
@@ -660,6 +681,7 @@ last_sync_time:(NSString *)last_sync_time
     NSArray *components = [iPadVersion componentsSeparatedByString:@"."];
     NSString *finalString = [[[NSString alloc] init] autorelease];
     NSString *finalString2 = [[[NSString alloc] init] autorelease];
+    @try{
     if([components count] <= 2)
     {
         NSString *secondString = [components objectAtIndex:1];
@@ -689,12 +711,17 @@ last_sync_time:(NSString *)last_sync_time
             finalString2 = [finalString2 stringByAppendingFormat:@"%@%@",[components objectAtIndex:0],secondString];
         }
     }
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getClientVersionString %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getClientVersionString %@",exp.reason);
+    }
     return finalString2;
 }
 
 #pragma mark - incremental Data Sync
 -(void) PutAllTheRecordsForIds
 {
+    @try{
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
@@ -781,7 +808,10 @@ last_sync_time:(NSString *)last_sync_time
                                       CallOptions:callOptions
                                   DebuggingHeader:debuggingHeader
                        AllowFieldTruncationHeader:allowFieldTruncationHeader delegate:self]; 
-    
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :PutAllTheRecordsForIds %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :PutAllTheRecordsForIds %@",exp.reason);
+    }
 }
 
 -(NSString *)requestSnapShot
@@ -811,7 +841,7 @@ last_sync_time:(NSString *)last_sync_time
 //DATA SYNC METHOD
 -(void)DoIncrementalDataSync
 {
-    
+    @try{
     //RADHA 2012june12
     if (appDelegate.metaSyncRunning)
         return;
@@ -1663,6 +1693,11 @@ last_sync_time:(NSString *)last_sync_time
     }
     
     appDelegate.dataSyncRunning = NO;
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.reason);
+    }
+    
     
 }
 
@@ -1766,7 +1801,7 @@ last_sync_time:(NSString *)last_sync_time
         appDelegate.dataSync_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
     
     NSArray * keys_all = [NSArray arrayWithObjects:@"local_id" , @"parent_object_name", @"parent_local_id",@"time_stamp",@"record_type" ,nil];
-    
+    @try{
     for(int i = 0 ; i < [object_array count] ; i++)
     {
         NSDictionary * dict = [object_array objectAtIndex:i];
@@ -1831,10 +1866,15 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.dataSync_dict setValue:array forKey:object_name];
         }
     }
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getAllRecordsForOperationType %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getAllRecordsForOperationType %@",exp.reason);
+    }
 }
 
 -(void)getOnDemandRecords:(NSString*)objectName record_id:(NSString*)record_id
 {
+@try{
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
@@ -2006,9 +2046,14 @@ last_sync_time:(NSString *)last_sync_time
                                       CallOptions:callOptions
                                   DebuggingHeader:debuggingHeader
                        AllowFieldTruncationHeader:allowFieldTruncationHeader delegate:self];
+        }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getOnDemandRecords %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getOnDemandRecords %@",exp.reason);
+    }
 }
 -(void)GetInsert
 {
+@try{
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
@@ -2073,12 +2118,16 @@ last_sync_time:(NSString *)last_sync_time
                                       CallOptions:callOptions
                                   DebuggingHeader:debuggingHeader
                        AllowFieldTruncationHeader:allowFieldTruncationHeader delegate:self]; 
+    }@catch (NSException *exp) {
+    SMLog(@"Exception Name WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.name);
+    SMLog(@"Exception Reason WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.reason);
+}
 }
 
 -(void)GetUpdate
 {
     [INTF_WebServicesDefServiceSvc initialize];
-    
+    @try{
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
     sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
     
@@ -2139,11 +2188,16 @@ last_sync_time:(NSString *)last_sync_time
                                     SessionHeader:sessionHeader 
                                       CallOptions:callOptions
                                   DebuggingHeader:debuggingHeader
-                       AllowFieldTruncationHeader:allowFieldTruncationHeader delegate:self]; 
+                       AllowFieldTruncationHeader:allowFieldTruncationHeader delegate:self];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :GetUpdate %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :GetUpdate %@",exp.reason);
+    }
 }
 
 -(void)GetDelete
 {
+    @try{
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
@@ -2207,12 +2261,16 @@ last_sync_time:(NSString *)last_sync_time
                                       CallOptions:callOptions
                                   DebuggingHeader:debuggingHeader
                        AllowFieldTruncationHeader:allowFieldTruncationHeader delegate:self];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :GetDelete %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :GetDelete %@",exp.reason);
+    }
 }
 
 -(void)cleanUpForRequestId:(NSString *)requestId  forEventName:(NSString *)eventName
 {
     [INTF_WebServicesDefServiceSvc initialize];
-    
+    @try{
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
     sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
     
@@ -2258,6 +2316,10 @@ last_sync_time:(NSString *)last_sync_time
                                       CallOptions:callOptions
                                   DebuggingHeader:debuggingHeader
                        AllowFieldTruncationHeader:allowFieldTruncationHeader delegate:self];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :cleanUpForRequestId %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :cleanUpForRequestId %@",exp.reason);
+    }
 
 
 }
@@ -2265,6 +2327,7 @@ last_sync_time:(NSString *)last_sync_time
 //sahana  -Download criteria sync
 -(void)GETDownloadCriteriaRecordsFor:(NSString *)event_name
 {
+@try{
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
@@ -2396,6 +2459,10 @@ last_sync_time:(NSString *)last_sync_time
                                       CallOptions:callOptions
                                   DebuggingHeader:debuggingHeader
                        AllowFieldTruncationHeader:allowFieldTruncationHeader delegate:self];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :GETDownloadCriteriaRecordsFor %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :GETDownloadCriteriaRecordsFor %@",exp.reason);
+    }
 }
 
 -(void)setLastSyncTime
@@ -2446,6 +2513,7 @@ last_sync_time:(NSString *)last_sync_time
 
 -(void) Put:(NSString *)event_name
 {
+@try{
     NSString * event_type = @"SYNC";
     [INTF_WebServicesDefServiceSvc initialize];
     
@@ -3096,11 +3164,16 @@ last_sync_time:(NSString *)last_sync_time
                                       CallOptions:callOptions
                                   DebuggingHeader:debuggingHeader
                        AllowFieldTruncationHeader:allowFieldTruncationHeader delegate:self]; 
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :Put %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :Put %@",exp.reason);
+    }
 }
 
 #pragma mark - ServiceMax Version check method
 - (void) getSvmxVersion
 {    
+@try{
     [INTF_WebServicesDefServiceSvc initialize];
     INTF_WebServicesDefServiceSvc_SessionHeader * session = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
     session.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
@@ -3134,6 +3207,10 @@ last_sync_time:(NSString *)last_sync_time
                                      DebuggingHeader:debuggingHeader
                           AllowFieldTruncationHeader:allowFieldTruncationHeader
                                             delegate:self];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getSvmxVersion %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getSvmxVersion %@",exp.reason);
+    }
     
 }
 
@@ -3142,7 +3219,7 @@ last_sync_time:(NSString *)last_sync_time
 
 - (void) metaSyncWithEventName:(NSString *)eventName eventType:(NSString *)eventType values:(NSMutableArray *)values
 {
-    
+ @try{   
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * session = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
@@ -3238,12 +3315,17 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                   DebuggingHeader:debuggingHeader 
                        AllowFieldTruncationHeader:allowFieldTruncationHeader 
                                          delegate:self];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :metaSyncWithEventName %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :metaSyncWithEventName %@",exp.reason);
+    }
     
 }
 
 #pragma mark DataSync
 - (void) dataSyncWithEventName:(NSString *)eventName eventType:(NSString *)eventType values:(NSMutableArray *)values
 {
+@try{
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
@@ -3455,11 +3537,15 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                       CallOptions:callOptions
                                   DebuggingHeader:debuggingHeader
                        AllowFieldTruncationHeader:allowFieldTruncationHeader delegate:self];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :dataSyncWithEventName %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :dataSyncWithEventName %@",exp.reason);
+    }
 }
 
 - (void) dataSyncWithEventName:(NSString *)eventName eventType:(NSString *)eventType requestId:(NSString *)requestId
 {
-    
+  @try{  
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
@@ -3542,6 +3628,10 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                       CallOptions:callOptions
                                   DebuggingHeader:debuggingHeader
                        AllowFieldTruncationHeader:allowFieldTruncationHeader delegate:self];
+ }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :dataSyncWithEventName %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :dataSyncWithEventName %@",exp.reason);
+    }
     
 }
 
@@ -3550,7 +3640,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 - (void) getTags
 {
     // Essentials
-    
+    @try{
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * session = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
@@ -3591,12 +3681,16 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                   DebuggingHeader:debuggingHeader
                        AllowFieldTruncationHeader:allowFieldTruncationHeader
                                          delegate:self];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getTags %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getTags %@",exp.reason);
+    }
 }
 
 - (void) getCreateProcesses
 {
     // Essentials
-    
+    @try{
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
@@ -3624,13 +3718,17 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                                    DebuggingHeader:debuggingHeader
                                         AllowFieldTruncationHeader:allowFieldTruncationHeader
                                                           delegate:self];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getCreateProcesses %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getCreateProcesses %@",exp.reason);
+    }
 }
 
 
 - (void) getViewLayouts
 {
     // Essentials
-    
+    @try{
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
@@ -3657,13 +3755,17 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                           DebuggingHeader:debuggingHeader
                                AllowFieldTruncationHeader:allowFieldTruncationHeader
                                                  delegate:self];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getViewLayouts %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getViewLayouts %@",exp.reason);
+    }
         
 }
 
 - (void) getTasksForStartDate:(NSString *)_startDate EndDate:(NSString *)_endDate
 {
     // Essentials
-    
+    @try{
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
@@ -3714,12 +3816,16 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                    DebuggingHeader:debuggingHeader
                         AllowFieldTruncationHeader:allowFieldTruncationHeader
                                           delegate:self];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.reason);
+    }
 }
 
 - (void) getPageLayoutWithProcessId:(NSString *)processId RecordId:(NSString *)recordId
 {
     // Essentials
-    
+    @try{
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * session = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
@@ -3780,14 +3886,17 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                        DebuggingHeader:debuggingHeader
                             AllowFieldTruncationHeader:allowFieldTruncationHeader
                                               delegate:self];
-    
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.reason);
+    }
     // Also make calls to retreive Product History and Account History
 }
 
 - (void) savePageLayout
 {
     // Essentials
-    
+    @try{
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
@@ -3868,6 +3977,10 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                         DebuggingHeader:debuggingHeader
                              AllowFieldTruncationHeader:allowFieldTruncationHeader
                                                delegate:self];
+	}@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :savePageLayout %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :savePageLayout %@",exp.reason);
+    }
     
 }
 
@@ -3887,7 +4000,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     }
     endDate = [_endDate retain];
     // Essentials
-    
+    @try{
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
@@ -3940,12 +4053,16 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                     DebuggingHeader:debuggingHeader
                          AllowFieldTruncationHeader:allowFieldTruncationHeader
                                            delegate:self];
+	}@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.reason);
+    }
 }
 
 - (void) getUpdateEventsForStartDate:(NSString *)_startDate EndDate:(NSString *)_endDate recordID:(NSString *)_recordID
 {
     //Essentials
-    
+    @try{
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
@@ -3989,6 +4106,10 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                          SessionHeader:(INTF_WebServicesDefServiceSvc_SessionHeader *)sessionHeader 
                                            CallOptions: (INTF_WebServicesDefServiceSvc_CallOptions *)callOptions 
                                        DebuggingHeader:(INTF_WebServicesDefServiceSvc_DebuggingHeader *)debuggingHeader AllowFieldTruncationHeader:(INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader *)allowFieldTruncationHeader delegate:self];    
+	}@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getUpdateEventsForStartDate %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getUpdateEventsForStartDate %@",exp.reason);
+    }
 }
 
 - (BOOL) checkValidStartDate:(NSString *)_startDate EndDate:(NSString *)_endDate
@@ -4410,7 +4531,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 -(void) SaveSFMData:(NSDictionary *)sfmpage
 {
     // Essentials
-    
+    @try{
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
@@ -4443,6 +4564,10 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                           DebuggingHeader:debuggingHeader
                                AllowFieldTruncationHeader:allowFieldTruncationHeader
                                                  delegate:self];
+	}@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :SaveSFMData %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :SaveSFMData %@",exp.reason);
+    }
 }
 - (void) callCustomSFMAction:(NSDictionary *)dictionary  withData:(NSDictionary *)webServiceDict
 {   
@@ -4451,7 +4576,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     
     NSString * webServiceClass = nil;
     NSString * sfmMethodName = nil;
-    
+    @try{
     sfmMethodName = [webServiceDict objectForKey:@"method_name"];
     webServiceClass = [webServiceDict objectForKey:@"class_name"];
     
@@ -4509,13 +4634,17 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                        DebuggingHeader:debuggingHeader
                             AllowFieldTruncationHeader:allowFieldTruncationHeader
                                               delegate:self];
+	}@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :callCustomSFMAction %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :callCustomSFMAction %@",exp.reason);
+    }
 }
 
 // Thoons Method
 - (void) callSFMEvent:(NSDictionary *)dictionary  event_name:(NSString *)event_name
 {   
     // Pre - Essentials
-    
+    @try{
     NSString * webServiceName = [dictionary objectForKey:WEBSERVICE_NAME];
 
     NSString * webServiceClass = nil;
@@ -4593,6 +4722,10 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
        // SMLog(@" count %d", [appDelegate.afterSavePageLevelEvents count]);
         appDelegate.wsInterface.getPrice = TRUE;
     }
+	}@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :callSFMEvent %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :callSFMEvent %@",exp.reason);
+    }
 }
 
 
@@ -4600,7 +4733,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 -(void) AddRecordForLines:(NSString*) process_id ForDetailLayoutId:(NSString*) layout_id
 {
     // Essentials
-    
+    @try{
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
@@ -4651,6 +4784,10 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                           DebuggingHeader:debuggingHeader
                                AllowFieldTruncationHeader:allowFieldTruncationHeader
                                                  delegate:self];
+	}@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :AddRecordForLines %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :AddRecordForLines %@",exp.reason);
+    }
 }
 
 -(NSMutableDictionary *)getAddRecordsFields:(INTF_WebServicesDefBindingResponse *)response
@@ -4666,6 +4803,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     
     NSMutableDictionary * result_dict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
     result=  wsresponse.result;
+    @try{
     INTF_WebServicesDefServiceSvc_INTF_PageDataSet * r = [result objectAtIndex:0];
     if (r == nil)
         return nil;
@@ -4682,6 +4820,10 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             [result_dict setValue:value forKey:key];
     }
     add_WS = TRUE;  
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getAddRecordsFields %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getAddRecordsFields %@",exp.reason);
+    }
     return result_dict;
 }
 -(void)downloadcriteriaplist:(NSMutableDictionary *)dict
@@ -4709,6 +4851,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 
 -(void)checkdownloadcriteria
 {
+@try{
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
@@ -4764,19 +4907,35 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                       CallOptions:callOptions
                                   DebuggingHeader:debuggingHeader
                        AllowFieldTruncationHeader:allowFieldTruncationHeader delegate:self];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :checkdownloadcriteria %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :checkdownloadcriteria %@",exp.reason);
+    }
 }
 
 #pragma mark - INTF_WebServicesDefBindingOperation Delegate Method
 - (void) operation:(INTF_WebServicesDefBindingOperation *)operation completedWithResponse:(INTF_WebServicesDefBindingResponse *)response
 {
     int ret;
+    NSException* myException;
+
     SMLog(@"OPERATION COMPLETED RESPONSE");
-    
+    @try
+    {
     if (response.error != nil)
     {
        
        didCompleteAfterSaveEventCalls = YES;
        appDelegate.connection_error = TRUE;
+       NSError *error=response.error;
+                    NSDictionary *userinfo=error.userInfo;
+                    NSString *type=error.domain;
+                    NSString *des=[error localizedDescription];
+                    myException = [NSException
+                                                exceptionWithName:[NSString stringWithFormat:@"%@",type]
+                                                reason:[NSString stringWithFormat:@"%@",des]
+                                                userInfo:userinfo];
+                    @throw myException;
        return;
     }
     else
@@ -4853,6 +5012,13 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         appDelegate.connection_error = TRUE;
         responseError = 1;
         [self didFinishGetEventsWithFault:sFault];
+        NSMutableDictionary *correctiveAction=[[NSMutableDictionary alloc]init];
+                [correctiveAction setObject:@"" forKey:@"userInfo"];
+                myException = [NSException
+                                   exceptionWithName:[NSString stringWithFormat:@"%@",sFault.faultcode]
+                                   reason:[NSString stringWithFormat:@"%@",faultString]
+                                   userInfo:correctiveAction];
+                    @throw myException;
         return;
     }
 
@@ -4865,7 +5031,43 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     if ([operation isKindOfClass:[INTF_WebServicesDefBinding_INTF_MetaSync_WS class]])
     {
         INTF_WebServicesDefServiceSvc_INTF_MetaSync_WSResponse * wsResponse = [response.bodyParts objectAtIndex:0];
-               
+        if([wsResponse.result.errors count]>0)
+        {
+                    appDelegate.connection_error = TRUE;
+                    responseError = 1;
+                     NSString *message=@"";
+                     NSString *errorDesTitle=[[wsResponse.result.errors objectAtIndex:0] errorTitle];
+                     if(![errorDesTitle length]>0)
+                     {
+                         message=[[wsResponse.result.errors objectAtIndex:0] errorMsg];
+                     }
+                     else
+                     {
+                         message=errorDesTitle;
+                     }
+                    NSString *type=[[wsResponse.result.errors objectAtIndex:0] errorType];
+                     if(!([message length]>0) &&!([type length]>0))
+                     {
+                         return;
+                     }
+
+                    NSString *userInfo=[[wsResponse.result.errors objectAtIndex:0] correctiveAction];
+                    NSMutableDictionary *correctiveAction=[[NSMutableDictionary alloc]init];
+                     if(userInfo !=nil)
+                     {
+                        [correctiveAction setObject:userInfo forKey:@"userInfo"];
+                     }
+                     if(message !=nil && type !=nil)
+                     {
+                        myException = [NSException
+                                       exceptionWithName:type
+                                       reason:message
+                                       userInfo:correctiveAction];
+                        @throw myException;
+                     }
+
+                }
+
         if ([wsResponse.result.eventName isEqualToString:SFM_SEARCH] && [wsResponse.result.eventType isEqualToString:SYNC])
         {
             didOpSFMSearchComplete = TRUE;
@@ -6169,6 +6371,42 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     if ([operation isKindOfClass:[INTF_WebServicesDefBinding_INTF_DataSync_WS class]])
     {
         INTF_WebServicesDefServiceSvc_INTF_DataSync_WSResponse * wsResponse = [response.bodyParts objectAtIndex:0];
+
+        if([wsResponse.result.errors count]>0 && wsResponse.result.errors!=NULL)
+        {
+            //            didCompleteAfterSaveEventCalls = YES;
+            appDelegate.connection_error = TRUE;
+            responseError = 1;
+            NSString *message=@"";
+            NSString *errorDesTitle=[[wsResponse.result.errors objectAtIndex:0] errorTitle];
+            if(![errorDesTitle length]>0)
+            {
+                message=[[wsResponse.result.errors objectAtIndex:0] errorMsg];
+            }
+            else
+            {
+                message=errorDesTitle;
+            }
+            NSString *type=[[wsResponse.result.errors objectAtIndex:0] errorType];
+            NSString *userInfo=[[wsResponse.result.errors objectAtIndex:0] correctiveAction];
+            NSMutableDictionary *correctiveAction=[[NSMutableDictionary alloc]init];
+            if(userInfo !=nil)
+            {
+                [correctiveAction setObject:userInfo forKey:@"userInfo"];
+            }
+            
+            if(message !=nil && type !=nil)
+            {
+                
+                myException = [NSException
+                               exceptionWithName:type
+                               reason:message
+                               userInfo:correctiveAction];
+                @throw myException;
+                //                        return;
+                
+            }
+        }
         if(wsResponse.result.eventName == nil && wsResponse.result.eventType == nil )
         {
             appDelegate.connection_error = TRUE;
@@ -8423,18 +8661,67 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         [bubbleInfoDict_hdr release];
         appDelegate.wsInterface.getPrice = TRUE;
        }
+    }@catch (NSException *exp)
+    {
+        appDelegate.connection_error = FALSE;
+        NSMutableDictionary *Errordict=[[NSMutableDictionary alloc]init];
+        [Errordict setObject:exp.name forKey:@"ExpName"];
+        [Errordict setObject:exp.reason forKey:@"ExpReason"];
+        if(exp.userInfo ==nil)
+            [Errordict setObject:exp forKey:@"userInfo"];
+        else
+            [Errordict setObject:exp.userInfo forKey:@"userInfo"];
+        [appDelegate CustomizeAletView:nil alertType:RES_ERROR Dict:Errordict exception:nil];
+        [self settingFlags];
+        SMLog(@"Exception Name WSInterface :operation:completesWithResponse %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :operation:completesWithResponse %@",exp.reason);
+    }
 }
 
-
+-(void)settingFlags
+{
+    appDelegate.get_trigger_code = TRUE;
+    didCompleteAfterSaveEventCalls = YES;
+    appDelegate.incrementalSync_Failed = TRUE;
+    didOpComplete = TRUE;
+    appDelegate.didincrementalmetasyncdone = TRUE;
+    appDelegate.Incremental_sync_status = PUT_RECORDS_DONE;
+    
+    appDelegate.wsInterface.getPrice = TRUE;
+    appDelegate.sfmSave = TRUE;
+    
+    appDelegate.didGetVersion = TRUE;
+    didRescheduleEvent = TRUE;
+    appDelegate.wsInterface.sfm_response = TRUE;
+    appDelegate.wsInterface.errorLoadingSFM = TRUE;
+    didGetAccountHistory = YES;
+    didGetProductHistory = YES;
+    appDelegate.wsInterface.getPrice = TRUE;
+    add_WS = TRUE;
+    didGetObjectDef = TRUE;
+    didGetObjectDef = TRUE;
+    didGetPageData = TRUE;
+    didGetPicklistValues = TRUE;
+    didGetPicklistValueDb = TRUE;
+    didGetWorkOder = TRUE;
+    didGetAddtionalObjDef = TRUE;
+    didOpSFMSearchComplete = TRUE;
+    appDelegate.didFinishWithError = TRUE;
+    
+    appDelegate.isSpecialSyncDone = TRUE;
+    [appDelegate.dataBase setDidUserGPSLocationUpdated:YES];
+    appDelegate.connection_error = TRUE;
+    responseError = 1;
+}
 
 -(NSString *)getIdFromJsonString:(NSString *)jsonString
 {
     NSString * SF_id = @"";
     NSAutoreleasePool * autoReleasePool = [[NSAutoreleasePool alloc] init];
     SBJsonParser * jsonParser_ = [[[SBJsonParser alloc] init] autorelease];
-    
     NSDictionary * jsonDict = [jsonParser_ objectWithString:jsonString];
     NSArray * all_json_keys = [jsonDict allKeys];
+    @try{
     for(NSString * field in all_json_keys)
     {
         if([field isEqualToString:@"Id"])
@@ -8443,7 +8730,13 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             break;
         }
     }
-    [autoReleasePool drain];
+     }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getIdFromJsonString %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getIdFromJsonString %@",exp.reason);
+    }
+    @finally{
+        [autoReleasePool drain];
+    }
     return SF_id;
 }
 
@@ -8462,6 +8755,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     NSArray * records_array = [jsonstrings componentsSeparatedByString:@"$,$"];
    
     NSMutableArray * records_list = [[NSMutableArray alloc] initWithCapacity:0] ;
+    @try{
     for(NSString * jsonString in records_array)
     {
         NSAutoreleasePool * autoReleasePool = [[NSAutoreleasePool alloc] init];
@@ -8487,13 +8781,17 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     }
     jsonstrings = nil;
     records_array = nil;
-    
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getIdFromJsonString %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getIdFromJsonString %@",exp.reason);
+    }
     return records_list;
 }
 #pragma mark CollectPlistValues
 - (NSMutableArray *) collectPickListObject
 {
     NSMutableArray * result = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    @try{
     for (int i = 0; i < [object count]; i++)
     {
         NSDictionary * dict = [object objectAtIndex:i];
@@ -8506,6 +8804,10 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         }
         
     }
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :collectPickListObject %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :collectPickListObject %@",exp.reason);
+    }
     return result;
 }
 
@@ -8515,7 +8817,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 {
     NSMutableArray * pageId = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
     processType_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
-    
+    @try{
     NSArray * array = [processDictionary objectForKey:@"SFMProcess"];
     
     for (int i = 0; i < [array count]; i++)
@@ -8529,13 +8831,17 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             [pageId addObject:str];        
         }
     }
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getAllPageLauoutId %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getAllPageLauoutId %@",exp.reason);
+    }
     return pageId;
 }
     
 - (NSMutableArray *) getAllProcessId
 {
     NSMutableArray * processId = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-    
+    @try{
     NSArray * sfm_processComp = [processDictionary objectForKey:@"SFProcess_component"];
     
     for (int i = 0; i < [sfm_processComp count]; i++)
@@ -8548,6 +8854,10 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         {
             [processId addObject:str];        
         }
+    }
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getAllProcessId %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getAllProcessId %@",exp.reason);
     }
     return processId;
 }
@@ -8570,6 +8880,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     }
 //    for(id objName in objects)
 //    {
+    @try{
     if( tempObjects.count != 0 )
     {
         id objName = [tempObjects objectAtIndex:0];
@@ -8584,8 +8895,11 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         }
         return;
     }
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getRecordTypeDictForObjects %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getRecordTypeDictForObjects %@",exp.reason);
+    }
     
-       
     [appDelegate.dataBase insertValuesInToRTPicklistTableForObject:tempObjects2 Values:recordTypeDict];
     
     [tempObjects2 release];
@@ -8598,7 +8912,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 {
     NSMutableArray * RecordTypePickListForObject = [[NSMutableArray alloc] init];
     NSArray * recordTypeMappings = [result recordTypeMappings];
-    
+    @try{
     for(ZKRecordTypeMapping *recordType in recordTypeMappings)
     {
         //RADHA 23/06/2012
@@ -8659,6 +8973,10 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     didDescribeLayoutReceived = YES;
     
     [self getRecordTypeDictForObjects:tempObjects];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getAllProcessId %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getAllProcessId %@",exp.reason);
+    }
 }
 
 #pragma mark - GetAdditional object definitions
@@ -8682,7 +9000,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     NSMutableArray * bodyParts = [[[response bodyParts] mutableCopy] autorelease];
     if ([bodyParts count] == 0)
         return nil;
-    
+    @try{
     for (int i = 0; i < [bodyParts count]; i++)
     {
         INTF_WebServicesDefServiceSvc_INTF_Get_Tasks_WSResponse * getTasksResponse = [bodyParts objectAtIndex:i];
@@ -8702,7 +9020,10 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             [_tasks addObject:taskObject];
         }
     }
-    
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getTasksFromResponse %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getTasksFromResponse %@",exp.reason);
+    }
     return _tasks;
 }
 
@@ -8720,6 +9041,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                       nil];
     
     NSMutableArray * bodyParts = [[[response bodyParts] mutableCopy] autorelease];
+    @try{
     for (int i = 0; i < [bodyParts count]; i++)
     {
         INTF_WebServicesDefServiceSvc_INTF_Get_Product_History_WSResponse * response = [bodyParts objectAtIndex:i];
@@ -8743,14 +9065,17 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             [productHistoryArray addObject:dict];
         }
     }
-    
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getProductHistoryFromResponse %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getProductHistoryFromResponse %@",exp.reason);
+    }
     return productHistoryArray;
 }
 
 - (NSMutableArray *) getAccountHistoryFromResponse:(INTF_WebServicesDefBindingResponse *)response
 {
     NSMutableArray * accountHistoryArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-    
+    @try{
     NSArray * keys = [NSArray arrayWithObjects:
                      // @"Id",
                       @"CreatedDate",
@@ -8785,7 +9110,11 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         
         [accountHistoryArray addObject:dict];
     }
-    
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getAccountHistoryFromResponse %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getAccountHistoryFromResponse %@",exp.reason);
+        
+    }
     return accountHistoryArray;
 }
 
@@ -8838,6 +9167,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     [describeObjectsArray addObject:objectName];
     
     // Add reference fields from Header
+    @try{
     NSMutableArray * hdrSections = hdr.sections;
     for (int h = 0; h < [hdrSections count]; h++)
     {
@@ -8881,7 +9211,10 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             }
         }
     }
-    
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getDescribeObjects %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getDescribeObjects %@",exp.reason);
+    }
     [[ZKServerSwitchboard switchboard] describeSObjects:describeObjectsArray target:self selector:@selector(didDescribeSObjects:error:context:) context:bodyParts];
     
     return nil;
@@ -8889,6 +9222,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 
 - (void) didDescribeSObject:(ZKDescribeSObject *)describeObject error:(NSError *)error context:(id)context
 {
+    @try{
     INTF_WebServicesDefBindingResponse * response = (INTF_WebServicesDefBindingResponse *) context;
     NSMutableDictionary * lookupDetails = [self getLookUpFromResponse:response];
     SMLog(@"%@", lookupDetails);
@@ -8903,6 +9237,10 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     NSMutableDictionary * lookupDictionary = [NSMutableDictionary dictionaryWithObjects:objects forKeys:keys];
     if ([lookupCaller respondsToSelector:@selector(setLookupData:)])
         [lookupCaller performSelector:@selector(setLookupData:) withObject:lookupDictionary];
+    }@catch(NSException *exp){
+        SMLog(@"Exception Name WSInterface :didDescribeSObject %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :didDescribeSObject %@",exp.reason);
+    }
 }
 
 - (void) didDescribeSObjects:(NSMutableArray *)result error:(NSError *)error context:(id)context
@@ -8917,6 +9255,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 {
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
 	sequence += 1;
+    @try{
 	NSMutableDictionary *header = [appDelegate.SFMPage objectForKey:gHEADER];
 	NSMutableArray *sections = [header objectForKey:gHEADER_SECTIONS];
 	for (int i=0;i<[sections count];i++)
@@ -8926,7 +9265,11 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 		if (_seq == sequence)
 			return section;
 	}
-	
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :GetHeaderSectionForSequenceNumber %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :GetHeaderSectionForSequenceNumber %@",exp.reason);
+        
+    }
 	return nil;
     
     
@@ -8951,6 +9294,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 - (void) getDictionaryFromPageLayout:(NSMutableDictionary *)bodyParts withDescribedObjects:(NSMutableArray *)describeObjects
 {
     NSMutableDictionary * headerDataDict = nil, * detailsDataDict = nil;
+  @try{
     NSString * process_type = [bodyParts objectForKey:gPROCESSTYPE];
     
     INTF_WebServicesDefServiceSvc_INTF_PageUI * page = [bodyParts objectForKey:gPAGE];
@@ -9605,6 +9949,10 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     // Call this method ONLY after Product and Account History have been retrieved
     if ([self.delegate respondsToSelector:@selector(didReceivePageLayout:withDescribeObjects:)])
         [self.delegate didReceivePageLayout:pageLayout withDescribeObjects:describeObjects];
+  }@catch (NSException *exp) {
+      SMLog(@"Exception Name WSInterface :getDictionaryFromPageLayout %@",exp.name);
+      SMLog(@"Exception Reason WSInterface :getDictionaryFromPageLayout %@",exp.reason);
+  }
 }
 
 -(NSString *) getAllFieldsForObjectName:(NSString *)hdr_object_name
@@ -9630,7 +9978,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 - (INTF_WebServicesDefServiceSvc_INTF_TargetRecord *) getTargetRecordsFromSFMPage:(NSDictionary *)sfmpage
 {
     INTF_WebServicesDefServiceSvc_INTF_TargetRecord * targetRecord = [[[INTF_WebServicesDefServiceSvc_INTF_TargetRecord alloc] init] autorelease];
-    
+    @try{
     // [targetRecord setSfmProcessId: (Process ID required here)  ];
     // hardcoding for now - don't we have process id anywhere in the response?? 
     [targetRecord setSfmProcessId:appDelegate.sfmPageController.processId];
@@ -9984,7 +10332,10 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 
         [[targetRecord detailRecords] addObject:targetRecordObjectDetails];
     }
-    
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getTargetRecordsFromSFMPage %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getTargetRecordsFromSFMPage %@",exp.reason);
+    }
     return targetRecord;
 }
 
@@ -10225,7 +10576,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     NSMutableDictionary * _tagsDictionary = nil;
     NSMutableArray * array = nil;
     int ret;
-        
+    @try{
     for ( int i = 0; i < [response.bodyParts count]; i++ )
     {
         ret = [[response.bodyParts objectAtIndex:i] isKindOfClass:[SOAPFault class]];
@@ -10268,6 +10619,10 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     SMLog(@"%@", _tagsDictionary);
     // Samman
     _tagsDictionary = [self fillEmptyTags:_tagsDictionary];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getTagsdisplay %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getTagsdisplay %@",exp.reason);
+    }
     return _tagsDictionary;
 }
 
@@ -10275,6 +10630,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 // To fill empty tags with temporary values when webservice fails
 -(NSMutableDictionary *) fillEmptyTags:(NSMutableDictionary *)_tagsDictionary
 {
+    @try{
     NSArray * keys = [_tagsDictionary allKeys];
 
     NSMutableDictionary * defaultTags = [self getDefaultTags];
@@ -10301,7 +10657,10 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             [_tagsDictionary setValue:defaultValue forKey:key];
         }
     }
-    
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :fillEmptyTags %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :fillEmptyTags %@",exp.reason);
+    }
     return _tagsDictionary;
 }
 
@@ -10320,7 +10679,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     NSMutableArray * _eventArray = wsResponse.result.eventInfo;
     NSMutableArray * arr = nil;
     NSMutableDictionary * dict;
-    
+    @try{
     //Radha 30th April 2011
     for ( int i = 0; i < [_eventArray count]; i++ ) 
     {
@@ -10442,7 +10801,12 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         
         [arr addObject:dict];
     }
-    SMLog(@"arr = %@", arr); 
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getEventdisplay %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getEventdisplay %@",exp.reason);
+    }
+    SMLog(@"arr = %@", arr);
+
     return arr;
 }
 
@@ -10455,7 +10819,8 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     // return array;
     
     INTF_WebServicesDefServiceSvc_INTF_Get_StandaloneCreate_LayoutsResponse * viewWsResponse = [response.bodyParts objectAtIndex:0];
-    NSArray * create_processes = viewWsResponse.result.layoutsInfo; 
+    NSArray * create_processes = viewWsResponse.result.layoutsInfo;
+    @try{
     for ( int i = 0; i < [create_processes count]; i++ )
     {
         INTF_WebServicesDefServiceSvc_SVMXC__ServiceMax_Processes__c * create_process = [create_processes objectAtIndex:i];
@@ -10617,7 +10982,10 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         [createobjects release];
     }
     appDelegate.StandAloneCreateProcess = [section_for_createObjects retain];
-
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getCreateProcessesDictionaryArray %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getCreateProcessesDictionaryArray %@",exp.reason);
+    }
     return array;
 }
 
@@ -10637,6 +11005,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         array = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
     
     NSMutableArray * arr = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    @try{
     for (int i = 0; i < [viewLayoutsInfo count]; i++)
     {
         NSString * objectName = [[viewLayoutsInfo objectAtIndex:i] objectName];
@@ -10664,6 +11033,10 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             [array addObject:dict];
         }
     }
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getViewLayoutArray %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getViewLayoutArray %@",exp.reason);
+    }
     SMLog(@"%@", array);
     return array;
 }
@@ -10673,6 +11046,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 {
     NSMutableArray * objectNames = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
     ZKDescribeSObject * sobj=nil;
+    @try{
     for (int itr = 0; itr < [describeObjects count]; itr++)
     {
         sobj = [describeObjects objectAtIndex:itr];
@@ -10686,8 +11060,12 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         [objectNames addObject:label];
     }
     appDelegate.objectLabel_array = objectNames;
-
     didGetObjectName = TRUE;
+
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :didGetNameFields %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :didGetNameFields %@",exp.reason);
+    }
       
 }
 
@@ -10699,7 +11077,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         appDelegate.createObjectContext = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
     
     NSString * resultId = nil;
-    
+    @try{
     for (int i = 0; i < [response.bodyParts count]; i++)
     {
         INTF_WebServicesDefServiceSvc_SFM_SaveTargetRecords_WSResponse * saveResponse = [response.bodyParts objectAtIndex:i]; 
@@ -10730,13 +11108,18 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     [self getNameFieldForCreateProcess:resultId];
     //sahana
     appDelegate.newRecordId = resultId;
-    
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getSaveTargetRecords %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getSaveTargetRecords %@",exp.reason);
+    }
     return appDelegate.createObjectContext;
 }
 
 - (void) getNameFieldForCreateProcess:(NSString *)ID
 {
     //Radha 16th Sep
+    @try
+    {
     didGetNameField = FALSE;
     NSString * name = [appDelegate.createObjectContext objectForKey:NAME_FIELD];
     NSString * objname = [appDelegate.createObjectContext objectForKey:OBJ_NAME];
@@ -10772,6 +11155,10 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             break;
         }
     }
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getNameFieldForCreateProcess %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getNameFieldForCreateProcess %@",exp.reason);
+    }
 }
 
 - (void) didGetNameField:(ZKQueryResult *)result error:(NSError *)error context:(id)context
@@ -10781,7 +11168,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     NSString * str = nil ;
     
     SMLog(@"%@", array);
-    
+    @try{
     if ([array count] > 0)
     {
         ZKSObject * obj = [array objectAtIndex:0];
@@ -10819,6 +11206,11 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     //sahana 16th sept 2011
     didGetProcessId = TRUE;
     didGetNameField = TRUE;
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :didGetNameField %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :didGetNameField %@",exp.reason);
+        
+    }
 }
 
 - (void) saveDictionaryToPList:(NSMutableDictionary *)dictionary 
@@ -10836,7 +11228,8 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     
     if (appDelegate.recentObject == nil)
         appDelegate.recentObject = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-    
+    @try
+    {
     if(plistData)
     {
         array = [[[NSMutableArray alloc] initWithContentsOfFile:plistPath] autorelease];
@@ -10864,6 +11257,11 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     {
         SMLog(@"%@",error);
         [error release];
+    }
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :saveDictionaryToPList %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :saveDictionaryToPList %@",exp.reason);
+        
     }
 }
 
@@ -11008,6 +11406,8 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     NSString * serverUrl = [loginResult serverUrl];
     NSArray * array = [serverUrl pathComponents];
     NSString * server = [NSString stringWithFormat:@"%@//%@", [array objectAtIndex:0], [array objectAtIndex:1]];
+    @try
+    {
     if (error)
     {
         SMLog(@"There was an error resuming the session: %@", error);
@@ -11029,6 +11429,11 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 		}
         didSessionResume = YES;
         isSessionInavalid = NO;
+    }
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :sessionDidResume %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :sessionDidResume %@",exp.reason);
+        
     }
 }
 

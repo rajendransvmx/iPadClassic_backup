@@ -539,6 +539,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) PopulateDateFromDay:(NSInteger) weekday totalDays:(NSInteger) numDays
 {
+	@try{
     if (dates == nil)
         dates = [[NSMutableArray alloc] initWithCapacity:43];
     else
@@ -607,6 +608,12 @@ extern void SVMXLog(NSString *format, ...);
     [dates removeAllObjects];
     [dates release];
     dates = nil;
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name CalendarController :PopulateDateFromDay %@",exp.name);
+	SMLog(@"Exception Reason CalendarController :PopulateDateFromDay %@",exp.reason);
+	 [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
 }
 - (NSMutableArray *) getRemainingDaysInMonth:(int ) month 
                                lastNumOfDays:(NSInteger)noDays 
@@ -616,6 +623,7 @@ extern void SVMXLog(NSString *format, ...);
         month = 12;
     
     NSMutableArray *days = [[NSMutableArray alloc] init];
+    @try{
     NSString * numberOfDays = [monthDaysInYearDict objectAtIndex:month];
 	int numDays = [numberOfDays intValue];
 	if ([self IsLeapYear:selYear])
@@ -640,11 +648,18 @@ extern void SVMXLog(NSString *format, ...);
         for(int i = 1;i<=forDays +1 ;i++)
             [days addObject:[NSString stringWithFormat:@"%d",i]];        
     }
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name CalendarController :getRemainingDaysInMonth %@",exp.name);
+	SMLog(@"Exception Reason CalendarController :getRemainingDaysInMonth %@",exp.reason);
+	 [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
     return [days autorelease];
 }
 
 - (IBAction) DateClicked:(id)sender
 {
+	@try{
 	// Perform date clicked operation
 	UIButton * dateButton = (UIButton *) sender;
     
@@ -696,6 +711,12 @@ extern void SVMXLog(NSString *format, ...);
     
     [dayOne release];
     [gregorian release];
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name CalendarController :DateClicked %@",exp.name);
+	SMLog(@"Exception Reason CalendarController :DateClicked %@",exp.reason);
+	 [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
 }
 
 - (void) setDate:(NSUInteger) date
@@ -725,6 +746,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (NSMutableArray *) getWeeksArray
 {
+	@try{
     // Run through the calendar and find out which days are present in which weeks
     if (weeksArray == nil)
         weeksArray = [[NSMutableArray alloc] initWithCapacity:0];
@@ -761,6 +783,11 @@ extern void SVMXLog(NSString *format, ...);
 
         isAllNil = YES;
     }
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name CalendarController :getWeeksArray %@",exp.name);
+	SMLog(@"Exception Reason CalendarController :getWeeksArray %@",exp.reason);
+	 [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
     return [weeksArray retain];
 }
 
@@ -769,7 +796,8 @@ extern void SVMXLog(NSString *format, ...);
     // Get Month name
     // Get Year
     // Get current week - in index as in week 2 of 5 weeks for a month
-    
+    NSDictionary * dict =[NSDictionary alloc];
+    @try{
     NSArray * keys = [NSArray arrayWithObjects:wMONTH, wMONTHNUMBER, wYEAR, wWEEKNUMBER, wWEEK, nil];
     NSArray * objects = [NSArray arrayWithObjects:
                          [monthArray objectAtIndex:selMonth],
@@ -778,9 +806,15 @@ extern void SVMXLog(NSString *format, ...);
                          [NSString stringWithFormat:@"%d", [self getWeekNumber]],
                          [NSString stringWithFormat:@"%d", currentWeek], nil];
     
-    NSDictionary * dict = [[[NSDictionary alloc] initWithObjects:objects forKeys:keys] autorelease];
+     dict = [[dict initWithObjects:objects forKeys:keys] autorelease];
+    }
+    @catch(NSException *exp)
+    {
+        SMLog(@"Exception Name CalendarController :getWeekDetails %@",exp.name);
+        SMLog(@"Exception Reason CalendarController :getWeekDetails %@",exp.reason);
+         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
 
-    return dict;
 }
 
 - (NSUInteger) getToday
@@ -859,6 +893,7 @@ extern void SVMXLog(NSString *format, ...);
 	NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
     
     [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+    @try{
     if ([date length] > 10)
         date = [date substringToIndex:10];
     NSDate *today = [dateFormatter dateFromString:date];
@@ -900,7 +935,12 @@ extern void SVMXLog(NSString *format, ...);
 	[componentsToSubtract release];
 	[minus_onesec release];
 	[dateFormatter release];
-	
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name CalendarConroller :getWeekBoundaries %@",exp.name);
+	SMLog(@"Exception Reason CalendarConroller :getWeekBoundaries %@",exp.reason);
+	[appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
 	return bounds;											
 }
 

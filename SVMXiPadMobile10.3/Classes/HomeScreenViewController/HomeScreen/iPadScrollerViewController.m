@@ -142,6 +142,7 @@ const NSUInteger kNumImages = 7;
     appDelegate.dateClicked = [df stringFromDate:today];
     
     // Add events to workOrderEventArray based on today
+    @try{
     for (int i = 0; i < [appDelegate.wsInterface.eventArray count]; i++)
     {
         NSDictionary * dict = [appDelegate.wsInterface.eventArray objectAtIndex:i];
@@ -278,6 +279,11 @@ const NSUInteger kNumImages = 7;
         mapView.modalPresentationStyle = UIModalPresentationFullScreen;
         [self presentViewController:mapView animated:YES completion:nil];
         [mapView release];
+    }
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name iPadScrollerViewController :showMap %@",exp.name);
+        SMLog(@"Exception Reason iPadScrollerViewController :showMap %@",exp.reason);
+         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
     }
 }
 - (void) showRecents
@@ -560,10 +566,17 @@ const NSUInteger kNumImages = 7;
 }
 -(void)clearuserinfoPlist
 {
+	@try{
     NSDictionary * dict = [[NSDictionary alloc] initWithObjects:[NSArray arrayWithObjects:@"",@"", nil] forKeys:[NSArray arrayWithObjects:USER_NAME_AUTHANTICATED,INITIAL_SYNC_LOGIN_SATUS, nil]];
     NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:USER_INFO_PLIST];
     [dict writeToFile:plistPath_SYNHIST atomically:YES];
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name iPadScrollerViewController :clearuserinfoPlist %@",exp.name);
+	SMLog(@"Exception Reason iPadScrollerViewController :clearuserinfoPlist %@",exp.reason);
+	[appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+
 }
 - (void) didInternetConnectionChange:(NSNotification *)notification
 {
@@ -1322,6 +1335,7 @@ const float progress_ = 0.07;
 
 -(void)doMetaSync
 {
+	@try{
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
 		[appDelegate goOnlineIfRequired];
@@ -1446,6 +1460,10 @@ const float progress_ = 0.07;
     
     txnstmt = @"END TRANSACTION";
     retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err); 
+	}@catch (NSException *exp) {
+	NSLog(@"testing for exception thrown :%@",exp);
+	 [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+	}
 }
 
 -(void)doDataSync

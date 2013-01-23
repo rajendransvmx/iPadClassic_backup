@@ -153,7 +153,7 @@ extern void SVMXLog(NSString *format, ...);
     NSDateFormatter * df = [[[NSDateFormatter alloc] init] autorelease];
     [df setDateFormat:@"yyyy-MM-dd"];
     appDelegate.dateClicked = [df stringFromDate:today];
-    
+    @try{
     for (int i = 0; i < [appDelegate.wsInterface.eventArray count]; i++)
     {
         NSDictionary * dict = [appDelegate.wsInterface.eventArray objectAtIndex:i];
@@ -185,6 +185,11 @@ extern void SVMXLog(NSString *format, ...);
         [self presentViewController:mapView animated:YES completion:nil];
         [mapView release];
     }
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name OpenFlowAppViewController :showMap %@",exp.name);
+	SMLog(@"Exception Reason OpenFlowAppViewController :showMap %@",exp.reason);
+    }
+
 }
 - (void) showRecents
 {

@@ -120,7 +120,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         return;
     }
-    
+    @try{
     for (int i = 0; i < [_array count]; i++ )
     {
         NSArray *objects = [[NSArray alloc]initWithObjects:[[[_array objectAtIndex:i] fields]objectForKey:@"Id"],[[[_array objectAtIndex:i] fields]objectForKey:@"Name"], nil]; 
@@ -129,6 +129,10 @@ extern void SVMXLog(NSString *format, ...);
         
         [_dict release];
         [objects release];
+    }
+	}@catch (NSException *exp) {
+	SMLog(@"Exception Name ProductManual :didQueryManualForProductName %@",exp.name);
+	SMLog(@"Exception Reason ProductManual :didQueryManualForProductName %@",exp.reason);
     }
 
     //[array retain];         //Check For leak here
