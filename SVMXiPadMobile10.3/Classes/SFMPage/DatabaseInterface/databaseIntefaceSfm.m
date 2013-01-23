@@ -1607,7 +1607,7 @@ extern void SVMXLog(NSString *format, ...);
             NSString * enddatetime = [valuesDict objectForKey:@"EndDateTime"];
             NSString * overlappingEvent = [appDelegate.databaseInterface getallOverLappingEventsForStartDateTime:startDateTime EndDateTime:enddatetime];
             NSString * local_id = [valuesDict objectForKey:@"local_id"];
-            [self insertIntoEventsLocal_ids:local_id];
+            [self insertIntoEventsLocal_ids:local_id fromEvent_temp_table:Event_local_Ids];
             [databaseInterfaceDelegate displayALertViewinSFMDetailview:overlappingEvent];
         }
         
@@ -3406,6 +3406,13 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", update_statement);
 		SMLog(@"METHOD:UpdateTableforId " );
 		SMLog(@"ERROR IN UPDATING %s", err);
+	 if([objectName isEqualToString:@"Event"])
+        {
+            NSString * startDateTime = [dict objectForKey:@"StartDateTime"];
+            NSString * enddatetime = [dict objectForKey:@"EndDateTime"];
+            NSString * overlappingEvent = [appDelegate.databaseInterface getallOverLappingEventsForStartDateTime:startDateTime EndDateTime:enddatetime];
+            [databaseInterfaceDelegate displayALertViewinSFMDetailview:overlappingEvent];
+        }
     }
     else
     {
@@ -6309,11 +6316,12 @@ extern void SVMXLog(NSString *format, ...);
     return processIds_array;
 }
 
--(void)insertIntoEventsLocal_ids:(NSString *)local_id
+-(void)insertIntoEventsLocal_ids:(NSString *)local_id  fromEvent_temp_table:(NSString *)event_temp_table
 {
     //delete before created event
-    [self deleteRecordsFromEventLocalIds];
-    NSString * insert_query = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ ('object_name','local_id') VALUES ('%@','%@')" , Event_local_Ids,@"Event",local_id ];
+    [self deleteRecordsFromEventLocalIdsFromTable:event_temp_table];
+    
+    NSString * insert_query = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ ('object_name','local_id' ) VALUES ('%@','%@')" , event_temp_table,@"Event",local_id ];
     char * err;
     
     if(synchronized_sqlite3_exec(appDelegate.db, [insert_query UTF8String], NULL, NULL, &err) != SQLITE_OK)
@@ -6325,10 +6333,10 @@ extern void SVMXLog(NSString *format, ...);
     }
 }
 
--(NSString *)getLocal_idFrom_Event_local_id
+-(NSString *)getLocal_idFrom_Event_local_id:(NSString *)event_temp_table
 {
     NSString * local_id = @"";
-    NSString * query = [NSString stringWithFormat:@"SELECT local_id FROM Event_local_Ids"];
+    NSString * query = [NSString stringWithFormat:@"SELECT local_id FROM %@",event_temp_table];
     sqlite3_stmt * stmt;
     if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
     {
@@ -6346,9 +6354,9 @@ extern void SVMXLog(NSString *format, ...);
     return local_id;
 }
 
--(void)deleteRecordsFromEventLocalIds
+-(void)deleteRecordsFromEventLocalIdsFromTable:(NSString *)event_temp_table
 {
-    NSString * delete_query = [NSString stringWithFormat:@"DELETE FROM %@",Event_local_Ids];
+    NSString * delete_query = [NSString stringWithFormat:@"DELETE FROM %@ ",event_temp_table];
     char * err_delete;
     
     if(synchronized_sqlite3_exec(appDelegate.db, [delete_query UTF8String], NULL, NULL, &err_delete) != SQLITE_OK)
@@ -6357,7 +6365,6 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", delete_query);
 		SMLog(@"METHOD:deleteRecordsFromEventLocalIds");
 		SMLog(@"ERROR IN DELETE %s", err_delete);
-        [appDelegate printIfError:[NSString stringWithUTF8String:err_delete] ForQuery:delete_query type:DELETEQUERY];
     }
 }
 

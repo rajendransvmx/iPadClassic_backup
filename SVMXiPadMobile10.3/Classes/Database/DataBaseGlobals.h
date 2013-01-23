@@ -16,6 +16,7 @@
 
 #define User_created_events         @"user_created_events"
 #define Event_local_Ids             @"Event_local_ids"
+#define LOCAL_EVENT_UPDATE          @"local_event_update"
 
 //Macros For Database
 #define DATABASENAME1               @"sfm"

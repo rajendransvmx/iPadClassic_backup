@@ -814,7 +814,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"Exception Reason CalendarController :getWeekDetails %@",exp.reason);
          [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
     }
-
+    return dict;
 }
 
 - (NSUInteger) getToday

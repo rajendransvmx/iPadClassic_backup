@@ -58,6 +58,8 @@ SummaryViewControllerDelegate,
 ChatterDelegate,
 SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceProtocol>
 {
+    BOOL EventUpdate_Continue;
+    
     id <DetailViewControllerDelegate> delegate;
     SFWToolBar * sfwToolBar;
     IBOutlet UITableView * tableView;
@@ -204,7 +206,7 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
     ZBarReaderViewController *reader;
 }
 
-
+@property (nonatomic) BOOL EventUpdate_Continue;
 //0:uninitialized
 //1:first controller flag
 //2:second controller flag

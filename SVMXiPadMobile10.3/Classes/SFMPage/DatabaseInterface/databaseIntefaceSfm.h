@@ -31,9 +31,9 @@
 -(NSString *)getallOverLappingEventsForStartDateTime:(NSString *)startDateTime EndDateTime:(NSString *)endDateTime;
 //Sahana Dec 7th 2012
 -(void)InsertInto_User_created_event_for_local_id:(NSString *)local_id sf_id:(NSString *)sf_id;
--(void)insertIntoEventsLocal_ids:(NSString *)local_id;
--(NSString *)getLocal_idFrom_Event_local_id;
--(void)deleteRecordsFromEventLocalIds;
+-(void)insertIntoEventsLocal_ids:(NSString *)local_id  fromEvent_temp_table:(NSString *)event_temp_table;
+-(NSString *)getLocal_idFrom_Event_local_id:(NSString *)event_temp_table;
+-(void)deleteRecordsFromEventLocalIdsFromTable:(NSString *)event_temp_table;
 
 -(void)updateChildParentColumnNameForParentObject:(NSString *)master_object masterLocalId:(NSString *)masterLocal_id child_info:(NSMutableDictionary *)child_info;
 -(void)insertOndemandRecords:(NSMutableDictionary *)record_dict;
@@ -393,6 +393,11 @@
 #define DEPENDENT_PICKLIST       @"dependent_picklist"
 #define CONTROLLER_FIRLD         @"controler_field"
 #define VALID_FOR                @"valid_for"
+
+
+#define INSERTION_TYPE           @"insertion_type"
+#define LOCAL_UPDATE_TYPE        @"local_update_type"
+#define ONLINE_UPDATE_TYPE       @"online_upadte_type"
 
 @end
 

@@ -5662,6 +5662,8 @@ extern void SVMXLog(NSString *format, ...);
     query =  [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS %@ ('object_name' VARCHAR ,'local_id' VARCHAR ) ",Event_local_Ids];
     [self createTable:query];
     
+    query =  [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS %@ ('object_name' VARCHAR ,'local_id' VARCHAR) ",LOCAL_EVENT_UPDATE];
+    [self createTable:query];
     
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS servicereprt_logo ('logo' VARCHAR)"];
     [self createTable:query];
@@ -6652,6 +6654,9 @@ extern void SVMXLog(NSString *format, ...);
     [self createTable:query];
     
     query =  [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS %@ ('object_name' VARCHAR ,'local_id' VARCHAR ) ",Event_local_Ids];
+    [self createTable:query];
+    
+    query =  [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS %@ ('object_name' VARCHAR ,'local_id' VARCHAR) ",LOCAL_EVENT_UPDATE];
     [self createTable:query];
     
     [self createTemporaryTable:query];

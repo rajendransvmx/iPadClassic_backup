@@ -93,6 +93,10 @@ extern void SVMXLog(NSString *format, ...);
 {
     [super viewDidLoad];
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+   
+    [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:Event_local_Ids];
+    [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:LOCAL_EVENT_UPDATE];
+    
     
     if (appDelegate.didSFMUnload)
     {
@@ -177,13 +181,16 @@ extern void SVMXLog(NSString *format, ...);
 {
     [self dismissViewControllerAnimated:YES completion:^(void){}];
 	[delegate Back:nil];
-    [appDelegate.databaseInterface deleteRecordsFromEventLocalIds];
+    [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:Event_local_Ids];
+    [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:LOCAL_EVENT_UPDATE];
+    
 }
 -(void) BackOnSave
 {
     [self dismissViewControllerAnimated:YES completion:^(void){}];
     [delegate Back:nil];
-    [appDelegate.databaseInterface deleteRecordsFromEventLocalIds];
+    [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:Event_local_Ids];
+    [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:LOCAL_EVENT_UPDATE];
    
 }
 #pragma progress bar

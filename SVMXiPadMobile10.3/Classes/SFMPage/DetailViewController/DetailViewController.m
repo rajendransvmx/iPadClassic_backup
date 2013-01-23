@@ -31,6 +31,7 @@ extern void SVMXLog(NSString *format, ...);
 
 @implementation DetailViewController
 
+@synthesize EventUpdate_Continue;
 
 @synthesize updateGreenButtonFlag;
 @synthesize parentReference;
@@ -279,6 +280,8 @@ extern void SVMXLog(NSString *format, ...);
 	
 	CGRect rect = self.view.frame;
 	self.navigationController.navigationBar.frame = CGRectMake(0, 0, rect.size.width, self.navigationController.navigationBar.frame.size.height);
+    
+    EventUpdate_Continue = FALSE;
     
     didRunOperation = YES;
     
@@ -10323,7 +10326,7 @@ extern void SVMXLog(NSString *format, ...);
                 if([headerObjName isEqualToString:@"Event"])
                 {
                     appDelegate.databaseInterface.databaseInterfaceDelegate = self;
-                    NSString * event_local_id = [appDelegate.databaseInterface getLocal_idFrom_Event_local_id];
+                    NSString * event_local_id = [appDelegate.databaseInterface getLocal_idFrom_Event_local_id:Event_local_Ids];
                     if([event_local_id length] != 0)
                     {
                         header_record_local_id = event_local_id;
@@ -10736,11 +10739,30 @@ extern void SVMXLog(NSString *format, ...);
                 
                 if([headerObjName isEqualToString:@"Event"])
                 {
+                    appDelegate.databaseInterface.databaseInterfaceDelegate = self;
+                    [all_header_fields setObject:@"" forKey:@"DurationInMinutes"];
+                    [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:LOCAL_EVENT_UPDATE];
+                    if(!EventUpdate_Continue)
+                    {
+                        [appDelegate.databaseInterface insertIntoEventsLocal_ids:appDelegate.sfmPageController.recordId fromEvent_temp_table:LOCAL_EVENT_UPDATE];
+                    }
                     
-                      [all_header_fields setObject:@"" forKey:@"DurationInMinutes"];
                 }
                     
                 BOOL success_flag = [appDelegate.databaseInterface  UpdateTableforId:currentRecordId forObject:headerObjName data:all_header_fields];
+              
+                
+                if([headerObjName isEqualToString:@"Event"])
+                {
+                    appDelegate.databaseInterface.databaseInterfaceDelegate = nil;
+                    if(!success_flag)
+                    {
+                        [self enableSFMUI];
+                        return;
+                    }
+                }
+                
+               
                 
                 NSString *  id_value  =  [appDelegate.databaseInterface  checkforSalesForceIdForlocalId:headerObjName local_id:currentRecordId];
                 
@@ -11397,7 +11419,7 @@ extern void SVMXLog(NSString *format, ...);
                 if([headerObjName isEqualToString:@"Event"])
                 {
                     appDelegate.databaseInterface.databaseInterfaceDelegate = self;
-                    NSString * event_local_id = [appDelegate.databaseInterface getLocal_idFrom_Event_local_id];
+                    NSString * event_local_id = [appDelegate.databaseInterface getLocal_idFrom_Event_local_id:Event_local_Ids];
                     if([event_local_id length] != 0)
                     {
                         header_record_local_id = event_local_id;
@@ -12886,6 +12908,9 @@ extern void SVMXLog(NSString *format, ...);
 {
     if(buttonIndex == 1)
     {
+
+        EventUpdate_Continue = TRUE;
+        [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:LOCAL_EVENT_UPDATE];
         NSMutableArray  *keys_event = nil, *objects_event = nil;
         objects_event = [NSArray arrayWithObjects:@"",save,@"",@"",gBUTTON_TYPE_TDM_IPAD_ONLY ,@"",@"true",nil];
         keys_event = [NSArray arrayWithObjects:SFW_ACTION_ID,SFW_ACTION_DESCRIPTION,SFW_EXPRESSION_ID,SFW_PROCESS_ID,SFW_ACTION_TYPE ,SFW_WIZARD_ID,SFW_ENABLE_ACTION_BUTTON,nil];
@@ -12894,7 +12919,10 @@ extern void SVMXLog(NSString *format, ...);
         
     }
      else if(buttonIndex == 0){
-         [appDelegate.databaseInterface deleteRecordsFromEventLocalIds];
+         
+        EventUpdate_Continue =FALSE;
+        [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:Event_local_Ids];
+        [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:LOCAL_EVENT_UPDATE];
     }
     
 }
