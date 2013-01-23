@@ -697,16 +697,6 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     [alert release];
 }
 
-- (void)willPresentActionSheet:(UIActionSheet *)actionSheet {
-	actionSheet.frame = CGRectMake(50, 50, 600.0, 600.0 ); 
-}
-- (void)willPresentAlertView:(UIAlertView *)alertView {
-    alertView.frame = CGRectMake(50, 50, 600.0, 600.0 );
-}
-- (void)didPresentAlertView:(UIAlertView *)alertView {
-    alertView.frame = CGRectMake(50, 50, 600.0, 600.0 );
-}
-
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_TIMER_INVALIDATE object:nil];
