@@ -2341,7 +2341,7 @@ NSString * GO_Online = @"GO_Online";
 {
     @try
     {
-        NSString * CopytoClipboard = @"Copy to Clipboard";//[appDelegate.wsInterface.tagsDictionary objectForKey:Copy_to_Clipboard];
+        NSString * CopytoClipboard = [appDelegate.wsInterface.tagsDictionary objectForKey:Copy_to_Clipboard];
         NSString * eMail = [appDelegate.wsInterface.tagsDictionary objectForKey:PDF_EMAIL];
         NSString * Ok= [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
         NSString * tag1 = [appDelegate.wsInterface.tagsDictionary objectForKey:Type_of_Error];
@@ -2426,13 +2426,13 @@ NSString * GO_Online = @"GO_Online";
 {
     if(buttonIndex==1)
     {
-        NSLog(@"Copy To clipBoard");
+        SMLog(@"Copy To clipBoard");
        [self sendingEmail:alertView];
         
     }
     else if (buttonIndex==2)
     {
-        NSLog(@"Email");
+        SMLog(@"Email");
         [self copyToClipboard:alertView];
     }
 }
@@ -2516,7 +2516,7 @@ NSString * GO_Online = @"GO_Online";
         }
         NSString *emailBody = [NSString stringWithFormat: @"\n %@ \n ================ \n%@\n%@ \n%@",alertview.title,errType,errMessage,errorDescription];
 
-        NSLog(@"Copy to clipboard %@",emailBody);
+        SMLog(@"Copy to clipboard %@",emailBody);
         UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
         pasteboard.string = emailBody;
     } @catch (NSException *exp)
