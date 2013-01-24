@@ -5006,7 +5006,6 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         
         appDelegate.connection_error = TRUE;
         responseError = 1;
-        [self didFinishGetEventsWithFault:sFault];
         NSMutableDictionary *correctiveAction=[[NSMutableDictionary alloc]init];
                 [correctiveAction setObject:@"" forKey:@"userInfo"];
                 myException = [NSException
@@ -5028,8 +5027,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         INTF_WebServicesDefServiceSvc_INTF_MetaSync_WSResponse * wsResponse = [response.bodyParts objectAtIndex:0];
         if([wsResponse.result.errors count]>0)
         {
-                    appDelegate.connection_error = TRUE;
-                    responseError = 1;
+
                      NSString *message=@"";
                      NSString *errorDesTitle=[[wsResponse.result.errors objectAtIndex:0] errorTitle];
                      if(![errorDesTitle length]>0)
@@ -5054,6 +5052,8 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                      }
                      if(message !=nil && type !=nil)
                      {
+                        appDelegate.connection_error = TRUE;
+                        responseError = 1;
                         myException = [NSException
                                        exceptionWithName:type
                                        reason:message
@@ -6369,9 +6369,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 
         if([wsResponse.result.errors count]>0 && wsResponse.result.errors!=NULL)
         {
-            //            didCompleteAfterSaveEventCalls = YES;
-            appDelegate.connection_error = TRUE;
-            responseError = 1;
+
             NSString *message=@"";
             NSString *errorDesTitle=[[wsResponse.result.errors objectAtIndex:0] errorTitle];
             if(![errorDesTitle length]>0)
@@ -6392,7 +6390,8 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             
             if(message !=nil && type !=nil)
             {
-                
+                appDelegate.connection_error = TRUE;
+                responseError = 1;
                 myException = [NSException
                                exceptionWithName:type
                                reason:message
@@ -8658,7 +8657,6 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
        }
     }@catch (NSException *exp)
     {
-        appDelegate.connection_error = FALSE;
         NSMutableDictionary *Errordict=[[NSMutableDictionary alloc]init];
         [Errordict setObject:exp.name forKey:@"ExpName"];
         [Errordict setObject:exp.reason forKey:@"ExpReason"];
