@@ -1991,6 +1991,7 @@ extern void SVMXLog(NSString *format, ...);
     
     else if([process_type isEqualToString:@"EDIT"])
     {
+        EventUpdate_Continue = FALSE;
         NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGET process_id:processId layoutId:layout_id objectName:headerObjName];
         //[appDelegate.databaseInterface  getValueMappingForlayoutId:layout_id process_id:processId objectName:headerObjName];
         
