@@ -1605,8 +1605,8 @@ extern void SVMXLog(NSString *format, ...);
         {
             NSString * startDateTime = [valuesDict objectForKey:@"StartDateTime"];
             NSString * enddatetime = [valuesDict objectForKey:@"EndDateTime"];
-            NSString * overlappingEvent = [appDelegate.databaseInterface getallOverLappingEventsForStartDateTime:startDateTime EndDateTime:enddatetime];
             NSString * local_id = [valuesDict objectForKey:@"local_id"];
+            NSString * overlappingEvent = [appDelegate.databaseInterface getallOverLappingEventsForStartDateTime:startDateTime EndDateTime:enddatetime local_id:local_id];
             [self insertIntoEventsLocal_ids:local_id fromEvent_temp_table:Event_local_Ids];
             [databaseInterfaceDelegate displayALertViewinSFMDetailview:overlappingEvent];
         }
@@ -3410,7 +3410,7 @@ extern void SVMXLog(NSString *format, ...);
         {
             NSString * startDateTime = [dict objectForKey:@"StartDateTime"];
             NSString * enddatetime = [dict objectForKey:@"EndDateTime"];
-            NSString * overlappingEvent = [appDelegate.databaseInterface getallOverLappingEventsForStartDateTime:startDateTime EndDateTime:enddatetime];
+            NSString * overlappingEvent = [appDelegate.databaseInterface getallOverLappingEventsForStartDateTime:startDateTime EndDateTime:enddatetime local_id:local_id];
             [databaseInterfaceDelegate displayALertViewinSFMDetailview:overlappingEvent];
         }
     }
@@ -5905,6 +5905,9 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void)deleteAllOndemandRecordsPartOfDownloadCriteriaForSfId:(NSString *)sf_id
 {
+    BOOL isTableExist= [appDelegate.dataBase isTabelExistInDB:@"on_demand_download"];
+    if(!isTableExist)
+        return;
     NSString * delete_statement = [NSString stringWithFormat:@"DELETE FROM on_demand_download  WHERE sf_id = '%@'",sf_id];
     char * err;
     
@@ -5974,6 +5977,9 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void)updateOndemandRecordForId:(NSString *)record_id
 {
+   BOOL isTableExist= [appDelegate.dataBase isTabelExistInDB:@"on_demand_download"];
+    if(!isTableExist)
+        return;
     NSDate * date = [NSDate date];
     NSString * today_Date = @"";
     NSDateFormatter * dateFormatter  = [[NSDateFormatter alloc] init];
@@ -6368,12 +6374,12 @@ extern void SVMXLog(NSString *format, ...);
     }
 }
 
--(NSString * )getallOverLappingEventsForStartDateTime:(NSString *)startDateTime EndDateTime:(NSString *)endDateTime
+-(NSString * )getallOverLappingEventsForStartDateTime:(NSString *)startDateTime EndDateTime:(NSString *)endDateTime local_id:(NSString *)local_id
 {
     NSString * overlapping_events = nil;
     NSMutableString * mutable_str = [[NSMutableString alloc] initWithCapacity:0];
     NSMutableArray * events = [[NSMutableArray alloc] initWithCapacity:0];
-    NSString * query_str = [NSString stringWithFormat:@"SELECT DISTINCT Subject,WhatId  from  Event where(strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@','+0000','Z'))  <=  strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') ) AND strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@','+0000','Z') )   > strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') ) ) OR (strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@','+0000','Z') ) <  strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( EndDateTime, '+0000','Z') )   AND strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@', '+0000','Z') ) >= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( EndDateTime, '+0000','Z') ))  OR (strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@', '+0000','Z') ) <= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') ) AND strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@', '+0000','Z') ) >= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( EndDateTime, '+0000','Z') )) OR (strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@','+0000','Z') ) >= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') )  and strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@', '+0000','Z') ) <= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  (EndDateTime, '+0000','Z') ))",startDateTime,endDateTime,startDateTime,endDateTime,startDateTime,endDateTime,startDateTime,endDateTime];
+    NSString * query_str = [NSString stringWithFormat:@"SELECT DISTINCT Subject,WhatId  from  Event where ((strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@','+0000','Z'))  <=  strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') ) AND strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@','+0000','Z') )   > strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') ) ) OR (strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@','+0000','Z') ) <  strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( EndDateTime, '+0000','Z') )   AND strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@', '+0000','Z') ) >= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( EndDateTime, '+0000','Z') ))  OR (strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@', '+0000','Z') ) <= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') ) AND strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@', '+0000','Z') ) >= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( EndDateTime, '+0000','Z') )) OR (strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@','+0000','Z') ) >= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') )  and strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@', '+0000','Z') ) <= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  (EndDateTime, '+0000','Z') )) )  and local_id != '%@'",startDateTime,endDateTime,startDateTime,endDateTime,startDateTime,endDateTime,startDateTime,endDateTime,local_id];
     NSString * subject = nil , * relatedTo = nil ;
     sqlite3_stmt * stmt;
     if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query_str UTF8String], -1, &stmt, nil) == SQLITE_OK)

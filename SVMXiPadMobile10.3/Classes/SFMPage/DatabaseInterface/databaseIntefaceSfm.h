@@ -28,7 +28,7 @@
 
 //sahana 16th Jan for alerting overlapping events fix
 -(NSString *)getNameForSFId:(NSString *)sfId;
--(NSString *)getallOverLappingEventsForStartDateTime:(NSString *)startDateTime EndDateTime:(NSString *)endDateTime;
+-(NSString *)getallOverLappingEventsForStartDateTime:(NSString *)startDateTime EndDateTime:(NSString *)endDateTime local_id:(NSString *)local_id;
 //Sahana Dec 7th 2012
 -(void)InsertInto_User_created_event_for_local_id:(NSString *)local_id sf_id:(NSString *)sf_id;
 -(void)insertIntoEventsLocal_ids:(NSString *)local_id  fromEvent_temp_table:(NSString *)event_temp_table;
