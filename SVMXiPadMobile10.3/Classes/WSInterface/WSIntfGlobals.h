@@ -15,6 +15,8 @@
 @end
 
 #define KMinPkgForScheduleEvents                       10.20000
+#define KMinPkgForLocalUpdateEventCreation             10.20003
+#define DOD                                            9.3
 
 #define NOT_OWNERLESSTHAN                               @"NOT_OWNERLESSTHAN"
 #define NOT_OWNER_GREATERTHAN                           @"NOT_OWNER_GREATERTHAN"

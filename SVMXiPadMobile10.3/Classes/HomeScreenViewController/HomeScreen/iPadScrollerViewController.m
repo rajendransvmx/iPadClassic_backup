@@ -815,7 +815,30 @@ const NSUInteger kNumImages = 7;
     {
         appDelegate.SyncStatus = SYNC_GREEN;
     }
-
+    NSString *packgeVersion;
+    if (userDefaults)
+    {
+        packgeVersion = [userDefaults objectForKey:kPkgVersionCheckForGPS_AND_SFM_SEARCH];
+        int _stringNumber = [packgeVersion intValue];
+		int check = (DOD * 100000);
+		SMLog(@"%d", check);
+        if(_stringNumber >= check)
+		{
+			NSString * query =  [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS on_demand_download ('object_name' VARCHAR , 'sf_id' VARCHAR PRIMARY KEY  NOT NULL UNIQUE, 'time_stamp' DATETIME ,'local_id' VARCHAR, 'record_type' VARCHAR, 'json_record' VARCHAR) "];
+			[appDelegate.dataBase createTable:query];
+		}
+        
+        int check_for_local_event_table = (KMinPkgForLocalUpdateEventCreation *100000);
+        if( _stringNumber >= check_for_local_event_table)
+        {
+            NSString *  query =  [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS %@ ('object_name' VARCHAR ,'local_id' VARCHAR) ",LOCAL_EVENT_UPDATE];
+            [appDelegate.dataBase createTable:query];
+        }
+                
+    }
+    
+    
+    
 }
 -(void)initialDataSetUpAfterSyncOrLogin
 {
