@@ -11121,6 +11121,8 @@ extern void SVMXLog(NSString *format, ...);
                         
                         [self UpdateAlldeletedRecordsIntoSFTrailerTable:detail_deleted_records  object_name:detail_object_name];
                     }
+                    [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:Event_local_Ids];
+                    [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:LOCAL_EVENT_UPDATE];
                     [appDelegate callDataSync];
                 }
                 else

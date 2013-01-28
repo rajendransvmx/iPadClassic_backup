@@ -3473,6 +3473,12 @@ extern void SVMXLog(NSString *format, ...);
     if ([objectName isEqualToString:@"Case"])
         objectName = @"'Case'";
     
+    if([objectName isEqualToString:@"Event"])
+    {
+        [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:Event_local_Ids];
+        [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:LOCAL_EVENT_UPDATE];
+    }
+    
     NSString * update_statement;
     if([updateValue length] != 0 && sf_id != nil && [sf_id length] != 0 )
         update_statement = [NSString stringWithFormat:@"UPDATE %@ SET %@ WHERE Id = '%@'",objectName ,updateValue,sf_id];
@@ -6362,6 +6368,13 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void)deleteRecordsFromEventLocalIdsFromTable:(NSString *)event_temp_table
 {
+    
+    BOOL table_exist = [appDelegate.dataBase isTabelExistInDB:event_temp_table];
+    if(!table_exist)
+    {
+        return;
+    }
+    
     NSString * delete_query = [NSString stringWithFormat:@"DELETE FROM %@ ",event_temp_table];
     char * err_delete;
     
@@ -6379,7 +6392,7 @@ extern void SVMXLog(NSString *format, ...);
     NSString * overlapping_events = nil;
     NSMutableString * mutable_str = [[NSMutableString alloc] initWithCapacity:0];
     NSMutableArray * events = [[NSMutableArray alloc] initWithCapacity:0];
-    NSString * query_str = [NSString stringWithFormat:@"SELECT DISTINCT Subject,WhatId  from  Event where ((strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@','+0000','Z'))  <=  strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') ) AND strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@','+0000','Z') )   > strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') ) ) OR (strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@','+0000','Z') ) <  strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( EndDateTime, '+0000','Z') )   AND strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@', '+0000','Z') ) >= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( EndDateTime, '+0000','Z') ))  OR (strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@', '+0000','Z') ) <= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') ) AND strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@', '+0000','Z') ) >= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( EndDateTime, '+0000','Z') )) OR (strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@','+0000','Z') ) >= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ( StartDatetime, '+0000','Z') )  and strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  ('%@', '+0000','Z') ) <= strftime('%%Y-%%m-%%d %%H:%%M', REPLACE  (EndDateTime, '+0000','Z') )) )  and local_id != '%@'",startDateTime,endDateTime,startDateTime,endDateTime,startDateTime,endDateTime,startDateTime,endDateTime,local_id];
+    NSString * query_str = [NSString stringWithFormat:@"SELECT DISTINCT  Subject, WhatId FROM Event WHERE (('%@' >=  StartDatetime AND '%@' < EndDateTime) OR ('%@' >= StartDatetime AND    '%@' <=  EndDateTime) OR  ('%@' <= StartDatetime  AND '%@' >= EndDateTime)   OR ('%@' >=  StartDatetime  AND '%@' <= EndDateTime)) AND local_id!='%@'" ,startDateTime,startDateTime,endDateTime,endDateTime,startDateTime,endDateTime ,startDateTime,startDateTime,local_id];
     NSString * subject = nil , * relatedTo = nil ;
     sqlite3_stmt * stmt;
     if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query_str UTF8String], -1, &stmt, nil) == SQLITE_OK)
