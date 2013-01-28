@@ -367,6 +367,8 @@
 #define SFM_CRITERIA_ENDS_WITH              @"IPAD019_TAG010"
 #define SFM_CRITERIA_STARTS_WITH            @"IPAD019_TAG011"
 #define SFM_SRCH_CLOSE                      @"IPAD019_TAG012"
+#define SFM_SHOW                            @"IPAD020_TAG001"
+#define SFM_RECORDS                         @"IPAD020_TAG002"
 
 //Location Ping
 #define Location_Setting_Disable            @"Location Services Setting is disabled by the User"

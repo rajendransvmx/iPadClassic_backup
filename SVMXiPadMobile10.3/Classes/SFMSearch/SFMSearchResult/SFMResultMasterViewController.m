@@ -153,6 +153,9 @@ extern void SVMXLog(NSString *format, ...);
     searchString.placeholder = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_SRCH_ENTER_TEXT];
     searchCriteriaLabel.text = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_SRCH_Criteria];
     includeOnlineResultLabel.text = [appDelegate.wsInterface.tagsDictionary objectForKey:INCLUDE_ONLINE_RESULTS];
+    limitShowLabel.text=[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_SHOW];
+    limitRecordLabel.text=[appDelegate.wsInterface.tagsDictionary objectForKey:SFM_RECORDS];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self 
                                              selector:@selector(reachabilityChanged:) 
                                                  name:kReachabilityChangedNotification

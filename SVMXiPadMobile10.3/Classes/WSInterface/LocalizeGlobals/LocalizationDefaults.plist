@@ -612,5 +612,9 @@
 	<string>Related To</string>
 	<key>IPAD018_TAG034</key>
 	<string>Reset Application</string>
+	<key>IPAD020_TAG001</key>
+	<string>Show</string>
+	<key>IPAD020_TAG002</key>
+	<string>Records</string>
 </dict>
 </plist>
