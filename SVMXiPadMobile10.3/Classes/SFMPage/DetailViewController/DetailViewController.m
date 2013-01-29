@@ -10117,6 +10117,8 @@ extern void SVMXLog(NSString *format, ...);
         {
             if([targetCall isEqualToString:save])
             {
+                save_status = EDIT_SAVE;
+                
                 [self pageLevelEventsForEvent:BEFORESAVE];
                 [self pageLevelEventsForEvent:AFTERSAVE];
                
@@ -10518,6 +10520,11 @@ extern void SVMXLog(NSString *format, ...);
                 if ([targetCall isEqualToString:quick_save])
                 {
                     [activity startAnimating];
+                    save_status = EDIT_QUICKSAVE;
+                }
+                else
+                {
+                    save_status = EDIT_SAVE;                    
                 }
                 
                 [self pageLevelEventsForEvent:BEFORESAVE];
@@ -11203,6 +11210,7 @@ extern void SVMXLog(NSString *format, ...);
             //write a method to  save the header and lines 
             if([targetCall isEqualToString:save])
             {
+                save_status = EDIT_SAVE;
                 
                 [self pageLevelEventsForEvent:BEFORESAVE];
                 [self pageLevelEventsForEvent:AFTERSAVE];
@@ -12915,8 +12923,16 @@ extern void SVMXLog(NSString *format, ...);
         EventUpdate_Continue = TRUE;
         [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:LOCAL_EVENT_UPDATE];
         NSMutableArray  *keys_event = nil, *objects_event = nil;
-        objects_event = [NSArray arrayWithObjects:@"",save,@"",@"",gBUTTON_TYPE_TDM_IPAD_ONLY ,@"",@"true",nil];
         keys_event = [NSArray arrayWithObjects:SFW_ACTION_ID,SFW_ACTION_DESCRIPTION,SFW_EXPRESSION_ID,SFW_PROCESS_ID,SFW_ACTION_TYPE ,SFW_WIZARD_ID,SFW_ENABLE_ACTION_BUTTON,nil];
+        if(save_status == EDIT_QUICKSAVE)
+        {
+            
+            objects_event = [NSArray arrayWithObjects:@"",quick_save,@"",@"",gBUTTON_TYPE_TDM_IPAD_ONLY ,@"",@"true",nil];
+        }
+        else
+        {
+            objects_event = [NSArray arrayWithObjects:@"",save,@"",@"",gBUTTON_TYPE_TDM_IPAD_ONLY ,@"",@"true",nil];
+        }
         NSMutableDictionary * dict_events_save = [NSMutableDictionary dictionaryWithObjects:objects_event forKeys:keys_event];
         [self offlineActions:dict_events_save];
         

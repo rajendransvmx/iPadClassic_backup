@@ -38,6 +38,13 @@
 NSInteger multiAddFlag;
 NSString * objectLabel;
 
+typedef enum Onclick{
+    EDIT_SAVE = 0,
+    EDIT_QUICKSAVE = 1,
+    
+}SAVE_STATUS;
+
+
 @interface DetailViewController : UIViewController
 <UIPopoverControllerDelegate,
 UISplitViewControllerDelegate,
@@ -58,6 +65,8 @@ SummaryViewControllerDelegate,
 ChatterDelegate,
 SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceProtocol>
 {
+    SAVE_STATUS save_status;
+    
     BOOL EventUpdate_Continue;
     
     id <DetailViewControllerDelegate> delegate;
