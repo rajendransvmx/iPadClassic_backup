@@ -1722,7 +1722,10 @@ extern void SVMXLog(NSString *format, ...);
     NSString * isstandard = @"";
     NSString * isdefault = @"";
     
-    NSString *querystring2 = [NSString stringWithFormat:@"Select default_lookup_column,object_name,is_default,is_standard from '%@' where object_name = '%@'", SFNAMEDSEARCH,object];
+    NSString * no_of_records = @"";
+    int records = 0;
+    
+    NSString *querystring2 = [NSString stringWithFormat:@"Select default_lookup_column,object_name,is_default,is_standard, no_of_lookup_records from '%@' where object_name = '%@'", SFNAMEDSEARCH,object];
     NSArray * lookUp_info_object_keys = [NSArray arrayWithObjects:LOOKUP_DEFAULT_LOOK_UP_CLMN,LOOKUP_OBJECT_NAME,LOOkUP_IS_DEFAULT,LOOKUP_IS_STANDARD, nil];
     
     sqlite3_stmt * stmt_;
@@ -1757,12 +1760,21 @@ extern void SVMXLog(NSString *format, ...);
             {
                 isdefault = [NSString stringWithUTF8String:temp_isdefault];
             }
+            char * temp_records = (char *) synchronized_sqlite3_column_text(stmt_, 4);
+            if (temp_records != nil && strlen(temp_records))
+            {
+                no_of_records = [NSString stringWithUTF8String:temp_records];
+                records = [no_of_records intValue];
+            }
+            else if(temp_records == nil || !(strlen(temp_records)))
+            {
+                records = LOOKUP_RECORDS_LIMIT;
+            }
+            
             NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:default_column,Object_name,isstandard,isdefault, nil] forKeys:lookUp_info_object_keys];
             [lookup_object_info addObject:dict];
         }
     }
-	
-    
  	synchronized_sqlite3_finalize(stmt_);
     if(lookupID == nil || [lookupID isEqualToString:@""])
     {
@@ -1785,11 +1797,11 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%d", [searchForString length]);
         if ([searchForString length] > 1)
         {
-            querystring2 = [NSString stringWithFormat:@"Select %@ , Id from '%@'  WHERE  Id  NOT NULL   AND Id != '' and %@ LIKE '%%%@%%' ", default_column_name, object, default_column_name, _searchForString];
+            querystring2 = [NSString stringWithFormat:@"Select %@ , Id from '%@'  WHERE  Id  NOT NULL   AND Id != '' and %@ LIKE '%%%@%%' LIMIT %d", default_column_name, object, default_column_name, _searchForString, records];
         }
 		else
 		{
-            querystring2 = [NSString stringWithFormat:@"Select %@ , Id from '%@'  WHERE  Id  NOT NULL   AND Id != '' ", default_column_name, object];
+            querystring2 = [NSString stringWithFormat:@"Select %@ , Id from '%@'  WHERE  Id  NOT NULL   AND Id != '' LIMIT %d", default_column_name, object, records];
         }
         
         sqlite3_stmt * stmt;
@@ -1993,7 +2005,7 @@ extern void SVMXLog(NSString *format, ...);
             [searchFieldNames appendFormat:@"  Id  NOT NULL AND Id != ' ' "];
         }
         
-        NSString * querystring2 = [NSString stringWithFormat:@"Select %@ from '%@'  where %@ ", result_fieldNames, object, searchFieldNames];
+        NSString * querystring2 = [NSString stringWithFormat:@"Select %@ from '%@'  where %@ LIMIT %d ", result_fieldNames, object, searchFieldNames, records];
               
         if(synchronized_sqlite3_prepare_v2(appDelegate.db, [querystring2 UTF8String], -1, &stmt, nil) == SQLITE_OK)
         {
