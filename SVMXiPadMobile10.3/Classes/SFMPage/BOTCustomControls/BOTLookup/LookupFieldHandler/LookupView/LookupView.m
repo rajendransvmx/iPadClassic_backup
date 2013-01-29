@@ -31,6 +31,8 @@ extern void SVMXLog(NSString *format, ...);
 - (void)dealloc
 {
     [describeObject release];
+    [lookupData release];
+    [popover release];
     [super dealloc];
 }
 
