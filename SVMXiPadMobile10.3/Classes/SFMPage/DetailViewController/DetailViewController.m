@@ -2635,7 +2635,6 @@ extern void SVMXLog(NSString *format, ...);
                             
 
                         }
-
                         
                     }
                     
@@ -2649,9 +2648,36 @@ extern void SVMXLog(NSString *format, ...);
                 Total_height = Total_height +40 ;
             }*/
             
-
+            //Vipin  28 th Jan
+            
+            CGFloat popoverHeight = 0.0f;
+            
+            CGFloat maxAllowedPopoverHeight = ((appDelegate.sfmPageController.rootView.view.frame.size.height * 107) / 100.0);
+            
+            if (Total_height > maxAllowedPopoverHeight)
+            {
+                popoverHeight = maxAllowedPopoverHeight;
+                
+            } else {
+                
+                popoverHeight = Total_height;
+            }
+            
+            
             UIPopoverController * popover = [[[UIPopoverController alloc] initWithContentViewController:sfwToolBar] autorelease];
-            [popover setPopoverContentSize:CGSizeMake(1024, Total_height)];
+            
+            // Set up SFM Wizard tool bar view size
+            CGRect toolBarViewFrame =  sfwToolBar.view.frame;
+            toolBarViewFrame.size.height = popoverHeight;
+            sfwToolBar.view.frame = toolBarViewFrame;
+            
+            // Set up SFM Wizard tool bar table view size
+            CGRect tableViewFrame =  sfwToolBar.sfw_tableview.frame;
+            tableViewFrame.size.height = popoverHeight;
+            sfwToolBar.sfw_tableview.frame = tableViewFrame;
+            
+            // Need to set content size
+            [popover setPopoverContentSize:sfwToolBar.view.frame.size];
             popover.delegate = self;
             CGPoint p ;
             CGSize q;
