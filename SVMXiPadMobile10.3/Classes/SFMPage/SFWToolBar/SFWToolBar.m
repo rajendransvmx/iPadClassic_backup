@@ -180,6 +180,8 @@ extern void SVMXLog(NSString *format, ...);
 {
     NSString * identifier = @"cell";
     
+    static int backgroudTag = 8001;
+    
     tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     UITableViewCell * cell  = [tableView dequeueReusableCellWithIdentifier:identifier];
     UIView * background = nil;
@@ -200,6 +202,10 @@ extern void SVMXLog(NSString *format, ...);
         }
         else
         {
+            // Vipin 28th Jan : Reset content view 
+            background = [cell.contentView viewWithTag:backgroudTag];
+            background = nil;
+            
             //sahana 16th August
             for(int j = 0; j< [[cell.contentView subviews] count]; j++)
             {
@@ -264,6 +270,7 @@ extern void SVMXLog(NSString *format, ...);
                     final_height = final_height + 20;
                
                 background = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, width, final_height)] autorelease];
+                background.tag = backgroudTag;
             }
             
             for(int j = x, index =0  ; j < (x+6) ;j++, index++)
@@ -328,7 +335,8 @@ extern void SVMXLog(NSString *format, ...);
     }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
-    [cell addSubview:background];   
+    [cell.contentView addSubview:background];
+        
 	}@catch (NSException *exp) {
 	SMLog(@"Exception Name SFWToolBar :cellForRowAtIndexPath %@",exp.name);
 	SMLog(@"Exception Reason SFWToolBar :cellForRowAtIndexPath %@",exp.reason);
