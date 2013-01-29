@@ -1610,6 +1610,10 @@ extern void SVMXLog(NSString *format, ...);
             [self insertIntoEventsLocal_ids:local_id fromEvent_temp_table:Event_local_Ids];
             [databaseInterfaceDelegate displayALertViewinSFMDetailview:overlappingEvent];
         }
+        else
+        {
+            [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:insert_statement type:INSERTQUERY];
+        }
         
     }
     else
@@ -3412,6 +3416,10 @@ extern void SVMXLog(NSString *format, ...);
             NSString * enddatetime = [dict objectForKey:@"EndDateTime"];
             NSString * overlappingEvent = [appDelegate.databaseInterface getallOverLappingEventsForStartDateTime:startDateTime EndDateTime:enddatetime local_id:local_id];
             [databaseInterfaceDelegate displayALertViewinSFMDetailview:overlappingEvent];
+        }
+        else
+        {
+             [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:update_statement type:UPDATEQUERY];
         }
     }
     else
@@ -6202,6 +6210,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", insert_query);
 		SMLog(@"METHOD: insertrecordintoOnDemandTableForId");
         SMLog(@"ERROR IN INSERTING %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:insert_query type:INSERTQUERY];
 
     }
 
@@ -6331,6 +6340,11 @@ extern void SVMXLog(NSString *format, ...);
 -(void)insertIntoEventsLocal_ids:(NSString *)local_id  fromEvent_temp_table:(NSString *)event_temp_table
 {
     //delete before created event
+    BOOL table_exist = [appDelegate.dataBase isTabelExistInDB:event_temp_table];
+    if(!table_exist)
+    {
+        return;
+    }
     [self deleteRecordsFromEventLocalIdsFromTable:event_temp_table];
     
     NSString * insert_query = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ ('object_name','local_id' ) VALUES ('%@','%@')" , event_temp_table,@"Event",local_id ];
@@ -6384,6 +6398,8 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", delete_query);
 		SMLog(@"METHOD:deleteRecordsFromEventLocalIds");
 		SMLog(@"ERROR IN DELETE %s", err_delete);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err_delete] ForQuery:delete_query type:DELETEQUERY];
+        
     }
 }
 

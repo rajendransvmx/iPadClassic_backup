@@ -582,7 +582,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", sql);
 		SMLog(@"METHOD: updateMovedEventWithStartTime" );
 		SMLog(@"ERROR IN UPDATING %s", err);
-
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:sql type:UPDATEQUERY];
     }
 }
 
@@ -724,6 +724,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", queryStatement);
 		SMLog(@"METHOD:deleteTaskFromDB");
 		SMLog(@"ERROR IN DELETE %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryStatement type:DELETEQUERY];
 
     }
     
@@ -2390,7 +2391,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", queryString);
 		SMLog(@"METHOD:insertTroubleShootDataInDB " );
 		SMLog(@"ERROR IN UPDATING %s", err);
-
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryString type:UPDATEQUERY];
     }
     
 }
@@ -2410,6 +2411,7 @@ extern void SVMXLog(NSString *format, ...);
 			SMLog(@"%@", queryString);
 			SMLog(@"METHOD: insertProductName");
 			SMLog(@"ERROR IN INSERTING %s", err);
+			[appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryString type:INSERTQUERY];
         }  
     }
 }
@@ -2433,6 +2435,7 @@ extern void SVMXLog(NSString *format, ...);
 		SMLog(@"%@", deleteQuery);
 		SMLog(@"METHOD:insertChatterDetailsIntoDBForWithId");
 		SMLog(@"ERROR IN DELETE %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:deleteQuery type:DELETEQUERY];
 	}
 
     
@@ -2452,6 +2455,7 @@ extern void SVMXLog(NSString *format, ...);
             SMLog(@"%@", insertStatement);
 			SMLog(@"METHOD: insertChatterDetailsIntoDBForWithId");
 			SMLog(@"ERROR IN INSERTING %s", err);
+            [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:insertStatement type:INSERTQUERY];
         }  
         
     }
@@ -2546,6 +2550,7 @@ extern void SVMXLog(NSString *format, ...);
     {
         SMLog(@"%@", deleteQuery);
 		SMLog(@"ERROR IN DELETING %s", &err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:deleteQuery type:DELETEQUERY];
     }
    
     
@@ -2564,6 +2569,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", queryString);
 		SMLog(@"METHOD: insertImageDataInChatterDetailsForUserName");
         SMLog(@"ERROR IN INSERTING %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryString type:INSERTQUERY];
     }
 }
 
@@ -2610,6 +2616,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", deleteQuery);
 		SMLog(@"METHOD: insertProductPicture");
         SMLog(@"ERROR IN INSERTING %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:deleteQuery type:DELETEQUERY];
     }
     
     
@@ -2624,6 +2631,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", insertQuery);
 		SMLog(@"METHOD: insertProductPicture");
         SMLog(@"ERROR IN INSERTING %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:insertQuery type:INSERTQUERY];
     }
 }
 
@@ -2754,12 +2762,14 @@ extern void SVMXLog(NSString *format, ...);
 			SMLog(@"%@", queryStatement);
 			SMLog(@"METHOD:insertSignatureData " );
 			SMLog(@"ERROR IN UPDATING %s", err);
+            [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryStatement type:UPDATEQUERY];
 		}
 		else
 		{
 			SMLog(@"%@", queryStatement);
 			SMLog(@"METHOD:insertSignatureData");
 			SMLog(@"ERROR IN INSERTING %s", err);
+            [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryStatement type:INSERTQUERY];
 
 		}
     }
@@ -2835,6 +2845,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", queryStatement);
 		SMLog(@"METHOD:deleteSignature");
 		SMLog(@"ERROR IN DELETE %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryStatement type:DELETEQUERY];
 	}
     
 }
@@ -2849,6 +2860,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", queryStatement);
 		SMLog(@"METHOD:deleteAllSignatureData");
 		SMLog(@"ERROR IN DELETE %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryStatement type:DELETEQUERY];
 
 	}
 }
@@ -2916,7 +2928,7 @@ extern void SVMXLog(NSString *format, ...);
 		SMLog(@"%@", updateQuery);
 		SMLog(@"METHOD: getSFIdForSignature" );
 		SMLog(@"ERROR IN UPDATING %s", err);
-
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:updateQuery type:UPDATEQUERY];
         return;
     }
     else
@@ -2995,7 +3007,8 @@ extern void SVMXLog(NSString *format, ...);
         {
             SMLog(@"%@", deleteQuery);
 			SMLog(@"METHOD:insertProductManualNameInDB");
-			SMLog(@"ERROR IN DELETE %s", err);      
+			SMLog(@"ERROR IN DELETE %s", err);
+            [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:deleteQuery type:DELETEQUERY];
         } 
         
         
@@ -3007,6 +3020,7 @@ extern void SVMXLog(NSString *format, ...);
             SMLog(@"%@", queryString);
 			SMLog(@"METHOD: insertProductManualNameInDB");
 			SMLog(@"ERROR IN INSERTING %s", err);
+            [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryString type:INSERTQUERY];
         }  
     } 
 }
@@ -3021,6 +3035,7 @@ extern void SVMXLog(NSString *format, ...);
 		SMLog(@"%@", updateString);
 		SMLog(@"METHOD: insertProductManualBody" );
 		SMLog(@"ERROR IN UPDATING %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:updateString type:UPDATEQUERY];
 
     }
 }
@@ -3107,6 +3122,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", deleteQuery);
 		SMLog(@"METHOD:updateProductTableWithProductName");
 		SMLog(@"ERROR IN DELETE %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:deleteQuery type:DELETEQUERY];
     } 
     
     NSMutableString *query = [NSString stringWithFormat:@"INSERT OR REPLACE INTO Product2 (Id, Name) VALUES ('%@', '%@')", productId, Name];
@@ -3117,7 +3133,8 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", query);
 		SMLog(@"METHOD: updateProductTableWithProductName");
         SMLog(@"ERROR IN INSERTING %s", err);
-    }  
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:query type:INSERTQUERY];
+    }
 }
 
 
@@ -3156,6 +3173,7 @@ extern void SVMXLog(NSString *format, ...);
 				SMLog(@"%@", insertQuery);
 				SMLog(@"METHOD:insertTroubleshootingIntoDB " );
 				SMLog(@"ERROR IN UPDATING %s", err);
+                [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:insertQuery type:UPDATEQUERY];
 
 			}  
 
@@ -3169,7 +3187,9 @@ extern void SVMXLog(NSString *format, ...);
 				SMLog(@"%@", insertQuery);
 				SMLog(@"METHOD: insertTroubleshootingIntoDB");
 				SMLog(@"ERROR IN INSERTING %s", err);
-			}  
+                [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:insertQuery type:INSERTQUERY];
+
+			}
 
 		}
 		
@@ -3544,8 +3564,8 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", updateQuery);
 		SMLog(@"METHOD:updateOverrideFlagWithObjectName " );
 		SMLog(@"ERROR IN UPDATING %s", err);
-
-    }  
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:updateQuery type:UPDATEQUERY];
+    }
 }
 
 - (NSString *)getLabelForObject:(NSString *)_objectName
@@ -3653,13 +3673,17 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", deleteQuery);
 		SMLog(@"METHOD:deleteUndonerecordsWithId");
 		SMLog(@"ERROR IN DELETE %s", err);
-    } 
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:deleteQuery type:DELETEQUERY];
+
+    }
     
     if (synchronized_sqlite3_exec(appDelegate.db, [_deleteQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
         SMLog(@"%@", _deleteQuery);
 		SMLog(@"METHOD:deleteUndonerecordsWithId");
-		SMLog(@"ERROR IN DELETE %s", err);      
+		SMLog(@"ERROR IN DELETE %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:_deleteQuery type:DELETEQUERY];
+
     }
     
     
@@ -3670,6 +3694,8 @@ extern void SVMXLog(NSString *format, ...);
 		SMLog(@"%@", delete_from_trailer);
 		SMLog(@"METHOD:deleteUndonerecordsWithId");
 		SMLog(@"ERROR IN DELETE %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:delete_from_trailer type:DELETEQUERY];
+
 	}
     
 }
@@ -3705,13 +3731,15 @@ extern void SVMXLog(NSString *format, ...);
 			SMLog(@"%@", queryStatement);
 			SMLog(@"METHOD:insertPDFintoDB " );
 			SMLog(@"ERROR IN UPDATING %s", err);
-
+            [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryStatement type:UPDATEQUERY];
 		}
 		else
 		{
 			SMLog(@"%@", queryStatement);
 			SMLog(@"METHOD: insertPDFintoDB");
 			SMLog(@"ERROR IN INSERTING %s", err);
+            [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryStatement type:INSERTQUERY];
+
 		}
         
     } 
@@ -3785,6 +3813,8 @@ extern void SVMXLog(NSString *format, ...);
             SMLog(@"%@", deleteQuery);
 			SMLog(@"METHOD:deletePDFFromDBWithId");
 			SMLog(@"ERROR IN DELETE %s", err);
+            [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:deleteQuery type:DELETEQUERY];
+
 			return;
         }
     }
@@ -3822,7 +3852,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", updateQuery);
 		SMLog(@"METHOD:getSFIdForPDF " );
 		SMLog(@"ERROR IN UPDATING %s", err);
-
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:updateQuery type:UPDATEQUERY];
         return;
     }
     else
@@ -3940,6 +3970,8 @@ extern void SVMXLog(NSString *format, ...);
 		SMLog(@"%@", queryStatement);
 		SMLog(@"METHOD:deletePDFF");
 		SMLog(@"ERROR IN DELETE %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryStatement type:DELETEQUERY];
+
     }
 }
     
@@ -3996,6 +4028,8 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", insertQuery);
 		SMLog(@"METHOD: insertContactImageIntoDatabase");
         SMLog(@"ERROR IN INSERTING %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:insertQuery type:INSERTQUERY];
+
     }
 
     
@@ -4064,7 +4098,8 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", insertQuery);
 		SMLog(@"METHOD: insertIntoConflictInternetErrorWithSyncType");
         SMLog(@"ERROR IN INSERTING %s", err);
-        
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:insertQuery type:INSERTQUERY];
+
     }
 }
 
@@ -4079,7 +4114,8 @@ extern void SVMXLog(NSString *format, ...);
         
         SMLog(@"%@", insertQuery);
 		SMLog(@"METHOD: insertIntoConflictInternetErrorForMetaSync");
-        SMLog(@"ERROR IN INSERTING %s", err);;
+        SMLog(@"ERROR IN INSERTING %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:insertQuery type:INSERTQUERY];
         
     }
 
@@ -4145,6 +4181,8 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", deleteQuery);
 		SMLog(@"METHOD:removeInternetConflicts");
 		SMLog(@"ERROR IN DELETE %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:deleteQuery type:DELETEQUERY];
+
     }
 
 }
@@ -4160,7 +4198,9 @@ extern void SVMXLog(NSString *format, ...);
         
         SMLog(@"%@", deleteQuery);
 		SMLog(@"METHOD:insertMetaSyncStatus");
-		SMLog(@"ERROR IN DELETE %s", err);      
+		SMLog(@"ERROR IN DELETE %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:deleteQuery type:DELETEQUERY];
+
         
     }
 
@@ -4172,7 +4212,8 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", insertQuery);
 		SMLog(@"METHOD: insertMetaSyncStatus");
         SMLog(@"ERROR IN INSERTING %s", err);
-        
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:insertQuery type:INSERTQUERY];
+   
     }
 
 }
