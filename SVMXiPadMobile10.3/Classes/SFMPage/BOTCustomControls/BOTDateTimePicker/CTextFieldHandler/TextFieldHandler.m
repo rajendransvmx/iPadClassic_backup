@@ -61,9 +61,9 @@
 {
     datepicker.delegate = nil;
     datepicker.datePickerDelegate = nil;
-    [datepicker release];
-//    [datePickerPopOver release];
     [datePickerPopOver dismissPopoverAnimated:YES];
+    [datePickerPopOver release];
+    [datepicker release];
 }
 
 @end
