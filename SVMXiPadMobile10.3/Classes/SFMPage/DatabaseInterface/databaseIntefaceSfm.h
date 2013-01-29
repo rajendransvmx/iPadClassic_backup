@@ -358,6 +358,7 @@
 #define LOOKUP_OBJECT_NAME            @"object_name"
 #define LOOkUP_IS_DEFAULT             @"is_default"
 #define LOOKUP_IS_STANDARD            @"is_standard"
+#define LOOKUP_RECORDS_LIMIT          10
 
 
 //VALUE MAPPING THINGS 
