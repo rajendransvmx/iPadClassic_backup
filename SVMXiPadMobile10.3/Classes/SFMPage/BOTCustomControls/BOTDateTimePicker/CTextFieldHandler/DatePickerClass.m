@@ -28,6 +28,8 @@
 
 - (void)dealloc
 {
+    [picker release];
+    picker = nil;
     [super dealloc];
 }
 
