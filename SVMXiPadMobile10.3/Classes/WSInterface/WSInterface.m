@@ -4913,25 +4913,33 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 {
     int ret;
     NSException* myException;
-
+    ALERT_VIEW_ERROR var=APPLICATION_ERROR;
     SMLog(@"OPERATION COMPLETED RESPONSE");
     @try
     {
     if (response.error != nil)
     {
-       
-       didCompleteAfterSaveEventCalls = YES;
-       appDelegate.connection_error = TRUE;
-       NSError *error=response.error;
-                    NSDictionary *userinfo=error.userInfo;
-                    NSString *type=error.domain;
-                    NSString *des=[error localizedDescription];
-                    myException = [NSException
-                                                exceptionWithName:[NSString stringWithFormat:@"%@",type]
-                                                reason:[NSString stringWithFormat:@"%@",des]
-                                                userInfo:userinfo];
-                    @throw myException;
-       return;
+        didCompleteAfterSaveEventCalls = YES;
+        appDelegate.connection_error = TRUE;
+        NSError *error=response.error;
+        NSString *type=error.domain;
+        if([type Contains:@"NSURLErrorDomain"])
+        {
+            return;
+        }
+        NSDictionary *userinfo=error.userInfo;
+        NSMutableDictionary *correctiveAction=[[[NSMutableDictionary alloc]init]autorelease];
+        [correctiveAction setObject:userinfo forKey:@"userInfo"];
+        NSString *des=[error localizedDescription];
+
+        myException = [NSException
+        exceptionWithName:type
+        reason:des
+        userInfo:correctiveAction];
+
+        var=SOAP_ERROR;
+        @throw myException;
+        return;
     }
     else
     {
@@ -5004,15 +5012,17 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             
         }
         
-        appDelegate.connection_error = TRUE;
-        responseError = 1;
-        NSMutableDictionary *correctiveAction=[[NSMutableDictionary alloc]init];
+
+        NSMutableDictionary *correctiveAction=[[[NSMutableDictionary alloc]init]autorelease];
                 [correctiveAction setObject:@"" forKey:@"userInfo"];
                 myException = [NSException
                                    exceptionWithName:[NSString stringWithFormat:@"%@",sFault.faultcode]
                                    reason:[NSString stringWithFormat:@"%@",faultString]
                                    userInfo:correctiveAction];
-                    @throw myException;
+        appDelegate.connection_error = TRUE;
+        responseError = 1;
+        var=SOAP_ERROR;
+        @throw myException;
         return;
     }
 
@@ -5045,7 +5055,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                      }
 
                     NSString *userInfo=[[wsResponse.result.errors objectAtIndex:0] correctiveAction];
-                    NSMutableDictionary *correctiveAction=[[NSMutableDictionary alloc]init];
+                    NSMutableDictionary *correctiveAction=[[[NSMutableDictionary alloc]init]autorelease];
                      if(userInfo !=nil)
                      {
                         [correctiveAction setObject:userInfo forKey:@"userInfo"];
@@ -5058,6 +5068,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                        exceptionWithName:type
                                        reason:message
                                        userInfo:correctiveAction];
+                         var=RES_ERROR;
                         @throw myException;
                      }
 
@@ -6382,7 +6393,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             }
             NSString *type=[[wsResponse.result.errors objectAtIndex:0] errorType];
             NSString *userInfo=[[wsResponse.result.errors objectAtIndex:0] correctiveAction];
-            NSMutableDictionary *correctiveAction=[[NSMutableDictionary alloc]init];
+            NSMutableDictionary *correctiveAction=[[[NSMutableDictionary alloc]init]autorelease];
             if(userInfo !=nil)
             {
                 [correctiveAction setObject:userInfo forKey:@"userInfo"];
@@ -6396,6 +6407,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                exceptionWithName:type
                                reason:message
                                userInfo:correctiveAction];
+                var=RES_ERROR;
                 @throw myException;
                 //                        return;
                 
@@ -8661,10 +8673,14 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         [Errordict setObject:exp.name forKey:@"ExpName"];
         [Errordict setObject:exp.reason forKey:@"ExpReason"];
         if(exp.userInfo ==nil)
+        {
             [Errordict setObject:exp forKey:@"userInfo"];
+        }
         else
+        {
             [Errordict setObject:exp.userInfo forKey:@"userInfo"];
-        [appDelegate CustomizeAletView:nil alertType:RES_ERROR Dict:Errordict exception:nil];
+        }
+        [appDelegate CustomizeAletView:nil alertType:var Dict:Errordict exception:nil];
         [self settingFlags];
         SMLog(@"Exception Name WSInterface :operation:completesWithResponse %@",exp.name);
         SMLog(@"Exception Reason WSInterface :operation:completesWithResponse %@",exp.reason);

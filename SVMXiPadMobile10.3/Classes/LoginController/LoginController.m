@@ -625,6 +625,38 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) didLogin:(ZKLoginResult *)lr error:(NSError *)error context:(id)context
 {
+    if( error != nil)
+    {
+        NSString * faultstring = [[error userInfo] objectForKey:@"faultstring"];
+        NSString * faultcode = [[error userInfo] objectForKey:@"faultcode"];
+        if(faultstring == nil && faultcode == nil)
+        {
+            NSString *errorDomain =	[error domain];
+            NSInteger errorCode = [error code];
+            if((errorCode == 0) && ([errorDomain caseInsensitiveCompare:@"APIError"] == NSOrderedSame))
+            {
+                faultstring = [error localizedDescription];
+                faultcode = errorDomain;
+            }
+        }
+        [activity stopAnimating];
+        appDelegate.wsInterface.didOpComplete = TRUE;
+        SMLog(@"IComeOUTHere login");
+        didLoginCompleted  = TRUE;
+        appDelegate.didLoginAgain = TRUE;
+        [self enableControls];
+        NSMutableDictionary *Errordict=[[NSMutableDictionary alloc]init];
+        [Errordict setObject:faultcode forKey:@"ExpName"];
+        [Errordict setObject:faultstring forKey:@"ExpReason"];
+        NSMutableDictionary *dicttemp=[[NSMutableDictionary alloc]init];
+        [dicttemp setObject:@"" forKey:@"userInfo"];
+        [Errordict setObject:dicttemp forKey:@"userInfo"];
+        [appDelegate CustomizeAletView:nil alertType:SOAP_ERROR Dict:Errordict exception:nil];
+        [dicttemp release];
+        [Errordict release];
+        return;
+
+    }
     if (![appDelegate isInternetConnectionAvailable])
     {
         [activity stopAnimating];
@@ -733,9 +765,6 @@ extern void SVMXLog(NSString *format, ...);
 
 		if ([appDelegate.userProfileId length] == 0)
 		{
-			UIAlertView * alert = [[UIAlertView alloc] initWithTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_TITLE] message:[appDelegate.wsInterface.tagsDictionary objectForKey:profile_error] delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
-			[alert show];
-			[alert release];
 			[activity stopAnimating];
 			[self enableControls];
 			

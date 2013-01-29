@@ -1032,6 +1032,36 @@ NSString * GO_Online = @"GO_Online";
 
 - (void) didLoginForServer:(ZKLoginResult *)lr error:(NSError *)error context:(id)context
 {
+    if(error!=nil)
+    {
+        NSString * faultstring = [[error userInfo] objectForKey:@"faultstring"];
+        NSString * faultcode = [[error userInfo] objectForKey:@"faultcode"];
+        if(faultstring == nil && faultcode == nil)
+        {
+            NSString *errorDomain =	[error domain];
+            NSInteger errorCode = [error code];
+            if((errorCode == 0) && ([errorDomain caseInsensitiveCompare:@"APIError"] == NSOrderedSame))
+            {
+                faultstring = [error localizedDescription];
+                faultcode = errorDomain;
+            }
+        }
+        NSMutableDictionary *Errordict=[[NSMutableDictionary alloc]init];
+        [Errordict setObject:faultcode forKey:@"ExpName"];
+        [Errordict setObject:faultstring forKey:@"ExpReason"];
+        NSMutableDictionary *dicttemp=[[NSMutableDictionary alloc]init];
+        [dicttemp setObject:@"" forKey:@"userInfo"];
+        [Errordict setObject:dicttemp forKey:@"userInfo"];
+        [appDelegate CustomizeAletView:nil alertType:SOAP_ERROR Dict:Errordict exception:nil];
+        [dicttemp release];
+        [Errordict release];
+        self._pingServer = FALSE;
+        self.isServerInValid = TRUE;
+        self.didLoginAgain = TRUE;
+        connection_error = TRUE;
+        return;
+        
+    }
     if (lr != nil)
     {
         self.loginResult = lr;
@@ -2291,7 +2321,7 @@ NSString * GO_Online = @"GO_Online";
         if([err length]>0)
         {
             [errorDict setObject:err forKey:@"ExpReason"];
-            [errorDict setObject:query forKey:@"UserInfo"];
+            [errorDict setObject:query forKey:@"userInfo"];
         }
         switch (type)
         {
@@ -2337,7 +2367,7 @@ NSString * GO_Online = @"GO_Online";
         NSString * tag1 = [appDelegate.wsInterface.tagsDictionary objectForKey:Type_of_Error];
         NSString * tag2 = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_error_message];
         NSString * errorMessage=@"",* errorType=@"",* detail_desc=@"",*title=@"";
-
+        errorDescription=@"";
         switch (type)
         {
                 
@@ -2365,9 +2395,18 @@ NSString * GO_Online = @"GO_Online";
                 
             case SOAP_ERROR:
                 SMLog(@"Soap Error");
-                NSDictionary * user_info_error = [error userInfo];
-                errorType = [user_info_error objectForKey:@"faultcode"];
-                errorMessage = [user_info_error objectForKey:@"faultstring"];
+                if(error!=nil)
+                {
+                    NSDictionary * user_info_error = [error userInfo];
+                    errorType = [user_info_error objectForKey:@"faultcode"];
+                    errorMessage = [user_info_error objectForKey:@"faultstring"];
+                }
+                else
+                {
+                    errorType =[errorDict objectForKey:@"ExpName"];
+                    errorMessage = [errorDict objectForKey:@"ExpReason"];
+                    detail_desc=[[errorDict objectForKey:@"userInfo"]objectForKey:@"userInfo"];
+                }
                 title=[appDelegate.wsInterface.tagsDictionary objectForKey:System_Error];
                 break;
             case APPLICATION_ERROR:
@@ -2382,7 +2421,6 @@ NSString * GO_Online = @"GO_Online";
         NSMutableString *message = [NSString stringWithFormat:@"%@:\t%@\n\n%@:\t%@\n",tag1,errorType,tag2,errorMessage];
         UIAlertView * customize_alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:Ok otherButtonTitles:eMail,CopytoClipboard, nil];
         errorDescription=detail_desc;
-//        errDescArray=[self stringConversion:errorDescription];
         NSArray *subViewArray = customize_alert.subviews;
         
         for(int x=0;x<[subViewArray count];x++)
@@ -2392,9 +2430,6 @@ NSString * GO_Online = @"GO_Online";
             {
                 UILabel *label = [subViewArray objectAtIndex:x];
                 label.textAlignment = UITextAlignmentLeft;
-//                UITapGestureRecognizer * tapObject = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapRecognized:)];
-//                [label addGestureRecognizer:tapObject];
-//                [tapObject release];
             }
         }
         [customize_alert performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
@@ -2404,7 +2439,6 @@ NSString * GO_Online = @"GO_Online";
     {
         SMLog(@"Exception Name iServiceAppDelegate :CustomizeAletView %@",exp.name);
         SMLog(@"Exception Reason iServiceAppDelegate :CustomizeAletView %@",exp.reason);
-//        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
     }
 }
 
@@ -2444,6 +2478,8 @@ NSString * GO_Online = @"GO_Online";
                 errType=[alertview.message substringToIndex:range.location];
                 errMessage=[alertview.message substringFromIndex:range.location];
             }
+            if(errorDescription ==nil)
+                errorDescription=@"";
             NSMutableString *emailBody = [NSString stringWithFormat: @"<Head> %@ </Head><br/>================\n<br/> %@ <br/> <br/> %@ <br/><br/> %@<br/>",alertview.title,errType,errMessage,errorDescription];
             [mailComposer setMessageBody:emailBody isHTML:YES];
             [mailComposer supportedInterfaceOrientations];
@@ -2501,9 +2537,11 @@ NSString * GO_Online = @"GO_Online";
         NSRange range=[alertview.message rangeOfString:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_error_message] options:NSCaseInsensitiveSearch];
         if(range.location != NSNotFound)
         {
-        errType=[alertview.message substringToIndex:range.location];
-        errMessage=[alertview.message substringFromIndex:range.location];
+            errType=[alertview.message substringToIndex:range.location];
+            errMessage=[alertview.message substringFromIndex:range.location];
         }
+        if(errorDescription ==nil)
+            errorDescription=@"";
         NSString *emailBody = [NSString stringWithFormat: @"\n %@ \n ================ \n%@\n%@ \n%@",alertview.title,errType,errMessage,errorDescription];
 
         SMLog(@"Copy to clipboard %@",emailBody);
