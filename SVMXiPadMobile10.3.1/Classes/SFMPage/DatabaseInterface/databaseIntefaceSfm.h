@@ -358,7 +358,7 @@
 #define LOOKUP_OBJECT_NAME            @"object_name"
 #define LOOkUP_IS_DEFAULT             @"is_default"
 #define LOOKUP_IS_STANDARD            @"is_standard"
-#define LOOKUP_RECORDS_LIMIT          10
+#define LOOKUP_RECORDS_LIMIT          50            //6533 TEMPORARY FIX FOR CUSTOM/STANDARD LOOKUP QUERY LIMIT
 
 
 //VALUE MAPPING THINGS 

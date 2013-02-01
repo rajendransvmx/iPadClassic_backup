@@ -1722,10 +1722,12 @@ extern void SVMXLog(NSString *format, ...);
     NSString * isstandard = @"";
     NSString * isdefault = @"";
     
-    NSString * no_of_records = @"";
-    int records = 0;
+//    NSString * no_of_records = @"";
+    int records = LOOKUP_RECORDS_LIMIT;
     
-    NSString *querystring2 = [NSString stringWithFormat:@"Select default_lookup_column,object_name,is_default,is_standard, no_of_lookup_records from '%@' where object_name = '%@'", SFNAMEDSEARCH,object];
+//    NSString *querystring2 = [NSString stringWithFormat:@"Select default_lookup_column,object_name,is_default,is_standard, no_of_lookup_records from '%@' where object_name = '%@'", SFNAMEDSEARCH,object];
+    
+    NSString *querystring2 = [NSString stringWithFormat:@"Select default_lookup_column,object_name,is_default,is_standard from '%@' where object_name = '%@'", SFNAMEDSEARCH,object];
     NSArray * lookUp_info_object_keys = [NSArray arrayWithObjects:LOOKUP_DEFAULT_LOOK_UP_CLMN,LOOKUP_OBJECT_NAME,LOOkUP_IS_DEFAULT,LOOKUP_IS_STANDARD, nil];
     
     sqlite3_stmt * stmt_;
@@ -1760,16 +1762,17 @@ extern void SVMXLog(NSString *format, ...);
             {
                 isdefault = [NSString stringWithUTF8String:temp_isdefault];
             }
-            char * temp_records = (char *) synchronized_sqlite3_column_text(stmt_, 4);
-            if (temp_records != nil && strlen(temp_records))
-            {
-                no_of_records = [NSString stringWithUTF8String:temp_records];
-                records = [no_of_records intValue];
-            }
-            else if(temp_records == nil || !(strlen(temp_records)))
-            {
-                records = LOOKUP_RECORDS_LIMIT;
-            }
+            //Commented to satisfy resolution of the defect: 6533
+//            char * temp_records = (char *) synchronized_sqlite3_column_text(stmt_, 4);
+//            if (temp_records != nil && strlen(temp_records))
+//            {
+//                no_of_records = [NSString stringWithUTF8String:temp_records];
+//                records = [no_of_records intValue];
+//            }
+//            else if(temp_records == nil || !(strlen(temp_records)))
+//            {
+//                records = LOOKUP_RECORDS_LIMIT;
+//            }
             
             NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:default_column,Object_name,isstandard,isdefault, nil] forKeys:lookUp_info_object_keys];
             [lookup_object_info addObject:dict];

@@ -1825,17 +1825,31 @@ extern void SVMXLog(NSString *format, ...);
                 NSString * event_local_id = [event objectForKey:EVENT_LOCAL_ID];
                 NSString * event_process_id = [processids_array objectAtIndex:0];
                 appDelegate.sfmPageController = [[[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:NO] autorelease];
-                appDelegate.sfmPageController.processId = event_process_id;
+                NSString * processId_for_event =  [appDelegate.switchViewLayouts objectForKey:@"Event"];
+                appDelegate.sfmPageController.processId = (processId_for_event != nil)?processId_for_event:event_process_id;
                 appDelegate.sfmPageController.recordId = event_local_id;
                 //sahana offline
                 appDelegate.sfmPageController.objectName = @"Event";
                 
-                [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
-                [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
+                processInfo * pinfo =  [appDelegate getViewProcessForObject:@"Event" record_id:event_local_id processId:appDelegate.sfmPageController.processId isswitchProcess:FALSE];
+                BOOL process_exist = pinfo.process_exists;
+                if(process_exist)
+                {
+                    appDelegate.sfmPageController.processId = pinfo.process_id;
+                    [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
+                    [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
+                    
+                    [appDelegate.sfmPageController.detailView view];
+                    [self presentViewController:appDelegate.sfmPageController animated:YES completion:nil];
+                    [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];
+                }
+                else
+                {
+                    UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:warning message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
+                    [alert1 show];
+                    [alert1 release];
+                }
                 
-                [appDelegate.sfmPageController.detailView view];
-                [self presentViewController:appDelegate.sfmPageController animated:YES completion:nil];
-                [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];
                 
             }
             else
@@ -2445,16 +2459,30 @@ extern void SVMXLog(NSString *format, ...);
                 NSString * event_local_id = [event objectForKey:EVENT_LOCAL_ID];
                 NSString * event_process_id = [processids_array objectAtIndex:0];
                 appDelegate.sfmPageController = [[[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:NO] autorelease];
-                appDelegate.sfmPageController.processId = event_process_id;
+                
+                NSString * processId_for_event =  [appDelegate.switchViewLayouts objectForKey:@"Event"];
+                appDelegate.sfmPageController.processId = (processId_for_event != nil)?processId_for_event:event_process_id;
                 appDelegate.sfmPageController.recordId = event_local_id;
                 //sahana offline
                 appDelegate.sfmPageController.objectName = @"Event";
                 
-                [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
-                [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
+                processInfo * pinfo =  [appDelegate getViewProcessForObject:@"Event" record_id:event_local_id processId:appDelegate.sfmPageController.processId isswitchProcess:FALSE];
+                BOOL process_exist = pinfo.process_exists;
+                if(process_exist)
+                {
+                     appDelegate.sfmPageController.processId = pinfo.process_id;
+                    [appDelegate.sfmPageController setModalPresentationStyle:UIModalPresentationFullScreen];
+                    [appDelegate.sfmPageController setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
+                    [self presentViewController:appDelegate.sfmPageController animated:YES completion:^(void){}];
+                    [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline ];
+                }
+                else
+                {
+                    UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:warning message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
+                    [alert1 show];
+                    [alert1 release];
+                }
                 
-                [self presentViewController:appDelegate.sfmPageController animated:YES completion:^(void){}];
-                [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline ];
                 
             }
             else
