@@ -220,7 +220,16 @@
     HelpController * help = [[HelpController alloc] initWithNibName:@"HelpController" bundle:nil];
     help.modalPresentationStyle = UIModalPresentationFullScreen;
     help.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    help.helpString = @"sync.html";
+    NSString *lang=[appDelegate.dataBase checkUserLanguage];
+    NSString *isfileExists = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"sync_%@",lang] ofType:@"html"];
+    if((isfileExists == NULL) || [lang isEqualToString:@"en_US"] ||  !([lang length]>0))
+    {
+        help.helpString=@"sync.html";
+    }
+    else
+    {
+        help.helpString = [NSString stringWithFormat:@"sync_%@.html",lang];
+    }
     [self presentViewController:help animated:YES completion:^(void){}];
     [help release];
 

@@ -174,7 +174,16 @@ extern void SVMXLog(NSString *format, ...);
     HelpController * help = [[HelpController alloc] initWithNibName:@"HelpController" bundle:nil];
     help.modalPresentationStyle = UIModalPresentationFullScreen;
     help.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    help.helpString = @"recents.html";  
+    NSString *lang=[appDelegate.dataBase checkUserLanguage];
+    NSString *isfileExists = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"recents_%@",lang] ofType:@"html"];
+    if((isfileExists == NULL) || [lang isEqualToString:@"en_US"] ||  !([lang length]>0))
+    {
+        help.helpString=@"recents.html";
+    }
+    else
+    {
+        help.helpString = [NSString stringWithFormat:@"recents_%@.html",lang];
+    }
     [(RecentsViewController*)delegate presentViewController:help animated:YES completion:^(void){}];
     [help release];
 } 

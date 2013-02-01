@@ -168,7 +168,18 @@ extern void SVMXLog(NSString *format, ...);
     HelpController * help = [[HelpController alloc] initWithNibName:@"HelpController" bundle:nil];
     help.modalPresentationStyle = UIModalPresentationFullScreen;
     help.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    help.helpString = @"create-new.html";  
+    NSString *lang=[appDelegate.dataBase checkUserLanguage];
+
+    NSString *isfileExists = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"create-new_%@",lang] ofType:@"html"];
+
+    if( (isfileExists ==NULL) ||  [lang isEqualToString:@"en_US"] ||  !([lang length]>0))
+    {
+        help.helpString=@"create-new.html";
+    }
+    else
+    {
+        help.helpString = [NSString stringWithFormat:@"create-new_%@.html",lang];
+    }
     [(CreateObject*)delegate presentViewController:help animated:YES completion:^(void){}];
     [help release];
 

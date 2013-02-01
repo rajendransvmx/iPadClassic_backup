@@ -332,4 +332,9 @@ PopoverButtons *popOver_view;
 - (NSMutableString *) getAllEventRelatedIdFromSyncRecordHeap;
 - (void) deleteEventNotRelatedToLoggedInUser:(NSMutableString *)Id tableName:(NSString *)tableName;
 
+//Help Files
+-(void)updateUserLanguage:(NSString*)language;
+-(NSString*)getUserLanguage:(NSString*)userName;
+-(NSString*)checkUserLanguage;
+
 @end

@@ -463,7 +463,16 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     HelpController * help = [[HelpController alloc] initWithNibName:@"HelpController" bundle:nil];
     help.modalPresentationStyle = UIModalPresentationFullScreen;
     help.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    help.helpString = @"map-view.html";
+    NSString *lang=[appDelegate.dataBase checkUserLanguage];
+    NSString *isfileExists = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"map-view_%@",lang] ofType:@"html"];
+    if((isfileExists == NULL)|| [lang isEqualToString:@"en_US"] ||  !([lang length]>0))
+    {
+        help.helpString=@"map-view.html";
+    }
+    else
+    {
+        help.helpString = [NSString stringWithFormat:@"map-view_%@.html",lang];
+    }
     [self presentViewController:help animated:YES completion:nil];
     [help release];
 }

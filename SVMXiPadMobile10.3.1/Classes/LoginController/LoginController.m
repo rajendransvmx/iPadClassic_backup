@@ -680,9 +680,8 @@ extern void SVMXLog(NSString *format, ...);
 	if( ![server Contains:@"null"] )
 		appDelegate.currentServerUrl = [[NSString stringWithFormat:@"%@", server] retain];
 	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-	[userDefaults setObject:appDelegate.currentUserName forKey:@"UserFullName"];
+	
 	[userDefaults setObject:appDelegate.currentServerUrl forKey:SERVERURL];
-	[userDefaults synchronize];
     
     ZKUserInfo * userInfo = [lr userInfo];
 	
@@ -691,8 +690,12 @@ extern void SVMXLog(NSString *format, ...);
 		appDelegate.current_userId = [NSString stringWithFormat:@"%@", userInfo.userId];
 		SMLog(@"usetId = %@", appDelegate.current_userId);
 		appDelegate.currentUserName = [[userInfo fullName] mutableCopy];
+        appDelegate.language=[userInfo language];
 	}
-	
+    [userDefaults setObject:appDelegate.currentUserName forKey:@"UserFullName"];
+    [userDefaults setObject:appDelegate.language forKey:@"UserLanguage"];
+    [userDefaults synchronize];
+
     NSDictionary * defaultTags = [appDelegate.wsInterface getDefaultTags];
     
    // NSString * serviceMax = [defaultTags objectForKey:ALERT_ERROR_TITLE];

@@ -364,6 +364,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize metaSyncCompleted;
 @synthesize From_SFM_Search;
 @synthesize errorDescription;
+@synthesize language;
 
 -(BOOL)shouldAutorotate
 {
@@ -1085,7 +1086,9 @@ NSString * GO_Online = @"GO_Online";
 		{
 			self.current_userId = [NSString stringWithFormat:@"%@", userInfo.userId];
 			self.currentUserName = [[userInfo fullName] mutableCopy];
+            self.language=[userInfo language];
 			[userDefaults setObject:appDelegate.currentUserName forKey:@"UserFullName"];
+            [userDefaults setObject:appDelegate.language forKey:@"UserLanguage"];
         }
 		connection_error = FALSE;
     }

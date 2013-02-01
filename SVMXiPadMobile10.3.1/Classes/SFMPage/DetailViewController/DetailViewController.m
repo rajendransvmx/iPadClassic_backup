@@ -9854,10 +9854,23 @@ extern void SVMXLog(NSString *format, ...);
     HelpController * help = [[HelpController alloc] initWithNibName:@"HelpController" bundle:nil];
     help.modalPresentationStyle = UIModalPresentationFullScreen;
     help.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    NSString *lang=[appDelegate.dataBase checkUserLanguage];
+    NSString *html=@"";
     if (!isInViewMode)
-        help.helpString = @"view-record.html";  
+        html = @"view-record";
     else
-        help.helpString = @"create-edit-record.html";
+        html = @"create-edit-record";
+    NSString *isfileExists = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"%@_%@",html,lang] ofType:@"html"];
+    
+    if( (isfileExists ==NULL)|| [lang isEqualToString:@"en_US"] || !([lang length]>0))
+    {
+        help.helpString=[NSString stringWithFormat:@"%@.html",html];
+    }
+    else
+    {
+        help.helpString = [NSString stringWithFormat:@"%@_%@.html",html,lang];
+    }
+  
     [(SFMPageController *)delegate presentViewController:help animated:YES completion:nil];
     [help release];
     appDelegate.isDetailActive = NO;

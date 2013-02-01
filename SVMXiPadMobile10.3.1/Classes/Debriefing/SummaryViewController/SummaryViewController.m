@@ -737,9 +737,16 @@ extern void SVMXLog(NSString *format, ...);
 - (IBAction) Help
 {    
     HelpController * help = [[HelpController alloc] initWithNibName:@"HelpController" bundle:nil];
-    
-    help.helpString = @"summary.html";
-
+    NSString *lang=[appDelegate.dataBase checkUserLanguage];
+    NSString *isfileExists = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"summary_%@",lang] ofType:@"html"];
+    if((isfileExists == NULL) || [lang isEqualToString:@"en_US"] ||  !([lang length]>0))
+    {
+        help.helpString=@"summary.html";
+    }
+    else
+    {
+        help.helpString = [NSString stringWithFormat:@"summary_%@.html",lang];
+    }
     help.isPortrait = YES;
     help.modalPresentationStyle = UIModalPresentationFullScreen;
     help.modalTransitionStyle = UIModalTransitionStyleCoverVertical;

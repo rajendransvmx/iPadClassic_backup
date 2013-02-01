@@ -51,7 +51,16 @@ enum  {
     HelpController * help = [[HelpController alloc] initWithNibName:@"HelpController" bundle:nil];
     help.modalPresentationStyle = UIModalPresentationFullScreen;
     help.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    help.helpString = @"sfm-search.html";  
+    NSString *lang=[appDelegate.dataBase checkUserLanguage];
+    NSString *isfileExists = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"sfm-search_%@",lang] ofType:@"html"];
+    if((isfileExists == NULL)  || [lang isEqualToString:@"en_US"] ||  !([lang length]>0))
+    {
+        help.helpString=@"sfm-search.html";
+    }
+    else
+    {
+        help.helpString = [NSString stringWithFormat:@"sfm-search_%@.html",lang];
+    }
     [self.mainView presentViewController:help animated:YES completion:nil];
     [help release];
 }

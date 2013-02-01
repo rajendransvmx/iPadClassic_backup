@@ -738,6 +738,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 // SFM Search conflict status
 @property (nonatomic, assign) NSString *From_SFM_Search;
 @property (nonatomic, assign) NSString *errorDescription;
+@property (nonatomic, assign) NSString *language;
+
 
 
 

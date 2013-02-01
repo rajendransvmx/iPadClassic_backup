@@ -299,7 +299,17 @@ const NSUInteger kNumImages = 7;
     HelpController * help = [[HelpController alloc] initWithNibName:@"HelpController" bundle:nil];
     help.modalPresentationStyle = UIModalPresentationFullScreen;
     help.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    help.helpString = @"home.html";
+    NSString *lang=[appDelegate.dataBase checkUserLanguage];
+
+    NSString *isfileExists = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"home_%@",lang] ofType:@"html"];
+    if((isfileExists == NULL) || [lang isEqualToString:@"en_US"] ||  !([lang length]>0))
+    {
+        help.helpString=@"home.html";
+    }
+    else
+    {
+        help.helpString = [NSString stringWithFormat:@"home_%@.html",lang];
+    }
     [self presentViewController:help animated:YES completion:nil];
     [help release];
 }
@@ -532,7 +542,7 @@ const NSUInteger kNumImages = 7;
         appDelegate.IsLogedIn = ISLOGEDIN_FALSE;
         if(appDelegate == nil)
             appDelegate = (iServiceAppDelegate *)[[ UIApplication sharedApplication] delegate];
-        NSString *UserFullName=@"";
+        NSString *UserFullName=@"",*language=@"";
         if(![appDelegate.currentUserName length]>0)
         {
             NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
@@ -551,7 +561,25 @@ const NSUInteger kNumImages = 7;
         {
             [appDelegate.dataBase updateUserTable:appDelegate.loggedInUserId Name:UserFullName];
         }
+        if(![appDelegate.language length]>0)
+        {
+            NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+            if (userDefaults)
+            {
+                language = [userDefaults objectForKey:@"UserLanguage"];
+                SMLog(@"User Language  = %@",language);
+            }
+            
+        }
+        else
+        {
+            language=appDelegate.language;
+        }
         
+        if(language !=nil)
+        {
+            [appDelegate.dataBase updateUserLanguage:language];
+        }
         [self enableControls];
         [self scheduleLocationPingService];
         [appDelegate startBackgroundThreadForLocationServiceSettings];

@@ -270,10 +270,23 @@ extern void SVMXLog(NSString *format, ...);
     HelpController * help = [[HelpController alloc] initWithNibName:@"HelpController" bundle:nil];
     help.modalPresentationStyle = UIModalPresentationFullScreen;
     help.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    NSString *lang=[appDelegate.dataBase checkUserLanguage];
+    NSString *calView=@"";
     if (isShowingDailyView)
-        help.helpString = @"day-view.html";
+        calView = @"day-view";
     else
-        help.helpString = @"week-view.html";
+        calView = @"week-view";
+    
+    NSString *isfileExists = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"%@_%@",calView,lang] ofType:@"html"];
+    if((isfileExists == NULL) || [lang isEqualToString:@"en_US"] ||  !([lang length]>0))
+    {
+        help.helpString=[NSString stringWithFormat:@"%@.html",calView];
+    }
+    else
+    {
+        help.helpString = [NSString stringWithFormat:@"%@_%@.html",calView,lang];
+    }
+
     [self presentViewController:help animated:YES completion:nil];
     [help release];
 }

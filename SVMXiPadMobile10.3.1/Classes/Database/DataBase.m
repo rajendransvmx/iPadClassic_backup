@@ -5086,8 +5086,91 @@ extern void SVMXLog(NSString *format, ...);
             }
     }
 }
+#pragma HelpFiles
+-(void)updateUserLanguage:(NSString*)language
+{
+    if(appDelegate == nil)
+        appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+    NSString * queryStatement = [NSString stringWithFormat:@"SELECT LanguageLocaleKey FROM User Where Username='%@'",appDelegate.username];
+    sqlite3_stmt * stmt;
+    BOOL flag=FALSE;
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        if (synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            char * _lang = (char *) synchronized_sqlite3_column_text(stmt, 0);
+            if ((_lang != nil) && strlen(_lang))
+            {
+                flag=TRUE;
+            }
+            
+        }
+    }
+    synchronized_sqlite3_finalize(stmt);
+    if(!flag)
+    {
+        NSString *queryStatementUpdate = [NSString stringWithFormat:@"update User SET LanguageLocaleKey='%@'  where Username='%@'", language, appDelegate.username];
+        
+        char * err;
+        if (synchronized_sqlite3_exec(appDelegate.db, [queryStatementUpdate UTF8String], NULL, NULL, &err) != SQLITE_OK)
+        {
+            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                [MyPopoverDelegate performSelector:@selector(throwException)];
+            SMLog(@"%@", queryStatementUpdate);
+			SMLog(@"METHOD:updateUserLanguage" );
+			SMLog(@"ERROR IN UPDATING %s", err);
+			[appDelegate printIfError:nil ForQuery:queryStatementUpdate type:UPDATEQUERY];
+        }
+    }
 
+}
 
+-(NSString*)checkUserLanguage
+{
+    NSString *language=@"";
+    if(![appDelegate.language length]>0)
+    {
+        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+        if ([[userDefaults objectForKey:@"UserLanguage"] length]>0)
+        {
+            language = [userDefaults objectForKey:@"UserLanguage"];
+            SMLog(@"User Full Name  = %@",language);
+        }
+        else
+        {
+            language=[self getUserLanguage:appDelegate.username];
+        }
+    }
+    else
+    {
+        language=appDelegate.language;
+    }
+    return language;
+}
+-(NSString*)getUserLanguage:(NSString*)userName
+{
+    NSMutableString * query = [NSMutableString stringWithFormat:@"SELECT LanguageLocaleKey FROM User WHERE Username = '%@'", userName];
+    sqlite3_stmt * stmt;
+    NSString * queryStatement = @"";
+    const char * _query = [query UTF8String];
+    
+    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, _query,-1, &stmt, nil) == SQLITE_OK )
+    {
+        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            char *field1 = (char *) synchronized_sqlite3_column_text(stmt,COLUMN_1);
+            if ((field1 != nil) && strlen(field1))
+            {
+                NSString *field1Str = [[NSString alloc] initWithUTF8String:field1];
+                queryStatement = [NSString stringWithFormat:@"%@",field1Str];
+            }
+        }
+    }
+    synchronized_sqlite3_finalize(stmt);
+    
+    return queryStatement;        
+    
+}
 
 #pragma mark - Delete All Tables
 - (void) clearDatabase
@@ -6933,7 +7016,6 @@ extern void SVMXLog(NSString *format, ...);
 }
 -(NSString*) getLoggedInUser:(NSString *)username
 {
-    {
         NSMutableString * query = [NSMutableString stringWithFormat:@"SELECT Name FROM User WHERE Username = '%@'", username];
         
         sqlite3_stmt * stmt;
@@ -6956,9 +7038,8 @@ extern void SVMXLog(NSString *format, ...);
         synchronized_sqlite3_finalize(stmt);
         
         return queryStatement;
-    }
-
 }
+
 # pragma end
 
 

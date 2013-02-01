@@ -64,10 +64,19 @@ extern void SVMXLog(NSString *format, ...);
     [helpAlert show];
     [helpAlert release];
      */
+    NSString *lang=[appDelegate.dataBase checkUserLanguage];
     HelpController * help = [[HelpController alloc] initWithNibName:@"HelpController" bundle:nil];
     help.modalPresentationStyle = UIModalPresentationFullScreen;
     help.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    help.helpString = @"sfm-search.html";  
+    NSString *isfileExists = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"sfm-search_%@",lang] ofType:@"html"];
+    if((isfileExists == NULL) || [lang isEqualToString:@"en_US"] || !([lang length]>0))
+    {
+        help.helpString=@"sfm-search.html";
+    }
+    else
+    {
+        help.helpString = [NSString stringWithFormat:@"sfm-search_%@.html",lang];
+    }
     [self.mainView presentViewController:help animated:YES completion:^(void){}];
     [help release];
 
