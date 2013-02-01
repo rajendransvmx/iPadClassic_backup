@@ -236,6 +236,49 @@ body {
 	color:#fff;
 	float: left;
 }
+.link6
+{
+	float:left;
+	background-image:url(iService-help1_with-slices_12.gif);
+	width: 224px;
+	height: 51px;
+	background-repeat:no-repeat;
+}
+
+#linkText6
+{
+	font-size:18px;
+	font-family:Verdana;
+	padding-left:25px;
+	color:#fff;
+	float: left;
+}
+
+.link7
+{
+background-image: url("iService-help1_with-slices_12.gif");
+    float: left;
+    height: 51px;
+    padding-left:2px;
+    padding-right:2px;
+    color:#fff;
+    width: 28%;
+
+}
+
+
+#linkText6 a
+{
+	font-size:18px;
+	font-family:Verdana;
+	color:#fff;
+	float: left;
+	text-decoration:none;
+	/*background-image:url(btnselected.png);*/
+	background-repeat:no-repeat;
+}
+
+
 
 .Blockcontainer {
 	background-color:#f2f3f5;
