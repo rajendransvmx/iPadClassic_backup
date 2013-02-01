@@ -6324,9 +6324,16 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
               INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [array objectAtIndex:i];
             
               NSString * key = (svmxMap.key!=nil)?(svmxMap.key):@"";
+              
+              NSString * value = svmxMap.value;
+              
+              if ([value isEqualToString:key])
+              {
+                  value = @"";
+              }
             
               if (![key isEqualToString:@""])
-                  [mobileDeviceTagsDict setValue:(svmxMap.value!=nil)?(svmxMap.value):@"" forKey:(svmxMap.key!=nil)?svmxMap.key:@""];
+                  [mobileDeviceTagsDict setValue:(value!=nil)?(value):@"" forKey:(svmxMap.key!=nil)?svmxMap.key:@""];
           }
           if(!appDelegate.firstTimeCallForTags)
           {
