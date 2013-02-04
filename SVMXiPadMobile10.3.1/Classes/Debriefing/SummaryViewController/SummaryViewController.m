@@ -323,6 +323,11 @@ extern void SVMXLog(NSString *format, ...);
     return NO;
 }
 
+/* Fix for - 005882*/
+- (BOOL)shouldAutorotate {
+    return NO;
+}
+
 #pragma mark -
 #pragma mark Table view data source
 
