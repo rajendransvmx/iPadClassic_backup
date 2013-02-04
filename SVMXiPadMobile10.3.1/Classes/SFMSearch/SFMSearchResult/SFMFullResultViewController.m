@@ -650,7 +650,10 @@ extern void SVMXLog(NSString *format, ...);
 {
     if (![appDelegate isInternetConnectionAvailable])
     {
+        /*Bug fixes 5606*/
+        appDelegate.shouldShowConnectivityStatus = TRUE;
         [appDelegate displayNoInternetAvailable];
+        [self dismissView:nil];
         return;
     }
     
@@ -708,12 +711,26 @@ extern void SVMXLog(NSString *format, ...);
             SMLog(@"SFMFullResultViewController.m : presentProgressBar: DOD");
 #endif
 
-            if( appDelegate.dod_req_response_ststus == DOD_RESPONSE_RECIEVED || appDelegate.connection_error || ![appDelegate isInternetConnectionAvailable])
-            {
+            if( appDelegate.dod_req_response_ststus == DOD_RESPONSE_RECIEVED || appDelegate.connection_error)
+            {   
+            	break;
+            }
+            
+            if(![appDelegate isInternetConnectionAvailable]) {
+                /* DOD Request fails , then show the message Defect num:005606*/
+                appDelegate.shouldShowConnectivityStatus = TRUE;
+                [appDelegate displayNoInternetAvailable];
                 break;
             }
         }
     }
+    else {
+        
+        /* DOD Request fails , then show the message Defect num:005606*/
+        appDelegate.shouldShowConnectivityStatus = TRUE;
+        [appDelegate displayNoInternetAvailable];
+    }
+    
     
     [initial_sync_timer invalidate];
     initial_sync_timer = nil;
