@@ -2485,8 +2485,6 @@ NSString * GO_Online = @"GO_Online";
                 errorDescription=@"";
             NSMutableString *emailBody = [NSString stringWithFormat: @"<Head> %@ </Head><br/>================\n<br/> %@ <br/> <br/> %@ <br/><br/> %@<br/>",alertview.title,errType,errMessage,errorDescription];
             [mailComposer setMessageBody:emailBody isHTML:YES];
-            [mailComposer supportedInterfaceOrientations];
-            [mailComposer shouldAutorotate];
             [mailComposer.view sizeToFit];
             
             UIViewController *someViewController =  [[[[UIApplication sharedApplication] delegate]window]rootViewController];
