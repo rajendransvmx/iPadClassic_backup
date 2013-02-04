@@ -141,7 +141,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 - (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation
 {
 	id obj = self.viewControllers.lastObject;
-	if( [obj isKindOfClass:[SummaryViewController class]] )
+    /* Added PDF Create for issue 05776 */
+	if( [obj isKindOfClass:[SummaryViewController class]] || [obj isKindOfClass:[PDFCreator class]] )
 	{
 		[[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationPortrait];
 		return UIInterfaceOrientationPortrait;

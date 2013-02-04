@@ -2496,6 +2496,15 @@ extern void SVMXLog(NSString *format, ...);
     }
 }
 
+/* Issue 005776 */
+- (BOOL)shouldAutorotate {
+    if(calledFromSummary) {
+        return NO;
+    }
+    return [super shouldAutorotate];
+    
+}
+
 // Override to allow orientations other than the default portrait orientation.
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {

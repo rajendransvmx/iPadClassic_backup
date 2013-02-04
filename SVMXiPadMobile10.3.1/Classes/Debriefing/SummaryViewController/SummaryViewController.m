@@ -251,8 +251,14 @@ extern void SVMXLog(NSString *format, ...);
         
         pdfCreator.workOrderDetails = self.workOrderDetails;
         
-        [self presentViewController:pdfCreator animated:YES completion:nil];
-    }
+        /* Created as fix for 005776*/
+        UINavigationController *navigationControllerTemp = [[[UINavigationController alloc] initWithRootViewController:pdfCreator] autorelease];
+        navigationControllerTemp.modalPresentationStyle = UIModalPresentationFullScreen;
+        navigationControllerTemp.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+        [navigationControllerTemp setNavigationBarHidden:YES];
+        [self presentViewController:navigationControllerTemp animated:YES completion:nil];
+
+        }
 	}@catch (NSException *exp) {
 	SMLog(@"Exception Name SummaryViewController :createPDF %@",exp.name);
 	SMLog(@"Exception Reason SummaryViewController :createPDF %@",exp.reason);
