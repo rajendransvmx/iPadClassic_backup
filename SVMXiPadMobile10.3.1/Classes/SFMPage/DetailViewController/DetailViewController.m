@@ -93,7 +93,7 @@ extern void SVMXLog(NSString *format, ...);
     NSPredicate * urlPredicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", urlRegEx];
     BOOL isValidUrl = [urlPredicate evaluateWithObject:url];
     
-    NSLog(@"***** Is %@ valid url %d",url,isValidUrl);
+    SMLog(@"***** Is %@ valid url %d",url,isValidUrl);
     return isValidUrl;
     
 }
