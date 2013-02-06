@@ -5700,11 +5700,20 @@ extern void SVMXLog(NSString *format, ...);
                             [background addSubview:lbl];
                             colmn_count ++;*/
                             
-                            NSDate * date = [info_dict objectForKey:@"CreatedDate"];
+                            id date = [info_dict objectForKey:@"CreatedDate"];
                             NSDateFormatter * frm = [[[NSDateFormatter alloc] init] autorelease];
                             [frm setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
                             
-                            value = [frm stringFromDate:date];
+                            //Aparna: FIx for the defect 4611
+                            if([date isKindOfClass:[NSDate class]])
+                            {
+                                value = [frm stringFromDate:date];
+                            }
+                            else
+                            {
+                                value = date;
+                            }
+
                             value = [iOSInterfaceObject getLocalTimeFromGMT:value];
                             value = [value stringByReplacingOccurrencesOfString:@"T" withString:@" "];
                             value = [value stringByReplacingOccurrencesOfString:@"Z" withString:@""];
