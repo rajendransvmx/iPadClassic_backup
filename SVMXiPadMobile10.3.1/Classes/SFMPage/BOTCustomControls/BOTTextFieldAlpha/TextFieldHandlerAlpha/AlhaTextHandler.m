@@ -78,21 +78,26 @@ extern void SVMXLog(NSString *format, ...);
 
     if([control_type isEqualToString:@"url"])
     {
-        BOOL result;
-        NSString * urlRegEx = @"(http|https)://((\\w)*|([0-9]*)|([-|_])*)+([\\.|/]((\\w)*|([0-9]*)|([-|_])*))+";
-        NSPredicate * urlTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", urlRegEx]; 
-        result =  [urlTest evaluateWithObject:textField.text];
-        if (result == YES)
-        {
-            return YES;
-        }
-        else
-        {
-            UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:warning message:invalidUrl delegate:self cancelButtonTitle:alert_ok otherButtonTitles:nil, nil];
-            [alertView show];
-            [alertView release];
-            return YES; 
-        }
+        //Aparna: Fix for the defect 4547
+        if ([textField.text length] > 0)
+         {
+             BOOL result;
+             NSString * urlRegEx = @"(http|https)://((\\w)*|([0-9]*)|([-|_])*)+([\\.|/]((\\w)*|([0-9]*)|([-|_])*))+";
+             NSPredicate * urlTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", urlRegEx];
+             result =  [urlTest evaluateWithObject:textField.text];
+             if (result == YES )
+             {
+                 return YES;
+             }
+             else
+             {
+                 UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:warning message:invalidUrl delegate:self cancelButtonTitle:alert_ok otherButtonTitles:nil, nil];
+                 [alertView show];
+                 [alertView release];
+                 return YES; 
+             }
+
+         }
     }
 
     return YES;
@@ -100,12 +105,24 @@ extern void SVMXLog(NSString *format, ...);
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string;   // return NO to not change text
 {
-    NSString * text = textField.text;
-    if ([string length] != 0)
-        text = [NSString stringWithFormat:@"%@%@", text, string];
-    else
-        text = [text substringToIndex:[text length]-1];
+    id text = textField.text;
     
+    if ([string length] != 0)
+    {
+        //text = [NSString stringWithFormat:@"%@%@", text, string];
+        //Aparna: Substring is added to the specified location instead of appending it to the string.
+        text = (NSMutableString *)[NSMutableString stringWithString:text];
+        [text insertString:string atIndex:range.location];
+    }
+    else
+    {
+//        text = [text substringToIndex:[text length]-1];
+        //Aparna: Substring is deleted from the specified location instead of removing the last character.
+        
+        text = (NSMutableString *)[NSMutableString stringWithString:text];
+        [text deleteCharactersInRange:range];
+    }
+
     [delegate didChangeText:text];
 
     return YES;
