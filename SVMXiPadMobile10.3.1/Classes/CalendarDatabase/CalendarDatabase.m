@@ -2441,7 +2441,17 @@ extern void SVMXLog(NSString *format, ...);
     
     for ( int i = 0; i < [chatterDetails count]; i++ )
     {
-        NSMutableString *insertStatement = [NSString stringWithFormat:@"Insert into ChatterPostDetails (ProductId, Body, CreatedById, CreatedDate, Id, POSTTYPE, Username, Email, FeedPostId, FullPhotoUrl) Values ('%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@')", productId, [[chatterDetails objectAtIndex:i]objectForKey:BODY],[[chatterDetails objectAtIndex:i]objectForKey:CREATEDBYID],[[chatterDetails objectAtIndex:i]objectForKey:CREATEDDATE], [[chatterDetails objectAtIndex:i]objectForKey:_USERID], [[chatterDetails objectAtIndex:i]objectForKey:POSTTYPE], [[chatterDetails objectAtIndex:i]objectForKey:USERNAME_CHATTER],[[chatterDetails objectAtIndex:i]objectForKey:EMAIL],[[chatterDetails objectAtIndex:i]objectForKey:FEEDPOSTID],[[chatterDetails objectAtIndex:i]objectForKey:FULLPHOTOURL]];
+        productId=[productId stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+        NSString *body=[[[chatterDetails objectAtIndex:i]objectForKey:BODY] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+        NSString *createdById=[[[chatterDetails objectAtIndex:i]objectForKey:CREATEDBYID] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+        NSString *CreatedDate=[[[chatterDetails objectAtIndex:i]objectForKey:CREATEDDATE] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+        NSString *_userid=[[[chatterDetails objectAtIndex:i]objectForKey:_USERID] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+        NSString *postType=[[[chatterDetails objectAtIndex:i]objectForKey:POSTTYPE] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+        NSString *userNameChatter=[[[chatterDetails objectAtIndex:i]objectForKey:USERNAME_CHATTER] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+        NSString *eMail=[[[chatterDetails objectAtIndex:i]objectForKey:EMAIL] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+        NSString *feedPostId=[[[chatterDetails objectAtIndex:i]objectForKey:FEEDPOSTID] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+        NSString *fullPhotoUrl=[[[chatterDetails objectAtIndex:i]objectForKey:FULLPHOTOURL] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+        NSMutableString *insertStatement = [NSString stringWithFormat:@"Insert into ChatterPostDetails (ProductId, Body, CreatedById, CreatedDate, Id, POSTTYPE, Username, Email, FeedPostId, FullPhotoUrl) Values ('%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@')", productId, body,createdById,CreatedDate,_userid,postType, userNameChatter,eMail,feedPostId,fullPhotoUrl];
         
         
         SMLog(@"%@", insertStatement);
