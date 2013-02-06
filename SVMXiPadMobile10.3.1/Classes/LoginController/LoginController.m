@@ -107,7 +107,8 @@ extern void SVMXLog(NSString *format, ...);
 	 appDelegate.IsLogedIn = ISLOGEDIN_TRUE;
 	shouldAppRelogin = NO;
     appDelegate.wsInterface.didOpComplete = FALSE;
-    //shrinivas
+	appDelegate.connection_error = FALSE;//CHANGED FOR DEFECT #5786 -- 29/JAN/2013
+	
     if (appDelegate.isBackground == TRUE)
         appDelegate.isBackground = FALSE;
     
