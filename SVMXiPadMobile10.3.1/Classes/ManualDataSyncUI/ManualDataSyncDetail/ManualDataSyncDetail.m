@@ -1613,6 +1613,15 @@ PopoverButtons *popOver_view;
 		if (buttonIndex == 0)
 		{
 			
+            /* Fix for - 005616 */
+            
+            if (![appDelegate isInternetConnectionAvailable])
+            {
+                appDelegate.shouldShowConnectivityStatus = TRUE;
+                [appDelegate displayNoInternetAvailable];
+                return;
+            }
+            
 			[appDelegate invalidateAllTimers];
 			[appDelegate.dataBase removecache];
 			appDelegate.wsInterface.didOpComplete = FALSE;
