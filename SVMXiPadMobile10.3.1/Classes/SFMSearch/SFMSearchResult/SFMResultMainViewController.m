@@ -276,4 +276,11 @@ const float progress_SFMSearch = 0.33;
     [_percentagetext release];
 }
 
+// Returns YES if a view controller should be hidden by the split view controller in a given orientation.
+// (This method is only called on the leftmost view controller and only discriminates portrait from landscape.)
+- (BOOL)splitViewController: (UISplitViewController*)svc shouldHideViewController:(UIViewController *)vc inOrientation:(UIInterfaceOrientation)orientation
+{
+    return NO;
+}
+
 @end

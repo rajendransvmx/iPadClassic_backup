@@ -438,9 +438,6 @@
 // (This method is only called on the leftmost view controller and only discriminates portrait from landscape.)
 - (BOOL)splitViewController: (UISplitViewController*)svc shouldHideViewController:(UIViewController *)vc inOrientation:(UIInterfaceOrientation)orientation
 {
-    UIDeviceOrientation deviceOrientation = [[UIDevice currentDevice] orientation];
-    if (deviceOrientation == UIInterfaceOrientationPortrait || deviceOrientation == UIInterfaceOrientationPortraitUpsideDown)
-        return YES;
     return NO;
 }
 
