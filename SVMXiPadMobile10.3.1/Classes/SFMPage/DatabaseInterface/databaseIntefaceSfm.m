@@ -3451,8 +3451,11 @@ extern void SVMXLog(NSString *format, ...);
     
 	NSMutableDictionary * dict = [self updateEmptyFieldValuesForDict:dict1 objectName:objectName];
     NSString *  parent_column_name = [self getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectName field_name:@"parent_column_name"];
-    [dict removeObjectForKey:parent_column_name];
 	
+	if (![objectName caseInsensitiveCompare:@"EVENT"] == NSOrderedSame)
+	{
+		[dict removeObjectForKey:parent_column_name];
+	}
 	BOOL success = FALSE;
     NSArray * allkeys = [dict allKeys];
     NSMutableString *  updateValue = [[[NSMutableString alloc] initWithCapacity:0] autorelease]; // sahana sep 13th
@@ -3821,12 +3824,17 @@ extern void SVMXLog(NSString *format, ...);
                 
             }
             
-            BOOL isChild = [self IsChildObject:object_name];
             
-            if (isChild)
+			BOOL isChild = [self IsChildObject:object_name];
+            
+            if (isChild && ![object_name caseInsensitiveCompare:@"EVENT"] == NSOrderedSame)
             {
                 record_type = DETAIL;
             }
+			else
+			{
+				record_type = MASTER;
+			}
             
             NSString * update_query = [NSString stringWithFormat:@"INSERT INTO '%@' (local_id , json_record, sf_id, sync_flag,object_name,sync_type,record_type) VALUES ('%@','%@','%@','false','%@','%@','%@')", SYNC_RECORD_HEAP,local_id , json_record , sf_id, object_name, sync_type, record_type];
             
