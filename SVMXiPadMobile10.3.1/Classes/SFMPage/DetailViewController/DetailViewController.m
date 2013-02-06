@@ -27,6 +27,9 @@ extern void SVMXLog(NSString *format, ...);
 @interface DetailViewController ()
 @property (nonatomic, retain) UIPopoverController *popoverController;
 - (void)configureView;
+- (BOOL) isValidUrl:(NSString *)url;
+- (void) showAlertForInvalidUrl;
+
 @end
 
 @implementation DetailViewController
@@ -83,6 +86,40 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize LabourValuesDictionary;
 @synthesize showSyncUI;
 @synthesize multiLookupPopover;
+
+- (BOOL) isValidUrl:(NSString *)url
+{
+    NSString * urlRegEx = @"(http|https)://((\\w)*|([0-9]*)|([-|_])*)+([\\.|/]((\\w)*|([0-9]*)|([-|_])*))+";
+    NSPredicate * urlPredicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", urlRegEx];
+    BOOL isValidUrl = [urlPredicate evaluateWithObject:url];
+    
+    NSLog(@"***** Is %@ valid url %d",url,isValidUrl);
+    return isValidUrl;
+    
+}
+- (void) showAlertForInvalidUrl
+{
+    NSString * warning = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_WARNING];
+    NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+    NSString * invalidUrlMessage = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_TEXT_INVALID_URL];
+    
+    BOOL isAlertShowing = NO;
+    for( UIView* subview in [UIApplication sharedApplication].keyWindow.subviews )
+    {
+        if( [subview isKindOfClass:[UIAlertView class]] )
+        {
+            SMLog( @"Alert is showing" );
+            isAlertShowing = YES;
+            break;
+        }
+    }
+    if (!isAlertShowing) {
+        UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:warning message:invalidUrlMessage delegate:self cancelButtonTitle:alert_ok otherButtonTitles:nil, nil];
+        [alertView show];
+        [alertView release];
+    }
+}
+
 - (id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -9498,6 +9535,12 @@ extern void SVMXLog(NSString *format, ...);
                         id_type = [dict objectForKey:Didtype];
                         control_type = [dict objectForKey:Dcontrol_type];
                     }
+                    //Aparna
+                    if ([control_type length] == 0 || control_type == nil)
+                    {
+                        control_type = [[Disclosure_Details objectAtIndex:i] objectForKey:@"Field_Data_Type"];
+                    }
+                    
                     NSMutableArray * detailValue = [detail_values objectAtIndex:self.selectedRowForDetailEdit];
                     for(int l = 0; l < [detailValue count]; l++)
                     {
@@ -9629,6 +9672,20 @@ extern void SVMXLog(NSString *format, ...);
                                   
                                 }
                                 
+                            }
+                            //Aparna: Fix for the defect 4547
+                            if ([control_type isEqualToString:@"url"])
+                            {
+                                BOOL isValidUrl = [self isValidUrl:fieldValue];
+                                if ((isValidUrl == NO) && ([fieldValue length] > 0))
+                                {
+                                    [self showAlertForInvalidUrl];
+//                                    [self enableSFMUI];
+                                    [activity stopAnimating];
+                                    return;
+                                    
+                                }
+
                             }
 
                             if([control_type isEqualToString:@"boolean"])
@@ -10219,7 +10276,20 @@ extern void SVMXLog(NSString *format, ...);
                             }*/
                             
                         }
-                    }        
+                        // Fix for the defect 4547: Url validation
+                        else if ([dataType isEqualToString:@"url"] )
+                        {
+                            BOOL isValidUrl = [self isValidUrl:value];
+                            if ((isValidUrl == NO) && ([value length] > 0))
+                            {
+                                [self showAlertForInvalidUrl];
+                                [self enableSFMUI];
+                                return;
+
+                            }
+                        }
+
+                    }
                 }
                 if(error == TRUE)
                 {
@@ -10249,6 +10319,7 @@ extern void SVMXLog(NSString *format, ...);
                             NSDictionary * field = [child_record_fields objectAtIndex:k];
                             NSString * detail_api_name = [field objectForKey:gVALUE_FIELD_API_NAME];
                             NSString * deatil_value = [field objectForKey:gVALUE_FIELD_VALUE_VALUE];
+                            NSString *detailDataType = [field objectForKey:gFIELD_DATA_TYPE];
                             for(int l = 0 ;l < [fields_array count]; l++)
                             {
                                 NSDictionary *field_array_value = [fields_array  objectAtIndex:l];
@@ -10284,6 +10355,18 @@ extern void SVMXLog(NSString *format, ...);
                                         return;
                                     }
                                     
+                                }
+                                // Fix for the defect 4547: Url validation
+                                else if ([detailDataType isEqualToString:@"url"])
+                                {
+                                    BOOL isValidUrl = [self isValidUrl:deatil_value];
+                                    if ((isValidUrl == NO) && ([deatil_value length] > 0))
+                                    {
+                                        [self showAlertForInvalidUrl];
+                                        [self enableSFMUI];
+                                        return;
+                                        
+                                    }
                                 }
 
                             }
@@ -10621,6 +10704,18 @@ extern void SVMXLog(NSString *format, ...);
                              */
                             
                         }
+                        //Aparna://Fix for the defect 4547
+                        else if ([dataType isEqualToString:@"url"] )
+                        {
+                            BOOL isValidUrl = [self isValidUrl:value];
+                            if ((isValidUrl == NO) && ([value length] > 0))
+                            {
+                                [self showAlertForInvalidUrl];
+                                [self enableSFMUI];
+                                return;
+                                
+                            }
+                        }
 
                         
                     }        
@@ -10653,6 +10748,8 @@ extern void SVMXLog(NSString *format, ...);
                             NSDictionary * field = [child_record_fields objectAtIndex:k];
                             NSString * detail_api_name = [field objectForKey:gVALUE_FIELD_API_NAME];
                             NSString * deatil_value = [field objectForKey:gVALUE_FIELD_VALUE_VALUE];
+                            NSString * detailDataType = [field objectForKey:gFIELD_DATA_TYPE];
+
                             for(int l = 0 ;l < [fields_array count]; l++)
                             {
                                 NSDictionary *field_array_value = [fields_array  objectAtIndex:l];
@@ -10688,6 +10785,19 @@ extern void SVMXLog(NSString *format, ...);
                                         return;
                                     }
                                 }
+                                //Aparna: Fix for thr defect 4547 - Invalid Url
+                                else if ([detailDataType isEqualToString:@"url"] )
+                                {
+                                    BOOL isValidUrl = [self isValidUrl:deatil_value];
+                                    if ((isValidUrl == NO) && ([deatil_value length] > 0))
+                                    {
+                                        [self showAlertForInvalidUrl];
+                                        [self enableSFMUI];
+                                        return;
+                                        
+                                    }
+                                }
+
                             }
                         }
                     }        
@@ -11312,6 +11422,20 @@ extern void SVMXLog(NSString *format, ...);
                             }
                             */
                         }
+                        //Aparna: Fix for the defect 4547- Invalid Url
+                        else if ([dataType isEqualToString:@"url"] )
+                        {
+                            BOOL isValidUrl = [self isValidUrl:value];
+                            if ((isValidUrl == NO) && ([value length] > 0))
+                            {
+                                [self showAlertForInvalidUrl];
+                                [self enableSFMUI];
+                                return;
+                                
+                            }
+                        }
+
+                        
                     }        
                 }
                 if(error == TRUE)
@@ -11342,6 +11466,7 @@ extern void SVMXLog(NSString *format, ...);
                             NSDictionary * field = [child_record_fields objectAtIndex:k];
                             NSString * detail_api_name = [field objectForKey:gVALUE_FIELD_API_NAME];
                             NSString * deatil_value = [field objectForKey:gVALUE_FIELD_VALUE_VALUE];
+                            NSString *detailValue = [field objectForKey:gFIELD_DATA_TYPE];
                             for(int l = 0 ;l < [fields_array count]; l++)
                             {
                                 NSDictionary *field_array_value = [fields_array  objectAtIndex:l];
@@ -11378,6 +11503,19 @@ extern void SVMXLog(NSString *format, ...);
                                     }
                                     
                                 }
+                                //Aparna: Fix for the defect 4547: Invalid Url
+                                else if ([detailValue isEqualToString:@"url"] )
+                                {
+                                    BOOL isValidUrl = [self isValidUrl:deatil_value];
+                                    if ((isValidUrl == NO) && ([deatil_value length] > 0))
+                                    {
+                                        [self showAlertForInvalidUrl];
+                                        [self enableSFMUI];
+                                        return;
+                                        
+                                    }
+                                }
+
 
                             }
                         }
