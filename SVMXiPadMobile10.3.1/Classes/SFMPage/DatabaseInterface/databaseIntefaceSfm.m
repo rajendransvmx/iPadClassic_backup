@@ -6225,6 +6225,9 @@ extern void SVMXLog(NSString *format, ...);
     NSDateFormatter * dateFormatter  = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     today_Date = [dateFormatter stringFromDate:date];
+    object_name=[object_name stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+    RecordType=[RecordType stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+    json_record=[json_record stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     NSString * insert_query = [NSString stringWithFormat:@"INSERT OR REPLACE INTO 'on_demand_download' ('object_name','sf_id','time_stamp','local_id','record_type','json_record') VALUES ('%@','%@','%@','%@','%@','%@')" , object_name,sf_id,today_Date,local_id,RecordType,json_record ];
     char * err;
     
