@@ -218,8 +218,12 @@ extern void SVMXLog(NSString *format, ...);
     }
     //fetch the parent  column name  in child table from  CHildInfo Table   -- IMP headerObjectName
     
-    NSString * sql;
-    if([parent_column_name length] != 0)
+    NSString * sql = @"";
+    
+    BOOL isChild =  [self IsChildObject:detailObjectName];
+    
+    
+    if(isChild)
     {
         if([expression_ length ] != 0 && expression_ != nil)
             
@@ -234,10 +238,16 @@ extern void SVMXLog(NSString *format, ...);
         
         NSString * SF_id = [self getSfid_For_LocalId_From_Object_table:headerObjectName local_id:local_record_id ];
         
-        if([releated_column_name length] != 0)
+       if([parent_column length] != 0)
         {
             if([expression_ length ] != 0 && expression_ != nil)
-                
+                sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE %@ = '%@' and %@",fieldsString,detailObjectName,parent_column,SF_id, expression_];
+            else
+                sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE %@ = '%@'",fieldsString,detailObjectName,parent_column,SF_id];
+        }
+        else if([releated_column_name length] != 0)
+        {
+            if([expression_ length ] != 0 && expression_ != nil)
                 sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE %@ = '%@' and %@",fieldsString,detailObjectName,releated_column_name,SF_id, expression_];
             else
                 sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE %@ = '%@'",fieldsString,detailObjectName,releated_column_name,SF_id];
@@ -6431,17 +6441,26 @@ extern void SVMXLog(NSString *format, ...);
 
 -(NSString * )getallOverLappingEventsForStartDateTime:(NSString *)startDateTime EndDateTime:(NSString *)endDateTime local_id:(NSString *)local_id
 {
+    NSDateFormatter * formatter = [[[NSDateFormatter alloc] init] autorelease];
+    [formatter setDateFormat:@"hh:mm"];
+    
+    NSDateFormatter * date_formatter = [[[NSDateFormatter alloc] init] autorelease];
+    [date_formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    NSTimeInterval timeZoneOffset = [[NSTimeZone systemTimeZone] secondsFromGMT];
+    
     NSString * overlapping_events = nil;
-    NSMutableString * mutable_str = [[NSMutableString alloc] initWithCapacity:0];
-    NSMutableArray * events = [[NSMutableArray alloc] initWithCapacity:0];
-    NSString * query_str = [NSString stringWithFormat:@"SELECT DISTINCT  Subject, WhatId FROM Event WHERE (('%@' >=  StartDatetime AND '%@' < EndDateTime) OR ('%@' >= StartDatetime AND    '%@' <=  EndDateTime) OR  ('%@' <= StartDatetime  AND '%@' >= EndDateTime)   OR ('%@' >=  StartDatetime  AND '%@' <= EndDateTime)) AND local_id!='%@'" ,startDateTime,startDateTime,endDateTime,endDateTime,startDateTime,endDateTime ,startDateTime,startDateTime,local_id];
-    NSString * subject = nil , * relatedTo = nil ;
+    NSMutableString * mutable_str = [[NSMutableString alloc] initWithCapacity:0] ;
+    NSMutableArray * events = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    NSMutableArray * startDate_time_array = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    NSMutableArray * endDate_time_array = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    NSString * query_str = [NSString stringWithFormat:@"SELECT DISTINCT  Subject, WhatId , StartDatetime, EndDateTime FROM Event WHERE (('%@' >=  StartDatetime AND '%@' < EndDateTime) OR ('%@' >= StartDatetime AND    '%@' <=  EndDateTime) OR  ('%@' <= StartDatetime  AND '%@' >= EndDateTime)   OR ('%@' >=  StartDatetime  AND '%@' <= EndDateTime)) AND local_id!='%@'" ,startDateTime,startDateTime,endDateTime,endDateTime,startDateTime,endDateTime ,startDateTime,startDateTime,local_id];
+    NSString * subject = nil , * relatedTo = nil ,*startTime = nil,* endTime = nil;
     sqlite3_stmt * stmt;
     if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query_str UTF8String], -1, &stmt, nil) == SQLITE_OK)
     {
         while(synchronized_sqlite3_step(stmt)== SQLITE_ROW)
         {
-            relatedTo = @"" ,subject = @"";
+            relatedTo = @"" ,subject = @"",startTime = @"",endTime = @"";
             char * temp_subject = (char *)synchronized_sqlite3_column_text(stmt, 0);
             if(temp_subject != nil)
             {
@@ -6452,6 +6471,18 @@ extern void SVMXLog(NSString *format, ...);
             {
                 relatedTo =[NSString stringWithUTF8String:temp_relatedTo];
             }
+            char * temp_start_time = (char *)synchronized_sqlite3_column_text(stmt, 2);
+            if (temp_start_time != nil)
+            {
+                startTime = [NSString stringWithUTF8String:temp_start_time];
+            }
+            char * temp_end_time = (char *)synchronized_sqlite3_column_text(stmt, 3);
+            if (temp_end_time != nil)
+            {
+                endTime = [NSString stringWithUTF8String:temp_end_time];
+            }
+            
+            
             if([relatedTo length] > 0 && relatedTo != nil)
             {
                 NSString * nameField = [self getNameForSFId:relatedTo];
@@ -6461,14 +6492,74 @@ extern void SVMXLog(NSString *format, ...);
             {
                 [events addObject:subject];
             }
+            else
+            {
+                [events addObject:@""];
+            }
+            
+            if([startTime length] > 0 && [endTime length] > 0)
+            {
+                NSString * s_time = @"" ,* e_time = @"";
+                NSString * After_replacing_stime = [[[NSString alloc] initWithString:startTime] autorelease];
+                After_replacing_stime = [After_replacing_stime stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+                After_replacing_stime = [After_replacing_stime stringByReplacingOccurrencesOfString:@".000+0000" withString:@""];
+                
+                NSString * afterReplacing_etime = [[[NSString alloc] initWithString:endTime] autorelease];
+                afterReplacing_etime = [afterReplacing_etime stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+                afterReplacing_etime = [afterReplacing_etime stringByReplacingOccurrencesOfString:@".000+0000" withString:@""];
+
+                
+                NSDate * gmtSartDate = [date_formatter dateFromString:After_replacing_stime];
+                NSTimeInterval NDS_gmtTimeInterval = [gmtSartDate timeIntervalSinceReferenceDate] + timeZoneOffset;
+                NSDate * NSDlocal_startDate = [NSDate dateWithTimeIntervalSinceReferenceDate:NDS_gmtTimeInterval];
+                s_time = [formatter stringFromDate:NSDlocal_startDate];
+                
+                NSDate * gmtendDate = [date_formatter dateFromString:afterReplacing_etime];
+                NSTimeInterval NDS_gmtTimeInterval_end = [gmtendDate timeIntervalSinceReferenceDate] + timeZoneOffset;
+                NSDate * NSDlocal_endDate = [NSDate dateWithTimeIntervalSinceReferenceDate:NDS_gmtTimeInterval_end];
+                e_time = [formatter stringFromDate:NSDlocal_endDate];
+                
+                if(s_time != nil)
+                {
+                    [startDate_time_array addObject:s_time];
+                }
+                else
+                {
+                     [startDate_time_array addObject:@""];
+                }
+                if(e_time!= nil)
+                {
+                     [endDate_time_array addObject:e_time];
+                }
+                else
+                {
+                      [endDate_time_array addObject:@""];
+                }
+            }
+            else
+            {
+                [startDate_time_array addObject:@""];
+                [endDate_time_array addObject:@""];
+            }
+            
         }
     }
     NSLog(@" overlapping events%@",events);
     synchronized_sqlite3_finalize(stmt);
      [mutable_str appendFormat:@"\n"];
-    for(NSString * event_temp in events)
+    for(int i= 0;i<[events count];i++)
     {
-        [mutable_str appendFormat:@"%@\n",event_temp];
+        NSString * event_temp = [events objectAtIndex:i];
+        NSString * disp_st_time = [startDate_time_array objectAtIndex:i];
+        NSString * disp_et_time = [endDate_time_array objectAtIndex:i];
+        if([event_temp length] >0)
+        {
+            [mutable_str appendFormat:@"%@: (%@-%@)\n",event_temp,disp_st_time,disp_et_time];
+        }
+        else
+        {
+             [mutable_str appendFormat:@"(%@-%@)\n",disp_st_time,disp_et_time];
+        }
     }
     overlapping_events = [[NSString alloc]  initWithFormat:@"%@",mutable_str];
     [mutable_str release];
