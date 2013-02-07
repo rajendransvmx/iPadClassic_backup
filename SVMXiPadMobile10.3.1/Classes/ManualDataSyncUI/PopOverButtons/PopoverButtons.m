@@ -580,7 +580,8 @@ PopoverButtons *popOver_view;
         
         [delegate enableControls];
         
-		[appDelegate.calDataBase insertMetaSyncStatus:@"Red" WithDB:appDelegate.db];
+		//Radha - Commented the below since the table will not be created.
+		//		[appDelegate.calDataBase insertMetaSyncStatus:@"Red" WithDB:appDelegate.db];
         if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.internetAlertFlag = TRUE;

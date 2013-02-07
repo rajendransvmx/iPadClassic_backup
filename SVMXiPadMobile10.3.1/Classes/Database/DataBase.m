@@ -6588,6 +6588,8 @@ extern void SVMXLog(NSString *format, ...);
     } 
     appDelegate.internetAlertFlag = TRUE;
     popOver_view.syncConfigurationFailed = TRUE;
+	//Radha - Fix for the defect 5745
+	[appDelegate.calDataBase insertMetaSyncStatus:@"Red" WithDB:appDelegate.db];
     [self settingAfterIncrementalMetaSync];
 
 }
@@ -6770,16 +6772,50 @@ extern void SVMXLog(NSString *format, ...);
     {
         while(synchronized_sqlite3_step(objectStatement) == SQLITE_ROW)
         {
+			object_api_name = @"";
             char * field = (char *) synchronized_sqlite3_column_text(objectStatement,0);
             if ((field != nil) && strlen(field))
                 object_api_name = [[NSString alloc] initWithUTF8String:field];
-            [objects  addObject:object_api_name];
+			if ([object_api_name length] > 0)
+			{
+				[objects  addObject:object_api_name];
+			}
+            
+            
+        }
+    }
+	//Radha - Fix for the defect 5745
+	objectStatement = nil;
+	
+	//Radha - Fix for defect 5745
+	NSMutableArray * objects_sfmTable = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    
+    NSString * queryStatement1 = [NSString stringWithFormat:@"SELECT DISTINCT object_api_name FROM SFObjectField"];
+    
+	object_api_name = @"";
+    
+    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement1 UTF8String],-1, &objectStatement, nil) == SQLITE_OK )
+    {
+        while(synchronized_sqlite3_step(objectStatement) == SQLITE_ROW)
+        {
+			object_api_name = @"";
+            char * field = (char *) synchronized_sqlite3_column_text(objectStatement,0);
+            if ((field != nil) && strlen(field))
+                object_api_name = [[NSString alloc] initWithUTF8String:field];
+			if ([object_api_name length] > 0)
+			{
+				[objects_sfmTable  addObject:object_api_name];
+			}
             
         }
     }
     
     for (NSString * tableName in objects)
     {
+		//Radha - Fix for the defect 5745
+		if (![objects_sfmTable containsObject:tableName])
+			continue;
+		
         if ([tableName isEqualToString:@"Case"])
             tableName = @"'Case'";
         
