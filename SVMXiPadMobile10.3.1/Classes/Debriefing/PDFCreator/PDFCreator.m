@@ -639,9 +639,8 @@ extern void SVMXLog(NSString *format, ...);
     {
         [self createCustomFields];
     }
-    
-    if (srShowParts || srShowExpenses || srShowLabor)
-        [self setDetailsOfWorkPerformed];
+    //Radha - Fix for the defect 6337
+	[self setDetailsOfWorkPerformed];
 
     {
         [self setPartsImage];

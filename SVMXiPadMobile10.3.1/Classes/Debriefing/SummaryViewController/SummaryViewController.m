@@ -211,6 +211,16 @@ extern void SVMXLog(NSString *format, ...);
     
      //BOOL enable_summary_generation = [[header_sfm objectForKey:gENABLE_SUMMURY_GENERATION] boolValue];
     // if(enable_summary_generation)
+	 
+	//Radha - Fix for the defect 6337
+	BOOL showParts, showLabour ,showExpenses;
+	
+	showParts = showLabour = showExpenses = FALSE;
+	
+	showParts = [[appDelegate.serviceReport objectForKey:@"IPAD004_SET006"] boolValue];
+	showLabour = [[appDelegate.serviceReport objectForKey:@"IPAD004_SET007"] boolValue];
+	showExpenses = [[appDelegate.serviceReport objectForKey:@"IPAD004_SET008"] boolValue];
+
     {
         PDFCreator * pdfCreator = [[PDFCreator alloc] initWithNibName:@"PDFCreator" bundle:nil];
         pdfCreator.delegate = self;
@@ -238,9 +248,13 @@ extern void SVMXLog(NSString *format, ...);
      
         pdfCreator._workPerformed = [[workOrderDetails objectForKey:SVMXCWORKPERFORMED] isKindOfClass:[NSString class]]?[workOrderDetails objectForKey:SVMXCWORKPERFORMED]:@"";
         pdfCreator._totalCost = LblTotalCost.text;
-        pdfCreator._parts = Parts;
-        pdfCreator._labor = Labour;
-        pdfCreator._expenses = Expenses;
+ 		//Radha - Fix for the defect 6337
+		if (showParts)
+			pdfCreator._parts = Parts;
+		if (showLabour)
+			pdfCreator._labor = Labour;
+		if (showExpenses)
+			pdfCreator._expenses = Expenses;
         
         pdfCreator.modalPresentationStyle = UIModalPresentationFullScreen;
         pdfCreator.modalTransitionStyle = UIModalTransitionStyleCoverVertical;

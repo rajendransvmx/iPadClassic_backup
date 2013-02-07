@@ -3038,13 +3038,25 @@ extern void SVMXLog(NSString *format, ...);
     Summary = [[[SummaryViewController alloc] initWithNibName:[SummaryViewController description] bundle:nil] autorelease];
     Summary.delegate = self;
     Summary.reportEssentials = reportEssentials;
+		
+	//Radha Fix for defect 6337
+	BOOL showParts, showLabour ,showExpenses;
+		
+	showParts = showLabour = showExpenses = FALSE;
+		
+	showParts = [[appDelegate.serviceReport objectForKey:@"IPAD004_SET006"] boolValue];
+	showLabour = [[appDelegate.serviceReport objectForKey:@"IPAD004_SET007"] boolValue];
+	showExpenses = [[appDelegate.serviceReport objectForKey:@"IPAD004_SET008"] boolValue];
     
     SMLog(@"%@",reportEssentials);
     NSDictionary * headerDict = [appDelegate.SFMPage objectForKey:gHEADER];
     NSDictionary * headerDataDict = [headerDict objectForKey:gHEADER_DATA];
     Summary.workDescription = [self getObjectNameFromHeaderData:headerDataDict forKey:PROBLEMSUMMARY];
-    Summary.Parts = Parts;
-    Summary.Expenses = Expenses;
+	//Radha Fix for defect 6337
+	if (showParts)
+		Summary.Parts = Parts;
+	if (showExpenses)
+		Summary.Expenses = Expenses;
     Summary.recordId = currentRecordId;
     Summary.objectApiName = appDelegate.sfmPageController.objectName;
     SMLog(@"%@",Parts);
@@ -3079,7 +3091,9 @@ extern void SVMXLog(NSString *format, ...);
 	}
 	
 	SMLog(@"%@",Labor);
-    Summary.Labour = Labor;
+	//Radha Fix for defect 6337
+	if (showLabour)
+		Summary.Labour = Labor;
     
     Summary.view.frame = CGRectMake(0, 20, 768, 1004);
     Summary.modalPresentationStyle = UIModalPresentationFullScreen;
