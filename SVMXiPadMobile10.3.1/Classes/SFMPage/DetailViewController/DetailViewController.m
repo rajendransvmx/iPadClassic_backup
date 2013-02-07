@@ -1177,7 +1177,7 @@ extern void SVMXLog(NSString *format, ...);
             NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGETCHILD process_id:processId layoutId:detail_layout_id objectName:detailObjectName];
             
             NSString * expressionId = [process_components objectForKey:EXPRESSION_ID];
-            NSString * parent_column_name = [dict objectForKey:gDETAIL_HEADER_REFERENCE_FIELD];
+            NSString * parent_column_name = [process_components objectForKey:PARENT_COLUMN_NAME];
             
             NSMutableArray * detail_values = [appDelegate.databaseInterface queryLinesInfo:details_api_keys detailObjectName:detailObjectName headerObjectName:headerObjName detailaliasName:detailaliasName headerRecordId:appDelegate.sfmPageController.recordId expressionId:expressionId parent_column_name:parent_column_name];
             
