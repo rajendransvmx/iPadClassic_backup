@@ -1745,8 +1745,13 @@ const float progress_ = 0.07;
     
     SMLog(@"SAMMAN Update Sync Records Start: %@", [NSDate date]);
     
-    [appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
+    //[appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
     
+    /* Releasing the memory allocated : InitialSync-shr*/
+    appDelegate.databaseInterface.objectFieldDictionary  = nil;
+    appDelegate.wsInterface.jsonParserForDataSync = nil;
+    [appDelegate.databaseInterface updatesfmIdsOfMasterToLocalIds];
+
     
     appDelegate.initial_sync_status = INITIAL_SYNC_COMPLETED;
     appDelegate.Sync_check_in = FALSE;

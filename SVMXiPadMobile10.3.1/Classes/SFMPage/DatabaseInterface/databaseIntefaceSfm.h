@@ -10,9 +10,12 @@
 #import "sqlite3.h"
 #import "offlineGlobles.h"
 #import "iOSInterfaceObject.h"
+#import "JSON.h"
+#import "SBJsonParser.h"
 
 @protocol databaseInterfaceProtocol;
 @class iServiceAppDelegate;
+@class SBJsonParser;
 @interface databaseIntefaceSfm : NSObject
 {
     //RADHA
@@ -261,6 +264,23 @@
 -(void) UpdateSFPicklistForMultiSelect_IndexValue_For_Oject_Name:(NSString *)object_name  field_api_name:(NSString *)field_api_name value:(NSString *)value  index:(int)index_value;
 
 -(NSArray *)getEventProcessIdForProcessType:(NSString *)process_type SourceObject:(NSString *)sourceobjectName;
+
+
+/* Shravya-InitialSync :InitialSync-shr */
+@property(nonatomic,retain)NSMutableDictionary *objectFieldDictionary;
+
+/* this is not used as of now*/
+@property(nonatomic,retain)NSMutableDictionary *localIdOfFutureMasterRecords;
+@property(nonatomic,retain)NSMutableDictionary *parentobjectDictionary;
+@property(nonatomic,retain)NSMutableDictionary *parentColumnDictionary;
+
+/* Shravya-InitialSync :InitialSync-shr */
+- (NSInteger)startTransaction;
+- (NSInteger)endTransaction;
+- (void)insertAllRecordsToRespectiveTables:(NSMutableDictionary *)syncedData andParser:(SBJsonParser *)jsonParser;
+- (void)updateTheStatusOfSynRecordsToTrue:(NSMutableDictionary *)sync_data;
+- (void)updatesfmIdsOfMasterToLocalIds ;
+
 #define SERVER_OVERRIDE                     @"Server_Override"
 #define CLIENT_OVERRIDE                     @"Client_Override"
 #define UNDO                                @"Undo"

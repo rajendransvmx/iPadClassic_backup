@@ -187,6 +187,9 @@
     BOOL webservice_call;
    
     NSMutableArray *tempObjects, *tempObjects2;
+    NSTimeInterval totalTimeTakenForInsertion;
+    
+    SBJsonParser *jsonParserForDataSync;
  
 }
 //sahana
@@ -279,6 +282,8 @@
 //Radha DataSync
 @property (nonatomic, retain) NSMutableArray * childObject;
 
+ /* Added global parser : InitialSync-shr*/
+@property (nonatomic,retain) SBJsonParser *jsonParserForDataSync;
 
 -(NSString *)requestSnapShot;
 - (void) getSvmxVersion;

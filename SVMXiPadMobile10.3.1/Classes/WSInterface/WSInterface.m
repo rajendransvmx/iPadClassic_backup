@@ -97,6 +97,9 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize processDictionary;
 @synthesize childObject;
 @synthesize accountHistory;
+
+@synthesize jsonParserForDataSync;
+
 #define VALUE 100
 
 - (id) init
@@ -111,7 +114,7 @@ extern void SVMXLog(NSString *format, ...);
     didOpComplete = FALSE;
     isLoggedIn = NO;
     
-    
+    totalTimeTakenForInsertion = 0;
     if (self)
     {
     }
@@ -6639,6 +6642,14 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         {
           
             NSAutoreleasePool * autoreleasePool = [[NSAutoreleasePool alloc] init];
+            
+            if(jsonParserForDataSync == nil) {
+                SBJsonParser *tempParser = [[SBJsonParser alloc] init];
+                self.jsonParserForDataSync = tempParser;
+                [tempParser release];
+                tempParser = nil;
+            }
+            
             SMLog(@"SAMMAN TX_FETCH Response recived: %@", [NSDate date]);
             SMLog(@"SAMMAN TX_FETCH Processing starts: %@", [NSDate date]);
             NSMutableDictionary * record_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
@@ -6663,11 +6674,13 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                     NSMutableString * temp_json_string = [[NSMutableString alloc] initWithString:json_record];
                     //fetch id from the record 
                     NSString * SF_id = [self getIdFromJsonString:temp_json_string];
-                    
-                    ;
-                 // temp_json_string = [self escapeSIngleQute:temp_json_string];
-                    NSInteger val =  [temp_json_string replaceOccurrencesOfString:@"'" withString:@"''" options:NSCaseInsensitiveSearch range: NSMakeRange(0, [temp_json_string length])];
-                    SMLog(@"%d" , val);
+                   
+                    /* For initial sync do not escape the single quote as it is handled by sqlite3_bind :InitialSync-shr*/
+                    if(appDelegate.do_meta_data_sync != ALLOW_META_AND_DATA_SYNC) {
+                        NSInteger val =  [temp_json_string replaceOccurrencesOfString:@"'" withString:@"''" options:NSCaseInsensitiveSearch range: NSMakeRange(0, [temp_json_string length])];
+                        SMLog(@"%d" , val);
+                    }
+                   
                     
                     NSArray * allkeys = [record_dict allKeys];
                     BOOL flag = FALSE;
@@ -6708,10 +6721,26 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             [keys_ release];
             SMLog(@"SAMMAN TX_FETCH Processing ends: %@", [NSDate date]);
             
-            [appDelegate.databaseInterface updateAllRecordsToSyncRecordsHeap:record_dict];
+            /* If this is initial sync , then insert all the records :InitialSync-shr*/
+            if(appDelegate.do_meta_data_sync == ALLOW_META_AND_DATA_SYNC)
+            {
+                [appDelegate.databaseInterface insertAllRecordsToRespectiveTables:record_dict andParser:jsonParserForDataSync];
+               
+            }
+            else {
+                [appDelegate.databaseInterface updateAllRecordsToSyncRecordsHeap:record_dict];
+            }
+            
             [record_dict release];
             
-            [self PutAllTheRecordsForIds];        //sahana tesing    uncomment this line 
+            /* For debugging. To be remove while given to Testing team :InitialSync-shr*/
+            //NSTimeInterval timeintervalSecond = [[NSDate date] timeIntervalSince1970];
+            //NSTimeInterval totaltimeInSec = timeintervalSecond - timeintervalFirst;
+            //totalTimeTakenForInsertion = totalTimeTakenForInsertion + totaltimeInSec;
+            //NSLog(@"Insertion duration at %f and sum  %f",totaltimeInSec,totalTimeTakenForInsertion);
+            
+            
+            [self PutAllTheRecordsForIds];        //sahana tesing    uncomment this line
             
             [autoreleasePool drain];
             
