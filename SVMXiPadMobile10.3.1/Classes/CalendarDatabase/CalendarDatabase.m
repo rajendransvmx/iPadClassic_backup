@@ -3723,7 +3723,7 @@ extern void SVMXLog(NSString *format, ...);
     
     if (does_exists)
     {
-        queryStatement = [NSString stringWithFormat:@"UPDATE %@ SET %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@',%@ = 'Service Report_%@.pdf', WHERE record_id = '%@' AND sign_type = '%@", @"Summary_PDF", @"record_Id", record_Id, @"object_api_name", apiname, @"PDF_data", stringData, @"WorkOrderNumber", WO_number, @"pdf_name", WO_number, record_Id, @"ServiceReport"];
+        queryStatement = [NSString stringWithFormat:@"UPDATE %@ SET %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@',%@ = 'Service Report_%@.pdf' WHERE record_id = '%@' AND sign_type = '%@'", @"Summary_PDF", @"record_Id", record_Id, @"object_api_name", apiname, @"PDF_data", stringData, @"WorkOrderNumber", WO_number, @"pdf_name", WO_number, record_Id, @"ServiceReport"];
     }
     
     else
