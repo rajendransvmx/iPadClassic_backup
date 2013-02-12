@@ -46,8 +46,7 @@ extern void SVMXLog(NSString *format, ...);
     appDelegate.wsInterface.updateSyncStatus = self;
     popOverButtons.refreshMetaSyncDelegate = self;
 
-    UIView * view = nil;
-    
+    view = nil;
     UIImageView * bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_right_panel_bg_main.png"]];
     
     [self.view addSubview:bgImage];
@@ -65,9 +64,10 @@ extern void SVMXLog(NSString *format, ...);
     NSDateFormatter * formatter1 = [[NSDateFormatter alloc] init];
     [formatter1 setDateFormat:@"EEE, dd MMM yyyy HH:mm:ss a"];
     [formatter1 setTimeZone:[todayDateComponents timeZone]];
-        [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-    
-    
+//	[formatter1 setTimeZone:[NSTimeZone systemTimeZone]];
+	[formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+	[formatter setTimeZone:[todayDateComponents timeZone]];
+
     //Read from the plist
     @try{
     NSArray  * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -78,12 +78,16 @@ extern void SVMXLog(NSString *format, ...);
     SMLog(@"%@", dictionary);
     
     lastSyncTime = @"";
-    lastSyncTime = [dictionary objectForKey:@"last_initial_sync_time"];
+    lastSyncTime = [dictionary objectForKey:LAST_INITIAL_SYNC_IME];
     
     NSDate * _gmtDate = [formatter dateFromString:lastSyncTime];
-    
-    lastSyncTime = [formatter1 stringFromDate:_gmtDate];
-    
+	NSTimeInterval timeZoneOffset = [[NSTimeZone systemTimeZone] secondsFromGMT];
+	NSTimeInterval gmtTimeInterval = [_gmtDate timeIntervalSinceReferenceDate] + timeZoneOffset;
+	
+	NSDate * localDate = [NSDate dateWithTimeIntervalSinceReferenceDate:gmtTimeInterval];
+
+    lastSyncTime = [formatter1 stringFromDate:localDate];
+
     SMLog(@"%@", lastSyncTime);;
     
     NSString * str1 = nil;
@@ -172,18 +176,21 @@ extern void SVMXLog(NSString *format, ...);
     
     
     NSDateFormatter * format = [[NSDateFormatter alloc] init];
-    [format setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+	[format setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
 	[format setTimeZone:[todayDateComponents timeZone]];
-    NSString *str = [dictionary objectForKey:@"last_initial_sync_time"];
-    NSDate * gmtDate = [format dateFromString:str];
-    [format release];
-    
+    NSString *str = [dictionary objectForKey:LAST_INITIAL_SYNC_IME];
+		
+		
     NSDateFormatter * formatter2 = [[NSDateFormatter alloc] init];
 	[formatter2 setTimeZone:[todayDateComponents timeZone]];
     [formatter2 setDateFormat:@"EEE, dd MMM yyyy HH:mm:ss a"];
 	
-    
-    
+	NSDate * gmtDate = [format dateFromString:str];
+	
+	NSTimeInterval NDS_gmtTimeInterval = [gmtDate timeIntervalSinceReferenceDate] + timeZoneOffset;
+	
+	NSDate * NSDlocalDate = [NSDate dateWithTimeIntervalSinceReferenceDate:NDS_gmtTimeInterval];
+	
     NSString * timerValue = ([appDelegate.settingsDict objectForKey:@"Frequency of Master Data"]) != nil?[appDelegate.settingsDict objectForKey:@"Frequency of Master Data"]:@"";
     
     NSTimeInterval scheduledTimer = 0;
@@ -196,10 +203,8 @@ extern void SVMXLog(NSString *format, ...);
     }
     else
         scheduledTimer = 600;
-
-    
-    
-    NSDate *dateTwoMinsAhead = [gmtDate dateByAddingTimeInterval:scheduledTimer];
+	
+	NSDate *dateTwoMinsAhead = [NSDlocalDate dateByAddingTimeInterval:scheduledTimer];
     nextSyncTime = @"";
     nextSyncTime = [formatter2 stringFromDate:dateTwoMinsAhead];
     [formatter2 release];
@@ -232,8 +237,9 @@ extern void SVMXLog(NSString *format, ...);
     [label2 release];
     [nextSync release];
     [formatter release];
-    
-    
+	[formatter1 release];
+	[format release];
+
     UILabel *label3 = [[UILabel alloc] initWithFrame:CGRectMake(35, 120, 550, 45)];
     UIImageView * bgView3 = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"wou-row1-textfield-bg.png"]];
     bgView3.frame = CGRectMake(0, 0, 550, 45);
@@ -267,7 +273,6 @@ extern void SVMXLog(NSString *format, ...);
     NSDateFormatter * formatter4 = [[NSDateFormatter alloc] init];
     
     [formatter4 setDateFormat:@"EEE, dd MMM yyyy HH:mm:ss a"];
-    [formatter4 setTimeZone:[todayDateComponents timeZone]];
 
     [formatter3 setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
 	[formatter3 setTimeZone:[todayDateComponents timeZone]];
@@ -276,13 +281,16 @@ extern void SVMXLog(NSString *format, ...);
     
     lastSyncTime = @"";
     lastSyncTime = [dictionary objectForKey:LAST_INITIAL_META_SYNC_TIME];
-    
-    NSDate * _gmtDate3 = [formatter3 dateFromString:lastSyncTime];
-    
-    lastSyncTime = [formatter4 stringFromDate:_gmtDate3];
-    
-    SMLog(@"%@", lastSyncTime);
-    
+		
+    		
+	NSDate * _gmtDate3 = [formatter3 dateFromString:lastSyncTime];
+	
+	NSTimeInterval NMSgmtTimeInterval = [_gmtDate3 timeIntervalSinceReferenceDate] + timeZoneOffset;
+	
+	NSDate * NMSlocalDate = [NSDate dateWithTimeIntervalSinceReferenceDate:NMSgmtTimeInterval];
+
+	lastSyncTime = [formatter4 stringFromDate:NMSlocalDate];
+        
     NSString * str4 = nil;
     NSString * str5 = nil;
     NSString * str6 = nil;
@@ -322,22 +330,30 @@ extern void SVMXLog(NSString *format, ...);
     [label5 addSubview:bgView5];
     [self.view addSubview:label5];
     
+	[formatter3 release];
+	[formatter4 release];
+		
     /*############################### Next Sync Time for Meta Sync ########################*/
     
     NSDateFormatter * format_MS = [[NSDateFormatter alloc] init];
     [format_MS setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
 	[format_MS setTimeZone:[todayDateComponents timeZone]];
     NSString * _str = [dictionary objectForKey:NEXT_META_SYNC_TIME];
-    NSDate * gmtDate_ = [format_MS dateFromString:_str];
-    [format_MS release];
-    
+		
+	NSDate * gmtDate_ = [format_MS dateFromString:_str];
+	
+	NSTimeInterval MSgmtTimeInterval = [gmtDate_ timeIntervalSinceReferenceDate] + timeZoneOffset;
+	
+	NSDate * MSlocalDate = [NSDate dateWithTimeIntervalSinceReferenceDate:MSgmtTimeInterval];
+	[format_MS release];
+
+	
     NSDateFormatter * formatter2_MS = [[NSDateFormatter alloc] init];
     [formatter2_MS setDateFormat:@"EEE, dd MMM yyyy HH:mm:ss a"];
 	[formatter2_MS setTimeZone:[todayDateComponents timeZone]];
     
-    
     nextSyncTime = @"";
-    nextSyncTime = [formatter2_MS stringFromDate:gmtDate_];
+	nextSyncTime = [formatter2_MS stringFromDate:MSlocalDate];
     [formatter2_MS release];
     
     NSString * _str4 = nil;

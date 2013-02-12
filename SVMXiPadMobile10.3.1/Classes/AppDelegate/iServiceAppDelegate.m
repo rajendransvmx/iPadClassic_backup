@@ -1769,12 +1769,10 @@ NSString * GO_Online = @"GO_Online";
     NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:SYNC_HISTORY];
 
     NSMutableDictionary * dict_temp = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST];
-    NSArray * allkeys= [dict_temp allKeys];
-
-    
 
     NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+	[dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]]; //Change for Time Stamp	
 
     NSDate * current_date = [NSDate date];
 

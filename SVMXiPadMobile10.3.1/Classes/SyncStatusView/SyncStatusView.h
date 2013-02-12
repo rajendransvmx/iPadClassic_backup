@@ -28,6 +28,7 @@
     UIPopoverController * popOver;
     
     PopoverButtons * popOverButtons;
+	UIView * view;
 }
 
 @property (nonatomic, retain) UIPopoverController * popOver;
