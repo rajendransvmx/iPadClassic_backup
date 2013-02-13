@@ -673,7 +673,7 @@ PopoverButtons *popOver_view;
     {
 		appDelegate.event_thread = nil;
     }
-
+    [appDelegate pingServer];
     [self performSelectorOnMainThread:@selector(scheduletimer) withObject:nil waitUntilDone:NO];
     
 }
