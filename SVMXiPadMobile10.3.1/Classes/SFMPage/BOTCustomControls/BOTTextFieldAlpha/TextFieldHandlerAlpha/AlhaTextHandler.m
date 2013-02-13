@@ -79,9 +79,18 @@ extern void SVMXLog(NSString *format, ...);
     if([control_type isEqualToString:@"url"])
     {
         //Aparna: Fix for the defect 4547
-        if ([textField.text length] > 0)
+        NSString *text = textField.text;
+        if ([text length] > 0)
          {
-             BOOL result;
+             
+             if (!([text hasPrefix:@"http://"] || [text hasPrefix:@"https://"] || [text hasPrefix:@"ftp://"] || [text isEqualToString:@"http://"] || [text isEqualToString:@"https://"] || [text isEqualToString:@"ftp://"]))
+             {
+                 text = [NSString stringWithFormat:@"http://%@",text];
+                 [textField setText:text];
+             }
+             
+             
+             /*BOOL result;
              NSString * urlRegEx = @"(http|https)://((\\w)*|([0-9]*)|([-|_])*)+([\\.|/]((\\w)*|([0-9]*)|([-|_])*))+";
              NSPredicate * urlTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", urlRegEx];
              result =  [urlTest evaluateWithObject:textField.text];
@@ -95,9 +104,10 @@ extern void SVMXLog(NSString *format, ...);
                  [alertView show];
                  [alertView release];
                  return YES; 
-             }
+             }*/
 
          }
+        [delegate didChangeText:text];
     }
 
     return YES;

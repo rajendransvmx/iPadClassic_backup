@@ -9698,7 +9698,7 @@ extern void SVMXLog(NSString *format, ...);
                                 
                             }
                             //Aparna: Fix for the defect 4547
-                            if ([control_type isEqualToString:@"url"])
+                            /*if ([control_type isEqualToString:@"url"])
                             {
                                 BOOL isValidUrl = [self isValidUrl:fieldValue];
                                 if ((isValidUrl == NO) && ([fieldValue length] > 0))
@@ -9710,7 +9710,7 @@ extern void SVMXLog(NSString *format, ...);
                                     
                                 }
 
-                            }
+                            }*/
 
                             if([control_type isEqualToString:@"boolean"])
                             {
@@ -10301,7 +10301,7 @@ extern void SVMXLog(NSString *format, ...);
                             
                         }
                         // Fix for the defect 4547: Url validation
-                        else if ([dataType isEqualToString:@"url"] )
+                        /*else if ([dataType isEqualToString:@"url"] )
                         {
                             BOOL isValidUrl = [self isValidUrl:value];
                             if ((isValidUrl == NO) && ([value length] > 0))
@@ -10311,7 +10311,7 @@ extern void SVMXLog(NSString *format, ...);
                                 return;
 
                             }
-                        }
+                        }*/
 
                     }
                 }
@@ -10381,7 +10381,7 @@ extern void SVMXLog(NSString *format, ...);
                                     
                                 }
                                 // Fix for the defect 4547: Url validation
-                                else if ([detailDataType isEqualToString:@"url"])
+                                /*else if ([detailDataType isEqualToString:@"url"])
                                 {
                                     BOOL isValidUrl = [self isValidUrl:deatil_value];
                                     if ((isValidUrl == NO) && ([deatil_value length] > 0))
@@ -10391,7 +10391,7 @@ extern void SVMXLog(NSString *format, ...);
                                         return;
                                         
                                     }
-                                }
+                                }*/
 
                             }
                         }
@@ -10729,7 +10729,7 @@ extern void SVMXLog(NSString *format, ...);
                             
                         }
                         //Aparna://Fix for the defect 4547
-                        else if ([dataType isEqualToString:@"url"] )
+                        /*else if ([dataType isEqualToString:@"url"] )
                         {
                             BOOL isValidUrl = [self isValidUrl:value];
                             if ((isValidUrl == NO) && ([value length] > 0))
@@ -10739,7 +10739,7 @@ extern void SVMXLog(NSString *format, ...);
                                 return;
                                 
                             }
-                        }
+                        }*/
 
                         
                     }        
@@ -10810,7 +10810,7 @@ extern void SVMXLog(NSString *format, ...);
                                     }
                                 }
                                 //Aparna: Fix for thr defect 4547 - Invalid Url
-                                else if ([detailDataType isEqualToString:@"url"] )
+                                /*else if ([detailDataType isEqualToString:@"url"] )
                                 {
                                     BOOL isValidUrl = [self isValidUrl:deatil_value];
                                     if ((isValidUrl == NO) && ([deatil_value length] > 0))
@@ -10820,7 +10820,7 @@ extern void SVMXLog(NSString *format, ...);
                                         return;
                                         
                                     }
-                                }
+                                }*/
 
                             }
                         }
@@ -11447,7 +11447,7 @@ extern void SVMXLog(NSString *format, ...);
                             */
                         }
                         //Aparna: Fix for the defect 4547- Invalid Url
-                        else if ([dataType isEqualToString:@"url"] )
+                        /*else if ([dataType isEqualToString:@"url"] )
                         {
                             BOOL isValidUrl = [self isValidUrl:value];
                             if ((isValidUrl == NO) && ([value length] > 0))
@@ -11457,7 +11457,7 @@ extern void SVMXLog(NSString *format, ...);
                                 return;
                                 
                             }
-                        }
+                        }*/
 
                         
                     }        
@@ -11528,7 +11528,7 @@ extern void SVMXLog(NSString *format, ...);
                                     
                                 }
                                 //Aparna: Fix for the defect 4547: Invalid Url
-                                else if ([detailValue isEqualToString:@"url"] )
+                                /*else if ([detailValue isEqualToString:@"url"] )
                                 {
                                     BOOL isValidUrl = [self isValidUrl:deatil_value];
                                     if ((isValidUrl == NO) && ([deatil_value length] > 0))
@@ -11538,7 +11538,7 @@ extern void SVMXLog(NSString *format, ...);
                                         return;
                                         
                                     }
-                                }
+                                }*/
 
 
                             }
