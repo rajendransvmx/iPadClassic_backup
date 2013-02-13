@@ -28,6 +28,7 @@
 #define kPkgVersionCheckForGPS_AND_SFM_SEARCH   @"PackageVersionCheckForGPSandSFMSearch"
 #define kMinPkgForGPS_AND_SFMSEARCH             9.1
 #define kMinPkgForRESETTag						9.40003
+#define NoExceptionRecord                         10
 
 @class iServiceViewController;
 @class LoginController;
@@ -491,6 +492,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     NSMutableDictionary * serviceReportReference;
     NSTimer * locationPingSettingTimer;
 	NSString *errorDescription;
+    NSMutableArray *errorArray;
+    NSMutableDictionary *tempDict;
+    NSString * errorMessage,* errorType,*title;
 }
 @property (nonatomic,retain) NSMutableArray * code_snippet_ids;
 @property (nonatomic) BOOL get_trigger_code;
@@ -739,8 +743,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 @property (nonatomic, assign) NSString *From_SFM_Search;
 @property (nonatomic, assign) NSString *errorDescription;
 @property (nonatomic, assign) NSString *language;
-
-
+@property (nonatomic , retain) NSMutableArray * errorArray;
+@property(nonatomic,assign) BOOL isFirstError;
 
 
 //sahana dec 4th

@@ -364,7 +364,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize frequencyLocationService;
 @synthesize metaSyncCompleted;
 @synthesize From_SFM_Search;
-@synthesize errorDescription;
+@synthesize errorDescription,errorArray,isFirstError;
 @synthesize language;
 
 -(BOOL)shouldAutorotate
@@ -382,6 +382,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     appDelegate = self;
     appDelegate.code_snippet_ids = nil;
     self.isBackground = FALSE;
+    self.isFirstError=false;
+    errorDescription=@"";
+    errorArray=[[NSMutableArray alloc]init];
     // Check for internet connection here
     [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
     
@@ -709,8 +712,10 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     [viewController release];
     [window release];
     [_manualDataSync release];
+    [errorArray release];
     [frequencyLocationService release];
     [locationPingSettingTimer invalidate];
+    [tempDict release];
     [super dealloc];
 }
 
@@ -2317,6 +2322,10 @@ NSString * GO_Online = @"GO_Online";
 {
     @try
     {
+        if(err ==nil)
+        {
+            return;
+        }
         SMLog(@"%@ :", query);
         SMLog(@"ERROR :%@", err);
         NSMutableDictionary *errorDict=[[NSMutableDictionary alloc]init];
@@ -2363,77 +2372,144 @@ NSString * GO_Online = @"GO_Online";
 {
     @try
     {
+
         NSString * CopytoClipboard = [appDelegate.wsInterface.tagsDictionary objectForKey:Copy_to_Clipboard];
         NSString * eMail = [appDelegate.wsInterface.tagsDictionary objectForKey:PDF_EMAIL];
         NSString * Ok= [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
         NSString * tag1 = [appDelegate.wsInterface.tagsDictionary objectForKey:Type_of_Error];
         NSString * tag2 = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_error_message];
-        NSString * errorMessage=@"",* errorType=@"",* detail_desc=@"",*title=@"";
-        errorDescription=@"";
+        if(errorMessage ==NULL ||![errorMessage length]>0)
+        {
+            errorMessage=@"";
+        }
+        if(errorType ==NULL ||![errorType length]>0)
+        {
+            errorType=@"";
+        }
+        if(title ==NULL ||![title length]>0)
+        {
+            title=@"";
+        }
+        UIAlertView * customize_alert;
+        NSString * detail_desc=@"";
+
+        if(appDelegate.do_meta_data_sync == ALLOW_META_AND_DATA_SYNC||self.metaSyncRunning)
+        {
+            if([errorType length]>0 && [errorMessage length]>0)
+            {
+                isFirstError=TRUE;
+            }
+            
+        }
         switch (type)
         {
                 
             case DATABASE_ERROR:
                 SMLog(@"DATABASE_ERROR");
-                errorType =[errorDict objectForKey:@"ExpName"];
-                
-                errorMessage = [errorDict objectForKey:@"ExpReason"];
-                
+                if(!isFirstError)
+                {
+                    errorType =[errorDict objectForKey:@"ExpName"];
+                    
+                    errorMessage = [errorDict objectForKey:@"ExpReason"];
+                    title=[appDelegate.wsInterface.tagsDictionary objectForKey:alert_application_error];
+
+                }
                 detail_desc=[errorDict objectForKey:@"userInfo"];
-                title=[appDelegate.wsInterface.tagsDictionary objectForKey:alert_application_error];
                 break;
                 
             case RES_ERROR:
                 SMLog(@"Response Error");
-                
-                errorType =[errorDict objectForKey:@"ExpName"];
-                
-                errorMessage = [errorDict objectForKey:@"ExpReason"];
-                
+                if(!isFirstError)
+                {
+                    errorType =[errorDict objectForKey:@"ExpName"];
+                    
+                    errorMessage = [errorDict objectForKey:@"ExpReason"];
+                    title=[appDelegate.wsInterface.tagsDictionary objectForKey:Functional_Error];
+                }
+
                 detail_desc=[[errorDict objectForKey:@"userInfo"]objectForKey:@"userInfo"];
 
-                title=[appDelegate.wsInterface.tagsDictionary objectForKey:Functional_Error];
                 break;
                 
             case SOAP_ERROR:
                 SMLog(@"Soap Error");
+                NSString *errorTypeTemp=@"",*errorMessageTemp=@"";
                 if(error!=nil)
                 {
                     NSDictionary * user_info_error = [error userInfo];
-                    errorType = [user_info_error objectForKey:@"faultcode"];
-                    errorMessage = [user_info_error objectForKey:@"faultstring"];
+                    errorTypeTemp = [user_info_error objectForKey:@"faultcode"];
+                    errorMessageTemp = [user_info_error objectForKey:@"faultstring"];
                 }
                 else
                 {
-                    errorType =[errorDict objectForKey:@"ExpName"];
-                    errorMessage = [errorDict objectForKey:@"ExpReason"];
+                    errorTypeTemp =[errorDict objectForKey:@"ExpName"];
+                    errorMessageTemp = [errorDict objectForKey:@"ExpReason"];
                     detail_desc=[[errorDict objectForKey:@"userInfo"]objectForKey:@"userInfo"];
                 }
-                title=[appDelegate.wsInterface.tagsDictionary objectForKey:System_Error];
+                if(!isFirstError)
+                {
+                    errorType=errorTypeTemp;
+                    errorMessage=errorMessageTemp;
+                    title=[appDelegate.wsInterface.tagsDictionary objectForKey:System_Error];
+
+                }
+                
                 break;
             case APPLICATION_ERROR:
                 SMLog(@"Application Error");
-                errorType=[exp name];
-                errorMessage=[exp description];
-                title=[appDelegate.wsInterface.tagsDictionary objectForKey:alert_application_error];
+                if(!isFirstError)
+                {
+                    errorType=[exp name];
+                    errorMessage=[exp description];
+                    title=[appDelegate.wsInterface.tagsDictionary objectForKey:alert_application_error];
+                }
+                else
+                {
+                    detail_desc=[exp description];
+                }
                 break;
-
         }
-        
-        NSMutableString *message = [NSString stringWithFormat:@"%@:\t%@\n\n%@:\t%@\n",tag1,errorType,tag2,errorMessage];
-        UIAlertView * customize_alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:Ok otherButtonTitles:eMail,CopytoClipboard, nil];
-        errorDescription=detail_desc;
-        NSArray *subViewArray = customize_alert.subviews;
-        
-        for(int x=0;x<[subViewArray count];x++)
+        if(appDelegate.do_meta_data_sync == ALLOW_META_AND_DATA_SYNC||self.metaSyncRunning)
         {
-            if([[[subViewArray objectAtIndex:x] class] isSubclassOfClass:[UILabel class]] && x > 0)
-                
-            {
-                UILabel *label = [subViewArray objectAtIndex:x];
-                label.textAlignment = UITextAlignmentLeft;
+            if(detail_desc !=nil)
+            [errorArray addObject:detail_desc];
+             if([errorArray count]==NoExceptionRecord)
+             {
+                NSMutableString *mutaDesStr=[[[NSMutableString alloc]init]autorelease];
+                for (int i=0; i<[errorArray count]; i++)
+                {
+                    [mutaDesStr appendFormat:@"<br/> %@",[errorArray objectAtIndex:i]];
+                    [mutaDesStr appendFormat:@"<br/>=================================="];
+                }
+                detail_desc=mutaDesStr;
             }
+            else
+            {
+                return;
+            }
+            self.errorDescription=detail_desc;
         }
+		else
+		{
+			self.errorDescription=detail_desc;
+		}
+		NSMutableString *message = [NSString stringWithFormat:@"%@:\t%@\n\n%@:\t%@\n",tag1,errorType,tag2,errorMessage];
+   
+		customize_alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:Ok otherButtonTitles:eMail,CopytoClipboard, nil];
+		NSArray *subViewArray = customize_alert.subviews;
+		
+		for(int x=0;x<[subViewArray count];x++)
+		{
+			if([[[subViewArray objectAtIndex:x] class] isSubclassOfClass:[UILabel class]] && x > 0)
+				
+			{
+				UILabel *label = [subViewArray objectAtIndex:x];
+				label.textAlignment = UITextAlignmentLeft;
+			}
+		}
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refresh) name:NOTIFICATION_EVENT_DATA_SYNC object:nil];
+        tempDict =[[NSMutableDictionary alloc]init];
+        [tempDict setObject:self.errorDescription forKey:@"des"];
         [customize_alert performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
 
         [customize_alert release];
@@ -2480,9 +2556,10 @@ NSString * GO_Online = @"GO_Online";
                 errType=[alertview.message substringToIndex:range.location];
                 errMessage=[alertview.message substringFromIndex:range.location];
             }
-            if(errorDescription ==nil)
-                errorDescription=@"";
-            NSMutableString *emailBody = [NSString stringWithFormat: @"<Head> %@ </Head><br/>================\n<br/> %@ <br/> <br/> %@ <br/><br/> %@<br/>",alertview.title,errType,errMessage,errorDescription];
+            if(self.errorDescription ==nil)
+                self.errorDescription=@"";
+            self.errorDescription=[tempDict objectForKey:@"des"];
+            NSMutableString *emailBody = [NSString stringWithFormat: @"<Head> %@ </Head><br/>================\n<br/> %@ <br/> <br/> %@ <br/><br/> %@<br/>",alertview.title,errType,errMessage,self.errorDescription];
             [mailComposer setMessageBody:emailBody isHTML:YES];
             [mailComposer.view sizeToFit];
             
@@ -2496,8 +2573,6 @@ NSString * GO_Online = @"GO_Online";
                 count--;
             }
             [focusedViewController presentModalViewController:mailComposer animated:YES];
-
-            
         }
         else
         {
@@ -2540,8 +2615,9 @@ NSString * GO_Online = @"GO_Online";
             errType=[alertview.message substringToIndex:range.location];
             errMessage=[alertview.message substringFromIndex:range.location];
         }
-        if(errorDescription ==nil)
-            errorDescription=@"";
+        if(self.errorDescription ==nil)
+            self.errorDescription=@"";
+        self.errorDescription=[tempDict objectForKey:@"des"];
         NSString *emailBody = [NSString stringWithFormat: @"\n %@ \n ================ \n%@\n%@ \n%@",alertview.title,errType,errMessage,errorDescription];
 
         SMLog(@"Copy to clipboard %@",emailBody);
