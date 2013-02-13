@@ -5726,9 +5726,10 @@ extern void SVMXLog(NSString *format, ...);
                             else
                             {
                                 value = date;
+                                value = [iOSInterfaceObject getLocalTimeFromGMT:value];
                             }
 
-                            value = [iOSInterfaceObject getLocalTimeFromGMT:value];
+                            
                             value = [value stringByReplacingOccurrencesOfString:@"T" withString:@" "];
                             value = [value stringByReplacingOccurrencesOfString:@"Z" withString:@""];
                             
