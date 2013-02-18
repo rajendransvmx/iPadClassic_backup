@@ -153,10 +153,10 @@ extern void SVMXLog(NSString *format, ...);
 - (BOOL) insertTasksIntoDB:(NSArray *)_tasks WithDate:(NSString*)_date local_id:(NSString *)local_id
 {    
     NSString *tableName = @"Task";
-    
+    NSString *strTasks=[ [_tasks objectAtIndex:0] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     NSString * subject = [[_tasks objectAtIndex:1] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     
-    NSString *sql = [NSString stringWithFormat: @"INSERT  INTO '%@' (local_id , Priority,Subject,ActivityDate) VALUES ('%@','%@','%@', '%@')", tableName, local_id, [_tasks objectAtIndex:0], subject, _date];
+    NSString *sql = [NSString stringWithFormat: @"INSERT  INTO '%@' (local_id , Priority,Subject,ActivityDate) VALUES ('%@','%@','%@', '%@')", tableName, local_id,strTasks, subject, _date];
     
     char *err;
     if (synchronized_sqlite3_exec(appDelegate.db, [sql UTF8String], NULL, NULL, &err) != SQLITE_OK)
@@ -2402,8 +2402,11 @@ extern void SVMXLog(NSString *format, ...);
     
     for ( int i = 0; i < [productInfo count]; i++ )
     {
-        NSMutableString *queryString = [NSMutableString stringWithFormat:@"Insert into trobleshootdata (ProductId, DocId, ProductName) Values ('%@', '%@', '%@')",productId, 
-                                        [[productInfo objectAtIndex:i]objectForKey:@"DocId"], [[productInfo objectAtIndex:i]objectForKey:@"Name"]];
+        productId=[productId stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+        NSString *DocId=[[[productInfo objectAtIndex:i]objectForKey:@"DocId"] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+        NSString *Name=[[[productInfo objectAtIndex:i]objectForKey:@"Name"] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+        NSMutableString *queryString = [NSMutableString stringWithFormat:@"Insert into trobleshootdata (ProductId, DocId, ProductName) Values ('%@', '%@', '%@')",productId,
+                                        DocId, Name];
         
         char *err;
         if (synchronized_sqlite3_exec(appDelegate.db, [queryString UTF8String], NULL, NULL, &err) != SQLITE_OK)
@@ -2565,6 +2568,7 @@ extern void SVMXLog(NSString *format, ...);
    
     
     NSString * stringData = [Base64 encode:imageData];
+    UserName=[UserName stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     // UserImages (username, userimage)  Values('%@','%@')", UserName, imageData
     NSMutableString *queryString = [NSMutableString stringWithFormat:@"Insert into UserImages (username, userimage) Values ('%@', '%@')", UserName, stringData];
     
@@ -2629,7 +2633,7 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:deleteQuery type:DELETEQUERY];
     }
     
-    
+    productId=[productId stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     NSMutableString *insertQuery = [NSString stringWithFormat:@"Insert into ProductImage (productId, productImage) Values ('%@', '%@')", productId, pictureData];
     SMLog(@"%@", insertQuery);
     
@@ -3021,9 +3025,11 @@ extern void SVMXLog(NSString *format, ...);
             [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:deleteQuery type:DELETEQUERY];
         } 
         
-        
+        NSString *ManId= [[manualInfo objectForKey:@"ManId"] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+        NSString *ManName=[[manualInfo objectForKey:@"ManName"] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+        productID=[productID stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
         NSMutableString *queryString = [NSMutableString stringWithFormat:@"Insert into trobleshootdata (prod_manual_Id,prod_manual_name, ProductId) Values('%@', '%@', '%@') ", 
-                                        [manualInfo objectForKey:@"ManId"],[manualInfo objectForKey:@"ManName"],productID];
+                                        ManId,ManName,productID];
         
         if (synchronized_sqlite3_exec(appDelegate.db, [queryString UTF8String], NULL, NULL, &err) != SQLITE_OK)
         {
@@ -3037,6 +3043,9 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) insertProductManualBody:(NSString *)manualBody WithId:(NSString *)ManId WithName:(NSString *)ManName
 {
+    manualBody=[manualBody stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+    ManId=[ManId stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+    ManName=[ManName stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     NSString *updateString = [NSString stringWithFormat:@"Update trobleshootdata Set productmanbody = '%@' Where prod_manual_Id = '%@' and prod_manual_name = '%@'",manualBody, ManId, ManName];
     
     char *err;
@@ -3124,6 +3133,8 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) updateProductTableWithProductName:(NSString *)Name WithId:(NSString *)productId
 {
+    productId=[productId stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+    Name=[Name stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     NSMutableString *deleteQuery = [NSString stringWithFormat:@"Delete from Product2 Where Id = '%@'", productId];
     
     char *err;
@@ -3174,8 +3185,10 @@ extern void SVMXLog(NSString *format, ...);
 		
 		if ([[dict objectForKey:DOCUMENTS_NAME] isEqualToString:docName])
 		{
+            NSString *DocName= [[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+            NSString *DocKeyWord=[[dict objectForKey:DOCUMENTS_KEYWORDS] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
 			NSMutableString *insertQuery = [NSString stringWithFormat:@"Update Document Set Id = '%@', Name = '%@', Keywords = '%@' Where Id = '%@'",[dict objectForKey:DOCUMENTS_ID],
-											[dict objectForKey:DOCUMENTS_NAME],[dict objectForKey:DOCUMENTS_KEYWORDS],[dict objectForKey:DOCUMENTS_ID] ];
+											DocName,DocKeyWord,[dict objectForKey:DOCUMENTS_ID] ];
 			
 			char *err;
 			if (synchronized_sqlite3_exec(appDelegate.db, [insertQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
@@ -3188,8 +3201,10 @@ extern void SVMXLog(NSString *format, ...);
 			}  
 
 		}else {
+            NSString *DocName= [[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+            NSString *DocKeyword=[[dict objectForKey:DOCUMENTS_KEYWORDS] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
 			NSMutableString *insertQuery = [NSString stringWithFormat:@"Insert into Document (Id, Name, Keywords) Values ('%@', '%@', '%@')",[dict objectForKey:DOCUMENTS_ID],
-											[dict objectForKey:DOCUMENTS_NAME],[dict objectForKey:DOCUMENTS_KEYWORDS]];
+											DocName,DocKeyword];
 			
 			char *err;
 			if (synchronized_sqlite3_exec(appDelegate.db, [insertQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
@@ -3839,6 +3854,7 @@ extern void SVMXLog(NSString *format, ...);
     NSString *SFID = @"";
     NSString * Name = @"";
     NSString * serviceReport = [appDelegate.wsInterface.tagsDictionary objectForKey:PDF_SERVICE_REPORT];
+    serviceReport=[serviceReport stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     
     if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, NULL) == SQLITE_OK)
     {
@@ -4030,6 +4046,7 @@ extern void SVMXLog(NSString *format, ...);
 //Contact Image offline Methods
 - (void)insertContactImageIntoDatabase:(NSString *)contactId andContactImageData:(NSString *)imageData
 {
+    contactId=[contactId stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     NSString * insertQuery = [NSString stringWithFormat:@"Insert into contact_images (contact_Id, contact_Image) Values ('%@', '%@')", contactId, imageData];
     
     char *err;
@@ -4096,7 +4113,7 @@ extern void SVMXLog(NSString *format, ...);
 - (void) insertIntoConflictInternetErrorWithSyncType:(NSString *)sync_type
 {
     NSString * str = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_no_internet];
-    
+    str=[str stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
 	[self removeInternetConflicts]; //Fix for Internet Conflicts : 12/06/212  12:43 PM
 
 	
@@ -4116,7 +4133,7 @@ extern void SVMXLog(NSString *format, ...);
 - (void) insertIntoConflictInternetErrorForMetaSync:(NSString *)sync_type WithDB:(sqlite3 *)db
 {
     NSString * str = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_no_internet];
-    
+    str=[str stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     NSString * insertQuery = [NSString stringWithFormat:@"Insert into internet_conflicts (sync_type, error_message, operation_type, error_type) Values ('%@', '%@', 'Sync', 'Conflict')", sync_type, str];
     char *err;
     

@@ -492,9 +492,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     NSMutableDictionary * serviceReportReference;
     NSTimer * locationPingSettingTimer;
 	NSString *errorDescription;
-    NSMutableArray *errorArray;
-    NSMutableDictionary *tempDict;
-    NSString * errorMessage,* errorType,*title;
+//    NSMutableDictionary *tempDict;
+//    NSInteger Custom_alert_count;
 }
 @property (nonatomic,retain) NSMutableArray * code_snippet_ids;
 @property (nonatomic) BOOL get_trigger_code;
@@ -743,9 +742,6 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 @property (nonatomic, assign) NSString *From_SFM_Search;
 @property (nonatomic, assign) NSString *errorDescription;
 @property (nonatomic, assign) NSString *language;
-@property (nonatomic , retain) NSMutableArray * errorArray;
-@property(nonatomic,assign) BOOL isFirstError;
-
 
 //sahana dec 4th
 -(void)updateMetasyncTimeinSynchistory;

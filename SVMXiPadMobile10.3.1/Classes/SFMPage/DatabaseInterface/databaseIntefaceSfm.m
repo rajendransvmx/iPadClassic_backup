@@ -1633,10 +1633,10 @@ extern void SVMXLog(NSString *format, ...);
             [self insertIntoEventsLocal_ids:local_id fromEvent_temp_table:Event_local_Ids];
             [databaseInterfaceDelegate displayALertViewinSFMDetailview:overlappingEvent];
         }
-        else
-        {
-            [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:insert_statement type:INSERTQUERY];
-        }
+//        else
+//        {
+//            [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:insert_statement type:INSERTQUERY];
+//        }
         
     }
     else
@@ -3455,10 +3455,10 @@ extern void SVMXLog(NSString *format, ...);
             NSString * overlappingEvent = [appDelegate.databaseInterface getallOverLappingEventsForStartDateTime:startDateTime EndDateTime:enddatetime local_id:local_id];
             [databaseInterfaceDelegate displayALertViewinSFMDetailview:overlappingEvent];
         }
-        else
-        {
-             [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:update_statement type:UPDATEQUERY];
-        }
+//        else
+//        {
+//             [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:update_statement type:UPDATEQUERY];
+//        }
     }
     else
     {
@@ -3545,7 +3545,9 @@ extern void SVMXLog(NSString *format, ...);
 		SMLog(@"%@", update_statement);
 		SMLog(@"METHOD:UpdateTableforSFId " );
 		SMLog(@"ERROR IN UPDATING %s", err);
+        /*
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:update_statement type:UPDATEQUERY];
+         */
     }
     else
     {
@@ -3723,8 +3725,9 @@ extern void SVMXLog(NSString *format, ...);
                 SMLog(@"%@", update_query);
 				SMLog(@"METHOD:updateAllRecordsToSyncRecordsHeap " );
 				SMLog(@"ERROR IN UPDATING %s", err); //RADHA TODAY
+                /*
                 [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:update_query type:UPDATEQUERY]; //RADHA TODAY
-
+                 */
             }
             [autorelease drain];
         }
@@ -3945,7 +3948,9 @@ extern void SVMXLog(NSString *format, ...);
                         SMLog(@"%@", insertionQuery);
                         SMLog(@"METHOD:updateAllRecordsToSyncRecordsHeap " );
                         SMLog(@"ERROR IN UPDATING %s", error); //RADHA TODAY
+                        /*
                         [appDelegate printIfError:[NSString stringWithFormat:@"%d",ret] ForQuery:insertionQuery type:INSERTQUERY];
+                         */
                     }
                     sqlite3_reset(bulk_statement);
                 }
@@ -4031,7 +4036,9 @@ extern void SVMXLog(NSString *format, ...);
                     SMLog(@"%@", update_query);
                     SMLog(@"METHOD:updateAllRecordsToSyncRecordsHeap " );
                     SMLog(@"ERROR IN UPDATING %s", err); //RADHA TODAY
+                    /*
                     [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:update_query type:UPDATEQUERY]; 
+                     */
                     
                 }
                 [autorelease drain];
@@ -4190,7 +4197,9 @@ extern void SVMXLog(NSString *format, ...);
                 SMLog(@"%@", update_query);
 				SMLog(@"METHOD: insertRecordIdsIntosyncRecordHeap");
 				SMLog(@"ERROR IN INSERTING %s", err);
+                /*
 				[appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:update_query type:INSERTQUERY];
+                 */
             }
              [autorelesePool release];
         }        
@@ -4294,7 +4303,9 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", insert_statement);
 		SMLog(@"METHOD: insertdataIntoTrailerTableForRecord");
         SMLog(@"ERROR IN INSERTING %s", err);
+        /*
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:insert_statement type:INSERTQUERY];
+         */
     }
 }
 
@@ -4439,7 +4450,9 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", update_statement);
 		SMLog(@"METHOD:updateDataTrailer_RecordSentForlocalId " );
 		SMLog(@"ERROR IN UPDATING %s", err);
+        /*
 		[appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:update_statement type:UPDATEQUERY];
+         */
     }
 }
 
@@ -4453,7 +4466,9 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", query);
 		SMLog(@"METHOD: copyTrailerTableToTempTrailerForOperationType");
         SMLog(@"ERROR IN INSERTING %s", err);
+        /*
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:query type:INSERTQUERY];
+         */
     }
 }
 
@@ -5111,7 +5126,9 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", updateStatement);
 		SMLog(@"METHOD:updatedataTrailerTAbleForLocal_id " );
 		SMLog(@"ERROR IN UPDATING %s", err);
+        /*
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:updateStatement type:UPDATEQUERY];
+         */
 
     }
     
@@ -5126,7 +5143,9 @@ extern void SVMXLog(NSString *format, ...);
 		SMLog(@"%@", updateStatement);
 		SMLog(@"METHOD:updateParentColumnNameInChildTableWithParentLocalId " );
 		SMLog(@"ERROR IN UPDATING %s", err);
+        /*
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:updateStatement type:UPDATEQUERY];
+         */
 
     }
 }
@@ -5465,7 +5484,9 @@ extern void SVMXLog(NSString *format, ...);
                 SMLog(@"%@", insert_query);
 				SMLog(@"METHOD: insertSyncConflictsIntoSYNC_CONFLICT");
 				SMLog(@"ERROR IN INSERTING %s", err);
+                /*
                 [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:insert_query type:INSERTQUERY];
+                 */
 
             }
             
@@ -5997,7 +6018,9 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", query);
 		SMLog(@"METHOD:UpdateSFObjectField_For_Picklist_TypeObject " );
 		SMLog(@"ERROR IN UPDATING %s", err);
+        /*
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:query type:UPDATEQUERY];
+         */
 
         return FALSE;
     }
@@ -6019,7 +6042,9 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", query);
 		SMLog(@"METHOD:UpdateSFPicklistForMultiSelect_IndexValue_For_Oject_Name " );
 		SMLog(@"ERROR IN UPDATING %s", err);
+        /*
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:query type:UPDATEQUERY];
+         */
 
         
     }
@@ -6044,7 +6069,9 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", query);
 		SMLog(@"METHOD:UpdateSFPicklist_validFor_For_Oject_Name " );
 		SMLog(@"ERROR IN UPDATING %s", err);
+        /*
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:query type:UPDATEQUERY];
+         */
 
         return FALSE;
     }
@@ -6660,7 +6687,9 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", insert_query);
 		SMLog(@"METHOD: insertrecordintoOnDemandTableForId");
         SMLog(@"ERROR IN INSERTING %s", err);
+        /*
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:insert_query type:INSERTQUERY];
+         */
 
     }
 

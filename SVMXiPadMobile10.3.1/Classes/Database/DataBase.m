@@ -101,7 +101,9 @@ extern void SVMXLog(NSString *format, ...);
             SMLog(@"%@", queryStatement);
 			SMLog(@"METHOD: insertValuesintoSFMProcessTable");
 			SMLog(@"ERROR IN INSERTING %s", err);
+            /*
 			[appDelegate printIfError:nil ForQuery:queryStatement type:INSERTQUERY];
+             */
         }
         [valueFields release];
     }
@@ -161,7 +163,9 @@ extern void SVMXLog(NSString *format, ...);
                 SMLog(@"%@", queryStatement);
 				SMLog(@"METHOD: insertValuesintoSFMObjectTable");
 				SMLog(@"ERROR IN INSERTING %s", err);
-				[appDelegate printIfError:nil ForQuery:queryStatement type:INSERTQUERY];                
+                /*
+				[appDelegate printIfError:nil ForQuery:queryStatement type:INSERTQUERY];          
+                 */
             }
             NSArray *objectConfigDataArray = [objectDict objectForKey:@"ConfigData"];
             for(int n=0; n<[objectConfigDataArray count]; n++)
@@ -192,7 +196,9 @@ extern void SVMXLog(NSString *format, ...);
                     SMLog(@"%@", queryStatement);
 					SMLog(@"METHOD: insertValuesintoSFMObjectTable");
 					SMLog(@"ERROR IN INSERTING %s", err);
+                    /*
 					[appDelegate printIfError:nil ForQuery:queryStatement type:INSERTQUERY];
+                     */
                 }
                 
 
@@ -3380,7 +3386,9 @@ extern void SVMXLog(NSString *format, ...);
                 SMLog(@"%@", queryStatement);
 				SMLog(@"METHOD:insertValuesToProcessTable");
 				SMLog(@"ERROR IN INSERTING %s", err);
+                /*
 				[appDelegate printIfError:nil ForQuery:queryStatement type:INSERTQUERY];
+                 */
             }
         }
         process_type = @"";
@@ -3441,7 +3449,9 @@ extern void SVMXLog(NSString *format, ...);
                 SMLog(@"%@", queryStatement);
 				SMLog(@"METHOD:insertValuesToProcessTable " );
 				SMLog(@"ERROR IN UPDATING %s", err);
+                /*
 				[appDelegate printIfError:nil ForQuery:queryStatement type:UPDATEQUERY];
+                 */
             }
         } 
     }
@@ -5026,7 +5036,7 @@ extern void SVMXLog(NSString *format, ...);
     if (!flag)
     {
         NSString * local_id = [iServiceAppDelegate GetUUID];
-        
+        UserName=[UserName stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
         queryStatement = [NSString stringWithFormat:@"INSERT INTO User (local_id, 'Username') VALUES ('%@', '%@')", local_id, UserName];
         
         char * err;
@@ -5072,7 +5082,9 @@ extern void SVMXLog(NSString *format, ...);
     synchronized_sqlite3_finalize(stmt);
     if(!flag)
     {
-        NSString *queryStatementUpdate = [NSString stringWithFormat:@"update User SET Id='%@',Name='%@' Where Username='%@' ",UserId ,name, appDelegate.username];
+        name=[name stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+        NSString *userName=[appDelegate.username stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+        NSString *queryStatementUpdate = [NSString stringWithFormat:@"update User SET Id='%@',Name='%@' Where Username='%@' ",UserId ,name,userName];
             
             char * err;
             if (synchronized_sqlite3_exec(appDelegate.db, [queryStatementUpdate UTF8String], NULL, NULL, &err) != SQLITE_OK)
@@ -5091,7 +5103,9 @@ extern void SVMXLog(NSString *format, ...);
 {
     if(appDelegate == nil)
         appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
-    NSString * queryStatement = [NSString stringWithFormat:@"SELECT LanguageLocaleKey FROM User Where Username='%@'",appDelegate.username];
+    
+    NSString *userName=[appDelegate.username stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+    NSString * queryStatement = [NSString stringWithFormat:@"SELECT LanguageLocaleKey FROM User Where Username='%@'",userName];
     sqlite3_stmt * stmt;
     BOOL flag=FALSE;
     if (synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &stmt, NULL) == SQLITE_OK)
@@ -5109,7 +5123,7 @@ extern void SVMXLog(NSString *format, ...);
     synchronized_sqlite3_finalize(stmt);
     if(!flag)
     {
-        NSString *queryStatementUpdate = [NSString stringWithFormat:@"update User SET LanguageLocaleKey='%@'  where Username='%@'", language, appDelegate.username];
+        NSString *queryStatementUpdate = [NSString stringWithFormat:@"update User SET LanguageLocaleKey='%@'  where Username='%@'", language,userName];
         
         char * err;
         if (synchronized_sqlite3_exec(appDelegate.db, [queryStatementUpdate UTF8String], NULL, NULL, &err) != SQLITE_OK)
@@ -5766,7 +5780,9 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", statement);
 		SMLog(@"METHOD: createTable");
         SMLog(@"ERROR IN INSERTING %s", err);
+        /*
 		[appDelegate printIfError:nil ForQuery:statement type:INSERTQUERY];
+         */
         return NO;
     }
     return YES;
@@ -5865,7 +5881,9 @@ extern void SVMXLog(NSString *format, ...);
                         SMLog(@"%@", query);
 						SMLog(@"METHOD: insertDataInToTables");
 						SMLog(@"ERROR IN INSERTING %s", err);
+                        /*
 						[appDelegate printIfError:nil ForQuery:query type:INSERTQUERY];
+                         */
                     }
                 }
             }
@@ -6006,7 +6024,9 @@ extern void SVMXLog(NSString *format, ...);
                                     SMLog(@"%@", queryStatement3);
 									SMLog(@"METHOD:updateChildSfIdWithParentLocalId" );
 									SMLog(@"ERROR IN UPDATING %s", err);
+                                    /*
 									[appDelegate printIfError:nil ForQuery:queryStatement3 type:UPDATEQUERY];
+                                     */
                                 }
 
                             }
