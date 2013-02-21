@@ -144,13 +144,20 @@ enum logLocation
     {
         UIBarButtonItem *emailBarButton = [[UIBarButtonItem alloc] initWithTitle:@"Email" style:UIBarButtonSystemItemAction target:self action:@selector(sendEmail)];
         [rightBarButtons addObject:emailBarButton];
+        [emailBarButton release];
 
         UIBarButtonItem *refreshBarButton = [[UIBarButtonItem alloc] initWithTitle:@"Refresh" style:UIBarButtonSystemItemAction target:self action:@selector(refreshLogs)];
         [rightBarButtons addObject:refreshBarButton];
+        [refreshBarButton release];
 
         UIBarButtonItem *saveBarButton = [[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonSystemItemAction target:self action:@selector(saveData)];
         [rightBarButtons addObject:saveBarButton];
+        [saveBarButton release];
 
+        UIBarButtonItem *clearBarButton = [[UIBarButtonItem alloc] initWithTitle:@"ClearLogs" style:UIBarButtonSystemItemAction target:self action:@selector(clearData)];
+        [rightBarButtons addObject:clearBarButton];
+        [clearBarButton release];
+        
         NSLog(@"Add Refresh, Save and Email Buttons to Navigation Bar Button");
     }
     [self.navigationItem setRightBarButtonItems:rightBarButtons];
@@ -219,6 +226,10 @@ enum logLocation
     [data writeToFile:newFilePath atomically:YES];
 }
 
+- (void) clearData
+{
+    self.detailDescriptionLabel.text = @"";
+}
 #pragma mark - Logger
 - (NSArray *) getLogMessage
 {
@@ -248,22 +259,30 @@ enum logLocation
     
     count = count - linesToRead;
     if(count < 0)
-        count = 0;
+        count = count + linesToRead;
     response = asl_search(client, query);
     asl_free(query);
+    NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     while((message = aslresponse_next(response)))
     {
         const char *msg = asl_get(message, ASL_KEY_MSG);
         if(msg)
         {
             count--;
-            if(count <= 0)
-                [consoleLog addObject:[NSString stringWithCString:msg encoding:NSUTF8StringEncoding]];
+            if(count >= 0)
+            {
+                NSDate *time = [NSDate dateWithTimeIntervalSince1970:(strtod(asl_get(message, ASL_KEY_TIME), NULL))];
+                NSString *message = [NSString stringWithCString:msg encoding:NSUTF8StringEncoding];
+                NSString *messageWithTime = [NSString stringWithFormat:@"[%@]%@",[dateFormatter stringFromDate:time],message];
+                [consoleLog addObject:messageWithTime];
+            }
         }
     }
     aslresponse_free(response);
     
     asl_close(client);
+    [dateFormatter release];
     NSLog(@"Log = %@",consoleLog);
     return consoleLog;
 }
