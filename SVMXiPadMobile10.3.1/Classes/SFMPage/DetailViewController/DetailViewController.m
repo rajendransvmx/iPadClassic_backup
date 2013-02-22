@@ -10611,7 +10611,7 @@ extern void SVMXLog(NSString *format, ...);
                   
                     [self SaveRecordIntoPlist:header_record_local_id objectName:headerObjName];
                     //[appDelegate.wsInterface  CallIncrementalDataSync];
-                  
+                    [appDelegate setAgrressiveSync_flag];
                     [appDelegate callDataSync];
                                    
                 }
@@ -11303,6 +11303,7 @@ extern void SVMXLog(NSString *format, ...);
                     }
                     [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:Event_local_Ids];
                     [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:LOCAL_EVENT_UPDATE];
+                    [appDelegate setAgrressiveSync_flag];
                     [appDelegate callDataSync];
                 }
                 else
@@ -11736,6 +11737,7 @@ extern void SVMXLog(NSString *format, ...);
                     }
                     
                     [self SaveRecordIntoPlist:header_record_local_id objectName:headerObjName];
+                    [appDelegate setAgrressiveSync_flag];
                     [appDelegate callDataSync];
                 }
             }
@@ -11854,6 +11856,7 @@ extern void SVMXLog(NSString *format, ...);
                     }
                 }
             }
+            
             appDelegate.dataSyncRunning = YES;
             [activity startAnimating];
             [appDelegate callDataSync];

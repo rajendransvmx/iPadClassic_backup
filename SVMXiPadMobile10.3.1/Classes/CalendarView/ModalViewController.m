@@ -2147,6 +2147,7 @@ extern void SVMXLog(NSString *format, ...);
                             [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:local_id SF_id:calEventView.eventId record_type:MASTER operation:UPDATE object_name:@"Event" sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@""];
                             
                         }
+                        [appDelegate setAgrressiveSync_flag];
                         [appDelegate callDataSync];
                         
                         [activity stopAnimating];

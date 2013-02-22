@@ -155,6 +155,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 //================================================================
 
 @implementation iServiceAppDelegate
+@synthesize Enable_aggresssiveSync;
 @synthesize code_snippet_ids;
 @synthesize get_trigger_code;
 @synthesize dod_status,dod_req_response_ststus;
@@ -379,6 +380,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    Enable_aggresssiveSync = FALSE;
     appDelegate = self;
     appDelegate.code_snippet_ids = nil;
     self.isBackground = FALSE;
@@ -1323,6 +1325,7 @@ NSString * GO_Online = @"GO_Online";
         }
         else
         {
+            Enable_aggresssiveSync = FALSE;
             SMLog(@"thread is not finished its work");
             return; //Please don't comment return
         }
@@ -1426,11 +1429,13 @@ NSString * GO_Online = @"GO_Online";
 
 -(void)callSpecialIncrementalSync
 {
+    Enable_aggresssiveSync = FALSE;
     if (special_incremental_thread != nil)
     {
         if ([special_incremental_thread isFinished] == YES)
         {
             SMLog(@"Specialthread  finished its work");
+            appDelegate.Enable_aggresssiveSync = FALSE;
         }
         else
         {
@@ -2556,6 +2561,51 @@ NSString * GO_Online = @"GO_Online";
         SMLog(@"Exception Name iServiceAppDelegate :copyToClipboard %@",exp.name);
         SMLog(@"Exception Reason iServiceAppDelegate :copyToClipboard %@",exp.reason);
     }
+}
+
+-(void)setAgrressiveSync_flag
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL USDefault_aggressiveSync = [defaults boolForKey:@"USDefault_Aggressive_flag"];
+    
+    
+    if (syncThread != nil)
+    {
+        if ([syncThread isFinished] == YES)
+        {
+            SMLog(@"setAgrressiveSync_flag:thread finished its work");
+            if(USDefault_aggressiveSync)
+            {
+                Enable_aggresssiveSync = TRUE;
+            }
+            else
+            {
+                Enable_aggresssiveSync = FALSE;
+            }
+        }
+        else
+        {
+
+            Enable_aggresssiveSync = FALSE;
+            SMLog(@"setAgrressiveSync_flag:thread is not finished its work");
+        }
+        
+    }
+    else
+    {
+        if(USDefault_aggressiveSync)
+        {
+            Enable_aggresssiveSync = TRUE;
+        }
+    }
+    if (special_incremental_thread != nil)
+    {
+        if ([special_incremental_thread isFinished] == NO)
+        {
+            Enable_aggresssiveSync = FALSE;
+        }
+    }
+    
 }
 @end
 

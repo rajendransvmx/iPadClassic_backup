@@ -201,6 +201,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 @interface iServiceAppDelegate : NSObject
 <UIApplicationDelegate, UIActionSheetDelegate, WSInterfaceDelegate,MFMailComposeViewControllerDelegate,DetailViewControllerDelegate>
 {
+    BOOL Enable_aggresssiveSync;
     
     NSMutableArray * code_snippet_ids;
     BOOL get_trigger_code;
@@ -495,6 +496,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 //    NSMutableDictionary *tempDict;
 //    NSInteger Custom_alert_count;
 }
+@property (nonatomic)BOOL Enable_aggresssiveSync;
 @property (nonatomic,retain) NSMutableArray * code_snippet_ids;
 @property (nonatomic) BOOL get_trigger_code;
 @property (nonatomic)  DOD_REQUEST_RESPONSE_STATUS dod_req_response_ststus;
@@ -742,6 +744,10 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 @property (nonatomic, assign) NSString *From_SFM_Search;
 @property (nonatomic, assign) NSString *errorDescription;
 @property (nonatomic, assign) NSString *language;
+
+//sahana Feb 22nd
+-(void)setAgrressiveSync_flag;
+
 
 //sahana dec 4th
 -(void)updateMetasyncTimeinSynchistory;

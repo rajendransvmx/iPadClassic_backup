@@ -842,14 +842,17 @@ last_sync_time:(NSString *)last_sync_time
     @try{
     //RADHA 2012june12
     if (appDelegate.metaSyncRunning)
+    {
+         appDelegate.Enable_aggresssiveSync = FALSE;
         return;
-    
+    }
     if( appDelegate.eventSyncRunning )
     {
         //return this function if event sync is running and queue it
         appDelegate.dataSyncRunning = NO;
         appDelegate.queue_object = appDelegate;
         appDelegate.queue_selector = @selector(callDataSync);
+         appDelegate.Enable_aggresssiveSync = FALSE;
         return;
     }
     
@@ -857,11 +860,14 @@ last_sync_time:(NSString *)last_sync_time
     
     if (![appDelegate isInternetConnectionAvailable])
     {
+         appDelegate.Enable_aggresssiveSync = FALSE;
         return;
     }
    
     BOOL retVal;
     NSAutoreleasePool * autoreleasePool = [[NSAutoreleasePool alloc] init];
+
+    BOOL temp_aggressiveSync = appDelegate.Enable_aggresssiveSync;
     
     //shrinivas
     retVal = [appDelegate goOnlineIfRequired];
@@ -884,6 +890,7 @@ last_sync_time:(NSString *)last_sync_time
     {
         appDelegate.SyncStatus = SYNC_GREEN;
         [appDelegate setSyncStatus:SYNC_GREEN];
+         appDelegate.Enable_aggresssiveSync = FALSE;
         return;
     }
 
@@ -947,6 +954,7 @@ last_sync_time:(NSString *)last_sync_time
              appDelegate.dataSyncRunning = NO;
             appDelegate.SyncStatus = SYNC_GREEN;
             [self internetConnectivityHandling:data_sync];
+             appDelegate.Enable_aggresssiveSync = FALSE;
             return;
         }
 		
@@ -956,122 +964,134 @@ last_sync_time:(NSString *)last_sync_time
     {
         if ([appDelegate isInternetConnectionAvailable])
             [appDelegate setSyncStatus:SYNC_GREEN];
-		
+		 appDelegate.Enable_aggresssiveSync = FALSE;
 		appDelegate.dataSyncRunning = NO;
         return;
     }
     
-    [self GETDownloadCriteriaRecordsFor:GET_DELETE_DOWNLOAD_CRITERIA];
-    
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+    if(!temp_aggressiveSync)
     {
-#ifdef kPrintLogsDuringWebServiceCall
-        SMLog(@"WSinterface.m : DOINC_DATA_SYNC: GET_DELETE_DWN_CRIT");
-#endif
+        [self GETDownloadCriteriaRecordsFor:GET_DELETE_DOWNLOAD_CRITERIA];
 
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+        {
+        #ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"WSinterface.m : DOINC_DATA_SYNC: GET_DELETE_DWN_CRIT");
+        #endif
+
+            if (![appDelegate isInternetConnectionAvailable])
+            {
+                 appDelegate.dataSyncRunning = NO;
+                [self internetConnectivityHandling:data_sync];        
+                break;
+            }
+            if(appDelegate.Incremental_sync_status == GET_DELETE_DC_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+            {
+                break;
+            }
+            if(appDelegate.connection_error)
+            {
+                appDelegate.dataSyncRunning = NO;
+                appDelegate.connection_error = TRUE;
+                [self internetConnectivityHandling:data_sync];
+                 appDelegate.Enable_aggresssiveSync = FALSE;
+                return;
+            }
+        }
+        if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+        {
+            if ([appDelegate isInternetConnectionAvailable])
+                appDelegate.SyncStatus = SYNC_GREEN;
+            
+            appDelegate.dataSyncRunning = NO;
+             appDelegate.Enable_aggresssiveSync = FALSE;
+            return;
+        }    
+
+        [self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP_SELECT"];
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+        {
+        #ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"WSinterface.m : DOINC_DATA_SYNC: CLEAN_UP_SELECT 1");
+        #endif
+
+            if (![appDelegate isInternetConnectionAvailable])
+            {
+                appDelegate.dataSyncRunning = NO;
+                [self internetConnectivityHandling:data_sync];            
+                break;
+            }
+
+            if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
+                break;
+            
+            if(appDelegate.connection_error)
+            {
+                appDelegate.dataSyncRunning = NO;
+                [self internetConnectivityHandling:data_sync];
+                 appDelegate.Enable_aggresssiveSync = FALSE;
+                return;
+            }
+            
+        }
         if (![appDelegate isInternetConnectionAvailable])
         {
-             appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];        
-            break;
-        }
-        if(appDelegate.Incremental_sync_status == GET_DELETE_DC_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
-        {
-            break;
-        }
-        if(appDelegate.connection_error)
-        {
             appDelegate.dataSyncRunning = NO;
-            appDelegate.connection_error = TRUE;
             [self internetConnectivityHandling:data_sync];
+             appDelegate.Enable_aggresssiveSync = FALSE;
             return;
         }
     }
-    if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
-    {
-		if ([appDelegate isInternetConnectionAvailable])
-			appDelegate.SyncStatus = SYNC_GREEN;
-        
-		appDelegate.dataSyncRunning = NO;
-        return;
-    }    
-    
-    [self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP_SELECT"];
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-    {
-#ifdef kPrintLogsDuringWebServiceCall
-        SMLog(@"WSinterface.m : DOINC_DATA_SYNC: CLEAN_UP_SELECT 1");
-#endif
-
-        if (![appDelegate isInternetConnectionAvailable])
-        {
-            appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];            
-            break;
-        }
-
-        if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
-            break;
-        
-        if(appDelegate.connection_error)
-        {
-            appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];
-            return;
-        }
-        
-    }
-    if (![appDelegate isInternetConnectionAvailable])
-    {
-		appDelegate.dataSyncRunning = NO;
-        return;
-    }
-    
     
     [self copyTrailertoTempTrailer:DELETE];
     
     [self getAllRecordsForOperationType:DELETE];
     
-    [self Put:PUT_DELETE];
-    
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+    if([appDelegate.dataSync_dict count] >0)
     {
-#ifdef kPrintLogsDuringWebServiceCall
-        SMLog(@"WSinterface.m : DOINC_DATA_SYNC: PUT_DELETE");
-#endif
+        [self Put:PUT_DELETE];
+        
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+        {
+        #ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"WSinterface.m : DOINC_DATA_SYNC: PUT_DELETE");
+        #endif
 
+            if (![appDelegate isInternetConnectionAvailable])
+            {
+                appDelegate.dataSyncRunning = NO;
+                break;
+            }
+            if(appDelegate.Incremental_sync_status == PUT_DELETE_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+            {
+                break;
+            }
+            if(appDelegate.connection_error)
+            {
+                appDelegate.dataSyncRunning = NO;
+                appDelegate.SyncStatus = SYNC_GREEN;
+                [self internetConnectivityHandling:data_sync];
+                 appDelegate.Enable_aggresssiveSync = FALSE;
+                return;
+            }
+        }
         if (![appDelegate isInternetConnectionAvailable])
         {
-            appDelegate.dataSyncRunning = NO;
-            break;
+            [self internetConnectivityHandling:data_sync];        
         }
-        if(appDelegate.Incremental_sync_status == PUT_DELETE_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+
+        if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
         {
-            break;
-        }
-        if(appDelegate.connection_error)
-        {
+            if ([appDelegate isInternetConnectionAvailable])
+                [appDelegate setSyncStatus:SYNC_GREEN];
+            
             appDelegate.dataSyncRunning = NO;
-            appDelegate.SyncStatus = SYNC_GREEN;
-            [self internetConnectivityHandling:data_sync];
+            [updateSyncStatus refreshSyncStatus];
+             appDelegate.Enable_aggresssiveSync = FALSE;
             return;
         }
-    }
-    if (![appDelegate isInternetConnectionAvailable])
-    {
-        [self internetConnectivityHandling:data_sync];        
-    }
-
-    if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
-    {
-        if ([appDelegate isInternetConnectionAvailable])
-            [appDelegate setSyncStatus:SYNC_GREEN];
-        
-		appDelegate.dataSyncRunning = NO;
-		[updateSyncStatus refreshSyncStatus];
-        return;
-    }
     
+    }
     [appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:GET_DELETE];
     [appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:PUT_DELETE];
     
@@ -1081,42 +1101,48 @@ last_sync_time:(NSString *)last_sync_time
    
     [self  getAllRecordsForOperationType:INSERT];
     
-    [self Put:PUT_INSERT];   //call incremental insert
-    
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+        
+    if([appDelegate.dataSync_dict count] >0)
     {
-#ifdef kPrintLogsDuringWebServiceCall
-        SMLog(@"WSinterface.m : DOINC_DATA_SYNC: PUT_INSERT");
-#endif
+        [self Put:PUT_INSERT];   //call incremental insert
+        
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+        {
+            #ifdef kPrintLogsDuringWebServiceCall
+                SMLog(@"WSinterface.m : DOINC_DATA_SYNC: PUT_INSERT");
+            #endif
 
-        if (![appDelegate isInternetConnectionAvailable])
-        {
-            [self internetConnectivityHandling:data_sync];
-            appDelegate.dataSyncRunning = NO;
-            break;
-        }
+            if (![appDelegate isInternetConnectionAvailable])
+            {
+                [self internetConnectivityHandling:data_sync];
+                appDelegate.dataSyncRunning = NO;
+                break;
+            }
 
-        if(appDelegate.Incremental_sync_status == PUT_INSERT_DONE || appDelegate.incrementalSync_Failed == TRUE  || [appDelegate isInternetConnectionAvailable] == FALSE)
-        {
-            break;
+            if(appDelegate.Incremental_sync_status == PUT_INSERT_DONE || appDelegate.incrementalSync_Failed == TRUE  || [appDelegate isInternetConnectionAvailable] == FALSE)
+            {
+                break;
+            }
+            if(appDelegate.connection_error)
+            {
+                appDelegate.dataSyncRunning = NO;
+                appDelegate.SyncStatus = SYNC_GREEN;
+                [self internetConnectivityHandling:data_sync];
+                 appDelegate.Enable_aggresssiveSync = FALSE;
+                return;
+            }
         }
-        if(appDelegate.connection_error)
+        if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
         {
+            if ([appDelegate isInternetConnectionAvailable])
+                appDelegate.SyncStatus = SYNC_GREEN;
+
             appDelegate.dataSyncRunning = NO;
-            appDelegate.SyncStatus = SYNC_GREEN;
-            [self internetConnectivityHandling:data_sync];
+             appDelegate.Enable_aggresssiveSync = FALSE;
             return;
         }
-    }
-    if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
-    {
-        if ([appDelegate isInternetConnectionAvailable])
-            appDelegate.SyncStatus = SYNC_GREEN;
-
-		appDelegate.dataSyncRunning = NO;
-        return;
-    }
     
+    }
     [self resetSyncLastindexAndObjectName];  //sahana
     [self GetInsert];                        //once all insertion is over call call reverse insert  method 
     
@@ -1142,6 +1168,7 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.dataSyncRunning = NO;
             appDelegate.SyncStatus = SYNC_GREEN;
             [self internetConnectivityHandling:data_sync];
+             appDelegate.Enable_aggresssiveSync = FALSE;
             return;
         }
     }  
@@ -1149,80 +1176,87 @@ last_sync_time:(NSString *)last_sync_time
     {
         if ([appDelegate isInternetConnectionAvailable])
             [appDelegate setSyncStatus:SYNC_GREEN];
-	
+         appDelegate.Enable_aggresssiveSync = FALSE;
 		appDelegate.dataSyncRunning = NO;
         return;
     }                                                             //call delete
                                                                         //call Update
     
-
-    [self GETDownloadCriteriaRecordsFor:GET_INSERT_DOWNLOAD_CRITERIA];
-    
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+    if( !temp_aggressiveSync)
     {
-#ifdef kPrintLogsDuringWebServiceCall
-        SMLog(@"WSinterface.m : DOINC_DATA_SYNC: GET_INSERT_DWN_CRIT");
-#endif
 
-        if (![appDelegate isInternetConnectionAvailable])
-        {
-            appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];            
-            break;
-        }
-        if(appDelegate.Incremental_sync_status == GET_INSERT_DC_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
-        {
-            break;
-        }
-        if(appDelegate.connection_error)
-        {
-            appDelegate.dataSyncRunning = NO;
-            appDelegate.SyncStatus = SYNC_GREEN;
-            [self internetConnectivityHandling:data_sync];
-            return;
-        }
-    }
-    if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
-    {
-        if ([appDelegate isInternetConnectionAvailable])
-            [appDelegate setSyncStatus:SYNC_GREEN];
-	
-		appDelegate.dataSyncRunning = NO;	
-        return;
-    }    
-    
-    [self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP_SELECT"];
-    
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-    {
-#ifdef kPrintLogsDuringWebServiceCall
-        SMLog(@"WSinterface.m : DOINC_DATA_SYNC: CLEAN_UP_SELECT 2");
-#endif
-
-        if (![appDelegate isInternetConnectionAvailable])
-        {
-            appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];
-            break;
-        }
+        [self GETDownloadCriteriaRecordsFor:GET_INSERT_DOWNLOAD_CRITERIA];
         
-        if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
-            break;
-        if(appDelegate.connection_error)
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+        {
+            #ifdef kPrintLogsDuringWebServiceCall
+                SMLog(@"WSinterface.m : DOINC_DATA_SYNC: GET_INSERT_DWN_CRIT");
+            #endif
+
+            if (![appDelegate isInternetConnectionAvailable])
+            {
+                appDelegate.dataSyncRunning = NO;
+                [self internetConnectivityHandling:data_sync];            
+                break;
+            }
+            if(appDelegate.Incremental_sync_status == GET_INSERT_DC_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+            {
+                break;
+            }
+            if(appDelegate.connection_error)
+            {
+                appDelegate.dataSyncRunning = NO;
+                appDelegate.SyncStatus = SYNC_GREEN;
+                [self internetConnectivityHandling:data_sync];
+                 appDelegate.Enable_aggresssiveSync = FALSE;
+                return;
+            }
+        }
+        if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+        {
+            if ([appDelegate isInternetConnectionAvailable])
+                [appDelegate setSyncStatus:SYNC_GREEN];
+        
+            appDelegate.dataSyncRunning = NO;	
+            return;
+        }    
+        
+        [self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP_SELECT"];
+        
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+        {
+    #ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"WSinterface.m : DOINC_DATA_SYNC: CLEAN_UP_SELECT 2");
+    #endif
+
+            if (![appDelegate isInternetConnectionAvailable])
+            {
+                appDelegate.dataSyncRunning = NO;
+                [self internetConnectivityHandling:data_sync];
+                break;
+            }
+            
+            if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
+                break;
+            if(appDelegate.connection_error)
+            {
+                appDelegate.dataSyncRunning = NO;
+                appDelegate.SyncStatus = SYNC_GREEN;
+                [self internetConnectivityHandling:data_sync];
+                 appDelegate.Enable_aggresssiveSync = FALSE;
+                return;
+            }
+        }
+        if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.dataSyncRunning = NO;
             appDelegate.SyncStatus = SYNC_GREEN;
             [self internetConnectivityHandling:data_sync];
+            appDelegate.Enable_aggresssiveSync = FALSE;
             return;
         }
-    }
-    if (![appDelegate isInternetConnectionAvailable])
-    {
-		appDelegate.dataSyncRunning = NO;
-        return;
-    }
     
-    
+    }
     didWriteSignature = NO;
     [appDelegate.calDataBase getAllLocalIdsForSignature:SIG_BEFOREUPDATE];
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
@@ -1243,44 +1277,47 @@ last_sync_time:(NSString *)last_sync_time
     [self copyTrailertoTempTrailer:UPDATE];
     [self  getAllRecordsForOperationType:UPDATE];
     
-    [self Put:PUT_UPDATE];
-    
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+    if([appDelegate.dataSync_dict count] >0)
     {
-#ifdef kPrintLogsDuringWebServiceCall
-        SMLog(@"WSinterface.m : DOINC_DATA_SYNC: PUT_UPDATE");
-#endif
+        [self Put:PUT_UPDATE];
+        
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+        {
+            #ifdef kPrintLogsDuringWebServiceCall
+                SMLog(@"WSinterface.m : DOINC_DATA_SYNC: PUT_UPDATE");
+            #endif
 
-        if (![appDelegate isInternetConnectionAvailable])
-        {
-            appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];
-             
-            break;
+            if (![appDelegate isInternetConnectionAvailable])
+            {
+                appDelegate.dataSyncRunning = NO;
+                [self internetConnectivityHandling:data_sync];
+                 
+                break;
+            }
+            if(appDelegate.Incremental_sync_status == PUT_UPDATE_DONE  || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+            {
+                break;
+            }
+            if(appDelegate.connection_error)
+            {
+                appDelegate.dataSyncRunning = NO;
+                appDelegate.SyncStatus = SYNC_GREEN;
+                [self internetConnectivityHandling:data_sync];
+                appDelegate.Enable_aggresssiveSync = FALSE;
+                return;
+            }
         }
-        if(appDelegate.Incremental_sync_status == PUT_UPDATE_DONE  || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+        if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
         {
-            break;
-        }
-        if(appDelegate.connection_error)
-        {
+            if ([appDelegate isInternetConnectionAvailable])
+                [appDelegate setSyncStatus:SYNC_GREEN];
+
             appDelegate.dataSyncRunning = NO;
-            appDelegate.SyncStatus = SYNC_GREEN;
-            [self internetConnectivityHandling:data_sync];
-             
+             appDelegate.Enable_aggresssiveSync = FALSE;
             return;
         }
-    }
-    if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
-    {
-        if ([appDelegate isInternetConnectionAvailable])
-            [appDelegate setSyncStatus:SYNC_GREEN];
-
-		appDelegate.dataSyncRunning = NO;
-        return;
-    }
     
-   
+    }
     [self resetSyncLastindexAndObjectName];  //sahana
     
     
@@ -1318,7 +1355,7 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.dataSyncRunning = NO;
             appDelegate.SyncStatus = SYNC_GREEN;
             [self internetConnectivityHandling:data_sync];
-             
+              appDelegate.Enable_aggresssiveSync = FALSE;
             return;
         }
     }
@@ -1328,79 +1365,86 @@ last_sync_time:(NSString *)last_sync_time
         if ([appDelegate isInternetConnectionAvailable])
             [appDelegate setSyncStatus:SYNC_GREEN];
         
+        appDelegate.Enable_aggresssiveSync = FALSE;
 		appDelegate.dataSyncRunning = NO;
         return;
     }
-    
-    [self GETDownloadCriteriaRecordsFor:GET_UPDATE_DOWNLOAD_CRITERIA];
-    
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+        
+    if( !temp_aggressiveSync)
     {
-#ifdef kPrintLogsDuringWebServiceCall
-        SMLog(@"WSinterface.m : DOINC_DATA_SYNC: GET_UPDATE_DWN_CRIT");
-#endif
+        [self GETDownloadCriteriaRecordsFor:GET_UPDATE_DOWNLOAD_CRITERIA];
+        
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+        {
+            #ifdef kPrintLogsDuringWebServiceCall
+                SMLog(@"WSinterface.m : DOINC_DATA_SYNC: GET_UPDATE_DWN_CRIT");
+            #endif
 
-        if (![appDelegate isInternetConnectionAvailable])
-        {
-            appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];
-             
-            
-            break;
+            if (![appDelegate isInternetConnectionAvailable])
+            {
+                appDelegate.dataSyncRunning = NO;
+                [self internetConnectivityHandling:data_sync];
+                 
+                
+                break;
+            }
+            if(appDelegate.Incremental_sync_status == GET_UPDATE_DC_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+            {
+                break;
+            }
+            if(appDelegate.connection_error)
+            {
+                appDelegate.dataSyncRunning = NO;
+                appDelegate.SyncStatus = SYNC_GREEN;
+                [self internetConnectivityHandling:data_sync];
+                  appDelegate.Enable_aggresssiveSync = FALSE;
+                return;
+            }
         }
-        if(appDelegate.Incremental_sync_status == GET_UPDATE_DC_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+        if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
         {
-            break;
-        }
-        if(appDelegate.connection_error)
-        {
+            if ([appDelegate isInternetConnectionAvailable])
+                [appDelegate setSyncStatus:SYNC_GREEN];
+        
             appDelegate.dataSyncRunning = NO;
-            appDelegate.SyncStatus = SYNC_GREEN;
-            [self internetConnectivityHandling:data_sync];
-             
+             appDelegate.Enable_aggresssiveSync = FALSE;
             return;
         }
-    }
-    if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
-    {
-        if ([appDelegate isInternetConnectionAvailable])
-            [appDelegate setSyncStatus:SYNC_GREEN];
-    
-		appDelegate.dataSyncRunning = NO;
-        return;
-    }
-    
-    [self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP_SELECT"];
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-    {
-#ifdef kPrintLogsDuringWebServiceCall
-        SMLog(@"WSinterface.m : DOINC_DATA_SYNC: CLN_UP_SELECT 3");
-#endif
+        
+        [self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP_SELECT"];
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+        {
+    #ifdef kPrintLogsDuringWebServiceCall
+            SMLog(@"WSinterface.m : DOINC_DATA_SYNC: CLN_UP_SELECT 3");
+    #endif
 
+            if ( ![appDelegate isInternetConnectionAvailable])
+            {
+                appDelegate.dataSyncRunning = NO;
+                [self internetConnectivityHandling:data_sync];
+                 
+                break;
+            }
+            
+            if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
+                break;
+            
+            if(appDelegate.connection_error)
+            {
+                appDelegate.dataSyncRunning = NO;
+                appDelegate.SyncStatus = SYNC_GREEN;
+                [self internetConnectivityHandling:data_sync];
+                appDelegate.Enable_aggresssiveSync = FALSE;
+                return;
+            }
+        }
         if ( ![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];
-             
-            break;
-        }
-        
-        if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
-            break;
-        
-        if(appDelegate.connection_error)
-        {
-            appDelegate.dataSyncRunning = NO;
-            appDelegate.SyncStatus = SYNC_GREEN;
-            [self internetConnectivityHandling:data_sync];
-             
+            appDelegate.Enable_aggresssiveSync = FALSE;
             return;
         }
-    }
-    if ( ![appDelegate isInternetConnectionAvailable])
-    {
-		appDelegate.dataSyncRunning = NO;
-        return;
+            
     }
     [appDelegate.databaseInterface deleteAllConflictedRecordsFrom:SYNC_RECORD_HEAP];
     [self PutAllTheRecordsForIds];                                    //After update or delere ,insert are done  ,call getallrecords
@@ -1428,7 +1472,7 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.dataSyncRunning = NO;
             appDelegate.SyncStatus = SYNC_GREEN;
             [self internetConnectivityHandling:data_sync];
-            
+             appDelegate.Enable_aggresssiveSync = FALSE;
             return;
         }
     }
@@ -1439,57 +1483,65 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate setSyncStatus:SYNC_GREEN];
         
 		appDelegate.dataSyncRunning = NO;
+        appDelegate.Enable_aggresssiveSync = FALSE;
         return;
     }
-    if([appDelegate enableGPS_SFMSearch])
+        
+    if( !temp_aggressiveSync)
     {
-        [appDelegate.dataBase createUserGPSTable];
-        [appDelegate.dataBase updateTechnicianLocation];
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
+        if([appDelegate enableGPS_SFMSearch])
         {
-            if (appDelegate.dataBase.didTechnicianLocationUpdated == TRUE)
-                break;   
-            if (![appDelegate isInternetConnectionAvailable])
+            [appDelegate.dataBase createUserGPSTable];
+            [appDelegate.dataBase updateTechnicianLocation];
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
             {
-                break;
+                if (appDelegate.dataBase.didTechnicianLocationUpdated == TRUE)
+                    break;   
+                if (![appDelegate isInternetConnectionAvailable])
+                {
+                    break;
+                }
+                if (appDelegate.connection_error)
+                {
+                    break;
+                }
+                
+                SMLog(@"Technician Location Updated");
             }
-            if (appDelegate.connection_error)
-            {
-                break;
-            }
-            
-            SMLog(@"Technician Location Updated");
-        }
 
-        [appDelegate.dataBase updateUserGPSLocation];
+            [appDelegate.dataBase updateUserGPSLocation];
+        }
     }
     [appDelegate.databaseInterface  updateSyncRecordsIntoLocalDatabase];
     //check download criteria match
 /*******************************************************DOWNLOAD_CRITERIA_CHANGE*************************************************************************/
     
-    
-    NSDictionary * get_old_criteria = [self getdownloadCriteriaObjects];
-  
-    NSArray * old_criteria_objects = [get_old_criteria allKeys];
-    
-    NSArray * new_criteria_objects = [dcobjects_incrementalSync allKeys];
-    
-    NSMutableArray * deletedObjects = [[NSMutableArray alloc] initWithCapacity:0];
- 
-    for(NSString * str in old_criteria_objects)
+    if(!temp_aggressiveSync)
     {
-        if(![new_criteria_objects containsObject:str])
+        
+        NSDictionary * get_old_criteria = [self getdownloadCriteriaObjects];
+      
+        NSArray * old_criteria_objects = [get_old_criteria allKeys];
+        
+        NSArray * new_criteria_objects = [dcobjects_incrementalSync allKeys];
+        
+        NSMutableArray * deletedObjects = [[NSMutableArray alloc] initWithCapacity:0];
+     
+        for(NSString * str in old_criteria_objects)
         {
-            [deletedObjects addObject:str];
+            if(![new_criteria_objects containsObject:str])
+            {
+                [deletedObjects addObject:str];
+            }
         }
-    }
-    
-    [appDelegate.databaseInterface deleteDownloadCriteriaObjects:deletedObjects];
-    
-    [deletedObjects release];
-    //if([dcobjects_incrementalSync count] > 0)
-    {
-        [self downloadcriteriaplist:dcobjects_incrementalSync];
+        
+        [appDelegate.databaseInterface deleteDownloadCriteriaObjects:deletedObjects];
+        
+        [deletedObjects release];
+        //if([dcobjects_incrementalSync count] > 0)
+        {
+            [self downloadcriteriaplist:dcobjects_incrementalSync];
+        }
     }
 /*******************************************************DOWNLOAD_CRITERIA_CHANGE*************************************************************************/
    
@@ -1538,9 +1590,10 @@ last_sync_time:(NSString *)last_sync_time
     
     [appDelegate.databaseInterface deleteAllConflictedRecordsFrom:SFDATATRAILER];
     
-    
-    [self setLastSyncTime];   // update the plist to last sync time
-	
+    if(!temp_aggressiveSync)
+    {
+        [self setLastSyncTime];   // update the plist to last sync time
+    }
 	//Radha updatesyncflag
 	[appDelegate updateSyncFailedFlag:SFALSE];
     
@@ -1553,7 +1606,7 @@ last_sync_time:(NSString *)last_sync_time
         [updateSyncStatus refreshSyncStatus];
         
         [appDelegate setSyncStatus:SYNC_RED];
-
+   
     }
     else
     {
@@ -1573,7 +1626,7 @@ last_sync_time:(NSString *)last_sync_time
                 break;
             if(appDelegate.connection_error)
                 break;
-
+            
         }
         
         [self setSyncReqId:@""];
@@ -1679,11 +1732,26 @@ last_sync_time:(NSString *)last_sync_time
     //so, incremental datasync needs to continue on the "SAME THREAD"
     if([appDelegate.databaseInterface ContinueIncrementalDataSync] && !conflict_exists)
     {
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        BOOL USDefault_aggressiveSync = [defaults boolForKey:@"USDefault_Aggressive_flag"];
+        if(USDefault_aggressiveSync)
+        {
+            appDelegate.Enable_aggresssiveSync = TRUE;
+        }
+        else
+        {
+             appDelegate.Enable_aggresssiveSync = FALSE;
+        }
         [self DoIncrementalDataSync];
     }
+    else
+    {
+         appDelegate.Enable_aggresssiveSync = FALSE;
+    }
+        
     //sahana ends june 8
-    
-    
+   
+        
     if( appDelegate.queue_object != nil )
     {
         appDelegate.dataSyncRunning = NO;
@@ -4923,6 +4991,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     {
     if (response.error != nil)
     {
+         appDelegate.Enable_aggresssiveSync = FALSE;
         didCompleteAfterSaveEventCalls = YES;
         appDelegate.connection_error = TRUE;
         NSError *error=response.error;
@@ -4958,6 +5027,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     ret = [[response.bodyParts objectAtIndex:0] isKindOfClass:[SOAPFault class]];
     if (ret)
     {
+         appDelegate.Enable_aggresssiveSync = FALSE;
         appDelegate.get_trigger_code = TRUE;
         didCompleteAfterSaveEventCalls = YES;
         appDelegate.incrementalSync_Failed = TRUE;
@@ -8726,6 +8796,9 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 
 -(void)settingFlags
 {
+    //sahana aggresive sync
+    appDelegate.Enable_aggresssiveSync = FALSE;
+    
     appDelegate.get_trigger_code = TRUE;
     didCompleteAfterSaveEventCalls = YES;
     appDelegate.incrementalSync_Failed = TRUE;

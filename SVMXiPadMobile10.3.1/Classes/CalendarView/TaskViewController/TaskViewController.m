@@ -167,6 +167,7 @@ extern void SVMXLog(NSString *format, ...);
     if (success)
     {
         [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:local_id SF_id:@"" record_type:MASTER operation:INSERT object_name:@"Task" sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@""];
+        [appDelegate setAgrressiveSync_flag];
         [appDelegate callDataSync];
     }
     
@@ -238,7 +239,7 @@ extern void SVMXLog(NSString *format, ...);
     if(![sf_id isEqualToString:@""] && [sf_id length] != 0)
     {
         [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:local_id SF_id:sf_id  record_type:DETAIL operation:DELETE object_name:@"Task" sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@""];
-
+        [appDelegate setAgrressiveSync_flag];
         [appDelegate callDataSync];
     }
     
