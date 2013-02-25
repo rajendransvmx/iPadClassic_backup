@@ -239,27 +239,24 @@ enum logLocation
     
     aslmsg query = asl_new(ASL_TYPE_QUERY);
     asl_set_query(query, ASL_KEY_MSG, NULL, ASL_QUERY_OP_NOT_EQUAL);
-    asl_set_query(query, ASL_KEY_SENDER, "ServiceMax Mobile", ASL_QUERY_OP_EQUAL);
+    //asl_set_query(query, ASL_KEY_SENDER, "ServiceMax Mobile", ASL_QUERY_OP_EQUAL);
+    asl_set_query(query, ASL_KEY_SENDER, "Date", ASL_QUERY_OP_EQUAL);
     aslresponse response = asl_search(client, query);
     //asl_free(query);
     
     aslmsg message;
     int linesToRead = 1000; // Total Number Of Lines to Read From Console
-    int count = 0;
+    int totalLinesCount = 0;
     while((message = aslresponse_next(response)))
     {
         const char *msg = asl_get(message, ASL_KEY_MSG);
         if(msg)
         {
-            count++;
+            totalLinesCount++;
         }
     }
     aslresponse_free(response);
-    NSLog(@"Log Count  = %d",count);
-    
-    count = count - linesToRead;
-    if(count < 0)
-        count = count + linesToRead;
+    NSLog(@"Log Count  = %d",totalLinesCount);
     response = asl_search(client, query);
     asl_free(query);
     NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
@@ -269,8 +266,8 @@ enum logLocation
         const char *msg = asl_get(message, ASL_KEY_MSG);
         if(msg)
         {
-            count--;
-            if(count >= 0)
+            totalLinesCount--;
+            if(totalLinesCount <= linesToRead)
             {
                 NSDate *time = [NSDate dateWithTimeIntervalSince1970:(strtod(asl_get(message, ASL_KEY_TIME), NULL))];
                 NSString *message = [NSString stringWithCString:msg encoding:NSUTF8StringEncoding];
