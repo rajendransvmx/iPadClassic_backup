@@ -393,6 +393,9 @@
 -(void)GetUpdate;
 -(void)GetDelete;
 -(void)setLastSyncTime;
+//sahana Feb25th Optimized DS fix
+-(void)setLastSyncTimeForDownloadCriteriaSync;
+
 -(void)DoIncrementalDataSync;
 -(NSString *)getSyncTimeStampWithTheIntervalof15days:(NSString *)time;
 -(NSString *)get_SYNCHISTORYTime_ForKey:(NSString *)forkey;

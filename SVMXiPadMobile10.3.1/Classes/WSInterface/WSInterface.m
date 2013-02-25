@@ -366,6 +366,38 @@ last_sync_time:(NSString *)last_sync_time
            
         }
     }
+    else if([sync_type isEqualToString:GET_INSERT_DOWNLOAD_CRITERIA] && [operation_type isEqualToString:RESPONSE])
+    {
+        for(NSString *  str in allkeys)
+        {
+            if([str isEqualToString:LAST_DC_INSERT_RESPONSE_TIME])
+            {
+                [dict setObject:last_sync_time forKey:LAST_DC_INSERT_RESPONSE_TIME];
+            }
+            
+        }
+    }
+    else if([sync_type isEqualToString:GET_DELETE_DOWNLOAD_CRITERIA] && [operation_type isEqualToString:RESPONSE])
+    {
+        for(NSString *  str in allkeys)
+        {
+            if([str isEqualToString:LAST_DC_DELETE_RESPONSE_TIME])
+            {
+                [dict setObject:last_sync_time forKey:LAST_DC_DELETE_RESPONSE_TIME];
+            }
+        }
+    }
+    else if([sync_type isEqualToString:GET_UPDATE_DOWNLOAD_CRITERIA] && [operation_type isEqualToString:RESPONSE])
+    {
+        for(NSString *  str in allkeys)
+        {
+            if([str isEqualToString:LAST_DC_UPDATE_RESPONSE_TIME])
+            {
+                [dict setObject:last_sync_time forKey:LAST_DC_UPDATE_RESPONSE_TIME];
+            }
+        }
+    }
+    
     }@catch (NSException *exp) {
         SMLog(@"Exception Name WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.name);
         SMLog(@"Exception Reason WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.reason);
@@ -1512,8 +1544,14 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate.dataBase updateUserGPSLocation];
         }
     }
+  
+        
     [appDelegate.databaseInterface  updateSyncRecordsIntoLocalDatabase];
-    //check download criteria match
+    
+        
+        
+        
+        //check download criteria match
 /*******************************************************DOWNLOAD_CRITERIA_CHANGE*************************************************************************/
     
     if(!temp_aggressiveSync)
@@ -1592,7 +1630,14 @@ last_sync_time:(NSString *)last_sync_time
     
     if(!temp_aggressiveSync)
     {
+//        normal sync
         [self setLastSyncTime];   // update the plist to last sync time
+        [self setLastSyncTimeForDownloadCriteriaSync];
+    }
+    else
+    {
+//        aggressive sync
+         [self setLastSyncTime];   // update the plist to last sync time
     }
 	//Radha updatesyncflag
 	[appDelegate updateSyncFailedFlag:SFALSE];
@@ -2428,15 +2473,15 @@ last_sync_time:(NSString *)last_sync_time
     
     if([event_name isEqualToString:GET_DELETE_DOWNLOAD_CRITERIA])
     {
-        SVMXCMap_lastModified.value = [self get_SYNCHISTORYTime_ForKey:LAST_DELETE_RESPONSE_TIME] == nil ?@"":[self get_SYNCHISTORYTime_ForKey:LAST_DELETE_RESPONSE_TIME];
+        SVMXCMap_lastModified.value = [self get_SYNCHISTORYTime_ForKey:LAST_DC_DELETE_RESPONSE_TIME] == nil ?@"":[self get_SYNCHISTORYTime_ForKey:LAST_DC_DELETE_RESPONSE_TIME];
     }
     else if ([event_name isEqualToString:GET_INSERT_DOWNLOAD_CRITERIA])
     {
-        SVMXCMap_lastModified.value = [self get_SYNCHISTORYTime_ForKey:LAST_INSERT_RESONSE_TIME] == nil ?@"":[self get_SYNCHISTORYTime_ForKey:LAST_INSERT_RESONSE_TIME];
+        SVMXCMap_lastModified.value = [self get_SYNCHISTORYTime_ForKey:LAST_DC_INSERT_RESPONSE_TIME] == nil ?@"":[self get_SYNCHISTORYTime_ForKey:LAST_DC_INSERT_RESPONSE_TIME];
     }
     else if ([event_name isEqualToString:GET_UPDATE_DOWNLOAD_CRITERIA])
     {
-        SVMXCMap_lastModified.value = [self get_SYNCHISTORYTime_ForKey:LAST_UPDATE_RESONSE_TIME] == nil ?@"":[self get_SYNCHISTORYTime_ForKey:LAST_UPDATE_RESONSE_TIME];
+        SVMXCMap_lastModified.value = [self get_SYNCHISTORYTime_ForKey:LAST_DC_UPDATE_RESPONSE_TIME] == nil ?@"":[self get_SYNCHISTORYTime_ForKey:LAST_DC_UPDATE_RESPONSE_TIME];
     }
     
     INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_startTime =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
@@ -2541,12 +2586,22 @@ last_sync_time:(NSString *)last_sync_time
     
     if(delete_last_sync_time != nil)
          [self setsyncHistoryForSyncType:DELETE  requestOrResponse:RESPONSE request_id:@"" last_sync_time:delete_last_sync_time];
-   
     
     //set the last sync time 
     [self  setLastSyncOccured];
 }
 
+-(void)setLastSyncTimeForDownloadCriteriaSync
+{
+    if(insert_last_sync_time !=  nil)
+        [self setsyncHistoryForSyncType:GET_INSERT_DOWNLOAD_CRITERIA requestOrResponse:RESPONSE request_id:@"" last_sync_time:insert_last_sync_time];
+    
+    if(update_last_sync_time != nil)
+        [self setsyncHistoryForSyncType:GET_UPDATE_DOWNLOAD_CRITERIA requestOrResponse:RESPONSE request_id:@"" last_sync_time:update_last_sync_time];
+    
+    if(delete_last_sync_time != nil)
+        [self setsyncHistoryForSyncType:GET_DELETE_DOWNLOAD_CRITERIA  requestOrResponse:RESPONSE request_id:@"" last_sync_time:delete_last_sync_time];
+}
 
 -(void)setLastSyncOccured
 {
