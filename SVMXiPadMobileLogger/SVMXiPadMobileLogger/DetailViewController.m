@@ -239,8 +239,7 @@ enum logLocation
     
     aslmsg query = asl_new(ASL_TYPE_QUERY);
     asl_set_query(query, ASL_KEY_MSG, NULL, ASL_QUERY_OP_NOT_EQUAL);
-    //asl_set_query(query, ASL_KEY_SENDER, "ServiceMax Mobile", ASL_QUERY_OP_EQUAL);
-    asl_set_query(query, ASL_KEY_SENDER, "Date", ASL_QUERY_OP_EQUAL);
+    asl_set_query(query, ASL_KEY_SENDER, "ServiceMax Mobile", ASL_QUERY_OP_EQUAL);
     aslresponse response = asl_search(client, query);
     //asl_free(query);
     
