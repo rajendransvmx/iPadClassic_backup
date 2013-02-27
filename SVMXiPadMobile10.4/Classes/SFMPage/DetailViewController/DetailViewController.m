@@ -10004,7 +10004,10 @@ extern void SVMXLog(NSString *format, ...);
     NSString * targetCall = [buttonDict objectForKey:SFW_ACTION_DESCRIPTION];
     NSString * action_type = [buttonDict objectForKey:SFW_ACTION_TYPE];
     NSString * action_process_id = [buttonDict objectForKey:SFW_PROCESS_ID];
-    if([action_type isEqualToString:SFM] || [action_type isEqualToString:@"WEBSERVICE"] || ![action_type isEqualToString:@"SFW_Custom_Actions"])
+    if([action_type isEqualToString:SFM] ||
+       [action_type isEqualToString:@"WEBSERVICE"] ||
+       [action_type isEqualToString:@"JAVASCRIPT"] ||
+       ![action_type isEqualToString:@"SFW_Custom_Actions"])
     {
         if ([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"VIEWRECORD"]) 
         {
@@ -10621,7 +10624,11 @@ extern void SVMXLog(NSString *format, ...);
                 }
                 
             }
-            if([action_type isEqual:@"WEBSERVICE"])
+            if([action_type isEqual:@"JAVASCRIPT"])
+            {
+                SMLog(@"Java Script");
+            }
+            else if([action_type isEqual:@"WEBSERVICE"])
             {
                 
                 // sahana Fix For Defect #5747
@@ -11344,8 +11351,11 @@ extern void SVMXLog(NSString *format, ...);
 
             }
             
-            
-            if([action_type isEqual:@"WEBSERVICE"])
+            if([action_type isEqual:@"JAVASCRIPT"])
+            {
+                SMLog(@"Java Script");
+            }
+            else if([action_type isEqual:@"WEBSERVICE"])
             {
                 //Code change for get pirce  ---> 11/06/2012   --- Time: 1:23 PM.
                 // sahana Fix For Defect #5747
@@ -11751,7 +11761,11 @@ extern void SVMXLog(NSString *format, ...);
                     [delegate BackOnSave];
                 }
             }
-            if([action_type isEqual:@"WEBSERVICE"])
+            if([action_type isEqual:@"JAVASCRIPT"])
+            {
+                SMLog(@"Java Script");
+            }
+            else if([action_type isEqual:@"WEBSERVICE"])
             {
                 //Code change for get pirce  ---> 11/06/2012   --- Time: 1:23 PM.
                 // sahana Fix For Defect #5747
