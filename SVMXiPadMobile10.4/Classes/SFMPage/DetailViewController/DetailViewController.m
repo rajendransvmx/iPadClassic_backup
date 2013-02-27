@@ -10627,6 +10627,22 @@ extern void SVMXLog(NSString *format, ...);
             if([action_type isEqual:@"JAVASCRIPT"])
             {
                 SMLog(@"Java Script");
+                if(([[appDelegate.wsInterface getValueFromUserDefaultsForKey:@"doesGetPriceRequired"] boolValue]) && ([appDelegate doesServerSupportsModule:kMinPkgForGetPriceModule]))
+                {
+                    // Get Price Code Should Go Here 
+                }
+                else
+                {
+                   // Alert the user that it requires Meta Sync
+                    NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:getPrice_Objects_not_found];
+                    NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
+                    NSString * Ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+                    
+                    UIAlertView * getPriceAlertView = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:Ok otherButtonTitles:nil];
+                    [getPriceAlertView show];
+                    [getPriceAlertView release];
+                    return;
+                }                    
             }
             else if([action_type isEqual:@"WEBSERVICE"])
             {
@@ -11354,6 +11370,23 @@ extern void SVMXLog(NSString *format, ...);
             if([action_type isEqual:@"JAVASCRIPT"])
             {
                 SMLog(@"Java Script");
+                if(([[appDelegate.wsInterface getValueFromUserDefaultsForKey:@"doesGetPriceRequired"] boolValue]) && ([appDelegate doesServerSupportsModule:kMinPkgForGetPriceModule]))
+                {
+                    // Get Price Code Should Go Here
+                }
+                else
+                {
+                    // Alert the user that it requires Meta Sync
+                    NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:getPrice_Objects_not_found];
+                    NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
+                    NSString * Ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+                    
+                    UIAlertView * getPriceAlertView = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:Ok otherButtonTitles:nil];
+                    [getPriceAlertView show];
+                    [getPriceAlertView release];
+                    return;
+                }
+
             }
             else if([action_type isEqual:@"WEBSERVICE"])
             {
@@ -11764,6 +11797,23 @@ extern void SVMXLog(NSString *format, ...);
             if([action_type isEqual:@"JAVASCRIPT"])
             {
                 SMLog(@"Java Script");
+                if(([[appDelegate.wsInterface getValueFromUserDefaultsForKey:@"doesGetPriceRequired"] boolValue]) && ([appDelegate doesServerSupportsModule:kMinPkgForGetPriceModule]))
+                {
+                    // Get Price Code Should Go Here
+                }
+                else
+                {
+                    // Alert the user that it requires Meta Sync
+                    NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:getPrice_Objects_not_found];
+                    NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
+                    NSString * Ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+                    
+                    UIAlertView * getPriceAlertView = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:Ok otherButtonTitles:nil];
+                    [getPriceAlertView show];
+                    [getPriceAlertView release];
+                    return;
+                }
+
             }
             else if([action_type isEqual:@"WEBSERVICE"])
             {

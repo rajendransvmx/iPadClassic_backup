@@ -28,8 +28,8 @@
 #define kPkgVersionCheckForGPS_AND_SFM_SEARCH   @"PackageVersionCheckForGPSandSFMSearch"
 #define kMinPkgForGPS_AND_SFMSEARCH             9.1
 #define kMinPkgForRESETTag						9.40003
-#define kMinPkgForGetPriceModule                @"10.30004"
-#define NoExceptionRecord                         10
+#define kMinPkgForGetPriceModule                @"10.40000"
+#define NoExceptionRecord                       10
 
 @class iServiceViewController;
 @class LoginController;

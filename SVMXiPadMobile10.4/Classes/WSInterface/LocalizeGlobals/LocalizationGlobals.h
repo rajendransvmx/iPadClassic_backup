@@ -302,6 +302,7 @@
 #define sfm_sync_error                      @"IPAD014_TAG028"
 #define sfm_sfw_header                      @"IPAD014_TAG029"
 #define sync_meta_sync_failed               @"IPAD014_TAG030"
+#define getPrice_Objects_not_found          @"IPAD014_TAG032"
 
 #define login_switch_user                   @"IPAD015_TAG005"
 #define login_connection_error              @"IPAD015_TAG006"

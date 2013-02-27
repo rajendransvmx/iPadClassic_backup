@@ -474,9 +474,9 @@
 	<string>Copy to Clipboard</string>
 	<key>IPAD011_TAG015</key>
 	<string>System Error</string>
-    <key>IPAD011_TAG016</key>
+	<key>IPAD011_TAG016</key>
 	<string>Functional Error</string>
-    <key>IPAD011_TAG017</key>
+	<key>IPAD011_TAG017</key>
 	<string>Type of Error</string>
 	<key>IPAD012_TAG018</key>
 	<string>Now downloading SFM Transactions</string>
@@ -610,6 +610,8 @@
 	<string>Edit Event</string>
 	<key>IPAD014_TAG031</key>
 	<string>Related To</string>
+	<key>IPAD014_TAG032</key>
+	<string>Get Price Objects are not available. Perform Reset Application or Contact Administrator.</string>
 	<key>IPAD018_TAG034</key>
 	<string>Reset Application</string>
 	<key>IPAD020_TAG001</key>
