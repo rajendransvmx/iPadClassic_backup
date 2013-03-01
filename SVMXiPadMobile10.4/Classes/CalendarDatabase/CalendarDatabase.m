@@ -12,6 +12,7 @@
 #import "iServiceAppDelegate.h"
 #import "NSData-AES.h"
 #import "PDFCreator.h"
+#import "Utility.h"
 extern void SVMXLog(NSString *format, ...);
 
 @implementation CalendarDatabase
@@ -4415,5 +4416,2045 @@ extern void SVMXLog(NSString *format, ...);
     return [allValuesArray retain];
 }
 
+/* GET_PRICE_JS-shr*/
+#pragma mark -
+#pragma mark GET PRICE BOOK
+- (NSArray *)getPriceBook:(NSDictionary *)currentContext {
+    
+    
+    NSMutableArray *priceBookArray = [[NSMutableArray alloc] init];
+    
+    @try {
+        NSAutoreleasePool *outerPool = [[NSAutoreleasePool alloc] init];
+        
+        
+        /* get record type ids  */
+        NSArray *recordTypes = [NSArray arrayWithObjects:@"Usage/Consumption",@"Estimate",nil];
+        NSDictionary *recordTypeIds =  [self getRecordTypeIdsForRecordType:recordTypes];
+        
+        NSMutableArray *someARrayNew = [[NSMutableArray alloc] init];
+        
+        NSString *usage = [recordTypeIds objectForKey:@"Usage/Consumption"];
+        NSDictionary *someDictionary  = [NSDictionary dictionaryWithObjectsAndKeys: @"Usage/Consumption",@"key",usage,@"value", nil];
+        [someARrayNew addObject:someDictionary];
+        
+        NSString *estimate = [recordTypeIds objectForKey:@"Estimate"];
+        someDictionary  = [NSDictionary dictionaryWithObjectsAndKeys: @"Estimate",@"key",estimate,@"value", nil];
+        [someARrayNew addObject:someDictionary];
+        
+        NSDictionary *finalDictOne = [[NSDictionary alloc] initWithObjectsAndKeys:@"RECORDTYPEDEFINITION",@"key",someARrayNew,@"valueMap", nil];
+        [priceBookArray addObject:finalDictOne];
+        
+        NSMutableArray *partsPriceBookNames = [[NSMutableArray alloc] init];
+        NSMutableArray *labourPriceBookNames = [[NSMutableArray alloc] init];
+        NSMutableArray *partsPriceBookIdsArray = [[NSMutableArray alloc] init];
+        NSMutableArray *labourPriceBookIdsArray = [[NSMutableArray alloc] init];
+        NSMutableArray *namedExpressionArray = [[NSMutableArray alloc] init];
+        
+        NSString *pbPartsEstimateName =  [self getPricebookInformationForSettingId:@"WORD005_SET006"];
+        if (pbPartsEstimateName != nil) {
+            [partsPriceBookNames addObject:pbPartsEstimateName];
+            
+        }
+        NSString *pbLabourEstimateName =  [self getPricebookInformationForSettingId:@"WORD005_SET018"];
+        if (pbLabourEstimateName != nil) {
+            [labourPriceBookNames addObject:pbLabourEstimateName];
+        }
+        
+        NSString *pbPartsUsageName =  [self getPricebookInformationForSettingId:@"WORD005_SET004"];
+        if (pbPartsUsageName != nil) {
+            [partsPriceBookNames addObject:pbPartsUsageName];
+        }
+        NSString *pbLabourUsageName =  [self getPricebookInformationForSettingId:@"WORD005_SET017"];
+        if (pbLabourUsageName != nil) {
+            [labourPriceBookNames addObject:pbLabourUsageName];
+        }
+        
+        
+        
+        
+        
+        /* get the header and detail records*/
+        NSDictionary *headerRecord =  [currentContext objectForKey:@"headerRecord"];
+        NSArray *detailRecords = [currentContext objectForKey:@"detailRecords"];
+        
+        NSArray *recordsArr = [headerRecord objectForKey:@"records"];
+        if ([recordsArr count] <= 0) {
+            return nil;
+        }
+        
+        NSDictionary *headerDataDictionary = [recordsArr objectAtIndex:0];
+        NSString *targetRecordId = [headerDataDictionary objectForKey:@"targetRecordId"];
+        NSArray *headerFieldArray =  [headerDataDictionary objectForKey:@"targetRecordAsKeyValue"];
+        NSString *currencyCode =  [self getValueFOrKey:@"CurrencyIsoCode" FromArray:headerFieldArray]; //[headerFieldDictionanary objectForKey:@"SVMXC__Product__c"];
+        if ([Utility isStringEmpty:currencyCode]) {
+            currencyCode = nil;
+        }
+        NSString *workOrderProduct = [self getValueFOrKey:@"SVMXC__Product__c" FromArray:headerFieldArray];
+        NSMutableArray *productsArray = [[NSMutableArray alloc] init];
+        NSMutableArray *labourArray = [[NSMutableArray alloc] init];
+        NSMutableArray *labourPartsArray = [[NSMutableArray alloc] init];
+        
+        
+        
+        for(int counter = 0;counter < [detailRecords count];counter++){
+            
+            NSDictionary *detailTargetDictionary = [detailRecords objectAtIndex:counter];
+            NSString *aliasName = [detailTargetDictionary objectForKey:@"aliasName"];
+            if ([aliasName isEqualToString:@"Parts"]) {
+                NSArray *records = [detailTargetDictionary objectForKey:@"records"];
+                for(int counter = 0;counter < [records count];counter++){
+                    
+                    NSDictionary *recordDict = [records objectAtIndex:counter];
+                    NSArray *detalFiledsArray = [recordDict objectForKey:@"targetRecordAsKeyValue"];
+                    NSString *productId =  [self getValueFOrKey:@"SVMXC__Product__c" FromArray:detalFiledsArray];
+                    [productsArray addObject:productId];
+                }
+            }
+            else if([aliasName isEqualToString:@"Labor"]){
+                NSArray *records = [detailTargetDictionary objectForKey:@"records"];
+                for(int counter = 0;counter < [records count];counter++){
+                    
+                    NSDictionary *recordDict = [records objectAtIndex:counter];
+                    NSArray *detalFiledsArray = [recordDict objectForKey:@"targetRecordAsKeyValue"];
+                    NSString *productId =  [self getValueFOrKey:@"SVMXC__Activity_Type__c" FromArray:detalFiledsArray];
+                    [labourArray addObject:productId];
+                }
+                
+            }
+            else if ([aliasName isEqualToString:@"LaborParts"]) {
+                NSArray *records = [detailTargetDictionary objectForKey:@"records"];
+                for(int counter = 0;counter < [records count];counter++){
+                    
+                    NSDictionary *recordDict = [records objectAtIndex:counter];
+                    NSArray *detalFiledsArray = [recordDict objectForKey:@"targetRecordAsKeyValue"];
+                    NSString *productId =  [self getValueFOrKey:@"SVMXC__Product__c" FromArray:detalFiledsArray];
+                    [labourPartsArray addObject:productId];
+                }
+                
+            }
+        }
+        
+        
+        /*For labor we need to consider work order product if work detail does not have product*/
+        if(labourArray != nil && [labourArray count]> 0 && workOrderProduct!= nil )
+        {
+            [labourPartsArray addObject:workOrderProduct];
+        }
+        
+        /*preparing key value for record type ­> pricebook definition that are defined as part of setting*/
+        NSAutoreleasePool *aPool = [[NSAutoreleasePool alloc] init];
+        if ([productsArray count] > 0) {
+            NSDictionary *partsDictionary =  [self preparePBForSettings:pbPartsEstimateName andUsageValue:pbPartsUsageName andKey:@"RECORDTYPEINFO_PARTS" andRecordTypeId:recordTypeIds];
+            if (partsDictionary != nil) {
+                [priceBookArray addObject:partsDictionary];
+            }
+        }
+        
+        if ([labourArray count] > 0) {
+            /*preparing key value for record type ­> pricebook definition that are defined as part of setting*/
+            NSDictionary *labourDictionary =  [self preparePBForLabourSettings:pbPartsEstimateName andUsageValue:pbLabourUsageName andKey:@"RECORDTYPEINFO_LABOR" andRecordTypeId:recordTypeIds];
+            if (labourDictionary != nil) {
+                [priceBookArray addObject:labourDictionary];
+            }
+        }
+        
+        [aPool release];
+        aPool = nil;
+        
+        
+        /*Entitlement has to be checked thouroughly */
+        NSDictionary *entitlementDict = [self getEntitlementHistoryForWorkorder:targetRecordId];
+        
+        NSString *idOfServiceOffering = nil;
+        NSString *idServiceCovered = nil;
+        
+        NSString *SVMXC__Warranty__c = [entitlementDict objectForKey:@"SVMXC__Warranty__c"];
+        NSString *SVMXC__Service_Contract__c = [entitlementDict objectForKey:@"SVMXC__Service_Contract__c"];
+        NSString *SVMXC__Entitled_By_Service__c =  [entitlementDict objectForKey:@"SVMXC__Entitled_By_Service__c"];
+        if (![Utility isStringEmpty:SVMXC__Entitled_By_Service__c]) {
+            idOfServiceOffering = idOfServiceOffering;
+        }
+        
+        NSString *SVMXC__Entitled_Within_Threshold__c = [entitlementDict objectForKey:@"SVMXC__Entitled_Within_Threshold__c"];
+        if ([SVMXC__Entitled_Within_Threshold__c isEqualToString:@"true'"]) {
+            idServiceCovered = @"COVERED";
+        }
+        
+        
+        /* Wo comes under warranty then get wa_id */
+        if (![Utility isStringEmpty:SVMXC__Warranty__c]) {
+            
+            NSMutableDictionary *warrantyDictionary =  [self getRecordForSfId:SVMXC__Warranty__c andTableName:@"SVMXC__Warranty__c"];
+            [warrantyDictionary setObject:@"SVMXC__Warranty__c" forKey:@"type"];
+            
+            NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:warrantyDictionary, @"attributes",nil];
+            NSArray *tempArray =[[NSArray alloc] initWithObjects:tempDictionary, nil];
+            [tempDictionary release];
+            tempDictionary = nil;
+            
+            NSDictionary *finalDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:@"WARRANTYDEFINITION",@"key",tempArray, @"data",nil];
+            [tempArray release];
+            tempArray = nil;
+            
+            [priceBookArray addObject:finalDictionary];
+            [finalDictionary release];
+            finalDictionary = nil;
+            
+            
+        }
+        else if(![Utility isStringEmpty:SVMXC__Service_Contract__c]){
+            
+            /* else If wo comes under contract then get contract_id */
+            NSMutableDictionary *serviceContractDictionary = [self getRecordForSfId:SVMXC__Service_Contract__c andTableName:@"SVMXC__Service_Contract__c"];
+            
+            /*Get Service Contract pricebook definition for Parts */
+            NSString *SVMXC__Default_Parts_Price_Book__c =  [serviceContractDictionary objectForKey:@"SVMXC__Default_Parts_Price_Book__c"];
+            if (![Utility isStringEmpty:SVMXC__Default_Parts_Price_Book__c]) {
+                /* get the price book info */
+                [partsPriceBookIdsArray addObject:SVMXC__Default_Parts_Price_Book__c];
+                NSDictionary *tempDictionary =  [self preparePBEstimateId:SVMXC__Default_Parts_Price_Book__c andUsageValue:SVMXC__Default_Parts_Price_Book__c andKey:@"RECORDTYPEINFO_PARTS_CONTRACT" andRecordTypeId:recordTypeIds];
+                if (tempDictionary != nil) {
+                    [priceBookArray addObject:tempDictionary];
+                }
+                
+            }
+            
+            /*Get Service Contract pricebook definition for labor*/
+            NSString *SVMXC__Service_Pricebook__c =  [serviceContractDictionary objectForKey:@"SVMXC__Service_Pricebook__c"];
+            if (![Utility isStringEmpty:SVMXC__Service_Pricebook__c]) {
+                [labourPriceBookIdsArray addObject:SVMXC__Service_Pricebook__c];
+                NSDictionary *tempDictionary =  [self preparePBLaourEstimateId:SVMXC__Service_Pricebook__c  andUsageValue:SVMXC__Service_Pricebook__c andKey:@"RECORDTYPEINFO_LABOR_CONTRACT" andRecordTypeId:recordTypeIds];
+                if (tempDictionary != nil) {
+                    [priceBookArray addObject:tempDictionary];
+                }
+                
+            }
+            
+            /* Getting data for SVMXC__Pricing_Rule__,SVMXC__Parts_Pricing__c,SVMXC__Parts_Discount__c,SVMXC__Labor_Pricing__c,SVMXC__Labor_Pricing__c,SVMXC__Labor_Pricing__c,SVMXC__Labor_Pricing__c,SVMXC__Expense_Pricing__c,SVMXC__Travel_Policy__c,SVMXC__Mileage_Tiers__c,SVMXC__Zone_Pricing__c
+             */
+            
+            NSAutoreleasePool *aPool = [[NSAutoreleasePool alloc] init];
+            
+            [self fillUpContractInformationInTheTargetArray:priceBookArray andContractId:SVMXC__Service_Contract__c andCurrency:currencyCode andNamedExpressionArray:namedExpressionArray andIdOffering:idOfServiceOffering  andCovered:idServiceCovered];
+            
+            [aPool drain];
+            aPool = nil;
+            
+            /* Get the expression ids used in the process */
+            if ([namedExpressionArray count] > 0) {
+                NSArray *valueMapArray =  [self getNamedExpressionsForIds:namedExpressionArray];
+                NSDictionary *finalDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"RULES",@"key",valueMapArray,@"valueMap", nil];
+                [priceBookArray addObject: finalDict];
+                valueMapArray = nil;
+                [finalDict release];
+                finalDict = nil;
+            }
+            
+            /* Getting product definition */
+            NSMutableArray *productsArrayTemp = [[NSMutableArray alloc] initWithArray:productsArray];
+            [productsArrayTemp addObjectsFromArray:labourPartsArray];
+            NSArray *dataArray =  [self getProductRecords:productsArrayTemp];
+            NSDictionary *finalDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"PRODUCT_DEFINITION",@"key",dataArray,@"data", nil];
+            if ([dataArray count] > 0) {
+                [priceBookArray addObject: finalDict];
+            }
+            
+            dataArray = nil;
+            [finalDict release];
+            finalDict = nil;
+            
+            
+        }
+        
+        
+        
+        /* Get the work order data and look up keys */
+        NSArray *dataArray =  [self getLookUpDefinition:headerDataDictionary];
+        [priceBookArray addObjectsFromArray:dataArray];
+        
+        
+        if ([productsArray count] > 0 && ([partsPriceBookNames count] > 0 || [partsPriceBookIdsArray count ] >0) ) {
+            
+            NSDictionary *dataDictionary =  [self getPriceBookDictionaryWithProductArray:productsArray andPriceBookNames:partsPriceBookNames andPartsPriceBookIds:partsPriceBookIdsArray andCurrency:currencyCode];
+            if(dataDictionary != nil) {
+                [priceBookArray addObject:dataDictionary];
+            }
+            
+        }
+        
+        /*Get the parts pricebook entry for the requested parts, pricebook(Contract special pricebook, Setting pricebook)*/
+        if ([labourArray count] > 0 && ([labourPriceBookNames count] > 0 || [labourPriceBookIdsArray count ] >0) ) {
+            
+            NSDictionary *dataDictionary =  [self getPriceBookForLabourParts:labourArray andLabourPbNames:labourPriceBookNames andLabourPbIds:labourPriceBookIdsArray andCurrency:currencyCode];
+            if (dataDictionary != nil) {
+                [priceBookArray addObject:dataDictionary];
+            }
+            
+        }
+        [productsArray release];
+        productsArray = nil;
+        
+        [labourArray release];
+        labourArray = nil;
+        
+        [labourPartsArray release];
+        labourPartsArray = nil;
+        
+        [labourPriceBookNames release];
+        [labourPriceBookIdsArray release];
+        
+        [partsPriceBookIdsArray release];
+        [partsPriceBookNames release];
+        
+        [outerPool release];
+        outerPool = nil;
+        
+        /*Adding tags*/
+        NSMutableArray *someArray = [[NSMutableArray alloc] init];
+        NSDictionary *finalDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"TAGS",@"key",someArray,@"valueMap", nil];
+        [priceBookArray addObject: finalDict];
+        [finalDict release];
+        finalDict = nil;
+        
+        
+    }
+    @catch (NSException *exception) {
+        NSLog(@"%@",[exception description]);
+    }
+    @finally {
+        return [priceBookArray autorelease];
+    }
+    return [priceBookArray autorelease];
+}
 
+- (void)fillUpContractInformationInTheTargetArray:(NSMutableArray *)priceBookArray
+                                    andContractId:(NSString *)SVMXC__Service_Contract__c
+                                      andCurrency:(NSString *)currencyCode
+                          andNamedExpressionArray:(NSMutableArray *)namedExpressionArray
+                                    andIdOffering:(NSString *) idOfServiceOffering
+                                       andCovered:(NSString *)idServiceCovered
+{
+    
+    NSMutableDictionary *columnNames = [[NSMutableDictionary alloc] init];
+    if (currencyCode != nil) {
+        [columnNames setObject:currencyCode forKey:@"CurrencyIsoCode"];
+    }
+    [columnNames setObject:SVMXC__Service_Contract__c forKey:@"SVMXC__Service_Contract__c"];
+    
+    
+    /* Get pricing rules for Contract*/
+    NSArray *dataArray =  [self getRecordWhereColumnNamesAndValues:columnNames andTableName:@"SVMXC__Pricing_Rule__c"];
+    NSDictionary *finalDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"CONTRACT_PRICINGRULES",@"key",dataArray,@"data", nil];
+    if ([dataArray count] > 0) {
+        [priceBookArray addObject: finalDict];
+    }
+    
+    [self addNamedExpressionsFrom:dataArray ToArray:namedExpressionArray];
+    dataArray = nil;
+    [finalDict release];
+    finalDict = nil;
+    
+    /* Get special parts pricing definition if available*/
+    [columnNames setObject:@"true"  forKey:@"SVMXC__Active__c"];
+    dataArray =  [self getRecordWhereColumnNamesAndValues:columnNames andTableName:@"SVMXC__Parts_Pricing__c"];
+    finalDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"CONTRACT_SPECIALPARTSPRICING",@"key",dataArray,@"data", nil];
+    if ([dataArray count] > 0) {
+        [priceBookArray addObject: finalDict];
+    }
+    dataArray = nil;
+    [finalDict release];
+    finalDict = nil;
+    
+    /* get special parts discount is available*/
+    dataArray =  [self getRecordWhereColumnNamesAndValues:columnNames andTableName:@"SVMXC__Parts_Discount__c"];
+    finalDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"CONTRACT_PARTSDISCOUNT",@"key",dataArray,@"data", nil];
+    if ([dataArray count] > 0) {
+        [priceBookArray addObject: finalDict];
+    }
+    dataArray = nil;
+    [finalDict release];
+    finalDict = nil;
+    [columnNames removeObjectForKey:@"SVMXC__Active__c"];
+    
+    /* Get special labor pricing definition */
+    dataArray =  [self getRecordWhereColumnNamesAndValues:columnNames andTableName:@"SVMXC__Labor_Pricing__c"];
+    finalDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"CONTRACT_SPECIALLABORPRICING",@"key",dataArray,@"data", nil];
+    if ([dataArray count] > 0) {
+        [priceBookArray addObject: finalDict];
+    }
+    dataArray = nil;
+    [finalDict release];
+    finalDict = nil;
+    
+    /*Get expense pricing if available*/
+    dataArray =  [self getRecordWhereColumnNamesAndValues:columnNames andTableName:@"SVMXC__Expense_Pricing__c"];
+    finalDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"CONTRACT_EXPENSE",@"key",dataArray,@"data", nil];
+    if ([dataArray count] > 0) {
+        [priceBookArray addObject: finalDict];
+    }
+    dataArray = nil;
+    [finalDict release];
+    finalDict = nil;
+    
+    /*Get  travel policy is available*/
+    dataArray =  [self getRecordWhereColumnNamesAndValues:columnNames andTableName:@"SVMXC__Travel_Policy__c"];
+    finalDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"CONTRACT_TRAVELPOLICY",@"key",dataArray,@"data", nil];
+    if ([dataArray count] > 0) {
+        [priceBookArray addObject: finalDict];
+    }
+    [self addNamedExpressionsFrom:dataArray ToArray:namedExpressionArray];
+    dataArray = nil;
+    [finalDict release];
+    finalDict = nil;
+    
+    
+    /*mileage tier pricing is available*/
+    dataArray =  [self getRecordWhereColumnNamesAndValues:columnNames andTableName:@"SVMXC__Mileage_Tiers__c"];
+    finalDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"CONTRACT_MILEAGETIERS",@"key",dataArray,@"data", nil];
+    if ([dataArray count] > 0) {
+        [priceBookArray addObject: finalDict];
+    }
+    dataArray = nil;
+    [finalDict release];
+    finalDict = nil;
+    
+    /*zone based pricing is available*/
+    dataArray =  [self getRecordWhereColumnNamesAndValues:columnNames andTableName:@"SVMXC__Zone_Pricing__c"];
+    finalDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"CONTRACT_ZONEPRICING",@"key",dataArray,@"data", nil];
+    if ([dataArray count] > 0) {
+        [priceBookArray addObject: finalDict];
+    }
+    
+    dataArray = nil;
+    [finalDict release];
+    finalDict = nil;
+    
+    
+    /*Get included services for Contract, we retrieve this information only if warranty says this is the included service. In response to this we attach COVERED or NONCOVERED*/
+    if (idOfServiceOffering != nil) {
+        [columnNames removeObjectForKey:@"SVMXC__Service_Contract__c"];
+        [columnNames setObject:idOfServiceOffering forKey:@"Id"];
+        dataArray =  [self getRecordWhereColumnNamesAndValues:columnNames andTableName:@"SVMXC__Service_Contract_Services__c"];
+        finalDict = [[NSDictionary alloc] initWithObjectsAndKeys:idServiceCovered,@"value",@"CONTRACT_SERVICEOFFERING",@"key",dataArray,@"data", nil];
+        
+        if ([dataArray count] > 0) {
+            [priceBookArray addObject: finalDict];
+        }
+        
+        dataArray = nil;
+        [finalDict release];
+        finalDict = nil;
+        
+    }
+    
+    [columnNames release];
+    columnNames = nil;
+}
+- (NSString *)getPricebookInformationForSettingId:(NSString *)settingId {
+    NSString *sqlQuery = [NSString stringWithFormat:@"SELECT * FROM MobileDeviceSettings where setting_id =  '%@'",settingId];
+    
+    NSString  *settingValue = nil;
+    sqlite3_stmt *selectStmt = nil;
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    {
+        while(synchronized_sqlite3_step(selectStmt) == SQLITE_ROW)
+        {
+            
+			
+            int index = synchronized_sqlite3_column_int(selectStmt, 0);
+            char * temp_label = (char *)synchronized_sqlite3_column_text(selectStmt, 1);
+            char * temp_value = (char *)(char*)synchronized_sqlite3_column_text(selectStmt, 2);
+			
+            
+            if(temp_label != nil)
+            {
+                settingId = [NSString stringWithUTF8String:temp_label];
+            }
+            if(temp_value != nil)
+            {
+                settingValue = [NSString stringWithUTF8String:temp_value];
+            }
+            
+            
+            
+        }
+		
+		synchronized_sqlite3_finalize(selectStmt);
+    }
+    return settingValue;
+}
+
+- (NSDictionary *)getRecordTypeIdsForRecordType:(NSArray *)recordTypes{
+    NSString *recordTypeString = [self getConcatenatedStringFromArray:recordTypes withSingleQuotesAndBraces:YES];
+    
+    NSString *sqlQuery = [NSString stringWithFormat:@"select record_type_id,record_type from SFRecordType where record_type IN %@ and record_type <> \"\"",recordTypeString];
+    NSMutableDictionary *dataDictionary = [[NSMutableDictionary alloc] init];
+    sqlite3_stmt *selectStmt = nil;
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    {
+        while(synchronized_sqlite3_step(selectStmt) == SQLITE_ROW)
+        {
+            NSString * recordId = @"" , * recordType = @"";
+			
+            
+            char * temp_label = (char *)synchronized_sqlite3_column_text(selectStmt, 0);
+            char * temp_value = (char *)(char*)synchronized_sqlite3_column_text(selectStmt, 1);
+			
+			
+            if(temp_label != nil)
+            {
+                recordId = [NSString stringWithUTF8String:temp_label];
+            }
+            if(temp_value != nil)
+            {
+                recordType = [NSString stringWithUTF8String:temp_value];
+            }
+            
+            
+            [dataDictionary setObject:recordId forKey:recordType];
+        }
+		
+		synchronized_sqlite3_finalize(selectStmt);
+    }
+    return [dataDictionary autorelease];
+}
+
+- (NSDictionary *)getEntitlementHistoryForWorkorder:(NSString *)workOrderId {
+    
+    NSString *tableName = @"SVMXC__Entitlement_History__c";
+    
+    NSDictionary *allFieldsOfTable = [self getAllFieldsOfTable:tableName];
+    NSArray *allColumnNames = [allFieldsOfTable  allKeys];
+    NSString *allColumnNamesString = [self getConcatenatedStringFromArray:allColumnNames withSingleQuotesAndBraces:NO];
+    
+    
+    NSString *sqlQuery = [NSString  stringWithFormat:@"select %@ from %@ where SVMXC__Service_Order__c = '%@' and SVMXC__Inactive_Date__c = \"\"",allColumnNamesString,tableName,workOrderId];
+    
+    NSMutableDictionary *dataDictionary = [[NSMutableDictionary alloc] init];
+    sqlite3_stmt *selectStmt = nil;
+    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    {
+        
+        while(sqlite3_step(selectStmt) == SQLITE_ROW)
+        {
+            NSString * tempString = @"";
+			char * tempCharString = nil;
+            
+            for (int counter = 0; counter < [allColumnNames count]; counter++) {
+                
+                tempCharString = (char *)sqlite3_column_text(selectStmt, counter);
+                if (tempCharString != nil) {
+                    tempString = [NSString stringWithUTF8String:tempCharString];
+                    if (tempString != nil) {
+                        NSString *fieldName = [allColumnNames objectAtIndex:counter];
+                        NSString *fieldType = [allFieldsOfTable objectForKey:fieldName];
+                        NSLog(@"Filed type is %@",fieldType);
+                        if ([fieldType isEqualToString:@"boolean"]) {
+                            tempString = [self changeTheBooleanValue:tempString];
+                        }
+                        [dataDictionary setObject:tempString forKey:fieldName];
+                    }
+                }
+            }
+            
+            NSString *tempStringNew = [dataDictionary objectForKey:@"SVMXC__Entitled_Within_Threshold__c"];
+            if ([tempStringNew isEqualToString:@"1"]) {
+                tempStringNew = @"true";
+            }else{
+                tempStringNew = @"false";
+            }
+            [dataDictionary setObject:tempStringNew forKey:@"SVMXC__Entitled_Within_Threshold__c"];
+            
+            /* get the date and check whether it is valid */
+            NSString *startDateString = [dataDictionary objectForKey:@"SVMXC__Start_Date__c"];
+            NSString *endDateString = [dataDictionary objectForKey:@"SVMXC__End_Date__c"];
+            
+            NSDate *startDate = [Utility getDateFromString:startDateString];
+            NSDate *endDate = [Utility getDateFromString:endDateString];
+            NSDate *todayDate = [Utility todayDateInGMT];
+            
+            BOOL validDate =  [Utility checkIfDate:todayDate betweenDate:startDate andEndDate:endDate];
+            if (validDate) {
+                break;
+            }
+            else {
+                [dataDictionary removeAllObjects];
+            }
+            
+        }
+		sqlite3_finalize(selectStmt);
+    }
+    return [dataDictionary autorelease];
+}
+
+- (NSString *)getConcatenatedStringFromArray:(NSArray *)arayOfString withSingleQuotesAndBraces:(BOOL)isRequired {
+    if ([arayOfString count] <= 0) {
+        return nil;
+    }
+    NSMutableString *concatenatedString = [[NSMutableString alloc] init];
+    
+    if (isRequired) {
+        for (int counter = 0; counter < [arayOfString count]; counter++) {
+            
+            NSString *tempStr = [arayOfString objectAtIndex:counter];
+            if (counter == 0) {
+                [concatenatedString appendFormat:@"('%@'",tempStr];
+            }
+            else{
+                [concatenatedString appendFormat:@",'%@'",tempStr];
+            }
+        }
+        [concatenatedString appendFormat:@")"];
+    }
+    else {
+        for (int counter = 0; counter < [arayOfString count]; counter++) {
+            
+            NSString *tempStr = [arayOfString objectAtIndex:counter];
+            if (counter == 0) {
+                [concatenatedString appendFormat:@"%@",tempStr];
+            }
+            else{
+                [concatenatedString appendFormat:@",%@",tempStr];
+            }
+        }
+    }
+    
+    return [concatenatedString autorelease];
+}
+
+
+- (NSDictionary *)getAllFieldsOfTable:(NSString *)tableName {
+    NSDictionary * fields_dict = [self getAllObjectFields:tableName tableName:SFOBJECTFIELD];
+    return fields_dict;
+}
+- (NSDictionary *)preparePBForSettings:(NSString *)estimateValue andUsageValue:(NSString *)usageValue andKey:(NSString *)key andRecordTypeId:(NSDictionary *)recordTypeIds {
+    
+    NSString *usageRecordTypeId = [recordTypeIds objectForKey:@"Usage/Consumption"];
+    NSString *estimateRecordTypeId = [recordTypeIds objectForKey:@"Estimate"];
+    
+    if (usageRecordTypeId != nil) {
+        NSMutableArray *arrayTemp = [[NSMutableArray alloc] init];
+        
+        if (usageValue != nil) {
+            NSArray *pbArray = [self getPriceBookObjectsForPriceBookIds:nil OrPriceBookNames:[NSArray arrayWithObject:usageValue]];
+            for (int counter = 0; counter < [pbArray count ]; counter++) {
+                
+                NSDictionary *pbBook = [pbArray objectAtIndex:counter];
+                NSString *finalValue = [pbBook objectForKey:@"Id"];
+                if (finalValue == nil) {
+                    finalValue = @"";
+                }
+                NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:finalValue,@"value", usageRecordTypeId,@"key", nil];
+                [arrayTemp addObject:tempDictionary];
+                [tempDictionary release];
+                tempDictionary = nil;
+            }
+        }
+        
+        if (estimateRecordTypeId != nil && estimateValue != nil) {
+            
+            NSArray *pbArray = [self getPriceBookObjectsForPriceBookIds:nil OrPriceBookNames:[NSArray arrayWithObject:estimateValue]];
+            for (int counter = 0; counter < [pbArray count ]; counter++) {
+                NSDictionary *pbBook = [pbArray objectAtIndex:counter];
+                NSString *finalValue = [pbBook objectForKey:@"Id"];
+                if (finalValue == nil) {
+                    finalValue = @"";
+                }
+                NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:finalValue,@"value", estimateRecordTypeId, @"key",nil];
+                [arrayTemp addObject:tempDictionary];
+                [tempDictionary release];
+                tempDictionary = nil;
+            }
+        }
+        NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:arrayTemp,@"valueMap",key,@"key", nil];
+        return [tempDictionary autorelease];
+    }
+    return nil;
+}
+
+- (NSDictionary *)preparePBForLabourSettings:(NSString *)estimateValue andUsageValue:(NSString *)usageValue andKey:(NSString *)key andRecordTypeId:(NSDictionary *)recordTypeIds {
+    
+    NSString *usageRecordTypeId = [recordTypeIds objectForKey:@"Usage/Consumption"];
+    NSString *estimateRecordTypeId = [recordTypeIds objectForKey:@"Estimate"];
+    
+    if (usageRecordTypeId != nil) {
+        NSMutableArray *arrayTemp = [[NSMutableArray alloc] init];
+        
+        if (usageValue != nil) {
+            NSArray *pbArray = [self getPriceBookObjectsForLabourPriceBookIds:nil OrPriceBookNames:[NSArray arrayWithObject:usageValue]];
+            for (int counter = 0; counter < [pbArray count ]; counter++) {
+                
+                NSDictionary *pbBook = [pbArray objectAtIndex:counter];
+                NSString *finalValue = [pbBook objectForKey:@"Id"];
+                if (finalValue == nil) {
+                    finalValue = @"";
+                }
+                NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:finalValue,@"value", usageRecordTypeId,@"key", nil];
+                [arrayTemp addObject:tempDictionary];
+                [tempDictionary release];
+                tempDictionary = nil;
+            }
+        }
+        
+        if (estimateRecordTypeId != nil && estimateValue != nil) {
+            
+            NSArray *pbArray = [self getPriceBookObjectsForLabourPriceBookIds:nil OrPriceBookNames:[NSArray arrayWithObject:estimateValue]];
+            for (int counter = 0; counter < [pbArray count ]; counter++) {
+                NSDictionary *pbBook = [pbArray objectAtIndex:counter];
+                NSString *finalValue = [pbBook objectForKey:@"Id"];
+                if (finalValue == nil) {
+                    finalValue = @"";
+                }
+                NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:finalValue,@"value", estimateRecordTypeId, @"key",nil];
+                [arrayTemp addObject:tempDictionary];
+                [tempDictionary release];
+                tempDictionary = nil;
+            }
+        }
+        NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:arrayTemp,@"valueMap",key,@"key", nil];
+        return [tempDictionary autorelease];
+    }
+    return nil;
+}
+
+- (NSMutableDictionary *)getRecordForSfId:(NSString *)sfId andTableName:(NSString *)tableName {
+    
+    NSDictionary *allFieldsOfTable = [self getAllFieldsOfTable:tableName];
+    NSArray *allColumnNames = [allFieldsOfTable  allKeys];
+    NSString *allColumnNamesString = [self getConcatenatedStringFromArray:allColumnNames withSingleQuotesAndBraces:NO];
+    
+    
+    NSString *sqlQuery = [NSString  stringWithFormat:@"select %@ from %@ where  Id = '%@'",allColumnNamesString,tableName,sfId];
+    
+    NSMutableDictionary *dataDictionary = [[NSMutableDictionary alloc] init];
+    sqlite3_stmt *selectStmt = nil;
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    {
+        
+        while(synchronized_sqlite3_step(selectStmt) == SQLITE_ROW)
+        {
+            NSString * tempString = @"";
+			char * tempCharString = nil;
+            
+            for (int counter = 0; counter < [allColumnNames count]; counter++) {
+                tempCharString = (char *)sqlite3_column_text(selectStmt, counter);
+                if (tempCharString != nil) {
+                    tempString = [NSString stringWithUTF8String:tempCharString];
+                    if (tempString != nil) {
+                        NSString *fieldName = [allColumnNames objectAtIndex:counter];
+                        NSString *fieldType = [allFieldsOfTable objectForKey:fieldName];
+                        NSLog(@"Filed type is %@",fieldType);
+                        if ([fieldType isEqualToString:@"boolean"]) {
+                            tempString = [self changeTheBooleanValue:tempString];
+                        }
+                        [dataDictionary setObject:tempString forKey:fieldName];
+                    }
+                }
+                
+            }
+        }
+		sqlite3_finalize(selectStmt);
+    }
+    return [dataDictionary autorelease];
+}
+
+- (NSArray *)getRecordWhereColumnNamesAndValues:(NSDictionary *)columnKeyAndValue  andTableName:(NSString *)tableName {
+    
+    NSDictionary *allFieldsOfTable = [self getAllFieldsOfTable:tableName];
+    NSArray *allColumnNames = [allFieldsOfTable  allKeys];
+    NSString *allColumnNamesString = [self getConcatenatedStringFromArray:allColumnNames withSingleQuotesAndBraces:NO];
+    
+    NSMutableString *someString = [[NSMutableString alloc] init];
+    NSArray *allKeys = [columnKeyAndValue allKeys];
+    NSInteger counter = 0;
+    for (NSString *columnKey in allKeys) {
+        NSString *columnValue = [columnKeyAndValue objectForKey:columnKey];
+        if (counter > 0) {
+            [someString appendFormat:@" and "];
+        }
+        counter++;
+        [someString appendFormat:@"%@ = '%@'",columnKey,columnValue];
+    }
+    
+    NSString *sqlQuery = [NSString  stringWithFormat:@"select %@ from %@ where %@",allColumnNamesString,tableName,someString];
+    
+    [someString release];
+    someString = nil;
+    
+    NSMutableArray *dataArray = [[NSMutableArray alloc] init];
+    sqlite3_stmt *selectStmt = nil;
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    {
+        
+        while(synchronized_sqlite3_step(selectStmt) == SQLITE_ROW)
+        {
+            NSMutableDictionary *recordDictionary = [[NSMutableDictionary alloc] init];
+            
+            NSString * tempString = @"";
+			char * tempCharString = nil;
+            
+            for(int counter = 0;counter < [allColumnNames count];counter++) {
+                
+                tempCharString = (char *)sqlite3_column_text(selectStmt, counter);
+                if (tempCharString != nil) {
+                    tempString = [NSString stringWithUTF8String:tempCharString];
+                    if (tempString != nil && counter < [allColumnNames count]) {
+                        NSString *fieldName = [allColumnNames objectAtIndex:counter];
+                        NSString *fieldType = [allFieldsOfTable objectForKey:fieldName];
+                        NSLog(@"Field type is %@",fieldType);
+                        if ([fieldType isEqualToString:@"boolean"]) {
+                            tempString = [self changeTheBooleanValue:tempString];
+                        }
+                        [recordDictionary setObject:tempString forKey:fieldName];
+                    }
+                }
+            }
+            
+            
+            NSDictionary *tempDict = [[NSDictionary alloc] initWithObjectsAndKeys:tableName,@"type", nil];
+            [recordDictionary setObject:tempDict forKey:@"attributes"];
+            [tempDict release];
+            tempDict = nil;
+            
+            [dataArray addObject:recordDictionary];
+            
+            [recordDictionary release];
+            recordDictionary = nil;
+            
+            
+        }
+		sqlite3_finalize(selectStmt);
+    }
+    return [dataArray autorelease];
+}
+
+- (NSArray *)getProductRecords:(NSArray *)productIdentifiers {
+    NSString *productIdentfierStr = [self getConcatenatedStringFromArray:productIdentifiers withSingleQuotesAndBraces:YES];
+    NSString *sqlQuery = [NSString stringWithFormat:@"Select Id, SVMXC__Product_Line__c, Family From Product2 where Id IN %@",productIdentfierStr];
+    
+    NSMutableArray *dataArray = [[NSMutableArray alloc] init];
+    sqlite3_stmt *selectStmt = nil;
+    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    {
+        
+        while(sqlite3_step(selectStmt) == SQLITE_ROW)
+        {
+            NSMutableDictionary *recordDictionary = [[NSMutableDictionary alloc] init];
+            
+            NSString * tempString = @"";
+			char * tempCharString = nil;
+            
+            tempCharString = (char *)sqlite3_column_text(selectStmt, 0);
+            if (tempCharString != nil) {
+                tempString = [NSString stringWithUTF8String:tempCharString];
+                [recordDictionary setObject:tempString forKey:@"Id"];
+            }
+            
+            tempCharString = (char *)sqlite3_column_text(selectStmt, 1);
+            if (tempCharString != nil) {
+                tempString = [NSString stringWithUTF8String:tempCharString];
+                [recordDictionary setObject:tempString forKey:@"SVMXC__Product_Line__c"];
+            }
+            
+            tempCharString = (char *)sqlite3_column_text(selectStmt, 2);
+            if (tempCharString != nil) {
+                tempString = [NSString stringWithUTF8String:tempCharString];
+                [recordDictionary setObject:tempString forKey:@"Family"];
+            }
+            
+            NSDictionary *tempDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"Product2",@"type", nil];
+            [recordDictionary setObject:tempDict forKey:@"attributes"];
+            [tempDict release];
+            tempDict = nil;
+            
+            [dataArray addObject:recordDictionary];
+            
+            [recordDictionary release];
+            recordDictionary = nil;
+            
+            
+        }
+		sqlite3_finalize(selectStmt);
+    }
+    return [dataArray autorelease];
+    
+    
+}
+
+- (NSArray *)getPriceBookObjectsForPriceBookIds:(NSArray *)priceBookIds OrPriceBookNames:(NSArray *)priceBookNames {
+    
+    NSString *priceBookIdString = [self getConcatenatedStringFromArray:priceBookIds withSingleQuotesAndBraces:YES];
+    
+    NSString *priceBookNameString = [self getConcatenatedStringFromArray:priceBookNames withSingleQuotesAndBraces:YES];
+    
+    NSString *sqlQuery = nil;
+    
+    if (priceBookIdString != nil && priceBookNameString != nil) {
+        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM Pricebook2 WHERE (Id IN %@ OR Name IN %@) and IsActive = '1'",priceBookIdString,priceBookNameString];
+    }
+    else if (priceBookIdString != nil){
+        
+        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM Pricebook2 WHERE Id IN %@ and IsActive = '1'",priceBookIdString];
+        
+    }else if(priceBookNameString != nil){
+        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM Pricebook2 WHERE Name IN %@ and IsActive = '1'",priceBookNameString];
+    }
+    
+    NSMutableArray *dataArray = [[NSMutableArray alloc] init];
+    sqlite3_stmt *selectStmt = nil;
+    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    {
+        
+        while(sqlite3_step(selectStmt) == SQLITE_ROW)
+        {
+            NSMutableDictionary *recordDictionary = [[NSMutableDictionary alloc] init];
+            
+            NSString * tempString = @"";
+			char * tempCharString = nil;
+            
+            tempCharString = (char *)sqlite3_column_text(selectStmt, 0);
+            if (tempCharString != nil) {
+                tempString = [NSString stringWithUTF8String:tempCharString];
+                [recordDictionary setObject:tempString forKey:@"Id"];
+            }
+            
+            tempCharString = (char *)sqlite3_column_text(selectStmt, 1);
+            if (tempCharString != nil) {
+                tempString = [NSString stringWithUTF8String:tempCharString];
+                [recordDictionary setObject:tempString forKey:@"Name"];
+            }
+            [dataArray addObject:recordDictionary];
+        }
+    }
+    sqlite3_finalize(selectStmt);
+    return [dataArray autorelease];
+}
+
+- (NSArray *)getPriceBookObjectsForLabourPriceBookIds:(NSArray *)priceBookIds OrPriceBookNames:(NSArray *)priceBookNames {
+    
+    NSString *priceBookIdString = [self getConcatenatedStringFromArray:priceBookIds withSingleQuotesAndBraces:YES];
+    
+    NSString *priceBookNameString = [self getConcatenatedStringFromArray:priceBookNames withSingleQuotesAndBraces:YES];
+    
+    NSString *sqlQuery = nil;
+    
+    if (priceBookIdString != nil && priceBookNameString != nil) {
+        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM SVMXC__Service_Pricebook__c WHERE (Id IN %@ OR Name IN %@) and SVMXC__Active__c = '1'",priceBookIdString,priceBookNameString];
+    }
+    else if (priceBookIdString != nil){
+        
+        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM SVMXC__Service_Pricebook__c WHERE Id IN %@ and SVMXC__Active__c = '1'",priceBookIdString];
+        
+    }else if(priceBookNameString != nil){
+        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM SVMXC__Service_Pricebook__c WHERE Name IN %@ and SVMXC__Active__c = '1'",priceBookNameString];
+    }
+    
+    NSMutableArray *dataArray = [[NSMutableArray alloc] init];
+    sqlite3_stmt *selectStmt = nil;
+    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    {
+        
+        while(sqlite3_step(selectStmt) == SQLITE_ROW)
+        {
+            NSMutableDictionary *recordDictionary = [[NSMutableDictionary alloc] init];
+            
+            NSString * tempString = @"";
+			char * tempCharString = nil;
+            
+            tempCharString = (char *)sqlite3_column_text(selectStmt, 0);
+            if (tempCharString != nil) {
+                tempString = [NSString stringWithUTF8String:tempCharString];
+                [recordDictionary setObject:tempString forKey:@"Id"];
+            }
+            
+            tempCharString = (char *)sqlite3_column_text(selectStmt, 1);
+            if (tempCharString != nil) {
+                tempString = [NSString stringWithUTF8String:tempCharString];
+                [recordDictionary setObject:tempString forKey:@"Name"];
+            }
+            [dataArray addObject:recordDictionary];
+        }
+    }
+    sqlite3_finalize(selectStmt);
+    return [dataArray autorelease];
+}
+
+
+- (NSDictionary *)preparePBEstimateId:(NSString *)estimateValue andUsageValue:(NSString *)usageValue andKey:(NSString *)key andRecordTypeId:(NSDictionary *)recordTypeIds {
+    
+    NSString *usageRecordTypeId = [recordTypeIds objectForKey:@"Usage/Consumption"];
+    NSString *estimateRecordTypeId = [recordTypeIds objectForKey:@"Estimate"];
+    
+    if (usageRecordTypeId != nil) {
+        NSMutableArray *arrayTemp = [[NSMutableArray alloc] init];
+        
+        if (usageValue != nil) {
+            NSArray *pbArray = [self getPriceBookObjectsForPriceBookIds:[NSArray arrayWithObject:usageValue] OrPriceBookNames:nil];
+            for (int counter = 0; counter < [pbArray count ]; counter++) {
+                
+                NSDictionary *pbBook = [pbArray objectAtIndex:counter];
+                NSString *finalValue = [pbBook objectForKey:usageValue];
+                if (finalValue == nil) {
+                    finalValue = @"";
+                }
+                NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:finalValue, usageRecordTypeId, nil];
+                [arrayTemp addObject:tempDictionary];
+                [tempDictionary release];
+                tempDictionary = nil;
+            }
+        }
+        
+        if (estimateRecordTypeId != nil && estimateValue != nil) {
+            
+            NSArray *pbArray = [self getPriceBookObjectsForPriceBookIds:[NSArray arrayWithObject:estimateValue] OrPriceBookNames:nil];
+            for (int counter = 0; counter < [pbArray count ]; counter++) {
+                NSDictionary *pbBook = [pbArray objectAtIndex:counter];
+                NSString *finalValue = [pbBook objectForKey:estimateValue];
+                NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:finalValue, estimateRecordTypeId, nil];
+                [arrayTemp addObject:tempDictionary];
+                [tempDictionary release];
+                tempDictionary = nil;
+            }
+        }
+        NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:arrayTemp,@"valueMap",key,@"key", nil];
+        return [tempDictionary autorelease];
+    }
+    return nil;
+}
+
+- (NSDictionary *)preparePBLaourEstimateId:(NSString *)estimateValue andUsageValue:(NSString *)usageValue andKey:(NSString *)key andRecordTypeId:(NSDictionary *)recordTypeIds {
+    
+    NSString *usageRecordTypeId = [recordTypeIds objectForKey:@"Usage/Consumption"];
+    NSString *estimateRecordTypeId = [recordTypeIds objectForKey:@"Estimate"];
+    
+    if (usageRecordTypeId != nil) {
+        NSMutableArray *arrayTemp = [[NSMutableArray alloc] init];
+        
+        if (usageValue != nil) {
+            NSArray *pbArray = [self getPriceBookObjectsForLabourPriceBookIds:[NSArray arrayWithObject:usageValue] OrPriceBookNames:nil];
+            for (int counter = 0; counter < [pbArray count ]; counter++) {
+                
+                NSDictionary *pbBook = [pbArray objectAtIndex:counter];
+                NSString *finalValue = [pbBook objectForKey:usageValue];
+                if (finalValue == nil) {
+                    finalValue = @"";
+                }
+                NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:finalValue, usageRecordTypeId, nil];
+                [arrayTemp addObject:tempDictionary];
+                [tempDictionary release];
+                tempDictionary = nil;
+            }
+        }
+        
+        if (estimateRecordTypeId != nil && estimateValue != nil) {
+            
+            NSArray *pbArray = [self getPriceBookObjectsForLabourPriceBookIds:[NSArray arrayWithObject:estimateValue] OrPriceBookNames:nil];
+            for (int counter = 0; counter < [pbArray count ]; counter++) {
+                NSDictionary *pbBook = [pbArray objectAtIndex:counter];
+                NSString *finalValue = [pbBook objectForKey:estimateValue];
+                NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:finalValue, estimateRecordTypeId, nil];
+                [arrayTemp addObject:tempDictionary];
+                [tempDictionary release];
+                tempDictionary = nil;
+            }
+        }
+        NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:arrayTemp,@"valueMap",key,@"key", nil];
+        return [tempDictionary autorelease];
+    }
+    return nil;
+}
+
+- (void)addNamedExpressionsFrom:(NSArray *)dataArray ToArray:(NSMutableArray *)namedExpressionArray {
+    
+    for (int counter = 0; counter < [dataArray count]; counter ++) {
+        NSDictionary *tempDictionary = [dataArray objectAtIndex:counter];
+        NSString  *nameExpressionId = [tempDictionary objectForKey:@"SVMXC__Named_Expression__c"];
+        if (![Utility isStringEmpty:nameExpressionId]) {
+            [namedExpressionArray addObject:nameExpressionId];
+        }
+    }
+}
+
+- (NSArray *)getNamedExpressionsForIds:(NSArray *)namedExpressionArray {
+    
+    NSString *concatenatedExpId = [self getConcatenatedStringFromArray:namedExpressionArray withSingleQuotesAndBraces:YES];
+    if (concatenatedExpId == nil) {
+        concatenatedExpId = @"()";
+    }
+    NSDictionary *recordTypeDict = [self getRecordTypeIdsForRecordType:[NSArray arrayWithObjects:@"SVMX Rule",@"EXPRESSIONS", nil]];
+    
+    NSString *recordTypeRule = [recordTypeDict objectForKey:@"SVMX Rule"];
+    NSString *expressionRule = [recordTypeDict objectForKey:@"EXPRESSIONS"];
+    
+    
+    NSString *sqlQuery = [NSString stringWithFormat:@"Select SVMXC__Advance_Expression__c,Id from SVMXC__ServiceMax_Processes__c where Id IN %@ and recordTypeId = '%@'",concatenatedExpId,recordTypeRule];
+    sqlite3_stmt *selectStmt = nil;
+    NSMutableDictionary *expressionDictionary = [[NSMutableDictionary alloc] init ];
+    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    {
+        while(sqlite3_step(selectStmt) == SQLITE_ROW) {
+            
+            NSString *identifier = nil, *advancedExpression = nil;
+			char * tempCharString = nil;
+            
+            tempCharString = (char *)sqlite3_column_text(selectStmt, 0);
+            if (tempCharString != nil) {
+                advancedExpression = [NSString stringWithUTF8String:tempCharString];
+                
+            }
+            
+            tempCharString = (char *)sqlite3_column_text(selectStmt,1);
+            if (tempCharString != nil) {
+                identifier = [NSString stringWithUTF8String:tempCharString];
+                
+            }
+            [expressionDictionary setObject:advancedExpression forKey:identifier];
+            
+        }
+    }
+    sqlite3_finalize(selectStmt);
+    
+    
+    NSMutableArray *expressionArray = [[NSMutableArray alloc] init];
+    for (int counter = 0; counter < [namedExpressionArray count]; counter++) {
+        
+        NSString *identifier = [namedExpressionArray objectAtIndex:counter];
+        NSString *expression = [expressionDictionary objectForKey:identifier];
+        NSArray *expressionComponenets =  [self getExpressionComponentsForExpressionId:identifier andExpression:expression andRecordId:expressionRule];
+        NSDictionary *dictionaryObj = [[NSDictionary alloc] initWithObjectsAndKeys:identifier,@"key",expression,@"value",expressionComponenets,@"data", nil];
+        [expressionArray addObject:dictionaryObj];
+        [dictionaryObj release];
+        dictionaryObj = nil;
+    }
+    
+    return [expressionArray autorelease];
+}
+
+- (NSArray *) getExpressionComponentsForExpressionId:(NSString *)expressionId andExpression:(NSString *)expressionName andRecordId:(NSString *)recordTypeId{
+    
+    NSString *sqlQuery = [NSString stringWithFormat:@"Select SVMXC__Field_Name__c,SVMXC__Operator__c,SVMXC__Operand__c,SVMXC__Sequence__c,SVMXC__Expression_Type__c,SVMXC__Expression_Rule__c,Id from SVMXC__SERVICEMAX_CONFIG_DATA__C where SVMXC__Expression_Rule__c = '%@'",expressionId];
+    sqlite3_stmt *selectStmt = nil;
+    NSMutableArray *expressionComponents = [[NSMutableArray alloc] init];
+    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    {
+        while(sqlite3_step(selectStmt) == SQLITE_ROW) {
+            NSMutableDictionary *recordDictionary = [[NSMutableDictionary alloc] init];
+            int i =0;
+            NSString *someExpression = nil;
+			char * tempCharString = nil;
+            
+            tempCharString = (char *)sqlite3_column_text(selectStmt, i++);
+            if (tempCharString != nil) {
+                someExpression = [NSString stringWithUTF8String:tempCharString];
+                if (someExpression != nil) {
+                    [recordDictionary setObject:someExpression forKey:@"SVMXC__Field_Name__c"];
+                }
+                
+            }
+            
+            tempCharString = (char *)sqlite3_column_text(selectStmt,i++);
+            if (tempCharString != nil) {
+                if (someExpression != nil) {
+                    [recordDictionary setObject:someExpression forKey:@"SVMXC__Operator__c"];
+                }
+                
+            }
+            tempCharString = (char *)sqlite3_column_text(selectStmt,i++);
+            if (tempCharString != nil) {
+                if (someExpression != nil) {
+                    [recordDictionary setObject:someExpression forKey:@"SVMXC__Operand__c"];
+                }
+                
+            }
+            tempCharString = (char *)sqlite3_column_text(selectStmt,i++);
+            if (tempCharString != nil) {
+                if (someExpression != nil) {
+                    [recordDictionary setObject:someExpression forKey:@"SVMXC__Sequence__c"];
+                }
+                
+            }
+            tempCharString = (char *)sqlite3_column_text(selectStmt,i++);
+            if (tempCharString != nil) {
+                if (someExpression != nil) {
+                    [recordDictionary setObject:someExpression forKey:@"SVMXC__Expression_Type__c"];
+                }
+                
+            }
+            tempCharString = (char *)sqlite3_column_text(selectStmt,i++);
+            if (tempCharString != nil) {
+                if (someExpression != nil) {
+                    [recordDictionary setObject:someExpression forKey:@"SVMXC__Expression_Rule__c"];
+                }
+                
+            }
+            tempCharString = (char *)sqlite3_column_text(selectStmt,i++);
+            if (tempCharString != nil) {
+                if (someExpression != nil) {
+                    [recordDictionary setObject:someExpression forKey:@"Id"];
+                }
+                
+            }
+            if ([recordDictionary count] > 0) {
+                
+                NSDictionary *tempDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"SVMXC__ServiceMax_Config_Data__c",@"type", nil];
+                [recordDictionary setObject:tempDict forKey:@"attributes"];
+                [tempDict release];
+                tempDict = nil;
+                
+                [expressionComponents addObject:recordDictionary];
+            }
+            [recordDictionary release];
+            recordDictionary = nil;
+        }
+    }
+    sqlite3_finalize(selectStmt);
+    return [expressionComponents autorelease];
+}
+
+//- (NSArray *)getNamedExpressionsForIds:(NSArray *)namedExpressionArray {
+//
+//    /* Get all SVMXC__Advance_Expression__c expression from  expression ids */
+//
+//    NSMutableArray *finalArray = [[NSMutableArray alloc] init];
+//    for (int counter = 0; counter < [namedExpressionArray count]; counter++) {
+//
+//        NSString *namedExpressionId = [namedExpressionArray objectAtIndex:counter];
+//
+//        NSDictionary *expressionDictionary = [self getexpressionDictionaryForExpressionId:namedExpressionId];
+//        [finalArray addObject:expressionDictionary];
+//    }
+//
+//    return [finalArray autorelease];
+//}
+
+//- (NSDictionary *)getexpressionDictionaryForExpressionId:(NSString *)expressionId {
+//
+//    /* get expression dictionary*/
+//    NSString *sqlQuery = [NSString stringWithFormat:@"select expression from SFExpression where expression_id = '%@'",expressionId];
+//    sqlite3_stmt *selectStmt = nil;
+//
+//    /*get expression array*/
+//    NSString * expression = nil;
+//    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+//    {
+//        while(sqlite3_step(selectStmt) == SQLITE_ROW) {
+//
+//
+//			char * tempCharString = nil;
+//
+//            tempCharString = (char *)sqlite3_column_text(selectStmt, 0);
+//            if (tempCharString != nil) {
+//                expression = [NSString stringWithUTF8String:tempCharString];
+//
+//            }
+//        }
+//    }
+//    sqlite3_finalize(selectStmt);
+//
+//
+//    /* Get operand information from operation */
+//    NSArray *operandsArray = [self getExpressionComponentsForExpressionId:expressionId andExpression:expression];
+//
+//    NSDictionary *expressionDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:expression,@"expression",expressionId,@"key",operandsArray,@"data", nil];
+//    return [expressionDictionary autorelease];
+//}
+
+
+//- (NSArray *) getExpressionComponentsForExpressionId:(NSString *)expressionId andExpression:(NSString *)expressionName {
+//
+//    NSString  * expression_ = expressionName;
+//    NSString  *SVMXC__Expression_Type__c = @"";
+//
+//    NSString * modified_expr = [expression_ stringByReplacingOccurrencesOfString:@"(" withString:@"#(#"];
+//    modified_expr =   [modified_expr stringByReplacingOccurrencesOfString:@")" withString:@"#)#"];
+//    modified_expr  =  [modified_expr stringByReplacingOccurrencesOfString:@"and" withString:@"#and#"];
+//    modified_expr  =  [modified_expr stringByReplacingOccurrencesOfString:@"AND" withString:@"#AND#"];
+//    modified_expr  =  [modified_expr stringByReplacingOccurrencesOfString:@"OR" withString:@"#OR#"];
+//    modified_expr =   [modified_expr stringByReplacingOccurrencesOfString:@"or" withString:@"#or#"];
+//
+//    NSArray * array = [modified_expr componentsSeparatedByString:@"#"];
+//
+//
+//    NSMutableArray * components = [[NSMutableArray alloc] initWithCapacity:0];
+//    NSMutableArray * operators = [[NSMutableArray alloc] initWithCapacity:0];
+//
+//    NSMutableArray *operandArray = [[NSMutableArray alloc] init];
+//     @try
+//    {
+//
+//        for(int i = 0 ; i < [array count]; i++)
+//        {
+//            NSString * str = [array objectAtIndex:i];
+//            if([str isEqualToString:@"("])
+//            {
+//                [operators addObject:str];
+//            }
+//            else if ([str isEqualToString:@")"])
+//            {
+//                [operators addObject:str];
+//            }
+//            else if([str isEqualToString:@"or"] || [str isEqualToString:@"OR"])
+//            {
+//                [operators addObject:str];
+//            }
+//            else if([str isEqualToString:@"and"] || [str isEqualToString:@"AND"])
+//            {
+//                [operators addObject:str];
+//            }
+//            else if([str length] == 0)
+//            {
+//
+//            }
+//            else
+//            {
+//                str = [str  stringByReplacingOccurrencesOfString:@" " withString:@""];
+//
+//                BOOL flag = FALSE;
+//
+//                for(int k=0 ;k< [components count]; k++)
+//                {
+//                    if([[components objectAtIndex:k] isEqualToString:str])
+//                    {
+//                        flag = TRUE;
+//                        break;
+//                    }
+//                }
+//                if(flag)
+//                {
+//
+//                }
+//                else
+//                {
+//                    [components addObject:str];
+//                }
+//            }
+//        }
+//
+//       for(int j = 0 ; j<[components count]; j++)
+//        {
+//            NSString * component_number = [components objectAtIndex:j];
+//            int f = [component_number intValue];
+//            NSString * appended_component_number = [NSString stringWithFormat:@"%d.0000",f];
+//
+//
+//            NSString * sqlQuery = [NSString stringWithFormat:@"SELECT component_lhs , component_rhs , operator  FROM '%@' where expression_id = '%@'  and component_sequence_number = '%@'",SFEXPRESSION_COMPONENT, expressionId ,appended_component_number];
+//
+//            sqlite3_stmt * selectStmt = nil;
+//
+//            NSString *componentLhs = nil,*componentRhs = nil,*componentOperator = nil;
+//            NSMutableDictionary *recordDictionary = [[NSMutableDictionary alloc] init];
+//
+//            if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK)
+//            {
+//                while (sqlite3_step(selectStmt)  == SQLITE_ROW)
+//                {
+//
+//                    char * lhs = (char *)sqlite3_column_text(selectStmt, 0);
+//                    if(lhs != nil)
+//                    {
+//                        componentLhs = [NSString stringWithUTF8String:lhs];
+//                    }
+//
+//                    char * rhs = (char *)sqlite3_column_text(selectStmt, 1);
+//                    if(rhs != nil)
+//                    {
+//                        componentRhs = [NSString stringWithUTF8String:rhs];
+//                    }
+//
+//                    char * operator = (char *)sqlite3_column_text(selectStmt, 2);
+//                    if(operator != nil)
+//                    {
+//                        componentOperator = [NSString stringWithUTF8String:operator];
+//                    }
+//                }
+//
+//                if (componentLhs != nil) {
+//                    [recordDictionary setObject:componentLhs forKey:@"SVMXC__Field_Name__c"];
+//                }
+//                if (componentRhs != nil) {
+//                    [recordDictionary setObject:componentRhs forKey:@"SVMXC__Operand__c"];
+//                }
+//                if (componentOperator != nil) {
+//                    [recordDictionary setObject:componentOperator forKey:@"SVMXC__Operator__c"];
+//                }
+//                if (appended_component_number != nil) {
+//                    [recordDictionary setObject:appended_component_number forKey:@"SVMXC__Sequence__c"];
+//                }
+//                if (SVMXC__Expression_Type__c != nil) {
+//                    [recordDictionary setObject:SVMXC__Expression_Type__c forKey:@"SVMXC__Expression_Type__c"];
+//                }
+//                if (expressionId != nil) {
+//                    [recordDictionary setObject:expressionId forKey:@"SVMXC__Expression_Rule__c"];
+//                }
+//                [operandArray addObject:recordDictionary];
+//            }
+//            sqlite3_finalize(selectStmt);
+//            [recordDictionary release];
+//            recordDictionary =nil;
+//        }
+//        [components release];
+//        components = nil;
+//        [operators release];
+//        operators = nil;
+//
+//    }@catch (NSException *exp) {
+//        SMLog(@"Exception Name Database :queryForExpressionComponent %@",exp.name);
+//        SMLog(@"Exception Reason Database :queryForExpressionComponent %@",exp.reason);
+//        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+//    }
+//
+//    return [operandArray autorelease];
+//}
+
+- (NSArray *)getLookUpDefinition:(NSDictionary *)workOrderData {
+    
+    NSAutoreleasePool *aPool = [[NSAutoreleasePool alloc] init];
+    
+    NSString *tableName = @"SVMXC__Service_Order__c";
+    
+    NSMutableDictionary *targetRecordAsKeyValue = [[NSMutableDictionary alloc] init];
+    /*Get the target record id and targetRecordAsKeyvalue */
+    NSArray *detailFieldsArr = [workOrderData objectForKey:@"targetRecordAsKeyValue"];
+    for (int counter = 0; counter < [detailFieldsArr count]; counter++) {
+        NSDictionary *tempDict = [detailFieldsArr objectAtIndex:counter];
+        NSString *keyNew = [tempDict objectForKey:@"key"];
+        NSString *value  = [tempDict objectForKey:@"value"];
+        if (keyNew != nil ) {
+            value = value?value:@"";
+            [targetRecordAsKeyValue setObject:value forKey:keyNew];
+        }
+    }
+    
+    
+    
+    /* Get the LOOKUP_DEFINITION */
+    NSString *parentColumnName =  [self parentColumnNameFor:tableName];
+    
+    NSDictionary *lookUpDictioanry =  [self getLookUpFor:parentColumnName andFieldDictionary:targetRecordAsKeyValue andTableName:tableName];
+    NSDictionary *lookUpFinal = [NSDictionary dictionaryWithObjectsAndKeys:lookUpDictioanry,@"valueMap",@"LOOKUP_DEFINITION",@"key", nil];
+    
+    
+    /*Prepare work order data  */
+    NSArray *tempArray = [[NSArray alloc] initWithObjects:targetRecordAsKeyValue, nil];
+    
+    NSDictionary *finalDictioanry = [[NSDictionary alloc] initWithObjectsAndKeys:tempArray,@"data",@"WORKORDER_DATA",@"key",nil];
+    [tempArray release];
+    tempArray = nil;
+    
+    NSArray *finalArray = [[NSArray alloc] initWithObjects:lookUpFinal, finalDictioanry,nil];
+    
+    [finalDictioanry release];
+    finalDictioanry=nil;
+    
+    [aPool release];
+    aPool = nil;
+    
+    return [finalArray autorelease];
+}
+
+- (NSDictionary *)getLookUpFor:(NSString *)parentColumnName andFieldDictionary:(NSDictionary *)parentColumnDictionary andTableName:(NSString *)tableName {
+    
+    NSString *sqlQuery = [NSString stringWithFormat:@"SELECT local_id, api_name , reference_to FROM SFObjectField where object_api_name = '%@' and reference_to != \"\"",tableName];
+    
+    NSMutableDictionary *recordDictionary = [[NSMutableDictionary alloc] init];
+    sqlite3_stmt *selectStmt = nil;
+    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    {
+        
+        while(sqlite3_step(selectStmt) == SQLITE_ROW)
+        {
+            
+            
+            NSString * localId = @"",*fieldName = nil,*reference_to = nil ;
+			char * tempCharString = nil;
+            
+            tempCharString = (char *)sqlite3_column_text(selectStmt, 0);
+            if (tempCharString != nil) {
+                localId = [NSString stringWithUTF8String:tempCharString];
+                
+            }
+            
+            tempCharString = (char *)sqlite3_column_text(selectStmt, 1);
+            if (tempCharString != nil) {
+                fieldName = [NSString stringWithUTF8String:tempCharString];
+            }
+            
+            tempCharString = (char *)sqlite3_column_text(selectStmt, 2);
+            if (tempCharString != nil) {
+                reference_to = [NSString stringWithUTF8String:tempCharString];
+            }
+            
+            NSString *idValueOfTheField = [parentColumnDictionary objectForKey:fieldName];
+            
+            if (![Utility isStringEmpty:idValueOfTheField]) {
+                
+                /* If fieldName is parent column name, the idValueOfTheField is local id */
+                if ([fieldName isEqualToString:parentColumnName]) {
+                    NSDictionary *sfidDict = [self getParentSFIDAForLocalId:idValueOfTheField andTableName:reference_to];
+                    if (sfidDict != nil && [[sfidDict allKeys] count] > 0) {
+                        NSString *sfId =  [[sfidDict allKeys] objectAtIndex:0];
+                        NSString *nameValue =  [sfidDict objectForKey:sfId];
+                        if (nameValue == nil) {
+                            nameValue = sfId;
+                        }
+                        [recordDictionary setObject:sfId forKey:@"key"];
+                        [recordDictionary setObject:nameValue forKey:@"value"];
+                        continue;
+                    }
+                }
+                
+                NSString *getTheReferenceValue = [self getTheReferenceValueForId:idValueOfTheField andTableName:reference_to];
+                if (getTheReferenceValue == nil) {
+                    getTheReferenceValue = idValueOfTheField;
+                }
+                [recordDictionary setObject:idValueOfTheField forKey:@"key"];
+                [recordDictionary setObject:getTheReferenceValue forKey:@"value"];
+            }
+            
+        }
+        
+        
+    }
+    sqlite3_finalize(selectStmt);
+    return [recordDictionary autorelease];
+}
+- (NSString *)parentColumnNameFor:(NSString *)tableName {
+    NSString * parent_column_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:tableName field_name:@"parent_column_name"];
+    return parent_column_name;
+}
+
+- (NSString *)getTheReferenceValueForId:(NSString*)idValueOfTheField andTableName:(NSString *)tableName {
+    
+    NSString *sqlQuery = [NSString stringWithFormat:@"SELECT Name FROM %@ where Id = '%@' OR local_id = '%@' ",tableName,idValueOfTheField,idValueOfTheField];
+    sqlite3_stmt *selectStmt = nil;
+    NSString *  nameValue= nil;
+    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    {
+        
+        while(sqlite3_step(selectStmt) == SQLITE_ROW)
+        {
+            
+            
+            
+			char * tempCharString = nil;
+            
+            tempCharString = (char *)sqlite3_column_text(selectStmt, 0);
+            if (tempCharString != nil) {
+                nameValue = [NSString stringWithUTF8String:tempCharString];
+                
+            }
+        }
+    }
+    sqlite3_finalize(selectStmt);
+    return nameValue;
+}
+
+- (NSDictionary *)getParentSFIDAForLocalId:(NSString *)localId andTableName:(NSString*)tableName{
+    
+    NSString *sqlQuery = [NSString stringWithFormat:@"SELECT Name, Id FROM %@ local_id = '%@' ",tableName,localId];
+    sqlite3_stmt *selectStmt = nil;
+    NSString *  nameValue= nil;
+    NSString *sfId = nil;
+    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    {
+        
+        while(sqlite3_step(selectStmt) == SQLITE_ROW)
+        {
+            
+            
+            
+			char * tempCharString = nil;
+            
+            tempCharString = (char *)sqlite3_column_text(selectStmt, 0);
+            if (tempCharString != nil) {
+                nameValue = [NSString stringWithUTF8String:tempCharString];
+                if (nameValue != nil) {
+                    nameValue = @"";
+                }
+            }
+            
+            tempCharString = (char *)sqlite3_column_text(selectStmt, 0);
+            if (tempCharString != nil) {
+                sfId = [NSString stringWithUTF8String:tempCharString];
+                
+            }
+            
+        }
+    }
+    sqlite3_finalize(selectStmt);
+    if (sfId != nil) {
+        return [NSDictionary dictionaryWithObjectsAndKeys:nameValue,sfId,nil];
+    }
+    return nil;
+    
+}
+
+- (NSDictionary *)getPriceBookDictionaryWithProductArray:(NSArray *)productsArray andPriceBookNames:(NSArray *)partsPriceBookNames andPartsPriceBookIds:(NSArray *)partsPriceBookIdsArray andCurrency:(NSString *)currencyIsoCode{
+    
+    NSAutoreleasePool *aPool = [[NSAutoreleasePool alloc] init];
+    NSArray *tempArray =  [self getPriceBookObjectsForPriceBookIds:partsPriceBookIdsArray  OrPriceBookNames:partsPriceBookNames];
+    
+    NSMutableArray *priceBookIds = [[NSMutableArray alloc] init];
+    for (int counter = 0; counter < [tempArray count]; counter++) {
+        
+        NSDictionary *pbDictioanry = [tempArray objectAtIndex:counter];
+        NSString *identifier = [pbDictioanry objectForKey:@"Id"];
+        if (identifier != nil) {
+            [priceBookIds addObject:identifier];
+        }
+    }
+    NSDictionary *tempDictionary = nil;
+    if ([priceBookIds count] > 0) {
+        /*get pricebook entry for these ids */
+        NSArray *pricebookRecords =  [self getPriceBookEntryRecordsFor:priceBookIds andProductArray:productsArray andTableName:@"PricebookEntry" andCurrency:currencyIsoCode];
+        tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:@"PARTSPRICING",@"key",pricebookRecords,@"data",nil];
+        
+    }
+    [priceBookIds release];
+    priceBookIds = nil;
+    [aPool release];
+    aPool = nil;
+    return [tempDictionary autorelease];
+}
+
+- (NSArray*)getPriceBookEntryRecordsFor:(NSArray *)priceBookIds andProductArray:(NSArray *)productsArray andTableName:(NSString *)tableName andCurrency:(NSString *)currency {
+    
+    NSString *priceBookIdString = [self getConcatenatedStringFromArray:priceBookIds withSingleQuotesAndBraces:YES];
+    NSString *productString = [self getConcatenatedStringFromArray:productsArray withSingleQuotesAndBraces:YES];
+    
+    if (productString == nil) {
+        productString = @"()";
+    }
+    if (priceBookIdString == nil) {
+        priceBookIdString = @"()";
+    }
+    
+    NSDictionary *allFieldsOfTable = [self getAllFieldsOfTable:tableName];
+    NSArray *allColumnNames = [allFieldsOfTable  allKeys];
+    NSString *allColumnNamesString = [self getConcatenatedStringFromArray:allColumnNames withSingleQuotesAndBraces:NO];
+    NSString *sqlQuery = nil;
+    if (currency == nil) {
+        sqlQuery = [[NSString alloc] initWithFormat:@"Select %@ from %@ where isActive = '1' and Product2Id IN %@ AND Pricebook2Id IN %@",allColumnNamesString,tableName,productString,priceBookIdString];
+    }
+    else {
+        sqlQuery = [[NSString alloc] initWithFormat:@"Select %@ from %@ where isActive = '1' and Product2Id IN %@ AND Pricebook2Id IN %@ and CurrencyIsoCode = '%@'",allColumnNamesString,tableName,productString,priceBookIdString,currency];
+    }
+    
+    
+    NSMutableArray *dataArray = [[NSMutableArray alloc] init];
+    sqlite3_stmt *selectStmt = nil;
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    {
+        
+        while(synchronized_sqlite3_step(selectStmt) == SQLITE_ROW)
+        {
+            NSMutableDictionary *recordDictionary = [[NSMutableDictionary alloc] init];
+            
+            NSString * tempString = @"";
+			char * tempCharString = nil;
+            
+            for(int counter = 0;counter < [allColumnNames count];counter++) {
+                
+                tempCharString = (char *)sqlite3_column_text(selectStmt, counter);
+                if (tempCharString != nil) {
+                    tempString = [NSString stringWithUTF8String:tempCharString];
+                    if (tempString != nil && counter < [allColumnNames count]) {
+                        NSString *fieldName = [allColumnNames objectAtIndex:counter];
+                        [recordDictionary setObject:tempString forKey:fieldName];
+                    }
+                }
+            }
+            
+            
+            NSDictionary *tempDict = [[NSDictionary alloc] initWithObjectsAndKeys:tableName,@"type", nil];
+            [recordDictionary setObject:tempDict forKey:@"attributes"];
+            [tempDict release];
+            tempDict = nil;
+            
+            [dataArray addObject:recordDictionary];
+            
+            [recordDictionary release];
+            recordDictionary = nil;
+            
+            
+        }
+		
+    }
+    sqlite3_finalize(selectStmt);
+    [sqlQuery release];
+    sqlQuery = nil;
+    
+    return [dataArray autorelease];
+}
+
+- (NSDictionary *)getPriceBookForLabourParts:(NSArray *)labourArray andLabourPbNames:(NSArray *)labourPbNames andLabourPbIds:(NSArray *)labourPbIds andCurrency:(NSString *)currency {
+    
+    NSAutoreleasePool *aPool = [[NSAutoreleasePool alloc] init];
+    NSArray *tempArray =  [self getValidLabourPriceBookNames:labourPbNames andLabourIdArray:labourPbIds andCurrency:currency];
+    
+    NSMutableArray *priceBookIds = [[NSMutableArray alloc] init];
+    for (int counter = 0; counter < [tempArray count]; counter++) {
+        
+        NSDictionary *pbDictioanry = [tempArray objectAtIndex:counter];
+        NSString *identifier = [pbDictioanry objectForKey:@"Id"];
+        if (identifier != nil) {
+            [priceBookIds addObject:identifier];
+        }
+    }
+    NSDictionary *tempDictionary = nil;
+    if ([priceBookIds count] > 0) {
+        /*get pricebook entry for these ids */
+        NSArray *pricebookRecords =  [self getPriceBookEntryForLabourArray:labourArray andPriceBookIds:priceBookIds andCurrency:currency];
+        tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:@"LABORPRICING",@"key",pricebookRecords,@"data",nil];
+        
+    }
+    [priceBookIds release];
+    priceBookIds = nil;
+    [aPool release];
+    aPool = nil;
+    return [tempDictionary autorelease];
+    
+}
+
+- (NSArray *)getPriceBookEntryForLabourArray:(NSArray *)labourArray andPriceBookIds:(NSArray *)priceBookIds andCurrency:(NSString *)currency {
+    NSString *tableName = @"SVMXC__Service_Pricebook_Entry__c";
+    NSString *priceBookIdString = [self getConcatenatedStringFromArray:priceBookIds withSingleQuotesAndBraces:YES];
+    NSString *labourString = [self getConcatenatedStringFromArray:labourArray withSingleQuotesAndBraces:YES];
+    
+    if (labourString == nil) {
+        labourString = @"()";
+    }
+    if (priceBookIdString == nil) {
+        priceBookIdString = @"()";
+    }
+    
+    NSDictionary *allFieldsOfTable = [self getAllFieldsOfTable:tableName];
+    NSArray *allColumnNames = [allFieldsOfTable  allKeys];
+    NSString *allColumnNamesString = [self getConcatenatedStringFromArray:allColumnNames withSingleQuotesAndBraces:NO];
+    NSString *sqlQuery = nil;
+    if (currency == nil) {
+        sqlQuery = [[NSString alloc] initWithFormat:@"Select %@ from %@ where  SVMXC__Activity_Type__c IN %@ AND SVMXC__Price_Book__c IN %@",allColumnNamesString,tableName,labourString,priceBookIdString];
+    }
+    else {
+        sqlQuery = [[NSString alloc] initWithFormat:@"Select %@ from %@ where SVMXC__Activity_Type__c IN %@ AND SVMXC__Price_Book__c IN %@ and CurrencyIsoCode = '%@'",allColumnNamesString,tableName,labourString,priceBookIdString,currency];
+    }
+    
+    
+    NSMutableArray *dataArray = [[NSMutableArray alloc] init];
+    sqlite3_stmt *selectStmt = nil;
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    {
+        
+        while(synchronized_sqlite3_step(selectStmt) == SQLITE_ROW)
+        {
+            NSMutableDictionary *recordDictionary = [[NSMutableDictionary alloc] init];
+            
+            NSString * tempString = @"";
+			char * tempCharString = nil;
+            
+            for(int counter = 0;counter < [allColumnNames count];counter++) {
+                
+                tempCharString = (char *)sqlite3_column_text(selectStmt, counter);
+                if (tempCharString != nil) {
+                    tempString = [NSString stringWithUTF8String:tempCharString];
+                    if (tempString != nil && counter < [allColumnNames count]) {
+                        NSString *fieldName = [allColumnNames objectAtIndex:counter];
+                        NSString *fieldType = [allFieldsOfTable objectForKey:fieldName];
+                        NSLog(@"Filed type is %@",fieldType);
+                        if ([fieldType isEqualToString:@"boolean"]) {
+                            tempString = [self changeTheBooleanValue:tempString];
+                        }
+                        [recordDictionary setObject:tempString forKey:fieldName];
+                    }
+                }
+            }
+            
+            
+            NSDictionary *tempDict = [[NSDictionary alloc] initWithObjectsAndKeys:tableName,@"type", nil];
+            [recordDictionary setObject:tempDict forKey:@"attributes"];
+            [tempDict release];
+            tempDict = nil;
+            
+            [dataArray addObject:recordDictionary];
+            
+            [recordDictionary release];
+            recordDictionary = nil;
+            
+            
+        }
+		
+    }
+    sqlite3_finalize(selectStmt);
+    [sqlQuery release];
+    sqlQuery = nil;
+    
+    return [dataArray autorelease];
+    
+}
+- (NSArray *)getValidLabourPriceBookNames:(NSArray *)labourPbNames andLabourIdArray:(NSArray *)labourIdArray andCurrency:(NSString *)currency{
+    
+    NSString *tablename = @"SVMXC__Service_Pricebook__c";
+    
+    NSString *priceBookIdString = [self getConcatenatedStringFromArray:labourIdArray withSingleQuotesAndBraces:YES];
+    
+    NSString *priceBookNameString = [self getConcatenatedStringFromArray:labourPbNames withSingleQuotesAndBraces:YES];
+    
+    NSString *sqlQuery = nil;
+    
+    if (priceBookIdString != nil && priceBookNameString != nil) {
+        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM %@ WHERE (Id IN %@ OR Name IN %@) and SVMXC__Active__c = '1'",tablename,priceBookIdString,priceBookNameString];
+    }
+    else if (priceBookIdString != nil){
+        
+        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM %@ WHERE Id IN %@ and SVMXC__Active__c = '1'",tablename,priceBookIdString];
+        
+    }else if(priceBookNameString != nil){
+        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM %@ WHERE Name IN %@ and SVMXC__Active__c = '1'",tablename,priceBookNameString];
+    }
+    
+    NSMutableArray *dataArray = [[NSMutableArray alloc] init];
+    sqlite3_stmt *selectStmt = nil;
+    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    {
+        
+        while(sqlite3_step(selectStmt) == SQLITE_ROW)
+        {
+            NSMutableDictionary *recordDictionary = [[NSMutableDictionary alloc] init];
+            
+            NSString * tempString = @"";
+			char * tempCharString = nil;
+            
+            tempCharString = (char *)sqlite3_column_text(selectStmt, 0);
+            if (tempCharString != nil) {
+                tempString = [NSString stringWithUTF8String:tempCharString];
+                [recordDictionary setObject:tempString forKey:@"Id"];
+            }
+            
+            tempCharString = (char *)sqlite3_column_text(selectStmt, 1);
+            if (tempCharString != nil) {
+                tempString = [NSString stringWithUTF8String:tempCharString];
+                [recordDictionary setObject:tempString forKey:@"Name"];
+            }
+            [dataArray addObject:recordDictionary];
+        }
+    }
+    
+    return [dataArray autorelease];
+    
+    
+}
+
+- (NSString *)getValueFOrKey:(NSString *)key FromArray:(NSArray *)array {
+    for (int counter = 0; counter < [array count]; counter++) {
+        NSDictionary *tempDict = [array objectAtIndex:counter];
+        NSString *keyNew = [tempDict objectForKey:@"key"];
+        if ([keyNew isEqualToString:key]) {
+            return [tempDict objectForKey:@"value"];
+        }
+    }
+    return nil;
+}
+- (NSString *)changeTheBooleanValue:(NSString *)someString {
+    if ([someString isEqualToString:@"1"]) {
+        return @"true";
+    }
+    else {
+        
+        if ([someString isEqualToString:@"true"] || [someString isEqualToString:@"false"]) {
+            return someString;
+        }
+        else {
+            return [someString lowercaseString];
+        }
+    }
+    return @"false";
+}
+
+
+-(NSMutableDictionary *)getAllObjectFields:(NSString *)objectName tableName:(NSString *)tableName
+{
+    NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+    NSString * field_api_name = @"", *fieldType = nil;
+    if(objectName != nil || [objectName length ] != 0)
+    {
+        NSString * query = [NSString stringWithFormat:@"SELECT api_name , type from '%@' where object_api_name = '%@'" , tableName , objectName];
+        sqlite3_stmt * stmt;
+        if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+        {
+            while (synchronized_sqlite3_step(stmt)  == SQLITE_ROW)
+            {
+                char * temp_process_id  = (char *)synchronized_sqlite3_column_text(stmt, 0);
+                
+                if(temp_process_id!= nil)
+                    field_api_name = [NSString stringWithUTF8String:temp_process_id];
+                
+                
+                char * typeOfField  = (char *)synchronized_sqlite3_column_text(stmt, 1);
+                if(typeOfField!= nil)
+                    fieldType = [NSString stringWithUTF8String:typeOfField];
+                
+                
+                
+                
+                if([dict count] != 0)
+                {
+                    
+                }
+                [dict setObject:fieldType forKey:field_api_name];
+                
+            }
+        }
+        synchronized_sqlite3_finalize(stmt);
+    }
+    return dict;
+    
+}
+
+#pragma mark -
+#pragma mark Get get price code snippet
+
+
+- (NSString *)getGetPriceCodeSnippet:(NSString *)codeSnippetName {
+    NSDictionary *codeSnippetDictMain = [self getCodeSnippetForName:codeSnippetName];
+    
+    NSString *codeSnippetId =  [codeSnippetDictMain objectForKey:@"key"];
+    NSString *codeSnippetMain = [codeSnippetDictMain objectForKey:@"data"];
+    NSMutableString *codeSnippetFinal = nil;
+    if (![Utility isStringEmpty:codeSnippetId] &&![Utility isStringEmpty:codeSnippetMain] ) {
+        codeSnippetFinal =  [[NSMutableString alloc] initWithString:codeSnippetMain];
+        
+        while (![Utility isStringEmpty:codeSnippetId]) {
+            
+            /*get the reference id from manifest */
+            NSString *snippetId =  [self getCodeSnippetRefererenceForId:codeSnippetId];
+            NSDictionary *tempDictionary =  [self getCodeSnippetForId:snippetId];
+            if ([tempDictionary count] > 0) {
+                codeSnippetId = [tempDictionary objectForKey:@"key"];
+                NSString *tempStr = [tempDictionary objectForKey:@"data"];
+                if(![Utility isStringEmpty:codeSnippetId] && ![Utility isStringEmpty:tempStr] ) {
+                    [codeSnippetFinal appendFormat:@" %@",tempStr];
+                }
+                else {
+                    codeSnippetId = nil;
+                }
+            }
+            else {
+                codeSnippetId = nil;
+            }
+            
+        }
+    }
+    return [codeSnippetFinal autorelease];
+}
+
+- (NSDictionary *)getCodeSnippetForId:(NSString *)codeSnippetId {
+    
+    NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+    NSString * fieldId = @"", *fieldData = nil;
+    NSString * query = [NSString stringWithFormat:@"SELECT Id ,SVMXC__Data__c  from SVMXC__Code_Snippet__c  where Id = '%@' and SVMXC__Data__c <> \"\"" , codeSnippetId];
+    sqlite3_stmt * stmt;
+    if(sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+    {
+        while (sqlite3_step(stmt)  == SQLITE_ROW)
+        {
+            char * temp_process_id  = (char *)sqlite3_column_text(stmt, 0);
+            
+            if(temp_process_id!= nil) {
+                fieldId = [NSString stringWithUTF8String:temp_process_id];
+                [dict setObject:fieldId forKey:@"key"];
+            }
+            
+            
+            char * typeOfField  = (char *)sqlite3_column_text(stmt, 1);
+            if(typeOfField!= nil) {
+                fieldData = [NSString stringWithUTF8String:typeOfField];
+                [dict setObject:fieldData forKey:@"data"];
+            }
+            break;
+        }
+    }
+    sqlite3_finalize(stmt);
+    
+    return [dict autorelease];
+    
+    
+}
+
+- (NSDictionary *)getCodeSnippetForName:(NSString *)codeSnippetName {
+    NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+    
+    NSString * fieldId = @"", *fieldData = nil;
+    NSString * query = [NSString stringWithFormat:@"SELECT Id ,SVMXC__Data__c  from SVMXC__Code_Snippet__c  where SVMXC__Name__c  = '%@' and SVMXC__Data__c <> \"\"" , codeSnippetName];
+    sqlite3_stmt * stmt;
+    if(sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+    {
+        while (sqlite3_step(stmt)  == SQLITE_ROW)
+        {
+            char * temp_process_id  = (char *)sqlite3_column_text(stmt, 0);
+            
+            if(temp_process_id!= nil) {
+                fieldId = [NSString stringWithUTF8String:temp_process_id];
+                [dict setObject:fieldId forKey:@"key"];
+            }
+            
+            
+            char * typeOfField  = (char *)sqlite3_column_text(stmt, 1);
+            if(typeOfField!= nil) {
+                fieldData = [NSString stringWithUTF8String:typeOfField];
+                [dict setObject:fieldData forKey:@"data"];
+            }
+            break;
+        }
+    }
+    sqlite3_finalize(stmt);
+    
+    return [dict autorelease];
+    
+}
+- (NSString *)getCodeSnippetRefererenceForId:(NSString *)codeSnippetReference {
+    
+    
+    NSString * SVMXC__Code_Snippet_Manifest__c = nil;
+    NSString * query = [NSString stringWithFormat:@"SELECT SVMXC__Referenced_Code_Snippet__c  from SVMXC__Code_Snippet_Manifest__c  where SVMXC__Code_Snippet__c = '%@' and SVMXC__Referenced_Code_Snippet__c <> \"\"" ,codeSnippetReference];
+    sqlite3_stmt * stmt = nil;;
+    if(sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+    {
+        while (sqlite3_step(stmt)  == SQLITE_ROW)
+        {
+            char * temp_process_id  = (char *)sqlite3_column_text(stmt, 0);
+            
+            if(temp_process_id!= nil) {
+                SVMXC__Code_Snippet_Manifest__c = [NSString stringWithUTF8String:temp_process_id];
+                
+            }
+        }
+    }
+    sqlite3_finalize(stmt);
+    
+    return SVMXC__Code_Snippet_Manifest__c;
+}
+
+- (NSDictionary *)getAllBooleanFieldsForTable:(NSString *)tablenName {
+    NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+    NSString * fieldId = @"";
+    NSString * query = [NSString stringWithFormat:@"SELECT api_name FROM SFObjectField where object_api_name = '%@' and type = 'boolean'",tablenName];
+    sqlite3_stmt * stmt;
+    if(sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+    {
+        while (sqlite3_step(stmt)  == SQLITE_ROW)
+        {
+            char * temp_process_id  = (char *)sqlite3_column_text(stmt, 0);
+            
+            if(temp_process_id!= nil) {
+                fieldId = [NSString stringWithUTF8String:temp_process_id];
+                [dict setObject:fieldId forKey:fieldId];
+            }
+            
+        }
+    }
+    sqlite3_finalize(stmt);
+    
+    return dict;
+}
 @end

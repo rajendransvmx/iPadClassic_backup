@@ -716,6 +716,13 @@
 		A8DA42F015D906810050CF04 /* gps-tracking.png in Resources */ = {isa = PBXBuildFile; fileRef = A8DA42EF15D906810050CF04 /* gps-tracking.png */; };
 		A8DA42F215D906980050CF04 /* sfm-search.png in Resources */ = {isa = PBXBuildFile; fileRef = A8DA42F115D906980050CF04 /* sfm-search.png */; };
 		A8DA42F415D906AF0050CF04 /* barcode-scanning.png in Resources */ = {isa = PBXBuildFile; fileRef = A8DA42F315D906AF0050CF04 /* barcode-scanning.png */; };
+		A8DB1CFA16E0B586007D1A4F /* Utility.m in Sources */ = {isa = PBXBuildFile; fileRef = A8DB1CF916E0B586007D1A4F /* Utility.m */; };
+		A8DB1D0416E0B58B007D1A4F /* HTMLJSWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = A8DB1CFD16E0B58B007D1A4F /* HTMLJSWrapper.m */; };
+		A8DB1D0516E0B58B007D1A4F /* iOStoJsBridge.js in Sources */ = {isa = PBXBuildFile; fileRef = A8DB1CFF16E0B58B007D1A4F /* iOStoJsBridge.js */; };
+		A8DB1D0616E0B58B007D1A4F /* jquery-1.8.2.min.js in Sources */ = {isa = PBXBuildFile; fileRef = A8DB1D0016E0B58B007D1A4F /* jquery-1.8.2.min.js */; };
+		A8DB1D0716E0B58B007D1A4F /* svmx_client_api.js in Sources */ = {isa = PBXBuildFile; fileRef = A8DB1D0116E0B58B007D1A4F /* svmx_client_api.js */; };
+		A8DB1D0816E0B58B007D1A4F /* JSExecuter.m in Sources */ = {isa = PBXBuildFile; fileRef = A8DB1D0316E0B58B007D1A4F /* JSExecuter.m */; };
+		A8DB1D0C16E0B590007D1A4F /* PriceBookData.m in Sources */ = {isa = PBXBuildFile; fileRef = A8DB1D0B16E0B590007D1A4F /* PriceBookData.m */; };
 		A8E07D8F15FDDECC00070821 /* CustomLibXml.m in Sources */ = {isa = PBXBuildFile; fileRef = A8E07D8815FDD93C00070821 /* CustomLibXml.m */; };
 		A8FBA65B155A503600F52346 /* DetailViewControllerForSFM.m in Sources */ = {isa = PBXBuildFile; fileRef = A8FBA641155A503600F52346 /* DetailViewControllerForSFM.m */; };
 		A8FBA65C155A503600F52346 /* DetailViewControllerForSFM.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8FBA642155A503600F52346 /* DetailViewControllerForSFM.xib */; };
@@ -1792,6 +1799,17 @@
 		A8DA42EF15D906810050CF04 /* gps-tracking.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "gps-tracking.png"; sourceTree = "<group>"; };
 		A8DA42F115D906980050CF04 /* sfm-search.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sfm-search.png"; sourceTree = "<group>"; };
 		A8DA42F315D906AF0050CF04 /* barcode-scanning.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "barcode-scanning.png"; sourceTree = "<group>"; };
+		A8DB1CF816E0B586007D1A4F /* Utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utility.h; sourceTree = "<group>"; };
+		A8DB1CF916E0B586007D1A4F /* Utility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utility.m; sourceTree = "<group>"; };
+		A8DB1CFC16E0B58B007D1A4F /* HTMLJSWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLJSWrapper.h; sourceTree = "<group>"; };
+		A8DB1CFD16E0B58B007D1A4F /* HTMLJSWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTMLJSWrapper.m; sourceTree = "<group>"; };
+		A8DB1CFF16E0B58B007D1A4F /* iOStoJsBridge.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = iOStoJsBridge.js; sourceTree = "<group>"; };
+		A8DB1D0016E0B58B007D1A4F /* jquery-1.8.2.min.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "jquery-1.8.2.min.js"; sourceTree = "<group>"; };
+		A8DB1D0116E0B58B007D1A4F /* svmx_client_api.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = svmx_client_api.js; sourceTree = "<group>"; };
+		A8DB1D0216E0B58B007D1A4F /* JSExecuter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSExecuter.h; sourceTree = "<group>"; };
+		A8DB1D0316E0B58B007D1A4F /* JSExecuter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSExecuter.m; sourceTree = "<group>"; };
+		A8DB1D0A16E0B590007D1A4F /* PriceBookData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PriceBookData.h; sourceTree = "<group>"; };
+		A8DB1D0B16E0B590007D1A4F /* PriceBookData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PriceBookData.m; sourceTree = "<group>"; };
 		A8E07D8715FDD93C00070821 /* CustomLibXml.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomLibXml.h; sourceTree = "<group>"; };
 		A8E07D8815FDD93C00070821 /* CustomLibXml.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomLibXml.m; sourceTree = "<group>"; };
 		A8E07D8D15FDDCE200070821 /* LoggingController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoggingController.h; sourceTree = "<group>"; };
@@ -3772,6 +3790,9 @@
 		7B001E101227BA1F002E1770 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				A8DB1D0916E0B590007D1A4F /* GetPriceBook */,
+				A8DB1CFB16E0B58B007D1A4F /* JSExecuter */,
+				A8DB1CF716E0B586007D1A4F /* Utility */,
 				A8FBA63D155A503600F52346 /* SFMSearch */,
 				FA9F86DF151A6A160013F4BE /* SyncStatusImages */,
 				FA0F7B8F14F58C9E00052BD6 /* MultilineController */,
@@ -4268,6 +4289,46 @@
 				A8C1B0C015AD7D3E00E5B76D /* zbar-samples.png */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		A8DB1CF716E0B586007D1A4F /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				A8DB1CF816E0B586007D1A4F /* Utility.h */,
+				A8DB1CF916E0B586007D1A4F /* Utility.m */,
+			);
+			path = Utility;
+			sourceTree = "<group>";
+		};
+		A8DB1CFB16E0B58B007D1A4F /* JSExecuter */ = {
+			isa = PBXGroup;
+			children = (
+				A8DB1CFC16E0B58B007D1A4F /* HTMLJSWrapper.h */,
+				A8DB1CFD16E0B58B007D1A4F /* HTMLJSWrapper.m */,
+				A8DB1CFE16E0B58B007D1A4F /* Javascript */,
+				A8DB1D0216E0B58B007D1A4F /* JSExecuter.h */,
+				A8DB1D0316E0B58B007D1A4F /* JSExecuter.m */,
+			);
+			path = JSExecuter;
+			sourceTree = "<group>";
+		};
+		A8DB1CFE16E0B58B007D1A4F /* Javascript */ = {
+			isa = PBXGroup;
+			children = (
+				A8DB1CFF16E0B58B007D1A4F /* iOStoJsBridge.js */,
+				A8DB1D0016E0B58B007D1A4F /* jquery-1.8.2.min.js */,
+				A8DB1D0116E0B58B007D1A4F /* svmx_client_api.js */,
+			);
+			path = Javascript;
+			sourceTree = "<group>";
+		};
+		A8DB1D0916E0B590007D1A4F /* GetPriceBook */ = {
+			isa = PBXGroup;
+			children = (
+				A8DB1D0A16E0B590007D1A4F /* PriceBookData.h */,
+				A8DB1D0B16E0B590007D1A4F /* PriceBookData.m */,
+			);
+			path = GetPriceBook;
 			sourceTree = "<group>";
 		};
 		A8FBA63D155A503600F52346 /* SFMSearch */ = {
@@ -6028,6 +6089,13 @@
 				A89B535516CCBFF400849FBC /* SMGPDataSyncResponseParser.m in Sources */,
 				A89B535616CCBFF400849FBC /* SMGPObjectsResponseParser.m in Sources */,
 				A89B535716CCBFF400849FBC /* WSResponseParser.m in Sources */,
+				A8DB1CFA16E0B586007D1A4F /* Utility.m in Sources */,
+				A8DB1D0416E0B58B007D1A4F /* HTMLJSWrapper.m in Sources */,
+				A8DB1D0516E0B58B007D1A4F /* iOStoJsBridge.js in Sources */,
+				A8DB1D0616E0B58B007D1A4F /* jquery-1.8.2.min.js in Sources */,
+				A8DB1D0716E0B58B007D1A4F /* svmx_client_api.js in Sources */,
+				A8DB1D0816E0B58B007D1A4F /* JSExecuter.m in Sources */,
+				A8DB1D0C16E0B590007D1A4F /* PriceBookData.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6042,8 +6110,8 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"ARCHS[sdk=iphoneos*]" = "$(ARCHS_STANDARD_32_BIT)";
 				"ARCHS[sdk=iphonesimulator*]" = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
 				COPY_PHASE_STRIP = YES;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_GC = unsupported;
@@ -6066,8 +6134,8 @@
 				MACOSX_DEPLOYMENT_TARGET = "";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_NAME = "ServiceMax Mobile";
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				PROVISIONING_PROFILE = "6B2EA6AD-0BCF-4C76-9FD6-7B19B32BED96";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "6B2EA6AD-0BCF-4C76-9FD6-7B19B32BED96";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -6084,8 +6152,8 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"ARCHS[sdk=iphoneos*]" = "$(ARCHS_STANDARD_32_BIT)";
 				"ARCHS[sdk=iphonesimulator*]" = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_INPUT_FILETYPE = automatic;
@@ -6106,8 +6174,8 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = "";
 				PRODUCT_NAME = "ServiceMax Mobile";
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				PROVISIONING_PROFILE = "6B2EA6AD-0BCF-4C76-9FD6-7B19B32BED96";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "6B2EA6AD-0BCF-4C76-9FD6-7B19B32BED96";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -6150,8 +6218,8 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"ARCHS[sdk=iphoneos*]" = "$(ARCHS_STANDARD_32_BIT)";
 				"ARCHS[sdk=iphonesimulator*]" = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_INPUT_FILETYPE = automatic;
@@ -6173,8 +6241,8 @@
 				MACOSX_DEPLOYMENT_TARGET = "";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_NAME = "ServiceMax Mobile";
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				PROVISIONING_PROFILE = "6B2EA6AD-0BCF-4C76-9FD6-7B19B32BED96";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "6B2EA6AD-0BCF-4C76-9FD6-7B19B32BED96";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = YES;

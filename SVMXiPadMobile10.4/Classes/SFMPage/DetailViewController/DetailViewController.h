@@ -20,7 +20,8 @@
 #import "offlineGlobles.h"
 #import "SFWToolBar.h"
 #import "databaseIntefaceSfm.h"
-
+#import "JSExecuter.h"
+#import "PriceBookData.h"
 
 
 @protocol DetailViewControllerDelegate;
@@ -63,7 +64,7 @@ WSInterFaceDelegateForDetailView,
 SignatureDelegate,
 SummaryViewControllerDelegate,
 ChatterDelegate,
-SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceProtocol>
+SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceProtocol,JSExecuterDelegate>
 {
     SAVE_STATUS save_status;
     
@@ -213,6 +214,10 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
     //Shrinivas
     UIButton  * statusButton;
     ZBarReaderViewController *reader;
+    
+    /* GET_PRICE_JS-shr*/
+    JSExecuter *jsExecuter;
+    PriceBookData *priceBookData;
 }
 
 @property (nonatomic) BOOL EventUpdate_Continue;
@@ -272,6 +277,9 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
 
 @property (nonatomic, retain) NSMutableDictionary * LabourValuesDictionary;
 @property (nonatomic,assign)   UIPopoverController * multiLookupPopover;
+
+@property(nonatomic,retain) JSExecuter *jsExecuter;
+@property(nonatomic,retain) PriceBookData *priceBookData;
 
 -(void)UpdateAlldeletedRecordsIntoSFTrailerTable:(NSArray *)deleted_record_array   object_name:(NSString *)object_name;
 
@@ -337,6 +345,15 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
 -(void) LaunchMultiAddPopover;
 -(void) reDrawBackground;
 
+
+/* GetPrice - shr */
+- (void)getPriceForCurrentContext;
+- (void)updateWorkOrderWithPrice:(NSDictionary *)updatedWo;
+- (NSDictionary *)getTheValueFOrKey:(NSString *)key andAliasName:(NSString *)aliasName andIndex:(NSInteger)index andArray:(NSArray *)detailArray;
+- (NSDictionary *)getServiceBooleanTypeDictionary:(NSString *)tableName;
+- (void)createJSExcecuter:(UIView *)parentView andCodeSnippet:(NSString *)codeSnippet;
+- (BOOL)checkIfAllAnyOneLinePresent;
+- (void)showAlertView:(NSString *)message;
 
 #define SHOWALL_HEADERS                     0
 #define SHOW_HEADER_ROW                     1

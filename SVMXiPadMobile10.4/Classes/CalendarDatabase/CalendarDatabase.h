@@ -188,6 +188,54 @@
 //Sorting the PickList Array using indexes.
 -(NSArray *) sortPickListUsingIndexes:(NSArray *)pickListArray WithfieldAPIName:(NSString *)fieldAPIName tableName:(NSString *)_SFPicklist objectName:(NSString *)headerObjName;
 
+/* GET_PRICE_JS-shr*/
+- (NSArray *)getPriceBook:(NSDictionary *)currentContext;
+- (void)fillUpContractInformationInTheTargetArray:(NSMutableArray *)priceBookArray
+                                    andContractId:(NSString *)SVMXC__Service_Contract__c
+                                      andCurrency:(NSString *)currencyCode
+                          andNamedExpressionArray:(NSMutableArray *)namedExpressionArray
+                                    andIdOffering:(NSString *) idOfServiceOffering
+                                       andCovered:(NSString *)idServiceCovered;
+- (NSString *)getPricebookInformationForSettingId:(NSString *)settingId ;
+- (NSDictionary *)getRecordTypeIdsForRecordType:(NSArray *)recordTypes;
+- (NSDictionary *)getEntitlementHistoryForWorkorder:(NSString *)workOrderId;
+- (NSString *)getConcatenatedStringFromArray:(NSArray *)arayOfString withSingleQuotesAndBraces:(BOOL)isRequired ;
+- (NSDictionary *)getAllFieldsOfTable:(NSString *)tableName;
+- (NSDictionary *)preparePBForSettings:(NSString *)estimateValue andUsageValue:(NSString *)usageValue andKey:(NSString *)key andRecordTypeId:(NSDictionary *)recordTypeIds;
+- (NSMutableDictionary *)getRecordForSfId:(NSString *)sfId andTableName:(NSString *)tableName;
+- (NSArray *)getRecordWhereColumnNamesAndValues:(NSDictionary *)columnKeyAndValue  andTableName:(NSString *)tableName;
+
+
+- (NSArray *)getProductRecords:(NSArray *)productIdentifiers;
+- (NSArray *)getPriceBookObjectsForPriceBookIds:(NSArray *)priceBookIds OrPriceBookNames:(NSArray *)priceBookNames;
+- (NSDictionary *)preparePBEstimateId:(NSString *)estimateValue andUsageValue:(NSString *)usageValue andKey:(NSString *)key andRecordTypeId:(NSDictionary *)recordTypeIds ;
+- (void)addNamedExpressionsFrom:(NSArray *)dataArray ToArray:(NSMutableArray *)namedExpressionArray;
+- (NSArray *)getNamedExpressionsForIds:(NSArray *)namedExpressionArray;
+- (NSDictionary *)getAllAdvancedExpressionForIds:(NSArray *)expressionIds;
+
+- (NSArray *)getLookUpDefinition:(NSDictionary *)workOrderData;
+- (NSDictionary *)getLookUpFor:(NSString *)parentColumnName andFieldDictionary:(NSDictionary *)parentColumnDictionary andTableName:(NSString *)tableName;
+- (NSString *)getTheReferenceValueForId:(NSString*)idValueOfTheField andTableName:(NSString *)tableName;
+- (NSDictionary *)getParentSFIDAForLocalId:(NSString *)localId andTableName:(NSString*)tableName;
+- (NSDictionary *)getPriceBookDictionaryWithProductArray:(NSArray *)productsArray andPriceBookNames:(NSArray *)partsPriceBookNames andPartsPriceBookIds:(NSArray *)partsPriceBookIdsArray andCurrency:(NSString *)currencyIsoCode;
+
+- (NSArray*)getPriceBookEntryRecordsFor:(NSArray *)priceBookIds andProductArray:(NSArray *)productsArray andTableName:(NSString *)tableName andCurrency:(NSString *)currency;
+- (NSDictionary *)getPriceBookForLabourParts:(NSArray *)labourArray andLabourPbNames:(NSArray *)labourPbNames andLabourPbIds:(NSArray *)labourPbIds andCurrency:(NSString *)currency;
+- (NSArray *)getPriceBookEntryForLabourArray:(NSArray *)labourArray andPriceBookIds:(NSArray *)priceBookIds andCurrency:(NSString *)currency;
+
+- (NSArray *)getValidLabourPriceBookNames:(NSArray *)labourPbNames andLabourIdArray:(NSArray *)labourIdArray andCurrency:(NSString *)currency;
+- (NSString *)getValueFOrKey:(NSString *)key FromArray:(NSArray *)array;
+- (NSArray *) getExpressionComponentsForExpressionId:(NSString *)expressionId andExpression:(NSString *)expressionName;
+- (NSDictionary *)getexpressionDictionaryForExpressionId:(NSString *)expressionId ;
+- (NSString *)changeTheBooleanValue:(NSString *)someString;
+- (NSMutableDictionary *)getAllObjectFields:(NSString *)objectName tableName:(NSString *)tableName;
+- (NSString *)getGetPriceCodeSnippet:(NSString *)codeSnippetName ;
+- (NSDictionary *)getCodeSnippetForId:(NSString *)codeSnippetId;
+- (NSDictionary *)getCodeSnippetForName:(NSString *)codeSnippetName ;
+- (NSString *)getCodeSnippetRefererenceForId:(NSString *)codeSnippetReference;
+- (NSDictionary *)getAllBooleanFieldsForTable:(NSString *)tablenName;
+- (NSArray *)getPriceBookObjectsForLabourPriceBookIds:(NSArray *)priceBookIds OrPriceBookNames:(NSArray *)priceBookNames ;
+/* End GET_PRICE_JS-shr*/
 
 #define DATABASENAME   @"sfm"
 #define DATABASETYPE   @"sqlite"

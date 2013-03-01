@@ -21,6 +21,9 @@
 #import "Chatter.h"
 #import "databaseIntefaceSfm.h"
 #import "ManualDataSync.h"
+#import "Utility.h"
+#import "HTMLJSWrapper.h"
+
 extern void SVMXLog(NSString *format, ...);
 
 
@@ -86,6 +89,8 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize LabourValuesDictionary;
 @synthesize showSyncUI;
 @synthesize multiLookupPopover;
+@synthesize jsExecuter;
+@synthesize priceBookData;
 
 - (BOOL) isValidUrl:(NSString *)url
 {
@@ -10629,7 +10634,9 @@ extern void SVMXLog(NSString *format, ...);
                 SMLog(@"Java Script");
                 if(([[appDelegate.wsInterface getValueFromUserDefaultsForKey:@"doesGetPriceRequired"] boolValue]) && ([appDelegate doesServerSupportsModule:kMinPkgForGetPriceModule]))
                 {
-                    // Get Price Code Should Go Here 
+                    // Get Price Code Should Go Here Shr
+                    /* GET_PRICE_JS-shr*/
+                    [self getPriceForCurrentContext];
                 }
                 else
                 {
@@ -11372,7 +11379,9 @@ extern void SVMXLog(NSString *format, ...);
                 SMLog(@"Java Script");
                 if(([[appDelegate.wsInterface getValueFromUserDefaultsForKey:@"doesGetPriceRequired"] boolValue]) && ([appDelegate doesServerSupportsModule:kMinPkgForGetPriceModule]))
                 {
-                    // Get Price Code Should Go Here
+                    // Get Price Code Should Go HereShr
+                    /* GET_PRICE_JS-shr*/
+                    [self getPriceForCurrentContext];
                 }
                 else
                 {
@@ -11799,7 +11808,9 @@ extern void SVMXLog(NSString *format, ...);
                 SMLog(@"Java Script");
                 if(([[appDelegate.wsInterface getValueFromUserDefaultsForKey:@"doesGetPriceRequired"] boolValue]) && ([appDelegate doesServerSupportsModule:kMinPkgForGetPriceModule]))
                 {
-                    // Get Price Code Should Go Here
+                    // Get Price Code Should Go Here Shr
+                    /* GET_PRICE_JS-shr*/
+                    [self getPriceForCurrentContext];
                 }
                 else
                 {
@@ -13213,5 +13224,346 @@ extern void SVMXLog(NSString *format, ...);
     
 }
 
+/* GET_PRICE_JS-shr*/
+#pragma mark -
+#pragma mark Get price
+
+- (void)getPriceForCurrentContext {
+    activity.hidden = NO;
+    [activity startAnimating];
+    [self.view bringSubviewToFront:activity];
+   
+    NSDictionary * sfm_temp = appDelegate.SFMPage;
+    BOOL shouldProceed =  [self checkIfAllAnyOneLinePresent];
+    if (!shouldProceed) {
+        [self showAlertView:@"There are no work order lines"];
+        return;
+    }
+    PriceBookData *tempData = [[PriceBookData alloc] initWithSfmPage:sfm_temp];
+    self.priceBookData = tempData;
+    [tempData getJSONRepresentationForJS];
+    tempData.targetObject = nil;
+    tempData.priceBookComponents = nil;
+    [tempData release];
+    tempData = nil;
+    
+    
+    NSString *codeSnipppet = [appDelegate.calDataBase getGetPriceCodeSnippet:@"GetPrice"];
+  
+    
+    
+    //codeSnipppet =  [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Get_Price_Code_Snippet1" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil];
+    //NSString *tt =  [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Get_Price_Code_Snippet2" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil];
+    //codeSnipppet = [codeSnipppet stringByAppendingFormat:@" %@",tt];
+    codeSnipppet = [codeSnipppet stringByReplacingOccurrencesOfString:@"&quot;" withString:@"\""];
+    codeSnipppet = [codeSnipppet stringByReplacingOccurrencesOfString:@"&amp;" withString:@"&"];
+    codeSnipppet = [codeSnipppet stringByReplacingOccurrencesOfString:@"\n" withString:@"  "];
+    codeSnipppet = [codeSnipppet stringByReplacingOccurrencesOfString:@"\r" withString:@"  "];
+    codeSnipppet = [codeSnipppet stringByReplacingOccurrencesOfString:@"\t" withString:@"  "];
+    codeSnipppet = [codeSnipppet stringByReplacingOccurrencesOfString:@"\"" withString:@"'"];
+    
+    NSString *wrappedCode = [HTMLJSWrapper getWrapperForCodeSnippet:codeSnipppet];
+    [self createJSExcecuter:self.view andCodeSnippet:wrappedCode];
+}
+
+- (void)createJSExcecuter:(UIView *)parentView andCodeSnippet:(NSString *)codeSnippet{
+    
+    JSExecuter *tempVar = [[JSExecuter alloc] initWithParentView:self.view andCodeSnippet:codeSnippet andDelegate:self];
+    self.jsExecuter = tempVar;
+    [tempVar release];
+    tempVar = nil;
+}
+
+
+- (void)eventOccured:(NSString *)eventName andParameter:(NSString *)jsonParameterString {
+    SMLog(@"Event name is %@ and %@",eventName,jsonParameterString);
+    
+    if ([eventName isEqualToString:@"console"]) {
+        NSDictionary *paramDict =  [Utility getTheParameterFromUrlParameterString:jsonParameterString];
+        NSString *message =  [paramDict objectForKey:@"msg"];
+        [self performSelectorOnMainThread:@selector(showAlertView:) withObject:message waitUntilDone:NO];
+        
+    }
+    else {
+        NSLog(@"Request data for JSExcecuter %@",self.priceBookData.jsonRepresentation);
+        NSString *responseRecieved =  [self.jsExecuter response:self.priceBookData.jsonRepresentation forEventName:eventName];
+        NSLog(@"responseRecieved from JSExcecuter %@",responseRecieved);
+        SBJsonParser *jsonParser =  [[SBJsonParser alloc] init];
+        NSDictionary *finalDictionary = [jsonParser objectWithString:responseRecieved];
+        [jsonParser release];
+        jsonParser = nil;
+        [self performSelectorOnMainThread:@selector(updateWorkOrderWithPrice:) withObject:finalDictionary waitUntilDone:NO];
+    }
+    
+}
+
+- (void)showAlertView:(NSString *)message {
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Get Price" message:message delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+    [alertView show];
+    [alertView release];
+    alertView = nil;
+}
+
+- (void)updateWorkOrderWithPrice:(NSDictionary *)updatedWo  {
+    
+    
+    NSString *tableName = @"SVMXC__Service_Order__c";
+    
+    NSDictionary *tagHeaderDictionary = [self getServiceBooleanTypeDictionary:tableName];
+    NSDictionary *fieldTypeDictionaryNew = [appDelegate.calDataBase getAllObjectFields:tableName tableName:SFOBJECTFIELD];
+    
+    NSDictionary *oldDictionary = appDelegate.SFMPage;
+    
+    
+    NSMutableDictionary *finalHeaderDictionary = [[NSMutableDictionary alloc] initWithDictionary:[oldDictionary objectForKey:@"header"]];
+    
+    NSDictionary *headerDictionary = [updatedWo objectForKey:@"headerRecord"];
+    NSArray *recordsArray =  [headerDictionary objectForKey:@"records"];
+    NSDictionary *targetDict = [recordsArray objectAtIndex:0];
+    
+    if ([targetDict count] <= 0) {
+        return;
+    }
+    
+    NSDictionary *currentHDRData = [finalHeaderDictionary objectForKey:@"hdr_Data"];
+    NSMutableDictionary *updatedColumnDictionary =  [[NSMutableDictionary alloc] initWithDictionary:currentHDRData];
+    
+    NSArray *targetRecAsKeyValue = [targetDict objectForKey:@"targetRecordAsKeyValue"];
+    for (int counter = 0; counter < [targetRecAsKeyValue count]; counter++) {
+        NSDictionary *keyAsValueDict = [targetRecAsKeyValue objectAtIndex:counter];
+        
+        NSString *key = [keyAsValueDict objectForKey:@"key"];
+        NSString *value = [keyAsValueDict objectForKey:@"value"];
+        
+        if ([tagHeaderDictionary objectForKey:key] == nil) {
+            [updatedColumnDictionary setObject:[NSString stringWithFormat:@"%@",value] forKey:key];
+        }
+        
+        
+    }
+    [finalHeaderDictionary setObject:updatedColumnDictionary forKey:@"hdr_Data"];
+    
+    
+    /* update the page layout data */
+    NSArray *displayFieldSections = [finalHeaderDictionary objectForKey:@"hdr_Sections"];
+    NSMutableArray *someArray = [[NSMutableArray alloc] init];
+    for (int n = 0; n < [displayFieldSections count]; n++) {
+        NSDictionary *sectionDict = [displayFieldSections objectAtIndex:n];
+        
+        NSMutableDictionary *sectionDictMutable = [[NSMutableDictionary alloc] initWithDictionary:sectionDict];
+        NSArray *sectionOne = [sectionDict objectForKey:@"section_Fields"];
+        
+        NSMutableArray *sectionOneArry = [[NSMutableArray alloc] init];
+        
+        for (int cc = 0; cc < [sectionOne count]; cc++) {
+            
+            NSDictionary *fieldDict = [sectionOne objectAtIndex:cc];
+            NSMutableDictionary *fieldDictMutable = [[NSMutableDictionary alloc] initWithDictionary:fieldDict];
+            NSString *fieldKey = [fieldDictMutable objectForKey:@"Field_API_Name"];
+            
+            NSString *tempStr = [updatedColumnDictionary objectForKey:fieldKey];
+            if (tempStr != nil) {
+              
+                NSString *fieldtype = [fieldTypeDictionaryNew objectForKey:fieldKey];
+                [fieldDictMutable setObject:[NSString stringWithFormat:@"%@",tempStr] forKey:@"Field_Value_Key"];
+                NSString *ffData  =  [self getValueForApiName:fieldKey dataType:fieldtype object_name:tableName field_key:tempStr];
+                if (ffData != nil) {
+                    [fieldDictMutable setObject:[NSString stringWithFormat:@"%@",ffData] forKey:@"Field_Value_Value"];
+                }
+            }
+            [sectionOneArry addObject:fieldDictMutable];
+            [fieldDictMutable release];
+            fieldDictMutable = nil;
+        }
+        [someArray addObject:sectionDictMutable];
+        [sectionDictMutable release];
+        sectionDictMutable = nil;
+    }
+    [finalHeaderDictionary setObject:someArray forKey:@"hdr_Sections"];
+    [someArray release];
+    someArray = nil;
+    [updatedColumnDictionary release];
+    updatedColumnDictionary = nil;
+    
+    NSString *tableNameTwo = @"SVMXC__Service_Order_Line__c";
+    NSDictionary *tagDetailDictionary = [self getServiceBooleanTypeDictionary:tableNameTwo];
+    NSDictionary *fieldTypeDictionary = [appDelegate.calDataBase getAllObjectFields:tableNameTwo tableName:SFOBJECTFIELD];
+    NSArray *detailRecords = [updatedWo objectForKey:@"detailRecords"];
+    
+    NSArray *oldDetailRecords  = [oldDictionary objectForKey:@"details"];
+    
+    NSMutableArray *brandNewDetailArray = [[NSMutableArray alloc] init];
+    
+    for (int counter = 0; counter < [oldDetailRecords count]; counter++) {
+        
+        NSDictionary *detailDictionary = [oldDetailRecords objectAtIndex:counter];
+        NSMutableDictionary *newDictionary = [[NSMutableDictionary alloc] initWithDictionary:detailDictionary];
+        
+        NSString *aliasName = [newDictionary objectForKey:@"detail_object_alias_name"];
+        NSArray *detailFieldValues = [newDictionary objectForKey:@"details_Values_Array"];
+        
+        NSMutableArray *detailFieldValuesMutable = [[NSMutableArray alloc] init];
+        
+        for (int j = 0; j < [detailFieldValues count]; j++) {
+            
+            NSArray *allFields = [detailFieldValues objectAtIndex:j];
+            NSMutableArray *allFieldsMutable = [[NSMutableArray alloc] init];
+            for (int k = 0; k < [allFields count]; k++) {
+                
+                NSDictionary *finalDictionary = [allFields objectAtIndex:k];
+                NSMutableDictionary *keysDictionary = [[NSMutableDictionary alloc] initWithDictionary:finalDictionary];
+                
+                NSString *key = [keysDictionary objectForKey:@"value_Field_API_Name"];
+                if ([tagDetailDictionary objectForKey:key] != nil) {
+                    [allFieldsMutable addObject:keysDictionary];
+                    [keysDictionary release];
+                    keysDictionary = nil;
+                    continue;
+                }
+                
+                NSDictionary *updatedDictObj =  [self getTheValueFOrKey:key andAliasName:aliasName andIndex:j andArray:detailRecords];
+                NSString *value = [updatedDictObj objectForKey:@"value"];
+                NSString *valueOne = [updatedDictObj objectForKey:@"value1"];
+                
+                NSString *fieldtype = [fieldTypeDictionary objectForKey:key];
+                if (value != nil) {
+                    if ([fieldtype isEqualToString:@"datetime"]) {
+                        value = [Utility replaceSpaceinDateByT:value];
+                    }
+                    [keysDictionary setObject:[NSString stringWithFormat:@"%@",value] forKey:@"value_Field_Value_key"];
+                }
+                if (valueOne != nil) {
+                   
+                   
+                    NSString *ffData  =  [self getValueForApiName:key dataType:fieldtype object_name:tableNameTwo field_key:value];
+                    if (ffData != nil) {
+                        [keysDictionary setObject:[NSString stringWithFormat:@"%@",ffData] forKey:@"value_Field_Value_value"];
+                    }
+                }
+                [allFieldsMutable addObject:keysDictionary];
+                [keysDictionary release];
+                keysDictionary = nil;
+                
+            }
+            if ([allFieldsMutable count] > 0) {
+                [detailFieldValuesMutable addObject:allFieldsMutable];
+            }
+        }
+        if ([detailFieldValuesMutable count] == [detailFieldValues count]) {
+            [newDictionary setObject:detailFieldValuesMutable forKey:@"details_Values_Array"];
+        }
+        [brandNewDetailArray addObject:newDictionary];
+        
+        [newDictionary release];
+        newDictionary = nil;
+        [detailFieldValuesMutable release];
+        detailFieldValuesMutable = nil;
+    }
+    NSMutableDictionary *masterDictionary = [[NSMutableDictionary alloc] initWithDictionary:oldDictionary];
+    
+    if ([finalHeaderDictionary count] > 0) {
+        [masterDictionary setObject:finalHeaderDictionary forKey:@"header"];
+    }
+    if ([brandNewDetailArray count] > 0) {
+        [masterDictionary setObject:brandNewDetailArray forKey:@"details"];
+    }
+    
+    appDelegate.SFMPage = masterDictionary;
+    
+    [masterDictionary release];
+    masterDictionary = nil;
+    
+    
+    [self.tableView reloadData];
+    [appDelegate.sfmPageController.rootView refreshTable];
+    [self  didselectSection:0];
+    activity.hidden = YES;
+    [activity stopAnimating];
+    
+}
+
+- (NSDictionary *)getTheValueFOrKey:(NSString *)key andAliasName:(NSString *)aliasName andIndex:(NSInteger)index andArray:(NSArray *)detailArray{
+    
+    for (int counter = 0; counter < [detailArray count]; counter++) {
+        
+        NSDictionary *someDictioanry = [detailArray objectAtIndex:counter];
+        NSString *aliasNameNew = [someDictioanry objectForKey:@"aliasName"];
+        if ([aliasNameNew isEqualToString:aliasName]) {
+            
+        }
+        else {
+            continue;
+        }
+        
+        NSArray *detailValuesArray = [someDictioanry objectForKey:@"records"];
+        if ([detailValuesArray count] > index) {
+            
+            NSDictionary *valuesDictionary = [detailValuesArray objectAtIndex:index];
+            NSArray *targetDictionaryAsKeyValue = [valuesDictionary objectForKey:@"targetRecordAsKeyValue"];
+            for (int j = 0; j < [targetDictionaryAsKeyValue count]; j++) {
+                NSDictionary *tempDictionary =  [targetDictionaryAsKeyValue objectAtIndex:j];
+                NSString *keyNew =  [tempDictionary objectForKey:@"key"];
+                if ([keyNew isEqualToString:key]) {
+                    
+                    return tempDictionary;
+                }
+            }
+        }
+    }
+    return nil;
+}
+
+- (NSDictionary *)getServiceBooleanTypeDictionary:(NSString *)tableName {
+    
+    /* Get the columnName whose type is boolean */
+    NSDictionary *someDictionaryNew =  [appDelegate.calDataBase getAllBooleanFieldsForTable:tableName];
+    NSMutableDictionary *someDictionary = [[NSMutableDictionary alloc] initWithDictionary:someDictionaryNew];
+    if ([tableName isEqualToString:@"SVMXC__Service_Order__c"]) {
+        [someDictionary setObject:@"invalid_address_c" forKey:@"invalid_address_c"];
+        [someDictionary setObject:@"svmxc_invoice_created_c" forKey:@"svmxc_invoice_created_c"];
+        [someDictionary setObject:@"auto_calc_drive_time_c" forKey:@"auto_calc_drive_time_c"];
+        [someDictionary setObject:@"svmxc_clock_paused_forever_c" forKey:@"svmxc_clock_paused_forever_c"];
+        [someDictionary setObject:@"svmxc_optimax_error_occured_c" forKey:@"svmxc_optimax_error_occured_c"];
+        [someDictionary setObject:@"svmxc_is_pm_work_order_c" forKey:@"svmxc_is_pm_work_order_c"];
+        [someDictionary setObject:@"svmxc_is_sla_calculated_c" forKey:@"svmxc_is_sla_calculated_c"];
+        [someDictionary setObject:@"svmxc_apply_business_hours_for_optimax_c" forKey:@"svmxc_apply_business_hours_for_optimax_c"];
+        [someDictionary setObject:@"regulatory_4_c" forKey:@"regulatory_4_c"];
+        [someDictionary setObject:@"svmxc_locked_by_dc_c" forKey:@"svmxc_locked_by_dc_c"];
+        [someDictionary setObject:@"svmxc_sla_clock_paused_c" forKey:@"svmxc_sla_clock_paused_c"];
+        [someDictionary setObject:@"geoviatrigger_c" forKey:@"geoviatrigger_c"];
+        [someDictionary setObject:@"svmxc_is_service_covered_c" forKey:@"svmxc_is_service_covered_c"];
+        [someDictionary setObject:@"svmxc_pm_tasks_created_c" forKey:@"svmxc_pm_tasks_created_c"];
+        [someDictionary setObject:@"svmxc_customer_down_c" forKey:@"svmxc_customer_down_c"];
+        [someDictionary setObject:@"svmxc_perform_auto_entitlement_c" forKey:@"svmxc_perform_auto_entitlement_c"];
+        [someDictionary setObject:@"cust_bool_c" forKey:@"cust_bool_c"];
+        [someDictionary setObject:@"svmxc_is_entitlement_performed_c" forKey:@"svmxc_is_entitlement_performed_c"];
+        [someDictionary setObject:@"svmxc_isPartnerRecord_c" forKey:@"svmxc_isPartnerRecord_c"];
+        [someDictionary setObject:@"parts_required_c" forKey:@"parts_required_c"];
+        
+    }
+    else {
+        [someDictionary setObject:@"svmxc_service_order_line_c" forKey:@"svmxc_service_order_line_c"];
+        [someDictionary setObject:@"svmxc_use_price_fromPricebook_c" forKey:@"svmxc_use_price_fromPricebook_c"];
+        [someDictionary setObject:@"isDeleted" forKey:@"isDeleted"];
+        [someDictionary setObject:@"svmxc_posted_to_inventory_c" forKey:@"svmxc_posted_to_inventory_c"];
+        [someDictionary setObject:@"svmxc_is_billable_c" forKey:@"svmxc_is_billable_c"];
+        [someDictionary setObject:@"svmxc_include_in_quote_c" forKey:@"svmxc_include_in_quote_c"];
+        [someDictionary setObject:@"svmxc_select_c" forKey:@"svmxc_select_c"];
+    }
+    return [someDictionary autorelease];
+}
+
+- (BOOL)checkIfAllAnyOneLinePresent {
+   
+    NSArray *detailRecords = [appDelegate.SFMPage objectForKey:@"details"];
+    for (int counter = 0; counter < [detailRecords count]; counter++) {
+        NSDictionary *oneDict = [detailRecords objectAtIndex:counter];
+        NSArray *valuesArra = [oneDict objectForKey:@"details_Values_Array"];
+        if ([valuesArra count] > 0) {
+             return YES;
+        }
+    }
+    return NO;
+}
 
 @end
