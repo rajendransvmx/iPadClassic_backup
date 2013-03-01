@@ -1,0 +1,99 @@
+//
+//  Utility.m
+//  iService
+//
+//  Created by Shravya shridhar on 2/20/13.
+//
+//
+
+#import "Utility.h"
+
+@implementation Utility
+
++ (BOOL)checkIfStringEmpty:(NSString *)str {
+    
+    
+    if (str != nil && !([[str class] isEqual:[NSNull class]])) {
+        
+        str = [str stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        if (![str isEqualToString:@""] && !([str isEqualToString:@" "] ) ) {
+            return NO;
+        }
+    }
+    
+    return YES;
+}
+
++ (BOOL)isStringEmpty:(NSString *)newString {
+    
+    return [Utility checkIfStringEmpty:newString];
+}
+
++ (NSDate *)getDateFromString:(NSString *)someDateString {
+    
+    NSTimeZone *gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
+    NSDateFormatter *dateFormater = [[NSDateFormatter alloc] init];
+    [dateFormater setDateFormat:@"yyyy-MM-dd"];
+    [dateFormater setTimeZone:gmt];
+    NSDate *someDate = [dateFormater dateFromString:someDateString];
+    [dateFormater release];
+    dateFormater = nil;
+    return someDate;
+}
+
++ (NSDate *)todayDateInGMT {
+    return [NSDate date];
+}
+
++ (BOOL)checkIfDate:(NSDate *)todayDate betweenDate:(NSDate *)startDate andEndDate:(NSDate *)endDate {
+    
+    NSTimeInterval startTI = [startDate timeIntervalSinceReferenceDate];
+    NSTimeInterval endTI = [endDate timeIntervalSinceReferenceDate];
+    NSTimeInterval todayTI = [todayDate timeIntervalSinceReferenceDate];
+    
+    if (startTI <= todayTI &&  todayTI <= endTI  ) {
+        return YES;
+    }
+    return NO;
+}
+
++ (NSDictionary *)getTheParameterFromUrlParameterString:(NSString*)urlParam {
+    
+    NSArray *stringArray = [urlParam componentsSeparatedByString:@"&"];
+    NSMutableDictionary *keysDictionary = [[NSMutableDictionary alloc] init];
+    for (NSString *paramString in stringArray) {
+        NSArray *valueArray =  [paramString componentsSeparatedByString:@"="];
+        
+        NSString *key = nil,*value = @"";
+        if ([valueArray count] > 0) {
+            key = [valueArray objectAtIndex:0];
+        }
+        
+        if ([valueArray count] > 1) {
+            value = [valueArray objectAtIndex:1];
+        }
+        if (key != nil) {
+            [keysDictionary setObject:value forKey:key];
+        }
+    }
+    return [keysDictionary autorelease];
+}
+
++ (NSString *)replaceTinDateBySpace:(NSString *)stringToBeChanged {
+   
+    stringToBeChanged = [stringToBeChanged stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    NSInteger length =  [stringToBeChanged rangeOfString:@"T"].length;
+    if (length > 0 ) {
+        stringToBeChanged = [stringToBeChanged stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+    }
+    return stringToBeChanged;
+}
++ (NSString *)replaceSpaceinDateByT:(NSString *)stringToBeChanged {
+    stringToBeChanged = [stringToBeChanged stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    NSInteger length =  [stringToBeChanged rangeOfString:@" "].length;
+    if (length > 0 ) {
+        stringToBeChanged = [stringToBeChanged stringByReplacingOccurrencesOfString:@" " withString:@"T"];
+    }
+    return stringToBeChanged;
+}
+@end
