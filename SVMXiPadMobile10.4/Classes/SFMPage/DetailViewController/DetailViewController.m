@@ -6505,6 +6505,8 @@ extern void SVMXLog(NSString *format, ...);
     indicatorForAddRow = nil;
     [webView release];
     [backBtn release];
+    [jsExecuter release];
+    [priceBookData release];
 	[super dealloc];
 }
 
