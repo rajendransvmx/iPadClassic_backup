@@ -100,8 +100,8 @@ extern void SVMXLog(NSString *format, ...);
     
     SMLog(@"***** Is %@ valid url %d",url,isValidUrl);
     return isValidUrl;
-    
 }
+
 - (void) showAlertForInvalidUrl
 {
     NSString * warning = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_WARNING];
@@ -125,7 +125,7 @@ extern void SVMXLog(NSString *format, ...);
     }
 }
 
-- (id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self)
@@ -13236,11 +13236,7 @@ extern void SVMXLog(NSString *format, ...);
     [self.view bringSubviewToFront:activity];
    
     NSDictionary * sfm_temp = appDelegate.SFMPage;
-    BOOL shouldProceed =  [self checkIfAllAnyOneLinePresent];
-    if (!shouldProceed) {
-        [self showAlertView:@"There are no work order lines"];
-        return;
-    }
+    
     PriceBookData *tempData = [[PriceBookData alloc] initWithSfmPage:sfm_temp];
     self.priceBookData = tempData;
     [tempData getJSONRepresentationForJS];
@@ -13252,11 +13248,6 @@ extern void SVMXLog(NSString *format, ...);
     
     NSString *codeSnipppet = [appDelegate.calDataBase getGetPriceCodeSnippet:@"GetPrice"];
   
-    
-    
-    //codeSnipppet =  [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Get_Price_Code_Snippet1" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil];
-    //NSString *tt =  [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Get_Price_Code_Snippet2" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil];
-    //codeSnipppet = [codeSnipppet stringByAppendingFormat:@" %@",tt];
     codeSnipppet = [codeSnipppet stringByReplacingOccurrencesOfString:@"&quot;" withString:@"\""];
     codeSnipppet = [codeSnipppet stringByReplacingOccurrencesOfString:@"&amp;" withString:@"&"];
     codeSnipppet = [codeSnipppet stringByReplacingOccurrencesOfString:@"\n" withString:@"  "];
@@ -13283,10 +13274,12 @@ extern void SVMXLog(NSString *format, ...);
     if ([eventName isEqualToString:@"console"]) {
         NSDictionary *paramDict =  [Utility getTheParameterFromUrlParameterString:jsonParameterString];
         NSString *message =  [paramDict objectForKey:@"msg"];
-        [self performSelectorOnMainThread:@selector(showAlertView:) withObject:message waitUntilDone:NO];
-        
+        BOOL shouldDisplay = [self shouldDisplayMessage:message];
+        if (shouldDisplay) {
+               [self performSelectorOnMainThread:@selector(showAlertView:) withObject:message waitUntilDone:NO];
+        }
     }
-    else {
+    else  if ([eventName isEqualToString:@"pricebook"])  {
         NSLog(@"Request data for JSExcecuter %@",self.priceBookData.jsonRepresentation);
         NSString *responseRecieved =  [self.jsExecuter response:self.priceBookData.jsonRepresentation forEventName:eventName];
         NSLog(@"responseRecieved from JSExcecuter %@",responseRecieved);
@@ -13295,8 +13288,24 @@ extern void SVMXLog(NSString *format, ...);
         [jsonParser release];
         jsonParser = nil;
         [self performSelectorOnMainThread:@selector(updateWorkOrderWithPrice:) withObject:finalDictionary waitUntilDone:NO];
+    } else  if ([eventName isEqualToString:@"showmessage"])  {
+        
+        NSDictionary *paramDict =  [Utility getTheParameterFromUrlParameterString:jsonParameterString];
+        NSString *message =  [paramDict objectForKey:@"msg"];
+       
+        if (message != nil) {
+            [self performSelectorOnMainThread:@selector(showAlertView:) withObject:message waitUntilDone:NO];
+        }
     }
     
+}
+
+- (BOOL)shouldDisplayMessage:(NSString *)message {
+    message = [message lowercaseString];
+    if ([Utility containsString:@" not " inString:message] || [Utility containsString:@" no " inString:message] || [Utility containsString:@" error " inString:message]) {
+        return YES;
+    }
+    return NO;
 }
 
 - (void)showAlertView:(NSString *)message {

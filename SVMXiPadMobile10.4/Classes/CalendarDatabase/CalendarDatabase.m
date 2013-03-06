@@ -4445,6 +4445,11 @@ extern void SVMXLog(NSString *format, ...);
         NSDictionary *finalDictOne = [[NSDictionary alloc] initWithObjectsAndKeys:@"RECORDTYPEDEFINITION",@"key",someARrayNew,@"valueMap", nil];
         [priceBookArray addObject:finalDictOne];
         
+        [someARrayNew release];
+        someARrayNew = nil;
+        [finalDictOne release];
+        finalDictOne = nil;
+        
         NSMutableArray *partsPriceBookNames = [[NSMutableArray alloc] init];
         NSMutableArray *labourPriceBookNames = [[NSMutableArray alloc] init];
         NSMutableArray *partsPriceBookIdsArray = [[NSMutableArray alloc] init];
@@ -4470,11 +4475,7 @@ extern void SVMXLog(NSString *format, ...);
             [labourPriceBookNames addObject:pbLabourUsageName];
         }
         
-        
-        
-        
-        
-        /* get the header and detail records*/
+       /* get the header and detail records*/
         NSDictionary *headerRecord =  [currentContext objectForKey:@"headerRecord"];
         NSArray *detailRecords = [currentContext objectForKey:@"detailRecords"];
         
@@ -4486,7 +4487,7 @@ extern void SVMXLog(NSString *format, ...);
         NSDictionary *headerDataDictionary = [recordsArr objectAtIndex:0];
         NSString *targetRecordId = [headerDataDictionary objectForKey:@"targetRecordId"];
         NSArray *headerFieldArray =  [headerDataDictionary objectForKey:@"targetRecordAsKeyValue"];
-        NSString *currencyCode =  [self getValueFOrKey:@"CurrencyIsoCode" FromArray:headerFieldArray]; //[headerFieldDictionanary objectForKey:@"SVMXC__Product__c"];
+        NSString *currencyCode =  [self getValueFOrKey:@"CurrencyIsoCode" FromArray:headerFieldArray]; 
         if ([Utility isStringEmpty:currencyCode]) {
             currencyCode = nil;
         }
@@ -4617,7 +4618,6 @@ extern void SVMXLog(NSString *format, ...);
                 if (tempDictionary != nil) {
                     [priceBookArray addObject:tempDictionary];
                 }
-                
             }
             
             /*Get Service Contract pricebook definition for labor*/
@@ -4628,7 +4628,6 @@ extern void SVMXLog(NSString *format, ...);
                 if (tempDictionary != nil) {
                     [priceBookArray addObject:tempDictionary];
                 }
-                
             }
             
             /* Getting data for SVMXC__Pricing_Rule__,SVMXC__Parts_Pricing__c,SVMXC__Parts_Discount__c,SVMXC__Labor_Pricing__c,SVMXC__Labor_Pricing__c,SVMXC__Labor_Pricing__c,SVMXC__Labor_Pricing__c,SVMXC__Expense_Pricing__c,SVMXC__Travel_Policy__c,SVMXC__Mileage_Tiers__c,SVMXC__Zone_Pricing__c
@@ -4660,6 +4659,9 @@ extern void SVMXLog(NSString *format, ...);
                 [priceBookArray addObject: finalDict];
             }
             
+            [productsArrayTemp release];
+            productsArrayTemp = nil;
+            
             dataArray = nil;
             [finalDict release];
             finalDict = nil;
@@ -4674,6 +4676,7 @@ extern void SVMXLog(NSString *format, ...);
         [priceBookArray addObjectsFromArray:dataArray];
         
         
+          /*Get the parts pricebook entry for the requested parts, pricebook(Contract special pricebook, Setting pricebook)*/
         if ([productsArray count] > 0 && ([partsPriceBookNames count] > 0 || [partsPriceBookIdsArray count ] >0) ) {
             
             NSDictionary *dataDictionary =  [self getPriceBookDictionaryWithProductArray:productsArray andPriceBookNames:partsPriceBookNames andPartsPriceBookIds:partsPriceBookIdsArray andCurrency:currencyCode];
@@ -4683,7 +4686,7 @@ extern void SVMXLog(NSString *format, ...);
             
         }
         
-        /*Get the parts pricebook entry for the requested parts, pricebook(Contract special pricebook, Setting pricebook)*/
+        /*Get the labour pricebook entry for the requested parts, pricebook(Contract special pricebook, Setting pricebook)*/
         if ([labourArray count] > 0 && ([labourPriceBookNames count] > 0 || [labourPriceBookIdsArray count ] >0) ) {
             
             NSDictionary *dataDictionary =  [self getPriceBookForLabourParts:labourArray andLabourPbNames:labourPriceBookNames andLabourPbIds:labourPriceBookIdsArray andCurrency:currencyCode];
@@ -4711,7 +4714,7 @@ extern void SVMXLog(NSString *format, ...);
         outerPool = nil;
         
         /*Adding tags*/
-        NSMutableArray *someArray = [[NSMutableArray alloc] init];
+        NSMutableArray *someArray = [self getAllMessagesForTagsArray:nil];
         NSDictionary *finalDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"TAGS",@"key",someArray,@"valueMap", nil];
         [priceBookArray addObject: finalDict];
         [finalDict release];
@@ -4721,6 +4724,21 @@ extern void SVMXLog(NSString *format, ...);
     }
     @catch (NSException *exception) {
         NSLog(@"%@",[exception description]);
+        
+        NSMutableDictionary *Errordict=[[NSMutableDictionary alloc]init];
+        [Errordict setObject:exception.name forKey:@"ExpName"];
+        [Errordict setObject:exception.reason forKey:@"ExpReason"];
+        if(exception.userInfo ==nil)
+        {
+            [Errordict setObject:exception forKey:@"userInfo"];
+        }
+        else
+        {
+            [Errordict setObject:exception.userInfo forKey:@"userInfo"];
+        }
+        [appDelegate CustomizeAletView:nil alertType:DATABASE_ERROR Dict:Errordict exception:nil];
+        [Errordict release];
+        Errordict = nil;
     }
     @finally {
         return [priceBookArray autorelease];
@@ -4875,10 +4893,7 @@ extern void SVMXLog(NSString *format, ...);
             {
                 settingValue = [NSString stringWithUTF8String:temp_value];
             }
-            
-            
-            
-        }
+       }
 		
 		synchronized_sqlite3_finalize(selectStmt);
     }
@@ -5210,9 +5225,7 @@ extern void SVMXLog(NSString *format, ...);
                     }
                 }
             }
-            
-            
-            NSDictionary *tempDict = [[NSDictionary alloc] initWithObjectsAndKeys:tableName,@"type", nil];
+             NSDictionary *tempDict = [[NSDictionary alloc] initWithObjectsAndKeys:tableName,@"type", nil];
             [recordDictionary setObject:tempDict forKey:@"attributes"];
             [tempDict release];
             tempDict = nil;
@@ -6238,8 +6251,9 @@ extern void SVMXLog(NSString *format, ...);
             }
             [dataArray addObject:recordDictionary];
         }
-    }
     
+    }
+    synchronized_sqlite3_finalize(selectStmt);
     return [dataArray autorelease];
     
     
@@ -6307,7 +6321,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         synchronized_sqlite3_finalize(stmt);
     }
-    return dict;
+    return [dict autorelease];
     
 }
 
@@ -6413,8 +6427,7 @@ extern void SVMXLog(NSString *format, ...);
     
 }
 - (NSString *)getCodeSnippetRefererenceForId:(NSString *)codeSnippetReference {
-    
-    
+   
     NSString * SVMXC__Code_Snippet_Manifest__c = nil;
     NSString * query = [NSString stringWithFormat:@"SELECT SVMXC__Referenced_Code_Snippet__c  from SVMXC__Code_Snippet_Manifest__c  where SVMXC__Code_Snippet__c = '%@' and SVMXC__Referenced_Code_Snippet__c <> \"\"" ,codeSnippetReference];
     sqlite3_stmt * stmt = nil;;
@@ -6455,6 +6468,49 @@ extern void SVMXLog(NSString *format, ...);
     }
     sqlite3_finalize(stmt);
     
-    return dict;
+    return [dict autorelease];
+}
+
+- (NSArray *)getAllMessagesForTagsArray:(NSArray *)tags {
+    
+    NSString *tagsConacatenatedString = [self getConcatenatedStringFromArray:tags withSingleQuotesAndBraces:YES];
+    if (tagsConacatenatedString == nil) {
+        tagsConacatenatedString  = @"()";
+    }
+   
+    NSMutableArray *tagsArray = [[NSMutableArray alloc] init];
+    NSString * query = [NSString stringWithFormat:@"SELECT tag_id, value FROM MobileDeviceTags where tag_id IN %@",tagsConacatenatedString];
+    sqlite3_stmt * stmt = nil;
+    if(sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+    {
+        while (sqlite3_step(stmt)  == SQLITE_ROW)
+        {
+              NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+            
+            NSString *tagId = nil, *tagValue = nil;
+            char * someCharStr  = (char *)sqlite3_column_text(stmt, 0);
+            
+            if(someCharStr!= nil) {
+                tagId = [NSString stringWithUTF8String:someCharStr];
+               
+            }
+            someCharStr = NULL;
+            someCharStr  = (char *)sqlite3_column_text(stmt, 1);
+            if(someCharStr!= nil) {
+                tagValue = [NSString stringWithUTF8String:someCharStr];
+                
+            }
+            if (tagValue != nil && tagId != nil) {
+                [dict setObject:tagValue forKey:@"value"];
+                [dict setObject:tagId forKey:@"key"];
+                [tagsArray addObject:dict];
+            }
+            [dict release];
+            dict = nil;
+        }
+    }
+    sqlite3_finalize(stmt);
+    
+    return [tagsArray autorelease];
 }
 @end

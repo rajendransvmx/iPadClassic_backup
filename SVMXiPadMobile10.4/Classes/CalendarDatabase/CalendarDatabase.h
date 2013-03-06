@@ -235,6 +235,10 @@
 - (NSString *)getCodeSnippetRefererenceForId:(NSString *)codeSnippetReference;
 - (NSDictionary *)getAllBooleanFieldsForTable:(NSString *)tablenName;
 - (NSArray *)getPriceBookObjectsForLabourPriceBookIds:(NSArray *)priceBookIds OrPriceBookNames:(NSArray *)priceBookNames ;
+- (NSDictionary *)preparePBForLabourSettings:(NSString *)estimateValue andUsageValue:(NSString *)usageValue andKey:(NSString *)key andRecordTypeId:(NSDictionary *)recordTypeIds;
+- (NSDictionary *)preparePBLaourEstimateId:(NSString *)estimateValue andUsageValue:(NSString *)usageValue andKey:(NSString *)key andRecordTypeId:(NSDictionary *)recordTypeIds;
+- (NSArray *)getAllMessagesForTagsArray:(NSArray *)tags;
+
 /* End GET_PRICE_JS-shr*/
 
 #define DATABASENAME   @"sfm"

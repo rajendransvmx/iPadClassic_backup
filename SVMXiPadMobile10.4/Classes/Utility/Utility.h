@@ -17,5 +17,6 @@
 + (NSDictionary *)getTheParameterFromUrlParameterString:(NSString*)urlParam;
 + (NSString *)replaceSpaceinDateByT:(NSString *)stringToBeChanged;
 + (NSString *)replaceTinDateBySpace:(NSString *)stringToBeChanged;
++ (BOOL)containsString:(NSString *)someString inString:(NSString *)parentString ;
 
 @end

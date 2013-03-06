@@ -107,7 +107,7 @@
         for (int i=0;i<[header_sections count];i++)
         {
             NSDictionary * section = [header_sections objectAtIndex:i];
-            NSArray *section_fields = [section objectForKey:gSECTION_FIELDS]; // @"section_Fields"
+            NSArray *section_fields = [section objectForKey:gSECTION_FIELDS]; 
             for (int j=0;j<[section_fields count];j++)
             {
                 NSDictionary *section_field = [section_fields objectAtIndex:j];
@@ -146,16 +146,16 @@
                 [targetAsKeyValueArray addObject:currentDictionary];
                 [currentDictionary release];
                 currentDictionary = nil;
-                //sahana 4th Aug 2011
+                
                 NSString * sectionFieldAPI = [section_field objectForKey:gFIELD_API_NAME];
-                //sahana 30th Aug 2011
+               
                 for (NSString * key in allkeys_HeaderData)
                 {
                     NSString * uppercaseKey = [key uppercaseString];
                     NSString * uppercaseFieldAPI = [sectionFieldAPI uppercaseString];
-                    if([uppercaseKey isEqualToString:uppercaseFieldAPI]) // @"Field_API_Name"
+                    if([uppercaseKey isEqualToString:uppercaseFieldAPI]) 
                     {
-                        // @"Field_API_Name"
+                        
                         [hdrData removeObjectForKey:key];
                         allkeys_HeaderData = [hdrData allKeys];
                     }
@@ -163,8 +163,7 @@
             }
         }
         
-        // SAMMAN - 27 July, 2011, Adding hdrData objects obtained dynamically from sfmPage
-        //NSDictionary * hdrData = [hdr_object objectForKey:gHEADER_DATA];
+        //Adding hdrData objects obtained dynamically from sfmPage
         NSArray * allKeys = [hdrData allKeys];
         for (NSString * key in allKeys)
         {
@@ -181,8 +180,8 @@
             
         }
         
-        //separately add a key-value map for record id - as per Bala's instructions on 10th June 2011 - pavaman
-        NSString * hdr_id = header_sf_id;    //[hdr_object objectForKey:gHEADER_ID];
+        //separately add a key-value map for record id 
+        NSString * hdr_id = header_sf_id;    
         if (hdr_id != nil && ![hdr_id isKindOfClass:[NSNull class]] && ![hdr_id isEqualToString:@""])
         {
             NSMutableDictionary *currentDictionary = [[NSMutableDictionary alloc] init];
@@ -217,6 +216,7 @@
         NSMutableArray *detailRecordsArray = [[NSMutableArray alloc] init];
         
         NSArray * details = [sfmpage objectForKey:gDETAILS]; //as many as number of lines sections
+      
         for (int i = 0; i < [details count]; i++) //parts, labor, expense for instance
         {
             NSDictionary *detail = [details objectAtIndex:i];
@@ -246,10 +246,9 @@
             NSArray * detailSobjectKeys = nil;
             
             NSInteger count = 0 ;
-            for (int j=0;j<[details_values count];j++) //parts for instance
+             /* Storing the hidden fields */
+           for (int j=0;j<[details_values count];j++) //parts for instance
             {
-                
-                NSMutableDictionary *detailRecordDictionary = [[NSMutableDictionary alloc] init];
                 
                 NSString * details_record_id = nil;
                 NSString * local_id  = @"";
@@ -260,8 +259,6 @@
                     details_record_id = sfid;
                     if ([details_record_id isEqualToString:@""])
                         details_record_id = nil;
-                    
-                    [detailRecordDictionary setObject:sfid forKey:@"targetRecordId"];
                 }
                 
                 if([detailSObjectDataArray  objectAtIndex:j] != @"")
@@ -371,8 +368,6 @@
                         }
                     }
                     
-                    
-                    
                     NSMutableDictionary *currentDictionary = [[NSMutableDictionary alloc]init];
                     [currentDictionary setObject:[field objectForKey:gVALUE_FIELD_API_NAME] forKey:@"key"];
                     [currentDictionary setObject:key1 forKey:@"value"];
@@ -382,13 +377,11 @@
                     currentDictionary = nil;
                     
                     
-                    // Sahana - 5th Aug, 2011 - Cross Referencing Error
+                    //  Cross Referencing Error
                     NSString * detailFieldApiName = [field objectForKey:gVALUE_FIELD_API_NAME];
                     if(detailSobjectKeys != nil)
                     {
                         NSMutableDictionary * detailSObjectDictionary = [detailSObjectDataArray objectAtIndex:j];
-                        // NSArray * allKeys = [detailSObjectDictionary allKeys];
-                        //sahana 30th Aug 2011
                         for(int i= 0 ; i<[detailSobjectKeys count] ; i++)
                         {
                             NSString * uppercaseString = [[detailSobjectKeys objectAtIndex:i] uppercaseString];
@@ -405,10 +398,6 @@
                 
                 if(details_record_id != nil)
                 {
-                   
-                   
-                   
-                    
                     NSMutableDictionary *currentDictionary = [[NSMutableDictionary alloc]init];
                     [currentDictionary setObject:@"_Id" forKey:@"key"];
                     [currentDictionary setObject:details_record_id forKey:@"value"];
@@ -416,38 +405,27 @@
                     [currentDictionary release];
                     currentDictionary = nil;
                 }
-                
-                //sahana 9th sept 2011
+                               
                 if([detailSObjectDataArray objectAtIndex:j] != @"")
-                {
-                    // Sahana - 5th Aug, 2011 - Cross Referencing Error
+                {                   
                     // Iterate thru gDETAIL_SOBJECT_ARRAY based on current iteration index
                     NSDictionary * detailSObjectDictionary = [detailSObjectDataArray objectAtIndex:j];
                     NSArray * allKeys = [detailSObjectDictionary allKeys];
                     for (NSString * key in allKeys)
                     {
                         NSString * value = [detailSObjectDictionary objectForKey:key];
-                        
-                                               
                         NSMutableDictionary *currentDictionary = [[NSMutableDictionary alloc]init];
                         [currentDictionary setObject:key forKey:@"key"];
                         [currentDictionary setObject:value forKey:@"value"];
                         [detailTargetRecAsKeyValue addObject:currentDictionary];
                         [currentDictionary release];
-                        currentDictionary = nil;
-                        
-                        
+                        currentDictionary = nil;                        
                     }
                     
                 }
                 
-                
-                //sahana 30th July
-                // if([details_record_id  isEqualToString:@""])
                 if(details_record_id == nil )
                 {
-                    
-                                        
                     NSMutableDictionary *currentDictionary = [[NSMutableDictionary alloc]init];
                     [currentDictionary setObject:gDETAIL_SEQUENCE_NO forKey:@"key"];
                     [currentDictionary setObject:[detail objectForKey:gDETAIL_SEQUENCE_NO] forKey:@"value"];

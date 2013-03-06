@@ -14,6 +14,7 @@ var context = {};
  var someExpression = null;
  var someCallBackFunctions = null;
  var finalResult = null;
+
  /**
   * The core API method to evaluate the JS expression
   *
@@ -60,7 +61,8 @@ var SVMXEvalExpression = function(expression, context, callId){
  function requestDataForType(requestType,paramsString){
  
             var redirectURL = requestType+STANDARD_STRING+paramsString;
-            redirectToCustomUrlGiven(redirectURL);
+ redirectToCustomUrlGiven(redirectURL);
+
  }
  
 /* Below function used to redirect the page to fake url to comunicate with client*/
@@ -118,10 +120,28 @@ $EXPR.getPricingDefinition = function(context, callback){
     /* Request for work order */
     requestDataForType("pricebook","workorder");
  
- };
+ }
+ 
+ $EXPR.showMessage = function(someArg){
+ var text = someArg.text;
+ var type = someArg.type;
+ var handler = someArg.handler;
+ var buttonsArray = someArg.buttons;
+ 
+    if(text != null){
+        requestDataForType("showMessage",'msg='+text);
+    }
+    if (handler != null){
+        handler(null);
+    }
+ return;
+}
  
  $EXPR.printLog = function(msg){
-  
+
+ if(msg == null){
+ return;
+ }
     msg = msg.replace("=>",":");
     requestDataForType("console",'msg='+msg);
  }

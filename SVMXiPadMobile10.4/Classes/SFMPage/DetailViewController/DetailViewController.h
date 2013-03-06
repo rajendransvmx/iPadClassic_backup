@@ -354,6 +354,8 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
 - (void)createJSExcecuter:(UIView *)parentView andCodeSnippet:(NSString *)codeSnippet;
 - (BOOL)checkIfAllAnyOneLinePresent;
 - (void)showAlertView:(NSString *)message;
+- (BOOL)shouldDisplayMessage:(NSString *)message;
+
 
 #define SHOWALL_HEADERS                     0
 #define SHOW_HEADER_ROW                     1

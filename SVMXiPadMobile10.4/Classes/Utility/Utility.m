@@ -96,4 +96,13 @@
     }
     return stringToBeChanged;
 }
+
++ (BOOL)containsString:(NSString *)someString inString:(NSString *)parentString {
+   NSRange range = [parentString rangeOfString:someString];
+    if( NSEqualRanges(range, NSMakeRange(NSNotFound, 0)) ) {
+            return NO;
+    }
+    return YES;
+}
+
 @end
