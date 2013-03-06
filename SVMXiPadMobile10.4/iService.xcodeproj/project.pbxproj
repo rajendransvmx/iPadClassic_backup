@@ -12,7 +12,6 @@
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765A40DF7441C002DB57D /* CoreGraphics.framework */; };
 		39C8F4D71521ED9D00F81B51 /* iPadHelp.css in Resources */ = {isa = PBXBuildFile; fileRef = 39C8F44A1521ED9D00F81B51 /* iPadHelp.css */; };
-		39C8F4D81521ED9D00F81B51 /* tooltip.js in Sources */ = {isa = PBXBuildFile; fileRef = 39C8F44C1521ED9D00F81B51 /* tooltip.js */; };
 		39C8F4DF1521ED9D00F81B51 /* actions.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 39C8F4541521ED9D00F81B51 /* actions.jpg */; };
 		39C8F4E01521ED9D00F81B51 /* arrow.gif in Resources */ = {isa = PBXBuildFile; fileRef = 39C8F4551521ED9D00F81B51 /* arrow.gif */; };
 		39C8F4E11521ED9D00F81B51 /* arrow.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 39C8F4561521ED9D00F81B51 /* arrow.jpg */; };
@@ -718,9 +717,9 @@
 		A8DA42F415D906AF0050CF04 /* barcode-scanning.png in Resources */ = {isa = PBXBuildFile; fileRef = A8DA42F315D906AF0050CF04 /* barcode-scanning.png */; };
 		A8DB1CFA16E0B586007D1A4F /* Utility.m in Sources */ = {isa = PBXBuildFile; fileRef = A8DB1CF916E0B586007D1A4F /* Utility.m */; };
 		A8DB1D0416E0B58B007D1A4F /* HTMLJSWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = A8DB1CFD16E0B58B007D1A4F /* HTMLJSWrapper.m */; };
-		A8DB1D0516E0B58B007D1A4F /* iOStoJsBridge.js in Sources */ = {isa = PBXBuildFile; fileRef = A8DB1CFF16E0B58B007D1A4F /* iOStoJsBridge.js */; };
-		A8DB1D0616E0B58B007D1A4F /* jquery-1.8.2.min.js in Sources */ = {isa = PBXBuildFile; fileRef = A8DB1D0016E0B58B007D1A4F /* jquery-1.8.2.min.js */; };
-		A8DB1D0716E0B58B007D1A4F /* svmx_client_api.js in Sources */ = {isa = PBXBuildFile; fileRef = A8DB1D0116E0B58B007D1A4F /* svmx_client_api.js */; };
+		A8DB1D0516E0B58B007D1A4F /* iOStoJsBridge.js in Resources */ = {isa = PBXBuildFile; fileRef = A8DB1CFF16E0B58B007D1A4F /* iOStoJsBridge.js */; };
+		A8DB1D0616E0B58B007D1A4F /* jquery-1.8.2.min.js in Resources */ = {isa = PBXBuildFile; fileRef = A8DB1D0016E0B58B007D1A4F /* jquery-1.8.2.min.js */; };
+		A8DB1D0716E0B58B007D1A4F /* svmx_client_api.js in Resources */ = {isa = PBXBuildFile; fileRef = A8DB1D0116E0B58B007D1A4F /* svmx_client_api.js */; };
 		A8DB1D0816E0B58B007D1A4F /* JSExecuter.m in Sources */ = {isa = PBXBuildFile; fileRef = A8DB1D0316E0B58B007D1A4F /* JSExecuter.m */; };
 		A8DB1D0C16E0B590007D1A4F /* PriceBookData.m in Sources */ = {isa = PBXBuildFile; fileRef = A8DB1D0B16E0B590007D1A4F /* PriceBookData.m */; };
 		A8E07D8F15FDDECC00070821 /* CustomLibXml.m in Sources */ = {isa = PBXBuildFile; fileRef = A8E07D8815FDD93C00070821 /* CustomLibXml.m */; };
@@ -872,7 +871,7 @@
 		FA9A0D6714DFB6660077B1EB /* UICRouteAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = FA9A0D4014DFB6660077B1EB /* UICRouteAnnotation.m */; };
 		FA9A0D6814DFB6660077B1EB /* UICRouteOverlayMapView.m in Sources */ = {isa = PBXBuildFile; fileRef = FA9A0D4214DFB6660077B1EB /* UICRouteOverlayMapView.m */; };
 		FA9A0D6A14DFB6660077B1EB /* api.html in Resources */ = {isa = PBXBuildFile; fileRef = FA9A0D4614DFB6660077B1EB /* api.html */; };
-		FA9A0D6B14DFB6660077B1EB /* json2.js in Sources */ = {isa = PBXBuildFile; fileRef = FA9A0D4714DFB6660077B1EB /* json2.js */; };
+		FA9A0D6B14DFB6660077B1EB /* json2.js in Resources */ = {isa = PBXBuildFile; fileRef = FA9A0D4714DFB6660077B1EB /* json2.js */; };
 		FA9A0D6C14DFB6660077B1EB /* RouteListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA9A0D4A14DFB6660077B1EB /* RouteListViewController.m */; };
 		FA9A0D6D14DFB6660077B1EB /* RouteListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA9A0D4B14DFB6660077B1EB /* RouteListViewController.xib */; };
 		FA9A0D6E14DFB6660077B1EB /* MapTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA9A0D4E14DFB6660077B1EB /* MapTableCell.m */; };
@@ -5172,6 +5171,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				39C8F5621521F51200F81B51 /* tooltip.js in Resources */,
+				FA9A0D6B14DFB6660077B1EB /* json2.js in Resources */,
+				A8DB1D0516E0B58B007D1A4F /* iOStoJsBridge.js in Resources */,
+				A8DB1D0616E0B58B007D1A4F /* jquery-1.8.2.min.js in Resources */,
+				A8DB1D0716E0B58B007D1A4F /* svmx_client_api.js in Resources */,
 				7B00224212282B08002E1770 /* add-task.png in Resources */,
 				7B00224312282B08002E1770 /* big-date-bg.png in Resources */,
 				7B00224412282B08002E1770 /* bigdate-task-divider.png in Resources */,
@@ -6040,7 +6043,6 @@
 				FA9A0D6614DFB6660077B1EB /* UICGStep.m in Sources */,
 				FA9A0D6714DFB6660077B1EB /* UICRouteAnnotation.m in Sources */,
 				FA9A0D6814DFB6660077B1EB /* UICRouteOverlayMapView.m in Sources */,
-				FA9A0D6B14DFB6660077B1EB /* json2.js in Sources */,
 				FA9A0D6C14DFB6660077B1EB /* RouteListViewController.m in Sources */,
 				FA9A0D6E14DFB6660077B1EB /* MapTableCell.m in Sources */,
 				FA9A0D7014DFB6660077B1EB /* RouteController.m in Sources */,
@@ -6067,7 +6069,6 @@
 				FA1826C91509EF19003EA09C /* BitSet.m in Sources */,
 				3EAC7BE31517AFB200B54478 /* NSData+DDData.m in Sources */,
 				FA93F0E9151A89380077AE1A /* databaseIntefaceSfm.m in Sources */,
-				39C8F4D81521ED9D00F81B51 /* tooltip.js in Sources */,
 				8B97C7EC15594C5C004914F7 /* SBJsonStreamParser.m in Sources */,
 				8B97C7ED15594C5C004914F7 /* SBJsonStreamParserAccumulator.m in Sources */,
 				8B97C7EE15594C5C004914F7 /* SBJsonStreamParserAdapter.m in Sources */,
@@ -6091,9 +6092,6 @@
 				A89B535716CCBFF400849FBC /* WSResponseParser.m in Sources */,
 				A8DB1CFA16E0B586007D1A4F /* Utility.m in Sources */,
 				A8DB1D0416E0B58B007D1A4F /* HTMLJSWrapper.m in Sources */,
-				A8DB1D0516E0B58B007D1A4F /* iOStoJsBridge.js in Sources */,
-				A8DB1D0616E0B58B007D1A4F /* jquery-1.8.2.min.js in Sources */,
-				A8DB1D0716E0B58B007D1A4F /* svmx_client_api.js in Sources */,
 				A8DB1D0816E0B58B007D1A4F /* JSExecuter.m in Sources */,
 				A8DB1D0C16E0B590007D1A4F /* PriceBookData.m in Sources */,
 			);
