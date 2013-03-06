@@ -13246,7 +13246,7 @@ extern void SVMXLog(NSString *format, ...);
     tempData = nil;
     
     
-    NSString *codeSnipppet = [appDelegate.calDataBase getGetPriceCodeSnippet:@"GetPrice"];
+    NSString *codeSnipppet = [appDelegate.calDataBase getGetPriceCodeSnippet:@"Standard Get Price"];
   
     codeSnipppet = [codeSnipppet stringByReplacingOccurrencesOfString:@"&quot;" withString:@"\""];
     codeSnipppet = [codeSnipppet stringByReplacingOccurrencesOfString:@"&amp;" withString:@"&"];
