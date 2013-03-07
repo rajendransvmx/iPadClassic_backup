@@ -4574,11 +4574,11 @@ extern void SVMXLog(NSString *format, ...);
         NSString *SVMXC__Service_Contract__c = [entitlementDict objectForKey:@"SVMXC__Service_Contract__c"];
         NSString *SVMXC__Entitled_By_Service__c =  [entitlementDict objectForKey:@"SVMXC__Entitled_By_Service__c"];
         if (![Utility isStringEmpty:SVMXC__Entitled_By_Service__c]) {
-            idOfServiceOffering = idOfServiceOffering;
+            idOfServiceOffering = SVMXC__Entitled_By_Service__c;
         }
         
         NSString *SVMXC__Entitled_Within_Threshold__c = [entitlementDict objectForKey:@"SVMXC__Entitled_Within_Threshold__c"];
-        if ([SVMXC__Entitled_Within_Threshold__c isEqualToString:@"true'"]) {
+        if ([SVMXC__Entitled_Within_Threshold__c isEqualToString:@"true"] ||[SVMXC__Entitled_Within_Threshold__c isEqualToString:@"True"] || [SVMXC__Entitled_Within_Threshold__c isEqualToString:@"1"]  ) {
             idServiceCovered = @"COVERED";
         }
         
