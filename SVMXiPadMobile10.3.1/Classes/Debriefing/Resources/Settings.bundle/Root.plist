@@ -266,6 +266,28 @@
 			<key>DefaultValue</key>
 			<false/>
 		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+			<key>Title</key>
+			<string>Enter request timeout (in mins)</string>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSSliderSpecifier</string>
+			<key>Key</key>
+			<string>reqTimeout_Setting</string>
+			<key>DefaultValue</key>
+			<integer>3</integer>
+			<key>MinimumValue</key>
+			<integer>3</integer>
+			<key>MaximumValue</key>
+			<integer>10</integer>
+			<key>MinimumValueImage</key>
+			<string>3.png</string>
+			<key>MaximumValueImage</key>
+			<string>10.png</string>
+		</dict>
 	</array>
 	<key>StringsTable</key>
 	<string>Root</string>
