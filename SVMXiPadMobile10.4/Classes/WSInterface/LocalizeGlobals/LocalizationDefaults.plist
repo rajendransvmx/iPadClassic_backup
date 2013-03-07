@@ -618,5 +618,7 @@
 	<string>Show</string>
 	<key>IPAD020_TAG002</key>
 	<string>Records</string>
+	<key>EVER005_TAG087</key>
+	<string>Price not calculated, because entitlement check has not been performed</string>
 </dict>
 </plist>

@@ -4714,11 +4714,20 @@ extern void SVMXLog(NSString *format, ...);
         outerPool = nil;
         
         /*Adding tags*/
-        NSMutableArray *someArray = [self getAllMessagesForTagsArray:nil];
+        NSMutableArray *someArray = [[NSMutableArray alloc] init];
+        NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:getPrice_not_entitled];
+        if (message != nil) {
+            NSDictionary *tempDict = [[NSDictionary alloc]initWithObjectsAndKeys:message,@"value",getPrice_not_entitled, @"key", nil];
+            [someArray addObject:tempDict];
+            [tempDict release];
+            tempDict = nil;
+        }
         NSDictionary *finalDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"TAGS",@"key",someArray,@"valueMap", nil];
         [priceBookArray addObject: finalDict];
         [finalDict release];
         finalDict = nil;
+        [someArray release];
+        someArray = nil;
         
         
     }
