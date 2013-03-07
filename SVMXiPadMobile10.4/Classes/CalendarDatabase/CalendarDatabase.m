@@ -4568,7 +4568,7 @@ extern void SVMXLog(NSString *format, ...);
         NSDictionary *entitlementDict = [self getEntitlementHistoryForWorkorder:targetRecordId];
         
         NSString *idOfServiceOffering = nil;
-        NSString *idServiceCovered = nil;
+        NSString *idServiceCovered = @"NONCOVERED";
         
         NSString *SVMXC__Warranty__c = [entitlementDict objectForKey:@"SVMXC__Warranty__c"];
         NSString *SVMXC__Service_Contract__c = [entitlementDict objectForKey:@"SVMXC__Service_Contract__c"];
