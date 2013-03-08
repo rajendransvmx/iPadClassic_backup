@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A85D82A1167AFEB6003728C4 /* Console.png in Resources */ = {isa = PBXBuildFile; fileRef = A85D82A0167AFEB6003728C4 /* Console.png */; };
 		A89A6368164A77E400211AE8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A89A6367164A77E400211AE8 /* UIKit.framework */; };
 		A89A636A164A77E400211AE8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A89A6369164A77E400211AE8 /* Foundation.framework */; };
 		A89A636C164A77E400211AE8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A89A636B164A77E400211AE8 /* CoreGraphics.framework */; };
@@ -28,6 +29,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A85D82A0167AFEB6003728C4 /* Console.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Console.png; sourceTree = "<group>"; };
 		A89A6363164A77E400211AE8 /* SVMXiPadMobileLogger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SVMXiPadMobileLogger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A89A6367164A77E400211AE8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		A89A6369164A77E400211AE8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -73,6 +75,7 @@
 		A89A6358164A77E400211AE8 = {
 			isa = PBXGroup;
 			children = (
+				A85D82A0167AFEB6003728C4 /* Console.png */,
 				A8F95191164B93450093D2BA /* MessageUI.framework */,
 				A89A636D164A77E400211AE8 /* SVMXiPadMobileLogger */,
 				A89A6366164A77E400211AE8 /* Frameworks */,
@@ -201,6 +204,7 @@
 				A89A6395164A8AB300211AE8 /* save.png in Resources */,
 				A89A6398164A8ABF00211AE8 /* email.png in Resources */,
 				A89A6399164A8ABF00211AE8 /* referesh.png in Resources */,
+				A85D82A1167AFEB6003728C4 /* Console.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -309,8 +313,8 @@
 				INFOPLIST_FILE = "SVMXiPadMobileLogger/SVMXiPadMobileLogger-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "BC4B5E7E-D950-4B3F-804B-79C3748D0DFC";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "BC4B5E7E-D950-4B3F-804B-79C3748D0DFC";
+				PROVISIONING_PROFILE = "6205D716-0613-40ED-B63F-E2EECD95A813";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "6205D716-0613-40ED-B63F-E2EECD95A813";
 				VALID_ARCHS = armv7;
 				WRAPPER_EXTENSION = app;
 			};
@@ -326,8 +330,8 @@
 				INFOPLIST_FILE = "SVMXiPadMobileLogger/SVMXiPadMobileLogger-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "BC4B5E7E-D950-4B3F-804B-79C3748D0DFC";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "BC4B5E7E-D950-4B3F-804B-79C3748D0DFC";
+				PROVISIONING_PROFILE = "6205D716-0613-40ED-B63F-E2EECD95A813";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "6205D716-0613-40ED-B63F-E2EECD95A813";
 				VALID_ARCHS = armv7;
 				WRAPPER_EXTENSION = app;
 			};

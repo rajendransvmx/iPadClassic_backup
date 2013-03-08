@@ -9,6 +9,7 @@
 #import "DetailViewController.h"
 #import <asl.h>
 
+#undef kEnableLogs
 @interface DetailViewController ()
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
 @property (strong, nonatomic) NSString  *fileName;
@@ -244,7 +245,7 @@ enum logLocation
     //asl_free(query);
     
     aslmsg message;
-    int linesToRead = 1000; // Total Number Of Lines to Read From Console
+    int linesToRead = 2000; // Total Number Of Lines to Read From Console
     int totalLinesCount = 0;
     while((message = aslresponse_next(response)))
     {
@@ -258,8 +259,8 @@ enum logLocation
     NSLog(@"Log Count  = %d",totalLinesCount);
     response = asl_search(client, query);
     asl_free(query);
-    NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    //NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
+    //[dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss.SSSSSSSS"];
     while((message = aslresponse_next(response)))
     {
         const char *msg = asl_get(message, ASL_KEY_MSG);
@@ -270,7 +271,8 @@ enum logLocation
             {
                 NSDate *time = [NSDate dateWithTimeIntervalSince1970:(strtod(asl_get(message, ASL_KEY_TIME), NULL))];
                 NSString *message = [NSString stringWithCString:msg encoding:NSUTF8StringEncoding];
-                NSString *messageWithTime = [NSString stringWithFormat:@"[%@]%@",[dateFormatter stringFromDate:time],message];
+                //NSString *messageWithTime = [NSString stringWithFormat:@"[%@]%@",[dateFormatter stringFromDate:time],message];
+                NSString *messageWithTime = [NSString stringWithFormat:@"[%@]%@",time,message];
                 [consoleLog addObject:messageWithTime];
             }
         }
@@ -278,8 +280,10 @@ enum logLocation
     aslresponse_free(response);
     
     asl_close(client);
-    [dateFormatter release];
+    //[dateFormatter release];
+#ifdef kEnableLogs
     NSLog(@"Log = %@",consoleLog);
+#endif
     return consoleLog;
 }
 #pragma mark - Mail Delegate
