@@ -1833,7 +1833,7 @@ last_sync_time:(NSString *)last_sync_time
 {
     if(![appDelegate doesServerSupportsModule:kMinPkgForGetPriceModule])
         return;
-    if(![[appDelegate.wsInterface getValueFromUserDefaultsForKey:@"doesGetPriceRequired"] boolValue])
+    if(![[self getValueFromUserDefaultsForKey:@"doesGetPriceRequired"] boolValue])
     {
         SMLog(@"Some Objects Doesn't Have permission. Give the permission and the sync again for Get Price");
         return;
@@ -1841,7 +1841,7 @@ last_sync_time:(NSString *)last_sync_time
     NSString *requestId = [iServiceAppDelegate GetUUID];
     appDelegate.initial_sync_status = SYNC_GP_DATA; //  Need to change it for Get Price
     appDelegate.Sync_check_in = FALSE;
-    [appDelegate.wsInterface dataSyncWithEventName:GET_PRICE_DATA eventType:SYNC requestId:requestId withData:nil lastIndex:@"0"];
+    [self dataSyncWithEventName:GET_PRICE_DATA eventType:SYNC requestId:requestId withData:nil lastIndex:@"0"];
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
         SMLog(@"iPadScrollerViewController.m : doGetPrice: Download GetPrice Data Sync");
@@ -1862,7 +1862,7 @@ last_sync_time:(NSString *)last_sync_time
             SMLog(@"GetPrice Data Sync Failed due to Connection Error");
             return;
         }
-        if (appDelegate.Incremental_sync_status == PUT_RECORDS_DONE)
+        if (appDelegate.Incremental_sync_status == GET_PRICE_DONE)
         {
             SMLog(@"GetPrice Data Sync Completed for Request ID = %@",requestId);
             break;
@@ -1874,7 +1874,7 @@ last_sync_time:(NSString *)last_sync_time
     appDelegate.initial_sync_status = SYNC_GP_DATA; //  Need to change it for Get Price
     appDelegate.Incremental_sync_status = INCR_STARTS;
     appDelegate.Sync_check_in = FALSE;
-    [appDelegate.wsInterface dataSyncWithEventName:GET_PRICE_DATA eventType:SYNC requestId:requestId withData:nil lastIndex:@"1"];
+    [self  dataSyncWithEventName:GET_PRICE_DATA eventType:SYNC requestId:requestId withData:nil lastIndex:@"1"];
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
         SMLog(@"iPadScrollerViewController.m : doGetPrice: Download GetPrice Data Sync");
@@ -1895,7 +1895,7 @@ last_sync_time:(NSString *)last_sync_time
             SMLog(@"GetPrice Data Sync Failed due to Connection Error");
             return;
         }
-        if (appDelegate.Incremental_sync_status == PUT_RECORDS_DONE)
+        if (appDelegate.Incremental_sync_status == GET_PRICE_DONE)
         {
             SMLog(@"GetPrice Data Sync Completed for Request ID = %@",requestId);
             break;
@@ -1918,7 +1918,7 @@ last_sync_time:(NSString *)last_sync_time
         [activityType addObject:activityValue];
     }
     
-    [appDelegate.wsInterface dataSyncWithEventName:GET_PRICE_DATA eventType:SYNC requestId:requestId withData:activityType lastIndex:@"2"];
+    [self dataSyncWithEventName:GET_PRICE_DATA eventType:SYNC requestId:requestId withData:activityType lastIndex:@"2"];
     [activityType release];
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
@@ -1940,7 +1940,7 @@ last_sync_time:(NSString *)last_sync_time
             SMLog(@"GetPrice Data Sync Failed due to Connection Error");
             return;
         }
-        if (appDelegate.Incremental_sync_status == PUT_RECORDS_DONE)
+        if (appDelegate.Incremental_sync_status == GET_PRICE_DONE)
         {
             SMLog(@"GetPrice Data Sync Completed for Request ID = %@",requestId);
             break;
@@ -5094,7 +5094,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 
         [dict release];
        // SMLog(@" count %d", [appDelegate.afterSavePageLevelEvents count]);
-        appDelegate.wsInterface.getPrice = TRUE;
+        self.getPrice = TRUE;
     }
 	}@catch (NSException *exp) {
         SMLog(@"Exception Name WSInterface :callSFMEvent %@",exp.name);
@@ -6875,8 +6875,10 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                                           withData:(NSArray *)[obj getRequiredData:@"RecordIds"]
                                                          lastIndex:(NSString *)[obj getRequiredData:@"LAST_INDEX"]];
                 }
-                else
-                    appDelegate.Incremental_sync_status = PUT_RECORDS_DONE;
+                else {
+                    appDelegate.Incremental_sync_status = GET_PRICE_DONE;
+                }
+                
                 [obj release];
             }
         }
