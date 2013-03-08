@@ -4783,7 +4783,7 @@ extern void SVMXLog(NSString *format, ...);
     finalDict = nil;
     
     /* Get special parts pricing definition if available*/
-    [columnNames setObject:@"true"  forKey:@"SVMXC__Active__c"];
+    [columnNames setObject:@"1"  forKey:@"SVMXC__Active__c"];
     dataArray =  [self getRecordWhereColumnNamesAndValues:columnNames andTableName:@"SVMXC__Parts_Pricing__c"];
     finalDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"CONTRACT_SPECIALPARTSPRICING",@"key",dataArray,@"data", nil];
     if ([dataArray count] > 0) {
