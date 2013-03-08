@@ -259,8 +259,8 @@ enum logLocation
     NSLog(@"Log Count  = %d",totalLinesCount);
     response = asl_search(client, query);
     asl_free(query);
-    //NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
-    //[dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss.SSSSSSSS"];
+    NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss.SSSS"];
     while((message = aslresponse_next(response)))
     {
         const char *msg = asl_get(message, ASL_KEY_MSG);
@@ -271,8 +271,7 @@ enum logLocation
             {
                 NSDate *time = [NSDate dateWithTimeIntervalSince1970:(strtod(asl_get(message, ASL_KEY_TIME), NULL))];
                 NSString *message = [NSString stringWithCString:msg encoding:NSUTF8StringEncoding];
-                //NSString *messageWithTime = [NSString stringWithFormat:@"[%@]%@",[dateFormatter stringFromDate:time],message];
-                NSString *messageWithTime = [NSString stringWithFormat:@"[%@]%@",time,message];
+                NSString *messageWithTime = [NSString stringWithFormat:@"[%@] %@",[dateFormatter stringFromDate:time],message];
                 [consoleLog addObject:messageWithTime];
             }
         }
@@ -280,7 +279,7 @@ enum logLocation
     aslresponse_free(response);
     
     asl_close(client);
-    //[dateFormatter release];
+    [dateFormatter release];
 #ifdef kEnableLogs
     NSLog(@"Log = %@",consoleLog);
 #endif
