@@ -10,6 +10,7 @@
 #import <asl.h>
 
 #undef kEnableLogs
+//#define kEnableLogs
 @interface DetailViewController ()
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
 @property (strong, nonatomic) NSString  *fileName;
@@ -260,7 +261,8 @@ enum logLocation
     response = asl_search(client, query);
     asl_free(query);
     NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss.SSSS"];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    int nanoTime;
     while((message = aslresponse_next(response)))
     {
         const char *msg = asl_get(message, ASL_KEY_MSG);
@@ -270,8 +272,9 @@ enum logLocation
             if(totalLinesCount <= linesToRead)
             {
                 NSDate *time = [NSDate dateWithTimeIntervalSince1970:(strtod(asl_get(message, ASL_KEY_TIME), NULL))];
+                nanoTime = (int)(strtod(asl_get(message, ASL_KEY_TIME_NSEC), NULL)/ 1000000);
                 NSString *message = [NSString stringWithCString:msg encoding:NSUTF8StringEncoding];
-                NSString *messageWithTime = [NSString stringWithFormat:@"[%@] %@",[dateFormatter stringFromDate:time],message];
+                NSString *messageWithTime = [NSString stringWithFormat:@"[%@.%d] %@",[dateFormatter stringFromDate:time],nanoTime,message];
                 [consoleLog addObject:messageWithTime];
             }
         }
