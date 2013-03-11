@@ -367,11 +367,12 @@ extern void SVMXLog(NSString *format, ...);
     appDelegate.loginResult = nil;
     appDelegate.currentServerUrl = nil;
     
-    [ZKServerSwitchboard switchboard].logXMLInOut = YES;
+    [ZKServerSwitchboard switchboard].logXMLInOut = NO;
     [[ZKServerSwitchboard switchboard] loginWithUsername:txtUsernameLandscape.text password:txtPasswordLandscape.text target:self selector:@selector(didLogin:error:context:)];
     
     if (![appDelegate isInternetConnectionAvailable])
     {
+        [ZKServerSwitchboard switchboard].logXMLInOut = YES;
         [activity stopAnimating];
         appDelegate.shouldShowConnectivityStatus = YES;
         [appDelegate displayNoInternetAvailable];
@@ -405,13 +406,14 @@ extern void SVMXLog(NSString *format, ...);
         }
 
     }
+    [ZKServerSwitchboard switchboard].logXMLInOut = YES;
     
 }
 
 
 - (void) doMetaAndDataSync
 {
-    SMLog(@"SAMMAN MetaSync WS Start: %@", [NSDate date]);
+    SMLog(@" MetaSync WS Start: %@", [NSDate date]);
     
     time_t t1;
     time(&t1);
@@ -442,7 +444,7 @@ extern void SVMXLog(NSString *format, ...);
         
     }
     
-    SMLog(@"SAMMAN MetaSync WS End: %@", [NSDate date]);
+    SMLog(@" MetaSync WS End: %@", [NSDate date]);
     if([appDelegate enableGPS_SFMSearch])
     {
         //SFM Search 
@@ -457,7 +459,7 @@ extern void SVMXLog(NSString *format, ...);
             if (appDelegate.wsInterface.didOpSFMSearchComplete == TRUE)
                 break; 
         }
-        SMLog(@"SAMMAN MetaSync SFM Search End: %@", [NSDate date]);
+        SMLog(@" MetaSync SFM Search End: %@", [NSDate date]);
         
         //SFM Search End
     }    
@@ -472,7 +474,7 @@ extern void SVMXLog(NSString *format, ...);
         return;
     }
     
-    SMLog(@"SAMMAN DataSync WS Start: %@", [NSDate date]);
+    SMLog(@" DataSync WS Start: %@", [NSDate date]);
     appDelegate.wsInterface.didOpComplete = FALSE;
   
     //sahaan generate client req id for initital data sync                                                                                                                                                                                                                                                                     
@@ -545,8 +547,8 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
-    SMLog(@"SAMMAN DataSync WS End: %@", [NSDate date]);
-    SMLog(@"SAMMAN Incremental DataSync WS Start: %@", [NSDate date]);
+    SMLog(@" DataSync WS End: %@", [NSDate date]);
+    SMLog(@" Incremental DataSync WS Start: %@", [NSDate date]);
     
     [appDelegate.wsInterface cleanUpForRequestId:appDelegate.initial_dataSync_reqid forEventName:@"CLEAN_UP_SELECT"];
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
@@ -586,9 +588,9 @@ extern void SVMXLog(NSString *format, ...);
     }
     
             
-    SMLog(@"SAMMAN Incremental DataSync WS End: %@", [NSDate date]);
+    SMLog(@" Incremental DataSync WS End: %@", [NSDate date]);
     
-    SMLog(@"SAMMAN Update Sync Records Start: %@", [NSDate date]);
+    SMLog(@" Update Sync Records Start: %@", [NSDate date]);
 
     if (appDelegate.isForeGround == FALSE)
         [appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
@@ -600,7 +602,7 @@ extern void SVMXLog(NSString *format, ...);
     //Radha End
 
     
-    SMLog(@"SAMMAN Update Sync Records End: %@", [NSDate date]);
+    SMLog(@" Update Sync Records End: %@", [NSDate date]);
     //remove recents
     NSFileManager * fileManager = [NSFileManager defaultManager];
     NSString * rootPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
@@ -1207,7 +1209,6 @@ extern void SVMXLog(NSString *format, ...);
     
     NSError * error = nil;
     _username = [SFHFKeychainUtils getPasswordForUsername:@"username" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
-    SMLog(@"%@", _username);
     if ((_username == nil) && (temp != nil))
     {
         _username = [[temp objectAtIndex:0] objectForKey:@"username"];
@@ -1217,7 +1218,6 @@ extern void SVMXLog(NSString *format, ...);
     // Retrieve password from keychain
     
     _password = [SFHFKeychainUtils getPasswordForUsername:@"password" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
-    SMLog(@"%@", _password);
     if ((_password == nil) && (appDelegate.savedReference != nil))
     {
         _password = [[appDelegate.savedReference objectAtIndex:0] objectForKey:@"password"];

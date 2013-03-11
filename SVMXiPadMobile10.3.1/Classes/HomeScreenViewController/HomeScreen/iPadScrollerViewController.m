@@ -1508,7 +1508,7 @@ const float progress_ = 0.07;
             if (appDelegate.wsInterface.didOpSFMSearchComplete == TRUE)
                 break; 
         }
-        SMLog(@"SAMMAN MetaSync SFM Search End: %@", [NSDate date]);
+        SMLog(@" MetaSync SFM Search End: %@", [NSDate date]);
     }
     if (![appDelegate isInternetConnectionAvailable])
     {
@@ -1519,7 +1519,7 @@ const float progress_ = 0.07;
        //SFM Search End
     
     
-    SMLog(@"SAMMAN MetaSync WS End: %@", [NSDate date]);
+    SMLog(@" MetaSync WS End: %@", [NSDate date]);
     appDelegate.initial_sync_status = SYNC_DP_PICKLIST_INFO;
     appDelegate.Sync_check_in = FALSE;
     [appDelegate getDPpicklistInfo];
@@ -1559,7 +1559,7 @@ const float progress_ = 0.07;
     char * err ;
     int retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);   
     
-    SMLog(@"SAMMAN DataSync WS Start: %@", [NSDate date]);
+    SMLog(@" DataSync WS Start: %@", [NSDate date]);
     appDelegate.wsInterface.didOpComplete = FALSE;
     
     appDelegate.initial_sync_status = SYNC_EVENT_SYNC;
@@ -1675,8 +1675,8 @@ const float progress_ = 0.07;
             }
         }
     }
-      SMLog(@"SAMMAN DataSync WS End: %@", [NSDate date]);
-    SMLog(@"SAMMAN Incremental DataSync WS Start: %@", [NSDate date]);
+      SMLog(@" DataSync WS End: %@", [NSDate date]);
+    SMLog(@" Incremental DataSync WS Start: %@", [NSDate date]);
 
     txnstmt = @"END TRANSACTION";
     retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err); 
@@ -1776,9 +1776,9 @@ const float progress_ = 0.07;
             break;
         }
     }
-    SMLog(@"SAMMAN Incremental DataSync WS End: %@", [NSDate date]);
+    SMLog(@" Incremental DataSync WS End: %@", [NSDate date]);
     
-    SMLog(@"SAMMAN Update Sync Records Start: %@", [NSDate date]);
+    SMLog(@" Update Sync Records Start: %@", [NSDate date]);
     
     //[appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
     
@@ -1816,7 +1816,7 @@ const float progress_ = 0.07;
     //Radha End
     
     
-    SMLog(@"SAMMAN Update Sync Records End: %@", [NSDate date]);
+    SMLog(@" Update Sync Records End: %@", [NSDate date]);
     //remove recents
     NSFileManager * fileManager = [NSFileManager defaultManager];
     NSString * rootPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
