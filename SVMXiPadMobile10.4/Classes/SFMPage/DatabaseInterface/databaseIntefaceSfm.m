@@ -3974,7 +3974,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         else
         {
-            NSLog(@"Sahana - Failed to insert Initial Sync");
+            NSLog(@"Failed to insert Initial Sync");
         }
         
         sqlite3_finalize(bulk_statement);
