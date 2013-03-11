@@ -4845,7 +4845,8 @@ extern void SVMXLog(NSString *format, ...);
                     
                     if([sync_type isEqualToString:GET_INSERT] || [sync_type isEqualToString:GET_UPDATE] )
                     {
-                        [self deleteAllOndemandRecordsPartOfDownloadCriteriaForSfId:sf_id];
+                        // Fix for PB 
+//                        [self deleteAllOndemandRecordsPartOfDownloadCriteriaForSfId:sf_id];
                     }
                     if([sync_type isEqualToString:PUT_UPDATE])
                     {
