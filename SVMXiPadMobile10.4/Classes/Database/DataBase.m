@@ -3845,7 +3845,7 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void) insertvaluesToPicklist:(NSMutableArray *)object fields:(NSMutableArray *)fields value:(NSMutableArray *)values
 {
-    SMLog(@"SAMMAN insertvaluesToPicklist Processing starts: %@", [NSDate date]);
+    SMLog(@"  insertvaluesToPicklist Processing starts: %@", [NSDate date]);
     BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFPickList ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE, 'object_api_name' VARCHAR,'field_api_name' VARCHAR,'label' VARCHAR,'value' VARCHAR, 'defaultvalue'  VARCHAR , 'valid_for' VARCHAR , 'index_value' INTEGER)"]];
     
     if (result == YES)
@@ -3970,14 +3970,14 @@ extern void SVMXLog(NSString *format, ...);
     }
   
     appDelegate.wsInterface.didGetPicklistValues = TRUE;
-    SMLog(@"SAMMAN insertvaluesToPicklist Processing ends: %@", [NSDate date]);
+    SMLog(@"  insertvaluesToPicklist Processing ends: %@", [NSDate date]);
 }
 
 - (void) insertValuesInToRTPicklistTableForObject:(id)objects Values:(NSMutableDictionary *)recordTypeDict
 {
     int id_value = 0;
     
-    SMLog(@"SAMMAN insertValuesInToRTPicklistTableForObject Processing starts: %@", [NSDate date]);
+    SMLog(@"  insertValuesInToRTPicklistTableForObject Processing starts: %@", [NSDate date]);
     
     BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFRTPicklist ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL, 'object_api_name' VARCHAR, 'recordtypename' VARCHAR, 'recordtypelayoutid' VARCHAR, 'recordtypeid' VARCHAR, 'field_api_name' VARCHAR, 'label' VARCHAR, 'value' VARCHAR, 'defaultlabel' VARCHAR, 'defaultvalue' VARCHAR)"]];
     
@@ -4090,7 +4090,7 @@ extern void SVMXLog(NSString *format, ...);
     
     }
     
-    SMLog(@"SAMMAN insertValuesInToRTPicklistTableForObject Processing starts: %@", [NSDate date]);
+    SMLog(@"  insertValuesInToRTPicklistTableForObject Processing starts: %@", [NSDate date]);
     
     appDelegate.initial_sync_status = SYNC_SFW_METADATA;
     appDelegate.Sync_check_in = FALSE;
@@ -4532,7 +4532,7 @@ extern void SVMXLog(NSString *format, ...);
 - (void) insertValuesInToTagsTable:(NSMutableDictionary *)tagsDictionary
 {
     
-    SMLog(@"SAMMAN MetaSync insertValuesInToTagsTable starts: %@", [NSDate date]);
+    SMLog(@"  MetaSync insertValuesInToTagsTable starts: %@", [NSDate date]);
     int id_value = 0;
     BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS MobileDeviceTags ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'tag_id' VARCHAR, 'value' VARCHAR)"]];
     if (result == YES)
@@ -4574,7 +4574,7 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
-    SMLog(@"SAMMAN MetaSync insertValuesInToTagsTable ends: %@", [NSDate date]);
+    SMLog(@"  MetaSync insertValuesInToTagsTable ends: %@", [NSDate date]);
     appDelegate.initial_sync_status =  SYNC_MOBILE_DEVICE_SETTINGS;
     appDelegate.Sync_check_in = FALSE;
     [appDelegate.wsInterface metaSyncWithEventName:MOBILE_DEVICE_SETTINGS eventType:SYNC values:nil];
@@ -4582,7 +4582,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) insertValuesInToSettingsTable:(NSMutableDictionary *)settingsDictionary
 {
-    SMLog(@"SAMMAN MetaSync insertValuesInToSettingsTable processing starts: %@", [NSDate date]);
+    SMLog(@"  MetaSync insertValuesInToSettingsTable processing starts: %@", [NSDate date]);
     int id_value = 0;
     
     BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS MobileDeviceSettings ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'setting_id' VARCHAR, 'value' VARCHAR)"]];
@@ -4624,7 +4624,7 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     
-    SMLog(@"SAMMAN MetaSync insertValuesInToSettingsTable processing ends: %@", [NSDate date]);
+    SMLog(@"  MetaSync insertValuesInToSettingsTable processing ends: %@", [NSDate date]);
     //Radha - 24/March
     appDelegate.settingsDict = [self getSettingsDictionary];
 
@@ -4635,7 +4635,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) insertValuesInToSFWizardsTable:(NSDictionary *)wizardDict
 {
-    SMLog(@"SAMMAN MetaSync insertValuesInToSFWizardsTable: processing starts: %@", [NSDate date]);
+    SMLog(@"  MetaSync insertValuesInToSFWizardsTable: processing starts: %@", [NSDate date]);
     int id_value = 0;
     
     BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFWizard ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , 'object_name' VARCHAR, 'wizard_id' VARCHAR, 'expression_id' VARCHAR, 'wizard_description' VARCHAR, 'wizard_name' VARCHAR)"]];
@@ -4930,7 +4930,7 @@ extern void SVMXLog(NSString *format, ...);
             sqlite3_reset(bulkStmt);
         }
     }   
-    SMLog(@"SAMMAN MetaSync insertValuesInToSFWizardsTable: processing ends: %@", [NSDate date]);
+    SMLog(@"  MetaSync insertValuesInToSFWizardsTable: processing ends: %@", [NSDate date]);
     
     appDelegate.initial_sync_status = SYNC_MOBILE_DEVICE_TAGS;
     appDelegate.Sync_check_in = FALSE;
@@ -6211,7 +6211,7 @@ extern void SVMXLog(NSString *format, ...);
 }
 -(void)insertSettingsIntoTable:(NSMutableArray*)array:(NSString*)TableName
 {
-    SMLog(@"SAMMAN MetaSync insertSettingsIntoTable processing starts: %@", [NSDate date]);
+    SMLog(@"  MetaSync insertSettingsIntoTable processing starts: %@", [NSDate date]);
     NSString * field_string = @"";
     NSString * field_value = @"";
     for (NSDictionary * dict in array) 
@@ -7530,7 +7530,7 @@ extern void SVMXLog(NSString *format, ...);
     NSString * event_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_events];
     appDelegate.connection_error = FALSE;
     BOOL retVal = TRUE;
-    SMLog(@"SAMMAN DataSync WS Start: %@", [NSDate date]);
+    SMLog(@"  DataSync WS Start: %@", [NSDate date]);
     appDelegate.wsInterface.didOpComplete = FALSE;
 
     [appDelegate.wsInterface dataSyncWithEventName:EVENT_SYNC eventType:SYNC requestId:@""];

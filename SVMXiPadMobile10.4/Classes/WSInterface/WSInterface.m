@@ -834,7 +834,7 @@ last_sync_time:(NSString *)last_sync_time
     [datasync setRequest:sfmRequest];
     
     
-    SMLog(@"SAMMAN TX_FETCH Request Sent: %@", [NSDate date]);
+    SMLog(@"  TX_FETCH Request Sent: %@", [NSDate date]);
     //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_DataSync_WSAsyncUsingParameters:datasync 
                                     SessionHeader:sessionHeader 
@@ -3842,7 +3842,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         
         INTF_WebServicesDefServiceSvc_SVMXClient * client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
         
-        SMLog(@"SAMMAN Incremental DataSync request looping  starts: %@", [NSDate date]);
+        SMLog(@"  Incremental DataSync request looping  starts: %@", [NSDate date]);
         if([eventName isEqualToString:GET_PRICE_DATA] && [eventType  isEqualToString:SYNC])
         {
             INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_last_index =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
@@ -3886,7 +3886,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             }
             
         }
-        SMLog(@"SAMMAN Incremental DataSync request looping  ends: %@", [NSDate date]);
+        SMLog(@"  Incremental DataSync request looping  ends: %@", [NSDate date]);
         client.clientType = @"iPad";
         [client.clientInfo addObject:@"OS:iPadOS"];
         [client.clientInfo addObject:@"R4B2"];
@@ -3902,7 +3902,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         [sfmRequest addClientInfo:client];
         [dataSync setRequest:sfmRequest];
         
-        SMLog(@"SAMMAN Incremental DataSync Request sent: %@", [NSDate date]);
+        SMLog(@"  Incremental DataSync Request sent: %@", [NSDate date]);
         
         
         [binding INTF_DataSync_WSAsyncUsingParameters:dataSync
@@ -3956,7 +3956,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     [sfmRequest.valueMap addObject:SVMXCMap_startTime];
     [sfmRequest.valueMap addObject:SVMXCMap_endTime];
     
-    SMLog(@"SAMMAN Incremental DataSync request looping  starts: %@", [NSDate date]);
+    SMLog(@"  Incremental DataSync request looping  starts: %@", [NSDate date]);
     if([eventName isEqualToString:DOWNLOAD_CREITERIA_SYNC])
     {
         INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_last_index =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
@@ -3974,7 +3974,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             }
         }
     }
-    SMLog(@"SAMMAN Incremental DataSync request looping  ends: %@", [NSDate date]);
+    SMLog(@"  Incremental DataSync request looping  ends: %@", [NSDate date]);
     client.clientType = @"iPad";
     [client.clientInfo addObject:@"OS:iPadOS"];
     [client.clientInfo addObject:@"R4B2"];
@@ -3994,7 +3994,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     [dataSync setRequest:sfmRequest];
     
     //[[ZKServerSwitchboard switchboard] doCheckSession];
-    SMLog(@"SAMMAN Incremental DataSync Request sent: %@", [NSDate date]);
+    SMLog(@"  Incremental DataSync Request sent: %@", [NSDate date]);
     
   
     [binding INTF_DataSync_WSAsyncUsingParameters:dataSync 
@@ -5595,7 +5595,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         
         if ([wsResponse.result.eventName isEqualToString:SFM_METADATA])
         {            
-            //SMLog(@"SAMMAN MetaSync SFM_METADATA received, processing starts: %@", [NSDate date]);
+            //SMLog(@"  MetaSync SFM_METADATA received, processing starts: %@", [NSDate date]);
             NSMutableArray * keys = [[NSMutableArray alloc] initWithCapacity:0];
             NSMutableArray * values = [[NSMutableArray alloc] initWithCapacity:0];
             NSMutableArray * arr = [[NSMutableArray alloc] initWithCapacity:0];
@@ -6291,7 +6291,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         {
            
             FisrtTime_response = FALSE;
-            //SMLog(@"SAMMAN MetaSync SFM_PICKLIST_DEFINITIONS received, processing starts: %@", [NSDate date]);
+            //SMLog(@"  MetaSync SFM_PICKLIST_DEFINITIONS received, processing starts: %@", [NSDate date]);
             didGetPicklistValues = TRUE;
             NSMutableArray * arr;
             NSMutableArray * Fields = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
@@ -6379,7 +6379,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                 }
                 
                                
-                //SMLog(@"SAMMAN MetaSync SFM_PICKLIST_DEFINITIONS received, processing ends: %@", [NSDate date]);
+                //SMLog(@"  MetaSync SFM_PICKLIST_DEFINITIONS received, processing ends: %@", [NSDate date]);
                 if([allObjects count] > 0)
                 {
                     appDelegate.initial_sync_status =  SYNC_RT_DP_PICKLIST_INFO;
@@ -6394,7 +6394,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         else if ([wsResponse.result.eventName isEqualToString:SFM_OBJECT_DEFINITIONS])
         {
            
-           // SMLog(@"SAMMAN MetaSync SFM_OBJECT_DEFINITIONS received, processing starts: %@", [NSDate date]);
+           // SMLog(@"  MetaSync SFM_OBJECT_DEFINITIONS received, processing starts: %@", [NSDate date]);
             int m = 0;
             NSMutableArray * arr = [[[NSMutableArray alloc] initWithCapacity:0] retain];
             NSMutableArray * object_array = [[[NSMutableArray alloc] initWithCapacity:0] retain];
@@ -6525,7 +6525,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         else if ([wsResponse.result.eventName isEqualToString:SFM_BATCH_OBJECT_DEFINITIONS])
         {
 
-            //SMLog(@"SAMMAN MetaSync SFM_BATCH_OBJECT_DEFINITIONS received, processing starts: %@", [NSDate date]);
+            //SMLog(@"  MetaSync SFM_BATCH_OBJECT_DEFINITIONS received, processing starts: %@", [NSDate date]);
             NSMutableArray * arr = [[[NSMutableArray alloc] initWithCapacity:0] retain];
             NSMutableArray * object_array = [[[NSMutableArray alloc] initWithCapacity:0] retain];
             NSMutableArray * array1;
@@ -6652,7 +6652,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 	            //sahana Aug 16th
     	        [appDelegate.dataBase getRecordTypeValuesForObject:pickListObj];
                 
-                // SMLog(@"SAMMAN MetaSync SFM_OBJECT_DEFINITIONS received, processing ends: %@", [NSDate date]);
+                // SMLog(@"  MetaSync SFM_OBJECT_DEFINITIONS received, processing ends: %@", [NSDate date]);
                 
                 appDelegate.initial_sync_status = SYNC_SFM_PICKLIST_DEFINITIONS;
                 appDelegate.Sync_check_in = FALSE;
@@ -6664,7 +6664,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         else if ([wsResponse.result.eventName isEqualToString:SFW_METADATA])
         {
            
-           // SMLog(@"SAMMAN MetaSync SFW_METADATA received, processing starts: %@", [NSDate date]);
+           // SMLog(@"  MetaSync SFW_METADATA received, processing starts: %@", [NSDate date]);
             wizardDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
             
             NSMutableArray * array = [wsResponse.result valueMap];
@@ -6745,7 +6745,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
       else if ([wsResponse.result.eventName isEqualToString:MOBILE_DEVICE_TAGS])
       {
           
-         // SMLog(@"SAMMAN MetaSync MOBILE_DEVICE_TAGS processing starts: %@", [NSDate date]);
+         // SMLog(@"  MetaSync MOBILE_DEVICE_TAGS processing starts: %@", [NSDate date]);
           mobileDeviceTagsDict = [[NSMutableDictionary alloc] initWithCapacity:0];
           NSMutableArray * array = [wsResponse.result valueMap];
         
@@ -6947,7 +6947,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             
             NSAutoreleasePool * autoreleasePool = [[NSAutoreleasePool alloc] init];
             appDelegate.data_sync_chunking = RESPONSE_RECIEVED; //sahana IMP 
-            SMLog(@"SAMMAN Incremental DataSync response recieved: %@", [NSDate date]);
+            SMLog(@"  Incremental DataSync response recieved: %@", [NSDate date]);
             
            // NSString * event_name = wsResponse.result.eventName;
     
@@ -6958,7 +6958,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             
             NSArray * keys_ =[[NSArray alloc] initWithObjects:@"LOCAL_ID",@"JSON_RECORD",@"SF_ID", @"SYNC_TYPE", @"RECORD_TYPE", nil];
             
-            SMLog(@"SAMMAN Incremental DataSync response parsing starts: %@", [NSDate date]);
+            SMLog(@"  Incremental DataSync response parsing starts: %@", [NSDate date]);
             for (int i = 0; i < [array count]; i++)
             {
                 INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [array objectAtIndex:i];
@@ -7068,7 +7068,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             
             SMLog(@"array %d",[array retainCount]);
             
-            SMLog(@"SAMMAN Incremental DataSync response parsing starts: %@", [NSDate date]);
+            SMLog(@"  Incremental DataSync response parsing starts: %@", [NSDate date]);
             [appDelegate.databaseInterface insertRecordIdsIntosyncRecordHeap:record_dict];
            
             SMLog(@"record_dict %d" , [record_dict retainCount]);
@@ -7105,8 +7105,8 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                 tempParser = nil;
             }
             
-            SMLog(@"SAMMAN TX_FETCH Response recived: %@", [NSDate date]);
-            SMLog(@"SAMMAN TX_FETCH Processing starts: %@", [NSDate date]);
+            SMLog(@"  TX_FETCH Response recived: %@", [NSDate date]);
+            SMLog(@"  TX_FETCH Processing starts: %@", [NSDate date]);
             NSMutableDictionary * record_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
             NSMutableArray * array = [wsResponse.result valueMap];
             
@@ -7174,7 +7174,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             }
             
             [keys_ release];
-            SMLog(@"SAMMAN TX_FETCH Processing ends: %@", [NSDate date]);
+            SMLog(@"  TX_FETCH Processing ends: %@", [NSDate date]);
             
             /* If this is initial sync , then insert all the records :InitialSync-shr*/
             if(appDelegate.do_meta_data_sync == ALLOW_META_AND_DATA_SYNC)
@@ -7202,7 +7202,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         }
         else if ([wsResponse.result.eventName isEqualToString:@"PUT_INSERT"] )//INSERT
         {
-            SMLog(@"SAMMAN GET_INSERT/PUT_INSERT Processing starts: %@", [NSDate date]);
+            SMLog(@"  GET_INSERT/PUT_INSERT Processing starts: %@", [NSDate date]);
             NSString * event_name = wsResponse.result.eventName;
             NSMutableDictionary * record_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
             NSMutableDictionary * conflict_dict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
@@ -7379,7 +7379,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                     }
                 }
             }
-            SMLog(@"SAMMAN GET_INSERT/PUT_INSERT Processing ends: %@", [NSDate date]);
+            SMLog(@"  GET_INSERT/PUT_INSERT Processing ends: %@", [NSDate date]);
             [appDelegate.databaseInterface insertRecordIdsIntosyncRecordHeap:record_dict];
             [appDelegate.databaseInterface insertSyncConflictsIntoSYNC_CONFLICT:conflict_dict];
             

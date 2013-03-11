@@ -957,7 +957,7 @@ NSString * GO_Online = @"GO_Online";
 			if (isSessionInavalid == YES)
 			{
 				didLoginAgain = NO;
-
+                [ZKServerSwitchboard switchboard].logXMLInOut = NO;
 				[[ZKServerSwitchboard switchboard] loginWithUsername:self.username password:self.password target:self selector:@selector(didLoginForServer:error:context:)];
 				
 				while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, FALSE))
@@ -981,7 +981,7 @@ NSString * GO_Online = @"GO_Online";
 						break;
 					}
 				}
-				
+				[ZKServerSwitchboard switchboard].logXMLInOut = YES;
 				
 			}
 			if (isServerInValid)
@@ -998,7 +998,7 @@ NSString * GO_Online = @"GO_Online";
     _pingServer = TRUE;
      
     didLoginAgain = NO;
-    
+    [ZKServerSwitchboard switchboard].logXMLInOut = NO;
     [[ZKServerSwitchboard switchboard] loginWithUsername:self.username password:self.password target:self selector:@selector(didLoginForServer:error:context:)];
     
     self.isServerInValid = FALSE;
@@ -1022,7 +1022,7 @@ NSString * GO_Online = @"GO_Online";
         if (didLoginAgain)
             break;
     }
-        
+    [ZKServerSwitchboard switchboard].logXMLInOut = YES;
     if (isServerInValid == TRUE)
     {
         self.isServerInValid = FALSE;
