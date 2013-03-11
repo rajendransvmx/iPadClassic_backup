@@ -13237,6 +13237,11 @@ extern void SVMXLog(NSString *format, ...);
    
     NSDictionary * sfm_temp = appDelegate.SFMPage;
     
+    BOOL shouldContinue =  [self recordsAvailableForPriceCalculation:appDelegate.sfmPageController.recordId];
+    if (!shouldContinue) {
+        return;
+    }
+    
     PriceBookData *tempData = [[PriceBookData alloc] initWithSfmPage:sfm_temp];
     self.priceBookData = tempData;
     [tempData getJSONRepresentationForJS];
@@ -13347,7 +13352,13 @@ extern void SVMXLog(NSString *format, ...);
         NSString *value = [keyAsValueDict objectForKey:@"value"];
         
         if ([tagHeaderDictionary objectForKey:key] == nil) {
-            [updatedColumnDictionary setObject:[NSString stringWithFormat:@"%@",value] forKey:key];
+            if (![Utility isStringNotNULL:value]) {
+                 [updatedColumnDictionary setObject:[NSString stringWithFormat:@""] forKey:key];
+            }
+            else {
+                 [updatedColumnDictionary setObject:[NSString stringWithFormat:@"%@",value] forKey:key];
+            }
+           
         }
         
         
@@ -13373,7 +13384,7 @@ extern void SVMXLog(NSString *format, ...);
             NSString *fieldKey = [fieldDictMutable objectForKey:@"Field_API_Name"];
             
             NSString *tempStr = [updatedColumnDictionary objectForKey:fieldKey];
-            if (tempStr != nil) {
+            if (tempStr != nil && [Utility isStringNotNULL:tempStr]) {
               
                 NSString *fieldtype = [fieldTypeDictionaryNew objectForKey:fieldKey];
                 [fieldDictMutable setObject:[NSString stringWithFormat:@"%@",tempStr] forKey:@"Field_Value_Key"];
@@ -13437,11 +13448,14 @@ extern void SVMXLog(NSString *format, ...);
                 NSString *valueOne = [updatedDictObj objectForKey:@"value1"];
                 
                 NSString *fieldtype = [fieldTypeDictionary objectForKey:key];
-                if (value != nil) {
+                if (value != nil && [Utility isStringNotNULL:value]) {
                     if ([fieldtype isEqualToString:@"datetime"]) {
                         value = [Utility replaceSpaceinDateByT:value];
                     }
                     [keysDictionary setObject:[NSString stringWithFormat:@"%@",value] forKey:@"value_Field_Value_key"];
+                }
+                else {
+                    valueOne = nil;
                 }
                 if (valueOne != nil) {
                    
@@ -13575,6 +13589,42 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     return NO;
+}
+
+- (BOOL)recordsAvailableForPriceCalculation:(NSString *)workOrderLocalId {
+    
+    NSString *tableName = @"SVMXC__Service_Order__c";
+    NSString *sfmId = [appDelegate.calDataBase getSFIdForlocalId:workOrderLocalId andTableName:tableName];
+    
+    if (![Utility isStringEmpty:sfmId]) {
+        
+        NSString *status = [appDelegate.calDataBase getEntitlementStatus:sfmId recordIdFromTable:tableName];
+        if ([Utility isItTrue:status]) {
+            
+            BOOL doesRecordAvailable = [appDelegate.calDataBase doesAllRecordsForGetPriceCalculationExist:sfmId];
+            if (!doesRecordAvailable) {
+                NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:getPrice_Objects_not_found];
+                [self showAlertViewWhenGPCalculationNotPossible:message];
+                return NO;
+            }
+        }
+        return YES;
+    }
+    else {
+        NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:getPrice_Objects_not_found];
+        [self showAlertViewWhenGPCalculationNotPossible:message];
+    }
+    return NO;
+}
+
+- (void)showAlertViewWhenGPCalculationNotPossible:(NSString * )message {
+    
+    NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
+    NSString * Ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+    
+    UIAlertView * getPriceAlertView = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:Ok otherButtonTitles:nil];
+    [getPriceAlertView show];
+    [getPriceAlertView release];
 }
 
 @end

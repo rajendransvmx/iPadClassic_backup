@@ -355,7 +355,8 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
 - (BOOL)checkIfAllAnyOneLinePresent;
 - (void)showAlertView:(NSString *)message;
 - (BOOL)shouldDisplayMessage:(NSString *)message;
-
+- (void)showAlertViewWhenGPCalculationNotPossible:(NSString * )message;
+- (BOOL)recordsAvailableForPriceCalculation:(NSString *)workOrderLocalId;
 
 #define SHOWALL_HEADERS                     0
 #define SHOW_HEADER_ROW                     1

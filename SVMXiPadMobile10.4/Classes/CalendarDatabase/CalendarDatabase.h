@@ -238,6 +238,11 @@
 - (NSDictionary *)preparePBForLabourSettings:(NSString *)estimateValue andUsageValue:(NSString *)usageValue andKey:(NSString *)key andRecordTypeId:(NSDictionary *)recordTypeIds;
 - (NSDictionary *)preparePBLaourEstimateId:(NSString *)estimateValue andUsageValue:(NSString *)usageValue andKey:(NSString *)key andRecordTypeId:(NSDictionary *)recordTypeIds;
 - (NSArray *)getAllMessagesForTagsArray:(NSArray *)tags;
+- (NSArray *) getExpressionComponentsForExpressionId:(NSString *)expressionId andExpression:(NSString *)expressionName andRecordId:(NSString *)recordTypeId;
+- (NSString *)getEntitlementStatus:(NSString *)recordIdentfier recordIdFromTable:(NSString *)tableName;
+- (BOOL)doesAllRecordsForGetPriceCalculationExist:(NSString *)recordId;
+- (NSInteger)getRecordCountForSfId:(NSString *)sfId andTableName:(NSString *)tableName;
+- (NSString *)getSFIdForlocalId:(NSString *)workOrderLocalId andTableName:(NSString *)tableName;
 
 /* End GET_PRICE_JS-shr*/
 

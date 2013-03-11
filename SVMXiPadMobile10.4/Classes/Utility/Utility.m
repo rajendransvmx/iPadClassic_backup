@@ -105,4 +105,22 @@
     return YES;
 }
 
++ (BOOL)isItTrue:(NSString *)stringTrue {
+     stringTrue = [stringTrue lowercaseString];
+    if ([stringTrue isEqualToString:@"true"]  || [stringTrue isEqualToString:@"True"] ||  [stringTrue isEqualToString:@"1"] ) {
+        return YES;
+    }
+    return NO;
+}
+
++ (BOOL)isStringNotNULL:(NSString *)value {
+    NSString *someString = [NSString stringWithFormat:@"%@",value];
+    value = [someString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    value = [value lowercaseString];
+    if([value isEqualToString:@"<null>"] || [value isEqualToString:@"<NULL>"] || [value isEqualToString:@"Null"] || [value isEqualToString:@"null"]){
+        return NO;
+    }
+    return YES;
+}
+
 @end

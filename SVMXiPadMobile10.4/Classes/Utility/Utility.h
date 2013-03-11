@@ -18,5 +18,6 @@
 + (NSString *)replaceSpaceinDateByT:(NSString *)stringToBeChanged;
 + (NSString *)replaceTinDateBySpace:(NSString *)stringToBeChanged;
 + (BOOL)containsString:(NSString *)someString inString:(NSString *)parentString ;
-
++ (BOOL)isItTrue:(NSString *)stringTrue;
++ (BOOL)isStringNotNULL:(NSString *)value;
 @end

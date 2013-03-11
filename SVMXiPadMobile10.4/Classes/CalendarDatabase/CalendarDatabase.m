@@ -5536,20 +5536,21 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     sqlite3_finalize(selectStmt);
-    
-    
-    NSMutableArray *expressionArray = [[NSMutableArray alloc] init];
-    for (int counter = 0; counter < [namedExpressionArray count]; counter++) {
-        
-        NSString *identifier = [namedExpressionArray objectAtIndex:counter];
-        NSString *expression = [expressionDictionary objectForKey:identifier];
-        NSArray *expressionComponenets =  [self getExpressionComponentsForExpressionId:identifier andExpression:expression andRecordId:expressionRule];
-        NSDictionary *dictionaryObj = [[NSDictionary alloc] initWithObjectsAndKeys:identifier,@"key",expression,@"value",expressionComponenets,@"data", nil];
-        [expressionArray addObject:dictionaryObj];
-        [dictionaryObj release];
-        dictionaryObj = nil;
-    }
-    
+      NSMutableArray *expressionArray = [[NSMutableArray alloc] init];
+    if ([expressionDictionary count] > 0) {
+        for (int counter = 0; counter < [namedExpressionArray count]; counter++) {
+            
+            NSString *identifier = [namedExpressionArray objectAtIndex:counter];
+            NSString *expression = [expressionDictionary objectForKey:identifier];
+            NSArray *expressionComponenets =  [self getExpressionComponentsForExpressionId:identifier andExpression:expression andRecordId:expressionRule];
+            NSDictionary *dictionaryObj = [[NSDictionary alloc] initWithObjectsAndKeys:identifier,@"key",expression,@"value",expressionComponenets,@"data", nil];
+            [expressionArray addObject:dictionaryObj];
+            [dictionaryObj release];
+            dictionaryObj = nil;
+        }
+   }
+  
+       
     return [expressionArray autorelease];
 }
 
@@ -6522,4 +6523,89 @@ extern void SVMXLog(NSString *format, ...);
     
     return [tagsArray autorelease];
 }
+
+#pragma mark -
+#pragma mark Getting entitlement status of record
+- (NSString *)getEntitlementStatus:(NSString *)recordIdentfier recordIdFromTable:(NSString *)tableName {
+    
+    NSString * fieldId = nil;
+    NSString * query = [NSString stringWithFormat:@"SELECT SVMXC__Is_Entitlement_Performed__c FROM %@ where Id = '%@'",tableName,recordIdentfier];
+    sqlite3_stmt * stmt;
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(stmt)  == SQLITE_ROW)
+        {
+            char * temp_process_id  = (char *)sqlite3_column_text(stmt, 0);
+            
+            if(temp_process_id!= nil) {
+                fieldId = [NSString stringWithUTF8String:temp_process_id];
+                
+            }            
+        }
+    }
+    sqlite3_finalize(stmt);
+    return fieldId;
+}
+
+- (BOOL)doesAllRecordsForGetPriceCalculationExist:(NSString *)recordId {
+    
+    NSDictionary *someDictionary =  [self getEntitlementHistoryForWorkorder:recordId];
+    
+    if(someDictionary != nil && [someDictionary count] > 0 ){
+        
+        NSString *SVMXC__Warranty__c         = [someDictionary objectForKey:@"SVMXC__Warranty__c"];
+        NSString *SVMXC__Service_Contract__c = [someDictionary objectForKey:@"SVMXC__Service_Contract__c"];
+        NSInteger  numberOfRecordsOne = -1 , numberOfRecordsTwo = -1;
+        if (![Utility isStringEmpty:SVMXC__Warranty__c]) {
+            numberOfRecordsOne =  [self getRecordCountForSfId:SVMXC__Warranty__c andTableName:@"SVMXC__Warranty__c"];
+        }
+        
+        if (![Utility isStringEmpty:SVMXC__Service_Contract__c]) {
+            numberOfRecordsTwo =  [self getRecordCountForSfId:SVMXC__Service_Contract__c andTableName:@"SVMXC__Service_Contract__c"];
+        }
+        if (numberOfRecordsOne > 0 || numberOfRecordsTwo > 0) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+
+- (NSInteger)getRecordCountForSfId:(NSString *)sfId andTableName:(NSString *)tableName {
+    
+    NSString *sqlQuery = [NSString  stringWithFormat:@"select count(*) from %@ where  Id = '%@'",tableName,sfId];
+    
+    sqlite3_stmt *selectStmt = nil;
+    NSInteger counter = -1;
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    {
+        while(synchronized_sqlite3_step(selectStmt) == SQLITE_ROW)
+        {
+            counter = sqlite3_column_int(selectStmt, 0);
+        }
+    }
+    sqlite3_finalize(selectStmt);
+    return counter;
+}
+
+- (NSString *)getSFIdForlocalId:(NSString *)workOrderLocalId andTableName:(NSString *)tableName {
+    NSString * fieldId = nil;
+    NSString * query = [NSString stringWithFormat:@"SELECT Id FROM %@ where local_id = '%@'",tableName,workOrderLocalId];
+    sqlite3_stmt * stmt;
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(stmt)  == SQLITE_ROW)
+        {
+            char * temp_process_id  = (char *)sqlite3_column_text(stmt, 0);
+            
+            if(temp_process_id!= nil) {
+                fieldId = [NSString stringWithUTF8String:temp_process_id];
+            }
+        }
+    }
+    sqlite3_finalize(stmt);
+    return fieldId;
+    
+}
+
 @end
