@@ -4520,6 +4520,12 @@ extern void SVMXLog(NSString *format, ...);
                     NSArray *detalFiledsArray = [recordDict objectForKey:@"targetRecordAsKeyValue"];
                     NSString *productId =  [self getValueFOrKey:@"SVMXC__Activity_Type__c" FromArray:detalFiledsArray];
                     [labourArray addObject:productId];
+                    
+                    /*If Labour has product then add it to labour parts array */
+                    NSString *realproductId =  [self getValueFOrKey:@"SVMXC__Product__c" FromArray:detalFiledsArray];
+                    if (![Utility isStringEmpty:realproductId]) {
+                         [labourPartsArray addObject:realproductId];
+                    }
                 }
                 
             }
