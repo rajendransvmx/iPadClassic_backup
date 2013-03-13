@@ -23,6 +23,7 @@
 @synthesize parentView;
 
 - (void)dealloc {
+    [jsWebView removeFromSuperview];
     [jsWebView release];
     [codeSnippet release];
     delegate = nil;

@@ -13236,7 +13236,7 @@ extern void SVMXLog(NSString *format, ...);
     [self.view bringSubviewToFront:activity];
    
     NSDictionary * sfm_temp = appDelegate.SFMPage;
-    
+    self.jsExecuter = nil;
     BOOL shouldContinue =  [self recordsAvailableForPriceCalculation:appDelegate.sfmPageController.recordId];
     if (!shouldContinue) {
         return;
@@ -13360,9 +13360,7 @@ extern void SVMXLog(NSString *format, ...);
             }
            
         }
-        
-        
-    }
+   }
     [finalHeaderDictionary setObject:updatedColumnDictionary forKey:@"hdr_Data"];
     
     
@@ -13455,11 +13453,10 @@ extern void SVMXLog(NSString *format, ...);
                     [keysDictionary setObject:[NSString stringWithFormat:@"%@",value] forKey:@"value_Field_Value_key"];
                 }
                 else {
-                    valueOne = nil;
+                     [keysDictionary setObject:[NSString stringWithFormat:@""] forKey:@"value_Field_Value_key"];
+                     valueOne = @"";
                 }
                 if (valueOne != nil) {
-                   
-                   
                     NSString *ffData  =  [self getValueForApiName:key dataType:fieldtype object_name:tableNameTwo field_key:value];
                     if (ffData != nil) {
                         [keysDictionary setObject:[NSString stringWithFormat:@"%@",ffData] forKey:@"value_Field_Value_value"];

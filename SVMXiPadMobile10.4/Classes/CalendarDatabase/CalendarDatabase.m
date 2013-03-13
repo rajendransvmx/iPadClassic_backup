@@ -4554,7 +4554,7 @@ extern void SVMXLog(NSString *format, ...);
         
         if ([labourArray count] > 0) {
             /*preparing key value for record type ­> pricebook definition that are defined as part of setting*/
-            NSDictionary *labourDictionary =  [self preparePBForLabourSettings:pbPartsEstimateName andUsageValue:pbLabourUsageName andKey:@"RECORDTYPEINFO_LABOR" andRecordTypeId:recordTypeIds];
+            NSDictionary *labourDictionary =  [self preparePBForLabourSettings:pbLabourEstimateName andUsageValue:pbLabourUsageName andKey:@"RECORDTYPEINFO_LABOR" andRecordTypeId:recordTypeIds];
             if (labourDictionary != nil) {
                 [priceBookArray addObject:labourDictionary];
             }
@@ -4582,18 +4582,14 @@ extern void SVMXLog(NSString *format, ...);
             idServiceCovered = @"COVERED";
         }
         
-        
-        /* Wo comes under warranty then get wa_id */
+       
+        /* Wo comes under warranty then get warranty_id */
         if (![Utility isStringEmpty:SVMXC__Warranty__c]) {
             
             NSMutableDictionary *warrantyDictionary =  [self getRecordForSfId:SVMXC__Warranty__c andTableName:@"SVMXC__Warranty__c"];
-            [warrantyDictionary setObject:@"SVMXC__Warranty__c" forKey:@"type"];
             
-            NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:warrantyDictionary, @"attributes",nil];
-            NSArray *tempArray =[[NSArray alloc] initWithObjects:tempDictionary, nil];
-            [tempDictionary release];
-            tempDictionary = nil;
-            
+            [warrantyDictionary setObject:[NSDictionary dictionaryWithObjectsAndKeys:@"SVMXC__Warranty__c",@"type",nil] forKey:@"attributes"];
+            NSArray *tempArray =[[NSArray alloc] initWithObjects:warrantyDictionary, nil];
             NSDictionary *finalDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:@"WARRANTYDEFINITION",@"key",tempArray, @"data",nil];
             [tempArray release];
             tempArray = nil;
@@ -4601,13 +4597,12 @@ extern void SVMXLog(NSString *format, ...);
             [priceBookArray addObject:finalDictionary];
             [finalDictionary release];
             finalDictionary = nil;
-            
-            
         }
         else if(![Utility isStringEmpty:SVMXC__Service_Contract__c]){
             
             /* else If wo comes under contract then get contract_id */
-            NSMutableDictionary *serviceContractDictionary = [self getRecordForSfId:SVMXC__Service_Contract__c andTableName:@"SVMXC__Service_Contract__c"];
+            NSMutableDictionary *serviceContractDictionary = [self getRecordForSfId:SVMXC__Service_Contract__c
+                                                                       andTableName:@"SVMXC__Service_Contract__c"];
             
             /*Get Service Contract pricebook definition for Parts */
             NSString *SVMXC__Default_Parts_Price_Book__c =  [serviceContractDictionary objectForKey:@"SVMXC__Default_Parts_Price_Book__c"];
@@ -4630,8 +4625,14 @@ extern void SVMXLog(NSString *format, ...);
                 }
             }
             
-            /* Getting data for SVMXC__Pricing_Rule__,SVMXC__Parts_Pricing__c,SVMXC__Parts_Discount__c,SVMXC__Labor_Pricing__c,SVMXC__Labor_Pricing__c,SVMXC__Labor_Pricing__c,SVMXC__Labor_Pricing__c,SVMXC__Expense_Pricing__c,SVMXC__Travel_Policy__c,SVMXC__Mileage_Tiers__c,SVMXC__Zone_Pricing__c
-             */
+            if (serviceContractDictionary != nil) {
+                NSDictionary * someDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"CONTRACT_DEFINITION",@"key",[NSArray arrayWithObject:serviceContractDictionary],@"data", nil];
+                [priceBookArray addObject:someDict];
+                [someDict release];
+                someDict = nil;
+            }
+           
+            
             
             NSAutoreleasePool *aPool = [[NSAutoreleasePool alloc] init];
             
@@ -4665,9 +4666,7 @@ extern void SVMXLog(NSString *format, ...);
             dataArray = nil;
             [finalDict release];
             finalDict = nil;
-            
-            
-        }
+         }
         
         
         
@@ -4710,9 +4709,6 @@ extern void SVMXLog(NSString *format, ...);
         [partsPriceBookIdsArray release];
         [partsPriceBookNames release];
         
-        [outerPool release];
-        outerPool = nil;
-        
         /*Adding tags*/
         NSMutableArray *someArray = [[NSMutableArray alloc] init];
         NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:getPrice_not_entitled];
@@ -4729,7 +4725,8 @@ extern void SVMXLog(NSString *format, ...);
         [someArray release];
         someArray = nil;
         
-        
+        [outerPool release];
+        outerPool = nil;
     }
     @catch (NSException *exception) {
         NSLog(@"%@",[exception description]);
@@ -5111,13 +5108,13 @@ extern void SVMXLog(NSString *format, ...);
                 
                 NSDictionary *pbBook = [pbArray objectAtIndex:counter];
                 NSString *finalValue = [pbBook objectForKey:@"Id"];
-                if (finalValue == nil) {
-                    finalValue = @"";
+                if (finalValue != nil) {
+                    NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:finalValue,@"value", usageRecordTypeId,@"key", nil];
+                    [arrayTemp addObject:tempDictionary];
+                    [tempDictionary release];
+                    tempDictionary = nil;
                 }
-                NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:finalValue,@"value", usageRecordTypeId,@"key", nil];
-                [arrayTemp addObject:tempDictionary];
-                [tempDictionary release];
-                tempDictionary = nil;
+                
             }
         }
         
@@ -5127,13 +5124,12 @@ extern void SVMXLog(NSString *format, ...);
             for (int counter = 0; counter < [pbArray count ]; counter++) {
                 NSDictionary *pbBook = [pbArray objectAtIndex:counter];
                 NSString *finalValue = [pbBook objectForKey:@"Id"];
-                if (finalValue == nil) {
-                    finalValue = @"";
+                if (finalValue != nil) {
+                    NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:finalValue,@"value", estimateRecordTypeId, @"key",nil];
+                    [arrayTemp addObject:tempDictionary];
+                    [tempDictionary release];
+                    tempDictionary = nil;
                 }
-                NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:finalValue,@"value", estimateRecordTypeId, @"key",nil];
-                [arrayTemp addObject:tempDictionary];
-                [tempDictionary release];
-                tempDictionary = nil;
             }
         }
         NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:arrayTemp,@"valueMap",key,@"key", nil];
@@ -5168,7 +5164,7 @@ extern void SVMXLog(NSString *format, ...);
                     if (tempString != nil) {
                         NSString *fieldName = [allColumnNames objectAtIndex:counter];
                         NSString *fieldType = [allFieldsOfTable objectForKey:fieldName];
-                        NSLog(@"Filed type is %@",fieldType);
+                        
                         if ([fieldType isEqualToString:@"boolean"]) {
                             tempString = [self changeTheBooleanValue:tempString];
                         }
@@ -5416,14 +5412,13 @@ extern void SVMXLog(NSString *format, ...);
             for (int counter = 0; counter < [pbArray count ]; counter++) {
                 
                 NSDictionary *pbBook = [pbArray objectAtIndex:counter];
-                NSString *finalValue = [pbBook objectForKey:usageValue];
-                if (finalValue == nil) {
-                    finalValue = @"";
+                NSString *finalValue = [pbBook objectForKey:@"Id"];
+                if (finalValue != nil) {
+                    NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:finalValue,@"value", usageRecordTypeId,@"key", nil];
+                    [arrayTemp addObject:tempDictionary];
+                    [tempDictionary release];
+                    tempDictionary = nil;
                 }
-                NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:finalValue, usageRecordTypeId, nil];
-                [arrayTemp addObject:tempDictionary];
-                [tempDictionary release];
-                tempDictionary = nil;
             }
         }
         
@@ -5432,11 +5427,13 @@ extern void SVMXLog(NSString *format, ...);
             NSArray *pbArray = [self getPriceBookObjectsForPriceBookIds:[NSArray arrayWithObject:estimateValue] OrPriceBookNames:nil];
             for (int counter = 0; counter < [pbArray count ]; counter++) {
                 NSDictionary *pbBook = [pbArray objectAtIndex:counter];
-                NSString *finalValue = [pbBook objectForKey:estimateValue];
-                NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:finalValue, estimateRecordTypeId, nil];
-                [arrayTemp addObject:tempDictionary];
-                [tempDictionary release];
-                tempDictionary = nil;
+                NSString *finalValue = [pbBook objectForKey:@"Id"];
+                if (finalValue != nil) {
+                    NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:finalValue, @"value",estimateRecordTypeId,@"key", nil];
+                    [arrayTemp addObject:tempDictionary];
+                    [tempDictionary release];
+                    tempDictionary = nil;
+                }
             }
         }
         NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:arrayTemp,@"valueMap",key,@"key", nil];
@@ -5458,15 +5455,14 @@ extern void SVMXLog(NSString *format, ...);
             for (int counter = 0; counter < [pbArray count ]; counter++) {
                 
                 NSDictionary *pbBook = [pbArray objectAtIndex:counter];
-                NSString *finalValue = [pbBook objectForKey:usageValue];
-                if (finalValue == nil) {
-                    finalValue = @"";
+                NSString *finalValue = [pbBook objectForKey:@"Id"];
+                if (finalValue != nil) {
+                    NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:finalValue,@"value", usageRecordTypeId,@"key", nil];
+                    [arrayTemp addObject:tempDictionary];
+                    [tempDictionary release];
+                    tempDictionary = nil;
                 }
-                NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:finalValue, usageRecordTypeId, nil];
-                [arrayTemp addObject:tempDictionary];
-                [tempDictionary release];
-                tempDictionary = nil;
-            }
+             }
         }
         
         if (estimateRecordTypeId != nil && estimateValue != nil) {
@@ -5474,11 +5470,13 @@ extern void SVMXLog(NSString *format, ...);
             NSArray *pbArray = [self getPriceBookObjectsForLabourPriceBookIds:[NSArray arrayWithObject:estimateValue] OrPriceBookNames:nil];
             for (int counter = 0; counter < [pbArray count ]; counter++) {
                 NSDictionary *pbBook = [pbArray objectAtIndex:counter];
-                NSString *finalValue = [pbBook objectForKey:estimateValue];
-                NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:finalValue, estimateRecordTypeId, nil];
-                [arrayTemp addObject:tempDictionary];
-                [tempDictionary release];
-                tempDictionary = nil;
+                NSString *finalValue = [pbBook objectForKey:@"Id"];
+                if (finalValue != nil) {
+                    NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:finalValue,@"value", estimateRecordTypeId,@"key", nil];
+                    [arrayTemp addObject:tempDictionary];
+                    [tempDictionary release];
+                    tempDictionary = nil;
+                }
             }
         }
         NSDictionary *tempDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:arrayTemp,@"valueMap",key,@"key", nil];
@@ -5500,17 +5498,33 @@ extern void SVMXLog(NSString *format, ...);
 
 - (NSArray *)getNamedExpressionsForIds:(NSArray *)namedExpressionArray {
     
-    NSString *concatenatedExpId = [self getConcatenatedStringFromArray:namedExpressionArray withSingleQuotesAndBraces:YES];
-    if (concatenatedExpId == nil) {
-        concatenatedExpId = @"()";
+    if ([namedExpressionArray count] <= 0) {
+        return nil;
     }
+    NSMutableString *tempString = [[NSMutableString alloc] init];
+    for (int counter = 0; counter < [namedExpressionArray count]; counter++) {
+        
+        NSString *someExpr = [namedExpressionArray objectAtIndex:counter];
+        if (counter == 0) {
+            [tempString appendFormat:@"Id LIKE '%@%%'",someExpr];
+        }
+        else {
+            [tempString appendFormat:@" OR Id LIKE '%@%%'",someExpr];
+        }
+    }
+     
+    NSString *concatenatedExpId = [NSString stringWithFormat:@"( %@ )",tempString];
+    [tempString release];
+    tempString = nil;
+    
+    
     NSDictionary *recordTypeDict = [self getRecordTypeIdsForRecordType:[NSArray arrayWithObjects:@"SVMX Rule",@"EXPRESSIONS", nil]];
     
     NSString *recordTypeRule = [recordTypeDict objectForKey:@"SVMX Rule"];
     NSString *expressionRule = [recordTypeDict objectForKey:@"EXPRESSIONS"];
     
     
-    NSString *sqlQuery = [NSString stringWithFormat:@"Select SVMXC__Advance_Expression__c,Id from SVMXC__ServiceMax_Processes__c where Id IN %@ and recordTypeId = '%@'",concatenatedExpId,recordTypeRule];
+    NSString *sqlQuery = [NSString stringWithFormat:@"Select SVMXC__Advance_Expression__c,Id from SVMXC__ServiceMax_Processes__c where %@ and recordTypeId = '%@'",concatenatedExpId,recordTypeRule];
     sqlite3_stmt *selectStmt = nil;
     NSMutableDictionary *expressionDictionary = [[NSMutableDictionary alloc] init ];
     if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
@@ -5523,9 +5537,13 @@ extern void SVMXLog(NSString *format, ...);
             tempCharString = (char *)sqlite3_column_text(selectStmt, 0);
             if (tempCharString != nil) {
                 advancedExpression = [NSString stringWithUTF8String:tempCharString];
+                if (advancedExpression == nil) {
+                    advancedExpression = @"";
+                }
                 
             }
-            
+            tempCharString = nil;
+                        
             tempCharString = (char *)sqlite3_column_text(selectStmt,1);
             if (tempCharString != nil) {
                 identifier = [NSString stringWithUTF8String:tempCharString];
@@ -5542,11 +5560,23 @@ extern void SVMXLog(NSString *format, ...);
             
             NSString *identifier = [namedExpressionArray objectAtIndex:counter];
             NSString *expression = [expressionDictionary objectForKey:identifier];
+          
             NSArray *expressionComponenets =  [self getExpressionComponentsForExpressionId:identifier andExpression:expression andRecordId:expressionRule];
-            NSDictionary *dictionaryObj = [[NSDictionary alloc] initWithObjectsAndKeys:identifier,@"key",expression,@"value",expressionComponenets,@"data", nil];
-            [expressionArray addObject:dictionaryObj];
-            [dictionaryObj release];
-            dictionaryObj = nil;
+            if ([expressionComponenets count] > 0) {
+                
+                NSDictionary *dictionaryObj = nil;
+                if (expression != nil) {
+                  dictionaryObj = [[NSDictionary alloc] initWithObjectsAndKeys:identifier,@"key",expression,@"value",expressionComponenets,@"data", nil];
+                }
+                else {
+                   dictionaryObj = [[NSDictionary alloc] initWithObjectsAndKeys:identifier,@"key",expressionComponenets,@"data", nil];
+                    
+                }
+                [expressionArray addObject:dictionaryObj];
+                [dictionaryObj release];
+                dictionaryObj = nil;
+            }
+            
         }
    }
   
@@ -5556,7 +5586,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (NSArray *) getExpressionComponentsForExpressionId:(NSString *)expressionId andExpression:(NSString *)expressionName andRecordId:(NSString *)recordTypeId{
     
-    NSString *sqlQuery = [NSString stringWithFormat:@"Select SVMXC__Field_Name__c,SVMXC__Operator__c,SVMXC__Operand__c,SVMXC__Sequence__c,SVMXC__Expression_Type__c,SVMXC__Expression_Rule__c,Id from SVMXC__SERVICEMAX_CONFIG_DATA__C where SVMXC__Expression_Rule__c = '%@'",expressionId];
+    NSString *sqlQuery = [NSString stringWithFormat:@"Select SVMXC__Field_Name__c,SVMXC__Operator__c,SVMXC__Operand__c,SVMXC__Sequence__c,SVMXC__Expression_Type__c,SVMXC__Expression_Rule__c,Id from SVMXC__SERVICEMAX_CONFIG_DATA__C where SVMXC__Expression_Rule__c LIKE '%@%%'",expressionId];
     sqlite3_stmt *selectStmt = nil;
     NSMutableArray *expressionComponents = [[NSMutableArray alloc] init];
     if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
@@ -5578,6 +5608,7 @@ extern void SVMXLog(NSString *format, ...);
             
             tempCharString = (char *)sqlite3_column_text(selectStmt,i++);
             if (tempCharString != nil) {
+                 someExpression = [NSString stringWithUTF8String:tempCharString];
                 if (someExpression != nil) {
                     [recordDictionary setObject:someExpression forKey:@"SVMXC__Operator__c"];
                 }
@@ -5585,6 +5616,7 @@ extern void SVMXLog(NSString *format, ...);
             }
             tempCharString = (char *)sqlite3_column_text(selectStmt,i++);
             if (tempCharString != nil) {
+                 someExpression = [NSString stringWithUTF8String:tempCharString];
                 if (someExpression != nil) {
                     [recordDictionary setObject:someExpression forKey:@"SVMXC__Operand__c"];
                 }
@@ -5592,6 +5624,7 @@ extern void SVMXLog(NSString *format, ...);
             }
             tempCharString = (char *)sqlite3_column_text(selectStmt,i++);
             if (tempCharString != nil) {
+                someExpression = [NSString stringWithUTF8String:tempCharString];
                 if (someExpression != nil) {
                     [recordDictionary setObject:someExpression forKey:@"SVMXC__Sequence__c"];
                 }
@@ -5599,6 +5632,7 @@ extern void SVMXLog(NSString *format, ...);
             }
             tempCharString = (char *)sqlite3_column_text(selectStmt,i++);
             if (tempCharString != nil) {
+                someExpression = [NSString stringWithUTF8String:tempCharString];
                 if (someExpression != nil) {
                     [recordDictionary setObject:someExpression forKey:@"SVMXC__Expression_Type__c"];
                 }
@@ -5606,6 +5640,7 @@ extern void SVMXLog(NSString *format, ...);
             }
             tempCharString = (char *)sqlite3_column_text(selectStmt,i++);
             if (tempCharString != nil) {
+                someExpression = [NSString stringWithUTF8String:tempCharString];
                 if (someExpression != nil) {
                     [recordDictionary setObject:someExpression forKey:@"SVMXC__Expression_Rule__c"];
                 }
@@ -5613,6 +5648,7 @@ extern void SVMXLog(NSString *format, ...);
             }
             tempCharString = (char *)sqlite3_column_text(selectStmt,i++);
             if (tempCharString != nil) {
+                someExpression = [NSString stringWithUTF8String:tempCharString];
                 if (someExpression != nil) {
                     [recordDictionary setObject:someExpression forKey:@"Id"];
                 }
