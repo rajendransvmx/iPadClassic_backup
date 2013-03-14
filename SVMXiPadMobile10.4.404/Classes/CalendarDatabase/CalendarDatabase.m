@@ -2377,7 +2377,7 @@ extern void SVMXLog(NSString *format, ...);
 - (void) insertTroubleShootDataInDB:(NSData *)troubleShootData WithId:(NSString *)docID  andName:(NSString *)productName andProductId:(NSString *)productId
 {
     NSString * stringData = [Base64 encode:troubleShootData];
-    
+    productName=[productName stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     NSMutableString *queryString = [NSMutableString stringWithFormat:@"Update '%@' Set '%@' = '%@' Where DocId = '%@' and ProductName = '%@'", @"trobleshootdata", @"Product_Doc", 
                                     stringData, docID, productName];
     
@@ -3197,8 +3197,9 @@ extern void SVMXLog(NSString *format, ...);
 		{
             NSString *DocName= [[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
             NSString *DocKeyWord=[[dict objectForKey:DOCUMENTS_KEYWORDS] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
-			NSMutableString *insertQuery = [NSString stringWithFormat:@"Update Document Set Id = '%@', Name = '%@', Keywords = '%@' Where Id = '%@'",[dict objectForKey:DOCUMENTS_ID],
-											DocName,DocKeyWord,[dict objectForKey:DOCUMENTS_ID] ];
+            NSString *docId=[[dict objectForKey:DOCUMENTS_ID] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+			NSMutableString *insertQuery = [NSString stringWithFormat:@"Update Document Set Id = '%@', Name = '%@', Keywords = '%@' Where Id = '%@'",docId,
+											DocName,DocKeyWord,docId];
 			
 			char *err;
 			if (synchronized_sqlite3_exec(appDelegate.db, [insertQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
@@ -3213,7 +3214,9 @@ extern void SVMXLog(NSString *format, ...);
 		}else {
             NSString *DocName= [[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
             NSString *DocKeyword=[[dict objectForKey:DOCUMENTS_KEYWORDS] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
-			NSMutableString *insertQuery = [NSString stringWithFormat:@"Insert into Document (Id, Name, Keywords) Values ('%@', '%@', '%@')",[dict objectForKey:DOCUMENTS_ID],
+            NSString *docId=[[dict objectForKey:DOCUMENTS_ID] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+
+			NSMutableString *insertQuery = [NSString stringWithFormat:@"Insert into Document (Id, Name, Keywords) Values ('%@', '%@', '%@')",docId,
 											DocName,DocKeyword];
 			
 			char *err;
