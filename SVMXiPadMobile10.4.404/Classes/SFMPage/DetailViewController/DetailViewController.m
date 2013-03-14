@@ -1007,6 +1007,10 @@ extern void SVMXLog(NSString *format, ...);
                                     break;
                                 }
                             }
+                            //krishna defect : 4655
+                            if([field_value isEqualToString:@""]) {
+                                field_value = field_key;
+                            }
                         }
                         
                         else if([field_data_type isEqualToString:@"reference"] && (![filed_api_name isEqualToString:@"RecordTypeId"]))
