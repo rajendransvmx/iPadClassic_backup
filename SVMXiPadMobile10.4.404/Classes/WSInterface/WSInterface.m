@@ -946,6 +946,22 @@ last_sync_time:(NSString *)last_sync_time
     appDelegate.initital_sync_object_name = @"";
 }
 
+//conflict check 6580 : krishna
+- (BOOL) checkForConflicts {
+    NSString *sf_id = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:appDelegate.sfmPageController.objectName local_id:appDelegate.sfmPageController.recordId];
+    BOOL isConflictExists = NO;
+    if([sf_id isEqualToString:@""] || sf_id == nil) {
+     
+        isConflictExists = [appDelegate.dataBase checkIfConflictsExistsForEventWithLocalId:appDelegate.sfmPageController.recordId objectName:appDelegate.sfmPageController.objectName];
+    }
+    else {
+        
+     isConflictExists = [appDelegate.dataBase checkIfConflictsExistsForEventWithSFID:sf_id objectName:appDelegate.sfmPageController.objectName];
+    }
+    NSLog(@"isconflict %d andSfId %@",isConflictExists,sf_id);
+    return isConflictExists;
+}
+
 //DATA SYNC METHOD
 -(void)DoIncrementalDataSync
 {
@@ -1820,19 +1836,24 @@ last_sync_time:(NSString *)last_sync_time
             INTF_WebServicesDefServiceSvc_INTF_PREQ_GetPrice_WS *  request =  [aftersavePagelevelEvent objectForKey:AFTERSAVEPAGELEVELEVENT];
             INTF_WebServicesDefBinding * binding = [aftersavePagelevelEvent objectForKey:AFTERSAVEPAQGELEVELBINDING];
             didCompleteAfterSaveEventCalls = NO;
-            [self callsfMEventForAfterSaveOrupdateEvents:request binding:binding];
-            while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+            
+            //conflict check 6580 : krishna
+            if(![self checkForConflicts])
             {
-                SMLog(@"pagelevel events");
-                if (didCompleteAfterSaveEventCalls == YES)
-                    break;
-                if (![appDelegate isInternetConnectionAvailable])
+                [self callsfMEventForAfterSaveOrupdateEvents:request binding:binding];
+                while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
                 {
-                    break;
-                }
-                if(appDelegate.connection_error)
-                    break;
+                    SMLog(@"pagelevel events");
+                    if (didCompleteAfterSaveEventCalls == YES)
+                        break;
+                    if (![appDelegate isInternetConnectionAvailable])
+                    {
+                        break;
+                    }
+                    if(appDelegate.connection_error)
+                        break;
 
+                }
             }
         }
     }
