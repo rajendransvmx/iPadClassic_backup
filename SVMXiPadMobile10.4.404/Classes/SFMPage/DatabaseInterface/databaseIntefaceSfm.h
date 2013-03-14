@@ -122,7 +122,8 @@
 
 -(NSString *)getTheRecordIdOfnewlyInsertedRecord:(NSString *)tableName;
 
--(NSMutableDictionary *)getDataForMultiAdd:(NSString *)object_name searchField:(NSString *)search_field;
+//Radha - Defect Fix 6483 - Added new variable to existing method
+-(NSMutableDictionary *)getDataForMultiAdd:(NSString *)object_name searchField:(NSString *)search_field lookUpSearchId:(NSString *)searchId;
 
 //get the lookup information from database 
 - (NSDictionary *) getLookupDataFromDBWith:(NSString *)lookupID referenceTo:(NSString *)object searchFor:(NSString *)searchForString;

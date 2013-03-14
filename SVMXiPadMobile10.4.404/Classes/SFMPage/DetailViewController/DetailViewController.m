@@ -8105,15 +8105,6 @@ extern void SVMXLog(NSString *format, ...);
 #pragma mark- multiAccessoryTapped:Method
 - (IBAction) multiAccessoryTapped:(id)sender
 {
-    if(appDelegate.isWorkinginOffline)
-    {
-        
-    }
-    else
-    {
-        
-    }
-
     control = (UIControl *)sender;
     NSInteger  _section = control.tag;
     SMLog(@"buttonclicked");
@@ -8121,9 +8112,12 @@ extern void SVMXLog(NSString *format, ...);
     
     NSString * multiadd_search_filed = [[details objectAtIndex:_section] objectForKey:gDETAIL_MULTIADD_SEARCH];
     NSString * multiadd_seach_object = [[details objectAtIndex:_section] objectForKey:gDETAIL_MULTIADD_SEARCH_OBJECT];
-//    NSString * mutlti_add_config = [[details objectAtIndex:_section] objectForKey:gDETAIL_MULTIADD_SEARCH_OBJECT];
     NSMutableArray * detailFieldsArray = [[details objectAtIndex:_section] objectForKey:gDETAILS_FIELDS_ARRAY];
     NSString * multiadd_label = nil;
+	
+	//Radha - Defect Fix 6483
+	NSString * nameSearchId = @"";
+	
     for(int i= 0;i<[detailFieldsArray count]; i++)
     {
         NSDictionary * dict = [detailFieldsArray objectAtIndex:i];
@@ -8131,6 +8125,8 @@ extern void SVMXLog(NSString *format, ...);
         if([field_api_name isEqualToString: multiadd_search_filed] )
         { 
             multiadd_label = [dict objectForKey:gFIELD_LABEL];
+			//Radha - Defect Fix 6483
+			nameSearchId = ([dict objectForKey:gFIELD_RELATED_OBJECT_SEARCH_ID] != nil)?[dict objectForKey:gFIELD_RELATED_OBJECT_SEARCH_ID]:@"";
             break;
         }
     }
@@ -8141,6 +8137,8 @@ extern void SVMXLog(NSString *format, ...);
     multiAddLookup.search_field = multiadd_search_filed;
     multiAddLookup.index = _section;
     multiAddLookup.delegate = self;
+	//Radha - Defect Fix 6483
+	multiAddLookup.searchId = nameSearchId;
     NSString * searchBarTitle = nil;
     
     

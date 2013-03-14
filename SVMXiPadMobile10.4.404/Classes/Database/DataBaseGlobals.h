@@ -142,6 +142,8 @@
 #define MNO_OF_LOOKUP_RECORDS    @"no_of_lookup_records"
 #define MIS_DEFAULT              @"is_default"
 #define MIS_STANDARD             @"is_standard"
+//Defect 6483
+#define MSEARCH_ID				 @"search_sfid"
 
 
 

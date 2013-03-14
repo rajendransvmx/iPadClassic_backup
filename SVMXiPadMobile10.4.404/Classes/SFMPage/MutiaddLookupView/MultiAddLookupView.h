@@ -52,6 +52,8 @@
 @property (nonatomic, retain) LookupField * lField;
 @property (nonatomic, retain) NSMutableArray * selectedObjDetails;
 @property (nonatomic, retain) NSMutableDictionary * objectSelected;
+//Radha - Defect Fix 6483
+@property (nonatomic, retain) NSString * searchId;
 
 - (void) setLookupData:(NSDictionary *)_lookupDetails;
 - (void) reloadData;

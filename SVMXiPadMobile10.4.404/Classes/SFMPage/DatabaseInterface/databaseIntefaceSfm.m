@@ -1669,23 +1669,62 @@ extern void SVMXLog(NSString *format, ...);
     return count;
 }
 
-//For muti add  
--(NSMutableDictionary *)getDataForMultiAdd:(NSString *)object_name searchField:(NSString *)search_field 
+//For muti add
+//Radha - Defect Fix 6483 
+-(NSMutableDictionary *)getDataForMultiAdd:(NSString *)object_name searchField:(NSString *)search_field lookUpSearchId:(NSString *)searchId
 {
     NSMutableDictionary * muti_add_data = [[NSMutableDictionary alloc] initWithCapacity:0];
     NSMutableArray * eachRow = [[NSMutableArray alloc] initWithCapacity:0];
+	
+	int no_of_records = 0;
     
+	//Radha - Defect Fix 6483
     NSString * query = @"";
+	sqlite3_stmt * stmt ;
+	
+	if(searchId == nil || [searchId isEqualToString:@""])
+	{
+		query = [NSString stringWithFormat:@"SELECT DISTINCT no_of_lookup_records FROM '%@' WHERE object_name = '%@'", SFNAMEDSEARCH,object_name];
+	}
+	
+	else
+	{
+		query = [NSString stringWithFormat:@"SELECT DISTINCT no_of_lookup_records FROM '%@' WHERE object_name = '%@' AND search_sfid = '%@'", SFNAMEDSEARCH,object_name, searchId];
+	}
+	
+	
+	if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+	{
+		while (synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+		{
+			char * temprecord = (char *)synchronized_sqlite3_column_text(stmt, 0);
+			NSString * records = @"";
+			if (temprecord != nil && strlen(temprecord))
+			{
+				records = [NSString stringWithUTF8String:temprecord];
+				no_of_records = [records intValue];
+			}
+			else if(temprecord == nil || !(strlen(temprecord)))
+            {
+                no_of_records = LOOKUP_RECORDS_LIMIT;
+            }
+		}
+	}
+	
+	query = @"";
+	stmt = nil;
+	
+	//Radha - Defect Fix 6483
     if ([search_field length] > 0)
 	{
-        query = [NSString stringWithFormat:@"SELECT Id , %@ FROM '%@' Where Name LIKE '%%%@%%'",@"Name" , object_name, search_field];
+        query = [NSString stringWithFormat:@"SELECT Id , %@ FROM '%@' Where Name LIKE '%%%@%%' LIMIT %d",@"Name" , object_name, search_field, no_of_records];
     }
 	else
 	{
-        query = [NSString stringWithFormat:@"SELECT Id , %@ FROM '%@'",@"Name" , object_name];
+        query = [NSString stringWithFormat:@"SELECT Id , %@ FROM '%@' LIMIT %d",@"Name" , object_name, no_of_records];
     }
     
-    sqlite3_stmt * stmt ;
+    
     NSString * Id = @"";
     NSString * field_value = @"";
     
@@ -1745,12 +1784,24 @@ extern void SVMXLog(NSString *format, ...);
     NSString * isstandard = @"";
     NSString * isdefault = @"";
     
-//    NSString * no_of_records = @"";
+	//Radha - Defect Fix 6483 - Get no_of_records to be displayed using lookupid
+    NSString * no_of_records = @"";
     int records = LOOKUP_RECORDS_LIMIT;
+	
+	NSString *querystring2 = @"";
     
-//    NSString *querystring2 = [NSString stringWithFormat:@"Select default_lookup_column,object_name,is_default,is_standard, no_of_lookup_records from '%@' where object_name = '%@'", SFNAMEDSEARCH,object];
+	 if(lookupID == nil || [lookupID isEqualToString:@""])
+	 {
+		 querystring2 = [NSString stringWithFormat:@"Select default_lookup_column,object_name,is_default,is_standard, no_of_lookup_records from '%@' where object_name = '%@'", SFNAMEDSEARCH,object];
+	 }
+	   
+	 else
+	 {
+		 querystring2 = [NSString stringWithFormat:@"Select default_lookup_column,object_name,is_default,is_standard, no_of_lookup_records from '%@' where object_name = '%@' AND search_sfid = '%@'", SFNAMEDSEARCH,object, lookupID];
+
+	 }
     
-    NSString *querystring2 = [NSString stringWithFormat:@"Select default_lookup_column,object_name,is_default,is_standard from '%@' where object_name = '%@'", SFNAMEDSEARCH,object];
+    
     NSArray * lookUp_info_object_keys = [NSArray arrayWithObjects:LOOKUP_DEFAULT_LOOK_UP_CLMN,LOOKUP_OBJECT_NAME,LOOkUP_IS_DEFAULT,LOOKUP_IS_STANDARD, nil];
     
     sqlite3_stmt * stmt_;
@@ -1784,18 +1835,18 @@ extern void SVMXLog(NSString *format, ...);
             if(temp_isdefault != nil)
             {
                 isdefault = [NSString stringWithUTF8String:temp_isdefault];
+            }			
+			//Radha - Defect Fix 6483
+            char * temp_records = (char *) synchronized_sqlite3_column_text(stmt_, 4);
+            if (temp_records != nil && strlen(temp_records))
+            {
+                no_of_records = [NSString stringWithUTF8String:temp_records];
+                records = [no_of_records intValue];
             }
-            //Commented to satisfy resolution of the defect: 6533
-//            char * temp_records = (char *) synchronized_sqlite3_column_text(stmt_, 4);
-//            if (temp_records != nil && strlen(temp_records))
-//            {
-//                no_of_records = [NSString stringWithUTF8String:temp_records];
-//                records = [no_of_records intValue];
-//            }
-//            else if(temp_records == nil || !(strlen(temp_records)))
-//            {
-//                records = LOOKUP_RECORDS_LIMIT;
-//            }
+            else if(temp_records == nil || !(strlen(temp_records)))
+            {
+                records = LOOKUP_RECORDS_LIMIT;
+            }
             
             NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:default_column,Object_name,isstandard,isdefault, nil] forKeys:lookUp_info_object_keys];
             [lookup_object_info addObject:dict];
