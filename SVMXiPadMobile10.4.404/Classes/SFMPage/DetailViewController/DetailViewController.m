@@ -9942,6 +9942,8 @@ extern void SVMXLog(NSString *format, ...);
 #pragma mark - ShowHelp Method
 - (void) showHelp
 {
+	//Radha Fix for defect - 4690
+	[self dismissActionMenu];
     HelpController * help = [[HelpController alloc] initWithNibName:@"HelpController" bundle:nil];
     help.modalPresentationStyle = UIModalPresentationFullScreen;
     help.modalTransitionStyle = UIModalTransitionStyleCoverVertical;

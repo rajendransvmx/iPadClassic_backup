@@ -164,6 +164,12 @@ PopoverButtons *popOver_view;
 
 - (void) showHelp
 {
+	//Radha Fix for defect - 4690
+	
+	if (syncStatus.popOver != nil)
+		[syncStatus.popOver dismissPopoverAnimated:YES];
+	if (popOver_view.popover != nil)
+		[self dismisspopover];
     [dataSync showHelp];
 
 }
