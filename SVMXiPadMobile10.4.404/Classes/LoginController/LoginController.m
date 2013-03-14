@@ -17,7 +17,7 @@
 #import "Reachability.h"
 
 #define degreesToRadian(x) (M_PI * x / 180.0)
-#define KEYCHAIN_SERVICE_NAME               @"ServiceMaxEnterprise"
+
 extern void SVMXLog(NSString *format, ...);
 
 @implementation LoginController
@@ -1188,12 +1188,8 @@ extern void SVMXLog(NSString *format, ...);
     return userId;
 }
 
-
-// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
-- (void)viewDidLoad
+- (void)initialCheckup
 {
-    [super viewDidLoad];
-    
     //sahana initial sync crash fix
     checkIn = TRUE;
     
@@ -1201,48 +1197,58 @@ extern void SVMXLog(NSString *format, ...);
     
     appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
     @try{
-    NSString * kRestoreLocationKey = [NSString stringWithFormat:@"RestoreLocation"];
-    NSMutableArray * temp = [[NSUserDefaults standardUserDefaults] objectForKey:kRestoreLocationKey];
-    SMLog(@"%@", temp);
-    
-    appDelegate.priceBookName = @"Standard Price Book";
-    
-    NSError * error = nil;
-    _username = [SFHFKeychainUtils getPasswordForUsername:@"username" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
-    if ((_username == nil) && (temp != nil))
-    {
-        _username = [[temp objectAtIndex:0] objectForKey:@"username"];
-    }
-    txtUsernameLandscape.text = _username;
-    
-    // Retrieve password from keychain
-    
-    _password = [SFHFKeychainUtils getPasswordForUsername:@"password" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
-    if ((_password == nil) && (appDelegate.savedReference != nil))
-    {
-        _password = [[appDelegate.savedReference objectAtIndex:0] objectForKey:@"password"];
-    }
-    txtPasswordLandscape.text = _password;
-    
-    [createSampleLabel setText:SAMPLEDATA];
-    
-    //Radha
-    [checkBoxTitle setText:@"Initial Meta Sync"];
-    isinitialSyncButtonChecked = FALSE;
-    
-    //Abinash
-    [incrementalMetasync setText:@"Do incremental MetaSync"];
-    isincrementalMetaSyncButtonChecked = FALSE;
-    
-    didDebriefData = FALSE;
-    didQueryTechnician = FALSE;
-    didEnterAlertView = FALSE;  
+        NSString * kRestoreLocationKey = [NSString stringWithFormat:@"RestoreLocation"];
+        NSMutableArray * temp = [[NSUserDefaults standardUserDefaults] objectForKey:kRestoreLocationKey];
+        SMLog(@"%@", temp);
+        
+        appDelegate.priceBookName = @"Standard Price Book";
+        
+        NSError * error = nil;
+        _username = [SFHFKeychainUtils getPasswordForUsername:@"username" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
+        SMLog(@"%@", _username);
+        if ((_username == nil) && (temp != nil))
+        {
+            _username = [[temp objectAtIndex:0] objectForKey:@"username"];
+        }
+        txtUsernameLandscape.text = _username;
+        
+        // Retrieve password from keychain
+        
+        _password = [SFHFKeychainUtils getPasswordForUsername:@"password" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
+        SMLog(@"%@", _password);
+        if ((_password == nil) && (appDelegate.savedReference != nil))
+        {
+            _password = [[appDelegate.savedReference objectAtIndex:0] objectForKey:@"password"];
+        }
+        txtPasswordLandscape.text = _password;
+        
+        [createSampleLabel setText:SAMPLEDATA];
+        
+        //Radha
+        [checkBoxTitle setText:@"Initial Meta Sync"];
+        isinitialSyncButtonChecked = FALSE;
+        
+        //Abinash
+        [incrementalMetasync setText:@"Do incremental MetaSync"];
+        isincrementalMetaSyncButtonChecked = FALSE;
+        
+        didDebriefData = FALSE;
+        didQueryTechnician = FALSE;
+        didEnterAlertView = FALSE;
 	}@catch (NSException *exp) {
         SMLog(@"Exception Name LoginController :viewDidLoad %@",exp.name);
         SMLog(@"Exception Reason LoginController :viewDidLoad %@",exp.reason);
         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
     }
+
+}
+
+// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
     
+    [self initialCheckup];
 }
 
 - (void) didInternetConnectionChange:(NSNotification *)notification
@@ -1939,8 +1945,8 @@ extern void SVMXLog(NSString *format, ...);
 -(void)autologin
 {
     checkIn = FALSE;
-    NSString * plist_user_name = [self getUSerInfoForKey:USER_NAME_AUTHANTICATED];
-    NSString * status = [self getUSerInfoForKey:INITIAL_SYNC_LOGIN_SATUS];
+    NSString * plist_user_name = [appDelegate getUSerInfoForKey:USER_NAME_AUTHANTICATED];
+    NSString * status = [appDelegate getUSerInfoForKey:INITIAL_SYNC_LOGIN_SATUS];
     if([_username isEqualToString:plist_user_name] && [status isEqualToString:@"false"])
     {
         [self doinitialSettings];
@@ -1989,19 +1995,6 @@ extern void SVMXLog(NSString *format, ...);
         return;
     }
 
-}
--(NSString *)getUSerInfoForKey:(NSString *)key
-{
-    NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:USER_INFO_PLIST];
-    NSDictionary * dict = [[[NSDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST] autorelease];
-    NSArray * allkeys = [dict allKeys];
-    for(NSString * str in allkeys)
-    {
-        SMLog(@"str-%@",str);
-    }
-    NSString * value = [[dict objectForKey:key] retain];
-    return value;
 }
 
 - (void) readUsernameAndPasswordFromKeychain

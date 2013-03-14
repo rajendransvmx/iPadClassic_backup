@@ -320,7 +320,13 @@ const NSUInteger kNumImages = 7;
 {
     [locationManager stopUpdatingLocation];
     [appDelegate showloginScreen];
-    [self dismissViewControllerAnimated:YES completion:nil];
+    
+    if([appDelegate.window.rootViewController isKindOfClass:[iPadScrollerViewController class]])
+        [appDelegate setLoginAsRootFrom:self];
+    else
+    {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
 }
 
 -(void)sync

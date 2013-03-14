@@ -8,10 +8,12 @@
 
 #import "iServiceAppDelegate.h"
 #import "LoginController.h" 
+#import "iPadScrollerViewController.h"
 #import "LocalizationGlobals.h"
 #import "ManualDataSync.h"
 #import "SummaryViewController.h"
 #import <SystemConfiguration/SystemConfiguration.h>
+#import "SFHFKeychainUtils.h"
 
 extern void SVMXLog(NSString *format, ...);
 
@@ -378,6 +380,20 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     return (UIInterfaceOrientationMaskLandscapeRight || UIInterfaceOrientationMaskLandscapeLeft);
 }
 
+-(NSString *)getUSerInfoForKey:(NSString *)key
+{
+    NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:USER_INFO_PLIST];
+    NSDictionary * dict = [[[NSDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST] autorelease];
+    NSArray * allkeys = [dict allKeys];
+    for(NSString * str in allkeys)
+    {
+        SMLog(@"str-%@",str);
+    }
+    NSString * value = [[dict objectForKey:key] retain];
+    return value;
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     Enable_aggresssiveSync = FALSE;
@@ -467,13 +483,37 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     switchViewLayouts = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
 
     loginController = [[LoginController alloc] initWithNibName:@"LoginController" bundle:nil];
-    
-    loginController.modalPresentationStyle = UIModalPresentationFullScreen;
-    loginController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [window setRootViewController:loginController];
+
+    NSString * status = [self getUSerInfoForKey:INITIAL_SYNC_LOGIN_SATUS];
+    if([status isEqualToString:@"false"])
+    {
+        NSError * error = nil;
+        self.username = [SFHFKeychainUtils getPasswordForUsername:@"username" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
+        self.password = [SFHFKeychainUtils getPasswordForUsername:@"password" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
+        
+        if( (![self.username isEqualToString:@""] || self.username != nil) && (![self.password isEqualToString:@""]  || self.password != nil) && [self goOnlineIfRequired] )
+        {
+            self.IsLogedIn = ISLOGEDIN_TRUE;
+            self.do_meta_data_sync = ALLOW_META_AND_DATA_SYNC;
+            
+            homeScreenView = [[iPadScrollerViewController alloc] initWithNibName:@"iPadScrollerViewController" bundle:nil];
+            homeScreenView.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+            homeScreenView.modalPresentationStyle = UIModalPresentationFullScreen;
+            [window setRootViewController:homeScreenView];
+            [homeScreenView release];
+        }
+    }
+    else
+    {
+        
+        loginController.modalPresentationStyle = UIModalPresentationFullScreen;
+        loginController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+        
+        [window setRootViewController:loginController];
+    }
+
     [window makeKeyAndVisible];
     //[self.viewController presentViewController:loginController animated:YES];
-    [loginController release];
     
     _iOSObject = [[iOSInterfaceObject alloc] init];
     
@@ -704,6 +744,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 
 - (void)dealloc
 {
+    if(loginController) [loginController release];
+    
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_TIMER_INVALIDATE object:nil];
     [animatedImageView release];
     [sfmSearchTableArray release];
@@ -1132,6 +1174,16 @@ NSString * GO_Online = @"GO_Online";
 
 
 # pragma mark - Logout
+- (void)setLoginAsRootFrom:(UIViewController*)controller
+{
+    loginController.modalPresentationStyle = UIModalPresentationFullScreen;
+    loginController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    
+    [controller presentViewController:loginController animated:YES completion:^{
+        [self.window setRootViewController:loginController];
+    }];
+}
+
 - (void) showloginScreen
 {
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];

@@ -10,7 +10,7 @@
 #import "iServiceAppDelegate.h"
 #import "iPadScrollerViewController.h"
 #import "OpenFlowAppViewController.h"
-
+#define KEYCHAIN_SERVICE_NAME               @"ServiceMaxEnterprise"
 @class ModalViewController;
 
 #define APPVERSION                                  8.41000
@@ -132,7 +132,7 @@
 -(void)scheduleLocationPing;
 -(void)autologin;
 -(void) doinitialSettings;
--(NSString *)getUSerInfoForKey:(NSString *)key;
+//-(NSString *)getUSerInfoForKey:(NSString *)key;
 
 //Radha 27th April 2011
 //-(void) callModalViewController;
