@@ -3016,7 +3016,12 @@ extern void SVMXLog(NSString *format, ...);
        // NSMutableString *queryString = [NSMutableString stringWithFormat:@"Update trobleshootdata Set prod_manual_Id = '%@', prod_manual_name = '%@' Where ProductId = '%@'", 
                                         //[manualInfo objectForKey:@"ManId"],[manualInfo objectForKey:@"ManName"], productID];
         
-        NSString *deleteQuery = [NSString stringWithFormat:@"Delete From troubleshootdata where ProductId = '%@'", productID];
+        //Aparna
+        //Fixed the defect: 6627 : By changing the tablename troubleshootdata to trobleshootdata
+        //Fixed the defect: 6628: By changeing the query
+        NSString *deleteQuery = [NSString stringWithFormat:@"Delete From trobleshootdata where prod_manual_Id = '%@' and prod_manual_name = '%@' and ProductId = '%@'",
+                                 [manualInfo objectForKey:@"ManId"],[manualInfo objectForKey:@"ManName"],productID];
+
         char *err;
         if (synchronized_sqlite3_exec(appDelegate.db, [deleteQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
         {
@@ -3071,7 +3076,9 @@ extern void SVMXLog(NSString *format, ...);
     
     if (synchronized_sqlite3_prepare_v2(appDelegate.db, [queryString UTF8String], -1, &stmt, NULL) == SQLITE_OK)
     {
-        if (synchronized_sqlite3_step(stmt) == SQLITE_ROW) 
+        //Aparna
+        //Fixed defect: 6628: Replaced if with while
+        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
         {
             NSString *manName = @"";
             char *field = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_1);
@@ -3111,7 +3118,9 @@ extern void SVMXLog(NSString *format, ...);
     
     if (synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &stmt, NULL) == SQLITE_OK)
     {
-        if (synchronized_sqlite3_step(stmt) == SQLITE_ROW) 
+        //Aparna
+        //Fixed defect: 6628: Replaced if with while
+        while (synchronized_sqlite3_step(stmt) == SQLITE_ROW)
         {
             const char * raw_data = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_1);
             if (raw_data != nil)
