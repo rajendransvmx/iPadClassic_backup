@@ -718,7 +718,6 @@
 		A8DB1CFA16E0B586007D1A4F /* Utility.m in Sources */ = {isa = PBXBuildFile; fileRef = A8DB1CF916E0B586007D1A4F /* Utility.m */; };
 		A8DB1D0416E0B58B007D1A4F /* HTMLJSWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = A8DB1CFD16E0B58B007D1A4F /* HTMLJSWrapper.m */; };
 		A8DB1D0516E0B58B007D1A4F /* iOStoJsBridge.js in Resources */ = {isa = PBXBuildFile; fileRef = A8DB1CFF16E0B58B007D1A4F /* iOStoJsBridge.js */; };
-		A8DB1D0616E0B58B007D1A4F /* jquery-1.8.2.min.js in Resources */ = {isa = PBXBuildFile; fileRef = A8DB1D0016E0B58B007D1A4F /* jquery-1.8.2.min.js */; };
 		A8DB1D0716E0B58B007D1A4F /* svmx_client_api.js in Resources */ = {isa = PBXBuildFile; fileRef = A8DB1D0116E0B58B007D1A4F /* svmx_client_api.js */; };
 		A8DB1D0816E0B58B007D1A4F /* JSExecuter.m in Sources */ = {isa = PBXBuildFile; fileRef = A8DB1D0316E0B58B007D1A4F /* JSExecuter.m */; };
 		A8DB1D0C16E0B590007D1A4F /* PriceBookData.m in Sources */ = {isa = PBXBuildFile; fileRef = A8DB1D0B16E0B590007D1A4F /* PriceBookData.m */; };
@@ -1803,7 +1802,6 @@
 		A8DB1CFC16E0B58B007D1A4F /* HTMLJSWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLJSWrapper.h; sourceTree = "<group>"; };
 		A8DB1CFD16E0B58B007D1A4F /* HTMLJSWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTMLJSWrapper.m; sourceTree = "<group>"; };
 		A8DB1CFF16E0B58B007D1A4F /* iOStoJsBridge.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = iOStoJsBridge.js; sourceTree = "<group>"; };
-		A8DB1D0016E0B58B007D1A4F /* jquery-1.8.2.min.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "jquery-1.8.2.min.js"; sourceTree = "<group>"; };
 		A8DB1D0116E0B58B007D1A4F /* svmx_client_api.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = svmx_client_api.js; sourceTree = "<group>"; };
 		A8DB1D0216E0B58B007D1A4F /* JSExecuter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSExecuter.h; sourceTree = "<group>"; };
 		A8DB1D0316E0B58B007D1A4F /* JSExecuter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSExecuter.m; sourceTree = "<group>"; };
@@ -4315,7 +4313,6 @@
 			isa = PBXGroup;
 			children = (
 				A8DB1CFF16E0B58B007D1A4F /* iOStoJsBridge.js */,
-				A8DB1D0016E0B58B007D1A4F /* jquery-1.8.2.min.js */,
 				A8DB1D0116E0B58B007D1A4F /* svmx_client_api.js */,
 			);
 			path = Javascript;
@@ -5173,7 +5170,6 @@
 				39C8F5621521F51200F81B51 /* tooltip.js in Resources */,
 				FA9A0D6B14DFB6660077B1EB /* json2.js in Resources */,
 				A8DB1D0516E0B58B007D1A4F /* iOStoJsBridge.js in Resources */,
-				A8DB1D0616E0B58B007D1A4F /* jquery-1.8.2.min.js in Resources */,
 				A8DB1D0716E0B58B007D1A4F /* svmx_client_api.js in Resources */,
 				7B00224212282B08002E1770 /* add-task.png in Resources */,
 				7B00224312282B08002E1770 /* big-date-bg.png in Resources */,
