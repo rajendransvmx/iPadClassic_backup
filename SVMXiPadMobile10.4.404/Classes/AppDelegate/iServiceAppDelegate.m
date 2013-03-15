@@ -14,8 +14,16 @@
 #import "SummaryViewController.h"
 #import <SystemConfiguration/SystemConfiguration.h>
 #import "SFHFKeychainUtils.h"
+#import <sys/utsname.h>
 
 extern void SVMXLog(NSString *format, ...);
+
+//krishna client info
+const NSString *deviceType = @"type";//@"iPad";
+const NSString *osVersion = @"iOSVersion";
+const NSString *applicationVersion = @"appVersion";
+const NSString *devVersion = @"deviceVersion";
+
 
 iServiceAppDelegate *appDelegate;
 
@@ -394,6 +402,58 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     return value;
 }
 
+//Changed krishna.
+#pragma mark - Client info param
+//Request paremeters for client Info
+
+NSString* machineName()
+{
+    struct utsname systemInfo;
+    uname(&systemInfo);
+    
+    return [NSString stringWithCString:systemInfo.machine
+                              encoding:NSUTF8StringEncoding];
+}
+- (NSString *) getDeviceVersion {
+    
+    
+    NSString *myIpad = machineName();
+    return myIpad;
+}
+- (NSDictionary *)getClientInfoDict {
+    
+    UIDevice *currentDevice = [UIDevice currentDevice];
+    
+    NSString *type = [currentDevice model];
+    
+    NSString *systemOSVersion = [currentDevice systemVersion];
+    
+    NSString *appVersion = [[NSBundle mainBundle]
+                            objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
+    
+    NSString *deviceVersion = [self getDeviceVersion];
+    
+    NSLog(@"model : %@ systemVersion : %@ appversion %@",type,systemOSVersion,appVersion);
+    
+    
+    NSString *str = [NSString stringWithFormat:@"model : %@ systemVersion : %@ appversion %@ iPadVersion %@",type,systemOSVersion,appVersion,deviceVersion];
+    
+    NSLog(@"string %@",str);
+    
+    NSMutableDictionary *clientInfodict = [NSMutableDictionary dictionary];
+    [clientInfodict setObject:type forKey:deviceType];
+    [clientInfodict setObject:systemOSVersion forKey:osVersion];
+    [clientInfodict setObject:appVersion forKey:applicationVersion];
+    [clientInfodict setObject:deviceVersion forKey:devVersion];
+    return clientInfodict;
+}
+//create new object
+- (INTF_WebServicesDefServiceSvc_SVMXClient  *) getSVMXClientObject
+{
+    //ADD SVMXClient
+    return svmxc_client;
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     Enable_aggresssiveSync = FALSE;
@@ -544,6 +604,17 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     }
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timerHandler:) name:NOTIFICATION_TIMER_INVALIDATE object:nil];
+    
+    //Changed krishna.
+    //set client info at the begining of the app
+    
+    svmxc_client = [[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init];
+
+    NSDictionary *clientInfoDict = [self getClientInfoDict];
+    svmxc_client.clientType = [clientInfoDict objectForKey:deviceType];//@"iPad";
+    [svmxc_client.clientInfo addObject:[clientInfoDict objectForKey:osVersion]];
+    [svmxc_client.clientInfo addObject:[clientInfoDict objectForKey:applicationVersion]];
+    [svmxc_client.clientInfo addObject:[clientInfoDict objectForKey:devVersion]];
     
 	return YES;
 }
@@ -756,6 +827,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     [_manualDataSync release];
     [frequencyLocationService release];
     [locationPingSettingTimer invalidate];
+    [svmxc_client release];
     [super dealloc];
 }
 

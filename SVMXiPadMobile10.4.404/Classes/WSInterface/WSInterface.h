@@ -35,12 +35,6 @@
 @protocol RefreshProgressBar;
 @protocol RefreshSyncUIStatusButton;
 
-//krishna : client info
-extern  NSString const *deviceType;
-extern  NSString const *osVersion;
-extern  NSString const *applicationVersion;
-extern  NSString const *devVersion;
-
 @interface WSInterface : NSObject
 <INTF_WebServicesDefBindingResponseDelegate>
 {

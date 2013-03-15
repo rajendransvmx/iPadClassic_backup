@@ -202,6 +202,11 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 
 @end
 
+//krishna : client info
+extern  NSString const *deviceType;
+extern  NSString const *osVersion;
+extern  NSString const *applicationVersion;
+extern  NSString const *devVersion;
 
 
 @interface iServiceAppDelegate : NSObject
@@ -502,6 +507,10 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 	NSString *errorDescription;
 //    NSMutableDictionary *tempDict;
 //    NSInteger Custom_alert_count;
+    
+    //changed krishna : client Info
+    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client;
+    
 }
 @property (nonatomic)BOOL Enable_aggresssiveSync;
 @property (nonatomic,retain) NSMutableArray * code_snippet_ids;
@@ -854,6 +863,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 
 -(void)getTriggerCode;
 
+//changed krishna
+- (INTF_WebServicesDefServiceSvc_SVMXClient  *) getSVMXClientObject;
 @end
 
 @interface processInfo : NSObject {
