@@ -14,5 +14,5 @@
 - (BOOL) processFirstCallResponse:(INTF_WebServicesDefServiceSvc_SVMXMap * )svmxMapObject;
 - (BOOL) processSecondCallResponse:(INTF_WebServicesDefServiceSvc_SVMXMap * )svmxMapObject;
 - (BOOL) processThirdCallResponse:(INTF_WebServicesDefServiceSvc_SVMXMap * )svmxMapObject;
-- (NSDictionary *) getSyncReacordHeapDictForSFID:(NSString *)sfId withSyncType:(NSString *)syncType;
+- (NSDictionary *) getSyncRecordHeapDictForSFID:(NSString *)sfId withSyncType:(NSString *)syncType;
 @end

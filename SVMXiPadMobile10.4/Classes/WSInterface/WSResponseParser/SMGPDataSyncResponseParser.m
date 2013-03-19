@@ -112,7 +112,7 @@
                         if(((NSNull *) obj != [NSNull null]))
                         {
                             NSAutoreleasePool *kPool = [[NSAutoreleasePool alloc] init];
-                            NSDictionary *dict = [[self getSyncReacordHeapDictForSFID:obj withSyncType:@"DATA_SYNC"] retain];                            
+                            NSDictionary *dict = [[self getSyncRecordHeapDictForSFID:obj withSyncType:@"DATA_SYNC"] retain];                            
                             [dataArray addObject:dict];
                             [dict release];
                             [kPool drain];
@@ -178,7 +178,7 @@
                     {
                         
                         NSAutoreleasePool *kPool = [[NSAutoreleasePool alloc] init];
-                        NSDictionary *dict = [[self getSyncReacordHeapDictForSFID:obj withSyncType:@"DATA_SYNC"] retain];
+                        NSDictionary *dict = [[self getSyncRecordHeapDictForSFID:obj withSyncType:@"DATA_SYNC"] retain];
                         [dataArray addObject:dict];
                         [dict release];
                         [kPool drain];
@@ -240,7 +240,7 @@
                     {
                         
                         NSAutoreleasePool *kPool = [[NSAutoreleasePool alloc] init];
-                        NSDictionary *dict = [[self getSyncReacordHeapDictForSFID:obj withSyncType:@"DATA_SYNC"] retain];
+                        NSDictionary *dict = [[self getSyncRecordHeapDictForSFID:obj withSyncType:@"DATA_SYNC"] retain];
                         [dataArray addObject:dict];
                         [dict release];
                         [kPool drain];
@@ -270,7 +270,7 @@
         return recordIDs;
     return nil;
 }
-- (NSDictionary *) getSyncReacordHeapDictForSFID:(NSString *)sfId withSyncType:(NSString *)syncType
+- (NSDictionary *) getSyncRecordHeapDictForSFID:(NSString *)sfId withSyncType:(NSString *)syncType
 {
     NSMutableDictionary *dataDict = [[NSMutableDictionary alloc] init];
     [dataDict setObject:@"MASTER" forKey:@"RECORD_TYPE"];
