@@ -162,8 +162,7 @@
                                 if([objKey isEqualToString:_TYPE])
                                 {
                                     //get the proper type from db
-                                    NSString *type = [self.dataBase columnType:value];
-                                    NSString *dataType = [NSString stringWithFormat:@"'%@'",type];
+                                    NSString *dataType = [NSString stringWithFormat:@"'%@'",[fieldValue lowercaseString]];
                                     [dict setObject:dataType forKey:MTYPEM];
                                 }
                                 else
