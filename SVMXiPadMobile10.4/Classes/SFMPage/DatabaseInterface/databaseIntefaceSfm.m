@@ -14,6 +14,8 @@
 #import "SBJsonParser.h"
 #import "ZKPicklistEntry.h"
 #import "NSObject+SBJson.h"
+#import "Utility.h"
+
 extern void SVMXLog(NSString *format, ...);
 
 @implementation databaseIntefaceSfm
@@ -7027,4 +7029,338 @@ extern void SVMXLog(NSString *format, ...);
     [new_sf_id release];
     return name_field;
 }
+
+
+#pragma mark - 
+#pragma mark Get price deletion of records
+- (void)insertGetPriceRecordsToRespectiveTables:(NSMutableDictionary *)gpData andParser:(SBJsonParser *)jsonParser{
+   
+    @try {
+        
+        NSMutableDictionary *objectFieldDictionaryLocal = [[NSMutableDictionary alloc] init];
+        
+        BOOL allRecordInsertedSuccessFully = YES;
+        int retVal =  [self startTransaction];
+        SMLog(@"GP Starting transcation Success = %d",retVal);
+        
+        /*For each object in object array, objectApiName = table name  */
+        NSArray *allKeysOfSyncData = [gpData allKeys];
+        for(NSString *objectApiName in allKeysOfSyncData) {
+            
+            NSAutoreleasePool * autoreleaseExternal = [[NSAutoreleasePool alloc] init];
+            
+            SMLog(@"GP Insertion starts for %@",objectApiName);
+            
+            NSArray *allRecords =[gpData objectForKey:objectApiName];
+            NSInteger numberOfRecords = [allRecords count];
+            if (numberOfRecords <= 0) {
+                continue;
+            }
+            
+            /* get field and table schema only once and store it in global dictionary*/
+            NSMutableDictionary *fieldDictionary =  [objectFieldDictionaryLocal objectForKey:objectApiName];
+            if(fieldDictionary == nil ) {
+                
+                fieldDictionary = [self getAllFieldsAndItsDataTypesForObject:objectApiName tableName:SFOBJECTFIELD];
+                [fieldDictionary setValue:@"VARCHAR" forKey:@"local_id"];
+                [objectFieldDictionaryLocal setObject:fieldDictionary forKey:objectApiName];
+            }
+            
+            /* Form a query and store that in the global dictionary */
+            NSArray * allKeysObjectApiNames = [fieldDictionary allKeys];
+            NSString * fieldString = @"";
+            NSString * valuesString = @"";
+            
+            NSInteger allKeysCount = [allKeysObjectApiNames count];
+            for(int t = 0; t < allKeysCount;t++)
+            {
+                NSString * keyFieldName = [allKeysObjectApiNames objectAtIndex:t];
+                if(t != 0)
+                {
+                    NSString * temp_field_string = [NSString stringWithFormat:@",%@" ,keyFieldName];
+                    fieldString = [fieldString stringByAppendingFormat:@"%@",temp_field_string];
+                    valuesString = [valuesString stringByAppendingFormat:@",?%d",t+1];
+                }
+                else
+                {
+                    NSString * temp_field_string = [NSString stringWithFormat:@"%@" ,keyFieldName];
+                    fieldString = [fieldString stringByAppendingFormat:@"%@",temp_field_string];
+                    valuesString = [valuesString stringByAppendingFormat:@"?%d",t+1];
+                }
+            }
+            
+            /*get all these records whether master or detail */
+            NSString *insertionQuery = [NSString stringWithFormat:@"INSERT INTO '%@' (%@) VALUES (%@)",objectApiName,fieldString,valuesString];
+            
+            /* Compile it for the records and insert them */
+            sqlite3_stmt * bulk_statement = nil;
+            
+            int preparedSuccessfully = sqlite3_prepare_v2(appDelegate.db, [insertionQuery UTF8String], strlen([insertionQuery UTF8String]), &bulk_statement, NULL);
+            int counter = 0;
+            
+            NSString *sfid=nil,*jsonRecord = nil;
+            if(preparedSuccessfully == SQLITE_OK)
+            {
+                for (counter = 0; counter < numberOfRecords; counter++) {
+                    
+                    NSAutoreleasePool * autoreleaseInternal = [[NSAutoreleasePool alloc] init];
+                    
+                    jsonRecord = [allRecords objectAtIndex:counter];
+                    NSMutableDictionary * responseDictionary = [self getDictForJsonString:jsonRecord withParser:jsonParser];
+                    
+                    sfid = [responseDictionary objectForKey:@"Id"];
+                    
+                    NSString * newLocalId  = [iServiceAppDelegate GetUUID];
+                    
+                    BOOL  noDuplicate = [appDelegate.dataBase checkForDuplicateId:objectApiName sfId:sfid];
+                    /* Insertion */
+                    if(noDuplicate)
+                    {
+                        [responseDictionary setObject:newLocalId forKey:@"local_id"];
+                        
+                        NSInteger allTableColumnNamesCount = [allKeysObjectApiNames count];
+                        for(int x = 0; x < allTableColumnNamesCount; x++)
+                        {
+                            int column_num = x+1;
+                            NSString * field = [allKeysObjectApiNames objectAtIndex:x];
+                            NSString * data_type = [fieldDictionary objectForKey:field];
+                            NSString * columnType = [appDelegate.dataBase columnType:data_type];
+                            NSString * final_value = [responseDictionary objectForKey:field];
+                            
+                            
+                            if([data_type isEqualToString:@"boolean"])
+                            {
+                                if ([final_value isEqualToString:@"True"] || [final_value isEqualToString:@"true"] || [final_value isEqualToString:@"1"])
+                                {
+                                    final_value = @"1";
+                                }
+                                else
+                                {
+                                    final_value = @"0";
+                                }
+                            }
+                            
+                            if(final_value == nil)
+                            {
+                                final_value = @"";
+                            }
+                            
+                            
+                            char * _finalValue = [appDelegate convertStringIntoChar:final_value];
+                            
+                            if([columnType isEqualToString:DOUBLE])
+                            {
+                                sqlite3_bind_double(bulk_statement, column_num, [final_value doubleValue]);
+                            }
+                            else if([columnType isEqualToString:INTEGER])
+                            {
+                                sqlite3_bind_int(bulk_statement, column_num, [final_value intValue]);
+                            }
+                            else if([columnType isEqualToString:DATETIME])
+                            {
+                                sqlite3_bind_text(bulk_statement, column_num, _finalValue, strlen(_finalValue), SQLITE_TRANSIENT);
+                            }
+                            else if([columnType isEqualToString:VARCHAR])
+                            {
+                                
+                                sqlite3_bind_text(bulk_statement, column_num, _finalValue, strlen(_finalValue), SQLITE_TRANSIENT);
+                            }
+                            else if([columnType isEqualToString:_BOOL])
+                            {
+                                
+                                sqlite3_bind_text(bulk_statement, column_num, _finalValue, strlen(_finalValue), SQLITE_TRANSIENT);
+                            }
+                            else
+                            {
+                                sqlite3_bind_text(bulk_statement, column_num, _finalValue, strlen(_finalValue), SQLITE_TRANSIENT);
+                            }
+                        }
+                        
+                        int ret = sqlite3_step(bulk_statement);
+                        SMLog(@"Insertion For for %@ Success = %d",sfid,ret);
+                        if (ret!= SQLITE_DONE)
+                        {
+                            allRecordInsertedSuccessFully = NO;
+                            NSError *error = nil;
+                            NSLog(@"Commit Failed!\n");
+                            SMLog(@"%@", insertionQuery);
+                            SMLog(@"METHOD:updateAllRecordsToSyncRecordsHeap " );
+                            SMLog(@"ERROR IN UPDATING %s", error); //RADHA TODAY
+                            
+                        }
+                        sqlite3_reset(bulk_statement);
+                    }
+                    else
+                    {
+                        BOOL flag = [self updateGPTableforSFId:sfid forObject:objectApiName data:responseDictionary];
+                        if(flag)
+                        {
+                            NSLog(@"Record updated ");
+                        }
+                        else {
+                            allRecordInsertedSuccessFully = NO;
+                        }
+                    }
+                    
+                    
+                    [responseDictionary release];
+                    [newLocalId release];
+                    
+                    [autoreleaseInternal drain];
+                    autoreleaseInternal = nil;
+                }
+                
+            }
+            else
+            {
+                NSLog(@"Failed to insert Initial Sync");
+            }
+            
+            sqlite3_finalize(bulk_statement);
+            
+            [autoreleaseExternal release];
+            autoreleaseExternal = nil;
+            SMLog(@"Insertion Ends for %@",objectApiName);
+        }
+        
+        retVal = [self endTransaction];
+        SMLog(@"Commit transaction %d",retVal);
+        
+        [objectFieldDictionaryLocal release];
+        objectFieldDictionaryLocal = nil;
+        if (!allRecordInsertedSuccessFully ) {
+            
+        }
+    }
+    @catch (NSException *exception) {
+        
+        SMLog(@"Exception Name databaseInterfaceSfm :UpdateTableforSFId %@",exception.name);
+        SMLog(@"Exception Reason databaseInterfaceSfm :UpdateTableforSFId %@",exception.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exception];
+    }
+   
+}
+
+
+
+
+- (BOOL)updateGPTableforSFId:(NSString *)sfId  forObject:(NSString *)objectName  data:(NSDictionary *)dictionaryValue {
+    
+    BOOL success = FALSE;
+    if ( sfId == nil && [sfId length] <= 0)
+        return success;
+    
+	NSMutableDictionary * dict = [self updateEmptyFieldValuesForDict:dictionaryValue objectName:objectName];
+    
+	
+    NSArray * allkeys = [dict allKeys];
+    NSMutableString *  updateValue = [[[NSMutableString alloc] initWithCapacity:0] autorelease]; 
+    @try{
+        for(int i = 0 ; i < [allkeys count]; i++)
+        {
+            NSString * key = [allkeys objectAtIndex:i];
+            NSString * value = [dict objectForKey:key];
+            if(value != nil)
+            {
+                value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                NSString * field_data_type = [self getFieldDataType:objectName filedName:key];
+                
+                if([field_data_type isEqualToString:@"boolean"])
+                {
+                    if ([value isEqualToString:@"True"] || [value isEqualToString:@"true"] || [value isEqualToString:@"1"])
+                    {
+                        value = @"1";
+                    }
+                    else
+                    {
+                        value = @"0";
+                    }
+                }
+                
+                if(i== 0)
+                    [updateValue  appendFormat:@" %@ = '%@' ",key ,value ];
+                else
+                    [updateValue  appendFormat:@" , %@ = '%@' ",key ,value ];
+            }
+            
+        }
+        
+        NSString * update_statement = nil;
+        if([updateValue length] != 0 && sfId != nil && [sfId length] > 0 ){
+             update_statement = [NSString stringWithFormat:@"UPDATE %@ SET %@ WHERE Id = '%@'",objectName ,updateValue,sfId];
+                char * err = NULL;
+         
+                if(synchronized_sqlite3_exec(appDelegate.db, [update_statement UTF8String],NULL, NULL, &err) != SQLITE_OK) {
+                    success = FALSE;
+             
+                    SMLog(@"%@", update_statement);
+                    SMLog(@"METHOD:UpdateTableforSFId " );
+                    SMLog(@"ERROR IN UPDATING %s", err);
+                }
+                else
+                {
+                    success = TRUE;
+                }
+        }
+    }
+    @catch (NSException *exp) {
+        SMLog(@"Exception Name databaseInterfaceSfm :UpdateTableforSFId %@",exp.name);
+        SMLog(@"Exception Reason databaseInterfaceSfm :UpdateTableforSFId %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+    return success;
+}
+
+-(NSMutableDictionary *)getRecordsGPForRecordId:(NSString *)record_id ForObjectName:(NSString *)object_name fields:(NSString *)fields
+{
+    NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+    NSString * query = [NSString stringWithFormat:@"SELECT  %@  FROM '%@' WHERE local_id = '%@'",fields , object_name, record_id];
+    sqlite3_stmt * statement ;
+    
+    NSArray * fields_array = [fields componentsSeparatedByString:@","];
+    
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, nil) ==  SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            for(int i = 0 ; i < [fields_array count] ; i++)
+            {
+                NSString * value  = @"";
+                NSString * field = [fields_array objectAtIndex:i];
+                char * temp_column = (char * ) synchronized_sqlite3_column_text(statement, i);
+                if(temp_column != nil)
+                {
+                    value  = [NSString stringWithUTF8String:temp_column];
+                }
+                
+              
+                NSString * field_data_type = [self getFieldDataType:object_name filedName:field];
+                if([field_data_type isEqualToString:@"boolean"])
+                {
+                    if ([value isEqualToString:@"1"] || [value isEqualToString:@"true"] || [value isEqualToString:@"True"])
+                    {
+                        value = @"true";
+                    }
+                    else
+                    {
+                        value = @"false";
+                    }
+                }
+                
+                if([value isEqualToString:@""])
+                {
+                    [dict setValue:value forKey:field];
+                }
+                else
+                {
+                    [dict setValue:value forKey:field];
+                }
+                
+            }
+        }
+    }
+    synchronized_sqlite3_finalize(statement);
+    return dict;
+}
+
 @end

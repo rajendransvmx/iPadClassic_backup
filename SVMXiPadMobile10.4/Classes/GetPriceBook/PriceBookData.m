@@ -70,7 +70,7 @@
         
         NSString * field_string = [self getAllFieldsForObjectName:hdr_object_name];
         
-        NSMutableDictionary * header_all_fields = [appDelegate.databaseInterface getRecordsForRecordId:appDelegate.sfmPageController.recordId ForObjectName:hdr_object_name fields:field_string];
+        NSMutableDictionary * header_all_fields = [appDelegate.databaseInterface getRecordsGPForRecordId:appDelegate.sfmPageController.recordId ForObjectName:hdr_object_name fields:field_string];
         
         NSArray *   header_All_fields_keys = [header_all_fields allKeys];
         NSArray * headerData_keys = [hdrData allKeys];
@@ -180,7 +180,6 @@
             
         }
         
-        //separately add a key-value map for record id 
         NSString * hdr_id = header_sf_id;    
         if (hdr_id != nil && ![hdr_id isKindOfClass:[NSNull class]] && ![hdr_id isEqualToString:@""])
         {
@@ -275,7 +274,7 @@
                 NSMutableDictionary * detail_all_fields = nil;
                 if(![local_id isEqualToString:@""])
                 {
-                    detail_all_fields = [appDelegate.databaseInterface getRecordsForRecordId:local_id ForObjectName:detail_object_name fields:field_string];
+                    detail_all_fields = [appDelegate.databaseInterface getRecordsGPForRecordId:local_id ForObjectName:detail_object_name fields:field_string];
                 }
                 else
                 {

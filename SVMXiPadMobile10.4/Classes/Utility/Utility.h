@@ -20,4 +20,6 @@
 + (BOOL)containsString:(NSString *)someString inString:(NSString *)parentString ;
 + (BOOL)isItTrue:(NSString *)stringTrue;
 + (BOOL)isStringNotNULL:(NSString *)value;
++ (NSString *)getConcatenatedStringFromArray:(NSArray *)arayOfString withSingleQuotesAndBraces:(BOOL)isRequired;
+
 @end

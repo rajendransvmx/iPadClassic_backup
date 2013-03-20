@@ -7991,6 +7991,8 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             appDelegate.Sync_check_in = FALSE;
             
             NSMutableDictionary * record_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+            NSMutableDictionary *gpRecordsDictionary = [[NSMutableDictionary alloc] init];
+            
             NSMutableArray * array = [wsResponse.result valueMap];
             for(int i = 0 ;i< [array count]; i++)
             {
@@ -8043,15 +8045,60 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                             [Tempdict release];
                         }
                     }
+                    else if([master_or_detail isEqualToString:@"PRICING_DATA"]){
+                        
+                        /* For all other tables , insert the data */
+                        SMLog(@"%@",master_or_detail);
+                        NSArray *valueMapGpArray = recordLevel_map.valueMap;
+                        for (int counter = 0; counter < [valueMapGpArray count]; counter++) {
+                            
+                            INTF_WebServicesDefServiceSvc_SVMXMap * pbRelatedObjectMap = [valueMapGpArray objectAtIndex:counter];
+                            NSString *tableName = pbRelatedObjectMap.key;
+                            SMLog(@"GPTable name is %@",tableName);
+                            NSArray *gpTableRecords = pbRelatedObjectMap.valueMap;
+                            
+                            SMLog(@"Table name is %@ and count is %d",tableName,[gpTableRecords count]);
+                            
+                            for (int innerCounter = 0; innerCounter< [gpTableRecords count]; innerCounter++) {
+                                INTF_WebServicesDefServiceSvc_SVMXMap * gpJsonRecordMap = [gpTableRecords objectAtIndex:innerCounter];
+                                NSString *gpJsonRec = gpJsonRecordMap.value;
+                                NSLog(@"GPJSON is %@",gpJsonRec);
+                                
+                                if (gpJsonRec != nil) {
+                                    
+                                  NSMutableArray *someArray = [gpRecordsDictionary objectForKey:tableName];
+                                  if (someArray == nil) {
+                                      
+                                      NSMutableArray *tempArrayGP = [[NSMutableArray alloc] init];
+                                      [tempArrayGP addObject:gpJsonRec];
+                                      [gpRecordsDictionary setObject:tempArrayGP forKey:tableName];
+                                      [tempArrayGP release];
+                                      tempArrayGP = nil;
+                                  
+                                  }
+                                  else {
+                                      [someArray addObject:gpJsonRec];
+                                  }
+                               }
+                            }
+                         }
+                        
+                    }
                     
                 }
-                
-                
             }
           
-            
             SMLog(@"record_dict %@",record_dict);
             [appDelegate.databaseInterface insertOndemandRecords:record_dict];
+            if ([gpRecordsDictionary count] > 0) {
+                SBJsonParser *jsonParserGP = [[SBJsonParser alloc] init];
+                 [appDelegate.databaseInterface insertGetPriceRecordsToRespectiveTables:gpRecordsDictionary andParser:jsonParserGP];
+                [jsonParserGP release];
+                jsonParserGP = nil;
+                
+            }
+            [gpRecordsDictionary release];
+            gpRecordsDictionary = nil;
             
             appDelegate.dod_status = SAVING_DATA;
             appDelegate.Sync_check_in = FALSE;
@@ -8059,9 +8106,6 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             [record_dict release];
             appDelegate.dod_req_response_ststus = DOD_RESPONSE_RECIEVED;
         }
-             
-        
-        
         SMLog(@"DataSync End: %@", [NSDate date]);
     }
     

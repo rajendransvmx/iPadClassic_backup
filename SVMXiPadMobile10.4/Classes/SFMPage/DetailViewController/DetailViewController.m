@@ -13285,9 +13285,9 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     else  if ([eventName isEqualToString:@"pricebook"])  {
-        NSLog(@"Request data for JSExcecuter %@",self.priceBookData.jsonRepresentation);
+        NSLog(@"GP_request_JSExcecuter %@",self.priceBookData.jsonRepresentation);
         NSString *responseRecieved =  [self.jsExecuter response:self.priceBookData.jsonRepresentation forEventName:eventName];
-        NSLog(@"responseRecieved from JSExcecuter %@",responseRecieved);
+        NSLog(@"GP_response_JSExcecuter %@",responseRecieved);
         SBJsonParser *jsonParser =  [[SBJsonParser alloc] init];
         NSDictionary *finalDictionary = [jsonParser objectWithString:responseRecieved];
         [jsonParser release];

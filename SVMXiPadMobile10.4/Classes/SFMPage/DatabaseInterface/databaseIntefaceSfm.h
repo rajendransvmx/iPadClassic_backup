@@ -281,6 +281,11 @@
 - (void)updateTheStatusOfSynRecordsToTrue:(NSMutableDictionary *)sync_data;
 - (void)updatesfmIdsOfMasterToLocalIds ;
 
+/* Shravya-get price */
+- (void)insertGetPriceRecordsToRespectiveTables:(NSMutableDictionary *)gpData andParser:(SBJsonParser *)jsonParser;
+- (BOOL)updateGPTableforSFId:(NSString *)sfId  forObject:(NSString *)objectName  data:(NSDictionary *)dictionaryValue;
+- (NSMutableDictionary *)getRecordsGPForRecordId:(NSString *)record_id ForObjectName:(NSString *)object_name fields:(NSString *)fields;
+
 #define SERVER_OVERRIDE                     @"Server_Override"
 #define CLIENT_OVERRIDE                     @"Client_Override"
 #define UNDO                                @"Undo"
