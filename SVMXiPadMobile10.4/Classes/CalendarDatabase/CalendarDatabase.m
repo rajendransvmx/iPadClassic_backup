@@ -4639,6 +4639,9 @@ extern void SVMXLog(NSString *format, ...);
             }
            
             
+            /* Getting data for SVMXC__Pricing_Rule__,SVMXC__Parts_Pricing__c,SVMXC__Parts_Discount__c,,SVMXC__Labor_Pricing__c,SVMXC__Expense_Pricing__c,SVMXC__Travel_Policy__c,SVMXC__Mileage_Tiers__c,SVMXC__Zone_Pricing__c
+             */
+
             
             NSAutoreleasePool *aPool = [[NSAutoreleasePool alloc] init];
             
@@ -4986,7 +4989,7 @@ extern void SVMXLog(NSString *format, ...);
             }
             
             NSString *tempStringNew = [dataDictionary objectForKey:@"SVMXC__Entitled_Within_Threshold__c"];
-            if ([tempStringNew isEqualToString:@"1"]) {
+            if ([Utility isItTrue:tempStringNew]) {
                 tempStringNew = @"true";
             }else{
                 tempStringNew = @"false";
@@ -5173,8 +5176,15 @@ extern void SVMXLog(NSString *format, ...);
                         
                         if ([fieldType isEqualToString:@"boolean"]) {
                             tempString = [self changeTheBooleanValue:tempString];
+                            [dataDictionary setObject:tempString forKey:fieldName];
                         }
-                        [dataDictionary setObject:tempString forKey:fieldName];
+                        else{
+                            id someObject =  [self getTheProperObjectTypeForFieldType:fieldType andFieldValue:tempString];
+                            if (someObject != nil) {
+                                [dataDictionary setObject:someObject forKey:fieldName];
+                            }
+                        }
+                       
                     }
                 }
                 
@@ -5200,7 +5210,14 @@ extern void SVMXLog(NSString *format, ...);
             [someString appendFormat:@" and "];
         }
         counter++;
-        [someString appendFormat:@"%@ = '%@'",columnKey,columnValue];
+        if ([columnKey isEqualToString:@"SVMXC__Active__c"]) {
+            
+            [someString appendFormat:@"( SVMXC__Active__c = '1' OR  SVMXC__Active__c = 'True' OR SVMXC__Active__c = 'true')"];
+        }
+        else {
+            [someString appendFormat:@"%@ = '%@'",columnKey,columnValue];
+        }
+        
     }
     
     NSString *sqlQuery = [NSString  stringWithFormat:@"select %@ from %@ where %@",allColumnNamesString,tableName,someString];
@@ -5231,8 +5248,15 @@ extern void SVMXLog(NSString *format, ...);
                         NSLog(@"Field type is %@",fieldType);
                         if ([fieldType isEqualToString:@"boolean"]) {
                             tempString = [self changeTheBooleanValue:tempString];
+                             [recordDictionary setObject:tempString forKey:fieldName];
                         }
-                        [recordDictionary setObject:tempString forKey:fieldName];
+                        else  {
+                           
+                            id someObject =  [self getTheProperObjectTypeForFieldType:fieldType andFieldValue:tempString];
+                            if (someObject != nil) {
+                                [recordDictionary setObject:someObject forKey:fieldName];
+                            }
+                        }
                     }
                 }
             }
@@ -5312,17 +5336,19 @@ extern void SVMXLog(NSString *format, ...);
     
     NSString *priceBookNameString = [self getConcatenatedStringFromArray:priceBookNames withSingleQuotesAndBraces:YES];
     
+    NSString *activeString = @"(IsActive = '1' OR IsActive = 'True' OR IsActive = 'true')";
+    
     NSString *sqlQuery = nil;
     
     if (priceBookIdString != nil && priceBookNameString != nil) {
-        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM Pricebook2 WHERE (Id IN %@ OR Name IN %@) and IsActive = '1'",priceBookIdString,priceBookNameString];
+        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM Pricebook2 WHERE (Id IN %@ OR Name IN %@) and %@",priceBookIdString,priceBookNameString,activeString];
     }
     else if (priceBookIdString != nil){
         
-        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM Pricebook2 WHERE Id IN %@ and IsActive = '1'",priceBookIdString];
+        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM Pricebook2 WHERE Id IN %@ and %@ ",priceBookIdString,activeString];
         
     }else if(priceBookNameString != nil){
-        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM Pricebook2 WHERE Name IN %@ and IsActive = '1'",priceBookNameString];
+        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM Pricebook2 WHERE Name IN %@ and %@ ",priceBookNameString,activeString];
     }
     
     NSMutableArray *dataArray = [[NSMutableArray alloc] init];
@@ -5361,17 +5387,18 @@ extern void SVMXLog(NSString *format, ...);
     
     NSString *priceBookNameString = [self getConcatenatedStringFromArray:priceBookNames withSingleQuotesAndBraces:YES];
     
+    NSString *isActiveString = @"( SVMXC__Active__c = '1' OR SVMXC__Active__c = 'true'  OR SVMXC__Active__c = 'True' )";
     NSString *sqlQuery = nil;
     
     if (priceBookIdString != nil && priceBookNameString != nil) {
-        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM SVMXC__Service_Pricebook__c WHERE (Id IN %@ OR Name IN %@) and SVMXC__Active__c = '1'",priceBookIdString,priceBookNameString];
+        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM SVMXC__Service_Pricebook__c WHERE (Id IN %@ OR Name IN %@) and %@",priceBookIdString,priceBookNameString,isActiveString];
     }
     else if (priceBookIdString != nil){
         
-        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM SVMXC__Service_Pricebook__c WHERE Id IN %@ and SVMXC__Active__c = '1'",priceBookIdString];
+        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM SVMXC__Service_Pricebook__c WHERE Id IN %@ and %@ ",priceBookIdString,isActiveString];
         
     }else if(priceBookNameString != nil){
-        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM SVMXC__Service_Pricebook__c WHERE Name IN %@ and SVMXC__Active__c = '1'",priceBookNameString];
+        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM SVMXC__Service_Pricebook__c WHERE Name IN %@ and %@ ",priceBookNameString,isActiveString];
     }
     
     NSMutableArray *dataArray = [[NSMutableArray alloc] init];
@@ -5592,7 +5619,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (NSArray *) getExpressionComponentsForExpressionId:(NSString *)expressionId andExpression:(NSString *)expressionName andRecordId:(NSString *)recordTypeId{
     
-    NSString *sqlQuery = [NSString stringWithFormat:@"Select SVMXC__Field_Name__c,SVMXC__Operator__c,SVMXC__Operand__c,SVMXC__Sequence__c,SVMXC__Expression_Type__c,SVMXC__Expression_Rule__c,Id from SVMXC__SERVICEMAX_CONFIG_DATA__C where SVMXC__Expression_Rule__c LIKE '%@%%'",expressionId];
+    NSString *sqlQuery = [NSString stringWithFormat:@"Select SVMXC__Field_Name__c,SVMXC__Operator__c,SVMXC__Operand__c,SVMXC__Sequence__c,SVMXC__Expression_Type__c,SVMXC__Expression_Rule__c,Id from SVMXC__SERVICEMAX_CONFIG_DATA__C where SVMXC__Expression_Rule__c LIKE '%@%%' and recordTypeId = '%@'",expressionId,recordTypeId];
     sqlite3_stmt *selectStmt = nil;
     NSMutableArray *expressionComponents = [[NSMutableArray alloc] init];
     if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
@@ -6100,10 +6127,10 @@ extern void SVMXLog(NSString *format, ...);
     NSString *allColumnNamesString = [self getConcatenatedStringFromArray:allColumnNames withSingleQuotesAndBraces:NO];
     NSString *sqlQuery = nil;
     if (currency == nil) {
-        sqlQuery = [[NSString alloc] initWithFormat:@"Select %@ from %@ where isActive = '1' and Product2Id IN %@ AND Pricebook2Id IN %@",allColumnNamesString,tableName,productString,priceBookIdString];
+        sqlQuery = [[NSString alloc] initWithFormat:@"Select %@ from %@ where (isActive = '1' OR isActive = 'True' OR  isActive = 'true') and Product2Id IN %@ AND Pricebook2Id IN %@",allColumnNamesString,tableName,productString,priceBookIdString];
     }
     else {
-        sqlQuery = [[NSString alloc] initWithFormat:@"Select %@ from %@ where isActive = '1' and Product2Id IN %@ AND Pricebook2Id IN %@ and CurrencyIsoCode = '%@'",allColumnNamesString,tableName,productString,priceBookIdString,currency];
+        sqlQuery = [[NSString alloc] initWithFormat:@"Select %@ from %@ where (isActive = '1' OR isActive = 'True' OR  isActive = 'true') and Product2Id IN %@ AND Pricebook2Id IN %@ and CurrencyIsoCode = '%@'",allColumnNamesString,tableName,productString,priceBookIdString,currency];
     }
     
     
@@ -6126,11 +6153,21 @@ extern void SVMXLog(NSString *format, ...);
                     tempString = [NSString stringWithUTF8String:tempCharString];
                     if (tempString != nil && counter < [allColumnNames count]) {
                         NSString *fieldName = [allColumnNames objectAtIndex:counter];
-                        [recordDictionary setObject:tempString forKey:fieldName];
+                        NSString *fieldType =  [allFieldsOfTable objectForKey:fieldName];
+                        
+                        if ([fieldType isEqualToString:@"boolean"]) {
+                            tempString = [self changeTheBooleanValue:tempString];
+                            [recordDictionary setObject:tempString forKey:fieldName];
+                        }
+                        else {
+                            id someObject =  [self getTheProperObjectTypeForFieldType:fieldType andFieldValue:tempString];
+                            if (someObject != nil) {
+                                [recordDictionary setObject:someObject forKey:fieldName];
+                            }
+                        }
                     }
                 }
             }
-            
             
             NSDictionary *tempDict = [[NSDictionary alloc] initWithObjectsAndKeys:tableName,@"type", nil];
             [recordDictionary setObject:tempDict forKey:@"attributes"];
@@ -6229,8 +6266,15 @@ extern void SVMXLog(NSString *format, ...);
                         NSLog(@"Filed type is %@",fieldType);
                         if ([fieldType isEqualToString:@"boolean"]) {
                             tempString = [self changeTheBooleanValue:tempString];
+                             [recordDictionary setObject:tempString forKey:fieldName];
                         }
-                        [recordDictionary setObject:tempString forKey:fieldName];
+                        else {
+                            id someObject =  [self getTheProperObjectTypeForFieldType:fieldType andFieldValue:tempString];
+                            if (someObject != nil) {
+                                [recordDictionary setObject:someObject forKey:fieldName];
+                            }
+                        }
+                       
                     }
                 }
             }
@@ -6265,17 +6309,19 @@ extern void SVMXLog(NSString *format, ...);
     
     NSString *priceBookNameString = [self getConcatenatedStringFromArray:labourPbNames withSingleQuotesAndBraces:YES];
     
+    NSString *activeString = @"(SVMXC__Active__c = '1' OR SVMXC__Active__c = 'True' OR SVMXC__Active__c = 'true')";
+    
     NSString *sqlQuery = nil;
     
     if (priceBookIdString != nil && priceBookNameString != nil) {
-        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM %@ WHERE (Id IN %@ OR Name IN %@) and SVMXC__Active__c = '1'",tablename,priceBookIdString,priceBookNameString];
+        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM %@ WHERE (Id IN %@ OR Name IN %@) and %@ ",tablename,priceBookIdString,priceBookNameString,activeString];
     }
     else if (priceBookIdString != nil){
         
-        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM %@ WHERE Id IN %@ and SVMXC__Active__c = '1'",tablename,priceBookIdString];
+        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM %@ WHERE Id IN %@ and %@",tablename,priceBookIdString,activeString];
         
     }else if(priceBookNameString != nil){
-        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM %@ WHERE Name IN %@ and SVMXC__Active__c = '1'",tablename,priceBookNameString];
+        sqlQuery = [NSString stringWithFormat:@"SELECT Id, Name FROM %@ WHERE Name IN %@ and %@",tablename,priceBookNameString,activeString];
     }
     
     NSMutableArray *dataArray = [[NSMutableArray alloc] init];
@@ -6321,7 +6367,8 @@ extern void SVMXLog(NSString *format, ...);
     }
     return nil;
 }
-- (NSString *)changeTheBooleanValue:(NSString *)someString {
+- (NSString *)changeTheBooleanValue:(NSString *)newString {
+    NSString *someString = [newString lowercaseString];
     if ([someString isEqualToString:@"1"]) {
         return @"true";
     }
@@ -6331,7 +6378,10 @@ extern void SVMXLog(NSString *format, ...);
             return someString;
         }
         else {
-            return [someString lowercaseString];
+            if ([someString isEqualToString:@"0"]) {
+                return @"false";
+            }
+            return someString;
         }
     }
     return @"false";
@@ -6648,6 +6698,22 @@ extern void SVMXLog(NSString *format, ...);
     sqlite3_finalize(stmt);
     return fieldId;
     
+}
+
+- (id)getTheProperObjectTypeForFieldType:(NSString *)fieldType andFieldValue:(NSString *)fieldValue {
+    id someObject = fieldValue;
+    
+    fieldType = [fieldType uppercaseString];
+    NSString *newFieldType = [appDelegate.dataBase columnType:fieldType];
+    if ([newFieldType isEqualToString:DOUBLE]) {
+        someObject = [NSNumber numberWithDouble:[fieldValue doubleValue]];
+       
+    }
+    else if ([newFieldType isEqualToString:INTEGER]) {
+        someObject = [NSNumber numberWithInt:[fieldValue intValue]];
+       
+    }
+    return someObject;
 }
 
 @end

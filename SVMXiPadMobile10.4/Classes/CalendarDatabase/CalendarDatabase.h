@@ -243,7 +243,7 @@
 - (BOOL)doesAllRecordsForGetPriceCalculationExist:(NSString *)recordId;
 - (NSInteger)getRecordCountForSfId:(NSString *)sfId andTableName:(NSString *)tableName;
 - (NSString *)getSFIdForlocalId:(NSString *)workOrderLocalId andTableName:(NSString *)tableName;
-
+- (id)getTheProperObjectTypeForFieldType:(NSString *)fieldType andFieldValue:(NSString *)fieldValue;
 /* End GET_PRICE_JS-shr*/
 
 #define DATABASENAME   @"sfm"
