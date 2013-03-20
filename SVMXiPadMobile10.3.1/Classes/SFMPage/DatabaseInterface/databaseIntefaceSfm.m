@@ -3684,7 +3684,7 @@ extern void SVMXLog(NSString *format, ...);
 -(void)updateAllRecordsToSyncRecordsHeap:(NSMutableDictionary *)sync_data
 {
    
-    SMLog(@" updateAllRecordsToSyncRecordsHeap Processing starts: %@  for count %d", [NSDate date],[sync_data count]);
+    SMLog(@"SAMMAN updateAllRecordsToSyncRecordsHeap Processing starts: %@  for count %d", [NSDate date],[sync_data count]);
     sync_data = [sync_data retain];
     NSArray * all_objects = [sync_data allKeys];
     @try{
@@ -3739,7 +3739,7 @@ extern void SVMXLog(NSString *format, ...);
     }
 
     [sync_data release];
-    SMLog(@" updateAllRecordsToSyncRecordsHeap Processing ends: %@", [NSDate date]);
+    SMLog(@"SAMMAN updateAllRecordsToSyncRecordsHeap Processing ends: %@", [NSDate date]);
 }
 
 /* Modified to include parser :InitialSync-shr*/
@@ -3974,7 +3974,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         else
         {
-            NSLog(@" Failed to insert Initial Sync");
+            NSLog(@"Sahana - Failed to insert Initial Sync");
         }
         
         sqlite3_finalize(bulk_statement);
@@ -4137,7 +4137,7 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void)insertRecordIdsIntosyncRecordHeap:(NSMutableDictionary *)sync_data
 {
-    SMLog(@" insertRecordIdsIntosyncRecordHeap starts: %@", [NSDate date]);
+    SMLog(@"SAMMAN insertRecordIdsIntosyncRecordHeap starts: %@", [NSDate date]);
     sync_data = [sync_data retain];
     NSArray * all_objects = [sync_data allKeys];
     @try{
@@ -4213,7 +4213,7 @@ extern void SVMXLog(NSString *format, ...);
     SMLog(@" sync_data %d",[sync_data retainCount]);
     [sync_data release];
     SMLog(@"IComeOUTHere databaseinterface");
-    SMLog(@" insertRecordIdsIntosyncRecordHeap ends: %@", [NSDate date]);
+    SMLog(@"SAMMAN insertRecordIdsIntosyncRecordHeap ends: %@", [NSDate date]);
 }
 
 #pragma mark query for trailer table
@@ -5436,7 +5436,7 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void)insertSyncConflictsIntoSYNC_CONFLICT:(NSMutableDictionary *)conflictDict
 {
-    SMLog(@" insertSyncConflictsIntoSYNC_CONFLICT Processing starts: %@", [NSDate date]);
+    SMLog(@"SAMMAN insertSyncConflictsIntoSYNC_CONFLICT Processing starts: %@", [NSDate date]);
     NSArray * all_objects = [conflictDict allKeys];
     @try{
     for(NSString * object_name in  all_objects)
@@ -5499,7 +5499,7 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
     }
 
-    SMLog(@" insertSyncConflictsIntoSYNC_CONFLICT Processing ends: %@", [NSDate date]);
+    SMLog(@"SAMMAN insertSyncConflictsIntoSYNC_CONFLICT Processing ends: %@", [NSDate date]);
 }
 
 -(BOOL)DoesTrailerContainTheRecord:(NSString *)local_id  operation_type:(NSString *)operation_type  object_name:(NSString *)object_name
