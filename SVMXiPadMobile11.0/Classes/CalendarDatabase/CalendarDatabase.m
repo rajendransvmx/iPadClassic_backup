@@ -5551,10 +5551,10 @@ extern void SVMXLog(NSString *format, ...);
     tempString = nil;
     
     
-    NSDictionary *recordTypeDict = [self getRecordTypeIdsForRecordType:[NSArray arrayWithObjects:@"SVMX Rule",@"EXPRESSIONS", nil]];
+    NSDictionary *recordTypeDict = [self getRecordTypeIdsForRecordType:[NSArray arrayWithObjects:@"SVMX Rule",@"Expressions", nil]];
     
     NSString *recordTypeRule = [recordTypeDict objectForKey:@"SVMX Rule"];
-    NSString *expressionRule = [recordTypeDict objectForKey:@"EXPRESSIONS"];
+    NSString *expressionRule = [recordTypeDict objectForKey:@"Expressions"];
     
     
     NSString *sqlQuery = [NSString stringWithFormat:@"Select SVMXC__Advance_Expression__c,Id from SVMXC__ServiceMax_Processes__c where %@ and recordTypeId = '%@'",concatenatedExpId,recordTypeRule];
@@ -6642,7 +6642,6 @@ extern void SVMXLog(NSString *format, ...);
 - (BOOL)doesAllRecordsForGetPriceCalculationExist:(NSString *)recordId {
     
     NSDictionary *someDictionary =  [self getEntitlementHistoryForWorkorder:recordId];
-    
     if(someDictionary != nil && [someDictionary count] > 0 ){
         
         NSString *SVMXC__Warranty__c         = [someDictionary objectForKey:@"SVMXC__Warranty__c"];
@@ -6651,13 +6650,22 @@ extern void SVMXLog(NSString *format, ...);
         if (![Utility isStringEmpty:SVMXC__Warranty__c]) {
             numberOfRecordsOne =  [self getRecordCountForSfId:SVMXC__Warranty__c andTableName:@"SVMXC__Warranty__c"];
         }
+        else {
+            numberOfRecordsOne = 1;
+        }
         
         if (![Utility isStringEmpty:SVMXC__Service_Contract__c]) {
             numberOfRecordsTwo =  [self getRecordCountForSfId:SVMXC__Service_Contract__c andTableName:@"SVMXC__Service_Contract__c"];
         }
+        else {
+            numberOfRecordsTwo = 1;
+        }
         if (numberOfRecordsOne > 0 || numberOfRecordsTwo > 0) {
             return YES;
         }
+    }
+    else {
+        return YES;
     }
     return NO;
 }

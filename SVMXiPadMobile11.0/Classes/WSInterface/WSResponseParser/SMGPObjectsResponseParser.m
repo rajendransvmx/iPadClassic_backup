@@ -114,7 +114,7 @@
                                 NSString *recordTypeValue = [NSString stringWithFormat:@"'%@'",recordTypeObj.value];
                                 //update SFRecord Table with this info
                                 [recordDict setObject:recordTypeId forKey:MRECORD_TYPE_ID];
-                                [recordDict setObject:recordTypeValue forKey:MRECORDTYPE_LABEL];
+                                [recordDict setObject:recordTypeValue forKey:MRECORD_TYPE];
                                 [recordDict setObject:objName forKey:MOBJECT_API_NAME];
                                 [recordTypeArray addObject:recordDict];
                                 [recordDict release];
