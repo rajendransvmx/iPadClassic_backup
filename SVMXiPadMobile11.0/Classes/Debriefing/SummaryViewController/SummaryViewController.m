@@ -576,29 +576,43 @@ extern void SVMXLog(NSString *format, ...);
 
 - (NSString *) getFormattedCost:(double)cost
 {
-    NSMutableString * decimalCostStr = [NSMutableString stringWithFormat:@"%d", (int)cost];
-    int strLength = [decimalCostStr length];
-    @try{
-    for (int i = 0; i < strLength; i++)
-    {
-        if ((i > 0) && (i%3 == 0))
-        {
-            // insert a ',' after the current position
-            [decimalCostStr insertString:@"," atIndex:strLength-i];
+    
+    NSMutableString * formattedString = [NSMutableString stringWithFormat:@"%.2f", cost];
+   
+    @try {
+        
+        NSArray *componentsString = [formattedString componentsSeparatedByString:@"."];
+        if (componentsString > 0) {
+            
+            NSString *mainString = [componentsString objectAtIndex:0];
+            NSMutableString * decimalCostStr = [NSMutableString stringWithFormat:@"%@",mainString];
+            int strLength = [decimalCostStr length];
+            for (int i = 0; i < strLength; i++)
+            {
+                if ((i > 0) && (i%3 == 0))
+                {
+                    // insert a ',' after the current position
+                    [decimalCostStr insertString:@"," atIndex:strLength-i];
+                }
+            }
+            
+            if ([componentsString count] > 1) {
+                
+                NSString *floatValue = [componentsString objectAtIndex:1];
+                
+                [decimalCostStr appendFormat:@".%@",floatValue];
+            }
+            
+            return decimalCostStr;
+        }
+        else {
+            return formattedString;
         }
     }
-    // add the floating portion of the number to the string
-    NSUInteger decimalPortion = cost;
-    cost = cost - decimalPortion;
-    NSMutableString * floatStr = [NSMutableString stringWithFormat:@"%.2f", cost];
-    [floatStr replaceOccurrencesOfString:@"0." withString:@"." options:NSCaseInsensitiveSearch range:NSMakeRange(0, [floatStr length])];
-    [decimalCostStr appendString:floatStr];
-	}@catch (NSException *exp) {
-	SMLog(@"Exception Name SummaryViewController :getFormattedCost %@",exp.name);
-	SMLog(@"Exception Reason SummaryViewController :getFormattedCost %@",exp.reason);
-    }
-
-    return decimalCostStr;
+    @catch (NSException *exception) {
+        
+    }   
+    return formattedString;
 }
 
 #pragma mark -
