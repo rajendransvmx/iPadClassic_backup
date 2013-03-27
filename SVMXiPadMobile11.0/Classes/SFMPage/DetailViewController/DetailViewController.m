@@ -13395,9 +13395,13 @@ extern void SVMXLog(NSString *format, ...);
             [fieldDictMutable release];
             fieldDictMutable = nil;
         }
+        
+        [sectionDictMutable setObject:sectionOneArry forKey:@"section_Fields"];
         [someArray addObject:sectionDictMutable];
         [sectionDictMutable release];
         sectionDictMutable = nil;
+        [sectionOneArry release];
+        sectionOneArry = nil;
     }
     [finalHeaderDictionary setObject:someArray forKey:@"hdr_Sections"];
     [someArray release];
@@ -13490,8 +13494,10 @@ extern void SVMXLog(NSString *format, ...);
         [masterDictionary setObject:brandNewDetailArray forKey:@"details"];
     }
     
-    appDelegate.SFMPage = masterDictionary;
-    
+    if ([masterDictionary count] > 0) {
+        appDelegate.SFMPage = masterDictionary;
+    }
+   
     [masterDictionary release];
     masterDictionary = nil;
     
