@@ -3857,6 +3857,71 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                 
                 SVMXCMapLastSyncTime.value = [appDelegate.wsInterface getValueFromPlistForKey:LAST_INITIAL_SYNC_IME];
                 [sfmRequest.valueMap addObject:SVMXCMapLastSyncTime];
+
+                NSString *customPriceBook = @"SVMXC__Service_Pricebook__c";
+                NSString *customPriceBookEntry = @"SVMXC__Service_Pricebook_Entry__c";
+                NSString *priceBook = @"Pricebook2";
+                NSString *priceBookEntry = @"PricebookEntry";
+                NSString *columnName = @"Id";
+                NSString *priceBookEntryColumnName = @"CurrencyIsoCode";
+                NSArray *columns = [NSArray arrayWithObject:columnName];
+                NSString *priceBookColumnName = @"Pricebook2Id";
+                NSString *customPriceBookColumnName = @"SVMXC__Price_Book__c";
+                NSArray *priceBookIds = [appDelegate.dataBase getAllRecordsFromTable:priceBook
+                                                                               forColumns:columns
+                                                                           filterCriteria:nil
+                                                                                    limit:nil];
+                
+                NSArray *customPriceBookIds = [appDelegate.dataBase getAllRecordsFromTable:customPriceBook
+                                                                          forColumns:columns
+                                                                      filterCriteria:nil
+                                                                               limit:nil];
+                if(([priceBookIds count] + [customPriceBookIds count]) > 0)
+                {
+                    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMapCurrency =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
+                    SVMXCMapCurrency.key  = @"CurrencyISO";
+                    
+                    for(NSDictionary *priceBookDict in priceBookIds)
+                    {
+                        NSString *priceBookId = [priceBookDict objectForKey:columnName];
+                        NSString *filterCriteria = [NSString stringWithFormat:@"%@ = '%@'",priceBookColumnName,priceBookId];
+                        NSArray *uniqueCurrencyArray  = [appDelegate.dataBase
+                                                         getUniqueRecordsFromTable:priceBookEntry
+                                                         forColumn:priceBookEntryColumnName
+                                                         filterCriteria:filterCriteria
+                                                         ];
+                        if([uniqueCurrencyArray count] >0)
+                        {
+                            INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMapUniqueCurrency =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
+                            SVMXCMapUniqueCurrency.key  = @"PRICEBOOK_ID";
+                            
+                            SVMXCMapUniqueCurrency.value = priceBookId;
+                            [SVMXCMapUniqueCurrency.values addObjectsFromArray:uniqueCurrencyArray];
+                            [SVMXCMapCurrency.valueMap addObject:SVMXCMapUniqueCurrency];
+                        }
+                    }
+                    
+                    for(NSDictionary *customPriceBookDict in customPriceBookIds)
+                    {
+                        NSString *priceBookId = [customPriceBookDict objectForKey:columnName];
+                        NSString *filterCriteria = [NSString stringWithFormat:@"%@ = '%@'",customPriceBookColumnName,priceBookId];
+                        NSArray *uniqueCurrencyArray  = [appDelegate.dataBase
+                                                         getUniqueRecordsFromTable:customPriceBookEntry
+                                                         forColumn:priceBookEntryColumnName
+                                                         filterCriteria:filterCriteria
+                                                         ];
+                        if([uniqueCurrencyArray count] >0)
+                        {
+                            INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMapUniqueCurrency =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
+                            SVMXCMapUniqueCurrency.key  = @"PRICEBOOK_ID";
+                            
+                            SVMXCMapUniqueCurrency.value = priceBookId;
+                            [SVMXCMapUniqueCurrency.values addObjectsFromArray:uniqueCurrencyArray];
+                            [SVMXCMapCurrency.valueMap addObject:SVMXCMapUniqueCurrency];
+                        }
+                    }
+                    [sfmRequest.valueMap addObject:SVMXCMapCurrency];
+                }
             }
 
             if([lastIndex isEqualToString:@"2"])
