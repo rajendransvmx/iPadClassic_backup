@@ -3857,7 +3857,23 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                 
                 SVMXCMapLastSyncTime.value = [appDelegate.wsInterface getValueFromPlistForKey:LAST_INITIAL_SYNC_IME];
                 [sfmRequest.valueMap addObject:SVMXCMapLastSyncTime];
+            }
 
+            if([lastIndex isEqualToString:@"2"])
+            {
+                if([data count])
+                {
+                    INTF_WebServicesDefServiceSvc_SVMXMap * svmxcObject =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+                    
+                    svmxcObject.key  = @"Labor";
+                    for(int i=0; i<[data count]; i++)
+                    {
+                        [svmxcObject.values addObject:[data objectAtIndex:i]];
+                    }
+                    [sfmRequest.valueMap addObject:svmxcObject];
+                    [svmxcObject release];
+                }
+                
                 NSString *customPriceBook = @"SVMXC__Service_Pricebook__c";
                 NSString *customPriceBookEntry = @"SVMXC__Service_Pricebook_Entry__c";
                 NSString *priceBook = @"Pricebook2";
@@ -3868,14 +3884,14 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                 NSString *priceBookColumnName = @"Pricebook2Id";
                 NSString *customPriceBookColumnName = @"SVMXC__Price_Book__c";
                 NSArray *priceBookIds = [appDelegate.dataBase getAllRecordsFromTable:priceBook
-                                                                               forColumns:columns
-                                                                           filterCriteria:nil
-                                                                                    limit:nil];
-                
-                NSArray *customPriceBookIds = [appDelegate.dataBase getAllRecordsFromTable:customPriceBook
                                                                           forColumns:columns
                                                                       filterCriteria:nil
                                                                                limit:nil];
+                
+                NSArray *customPriceBookIds = [appDelegate.dataBase getAllRecordsFromTable:customPriceBook
+                                                                                forColumns:columns
+                                                                            filterCriteria:nil
+                                                                                     limit:nil];
                 if(([priceBookIds count] + [customPriceBookIds count]) > 0)
                 {
                     INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMapCurrency =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
@@ -3921,22 +3937,6 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                         }
                     }
                     [sfmRequest.valueMap addObject:SVMXCMapCurrency];
-                }
-            }
-
-            if([lastIndex isEqualToString:@"2"])
-            {
-                if([data count])
-                {
-                    INTF_WebServicesDefServiceSvc_SVMXMap * svmxcObject =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
-                    
-                    svmxcObject.key  = @"Labor";
-                    for(int i=0; i<[data count]; i++)
-                    {
-                        [svmxcObject.values addObject:[data objectAtIndex:i]];
-                    }
-                    [sfmRequest.valueMap addObject:svmxcObject];
-                    [svmxcObject release];
                 }
             }
             else
