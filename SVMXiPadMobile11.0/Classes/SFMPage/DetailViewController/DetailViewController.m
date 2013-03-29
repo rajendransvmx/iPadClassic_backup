@@ -13606,9 +13606,12 @@ extern void SVMXLog(NSString *format, ...);
             
             BOOL doesRecordAvailable = [appDelegate.calDataBase doesAllRecordsForGetPriceCalculationExist:sfmId];
             if (!doesRecordAvailable) {
-                NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:getPrice_Objects_not_found];
-                [self showAlertViewWhenGPCalculationNotPossible:message];
-                return NO;
+                BOOL finalResult =  [self getPriceDataFromOnline:sfmId];
+                if (!finalResult) {
+                    NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:getPrice_Objects_not_found];
+                    [self showAlertViewWhenGPCalculationNotPossible:message];
+                }
+                return finalResult;
             }
         }
         return YES;
@@ -13628,6 +13631,37 @@ extern void SVMXLog(NSString *format, ...);
     UIAlertView * getPriceAlertView = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:Ok otherButtonTitles:nil];
     [getPriceAlertView show];
     [getPriceAlertView release];
+}
+
+- (BOOL)getPriceDataFromOnline:(NSString *)someIdentifier {
+    
+    if ([appDelegate isInternetConnectionAvailable]) {
+        
+        /*Invalidate all time and wait for current sync to finish */
+        [self disableAllRunningNetworkOperations];
+       
+        
+        /* Make a request for the sfmid*/
+        BOOL isSucess = [appDelegate.wsInterface  getPriceInformationForWorkOrderId:someIdentifier];
+        
+        /*  Enable all timers  */
+        [self enableAllNetworkOpertaions];
+        
+        
+        return isSucess;
+    }
+    return NO;
+}
+
+
+- (void)disableAllRunningNetworkOperations {
+     [appDelegate invalidateAllTimers];
+}
+- (void)enableAllNetworkOpertaions {
+    [appDelegate ScheduleIncrementalDatasyncTimer];
+    [appDelegate ScheduleIncrementalMetaSyncTimer];
+    [appDelegate ScheduleTimerForEventSync];
+    [appDelegate scheduleLocationPingTimer];
 }
 
 @end

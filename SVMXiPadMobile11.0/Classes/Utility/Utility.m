@@ -157,4 +157,23 @@
     
     return [concatenatedString autorelease];
 }
+
++ (NSString *)getMeLocalHTML {
+    return [NSString stringWithContentsOfFile:[[NSBundle mainBundle]pathForResource:@"temp" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil];
+}
+
++ (NSString *)getPriceDownloadStatus {
+    return [[NSUserDefaults standardUserDefaults] objectForKey:@"GP_DL_STATUS"];
+}
+
++ (void )setPriceDownloadStatus:(NSString *)statusValue {
+    [[NSUserDefaults standardUserDefaults] setObject:statusValue forKey:@"GP_DL_STATUS"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
++ (void )removePriceDownloadStatus {
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"GP_DL_STATUS"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
 @end

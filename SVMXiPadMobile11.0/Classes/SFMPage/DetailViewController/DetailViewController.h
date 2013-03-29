@@ -357,6 +357,11 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
 - (BOOL)shouldDisplayMessage:(NSString *)message;
 - (void)showAlertViewWhenGPCalculationNotPossible:(NSString * )message;
 - (BOOL)recordsAvailableForPriceCalculation:(NSString *)workOrderLocalId;
+- (BOOL)getPriceDataFromOnline:(NSString *)someIdentifier;
+
+- (void)disableAllRunningNetworkOperations;
+- (void)enableAllNetworkOpertaions;
+- (BOOL)getPriceDataFromOnline:(NSString *)someIdentifier;
 
 #define SHOWALL_HEADERS                     0
 #define SHOW_HEADER_ROW                     1

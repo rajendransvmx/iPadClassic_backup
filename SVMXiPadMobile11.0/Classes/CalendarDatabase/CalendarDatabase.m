@@ -6664,9 +6664,7 @@ extern void SVMXLog(NSString *format, ...);
             return YES;
         }
     }
-    else {
-        return YES;
-    }
+    
     return NO;
 }
 

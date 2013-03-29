@@ -22,4 +22,8 @@
 + (BOOL)isStringNotNULL:(NSString *)value;
 + (NSString *)getConcatenatedStringFromArray:(NSArray *)arayOfString withSingleQuotesAndBraces:(BOOL)isRequired;
 
++ (NSString *)getPriceDownloadStatus ;
++ (void )setPriceDownloadStatus:(NSString *)statusValue;
++ (void )removePriceDownloadStatus;
+
 @end

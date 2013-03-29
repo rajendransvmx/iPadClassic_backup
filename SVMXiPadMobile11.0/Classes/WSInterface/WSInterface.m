@@ -10,7 +10,7 @@
 #import "iServiceAppDelegate.h"
 #import "LoginController.h"
 #import "WSResponseParser.h"
-
+#import "Utility.h"
 extern void SVMXLog(NSString *format, ...);
 
 //sahana Note 
@@ -11181,6 +11181,192 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     return targetRecord;
 }*/
 
+
+#pragma mark - Getting price information for a single work order.
+
+- (BOOL)getPriceInformationForWorkOrderId:(NSString *)sfmId {
+    BOOL returnValue = YES;
+    
+    @try {
+        appDelegate.connection_error = NO;
+        appDelegate.Sync_check_in = NO;
+        [Utility removePriceDownloadStatus];
+        [Utility setPriceDownloadStatus:[NSString stringWithFormat:@"%d",GET_PRICE_DL_START]];
+        
+        /* Sending request to server */
+        [self sendRequestToGetData:sfmId];
+        
+        NSString *statusString =  [NSString stringWithFormat:@"%d",GET_PRICE_DL_FINISH];
+        /* waiting till request finishes */
+        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
+        {
+            SMLog(@"getPriceInformationForWorkOrderId: Download  PRICE _INFO for %@",sfmId);
+          
+            if (![appDelegate isInternetConnectionAvailable])
+            {
+                SMLog(@"getPriceInformationForWorkOrderId: Download  PRICE _INFO Failed due to Internet Lost");
+                returnValue = NO;
+                break;
+            }
+            if(appDelegate.connection_error)
+            {
+                SMLog(@"getPriceInformationForWorkOrderId: Download  PRICE _INFO Failed due to Connection Error");
+                returnValue = NO;
+                break;
+            }
+            NSString *currentStaus =  [Utility getPriceDownloadStatus];
+            if ([currentStaus isEqualToString:statusString])
+            {
+                returnValue = YES;
+                SMLog(@"getPriceInformationForWorkOrderId: Download  PRICE _INFO Completed successfully");
+                break;
+            }
+        }
+        
+    }
+    @catch (NSException *exception) {
+        
+    }
+    @finally {
+        return returnValue;
+    }
+}
+
+- (void)sendRequestToGetData:(NSString *)workOrderId {
+    
+    @try{
+        [INTF_WebServicesDefServiceSvc initialize];
+        
+        INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
+        sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
+        
+        INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
+        callOptions.client = nil;
+        
+        INTF_WebServicesDefServiceSvc_DebuggingHeader * debuggingHeader = [[[INTF_WebServicesDefServiceSvc_DebuggingHeader alloc] init] autorelease];
+        debuggingHeader.debugLevel = 0;
+        
+        INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * allowFieldTruncationHeader = [[[INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader alloc] init] autorelease];
+        allowFieldTruncationHeader.allowFieldTruncation = NO;
+        
+        INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
+        binding.logXMLInOut = YES;
+        
+        
+        INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] autorelease];
+        
+        INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] autorelease];
+        sfmRequest.eventName = @"DATA_ON_DEMAND";
+        sfmRequest.eventType = @"GET_PRICE_INFO";
+        sfmRequest.userId = [appDelegate.loginResult userId];
+        sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
+        sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
+        
+        //ADD SVMXClient
+        INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
+        
+        svmxc_client.clientType = @"iPad";
+        [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
+        [svmxc_client.clientInfo addObject:@"R4B2"];
+        
+    
+        INTF_WebServicesDefServiceSvc_SVMXMap *valueMapforObject=[[[INTF_WebServicesDefServiceSvc_SVMXMap alloc]init]autorelease];
+            
+        valueMapforObject.key=@"Object_Name";
+        valueMapforObject.value=@"SVMXC__Service_Order__c";
+            
+        INTF_WebServicesDefServiceSvc_SVMXMap *valueMapId=[[[INTF_WebServicesDefServiceSvc_SVMXMap alloc]init]autorelease];
+        valueMapId.key=@"Id";
+        valueMapId.value = workOrderId;
+            
+           
+            
+            
+//        INTF_WebServicesDefServiceSvc_SVMXMap *valueMapParentField_for_parent=[[[INTF_WebServicesDefServiceSvc_SVMXMap alloc]init]autorelease];
+//        valueMapParentField_for_parent.key =@"Parent_Reference_Field";
+//        valueMapParentField_for_parent.value = nil;
+//            
+//        
+//        [valueMapforObject.valueMap addObject:valueMapParentField_for_parent];
+        [valueMapforObject.valueMap addObject:valueMapId];
+            
+       
+         [sfmRequest.valueMap addObject:valueMapforObject];
+        
+        [sfmRequest addClientInfo:svmxc_client];
+        [datasync setRequest:sfmRequest];
+        
+        
+        binding.logXMLInOut = YES;
+        [binding INTF_DataSync_WSAsyncUsingParameters:datasync
+                                        SessionHeader:sessionHeader
+                                          CallOptions:callOptions
+                                      DebuggingHeader:debuggingHeader
+                           AllowFieldTruncationHeader:allowFieldTruncationHeader delegate:self];
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name WSInterface :getOnDemandRecords %@",exp.name);
+        SMLog(@"Exception Reason WSInterface :getOnDemandRecords %@",exp.reason);
+    }
+}
+
+- (void)parseAndStoreTheResponse:(NSArray *)valueMapArray {
+    
+    NSMutableDictionary *gpRecordsDictionary = [[NSMutableDictionary alloc] init];
+    for(int i = 0 ;i< [valueMapArray count]; i++)
+    {
+        INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [valueMapArray objectAtIndex:i];
+        NSString * tagName = svmxMap.key;
+        
+        if([tagName isEqualToString:@"PRICING_DATA"]){
+            
+            /* For all other tables , insert the data */
+            SMLog(@"%@",tagName);
+            NSArray *valueMapGpArray = svmxMap.valueMap;
+            for (int counter = 0; counter < [valueMapGpArray count]; counter++) {
+                
+                INTF_WebServicesDefServiceSvc_SVMXMap * pbRelatedObjectMap = [valueMapGpArray objectAtIndex:counter];
+                NSString *tableName = pbRelatedObjectMap.key;
+                SMLog(@"GPTable name is %@",tableName);
+                NSArray *gpTableRecords = pbRelatedObjectMap.valueMap;
+                
+                SMLog(@"Table name is %@ and count is %d",tableName,[gpTableRecords count]);
+                
+                for (int innerCounter = 0; innerCounter< [gpTableRecords count]; innerCounter++) {
+                    INTF_WebServicesDefServiceSvc_SVMXMap * gpJsonRecordMap = [gpTableRecords objectAtIndex:innerCounter];
+                    NSString *gpJsonRec = gpJsonRecordMap.value;
+                    SMLog(@"GPJSON is %@",gpJsonRec);
+                    
+                    if (gpJsonRec != nil) {
+                        
+                        NSMutableArray *someArray = [gpRecordsDictionary objectForKey:tableName];
+                        if (someArray == nil) {
+                            
+                            NSMutableArray *tempArrayGP = [[NSMutableArray alloc] init];
+                            [tempArrayGP addObject:gpJsonRec];
+                            [gpRecordsDictionary setObject:tempArrayGP forKey:tableName];
+                            [tempArrayGP release];
+                            tempArrayGP = nil;
+                            
+                        }
+                        else {
+                            [someArray addObject:gpJsonRec];
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    if ([gpRecordsDictionary count] > 0) {
+        SBJsonParser *jsonParserGP = [[SBJsonParser alloc] init];
+        [appDelegate.databaseInterface insertGetPriceRecordsToRespectiveTables:gpRecordsDictionary andParser:jsonParserGP];
+        [jsonParserGP release];
+        jsonParserGP = nil;
+        
+    }
+    [gpRecordsDictionary release];
+    gpRecordsDictionary = nil;
+}
 
 #pragma mark - INTF_WebServicesDefBindingOperation Delegate Method
 - (NSMutableDictionary *) getTagsdisplay:(INTF_WebServicesDefBindingResponse *)response

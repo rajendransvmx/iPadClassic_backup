@@ -404,6 +404,11 @@
 //sahana Feb25th Optimized DS fix
 -(void)setLastSyncTimeForDownloadCriteriaSync;
 
+/* For get price single work order */
+- (BOOL)getPriceInformationForWorkOrderId:(NSString *)sfmId;
+- (void)parseAndStoreTheResponse:(NSArray *)valueMapArray;
+- (void)sendRequestToGetData:(NSString *)workOrderId;
+
 -(void)DoIncrementalDataSync;
 -(NSString *)getSyncTimeStampWithTheIntervalof15days:(NSString *)time;
 -(NSString *)get_SYNCHISTORYTime_ForKey:(NSString *)forkey;
