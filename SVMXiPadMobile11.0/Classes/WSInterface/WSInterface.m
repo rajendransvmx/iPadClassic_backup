@@ -3855,7 +3855,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                 INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMapLastSyncTime =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
                 SVMXCMapLastSyncTime.key  = @"LAST_SYNC_TIME";
                 
-                SVMXCMapLastSyncTime.value = [appDelegate.wsInterface getValueFromPlistForKey:LAST_INITIAL_SYNC_IME];
+                SVMXCMapLastSyncTime.value = [self get_SYNCHISTORYTime_ForKey:LAST_INSERT_RESONSE_TIME] == nil ?@"":[self get_SYNCHISTORYTime_ForKey:LAST_INSERT_RESONSE_TIME];
                 [sfmRequest.valueMap addObject:SVMXCMapLastSyncTime];
             }
 
@@ -3896,7 +3896,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                 {
                     INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMapCurrency =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
                     SVMXCMapCurrency.key  = @"CurrencyISO";
-                    
+                    BOOL currencyPresent = NO;
                     for(NSDictionary *priceBookDict in priceBookIds)
                     {
                         NSString *priceBookId = [priceBookDict objectForKey:columnName];
@@ -3914,6 +3914,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                             SVMXCMapUniqueCurrency.value = priceBookId;
                             [SVMXCMapUniqueCurrency.values addObjectsFromArray:uniqueCurrencyArray];
                             [SVMXCMapCurrency.valueMap addObject:SVMXCMapUniqueCurrency];
+                            currencyPresent = YES;
                         }
                     }
                     
@@ -3934,9 +3935,11 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                             SVMXCMapUniqueCurrency.value = priceBookId;
                             [SVMXCMapUniqueCurrency.values addObjectsFromArray:uniqueCurrencyArray];
                             [SVMXCMapCurrency.valueMap addObject:SVMXCMapUniqueCurrency];
+                            currencyPresent = YES;
                         }
                     }
-                    [sfmRequest.valueMap addObject:SVMXCMapCurrency];
+                    if(currencyPresent)
+                        [sfmRequest.valueMap addObject:SVMXCMapCurrency];
                 }
             }
             else
