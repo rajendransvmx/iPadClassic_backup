@@ -245,6 +245,7 @@
 - (NSString *)getSFIdForlocalId:(NSString *)workOrderLocalId andTableName:(NSString *)tableName;
 - (id)getTheProperObjectTypeForFieldType:(NSString *)fieldType andFieldValue:(NSString *)fieldValue;
 - (BOOL)checkIfBillablePriceExistForWorkOrderId:(NSString *)workOrderLocalId andFieldName:(NSString *)fieldName;
+- (NSMutableArray *) queryForTravel:(NSString *)currentRecordId;
 
 /* End GET_PRICE_JS-shr*/
 

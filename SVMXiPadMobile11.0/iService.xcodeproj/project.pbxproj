@@ -666,6 +666,10 @@
 		A830EA4A15AC4E0D0071DEF0 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A830EA4815AC4E0D0071DEF0 /* CoreMedia.framework */; };
 		A830EA4B15AC4E0D0071DEF0 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A830EA4915AC4E0D0071DEF0 /* CoreVideo.framework */; };
 		A830EA4D15AC4E130071DEF0 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A830EA4C15AC4E130071DEF0 /* libiconv.dylib */; };
+		A837EC72170C80FD00229855 /* TravelcellView.m in Sources */ = {isa = PBXBuildFile; fileRef = A837EC6F170C80FD00229855 /* TravelcellView.m */; };
+		A837EC73170C80FD00229855 /* TravelcellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A837EC70170C80FD00229855 /* TravelcellView.xib */; };
+		A837EC74170C80FD00229855 /* TravelHeaderToolBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = A837EC71170C80FD00229855 /* TravelHeaderToolBar.xib */; };
+		A837EC76170C813200229855 /* travel_header_nw.png in Resources */ = {isa = PBXBuildFile; fileRef = A837EC75170C813200229855 /* travel_header_nw.png */; };
 		A895DA4115A2CB710083204F /* sync-getOnline.png in Resources */ = {isa = PBXBuildFile; fileRef = A895DA3E15A2CB710083204F /* sync-getOnline.png */; };
 		A895DA4215A2CB710083204F /* sync-hold.png in Resources */ = {isa = PBXBuildFile; fileRef = A895DA3F15A2CB710083204F /* sync-hold.png */; };
 		A895DA4315A2CB710083204F /* sync-retry.png in Resources */ = {isa = PBXBuildFile; fileRef = A895DA4015A2CB710083204F /* sync-retry.png */; };
@@ -1724,6 +1728,11 @@
 		A830EA4815AC4E0D0071DEF0 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		A830EA4915AC4E0D0071DEF0 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		A830EA4C15AC4E130071DEF0 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
+		A837EC6E170C80FD00229855 /* TravelcellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TravelcellView.h; sourceTree = "<group>"; };
+		A837EC6F170C80FD00229855 /* TravelcellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TravelcellView.m; sourceTree = "<group>"; };
+		A837EC70170C80FD00229855 /* TravelcellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TravelcellView.xib; sourceTree = "<group>"; };
+		A837EC71170C80FD00229855 /* TravelHeaderToolBar.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TravelHeaderToolBar.xib; sourceTree = "<group>"; };
+		A837EC75170C813200229855 /* travel_header_nw.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = travel_header_nw.png; sourceTree = "<group>"; };
 		A895DA3E15A2CB710083204F /* sync-getOnline.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sync-getOnline.png"; sourceTree = "<group>"; };
 		A895DA3F15A2CB710083204F /* sync-hold.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sync-hold.png"; sourceTree = "<group>"; };
 		A895DA4015A2CB710083204F /* sync-retry.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sync-retry.png"; sourceTree = "<group>"; };
@@ -4209,6 +4218,19 @@
 			path = MapDirection;
 			sourceTree = "<group>";
 		};
+		A837EC6D170C80FD00229855 /* TravelsCellView */ = {
+			isa = PBXGroup;
+			children = (
+				A837EC75170C813200229855 /* travel_header_nw.png */,
+				A837EC6E170C80FD00229855 /* TravelcellView.h */,
+				A837EC6F170C80FD00229855 /* TravelcellView.m */,
+				A837EC70170C80FD00229855 /* TravelcellView.xib */,
+				A837EC71170C80FD00229855 /* TravelHeaderToolBar.xib */,
+			);
+			name = TravelsCellView;
+			path = ../TravelsCellView;
+			sourceTree = "<group>";
+		};
 		A89B534B16CCBFF400849FBC /* WSResponseParser */ = {
 			isa = PBXGroup;
 			children = (
@@ -4635,6 +4657,7 @@
 		FA55B76214A08E7200DC6CD3 /* SummaryViewController */ = {
 			isa = PBXGroup;
 			children = (
+				A837EC6D170C80FD00229855 /* TravelsCellView */,
 				FA55B76314A08E7200DC6CD3 /* ExpensesCellView */,
 				FA55B76714A08E7200DC6CD3 /* HeaderToolBar */,
 				FA55B76C14A08E7200DC6CD3 /* LabourCellView */,
@@ -5854,6 +5877,9 @@
 				A8FF03CB16BFAB32002BCA0D /* troubleshooting.html in Resources */,
 				A8FF03CC16BFAB32002BCA0D /* view-record.html in Resources */,
 				A8FF03CD16BFAB32002BCA0D /* week-view.html in Resources */,
+				A837EC73170C80FD00229855 /* TravelcellView.xib in Resources */,
+				A837EC74170C80FD00229855 /* TravelHeaderToolBar.xib in Resources */,
+				A837EC76170C813200229855 /* travel_header_nw.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6090,6 +6116,7 @@
 				A8DB1D0416E0B58B007D1A4F /* HTMLJSWrapper.m in Sources */,
 				A8DB1D0816E0B58B007D1A4F /* JSExecuter.m in Sources */,
 				A8DB1D0C16E0B590007D1A4F /* PriceBookData.m in Sources */,
+				A837EC72170C80FD00229855 /* TravelcellView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

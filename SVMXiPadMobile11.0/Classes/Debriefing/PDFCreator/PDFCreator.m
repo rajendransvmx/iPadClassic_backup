@@ -35,6 +35,8 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize shouldShowBillablePrice;
 @synthesize shouldShowBillableQty;
 
+//krishna defect : 5813
+@synthesize travelArray;
 - (id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -893,7 +895,51 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
-	}@catch (NSException *exp) {
+        
+        NSLog(@"travel array %d",[travelArray count]);
+        if([travelArray count] >0) {
+            [self setTravelImage];
+        }
+        for (int t = 0; t < [travelArray count]; t++)
+        {
+            SMLog(@"%@", [travelArray objectAtIndex:t]);
+        
+            float linePrice = [[[travelArray objectAtIndex:t] objectForKey:@"SVMXC__Actual_Price2__c"] floatValue];
+            linePrice *= [[[travelArray objectAtIndex:t] objectForKey:@"SVMXC__Actual_Quantity2__c"] floatValue];
+           
+            
+            
+            NSDictionary * obj = [travelArray objectAtIndex:t];
+            
+            
+            if (self.shouldShowBillablePrice) {
+                linePrice = [[obj objectForKey:SVMXC__Billable_Line_Price__c] floatValue];
+            }
+           
+            NSString *quantity = nil;
+            
+            if (self.shouldShowBillableQty) {
+                quantity = [obj objectForKey:SVMXC__Billable_Quantity__c];
+            }
+            else {
+                quantity = [[travelArray objectAtIndex:t] objectForKey:@"SVMXC__Actual_Quantity2__c"];
+            }
+            
+            NSString *unitPrice = [[travelArray objectAtIndex:t] objectForKey:@"SVMXC__Actual_Price2__c"];
+            if (unitPrice == nil) {
+                unitPrice = @"0.0";
+            }
+            
+            [self writePartsNo:[NSString stringWithFormat:@"%d.", t+1]
+                                  part:[[travelArray objectAtIndex:t] objectForKey:@"Name"]
+                                   qty:quantity
+                             unitprice:unitPrice
+                             lineprice:[NSString stringWithFormat:@"%.2f", linePrice]
+                              discount:nil
+                     ];
+        }
+	}
+ @catch (NSException *exp) {
 	SMLog(@"Exception Name PDFCreator :createMainPage %@",exp.name);
 	SMLog(@"Exception Reason PDFCreator :createMainPage %@",exp.reason);
     }
@@ -1672,7 +1718,44 @@ extern void SVMXLog(NSString *format, ...);
         [self PDFPageBegin];
     }
 }
-
+//krishna defect 5813
+- (void)setTravelImage {
+    
+    char *picture = 0;
+    
+    picture = "travel_header_nw";
+    
+	CGImageRef image;
+    CGDataProviderRef provider;
+    CFStringRef picturePath;
+    CFURLRef pictureURL;
+	
+    picturePath = CFStringCreateWithCString (NULL, picture, kCFStringEncodingUTF8);
+    pictureURL = CFBundleCopyResourceURL(CFBundleGetMainBundle(), picturePath, CFSTR("png"), NULL);
+    CFRelease(picturePath);
+    if (pictureURL != nil)
+    {
+        provider = CGDataProviderCreateWithURL (pictureURL);
+        CFRelease (pictureURL);
+        image = CGImageCreateWithPNGDataProvider (provider, NULL, true, kCGRenderingIntentDefault);
+        CGDataProviderRelease (provider);
+        CGContextDrawImage (pdfContext, CGRectMake(pageRect.size.width/2-(CGImageGetWidth(image)/2*0.7), pageRect.size.height-CGImageGetHeight(image)*0.7-currentPoint.y, CGImageGetWidth(image)*0.7, CGImageGetHeight(image)*0.7), image);
+        
+        // Analyser
+        // CGImageRelease (image);
+        
+        [self newLine:CGImageGetHeight(image)*0.8];
+        
+        // Analyser
+        CGImageRelease (image);
+    }
+    
+    if (currentPoint.y > 850)
+    {
+        [self PDFPageEnd];
+        [self PDFPageBegin];
+    }
+}
 - (void) setPartsImage
 {
     // This code block will create an image that we then draw to the page
@@ -2615,6 +2698,9 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void)dealloc
 {
+    //krishna defect 5813
+    [travelArray release];
+    [customFields release];
     [super dealloc];
     
     [customFields release];

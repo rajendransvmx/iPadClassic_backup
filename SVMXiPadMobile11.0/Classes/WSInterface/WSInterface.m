@@ -8053,6 +8053,13 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         {
             appDelegate.Incremental_sync_status = CLEANUP_DONE;
         }
+        else if ([wsResponse.result.eventName isEqualToString:@"DATA_ON_DEMAND"] || [wsResponse.result.eventName isEqualToString:@"GET_PRICE_INFO"]){
+                    /* Parsing code here */
+                    NSMutableArray * array = [wsResponse.result valueMap];
+                    [self parseAndStoreTheResponse:array];
+                [Utility setPriceDownloadStatus:[NSString stringWithFormat:@"%d",GET_PRICE_DL_FINISH]];
+            
+        }
         else if ([wsResponse.result.eventName isEqualToString:@"DATA_ON_DEMAND"] || [wsResponse.result.eventName isEqualToString:@"GET_DATA"])
         {
             appDelegate.dod_status = RETRIEVING_DATA;

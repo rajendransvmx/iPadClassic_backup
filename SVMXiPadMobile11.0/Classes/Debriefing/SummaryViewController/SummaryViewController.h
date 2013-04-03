@@ -13,6 +13,9 @@
 #import "PartsCellView.h"
 #import "LabourCellView.h"
 #import "ExpensesCellView.h"
+//krishna defect 5813
+#import "TravelcellView.h"
+
 #import "SignatureViewController.h"
 #import "Globals.h"
 
@@ -62,6 +65,7 @@
 }
 
 
+@property (nonatomic, retain) NSMutableArray *travel; //Krishna defect : 5813
 
 @property (nonatomic, assign) id <SummaryViewControllerDelegate> delegate;
 @property (nonatomic, retain) NSData *signimagedata;

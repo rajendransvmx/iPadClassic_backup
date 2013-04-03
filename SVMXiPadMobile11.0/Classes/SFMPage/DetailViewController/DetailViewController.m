@@ -2976,6 +2976,8 @@ extern void SVMXLog(NSString *format, ...);
         Labor = nil;
     }
     
+       
+    NSMutableArray *travelArray = nil;
     if(isworkingInOffline)
     {
 		//Get Parts for the Work Order
@@ -2988,6 +2990,8 @@ extern void SVMXLog(NSString *format, ...);
 		//Get Labor
 		LaborArray = [appDelegate.calDataBase  queryForLabor:appDelegate.sfmPageController.recordId];
         
+        travelArray  = [appDelegate.calDataBase  queryForTravel:appDelegate.sfmPageController.recordId];
+
         reportEssentials  = [[appDelegate.calDataBase getReportEssentials:appDelegate.sfmPageController.recordId] retain];
         SMLog(@" reportEssentis array ==%@",reportEssentials);
         //Labor = nil;
@@ -3020,6 +3024,10 @@ extern void SVMXLog(NSString *format, ...);
 		Summary.Parts = Parts;
 	if (showExpenses)
 		Summary.Expenses = Expenses;
+                        
+     if([travelArray count] > 0) {
+        Summary.travel = travelArray;
+     }
     Summary.recordId = currentRecordId;
     Summary.objectApiName = appDelegate.sfmPageController.objectName;
     SMLog(@"%@",Parts);
@@ -13641,9 +13649,7 @@ extern void SVMXLog(NSString *format, ...);
 }
 
 - (BOOL)shouldShowBillableAmountInServiceReport {
-  
-    
-   return [appDelegate.calDataBase checkIfBillablePriceExistForWorkOrderId:appDelegate.sfmPageController.recordId andFieldName:@"SVMXC__Billable_Line_Price__c"];
+    return [appDelegate.calDataBase checkIfBillablePriceExistForWorkOrderId:appDelegate.sfmPageController.recordId andFieldName:@"SVMXC__Billable_Line_Price__c"];
 }
 
 - (BOOL)shouldShowBillableQuantityInServiceReport {

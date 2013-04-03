@@ -46,6 +46,10 @@
     UIImage * _signature;
     
     NSArray * _parts, * _expenses;
+    
+    //krishna defect : 5813
+    NSMutableArray *travelArray;
+    
     NSMutableArray * _labor;
     
     NSString *saveFileName, *newFilePath;
@@ -96,6 +100,8 @@
 @property (nonatomic, retain) NSString * _totalCost;
 @property (nonatomic, retain) NSArray * _parts, * _expenses;
 @property (nonatomic, retain) NSMutableArray * _labor;
+//krishna defect : 5813
+@property (nonatomic, retain) NSMutableArray *travelArray;
 
 @property (nonatomic, retain) UIImage * _signature;
 @property (nonatomic,assign) BOOL shouldShowBillablePrice;
@@ -149,6 +155,11 @@
 - (void) setDetailsOfWorkPerformed;
 // Set Parts Image
 - (void) setPartsImage;
+
+//krishna defect : 5813
+- (void)setTravelImage;
+
+
 // Set Labor Image
 - (void) setLaborImage;
 // Set Expenses Image

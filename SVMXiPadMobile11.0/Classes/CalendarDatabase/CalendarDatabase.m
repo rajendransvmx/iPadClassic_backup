@@ -1152,7 +1152,7 @@ extern void SVMXLog(NSString *format, ...);
     NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
     sqlite3_stmt *statement1;
     @try{
-    queryStatement = [NSString stringWithFormat:@"SELECT Id, SVMXC__Activity_Type__c, SVMXC__Actual_Quantity2__c, SVMXC__Actual_Price2__c, SVMXC__Work_Description__c,SVMXC__Billable_Quantity__c, SVMXC__Billable_Line_Price__c FROM SVMXC__Service_Order_Line__c WHERE SVMXC__Line_Type__c = 'Labor' AND SVMXC__Service_Order__c = '%@' AND SVMXC__Actual_Quantity2__c > 0 AND SVMXC__Actual_Price2__c >= 0 AND (SVMXC__Is_Billable__c = 'true' or  SVMXC__Is_Billable__c = 'True' or SVMXC__Is_Billable__c = '1') AND RecordTypeId   in   (select  record_type_id  from SFRecordType where record_type = 'Usage/Consumption' )", currentRecordId];
+    queryStatement = [NSString stringWithFormat:@"SELECT Id, SVMXC__Activity_Type__c, SVMXC__Actual_Quantity2__c, SVMXC__Actual_Price2__c, SVMXC__Work_Description__c,SVMXC__Billable_Quantity__c, SVMXC__Billable_Line_Price__c FROM SVMXC__Service_Order_Line__c WHERE SVMXC__Line_Type__c = 'Labor' AND SVMXC__Service_Order__c = '%@' AND  (SVMXC__Is_Billable__c = 'true' or  SVMXC__Is_Billable__c = 'True' or SVMXC__Is_Billable__c = '1') AND RecordTypeId   in   (select  record_type_id  from SFRecordType where record_type = 'Usage/Consumption' )", currentRecordId];
     const char * _query = [queryStatement UTF8String];
     NSArray * keys = [NSArray arrayWithObjects:
                       _ID,
@@ -1467,6 +1467,116 @@ extern void SVMXLog(NSString *format, ...);
     }
     return LaborArray;
 }
+
+- (NSMutableArray *) queryForTravel:(NSString *)currentRecordId
+{
+    
+    NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
+    sqlite3_stmt *statement;
+    NSString * nameField = @"";
+    
+    NSMutableArray *travel = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    
+    queryStatement = [NSString stringWithFormat:@"SELECT Id, SVMXC__Actual_Quantity2__c, SVMXC__Actual_Price2__c, SVMXC__Work_Description__c, SVMXC__Billable_Quantity__c, SVMXC__Billable_Line_Price__c FROM SVMXC__Service_Order_Line__c WHERE SVMXC__Line_Type__c = 'Travel' AND SVMXC__Service_Order__c = '%@' AND (SVMXC__Is_Billable__c = 'true' or  SVMXC__Is_Billable__c = 'True' or SVMXC__Is_Billable__c = '1') AND RecordTypeId   in   (select  record_type_id  from SFRecordType where record_type = 'Usage/Consumption' )", currentRecordId];
+    @try{
+        const char * _query = [queryStatement UTF8String];
+        if ( synchronized_sqlite3_prepare_v2(appDelegate.db, _query,-1, &statement, nil) == SQLITE_OK )
+        {
+            while(synchronized_sqlite3_step(statement) == SQLITE_ROW)
+            {
+                NSMutableArray * keys = [NSMutableArray arrayWithObjects:
+                                         _ID,
+                                         SVMXC__ACTUAL_QUANTITY2__C,
+                                         SVMXC__ACTUAL_PRICE2__C,
+                                         SVMXC__WORK_DESCRIPTION__C,
+                                         SVMXC_BILLABLE_QUANTITY,
+                                         SVMXC_BILLABLE_PRICE,nil];
+                
+                NSMutableDictionary *travelDict = [[[NSMutableDictionary alloc] init] autorelease];
+                
+                char *_Id = (char *) synchronized_sqlite3_column_text(statement,0);
+                NSString * Id = @"";
+                if ((_Id != nil) && strlen(_Id))
+                {
+                    Id = [[NSString alloc] initWithUTF8String:_Id];
+                    if (Id == nil) {
+                        Id = @"";
+                        
+                    }
+                    [travelDict setObject:Id forKey:_ID];
+                }
+                
+                
+                char *_SVMXC__Actual_Quantity2__c = (char *) synchronized_sqlite3_column_text(statement,1);
+                NSString * SVMXC__Actual_Quantity2__c_ = @"";
+                if ((_SVMXC__Actual_Quantity2__c != nil) && strlen(_SVMXC__Actual_Quantity2__c))
+                {
+                    SVMXC__Actual_Quantity2__c_ = [[[NSString alloc] initWithUTF8String:_SVMXC__Actual_Quantity2__c] autorelease];
+                    if (SVMXC__Actual_Quantity2__c_ == nil) {
+                        SVMXC__Actual_Quantity2__c_ = @"0.0";
+                    }
+                }
+                
+                char *_SVMXC__Actual_Price2__c = (char *) synchronized_sqlite3_column_text(statement,2);
+                NSString * SVMXC__Actual_Price2__c_ = @"";
+                if ((_SVMXC__Actual_Price2__c != nil) && strlen(_SVMXC__Actual_Price2__c))
+                {
+                    SVMXC__Actual_Price2__c_ = [[[NSString alloc] initWithUTF8String:_SVMXC__Actual_Price2__c] autorelease];
+                    if (SVMXC__Actual_Price2__c_ == nil) {
+                        SVMXC__Actual_Price2__c_ = @"0.0";
+                    }
+                }
+                char *_SVMXC__Work_Description_c = (char *) synchronized_sqlite3_column_text(statement,3);
+                NSString * SVMXC__Work_Description_c = @"";
+                if ((_SVMXC__Work_Description_c != nil) && strlen(_SVMXC__Work_Description_c))
+                {
+                    SVMXC__Work_Description_c = [[[NSString alloc] initWithUTF8String:_SVMXC__Work_Description_c] autorelease];
+                    if (_SVMXC__Work_Description_c == nil) {
+                        _SVMXC__Work_Description_c = @"";
+                    }
+                }
+                
+                char *_SVMXC__Billable_Quantity__c = (char *) synchronized_sqlite3_column_text(statement,4);
+                NSString * billableQty = @"";
+                if ((_SVMXC__Billable_Quantity__c != nil) && strlen(_SVMXC__Billable_Quantity__c))
+                {
+                    billableQty = [[[NSString alloc] initWithUTF8String:_SVMXC__Billable_Quantity__c] autorelease];
+                    if (billableQty == nil) {
+                        billableQty = @"";
+                    }
+                }
+                
+                
+                char *_SVMXC__billable_line_price__c = (char *) synchronized_sqlite3_column_text(statement,5);
+                NSString *billableLinePrice = @"";
+                if ((_SVMXC__billable_line_price__c != nil) && strlen(_SVMXC__billable_line_price__c))
+                {
+                    billableLinePrice = [[[NSString alloc] initWithUTF8String:_SVMXC__billable_line_price__c] autorelease];
+                    if (billableLinePrice == nil) {
+                        billableLinePrice = @"";
+                    }
+                }
+                
+                
+                NSMutableArray * objects = [NSMutableArray arrayWithObjects:Id,SVMXC__Actual_Quantity2__c_,SVMXC__Actual_Price2__c_,SVMXC__Work_Description_c,billableQty,billableLinePrice,nil];
+                
+                NSDictionary * dictionary = [[NSDictionary alloc] initWithObjects:objects forKeys:keys];
+                [travel addObject:dictionary];
+                [dictionary release];
+                dictionary = nil;
+                
+            }
+        }
+        synchronized_sqlite3_finalize(statement);
+    }@catch (NSException *exp)
+    {
+        SMLog(@"Exception Name CalendarDatabase :queryForTravel %@",exp.name);
+        SMLog(@"Exception Reason CalendarDatabase :queryForTravel %@",exp.reason);
+    }
+    
+    return travel;
+}
+
 
 #pragma mark - Summary
 - (void) startQueryConfiguration

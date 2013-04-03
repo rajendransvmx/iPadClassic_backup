@@ -20,6 +20,11 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize prevInterfaceOrientation;
 @synthesize workOrderDetails;
 
+//krishna defect 5813
+@synthesize travel;
+@synthesize shouldShowBillablePrice;
+@synthesize shouldShowBillableQty;
+
 @synthesize Parts, Labour, Expenses;
 @synthesize workDescription;
 @synthesize reportEssentials;
@@ -28,8 +33,7 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize recordId;
 @synthesize objectApiName;
 
-@synthesize shouldShowBillablePrice;
-@synthesize shouldShowBillableQty;
+
 
 - (IBAction) displayUser:(id)sender
 {
@@ -263,6 +267,9 @@ extern void SVMXLog(NSString *format, ...);
 		if (showExpenses)
 			pdfCreator._expenses = Expenses;
         
+        //krishna defect : 5813
+        pdfCreator.travelArray = travel;
+        
         pdfCreator.modalPresentationStyle = UIModalPresentationFullScreen;
         pdfCreator.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
         
@@ -355,7 +362,15 @@ extern void SVMXLog(NSString *format, ...);
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     // Return the number of sections.
-    return 4;// ([Parts count]?1:0) + ([Labour count]?1:0) + ([Expenses count]?1:0);
+   // return 4;// ([Parts count]?1:0) + ([Labour count]?1:0) + ([Expenses count]?1:0);
+    
+    //krishna hardcoded : defect 5813
+    
+    // ([Parts count]?1:0) + ([Labour count]?1:0) + ([Expenses count]?1:0) + (([travel count]?1:0);
+    if([travel count] > 0) {
+        return 5;
+    }
+    else return 4;//([Parts count]?1:0) + ([Labour count]?1:0) + ([Expenses count]?1:0);
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -374,6 +389,12 @@ extern void SVMXLog(NSString *format, ...);
 		case 3:
 			return [Expenses count];
 			break;
+        case 4:
+            //Krishna defect 5813
+            if([travel count] > 0) {
+            return [travel count];
+            }
+            break;
 		default:
 			break;
 	}
@@ -459,7 +480,33 @@ extern void SVMXLog(NSString *format, ...);
          }
       
     }
-	}@catch (NSException *exp) {
+        
+    NSArray *travelArrayTemp = self.travel;
+    count = [travelArrayTemp count];
+    for (int i = 0; i < count; i++)
+    {
+        NSDictionary *dict = [travelArrayTemp objectAtIndex:i];
+        
+        NSString * actualPrice = [dict objectForKey:SVMXC__Actual_Price2__c];
+        if (![actualPrice isKindOfClass:[NSString class]])
+            actualPrice = @"0.0";
+        
+        NSString * actualQuantity = [dict objectForKey:SVMXC__Actual_Quantity2__c];
+        if (![actualQuantity isKindOfClass:[NSString class]])
+            actualQuantity = @"0.0";
+        
+        double cost = [actualPrice floatValue] * [actualQuantity floatValue];
+        
+        if(self.shouldShowBillablePrice){
+            double billableValue = [[dict valueForKey:SVMXC__Billable_Line_Price__c] doubleValue];
+            totalCost += billableValue;
+        }
+        else{
+            totalCost += cost;
+        }
+   }
+    
+    }@catch (NSException *exp) {
 		SMLog(@"Exception Name SmmaryViewController :setTotalCost %@",exp.name);
 		SMLog(@"Exception Reason SummaryViewController :setTotalCost %@",exp.reason);
     }
@@ -575,6 +622,7 @@ extern void SVMXLog(NSString *format, ...);
             NSString * laborRateHours = [dict valueForKey:@"SVMXC__Actual_Quantity2__c"];
             if (![laborRateHours isKindOfClass:[NSString class]])
                 laborRateHours = @"";
+            
             /* 6773 */
             if (self.shouldShowBillableQty) {
                 NSString *someValue =  [dict valueForKey:SVMXC__Billable_Quantity__c];
@@ -637,6 +685,50 @@ extern void SVMXLog(NSString *format, ...);
 			view = expensecell;
 			break;
 		}
+        case 4:
+        {
+            TravelcellView *travelcell = [[[TravelcellView alloc] initWithFrame:CGRectMake(0, 0, 768, 44)] autorelease];
+            NSDictionary *dict = [travel objectAtIndex:indexPath.row];
+			travelcell.SrNo.text = [NSString stringWithFormat:@"%d.", indexPath.row + 1];
+			travelcell.Travel.text = [[dict valueForKey:KEY_NAME] isKindOfClass:[NSString class]]?[dict valueForKey:KEY_NAME]:@"";
+            
+           
+            if(self.shouldShowBillableQty){
+                travelcell.Qty.text = [[dict valueForKey:SVMXC__Billable_Quantity__c] isKindOfClass:[NSString class]]?[dict valueForKey:SVMXC__Billable_Quantity__c]:@"";
+            }
+            else {
+                travelcell.Qty.text = [[dict valueForKey:SVMXC__Actual_Quantity2__c] isKindOfClass:[NSString class]]?[dict valueForKey:SVMXC__Actual_Quantity2__c]:@"";
+            }
+			
+            float costPerPart = 0.0;
+          
+            costPerPart = [[dict objectForKey:SVMXC__Actual_Price2__c] floatValue];
+            travelcell.UnitPrice.text = [self getFormattedCost:costPerPart];
+            
+            
+            NSString * keyPartsUsedStr = [dict valueForKey:SVMXC__Actual_Quantity2__c];
+            if (![keyPartsUsedStr isKindOfClass:[NSString class]])
+                keyPartsUsedStr = @"";
+            
+            NSString * billablePrice = [dict valueForKey:SVMXC__Billable_Line_Price__c];
+            if (![billablePrice isKindOfClass:[NSString class]])
+                billablePrice = @"";
+            
+            double cost = [keyPartsUsedStr floatValue] * costPerPart;
+            
+			LblTotalCost.text = [NSString stringWithFormat:@"%@%@",AppDelegate.workOrderCurrency, [self getFormattedCost:totalCost]];
+            
+            if (self.shouldShowBillablePrice) {
+                double billableCost =  [billablePrice doubleValue];
+                travelcell.LinePrice.text = [self getFormattedCost:billableCost];
+            }
+            else {
+                travelcell.LinePrice.text = [self getFormattedCost:cost];
+            }
+         
+            view = travelcell;
+			break;
+       }
 		default:
 			break;
 	}
@@ -758,6 +850,12 @@ extern void SVMXLog(NSString *format, ...);
 		case 3:
 			objs = [[NSBundle mainBundle] loadNibNamed:@"ExpensesHeaderToolBar" owner:self options:nil];
 			break;
+            
+        //Krishna defect : 5813 
+        case 4:
+            objs = [[NSBundle mainBundle] loadNibNamed:@"TravelHeaderToolBar" owner:self options:nil];
+			break;
+
 		default:
 			break;
 	}
@@ -852,6 +950,8 @@ extern void SVMXLog(NSString *format, ...);
 - (void)dealloc
 {
     [totalAmount release];
+    //krishna defect 5813
+    [travel release];
     [super dealloc];
 }
 
