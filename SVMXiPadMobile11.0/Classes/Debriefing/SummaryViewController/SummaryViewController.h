@@ -56,6 +56,9 @@
     //Shrinivas
     NSString * recordId;
     NSString * objectApiName;
+    
+    BOOL     shouldShowBillablePrice;
+    BOOL     shouldShowBillableQty;
 }
 
 
@@ -75,7 +78,8 @@
 //Shrinivas
 @property (nonatomic, retain) NSString *recordId;
 @property (nonatomic, retain) NSString *objectApiName;
-
+@property(nonatomic,assign)   BOOL     shouldShowBillablePrice;
+@property(nonatomic,assign)   BOOL     shouldShowBillableQty;
 
 - (IBAction) Done;
 

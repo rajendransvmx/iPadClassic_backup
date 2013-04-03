@@ -35,3 +35,7 @@
 #define SVMXC__Actual_Price2__c                         @"SVMXC__Actual_Price2__c"
 #define SVMXC__Actual_Quantity2__c                      @"SVMXC__Actual_Quantity2__c"
 #define RATE                                            @"RATE"
+
+#define SVMXC__Billable_Quantity__c                     @"SVMXC__Billable_Quantity__c"
+#define SVMXC__Billable_Line_Price__c                    @"SVMXC__Billable_Line_Price__c"
+

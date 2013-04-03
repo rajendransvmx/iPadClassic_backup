@@ -21,6 +21,9 @@
 #define KEY_DISCOUNT				@"Discount"
 #define KEY_PRODUCTID               @"KEY_PRODUCTID"
 #define KEY_USEPRICEBOOK            @"UsePriceBook"
+#define KEY_BILLABLE_QUANTITY       @"SVMXC__Billable_Quantity__c"
+#define KEY_BILLABLE_PRICE          @"SVMXC__Billable_Line_Price__c"
+
 
 #define CONSUMEDPARTS               @"CONSUMEDPARTS"
 #define STOCKPARTS                  @"STOCKPARTS"

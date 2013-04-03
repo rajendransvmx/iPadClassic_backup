@@ -878,7 +878,7 @@ extern void SVMXLog(NSString *format, ...);
     NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
     Expenses = [[NSMutableArray alloc] initWithCapacity:0];
     sqlite3_stmt *statement1;
-    queryStatement = [NSString stringWithFormat:@"SELECT Id, SVMXC__Expense_Type__c, SVMXC__Actual_Quantity2__c, SVMXC__Actual_Price2__c, SVMXC__Work_Description__c FROM SVMXC__Service_Order_Line__c WHERE SVMXC__Line_Type__c = 'Expenses' AND SVMXC__Service_Order__c = '%@' AND (SVMXC__Is_Billable__c = 'true' or  SVMXC__Is_Billable__c = 'True' or SVMXC__Is_Billable__c = '1') AND RecordTypeId   in   (select  record_type_id  from SFRecordType where record_type = 'Usage/Consumption' )", currentRecordId];
+    queryStatement = [NSString stringWithFormat:@"SELECT Id, SVMXC__Expense_Type__c, SVMXC__Actual_Quantity2__c, SVMXC__Actual_Price2__c, SVMXC__Work_Description__c,SVMXC__Billable_Quantity__c, SVMXC__Billable_Line_Price__c FROM SVMXC__Service_Order_Line__c WHERE SVMXC__Line_Type__c = 'Expenses' AND SVMXC__Service_Order__c = '%@' AND (SVMXC__Is_Billable__c = 'true' or  SVMXC__Is_Billable__c = 'True' or SVMXC__Is_Billable__c = '1') AND RecordTypeId   in   (select  record_type_id  from SFRecordType where record_type = 'Usage/Consumption' )", currentRecordId];
     const char * _query = [queryStatement UTF8String];
     NSArray * keys = [NSArray arrayWithObjects:
                       _ID,
@@ -886,6 +886,8 @@ extern void SVMXLog(NSString *format, ...);
                       SVMXC__ACTUAL_QUANTITY2__C,
                       SVMXC__ACTUAL_PRICE2__C,
                       SVMXC__WORK_DESCRIPTION__C,
+                      SVMXC_BILLABLE_QUANTITY,
+                      SVMXC_BILLABLE_PRICE,
                       nil];
     @try{
     if ( synchronized_sqlite3_prepare_v2(appDelegate.db, _query,-1, &statement1, nil) == SQLITE_OK )
@@ -922,8 +924,34 @@ extern void SVMXLog(NSString *format, ...);
             if ((_SVMXC__Work_Description_c != nil) && strlen(_SVMXC__Work_Description_c))
             {         
                 SVMXC__Work_Description_c = [[NSString alloc] initWithUTF8String:_SVMXC__Work_Description_c];
-            }   
-            NSMutableArray * objects = [[NSMutableArray arrayWithObjects:Id,SVMXC__Expense_Type__c, SVMXC__Actual_Quantity2__c_,SVMXC__Actual_Price2__c_,SVMXC__Work_Description_c,nil] retain];
+            }
+            
+            
+            char *tempValue = (char *) synchronized_sqlite3_column_text(statement1,5);
+            NSString * billableQty = @"";
+            if ((tempValue != nil) && strlen(tempValue))
+            {
+                billableQty = [[NSString alloc] initWithUTF8String:tempValue];
+                if (billableQty == nil) {
+                    billableQty = @"";
+                }
+            }
+            
+            
+            tempValue = (char *) synchronized_sqlite3_column_text(statement1,6);
+            NSString * billablePrice = @"0.0";
+            if ((tempValue != nil) && strlen(tempValue))
+            {
+                billablePrice = [[NSString alloc] initWithUTF8String:tempValue];
+                if (billablePrice == nil) {
+                    billablePrice = @"0.0";
+                }
+            }
+            
+            
+            NSMutableArray * objects = [[NSMutableArray arrayWithObjects:Id,SVMXC__Expense_Type__c, SVMXC__Actual_Quantity2__c_,SVMXC__Actual_Price2__c_,SVMXC__Work_Description_c,billableQty,billablePrice,nil] retain];
+            
+            
             
             NSDictionary * dictionary = [[NSDictionary alloc] initWithObjects:objects forKeys:keys];
             [Expenses addObject:dictionary];
@@ -952,11 +980,12 @@ extern void SVMXLog(NSString *format, ...);
     
     Parts = [[NSMutableArray alloc] initWithCapacity:0];
     
-    queryStatement = [NSString stringWithFormat:@"SELECT Id, SVMXC__Product__c,SVMXC__Actual_Quantity2__c, SVMXC__Actual_Price2__c, SVMXC__Work_Description__c, SVMXC__Discount__c, Name FROM SVMXC__Service_Order_Line__c WHERE SVMXC__Line_Type__c = 'Parts' AND SVMXC__Service_Order__c = '%@' AND SVMXC__Actual_Quantity2__c > 0 AND SVMXC__Actual_Price2__c >= 0 AND (SVMXC__Is_Billable__c = 'true' or  SVMXC__Is_Billable__c = 'True' or SVMXC__Is_Billable__c = '1') AND RecordTypeId   in   (select  record_type_id  from SFRecordType where record_type = 'Usage/Consumption' )", currentRecordId];
+    queryStatement = [NSString stringWithFormat:@"SELECT Id, SVMXC__Product__c,SVMXC__Actual_Quantity2__c, SVMXC__Actual_Price2__c, SVMXC__Work_Description__c, SVMXC__Discount__c, Name , SVMXC__Billable_Quantity__c, SVMXC__Billable_Line_Price__c FROM SVMXC__Service_Order_Line__c WHERE SVMXC__Line_Type__c = 'Parts' AND SVMXC__Service_Order__c = '%@' AND SVMXC__Actual_Quantity2__c > 0 AND SVMXC__Actual_Price2__c >= 0 AND (SVMXC__Is_Billable__c = 'true' or  SVMXC__Is_Billable__c = 'True' or SVMXC__Is_Billable__c = '1') AND RecordTypeId   in   (select  record_type_id  from SFRecordType where record_type = 'Usage/Consumption' )", currentRecordId];
     @try{
     const char * _query = [queryStatement UTF8String];
     if ( synchronized_sqlite3_prepare_v2(appDelegate.db, _query,-1, &statement1, nil) == SQLITE_OK )
     {
+        
         while(synchronized_sqlite3_step(statement1) == SQLITE_ROW)
         {
             NSMutableArray * keys = [NSMutableArray arrayWithObjects:
@@ -967,6 +996,8 @@ extern void SVMXLog(NSString *format, ...);
                                      SVMXC__ACTUAL_PRICE2__C,
                                      SVMXC__WORK_DESCRIPTION__C,
                                      SVMXC__DISCOUNT__C,
+                                     SVMXC_BILLABLE_QUANTITY,
+                                     SVMXC_BILLABLE_PRICE,
                                      nil];
             
             char *_Id = (char *) synchronized_sqlite3_column_text(statement1,0);
@@ -1015,7 +1046,33 @@ extern void SVMXLog(NSString *format, ...);
                 SVMXC__Discount__c = [[NSString alloc] initWithUTF8String:_SVMXC__Discount__c];
             } 
             
-            NSMutableArray * objects = [[NSMutableArray arrayWithObjects:Id,SVMXC__Product__c,nameField,SVMXC__Actual_Quantity2__c_,SVMXC__Actual_Price2__c_,SVMXC__Work_Description_c,SVMXC__Discount__c,nil] retain];
+            
+            /* Fetching billable quantitye 6773*/
+            char *tempValue = (char *) synchronized_sqlite3_column_text(statement1,7);
+            NSString * _SVMXC__Billable_Quantity__c = @"";
+            if ((tempValue != nil) && strlen(tempValue))
+            {
+                _SVMXC__Billable_Quantity__c = [[NSString alloc] initWithUTF8String:tempValue];
+                if (_SVMXC__Billable_Quantity__c == nil) {
+                    _SVMXC__Billable_Quantity__c = @"0.0";
+                }
+            }
+            
+            tempValue = nil;
+            tempValue = (char *) synchronized_sqlite3_column_text(statement1,8);
+            NSString * _SVMXC__Billable_Line_Price__c = @"";
+            if ((tempValue != nil) && strlen(tempValue))
+            {
+                _SVMXC__Billable_Line_Price__c = [[NSString alloc] initWithUTF8String:tempValue];
+                if (_SVMXC__Billable_Line_Price__c == nil) {
+                    _SVMXC__Billable_Line_Price__c = @"0.0";
+                }
+            }
+            
+            /* End fetching billable quantitye 6773*/
+            
+            
+            NSMutableArray * objects = [[NSMutableArray arrayWithObjects:Id,SVMXC__Product__c,nameField,SVMXC__Actual_Quantity2__c_,SVMXC__Actual_Price2__c_,SVMXC__Work_Description_c,SVMXC__Discount__c,_SVMXC__Billable_Quantity__c,_SVMXC__Billable_Line_Price__c,nil] retain];
             
             NSDictionary * dictionary = [[NSDictionary alloc] initWithObjects:objects forKeys:keys];
             
@@ -1029,7 +1086,10 @@ extern void SVMXLog(NSString *format, ...);
                     KEY_COSTPERPART,
                     KEY_PRODUCTID,
                     KEY_DISCOUNT,
+                    KEY_BILLABLE_QUANTITY,
+                    KEY_BILLABLE_PRICE,
                     nil];
+            
             
             
             
@@ -1051,8 +1111,15 @@ extern void SVMXLog(NSString *format, ...);
             if ([discount isKindOfClass:[NSString class]])
                 discount = [NSString stringWithFormat:@"%@", discount];
             
-            objects = [NSMutableArray arrayWithObjects:nameField,numPartsUsed,description,costPerPart, keyProduct, discount,
+            NSString  *keyBillableQty = [dictionary objectForKey:SVMXC_BILLABLE_QUANTITY];
+            
+            NSString  *keyBillablePrice = [dictionary objectForKey:SVMXC_BILLABLE_PRICE];
+            
+            
+            objects = [NSMutableArray arrayWithObjects:nameField,numPartsUsed,description,costPerPart, keyProduct, discount,keyBillableQty,keyBillablePrice,
                        nil];
+            
+            
             
             part = [NSMutableDictionary dictionaryWithObjects:objects forKeys:keys];
             [Parts addObject:part];
@@ -1085,7 +1152,7 @@ extern void SVMXLog(NSString *format, ...);
     NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
     sqlite3_stmt *statement1;
     @try{
-    queryStatement = [NSString stringWithFormat:@"SELECT Id, SVMXC__Activity_Type__c, SVMXC__Actual_Quantity2__c, SVMXC__Actual_Price2__c, SVMXC__Work_Description__c FROM SVMXC__Service_Order_Line__c WHERE SVMXC__Line_Type__c = 'Labor' AND SVMXC__Service_Order__c = '%@' AND SVMXC__Actual_Quantity2__c > 0 AND SVMXC__Actual_Price2__c >= 0 AND (SVMXC__Is_Billable__c = 'true' or  SVMXC__Is_Billable__c = 'True' or SVMXC__Is_Billable__c = '1') AND RecordTypeId   in   (select  record_type_id  from SFRecordType where record_type = 'Usage/Consumption' )", currentRecordId];
+    queryStatement = [NSString stringWithFormat:@"SELECT Id, SVMXC__Activity_Type__c, SVMXC__Actual_Quantity2__c, SVMXC__Actual_Price2__c, SVMXC__Work_Description__c,SVMXC__Billable_Quantity__c, SVMXC__Billable_Line_Price__c FROM SVMXC__Service_Order_Line__c WHERE SVMXC__Line_Type__c = 'Labor' AND SVMXC__Service_Order__c = '%@' AND SVMXC__Actual_Quantity2__c > 0 AND SVMXC__Actual_Price2__c >= 0 AND (SVMXC__Is_Billable__c = 'true' or  SVMXC__Is_Billable__c = 'True' or SVMXC__Is_Billable__c = '1') AND RecordTypeId   in   (select  record_type_id  from SFRecordType where record_type = 'Usage/Consumption' )", currentRecordId];
     const char * _query = [queryStatement UTF8String];
     NSArray * keys = [NSArray arrayWithObjects:
                       _ID,
@@ -1093,6 +1160,8 @@ extern void SVMXLog(NSString *format, ...);
                       SVMXC__ACTUAL_QUANTITY2__C,
                       SVMXC__ACTUAL_PRICE2__C,
                       SVMXC__WORK_DESCRIPTION__C,
+                      SVMXC_BILLABLE_QUANTITY,
+                      SVMXC_BILLABLE_PRICE,
                       nil];
     if ( synchronized_sqlite3_prepare_v2(appDelegate.db, _query,-1, &statement1, nil) == SQLITE_OK )
     {
@@ -1130,8 +1199,32 @@ extern void SVMXLog(NSString *format, ...);
             if ((_SVMXC__Work_Description_c != nil) && strlen(_SVMXC__Work_Description_c))
             {         
                 SVMXC__Work_Description_c = [[NSString alloc] initWithUTF8String:_SVMXC__Work_Description_c];
-            }   
-            NSMutableArray * objects = [[NSMutableArray arrayWithObjects:Id,SVMXC__Activity_Type__c_,SVMXC__Actual_Quantity2__c_,SVMXC__Actual_Price2__c_,SVMXC__Work_Description_c,nil] retain];
+            }
+            
+            char *tempValue = (char *) synchronized_sqlite3_column_text(statement1,5);
+            NSString * billableQty = @"";
+            if ((tempValue != nil) && strlen(tempValue))
+            {
+                billableQty = [[NSString alloc] initWithUTF8String:tempValue];
+                if (billableQty == nil) {
+                    billableQty = @"0.0";
+                }
+            }
+            
+            
+            tempValue = (char *) synchronized_sqlite3_column_text(statement1,6);
+            NSString * billablePrice = @"";
+            if ((tempValue != nil) && strlen(tempValue))
+            {
+                billablePrice = [[NSString alloc] initWithUTF8String:tempValue];
+                if (billablePrice == nil) {
+                    billablePrice = @"0.0";
+                }
+            }
+            
+            
+            
+            NSMutableArray * objects = [[NSMutableArray arrayWithObjects:Id,SVMXC__Activity_Type__c_,SVMXC__Actual_Quantity2__c_,SVMXC__Actual_Price2__c_,SVMXC__Work_Description_c,billableQty,billablePrice,nil] retain];
             
             NSDictionary * dictionary = [[NSDictionary alloc] initWithObjects:objects forKeys:keys];
             
@@ -1141,30 +1234,50 @@ extern void SVMXLog(NSString *format, ...);
             [LabourValuesDictionary setValue:@"0" forKey:REPAIR];
             [LabourValuesDictionary setValue:@"0" forKey:SERVICE];
             
+          
             if ([[dictionary objectForKey:@"SVMXC__Activity_Type__c"] isEqualToString:CALIBRATION])
             {
                 [LabourValuesDictionary setValue:[dictionary objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_CALIBRATION];
-                [LabourValuesDictionary setValue:[dictionary objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_CALIBRATION];
+                [LabourValuesDictionary setValue:[dictionary objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_CALIBRATION]
+                ;
+                
+                [LabourValuesDictionary setValue:[dictionary objectForKey:SVMXC_BILLABLE_PRICE ] forKey:BILL_RATE_CALIBRATION];
+                [LabourValuesDictionary setValue:[dictionary objectForKey:SVMXC_BILLABLE_QUANTITY] forKey:BILL_QTY_CALIBRATION];
+                
             }
             if ([[dictionary objectForKey:@"SVMXC__Activity_Type__c"] isEqualToString:CLEANUP])
             {
                 [LabourValuesDictionary setValue:[dictionary objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_CLEANUP];
                 [LabourValuesDictionary setValue:[dictionary objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_CLEANUP];
+                
+                [LabourValuesDictionary setValue:[dictionary objectForKey:SVMXC_BILLABLE_PRICE ] forKey:BILL_RATE_CLEANUP];
+                [LabourValuesDictionary setValue:[dictionary objectForKey:SVMXC_BILLABLE_QUANTITY] forKey:BILL_QTY_CLEANUP];
+
+                
             }
             if ([[dictionary objectForKey:@"SVMXC__Activity_Type__c"] isEqualToString:INSTALLATION])
             {
                 [LabourValuesDictionary setValue:[dictionary objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_INSTALLATION];
                 [LabourValuesDictionary setValue:[dictionary  objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_INSTALLATION];
+                
+                [LabourValuesDictionary setValue:[dictionary objectForKey:SVMXC_BILLABLE_PRICE ] forKey:BILL_RATE_INSTALLATION];
+                [LabourValuesDictionary setValue:[dictionary objectForKey:SVMXC_BILLABLE_QUANTITY] forKey:BILL_QTY_INSTALLATION];
             }
             if ([[dictionary objectForKey:@"SVMXC__Activity_Type__c"] isEqualToString:REPAIR])
             {
                 [LabourValuesDictionary setValue:[dictionary objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_REPAIR];
                 [LabourValuesDictionary setValue:[dictionary objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_REPAIR];
+                
+                [LabourValuesDictionary setValue:[dictionary objectForKey:SVMXC_BILLABLE_PRICE ] forKey:BILL_RATE_REPAIR];
+                [LabourValuesDictionary setValue:[dictionary objectForKey:SVMXC_BILLABLE_QUANTITY] forKey:BILL_QTY_REPAIR];
             }
             if ([[dictionary objectForKey:@"SVMXC__Activity_Type__c"] isEqualToString:SERVICE])
             {
                 [LabourValuesDictionary setValue:[dictionary objectForKey:@"SVMXC__Actual_Price2__c"] forKey:RATE_SERVICE];
                 [LabourValuesDictionary setValue:[dictionary objectForKey:@"SVMXC__Actual_Quantity2__c"] forKey:QTY_SERVICE];
+                
+                [LabourValuesDictionary setValue:[dictionary objectForKey:SVMXC_BILLABLE_PRICE ] forKey:BILL_RATE_SERVICE];
+                [LabourValuesDictionary setValue:[dictionary objectForKey:SVMXC_BILLABLE_QUANTITY] forKey:BILL_QTY_SERVICE];
             }
 			
 			[LaborArray addObject:LabourValuesDictionary];
@@ -1203,6 +1316,7 @@ extern void SVMXLog(NSString *format, ...);
         }
     } 
     synchronized_sqlite3_finalize(statement6);
+        
     NSMutableArray * array = billable_cost_2;
     NSMutableArray * billable_cost = [[NSMutableArray alloc]initWithCapacity:0];
     
@@ -6720,6 +6834,36 @@ extern void SVMXLog(NSString *format, ...);
        
     }
     return someObject;
+}
+
+
+#pragma mark - Check for billable price 
+
+- (BOOL)checkIfBillablePriceExistForWorkOrderId:(NSString *)workOrderLocalId andFieldName:(NSString *)fieldName {
+    
+    NSString *sfmId = [self getSFIdForlocalId:workOrderLocalId andTableName:@"SVMXC__Service_Order__c"];
+    
+    /* Get all lines and check if one billable price exist and non empty  */
+    
+    NSString *sqlQuery = [NSString stringWithFormat:@"select %@ from SVMXC__Service_Order_Line__c where (SVMXC__Service_Order__c = '%@' OR SVMXC__Service_Order__c = '%@')", fieldName,workOrderLocalId,sfmId ];
+    sqlite3_stmt * stmt;
+    
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &stmt, nil) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(stmt)  == SQLITE_ROW)
+        {
+            char * fieldValue  = (char *)sqlite3_column_text(stmt, 0);
+            
+            if(fieldValue!= nil && fieldValue != "" && fieldValue != " ") {
+                NSString *priceValue = [NSString stringWithUTF8String:fieldValue];
+                if (![Utility isStringEmpty:priceValue]) {
+                    return YES;
+                }
+            }
+        }
+    }
+    sqlite3_finalize(stmt);
+    return NO;
 }
 
 @end

@@ -81,6 +81,9 @@
     
     BOOL didremovepdf;
     BOOL didremoveallPdf;
+    
+    BOOL shouldShowBillablePrice;
+    BOOL shouldShowBillableQty;
 }
 
 @property (nonatomic, assign) id <PDFCreatorDelegate> delegate;
@@ -95,6 +98,8 @@
 @property (nonatomic, retain) NSMutableArray * _labor;
 
 @property (nonatomic, retain) UIImage * _signature;
+@property (nonatomic,assign) BOOL shouldShowBillablePrice;
+@property (nonatomic,assign) BOOL shouldShowBillableQty;
 
 @property BOOL createPDF;
 @property BOOL calledFromSummary;

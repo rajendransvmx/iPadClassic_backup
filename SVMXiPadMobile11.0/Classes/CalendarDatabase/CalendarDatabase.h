@@ -244,6 +244,8 @@
 - (NSInteger)getRecordCountForSfId:(NSString *)sfId andTableName:(NSString *)tableName;
 - (NSString *)getSFIdForlocalId:(NSString *)workOrderLocalId andTableName:(NSString *)tableName;
 - (id)getTheProperObjectTypeForFieldType:(NSString *)fieldType andFieldValue:(NSString *)fieldValue;
+- (BOOL)checkIfBillablePriceExistForWorkOrderId:(NSString *)workOrderLocalId andFieldName:(NSString *)fieldName;
+
 /* End GET_PRICE_JS-shr*/
 
 #define DATABASENAME   @"sfm"
@@ -267,6 +269,11 @@
 #define REPAIR                                    @"Repair"
 #define SERVICE                                   @"Service"
 
+
+#define SVMXC_BILLABLE_QUANTITY                   @"SVMXC__Billable_Quantity__c"
+#define SVMXC_BILLABLE_PRICE                      @"SVMXC__Billable_Line_Price__c"
+
+
 #define RATE_CALIBRATION                          @"Rate_Calibration"
 #define RATE_CLEANUP                              @"Rate_Cleanup"
 #define RATE_INSTALLATION                         @"Rate_Installation"
@@ -278,6 +285,22 @@
 #define QTY_INSTALLATION                          @"QTY_Installation"
 #define QTY_REPAIR                                @"QTY_Repair"
 #define QTY_SERVICE                               @"QTY_Service"
+
+
+#define BILL_RATE_CALIBRATION                          @"Bill_Rate_Calibration"
+#define BILL_RATE_CLEANUP                              @"Bill_Rate_Cleanup"
+#define BILL_RATE_INSTALLATION                         @"Bill_Rate_Installation"
+#define BILL_RATE_REPAIR                               @"Bill_Rate_Repair"
+#define BILL_RATE_SERVICE                              @"Bill_Rate_Service"
+
+#define BILL_QTY_CALIBRATION                           @"Bill_QTY_Calibration"
+#define BILL_QTY_CLEANUP                               @"Bill_QTY_Cleanup"
+#define BILL_QTY_INSTALLATION                          @"Bill_QTY_Installation"
+#define BILL_QTY_REPAIR                                @"Bill_QTY_Repair"
+#define BILL_QTY_SERVICE                               @"Bill_QTY_Service"
+
+
+
 //Service Report
 #define SVMXC__NAME__C                           @"SVMXC__Name__c"
 #define SVMXC__DESCRIPTION__C                    @"SVMXC__Description__c"

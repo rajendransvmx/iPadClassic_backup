@@ -28,6 +28,9 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize recordId;
 @synthesize objectApiName;
 
+@synthesize shouldShowBillablePrice;
+@synthesize shouldShowBillableQty;
+
 - (IBAction) displayUser:(id)sender
 {
     UIButton * button = (UIButton *)sender;
@@ -226,6 +229,10 @@ extern void SVMXLog(NSString *format, ...);
         pdfCreator.delegate = self;
         pdfCreator.reportEssentials = self.reportEssentials;
         pdfCreator.woId = [[workOrderDetails objectForKey:WHATID] isKindOfClass:[NSString class]]?[workOrderDetails objectForKey:WHATID]:@"";
+        
+        pdfCreator.shouldShowBillableQty = self.shouldShowBillableQty;
+        pdfCreator.shouldShowBillablePrice = self.shouldShowBillablePrice;
+        
         NSDictionary * dict = nil;
         if ([reportEssentials count] > 0)
             dict = [reportEssentials objectAtIndex:0];
@@ -375,6 +382,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) setTotalCost
 {
+    /* 6773 */
     NSUInteger count = [Parts count];
     @try{
     for (int i = 0; i < count; i++)
@@ -389,7 +397,15 @@ extern void SVMXLog(NSString *format, ...);
         costPerPart = [[dict objectForKey:KEY_COSTPERPART] floatValue];
         float discount = [[dict valueForKey:@"Discount"] floatValue];
         double cost = [[dict valueForKey:KEY_PARTSUSED] floatValue] * costPerPart * (1 - (discount/100));//#3014
-        totalCost += cost;
+        
+        if(self.shouldShowBillablePrice){
+            double billableValue = [[dict valueForKey:KEY_BILLABLE_PRICE] doubleValue];
+            totalCost += billableValue;
+        }
+        else {
+             totalCost += cost;
+        }
+       
     }
     
     count = [Labour count];
@@ -407,7 +423,15 @@ extern void SVMXLog(NSString *format, ...);
                 actualQuantity = @"0.0";
 
             double cost = [actualPrice floatValue] * [actualQuantity floatValue];
-            totalCost += cost;
+             if(self.shouldShowBillablePrice){
+                 double billableValue = [[dict valueForKey:SVMXC__Billable_Line_Price__c] doubleValue];
+                 totalCost += billableValue;
+
+             }
+             else {
+                 totalCost += cost;
+             }
+            
         }
     }
     
@@ -425,7 +449,15 @@ extern void SVMXLog(NSString *format, ...);
             actualQuantity = @"0.0";
         
         double cost = [actualPrice floatValue] * [actualQuantity floatValue];
-        totalCost += cost;
+        
+         if(self.shouldShowBillablePrice){
+             double billableValue = [[dict valueForKey:SVMXC__Billable_Line_Price__c] doubleValue];
+             totalCost += billableValue;
+         }
+         else{
+               totalCost += cost;
+         }
+      
     }
 	}@catch (NSException *exp) {
 		SMLog(@"Exception Name SmmaryViewController :setTotalCost %@",exp.name);
@@ -486,7 +518,18 @@ extern void SVMXLog(NSString *format, ...);
 			NSDictionary *dict = [Parts objectAtIndex:indexPath.row];
 			partcell.SrNo.text = [NSString stringWithFormat:@"%d.", indexPath.row + 1];
 			partcell.Parts.text = [[dict valueForKey:KEY_NAME] isKindOfClass:[NSString class]]?[dict valueForKey:KEY_NAME]:@"";
-			partcell.Qty.text = [[dict valueForKey:KEY_PARTSUSED] isKindOfClass:[NSString class]]?[dict valueForKey:KEY_PARTSUSED]:@"";
+			
+            /* 6773 */
+            if (self.shouldShowBillableQty) {
+                partcell.Qty.text = [[dict valueForKey:KEY_BILLABLE_QUANTITY] isKindOfClass:[NSString class]]?[dict valueForKey:KEY_BILLABLE_QUANTITY]:@"";
+            }
+            else {
+                partcell.Qty.text = [[dict valueForKey:KEY_BILLABLE_QUANTITY] isKindOfClass:[NSString class]]?[dict valueForKey:KEY_BILLABLE_QUANTITY]:@"";
+            }
+            
+           
+            
+            
             ZKSObject * obj = [[dict objectForKey:@"CONSUMEDPARTS"] isKindOfClass:[ZKSObject class]]?[dict objectForKey:@"CONSUMEDPARTS"]:nil;
             float costPerPart = 0.0;
            /* if (![obj isKindOfClass:[NSNull class]])
@@ -504,8 +547,18 @@ extern void SVMXLog(NSString *format, ...);
                 keyPartsUsedStr = @"";
 			double cost = [keyPartsUsedStr floatValue] * costPerPart * (1 - (discount/100));
 			LblTotalCost.text = [NSString stringWithFormat:@"%@%@",AppDelegate.workOrderCurrency, [self getFormattedCost:totalCost]];
-            partcell.LinePrice.text = [self getFormattedCost:cost];
-			view = partcell;
+           
+            /* 6773 */
+            if (self.shouldShowBillablePrice) {
+                      double billableCost =   [[dict objectForKey:KEY_BILLABLE_PRICE] doubleValue];
+                      partcell.LinePrice.text = [self getFormattedCost:billableCost];
+            }
+            else {
+                partcell.LinePrice.text = [self getFormattedCost:cost];
+               
+            }
+            
+            view = partcell;
 			break;
 		}
 		case 2:
@@ -522,12 +575,32 @@ extern void SVMXLog(NSString *format, ...);
             NSString * laborRateHours = [dict valueForKey:@"SVMXC__Actual_Quantity2__c"];
             if (![laborRateHours isKindOfClass:[NSString class]])
                 laborRateHours = @"";
-			labourcell.Hours.text = laborRateHours;
+            /* 6773 */
+            if (self.shouldShowBillableQty) {
+                NSString *someValue =  [dict valueForKey:SVMXC__Billable_Quantity__c];
+                if (![someValue isKindOfClass:[NSString class]]) {
+                    someValue = @"";
+                }
+                labourcell.Hours.text = someValue;
+            }
+            else {
+                labourcell.Hours.text = laborRateHours;
+            }
+			
 		//	float cost = [laborRateStr intValue] * [laborRateHours floatValue];
             //Abinash 28 december
             double cost = [laborRateStr doubleValue] * [laborRateHours doubleValue];
 			 LblTotalCost.text = [NSString stringWithFormat:@"%@%@", AppDelegate.workOrderCurrency, [self getFormattedCost:totalCost]];
-            labourcell.LinePrice.text = [self getFormattedCost:cost];
+            
+            /* 6773 */
+            if (self.shouldShowBillablePrice) {
+                double billableCost =  [[dict valueForKey:SVMXC__Billable_Line_Price__c] doubleValue];
+                labourcell.LinePrice.text = [self getFormattedCost:billableCost];
+            }
+            else {
+                labourcell.LinePrice.text = [self getFormattedCost:cost];
+            }
+            
 			view = labourcell;
 			break;
 		}
@@ -550,7 +623,16 @@ extern void SVMXLog(NSString *format, ...);
                 linePrice = @"";
             
             CGFloat linePriceValue = [linePrice floatValue] * [expenseQty floatValue];
-            expensecell.LinePrice.text = [self getFormattedCost:linePriceValue];
+           
+            /* 6773 */
+            if (self.shouldShowBillablePrice) {
+                 double billableValue =  [[dict valueForKey:SVMXC__Billable_Line_Price__c] doubleValue];
+                 expensecell.LinePrice.text = [self getFormattedCost:billableValue];
+            }
+            else {
+                 expensecell.LinePrice.text = [self getFormattedCost:linePriceValue];
+            }
+           
 			LblTotalCost.text = [NSString stringWithFormat:@"%@%@",AppDelegate.workOrderCurrency, [self getFormattedCost:totalCost]];
 			view = expensecell;
 			break;

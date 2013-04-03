@@ -2992,59 +2992,17 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@" reportEssentis array ==%@",reportEssentials);
         //Labor = nil;
     }
-    else
-    {
-        NSString *query = [NSString stringWithFormat:@"SELECT Id, SVMXC__Product__c, SVMXC__Product__r.Name, SVMXC__Actual_Quantity2__c, SVMXC__Actual_Price2__c, SVMXC__Work_Description__c, SVMXC__Discount__c FROM SVMXC__Service_Order_Line__c WHERE SVMXC__Line_Type__c = 'Parts' AND SVMXC__Service_Order__c = '%@' AND SVMXC__Actual_Quantity2__c > 0 AND SVMXC__Actual_Price2__c >= 0 AND SVMXC__Is_Billable__c = true", currentRecordId];
-		SVMXLog(@"startSummaryDataFetch = %@", query);
-        [[ZKServerSwitchboard switchboard] query:query target:self selector:@selector(getParts:error:context:) context:nil];
-        
-        query = [NSString stringWithFormat:@"SELECT Id, SVMXC__Activity_Type__c, SVMXC__Actual_Quantity2__c, SVMXC__Actual_Price2__c, SVMXC__Work_Description__c FROM SVMXC__Service_Order_Line__c WHERE SVMXC__Line_Type__c = 'Labor' AND SVMXC__Service_Order__c = '%@' AND SVMXC__Actual_Quantity2__c > 0 AND SVMXC__Actual_Price2__c >= 0 AND SVMXC__Is_Billable__c = true", currentRecordId];
-		SVMXLog(@"startSummaryDataFetch = %@", query);
-        [[ZKServerSwitchboard switchboard] query:query target:self selector:@selector(getExistingLabor:error:context:) context:nil];
-        
-        query = [NSString stringWithFormat:@"SELECT Id, SVMXC__Expense_Type__c, SVMXC__Actual_Quantity2__c, SVMXC__Actual_Price2__c, SVMXC__Work_Description__c FROM SVMXC__Service_Order_Line__c WHERE SVMXC__Line_Type__c = 'Expenses' AND SVMXC__Service_Order__c = '%@' AND SVMXC__Is_Billable__c = true", currentRecordId];
-		SVMXLog(@"startSummaryDataFetch = %@", query);
-        [[ZKServerSwitchboard switchboard] query:query target:self selector:@selector(getExpenses:error:context:) context:nil];
-        
-        // Service Report Essentials
-        
-        query = @""; // [NSString stringWithFormat:@"Name,SVMXC__Problem_Description__c,SVMXC__Contact__r.Name,SVMXC__Contact__r.Phone,SVMXC__Work_Performed__c"];
-        NSString * cleanQuery = [self removeDuplicatesFromSOQL:appDelegate.soqlQuery withString:query];
-        // query = [NSString stringWithFormat:@"%@%@ FROM SVMXC__Service_Order__c WHERE Id = '%@'", query, cleanQuery, currentRecordId];
-		SVMXLog(@"startSummaryDataFetch = %@", cleanQuery);
-        [[ZKServerSwitchboard switchboard] query:cleanQuery target:self selector:@selector(getReportEssentials:error:context:) context:nil];
-        
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, FALSE))
-        {
-            SMLog(@"startSummaryDataFetch in while loop");
-            /*if (![appDelegate isInternetConnectionAvailable])
-            {
-                [activity stopAnimating];
-                [appDelegate displayNoInternetAvailable];
-                didRunOperation = NO;
-                
-                [self enableSFMUI];
-                
-                return;
-            }*/
-            SMLog(@"Waiting for summary data...");
-            if (didGetParts && didGetExpenses && didGetLabor)
-                break;
-            if (clickedBack)
-            {
-                didRunOperation = NO;
-                
-                [self enableSFMUI];
-                
-                return;
-            }
-        }
-    }
+   
     Summary = [[[SummaryViewController alloc] initWithNibName:[SummaryViewController description] bundle:nil] autorelease];
     Summary.delegate = self;
     Summary.reportEssentials = reportEssentials;
-		
-	//Radha Fix for defect 6337
+        
+    /* Set show billable amount 6773 */
+        BOOL showBillablePrice = [self shouldShowBillableAmountInServiceReport];
+        Summary.shouldShowBillablePrice = showBillablePrice;
+        Summary.shouldShowBillableQty =  [self shouldShowBillableQuantityInServiceReport];
+	
+        //Radha Fix for defect 6337
 	BOOL showParts, showLabour ,showExpenses;
 		
 	showParts = showLabour = showExpenses = FALSE;
@@ -3066,24 +3024,42 @@ extern void SVMXLog(NSString *format, ...);
     Summary.objectApiName = appDelegate.sfmPageController.objectName;
     SMLog(@"%@",Parts);
     SMLog(@"%@",Expenses);
-    NSArray * _keys = [NSArray arrayWithObjects:SVMXC__Activity_Type__c, SVMXC__Actual_Price2__c, SVMXC__Actual_Quantity2__c, nil];
+    NSArray * _keys = [NSArray arrayWithObjects:SVMXC__Activity_Type__c, SVMXC__Actual_Price2__c, SVMXC__Actual_Quantity2__c, SVMXC__Billable_Quantity__c,SVMXC__Billable_Line_Price__c,nil];
     // Calculate Labor
-	
 	
 	for (LabourValuesDictionary in LaborArray)
 	{
 		NSArray * allKeys = [LabourValuesDictionary allKeys];
 		for (NSString * key in allKeys)
 		{
-			if ([key Contains:@"QTY_"])
+          NSString *newKey = [key stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+            
+			if ([newKey hasPrefix:@"QTY_"])
 			{
 				NSString * quantity = [LabourValuesDictionary objectForKey:key];
+                
 				float _quantity = [quantity floatValue]; //#3736
-				if (_quantity)
+				if (_quantity || showBillablePrice )
 				{
 					NSString * item = [key stringByReplacingOccurrencesOfString:@"QTY_" withString:@""];
+                    if (item == nil) {
+                        item = @"";
+                    }
 					NSString * _rate = [LabourValuesDictionary objectForKey:[NSString stringWithFormat:@"Rate_%@", item]];
-					NSArray * _objects = [NSArray arrayWithObjects:item, _rate, quantity, nil];
+                    if (_rate == nil) {
+                        _rate = @"0.0";
+                    }
+                    NSString *billaBleQty = [LabourValuesDictionary objectForKey:[NSString stringWithFormat:@"Bill_QTY_%@", item]];
+                    if (billaBleQty == nil) {
+                        billaBleQty = @"0";
+                    }
+                     NSString *billaBlePrice = [LabourValuesDictionary objectForKey:[NSString stringWithFormat:@"Bill_Rate_%@", item]];
+                    
+                    if (billaBlePrice == nil) {
+                        billaBlePrice = @"0.0";
+                    }
+                    
+					NSArray * _objects = [NSArray arrayWithObjects:item, _rate, quantity,billaBleQty,billaBlePrice, nil];
 					
 					if (Labor == nil)
 						Labor = [[NSMutableArray alloc] initWithCapacity:0];
@@ -13662,6 +13638,18 @@ extern void SVMXLog(NSString *format, ...);
     [appDelegate ScheduleIncrementalMetaSyncTimer];
     [appDelegate ScheduleTimerForEventSync];
     [appDelegate scheduleLocationPingTimer];
+}
+
+- (BOOL)shouldShowBillableAmountInServiceReport {
+  
+    
+   return [appDelegate.calDataBase checkIfBillablePriceExistForWorkOrderId:appDelegate.sfmPageController.recordId andFieldName:@"SVMXC__Billable_Line_Price__c"];
+}
+
+- (BOOL)shouldShowBillableQuantityInServiceReport {
+    
+    
+    return [appDelegate.calDataBase checkIfBillablePriceExistForWorkOrderId:appDelegate.sfmPageController.recordId andFieldName:@"SVMXC__Billable_Quantity__c"];
 }
 
 @end

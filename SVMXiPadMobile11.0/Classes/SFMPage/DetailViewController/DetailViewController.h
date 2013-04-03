@@ -218,6 +218,7 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
     /* GET_PRICE_JS-shr*/
     JSExecuter *jsExecuter;
     PriceBookData *priceBookData;
+   
 }
 
 @property (nonatomic) BOOL EventUpdate_Continue;
@@ -362,6 +363,10 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
 - (void)disableAllRunningNetworkOperations;
 - (void)enableAllNetworkOpertaions;
 - (BOOL)getPriceDataFromOnline:(NSString *)someIdentifier;
+
+
+- (BOOL)shouldShowBillableAmountInServiceReport;
+- (BOOL)shouldShowBillableQuantityInServiceReport;
 
 #define SHOWALL_HEADERS                     0
 #define SHOW_HEADER_ROW                     1

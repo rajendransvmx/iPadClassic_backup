@@ -32,6 +32,8 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize prevInterfaceOrientation;
 @synthesize workOrderDetails;
 @synthesize reportEssentials;
+@synthesize shouldShowBillablePrice;
+@synthesize shouldShowBillableQty;
 
 - (id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -656,13 +658,35 @@ extern void SVMXLog(NSString *format, ...);
             {
                 NSDictionary * obj = [_parts objectAtIndex:i];
                 NSString * discount = [obj valueForKey:@"Discount"];
+                
+                /* 6773 */
+                NSString *quantity = @"";
+                float linePriceFinal = 0.0;
+                
+                if (self.shouldShowBillablePrice) {
+                    linePriceFinal =  [[[_parts objectAtIndex:i] objectForKey:SVMXC__Billable_Line_Price__c] floatValue];
+                    
+                }
+                else {
+                    linePriceFinal = linePrice;
+                }
+                
+                if (self.shouldShowBillableQty) {
+                    quantity = [[_parts objectAtIndex:i] objectForKey:SVMXC__Billable_Quantity__c];
+                }
+                else {
+                    quantity = [[_parts objectAtIndex:i] objectForKey:@"PartsUsed"];
+                }
+                
+                /*  ends 6773 */
+                
                 if (srShowLinePrice && srShowDiscount)
                 {
                     [self writePartsNo:[NSString stringWithFormat:@"%d.", i+1]
                                   part:[[_parts objectAtIndex:i] objectForKey:@"Name"]
-                                   qty:[[_parts objectAtIndex:i] objectForKey:@"PartsUsed"]
+                                   qty:quantity
                              unitprice:[[_parts objectAtIndex:i] objectForKey:@"CostPerPart"]
-                             lineprice:[NSString stringWithFormat:@"%.2f", linePrice] 
+                             lineprice:[NSString stringWithFormat:@"%.2f", linePriceFinal] 
                               discount:discount
                      ];
                 }
@@ -670,9 +694,9 @@ extern void SVMXLog(NSString *format, ...);
                 {
                     [self writePartsNo:[NSString stringWithFormat:@"%d.", i+1]
                                   part:[[_parts objectAtIndex:i] objectForKey:@"Name"]
-                                   qty:[[_parts objectAtIndex:i] objectForKey:@"PartsUsed"]
+                                   qty:quantity
                              unitprice:[[_parts objectAtIndex:i] objectForKey:@"CostPerPart"]
-                             lineprice:[NSString stringWithFormat:@"%.2f", linePrice]
+                             lineprice:[NSString stringWithFormat:@"%.2f", linePriceFinal]
                      ];
                 }
                 else if (!srShowLinePrice && srShowDiscount)
@@ -688,9 +712,9 @@ extern void SVMXLog(NSString *format, ...);
                 {
                     [self writePartsNo:[NSString stringWithFormat:@"%d.", i+1]
                                   part:[[_parts objectAtIndex:i] objectForKey:@"Name"]
-                                   qty:[[_parts objectAtIndex:i] objectForKey:@"PartsUsed"]
+                                   qty:quantity
                              unitprice:nil
-                             lineprice:[NSString stringWithFormat:@"%.2f", linePrice]
+                             lineprice:[NSString stringWithFormat:@"%.2f", linePriceFinal]
                      ];
                     
                 }
@@ -717,6 +741,18 @@ extern void SVMXLog(NSString *format, ...);
             //pavaman 16th Jan 2011
             tLinePrice = [NSString stringWithFormat:@"%.2f", [tHours floatValue]*[tRate floatValue]];
             
+            /* 6773 */
+            if (self.shouldShowBillablePrice) {
+                double someValue = [[labor objectForKey:SVMXC__Billable_Line_Price__c] doubleValue];
+                tLinePrice = [NSString stringWithFormat:@"%.2f", someValue];
+            }
+            
+            /* 6773 */
+            if (self.shouldShowBillableQty) {
+                tHours = [labor objectForKey:SVMXC__Billable_Quantity__c];
+                if (![tHours isKindOfClass:[NSString class]])
+                    tHours = @"0.0";
+            }
             [self writePartsNo:[NSString stringWithFormat:@"%d.", j+1]
                           part:tLabor
                            qty:tHours
@@ -751,6 +787,11 @@ extern void SVMXLog(NSString *format, ...);
             if (![actualPrice isKindOfClass:[NSString class]])
                 actualPrice = @"0.0";
             
+            /* 6773 */
+            if (self.shouldShowBillablePrice) {
+                double someDoubleValue =  [[expenses objectForKey:SVMXC__Billable_Line_Price__c] doubleValue];
+                actualPrice = [NSString stringWithFormat:@"%.2f", someDoubleValue];
+            }
             if ([expenseType isEqualToString:@"Airfare"])
             {
                 [self writePartsNo:[NSString stringWithFormat:@"%d.", k+1]
