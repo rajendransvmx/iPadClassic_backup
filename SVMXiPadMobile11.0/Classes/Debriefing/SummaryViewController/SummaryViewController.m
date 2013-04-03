@@ -524,7 +524,7 @@ extern void SVMXLog(NSString *format, ...);
                 partcell.Qty.text = [[dict valueForKey:KEY_BILLABLE_QUANTITY] isKindOfClass:[NSString class]]?[dict valueForKey:KEY_BILLABLE_QUANTITY]:@"";
             }
             else {
-                partcell.Qty.text = [[dict valueForKey:KEY_BILLABLE_QUANTITY] isKindOfClass:[NSString class]]?[dict valueForKey:KEY_BILLABLE_QUANTITY]:@"";
+                partcell.Qty.text = [[dict valueForKey:KEY_PARTSUSED] isKindOfClass:[NSString class]]?[dict valueForKey:KEY_PARTSUSED]:@"";
             }
             
            
