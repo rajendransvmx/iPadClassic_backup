@@ -928,7 +928,7 @@ extern void SVMXLog(NSString *format, ...);
             
             
             char *tempValue = (char *) synchronized_sqlite3_column_text(statement1,5);
-            NSString * billableQty = @"";
+            NSString * billableQty = @"0.0";
             if ((tempValue != nil) && strlen(tempValue))
             {
                 billableQty = [[NSString alloc] initWithUTF8String:tempValue];
@@ -1049,7 +1049,7 @@ extern void SVMXLog(NSString *format, ...);
             
             /* Fetching billable quantitye 6773*/
             char *tempValue = (char *) synchronized_sqlite3_column_text(statement1,7);
-            NSString * _SVMXC__Billable_Quantity__c = @"";
+            NSString * _SVMXC__Billable_Quantity__c = @"0.0";
             if ((tempValue != nil) && strlen(tempValue))
             {
                 _SVMXC__Billable_Quantity__c = [[NSString alloc] initWithUTF8String:tempValue];
@@ -1060,7 +1060,7 @@ extern void SVMXLog(NSString *format, ...);
             
             tempValue = nil;
             tempValue = (char *) synchronized_sqlite3_column_text(statement1,8);
-            NSString * _SVMXC__Billable_Line_Price__c = @"";
+            NSString * _SVMXC__Billable_Line_Price__c = @"0.0";
             if ((tempValue != nil) && strlen(tempValue))
             {
                 _SVMXC__Billable_Line_Price__c = [[NSString alloc] initWithUTF8String:tempValue];
@@ -1202,7 +1202,7 @@ extern void SVMXLog(NSString *format, ...);
             }
             
             char *tempValue = (char *) synchronized_sqlite3_column_text(statement1,5);
-            NSString * billableQty = @"";
+            NSString * billableQty = @"0.0";
             if ((tempValue != nil) && strlen(tempValue))
             {
                 billableQty = [[NSString alloc] initWithUTF8String:tempValue];
@@ -1213,7 +1213,7 @@ extern void SVMXLog(NSString *format, ...);
             
             
             tempValue = (char *) synchronized_sqlite3_column_text(statement1,6);
-            NSString * billablePrice = @"";
+            NSString * billablePrice = @"0.0";
             if ((tempValue != nil) && strlen(tempValue))
             {
                 billablePrice = [[NSString alloc] initWithUTF8String:tempValue];
@@ -1531,29 +1531,29 @@ extern void SVMXLog(NSString *format, ...);
                 if ((_SVMXC__Work_Description_c != nil) && strlen(_SVMXC__Work_Description_c))
                 {
                     SVMXC__Work_Description_c = [[[NSString alloc] initWithUTF8String:_SVMXC__Work_Description_c] autorelease];
-                    if (_SVMXC__Work_Description_c == nil) {
-                        _SVMXC__Work_Description_c = @"";
+                    if (SVMXC__Work_Description_c == nil) {
+                        SVMXC__Work_Description_c = @"";
                     }
                 }
                 
                 char *_SVMXC__Billable_Quantity__c = (char *) synchronized_sqlite3_column_text(statement,4);
-                NSString * billableQty = @"";
+                NSString * billableQty = @"0.0";
                 if ((_SVMXC__Billable_Quantity__c != nil) && strlen(_SVMXC__Billable_Quantity__c))
                 {
                     billableQty = [[[NSString alloc] initWithUTF8String:_SVMXC__Billable_Quantity__c] autorelease];
                     if (billableQty == nil) {
-                        billableQty = @"";
+                        billableQty = @"0.0";
                     }
                 }
                 
                 
                 char *_SVMXC__billable_line_price__c = (char *) synchronized_sqlite3_column_text(statement,5);
-                NSString *billableLinePrice = @"";
+                NSString *billableLinePrice = @"0.0";
                 if ((_SVMXC__billable_line_price__c != nil) && strlen(_SVMXC__billable_line_price__c))
                 {
                     billableLinePrice = [[[NSString alloc] initWithUTF8String:_SVMXC__billable_line_price__c] autorelease];
                     if (billableLinePrice == nil) {
-                        billableLinePrice = @"";
+                        billableLinePrice = @"0.0";
                     }
                 }
                 
@@ -6964,9 +6964,11 @@ extern void SVMXLog(NSString *format, ...);
         {
             char * fieldValue  = (char *)sqlite3_column_text(stmt, 0);
             
-            if(fieldValue!= nil && fieldValue != "" && fieldValue != " ") {
+            if(fieldValue != nil) {
                 NSString *priceValue = [NSString stringWithUTF8String:fieldValue];
                 if (![Utility isStringEmpty:priceValue]) {
+                    
+                    sqlite3_finalize(stmt);
                     return YES;
                 }
             }
