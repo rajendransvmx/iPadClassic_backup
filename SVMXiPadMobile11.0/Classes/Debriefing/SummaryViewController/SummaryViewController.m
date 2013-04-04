@@ -666,7 +666,7 @@ extern void SVMXLog(NSString *format, ...);
                 expenseQty = @"0.0";
 			
             expensecell.Expenses.text = expenseType;
-            NSString * linePrice = [dict valueForKey:[[dict allKeys] objectAtIndex:0]];
+            NSString * linePrice = [dict objectForKey:@"SVMXC__Actual_Price2__c"];
             if (linePrice == nil || [linePrice isKindOfClass:[NSNull class]])
                 linePrice = @"";
             
