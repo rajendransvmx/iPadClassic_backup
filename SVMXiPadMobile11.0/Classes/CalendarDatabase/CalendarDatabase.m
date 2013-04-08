@@ -4725,44 +4725,21 @@ extern void SVMXLog(NSString *format, ...);
         for(int counter = 0;counter < [detailRecords count];counter++){
             
             NSDictionary *detailTargetDictionary = [detailRecords objectAtIndex:counter];
-            NSString *aliasName = [detailTargetDictionary objectForKey:@"aliasName"];
-            if ([aliasName isEqualToString:@"Parts"]) {
-                NSArray *records = [detailTargetDictionary objectForKey:@"records"];
-                for(int counter = 0;counter < [records count];counter++){
-                    
-                    NSDictionary *recordDict = [records objectAtIndex:counter];
-                    NSArray *detalFiledsArray = [recordDict objectForKey:@"targetRecordAsKeyValue"];
-                    NSString *productId =  [self getValueFOrKey:@"SVMXC__Product__c" FromArray:detalFiledsArray];
-                    [productsArray addObject:productId];
-                }
-            }
-            else if([aliasName isEqualToString:@"Labor"]){
-                NSArray *records = [detailTargetDictionary objectForKey:@"records"];
-                for(int counter = 0;counter < [records count];counter++){
-                    
-                    NSDictionary *recordDict = [records objectAtIndex:counter];
-                    NSArray *detalFiledsArray = [recordDict objectForKey:@"targetRecordAsKeyValue"];
-                    NSString *productId =  [self getValueFOrKey:@"SVMXC__Activity_Type__c" FromArray:detalFiledsArray];
-                    [labourArray addObject:productId];
-                    
-                    /*If Labour has product then add it to labour parts array */
-                    NSString *realproductId =  [self getValueFOrKey:@"SVMXC__Product__c" FromArray:detalFiledsArray];
-                    if (![Utility isStringEmpty:realproductId]) {
-                         [labourPartsArray addObject:realproductId];
-                    }
+            NSArray *records = [detailTargetDictionary objectForKey:@"records"];
+            for(int counter = 0;counter < [records count];counter++){
+                
+                NSDictionary *recordDict = [records objectAtIndex:counter];
+                NSArray *detalFiledsArray = [recordDict objectForKey:@"targetRecordAsKeyValue"];
+                
+                NSString *productId =  [self getValueFOrKey:@"SVMXC__Product__c" FromArray:detalFiledsArray];
+                if (![Utility isStringEmpty:productId]) {
+                        [productsArray addObject:productId];
                 }
                 
-            }
-            else if ([aliasName isEqualToString:@"LaborParts"]) {
-                NSArray *records = [detailTargetDictionary objectForKey:@"records"];
-                for(int counter = 0;counter < [records count];counter++){
-                    
-                    NSDictionary *recordDict = [records objectAtIndex:counter];
-                    NSArray *detalFiledsArray = [recordDict objectForKey:@"targetRecordAsKeyValue"];
-                    NSString *productId =  [self getValueFOrKey:@"SVMXC__Product__c" FromArray:detalFiledsArray];
-                    [labourPartsArray addObject:productId];
+                NSString *activityType =  [self getValueFOrKey:@"SVMXC__Activity_Type__c" FromArray:detalFiledsArray];
+                if (![Utility isStringEmpty:activityType]) {
+                        [labourArray addObject:activityType];
                 }
-                
             }
         }
         
