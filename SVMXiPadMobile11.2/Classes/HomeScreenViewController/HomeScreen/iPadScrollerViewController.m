@@ -350,6 +350,7 @@ const NSUInteger kNumImages = 7;
         menuTableView = [[UITableView alloc]initWithFrame:CGRectZero];
         [menuTableView setDataSource:self];
         [menuTableView setDelegate:self];
+        menuTableView.allowsSelection = NO;
         [self.view addSubview:menuTableView];
     }
     return self;
