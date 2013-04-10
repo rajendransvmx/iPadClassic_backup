@@ -42,7 +42,16 @@
 }
 
 + (NSDate *)todayDateInGMT {
-    return [NSDate date];
+    NSDate *date = [NSDate date];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    NSTimeZone *gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
+    [dateFormatter setTimeZone:gmt];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    NSString *someDate = [dateFormatter stringFromDate:date];
+    NSString *newDateString = [NSString stringWithFormat:@"%@ 00:00:00",[someDate substringToIndex:10]];
+    NSDate *newDate = [dateFormatter dateFromString:newDateString];
+    [dateFormatter release];
+    return newDate;
 }
 
 + (BOOL)checkIfDate:(NSDate *)todayDate betweenDate:(NSDate *)startDate andEndDate:(NSDate *)endDate {
