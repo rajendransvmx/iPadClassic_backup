@@ -13600,11 +13600,8 @@ extern void SVMXLog(NSString *format, ...);
         }
         return YES;
     }
-    else {
-        NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:getPrice_Objects_not_found];
-        [self showAlertViewWhenGPCalculationNotPossible:message];
-    }
-    return NO;
+    
+    return YES;
 }
 
 - (void)showAlertViewWhenGPCalculationNotPossible:(NSString * )message {
