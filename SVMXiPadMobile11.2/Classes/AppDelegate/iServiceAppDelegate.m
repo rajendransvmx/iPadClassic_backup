@@ -155,6 +155,12 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 //================================================================
 
 @implementation iServiceAppDelegate
+
+//Radha Sync ProgressBar
+@synthesize SyncProgress;
+@synthesize syncTypeInProgress = _syncTypeInProgress;
+
+@synthesize data_sync_type;
 @synthesize Enable_aggresssiveSync;
 @synthesize code_snippet_ids;
 @synthesize get_trigger_code;
@@ -447,6 +453,10 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     
     self.didCheckProfile = FALSE;
     
+	//Radha Progress Bar
+	self.syncTypeInProgress = NO_SYNCINPROGRESS;
+	
+	
     [self initWithDBName:DATABASENAME1 type:DATABASETYPE1];
         
     //sahana
@@ -627,6 +637,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 {
     [loginController.activity stopAnimating];
     //shrinivas
+	[self setAgrressiveSync_flag];
+	
     self.isForeGround = TRUE;
 }
 
@@ -1303,8 +1315,7 @@ NSString * GO_Online = @"GO_Online";
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc]init];
     
     [self performSelectorInBackground:@selector(goOnlineIfRequired) withObject:nil];
-//[self goOnlineIfRequired];
-	
+
 	BOOL retVal = [self.calDataBase selectCountFromSync_Conflicts];
 	
     if(retVal == TRUE)
@@ -1333,9 +1344,11 @@ NSString * GO_Online = @"GO_Online";
     }
     
     [syncThread release];
-    [self setSyncStatus:SYNC_ORANGE];
+	
+	appDelegate.syncTypeInProgress = DATASYNC_INPROGRESS;
+	[appDelegate setCurrentSyncStatusProgress:SYNC_NONE optimizedSynstate:oSYNC_NONE];
+	
     syncThread = [[NSThread alloc] initWithTarget:self.wsInterface selector:@selector(DoIncrementalDataSync) object:nil];
-    [NSThread sleepForTimeInterval:0.1];
     [syncThread start];
     
     [pool release];
@@ -1364,7 +1377,7 @@ NSString * GO_Online = @"GO_Online";
     {
         self.datasync_timer =  [NSTimer scheduledTimerWithTimeInterval:scheduledTimer
                                          target:self
-                                        selector:@selector(callDataSync)
+                                        selector:@selector(MethodForTimer:)
                                        userInfo:nil
                                         repeats:YES];
     }
@@ -1372,6 +1385,7 @@ NSString * GO_Online = @"GO_Online";
 
 -(void)MethodForTimer:(NSTimer *)timer
 {
+    appDelegate.data_sync_type = NORMAL_DATA_SYNC;
     [self performSelectorOnMainThread:@selector(callDataSync) withObject:nil waitUntilDone:NO];
     
     //[NSThread detachNewThreadSelector:@selector(callDataSync) toTarget:self withObject:nil];
@@ -1855,50 +1869,125 @@ NSString * GO_Online = @"GO_Online";
                 
         }
     }
-    
-    [event_thread release];
+    self.syncTypeInProgress = EVENTSYNC_INPROGRESS;
+	
+	[self setCurrentSyncStatusProgress:eEVENTSYNC_NONE optimizedSynstate:0];
+	
+	[event_thread release];
     event_thread = [[NSThread alloc] initWithTarget:self.dataBase selector:@selector(scheduleEventSync) object:nil];
     [event_thread start];
     
 }
 
+
+//Radha Sync ProgressBar : 
 - (void) setSyncStatus2
 {
 	UIImage *img;
-    
-    if( animatedImageView == nil )
+    BOOL  iscustomSync = NO;
+	
+    if( SyncProgress == nil )
     {
-        animatedImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 26, 26)];
+        CGRect frame = CGRectMake(0, 0, 35, 35);
+        SyncProgress = [[SyncProgressBar alloc]initWithFrame:frame];
     }
     
     if (_SyncStatus == SYNC_RED)
     {
 		NSString * statusImage = @"red.png";
-        [animatedImageView stopAnimating];
-        animatedImageView.image = [UIImage imageNamed:statusImage];
+        SyncProgress.progressIndicator.image = [UIImage imageNamed:statusImage];
+		SyncProgress.percentage.text = @"";
         img = [UIImage imageNamed:statusImage];
         [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
     }
     else if (_SyncStatus == SYNC_GREEN)
     {
         NSString * statusImage = @"green.png";
-        [animatedImageView stopAnimating];
-        animatedImageView.image = [UIImage imageNamed:statusImage];
+        
+        SyncProgress.progressIndicator.image = [UIImage imageNamed:statusImage];
+		SyncProgress.percentage.text = @"";
         img = [UIImage imageNamed:statusImage];
         [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
     }
     else if (_SyncStatus == SYNC_ORANGE)
     {
-        animatedImageView.animationImages = nil;
-        NSMutableArray * imgArr = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-        for ( int i = 1; i < 26; i++)
-        {
-            [imgArr addObject:[UIImage imageNamed:[NSString stringWithFormat:@"ani%d.png", i]]];
-        }
-        animatedImageView.animationImages = [NSArray arrayWithArray:imgArr];
-        animatedImageView.animationDuration = 1.0f;
-        animatedImageView.animationRepeatCount = 0;
-        [animatedImageView startAnimating];
+		int numOfCalls = 0, syncProgressState = 0;
+		switch (self.syncTypeInProgress) {
+			case DATASYNC_INPROGRESS:
+				if (self.Enable_aggresssiveSync)
+				{
+					numOfCalls = 9;
+					syncProgressState = SyncProgress.optimizedSyncProgress;
+				}
+				else
+				{
+					numOfCalls = 12;
+					syncProgressState = SyncProgress.syncProgressState;
+				}
+				break;
+				
+			case EVENTSYNC_INPROGRESS:
+				numOfCalls = 12;
+				syncProgressState = SyncProgress.eventsyncProgressState;
+				break;
+				
+			case METASYNC_INPROGRESS:
+				numOfCalls = 12;
+				syncProgressState = SyncProgress.metasyncProgressState;
+				break;
+				
+			case CONFLICTSYNC_INPROGRESS:
+				numOfCalls = 10;
+				syncProgressState = SyncProgress.conflictSyncProgressState;
+				break;
+				
+			case CUSTOMSYNC_INPROGRESS:
+				iscustomSync = YES;
+				syncProgressState = SyncProgress.customSyncProgressState;
+				numOfCalls = 2;
+				break;
+				
+			default:
+				break;
+		}
+		int percent  = 0;
+		if (numOfCalls > 0)
+		{
+			percent = ( 100/ numOfCalls) * syncProgressState;
+			if (numOfCalls == syncProgressState)
+			{
+				percent = 100;
+				syncProgressState = 12;
+			}
+			
+		}
+		
+		
+		NSString * statusImage = @"";
+		if (iscustomSync)
+		{
+			
+			if (appDelegate.SyncProgress.customSyncProgressState == CUSTOMSYNC_STARTS)
+			{
+				statusImage = [NSString stringWithFormat:@"sync6.png"];
+				percent = 50;
+			}
+			else
+			{
+				statusImage = [NSString stringWithFormat:@"sync12.png"];
+				
+			}
+		}
+		else
+		{
+			statusImage  = [NSString stringWithFormat:@"sync%d.png", syncProgressState];
+		}
+		
+       
+        SyncProgress.progressIndicator.image = [UIImage imageNamed:statusImage];
+		[SyncProgress updateProgress:percent forObject:self];
+        img = [UIImage imageNamed:statusImage];
+        [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
     }
 }
 
@@ -1908,6 +1997,54 @@ NSString * GO_Online = @"GO_Online";
 	_SyncStatus = _SyncStatus_;
 	[self performSelectorOnMainThread:@selector(setSyncStatus2) withObject:nil waitUntilDone:NO];
 }
+
+
+//Radha
+#pragma mark -   Progress Bar
+- (void) setSyncTypeInProgress:(SYNC_TYPE_INPROGRESS)syncTypeInProgress
+{
+	_syncTypeInProgress = syncTypeInProgress;
+}
+
+- (void) setCurrentSyncStatusProgress:(int)syncState optimizedSynstate:(int)oSyncState
+{
+	switch (self.syncTypeInProgress) {
+		case DATASYNC_INPROGRESS:
+			if (Enable_aggresssiveSync)
+			{
+				self.SyncProgress.optimizedSyncProgress = oSyncState;
+			}
+			else
+			{
+				self.SyncProgress.syncProgressState = syncState;
+			}
+			break;
+			
+		case EVENTSYNC_INPROGRESS:
+			self.SyncProgress.eventsyncProgressState = syncState;
+			break;
+			
+		case METASYNC_INPROGRESS:
+			self.SyncProgress.metasyncProgressState = syncState;
+			break;
+			
+		case CONFLICTSYNC_INPROGRESS:
+			self.SyncProgress.conflictSyncProgressState = syncState;
+			break;
+		
+		case CUSTOMSYNC_INPROGRESS:
+			self.SyncProgress.customSyncProgressState = syncState;
+			break;
+			
+		default:
+			break;
+	}
+	
+	[self setSyncStatus:SYNC_ORANGE];
+}
+
+
+#pragma mark - End
 
 #pragma mark - Location Ping
 -(void)didUpdateToLocation:(CLLocation*)location
@@ -2577,6 +2714,8 @@ NSString * GO_Online = @"GO_Online";
 
 -(void)setAgrressiveSync_flag
 {
+    appDelegate.data_sync_type = NORMAL_DATA_SYNC;
+    
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     BOOL USDefault_aggressiveSync = [defaults boolForKey:@"USDefault_Aggressive_flag"];
     

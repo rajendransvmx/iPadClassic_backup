@@ -218,6 +218,11 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
     /* GET_PRICE_JS-shr*/
     JSExecuter *jsExecuter;
     PriceBookData *priceBookData;
+	
+	//SYNC_Override
+	NSString * webserviceName;
+	NSString * className;
+	NSString * syncType;
    
 }
 
@@ -282,7 +287,8 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
 @property(nonatomic,retain) JSExecuter *jsExecuter;
 @property(nonatomic,retain) PriceBookData *priceBookData;
 
--(void)UpdateAlldeletedRecordsIntoSFTrailerTable:(NSArray *)deleted_record_array   object_name:(NSString *)object_name;
+//Sync_Overide :- Adding the new parameters to the existing method (webservice_name, class_name, synctype)
+-(void)UpdateAlldeletedRecordsIntoSFTrailerTable:(NSArray *)deleted_record_array   object_name:(NSString *)object_name webserviceName:(NSString *)webservice_name className:(NSString *)class_name synctype:(NSString *)sync_type headerLocalId:(NSString *)header_localId requestData:(NSMutableDictionary *)request_data;
 
 //Radha DefectFix - 5721 - Adding objectName parameter in the below method
 - (id) getControl:(NSString *)controlType withRect:(CGRect )frame withData:(NSArray *)datasource withValue:(NSString *)value fieldType:(NSString *)fieldType labelValue:(NSString *)lableValue enabled:(BOOL)readOnly refObjName:(NSString *)refObjName referenceView:(UIView *)POView indexPath:(NSIndexPath *)indexPath required:(BOOL)required valueKeyValue:(NSString *)valueKeyValue lookUpSearchId:(NSString *)searchid overrideRelatedLookup:(NSNumber *)Override_Related_Lookup fieldLookupContext:(NSString *)Field_Lookup_Context fieldLookupQuery:(NSString *)Field_Lookup_Query   dependentPicklistControllerName:(NSString *)dependPick_controllerName picklistValidFor:(NSMutableArray *)validFor picklistIsdependent:(BOOL)isdependentPicklist objectAPIName:(NSString *)object_api_name;

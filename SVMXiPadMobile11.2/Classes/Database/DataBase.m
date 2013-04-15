@@ -4694,7 +4694,7 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     
-    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFWizardComponent ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , 'wizard_id' VARCHAR, 'action_id' VARCHAR, 'action_description' VARCHAR, 'expression_id' VARCHAR, 'process_id' VARCHAR, 'action_type' VARCHAR, 'perform_sync' VARCHAR,class_name VARCHAR, method_name VARCHAR)"]];
+    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFWizardComponent ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , 'wizard_id' VARCHAR, 'action_id' VARCHAR, 'action_description' VARCHAR, 'expression_id' VARCHAR, 'process_id' VARCHAR, 'action_type' VARCHAR, 'perform_sync' VARCHAR, 'class_name' VARCHAR, 'method_name' VARCHAR, 'wizard_step_id' VARCHAR)"]];
     if (result == YES)
     {
         NSArray * sfWizComponent = [wizardDict objectForKey:MSFW_wizard_steps];
@@ -4707,7 +4707,7 @@ extern void SVMXLog(NSString *format, ...);
         NSString * emptyString = @"";
         
         
-        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)", SFWIZARDCOMPONENT, MWIZARD_ID, MACTION_ID, MACTION_DESCRIPTION, MEXPRESSION_ID, MPROCESS_ID, MACTION_TYPE, MLOCAL_ID,MPERFORM_SYNC, @"class_name",@"method_name"];
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)", SFWIZARDCOMPONENT, MWIZARD_ID, MACTION_ID, MACTION_DESCRIPTION, MEXPRESSION_ID, MPROCESS_ID, MACTION_TYPE, MLOCAL_ID,MPERFORM_SYNC, @"class_name",@"method_name", MWIZARD_STEP_ID];
         
         sqlite3_stmt * bulkStmt;
         
@@ -4806,6 +4806,10 @@ extern void SVMXLog(NSString *format, ...);
 				char * _methodName = [appDelegate convertStringIntoChar:methodName];
 				
                 sqlite3_bind_text(bulkStmt, 10, _methodName, strlen(_methodName), SQLITE_TRANSIENT);
+				
+				char * step_id = [appDelegate convertStringIntoChar:([comp_dict objectForKey:MWIZARD_STEP_ID] != nil)?[comp_dict objectForKey:MWIZARD_STEP_ID]:@""];
+				
+				sqlite3_bind_text(bulkStmt, 11, step_id, strlen(step_id), SQLITE_TRANSIENT);
                 
                 if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
@@ -4816,6 +4820,7 @@ extern void SVMXLog(NSString *format, ...);
                             
             }
         }
+		[self updateWebserviceNameInWizarsTable:[wizardDict objectForKey:SFW_Sync_Override]];
     }
     
     
@@ -4936,6 +4941,57 @@ extern void SVMXLog(NSString *format, ...);
     appDelegate.Sync_check_in = FALSE;
     [appDelegate.wsInterface metaSyncWithEventName:MOBILE_DEVICE_TAGS eventType:SYNC values:nil];
 }
+
+#pragma mark - SYNC OVERRIDE
+- (void) updateWebserviceNameInWizarsTable:(NSArray *)customArray
+{
+	
+	NSString * queryStatement = [NSString stringWithFormat:@"UPDATE %@ SET %@ = ?, %@ = ? WHERE %@ = ?",SFWIZARDCOMPONENT, @"class_name", @"method_name", MWIZARD_STEP_ID];
+
+	sqlite3_stmt * bulkStatement = nil;
+	
+	if (sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &bulkStatement, NULL) == SQLITE_OK)
+	{
+		for (NSDictionary * customDict in customArray)
+		{
+			NSString * service_name = ([customDict objectForKey:SERVICENAME] != nil)?[customDict objectForKey:SERVICENAME]:@"";
+			
+			NSString * className = @"";
+			NSString * webserviceName = @"";
+			
+			if ([service_name length] > 0)
+			{
+				NSArray * array = [service_name componentsSeparatedByString:@"."];
+				
+				className = [array objectAtIndex:0];
+				webserviceName = [array objectAtIndex:1];
+			}
+			
+			
+			char * tempclassName = [appDelegate convertStringIntoChar:className];
+		
+			sqlite3_bind_text(bulkStatement, 1, tempclassName, strlen(tempclassName), SQLITE_TRANSIENT);
+	
+			char * temserviceName = [appDelegate convertStringIntoChar:webserviceName];
+			
+			sqlite3_bind_text(bulkStatement, 2, temserviceName, strlen(temserviceName), SQLITE_TRANSIENT);
+	
+			char * tempId = [appDelegate convertStringIntoChar:([customDict objectForKey:MWIZARD_STEP_ID] != nil)?[customDict objectForKey:MWIZARD_STEP_ID]:@""];
+			
+			sqlite3_bind_text(bulkStatement, 3, tempId, strlen(tempId), SQLITE_TRANSIENT);
+			
+			if (synchronized_sqlite3_step(bulkStatement) != SQLITE_DONE)
+			{
+				printf("Commit Failed!\n");
+			}
+
+			sqlite3_reset(bulkStatement);
+		}
+
+	}
+}
+#pragma mark - END
+
 
 #pragma mark - getTags
 - (NSMutableDictionary *) getTagsDictionary
@@ -5717,11 +5773,11 @@ extern void SVMXLog(NSString *format, ...);
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS  trobleshootdata ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0),'ProductId' VARCHAR, 'ProductName' VARCHAR, 'Product_Doc' BLOB, 'DocId' VARCHAR, 'prod_manual_Id' VARCHAR, 'prod_manual_name' VARCHAR, 'productmanbody' VARCHAR)"];
     [self createTable:query];
     
-
-    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFDataTrailer ('timestamp' DATETIME, 'local_id' INTEGER,'sf_id' VARCHAR, 'record_type' VARCHAR, 'operation' VARCHAR, 'object_name' VARCHAR, 'sync_flag' BOOL , 'parent_object_name'  VARCHAR ,'parent_local_id'  VARCHAR , 'record_sent')"];
+	//Sync_Override
+    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFDataTrailer ('timestamp' DATETIME, 'local_id' INTEGER,'sf_id' VARCHAR, 'record_type' VARCHAR, 'operation' VARCHAR, 'object_name' VARCHAR, 'sync_flag' BOOL , 'parent_object_name' VARCHAR ,'parent_local_id' VARCHAR , 'record_sent' VARCHAR ,'webservice_name' VARCHAR, 'class_name' VARCHAR , 'sync_type' VARCHAR, 'header_localId' VARCHAR,'request_data' VARCHAR ,'request_id' VARCHAR)"];
     [self createTable:query];
     
-    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFDataTrailer_Temp ('timestamp' DATETIME, 'local_id' INTEGER,'sf_id' VARCHAR, 'record_type' VARCHAR, 'operation' VARCHAR, 'object_name' VARCHAR, 'sync_flag' BOOL , 'parent_object_name'  VARCHAR ,'parent_local_id'  VARCHAR , 'record_sent')"];
+    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFDataTrailer_Temp ('timestamp' DATETIME, 'local_id' INTEGER,'sf_id' VARCHAR, 'record_type' VARCHAR, 'operation' VARCHAR, 'object_name' VARCHAR, 'sync_flag' BOOL , 'parent_object_name'  VARCHAR ,'parent_local_id'  VARCHAR , 'record_sent' VARCHAR ,'webservice_name' VARCHAR, 'class_name'  VARCHAR , 'sync_type' VARCHAR, 'header_localId' VARCHAR)"];
     [self createTable:query];
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SYNC_HISTORY ('last_sync_time' DATETIME , 'sync_type' VARCHAR , 'request_id' VARCHAR , 'SYNC_STATUS' BOOL )"];
     [self createTable:query];
@@ -5744,7 +5800,7 @@ extern void SVMXLog(NSString *format, ...);
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS Summary_PDF ('record_Id' VARCHAR,'object_api_name' VARCHAR, 'PDF_data' TEXT, 'WorkOrderNumber' VARCHAR, 'PDF_Id' VARCHAR, 'sign_type' VARCHAR, 'pdf_name' VARCHAR)"];
     [self createTable:query];
     
-    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS sync_error_conflict ('sf_id' VARCHAR, 'local_id' VARCHAR,'object_name' VARCHAR, 'record_type' VARCHAR ,'sync_type' VARCHAR ,'error_message' VARCHAR ,'operation_type' VARCHAR , 'error_type' VARCHAR , 'override_flag'  VARCHAR)"];
+    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS sync_error_conflict ('sf_id' VARCHAR, 'local_id' VARCHAR,'object_name' VARCHAR, 'record_type' VARCHAR ,'sync_type' VARCHAR ,'error_message' VARCHAR ,'operation_type' VARCHAR , 'error_type' VARCHAR , 'override_flag'  VARCHAR ,'class_name' VARCHAR ,'method_name' VARCHAR , 'custom_ws_error' VARCHAR , 'request_id' VARCHAR)"];
     [self createTable:query];
     
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS contact_images ('contact_Id' VARCHAR, 'contact_Image' VARCHAR)"];
@@ -6373,6 +6429,7 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void)StartIncrementalmetasync
 {
+	appDelegate.syncTypeInProgress = METASYNC_INPROGRESS;
     [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
     
     //We are retriving the SFObjectField table here so that we can compare the fields of the tables of the two databases
@@ -6480,6 +6537,8 @@ extern void SVMXLog(NSString *format, ...);
          
          //SFM Search End
      }
+	
+	[appDelegate setCurrentSyncStatusProgress:METASYNC_SEARCH optimizedSynstate:0];
     if([appDelegate doesServerSupportsModule:kMinPkgForGetPriceModule])
     {
         appDelegate.initial_sync_status = SYNC_SFM_SEARCH;
@@ -6545,9 +6604,12 @@ extern void SVMXLog(NSString *format, ...);
             SMLog(@"MetaSync Get Price PRICE_CALC_CODE_SNIPPET End: %@", [NSDate date]);
         }
     }
+	[appDelegate setCurrentSyncStatusProgress:METASYNC_GETPRICE optimizedSynstate:0];
     if ([retVal isEqualToString:SUCCESS_])
     {
         [appDelegate getDPpicklistInfo];
+		
+		[appDelegate setCurrentSyncStatusProgress:METASYNC_DEPPICKLIST optimizedSynstate:0];
         SMLog(@"META SYNC 1");
         
         time_t t2;
@@ -6787,10 +6849,11 @@ extern void SVMXLog(NSString *format, ...);
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS  trobleshootdata ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0),'ProductId' VARCHAR, 'ProductName' VARCHAR, 'Product_Doc' BLOB, 'DocId' VARCHAR, 'prod_manual_Id' VARCHAR, 'prod_manual_name' VARCHAR, 'productmanbody' VARCHAR)"];
     [self createTemporaryTable:query];
     
-    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFDataTrailer ('timestamp' DATETIME, 'local_id' INTEGER,'sf_id' VARCHAR, 'record_type' VARCHAR, 'operation' VARCHAR, 'object_name' VARCHAR, 'sync_flag' BOOL , 'parent_object_name'  VARCHAR ,'parent_local_id'  VARCHAR , 'record_sent')"];
+	//Sync_Override
+    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFDataTrailer ('timestamp' DATETIME, 'local_id' INTEGER,'sf_id' VARCHAR, 'record_type' VARCHAR, 'operation' VARCHAR, 'object_name' VARCHAR, 'sync_flag' BOOL , 'parent_object_name'  VARCHAR ,'parent_local_id'  VARCHAR , 'record_sent' VARCHAR ,'webservice_name' VARCHAR, 'class_name'  VARCHAR , 'sync_type' VARCHAR, 'header_localId' VARCHAR,'request_data' VARCHAR  ,'request_id' VARCHAR)"];
     [self createTemporaryTable:query];
     
-    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFDataTrailer_Temp ('timestamp' DATETIME, 'local_id' INTEGER,'sf_id' VARCHAR, 'record_type' VARCHAR, 'operation' VARCHAR, 'object_name' VARCHAR, 'sync_flag' BOOL , 'parent_object_name'  VARCHAR ,'parent_local_id'  VARCHAR , 'record_sent')"];
+    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFDataTrailer_Temp ('timestamp' DATETIME, 'local_id' INTEGER,'sf_id' VARCHAR, 'record_type' VARCHAR, 'operation' VARCHAR, 'object_name' VARCHAR, 'sync_flag' BOOL , 'parent_object_name'  VARCHAR ,'parent_local_id'  VARCHAR , 'record_sent' VARCHAR ,'webservice_name' VARCHAR, 'class_name'  VARCHAR , 'sync_type' VARCHAR, 'header_localId' VARCHAR)"];
     [self createTemporaryTable:query];
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SYNC_HISTORY ('last_sync_time' DATETIME , 'sync_type' VARCHAR , 'request_id' VARCHAR , 'SYNC_STATUS' BOOL )"];
     [self createTemporaryTable:query];
@@ -6808,7 +6871,7 @@ extern void SVMXLog(NSString *format, ...);
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS Summary_PDF ('record_Id' VARCHAR,'object_api_name' VARCHAR, 'PDF_data' TEXT, 'WorkOrderNumber' VARCHAR, 'PDF_Id' VARCHAR, 'sign_type' VARCHAR, 'pdf_name' VARCHAR)"];
     [self createTemporaryTable:query];
     
-    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS sync_error_conflict ('sf_id' VARCHAR, 'local_id' VARCHAR,'object_name' VARCHAR, 'record_type' VARCHAR ,'sync_type' VARCHAR ,'error_message' VARCHAR ,'operation_type' VARCHAR , 'error_type' VARCHAR , 'override_flag'  VARCHAR)"];
+    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS sync_error_conflict ('sf_id' VARCHAR, 'local_id' VARCHAR,'object_name' VARCHAR, 'record_type' VARCHAR ,'sync_type' VARCHAR ,'error_message' VARCHAR ,'operation_type' VARCHAR , 'error_type' VARCHAR , 'override_flag'  VARCHAR ,'class_name' VARCHAR ,'method_name' VARCHAR ,'custom_ws_error' VARCHAR , 'request_id' VARCHAR )"];
     [self createTemporaryTable:query];
     
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS contact_images ('contact_Id' VARCHAR, 'contact_Image' VARCHAR)"];
@@ -7016,6 +7079,8 @@ extern void SVMXLog(NSString *format, ...);
     appDelegate.internetAlertFlag = TRUE;
     
     popOver_view.syncConfigurationFailed = FALSE;
+	[appDelegate setCurrentSyncStatusProgress:METASYNC_POPULATEDATA optimizedSynstate:0];
+	
     [self settingAfterIncrementalMetaSync];
     
 }
@@ -7582,8 +7647,10 @@ extern void SVMXLog(NSString *format, ...);
             [MyPopoverDelegate performSelector:@selector(throwException)];
         return FALSE;
     }
-    
-    appDelegate.Incremental_sync_status = INCR_STARTS;
+	
+	[appDelegate setCurrentSyncStatusProgress:eEVENTSYNC_GETID optimizedSynstate:0];
+	
+	appDelegate.Incremental_sync_status = INCR_STARTS;
     
     [appDelegate.wsInterface PutAllTheRecordsForIds];
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
@@ -7633,14 +7700,16 @@ extern void SVMXLog(NSString *format, ...);
             [MyPopoverDelegate performSelector:@selector(throwException)];
         return FALSE;
     }
-    
+	[appDelegate setCurrentSyncStatusProgress:eEVENTSYNC_GETDATA optimizedSynstate:0];
+	
 	//Radha #6176
 	NSMutableString * eventId = [self getAllEventRelatedIdFromSyncRecordHeap];
 	
 	[self deleteEventNotRelatedToLoggedInUser:eventId tableName:@"Event"];
     [appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
-    
-    
+	
+	[appDelegate setCurrentSyncStatusProgress:eEVENTSYNC_PUTDATA optimizedSynstate:0];
+	
     return TRUE;
 }
 

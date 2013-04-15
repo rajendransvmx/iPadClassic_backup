@@ -22,6 +22,9 @@
 //Radha
 #import "DataBase.h"
 
+//Radha Sync ProgressBar
+#import "SyncProgressBar.h"
+
 #define TableViewCellHeight 40
 #define kLastLocationUpdateTimestamp @"LastLocationUpdateTimestamp"
 #define kLastLocationSettingUpdateTimestamp @"LastLocationSettingUpdateTimestamp"
@@ -42,6 +45,12 @@
 @class CLLocation;
 
 BOOL didSessionResume;
+
+typedef enum DATA_SYNC_TYPE{
+    NORMAL_DATA_SYNC = 0,
+    CUSTOM_DATA_SYNC =1,
+    
+}DATA_SYNC_TYPE;
 
 typedef enum DOD_STATUS{
     CONNECTING_TO_SALESFORCE = 0,
@@ -95,7 +104,8 @@ typedef enum  INCREMENTAL_SYNC{
     GET_PRICE_DONE = 12,
     GET_PRICE_DL_START = 13,
     GET_PRICE_INSERT_START = 14,
-    GET_PRICE_DL_FINISH = 15
+    GET_PRICE_DL_FINISH = 15,
+    CUSTOM_AGGRESSIVESYNC_DONE = 16
     
     } INCREMENTAL_SYNC;
 
@@ -168,6 +178,17 @@ typedef enum INITIAL_SYNC_STATUS
     SYNC_GP_META_CODE_SNIPPET = 36,
     SYNC_GP_DATA = 37    
 }INITIAL_SYNC_STATUS;
+
+typedef enum
+{
+	NO_SYNCINPROGRESS = 0,
+	DATASYNC_INPROGRESS,
+	EVENTSYNC_INPROGRESS,
+	METASYNC_INPROGRESS,
+	CONFLICTSYNC_INPROGRESS,
+	CUSTOMSYNC_INPROGRESS,
+	
+}SYNC_TYPE_INPROGRESS;
 
 
 BOOL isSessionInavalid;
@@ -504,7 +525,16 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 	NSString *errorDescription;
 //    NSMutableDictionary *tempDict;
 //    NSInteger Custom_alert_count;
+    
+    //sync_override
+    DATA_SYNC_TYPE data_sync_type;
 }
+
+//Radha Sync ProgressBar
+@property (nonatomic, retain) SyncProgressBar * SyncProgress;
+@property (nonatomic ) SYNC_TYPE_INPROGRESS syncTypeInProgress;
+
+@property (nonatomic) DATA_SYNC_TYPE data_sync_type;
 @property (nonatomic)BOOL Enable_aggresssiveSync;
 @property (nonatomic,retain) NSMutableArray * code_snippet_ids;
 @property (nonatomic) BOOL get_trigger_code;
@@ -853,6 +883,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 - (void) sendingEmail:(UIAlertView*)alertView;
 
 -(void)getTriggerCode;
+
+//Radha : Sync Progress Bar
+- (void) setCurrentSyncStatusProgress:(int)syncState optimizedSynstate:(int)oSyncState;
 
 @end
 

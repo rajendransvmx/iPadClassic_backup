@@ -96,8 +96,8 @@
 	[super viewDidAppear:YES];
 	
 //	iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-//	appDelegate.animatedImageView.center = CGPointMake(450, 21);
-//    [dataSyncDetail.navigationController.view addSubview:appDelegate.animatedImageView];
+//	appDelegate.SyncProgress.center = CGPointMake(450, 21);
+//    [dataSyncDetail.navigationController.view addSubview:appDelegate.SyncProgress];
 }
 
 - (void) showSFMWithProcessId:(NSString *)processId recordId:(NSString *)recordId objectName:(NSString *)objectName

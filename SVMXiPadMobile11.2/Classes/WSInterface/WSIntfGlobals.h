@@ -14,6 +14,16 @@
 
 @end
 
+
+#define SYNC_RECORD_header              @"MASTER"
+#define SYNC_RECORD_DETAIL              @"DETAIL"
+#define SYNC_RECORD_OBJECT_NAME         @"object_name"
+#define SYNC_RECORD_SF_id                @"Id"
+#define SYNC_RECORD_LOCAL_ID            @"local_id"
+#define SYNC_RECORD_OPERATION_TYPE      @"operation_type"
+
+
+
 #define KMinPkgForScheduleEvents                       10.20000
 #define KMinPkgForLocalUpdateEventCreation             10.20003
 #define DOD                                            9.3

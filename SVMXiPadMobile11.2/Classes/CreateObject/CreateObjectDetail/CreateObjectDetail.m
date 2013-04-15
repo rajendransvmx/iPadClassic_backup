@@ -72,9 +72,9 @@ extern void SVMXLog(NSString *format, ...);
 	NSInteger toolBarWidth = 0;
 	const int SPACE_BUFFER = 4;
 	
-	UIBarButtonItem *activityButton = [[[UIBarButtonItem alloc] initWithCustomView:appDelegate.animatedImageView] autorelease];
+	UIBarButtonItem *activityButton = [[[UIBarButtonItem alloc] initWithCustomView:appDelegate.SyncProgress] autorelease];
 	[arrayForRightBarButton addObject:activityButton];
-	toolBarWidth += appDelegate.animatedImageView.frame.size.width + SPACE_BUFFER;
+	toolBarWidth += appDelegate.SyncProgress.frame.size.width + SPACE_BUFFER;
 	
 	UIButton *helpButton = [UIButton buttonWithType:UIButtonTypeCustom];
 	helpButton.backgroundColor = [UIColor clearColor];

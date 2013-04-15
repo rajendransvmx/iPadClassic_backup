@@ -78,6 +78,9 @@
 #define MOBJECT_NAME             @"object_name"
 #define MVALUE_MAPPING_ID        @"value_mapping_id"
 #define MPERFORM_SYNC            @"perform_sync"
+//SYNC Overrride : Radha
+#define MWIZARD_STEP_ID			 @"wizard_step_id"
+
 
 //SFobjectField
 #define MREFERENCE_TO            @"reference_to"
@@ -248,4 +251,15 @@
 
 #define METASYNCDUE                     @"meta_sync_due"
 
+//Sync Override :Radha
+#define CUSTOMSYNC                      @"customsync"
+#define AGRESSIVESYNC                   @"agressivesync"
+#define WEBSERVICENAME					@"webservice_name"
+#define CLASSNAME						@"class_name"
+#define SFW_Sync_Override               @"SFW_Sync_Override"
+#define SERVICENAME			@"service_name"
+
+#define RELATED_REC_ERROR               @"RELATED_REC_ERROR"
+#define DML_ERROR                       @"DML_ERROR"
+#define CUSTOM_SYNC_SOAP_FAULT          @"CUSTOM_SYNC_SOAP_FAULT"
 

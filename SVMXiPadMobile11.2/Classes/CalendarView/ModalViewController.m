@@ -37,7 +37,7 @@ extern void SVMXLog(NSString *format, ...);
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
-    [self.view addSubview:appDelegate.animatedImageView];
+    [self.view addSubview:appDelegate.SyncProgress];
     if( isShowingDailyView )
     {
         //sahana  dec 14th
@@ -46,14 +46,13 @@ extern void SVMXLog(NSString *format, ...);
         
         if(_stringNumber >=  (KMinPkgForScheduleEvents * 100000))
         {
-            appDelegate.animatedImageView.frame = CGRectMake(776, 8, 26, 26);
+            appDelegate.SyncProgress.frame = CGRectMake(776, 5, 35, 35);
         }
         else
         {
-            appDelegate.animatedImageView.frame = CGRectMake(834, 8, 26, 26);
+            appDelegate.SyncProgress.frame = CGRectMake(834, 5, 35, 35);
         }
-//		appDelegate.animatedImageView.frame = CGRectMake(834, 8, 26, 26);
-//        appDelegate.animatedImageView.frame = CGRectMake(776, 8, 26, 26);
+
     }
     else
     {
@@ -62,11 +61,11 @@ extern void SVMXLog(NSString *format, ...);
         
         if(_stringNumber >=  (KMinPkgForScheduleEvents * 100000))
         {
-              appDelegate.animatedImageView.frame = CGRectMake(835, 8, 26, 26);
+              appDelegate.SyncProgress.frame = CGRectMake(826, 5, 35, 35);
         }
         else
         {
-            appDelegate.animatedImageView.frame = CGRectMake(885, 8, 26, 26);
+            appDelegate.SyncProgress.frame = CGRectMake(876, 5, 35, 35);
         }
     }
 	
@@ -765,11 +764,11 @@ extern void SVMXLog(NSString *format, ...);
             if(_stringNumber >=  (KMinPkgForScheduleEvents * 100000))
             {
                 Add_event_Button.frame = AddEventButtonRect;
-                appDelegate.animatedImageView.frame = CGRectMake(776, 8, 26, 26);
+                appDelegate.SyncProgress.frame = CGRectMake(776, 5, 35, 35);
             }
             else
             {
-                appDelegate.animatedImageView.frame = CGRectMake(834, 8, 26, 26);
+                appDelegate.SyncProgress.frame = CGRectMake(834, 5, 35, 35);
             }
             [UIView commitAnimations];
             isViewDirty = NO;
@@ -794,11 +793,11 @@ extern void SVMXLog(NSString *format, ...);
             if(_stringNumber >=  (KMinPkgForScheduleEvents * 100000))
             {
                 Add_event_Button.frame = AddEventButtonRect;
-                appDelegate.animatedImageView.frame = CGRectMake(776, 8, 26, 26);
+                appDelegate.SyncProgress.frame = CGRectMake(776, 5, 35, 35);
             }
             else
             {
-                appDelegate.animatedImageView.frame = CGRectMake(834, 8, 26, 26);
+                appDelegate.SyncProgress.frame = CGRectMake(834, 5, 35, 35);
             }
             
           
@@ -864,14 +863,14 @@ extern void SVMXLog(NSString *format, ...);
         if(_stringNumber >=  (KMinPkgForScheduleEvents * 100000))
         {
             AddEventButtonRect  = Add_event_Button.frame;
-            syncindicatorRect = appDelegate.animatedImageView.frame;
+            syncindicatorRect = appDelegate.SyncProgress.frame;
             Add_event_Button.frame = homeButtonRect;
-            appDelegate.animatedImageView.frame = CGRectMake(835, 8, 26, 26);
+            appDelegate.SyncProgress.frame = CGRectMake(826, 5, 35, 35);
             
         }
         else
         {
-             appDelegate.animatedImageView.frame = CGRectMake(885, 8, 26, 26);
+             appDelegate.SyncProgress.frame = CGRectMake(876, 5, 35, 35);
         }
        
        
@@ -2143,8 +2142,8 @@ extern void SVMXLog(NSString *format, ...);
 						// BOOL does_exists = [appDelegate.databaseInterface DoesTrailerContainTheRecord:local_id operation_type:UPDATE object_name:@"Event"];
 						//  if(!does_exists)
                         {
-							
-                            [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:local_id SF_id:calEventView.eventId record_type:MASTER operation:UPDATE object_name:@"Event" sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@""];
+							//Sync_Override
+                            [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:local_id SF_id:calEventView.eventId record_type:MASTER operation:UPDATE object_name:@"Event" sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@"" webserviceName:@"" className:@"" synctype:AGRESSIVESYNC headerLocalId:local_id requestData:nil finalEntry:NO];
                             
                         }
                         [appDelegate setAgrressiveSync_flag];

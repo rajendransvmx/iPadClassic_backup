@@ -3697,8 +3697,6 @@ extern void SVMXLog(NSString *format, ...);
             char * _objects = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_1);
             if (_objects != nil && strlen(_objects))
                 [objects addObject:[NSString stringWithUTF8String:_objects]];
-            else
-                [objects addObject:[NSString stringWithFormat:@""]];
         }
     }
     return [objects retain];

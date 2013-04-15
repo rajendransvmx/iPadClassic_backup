@@ -165,7 +165,10 @@
 
 -(void)updateDataTrailer_RecordSentForlocalId:(NSString *)local_id operation_type:(NSString *)operationType;
 
--(void) insertdataIntoTrailerTableForRecord:(NSString *)local_id SF_id:(NSString *)sf_id record_type:(NSString *)record_type operation:(NSString *)operation object_name:(NSString *)object_name  sync_flag:(NSString *)sync parentObjectName:(NSString *)parentObjectName parent_loacl_id:(NSString *)parent_local_id ;
+//Sync_Overide :- Adding the new parameters to the existing method (webservice_name, class_name, synctype)
+
+-(void) insertdataIntoTrailerTableForRecord:(NSString *)local_id SF_id:(NSString *)sf_id record_type:(NSString *)record_type operation:(NSString *)operation object_name:(NSString *)object_name  sync_flag:(NSString *)sync parentObjectName:(NSString *)parentObjectName parent_loacl_id:(NSString *)parent_local_id webserviceName:(NSString *)webservice_name className:(NSString *)class_name synctype:(NSString *)sync_type headerLocalId:(NSString *)header_localId requestData:(NSMutableDictionary *) request_data  finalEntry:(BOOL)isFinalCustomEntry;
+
 -(void)copyTrailerTableToTempTrailerForOperationType:(NSString *)operation_type;
 -(void)cleartable:(NSString *)table_name;
 -(NSMutableArray *) getAllSyncRecordsFromSYNCHeap;
@@ -285,6 +288,29 @@
 - (void)insertGetPriceRecordsToRespectiveTables:(NSMutableDictionary *)gpData andParser:(SBJsonParser *)jsonParser;
 - (BOOL)updateGPTableforSFId:(NSString *)sfId  forObject:(NSString *)objectName  data:(NSDictionary *)dictionaryValue;
 - (NSMutableDictionary *)getRecordsGPForRecordId:(NSString *)record_id ForObjectName:(NSString *)object_name fields:(NSString *)fields;
+
+//Sahana Custom Aggressive Sync
+- (BOOL)ShouldTriggerCustomAggressive;
+- (void)fillSyncRecordDictForRecordType:(NSString *)record_type SF_Id:(NSString *)SF_id local_id:(NSString *)local_id  operation_type:(NSString *)operation_type  final_dictionary:(NSMutableDictionary *)sync_record_dict  object_naem:(NSString *)object_name parent_object_name:(NSString *)parent_object_name parent_local_id:(NSString *)parent_local_id;
+- (NSMutableDictionary * )getCustomAggressiveSyncRecordsForHearedRecord:(NSString *)header_reco_id;
+- (NSArray *)getallmasterRecordsForCustomAggressiveSync;
+- (BOOL)checkColumnExists:(NSString *)columnname tableName:(NSString *)tableName;
+- (NSMutableDictionary *)getClassNameMethodnameForHeaderLocalId:(NSString *)header_lcal_id;
+-(void)insertCustomWebserviceResponse:(NSMutableArray *)records_array class_name:(NSString *)class_name method_name:(NSString *)method_name related_record_error:(BOOL)related_record_error request_id:(NSString *)request_id;
+-(void)insertCustomWebserviceResponsewithError:(NSMutableArray *)error_list class_name:(NSString *)class_name method_name:(NSString *)method_name related_record_error:(BOOL)related_record_error request_id:(NSString *)request_id;
+-(void)deletecustomWebservicefrom_detailTrailer_for_request_id:(NSString *)request_id table_name:(NSString *)table_name;
+-(void)insertIntoConflictTable_forlocal_id:(NSString *)local_id sf_id:(NSString *)sf_id class_name:(NSString *)class_name method_name:(NSString *)method_name   error_type:(NSString *)error_type error_message:(NSString *)error_msg custom_service:(NSString *)custom_wsservice request_id:(NSString *)request_id record_type:(NSString *)record_type object_name:(NSString *)object_name operation_type:(NSString *)operation_type;
+-(NSArray *)getallmasterRecordsForCustomAggressiveSyncFrom_SyncErrorTable;
+-(NSMutableArray *)getAllrequestIdsWithFlag:(NSString *)flag;
+-(void)deleteAllRecordsWithIgnoreTagFromConflictTable;
+-(void)deleteallRecordsForRequest_ids:(NSString *)table_name request_ids:(NSString *)request_id_str;
+-(NSString *)errorTypeOfrRequestId:(NSString *)request_id;
+-(BOOL)doesRequestIdExistsintable:(NSString *)table_name request_id:(NSString *)request_id error_type:(NSString *)error_type;
+-(BOOL)ContinueIncrementalDataSync_forNoncustomRecords;
+
+//Sync_Override : Radha
+- (BOOL) checkIfCustomEntryExistsInTrailerTable:(NSString *)parentLocalId;
+
 
 #define SERVER_OVERRIDE                     @"Server_Override"
 #define CLIENT_OVERRIDE                     @"Client_Override"
@@ -425,6 +451,19 @@
 #define LOCAL_UPDATE_TYPE        @"local_update_type"
 #define ONLINE_UPDATE_TYPE       @"online_upadte_type"
 
+
+
+#define cw_local_id              @"LOCAL_ID"
+#define cw_json_record           @"JSON_RECORD"
+#define cw_sf_id                 @"SF_ID"
+#define cw_operation_type        @"OPERATION_TYPE"
+#define cw_record_type           @"RECORD_TYPE"
+#define cw_object_name           @"OBJECT_NAME"
+#define cw_custom_error_type     @"custom_error_type"
+#define cw_parent_colmn_name     @"PARENT_COLUMN_NAME"
+#define cw_header_obj_name       @"HEADER_OBJECT_NAME"
+#define cw_error_mesg            @"ERROR_MSG"
+#define cw_error_type            @"ERROR_TYPE"
 @end
 
 @protocol databaseInterfaceProtocol <NSObject>

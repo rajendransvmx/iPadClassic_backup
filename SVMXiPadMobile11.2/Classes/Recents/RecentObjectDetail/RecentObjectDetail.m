@@ -48,68 +48,74 @@ extern void SVMXLog(NSString *format, ...);
 
 #pragma mark - View lifecycle
 
-- (void)viewDidLoad
+- (void) layout
 {
-    [super viewDidLoad];
-	
-	CGRect rect = self.view.frame;
+    CGRect rect = self.view.frame;
 	self.navigationController.navigationBar.frame = CGRectMake(0, 0, rect.size.width, self.navigationController.navigationBar.frame.size.height);
     
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     @try{
-    UIImageView * bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_right_panel_bg_main_top.png"]];
-	bgImage.frame = CGRectMake(0, -12, bgImage.frame.size.width, bgImage.frame.size.height+12);
-	self.tableView.backgroundView = bgImage;
-	[bgImage release];
-	self.tableView.backgroundColor = [UIColor clearColor];
-    
-    UIImage *image = [UIImage imageNamed:@"SFM-Screen-Back-Arrow-Button"];
-	UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, image.size.width, image.size.height)] autorelease];
-	[backButton setBackgroundImage:image forState:UIControlStateNormal];
-	[backButton addTarget:self action:@selector(DismissSplitView:) forControlEvents:UIControlEventTouchUpInside];
-	UIBarButtonItem * backBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:backButton] autorelease];
-	self.navigationItem.leftBarButtonItem = backBarButtonItem;
-	
-	UILabel * titleLabel = [[[UILabel alloc] initWithFrame:CGRectZero] autorelease];
-	titleLabel.textAlignment = UITextAlignmentCenter;
-	titleLabel.text = [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_RECENTS];
-	titleLabel.font = [UIFont boldSystemFontOfSize:15];
-	titleLabel.backgroundColor = [UIColor clearColor];
-	[titleLabel sizeToFit];
-	self.navigationItem.titleView = titleLabel;
-	
-	NSMutableArray *arrayForRightBarButton = [[NSMutableArray alloc] initWithCapacity:0];
-	
-	NSInteger toolBarWidth = 0;
-	const int SPACE_BUFFER = 4;
-	
-	UIBarButtonItem *activityButton = [[[UIBarButtonItem alloc] initWithCustomView:appDelegate.animatedImageView] autorelease];
-	[arrayForRightBarButton addObject:activityButton];
-	toolBarWidth += appDelegate.animatedImageView.frame.size.width + SPACE_BUFFER;
-	
-	UIButton *helpButton = [UIButton buttonWithType:UIButtonTypeCustom];
-	helpButton.backgroundColor = [UIColor clearColor];
-	[helpButton setBackgroundImage:[UIImage imageNamed:@"iService-Screen-Help"] forState:UIControlStateNormal];
-	[helpButton addTarget:self action:@selector(showHelp) forControlEvents:UIControlEventTouchUpInside];
-	[helpButton sizeToFit];
-	toolBarWidth += helpButton.frame.size.width + SPACE_BUFFER;
-	UIBarButtonItem * helpBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:helpButton] autorelease];
-	[arrayForRightBarButton addObject:helpBarButtonItem];
-	
-	UIToolbar *myToolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, toolBarWidth + 30, 44)];
-    myToolBar.backgroundColor = [UIColor clearColor];
-    [myToolBar setItems:arrayForRightBarButton];
-	UIView *view = myToolBar;
-	SMLog(@"%f %f", view.frame.size.width, view.frame.size.height);
-	self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:myToolBar] autorelease];
-    [myToolBar release];
-	
-	[arrayForRightBarButton release];
-	arrayForRightBarButton = nil;
+        UIImageView * bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_right_panel_bg_main_top.png"]];
+        bgImage.frame = CGRectMake(0, -12, bgImage.frame.size.width, bgImage.frame.size.height+12);
+        self.tableView.backgroundView = bgImage;
+        [bgImage release];
+        self.tableView.backgroundColor = [UIColor clearColor];
+        
+        UIImage *image = [UIImage imageNamed:@"SFM-Screen-Back-Arrow-Button"];
+        UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, image.size.width, image.size.height)] autorelease];
+        [backButton setBackgroundImage:image forState:UIControlStateNormal];
+        [backButton addTarget:self action:@selector(DismissSplitView:) forControlEvents:UIControlEventTouchUpInside];
+        UIBarButtonItem * backBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:backButton] autorelease];
+        self.navigationItem.leftBarButtonItem = backBarButtonItem;
+        
+        UILabel * titleLabel = [[[UILabel alloc] initWithFrame:CGRectZero] autorelease];
+        titleLabel.textAlignment = UITextAlignmentCenter;
+        titleLabel.text = [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_RECENTS];
+        titleLabel.font = [UIFont boldSystemFontOfSize:15];
+        titleLabel.backgroundColor = [UIColor clearColor];
+        [titleLabel sizeToFit];
+        self.navigationItem.titleView = titleLabel;
+        
+        NSMutableArray *arrayForRightBarButton = [[NSMutableArray alloc] initWithCapacity:0];
+        
+        NSInteger toolBarWidth = 0;
+        const int SPACE_BUFFER = 4;
+        
+        UIBarButtonItem *activityButton = [[[UIBarButtonItem alloc] initWithCustomView:appDelegate.SyncProgress] autorelease];
+        [arrayForRightBarButton addObject:activityButton];
+        toolBarWidth += appDelegate.SyncProgress.frame.size.width + SPACE_BUFFER;
+        
+        UIButton *helpButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        helpButton.backgroundColor = [UIColor clearColor];
+        [helpButton setBackgroundImage:[UIImage imageNamed:@"iService-Screen-Help"] forState:UIControlStateNormal];
+        [helpButton addTarget:self action:@selector(showHelp) forControlEvents:UIControlEventTouchUpInside];
+        [helpButton sizeToFit];
+        toolBarWidth += helpButton.frame.size.width + SPACE_BUFFER;
+        UIBarButtonItem * helpBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:helpButton] autorelease];
+        [arrayForRightBarButton addObject:helpBarButtonItem];
+        
+        UIToolbar *myToolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, toolBarWidth + 30, 44)];
+        myToolBar.backgroundColor = [UIColor clearColor];
+        [myToolBar setItems:arrayForRightBarButton];
+        UIView *view = myToolBar;
+        SMLog(@"%f %f", view.frame.size.width, view.frame.size.height);
+        self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:myToolBar] autorelease];
+        [myToolBar release];
+        
+        [arrayForRightBarButton release];
+        arrayForRightBarButton = nil;
     }@catch (NSException *exp) {
         SMLog(@"Exception Name RecentObjectDetail :viewDidLoad %@",exp.name);
         SMLog(@"Exception Reason RecentObjectDetail :viewDidLoad %@",exp.reason);
     }
+
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    [self layout];
+	
 }
 
 - (void)viewDidUnload
@@ -125,7 +131,7 @@ extern void SVMXLog(NSString *format, ...);
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
+    [self layout];
     [self.tableView reloadData];
 }
 

@@ -20,6 +20,11 @@
 #import "ZKRecordTypeMapping.h"
 #import "ZKPicklistEntry.h"
 
+
+typedef enum CUSTOM_SYNC_STATUS{
+        NO_ACTIVE_CUSTOM_SYNC  = 0,
+        CUSTOM_SYNC_INITIATED = 1,
+}CUSTOM_SYNC_STATUS;
 //radha 18th August 2011
 
 
@@ -190,9 +195,13 @@
     NSTimeInterval totalTimeTakenForInsertion;
     
     SBJsonParser *jsonParserForDataSync;
+    NSString * cus_class_name ,* cus_method_name , * cus_sync_req_id , * custom_sync_object_name;
  
+    CUSTOM_SYNC_STATUS custom_sync_status;
 }
 //sahana
+@property ( nonatomic) CUSTOM_SYNC_STATUS custom_sync_status;
+@property (nonatomic ,retain) NSString * cus_class_name ,* cus_method_name , * cus_sync_req_id , * custom_sync_object_name;
 @property (nonatomic) BOOL webservice_call;
 @property (nonatomic)  BOOL didCompleteAfterSaveEventCalls;
 @property (nonatomic) BOOL AfterSaveEventsCalls;
@@ -442,8 +451,18 @@ last_sync_time:(NSString *)last_sync_time;
 -(void)getOnDemandRecords:(NSString*)objectName record_id:(NSString*)record_id;
 - (NSString *) getClientVersionString;
 -(void)settingFlags;
+
+//Custom Aggressive Sync
+-(void)optimizedAggressiveSync:(NSMutableDictionary *)sync_record  method_name:(NSString *)sfmMethodName class_name:(NSString *)webServiceClass event_type:(NSString *)Event_type event_name:(NSString *)event_name request_id:(NSString *)request_id;
+-(void)customAggressiveSync;
+
 - (NSString *) getValueFromUserDefaultsForKey:(NSString *)key;
 - (void) setUserDefaultsForKey:(NSString *)key withValue:(NSString *)value;
+-(void)specialOverrideSync;
+
+-(BOOL)ConflictExists;
+    
+
 @end
 
 @protocol RefrehManualDataSyncUI <NSObject>

@@ -104,10 +104,11 @@ enum  {
     NSMutableArray * buttons = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
     if(appDelegate == nil)
         appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:appDelegate.animatedImageView];
+    UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:appDelegate.SyncProgress];
     [buttons addObject:syncBarButton];
     [syncBarButton setTarget:self];
-    syncBarButton.width =26;
+   //Radha Sync ProgressBar
+//	syncBarButton.width =26;
     [syncBarButton release];
     
     UIButton *actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)];

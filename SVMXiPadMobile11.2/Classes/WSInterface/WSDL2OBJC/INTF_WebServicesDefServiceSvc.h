@@ -508,6 +508,12 @@ Class xNSClassFromString(NSString * aClassName);
 @class INTF_WebServicesDefServiceSvc_SFM_SaveTargetRecords_WSResponse;
 @class INTF_WebServicesDefServiceSvc_SVMX_GetSvmxVersion;
 @class INTF_WebServicesDefServiceSvc_SVMX_GetSvmxVersionResponse;
+
+//sahana syncOverride for custom webservice
+@class INTF_WebServicesDefServiceSvc_INTF_SyncOverRide_WS;
+@class INTF_WebServicesDefServiceSvc_INTF_SyncOverRide_WSResponse;
+
+
 #import "KeyValue.h"
 #import "SFM_Request.h"
 #import "SMAX_Debug.h"
@@ -23676,6 +23682,8 @@ NSString * INTF_WebServicesDefServiceSvc_LogType_stringFromEnum(INTF_WebServices
 - (void)INTF_CUD_OnPropertyElements_WSAsyncUsingParameters:(INTF_WebServicesDefServiceSvc_INTF_CUD_OnPropertyElements_WS *)aParameters SessionHeader:(INTF_WebServicesDefServiceSvc_SessionHeader *)aSessionHeader CallOptions:(INTF_WebServicesDefServiceSvc_CallOptions *)aCallOptions DebuggingHeader:(INTF_WebServicesDefServiceSvc_DebuggingHeader *)aDebuggingHeader AllowFieldTruncationHeader:(INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader *)aAllowFieldTruncationHeader  delegate:(id<INTF_WebServicesDefBindingResponseDelegate>)responseDelegate;
 - (INTF_WebServicesDefBindingResponse *)INTF_DataSync_WSUsingParameters:(INTF_WebServicesDefServiceSvc_INTF_DataSync_WS *)aParameters SessionHeader:(INTF_WebServicesDefServiceSvc_SessionHeader *)aSessionHeader CallOptions:(INTF_WebServicesDefServiceSvc_CallOptions *)aCallOptions DebuggingHeader:(INTF_WebServicesDefServiceSvc_DebuggingHeader *)aDebuggingHeader AllowFieldTruncationHeader:(INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader *)aAllowFieldTruncationHeader ;
 - (void)INTF_DataSync_WSAsyncUsingParameters:(INTF_WebServicesDefServiceSvc_INTF_DataSync_WS *)aParameters SessionHeader:(INTF_WebServicesDefServiceSvc_SessionHeader *)aSessionHeader CallOptions:(INTF_WebServicesDefServiceSvc_CallOptions *)aCallOptions DebuggingHeader:(INTF_WebServicesDefServiceSvc_DebuggingHeader *)aDebuggingHeader AllowFieldTruncationHeader:(INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader *)aAllowFieldTruncationHeader  delegate:(id<INTF_WebServicesDefBindingResponseDelegate>)responseDelegate;
+- (void)INTF_SyncOverRide_WSAsyncUsingParameters:(INTF_WebServicesDefServiceSvc_INTF_SyncOverRide_WS *)aParameters SessionHeader:(INTF_WebServicesDefServiceSvc_SessionHeader *)aSessionHeader CallOptions:(INTF_WebServicesDefServiceSvc_CallOptions *)aCallOptions DebuggingHeader:(INTF_WebServicesDefServiceSvc_DebuggingHeader *)aDebuggingHeader AllowFieldTruncationHeader:(INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader *)aAllowFieldTruncationHeader  delegate:(id<INTF_WebServicesDefBindingResponseDelegate>)responseDelegate;
+
 - (INTF_WebServicesDefBindingResponse *)INTF_Get_Account_History_WSUsingParameters:(INTF_WebServicesDefServiceSvc_INTF_Get_Account_History_WS *)aParameters SessionHeader:(INTF_WebServicesDefServiceSvc_SessionHeader *)aSessionHeader CallOptions:(INTF_WebServicesDefServiceSvc_CallOptions *)aCallOptions DebuggingHeader:(INTF_WebServicesDefServiceSvc_DebuggingHeader *)aDebuggingHeader AllowFieldTruncationHeader:(INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader *)aAllowFieldTruncationHeader ;
 - (void)INTF_Get_Account_History_WSAsyncUsingParameters:(INTF_WebServicesDefServiceSvc_INTF_Get_Account_History_WS *)aParameters SessionHeader:(INTF_WebServicesDefServiceSvc_SessionHeader *)aSessionHeader CallOptions:(INTF_WebServicesDefServiceSvc_CallOptions *)aCallOptions DebuggingHeader:(INTF_WebServicesDefServiceSvc_DebuggingHeader *)aDebuggingHeader AllowFieldTruncationHeader:(INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader *)aAllowFieldTruncationHeader  delegate:(id<INTF_WebServicesDefBindingResponseDelegate>)responseDelegate;
 - (INTF_WebServicesDefBindingResponse *)INTF_Get_Events_WSUsingParameters:(INTF_WebServicesDefServiceSvc_INTF_Get_Events_WS *)aParameters SessionHeader:(INTF_WebServicesDefServiceSvc_SessionHeader *)aSessionHeader CallOptions:(INTF_WebServicesDefServiceSvc_CallOptions *)aCallOptions DebuggingHeader:(INTF_WebServicesDefServiceSvc_DebuggingHeader *)aDebuggingHeader AllowFieldTruncationHeader:(INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader *)aAllowFieldTruncationHeader ;
@@ -24840,4 +24848,63 @@ NSString * INTF_WebServicesDefServiceSvc_LogType_stringFromEnum(INTF_WebServices
 @property (retain) NSArray *headers;
 @property (retain) NSArray *bodyParts;
 @property (retain) NSError *error;
+@end
+@interface INTF_WebServicesDefServiceSvc_INTF_SyncOverRide_WS : NSObject {
+	
+/* elements */
+	INTF_WebServicesDefServiceSvc_INTF_SFMRequest * request;
+NSString * callEventName, * webServiceName;
+/* attributes */
+}
+- (NSString *)nsPrefix;
+- (xmlNodePtr)xmlNodeForDoc:(xmlDocPtr)doc elementName:(NSString *)elName elementNSPrefix:(NSString *)elNSPrefix;
+- (void)addAttributesToNode:(xmlNodePtr)node;
+- (void)addElementsToNode:(xmlNodePtr)node;
++ (INTF_WebServicesDefServiceSvc_INTF_SyncOverRide_WS *)deserializeNode:(xmlNodePtr)cur;
+- (void)deserializeAttributesFromNode:(xmlNodePtr)cur;
+- (void)deserializeElementsFromNode:(xmlNodePtr)cur;
+/* elements */
+@property (retain) INTF_WebServicesDefServiceSvc_INTF_SFMRequest * request;
+/* attributes */
+- (NSDictionary *)attributes;
+@property (retain) NSString * callEventName, * webServiceName;
+@end
+@interface INTF_WebServicesDefServiceSvc_INTF_SyncOverRide_WSResponse : NSObject {
+	
+/* elements */
+	INTF_WebServicesDefServiceSvc_INTF_SFMResponse * result;
+/* attributes */
+}
+- (NSString *)nsPrefix;
+- (xmlNodePtr)xmlNodeForDoc:(xmlDocPtr)doc elementName:(NSString *)elName elementNSPrefix:(NSString *)elNSPrefix;
+- (void)addAttributesToNode:(xmlNodePtr)node;
+- (void)addElementsToNode:(xmlNodePtr)node;
++ (INTF_WebServicesDefServiceSvc_INTF_SyncOverRide_WSResponse *)deserializeNode:(xmlNodePtr)cur;
+- (void)deserializeAttributesFromNode:(xmlNodePtr)cur;
+- (void)deserializeElementsFromNode:(xmlNodePtr)cur;
+/* elements */
+@property (retain) INTF_WebServicesDefServiceSvc_INTF_SFMResponse * result;
+/* attributes */
+- (NSDictionary *)attributes;
+@end
+@interface INTF_WebServicesDefBinding_INTF_SyncOverRide_WS : INTF_WebServicesDefBindingOperation {
+	INTF_WebServicesDefServiceSvc_INTF_SyncOverRide_WS * parameters;
+	INTF_WebServicesDefServiceSvc_SessionHeader * SessionHeader;
+	INTF_WebServicesDefServiceSvc_CallOptions * CallOptions;
+	INTF_WebServicesDefServiceSvc_DebuggingHeader * DebuggingHeader;
+	INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * AllowFieldTruncationHeader;
+	NSString * callEventName, * webServiceName;
+}
+@property (retain) INTF_WebServicesDefServiceSvc_INTF_SyncOverRide_WS * parameters;
+@property (retain) INTF_WebServicesDefServiceSvc_SessionHeader * SessionHeader;
+@property (retain) INTF_WebServicesDefServiceSvc_CallOptions * CallOptions;
+@property (retain) INTF_WebServicesDefServiceSvc_DebuggingHeader * DebuggingHeader;
+@property (retain) INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * AllowFieldTruncationHeader;
+- (id)initWithBinding:(INTF_WebServicesDefBinding *)aBinding delegate:(id<INTF_WebServicesDefBindingResponseDelegate>)aDelegate
+	parameters:(INTF_WebServicesDefServiceSvc_INTF_SyncOverRide_WS *)aParameters
+	SessionHeader:(INTF_WebServicesDefServiceSvc_SessionHeader *)aSessionHeader
+	CallOptions:(INTF_WebServicesDefServiceSvc_CallOptions *)aCallOptions
+	DebuggingHeader:(INTF_WebServicesDefServiceSvc_DebuggingHeader *)aDebuggingHeader
+	AllowFieldTruncationHeader:(INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader *)aAllowFieldTruncationHeader
+;
 @end

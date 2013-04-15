@@ -162,8 +162,14 @@ PopoverButtons *popOver_view;
 }
 - (void) Syncronise
 {
+    //sync_override
+    appDelegate.data_sync_type = NORMAL_DATA_SYNC;
+    
 	BOOL retVal;
     [delegate dismisspopover];
+	
+	[appDelegate setAgrressiveSync_flag];
+    // appDelegate.Enable_aggresssiveSync = FALSE;
     appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
     
     if (![appDelegate isInternetConnectionAvailable])
@@ -257,14 +263,16 @@ PopoverButtons *popOver_view;
         [appDelegate callDataSync];
 		[delegate activityStop];
         appDelegate.dataSyncRunning = NO;
-}
+    }
     
     else 
     {        
         [appDelegate.calDataBase selectUndoneRecords];
-        
-        appDelegate.SyncStatus = SYNC_ORANGE;
-        
+        [appDelegate.databaseInterface deleteAllRecordsWithIgnoreTagFromConflictTable];
+        appDelegate.syncTypeInProgress = CONFLICTSYNC_INPROGRESS;
+		
+		[appDelegate setCurrentSyncStatusProgress:cSYNC_STARTS optimizedSynstate:0];
+		
         if([appDelegate.syncThread isExecuting])
         {
             while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
@@ -347,7 +355,8 @@ PopoverButtons *popOver_view;
                 break;
             }
         }
-		
+		//Radha Progress Bar
+		appDelegate.syncTypeInProgress = NO_SYNCINPROGRESS;
         retVal = [appDelegate.calDataBase selectCountFromSync_Conflicts];
         if (retVal == FALSE)
         {
@@ -402,7 +411,7 @@ PopoverButtons *popOver_view;
         {
             SMLog(@"Finished");
         }
-        [appDelegate setSyncStatus:SYNC_ORANGE];
+		
 		appDelegate.metaSyncThread = nil;
         appDelegate.metaSyncThread = [[NSThread alloc] initWithTarget:self selector:@selector(startSyncConfiguration) object:nil];
         [appDelegate.metaSyncThread start];
@@ -435,8 +444,7 @@ PopoverButtons *popOver_view;
     {
         SMLog(@"Finished");
     }
-    [appDelegate setSyncStatus:SYNC_ORANGE];
-    
+	
     [manualEventThread release];
     manualEventThread = [[NSThread alloc] initWithTarget:self selector:@selector(startSyncEvents) object:nil];
     [manualEventThread start];
@@ -561,8 +569,9 @@ PopoverButtons *popOver_view;
         
 
         [refreshMetaSyncDelegate refreshMetaSyncStatus];
-        
-        [appDelegate setSyncStatus:SYNC_ORANGE];
+        appDelegate.syncTypeInProgress = METASYNC_INPROGRESS;
+
+        [appDelegate setCurrentSyncStatusProgress:METASYNC_STARTS optimizedSynstate:0];
       
         [appDelegate goOnlineIfRequired];
         [appDelegate.dataBase removecache];
@@ -621,7 +630,9 @@ PopoverButtons *popOver_view;
 - (void) syncSuccess
 {
     appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
-        
+    
+	[appDelegate setCurrentSyncStatusProgress:METSSYNC_END optimizedSynstate:0];
+
     [delegate activityStop];
     [delegate enableControls];
     
@@ -629,11 +640,6 @@ PopoverButtons *popOver_view;
     {
         [appDelegate setSyncStatus:SYNC_GREEN];
         
-//        if ([appDelegate.dataBase checkIfSyncConfigDue])
-//        {
-//            [delegate resetTableview];
-//            [appDelegate.databaseInterface cleartable:@"meta_sync_due"];
-//        }
 		[appDelegate.wsInterface.updateSyncStatus refreshMetaSyncStatus];
 		[self updateMetsSyncStatus:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_failed]];
     }
@@ -662,11 +668,12 @@ PopoverButtons *popOver_view;
 
 
     }
-    
+    //Radha Progress Bar
+	appDelegate.syncTypeInProgress = NO_SYNCINPROGRESS;
+	
     appDelegate.dataBase.MyPopoverDelegate = nil;
     appDelegate.databaseInterface.MyPopoverDelegate = nil;
     appDelegate.wsInterface.MyPopoverDelegate = nil;
-//    appDelegate.metaSyncRunning = NO;
     
     
     if (appDelegate.event_thread != nil)
@@ -841,8 +848,8 @@ PopoverButtons *popOver_view;
                 }
             }
         }
-      
-        [appDelegate setSyncStatus:SYNC_ORANGE];
+		appDelegate.syncTypeInProgress = EVENTSYNC_INPROGRESS;
+        [appDelegate setCurrentSyncStatusProgress:eEVENTSYNC_STARTS optimizedSynstate:0];
                
         [appDelegate goOnlineIfRequired];
         [appDelegate.databaseInterface cleartable:SYNC_RECORD_HEAP];
@@ -893,6 +900,10 @@ PopoverButtons *popOver_view;
     if (fullDataSyncFailed == FALSE)
     {
         
+		[appDelegate setCurrentSyncStatusProgress:eEVENTSYNC_END optimizedSynstate:0];
+		
+		[NSThread sleepForTimeInterval:0.5];
+
         BOOL conflict_exists = [appDelegate.databaseInterface getConflictsStatus];
         if(conflict_exists)
         {
@@ -908,6 +919,9 @@ PopoverButtons *popOver_view;
     
     
     [pool release];
+	
+	//Radha Progress Bar
+	appDelegate.syncTypeInProgress = NO_SYNCINPROGRESS;
     
     if( appDelegate.queue_object != nil )
     {

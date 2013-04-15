@@ -2744,6 +2744,9 @@ extern void SVMXLog(NSString *format, ...);
                     expression_id = @"";
                     process_id = @"";
                     action_type = @"";
+		    perfom_sync = @"";
+		    class_name = @"";
+		    method_name = @"";
                     
                     char * temp_action_id = (char *)synchronized_sqlite3_column_text(stmt, 0);
                     if(temp_action_id != nil)
@@ -2802,7 +2805,27 @@ extern void SVMXLog(NSString *format, ...);
                         
                         if(flag)
                         {
-                            NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:action_id,action_description , expression_id, process_id, action_type , wizard_id, @"true",perfom_sync, class_name,method_name, nil] forKeys:keys];
+							//Sync Override :Radha
+							BOOL customEntryExists = [self checkIfCustomEntryExistsInTrailerTable:record_id];
+							NSMutableDictionary * dict = nil;
+							
+							//Check if button is associated with custom agressive sync webservice
+							BOOL isCustomSync = NO;
+							
+							if (([class_name length] > 0) && ([method_name length] > 0))
+							{
+								isCustomSync = YES;
+							}
+							
+							if (customEntryExists && [action_type isEqualToString:@"SFM"] && isCustomSync)
+							{
+								dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:action_id,action_description , expression_id, process_id, action_type , wizard_id, @"false",perfom_sync, class_name,method_name, nil] forKeys:keys];
+							}
+							else
+							{
+								dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:action_id,action_description , expression_id, process_id, action_type , wizard_id, @"true",perfom_sync, class_name,method_name, nil] forKeys:keys];
+							}
+                            
                             [buttons_array addObject:dict];
                             
                         }
@@ -4283,8 +4306,8 @@ extern void SVMXLog(NSString *format, ...);
     return array;
 }
 
-
--(void) insertdataIntoTrailerTableForRecord:(NSString *)local_id SF_id:(NSString *)sf_id record_type:(NSString *)record_type operation:(NSString *)operation object_name:(NSString *)Object_name  sync_flag:(NSString *)sync  parentObjectName:(NSString *)parentObjectName parent_loacl_id:(NSString *)parent_local_id;
+//Sync_Override
+-(void) insertdataIntoTrailerTableForRecord:(NSString *)local_id SF_id:(NSString *)sf_id record_type:(NSString *)record_type operation:(NSString *)operation object_name:(NSString *)object_name  sync_flag:(NSString *)sync  parentObjectName:(NSString *)parentObjectName parent_loacl_id:(NSString *)parent_local_id webserviceName:(NSString *)webservice_name className:(NSString *)class_name synctype:(NSString *)sync_type headerLocalId:(NSString *)header_localId requestData:(NSMutableDictionary *)request_data finalEntry:(BOOL)isFinalCustomEntry
 {
     
     NSDate * date = [NSDate date];
@@ -4293,11 +4316,48 @@ extern void SVMXLog(NSString *format, ...);
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     
     today_Date = [dateFormatter stringFromDate:date];
+	
+	
+	////Sync_Override check if colunm exists (Backward Compatibility)
+	BOOL columnExists = [self checkColumnExists:@"webservice_name" tableName:SFDATATRAILER];
     
-	// SMLog(@"%@  sf_id %@" , local_id, sf_id);
     NSString * insert_statement;
-    insert_statement = [NSString stringWithFormat:@"INSERT INTO '%@' (local_id ,sf_id ,record_type, operation, object_name, sync_flag, parent_object_name, parent_local_id,timestamp,record_sent) VALUES ('%@' , '%@' , '%@' , '%@' , '%@' ,'%@', '%@', '%@','%@','false')",SFDATATRAILER,local_id , sf_id , record_type, operation ,Object_name , sync, parentObjectName, parent_local_id,today_Date];
-    
+	
+	if (columnExists)
+	{
+		if ([sync_type isEqualToString:CUSTOMSYNC] && (!isFinalCustomEntry))
+		{
+			[self fillSyncRecordDictForRecordType:record_type SF_Id:sf_id local_id:local_id operation_type:operation final_dictionary:request_data object_naem:object_name parent_object_name:parentObjectName parent_local_id:header_localId];
+			return;
+		}
+		
+		else if (isFinalCustomEntry)
+		{
+            appDelegate.data_sync_type = CUSTOM_DATA_SYNC;
+            
+			NSString * requestId = [iServiceAppDelegate GetUUID];
+			
+			SBJsonWriter * jsonWriter = [[SBJsonWriter alloc] init];
+			
+			NSString * requestJsonString = [jsonWriter stringWithObject:request_data];
+			
+			[jsonWriter release];
+			
+			insert_statement = [NSString stringWithFormat:@"INSERT INTO '%@'(local_id, object_name, sf_id, parent_object_name, header_localId, request_id, request_data, webservice_name, class_name, sync_type, timestamp, operation) VALUES ('%@' , '%@' , '%@' , '%@' , '%@' ,'%@', '%@', '%@','%@', '%@', '%@', '%@' )", SFDATATRAILER, local_id, object_name, sf_id, parentObjectName, header_localId, requestId, requestJsonString, webservice_name, class_name, sync_type, today_Date, CUSTOMSYNC];
+		}
+		
+		else
+		{
+			insert_statement = [NSString stringWithFormat:@"INSERT INTO '%@' (local_id ,sf_id ,record_type, operation, object_name, sync_flag, parent_object_name, parent_local_id,timestamp,record_sent, webservice_name, class_name, sync_type, header_localId) VALUES ('%@' , '%@' , '%@' , '%@' , '%@' ,'%@', '%@', '%@','%@','false', '%@', '%@', '%@', '%@')",SFDATATRAILER,local_id , sf_id , record_type, operation ,object_name , sync, parentObjectName, parent_local_id,today_Date, webservice_name, class_name, sync_type, header_localId];
+		}
+		
+		
+	}
+	else
+	{
+		insert_statement = [NSString stringWithFormat:@"INSERT INTO '%@' (local_id ,sf_id ,record_type, operation, object_name, sync_flag, parent_object_name, parent_local_id,timestamp,record_sent) VALUES ('%@' , '%@' , '%@' , '%@' , '%@' ,'%@', '%@', '%@','%@','false')",SFDATATRAILER,local_id , sf_id , record_type, operation ,object_name , sync, parentObjectName, parent_local_id,today_Date];
+	}
+        
     char * err;
     
     if(synchronized_sqlite3_exec(appDelegate.db, [insert_statement UTF8String],NULL, NULL, &err) != SQLITE_OK)
@@ -5714,7 +5774,17 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void) DeleterecordFromTableWithSf_Id:(NSString *)object_name sf_id:(NSString *)sf_id withColumn:(NSString *)columnName
 {
-    NSString * delete_query = [NSString stringWithFormat:@"DELETE FROM '%@' WHERE %@ = '%@'" ,object_name, columnName, sf_id];
+    NSString * delete_query = @"";
+    //sync_override
+    if([object_name isEqualToString:SFDATATRAILER])
+    {
+        delete_query = [NSString stringWithFormat:@"DELETE FROM '%@' WHERE %@ = '%@' and sync_type != '%@' " ,object_name, columnName, sf_id,CUSTOMSYNC];
+    }
+    else
+    {
+        delete_query = [NSString stringWithFormat:@"DELETE FROM '%@' WHERE %@ = '%@'" ,object_name, columnName, sf_id];
+    }
+    delete_query = [NSString stringWithFormat:@"DELETE FROM '%@' WHERE %@ = '%@'" ,object_name, columnName, sf_id];
     SMLog(@"delete_query - - %@",delete_query);
     char * err ;
     if(synchronized_sqlite3_exec(appDelegate.db, [delete_query UTF8String], NULL, NULL, &err))
@@ -6351,6 +6421,28 @@ extern void SVMXLog(NSString *format, ...);
     else
         return TRUE;
 }
+
+-(BOOL)ContinueIncrementalDataSync_forNoncustomRecords
+{
+    sqlite3_stmt * statement;
+    int count = 0;
+    NSString * query = [[[NSString alloc] initWithFormat:@"SELECT COUNT(*) FROM SFDataTrailer where sync_type != '%@'",CUSTOMSYNC] autorelease];
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String],-1, &statement, nil) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement)== SQLITE_ROW)
+        {
+            count =  sqlite3_column_int(statement, 0);
+        }
+    }
+    if(count == 0)
+    {
+        return FALSE;
+    }
+    else
+        return TRUE;
+}
+
+
 
  //sahana 16th June 2012
 -(NSString *)getRefernceToFieldnameForObjct:(NSString *) object_name reference_table:(NSString *)reference_table table_name:(NSString *)table_name;
@@ -7363,4 +7455,562 @@ extern void SVMXLog(NSString *format, ...);
     return dict;
 }
 
+#pragma custom agggressive sync implementation Begins
+-(NSArray *)getallmasterRecordsForCustomAggressiveSync
+{
+    NSMutableArray * all_local_ids = [[NSMutableArray alloc] initWithCapacity:0];
+    NSString * query = [NSString stringWithFormat:@"SELECT DISTINCT request_id FROM '%@' WHERE sync_type = '%@' and request_id not in (select request_id FROM '%@')",SFDATATRAILER,CUSTOMSYNC,SYNC_ERROR_CONFLICT];
+    sqlite3_stmt * statement ;
+    
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, nil) ==  SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            NSString * value = @"";
+            char * temp_header_local_id = (char * ) synchronized_sqlite3_column_text(statement, 0);
+            if(temp_header_local_id != nil)
+            {
+                value  = [NSString stringWithUTF8String:temp_header_local_id];
+            }
+            if(value != nil)
+            {
+                [all_local_ids addObject:value];
+            }
+        }
+    }
+    
+     synchronized_sqlite3_finalize(statement);
+    return all_local_ids ;
+}
+
+-(NSArray *)getallmasterRecordsForCustomAggressiveSyncFrom_SyncErrorTable
+{
+    NSMutableArray * all_local_ids = [[NSMutableArray alloc] initWithCapacity:0];
+    NSString * query = [NSString stringWithFormat:@"SELECT  request_id FROM '%@' WHERE ( custom_ws_error = 'RELATED_REC_ERROR' or custom_ws_error = '%@')  and override_flag = 'retry'",SYNC_ERROR_CONFLICT,CUSTOM_SYNC_SOAP_FAULT];
+    sqlite3_stmt * statement ;
+    
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, nil) ==  SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            NSString * value = @"";
+            char * temp_header_local_id = (char * ) synchronized_sqlite3_column_text(statement, 0);
+            if(temp_header_local_id != nil)
+            {
+                value  = [NSString stringWithUTF8String:temp_header_local_id];
+            }
+            if(value != nil)
+            {
+                [all_local_ids addObject:value];
+            }
+        }
+    }
+    synchronized_sqlite3_finalize(statement);
+    return all_local_ids ;
+}
+
+-(NSMutableDictionary *)getClassNameMethodnameForHeaderLocalId:(NSString *)header_lcal_id
+{
+    NSMutableDictionary * config_info = [[NSMutableDictionary alloc] initWithCapacity:0];
+    
+    NSString * query = [NSString stringWithFormat:@"SELECT DISTINCT class_name , webservice_name  FROM '%@' WHERE  request_id = '%@'",SFDATATRAILER,header_lcal_id];
+    sqlite3_stmt * statement ;
+    
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, nil) ==  SQLITE_OK)
+    {
+        if(synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            NSString * class_name = @"" , * webservice_name = @"";
+            char * temp_class_name = (char * ) synchronized_sqlite3_column_text(statement, 0);
+            if(temp_class_name != nil)
+            {
+                class_name  = [NSString stringWithUTF8String:temp_class_name];
+            }
+            char * temp_webservice = (char * ) synchronized_sqlite3_column_text(statement, 1);
+            if(temp_webservice != nil)
+            {
+                webservice_name  = [NSString stringWithUTF8String:temp_webservice];
+            }
+            if([class_name length] > 0 && [webservice_name length] >0)
+            {
+                [config_info setObject:class_name forKey:CLASS_NAME];
+                [config_info setObject:webservice_name forKey:WEBSERVICE_NAME];
+            }
+        }
+    }
+    synchronized_sqlite3_finalize(statement);
+    return config_info ;
+}
+
+-(NSMutableDictionary *)getCustomAggressiveSyncRecordsForHearedRecord:(NSString *)header_reco_id
+{
+    NSMutableDictionary * sync_record_dict = nil;
+    
+    NSString * query = [NSString stringWithFormat:@"SELECT  request_data FROM '%@' WHERE request_id = '%@'",SFDATATRAILER ,header_reco_id];
+    
+    NSString *request_data = nil;
+    sqlite3_stmt * statement ;
+    
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, nil) ==  SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            request_data = @"";
+            
+            char * temp_request_data = (char * ) synchronized_sqlite3_column_text(statement, 0);
+            if(temp_request_data != nil)
+            {
+                request_data  = [NSString stringWithUTF8String:temp_request_data];
+            }
+                       
+//            [self fillSyncRecordDictForRecordType:record_type SF_Id:sf_id local_id:local_id operation_type:operation final_dictionary:sync_record_dict object_naem:object_name parent_object_name:parent_obj_name parent_local_id:parent_local_id];
+        }
+    }
+    if(request_data != nil)
+    {
+        SBJsonParser * jsonParser = [[[SBJsonParser alloc] init] autorelease];
+        sync_record_dict = [jsonParser objectWithString:request_data];
+    }
+    synchronized_sqlite3_finalize(statement);
+    return sync_record_dict ;
+}
+
+-(BOOL)ShouldTriggerCustomAggressive
+{
+    BOOL flag = [self checkColumnExists:@"sync_type" tableName:SFDATATRAILER];
+    return flag;
+}
+
+-(void)fillSyncRecordDictForRecordType:(NSString *)record_type SF_Id:(NSString *)SF_id local_id:(NSString *)local_id  operation_type:(NSString *)operation_type  final_dictionary:(NSMutableDictionary *)sync_record_dict  object_naem:(NSString *)object_name parent_object_name:(NSString *)parent_object_name parent_local_id:(NSString *)parent_local_id
+{
+    NSArray * keys =  [[NSArray alloc] initWithObjects:@"Id",@"local_id",@"Operation_type", @"parent_object_name", @"parent_local_id",nil ];
+    NSDictionary *  info_dict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:SF_id,local_id, operation_type,parent_object_name,parent_local_id, nil] forKeys:keys];
+    
+    if([record_type isEqualToString:SYNC_RECORD_header])
+    {
+        NSMutableArray * detail_records = [[NSMutableArray alloc] initWithCapacity:0];
+        [detail_records addObject:info_dict];
+        NSMutableDictionary * final_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+        NSMutableDictionary * operation_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+        [operation_dict setObject:detail_records forKey:operation_type];
+        [final_dict setObject:operation_dict forKey:object_name];
+        [sync_record_dict setObject:final_dict forKey:SYNC_RECORD_header];
+        [final_dict release];
+        [detail_records release];
+    }
+    else if([record_type isEqualToString:SYNC_RECORD_DETAIL])
+    {
+        if([[sync_record_dict allKeys] containsObject:SYNC_RECORD_DETAIL])
+        {
+            NSMutableDictionary * objects_dict = [sync_record_dict objectForKey:SYNC_RECORD_DETAIL];
+            
+            if([[objects_dict allKeys] containsObject:object_name])
+            {
+                NSMutableDictionary * operation_dict  = [objects_dict objectForKey:object_name];
+                
+                if([[operation_dict allKeys] containsObject:operation_type])
+                {
+                    NSMutableArray * detail_records = [operation_dict objectForKey:operation_type];
+                    [detail_records addObject:info_dict];
+                }
+                else
+                {
+                    NSMutableArray * detail_records = [[NSMutableArray alloc] initWithCapacity:0];
+                    [detail_records addObject:info_dict];
+                    [operation_dict setObject:detail_records forKey:operation_type];
+                    [detail_records release];
+                }
+            }
+            else
+            {
+                NSMutableDictionary * operation_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+                NSMutableArray * detail_records = [[NSMutableArray alloc] initWithCapacity:0];
+                
+                [detail_records addObject:info_dict];
+                [operation_dict setObject:detail_records forKey:operation_type];
+                [objects_dict setObject:operation_dict forKey:object_name];
+                [detail_records release];
+                [operation_dict release];
+                
+            }
+        }
+        else
+        {
+            NSMutableArray * detail_records = [[NSMutableArray alloc] initWithCapacity:0];
+            NSMutableDictionary * objects_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+            NSMutableDictionary * operation_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+            
+            [detail_records addObject:info_dict];
+            [operation_dict setObject:detail_records forKey:operation_type];
+            [objects_dict setObject:operation_dict forKey:object_name];
+            [sync_record_dict setObject:objects_dict forKey:SYNC_RECORD_DETAIL];
+            [detail_records release];
+            [objects_dict release];
+            [operation_dict release];
+            
+        }
+    }
+    
+    [info_dict release];
+}
+#pragma custom agggressive sync implementation Ends
+//Sync Override :Radha
+-(BOOL)checkColumnExists:(NSString *)columnname tableName:(NSString *)tableName
+{
+    BOOL columnExists = NO;
+    sqlite3_stmt *selectStmt;
+    const char *sql = "PRAGMA table_info(SFDataTrailer)";
+	
+	
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, sql, -1, &selectStmt, nil) == SQLITE_OK)
+    {
+        while(synchronized_sqlite3_step(selectStmt)== SQLITE_ROW)
+        {
+            NSString *fieldName = [NSString stringWithUTF8String:(char *)sqlite3_column_text(selectStmt, 1)];
+			if([columnname isEqualToString:fieldName])
+			{
+				columnExists = YES;
+				return columnExists;
+			}
+        }
+    }
+    return columnExists;
+}
+- (BOOL) checkIfCustomEntryExistsInTrailerTable:(NSString *)parentLocalId
+{
+	BOOL entryExists = FALSE;
+	
+	if (![self checkColumnExists:@"sync_type" tableName:SFDATATRAILER])
+	{
+		return entryExists;
+	}
+	int count = 0;
+	
+	sqlite3_stmt * statement = nil;
+
+	
+	NSString * queryStatement = [NSString stringWithFormat:@"SELECT COUNT(*) FROM '%@' WHERE header_localId = '%@' AND sync_type = '%@'", SFDATATRAILER, parentLocalId, CUSTOMSYNC];
+	
+	if (synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &statement, NULL) == SQLITE_OK)
+	{
+		while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+		{
+			count = synchronized_sqlite3_column_int(statement, 0);
+		}
+		synchronized_sqlite3_finalize(statement);
+	}
+	
+	if (count > 0)
+	{
+		entryExists = TRUE;
+	}
+	
+	
+	return entryExists;
+}
+
+-(void)deletecustomWebservicefrom_detailTrailer_for_request_id:(NSString *)request_id table_name:(NSString *)table_name
+{
+    NSString * delete_stmt = @"";
+   
+    delete_stmt = [NSString stringWithFormat:@"DELETE FROM '%@' WHERE  request_id = '%@'", table_name,request_id];
+    char * err;
+    
+    if (synchronized_sqlite3_exec(appDelegate.db, [delete_stmt UTF8String], NULL, NULL, &err) != SQLITE_OK)
+    {
+		SMLog(@"%@", delete_stmt);
+		SMLog(@"METHOD:DeleteDataTrailerTableAfterSync");
+		SMLog(@"ERROR IN DELETE %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:delete_stmt type:DELETEQUERY];
+    }
+}
+
+
+-(void)insertIntoConflictTable_forlocal_id:(NSString *)local_id sf_id:(NSString *)sf_id class_name:(NSString *)class_name method_name:(NSString *)method_name   error_type:(NSString *)error_type error_message:(NSString *)error_msg custom_service:(NSString *)custom_wsservice request_id:(NSString *)request_id record_type:(NSString *)record_type object_name:(NSString *)object_name operation_type:(NSString *)operation_type
+{
+   
+     NSString * insert_query = @"";
+    NSString * mod_error_msg = [[NSString alloc] initWithString:error_msg];
+    NSString * final_error_msg =[mod_error_msg stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+    if([custom_wsservice isEqualToString:@"RELATED_REC_ERROR"] || [custom_wsservice isEqualToString:CUSTOM_SYNC_SOAP_FAULT])
+    {
+        BOOL record_exists = [self doesRequestIdExistsintable:SYNC_ERROR_CONFLICT request_id:request_id error_type:custom_wsservice];
+        if(record_exists)
+        {
+            return;
+        }
+        insert_query = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' (local_id , sf_id, object_name, sync_type,record_type,error_message,error_type,class_name,method_name,custom_ws_error,request_id) VALUES ('%@','%@','%@','%@','%@','%@','%@','%@','%@','%@','%@')", SYNC_ERROR_CONFLICT, local_id , sf_id, object_name, custom_wsservice, record_type, final_error_msg, error_type,class_name,method_name,custom_wsservice,request_id];
+    }
+    else if([custom_wsservice isEqualToString:@"DML_ERROR"])
+    {
+         insert_query = [NSString stringWithFormat:@"INSERT INTO '%@' (local_id , sf_id, object_name, sync_type,record_type,error_message,error_type) VALUES ('%@','%@','%@','%@','%@','%@','%@')", SYNC_ERROR_CONFLICT, local_id , sf_id, object_name, operation_type, record_type, final_error_msg, error_type];
+    }
+    
+    char * err;
+    
+    if(synchronized_sqlite3_exec(appDelegate.db, [insert_query UTF8String],NULL, NULL, &err) != SQLITE_OK)
+    {
+        SMLog(@"%@", insert_query);
+        SMLog(@"METHOD: insertSyncConflictsIntoSYNC_CONFLICT");
+        SMLog(@"ERROR IN INSERTING %s", err);
+    }
+}
+-(void)deleteAllRecordsWithIgnoreTagFromConflictTable
+{
+    NSMutableArray * all_request_ids = [self getAllrequestIdsWithFlag:@"IGNORE"];
+    
+    NSMutableString  * request_ids_str = [[NSMutableString alloc] initWithCapacity:0];
+    
+    for(int count = 0;count < [all_request_ids count] ; count++)
+    {
+        NSString * request_id = [all_request_ids objectAtIndex:count];
+        if(count == 0)
+        {
+            [request_ids_str appendFormat:@"'%@'",request_id];
+        }else{
+             [request_ids_str appendFormat:@" , '%@'",request_id];
+        }
+        
+    }
+    
+    if([request_ids_str length] >0)
+    {
+        [self deleteallRecordsForRequest_ids:SFDATATRAILER request_ids:request_ids_str];
+        [self deleteallRecordsForRequest_ids:SYNC_ERROR_CONFLICT request_ids:request_ids_str];
+        
+    }
+    [request_ids_str release];
+    [all_request_ids release];
+}
+-(void)deleteallRecordsForRequest_ids:(NSString *)table_name request_ids:(NSString *)request_id_str
+{
+    NSString * deleteQuery = [NSString stringWithFormat:@"Delete from %@ where request_id in (%@)", table_name,request_id_str];
+    char * err;
+    
+    if(synchronized_sqlite3_exec(appDelegate.db, [deleteQuery UTF8String],NULL, NULL, &err) != SQLITE_OK)
+    {
+        SMLog(@"%@", deleteQuery);
+        SMLog(@"METHOD: insertSyncConflictsIntoSYNC_CONFLICT");
+        SMLog(@"ERROR IN INSERTING %s", err);
+    }
+}
+-(NSArray *)getAllrequestIdsWithFlag:(NSString *)flag
+{
+    NSMutableArray * request_ids_array = [[NSMutableArray alloc] initWithCapacity:0];
+    NSString * request_id = @"";
+    
+    NSString * selectQuery = [NSString stringWithFormat:@"Select request_id  from sync_error_conflict where override_flag = '%@'",flag];
+    sqlite3_stmt *stmt;
+    int ret = synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, NULL);
+    if(ret == SQLITE_OK)
+    {
+        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            char * _request_id = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_1);
+            if (_request_id != nil && strlen(_request_id))
+            {
+                request_id = [NSString stringWithUTF8String:_request_id];
+                [request_ids_array addObject:request_id];
+            }
+        }
+    }
+    synchronized_sqlite3_finalize(stmt);
+    return request_ids_array ;
+}
+-(void)insertCustomWebserviceResponse:(NSMutableArray *)records_array class_name:(NSString *)class_name method_name:(NSString *)method_name related_record_error:(BOOL)related_record_error request_id:(NSString *)request_id
+{
+    for(int i = 0; i< [records_array count]; i++)
+    {
+        NSDictionary * each_record = [records_array objectAtIndex:i];
+        NSString * operation_type = [each_record objectForKey:cw_operation_type];
+        NSString * record_type = [each_record objectForKey:cw_record_type];
+        NSString * json_string = [each_record objectForKey:cw_json_record];
+        NSString * object_name = [each_record objectForKey:cw_object_name];
+        NSString * parent_column_name = [each_record objectForKey:cw_parent_colmn_name];
+        NSString * parent_object_name = [each_record objectForKey:cw_header_obj_name];
+        NSString * local_id = [each_record objectForKey:cw_local_id];
+        
+        NSMutableDictionary * temp_dict = [self getDictForJsonString:[[NSString alloc] initWithString:json_string]];
+        [temp_dict removeObjectForKey:@"attributes"];
+        NSString * sf_id = [temp_dict objectForKey:@"Id"];
+      
+      
+        if(![record_type isEqualToString:@"RELATED_REC"])
+        {
+            if([operation_type isEqualToString:INSERT])
+            {
+                if([local_id length] > 0)
+                {
+                    if([record_type isEqualToString:DETAIL])
+                    {
+                        [temp_dict removeObjectForKey:parent_column_name];
+                    }
+                    BOOL  update_flag = [self UpdateTableforId:local_id forObject:object_name data:temp_dict];
+                    if(update_flag){}
+                }
+                else
+                {
+                    NSString * new_local_id = [iServiceAppDelegate GetUUID];
+                    if ([record_type isEqualToString:DETAIL])
+                    {
+                        NSString * parent_sf_id = @"";
+                        parent_sf_id = [temp_dict objectForKey:parent_column_name];
+                        NSString * parent_local_id = [self getLocalIdFromSFId:parent_sf_id tableName:parent_object_name];
+                        [temp_dict setObject:parent_local_id forKey:parent_column_name];
+                    }
+                    [temp_dict setObject:new_local_id forKey:@"local_id"];
+                    BOOL insert_flag = [self insertdataIntoTable:object_name data:temp_dict];
+                    if(insert_flag){}
+                }
+            }
+            else if([operation_type isEqualToString:UPDATE])
+            {
+                BOOL id_exist = [appDelegate.dataBase checkIfRecordExistForObject:object_name Id:sf_id];
+                if(!id_exist)
+                {
+                    NSString * new_local_id = [iServiceAppDelegate GetUUID];
+                    if ([record_type isEqualToString:DETAIL])
+                    {
+                        NSString * parent_sf_id = @"";
+                        parent_sf_id = [temp_dict objectForKey:parent_column_name];
+                        NSString * parent_local_id = [self getLocalIdFromSFId:parent_sf_id tableName:parent_object_name];
+                        [temp_dict setObject:parent_local_id forKey:parent_column_name];
+                    }
+                    
+                    [temp_dict setObject:new_local_id forKey:@"local_id"];
+                    BOOL insert_flag = [self insertdataIntoTable:object_name data:temp_dict];
+                    if(insert_flag){}
+                }
+                else
+                {
+                    if([record_type isEqualToString:DETAIL])
+                    {
+                        [temp_dict removeObjectForKey:parent_column_name];
+                    }
+                    BOOL flag = [self UpdateTableforSFId:sf_id forObject:object_name data:temp_dict];
+                    if(flag){}
+                    
+                }
+            }
+            else if([operation_type isEqualToString:DELETE])
+            {
+                
+            }
+        }
+        else
+        {
+            if(![operation_type isEqualToString:DELETE])
+            {
+                BOOL id_exist = [appDelegate.dataBase checkIfRecordExistForObject:object_name Id:sf_id];
+                if(!id_exist)
+                {
+                    NSString * new_local_id = [iServiceAppDelegate GetUUID];
+                    [temp_dict setObject:new_local_id forKey:@"local_id"];
+                    BOOL insert_flag = [self insertdataIntoTable:object_name data:temp_dict];
+                    if(insert_flag){}
+                }
+                else
+                {
+                    BOOL flag = [self UpdateTableforSFId:sf_id forObject:object_name data:temp_dict];
+                    if(flag){}
+                }
+            }
+            else
+            {
+                [self DeleterecordFromTableWithSf_Id:object_name sf_id:sf_id withColumn:@"Id"];
+            }
+        }
+    }
+    
+    if(!related_record_error)
+    {
+        [self deletecustomWebservicefrom_detailTrailer_for_request_id:request_id table_name:SFDATATRAILER];
+    }
+}
+
+-(void)insertCustomWebserviceResponsewithError:(NSMutableArray *)error_list class_name:(NSString *)class_name method_name:(NSString *)method_name related_record_error:(BOOL)related_record_error request_id:(NSString *)request_id;
+{
+    for(int i =0; i < [error_list count]; i++)
+    {
+        NSDictionary * dict = [error_list objectAtIndex:i];
+        NSString * local_id =[dict objectForKey:cw_local_id];
+        NSString * sf_id = [dict objectForKey:cw_sf_id];
+        NSString * error_type = [dict objectForKey:cw_error_type];
+        NSString * error_msg = [dict objectForKey:cw_error_mesg];
+        NSString * object_name = [dict objectForKey:cw_object_name];
+        NSString * record_type = [dict objectForKey:cw_record_type];
+        NSString * custom_error_type = [dict objectForKey:cw_custom_error_type];
+        NSString * operation_type = [dict objectForKey:cw_operation_type];
+        
+        NSString * final_operation_type = @"";
+        
+        if([operation_type isEqualToString:INSERT])
+        {
+            final_operation_type = PUT_INSERT;
+        }
+        else if([operation_type isEqualToString:UPDATE])
+        {
+            final_operation_type = PUT_UPDATE;
+        }
+        else if([operation_type isEqualToString:DELETE])
+        {
+            final_operation_type = PUT_DELETE;
+        }
+        
+        if([sf_id length] == 0)
+        {
+            sf_id = [self getSfid_For_LocalId_From_Object_table:object_name local_id:local_id];
+        }
+        
+        [self insertIntoConflictTable_forlocal_id:local_id sf_id:sf_id class_name:class_name method_name:method_name error_type:error_type error_message:error_msg custom_service:custom_error_type request_id:request_id record_type:record_type object_name:object_name operation_type:final_operation_type];
+        
+    }
+}
+
+-(NSString *)errorTypeOfrRequestId:(NSString *)request_id
+{
+    NSString * query = [NSString stringWithFormat:@"SELECT custom_ws_error FROM '%@' WHERE request_id = '%@'",SYNC_ERROR_CONFLICT,request_id];
+    sqlite3_stmt * statement ;
+    
+    NSString * custom_ws_error = @"";
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, nil) ==  SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            char * temp_header_local_id = (char * ) synchronized_sqlite3_column_text(statement, 0);
+            if(temp_header_local_id != nil)
+            {
+                custom_ws_error  = [NSString stringWithUTF8String:temp_header_local_id];
+            }
+           
+        }
+    }
+    synchronized_sqlite3_finalize(statement);
+    return custom_ws_error;
+}
+-(BOOL)doesRequestIdExistsintable:(NSString *)table_name request_id:(NSString *)request_id error_type:(NSString *)error_type
+{
+    BOOL record_exists = FALSE;
+    int count = 0;
+    sqlite3_stmt * statement ;
+    NSString * select = [NSString stringWithFormat:@"SELECT COUNT(*) FROM '%@' WHERE request_id = '%@' and custom_ws_error = '%@' ",table_name,request_id,error_type];
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [select UTF8String], -1, &statement, nil) ==  SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+          count = synchronized_sqlite3_column_int(statement, 0);
+        }
+    }
+     synchronized_sqlite3_finalize(statement);
+    
+    if(count > 0)
+    {
+        record_exists = TRUE;
+    }
+    else
+    {
+        record_exists = FALSE;
+    }
+    return record_exists;
+}
 @end

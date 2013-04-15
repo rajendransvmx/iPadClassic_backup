@@ -582,10 +582,11 @@ extern void SVMXLog(NSString *format, ...);
     
     //[appDelegate setSyncStatus:appDelegate.SyncStatus];
     
-    UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:appDelegate.animatedImageView];
+    UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:appDelegate.SyncProgress];
     [buttons addObject:syncBarButton];
     [syncBarButton setTarget:self];
-    syncBarButton.width =26;
+	//Radha Sync ProgressBar
+//    syncBarButton.width =26;
     toolBarWidth += syncBarButton.width;
     [syncBarButton release];
     // Samman - 20 July, 2011 - Signature Capture - BEGIN
@@ -701,7 +702,7 @@ extern void SVMXLog(NSString *format, ...);
     //[appDelegate setSyncStatus:appDelegate.SyncStatus];
     showSyncUI=YES;
     
-    UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:appDelegate.animatedImageView];
+    UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:appDelegate.SyncProgress];
     [buttons addObject:syncBarButton];
     [syncBarButton setTarget:self];
     
@@ -7752,7 +7753,7 @@ extern void SVMXLog(NSString *format, ...);
         showSyncUI=YES;
         //[appDelegate setSyncStatus:appDelegate.SyncStatus];
         
-        UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:appDelegate.animatedImageView];
+        UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:appDelegate.SyncProgress];
         [buttons addObject:syncBarButton];
         [syncBarButton setTarget:self];
         //sahana offline
@@ -8020,7 +8021,7 @@ extern void SVMXLog(NSString *format, ...);
         //[appDelegate setSyncStatus:appDelegate.SyncStatus];
         showSyncUI=YES;
 
-        UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:appDelegate.animatedImageView];
+        UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:appDelegate.SyncProgress];
         [buttons addObject:syncBarButton];
         [syncBarButton setTarget:self];
         //sahana offline
@@ -8698,7 +8699,7 @@ extern void SVMXLog(NSString *format, ...);
     //[appDelegate setSyncStatus:appDelegate.SyncStatus];
     showSyncUI=YES;
 
-    UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:appDelegate.animatedImageView];
+    UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:appDelegate.SyncProgress];
     
     NSMutableArray * buttons = [[NSMutableArray alloc] initWithCapacity:0];
     [buttons addObject:syncBarButton];
@@ -10042,11 +10043,28 @@ extern void SVMXLog(NSString *format, ...);
             {
                 if(action_process_id != nil && [action_process_id length] != 0)
                 {
-                    
+					//Sync_Override
+                    webserviceName = nil;
+					className = nil;
+					syncType = nil;
+					
                     NSString * process_type = [appDelegate.databaseInterface getprocessTypeForProcessId:action_process_id];
                     
                     if([process_type isEqualToString:@"EDIT"] || [process_type isEqualToString:@"SOURCETOTARGETONLYCHILDROWS"])
                     {
+						//Sync Override :Radha
+						webserviceName = ([buttonDict objectForKey:@"method_name"] != nil)?[buttonDict objectForKey:@"method_name"]:@"";
+						className = ([buttonDict objectForKey:@"class_name"] != nil)?[buttonDict objectForKey:@"class_name"]:@"";
+												
+						if ((![webserviceName isEqualToString:@""]) && (![className isEqualToString:@""]))
+						{
+							syncType = CUSTOMSYNC;
+						}
+						else
+						{
+							syncType = AGRESSIVESYNC;
+						}
+																						 
                         //Deffect Num
                         NSMutableDictionary * page_layoutInfo = [appDelegate.databaseInterface  queryProcessInfo:action_process_id object_name:@""];
                         
@@ -10089,7 +10107,19 @@ extern void SVMXLog(NSString *format, ...);
                     //Radha 15/5/11
                     if ([process_type isEqualToString:@"STANDALONECREATE"])
                     {
-                        
+						//Sync Override :Radha
+                        webserviceName = ([buttonDict objectForKey:@"method_name"] != nil)?[buttonDict objectForKey:@"method_name"]:@"";
+						className = ([buttonDict objectForKey:@"class_name"] != nil)?[buttonDict objectForKey:@"class_name"]:@"";
+						
+						if ((![webserviceName isEqualToString:@""]) && (![className isEqualToString:@""]))
+						{
+							syncType = CUSTOMSYNC;
+			 			}
+						else
+						{
+							syncType = AGRESSIVESYNC;
+						}
+
                         appDelegate.sfmPageController.sourceProcessId = appDelegate.sfmPageController.processId;
                         appDelegate.sfmPageController.sourceRecordId = nil;
                         
@@ -10105,7 +10135,19 @@ extern void SVMXLog(NSString *format, ...);
                         
                     if([process_type isEqualToString:@"SOURCETOTARGET"] )
                     {
-                        
+                        //Sync Override :Radha
+						webserviceName = ([buttonDict objectForKey:@"method_name"] != nil)?[buttonDict objectForKey:@"method_name"]:@"";
+						className = ([buttonDict objectForKey:@"class_name"] != nil)?[buttonDict objectForKey:@"class_name"]:@"";
+						
+						if ((![webserviceName isEqualToString:@""]) && (![className isEqualToString:@""]))
+						{
+							syncType = CUSTOMSYNC;
+						}
+						else
+						{
+							syncType = AGRESSIVESYNC;
+						}
+						
                         //check out the record any child or parent  local_id
                         
                         BOOL record_is_not_syncd = FALSE;
@@ -10243,6 +10285,8 @@ extern void SVMXLog(NSString *format, ...);
                 NSString * layout_id = [hdr_object objectForKey:gHEADER_HEADER_LAYOUT_ID];
                 NSString * processId = appDelegate.sfmPageController.processId;
                 NSMutableDictionary * SFM_header_fields = [[NSMutableDictionary alloc] initWithCapacity:0];
+				
+				NSMutableDictionary * customDataDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
                 
                 
                 BOOL error = FALSE;
@@ -10490,7 +10534,7 @@ extern void SVMXLog(NSString *format, ...);
                     //***************************************************** DETAIL SECTION ***************************************************
                     
                     //blank
-                    [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:header_record_local_id SF_id:@"" record_type:MASTER operation:INSERT object_name:headerObjName sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@""];
+                    [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:header_record_local_id SF_id:@"" record_type:MASTER operation:INSERT object_name:headerObjName sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@"" webserviceName:webserviceName className:className synctype:syncType headerLocalId:header_record_local_id  requestData:customDataDictionary finalEntry:NO];
                     
                     for (int i=0;i<[details count];i++) //parts, labor, expense for instance
                     {
@@ -10592,7 +10636,7 @@ extern void SVMXLog(NSString *format, ...);
                             {
                                 SMLog(@"insertion success");
                               
-                                [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:detail_record_local_id SF_id:@"" record_type:DETAIL  operation:INSERT object_name:detail_object_name sync_flag:@"false"  parentObjectName:headerObjName parent_loacl_id:header_record_local_id];
+                                [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:detail_record_local_id SF_id:@"" record_type:DETAIL  operation:INSERT object_name:detail_object_name sync_flag:@"false"  parentObjectName:headerObjName parent_loacl_id:header_record_local_id webserviceName:webserviceName className:className synctype:syncType headerLocalId:header_record_local_id requestData:customDataDictionary finalEntry:NO];
 
                             }
                             else
@@ -10606,6 +10650,12 @@ extern void SVMXLog(NSString *format, ...);
                     [self SaveRecordIntoPlist:header_record_local_id objectName:headerObjName];
                     //[appDelegate.wsInterface  CallIncrementalDataSync];
                     [appDelegate setAgrressiveSync_flag];
+                    if ([syncType isEqualToString:CUSTOMSYNC])
+					{
+						[appDelegate.databaseInterface insertdataIntoTrailerTableForRecord:header_record_local_id SF_id:@"" record_type:@"" operation:headerObjName object_name:headerObjName sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:header_record_local_id webserviceName:webserviceName className:className synctype:syncType headerLocalId:header_record_local_id requestData:customDataDictionary finalEntry:YES];
+					}
+					
+                    
                     [appDelegate callDataSync];
                                    
                 }
@@ -10700,7 +10750,8 @@ extern void SVMXLog(NSString *format, ...);
                 NSMutableDictionary * hdrData = [hdr_object objectForKey:gHEADER_DATA];
                 NSString * processId = appDelegate.sfmPageController.processId;
                     
-                
+                NSMutableDictionary * customDataDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
+				
                 BOOL error = FALSE;
                 for (int i=0;i<[header_sections count];i++)
                 {
@@ -10979,11 +11030,32 @@ extern void SVMXLog(NSString *format, ...);
                 }
                 if(isSalesForceRecord)
                 {
-                    BOOL does_exists = [appDelegate.databaseInterface DoesTrailerContainTheRecord:currentRecordId operation_type:UPDATE object_name:headerObjName];
-                    if(!does_exists)
-                    {
-                        [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:currentRecordId SF_id:id_value record_type:MASTER operation:UPDATE object_name:headerObjName sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@""];
-                    }
+					if ([syncType isEqualToString:AGRESSIVESYNC])
+					{
+						BOOL does_exists = [appDelegate.databaseInterface DoesTrailerContainTheRecord:currentRecordId operation_type:UPDATE object_name:headerObjName];
+						if(!does_exists)
+						{
+							[appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:currentRecordId SF_id:id_value record_type:MASTER operation:UPDATE object_name:headerObjName sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@"" webserviceName:webserviceName className:className synctype:syncType
+																				  headerLocalId:appDelegate.sfmPageController.recordId requestData:customDataDictionary finalEntry:NO];
+						}
+					}
+					else
+					{
+                        //RAdha
+						[appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:currentRecordId SF_id:id_value record_type:MASTER operation:UPDATE object_name:headerObjName sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@"" webserviceName:webserviceName className:className synctype:syncType
+																			  headerLocalId:appDelegate.sfmPageController.recordId requestData:customDataDictionary finalEntry:NO];
+					}
+					
+                    
+                }
+                else
+                {
+                    if([syncType isEqualToString:CUSTOMSYNC])
+					{
+                        //RAdha
+						[appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:currentRecordId SF_id:id_value record_type:MASTER operation:INSERT object_name:headerObjName sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@"" webserviceName:webserviceName className:className synctype:syncType
+																			  headerLocalId:appDelegate.sfmPageController.recordId requestData:customDataDictionary finalEntry:NO];
+					}
                 }
                 //sahana need to remove below code
                 success_flag = TRUE;
@@ -11126,11 +11198,11 @@ extern void SVMXLog(NSString *format, ...);
                                         //update  String SF_ID 
                                         
                                        // NSString * parent_SFId = [NSString stringWithFormat:@"SFID%@", id_value];
-                                        [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:line_local_id SF_id:@"" record_type:DETAIL operation:INSERT object_name:detail_object_name sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:currentRecordId];
+                                        [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:line_local_id SF_id:@"" record_type:DETAIL operation:INSERT object_name:detail_object_name sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:currentRecordId webserviceName:webserviceName className:className synctype:syncType headerLocalId:appDelegate.sfmPageController.recordId  requestData:customDataDictionary finalEntry:NO];
                                     }
                                     else
                                     {
-                                        [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:line_local_id SF_id:@"" record_type:DETAIL operation:INSERT object_name:detail_object_name sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:currentRecordId];
+                                        [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:line_local_id SF_id:@"" record_type:DETAIL operation:INSERT object_name:detail_object_name sync_flag:@"false"  parentObjectName:headerObjName parent_loacl_id:currentRecordId webserviceName:webserviceName className:className synctype:syncType headerLocalId:appDelegate.sfmPageController.recordId requestData:customDataDictionary finalEntry:NO];
                                     }
                                 }
                                 else
@@ -11245,11 +11317,11 @@ extern void SVMXLog(NSString *format, ...);
                                         if(isSalesForceRecord)
                                         {
                                             //update  String SF_ID 
-                                            [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:line_record_id SF_id:@"" record_type:DETAIL operation:INSERT object_name:detail_object_name sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:currentRecordId];
+                                            [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:line_record_id SF_id:@"" record_type:DETAIL operation:INSERT object_name:detail_object_name sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:currentRecordId webserviceName:webserviceName className:className synctype:syncType headerLocalId:appDelegate.sfmPageController.recordId  requestData:customDataDictionary finalEntry:NO];
                                         }
                                         else
                                         {
-                                            [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:line_record_id SF_id:@"" record_type:DETAIL operation:INSERT object_name:detail_object_name sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:currentRecordId];
+                                            [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:line_record_id SF_id:@"" record_type:DETAIL operation:INSERT object_name:detail_object_name sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:currentRecordId webserviceName:webserviceName className:className synctype:syncType headerLocalId:appDelegate.sfmPageController.recordId requestData:customDataDictionary finalEntry:NO];
                                         }
                                     }
                                     else
@@ -11284,42 +11356,69 @@ extern void SVMXLog(NSString *format, ...);
                                             child_isSalesForceRecord = FALSE;
                                         }
                                         
-                                        //check whether the entry exists for an  id  in the DataTrailer table  if it exists dont insert it again 
-                                        BOOL does_exists = [appDelegate.databaseInterface  DoesTrailerContainTheRecord:line_record_id operation_type:UPDATE object_name:detail_object_name];
-                                        if(!does_exists)
-                                        {
-                                        
-                                        
-                                            if(child_isSalesForceRecord)
-                                            {
-                                                if(isSalesForceRecord)
-                                                {
-                                                    [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:line_record_id SF_id:childSfId record_type:DETAIL operation:UPDATE object_name:detail_object_name sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:currentRecordId];//idvalue
-                                                }
-                                            }
-                                            else
-                                            {
-                                                [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:line_record_id SF_id:@"" record_type:DETAIL operation:UPDATE object_name:detail_object_name sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:currentRecordId];
+                                        //check whether the entry exists for an  id  in the DataTrailer table  if it exists dont insert it again
+										
+										if ([syncType isEqualToString:AGRESSIVESYNC])
+										{
+											BOOL does_exists = [appDelegate.databaseInterface  DoesTrailerContainTheRecord:line_record_id operation_type:UPDATE object_name:detail_object_name];
+											if(!does_exists)
+											{
+												
+												if(child_isSalesForceRecord)
+												{
+													if(isSalesForceRecord)
+													{
+														[appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:line_record_id SF_id:childSfId record_type:DETAIL operation:UPDATE object_name:detail_object_name sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:currentRecordId webserviceName:webserviceName className:className synctype:syncType headerLocalId:appDelegate.sfmPageController.recordId  requestData:customDataDictionary finalEntry:NO];//idvalue
+													}
+												}
+												else
+												{
+													[appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:line_record_id SF_id:@"" record_type:DETAIL operation:UPDATE object_name:detail_object_name sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:currentRecordId webserviceName:webserviceName className:className synctype:syncType headerLocalId:appDelegate.sfmPageController.recordId requestData:customDataDictionary finalEntry:NO];
+													
+												}
+											}
 
-                                        }
-                                    }
-
-                                    }
-                                    else
-                                    {
-                                        SMLog(@"detail Update failed");
-                                    }
-                                }
-                            }
-                        }
+										}
+										else
+										{
+                                            //Radha
+											if(child_isSalesForceRecord)
+											{
+												if(isSalesForceRecord)
+												{
+													[appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:line_record_id SF_id:childSfId record_type:DETAIL operation:UPDATE object_name:detail_object_name sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:currentRecordId webserviceName:webserviceName className:className synctype:syncType headerLocalId:appDelegate.sfmPageController.recordId  requestData:customDataDictionary finalEntry:NO];//idvalue
+												}
+											}
+											else
+											{
+												[appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:line_record_id SF_id:@"" record_type:DETAIL operation:INSERT object_name:detail_object_name sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:currentRecordId webserviceName:webserviceName className:className synctype:syncType headerLocalId:appDelegate.sfmPageController.recordId requestData:customDataDictionary finalEntry:NO];
+												
+											}
+										}
+										
+                                       
+								}
+								else
+								{
+									SMLog(@"detail Update failed");
+								}
+							}
+						}
+					}
                         
                         //delete all the detail deleted records in the table 
                         
-                        [self UpdateAlldeletedRecordsIntoSFTrailerTable:detail_deleted_records  object_name:detail_object_name];
+                        [self UpdateAlldeletedRecordsIntoSFTrailerTable:detail_deleted_records  object_name:detail_object_name webserviceName:webserviceName className:className synctype:syncType headerLocalId:appDelegate.sfmPageController.recordId requestData:customDataDictionary];;
                     }
+					
+					
                     [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:Event_local_Ids];
                     [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:LOCAL_EVENT_UPDATE];
                     [appDelegate setAgrressiveSync_flag];
+                    if ([syncType isEqualToString:CUSTOMSYNC])
+					{
+						[appDelegate.databaseInterface insertdataIntoTrailerTableForRecord:currentRecordId SF_id:id_value record_type:@"" operation:headerObjName object_name:headerObjName sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:currentRecordId webserviceName:webserviceName className:className synctype:syncType headerLocalId:appDelegate.sfmPageController.recordId requestData:customDataDictionary finalEntry:YES];
+					}
                     [appDelegate callDataSync];
                 }
                 else
@@ -11434,6 +11533,8 @@ extern void SVMXLog(NSString *format, ...);
                 NSString * layout_id = [hdr_object objectForKey:gHEADER_HEADER_LAYOUT_ID];
                 NSString * processId = appDelegate.sfmPageController.processId;
                 NSMutableDictionary * SFM_header_fields = [[NSMutableDictionary alloc] initWithCapacity:0];
+				
+				NSMutableDictionary * customDataDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
                 
                 BOOL error = FALSE;
                 for (int i=0;i<[header_sections count];i++)
@@ -11684,7 +11785,7 @@ extern void SVMXLog(NSString *format, ...);
                 {
                    // NSString * header_record_local_id = [appDelegate.databaseInterface getTheRecordIdOfnewlyInsertedRecord:headerObjName]; 
                     //blank string
-                    [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:header_record_local_id SF_id:@"" record_type:MASTER operation:INSERT object_name:headerObjName sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@""];
+                    [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:header_record_local_id SF_id:@"" record_type:MASTER operation:INSERT object_name:headerObjName sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@"" webserviceName:webserviceName className:className synctype:syncType headerLocalId:header_record_local_id  requestData:customDataDictionary finalEntry:NO];
                     
                     for (int i=0;i<[details count];i++) //parts, labor, expense for instance
                     {
@@ -11763,7 +11864,7 @@ extern void SVMXLog(NSString *format, ...);
                             
                             if(data_inserted )
                             {
-                                 [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:detail_local_id SF_id:@"" record_type:DETAIL operation:INSERT object_name:detail_object_name sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:header_record_local_id];
+                                 [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:detail_local_id SF_id:@"" record_type:DETAIL operation:INSERT object_name:detail_object_name sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:header_record_local_id webserviceName:webserviceName className:className synctype:syncType headerLocalId:header_record_local_id requestData:customDataDictionary finalEntry:NO];
                                 SMLog(@"insertion success");
                             }
                             else
@@ -11774,8 +11875,14 @@ extern void SVMXLog(NSString *format, ...);
                         }
                     }
                     
+					
+					
                     [self SaveRecordIntoPlist:header_record_local_id objectName:headerObjName];
                     [appDelegate setAgrressiveSync_flag];
+                    if ([syncType isEqualToString:CUSTOMSYNC])
+					{
+						[appDelegate.databaseInterface insertdataIntoTrailerTableForRecord:header_record_local_id SF_id:@"" record_type:@"" operation:headerObjName object_name:headerObjName sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:header_record_local_id webserviceName:webserviceName className:className synctype:syncType headerLocalId:header_record_local_id requestData:customDataDictionary finalEntry:YES];
+					}
                     [appDelegate callDataSync];
                 }
             }
@@ -11852,14 +11959,14 @@ extern void SVMXLog(NSString *format, ...);
             return;
         } 
 
-        NSString *className = [buttonDict objectForKey:@"class_name"];
+        NSString * _className = [buttonDict objectForKey:@"class_name"];
         NSString *methodName = [buttonDict objectForKey:@"method_name"];
         
-        className = (className != nil) ? className : @"";
+        _className = (_className != nil) ? className : @"";
         methodName = (methodName != nil) ? methodName : @"";
         NSMutableDictionary *dict = [[[NSMutableDictionary alloc] init] autorelease];
         
-        [dict setObject:className forKey:@"class_name"];
+        [dict setObject:_className forKey:@"class_name"];
         [dict setObject:methodName forKey:@"method_name"];
 
         NSDictionary *dataDict = [appDelegate.SFMPage copy];
@@ -12423,7 +12530,7 @@ extern void SVMXLog(NSString *format, ...);
     return productName;
 }
 
--(void)UpdateAlldeletedRecordsIntoSFTrailerTable:(NSArray *)deleted_record_array   object_name:(NSString *)object_name
+-(void)UpdateAlldeletedRecordsIntoSFTrailerTable:(NSArray *)deleted_record_array   object_name:(NSString *)object_name webserviceName:(NSString *)webservice_name className:(NSString *)class_name synctype:(NSString *)sync_type headerLocalId:(NSString *)header_localId requestData:(NSMutableDictionary *)request_data
 {
     for(int i = 0; i < [deleted_record_array count]; i++)
     {
@@ -12436,7 +12543,7 @@ extern void SVMXLog(NSString *format, ...);
             
             if(delete_Flag)
             {
-                [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:deleted_record_id SF_id:sf_id_for_deleted_record record_type:DETAIL operation:DELETE object_name:object_name sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@""];
+                [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:deleted_record_id SF_id:sf_id_for_deleted_record record_type:DETAIL operation:DELETE object_name:object_name sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@"" webserviceName:webserviceName className:className synctype:syncType headerLocalId:header_localId requestData:request_data finalEntry:NO];
             }
         }
     }

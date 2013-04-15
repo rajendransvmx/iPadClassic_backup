@@ -348,4 +348,7 @@ PopoverButtons *popOver_view;
                               forColumn:(NSString *) columnName
                          filterCriteria:(NSString *) criteria;
 
+//Sync Override : Radha
+- (void) updateWebserviceNameInWizarsTable:(NSArray *)customArray;
+
 @end

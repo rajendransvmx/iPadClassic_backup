@@ -85,9 +85,9 @@ PopoverButtons *popOver_view;
 	NSInteger toolBarWidth = 0;
 	const int SPACE_BUFFER = 4;
 	
-	UIBarButtonItem *activityButton = [[[UIBarButtonItem alloc] initWithCustomView:appDelegate.animatedImageView] autorelease];
+	UIBarButtonItem *activityButton = [[[UIBarButtonItem alloc] initWithCustomView:appDelegate.SyncProgress] autorelease];
 	[arrayForRightBarButton addObject:activityButton];
-	toolBarWidth += appDelegate.animatedImageView.frame.size.width + SPACE_BUFFER;
+	toolBarWidth += appDelegate.SyncProgress.frame.size.width + SPACE_BUFFER;
 	
 	button = [UIButton buttonWithType:UIButtonTypeCustom];
 	button.backgroundColor = [UIColor clearColor];
@@ -150,8 +150,8 @@ PopoverButtons *popOver_view;
     appDelegate.wsInterface.refreshSyncStatusUIButton = self;
     
     //[appDelegate setSyncStatus:appDelegate.SyncStatus];
-	//    appDelegate.animatedImageView.center = CGPointMake(450,21);
-	//    [self.navigationController.view addSubview:appDelegate.animatedImageView];
+	//    appDelegate.SyncProgress.center = CGPointMake(450,21);
+	//    [self.navigationController.view addSubview:appDelegate.SyncProgress];
     
     //Radha 2012june16
 	if ([appDelegate.dataBase checkIfSyncConfigDue])
@@ -387,6 +387,7 @@ PopoverButtons *popOver_view;
 		NSString * get_from_online = [appDelegate.wsInterface.tagsDictionary objectForKey:conflict_getFrom];
         NSString * online = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_select_online];
 		NSString * changes = [appDelegate.wsInterface.tagsDictionary objectForKey:conflict_changes];
+        NSString * ignore = @"Ignore";
 		
         UISegmentedControl * mySegment = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:[NSString stringWithFormat:@"%@ %@", force, changes],[NSString stringWithFormat:@"%@ %@", get_from_online, online],hold, nil]];
 		mySegment.segmentedControlStyle = UISegmentedControlStyleBar;
@@ -399,12 +400,20 @@ PopoverButtons *popOver_view;
 		UISegmentedControl * mySegment2 = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:retry, [NSString stringWithFormat:@"%@ %@", get_from_online, online],hold,nil]];
 		mySegment2.segmentedControlStyle = UISegmentedControlStyleBar;
 		[mySegment2 sizeToFit];
+        
+        
+        //sync_override
+        UISegmentedControl * related_record_error_segment = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:retry,ignore,hold,nil]];
+		related_record_error_segment.segmentedControlStyle = UISegmentedControlStyleBar;
+		[related_record_error_segment sizeToFit];
+        
+        
 
 		UIColor *newTintColor = [appDelegate colorForHex:@"#C8C8C8"];
         mySegment.tintColor = newTintColor;
 		mySegment1.tintColor = newTintColor;
 		mySegment2.tintColor = newTintColor;
-		
+		related_record_error_segment.tintColor = newTintColor;
 		
 		if ([syncType isEqualToString:@"PUT_INSERT"] || [syncType isEqualToString:@"GET_INSERT"])
 		{
@@ -438,10 +447,18 @@ PopoverButtons *popOver_view;
 			[cell.contentView addSubview:mySegment];
 		}
 
+        if([syncType isEqualToString:RELATED_REC_ERROR] || [syncType isEqualToString:CUSTOM_SYNC_SOAP_FAULT] )
+        {
+            [bgView2 setBackgroundColor:[appDelegate colorForHex:[appDelegate.settingsDict objectForKey:@"IPAD018_SET001"] ]];
+            cell.backgroundView = bgView2;
+			[cell.contentView addSubview:related_record_error_segment];
+            
+        }
+        
         [mySegment  addTarget:self action:@selector(segmentControlSelected:) forControlEvents:UIControlEventValueChanged];
         [mySegment1 addTarget:self action:@selector(segmentControlSelected1:) forControlEvents:UIControlEventValueChanged];
 		[mySegment2 addTarget:self action:@selector(segmentControlSelected2:) forControlEvents:UIControlEventValueChanged];
-        		
+        [related_record_error_segment addTarget:self action:@selector(relatedrecordErrorSegmentSelected:) forControlEvents:UIControlEventValueChanged];
 		
         if ( [override_flag isEqualToString:@"Client_Override"])
         {
@@ -452,6 +469,7 @@ PopoverButtons *popOver_view;
             [[[mySegment subviews] objectAtIndex:2] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
 			[[[mySegment1 subviews] objectAtIndex:2] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
 			[[[mySegment2 subviews] objectAtIndex:2] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
+            [[[related_record_error_segment subviews] objectAtIndex:2] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
         }
         else if ([override_flag isEqualToString:@"Server_Override"]||[override_flag isEqualToString:@""])
         {
@@ -462,12 +480,18 @@ PopoverButtons *popOver_view;
         {
             [[[mySegment1 subviews] objectAtIndex:0] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
 			[[[mySegment2 subviews] objectAtIndex:0] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
+            [[[related_record_error_segment subviews] objectAtIndex:0] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
         }
 		else if ([override_flag isEqualToString:@"remove"]||[override_flag isEqualToString:@""])
         {
             [[[mySegment1 subviews] objectAtIndex:1] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
 			
         }
+         else if([override_flag isEqualToString:@"IGNORE"])
+         {
+             [[[related_record_error_segment subviews] objectAtIndex:1] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
+         }
+             
 		cellContentViewCenter.x = (self._tableView.frame.size.width - mySegment.frame.size.width/2) - borderRight;
 		mySegment.center = cellContentViewCenter;
 		
@@ -476,15 +500,22 @@ PopoverButtons *popOver_view;
 		
 		cellContentViewCenter.x = (self._tableView.frame.size.width - mySegment2.frame.size.width/2) - borderRight;
 		mySegment2.center = cellContentViewCenter;
+             
+             
+        cellContentViewCenter.x = (self._tableView.frame.size.width - related_record_error_segment.frame.size.width/2) - borderRight;
+        related_record_error_segment.center = cellContentViewCenter;
 
         [mySegment release];
         [mySegment1 release];
 		[mySegment2 release];
-		
+        [related_record_error_segment release];
+             
 		mySegment = nil;
 		mySegment1 = nil;
 		mySegment2 = nil;
-        
+        related_record_error_segment = nil;
+             
+             
         UILabel *textView = [[UILabel alloc] initWithFrame:CGRectMake(180, 3, 200, 50)];
         textView.font = [UIFont systemFontOfSize:19.0];
         textView.text = [[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"Error_message"];
@@ -502,7 +533,7 @@ PopoverButtons *popOver_view;
         cell.textLabel.font = [UIFont fontWithName:@"HelveticaBold" size:19]; 
 		
 		//New Code.
-		if ([syncType isEqualToString:@"PUT_DELETE"])
+		if ([syncType isEqualToString:@"PUT_DELETE"] || [syncType isEqualToString:RELATED_REC_ERROR]  || [syncType isEqualToString:CUSTOM_SYNC_SOAP_FAULT])
 		{
 			cell.accessoryType = UITableViewCellAccessoryNone;
 		}else{
@@ -588,10 +619,11 @@ PopoverButtons *popOver_view;
 		NSString * get_from_online = [appDelegate.wsInterface.tagsDictionary objectForKey:conflict_getFrom];
         NSString * online = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_select_online];
         NSString * changes = [appDelegate.wsInterface.tagsDictionary objectForKey:conflict_changes];
-
+        NSString * ignore = @"Ignore";
 
 		UISegmentedControl * mySegment =[[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:[NSString stringWithFormat:@"%@ %@", force, changes],[NSString stringWithFormat:@"%@ %@", get_from_online, online],hold, nil]];
 		mySegment.segmentedControlStyle = UISegmentedControlStyleBar;
+		[mySegment sizeToFit];
 
         UISegmentedControl * mySegment1 = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:retry,remove,hold,nil]];
 		mySegment1.segmentedControlStyle = UISegmentedControlStyleBar;
@@ -600,6 +632,15 @@ PopoverButtons *popOver_view;
 		UISegmentedControl * mySegment2 = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:retry,[NSString stringWithFormat:@"%@ %@", get_from_online, online],hold,nil]];
 		mySegment2.segmentedControlStyle = UISegmentedControlStyleBar;
 		[mySegment2 sizeToFit];
+        
+        
+        //sync_override
+        UISegmentedControl * related_record_error_segment = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:retry,ignore,hold,nil]];
+		related_record_error_segment.segmentedControlStyle = UISegmentedControlStyleBar;
+		[related_record_error_segment sizeToFit];
+        
+        
+        
 
 		if ([syncType isEqualToString:@"PUT_INSERT"] || [syncType isEqualToString:@"GET_INSERT"])
 		{
@@ -633,17 +674,24 @@ PopoverButtons *popOver_view;
 			[cell.contentView addSubview:mySegment];
 		}
 		
+        if([syncType isEqualToString:RELATED_REC_ERROR] || [syncType isEqualToString:CUSTOM_SYNC_SOAP_FAULT])
+        {
+            [bgView2 setBackgroundColor:[appDelegate colorForHex:[appDelegate.settingsDict objectForKey:@"IPAD018_SET002"]]];
+			cell.backgroundView = bgView1;
+			[cell.contentView addSubview:related_record_error_segment];
+        }
 
         UIColor *newTintColor = [appDelegate colorForHex:@"#C8C8C8"];
         mySegment.tintColor = newTintColor;
 		mySegment1.tintColor = newTintColor;
 		mySegment2.tintColor = newTintColor;
-		
+		related_record_error_segment.tintColor = newTintColor;
 		
         [mySegment addTarget:self action:@selector(segmentControlSelected:) forControlEvents:UIControlEventValueChanged];
         
         [mySegment1 addTarget:self action:@selector(segmentControlSelected1:) forControlEvents:UIControlEventValueChanged];
 		[mySegment2 addTarget:self action:@selector(segmentControlSelected2:) forControlEvents:UIControlEventValueChanged];
+        [related_record_error_segment addTarget:self action:@selector(relatedrecordErrorSegmentSelected:) forControlEvents:UIControlEventValueChanged];
         
         if ( [override_flag isEqualToString:@"Client_Override"])
         {
@@ -654,6 +702,7 @@ PopoverButtons *popOver_view;
             [[[mySegment subviews] objectAtIndex:2] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
 			[[[mySegment1 subviews] objectAtIndex:2] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
 			[[[mySegment2 subviews] objectAtIndex:2] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
+            [[[related_record_error_segment subviews] objectAtIndex:2] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
         }
         else if ([override_flag isEqualToString:@"Server_Override"]||[override_flag isEqualToString:@""])
         {
@@ -664,12 +713,19 @@ PopoverButtons *popOver_view;
         {
             [[[mySegment1 subviews] objectAtIndex:0] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
 			[[[mySegment2 subviews] objectAtIndex:0] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
+            [[[related_record_error_segment subviews] objectAtIndex:0] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
         }
 		else if ([override_flag isEqualToString:@"remove"]||[override_flag isEqualToString:@""])
         {
             [[[mySegment1 subviews] objectAtIndex:1] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
 			
         }
+        else if([override_flag isEqualToString:@"IGNORE"])
+        {
+            [[[related_record_error_segment subviews] objectAtIndex:1] setTintColor:[appDelegate colorForHex:@"#1589FF"]];
+        }
+        
+        
 		cellContentViewCenter.x = (self._tableView.frame.size.width - mySegment.frame.size.width/2) - borderRight;
 		mySegment.center = cellContentViewCenter;
 		
@@ -678,15 +734,21 @@ PopoverButtons *popOver_view;
 		
 		cellContentViewCenter.x = (self._tableView.frame.size.width - mySegment2.frame.size.width/2) - borderRight;
 		mySegment2.center = cellContentViewCenter;
+        
+        
+        cellContentViewCenter.x = (self._tableView.frame.size.width - related_record_error_segment.frame.size.width/2) - borderRight;
+        related_record_error_segment.center = cellContentViewCenter;
 		
         [mySegment release];
         [mySegment1 release];
 		[mySegment2 release];
-		
+		[related_record_error_segment release];
+        
 		mySegment = nil;
 		mySegment1 = nil;
 		mySegment2 = nil;
-    
+        related_record_error_segment = nil;
+        
         UILabel *textView = [[UILabel alloc] initWithFrame:CGRectZero];
         textView.font = [UIFont systemFontOfSize:19.0];
      
@@ -718,7 +780,7 @@ PopoverButtons *popOver_view;
         cell.textLabel.font = [UIFont fontWithName:@"HelveticaBold" size:19];
 		
 		//New Code.
-		if ([syncType isEqualToString:@"PUT_DELETE"])
+		if ([syncType isEqualToString:@"PUT_DELETE"] || [syncType isEqualToString:RELATED_REC_ERROR] || [syncType isEqualToString:CUSTOM_SYNC_SOAP_FAULT])
 		{
 			cell.accessoryType = UITableViewCellAccessoryNone;
 		}else{
@@ -1416,6 +1478,43 @@ PopoverButtons *popOver_view;
 
 }
 
+-(void)relatedrecordErrorSegmentSelected:(id)sender
+{
+ 
+    NSString * objectName = @"";
+    NSString *SFId = @"";
+    
+    MySegmentedControl *segmentedControl = (MySegmentedControl *) sender;
+    NSIndexPath *indexPath = [self._tableView indexPathForCell:(UITableViewCell *)[[sender superview] superview]];
+    if (HeaderSelected == 1)
+    {
+        SFId = [[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"SFId"];
+        objectName = [objectsArray objectAtIndex:indexPath.section];
+        
+    }
+    else if (HeaderSelected == 0)
+    {
+        objectName = [objectsArray objectAtIndex:selectedRow];
+        SFId = [[[objectsDict objectForKey:[objectsArray objectAtIndex:selectedRow]]objectAtIndex:indexPath.row] objectForKey:@"SFId"];
+    }
+    
+    UIColor *newSelectedTintColor = [appDelegate colorForHex:@"#1589FF"];
+    for(id v in [segmentedControl subviews])
+    {
+        if([v isSelected])
+            [v setTintColor:newSelectedTintColor];
+        else
+            [v setTintColor:[appDelegate colorForHex:@"#C8C8C8"]];
+    }
+	
+    if ([segmentedControl selectedSegmentIndex] == 0)
+        [appDelegate.calDataBase updateOverrideFlagWithObjectName:objectName andSFId:SFId WithStatus:@"retry"];
+    if ([segmentedControl selectedSegmentIndex] == 1)
+        [appDelegate.calDataBase updateOverrideFlagWithObjectName:objectName andSFId:SFId WithStatus:@"IGNORE"];
+    if ([segmentedControl selectedSegmentIndex] == 2)
+        [appDelegate.calDataBase updateOverrideFlagWithObjectName:objectName andSFId:SFId WithStatus:@"None"];
+
+}
 
 - (void) deleteUndoneRecords
 {

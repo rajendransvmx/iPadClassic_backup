@@ -1593,7 +1593,8 @@ extern void SVMXLog(NSString *format, ...);
                     BOOL does_exists = [appDelegate.databaseInterface DoesTrailerContainTheRecord:local_id operation_type:UPDATE object_name:@"Event"];
                     if(!does_exists)
                     {
-                        [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:local_id SF_id:calEvent.eventId record_type:MASTER operation:UPDATE object_name:@"Event" sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@""];
+						//Sync_Override
+                        [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:local_id SF_id:calEvent.eventId record_type:MASTER operation:UPDATE object_name:@"Event" sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@"" webserviceName:@"" className:@"" synctype:AGRESSIVESYNC headerLocalId:local_id requestData:nil finalEntry:NO];
                     }
                     [appDelegate setAgrressiveSync_flag];
                     [appDelegate callDataSync];
