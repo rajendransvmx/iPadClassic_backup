@@ -428,6 +428,10 @@ extern void SVMXLog(NSString *format, ...);
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     appDelegate.isDetailActive = YES;
     
+    //6347 & 6757: Aparna
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(handleIncrementalDataSyncNotification:) name:kIncrementalDataSyncDone object:nil];
+
+    
     //[appDelegate setSyncStatus:appDelegate.SyncStatus];
 }
 
@@ -439,6 +443,10 @@ extern void SVMXLog(NSString *format, ...);
 - (void)viewDidDisappear:(BOOL)animated
 {
 	[super viewDidDisappear:animated];
+
+    //6347 & 6757: Aparna
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:kIncrementalDataSyncDone object:nil];
+
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -4033,7 +4041,8 @@ extern void SVMXLog(NSString *format, ...);
     {
         [self addNavigationButtons:detailTitle];
     }
-    if([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"VIEWRECORD"])
+    //6347 & 6757 : Aparna
+    if([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"VIEWRECORD"] && !self.isInEditDetail)
     {
         [self addNavigationButtons:detailTitle];
     }
@@ -8908,14 +8917,20 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void) fillDictionary:(NSIndexPath *)indexPath
 {
-    if (selectedSection == SHOW_LINES_ROW || selectedSection == SHOWALL_LINES)
-	{
-        NSMutableArray * details = [appDelegate.SFMPage objectForKey:gDETAILS];
-		NSMutableDictionary * detail = [details objectAtIndex:indexPath.section];
+    NSMutableArray * details = [appDelegate.SFMPage objectForKey:gDETAILS];
+    
+    if ([details count]>0)
+    {
+        NSMutableDictionary * detail = [details objectAtIndex:indexPath.section];
         Disclosure_dict = detail;
-		Disclosure_Details = [detail objectForKey:gDETAILS_FIELDS_ARRAY];
-        self.line = YES;
-        self.header = NO;
+        Disclosure_Details = [detail objectForKey:gDETAILS_FIELDS_ARRAY];
+        //6347 & 6757: Aparna
+        if (selectedSection == SHOW_LINES_ROW || selectedSection == SHOWALL_LINES)
+        {
+            self.line = YES;
+            self.header = NO;
+        }
+
     }
 }
 
@@ -13751,6 +13766,30 @@ extern void SVMXLog(NSString *format, ...);
     [appDelegate ScheduleTimerForEventSync];
     [appDelegate scheduleLocationPingTimer];
 }
+
+
+//6347 & 6757 : Aparna
+#pragma mark -
+#pragma mark Incremental Data Sync Notification Handler
+
+- (void)handleIncrementalDataSyncNotification:(NSNotification *)notification
+{
+    
+    [self performSelectorOnMainThread:@selector(refreshDetails) withObject:nil waitUntilDone:YES];
+}
+
+- (void)refreshDetails
+{
+    if([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"VIEWRECORD"])
+    {
+        [self fillSFMdictForOfflineforProcess:appDelegate.sfmPageController.processId forRecord:appDelegate.sfmPageController.recordId];
+        [self didReceivePageLayoutOffline];
+        [self fillDictionary:selectedIndexPath];
+        [self.tableView reloadData];
+    }
+}
+
+
 
 - (BOOL)shouldShowBillableAmountInServiceReport {
     return [appDelegate.calDataBase checkIfBillablePriceExistForWorkOrderId:appDelegate.sfmPageController.recordId andFieldName:@"SVMXC__Billable_Line_Price__c"];

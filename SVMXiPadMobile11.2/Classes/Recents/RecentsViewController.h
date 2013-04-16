@@ -23,6 +23,11 @@ UISplitViewControllerDelegate>
     iServiceAppDelegate * appDelegate;
     IBOutlet UITableView * mTable;
     IBOutlet UIActivityIndicatorView * activity;
+	
+	//6347: Refresh for recents screen
+	RecentObjectRoot * rootView;
+	RecentObjectDetail * detailView;
+	
 }
 
 @property (nonatomic, retain) NSArray * array;
@@ -34,5 +39,8 @@ UISplitViewControllerDelegate>
 
 // Display user name
 - (IBAction) displayUser:(id)sender;
+
+//6347: Refresh for recents screen
+- (NSMutableArray *) getRecentsArrayFromObjectHistoryPlist;
 
 @end

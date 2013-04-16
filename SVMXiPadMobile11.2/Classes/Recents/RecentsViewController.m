@@ -63,106 +63,15 @@
     // Load appDelegate.recentObject from the plist
     [appDelegate.recentObject removeAllObjects];
     
-    NSString *rootPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString *plistPath = [rootPath stringByAppendingPathComponent:OBJECT_HISTORY_PLIST];
-    appDelegate.recentObject = [NSArray arrayWithContentsOfFile:plistPath];
-    
-    NSMutableArray * countArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-    @try{
-    for (int rec = 0; rec < [appDelegate.recentObject count]; rec++)
-    {
-        NSDictionary * recentDict = [appDelegate.recentObject objectAtIndex:rec];
-        
-        NSString * object = [recentDict objectForKey:@"OBJECT_NAME"];
-        NSString * recordID = [recentDict objectForKey:@"resultIds"];
-        
-        BOOL result = [appDelegate.dataBase checkIfRecordExistForObjectWithRecordId:object Id:recordID];
-        
-        if (result == FALSE)
-        {
-            [countArray addObject:[NSString stringWithFormat:@"%d", rec]];
-        }
-    }
-    
-    //Remove deleted record from recentObject
-    NSMutableIndexSet *indexSet = [NSMutableIndexSet indexSet];
-    for (int del = 0; del < [countArray count]; del++)
-    {
-        int value = [[countArray objectAtIndex:del] intValue];
-        [indexSet addIndex:value];
-//        [appDelegate.recentObject removeObjectAtIndex:value];
-    }
-    [appDelegate.recentObject removeObjectsAtIndexes:indexSet];
-    
-    
-    NSMutableArray * recentObjectsArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-    for (int i = 0; i < [appDelegate.recentObject count]; i++)
-    {
-        NSDictionary * dict = [appDelegate.recentObject objectAtIndex:i];
-        NSString * recentObjectLabel = [dict objectForKey:OBJECT_LABEL];
-        
-        // run a loop thru the recentObjectsArray
-        // find out key of dictionary for each loop
-        // check if any key == recentObject
-        // if yes then add object_name
-        // if no key == recentObject then
-        // add key + object_name to dictionary
-        // add dictionary to recentObjectsArray
-        
-        BOOL flag = NO;
-        
-        for (int j = 0; j < [recentObjectsArray count]; j++)
-        {
-            NSMutableDictionary * recentObjectDictionary = [recentObjectsArray objectAtIndex:j];
-            NSString * key = [[recentObjectDictionary allKeys] objectAtIndex:0];
-            
-            if ([key isEqualToString:recentObjectLabel])
-            {
-               // NSMutableArray * objectArray = [dict objectForKey:key];
-                NSMutableArray * objectArray = [recentObjectDictionary objectForKey:key];
-                [objectArray addObject:dict];
-                flag = YES;
-            }
-        }
-        
-        if (!flag)
-        {
-            NSMutableDictionary * newDictionary = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
-            NSMutableArray * newArray = [[[NSMutableArray alloc] initWithObjects:dict, nil] autorelease];
-            [newDictionary setObject:newArray forKey:recentObjectLabel];
-            [recentObjectsArray addObject:newDictionary];
-        }
-    }
-    
-    // Sort recentObjectsArray before displaying
-    //Abinash Fixed
-    for (int i = 0; i < [recentObjectsArray count]; i++)
-    {
-        NSDictionary * dict1 = [recentObjectsArray objectAtIndex:i];
-        NSString * key1 = [[dict1 allKeys] objectAtIndex:0];
-        for (int j = i + 1; j < [recentObjectsArray count]; j++)
-        {
-            NSDictionary * dict2 = [recentObjectsArray objectAtIndex:j];
-            NSString * key2 = [[dict2 allKeys] objectAtIndex:0];
-           
-            int result = strcmp([key1 UTF8String], [key2 UTF8String]);
-            
-            if (result > 0 )
-            {
-                // perform swap
-                [recentObjectsArray exchangeObjectAtIndex:i withObjectAtIndex:j];
-                key1 = key2;
-            }
-        }
-    }
-
-    RecentObjectRoot * rootView = [[RecentObjectRoot alloc] initWithNibName:@"RecentObjectRoot" bundle:nil];
+	NSMutableArray * recentObjectsArray = [self getRecentsArrayFromObjectHistoryPlist];
+   
+	rootView = [[RecentObjectRoot alloc] initWithNibName:@"RecentObjectRoot" bundle:nil];
     rootView.recentObjectsArray = recentObjectsArray;
     UIImageView * bgImage = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_left_panel_bg_main_2.png"]] autorelease];
     rootView.tableView.backgroundView = bgImage;
     UINavigationController * master = [[[UINavigationController alloc] initWithRootViewController:rootView] autorelease];
     
-    RecentObjectDetail * detailView = [[RecentObjectDetail alloc] initWithNibName:@"RecentObjectDetail" bundle:nil];
+    detailView = [[RecentObjectDetail alloc] initWithNibName:@"RecentObjectDetail" bundle:nil];
     detailView.recentObjectsArray = recentObjectsArray;
     detailView.delegate = self;
     UINavigationController * detail = [[[UINavigationController alloc] initWithRootViewController:detailView] autorelease];
@@ -176,17 +85,32 @@
 	splitView.view.autoresizingMask = UIViewAutoresizingNone;
     [self.view addSubview:splitView.view];
 	splitView.view.frame = self.view.frame;
-	}@catch (NSException *exp)
-    {
-        SMLog(@"Exception Name RecentViewController :viewDidLoad %@",exp.name);
-        SMLog(@"Exception Reason RecentViewController :viewDidLoad %@",exp.reason);
-    }
+//	}@catch (NSException *exp)
+//    {
+//        SMLog(@"Exception Name RecentViewController :viewDidLoad %@",exp.name);
+//        SMLog(@"Exception Reason RecentViewController :viewDidLoad %@",exp.reason);
+//    }
 
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    //6347:
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleIncrementalDataSyncNotification:) name:kIncrementalDataSyncDone object:nil];
+
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    //6347:
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:kIncrementalDataSyncDone object:nil];
 }
 
 - (void)viewDidUnload
@@ -412,6 +336,114 @@
     }
 
 }
+#pragma mark - Refresh
+- (NSMutableArray *) getRecentsArrayFromObjectHistoryPlist
+{
+	// Load appDelegate.recentObject from the plist
+    [appDelegate.recentObject removeAllObjects];
+    
+    NSString *rootPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *plistPath = [rootPath stringByAppendingPathComponent:OBJECT_HISTORY_PLIST];
+    appDelegate.recentObject = [NSArray arrayWithContentsOfFile:plistPath];
+	
+	NSMutableArray * recentObjectsArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    
+    NSMutableArray * countArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    @try
+	{
+		for (int rec = 0; rec < [appDelegate.recentObject count]; rec++)
+		{
+			NSDictionary * recentDict = [appDelegate.recentObject objectAtIndex:rec];
+			
+			NSString * object = [recentDict objectForKey:@"OBJECT_NAME"];
+			NSString * recordID = [recentDict objectForKey:@"resultIds"];
+			
+			BOOL result = [appDelegate.dataBase checkIfRecordExistForObjectWithRecordId:object Id:recordID];
+			
+			if (result == FALSE)
+			{
+				[countArray addObject:[NSString stringWithFormat:@"%d", rec]];
+			}
+		}
+		
+		//Remove deleted record from recentObject
+		NSMutableIndexSet *indexSet = [NSMutableIndexSet indexSet];
+		for (int del = 0; del < [countArray count]; del++)
+		{
+			int value = [[countArray objectAtIndex:del] intValue];
+			[indexSet addIndex:value];
+			//        [appDelegate.recentObject removeObjectAtIndex:value];
+		}
+		[appDelegate.recentObject removeObjectsAtIndexes:indexSet];
+		
+	
+		for (int i = 0; i < [appDelegate.recentObject count]; i++)
+		{
+			NSDictionary * dict = [appDelegate.recentObject objectAtIndex:i];
+			NSString * recentObjectLabel = [dict objectForKey:OBJECT_LABEL];
+			
+			// run a loop thru the recentObjectsArray
+			// find out key of dictionary for each loop
+			// check if any key == recentObject
+			// if yes then add object_name
+			// if no key == recentObject then
+			// add key + object_name to dictionary
+			// add dictionary to recentObjectsArray
+			
+			BOOL flag = NO;
+			
+			for (int j = 0; j < [recentObjectsArray count]; j++)
+			{
+				NSMutableDictionary * recentObjectDictionary = [recentObjectsArray objectAtIndex:j];
+				NSString * key = [[recentObjectDictionary allKeys] objectAtIndex:0];
+				
+				if ([key isEqualToString:recentObjectLabel])
+				{
+					// NSMutableArray * objectArray = [dict objectForKey:key];
+					NSMutableArray * objectArray = [recentObjectDictionary objectForKey:key];
+					[objectArray addObject:dict];
+					flag = YES;
+				}
+			}
+			
+			if (!flag)
+			{
+				NSMutableDictionary * newDictionary = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
+				NSMutableArray * newArray = [[[NSMutableArray alloc] initWithObjects:dict, nil] autorelease];
+				[newDictionary setObject:newArray forKey:recentObjectLabel];
+				[recentObjectsArray addObject:newDictionary];
+			}
+		}
+		
+		// Sort recentObjectsArray before displaying
+		//Abinash Fixed
+		for (int i = 0; i < [recentObjectsArray count]; i++)
+		{
+			NSDictionary * dict1 = [recentObjectsArray objectAtIndex:i];
+			NSString * key1 = [[dict1 allKeys] objectAtIndex:0];
+			for (int j = i + 1; j < [recentObjectsArray count]; j++)
+			{
+				NSDictionary * dict2 = [recentObjectsArray objectAtIndex:j];
+				NSString * key2 = [[dict2 allKeys] objectAtIndex:0];
+				
+				int result = strcmp([key1 UTF8String], [key2 UTF8String]);
+				
+				if (result > 0 )
+				{
+					// perform swap
+					[recentObjectsArray exchangeObjectAtIndex:i withObjectAtIndex:j];
+					key1 = key2;
+				}
+			}
+		}
+	}
+	@catch (NSException *exp)
+    {
+        SMLog(@"Exception Name RecentViewController :getRecentsArrayFromObjectHistoryPlist %@",exp.name);
+        SMLog(@"Exception Reason RecentViewController :getRecentsArrayFromObjectHistoryPlist %@",exp.reason);
+    }
+	return recentObjectsArray;
+}
 
 
 #pragma mark - SplitViewController Delegate
@@ -439,6 +471,26 @@
 - (BOOL)splitViewController: (UISplitViewController*)svc shouldHideViewController:(UIViewController *)vc inOrientation:(UIInterfaceOrientation)orientation
 {
     return NO;
+}
+
+
+#pragma mark -
+#pragma mark Incremental Data Sync Notification Handler
+//6347:
+- (void) handleIncrementalDataSyncNotification:(NSNotification *)notification
+{
+    [self performSelectorOnMainThread:@selector(refreshRecents) withObject:nil waitUntilDone:YES];
+}
+
+//6347:
+- (void) refreshRecents
+{
+    NSMutableArray * recentObjectsArray = [self getRecentsArrayFromObjectHistoryPlist];
+	
+	rootView.recentObjectsArray = recentObjectsArray;
+	detailView.recentObjectsArray = recentObjectsArray;
+	[detailView.tableView reloadData];
+
 }
 
 @end

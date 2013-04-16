@@ -698,6 +698,19 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 
 - (void) viewDidAppear:(BOOL)animated
 {
+    [super viewDidAppear:animated];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshMap:) name:kIncrementalDataSyncDone object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshMap:) name:NOTIFICATION_EVENT_DATA_SYNC object:nil];
+
+}
+
+- (void) viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:kIncrementalDataSyncDone object:nil];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:NOTIFICATION_EVENT_DATA_SYNC object:nil];
+
+
 }
 
 #pragma mark <UICGDirectionsDelegate> Methods
@@ -1424,5 +1437,202 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     }
 }
 
+
+#pragma mark -
+#pragma marl Incremental Data Sync Notification Handler
+
+- (void)refreshMap:(NSNotification *)notification
+{
+    NSLog(@"FirstDetailViewController: Recieve [%@] notification in refreshMap",[notification name]);
+    [self updateWorkOrderInfo];
+
+    [self performSelectorOnMainThread:@selector(updateMapInfo) withObject:nil waitUntilDone:YES];
+}
+
+- (void) updateMapInfo
+{
+    [tableView reloadData];
+
+    
+    NSLog(@"First work order event %@",[appDelegate.workOrderEventArray objectAtIndex:0]);
+    NSLog(@"First work order event info %@",[appDelegate.workOrderInfo objectAtIndex:0]);
+
+    if([appDelegate.workOrderEventArray count]>0 && [appDelegate.workOrderInfo count]>0)
+    {
+        [self setJobDetailsForWorkOrder:[appDelegate.workOrderEventArray objectAtIndex:0] workOrderInfo:[appDelegate.workOrderInfo objectAtIndex:0]];
+        
+        [self setupMapView];
+        
+        if (diretions.isInitialized)
+        {
+            [self update];
+        }
+        
+        [self.view bringSubviewToFront:tableView];
+
+    }
+        
+
+}
+
+- (void) updateWorkOrderInfo
+{
+        
+        if (appDelegate.workOrderEventArray && [appDelegate.workOrderEventArray count] > 0)
+        {
+            [appDelegate.workOrderEventArray removeAllObjects];
+        }
+        
+        NSDate * today = [NSDate date];
+        NSDateFormatter * df = [[[NSDateFormatter alloc] init] autorelease];
+        [df setDateFormat:@"yyyy-MM-dd"];
+        appDelegate.dateClicked = [df stringFromDate:today];
+    
+    
+    NSMutableArray * currentDateRange = [[appDelegate getWeekdates:appDelegate.dateClicked] retain];
+    
+    appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0]  endDate:[currentDateRange objectAtIndex:1]];
+    
+        // Add events to workOrderEventArray based on today
+        @try{
+            for (int i = 0; i < [appDelegate.wsInterface.eventArray count]; i++)
+            {
+                NSDictionary * dict = [appDelegate.wsInterface.eventArray objectAtIndex:i];
+                
+                NSDateFormatter * dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+                [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+                NSString * activityDate = [dateFormatter stringFromDate:[dict objectForKey:STARTDATETIME]];
+                NSString * apiName = [dict objectForKey:OBJECTAPINAME];
+                
+                if ([appDelegate.dateClicked isEqualToString:activityDate])
+                {
+                    if ([apiName isEqualToString:WORKORDER])
+                    {
+                        [appDelegate.workOrderEventArray addObject:dict];
+                    }
+                }
+            }
+            
+            // Sort workOrderEventArray
+            NSDateFormatter * dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+            [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+            for (int i = 0; i < [appDelegate.workOrderEventArray count]; i++)
+            {
+                for (int j = i+1; j < [appDelegate.workOrderEventArray count]; j++)
+                {
+                    NSDictionary * obji = [appDelegate.workOrderEventArray objectAtIndex:i];
+                    NSDictionary * objj = [appDelegate.workOrderEventArray objectAtIndex:j];
+                    
+                    NSString * objiDate = [dateFormatter stringFromDate:[obji objectForKey:STARTDATETIME]];
+                    NSString * objjDate = [dateFormatter stringFromDate:[objj objectForKey:STARTDATETIME]];
+                    
+                    NSString * iDateStr = [objiDate isKindOfClass:[NSString class]]?objiDate:@"1970-01-01T00:00:00Z";
+                    NSString * jDateStr = [objjDate isKindOfClass:[NSString class]]?objjDate:@"1970-01-01T00:00:00Z";
+                    
+                    iDateStr = [iOSInterfaceObject getLocalTimeFromGMT:iDateStr];
+                    iDateStr = [iDateStr stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+                    iDateStr = [iDateStr stringByReplacingOccurrencesOfString:@"Z" withString:@""];
+                    
+                    jDateStr = [iOSInterfaceObject getLocalTimeFromGMT:jDateStr];
+                    jDateStr = [jDateStr stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+                    jDateStr = [jDateStr stringByReplacingOccurrencesOfString:@"Z" withString:@""];
+                    
+                    NSDate * iDate = [dateFormatter dateFromString:iDateStr];
+                    NSDate * jDate = [dateFormatter dateFromString:jDateStr];
+                    
+                    // Compare the dates, if iDate > jDate interchange
+                    if ([iDate timeIntervalSince1970] > [jDate timeIntervalSince1970])
+                    {
+                        [appDelegate.workOrderEventArray exchangeObjectAtIndex:i withObjectAtIndex:j];
+                    }
+                }
+            }
+            
+            for ( int i=0; i<[appDelegate.workOrderEventArray count];i++ )
+            {
+                for (int j= i + 1; j<=[appDelegate.workOrderEventArray count]-1;j++)
+                {
+                    NSDate * iobjDate = [[appDelegate.workOrderEventArray objectAtIndex:i] objectForKey:STARTDATETIME];
+                    NSString * istartDate = [self dateStringConversion:iobjDate];
+                    NSDate * jobjDate = [[appDelegate.workOrderEventArray objectAtIndex:j] objectForKey:STARTDATETIME];
+                    NSString * jstartDate = [self dateStringConversion:jobjDate];
+                    
+                    if ([istartDate isEqualToString:jstartDate])
+                    {
+                        NSString * iWhatId = [[appDelegate.workOrderEventArray objectAtIndex:i] objectForKey:WHATID];
+                        NSString * jWhatId = [[appDelegate.workOrderEventArray objectAtIndex:j] objectForKey:WHATID];
+                        
+                        NSString * iObjectName = [[appDelegate.workOrderEventArray objectAtIndex:i] objectForKey:OBJECTAPINAME];
+                        NSString * jObjectname = [[appDelegate.workOrderEventArray objectAtIndex:j] objectForKey:OBJECTAPINAME];
+                        
+                        NSString * iPriority = [appDelegate.calDataBase getPriorityForWhatId:iWhatId objectname:iObjectName];
+                        NSString * jPriority = [appDelegate.calDataBase getPriorityForWhatId:jWhatId objectname:jObjectname];
+                        
+                        if ([iPriority isEqualToString:@"High"] && ([jPriority isEqualToString:@"Medium"]||[jPriority isEqualToString:@"Low"]))
+                        {
+                            [appDelegate.workOrderEventArray removeObjectAtIndex:j];
+                        }
+                        else if([iPriority isEqualToString:@"Medium"] && [jPriority isEqualToString:@"Low"])
+                        {
+                            [appDelegate.workOrderEventArray removeObjectAtIndex:j];
+                        }
+                        else if([iPriority isEqualToString:@"Low"]&&([jPriority isEqualToString:@"High"]||[jPriority isEqualToString:@"Medium"]))
+                        {
+                            [appDelegate.workOrderEventArray removeObjectAtIndex:j];
+                        }
+                        else if([iPriority isEqualToString:jPriority])
+                        {
+                            if (strcmp((const char*)iWhatId, (const char *)jWhatId) > 0)
+                            {
+                                [appDelegate.workOrderEventArray removeObjectAtIndex:i];
+                            }
+                            else
+                            {
+                                [appDelegate.workOrderEventArray removeObjectAtIndex:j];
+                            }
+                        }
+                        
+                    }
+                }
+                
+            }
+            
+            if ([appDelegate.workOrderEventArray count] == 0)
+            {
+            }
+            else
+            {
+                if (appDelegate.workOrderInfo)
+                {
+                    appDelegate.workOrderInfo = nil;
+                    appDelegate.workOrderInfo = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+                }
+                
+                BOOL status;
+                status = [Reachability connectivityStatus];
+                //write a query to retrieve the work order info 
+                for (int i = 0; i < [appDelegate.workOrderEventArray count]; i++)
+                {
+                    
+                    NSDictionary * dict = [appDelegate.workOrderEventArray objectAtIndex:i];
+                    NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:[dict objectForKey:WHATID] tableName:[dict objectForKey:OBJECTAPINAME]];
+                    NSMutableDictionary *  infoDict  = [appDelegate.databaseInterface queryForMapWorkOrderInfo:local_id tableName:[dict objectForKey:OBJECTAPINAME]];
+                    [appDelegate.workOrderInfo addObject:infoDict];
+                }
+            }
+        }@catch (NSException *exp) {
+            SMLog(@"Exception Name iPadScrollerViewController :showMap %@",exp.name);
+            SMLog(@"Exception Reason iPadScrollerViewController :showMap %@",exp.reason);
+            [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+        }
+}
+- (NSString *)dateStringConversion:(NSDate*)date
+{
+    NSDateFormatter * dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss Z"];
+    [dateFormatter setTimeZone:[NSTimeZone defaultTimeZone]];
+    NSString * dateString = [dateFormatter stringFromDate:date];
+    return  dateString;
+}
 
 @end

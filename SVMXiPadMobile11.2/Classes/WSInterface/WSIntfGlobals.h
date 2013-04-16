@@ -352,3 +352,5 @@
 //Conflict
 #define ISCONFLICT                                      @"ISCONFLICT"
 
+//6347: Aparna
+#define kIncrementalDataSyncDone                    @"IncrementalDataSyncDone"

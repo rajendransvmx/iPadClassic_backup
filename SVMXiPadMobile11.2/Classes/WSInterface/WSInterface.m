@@ -2265,6 +2265,10 @@ last_sync_time:(NSString *)last_sync_time
          appDelegate.Enable_aggresssiveSync = FALSE;
     }
         
+    //6347
+    //Post the notification to indicate that incremental data sync is done
+        [[NSNotificationCenter defaultCenter] postNotificationName:kIncrementalDataSyncDone object:nil userInfo:nil];
+
     //sahana ends june 8
    
         
