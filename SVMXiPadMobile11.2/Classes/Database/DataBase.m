@@ -1662,7 +1662,7 @@ extern void SVMXLog(NSString *format, ...);
             {
                 NSDictionary *Bracesinvalue=[self occurenceOfBraces:objectValue];
                 [finalQuery appendString:operator];
-                objectValueWithoutBrace=[objectValueWithoutBrace stringByReplacingOccurrencesOfString:@"True"withString:@"1"];
+                objectValueWithoutBrace=[objectValueWithoutBrace stringByReplacingOccurrencesOfString:@"True" withString:@"1" options:NSCaseInsensitiveSearch range:NSMakeRange(0, [objectValueWithoutBrace length])];
                 [finalQuery appendString:objectValueWithoutBrace];
                 for (int i=0; i<[[Bracesinvalue objectForKey:@"leftBraces"] intValue]; i++) 
                 {
@@ -1676,7 +1676,8 @@ extern void SVMXLog(NSString *format, ...);
             {
                 NSDictionary *Bracesinvalue=[self occurenceOfBraces:objectValue];
                 [finalQuery appendString:operator];
-                objectValueWithoutBrace=[objectValueWithoutBrace stringByReplacingOccurrencesOfString:@"False"withString:@"0"];
+                objectValueWithoutBrace=[objectValueWithoutBrace stringByReplacingOccurrencesOfString:@"False" withString:@"0" options:NSCaseInsensitiveSearch range:NSMakeRange(0, [objectValueWithoutBrace length])];
+
                 [finalQuery appendString:objectValueWithoutBrace];
                 for (int i=0; i<[[Bracesinvalue objectForKey:@"leftBraces"] intValue]; i++) 
                 {
