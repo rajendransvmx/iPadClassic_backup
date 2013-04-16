@@ -1385,6 +1385,9 @@ last_sync_time:(NSString *)last_sync_time
         appDelegate.Enable_aggresssiveSync = FALSE;
         appDelegate.dataSyncRunning = NO;
         appDelegate.data_sync_type = NORMAL_DATA_SYNC;
+	//Refresh
+	[[NSNotificationCenter defaultCenter] postNotificationName:kIncrementalDataSyncDone object:nil userInfo:nil];
+	[[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_EVENT_DATA_SYNC object:nil];		
         return;
     }
         
