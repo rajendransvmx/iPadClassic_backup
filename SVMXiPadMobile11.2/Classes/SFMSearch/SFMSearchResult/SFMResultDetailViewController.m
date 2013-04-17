@@ -1019,7 +1019,7 @@ enum  {
             NSArray *offlineRecords = [self getOfflineRecordsForObjectID:objectID];
             if(([objectArray count] + [offlineRecords count]) == [[[self.masterView searchLimitString] text] intValue])
             {
-                break;
+                continue;
             }
                         
             if([offlineRecords count] == 0)
