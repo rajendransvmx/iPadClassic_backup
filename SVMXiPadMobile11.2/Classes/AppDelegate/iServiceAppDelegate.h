@@ -36,6 +36,7 @@
 
 @class iServiceViewController;
 @class LoginController;
+@class iPadScrollerViewController;
 @class JobViewController;
 @class ModalViewController;
 @class processInfo;
@@ -284,6 +285,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
     sqlite3  *db;
     UIWindow *window;
     LoginController * loginController;
+    iPadScrollerViewController * homeScreenView;
     
     Reachability* hostReach;
     Reachability* internetReach;
@@ -862,6 +864,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 //Bar Code
 - (BOOL) isCameraAvailable;
 
+-(NSString *)getUSerInfoForKey:(NSString *)key;
+- (void)setLoginAsRootFrom:(UIViewController*)controller;
 
 //Timer invalide handler
 - (void) timerHandler:(NSNotification *)notification;
