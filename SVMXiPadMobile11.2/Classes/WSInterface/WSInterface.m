@@ -1219,15 +1219,11 @@ last_sync_time:(NSString *)last_sync_time
     }
     
     [dict release];
-    //ADD SVMXClient
-    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
-    
-    svmxc_client.clientType = @"iPad";
-    [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
-    [svmxc_client.clientInfo addObject:@"R4B2"];
-    
-    [sfmRequest addClientInfo:svmxc_client];
-    [datasync setRequest:sfmRequest];
+    //ADD SVMXClient : changed krishna
+        INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [appDelegate getSVMXClientObject];
+        
+        [sfmRequest addClientInfo:svmxc_client];
+        [datasync setRequest:sfmRequest];
     
     
     SMLog(@"  TX_FETCH Request Sent: %@", [NSDate date]);
@@ -2630,12 +2626,17 @@ last_sync_time:(NSString *)last_sync_time
     sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
     sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
     
-    //ADD SVMXClient
-    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
+    //ADD SVMXClient : krishna 10.4.404 change
+    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client =  [appDelegate getSVMXClientObject];//[self getSVMXClientObject];
     
-    svmxc_client.clientType = @"iPad";
-    [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
-    [svmxc_client.clientInfo addObject:@"R4B2"];
+    [sfmRequest addClientInfo:svmxc_client];
+    [datasync setRequest:sfmRequest];
+    
+    //    [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
+    //
+    //    svmxc_client.clientType = @"iPad";
+    //    [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
+    //    [svmxc_client.clientInfo addObject:@"R4B2"];
     
     //find out whether the object is MASTER/DETAIL
     NSDictionary *dict_child=[appDelegate.databaseInterface getAllChildRelationShipForObject:objectName];
@@ -2827,14 +2828,15 @@ last_sync_time:(NSString *)last_sync_time
     [sfmRequest.valueMap addObject:SVMXCMap_startTime];
     [sfmRequest.valueMap addObject:SVMXCMap_endTime];
 
-    //ADD SVMXClient
-    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init]  autorelease];
-    
-    svmxc_client.clientType = @"iPad";
-    [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
-    [svmxc_client.clientInfo addObject:@"R4B2"];
+    //ADD SVMXClient changed : kri 10.4.404
+    //    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init]  autorelease];
+    //
+    //    svmxc_client.clientType = @"iPad";
+    //    [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
+    //    [svmxc_client.clientInfo addObject:@"R4B2"];
     //[client_listMap.valueList addObject:svmxc_client];
     
+    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client =  [appDelegate getSVMXClientObject];
     [sfmRequest addClientInfo:svmxc_client];
     [datasync setRequest:sfmRequest];
     
@@ -2898,16 +2900,18 @@ last_sync_time:(NSString *)last_sync_time
     [sfmRequest.valueMap addObject:SVMXCMap_startTime];
     [sfmRequest.valueMap addObject:SVMXCMap_endTime];
     
-    //ADD SVMXClient
-    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init];
-    
-    svmxc_client.clientType = @"iPad";
-    [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
-    [svmxc_client.clientInfo addObject:@"R4B2"];
-    //[client_listMap.valueList addObject:svmxc_client];
-    
-    [sfmRequest addClientInfo:svmxc_client];
-    [datasync setRequest:sfmRequest];
+        //ADD SVMXClient
+        //changed : krishna 10.4.404
+        //    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init];
+        //
+        //    svmxc_client.clientType = @"iPad";
+        //    [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
+        //    [svmxc_client.clientInfo addObject:@"R4B2"];
+        //[client_listMap.valueList addObject:svmxc_client];
+        
+        INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client =  [appDelegate getSVMXClientObject];
+        [sfmRequest addClientInfo:svmxc_client];
+        [datasync setRequest:sfmRequest];
     
     
     binding.logXMLInOut = YES;
@@ -2970,16 +2974,22 @@ last_sync_time:(NSString *)last_sync_time
     [sfmRequest.valueMap addObject:SVMXCMap_startTime];
     [sfmRequest.valueMap addObject:SVMXCMap_endTime];
     
-    //ADD SVMXClient
-    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
-    
-    svmxc_client.clientType = @"iPad";
-    [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
-    [svmxc_client.clientInfo addObject:@"R4B2"];
-    //[client_listMap.valueList addObject:svmxc_client];
-    
-    [sfmRequest addClientInfo:svmxc_client];
-    [datasync setRequest:sfmRequest];
+        //ADD SVMXClient
+        //    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
+        //
+        //    svmxc_client.clientType = @"iPad";
+        //    [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
+        //    [svmxc_client.clientInfo addObject:@"R4B2"];
+        //    //[client_listMap.valueList addObject:svmxc_client];
+        //
+        //    [sfmRequest addClientInfo:svmxc_client];
+        //    [datasync setRequest:sfmRequest];
+        
+        //chenged : kri 10.4.404
+        INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client =  [appDelegate getSVMXClientObject];
+        
+        [sfmRequest addClientInfo:svmxc_client];
+        [datasync setRequest:sfmRequest];
     
     
     binding.logXMLInOut = YES;
@@ -3025,16 +3035,22 @@ last_sync_time:(NSString *)last_sync_time
     sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
     sfmRequest.value = requestId;
     
-    //ADD SVMXClient
-    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
-    
-    svmxc_client.clientType = @"iPad";
-    [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
-    [svmxc_client.clientInfo addObject:@"R4B2"];
-    //[client_listMap.valueList addObject:svmxc_client];
-    
-    [sfmRequest addClientInfo:svmxc_client];
-    [datasync setRequest:sfmRequest];
+        //ADD SVMXClient
+        //    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
+        //
+        //    svmxc_client.clientType = @"iPad";
+        //    [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
+        //    [svmxc_client.clientInfo addObject:@"R4B2"];
+        //    //[client_listMap.valueList addObject:svmxc_client];
+        //
+        //    [sfmRequest addClientInfo:svmxc_client];
+        //    [datasync setRequest:sfmRequest];
+        
+        //changed : krishna 10.4.404
+        INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client =  [appDelegate getSVMXClientObject];
+        
+        [sfmRequest addClientInfo:svmxc_client];
+        [datasync setRequest:sfmRequest];
     
     
     binding.logXMLInOut = YES;
@@ -3169,13 +3185,15 @@ last_sync_time:(NSString *)last_sync_time
     [sfmRequest.valueMap addObject:SVMXCMap_dc_objects];
     
     //ADD SVMXClient
-    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
-    
-    svmxc_client.clientType = @"iPad";
-    [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
-    [svmxc_client.clientInfo addObject:@"R4B2"];
+//    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
+//    
+//    svmxc_client.clientType = @"iPad";
+//    [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
+//    [svmxc_client.clientInfo addObject:@"R4B2"];
     //[client_listMap.valueList addObject:svmxc_client];
     
+    //changed kri : 10.4.404
+    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client =  [appDelegate getSVMXClientObject];
     [sfmRequest addClientInfo:svmxc_client];
     [datasync setRequest:sfmRequest];
     
@@ -3893,13 +3911,15 @@ last_sync_time:(NSString *)last_sync_time
         
     }
         //ADD SVMXClient
-   INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init]  autorelease];
-    
-    svmxc_client.clientType = @"iPad";
-    [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
-    [svmxc_client.clientInfo addObject:@"R4B2"];
+//   INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init]  autorelease];
+//    
+//    svmxc_client.clientType = @"iPad";
+//    [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
+//    [svmxc_client.clientInfo addObject:@"R4B2"];
     //[client_listMap.valueList addObject:svmxc_client];
     
+    //changed kri : 10.4.404
+    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client =  [appDelegate getSVMXClientObject];
     [sfmRequest addClientInfo:svmxc_client];
     [datasync setRequest:sfmRequest];
     
@@ -3994,7 +4014,8 @@ last_sync_time:(NSString *)last_sync_time
 INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
 //    svmxMap = NULL;
     
-    INTF_WebServicesDefServiceSvc_SVMXClient * client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
+     //krishna
+     INTF_WebServicesDefServiceSvc_SVMXClient * client = nil;//[[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
     
     
     if ([eventName isEqualToString:SFM_METADATA] && [eventType isEqualToString:SYNC])
@@ -4022,9 +4043,14 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     }
     else
     {
-        client.clientType = @"iPad";
-        [client.clientInfo addObject:@"OS:iPadOS"];
-        [client.clientInfo addObject:@"R4B2"];
+        
+        //        changed : krishna
+        //        client.clientType = @"iPad";
+        //        [client.clientInfo addObject:@"OS:iPadOS"];
+        //        [client.clientInfo addObject:@"R4B2"];
+        
+        
+        client = [appDelegate getSVMXClientObject];
         sfmRequest.value = @"";
         [sfmRequest.values addObjectsFromArray:values];
     }
@@ -4099,8 +4125,9 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     
     INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] 
                                                                   autorelease];
-    
-    INTF_WebServicesDefServiceSvc_SVMXClient * client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
+  
+    //krishna
+//    INTF_WebServicesDefServiceSvc_SVMXClient * client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
     
     INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_startTime =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
     SVMXCMap_startTime.key  = @"RANGE_START";
@@ -4113,9 +4140,14 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     [sfmRequest.valueMap addObject:SVMXCMap_startTime];
     [sfmRequest.valueMap addObject:SVMXCMap_endTime];
     
-    client.clientType = @"iPad";
-    [client.clientInfo addObject:@"OS:iPadOS"];
-    [client.clientInfo addObject:@"R4B2"];
+    //    client.clientType = @"iPad";
+    //    [client.clientInfo addObject:@"OS:iPadOS"];
+    //    [client.clientInfo addObject:@"R4B2"];
+    
+    
+    //krishna 10.4.404
+    INTF_WebServicesDefServiceSvc_SVMXClient * client = [appDelegate getSVMXClientObject];
+//    [self addClientInfoForObject:client];
     
     sfmRequest.eventName = eventName;
     sfmRequest.eventType = eventType;
@@ -4321,7 +4353,8 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init]
                                                                       autorelease];
         
-        INTF_WebServicesDefServiceSvc_SVMXClient * client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
+        //krishna
+        //INTF_WebServicesDefServiceSvc_SVMXClient * client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
         
         SMLog(@"  Incremental DataSync request looping  starts: %@", [NSDate date]);
         if([eventName isEqualToString:GET_PRICE_DATA] && [eventType  isEqualToString:SYNC])
@@ -4436,10 +4469,14 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             
         }
         SMLog(@"  Incremental DataSync request looping  ends: %@", [NSDate date]);
-        client.clientType = @"iPad";
-        [client.clientInfo addObject:@"OS:iPadOS"];
-        [client.clientInfo addObject:@"R4B2"];
         
+        //chenged : krishna 10.4.404
+        //    client.clientType = @"iPad";
+        //    [client.clientInfo addObject:@"OS:iPadOS"];
+        //    [client.clientInfo addObject:@"R4B2"];
+        
+//        [self addClientInfoForObject:client];
+        INTF_WebServicesDefServiceSvc_SVMXClient * client = [appDelegate getSVMXClientObject];
         sfmRequest.eventName = eventName;
         sfmRequest.eventType = eventType;
         
@@ -4491,7 +4528,8 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] 
                                                                   autorelease];
 
-    INTF_WebServicesDefServiceSvc_SVMXClient * client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
+      //krishna
+    //INTF_WebServicesDefServiceSvc_SVMXClient * client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
     
     INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_startTime =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
     SVMXCMap_startTime.key  = @"RANGE_START";
@@ -4523,10 +4561,14 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             }
         }
     }
-    SMLog(@"  Incremental DataSync request looping  ends: %@", [NSDate date]);
-    client.clientType = @"iPad";
-    [client.clientInfo addObject:@"OS:iPadOS"];
-    [client.clientInfo addObject:@"R4B2"];
+    SMLog(@"Incremental DataSync request looping  ends: %@", [NSDate date]);
+      //    client.clientType = @"iPad";
+      //    [client.clientInfo addObject:@"OS:iPadOS"];
+      //    [client.clientInfo addObject:@"R4B2"];
+      //changed : kri
+      
+      //[self addClientInfoForObject:client];
+      INTF_WebServicesDefServiceSvc_SVMXClient * client = [appDelegate getSVMXClientObject];
     
     sfmRequest.eventName = eventName;
     sfmRequest.eventType = eventType;
@@ -5815,12 +5857,15 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     }
     
     //ADD SVMXClient
-    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init]  autorelease];
-    
-    svmxc_client.clientType = @"iPad";
-    [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
-    [svmxc_client.clientInfo addObject:@"R4B2"];
-    
+//    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init]  autorelease];
+//    
+//    svmxc_client.clientType = @"iPad";
+//    [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
+//    [svmxc_client.clientInfo addObject:@"R4B2"];
+
+    //changed kri : 10.4.404
+    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [appDelegate getSVMXClientObject];
+
     [sfmRequest addClientInfo:svmxc_client];
     [datasync setRequest:sfmRequest];
     

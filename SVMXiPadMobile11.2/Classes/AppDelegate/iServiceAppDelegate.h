@@ -227,6 +227,11 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 
 @end
 
+//krishna : client info
+extern  NSString const *deviceType;
+extern  NSString const *osVersion;
+extern  NSString const *applicationVersion;
+extern  NSString const *devVersion;
 
 
 @interface iServiceAppDelegate : NSObject
@@ -528,6 +533,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 //    NSMutableDictionary *tempDict;
 //    NSInteger Custom_alert_count;
     
+    //changed krishna : client Info
+    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client;
+
     //sync_override
     DATA_SYNC_TYPE data_sync_type;
 }
@@ -887,6 +895,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 - (void) sendingEmail:(UIAlertView*)alertView;
 
 -(void)getTriggerCode;
+
+//changed krishna
+- (INTF_WebServicesDefServiceSvc_SVMXClient  *) getSVMXClientObject;
 
 //Radha : Sync Progress Bar
 - (void) setCurrentSyncStatusProgress:(int)syncState optimizedSynstate:(int)oSyncState;
