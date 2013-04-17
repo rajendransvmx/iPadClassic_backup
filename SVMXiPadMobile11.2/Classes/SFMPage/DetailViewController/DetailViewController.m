@@ -1015,6 +1015,11 @@ extern void SVMXLog(NSString *format, ...);
                                     field_value =[picklistValues objectForKey:field_key];
                                     break;
                                 }
+                                //krishna defect : 4655
+                            	if([field_value isEqualToString:@""]) 
+                            	{
+                                	field_value = field_key;
+                            	}
                             }
                         }
                         
