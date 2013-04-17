@@ -1564,12 +1564,24 @@ extern void SVMXLog(NSString *format, ...);
                 NSDictionary *Bracesinvalue=[self occurenceOfBraces:objectValue];
                 if([objectValueWithoutBrace Contains:@"null"] &&([operator isEqualToString:@"!="] || [operator isEqualToString:@"<>"]) )
                 {
+                    //Keerti: 5157
+                    if([rhs length]>0)
+                    {
+                        [finalQuery appendFormat:@" !='' OR %@ IS NOT NULL",rhs];
+                    }
+                    else
                     [finalQuery appendFormat:@" != '' "];
                 }
                 else
                 {
 //                    [finalQuery appendString:@" isnull"];
-                      [finalQuery appendFormat:@"= '' "];
+                    //Keerti: 5157
+                    if([rhs length]>0)
+                    {
+                        [finalQuery appendFormat:@" ='' OR %@ isnull",rhs];
+                    }
+                    else
+                        [finalQuery appendFormat:@"= '' "];
                 }
                 
                 
@@ -1857,6 +1869,16 @@ extern void SVMXLog(NSString *format, ...);
                     {
                         [finalQuery appendString:operator];
                         [finalQuery appendString:objectValueWithoutBrace];
+						if([operator isEqualToString:@">="] || [operator isEqualToString:@">"]) //Keerti Fix for #5157
+						{
+							[finalQuery appendString:@" AND"];
+							[finalQuery appendString:rhs];
+							[finalQuery appendString:@"!= ''"];
+							[finalQuery appendString:@" AND"];
+							[finalQuery appendString:rhs];
+							[finalQuery appendString:@"!= ' '"];
+							
+						}
                     }
                     for (int i=0; i<[[valueBracesOccurence objectForKey:@"leftBraces"] intValue]; i++) 
                     {
