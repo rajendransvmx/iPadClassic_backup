@@ -8941,6 +8941,15 @@ extern void SVMXLog(NSString *format, ...);
                 index = selectedRow;
             NSMutableArray * details = [appDelegate.SFMPage objectForKey:@"details"];
             NSMutableDictionary * detail = [details objectAtIndex:index];
+			
+			//Radha - Defect Fix 4833
+			NSString * viewProcess = [appDelegate.SFMPage objectForKey:@"PROCESSTYPE"];
+			
+			if ([viewProcess caseInsensitiveCompare:@"VIEWRECORD"] == NSOrderedSame)
+			{
+				return NO;
+			}
+			
             BOOL allowDeleteLines = [[detail objectForKey:@"details_Allow_Delete_Lines"] boolValue];
             if(allowDeleteLines)
             {
