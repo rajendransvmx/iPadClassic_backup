@@ -707,10 +707,13 @@ extern void SVMXLog(NSString *format, ...);
 		SMLog(@"usetId = %@", appDelegate.current_userId);
 		appDelegate.currentUserName = [[userInfo fullName] mutableCopy];
         appDelegate.language=[userInfo language];
+		
+		//Radha - Defect Fix 6016
+		[userDefaults setObject:appDelegate.currentUserName forKey:@"UserFullName"];
+		[userDefaults setObject:appDelegate.language forKey:@"UserLanguage"];
+		[userDefaults synchronize];
 	}
-    [userDefaults setObject:appDelegate.currentUserName forKey:@"UserFullName"];
-    [userDefaults setObject:appDelegate.language forKey:@"UserLanguage"];
-    [userDefaults synchronize];
+    
 
     NSDictionary * defaultTags = [appDelegate.wsInterface getDefaultTags];
     

@@ -12997,6 +12997,19 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 			appDelegate.currentServerUrl = server;
 			[userDefaults synchronize];
 		}
+		//Radha - Defect Fix 6016
+		ZKUserInfo * userInformation = [loginResult userInfo];
+		
+		if(userInformation)
+		{
+			NSUserDefaults * userDefaults = [NSUserDefaults standardUserDefaults];
+			appDelegate.currentUserName = [[userInformation fullName] mutableCopy];
+            appDelegate.language=[userInformation language];
+			[userDefaults setObject:appDelegate.currentUserName forKey:@"UserFullName"];
+            [userDefaults setObject:appDelegate.language forKey:@"UserLanguage"];
+			[userDefaults synchronize];
+        }
+
         didSessionResume = YES;
         isSessionInavalid = NO;
     }
