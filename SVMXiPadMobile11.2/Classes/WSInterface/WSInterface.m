@@ -2084,7 +2084,9 @@ last_sync_time:(NSString *)last_sync_time
     //sahana dec 14 2012
     [appDelegate.dataBase purgingDataOnSyncSettings:date tableName:@"Event" Action:NOT_OWNER_GREATERTHAN];
 
-
+	//Radha - Defect Fic 4558
+	[[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_EVENT_DATA_SYNC object:nil];
+	
     //Radha Purging End
     
     [appDelegate.databaseInterface deleteAllConflictedRecordsFrom:SFDATATRAILER];
