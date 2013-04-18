@@ -165,6 +165,9 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 //================================================================
 
 @implementation iServiceAppDelegate
+//RADHA Defect Fix 5542
+@synthesize shouldScheduleTimer;
+@synthesize isDataSyncTimerTriggered;
 
 //Radha Sync ProgressBar
 @synthesize SyncProgress;
@@ -462,6 +465,10 @@ NSString* machineName()
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+	//RADHA Defect Fix 5542
+	self.shouldScheduleTimer = NO;
+	self.isDataSyncTimerTriggered = NO;
+	
     Enable_aggresssiveSync = FALSE;
     appDelegate = self;
     appDelegate.code_snippet_ids = nil;
@@ -1444,11 +1451,25 @@ NSString * GO_Online = @"GO_Online";
 	
     if(retVal == TRUE)
     {
+		//Radha Defect Fix 5542
+		if (self.isDataSyncTimerTriggered)
+		{
+			[self updateNextSyncTimeIfSyncFails];
+			isDataSyncTimerTriggered = NO;
+			
+		}
         return;
     }
     
     if (![appDelegate isInternetConnectionAvailable])
     {
+		//Radha Defect Fix 5542
+		if (self.isDataSyncTimerTriggered)
+		{
+			[self updateNextSyncTimeIfSyncFails];
+			isDataSyncTimerTriggered = NO;
+			
+		}
         return;
     }
     
@@ -1499,6 +1520,7 @@ NSString * GO_Online = @"GO_Online";
     
     if( ![self.datasync_timer isValid] )
     {
+		//Radha Defect Fix 5542
         self.datasync_timer =  [NSTimer scheduledTimerWithTimeInterval:scheduledTimer
                                          target:self
                                         selector:@selector(MethodForTimer:)
@@ -1509,11 +1531,10 @@ NSString * GO_Online = @"GO_Online";
 
 -(void)MethodForTimer:(NSTimer *)timer
 {
+	//Radha Defect Fix 5542
+	self.isDataSyncTimerTriggered = YES;
     appDelegate.data_sync_type = NORMAL_DATA_SYNC;
     [self performSelectorOnMainThread:@selector(callDataSync) withObject:nil waitUntilDone:NO];
-    
-    //[NSThread detachNewThreadSelector:@selector(callDataSync) toTarget:self withObject:nil];
-    //[self callDataSync];
 }
 
 - (NSMutableArray *) getWeekdates:(NSString *)date
@@ -2589,6 +2610,84 @@ NSString * GO_Online = @"GO_Online";
 		_data = "";
 	
 	return _data;
+}
+
+
+//Radha DefectFix - 5542
+- (void) updateNextDataSyncTimeToBeDisplayed:(NSDate *)CureentDateTime
+{
+	self.settingsDict = [dataBase getSettingsDictionary];
+	
+	NSString * timeInterval = ([self.settingsDict objectForKey:@"Frequency of Master Data"] != nil)?[self.settingsDict objectForKey:@"Frequency of Master Data"]:@"";
+	
+	int value = [timeInterval intValue];
+	
+	if (value == 0)
+		return;
+	
+	NSTimeInterval scheduleTimeInterval;
+	
+	if (![timeInterval isEqualToString:@""])
+	{
+		double interval = [timeInterval doubleValue];
+		
+		scheduleTimeInterval = interval * 60;
+	}
+	
+	
+	NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:SYNC_HISTORY];
+	
+    NSMutableDictionary * tempDict = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST];
+	
+    NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+	[dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]]; //Change for Time Stamp
+		
+    NSDate * nextSync = [NSDate dateWithTimeInterval:scheduleTimeInterval sinceDate:CureentDateTime];
+    NSString * nextSyncTime = [dateFormatter stringFromDate:nextSync];
+    [tempDict setObject:nextSyncTime forKey:NEXT_DATA_SYNC_TIME_DISPLAYED];
+    
+    [tempDict writeToFile:plistPath_SYNHIST atomically:YES];
+    [tempDict release];
+
+}
+
+//RADHA Defect Fix 5542
+- (NSDate *) getGMTTimeForNextDataSyncFromPList
+{
+	NSDateFormatter * formatter = [[[NSDateFormatter alloc] init] autorelease];
+	[formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+	[formatter setTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]];
+	
+	NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:SYNC_HISTORY];
+	
+    NSMutableDictionary * tempDict = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST];
+	
+	NSArray * keys = [tempDict allKeys];
+	
+	NSString * nextSyncTime = @"";
+
+	for (NSString * value in keys)
+	{
+		if ([value isEqualToString:NEXT_DATA_SYNC_TIME_DISPLAYED])
+		{
+			nextSyncTime = [tempDict objectForKey:NEXT_DATA_SYNC_TIME_DISPLAYED];
+			break;
+		}
+	}
+	
+	NSDate * currentDateTime = [formatter dateFromString:nextSyncTime];
+	
+	return currentDateTime;
+}
+
+//RADHA Defect Fix 5542
+- (void) updateNextSyncTimeIfSyncFails
+{
+	NSDate * nextSyncTime = [self getGMTTimeForNextDataSyncFromPList];
+	[self updateNextDataSyncTimeToBeDisplayed:nextSyncTime];
 }
 
 //PRINTING ERROR MESSEGES:

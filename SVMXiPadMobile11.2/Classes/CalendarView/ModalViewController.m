@@ -2147,6 +2147,8 @@ extern void SVMXLog(NSString *format, ...);
                             
                         }
                         [appDelegate setAgrressiveSync_flag];
+						//RADHA Defect Fix 5542
+						appDelegate.shouldScheduleTimer = YES;
                         [appDelegate callDataSync];
                         
                         [activity stopAnimating];

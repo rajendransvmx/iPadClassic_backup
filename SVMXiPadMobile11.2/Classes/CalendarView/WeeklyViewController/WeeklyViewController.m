@@ -1597,6 +1597,8 @@ extern void SVMXLog(NSString *format, ...);
                         [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:local_id SF_id:calEvent.eventId record_type:MASTER operation:UPDATE object_name:@"Event" sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@"" webserviceName:@"" className:@"" synctype:AGRESSIVESYNC headerLocalId:local_id requestData:nil finalEntry:NO];
                     }
                     [appDelegate setAgrressiveSync_flag];
+					//RADHA Defect Fix 5542
+					appDelegate.shouldScheduleTimer = YES;
                     [appDelegate callDataSync];
                     
                     NSArray * startEnd = [self getWeekStartEndDatesAtOptionalIndex:[NSString stringWithFormat:@"%d", currentSliderPositionIndex]];

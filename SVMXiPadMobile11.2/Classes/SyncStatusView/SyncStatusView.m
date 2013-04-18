@@ -59,14 +59,13 @@ extern void SVMXLog(NSString *format, ...);
 	NSDateComponents * todayDateComponents = [gregorian components:unitFlags fromDate:[NSDate date]];
 
 	
-    
+    //Radha - defect Fix - 5542
     NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
     NSDateFormatter * formatter1 = [[NSDateFormatter alloc] init];
     [formatter1 setDateFormat:@"EEE, dd MMM yyyy HH:mm:ss a"];
     [formatter1 setTimeZone:[todayDateComponents timeZone]];
-//	[formatter1 setTimeZone:[NSTimeZone systemTimeZone]];
-	[formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
 	[formatter setTimeZone:[todayDateComponents timeZone]];
+	[formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
 
     //Read from the plist
     @try{
@@ -78,7 +77,8 @@ extern void SVMXLog(NSString *format, ...);
     SMLog(@"%@", dictionary);
     
     lastSyncTime = @"";
-    lastSyncTime = [dictionary objectForKey:LAST_INITIAL_SYNC_IME];
+	//Radha - defect Fix - 5542
+    lastSyncTime = [dictionary objectForKey:DATASYNC_TIME_TOBE_DISPLAYED];
     
     NSDate * _gmtDate = [formatter dateFromString:lastSyncTime];
 	NSTimeInterval timeZoneOffset = [[NSTimeZone systemTimeZone] secondsFromGMT];
@@ -165,6 +165,8 @@ extern void SVMXLog(NSString *format, ...);
     [lastSync release];
     [label1 release];
     
+	 /*################################## Time Stamp For Next Data Sync ################################*/
+		
     UILabel *label2;
     label2 = [[UILabel alloc] initWithFrame:CGRectMake(35, 75, 550, 45)];
     UIImageView * bgView1 = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"wou-row1-textfield-bg.png"]];
@@ -174,39 +176,46 @@ extern void SVMXLog(NSString *format, ...);
     [label2 addSubview:bgView1];
     [self.view addSubview:label2];
     
+		
+	//If data sync id failed just update the next sync time
     
     NSDateFormatter * format = [[NSDateFormatter alloc] init];
 	[format setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
 	[format setTimeZone:[todayDateComponents timeZone]];
-    NSString *str = [dictionary objectForKey:LAST_INITIAL_SYNC_IME];
-		
+	//Radha - defect Fix - 5542
+    //NSString *str = [dictionary objectForKey:DATASYNC_TIME_TOBE_DISPLAYED];
 		
     NSDateFormatter * formatter2 = [[NSDateFormatter alloc] init];
 	[formatter2 setTimeZone:[todayDateComponents timeZone]];
     [formatter2 setDateFormat:@"EEE, dd MMM yyyy HH:mm:ss a"];
 	
-	NSDate * gmtDate = [format dateFromString:str];
+	nextSyncTime = [dictionary objectForKey:NEXT_DATA_SYNC_TIME_DISPLAYED];
+		
+	NSDate * gmtDate = [format dateFromString:nextSyncTime];
 	
 	NSTimeInterval NDS_gmtTimeInterval = [gmtDate timeIntervalSinceReferenceDate] + timeZoneOffset;
 	
 	NSDate * NSDlocalDate = [NSDate dateWithTimeIntervalSinceReferenceDate:NDS_gmtTimeInterval];
 	
-    NSString * timerValue = ([appDelegate.settingsDict objectForKey:@"Frequency of Master Data"]) != nil?[appDelegate.settingsDict objectForKey:@"Frequency of Master Data"]:@"";
-    
-    NSTimeInterval scheduledTimer = 0;
-    
-    if (![timerValue isEqualToString:@""])  
-    {
-        double timeInterval = [timerValue doubleValue];
-        
-        scheduledTimer = timeInterval * 60;
-    }
-    else
-        scheduledTimer = 600;
+//    NSString * timerValue = ([appDelegate.settingsDict objectForKey:@"Frequency of Master Data"]) != nil?[appDelegate.settingsDict objectForKey:@"Frequency of Master Data"]:@"";
+//    
+//    NSTimeInterval scheduledTimer = 0;
+//    
+//    if (![timerValue isEqualToString:@""])  
+//    {
+//        double timeInterval = [timerValue doubleValue];
+//        
+//        scheduledTimer = timeInterval * 60;
+//    }
+//    else
+//        scheduledTimer = 600;
+//	
+//	NSDate *dateTwoMinsAhead = [NSDlocalDate dateByAddingTimeInterval:scheduledTimer];
+//    nextSyncTime = @"";
+//    nextSyncTime = [formatter2 stringFromDate:dateTwoMinsAhead];
 	
-	NSDate *dateTwoMinsAhead = [NSDlocalDate dateByAddingTimeInterval:scheduledTimer];
-    nextSyncTime = @"";
-    nextSyncTime = [formatter2 stringFromDate:dateTwoMinsAhead];
+	nextSyncTime = [formatter2 stringFromDate:NSDlocalDate];
+		
     [formatter2 release];
     
     NSString * _str1 = nil;

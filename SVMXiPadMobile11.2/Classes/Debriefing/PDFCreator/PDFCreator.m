@@ -221,6 +221,8 @@ extern void SVMXLog(NSString *format, ...);
 #endif
 	
 	//Call Agressive data Sync.  -- 10/07/2012 #4740
+	//RADHA Defect Fix 5542
+	appDelegate.shouldScheduleTimer = YES;
 	[appDelegate callDataSync];
 }
 

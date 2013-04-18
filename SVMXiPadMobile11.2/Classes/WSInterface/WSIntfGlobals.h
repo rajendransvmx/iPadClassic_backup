@@ -64,6 +64,10 @@
 #define LAST_INITIAL_META_SYNC_TIME                      @"last_initial_meta_sync"
 #define NEXT_META_SYNC_TIME                              @"next_meta_sync_time"
 
+//Radha - defect Fix - 5542
+#define DATASYNC_TIME_TOBE_DISPLAYED					 @"data_sync_time_tobe_displayed"
+#define NEXT_DATA_SYNC_TIME_DISPLAYED					 @"next_daya_sync_time_displayed"
+
 //Radha Data sync
 #define SYNC_FAILED										 @"sync_failed"
 

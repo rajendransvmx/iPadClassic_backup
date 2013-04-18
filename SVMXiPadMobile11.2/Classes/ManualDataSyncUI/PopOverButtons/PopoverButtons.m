@@ -260,6 +260,8 @@ PopoverButtons *popOver_view;
             }
         }
 		[delegate activityStart];
+		//RADHA Defect Fix 5542
+		appDelegate.shouldScheduleTimer = YES;
         [appDelegate callDataSync];
 		[delegate activityStop];
         appDelegate.dataSyncRunning = NO;
@@ -360,6 +362,8 @@ PopoverButtons *popOver_view;
         retVal = [appDelegate.calDataBase selectCountFromSync_Conflicts];
         if (retVal == FALSE)
         {
+			//RADHA Defect Fix 5542
+			appDelegate.shouldScheduleTimer = YES;
             [appDelegate callDataSync];
         }
     }
@@ -719,6 +723,9 @@ PopoverButtons *popOver_view;
     [appDelegate ScheduleIncrementalDatasyncTimer];
     [appDelegate ScheduleIncrementalMetaSyncTimer];
     [appDelegate ScheduleTimerForEventSync];
+	//Radha Defect Fix 5542
+	[appDelegate updateNextDataSyncTimeToBeDisplayed:[NSDate date]];
+
 }
 
 //EVENT SYNC METHOD

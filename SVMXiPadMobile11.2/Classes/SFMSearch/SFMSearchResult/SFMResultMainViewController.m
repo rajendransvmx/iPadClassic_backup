@@ -229,6 +229,10 @@ extern void SVMXLog(NSString *format, ...);
     [appDelegate ScheduleIncrementalMetaSyncTimer];
     [appDelegate ScheduleTimerForEventSync];
     [appDelegate scheduleLocationPingTimer];
+	
+	//Radha Defect Fix 5542
+	[appDelegate updateNextDataSyncTimeToBeDisplayed:[NSDate date]];
+
     
 }
 const int percentage_SFMSearch = 30;

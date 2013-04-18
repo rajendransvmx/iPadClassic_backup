@@ -740,6 +740,10 @@ extern void SVMXLog(NSString *format, ...);
     [appDelegate ScheduleIncrementalMetaSyncTimer];
     [appDelegate ScheduleTimerForEventSync];
     [appDelegate scheduleLocationPingTimer];
+	
+	//Radha Defect Fix 5542
+	[appDelegate updateNextDataSyncTimeToBeDisplayed:[NSDate date]];
+
     isOndemandRecord=TRUE;
     
     NSString *queryStatement1 =[NSString stringWithFormat:@"Select process_id from SFProcess where object_api_name is  '%@' and process_type is 'VIEWRECORD'",[appDelegate.dataBase getApiNameFromFieldLabel:objectName]];

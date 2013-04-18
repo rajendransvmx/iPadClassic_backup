@@ -3016,6 +3016,8 @@ extern void SVMXLog(NSString *format, ...);
 	//10/07/2012  - Agreesive Sync for Work Order Signature.  #4740
 	if ([sign_type isEqualToString:@"ViewWorkOrder"])
 	{
+		//RADHA Defect Fix 5542
+		appDelegate.shouldScheduleTimer = YES;
 		[appDelegate callDataSync];
 	}
 

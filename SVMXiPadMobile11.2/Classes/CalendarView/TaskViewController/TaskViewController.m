@@ -169,6 +169,8 @@ extern void SVMXLog(NSString *format, ...);
 		//Sync_Override
         [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:local_id SF_id:@"" record_type:MASTER operation:INSERT object_name:@"Task" sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@"" webserviceName:@"" className:@"" synctype:AGRESSIVESYNC headerLocalId:local_id requestData:nil finalEntry:NO];
         [appDelegate setAgrressiveSync_flag];
+		//RADHA Defect Fix 5542
+		appDelegate.shouldScheduleTimer = YES;
         [appDelegate callDataSync];
     }
     
@@ -242,6 +244,9 @@ extern void SVMXLog(NSString *format, ...);
 		//Sync_Override
         [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:local_id SF_id:sf_id  record_type:DETAIL operation:DELETE object_name:@"Task" sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@"" webserviceName:@"" className:@"" synctype:AGRESSIVESYNC headerLocalId:local_id requestData:nil finalEntry:NO];
         [appDelegate setAgrressiveSync_flag];
+
+		//RADHA Defect Fix 5542
+		appDelegate.shouldScheduleTimer = YES;
         [appDelegate callDataSync];
     }
     

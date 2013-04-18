@@ -1288,6 +1288,13 @@ last_sync_time:(NSString *)last_sync_time
     if (![appDelegate isInternetConnectionAvailable])
     {
          appDelegate.Enable_aggresssiveSync = FALSE;
+		//Radha Defect Fix 5542
+		if (appDelegate.isDataSyncTimerTriggered)
+		{
+			[appDelegate updateNextSyncTimeIfSyncFails];
+			appDelegate.isDataSyncTimerTriggered = NO;
+			
+		}
         return;
     }
    
@@ -1318,6 +1325,13 @@ last_sync_time:(NSString *)last_sync_time
         appDelegate.SyncStatus = SYNC_GREEN;
         [appDelegate setSyncStatus:SYNC_GREEN];
          appDelegate.Enable_aggresssiveSync = FALSE;
+		//Radha Defect Fix 5542
+		if (appDelegate.isDataSyncTimerTriggered)
+		{
+			[appDelegate updateNextSyncTimeIfSyncFails];
+			appDelegate.isDataSyncTimerTriggered = NO;
+			
+		}
         return;
     }
 
@@ -1418,6 +1432,13 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.SyncStatus = SYNC_GREEN;
             [self internetConnectivityHandling:data_sync];
              appDelegate.Enable_aggresssiveSync = FALSE;
+			//Radha Defect Fix 5542
+			if (appDelegate.isDataSyncTimerTriggered)
+			{
+				[appDelegate updateNextSyncTimeIfSyncFails];
+				appDelegate.isDataSyncTimerTriggered = NO;
+				
+			}
             return;
         }
 		
@@ -1429,6 +1450,13 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate setSyncStatus:SYNC_GREEN];
 		 appDelegate.Enable_aggresssiveSync = FALSE;
 		appDelegate.dataSyncRunning = NO;
+		//Radha Defect Fix 5542
+		if (appDelegate.isDataSyncTimerTriggered)
+		{
+			[appDelegate updateNextSyncTimeIfSyncFails];
+			appDelegate.isDataSyncTimerTriggered = NO;
+			
+		}
         return;
     }
     
@@ -1461,6 +1489,13 @@ last_sync_time:(NSString *)last_sync_time
                 appDelegate.connection_error = TRUE;
                 [self internetConnectivityHandling:data_sync];
                  appDelegate.Enable_aggresssiveSync = FALSE;
+				//Radha Defect Fix 5542
+				if (appDelegate.isDataSyncTimerTriggered)
+				{
+					[appDelegate updateNextSyncTimeIfSyncFails];
+					appDelegate.isDataSyncTimerTriggered = NO;
+					
+				}
                 return;
             }
         }
@@ -1471,6 +1506,13 @@ last_sync_time:(NSString *)last_sync_time
             
             appDelegate.dataSyncRunning = NO;
              appDelegate.Enable_aggresssiveSync = FALSE;
+			//Radha Defect Fix 5542
+			if (appDelegate.isDataSyncTimerTriggered)
+			{
+				[appDelegate updateNextSyncTimeIfSyncFails];
+				appDelegate.isDataSyncTimerTriggered = NO;
+				
+			}
             return;
         }    
 
@@ -1496,6 +1538,13 @@ last_sync_time:(NSString *)last_sync_time
                 appDelegate.dataSyncRunning = NO;
                 [self internetConnectivityHandling:data_sync];
                  appDelegate.Enable_aggresssiveSync = FALSE;
+				//Radha Defect Fix 5542
+				if (appDelegate.isDataSyncTimerTriggered)
+				{
+					[appDelegate updateNextSyncTimeIfSyncFails];
+					appDelegate.isDataSyncTimerTriggered = NO;
+					
+				}
                 return;
             }
             
@@ -1505,6 +1554,13 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.dataSyncRunning = NO;
             [self internetConnectivityHandling:data_sync];
              appDelegate.Enable_aggresssiveSync = FALSE;
+			//Radha Defect Fix 5542
+			if (appDelegate.isDataSyncTimerTriggered)
+			{
+				[appDelegate updateNextSyncTimeIfSyncFails];
+				appDelegate.isDataSyncTimerTriggered = NO;
+				
+			}
             return;
         }
         //Radha Sync ProgressBar
@@ -1540,6 +1596,13 @@ last_sync_time:(NSString *)last_sync_time
                 appDelegate.SyncStatus = SYNC_GREEN;
                 [self internetConnectivityHandling:data_sync];
                  appDelegate.Enable_aggresssiveSync = FALSE;
+				//Radha Defect Fix 5542
+				if (appDelegate.isDataSyncTimerTriggered)
+				{
+					[appDelegate updateNextSyncTimeIfSyncFails];
+					appDelegate.isDataSyncTimerTriggered = NO;
+					
+				}
                 return;
             }
         }
@@ -1556,6 +1619,13 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.dataSyncRunning = NO;
             [updateSyncStatus refreshSyncStatus];
              appDelegate.Enable_aggresssiveSync = FALSE;
+			//Radha Defect Fix 5542
+			if (appDelegate.isDataSyncTimerTriggered)
+			{
+				[appDelegate updateNextSyncTimeIfSyncFails];
+				appDelegate.isDataSyncTimerTriggered = NO;
+				
+			}
             return;
         }
     
@@ -1602,6 +1672,13 @@ last_sync_time:(NSString *)last_sync_time
                 appDelegate.SyncStatus = SYNC_GREEN;
                 [self internetConnectivityHandling:data_sync];
                  appDelegate.Enable_aggresssiveSync = FALSE;
+				//Radha Defect Fix 5542
+				if (appDelegate.isDataSyncTimerTriggered)
+				{
+					[appDelegate updateNextSyncTimeIfSyncFails];
+					appDelegate.isDataSyncTimerTriggered = NO;
+					
+				}
                 return;
             }
         }
@@ -1612,6 +1689,13 @@ last_sync_time:(NSString *)last_sync_time
 
             appDelegate.dataSyncRunning = NO;
              appDelegate.Enable_aggresssiveSync = FALSE;
+			//Radha Defect Fix 5542
+			if (appDelegate.isDataSyncTimerTriggered)
+			{
+				[appDelegate updateNextSyncTimeIfSyncFails];
+				appDelegate.isDataSyncTimerTriggered = NO;
+				
+			}
             return;
         }
     
@@ -1647,6 +1731,13 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.SyncStatus = SYNC_GREEN;
             [self internetConnectivityHandling:data_sync];
              appDelegate.Enable_aggresssiveSync = FALSE;
+			//Radha Defect Fix 5542
+			if (appDelegate.isDataSyncTimerTriggered)
+			{
+				[appDelegate updateNextSyncTimeIfSyncFails];
+				appDelegate.isDataSyncTimerTriggered = NO;
+				
+			}
             return;
         }
     }  
@@ -1656,6 +1747,13 @@ last_sync_time:(NSString *)last_sync_time
             [appDelegate setSyncStatus:SYNC_GREEN];
          appDelegate.Enable_aggresssiveSync = FALSE;
 		appDelegate.dataSyncRunning = NO;
+		//Radha Defect Fix 5542
+		if (appDelegate.isDataSyncTimerTriggered)
+		{
+			[appDelegate updateNextSyncTimeIfSyncFails];
+			appDelegate.isDataSyncTimerTriggered = NO;
+			
+		}
         return;
     }                                                             //call delete
                                                                         //call Update
@@ -1690,6 +1788,13 @@ last_sync_time:(NSString *)last_sync_time
                 appDelegate.SyncStatus = SYNC_GREEN;
                 [self internetConnectivityHandling:data_sync];
                  appDelegate.Enable_aggresssiveSync = FALSE;
+				//Radha Defect Fix 5542
+				if (appDelegate.isDataSyncTimerTriggered)
+				{
+					[appDelegate updateNextSyncTimeIfSyncFails];
+					appDelegate.isDataSyncTimerTriggered = NO;
+					
+				}
                 return;
             }
         }
@@ -1698,7 +1803,14 @@ last_sync_time:(NSString *)last_sync_time
             if ([appDelegate isInternetConnectionAvailable])
                 [appDelegate setSyncStatus:SYNC_GREEN];
         
-            appDelegate.dataSyncRunning = NO;	
+            appDelegate.dataSyncRunning = NO;
+			//Radha Defect Fix 5542
+			if (appDelegate.isDataSyncTimerTriggered)
+			{
+				[appDelegate updateNextSyncTimeIfSyncFails];
+				appDelegate.isDataSyncTimerTriggered = NO;
+				
+			}
             return;
         }    
         
@@ -1725,6 +1837,13 @@ last_sync_time:(NSString *)last_sync_time
                 appDelegate.SyncStatus = SYNC_GREEN;
                 [self internetConnectivityHandling:data_sync];
                  appDelegate.Enable_aggresssiveSync = FALSE;
+				//Radha Defect Fix 5542
+				if (appDelegate.isDataSyncTimerTriggered)
+				{
+					[appDelegate updateNextSyncTimeIfSyncFails];
+					appDelegate.isDataSyncTimerTriggered = NO;
+					
+				}
                 return;
             }
         }
@@ -1734,6 +1853,13 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.SyncStatus = SYNC_GREEN;
             [self internetConnectivityHandling:data_sync];
             appDelegate.Enable_aggresssiveSync = FALSE;
+			//Radha Defect Fix 5542
+			if (appDelegate.isDataSyncTimerTriggered)
+			{
+				[appDelegate updateNextSyncTimeIfSyncFails];
+				appDelegate.isDataSyncTimerTriggered = NO;
+				
+			}
             return;
         }
 		
@@ -1787,6 +1913,13 @@ last_sync_time:(NSString *)last_sync_time
                 appDelegate.SyncStatus = SYNC_GREEN;
                 [self internetConnectivityHandling:data_sync];
                 appDelegate.Enable_aggresssiveSync = FALSE;
+				//Radha Defect Fix 5542
+				if (appDelegate.isDataSyncTimerTriggered)
+				{
+					[appDelegate updateNextSyncTimeIfSyncFails];
+					appDelegate.isDataSyncTimerTriggered = NO;
+					
+				}
                 return;
             }
         }
@@ -1797,6 +1930,13 @@ last_sync_time:(NSString *)last_sync_time
 
             appDelegate.dataSyncRunning = NO;
              appDelegate.Enable_aggresssiveSync = FALSE;
+			//Radha Defect Fix 5542
+			if (appDelegate.isDataSyncTimerTriggered)
+			{
+				[appDelegate updateNextSyncTimeIfSyncFails];
+				appDelegate.isDataSyncTimerTriggered = NO;
+				
+			}
             return;
         }
     
@@ -1843,6 +1983,13 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.SyncStatus = SYNC_GREEN;
             [self internetConnectivityHandling:data_sync];
               appDelegate.Enable_aggresssiveSync = FALSE;
+			//Radha Defect Fix 5542
+			if (appDelegate.isDataSyncTimerTriggered)
+			{
+				[appDelegate updateNextSyncTimeIfSyncFails];
+				appDelegate.isDataSyncTimerTriggered = NO;
+				
+			}
             return;
         }
     }
@@ -1854,6 +2001,13 @@ last_sync_time:(NSString *)last_sync_time
         
         appDelegate.Enable_aggresssiveSync = FALSE;
 		appDelegate.dataSyncRunning = NO;
+		//Radha Defect Fix 5542
+		if (appDelegate.isDataSyncTimerTriggered)
+		{
+			[appDelegate updateNextSyncTimeIfSyncFails];
+			appDelegate.isDataSyncTimerTriggered = NO;
+			
+		}
         return;
     }
         
@@ -1888,6 +2042,13 @@ last_sync_time:(NSString *)last_sync_time
                 appDelegate.SyncStatus = SYNC_GREEN;
                 [self internetConnectivityHandling:data_sync];
                   appDelegate.Enable_aggresssiveSync = FALSE;
+				//Radha Defect Fix 5542
+				if (appDelegate.isDataSyncTimerTriggered)
+				{
+					[appDelegate updateNextSyncTimeIfSyncFails];
+					appDelegate.isDataSyncTimerTriggered = NO;
+					
+				}
                 return;
             }
         }
@@ -1898,6 +2059,13 @@ last_sync_time:(NSString *)last_sync_time
         
             appDelegate.dataSyncRunning = NO;
              appDelegate.Enable_aggresssiveSync = FALSE;
+			//Radha Defect Fix 5542
+			if (appDelegate.isDataSyncTimerTriggered)
+			{
+				[appDelegate updateNextSyncTimeIfSyncFails];
+				appDelegate.isDataSyncTimerTriggered = NO;
+				
+			}
             return;
         }
         
@@ -1925,6 +2093,13 @@ last_sync_time:(NSString *)last_sync_time
                 appDelegate.SyncStatus = SYNC_GREEN;
                 [self internetConnectivityHandling:data_sync];
                 appDelegate.Enable_aggresssiveSync = FALSE;
+				//Radha Defect Fix 5542
+				if (appDelegate.isDataSyncTimerTriggered)
+				{
+					[appDelegate updateNextSyncTimeIfSyncFails];
+					appDelegate.isDataSyncTimerTriggered = NO;
+					
+				}
                 return;
             }
         }
@@ -1932,6 +2107,13 @@ last_sync_time:(NSString *)last_sync_time
         {
             appDelegate.dataSyncRunning = NO;
             appDelegate.Enable_aggresssiveSync = FALSE;
+			//Radha Defect Fix 5542
+			if (appDelegate.isDataSyncTimerTriggered)
+			{
+				[appDelegate updateNextSyncTimeIfSyncFails];
+				appDelegate.isDataSyncTimerTriggered = NO;
+				
+			}
             return;
         }
 		[appDelegate setCurrentSyncStatusProgress:GETUPDATE_DC_DONE optimizedSynstate:0];
@@ -1969,6 +2151,13 @@ last_sync_time:(NSString *)last_sync_time
             appDelegate.SyncStatus = SYNC_GREEN;
             [self internetConnectivityHandling:data_sync];
              appDelegate.Enable_aggresssiveSync = FALSE;
+			//Radha Defect Fix 5542
+			if (appDelegate.isDataSyncTimerTriggered)
+			{
+				[appDelegate updateNextSyncTimeIfSyncFails];
+				appDelegate.isDataSyncTimerTriggered = NO;
+				
+			}
             return;
         }
     }
@@ -1980,6 +2169,13 @@ last_sync_time:(NSString *)last_sync_time
         
 		appDelegate.dataSyncRunning = NO;
         appDelegate.Enable_aggresssiveSync = FALSE;
+		//Radha Defect Fix 5542
+		if (appDelegate.isDataSyncTimerTriggered)
+		{
+			[appDelegate updateNextSyncTimeIfSyncFails];
+			appDelegate.isDataSyncTimerTriggered = NO;
+			
+		}
         return;
     }
         
@@ -2102,6 +2298,18 @@ last_sync_time:(NSString *)last_sync_time
 //        aggressive sync
          [self setLastSyncTime];   // update the plist to last sync time
     }
+	//RADHA Defect Fix 5542
+	if(![appDelegate.databaseInterface ContinueIncrementalDataSync])
+	{
+		if(appDelegate.shouldScheduleTimer)
+		{
+			[[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
+			[appDelegate performSelectorOnMainThread:@selector(ScheduleIncrementalDatasyncTimer) withObject:nil waitUntilDone:NO];
+			appDelegate.shouldScheduleTimer = NO;
+		}
+
+	}
+		
 	//Radha updatesyncflag
 	[appDelegate updateSyncFailedFlag:SFALSE];
     
@@ -3266,8 +3474,18 @@ last_sync_time:(NSString *)last_sync_time
             NSString * last_sync_time = [dateFormatter stringFromDate:current_dateTime];
             [dict  setObject:last_sync_time forKey:LAST_INITIAL_SYNC_IME];
         }
+		//Defect Fix 5542
+		else if([str isEqualToString:DATASYNC_TIME_TOBE_DISPLAYED])
+		{
+			NSString * last_sync_time = [dateFormatter stringFromDate:current_dateTime];
+            [dict  setObject:last_sync_time forKey:DATASYNC_TIME_TOBE_DISPLAYED];
+
+		}
     }
     [dict writeToFile:plistPath_SYNHIST atomically:YES];
+	//Defect Fix 5542
+	[appDelegate updateNextDataSyncTimeToBeDisplayed:current_dateTime];
+	
 
 }
 - (NSString *) getValueFromPlistForKey:(NSString *) key

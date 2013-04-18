@@ -540,6 +540,8 @@ const NSUInteger kNumImages = 7;
 				BOOL ConflictExists = [appDelegate.databaseInterface getConflictsStatus];
 				if (!ConflictExists && [appDelegate isInternetConnectionAvailable])
 				{
+					//RADHA Defect Fix 5542
+					appDelegate.shouldScheduleTimer = YES;
 					[appDelegate callDataSync];
 				}
 				
@@ -769,6 +771,8 @@ const NSUInteger kNumImages = 7;
     NSTimeZone *gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
     [dateFormatter setTimeZone:gmt];
     NSString * current_gmt_time = @"";
+	//Radha Defect Fix 5542
+	NSString * current_gmt_timedispalyed = @"";
     
     NSFileManager * fileManager = [NSFileManager defaultManager];
     //create SYNC_HISTORY PLIST 
@@ -785,16 +789,18 @@ const NSUInteger kNumImages = 7;
         {
             current_gmt_time = [dateFormatter stringFromDate:current_dateTime];
         }
+		//Radha Defect Fix 5542
+		current_gmt_timedispalyed = [dateFormatter stringFromDate:current_dateTime];
         
-        NSArray * sync_hist_keys = [NSArray arrayWithObjects:LAST_INITIAL_SYNC_IME, REQUEST_ID, LAST_INSERT_REQUEST_TIME,LAST_INSERT_RESONSE_TIME,LAST_UPDATE_REQUEST_TIME,LAST_UPDATE_RESONSE_TIME, LAST_DELETE_REQUEST_TIME, LAST_DELETE_RESPONSE_TIME,INSERT_SUCCESS,UPDATE_SUCCESS,DELETE_SUCCESS, LAST_INITIAL_META_SYNC_TIME, SYNC_FAILED, META_SYNC_STATUS,NEXT_META_SYNC_TIME,LAST_DC_INSERT_RESPONSE_TIME,LAST_DC_UPDATE_RESPONSE_TIME,LAST_DC_DELETE_RESPONSE_TIME, nil];
-        NSMutableDictionary * sync_info = [[[NSMutableDictionary alloc] initWithObjects:[NSArray arrayWithObjects:current_gmt_time,@"",current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,@"true",@"",@"", current_gmt_time, @"false", [appDelegate.wsInterface.tagsDictionary objectForKey:sync_succeeded],@"",current_gmt_time,current_gmt_time,current_gmt_time, nil] forKeys:sync_hist_keys] autorelease];
+        NSArray * sync_hist_keys = [NSArray arrayWithObjects:LAST_INITIAL_SYNC_IME, REQUEST_ID, LAST_INSERT_REQUEST_TIME,LAST_INSERT_RESONSE_TIME,LAST_UPDATE_REQUEST_TIME,LAST_UPDATE_RESONSE_TIME, LAST_DELETE_REQUEST_TIME, LAST_DELETE_RESPONSE_TIME,INSERT_SUCCESS,UPDATE_SUCCESS,DELETE_SUCCESS, LAST_INITIAL_META_SYNC_TIME, SYNC_FAILED, META_SYNC_STATUS,NEXT_META_SYNC_TIME,LAST_DC_INSERT_RESPONSE_TIME,LAST_DC_UPDATE_RESPONSE_TIME,LAST_DC_DELETE_RESPONSE_TIME, DATASYNC_TIME_TOBE_DISPLAYED, NEXT_DATA_SYNC_TIME_DISPLAYED, nil];
+        NSMutableDictionary * sync_info = [[[NSMutableDictionary alloc] initWithObjects:[NSArray arrayWithObjects:current_gmt_time,@"",current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,@"true",@"",@"", current_gmt_timedispalyed, @"false", [appDelegate.wsInterface.tagsDictionary objectForKey:sync_succeeded],@"",current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_timedispalyed, @"", nil] forKeys:sync_hist_keys] autorelease];
         [sync_info writeToFile:plistPath_SYNHIST atomically:YES];
     }
     else
     {
         NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST];
         NSArray * keys = [dict allKeys];
-         if(![keys containsObject:LAST_DC_INSERT_RESPONSE_TIME] || ![keys containsObject:LAST_DC_DELETE_RESPONSE_TIME] || ![keys containsObject:LAST_DC_UPDATE_RESPONSE_TIME] )
+         if(![keys containsObject:LAST_DC_INSERT_RESPONSE_TIME] || ![keys containsObject:LAST_DC_DELETE_RESPONSE_TIME] || ![keys containsObject:LAST_DC_UPDATE_RESPONSE_TIME] || ![keys containsObject:DATASYNC_TIME_TOBE_DISPLAYED])
          {
             if(![keys containsObject:LAST_DC_INSERT_RESPONSE_TIME])
             {
@@ -820,10 +826,25 @@ const NSUInteger kNumImages = 7;
                     [dict setObject:last_update_response_time forKey:LAST_DC_UPDATE_RESPONSE_TIME];
                 }
             }
+			 
+			//Radha Defect Fix 5542
+			 if(![keys containsObject:DATASYNC_TIME_TOBE_DISPLAYED])
+			 {
+				 NSString * initialSyncTime = [dict objectForKey:LAST_INITIAL_SYNC_IME];
+				 
+				 if(initialSyncTime != nil || [initialSyncTime length] > 0)
+				 {
+					 [dict setObject:initialSyncTime forKey:DATASYNC_TIME_TOBE_DISPLAYED];
+				 }
+			 }
+			 
             
             [dict writeToFile:plistPath_SYNHIST atomically:YES];
          }
     }
+	
+	//Radha Defect Fix 5542
+	[appDelegate updateNextDataSyncTimeToBeDisplayed:current_dateTime];
    
     
 	

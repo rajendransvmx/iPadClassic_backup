@@ -2962,6 +2962,9 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate ScheduleIncrementalDatasyncTimer];
         [appDelegate ScheduleIncrementalMetaSyncTimer];
         [appDelegate ScheduleTimerForEventSync];
+		//Radha Defect Fix 5542
+		[appDelegate updateNextDataSyncTimeToBeDisplayed:[NSDate date]];
+		
         [self enableSFMUI];
         SMLog(@" getPrice4");
     }
@@ -10665,7 +10668,8 @@ extern void SVMXLog(NSString *format, ...);
 						[appDelegate.databaseInterface insertdataIntoTrailerTableForRecord:header_record_local_id SF_id:@"" record_type:@"" operation:headerObjName object_name:headerObjName sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:header_record_local_id webserviceName:webserviceName className:className synctype:syncType headerLocalId:header_record_local_id requestData:customDataDictionary finalEntry:YES];
 					}
 					
-                    
+                    //RADHA Defect Fix 5542
+		   			appDelegate.shouldScheduleTimer = YES;
                     [appDelegate callDataSync];
                                    
                 }
@@ -11429,6 +11433,8 @@ extern void SVMXLog(NSString *format, ...);
 					{
 						[appDelegate.databaseInterface insertdataIntoTrailerTableForRecord:currentRecordId SF_id:id_value record_type:@"" operation:headerObjName object_name:headerObjName sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:currentRecordId webserviceName:webserviceName className:className synctype:syncType headerLocalId:appDelegate.sfmPageController.recordId requestData:customDataDictionary finalEntry:YES];
 					}
+					//RADHA Defect Fix 5542
+					appDelegate.shouldScheduleTimer = YES;
                     [appDelegate callDataSync];
                 }
                 else
@@ -11893,7 +11899,9 @@ extern void SVMXLog(NSString *format, ...);
 					{
 						[appDelegate.databaseInterface insertdataIntoTrailerTableForRecord:header_record_local_id SF_id:@"" record_type:@"" operation:headerObjName object_name:headerObjName sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:header_record_local_id webserviceName:webserviceName className:className synctype:syncType headerLocalId:header_record_local_id requestData:customDataDictionary finalEntry:YES];
 					}
-                    [appDelegate callDataSync];
+					//RADHA Defect Fix 5542
+					appDelegate.shouldScheduleTimer = YES;
+					[appDelegate callDataSync];
                 }
             }
             
@@ -12036,6 +12044,9 @@ extern void SVMXLog(NSString *format, ...);
             }
             appDelegate.dataSyncRunning = YES;
             [activity startAnimating];
+			[[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
+			//RADHA Defect Fix 5542
+			appDelegate.shouldScheduleTimer = YES;
             [appDelegate callDataSync];
             while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, FALSE))
             {
@@ -12074,6 +12085,10 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate ScheduleIncrementalDatasyncTimer];
         [appDelegate ScheduleIncrementalMetaSyncTimer];
         [appDelegate ScheduleTimerForEventSync];
+		
+		//Radha Defect Fix 5542
+		[appDelegate updateNextDataSyncTimeToBeDisplayed:[NSDate date]];
+
     
     }
     
@@ -12480,6 +12495,8 @@ extern void SVMXLog(NSString *format, ...);
     [appDelegate ScheduleIncrementalMetaSyncTimer];
     [appDelegate ScheduleIncrementalDatasyncTimer];
     [appDelegate ScheduleTimerForEventSync];
+	//Radha Defect Fix 5542
+	[appDelegate updateNextDataSyncTimeToBeDisplayed:[NSDate date]];
 } 
 
 #pragma mark - Get Product Info

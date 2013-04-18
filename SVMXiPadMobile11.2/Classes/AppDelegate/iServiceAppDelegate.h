@@ -530,6 +530,11 @@ extern  NSString const *devVersion;
     NSMutableDictionary * serviceReportReference;
     NSTimer * locationPingSettingTimer;
 	NSString *errorDescription;
+	
+	//RADHA Defect Fix 5542
+	BOOL shouldScheduleTimer;
+	BOOL isDataSyncTimerTriggered;
+
 //    NSMutableDictionary *tempDict;
 //    NSInteger Custom_alert_count;
     
@@ -539,6 +544,9 @@ extern  NSString const *devVersion;
     //sync_override
     DATA_SYNC_TYPE data_sync_type;
 }
+//RADHA Defect Fix 5542
+@property (nonatomic, assign)BOOL shouldScheduleTimer;
+@property (nonatomic, assign)BOOL isDataSyncTimerTriggered;
 
 //Radha Sync ProgressBar
 @property (nonatomic, retain) SyncProgressBar * SyncProgress;
@@ -896,8 +904,10 @@ extern  NSString const *devVersion;
 
 -(void)getTriggerCode;
 
-//changed krishna
-- (INTF_WebServicesDefServiceSvc_SVMXClient  *) getSVMXClientObject;
+//Radha DefectFix - 5542
+- (void) updateNextDataSyncTimeToBeDisplayed:(NSDate *)CureentDateTime;
+- (void) updateNextSyncTimeIfSyncFails;
+- (NSDate *) getGMTTimeForNextDataSyncFromPList;
 
 //Radha : Sync Progress Bar
 - (void) setCurrentSyncStatusProgress:(int)syncState optimizedSynstate:(int)oSyncState;
