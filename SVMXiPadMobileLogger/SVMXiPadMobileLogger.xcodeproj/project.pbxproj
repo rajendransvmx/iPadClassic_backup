@@ -306,15 +306,13 @@
 		A89A638E164A77E400211AE8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Distribution: ServiceMax Inc";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: ServiceMax Inc";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SVMXiPadMobileLogger/SVMXiPadMobileLogger-Prefix.pch";
 				INFOPLIST_FILE = "SVMXiPadMobileLogger/SVMXiPadMobileLogger-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "6205D716-0613-40ED-B63F-E2EECD95A813";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "6205D716-0613-40ED-B63F-E2EECD95A813";
 				VALID_ARCHS = armv7;
 				WRAPPER_EXTENSION = app;
 			};
@@ -323,15 +321,13 @@
 		A89A638F164A77E400211AE8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Distribution: ServiceMax Inc";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: ServiceMax Inc";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SVMXiPadMobileLogger/SVMXiPadMobileLogger-Prefix.pch";
 				INFOPLIST_FILE = "SVMXiPadMobileLogger/SVMXiPadMobileLogger-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "6205D716-0613-40ED-B63F-E2EECD95A813";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "6205D716-0613-40ED-B63F-E2EECD95A813";
 				VALID_ARCHS = armv7;
 				WRAPPER_EXTENSION = app;
 			};
