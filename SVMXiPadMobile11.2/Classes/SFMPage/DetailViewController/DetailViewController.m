@@ -5489,9 +5489,6 @@ extern void SVMXLog(NSString *format, ...);
 			NSMutableArray * detail_values = [[detail objectForKey:gDETAILS_VALUES_ARRAY] objectAtIndex:row-1];
              NSString * record_id  = @"";
                         
-            /*NSMutableArray * array  =  [detail objectForKey:@"local_id"];
-            if ([array count] > 0)
-                record_id  =  [array objectAtIndex:row-1];*/
             
             //#4683 - Radha
             for (int i = 0; i < [detail_values count]; i++)
@@ -5508,25 +5505,6 @@ extern void SVMXLog(NSString *format, ...);
             }
 
            
-            NSString * objectName_  =  [detail objectForKey:gDETAIL_OBJECT_NAME];
-            
-            NSString * newProcessId = @"";
-            
-            for (int j = 0; j < [appDelegate.view_layout_array count]; j++)
-            {
-                NSDictionary * viewLayoutDict = [appDelegate.view_layout_array objectAtIndex:j];
-                NSString * objName = [viewLayoutDict objectForKey:VIEW_OBJECTNAME];
-                
-                SMLog(@"%@ %@", objName , objectName_);
-                if ([objName isEqualToString:objectName_])
-                {
-                    SMLog(@" after %@ %@", objName , objectName_);
-                    newProcessId = [viewLayoutDict objectForKey:@"SVMXC__ProcessID__c"];
-                    break;
-                }
-            }
-
-
 			for (int j = 0; j < columns && j < [detail_fields count]; j++)//[detail_values count ]
 			{
                 CGRect frame =  CGRectMake(j*field_width, 6, field_width-4,control_height-6);
@@ -5570,17 +5548,46 @@ extern void SVMXLog(NSString *format, ...);
                 }
 
                 lbl2.backgroundColor = [UIColor clearColor];
-                
-                if([newProcessId length] != 0 && newProcessId != nil && [record_id length] != 0 && record_id  != nil )
-                {
-                    lbl2.textColor = [UIColor blueColor];
-                }
-                
-                [background addSubview:lbl2];
-                
+				
+				
+				//Radha Fix for defect - 4683
+				if ([field_data_type isEqualToString:@"reference"])
+				{
+					NSString * objectName_  =  [detail objectForKey:gDETAIL_OBJECT_NAME];
+					
+					NSString * newProcessId = @"";
+					
+					for (int j = 0; j < [appDelegate.view_layout_array count]; j++)
+					{
+						NSDictionary * viewLayoutDict = [appDelegate.view_layout_array objectAtIndex:j];
+						NSString * objName = [viewLayoutDict objectForKey:VIEW_OBJECTNAME];
+						
+						SMLog(@"%@ %@", objName , objectName_);
+						if ([objName isEqualToString:objectName_])
+						{
+							SMLog(@" after %@ %@", objName , objectName_);
+							newProcessId = [viewLayoutDict objectForKey:@"SVMXC__ProcessID__c"];
+							break;
+						}
+					}
+					
+					if([newProcessId length] != 0 && newProcessId != nil && [record_id length] != 0 && record_id  != nil )
+					{
+						lbl2.textColor = [UIColor blueColor];
+					}
+					//NSLog(@"%@",lbl2.text );
+					//Radha 29
+					cell.userInteractionEnabled = TRUE;
+					UITapGestureRecognizer * cellTap;
+					cellTap = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(celltapRecognizer:)] autorelease];
+					[cellTap setNumberOfTapsRequired:2];
+					NSInteger cellCount = 10000;
+					int section_ = index + 1;
+					cell.tag = (cellCount * section_) + row;
+					[cell addGestureRecognizer:cellTap];
 
-               // [background addSubview:lbl2];
-                
+				}
+                [background addSubview:lbl2];
                 
                 if ( [field_data_type isEqualToString:@"boolean"] )
                 {
@@ -5612,15 +5619,6 @@ extern void SVMXLog(NSString *format, ...);
             [cell setAccessoryType:UITableViewCellAccessoryDetailDisclosureButton];
             
             
-            //Radha 29
-            cell.userInteractionEnabled = TRUE;
-            UITapGestureRecognizer * cellTap;
-            cellTap = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(celltapRecognizer:)] autorelease];
-            [cellTap setNumberOfTapsRequired:2];
-            NSInteger cellCount = 10000;
-            int section_ = index + 1;
-            cell.tag = (cellCount * section_) + row;
-            [cell addGestureRecognizer:cellTap];
 		}
         background.backgroundColor = [UIColor clearColor];
         background.frame = CGRectMake(0, 0, cell.contentView.frame.size.width-42, cell.contentView.frame.size.height);
@@ -5852,12 +5850,6 @@ extern void SVMXLog(NSString *format, ...);
                 }
             }
 
-            
-           /* NSMutableArray * array  =  [detail objectForKey:gDETAIL_VALUES_RECORD_ID];
-           
-            if ([array count] > 0)
-               temp_record_id =  [array objectAtIndex:row-1];  */
-            
                     
             
             NSString * objectName_  =  [detail objectForKey:gDETAIL_OBJECT_NAME];;
@@ -5885,25 +5877,12 @@ extern void SVMXLog(NSString *format, ...);
             {
                 
                 [activity startAnimating];
-               /* appDelegate.oldRecordId = currentRecordId;
-                appDelegate.oldProcessId = currentProcessId;
-                appDelegate.sfmPageController.objectName = objectName_;*/
                 [self initAllrequriredDetailsForProcessId:newProcessId recordId:record_id object_name:objectName_];
                 [self fillSFMdictForOfflineforProcess:newProcessId forRecord:record_id ];
                 [self didReceivePageLayoutOffline];
                 return;
             }
-           /* else
-            {
-                NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_referred_record_error];
-                NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_synchronize_error];
-                NSString * Ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
-
-                
-                UIAlertView * alert_view = [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:Ok otherButtonTitles:nil, nil] autorelease];
-                [alert_view  show];
-                
-            } */
+          
             [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
             
         }
