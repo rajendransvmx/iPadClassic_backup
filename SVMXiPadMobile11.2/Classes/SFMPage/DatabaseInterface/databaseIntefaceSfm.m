@@ -1810,12 +1810,10 @@ extern void SVMXLog(NSString *format, ...);
         
         for(NSDictionary * dict in lookup_object_info)
         {
-            NSString * isdefault = [dict objectForKey:LOOKUP_IS_STANDARD];
-            if([isdefault boolValue])
-            {
-                default_column_name = [dict objectForKey:LOOKUP_DEFAULT_LOOK_UP_CLMN];
-                break;
-            }
+			//Radha - Defect Fix - 5419
+			default_column_name = [dict objectForKey:LOOKUP_DEFAULT_LOOK_UP_CLMN];
+			if ([default_column_name length] > 0 )
+				break;
         }
         
         //Sahana Fixed   ---
