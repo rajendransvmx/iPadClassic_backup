@@ -11976,11 +11976,12 @@ extern void SVMXLog(NSString *format, ...);
             [appDelegate displayNoInternetAvailable];
             return;
         } 
-
+        
+        //Radha #6950
         NSString * _className = [buttonDict objectForKey:@"class_name"];
         NSString *methodName = [buttonDict objectForKey:@"method_name"];
         
-        _className = (_className != nil) ? className : @"";
+        _className = (_className != nil) ? _className : @"";
         methodName = (methodName != nil) ? methodName : @"";
         NSMutableDictionary *dict = [[[NSMutableDictionary alloc] init] autorelease];
         
@@ -12573,6 +12574,12 @@ extern void SVMXLog(NSString *format, ...);
                 [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:deleted_record_id SF_id:sf_id_for_deleted_record record_type:DETAIL operation:DELETE object_name:object_name sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@"" webserviceName:webserviceName className:className synctype:syncType headerLocalId:header_localId requestData:request_data finalEntry:NO];
             }
         }
+    }
+    
+    //Radha #6951
+    if ([deleted_record_array count] == 0)
+    {
+        [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:@"" SF_id:@"" record_type:DETAIL operation:DELETE object_name:object_name sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@"" webserviceName:webserviceName className:className synctype:syncType headerLocalId:header_localId requestData:request_data finalEntry:NO];
     }
     
 }

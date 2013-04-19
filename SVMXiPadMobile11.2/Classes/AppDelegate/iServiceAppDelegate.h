@@ -911,6 +911,7 @@ extern  NSString const *devVersion;
 
 //Radha : Sync Progress Bar
 - (void) setCurrentSyncStatusProgress:(int)syncState optimizedSynstate:(int)oSyncState;
+- (NSString *) getStatusImageForCustomSync;
 
 @end
 

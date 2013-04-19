@@ -755,7 +755,6 @@ NSString* machineName()
 {
     [loginController.activity stopAnimating];
     //shrinivas
-	[self setAgrressiveSync_flag];
 	
     self.isForeGround = TRUE;
 }
@@ -2025,7 +2024,8 @@ NSString * GO_Online = @"GO_Online";
 }
 
 
-//Radha Sync ProgressBar : 
+//Radha Sync ProgressBar :
+int percent = 0;
 - (void) setSyncStatus2
 {
 	UIImage *img;
@@ -2095,7 +2095,7 @@ NSString * GO_Online = @"GO_Online";
 			default:
 				break;
 		}
-		int percent  = 0;
+		 percent  = 0;
 		if (numOfCalls > 0)
 		{
 			percent = ( 100/ numOfCalls) * syncProgressState;
@@ -2111,17 +2111,7 @@ NSString * GO_Online = @"GO_Online";
 		NSString * statusImage = @"";
 		if (iscustomSync)
 		{
-			
-			if (appDelegate.SyncProgress.customSyncProgressState == CUSTOMSYNC_STARTS)
-			{
-				statusImage = [NSString stringWithFormat:@"sync6.png"];
-				percent = 50;
-			}
-			else
-			{
-				statusImage = [NSString stringWithFormat:@"sync12.png"];
-				
-			}
+			statusImage = [self getStatusImageForCustomSync];
 		}
 		else
 		{
@@ -2188,6 +2178,41 @@ NSString * GO_Online = @"GO_Online";
 	[self setSyncStatus:SYNC_ORANGE];
 }
 
+- (NSString *) getStatusImageForCustomSync
+{
+	NSString * statusImage = @"";
+	percent = 0;
+	
+	
+	switch (appDelegate.SyncProgress.customSyncProgressState) {
+		case CUSTOMSYNC_REQDATA:
+			statusImage = [NSString stringWithFormat:@"sync3.png"];
+			percent = 25;
+			break;
+			
+		case CUSTOMSYNC_GETDATA:
+			statusImage = [NSString stringWithFormat:@"sync6.png"];
+			percent = 50;
+			break;
+			
+		case CUSTOMSYNC_PUTDATA:
+			statusImage = [NSString stringWithFormat:@"sync9.png"];
+			percent = 75;
+			break;
+			
+		case CUSTOMSYNC_END:
+			statusImage = [NSString stringWithFormat:@"sync12.png"];
+			percent = 100;
+			break;
+			
+		default:
+			statusImage = [NSString stringWithFormat:@"sync0.png"];
+			break;
+	}
+
+	
+	return statusImage;
+}
 
 #pragma mark - End
 

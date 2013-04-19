@@ -7581,6 +7581,16 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void)fillSyncRecordDictForRecordType:(NSString *)record_type SF_Id:(NSString *)SF_id local_id:(NSString *)local_id  operation_type:(NSString *)operation_type  final_dictionary:(NSMutableDictionary *)sync_record_dict  object_naem:(NSString *)object_name parent_object_name:(NSString *)parent_object_name parent_local_id:(NSString *)parent_local_id
 {
+    
+    if([operation_type isEqualToString:UPDATE])
+    {
+    BOOL flag = [self doeslocal_idexistsinSyncrecord:sync_record_dict new_local_id:local_id];
+    if(flag )
+    {
+        return;
+    }
+    }
+    
     NSArray * keys =  [[NSArray alloc] initWithObjects:@"Id",@"local_id",@"Operation_type", @"parent_object_name", @"parent_local_id",nil ];
     NSDictionary *  info_dict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:SF_id,local_id, operation_type,parent_object_name,parent_local_id, nil] forKeys:keys];
     
@@ -7650,6 +7660,39 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     [info_dict release];
+}
+
+-(BOOL)doeslocal_idexistsinSyncrecord:(NSDictionary *)sync_record new_local_id:(NSString *)new_local_id
+{
+    
+    BOOL flag = FALSE;
+    NSArray * object_types = [sync_record allKeys];
+    
+    for(NSString * object_type in object_types)
+    {
+        NSDictionary * each_dict = [sync_record objectForKey:object_type];
+        NSArray * allobjects = [each_dict allKeys];
+        for(NSString * object_name in allobjects)
+        {
+            NSDictionary  * operation_type_dict  = [each_dict objectForKey:object_name];
+            NSArray * all_operations = [operation_type_dict allKeys];
+            for(NSString  * single_operation in all_operations)
+            {
+                NSArray * record_info_dict_array = [operation_type_dict objectForKey:single_operation];
+                
+                for(NSDictionary * info_dict in record_info_dict_array)
+                {
+                    NSString * local_id = [info_dict objectForKey:@"local_id"];
+                    if([local_id isEqualToString:new_local_id])
+                    {
+                        flag = TRUE;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    return flag;
 }
 #pragma custom agggressive sync implementation Ends
 //Sync Override :Radha
@@ -7848,17 +7891,28 @@ extern void SVMXLog(NSString *format, ...);
                 }
                 else
                 {
-                    NSString * new_local_id = [iServiceAppDelegate GetUUID];
-                    if ([record_type isEqualToString:DETAIL])
-                    {
-                        NSString * parent_sf_id = @"";
-                        parent_sf_id = [temp_dict objectForKey:parent_column_name];
-                        NSString * parent_local_id = [self getLocalIdFromSFId:parent_sf_id tableName:parent_object_name];
-                        [temp_dict setObject:parent_local_id forKey:parent_column_name];
-                    }
-                    [temp_dict setObject:new_local_id forKey:@"local_id"];
-                    BOOL insert_flag = [self insertdataIntoTable:object_name data:temp_dict];
-                    if(insert_flag){}
+					//Check if entry exists
+					BOOL check = [appDelegate.dataBase checkIfRecordExistForObject:object_name Id:sf_id];
+					
+					if (check)
+					{
+						[self UpdateTableforSFId:sf_id forObject:object_name data:temp_dict];
+					}
+					else
+					{
+						NSString * new_local_id = [iServiceAppDelegate GetUUID];
+						if ([record_type isEqualToString:DETAIL])
+						{
+							NSString * parent_sf_id = @"";
+							parent_sf_id = [temp_dict objectForKey:parent_column_name];
+							NSString * parent_local_id = [self getLocalIdFromSFId:parent_sf_id tableName:parent_object_name];
+							[temp_dict setObject:parent_local_id forKey:parent_column_name];
+						}
+						[temp_dict setObject:new_local_id forKey:@"local_id"];
+						BOOL insert_flag = [self insertdataIntoTable:object_name data:temp_dict];
+						if(insert_flag){}
+					}
+                   
                 }
             }
             else if([operation_type isEqualToString:UPDATE])

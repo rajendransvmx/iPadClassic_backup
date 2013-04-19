@@ -291,7 +291,8 @@ extern void SVMXLog(NSString *format, ...);
                                     parent_column_name = [appDelegate.databaseInterface getParentColumnNameFormChildInfoTable:SFCHILDRELATIONSHIP childApiName:object_name parentApiName:parent_obj_name];
                                 }
                             }
-                            if(![operation_type isEqualToString:INSERT])
+                             BOOL ischild =  [appDelegate.databaseInterface IsChildObject:object_name];
+                            if(![operation_type isEqualToString:INSERT] && ischild)
                             {
                                 [each_record setValue:parent_sf_id forKey:parent_column_name];
                             }
@@ -299,6 +300,10 @@ extern void SVMXLog(NSString *format, ...);
                     }
                     else
                     {
+                        if([sf_id length] == 0)
+                        {
+                            continue;
+                        }
                         if(each_record == nil)
                         {
                             each_record = [[NSMutableDictionary alloc] initWithCapacity:0];
@@ -366,6 +371,37 @@ extern void SVMXLog(NSString *format, ...);
                 [SVMXC_valueMAp addValueMap:Delete_operation];
                 [Delete_operation release];
             }
+            else
+            {
+				//Radha #6951
+                if(![object_type isEqualToString:MASTER])
+                {
+                    Delete_operation = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+                    Delete_operation.key = @"UPDATE";
+                    BOOL ischild =  [appDelegate.databaseInterface IsChildObject:object_name];
+                    if(ischild)
+                    {
+                        if(parent_column_name == nil )
+                        {
+                            NSString * parent_obj_name= custom_sync_object_name;
+                            
+                            if(parent_column_name == nil)
+                            {
+                                parent_column_name = [appDelegate.databaseInterface getParentColumnNameFormChildInfoTable:SFCHILDRELATIONSHIP childApiName:object_name parentApiName:parent_obj_name];
+                            }
+                        }
+                        [Delete_operation.values addObject:parent_column_name];
+                    }
+                    else
+                    {
+                        NSString * releated_column_name = [appDelegate.databaseInterface getRefernceToFieldnameForObjct:object_name reference_table:custom_sync_object_name table_name:SF_REFERENCE_TO];
+                        [Delete_operation.values addObject:releated_column_name];
+                    }
+                    [SVMXC_valueMAp addValueMap:Delete_operation];
+                    [Delete_operation release];
+                }
+
+            }
             if(Insert_operation != nil)
             {
                 if([object_type isEqualToString:SYNC_RECORD_DETAIL] && parent_column_name != nil)
@@ -422,6 +458,7 @@ extern void SVMXLog(NSString *format, ...);
 			[appDelegate setCurrentSyncStatusProgress:CUSTOMSYNC_STARTS optimizedSynstate:0];
 			
             NSMutableDictionary * sync_record = [appDelegate.databaseInterface getCustomAggressiveSyncRecordsForHearedRecord:request_id];
+			[appDelegate setCurrentSyncStatusProgress:CUSTOMSYNC_REQDATA optimizedSynstate:0];
             [self optimizedAggressiveSync:sync_record method_name:[cofig_info objectForKey:WEBSERVICE_NAME] class_name:[cofig_info objectForKey:CLASS_NAME] event_type:@"SYNC" event_name:@"PROCESS" request_id:request_id];
             while(CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
             {
@@ -452,6 +489,7 @@ extern void SVMXLog(NSString *format, ...);
                 
             }
         }
+		[appDelegate setCurrentSyncStatusProgress:CUSTOMSYNC_END optimizedSynstate:0];
     }
 
     
@@ -487,6 +525,7 @@ extern void SVMXLog(NSString *format, ...);
             }
             
             NSMutableDictionary * sync_record = [appDelegate.databaseInterface getCustomAggressiveSyncRecordsForHearedRecord:request_id];
+			[appDelegate setCurrentSyncStatusProgress:CUSTOMSYNC_REQDATA optimizedSynstate:0];
             [self optimizedAggressiveSync:sync_record method_name:[cofig_info objectForKey:WEBSERVICE_NAME] class_name:[cofig_info objectForKey:CLASS_NAME] event_type:@"SYNC" event_name:event_name request_id:request_id];
             while(CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
             {
@@ -505,6 +544,7 @@ extern void SVMXLog(NSString *format, ...);
                 }
             }
         }
+		[appDelegate setCurrentSyncStatusProgress:CUSTOMSYNC_END optimizedSynstate:0];
     }
 }
 
@@ -1395,9 +1435,11 @@ last_sync_time:(NSString *)last_sync_time
         appDelegate.Enable_aggresssiveSync = FALSE;
         appDelegate.dataSyncRunning = NO;
         appDelegate.data_sync_type = NORMAL_DATA_SYNC;
+		[appDelegate updateSyncFailedFlag:SFALSE];
 	//Refresh
 	[[NSNotificationCenter defaultCenter] postNotificationName:kIncrementalDataSyncDone object:nil userInfo:nil];
-	[[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_EVENT_DATA_SYNC object:nil];		
+	[[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_EVENT_DATA_SYNC object:nil];
+	[appDelegate.dataBase updateRecentsPlist];
         return;
     }
         
@@ -6254,7 +6296,9 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     if([operation isKindOfClass:[INTF_WebServicesDefBinding_INTF_SyncOverRide_WS class]])
     {
          custom_sync_status = NO_ACTIVE_CUSTOM_SYNC;
-        
+		
+		[appDelegate setCurrentSyncStatusProgress:CUSTOMSYNC_GETDATA optimizedSynstate:0];
+		
         INTF_WebServicesDefServiceSvc_INTF_SyncOverRide_WSResponse * wsResponse = [response.bodyParts objectAtIndex:0];
         if([wsResponse.result.errors count]>0)
         {
@@ -6297,8 +6341,10 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         
         if (([wsResponse.result.eventName isEqualToString:@"PROCESS"] || [wsResponse.result.eventName isEqualToString:@"IGNORE"]) && [wsResponse.result.eventType isEqualToString:SYNC])
         {
-            NSArray * keys = [[NSArray alloc] initWithObjects:cw_local_id,cw_json_record,cw_sf_id,cw_operation_type, cw_record_type,cw_object_name,cw_parent_colmn_name,cw_header_obj_name,nil];
-            NSArray * error_conflict =[[NSArray alloc] initWithObjects:cw_local_id,cw_sf_id ,cw_operation_type, cw_record_type,cw_error_mesg,cw_error_type,cw_object_name,cw_custom_error_type,nil];
+            NSArray * keys = [NSArray arrayWithObjects:cw_local_id,cw_json_record,cw_sf_id,cw_operation_type, cw_record_type,cw_object_name,cw_parent_colmn_name,cw_header_obj_name,nil];
+            //Radha #6949
+            NSArray * error_conflict =[NSArray arrayWithObjects:cw_local_id,cw_sf_id ,cw_operation_type, cw_record_type,cw_error_mesg,cw_error_type,cw_object_name,cw_custom_error_type,nil];
+            
             NSMutableArray * record_dict = [[NSMutableArray alloc] initWithCapacity:0];
             
             NSMutableArray * conflict_array = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
@@ -6386,7 +6432,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                             
                              NSDictionary * dict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:local_id,record_value,sf_id,operation_type,record_type,object_name,parent_column_name,header_object_name,nil] forKeys:keys];
                             [record_dict addObject:dict];
-                            [dict release];
+            
                         }
                         else if([each_record.key isEqualToString:@"DML_ERROR"])
                         {
@@ -6397,7 +6443,6 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                             //Need to insert into conflict table
                             NSDictionary * dict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:local_id,sf_id,operation_type,record_type,each_record.value,@"ERROR",object_name,@"DML_ERROR", nil] forKeys:error_conflict];
                             [conflict_array addObject:dict];
-                            [dict release];
                         }
                     }
                 }
@@ -6421,12 +6466,11 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 //            [error_conflict release];
 //            [record_dict release];
         }
-        
-        appDelegate.Incremental_sync_status = CUSTOM_AGGRESSIVESYNC_DONE;
 		if (appDelegate.syncTypeInProgress == CUSTOMSYNC_INPROGRESS)
 		{
-			[appDelegate setCurrentSyncStatusProgress:CUSTOMSYNC_END optimizedSynstate:0];
+			[appDelegate setCurrentSyncStatusProgress:CUSTOMSYNC_PUTDATA optimizedSynstate:0];
 		}
+		 appDelegate.Incremental_sync_status = CUSTOM_AGGRESSIVESYNC_DONE;
 		
         NSLog(@"This is INTF_WebServicesDefBinding_INTF_SyncOverRide_WS");
     }

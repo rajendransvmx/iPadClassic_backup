@@ -310,7 +310,7 @@
 
 //Sync_Override : Radha
 - (BOOL) checkIfCustomEntryExistsInTrailerTable:(NSString *)parentLocalId;
-
+-(BOOL)doeslocal_idexistsinSyncrecord:(NSDictionary *)sync_record new_local_id:(NSString *)new_local_id;
 
 #define SERVER_OVERRIDE                     @"Server_Override"
 #define CLIENT_OVERRIDE                     @"Client_Override"

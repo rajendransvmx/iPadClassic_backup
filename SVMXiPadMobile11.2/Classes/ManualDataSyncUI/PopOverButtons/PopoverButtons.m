@@ -163,13 +163,12 @@ PopoverButtons *popOver_view;
 - (void) Syncronise
 {
     //sync_override
-    appDelegate.data_sync_type = NORMAL_DATA_SYNC;
+//    appDelegate.data_sync_type = NORMAL_DATA_SYNC;
     
 	BOOL retVal;
     [delegate dismisspopover];
 	
-	[appDelegate setAgrressiveSync_flag];
-    // appDelegate.Enable_aggresssiveSync = FALSE;
+	
     appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
     
     if (![appDelegate isInternetConnectionAvailable])
