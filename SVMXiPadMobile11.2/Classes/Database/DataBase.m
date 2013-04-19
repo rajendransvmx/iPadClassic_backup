@@ -8065,6 +8065,7 @@ extern void SVMXLog(NSString *format, ...);
     if ([array count] == 0)
     {
         didGetServiceReportLogo = YES;
+        appDelegate.serviceReportLogo = nil;
         return;
     }
     
@@ -8075,6 +8076,11 @@ extern void SVMXLog(NSString *format, ...);
     // Decode data from Base64
     if (dataString != nil && [dataString length] > 0)
     {        
+        
+        NSData * data = [Base64 decode:dataString];
+
+        appDelegate.serviceReportLogo = [[[UIImage alloc] initWithData:data]autorelease];
+
         // Save the image to the application bundle
 //        NSFileManager * fileManager = [NSFileManager defaultManager];
 //        

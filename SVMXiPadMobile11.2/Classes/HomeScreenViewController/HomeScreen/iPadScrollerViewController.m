@@ -399,6 +399,12 @@ const NSUInteger kNumImages = 7;
     [self performSelector:@selector(fadeInLogo) withObject:nil afterDelay:1];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [customerLogoImageView setImage:appDelegate.serviceReportLogo];
+}
+
 -(void)viewDidAppear:(BOOL)animated
 {
     //[appDelegate.wsInterface doGetPrice];
@@ -505,6 +511,10 @@ const NSUInteger kNumImages = 7;
             appDelegate.isInitialMetaSyncInProgress = FALSE;
             [ProgressView removeFromSuperview];
             [transparent_layer removeFromSuperview];
+            
+            //6941:Aparna
+            [customerLogoImageView setImage:appDelegate.serviceReportLogo];
+            
         }
         else
         {
@@ -1093,6 +1103,9 @@ const NSUInteger kNumImages = 7;
     
     [ProgressView removeFromSuperview];
     [transparent_layer removeFromSuperview];
+    //6941:Aparna
+    [customerLogoImageView setImage:appDelegate.serviceReportLogo];
+
 
     appDelegate.do_meta_data_sync = DONT_ALLOW_META_DATA_SYNC;
     appDelegate.IsLogedIn = ISLOGEDIN_FALSE;

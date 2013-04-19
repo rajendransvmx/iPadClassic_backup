@@ -168,18 +168,6 @@ extern void SVMXLog(NSString *format, ...);
 			[self loginWithUsernamePassword];
 		}
 
-        [self getServiceReportLogo];
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, FALSE))
-        {
-            if (![appDelegate isInternetConnectionAvailable])
-            {
-                break;
-            }
-            if(didGetServiceReportLogo)
-            {
-                break;
-            }
-        }
 
         [self showHomeScreenviewController];
     }
@@ -420,6 +408,21 @@ extern void SVMXLog(NSString *format, ...);
 
     }
     [ZKServerSwitchboard switchboard].logXMLInOut = YES;
+    
+    [self getServiceReportLogo];
+    
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, FALSE))
+    {
+        if (![appDelegate isInternetConnectionAvailable])
+        {
+            break;
+        }
+        if(didGetServiceReportLogo)
+        {
+            break;
+        }
+    }
+
     
 }
 
@@ -889,7 +892,7 @@ extern void SVMXLog(NSString *format, ...);
     }
 
     NSString * _query = [NSString stringWithFormat:@"SELECT Body FROM Document Where Name = 'ServiceMax_iPad_CompanyLogo'"];
-    
+    [appDelegate goOnlineIfRequired];
     [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetServiceReportLogo:error:context:) context:nil];
 }
 
@@ -902,6 +905,7 @@ extern void SVMXLog(NSString *format, ...);
     if ([array count] == 0)
     {
         didGetServiceReportLogo = YES;
+        appDelegate.serviceReportLogo = nil;
         return;
     }
     
@@ -1992,14 +1996,6 @@ extern void SVMXLog(NSString *format, ...);
     BOOL ContinueLogin = [self CheckForUserNamePassword];  //SYNC_HISTORY PLIST  check should be done before calling to the
     if(ContinueLogin)
     {
-        [self getServiceReportLogo];
-        while(didGetServiceReportLogo)
-        {
-            if (![appDelegate isInternetConnectionAvailable])
-            {
-                break;
-            }
-        }
         
         [self showHomeScreenviewController];
     }
