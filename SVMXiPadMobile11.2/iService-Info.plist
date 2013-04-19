@@ -13,7 +13,19 @@
 	<key>CFBundleIconFiles</key>
 	<array>
 		<string>72x72.png</string>
+		<string>72x72@2x.png</string>
 	</array>
+	<key>CFBundleIcons</key>
+	<dict>
+		<key>CFBundlePrimaryIcon</key>
+		<dict>
+			<key>CFBundleIconFiles</key>
+			<array>
+				<string>72x72.png</string>
+				<string>72x72@2x.png</string>
+			</array>
+		</dict>
+	</dict>
 	<key>CFBundleIdentifier</key>
 	<string>com.servicemaxinc.servicemaxmobile</string>
 	<key>CFBundleInfoDictionaryVersion</key>
