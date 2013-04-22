@@ -3006,6 +3006,21 @@ int percent = 0;
     }
     
 }
+
+
+//Defect 6774
+- (void) checkifConflictExistsForConnectionError
+{
+	if ( [self.calDataBase selectCountFromSync_Conflicts])
+	{
+		[self  setSyncStatus:SYNC_RED];
+	}
+	else
+	{
+		[self  setSyncStatus:SYNC_GREEN];
+	}
+}
+
 @end
 
 @implementation processInfo

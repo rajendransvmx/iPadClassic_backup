@@ -7638,8 +7638,8 @@ extern void SVMXLog(NSString *format, ...);
 
         if(appDelegate.connection_error)
         {
-            appDelegate.SyncStatus = SYNC_GREEN;
-            [self performSelectorOnMainThread:@selector(setSyncStatus) withObject:nil waitUntilDone:NO];
+			//Defect 6774
+			[appDelegate checkifConflictExistsForConnectionError];
             return FALSE;
         }
     }
@@ -7689,8 +7689,8 @@ extern void SVMXLog(NSString *format, ...);
             break; 
         if(appDelegate.connection_error)
         {
-            appDelegate.SyncStatus = SYNC_GREEN;
-            [self performSelectorOnMainThread:@selector(setSyncStatus) withObject:nil waitUntilDone:NO];
+            //Defect 6774
+			[appDelegate checkifConflictExistsForConnectionError];
              return FALSE;
         }
     }

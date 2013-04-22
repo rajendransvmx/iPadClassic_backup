@@ -3600,17 +3600,27 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) animation1DidStop:(NSString *)animationID finished:(NSNumber *)finished context:(void *)context
 {
-	if (detailViewObject.isInEditDetail)  //Shrinivas detailViewObject.isInEditDetail
-	{
-		[detailViewObject.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+    @try {
+        if (detailViewObject.isInEditDetail)  //Shrinivas detailViewObject.isInEditDetail
+        {
+            
+            [detailViewObject.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+            
+        }
+        else
+        {
+            [tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+            
+        }
+        
+    }
+    @catch (NSException *exception) {
+        
+        SMLog(@"Exception Name DetailViewController :animation1DidStop %@",exception.name);
+        SMLog(@"Exception Reason DetailViewController :animation1DidStop %@",exception.reason);
 
-	}
-	else
-	{
-		[tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
-
-	}
-
+    }
+   
 }
 
 /*
@@ -11382,7 +11392,11 @@ extern void SVMXLog(NSString *format, ...);
 												{
 													if(isSalesForceRecord)
 													{
-														[appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:line_record_id SF_id:childSfId record_type:DETAIL operation:UPDATE object_name:detail_object_name sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:currentRecordId webserviceName:webserviceName className:className synctype:syncType headerLocalId:appDelegate.sfmPageController.recordId  requestData:customDataDictionary finalEntry:NO];//idvalue
+                                                        BOOL Does_exist_sf_id = [appDelegate.databaseInterface DoesTrailerContainTheRecordForSf_id:childSfId operation_type:UPDATE object_name:detail_object_name];
+                                                        if(!Does_exist_sf_id )
+                                                        {
+                                                            [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:line_record_id SF_id:childSfId record_type:DETAIL operation:UPDATE object_name:detail_object_name sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:currentRecordId webserviceName:webserviceName className:className synctype:syncType headerLocalId:appDelegate.sfmPageController.recordId  requestData:customDataDictionary finalEntry:NO];//idvalue
+                                                        }
 													}
 												}
 												else
@@ -12576,8 +12590,8 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     
-    //Radha #6951
-    if ([deleted_record_array count] == 0)
+    //Radha #6951  && 6963
+    if ([deleted_record_array count] == 0 && [sync_type isEqualToString:CUSTOMSYNC])
     {
         [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:@"" SF_id:@"" record_type:DETAIL operation:DELETE object_name:object_name sync_flag:@"false" parentObjectName:@"" parent_loacl_id:@"" webserviceName:webserviceName className:className synctype:syncType headerLocalId:header_localId requestData:request_data finalEntry:NO];
     }
