@@ -225,7 +225,7 @@ extern void SVMXLog(NSString *format, ...);
          
             NSString * parent_column_name = nil , * parent_sf_id = nil;
             
-            INTF_WebServicesDefServiceSvc_SVMXMap  * Insert_operation = nil , * Delete_operation  = nil , * update_operation = nil ;
+            INTF_WebServicesDefServiceSvc_SVMXMap  * Insert_operation = nil , * Delete_operation  = nil , * update_operation = nil , * additional_valuemap = nil;
             
             for(NSString  * single_operation in all_operations)
             {
@@ -280,18 +280,29 @@ extern void SVMXLog(NSString *format, ...);
                          each_record = [appDelegate.databaseInterface getRecordsForRecordId:local_id  ForObjectName:object_name fields:field_string];
                         if([object_type isEqualToString:DETAIL])
                         {
-                            
-                            if(parent_column_name == nil || parent_sf_id == nil)
+                            BOOL ischild =  [appDelegate.databaseInterface IsChildObject:object_name];
+                            if(ischild)
                             {
-                                NSString * parent_obj_name= [info_dict objectForKey:@"parent_object_name"];
-                                NSString * header_local_id = [info_dict objectForKey:@"parent_local_id"];
-                                if(parent_sf_id == nil && parent_column_name == nil)
+                                if(parent_column_name == nil || parent_sf_id == nil)
                                 {
-                                    parent_sf_id = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:parent_obj_name local_id:header_local_id];
-                                    parent_column_name = [appDelegate.databaseInterface getParentColumnNameFormChildInfoTable:SFCHILDRELATIONSHIP childApiName:object_name parentApiName:parent_obj_name];
+                                    NSString * parent_obj_name= [info_dict objectForKey:@"parent_object_name"];
+                                    NSString * header_local_id = [info_dict objectForKey:@"parent_local_id"];
+                                    if(parent_sf_id == nil && parent_column_name == nil)
+                                    {
+                                        parent_sf_id = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:parent_obj_name local_id:header_local_id];
+                                        parent_column_name = [appDelegate.databaseInterface getParentColumnNameFormChildInfoTable:SFCHILDRELATIONSHIP childApiName:object_name parentApiName:parent_obj_name];
+                                    }
                                 }
                             }
-                             BOOL ischild =  [appDelegate.databaseInterface IsChildObject:object_name];
+                            else
+                            {
+                                 if(parent_column_name == nil )
+                                 {
+                                    NSString * parent_obj_name= [info_dict objectForKey:@"parent_object_name"];
+                                     parent_column_name = [appDelegate.databaseInterface getRefernceToFieldnameForObjct:object_name reference_table:parent_obj_name table_name:SF_REFERENCE_TO];
+                                 }
+                            }
+//                             BOOL ischild =  [appDelegate.databaseInterface IsChildObject:object_name];
                             if(![operation_type isEqualToString:INSERT] && ischild)
                             {
                                 [each_record setValue:parent_sf_id forKey:parent_column_name];
@@ -352,9 +363,56 @@ extern void SVMXLog(NSString *format, ...);
                             Delete_operation = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
                             Delete_operation.key = operation_type;
                         }
+                        BOOL ischild =  [appDelegate.databaseInterface IsChildObject:object_name];
+                        if(ischild)
+                        {
+                            if(parent_column_name == nil )
+                            {
+                                NSString * parent_obj_name= custom_sync_object_name;
+                                
+                                if(parent_column_name == nil)
+                                {
+                                    parent_column_name = [appDelegate.databaseInterface getParentColumnNameFormChildInfoTable:SFCHILDRELATIONSHIP childApiName:object_name parentApiName:parent_obj_name];
+                                }
+                            }
+                            [Delete_operation.values  addObject:parent_column_name];
+                        }
+                        else
+                        {
+                            NSString * related_column_name = [appDelegate.databaseInterface getRefernceToFieldnameForObjct:object_name reference_table:custom_sync_object_name table_name:SF_REFERENCE_TO];
+                            [Delete_operation.values addObject:related_column_name];
+                        }
                         [Delete_operation addValueMap:records_map];
                     }
                 }
+            }
+            //---TO DO----
+            if(additional_valuemap == nil && ![object_type isEqualToString:MASTER] && update_operation == nil && Delete_operation == nil  && Insert_operation == nil)
+            {
+                additional_valuemap = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+                additional_valuemap.key = @"UPDATE";
+                BOOL ischild =  [appDelegate.databaseInterface IsChildObject:object_name];
+                if(ischild)
+                {
+                    if(parent_column_name == nil )
+                    {
+                        NSString * parent_obj_name= custom_sync_object_name;
+                        
+                        if(parent_column_name == nil)
+                        {
+                            parent_column_name = [appDelegate.databaseInterface getParentColumnNameFormChildInfoTable:SFCHILDRELATIONSHIP childApiName:object_name parentApiName:parent_obj_name];
+                        }
+                    }
+                    [additional_valuemap.values addObject:parent_column_name];
+                }
+                else
+                {
+                    NSString * releated_column_name = [appDelegate.databaseInterface getRefernceToFieldnameForObjct:object_name reference_table:custom_sync_object_name table_name:SF_REFERENCE_TO];
+                    [additional_valuemap.values addObject:releated_column_name];
+                }
+                [SVMXC_valueMAp addValueMap:additional_valuemap];
+                [additional_valuemap release];
+                
             }
             
             if(update_operation != nil)
@@ -374,32 +432,32 @@ extern void SVMXLog(NSString *format, ...);
             else
             {
 				//Radha #6951
-                if(![object_type isEqualToString:MASTER])
-                {
-                    Delete_operation = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
-                    Delete_operation.key = @"UPDATE";
-                    BOOL ischild =  [appDelegate.databaseInterface IsChildObject:object_name];
-                    if(ischild)
-                    {
-                        if(parent_column_name == nil )
-                        {
-                            NSString * parent_obj_name= custom_sync_object_name;
-                            
-                            if(parent_column_name == nil)
-                            {
-                                parent_column_name = [appDelegate.databaseInterface getParentColumnNameFormChildInfoTable:SFCHILDRELATIONSHIP childApiName:object_name parentApiName:parent_obj_name];
-                            }
-                        }
-                        [Delete_operation.values addObject:parent_column_name];
-                    }
-                    else
-                    {
-                        NSString * releated_column_name = [appDelegate.databaseInterface getRefernceToFieldnameForObjct:object_name reference_table:custom_sync_object_name table_name:SF_REFERENCE_TO];
-                        [Delete_operation.values addObject:releated_column_name];
-                    }
-                    [SVMXC_valueMAp addValueMap:Delete_operation];
-                    [Delete_operation release];
-                }
+//                if(![object_type isEqualToString:MASTER])
+//                {
+//                    Delete_operation = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+//                    Delete_operation.key = @"UPDATE";
+//                    BOOL ischild =  [appDelegate.databaseInterface IsChildObject:object_name];
+//                    if(ischild)
+//                    {
+//                        if(parent_column_name == nil )
+//                        {
+//                            NSString * parent_obj_name= custom_sync_object_name;
+//                            
+//                            if(parent_column_name == nil)
+//                            {
+//                                parent_column_name = [appDelegate.databaseInterface getParentColumnNameFormChildInfoTable:SFCHILDRELATIONSHIP childApiName:object_name parentApiName:parent_obj_name];
+//                            }
+//                        }
+//                        [Delete_operation.values addObject:parent_column_name];
+//                    }
+//                    else
+//                    {
+//                        NSString * releated_column_name = [appDelegate.databaseInterface getRefernceToFieldnameForObjct:object_name reference_table:custom_sync_object_name table_name:SF_REFERENCE_TO];
+//                        [Delete_operation.values addObject:releated_column_name];
+//                    }
+//                    [SVMXC_valueMAp addValueMap:Delete_operation];
+//                    [Delete_operation release];
+//                }
 
             }
             if(Insert_operation != nil)
@@ -481,7 +539,8 @@ extern void SVMXLog(NSString *format, ...);
                 if(appDelegate.connection_error)
                 {
                     appDelegate.dataSyncRunning = NO;
-                    appDelegate.SyncStatus = SYNC_GREEN;
+                    //Defect 6774
+					[appDelegate checkifConflictExistsForConnectionError];
                     [self internetConnectivityHandling:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_data_sync]];
                     appDelegate.Enable_aggresssiveSync = FALSE;
                     return;
@@ -961,7 +1020,11 @@ last_sync_time:(NSString *)last_sync_time
             break;
         }
         if(appDelegate.connection_error)
+		{
+			//Defect 6774
+			[appDelegate checkifConflictExistsForConnectionError];
             break;
+		}
         
 
     }
@@ -996,7 +1059,11 @@ last_sync_time:(NSString *)last_sync_time
                 break;
             }
             if(appDelegate.connection_error)
+			{
+				//Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
                 break;
+			}
 
         }
         [self setSyncReqId:@""];
@@ -1422,7 +1489,10 @@ last_sync_time:(NSString *)last_sync_time
     if( [appDelegate isInternetConnectionAvailable] == FALSE)
     {
         if ([appDelegate isInternetConnectionAvailable])
-            [appDelegate setSyncStatus:SYNC_GREEN];
+		{
+            //Defect 6774
+			[appDelegate checkifConflictExistsForConnectionError];
+		}
         appDelegate.Enable_aggresssiveSync = FALSE;
         appDelegate.dataSyncRunning = NO;
         return;
@@ -1431,7 +1501,10 @@ last_sync_time:(NSString *)last_sync_time
     if(![appDelegate.databaseInterface ContinueIncrementalDataSync] && appDelegate.data_sync_type == CUSTOM_DATA_SYNC)
     {
         if ([appDelegate isInternetConnectionAvailable])
-            [appDelegate setSyncStatus:SYNC_GREEN];
+		{
+            //Defect 6774
+			[appDelegate checkifConflictExistsForConnectionError];
+		}
         appDelegate.Enable_aggresssiveSync = FALSE;
         appDelegate.dataSyncRunning = NO;
         appDelegate.data_sync_type = NORMAL_DATA_SYNC;
@@ -1471,7 +1544,8 @@ last_sync_time:(NSString *)last_sync_time
         if(appDelegate.connection_error)
         {
              appDelegate.dataSyncRunning = NO;
-            appDelegate.SyncStatus = SYNC_GREEN;
+            //Defect 6774
+			[appDelegate checkifConflictExistsForConnectionError];
             [self internetConnectivityHandling:data_sync];
              appDelegate.Enable_aggresssiveSync = FALSE;
 			//Radha Defect Fix 5542
@@ -1489,7 +1563,10 @@ last_sync_time:(NSString *)last_sync_time
     if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
     {
         if ([appDelegate isInternetConnectionAvailable])
-            [appDelegate setSyncStatus:SYNC_GREEN];
+		{
+            //Defect 6774
+			[appDelegate checkifConflictExistsForConnectionError];
+		}
 		 appDelegate.Enable_aggresssiveSync = FALSE;
 		appDelegate.dataSyncRunning = NO;
 		//Radha Defect Fix 5542
@@ -1529,6 +1606,8 @@ last_sync_time:(NSString *)last_sync_time
             {
                 appDelegate.dataSyncRunning = NO;
                 appDelegate.connection_error = TRUE;
+				//Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
                 [self internetConnectivityHandling:data_sync];
                  appDelegate.Enable_aggresssiveSync = FALSE;
 				//Radha Defect Fix 5542
@@ -1544,7 +1623,10 @@ last_sync_time:(NSString *)last_sync_time
         if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
         {
             if ([appDelegate isInternetConnectionAvailable])
-                appDelegate.SyncStatus = SYNC_GREEN;
+            {
+				//Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
+			}
             
             appDelegate.dataSyncRunning = NO;
              appDelegate.Enable_aggresssiveSync = FALSE;
@@ -1579,6 +1661,8 @@ last_sync_time:(NSString *)last_sync_time
             {
                 appDelegate.dataSyncRunning = NO;
                 [self internetConnectivityHandling:data_sync];
+				//Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
                  appDelegate.Enable_aggresssiveSync = FALSE;
 				//Radha Defect Fix 5542
 				if (appDelegate.isDataSyncTimerTriggered)
@@ -1593,6 +1677,8 @@ last_sync_time:(NSString *)last_sync_time
         }
         if (![appDelegate isInternetConnectionAvailable])
         {
+			//Defect 6774
+			[appDelegate checkifConflictExistsForConnectionError];
             appDelegate.dataSyncRunning = NO;
             [self internetConnectivityHandling:data_sync];
              appDelegate.Enable_aggresssiveSync = FALSE;
@@ -1635,7 +1721,8 @@ last_sync_time:(NSString *)last_sync_time
             if(appDelegate.connection_error)
             {
                 appDelegate.dataSyncRunning = NO;
-                appDelegate.SyncStatus = SYNC_GREEN;
+                //Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
                 [self internetConnectivityHandling:data_sync];
                  appDelegate.Enable_aggresssiveSync = FALSE;
 				//Radha Defect Fix 5542
@@ -1656,7 +1743,10 @@ last_sync_time:(NSString *)last_sync_time
         if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
         {
             if ([appDelegate isInternetConnectionAvailable])
-                [appDelegate setSyncStatus:SYNC_GREEN];
+			{
+				//Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
+			}
             
             appDelegate.dataSyncRunning = NO;
             [updateSyncStatus refreshSyncStatus];
@@ -1711,7 +1801,8 @@ last_sync_time:(NSString *)last_sync_time
             if(appDelegate.connection_error)
             {
                 appDelegate.dataSyncRunning = NO;
-                appDelegate.SyncStatus = SYNC_GREEN;
+                //Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
                 [self internetConnectivityHandling:data_sync];
                  appDelegate.Enable_aggresssiveSync = FALSE;
 				//Radha Defect Fix 5542
@@ -1727,7 +1818,10 @@ last_sync_time:(NSString *)last_sync_time
         if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
         {
             if ([appDelegate isInternetConnectionAvailable])
-                appDelegate.SyncStatus = SYNC_GREEN;
+			{
+				//Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
+			}
 
             appDelegate.dataSyncRunning = NO;
              appDelegate.Enable_aggresssiveSync = FALSE;
@@ -1770,7 +1864,8 @@ last_sync_time:(NSString *)last_sync_time
         if(appDelegate.connection_error)
         {
             appDelegate.dataSyncRunning = NO;
-            appDelegate.SyncStatus = SYNC_GREEN;
+            //Defect 6774
+			[appDelegate checkifConflictExistsForConnectionError];
             [self internetConnectivityHandling:data_sync];
              appDelegate.Enable_aggresssiveSync = FALSE;
 			//Radha Defect Fix 5542
@@ -1786,7 +1881,10 @@ last_sync_time:(NSString *)last_sync_time
     if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
     {
         if ([appDelegate isInternetConnectionAvailable])
-            [appDelegate setSyncStatus:SYNC_GREEN];
+		{
+            //Defect 6774
+			[appDelegate checkifConflictExistsForConnectionError];
+		}
          appDelegate.Enable_aggresssiveSync = FALSE;
 		appDelegate.dataSyncRunning = NO;
 		//Radha Defect Fix 5542
@@ -1827,7 +1925,8 @@ last_sync_time:(NSString *)last_sync_time
             if(appDelegate.connection_error)
             {
                 appDelegate.dataSyncRunning = NO;
-                appDelegate.SyncStatus = SYNC_GREEN;
+				//Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
                 [self internetConnectivityHandling:data_sync];
                  appDelegate.Enable_aggresssiveSync = FALSE;
 				//Radha Defect Fix 5542
@@ -1843,7 +1942,10 @@ last_sync_time:(NSString *)last_sync_time
         if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
         {
             if ([appDelegate isInternetConnectionAvailable])
-                [appDelegate setSyncStatus:SYNC_GREEN];
+			{
+				//Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
+			}
         
             appDelegate.dataSyncRunning = NO;
 			//Radha Defect Fix 5542
@@ -1876,7 +1978,8 @@ last_sync_time:(NSString *)last_sync_time
             if(appDelegate.connection_error)
             {
                 appDelegate.dataSyncRunning = NO;
-                appDelegate.SyncStatus = SYNC_GREEN;
+                //Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
                 [self internetConnectivityHandling:data_sync];
                  appDelegate.Enable_aggresssiveSync = FALSE;
 				//Radha Defect Fix 5542
@@ -1892,7 +1995,8 @@ last_sync_time:(NSString *)last_sync_time
         if (![appDelegate isInternetConnectionAvailable])
         {
             appDelegate.dataSyncRunning = NO;
-            appDelegate.SyncStatus = SYNC_GREEN;
+				//Defect 6774
+			[appDelegate checkifConflictExistsForConnectionError];
             [self internetConnectivityHandling:data_sync];
             appDelegate.Enable_aggresssiveSync = FALSE;
 			//Radha Defect Fix 5542
@@ -1952,7 +2056,8 @@ last_sync_time:(NSString *)last_sync_time
             if(appDelegate.connection_error)
             {
                 appDelegate.dataSyncRunning = NO;
-                appDelegate.SyncStatus = SYNC_GREEN;
+				//Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
                 [self internetConnectivityHandling:data_sync];
                 appDelegate.Enable_aggresssiveSync = FALSE;
 				//Radha Defect Fix 5542
@@ -1968,7 +2073,10 @@ last_sync_time:(NSString *)last_sync_time
         if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
         {
             if ([appDelegate isInternetConnectionAvailable])
-                [appDelegate setSyncStatus:SYNC_GREEN];
+			{
+				//Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
+			}
 
             appDelegate.dataSyncRunning = NO;
              appDelegate.Enable_aggresssiveSync = FALSE;
@@ -2022,7 +2130,8 @@ last_sync_time:(NSString *)last_sync_time
         if(appDelegate.connection_error)
         {
             appDelegate.dataSyncRunning = NO;
-            appDelegate.SyncStatus = SYNC_GREEN;
+            //Defect 6774
+			[appDelegate checkifConflictExistsForConnectionError];
             [self internetConnectivityHandling:data_sync];
               appDelegate.Enable_aggresssiveSync = FALSE;
 			//Radha Defect Fix 5542
@@ -2039,7 +2148,10 @@ last_sync_time:(NSString *)last_sync_time
     if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
     {
         if ([appDelegate isInternetConnectionAvailable])
-            [appDelegate setSyncStatus:SYNC_GREEN];
+		{
+            //Defect 6774
+			[appDelegate checkifConflictExistsForConnectionError];
+		}
         
         appDelegate.Enable_aggresssiveSync = FALSE;
 		appDelegate.dataSyncRunning = NO;
@@ -2081,7 +2193,8 @@ last_sync_time:(NSString *)last_sync_time
             if(appDelegate.connection_error)
             {
                 appDelegate.dataSyncRunning = NO;
-                appDelegate.SyncStatus = SYNC_GREEN;
+                //Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
                 [self internetConnectivityHandling:data_sync];
                   appDelegate.Enable_aggresssiveSync = FALSE;
 				//Radha Defect Fix 5542
@@ -2097,7 +2210,10 @@ last_sync_time:(NSString *)last_sync_time
         if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
         {
             if ([appDelegate isInternetConnectionAvailable])
-                [appDelegate setSyncStatus:SYNC_GREEN];
+			{
+				//Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
+			}
         
             appDelegate.dataSyncRunning = NO;
              appDelegate.Enable_aggresssiveSync = FALSE;
@@ -2132,7 +2248,8 @@ last_sync_time:(NSString *)last_sync_time
             if(appDelegate.connection_error)
             {
                 appDelegate.dataSyncRunning = NO;
-                appDelegate.SyncStatus = SYNC_GREEN;
+                //Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
                 [self internetConnectivityHandling:data_sync];
                 appDelegate.Enable_aggresssiveSync = FALSE;
 				//Radha Defect Fix 5542
@@ -2147,6 +2264,8 @@ last_sync_time:(NSString *)last_sync_time
         }
         if ( ![appDelegate isInternetConnectionAvailable])
         {
+				//Defect 6774
+			[appDelegate checkifConflictExistsForConnectionError];
             appDelegate.dataSyncRunning = NO;
             appDelegate.Enable_aggresssiveSync = FALSE;
 			//Radha Defect Fix 5542
@@ -2190,7 +2309,8 @@ last_sync_time:(NSString *)last_sync_time
         if(appDelegate.connection_error)
         {
             appDelegate.dataSyncRunning = NO;
-            appDelegate.SyncStatus = SYNC_GREEN;
+			//Defect 6774
+			[appDelegate checkifConflictExistsForConnectionError];
             [self internetConnectivityHandling:data_sync];
              appDelegate.Enable_aggresssiveSync = FALSE;
 			//Radha Defect Fix 5542
@@ -2207,7 +2327,10 @@ last_sync_time:(NSString *)last_sync_time
     if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
     {
         if ([appDelegate isInternetConnectionAvailable])
-            [appDelegate setSyncStatus:SYNC_GREEN];
+		{
+            //Defect 6774
+			[appDelegate checkifConflictExistsForConnectionError];
+		}
         
 		appDelegate.dataSyncRunning = NO;
         appDelegate.Enable_aggresssiveSync = FALSE;
@@ -2380,7 +2503,11 @@ last_sync_time:(NSString *)last_sync_time
             if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
                 break;
             if(appDelegate.connection_error)
-                break;
+			{
+				//Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
+				break;
+			}
             
         }
         
@@ -2588,6 +2715,8 @@ last_sync_time:(NSString *)last_sync_time
         }
         if(appDelegate.connection_error)
         {
+			//Defect 6774
+			[appDelegate checkifConflictExistsForConnectionError];
             SMLog(@"GetPrice Data Sync Failed due to Connection Error");
             return;
         }
@@ -2621,6 +2750,8 @@ last_sync_time:(NSString *)last_sync_time
         }
         if(appDelegate.connection_error)
         {
+			//Defect 6774
+			[appDelegate checkifConflictExistsForConnectionError];
             SMLog(@"GetPrice Data Sync Failed due to Connection Error");
             return;
         }
@@ -2666,6 +2797,8 @@ last_sync_time:(NSString *)last_sync_time
         }
         if(appDelegate.connection_error)
         {
+			//Defect 6774
+			[appDelegate checkifConflictExistsForConnectionError];
             SMLog(@"GetPrice Data Sync Failed due to Connection Error");
             return;
         }
@@ -6441,7 +6574,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                 local_id = [each_record.values objectAtIndex:0];
                             }
                             //Need to insert into conflict table
-                            NSDictionary * dict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:local_id,sf_id,operation_type,record_type,each_record.value,@"ERROR",object_name,@"DML_ERROR", nil] forKeys:error_conflict];
+                            NSDictionary * dict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:local_id,local_id,operation_type,record_type,each_record.value,@"ERROR",object_name,@"DML_ERROR", nil] forKeys:error_conflict];
                             [conflict_array addObject:dict];
                         }
                     }
@@ -12246,6 +12379,8 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             }
             if(appDelegate.connection_error)
             {
+				//Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
                 SMLog(@"getPriceInformationForWorkOrderId: Download  PRICE _INFO Failed due to Connection Error");
                 returnValue = NO;
                 break;

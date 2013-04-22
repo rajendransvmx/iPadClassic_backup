@@ -308,9 +308,12 @@
 -(BOOL)doesRequestIdExistsintable:(NSString *)table_name request_id:(NSString *)request_id error_type:(NSString *)error_type;
 -(BOOL)ContinueIncrementalDataSync_forNoncustomRecords;
 
+-(BOOL)DoesTrailerContainTheRecordForSf_id:(NSString *)sf_id  operation_type:(NSString *)operation_type  object_name:(NSString *)object_name;
+
 //Sync_Override : Radha
 - (BOOL) checkIfCustomEntryExistsInTrailerTable:(NSString *)parentLocalId;
--(BOOL)doeslocal_idexistsinSyncrecord:(NSDictionary *)sync_record new_local_id:(NSString *)new_local_id;
+-(BOOL)doesIdexistsinSyncrecord:(NSDictionary *)sync_record new_local_id:(NSString *)new_id idType:(NSString *)id_type;
+
 
 #define SERVER_OVERRIDE                     @"Server_Override"
 #define CLIENT_OVERRIDE                     @"Client_Override"

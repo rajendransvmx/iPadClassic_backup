@@ -913,6 +913,9 @@ extern  NSString const *devVersion;
 - (void) setCurrentSyncStatusProgress:(int)syncState optimizedSynstate:(int)oSyncState;
 - (NSString *) getStatusImageForCustomSync;
 
+//Defect 6774
+- (void) checkifConflictExistsForConnectionError;
+
 @end
 
 @interface processInfo : NSObject {

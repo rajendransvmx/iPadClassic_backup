@@ -4329,7 +4329,7 @@ extern void SVMXLog(NSString *format, ...);
 			return;
 		}
 		
-		else if (isFinalCustomEntry)
+		else if (isFinalCustomEntry && [sync_type isEqualToString:CUSTOMSYNC]) // #6963
 		{
             appDelegate.data_sync_type = CUSTOM_DATA_SYNC;
             
@@ -5408,7 +5408,8 @@ extern void SVMXLog(NSString *format, ...);
 
 -(NSString *)getSfid_For_LocalId_From_TrailerForlocal_id:(NSString *)local_id
 {
-    NSString * query = [NSString stringWithFormat:@"SELECT sf_id FROM '%@' WHERE local_id = '%@'" , SFDATATRAILER , local_id];
+    //sahana sat april 20 delete error
+    NSString * query = [NSString stringWithFormat:@"SELECT sf_id FROM '%@' WHERE local_id = '%@' and operation = 'DELETE'" , SFDATATRAILER , local_id];
     sqlite3_stmt * stmt ;
     NSString * Id_ = @"";
     
@@ -7582,13 +7583,19 @@ extern void SVMXLog(NSString *format, ...);
 -(void)fillSyncRecordDictForRecordType:(NSString *)record_type SF_Id:(NSString *)SF_id local_id:(NSString *)local_id  operation_type:(NSString *)operation_type  final_dictionary:(NSMutableDictionary *)sync_record_dict  object_naem:(NSString *)object_name parent_object_name:(NSString *)parent_object_name parent_local_id:(NSString *)parent_local_id
 {
     
-    if([operation_type isEqualToString:UPDATE])
+    if([operation_type isEqualToString:UPDATE] || [operation_type isEqualToString:DELETE])
     {
-    BOOL flag = [self doeslocal_idexistsinSyncrecord:sync_record_dict new_local_id:local_id];
-    if(flag )
-    {
-        return;
-    }
+        BOOL sf_id_exists = FALSE;
+        if(SF_id != nil || [SF_id length] != 0)
+        {
+             sf_id_exists = [self doesIdexistsinSyncrecord:sync_record_dict new_local_id:SF_id idType:@"SF_ID"];
+        }
+        BOOL Local_id_exists = [self doesIdexistsinSyncrecord:sync_record_dict new_local_id:local_id idType:@"LOCAL_ID" ];
+        if(sf_id_exists || Local_id_exists)
+        {
+//            NSLog(@"Duplicate_id %@ ,%@",local_id,SF_id);
+            return;
+        }
     }
     
     NSArray * keys =  [[NSArray alloc] initWithObjects:@"Id",@"local_id",@"Operation_type", @"parent_object_name", @"parent_local_id",nil ];
@@ -7662,7 +7669,7 @@ extern void SVMXLog(NSString *format, ...);
     [info_dict release];
 }
 
--(BOOL)doeslocal_idexistsinSyncrecord:(NSDictionary *)sync_record new_local_id:(NSString *)new_local_id
+-(BOOL)doesIdexistsinSyncrecord:(NSDictionary *)sync_record new_local_id:(NSString *)new_id idType:(NSString *)id_type
 {
     
     BOOL flag = FALSE;
@@ -7682,8 +7689,19 @@ extern void SVMXLog(NSString *format, ...);
                 
                 for(NSDictionary * info_dict in record_info_dict_array)
                 {
-                    NSString * local_id = [info_dict objectForKey:@"local_id"];
-                    if([local_id isEqualToString:new_local_id])
+                    NSString * id_to_compare = @"";
+                    
+                    if([id_type isEqualToString:@"SF_ID"])
+                    {
+                        id_to_compare = [info_dict objectForKey:@"Id"];
+                    }
+                    else if([id_type isEqualToString:@"LOCAL_ID"])
+                    {
+                        id_to_compare = [info_dict objectForKey:@"local_id"];
+                    }
+//                    NSLog(@"ID_to_compare %@,%@" ,id_to_compare,new_id);
+                  
+                    if([id_to_compare isEqualToString:new_id])
                     {
                         flag = TRUE;
                         break;
@@ -8064,5 +8082,32 @@ extern void SVMXLog(NSString *format, ...);
         record_exists = FALSE;
     }
     return record_exists;
+}
+
+
+-(BOOL)DoesTrailerContainTheRecordForSf_id:(NSString *)sf_id  operation_type:(NSString *)operation_type  object_name:(NSString *)object_name
+{
+    NSString * query = [NSString stringWithFormat:@"SELECT COUNT(*) FROM '%@' WHERE object_name = '%@' and operation = '%@' and sf_id = '%@'" ,SFDATATRAILER ,object_name , operation_type , sf_id ];
+    sqlite3_stmt * stmt;
+    int count;
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK  )
+    {
+        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            int temp_count = synchronized_sqlite3_column_int(stmt, 0);
+            count = temp_count;
+        }
+    }
+    
+    
+    synchronized_sqlite3_finalize(stmt);
+    if(count == 0)
+    {
+        return NO;
+    }
+    else
+    {
+        return YES;
+    }
 }
 @end
