@@ -6573,8 +6573,13 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                             {
                                 local_id = [each_record.values objectAtIndex:0];
                             }
+							//#6975, 4337
+							if([operation_type isEqualToString:@"DELETE"])
+							{
+								sf_id = local_id;
+							}
                             //Need to insert into conflict table
-                            NSDictionary * dict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:local_id,local_id,operation_type,record_type,each_record.value,@"ERROR",object_name,@"DML_ERROR", nil] forKeys:error_conflict];
+                            NSDictionary * dict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:local_id,sf_id,operation_type,record_type,each_record.value,@"ERROR",object_name,@"DML_ERROR", nil] forKeys:error_conflict];
                             [conflict_array addObject:dict];
                         }
                     }
