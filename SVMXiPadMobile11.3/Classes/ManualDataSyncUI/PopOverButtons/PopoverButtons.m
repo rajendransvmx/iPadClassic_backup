@@ -258,6 +258,28 @@ PopoverButtons *popOver_view;
                 }
             }
         }
+		//#6974
+		if ([manualEventThread isExecuting])
+		{
+			while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
+            {
+#ifdef kPrintLogsDuringWebServiceCall
+                SMLog(@"popoverButtons.m : synchronise: check for Event sync thread 2");
+#endif
+				
+                if (![appDelegate isInternetConnectionAvailable])
+                {
+                    break;
+                }
+                
+                if ([manualEventThread isFinished])
+                {
+                    break;
+                }
+            }
+			
+		}
+		
 		[delegate activityStart];
 		//RADHA Defect Fix 5542
 		appDelegate.shouldScheduleTimer = YES;
@@ -270,10 +292,7 @@ PopoverButtons *popOver_view;
     {        
         [appDelegate.calDataBase selectUndoneRecords];
         [appDelegate.databaseInterface deleteAllRecordsWithIgnoreTagFromConflictTable];
-        appDelegate.syncTypeInProgress = CONFLICTSYNC_INPROGRESS;
-		
-		[appDelegate setCurrentSyncStatusProgress:cSYNC_STARTS optimizedSynstate:0];
-		
+        		
         if([appDelegate.syncThread isExecuting])
         {
             while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
@@ -315,7 +334,6 @@ PopoverButtons *popOver_view;
         
         if ([appDelegate.event_thread isExecuting])
         {
-            
             while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
             {
 #ifdef kPrintLogsDuringWebServiceCall
@@ -334,7 +352,32 @@ PopoverButtons *popOver_view;
                 }
             }
         }
+		//#6974
+		if ([manualEventThread isExecuting])
+		{
+			while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
+            {
+#ifdef kPrintLogsDuringWebServiceCall
+                SMLog(@"popoverButtons.m : synchronise: check for Event sync thread 2");
+#endif
+				
+                if (![appDelegate isInternetConnectionAvailable])
+                {
+                    break;
+                }
+                
+                if ([manualEventThread isFinished])
+                {
+                    break;
+                }
+            }
+
+		}
         appDelegate.isSpecialSyncDone = FALSE;
+		
+		appDelegate.syncTypeInProgress = CONFLICTSYNC_INPROGRESS;
+		
+		[appDelegate setCurrentSyncStatusProgress:cSYNC_STARTS optimizedSynstate:0];
 		
 		[delegate activityStart];
         [appDelegate callSpecialIncrementalSync];
