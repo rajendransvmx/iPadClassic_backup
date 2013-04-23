@@ -5783,7 +5783,6 @@ extern void SVMXLog(NSString *format, ...);
     {
         delete_query = [NSString stringWithFormat:@"DELETE FROM '%@' WHERE %@ = '%@'" ,object_name, columnName, sf_id];
     }
-    delete_query = [NSString stringWithFormat:@"DELETE FROM '%@' WHERE %@ = '%@'" ,object_name, columnName, sf_id];
     SMLog(@"delete_query - - %@",delete_query);
     char * err ;
     if(synchronized_sqlite3_exec(appDelegate.db, [delete_query UTF8String], NULL, NULL, &err))
