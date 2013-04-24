@@ -62,8 +62,8 @@ static UICGDirections *sharedDirections;
 - (void)goolgeMapsAPI:(UICGoogleMapsAPI *)goolgeMapsAPI didGetObject:(NSObject *)object
 {
 	NSDictionary *dictionary = (NSDictionary *)object;
-    NSString *jasonFormat = [dictionary JSONRepresentation];
-    NSLog(@"jason format %@",jasonFormat);
+    //NSString *jasonFormat = [dictionary JSONRepresentation];
+    //NSLog(@"jason format %@",jasonFormat);
     
 	NSArray *routeDics = [dictionary objectForKey:@"routes"];
 	routes = [[NSMutableArray alloc] initWithCapacity:[routeDics count]];
