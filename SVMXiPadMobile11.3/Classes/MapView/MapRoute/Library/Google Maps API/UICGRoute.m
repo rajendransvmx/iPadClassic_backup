@@ -20,40 +20,73 @@
 @synthesize endGeocode;
 @synthesize endLocation;
 @synthesize polylineEndIndex;
+@synthesize waypoints;
+@synthesize legsArray;
 
 + (UICGRoute *)routeWithDictionaryRepresentation:(NSDictionary *)dictionary {
 	UICGRoute *route = [[UICGRoute alloc] initWithDictionaryRepresentation:dictionary];
 	return [route autorelease];
 }
+// V3:KRI
+// Updated way of retrieving Data
 
 - (id)initWithDictionaryRepresentation:(NSDictionary *)dictionary {
 	self = [super init];
 	if (self != nil)
     {
 		dictionaryRepresentation = [dictionary retain];
-//        NSArray *allKeys = [dictionaryRepresentation allKeys];
-//        NSDictionary *k = [dictionaryRepresentation objectForKey:[allKeys objectAtIndex:[allKeys count] - 1]];
-        NSDictionary *k = [dictionaryRepresentation objectForKey:@"k"];  //Shrinivas - Code Changed
-		NSArray *stepDics = [k objectForKey:@"Steps"];
-		numberOfSteps = [stepDics count];
-		steps = [[NSMutableArray alloc] initWithCapacity:numberOfSteps];
-		for (NSDictionary *stepDic in stepDics) {
-			[(NSMutableArray *)steps addObject:[UICGStep stepWithDictionaryRepresentation:stepDic]];
-		}
+        
+        steps = [[NSMutableArray alloc] initWithCapacity:0];
+        NSMutableArray *locations = [[NSMutableArray alloc] init];
+                
+        // V3:KRI
+        NSArray *legs = [dictionaryRepresentation objectForKey:@"legs"];// @"k"];  //Shrinivas - Code Changed
+        
+        if(self.legsArray == nil) {
+            NSArray *tempArr = [[NSArray alloc] init];
+            self.legsArray = tempArr;
+            [tempArr release];
+        }
+        
+        self.legsArray = legs;
+        
+        for (int counter = 0; counter < [legs count]; counter++) {
+            
+             NSDictionary *k = [legs objectAtIndex:counter];
+             NSArray *stepDics = [k objectForKey:@"steps"];
+            for (NSDictionary *stepDic in stepDics) {
+               // [(NSMutableArray *)steps addObject:[UICGStep stepWithDictionaryRepresentation:stepDic]];
+            }
+            
+            // V3:KRI
+            NSDictionary *endLocationDic = [k objectForKey:@"end_location"];
+            
+            //hb and ib for business purpose. if you are using publey key its again different
+           
+            CLLocationDegrees longitude = [[endLocationDic objectForKey:@"ib" ] doubleValue];//[coordinates objectAtIndex:0]
+            CLLocationDegrees latitude  = [[endLocationDic objectForKey:@"hb" ] doubleValue];//[coordinates objectAtIndex:1]
+            endLocation = [[CLLocation alloc] initWithLatitude:latitude longitude:longitude];
+            summaryHtml = [k objectForKey:@"instructions"];
+            
+            distance = [k objectForKey:@"Distance"];
+            duration = [k objectForKey:@"Duration"];
+
+            
+            [locations addObject:endLocation];
+            
+        }
+        
+        self.waypoints = locations;
+        [locations release];
+        locations = nil;
+       
+        // V3:KRI
+        //endGeocode = [dictionaryRepresentation objectForKey:@"pr"];
+		//startGeocode = [dictionaryRepresentation objectForKey:@"qr"];
 		
-		endGeocode = [dictionaryRepresentation objectForKey:@"pr"];
-		startGeocode = [dictionaryRepresentation objectForKey:@"qr"];
 		
-		distance = [k objectForKey:@"Distance"];
-		duration = [k objectForKey:@"Duration"];
-		NSDictionary *endLocationDic = [k objectForKey:@"End"];
-		NSArray *coordinates = [endLocationDic objectForKey:@"coordinates"];
-		CLLocationDegrees longitude = [[coordinates objectAtIndex:0] doubleValue];
-		CLLocationDegrees latitude  = [[coordinates objectAtIndex:1] doubleValue];
-		endLocation = [[CLLocation alloc] initWithLatitude:latitude longitude:longitude];
-		summaryHtml = [k objectForKey:@"summaryHtml"];
         // SMLog(@"## %@", summaryHtml);
-		polylineEndIndex = [[k objectForKey:@"polylineEndIndex"] integerValue];
+		//polylineEndIndex = [[k objectForKey:@"polylineEndIndex"] integerValue];
 	}
 	return self;
 }
@@ -67,6 +100,8 @@
 	[startGeocode release];
 	[endGeocode release];
 	[endLocation release];
+    [waypoints release];
+    [legsArray release];
 	[super dealloc];
 }
 

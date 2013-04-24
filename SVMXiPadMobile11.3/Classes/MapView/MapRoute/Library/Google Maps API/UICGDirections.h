@@ -26,7 +26,9 @@
 	id<UICGDirectionsDelegate> delegate;
 	UICGoogleMapsAPI *googleMapsAPI;
 	NSArray *routes;
-	NSArray *geocodes;
+
+    // V3:KRI We are not getting geocodes parameter in v3 anymore so we can make use of polyline instead
+//	NSArray *geocodes;
 	UICGPolyline *polyline;
 	NSDictionary *distance;
 	NSDictionary *duration;
@@ -36,7 +38,9 @@
 
 @property (nonatomic, assign) id<UICGDirectionsDelegate> delegate;
 @property (nonatomic, retain) NSArray *routes;
-@property (nonatomic, retain) NSArray *geocodes;
+
+// V3:KRI
+//@property (nonatomic, retain) NSArray *geocodes;
 @property (nonatomic, retain) UICGPolyline *polyline;
 @property (nonatomic, retain) NSDictionary *distance;
 @property (nonatomic, retain) NSDictionary *duration;
@@ -46,13 +50,17 @@
 + (UICGDirections *)sharedDirections;
 - (id)init;
 - (void)makeAvailable;
-- (void)loadWithQuery:(NSString *)query options:(UICGDirectionsOptions *)options;
+
+// V3:KRI This method can be eleminated as load() function and loadWithWaypoints() are eleminated.
+//- (void)loadWithQuery:(NSString *)query options:(UICGDirectionsOptions *)options;
 - (void)loadWithStartPoint:(NSString *)startPoint endPoint:(NSString *)endPoint options:(UICGDirectionsOptions *)options;
 - (void)loadFromWaypoints:(NSArray *)waypoints options:(UICGDirectionsOptions *)options;
 - (void)clear;
 - (NSInteger)numberOfRoutes;
 - (UICGRoute *)routeAtIndex:(NSInteger)index;
-- (NSInteger)numberOfGeocodes;
-- (NSDictionary *)geocodeAtIndex:(NSInteger)index;
+
+// V3:KRI Geocodes are no more a param in V3
+//- (NSInteger)numberOfGeocodes;
+//- (NSDictionary *)geocodeAtIndex:(NSInteger)index;
 
 @end

@@ -25,21 +25,24 @@
 	if (self != nil) {
 		dictionaryRepresentation = [dictionary retain];
         
+//        if (!vertices || (NSNull *)vertices == [NSNull null]) {
+//            vertices = [[dictionaryRepresentation objectForKey:@"k"] retain];
+//        }
+//        if (!vertices || (NSNull *)vertices == [NSNull null]) {
+//            vertices = [[dictionaryRepresentation objectForKey:@"g"] retain];
+//        }
+        
+        // V3:KRI
         if (!vertices || (NSNull *)vertices == [NSNull null]) {
-            vertices = [[dictionaryRepresentation objectForKey:@"k"] retain];
-        }
-        if (!vertices || (NSNull *)vertices == [NSNull null]) {
-            vertices = [[dictionaryRepresentation objectForKey:@"g"] retain];
-        }
-        if (!vertices || (NSNull *)vertices == [NSNull null]) {
-            vertices = [[dictionaryRepresentation objectForKey:@"j"] retain];
+            vertices = [[dictionaryRepresentation objectForKey:@"overview_path"] retain];//j
         }
         
         vertexCount = [vertices count];
 		routePoints = [NSMutableArray arrayWithCapacity:vertexCount];
 		for (NSDictionary *vertex in vertices) {
-			CLLocationDegrees latitude  = [[vertex objectForKey:@"y"] doubleValue];
-			CLLocationDegrees longitude = [[vertex objectForKey:@"x"] doubleValue];
+            // V3:KRI
+			CLLocationDegrees latitude  = [[vertex objectForKey:@"hb"] doubleValue];//x
+			CLLocationDegrees longitude = [[vertex objectForKey:@"ib"] doubleValue];//y
 			CLLocation *location = [[[CLLocation alloc] initWithLatitude:latitude longitude:longitude] autorelease];
 			[routePoints addObject:location];
 		}

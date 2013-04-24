@@ -43,14 +43,14 @@
     NSError * error = nil;
     NSString * htmlString = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:&error];
   /*  htmlString = [htmlString stringByReplacingOccurrencesOfString:@"<script src=>" withString:@"<script src=http://maps.google.com/maps?file=api&amp;v=3.x&amp;sensor=false&amp;key=hmdk64hM_G8XCEwBNON1o720wLo=>"];*/
-    htmlString = [htmlString stringByReplacingOccurrencesOfString:@"<script src=>" withString:@"<script src=http://maps.google.com/maps?file=api&amp;v=3.x&amp;sensor=false&amp;client=gme-servicemaxinc>"];
-    
+    /*htmlString = [htmlString stringByReplacingOccurrencesOfString:@"<script src=>" withString:@"<script src=//maps.googleapis.com/maps/api/js?sensor=false&client=gme-servicemaxinc"];*/
+        
     NSBundle *bundle = [NSBundle mainBundle];
     NSString *bundlePath = [bundle bundlePath];
     NSURL *baseURL = [NSURL fileURLWithPath:bundlePath];
     
-    //[self loadHTMLString:htmlString baseURL:baseURL];
-    [self loadHTMLString:[self signAPIURL:htmlString] baseURL:baseURL];
+   [self loadHTMLString:htmlString baseURL:baseURL];
+    //[self loadHTMLString:[self signAPIURL:htmlString] baseURL:baseURL];
     
     // [self loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:path]]];
 }

@@ -21,6 +21,7 @@
 	NSDictionary *endGeocode;
 	CLLocation *endLocation;
 	NSInteger polylineEndIndex;
+    NSArray   *waypoints;
 }
 
 @property (nonatomic, retain, readonly) NSDictionary *dictionaryRepresentation;
@@ -33,6 +34,9 @@
 @property (nonatomic, retain, readonly) NSDictionary *endGeocode;
 @property (nonatomic, retain, readonly) CLLocation *endLocation;
 @property (nonatomic, assign, readonly) NSInteger polylineEndIndex;
+@property (nonatomic,retain)  NSArray   *waypoints;
+@property (nonatomic, retain) NSArray   *legsArray;
+
 
 + (UICGRoute *)routeWithDictionaryRepresentation:(NSDictionary *)dictionary;
 - (id)initWithDictionaryRepresentation:(NSDictionary *)dictionary;
