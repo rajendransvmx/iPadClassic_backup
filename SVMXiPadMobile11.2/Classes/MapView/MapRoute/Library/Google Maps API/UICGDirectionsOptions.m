@@ -40,7 +40,7 @@
 
 - (NSString *)JSONRepresentation {
 	return [NSString stringWithFormat:
-			@"{ 'locale': '%@', travelMode: %@, avoidHighways: %@, getPolyline: %@, getSteps: %@, preserveViewport: %@}", 
+			@"{ 'locale': '%@', travelMode: '%@', avoidHighways: %@, getPolyline: %@, getSteps: %@, preserveViewport: %@ }", 
 			[locale localeIdentifier], 
 			travelMode == UICGTravelModeDriving ? @"G_TRAVEL_MODE_DRIVING" : @"G_TRAVEL_MODE_WALKING",
 			avoidHighways ? @"true" : @"false",

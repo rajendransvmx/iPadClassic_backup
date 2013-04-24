@@ -78,81 +78,102 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 - (void) customCallOutForAnnotation:(UICRouteAnnotation *)annotationObject AtPosition:(CGPoint)point;
 {
 	@try{
-    NSDictionary * workOrder = [annotationObject workOrder];
-    
-    //SMLog(@"%@", workOrder);
-    locationPop = [[[LocationPopOver alloc] initWithNibName:@"LocationPopOver" bundle:nil] autorelease];
-    locationPop.delegate = self;
-    locationPop.workOrder = [workOrder objectForKey:OBJECTLABEL];
-    NSString * str = [workOrder objectForKey:ADDITIONALINFO];
-    if (str != nil)
-        str = [str stringByReplacingOccurrencesOfString:[appDelegate.wsInterface.tagsDictionary objectForKey:MAP_POPOVER_TITLE] withString:@""];
-    locationPop.workOrderDetail = str;
-    
-    NSMutableString * address = nil;
-    address = [[[NSMutableString alloc] initWithCapacity:0] autorelease];
-
-    NSString * woStreet = nil, * woCity = nil, * woState = nil, * woZip = nil, * woCountry = nil;
-    woStreet = [[workOrder objectForKey:STREET] isKindOfClass:[NSString class]]?[NSString stringWithFormat:@"%@", [workOrder objectForKey:STREET]]:@"";
-    if ([woStreet length] > 0)
-        [address appendString:woStreet];
-    woCity = [[workOrder objectForKey:CITY] isKindOfClass:[NSString class]]?[NSString stringWithFormat:@"%@", [workOrder objectForKey:CITY]]:@"";
-    if ([woCity length] > 0)
-    {
-        if ([address length] > 0)
-            [address appendString:[NSString stringWithFormat:@", %@", woCity]];
+        NSDictionary * workOrder = [annotationObject workOrder];
+        
+        //SMLog(@"%@", workOrder);
+        
+        // V3:KRI
+        if(locationPop != nil)
+        {
+            [locationPop release];
+            locationPop  = nil;
+        }
+        
+        locationPop = [[LocationPopOver alloc] initWithNibName:@"LocationPopOver" bundle:nil];
+        locationPop.delegate = self;
+        
+        locationPop.workOrder = [workOrder objectForKey:OBJECTLABEL];
+        NSString * str = [workOrder objectForKey:ADDITIONALINFO];
+        if (str != nil)
+            str = [str stringByReplacingOccurrencesOfString:[appDelegate.wsInterface.tagsDictionary objectForKey:MAP_POPOVER_TITLE] withString:@""];
+        locationPop.workOrderDetail = str;
+        
+        NSMutableString * address = nil;
+        address = [[[NSMutableString alloc] initWithCapacity:0] autorelease];
+        
+        NSString * woStreet = nil, * woCity = nil, * woState = nil, * woZip = nil, * woCountry = nil;
+        woStreet = [[workOrder objectForKey:STREET] isKindOfClass:[NSString class]]?[NSString stringWithFormat:@"%@", [workOrder objectForKey:STREET]]:@"";
+        if ([woStreet length] > 0)
+            [address appendString:woStreet];
+        woCity = [[workOrder objectForKey:CITY] isKindOfClass:[NSString class]]?[NSString stringWithFormat:@"%@", [workOrder objectForKey:CITY]]:@"";
+        if ([woCity length] > 0)
+        {
+            if ([address length] > 0)
+                [address appendString:[NSString stringWithFormat:@", %@", woCity]];
+            else
+                [address appendString:[NSString stringWithFormat:@"%@", woCity]];
+        }
+        woState = [[workOrder objectForKey:STATE] isKindOfClass:[NSString class]]?[NSString stringWithFormat:@"%@", [workOrder objectForKey:STATE]]:@"";
+        if ([woState length] > 0)
+        {
+            if ([address length] > 0)
+                [address appendString:[NSString stringWithFormat:@", %@", woState]];
+            else
+                [address appendString:[NSString stringWithFormat:@"%@", woState]];
+        }
+        woZip = [[workOrder objectForKey:ZIP] isKindOfClass:[NSString class]]?[NSString stringWithFormat:@"%@", [workOrder objectForKey:ZIP]]:@"";
+        if ([woZip length] > 0)
+        {
+            if ([address length] > 0)
+                [address appendString:[NSString stringWithFormat:@", %@", woZip]];
+            else
+                [address appendString:[NSString stringWithFormat:@"%@", woZip]];
+        }
+        woCountry = [[workOrder objectForKey:COUNTRY] isKindOfClass:[NSString class]]?[NSString stringWithFormat:@"%@", [workOrder objectForKey:COUNTRY]]:@"";
+        if ([woCountry length] > 0)
+        {
+            if ([address length] > 0)
+                [address appendString:[NSString stringWithFormat:@", %@", woCountry]];
+            else
+                [address appendString:[NSString stringWithFormat:@"%@", woCountry]];
+        }
+        
+        locationPop.workOrderContact = address;
+        
+        if (annotationObject.index == -1)
+        {
+            locationPop.workOrder = [appDelegate.wsInterface.tagsDictionary objectForKey:MAP_HOMELOC_TITLE];
+            locationPop.workOrderContact = appDelegate.technicianAddress;
+            locationPop.view.frame = CGRectMake(point.x, point.y-126, locationPop.view.frame.size.width, locationPop.view.frame.size.height);
+        }
         else
-            [address appendString:[NSString stringWithFormat:@"%@", woCity]];
-    }
-    woState = [[workOrder objectForKey:STATE] isKindOfClass:[NSString class]]?[NSString stringWithFormat:@"%@", [workOrder objectForKey:STATE]]:@"";
-    if ([woState length] > 0)
-    {
-        if ([address length] > 0)
-            [address appendString:[NSString stringWithFormat:@", %@", woState]];
-        else
-            [address appendString:[NSString stringWithFormat:@"%@", woState]];
-    }
-    woZip = [[workOrder objectForKey:ZIP] isKindOfClass:[NSString class]]?[NSString stringWithFormat:@"%@", [workOrder objectForKey:ZIP]]:@"";
-    if ([woZip length] > 0)
-    {
-        if ([address length] > 0)
-            [address appendString:[NSString stringWithFormat:@", %@", woZip]];
-        else
-            [address appendString:[NSString stringWithFormat:@"%@", woZip]];
-    }
-    woCountry = [[workOrder objectForKey:COUNTRY] isKindOfClass:[NSString class]]?[NSString stringWithFormat:@"%@", [workOrder objectForKey:COUNTRY]]:@"";
-    if ([woCountry length] > 0)
-    {
-        if ([address length] > 0)
-            [address appendString:[NSString stringWithFormat:@", %@", woCountry]];
-        else
-            [address appendString:[NSString stringWithFormat:@"%@", woCountry]];
-    }
-    
-    locationPop.workOrderContact = address;
-
-    if (annotationObject.index == -1)
-    {
-        locationPop.workOrder = [appDelegate.wsInterface.tagsDictionary objectForKey:MAP_HOMELOC_TITLE];
-        locationPop.workOrderContact = appDelegate.technicianAddress;
-        locationPop.view.frame = CGRectMake(point.x, point.y-126, locationPop.view.frame.size.width, locationPop.view.frame.size.height);
-    }
-    else
-        locationPop.view.frame = CGRectMake(point.x, point.y-149, locationPop.view.frame.size.width, locationPop.view.frame.size.height);
-
-    locationPop.annotationIndex = annotationObject.index;
-    
-    popOver = [[[UIPopoverController alloc] initWithContentViewController:locationPop] autorelease];
-    popOver.delegate = self;
-    [popOver setPopoverContentSize:locationPop.view.frame.size];
-    
-    locationPop.popOver = popOver;
-    [popOver presentPopoverFromRect:locationPop.view.frame inView:mapView permittedArrowDirections:UIPopoverArrowDirectionRight animated:YES];
-    //SMLog(@"%f, %f", point.x, point.y);
-    //SMLog(@"%f, %f", popOver.contentViewController.view.frame.origin.x, popOver.contentViewController.view.frame.origin.y);
-//    [locationPop release];
+            locationPop.view.frame = CGRectMake(point.x, point.y-149, locationPop.view.frame.size.width, locationPop.view.frame.size.height);
+        
+        locationPop.annotationIndex = annotationObject.index;
+        
+        // V3:KRI
+        //to eliminate multiple popovers
+        if([popOver isPopoverVisible]) {
+            [popOver dismissPopoverAnimated:NO];
+        }
+        if(popOver != nil)
+        {
+            [popOver release];
+            popOver  = nil;
+        }
+        
+        popOver = [[UIPopoverController alloc] initWithContentViewController:locationPop];
+        popOver.delegate = self;
+        
+        
+        [popOver setPopoverContentSize:locationPop.view.frame.size];
+        locationPop.popOver = popOver;
+        [popOver presentPopoverFromRect:locationPop.view.frame inView:mapView permittedArrowDirections:UIPopoverArrowDirectionRight animated:YES];
+        //SMLog(@"%f, %f", point.x, point.y);
+        //SMLog(@"%f, %f", popOver.contentViewController.view.frame.origin.x, popOver.contentViewController.view.frame.origin.y);
+        [locationPop release];
 	}
-@catch (NSException *exp) {
+    @catch (NSException *exp) {
         SMLog(@"Exception Name FirstDetailViewController :customCallOutForAnnotation %@",exp.name);
         SMLog(@"Exception Reason FirstDetailViewController :customCallOutForAnnotation %@",exp.reason);
         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
@@ -161,6 +182,19 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 
 #pragma mark -
 #pragma mark LocationPopOver Delegate Methods
+// V3:KRI
+- (BOOL)popoverControllerShouldDismissPopover:(UIPopoverController *)popoverController
+{
+    return YES;
+}
+- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
+{
+    if( (popoverController == popOver) && (popOver != nil) )
+    {
+        [popOver release];
+        popOver = nil;
+    }
+}
 
 - (void) showJobDetailsForAnnotationIndex:(NSUInteger)annotationIndex
 {

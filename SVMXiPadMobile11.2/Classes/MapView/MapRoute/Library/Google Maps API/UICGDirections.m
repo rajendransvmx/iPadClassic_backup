@@ -15,7 +15,8 @@ static UICGDirections *sharedDirections;
 @implementation UICGDirections
 
 @synthesize routes;
-@synthesize geocodes;
+// V3:KRI
+//@synthesize geocodes;
 @synthesize delegate;
 @synthesize polyline;
 @synthesize distance;
@@ -42,7 +43,8 @@ static UICGDirections *sharedDirections;
 - (void)dealloc {
 	[googleMapsAPI release];
 	[routes release];
-	[geocodes release];
+// V3:KRI
+//	[geocodes release];
 	[polyline release];
 	[distance release];
 	[duration release];
@@ -54,19 +56,30 @@ static UICGDirections *sharedDirections;
 	[googleMapsAPI makeAvailable];
 }
 
+// V3:KRI
+// ***** Modified MAIN parser code for google javascript api v3 *****
+
 - (void)goolgeMapsAPI:(UICGoogleMapsAPI *)goolgeMapsAPI didGetObject:(NSObject *)object
 {
 	NSDictionary *dictionary = (NSDictionary *)object;
+    NSString *jasonFormat = [dictionary JSONRepresentation];
+    NSLog(@"jason format %@",jasonFormat);
+    
 	NSArray *routeDics = [dictionary objectForKey:@"routes"];
 	routes = [[NSMutableArray alloc] initWithCapacity:[routeDics count]];
-	for (NSDictionary *routeDic in routeDics) {
+	
+    for (NSDictionary *routeDic in routeDics) {
 		[(NSMutableArray *)routes addObject:[UICGRoute routeWithDictionaryRepresentation:routeDic]];
 	}
-	self.geocodes = [dictionary objectForKey:@"geocodes"];
-	self.polyline = [UICGPolyline polylineWithDictionaryRepresentation:[dictionary objectForKey:@"polyline"]];
-	self.distance = [dictionary objectForKey:@"distance"];
+//v2	self.geocodes = [dictionary objectForKey:@"geocodes"];
+    
+    self.distance = [dictionary objectForKey:@"distance"];
 	self.duration = [dictionary objectForKey:@"duration"];
 	self.status = [dictionary objectForKey:@"status"];
+
+    // V3:KRI
+	self.polyline = [UICGPolyline polylineWithDictionaryRepresentation:[routeDics objectAtIndex:0]];
+    //[dictionary objectForKey:@"polyline"]];//v2
 	
 	if ([self.delegate respondsToSelector:@selector(directionsDidUpdateDirections:)]) {
 		[self.delegate directionsDidUpdateDirections:self];
@@ -92,19 +105,74 @@ static UICGDirections *sharedDirections;
 	}
 }
 
-- (void)loadWithQuery:(NSString *)query options:(UICGDirectionsOptions *)options {
-	[googleMapsAPI stringByEvaluatingJavaScriptFromString:
-	 [NSString stringWithFormat:@"loadDirections(%@, %@)", query, [options JSONRepresentation]]];
-}
 
+//V3:KRI 
+
+//- (void)loadWithQuery:(NSString *)query options:(UICGDirectionsOptions *)options {    
+//    
+//    // V3:KRI
+//
+//    NSString *someStr = [NSString stringWithFormat:@"loadDirections(%@, %@);", query, [options JSONRepresentation]];
+//    [googleMapsAPI stringByEvaluatingJavaScriptFromString:someStr];
+//	
+//    NSLog(@"description 1 : %@",someStr);
+//
+//    
+//}
+
+
+// If no waypoints are given then loadWithStartPoint will take start and end point and depict the route
+// param : startPoint or origin (technicians start point)
+// param : endpoint or destination
+// param : options for driving mode can be specified here. (obv. DRIVING for now)
 - (void)loadWithStartPoint:(NSString *)startPoint endPoint:(NSString *)endPoint options:(UICGDirectionsOptions *)options {
-	[googleMapsAPI stringByEvaluatingJavaScriptFromString:
-	 [NSString stringWithFormat:@"loadDirections('%@', '%@', %@)", startPoint, endPoint, [options JSONRepresentation]]];
+    
+    NSMutableDictionary *finalDictionary = [[[NSMutableDictionary alloc] init] autorelease];
+    [finalDictionary setObject:startPoint forKey:@"origin"];
+    [finalDictionary setObject:endPoint forKey:@"destination"];
+    
+    NSString *requestDataString = [finalDictionary JSONRepresentation];
+    
+    NSString *executableString = [NSString stringWithFormat:@"route1(%@);",requestDataString];
+    
+    [googleMapsAPI stringByEvaluatingJavaScriptFromString:executableString];
+
 }
 
+// V3:KRI
+// Function which takes the list of waypoints with neccesary UICGDirectionsOptions
+// param : waypoints or workorder points
+// param : options for driving mode can be specified here. (obv. DRIVING for now)
 - (void)loadFromWaypoints:(NSArray *)waypoints options:(UICGDirectionsOptions *)options {
-	[googleMapsAPI stringByEvaluatingJavaScriptFromString:
-	 [NSString stringWithFormat:@"loadFromWaypoints(%@, %@)", [waypoints JSONRepresentation], [options JSONRepresentation]]];
+    
+    NSMutableDictionary *finalDictionary = [[[NSMutableDictionary alloc] init] autorelease];
+    
+    NSMutableArray *wayPointsArray = [NSMutableArray array];
+    
+    NSInteger someCount = [waypoints count];
+    for (int counter = 1; (counter < someCount && (counter != (someCount -1))); counter ++)
+    {
+        NSString *loc = [waypoints objectAtIndex:counter];
+        NSMutableDictionary *waypt = [NSMutableDictionary dictionary];
+        [waypt setObject:loc forKey:@"location"];
+        [waypt setObject:[NSNumber numberWithBool:true] forKey:@"stopover"];
+        [wayPointsArray addObject:waypt];
+    }
+    
+    [finalDictionary setObject:wayPointsArray forKey:@"waypoints"];
+    
+     
+    NSString *fromString = [waypoints objectAtIndex:0];
+    NSString *destString = [waypoints lastObject];
+    
+    [finalDictionary setObject:fromString forKey:@"origin"];
+    [finalDictionary setObject:destString forKey:@"destination"];
+    
+    NSString *requestDataString = [finalDictionary JSONRepresentation];
+    NSString *executableString = [NSString stringWithFormat:@"route1(%@);",requestDataString];
+    
+    [googleMapsAPI stringByEvaluatingJavaScriptFromString:executableString];
+ 
 }
 
 - (void)clear {
@@ -119,12 +187,14 @@ static UICGDirections *sharedDirections;
 	return [routes objectAtIndex:index];
 }
 
-- (NSInteger)numberOfGeocodes {
-	return [geocodes count];
-}
+// V3:KRI
 
-- (NSDictionary *)geocodeAtIndex:(NSInteger)index {
-	return [geocodes objectAtIndex:index];;
-}
+//- (NSInteger)numberOfGeocodes {
+//	return [geocodes count];
+//}
+//
+//- (NSDictionary *)geocodeAtIndex:(NSInteger)index {
+//	return [geocodes objectAtIndex:index];;
+//}
 
 @end

@@ -27,19 +27,15 @@
 	if (self != nil) {
 		dictionaryRepresentation = [dictionary retain];
 		
-		NSDictionary *point = [dictionaryRepresentation objectForKey:@"Point"];
-		NSArray *coordinates = [point objectForKey:@"coordinates"];
-		CLLocationDegrees latitude  = [[coordinates objectAtIndex:0] doubleValue];
-		CLLocationDegrees longitude = [[coordinates objectAtIndex:1] doubleValue];
+		NSDictionary *start_location = [dictionaryRepresentation objectForKey:@"start_location"];//@"Point"];
+        
+        //hb and ib for business purpose. if you are using publey key its again different
+		CLLocationDegrees latitude  = [[start_location objectForKey:@"ib"] doubleValue];//[[coordinates objectAtIndex:0] doubleValue];
+		CLLocationDegrees longitude = [[start_location objectForKey:@"hb"] doubleValue];//[[coordinates objectAtIndex:1] doubleValue];
 		location = [[[CLLocation alloc] initWithLatitude:latitude longitude:longitude] autorelease];
-		
-		id index = [dictionaryRepresentation objectForKey:@"polylineIndex"];
-		if (index == [NSNull null]) {
-			polylineIndex = -1;
-		} else {
-			polylineIndex = [index integerValue];
-		}
-		descriptionHtml = [dictionaryRepresentation objectForKey:@"descriptionHtml"];
+        
+        // V3:KRI
+		descriptionHtml = [dictionaryRepresentation objectForKey:@"instructions"];//@"descriptionHtml"];
 		distance = [dictionaryRepresentation objectForKey:@"Distance"];
 		duration = [dictionaryRepresentation objectForKey:@"Duration"];
 	}

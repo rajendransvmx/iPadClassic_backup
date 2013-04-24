@@ -16,6 +16,29 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize directionArray;
 @synthesize workOrderArray;
 
+// V3:KRI
+- (NSArray *)getStepsForLegAtIndex:(NSInteger)legIndex {
+
+    NSArray *stepsArr = nil;
+    
+    //Only one route
+    UICGRoute *route = [directionArray objectAtIndex:0];
+    
+    if (route != nil) {
+        NSDictionary *k = [route.legsArray objectAtIndex:legIndex];
+        stepsArr = [k objectForKey:@"steps"];
+    }
+    return stepsArr;
+}
+// V3:KRI
+- (NSArray *)getLegsForRoute {
+    
+    UICGRoute *route = [directionArray objectAtIndex:0];
+    if(route != nil) {
+    return route.legsArray;
+    }
+    return nil;
+}
 #pragma mark -
 #pragma mark View lifecycle
 
@@ -27,16 +50,16 @@ extern void SVMXLog(NSString *format, ...);
     
     [self.tableView setBackgroundColor:[UIColor clearColor]];
 }
-
+// V3:KRI
 - (void) scrollToSection:(NSNumber *)index
 {
     NSInteger section = 0;
     if([index intValue] < 0)
-        section = [directionArray count]-1;
+        section = [[self getLegsForRoute] count]-1;
     else
         section = [index intValue];
-    UICGRoute *route = [directionArray objectAtIndex:section];
-    if(![route numberOfSteps])
+//    UICGRoute *route = [directionArray objectAtIndex:0];
+    if([[self getLegsForRoute] count] <= 0)
     {
         SMLog(@"[%@]Route Data is NULL",NSStringFromSelector(_cmd));
         return;
@@ -44,7 +67,7 @@ extern void SVMXLog(NSString *format, ...);
     // scroll to annotationIndexth section
     if ([index intValue] < 0)
     {
-        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:[directionArray count]-1] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:[[self getLegsForRoute] count]-1] atScrollPosition:UITableViewScrollPositionTop animated:YES];
         return;
     }
 
@@ -53,27 +76,38 @@ extern void SVMXLog(NSString *format, ...);
 
 #pragma mark -
 #pragma mark Table view data source
-
+// V3:KRI
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     // Return the number of sections.
-    return [directionArray count];
+    return [[self getLegsForRoute] count];
 }
 
-
+// V3:KRI
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     // Return the number of rows in the section.
-    UICGRoute *route = [directionArray objectAtIndex:section];
-    return [route numberOfSteps];
+//    UICGRoute *route = [directionArray objectAtIndex:section];
+//    return [route numberOfSteps];
+    return [[self getStepsForLegAtIndex:section] count];
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-	UICGRoute *route = [directionArray objectAtIndex:section];
+	UICGRoute *route = [directionArray objectAtIndex:0];
     if (section == [workOrderArray count])
         section = 0;
+    
+    NSDictionary *legDict = [route.legsArray objectAtIndex:section];
+    NSString *distance = [[legDict objectForKey:@"distance"] objectForKey:@"text"];
+    NSString *duration = [[legDict objectForKey:@"duration"] objectForKey:@"text"];
+    
+    NSString *requiredFormatString = [NSString stringWithFormat:@"%@ ( about %@ )",distance,duration];
+    
+    
     NSDictionary * dict = [workOrderArray objectAtIndex:section];
-    NSString * sectionDetail = [NSString stringWithFormat:@"%@\r-- -- -- -- -- --\r%@\r-- -- -- -- -- --\r%@", [dict objectForKey:@"WorkOrderNumber"], [dict objectForKey:@"WorkOrderAddress"], [route.summaryHtml stringByReplacingOccurrencesOfString:@"&nbsp;" withString:@" "]];
+    NSString * sectionDetail = [NSString stringWithFormat:@"%@\r-- -- -- -- -- --\r%@\r-- -- -- -- -- --\r%@", [dict objectForKey:@"WorkOrderNumber"], [dict objectForKey:@"WorkOrderAddress"],requiredFormatString];
+                                
+                                //[route.summaryHtml stringByReplacingOccurrencesOfString:@"&nbsp;" withString:@" "]];
     return sectionDetail;
     // return [route.summaryHtml stringByReplacingOccurrencesOfString:@"&nbsp;" withString:@" "];
 }
@@ -129,10 +163,12 @@ extern void SVMXLog(NSString *format, ...);
     
     cell.backgroundColor = [UIColor blueColor];
     
-    UICGRoute *route = [directionArray objectAtIndex:indexPath.section];
-	UICGStep *step = [route stepAtIndex:indexPath.row];
-
-	[cell setCellText:step.descriptionHtml];
+    //UICGRoute *route = [directionArray objectAtIndex:0];
+	NSDictionary *step = [[self getStepsForLegAtIndex:indexPath.section] objectAtIndex:indexPath.row];//[route stepAtIndex:indexPath.row];
+    
+    
+    
+	[cell setCellText:[step objectForKey:@"instructions"]];
     
     return cell;
 }
