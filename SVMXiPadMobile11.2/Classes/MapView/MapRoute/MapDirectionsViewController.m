@@ -194,11 +194,18 @@ static NSString* const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 
 	if ([wayPoints count] > 0)
     {
-		NSInteger numberOfRoutes = [directions numberOfRoutes];
-		for (NSInteger index = 0; index < numberOfRoutes-1; index++)
+	//	NSInteger numberOfRoutes = [directions numberOfRoutes];
+		//Krishna Map V3
+        int  kk = 0;
+		for (NSInteger index = 0; index < [wayPoints count]; index++)
         {
-			UICGRoute *route = [directions routeAtIndex:index];
+			UICGRoute *route = [directions routeAtIndex:0];////Krishna Map V3
 			CLLocation *location = [route endLocation];
+			//Krishna Map V3
+            if (kk < [[route waypoints]count]) {
+                location = [[route waypoints]objectAtIndex:kk];
+              	kk++;
+            }//
             NSDictionary * endGeocode = [route endGeocode];
             NSString * address = [endGeocode objectForKey:@"address"];
             CLLocationCoordinate2D coord = [location coordinate];
