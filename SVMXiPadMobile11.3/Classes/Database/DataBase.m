@@ -6493,7 +6493,7 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void)StartIncrementalmetasync
 {
-	appDelegate.syncTypeInProgress = METASYNC_INPROGRESS;
+	//appDelegate.syncTypeInProgress = METASYNC_INPROGRESS;
     [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
     
     //We are retriving the SFObjectField table here so that we can compare the fields of the tables of the two databases
@@ -6602,7 +6602,7 @@ extern void SVMXLog(NSString *format, ...);
          //SFM Search End
      }
 	
-	[appDelegate setCurrentSyncStatusProgress:METASYNC_SEARCH optimizedSynstate:0];
+//	[appDelegate setCurrentSyncStatusProgress:METASYNC_SEARCH optimizedSynstate:0];
     if([appDelegate doesServerSupportsModule:kMinPkgForGetPriceModule])
     {
         appDelegate.initial_sync_status = SYNC_SFM_SEARCH;
@@ -6668,12 +6668,12 @@ extern void SVMXLog(NSString *format, ...);
             SMLog(@"MetaSync Get Price PRICE_CALC_CODE_SNIPPET End: %@", [NSDate date]);
         }
     }
-	[appDelegate setCurrentSyncStatusProgress:METASYNC_GETPRICE optimizedSynstate:0];
+//	[appDelegate setCurrentSyncStatusProgress:METASYNC_GETPRICE optimizedSynstate:0];
     if ([retVal isEqualToString:SUCCESS_])
     {
         [appDelegate getDPpicklistInfo];
 		
-		[appDelegate setCurrentSyncStatusProgress:METASYNC_DEPPICKLIST optimizedSynstate:0];
+//		[appDelegate setCurrentSyncStatusProgress:METASYNC_DEPPICKLIST optimizedSynstate:0];
         SMLog(@"META SYNC 1");
         
         time_t t2;
@@ -7143,7 +7143,7 @@ extern void SVMXLog(NSString *format, ...);
     appDelegate.internetAlertFlag = TRUE;
     
     popOver_view.syncConfigurationFailed = FALSE;
-	[appDelegate setCurrentSyncStatusProgress:METASYNC_POPULATEDATA optimizedSynstate:0];
+//	[appDelegate setCurrentSyncStatusProgress:METASYNC_POPULATEDATA optimizedSynstate:0];
 	
     [self settingAfterIncrementalMetaSync];
     
@@ -7712,7 +7712,7 @@ extern void SVMXLog(NSString *format, ...);
         return FALSE;
     }
 	
-	[appDelegate setCurrentSyncStatusProgress:eEVENTSYNC_GETID optimizedSynstate:0];
+//	[appDelegate setCurrentSyncStatusProgress:eEVENTSYNC_GETID optimizedSynstate:0];
 	
 	appDelegate.Incremental_sync_status = INCR_STARTS;
     
@@ -7764,7 +7764,7 @@ extern void SVMXLog(NSString *format, ...);
             [MyPopoverDelegate performSelector:@selector(throwException)];
         return FALSE;
     }
-	[appDelegate setCurrentSyncStatusProgress:eEVENTSYNC_GETDATA optimizedSynstate:0];
+//	[appDelegate setCurrentSyncStatusProgress:eEVENTSYNC_GETDATA optimizedSynstate:0];
 	
 	//Radha #6176
 	NSMutableString * eventId = [self getAllEventRelatedIdFromSyncRecordHeap];
@@ -7772,7 +7772,7 @@ extern void SVMXLog(NSString *format, ...);
 	[self deleteEventNotRelatedToLoggedInUser:eventId tableName:@"Event"];
     [appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
 	
-	[appDelegate setCurrentSyncStatusProgress:eEVENTSYNC_PUTDATA optimizedSynstate:0];
+//	[appDelegate setCurrentSyncStatusProgress:eEVENTSYNC_PUTDATA optimizedSynstate:0];
 	
     return TRUE;
 }
