@@ -547,8 +547,45 @@ extern void SVMXLog(NSString *format, ...);
                 }
                 
             }
+			
+			//Radha - Signaturecapture
+			NSDictionary * dict = [sync_record objectForKey:MASTER];
+			
+			NSArray * allKey = [dict allKeys];
+			
+			NSString * objectName = [allKey objectAtIndex:0];
+			
+			NSDictionary * detailDict  = [dict objectForKey:[allKey objectAtIndex:0]];
+			
+			allKey = [detailDict allKeys];
+			
+			NSDictionary  * recordInfo = [[detailDict objectForKey:[allKey objectAtIndex:0]] objectAtIndex:0];
+						
+			NSMutableDictionary * recordDict = [NSMutableDictionary dictionaryWithCapacity:0];
+			
+			[recordDict setValue:objectName forKey:OBJECTNAME];
+			[recordDict setValue:[recordInfo objectForKey:@"local_id"] forKey:HEADERID];
+			
+			NSString * type = [recordInfo objectForKey:@"Operation_type"];
+			
+			if ([type isEqualToString:INSERT])
+				type = SIG_AFTERSYNC;
+			else if ([type isEqualToString:UPDATE])
+			{
+				type = [appDelegate.calDataBase getOperationTypeForSignature:[recordDict objectForKey:HEADERID] forObject:[recordDict objectForKey:OBJECTNAME]];
+			}
+						
+			BOOL retval = [self checkIfSignatureExistsForCustomRecord:recordDict type:type];
+			
+			if (retval)
+			{
+				didWriteSignature = NO;
+				[appDelegate.dataBase attachSiganture:type];
+			}
+			
+			
         }
-		[appDelegate setCurrentSyncStatusProgress:CUSTOMSYNC_END optimizedSynstate:0];
+//		[appDelegate setCurrentSyncStatusProgress:CUSTOMSYNC_END optimizedSynstate:0];
     }
 
     
@@ -603,9 +640,34 @@ extern void SVMXLog(NSString *format, ...);
                 }
             }
         }
-		[appDelegate setCurrentSyncStatusProgress:CUSTOMSYNC_END optimizedSynstate:0];
+//		[appDelegate setCurrentSyncStatusProgress:CUSTOMSYNC_END optimizedSynstate:0];
     }
 }
+
+- (BOOL) checkIfSignatureExistsForCustomRecord:(NSMutableDictionary *) recordInfo type:(NSString *)Operation_type
+{		
+	NSString * query = [NSString stringWithFormat:@"SELECT COUNT(*) FROM %@ WHERE record_Id = '%@' AND object_api_name = '%@' AND operation_type = '%@'", @"SFSignatureData", [recordInfo objectForKey:HEADERID], [recordInfo objectForKey:OBJECTNAME], Operation_type];
+	sqlite3_stmt * statement;
+	int count = 0;
+	
+	if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, nil) == SQLITE_OK)
+    {
+        while  (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            count = synchronized_sqlite3_column_int(statement, 0);
+            
+        }
+        synchronized_sqlite3_finalize(statement);
+    }
+	
+	if (count > 0)
+		return TRUE;
+
+	return FALSE;
+	
+}
+
+
 
 #define REQUEST  @"request"
 #define RESPONSE @"response"
@@ -1394,7 +1456,7 @@ last_sync_time:(NSString *)last_sync_time
     
     if (![appDelegate isInternetConnectionAvailable])
     {
-         appDelegate.Enable_aggresssiveSync = FALSE;
+        appDelegate.Enable_aggresssiveSync = FALSE;
 		//Radha Defect Fix 5542
 		if (appDelegate.isDataSyncTimerTriggered)
 		{
@@ -1417,15 +1479,12 @@ last_sync_time:(NSString *)last_sync_time
 
     SMLog(@"%@, %d",appDelegate.currentServerUrl, [appDelegate.currentServerUrl length] );
 	
-	
-	
 	if ([appDelegate.currentServerUrl Contains:@"null"] || [appDelegate.currentServerUrl length] == 0 || appDelegate.currentServerUrl == nil)
 	{
 		NSUserDefaults * userdefaults = [NSUserDefaults standardUserDefaults];
 		
 		appDelegate.currentServerUrl = [userdefaults objectForKey:SERVERURL];
 	}
-		
     
     if(retVal == NO || [appDelegate.currentServerUrl Contains:@"null"])
     {

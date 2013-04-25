@@ -5013,6 +5013,47 @@ extern void SVMXLog(NSString *format, ...);
 
 	}
 }
+
+- (void) attachSiganture:(NSString *)operation_type
+{
+	NSString *selectQuery = [NSString stringWithFormat:@"SELECT DISTINCT record_Id, object_api_name From SFSignatureData Where sign_type = 'ViewWorkOrder' and operation_type = '%@'",operation_type];
+	
+	
+    sqlite3_stmt * stmt;
+    
+    NSString  * recordId = @"";
+    NSString * objectapiName = @"";
+    
+    NSMutableDictionary * signatureData = [[NSMutableDictionary alloc] initWithCapacity:0];
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        if(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            char *field = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_1);
+            if ( field != nil )
+                recordId = [NSString stringWithUTF8String:field];
+            
+            char *field1 = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_2);
+            if ( field1 != nil )
+                objectapiName = [NSString stringWithUTF8String:field1];
+            
+            [signatureData setValue:objectapiName forKey:recordId];
+        }
+		synchronized_sqlite3_finalize(stmt);
+    }
+    
+    NSArray * allkeys = [signatureData allKeys];
+    
+    for (int i = 0; i < [allkeys count]; i++)
+    {
+        [appDelegate.calDataBase getSFIdForSignature:[allkeys objectAtIndex:i] objectName:[signatureData objectForKey:[allkeys objectAtIndex:i]]];
+		[appDelegate.calDataBase deleteSignatureDataWRTId:[allkeys objectAtIndex:i] type:operation_type];
+    }
+    
+    appDelegate.wsInterface.didWriteSignature = YES;
+}
+
 #pragma mark - END
 
 

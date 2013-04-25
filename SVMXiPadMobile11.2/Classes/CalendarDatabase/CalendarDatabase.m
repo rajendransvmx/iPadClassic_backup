@@ -3106,6 +3106,21 @@ extern void SVMXLog(NSString *format, ...);
 	}
 }
 
+- (void) deleteSignatureDataWRTId:(NSString *)local_id  type:(NSString *)operationType
+{
+    NSString * queryStatement = [NSString stringWithFormat:@"DELETE From SFSignatureData where operation_type = '%@' and record_Id = '%@' ",operationType, local_id];
+    
+    char * err;
+    if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+    {
+        SMLog(@"%@", queryStatement);
+		SMLog(@"METHOD:deleteAllSignatureData");
+		SMLog(@"ERROR IN DELETE %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryStatement type:DELETEQUERY];
+		
+	}
+}
+
 //####################################################################################//
                         //PLEASE CALL THIS METHODS ONCE DATA SYNC IS OVER
 //Shrinivas - This method to be only called when Data Sync Over.

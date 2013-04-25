@@ -350,5 +350,6 @@ PopoverButtons *popOver_view;
 
 //Sync Override : Radha
 - (void) updateWebserviceNameInWizarsTable:(NSArray *)customArray;
+- (void) attachSiganture:(NSString *)operation_type;
 
 @end
