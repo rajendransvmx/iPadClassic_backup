@@ -504,7 +504,7 @@ extern void SVMXLog(NSString *format, ...);
 {
 
     //get all records from trailer table with tag CUSTOM_WS
-	appDelegate.syncTypeInProgress = CUSTOMSYNC_INPROGRESS;
+	//appDelegate.syncTypeInProgress = CUSTOMSYNC_INPROGRESS;
 	
    NSArray *request_ids = [appDelegate.databaseInterface getallmasterRecordsForCustomAggressiveSync];
     for(NSString * request_id  in request_ids)
@@ -513,7 +513,7 @@ extern void SVMXLog(NSString *format, ...);
         if([cofig_info count] > 0 )
         {
              appDelegate.Incremental_sync_status = INCR_STARTS;
-			[appDelegate setCurrentSyncStatusProgress:CUSTOMSYNC_STARTS optimizedSynstate:0];
+//			[appDelegate setCurrentSyncStatusProgress:CUSTOMSYNC_STARTS optimizedSynstate:0];
 			
             NSMutableDictionary * sync_record = [appDelegate.databaseInterface getCustomAggressiveSyncRecordsForHearedRecord:request_id];
 			[appDelegate setCurrentSyncStatusProgress:CUSTOMSYNC_REQDATA optimizedSynstate:0];
@@ -599,7 +599,7 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void)specialOverrideSync
 {
-	appDelegate.syncTypeInProgress = CUSTOMSYNC_INPROGRESS;
+	//appDelegate.syncTypeInProgress = CUSTOMSYNC_INPROGRESS;
 	
     NSArray *request_ids = [appDelegate.databaseInterface getallmasterRecordsForCustomAggressiveSyncFrom_SyncErrorTable];
     for(NSString * request_id  in request_ids)
@@ -608,7 +608,7 @@ extern void SVMXLog(NSString *format, ...);
         if([cofig_info count] > 0 )
         {
             appDelegate.Incremental_sync_status = INCR_STARTS;
-			[appDelegate setCurrentSyncStatusProgress:CUSTOMSYNC_STARTS optimizedSynstate:0];
+//			[appDelegate setCurrentSyncStatusProgress:CUSTOMSYNC_STARTS optimizedSynstate:0];
             NSString * error_type = [appDelegate.databaseInterface errorTypeOfrRequestId:request_id];
             NSString * event_name = @"";
             if([error_type isEqualToString:RELATED_REC_ERROR])
@@ -621,7 +621,7 @@ extern void SVMXLog(NSString *format, ...);
             }
             
             NSMutableDictionary * sync_record = [appDelegate.databaseInterface getCustomAggressiveSyncRecordsForHearedRecord:request_id];
-			[appDelegate setCurrentSyncStatusProgress:CUSTOMSYNC_REQDATA optimizedSynstate:0];
+//			[appDelegate setCurrentSyncStatusProgress:CUSTOMSYNC_REQDATA optimizedSynstate:0];
             [self optimizedAggressiveSync:sync_record method_name:[cofig_info objectForKey:WEBSERVICE_NAME] class_name:[cofig_info objectForKey:CLASS_NAME] event_type:@"SYNC" event_name:event_name request_id:request_id];
             while(CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
             {
@@ -976,8 +976,7 @@ last_sync_time:(NSString *)last_sync_time
         return;
     }
 	
-	appDelegate.syncTypeInProgress = CONFLICTSYNC_INPROGRESS;
-	[NSThread sleepForTimeInterval:0.2];
+	//appDelegate.syncTypeInProgress = CONFLICTSYNC_INPROGRESS;
 	[appDelegate setCurrentSyncStatusProgress:cSYNC_STARTS optimizedSynstate:0];
 	
 	[self getAllRecordsForOperationTypeFromSYNCCONFLICT:PUT_INSERT OverRideFlag:RETRY];  //change for new implementation.
@@ -1006,7 +1005,7 @@ last_sync_time:(NSString *)last_sync_time
 
     }
 
-	[appDelegate setCurrentSyncStatusProgress:cSYNC_PUTINSERT optimizedSynstate:0];
+//	[appDelegate setCurrentSyncStatusProgress:cSYNC_PUTINSERT optimizedSynstate:0];
 	
 	//put all deletes 
 	[self getAllRecordsForOperationTypeFromSYNCCONFLICT:PUT_DELETE OverRideFlag:RETRY];
@@ -1034,7 +1033,7 @@ last_sync_time:(NSString *)last_sync_time
         }
     }
 	
-	[appDelegate setCurrentSyncStatusProgress:cSYNC_PUTDELETE optimizedSynstate:0];
+//	[appDelegate setCurrentSyncStatusProgress:cSYNC_PUTDELETE optimizedSynstate:0];
 	
     [self getAllRecordsForOperationTypeFromSYNCCONFLICT:PUT_UPDATE OverRideFlag:CLIENT_OVERRIDE];
     [self Put:PUT_UPDATE];
@@ -1060,7 +1059,7 @@ last_sync_time:(NSString *)last_sync_time
 
     }
     
-	[appDelegate setCurrentSyncStatusProgress:cSYNC_PUTUPDATE optimizedSynstate:0];
+//	[appDelegate setCurrentSyncStatusProgress:cSYNC_PUTUPDATE optimizedSynstate:0];
 	
     [appDelegate.databaseInterface PutconflictRecordsIntoHeapFor:PUT_UPDATE override_flag:SERVER_OVERRIDE];
     [appDelegate.databaseInterface PutconflictRecordsIntoHeapFor:PUT_DELETE override_flag:SERVER_OVERRIDE];
@@ -1094,7 +1093,7 @@ last_sync_time:(NSString *)last_sync_time
     [appDelegate.databaseInterface  updateSyncRecordsIntoLocalDatabase];
 	
 	
-	[appDelegate setCurrentSyncStatusProgress:cSYNC_PUTRECORDS optimizedSynstate:0];
+//	[appDelegate setCurrentSyncStatusProgress:cSYNC_PUTRECORDS optimizedSynstate:0];
     
     [appDelegate.databaseInterface cleartable:SYNC_RECORD_HEAP];
     appDelegate.speacialSyncIsGoingOn  = FALSE;
@@ -1131,8 +1130,7 @@ last_sync_time:(NSString *)last_sync_time
         [self setSyncReqId:@""];
 		
 		
-		[appDelegate setCurrentSyncStatusProgress:cSYNC_END optimizedSynstate:0];
-		[NSThread sleepForTimeInterval:0.5f];
+//		[appDelegate setCurrentSyncStatusProgress:cSYNC_END optimizedSynstate:0];
         
         [appDelegate setSyncStatus:SYNC_GREEN];
         [updateSyncStatus refreshSyncStatus];
@@ -1456,7 +1454,7 @@ last_sync_time:(NSString *)last_sync_time
     
     if (![appDelegate isInternetConnectionAvailable])
     {
-        appDelegate.Enable_aggresssiveSync = FALSE;
+         appDelegate.Enable_aggresssiveSync = FALSE;
 		//Radha Defect Fix 5542
 		if (appDelegate.isDataSyncTimerTriggered)
 		{
@@ -1500,7 +1498,8 @@ last_sync_time:(NSString *)last_sync_time
 		}
         return;
     }
-
+	
+	[appDelegate setCurrentSyncStatusProgress:SYNC_STARTS optimizedSynstate:oSYNC_STARTS];
 	[appDelegate updateSyncFailedFlag:STRUE];
     appDelegate.dataSyncRunning = YES;
     appDelegate.connection_error = FALSE;
@@ -1577,9 +1576,7 @@ last_sync_time:(NSString *)last_sync_time
         
         
 	//Radha Sync ProgressBar
-	appDelegate.syncTypeInProgress = DATASYNC_INPROGRESS;
-	[NSThread sleepForTimeInterval:0.2];
-	[appDelegate setCurrentSyncStatusProgress:SYNC_STARTS optimizedSynstate:oSYNC_STARTS];
+	//appDelegate.syncTypeInProgress = DATASYNC_INPROGRESS;
 
     [self GetDelete];
 
@@ -1639,7 +1636,7 @@ last_sync_time:(NSString *)last_sync_time
     }
     
     //Radha Sync ProgressBar
-	[appDelegate setCurrentSyncStatusProgress:GETDELETE_DONE optimizedSynstate:oGETDELETE_DONE];
+//	[appDelegate setCurrentSyncStatusProgress:GETDELETE_DONE optimizedSynstate:oGETDELETE_DONE];
 
     if(!temp_aggressiveSync)
     {
@@ -1751,7 +1748,7 @@ last_sync_time:(NSString *)last_sync_time
             return;
         }
         //Radha Sync ProgressBar
-		[appDelegate setCurrentSyncStatusProgress:GETEDELETE_DC_DONE optimizedSynstate:0];
+//		[appDelegate setCurrentSyncStatusProgress:GETEDELETE_DC_DONE optimizedSynstate:0];
 	}
     
     [self copyTrailertoTempTrailer:DELETE];
@@ -1824,8 +1821,8 @@ last_sync_time:(NSString *)last_sync_time
         
     //Radha Sync ProgressBar
 		
-	[appDelegate setCurrentSyncStatusProgress:PUTDELETE_DONE optimizedSynstate:oPUTDELETE_DONE];
-	        
+//	[appDelegate setCurrentSyncStatusProgress:PUTDELETE_DONE optimizedSynstate:oPUTDELETE_DONE];
+	       
     [appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:GET_DELETE];
     [appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:PUT_DELETE];
     
@@ -1898,7 +1895,7 @@ last_sync_time:(NSString *)last_sync_time
         
     //Radha Sync ProgressBar
 		
-	[appDelegate setCurrentSyncStatusProgress:PUTINSERT_DONE optimizedSynstate:oPUTINSERT_DONE];
+//	[appDelegate setCurrentSyncStatusProgress:PUTINSERT_DONE optimizedSynstate:oPUTINSERT_DONE];
 	       
     [self resetSyncLastindexAndObjectName];  //sahana
     [self GetInsert];                        //once all insertion is over call call reverse insert  method 
@@ -1958,7 +1955,7 @@ last_sync_time:(NSString *)last_sync_time
                                                                         //call Update
     
     //Radha Sync ProgressBar
-	[appDelegate setCurrentSyncStatusProgress:GETINSERT_DONE optimizedSynstate:oGETINSERT_DONE];
+//	[appDelegate setCurrentSyncStatusProgress:GETINSERT_DONE optimizedSynstate:oGETINSERT_DONE];
     
     if( !temp_aggressiveSync)
     {
@@ -2069,7 +2066,7 @@ last_sync_time:(NSString *)last_sync_time
         }
 		
 		//Radha Sync ProgressBar
-		[appDelegate setCurrentSyncStatusProgress:GETINSERT_DC_DONE optimizedSynstate:0];
+//		[appDelegate setCurrentSyncStatusProgress:GETINSERT_DC_DONE optimizedSynstate:0];
     }
     didWriteSignature = NO;
     [appDelegate.calDataBase getAllLocalIdsForSignature:SIG_BEFOREUPDATE];
@@ -2154,7 +2151,7 @@ last_sync_time:(NSString *)last_sync_time
     
     
     //Radha Sync ProgressBar
-	[appDelegate setCurrentSyncStatusProgress:PUTUPDATE_DONE optimizedSynstate:oPUTUPDATE_DONE];
+//	[appDelegate setCurrentSyncStatusProgress:PUTUPDATE_DONE optimizedSynstate:oPUTUPDATE_DONE];
 	
     
     didWriteSignature = NO;
@@ -2225,7 +2222,7 @@ last_sync_time:(NSString *)last_sync_time
     }
         
     //Radha Sync ProgressBar
-	[appDelegate setCurrentSyncStatusProgress:GETUPDATE_DONE optimizedSynstate:oGETUPDATE_DONE];
+//	[appDelegate setCurrentSyncStatusProgress:GETUPDATE_DONE optimizedSynstate:oGETUPDATE_DONE];
 		
     if( !temp_aggressiveSync)
     {
@@ -2336,7 +2333,7 @@ last_sync_time:(NSString *)last_sync_time
 			}
             return;
         }
-		[appDelegate setCurrentSyncStatusProgress:GETUPDATE_DC_DONE optimizedSynstate:0];
+//		[appDelegate setCurrentSyncStatusProgress:GETUPDATE_DC_DONE optimizedSynstate:0];
     }
         
         //Radha Sync ProgressBar
@@ -2404,7 +2401,7 @@ last_sync_time:(NSString *)last_sync_time
     }
         
     //Radha Sync ProgressBar
-	[appDelegate setCurrentSyncStatusProgress:TXFETCH_DONE optimizedSynstate:oTXFETCH_DONE];	
+//	[appDelegate setCurrentSyncStatusProgress:TXFETCH_DONE optimizedSynstate:oTXFETCH_DONE];	
 		
     if( !temp_aggressiveSync)
     {
@@ -2654,9 +2651,7 @@ last_sync_time:(NSString *)last_sync_time
         
         
     //Radha Sync ProgressBar
-	[appDelegate setCurrentSyncStatusProgress:SYNC_END optimizedSynstate:oSYNC_END];
-			
-	[NSThread sleepForTimeInterval:0.5];
+//	[appDelegate setCurrentSyncStatusProgress:SYNC_END optimizedSynstate:oSYNC_END];
 	if(conflict_exists)
 	{
 		appDelegate.SyncStatus = SYNC_RED;
@@ -2710,7 +2705,7 @@ last_sync_time:(NSString *)last_sync_time
    
         
 	//Radha Progress Bar
-	appDelegate.syncTypeInProgress = NO_SYNCINPROGRESS;
+	//appDelegate.syncTypeInProgress = NO_SYNCINPROGRESS;
     if( appDelegate.queue_object != nil )
     {
         appDelegate.dataSyncRunning = NO;
@@ -6489,7 +6484,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     {
          custom_sync_status = NO_ACTIVE_CUSTOM_SYNC;
 		
-		[appDelegate setCurrentSyncStatusProgress:CUSTOMSYNC_GETDATA optimizedSynstate:0];
+//		[appDelegate setCurrentSyncStatusProgress:CUSTOMSYNC_GETDATA optimizedSynstate:0];
 		
         INTF_WebServicesDefServiceSvc_INTF_SyncOverRide_WSResponse * wsResponse = [response.bodyParts objectAtIndex:0];
         if([wsResponse.result.errors count]>0)
@@ -6663,11 +6658,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 //            [error_conflict release];
 //            [record_dict release];
         }
-		if (appDelegate.syncTypeInProgress == CUSTOMSYNC_INPROGRESS)
-		{
-			[appDelegate setCurrentSyncStatusProgress:CUSTOMSYNC_PUTDATA optimizedSynstate:0];
-		}
-		 appDelegate.Incremental_sync_status = CUSTOM_AGGRESSIVESYNC_DONE;
+		appDelegate.Incremental_sync_status = CUSTOM_AGGRESSIVESYNC_DONE;
 		
         NSLog(@"This is INTF_WebServicesDefBinding_INTF_SyncOverRide_WS");
     }
@@ -7090,12 +7081,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                 
                 NSMutableArray * pageId = [self getAllPageLauoutId];
 				
-				if (appDelegate.syncTypeInProgress == METASYNC_INPROGRESS)
-				{
-					[appDelegate setCurrentSyncStatusProgress:METASYNC_METADATA optimizedSynstate:0];
-				}
-                
-                [self metaSyncWithEventName:SFM_PAGEDATA eventType:SYNC values:pageId];
+				[self metaSyncWithEventName:SFM_PAGEDATA eventType:SYNC values:pageId];
 
                 didGetPageData = FALSE;
             }
@@ -7544,12 +7530,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                 appDelegate.Sync_check_in = FALSE;
 
                 NSMutableArray * _values = [self getAllProcessId];
-				if (appDelegate.syncTypeInProgress == METASYNC_INPROGRESS)
-				{
-					[appDelegate setCurrentSyncStatusProgress:METASYNC_PAGEDATA optimizedSynstate:0];
-				}
-				
-                
+							
                 [self metaSyncWithEventName:SFM_OBJECT_DEFINITIONS eventType:SYNC values:_values]; 
             }
         }
@@ -7655,12 +7636,6 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                     [self getRecordTypeDictForObjects:allObjects];
                 }
             }
-			
-			if (appDelegate.syncTypeInProgress == METASYNC_INPROGRESS)
-			{
-				[appDelegate setCurrentSyncStatusProgress:METASYNC_PICKLISTDEF optimizedSynstate:0];
-			}
-            
         } 
         
         else if ([wsResponse.result.eventName isEqualToString:SFM_OBJECT_DEFINITIONS])
@@ -7929,12 +7904,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                 appDelegate.initial_sync_status = SYNC_SFM_PICKLIST_DEFINITIONS;
                 appDelegate.Sync_check_in = FALSE;
 				
-				if (appDelegate.syncTypeInProgress == METASYNC_INPROGRESS)
-				{
-					[appDelegate setCurrentSyncStatusProgress:METASYNC_OBJECTDEF optimizedSynstate:0];
-				}
-                
-                [self metaSyncWithEventName:SFM_PICKLIST_DEFINITIONS eventType:SYNC values:pickListObj];   
+				[self metaSyncWithEventName:SFM_PICKLIST_DEFINITIONS eventType:SYNC values:pickListObj];
             }
         }
 
@@ -8017,10 +7987,6 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             }
                   
             [appDelegate.dataBase insertValuesInToSFWizardsTable:wizardDictionary];
-			if (appDelegate.syncTypeInProgress == METASYNC_INPROGRESS)
-			{
-				[appDelegate setCurrentSyncStatusProgress:METASYNC_WIZARD optimizedSynstate:0];
-			}
 		 
       }
       else if ([wsResponse.result.eventName isEqualToString:MOBILE_DEVICE_TAGS])
@@ -8072,11 +8038,6 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             }          
            
             [appDelegate.dataBase insertValuesInToSettingsTable:mobileDeviceSettingsDict];
-			if (appDelegate.syncTypeInProgress == METASYNC_INPROGRESS)
-			{
-				[appDelegate setCurrentSyncStatusProgress:METASYNC_TAGS optimizedSynstate:0];
-			}
-
         }
         else if([wsResponse.result.eventName isEqualToString:@"CODE_SNIPPET"])
         {
@@ -8469,11 +8430,6 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             }
             else {
                 [appDelegate.databaseInterface updateAllRecordsToSyncRecordsHeap:record_dict];
-				
-				if (appDelegate.syncTypeInProgress == EVENTSYNC_INPROGRESS)
-				{
-					[appDelegate setCurrentSyncStatusProgress:eEVENTSYNC_UPDATADATA optimizedSynstate:0];
-				}
             }
             
             [record_dict release];

@@ -1489,8 +1489,8 @@ NSString * GO_Online = @"GO_Online";
     
     [syncThread release];
 	
-	appDelegate.syncTypeInProgress = DATASYNC_INPROGRESS;
-	[appDelegate setCurrentSyncStatusProgress:SYNC_NONE optimizedSynstate:oSYNC_NONE];
+	//appDelegate.syncTypeInProgress = DATASYNC_INPROGRESS;
+//	[appDelegate setCurrentSyncStatusProgress:SYNC_NONE optimizedSynstate:oSYNC_NONE];
 	
     syncThread = [[NSThread alloc] initWithTarget:self.wsInterface selector:@selector(DoIncrementalDataSync) object:nil];
     [syncThread start];
@@ -2015,7 +2015,7 @@ NSString * GO_Online = @"GO_Online";
     }
     self.syncTypeInProgress = EVENTSYNC_INPROGRESS;
 	
-	[self setCurrentSyncStatusProgress:eEVENTSYNC_NONE optimizedSynstate:0];
+//	[self setCurrentSyncStatusProgress:eEVENTSYNC_NONE optimizedSynstate:0];
 	
 	[event_thread release];
     event_thread = [[NSThread alloc] initWithTarget:self.dataBase selector:@selector(scheduleEventSync) object:nil];
@@ -2029,7 +2029,6 @@ int percent = 0;
 - (void) setSyncStatus2
 {
 	UIImage *img;
-    BOOL  iscustomSync = NO;
 	
     if( SyncProgress == nil )
     {
@@ -2040,90 +2039,106 @@ int percent = 0;
     if (_SyncStatus == SYNC_RED)
     {
 		NSString * statusImage = @"red.png";
+		[SyncProgress.progressIndicator stopAnimating];
         SyncProgress.progressIndicator.image = [UIImage imageNamed:statusImage];
-		SyncProgress.percentage.text = @"";
+		SyncProgress.percentage.hidden = YES;
         img = [UIImage imageNamed:statusImage];
         [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
     }
     else if (_SyncStatus == SYNC_GREEN)
     {
         NSString * statusImage = @"green.png";
-        
+        [SyncProgress.progressIndicator stopAnimating];
         SyncProgress.progressIndicator.image = [UIImage imageNamed:statusImage];
-		SyncProgress.percentage.text = @"";
+		SyncProgress.percentage.hidden = YES;
         img = [UIImage imageNamed:statusImage];
         [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
     }
-    else if (_SyncStatus == SYNC_ORANGE)
-    {
-		int numOfCalls = 0, syncProgressState = 0;
-		switch (self.syncTypeInProgress) {
-			case DATASYNC_INPROGRESS:
-				if (self.Enable_aggresssiveSync)
-				{
-					numOfCalls = 9;
-					syncProgressState = SyncProgress.optimizedSyncProgress;
-				}
-				else
-				{
-					numOfCalls = 12;
-					syncProgressState = SyncProgress.syncProgressState;
-				}
-				break;
-				
-			case EVENTSYNC_INPROGRESS:
-				numOfCalls = 12;
-				syncProgressState = SyncProgress.eventsyncProgressState;
-				break;
-				
-			case METASYNC_INPROGRESS:
-				numOfCalls = 12;
-				syncProgressState = SyncProgress.metasyncProgressState;
-				break;
-				
-			case CONFLICTSYNC_INPROGRESS:
-				numOfCalls = 10;
-				syncProgressState = SyncProgress.conflictSyncProgressState;
-				break;
-				
-			case CUSTOMSYNC_INPROGRESS:
-				iscustomSync = YES;
-				syncProgressState = SyncProgress.customSyncProgressState;
-				numOfCalls = 2;
-				break;
-				
-			default:
-				break;
-		}
-		 percent  = 0;
-		if (numOfCalls > 0)
-		{
-			percent = ( 100/ numOfCalls) * syncProgressState;
-			if (numOfCalls == syncProgressState)
-			{
-				percent = 100;
-				syncProgressState = 12;
-			}
-			
-		}
-		
-		
-		NSString * statusImage = @"";
-		if (iscustomSync)
-		{
-			statusImage = [self getStatusImageForCustomSync];
-		}
-		else
-		{
-			statusImage  = [NSString stringWithFormat:@"sync%d.png", syncProgressState];
-		}
-		
-       
-        SyncProgress.progressIndicator.image = [UIImage imageNamed:statusImage];
-		[SyncProgress updateProgress:percent forObject:self];
-        img = [UIImage imageNamed:statusImage];
-        [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
-    }
+	else if (_SyncStatus == SYNC_ORANGE)
+	{
+		SyncProgress.progressIndicator.animationImages = nil;
+        NSMutableArray * imgArr = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+        for ( int i = 1; i < 26; i++)
+        {
+            [imgArr addObject:[UIImage imageNamed:[NSString stringWithFormat:@"ani%d.png", i]]];
+        }
+        SyncProgress.progressIndicator.animationImages = [NSArray arrayWithArray:imgArr];
+        SyncProgress.progressIndicator.animationDuration = 1.0f;
+        SyncProgress.progressIndicator.animationRepeatCount = 0;
+        [SyncProgress.progressIndicator startAnimating];
+
+	}
+	
+//    else if (_SyncStatus == SYNC_ORANGE)
+//    {
+//		int numOfCalls = 0, syncProgressState = 0;
+//		switch (self.syncTypeInProgress) {
+//			case DATASYNC_INPROGRESS:
+//				if (self.Enable_aggresssiveSync)
+//				{
+//					numOfCalls = 9;
+//					syncProgressState = SyncProgress.optimizedSyncProgress;
+//				}
+//				else
+//				{
+//					numOfCalls = 12;
+//					syncProgressState = SyncProgress.syncProgressState;
+//				}
+//				break;
+//				
+//			case EVENTSYNC_INPROGRESS:
+//				numOfCalls = 12;
+//				syncProgressState = SyncProgress.eventsyncProgressState;
+//				break;
+//				
+//			case METASYNC_INPROGRESS:
+//				numOfCalls = 12;
+//				syncProgressState = SyncProgress.metasyncProgressState;
+//				break;
+//				
+//			case CONFLICTSYNC_INPROGRESS:
+//				numOfCalls = 10;
+//				syncProgressState = SyncProgress.conflictSyncProgressState;
+//				break;
+//				
+//			case CUSTOMSYNC_INPROGRESS:
+//				iscustomSync = YES;
+//				syncProgressState = SyncProgress.customSyncProgressState;
+//				numOfCalls = 2;
+//				break;
+//				
+//			default:
+//				break;
+//		}
+//		 percent  = 0;
+//		if (numOfCalls > 0)
+//		{
+//			percent = ( 100/ numOfCalls) * syncProgressState;
+//			if (numOfCalls == syncProgressState)
+//			{
+//				percent = 100;
+//				syncProgressState = 12;
+//			}
+//			
+//		}
+//		
+//		
+//		NSString * statusImage = @"";
+//		if (iscustomSync)
+//		{
+//			statusImage = [self getStatusImageForCustomSync];
+//		}
+//		else
+//		{
+//			statusImage  = [NSString stringWithFormat:@"sync%d.png", syncProgressState];
+//		}
+//		
+//       
+//        SyncProgress.progressIndicator.image = [UIImage imageNamed:statusImage];
+//		[SyncProgress updateProgress:percent forObject:self];
+//        img = [UIImage imageNamed:statusImage];
+//        [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
+//    }
 }
 
 //upon changing the sync status, the animated image view has to change state automatically
@@ -2143,37 +2158,37 @@ int percent = 0;
 
 - (void) setCurrentSyncStatusProgress:(int)syncState optimizedSynstate:(int)oSyncState
 {
-	switch (self.syncTypeInProgress) {
-		case DATASYNC_INPROGRESS:
-			if (Enable_aggresssiveSync)
-			{
-				self.SyncProgress.optimizedSyncProgress = oSyncState;
-			}
-			else
-			{
-				self.SyncProgress.syncProgressState = syncState;
-			}
-			break;
-			
-		case EVENTSYNC_INPROGRESS:
-			self.SyncProgress.eventsyncProgressState = syncState;
-			break;
-			
-		case METASYNC_INPROGRESS:
-			self.SyncProgress.metasyncProgressState = syncState;
-			break;
-			
-		case CONFLICTSYNC_INPROGRESS:
-			self.SyncProgress.conflictSyncProgressState = syncState;
-			break;
-		
-		case CUSTOMSYNC_INPROGRESS:
-			self.SyncProgress.customSyncProgressState = syncState;
-			break;
-			
-		default:
-			break;
-	}
+//	switch (self.syncTypeInProgress) {
+//		case DATASYNC_INPROGRESS:
+//			if (Enable_aggresssiveSync)
+//			{
+//				self.SyncProgress.optimizedSyncProgress = oSyncState;
+//			}
+//			else
+//			{
+//				self.SyncProgress.syncProgressState = syncState;
+//			}
+//			break;
+//			
+//		case EVENTSYNC_INPROGRESS:
+//			self.SyncProgress.eventsyncProgressState = syncState;
+//			break;
+//			
+//		case METASYNC_INPROGRESS:
+//			self.SyncProgress.metasyncProgressState = syncState;
+//			break;
+//			
+//		case CONFLICTSYNC_INPROGRESS:
+//			self.SyncProgress.conflictSyncProgressState = syncState;
+//			break;
+//		
+//		case CUSTOMSYNC_INPROGRESS:
+//			self.SyncProgress.customSyncProgressState = syncState;
+//			break;
+//			
+//		default:
+//			break;
+//	}
 	
 	[self setSyncStatus:SYNC_ORANGE];
 }
