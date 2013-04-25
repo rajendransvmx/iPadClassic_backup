@@ -460,6 +460,10 @@ last_sync_time:(NSString *)last_sync_time;
 - (void) setUserDefaultsForKey:(NSString *)key withValue:(NSString *)value;
 -(void)specialOverrideSync;
 
+//Radha SyncOveride Signature
+
+- (BOOL) checkIfSignatureExistsForCustomRecord:(NSMutableDictionary *) recordInfo type:(NSString *)Operation_type;
+
 -(BOOL)ConflictExists;
     
 

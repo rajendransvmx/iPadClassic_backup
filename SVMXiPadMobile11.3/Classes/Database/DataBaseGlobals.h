@@ -263,3 +263,6 @@
 #define DML_ERROR                       @"DML_ERROR"
 #define CUSTOM_SYNC_SOAP_FAULT          @"CUSTOM_SYNC_SOAP_FAULT"
 
+#define OBJECTNAME						@"OBJECTNAME"
+#define HEADERID						@"HEADERID"
+

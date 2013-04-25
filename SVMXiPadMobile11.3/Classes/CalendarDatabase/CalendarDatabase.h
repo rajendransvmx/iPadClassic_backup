@@ -123,6 +123,8 @@
 - (void) retrieveSignatureFromSFDC:(NSString *)ID;
 - (void) writeSignatureToSFDC:(NSString *)SFId;
 - (void) getAllLocalIdsForSignature:(NSString *)operation_type;
+//Radha
+- (void) deleteSignatureDataWRTId:(NSString *)local_id  type:(NSString *)operationType;
 
 - (void) deletePDFF;
 
