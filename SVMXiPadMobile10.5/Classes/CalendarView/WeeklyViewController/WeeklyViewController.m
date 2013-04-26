@@ -87,6 +87,9 @@ extern void SVMXLog(NSString *format, ...);
     day6Label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:DAY6LABEL];    
     day7Label.text = [appDelegate.wsInterface.tagsDictionary objectForKey:DAY7LABEL];
     
+    [ prevWeek setAccessibilityIdentifier:@"PrevButton"];
+    [ nextWeek setAccessibilityIdentifier:@"NextButton"];
+    
     [self populateWeekView];
 }
 
@@ -752,7 +755,16 @@ extern void SVMXLog(NSString *format, ...);
         // Move slider to the first date
         [self setSliderToFirst];
     }
-
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+    NSArray * startEnd = [self getWeekStartEndDatesAtOptionalIndex:[NSString stringWithFormat:@"%d", currentSliderPositionIndex]];
+    NSString * _currentDate = [startEnd objectAtIndex:0];
+    NSMutableArray * currentDateRange = [[appDelegate getWeekdates:_currentDate] retain];
+    
+    [dict setValue:currentDateRange forKey:@"CurrentRange"];
+    SBJsonWriter *writer = [[[SBJsonWriter alloc] init] autorelease];
+    NSString *json = [writer stringWithObject:dict];
+    [dict release];
+    [nextWeek setAccessibilityValue:json];
 }
 
 - (IBAction) PrevWeek
@@ -803,7 +815,16 @@ extern void SVMXLog(NSString *format, ...);
         // Move slider to the last date
         [self setSliderToLast];
     }
-
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+    NSArray * startEnd = [self getWeekStartEndDatesAtOptionalIndex:[NSString stringWithFormat:@"%d", currentSliderPositionIndex]];
+    NSString * _currentDate = [startEnd objectAtIndex:0];
+    NSMutableArray * currentDateRange = [[appDelegate getWeekdates:_currentDate] retain];
+    
+    [dict setValue:currentDateRange forKey:@"CurrentRange"];
+    SBJsonWriter *writer = [[[SBJsonWriter alloc] init] autorelease];
+    NSString *json = [writer stringWithObject:dict];
+    [dict release];
+    [prevWeek setAccessibilityValue:json];
 }
 
 - (void) setSliderToFirst

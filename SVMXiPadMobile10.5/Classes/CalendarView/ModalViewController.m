@@ -215,10 +215,8 @@ extern void SVMXLog(NSString *format, ...);
         //sahana dec 14th
         Add_event_Button.enabled = NO;
         Add_event_Button.alpha = 0.0;
+        [Add_event_Button setHidden:true];
     }
-
-    
-	
 }
 
 - (void) didInternetConnectionChange:(NSNotification *)notification

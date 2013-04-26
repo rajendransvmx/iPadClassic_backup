@@ -68,6 +68,14 @@ extern void SVMXLog(NSString *format, ...);
     [self setColor:color];
     [self setPosition];
     [WeeklyViewEvent addEventRect:self.view.frame];
+    [self updateAccesibilityDictValue:NSStringFromCGRect(selfFrame) forKey:@"selfFrame"];
+    [self updateAccesibilityDictValue:color.description forKey:@"color"];
+    [self updateAccesibilityDictValue:startDate forKey:@"Date"];
+    [self updateAccesibilityDictValue:NSStringFromCGRect(selfFrame) forKey:@"selfFrame"];
+    SBJsonWriter *writer = [[[SBJsonWriter alloc] init] autorelease];
+    NSString *json = [writer stringWithObject:mAccessibilityDict];
+    imageView.isAccessibilityElement = YES;
+    imageView.accessibilityValue = json;
 }
 
 - (void) setColor:(UIColor *)color
@@ -82,7 +90,12 @@ extern void SVMXLog(NSString *format, ...);
     subject.text = [event objectAtIndex:0];
     workOrderName.text = [event objectAtIndex:1];
     SMLog(@"%@",subject.text);
-    
+    [self updateAccesibilityDictValue:subject.text forKey:@"Subject"];
+    SBJsonWriter *writer = [[[SBJsonWriter alloc] init] autorelease];
+    NSString *json = [writer stringWithObject:mAccessibilityDict];
+    imageView.isAccessibilityElement = YES;
+    imageView.accessibilityValue = json;
+    imageView.accessibilityIdentifier = subject.text;
     
     
     if (self.conflictFlag)
@@ -861,6 +874,19 @@ extern void SVMXLog(NSString *format, ...);
 - (void)dealloc {
     [subject release];
     [super dealloc];
+}
+
+-(void)updateAccesibilityDictValue:(NSString*)inValue forKey:(NSString*)inKey
+{
+    
+    if(inValue!= nil && inKey!= nil)
+    {
+        if(!mAccessibilityDict)
+            mAccessibilityDict = [[NSMutableDictionary alloc] init];
+        
+        [mAccessibilityDict setValue:inValue forKey:inKey];
+    }
+    
 }
 
 

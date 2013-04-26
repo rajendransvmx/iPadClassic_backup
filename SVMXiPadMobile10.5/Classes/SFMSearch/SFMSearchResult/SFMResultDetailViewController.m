@@ -545,10 +545,13 @@ enum  {
                 if( isparent && recordExists &&tabel_Exists)
                 {
                     UIImage * image1 = [UIImage imageNamed:@"download.png"];
-                    UIControl *control = [[UIControl alloc] initWithFrame:CGRectMake(tableView.frame.size.width-103, 7, 20, 21)];
+                    UIButton *control = [[UIButton alloc] initWithFrame:CGRectMake(tableView.frame.size.width-103, 7, 20, 21)];
+                    [control  setImage:image1 forState:UIControlStateNormal];
+                    [control  setImage:image1 forState:UIControlStateHighlighted];
+
                     control.backgroundColor = [UIColor clearColor];
                     control.tag = indexPath.section;
-                    control.layer.contents = (id)image1.CGImage;
+                    [control setAccessibilityIdentifier:@"FullResultDetailButton"];
                     [control addTarget:self action:@selector(onDemandDataFecthing:) forControlEvents:UIControlEventTouchUpInside];
                     [backgroundView addSubview:control];
                     [control release];
