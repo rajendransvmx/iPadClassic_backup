@@ -475,6 +475,83 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     
+     if(![object_types containsObject:DETAIL])
+     {
+        //sahana fix for #6951
+        NSDictionary * each_dict = [sync_record objectForKey:MASTER];
+        NSArray * allobjects = [each_dict allKeys];
+        NSString * master_object = @"";
+        if([each_dict count] > 0)
+        {
+            master_object = [allobjects objectAtIndex:0];
+        }
+
+        NSMutableArray * FinalChild = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+        NSDictionary *dict_child=[appDelegate.databaseInterface getAllChildRelationShipForObject:master_object];
+
+        NSArray * allChildObject = [dict_child allKeys];
+
+        for(NSString * str in allChildObject)
+        {
+            BOOL ifExists = [appDelegate.databaseInterface isSFObject:str];
+            if(![str isEqualToString:@"Event"]  && ![str isEqualToString:@"Task"]  && ifExists)
+            {
+                [FinalChild addObject:str];
+            }
+        }
+
+        for(NSString * child_object in FinalChild)
+        {
+            NSString * parent_column_name =nil;
+            INTF_WebServicesDefServiceSvc_SVMXMap * SVMXC_valueMAp = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+            SVMXC_valueMAp.key = DETAIL;
+            SVMXC_valueMAp.value = child_object;
+
+            NSMutableDictionary * fields_dict = [appDelegate.databaseInterface getAllObjectFields:child_object tableName:SFOBJECTFIELD];
+            NSArray * fields_array ;
+            fields_array = [fields_dict allKeys];
+            
+            NSString * field_string = @"";
+            
+            for(int i = 0 ; i< [fields_array count]; i++)
+            {
+                NSString * field = [fields_array objectAtIndex:i];
+                if (i == 0)
+                    field_string = [field_string stringByAppendingFormat:@"%@",field];
+                else
+                    field_string = [field_string stringByAppendingFormat:@",%@",field];
+                
+                if(![field isEqualToString:@"Id"])
+                {
+                    [SVMXC_valueMAp.values addObject:field];
+                }
+            }
+            INTF_WebServicesDefServiceSvc_SVMXMap * additional_valuemap = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+            additional_valuemap.key = @"UPDATE";
+            BOOL ischild =  [appDelegate.databaseInterface IsChildObject:child_object];
+            if(ischild)
+            {
+                if(parent_column_name == nil)
+                {
+                    parent_column_name = [dict_child objectForKey:child_object];
+                    if(parent_column_name == nil  || [parent_column_name length] == 0)
+                    {
+                        NSString * parent_obj_name= master_object;
+                         if(parent_column_name == nil)
+                         {
+                                parent_column_name = [appDelegate.databaseInterface getParentColumnNameFormChildInfoTable:SFCHILDRELATIONSHIP childApiName:child_object parentApiName:parent_obj_name];
+                         }
+                    }
+                }
+                [additional_valuemap.values addObject:parent_column_name];
+            }
+            [SVMXC_valueMAp addValueMap:additional_valuemap];
+            [additional_valuemap release];
+            
+            [sfmRequest addValueMap:SVMXC_valueMAp];
+        }
+     }
+    
     INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init]  autorelease];
     svmxc_client.clientType = @"iPad";
     [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
@@ -495,6 +572,57 @@ extern void SVMXLog(NSString *format, ...);
                                   DebuggingHeader:debuggingHeader
                        AllowFieldTruncationHeader:allowFieldTruncationHeader delegate:self];
 
+}
+
+-(NSMutableArray *) getAllCustomWebServiceRecordsFromSyncTable
+{
+    NSMutableArray * custom_ws_records = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    NSArray * request_ids = [appDelegate.databaseInterface getallmasterRecordsForCustomAggressiveSync];
+    
+    for(NSString * request_id  in request_ids)
+    {
+        NSMutableDictionary * sync_record = [appDelegate.databaseInterface getCustomAggressiveSyncRecordsForHearedRecord:request_id];
+			[appDelegate setCurrentSyncStatusProgress:CUSTOMSYNC_REQDATA optimizedSynstate:0];
+        [self allUpdateRecordsfromcustomSync:sync_record records_array:custom_ws_records];
+    }
+    return custom_ws_records;
+}
+
+-(void)allUpdateRecordsfromcustomSync:(NSDictionary *)sync_record  records_array:(NSMutableArray *)custom_ws_records
+{
+    NSArray * object_types = [sync_record allKeys];
+    
+    for(NSString * object_type in object_types)
+    {
+        NSDictionary * each_dict = [sync_record objectForKey:object_type];
+        NSArray * allobjects = [each_dict allKeys];
+        for(NSString * object_name in allobjects)
+        {
+            NSDictionary  * operation_type_dict  = [each_dict objectForKey:object_name];
+            NSArray * all_operations = [operation_type_dict allKeys];
+            for(NSString  * single_operation in all_operations)
+            {
+                if(![single_operation isEqualToString:UPDATE])
+                {
+                    continue;
+                }
+                NSArray * record_info_dict_array = [operation_type_dict objectForKey:single_operation];
+                for(NSDictionary * info_dict in record_info_dict_array)
+                {
+                    NSString * sf_id = @"";
+                    if([[info_dict allKeys] containsObject:@"Id"])
+                    {
+                        sf_id = [info_dict objectForKey:@"Id"];
+                        if([sf_id length] > 0)
+                        {
+                            [custom_ws_records addObject:sf_id];
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 -(void)addAttributesToJson:(NSMutableDictionary *)eachDict  forObject:(NSString *)object_name
 {
@@ -1429,6 +1557,15 @@ last_sync_time:(NSString *)last_sync_time
     appDelegate.initial_Sync_last_index = 0;
     appDelegate.initital_sync_object_name = @"";
 }
+-(void)deleteALlCustomWsEntriesFromSyncHeap
+{
+     NSMutableArray * custom_ws_records = [self getAllCustomWebServiceRecordsFromSyncTable];
+    if([custom_ws_records count] > 0 )
+    {
+        [appDelegate.databaseInterface deleteCustomWebserviceEntriesFromSyncHeap:custom_ws_records];
+    }
+    [custom_ws_records release];
+}
 
 //DATA SYNC METHOD
 -(void)DoIncrementalDataSync
@@ -1477,15 +1614,12 @@ last_sync_time:(NSString *)last_sync_time
 
     SMLog(@"%@, %d",appDelegate.currentServerUrl, [appDelegate.currentServerUrl length] );
 	
-	
-	
 	if ([appDelegate.currentServerUrl Contains:@"null"] || [appDelegate.currentServerUrl length] == 0 || appDelegate.currentServerUrl == nil)
 	{
 		NSUserDefaults * userdefaults = [NSUserDefaults standardUserDefaults];
 		
 		appDelegate.currentServerUrl = [userdefaults objectForKey:SERVERURL];
 	}
-		
     
     if(retVal == NO || [appDelegate.currentServerUrl Contains:@"null"])
     {
@@ -2345,6 +2479,11 @@ last_sync_time:(NSString *)last_sync_time
     [appDelegate.databaseInterface deleteAllConflictedRecordsFrom:SYNC_RECORD_HEAP];
     //Get Price
     [self doGetPrice];
+    //Get Price ends
+    
+    //delete All custom ws entries from Sync_records_heap
+    [self deleteALlCustomWsEntriesFromSyncHeap];
+    
     [self PutAllTheRecordsForIds];                                    //After update or delere ,insert are done  ,call getallrecords
     //After Insert Claer the trailer_temp table
     
