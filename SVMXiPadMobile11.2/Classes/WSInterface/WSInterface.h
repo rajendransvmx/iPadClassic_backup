@@ -460,9 +460,13 @@ last_sync_time:(NSString *)last_sync_time;
 - (void) setUserDefaultsForKey:(NSString *)key withValue:(NSString *)value;
 -(void)specialOverrideSync;
 
+-(void)allUpdateRecordsfromcustomSync:(NSDictionary *)sync_record  records_array:(NSMutableArray *)custom_ws_records;
+-(void)deleteALlCustomWsEntriesFromSyncHeap;
+
 //Radha SyncOveride Signature
 
 - (BOOL) checkIfSignatureExistsForCustomRecord:(NSMutableDictionary *) recordInfo type:(NSString *)Operation_type;
+-(NSMutableArray *) getAllCustomWebServiceRecordsFromSyncTable;
 
 -(BOOL)ConflictExists;
     

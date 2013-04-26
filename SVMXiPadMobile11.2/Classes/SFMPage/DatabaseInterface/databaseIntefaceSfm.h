@@ -309,6 +309,8 @@
 -(BOOL)ContinueIncrementalDataSync_forNoncustomRecords;
 
 -(BOOL)DoesTrailerContainTheRecordForSf_id:(NSString *)sf_id  operation_type:(NSString *)operation_type  object_name:(NSString *)object_name;
+-(void)deleteCustomWebserviceEntriesFromSyncHeap:(NSMutableArray *)custom_entries;
+
 
 //Sync_Override : Radha
 - (BOOL) checkIfCustomEntryExistsInTrailerTable:(NSString *)parentLocalId;

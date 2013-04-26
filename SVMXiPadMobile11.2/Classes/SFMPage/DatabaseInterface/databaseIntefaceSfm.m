@@ -7877,6 +7877,8 @@ extern void SVMXLog(NSString *format, ...);
 }
 -(void)insertCustomWebserviceResponse:(NSMutableArray *)records_array class_name:(NSString *)class_name method_name:(NSString *)method_name related_record_error:(BOOL)related_record_error request_id:(NSString *)request_id
 {
+    
+    NSMutableDictionary * MasterDetails = [[NSMutableDictionary alloc] initWithCapacity:0];
     for(int i = 0; i< [records_array count]; i++)
     {
         NSDictionary * each_record = [records_array objectAtIndex:i];
@@ -7971,15 +7973,49 @@ extern void SVMXLog(NSString *format, ...);
             if(![operation_type isEqualToString:DELETE])
             {
                 BOOL id_exist = [appDelegate.dataBase checkIfRecordExistForObject:object_name Id:sf_id];
+            
+                //sahana fix for #6951
+                BOOL ischild =  [appDelegate.databaseInterface IsChildObject:object_name];
+                NSString * parent_object_name = @"", * parent_column_name = @"";
+                if(ischild)
+                {
+                    if([[MasterDetails allKeys] containsObject:object_name])
+                    {
+                        NSDictionary * detail = [MasterDetails objectForKey:object_name];
+                        parent_column_name = [detail objectForKey:PARENT_COLUMN_NAME];
+                        parent_object_name = [detail objectForKey:cw_header_obj_name];
+                    }
+                    else
+                    {
+                      
+                        parent_object_name  = [self getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_name field_name:@"parent_name"];
+                        parent_column_name = [appDelegate.databaseInterface getParentColumnNameFormChildInfoTable:SFCHILDRELATIONSHIP childApiName:object_name parentApiName:parent_object_name];
+                        NSDictionary * dict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:parent_object_name,parent_column_name, nil] forKeys:[NSArray arrayWithObjects:cw_header_obj_name,PARENT_COLUMN_NAME, nil]];
+                        [MasterDetails setObject:dict forKey:object_name];
+                        
+                    }
+                }
+
+                
                 if(!id_exist)
                 {
                     NSString * new_local_id = [iServiceAppDelegate GetUUID];
                     [temp_dict setObject:new_local_id forKey:@"local_id"];
+                    if(ischild)
+                    {
+                        NSString * parent_sf_id = [temp_dict objectForKey:parent_column_name];
+                        NSString * parent_local_id = [self getLocalIdFromSFId:parent_sf_id tableName:parent_object_name];
+                        [temp_dict setObject:parent_local_id forKey:parent_column_name];
+                    }
                     BOOL insert_flag = [self insertdataIntoTable:object_name data:temp_dict];
                     if(insert_flag){}
                 }
                 else
                 {
+                    if(ischild)
+                    {
+                        [temp_dict removeObjectForKey:parent_column_name];
+                    }
                     BOOL flag = [self UpdateTableforSFId:sf_id forObject:object_name data:temp_dict];
                     if(flag){}
                 }
@@ -7995,6 +8031,8 @@ extern void SVMXLog(NSString *format, ...);
     {
         [self deletecustomWebservicefrom_detailTrailer_for_request_id:request_id table_name:SFDATATRAILER];
     }
+    
+    [MasterDetails release];
 }
 
 -(void)insertCustomWebserviceResponsewithError:(NSMutableArray *)error_list class_name:(NSString *)class_name method_name:(NSString *)method_name related_record_error:(BOOL)related_record_error request_id:(NSString *)request_id;
@@ -8109,4 +8147,38 @@ extern void SVMXLog(NSString *format, ...);
         return YES;
     }
 }
+-(void)deleteCustomWebserviceEntriesFromSyncHeap:(NSMutableArray *)custom_entries
+{
+    NSMutableString  * request_ids_str = [[NSMutableString alloc] initWithCapacity:0];
+    for(int count = 0;count < [custom_entries count] ; count++)
+    {
+        NSString * request_id = [custom_entries objectAtIndex:count];
+        if(count == 0)
+        {
+            [request_ids_str appendFormat:@"'%@'",request_id];
+        }else{
+            [request_ids_str appendFormat:@" , '%@'",request_id];
+        }
+        
+    }
+    
+    if([request_ids_str length] >0)
+    {
+        
+        NSString * deleteQuery = [NSString stringWithFormat:@"Delete from %@ where sf_id in (%@)  AND sync_type = '%@'", SYNC_RECORD_HEAP,request_ids_str,GET_UPDATE];
+        SMLog(@"customws_%@", deleteQuery);
+        char * err;
+        
+        if(synchronized_sqlite3_exec(appDelegate.db, [deleteQuery UTF8String],NULL, NULL, &err) != SQLITE_OK)
+        {
+            SMLog(@"%@", deleteQuery);
+            SMLog(@"METHOD: deleteCustomWebserviceEntriesFromSyncHeap");
+            SMLog(@"ERROR IN Delete %s", err);
+        }
+
+    }
+    
+    [request_ids_str release];
+}
+
 @end
