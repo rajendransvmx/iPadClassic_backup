@@ -2973,8 +2973,10 @@ last_sync_time:(NSString *)last_sync_time
         NSString *activityValue = [dict objectForKey:@"value"];
         [activityType addObject:activityValue];
     }
-    
-    [self dataSyncWithEventName:GET_PRICE_DATA eventType:SYNC requestId:requestId withData:activityType lastIndex:@"2"];
+    NSMutableArray *data = [[NSMutableArray alloc] init];
+    [data insertObject:activityType atIndex:0];
+    [self dataSyncWithEventName:GET_PRICE_DATA eventType:SYNC requestId:requestId withData:data lastIndex:@"2"];
+    [data release];
     [activityType release];
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
@@ -4964,94 +4966,136 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                 [sfmRequest.valueMap addObject:SVMXCMapLastSyncTime];
             }
 
-            if([lastIndex isEqualToString:@"2"])
+            if(([lastIndex isEqualToString:@"1"]) || ([lastIndex isEqualToString:@"2"]))
             {
-                if([data count])
+                
+                if([data count] > 1)
                 {
-                    INTF_WebServicesDefServiceSvc_SVMXMap * svmxcObject =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
-                    
-                    svmxcObject.key  = @"Labor";
-                    for(int i=0; i<[data count]; i++)
+                    NSArray *records = [data objectAtIndex:1];
+                    if((records != nil) && ([records count] == 2))
                     {
-                        [svmxcObject.values addObject:[data objectAtIndex:i]];
+                        NSDictionary *partialObjectDict = [records objectAtIndex:1];
+                        NSString *partialObject = [partialObjectDict objectForKey:@"partialObject"];
+                        if(partialObject != nil)
+                        {
+                            INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMapPartialObject =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
+                            SVMXCMapPartialObject.key  = @"PARTIAL_EXECUTED_OBJECT";
+                            SVMXCMapPartialObject.value = [partialObjectDict objectForKey:@"partialObject"];
+                            NSString *criteria = [NSString stringWithFormat:@"sync_flag = 'false' AND object_name = '%@'",SVMXCMapPartialObject.value];
+                            NSArray *columns = [NSArray arrayWithObjects:@"sf_id", nil];
+                            
+                            NSArray *partialObjectIds = [appDelegate.dataBase getAllRecordsFromTable:@"sync_Records_Heap"
+                                                                                      forColumns:columns
+                                                                                  filterCriteria:criteria
+                                                                                           limit:nil];
+                            for(NSDictionary *recordID in partialObjectIds)
+                            {
+                                [SVMXCMapPartialObject.values addObject:[recordID objectForKey:@"sf_id"]];
+                            }
+
+                            [sfmRequest.valueMap addObject:SVMXCMapPartialObject];
+                        }
                     }
-                    [sfmRequest.valueMap addObject:svmxcObject];
-                    [svmxcObject release];
+                    if([records count] > 1)
+                    {
+                        NSArray *objectList = [records objectAtIndex:0];
+                        for(NSString *record in objectList)
+                        {
+                            [sfmRequest.values addObject:record];
+                        }
+                    }
                 }
-                
-                NSString *customPriceBook = @"SVMXC__Service_Pricebook__c";
-                NSString *customPriceBookEntry = @"SVMXC__Service_Pricebook_Entry__c";
-                NSString *priceBook = @"Pricebook2";
-                NSString *priceBookEntry = @"PricebookEntry";
-                NSString *columnName = @"Id";
-                NSString *priceBookEntryColumnName = @"CurrencyIsoCode";
-                NSArray *columns = [NSArray arrayWithObject:columnName];
-                NSString *priceBookColumnName = @"Pricebook2Id";
-                NSString *customPriceBookColumnName = @"SVMXC__Price_Book__c";
-                NSArray *priceBookIds = [appDelegate.dataBase getAllRecordsFromTable:priceBook
-                                                                          forColumns:columns
-                                                                      filterCriteria:nil
-                                                                               limit:nil];
-                
-                NSArray *customPriceBookIds = [appDelegate.dataBase getAllRecordsFromTable:customPriceBook
-                                                                                forColumns:columns
-                                                                            filterCriteria:nil
-                                                                                     limit:nil];
-                if(([priceBookIds count] + [customPriceBookIds count]) > 0)
+                if([lastIndex isEqualToString:@"2"])
                 {
-                    INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMapCurrency =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
-                    SVMXCMapCurrency.key  = @"CurrencyISO";
-                    BOOL currencyPresent = NO;
-                    for(NSDictionary *priceBookDict in priceBookIds)
+                    NSArray *activityType = [data objectAtIndex:0];
+                    if([activityType count])
                     {
-                        NSString *priceBookId = [priceBookDict objectForKey:columnName];
-                        NSString *filterCriteria = [NSString stringWithFormat:@"%@ = '%@'",priceBookColumnName,priceBookId];
-                        NSArray *uniqueCurrencyArray  = [appDelegate.dataBase
-                                                         getUniqueRecordsFromTable:priceBookEntry
-                                                         forColumn:priceBookEntryColumnName
-                                                         filterCriteria:filterCriteria
-                                                         ];
-                        if([uniqueCurrencyArray count] >0)
+                        INTF_WebServicesDefServiceSvc_SVMXMap * svmxcObject =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+                        
+                        svmxcObject.key  = @"Labor";
+                        for(int i=0; i<[activityType count]; i++)
                         {
-                            INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMapUniqueCurrency =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
-                            SVMXCMapUniqueCurrency.key  = @"PRICEBOOK_ID";
-                            
-                            SVMXCMapUniqueCurrency.value = priceBookId;
-                            [SVMXCMapUniqueCurrency.values addObjectsFromArray:uniqueCurrencyArray];
-                            [SVMXCMapCurrency.valueMap addObject:SVMXCMapUniqueCurrency];
-                            currencyPresent = YES;
+                            [svmxcObject.values addObject:[activityType objectAtIndex:i]];
                         }
+                        [sfmRequest.valueMap addObject:svmxcObject];
+                        [svmxcObject release];
                     }
                     
-                    for(NSDictionary *customPriceBookDict in customPriceBookIds)
+                    NSString *customPriceBook = @"SVMXC__Service_Pricebook__c";
+                    NSString *customPriceBookEntry = @"SVMXC__Service_Pricebook_Entry__c";
+                    NSString *priceBook = @"Pricebook2";
+                    NSString *priceBookEntry = @"PricebookEntry";
+                    NSString *columnName = @"Id";
+                    NSString *priceBookEntryColumnName = @"CurrencyIsoCode";
+                    NSArray *columns = [NSArray arrayWithObject:columnName];
+                    NSString *priceBookColumnName = @"Pricebook2Id";
+                    NSString *customPriceBookColumnName = @"SVMXC__Price_Book__c";
+                    NSArray *priceBookIds = [appDelegate.dataBase getAllRecordsFromTable:priceBook
+                                                                              forColumns:columns
+                                                                          filterCriteria:nil
+                                                                                   limit:nil];
+                    
+                    NSArray *customPriceBookIds = [appDelegate.dataBase getAllRecordsFromTable:customPriceBook
+                                                                                    forColumns:columns
+                                                                                filterCriteria:nil
+                                                                                         limit:nil];
+                    if(([priceBookIds count] + [customPriceBookIds count]) > 0)
                     {
-                        NSString *priceBookId = [customPriceBookDict objectForKey:columnName];
-                        NSString *filterCriteria = [NSString stringWithFormat:@"%@ = '%@'",customPriceBookColumnName,priceBookId];
-                        NSArray *uniqueCurrencyArray  = [appDelegate.dataBase
-                                                         getUniqueRecordsFromTable:customPriceBookEntry
-                                                         forColumn:priceBookEntryColumnName
-                                                         filterCriteria:filterCriteria
-                                                         ];
-                        if([uniqueCurrencyArray count] >0)
+                        INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMapCurrency =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
+                        SVMXCMapCurrency.key  = @"CurrencyISO";
+                        BOOL currencyPresent = NO;
+                        for(NSDictionary *priceBookDict in priceBookIds)
                         {
-                            INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMapUniqueCurrency =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
-                            SVMXCMapUniqueCurrency.key  = @"PRICEBOOK_ID";
-                            
-                            SVMXCMapUniqueCurrency.value = priceBookId;
-                            [SVMXCMapUniqueCurrency.values addObjectsFromArray:uniqueCurrencyArray];
-                            [SVMXCMapCurrency.valueMap addObject:SVMXCMapUniqueCurrency];
-                            currencyPresent = YES;
+                            NSString *priceBookId = [priceBookDict objectForKey:columnName];
+                            NSString *filterCriteria = [NSString stringWithFormat:@"%@ = '%@'",priceBookColumnName,priceBookId];
+                            NSArray *uniqueCurrencyArray  = [appDelegate.dataBase
+                                                             getUniqueRecordsFromTable:priceBookEntry
+                                                             forColumn:priceBookEntryColumnName
+                                                             filterCriteria:filterCriteria
+                                                             ];
+                            if([uniqueCurrencyArray count] >0)
+                            {
+                                INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMapUniqueCurrency =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
+                                SVMXCMapUniqueCurrency.key  = @"PRICEBOOK_ID";
+                                
+                                SVMXCMapUniqueCurrency.value = priceBookId;
+                                [SVMXCMapUniqueCurrency.values addObjectsFromArray:uniqueCurrencyArray];
+                                [SVMXCMapCurrency.valueMap addObject:SVMXCMapUniqueCurrency];
+                                currencyPresent = YES;
+                            }
                         }
+                        
+                        for(NSDictionary *customPriceBookDict in customPriceBookIds)
+                        {
+                            NSString *priceBookId = [customPriceBookDict objectForKey:columnName];
+                            NSString *filterCriteria = [NSString stringWithFormat:@"%@ = '%@'",customPriceBookColumnName,priceBookId];
+                            NSArray *uniqueCurrencyArray  = [appDelegate.dataBase
+                                                             getUniqueRecordsFromTable:customPriceBookEntry
+                                                             forColumn:priceBookEntryColumnName
+                                                             filterCriteria:filterCriteria
+                                                             ];
+                            if([uniqueCurrencyArray count] >0)
+                            {
+                                INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMapUniqueCurrency =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
+                                SVMXCMapUniqueCurrency.key  = @"PRICEBOOK_ID";
+                                
+                                SVMXCMapUniqueCurrency.value = priceBookId;
+                                [SVMXCMapUniqueCurrency.values addObjectsFromArray:uniqueCurrencyArray];
+                                [SVMXCMapCurrency.valueMap addObject:SVMXCMapUniqueCurrency];
+                                currencyPresent = YES;
+                            }
+                        }
+                        if(currencyPresent)
+                            [sfmRequest.valueMap addObject:SVMXCMapCurrency];
                     }
-                    if(currencyPresent)
-                        [sfmRequest.valueMap addObject:SVMXCMapCurrency];
                 }
             }
             else
             {
-                if([data count])
+                NSArray *woIDs = [data objectAtIndex:1];
+                if([woIDs count])
                 {
-                    for(NSString *record in data)
+                    for(NSString *record in woIDs)
                     {
                         [sfmRequest.values addObject:record];
                     }
@@ -8257,11 +8301,41 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                 if(callBack)
                 {
                     NSString *requestId = [iServiceAppDelegate GetUUID];
+                    NSMutableArray *data = [[NSMutableArray alloc] init];
+                    NSString *lastIndex = (NSString *)[obj getRequiredData:@"LAST_INDEX"];
+                    if([lastIndex isEqualToString:@"0"])
+                    {
+                        [data insertObject:@"" atIndex:0];
+                    }
+                    else if([lastIndex isEqualToString:@"1"])
+                    {
+                       [data insertObject:@"" atIndex:0];
+                    }
+                    else if([lastIndex isEqualToString:@"2"])
+                    {
+                        NSString *filterCriteria = [NSString stringWithFormat:@"object_api_name = 'SVMXC__Service_Order_Line__c' and field_api_name = 'SVMXC__Activity_Type__c'"];
+                        NSArray *activityTypeArray = [appDelegate.dataBase getAllRecordsFromTable:@"SFPickList"
+                                                                                       forColumns:[NSArray arrayWithObject:@"value"]
+                                                                                   filterCriteria:filterCriteria
+                                                                                            limit:nil];
+                        NSMutableArray *activityType = [[NSMutableArray alloc] init];
+                        for(NSDictionary *dict in activityTypeArray)
+                        {
+                            NSString *activityValue = [dict objectForKey:@"value"];
+                            [activityType addObject:activityValue];
+                        }
+                        [data insertObject:activityType atIndex:0];
+                    }
+                    NSArray *objects = (NSArray *)[obj getRequiredData:@"RecordIds"];
+                    if((objects != nil) && [objects count])
+                        [data insertObject:objects atIndex:1];
+
                     [appDelegate.wsInterface dataSyncWithEventName:GET_PRICE_DATA
                                                          eventType:SYNC
                                                          requestId:requestId
-                                                          withData:(NSArray *)[obj getRequiredData:@"RecordIds"]
-                                                         lastIndex:(NSString *)[obj getRequiredData:@"LAST_INDEX"]];
+                                                          withData:data
+                                                         lastIndex:lastIndex];
+                    [data release];
                 }
                 else {
                     appDelegate.Incremental_sync_status = GET_PRICE_DONE;

@@ -30,10 +30,11 @@
                     break;
                 case 2:
                     SMLog(@"Call Two");
-                    if(recordIDs != svmxMapObject.values)
+                    if ([svmxMapObject.values count]) 
                     {
-                        [recordIDs release];
-                        recordIDs = [svmxMapObject.values retain];
+                        recordIDs = [[NSMutableArray alloc] init];
+                        NSArray *objectsList = [svmxMapObject.values retain];
+                        [recordIDs insertObject:objectsList atIndex:0];
                     }
                     callBack = [self processSecondCallResponse:svmxMapObject];
                     if([recordIDs count])
@@ -41,6 +42,12 @@
                     break;
                 case 3:
                     SMLog(@"Call Three");
+                    if ([svmxMapObject.values count])
+                    {
+                        recordIDs = [[NSMutableArray alloc] init];
+                        NSArray *objectsList = [svmxMapObject.values retain];
+                        [recordIDs insertObject:objectsList atIndex:0];
+                    }
                     callBack = [self processThirdCallResponse:svmxMapObject];
                     break;                    
                 default:
@@ -132,9 +139,13 @@
     }
     [GPDataDict release];
     [iPool drain];
-    if(!isWOCountZero)
+    if(callback && !isWOCountZero)
     {
         callback = TRUE;
+    }
+    else
+    {
+        callback = FALSE;
     }
     return callback;
 }
@@ -161,6 +172,15 @@
                 lastIndex = [svmxGPObject.value retain];
             }
             SMLog(@"LAST_INDEX Values = %@",lastIndex);
+        }
+        else if([key isEqualToString:@"PARTIAL_EXECUTED_OBJECT"])
+        {
+            NSString *partialObject = svmxGPObject.value;
+            if(partialObject != nil)
+            {
+                NSDictionary *partialObjectDict = [NSDictionary dictionaryWithObject:partialObject forKey:@"partialObject"];
+                [recordIDs insertObject:partialObjectDict atIndex:1];
+            }
         }
         else
         {
@@ -223,6 +243,15 @@
                 lastIndex = [svmxGPObject.value retain];
             }
             SMLog(@"LAST_INDEX Values = %@",lastIndex);
+        }
+        else if([key isEqualToString:@"PARTIAL_EXECUTED_OBJECT"])
+        {
+            NSString *partialObject = svmxGPObject.value;
+            if(partialObject != nil)
+            {
+                NSDictionary *partialObjectDict = [NSDictionary dictionaryWithObject:partialObject forKey:@"partialObject"];
+                [recordIDs insertObject:partialObjectDict atIndex:1];
+            }
         }
         else
         {

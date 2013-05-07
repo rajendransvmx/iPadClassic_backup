@@ -9,7 +9,7 @@
 #import "WSResponseParser.h"
 @class INTF_WebServicesDefServiceSvc_SVMXMap;
 @interface SMGPDataSyncResponseParser : WSResponseParser
-@property (nonatomic, assign) NSArray   *recordIDs;
+@property (nonatomic, assign) NSMutableArray   *recordIDs;
 @property (nonatomic, assign) NSString  *lastIndex;
 - (BOOL) processFirstCallResponse:(INTF_WebServicesDefServiceSvc_SVMXMap * )svmxMapObject;
 - (BOOL) processSecondCallResponse:(INTF_WebServicesDefServiceSvc_SVMXMap * )svmxMapObject;
