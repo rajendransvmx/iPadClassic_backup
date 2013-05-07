@@ -593,7 +593,9 @@ extern void SVMXLog(NSString *format, ...);
         [actionButton setTitle:act forState:UIControlStateNormal];
         [actionButton setImage:[UIImage imageNamed:@"sfm_signature_capture"] forState:UIControlStateNormal];
         [actionButton addTarget:self action:@selector(ShowSignature) forControlEvents:UIControlEventTouchUpInside];
-    
+        actionButton.isAccessibilityElement = YES;
+        actionButton.accessibilityLabel = @"sfm_signature_capture";
+
         UIBarButtonItem * actionBtn1 = [[UIBarButtonItem alloc] initWithCustomView:actionButton];
         actionBtn1.width = 43;
         [actionBtn1 setTarget:self];
@@ -706,8 +708,10 @@ extern void SVMXLog(NSString *format, ...);
     {
         UIButton * actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 35, 33)];
         [actionButton setImage:[UIImage imageNamed:@"sfm_signature_capture"] forState:UIControlStateNormal];
-        [actionButton addTarget:self action:@selector(ShowSignature) forControlEvents:UIControlEventTouchUpInside];
-        
+        [actionButton addTarget:self action:@selector(ShowSignature) forControlEvents:UIControlEventTouchUpInside];        
+        actionButton.isAccessibilityElement = YES;
+        actionButton.accessibilityLabel = @"sfm_signature_capture";
+                
         UIBarButtonItem * actionBtn1 = [[UIBarButtonItem alloc] initWithCustomView:actionButton];
         actionBtn1.width = 37;
         [actionBtn1 setTarget:self];
