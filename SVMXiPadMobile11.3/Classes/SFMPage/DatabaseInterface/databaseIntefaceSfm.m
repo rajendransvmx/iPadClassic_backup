@@ -204,7 +204,7 @@ extern void SVMXLog(NSString *format, ...);
     return dict;
 }
 
--(NSMutableArray *)queryLinesInfo:(NSMutableArray *)apiNames  detailObjectName:(NSString *)detailObjectName headerObjectName:(NSString *)headerObjectName detailaliasName:(NSString *)detailsAliasName headerRecordId:(NSString *)record_id expressionId:(NSString *)expression_id parent_column_name:(NSString *)parent_column
+-(NSMutableArray *)queryLinesInfo:(NSMutableArray *)apiNames  detailObjectName:(NSString *)detailObjectName headerObjectName:(NSString *)headerObjectName detailaliasName:(NSString *)detailsAliasName headerRecordId:(NSString *)record_id expressionId:(NSString *)expression_id parent_column_name:(NSString *)parent_column sorting_order:(NSString *)sorting_order_string
 {
     
     NSMutableArray * array = [[NSMutableArray alloc] initWithCapacity:0];
@@ -229,8 +229,72 @@ extern void SVMXLog(NSString *format, ...);
         {
             fieldsString = [fieldsString stringByAppendingString:@","];
         }
-        fieldsString = [fieldsString stringByAppendingString:singleField];
+//        fieldsString = [fieldsString stringByAppendingString:singleField];
+         fieldsString = [fieldsString stringByAppendingFormat:@"'%@'.%@",detailObjectName,singleField];
     }
+    
+    NSMutableString * Join_str = [[NSMutableString alloc] initWithCapacity:0];
+    NSMutableString * orderBy_str = [[NSMutableString alloc] initWithCapacity:0];
+    NSMutableArray * order_array = [[NSMutableArray alloc] initWithCapacity:0];
+    if([sorting_order_string length] > 0)
+    {
+        SBJsonParser * jsonParser = [[[SBJsonParser alloc] init] autorelease];
+        NSDictionary * json_dict = [jsonParser objectWithString:sorting_order_string];
+       
+        NSArray  * sorting_array = [json_dict objectForKey:@"lstSortingRec"];
+
+        NSInteger count = 0;
+        for(int i = 0;i< [sorting_array count] ; i++)
+        {
+            NSDictionary * dict = [sorting_array objectAtIndex:i];
+            NSString * data_type = [dict objectForKey:@"dataType"];
+            if([data_type isEqualToString:@"reference"] || [data_type isEqualToString:@"REFERENCE"])
+            {
+                NSString * temp_queryfield = [dict objectForKey:@"queryField"];
+                NSArray  * query_fields_array = [temp_queryfield componentsSeparatedByString:@"."];
+                //NSMutableString * temp_reference_To = [NSMutableString   stringWithString:([query_fields_array objectAtIndex:0]!= nil)?[query_fields_array objectAtIndex:0]:@""];
+                NSString * query_field = [query_fields_array objectAtIndex:1];
+                //NSString * reference_To = [temp_reference_To stringByReplacingOccurrencesOfString:@"__r" withString:@"__c"];
+                NSString * relation_ship_name = [dict objectForKey:@"fieldAPIName"];
+                
+                NSString * reference_To = [appDelegate.dataBase getReferencetoFiledForObject:detailObjectName api_Name:relation_ship_name];
+                
+                NSString * alias_name = [NSString stringWithFormat:@"%@%d",reference_To,count];
+                
+                NSString * sorting_order = [dict objectForKey:@"sortingOrder"];
+                BOOL ifExists = [appDelegate.dataBase isTabelExistInDB:reference_To];
+                
+                if(ifExists)
+                {
+                    [Join_str appendFormat:@" LEFT OUTER JOIN '%@' AS %@ ON %@.%@ = %@.Id",reference_To,alias_name,detailObjectName,relation_ship_name,alias_name ];                   
+                    [ order_array addObject:[NSString stringWithFormat:@" %@.%@ %@ ",alias_name,query_field,sorting_order]];
+                    count++;
+                }
+            }
+            else
+            {
+                NSString * sorting_order = [dict objectForKey:@"sortingOrder"];
+                NSString * field_api_name = [dict objectForKey:@"fieldAPIName"];
+                [order_array addObject:[NSString stringWithFormat:@" '%@'.%@ %@ ",detailObjectName,field_api_name, sorting_order]];
+            }
+        }
+        
+        if([order_array count] > 0)
+        {
+            [orderBy_str appendString:@"ORDER BY"];
+            for( int j = 0 ; j< [order_array count];j++)
+            {
+                [orderBy_str appendFormat:@"%@",[order_array objectAtIndex:j]];
+                if(j != [order_array count]-1)
+                {
+                    [orderBy_str appendString:@" , "];
+                }
+            }
+        }
+     
+    }
+    
+        
     //fetch the parent  column name  in child table from  CHildInfo Table   -- IMP headerObjectName
     
     NSString * sql = @"";
@@ -242,9 +306,9 @@ extern void SVMXLog(NSString *format, ...);
     {
         if([expression_ length ] != 0 && expression_ != nil)
             
-            sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE %@ = '%@' and %@",fieldsString,detailObjectName,parent_column_name,local_record_id, expression_];
+            sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@'  %@  WHERE '%@'.%@ = '%@' and %@  %@",fieldsString,detailObjectName,Join_str,detailObjectName,parent_column_name,local_record_id, expression_,orderBy_str];
         else
-            sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE %@ = '%@'",fieldsString,detailObjectName,parent_column_name,local_record_id];
+            sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE '%@'.%@ = '%@' %@",fieldsString,detailObjectName,Join_str,detailObjectName,parent_column_name,local_record_id, orderBy_str];
     }
     else
     {
@@ -256,16 +320,16 @@ extern void SVMXLog(NSString *format, ...);
        if([parent_column length] != 0)
         {
             if([expression_ length ] != 0 && expression_ != nil)
-                sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE %@ = '%@' and %@",fieldsString,detailObjectName,parent_column,SF_id, expression_];
+                sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE '%@'.%@ = '%@' and %@  %@",fieldsString,detailObjectName,Join_str,detailObjectName,parent_column,SF_id, expression_,orderBy_str];
             else
-                sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE %@ = '%@'",fieldsString,detailObjectName,parent_column,SF_id];
+                sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE '%@'.%@ = '%@' %@ ",fieldsString,detailObjectName,Join_str,detailObjectName,parent_column,SF_id ,orderBy_str];
         }
         else if([releated_column_name length] != 0)
         {
             if([expression_ length ] != 0 && expression_ != nil)
-                sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE %@ = '%@' and %@",fieldsString,detailObjectName,releated_column_name,SF_id, expression_];
+                sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE '%@'.%@ = '%@' and %@ %@",fieldsString,detailObjectName,Join_str,detailObjectName,releated_column_name,SF_id, expression_,orderBy_str];
             else
-                sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE %@ = '%@'",fieldsString,detailObjectName,releated_column_name,SF_id];
+                sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@'  %@ WHERE '%@'.%@ = '%@'  %@",fieldsString,detailObjectName,Join_str,detailObjectName,releated_column_name,SF_id,orderBy_str];
         }
          //sahana 16th June 2012
     }
@@ -425,6 +489,10 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     synchronized_sqlite3_finalize(sql_stmt);
+    
+    [Join_str release];
+    [orderBy_str release];
+ [order_array release];
     return array;
 }
 
@@ -1204,88 +1272,148 @@ extern void SVMXLog(NSString *format, ...);
     
     NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithCapacity:0];
     
-    NSString * object_mapping_id = @"";
-    NSString * value_mapping_id  = @"";
-    NSString * expression_id = @"";
-    NSString * source_object_name = @"";
-    NSString * target_object_name = @"";
-    NSString * parent_column = @"";
-    NSString * source_child_parent_column = @"";
+//    NSString * object_mapping_id = @"";
+//    NSString * value_mapping_id  = @"";
+//    NSString * expression_id = @"";
+//    NSString * source_object_name = @"";
+//    NSString * target_object_name = @"";
+//    NSString * parent_column = @"";
+//    NSString * source_child_parent_column = @"";
+//    NSString * sorting_order = @"";
+    
+    BOOL field_exists = [self ColumnExists:@"Sorting_Order" tableName:SFPROCESSCOMPONENT];
     
     
+    NSMutableString * field_string = [[NSMutableString alloc] initWithCapacity:0];
+    
+    NSArray * final_keys = nil,* final_fields = nil;
+    
+    if(field_exists)
+    {
+        final_fields = [[NSArray alloc] initWithObjects:@"object_mapping_id" ,@"expression_id",@"source_object_name",@"target_object_name",@"parent_column" ,@"value_mapping_id" ,@"source_child_parent_column",@"Sorting_Order", nil];;
+        final_keys = [[NSArray alloc] initWithObjects:OBJECT_MAPPING_ID,EXPRESSION_ID,SOURCE_OBJECT_NAME,TARGET_OBJECT_NAME, PARENT_COLUMN_NAME, VALUE_MAPPING_ID,SOURCE_CHILD_PARENT_COLUMN,SORTING_ORDER,nil];;
+        
+    }
+    else
+    {
+        final_keys = [[NSArray alloc] initWithObjects:OBJECT_MAPPING_ID,EXPRESSION_ID,SOURCE_OBJECT_NAME,TARGET_OBJECT_NAME, PARENT_COLUMN_NAME, VALUE_MAPPING_ID,SOURCE_CHILD_PARENT_COLUMN,nil];;
+        final_fields = [[NSArray alloc] initWithObjects:@"object_mapping_id" ,@"expression_id",@"source_object_name",@"target_object_name",@"parent_column" ,@"value_mapping_id" ,@"source_child_parent_column", nil];;
+    }
+   
+    
+    for (int i =0; i< [final_fields count] ; i++)
+    {
+        NSString * new_str = [final_fields objectAtIndex:i];
+        if(i == 0)
+        {
+            [field_string  appendFormat:@"%@",new_str];
+        }
+        else
+        {
+            [field_string appendFormat:@" , %@ ",new_str];
+        }
+    }
+   
     if([processId length ] != 0 ||  processId != nil)
     {
          NSString * query = @"";
         
         if(layoutId != nil || [layoutId length] != 0)
         {
-            query = [NSString stringWithFormat:@"SELECT object_mapping_id ,expression_id,source_object_name,target_object_name,parent_column ,value_mapping_id ,source_child_parent_column FROM '%@' WHERE process_id = '%@' AND layout_id = '%@' and component_type = '%@'",PROCESS_COMPONENT , processId , layoutId,componentType];
+            query = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE process_id = '%@' AND layout_id = '%@' and component_type = '%@'",field_string,PROCESS_COMPONENT , processId , layoutId,componentType];
         }
         else
         {
-            query = [NSString stringWithFormat:@"SELECT object_mapping_id ,expression_id,source_object_name,target_object_name,parent_column ,value_mapping_id  , source_child_parent_column FROM '%@' WHERE process_id = '%@' and component_type = '%@'",PROCESS_COMPONENT , processId ,componentType];
+            query = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE process_id = '%@' and component_type = '%@'",field_string,PROCESS_COMPONENT , processId ,componentType];
         }
         SMLog(@" process component%@ ",query );
+        NSString * value = @"";
         sqlite3_stmt * stmt ;
         if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
         {
             while (synchronized_sqlite3_step(stmt)  == SQLITE_ROW) 
             {
-                char * temp_object_mapping_id = (char *)synchronized_sqlite3_column_text(stmt, 0);
-                if(temp_object_mapping_id != nil)
+//                char * temp_object_mapping_id = (char *)synchronized_sqlite3_column_text(stmt, 0);
+//                if(temp_object_mapping_id != nil)
+//                {
+//                    object_mapping_id = [NSString stringWithUTF8String:temp_object_mapping_id];
+//                }
+//                
+//                char * temp_expression_id = (char *)synchronized_sqlite3_column_text(stmt, 1);
+//                if(temp_expression_id != nil)
+//                {
+//                    expression_id = [NSString stringWithUTF8String:temp_expression_id];
+//                }
+//                
+//                char * temp_source_object_name = (char *)synchronized_sqlite3_column_text(stmt, 2);
+//                if(temp_source_object_name != nil)
+//                {
+//                    source_object_name = [NSString stringWithUTF8String:temp_source_object_name];
+//                }
+//                
+//                char * temp_target_object_name = (char *)synchronized_sqlite3_column_text(stmt, 3);
+//                if(temp_target_object_name != nil)
+//                {
+//                    target_object_name = [NSString stringWithUTF8String:temp_target_object_name];
+//                }
+//                
+//                char * temp_parent_column_name = (char *)synchronized_sqlite3_column_text(stmt, 4);
+//                if(temp_parent_column_name != nil)
+//                {
+//                    parent_column = [NSString stringWithUTF8String:temp_parent_column_name];
+//                }
+//                
+//                char * temp_value_mapping_id = (char *)synchronized_sqlite3_column_text(stmt, 5);
+//                if(temp_value_mapping_id != nil)
+//                {
+//                    value_mapping_id = [NSString stringWithUTF8String:temp_value_mapping_id];
+//                }
+//                
+//                char * temp_source_child_parent_column = (char *)synchronized_sqlite3_column_text(stmt, 6);
+//                if(temp_source_child_parent_column != nil)
+//                {
+//                    source_child_parent_column = [NSString stringWithUTF8String:temp_source_child_parent_column];
+//                }
+//                
+//                
+//                char * temp_sorting_order = (char *)synchronized_sqlite3_column_text(stmt, 7);
+//                if(temp_sorting_order != nil)
+//                {
+//                    sorting_order = [NSString stringWithUTF8String:temp_sorting_order];
+//                }
+            
+                for(int i = 0 ; i< [final_keys count]; i++)
                 {
-                    object_mapping_id = [NSString stringWithUTF8String:temp_object_mapping_id];
+                    NSString * key = [final_keys objectAtIndex:i];
+                    char * temp_value= (char *)synchronized_sqlite3_column_text(stmt, i);
+                    if(temp_value != nil)
+                    {
+                        value = @"";
+                        value = [NSString stringWithUTF8String:temp_value];
+                        [dict setObject:value forKey:key];
+                    }
                 }
+               
                 
-                char * temp_expression_id = (char *)synchronized_sqlite3_column_text(stmt, 1);
-                if(temp_expression_id != nil)
-                {
-                    expression_id = [NSString stringWithUTF8String:temp_expression_id];
-                }
-                
-                char * temp_source_object_name = (char *)synchronized_sqlite3_column_text(stmt, 2);
-                if(temp_source_object_name != nil)
-                {
-                    source_object_name = [NSString stringWithUTF8String:temp_source_object_name];
-                }
-                
-                char * temp_target_object_name = (char *)synchronized_sqlite3_column_text(stmt, 3);
-                if(temp_target_object_name != nil)
-                {
-                    target_object_name = [NSString stringWithUTF8String:temp_target_object_name];
-                }
-                
-                char * temp_parent_column_name = (char *)synchronized_sqlite3_column_text(stmt, 4);
-                if(temp_parent_column_name != nil)
-                {
-                    parent_column = [NSString stringWithUTF8String:temp_parent_column_name];
-                }
-                
-                char * temp_value_mapping_id = (char *)synchronized_sqlite3_column_text(stmt, 5);
-                if(temp_value_mapping_id != nil)
-                {
-                    value_mapping_id = [NSString stringWithUTF8String:temp_value_mapping_id];
-                }
-                
-                char * temp_source_child_parent_column = (char *)synchronized_sqlite3_column_text(stmt, 6);
-                if(temp_source_child_parent_column != nil)
-                {
-                    source_child_parent_column = [NSString stringWithUTF8String:temp_source_child_parent_column];
-                }
-                
-                [dict setObject:expression_id forKey:EXPRESSION_ID];
-                [dict setObject:object_mapping_id forKey:OBJECT_MAPPING_ID];
-                [dict setObject:source_object_name forKey:SOURCE_OBJECT_NAME];
-                [dict setObject:target_object_name forKey:TARGET_OBJECT_NAME];
-                [dict setObject:parent_column forKey:PARENT_COLUMN_NAME];
-                [dict setObject:value_mapping_id forKey:VALUE_MAPPING_ID];
-                [dict setObject:source_child_parent_column  forKey:SOURCE_CHILD_PARENT_COLUMN];
+//                [dict setObject:expression_id forKey:EXPRESSION_ID];
+//                [dict setObject:object_mapping_id forKey:OBJECT_MAPPING_ID];
+//                [dict setObject:source_object_name forKey:SOURCE_OBJECT_NAME];
+//                [dict setObject:target_object_name forKey:TARGET_OBJECT_NAME];
+//                [dict setObject:parent_column forKey:PARENT_COLUMN_NAME];
+//                [dict setObject:value_mapping_id forKey:VALUE_MAPPING_ID];
+//                [dict setObject:source_child_parent_column  forKey:SOURCE_CHILD_PARENT_COLUMN];
+//                [dict setObject:sorting_order forKey:SORTING_ORDER];
 
             }
             
             synchronized_sqlite3_finalize(stmt);
         }
     }
+    
+    
+    [field_string release];
+    [final_fields release];
+    [final_keys release];
     return dict;
 
 }
@@ -2469,25 +2597,30 @@ extern void SVMXLog(NSString *format, ...);
             NSString * key = [keys objectAtIndex:q];
             
             NSDictionary * values_dict = [dict objectForKey:key];
+            //Major Change for Sorting lines
+            //**********************************************************
+            NSString * temp_lhs = [values_dict objectForKey:@"component_lhs"];
+            NSString * lhs = [NSString  stringWithFormat:@"'%@'.%@",object_name,temp_lhs];
+            //**********************************************************
             
-            NSString * lhs = [values_dict objectForKey:@"component_lhs"];
+            
             NSString * rhs = [values_dict objectForKey:@"component_rhs"];
             NSString * operator = [values_dict objectForKey:@"component_operator"];
             NSString * sequence = [values_dict objectForKey:@"sequence"];
             
                        
             NSString * component_expression = @"";
-            NSString * data_type = [[appDelegate.databaseInterface getFieldDataType:object_name filedName:lhs] lowercaseString];
+            NSString * data_type = [[appDelegate.databaseInterface getFieldDataType:object_name filedName:temp_lhs] lowercaseString];
 
             // This check is for RecordTypeId
-            if([lhs isEqualToString:@"RecordTypeId"])
+            if([temp_lhs isEqualToString:@"RecordTypeId"])
             {
-                component_expression = [NSString stringWithFormat:@" RecordTypeId   in   (select  record_type_id  from SFRecordType where record_type = '%@' )" , rhs];
+                component_expression = [NSString stringWithFormat:@" %@   in   (select  record_type_id  from SFRecordType where record_type = '%@' )" ,lhs, rhs];
                 
             }
             else if([data_type isEqualToString:@"reference"])
             {
-				NSString * referenceToTable = [appDelegate.dataBase getReferencetoFiledForObject:object_name api_Name:lhs];
+				NSString * referenceToTable = [appDelegate.dataBase getReferencetoFiledForObject:object_name api_Name:temp_lhs];
 				if([operator isEqualToString:@"isnotnull"]) //#4722 defect fix for wizard billing type null
 				{
                     operator = @"!=";
@@ -2559,7 +2692,8 @@ extern void SVMXLog(NSString *format, ...);
                                 component_expression = [component_expression stringByAppendingString:@" AND "];
                             }
                             
-                            component_expression = [component_expression stringByAppendingString:lhs_];
+                            //component_expression = [component_expression stringByAppendingString:lhs_];
+                             component_expression = [component_expression stringByAppendingFormat:@"'%@'.%@",object_name,lhs_];
                             component_expression = [component_expression stringByAppendingString:operator_];
                             rhs = [NSString stringWithFormat:@"'%@'",rhs_];
                             component_expression = [component_expression stringByAppendingString:rhs_];
@@ -7718,6 +7852,30 @@ extern void SVMXLog(NSString *format, ...);
     BOOL columnExists = NO;
     sqlite3_stmt *selectStmt;
     const char *sql = "PRAGMA table_info(SFDataTrailer)";
+	
+	
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, sql, -1, &selectStmt, nil) == SQLITE_OK)
+    {
+        while(synchronized_sqlite3_step(selectStmt)== SQLITE_ROW)
+        {
+            NSString *fieldName = [NSString stringWithUTF8String:(char *)sqlite3_column_text(selectStmt, 1)];
+			if([columnname isEqualToString:fieldName])
+			{
+				columnExists = YES;
+				return columnExists;
+			}
+        }
+    }
+    return columnExists;
+}
+
+- (BOOL)ColumnExists:(NSString *)columnname tableName:(NSString *)tableName
+{
+    BOOL columnExists = NO;
+    sqlite3_stmt *selectStmt;
+    
+    NSString * temp = [NSString stringWithFormat:@"PRAGMA table_info(%@)",tableName];
+    const char *sql = [temp UTF8String];//"PRAGMA table_info(SFDataTrailer)";
 	
 	
     if(synchronized_sqlite3_prepare_v2(appDelegate.db, sql, -1, &selectStmt, nil) == SQLITE_OK)

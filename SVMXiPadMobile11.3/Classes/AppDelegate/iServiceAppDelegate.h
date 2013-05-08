@@ -801,7 +801,7 @@ extern  NSString const *devVersion;
 @property (nonatomic, assign) NSString *From_SFM_Search;
 @property (nonatomic, assign) NSString *errorDescription;
 @property (nonatomic, assign) NSString *language;
-
+@property (nonatomic ,assign) BOOL isSfmSearchSortingAvailable;
 //sahana Feb 22nd
 -(void)setAgrressiveSync_flag;
 

@@ -37,6 +37,8 @@ enum  {
 @synthesize onlineDataDict;
 @synthesize mainView;
 @synthesize conflict;
+@synthesize onlineresultsObjectDict;
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -237,12 +239,18 @@ enum  {
     if([self.masterView.searchFilterSwitch isOn])
     {
         @try{
+        NSString *objectID =[[tableDataArray  objectAtIndex:section] objectForKey:@"ObjectId"];
+        NSMutableArray *array=[onlineresultsObjectDict objectForKey:objectID];
+        cellArray =array;
+            /*
         NSDictionary *sectionDict = [tableDataArray objectAtIndex:section];
         NSString *sectionObjectId = [sectionDict objectForKey:@"ObjectId"];
         int onlineCount = 0;
         NSMutableArray *objectSectionData = [onlineDataDict objectForKey:sectionObjectId];
         onlineCount = [objectSectionData count];
         noOfRows =  [cellArray count] + onlineCount;
+            */
+        noOfRows=[cellArray count];
         }@catch (NSException *exp) {
         SMLog(@"Exception Name SFMResultDetailViewController :numberOfRowsInSection %@",exp.name);
         SMLog(@"Exception Reason SFMResultDetailViewController :numberOfRowsInSection %@",exp.reason);
@@ -286,70 +294,222 @@ enum  {
             [subView removeFromSuperview];
         }         
     }
-    @try{
-    NSArray *cellArray = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"Values"] ;
-    [cell clearsContextBeforeDrawing];
-    UIButton * button = [[[UIButton alloc] initWithFrame:CGRectMake(tableView.frame.size.width-103, 7, 20, 21)] autorelease];
-    button.userInteractionEnabled = TRUE;
-    NSString *objname=[[tableDataArray objectAtIndex:indexPath.section ] objectForKey:@"ObjectName"];
-    objname = [appDelegate.dataBase getApiNameFromFieldLabel:objname];
-    if(([cellArray count]>0) && (indexPath.row < [cellArray count]))
+    @try
     {
-        SMLog(@"Array Count = %d",[cellArray count]);
-        NSString *sfId = [[cellArray objectAtIndex:indexPath.row] objectForKey:@"Id"];
-		NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:sfId tableName:objname];
-		
-        conflict=[appDelegate.dataBase checkIfConflictsExistsForEvent:sfId objectName:objname local_id:local_id];
-//        if (!conflict)
-//        {
-//            conflict = [appDelegate.dataBase checkIfChildConflictexist:[[cellArray objectAtIndex:indexPath.section] objectForKey:@"Id"] 
-//                                                                  sfId:objname];
-//        }
-    }
-        
-    
-    char *field1;
-    NSMutableString * queryStatement1 = [[NSMutableString alloc]initWithCapacity:0];
-    queryStatement1 =[NSMutableString stringWithFormat:@"Select process_id from SFProcess where object_api_name is  '%@' and process_type is 'VIEWRECORD'",objname]; 
-    sqlite3_stmt * labelstmt;
-    const char *selectStatement = [queryStatement1 UTF8String];
-    BOOL processAvailbleForRecord = NO;
-    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &labelstmt, nil) == SQLITE_OK )
-    {
-        if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
+        NSArray *cellArray = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"Values"] ;
+        [cell clearsContextBeforeDrawing];
+        UIButton * button = [[[UIButton alloc] initWithFrame:CGRectMake(tableView.frame.size.width-103, 7, 20, 21)] autorelease];
+        button.userInteractionEnabled = TRUE;
+        NSString *objname=[[tableDataArray objectAtIndex:indexPath.section ] objectForKey:@"ObjectName"];
+        objname = [appDelegate.dataBase getApiNameFromFieldLabel:objname];
+        if(([cellArray count]>0) && (indexPath.row < [cellArray count]))
         {
-            field1 = (char *) synchronized_sqlite3_column_text(labelstmt,0);           
-            if(field1 != nil)
-            {
-                processAvailbleForRecord = YES;
-            }
+            SMLog(@"Array Count = %d",[cellArray count]);
+            NSString *sfId = [[cellArray objectAtIndex:indexPath.row] objectForKey:@"Id"];
+            NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:sfId tableName:objname];
             
+            conflict=[appDelegate.dataBase checkIfConflictsExistsForEvent:sfId objectName:objname local_id:local_id];
+    //        if (!conflict)
+    //        {
+    //            conflict = [appDelegate.dataBase checkIfChildConflictexist:[[cellArray objectAtIndex:indexPath.section] objectForKey:@"Id"] 
+    //                                                                  sfId:objname];
+    //        }
         }
-        synchronized_sqlite3_finalize(labelstmt);
-    }
-    
-    
-    NSArray *tableHeader = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"TableHeader"];
-    
-    if([self.masterView.searchFilterSwitch isOn])
-    {   
-        if(indexPath.row < [cellArray count])
+            
+        
+        char *field1;
+        NSMutableString * queryStatement1 = [[NSMutableString alloc]initWithCapacity:0];
+        queryStatement1 =[NSMutableString stringWithFormat:@"Select process_id from SFProcess where object_api_name is  '%@' and process_type is 'VIEWRECORD'",objname]; 
+        sqlite3_stmt * labelstmt;
+        const char *selectStatement = [queryStatement1 UTF8String];
+        BOOL processAvailbleForRecord = NO;
+        if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &labelstmt, nil) == SQLITE_OK )
+        {
+            if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
+            {
+                field1 = (char *) synchronized_sqlite3_column_text(labelstmt,0);           
+                if(field1 != nil)
+                {
+                    processAvailbleForRecord = YES;
+                }
+                
+            }
+            synchronized_sqlite3_finalize(labelstmt);
+        }
+        
+        
+        NSArray *tableHeader = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"TableHeader"];
+        
+        if([self.masterView.searchFilterSwitch isOn])
+        {
+            NSString *objectID =[[tableDataArray  objectAtIndex:indexPath.section] objectForKey:@"ObjectId"];
+            NSMutableArray *array=[onlineresultsObjectDict objectForKey:objectID];
+            cellArray =array;
+            SMLog(@"%@",array);
+                for(int j=0;j<[tableHeader count] && j < no_of_fields;j++)
+                {
+                    if(j == 2)
+                    {
+                        labelForObjects=[[UILabel alloc]initWithFrame:CGRectMake((20+j*(640/no_of_fields)),0,170, TableViewResultViewCellHeight)]; 
+                    }
+                    else
+                    {
+                        labelForObjects=[[UILabel alloc]initWithFrame:CGRectMake((20+j*(640/no_of_fields)),0,210, TableViewResultViewCellHeight)];                     
+                    }
+                    labelForObjects.backgroundColor = [UIColor clearColor];      
+                    labelForObjects.font = [UIFont boldSystemFontOfSize:16];  
+                    if(indexPath.row < [cellArray count])
+                    {
+                        
+                        NSString * fieldName = [tableHeader objectAtIndex:j];
+                        NSArray * array = [fieldName componentsSeparatedByString:@"."];
+                        
+                        NSString * type = [appDelegate.dataBase getfieldTypeForApi:[array objectAtIndex:0] fieldName:[array objectAtIndex:1]];
+                        
+                        if ([type isEqualToString:@"boolean"])
+                        {
+                            UIImageView *v1;
+                            NSString * value = [[cellArray  objectAtIndex:indexPath.row] objectForKey:[tableHeader objectAtIndex:j]];
+                            if ([value isEqualToString:@"True"] || [value isEqualToString:@"true"] || [value isEqualToString:@"1"] ) 
+                            {
+                                v1 = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM-Screen-boolean-tick-Icon.png"]] autorelease];
+                                v1.backgroundColor = [UIColor clearColor];
+                                v1.frame = CGRectMake((20+j*(640/no_of_fields))-5,10,180, TableViewResultViewCellHeight/2);
+                                v1.contentMode = UIViewContentModeCenter;
+                                [backgroundView addSubview:v1];
+                            }
+                            else
+                            {  
+                                v1 = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM-Screen-boolean-Cancel-Icon.png"]] autorelease];
+                                v1.backgroundColor = [UIColor clearColor];
+                                v1.contentMode = UIViewContentModeCenter;
+                                v1.frame = CGRectMake((20+j*(640/no_of_fields))-5,10,180, TableViewResultViewCellHeight/2);
+                                [backgroundView addSubview:v1];
+                            }
+                            
+                        }
+                        else if([type isEqualToString:@"datetime"])
+                        {
+                            NSString * value = [[cellArray  objectAtIndex:indexPath.row] objectForKey:[tableHeader objectAtIndex:j]];
+                            value = [value stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+                            value = [value stringByReplacingOccurrencesOfString:@".000Z" withString:@""];
+                            value = [iOSInterfaceObject getLocalTimeFromGMT:value];
+                            value = [value stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+                            value = [value stringByReplacingOccurrencesOfString:@"Z" withString:@""];
+                            NSDateFormatter * frm = [[[NSDateFormatter alloc] init] autorelease];
+                            [frm setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
+                            NSDate * date = [frm dateFromString:value];
+                            [frm  setDateFormat:DATETIMEFORMAT];
+                            value = [frm stringFromDate:date];
+                            labelForObjects.text = value;
+                            
+                        }
+                        else if([type isEqualToString:@"date"])
+                        {
+                            NSString * value = [[cellArray  objectAtIndex:indexPath.row] objectForKey:[tableHeader objectAtIndex:j]];
+                            NSDateFormatter * formatter = [[[NSDateFormatter alloc] init] autorelease];
+                            [formatter setDateFormat:@"yyyy-MM-dd"];
+                            NSDate * date = [formatter dateFromString:value];
+                            [formatter setDateFormat:DATEFORMAT];
+                            value = [formatter stringFromDate:date];
+                            labelForObjects.text = value;
+                        }
+                        else
+                        {
+                            labelForObjects.text=[[cellArray  objectAtIndex:indexPath.row] objectForKey:[tableHeader objectAtIndex:j]];
+                        }
+                        labelForObjects.textColor = [appDelegate colorForHex:@"2d5d83"];
+                        
+                    }
+                    labelForObjects.textAlignment = UITextAlignmentLeft;
+                    [labelForObjects setTag:[self getTagForRow:j]];
+                    [backgroundView addSubview:labelForObjects];
+                    [labelForObjects release];
+                }
+                NSString * sf_id = [[cellArray objectAtIndex:indexPath.row] objectForKey:@"Id" ];
+                BOOL recordExists = [appDelegate.dataBase checkForDuplicateId:objname sfId:sf_id];
+                    NSMutableArray *objectArray = [[onlineDataDict objectForKey:objectID] retain];
+                if(!objectArray)
+                    objectArray = [[NSMutableArray alloc] init];
+                NSArray *offlineRecords = [self getOfflineRecordsForObjectID:objectID];
+                if(![self isRecordPresentInOfflineResults:offlineRecords record:[[cellArray objectAtIndex:indexPath.row ] objectForKey:@"Id"]])
+                {
+                    UIImage *onlineImage = [UIImage imageNamed:@"OnlineRecord.png"];
+                    UIImageView *onlineImgView = [[[UIImageView alloc] initWithImage:onlineImage] autorelease];
+                    [onlineImgView setFrame:CGRectMake(0, 2,10, TableViewResultViewCellHeight-4)];
+                    [backgroundView addSubview:onlineImgView];
+                    BOOL tabel_Exists=[appDelegate.dataBase isTabelExistInDB:@"on_demand_download"];
+                    BOOL isparent=[appDelegate.dataBase isHeaderRecord:objname];
+                    if( isparent && recordExists &&tabel_Exists)
+                    {
+                        UIImage * image1 = [UIImage imageNamed:@"download.png"];
+                        UIControl *control = [[UIControl alloc] initWithFrame:CGRectMake(tableView.frame.size.width-103, 7, 20, 21)];
+                        control.backgroundColor = [UIColor clearColor];
+                        control.tag = indexPath.section;
+                        control.layer.contents = (id)image1.CGImage;
+                        [control addTarget:self action:@selector(onDemandDataFecthing:) forControlEvents:UIControlEventTouchUpInside];
+                        [backgroundView addSubview:control];
+                        [control release];
+                    }
+                    else if(processAvailbleForRecord && !recordExists)
+                    {
+                        [button setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"]
+                                          forState:UIControlStateNormal];
+                        [button addTarget:self action:@selector(accessoryButtonTapped:)  forControlEvents:UIControlEventTouchUpInside];
+                        if (conflict)
+                        {
+                            UIImage *conflictImage = [UIImage imageNamed:@"red.png"];
+                            UIImageView *ConflictimgView  = [[[UIImageView alloc] initWithImage:conflictImage] autorelease];
+                            [ConflictimgView setFrame:CGRectMake(0, 7, 20, 21)];
+                            [backgroundView addSubview:ConflictimgView];
+                        }
+                        [backgroundView addSubview:button];
+                    }
+                }
+                else
+                {
+                    if(processAvailbleForRecord && !recordExists)
+                    {
+                        [button setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"]
+                                          forState:UIControlStateNormal];
+                        [button addTarget:self action:@selector(accessoryButtonTapped:)  forControlEvents:UIControlEventTouchUpInside];
+                        if (conflict)
+                        {
+                            UIImage *conflictImage = [UIImage imageNamed:@"red.png"];
+                            UIImageView *ConflictimgView  = [[[UIImageView alloc] initWithImage:conflictImage] autorelease];
+                            [ConflictimgView setFrame:CGRectMake(0, 7, 20, 21)];
+                            [backgroundView addSubview:ConflictimgView];
+                        }
+                        
+                    }
+                    else
+                    {
+                        [button setBackgroundImage:nil forState:UIControlStateNormal];
+                    }
+                    [backgroundView addSubview:button];
+                }
+            
+           // } comment kirti
+
+        }
+        else
         {
             for(int j=0;j<[tableHeader count] && j < no_of_fields;j++)
             {
-                if(j == 2)
+                if(j == no_of_fields-1)
                 {
                     labelForObjects=[[UILabel alloc]initWithFrame:CGRectMake((20+j*(640/no_of_fields)),0,170, TableViewResultViewCellHeight)]; 
                 }
                 else 
                 {
-                    labelForObjects=[[UILabel alloc]initWithFrame:CGRectMake((20+j*(640/no_of_fields)),0,210, TableViewResultViewCellHeight)];                     
+                    labelForObjects=[[UILabel alloc]initWithFrame:CGRectMake((20+j*(640/no_of_fields)),0,210, TableViewResultViewCellHeight)];                 
                 }
+
                 labelForObjects.backgroundColor = [UIColor clearColor];      
                 labelForObjects.font = [UIFont boldSystemFontOfSize:16];  
                 if(indexPath.row < [cellArray count])
-                {
-                    
+                {   
+                    //Display image for Boolean value - checkbox
                     NSString * fieldName = [tableHeader objectAtIndex:j];
                     NSArray * array = [fieldName componentsSeparatedByString:@"."];
                     
@@ -408,272 +568,34 @@ enum  {
                         labelForObjects.text=[[cellArray  objectAtIndex:indexPath.row] objectForKey:[tableHeader objectAtIndex:j]];
                     }
                     labelForObjects.textColor = [appDelegate colorForHex:@"2d5d83"];
-                    
                 }
                 labelForObjects.textAlignment = UITextAlignmentLeft;
-                if(processAvailbleForRecord)
-                {
-                   
-                    [button setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"]
-                                      forState:UIControlStateNormal];
-                    [button addTarget:self action:@selector(accessoryButtonTapped:)  forControlEvents:UIControlEventTouchUpInside];
-                    if (conflict)
-                    {
-                        UIImage *conflictImage = [UIImage imageNamed:@"red.png"];
-                        UIImageView *ConflictimgView  = [[[UIImageView alloc] initWithImage:conflictImage] autorelease];
-                        [ConflictimgView setFrame:CGRectMake(0, 7, 20, 21)];
-                        [backgroundView addSubview:ConflictimgView];
-                    }
-                }
-                else
-                {
-                    [button setBackgroundImage:nil forState:UIControlStateNormal];
-                }
-                
-                
                 [labelForObjects setTag:[self getTagForRow:j]];
                 [backgroundView addSubview:labelForObjects];
                 [labelForObjects release];
             }
-             [backgroundView addSubview:button];
-        }
-        else 
-        {
-            //save online dict data array in mutable array of mutable dict
-            NSDictionary *sectionDict = [tableDataArray objectAtIndex:indexPath.section];
-            NSString *sectionObjectId = [sectionDict objectForKey:@"ObjectId"];
-            NSMutableArray *onlineDataArray = [onlineDataDict objectForKey:sectionObjectId]; 
-            NSDictionary *mDict = [onlineDataArray  objectAtIndex:(indexPath.row - [cellArray count])];
-            for(int j=0;j<[tableHeader count] && j < no_of_fields;j++)
+            if(processAvailbleForRecord)
             {
-                if(j == no_of_fields-1)
+                [button setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"]
+                                  forState:UIControlStateNormal];
+                [button addTarget:self action:@selector(accessoryButtonTapped:)  forControlEvents:UIControlEventTouchUpInside];
+                if (conflict)
                 {
-                    labelForObjects=[[UILabel alloc]initWithFrame:CGRectMake((20+j*(640/no_of_fields)),0,170, TableViewResultViewCellHeight)]; 
-                }
-                else
-                {
-                    labelForObjects=[[UILabel alloc]initWithFrame:CGRectMake((20+j*(640/no_of_fields)),0,210, TableViewResultViewCellHeight)]; 
-                    
-                }
-
-                labelForObjects.backgroundColor = [UIColor clearColor];      
-                labelForObjects.font = [UIFont boldSystemFontOfSize:16]; 
-                NSString * fieldName = [tableHeader objectAtIndex:j];
-                NSArray * array = [fieldName componentsSeparatedByString:@"."];
-                
-                NSString * type = [appDelegate.dataBase getfieldTypeForApi:[array objectAtIndex:0] fieldName:[array objectAtIndex:1]];
-                
-                if ([type isEqualToString:@"boolean"])
-                {
-                    UIImageView *v1;
-                    NSString * value =[mDict objectForKey:[tableHeader objectAtIndex:j]];
-                    if ([value isEqualToString:@"True"] || [value isEqualToString:@"true"] || [value isEqualToString:@"1"] ) 
-                    {
-                        v1 = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM-Screen-boolean-tick-Icon.png"]] autorelease];
-                        v1.backgroundColor = [UIColor clearColor];
-                        v1.frame = CGRectMake((20+j*(640/no_of_fields))-5,10,180, TableViewResultViewCellHeight/2);
-                        v1.contentMode = UIViewContentModeCenter;
-                        [backgroundView addSubview:v1];
-                    }
-                    else
-                    {  
-                        v1 = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM-Screen-boolean-Cancel-Icon.png"]] autorelease];
-                        v1.backgroundColor = [UIColor clearColor];
-                        v1.contentMode = UIViewContentModeCenter;
-                        v1.frame = CGRectMake((20+j*(640/no_of_fields))-5,10,180, TableViewResultViewCellHeight/2);
-                        [backgroundView addSubview:v1];
-                    }
-                }
-                else if([type isEqualToString:@"datetime"])
-                {
-                    NSString * value = [mDict objectForKey:[tableHeader objectAtIndex:j]];
-                    value = [value stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-                    value = [value stringByReplacingOccurrencesOfString:@".000Z" withString:@""];
-                    value = [iOSInterfaceObject getLocalTimeFromGMT:value];
-                    value = [value stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-                    value = [value stringByReplacingOccurrencesOfString:@"Z" withString:@""];
-                    NSDateFormatter * frm = [[[NSDateFormatter alloc] init] autorelease];
-                    [frm setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
-                    NSDate * date = [frm dateFromString:value];
-                    [frm  setDateFormat:DATETIMEFORMAT];
-                    value = [frm stringFromDate:date];
-                    labelForObjects.text = value;
-                    
-                }
-                else if([type isEqualToString:@"date"])
-                {
-                    NSString * value = [mDict objectForKey:[tableHeader objectAtIndex:j]];
-                    NSDateFormatter * formatter = [[[NSDateFormatter alloc] init] autorelease];
-                    [formatter setDateFormat:@"yyyy-MM-dd"];
-                    NSDate * date = [formatter dateFromString:value];
-                    [formatter setDateFormat:DATEFORMAT];
-                    value = [formatter stringFromDate:date];
-                    labelForObjects.text = value;
+                    UIImage *conflictImage = [UIImage imageNamed:@"red.png"];
+                    UIImageView *ConflictimgView  = [[[UIImageView alloc] initWithImage:conflictImage] autorelease];
+                    [ConflictimgView setFrame:CGRectMake(0, 7, 20, 21)];
+                    [backgroundView addSubview:ConflictimgView];
                 }
 
-                else
-                {
-                    labelForObjects.text=[mDict objectForKey:[tableHeader objectAtIndex:j]];
-                }
-                labelForObjects.textAlignment = UITextAlignmentLeft;
-                if(lastSelectedIndexPath && (lastSelectedIndexPath.row == indexPath.row) && (lastSelectedIndexPath.section == indexPath.section))
-                    labelForObjects.textColor = [UIColor whiteColor];
-                else
-                    labelForObjects.textColor = [appDelegate colorForHex:@"2d5d83"];
-                [labelForObjects setTag:[self getTagForRow:j]];
-                [backgroundView addSubview:labelForObjects];
-                [labelForObjects release];
             }
-            NSArray * allkeys = [mDict allKeys];
-            NSString * sf_id = @"";
-            for(NSString * str in allkeys)
+            else
             {
-                if([str isEqualToString:@"Id"])
-                {
-                    sf_id = [mDict objectForKey:@"Id"];
-                    break;
-                }
+                [button setBackgroundImage:nil forState:UIControlStateNormal];
             }
-
-            // Online Image Indicator
-            UIImage *onlineImage = [UIImage imageNamed:@"OnlineRecord.png"];
-            UIImageView *onlineImgView = [[[UIImageView alloc] initWithImage:onlineImage] autorelease];
-            [onlineImgView setFrame:CGRectMake(0, 2,10, TableViewResultViewCellHeight-4)];
-            [backgroundView addSubview:onlineImgView];            
-            BOOL tabel_Exists=[appDelegate.dataBase isTabelExistInDB:@"on_demand_download"];
-            BOOL isparent=[appDelegate.dataBase isHeaderRecord:objname];
-            BOOL recordExists = [appDelegate.dataBase checkForDuplicateId:objname sfId:sf_id];
-                if( isparent && recordExists &&tabel_Exists)
-                {
-                    UIImage * image1 = [UIImage imageNamed:@"download.png"];
-                    UIControl *control = [[UIControl alloc] initWithFrame:CGRectMake(tableView.frame.size.width-103, 7, 20, 21)];
-                    control.backgroundColor = [UIColor clearColor];
-                    control.tag = indexPath.section;
-                    control.layer.contents = (id)image1.CGImage;
-                    [control addTarget:self action:@selector(onDemandDataFecthing:) forControlEvents:UIControlEventTouchUpInside];
-                    [backgroundView addSubview:control];
-                    [control release];
-                }
-                else if(processAvailbleForRecord&&!recordExists)
-                {
-                    
-                    UIImage * image1 = [UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"];
-                    UIControl *control = [[UIControl alloc] initWithFrame:CGRectMake(tableView.frame.size.width-103, 7, 20, 21)];
-                    control.backgroundColor = [UIColor clearColor];
-                    control.tag = indexPath.section;
-                    control.layer.contents = (id)image1.CGImage;
-                    [control addTarget:self action:@selector(onDemandDataFecthing:) forControlEvents:UIControlEventTouchUpInside];
-                    [backgroundView addSubview:control];
-                    [control release];
-                    
-                }
+               
+            [backgroundView addSubview:button];
         }
-
-    }
-    else 
-    {
-        for(int j=0;j<[tableHeader count] && j < no_of_fields;j++)
-        {
-            if(j == no_of_fields-1)
-            {
-                labelForObjects=[[UILabel alloc]initWithFrame:CGRectMake((20+j*(640/no_of_fields)),0,170, TableViewResultViewCellHeight)]; 
-            }
-            else 
-            {
-                labelForObjects=[[UILabel alloc]initWithFrame:CGRectMake((20+j*(640/no_of_fields)),0,210, TableViewResultViewCellHeight)];                 
-            }
-
-            labelForObjects.backgroundColor = [UIColor clearColor];      
-            labelForObjects.font = [UIFont boldSystemFontOfSize:16];  
-            if(indexPath.row < [cellArray count])
-            {   
-                //Display image for Boolean value - checkbox
-                NSString * fieldName = [tableHeader objectAtIndex:j];
-                NSArray * array = [fieldName componentsSeparatedByString:@"."];
-                
-                NSString * type = [appDelegate.dataBase getfieldTypeForApi:[array objectAtIndex:0] fieldName:[array objectAtIndex:1]];
-                
-                if ([type isEqualToString:@"boolean"])
-                {
-                    UIImageView *v1;
-                    NSString * value = [[cellArray  objectAtIndex:indexPath.row] objectForKey:[tableHeader objectAtIndex:j]];
-                    if ([value isEqualToString:@"True"] || [value isEqualToString:@"true"] || [value isEqualToString:@"1"] ) 
-                    {
-                        v1 = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM-Screen-boolean-tick-Icon.png"]] autorelease];
-                        v1.backgroundColor = [UIColor clearColor];
-                        v1.frame = CGRectMake((20+j*(640/no_of_fields))-5,10,180, TableViewResultViewCellHeight/2);
-                        v1.contentMode = UIViewContentModeCenter;
-                        [backgroundView addSubview:v1];
-                    }
-                    else
-                    {  
-                        v1 = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM-Screen-boolean-Cancel-Icon.png"]] autorelease];
-                        v1.backgroundColor = [UIColor clearColor];
-                        v1.contentMode = UIViewContentModeCenter;
-                        v1.frame = CGRectMake((20+j*(640/no_of_fields))-5,10,180, TableViewResultViewCellHeight/2);
-                        [backgroundView addSubview:v1];
-                    }
-                    
-                }
-                else if([type isEqualToString:@"datetime"])
-                {
-                    NSString * value = [[cellArray  objectAtIndex:indexPath.row] objectForKey:[tableHeader objectAtIndex:j]];
-                    value = [value stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-                    value = [value stringByReplacingOccurrencesOfString:@".000Z" withString:@""];
-                    value = [iOSInterfaceObject getLocalTimeFromGMT:value];
-                    value = [value stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-                    value = [value stringByReplacingOccurrencesOfString:@"Z" withString:@""];
-                    NSDateFormatter * frm = [[[NSDateFormatter alloc] init] autorelease];
-                    [frm setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
-                    NSDate * date = [frm dateFromString:value];
-                    [frm  setDateFormat:DATETIMEFORMAT];
-                    value = [frm stringFromDate:date];
-                    labelForObjects.text = value;
-                    
-                }
-                else if([type isEqualToString:@"date"])
-                {
-                    NSString * value = [[cellArray  objectAtIndex:indexPath.row] objectForKey:[tableHeader objectAtIndex:j]];
-                    NSDateFormatter * formatter = [[[NSDateFormatter alloc] init] autorelease];
-                    [formatter setDateFormat:@"yyyy-MM-dd"];
-                    NSDate * date = [formatter dateFromString:value];
-                    [formatter setDateFormat:DATEFORMAT];
-                    value = [formatter stringFromDate:date];
-                    labelForObjects.text = value;
-                }
-                else
-                {
-                    labelForObjects.text=[[cellArray  objectAtIndex:indexPath.row] objectForKey:[tableHeader objectAtIndex:j]];
-                }
-                labelForObjects.textColor = [appDelegate colorForHex:@"2d5d83"];
-            }
-            labelForObjects.textAlignment = UITextAlignmentLeft;
-            [labelForObjects setTag:[self getTagForRow:j]];
-            [backgroundView addSubview:labelForObjects];
-            [labelForObjects release];
-        }
-        if(processAvailbleForRecord)
-        {
-            [button setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"]
-                              forState:UIControlStateNormal];
-            [button addTarget:self action:@selector(accessoryButtonTapped:)  forControlEvents:UIControlEventTouchUpInside];
-            if (conflict)
-            {
-                UIImage *conflictImage = [UIImage imageNamed:@"red.png"];
-                UIImageView *ConflictimgView  = [[[UIImageView alloc] initWithImage:conflictImage] autorelease];
-                [ConflictimgView setFrame:CGRectMake(0, 7, 20, 21)];
-                [backgroundView addSubview:ConflictimgView];
-            }
-
-        }
-        else
-        {
-            [button setBackgroundImage:nil forState:UIControlStateNormal];
-        }
-           
-        [backgroundView addSubview:button];
-    }
-	}@catch (NSException *exp) {
+    }@catch (NSException *exp) {
         SMLog(@"Exception Name SFMResultDetailViewController :cellForRowAtIndexPath %@",exp.name);
         SMLog(@"Exception Reason SFMResultDetailViewController :cellForRowAtIndexPath %@",exp.reason);
     }
@@ -754,12 +676,24 @@ enum  {
     }
     if([self.masterView.searchFilterSwitch isOn])
     {
-        if(indexPath.row < [cellArray count])
-        {
-            fullDataDict = [cellArray objectAtIndex:indexPath.row]; 
-            resultController.isOnlineRecord = NO;
+        NSString *objectID =[[tableDataArray  objectAtIndex:indexPath.section] objectForKey:@"ObjectId"];
+        NSMutableArray *array=[onlineresultsObjectDict objectForKey:objectID];
+        cellArray =array;
+//        if(indexPath.row < [cellArray count])
+//        {
+            fullDataDict = [cellArray objectAtIndex:indexPath.row];
             resultController.objectName = objectName;
-        }
+        if([[onlineDataDict objectForKey:objectID] containsObject:fullDataDict])
+           {
+               resultController.isOnlineRecord = YES;
+           }
+           else
+           {
+               resultController.isOnlineRecord = NO;
+           }
+
+//        }
+        /* Kirti
         else 
         {
             int onlineIndex =  indexPath.row - [cellArray count];
@@ -768,6 +702,7 @@ enum  {
             resultController.objectName = objectName;
             resultController.isOnlineRecord = YES;
         }
+         */
     }
     else 
     {
@@ -853,7 +788,6 @@ enum  {
 {
     int count = 0;
     NSMutableArray *results = [[NSMutableArray alloc] init];
-    NSArray *searchableArray = [dataForObject objectForKey:@"SearchableFields"];
     NSArray *displayArray = [dataForObject objectForKey:@"DisplayFields"];
     if(appDelegate == nil)
         appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -866,23 +800,32 @@ enum  {
     [uiControls setObject:self.masterView.searchCriteria.text forKey:@"searchCriteria"];
     [uiControls setObject:self.masterView.searchString.text forKey:@"searchString"];
     [dataForObject setValue:uiControls forKey:@"uiControls"];
-    NSMutableArray *result = [[appDelegate.dataBase getResults:object withConfigData:dataForObject] retain];
-    @try{
-    for(NSDictionary *dict in result)
-    {   
-        count++;
-        NSMutableDictionary *resultDict = [[NSMutableDictionary alloc] init];
-        for(NSDictionary *displaydict in displayArray)
-        {
-            NSString *key = [NSString stringWithFormat:@"%@.%@",[displaydict objectForKey:@"SVMXC__Object_Name2__c"], [displaydict objectForKey:@"SVMXC__Field_Name__c"]];
-            [resultDict setObject:[dict objectForKey:key] forKey:key];
-            [resultDict setObject:[dict objectForKey:@"Id"] forKey:@"Id"]; 
-            [resultDict setObject:[dict objectForKey:@"local_id"] forKey:@"local_id"]; 
-        }
-        [results addObject:resultDict];
-        if(count == [[[self.masterView searchLimitString] text] intValue])
-            break;
+    NSMutableArray *result;
+    if(!appDelegate.isSfmSearchSortingAvailable)
+    {
+        result= [[appDelegate.dataBase getResults:object withConfigData:dataForObject] retain];
     }
+    else
+    {
+        result = [[appDelegate.dataBase getResultsForSFM:object withConfigData:dataForObject] retain];
+    }
+    @try
+    {
+        for(NSDictionary *dict in result)
+        {   
+            count++;
+            NSMutableDictionary *resultDict = [[NSMutableDictionary alloc] init];
+            for(NSDictionary *displaydict in displayArray)
+            {
+                NSString *key = [NSString stringWithFormat:@"%@.%@",[displaydict objectForKey:@"SVMXC__Object_Name2__c"], [displaydict objectForKey:@"SVMXC__Field_Name__c"]];
+                [resultDict setObject:[dict objectForKey:key] forKey:key];
+            }
+            [resultDict setObject:[dict objectForKey:@"Id"] forKey:@"Id"];             
+            [resultDict setObject:[dict objectForKey:@"local_id"] forKey:@"local_id"];
+            [results addObject:resultDict];
+            if(count == [[[self.masterView searchLimitString] text] intValue])
+                break;
+        }
     }@catch (NSException *exp) {
             SMLog(@"Exception Name SFMResultDetailViewController :getResultsForObject %@",exp.name);
             SMLog(@"Exception Reason SFMResultDetailViewController :getResultsForObject %@",exp.reason);
@@ -942,7 +885,7 @@ enum  {
             SMLog(@"Offline DB has more or equal number records specified by the limit");
             return;
         }
-        //Make a WebService Call 
+        //Make a WebService Call
          appDelegate.sfmSearchTableArray = resultArray;
         NSMutableArray *searchResultData = [[NSMutableArray alloc] init];
         
@@ -952,7 +895,7 @@ enum  {
         {
             [objectList addObject:[[resultArray objectAtIndex:i] objectForKey:@"ObjectId"]];
         }
-        /*
+        
         for(int j=0;j<[resultArray count]; j++)
         {
             NSArray *objectResultsArray = [[resultArray objectAtIndex:j] objectForKey:@"Values"];
@@ -967,7 +910,7 @@ enum  {
             [objectResultList addObject:objResultArray];
             [objResultArray release];
         }
-        */
+        
         
         NSString *criteria = self.masterView.searchCriteria.text;
         NSString *userFilterString = self.masterView.searchString.text;
@@ -1010,16 +953,29 @@ enum  {
         if(onlineDataDict)
             [onlineDataDict release];
         onlineDataDict = [[NSMutableDictionary alloc] init];
+        onlineresultsObjectDict=[[NSMutableDictionary alloc]init];
         for(NSDictionary *dict in appDelegate.onlineDataArray)
         {
             NSString *objectID = [dict objectForKey:@"SearchObjectId"];
             NSMutableArray *objectArray = [[onlineDataDict objectForKey:objectID] retain];
+            if(! [[onlineresultsObjectDict allKeys] containsObject:objectID])
+            {
+                NSMutableArray *arry=[[NSMutableArray alloc]init];
+                [arry addObject:dict];
+                [onlineresultsObjectDict setObject:arry forKey:objectID];
+            }
+            else
+            {
+                NSMutableArray *array=[onlineresultsObjectDict objectForKey:objectID];
+                [array addObject:dict];
+            }
+            /*
             if(!objectArray)
                 objectArray = [[NSMutableArray alloc] init];
             NSArray *offlineRecords = [self getOfflineRecordsForObjectID:objectID];
             if(([objectArray count] + [offlineRecords count]) == [[[self.masterView searchLimitString] text] intValue])
             {
-                continue;
+                break;
             }
                         
             if([offlineRecords count] == 0)
@@ -1031,12 +987,33 @@ enum  {
             }
             [onlineDataDict setObject:objectArray forKey:objectID];
             [objectArray release];
+             */
+            if(!objectArray)
+                objectArray = [[NSMutableArray alloc] init];
+            NSArray *offlineRecords = [self getOfflineRecordsForObjectID:objectID];
+            if(([[onlineresultsObjectDict objectForKey:objectID ] count]) == [[[self.masterView searchLimitString] text] intValue])
+            {
+                continue;
+            }
+            
+            if([offlineRecords count] == 0)
+                [objectArray addObject:dict];
+            else
+            {
+                if(![self isRecordPresentInOfflineResults:offlineRecords record:[dict objectForKey:@"Id"]])
+                    [objectArray addObject:dict];
+            }
+            [onlineDataDict setObject:objectArray forKey:objectID];
+            [objectArray release];
         }
+        SMLog(@"onlineresultsObjectDict %@",onlineresultsObjectDict);
     }
 
 
 	//Enhancement change for showing the number of records.
-	[mainView.resultmasterView reloadTableWithOnlineData:onlineDataDict];
+//	[mainView.resultmasterView reloadTableWithOnlineData:onlineDataDict]; Kirti
+        [mainView.resultmasterView reloadTableWithOnlineData:onlineDataDict overallResult:onlineresultsObjectDict];
+
 	}@catch (NSException *exp) {
 	SMLog(@"Exception Name SFMResultDetailViewController :showObjects %@",exp.name);
 	SMLog(@"Exception Reason SFMResultDetailViewController :showObjects %@",exp.reason);
@@ -1133,8 +1110,11 @@ enum  {
     NSString *objectName = [[tableDataArray objectAtIndex:ownerCellIndexPath.section] objectForKey:@"ObjectName"];    
     NSDictionary *sectionDict = [tableDataArray objectAtIndex:ownerCellIndexPath.section];
     NSString *sectionObjectId = [sectionDict objectForKey:@"ObjectId"];
-    NSMutableArray *onlineDataArray = [onlineDataDict objectForKey:sectionObjectId]; 
-    NSDictionary *mDict = [onlineDataArray  objectAtIndex:(ownerCellIndexPath.row - [cellArray count])];
+    NSMutableArray *onlineDataArray = [onlineDataDict objectForKey:sectionObjectId];
+    NSString *objectID =[[tableDataArray  objectAtIndex:ownerCellIndexPath.section] objectForKey:@"ObjectId"];
+    NSMutableArray *array=[onlineresultsObjectDict objectForKey:objectID];
+    NSDictionary *mDict = [array  objectAtIndex:(ownerCellIndexPath.row)];
+//    NSDictionary *mDict = [onlineDataArray  objectAtIndex:(ownerCellIndexPath.row - [cellArray count])];
     NSString * recordId = @"";
     if([mDict count ]> 0)
     {
@@ -1290,9 +1270,17 @@ enum  {
 
     UIImageView *bgView = (UIImageView *)[ownerCell viewWithTag:backgroundImage];
     [bgView setImage:[UIImage imageNamed:@"SFM-Screen-Table-Strip-Selected.png"]];
-    @try{
+    @try
+    {
+    NSString *objectID =[[tableDataArray  objectAtIndex:ownerCellIndexPath.section] objectForKey:@"ObjectId"];
+    NSMutableArray *array=[onlineresultsObjectDict objectForKey:objectID];
+        
     NSDictionary *dict = [tableDataArray objectAtIndex:ownerCellIndexPath.section];
-    NSDictionary *dataDict = [[dict objectForKey:@"Values"] objectAtIndex:ownerCellIndexPath.row]; 
+        NSDictionary *dataDict;
+        if([self.masterView.searchFilterSwitch isOn])
+         dataDict =[array objectAtIndex:ownerCellIndexPath.row];
+        else
+         dataDict=[[dict objectForKey:@"Values"] objectAtIndex:ownerCellIndexPath.row];
     NSString *objectName = [appDelegate.dataBase getApiNameFromFieldLabel:[dict objectForKey:@"ObjectName"]];
      char *field1;
     NSMutableString * queryStatement1 = [[NSMutableString alloc]initWithCapacity:0];

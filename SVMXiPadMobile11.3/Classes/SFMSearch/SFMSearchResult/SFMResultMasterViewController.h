@@ -19,6 +19,7 @@
 }
 
 @property (nonatomic, retain) NSMutableDictionary * onlineRecordDict;
+@property (nonatomic, retain) NSMutableDictionary * onlineResultDict;
 @property (nonatomic, retain) IBOutlet UILabel *searchCriteriaLabel;
 @property (nonatomic, retain) IBOutlet UILabel *includeOnlineResultLabel;
 @property (nonatomic, retain) IBOutlet UILabel *limitShowLabel;
@@ -51,4 +52,6 @@
 - (void)setState:(id)sender;
 
 - (void)reloadTableWithOnlineData:(NSMutableDictionary *)_onlineDict;
+- (void) reloadTableWithOnlineData:(NSMutableDictionary *)_onlineDict overallResult:(NSMutableDictionary *)onlineResult;
+
 @end

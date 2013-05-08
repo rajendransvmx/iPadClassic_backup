@@ -41,7 +41,7 @@
 @property (nonatomic, retain) NSMutableArray          *tableDataArray;
 @property (nonatomic, retain) NSMutableArray          *resultArray;
 @property (nonatomic, assign) BOOL conflict;
-
+@property (nonatomic, retain) NSMutableDictionary *onlineresultsObjectDict;
 - (void)tapRecognized:(id)sender;
 - (void) createTable;
 - (void) showHelp;

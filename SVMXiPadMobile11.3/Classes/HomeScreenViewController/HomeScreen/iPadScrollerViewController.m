@@ -890,6 +890,11 @@ const NSUInteger kNumImages = 7;
             NSString *  query =  [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS %@ ('object_name' VARCHAR ,'local_id' VARCHAR) ",LOCAL_EVENT_UPDATE];
             [appDelegate.dataBase createTable:query];
         }
+        int check_for_SFMSearch_sorting = (kMinSFMSearchSorting * 100000);
+        if(_stringNumber >= check_for_SFMSearch_sorting)
+        {
+            appDelegate.isSfmSearchSortingAvailable=TRUE;
+        }
         [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:Event_local_Ids];
         [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:LOCAL_EVENT_UPDATE];
     }

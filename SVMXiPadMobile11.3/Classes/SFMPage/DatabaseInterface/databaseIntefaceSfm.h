@@ -55,7 +55,9 @@
 
 -(NSMutableDictionary *)queryDataFromObjectTable:(NSMutableArray *)api_names tableName:(NSString *)tableName record_id:(NSString *) recordId expression:(NSString *)expression;
 //method to get the line data from lines table
--(NSMutableArray *)queryLinesInfo:(NSMutableArray *)apiNames  detailObjectName:(NSString *)detailObjectName headerObjectName:(NSString *)headerObjectName detailaliasName:(NSString *)detailsAliasName headerRecordId:(NSString *)record_id expressionId:(NSString *)expression_id parent_column_name:(NSString *)parent_column;
+-(NSMutableArray *)queryLinesInfo:(NSMutableArray *)apiNames  detailObjectName:(NSString *)detailObjectName headerObjectName:(NSString *)headerObjectName detailaliasName:(NSString *)detailsAliasName headerRecordId:(NSString *)record_id expressionId:(NSString *)expression_id parent_column_name:(NSString *)parent_column sorting_order:(NSString *) sorting_order_string;
+/// Sahana for sorting
+-(BOOL)checkColumnExists:(NSString *)columnname tableName:(NSString *)tableName;
 
 //method to  get the processInfo ( page layout information) 
 -(NSMutableArray *) selectProcessFromDB:(NSString *)currentObject;
@@ -294,7 +296,7 @@
 - (void)fillSyncRecordDictForRecordType:(NSString *)record_type SF_Id:(NSString *)SF_id local_id:(NSString *)local_id  operation_type:(NSString *)operation_type  final_dictionary:(NSMutableDictionary *)sync_record_dict  object_naem:(NSString *)object_name parent_object_name:(NSString *)parent_object_name parent_local_id:(NSString *)parent_local_id;
 - (NSMutableDictionary * )getCustomAggressiveSyncRecordsForHearedRecord:(NSString *)header_reco_id;
 - (NSArray *)getallmasterRecordsForCustomAggressiveSync;
-- (BOOL)checkColumnExists:(NSString *)columnname tableName:(NSString *)tableName;
+- (BOOL)ColumnExists:(NSString *)columnname tableName:(NSString *)tableName;
 - (NSMutableDictionary *)getClassNameMethodnameForHeaderLocalId:(NSString *)header_lcal_id;
 -(void)insertCustomWebserviceResponse:(NSMutableArray *)records_array class_name:(NSString *)class_name method_name:(NSString *)method_name related_record_error:(BOOL)related_record_error request_id:(NSString *)request_id;
 -(void)insertCustomWebserviceResponsewithError:(NSMutableArray *)error_list class_name:(NSString *)class_name method_name:(NSString *)method_name related_record_error:(BOOL)related_record_error request_id:(NSString *)request_id;

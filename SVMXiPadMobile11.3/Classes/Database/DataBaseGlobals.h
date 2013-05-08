@@ -183,6 +183,9 @@
 #define MVALUE_MAPPING_ID        @"value_mapping_id"
 #define SFM                      @"SFM"
 
+#define SORTING_ORDER            @"Sorting_Order"
+#define SORT_CRITERIA            @"SVMXC__Values__c"
+
 //SFwizard and Component
 #define MWIZARD_ID               @"wizard_id"
 #define MWIZARD_DESCRIPTION      @"wizard_description"
@@ -208,6 +211,7 @@
 #define COLUMNCOMP_TYPE          5
 #define COLUMNPARENT_COLUMN      7
 #define COLUNMVALUEMAP           8
+#define COLUMNSORTING_ORDER      10
 
 //Tags
 #define COLUMNTAG_ID             0

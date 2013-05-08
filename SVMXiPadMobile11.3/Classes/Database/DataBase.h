@@ -16,6 +16,17 @@
 # define SUCCESS_           @"SUCCESS_"
 # define NOINTERNET         @"NOINTERNET"
 # define CONNECTIONERROR    @"CONNECTIONERROR"
+#define OBJECT_ID                                       @"Id"
+#define FIELD_NAME                                      @"SVMXC__Field_Name__c"
+#define OBJECT_NAME2                                    @"SVMXC__Object_Name2__c"
+#define LOOKUP_FIELD_API_NAME                           @"SVMXC__Lookup_Field_API_Name__c"
+#define FIELD_RELATIONSHIP_NAME                         @"SVMXC__Field_Relationship_Name__c"
+#define OBJECT_FIELD_NAME                               @"SVMXC__Object_Name__c"
+#define DISPLAY_TYPE                                    @"SVMXC__Display_Type__c"
+#define OPERAND                                         @"SVMXC__Operand__c"
+#define OPERATOR                                        @"SVMXC__Operator__c"
+// SFM Search
+#define SKIP_DISPLAY_FIELD                              @"skipped_Field"
 
 @class iServiceAppDelegate;
 @class PopoverButtons;
@@ -351,5 +362,18 @@ PopoverButtons *popOver_view;
 //Sync Override : Radha
 - (void) updateWebserviceNameInWizarsTable:(NSArray *)customArray;
 - (void) attachSiganture:(NSString *)operation_type;
+// SFM Search Alias implementation
+
+-(NSString *) CreateRandomString;
+-(NSString*)random;
+-(NSString*)getapiNameforObject:(NSString*)objectName RelationshipName:(NSString*)relName;
+-(NSMutableArray*)parsingExpression:(NSString*)Expression;
+-(BOOL)isColumnPresentInTable:(NSString*)TableName columnName:(NSString*)colName;
+-(NSMutableArray*)getSortObjects:(NSString *)objectId;
+
+// SFM Search Result methods for Alias implementation
+- (NSMutableArray *) getResultsForSFM:(NSString *)object withConfigData:(NSDictionary *)dataForObject;
+-(NSMutableString*)getJoinFieldsForSFM:(NSDictionary*)dict;
+-(NSMutableDictionary*) getupdatedTokenForSFM:(NSMutableDictionary*)dictforparsing;
 
 @end

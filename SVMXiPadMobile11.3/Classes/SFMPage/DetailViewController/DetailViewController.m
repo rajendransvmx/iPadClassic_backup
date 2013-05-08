@@ -1197,8 +1197,9 @@ extern void SVMXLog(NSString *format, ...);
             
             NSString * expressionId = [process_components objectForKey:EXPRESSION_ID];
             NSString * parent_column_name = [process_components objectForKey:PARENT_COLUMN_NAME];
+            NSString * sorting_order = ([process_components objectForKey:SORTING_ORDER]!= nil)?[process_components objectForKey:SORTING_ORDER]:@"";
             
-            NSMutableArray * detail_values = [appDelegate.databaseInterface queryLinesInfo:details_api_keys detailObjectName:detailObjectName headerObjectName:headerObjName detailaliasName:detailaliasName headerRecordId:appDelegate.sfmPageController.recordId expressionId:expressionId parent_column_name:parent_column_name];
+            NSMutableArray * detail_values = [appDelegate.databaseInterface queryLinesInfo:details_api_keys detailObjectName:detailObjectName headerObjectName:headerObjName detailaliasName:detailaliasName headerRecordId:appDelegate.sfmPageController.recordId expressionId:expressionId parent_column_name:parent_column_name sorting_order:sorting_order];
             
             for(int l = 0 ;l < [detail_values count]; l++)
             {
@@ -1431,7 +1432,7 @@ extern void SVMXLog(NSString *format, ...);
 			
             NSString * expressionId = [process_components objectForKey:EXPRESSION_ID];
             NSString * parent_column_name = [dict objectForKey:gDETAIL_HEADER_REFERENCE_FIELD];
-			
+			NSString * sorting_order = ([process_components objectForKey:SORTING_ORDER]!= nil)?[process_components objectForKey:SORTING_ORDER]:@"";
 			//6279 - DefectFix
 			
 			NSMutableDictionary * detailFieldMappingDict = [appDelegate.databaseInterface getObjectMappingForMappingId:process_components mappingType:FIELD_MAPPING];
@@ -1446,7 +1447,7 @@ extern void SVMXLog(NSString *format, ...);
 				}
 			}
 			
-            NSMutableArray * detail_values = [appDelegate.databaseInterface queryLinesInfo:details_api_keys detailObjectName:detailObjectName headerObjectName:headerObjName detailaliasName:detailaliasName headerRecordId:appDelegate.sfmPageController.recordId expressionId:expressionId parent_column_name:parent_column_name];
+            NSMutableArray * detail_values = [appDelegate.databaseInterface queryLinesInfo:details_api_keys detailObjectName:detailObjectName headerObjectName:headerObjName detailaliasName:detailaliasName headerRecordId:appDelegate.sfmPageController.recordId expressionId:expressionId parent_column_name:parent_column_name sorting_order:sorting_order];
             
             for(int l = 0 ;l < [detail_values count]; l++)
             {
@@ -2193,8 +2194,9 @@ extern void SVMXLog(NSString *format, ...);
 			NSArray * detail_value_mapping_keys = [detail_value_mapping_dict allKeys];
             NSString * expressionId = [process_components objectForKey:EXPRESSION_ID];
             NSString * parent_column_name = [dict objectForKey:gDETAIL_HEADER_REFERENCE_FIELD];
+            NSString * sorting_order = ([process_components objectForKey:SORTING_ORDER]!= nil)?[process_components objectForKey:SORTING_ORDER]:@"";
             
-            NSMutableArray * detail_values = [appDelegate.databaseInterface queryLinesInfo:details_api_keys detailObjectName:detailObjectName headerObjectName:headerObjName detailaliasName:detailaliasName headerRecordId:appDelegate.sfmPageController.recordId expressionId:expressionId parent_column_name:parent_column_name];
+            NSMutableArray * detail_values = [appDelegate.databaseInterface queryLinesInfo:details_api_keys detailObjectName:detailObjectName headerObjectName:headerObjName detailaliasName:detailaliasName headerRecordId:appDelegate.sfmPageController.recordId expressionId:expressionId parent_column_name:parent_column_name sorting_order:sorting_order];
             
 			NSMutableDictionary * api_name_dataType = [appDelegate.databaseInterface getAllFieldsAndItsDataTypesForObject:detailObjectName tableName:SFOBJECTFIELD];
 			

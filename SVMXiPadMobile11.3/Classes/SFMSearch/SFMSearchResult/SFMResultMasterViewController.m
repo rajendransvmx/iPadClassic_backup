@@ -38,6 +38,7 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize limitShowLabel;
 @synthesize limitRecordLabel;
 @synthesize inputAccessoryView;
+@synthesize onlineResultDict;
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
     if([textField tag] == 0)
@@ -308,6 +309,7 @@ extern void SVMXLog(NSString *format, ...);
     [searchFilterSwitch release];
     [searchCriteriaString release];
 	[onlineRecordDict release];
+    [onlineResultDict release];
     [super dealloc];
 }
 #pragma mark - table view delegate methods
@@ -368,7 +370,7 @@ extern void SVMXLog(NSString *format, ...);
 	{
 		if ([[dict valueForKey:@"ObjectId"] isEqualToString:[[objectArray objectAtIndex:0] valueForKey:@"SearchObjectId"]]) 
 		{
-			numberOfRecords = (numberOfRecords + [objectArray count]);
+			numberOfRecords = [[onlineResultDict objectForKey:[dict valueForKey:@"ObjectId"]] count] ;//(numberOfRecords + [objectArray count]);
 		}
 		
 	}
@@ -576,6 +578,13 @@ extern void SVMXLog(NSString *format, ...);
 - (void) reloadTableWithOnlineData:(NSMutableDictionary *)_onlineDict
 {
 	onlineRecordDict = _onlineDict;
+	SMLog(@"%@", onlineRecordDict);
+	[self.searchMasterTable reloadData];
+}
+- (void) reloadTableWithOnlineData:(NSMutableDictionary *)_onlineDict overallResult:(NSMutableDictionary *)onlineResult
+{
+	onlineRecordDict = _onlineDict;
+    onlineResultDict=onlineResult;
 	SMLog(@"%@", onlineRecordDict);
 	[self.searchMasterTable reloadData];
 }
