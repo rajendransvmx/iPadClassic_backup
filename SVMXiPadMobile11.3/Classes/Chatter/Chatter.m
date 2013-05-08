@@ -47,11 +47,11 @@ extern void SVMXLog(NSString *format, ...);
     
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     
-    //Shrinivas
-    ////[[ZKServerSwitchboard switchboard] doCheckSession];
+    //Shrinivas : OAuth
+    [[ZKServerSwitchboard switchboard] doCheckSession];
+	
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    [appDelegate goOnlineIfRequired];
-    if ( ![appDelegate isInternetConnectionAvailable] ) 
+    if ( ![appDelegate isInternetConnectionAvailable] )
     { 
         NSData *data; 
         data = [appDelegate.calDataBase getProductPictureForProductId:productId];

@@ -407,9 +407,10 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     
     if ([appDelegate isInternetConnectionAvailable])
     {
-        [appDelegate goOnlineIfRequired];
         
-        
+		//OAuth.
+		[[ZKServerSwitchboard switchboard] doCheckSession];
+
         DataBase* dat= [[DataBase alloc]init];
         if (appDelegate.loggedInUserId == nil)
             appDelegate.loggedInUserId = [dat getLoggedInUserId:appDelegate.username];

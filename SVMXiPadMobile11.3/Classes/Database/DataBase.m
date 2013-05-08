@@ -4361,7 +4361,11 @@ extern void SVMXLog(NSString *format, ...);
         [resultArray release];
         return;
     }
-    [appDelegate goOnlineIfRequired];
+	
+	//OAuth.
+	if ( ![[ZKServerSwitchboard switchboard] doCheckSession] )
+		return;
+		
     didUserGPSLocationUpdated=FALSE;
     SMLog(@"Updating User GPS Location Table");
     [appDelegate.wsInterface dataSyncWithEventName:@"LOCATION_HISTORY" eventType:SYNC values:resultArray];
@@ -4438,7 +4442,11 @@ extern void SVMXLog(NSString *format, ...);
         didTechnicianLocationUpdated=TRUE;
         return;
     }
-    [appDelegate goOnlineIfRequired];
+	
+	//OAuth.
+	if ( ![[ZKServerSwitchboard switchboard] doCheckSession] )
+		return;
+	
     didTechnicianLocationUpdated=FALSE;
     SMLog(@"Updating Technician Location");
     [appDelegate.wsInterface dataSyncWithEventName:@"TECH_LOCATION_UPDATE" eventType:SYNC values:location];
@@ -6947,6 +6955,14 @@ extern void SVMXLog(NSString *format, ...);
 			{
 				value = @"";
 			}
+			//OAuth
+			else if ([value Contains:key])
+			{
+				value = @"";
+			}
+
+			
+			
 			
             if (![key isEqualToString:@""])
                 [tagDict setValue:value forKey:key];
@@ -8503,8 +8519,10 @@ extern void SVMXLog(NSString *format, ...);
     
     appDelegate.wsInterface.didOpComplete = FALSE;
     appDelegate.connection_error = FALSE;
-
-   // [appDelegate goOnlineIfRequired];
+	
+	//OAuth.
+	[[ZKServerSwitchboard switchboard] doCheckSession];
+	
     [appDelegate updateInstalledPackageVersion];    
     NSString * retVal = [self callMetaSync];
 
@@ -8637,8 +8655,10 @@ extern void SVMXLog(NSString *format, ...);
     appDelegate.connection_error = FALSE;
     
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
-    {
-        [appDelegate goOnlineIfRequired];
+    {		
+		//OAuth.
+		[[ZKServerSwitchboard switchboard] doCheckSession];
+
         if(!appDelegate.connection_error)
         {
             break;
@@ -10011,6 +10031,14 @@ extern void SVMXLog(NSString *format, ...);
 #pragma mark - ServiceReportLogo
 - (void) getImageForServiceReportLogo
 {
+	if (![appDelegate isInternetConnectionAvailable])
+    {
+        //[appDelegate displayNoInternetAvailable];
+        appDelegate.serviceReportLogo = [[[UIImage alloc] initWithData:[self serviceReportLogoInDB]]autorelease];
+        return;
+    }
+	
+	
     NSString * _query = [NSString stringWithFormat:@"SELECT Body FROM Document Where Name = 'ServiceMax_iPad_CompanyLogo'"];
 	
 	SVMXLog(@"getImageForServiceReportLogo = %@", _query);
@@ -10881,6 +10909,70 @@ extern void SVMXLog(NSString *format, ...);
         
     }
     return data;
+}
+
+//Shrinivas : OAuth.
+- (NSString *)getLocalIdFromUserTable:(NSString *)userName
+{
+	NSString *query = nil;
+	NSString *local_Id = nil;
+   
+	query = [NSString stringWithFormat:@"SELECT local_id From User where Username = '%@'", userName];
+    
+    sqlite3_stmt * statement;
+	
+	if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, NULL) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            const char * value = (char *) synchronized_sqlite3_column_text(statement, 0);
+            if(value != nil)
+            {
+                local_Id = [NSString stringWithUTF8String:value];
+				
+			}
+        
+        }
+		synchronized_sqlite3_finalize(statement);
+    }
+
+	if ( local_Id != nil )
+		return local_Id;
+	else
+		return @"";
+
+}
+
+
+- (NSString *)getUserNameFromUserTable:(NSString *)local_Id
+{
+	NSString *query = nil;
+	NSString *Name = nil;
+	
+	query = [NSString stringWithFormat:@"SELECT Username From User where local_id = '%@'", local_Id];
+    
+    sqlite3_stmt * statement;
+	
+	if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, NULL) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            const char * value = (char *) synchronized_sqlite3_column_text(statement, 0);
+            if(value != nil)
+            {
+                Name = [NSString stringWithUTF8String:value];
+				
+			}
+			
+        }
+		synchronized_sqlite3_finalize(statement);
+    }
+	
+	if ( Name != nil )
+		return Name;
+	else
+		return @"";
+
 }
 
 

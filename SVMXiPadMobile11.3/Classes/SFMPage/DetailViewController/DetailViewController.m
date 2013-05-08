@@ -2915,7 +2915,9 @@ extern void SVMXLog(NSString *format, ...);
             }            
         }   
         
-        [appDelegate goOnlineIfRequired];
+		//OAuth.
+		[[ZKServerSwitchboard switchboard] doCheckSession];
+
         SMLog(@" getPrice1");
         NSMutableDictionary * sfm_temp = [appDelegate.SFMPage mutableCopy];
         NSArray * keys = [NSArray arrayWithObjects:WEBSERVICE_NAME, SFM_DICTIONARY, nil];
@@ -12343,13 +12345,13 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate displayNoInternetAvailable];
         return;
     } 
+	
+	//OAuth.
+	if ( ![[ZKServerSwitchboard switchboard] doCheckSession] )
+		return;
 
-    
-    [activity startAnimating];
-    [appDelegate goOnlineIfRequired];
-    
-    
-    
+	[activity startAnimating];
+
     if ([appDelegate.syncThread isExecuting])
     {
         

@@ -222,17 +222,43 @@
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 			<key>Title</key>
-			<string>Use Production Org</string>
+			<string>Connection Specifier</string>
 		</dict>
 		<dict>
 			<key>Type</key>
-			<string>PSToggleSwitchSpecifier</string>
+			<string>PSMultiValueSpecifier</string>
 			<key>Title</key>
-			<string>Enabled</string>
+			<string>Connection</string>
 			<key>Key</key>
-			<string>enabled_preference</string>
+			<string>preference_identifier</string>
 			<key>DefaultValue</key>
-			<true/>
+			<string>Production</string>
+			<key>Values</key>
+			<array>
+				<string>Production</string>
+				<string>Sandbox</string>
+				<string>Custom</string>
+			</array>
+			<key>Titles</key>
+			<array>
+				<string>Production</string>
+				<string>Sandbox</string>
+				<string>CustomURL</string>
+			</array>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSTextFieldSpecifier</string>
+			<key>Title</key>
+			<string>URL</string>
+			<key>Key</key>
+			<string>custom_url</string>
+			<key>KeyboardType</key>
+			<string>String</string>
+			<key>IsSecure</key>
+			<false/>
+			<key>DefaultValue</key>
+			<string>Your URL</string>
 		</dict>
 		<dict>
 			<key>Title</key>

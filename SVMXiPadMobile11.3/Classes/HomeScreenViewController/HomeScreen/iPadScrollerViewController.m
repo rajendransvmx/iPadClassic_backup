@@ -314,13 +314,25 @@ const NSUInteger kNumImages = 7;
 {
     [locationManager stopUpdatingLocation];
     [appDelegate showloginScreen];
-    
+    [self dismissViewControllerAnimated:YES completion:nil];
+	
+	//OAuth
+	
+	[appDelegate addBackgroundImageAndLogo];
+	[appDelegate.oauthClient initWithClientID:CLIENT_ID secret:CLIENT_SECRET redirectURL:REDIRECT_URL];
+	[appDelegate.oauthClient userAuthorizationRequestWithParameters:nil];
+	[appDelegate.OAuthController.view addSubview:appDelegate.oauthClient.view];
+
+
+	/*COMMENTING THE CODE SINCE LOGIN CONTROLLER IS NOT USED FOR OAUTH*/
+    /*
     if([appDelegate.window.rootViewController isKindOfClass:[iPadScrollerViewController class]])
         [appDelegate setLoginAsRootFrom:self];
     else
     {
         [self dismissViewControllerAnimated:YES completion:nil];
     }
+	 */
 }
 
 -(void)sync
@@ -366,7 +378,8 @@ const NSUInteger kNumImages = 7;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-        
+       //Shrinivas : OAuth
+	appDelegate.logoutFlag = FALSE;  
     if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
     {
         if(appDelegate.do_meta_data_sync != ALLOW_META_AND_DATA_SYNC)
@@ -407,9 +420,11 @@ const NSUInteger kNumImages = 7;
 
 -(void)viewDidAppear:(BOOL)animated
 {
+	[super viewDidAppear:animated];
     //[appDelegate.wsInterface doGetPrice];
     
     [self refreshArray];
+	[menuTableView reloadData]; //OAuth :
     if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
     {
         [self disableControls];
@@ -605,6 +620,8 @@ const NSUInteger kNumImages = 7;
         [self scheduleLocationPingService];
         [appDelegate startBackgroundThreadForLocationServiceSettings];
     }
+//OAuth
+	appDelegate.refreshHomeIcons = YES;
 }
 -(void)createUserInfoPlist
 {
@@ -926,6 +943,11 @@ const NSUInteger kNumImages = 7;
             }
         }*/
         
+		appDelegate.wsInterface.tagsDictionary = [appDelegate.dataBase getTagsDictionary];
+		NSMutableDictionary * temp_dict = [appDelegate.wsInterface fillEmptyTags:appDelegate.wsInterface.tagsDictionary];
+		appDelegate.wsInterface.tagsDictionary = temp_dict;
+
+		
         appDelegate.wsInterface.createProcessArray =  [appDelegate.calDataBase getProcessFromDatabase];
         
         appDelegate.isWorkinginOffline = TRUE;
@@ -1428,7 +1450,8 @@ const float progress_ = 0.07;
 	@try{
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
-		[appDelegate goOnlineIfRequired];
+		//OAuth.
+		[[ZKServerSwitchboard switchboard] doCheckSession];
         if(!appDelegate.connection_error)
         {
             break;
@@ -1732,8 +1755,10 @@ const float progress_ = 0.07;
                     //return;
                 }  
                 if ([appDelegate isInternetConnectionAvailable])
-                {
-                    [appDelegate goOnlineIfRequired];
+                {					
+					//OAuth.
+					[[ZKServerSwitchboard switchboard] doCheckSession];
+
                     [appDelegate.wsInterface dataSyncWithEventName:DOWNLOAD_CREITERIA_SYNC eventType:SYNC requestId:appDelegate.initial_dataSync_reqid];
                     break;
                 }
@@ -1898,8 +1923,27 @@ const float progress_ = 0.07;
     
     //Temperory Method - Removed after DataSync is implemented completly
     [appDelegate.dataBase insertUsernameToUserTable:appDelegate.username];
+	
+	//OAuth : 
+	[self UpdateUserDefaults];
+	
+}
+
+//Shrinvias : OAuth.
+- (void) UpdateUserDefaults
+{
+	NSString *localId = nil;
+	
+	localId = [appDelegate.dataBase getLocalIdFromUserTable:appDelegate.username];
+	
+	NSUserDefaults * userDefaults = [NSUserDefaults standardUserDefaults];
+	
+	[userDefaults setObject:localId forKey:LOCAL_ID];
+    [userDefaults synchronize];
 
 }
+
+
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex;
 {
@@ -1913,8 +1957,10 @@ const float progress_ = 0.07;
             [self showAlertForInternetUnAvailability];
         }
         else
-        {
-            [appDelegate goOnlineIfRequired];
+        {			
+			//OAuth.
+			[[ZKServerSwitchboard switchboard] doCheckSession];
+
             [self continueMetaAndDataSync];
         }
     }
@@ -1926,7 +1972,17 @@ const float progress_ = 0.07;
             initial_sync_timer = nil;
             appDelegate.initial_sync_succes_or_failed = INITIAL_SYNC_SUCCESS;
         }
-        [self logout];
+		
+		//Introducing Internet Check : Since Logout requires Internet Connection.
+		if ( [appDelegate isInternetConnectionAvailable] )
+		{
+			[self logout]; 
+		}
+		else
+		{
+			[self showAlertForInternetUnAvailability];
+		}
+        
         SMLog(@"index 1");
     }
 }
@@ -2155,7 +2211,21 @@ const float progress_ = 0.07;
             }
         }
         
-        
+		//OAuth : Disabling the logout button if offline.
+		NSString *logoutLab = [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_label];
+        if ( [itemView.titleLable.text isEqualToString:logoutLab])
+		{
+			if (![appDelegate isInternetConnectionAvailable])
+			{
+				itemView.alpha = 0.5;
+				itemView.userInteractionEnabled = FALSE;
+			}
+			else
+			{
+				itemView.alpha = 1.0;
+				itemView.userInteractionEnabled = TRUE;
+			}
+		}
     }
     
     return cell;
@@ -2195,6 +2265,15 @@ const float progress_ = 0.07;
         
     }
     
+}
+
+//OAuth.
+- (void) RefreshIcons
+{
+	if ( appDelegate.refreshHomeIcons )
+	{
+		[menuTableView reloadData];
+	}
 }
 
 

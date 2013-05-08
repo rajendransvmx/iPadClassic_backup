@@ -376,4 +376,7 @@ PopoverButtons *popOver_view;
 -(NSMutableString*)getJoinFieldsForSFM:(NSDictionary*)dict;
 -(NSMutableDictionary*) getupdatedTokenForSFM:(NSMutableDictionary*)dictforparsing;
 
+//Shrinivas : OAuth.
+- (NSString *)getLocalIdFromUserTable:(NSString *)userName;
+- (NSString *)getUserNameFromUserTable:(NSString *)local_Id;
 @end

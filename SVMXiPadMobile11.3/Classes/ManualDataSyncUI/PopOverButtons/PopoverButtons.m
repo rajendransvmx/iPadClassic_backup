@@ -150,6 +150,7 @@ PopoverButtons *popOver_view;
 }
 -(void)resetApplication
 {
+	[delegate dismisspopover];
 	if (![appDelegate isInternetConnectionAvailable])
     {
         [delegate dismisspopover];
@@ -157,6 +158,11 @@ PopoverButtons *popOver_view;
         [appDelegate displayNoInternetAvailable];
         return;
     }
+
+	//OAuth
+	BOOL retVal = [[ZKServerSwitchboard switchboard] doCheckSession];
+	if ( retVal == NO )
+		return;
 
 	[delegate dismissSyncScreen];
 }
@@ -187,12 +193,14 @@ PopoverButtons *popOver_view;
 		}
 	}
     
-    retVal = [appDelegate goOnlineIfRequired];
-    
-    if(retVal == NO)
-    {
-        return;
-    }
+
+//	//OAuth.
+//    retVal = [[ZKServerSwitchboard switchboard] doCheckSession];
+//    
+//    if(retVal == NO)
+//    {
+//        return;
+//    }
     
      NSString * data_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_data_sync];
 	
@@ -512,8 +520,9 @@ PopoverButtons *popOver_view;
     }
     
    
-    	//new code to handle meta sync whenever the application is logged of the authentication module.
-	BOOL retVal = [appDelegate goOnlineIfRequired];
+	//new code to handle meta sync whenever the application is logged of the authentication module.
+	//OAuth.
+	BOOL retVal = [[ZKServerSwitchboard switchboard] doCheckSession];;
 	
 	if ([appDelegate.currentServerUrl Contains:@"null"] || [appDelegate.currentServerUrl length] == 0 || appDelegate.currentServerUrl == nil)
 	{
@@ -619,7 +628,8 @@ PopoverButtons *popOver_view;
 
         [appDelegate setCurrentSyncStatusProgress:METASYNC_STARTS optimizedSynstate:0];
       
-        [appDelegate goOnlineIfRequired];
+       //OAuth.
+		[[ZKServerSwitchboard switchboard] doCheckSession];
         [appDelegate.dataBase removecache];
         appDelegate.didincrementalmetasyncdone = FALSE;
         
@@ -691,6 +701,12 @@ PopoverButtons *popOver_view;
     }
     else
     {
+		//Get the User Language After Incremental meta synchronization :
+		//Shrinivas : OAuth :
+		[[ZKServerSwitchboard switchboard] doCheckSession];
+		NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+		[appDelegate.oauthClient setUserLanguage:[userDefaults valueForKey:IDENTITY_URL]];
+
         appDelegate.SyncStatus = SYNC_GREEN;
         BOOL conflict_exists = [appDelegate.databaseInterface getConflictsStatus];
         if(conflict_exists)
@@ -726,7 +742,10 @@ PopoverButtons *popOver_view;
     {
 		appDelegate.event_thread = nil;
     }
-    [appDelegate pingServer];
+	
+	appDelegate.wsInterface.tagsDictionary = [appDelegate.dataBase getTagsDictionary];
+	NSMutableDictionary * temp_dict = [appDelegate.wsInterface fillEmptyTags:appDelegate.wsInterface.tagsDictionary];
+	appDelegate.wsInterface.tagsDictionary = temp_dict;
     [self performSelectorOnMainThread:@selector(scheduletimer) withObject:nil waitUntilDone:NO];
     
 }
@@ -790,7 +809,8 @@ PopoverButtons *popOver_view;
 		}
 	}
     
-	BOOL retVal_ = [appDelegate goOnlineIfRequired];
+	//OAuth.
+	BOOL retVal_ = [[ZKServerSwitchboard switchboard] doCheckSession];
 	
 	if ([appDelegate.currentServerUrl Contains:@"null"] || [appDelegate.currentServerUrl length] == 0 || appDelegate.currentServerUrl == nil)
 	{
@@ -900,7 +920,9 @@ PopoverButtons *popOver_view;
 		//appDelegate.syncTypeInProgress = EVENTSYNC_INPROGRESS;
         [appDelegate setCurrentSyncStatusProgress:eEVENTSYNC_STARTS optimizedSynstate:0];
                
-        [appDelegate goOnlineIfRequired];
+        	//OAuth.
+		[[ZKServerSwitchboard switchboard] doCheckSession];
+
         [appDelegate.databaseInterface cleartable:SYNC_RECORD_HEAP];
         appDelegate.eventSyncRunning = YES;
         retVal = [appDelegate.dataBase startEventSync];
@@ -920,7 +942,8 @@ PopoverButtons *popOver_view;
         }
         else if ([appDelegate isInternetConnectionAvailable] )
         {
-            BOOL value = [appDelegate goOnlineIfRequired];
+			//OAuth.
+            BOOL value = [[ZKServerSwitchboard switchboard] doCheckSession];;
             
             if (value == NO)
 				[appDelegate setSyncStatus:SYNC_RED];

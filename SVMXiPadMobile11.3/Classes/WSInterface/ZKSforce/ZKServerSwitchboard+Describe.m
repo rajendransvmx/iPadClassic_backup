@@ -28,6 +28,9 @@
 #import "ZKDescribeSObject.h"
 #import "ZKDescribeLayoutResult.h"
 
+//Shrinivas :
+#import "iServiceAppDelegate.h"
+
 @interface ZKServerSwitchboard (DescribeWrappers)
 
 - (NSArray *)_processDescribeGlobalResponse:(ZKElement *)describeGlobalResponseElement error:(NSError *)error context:(NSDictionary *)context;
@@ -65,10 +68,9 @@
 }
 
 - (NSURLConnection *)describeSObjects:(NSArray *)sObjectTypes target:(id)target selector:(SEL)selector context:(id)context
-{
-    [self _checkSession];
-    
-    ZKMessageEnvelope *envelope = [ZKMessageEnvelope envelopeWithSessionId:sessionId clientId:clientId];
+{    
+	//OAuth
+    ZKMessageEnvelope *envelope = [ZKMessageEnvelope envelopeWithSessionId:appDelegate.session_Id clientId:clientId];
     [envelope addBodyElementNamed:@"describeSObjects" withChildNamed:@"sObjectType" value:sObjectTypes];
     NSString *xml = [envelope stringRepresentation];  
     
@@ -78,9 +80,12 @@
 
 - (void)describeLayout:(NSString *)sObjectType target:(id)target selector:(SEL)selector context:(id)context
 {
-    [self _checkSession];
+	iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+	
+   // [self _checkSession];
     
-    ZKMessageEnvelope *envelope = [ZKMessageEnvelope envelopeWithSessionId:sessionId clientId:clientId];
+	//OAuth
+    ZKMessageEnvelope *envelope = [ZKMessageEnvelope envelopeWithSessionId:appDelegate.session_Id clientId:clientId];
     [envelope addBodyElementNamed:@"describeLayout" withChildNamed:@"sObjectType" value:sObjectType];
     NSString *xml = [envelope stringRepresentation];  
     

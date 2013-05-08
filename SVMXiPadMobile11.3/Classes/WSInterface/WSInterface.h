@@ -543,6 +543,6 @@ last_sync_time:(NSString *)last_sync_time;
 
 
 @interface ZKServerSwitchboard (Private1)
-- (void)doCheckSession;
+- (BOOL)doCheckSession;
 - (void)sessionDidResume:(ZKLoginResult *)loginResult error:(NSError *)error;
 @end

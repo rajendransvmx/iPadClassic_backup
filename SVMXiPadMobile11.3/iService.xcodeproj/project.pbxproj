@@ -820,6 +820,8 @@
 		AC1BF8B6171C395500F0EA14 /* sync8.png in Resources */ = {isa = PBXBuildFile; fileRef = AC1BF8A4171C395500F0EA14 /* sync8.png */; };
 		AC1BF8B7171C395500F0EA14 /* sync9.png in Resources */ = {isa = PBXBuildFile; fileRef = AC1BF8A5171C395500F0EA14 /* sync9.png */; };
 		AC1BF8B8171C395500F0EA14 /* SyncProgressBar.m in Sources */ = {isa = PBXBuildFile; fileRef = AC1BF8A7171C395500F0EA14 /* SyncProgressBar.m */; };
+		AC891298173A8AB400061C14 /* Default-Landscape~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = AC891297173A8AB400061C14 /* Default-Landscape~ipad.png */; };
+		AC89129E173A8B1300061C14 /* OAuthClientInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = AC89129D173A8B1300061C14 /* OAuthClientInterface.m */; };
 		ACEAD0541721201F00837555 /* 0@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = ACEACE421721201B00837555 /* 0@2x.png */; };
 		ACEAD0551721201F00837555 /* 1@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = ACEACE431721201B00837555 /* 1@2x.png */; };
 		ACEAD0561721201F00837555 /* 2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = ACEACE441721201B00837555 /* 2@2x.png */; };
@@ -2476,6 +2478,9 @@
 		AC1BF8A5171C395500F0EA14 /* sync9.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sync9.png; sourceTree = "<group>"; };
 		AC1BF8A6171C395500F0EA14 /* SyncProgressBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyncProgressBar.h; sourceTree = "<group>"; };
 		AC1BF8A7171C395500F0EA14 /* SyncProgressBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyncProgressBar.m; sourceTree = "<group>"; };
+		AC891297173A8AB400061C14 /* Default-Landscape~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Landscape~ipad.png"; sourceTree = "<group>"; };
+		AC89129C173A8B1300061C14 /* OAuthClientInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAuthClientInterface.h; sourceTree = "<group>"; };
+		AC89129D173A8B1300061C14 /* OAuthClientInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OAuthClientInterface.m; sourceTree = "<group>"; };
 		ACEACE421721201B00837555 /* 0@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "0@2x.png"; sourceTree = "<group>"; };
 		ACEACE431721201B00837555 /* 1@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "1@2x.png"; sourceTree = "<group>"; };
 		ACEACE441721201B00837555 /* 2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "2@2x.png"; sourceTree = "<group>"; };
@@ -3343,6 +3348,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				AC891297173A8AB400061C14 /* Default-Landscape~ipad.png */,
 				ACEACE411721201B00837555 /* Retina Images */,
 				39C8F4481521ED9D00F81B51 /* Help Files */,
 				7BBF623B125931EE00420879 /* debrief-button.png */,
@@ -4910,6 +4916,7 @@
 		7B001E101227BA1F002E1770 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				AC89129B173A8B1300061C14 /* OAuthClientInterface */,
 				AC1BF894171C395500F0EA14 /* SyncProgressBar */,
 				A8DB1D0916E0B590007D1A4F /* GetPriceBook */,
 				A8DB1CFB16E0B58B007D1A4F /* JSExecuter */,
@@ -5624,6 +5631,15 @@
 				AC1BF8A5171C395500F0EA14 /* sync9.png */,
 			);
 			path = SyncIndicatorImages;
+			sourceTree = "<group>";
+		};
+		AC89129B173A8B1300061C14 /* OAuthClientInterface */ = {
+			isa = PBXGroup;
+			children = (
+				AC89129C173A8B1300061C14 /* OAuthClientInterface.h */,
+				AC89129D173A8B1300061C14 /* OAuthClientInterface.m */,
+			);
+			path = OAuthClientInterface;
 			sourceTree = "<group>";
 		};
 		ACEACE411721201B00837555 /* Retina Images */ = {
@@ -8112,6 +8128,7 @@
 				ACEAD2641721201F00837555 /* zbar-helpicons@2x.png in Resources */,
 				ACEAD2651721201F00837555 /* zbar-samples@2x.png in Resources */,
 				ACEAD2681721209900837555 /* 72x72@2x.png in Resources */,
+				AC891298173A8AB400061C14 /* Default-Landscape~ipad.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8353,6 +8370,7 @@
 				A837EC7E170D4DF700229855 /* Item.m in Sources */,
 				A837EC7F170D4DF900229855 /* GridViewCell.m in Sources */,
 				AC1BF8B8171C395500F0EA14 /* SyncProgressBar.m in Sources */,
+				AC89129E173A8B1300061C14 /* OAuthClientInterface.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
