@@ -805,6 +805,8 @@ extern  NSString const *devVersion;
 //sahana Feb 22nd
 -(void)setAgrressiveSync_flag;
 
+//SM Krishna client info
+- (INTF_WebServicesDefServiceSvc_SVMXClient  *) getSVMXClientObject;
 
 //sahana dec 4th
 -(void)updateMetasyncTimeinSynchistory;

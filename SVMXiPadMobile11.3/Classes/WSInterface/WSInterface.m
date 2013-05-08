@@ -552,13 +552,17 @@ extern void SVMXLog(NSString *format, ...);
         }
      }
     
-    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init]  autorelease];
-    svmxc_client.clientType = @"iPad";
-    [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
-    [svmxc_client.clientInfo addObject:@"R4B2"];
+    //INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init]  autorelease];
+    //svmxc_client.clientType = @"iPad";
+    //[svmxc_client.clientInfo addObject:@"OS:iPadOS"];
+    //[svmxc_client.clientInfo addObject:@"R4B2"];
     //[client_listMap.valueList addObject:svmxc_client];
     
+    //[sfmRequest addClientInfo:svmxc_client];
+    //Krishna client info
+    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client =  [appDelegate getSVMXClientObject];
     [sfmRequest addClientInfo:svmxc_client];
+    
     [Overide_sync setRequest:sfmRequest];
     
     
@@ -12670,11 +12674,14 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
         
         //ADD SVMXClient
-        INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
+        //INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
         
-        svmxc_client.clientType = @"iPad";
-        [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
-        [svmxc_client.clientInfo addObject:@"R4B2"];
+        //svmxc_client.clientType = @"iPad";
+        //[svmxc_client.clientInfo addObject:@"OS:iPadOS"];
+        //[svmxc_client.clientInfo addObject:@"R4B2"];
+        //krishna client info
+        INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client =  [appDelegate getSVMXClientObject];
+        [sfmRequest addClientInfo:svmxc_client];
         
     
         INTF_WebServicesDefServiceSvc_SVMXMap *valueMapforObject=[[[INTF_WebServicesDefServiceSvc_SVMXMap alloc]init]autorelease];
@@ -12698,9 +12705,8 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         [valueMapforObject.valueMap addObject:valueMapId];
             
        
-         [sfmRequest.valueMap addObject:valueMapforObject];
+        [sfmRequest.valueMap addObject:valueMapforObject];
         
-        [sfmRequest addClientInfo:svmxc_client];
         [datasync setRequest:sfmRequest];
         
         
