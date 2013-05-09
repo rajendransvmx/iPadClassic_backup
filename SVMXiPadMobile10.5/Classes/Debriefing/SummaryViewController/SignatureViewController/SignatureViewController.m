@@ -23,6 +23,8 @@ extern void SVMXLog(NSString *format, ...);
 {
     [delegate setSignImageData:nil];
 	[self.view removeFromSuperview];
+    [self updateAccessibilityValue];
+
 }
 
 - (IBAction) Done
@@ -65,11 +67,13 @@ extern void SVMXLog(NSString *format, ...);
 	[parent SignatureDone];
     [delegate setSignImageData:encryptedImageData];
 	[self.view removeFromSuperview];
+    [self updateAccessibilityValue];
 }
 
 - (IBAction) Erase
 {
 	drawImage.image = nil;
+    [self updateAccessibilityValue];
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
@@ -124,6 +128,7 @@ extern void SVMXLog(NSString *format, ...);
         drawImage.image = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
     }
+    [self updateAccessibilityValue];
 }
 
 /*
@@ -308,6 +313,19 @@ extern void SVMXLog(NSString *format, ...);
                                                        NSMakeRange(2, 6)],[[randomArray objectAtIndex:1] substringWithRange:NSMakeRange(0, 5)]];
     
     return randomString;
+}
+- (void)updateAccessibilityValue
+{
+    [drawImage setIsAccessibilityElement:YES];
+    [drawImage setAccessibilityIdentifier:@"SigntaureImageView"];
+    NSData *theImgData = UIImagePNGRepresentation(drawImage.image);
+    NSUInteger theDataSize = [theImgData length];
+    NSNumber *thenum = [NSNumber numberWithUnsignedInteger:theDataSize];
+    NSMutableDictionary *theValDict = [NSMutableDictionary dictionaryWithCapacity:0];
+    [theValDict setObject:thenum forKey:@"DataSize"];
+    SBJsonWriter *writer = [[[SBJsonWriter alloc] init] autorelease];
+    NSString *json = [writer stringWithObject:theValDict];
+    drawImage.accessibilityValue = json;
 }
 
 @end

@@ -85,6 +85,8 @@ extern void SVMXLog(NSString *format, ...);
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [webView setIsAccessibilityElement:YES];
+    [webView setAccessibilityIdentifier:@"PDFWebView"];
     
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
 	@try{
@@ -1792,6 +1794,23 @@ extern void SVMXLog(NSString *format, ...);
         _wonumber = @"";
     
     NSData * data = [appDelegate.calDataBase retreiveSignatureimage:_wonumber recordId:_recordId];
+    if([data length] > 0)
+    {
+        NSMutableDictionary *dict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
+        [dict setValue:[NSNumber numberWithUnsignedInteger:[data length]] forKey:@"AttchedSignSize"];
+        SBJsonWriter *writer = [[[SBJsonWriter alloc] init] autorelease];
+        NSString *json = [writer stringWithObject:dict];
+        [webView setAccessibilityValue:json];
+    }
+    else
+    {
+        NSMutableDictionary *dict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
+        [dict setValue:[NSNumber numberWithUnsignedInteger:0] forKey:@"AttchedSignSize"];
+        SBJsonWriter *writer = [[[SBJsonWriter alloc] init] autorelease];
+        NSString *json = [writer stringWithObject:dict];
+        [webView setAccessibilityValue:json];
+    }
+        
     if (![data isKindOfClass:[NSNull class]])
         data = [data AESDecryptWithPassphrase:@"hello123_!@#$%^&*()"];
     

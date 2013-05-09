@@ -4894,10 +4894,13 @@ extern void SVMXLog(NSString *format, ...);
             
             // Add Item
             UIImage * image = [UIImage imageNamed:@"add.png"];
-            UIControl * c = [[UIControl alloc] initWithFrame:(CGRect){CGPointZero, image.size}];
+            UIButton * c = [[UIButton alloc] initWithFrame:(CGRect){CGPointZero, image.size}];
             c.backgroundColor = [UIColor clearColor];
             c.tag = index;
-            c.layer.contents = (id)image.CGImage;
+            [c setImage:image forState:UIControlStateNormal];
+            [c setImage:image forState:UIControlStateHighlighted];
+            c.isAccessibilityElement = YES;
+            [c setAccessibilityIdentifier:@"AddLinesButton"];
             [c addTarget:self action:@selector(accessoryTapped:) forControlEvents:UIControlEventTouchUpInside];
             //c.frame = CGRectMake(30, 0, 23, 23);
             c.frame = CGRectMake(45, 0, 38, 31);
@@ -13094,6 +13097,8 @@ extern void SVMXLog(NSString *format, ...);
     view.font = [UIFont boldSystemFontOfSize:18.0];
     view.textColor = [UIColor blackColor];
     view.editable = NO;
+    view.isAccessibilityElement = YES;
+    view.accessibilityIdentifier = @"DetailViewError";
     NSString * colourCode = @"#F75D59";
     UIColor * color = [appDelegate colorForHex:colourCode];
     
