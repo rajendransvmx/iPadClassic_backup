@@ -2742,9 +2742,9 @@ extern void SVMXLog(NSString *format, ...);
                     expression_id = @"";
                     process_id = @"";
                     action_type = @"";
-		    perfom_sync = @"";
-		    class_name = @"";
-		    method_name = @"";
+                    perfom_sync = @"";
+                    class_name = @"";
+                    method_name = @"";
                     
                     char * temp_action_id = (char *)synchronized_sqlite3_column_text(stmt, 0);
                     if(temp_action_id != nil)
@@ -2815,7 +2815,11 @@ extern void SVMXLog(NSString *format, ...);
 								isCustomSync = YES;
 							}
 							
-							if (customEntryExists && [action_type isEqualToString:@"SFM"] && isCustomSync)
+                            
+                            int isConflict = [appDelegate.dataBase checkIfObjectIsInConflict:objectName Id:appDelegate.sfmPageController.recordId];
+                            
+                            //if (customEntryExists && [action_type isEqualToString:@"SFM"] && isCustomSync)
+							if (customEntryExists && [action_type isEqualToString:@"SFM"] && isCustomSync && isConflict == 0)
 							{
 								dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:action_id,action_description , expression_id, process_id, action_type , wizard_id, @"false",perfom_sync, class_name,method_name, nil] forKeys:keys];
 							}

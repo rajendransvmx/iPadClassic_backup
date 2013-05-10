@@ -352,4 +352,8 @@ PopoverButtons *popOver_view;
 - (void) updateWebserviceNameInWizarsTable:(NSArray *)customArray;
 - (void) attachSiganture:(NSString *)operation_type;
 
+//PB Sync Conflict - Check if object is in conflict
+-(int)checkIfObjectIsInConflict:(NSString *)objectName Id:(NSString *)local_id;
+- (int)countRecordsInSyncConflictWith:(NSString *)objectName Id:(NSString *)localORsfid;
+
 @end

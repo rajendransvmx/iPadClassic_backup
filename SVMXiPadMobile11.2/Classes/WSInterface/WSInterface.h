@@ -469,6 +469,9 @@ last_sync_time:(NSString *)last_sync_time;
 -(NSMutableArray *) getAllCustomWebServiceRecordsFromSyncTable;
 
 -(BOOL)ConflictExists;
+
+//Sync -Override
+- (void) releaseSyncThread;
     
 
 @end

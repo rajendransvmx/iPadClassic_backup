@@ -1445,7 +1445,8 @@ NSString * GO_Online = @"GO_Online";
 -(void)callDataSync
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc]init];
-    
+    SMLog(@"Return No Datasync triggred");
+	
     [self performSelectorInBackground:@selector(goOnlineIfRequired) withObject:nil];
 
 	BOOL retVal = [self.calDataBase selectCountFromSync_Conflicts];
@@ -1459,6 +1460,7 @@ NSString * GO_Online = @"GO_Online";
 			isDataSyncTimerTriggered = NO;
 			
 		}
+		SMLog(@"Return No Datasync triggred");
         return;
     }
     
@@ -1471,6 +1473,7 @@ NSString * GO_Online = @"GO_Online";
 			isDataSyncTimerTriggered = NO;
 			
 		}
+		SMLog(@"Return No Datasync triggred");
         return;
     }
     
@@ -1484,6 +1487,7 @@ NSString * GO_Online = @"GO_Online";
         {
             Enable_aggresssiveSync = FALSE;
             SMLog(@"thread is not finished its work");
+			SMLog(@"Return No Datasync triggred");
             return; //Please don't comment return
         }
         

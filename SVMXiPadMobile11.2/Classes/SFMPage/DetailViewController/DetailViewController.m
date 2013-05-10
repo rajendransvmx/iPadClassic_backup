@@ -11449,11 +11449,12 @@ extern void SVMXLog(NSString *format, ...);
 					}
 					//RADHA Defect Fix 5542
 					appDelegate.shouldScheduleTimer = YES;
+					SMLog(@"Data sync is called");
                     [appDelegate callDataSync];
                 }
                 else
                 {
-                      SMLog(@"failed");
+                      SMLog(@"data sync failed");
                 }
                 
             }

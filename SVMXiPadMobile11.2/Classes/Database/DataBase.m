@@ -8426,6 +8426,37 @@ extern void SVMXLog(NSString *format, ...);
     return conflictMessage;
     
 }
+
+-(int)checkIfObjectIsInConflict:(NSString *)objectName Id:(NSString *)local_id
+{
+    NSString *sfid = nil;
+    int count_localORsfid = 0;
+    count_localORsfid = [self countRecordsInSyncConflictWith:objectName Id:local_id];
+    
+    if(count_localORsfid == 0)
+    {
+        sfid = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:objectName local_id:local_id];
+        count_localORsfid = [self countRecordsInSyncConflictWith:objectName Id:sfid];
+    }
+    
+    return count_localORsfid;
+}
+
+- (int)countRecordsInSyncConflictWith:(NSString *)objectName Id:(NSString *)localORsfid
+{
+    NSString * query = [NSString stringWithFormat:@"SELECT COUNT(*) FROM sync_error_conflict Where object_name = '%@' and (local_id = '%@' OR sf_id = '%@')", objectName, localORsfid, localORsfid];
+    sqlite3_stmt * stmt = nil;
+    int count = 0;
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            count = synchronized_sqlite3_column_int(stmt, 0);
+        }
+    }
+    return count;
+}
+
 //- (NSString *) getchildSfIdOrLocalId:(NSString *)tablename Id:(NSString *)Id  parentColumn:(NSString *)parentColumn  Key:(NSString *)key
 //{
 //    NSString * value = @"";
