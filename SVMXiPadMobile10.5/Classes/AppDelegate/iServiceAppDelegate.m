@@ -1898,6 +1898,8 @@ NSString * GO_Online = @"GO_Online";
         animatedImageView.animationImages = [NSArray arrayWithArray:imgArr];
         animatedImageView.animationDuration = 1.0f;
         animatedImageView.animationRepeatCount = 0;
+        animatedImageView.isAccessibilityElement = YES;
+        animatedImageView.accessibilityIdentifier = @"orange.png";
         [animatedImageView startAnimating];
     }
 }
