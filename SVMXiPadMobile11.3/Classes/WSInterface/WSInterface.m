@@ -1716,10 +1716,11 @@ last_sync_time:(NSString *)last_sync_time
         appDelegate.dataSyncRunning = NO;
         appDelegate.data_sync_type = NORMAL_DATA_SYNC;
 		[appDelegate updateSyncFailedFlag:SFALSE];
-	//Refresh
-	[[NSNotificationCenter defaultCenter] postNotificationName:kIncrementalDataSyncDone object:nil userInfo:nil];
-	[[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_EVENT_DATA_SYNC object:nil];
-	[appDelegate.dataBase updateRecentsPlist];
+		[self performSelectorOnMainThread:@selector(releaseSyncThread) withObject:nil waitUntilDone:YES];
+		//Refresh
+		[[NSNotificationCenter defaultCenter] postNotificationName:kIncrementalDataSyncDone object:nil userInfo:nil];
+		[[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_EVENT_DATA_SYNC object:nil];
+		[appDelegate.dataBase updateRecentsPlist];
         return;
     }
         
@@ -2874,6 +2875,14 @@ last_sync_time:(NSString *)last_sync_time
     
     
 }
+- (void) releaseSyncThread
+{
+	if (appDelegate.syncThread)
+	{
+		appDelegate.syncThread = nil;
+	}
+}
+
 - (NSString *) getValueFromUserDefaultsForKey:(NSString *)key
 {
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];

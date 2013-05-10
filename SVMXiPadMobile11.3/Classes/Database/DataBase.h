@@ -379,4 +379,9 @@ PopoverButtons *popOver_view;
 //Shrinivas : OAuth.
 - (NSString *)getLocalIdFromUserTable:(NSString *)userName;
 - (NSString *)getUserNameFromUserTable:(NSString *)local_Id;
+
+//PB Sync Conflict - Check if object is in conflict
+-(int)checkIfObjectIsInConflict:(NSString *)objectName Id:(NSString *)local_id;
+- (int)countRecordsInSyncConflictWith:(NSString *)objectName Id:(NSString *)localORsfid;
+
 @end
