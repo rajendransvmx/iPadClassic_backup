@@ -2099,32 +2099,35 @@ const float progress_ = 0.07;
         [itemArray release];
     
     if (descriptionArray != nil)
-        [descriptionArray release];
+        [descriptionArray release]; 
+    
+     itemArray = [[NSMutableArray arrayWithObjects:
+     [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CALENDAR],
+    [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search],
+     [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CREATENEW],
+    [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_MAP],
+     [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_RECENTS],
+     [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_TASKS],
+     [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_sync_label],
+    [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_HELP],
+     [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_label],
+     nil] retain];
+     
+     descriptionArray = [[NSMutableArray arrayWithObjects:
+     [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CALENDAR_TEXT],
+    [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search_Description],
+    [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CREATENEW_TEXT],
 
-    itemArray = [[NSMutableArray arrayWithObjects:
-                  [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CALENDAR],
-                  [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_MAP],
-                  [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CREATENEW],
-                  [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_RECENTS],
-                  [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_TASKS],
-                  [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_HELP],
-                  [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_sync_label], 
-                  [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search],
-                  [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_label],
-                  nil] retain];
-    
-    descriptionArray = [[NSMutableArray arrayWithObjects:
-                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CALENDAR_TEXT],
-                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_MAP_TEXT],
-                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_CREATENEW_TEXT],
-                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_RECENTS_TEXT],
-                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_TASKS_TEXT],
-                         [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_HELP_TEXT],
-                         [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_sync_text], 
-                         [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_Search_Description],
-                         [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_text],
-                         nil] retain];
-    
+     [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_MAP_TEXT],
+     [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_RECENTS_TEXT],
+     [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_TASKS_TEXT],
+     [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_sync_text],
+    [appDelegate.wsInterface.tagsDictionary objectForKey:HOME_HELP_TEXT],
+
+     [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_text],
+     nil] retain];
+
+        
     /*
     if (![appDelegate enableGPS_SFMSearch])
     {
@@ -2199,7 +2202,7 @@ const float progress_ = 0.07;
         itemView.descriptionLabel.text = [descriptionArray objectAtIndex:columnIndex];
         itemView.iconImageView.image = [UIImage imageNamed:[imageArray objectAtIndex:columnIndex]];
 
-        if((columnIndex == 7) && (i == 1))
+        if((columnIndex == 1) && (i == 1))
         {
             if(![appDelegate enableGPS_SFMSearch])
             {
@@ -2208,6 +2211,8 @@ const float progress_ = 0.07;
                 itemView.titleLable.text = nil;
                 itemView.descriptionLabel.text = nil;
                 itemView.iconImageView.image = nil;
+                itemView.index = -1;
+
             }
         }
         

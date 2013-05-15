@@ -6441,7 +6441,7 @@ extern void SVMXLog(NSString *format, ...);
             for (int i = 0; i < [keys count]; i++)
             {
                 NSString * value = ([values objectAtIndex:i] != nil)?[values objectAtIndex:i]:@"";
-                value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
             
 				char * _keys = [appDelegate convertStringIntoChar:[keys objectAtIndex:i]];
                 
