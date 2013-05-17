@@ -68,6 +68,13 @@
 		 appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
 	
 	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+	
+	//Read the custom url :  //For Defect #7085
+	NSString * preference = [userDefaults valueForKey:@"preference_identifier"];
+	if ( [preference isEqualToString:@"Custom"] )
+		appDelegate.customURLValue = [ZKServerSwitchboard baseURL];
+
+	
 	NSString *post = nil;
 	
 	post = [NSString stringWithFormat:@"redirect_uri=%@&client_id=%@&response_type=token&state=mystate",
@@ -89,7 +96,9 @@
 	NSURLRequest *request = [NSURLRequest requestWithURL:url];
 	
 	[view setScalesPageToFit:YES];
-	[view loadRequest:request]; 
+	[view loadRequest:request];
+	
+	_webViewDidFail = FALSE;
 	while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
 	{
 		if (![appDelegate isInternetConnectionAvailable])
@@ -100,17 +109,31 @@
 			return;
 		}
 		
-		if ( webViewDidFinishLoadBool == YES )
+		if ( webViewDidFinishLoadBool == YES || _webViewDidFail == TRUE )
 			break;
 	}
 
 	view.backgroundColor = [UIColor clearColor];
 	self.view.opaque = NO;
 	
-	view.frame = CGRectMake(0, 0, 1024, 785);
+	
+	view.frame = CGRectMake(0, 0, 1024, 768);
+	
+	
 	appDelegate.isUserOnAuthenticationPage = TRUE;
 	appDelegate.userOrg = [userDefaults valueForKey:@"preference_identifier"]; //Capture user org if Success :
-		
+	
+	
+	//Fix for Defect #7079 : 16/May/2013 : Changed  code for adding service max logo.
+	UIImageView *servicemaxLogo = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"logo.png"]];
+	servicemaxLogo.contentMode = UIViewContentModeScaleAspectFit;
+	servicemaxLogo.bounds = CGRectMake(0, 0, 441, 96);
+	CGPoint center = CGPointMake(CGRectGetMidX(self.view.frame), CGRectGetMidY(self.view.frame)+100);
+	servicemaxLogo.center = center;
+
+	//view.scrollView.scrollEnabled = NO;
+	[view.scrollView addSubview:servicemaxLogo];
+	[servicemaxLogo release];		
 }
 
 
@@ -170,14 +193,22 @@
 	NSDictionary *urlDict = [dict objectForKey:@"urls"];
 	
 	appDelegate.apiURl = [[urlDict objectForKey:@"partner"] stringByReplacingOccurrencesOfString:@"{version}" withString:PREFFERED_API_VERSION];
-	appDelegate.currentServerUrl =[[urlDict objectForKey:@"partner"] substringToIndex:31];
-	appDelegate.current_userId = [dict objectForKey:@"user_id"];
-	appDelegate.userProfileId = [dict objectForKey:@"user_id"];
+	
+	//Fix for defect #7092 : 15/May/2013
+	NSArray *pathComponentsArray = [[urlDict objectForKey:@"partner"] pathComponents];
+	NSString *protocol = [pathComponentsArray objectAtIndex:0];
+	NSString *appendToProtocol = @"//";
+	NSString *hostName = [pathComponentsArray objectAtIndex:1];
+	
+	appDelegate.currentServerUrl = [NSString stringWithFormat:@"%@%@%@", protocol, appendToProtocol, hostName];
+	
+	appDelegate.current_userId  = [dict objectForKey:@"user_id"];
+	appDelegate.userProfileId   = [dict objectForKey:@"user_id"];
 	appDelegate.currentUserName = [dict valueForKey:@"username"];
-	appDelegate.username = [dict valueForKey:@"username"];
+	appDelegate.username		= [dict valueForKey:@"username"];
+	appDelegate.language		= [dict valueForKey:@"language"];
+	appDelegate.loggedInUserId  = [dict objectForKey:@"user_id"];
 	appDelegate.organization_Id = [dict valueForKey:@"organization_id"];
-	appDelegate.language = [dict valueForKey:@"language"];
-	appDelegate.loggedInUserId = [dict objectForKey:@"user_id"];
 	
 	appDelegate.isUserOnAuthenticationPage = FALSE;
 	[appDelegate didLoginWithOAuth];
@@ -232,6 +263,15 @@
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType;
 {
+	//Fix for defect #7081
+	if ( navigationType == UIWebViewNavigationTypeLinkClicked )
+	{
+		if ( [[request.URL absoluteString] Contains:@"forgotpassword.jsp"] )
+		{
+			[[UIApplication sharedApplication] openURL:request.URL];
+			return NO;
+		}
+	}
 	
 	if ( ![appDelegate isInternetConnectionAvailable] )
 	{
@@ -343,7 +383,7 @@
 	{
 		NSException *exp;
 		NSString *ExpName = [appDelegate.wsInterface.tagsDictionary valueForKey:alert_connection_error];
-		NSString *ExpReason = @"Your remote access has been revoked.Please navigate back to the home screen to logout and re-authenticate.";
+		NSString *ExpReason = [appDelegate.wsInterface.tagsDictionary valueForKey:remote_access_error];
 		NSString *userInfo = [NSDictionary dictionaryWithObject:@"" forKey:@"userInfo"];
 		
 		NSArray *errKeys = [NSArray arrayWithObjects:@"ExpName",@"ExpReason",@"userInfo", nil];
@@ -492,7 +532,7 @@
 	{
 		msg = failureReason;
 	}else {
-		msg = [NSString stringWithFormat:@"%@. %d %@",[appDelegate.wsInterface.tagsDictionary valueForKey:@"Operation could not be completed."], [error code], [error localizedDescription]];
+		msg = [NSString stringWithFormat:@"%d %@",[error code], [error localizedDescription]];
 	}
 	
 	if ([failingURLString hasPrefix:self.redirectURL])
@@ -502,7 +542,11 @@
 	}
 	else if ( [error code] != NSURLErrorCancelled )
 	{
-		UIAlertView *OAuthAlert = [[UIAlertView alloc] initWithTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:alert_application_error] message:msg delegate:self cancelButtonTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_retry] otherButtonTitles:nil, nil];
+		//Fix for Defect #:7089 - 15/May/2013
+		NSString *cannotFindHostMsg = @"A server with the specified hostname could not be found. Please check your custom host URL settings.";
+		
+		_webViewDidFail = TRUE;
+		UIAlertView *OAuthAlert = [[UIAlertView alloc] initWithTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:alert_application_error] message:cannotFindHostMsg delegate:self cancelButtonTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK] otherButtonTitles:nil, nil];
 		
 		[OAuthAlert show];
 		[OAuthAlert release];

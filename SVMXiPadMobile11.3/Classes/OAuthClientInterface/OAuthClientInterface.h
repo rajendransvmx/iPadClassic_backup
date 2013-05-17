@@ -34,8 +34,7 @@
 	
 	BOOL loadFailedBool;
 	BOOL webViewDidFinishLoadBool;
-	
-	UIImageView *servicemaxLogo;
+	BOOL _webViewDidFail;
 	
 @private
 	BOOL isVerifying;
