@@ -473,7 +473,11 @@ last_sync_time:(NSString *)last_sync_time;
 //Sync -Override
 - (void) releaseSyncThread;
     
+//Shrinivas : OAuth
+//Methods to handle session expiry during initial login :
 
+#pragma mark - Handle Session expiry for initial login : 
+- (BOOL)handleSessionExpiryForInitialLogin;
 @end
 
 @protocol RefrehManualDataSyncUI <NSObject>

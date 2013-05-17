@@ -313,6 +313,9 @@
 
 #define profile_error                       @"IPAD015_TAG011"
 
+//OAuth : shirni.
+#define remote_access_error					@"IPAD015_TAG012"
+
 #define sync_login_error                    @"IPAD018_TAG001"
 #define sync_synchronize_button             @"IPAD018_TAG002"
 #define sync_status_button                  @"IPAD018_TAG003"

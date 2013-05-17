@@ -316,9 +316,7 @@ const NSUInteger kNumImages = 7;
     [appDelegate showloginScreen];
     [self dismissViewControllerAnimated:YES completion:nil];
 	
-	//OAuth
-	
-	[appDelegate addBackgroundImageAndLogo];
+	//OAuth 16/May/2013 : Remove the background image. (Removed the code)
 	[appDelegate.oauthClient initWithClientID:CLIENT_ID secret:CLIENT_SECRET redirectURL:REDIRECT_URL];
 	[appDelegate.oauthClient userAuthorizationRequestWithParameters:nil];
 	[appDelegate.OAuthController.view addSubview:appDelegate.oauthClient.view];

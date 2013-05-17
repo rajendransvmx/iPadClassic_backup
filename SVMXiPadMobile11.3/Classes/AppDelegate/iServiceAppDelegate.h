@@ -576,6 +576,9 @@ extern  NSString const *devVersion;
 	BOOL refreshHomeIcons;
 	UIImageView *logoImg;
 	NSString *userOrg;
+	NSString *customURLValue; //For Defect #7085
+	NSString *previousUser; ////Fix for Defect #:7076 - 15/May/2013 :Using this variable incase of upgrade from non-oauth to oauth.
+	UIActivityIndicatorView *activity; 
 	
 	BOOL _continueFalg;
 	BOOL _didDismissalertview;
@@ -614,6 +617,8 @@ extern  NSString const *devVersion;
 @property (nonatomic, assign)BOOL _didEnterAlertView;
 @property (nonatomic, retain)NSString *userOrg;
 @property (nonatomic, assign)BOOL isUserOnAuthenticationPage;
+//For Defect #7085
+@property (nonatomic, retain)NSString *customURLValue;
 
 @property (nonatomic) DATA_SYNC_TYPE data_sync_type;
 @property (nonatomic)BOOL Enable_aggresssiveSync;

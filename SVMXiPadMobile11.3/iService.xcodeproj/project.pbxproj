@@ -6845,6 +6845,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "iService" */;
 			buildPhases = (
+				ACE8E577174607A300C9B695 /* ShellScript */,
 				1D60588D0D05DD3D006BFB54 /* Resources */,
 				1D60588E0D05DD3D006BFB54 /* Sources */,
 				1D60588F0D05DD3D006BFB54 /* Frameworks */,
@@ -8133,6 +8134,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		ACE8E577174607A300C9B695 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "targetFile=\"${SRCROOT}/iService-Info.plist\"\n\nrootFile=\"${SRCROOT}/Classes/Debriefing/Resources/Settings.bundle/Root.plist\"\n\necho \"Target file \" $targetFile\n\necho \"Root file \" $rootFile\n\nversion=`/usr/libexec/PlistBuddy -c \"Print:CFBundleVersion\" $targetFile`\n\necho \"Project Version =\" $version\n\n/usr/libexec/PlistBuddy -c \"Set PreferenceSpecifiers:10:DefaultValue $version\" $rootFile";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1D60588E0D05DD3D006BFB54 /* Sources */ = {

@@ -6646,9 +6646,12 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         }
         
         //Radha
-        didOpComplete = TRUE;
+		//Commenting didOpComplete and setting this variable if exception is caught and if the exception is not caused by session failure in the exception block.
+        //didOpComplete = TRUE;
+		
         appDelegate.didincrementalmetasyncdone = TRUE;
-        appDelegate.Incremental_sync_status = PUT_RECORDS_DONE;
+		
+        //appDelegate.Incremental_sync_status = PUT_RECORDS_DONE; //Commented for session handling.
         
         appDelegate.wsInterface.getPrice = TRUE;
         appDelegate.sfmSave = TRUE;
@@ -6691,7 +6694,9 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                    exceptionWithName:[NSString stringWithFormat:@"%@",sFault.faultcode]
                                    reason:[NSString stringWithFormat:@"%@",faultString]
                                    userInfo:correctiveAction];
-        appDelegate.connection_error = TRUE;
+		
+		
+        //appDelegate.connection_error = TRUE; //Commenting for session handling.
         responseError = 1;
         var=SOAP_ERROR;
         @throw myException;
@@ -10715,7 +10720,23 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         NSMutableDictionary *Errordict=[[NSMutableDictionary alloc]init];
         [Errordict setObject:exp.name forKey:@"ExpName"];
         [Errordict setObject:exp.reason forKey:@"ExpReason"];
-        if(exp.userInfo ==nil)
+		
+		//Code for session handling.
+		if ( [exp.reason Contains:@"INVALID_SESSION_ID"] && appDelegate.do_meta_data_sync == ALLOW_META_AND_DATA_SYNC)
+		{
+			appDelegate.connection_error = FALSE;
+			didOpComplete = FALSE;
+			if ([self handleSessionExpiryForInitialLogin])
+				return;
+		}
+		else
+		{
+			appDelegate.connection_error = TRUE;
+			didOpComplete = TRUE;
+			appDelegate.Incremental_sync_status = PUT_RECORDS_DONE;
+		}
+		
+        if(exp.userInfo == nil)
         {
             [Errordict setObject:exp forKey:@"userInfo"];
         }

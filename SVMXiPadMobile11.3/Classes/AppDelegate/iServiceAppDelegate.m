@@ -405,6 +405,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize refreshIcons;
 @synthesize userOrg;
 @synthesize isUserOnAuthenticationPage;
+@synthesize customURLValue;
 
 
 -(BOOL)shouldAutorotate
@@ -579,38 +580,6 @@ NSString* machineName()
     plistPath = [rootPath stringByAppendingPathComponent:SWITCH_VIEW_LAYOUTS_PLIST];
     switchViewLayouts = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
 
-    /*loginController = [[LoginController alloc] initWithNibName:@"LoginController" bundle:nil];
-
-    NSString * status = [self getUSerInfoForKey:INITIAL_SYNC_LOGIN_SATUS];
-    if([status isEqualToString:@"false"])
-    {
-        NSError * error = nil;
-        self.username = [SFHFKeychainUtils getPasswordForUsername:@"username" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
-        self.password = [SFHFKeychainUtils getPasswordForUsername:@"password" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
-        
-        if( (![self.username isEqualToString:@""] || self.username != nil) && (![self.password isEqualToString:@""]  || self.password != nil) && [self goOnlineIfRequired] )
-        {
-            self.IsLogedIn = ISLOGEDIN_TRUE;
-            self.do_meta_data_sync = ALLOW_META_AND_DATA_SYNC;
-            
-            homeScreenView = [[iPadScrollerViewController alloc] initWithNibName:@"iPadScrollerViewController" bundle:nil];
-            homeScreenView.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-            homeScreenView.modalPresentationStyle = UIModalPresentationFullScreen;
-            [window setRootViewController:homeScreenView];
-            [homeScreenView release];
-        }
-    }
-    else
-    {
-        
-        loginController.modalPresentationStyle = UIModalPresentationFullScreen;
-        loginController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-        
-        [window setRootViewController:loginController];
-    }
-
-    [window makeKeyAndVisible];*/
-    //[self.viewController presentViewController:loginController animated:YES];
     
     _iOSObject = [[iOSInterfaceObject alloc] init];
     
@@ -618,7 +587,6 @@ NSString* machineName()
     if (lastSelectedDate == nil)
         lastSelectedDate = [[NSMutableArray alloc] initWithCapacity:0];
    
-//    a1E70000000gtbiEAA
     refreshCalendar = NO;
     
     allURLConnectionsArray = [[NSMutableArray alloc] initWithCapacity:0];
@@ -675,21 +643,27 @@ NSString* machineName()
 	//Auto Login
 	if ( accessToken != nil )
 	{
-		[self addBackgroundImageAndLogo];
+		//[self addBackgroundImageAndLogo]; 16/May/2013 : To remove the background image.
 		NSString *local_Id = [userDefaults valueForKey:LOCAL_ID];
 		NSString *userName = [appDelegate.dataBase getUserNameFromUserTable:local_Id];
 		
+		//Fix for defect #7078
+		if ( userName == nil || [userName isEqualToString:@""])
+		{
+			userName = [userDefaults valueForKey:@"UserFullName"];
+		}
+
 		//Initializing the varibales for Auto Login:
-		self.apiURl = [userDefaults valueForKey:API_URL];
+		self.language         = [userDefaults valueForKey:@"UserLanguage"];
+		self.apiURl           = [userDefaults valueForKey:API_URL];
 		self.currentServerUrl = [userDefaults valueForKey:SERVERURL];
 		self.current_userId   = [userDefaults valueForKey:CURRENT_USER_ID];
 		self.organization_Id  = [userDefaults valueForKey:ORGANIZATION_ID];
-		self.currentUserName = [userDefaults valueForKey:@"UserFullName"];
-		self.language  = [userDefaults valueForKey:@"UserLanguage"];
-		self.loggedInUserId = [userDefaults valueForKey:CURRENT_USER_ID];		
-		self.refresh_token = refreshToken;
-		self.session_Id = accessToken;
-		self.username = [userDefaults valueForKey:@"UserFullName"];
+		self.currentUserName  = [userDefaults valueForKey:@"UserFullName"];
+		self.loggedInUserId   = [userDefaults valueForKey:CURRENT_USER_ID];		
+		self.refresh_token    = refreshToken;
+		self.session_Id       = accessToken;
+		self.username         = [userDefaults valueForKey:@"UserFullName"];
 		
 		//Re-write the users org incase he has changed it accidently : 
 		if ( ![userOrg isEqualToString:preference] )
@@ -720,7 +694,8 @@ NSString* machineName()
 		switchBoard.logXMLInOut = TRUE;
 		
 		homeScreenView = nil;
-		[self.dataBase getImageForServiceReportLogo];
+		//Changed 
+		self.serviceReportLogo = [[[UIImage alloc] initWithData:[self.dataBase serviceReportLogoInDB]]autorelease];
 		
 		if ( homeScreenView == nil )
 		{
@@ -734,7 +709,7 @@ NSString* machineName()
 			refreshIcons = homeScreenView;
 			[homeScreenView release];
 			
-			[self removeBackgroundImageAndLogo];
+			//[self removeBackgroundImageAndLogo];
 			return TRUE;
 		}
 		
@@ -758,7 +733,7 @@ NSString* machineName()
 //OAuth
 -(void)showScreen
 {
-	[self addBackgroundImageAndLogo];
+	//[self addBackgroundImageAndLogo];
 	[OAuthController.view addSubview:oauthClient.view];
 	
 	[window setRootViewController:OAuthController];
@@ -777,7 +752,7 @@ NSString* machineName()
 	}
 	
 	[self.oauthClient.view removeFromSuperview];
-	[self addBackgroundImageAndLogo];
+	//[self addBackgroundImageAndLogo];
 	[self.oauthClient initWithClientID:CLIENT_ID secret:CLIENT_SECRET redirectURL:REDIRECT_URL];
 	[self.oauthClient userAuthorizationRequestWithParameters:nil];
 	
@@ -897,11 +872,8 @@ NSString* machineName()
 		if ([self.userProfileId length] == 0)
 		{
 			NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-			
-			UIAlertView * _alert = [[UIAlertView alloc] initWithTitle:[self.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_TITLE] message:[self.wsInterface.tagsDictionary objectForKey:profile_error] delegate:nil cancelButtonTitle:ALERT_ERROR_OK_DEFAULT otherButtonTitles:nil];
-			
-			[_alert show];
-			[_alert release];
+				
+			//Removed the code for profile error : Defect #7086
 			
 			[userDefaults removeObjectForKey:ACCESS_TOKEN];
 			[userDefaults removeObjectForKey:SERVERURL];
@@ -940,8 +912,7 @@ NSString* machineName()
 		refreshIcons = homeScreenView;
         [homeScreenView release];
 		
-		
-		[self removeBackgroundImageAndLogo];
+		//[self removeBackgroundImageAndLogo];
 		
     }
 	
@@ -988,10 +959,13 @@ NSString* machineName()
 	{
 		NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
 		
+		//Fix for defect #7086
+		/*
 		UIAlertView * _alert = [[UIAlertView alloc] initWithTitle:[self.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_TITLE] message:[self.wsInterface.tagsDictionary objectForKey:profile_error] delegate:nil cancelButtonTitle:ALERT_ERROR_OK_DEFAULT otherButtonTitles:nil];
 		
 		[_alert show];
 		[_alert release];
+		 */
 		
 		[userDefaults removeObjectForKey:ACCESS_TOKEN];
 		[userDefaults removeObjectForKey:SERVERURL];
@@ -1035,6 +1009,18 @@ NSString* machineName()
 	
 	NSString *local_Id = [userDefaults valueForKey:LOCAL_ID];
 	NSString *userName = [self.dataBase getUserNameFromUserTable:local_Id];
+	
+	//Fix for Defect #:7076 - 15/May/2013
+	if ( userName == nil || [userName isEqualToString:@""])
+	{
+		//Reading the previous user's username if exists in the keychain.
+		NSError * error = nil;
+		previousUser = [SFHFKeychainUtils getPasswordForUsername:@"username"
+										  andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
+		
+		userName = previousUser;
+
+	}
 	
 	if ( ![userName isEqualToString:@""] )
 	{
@@ -1221,7 +1207,7 @@ NSString* machineName()
 		backGround.transform = CGAffineTransformMakeRotation(3.14/2);
 		backGround.frame = CGRectMake(0, 0, self.window.frame.size.width, self.window.frame.size.height);
 		
-		CGRect servicemaxLogoFrame = CGRectMake(432, 20, 555, 96);
+		CGRect servicemaxLogoFrame = CGRectMake(432, 20, 441, 96);
 		
 		servicemaxLogo = [[UIImageView alloc] initWithFrame:servicemaxLogoFrame];
 		servicemaxLogo.contentMode = UIViewContentModeScaleAspectFit;
@@ -1385,7 +1371,7 @@ NSString* machineName()
     //shrinivas
 	
     self.isForeGround = TRUE;
-//Shrinivas : OAuth
+	//Shrinivas : OAuth
 	[self performSelector:@selector(handleChangedConnection) withObject:nil afterDelay:0.1];
 }
 
@@ -1406,6 +1392,25 @@ NSString* machineName()
 			[oauthClient userAuthorizationRequestWithParameters:nil];
 			[OAuthController.view addSubview:oauthClient.view];
 		}
+		else if ( [userOrg isEqualToString:@"Custom"] )
+		{
+			//For Defect #7085
+			NSString *_baseURL = [ZKServerSwitchboard baseURL] ;
+			if ( [appDelegate.customURLValue isEqualToString:_baseURL] )
+			{
+				//Do nothing
+			}
+			else
+			{
+				[oauthClient.view removeFromSuperview];
+				[oauthClient deleteAllCookies];
+				[oauthClient userAuthorizationRequestWithParameters:nil];
+				[OAuthController.view addSubview:oauthClient.view];
+
+			}
+		}
+		
+		
 	}
 	else
 	{
@@ -1413,7 +1418,7 @@ NSString* machineName()
 		
 		if ( [userOrg isEqualToString:preference] )
 		{
-			//Do Nothing
+			
 		}
 		else
 		{
@@ -1520,6 +1525,7 @@ NSString* machineName()
 	[sessionExpiry release];
 	[htmlString release];
 	[userOrg release];
+	[customURLValue release];
     [super dealloc];
 }
 
@@ -3565,7 +3571,16 @@ int percent = 0;
 		switchUser = FALSE;
 		
 		if ( buttonIndex == 0 )
+		{
 			_continueFalg = TRUE;
+			
+			if (previousUser)
+			{
+				NSError *error;
+				[SFHFKeychainUtils deleteItemForUsername:@"username" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
+				
+			}
+		}
 		else
 			_continueFalg = FALSE;
 

@@ -401,7 +401,7 @@
 	<key>IPAD014_TAG029</key>
 	<string>TrobleShooting and Summary</string>
 	<key>IPAD015_TAG005</key>
-	<string>Connecting as new user removes all the unsaved data. Do you want to continue?</string>
+	<string>Connecting as new user removes all the unsaved data. Application configuration will be downloaded and this may take some time. Are you sure you want to continue?</string>
 	<key>IPAD015_TAG006</key>
 	<string>Error connecting to ServiceMax. Internet connection is not available.</string>
 	<key>IPAD015_TAG007</key>
@@ -586,6 +586,8 @@
 	<string>Sync Now</string>
 	<key>IPAD015_TAG011</key>
 	<string>Your Salesforce Profile is not associated with any active ServiceMax Group Profile. Please contact your ServiceMax administrator to resolve this.</string>
+	<key>IPAD015_TAG012</key>
+	<string>Your remote access has been revoked.Please navigate back to the home screen to logout and re-authenticate.</string>
 	<key>IPAD018_TAG040</key>
 	<string>Retry</string>
 	<key>IPAD018_TAG037</key>
