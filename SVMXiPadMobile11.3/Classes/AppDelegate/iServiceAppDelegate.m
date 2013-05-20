@@ -892,16 +892,20 @@ NSString* machineName()
 		//GET TAGS :
 		[self getTagsForTheFirstTime];
 		
+		[self.dataBase getImageForServiceReportLogo]; //Get logo only for Initial sync.
+		
 	}
 	else
 	{
 		self.do_meta_data_sync = DONT_ALLOW_META_DATA_SYNC;
+		
+		self.serviceReportLogo = [[[UIImage alloc] initWithData:[self.dataBase serviceReportLogoInDB]] autorelease]; //Get logo from DB if no Initial sync is performed.
 	}
 		
 	ZKServerSwitchboard *switchBoard = [[ZKServerSwitchboard switchboard] init];
 	switchBoard.logXMLInOut = TRUE;
 	
-	[self.dataBase getImageForServiceReportLogo];
+	//[self.dataBase getImageForServiceReportLogo]; //Commenting the code 20/May/2013.
 	
 	if ( homeScreenView == nil )
     {
@@ -1019,6 +1023,20 @@ NSString* machineName()
 										  andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
 		
 		userName = previousUser;
+		
+		//Defect #:7129
+		BOOL retVal = [self.calDataBase isUsernameValid:userName];
+        
+        	if ( retVal == FALSE )
+		{
+			NSError *error;
+			[SFHFKeychainUtils deleteItemForUsername:@"username" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
+			[SFHFKeychainUtils deleteItemForUsername:@"password" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
+			
+			return TRUE;
+			
+		}
+
 
 	}
 	
@@ -3578,6 +3596,7 @@ int percent = 0;
 			{
 				NSError *error;
 				[SFHFKeychainUtils deleteItemForUsername:@"username" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
+				[SFHFKeychainUtils deleteItemForUsername:@"password" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
 				
 			}
 		}

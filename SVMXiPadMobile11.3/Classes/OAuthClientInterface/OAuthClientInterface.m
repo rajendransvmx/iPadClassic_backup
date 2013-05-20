@@ -99,19 +99,19 @@
 	[view loadRequest:request];
 	
 	_webViewDidFail = FALSE;
-	while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
-	{
-		if (![appDelegate isInternetConnectionAvailable])
-		{
-			appDelegate.shouldShowConnectivityStatus = YES;
-			[appDelegate displayNoInternetAvailable];
-			
-			return;
-		}
-		
-		if ( webViewDidFinishLoadBool == YES || _webViewDidFail == TRUE )
-			break;
-	}
+//	while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
+//	{
+//		if (![appDelegate isInternetConnectionAvailable])
+//		{
+//			appDelegate.shouldShowConnectivityStatus = YES;
+//			[appDelegate displayNoInternetAvailable];
+//			
+//			return;
+//		}
+//		
+//		if ( webViewDidFinishLoadBool == YES || _webViewDidFail == TRUE )
+//			break;
+//	}
 
 	view.backgroundColor = [UIColor clearColor];
 	self.view.opaque = NO;
