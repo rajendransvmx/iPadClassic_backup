@@ -1353,6 +1353,7 @@
 		ACEAD2641721201F00837555 /* zbar-helpicons@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = ACEAD0521721201E00837555 /* zbar-helpicons@2x.png */; };
 		ACEAD2651721201F00837555 /* zbar-samples@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = ACEAD0531721201E00837555 /* zbar-samples@2x.png */; };
 		ACEAD2681721209900837555 /* 72x72@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = ACEAD2671721209900837555 /* 72x72@2x.png */; };
+		ACFEC5E9174A1803000D5299 /* OAuthController.m in Sources */ = {isa = PBXBuildFile; fileRef = ACFEC5E8174A1803000D5299 /* OAuthController.m */; };
 		BA9A95591578F3B0008A0475 /* blue button.png in Resources */ = {isa = PBXBuildFile; fileRef = BA9A95581578F3B0008A0475 /* blue button.png */; };
 		FA0722D914DFBA79008CAFB3 /* GTMStringEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = FA0722D814DFBA79008CAFB3 /* GTMStringEncoding.m */; };
 		FA0F7B8414F58C1400052BD6 /* ___INTF_WebServicesDefServiceSvc___m___l7j8pj in Resources */ = {isa = PBXBuildFile; fileRef = FA0F7B7014F58C1400052BD6 /* ___INTF_WebServicesDefServiceSvc___m___l7j8pj */; };
@@ -3012,6 +3013,8 @@
 		ACEAD0521721201E00837555 /* zbar-helpicons@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "zbar-helpicons@2x.png"; sourceTree = "<group>"; };
 		ACEAD0531721201E00837555 /* zbar-samples@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "zbar-samples@2x.png"; sourceTree = "<group>"; };
 		ACEAD2671721209900837555 /* 72x72@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "72x72@2x.png"; sourceTree = "<group>"; };
+		ACFEC5E7174A1803000D5299 /* OAuthController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAuthController.h; sourceTree = "<group>"; };
+		ACFEC5E8174A1803000D5299 /* OAuthController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OAuthController.m; sourceTree = "<group>"; };
 		BA9A95581578F3B0008A0475 /* blue button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blue button.png"; sourceTree = "<group>"; };
 		FA0722D614DFBA79008CAFB3 /* GTMDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMDefines.h; sourceTree = "<group>"; };
 		FA0722D714DFBA79008CAFB3 /* GTMStringEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMStringEncoding.h; sourceTree = "<group>"; };
@@ -5636,6 +5639,8 @@
 		AC89129B173A8B1300061C14 /* OAuthClientInterface */ = {
 			isa = PBXGroup;
 			children = (
+				ACFEC5E7174A1803000D5299 /* OAuthController.h */,
+				ACFEC5E8174A1803000D5299 /* OAuthController.m */,
 				AC89129C173A8B1300061C14 /* OAuthClientInterface.h */,
 				AC89129D173A8B1300061C14 /* OAuthClientInterface.m */,
 			);
@@ -8388,6 +8393,7 @@
 				A837EC7F170D4DF900229855 /* GridViewCell.m in Sources */,
 				AC1BF8B8171C395500F0EA14 /* SyncProgressBar.m in Sources */,
 				AC89129E173A8B1300061C14 /* OAuthClientInterface.m in Sources */,
+				ACFEC5E9174A1803000D5299 /* OAuthController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

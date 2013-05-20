@@ -23,6 +23,7 @@
 //Shrinivas - OAuth.
 //#import "iPadScrollerViewController.h"
 #import "OAuthClientInterface.h"
+#import "OAuthController.h"
 //Radha
 #import "DataBase.h"
 
@@ -562,7 +563,7 @@ extern  NSString const *devVersion;
 	//Shrinivas : Access token:OAUTH LOGIN 
 	BOOL didReceiveAccess;
 	iPadScrollerViewController * homeScreenView;
-	UIViewController *OAuthController;
+	OAuthController *_OAuthController;
 	UIImageView *servicemaxLogo;
 	UIImageView *backGround;
 	OAuthClientInterface *oauthClient;
@@ -609,7 +610,7 @@ extern  NSString const *devVersion;
 @property (nonatomic, retain)NSString *session_Id;
 @property (nonatomic, retain)OAuthClientInterface *oauthClient;
 @property (nonatomic, retain)NSDate *sessionExpiry;
-@property (nonatomic, retain)UIViewController *OAuthController;
+@property (nonatomic, retain)OAuthController *_OAuthController;
 @property (nonatomic, retain)NSString *htmlString;
 @property (nonatomic, assign)BOOL refreshHomeIcons;
 @property (nonatomic, assign)BOOL _continueFalg;

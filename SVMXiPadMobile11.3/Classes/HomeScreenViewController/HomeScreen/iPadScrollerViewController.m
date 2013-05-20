@@ -319,7 +319,7 @@ const NSUInteger kNumImages = 7;
 	//OAuth 16/May/2013 : Remove the background image. (Removed the code)
 	[appDelegate.oauthClient initWithClientID:CLIENT_ID secret:CLIENT_SECRET redirectURL:REDIRECT_URL];
 	[appDelegate.oauthClient userAuthorizationRequestWithParameters:nil];
-	[appDelegate.OAuthController.view addSubview:appDelegate.oauthClient.view];
+	[appDelegate._OAuthController.view addSubview:appDelegate.oauthClient.view];
 
 
 	/*COMMENTING THE CODE SINCE LOGIN CONTROLLER IS NOT USED FOR OAUTH*/

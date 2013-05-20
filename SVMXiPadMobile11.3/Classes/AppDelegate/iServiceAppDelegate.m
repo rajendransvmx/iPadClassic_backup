@@ -399,7 +399,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize refresh_token;
 @synthesize organization_Id;
 @synthesize sessionExpiry;
-@synthesize OAuthController;
+@synthesize _OAuthController;
 @synthesize htmlString;
 @synthesize refreshHomeIcons;
 @synthesize refreshIcons;
@@ -626,7 +626,7 @@ NSString* machineName()
 	self.refreshHomeIcons = NO;
 	
 	oauthClient = [[OAuthClientInterface alloc] init];
-	OAuthController = [[UIViewController alloc] init];
+	_OAuthController = [[OAuthController alloc] init];
 	
 	//Auto Login incase user has already authorized.
 	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
@@ -699,13 +699,13 @@ NSString* machineName()
 		
 		if ( homeScreenView == nil )
 		{
-			[window setRootViewController:OAuthController];
+			[window setRootViewController:_OAuthController];
 			[window makeKeyAndVisible];
 			
 			homeScreenView = [[iPadScrollerViewController alloc] initWithNibName:@"iPadScrollerViewController" bundle:nil];
 			homeScreenView.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
 			homeScreenView.modalPresentationStyle = UIModalPresentationFullScreen;
-			[OAuthController presentViewController:homeScreenView animated:YES completion:nil];
+			[_OAuthController presentViewController:homeScreenView animated:YES completion:nil];
 			refreshIcons = homeScreenView;
 			[homeScreenView release];
 			
@@ -734,9 +734,9 @@ NSString* machineName()
 -(void)showScreen
 {
 	//[self addBackgroundImageAndLogo];
-	[OAuthController.view addSubview:oauthClient.view];
+	[_OAuthController.view addSubview:oauthClient.view];
 	
-	[window setRootViewController:OAuthController];
+	[window setRootViewController:_OAuthController];
 	[window makeKeyAndVisible];
 	
 }
@@ -756,7 +756,7 @@ NSString* machineName()
 	[self.oauthClient initWithClientID:CLIENT_ID secret:CLIENT_SECRET redirectURL:REDIRECT_URL];
 	[self.oauthClient userAuthorizationRequestWithParameters:nil];
 	
-	[self.OAuthController.view addSubview:self.oauthClient.view];
+	[self._OAuthController.view addSubview:self.oauthClient.view];
 }
 
 //OAuth
@@ -912,7 +912,7 @@ NSString* machineName()
         homeScreenView = [[iPadScrollerViewController alloc] initWithNibName:@"iPadScrollerViewController" bundle:nil];
         homeScreenView.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
         homeScreenView.modalPresentationStyle = UIModalPresentationFullScreen;
-        [OAuthController presentViewController:homeScreenView animated:YES completion:nil];
+        [_OAuthController presentViewController:homeScreenView animated:YES completion:nil];
 		refreshIcons = homeScreenView;
         [homeScreenView release];
 		
@@ -1408,7 +1408,7 @@ NSString* machineName()
 			[oauthClient.view removeFromSuperview];
 			[oauthClient deleteAllCookies];
 			[oauthClient userAuthorizationRequestWithParameters:nil];
-			[OAuthController.view addSubview:oauthClient.view];
+			[_OAuthController.view addSubview:oauthClient.view];
 		}
 		else if ( [userOrg isEqualToString:@"Custom"] )
 		{
@@ -1423,7 +1423,7 @@ NSString* machineName()
 				[oauthClient.view removeFromSuperview];
 				[oauthClient deleteAllCookies];
 				[oauthClient userAuthorizationRequestWithParameters:nil];
-				[OAuthController.view addSubview:oauthClient.view];
+				[_OAuthController.view addSubview:oauthClient.view];
 
 			}
 		}
@@ -1539,7 +1539,7 @@ NSString* machineName()
 	[apiURl release];
 	[session_Id release];
 	[oauthClient release];
-	[OAuthController release];
+	[_OAuthController release];
 	[sessionExpiry release];
 	[htmlString release];
 	[userOrg release];
