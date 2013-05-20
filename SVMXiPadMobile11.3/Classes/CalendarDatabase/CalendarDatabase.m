@@ -3260,8 +3260,12 @@ extern void SVMXLog(NSString *format, ...);
         //Aparna
         //Fixed the defect: 6627 : By changing the tablename troubleshootdata to trobleshootdata
         //Fixed the defect: 6628: By changeing the query
+        NSString *manId=[[manualInfo objectForKey:@"ManId"]stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+
+        NSString *manName=[[manualInfo objectForKey:@"ManName"]stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+        productID =[productID stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
         NSString *deleteQuery = [NSString stringWithFormat:@"Delete From trobleshootdata where prod_manual_Id = '%@' and prod_manual_name = '%@' and ProductId = '%@'",
-                                 [manualInfo objectForKey:@"ManId"],[manualInfo objectForKey:@"ManName"],productID];
+                                 manId,manName,productID]; //Keerti - 6592 - including manId and manName in where clause
 
         char *err;
         if (synchronized_sqlite3_exec(appDelegate.db, [deleteQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
