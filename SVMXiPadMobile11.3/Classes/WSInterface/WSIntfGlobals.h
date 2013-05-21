@@ -34,6 +34,7 @@
 
 #define AFTERSAVEPAGELEVELEVENT                        @"AFTERSAVEPAGELEVELEVENT"
 #define AFTERSAVEPAQGELEVELBINDING                     @"AFTERSAVEPAGELEVELBINDING"
+#define PAGE_LEVEL_EVENT_ID                             @"PAGE_LEVEL_EVENT_ID"
 //sahana
 //signature 
 #define SIG_AFTERUPDATE                                 @"AFTER_UPDATE"
