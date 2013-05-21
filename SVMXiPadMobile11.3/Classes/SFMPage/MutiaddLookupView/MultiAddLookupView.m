@@ -23,6 +23,8 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize index;
 @synthesize search_field;
 @synthesize mappingArray;
+//Radha - Defect Fix 6483
+@synthesize searchId;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -37,6 +39,7 @@ extern void SVMXLog(NSString *format, ...);
     [mappingArray release];
     [searchBar release];
     [_tableView release];
+	[searchId release];
     [super dealloc];
 }
 
@@ -152,7 +155,9 @@ extern void SVMXLog(NSString *format, ...);
     NSString * keyword = [_searchBar.text stringByReplacingCharactersInRange:NSMakeRange(0, 1) withString:@""];
     if(appDelegate.isWorkinginOffline)
     {
-        NSMutableDictionary * dict = [appDelegate.databaseInterface getDataForMultiAdd:objectName searchField:keyword];
+	//Radha - Defect Fix 6483
+        NSMutableDictionary * dict = [appDelegate.databaseInterface getDataForMultiAdd:objectName searchField:keyword
+																		lookUpSearchId:self.searchId];
         [self setLookupData:dict];
         
     }
@@ -171,7 +176,9 @@ extern void SVMXLog(NSString *format, ...);
 {
     if(appDelegate.isWorkinginOffline)
     {
-        NSMutableDictionary * dict = [appDelegate.databaseInterface getDataForMultiAdd:objectName searchField:searchText];
+	//Radha - Defect Fix 6483
+        NSMutableDictionary * dict = [appDelegate.databaseInterface getDataForMultiAdd:objectName searchField:searchText
+																		lookUpSearchId:self.searchId];
         [self setLookupData:dict];
         
     }
@@ -196,7 +203,6 @@ extern void SVMXLog(NSString *format, ...);
         for (int i = 0; i < [[lookupData objectForKey:@"DATA"] count]; i++)
         {
             NSArray * eachLookUp = [[lookupData objectForKey:@"DATA"] objectAtIndex:i];
-            SMLog(@"lookup = %@",eachLookUp);
             NSString *Id = @"";
             NSString *name = @"";
             for(NSDictionary *dict in eachLookUp)

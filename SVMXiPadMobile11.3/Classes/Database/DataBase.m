@@ -6267,7 +6267,9 @@ extern void SVMXLog(NSString *format, ...);
 - (void) insertValuesInToLookUpTable:(NSMutableDictionary *)processDictionary
 {
     int id_value = 0;
-    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFNamedSearch ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'default_lookup_column' VARCHAR, 'search_name' VARCHAR, 'object_name' VARCHAR, 'search_type' VARCHAR, 'named_search_id' VARCHAR, 'no_of_lookup_records' VARCHAR, 'is_default' VARCHAR, 'is_standard' VARCHAR)"]];
+	
+	//Radha - Defect Fix 6483 - Added New column to store lookup id
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFNamedSearch ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'default_lookup_column' VARCHAR, 'search_name' VARCHAR, 'object_name' VARCHAR, 'search_type' VARCHAR, 'named_search_id' VARCHAR, 'no_of_lookup_records' VARCHAR, 'is_default' VARCHAR, 'is_standard' VARCHAR, 'search_sfid' VARCHAR)"]];
     if (result == YES)
     {
         result = [self createTable:[NSString stringWithFormat:@"CREATE INDEX IF NOT EXISTS SFNamedSearchIndex ON SFNamedSearch (default_lookup_column, object_name, is_default,is_standard)"]];
@@ -6281,7 +6283,7 @@ extern void SVMXLog(NSString *format, ...);
         
         int exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
         
-        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@' ) VALUES (?1, ?2, ?3, ?4, ?5, ?6,?7, ?8, ?9)", SFNAMEDSEARCH, MDEFAULT_LOOKUP_COLUMN, MOBJECT_NAME, MSEARCH_NAME, MSEARCH_TYPE, MNAMED_SEARCHID, MNO_OF_LOOKUP_RECORDS, MIS_DEFAULT, MIS_STANDARD, MLOCAL_ID];
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@' ) VALUES (?1, ?2, ?3, ?4, ?5, ?6,?7, ?8, ?9, ?10)", SFNAMEDSEARCH, MDEFAULT_LOOKUP_COLUMN, MOBJECT_NAME, MSEARCH_NAME, MSEARCH_TYPE, MNAMED_SEARCHID, MNO_OF_LOOKUP_RECORDS, MIS_DEFAULT, MIS_STANDARD, MSEARCH_ID, MLOCAL_ID];
         
         sqlite3_stmt * bulkStmt;
         
@@ -6326,6 +6328,11 @@ extern void SVMXLog(NSString *format, ...);
 				char * _misStandard = [appDelegate convertStringIntoChar:([nameSearchDict objectForKey:MIS_STANDARD] != nil)?[nameSearchDict objectForKey:MIS_STANDARD]:@""];
                 
                 sqlite3_bind_text(bulkStmt, 8, _misStandard, strlen(_misStandard), SQLITE_TRANSIENT);
+				
+				//Radha - Defect Fix 6483
+				char * _tempsearch_id = [appDelegate convertStringIntoChar:([nameSearchDict objectForKey:MSEARCH_ID] != nil)?[nameSearchDict objectForKey:MSEARCH_ID]:@""];
+				
+				sqlite3_bind_text(bulkStmt, 9, _tempsearch_id, strlen(_tempsearch_id), SQLITE_TRANSIENT);
                 
                 sqlite3_bind_int(bulkStmt, 10, ++id_value);
                 
