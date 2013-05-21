@@ -295,6 +295,11 @@ typedef enum CUSTOM_SYNC_STATUS{
  /* Added global parser : InitialSync-shr*/
 @property (nonatomic,retain) SBJsonParser *jsonParserForDataSync;
 
+
+//krishna 6580
+- (BOOL) checkForConflictsForId:(NSString *)record_id andObject_name:(NSString *)object_name;
+
+
 -(NSString *)requestSnapShot;
 - (void) getSvmxVersion;
 // Web Service Caller Methods

@@ -2775,24 +2775,33 @@ last_sync_time:(NSString *)last_sync_time
     
         if( [current_dateTime compare:timeStamp] == NSOrderedDescending)
         {
-            [timesNeedtobeDeleted addObject:timeStamp];
+            //Krishna 6580
             
-            INTF_WebServicesDefServiceSvc_INTF_PREQ_GetPrice_WS *  request =  [aftersavePagelevelEvent objectForKey:AFTERSAVEPAGELEVELEVENT];
-            INTF_WebServicesDefBinding * binding = [aftersavePagelevelEvent objectForKey:AFTERSAVEPAQGELEVELBINDING];
-            didCompleteAfterSaveEventCalls = NO;
-            [self callsfMEventForAfterSaveOrupdateEvents:request binding:binding];
-            while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+            NSString * record_local_id = [aftersavePagelevelEvent objectForKey:PAGE_LEVEL_EVENT_ID];
+            NSString * header_object_name = [aftersavePagelevelEvent objectForKey:OBJECT_NAME];            
+            BOOL conflictExist = [self checkForConflictsForId:record_local_id andObject_name:header_object_name];
+           
+            if(!conflictExist)
             {
-                SMLog(@"pagelevel events");
-                if (didCompleteAfterSaveEventCalls == YES)
-                    break;
-                if (![appDelegate isInternetConnectionAvailable])
+                [timesNeedtobeDeleted addObject:timeStamp];
+                
+                INTF_WebServicesDefServiceSvc_INTF_PREQ_GetPrice_WS *  request =  [aftersavePagelevelEvent objectForKey:AFTERSAVEPAGELEVELEVENT];
+                INTF_WebServicesDefBinding * binding = [aftersavePagelevelEvent objectForKey:AFTERSAVEPAQGELEVELBINDING];
+                didCompleteAfterSaveEventCalls = NO;
+                [self callsfMEventForAfterSaveOrupdateEvents:request binding:binding];
+                while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
                 {
-                    break;
-                }
-                if(appDelegate.connection_error)
-                    break;
+                    SMLog(@"pagelevel events");
+                    if (didCompleteAfterSaveEventCalls == YES)
+                        break;
+                    if (![appDelegate isInternetConnectionAvailable])
+                    {
+                        break;
+                    }
+                    if(appDelegate.connection_error)
+                        break;
 
+                }
             }
         }
     }
@@ -2881,6 +2890,23 @@ last_sync_time:(NSString *)last_sync_time
 	{
 		appDelegate.syncThread = nil;
 	}
+}
+
+//conflict check 6580 : krishna
+- (BOOL) checkForConflictsForId:(NSString *)record_id andObject_name:(NSString *)object_name
+{
+    NSString *sf_id = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:object_name local_id:record_id];
+    BOOL isConflictExists = NO;
+    if([sf_id isEqualToString:@""] || sf_id == nil) {
+        
+        isConflictExists = [appDelegate.dataBase checkIfConflictsExistsForEventWithLocalId:appDelegate.sfmPageController.recordId objectName:appDelegate.sfmPageController.objectName];
+    }
+    else {
+        
+        isConflictExists = [appDelegate.dataBase checkIfConflictsExistsForEventWithSFID:sf_id objectName:appDelegate.sfmPageController.objectName];
+    }
+    NSLog(@"isconflict %d andSfId %@",isConflictExists,sf_id);
+    return isConflictExists;
 }
 
 - (NSString *) getValueFromUserDefaultsForKey:(NSString *)key
@@ -6345,10 +6371,14 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         if (appDelegate.sfmPageController.recordId == nil)
             appDelegate.sfmPageController.recordId = @"";
         
+        NSString * hdr_object_name = [[sfmDictionary objectForKey:gHEADER]  objectForKey:gHEADER_OBJECT_NAME];
+        
         
         NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithCapacity:0];
         [dict setObject:getThoonsEvent forKey:AFTERSAVEPAGELEVELEVENT];
         [dict setObject:binding forKey:AFTERSAVEPAQGELEVELBINDING];
+        [dict setObject:appDelegate.sfmPageController.recordId forKey:PAGE_LEVEL_EVENT_ID];
+        [dict setObject:hdr_object_name forKey:OBJECT_NAME];
         
         NSDate * current_dateTime = [NSDate date];
         
