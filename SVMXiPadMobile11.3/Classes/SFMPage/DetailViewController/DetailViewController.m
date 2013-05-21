@@ -2746,7 +2746,10 @@ extern void SVMXLog(NSString *format, ...);
              UIImageView * bgImage = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_left_panel_bg_main_2.png"]] autorelease];
             sfwToolBar.sfw_tableview.backgroundView = bgImage;
             sfwToolBar.ipad_only_view.backgroundColor = [UIColor whiteColor];
-            [popover presentPopoverFromRect:CGRectMake(900, 21, 67, 20) inView:appDelegate.sfmPageController.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+//            [popover presentPopoverFromRect:CGRectMake(900, 21, 67, 20) inView:appDelegate.sfmPageController.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+           // Defect Fix #4690
+            [popover presentPopoverFromBarButtonItem:actionBtn permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+
             sfwToolBar.popOver = popover;
             //[sfwToolBar showIpadOnlyButtons];
 
