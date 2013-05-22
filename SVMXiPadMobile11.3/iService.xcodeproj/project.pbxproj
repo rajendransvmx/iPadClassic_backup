@@ -8152,7 +8152,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "targetFile=\"${SRCROOT}/iService-Info.plist\"\n\nrootFile=\"${SRCROOT}/Classes/Debriefing/Resources/Settings.bundle/Root.plist\"\n\necho \"Target file \" $targetFile\n\necho \"Root file \" $rootFile\n\nversion=`/usr/libexec/PlistBuddy -c \"Print:CFBundleVersion\" $targetFile`\n\necho \"Project Version =\" $version\n\n/usr/libexec/PlistBuddy -c \"Set PreferenceSpecifiers:10:DefaultValue $version\" $rootFile";
+			shellScript = "targetFile=\"${SRCROOT}/iService-Info.plist\"\n\nrootFile=\"${SRCROOT}/Classes/Debriefing/Resources/Settings.bundle/Root.plist\"\n\necho \"Target file \" $targetFile\n\necho \"Root file \" $rootFile\n\nversion=`/usr/libexec/PlistBuddy -c \"Print:CFBundleVersion\" \"$targetFile\"`\n\necho \"Project Version =\" $version\n\n/usr/libexec/PlistBuddy -c \"Set PreferenceSpecifiers:10:DefaultValue $version\" \"$rootFile\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
