@@ -41,8 +41,9 @@
 		routePoints = [NSMutableArray arrayWithCapacity:vertexCount];
 		for (NSDictionary *vertex in vertices) {
             // V3:KRI
-			CLLocationDegrees latitude  = [[vertex objectForKey:@"hb"] doubleValue];//x
-			CLLocationDegrees longitude = [[vertex objectForKey:@"ib"] doubleValue];//y
+            //V3New:Kri
+			CLLocationDegrees latitude  = [[vertex objectForKey:@"jb"] doubleValue];//x hb to jb change v3
+			CLLocationDegrees longitude = [[vertex objectForKey:@"kb"] doubleValue];//y ib to kb change v3
 			CLLocation *location = [[[CLLocation alloc] initWithLatitude:latitude longitude:longitude] autorelease];
 			[routePoints addObject:location];
 		}

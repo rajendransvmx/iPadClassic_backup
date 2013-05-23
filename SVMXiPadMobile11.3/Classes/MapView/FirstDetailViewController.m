@@ -1488,10 +1488,6 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 {
     [tableView reloadData];
 
-    
-    NSLog(@"First work order event %@",[appDelegate.workOrderEventArray objectAtIndex:0]);
-    NSLog(@"First work order event info %@",[appDelegate.workOrderInfo objectAtIndex:0]);
-
     if([appDelegate.workOrderEventArray count]>0 && [appDelegate.workOrderInfo count]>0)
     {
         [self setJobDetailsForWorkOrder:[appDelegate.workOrderEventArray objectAtIndex:0] workOrderInfo:[appDelegate.workOrderInfo objectAtIndex:0]];

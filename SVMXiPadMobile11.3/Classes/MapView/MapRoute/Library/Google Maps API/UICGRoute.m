@@ -62,14 +62,14 @@
             NSDictionary *endLocationDic = [k objectForKey:@"end_location"];
             
             //hb and ib for business purpose. if you are using publey key its again different
-           
-            CLLocationDegrees longitude = [[endLocationDic objectForKey:@"ib" ] doubleValue];//[coordinates objectAtIndex:0]
-            CLLocationDegrees latitude  = [[endLocationDic objectForKey:@"hb" ] doubleValue];//[coordinates objectAtIndex:1]
+            //V3New:Kri
+            CLLocationDegrees longitude = [[endLocationDic objectForKey:@"kb" ] doubleValue];//[coordinates objectAtIndex:0]
+            CLLocationDegrees latitude  = [[endLocationDic objectForKey:@"jb" ] doubleValue];//[coordinates objectAtIndex:1]
             endLocation = [[CLLocation alloc] initWithLatitude:latitude longitude:longitude];
             summaryHtml = [k objectForKey:@"instructions"];
-            
-            distance = [k objectForKey:@"Distance"];
-            duration = [k objectForKey:@"Duration"];
+            //V3New:Kri
+            distance = [k objectForKey:@"distance"]; //V3 change Distance to distance
+            duration = [k objectForKey:@"duration"]; //v3 change Duration to duration
 
             
             [locations addObject:endLocation];
