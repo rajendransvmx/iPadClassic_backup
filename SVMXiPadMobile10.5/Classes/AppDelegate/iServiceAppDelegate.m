@@ -1275,6 +1275,7 @@ NSString * GO_Online = @"GO_Online";
 
     
     sqlite3_close(self.db);
+    self.db = nil;
 	
     [appDelegate.dataBase removecache];
     self.wsInterface.didOpComplete = FALSE;
