@@ -47,6 +47,11 @@ extern void SVMXLog(NSString *format, ...);
     [webView loadHTMLString:htmlFile baseURL:baseURL];  
     //Code Ends Here
     
+    //krishna map fix
+    [mutable_helpFile release];
+    
+    
+    
     [super viewDidLoad];
     
 
@@ -130,6 +135,9 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void)viewDidUnload
 {
+    //krishna map fix    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kInternetConnectionChanged object:nil];
+    
     [webView release];
     webView = nil;
     [activity release];

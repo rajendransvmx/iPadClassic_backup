@@ -63,8 +63,8 @@
             
             //hb and ib for business purpose. if you are using publey key its again different
             //V3New:Kri
-            CLLocationDegrees longitude = [[endLocationDic objectForKey:@"kb" ] doubleValue];//[coordinates objectAtIndex:0]
-            CLLocationDegrees latitude  = [[endLocationDic objectForKey:@"jb" ] doubleValue];//[coordinates objectAtIndex:1]
+            CLLocationDegrees longitude = [[endLocationDic objectForKey:@"lngi" ] doubleValue];//[coordinates objectAtIndex:0]
+            CLLocationDegrees latitude  = [[endLocationDic objectForKey:@"lati" ] doubleValue];//[coordinates objectAtIndex:1]
             endLocation = [[CLLocation alloc] initWithLatitude:latitude longitude:longitude];
             summaryHtml = [k objectForKey:@"instructions"];
             //V3New:Kri
