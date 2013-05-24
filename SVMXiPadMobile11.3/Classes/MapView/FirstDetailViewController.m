@@ -416,9 +416,10 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
             appDelegate.loggedInUserId = [dat getLoggedInUserId:appDelegate.username];
         [dat release];
         
-        ZKUserInfo * userinfo = [[ZKServerSwitchboard switchboard] userInfo];
+        //Krishna :- Get userId from userdefaults
+        NSUserDefaults * userdefaults = [NSUserDefaults standardUserDefaults];
         
-        NSString * userId = [userinfo userId];
+        NSString * userId = [userdefaults objectForKey:@"user_id"];
         
         if ((appDelegate.loggedInUserId == nil) || ([appDelegate.loggedInUserId length] > 0))
             appDelegate.loggedInUserId = userId;
