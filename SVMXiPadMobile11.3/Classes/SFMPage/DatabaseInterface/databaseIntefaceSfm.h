@@ -24,6 +24,11 @@
     //sqlite3 * db;
     iServiceAppDelegate * appDelegate;
     id <databaseInterfaceProtocol> databaseInterfaceDelegate;
+    
+    // Vipind-db-optmz
+    NSMutableDictionary  *fieldDataTypeDict;
+    NSMutableDictionary   *childInfoDict;
+
 }
 
 @property (nonatomic , assign)  id  <databaseInterfaceProtocol> databaseInterfaceDelegate;
@@ -124,7 +129,6 @@
 
 -(NSString *)getTheRecordIdOfnewlyInsertedRecord:(NSString *)tableName;
 
-//Radha - Defect Fix 6483 - Added new variable to existing method
 -(NSMutableDictionary *)getDataForMultiAdd:(NSString *)object_name searchField:(NSString *)search_field lookUpSearchId:(NSString *)searchId;
 
 //get the lookup information from database 
@@ -275,14 +279,21 @@
 /* Shravya-InitialSync :InitialSync-shr */
 @property(nonatomic,retain)NSMutableDictionary *objectFieldDictionary;
 
+/* vipindas Palli*/
+
+// Vipind-db-optmz
+@property(nonatomic,retain)NSMutableDictionary *apiNameToInsertionQueryDictionary
+;
+@property (nonatomic, retain) NSMutableDictionary   *fieldDataTypeDictionary;
+@property (nonatomic, retain) NSMutableDictionary   *childInfoDictionary;
+
+
 /* this is not used as of now*/
 @property(nonatomic,retain)NSMutableDictionary *localIdOfFutureMasterRecords;
 @property(nonatomic,retain)NSMutableDictionary *parentobjectDictionary;
 @property(nonatomic,retain)NSMutableDictionary *parentColumnDictionary;
 
 /* Shravya-InitialSync :InitialSync-shr */
-- (NSInteger)startTransaction;
-- (NSInteger)endTransaction;
 - (void)insertAllRecordsToRespectiveTables:(NSMutableDictionary *)syncedData andParser:(SBJsonParser *)jsonParser;
 - (void)updateTheStatusOfSynRecordsToTrue:(NSMutableDictionary *)sync_data;
 - (void)updatesfmIdsOfMasterToLocalIds ;
@@ -318,6 +329,9 @@
 //Sync_Override : Radha
 - (BOOL) checkIfCustomEntryExistsInTrailerTable:(NSString *)parentLocalId;
 -(BOOL)doesIdexistsinSyncrecord:(NSDictionary *)sync_record new_local_id:(NSString *)new_id idType:(NSString *)id_type;
+
+// Vipind-db-optmz
+- (void)deleteRecordFromTable:(NSString *)tableName byCollectionsOfId:(NSArray *)ids forColumn:(NSString *)columnName;
 
 
 #define SERVER_OVERRIDE                     @"Server_Override"

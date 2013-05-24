@@ -207,7 +207,7 @@ extern void SVMXLog(NSString *format, ...);
     
     int ret = synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement, -1, &statement, NULL);
     
-    if (synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement, -1, &statement, NULL) == SQLITE_OK)
+    if (ret == SQLITE_OK)
     {
         NSDateFormatter * dateFormatter = [[[NSDateFormatter alloc] init]autorelease];
         [dateFormatter setDateFormat:@"yyyy-MM-dd"];
@@ -577,6 +577,7 @@ extern void SVMXLog(NSString *format, ...);
     {
         sql = [NSString stringWithFormat: @"Update Event Set StartDateTime = '%@', EndDateTime = '%@', ActivityDateTime = '%@' Where local_id = '%@'", _startDT, _endDT,_startDT, event_LocalId];
     }
+    [appDelegate.dataBase beginTransaction];
     char *err;
     if (synchronized_sqlite3_exec(appDelegate.db, [sql UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
@@ -585,6 +586,7 @@ extern void SVMXLog(NSString *format, ...);
 		SMLog(@"ERROR IN UPDATING %s", err);
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:sql type:UPDATEQUERY];
     }
+    [appDelegate.dataBase endTransaction];
 }
 
 //28/Sep/2012
@@ -2567,6 +2569,7 @@ extern void SVMXLog(NSString *format, ...);
                     }
             }
         }
+    synchronized_sqlite3_finalize(statement);
     
     return tableName;
 }
@@ -2595,6 +2598,8 @@ extern void SVMXLog(NSString *format, ...);
             
         }
     }
+    
+    synchronized_sqlite3_finalize(queryStatement);
     return nameField;
 }
 
@@ -2607,6 +2612,8 @@ extern void SVMXLog(NSString *format, ...);
     
     SMLog(@"%@", queryString);
     
+    [appDelegate.dataBase beginTransaction];
+    
     char *err;
     int retVal = synchronized_sqlite3_exec(appDelegate.db, [queryString UTF8String], NULL, NULL, &err);
     SMLog(@"%d", retVal);
@@ -2618,13 +2625,13 @@ extern void SVMXLog(NSString *format, ...);
 		SMLog(@"ERROR IN UPDATING %s", err);
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryString type:UPDATEQUERY];
     }
-    
+    [appDelegate.dataBase endTransaction];
 }
 
 
 - (void) insertProductName:(NSMutableArray *)productInfo WithId:(NSString *)productId
 {
-    
+    [appDelegate.dataBase beginTransaction];
     for ( int i = 0; i < [productInfo count]; i++ )
     {
         productId=[productId stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
@@ -2642,6 +2649,7 @@ extern void SVMXLog(NSString *format, ...);
 			[appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryString type:INSERTQUERY];
         }  
     }
+    [appDelegate.dataBase endTransaction];
 }
 
 
@@ -2654,6 +2662,7 @@ extern void SVMXLog(NSString *format, ...);
     
     SMLog(@"%@", chatterDetails);
     
+    [appDelegate.dataBase beginTransaction];
     NSString *deleteQuery = [NSString stringWithFormat:@"Delete From ChatterPostDetails where ProductId = '%@'", productId];
     sqlite3_stmt *statement;
     
@@ -2696,7 +2705,9 @@ extern void SVMXLog(NSString *format, ...);
             [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:insertStatement type:INSERTQUERY];
         }  
         
+    
     }
+    [appDelegate.dataBase endTransaction];
 }
 
 
@@ -2780,7 +2791,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) insertImageDataInChatterDetailsForUserName:(NSString *)UserName WithData:(NSData *)imageData
 {
-    
+    [appDelegate.dataBase beginTransaction];
     NSMutableString *deleteQuery = [NSString stringWithFormat:@"Delete From UserImages Where username = '%@'", UserName];
     
 	char *err;
@@ -2810,6 +2821,8 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"ERROR IN INSERTING %s", err);
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryString type:INSERTQUERY];
     }
+    
+    [appDelegate.dataBase endTransaction];
 }
 
 
@@ -2846,7 +2859,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) insertProductPicture:(NSString *)pictureData ForId:(NSString *)productId
 {
-    
+    [appDelegate.dataBase beginTransaction];
     NSMutableString *deleteQuery = [NSString stringWithFormat:@"Delete From ProductImage Where productId = '%@'", productId];
     
     char *err;
@@ -2872,6 +2885,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"ERROR IN INSERTING %s", err);
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:insertQuery type:INSERTQUERY];
     }
+    [appDelegate.dataBase endTransaction];
 }
 
 
@@ -2949,6 +2963,8 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     
+    synchronized_sqlite3_finalize(statement);
+    
     if (count > 0)
         return SIG_AFTERUPDATE;
     else 
@@ -2970,6 +2986,7 @@ extern void SVMXLog(NSString *format, ...);
     
     NSString * stringData = [Base64 encode:signatureData];
     
+    [appDelegate.dataBase beginTransaction];
     if ([sign_type isEqualToString:@"ViewWorkOrder"])
         does_viewexists = [self isSignatureExists:recordId type:sign_type tableName:@"SFSignatureData"];
     else if ([sign_type isEqualToString:@"ServiceReport"])
@@ -3013,6 +3030,7 @@ extern void SVMXLog(NSString *format, ...);
 		}
     }
 	
+    [appDelegate.dataBase endTransaction];
 	//10/07/2012  - Agreesive Sync for Work Order Signature.  #4740
 	if ([sign_type isEqualToString:@"ViewWorkOrder"])
 	{
@@ -3039,6 +3057,8 @@ extern void SVMXLog(NSString *format, ...);
              count = synchronized_sqlite3_column_int(statement, 0);
          }
      }
+     
+     synchronized_sqlite3_finalize(statement);
      
      if (count > 0)
          return TRUE;
@@ -3179,18 +3199,20 @@ extern void SVMXLog(NSString *format, ...);
     NSString *updateQuery = [NSString stringWithFormat:@"Update SFSignatureData Set sig_Id = '%@' Where record_Id = '%@'", SFID, localId];
     
     char *err;
+    
+    [appDelegate.dataBase beginTransaction];
     if (synchronized_sqlite3_exec(appDelegate.db, [updateQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
 		SMLog(@"%@", updateQuery);
 		SMLog(@"METHOD: getSFIdForSignature" );
 		SMLog(@"ERROR IN UPDATING %s", err);
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:updateQuery type:UPDATEQUERY];
-        return;
     }
     else
     { 
         [self writeSignatureToSFDC:SFID];
     }
+    [appDelegate.dataBase endTransaction];
 }
 
 - (void) writeSignatureToSFDC:(NSString *)SFId
@@ -3251,6 +3273,7 @@ extern void SVMXLog(NSString *format, ...);
 #pragma mark - Product Manual
 - (void) insertProductManualNameInDB:(NSDictionary *)manualInfo WithID:(NSString *)productID
 {
+    [appDelegate.dataBase beginTransaction];
     SMLog(@"%@", manualInfo);
     for ( int i = 0; i < [manualInfo count]; i++ )
     {
@@ -3289,7 +3312,9 @@ extern void SVMXLog(NSString *format, ...);
 			SMLog(@"ERROR IN INSERTING %s", err);
             [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryString type:INSERTQUERY];
         }  
-    } 
+    }
+    
+    [appDelegate.dataBase endTransaction];
 }
 
 - (void) insertProductManualBody:(NSString *)manualBody WithId:(NSString *)ManId WithName:(NSString *)ManName
@@ -3299,6 +3324,7 @@ extern void SVMXLog(NSString *format, ...);
     ManName=[ManName stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     NSString *updateString = [NSString stringWithFormat:@"Update trobleshootdata Set productmanbody = '%@' Where prod_manual_Id = '%@' and prod_manual_name = '%@'",manualBody, ManId, ManName];
     
+    [appDelegate.dataBase beginTransaction];
     char *err;
     if (synchronized_sqlite3_exec(appDelegate.db, [updateString UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
@@ -3308,6 +3334,7 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:updateString type:UPDATEQUERY];
 
     }
+    [appDelegate.dataBase endTransaction];
 }
 
 
@@ -3416,6 +3443,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) insertTroubleshootingIntoDB:(NSMutableArray *)troubleshooting
 {
+    [appDelegate.dataBase beginTransaction];
 	//Change for Troubleshooting 22/06/2012
     for ( int i = 0; i < [troubleshooting count]; i++ )
     {
@@ -3437,6 +3465,7 @@ extern void SVMXLog(NSString *format, ...);
 			}
 		}
 		
+        synchronized_sqlite3_finalize(stmt);
 		
 		if ([[dict objectForKey:DOCUMENTS_NAME] isEqualToString:docName])
 		{
@@ -3477,6 +3506,8 @@ extern void SVMXLog(NSString *format, ...);
 		}
 		
 	}
+    
+    [appDelegate.dataBase endTransaction];
     
 }
 
@@ -3732,6 +3763,8 @@ extern void SVMXLog(NSString *format, ...);
                 [objects addObject:[NSString stringWithUTF8String:_objects]];
         }
     }
+    
+    synchronized_sqlite3_finalize(stmt);
     return [objects retain];
 }
 
@@ -3829,7 +3862,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         
     }
-    
+    synchronized_sqlite3_finalize(stmt);
     SMLog(@"%@", records);
     
     return records;
@@ -3867,6 +3900,7 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
 
+    synchronized_sqlite3_finalize(stmt);
     return objectName;
 }
 
@@ -3910,7 +3944,7 @@ extern void SVMXLog(NSString *format, ...);
             [mDict release];
         }
     }
-    
+    synchronized_sqlite3_finalize(stmt);
     SMLog(@"%@", records);
     for( int i=0; i < [records count]; i++)
     {
@@ -4083,6 +4117,8 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
 
+    synchronized_sqlite3_finalize(stmt);
+    
     SMLog(@"%@", SFID);
     for (int i = 0; i < [SFID count]; i++)
     {
@@ -4159,6 +4195,7 @@ extern void SVMXLog(NSString *format, ...);
                 SFID = [NSString stringWithUTF8String:field];
         }
     }
+    synchronized_sqlite3_finalize(stmt);
     return SFID;
 }
 
@@ -4274,6 +4311,7 @@ extern void SVMXLog(NSString *format, ...);
             
         }
     }
+    synchronized_sqlite3_finalize(stmt);
     return Name;
 }
 
@@ -4295,6 +4333,8 @@ extern void SVMXLog(NSString *format, ...);
             
         }
     }
+    
+    synchronized_sqlite3_finalize(stmt);
     return flag;
 }
 
@@ -4335,6 +4375,9 @@ extern void SVMXLog(NSString *format, ...);
             
         }
     }
+    
+    synchronized_sqlite3_finalize(statement);
+    
     return contactImageData;
 }
 
@@ -4359,7 +4402,7 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     data = [Base64 decode:pdfData];
-    
+    synchronized_sqlite3_finalize(statement);
     return data;
 }
 
@@ -4450,6 +4493,8 @@ extern void SVMXLog(NSString *format, ...);
         }
         
     }
+    
+    synchronized_sqlite3_finalize(statement);
     return internetConflict;
 }
 
@@ -4521,7 +4566,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         
     }
-
+    synchronized_sqlite3_finalize(statement);
     return sync_Status;
 }
 
@@ -4564,7 +4609,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         
     }
-	
+	synchronized_sqlite3_finalize(statement);
 	return final_api_name;
 }
 
@@ -4587,7 +4632,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         
     }
-	
+	synchronized_sqlite3_finalize(statement);
 	return value;
 }
 
@@ -4609,7 +4654,7 @@ extern void SVMXLog(NSString *format, ...);
             
         }
     }
-	
+	synchronized_sqlite3_finalize(statement);
 	return Id;
 }
 
@@ -4628,6 +4673,8 @@ extern void SVMXLog(NSString *format, ...);
 			count = synchronized_sqlite3_column_int(statement, 0);
 		}
 	}
+    synchronized_sqlite3_finalize(statement);
+
 	
 	if (count > 0)
 		return TRUE;
@@ -5245,7 +5292,7 @@ extern void SVMXLog(NSString *format, ...);
             }
             
         }
-		sqlite3_finalize(selectStmt);
+		synchronized_sqlite3_finalize(selectStmt);
     }
     return [dataDictionary autorelease];
 }
@@ -5422,7 +5469,7 @@ extern void SVMXLog(NSString *format, ...);
                 
             }
         }
-		sqlite3_finalize(selectStmt);
+		synchronized_sqlite3_finalize(selectStmt);
     }
     return [dataDictionary autorelease];
 }
@@ -5504,7 +5551,7 @@ extern void SVMXLog(NSString *format, ...);
             
             
         }
-		sqlite3_finalize(selectStmt);
+		synchronized_sqlite3_finalize(selectStmt);
     }
     return [dataArray autorelease];
 }
@@ -5555,7 +5602,7 @@ extern void SVMXLog(NSString *format, ...);
             
             
         }
-		sqlite3_finalize(selectStmt);
+		synchronized_sqlite3_finalize(selectStmt);
     }
     return [dataArray autorelease];
     
@@ -5609,7 +5656,7 @@ extern void SVMXLog(NSString *format, ...);
             [dataArray addObject:recordDictionary];
         }
     }
-    sqlite3_finalize(selectStmt);
+    synchronized_sqlite3_finalize(selectStmt);
     return [dataArray autorelease];
 }
 
@@ -5659,7 +5706,7 @@ extern void SVMXLog(NSString *format, ...);
             [dataArray addObject:recordDictionary];
         }
     }
-    sqlite3_finalize(selectStmt);
+    synchronized_sqlite3_finalize(selectStmt);
     return [dataArray autorelease];
 }
 
@@ -5818,7 +5865,7 @@ extern void SVMXLog(NSString *format, ...);
             
         }
     }
-    sqlite3_finalize(selectStmt);
+    synchronized_sqlite3_finalize(selectStmt);
       NSMutableArray *expressionArray = [[NSMutableArray alloc] init];
     if ([expressionDictionary count] > 0) {
         for (int counter = 0; counter < [namedExpressionArray count]; counter++) {
@@ -5932,204 +5979,9 @@ extern void SVMXLog(NSString *format, ...);
             recordDictionary = nil;
         }
     }
-    sqlite3_finalize(selectStmt);
+    synchronized_sqlite3_finalize(selectStmt);
     return [expressionComponents autorelease];
 }
-
-//- (NSArray *)getNamedExpressionsForIds:(NSArray *)namedExpressionArray {
-//
-//    /* Get all SVMXC__Advance_Expression__c expression from  expression ids */
-//
-//    NSMutableArray *finalArray = [[NSMutableArray alloc] init];
-//    for (int counter = 0; counter < [namedExpressionArray count]; counter++) {
-//
-//        NSString *namedExpressionId = [namedExpressionArray objectAtIndex:counter];
-//
-//        NSDictionary *expressionDictionary = [self getexpressionDictionaryForExpressionId:namedExpressionId];
-//        [finalArray addObject:expressionDictionary];
-//    }
-//
-//    return [finalArray autorelease];
-//}
-
-//- (NSDictionary *)getexpressionDictionaryForExpressionId:(NSString *)expressionId {
-//
-//    /* get expression dictionary*/
-//    NSString *sqlQuery = [NSString stringWithFormat:@"select expression from SFExpression where expression_id = '%@'",expressionId];
-//    sqlite3_stmt *selectStmt = nil;
-//
-//    /*get expression array*/
-//    NSString * expression = nil;
-//    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
-//    {
-//        while(sqlite3_step(selectStmt) == SQLITE_ROW) {
-//
-//
-//			char * tempCharString = nil;
-//
-//            tempCharString = (char *)sqlite3_column_text(selectStmt, 0);
-//            if (tempCharString != nil) {
-//                expression = [NSString stringWithUTF8String:tempCharString];
-//
-//            }
-//        }
-//    }
-//    sqlite3_finalize(selectStmt);
-//
-//
-//    /* Get operand information from operation */
-//    NSArray *operandsArray = [self getExpressionComponentsForExpressionId:expressionId andExpression:expression];
-//
-//    NSDictionary *expressionDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:expression,@"expression",expressionId,@"key",operandsArray,@"data", nil];
-//    return [expressionDictionary autorelease];
-//}
-
-
-//- (NSArray *) getExpressionComponentsForExpressionId:(NSString *)expressionId andExpression:(NSString *)expressionName {
-//
-//    NSString  * expression_ = expressionName;
-//    NSString  *SVMXC__Expression_Type__c = @"";
-//
-//    NSString * modified_expr = [expression_ stringByReplacingOccurrencesOfString:@"(" withString:@"#(#"];
-//    modified_expr =   [modified_expr stringByReplacingOccurrencesOfString:@")" withString:@"#)#"];
-//    modified_expr  =  [modified_expr stringByReplacingOccurrencesOfString:@"and" withString:@"#and#"];
-//    modified_expr  =  [modified_expr stringByReplacingOccurrencesOfString:@"AND" withString:@"#AND#"];
-//    modified_expr  =  [modified_expr stringByReplacingOccurrencesOfString:@"OR" withString:@"#OR#"];
-//    modified_expr =   [modified_expr stringByReplacingOccurrencesOfString:@"or" withString:@"#or#"];
-//
-//    NSArray * array = [modified_expr componentsSeparatedByString:@"#"];
-//
-//
-//    NSMutableArray * components = [[NSMutableArray alloc] initWithCapacity:0];
-//    NSMutableArray * operators = [[NSMutableArray alloc] initWithCapacity:0];
-//
-//    NSMutableArray *operandArray = [[NSMutableArray alloc] init];
-//     @try
-//    {
-//
-//        for(int i = 0 ; i < [array count]; i++)
-//        {
-//            NSString * str = [array objectAtIndex:i];
-//            if([str isEqualToString:@"("])
-//            {
-//                [operators addObject:str];
-//            }
-//            else if ([str isEqualToString:@")"])
-//            {
-//                [operators addObject:str];
-//            }
-//            else if([str isEqualToString:@"or"] || [str isEqualToString:@"OR"])
-//            {
-//                [operators addObject:str];
-//            }
-//            else if([str isEqualToString:@"and"] || [str isEqualToString:@"AND"])
-//            {
-//                [operators addObject:str];
-//            }
-//            else if([str length] == 0)
-//            {
-//
-//            }
-//            else
-//            {
-//                str = [str  stringByReplacingOccurrencesOfString:@" " withString:@""];
-//
-//                BOOL flag = FALSE;
-//
-//                for(int k=0 ;k< [components count]; k++)
-//                {
-//                    if([[components objectAtIndex:k] isEqualToString:str])
-//                    {
-//                        flag = TRUE;
-//                        break;
-//                    }
-//                }
-//                if(flag)
-//                {
-//
-//                }
-//                else
-//                {
-//                    [components addObject:str];
-//                }
-//            }
-//        }
-//
-//       for(int j = 0 ; j<[components count]; j++)
-//        {
-//            NSString * component_number = [components objectAtIndex:j];
-//            int f = [component_number intValue];
-//            NSString * appended_component_number = [NSString stringWithFormat:@"%d.0000",f];
-//
-//
-//            NSString * sqlQuery = [NSString stringWithFormat:@"SELECT component_lhs , component_rhs , operator  FROM '%@' where expression_id = '%@'  and component_sequence_number = '%@'",SFEXPRESSION_COMPONENT, expressionId ,appended_component_number];
-//
-//            sqlite3_stmt * selectStmt = nil;
-//
-//            NSString *componentLhs = nil,*componentRhs = nil,*componentOperator = nil;
-//            NSMutableDictionary *recordDictionary = [[NSMutableDictionary alloc] init];
-//
-//            if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK)
-//            {
-//                while (sqlite3_step(selectStmt)  == SQLITE_ROW)
-//                {
-//
-//                    char * lhs = (char *)sqlite3_column_text(selectStmt, 0);
-//                    if(lhs != nil)
-//                    {
-//                        componentLhs = [NSString stringWithUTF8String:lhs];
-//                    }
-//
-//                    char * rhs = (char *)sqlite3_column_text(selectStmt, 1);
-//                    if(rhs != nil)
-//                    {
-//                        componentRhs = [NSString stringWithUTF8String:rhs];
-//                    }
-//
-//                    char * operator = (char *)sqlite3_column_text(selectStmt, 2);
-//                    if(operator != nil)
-//                    {
-//                        componentOperator = [NSString stringWithUTF8String:operator];
-//                    }
-//                }
-//
-//                if (componentLhs != nil) {
-//                    [recordDictionary setObject:componentLhs forKey:@"SVMXC__Field_Name__c"];
-//                }
-//                if (componentRhs != nil) {
-//                    [recordDictionary setObject:componentRhs forKey:@"SVMXC__Operand__c"];
-//                }
-//                if (componentOperator != nil) {
-//                    [recordDictionary setObject:componentOperator forKey:@"SVMXC__Operator__c"];
-//                }
-//                if (appended_component_number != nil) {
-//                    [recordDictionary setObject:appended_component_number forKey:@"SVMXC__Sequence__c"];
-//                }
-//                if (SVMXC__Expression_Type__c != nil) {
-//                    [recordDictionary setObject:SVMXC__Expression_Type__c forKey:@"SVMXC__Expression_Type__c"];
-//                }
-//                if (expressionId != nil) {
-//                    [recordDictionary setObject:expressionId forKey:@"SVMXC__Expression_Rule__c"];
-//                }
-//                [operandArray addObject:recordDictionary];
-//            }
-//            sqlite3_finalize(selectStmt);
-//            [recordDictionary release];
-//            recordDictionary =nil;
-//        }
-//        [components release];
-//        components = nil;
-//        [operators release];
-//        operators = nil;
-//
-//    }@catch (NSException *exp) {
-//        SMLog(@"Exception Name Database :queryForExpressionComponent %@",exp.name);
-//        SMLog(@"Exception Reason Database :queryForExpressionComponent %@",exp.reason);
-//        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
-//    }
-//
-//    return [operandArray autorelease];
-//}
 
 - (NSArray *)getLookUpDefinition:(NSDictionary *)workOrderData {
     
@@ -6240,7 +6092,7 @@ extern void SVMXLog(NSString *format, ...);
         
         
     }
-    sqlite3_finalize(selectStmt);
+    synchronized_sqlite3_finalize(selectStmt);
     return [recordDictionary autorelease];
 }
 - (NSString *)parentColumnNameFor:(NSString *)tableName {
@@ -6270,7 +6122,7 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
-    sqlite3_finalize(selectStmt);
+    synchronized_sqlite3_finalize(selectStmt);
     return nameValue;
 }
 
@@ -6306,7 +6158,7 @@ extern void SVMXLog(NSString *format, ...);
             
         }
     }
-    sqlite3_finalize(selectStmt);
+    synchronized_sqlite3_finalize(selectStmt);
     if (sfId != nil) {
         return [NSDictionary dictionaryWithObjectsAndKeys:nameValue,sfId,nil];
     }
@@ -6415,7 +6267,7 @@ extern void SVMXLog(NSString *format, ...);
         }
 		
     }
-    sqlite3_finalize(selectStmt);
+    synchronized_sqlite3_finalize(selectStmt);
     [sqlQuery release];
     sqlQuery = nil;
     
@@ -6526,7 +6378,7 @@ extern void SVMXLog(NSString *format, ...);
         }
 		
     }
-    sqlite3_finalize(selectStmt);
+    synchronized_sqlite3_finalize(selectStmt);
     [sqlQuery release];
     sqlQuery = nil;
     
@@ -6722,7 +6574,7 @@ extern void SVMXLog(NSString *format, ...);
             break;
         }
     }
-    sqlite3_finalize(stmt);
+    synchronized_sqlite3_finalize(stmt);
     
     return [dict autorelease];
     
@@ -6755,7 +6607,7 @@ extern void SVMXLog(NSString *format, ...);
             break;
         }
     }
-    sqlite3_finalize(stmt);
+    synchronized_sqlite3_finalize(stmt);
     
     return [dict autorelease];
     
@@ -6777,7 +6629,7 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
-    sqlite3_finalize(stmt);
+    synchronized_sqlite3_finalize(stmt);
     
     return SVMXC__Code_Snippet_Manifest__c;
 }
@@ -6800,7 +6652,7 @@ extern void SVMXLog(NSString *format, ...);
             
         }
     }
-    sqlite3_finalize(stmt);
+    synchronized_sqlite3_finalize(stmt);
     
     return [dict autorelease];
 }
@@ -6843,7 +6695,7 @@ extern void SVMXLog(NSString *format, ...);
             dict = nil;
         }
     }
-    sqlite3_finalize(stmt);
+    synchronized_sqlite3_finalize(stmt);
     
     return [tagsArray autorelease];
 }
@@ -6867,7 +6719,7 @@ extern void SVMXLog(NSString *format, ...);
             }            
         }
     }
-    sqlite3_finalize(stmt);
+    synchronized_sqlite3_finalize(stmt);
     return fieldId;
 }
 
@@ -6917,7 +6769,7 @@ extern void SVMXLog(NSString *format, ...);
             counter = sqlite3_column_int(selectStmt, 0);
         }
     }
-    sqlite3_finalize(selectStmt);
+    synchronized_sqlite3_finalize(selectStmt);
     return counter;
 }
 
@@ -6936,7 +6788,7 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
-    sqlite3_finalize(stmt);
+    synchronized_sqlite3_finalize(stmt);
     return fieldId;
     
 }
@@ -6979,13 +6831,13 @@ extern void SVMXLog(NSString *format, ...);
                 NSString *priceValue = [NSString stringWithUTF8String:fieldValue];
                 if (![Utility isStringEmpty:priceValue]) {
                     
-                    sqlite3_finalize(stmt);
+                    synchronized_sqlite3_finalize(stmt);
                     return YES;
                 }
             }
         }
     }
-    sqlite3_finalize(stmt);
+    synchronized_sqlite3_finalize(stmt);
     return NO;
 }
 

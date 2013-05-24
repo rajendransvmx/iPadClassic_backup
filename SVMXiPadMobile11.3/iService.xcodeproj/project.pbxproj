@@ -673,6 +673,8 @@
 		A837EC7D170D4DF400229855 /* ItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = A837EC7C170D4DCA00229855 /* ItemView.m */; };
 		A837EC7E170D4DF700229855 /* Item.m in Sources */ = {isa = PBXBuildFile; fileRef = A837EC7A170D4DCA00229855 /* Item.m */; };
 		A837EC7F170D4DF900229855 /* GridViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A837EC78170D4DCA00229855 /* GridViewCell.m */; };
+		A83F22BF174E48410024466E /* PerformanceAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = A83F22BC174E48410024466E /* PerformanceAnalytics.m */; };
+		A83F22C0174E48410024466E /* Util.m in Sources */ = {isa = PBXBuildFile; fileRef = A83F22BE174E48410024466E /* Util.m */; };
 		A895DA4115A2CB710083204F /* sync-getOnline.png in Resources */ = {isa = PBXBuildFile; fileRef = A895DA3E15A2CB710083204F /* sync-getOnline.png */; };
 		A895DA4215A2CB710083204F /* sync-hold.png in Resources */ = {isa = PBXBuildFile; fileRef = A895DA3F15A2CB710083204F /* sync-hold.png */; };
 		A895DA4315A2CB710083204F /* sync-retry.png in Resources */ = {isa = PBXBuildFile; fileRef = A895DA4015A2CB710083204F /* sync-retry.png */; };
@@ -2293,6 +2295,10 @@
 		A837EC7A170D4DCA00229855 /* Item.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Item.m; sourceTree = "<group>"; };
 		A837EC7B170D4DCA00229855 /* ItemView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ItemView.h; sourceTree = "<group>"; };
 		A837EC7C170D4DCA00229855 /* ItemView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ItemView.m; sourceTree = "<group>"; };
+		A83F22BB174E48410024466E /* PerformanceAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceAnalytics.h; sourceTree = "<group>"; };
+		A83F22BC174E48410024466E /* PerformanceAnalytics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PerformanceAnalytics.m; sourceTree = "<group>"; };
+		A83F22BD174E48410024466E /* Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Util.h; sourceTree = "<group>"; };
+		A83F22BE174E48410024466E /* Util.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Util.m; sourceTree = "<group>"; };
 		A895DA3E15A2CB710083204F /* sync-getOnline.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sync-getOnline.png"; sourceTree = "<group>"; };
 		A895DA3F15A2CB710083204F /* sync-hold.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sync-hold.png"; sourceTree = "<group>"; };
 		A895DA4015A2CB710083204F /* sync-retry.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sync-retry.png"; sourceTree = "<group>"; };
@@ -5438,6 +5444,10 @@
 		A8DB1CF716E0B586007D1A4F /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				A83F22BB174E48410024466E /* PerformanceAnalytics.h */,
+				A83F22BC174E48410024466E /* PerformanceAnalytics.m */,
+				A83F22BD174E48410024466E /* Util.h */,
+				A83F22BE174E48410024466E /* Util.m */,
 				A8DB1CF816E0B586007D1A4F /* Utility.h */,
 				A8DB1CF916E0B586007D1A4F /* Utility.m */,
 			);
@@ -8394,6 +8404,8 @@
 				AC1BF8B8171C395500F0EA14 /* SyncProgressBar.m in Sources */,
 				AC89129E173A8B1300061C14 /* OAuthClientInterface.m in Sources */,
 				ACFEC5E9174A1803000D5299 /* OAuthController.m in Sources */,
+				A83F22BF174E48410024466E /* PerformanceAnalytics.m in Sources */,
+				A83F22C0174E48410024466E /* Util.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

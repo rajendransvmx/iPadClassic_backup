@@ -16,6 +16,10 @@
 #import "NSObject+SBJson.h"
 #import "Utility.h"
 
+// Vipin-db-optmz
+#import "PerformanceAnalytics.h"
+
+
 extern void SVMXLog(NSString *format, ...);
 
 @implementation databaseIntefaceSfm
@@ -26,9 +30,27 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize parentobjectDictionary;
 @synthesize parentColumnDictionary;
 
+// Vipind-db-optmz
+@synthesize apiNameToInsertionQueryDictionary;
+@synthesize fieldDataTypeDictionary;
+@synthesize childInfoDictionary;
+
+
 - (void)dealloc {
     [objectFieldDictionary release];
     objectFieldDictionary = nil;
+    
+    // Vipin-db-optmz
+    [apiNameToInsertionQueryDictionary release];
+    apiNameToInsertionQueryDictionary = nil;
+    
+    [fieldDataTypeDictionary release];
+    fieldDataTypeDictionary = nil;
+    
+    [childInfoDictionary release];
+    childInfoDictionary = nil;
+    
+    
     [localIdOfFutureMasterRecords release];
     localIdOfFutureMasterRecords = nil;
     [parentobjectDictionary release];
@@ -54,6 +76,7 @@ extern void SVMXLog(NSString *format, ...);
     NSString * sql = [NSString stringWithFormat:@"SELECT process_info FROM SFProcess where process_id = '%@'",Process_id];
 
     sqlite3_stmt * stmt;
+    NSMutableDictionary * dict = nil;
     
     if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sql UTF8String], -1, &stmt, nil) == SQLITE_OK  )
     {
@@ -78,16 +101,15 @@ extern void SVMXLog(NSString *format, ...);
             {
                 SMLog(@"No error creating XML data.");
                 [propertyList writeToFile:filePath atomically:YES];
-                NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithContentsOfFile:filePath];
-	synchronized_sqlite3_finalize(stmt);
-                return dict;
-
+                dict = [NSMutableDictionary dictionaryWithContentsOfFile:filePath];
+                
+                break;
             }
         }
     }
-    
+    // Vipind-db-optmz
     synchronized_sqlite3_finalize(stmt);
-    return nil;
+    return dict;
     
 }
 
@@ -582,6 +604,34 @@ extern void SVMXLog(NSString *format, ...);
 -(NSString *)getFieldDataType:(NSString *)objectName filedName:(NSString *)fieldName 
 {
     NSString * datatype = @"";
+   
+    // Vipind-db-optmz
+    NSString *cacheKey = [NSString stringWithFormat:@"%@_%@", objectName, fieldName];
+    
+    if (self.fieldDataTypeDictionary == nil)
+    {
+        NSMutableDictionary *tempDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
+        self.fieldDataTypeDictionary = tempDictionary;
+        [tempDictionary  release];
+    }
+    else
+    {
+        datatype = [self.fieldDataTypeDictionary objectForKey:cacheKey];
+    }
+    
+    // Just got it from cache, lets go back
+    if (datatype != nil)
+    {
+        NSLog(@" Go it from cache fieldDataTypeDictionary  %@ -> %@ ", cacheKey,  datatype);
+        return datatype;
+    }
+    
+    // Use cache here...
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"getFieldDataType"
+                                                         andRecordCount:1];
+    
+    
     NSString * query = [NSString stringWithFormat:@"SELECT type FROM '%@' where object_api_name = '%@' and api_name = '%@'" ,SFOBJECTFIELD,objectName,fieldName];
     
     sqlite3_stmt * stmt ;
@@ -599,6 +649,25 @@ extern void SVMXLog(NSString *format, ...);
     }
 
     synchronized_sqlite3_finalize(stmt);
+    
+    if ( (datatype != nil)
+        && (self.fieldDataTypeDictionary != nil)
+        && (cacheKey != nil))
+    {
+        // Stored in cache
+        NSLog(@" Storing in cache fieldDataTypeDictionary  %@  > %@ ", cacheKey,  datatype);
+        if ([self.fieldDataTypeDictionary count] > 100)
+        {
+            // Clear all objects it is exceeding the limit
+            [self.fieldDataTypeDictionary removeAllObjects];
+        }
+        
+        [self.fieldDataTypeDictionary setObject:datatype forKey:cacheKey];
+    }
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"getFieldDataType"
+                                                                      andRecordCount:0];
     return datatype;
 }
 
@@ -634,6 +703,12 @@ extern void SVMXLog(NSString *format, ...);
     {
         return keyPrefixValue;
     }
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"getTheObjectApiNameForThePrefix"
+                                                         andRecordCount:1];
+    
+    
     NSString * query = [NSString stringWithFormat:@"SELECT api_name FROM '%@' where key_prefix = '%@'",tableName,keyPrefix];
     sqlite3_stmt * stmt ;
     if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK  )
@@ -648,11 +723,21 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     synchronized_sqlite3_finalize(stmt);
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"getTheObjectApiNameForThePrefix"
+                                                                      andRecordCount:0];
+    
     return keyPrefixValue;
 }
 
 -(NSString *)getFieldNameForReferenceTable:(NSString *)referedToTableName  tableName:(NSString *)tableName
 {
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"getFieldNameForReferenceTable"
+                                                         andRecordCount:1];
+    
+    
     NSString * fieldName = @"";
     NSString * query = [NSString stringWithFormat:@"SELECT api_name FROM '%@' where object_api_name = '%@' and name_field = 'TRUE'",tableName,referedToTableName];
     sqlite3_stmt * stmt ;
@@ -668,6 +753,12 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     synchronized_sqlite3_finalize(stmt);
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"getFieldNameForReferenceTable"
+                                                                      andRecordCount:0];
+    
+    
     return fieldName;
     
 }
@@ -739,6 +830,10 @@ extern void SVMXLog(NSString *format, ...);
 //get the work order name like WO -000000020
 -(NSString *) getObjectName: (NSString *) tablename recordId:(NSString *)recordId;
 {
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"getObjectName"
+                                                         andRecordCount:1];
+    
 	//Fix for the defect : #6238
 	NSString * nameField = [appDelegate.databaseInterface getFieldNameForReferenceTable:tablename tableName:SFOBJECTFIELD];
     NSString * fieldName = @"";
@@ -764,6 +859,12 @@ extern void SVMXLog(NSString *format, ...);
         }
         synchronized_sqlite3_finalize(stmt);
     }
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"getObjectName"
+                                                                      andRecordCount:0];
+    
+    
     return fieldName;
 
 }
@@ -771,6 +872,11 @@ extern void SVMXLog(NSString *format, ...);
 // Get the child parent column name in child relationship table
 -(NSString *)getParentColumnNameFormChildInfoTable:(NSString *)tableName  childApiName:(NSString *)objectApiNameChild parentApiName:(NSString *)objectApiNameParent
 {
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"getParentColumnNameFormChildInfoTable"
+                                                         andRecordCount:1];
+    
     NSString * fieldName = @"";
     if(objectApiNameChild != nil && objectApiNameParent != nil)
     {
@@ -789,6 +895,11 @@ extern void SVMXLog(NSString *format, ...);
         }
         synchronized_sqlite3_finalize(stmt);
     }
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"getParentColumnNameFormChildInfoTable"
+                                                                      andRecordCount:0];
+    
     
     return fieldName;
 }
@@ -1082,6 +1193,10 @@ extern void SVMXLog(NSString *format, ...);
 
 -(NSString *)getLocalIdFromSFId:(NSString *)recordId  tableName:(NSString *)tableName
 {
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"getLocalIdFromSFId"
+                                                         andRecordCount:1];
+    
     NSString * local_id = @"" ;
     if(tableName != nil && recordId != nil)
     {
@@ -1104,6 +1219,11 @@ extern void SVMXLog(NSString *format, ...);
         
         synchronized_sqlite3_finalize(stmt);
     }
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"getLocalIdFromSFId"
+                                                                      andRecordCount:0];
+    
     
     return local_id;
 }
@@ -1687,6 +1807,7 @@ extern void SVMXLog(NSString *format, ...);
 				}
 			}
 			
+            sqlite3_finalize(stmt);
 		}
 	}
     
@@ -1695,7 +1816,10 @@ extern void SVMXLog(NSString *format, ...);
 
 -(BOOL)insertdataIntoTable:(NSString *)tableName data:(NSMutableDictionary *)valuesDict
 {
-    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"insertdataIntoTable"
+                                                         andRecordCount:1];
+        
     NSAutoreleasePool * autorelease_pool = [[NSAutoreleasePool alloc] init];
     BOOL success;
     NSArray * fields_array = [valuesDict allKeys];
@@ -1746,35 +1870,62 @@ extern void SVMXLog(NSString *format, ...);
     else
         insert_statement = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' DEFAULT VALUES",tableName ];
     
-    char * err;
-      
-    if(synchronized_sqlite3_exec(appDelegate.db, [insert_statement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+
+    // Vipin-db-optmz
+    
+    sqlite3_stmt * bulk_statement = nil;
+    
+    int prepare = sqlite3_prepare_v2(appDelegate.db, [insert_statement UTF8String], strlen([insert_statement UTF8String]), &bulk_statement, NULL);
+    
+    [appDelegate.dataBase beginTransaction];
+    
+    // Good prepare statement
+    if (prepare == SQLITE_OK)
     {
-        SMLog(@"%@", insert_statement);
-		SMLog(@"METHOD: insertdataIntoTable");
-        SMLog(@"ERROR IN INSERTING %s", err);
-        success = FALSE;
-        if([tableName isEqualToString:@"Event"])
+        if (synchronized_sqlite3_step(bulk_statement) != SQLITE_DONE)
         {
-            NSString * startDateTime = [valuesDict objectForKey:@"StartDateTime"];
-            NSString * enddatetime = [valuesDict objectForKey:@"EndDateTime"];
-            NSString * local_id = [valuesDict objectForKey:@"local_id"];
-            NSString * overlappingEvent = [appDelegate.databaseInterface getallOverLappingEventsForStartDateTime:startDateTime EndDateTime:enddatetime local_id:local_id];
-            [self insertIntoEventsLocal_ids:local_id fromEvent_temp_table:Event_local_Ids];
-            [databaseInterfaceDelegate displayALertViewinSFMDetailview:overlappingEvent];
+            SMLog(@"%@", insert_statement);
+            NSLog(@"Failure insertdataIntoTable - insert_statement => %@", insert_statement);
+            
+            if([tableName isEqualToString:@"Event"])
+            {
+                NSString * startDateTime = [valuesDict objectForKey:@"StartDateTime"];
+                NSString * enddatetime = [valuesDict objectForKey:@"EndDateTime"];
+                NSString * local_id = [valuesDict objectForKey:@"local_id"];
+                NSString * overlappingEvent = [appDelegate.databaseInterface getallOverLappingEventsForStartDateTime:startDateTime
+                                                                                                         EndDateTime:enddatetime
+                                                                                                            local_id:local_id];
+                [self insertIntoEventsLocal_ids:local_id fromEvent_temp_table:Event_local_Ids];
+                [databaseInterfaceDelegate displayALertViewinSFMDetailview:overlappingEvent];
+            }
         }
-//        else
-//        {
-//            [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:insert_statement type:INSERTQUERY];
-//        }
+        else
+        {
+            success = TRUE;
+            [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:1];
+            NSLog(@"Success insertdataIntoTable insert_statement");
+        }
         
+        sqlite3_clear_bindings(bulk_statement);
+        sqlite3_reset(bulk_statement);
+        synchronized_sqlite3_finalize(bulk_statement);
     }
     else
     {
-        success = TRUE;
+        NSLog(@"Failure prepare insertdataIntoTable - insert_statement => %@", insert_statement);
     }
+    
+    [appDelegate.dataBase endTransaction];
+
+    
    
     [autorelease_pool release];
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"insertdataIntoTable"
+                                                                      andRecordCount:0];
+    
+    
     return success;
 }
 
@@ -1841,6 +1992,7 @@ extern void SVMXLog(NSString *format, ...);
 		}
 	}
 	
+    synchronized_sqlite3_finalize(stmt);
 	query = @"";
 	stmt = nil;
 	
@@ -1851,9 +2003,8 @@ extern void SVMXLog(NSString *format, ...);
     }
 	else
 	{
-        query = [NSString stringWithFormat:@"SELECT Id , %@ FROM '%@' LIMIT %d",@"Name" , object_name, no_of_records];
+        query = [NSString stringWithFormat:@"SELECT Id , %@ FROM '%@'",@"Name" , object_name];
     }
-    
     
     NSString * Id = @"";
     NSString * field_value = @"";
@@ -2074,7 +2225,7 @@ extern void SVMXLog(NSString *format, ...);
         NSString * field_type = @"";
         NSString * field_relationShip_name = @"";
         sqlite3_stmt * stmt;
-        if(synchronized_sqlite3_prepare_v2(appDelegate.db, [querystring1 UTF8String], -1, &stmt, nil) == SQLITE_OK  ) 
+        if(synchronized_sqlite3_prepare_v2(appDelegate.db, [querystring1 UTF8String], -1, &stmt, nil) == SQLITE_OK  )
         {
             while(synchronized_sqlite3_step(stmt) == SQLITE_ROW) 
             {
@@ -2124,6 +2275,8 @@ extern void SVMXLog(NSString *format, ...);
                 }
             }
         }
+        
+        synchronized_sqlite3_finalize(stmt);
         
         [results_array addObject:@"Id"];
         NSMutableString *result_fieldNames = [[NSMutableString alloc]initWithCapacity:0];
@@ -2238,8 +2391,8 @@ extern void SVMXLog(NSString *format, ...);
                 [subdataArray release];
                 
             }
-            
         }
+        synchronized_sqlite3_finalize(stmt);
         
         for (int i = 0; i < [each_record count] ; i++) 
         {
@@ -3544,6 +3697,7 @@ extern void SVMXLog(NSString *format, ...);
             
         }
     }
+    synchronized_sqlite3_finalize(statement);
     return id_value;
 }
 
@@ -3595,11 +3749,19 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
+    
+    synchronized_sqlite3_finalize(stmt);
+    
     return process_Type;
 }
 
 -(BOOL)UpdateTableforId:(NSString *)local_id  forObject:(NSString *)objectName  data:(NSDictionary *)dict;
 {
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"UpdateTableforId"
+                                                         andRecordCount:0];
+    
+    
     BOOL success = FALSE;
     NSArray * allkeys = [dict allKeys];
     NSMutableString *  updateValue = [[NSMutableString alloc] initWithCapacity:0];
@@ -3647,13 +3809,23 @@ extern void SVMXLog(NSString *format, ...);
     
     if([updateValue length] != 0 && local_id != nil && [local_id length] != 0 )
         update_statement = [NSString stringWithFormat:@"UPDATE %@ SET %@ WHERE local_id = '%@'",objectName ,updateValue,local_id];
-    else if ( local_id != nil && [local_id length] != 0)
+    else if ( local_id != nil && [local_id length] != 0){
+        
+        // Vipin-db-optmz
+        [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"UpdateTableforId"
+                                                                          andRecordCount:0];
+        
         return FALSE;
-    else
+    }
+    else {
+        // Vipin-db-optmz
+        [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"UpdateTableforId"
+                                                                          andRecordCount:0];
         return TRUE;
+    }
     
     char * err;
-    
+    [appDelegate.dataBase beginTransaction];
     if(synchronized_sqlite3_exec(appDelegate.db, [update_statement UTF8String],NULL, NULL, &err) != SQLITE_OK)
     {
         success = FALSE;
@@ -3675,7 +3847,13 @@ extern void SVMXLog(NSString *format, ...);
     else
     {
         success = TRUE;
+        [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:1];
     }
+    
+    [appDelegate.dataBase endTransaction];
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"UpdateTableforId"
+                                                                      andRecordCount:1];
     
     return success;
 }
@@ -3683,6 +3861,12 @@ extern void SVMXLog(NSString *format, ...);
 
 -(BOOL)UpdateTableforSFId:(NSString *)sf_id  forObject:(NSString *)objectName  data:(NSDictionary *)dict1
 {
+    NSLog(@" it is missing ..... UpdateTableforSFId ");
+    
+    // Vipin-db-optmz  Chance here done
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"UpdateTableforSFId"
+                                                         andRecordCount:1];
+    
     
 	NSMutableDictionary * dict = [self updateEmptyFieldValuesForDict:dict1 objectName:objectName];
     NSString *  parent_column_name = [self getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectName field_name:@"parent_column_name"];
@@ -3691,6 +3875,7 @@ extern void SVMXLog(NSString *format, ...);
 	{
 		[dict removeObjectForKey:parent_column_name];
 	}
+    
 	BOOL success = FALSE;
     NSArray * allkeys = [dict allKeys];
     NSMutableString *  updateValue = [[[NSMutableString alloc] initWithCapacity:0] autorelease]; // sahana sep 13th
@@ -3740,31 +3925,67 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:LOCAL_EVENT_UPDATE];
     }
     
+     [appDelegate.dataBase beginTransaction];
+    
     NSString * update_statement;
-    if([updateValue length] != 0 && sf_id != nil && [sf_id length] != 0 )
-        update_statement = [NSString stringWithFormat:@"UPDATE %@ SET %@ WHERE Id = '%@'",objectName ,updateValue,sf_id];
+    
+    sqlite3_stmt * statement;
+    
+    if ( ([updateValue length] != 0)
+        && (sf_id != nil)
+        && ([sf_id length] != 0 ) )
+    {
+        
+        update_statement = [NSString stringWithFormat:@"UPDATE %@ SET %@ WHERE Id = ?", objectName, updateValue];
+        
+        int ret_val = sqlite3_prepare_v2(appDelegate.db, [update_statement UTF8String], strlen([update_statement UTF8String]),  &statement, NULL);
+        
+        // Good prepare statement
+        if (ret_val == SQLITE_OK)
+        {
+            char * _sf_id = [appDelegate convertStringIntoChar:sf_id];
+            sqlite3_bind_text(statement, 1, _sf_id, strlen(_sf_id), SQLITE_TRANSIENT);
+            
+            
+            if (synchronized_sqlite3_step(statement) != SQLITE_DONE)
+            {
+                SMLog(@"%@", update_statement);
+                NSLog(@"Failure UpdateTableforSFId - updateStatement => %@", update_statement);
+                success = FALSE;
+            }
+            else
+            {
+                // NSLog(@"Success updateParentColumnNameInChildTableWithParentLocalId - updateStatement => %@", updateStatement);
+                success = TRUE;
+            }
+            
+            sqlite3_clear_bindings(statement);
+            sqlite3_reset(statement);
+            synchronized_sqlite3_finalize(statement);
+        }
+        else
+        {
+            NSLog(@"Failure prepare UpdateTableforSFId - updateStatement => %@", update_statement);
+            success = FALSE;
+        }
+    }
     else if ( sf_id != nil && [sf_id length] != 0)
-        return FALSE;
-    else
-        return TRUE;
-    
-    char * err;
-    
-    if(synchronized_sqlite3_exec(appDelegate.db, [update_statement UTF8String],NULL, NULL, &err) != SQLITE_OK)
     {
         success = FALSE;
-        
-		SMLog(@"%@", update_statement);
-		SMLog(@"METHOD:UpdateTableforSFId " );
-		SMLog(@"ERROR IN UPDATING %s", err);
-        /*
-        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:update_statement type:UPDATEQUERY];
-         */
     }
     else
     {
         success = TRUE;
     }
+    
+    [appDelegate.dataBase endTransaction];
+    
+    [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:1];
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"UpdateTableforSFId"
+                                                                      andRecordCount:0];
+    
+    
     
     return success;
 }
@@ -3772,7 +3993,21 @@ extern void SVMXLog(NSString *format, ...);
 #pragma mark - updateNullValue
 - (NSMutableDictionary *) updateEmptyFieldValuesForDict:(NSDictionary *)dict objectName:(NSString *)objectName
 {
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"updateEmptyFieldValuesForDict"
+                                                         andRecordCount:1];
+    
+    
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"getAllObjectFields-1"
+                                                         andRecordCount:1];
+    
+    
 	NSMutableDictionary * allFieldsDict = [self getAllObjectFields:objectName tableName:@"SFObjectField"];
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"getAllObjectFields-1"
+                                                                      andRecordCount:0];
+    
 	
 	NSArray * allfield = [allFieldsDict allKeys];
 	NSMutableArray * valueFields =  (NSMutableArray*)[dict allKeys];
@@ -3791,7 +4026,10 @@ extern void SVMXLog(NSString *format, ...);
 		}
 		
 	}
-	
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"updateEmptyFieldValuesForDict"
+                                                                      andRecordCount:0];
 	return mDict;
 }
 
@@ -3813,6 +4051,9 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
+    
+    synchronized_sqlite3_finalize(stmt);
+    
     return name;
 }
 
@@ -3837,6 +4078,8 @@ extern void SVMXLog(NSString *format, ...);
             [Objects_Array addObject:object_name_temp];
         }
     }
+    
+    synchronized_sqlite3_finalize(stmt_);
     
     [query_ release];
     for(NSString * obj in Objects_Array)
@@ -3886,6 +4129,7 @@ extern void SVMXLog(NSString *format, ...);
                 }
             }
         }
+        synchronized_sqlite3_finalize(stmt);
         [query release];
     }
     
@@ -3893,66 +4137,110 @@ extern void SVMXLog(NSString *format, ...);
     return dict;
 }
 
+// Vipin-db-optmz
 -(void)updateAllRecordsToSyncRecordsHeap:(NSMutableDictionary *)sync_data
 {
-   
+    // Vipin-db-optmz
     SMLog(@"  updateAllRecordsToSyncRecordsHeap Processing starts: %@  for count %d", [NSDate date],[sync_data count]);
+    NSLog(@"  updateAllRecordsToSyncRecordsHeap Processing starts: %@  for count %d", [NSDate date],[sync_data count]);
+    
     sync_data = [sync_data retain];
     NSArray * all_objects = [sync_data allKeys];
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"updateAllRecordsToSyncRecordsHeap"
+                                                         andRecordCount:[all_objects count]];
+    
+    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+    
+    sqlite3_stmt * bulkStmt;
+    [appDelegate.dataBase beginTransaction];
+    
     @try{
-    for(NSString * object_name in  all_objects)
-    {
-        NSMutableArray *  object_info = [sync_data objectForKey:object_name];
-        SMLog(@" no of records %d", [object_info count]);
-      
-        for (int i = 0 ; i < [object_info count]; i++) 
+        
+        NSString * sf_id = @"", *json_record = @"";
+        NSString * update_query = [NSString stringWithFormat:@"UPDATE '%@' SET  json_record = ?1 , sync_flag = 'true' WHERE sf_id = ?2 ", SYNC_RECORD_HEAP];
+        
+        
+        int ret_val = synchronized_sqlite3_prepare_v2(appDelegate.db, [update_query UTF8String], strlen([update_query UTF8String]),  &bulkStmt, NULL);
+        
+        if (ret_val == SQLITE_OK)
         {
-            NSAutoreleasePool * autorelease = [[NSAutoreleasePool alloc] init];
-            NSDictionary * dict = [ object_info objectAtIndex:i];
-            NSArray * all_keys = [dict allKeys];
-            NSString * sf_id = @"", * local_id = @"", *json_record = @"";
-            for(NSString * key in all_keys)
+            for(NSString * object_name in  all_objects)
             {
-                // @"LOCAL_ID",@"JSON_RECORD",@"SF_ID",
-                if([key isEqualToString:@"LOCAL_ID"])
+                NSMutableArray *  object_info = [sync_data objectForKey:object_name];
+                SMLog(@" no of records %d", [object_info count]);
+                
+                // Vipin-db-optmz - 2.0
+                [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"updateAllRecordsToSyncRecordsHeap-Ext"
+                                                                     andRecordCount:[object_info count]];
+                for (int i = 0 ; i < [object_info count]; i++)
                 {
-                    local_id = [dict objectForKey:@"LOCAL_ID"];
+                    NSDictionary * dict = [ object_info objectAtIndex:i];
+                    NSArray * all_keys = [dict allKeys];
+                    
+                    for(NSString * key in all_keys)
+                    {
+                        // @"LOCAL_ID",@"JSON_RECORD",@"SF_ID",
+                        if([key isEqualToString:@"JSON_RECORD"])
+                        {
+                            json_record = [dict objectForKey:@"JSON_RECORD"];
+                            char * _json_record = [appDelegate convertStringIntoChar:json_record];
+                            sqlite3_bind_text(bulkStmt, 1, _json_record, strlen(_json_record), SQLITE_TRANSIENT);
+                            
+                        }
+                        else if ([key isEqualToString:@"SF_ID"])
+                        {
+                            sf_id = [dict objectForKey:@"SF_ID"];
+                            char * _sf_id = [appDelegate convertStringIntoChar:sf_id];
+                            sqlite3_bind_text(bulkStmt, 2, _sf_id, strlen(_sf_id), SQLITE_TRANSIENT);
+                        }
+                    }
+                    
+                    if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
+                    {
+                        SMLog(@"%@", update_query);
+                        SMLog(@"METHOD:updateAllRecordsToSyncRecordsHeap " ); //RADHA TODAY
+                        
+                        NSLog(@"Failure updateAllRecordsToSyncRecordsHeap - update_query => %@", update_query);
+                        NSLog(@"updateAllRecordsToSyncRecordsHeap " ); //RADHA TODAY
+                    } else
+                    {
+                        //NSLog(@"Success updateAllRecordsToSyncRecordsHeap - update_query => %@", update_query);
+                    }
+                    
+                    sqlite3_clear_bindings(bulkStmt);
+                    sqlite3_reset(bulkStmt);
                 }
-                else if([key isEqualToString:@"JSON_RECORD"])
-                {
-                    json_record = [dict objectForKey:@"JSON_RECORD"];
-                }
-                else if ([key isEqualToString:@"SF_ID"])
-                {
-                    sf_id = [dict objectForKey:@"SF_ID"];
-                }
+                
+                // Vipin-db-optmz - 2.0
+                [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"updateAllRecordsToSyncRecordsHeap-Ext"
+                                                                                  andRecordCount:0];
+                [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:[object_info count]];
             }
-            
-            NSString * update_query = [NSString stringWithFormat:@"UPDATE '%@' SET  json_record = '%@' , sync_flag = 'true' WHERE sf_id = '%@' ", SYNC_RECORD_HEAP, json_record , sf_id];
-            
-            char * err;
-            
-            if(synchronized_sqlite3_exec(appDelegate.db, [update_query UTF8String],NULL, NULL, &err) != SQLITE_OK)
-            {
-                SMLog(@"%@", update_query);
-				SMLog(@"METHOD:updateAllRecordsToSyncRecordsHeap " );
-				SMLog(@"ERROR IN UPDATING %s", err); //RADHA TODAY
-                /*
-                [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:update_query type:UPDATEQUERY]; //RADHA TODAY
-                 */
-            }
-            [autorelease drain];
         }
-    }
-     }@catch (NSException *exp) {
+    }@catch (NSException *exp) {
         SMLog(@"Exception Name databaseInterfaceSfm :updateAllRecordsToSyncRecordsHeap %@",exp.name);
         SMLog(@"Exception Reason databaseInterfaceSfm :updateAllRecordsToSyncRecordsHeap %@",exp.reason);
-         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
     }
-
+    
+    synchronized_sqlite3_finalize(bulkStmt);
     [sync_data release];
+    
+    [pool release];
+    
+    // Vipin-db-optmz
+    [appDelegate.dataBase endTransaction];
+    
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"updateAllRecordsToSyncRecordsHeap"
+                                                                      andRecordCount:0];
+    
     SMLog(@"  updateAllRecordsToSyncRecordsHeap Processing ends: %@", [NSDate date]);
 }
+
+
+
 
 /* Modified to include parser :InitialSync-shr*/
 -(NSMutableDictionary *)getDictForJsonString:(NSString *)json_record withParser:(SBJsonParser *)globalParser
@@ -3961,13 +4249,30 @@ extern void SVMXLog(NSString *format, ...);
     NSAutoreleasePool * autoreleasePool = [[NSAutoreleasePool alloc] init];
     
     SBJsonParser * jsonParser = globalParser;
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance]  observePerformanceForContext:@"getDictForJsonString - parsing"
+                                                          andRecordCount:0];
+    
+    
     NSDictionary * json_dict = [jsonParser objectWithString:json_record];
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance]  completedPerformanceObservationForContext:@"getDictForJsonString - parsing"
+                                                                       andRecordCount:1];
+    
     
     
     NSMutableDictionary * lookUpDict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
     NSMutableDictionary * final_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+    
+    // Vipin-db-optmz
+    NSMutableDictionary *apiNameForNameFieldDict = [[NSMutableDictionary alloc] initWithCapacity:0];
+    NSMutableArray  *lookupDictionaryArray = [[NSMutableArray alloc] init];
+    
+    
     NSArray * json_allkeys = [json_dict allKeys];
-    NSInteger lookUp_id = 0;
+   // NSInteger lookUp_id = 0;
     for (int f = 0; f < [json_allkeys count]; f++)
     {
         NSString * json_key = [json_allkeys objectAtIndex:f];
@@ -3987,10 +4292,22 @@ extern void SVMXLog(NSString *format, ...);
 				NSString * object = [attDict objectForKey:@"type"];
 				NSString * Name = [appDelegate.dataBase getApiNameForNameField:object];
 				
+                // Vipind-db-optmz
+                if (Name == nil)
+                {
+                    Name = [appDelegate.dataBase getApiNameForNameField:object];
+                    [apiNameForNameFieldDict setObject:Name forKey:object];
+                }
+                
+                
                 [lookUpDict setValue:[dict objectForKey:@"Id"] forKey:@"Id"];
                 [lookUpDict setValue:[dict objectForKey:Name] forKey:@"Name"];
                 [lookUpDict setValue:[dict objectForKey:@"type"] forKey:@"type"];
-                [appDelegate.dataBase addvaluesToLookUpFieldTable:lookUpDict WithId:lookUp_id];
+                
+                // Vipind-db-optmz
+                [lookupDictionaryArray addObject:lookUpDict];
+                //[appDelegate.dataBase addvaluesToLookUpFieldTable:lookUpDict WithId:lookUp_id];
+                
             }
         }
         else
@@ -4000,171 +4317,240 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     
+    // Vipin-db-optmz
+    [appDelegate.dataBase addValuesToLookUpFieldTable:lookupDictionaryArray];
+    [lookupDictionaryArray release];
+    [apiNameForNameFieldDict release];
+    
     [autoreleasePool release];
     return final_dict;
 }
 
+
+// Vipin-db-optmz - Modified method
 /* Inserts records into appropriate table and updates the sync flag in temporary table :InitialSync-shr*/
-- (void)insertAllRecordsToRespectiveTables:(NSMutableDictionary *)syncedData andParser:(SBJsonParser *)jsonParser{
-    
+- (void)insertAllRecordsToRespectiveTables:(NSMutableDictionary *)syncedData andParser:(SBJsonParser *)jsonParser
+{
     [syncedData retain];
     
-  
-    if(self.objectFieldDictionary == nil) {
-        
+    // Vipin-db-optmz
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    
+    if (self.objectFieldDictionary == nil)
+    {
         NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
         self.objectFieldDictionary  = dict;
         [dict release];
         dict = nil;
     }
-
     
-    int retVal =  [self startTransaction];
+    // Vipin-db-optmz
+    if (self.apiNameToInsertionQueryDictionary == nil)
+    {
+        NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
+        self.apiNameToInsertionQueryDictionary  = dictionary;
+        [dictionary release];
+        dictionary = nil;
+    }
+    
+    int retVal =  [appDelegate.dataBase beginTransaction];
     SMLog(@"Starting transcation Success = %d",retVal);
     
-    /*For each object in object array, objectApiName = table name  */
+    /*For each object in object array, objectApiName = table name */
     NSArray *allKeysOfSyncData = [syncedData allKeys];
-    for(NSString *objectApiName in allKeysOfSyncData) {
-        
+    
+    for (NSString *objectApiName in allKeysOfSyncData)
+    {
         NSAutoreleasePool * autoreleaseExternal = [[NSAutoreleasePool alloc] init];
         
         SMLog(@"Insertion starts for %@",objectApiName);
         
-       /* get field and table schema only once and store it in global dictionary*/
+        /* get field and table schema only once and store it in global dictionary*/
         NSMutableDictionary *fieldDictionary =  [objectFieldDictionary objectForKey:objectApiName];
-        if(fieldDictionary == nil ) {
-            
+        
+        if (fieldDictionary == nil)
+        {
             fieldDictionary = [self getAllFieldsAndItsDataTypesForObject:objectApiName tableName:SFOBJECTFIELD];
             [fieldDictionary setValue:@"VARCHAR" forKey:@"local_id"];
             [objectFieldDictionary setObject:fieldDictionary forKey:objectApiName];
         }
         
-        /* Form a query and store that in the global dictionary */
-        NSArray * allKeysObjectApiNames = [fieldDictionary allKeys];
-        NSString * fieldString = @"";
-        NSString * valuesString = @"";
+        // Form a query and store that in the global dictionary
+        NSArray  *allKeysObjectApiNames = [fieldDictionary allKeys];
         
-        NSInteger allKeysCount = [allKeysObjectApiNames count];
-        for(int t = 0; t < allKeysCount;t++)
+        NSString *insertionQuery = [self.apiNameToInsertionQueryDictionary objectForKey:objectApiName];
+        
+        if (insertionQuery == nil)
         {
-            NSString * keyFieldName = [allKeysObjectApiNames objectAtIndex:t];
-            if(t != 0)
-            {
-                NSString * temp_field_string = [NSString stringWithFormat:@",%@" ,keyFieldName];
-                fieldString = [fieldString stringByAppendingFormat:@"%@",temp_field_string];
-                valuesString = [valuesString stringByAppendingFormat:@",?%d",t+1];
-            }
-            else
-            {
-                NSString * temp_field_string = [NSString stringWithFormat:@"%@" ,keyFieldName];
-                fieldString = [fieldString stringByAppendingFormat:@"%@",temp_field_string];
-                valuesString = [valuesString stringByAppendingFormat:@"?%d",t+1];
-            }
-        }
-        
-        /*get all these records whether master or detail */
-        NSString *insertionQuery = [NSString stringWithFormat:@"INSERT INTO '%@' (%@) VALUES (%@)",objectApiName,fieldString,valuesString];
+            NSString * fieldString = @"";
+            NSString * valuesString = @"";
             
+            NSInteger allKeysCount = [allKeysObjectApiNames count];
+            
+            for (int t = 0; t < allKeysCount; t++)
+            {
+                NSString * keyFieldName = [allKeysObjectApiNames objectAtIndex:t];
+                
+                if (t != 0)
+                {
+                    NSString * temp_field_string = [NSString stringWithFormat:@",%@", keyFieldName];
+                    fieldString  = [fieldString stringByAppendingFormat:@"%@", temp_field_string];
+                    valuesString = [valuesString stringByAppendingFormat:@",?%d", t+1];
+                }
+                else
+                {
+                    NSString * temp_field_string = [NSString stringWithFormat:@"%@", keyFieldName];
+                    fieldString  = [fieldString stringByAppendingFormat:@"%@", temp_field_string];
+                    valuesString = [valuesString stringByAppendingFormat:@"?%d", t+1];
+                }
+            }
+            
+            insertionQuery = [NSString stringWithFormat:@"INSERT INTO '%@' (%@) VALUES (%@)", objectApiName, fieldString,valuesString];
+            [self.apiNameToInsertionQueryDictionary setObject:insertionQuery forKey:objectApiName];
+            
+        }
         
         
         /* Compile it for the records and insert them */
         sqlite3_stmt * bulk_statement = nil;
         
-        int preparedSuccessfully = sqlite3_prepare_v2(appDelegate.db, [insertionQuery UTF8String], strlen([insertionQuery UTF8String]), &bulk_statement, NULL);
+        int preparedSuccessfully =  sqlite3_prepare_v2(appDelegate.db, [insertionQuery UTF8String], strlen([insertionQuery UTF8String]), &bulk_statement, NULL);
+        
         int counter = 0;
         
         NSString *localId = nil,*sfid=nil,*jsonRecord = nil;
-        if(preparedSuccessfully == SQLITE_OK)
+        
+        if (preparedSuccessfully == SQLITE_OK)
         {
-           
-            
-            NSArray *allRecords =[syncedData objectForKey:objectApiName];
+            NSArray *allRecords = [syncedData objectForKey:objectApiName];
             NSInteger numberOfRecords = [allRecords count];
-            for (counter = 0; counter < numberOfRecords; counter++) {
-                
+            
+            // Vipin-db-optmz
+            [[PerformanceAnalytics sharedInstance]  observePerformanceForContext:[NSString stringWithFormat:@"insertAllRecordsToRespectiveTables : %@", objectApiName]
+                                                                  andRecordCount:0];
+            
+            for (counter = 0; counter < numberOfRecords; counter++)
+            {
                 NSAutoreleasePool * autoreleaseInternal = [[NSAutoreleasePool alloc] init];
                 
                 NSDictionary *recordDictionary = [allRecords objectAtIndex:counter];
                 
-                localId = [recordDictionary objectForKey:@"LOCAL_ID"];
-                sfid = [recordDictionary objectForKey:@"SF_ID"];
+                localId    = [recordDictionary objectForKey:@"LOCAL_ID"];
+                sfid       = [recordDictionary objectForKey:@"SF_ID"];
                 jsonRecord = [recordDictionary objectForKey:@"JSON_RECORD"];
                 
                 
-                 NSString * newLocalId = nil;
+                NSString * newLocalId = nil;
                 
-                 NSMutableDictionary * responseDictionary = [self getDictForJsonString:jsonRecord withParser:jsonParser];
+                // Vipin-db-optmz
+                [[PerformanceAnalytics sharedInstance]  observePerformanceForContext:@"insertAllRecordsToRespectiveTables-parser process"
+                                                                      andRecordCount:0];
                 
-                        
+                NSMutableDictionary * responseDictionary = [self getDictForJsonString:jsonRecord withParser:jsonParser];
+                
+                // Vipin-db-optmz
+                [[PerformanceAnalytics sharedInstance]  observePerformanceForContext:@"insertAllRecordsToRespectiveTables-GETUUID"
+                                                                      andRecordCount:0];
+                
                 newLocalId = [iServiceAppDelegate GetUUID];
+                // Vipin-db-optmz
+                [[PerformanceAnalytics sharedInstance]  completedPerformanceObservationForContext:@"insertAllRecordsToRespectiveTables-GETUUID"
+                                                                                   andRecordCount:0];
+                
+                
+                [[PerformanceAnalytics sharedInstance]  observePerformanceForContext:@"insertAllRecordsToRespectiveTables-parser process"
+                                                                      andRecordCount:1];
+                
+                [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"insertAllRecordsToRespectiveTables-parser process"
+                                                                                  andRecordCount:0];
+                
+                
                 
                 /* It is not used as of now. */
-               BOOL  check_flag = YES;// [appDelegate.dataBase checkForDuplicateId:objectApiName sfId:sfid];
+                BOOL  check_flag = YES;// [appDelegate.dataBase checkForDuplicateId:objectApiName sfId:sfid];
+                
                 /* Insertion */
-                if(check_flag)
+                if (check_flag)
                 {
-                  [responseDictionary setObject:newLocalId forKey:@"local_id"];
-                        
+                    
+                    [responseDictionary setObject:newLocalId forKey:@"local_id"];
+                    
                     NSInteger allTableColumnNamesCount = [allKeysObjectApiNames count];
-                    for(int x = 0; x < allTableColumnNamesCount; x++)
+                    
+                    // Vipin-db-optmz
+                    [[PerformanceAnalytics sharedInstance]  observePerformanceForContext:@"insertAllRecordsToRespectiveTables-Columns process"
+                                                                          andRecordCount:0];
+                    
+                    for (int x = 0; x < allTableColumnNamesCount; x++)
                     {
-                            int column_num = x+1;
-                            NSString * field = [allKeysObjectApiNames objectAtIndex:x];
-                            NSString * data_type = [fieldDictionary objectForKey:field];
-                            NSString * columnType = [appDelegate.dataBase columnType:data_type];
-                            NSString * final_value = [responseDictionary objectForKey:field];
+                        int column_num = x+1;
                         
+                        NSString * field       = [allKeysObjectApiNames objectAtIndex:x];
+                        NSString * data_type   = [fieldDictionary objectForKey:field];
+                        NSString * columnType  = [appDelegate.dataBase columnType:data_type];
+                        NSString * final_value = [responseDictionary objectForKey:field];
                         
-                            if(final_value == nil)
-                            {
-                                final_value = @"";
-                            }
-                       
-                            
-                            char * _finalValue = [appDelegate convertStringIntoChar:final_value];
-                            
-                            if([columnType isEqualToString:DOUBLE])
-                            {
-                                sqlite3_bind_double(bulk_statement, column_num, [final_value doubleValue]);
-                            }
-                            else if([columnType isEqualToString:INTEGER])
-                            {
-                                sqlite3_bind_int(bulk_statement, column_num, [final_value intValue]);
-                            }
-                            else if([columnType isEqualToString:DATETIME])
-                            {
-                                sqlite3_bind_text(bulk_statement, column_num, _finalValue, strlen(_finalValue), SQLITE_TRANSIENT);
-                            }
-                            else if([columnType isEqualToString:VARCHAR])
-                            {
-                                                                
-                                sqlite3_bind_text(bulk_statement, column_num, _finalValue, strlen(_finalValue), SQLITE_TRANSIENT);
-                            }
-                            else if([columnType isEqualToString:_BOOL])
-                            {
-                                
-                                sqlite3_bind_text(bulk_statement, column_num, _finalValue, strlen(_finalValue), SQLITE_TRANSIENT);
-                            }
-                            else
-                            {
-                                 sqlite3_bind_text(bulk_statement, column_num, _finalValue, strlen(_finalValue), SQLITE_TRANSIENT);
-                            }
+                        if (final_value == nil)
+                        {
+                            final_value = @"";
                         }
                         
-                    int ret = sqlite3_step(bulk_statement);
+                        char * _finalValue = [appDelegate convertStringIntoChar:final_value];
+                        
+                        if ([columnType isEqualToString:DOUBLE])
+                        {
+                            sqlite3_bind_double(bulk_statement, column_num, [final_value doubleValue]);
+                        }
+                        else if([columnType isEqualToString:INTEGER])
+                        {
+                            sqlite3_bind_int(bulk_statement, column_num, [final_value intValue]);
+                        }
+                        else if([columnType isEqualToString:DATETIME])
+                        {
+                            sqlite3_bind_text(bulk_statement, column_num, _finalValue, strlen(_finalValue), SQLITE_TRANSIENT);
+                        }
+                        else if([columnType isEqualToString:VARCHAR])
+                        {
+                            sqlite3_bind_text(bulk_statement, column_num, _finalValue, strlen(_finalValue), SQLITE_TRANSIENT);
+                        }
+                        else if([columnType isEqualToString:_BOOL])
+                        {
+                            sqlite3_bind_text(bulk_statement, column_num, _finalValue, strlen(_finalValue), SQLITE_TRANSIENT);
+                        }
+                        else
+                        {
+                            sqlite3_bind_text(bulk_statement, column_num, _finalValue, strlen(_finalValue), SQLITE_TRANSIENT);
+                        }
+                        
+                    }
+                    
+                    // Vipin-db-optmz
+                    [[PerformanceAnalytics sharedInstance]  observePerformanceForContext:@"insertAllRecordsToRespectiveTables-Columns process"
+                                                                          andRecordCount:allTableColumnNamesCount];
+                    
+                    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"insertAllRecordsToRespectiveTables-Columns process"
+                                                                                      andRecordCount:0];
+                    
+                    
+                    int ret = synchronized_sqlite3_step(bulk_statement);
                     SMLog(@"Insertion For for %@ Success = %d",sfid,ret);
-                    if (ret!= SQLITE_DONE)
+                    
+                    if (ret != SQLITE_DONE)
                     {
                         NSError *error = nil;
                         NSLog(@"Commit Failed!\n");
                         SMLog(@"%@", insertionQuery);
                         SMLog(@"METHOD:updateAllRecordsToSyncRecordsHeap " );
                         SMLog(@"ERROR IN UPDATING %s", error); //RADHA TODAY
-                        /*
-                        [appDelegate printIfError:[NSString stringWithFormat:@"%d",ret] ForQuery:insertionQuery type:INSERTQUERY];
-                         */
+                        
+                        //[appDelegate printIfError:[NSString stringWithFormat:@"%d",ret] ForQuery:insertionQuery type:INSERTQUERY];
                     }
+                    
+                    sqlite3_clear_bindings(bulk_statement);
                     sqlite3_reset(bulk_statement);
+                    
+                    [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:1];
+                    
                 }
                 else
                 {
@@ -4175,110 +4561,165 @@ extern void SVMXLog(NSString *format, ...);
                     }
                 }
                 
-                
                 [responseDictionary release];
+                responseDictionary = nil;
+                
                 [newLocalId release];
+                newLocalId = nil;
                 
                 [autoreleaseInternal drain];
                 autoreleaseInternal = nil;
             }
             
+            // Vipin-db-optmz
+            [[PerformanceAnalytics sharedInstance]  observePerformanceForContext:[NSString stringWithFormat:@"insertAllRecordsToRespectiveTables : %@", objectApiName]
+                                                                  andRecordCount:[allRecords count]];
+            
+            [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:[NSString stringWithFormat:@"insertAllRecordsToRespectiveTables : %@", objectApiName]
+                                                                              andRecordCount:0];
         }
         else
         {
-            NSLog(@"Failed to insert Initial Sync");
+            NSLog(@"Failed prepared statement for insertAllRecordsToRespectiveTables : %@", objectApiName);
         }
         
-        sqlite3_finalize(bulk_statement);
+        synchronized_sqlite3_finalize(bulk_statement);
         
         [autoreleaseExternal release];
         autoreleaseExternal = nil;
         SMLog(@"Insertion Ends for %@",objectApiName);
+        
     }
-   
+    
+    // Vipin-db-optmz
+    retVal = [appDelegate.dataBase endTransaction];
+    SMLog(@"Commit transaction %d",retVal);
     
     /* Change the status of records in sync table as true for the successfull insertion */
     [self updateTheStatusOfSynRecordsToTrue:syncedData];
-    retVal = [self endTransaction];
-    SMLog(@"Commit transaction %d",retVal);
+    
+    // Vipin-db-optmz
+    [pool drain];
+    pool = nil;
     
     /*Once everything is done, clean up the necessary objects in the memory */
-   [syncedData release];
+    [syncedData release];
 }
 
+/* Inserts records into appropriate table and updates the sync flag in temporary table :InitialSync-shr*/
 
-/* Updating the sync_flag = true for temporary table  :InitialSync-shr*/
+
+// Vipin-db-optmz  - Modified method
 - (void)updateTheStatusOfSynRecordsToTrue:(NSMutableDictionary *)sync_data {
+    
     SMLog(@"Updating sync temporary table  starts: %@  for count %d", [NSDate date],[sync_data count]);
-   
+    // NSLog(@"Updating sync temporary table  starts: %@  for count %d", [NSDate date],[sync_data count]);
+    
     [sync_data retain];
     NSArray * all_objects = [sync_data allKeys];
+    
+    int retVal = [appDelegate.dataBase beginTransaction];
+    
     @try{
-        for(NSString * object_name in  all_objects)
+        NSString * sf_id = @"", * local_id = @"";
+        
+        NSString * update_query = [NSString stringWithFormat:@"UPDATE '%@' SET sync_flag = 'true' WHERE sf_id = ?1", SYNC_RECORD_HEAP];
+        
+        sqlite3_stmt * bulkStmt;
+        
+        int ret_val = sqlite3_prepare_v2(appDelegate.db, [update_query UTF8String], strlen([update_query UTF8String]),  &bulkStmt, NULL);
+        
+        if (ret_val == SQLITE_OK)
         {
-            NSMutableArray *  object_info = [sync_data objectForKey:object_name];
-            SMLog(@" no of records %d", [object_info count]);
-            
-            for (int i = 0 ; i < [object_info count]; i++)
+            for (NSString * object_name in  all_objects)
             {
-                NSAutoreleasePool * autorelease = [[NSAutoreleasePool alloc] init];
-                NSDictionary * dict = [ object_info objectAtIndex:i];
-                NSArray * all_keys = [dict allKeys];
-                NSString * sf_id = @"", * local_id = @"";
-                for(NSString * key in all_keys)
+                NSMutableArray *  object_info = [sync_data objectForKey:object_name];
+                SMLog(@" no of records %d", [object_info count]);
+                //NSLog(@" no of records %d", [object_info count]);
+                // Vipin-db-optmz
+                [[PerformanceAnalytics sharedInstance] observePerformanceForContext:[NSString stringWithFormat:@"updateTheStatusOfSynRecordsToTrue : %@", object_name]
+                                                                     andRecordCount:0];
+                for (int i = 0 ; i < [object_info count]; i++)
                 {
+                    NSAutoreleasePool * autorelease = [[NSAutoreleasePool alloc] init];
+                    NSDictionary * dict = [ object_info objectAtIndex:i];
+                    NSArray * all_keys = [dict allKeys];
                     
-                    if([key isEqualToString:@"LOCAL_ID"])
+                    for(NSString * key in all_keys)
                     {
-                        local_id = [dict objectForKey:@"LOCAL_ID"];
+                        if([key isEqualToString:@"LOCAL_ID"])
+                        {
+                            local_id = [dict objectForKey:@"LOCAL_ID"];
+                        }
+                        
+                        else if ([key isEqualToString:@"SF_ID"])
+                        {
+                            sf_id = [dict objectForKey:@"SF_ID"];
+                        }
                     }
                     
-                    else if ([key isEqualToString:@"SF_ID"])
-                    {
-                        sf_id = [dict objectForKey:@"SF_ID"];
-                    }
-                }
-                
-                NSString * update_query = [NSString stringWithFormat:@"UPDATE '%@' SET sync_flag = 'true' WHERE sf_id = '%@' ", SYNC_RECORD_HEAP , sf_id];
-                
-                char * err;
-                
-                if(synchronized_sqlite3_exec(appDelegate.db, [update_query UTF8String],NULL, NULL, &err) != SQLITE_OK)
-                {
-                    SMLog(@"%@", update_query);
-                    SMLog(@"METHOD:updateAllRecordsToSyncRecordsHeap " );
-                    SMLog(@"ERROR IN UPDATING %s", err); //RADHA TODAY
-                    /*
-                    [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:update_query type:UPDATEQUERY]; 
-                     */
                     
+                    char * _sf_id = [appDelegate convertStringIntoChar:sf_id];
+                    sqlite3_bind_text(bulkStmt, 1, _sf_id, strlen(_sf_id), SQLITE_TRANSIENT);
+                    
+                    if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
+                    {
+                        SMLog(@"%@", update_query);
+                        SMLog(@"METHOD:updateAllRecordsToSyncRecordsHeap " ); //RADHA TODAY
+                        
+                        NSLog(@"Failure updateTheStatusOfSynRecordsToTrue - update_query => %@", update_query);
+                        NSLog(@"METHOD:updateAllRecordsToSyncRecordsHeap " ); //RADHA TODAY
+                    }else{
+                        
+                        // NSLog(@" Success updateTheStatusOfSynRecordsToTrue - update_query => %@", update_query);
+                        
+                        
+                    }
+                    
+                    sqlite3_clear_bindings(bulkStmt);
+                    sqlite3_reset(bulkStmt);
+                    
+                    
+                    //char * err;
+                    
+                    //if(synchronized_sqlite3_exec(appDelegate.db, [update_query UTF8String],NULL, NULL, &err) != SQLITE_OK)
+                    //{
+                    //  SMLog(@"%@", update_query);
+                    //SMLog(@"METHOD:updateAllRecordsToSyncRecordsHeap " );
+                    //SMLog(@"ERROR IN UPDATING %s", err); //RADHA TODAY
+                    
+                    //[appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:update_query type:UPDATEQUERY];
+                    //}
+                    
+                    [autorelease drain];
                 }
-                [autorelease drain];
+                
+                [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:[object_info count]];
+                // Vipin-db-optmz
+                [[PerformanceAnalytics sharedInstance] observePerformanceForContext:[NSString stringWithFormat:@"updateTheStatusOfSynRecordsToTrue : %@", object_name]
+                                                                     andRecordCount:[object_info count]];
+                
+                
+                [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:[NSString stringWithFormat:@"updateTheStatusOfSynRecordsToTrue : %@", object_name]
+                                                                                  andRecordCount:0];
             }
+            
+            synchronized_sqlite3_finalize(bulkStmt);
         }
+        
     }@catch (NSException *exp) {
         SMLog(@"Exception Name databaseInterfaceSfm :updateAllRecordsToSyncRecordsHeap %@",exp.name);
         SMLog(@"Exception Reason databaseInterfaceSfm :updateAllRecordsToSyncRecordsHeap %@",exp.reason);
+        NSLog(@"Exception Reason databaseInterfaceSfm :updateAllRecordsToSyncRecordsHeap %@",exp.reason);
         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
     }
+    
+    retVal = [appDelegate.dataBase endTransaction];
+    
     [sync_data release];
     SMLog(@"Updating sync temporary table ends: %@", [NSDate date]);
 }
 
-/* start the transaction :InitialSync-shr*/
-- (NSInteger)startTransaction {
-    
-    NSString* txnstmt = @"BEGIN TRANSACTION";
-    char * err ;
-   return  synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
-}
-
-/* end the transaction :InitialSync-shr*/
-- (NSInteger)endTransaction {
-    NSString* txnstmt = @"COMMIT TRANSACTION";
-    char * err ;
-    return  synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
-}
 
 -(void)PutconflictRecordsIntoHeapFor:(NSString *)sync_type override_flag:(NSString *)override_flag_value
 {
@@ -4339,99 +4780,192 @@ extern void SVMXLog(NSString *format, ...);
                 [final_dict setObject:array forKey:object_name];
                 
             }
-          
         }
+        
+        synchronized_sqlite3_finalize(statement);
     }
     
     [self insertRecordIdsIntosyncRecordHeap:final_dict];
 }
 
-
--(void)insertRecordIdsIntosyncRecordHeap:(NSMutableDictionary *)sync_data
+- (void)insertRecordIdsIntosyncRecordHeap:(NSMutableDictionary *)sync_data
 {
-    SMLog(@"  insertRecordIdsIntosyncRecordHeap starts: %@", [NSDate date]);
+    SMLog(@"SAMMAN insertRecordIdsIntosyncRecordHeap starts: %@", [NSDate date]);
+    
+    
     sync_data = [sync_data retain];
-    NSArray * all_objects = [sync_data allKeys];
-    @try{
-    for(NSString * object_name in  all_objects)
+    
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    
+    NSMutableDictionary *childObjectDictionary = [[NSMutableDictionary alloc] initWithCapacity:1];
+    
+    sqlite3_stmt * bulkStmt;
+    [appDelegate.dataBase beginTransaction];
+    
     {
-        NSMutableArray *  object_info = [sync_data objectForKey:object_name];
-        for (int i = 0 ; i < [object_info count]; i++) 
-        {
-            NSAutoreleasePool * autorelesePool = [[NSAutoreleasePool alloc] init];
-            NSDictionary * dict = [ object_info objectAtIndex:i];
-            NSArray * all_keys = [dict allKeys];
-            NSString * sf_id = @"", * local_id = @"", *json_record = @"" , * sync_type = @"", * record_type = @"";
-            for(NSString * key in all_keys)
+        NSArray * all_objects = [sync_data allKeys];
+        
+        @try{
+            
+            NSString * sf_id = @"", * local_id = @"", *json_record = @"", * sync_type = @"", * record_type = @"";
+            
+            NSString * update_query = [NSString stringWithFormat:@"INSERT INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)", SYNC_RECORD_HEAP, @"sf_id", @"local_id", @"object_name", @"sync_type", @"json_record", @"sync_flag", @"record_type"];
+            
+            
+            
+            // Vipin-db-optmz
+            [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"insertRecordIdsIntosyncRecordHeap"
+                                                                 andRecordCount:0];
+            
+            int reult = synchronized_sqlite3_prepare_v2(appDelegate.db,
+                                                        [update_query UTF8String],
+                                                        strlen([update_query UTF8String]),
+                                                        &bulkStmt, NULL);
+            if (reult == SQLITE_OK)
             {
-                // @"LOCAL_ID",@"JSON_RECORD",@"SF_ID",
-                if([key isEqualToString:@"LOCAL_ID"])
+                for (NSString * object_name in  all_objects)
                 {
-                    local_id = [dict objectForKey:@"LOCAL_ID"];
+                    NSMutableArray *  object_info = [sync_data objectForKey:object_name];
+                    
+                    // May Change
+                    for (int i = 0 ; i < [object_info count]; i++)
+                    {
+                        // NSAutoreleasePool * autorelesePool = [[NSAutoreleasePool alloc] init];
+                        
+                        NSDictionary * dict = [ object_info objectAtIndex:i];
+                        NSArray * all_keys = [dict allKeys];
+                        
+                        for (NSString * key in all_keys)
+                        {
+                            // @"LOCAL_ID",@"JSON_RECORD",@"SF_ID",
+                            if([key isEqualToString:@"LOCAL_ID"])
+                            {
+                                local_id = [dict objectForKey:@"LOCAL_ID"];
+                                char * _local_id = [appDelegate convertStringIntoChar:local_id];
+                                sqlite3_bind_text(bulkStmt, 2, _local_id, strlen(_local_id), SQLITE_TRANSIENT);
+                            }
+                            else if([key isEqualToString:@"JSON_RECORD"])
+                            {
+                                json_record = [dict objectForKey:@"JSON_RECORD"];
+                                char * _json_record = [appDelegate convertStringIntoChar:json_record];
+                                sqlite3_bind_text(bulkStmt, 5, _json_record, strlen(_json_record), SQLITE_TRANSIENT);
+                            }
+                            else if ([key isEqualToString:@"SF_ID"])
+                            {
+                                sf_id = [dict objectForKey:@"SF_ID"];
+                                char * _sf_id = [appDelegate convertStringIntoChar:sf_id];
+                                sqlite3_bind_text(bulkStmt, 1, _sf_id, strlen(_sf_id), SQLITE_TRANSIENT);
+                            }
+                            else if ([key isEqualToString:@"SYNC_TYPE"])
+                            {
+                                sync_type = [dict objectForKey:@"SYNC_TYPE"];
+                                char * _sync_type = [appDelegate convertStringIntoChar:sync_type];
+                                sqlite3_bind_text(bulkStmt, 4, _sync_type, strlen(_sync_type), SQLITE_TRANSIENT);
+                            }
+                            else if ([key isEqualToString:@"RECORD_TYPE"])
+                            {
+                                record_type = [dict objectForKey:@"RECORD_TYPE"];
+                            }
+                        }
+                        
+                        char * _object_name = [appDelegate convertStringIntoChar:object_name];
+                        sqlite3_bind_text(bulkStmt, 3, _object_name, strlen(_object_name), SQLITE_TRANSIENT);
+                        
+                        NSNumber *exist = [childObjectDictionary objectForKey:object_name];
+                        
+                        
+                        // Vipin-db-optmz 2.0
+                        BOOL isChild = NO;
+                        
+                        if (exist == nil)
+                        {
+                            isChild = [self IsChildObject:object_name];
+                            [childObjectDictionary setObject:[NSNumber numberWithBool:isChild] forKey:object_name];
+                        }
+                        else
+                        {
+                            isChild = [exist boolValue];
+                        }
+                        
+                        if (isChild && ![object_name caseInsensitiveCompare:@"EVENT"] == NSOrderedSame)
+                        {
+                            record_type = DETAIL;
+                        }
+                        else
+                        {
+                            record_type = MASTER;
+                        }
+                        
+                        char * _record_type = [appDelegate convertStringIntoChar:record_type];
+                        sqlite3_bind_text(bulkStmt, 7, _record_type, strlen(_record_type), SQLITE_TRANSIENT);
+                        
+                        NSString *sync_flag = @"false";
+                        char * _sync_flag = [appDelegate convertStringIntoChar:sync_flag];
+                        sqlite3_bind_text(bulkStmt, 6, _sync_flag, strlen(_sync_flag), SQLITE_TRANSIENT);
+                        
+                        char * err;
+                        
+                        if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+                        {
+                            NSLog(@"insertRecordIdsIntosyncRecordHeap failed Query :%@ \n\n reason: \n %s", update_query, err);
+                        }
+                        
+                        sqlite3_clear_bindings(bulkStmt);
+                        sqlite3_reset(bulkStmt);
+                        
+                        //[autorelesePool release];
+                    }
+                    
+                    // Vipin-db-optmz
+                    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"insertRecordIdsIntosyncRecordHeap"
+                                                                         andRecordCount:[object_info count]];
+                    [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:[object_info count]];
+                    
                 }
-                else if([key isEqualToString:@"JSON_RECORD"])
-                {
-                    json_record = [dict objectForKey:@"JSON_RECORD"];
-                }
-                else if ([key isEqualToString:@"SF_ID"])
-                {
-                    sf_id = [dict objectForKey:@"SF_ID"];
-                }
-                else if ([key isEqualToString:@"SYNC_TYPE"])
-                {
-                    sync_type = [dict objectForKey:@"SYNC_TYPE"];
-                }
-                else if ([key isEqualToString:@"RECORD_TYPE"])
-                {
-                    record_type = [dict objectForKey:@"RECORD_TYPE"];
-                }
-                
             }
             
+            synchronized_sqlite3_finalize(bulkStmt);
             
-			BOOL isChild = [self IsChildObject:object_name];
+        }@catch (NSException *exp) {
             
-            if (isChild && ![object_name caseInsensitiveCompare:@"EVENT"] == NSOrderedSame)
-            {
-                record_type = DETAIL;
-            }
-			else
-			{
-				record_type = MASTER;
-			}
+            SMLog(@"Exception Name databaseInterfaceSfm :insertRecordIdsIntosyncRecordHeap %@",exp.name);
+            SMLog(@"Exception Reason databaseInterfaceSfm :insertRecordIdsIntosyncRecordHeap %@",exp.reason);
+            [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
             
-            NSString * update_query = [NSString stringWithFormat:@"INSERT INTO '%@' (local_id , json_record, sf_id, sync_flag,object_name,sync_type,record_type) VALUES ('%@','%@','%@','false','%@','%@','%@')", SYNC_RECORD_HEAP,local_id , json_record , sf_id, object_name, sync_type, record_type];
-            
-            char * err;
-            
-            if(synchronized_sqlite3_exec(appDelegate.db, [update_query UTF8String],NULL, NULL, &err) != SQLITE_OK)
-            {
-                SMLog(@"%@", update_query);
-				SMLog(@"METHOD: insertRecordIdsIntosyncRecordHeap");
-				SMLog(@"ERROR IN INSERTING %s", err);
-                /*
-				[appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:update_query type:INSERTQUERY];
-                 */
-            }
-             [autorelesePool release];
-        }        
+        }@finally {
+            //
+        }
+        
+        SMLog(@" sync_data %d",[sync_data retainCount]);
+        
     }
-	 }@catch (NSException *exp) {
-        SMLog(@"Exception Name databaseInterfaceSfm :insertRecordIdsIntosyncRecordHeap %@",exp.name);
-        SMLog(@"Exception Reason databaseInterfaceSfm :insertRecordIdsIntosyncRecordHeap %@",exp.reason);
-         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
-    }
-
-    SMLog(@" sync_data %d",[sync_data retainCount]);
+    
+    //Vipin-db-optmz 2.0
+    [childObjectDictionary release];
+    childObjectDictionary = nil;
+    
+    [appDelegate.dataBase endTransaction];
+    
+    [pool drain];
+    
     [sync_data release];
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"insertRecordIdsIntosyncRecordHeap"
+                                                                      andRecordCount:0];
+    
     SMLog(@"IComeOUTHere databaseinterface");
-    SMLog(@"  insertRecordIdsIntosyncRecordHeap ends: %@", [NSDate date]);
+    SMLog(@"SAMMAN insertRecordIdsIntosyncRecordHeap ends: %@", [NSDate date]);
 }
+
 
 #pragma mark query for trailer table
 
 -(NSMutableArray *) getAllInsertRecords:(NSString *)operation_type
 {
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:[NSString stringWithFormat:@"getAllInsertRecords : %@", operation_type]
+                                                         andRecordCount:0];
+    
     NSString * request_time = @"";
     if([operation_type isEqualToString:INSERT])
     {
@@ -4490,6 +5024,17 @@ extern void SVMXLog(NSString *format, ...);
             [array addObject:dict];
         }
     }
+    
+    synchronized_sqlite3_finalize(statement);
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:[NSString stringWithFormat:@"getAllInsertRecords : %@", operation_type]
+                                                         andRecordCount:0];
+    
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:[NSString stringWithFormat:@"getAllInsertRecords : %@", operation_type]
+                                                                      andRecordCount:0];
+
+    
     return array;
 }
 
@@ -4547,6 +5092,8 @@ extern void SVMXLog(NSString *format, ...);
         
     char * err;
     
+    [appDelegate.dataBase beginTransaction];
+    
     if(synchronized_sqlite3_exec(appDelegate.db, [insert_statement UTF8String],NULL, NULL, &err) != SQLITE_OK)
     {
         SMLog(@"%@", insert_statement);
@@ -4556,6 +5103,8 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:insert_statement type:INSERTQUERY];
          */
     }
+    
+    [appDelegate.dataBase endTransaction];
 }
 
 -(NSArray *)getAllObjectsForRecordType:(NSString *)record_type  forOperation:(NSString *)operation_type;
@@ -4595,7 +5144,7 @@ extern void SVMXLog(NSString *format, ...);
                 
             }
         }
-
+         synchronized_sqlite3_finalize(statement);
     }
     else
     {
@@ -4630,6 +5179,8 @@ extern void SVMXLog(NSString *format, ...);
                 
             }
         }
+        
+        synchronized_sqlite3_finalize(statement);
     }
     if([array retainCount] == 1)                                     //sahana30April
         [array retain];
@@ -4691,6 +5242,7 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void)updateDataTrailer_RecordSentForlocalId:(NSString *)local_id operation_type:(NSString *)operationType
 {
+     [appDelegate.dataBase beginTransaction];
     NSString * update_statement = [NSString stringWithFormat:@"UPDATE '%@' SET record_sent = 'true' WHERE local_id = '%@' and operation = '%@' " ,SFDATATRAILER_TEMP , local_id , operationType];
     
     char * err ;
@@ -4703,10 +5255,17 @@ extern void SVMXLog(NSString *format, ...);
 		[appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:update_statement type:UPDATEQUERY];
          */
     }
+    [appDelegate.dataBase endTransaction];
 }
 
 -(void)copyTrailerTableToTempTrailerForOperationType:(NSString *)operation_type
 {
+    
+    [appDelegate.dataBase beginTransaction];
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:[NSString stringWithFormat:@"copyTrailerTableToTempTrailerForOperationType : %@", operation_type]
+                                                         andRecordCount:0];
+    
     NSString * query = [NSString stringWithFormat:@"INSERT INTO '%@' (timestamp ,  local_id , sf_id ,  record_type ,  operation ,  object_name ,  sync_flag  ,  parent_object_name   , parent_local_id   ,  record_sent )   SELECT timestamp ,  local_id , sf_id ,  record_type ,  operation ,  object_name ,  sync_flag  ,  parent_object_name   , parent_local_id   ,  record_sent  from  '%@' WHERE operation = '%@'",SFDATATRAILER_TEMP,SFDATATRAILER,operation_type];
     
     char * err ;
@@ -4719,10 +5278,52 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:query type:INSERTQUERY];
          */
     }
+    
+    [appDelegate.dataBase endTransaction];
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:[NSString stringWithFormat:@"copyTrailerTableToTempTrailerForOperationType : %@", operation_type]
+                            andRecordCount:0];
+    
+}
+
+
+// Vipin-db-optmz -rm
+- (void)getRecordCountForTable:(NSString *) tableName
+{
+    
+    int count = 0;
+    sqlite3_stmt * stmt;
+    
+    NSString * query = [NSString stringWithFormat:@"SELECT COUNT(*) FROM '%@'", tableName];
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK  )
+    {
+        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            int temp_count = synchronized_sqlite3_column_int(stmt, 0);
+            count = temp_count;
+        }
+    }else{
+        NSLog(@" DEL cleartable  Failure getRecordCountForTable  - %@ ",tableName);
+    }
+    
+    synchronized_sqlite3_finalize(stmt);
+    
+    NSLog(@" DEL cleartable - %@   -%d",tableName, count);
+    [[PerformanceAnalytics sharedInstance] addDeletedRecordsNumber:count];
+    
 }
 
 -(void)cleartable:(NSString *)table_name
 {
+    // Vipin-db-optmz -rm
+    NSLog(@" DEL cleartable - %@",table_name);
+    
+    [self getRecordCountForTable:table_name];
+    
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:[NSString stringWithFormat:@"cleartable : %@", table_name]
+                                                         andRecordCount:0];
+    
+    
     char * err;
     NSString *  queryStatemnt = [NSString stringWithFormat:@"DELETE FROM  '%@'", table_name];
     if (synchronized_sqlite3_exec(appDelegate.db, [queryStatemnt UTF8String], NULL, NULL, &err) != SQLITE_OK)
@@ -4732,6 +5333,11 @@ extern void SVMXLog(NSString *format, ...);
 		SMLog(@"ERROR IN DELETE %s", err);
 		[appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryStatemnt type:DELETEQUERY];
     }
+     
+     // Vipin-db-optmz
+     [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:[NSString stringWithFormat:@"cleartable : %@", table_name]
+                                                                       andRecordCount:0];
+     
 }
 
 //unused 
@@ -4778,19 +5384,24 @@ extern void SVMXLog(NSString *format, ...);
             }
             
             NSDictionary * dict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:sf_id,local_id,object_name,json_record, record_type, sync_type,nil] forKeys:keys];
+            dict = nil;
                       
         }
     }
+        synchronized_sqlite3_finalize(statement);
    }@catch (NSException *exp) {
         SMLog(@"Exception Name databaseInterfaceSfm :getAllSyncRecordsFromSYNCHeap %@",exp.name);
         SMLog(@"Exception Reason databaseInterfaceSfm :getAllSyncRecordsFromSYNCHeap %@",exp.reason);
         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
     }
-
+    return nil;
 }
 
 -(NSArray *)getAllObjectsFromHeap
 {
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"getAllObjectsFromHeap"
+                                                         andRecordCount:1];
+
     NSString  * sql = [NSString stringWithFormat:@"SELECT DISTINCT object_name FROM 'sync_Records_Heap'  where sync_flag = 'true'"];
     NSMutableArray * array = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
     NSString * obj_name= @""; 
@@ -4808,11 +5419,23 @@ extern void SVMXLog(NSString *format, ...);
             [array addObject:obj_name];
         }
     }
+    
+    synchronized_sqlite3_finalize(statement);
+    
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"getAllObjectsFromHeap"
+                                                                      andRecordCount:1];
+    
+    
     return array;
 }
 
 -(NSMutableDictionary *)getAllFieldsAndItsDataTypesForObject:(NSString *)object_api_name tableName:(NSString *)tableName
 {
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:[NSString stringWithFormat:@"getAllFieldsAndItsDataTypesForObject : %@", object_api_name]
+                                                         andRecordCount:0];
+    
+    
     NSMutableDictionary * dict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
     NSString * field_api_name = @"", *data_type = @"";
     if(object_api_name != nil || [object_api_name length ] != 0)
@@ -4840,16 +5463,31 @@ extern void SVMXLog(NSString *format, ...);
         }
         synchronized_sqlite3_finalize(stmt);
     }
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:[NSString stringWithFormat:@"getAllFieldsAndItsDataTypesForObject : %@", object_api_name]
+                                                                      andRecordCount:1];
+    
+    
     return dict;
 }
 
 -(void)updateSyncRecordsIntoLocalDatabase
 {
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"updateSyncRecordsIntoLocalDatabase"
+                                                         andRecordCount:1];
+    
+    
     NSArray * objects_names = [self getAllObjectsFromHeap];
     
-    NSString* txnstmt = @"BEGIN TRANSACTION";
-    char * err ;
-    int retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);   
+   // NSString* txnstmt = @"BEGIN TRANSACTION";
+    //char * err ;
+    //int retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+    
+    [appDelegate.dataBase beginTransaction];
+    
     sqlite3_stmt * statement ;
     NSString  * local_id = nil , *sf_id = nil, * object_Name = nil , * json_record = nil , * record_type = nil, *sync_type = nil;
     
@@ -4893,6 +5531,8 @@ extern void SVMXLog(NSString *format, ...);
         
         int prepare_ = sqlite3_prepare_v2(appDelegate.db, [query_string UTF8String], strlen([query_string UTF8String]), &bulk_statement, NULL);
         
+        // Vipin-db-optmz 2
+        NSMutableDictionary *parentColumnToObjectNameDict = [[NSMutableDictionary alloc] initWithCapacity:0];
         
         if(prepare_ == SQLITE_OK)
         {
@@ -4947,7 +5587,16 @@ extern void SVMXLog(NSString *format, ...);
                     }
                     else if ([record_type isEqualToString:DETAIL])
                     {
-                        parent_column_name = [self getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_Name field_name:@"parent_column_name"];
+                        
+                        parent_column_name = [parentColumnToObjectNameDict objectForKey:object_Name];
+                        
+                        if ( parent_column_name == nil)
+                        {
+                            // Good Chance
+                            parent_column_name = [self getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_Name field_name:@"parent_column_name"];
+                            
+                            [parentColumnToObjectNameDict setObject:parent_column_name forKey:object_Name];
+                        }
                     }
                     
                     //memory suspect
@@ -5061,7 +5710,9 @@ extern void SVMXLog(NSString *format, ...);
 								SMLog(@"%@", query_string);
 								SMLog(@"METHOD: updateSyncRecordsIntoLocalDatabase");
                             }
+                            sqlite3_clear_bindings(bulk_statement);
                             sqlite3_reset(bulk_statement);
+                             [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:count];
                         }
                         else
                         {
@@ -5132,6 +5783,7 @@ extern void SVMXLog(NSString *format, ...);
                         else
                         {
                             SMLog(@" trailer table Delete Not succeded");
+                            NSLog(@" failed! trailer table Delete Not succeded");
                         }
                     }
                     count++;
@@ -5143,12 +5795,18 @@ extern void SVMXLog(NSString *format, ...);
                 }
             }
         }
+        
+        // Vipin-db-optmz 2
+        [parentColumnToObjectNameDict release];
+        parentColumnToObjectNameDict = nil;
+        
+        
         synchronized_sqlite3_finalize(statement);
     }
     
     
-    txnstmt = @"END TRANSACTION";
-    retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);    
+    //txnstmt = @"END TRANSACTION";
+    //retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
     
     //Sahana Fixed memory oct4th
     NSMutableDictionary * parent_obejct_dict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
@@ -5174,7 +5832,7 @@ extern void SVMXLog(NSString *format, ...);
             
         }
     }
-    
+    synchronized_sqlite3_finalize(statement);
     
     statement = nil;
     
@@ -5260,10 +5918,19 @@ extern void SVMXLog(NSString *format, ...);
     
     synchronized_sqlite3_finalize(statement);
     
+    // Vipin-db-optmz
+    [appDelegate.dataBase endTransaction];
+    
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"updateSyncRecordsIntoLocalDatabase"
+                                                                      andRecordCount:0];
+    
 }
 
 /* Updates the parent column to parent local id  :InitialSync-shr */
 - (void)updatesfmIdsOfMasterToLocalIds {
+    
+    // Vipin-db-optmz
+    [appDelegate.dataBase beginTransaction];
     
     
     /* Get the parent-child releation ships for the detail records :InitialSync-shr*/
@@ -5273,6 +5940,13 @@ extern void SVMXLog(NSString *format, ...);
     NSString  * getObjects_sql = [NSString stringWithFormat:@"SELECT DISTINCT object_name  FROM 'sync_Records_Heap'  where sync_flag = 'true'  AND record_type = 'DETAIL'"];
     
     NSString * temp_child_object_name = @"";
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"sync_Records_Heap - DISTINCT object names"
+                                                         andRecordCount:0];
+    
+    int counter = 0;
+
     if(synchronized_sqlite3_prepare_v2(appDelegate.db, [getObjects_sql UTF8String], -1, &statement, nil) == SQLITE_OK)
     {
         while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
@@ -5287,11 +5961,21 @@ extern void SVMXLog(NSString *format, ...);
                 NSString * parent_column_name = [self getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:temp_child_object_name field_name:@"parent_column_name"];
                 [parent_obejct_dict setValue:parent_obj_name forKey:temp_child_object_name];
                 [parent_column_dict setValue:parent_column_name forKey:temp_child_object_name];
+                
+                 counter = counter +1;
             }
             
         }
     }
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"sync_Records_Heap - DISTINCT object names"
+                                                         andRecordCount:counter];
+    
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"sync_Records_Heap - DISTINCT object names"
+                                                                      andRecordCount:0];
+    
     synchronized_sqlite3_finalize(statement);
+    
     
     /*  Updating the local ids from master :InitialSync-shr*/
     
@@ -5299,6 +5983,14 @@ extern void SVMXLog(NSString *format, ...);
     NSString *local_id = @"",*sf_id = @"", *object_Name = @"" ,  *json_record = @"" ,  *record_type = @"", *sync_type = @"";
     
     NSString  * sql2 = [NSString stringWithFormat:@"SELECT sf_id, object_name,sync_type FROM 'sync_Records_Heap'  where sync_flag = 'true'  AND record_type = 'DETAIL' and sync_type = 'DATA_SYNC'"];
+    
+    counter = 0;
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"sync_Records_Heap - Field selection"
+                                                         andRecordCount:counter];
+    
+    
     if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sql2 UTF8String], -1, &statement, nil) == SQLITE_OK)
     {
         while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
@@ -5326,23 +6018,65 @@ extern void SVMXLog(NSString *format, ...);
             {
                     NSString *parent_obj_name = [parent_obejct_dict objectForKey:object_Name];
                     NSString * parent_column_name1 = [parent_column_dict objectForKey:object_Name];
+                
+                // Vipin-db-optmz
+                [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"getParentLocalIdForChildSFID"
+                                                                     andRecordCount:0];
+                
+                
                     
                     NSString * parent_local_id = [self getParentLocalIdForChildSFID:sf_id parentObject_name:parent_obj_name parent_column_name:parent_column_name1 child_object_name:object_Name];
+                
+                // Vipin-db-optmz
+                [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"getParentLocalIdForChildSFID"
+                                                                     andRecordCount:1];
+                
+                [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"getParentLocalIdForChildSFID"
+                                                                                  andRecordCount:0];
+                
                     
                     if([parent_local_id length] > 0)
                     {
-                        [self updateParentColumnNameInChildTableWithParentLocalId:object_Name parent_column_name:parent_column_name1 parent_local_id:parent_local_id child_sf_id:sf_id];
+                        [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"updateParentColumnNameInChildTableWithParentLocalId"
+                                                                             andRecordCount:0];
+                        
+                        
+                        [self updateParentColumnNameInChildTableWithParentLocalId:object_Name
+                                                               parent_column_name:parent_column_name1
+                                                                  parent_local_id:parent_local_id
+                                                                      child_sf_id:sf_id];
+                        
+                        [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"updateParentColumnNameInChildTableWithParentLocalId"
+                                                                             andRecordCount:1];
+                        
+                        [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"updateParentColumnNameInChildTableWithParentLocalId"
+                                                                                          andRecordCount:0];
                     }
+                counter = counter +1;
             }
-            
         }
     }
     
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"sync_Records_Heap - Field selection"
+                                                         andRecordCount:counter];
+    
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"sync_Records_Heap - Field selection"
+                                                                      andRecordCount:0];
+    
+    [appDelegate.dataBase endTransaction];
     synchronized_sqlite3_finalize(statement);
+    
 }
 
 -(void)InsertInto_User_created_event_for_local_id:(NSString *)local_id sf_id:(NSString *)sf_id
 {
+    [appDelegate.dataBase beginTransaction];
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"InsertInto_User_created_event_for_local_id"
+                                                         andRecordCount:1];
+
+    
     NSString * version = [appDelegate serverPackageVersion];
 	int _stringNumber = [version intValue];
     
@@ -5363,11 +6097,26 @@ extern void SVMXLog(NSString *format, ...);
             SMLog(@"ERROR IN INSERTING %s", err);
             [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:insert_query type:INSERTQUERY];
         }
+        [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:1];
     }
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"InsertInto_User_created_event_for_local_id"
+                                                                      andRecordCount:0];
+    
+    [appDelegate.dataBase endTransaction];
+
 }
 
 -(void)updatedataTrailerTAbleForLocal_id:(NSString *)local_id  sf_id:(NSString *)sf_id
 {
+    // Vipin-db-optmz
+    
+    [appDelegate.dataBase beginTransaction];
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"updatedataTrailerTAbleForLocal_id"
+                                                         andRecordCount:1];
+
+    
     char * err ;
     NSString * updateStatement = [NSString stringWithFormat:@"UPDATE '%@' SET %@ = '%@'  WHERE (local_id = '%@' )", SFDATATRAILER, @"sf_id" , sf_id,local_id ];
     
@@ -5382,9 +6131,131 @@ extern void SVMXLog(NSString *format, ...);
 
     }
     
+    [appDelegate.dataBase endTransaction];
+    
+    [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:1];
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"updatedataTrailerTAbleForLocal_id"
+                                                                      andRecordCount:0];
 }
--(void)updateParentColumnNameInChildTableWithParentLocalId:(NSString *)child_objectName parent_column_name:(NSString *)parent_column_name   parent_local_id:(NSString *)parent_local_id  child_sf_id:(NSString *)child_sfId
+
+
+-(void)updateParentColumnNameInChildTableWithParentLocalId:(NSString *)child_objectName
+                                        parent_column_name:(NSString *)parent_column_name
+                                           parent_local_id:(NSString *)parent_local_id
+                                              child_sf_ids:(NSArray *)child_sfIds
 {
+    
+    //NSString * updateStatement = [NSString stringWithFormat:@"UPDATE '%@' SET %@ = '%@'  WHERE Id = '%@'", child_objectName,parent_column_name , parent_local_id ,child_sfId];
+    
+    [appDelegate.dataBase beginTransaction];
+    
+    NSString * updateStatement = [NSString stringWithFormat:@"UPDATE '%@' SET %@ = '%@'  WHERE Id = ?1", child_objectName,parent_column_name , parent_local_id];
+    
+    sqlite3_stmt * bulkStmt;
+    
+    @try {
+        
+        int ret_val = sqlite3_prepare_v2(appDelegate.db, [updateStatement UTF8String], strlen([updateStatement UTF8String]),  &bulkStmt, NULL);
+        
+        if (ret_val == SQLITE_OK)
+        {
+            for (NSString * childSFId in  child_sfIds)
+            {
+                char * _sf_id = [appDelegate convertStringIntoChar:childSFId];
+                sqlite3_bind_text(bulkStmt, 1, _sf_id, strlen(_sf_id), SQLITE_TRANSIENT);
+                
+                if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
+                {
+                    SMLog(@"%@", updateStatement);
+                    NSLog(@"Failure updateParentColumnNameInChildTableWithParentLocalId - updateStatement => %@", updateStatement);
+                }
+                else
+                {
+                    NSLog(@" Success updateParentColumnNameInChildTableWithParentLocalId - updateStatement => %@", updateStatement);
+                }
+                
+                sqlite3_clear_bindings(bulkStmt);
+                sqlite3_reset(bulkStmt);
+            }
+            
+            [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:[child_sfIds count]];
+        }
+        
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name databaseInterfaceSfm :updateParentColumnNameInChildTableWithParentLocalId %@",exp.name);
+        SMLog(@"Exception Reason databaseInterfaceSfm :updateParentColumnNameInChildTableWithParentLocalId %@",exp.reason);
+        NSLog(@"Exception Reason databaseInterfaceSfm :updateParentColumnNameInChildTableWithParentLocalId %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+    
+    synchronized_sqlite3_finalize(bulkStmt);
+    [appDelegate.dataBase endTransaction];
+    
+    
+}
+
+
+-(void)updateParentColumnNameInChildTableWithParentLocalId:(NSString *)child_objectName
+                                        parent_column_name:(NSString *)parent_column_name
+                                           parent_local_id:(NSString *)parent_local_id
+                                               child_sf_id:(NSString *)child_sfId
+{
+    // Vipin-db-optmz
+    
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"updateParentColumnNameInChildTable"
+                                                         andRecordCount:1];
+    
+    
+    [appDelegate.dataBase beginTransaction];
+    
+    NSString * updateStatement = [NSString stringWithFormat:@"UPDATE '%@' SET %@ = '%@'  WHERE Id = ?1", child_objectName,parent_column_name , parent_local_id];
+    
+    sqlite3_stmt * bulkStmt;
+    
+    @try {
+        
+        int ret_val = sqlite3_prepare_v2(appDelegate.db, [updateStatement UTF8String], strlen([updateStatement UTF8String]),  &bulkStmt, NULL);
+        
+        if (ret_val == SQLITE_OK)
+        {
+            char * _sf_id = [appDelegate convertStringIntoChar:child_sfId];
+            sqlite3_bind_text(bulkStmt, 1, _sf_id, strlen(_sf_id), SQLITE_TRANSIENT);
+            
+            if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
+            {
+                SMLog(@"%@", updateStatement);
+                NSLog(@"Failure updateParentColumnNameInChildTableWithParentLocalId - updateStatement => %@", updateStatement);
+            }
+            else
+            {
+                // NSLog(@"Success updateParentColumnNameInChildTableWithParentLocalId - updateStatement => %@", updateStatement);
+            }
+            
+            sqlite3_clear_bindings(bulkStmt);
+            sqlite3_reset(bulkStmt);
+        }
+        
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name databaseInterfaceSfm :updateParentColumnNameInChildTableWithParentLocalId %@",exp.name);
+        SMLog(@"Exception Reason databaseInterfaceSfm :updateParentColumnNameInChildTableWithParentLocalId %@",exp.reason);
+        NSLog(@"Exception Reason databaseInterfaceSfm :updateParentColumnNameInChildTableWithParentLocalId %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+    
+    sqlite3_finalize(bulkStmt);
+    [appDelegate.dataBase endTransaction];
+    
+    [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:1];
+    
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"updateParentColumnNameInChildTable"
+                                                                      andRecordCount:0];
+    
+    
+    
+    /*
     char * err ;
     NSString * updateStatement = [NSString stringWithFormat:@"UPDATE '%@' SET %@ = '%@'  WHERE Id = '%@'", child_objectName,parent_column_name , parent_local_id ,child_sfId];
     
@@ -5393,15 +6264,22 @@ extern void SVMXLog(NSString *format, ...);
 		SMLog(@"%@", updateStatement);
 		SMLog(@"METHOD:updateParentColumnNameInChildTableWithParentLocalId " );
 		SMLog(@"ERROR IN UPDATING %s", err);
-        /*
-        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:updateStatement type:UPDATEQUERY];
-         */
+        
+       // [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:updateStatement type:UPDATEQUERY];
+         
 
     }
+     */
 }
 
 -(NSString *)getParentLocalIdForChildSFID:(NSString *)childSF_Id parentObject_name:(NSString *)parentObjectName parent_column_name:(NSString *)parent_column_name child_object_name:(NSString *)child_obj_name  
 {
+    
+    // Vipin-db-optmz
+    
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"getParentLocalIdForChildSFID"
+                                                         andRecordCount:1];
+    
     
     //Sahana Fixed memory oct4th
     NSString * Parent_Sf_id = @"";
@@ -5438,8 +6316,14 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
+    
     [query1 release];
     synchronized_sqlite3_finalize(stmt1);
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"getParentLocalIdForChildSFID"
+                                                                      andRecordCount:0];
+    
     return paren_local_id;
 }
 
@@ -5480,6 +6364,16 @@ extern void SVMXLog(NSString *format, ...);
 
 -(BOOL)DeleteDataTrailerTableAfterSync:(NSString *)local_id forObject:(NSString *)object  sync_type:(NSString *)sync_type
 {
+    // Vipin-db-optmz -rm
+    NSLog(@" DEL DeleteDataTrailerTableAfterSync - %@",object);
+    
+    
+    BOOL success = YES;
+    
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:[NSString stringWithFormat:@"DeleteDataTrailerTableAfterSync : %@", object]
+                                                         andRecordCount:0];
+    
+    
      NSString * sync_initiated_forSyncType  = @"";
     if([sync_type isEqualToString:PUT_INSERT])
     {   
@@ -5515,13 +6409,23 @@ extern void SVMXLog(NSString *format, ...);
 		SMLog(@"ERROR IN DELETE %s", err);
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:update type:DELETEQUERY];
 
-        return FALSE;
+        success = NO;
     }
-    return TRUE;
+    
+    [[PerformanceAnalytics sharedInstance] addDeletedRecordsNumber:1];
+    
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:[NSString stringWithFormat:@"DeleteDataTrailerTableAfterSync : %@", object]
+                                                                      andRecordCount:1];
+    return success;
 }
 
 -(NSMutableDictionary *)getDictForJsonString:(NSString *)json_record
 {
+    // Vipin-db-optmz -rm
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"getDictForJsonString"
+                                                         andRecordCount:1];
+    
+    
     NSAutoreleasePool * autoreleasePool = [[NSAutoreleasePool alloc] init];
     SBJsonParser * jsonParser = [[[SBJsonParser alloc] init] autorelease];
     NSDictionary * json_dict = [jsonParser objectWithString:json_record];
@@ -5529,7 +6433,12 @@ extern void SVMXLog(NSString *format, ...);
     NSMutableDictionary * lookUpDict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
     NSMutableDictionary * final_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
     NSArray * json_allkeys = [json_dict allKeys];
-    NSInteger lookUp_id = 0;
+    //NSInteger lookUp_id = 0;
+    
+    // Vipin-db-optmz
+    NSMutableDictionary *apiNameForNameFieldDict = [[NSMutableDictionary alloc] initWithCapacity:0];
+    NSMutableArray  *lookupDictionaryArray = [[NSMutableArray alloc] init];
+    
     @try{
     for (int f = 0; f < [json_allkeys count]; f++)
     {
@@ -5548,12 +6457,20 @@ extern void SVMXLog(NSString *format, ...);
 				//RADHA 27/Sep/2012
 				NSDictionary * attDict = [dict objectForKey:@"attributes"];
 				NSString * object = [attDict objectForKey:@"type"];
-				NSString * Name = [appDelegate.dataBase getApiNameForNameField:object];
+                NSString * Name = [apiNameForNameFieldDict objectForKey:object];
+                
+                if (Name == nil)
+                {
+                    Name = [appDelegate.dataBase getApiNameForNameField:object];
+                    [apiNameForNameFieldDict setObject:Name forKey:object];
+                }
+                
 				
                 [lookUpDict setValue:[dict objectForKey:@"Id"] forKey:@"Id"];
                 [lookUpDict setValue:[dict objectForKey:Name] forKey:@"Name"];
                 [lookUpDict setValue:[dict objectForKey:@"type"] forKey:@"type"];
-                [appDelegate.dataBase addvaluesToLookUpFieldTable:lookUpDict WithId:lookUp_id];
+                [lookupDictionaryArray addObject:lookUpDict];
+               // [appDelegate.dataBase addvaluesToLookUpFieldTable:lookUpDict WithId:lookUp_id];
             }                        
         }
         else
@@ -5562,13 +6479,22 @@ extern void SVMXLog(NSString *format, ...);
             [final_dict setObject:value forKey:json_key];
         }
     }
+        
+    // Vipin-db-optmz
+    [appDelegate.dataBase addValuesToLookUpFieldTable:lookupDictionaryArray];
+        
+        
+        
     }@catch (NSException *exp) {
         SMLog(@"Exception Name databaseInterfaceSfm :getDictForJsonString %@",exp.name);
         SMLog(@"Exception Reason databaseInterfaceSfm :getDictForJsonString %@",exp.reason);
         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];    }
     @finally
     {
+        [lookupDictionaryArray release];
+        [apiNameForNameFieldDict release];
         [autoreleasePool release];
+        
     }
     return final_dict;
 }   
@@ -5592,6 +6518,8 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
+    
+    synchronized_sqlite3_finalize(stmt);
     return Id_;
 }
 
@@ -5613,6 +6541,8 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
+    
+     synchronized_sqlite3_finalize(stmt);
     return Id_;
 }
 
@@ -5633,11 +6563,17 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
+     synchronized_sqlite3_finalize(stmt);
     return Id_;
 }
 
 -(BOOL)IsChildObject:(NSString *)object_name
 {
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"IsChildObject"
+                                                         andRecordCount:1];
+    
+    
     int count = 0;
     NSAutoreleasePool * autoreleasePool = [[NSAutoreleasePool alloc] init];
     NSString * query = [NSString stringWithFormat:@"SELECT COUNT(*) FROM '%@'  WHERE object_api_name_child = '%@'" ,SFCHILDRELATIONSHIP,object_name ];
@@ -5653,8 +6589,13 @@ extern void SVMXLog(NSString *format, ...);
             count = temp_count;
         }
     }
-    
+    synchronized_sqlite3_finalize(stmt);
     [autoreleasePool release];
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"IsChildObject"
+                                                                      andRecordCount:0];
+    
     
     if(count == 1)
     {
@@ -5669,6 +6610,14 @@ extern void SVMXLog(NSString *format, ...);
 
 -(BOOL)DeleterecordFromTable:(NSString *)object_name Forlocal_id:(NSString *)local_id
 {
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"DeleterecordFromTable"
+                                                         andRecordCount:1];
+    BOOL success = YES;
+    
+    // Vipin-db-optmz -rm
+    NSLog(@" DEL DeleterecordFromTable - %@",object_name);
+    
     NSString * delete_query = [NSString stringWithFormat:@"DELETE FROM '%@' WHERE local_id = '%@'" ,object_name , local_id ];
     
     char * err ;
@@ -5679,16 +6628,27 @@ extern void SVMXLog(NSString *format, ...);
 		SMLog(@"ERROR IN DELETE %s", err);
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:delete_query type:DELETEQUERY];
 
-        return FALSE;
+        success = NO;
     }
-    return YES;
+    
+    [[PerformanceAnalytics sharedInstance] addDeletedRecordsNumber:1];
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"DeleterecordFromTable"
+                                                                      andRecordCount:0];
+    
+    return success;
 }
 
 -(void)insertSyncConflictsIntoSYNC_CONFLICT:(NSMutableDictionary *)conflictDict
 {
     SMLog(@"  insertSyncConflictsIntoSYNC_CONFLICT Processing starts: %@", [NSDate date]);
+    
+    NSLog(@"[MON] insertSyncConflictsIntoSYNC_CONFLICT %d", [conflictDict count]);
     NSArray * all_objects = [conflictDict allKeys];
     @try{
+        
+    [appDelegate.dataBase beginTransaction];
+        
     for(NSString * object_name in  all_objects)
     {
         NSMutableArray *  object_info = [conflictDict objectForKey:object_name];
@@ -5742,6 +6702,7 @@ extern void SVMXLog(NSString *format, ...);
             }
             
         }
+         [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:[object_info count]];
     }
 	}@catch (NSException *exp) {
         SMLog(@"Exception Name databaseInterfaceSfm :insertSyncConflictsIntoSYNC_CONFLICT %@",exp.name);
@@ -5749,6 +6710,8 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
     }
 
+      [appDelegate.dataBase endTransaction];
+    
     SMLog(@"  insertSyncConflictsIntoSYNC_CONFLICT Processing ends: %@", [NSDate date]);
 }
 
@@ -5765,9 +6728,9 @@ extern void SVMXLog(NSString *format, ...);
             count = temp_count;
         }
     }
-    
-    
+
     synchronized_sqlite3_finalize(stmt);
+
     if(count == 0)
     {
         return NO;
@@ -5805,7 +6768,7 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
-    
+     synchronized_sqlite3_finalize(stmt);
     return local_Id;
 }
 
@@ -5858,7 +6821,7 @@ extern void SVMXLog(NSString *format, ...);
             [array addObject:dict];
         }
     }
-    
+    synchronized_sqlite3_finalize(statement);
     return array;
 }
 
@@ -5882,12 +6845,19 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
-    
+     synchronized_sqlite3_finalize(stmt);
     return local_Id;
 }
 
--(void) deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:(NSString *)sync_type ; 
+-(void) deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:(NSString *)sync_type ;
 {
+    // Vipin-db-optmz -rm
+    NSLog(@" DEL deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables - %@",sync_type);
+    
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:[NSString stringWithFormat:@"deleteObject_tables : %@", sync_type]
+                                                         andRecordCount:0];
+    
+    
     NSMutableDictionary * delete_list = [[NSMutableDictionary alloc] initWithCapacity:0];
     NSString * query = [NSString stringWithFormat:@"SELECT sf_id ,object_name FROM  '%@' WHERE  sync_type = '%@'" , SYNC_RECORD_HEAP,sync_type];
     sqlite3_stmt * stmt ;
@@ -5934,11 +6904,27 @@ extern void SVMXLog(NSString *format, ...);
         
     }
     
+    synchronized_sqlite3_finalize(stmt);
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:[NSString stringWithFormat:@"deleteObject_tables : %@", sync_type]
+                                                                      andRecordCount:1];
+    
+    
     [self deleteAllrecordsWithSF_ID:delete_list];
 }
 
 - (void) deleteAllrecordsWithSF_ID:(NSMutableDictionary *)delete_list
 {
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"deleteAllrecordsWithSF_ID"
+                                                         andRecordCount:0];
+    
+    NSMutableArray *syncRecordHeapsDeletionRecordIds = [[NSMutableArray alloc] initWithCapacity:0];
+    NSMutableArray *trailerTableDeletionRecordIds = [[NSMutableArray alloc] initWithCapacity:0];
+    NSMutableArray *trailerTableWithParentLocalIdDeletionRecordIds = [[NSMutableArray alloc] initWithCapacity:0];
+   
+    NSMutableDictionary *objectDeletionRecordIds = [[NSMutableDictionary alloc] initWithCapacity:0];
+    
     NSArray * allkeys = [delete_list allKeys];
     for (NSString * object_name in allkeys)
     {
@@ -5946,22 +6932,145 @@ extern void SVMXLog(NSString *format, ...);
         
         for (NSString * sf_id in deleteId)
         {
-            [self DeleterecordFromTableWithSf_Id:SYNC_RECORD_HEAP sf_id:sf_id withColumn:@"sf_id"];
-            [self DeleterecordFromTableWithSf_Id:SFDATATRAILER sf_id:sf_id withColumn:@"sf_id"];
+            //[self DeleterecordFromTableWithSf_Id:SYNC_RECORD_HEAP sf_id:sf_id withColumn:@"sf_id"];
+            //[self DeleterecordFromTableWithSf_Id:SFDATATRAILER sf_id:sf_id withColumn:@"sf_id"];
+            
+            [syncRecordHeapsDeletionRecordIds addObject:sf_id];
+            [trailerTableDeletionRecordIds addObject:sf_id];
+            
+            
+            //if the id is MASTER record id , for that master record id
+            NSMutableArray *storedIds = [objectDeletionRecordIds  objectForKey:object_name];
+            
+            if (storedIds == nil)
+            {
+                storedIds = [NSMutableArray  arrayWithCapacity:0];
+            }
+            
+            [storedIds addObject:sf_id];
+            [objectDeletionRecordIds setObject:storedIds forKey:object_name];
+            
             
             NSString * local_id = [self getLocalIdFromSFId:sf_id tableName:object_name];
             if([local_id length ]!= 0 && ![local_id isEqualToString:@""] && local_id != nil)
             {
-                [self DeleterecordFromTableWithSf_Id:SFDATATRAILER sf_id:local_id withColumn:@"parent_local_id"];
+                //[self DeleterecordFromTableWithSf_Id:SFDATATRAILER sf_id:local_id withColumn:@"parent_local_id"];
+                [trailerTableWithParentLocalIdDeletionRecordIds addObject:local_id];
             }
-            //if the id is MASTER record id , for that master record id 
-            [self DeleterecordFromTableWithSf_Id:object_name sf_id:sf_id withColumn:@"Id"];
+            
+            //if the id is MASTER record id , for that master record id
+            //[self DeleterecordFromTableWithSf_Id:object_name sf_id:sf_id withColumn:@"Id"];
         }
     }
+    
+   
+    [self deleteRecordFromTable:SYNC_RECORD_HEAP
+              byCollectionsOfId:syncRecordHeapsDeletionRecordIds
+                      forColumn:@"sf_id"];
+    
+    [self deleteRecordFromTable:SFDATATRAILER
+              byCollectionsOfId:trailerTableDeletionRecordIds
+                      forColumn:@"sf_id"];
+    
+    [self deleteRecordFromTable:SFDATATRAILER
+              byCollectionsOfId:trailerTableWithParentLocalIdDeletionRecordIds
+                      forColumn:@"parent_local_id"];
+    
+    [syncRecordHeapsDeletionRecordIds release];
+    [trailerTableDeletionRecordIds release];
+    [trailerTableWithParentLocalIdDeletionRecordIds release];
+
+    
+    NSArray *allKeys = [objectDeletionRecordIds allKeys];
+    
+    for (NSString *objectName in allKeys)
+    {
+        
+        if ([objectDeletionRecordIds objectForKey:objectName] != nil)
+        {
+            [self deleteRecordFromTable:objectName
+                      byCollectionsOfId:[objectDeletionRecordIds objectForKey:objectName]
+                              forColumn:@"Id"];
+        }
+    }
+    
+    [objectDeletionRecordIds release];
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"deleteAllrecordsWithSF_ID"
+                                                                      andRecordCount:[allkeys count]];
+    
 }
+
+- (void)deleteRecordFromTable:(NSString *)tableName byCollectionsOfId:(NSArray *)ids forColumn:(NSString *)columnName
+{
+    
+    NSLog(@"deleteRecordFromTable  %@  -  %d", tableName, [ids count] );
+    if (ids == nil || [ids count] == 0)
+    {
+
+        // Hey I m going back!
+        return;
+    }
+    
+    // Vipin-db-optmz -rm
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:[NSString stringWithFormat:@"deleteRecordFromTable :%@ ", tableName]
+                                                         andRecordCount:[ids count]];
+    
+    NSString * delete_query = @"";
+    
+    NSString *idSeparetedByComas = nil;
+    
+    if ([ids count] > 1)
+    {
+       NSString *baseString = [ids componentsJoinedByString:@"','"];
+       idSeparetedByComas = [NSString stringWithFormat:@"'%@'", baseString];
+    }
+    else
+    {
+        idSeparetedByComas =idSeparetedByComas = [NSString stringWithFormat:@"'%@'", [ids objectAtIndex:0]];
+    }
+    
+    //sync_override
+    if([tableName isEqualToString:SFDATATRAILER])
+    {
+        delete_query = [NSString stringWithFormat:@"DELETE FROM '%@' WHERE %@ in ( %@ ) and sync_type != '%@' " , tableName, columnName, idSeparetedByComas, CUSTOMSYNC];
+    }
+    else
+    {
+        delete_query = [NSString stringWithFormat:@"DELETE FROM '%@' WHERE %@ in ( %@ )" ,tableName, columnName, idSeparetedByComas];
+    }
+    
+    NSLog(@"[OBS] deleteRecordFromTable : delete_query - - %@",delete_query);
+    
+    SMLog(@"delete_query - - %@",delete_query);
+    char * err ;
+    int executionResult  = synchronized_sqlite3_exec(appDelegate.db, [delete_query UTF8String], NULL, NULL, &err);
+
+    if( executionResult != SQLITE_OK)
+    {
+        SMLog(@"%@", delete_query);
+		SMLog(@"METHOD:DeleterecordFromTableWithSf_Id  - %d", executionResult);
+		SMLog(@"ERROR IN DELETE %s", err);
+        
+        NSLog(@" Failed deleteRecordFromTable errorcode - %d \n  messge : %s", executionResult, err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:delete_query type:DELETEQUERY];
+    }
+    
+    [[PerformanceAnalytics sharedInstance] addDeletedRecordsNumber:[ids count]];
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:[NSString stringWithFormat:@"deleteRecordFromTable :%@ ", tableName]
+                                                                      andRecordCount:0];
+    
+}
+
 
 -(void) DeleterecordFromTableWithSf_Id:(NSString *)object_name sf_id:(NSString *)sf_id withColumn:(NSString *)columnName
 {
+    
+    // Vipin-db-optmz -rm
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:[NSString stringWithFormat:@"DeleterecordFromTableWithSf_Id :%@ - %@",object_name, columnName]
+                                                         andRecordCount:1];
+    
     NSString * delete_query = @"";
     //sync_override
     if([object_name isEqualToString:SFDATATRAILER])
@@ -5982,10 +7091,19 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:delete_query type:DELETEQUERY];
 
     }
+    
+    [[PerformanceAnalytics sharedInstance] addDeletedRecordsNumber:1];
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:[NSString stringWithFormat:@"DeleterecordFromTableWithSf_Id :%@ - %@",object_name, columnName]
+                                                                      andRecordCount:0];
+    
 }
 
 -(void)deleteAllConflictedRecordsFrom:(NSString *)tableName
 {
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"deleteAllConflictedRecordsFrom"
+                                                         andRecordCount:1];
+    
     NSArray * sync_type_array = [NSArray arrayWithObjects:PUT_UPDATE ,PUT_DELETE, PUT_INSERT, nil];
     
     for(NSString * sync_type  in sync_type_array)
@@ -6019,6 +7137,10 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
+
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"deleteAllConflictedRecordsFrom"
+                                                                      andRecordCount:0];
 }
 
 
@@ -6065,6 +7187,9 @@ extern void SVMXLog(NSString *format, ...);
             [array addObject:dict];
         }
     }
+    
+    synchronized_sqlite3_finalize(statement);
+    
     return array;
 }
 
@@ -6082,6 +7207,8 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     
+    synchronized_sqlite3_finalize(stmt);
+    
     if (count > 0)
         return TRUE;
     else 
@@ -6090,6 +7217,12 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void)deleterecordsFromConflictTableForOperationType:(NSString *)opeation_type overrideFlag:(NSString *)override_flag  table_name:(NSString *)table_name   id_value:(NSString *)id_   field_name:(NSString *)field_name 
 {
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:[NSString stringWithFormat:@"deleterecordsFromConflictTable : %@", opeation_type]
+                                                         andRecordCount:0];
+    
+    
     NSString * delete_stmt ;
     if([opeation_type isEqualToString:PUT_UPDATE] && [override_flag isEqualToString:CLIENT_OVERRIDE])
     {
@@ -6109,6 +7242,12 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:delete_stmt type:DELETEQUERY];
 
     }
+    
+    [[PerformanceAnalytics sharedInstance] addDeletedRecordsNumber:1];
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:[NSString stringWithFormat:@"deleterecordsFromConflictTable : %@", opeation_type]
+                                                                      andRecordCount:0];
+
 }
 
 
@@ -6130,6 +7269,9 @@ extern void SVMXLog(NSString *format, ...);
             
         }
     }
+    
+    synchronized_sqlite3_finalize(statement);
+    
     return temp_field;
 }
 
@@ -6193,6 +7335,8 @@ extern void SVMXLog(NSString *format, ...);
     
         }
     }
+
+    synchronized_sqlite3_finalize(statement);
     
     return objects_list;
 }
@@ -6206,6 +7350,11 @@ extern void SVMXLog(NSString *format, ...);
         appDelegate.connection_error = TRUE;
         return;
     }
+    
+    // Vipin-db-optmz
+    [appDelegate.dataBase beginTransaction];
+    
+    
     for (int i = 0; i < [result count]; i++)
     {
         ZKDescribeSObject * descObj = [result objectAtIndex:i];
@@ -6266,10 +7415,79 @@ extern void SVMXLog(NSString *format, ...);
 		}
     }
 
+    // Vipin-db-optmz
+    [appDelegate.dataBase endTransaction];
+    
     appDelegate.dPicklist_retrieval_complete = TRUE;
 }
 
--(BOOL)UpdateSFObjectField_For_Picklist_TypeObject:(NSString *)object_api_name field_api_name:(NSString *)field_api_name  dependent_picklist:(NSString *)dependent_value  controler_field_name:(NSString *)controler_field
+// Chances SFObjectField
+-(BOOL)UpdateSFObjectField_For_Picklist_TypeObject:(NSString *)object_api_name
+                                    field_api_name:(NSString *)field_api_name
+                                dependent_picklist:(NSString *)dependent_value
+                              controler_field_name:(NSString *)controler_field
+{
+    
+    BOOL isSuccess = YES;
+    
+    [appDelegate.dataBase beginTransaction];
+    
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:[NSString stringWithFormat: @"UpdateSFObjectField_For_Picklist_TypeObject : %@", object_api_name] andRecordCount:1];
+    
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"UpdateSFObjectField_For_Picklist_TypeObject : total"andRecordCount:1];
+    
+    
+    [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:1];
+    
+    NSString * query = [NSString stringWithFormat:@"UPDATE  '%@' SET  dependent_picklist = '%@' , controler_field = '%@' WHERE  object_api_name = '%@' AND api_name = '%@' " ,SFOBJECTFIELD , dependent_value , controler_field , object_api_name,field_api_name];
+    
+    //NSString * query = @"UPDATE ?1 SET dependent_picklist = ?2, controler_field = ?3 WHERE  object_api_name = ?4 AND api_name = ?5";
+    
+    sqlite3_stmt * statement;
+    
+    int preparedStatementCreated = synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1 , &statement , nil);
+    
+    if ( preparedStatementCreated == SQLITE_OK)
+    {
+        if (synchronized_sqlite3_step(statement) != SQLITE_DONE)
+        {
+            isSuccess = NO;
+            SMLog(@"%@", query);
+            NSLog(@"Failure UpdateSFObjectField_For_Picklist_TypeObject - update_query => %@", query);
+            
+        } else
+        {
+            //NSLog(@"Success updateAllRecordsToSyncRecordsHeap - update_query => %@", update_query);
+        }
+        
+    }
+    else
+    {
+        isSuccess = NO;
+        NSLog(@"Failure prepared UpdateSFObjectField_For_Picklist_TypeObject - update_query => %@", query);
+    }
+    
+    sqlite3_clear_bindings(statement);
+    sqlite3_reset(statement);
+    synchronized_sqlite3_finalize(statement);
+    
+    [appDelegate.dataBase endTransaction];
+    
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:[NSString stringWithFormat: @"UpdateSFObjectField_For_Picklist_TypeObject : %@", object_api_name] andRecordCount:0];
+    
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"UpdateSFObjectField_For_Picklist_TypeObject : total"
+                                                                      andRecordCount:0];
+    
+    
+    return isSuccess;
+}
+
+
+/*
+-(BOOL)UpdateSFObjectField_For_Picklist_TypeObject:(NSString *)object_api_name
+                                    field_api_name:(NSString *)field_api_name
+                                dependent_picklist:(NSString *)dependent_value
+                              controler_field_name:(NSString *)controler_field
 {
     NSString * query = [NSString stringWithFormat:@"UPDATE  '%@' SET  dependent_picklist = '%@' , controler_field = '%@' WHERE  object_api_name = '%@' AND api_name = '%@' " ,SFOBJECTFIELD , dependent_value , controler_field , object_api_name,field_api_name];
     char * err ;
@@ -6278,21 +7496,23 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", query);
 		SMLog(@"METHOD:UpdateSFObjectField_For_Picklist_TypeObject " );
 		SMLog(@"ERROR IN UPDATING %s", err);
-        /*
-        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:query type:UPDATEQUERY];
-         */
+ 
+        //[appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:query type:UPDATEQUERY];
+ 
 
         return FALSE;
     }
     return TRUE;
 }
-
+*/
 
 //Shrinivas : method for multiselect
 -(void) UpdateSFPicklistForMultiSelect_IndexValue_For_Oject_Name:(NSString *)object_name  field_api_name:(NSString *)field_api_name value:(NSString *)value  index:(int)index_value
 {    
     if([value isKindOfClass:[NSString class]])
         value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+    
+     [appDelegate.dataBase beginTransaction];
     
     NSString * query = [NSString stringWithFormat:@"UPDATE  '%@' SET   index_value = '%d'  WHERE  object_api_name = '%@' AND field_api_name = '%@'  AND value = '%@'" , SFPicklist  ,index_value, object_name , field_api_name , value ];
 	
@@ -6305,12 +7525,64 @@ extern void SVMXLog(NSString *format, ...);
         /*
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:query type:UPDATEQUERY];
          */
-
-        
     }
+    [appDelegate.dataBase endTransaction];
+}
+
+-(BOOL)UpdateSFPicklist_validFor_For_Oject_Name:(NSString *)object_name
+                                 field_api_name:(NSString *)field_api_name
+                                          value:(NSString *)value
+                                valid_for_value:(NSString *)valid_for_value
+                                          index:(int)index_value
+{
+    if (valid_for_value == nil)
+    {
+        valid_for_value = @"";
+    }
+    
+    if([value isKindOfClass:[NSString class]])
+        value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+    
+    BOOL isSuccessful = YES;
+    
+    NSString * query = [NSString stringWithFormat:@"UPDATE  '%@' SET  valid_for = '%@' , index_value = '%d'  WHERE  object_api_name = '%@' AND field_api_name = '%@'  AND value = '%@'" , SFPicklist , valid_for_value ,index_value, object_name , field_api_name , value ];
+    
+    //NSString * query = @"UPDATE  ?1 SET  valid_for = ?2, index_value = ?3  WHERE  object_api_name = ?4 AND field_api_name = ?5  AND value = ?6";
+    
+    [appDelegate.dataBase beginTransaction];
+    
+    sqlite3_stmt * statement;
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1 , &statement , nil)  ==  SQLITE_OK)
+    {
+        if (synchronized_sqlite3_step(statement) != SQLITE_DONE)
+        {
+            isSuccessful = NO;
+            SMLog(@"%@", query);
+            NSLog(@"Failure UpdateSFPicklist_validFor_For_Oject_Name - update_query => %@", query);
+            
+        } else
+        {
+            //NSLog(@"Success updateAllRecordsToSyncRecordsHeap - update_query => %@", update_query);
+        }
+        
+    }else
+    {
+        isSuccessful = NO;
+        NSLog(@" Failure prepared UpdateSFPicklist_validFor_For_Oject_Name ");
+    }
+    
+    sqlite3_clear_bindings(statement);
+    sqlite3_reset(statement);
+    synchronized_sqlite3_finalize(statement);
+    
+    [appDelegate.dataBase endTransaction];
+    
+    return isSuccessful;
 }
 
 
+
+/*
 -(BOOL)UpdateSFPicklist_validFor_For_Oject_Name:(NSString *)object_name  field_api_name:(NSString *)field_api_name value:(NSString *)value  valid_for_value:(NSString *)valid_for_value  index:(int)index_value
 {
      if(valid_for_value == nil)
@@ -6329,15 +7601,15 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%@", query);
 		SMLog(@"METHOD:UpdateSFPicklist_validFor_For_Oject_Name " );
 		SMLog(@"ERROR IN UPDATING %s", err);
-        /*
-        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:query type:UPDATEQUERY];
-         */
+ 
+        //[appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:query type:UPDATEQUERY];
+ 
 
         return FALSE;
     }
     return TRUE;
 }
-
+*/
 -(int)getIndexOfPicklistValueForOject_Name:(NSString *)object_name  field_api_name:(NSString *)field_api_name value:(NSString *)value
 {
     NSString * query = [NSString  stringWithFormat:@"SELECT  index_value  FROM SFPicklist  WHERE object_api_name = '%@' AND field_api_name = '%@' AND label = '%@' ", object_name , field_api_name , value];
@@ -6350,6 +7622,8 @@ extern void SVMXLog(NSString *format, ...);
             index_value =  synchronized_sqlite3_column_int(statement,0);
         }
     }
+    
+    synchronized_sqlite3_finalize(statement);
     
     return index_value;
 }
@@ -6376,6 +7650,9 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
+    
+    synchronized_sqlite3_finalize(statement);
+    
     return dependent_fields;
 }
 
@@ -6400,6 +7677,9 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
+    
+     synchronized_sqlite3_finalize(statement);
+    
     return array;
 }
 
@@ -6415,6 +7695,9 @@ extern void SVMXLog(NSString *format, ...);
             count = synchronized_sqlite3_column_int(statement, 0);
         }
     }
+    
+    synchronized_sqlite3_finalize(statement);
+    
     if(count > 0)
         return TRUE;
     else
@@ -6442,6 +7725,8 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
+    
+    synchronized_sqlite3_finalize(statement);
     return RTPicklistValues;
 }
 
@@ -6463,6 +7748,8 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
+    
+    synchronized_sqlite3_finalize(statement);
     return picklist_value;
 }
 
@@ -6487,6 +7774,9 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
+    
+    synchronized_sqlite3_finalize(statement);
+    
     return RTPicklistValues;
 }
 
@@ -6515,6 +7805,9 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
+    
+    synchronized_sqlite3_finalize(statement);
+    
     return default_value;
 }
 
@@ -6537,6 +7830,8 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
+    
+    synchronized_sqlite3_finalize(statement);
     
     return defaultValue;
 }
@@ -6569,6 +7864,11 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void)deleteDownloadCriteriaObjects:(NSArray *)deleted_objects
 {
+    
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"deleteDownloadCriteriaObjects"
+                                                         andRecordCount:[deleted_objects count]];
+    
+
     for(NSString * str in deleted_objects)
     {
         char * err;
@@ -6585,6 +7885,13 @@ extern void SVMXLog(NSString *format, ...);
 		}
         [delete_Statement release];
     }
+    
+    [[PerformanceAnalytics sharedInstance] addDeletedRecordsNumber:[deleted_objects count]];
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"deleteDownloadCriteriaObjects"
+                                                                      andRecordCount:0];
+    
 }
 
 //sahana code starts    june8th
@@ -6601,6 +7908,9 @@ extern void SVMXLog(NSString *format, ...);
             
         }
     }
+    
+    synchronized_sqlite3_finalize(statement);
+    
     if(count == 0)
     {
         return FALSE;
@@ -6621,6 +7931,9 @@ extern void SVMXLog(NSString *format, ...);
             count =  sqlite3_column_int(statement, 0);
         }
     }
+    
+     synchronized_sqlite3_finalize(statement);
+    
     if(count == 0)
     {
         return FALSE;
@@ -6665,6 +7978,9 @@ extern void SVMXLog(NSString *format, ...);
             
         }
     }
+    
+    synchronized_sqlite3_finalize(statement);
+    
     if(count == 0)
     {
         return FALSE;
@@ -6675,6 +7991,11 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void)deleteAllOndemandRecordsPartOfDownloadCriteriaForSfId:(NSString *)sf_id
 {
+    
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"deleteAllOndemandRecordsPartOfDownloadCriteriaForSfId"
+                                                         andRecordCount:1];
+    
+    
     BOOL isTableExist= [appDelegate.dataBase isTabelExistInDB:@"on_demand_download"];
     if(!isTableExist)
         return;
@@ -6688,6 +8009,11 @@ extern void SVMXLog(NSString *format, ...);
 		SMLog(@"ERROR IN DELETE %s", err);
       	[appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:delete_statement type:DELETEQUERY];
     }
+    
+    [[PerformanceAnalytics sharedInstance] addDeletedRecordsNumber:1];
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"deleteAllOndemandRecordsPartOfDownloadCriteriaForSfId"
+                                                                      andRecordCount:0];
+    
     
 }
 -(NSMutableArray *)getAllOndemandObejcts
@@ -6756,6 +8082,12 @@ extern void SVMXLog(NSString *format, ...);
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     today_Date = [dateFormatter stringFromDate:date];
     
+    [appDelegate.dataBase beginTransaction];
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"updateOndemandRecordForId"
+                                                         andRecordCount:1];
+    
+    
     NSString * update_query = [NSString stringWithFormat:@"UPDATE on_demand_download SET time_stamp = '%@' where sf_id = '%@'", today_Date,record_id];
     char * err;
     
@@ -6766,6 +8098,13 @@ extern void SVMXLog(NSString *format, ...);
 		SMLog(@"ERROR IN UPDATING %s", err);
 		[appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:update_query type:UPDATEQUERY];
     }
+    
+    [appDelegate.dataBase endTransaction];
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"updateOndemandRecordForId"
+                                                                      andRecordCount:0];
+    
     
     [dateFormatter release];
 }
@@ -6804,6 +8143,9 @@ extern void SVMXLog(NSString *format, ...);
             count =  sqlite3_column_int(statement, 0);
         }
     }
+    
+    synchronized_sqlite3_finalize(statement);
+    
     if(count == 0)
     {
         return FALSE;
@@ -6963,7 +8305,7 @@ extern void SVMXLog(NSString *format, ...);
     json_record=[json_record stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     NSString * insert_query = [NSString stringWithFormat:@"INSERT OR REPLACE INTO 'on_demand_download' ('object_name','sf_id','time_stamp','local_id','record_type','json_record') VALUES ('%@','%@','%@','%@','%@','%@')" , object_name,sf_id,today_Date,local_id,RecordType,json_record ];
     char * err;
-    
+    [appDelegate.dataBase beginTransaction];
     if(synchronized_sqlite3_exec(appDelegate.db, [insert_query UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
         SMLog(@"%@", insert_query);
@@ -6974,7 +8316,7 @@ extern void SVMXLog(NSString *format, ...);
          */
 
     }
-
+     [appDelegate.dataBase endTransaction];
 }
 
 -(NSString *)getRecordTypeNameForObject:(NSString *)object_name forId:(NSString *)recordTYpeId
@@ -7100,6 +8442,12 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void)insertIntoEventsLocal_ids:(NSString *)local_id  fromEvent_temp_table:(NSString *)event_temp_table
 {
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"insertIntoEventsLocal_ids"
+                                                         andRecordCount:1];
+    
+    
+    
     //delete before created event
     BOOL table_exist = [appDelegate.dataBase isTabelExistInDB:event_temp_table];
     if(!table_exist)
@@ -7107,6 +8455,8 @@ extern void SVMXLog(NSString *format, ...);
         return;
     }
     [self deleteRecordsFromEventLocalIdsFromTable:event_temp_table];
+    
+    [appDelegate.dataBase beginTransaction];
     
     NSString * insert_query = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ ('object_name','local_id' ) VALUES ('%@','%@')" , event_temp_table,@"Event",local_id ];
     char * err;
@@ -7118,6 +8468,13 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"ERROR IN INSERTING %s", err);
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:insert_query type:INSERTQUERY];
     }
+    
+    [appDelegate.dataBase endTransaction];
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"insertIntoEventsLocal_ids"
+                                                                      andRecordCount:0];
+
 }
 
 -(NSString *)getLocal_idFrom_Event_local_id:(NSString *)event_temp_table
@@ -7150,6 +8507,11 @@ extern void SVMXLog(NSString *format, ...);
         return;
     }
     
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"deleteRecordsFromEventLocalIdsFromTable"
+                                                         andRecordCount:1];
+    
+    
     NSString * delete_query = [NSString stringWithFormat:@"DELETE FROM %@ ",event_temp_table];
     char * err_delete;
     
@@ -7162,10 +8524,21 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate printIfError:[NSString stringWithUTF8String:err_delete] ForQuery:delete_query type:DELETEQUERY];
         
     }
+
+    [[PerformanceAnalytics sharedInstance] addDeletedRecordsNumber:1];
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"deleteRecordsFromEventLocalIdsFromTable"
+                                                                      andRecordCount:0];
+
 }
 
 -(NSString * )getallOverLappingEventsForStartDateTime:(NSString *)startDateTime EndDateTime:(NSString *)endDateTime local_id:(NSString *)local_id
 {
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"getallOverLappingEventsForStartDateTime"
+                                                         andRecordCount:1];
+    
+    
     NSDateFormatter * formatter = [[[NSDateFormatter alloc] init] autorelease];
     [formatter setDateFormat:@"hh:mm"];
     
@@ -7288,11 +8661,22 @@ extern void SVMXLog(NSString *format, ...);
     }
     overlapping_events = [[NSString alloc]  initWithFormat:@"%@",mutable_str];
     [mutable_str release];
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"getallOverLappingEventsForStartDateTime"
+                                                                      andRecordCount:0];
+    
+    
     return overlapping_events;
 }
 
 -(NSString *)getNameForSFId:(NSString *)sfId
 {
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"getNameForSFId"
+                                                         andRecordCount:1];
+    
+    
     NSString * new_sf_id = [[NSString alloc] initWithString:sfId];
     NSString * keyPrefix = [new_sf_id substringWithRange:NSMakeRange(0, 3)];
     
@@ -7306,6 +8690,12 @@ extern void SVMXLog(NSString *format, ...);
         name_field =  [appDelegate.databaseInterface  getObjectName:referencetoObject recordId:local_id];
     }
     [new_sf_id release];
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"getNameForSFId"
+                                                                      andRecordCount:0];
+    
+    
     return name_field;
 }
 
@@ -7314,13 +8704,14 @@ extern void SVMXLog(NSString *format, ...);
 #pragma mark Get price deletion of records
 - (void)insertGetPriceRecordsToRespectiveTables:(NSMutableDictionary *)gpData andParser:(SBJsonParser *)jsonParser{
    
+    int retVal =  [appDelegate.dataBase beginTransaction];;
+    SMLog(@"GP Starting transcation Success = %d",retVal);
+    
     @try {
         
         NSMutableDictionary *objectFieldDictionaryLocal = [[NSMutableDictionary alloc] init];
         
         BOOL allRecordInsertedSuccessFully = YES;
-        int retVal =  [self startTransaction];
-        SMLog(@"GP Starting transcation Success = %d",retVal);
         
         /*For each object in object array, objectApiName = table name  */
         NSArray *allKeysOfSyncData = [gpData allKeys];
@@ -7467,6 +8858,8 @@ extern void SVMXLog(NSString *format, ...);
                             SMLog(@"ERROR IN UPDATING %s", error); //RADHA TODAY
                             
                         }
+                        
+                        sqlite3_clear_bindings(bulk_statement);
                         sqlite3_reset(bulk_statement);
                     }
                     else
@@ -7495,15 +8888,12 @@ extern void SVMXLog(NSString *format, ...);
                 NSLog(@"Failed to insert Initial Sync");
             }
             
-            sqlite3_finalize(bulk_statement);
+            synchronized_sqlite3_finalize(bulk_statement);
             
             [autoreleaseExternal release];
             autoreleaseExternal = nil;
             SMLog(@"Insertion Ends for %@",objectApiName);
         }
-        
-        retVal = [self endTransaction];
-        SMLog(@"Commit transaction %d",retVal);
         
         [objectFieldDictionaryLocal release];
         objectFieldDictionaryLocal = nil;
@@ -7518,6 +8908,9 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exception];
     }
    
+    retVal = [appDelegate.dataBase endTransaction];
+    SMLog(@"Commit transaction %d",retVal);
+    
 }
 
 
@@ -7921,6 +9314,8 @@ extern void SVMXLog(NSString *format, ...);
 			}
         }
     }
+    
+    synchronized_sqlite3_finalize(selectStmt);
     return columnExists;
 }
 
@@ -7945,6 +9340,9 @@ extern void SVMXLog(NSString *format, ...);
 			}
         }
     }
+    
+    synchronized_sqlite3_finalize(selectStmt);
+    
     return columnExists;
 }
 - (BOOL) checkIfCustomEntryExistsInTrailerTable:(NSString *)parentLocalId
@@ -7975,7 +9373,7 @@ extern void SVMXLog(NSString *format, ...);
 	{
 		entryExists = TRUE;
 	}
-	
+	synchronized_sqlite3_finalize(statement);
 	
 	return entryExists;
 }
@@ -8019,12 +9417,16 @@ extern void SVMXLog(NSString *format, ...);
     
     char * err;
     
+    [appDelegate.dataBase beginTransaction];
+    
     if(synchronized_sqlite3_exec(appDelegate.db, [insert_query UTF8String],NULL, NULL, &err) != SQLITE_OK)
     {
         SMLog(@"%@", insert_query);
         SMLog(@"METHOD: insertSyncConflictsIntoSYNC_CONFLICT");
         SMLog(@"ERROR IN INSERTING %s", err);
     }
+    
+    [appDelegate.dataBase endTransaction];
 }
 -(void)deleteAllRecordsWithIgnoreTagFromConflictTable
 {
@@ -8058,12 +9460,20 @@ extern void SVMXLog(NSString *format, ...);
     NSString * deleteQuery = [NSString stringWithFormat:@"Delete from %@ where request_id in (%@)", table_name,request_id_str];
     char * err;
     
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"deleteallRecordsForRequest_ids"
+                                                         andRecordCount:1];
+    
     if(synchronized_sqlite3_exec(appDelegate.db, [deleteQuery UTF8String],NULL, NULL, &err) != SQLITE_OK)
     {
         SMLog(@"%@", deleteQuery);
         SMLog(@"METHOD: insertSyncConflictsIntoSYNC_CONFLICT");
         SMLog(@"ERROR IN INSERTING %s", err);
     }
+    
+    [[PerformanceAnalytics sharedInstance] addDeletedRecordsNumber:1];
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"deleteallRecordsForRequest_ids"
+                                                                      andRecordCount:1];
+
 }
 -(NSArray *)getAllrequestIdsWithFlag:(NSString *)flag
 {
@@ -8348,9 +9758,8 @@ extern void SVMXLog(NSString *format, ...);
             count = temp_count;
         }
     }
-    
-    
     synchronized_sqlite3_finalize(stmt);
+    
     if(count == 0)
     {
         return NO;
@@ -8360,6 +9769,8 @@ extern void SVMXLog(NSString *format, ...);
         return YES;
     }
 }
+
+
 -(void)deleteCustomWebserviceEntriesFromSyncHeap:(NSMutableArray *)custom_entries
 {
     NSMutableString  * request_ids_str = [[NSMutableString alloc] initWithCapacity:0];
@@ -8372,7 +9783,6 @@ extern void SVMXLog(NSString *format, ...);
         }else{
             [request_ids_str appendFormat:@" , '%@'",request_id];
         }
-        
     }
     
     if([request_ids_str length] >0)
@@ -8388,10 +9798,14 @@ extern void SVMXLog(NSString *format, ...);
             SMLog(@"METHOD: deleteCustomWebserviceEntriesFromSyncHeap");
             SMLog(@"ERROR IN Delete %s", err);
         }
-
     }
     
     [request_ids_str release];
 }
 
 @end
+
+
+
+
+

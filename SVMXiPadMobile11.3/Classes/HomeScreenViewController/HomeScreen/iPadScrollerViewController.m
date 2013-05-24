@@ -21,6 +21,7 @@
 #import "Item.h"
 #import "GridViewCell.h"
 
+#import "PerformanceAnalytics.h"
 #define GRID_COLUMN_COUNT 3
 
 extern void SVMXLog(NSString *format, ...);
@@ -422,6 +423,15 @@ const NSUInteger kNumImages = 7;
     //[appDelegate.wsInterface doGetPrice];
     
     [self refreshArray];
+    
+    [[PerformanceAnalytics sharedInstance] stopPerformAnalysis];
+    
+    [[PerformanceAnalytics sharedInstance] setCode:@"PA-IN-012"
+                                    andDescription:@"Initial Sync - Stage 3 : Caching + Deletion"];
+    
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"Initial Sync"
+                                                         andRecordCount:0];
+
 	[menuTableView reloadData]; //OAuth :
     if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
     {
@@ -464,7 +474,28 @@ const NSUInteger kNumImages = 7;
                 initial_sync_timer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(updateProgressBar:) userInfo:nil repeats:YES];
             
             appDelegate.initial_sync_succes_or_failed = INITIAL_SYNC_SUCCESS;
+            
+            NSLog(@" ------- doMetaSync  Started -----");
+            
+            [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"doMetaSync"
+                                                                 andRecordCount:0];
+
+            [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"doMetaSync-VP"
+                                                                 andRecordCount:1];
+
+            
             [self doMetaSync];
+            
+            [appDelegate.dataBase cleanupDatabase];
+            
+            [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"doMetaSync-VP"
+                                                                 andRecordCount:0];
+
+            
+            [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"doMetaSync"
+                                                                 andRecordCount:0];
+            
+            NSLog(@" ------- doMetaSync  Finished -----");
             
             if(appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED && ![appDelegate isInternetConnectionAvailable])
             {
@@ -482,7 +513,28 @@ const NSUInteger kNumImages = 7;
                 return;
             }
             
+            NSLog(@" ------- doDataSync  Started -----");
+            [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"doDataSync"
+                                                                 andRecordCount:0];
+            [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"doDataSync-VP"
+                                                                 andRecordCount:1];
+            
+            // Drop All Data sync
+            NSLog(@" ------- doDataSync Started -  removing all indexes -----");
+            [appDelegate.dataBase dropAllExistingTableIndex];
+            
             [self doDataSync];
+            
+            [appDelegate.dataBase cleanupDatabase];
+            
+            [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"doDataSync"
+                                                                 andRecordCount:0];
+            
+            [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"doDataSync-VP"
+                                                                 andRecordCount:0];
+            
+            NSLog(@" ------- doDataSync  Finished -----");
+            
             
             if(appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED && ![appDelegate isInternetConnectionAvailable])
             {
@@ -501,7 +553,30 @@ const NSUInteger kNumImages = 7;
                 return;
             }
             [appDelegate.wsInterface doGetPrice];
+            
+            NSLog(@" ------- doTxFetch  Started -----");
+            
+            // Drop All Data sync
+            NSLog(@" ------- doTxFetch Started -  creating indexes now -----");
+            [appDelegate.dataBase doTableIndexCreation];
+            
+            [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"doTxFetch"
+                                                                 andRecordCount:0];
+            
+            [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"doTxFetch-VP"
+                                                                 andRecordCount:1];
+
+            [appDelegate.dataBase cleanupDatabase];
             [self doTxFetch];
+            [appDelegate.dataBase cleanupDatabase];
+            
+            [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"doTxFetch-VP"
+                                                                 andRecordCount:0];
+
+            [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"doTxFetch"
+                                                                 andRecordCount:0];
+
+            NSLog(@" ------- doTxFetch  Finished -----");
             
             if(appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED && ![appDelegate isInternetConnectionAvailable])
             {
@@ -517,10 +592,31 @@ const NSUInteger kNumImages = 7;
                 return;
             }
             
+            NSLog(@" ------- doAfterSyncSetttings  Started -----");
+            
+            [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"doAfterSyncSetttings"
+                                                                 andRecordCount:0];
+            
             [self doAfterSyncSetttings];
             
+            [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"doAfterSyncSetttings"
+                                                                 andRecordCount:0];
+            NSLog(@" ------- doAfterSyncSetttings  Finished -----");
+
+            [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"InitsyncSetting"
+                                                                 andRecordCount:0];
+
             [self InitsyncSetting];
+            [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"InitsyncSetting"
+                                                                 andRecordCount:0];
+
+            [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"initialDataSetUpAfterSyncOrLogin"
+                                                                 andRecordCount:0];
+
             [self initialDataSetUpAfterSyncOrLogin];
+            [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"initialDataSetUpAfterSyncOrLogin"
+                                                                 andRecordCount:0];
+
             appDelegate.isInitialMetaSyncInProgress = FALSE;
             [ProgressView removeFromSuperview];
             [transparent_layer removeFromSuperview];
@@ -531,9 +627,16 @@ const NSUInteger kNumImages = 7;
         }
         else
         {
+            [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"InitsyncSetting"
+                                                                 andRecordCount:0];
+
             [self InitsyncSetting];
             [self initialDataSetUpAfterSyncOrLogin];
 			
+            [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"InitsyncSetting"
+                                                                 andRecordCount:0];
+
+            
 			NSFileManager * fileManager = [NSFileManager defaultManager];
 			
 			NSString * flag = @"";
@@ -615,12 +718,24 @@ const NSUInteger kNumImages = 7;
             [appDelegate.dataBase updateUserLanguage:language];
         }
         [self enableControls];
+        [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"scheduleLocationPingService"
+                                                             andRecordCount:0];
+
+        
         [self scheduleLocationPingService];
         [appDelegate startBackgroundThreadForLocationServiceSettings];
+        
+        [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"scheduleLocationPingService"
+                                                             andRecordCount:0];
+
     }
-//OAuth
-	appDelegate.refreshHomeIcons = YES;
+    
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"Initial Sync"
+                                                         andRecordCount:0];
+    
+    [[PerformanceAnalytics sharedInstance] displayCurrentStatics];
 }
+
 -(void)createUserInfoPlist
 {
     NSDictionary * dict = [[NSDictionary alloc] initWithObjects:[NSArray arrayWithObjects:appDelegate.username,@"false", nil] forKeys:[NSArray arrayWithObjects:USER_NAME_AUTHANTICATED,INITIAL_SYNC_LOGIN_SATUS, nil]];
@@ -1456,9 +1571,9 @@ const float progress_ = 0.07;
         }
     }
     
-    NSString* txnstmt = @"BEGIN TRANSACTION";
-    char * err ;
-    int retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);    
+    //NSString* txnstmt = @"BEGIN TRANSACTION";
+    //char * err ;
+    //int retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
     
     
     appDelegate.initial_sync_status = INITIAL_SYNC_SFM_METADATA;
@@ -1635,8 +1750,8 @@ const float progress_ = 0.07;
         return;
     }
     
-    txnstmt = @"END TRANSACTION";
-    retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err); 
+    //txnstmt = @"END TRANSACTION";
+    //retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
 	}@catch (NSException *exp) {
 	NSLog(@"testing for exception thrown :%@",exp);
 	 [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
@@ -1645,9 +1760,9 @@ const float progress_ = 0.07;
 
 -(void)doDataSync
 {
-    NSString* txnstmt = @"BEGIN TRANSACTION";
-    char * err ;
-    int retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);   
+    //NSString* txnstmt = @"BEGIN TRANSACTION";
+    //char * err ;
+    //int retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
     
     SMLog(@"  DataSync WS Start: %@", [NSDate date]);
     appDelegate.wsInterface.didOpComplete = FALSE;
@@ -1770,8 +1885,8 @@ const float progress_ = 0.07;
       SMLog(@"  DataSync WS End: %@", [NSDate date]);
     SMLog(@"  Incremental DataSync WS Start: %@", [NSDate date]);
 
-    txnstmt = @"END TRANSACTION";
-    retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err); 
+    //txnstmt = @"END TRANSACTION";
+    //retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
 }
 
 -(void)doTxFetch
@@ -1877,7 +1992,18 @@ const float progress_ = 0.07;
     /* Releasing the memory allocated : InitialSync-shr*/
     appDelegate.databaseInterface.objectFieldDictionary  = nil;
     appDelegate.wsInterface.jsonParserForDataSync = nil;
+    
+    
+    
+    NSLog(@"-------  updatesfmIdsOfMasterToLocalIds  started -------");
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"updatesfmIdsOfMasterToLocalIds"
+                                                         andRecordCount:0];
+
     [appDelegate.databaseInterface updatesfmIdsOfMasterToLocalIds];
+    
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"updatesfmIdsOfMasterToLocalIds"
+                                                         andRecordCount:0];
+    NSLog(@"-------  updatesfmIdsOfMasterToLocalIds  Finished -------");
 
     
     appDelegate.initial_sync_status = INITIAL_SYNC_COMPLETED;

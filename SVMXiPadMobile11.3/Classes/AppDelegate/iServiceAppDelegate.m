@@ -1664,7 +1664,12 @@ NSString* machineName()
     { 
         SMLog (@"couldn't open db:");
         NSAssert(0, @"Database failed to open.");		//throw another exception here
-        return;
+        
+    } else {
+            
+        NSLog(@" iServiceAppDelegate : initWithDBName : Reset DB Config");
+            
+        [dataBase resetConfigurationForDataBase:db];
     }
     return;
 }
