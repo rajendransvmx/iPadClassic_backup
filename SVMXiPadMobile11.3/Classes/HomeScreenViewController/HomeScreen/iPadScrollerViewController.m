@@ -313,15 +313,48 @@ const NSUInteger kNumImages = 7;
 //Abinash
 -(void)logout
 {
-    [locationManager stopUpdatingLocation];
-    [appDelegate showloginScreen];
-    [self dismissViewControllerAnimated:YES completion:nil];
+	//fix for logout crash Defect #007173 - 21/MAY/2013.
+	appDelegate.refreshHomeIcons = FALSE;
 	
-	//OAuth 16/May/2013 : Remove the background image. (Removed the code)
-	[appDelegate.oauthClient initWithClientID:CLIENT_ID secret:CLIENT_SECRET redirectURL:REDIRECT_URL];
-	[appDelegate.oauthClient userAuthorizationRequestWithParameters:nil];
-	[appDelegate._OAuthController.view addSubview:appDelegate.oauthClient.view];
+	
+	//Fix for multiple taps on logout.
+	NSArray *homeIcons = [self.menuTableView visibleCells];
+	
+	ItemView *itemView = nil;
+	for (GridViewCell *cell in homeIcons)
+	{
+		NSArray *itemViews = [cell subviews];
+		for (itemView in itemViews)
+		{
+			if ([itemView.titleLable.text isEqualToString:[appDelegate.wsInterface.tagsDictionary valueForKey:ipad_logout_label]])
+			{
+				itemView.userInteractionEnabled = FALSE;
+				break;
+			}
+		}
+	}
+		
+    [locationManager stopUpdatingLocation];
+	
+	//Fix for defect #7177
+    if ( [appDelegate showloginScreen] )
+	{
+		[self dismissViewControllerAnimated:YES completion:nil];
+		//OAuth 16/May/2013 : Remove the background image. (Removed the code)
+		[appDelegate.oauthClient.view removeFromSuperview];//Fix for Defect# 007179
+		[appDelegate.oauthClient initWithClientID:CLIENT_ID secret:CLIENT_SECRET redirectURL:REDIRECT_URL];
+		[appDelegate.oauthClient userAuthorizationRequestWithParameters:nil];
+		[appDelegate._OAuthController.view addSubview:appDelegate.oauthClient.view];
+		
+		itemView.userInteractionEnabled = TRUE;
 
+	}
+	else
+	{
+		itemView.userInteractionEnabled = TRUE;
+		return;
+	}
+	
 
 	/*COMMENTING THE CODE SINCE LOGIN CONTROLLER IS NOT USED FOR OAUTH*/
     /*

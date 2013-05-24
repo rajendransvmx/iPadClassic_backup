@@ -65,7 +65,7 @@
 - (void)verifyAuthorizationWithAccessCode:(NSString *)identityURL;
 - (BOOL)refreshAccessToken:(NSString *)refresh_Token;
 - (void)getEndPointUrlFromResponse:(NSString *)jsonResponse;
-- (void)revokeExistingToken:(NSString *)refresh_token;
+- (BOOL)revokeExistingToken:(NSString *)refresh_token; //7177
 - (void)extractAccessCodeFromCallbackURL:(NSURL *)url;
 - (void)setUserLanguage:(NSString *)identity_URL;
 - (void)deleteAllCookies;

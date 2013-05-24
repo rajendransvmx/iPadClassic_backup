@@ -10,10 +10,8 @@
 
 @interface OAuthController : UIViewController
 {
-	UIWebView *webView;
+	
 }
-
-@property (nonatomic, retain)UIWebView *webView;
 
 
 @end

@@ -23,6 +23,7 @@
 //Shrinivas - OAuth.
 //#import "iPadScrollerViewController.h"
 #import "OAuthClientInterface.h"
+//Fix for defect#7167
 #import "OAuthController.h"
 //Radha
 #import "DataBase.h"
@@ -911,7 +912,7 @@ extern  NSString const *devVersion;
 -(void)popupActionSheet:(NSString *)message;
 
 //Test
-- (void) showloginScreen;
+- (BOOL) showloginScreen; //#7177
 
 - (void)registerDefaultsFromSettingsBundle;
 

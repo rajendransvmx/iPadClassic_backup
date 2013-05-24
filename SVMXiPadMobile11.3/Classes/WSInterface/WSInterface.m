@@ -10997,6 +10997,34 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     }
 }
 
+
+#pragma mark Handle Session failure-initial sync.
+- (BOOL)handleSessionExpiryForInitialLogin
+{
+	if ( ![[ZKServerSwitchboard switchboard] doCheckSession] )
+		return FALSE;
+	
+	
+	if ( appDelegate.initial_sync_status == SYNC_TX_FETCH )	//Handle session failure for TX_FETCH
+	{
+		[self PutAllTheRecordsForIds];
+		return TRUE;
+	}
+	else if ( appDelegate.initial_sync_status == SYNC_EVENT_SYNC ) //Handle session failure for EVENT_SYNC
+	{
+		[self dataSyncWithEventName:EVENT_SYNC eventType:SYNC requestId:@""];
+		return TRUE;
+	}
+	else if ( appDelegate.initial_sync_status == SYNC_DOWNLOAD_CRITERIA_SYNC )//Handle session failure for DOWNLOAD_CREITERIA_SYNC
+	{
+		[self dataSyncWithEventName:DOWNLOAD_CREITERIA_SYNC eventType:SYNC requestId:appDelegate.initial_dataSync_reqid];
+		return TRUE;
+	}
+	
+	return FALSE;
+}
+
+
 -(void)settingFlags
 {
     //sahana aggresive sync

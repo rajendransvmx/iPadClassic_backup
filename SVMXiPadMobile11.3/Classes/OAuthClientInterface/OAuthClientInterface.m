@@ -128,7 +128,7 @@
 	UIImageView *servicemaxLogo = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"logo.png"]];
 	servicemaxLogo.contentMode = UIViewContentModeScaleAspectFit;
 	servicemaxLogo.bounds = CGRectMake(0, 0, 441, 96);
-	CGPoint center = CGPointMake(CGRectGetMidX(self.view.frame), CGRectGetMidY(self.view.frame)+100);
+	CGPoint center = CGPointMake(CGRectGetMidX(self.view.frame), CGRectGetMidY(self.view.frame)+150);
 	servicemaxLogo.center = center;
 
 	//view.scrollView.scrollEnabled = NO;
@@ -188,7 +188,7 @@
 {
 	SBJsonParser *parser = [[SBJsonParser alloc] init];
 	NSDictionary *dict = [parser objectWithString:jsonResponse];
-	NSLog(@"JSON RESPNSE WITH END POINT URLS : %@", dict);
+	//NSLog(@"JSON RESPNSE WITH END POINT URLS : %@", dict);
 	
 	NSDictionary *urlDict = [dict objectForKey:@"urls"];
 	
@@ -244,7 +244,7 @@
 	}
 	
 	NSString *data=[[NSString alloc]initWithData:urlData encoding:NSUTF8StringEncoding];
-	NSLog(@"%@", data);
+	//NSLog(@"%@", data);
 		
 	if ( data )
 	{
@@ -281,6 +281,13 @@
 		return NO;
 	}
 	
+	//Set flag to indicated if its on the authorization page. - 24/May/2013.
+	if ( [[request.URL absoluteString] Contains:@"frontdoor.jsp"] )
+	{
+		NSLog(@"%@", [[request.URL absoluteString] pathComponents]);
+		appDelegate.isUserOnAuthenticationPage = FALSE;
+	}
+	
 	NSLog(@"%@", request);
 	
 	if ([[request.URL absoluteString] hasPrefix:redirectURL])
@@ -292,8 +299,9 @@
 	
 	if ( [[request.URL absoluteString] Contains:@"oauth_error_code=1800"] )
 	{
-		[self deleteAllCookies];
-		[self userAuthorizationRequestWithParameters:nil];
+		//Change for : App renders 2 login screen if kept idle for around 30 mins.
+		//Fix for Defect #007179
+		[appDelegate showSalesforcePage];
 	}
 		
 	return YES;
@@ -417,7 +425,7 @@
 }
 
 //POST REQUEST TO REVOKE EXISTING TOKENS:
-- (void)revokeExistingToken:(NSString *)refresh_token
+/*- (void)revokeExistingToken:(NSString *)refresh_token
 {
 	NSString *revokeURl = REVOKE_URL;
 	NSString *orgURL = [NSString stringWithFormat:@"%@%@", [ZKServerSwitchboard baseURL], revokeURl];
@@ -474,6 +482,70 @@
 	else
 		NSLog(@"Failed Revoking the Tokens...");
 
+}*/
+
+- (BOOL)revokeExistingToken:(NSString *)refresh_token
+{
+	NSString *revokeURl = REVOKE_URL;
+	NSString *orgURL = [NSString stringWithFormat:@"%@%@", [ZKServerSwitchboard baseURL], revokeURl];
+	NSString *post = [NSString stringWithFormat:@"token=%@", refresh_token];
+	
+	NSData *postData = [post dataUsingEncoding:NSUTF8StringEncoding];
+	NSString *postLength = [NSString stringWithFormat:@"%d", [postData length]];
+	
+	NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] init] autorelease];
+	[request setURL:[NSURL URLWithString:orgURL]];
+	[request setHTTPMethod:@"POST"];
+	
+	[request setValue:postLength forHTTPHeaderField:@"Content-Length"];
+	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+	[request setHTTPBody:postData];
+	
+	NSError *error = nil;
+	NSHTTPURLResponse *response = nil;
+	
+	NSLog(@"%@", request);
+	
+	NSData *urlData=[NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+	
+	if ( error )
+	{
+		UIAlertView *OAuthAlert = [[UIAlertView alloc] initWithTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:alert_application_error] message:[error localizedDescription] delegate:self cancelButtonTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK] otherButtonTitles:nil, nil];
+		
+		[OAuthAlert show];
+		[OAuthAlert release];
+		
+	}
+	
+	NSString *data=[[NSString alloc]initWithData:urlData encoding:NSUTF8StringEncoding];
+	
+	NSLog(@"%@ REVOKE STATUS : %d", data, [response statusCode]);
+	
+	if ( [response statusCode] == 200)
+	{
+		NSLog(@"Sucessfully Revoked the Tokens...");
+		
+		//Delete the default values for the user incase logged out :
+		[SFHFKeychainUtils deleteKeychainValue:KEYCHAIN_SERVICE];
+		
+		NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+		[userDefaults removeObjectForKey:ACCESS_TOKEN];
+		[userDefaults removeObjectForKey:SERVERURL];
+		[userDefaults removeObjectForKey:ORGANIZATION_ID];
+		[userDefaults removeObjectForKey:API_URL];
+		[userDefaults removeObjectForKey:USER_ORG];
+		[userDefaults removeObjectForKey:IDENTITY_URL];
+		[userDefaults synchronize];
+		[self deleteAllCookies];
+
+		return TRUE; //Fix for #007177
+	}
+	else
+	{
+		NSLog(@"Failed Revoking the Tokens...");
+		return FALSE;//Fix for #007177
+	}
+	
 }
 
 -(void)deleteAllCookies
@@ -543,7 +615,12 @@
 	else if ( [error code] != NSURLErrorCancelled )
 	{
 		//Fix for Defect #:7089 - 15/May/2013
-		NSString *cannotFindHostMsg = @"A server with the specified hostname could not be found. Please check your custom host URL settings.";
+		NSString *cannotFindHostMsg = @"A server with the specified hostname could not be found.";
+		
+		if ([appDelegate.userOrg caseInsensitiveCompare:@"Custom"] == NSOrderedSame)
+		{
+			cannotFindHostMsg = @"A server with the specified hostname could not be found. Please check your custom host URL settings.";
+		}
 		
 		_webViewDidFail = TRUE;
 		UIAlertView *OAuthAlert = [[UIAlertView alloc] initWithTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:alert_application_error] message:cannotFindHostMsg delegate:self cancelButtonTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK] otherButtonTitles:nil, nil];

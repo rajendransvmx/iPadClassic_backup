@@ -828,6 +828,7 @@ NSString* machineName()
 		
 	if ( ContinueLogin )
 	{
+		[self addBackgroundImageAndLogo]; //Code for Indicator - 24/May/2013
 		[self.dataBase deleteDatabase:DATABASENAME1];
 		[self removeSyncHistoryPlist];
 		[self initWithDBName:DATABASENAME1 type:DATABASETYPE1];
@@ -893,6 +894,8 @@ NSString* machineName()
 		[self getTagsForTheFirstTime];
 		
 		[self.dataBase getImageForServiceReportLogo]; //Get logo only for Initial sync.
+		
+		[self removeBackgroundImageAndLogo]; //New code for indicator - 24/May/2013.
 		
 	}
 	else
@@ -1214,34 +1217,36 @@ NSString* machineName()
 
 -(void)addBackgroundImageAndLogo
 {
-	if (backGround != nil)
-	{
-		[servicemaxLogo setImage:[UIImage imageNamed:@"logo.png"]];
-		[backGround setImage:[UIImage imageNamed:@"dashboard-main-app-cloud-bg.png"]];
-	}
-	else
-	{
-		backGround = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"dashboard-main-app-cloud-bg.png"]];
-		backGround.transform = CGAffineTransformMakeRotation(3.14/2);
-		backGround.frame = CGRectMake(0, 0, self.window.frame.size.width, self.window.frame.size.height);
-		
-		CGRect servicemaxLogoFrame = CGRectMake(432, 20, 441, 96);
-		
-		servicemaxLogo = [[UIImageView alloc] initWithFrame:servicemaxLogoFrame];
-		servicemaxLogo.contentMode = UIViewContentModeScaleAspectFit;
-		servicemaxLogo.image = [UIImage imageNamed:@"logo.png"];
-		[backGround addSubview:servicemaxLogo];
-		
-		[self.window addSubview:backGround];
-
-	}
+	activity = [[UIActivityIndicatorView alloc] init];
+	activity.bounds = CGRectMake(0, 0, 150, 150);
+	activity.center = CGPointMake(self.window.frame.size.width/2 - 80, self.window.frame.size.height/2 - 40);
+	[activity setBackgroundColor:[UIColor clearColor]];
+	[activity setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhiteLarge];
+	activity.color = [UIColor grayColor];
+	
+	UILabel *loadingLabel = [[UILabel alloc] init];
+	loadingLabel.bounds = CGRectMake(0, 0, 100, 35);
+	loadingLabel.center = CGPointMake(activity.frame.size.width/2, activity.frame.size.width);
+	loadingLabel.transform = CGAffineTransformMakeRotation(3.14/2);
+	loadingLabel.backgroundColor = [UIColor clearColor];
+	loadingLabel.text = @"Loading...";
+	loadingLabel.textColor = [UIColor grayColor];
+	loadingLabel.font = [UIFont boldSystemFontOfSize:18];
+	
+	[activity addSubview:loadingLabel];
+	
+	[loadingLabel release];
+	
+	[self.window addSubview:activity];
+	[activity startAnimating];
 	
 }
 
 -(void)removeBackgroundImageAndLogo
 {
-	[servicemaxLogo setImage:nil];
-	[backGround setImage:nil];
+	[activity stopAnimating];
+	[activity removeFromSuperview];
+	[activity release];
 }
 
 #pragma mark - END
@@ -1410,24 +1415,25 @@ NSString* machineName()
 			[oauthClient userAuthorizationRequestWithParameters:nil];
 			[_OAuthController.view addSubview:oauthClient.view];
 		}
-		else if ( [userOrg isEqualToString:@"Custom"] )
+		else if ( [userOrg isEqualToString:@"Custom"] && [self isInternetConnectionAvailable] )
 		{
 			//For Defect #7085
-			NSString *_baseURL = [ZKServerSwitchboard baseURL] ;
-			if ( [appDelegate.customURLValue isEqualToString:_baseURL] )
-			{
-				//Do nothing
-			}
-			else
-			{
-				[oauthClient.view removeFromSuperview];
-				[oauthClient deleteAllCookies];
-				[oauthClient userAuthorizationRequestWithParameters:nil];
-				[_OAuthController.view addSubview:oauthClient.view];
-
-			}
+			[oauthClient.view removeFromSuperview];
+			[oauthClient deleteAllCookies];
+			[oauthClient userAuthorizationRequestWithParameters:nil];
+			[_OAuthController.view addSubview:oauthClient.view];
+			
 		}
 		
+		//Fix for Defect #007174
+		else if ( self.isUserOnAuthenticationPage == TRUE )
+		{
+			[oauthClient.view removeFromSuperview];
+			[oauthClient deleteAllCookies];
+			[oauthClient userAuthorizationRequestWithParameters:nil];
+			[_OAuthController.view addSubview:oauthClient.view];
+			
+		}
 		
 	}
 	else
@@ -1977,7 +1983,8 @@ NSString * GO_Online = @"GO_Online";
     }];
 }
 
-- (void) showloginScreen
+//#7177
+- (BOOL) showloginScreen
 {
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
     self.logoutFlag = TRUE;
@@ -2131,8 +2138,16 @@ NSString * GO_Online = @"GO_Online";
     metaSyncRunning = NO;
 	eventSyncRunning = NO;
 	
-	//Shrinivas : OAuth.
-	[self.oauthClient revokeExistingToken:self.refresh_token];
+	//Shrinivas : OAuth. Fix for defect #007177
+	if ( ![self.oauthClient revokeExistingToken:self.refresh_token] )
+	{
+		NSLog(@"Revoke tokens failed...");
+		return FALSE;
+	}
+	else
+		return TRUE;
+		
+		
 
 	/*COMMENTING THE CODE SINCE LOGIN CONTROLLER IS NOT USED FOR OAUTH*/
 	
