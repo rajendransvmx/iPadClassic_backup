@@ -65,12 +65,33 @@
                     var someVarName = routesTemp[i];
                     pathCo = someVarName.overview_path;
                     
+                    var overViewPathVar = [];
+                    
+                    for(var counter = 0; counter < pathCo.length; counter++) {
+                        
+                        var latLongObject = pathCo[counter];
+                        var latT = latLongObject.lat();
+                        var longT = latLongObject.lng();
+                        overViewPathVar.push({lat:latT,lng:longT});
+                    }
+                    
+                    for(var outerCounter = 0; outerCounter<someVarName.legs.length; outerCounter++) {
+                        
+                        var currentLeg = someVarName.legs[outerCounter];
+                        
+                            var endLocationLatLong = currentLeg.end_location;
+                            var latTi = endLocationLatLong.lat();
+                            var longTi = endLocationLatLong.lng();
+                            currentLeg.end_location = {lati:latTi,lngi:longTi};
+                                                    
+                    }
+                    
                     var durationAndDistance = getDurationAndDistanceForRoute(someVarName);
                     duration = durationAndDistance.duration;
                     distance =  durationAndDistance.distance;
                     
                 }
-                
+                someVarName.overview_path = overViewPathVar;
                 
                 var line = new google.maps.Polyline({path: pathCo});
                 // V3:KRI

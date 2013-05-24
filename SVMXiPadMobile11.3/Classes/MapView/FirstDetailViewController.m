@@ -734,16 +734,16 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 - (void) viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshMap:) name:kIncrementalDataSyncDone object:nil];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshMap:) name:NOTIFICATION_EVENT_DATA_SYNC object:nil];
+//    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshMap:) name:kIncrementalDataSyncDone object:nil];
+//   [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshMap:) name:NOTIFICATION_EVENT_DATA_SYNC object:nil];
 
 }
 
 - (void) viewDidDisappear:(BOOL)animated
 {
     [super viewDidDisappear:animated];
-    [[NSNotificationCenter defaultCenter]removeObserver:self name:kIncrementalDataSyncDone object:nil];
-    [[NSNotificationCenter defaultCenter]removeObserver:self name:NOTIFICATION_EVENT_DATA_SYNC object:nil];
+//    [[NSNotificationCenter defaultCenter]removeObserver:self name:kIncrementalDataSyncDone object:nil];
+//  [[NSNotificationCenter defaultCenter]removeObserver:self name:NOTIFICATION_EVENT_DATA_SYNC object:nil];
 
 
 }

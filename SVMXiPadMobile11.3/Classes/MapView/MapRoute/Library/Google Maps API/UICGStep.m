@@ -27,13 +27,6 @@
 	if (self != nil) {
 		dictionaryRepresentation = [dictionary retain];
 		
-		NSDictionary *start_location = [dictionaryRepresentation objectForKey:@"start_location"];//@"Point"];
-        //V3New:Kri
-        //hb and ib for business purpose. if you are using publey key its again different
-		CLLocationDegrees latitude  = [[start_location objectForKey:@"jb"] doubleValue];//[[coordinates objectAtIndex:0] doubleValue];i
-		CLLocationDegrees longitude = [[start_location objectForKey:@"kb"] doubleValue];//[[coordinates objectAtIndex:1] doubleValue];h
-		location = [[[CLLocation alloc] initWithLatitude:latitude longitude:longitude] autorelease];
-        
         // V3:KRI
 		descriptionHtml = [dictionaryRepresentation objectForKey:@"instructions"];//@"descriptionHtml"];
 		distance = [dictionaryRepresentation objectForKey:@"distance"];
