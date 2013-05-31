@@ -380,7 +380,7 @@ extern void SVMXLog(NSString *format, ...);
     
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
-    NSString  *queryStatementSearchObject =  [NSString stringWithFormat:@"INSERT INTO SFM_Search_Objects ('SVMXC__Module__c','SVMXC__ProcessID__c','SVMXC__Target_Object_Name__c','ProcessName','ProcessId','ObjectId','SVMXC__Advance_Expression__c','SVMXC__Name__c','SVMXC__Parent_Object_Criteria__c') VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9"];
+    NSString  *queryStatementSearchObject =  [NSString stringWithFormat:@"INSERT INTO SFM_Search_Objects ('SVMXC__Module__c','SVMXC__ProcessID__c','SVMXC__Target_Object_Name__c','ProcessName','ProcessId','ObjectId','SVMXC__Advance_Expression__c','SVMXC__Name__c','SVMXC__Parent_Object_Criteria__c') VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)"];
 
     sqlite3_stmt * preparedStmtSearchObject;
     int preparedStmtSearchObjectResult = synchronized_sqlite3_prepare_v2(appDelegate.db,
@@ -432,7 +432,7 @@ extern void SVMXLog(NSString *format, ...);
     {
         NSDictionary *processDict = [processData objectAtIndex:k];
         NSString *processName = [processDict objectForKey:@"Name"];
-        processName=[processName stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+        processName=[processName stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
         NSString *processId = [processDict objectForKey:@"Id"];
         NSArray *objectsArray = [processDict objectForKey:@"Objects"];
         SMLog(@"Process Name = %@ and Objects = %@",processName, objectsArray);
@@ -454,7 +454,7 @@ extern void SVMXLog(NSString *format, ...);
                 {
                     if(!(parentObjCriteria ==NULL))
                     {
-                        parentObjCriteria=[parentObjCriteria stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                        parentObjCriteria=[parentObjCriteria stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
                     }
                     else
                     {
@@ -469,11 +469,11 @@ extern void SVMXLog(NSString *format, ...);
                 NSString *targetObjectNameFull = [objectDict objectForKey:@"SVMXC__Target_Object_Name__c"];
                 targetObjectNameFull= [targetObjectNameFull stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
                 NSString *targetObjectName = [self getFieldLabelForApiName:targetObjectNameFull];
-                targetObjectName=[targetObjectName stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                targetObjectName=[targetObjectName stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
                 NSString * Name = [objectDict objectForKey:@"SVMXC__Name__c"];
-                Name = [Name stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                Name = [Name stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
                 NSString * Module = [objectDict objectForKey:@"SVMXC__Module__c"];
-                Module = [Module  stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                Module = [Module  stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
                 NSString *AdvanceExp=[objectDict objectForKey:@"SVMXC__Parent_Object_Criteria__c"];
 //                NSString *AdvanceExp=[objectDict objectForKey:@"SVMXC__Advance_Expression__c"];
 
@@ -522,7 +522,7 @@ extern void SVMXLog(NSString *format, ...);
                 }
                 else
                 {
-                    NSLog(@"insertValuesintoSFMObjectTable : prepare Failed! - SFM_Search_Objects - FieldSorting\n   message : %d - %@",  preparedStmtSearchObjectResult, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
+                    NSLog(@"insertValuesintoSFMObjectTable : prepare Failed! - SFM_Search_Objects - SFM_Searc_Objects\n   message : %d - %@",  preparedStmtSearchObjectResult, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
                 }
                 
                 [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:1];
@@ -830,7 +830,7 @@ extern void SVMXLog(NSString *format, ...);
                     {
                         if(!(parentObjCriteria ==NULL))
                         {
-                            parentObjCriteria=[parentObjCriteria stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                            parentObjCriteria=[parentObjCriteria stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
                         }
                         else
                         {
@@ -844,16 +844,16 @@ extern void SVMXLog(NSString *format, ...);
                     
                     
                     NSString *targetObjectNameFull = [objectDict objectForKey:@"SVMXC__Target_Object_Name__c"];
-                    targetObjectNameFull= [targetObjectNameFull stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                    targetObjectNameFull= [targetObjectNameFull stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
                     
                     NSString *targetObjectName = [self getFieldLabelForApiName:targetObjectNameFull];
-                    targetObjectName=[targetObjectName stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                    targetObjectName=[targetObjectName stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
                     
                     NSString * Name = [objectDict objectForKey:@"SVMXC__Name__c"];
-                    Name = [Name stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                    Name = [Name stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
                     
                     NSString * Module = [objectDict objectForKey:@"SVMXC__Module__c"];
-                    Module = [Module  stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                    Module = [Module  stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
                 
                     char * _Module = [appDelegate convertStringIntoChar:Module];
                     sqlite3_bind_text(bulkStmt, 1, _Module, strlen(_Module), SQLITE_TRANSIENT);
@@ -2236,25 +2236,24 @@ extern void SVMXLog(NSString *format, ...);
 }
 -(NSString *) CreateRandomString:(NSString*)objectName
 {
-    NSArray *arrayOfKeywords=[NSArray arrayWithObjects:@"AS",@"BY",@"IF",@"IN",@"IS",@"NO",@"OF",@"ON",@"OR",@"TO",nil];
     NSString *randomString=@"";
-    unichar characters[2];
-    objectName=[self getFieldLabelForApiName:objectName];
-    characters[0]=[objectName characterAtIndex:0];
-    characters[ 1 ] = 'A' + arc4random_uniform(26) ;
-    randomString=[ NSString stringWithCharacters:characters length:2 ];
-    while([arrayOfKeywords containsObject:randomString])
+
+    if([objectName length]>0 || objectName != nil)
     {
+        NSArray *arrayOfKeywords=[NSArray arrayWithObjects:@"AS",@"BY",@"IF",@"IN",@"IS",@"NO",@"OF",@"ON",@"OR",@"TO",nil];
+        unichar characters[2];
+        objectName=[self getFieldLabelForApiName:objectName];
+        characters[0]=[objectName characterAtIndex:0];
         characters[ 1 ] = 'A' + arc4random_uniform(26) ;
         randomString=[ NSString stringWithCharacters:characters length:2 ];
-        SMLog(@"%@",randomString);
+        while([arrayOfKeywords containsObject:randomString])
+        {
+            characters[ 1 ] = 'A' + arc4random_uniform(26) ;
+            randomString=[ NSString stringWithCharacters:characters length:2 ];
+            SMLog(@"%@",randomString);
+        }
+
     }
-//    NSMutableArray *randomArray=[[NSMutableArray alloc]init];
-//    if([arrayOfKeywords containsObject:randomString] || [randomArray containsObject:randomString])
-//    {
-//        randomString=[self random];
-//        [randomArray addObject:randomString];
-//    }
     return randomString;
 }
 /*
@@ -2529,12 +2528,12 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     
-    synchronized_sqlite3_finalize(labelstmt);
     if((refrence_to != nil)&& strlen(refrence_to))
         strRefrence_to=[NSString stringWithFormat:@"%s",refrence_to];
     else
         strRefrence_to=@"";
-    
+    synchronized_sqlite3_finalize(labelstmt);
+
     return strRefrence_to;
 }
 
@@ -3825,25 +3824,29 @@ extern void SVMXLog(NSString *format, ...);
                     
                     if ([TableName length]>0)
                         TableName = [self getApiNameFromFieldLabel:TableName];
-                    NSString *random=[self CreateRandomString:TableName];
-                    NSString *relationship_name=[[criteriaArray objectAtIndex:j] objectForKey:@"SVMXC__Field_Relationship_Name__c"];
-                    
-                    if(![TableName isEqualToString:object] && ![TableName isEqualToString:@"RecordType"])
+                    NSString *random=@"",*relationship_name=@"";
+                    if([TableName length]>0)
                     {
-                        if(![TableArray containsObject:TableName] )
+                        random=[self CreateRandomString:TableName];
+                        relationship_name=[[criteriaArray objectAtIndex:j] objectForKey:@"SVMXC__Field_Relationship_Name__c"];
+                        
+                        if(![TableName isEqualToString:object] && ![TableName isEqualToString:@"RecordType"])
                         {
-                            [TableArray addObject:TableName];
-                            NSMutableDictionary *dictRel=[[NSMutableDictionary alloc]init];
-                            [dictRel setObject:random forKey:relationship_name];
-                            [tableArrayDict setObject:dictRel forKey:TableName ];
-                        }
-                        else
-                        {
-                            NSMutableDictionary *Dict =  [tableArrayDict objectForKey:TableName];
-                            NSArray *keys=[Dict allKeys];
-                            if(![keys containsObject:relationship_name])
+                            if(![TableArray containsObject:TableName] )
                             {
-                                [Dict setObject:random forKey:relationship_name];
+                                [TableArray addObject:TableName];
+                                NSMutableDictionary *dictRel=[[NSMutableDictionary alloc]init];
+                                [dictRel setObject:random forKey:relationship_name];
+                                [tableArrayDict setObject:dictRel forKey:TableName ];
+                            }
+                            else
+                            {
+                                NSMutableDictionary *Dict =  [tableArrayDict objectForKey:TableName];
+                                NSArray *keys=[Dict allKeys];
+                                if(![keys containsObject:relationship_name])
+                                {
+                                    [Dict setObject:random forKey:relationship_name];
+                                }
                             }
                         }
                     }
@@ -4090,7 +4093,6 @@ extern void SVMXLog(NSString *format, ...);
                                 NSString *object_name_2 = [[sortingArray objectAtIndex:indexValue ] objectForKey:@"SVMXC__Object_Name2__c"];
                                 NSString *field_name = [[sortingArray objectAtIndex:indexValue ] objectForKey:@"SVMXC__Field_Name__c"];
                                 NSString *key = [NSString stringWithFormat:@"%@.%@",object_name_2,field_name];
-//                                NSString *sortObject=[[[sortingFieldArray objectAtIndex:indexValue] objectForKey:@"sort_Object"] stringByReplacingOccurrencesOfString:@"'" withString:@""];
                                 if(![[dict allKeys] containsObject:key])
                                 {
                                     refrenceValue=[self getvalueforReference:[sortingArray objectAtIndex:indexValue ]  value:value];
@@ -4216,13 +4218,13 @@ extern void SVMXLog(NSString *format, ...);
                     {
                         if(([objectValue isEqualToString:@"null"]) && ([operator isEqualToString:@"!="] || [operator isEqualToString:@"<>"]) )
                         {
-                            NSString *alias=[[tableArrayDict objectForKey:refrence_to] objectForKey:tableName];
+                            NSString *alias=[[tableArrayDict objectForKey:refrence_to] objectForKey:tableName]!=nil ?[[tableArrayDict objectForKey:refrence_to] objectForKey:tableName]:refrence_to;
                             rhs=[NSString stringWithFormat:@"%@.%@",alias,fieldName];
                             [finalQuery appendFormat:@"trim(%@.%@)",alias,fieldName];
                         }
                         else if(![objectValue Contains:@"SVMX.CURRENTUSER"] && ![objectValue Contains:@"SVMX.OWNER"]&&![refrence_to isEqualToString:@"User"])
                         {
-                            NSString *alias=[[tableArrayDict objectForKey:refrence_to] objectForKey:tableName];
+                            NSString *alias=[[tableArrayDict objectForKey:refrence_to] objectForKey:tableName]!=nil ?[[tableArrayDict objectForKey:refrence_to] objectForKey:tableName]:refrence_to;
                             rhs=[NSString stringWithFormat:@"%@.%@",alias,fieldName];
                             [finalQuery appendString:alias];
                             [finalQuery appendString:@"."];
@@ -4607,7 +4609,7 @@ extern void SVMXLog(NSString *format, ...);
             for (int j=0; j<[[dictApiName allKeys] count]; j++)
             {
                 NSString *relationshipName=[[dictApiName allKeys] objectAtIndex:j];
-                NSString *alias=[dictApiName objectForKey:relationshipName];
+                NSString *alias=[dictApiName objectForKey:relationshipName]!=nil ?[dictApiName objectForKey:relationshipName]:relationshipName;
                 [joinFields appendFormat:@" LEFT OUTER JOIN"];
                 [joinFields appendFormat:@" '%@'",[TableArray objectAtIndex:i]];
                 [joinFields appendFormat:@" %@ ",alias];
@@ -5329,7 +5331,7 @@ extern void SVMXLog(NSString *format, ...);
                     NSString * label = ([obj objectForKey:_LABEL] != nil)?[obj objectForKey:_LABEL]:@"";
                     if (![label isEqualToString:@""])
                     {
-                        label = [label stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                        label = [label stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
                     }
                     
                     NSString * type = ([obj objectForKey:_TYPE] != nil)?[obj objectForKey:_TYPE]:@"";
@@ -6843,16 +6845,16 @@ extern void SVMXLog(NSString *format, ...);
                                 continue;
                             
                             pickValue = [value objectAtIndex:r];
-                            pickValue = [pickValue stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                            pickValue = [pickValue stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
                             pickLabel = [value objectAtIndex:++r];
-                            pickLabel = [pickLabel stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                            pickLabel = [pickLabel stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
                             
                             if ( r < [key count] - 1)
                             {
                                 if ([[key objectAtIndex:++r] isEqualToString:DEFAULTPICKLISTVALUE])
                                 {
                                     defautPickValue = [value objectAtIndex:r];
-                                    defautPickValue = [defautPickValue stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                                    defautPickValue = [defautPickValue stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
                                 }
                                 else
                                 {
@@ -6969,8 +6971,8 @@ extern void SVMXLog(NSString *format, ...);
                             NSString * label = ([labelValueDict objectForKey:@"label"] != nil)?[labelValueDict objectForKey:@"label"]:@"";
                             NSString * value = ([labelValueDict objectForKey:@"value"] != nil)?[labelValueDict objectForKey:@"value"]:@"";
                             
-                            label = [label stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
-                            value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                            label = [label stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
+                            value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
                             
 							char * _objectName = [appDelegate convertStringIntoChar:objectName];
 							
@@ -8758,9 +8760,9 @@ extern void SVMXLog(NSString *format, ...);
                 
                 NSDictionary * source_dict = nil;
                 NSDictionary * target_dict = nil;
-                
-                NSArray * obj = [NSArray arrayWithObjects: processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"", nil];
-                
+                //Sahana 31-May-2013
+
+                NSArray * obj = [NSArray arrayWithObjects: processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"",sorting_order_value = @"", nil];
                 source_dict = [mappingArray objectAtIndex:0];
                 if ([mappingArray count] == 2)
                 {
@@ -9131,19 +9133,26 @@ extern void SVMXLog(NSString *format, ...);
 - (BOOL) createTable:(NSString *)statement
 {
     char * err;
+    BOOL isSuccess = YES;
     if (synchronized_sqlite3_exec(appDelegate.db, [statement UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
+        isSuccess = NO;
+        
         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+        {
             [MyPopoverDelegate performSelector:@selector(throwException)];
+        }
         SMLog(@"%@", statement);
 		SMLog(@"METHOD: createTable");
         SMLog(@"ERROR IN INSERTING %s", err);
         /*
 		[appDelegate printIfError:nil ForQuery:statement type:INSERTQUERY];
          */
-        return NO;
+        // Vipin 31-May-2013
+        NSLog(@" ERROR IN createTable \n  stetement: %@ \n %s", statement, err);
+        NSLog(@" ERROR in detail  : %@",[NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
     }
-    return YES;
+    return isSuccess;
 }
 
 #pragma mark - DataSync
@@ -9298,7 +9307,7 @@ extern void SVMXLog(NSString *format, ...);
         
         if (![value isEqualToString:@""])
         {
-            value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+            value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
         }
         
         type = ([lookUpDict objectForKey:@"type"] != nil) ? [lookUpDict objectForKey:@"type"] : @"";
@@ -9360,7 +9369,7 @@ extern void SVMXLog(NSString *format, ...);
     
     if (![value isEqualToString:@""])
     {
-        value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+        value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
     }
     
     NSString * query = [NSString stringWithFormat:@"INSERT OR REPLACE INTO LookUpFieldValue ('%@', '%@', '%@') VALUES (?1, ?2, ?3)", MOBJECT_API_NAME, @"Id",
@@ -9755,6 +9764,11 @@ extern void SVMXLog(NSString *format, ...);
         for (int i = 0; i < [allkeys count]; i++)
         {
             NSString * str = [allkeys objectAtIndex:i];
+            //Single Quote Fix
+            if ([str isKindOfClass:[NSNull class]])
+                str = @"";
+            [str stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+            
             
             NSString * value = [allvalue objectAtIndex:i];
             if ([value isKindOfClass:[NSNull class]])
@@ -10265,6 +10279,12 @@ extern void SVMXLog(NSString *format, ...);
 - (void)resetConfigurationForDataBase:(sqlite3 *)database
 {
     NSLog(@"resetConfigurationForDataBase:  Reset db configuration");
+    
+    if (self.dbTransactionCount > 0)
+    {
+        NSLog(@"Skipping db configuration reset since %d live transaction exist", dbTransactionCount);
+        return;
+    }
     
     char * errMessageSynch;
     char * errMessageJournalMod;
