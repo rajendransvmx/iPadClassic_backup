@@ -3385,7 +3385,7 @@ extern void SVMXLog(NSString *format, ...);
     sqlite3_stmt * stmt;
     NSData * data;
     NSString * ManData = @"";
-    
+    ManName=[ManName stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     NSString * queryStatement = [NSString stringWithFormat:@"SELECT productmanbody FROM trobleshootdata where prod_manual_Id = '%@' and prod_manual_name = '%@'", Id, ManName];
     
     if (synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &stmt, NULL) == SQLITE_OK)
@@ -3540,6 +3540,7 @@ extern void SVMXLog(NSString *format, ...);
 - (NSData *) selectTroubleShootingDataFromDBwithID:(NSString *)docID andName:(NSString *)name
 {
     sqlite3_stmt *statement;
+    name=[name stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     NSMutableString *query = [NSString stringWithFormat:@"Select Body from Document where Id = '%@' and Name = '%@'", docID, name];
     
     SMLog(@"%@", query);
@@ -3621,6 +3622,7 @@ extern void SVMXLog(NSString *format, ...);
     NSArray *keys = [[NSArray alloc]initWithObjects:DOCUMENTS_ID, DOCUMENTS_NAME, DOCUMENTS_KEYWORDS, nil];
     
     sqlite3_stmt *statement;
+    productString=[productString stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     NSString * query = [NSString stringWithFormat:@"SELECT Id, Name, Keywords from Document WHERE Keywords LIKE '%%%@%%'", productString];
     
     SMLog(@"%@", query);
@@ -3666,6 +3668,7 @@ extern void SVMXLog(NSString *format, ...);
 
 -(NSString *) getProductIdForName:(NSString *)productName
 {
+    productName=[productName stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     NSString * query = [NSString stringWithFormat:@"SELECT Id FROM Product2 WHERE Name = '%@'", productName];
     
     NSString * productId = @"";
@@ -3687,6 +3690,7 @@ extern void SVMXLog(NSString *format, ...);
     sqlite3_stmt * stmt1;
     if ([productId isEqualToString:@""])
     {
+        productName=[productName stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
         query = [NSString stringWithFormat:@"SELECT Id FROM LookUpFieldValue WHERE value = '%@'", productName];
         
         if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt1, NULL) == SQLITE_OK)
