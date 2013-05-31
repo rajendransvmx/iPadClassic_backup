@@ -73,7 +73,7 @@ extern void SVMXLog(NSString *format, ...);
     
     
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    
+    [self.dataBase beginTransaction];
         for (NSDictionary *dict in array)
         {
             NSArray *keys   = [dict allKeys];
@@ -108,8 +108,9 @@ extern void SVMXLog(NSString *format, ...);
                 NSLog(@" Failure prepared insertRecords  -  %d \n%s", returnValue, sqlite3_errmsg(appDelegate.db) );
             }
              sqlite3_finalize(statement);
-        }
 
+        }
+    [self.dataBase endTransaction];
     [pool drain];
     pool = nil;
     
