@@ -464,17 +464,19 @@ NSString* machineName()
     NSString *deviceVersion = [self getDeviceVersion];
     
     NSLog(@"model : %@ systemVersion : %@ appversion %@",type,systemOSVersion,appVersion);
-    
-    
-    NSString *str = [NSString stringWithFormat:@"model : %@ systemVersion : %@ appversion %@ iPadVersion %@",type,systemOSVersion,appVersion,deviceVersion];
-    
-    NSLog(@"string %@",str);
+    NSString *osVer =       @"iosversion:";
+    NSString *appVer =      @"appversion:";
+    NSString *deviceVer =   @"deviceversion:";
+    NSString *iosVersionString = [NSString stringWithFormat:@"%@%@",osVer,systemOSVersion];
+    NSString *appVersionString = [NSString stringWithFormat:@"%@%@",appVer,appVersion];
+    NSString *devVersionString = [NSString stringWithFormat:@"%@%@",deviceVer,deviceVersion];
     
     NSMutableDictionary *clientInfodict = [NSMutableDictionary dictionary];
     [clientInfodict setObject:type forKey:deviceType];
-    [clientInfodict setObject:systemOSVersion forKey:osVersion];
-    [clientInfodict setObject:appVersion forKey:applicationVersion];
-    [clientInfodict setObject:deviceVersion forKey:devVersion];
+    [clientInfodict setObject:iosVersionString forKey:osVersion];
+    [clientInfodict setObject:appVersionString forKey:applicationVersion];
+    [clientInfodict setObject:devVersionString forKey:devVersion];
+    
     return clientInfodict;
 }
 //create new object
