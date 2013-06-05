@@ -2237,7 +2237,12 @@ extern void SVMXLog(NSString *format, ...);
 -(NSString *) CreateRandomString:(NSString*)objectName
 {
     NSString *randomString=@"";
-
+    
+    //Keerti - 7275
+    if(arrayofAlias == nil || arrayofAlias == NULL || ![arrayofAlias count]>0)
+    {
+        arrayofAlias=[[NSMutableArray alloc]init];
+    }
     if([objectName length]>0 || objectName != nil)
     {
         NSArray *arrayOfKeywords=[NSArray arrayWithObjects:@"AS",@"BY",@"IF",@"IN",@"IS",@"NO",@"OF",@"ON",@"OR",@"TO",nil];
@@ -2246,13 +2251,21 @@ extern void SVMXLog(NSString *format, ...);
         characters[0]=[objectName characterAtIndex:0];
         characters[ 1 ] = 'A' + arc4random_uniform(26) ;
         randomString=[ NSString stringWithCharacters:characters length:2 ];
-        while([arrayOfKeywords containsObject:randomString])
+        while([arrayOfKeywords containsObject:randomString] ||[arrayofAlias containsObject:randomString]) //arrayofalias - Keerti - 7275
         {
             characters[ 1 ] = 'A' + arc4random_uniform(26) ;
             randomString=[ NSString stringWithCharacters:characters length:2 ];
             SMLog(@"%@",randomString);
         }
-
+        
+        //Keerti - 7275
+        [arrayofAlias addObject:randomString];
+        NSLog(@"arrayofAlias %@",arrayofAlias);
+    }
+    else if(isSortingDone)
+    {
+        [arrayofAlias release];
+        arrayofAlias=nil;
     }
     return randomString;
 }
@@ -2861,9 +2874,12 @@ extern void SVMXLog(NSString *format, ...);
                         }
                         if([UserFullName length]>0)
                         {
-//                            UserNameValue=[objectValue stringByReplacingOccurrencesOfString:@"SVMX.CURRENTUSER" withString:UserFullName];
-                            UserNameValue=[objectValue stringByReplacingOccurrencesOfString:@"SVMX.CURRENTUSER" withString:[NSString stringWithFormat:@"%@ COLLATE NOCASE",UserFullName ]];
-
+                            UserNameValue=[objectValue stringByReplacingOccurrencesOfString:@"SVMX.CURRENTUSER" withString:UserFullName];
+                            //Keerti - 7275
+                            NSMutableString *strTemp=[[NSMutableString alloc]init];
+                            [strTemp appendString:UserNameValue];
+                            [strTemp appendString:@" COLLATE NOCASE "];
+                            UserNameValue=strTemp;
                         }
 
                         if([refrence_to length]>0)
@@ -3240,7 +3256,6 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
         
-     synchronized_sqlite3_finalize(labelstmt);    
     NSString *strType,*strRefrence_to;
     if((type != nil)&& strlen(type))
         strType=[NSString stringWithFormat:@"%s",type];
@@ -3250,6 +3265,9 @@ extern void SVMXLog(NSString *format, ...);
         strRefrence_to=[NSString stringWithFormat:@"%s",refrence_to];
     else
         strRefrence_to=@" ";
+    
+    synchronized_sqlite3_finalize(labelstmt); //keerti - 7276
+
     if([strType isEqualToString:@"reference"])
     {
         
@@ -3267,7 +3285,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         synchronized_sqlite3_finalize(labelstmt);
         
-        NSString *queryRefrefield = [NSMutableString stringWithFormat:@"SELECT %@ FROM '%@' where Id='%@'",namefiled,[NSString stringWithFormat:@"%s",refrence_to],value];    
+        NSString *queryRefrefield = [NSMutableString stringWithFormat:@"SELECT %@ FROM '%@' where Id='%@'",namefiled,strRefrence_to,value]; //strReference_to added - Keerti - 7276
         sqlite3_stmt * queryRefrefieldstmt;
         const char *queryRefrefieldselectStatement = [queryRefrefield UTF8String];
         char *obejctFiled;
@@ -3284,7 +3302,6 @@ extern void SVMXLog(NSString *format, ...);
                 }
             }
         }
-        synchronized_sqlite3_finalize(queryRefrefieldstmt); 
         if(!refrenceObject)
         {
            strName_field=[self getValueFromLookupwithId:value];
@@ -3293,7 +3310,7 @@ extern void SVMXLog(NSString *format, ...);
                 strName_field=value;
             }
         }
-
+        synchronized_sqlite3_finalize(queryRefrefieldstmt); //Keerti - 7276
     }
     }@catch (NSException *exp) {
         SMLog(@"Exception Name Database :getvalueforReference %@",exp.name);
@@ -3405,14 +3422,14 @@ extern void SVMXLog(NSString *format, ...);
 - (NSMutableArray *) getResultsForSFM:(NSString *)object withConfigData:(NSDictionary *)dataForObject
 {
     // For Alias and sorting implementation
+    isSortingDone=FALSE; //Keerti - 7275
     NSMutableArray *searchableArray = [dataForObject objectForKey:@"SearchableFields"];
     if(![searchableArray count]>0)
     {
         NSMutableDictionary *dictforSearchObject=[[NSMutableDictionary alloc]init];
         [dictforSearchObject setObject:object forKey:@"SVMXC__Object_Name2__c"];
         [dictforSearchObject setObject:[self getNameFiled:object] forKey:@"SVMXC__Field_Name__c"];
-        //LOOKUP_FIELD_API_NAME, FIELD_RELATIONSHIP_NAME, OBJECT_FIELD_NAME
-        [dictforSearchObject setObject:@"" forKey:LOOKUP_FIELD_API_NAME];
+        [dictforSearchObject setObject:@"" forKey:LOOKUP_FIELD_API_NAME]; 
         [dictforSearchObject setObject:@"" forKey:FIELD_RELATIONSHIP_NAME];
         [dictforSearchObject setObject:@"" forKey:OBJECT_FIELD_NAME];
         [searchableArray addObject:dictforSearchObject];
@@ -3475,7 +3492,7 @@ extern void SVMXLog(NSString *format, ...);
                         NSMutableDictionary *dictRel=[[NSMutableDictionary alloc]init];
                         [dictRel setObject:random forKey:relationship_name];
                         [tableArrayDict setObject:dictRel forKey:ApiTableName ];
-                        if(![arrayQueryField containsObject:[NSString stringWithFormat:@"'%@'.%@",random ,ApifieldName]])
+//                        if(![arrayQueryField containsObject:[NSString stringWithFormat:@"'%@'.%@",random ,ApifieldName]]) //commented - keerti - 7275
                         [arrayQueryField addObject:[NSString stringWithFormat:@"'%@'.%@",random ,ApifieldName]];
                         
                     }
@@ -3486,7 +3503,7 @@ extern void SVMXLog(NSString *format, ...);
                         if(![keys containsObject:relationship_name])
                         {
                             [Dict setObject:random forKey:relationship_name];
-                            if(![arrayQueryField containsObject:[NSString stringWithFormat:@"'%@'.%@",random ,ApifieldName]])
+//                            if(![arrayQueryField containsObject:[NSString stringWithFormat:@"'%@'.%@",random ,ApifieldName]]) //commented - keerti - 7275
                             [arrayQueryField addObject:[NSString stringWithFormat:@"'%@'.%@",random ,ApifieldName]];
                         }
                     }
@@ -3494,7 +3511,7 @@ extern void SVMXLog(NSString *format, ...);
                 }
                 else
                 {
-                    if(![arrayQueryField containsObject:[NSString stringWithFormat:@"'%@'.%@",object ,ApifieldName]])
+//                    if(![arrayQueryField containsObject:[NSString stringWithFormat:@"'%@'.%@",object ,ApifieldName]]) //commented - keerti - 7275
                     {
                         [arrayQueryField addObject:[NSString stringWithFormat:@"'%@'.%@",object ,ApifieldName]];
                     }
@@ -3605,7 +3622,7 @@ extern void SVMXLog(NSString *format, ...);
 //                        [arrayQueryField addObject:[NSString stringWithFormat:@"'%@'.%@",object ,ApifieldName]];
 //                    }
                 }
-                if(![arrayQueryField containsObject:[NSString stringWithFormat:@"'%@'.%@",ApiTableName ,ApifieldName]])
+//                if(![arrayQueryField containsObject:[NSString stringWithFormat:@"'%@'.%@",ApiTableName ,ApifieldName]]) //commented - keerti - 7275
                 {
                     [arrayQueryField addObject:[NSString stringWithFormat:@"'%@'.%@",ApiTableName ,ApifieldName]];
                 }
@@ -3706,7 +3723,7 @@ extern void SVMXLog(NSString *format, ...);
                     [objectArray release];
                 }
                 NSMutableDictionary *sortDict=[[NSMutableDictionary alloc]init];
-                if(![arrayQueryField containsObject:[NSString stringWithFormat:@"'%@'.%@",ApiTableName ,ApifieldName]])
+//                if(![arrayQueryField containsObject:[NSString stringWithFormat:@"'%@'.%@",ApiTableName ,ApifieldName]]) //commented - keerti - 7275
                 {
                     [arrayQueryField addObject:[NSString stringWithFormat:@"'%@'.%@",ApiTableName ,ApifieldName]];
                 }
@@ -4146,7 +4163,9 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"Exception Reason Database :getResultsForSFM %@",exp.reason);
         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
     }
-    
+    isSortingDone=TRUE;//keerti - 7275
+    [self CreateRandomString:nil];
+
     return [results autorelease];
 }
 -(NSMutableDictionary*) getupdatedTokenForSFM:(NSMutableDictionary*)dictforparsing

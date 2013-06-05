@@ -82,6 +82,9 @@ PopoverButtons *popOver_view;
     // Vipindas Palli - Optimization
     int dbTransactionCount;
     
+    //Keerti - 7275
+    BOOL isSortingDone;
+    NSMutableArray *arrayofAlias;
 }
 
 //RADHA
@@ -370,7 +373,8 @@ PopoverButtons *popOver_view;
 - (void) attachSiganture:(NSString *)operation_type;
 // SFM Search Alias implementation
 
--(NSString *) CreateRandomString;
+//Keerti - 7275
+-(NSString *) CreateRandomString:(NSString*)objectName;
 -(NSString*)random;
 -(NSString*)getapiNameforObject:(NSString*)objectName RelationshipName:(NSString*)relName;
 -(NSMutableArray*)parsingExpression:(NSString*)Expression;
