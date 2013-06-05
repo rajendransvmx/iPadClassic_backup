@@ -763,6 +763,9 @@ const NSUInteger kNumImages = 7;
 
     }
     
+	//Radha :- OAuth Fix for defect 7239
+	appDelegate.refreshHomeIcons = TRUE;
+	
     [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"Initial Sync"
                                                          andRecordCount:0];
     
