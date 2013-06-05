@@ -898,6 +898,7 @@ NSString* machineName()
 			[userDefaults removeObjectForKey:IDENTITY_URL];
 			[userDefaults synchronize];
 			[self.oauthClient deleteAllCookies];
+			[self removeBackgroundImageAndLogo];  //Radha #Defect Fix 7238
 			[self showSalesforcePage];
 
 			
@@ -1010,6 +1011,7 @@ NSString* machineName()
 		[userDefaults removeObjectForKey:IDENTITY_URL];
 		[userDefaults synchronize];
 		[self.oauthClient deleteAllCookies];
+		[self removeBackgroundImageAndLogo];  //Radha #Defect Fix 7238
 		[self showSalesforcePage];
 
 		
@@ -1245,36 +1247,57 @@ NSString* machineName()
 
 -(void)addBackgroundImageAndLogo
 {
-	activity = [[UIActivityIndicatorView alloc] init];
-	activity.bounds = CGRectMake(0, 0, 150, 150);
-	activity.center = CGPointMake(self.window.frame.size.width/2 - 80, self.window.frame.size.height/2 - 40);
-	[activity setBackgroundColor:[UIColor clearColor]];
-	[activity setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhiteLarge];
-	activity.color = [UIColor grayColor];
 	
-	UILabel *loadingLabel = [[UILabel alloc] init];
-	loadingLabel.bounds = CGRectMake(0, 0, 100, 35);
-	loadingLabel.center = CGPointMake(activity.frame.size.width/2, activity.frame.size.width);
-	loadingLabel.transform = CGAffineTransformMakeRotation(3.14/2);
-	loadingLabel.backgroundColor = [UIColor clearColor];
+	//Radha Defect Fix :- 7238(Fix for orientation)
+	
+	
+	loadingLabel = [[UILabel alloc] init];
 	loadingLabel.text = @"Loading...";
+	loadingLabel.backgroundColor = [UIColor clearColor];
 	loadingLabel.textColor = [UIColor grayColor];
 	loadingLabel.font = [UIFont boldSystemFontOfSize:18];
 	
-	[activity addSubview:loadingLabel];
+	CGSize constraint = CGSizeMake(self._OAuthController.view.frame.size.width, 20);
 	
-	[loadingLabel release];
+	CGSize textsize = [loadingLabel.text sizeWithFont:[UIFont systemFontOfSize:18] constrainedToSize:constraint lineBreakMode:UILineBreakModeWordWrap];
+	CGFloat widthbytwo = textsize.width/2;
 	
-	[self.window addSubview:activity];
+	CGFloat x = CGRectGetMidY(self.window.frame);
+	
+	CGFloat placeatX =  (x- widthbytwo);
+	
+	activity = [[UIActivityIndicatorView alloc] init];
+	activity.frame = CGRectMake(placeatX, 456, textsize.width, 35);
+	activity.contentMode = UIViewContentModeScaleAspectFit;
+	[activity setBackgroundColor:[UIColor clearColor]];
+	[activity setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhiteLarge];
+	activity.color = [UIColor grayColor];
+	[self._OAuthController.view addSubview:activity];
+	
+	loadingLabel.frame = CGRectMake(placeatX+widthbytwo+20, 456, 100, 35);
+	[self._OAuthController.view addSubview:loadingLabel];
 	[activity startAnimating];
 	
 }
 
 -(void)removeBackgroundImageAndLogo
 {
-	[activity stopAnimating];
-	[activity removeFromSuperview];
-	[activity release];
+	//Defect #7238
+	if (activity)
+	{
+		[activity stopAnimating];
+		[activity removeFromSuperview];
+		[activity release];
+		activity = nil;
+	}
+	
+	if (loadingLabel)
+	{
+		[loadingLabel removeFromSuperview];
+		[loadingLabel release];
+		loadingLabel = nil;
+	}
+	
 }
 
 #pragma mark - END

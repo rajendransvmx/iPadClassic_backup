@@ -580,7 +580,9 @@ extern  NSString const *devVersion;
 	NSString *userOrg;
 	NSString *customURLValue; //For Defect #7085
 	NSString *previousUser; ////Fix for Defect #:7076 - 15/May/2013 :Using this variable incase of upgrade from non-oauth to oauth.
-	UIActivityIndicatorView *activity; 
+	UIActivityIndicatorView *activity;
+	//Defect #7238
+	UILabel * loadingLabel;
 	
 	BOOL _continueFalg;
 	BOOL _didDismissalertview;

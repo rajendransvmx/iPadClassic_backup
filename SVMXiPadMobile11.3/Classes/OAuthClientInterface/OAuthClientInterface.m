@@ -66,6 +66,8 @@
 {
 	if ( appDelegate == nil )
 		 appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+	//Radha Defect Fix 7238
+	[appDelegate addBackgroundImageAndLogo];
 	
 	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
 	
@@ -275,6 +277,8 @@
 	
 	if ( ![appDelegate isInternetConnectionAvailable] )
 	{
+		//Defect Fix 7238
+		[appDelegate removeBackgroundImageAndLogo];
 		appDelegate.shouldShowConnectivityStatus = TRUE;
 		[appDelegate displayNoInternetAvailable];
 		
@@ -301,6 +305,9 @@
 	{
 		//Change for : App renders 2 login screen if kept idle for around 30 mins.
 		//Fix for Defect #007179
+		//Defect Fix 7238
+		[appDelegate removeBackgroundImageAndLogo];
+
 		[appDelegate showSalesforcePage];
 	}
 		
@@ -629,6 +636,8 @@
 		[OAuthAlert release];
 		
 	}
+	//Radha Defect Fix 7238
+	[appDelegate removeBackgroundImageAndLogo];
 	loadFailedBool = YES;
 }
 
@@ -638,6 +647,9 @@
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
+	//Radha Defect Fix 7238
+	if ( appDelegate.isUserOnAuthenticationPage == TRUE )
+		[appDelegate removeBackgroundImageAndLogo];
 	
 	if ( !loadFailedBool )
 		webViewDidFinishLoadBool = YES;
