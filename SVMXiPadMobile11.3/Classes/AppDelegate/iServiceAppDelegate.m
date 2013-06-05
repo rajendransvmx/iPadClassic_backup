@@ -737,7 +737,6 @@ NSString* machineName()
 {
 	//[self addBackgroundImageAndLogo];
 	[_OAuthController.view addSubview:oauthClient.view];
-	
 	[window setRootViewController:_OAuthController];
 	[window makeKeyAndVisible];
 	
@@ -1989,7 +1988,7 @@ NSString * GO_Online = @"GO_Online";
 - (BOOL) showloginScreen
 {
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
-    self.logoutFlag = TRUE;
+    
     
     if([appDelegate.syncThread isExecuting])
     {
@@ -2128,26 +2127,38 @@ NSString * GO_Online = @"GO_Online";
     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:locationPingSettingTimer];
 
     
-    sqlite3_close(self.db);
-	
-    [self.dataBase removecache];
-    self.wsInterface.didOpComplete = FALSE;
-    loginController.didEnterAlertView = FALSE;
-    self.isMetaSyncExceptionCalled = FALSE;
-    self.isIncrementalMetaSyncInProgress = FALSE;
-    self.isInitialMetaSyncInProgress = FALSE; 
-    self.isSpecialSyncDone = FALSE;
-    metaSyncRunning = NO;
-	eventSyncRunning = NO;
-	
+    	
 	//Shrinivas : OAuth. Fix for defect #007177
 	if ( ![self.oauthClient revokeExistingToken:self.refresh_token] )
 	{
+		//Radha :- OAuth Fix for defect 7243
+		[appDelegate ScheduleIncrementalDatasyncTimer];
+		[appDelegate ScheduleIncrementalMetaSyncTimer];
+		[appDelegate ScheduleTimerForEventSync];
+		[appDelegate updateNextDataSyncTimeToBeDisplayed:[NSDate date]];
+		[appDelegate updateMetasyncTimeinSynchistory];
+		[appDelegate startBackgroundThreadForLocationServiceSettings];
 		NSLog(@"Revoke tokens failed...");
 		return FALSE;
 	}
 	else
+	{
+		//Radha :- OAuth Fix for defect 7243
+		self.logoutFlag = TRUE;
+		sqlite3_close(self.db);
+		
+		[self.dataBase removecache];
+		self.wsInterface.didOpComplete = FALSE;
+		loginController.didEnterAlertView = FALSE;
+		self.isMetaSyncExceptionCalled = FALSE;
+		self.isIncrementalMetaSyncInProgress = FALSE;
+		self.isInitialMetaSyncInProgress = FALSE;
+		self.isSpecialSyncDone = FALSE;
+		metaSyncRunning = NO;
+		eventSyncRunning = NO;
+
 		return TRUE;
+	}
 		
 		
 

@@ -313,10 +313,6 @@ const NSUInteger kNumImages = 7;
 //Abinash
 -(void)logout
 {
-	//fix for logout crash Defect #007173 - 21/MAY/2013.
-	appDelegate.refreshHomeIcons = FALSE;
-	
-	
 	//Fix for multiple taps on logout.
 	NSArray *homeIcons = [self.menuTableView visibleCells];
 	
@@ -334,11 +330,18 @@ const NSUInteger kNumImages = 7;
 		}
 	}
 		
-    [locationManager stopUpdatingLocation];
+    
 	
 	//Fix for defect #7177
     if ( [appDelegate showloginScreen] )
 	{
+		//Radha :- OAuth Fix for defect 7243
+		//fix for logout crash Defect #007173 - 21/MAY/2013.
+		appDelegate.refreshHomeIcons = FALSE;
+		
+		//Radha :- OAuth Fix for defect 7243
+		[locationManager stopUpdatingLocation];
+		
 		[self dismissViewControllerAnimated:YES completion:nil];
 		//OAuth 16/May/2013 : Remove the background image. (Removed the code)
 		[appDelegate.oauthClient.view removeFromSuperview];//Fix for Defect# 007179
