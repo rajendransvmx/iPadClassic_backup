@@ -842,6 +842,19 @@ NSString* machineName()
 		
 		if ( checkVersion == NO )
 		{
+			//#Radha Defect Fix 7168
+			NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+			NSLog(@"Continue Login");
+			[userDefaults removeObjectForKey:ACCESS_TOKEN];
+			[userDefaults removeObjectForKey:SERVERURL];
+			[userDefaults removeObjectForKey:ORGANIZATION_ID];
+			[userDefaults removeObjectForKey:API_URL];
+			[userDefaults removeObjectForKey:USER_ORG];
+			[userDefaults removeObjectForKey:IDENTITY_URL];
+			[userDefaults synchronize];
+			[self.oauthClient deleteAllCookies];
+			[self removeBackgroundImageAndLogo];
+			[self showSalesforcePage];
 			return;
 		}
 		
@@ -934,6 +947,20 @@ NSString* machineName()
 	
 	if ( checkVersion == NO )
 	{
+		//#Radha Defect Fix 7168
+		NSLog(@"Perform Initial Sync");
+		NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+		[userDefaults removeObjectForKey:ACCESS_TOKEN];
+		[userDefaults removeObjectForKey:SERVERURL];
+		[userDefaults removeObjectForKey:ORGANIZATION_ID];
+		[userDefaults removeObjectForKey:API_URL];
+		[userDefaults removeObjectForKey:USER_ORG];
+		[userDefaults removeObjectForKey:IDENTITY_URL];
+		[userDefaults synchronize];
+		[self.oauthClient deleteAllCookies];
+		[self removeBackgroundImageAndLogo];
+		[self showSalesforcePage];
+		
 		return;
 	}
 	
@@ -1149,17 +1176,17 @@ NSString* machineName()
 	
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
-        //shrinivas
-        if (self.isForeGround == TRUE)
-        {
-            self.didFinishWithError = FALSE;
-            return NO;
-        }
+		//#Radha Defect Fix 7168
+		if (appDelegate.connection_error)
+		{
+			self.didGetVersion = FALSE;
+			return NO;
+		}
 		
         if ( ![self isInternetConnectionAvailable] )
             return NO;
 		
-        SMLog (@"LoginViewController checkVersion in while loop");
+        SMLog (@"iserviceAppdelegate checkVersion in while loop");
 		
         if ( self.didGetVersion )
             break;
