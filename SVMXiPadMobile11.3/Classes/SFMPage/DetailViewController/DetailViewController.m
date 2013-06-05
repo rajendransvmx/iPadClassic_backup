@@ -969,13 +969,27 @@ extern void SVMXLog(NSString *format, ...);
                 
         if(!Entry_criteria)
         {
-            NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
-            NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
-            NSString * cancel_ = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
+            //1: Aparna: 7120
+            processInfo *processInfo = [appDelegate getViewProcessForObject:headerObjName record_id:recordId processId:processId isswitchProcess:NO];
+            SMLog(@"***************** process_exists: %d process_id: %@",processInfo.process_exists,processInfo.process_id);
+            
+            if (processInfo.process_exists)
+            {
+                [self initAllrequriredDetailsForProcessId:processInfo.process_id recordId:recordId object_name:headerObjName];
+                [self fillSFMdictForOfflineforProcess:processInfo.process_id forRecord:recordId];
+                return;
+            }
+            else{
+                NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_no_pagelayout];
+                NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
+                NSString * cancel_ = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
+                
+                UIAlertView * no_page_Layout = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:cancel_ otherButtonTitles:nil, nil];
+                
+                [no_page_Layout show];
+                [no_page_Layout release];
+            }
 
-            UIAlertView * enty_criteris = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:cancel_ otherButtonTitles:nil, nil];
-            [enty_criteris show];
-            [enty_criteris release];
         
         }
 
