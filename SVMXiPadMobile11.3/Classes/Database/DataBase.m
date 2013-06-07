@@ -3998,7 +3998,7 @@ extern void SVMXLog(NSString *format, ...);
                     
                 }
                 else
-                    queryStatement = [NSString stringWithFormat:@"SELECT DISTINCT %@ %@ FROM '%@' %@ WHERE (%@) COLLATE NOCASE LIMIT %@ %@",queryFields,selectQueryElement,object,joinFields,finalQuery,orderByElement,[uiControlsValue objectForKey:@"searchLimitString"]];
+                    queryStatement = [NSString stringWithFormat:@"SELECT DISTINCT %@ %@ FROM '%@' %@ WHERE (%@) COLLATE NOCASE %@ LIMIT %@",queryFields,selectQueryElement,object,joinFields,finalQuery,orderByElement,[uiControlsValue objectForKey:@"searchLimitString"]];
                 
             }
             else
