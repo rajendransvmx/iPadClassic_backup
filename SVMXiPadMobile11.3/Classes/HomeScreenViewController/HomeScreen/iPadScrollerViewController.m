@@ -2383,7 +2383,7 @@ const float progress_ = 0.07;
 		NSString *logoutLab = [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_label];
         if ( [itemView.titleLable.text isEqualToString:logoutLab])
 		{
-			if (![appDelegate isInternetConnectionAvailable])
+			if (![appDelegate isInternetConnectionAvailable] || [appDelegate.syncThread isExecuting] || appDelegate.eventSyncRunning)
 			{
 				itemView.alpha = 0.5;
 				itemView.userInteractionEnabled = FALSE;

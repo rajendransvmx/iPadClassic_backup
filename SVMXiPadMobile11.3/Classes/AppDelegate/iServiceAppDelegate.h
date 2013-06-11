@@ -589,6 +589,7 @@ extern  NSString const *devVersion;
 	BOOL _didEnterAlertView;
 	BOOL switchUser;
 	BOOL isUserOnAuthenticationPage;
+	BOOL wasPerformInitialSycn;
 
     
     //changed krishna : client Info
@@ -621,6 +622,8 @@ extern  NSString const *devVersion;
 @property (nonatomic, assign)BOOL _didEnterAlertView;
 @property (nonatomic, retain)NSString *userOrg;
 @property (nonatomic, assign)BOOL isUserOnAuthenticationPage;
+@property (nonatomic, retain)UIActivityIndicatorView *activity;
+@property (nonatomic, assign)BOOL wasPerformInitialSycn;
 //For Defect #7085
 @property (nonatomic, retain)NSString *customURLValue;
 
@@ -998,6 +1001,8 @@ extern  NSString const *devVersion;
 -(void)handleChangedConnection;
 -(void)addBackgroundImageAndLogo;
 -(void)removeBackgroundImageAndLogo;
+-(void)showHomeScreenForAutoInitialSync;
+-(void)showAlertForSyncFailure;
 
 
 

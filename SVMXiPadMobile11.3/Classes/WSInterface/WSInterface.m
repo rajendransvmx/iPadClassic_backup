@@ -1648,6 +1648,9 @@ last_sync_time:(NSString *)last_sync_time
     
     @try{
     //RADHA 2012june12
+		
+    [appDelegate.refreshIcons RefreshIcons]; //20-June-2013. ---> Refreshing home incons when sync is running.
+	
     if (appDelegate.metaSyncRunning)
     {
          appDelegate.Enable_aggresssiveSync = FALSE;
@@ -2967,7 +2970,12 @@ last_sync_time:(NSString *)last_sync_time
     }
     
     appDelegate.dataSyncRunning = NO;
+		
+		
+    [appDelegate.refreshIcons RefreshIcons]; //20-June-2013. ---> Refreshing home incons when sync is running.
     }@catch (NSException *exp) {
+		
+		[appDelegate.refreshIcons RefreshIcons]; //20-June-2013. ---> Refreshing home incons when sync is running.
         SMLog(@"Exception Name WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.name);
         SMLog(@"Exception Reason WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.reason);
     }
@@ -6794,21 +6802,24 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         NSError *error=response.error;
         NSString *type=error.domain;
 		//#Radha Defect Fix 7168
-        if([type Contains:@"NSURLErrorDomain"] && appDelegate.isUserOnAuthenticationPage)
+        if( [type Contains:@"NSURLErrorDomain"]  )
         {
-			//#Radha Defect Fix 7168
-			NSDictionary *userinfo=error.userInfo;
-			NSMutableDictionary *correctiveAction=[[[NSMutableDictionary alloc]init]autorelease];
-			[correctiveAction setObject:userinfo forKey:@"userInfo"];
-			NSString *des=[error localizedDescription];
-			
-			myException = [NSException
-						   exceptionWithName:type
-						   reason:des
-						   userInfo:correctiveAction];
-			
-			var=SOAP_ERROR;
-			@throw myException;
+			if ( appDelegate.isUserOnAuthenticationPage )
+			{
+				//#Radha Defect Fix 7168
+				NSDictionary *userinfo=error.userInfo;
+				NSMutableDictionary *correctiveAction=[[[NSMutableDictionary alloc]init]autorelease];
+				[correctiveAction setObject:userinfo forKey:@"userInfo"];
+				NSString *des=[error localizedDescription];
+				
+				myException = [NSException
+							   exceptionWithName:type
+							   reason:des
+							   userInfo:correctiveAction];
+				
+				var=SOAP_ERROR;
+				@throw myException;
+			}
             return;
         }
         NSDictionary *userinfo=error.userInfo;

@@ -67,7 +67,10 @@
 	if ( appDelegate == nil )
 		 appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
 	//Radha Defect Fix 7238
-	[appDelegate addBackgroundImageAndLogo];
+	
+	
+	if ( [appDelegate isInternetConnectionAvailable] && (appDelegate.activity==nil))
+		[appDelegate addBackgroundImageAndLogo];
 	
 	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
 	
@@ -123,14 +126,21 @@
 	
 	
 	appDelegate.isUserOnAuthenticationPage = TRUE;
-	appDelegate.userOrg = [userDefaults valueForKey:@"preference_identifier"]; //Capture user org if Success :
+	
+	appDelegate.logoutFlag = FALSE;
+	
+	appDelegate.userOrg = [userDefaults valueForKey:@"preference_identifier"]; //Capture user org if Success :a
 	
 	
 	//Fix for Defect #7079 : 16/May/2013 : Changed  code for adding service max logo.
 	UIImageView *servicemaxLogo = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"logo.png"]];
 	servicemaxLogo.contentMode = UIViewContentModeScaleAspectFit;
-	servicemaxLogo.bounds = CGRectMake(0, 0, 441, 96);
-	CGPoint center = CGPointMake(CGRectGetMidX(self.view.frame), CGRectGetMidY(self.view.frame)+150);
+	servicemaxLogo.bounds = CGRectMake(0, 0, 350, 96);
+//	CGPoint center = CGPointMake(CGRectGetMidX(self.view.frame), CGRectGetMidY(self.view.frame)+150);
+	int maxy = CGRectGetMaxY(self.view.frame);
+	int logoY = maxy;
+	int logoX = 48;
+	CGPoint center = CGPointMake(logoY, logoX);
 	servicemaxLogo.center = center;
 
 	//view.scrollView.scrollEnabled = NO;
@@ -173,6 +183,12 @@
 			
 		}
 
+		if ( ![appDelegate isInternetConnectionAvailable] )
+		{
+			[appDelegate displayNoInternetAvailable];
+			return;
+		}
+		
 		NSString *data=[[NSString alloc]initWithData:urlData encoding:NSUTF8StringEncoding];
 		NSLog(@"%@", data);
 		
@@ -606,6 +622,10 @@
 	NSString *failureReason = [error.userInfo objectForKey:NSLocalizedDescriptionKey];
 #endif
 	
+	//Radha Defect Fix 7238
+	[appDelegate removeBackgroundImageAndLogo];
+
+	
 	NSString *msg;
 	if ( failureReason )
 	{
@@ -636,8 +656,6 @@
 		[OAuthAlert release];
 		
 	}
-	//Radha Defect Fix 7238
-	[appDelegate removeBackgroundImageAndLogo];
 	loadFailedBool = YES;
 }
 

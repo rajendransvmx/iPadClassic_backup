@@ -406,6 +406,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize userOrg;
 @synthesize isUserOnAuthenticationPage;
 @synthesize customURLValue;
+@synthesize activity;
+@synthesize wasPerformInitialSycn;
 
 
 -(BOOL)shouldAutorotate
@@ -645,7 +647,6 @@ NSString* machineName()
 	//Auto Login
 	if ( accessToken != nil )
 	{
-		//[self addBackgroundImageAndLogo]; 16/May/2013 : To remove the background image.
 		NSString *local_Id = [userDefaults valueForKey:LOCAL_ID];
 		NSString *userName = [appDelegate.dataBase getUserNameFromUserTable:local_Id];
 		
@@ -673,7 +674,10 @@ NSString* machineName()
 			[userDefaults setValue:userOrg forKey:@"preference_identifier"];
 		}
 		
-		[oauthClient refreshAccessToken:refreshToken];
+		if ( [appDelegate isInternetConnectionAvailable] )
+		{
+			[oauthClient refreshAccessToken:refreshToken];
+		}
 		
 		BOOL retVal = [appDelegate.calDataBase isUsernameValid:userName];
         
@@ -686,35 +690,47 @@ NSString* machineName()
 
 			self.do_meta_data_sync = ALLOW_META_AND_DATA_SYNC;
 			
-			[self performInitialSynchronization];
-
-		}
-
-		self.IsLogedIn = ISLOGEDIN_TRUE;
-		
-		ZKServerSwitchboard *switchBoard = [[ZKServerSwitchboard switchboard] init];
-		switchBoard.logXMLInOut = TRUE;
-		
-		homeScreenView = nil;
-		//Changed 
-		self.serviceReportLogo = [[[UIImage alloc] initWithData:[self.dataBase serviceReportLogoInDB]]autorelease];
-		
-		if ( homeScreenView == nil )
-		{
 			[window setRootViewController:_OAuthController];
 			[window makeKeyAndVisible];
 			
-			homeScreenView = [[iPadScrollerViewController alloc] initWithNibName:@"iPadScrollerViewController" bundle:nil];
-			homeScreenView.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-			homeScreenView.modalPresentationStyle = UIModalPresentationFullScreen;
-			[_OAuthController presentViewController:homeScreenView animated:YES completion:nil];
-			refreshIcons = homeScreenView;
-			[homeScreenView release];
+			self.wasPerformInitialSycn = TRUE;
 			
-			//[self removeBackgroundImageAndLogo];
+			[self addBackgroundImageAndLogo];
+			[self performSelectorInBackground:@selector(performInitialSynchronization) withObject:nil];
+			
 			return TRUE;
+
+		}
+
+		else
+		{
+			self.IsLogedIn = ISLOGEDIN_TRUE;
+			
+			ZKServerSwitchboard *switchBoard = [[ZKServerSwitchboard switchboard] init];
+			switchBoard.logXMLInOut = TRUE;
+			
+			homeScreenView = nil;
+			//Changed
+			self.serviceReportLogo = [[[UIImage alloc] initWithData:[self.dataBase serviceReportLogoInDB]]autorelease];
+			
+			if ( homeScreenView == nil )
+			{
+				[window setRootViewController:_OAuthController];
+				[window makeKeyAndVisible];
+				
+				homeScreenView = [[iPadScrollerViewController alloc] initWithNibName:@"iPadScrollerViewController" bundle:nil];
+				homeScreenView.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+				homeScreenView.modalPresentationStyle = UIModalPresentationFullScreen;
+				[_OAuthController presentViewController:homeScreenView animated:YES completion:nil];
+				refreshIcons = homeScreenView;
+				[homeScreenView release];
+				
+				return TRUE;
+			}
+
 		}
 		
+		return TRUE;
 	}
 
 	[oauthClient initWithClientID:CLIENT_ID secret:CLIENT_SECRET redirectURL:REDIRECT_URL];
@@ -837,6 +853,8 @@ NSString* machineName()
 
 		self.do_meta_data_sync = ALLOW_META_AND_DATA_SYNC;
 				
+		self.wasPerformInitialSycn = TRUE;
+		
 		//GET VERSION :
 		BOOL checkVersion = [self checkVersion];
 		
@@ -845,17 +863,29 @@ NSString* machineName()
 			//#Radha Defect Fix 7168
 			NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
 			NSLog(@"Continue Login");
-			[userDefaults removeObjectForKey:ACCESS_TOKEN];
-			[userDefaults removeObjectForKey:SERVERURL];
-			[userDefaults removeObjectForKey:ORGANIZATION_ID];
-			[userDefaults removeObjectForKey:API_URL];
-			[userDefaults removeObjectForKey:USER_ORG];
-			[userDefaults removeObjectForKey:IDENTITY_URL];
-			[userDefaults synchronize];
-			[self.oauthClient deleteAllCookies];
+			
 			[self removeBackgroundImageAndLogo];
-			[self showSalesforcePage];
-			return;
+			
+			if (![appDelegate isInternetConnectionAvailable])
+			{
+				[self showAlertForSyncFailure];
+			}
+			
+			
+			if ( [appDelegate isInternetConnectionAvailable] )
+			{
+				[userDefaults removeObjectForKey:ACCESS_TOKEN];
+				[userDefaults removeObjectForKey:SERVERURL];
+				[userDefaults removeObjectForKey:ORGANIZATION_ID];
+				[userDefaults removeObjectForKey:API_URL];
+				[userDefaults removeObjectForKey:USER_ORG];
+				[userDefaults removeObjectForKey:IDENTITY_URL];
+				[userDefaults synchronize];
+				[self.oauthClient deleteAllCookies];
+				[self showSalesforcePage];
+				return;
+
+			}
 		}
 		
 		//GET PROFILE : 
@@ -870,7 +900,6 @@ NSString* machineName()
 			if (![self isInternetConnectionAvailable])
 			{
 				self.shouldShowConnectivityStatus = YES;
-				[self displayNoInternetAvailable];
 				return;
 			}
 			
@@ -890,25 +919,69 @@ NSString* machineName()
 				
 			//Removed the code for profile error : Defect #7086
 			
-			[userDefaults removeObjectForKey:ACCESS_TOKEN];
-			[userDefaults removeObjectForKey:SERVERURL];
-			[userDefaults removeObjectForKey:ORGANIZATION_ID];
-			[userDefaults removeObjectForKey:API_URL];
-			[userDefaults removeObjectForKey:USER_ORG];
-			[userDefaults removeObjectForKey:IDENTITY_URL];
-			[userDefaults synchronize];
-			[self.oauthClient deleteAllCookies];
 			[self removeBackgroundImageAndLogo];  //Radha #Defect Fix 7238
-			[self showSalesforcePage];
-
 			
-			return;
+			if ( [appDelegate isInternetConnectionAvailable] )
+			{
+				self.wasPerformInitialSycn = FALSE;
+				[userDefaults removeObjectForKey:ACCESS_TOKEN];
+				[userDefaults removeObjectForKey:SERVERURL];
+				[userDefaults removeObjectForKey:ORGANIZATION_ID];
+				[userDefaults removeObjectForKey:API_URL];
+				[userDefaults removeObjectForKey:USER_ORG];
+				[userDefaults removeObjectForKey:IDENTITY_URL];
+				[userDefaults synchronize];
+				[self.oauthClient deleteAllCookies];
+				[self showSalesforcePage];
+				
+				return;
+
+			}
+			else
+			{
+				[self showAlertForSyncFailure];
+			}
+			
+			
 		}
 		
 		//GET TAGS :
 		[self getTagsForTheFirstTime];
 		
+		if ( appDelegate.connection_error == TRUE || ![appDelegate isInternetConnectionAvailable] )
+		{
+			NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+				
+			[self removeBackgroundImageAndLogo];  //Radha #Defect Fix 7238
+			[self showAlertForSyncFailure];
+			
+			if ( [appDelegate isInternetConnectionAvailable] )
+			{
+				[userDefaults removeObjectForKey:ACCESS_TOKEN];
+				[userDefaults removeObjectForKey:SERVERURL];
+				[userDefaults removeObjectForKey:ORGANIZATION_ID];
+				[userDefaults removeObjectForKey:API_URL];
+				[userDefaults removeObjectForKey:USER_ORG];
+				[userDefaults removeObjectForKey:IDENTITY_URL];
+				[userDefaults synchronize];
+				[self.oauthClient deleteAllCookies];
+				[self showSalesforcePage];
+				
+			}
+			
+			return;
+
+		}
+		
 		[self.dataBase getImageForServiceReportLogo]; //Get logo only for Initial sync.
+		
+		if (appDelegate.connection_error)
+		{
+			[self removeBackgroundImageAndLogo];
+			return;
+		}
+		
+		self.wasPerformInitialSycn = FALSE;
 		
 		[self removeBackgroundImageAndLogo]; //New code for indicator - 24/May/2013.
 		
@@ -922,9 +995,7 @@ NSString* machineName()
 		
 	ZKServerSwitchboard *switchBoard = [[ZKServerSwitchboard switchboard] init];
 	switchBoard.logXMLInOut = TRUE;
-	
-	//[self.dataBase getImageForServiceReportLogo]; //Commenting the code 20/May/2013.
-	
+		
 	if ( homeScreenView == nil )
     {
         homeScreenView = [[iPadScrollerViewController alloc] initWithNibName:@"iPadScrollerViewController" bundle:nil];
@@ -934,7 +1005,6 @@ NSString* machineName()
 		refreshIcons = homeScreenView;
         [homeScreenView release];
 		
-		//[self removeBackgroundImageAndLogo];
 		
     }
 	
@@ -943,26 +1013,26 @@ NSString* machineName()
 //SHRINVIAS : OAuth :
 -(void)performInitialSynchronization
 {	
-	//GET VERSION : 
+	//GET VERSION :
+	self.wasPerformInitialSycn = TRUE;
 	BOOL checkVersion = [self checkVersion];
 	
 	if ( checkVersion == NO )
 	{
 		//#Radha Defect Fix 7168
-		NSLog(@"Perform Initial Sync");
-		NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-		[userDefaults removeObjectForKey:ACCESS_TOKEN];
-		[userDefaults removeObjectForKey:SERVERURL];
-		[userDefaults removeObjectForKey:ORGANIZATION_ID];
-		[userDefaults removeObjectForKey:API_URL];
-		[userDefaults removeObjectForKey:USER_ORG];
-		[userDefaults removeObjectForKey:IDENTITY_URL];
-		[userDefaults synchronize];
-		[self.oauthClient deleteAllCookies];
-		[self removeBackgroundImageAndLogo];
-		[self showSalesforcePage];
 		
-		return;
+		[self removeBackgroundImageAndLogo];
+		
+		if (!appDelegate.isInternetConnectionAvailable)
+			[self showAlertForSyncFailure];
+		
+		if ( [appDelegate isInternetConnectionAvailable] )
+		{
+			NSLog(@"Perform Initial Sync");
+			return;
+		}
+		
+		
 	}
 	
 	// GET PROFILE : 
@@ -977,7 +1047,6 @@ NSString* machineName()
 		if (![self isInternetConnectionAvailable])
 		{
 			self.shouldShowConnectivityStatus = YES;
-			[self displayNoInternetAvailable];
 			return;
 		}
 		
@@ -994,32 +1063,105 @@ NSString* machineName()
 	if ([self.userProfileId length] == 0)
 	{
 		NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-		
-		//Fix for defect #7086
-		/*
-		UIAlertView * _alert = [[UIAlertView alloc] initWithTitle:[self.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_TITLE] message:[self.wsInterface.tagsDictionary objectForKey:profile_error] delegate:nil cancelButtonTitle:ALERT_ERROR_OK_DEFAULT otherButtonTitles:nil];
-		
-		[_alert show];
-		[_alert release];
-		 */
-		
-		[userDefaults removeObjectForKey:ACCESS_TOKEN];
-		[userDefaults removeObjectForKey:SERVERURL];
-		[userDefaults removeObjectForKey:ORGANIZATION_ID];
-		[userDefaults removeObjectForKey:API_URL];
-		[userDefaults removeObjectForKey:USER_ORG];
-		[userDefaults removeObjectForKey:IDENTITY_URL];
-		[userDefaults synchronize];
-		[self.oauthClient deleteAllCookies];
 		[self removeBackgroundImageAndLogo];  //Radha #Defect Fix 7238
-		[self showSalesforcePage];
+		
+		if ( [appDelegate isInternetConnectionAvailable] )
+		{
+			self.wasPerformInitialSycn = FALSE;
+			[userDefaults removeObjectForKey:ACCESS_TOKEN];
+			[userDefaults removeObjectForKey:SERVERURL];
+			[userDefaults removeObjectForKey:ORGANIZATION_ID];
+			[userDefaults removeObjectForKey:API_URL];
+			[userDefaults removeObjectForKey:USER_ORG];
+			[userDefaults removeObjectForKey:IDENTITY_URL];
+			[userDefaults synchronize];
+
+			[self.oauthClient deleteAllCookies];
+			[self showSalesforcePage];
+			return;
+		}
+		else
+		{
+			[self showAlertForSyncFailure];
+		}
+		
 
 		
-		return;
 	}
 	
 	//GET TAGS FOR FIRST TIME :
 	[self getTagsForTheFirstTime];
+	
+	if ( appDelegate.connection_error == TRUE )
+	{
+		NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+		[self removeBackgroundImageAndLogo];  //Radha #Defect Fix 7238
+		[self showAlertForSyncFailure];
+		if ( [appDelegate isInternetConnectionAvailable] )
+		{
+			[self showAlertForSyncFailure];
+			[userDefaults removeObjectForKey:ACCESS_TOKEN];
+			[userDefaults removeObjectForKey:SERVERURL];
+			[userDefaults removeObjectForKey:ORGANIZATION_ID];
+			[userDefaults removeObjectForKey:API_URL];
+			[userDefaults removeObjectForKey:USER_ORG];
+			[userDefaults removeObjectForKey:IDENTITY_URL];
+			[userDefaults synchronize];
+			
+			[self.oauthClient deleteAllCookies];
+			[self showSalesforcePage];
+			
+		}
+		
+		return;
+	}
+	
+	[self.dataBase getImageForServiceReportLogo]; //Get Service Report from online.
+	
+	if (appDelegate.connection_error)
+	{
+		
+		[self removeBackgroundImageAndLogo];
+		return;
+	}
+		
+	self.wasPerformInitialSycn = FALSE;
+	[self performSelectorOnMainThread:@selector(showHomeScreenForAutoInitialSync) withObject:nil waitUntilDone:NO];
+	
+}
+
+-(void)showAlertForSyncFailure
+{
+	UIAlertView *syncAlert = [[UIAlertView alloc] initWithTitle:@"ServiceMax" message:[self.wsInterface.tagsDictionary valueForKey:ALERT_INTERNET_NOT_AVAILABLE] delegate:self cancelButtonTitle:@"Retry" otherButtonTitles:nil, nil];
+	
+	[syncAlert performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
+	[syncAlert release];
+}
+
+
+-(void)showHomeScreenForAutoInitialSync
+{
+	self.IsLogedIn = ISLOGEDIN_TRUE;
+	
+	ZKServerSwitchboard *switchBoard = [[ZKServerSwitchboard switchboard] init];
+	switchBoard.logXMLInOut = TRUE;
+	
+	homeScreenView = nil;
+	//Changed
+	//[self.dataBase getImageForServiceReportLogo]; //Get Service Report from online.
+	
+	[self removeBackgroundImageAndLogo];
+	
+	if ( homeScreenView == nil )
+	{		
+		homeScreenView = [[iPadScrollerViewController alloc] initWithNibName:@"iPadScrollerViewController" bundle:nil];
+		homeScreenView.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+		homeScreenView.modalPresentationStyle = UIModalPresentationFullScreen;
+		[_OAuthController presentViewController:homeScreenView animated:YES completion:nil];
+		refreshIcons = homeScreenView;
+		[homeScreenView release];
+				
+	}
 
 }
 
@@ -1030,10 +1172,18 @@ NSString* machineName()
     [self.wsInterface metaSyncWithEventName:MOBILE_DEVICE_TAGS eventType:SYNC values:nil];
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
+	if ( ![appDelegate isInternetConnectionAvailable] )
+		break;
+		
+	if ( self.connection_error == TRUE )
+		break;
+		
         if(self.download_tags_done)
             break;
     }
-    self.firstTimeCallForTags= FALSE;
+	 
+	
+    self.firstTimeCallForTags = FALSE;
 
 }
 
@@ -1490,12 +1640,7 @@ NSString* machineName()
 	else
 	{
 		NSString * preference = [userDefaults valueForKey:@"preference_identifier"];
-		
-		if ( [userOrg isEqualToString:preference] )
-		{
-			
-		}
-		else
+		if ( ![userOrg isEqualToString:preference] )
 		{
 			//Rewrite the user's actual org to settings :
 			[userDefaults setValue:userOrg forKey:@"preference_identifier"];
@@ -3690,6 +3835,13 @@ int percent = 0;
 	
 	else
 	{
+		if (self.wasPerformInitialSycn == TRUE)
+		{
+			[self addBackgroundImageAndLogo];
+			appDelegate.connection_error = FALSE;
+			[self performSelectorInBackground:@selector(performInitialSynchronization) withObject:nil];
+		}
+		
 		if( buttonIndex == 1 )
 		{
 			SMLog(@"Copy To clipBoard");

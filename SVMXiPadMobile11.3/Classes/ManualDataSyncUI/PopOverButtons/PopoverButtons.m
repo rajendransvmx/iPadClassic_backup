@@ -26,6 +26,8 @@ PopoverButtons *popOver_view;
 @synthesize popover;
 @synthesize refreshMetaSyncDelegate;
 
+@synthesize manualEventThread;  //10-June-2013
+
 - (id) init
 {
     if( ( self = [super init] ) )
@@ -931,6 +933,7 @@ PopoverButtons *popOver_view;
     }
     @catch (NSException *exception) { 
         
+	[appDelegate.refreshIcons RefreshIcons]; //20-June-2013. ---> Refreshing home incons when sync is running.
         fullDataSyncFailed = TRUE;
         appDelegate.dataBase.MyPopoverDelegate = nil;
         appDelegate.databaseInterface.MyPopoverDelegate = nil;
@@ -953,6 +956,7 @@ PopoverButtons *popOver_view;
     }
     @finally {
 
+	[appDelegate.refreshIcons RefreshIcons]; //20-June-2013. ---> Refreshing home incons when sync is running.
         appDelegate.eventSyncRunning = NO;
          if([appDelegate.syncThread isExecuting] || [appDelegate.metaSyncThread isExecuting] )
          {

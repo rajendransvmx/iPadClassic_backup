@@ -11231,6 +11231,8 @@ extern void SVMXLog(NSString *format, ...);
 - (BOOL) startEventSync
 {
     
+    [appDelegate.refreshIcons RefreshIcons]; //20-June-2013. ---> Refreshing home incons when sync is running.
+	
     NSString * event_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_events];
     appDelegate.connection_error = FALSE;
     BOOL retVal = TRUE;
@@ -11676,12 +11678,12 @@ extern void SVMXLog(NSString *format, ...);
 #pragma mark - ServiceReportLogo
 - (void) getImageForServiceReportLogo
 {
-	if (![appDelegate isInternetConnectionAvailable])
-    {
-        //[appDelegate displayNoInternetAvailable];
-        appDelegate.serviceReportLogo = [[[UIImage alloc] initWithData:[self serviceReportLogoInDB]]autorelease];
-        return;
-    }
+//	if (![appDelegate isInternetConnectionAvailable])
+//    {
+//        //[appDelegate displayNoInternetAvailable];
+//        appDelegate.serviceReportLogo = [[[UIImage alloc] initWithData:[self serviceReportLogoInDB]]autorelease];
+//        return;
+//    }
 	
 	
     NSString * _query = [NSString stringWithFormat:@"SELECT Body FROM Document Where Name = 'ServiceMax_iPad_CompanyLogo'"];
@@ -11703,6 +11705,12 @@ extern void SVMXLog(NSString *format, ...);
                break;
     }
     
+	//New Code: 10/June/2013.
+	if (![appDelegate isInternetConnectionAvailable] || appDelegate.connection_error)
+	{
+		didGetServiceReportLogo = FALSE;
+		[appDelegate showAlertForSyncFailure];
+	}
     
 }
 
