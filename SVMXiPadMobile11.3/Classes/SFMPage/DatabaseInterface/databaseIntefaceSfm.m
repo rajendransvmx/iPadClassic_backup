@@ -418,6 +418,14 @@ extern void SVMXLog(NSString *format, ...);
                             
                             label = [appDelegate.databaseInterface getReferenceValueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:value];
                             
+                            //Aparna: 6889
+                            if([label isEqualToString:@"" ]||[label isEqualToString:@" "] || label == nil)
+                            {
+                                NSString *sf_id =  [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:reference_to_tableName local_id:value];
+                                
+                                label = [appDelegate.databaseInterface getReferenceValueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:sf_id];
+                            }
+                            
                         }
                         if([label isEqualToString:@"" ]||[label isEqualToString:@" "] || label == nil)
                         {

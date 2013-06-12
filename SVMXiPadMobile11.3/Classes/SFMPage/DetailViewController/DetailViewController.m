@@ -1071,6 +1071,15 @@ extern void SVMXLog(NSString *format, ...);
                                         
                                         field_value = [appDelegate.databaseInterface getReferenceValueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:field_key];
                                         
+                                        
+                                        //Aparna: 6889
+                                        if([field_value isEqualToString:@"" ]||[field_value isEqualToString:@" "] || field_value == nil)
+                                        {
+                                            NSString *sf_id =  [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:reference_to_tableName local_id:field_key];
+                                            
+                                            field_value = [appDelegate.databaseInterface getReferenceValueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:sf_id];
+                                        }
+                                        
                                     }
                                 }
                                 if([field_value isEqualToString:@"" ]||[field_value isEqualToString:@" "] || field_value == nil)
@@ -5380,6 +5389,14 @@ extern void SVMXLog(NSString *format, ...);
                 //Radha 2012june08
                 BOOL recordExists = [appDelegate.dataBase checkIfRecordExistForObject:related_to_table_name Id:key];
                 
+                //Aparna: 6889
+                if (!recordExists)
+                {
+                    NSString *sf_id =  [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:related_to_table_name local_id:key];
+                    recordExists = [appDelegate.dataBase checkIfRecordExistForObject:related_to_table_name Id:sf_id];
+                }
+                
+                
                 BOOL flag_ = FALSE;
                 
                 if (recordExists)
@@ -5607,19 +5624,28 @@ extern void SVMXLog(NSString *format, ...);
 					
 					if([newProcessId length] != 0 && newProcessId != nil && [record_id length] != 0 && record_id  != nil )
 					{
-						lbl2.textColor = [UIColor blueColor];
-					}
-					//NSLog(@"%@",lbl2.text );
-					//Radha 29
-					cell.userInteractionEnabled = TRUE;
-					UITapGestureRecognizer * cellTap;
-					cellTap = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(celltapRecognizer:)] autorelease];
-					[cellTap setNumberOfTapsRequired:2];
-					NSInteger cellCount = 10000;
-					int section_ = index + 1;
-					cell.tag = (cellCount * section_) + row;
-					[cell addGestureRecognizer:cellTap];
+						//Aparna:6889
+                        NSString * related_to_table_name = [[detail_fields objectAtIndex:j] objectForKey:gFIELD_RELATED_OBJECT_NAME];
+                        NSString * fieldApiName = [[detail_fields objectAtIndex:j] objectForKey:gFIELD_API_NAME];
+                        NSString *recordId = [[detail_values objectAtIndex:j] valueForKey:gVALUE_FIELD_VALUE_KEY];
 
+                        
+                        lbl2.backgroundColor = [UIColor clearColor];
+                        CusLabel *referenceLabel = [[CusLabel alloc] initWithFrame:CGRectMake(0, 0, lbl2.frame.size.width, lbl2.frame.size.height)];
+                        [referenceLabel setBackgroundColor:[UIColor clearColor]];
+                        referenceLabel.textColor = [UIColor blueColor];
+                        referenceLabel.text = value;
+                        referenceLabel.tapRecgLabel = value;  //RADHA 2012june07
+                        referenceLabel.userInteractionEnabled = TRUE;
+                        referenceLabel.controlDelegate = self;
+                        referenceLabel.refered_to_table_name = related_to_table_name;
+                        referenceLabel.id_ = recordId;
+                        referenceLabel.object_api_name = fieldApiName;
+                        lbl2.userInteractionEnabled = YES;
+                        [lbl2 addSubview:referenceLabel];
+                        [referenceLabel release];
+                        cell.userInteractionEnabled = TRUE;
+					}
 				}
                 [background addSubview:lbl2];
                 
@@ -5654,8 +5680,12 @@ extern void SVMXLog(NSString *format, ...);
             
             
 		}
+        cell.contentView.userInteractionEnabled = YES;
+        
         background.backgroundColor = [UIColor clearColor];
-        background.frame = CGRectMake(0, 0, cell.contentView.frame.size.width-42, cell.contentView.frame.size.height);
+        background.frame = CGRectMake(0, 0, tableView.frame.size.width-42, cell.contentView.frame.size.height);
+        cell.clipsToBounds = YES;
+        cell.contentView.clipsToBounds = YES;
 		[cell.contentView addSubview:background];
 	}
     else if(selectedSection == SHOW_ADDITIONALINFO_ROW || selectedSection == SHOW_ALL_ADDITIONALINFO)
@@ -6074,6 +6104,14 @@ extern void SVMXLog(NSString *format, ...);
             //Radha 2012june08
             BOOL recordExists = [appDelegate.dataBase checkIfRecordExistForObject:related_to_table_name Id:key];
             
+            
+            //Aparna: 6889
+            if (!recordExists)
+            {
+                NSString *sf_id =  [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:related_to_table_name local_id:key];
+                recordExists = [appDelegate.dataBase checkIfRecordExistForObject:related_to_table_name Id:sf_id];
+            }
+
             
             BOOL flag_ = FALSE;
             
@@ -12719,11 +12757,25 @@ extern void SVMXLog(NSString *format, ...);
 
         //Radha 2012june08 08:00
         BOOL recordExists = [appDelegate.dataBase checkIfRecordExistForObject:reffered_to_table_name Id:temp_record_id];
+        
+        //Aparna: 6889
+        if (!recordExists)
+        {
+            NSString *sf_id =  [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:reffered_to_table_name local_id:temp_record_id];
+            recordExists = [appDelegate.dataBase checkIfRecordExistForObject:reffered_to_table_name Id:sf_id];
+        }
+        
         if (recordExists == FALSE)
             return;
     
         NSString * record_id = [appDelegate.databaseInterface  getLocalIdFromSFId:temp_record_id tableName:reffered_to_table_name];
         
+        //Aparna: 6889
+        if (record_id == nil || [record_id isEqualToString:@""] || [record_id isEqualToString:@" "])
+        {
+            record_id = temp_record_id;
+        }
+
         NSString * newProcessId = @"";
         for (int j = 0; j < [appDelegate.view_layout_array count]; j++)
         {
