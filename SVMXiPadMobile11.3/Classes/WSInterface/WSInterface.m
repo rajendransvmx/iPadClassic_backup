@@ -6804,22 +6804,22 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 		//#Radha Defect Fix 7168
         if( [type Contains:@"NSURLErrorDomain"]  )
         {
-			if ( appDelegate.isUserOnAuthenticationPage )
-			{
-				//#Radha Defect Fix 7168
-				NSDictionary *userinfo=error.userInfo;
-				NSMutableDictionary *correctiveAction=[[[NSMutableDictionary alloc]init]autorelease];
-				[correctiveAction setObject:userinfo forKey:@"userInfo"];
-				NSString *des=[error localizedDescription];
-				
-				myException = [NSException
-							   exceptionWithName:type
-							   reason:des
-							   userInfo:correctiveAction];
-				
-				var=SOAP_ERROR;
-				@throw myException;
-			}
+//			if ( appDelegate.isUserOnAuthenticationPage )
+//			{
+//				//#Radha Defect Fix 7168
+//				NSDictionary *userinfo=error.userInfo;
+//				NSMutableDictionary *correctiveAction=[[[NSMutableDictionary alloc]init]autorelease];
+//				[correctiveAction setObject:userinfo forKey:@"userInfo"];
+//				NSString *des=[error localizedDescription];
+//				
+//				myException = [NSException
+//							   exceptionWithName:type
+//							   reason:des
+//							   userInfo:correctiveAction];
+//				
+//				var=SOAP_ERROR;
+//				@throw myException;
+//			}
             return;
         }
         NSDictionary *userinfo=error.userInfo;

@@ -36,12 +36,12 @@
 	BOOL webViewDidFinishLoadBool;
 	BOOL _webViewDidFail;
 	
-@private
 	BOOL isVerifying;
 
 }
 
 
+@property (nonatomic, assign) BOOL isVerifying;
 @property (nonatomic, retain) NSString *identityURL;
 @property (nonatomic, retain) NSString *_accessToken;
 @property (nonatomic, retain) UIWebView *view;

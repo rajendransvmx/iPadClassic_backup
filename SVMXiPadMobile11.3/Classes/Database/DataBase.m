@@ -11676,15 +11676,9 @@ extern void SVMXLog(NSString *format, ...);
 
 
 #pragma mark - ServiceReportLogo
-- (void) getImageForServiceReportLogo
+- (BOOL) getImageForServiceReportLogo
 {
-//	if (![appDelegate isInternetConnectionAvailable])
-//    {
-//        //[appDelegate displayNoInternetAvailable];
-//        appDelegate.serviceReportLogo = [[[UIImage alloc] initWithData:[self serviceReportLogoInDB]]autorelease];
-//        return;
-//    }
-	
+	didGetServiceReportLogo = FALSE;
 	
     NSString * _query = [NSString stringWithFormat:@"SELECT Body FROM Document Where Name = 'ServiceMax_iPad_CompanyLogo'"];
 	
@@ -11705,13 +11699,10 @@ extern void SVMXLog(NSString *format, ...);
                break;
     }
     
-	//New Code: 10/June/2013.
-	if (![appDelegate isInternetConnectionAvailable] || appDelegate.connection_error)
-	{
-		didGetServiceReportLogo = FALSE;
-		[appDelegate showAlertForSyncFailure];
-	}
-    
+	if (didGetServiceReportLogo)
+		return TRUE;
+	else
+		return FALSE;
 }
 
 - (void) didGetServiceReportLogo:(ZKQueryResult *)result error:(NSError *)error context:(id)context

@@ -27,6 +27,7 @@
 @synthesize view;
 @synthesize _accessToken;
 @synthesize identityURL;
+@synthesize isVerifying;
 
 
 - (void)dealloc;
@@ -149,56 +150,45 @@
 }
 
 
-- (void)verifyAuthorizationWithAccessCode:(NSString *)_identityURL;
+- (void)verifyAuthorizationWithAccessCode:(NSString *)_identityURL
 {
-	@synchronized(self) {
-		if (isVerifying) return; // don't allow more than one oauth request
-		
-		isVerifying = YES;
-		
-		NSString *post = [NSString stringWithFormat:@"oauth_token=%@",appDelegate.session_Id];
-		NSData *postData = [post dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES];
-		NSString *postLength = [NSString stringWithFormat:@"%d", [postData length]];
-		
-		NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] init] autorelease];
-		[request setURL:[NSURL URLWithString:_identityURL]];
-		[request setHTTPMethod:@"POST"];
-		[request setValue:postLength forHTTPHeaderField:@"Content-Length"];
-		[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-		[request setHTTPBody:postData];
-		
-		NSError *error = nil;
-		NSURLResponse *response = nil;
-		
-		NSLog(@"%@", request);
-		
-		NSData *urlData=[NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-		
-		if ( error )
-		{
-			UIAlertView *OAuthAlert = [[UIAlertView alloc] initWithTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:alert_application_error] message:[error localizedDescription] delegate:self cancelButtonTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK] otherButtonTitles:nil, nil];
-			
-			[OAuthAlert show];
-			[OAuthAlert release];
-			
-		}
-
-		if ( ![appDelegate isInternetConnectionAvailable] )
-		{
-			[appDelegate displayNoInternetAvailable];
-			return;
-		}
-		
-		NSString *data=[[NSString alloc]initWithData:urlData encoding:NSUTF8StringEncoding];
-		NSLog(@"%@", data);
-		
-		isVerifying = NO;
-		if ( data )
-		{
-			[self getEndPointUrlFromResponse:data];
-		}
-		
+	self.isVerifying = YES;
+	
+	NSString *post = [NSString stringWithFormat:@"oauth_token=%@",appDelegate.session_Id];
+	NSData *postData = [post dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES];
+	NSString *postLength = [NSString stringWithFormat:@"%d", [postData length]];
+	
+	NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] init] autorelease];
+	[request setURL:[NSURL URLWithString:_identityURL]];
+	[request setHTTPMethod:@"POST"];
+	[request setValue:postLength forHTTPHeaderField:@"Content-Length"];
+	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+	[request setHTTPBody:postData];
+	
+	NSError *error = nil;
+	NSURLResponse *response = nil;
+	
+	NSLog(@"%@", request);
+	
+	NSData *urlData=[NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+	
+	if ( error )
+	{
+		[appDelegate removeBackgroundImageAndLogo];
+		[appDelegate showAlertForSyncFailure];
+		return;
 	}
+
+	
+	NSString *data=[[NSString alloc]initWithData:urlData encoding:NSUTF8StringEncoding];
+	NSLog(@"%@", data);
+	
+	self.isVerifying = NO;
+	if ( data )
+	{
+		[self getEndPointUrlFromResponse:data];
+	}
+		
 }
 
 
@@ -206,7 +196,6 @@
 {
 	SBJsonParser *parser = [[SBJsonParser alloc] init];
 	NSDictionary *dict = [parser objectWithString:jsonResponse];
-	//NSLog(@"JSON RESPNSE WITH END POINT URLS : %@", dict);
 	
 	NSDictionary *urlDict = [dict objectForKey:@"urls"];
 	
@@ -295,10 +284,10 @@
 	{
 		//Defect Fix 7238
 		[appDelegate removeBackgroundImageAndLogo];
-		appDelegate.shouldShowConnectivityStatus = TRUE;
-		[appDelegate displayNoInternetAvailable];
+//		appDelegate.shouldShowConnectivityStatus = TRUE;
+//		[appDelegate displayNoInternetAvailable];
 		
-		return NO;
+		//return NO;
 	}
 	
 	//Set flag to indicated if its on the authorization page. - 24/May/2013.
@@ -326,6 +315,12 @@
 
 		[appDelegate showSalesforcePage];
 	}
+	
+	if ( [[request.URL absoluteString] Contains:@"logout.jsp"] )
+	{
+		appDelegate.isUserOnAuthenticationPage = TRUE;
+		[appDelegate showSalesforcePage];
+	}
 		
 	return YES;
 }
@@ -345,6 +340,9 @@
 	{
 		if ( url )
 		{
+			
+			NSUserDefaults * userDefaults = [NSUserDefaults standardUserDefaults];
+			
 			NSArray *array = [url componentsSeparatedByString:@"&"];
 			
 			appDelegate.session_Id = [[[array objectAtIndex:0] componentsSeparatedByString:@"="] objectAtIndex:1];
@@ -356,6 +354,8 @@
 			identityURL = [[[array objectAtIndex:3] componentsSeparatedByString:@"="] objectAtIndex:1];
 			identityURL = [identityURL stringByReplacingOccurrencesOfString:@"%3A" withString:@":"];
 			identityURL = [identityURL stringByReplacingOccurrencesOfString:@"%2F" withString:@"/"];
+			[userDefaults setObject:identityURL forKey:IDENTITY_URL];
+			[userDefaults synchronize];
 			
 			[self verifyAuthorizationWithAccessCode:identityURL];
 
@@ -641,19 +641,28 @@
 	}
 	else if ( [error code] != NSURLErrorCancelled )
 	{
-		//Fix for Defect #:7089 - 15/May/2013
-		NSString *cannotFindHostMsg = @"A server with the specified hostname could not be found.";
+        if ( ![appDelegate isInternetConnectionAvailable] )
+        {
+            appDelegate.shouldShowConnectivityStatus = TRUE;
+            [appDelegate displayNoInternetAvailable];
+        }
+        else
+        {
+            //Fix for Defect #:7089 - 15/May/2013
+            NSString *cannotFindHostMsg = @"A server with the specified hostname could not be found.";
+            
+            if ([appDelegate.userOrg caseInsensitiveCompare:@"Custom"] == NSOrderedSame)
+            {
+                cannotFindHostMsg = @"A server with the specified hostname could not be found. Please check your custom host URL settings.";
+            }
+            
+            _webViewDidFail = TRUE;
+            UIAlertView *OAuthAlert = [[UIAlertView alloc] initWithTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:alert_application_error] message:cannotFindHostMsg delegate:self cancelButtonTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK] otherButtonTitles:nil, nil];
+            
+            [OAuthAlert show];
+            [OAuthAlert release];
+        }
 		
-		if ([appDelegate.userOrg caseInsensitiveCompare:@"Custom"] == NSOrderedSame)
-		{
-			cannotFindHostMsg = @"A server with the specified hostname could not be found. Please check your custom host URL settings.";
-		}
-		
-		_webViewDidFail = TRUE;
-		UIAlertView *OAuthAlert = [[UIAlertView alloc] initWithTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:alert_application_error] message:cannotFindHostMsg delegate:self cancelButtonTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK] otherButtonTitles:nil, nil];
-		
-		[OAuthAlert show];
-		[OAuthAlert release];
 		
 	}
 	loadFailedBool = YES;

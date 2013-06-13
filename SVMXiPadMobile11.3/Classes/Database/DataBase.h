@@ -309,7 +309,7 @@ PopoverButtons *popOver_view;
 - (BOOL) checkIfRecordExistForObjectWithRecordId:(NSString *)tableName Id :(NSString *)Id;
 
 //ServiceReportLogo
-- (void) getImageForServiceReportLogo;
+- (BOOL) getImageForServiceReportLogo;
 - (void) didGetServiceReportLogo:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
 //Aparna
 - (NSData *)serviceReportLogoInDB;
