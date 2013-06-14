@@ -38,17 +38,4 @@
 + (BOOL) storeUsername: (NSString *) username andPassword: (NSString *) password forServiceName: (NSString *) serviceName updateExisting: (BOOL) updateExisting error: (NSError **) error;
 + (BOOL) deleteItemForUsername: (NSString *) username andServiceName: (NSString *) serviceName error: (NSError **) error;
 
-//OAuth.
-+ (NSMutableDictionary *)newSearchDictionary:(NSString *)identifier;
-
-+ (BOOL)updateKeychainValue:(NSString *)refresh_token forIdentifier:(NSString *)identifier;
-
-+ (void)deleteKeychainValue:(NSString *)identifier;
-
-+ (BOOL)createKeychainValue:(NSString *)refresh_token forIdentifier:(NSString *)identifier;
-
-+ (NSString*)getValueForIdentifier:(NSString *)identifier;
-
-+ (NSData *)searchKeychainCopyMatching:(NSString *)identifier;
-
 @end

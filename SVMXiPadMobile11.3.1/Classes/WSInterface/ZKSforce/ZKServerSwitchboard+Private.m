@@ -47,7 +47,7 @@ static NSString *SOAP_NS = @"http://schemas.xmlsoap.org/soap/envelope/";
                     selector:(SEL)sel
                      context:(id)context
 {
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:appDelegate.apiURl]]; //Shrinivas : OAuth
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[self apiUrl]]];
 	[request setHTTPMethod:@"POST"];
 	[request addValue:@"text/xml; charset=UTF-8" forHTTPHeaderField:@"content-type"];	
 	[request addValue:@"\"\"" forHTTPHeaderField:@"SOAPAction"];

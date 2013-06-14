@@ -11,16 +11,12 @@
 #import "TapImage.h"
 #import "LocalizationGlobals.h"
 #import "WSInterface.h"
-#import "iServiceAppDelegate.h"
-
-
 #import "ItemView.h"
 @class CalendarController;
-
-
+@class iServiceAppDelegate;
 
 @interface iPadScrollerViewController : UIViewController
-<TapImageDelegate,RefreshProgressBar,CLLocationManagerDelegate,UITableViewDataSource, UITableViewDelegate,ItemViewDelegate,RefreshHomeScreenIcons,UIAlertViewDelegate>
+<TapImageDelegate,RefreshProgressBar,CLLocationManagerDelegate,UITableViewDataSource, UITableViewDelegate,ItemViewDelegate,UIAlertViewDelegate>
 {
     IBOutlet UIView *ProgressView;
     IBOutlet UIView * transparent_layer;
@@ -119,10 +115,4 @@
 //Location Ping
 - (void) scheduleLocationPingService;
 #define NUM_CALLS_INTIAL_SYNC  15;
-
-
-//Shrinivas : OAuth.
-# define LOCAL_ID	@"Local_Id"
--(void) UpdateUserDefaults;
-
 @end

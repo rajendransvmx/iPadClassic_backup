@@ -159,7 +159,7 @@ extern void SVMXLog(NSString *format, ...);
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
-    sessionHeader.sessionId = appDelegate.session_Id;
+    sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
     
     INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
     callOptions.client = nil;
@@ -181,11 +181,9 @@ extern void SVMXLog(NSString *format, ...);
     INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] autorelease];
     sfmRequest.eventName = event_name;
     sfmRequest.eventType = Event_type;// @"TX_DATA";
-	
-	sfmRequest.userId    = appDelegate.current_userId;
-	sfmRequest.groupId   = appDelegate.organization_Id;
-	sfmRequest.profileId = appDelegate.current_userId;
-	
+    sfmRequest.userId = [appDelegate.loginResult userId];
+    sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
+    sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
     sfmRequest.value = request_id;
     
     NSArray * object_types = [sync_record allKeys];
@@ -1113,10 +1111,9 @@ last_sync_time:(NSString *)last_sync_time
     
     NSAutoreleasePool * autoreleasePool = [[NSAutoreleasePool alloc] init];
     appDelegate.speacialSyncIsGoingOn  = TRUE;
-	
-	//OAuth.
-	[[ZKServerSwitchboard switchboard] doCheckSession];
-
+    
+    [appDelegate goOnlineIfRequired];
+    
     Insert_requestId = [self  get_SYNCHISTORYTime_ForKey:REQUEST_ID];
     Insert_requestId = [ Insert_requestId stringByReplacingOccurrencesOfString:@" " withString:@""];
     
@@ -1384,7 +1381,7 @@ last_sync_time:(NSString *)last_sync_time
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * session = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
-	session.sessionId = appDelegate.session_Id; //OAuth
+    session.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
     
     INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
     callOptions.client = nil;
@@ -1404,12 +1401,9 @@ last_sync_time:(NSString *)last_sync_time
     
     sfmRequest.eventName = eventName;
     sfmRequest.eventType = eventType;
-	
-	sfmRequest.userId    = appDelegate.current_userId;
-	sfmRequest.groupId   = appDelegate.organization_Id;
-	sfmRequest.profileId = appDelegate.current_userId;
-
-	
+    sfmRequest.userId = [appDelegate.loginResult userId];
+    sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
+    sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
     sfmRequest.name = @"";
 
         
@@ -1482,7 +1476,7 @@ last_sync_time:(NSString *)last_sync_time
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
-	sessionHeader.sessionId = appDelegate.session_Id; //OAuth
+    sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
     
     INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
     callOptions.client = nil;
@@ -1503,9 +1497,9 @@ last_sync_time:(NSString *)last_sync_time
     sfmRequest.eventName = @"TX_FETCH";
     sfmRequest.eventType = @"SYNC";
      
-	sfmRequest.userId    = appDelegate.current_userId;
-	sfmRequest.groupId   = appDelegate.organization_Id;
-	sfmRequest.profileId = appDelegate.current_userId;
+    sfmRequest.userId = [appDelegate.loginResult userId];
+    sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
+    sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
     
     
 
@@ -1648,9 +1642,6 @@ last_sync_time:(NSString *)last_sync_time
     
     @try{
     //RADHA 2012june12
-		
-    [appDelegate.refreshIcons RefreshIcons]; //20-June-2013. ---> Refreshing home incons when sync is running.
-	
     if (appDelegate.metaSyncRunning)
     {
          appDelegate.Enable_aggresssiveSync = FALSE;
@@ -1686,9 +1677,8 @@ last_sync_time:(NSString *)last_sync_time
 
     BOOL temp_aggressiveSync = appDelegate.Enable_aggresssiveSync;
     
-    //shrinivas : 
-    retVal = [[ZKServerSwitchboard switchboard] doCheckSession];
-		
+    //shrinivas
+    retVal = [appDelegate goOnlineIfRequired];
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     appDelegate.currentServerUrl = [userDefaults objectForKey:SERVERURL];
 
@@ -1721,8 +1711,7 @@ last_sync_time:(NSString *)last_sync_time
     appDelegate.dataSyncRunning = YES;
     appDelegate.connection_error = FALSE;
     
-    //OAuth.
-	[[ZKServerSwitchboard switchboard] doCheckSession];
+    [appDelegate goOnlineIfRequired];
     appDelegate.Incremental_sync = FALSE;
 	
     [updateSyncStatus refreshSyncStatus];
@@ -2970,12 +2959,7 @@ last_sync_time:(NSString *)last_sync_time
     }
     
     appDelegate.dataSyncRunning = NO;
-		
-		
-    [appDelegate.refreshIcons RefreshIcons]; //20-June-2013. ---> Refreshing home incons when sync is running.
     }@catch (NSException *exp) {
-		
-		[appDelegate.refreshIcons RefreshIcons]; //20-June-2013. ---> Refreshing home incons when sync is running.
         SMLog(@"Exception Name WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.name);
         SMLog(@"Exception Reason WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.reason);
     }
@@ -3193,7 +3177,7 @@ last_sync_time:(NSString *)last_sync_time
 {
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
-    sessionHeader.sessionId = appDelegate.session_Id;
+    sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
     
     INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
     callOptions.client = nil;
@@ -3362,7 +3346,7 @@ last_sync_time:(NSString *)last_sync_time
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
-    sessionHeader.sessionId = appDelegate.session_Id;
+    sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
     
     INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
     callOptions.client = nil;
@@ -3382,9 +3366,9 @@ last_sync_time:(NSString *)last_sync_time
     INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] autorelease];
     sfmRequest.eventName = @"DATA_ON_DEMAND";
     sfmRequest.eventType = @"GET_DATA";
-    sfmRequest.profileId = appDelegate.current_userId;
-	sfmRequest.userId  = appDelegate.current_userId;
-	sfmRequest.groupId = appDelegate.organization_Id;
+    sfmRequest.userId = [appDelegate.loginResult userId];
+    sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
+    sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
     
     //ADD SVMXClient : krishna 10.4.404 change
     INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client =  [appDelegate getSVMXClientObject];//[self getSVMXClientObject];
@@ -3550,7 +3534,7 @@ last_sync_time:(NSString *)last_sync_time
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
-	sessionHeader.sessionId = appDelegate.session_Id; //OAuth
+    sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];    
     
     INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
     callOptions.client = nil;
@@ -3571,11 +3555,9 @@ last_sync_time:(NSString *)last_sync_time
     INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] autorelease];
     sfmRequest.eventName = @"GET_INSERT";
     sfmRequest.eventType = @"SYNC";
-	
-	sfmRequest.profileId = appDelegate.current_userId;
-	sfmRequest.userId  = appDelegate.current_userId;
-	sfmRequest.groupId = appDelegate.organization_Id;
-	
+    sfmRequest.userId = [appDelegate.loginResult userId];
+    sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
+    sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
     sfmRequest.value = Insert_requestId;
     
     INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_lastModified =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
@@ -3634,7 +3616,7 @@ last_sync_time:(NSString *)last_sync_time
     [INTF_WebServicesDefServiceSvc initialize];
     @try{
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
-	sessionHeader.sessionId = appDelegate.session_Id; //OAuth
+    sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
     
     INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
     callOptions.client = nil;
@@ -3654,11 +3636,9 @@ last_sync_time:(NSString *)last_sync_time
     INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] autorelease];
     sfmRequest.eventName = @"GET_UPDATE";
     sfmRequest.eventType = @"SYNC";
-		
-	sfmRequest.profileId = appDelegate.current_userId;
-	sfmRequest.userId  = appDelegate.current_userId;
-	sfmRequest.groupId = appDelegate.organization_Id;
-		
+    sfmRequest.userId = [appDelegate.loginResult userId];
+    sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
+    sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
     sfmRequest.value = Insert_requestId;
     
     INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_lastModified =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
@@ -3722,7 +3702,7 @@ last_sync_time:(NSString *)last_sync_time
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
-	sessionHeader.sessionId = appDelegate.session_Id; //OAuth
+    sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
     
     INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
     callOptions.client = nil;
@@ -3742,11 +3722,9 @@ last_sync_time:(NSString *)last_sync_time
     INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] autorelease];
     sfmRequest.eventName = @"GET_DELETE";
     sfmRequest.eventType = @"SYNC";
-		
-	sfmRequest.profileId = appDelegate.current_userId;
-	sfmRequest.userId  = appDelegate.current_userId;
-	sfmRequest.groupId = appDelegate.organization_Id;
-	
+    sfmRequest.userId = [appDelegate.loginResult userId];
+    sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
+    sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
     sfmRequest.value = Insert_requestId;
     
     INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_lastModified =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
@@ -3811,7 +3789,7 @@ last_sync_time:(NSString *)last_sync_time
     [INTF_WebServicesDefServiceSvc initialize];
     @try{
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
-	sessionHeader.sessionId = appDelegate.session_Id; //OAuth
+    sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
     
     INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
     callOptions.client = nil;
@@ -3831,11 +3809,9 @@ last_sync_time:(NSString *)last_sync_time
     INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] autorelease];
     sfmRequest.eventName = eventName;
     sfmRequest.eventType = @"SYNC";
-		
-	sfmRequest.profileId = appDelegate.current_userId;
-	sfmRequest.userId  = appDelegate.current_userId;
-	sfmRequest.groupId = appDelegate.organization_Id;
-	
+    sfmRequest.userId = [appDelegate.loginResult userId];
+    sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
+    sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
     sfmRequest.value = requestId;
     
         //ADD SVMXClient
@@ -3887,8 +3863,8 @@ last_sync_time:(NSString *)last_sync_time
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
-    sessionHeader.sessionId = appDelegate.session_Id; //OAuth
-	
+    sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
+    
     INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
     callOptions.client = nil;
     
@@ -3907,11 +3883,9 @@ last_sync_time:(NSString *)last_sync_time
     INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] autorelease];
     sfmRequest.eventName = event_name;
     sfmRequest.eventType = @"SYNC";
-	
-	sfmRequest.profileId = appDelegate.current_userId;
-	sfmRequest.userId  = appDelegate.current_userId;
-	sfmRequest.groupId = appDelegate.organization_Id;
-	
+    sfmRequest.userId = [appDelegate.loginResult userId];
+    sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
+    sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
     sfmRequest.value = Insert_requestId;
     
  
@@ -4121,7 +4095,7 @@ last_sync_time:(NSString *)last_sync_time
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
-	sessionHeader.sessionId = appDelegate.session_Id; //OAuth
+    sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
     
     INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
     callOptions.client = nil;
@@ -4142,11 +4116,9 @@ last_sync_time:(NSString *)last_sync_time
     INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] autorelease];
     sfmRequest.eventName = event_name;
     sfmRequest.eventType = event_type;// @"TX_DATA";
-	
-	sfmRequest.profileId = appDelegate.current_userId;
-	sfmRequest.userId  = appDelegate.current_userId;
-	sfmRequest.groupId = appDelegate.organization_Id;
-	
+    sfmRequest.userId = [appDelegate.loginResult userId];
+    sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
+    sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
     sfmRequest.value = Insert_requestId;
    // event_name = @"PUT_INSERT";
     if([event_name isEqualToString:@"PUT_UPDATE"] && [event_type isEqualToString:@"SYNC"])//PUT_UPSATE
@@ -4787,7 +4759,7 @@ last_sync_time:(NSString *)last_sync_time
 @try{
     [INTF_WebServicesDefServiceSvc initialize];
     INTF_WebServicesDefServiceSvc_SessionHeader * session = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
-	session.sessionId = appDelegate.session_Id; //OAuth
+    session.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
     
     INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
     callOptions.client = nil;
@@ -4834,8 +4806,7 @@ last_sync_time:(NSString *)last_sync_time
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * session = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
-	 
-	 session.sessionId = appDelegate.session_Id; //OAuth
+    session.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
     
     INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
     callOptions.client = nil;
@@ -4902,12 +4873,9 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     
     sfmRequest.eventName = eventName;
     sfmRequest.eventType = eventType;
-	
-	
-	sfmRequest.userId  = appDelegate.current_userId;
-	sfmRequest.groupId = appDelegate.organization_Id;
-	sfmRequest.profileId = appDelegate.current_userId;
-	 
+    sfmRequest.userId = [appDelegate.loginResult userId];
+    sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
+    sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
     sfmRequest.name = @"";
     
     if(![eventName isEqualToString:@"CODE_SNIPPET"] && ![eventName isEqualToString:GET_PRICE_CODE_SNIPPET])
@@ -4951,7 +4919,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
-	sessionHeader.sessionId = appDelegate.session_Id; //OAuth
+    sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
     
     INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
     callOptions.client = nil;
@@ -4998,9 +4966,9 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     sfmRequest.eventName = eventName;
     sfmRequest.eventType = eventType;
     
-	sfmRequest.profileId = appDelegate.current_userId;
-	sfmRequest.userId  = appDelegate.current_userId;
-	sfmRequest.groupId = appDelegate.organization_Id;
+    sfmRequest.userId = [appDelegate.loginResult userId];
+    sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
+    sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
     
     [sfmRequest addClientInfo:client];
     //SFM Search
@@ -5180,7 +5148,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         [INTF_WebServicesDefServiceSvc initialize];
         
         INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
-		sessionHeader.sessionId = appDelegate.session_Id; //OAuth
+        sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
         
         INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
         callOptions.client = nil;
@@ -5368,10 +5336,9 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         sfmRequest.eventName = eventName;
         sfmRequest.eventType = eventType;
         
-		sfmRequest.profileId = appDelegate.current_userId;
-		sfmRequest.userId  = appDelegate.current_userId;
-		sfmRequest.groupId = appDelegate.organization_Id;
-		
+        sfmRequest.userId = [appDelegate.loginResult userId];
+        sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
+        sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
         sfmRequest.value = requestId;
         
         [sfmRequest addClientInfo:client];
@@ -5398,7 +5365,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
-	sessionHeader.sessionId = appDelegate.session_Id; //OAuth
+    sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
     
     INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
     callOptions.client = nil;
@@ -5462,9 +5429,9 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     sfmRequest.eventName = eventName;
     sfmRequest.eventType = eventType;
     
-	sfmRequest.userId  = appDelegate.current_userId;
-	sfmRequest.groupId = appDelegate.organization_Id;
-	sfmRequest.profileId = appDelegate.current_userId;
+    sfmRequest.userId = [appDelegate.loginResult userId];
+    sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
+    sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
     
     //sahana 
     sfmRequest.value = requestId;
@@ -6235,7 +6202,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     binding.logXMLInOut = YES;
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
-    sessionHeader.sessionId = appDelegate.session_Id; //OAuth
+    sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
     
     INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
     callOptions.client = nil;
@@ -6281,7 +6248,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     binding.logXMLInOut = YES;
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init];
-    sessionHeader.sessionId = appDelegate.session_Id;//OAuth
+    sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
     
     INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[INTF_WebServicesDefServiceSvc_CallOptions alloc] init];
     callOptions.client = nil;
@@ -6457,7 +6424,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     binding.logXMLInOut = YES;
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
-	sessionHeader.sessionId = appDelegate.session_Id; //OAuth
+    sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
     
     INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
     callOptions.client = nil;
@@ -6516,7 +6483,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     binding.logXMLInOut = YES;
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
-	sessionHeader.sessionId = appDelegate.session_Id; //OAuth
+    sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
     
     INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
     callOptions.client = nil;
@@ -6713,7 +6680,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
-    sessionHeader.sessionId = appDelegate.session_Id;    
+    sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];    
     
     INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
     callOptions.client = nil;
@@ -6733,9 +6700,9 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] autorelease];
     sfmRequest.eventName = DOWNLOAD_CRITERIA_CHANGE;
     sfmRequest.eventType = @"SYNC";
-    sfmRequest.profileId = appDelegate.current_userId;
-	sfmRequest.userId  = appDelegate.current_userId;
-	sfmRequest.groupId = appDelegate.organization_Id;
+    sfmRequest.userId = [appDelegate.loginResult userId];
+    sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
+    sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
     
     sfmRequest.value = Insert_requestId;
     NSDictionary * dict = [self getdownloadCriteriaObjects];
@@ -6801,25 +6768,8 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         appDelegate.connection_error = TRUE;
         NSError *error=response.error;
         NSString *type=error.domain;
-		//#Radha Defect Fix 7168
-        if( [type Contains:@"NSURLErrorDomain"]  )
+        if([type Contains:@"NSURLErrorDomain"])
         {
-//			if ( appDelegate.isUserOnAuthenticationPage )
-//			{
-//				//#Radha Defect Fix 7168
-//				NSDictionary *userinfo=error.userInfo;
-//				NSMutableDictionary *correctiveAction=[[[NSMutableDictionary alloc]init]autorelease];
-//				[correctiveAction setObject:userinfo forKey:@"userInfo"];
-//				NSString *des=[error localizedDescription];
-//				
-//				myException = [NSException
-//							   exceptionWithName:type
-//							   reason:des
-//							   userInfo:correctiveAction];
-//				
-//				var=SOAP_ERROR;
-//				@throw myException;
-//			}
             return;
         }
         NSDictionary *userinfo=error.userInfo;
@@ -6893,12 +6843,9 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         }
         
         //Radha
-		//Commenting didOpComplete and setting this variable if exception is caught and if the exception is not caused by session failure in the exception block.
-        //didOpComplete = TRUE;
-		
+        didOpComplete = TRUE;
         appDelegate.didincrementalmetasyncdone = TRUE;
-		
-        //appDelegate.Incremental_sync_status = PUT_RECORDS_DONE; //Commented for session handling.
+        appDelegate.Incremental_sync_status = PUT_RECORDS_DONE;
         
         appDelegate.wsInterface.getPrice = TRUE;
         appDelegate.sfmSave = TRUE;
@@ -6941,9 +6888,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                    exceptionWithName:[NSString stringWithFormat:@"%@",sFault.faultcode]
                                    reason:[NSString stringWithFormat:@"%@",faultString]
                                    userInfo:correctiveAction];
-		
-		
-        //appDelegate.connection_error = TRUE; //Commenting for session handling.
+        appDelegate.connection_error = TRUE;
         responseError = 1;
         var=SOAP_ERROR;
         @throw myException;
@@ -10991,23 +10936,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         NSMutableDictionary *Errordict=[[NSMutableDictionary alloc]init];
         [Errordict setObject:exp.name forKey:@"ExpName"];
         [Errordict setObject:exp.reason forKey:@"ExpReason"];
-		
-		//Code for session handling.
-		if ( [exp.reason Contains:@"INVALID_SESSION_ID"] && appDelegate.do_meta_data_sync == ALLOW_META_AND_DATA_SYNC)
-		{
-			appDelegate.connection_error = FALSE;
-			didOpComplete = FALSE;
-			if ([self handleSessionExpiryForInitialLogin])
-				return;
-		}
-		else
-		{
-			appDelegate.connection_error = TRUE;
-			didOpComplete = TRUE;
-			appDelegate.Incremental_sync_status = PUT_RECORDS_DONE;
-		}
-		
-        if(exp.userInfo == nil)
+        if(exp.userInfo ==nil)
         {
             [Errordict setObject:exp forKey:@"userInfo"];
         }
@@ -11021,34 +10950,6 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         SMLog(@"Exception Reason WSInterface :operation:completesWithResponse %@",exp.reason);
     }
 }
-
-
-#pragma mark Handle Session failure-initial sync.
-- (BOOL)handleSessionExpiryForInitialLogin
-{
-	if ( ![[ZKServerSwitchboard switchboard] doCheckSession] )
-		return FALSE;
-	
-	
-	if ( appDelegate.initial_sync_status == SYNC_TX_FETCH )	//Handle session failure for TX_FETCH
-	{
-		[self PutAllTheRecordsForIds];
-		return TRUE;
-	}
-	else if ( appDelegate.initial_sync_status == SYNC_EVENT_SYNC ) //Handle session failure for EVENT_SYNC
-	{
-		[self dataSyncWithEventName:EVENT_SYNC eventType:SYNC requestId:@""];
-		return TRUE;
-	}
-	else if ( appDelegate.initial_sync_status == SYNC_DOWNLOAD_CRITERIA_SYNC )//Handle session failure for DOWNLOAD_CREITERIA_SYNC
-	{
-		[self dataSyncWithEventName:DOWNLOAD_CREITERIA_SYNC eventType:SYNC requestId:appDelegate.initial_dataSync_reqid];
-		return TRUE;
-	}
-	
-	return FALSE;
-}
-
 
 -(void)settingFlags
 {
@@ -13003,7 +12904,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         [INTF_WebServicesDefServiceSvc initialize];
         
         INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
-        sessionHeader.sessionId = appDelegate.session_Id;
+        sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
         
         INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
         callOptions.client = nil;
@@ -13023,11 +12924,10 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] autorelease];
         sfmRequest.eventName = @"DATA_ON_DEMAND";
         sfmRequest.eventType = @"GET_PRICE_INFO";
-		
-		sfmRequest.profileId = appDelegate.current_userId;
-		sfmRequest.userId  = appDelegate.current_userId;
-		sfmRequest.groupId = appDelegate.organization_Id;
-		
+        sfmRequest.userId = [appDelegate.loginResult userId];
+        sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
+        sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
+        
         //ADD SVMXClient
         //INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init] autorelease];
         
@@ -13944,31 +13844,26 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 
 
 @implementation ZKServerSwitchboard (Private1)
-//OAuth
-- (BOOL)doCheckSession
-{	
-	BOOL isSessionValid;
-	
-    if ( appDelegate.refresh_token )
-    {
-		NSString *refreshToken = [SFHFKeychainUtils getValueForIdentifier:KEYCHAIN_SERVICE];
 
-		if ( refreshToken && [appDelegate isInternetConnectionAvailable] )
-		{
-			isSessionValid = [appDelegate.oauthClient refreshAccessToken:refreshToken];
-		}
-		
+- (void)doCheckSession
+{
+	SMLog(@"Session Expiry : %@", sessionExpiry);
+    if ([sessionExpiry timeIntervalSinceNow] < 5)
+    {
+        didSessionResume = NO;
+        iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+        [self loginWithUsername:appDelegate.username password:appDelegate.password target:self selector:@selector(sessionDidResume:error:)];
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, FALSE))
+        {
+            SMLog(@"WSInterface doCheckSession in while loop");
+            if (didSessionResume)
+                break;
+        }
     }
-	else
-	{
-		if ( [appDelegate isInternetConnectionAvailable] )
-			isSessionValid = TRUE;
-		else
-			isSessionValid =  FALSE;
-	}
-	
-	return isSessionValid;
-	
+    else    //shrinivas
+    {
+        isSessionInavalid = NO;
+    }
 }
 
 - (void)sessionDidResume:(ZKLoginResult *)loginResult error:(NSError *)error

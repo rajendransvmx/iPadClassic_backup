@@ -155,26 +155,28 @@ static ZKServerSwitchboard * sharedSwitchboard =  nil;
 + (NSString *)baseURL
 {
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+    BOOL enabled = NO;
+    // return @"https://www.salesforce.com";
     NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
     
-	//Shrinivas : OAuth
-	NSString *preference = [defaults valueForKey:@"preference_identifier"];
-	
-	
     NSString *groupIdentifier = [defaults objectForKey:kFirstTimeLogin];
     if (!groupIdentifier)
     {
         SMLog(@"First time login.");
         [defaults setValue:@"kFirstTimeLogin" forKey:kFirstTimeLogin];
+        //enabled = YES; //Siva Manne #3811
+        //[defaults setBool:enabled forKey:@"enabled_preference"];
     }
     
     else
     {
+        //enabled = [defaults boolForKey:@"enabled_preference"];
         SMLog(@"Not a first time login.");
     }
     
+    enabled = [defaults boolForKey:@"enabled_preference"];
     
-    if ( [preference isEqualToString:@"Production"] )
+    if (enabled)
     {
         appDelegate.loggedInOrg = [NSMutableString stringWithString:@"Production"];
 		NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
@@ -184,9 +186,9 @@ static ZKServerSwitchboard * sharedSwitchboard =  nil;
 		}
 
         SMLog(@"[TEST LOGIN URL] https://www.salesforce.com");
-        return @"https://login.salesforce.com";
+        return @"https://www.salesforce.com";
     }
-    else if ( [preference isEqualToString:@"Sandbox"] )
+    else
     {
         appDelegate.loggedInOrg = [NSMutableString stringWithString:@"Sandbox"];
 		NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
@@ -198,28 +200,6 @@ static ZKServerSwitchboard * sharedSwitchboard =  nil;
         SMLog(@"[TEST LOGIN URL] https://test.salesforce.com");
         return @"https://test.salesforce.com";
     }
-	else
-	{
-		NSString *customURL = [defaults valueForKey:@"custom_url"];
-			
-		if ( [customURL Contains:@"http://"] || [customURL Contains:@"https://"] );
-		//Its fine continue :
-		else
-			customURL = [NSString stringWithFormat:@"https://%@",customURL];
-		
-		appDelegate.loggedInOrg = [NSMutableString stringWithString:@"CustomURL"];
-		NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-		
-		if ( userDefaults )
-		{
-			[userDefaults setObject:appDelegate.loggedInOrg forKey:@"loggedInOrg"];
-		}
-		
-        SMLog(@"%@", customURL);
-        return customURL;
-
-	}
-	
     SMLog(@"[TEST LOGIN URL] https://www.salesforce.com");
     return @"https://www.salesforce.com";
 }
@@ -322,8 +302,9 @@ static ZKServerSwitchboard * sharedSwitchboard =  nil;
 
 - (NSURLConnection *)create:(NSArray *)objects target:(id)target selector:(SEL)selector context:(id)context
 {
-	//OAuth
-    ZKMessageEnvelope *envelope = [ZKMessageEnvelope envelopeWithSessionId:appDelegate.session_Id clientId:clientId];
+    [self _checkSession];
+    
+    ZKMessageEnvelope *envelope = [ZKMessageEnvelope envelopeWithSessionId:sessionId clientId:clientId];
     if (self.updatesMostRecentlyUsed)
         [envelope addUpdatesMostRecentlyUsedHeader];
     [envelope addBodyElementNamed:@"create" withChildNamed:@"sobject" value:objects];
@@ -335,8 +316,9 @@ static ZKServerSwitchboard * sharedSwitchboard =  nil;
 
 - (NSURLConnection *)delete:(NSArray *)objectIDs target:(id)target selector:(SEL)selector context:(id)context
 {
-	//OAuth
-    ZKMessageEnvelope *envelope = [ZKMessageEnvelope envelopeWithSessionId:appDelegate.session_Id clientId:clientId];
+    [self _checkSession];
+    
+    ZKMessageEnvelope *envelope = [ZKMessageEnvelope envelopeWithSessionId:sessionId clientId:clientId];
     if (self.updatesMostRecentlyUsed)
         [envelope addUpdatesMostRecentlyUsedHeader];
     [envelope addBodyElementNamed:@"delete" withChildNamed:@"ids" value:objectIDs];
@@ -392,10 +374,9 @@ static ZKServerSwitchboard * sharedSwitchboard =  nil;
 
 - (NSURLConnection *)query:(NSString *)soqlQuery target:(id)target selector:(SEL)selector context:(id)context
 {
-    //[self _checkSession];
+    [self _checkSession];
     
-	//OAuth
-    ZKMessageEnvelope *envelope = [ZKMessageEnvelope envelopeWithSessionId:appDelegate.session_Id clientId:clientId];
+    ZKMessageEnvelope *envelope = [ZKMessageEnvelope envelopeWithSessionId:sessionId clientId:clientId];
     [envelope addBodyElementNamed:@"query" withChildNamed:@"queryString" value:soqlQuery];
     NSString *xml = [envelope stringRepresentation]; 
     

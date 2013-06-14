@@ -924,10 +924,7 @@ enum  {
         [activityIndicator startAnimating];
         if(appDelegate==nil)
             appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-		
-		//OAuth.
-		[[ZKServerSwitchboard switchboard] doCheckSession];
-
+        [appDelegate goOnlineIfRequired];
         appDelegate.wsInterface.didOpComplete = FALSE;
         [appDelegate.wsInterface dataSyncWithEventName:@"SFM_SEARCH" eventType:@"SEARCH_RESULTS" values:searchResultData]; 
 

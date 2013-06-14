@@ -8,21 +8,16 @@
 
 #import "iServiceAppDelegate.h"
 #import "LoginController.h" 
+#import "iPadScrollerViewController.h"
 #import "LocalizationGlobals.h"
 #import "ManualDataSync.h"
 #import "SummaryViewController.h"
 #import <SystemConfiguration/SystemConfiguration.h>
-
-//OAuth:
-#import "iPadScrollerViewController.h"
-
 #import "SFHFKeychainUtils.h"
 #import <sys/utsname.h>
 
 extern void SVMXLog(NSString *format, ...);
 
-//OAuth.
-static const int MAX_SESSION_AGE = 10 * 60;
 //krishna client info
 const NSString *deviceType = @"type";//@"iPad";
 const NSString *osVersion = @"iOSVersion";
@@ -392,22 +387,6 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize errorDescription;
 @synthesize language;
 @synthesize isSfmSearchSortingAvailable;
-//Shrinivas : OAuth.
-@synthesize oauthClient;
-@synthesize session_Id;
-@synthesize apiURl;
-@synthesize refresh_token;
-@synthesize organization_Id;
-@synthesize sessionExpiry;
-@synthesize _OAuthController;
-@synthesize htmlString;
-@synthesize refreshHomeIcons;
-@synthesize refreshIcons;
-@synthesize userOrg;
-@synthesize isUserOnAuthenticationPage;
-@synthesize customURLValue;
-@synthesize activity;
-@synthesize wasPerformInitialSycn;
 
 
 -(BOOL)shouldAutorotate
@@ -506,7 +485,7 @@ NSString* machineName()
     //////////// REGISTER FOR REACHABILITY NOTIFICATIONS ////////////
     /////////////////////////////////////////////////////////////////
     
-    self.logoutFlag = FALSE;
+    logoutFlag = FALSE;
     // Check for internet connection
     [[NSNotificationCenter defaultCenter] addObserver:self 
                                              selector:@selector(reachabilityChanged:) 
@@ -532,7 +511,7 @@ NSString* machineName()
     workOrderInfo = [[NSMutableArray alloc] initWithCapacity:0];
     self.firstUsername = nil;
     
-    self.wsInterface = [[WSInterface alloc] init];
+    wsInterface = [[WSInterface alloc] init];
     wsInterface.delegate = self;
     
     dataBase = [[DataBase alloc] init];
@@ -584,6 +563,38 @@ NSString* machineName()
     plistPath = [rootPath stringByAppendingPathComponent:SWITCH_VIEW_LAYOUTS_PLIST];
     switchViewLayouts = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
 
+    loginController = [[LoginController alloc] initWithNibName:@"LoginController" bundle:nil];
+
+    NSString * status = [self getUSerInfoForKey:INITIAL_SYNC_LOGIN_SATUS];
+    if([status isEqualToString:@"false"])
+    {
+        NSError * error = nil;
+        self.username = [SFHFKeychainUtils getPasswordForUsername:@"username" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
+        self.password = [SFHFKeychainUtils getPasswordForUsername:@"password" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
+        
+        if( (![self.username isEqualToString:@""] || self.username != nil) && (![self.password isEqualToString:@""]  || self.password != nil) && [self goOnlineIfRequired] )
+        {
+            self.IsLogedIn = ISLOGEDIN_TRUE;
+            self.do_meta_data_sync = ALLOW_META_AND_DATA_SYNC;
+            
+            homeScreenView = [[iPadScrollerViewController alloc] initWithNibName:@"iPadScrollerViewController" bundle:nil];
+            homeScreenView.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+            homeScreenView.modalPresentationStyle = UIModalPresentationFullScreen;
+            [window setRootViewController:homeScreenView];
+            [homeScreenView release];
+        }
+    }
+    else
+    {
+        
+        loginController.modalPresentationStyle = UIModalPresentationFullScreen;
+        loginController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+        
+        [window setRootViewController:loginController];
+    }
+
+    [window makeKeyAndVisible];
+    //[self.viewController presentViewController:loginController animated:YES];
     
     _iOSObject = [[iOSInterfaceObject alloc] init];
     
@@ -624,679 +635,9 @@ NSString* machineName()
     [svmxc_client.clientInfo addObject:[clientInfoDict objectForKey:osVersion]];
     [svmxc_client.clientInfo addObject:[clientInfoDict objectForKey:applicationVersion]];
     [svmxc_client.clientInfo addObject:[clientInfoDict objectForKey:devVersion]];
-
-	//Shrinivas : OAuth.
-	self.isUserOnAuthenticationPage = FALSE;
-	self.refreshHomeIcons = NO;
-	
-	oauthClient = [[OAuthClientInterface alloc] init];
-	_OAuthController = [[OAuthController alloc] init];
-	
-	//Auto Login incase user has already authorized.
-	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-
-	NSString *accessToken  = [userDefaults valueForKey:ACCESS_TOKEN];
-	NSString *refreshToken = [SFHFKeychainUtils getValueForIdentifier:KEYCHAIN_SERVICE];
-	NSString *preference = [userDefaults valueForKey:@"preference_identifier"];
-	
-	userOrg = [userDefaults valueForKey:USER_ORG]; //Read the user org here to check for correct org :
-	
-	NSMutableDictionary * temp_dict = [self.wsInterface getDefaultTags];
-	self.wsInterface.tagsDictionary = temp_dict;
-
-	//Auto Login
-	if ( accessToken != nil )
-	{
-		NSString *local_Id = [userDefaults valueForKey:LOCAL_ID];
-		NSString *userName = [appDelegate.dataBase getUserNameFromUserTable:local_Id];
-		
-		//Fix for defect #7078
-		SMLog(@"%@", [userDefaults valueForKey:@"UserFullName"]);
-		
-		if ( userName == nil || [userName isEqualToString:@""])
-		{
-			userName = [userDefaults valueForKey:_USERNAME];
-			[userDefaults setValue:userName forKey:@"UserFullName"];
-
-		}
-
-		//Initializing the varibales for Auto Login:
-		self.language         = [userDefaults valueForKey:@"UserLanguage"];
-		self.apiURl           = [userDefaults valueForKey:API_URL];
-		self.currentServerUrl = [userDefaults valueForKey:SERVERURL];
-		self.current_userId   = [userDefaults valueForKey:CURRENT_USER_ID];
-		self.organization_Id  = [userDefaults valueForKey:ORGANIZATION_ID];
-		self.currentUserName  = [userDefaults valueForKey:@"UserFullName"];
-		self.loggedInUserId   = [userDefaults valueForKey:CURRENT_USER_ID];		
-		self.refresh_token    = refreshToken;
-		self.session_Id       = accessToken;
-		self.username         = [userDefaults valueForKey:@"UserFullName"];
-		
-		//Re-write the users org incase he has changed it accidently : 
-		if ( ![userOrg isEqualToString:preference] )
-		{
-			[userDefaults setValue:userOrg forKey:@"preference_identifier"];
-		}
-		
-		if ( [appDelegate isInternetConnectionAvailable] )
-		{
-			[oauthClient refreshAccessToken:refreshToken];
-		}
-		
-		BOOL retVal = [appDelegate.calDataBase isUsernameValid:userName];
-        
-        if ( retVal == FALSE )
-		{
-			[appDelegate.dataBase deleteDatabase:DATABASENAME1];
-			[appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
-			[self removeSyncHistoryPlist];
-			[self updateSyncFailedFlag:SFALSE];
-
-			self.do_meta_data_sync = ALLOW_META_AND_DATA_SYNC;
-			
-			[window setRootViewController:_OAuthController];
-			[window makeKeyAndVisible];
-			
-			self.wasPerformInitialSycn = TRUE;
-			
-			[self addBackgroundImageAndLogo];
-			[self performSelectorInBackground:@selector(performInitialSynchronization) withObject:nil];
-			
-			return TRUE;
-
-		}
-
-		else
-		{
-			self.IsLogedIn = ISLOGEDIN_TRUE;
-			
-			ZKServerSwitchboard *switchBoard = [[ZKServerSwitchboard switchboard] init];
-			switchBoard.logXMLInOut = TRUE;
-			
-			homeScreenView = nil;
-			//Changed
-			self.serviceReportLogo = [[[UIImage alloc] initWithData:[self.dataBase serviceReportLogoInDB]]autorelease];
-			
-			if ( homeScreenView == nil )
-			{
-				[window setRootViewController:_OAuthController];
-				[window makeKeyAndVisible];
-				
-				homeScreenView = [[iPadScrollerViewController alloc] initWithNibName:@"iPadScrollerViewController" bundle:nil];
-				homeScreenView.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-				homeScreenView.modalPresentationStyle = UIModalPresentationFullScreen;
-				[_OAuthController presentViewController:homeScreenView animated:YES completion:nil];
-				refreshIcons = homeScreenView;
-				[homeScreenView release];
-				
-				return TRUE;
-			}
-
-		}
-		
-		return TRUE;
-	}
-
-	[oauthClient initWithClientID:CLIENT_ID secret:CLIENT_SECRET redirectURL:REDIRECT_URL];
-	[self performAuthorization];
-	
+    
 	return YES;
 }
-
-
-#pragma mark - Open Authorization Methods :
-- (void) performAuthorization
-{
-	[oauthClient userAuthorizationRequestWithParameters:nil];
-	[self showScreen];
-	
-}
-
-//OAuth
--(void)showScreen
-{
-	//[self addBackgroundImageAndLogo];
-	[_OAuthController.view addSubview:oauthClient.view];
-	[window setRootViewController:_OAuthController];
-	[window makeKeyAndVisible];
-	
-}
-
-//OAuth
--(void)showSalesforcePage
-{	
-	//Revoke the Tokens in Case user decides to cancel switching to a new user OR Incase user denies Access.
-	[oauthClient deleteAllCookies];
-	if ( appDelegate.refresh_token )
-	{
-		[appDelegate.oauthClient revokeExistingToken:appDelegate.refresh_token];
-	}
-	
-	[self.oauthClient.view removeFromSuperview];
-	//[self addBackgroundImageAndLogo];
-	[self.oauthClient initWithClientID:CLIENT_ID secret:CLIENT_SECRET redirectURL:REDIRECT_URL];
-	[self.oauthClient userAuthorizationRequestWithParameters:nil];
-	
-	[self._OAuthController.view addSubview:self.oauthClient.view];
-}
-
-//OAuth
--(void)didLoginWithOAuth
-{
-	NSUserDefaults * userDefaults = [NSUserDefaults standardUserDefaults];
-	
-	[userDefaults setObject:self.currentServerUrl forKey:SERVERURL];
-	[userDefaults setObject:self.currentUserName forKey:@"UserFullName"];
-	[userDefaults setObject:self.currentUserName forKey:_USERNAME];
-    [userDefaults setObject:self.language forKey:@"UserLanguage"];
-	[userDefaults setObject:self.session_Id forKey:ACCESS_TOKEN];
-	[userDefaults setObject:self.current_userId forKey:CURRENT_USER_ID];
-	[userDefaults setObject:self.organization_Id forKey:ORGANIZATION_ID];
-	[userDefaults setObject:self.apiURl forKey:API_URL];
-	[userDefaults setObject:self.userOrg forKey:USER_ORG];
-    [userDefaults synchronize];
-	
-	[SFHFKeychainUtils deleteKeychainValue:KEYCHAIN_SERVICE];
-	[SFHFKeychainUtils createKeychainValue:self.refresh_token forIdentifier:KEYCHAIN_SERVICE];
-	
-	self.refresh_token = [SFHFKeychainUtils getValueForIdentifier:KEYCHAIN_SERVICE];
-	SMLog(@"Refresh Token : %@", self.refresh_token);
-	
-    self.didLoginAgain = TRUE;
-	
-	[self.oauthClient.view removeFromSuperview];
-	[self.oauthClient.view release];
-	self.oauthClient.view = nil;
-	
-	[self performInitialLogin];	
-}
-
-//OAuth
--(void)performInitialLogin
-{
-	if ( homeScreenView )
-	{
-		homeScreenView = nil;
-	}
-	
-	self.IsSSL_error = FALSE;
-	self.IsLogedIn = ISLOGEDIN_TRUE;
-	
-    self.wsInterface.didOpComplete = FALSE;
-	
-	self.connection_error = FALSE; //CHANGED FOR DEFECT #5786 --> 29/JAN/2013
-	
-    if (self.isBackground == TRUE)
-        self.isBackground = FALSE;
-    
-    if (self.isForeGround == TRUE)
-        self.isForeGround = FALSE;
-		
-    self.last_initial_data_sync_time = nil;
-	
-	
-	_continueFalg = TRUE;
-	
-    [self checkSwitchUser];
-	
-	
-}
-
-//SHRINVIAS : OAuth :
--(void)performInitialSynchronization
-{	
-	//GET VERSION :
-	self.wasPerformInitialSycn = TRUE;
-	BOOL checkVersion = [self checkVersion];
-	
-	if ( checkVersion == NO )
-	{
-		//#Radha Defect Fix 7168
-		
-		[self removeBackgroundImageAndLogo];
-		
-		if (!appDelegate.isInternetConnectionAvailable)
-			[self showAlertForSyncFailure];
-		
-		if ( [appDelegate isInternetConnectionAvailable] )
-		{
-			NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-			[userDefaults removeObjectForKey:ACCESS_TOKEN];
-			[userDefaults removeObjectForKey:SERVERURL];
-			[userDefaults removeObjectForKey:ORGANIZATION_ID];
-			[userDefaults removeObjectForKey:API_URL];
-			[userDefaults removeObjectForKey:USER_ORG];
-			[userDefaults removeObjectForKey:IDENTITY_URL];
-			[userDefaults synchronize];
-
-			[self.oauthClient deleteAllCookies];
-			
-			[self performSelectorOnMainThread:@selector(showSalesforcePage) withObject:nil waitUntilDone:YES];
-			return;
-		}
-		
-		
-	}
-	
-	// GET PROFILE : 
-	self.didCheckProfile = FALSE;
-	self.userProfileId = @"";
-	
-	//Dont remove the code in the comments below
-	[self.wsInterface checkIfProfileExistsWithEventName:VALIDATE_PROFILE type:GROUP_PROFILE];
-	
-	while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
-	{
-		if (![self isInternetConnectionAvailable])
-		{
-			self.shouldShowConnectivityStatus = YES;
-			return;
-		}
-		
-		if (self.didCheckProfile)
-		{
-			break;
-		}
-		if (self.connection_error)
-		{
-			break;
-		}
-	}
-	
-	if ([self.userProfileId length] == 0)
-	{
-		NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-		[self removeBackgroundImageAndLogo];  //Radha #Defect Fix 7238
-		
-		if ( [appDelegate isInternetConnectionAvailable] )
-		{
-			self.wasPerformInitialSycn = FALSE;
-			[userDefaults removeObjectForKey:ACCESS_TOKEN];
-			[userDefaults removeObjectForKey:SERVERURL];
-			[userDefaults removeObjectForKey:ORGANIZATION_ID];
-			[userDefaults removeObjectForKey:API_URL];
-			[userDefaults removeObjectForKey:USER_ORG];
-			[userDefaults removeObjectForKey:IDENTITY_URL];
-			[userDefaults synchronize];
-
-			[self.oauthClient deleteAllCookies];
-			[self performSelectorOnMainThread:@selector(showSalesforcePage) withObject:nil waitUntilDone:YES];
-			return;
-		}
-		else
-		{
-			[self showAlertForSyncFailure];
-		}
-		
-
-		
-	}
-	
-	//GET TAGS FOR FIRST TIME :
-	[self getTagsForTheFirstTime];
-	
-	if ( appDelegate.connection_error == TRUE )
-	{
-		NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-		[self removeBackgroundImageAndLogo];  //Radha #Defect Fix 7238
-		[self showAlertForSyncFailure];
-		if ( [appDelegate isInternetConnectionAvailable] )
-		{
-			[self showAlertForSyncFailure];
-			[userDefaults removeObjectForKey:ACCESS_TOKEN];
-			[userDefaults removeObjectForKey:SERVERURL];
-			[userDefaults removeObjectForKey:ORGANIZATION_ID];
-			[userDefaults removeObjectForKey:API_URL];
-			[userDefaults removeObjectForKey:USER_ORG];
-			[userDefaults removeObjectForKey:IDENTITY_URL];
-			[userDefaults synchronize];
-			
-			[self.oauthClient deleteAllCookies];
-			[self performSelectorOnMainThread:@selector(showSalesforcePage) withObject:nil waitUntilDone:YES];
-			
-		}
-		
-		return;
-	}
-	
-	BOOL retVal = [self.dataBase getImageForServiceReportLogo]; //Get Service Report from online.
-	
-	if (retVal == FALSE)
-	{
-		return;
-	}
-	else
-	{
-		self.wasPerformInitialSycn = FALSE;
-		[self performSelectorOnMainThread:@selector(showHomeScreenForAutoInitialSync) withObject:nil waitUntilDone:NO];
-		
-	}
-
-	
-}
-
--(void)showAlertForSyncFailure
-{
-	UIAlertView *syncAlert = [[UIAlertView alloc] initWithTitle:@"ServiceMax" message:[self.wsInterface.tagsDictionary valueForKey:ALERT_INTERNET_NOT_AVAILABLE] delegate:self cancelButtonTitle:@"Retry" otherButtonTitles:nil, nil];
-	
-	[syncAlert performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
-	[syncAlert release];
-}
-
-
--(void)showHomeScreenForAutoInitialSync
-{
-	self.IsLogedIn = ISLOGEDIN_TRUE;
-	
-	ZKServerSwitchboard *switchBoard = [[ZKServerSwitchboard switchboard] init];
-	switchBoard.logXMLInOut = TRUE;
-	
-	homeScreenView = nil;
-	[self removeBackgroundImageAndLogo];
-	
-	if ( homeScreenView == nil )
-	{		
-		homeScreenView = [[iPadScrollerViewController alloc] initWithNibName:@"iPadScrollerViewController" bundle:nil];
-		homeScreenView.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-		homeScreenView.modalPresentationStyle = UIModalPresentationFullScreen;
-		[_OAuthController presentViewController:homeScreenView animated:YES completion:nil];
-		refreshIcons = homeScreenView;
-		[homeScreenView release];
-				
-	}
-
-}
-
--(void)getTagsForTheFirstTime
-{
-	self.download_tags_done = FALSE;
-    self.firstTimeCallForTags = TRUE;
-    [self.wsInterface metaSyncWithEventName:MOBILE_DEVICE_TAGS eventType:SYNC values:nil];
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-    {
-	if ( ![appDelegate isInternetConnectionAvailable] )
-		break;
-		
-	if ( self.connection_error == TRUE )
-		break;
-		
-        if(self.download_tags_done)
-            break;
-    }
-	 
-	
-    self.firstTimeCallForTags = FALSE;
-
-}
-
-
-//Shrinivas : OAuth
-- (void)checkSwitchUser
-{
-	//Shrinivas : OAuth.
-	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-	
-	NSString *local_Id = [userDefaults valueForKey:LOCAL_ID];
-	NSString *userName = [self.dataBase getUserNameFromUserTable:local_Id];
-	
-	//Fix for Defect #:7076 - 15/May/2013
-	if ( userName == nil || [userName isEqualToString:@""])
-	{
-		//Reading the previous user's username if exists in the keychain.
-		NSError * error = nil;
-		previousUser = [SFHFKeychainUtils getPasswordForUsername:@"username"
-										  andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
-		
-		userName = previousUser;
-		
-		//Defect #:7129
-		BOOL retVal = [self.calDataBase isUsernameValid:userName];
-        
-		if ( retVal == FALSE )
-		{
-			NSError *error;
-			[SFHFKeychainUtils deleteItemForUsername:@"username" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
-			[SFHFKeychainUtils deleteItemForUsername:@"password" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
-			
-			[self addBackgroundImageAndLogo]; //Code for Indicator - 24/May/2013
-			[self.dataBase deleteDatabase:DATABASENAME1];
-			[self removeSyncHistoryPlist];
-			[self initWithDBName:DATABASENAME1 type:DATABASETYPE1];
-			[self updateSyncFailedFlag:SFALSE];
-			
-			self.do_meta_data_sync = ALLOW_META_AND_DATA_SYNC;
-
-			[self performInitialSynchronization];
-			
-		}
-		else
-		{
-			self.do_meta_data_sync = DONT_ALLOW_META_DATA_SYNC;
-			
-			self.serviceReportLogo = [[[UIImage alloc] initWithData:[self.dataBase serviceReportLogoInDB]] autorelease]; //Get logo from DB if no Initial sync is performed.
-			
-			
-			ZKServerSwitchboard *switchBoard = [[ZKServerSwitchboard switchboard] init];
-			switchBoard.logXMLInOut = TRUE;
-			
-			if ( homeScreenView == nil )
-			{
-				homeScreenView = [[iPadScrollerViewController alloc] initWithNibName:@"iPadScrollerViewController" bundle:nil];
-				homeScreenView.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-				homeScreenView.modalPresentationStyle = UIModalPresentationFullScreen;
-				[_OAuthController presentViewController:homeScreenView animated:YES completion:nil];
-				refreshIcons = homeScreenView;
-				[homeScreenView release];
-			}
-
-		}
-	}
-	
-	else if ( ![userName isEqualToString:@""] )
-	{
-		if ( ![self.currentUserName isEqualToString:userName] )
-		{
-			[self handleSwitchUser];
-			
-		}
-		else
-		{
-			self.do_meta_data_sync = DONT_ALLOW_META_DATA_SYNC;
-			
-			self.serviceReportLogo = [[[UIImage alloc] initWithData:[self.dataBase serviceReportLogoInDB]] autorelease]; //Get logo from DB if no Initial sync is performed.
-			
-			
-			ZKServerSwitchboard *switchBoard = [[ZKServerSwitchboard switchboard] init];
-			switchBoard.logXMLInOut = TRUE;
-			
-			if ( homeScreenView == nil )
-			{
-				homeScreenView = [[iPadScrollerViewController alloc] initWithNibName:@"iPadScrollerViewController" bundle:nil];
-				homeScreenView.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-				homeScreenView.modalPresentationStyle = UIModalPresentationFullScreen;
-				[_OAuthController presentViewController:homeScreenView animated:YES completion:nil];
-				refreshIcons = homeScreenView;
-				[homeScreenView release];
-			}
-
-		 }
-			
-	  }
-	
-}
-
-//Shrinivas : OAuth.
-- (void) handleSwitchUser
-{
-	switchUser = TRUE;
-	NSString * description = [self.wsInterface.tagsDictionary objectForKey:login_switch_user];
-	NSString * title = [self.wsInterface.tagsDictionary objectForKey:alert_switch_user];
-	NSString * Ok = [self.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
-	NSString * continue_ = [self.wsInterface.tagsDictionary objectForKey:login_continue];
-	
-	UIAlertView * _alert = [[UIAlertView alloc] initWithTitle:title message:description delegate:self cancelButtonTitle:continue_ otherButtonTitles:Ok, nil];
-	
-	[_alert show];
-	[_alert release];
-	
-	
-}
-
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-			   
-   
-}
-
-//Shrinivas : OAuth.
--(void)removeSyncHistoryPlist
-{
-    NSFileManager * fileManager = [NSFileManager defaultManager];
-    NSString * rootPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString * plistPath = [rootPath stringByAppendingPathComponent:SYNC_HISTORY];
-    NSError  * delete_error;
-	
-    if ([fileManager fileExistsAtPath:plistPath] == YES)
-    {
-        [fileManager removeItemAtPath:plistPath error:&delete_error];
-    }
-    
-}
-
-
-//Shrinivas : OAuth
--(BOOL)checkVersion
-{
-	self.didGetVersion = FALSE;
-	
-    [self.wsInterface getSvmxVersion];
-	
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-    {
-		//#Radha Defect Fix 7168
-		if (appDelegate.connection_error)
-		{
-			self.didGetVersion = FALSE;
-			return NO;
-		}
-		
-        if ( ![self isInternetConnectionAvailable] )
-            return NO;
-		
-        SMLog (@"iserviceAppdelegate checkVersion in while loop");
-		
-        if ( self.didGetVersion )
-            break;
-		
-        SMLog ( @"4" );
-    }
-    
-    NSString * stringNumber = [self.SVMX_Version stringByReplacingOccurrencesOfString:@"." withString:@""];
-	
-    int _stringNumber = [stringNumber intValue];
-    int version = (APPVERSION * 100000);
-	
-    if( _stringNumber >= version )
-    {
-        SMLog(@"greater than %f", APPVERSION);
-		
-        self.wsInterface.isLoggedIn = YES;
-		
-        SMLog(@"Installed Package Version = %@",stringNumber);
-        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-		
-        if ( userDefaults )
-        {
-            [userDefaults setObject:stringNumber forKey:kPkgVersionCheckForGPS_AND_SFM_SEARCH];
-            SMLog(@"Installed Package Version = %@",stringNumber);
-        }
-        else
-        {
-            SMLog(@"Getting User Defaults Failed");
-        }
-		
-        return YES;
-    }
-    else
-    {
-        NSString * title = [self.wsInterface.tagsDictionary objectForKey:login_incorrect_version];
-        NSString * ipad_version = [self.wsInterface.tagsDictionary objectForKey:login_ipad_app_version];
-        NSString * servicemax_version = [self.wsInterface.tagsDictionary objectForKey:login_serivcemax_version];
-        
-        // Read version info from plist
-        NSString * version_app  = [NSString stringWithFormat:@"%@", [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey]];
-        
-        NSString * message  = [NSString stringWithFormat:@"%@ %@  %@ %.5f .",ipad_version, version_app , servicemax_version,APPVERSION];
-        UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:title message:message  delegate:self cancelButtonTitle:ALERT_ERROR_OK_DEFAULT otherButtonTitles:nil, nil];
-		
-        [alertView show];
-        [alertView release];
-		
-        SMLog(@"lesser than %f", APPVERSION);
-		
-        return NO;
-    }
-    
-    return NO;
-}
-
--(void)addBackgroundImageAndLogo
-{
-	
-	//Radha Defect Fix :- 7238(Fix for orientation)
-	
-	
-	loadingLabel = [[UILabel alloc] init];
-	loadingLabel.text = @"Loading...";
-	loadingLabel.backgroundColor = [UIColor clearColor];
-	loadingLabel.textColor = [UIColor grayColor];
-	loadingLabel.font = [UIFont boldSystemFontOfSize:18];
-	
-	CGSize constraint = CGSizeMake(self._OAuthController.view.frame.size.width, 20);
-	
-	CGSize textsize = [loadingLabel.text sizeWithFont:[UIFont systemFontOfSize:18] constrainedToSize:constraint lineBreakMode:UILineBreakModeWordWrap];
-	CGFloat widthbytwo = textsize.width/2;
-	
-	CGFloat x = CGRectGetMidY(self.window.frame);
-	
-	CGFloat placeatX =  (x- widthbytwo);
-	
-	activity = [[UIActivityIndicatorView alloc] init];
-	activity.frame = CGRectMake(placeatX, 456, textsize.width, 35);
-	activity.contentMode = UIViewContentModeScaleAspectFit;
-	[activity setBackgroundColor:[UIColor clearColor]];
-	[activity setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhiteLarge];
-	activity.color = [UIColor grayColor];
-	[self._OAuthController.view addSubview:activity];
-	
-	loadingLabel.frame = CGRectMake(placeatX+widthbytwo+20, 456, 100, 35);
-	[self._OAuthController.view addSubview:loadingLabel];
-	[activity startAnimating];
-	
-}
-
--(void)removeBackgroundImageAndLogo
-{
-	//Defect #7238
-	if (activity)
-	{
-		[activity stopAnimating];
-		[activity removeFromSuperview];
-		[activity release];
-		activity = nil;
-	}
-	
-	if (loadingLabel)
-	{
-		[loadingLabel removeFromSuperview];
-		[loadingLabel release];
-		loadingLabel = nil;
-	}
-	
-}
-
-#pragma mark - END
-
 
 //Called by Reachability whenever status changes.
 - (void) reachabilityChanged: (NSNotification* )note
@@ -1358,17 +699,6 @@ NSString* machineName()
 - (void) PostInternetNotificationUnavailable
 {
     self.internet_Conflicts = [self.calDataBase getInternetConflicts];
-	
-	//OAuth.
-	if ( homeScreenView != nil && self.refreshHomeIcons )
-	{
-		if ( [refreshIcons respondsToSelector:@selector(RefreshIcons)])
-		{
-			[refreshIcons RefreshIcons];
-		}
-
-	}
-	
     [[NSNotificationCenter defaultCenter] postNotificationName:kInternetConnectionChanged object:[NSNumber numberWithInt:0] userInfo:nil];
 }
 
@@ -1389,16 +719,6 @@ NSString* machineName()
         //[self.wsInterface.refreshModalStatusButton showModalSyncStatus];
         //[self.wsInterface.refreshSyncStatusUIButton showSyncUIStatus];
     }
-//OAuth.
-	if ( homeScreenView != nil && self.refreshHomeIcons )
-	{
-		if ( [refreshIcons respondsToSelector:@selector(RefreshIcons)])
-		{
-			[refreshIcons RefreshIcons];
-		}
-		
-	}
-
     
 }
 
@@ -1440,58 +760,6 @@ NSString* machineName()
     //shrinivas
 	
     self.isForeGround = TRUE;
-	//Shrinivas : OAuth
-	[self performSelector:@selector(handleChangedConnection) withObject:nil afterDelay:0.1];
-}
-
-//Shrinivas : OAuth
--(void)handleChangedConnection
-{
-	//Shrinivas : OAuth :
-	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-	
-	if ( self.logoutFlag == TRUE || self.isUserOnAuthenticationPage == TRUE )
-	{
-		NSString * preference = [userDefaults valueForKey:@"preference_identifier"];
-		
-		if ( ![userOrg isEqualToString:preference] )
-		{
-			[oauthClient.view removeFromSuperview];
-			[oauthClient deleteAllCookies];
-			[oauthClient userAuthorizationRequestWithParameters:nil];
-			[_OAuthController.view addSubview:oauthClient.view];
-		}
-		else if ( [userOrg isEqualToString:@"Custom"] && [self isInternetConnectionAvailable] )
-		{
-			//For Defect #7085
-			[oauthClient.view removeFromSuperview];
-			[oauthClient deleteAllCookies];
-			[oauthClient userAuthorizationRequestWithParameters:nil];
-			[_OAuthController.view addSubview:oauthClient.view];
-			
-		}
-		
-		//Fix for Defect #007174
-		else if ( self.isUserOnAuthenticationPage == TRUE )
-		{
-			[oauthClient.view removeFromSuperview];
-			[oauthClient deleteAllCookies];
-			[oauthClient userAuthorizationRequestWithParameters:nil];
-			[_OAuthController.view addSubview:oauthClient.view];
-			
-		}
-		
-	}
-	else
-	{
-		NSString * preference = [userDefaults valueForKey:@"preference_identifier"];
-		if ( ![userOrg isEqualToString:preference] )
-		{
-			//Rewrite the user's actual org to settings :
-			[userDefaults setValue:userOrg forKey:@"preference_identifier"];
-		}
-	}
-
 }
 
 - (void) applicationDidBecomeActive:(UIApplication *)application
@@ -1581,16 +849,6 @@ NSString* machineName()
     [frequencyLocationService release];
     [locationPingSettingTimer invalidate];
     [svmxc_client release];
-	[organization_Id release];
-	[refresh_token release];
-	[apiURl release];
-	[session_Id release];
-	[oauthClient release];
-	[_OAuthController release];
-	[sessionExpiry release];
-	[htmlString release];
-	[userOrg release];
-	[customURLValue release];
     [super dealloc];
 }
 
@@ -2024,11 +1282,10 @@ NSString * GO_Online = @"GO_Online";
     }];
 }
 
-//#7177
-- (BOOL) showloginScreen
+- (void) showloginScreen
 {
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
-    
+    appDelegate.logoutFlag = TRUE;
     
     if([appDelegate.syncThread isExecuting])
     {
@@ -2167,44 +1424,17 @@ NSString * GO_Online = @"GO_Online";
     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:locationPingSettingTimer];
 
     
-    	
-	//Shrinivas : OAuth. Fix for defect #007177
-	if ( ![self.oauthClient revokeExistingToken:self.refresh_token] )
-	{
-		//Radha :- OAuth Fix for defect 7243
-		[appDelegate ScheduleIncrementalDatasyncTimer];
-		[appDelegate ScheduleIncrementalMetaSyncTimer];
-		[appDelegate ScheduleTimerForEventSync];
-		[appDelegate updateNextDataSyncTimeToBeDisplayed:[NSDate date]];
-		[appDelegate updateMetasyncTimeinSynchistory];
-		[appDelegate startBackgroundThreadForLocationServiceSettings];
-		NSLog(@"Revoke tokens failed...");
-		return FALSE;
-	}
-	else
-	{
-		//Radha :- OAuth Fix for defect 7243
-		self.logoutFlag = TRUE;
-		sqlite3_close(self.db);
-		
-		[self.dataBase removecache];
-		self.wsInterface.didOpComplete = FALSE;
-		loginController.didEnterAlertView = FALSE;
-		self.isMetaSyncExceptionCalled = FALSE;
-		self.isIncrementalMetaSyncInProgress = FALSE;
-		self.isInitialMetaSyncInProgress = FALSE;
-		self.isSpecialSyncDone = FALSE;
-		metaSyncRunning = NO;
-		eventSyncRunning = NO;
-
-		return TRUE;
-	}
-		
-		
-
-	/*COMMENTING THE CODE SINCE LOGIN CONTROLLER IS NOT USED FOR OAUTH*/
+    sqlite3_close(self.db);
 	
-	/*
+    [appDelegate.dataBase removecache];
+    self.wsInterface.didOpComplete = FALSE;
+    loginController.didEnterAlertView = FALSE;
+    self.isMetaSyncExceptionCalled = FALSE;
+    self.isIncrementalMetaSyncInProgress = FALSE;
+    self.isInitialMetaSyncInProgress = FALSE; 
+    self.isSpecialSyncDone = FALSE;
+    metaSyncRunning = NO;
+	eventSyncRunning = NO;
     [loginController readUsernameAndPasswordFromKeychain];
     if(!appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
     {
@@ -2212,7 +1442,6 @@ NSString * GO_Online = @"GO_Online";
     }
     [loginController.activity stopAnimating];
     [loginController enableControls];
-	 */
 }
 
 #pragma mark - END
@@ -3656,76 +2885,17 @@ int percent = 0;
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex;  // after animation
 {
-	if ( switchUser )
-	{
-		switchUser = FALSE;
-		
-		if ( buttonIndex == 0 )
-		{
-			
-			NSError *error;
-			[SFHFKeychainUtils deleteItemForUsername:@"username" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
-			[SFHFKeychainUtils deleteItemForUsername:@"password" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
-			
-			[self addBackgroundImageAndLogo]; //Code for Indicator - 24/May/2013
-			[self.dataBase deleteDatabase:DATABASENAME1];
-			[self removeSyncHistoryPlist];
-			[self initWithDBName:DATABASENAME1 type:DATABASETYPE1];
-			[self updateSyncFailedFlag:SFALSE];
-			
-			self.do_meta_data_sync = ALLOW_META_AND_DATA_SYNC;
-
-			[self performSelectorInBackground:@selector(performInitialSynchronization) withObject:nil];
-			
-		}
-		else
-		{
-			self.do_meta_data_sync = DONT_ALLOW_META_DATA_SYNC;
-			[self showSalesforcePage];
-			
-			return;
-
-		}
-
-	}
-	
-	else
-	{
-		if ( self.wasPerformInitialSycn == TRUE || self.oauthClient.isVerifying == TRUE )
-		{
-			
-			if (self.oauthClient.isVerifying)
-			{
-				self.oauthClient.isVerifying = FALSE;
-				NSUserDefaults * userDefaults = [NSUserDefaults standardUserDefaults];
-				[self.oauthClient verifyAuthorizationWithAccessCode:[userDefaults valueForKey:IDENTITY_URL]];
-			}
-			
-			if (self.wasPerformInitialSycn == TRUE)
-			{
-				self.wasPerformInitialSycn = FALSE;
-				appDelegate.connection_error = FALSE;
-				[self addBackgroundImageAndLogo];
-				[self performSelectorInBackground:@selector(performInitialSynchronization) withObject:nil];
-			}
-			
-			
-		}
-		
-		if( buttonIndex == 1 )
-		{
-			SMLog(@"Copy To clipBoard");
-			
-			[self sendingEmail:alertView];
-			
-		}
-		else if ( buttonIndex == 2 )
-		{
-			SMLog(@"Email");
-			[self copyToClipboard:alertView];
-		}
-
-	}
+    if(buttonIndex==1)
+    {
+        SMLog(@"Copy To clipBoard");
+       [self sendingEmail:alertView];
+        
+    }
+    else if (buttonIndex==2)
+    {
+        SMLog(@"Email");
+        [self copyToClipboard:alertView];
+    }
 }
 
 -(void) sendingEmail:(UIAlertView*)alertview

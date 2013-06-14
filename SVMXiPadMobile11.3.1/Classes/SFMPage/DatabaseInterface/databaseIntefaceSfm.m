@@ -4798,7 +4798,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void)insertRecordIdsIntosyncRecordHeap:(NSMutableDictionary *)sync_data
 {
-    SMLog(@"SAMMAN insertRecordIdsIntosyncRecordHeap starts: %@", [NSDate date]);
+    SMLog(@"insertRecordIdsIntosyncRecordHeap starts: %@", [NSDate date]);
     
     
     sync_data = [sync_data retain];
@@ -4962,7 +4962,7 @@ extern void SVMXLog(NSString *format, ...);
                                                                       andRecordCount:0];
     
     SMLog(@"IComeOUTHere databaseinterface");
-    SMLog(@"SAMMAN insertRecordIdsIntosyncRecordHeap ends: %@", [NSDate date]);
+    SMLog(@"insertRecordIdsIntosyncRecordHeap ends: %@", [NSDate date]);
 }
 
 
@@ -6857,7 +6857,7 @@ extern void SVMXLog(NSString *format, ...);
     return local_Id;
 }
 
--(void) deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:(NSString *)sync_type ;
+-(void) deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:(NSString *)sync_type 
 {
     // Vipin-db-optmz -rm
     NSLog(@" DEL deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables - %@",sync_type);

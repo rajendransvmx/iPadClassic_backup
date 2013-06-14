@@ -407,19 +407,17 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     
     if ([appDelegate isInternetConnectionAvailable])
     {
+        [appDelegate goOnlineIfRequired];
         
-		//OAuth.
-		[[ZKServerSwitchboard switchboard] doCheckSession];
-
+        
         DataBase* dat= [[DataBase alloc]init];
         if (appDelegate.loggedInUserId == nil)
             appDelegate.loggedInUserId = [dat getLoggedInUserId:appDelegate.username];
         [dat release];
         
-        //Krishna :- Get userId from userdefaults
-        NSUserDefaults * userdefaults = [NSUserDefaults standardUserDefaults];
+        ZKUserInfo * userinfo = [[ZKServerSwitchboard switchboard] userInfo];
         
-        NSString * userId = [userdefaults objectForKey:@"user_id"];
+        NSString * userId = [userinfo userId];
         
         if ((appDelegate.loggedInUserId == nil) || ([appDelegate.loggedInUserId length] > 0))
             appDelegate.loggedInUserId = userId;

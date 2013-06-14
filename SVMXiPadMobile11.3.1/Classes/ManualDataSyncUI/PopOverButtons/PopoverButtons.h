@@ -66,9 +66,6 @@
     BOOL continueFalg;
     BOOL didDismissAlertView;
 }
-
-
-@property (nonatomic, retain)NSThread * manualEventThread; //10-June-2013
 @property (nonatomic) BOOL syncConfigurationFailed;
 
 @property (nonatomic , retain)  UIPopoverController * popover;

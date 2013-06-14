@@ -181,9 +181,7 @@ extern void SVMXLog(NSString *format, ...);
     if(initial_sync_timer == nil)
         initial_sync_timer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(updateProgressBar:) userInfo:nil repeats:YES];
   
-	//OAuth.
-    BOOL flag = [[ZKServerSwitchboard switchboard] doCheckSession];
-    
+    BOOL flag = [appDelegate goOnlineIfRequired];
     if ([appDelegate.currentServerUrl Contains:@"null"] || [appDelegate.currentServerUrl length] == 0 || appDelegate.currentServerUrl == nil)
     {
         NSUserDefaults * userdefaults = [NSUserDefaults standardUserDefaults];

@@ -8,17 +8,17 @@
 		<dict>
 			<key>Airfare</key>
 			<string>0</string>
-			<key>Entertainment</key>
-			<string>0</string>
 			<key>Food - Breakfast</key>
 			<string>0</string>
 			<key>Food - Dinner</key>
 			<string>0</string>
-			<key>Food - Lunch</key>
+			<key>Entertainment</key>
 			<string>0</string>
 			<key>Gas</key>
 			<string>0</string>
 			<key>Lodging</key>
+			<string>0</string>
+			<key>Food - Lunch</key>
 			<string>0</string>
 			<key>Mileage</key>
 			<string>0</string>
@@ -214,49 +214,25 @@
 			<string>SVMXC__Product_Line__c</string>
 		</dict>
 	</array>
+	<key>kFirstTimeLogin</key>
+	<string></string>
 	<key>PreferenceSpecifiers</key>
 	<array>
 		<dict>
-			<key>Title</key>
-			<string>Connection</string>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
+			<key>Title</key>
+			<string>Use Production Org</string>
 		</dict>
 		<dict>
-			<key>DefaultValue</key>
-			<string>Production</string>
-			<key>Key</key>
-			<string>preference_identifier</string>
-			<key>Title</key>
-			<string>Login Host</string>
-			<key>Titles</key>
-			<array>
-				<string>Production</string>
-				<string>Sandbox</string>
-				<string>Custom Host</string>
-			</array>
 			<key>Type</key>
-			<string>PSMultiValueSpecifier</string>
-			<key>Values</key>
-			<array>
-				<string>Production</string>
-				<string>Sandbox</string>
-				<string>Custom</string>
-			</array>
-		</dict>
-		<dict>
-			<key>DefaultValue</key>
-			<string></string>
-			<key>IsSecure</key>
-			<false/>
-			<key>Key</key>
-			<string>custom_url</string>
-			<key>KeyboardType</key>
-			<string>String</string>
+			<string>PSToggleSwitchSpecifier</string>
 			<key>Title</key>
-			<string>Custom Host</string>
-			<key>Type</key>
-			<string>PSTextFieldSpecifier</string>
+			<string>Enabled</string>
+			<key>Key</key>
+			<string>enabled_preference</string>
+			<key>DefaultValue</key>
+			<true/>
 		</dict>
 		<dict>
 			<key>Title</key>
@@ -275,38 +251,38 @@
 			<string>PSToggleSwitchSpecifier</string>
 		</dict>
 		<dict>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
 			<key>Title</key>
 			<string>Optimize Aggressive Sync</string>
-			<key>Type</key>
-			<string>PSGroupSpecifier</string>
 		</dict>
 		<dict>
-			<key>DefaultValue</key>
-			<false/>
-			<key>Key</key>
-			<string>USDefault_Aggressive_flag</string>
-			<key>Title</key>
-			<string>Enabled</string>
 			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
+			<key>Title</key>
+			<string>Enabled</string>
+			<key>Key</key>
+			<string>USDefault_Aggressive_flag</string>
+			<key>DefaultValue</key>
+			<false/>
 		</dict>
 		<dict>
-			<key>Title</key>
-			<string>Select request timeout (in mins)</string>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
+			<key>Title</key>
+			<string>Select request timeout (in mins)</string>
 		</dict>
 		<dict>
-			<key>DefaultValue</key>
-			<integer>3</integer>
+			<key>Type</key>
+			<string>PSSliderSpecifier</string>
 			<key>Key</key>
 			<string>reqTimeout_Setting</string>
-			<key>MaximumValue</key>
-			<integer>10</integer>
-			<key>MaximumValueImage</key>
-			<string>10.png</string>
+			<key>DefaultValue</key>
+			<integer>3</integer>
 			<key>MinimumValue</key>
 			<integer>3</integer>
+			<key>MaximumValue</key>
+			<integer>10</integer>
 			<key>MinimumValueImage</key>
 			<string>3.png</string>
 			<key>Type</key>

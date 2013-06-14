@@ -36,10 +36,7 @@ extern void SVMXLog(NSString *format, ...);
     [super viewDidLoad];
     
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-	
-	//OAuth.
-	[[ZKServerSwitchboard switchboard] doCheckSession];
-
+    [appDelegate goOnlineIfRequired];
     navigationBar.title = [appDelegate.wsInterface.tagsDictionary objectForKey:PRODUCT_MANUAL_TITLE];
     serviceMax = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_TITLE];
     alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];

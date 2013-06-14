@@ -313,61 +313,15 @@ const NSUInteger kNumImages = 7;
 //Abinash
 -(void)logout
 {
-	//Fix for multiple taps on logout.
-	NSArray *homeIcons = [self.menuTableView visibleCells];
-	
-	ItemView *itemView = nil;
-	for (GridViewCell *cell in homeIcons)
-	{
-		NSArray *itemViews = [cell subviews];
-		for (itemView in itemViews)
-		{
-			if ([itemView.titleLable.text isEqualToString:[appDelegate.wsInterface.tagsDictionary valueForKey:ipad_logout_label]])
-			{
-				itemView.userInteractionEnabled = FALSE;
-				break;
-			}
-		}
-	}
-		
+    [locationManager stopUpdatingLocation];
+    [appDelegate showloginScreen];
     
-	
-	//Fix for defect #7177
-    if ( [appDelegate showloginScreen] )
-	{
-		//Radha :- OAuth Fix for defect 7243
-		//fix for logout crash Defect #007173 - 21/MAY/2013.
-		appDelegate.refreshHomeIcons = FALSE;
-		
-		//Radha :- OAuth Fix for defect 7243
-		[locationManager stopUpdatingLocation];
-		
-		[self dismissViewControllerAnimated:YES completion:nil];
-		//OAuth 16/May/2013 : Remove the background image. (Removed the code)
-		[appDelegate.oauthClient.view removeFromSuperview];//Fix for Defect# 007179
-		[appDelegate.oauthClient initWithClientID:CLIENT_ID secret:CLIENT_SECRET redirectURL:REDIRECT_URL];
-		[appDelegate.oauthClient userAuthorizationRequestWithParameters:nil];
-		[appDelegate._OAuthController.view addSubview:appDelegate.oauthClient.view];
-		
-		itemView.userInteractionEnabled = TRUE;
-
-	}
-	else
-	{
-		itemView.userInteractionEnabled = TRUE;
-		return;
-	}
-	
-
-	/*COMMENTING THE CODE SINCE LOGIN CONTROLLER IS NOT USED FOR OAUTH*/
-    /*
     if([appDelegate.window.rootViewController isKindOfClass:[iPadScrollerViewController class]])
         [appDelegate setLoginAsRootFrom:self];
     else
     {
         [self dismissViewControllerAnimated:YES completion:nil];
     }
-	 */
 }
 
 -(void)sync
@@ -413,8 +367,7 @@ const NSUInteger kNumImages = 7;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-       //Shrinivas : OAuth
-	appDelegate.logoutFlag = FALSE;  
+        
     if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
     {
         if(appDelegate.do_meta_data_sync != ALLOW_META_AND_DATA_SYNC)
@@ -455,7 +408,7 @@ const NSUInteger kNumImages = 7;
 
 -(void)viewDidAppear:(BOOL)animated
 {
-	[super viewDidAppear:animated];
+    [super viewDidAppear:animated];
     //[appDelegate.wsInterface doGetPrice];
     
     [self refreshArray];
@@ -467,8 +420,7 @@ const NSUInteger kNumImages = 7;
     
     [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"Initial Sync"
                                                          andRecordCount:0];
-
-	[menuTableView reloadData]; //OAuth :
+     [menuTableView reloadData];
     if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
     {
         [self disableControls];
@@ -765,9 +717,6 @@ const NSUInteger kNumImages = 7;
                                                              andRecordCount:0];
 
     }
-    
-	//Radha :- OAuth Fix for defect 7239
-	appDelegate.refreshHomeIcons = TRUE;
 	
     [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"Initial Sync"
                                                          andRecordCount:0];
@@ -1602,8 +1551,7 @@ const float progress_ = 0.07;
 	@try{
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
     {
-		//OAuth.
-		[[ZKServerSwitchboard switchboard] doCheckSession];
+	[appDelegate goOnlineIfRequired];
         if(!appDelegate.connection_error)
         {
             break;
@@ -1907,10 +1855,8 @@ const float progress_ = 0.07;
                     //return;
                 }  
                 if ([appDelegate isInternetConnectionAvailable])
-                {					
-					//OAuth.
-					[[ZKServerSwitchboard switchboard] doCheckSession];
-
+                {
+                    [appDelegate goOnlineIfRequired];
                     [appDelegate.wsInterface dataSyncWithEventName:DOWNLOAD_CREITERIA_SYNC eventType:SYNC requestId:appDelegate.initial_dataSync_reqid];
                     break;
                 }
@@ -2086,27 +2032,8 @@ const float progress_ = 0.07;
     
     //Temperory Method - Removed after DataSync is implemented completly
     [appDelegate.dataBase insertUsernameToUserTable:appDelegate.username];
-	
-	//OAuth : 
-	[self UpdateUserDefaults];
-	
-}
-
-//Shrinvias : OAuth.
-- (void) UpdateUserDefaults
-{
-	NSString *localId = nil;
-	
-	localId = [appDelegate.dataBase getLocalIdFromUserTable:appDelegate.username];
-	
-	NSUserDefaults * userDefaults = [NSUserDefaults standardUserDefaults];
-	
-	[userDefaults setObject:localId forKey:LOCAL_ID];
-    [userDefaults synchronize];
 
 }
-
-
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex;
 {
@@ -2120,10 +2047,8 @@ const float progress_ = 0.07;
             [self showAlertForInternetUnAvailability];
         }
         else
-        {			
-			//OAuth.
-			[[ZKServerSwitchboard switchboard] doCheckSession];
-
+        {
+            [appDelegate goOnlineIfRequired];
             [self continueMetaAndDataSync];
         }
     }
@@ -2135,17 +2060,7 @@ const float progress_ = 0.07;
             initial_sync_timer = nil;
             appDelegate.initial_sync_succes_or_failed = INITIAL_SYNC_SUCCESS;
         }
-		
-		//Introducing Internet Check : Since Logout requires Internet Connection.
-		if ( [appDelegate isInternetConnectionAvailable] )
-		{
-			[self logout]; 
-		}
-		else
-		{
-			[self showAlertForInternetUnAvailability];
-		}
-        
+        [self logout];
         SMLog(@"index 1");
     }
 }
@@ -2379,21 +2294,7 @@ const float progress_ = 0.07;
             }
         }
         
-		//OAuth : Disabling the logout button if offline.
-		NSString *logoutLab = [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_label];
-        if ( [itemView.titleLable.text isEqualToString:logoutLab])
-		{
-			if (![appDelegate isInternetConnectionAvailable] || [appDelegate.syncThread isExecuting] || appDelegate.eventSyncRunning)
-			{
-				itemView.alpha = 0.5;
-				itemView.userInteractionEnabled = FALSE;
-			}
-			else
-			{
-				itemView.alpha = 1.0;
-				itemView.userInteractionEnabled = TRUE;
-			}
-		}
+        
     }
     
     return cell;
@@ -2433,15 +2334,6 @@ const float progress_ = 0.07;
         
     }
     
-}
-
-//OAuth.
-- (void) RefreshIcons
-{
-	if ( appDelegate.refreshHomeIcons )
-	{
-		[menuTableView reloadData];
-	}
 }
 
 
