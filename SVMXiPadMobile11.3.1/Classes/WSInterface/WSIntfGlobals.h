@@ -153,7 +153,7 @@
 #define gNUM_SECTIONS_IN_TABLE                          2
 #define gNUM_SECTION_IN_TABLE_ADDITIONALINFO            3
 // Detail View Controller
-#define gSTANDARD_TABLE_ROW_HEIGHT                      31
+#define gSTANDARD_TABLE_ROW_HEIGHT                      40
 
 // Button Event
 #define gBUTTON_EVENT_TARGET_CALL                       @"button_Event_Target_Call"

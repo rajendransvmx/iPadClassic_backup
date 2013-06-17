@@ -27,4 +27,7 @@
 -(NSString *) getLabel;
 @property (nonatomic, assign) id <ControlDelegate> controlDelegate;
 @property (nonatomic, retain) NSString *tapRecgLabel;
+
+//Radha - Debrief
+@property ( nonatomic, assign) BOOL isInDetailMode;
 @end

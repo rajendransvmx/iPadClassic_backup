@@ -6211,7 +6211,7 @@ extern void SVMXLog(NSString *format, ...);
                                                          andRecordCount:0];
 
     
-    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFProcess ('local_id' INTEGER PRIMARY KEY  NOT NULL ,'process_id' VARCHAR,'object_api_name' VARCHAR,'process_type' VARCHAR,'process_name' VARCHAR,'process_description' VARCHAR, 'page_layout_id' VARCHAR, 'process_info' BLOB)"]];
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFProcess ('local_id' INTEGER PRIMARY KEY  NOT NULL ,'process_id' VARCHAR,'object_api_name' VARCHAR,'process_type' VARCHAR,'process_name' VARCHAR,'process_description' VARCHAR, 'page_layout_id' VARCHAR, 'process_info' BLOB,'sfID' VARCHAR)"]];
     
     if (result == YES)
     {
@@ -6248,15 +6248,18 @@ extern void SVMXLog(NSString *format, ...);
             
             NSString * process_id = ( [dict objectForKey:MPROCESS_UNIQUE_ID] != nil)?[dict objectForKey:MPROCESS_UNIQUE_ID]:@"";
             process_id = [process_id stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+            NSString * process_SFID = ( [dict objectForKey:MPROCESS_ID] != nil)?[dict objectForKey:MPROCESS_ID]:@"";
+            process_id = [process_id stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+
             NSString * process_name =  ([dict objectForKey:MPROCESS_NAME] != nil)?[dict objectForKey:MPROCESS_NAME]:@"";
             process_name = [process_name stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
             
-            NSString * queryStatement = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@') VALUES ('%@', '%@', '%@', '%@', '%@', '%d')", SFPROCESS, MPROCESS_ID, MPROCESS_TYPE, MPROCESS_NAME, 
-                                         MPROCESS_DESCRIPTION, @"page_layout_id", MLOCAL_ID, 
+            NSString * queryStatement = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@') VALUES ('%@', '%@', '%@', '%@', '%@', '%d','%@')", SFPROCESS, MPROCESS_ID, MPROCESS_TYPE, MPROCESS_NAME, 
+                                         MPROCESS_DESCRIPTION, @"page_layout_id", MLOCAL_ID,@"sfID",
                                          process_id, 
                                          process_type, 
                                          process_name, 
-                                         str, ([dict objectForKey:MPAGE_LAYOUT_ID] != nil)?[dict objectForKey:MPAGE_LAYOUT_ID]:@"", ++id_value];         
+                                         str, ([dict objectForKey:MPAGE_LAYOUT_ID] != nil)?[dict objectForKey:MPAGE_LAYOUT_ID]:@"", ++id_value,process_SFID];
             
             char * err;
             int ret = synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err);
@@ -6351,15 +6354,14 @@ extern void SVMXLog(NSString *format, ...);
     // Vipin - db-opt
     [self endTransaction];
     
-    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFProcess_test ('process_id' VARCHAR,'layout_id' VARCHAR,'object_name' VARCHAR,'expression_id' VARCHAR,'object_mapping_id' VARCHAR,'component_type' VARCHAR,'local_id' INTEGER PRIMARY KEY  NOT NULL , 'parent_column' VARCHAR, 'value_id' VARCHAR, 'parent_object' VARCHAR, 'Sorting_Order' VARCHAR)"]];
+    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFProcess_test ('process_id' VARCHAR,'layout_id' VARCHAR,'object_name' VARCHAR,'expression_id' VARCHAR,'object_mapping_id' VARCHAR,'component_type' VARCHAR,'local_id' INTEGER PRIMARY KEY  NOT NULL , 'parent_column' VARCHAR, 'value_id' VARCHAR, 'parent_object' VARCHAR, 'Sorting_Order' VARCHAR, 'process_node_id' VARCHAR)"]];
     
     if (result == YES)
     {
         // Vipin-db-optmz
         [self beginTransaction];
         
-        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@',  '%@', '%@', '%@', '%@', '%@','%@', '%@', '%@', '%@' ,'%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10 ,?11)", @"SFProcess_test", MPROCESS_ID, @"layout_id", @"object_name", @"expression_id", @"object_mapping_id", @"component_type", @"parent_column", @"value_id", @"parent_object", MLOCAL_ID,SORTING_ORDER];
-    
+       NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@',  '%@', '%@', '%@', '%@', '%@','%@', '%@', '%@', '%@' ,'%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10 ,?11, ?12)", @"SFProcess_test", MPROCESS_ID, @"layout_id", @"object_name", @"expression_id", @"object_mapping_id", @"component_type", @"parent_column", @"value_id", @"parent_object", MLOCAL_ID,SORTING_ORDER, process_node_id];
         
         sqlite3_stmt * bulkStmt = nil;
         
@@ -6448,6 +6450,10 @@ extern void SVMXLog(NSString *format, ...);
                 char * _sorting_order = [appDelegate convertStringIntoChar:(values_c != nil)?values_c:@""];
                 sqlite3_bind_text(bulkStmt, 11, _sorting_order, strlen(_sorting_order), SQLITE_TRANSIENT);
                 
+                char * temp_process_node = [appDelegate convertStringIntoChar:([dict objectForKey:MLOCAL_ID] != nil)?[dict objectForKey:MLOCAL_ID]: @""];
+                sqlite3_bind_text(bulkStmt, 12, temp_process_node, strlen(temp_process_node), SQLITE_TRANSIENT);
+                
+                
                 if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed -  SFProcess_test!\n");
@@ -6494,8 +6500,8 @@ extern void SVMXLog(NSString *format, ...);
         
         synchronized_sqlite3_finalize(statement);
         
-        NSArray * keys = [NSArray arrayWithObjects:MPROCESS_ID, MLAYOUT_ID, TARGET_OBJECT_NAME, SOURCE_OBJECT_NAME, EXPRESSION_ID, OBJECT_MAPPING_ID, MCOMPONENT_TYPE, MPARENT_COLUMN, MVALUE_MAPPING_ID,SORTING_ORDER, nil];
-        NSString * processId = @"", * layoutId = @"", * sourceName = @"", * expressionId = @"", * oMappingId = @"",* componentType = @"", * parentColumn = @"", * targetName = @"", * vMappingid = @"", * sorting_order_value = @"";
+        NSArray * keys = [NSArray arrayWithObjects:MPROCESS_ID, MLAYOUT_ID, TARGET_OBJECT_NAME, SOURCE_OBJECT_NAME, EXPRESSION_ID, OBJECT_MAPPING_ID, MCOMPONENT_TYPE, MPARENT_COLUMN, MVALUE_MAPPING_ID,SORTING_ORDER, process_node_id, nil];
+        NSString * processId = @"", * layoutId = @"", * sourceName = @"", * expressionId = @"", * oMappingId = @"",* componentType = @"", * parentColumn = @"", * targetName = @"", * vMappingid = @"", * sorting_order_value = @"", * processnode_id = @"";
                                                     
         if ([processType isEqualToString:VIEWRECORD])
         {
@@ -6544,13 +6550,18 @@ extern void SVMXLog(NSString *format, ...);
                     
                     if (![sourceName isEqualToString:@""])
                         targetName = sourceName;
+                    
+                    char * temp_process_node =  (char *) synchronized_sqlite3_column_text(viewstatement, COLUMNPROCESS_NODE);
+                    if ((temp_process_node != nil) && strlen(temp_process_node))
+                        processnode_id = [NSString stringWithUTF8String:temp_process_node];
+
                         
-                    NSArray * objects = [NSArray arrayWithObjects:processId, layoutId, targetName, sourceName, expressionId, oMappingId, componentType, parentColumn, vMappingid,sorting_order_value, nil];
+                    NSArray * objects = [NSArray arrayWithObjects:processId, layoutId, targetName, sourceName, expressionId, oMappingId, componentType, parentColumn, vMappingid,sorting_order_value,processnode_id, nil];
                     
                     NSDictionary * dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
                     NSArray * arr = [NSArray arrayWithObject:dict];
                     [process_comp_array addObjectsFromArray:arr];
-                    processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"" , sorting_order_value = @"";
+                    processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"" , sorting_order_value = @"", processnode_id = @"";
                 }
                 
             }
@@ -6604,12 +6615,17 @@ extern void SVMXLog(NSString *format, ...);
                     if (![sourceName isEqualToString:@""])
                         targetName = sourceName;
                     
-                    NSArray * objects = [NSArray arrayWithObjects:processId, layoutId, targetName, sourceName, expressionId, oMappingId, componentType, parentColumn,vMappingid, sorting_order_value,nil];
+                    char * temp_process_node =  (char *) synchronized_sqlite3_column_text(editstatement, COLUMNPROCESS_NODE);
+                    if ((temp_process_node != nil) && strlen(temp_process_node))
+                        processnode_id = [NSString stringWithUTF8String:temp_process_node];
+
+                    
+                    NSArray * objects = [NSArray arrayWithObjects:processId, layoutId, targetName, sourceName, expressionId, oMappingId, componentType, parentColumn,vMappingid, sorting_order_value, processnode_id, nil];
                     
                     NSDictionary * dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
                     NSArray * arr = [NSArray arrayWithObject:dict];
                     [process_comp_array addObjectsFromArray:arr];
-                    processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", sorting_order_value = @"";
+                    processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", sorting_order_value = @"", processnode_id = @"";
                 }
                
             }
@@ -6663,12 +6679,17 @@ extern void SVMXLog(NSString *format, ...);
                     if (![sourceName isEqualToString:@""])
                         targetName = sourceName;
                     
-                    NSArray * objects = [NSArray arrayWithObjects:processId, layoutId, targetName, sourceName, expressionId, oMappingId, componentType, parentColumn, vMappingid,sorting_order_value, nil];
+                    char * temp_process_node =  (char *) synchronized_sqlite3_column_text(createstatement, COLUMNPROCESS_NODE);
+                    if ((temp_process_node != nil) && strlen(temp_process_node))
+                        processnode_id = [NSString stringWithUTF8String:temp_process_node];
+
+                    
+                    NSArray * objects = [NSArray arrayWithObjects:processId, layoutId, targetName, sourceName, expressionId, oMappingId, componentType, parentColumn, vMappingid,sorting_order_value,processnode_id, nil];
                     
                     NSDictionary * dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
                     NSArray * arr = [NSArray arrayWithObject:dict];
                     [process_comp_array addObjectsFromArray:arr];
-                    processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"",sorting_order_value = @"";
+                    processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"",sorting_order_value = @"", processnode_id = @"";
                 }
                 
             }
@@ -6677,12 +6698,12 @@ extern void SVMXLog(NSString *format, ...);
         }
               
     }
-    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFProcessComponent ('process_id' VARCHAR,'layout_id' VARCHAR,'target_object_name' VARCHAR,'source_object_name' VARCHAR,'expression_id' VARCHAR,'object_mapping_id' VARCHAR,'component_type' VARCHAR,'local_id' INTEGER PRIMARY KEY  NOT NULL ,'parent_column' VARCHAR, 'value_mapping_id' VARCHAR, 'source_child_parent_column' VARCHAR, 'Sorting_Order' VARCHAR)"]];
+    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFProcessComponent ('process_id' VARCHAR,'layout_id' VARCHAR,'target_object_name' VARCHAR,'source_object_name' VARCHAR,'expression_id' VARCHAR,'object_mapping_id' VARCHAR,'component_type' VARCHAR,'local_id' INTEGER PRIMARY KEY  NOT NULL ,'parent_column' VARCHAR, 'value_mapping_id' VARCHAR, 'source_child_parent_column' VARCHAR, 'Sorting_Order' VARCHAR, 'process_node_id' VARCHAR)"]];
     
     if (result == YES)
     {
         
-        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@',  '%@', '%@', '%@', '%@','%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6,?7, ?8, ?9, ?10, ?11,?12)", SFPROCESSCOMPONENT, MPROCESS_ID, MLAYOUT_ID, MTARGET_OBJECT_NAME, MSOURCE_OBJECT_NAME, MEXPRESSION_ID, MOBJECT_MAPPING_ID, MCOMPONENT_TYPE, MPARENT_COLUMN,MVALUE_MAPPING_ID,@"source_child_parent_column", MLOCAL_ID,SORTING_ORDER];
+	NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@',  '%@', '%@', '%@', '%@','%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6,?7, ?8, ?9, ?10, ?11,?12, ?13)", SFPROCESSCOMPONENT, MPROCESS_ID, MLAYOUT_ID, MTARGET_OBJECT_NAME, MSOURCE_OBJECT_NAME, MEXPRESSION_ID, MOBJECT_MAPPING_ID, MCOMPONENT_TYPE, MPARENT_COLUMN,MVALUE_MAPPING_ID,@"source_child_parent_column", MLOCAL_ID,SORTING_ORDER, process_node_id];
         
         sqlite3_stmt * bulkStmt;
         
@@ -6754,6 +6775,9 @@ extern void SVMXLog(NSString *format, ...);
                 }
                 char * _sorting_order = [appDelegate convertStringIntoChar:(values_c != nil)?values_c:@""];
                 sqlite3_bind_text(bulkStmt, 12, _sorting_order, strlen(_sorting_order), SQLITE_TRANSIENT);
+                
+                char * temp_process_node = [appDelegate convertStringIntoChar:([dict objectForKey:process_node_id] != nil)?[dict objectForKey:process_node_id]:@""];
+                sqlite3_bind_text(bulkStmt, 13, temp_process_node, strlen(temp_process_node), SQLITE_TRANSIENT);
                                 
                 if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
@@ -6779,11 +6803,74 @@ extern void SVMXLog(NSString *format, ...);
 
     
     [self insertValuesInToExpressionTables:processDictionary];
-    
+     [self insertValuesIntoLinkedSFMProcessTable:processDictionary];    
     // Vipin-db-optmz
     [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"SFProcess Segment"
                                                          andRecordCount:0];
 
+}
+-(void)insertValuesIntoLinkedSFMProcessTable:(NSMutableDictionary *)processDictionary
+{
+    int id_value = 0;
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS 'LINKED_SFMProcess' ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE, 'Id' VARCHAR,'source_header' VARCHAR,'source_detail' VARCHAR,'target_header' VARCHAR )"]];
+    if(result)
+    {
+        char * err;
+        NSString * txnstmt = @"BEGIN TRANSACTION";
+        int exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5)", LINKED_SFMProcess, _ID, source_detail, source_header,target_header,MLOCAL_ID];
+        
+        sqlite3_stmt * bulkStmt;
+        
+        int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
+        
+        NSArray * linked_process = [processDictionary objectForKey:LINKED_SFMProcess];
+
+        
+        if (ret_value == SQLITE_OK)
+        {
+            
+            for (int i = 0; i < [linked_process count]; i++)
+            {
+                NSDictionary * dict = [linked_process objectAtIndex:i];
+				
+				char * _linked_id = [appDelegate convertStringIntoChar:([dict objectForKey:_ID] != nil)?[dict objectForKey:_ID]:@""];
+                
+                sqlite3_bind_text(bulkStmt, 1, _linked_id, strlen(_linked_id), SQLITE_TRANSIENT);
+				
+				
+                char * _source_detail = [appDelegate convertStringIntoChar:([dict objectForKey:source_detail] != nil)?[dict objectForKey:source_detail]:@""];
+                
+                sqlite3_bind_text(bulkStmt, 2, _source_detail, strlen(_source_detail), SQLITE_TRANSIENT);
+				
+				char * _source_header = [appDelegate convertStringIntoChar:([dict objectForKey:source_header] != nil)?[dict objectForKey:source_header]:@"" ];
+                
+                sqlite3_bind_text(bulkStmt, 3, _source_header, strlen(_source_header), SQLITE_TRANSIENT);
+                
+                char * _target_header = [appDelegate convertStringIntoChar:([dict objectForKey:target_header] != nil)?[dict objectForKey:target_header]:@"" ];
+                
+                sqlite3_bind_text(bulkStmt, 4, _target_header, strlen(_target_header), SQLITE_TRANSIENT);
+                
+                
+                sqlite3_bind_int(bulkStmt, 5, ++id_value);
+                
+                if ( synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
+                {
+                    printf("Commit Failed!\n");
+                }
+                
+                sqlite3_reset(bulkStmt);
+            }
+
+        }
+        
+        
+        txnstmt = @"END TRANSACTION";
+        exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+    }
+    
+    
 }
 
 -(void) insertvaluesToPicklist:(NSMutableArray *)object fields:(NSMutableArray *)fields value:(NSMutableArray *)values
@@ -8518,8 +8605,8 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
         synchronized_sqlite3_finalize(statement);
-        NSArray * keys = [NSArray arrayWithObjects:MPROCESS_ID, MLAYOUT_ID, TARGET_OBJECT_NAME, SOURCE_OBJECT_NAME, EXPRESSION_ID, OBJECT_MAPPING_ID, MCOMPONENT_TYPE, MPARENT_COLUMN, MVALUE_MAPPING_ID, @"source_child_parent_column",SORTING_ORDER, nil];
-        NSString * processId = @"", * layoutId = @"", * sourceName = @"", * expressionId = @"", * oMappingId = @"",* componentType = @"", * parentColumn = @"", * targetName = @"", * vMappingid = @"", * source_child_column = @"" , * sorting_order_value = @"";
+        NSArray * keys = [NSArray arrayWithObjects:MPROCESS_ID, MLAYOUT_ID, TARGET_OBJECT_NAME, SOURCE_OBJECT_NAME, EXPRESSION_ID, OBJECT_MAPPING_ID, MCOMPONENT_TYPE, MPARENT_COLUMN, MVALUE_MAPPING_ID, @"source_child_parent_column",SORTING_ORDER, process_node_id, nil];
+        NSString * processId = @"", * layoutId = @"", * sourceName = @"", * expressionId = @"", * oMappingId = @"",* componentType = @"", * parentColumn = @"", * targetName = @"", * vMappingid = @"", * source_child_column = @"" , * sorting_order_value = @"",      * processnode_id = @"";
         NSArray * objects;
         
         NSString * query = @"";
@@ -8570,17 +8657,21 @@ extern void SVMXLog(NSString *format, ...);
                      if ((_sorting_order != nil) && strlen(_sorting_order))
                          sorting_order_value = [NSString stringWithUTF8String:_sorting_order];
                      
-                     objects = [NSArray arrayWithObjects:processId, layoutId, targetName, sourceName, expressionId, oMappingId, componentType, parentColumn, vMappingid, @"", sorting_order_value,nil];
+                     char * temp_process_node = (char *) synchronized_sqlite3_column_text(stmt, COLUMNPROCESS_NODE);
+                     if ((temp_process_node != nil) && strlen(temp_process_node))
+                         processnode_id = [NSString stringWithUTF8String:temp_process_node];
+                     
+                     objects = [NSArray arrayWithObjects:processId, layoutId, targetName, sourceName, expressionId, oMappingId, componentType, parentColumn, vMappingid, @"", sorting_order_value, processnode_id,nil];
                      
                      NSDictionary * dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
                      [mappingArray addObject:dict];
-                     processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"",sorting_order_value = @"";
+                     processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"",sorting_order_value = @"", processnode_id = @"";
                 }
                 
                 NSDictionary * source_dict = nil;
                 NSDictionary * target_dict = nil;
                 
-                NSArray * obj = [NSArray arrayWithObjects: processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"",sorting_order_value = @"" ,nil];
+                NSArray * obj = [NSArray arrayWithObjects: processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"",sorting_order_value = @"", processnode_id = @"" ,nil];
                 
                 source_dict = [mappingArray objectAtIndex:0];
                 if ([mappingArray count] == 2)
@@ -8643,7 +8734,8 @@ extern void SVMXLog(NSString *format, ...);
                            ([source_dict objectForKey:MPARENT_COLUMN]!=@"")?[source_dict objectForKey:MPARENT_COLUMN]:[target_dict  objectForKey:MPARENT_COLUMN],
                            ([source_dict objectForKey:MVALUE_MAPPING_ID]!=@"")?[source_dict objectForKey:MVALUE_MAPPING_ID]:[target_dict  objectForKey:MVALUE_MAPPING_ID],
                            ([source_dict objectForKey:@"source_child_parent_column"]!=@"")?[source_dict objectForKey:@"source_child_parent_column"]:[target_dict  objectForKey:@"source_child_parent_column"],
-                           (final_sorting_order!= nil)?final_sorting_order:@"",nil];
+                           (final_sorting_order!= nil)?final_sorting_order:@"",
+                           ([source_dict objectForKey:process_node_id]!=@"")?[source_dict objectForKey:process_node_id]:[target_dict  objectForKey:process_node_id],nil];
                 NSDictionary * dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
                 
                 [process_info addObject:dict];
@@ -8652,7 +8744,7 @@ extern void SVMXLog(NSString *format, ...);
              synchronized_sqlite3_finalize(stmt);
             
             [mappingArray release];
-            processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"" , sorting_order_value = @"";
+            processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"" , sorting_order_value = @"", processnode_id = @"";
             query = @"";
             sqlite3_stmt * childStmt;
             
@@ -8698,17 +8790,22 @@ extern void SVMXLog(NSString *format, ...);
                     if ((_sorting_order != nil) && strlen(_sorting_order))
                         sorting_order_value = [NSString stringWithUTF8String:_sorting_order];
                     
+                    char * temp_process_node = (char *) synchronized_sqlite3_column_text(childStmt, COLUMNPROCESS_NODE);
+                    if ((temp_process_node != nil) && strlen(temp_process_node))
+                        processnode_id = [NSString stringWithUTF8String:temp_process_node];
+
+                    
                     
                     NSString * source_objectName =  [self getObjectNameFromSFobjMapping:oMappingId];
                     
                     NSString * source_childName = [self getSourceChildNameFromProcessId:source_objectName processid:[processIdList objectAtIndex:i]];
                     
-                    objects = [NSArray arrayWithObjects:processId, layoutId, sourceName, source_objectName, expressionId, oMappingId, componentType, parentColumn, vMappingid, source_childName, sorting_order_value,nil];
+                    objects = [NSArray arrayWithObjects:processId, layoutId, sourceName, source_objectName, expressionId, oMappingId, componentType, parentColumn, vMappingid, source_childName, sorting_order_value,processnode_id,nil];
                     
                     NSDictionary * dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
                     
                     [process_info addObject:dict];
-                    processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"" , sorting_order_value = @"";
+                    processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"" , sorting_order_value = @"", processnode_id = @"";
                 }
                 
             }
@@ -8761,11 +8858,17 @@ extern void SVMXLog(NSString *format, ...);
                     if ((_sorting_order != nil) && strlen(_sorting_order))
                         sorting_order_value = [NSString stringWithUTF8String:_sorting_order];
                     
-                    objects = [NSArray arrayWithObjects:processId, layoutId, targetName, sourceName, expressionId, oMappingId, componentType, parentColumn, vMappingid, @"", sorting_order_value,nil];
+                    char * temp_process_node = (char *) synchronized_sqlite3_column_text(stmt, COLUMNPROCESS_NODE);
+                    if ((temp_process_node != nil) && strlen(temp_process_node))
+                        processnode_id = [NSString stringWithUTF8String:temp_process_node];
+                    
+
+                    
+                    objects = [NSArray arrayWithObjects:processId, layoutId, targetName, sourceName, expressionId, oMappingId, componentType, parentColumn, vMappingid, @"", sorting_order_value,processnode_id,nil];
                     
                     NSDictionary * dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
                     [mappingArray addObject:dict];
-                    processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"", sorting_order_value = @"";
+                    processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"", sorting_order_value = @"", processnode_id = @"";
                 }
                 
                 
@@ -8773,7 +8876,7 @@ extern void SVMXLog(NSString *format, ...);
                 NSDictionary * target_dict = nil;
                 //Sahana 31-May-2013
 
-                NSArray * obj = [NSArray arrayWithObjects: processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"",sorting_order_value = @"", nil];
+                NSArray * obj = [NSArray arrayWithObjects: processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"",sorting_order_value = @"", processnode_id = @"",nil];
                 source_dict = [mappingArray objectAtIndex:0];
                 if ([mappingArray count] == 2)
                 {
@@ -8832,7 +8935,9 @@ extern void SVMXLog(NSString *format, ...);
                            ([target_dict objectForKey:MCOMPONENT_TYPE]!=@"")?[target_dict objectForKey:MCOMPONENT_TYPE]:@"",
                            ([source_dict objectForKey:MPARENT_COLUMN]!=@"")?[source_dict objectForKey:MPARENT_COLUMN]:[target_dict  objectForKey:MPARENT_COLUMN],
                            ([source_dict objectForKey:MVALUE_MAPPING_ID]!=@"")?[source_dict objectForKey:MVALUE_MAPPING_ID]:[target_dict  objectForKey:MVALUE_MAPPING_ID],
-                           ([source_dict objectForKey:@"source_child_parent_column"]!=@"")?[source_dict objectForKey:@"source_child_parent_column"]:[target_dict  objectForKey:@"source_child_parent_column"],(final_sorting_order!= nil)? final_sorting_order:@"", nil];
+                           ([source_dict objectForKey:@"source_child_parent_column"]!=@"")?[source_dict objectForKey:@"source_child_parent_column"]:[target_dict  objectForKey:@"source_child_parent_column"],(final_sorting_order!= nil)? final_sorting_order:@"",
+                           ([source_dict objectForKey:process_node_id]!=@"")?[source_dict objectForKey:process_node_id]:[target_dict  objectForKey:process_node_id],nil];
+                       
                 NSDictionary * dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
                 
                 [process_info addObject:dict];
@@ -8840,7 +8945,7 @@ extern void SVMXLog(NSString *format, ...);
             }
             synchronized_sqlite3_finalize(stmt);
             [mappingArray release];
-            processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"";
+            processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"",sorting_order_value = @"", processnode_id = @"";
             query = @"";
             sqlite3_stmt * childStmt;
             
@@ -8887,16 +8992,21 @@ extern void SVMXLog(NSString *format, ...);
                     if ((_sorting_order != nil) && strlen(_sorting_order))
                         sorting_order_value = [NSString stringWithUTF8String:_sorting_order];
                     
+                    char * temp_process_node = (char *) synchronized_sqlite3_column_text(childStmt, COLUMNPROCESS_NODE);
+                    if ((temp_process_node != nil) && strlen(temp_process_node))
+                        processnode_id = [NSString stringWithUTF8String:temp_process_node];
+
+                    
                     NSString * source_objectName =  [self getObjectNameFromSFobjMapping:oMappingId];
                     
                     NSString * source_childName = [self getSourceChildNameFromProcessId:source_objectName processid:[processIdList objectAtIndex:i]];
                     
-                    objects = [NSArray arrayWithObjects:processId, layoutId, sourceName, source_objectName, expressionId, oMappingId, componentType, parentColumn, vMappingid, source_childName,sorting_order_value, nil];
+                    objects = [NSArray arrayWithObjects:processId, layoutId, sourceName, source_objectName, expressionId, oMappingId, componentType, parentColumn, vMappingid, source_childName,sorting_order_value, processnode_id, nil];
                     
                     NSDictionary * dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
                     
                     [process_info addObject:dict];
-                    processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"", sorting_order_value = @"";
+                    processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"", sorting_order_value = @"", processnode_id = @"";
                 }
                 
             }
@@ -8920,8 +9030,7 @@ extern void SVMXLog(NSString *format, ...);
     // Vipin-db-optmz
     [self beginTransaction];
     
-    
-    NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@',  '%@', '%@', '%@', '%@','%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6,?7, ?8, ?9, ?10, ?11,?12)", SFPROCESSCOMPONENT, MPROCESS_ID, MLAYOUT_ID, MTARGET_OBJECT_NAME, MSOURCE_OBJECT_NAME, MEXPRESSION_ID, MOBJECT_MAPPING_ID, MCOMPONENT_TYPE, MPARENT_COLUMN,MVALUE_MAPPING_ID,@"source_child_parent_column", MLOCAL_ID,SORTING_ORDER];
+    NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@',  '%@', '%@', '%@', '%@','%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6,?7, ?8, ?9, ?10, ?11,?12, ?13)", SFPROCESSCOMPONENT, MPROCESS_ID, MLAYOUT_ID, MTARGET_OBJECT_NAME, MSOURCE_OBJECT_NAME, MEXPRESSION_ID, MOBJECT_MAPPING_ID, MCOMPONENT_TYPE, MPARENT_COLUMN,MVALUE_MAPPING_ID,@"source_child_parent_column", MLOCAL_ID,SORTING_ORDER, process_node_id];
     
     sqlite3_stmt * bulkStmt;
     
@@ -8988,7 +9097,11 @@ extern void SVMXLog(NSString *format, ...);
             
             char * _sorting_order = [appDelegate convertStringIntoChar:(values_c != nil)?values_c:@""];
             sqlite3_bind_text(bulkStmt, 12, _sorting_order, strlen(_sorting_order), SQLITE_TRANSIENT);
-           
+            
+            char * temp_processnode = [appDelegate convertStringIntoChar:([dict objectForKey:process_node_id] != nil)?[dict objectForKey:process_node_id]:@""];
+            
+            sqlite3_bind_text(bulkStmt,  13, temp_processnode, strlen(temp_processnode), SQLITE_TRANSIENT);
+            
             if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
             {
                 printf("Commit Failed - SFPROCESSCOMPONENT!\n");

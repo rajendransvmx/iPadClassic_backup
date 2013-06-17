@@ -118,6 +118,9 @@ PopoverButtons *popOver_view;
 
 - (void) insertSourceToTargetInToSFProcessComponent;
 
+//Linked SFMProcess
+-(void)insertValuesIntoLinkedSFMProcessTable:(NSMutableDictionary *)processDictionary;
+
 //Expressions 
 - (void) insertValuesInToExpressionTables:(NSMutableDictionary *)processDictionary;
 

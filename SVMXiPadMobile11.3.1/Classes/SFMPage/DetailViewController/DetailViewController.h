@@ -22,8 +22,12 @@
 #import "databaseIntefaceSfm.h"
 #import "JSExecuter.h"
 #import "PriceBookData.h"
+#import "SFMEditDetailViewController.h"
 
+//Radha
+#import "SFMChildView.h"
 
+//@class SFMEditDetailViewController;
 @protocol DetailViewControllerDelegate;
 @protocol SummaryViewControllerDelegate;
 @protocol ChatterDelegate;
@@ -64,7 +68,7 @@ WSInterFaceDelegateForDetailView,
 SignatureDelegate,
 SummaryViewControllerDelegate,
 ChatterDelegate,
-SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceProtocol,JSExecuterDelegate>
+SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceProtocol,JSExecuterDelegate, SFMEditDetailDelegate, SFMChildViewDelegate>
 {
     SAVE_STATUS save_status;
     
@@ -215,6 +219,10 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
     UIButton  * statusButton;
     ZBarReaderViewController *reader;
     
+    //Debrief
+    NSIndexPath  *selectedIndexPathForEdit;
+    UIView       *editViewOfLine;
+    
     /* GET_PRICE_JS-shr*/
     JSExecuter *jsExecuter;
     PriceBookData *priceBookData;
@@ -223,7 +231,7 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
 	NSString * webserviceName;
 	NSString * className;
 	NSString * syncType;
-   
+
 }
 
 @property (nonatomic) BOOL EventUpdate_Continue;
@@ -231,7 +239,8 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
 //1:first controller flag
 //2:second controller flag
 @property (nonatomic, assign) short int updateGreenButtonFlag;
-
+ //Debrief
+@property (nonatomic, retain) SFMEditDetailViewController   *editDetailObject;
 @property (nonatomic, retain) DetailViewController * parentReference;
 
 @property (nonatomic, retain) id <DetailViewControllerDelegate> delegate, calendarDelegate;
@@ -283,6 +292,14 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
 
 @property (nonatomic, retain) NSMutableDictionary * LabourValuesDictionary;
 @property (nonatomic,assign)   UIPopoverController * multiLookupPopover;
+
+ //Debrief
+@property (nonatomic,retain) NSIndexPath  *selectedIndexPathForEdit;
+//Child SFM UI
+@property (nonatomic,retain) SFMChildView * SFMChildTableview;
+@property (nonatomic,retain) NSIndexPath *  selectedIndexPathForchildView;
+
+
 
 @property(nonatomic,retain) JSExecuter *jsExecuter;
 @property(nonatomic,retain) PriceBookData *priceBookData;
@@ -344,13 +361,13 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
 -(NSArray *)orderingAnArray:(NSArray *)array;
 
 //To get the status Image
-- (UIImage *) getStatusImage;
+//- (UIImage *) getStatusImage;
 - (void) refreshStatusImage;
 -(void)pageLevelEventsForEvent:(NSString *)event_Name;
 //Bar code
 -(void)launchBarcodeScanner;
 -(void) LaunchMultiAddPopover;
--(void) reDrawBackground;
+//-(void) reDrawBackground;
 
 
 /* GetPrice - shr */
@@ -373,6 +390,14 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
 
 - (BOOL)shouldShowBillableAmountInServiceReport;
 - (BOOL)shouldShowBillableQuantityInServiceReport;
+
+ //Debrief
+/* Manage edit view of lines*/
+- (void)showEditViewOfLineInView:(UIView *)parentView forIndexPath:(NSIndexPath *)_indexpath forEditMode:(BOOL)isEditMode;
+
+//Radha :- Child SFM UI
+- (void)hideEditViewOfLine;
+- (void)hideExpandedChildViews;
 
 #define SHOWALL_HEADERS                     0
 #define SHOW_HEADER_ROW                     1

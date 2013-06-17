@@ -823,7 +823,18 @@
 		AC1BF8B7171C395500F0EA14 /* sync9.png in Resources */ = {isa = PBXBuildFile; fileRef = AC1BF8A5171C395500F0EA14 /* sync9.png */; };
 		AC1BF8B8171C395500F0EA14 /* SyncProgressBar.m in Sources */ = {isa = PBXBuildFile; fileRef = AC1BF8A7171C395500F0EA14 /* SyncProgressBar.m */; };
 		AC891298173A8AB400061C14 /* Default-Landscape~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = AC891297173A8AB400061C14 /* Default-Landscape~ipad.png */; };
-		AC89129E173A8B1300061C14 /* OAuthClientInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = AC89129D173A8B1300061C14 /* OAuthClientInterface.m */; };
+		ACB56C56176B623800E46D08 /* detail_disclosure.png in Resources */ = {isa = PBXBuildFile; fileRef = ACB56C4B176B623800E46D08 /* detail_disclosure.png */; };
+		ACB56C57176B623800E46D08 /* detail_disclosure_open.png in Resources */ = {isa = PBXBuildFile; fileRef = ACB56C4C176B623800E46D08 /* detail_disclosure_open.png */; };
+		ACB56C58176B623800E46D08 /* save.png in Resources */ = {isa = PBXBuildFile; fileRef = ACB56C4D176B623800E46D08 /* save.png */; };
+		ACB56C59176B623800E46D08 /* SFM-Screen-Switch-Views-button_transparent.png in Resources */ = {isa = PBXBuildFile; fileRef = ACB56C4E176B623800E46D08 /* SFM-Screen-Switch-Views-button_transparent.png */; };
+		ACB56C5A176B623800E46D08 /* SFM-Screen-Table-Strip-Edit.png in Resources */ = {isa = PBXBuildFile; fileRef = ACB56C4F176B623800E46D08 /* SFM-Screen-Table-Strip-Edit.png */; };
+		ACB56C5B176B623800E46D08 /* SFMEditDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ACB56C51176B623800E46D08 /* SFMEditDetailViewController.m */; };
+		ACB56C5C176B623800E46D08 /* SFMEditDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = ACB56C52176B623800E46D08 /* SFMEditDetailViewController.xib */; };
+		ACB56C5D176B623800E46D08 /* shadow_gray_light_blue-1.png in Resources */ = {isa = PBXBuildFile; fileRef = ACB56C53176B623800E46D08 /* shadow_gray_light_blue-1.png */; };
+		ACB56C5E176B623800E46D08 /* SVMAccessoryButton.m in Sources */ = {isa = PBXBuildFile; fileRef = ACB56C55176B623800E46D08 /* SVMAccessoryButton.m */; };
+		ACB56C6F176B629F00E46D08 /* SFMChildView.m in Sources */ = {isa = PBXBuildFile; fileRef = ACB56C6B176B629F00E46D08 /* SFMChildView.m */; };
+		ACB56C70176B629F00E46D08 /* SFMChildView.xib in Resources */ = {isa = PBXBuildFile; fileRef = ACB56C6C176B629F00E46D08 /* SFMChildView.xib */; };
+		ACB56C71176B629F00E46D08 /* SWitchViewButton.m in Sources */ = {isa = PBXBuildFile; fileRef = ACB56C6E176B629F00E46D08 /* SWitchViewButton.m */; };
 		ACEAD0541721201F00837555 /* 0@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = ACEACE421721201B00837555 /* 0@2x.png */; };
 		ACEAD0551721201F00837555 /* 1@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = ACEACE431721201B00837555 /* 1@2x.png */; };
 		ACEAD0561721201F00837555 /* 2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = ACEACE441721201B00837555 /* 2@2x.png */; };
@@ -1355,7 +1366,6 @@
 		ACEAD2641721201F00837555 /* zbar-helpicons@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = ACEAD0521721201E00837555 /* zbar-helpicons@2x.png */; };
 		ACEAD2651721201F00837555 /* zbar-samples@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = ACEAD0531721201E00837555 /* zbar-samples@2x.png */; };
 		ACEAD2681721209900837555 /* 72x72@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = ACEAD2671721209900837555 /* 72x72@2x.png */; };
-		ACFEC5E9174A1803000D5299 /* OAuthController.m in Sources */ = {isa = PBXBuildFile; fileRef = ACFEC5E8174A1803000D5299 /* OAuthController.m */; };
 		BA9A95591578F3B0008A0475 /* blue button.png in Resources */ = {isa = PBXBuildFile; fileRef = BA9A95581578F3B0008A0475 /* blue button.png */; };
 		FA0722D914DFBA79008CAFB3 /* GTMStringEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = FA0722D814DFBA79008CAFB3 /* GTMStringEncoding.m */; };
 		FA0F7B8414F58C1400052BD6 /* ___INTF_WebServicesDefServiceSvc___m___l7j8pj in Resources */ = {isa = PBXBuildFile; fileRef = FA0F7B7014F58C1400052BD6 /* ___INTF_WebServicesDefServiceSvc___m___l7j8pj */; };
@@ -2486,8 +2496,22 @@
 		AC1BF8A6171C395500F0EA14 /* SyncProgressBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyncProgressBar.h; sourceTree = "<group>"; };
 		AC1BF8A7171C395500F0EA14 /* SyncProgressBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyncProgressBar.m; sourceTree = "<group>"; };
 		AC891297173A8AB400061C14 /* Default-Landscape~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Landscape~ipad.png"; sourceTree = "<group>"; };
-		AC89129C173A8B1300061C14 /* OAuthClientInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAuthClientInterface.h; sourceTree = "<group>"; };
-		AC89129D173A8B1300061C14 /* OAuthClientInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OAuthClientInterface.m; sourceTree = "<group>"; };
+		ACB56C4B176B623800E46D08 /* detail_disclosure.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = detail_disclosure.png; sourceTree = "<group>"; };
+		ACB56C4C176B623800E46D08 /* detail_disclosure_open.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = detail_disclosure_open.png; sourceTree = "<group>"; };
+		ACB56C4D176B623800E46D08 /* save.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = save.png; sourceTree = "<group>"; };
+		ACB56C4E176B623800E46D08 /* SFM-Screen-Switch-Views-button_transparent.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SFM-Screen-Switch-Views-button_transparent.png"; sourceTree = "<group>"; };
+		ACB56C4F176B623800E46D08 /* SFM-Screen-Table-Strip-Edit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SFM-Screen-Table-Strip-Edit.png"; sourceTree = "<group>"; };
+		ACB56C50176B623800E46D08 /* SFMEditDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFMEditDetailViewController.h; sourceTree = "<group>"; };
+		ACB56C51176B623800E46D08 /* SFMEditDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFMEditDetailViewController.m; sourceTree = "<group>"; };
+		ACB56C52176B623800E46D08 /* SFMEditDetailViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SFMEditDetailViewController.xib; sourceTree = "<group>"; };
+		ACB56C53176B623800E46D08 /* shadow_gray_light_blue-1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "shadow_gray_light_blue-1.png"; sourceTree = "<group>"; };
+		ACB56C54176B623800E46D08 /* SVMAccessoryButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVMAccessoryButton.h; sourceTree = "<group>"; };
+		ACB56C55176B623800E46D08 /* SVMAccessoryButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVMAccessoryButton.m; sourceTree = "<group>"; };
+		ACB56C6A176B629F00E46D08 /* SFMChildView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFMChildView.h; sourceTree = "<group>"; };
+		ACB56C6B176B629F00E46D08 /* SFMChildView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFMChildView.m; sourceTree = "<group>"; };
+		ACB56C6C176B629F00E46D08 /* SFMChildView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SFMChildView.xib; sourceTree = "<group>"; };
+		ACB56C6D176B629F00E46D08 /* SWitchViewButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWitchViewButton.h; sourceTree = "<group>"; };
+		ACB56C6E176B629F00E46D08 /* SWitchViewButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWitchViewButton.m; sourceTree = "<group>"; };
 		ACEACE421721201B00837555 /* 0@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "0@2x.png"; sourceTree = "<group>"; };
 		ACEACE431721201B00837555 /* 1@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "1@2x.png"; sourceTree = "<group>"; };
 		ACEACE441721201B00837555 /* 2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "2@2x.png"; sourceTree = "<group>"; };
@@ -3019,8 +3043,6 @@
 		ACEAD0521721201E00837555 /* zbar-helpicons@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "zbar-helpicons@2x.png"; sourceTree = "<group>"; };
 		ACEAD0531721201E00837555 /* zbar-samples@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "zbar-samples@2x.png"; sourceTree = "<group>"; };
 		ACEAD2671721209900837555 /* 72x72@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "72x72@2x.png"; sourceTree = "<group>"; };
-		ACFEC5E7174A1803000D5299 /* OAuthController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAuthController.h; sourceTree = "<group>"; };
-		ACFEC5E8174A1803000D5299 /* OAuthController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OAuthController.m; sourceTree = "<group>"; };
 		BA9A95581578F3B0008A0475 /* blue button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blue button.png"; sourceTree = "<group>"; };
 		FA0722D614DFBA79008CAFB3 /* GTMDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMDefines.h; sourceTree = "<group>"; };
 		FA0722D714DFBA79008CAFB3 /* GTMStringEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMStringEncoding.h; sourceTree = "<group>"; };
@@ -4307,6 +4329,7 @@
 		3E34683213E95C4D00B5790F /* SFMPage */ = {
 			isa = PBXGroup;
 			children = (
+				ACB56C4A176B623700E46D08 /* SFMEditDetailView */,
 				A8C1B0A315AD7D3E00E5B76D /* ZBarSDK */,
 				FAA32E2C147B743800069FDF /* DatabaseInterface */,
 				3E34683313E95C4D00B5790F /* ActionMenu */,
@@ -4639,6 +4662,7 @@
 		3E34689913E95C4D00B5790F /* DetailViewController */ = {
 			isa = PBXGroup;
 			children = (
+				ACB56C69176B629F00E46D08 /* SFMChildView */,
 				3E34689A13E95C4D00B5790F /* DetailView.xib */,
 				3E34689B13E95C4D00B5790F /* DetailViewController.h */,
 				3E34689C13E95C4D00B5790F /* DetailViewController.m */,
@@ -4925,7 +4949,6 @@
 		7B001E101227BA1F002E1770 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				AC89129B173A8B1300061C14 /* OAuthClientInterface */,
 				AC1BF894171C395500F0EA14 /* SyncProgressBar */,
 				A8DB1D0916E0B590007D1A4F /* GetPriceBook */,
 				A8DB1CFB16E0B58B007D1A4F /* JSExecuter */,
@@ -5646,15 +5669,34 @@
 			path = SyncIndicatorImages;
 			sourceTree = "<group>";
 		};
-		AC89129B173A8B1300061C14 /* OAuthClientInterface */ = {
+		ACB56C4A176B623700E46D08 /* SFMEditDetailView */ = {
 			isa = PBXGroup;
 			children = (
-				ACFEC5E7174A1803000D5299 /* OAuthController.h */,
-				ACFEC5E8174A1803000D5299 /* OAuthController.m */,
-				AC89129C173A8B1300061C14 /* OAuthClientInterface.h */,
-				AC89129D173A8B1300061C14 /* OAuthClientInterface.m */,
+				ACB56C4B176B623800E46D08 /* detail_disclosure.png */,
+				ACB56C4C176B623800E46D08 /* detail_disclosure_open.png */,
+				ACB56C4D176B623800E46D08 /* save.png */,
+				ACB56C4E176B623800E46D08 /* SFM-Screen-Switch-Views-button_transparent.png */,
+				ACB56C4F176B623800E46D08 /* SFM-Screen-Table-Strip-Edit.png */,
+				ACB56C50176B623800E46D08 /* SFMEditDetailViewController.h */,
+				ACB56C51176B623800E46D08 /* SFMEditDetailViewController.m */,
+				ACB56C52176B623800E46D08 /* SFMEditDetailViewController.xib */,
+				ACB56C53176B623800E46D08 /* shadow_gray_light_blue-1.png */,
+				ACB56C54176B623800E46D08 /* SVMAccessoryButton.h */,
+				ACB56C55176B623800E46D08 /* SVMAccessoryButton.m */,
 			);
-			path = OAuthClientInterface;
+			path = SFMEditDetailView;
+			sourceTree = "<group>";
+		};
+		ACB56C69176B629F00E46D08 /* SFMChildView */ = {
+			isa = PBXGroup;
+			children = (
+				ACB56C6A176B629F00E46D08 /* SFMChildView.h */,
+				ACB56C6B176B629F00E46D08 /* SFMChildView.m */,
+				ACB56C6C176B629F00E46D08 /* SFMChildView.xib */,
+				ACB56C6D176B629F00E46D08 /* SWitchViewButton.h */,
+				ACB56C6E176B629F00E46D08 /* SWitchViewButton.m */,
+			);
+			path = SFMChildView;
 			sourceTree = "<group>";
 		};
 		ACEACE411721201B00837555 /* Retina Images */ = {
@@ -8145,6 +8187,14 @@
 				ACEAD2651721201F00837555 /* zbar-samples@2x.png in Resources */,
 				ACEAD2681721209900837555 /* 72x72@2x.png in Resources */,
 				AC891298173A8AB400061C14 /* Default-Landscape~ipad.png in Resources */,
+				ACB56C56176B623800E46D08 /* detail_disclosure.png in Resources */,
+				ACB56C57176B623800E46D08 /* detail_disclosure_open.png in Resources */,
+				ACB56C58176B623800E46D08 /* save.png in Resources */,
+				ACB56C59176B623800E46D08 /* SFM-Screen-Switch-Views-button_transparent.png in Resources */,
+				ACB56C5A176B623800E46D08 /* SFM-Screen-Table-Strip-Edit.png in Resources */,
+				ACB56C5C176B623800E46D08 /* SFMEditDetailViewController.xib in Resources */,
+				ACB56C5D176B623800E46D08 /* shadow_gray_light_blue-1.png in Resources */,
+				ACB56C70176B629F00E46D08 /* SFMChildView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8162,7 +8212,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "targetFile=\"${SRCROOT}/iService-Info.plist\"\n\nrootFile=\"${SRCROOT}/Classes/Debriefing/Resources/Settings.bundle/Root.plist\"\n\necho \"Target file \" $targetFile\n\necho \"Root file \" $rootFile\n\nversion=`/usr/libexec/PlistBuddy -c \"Print:CFBundleVersion\" \"$targetFile\"`\n\necho \"Project Version =\" $version\n\n/usr/libexec/PlistBuddy -c \"Set PreferenceSpecifiers:10:DefaultValue $version\" \"$rootFile\"";
+			shellScript = "targetFile=\"${SRCROOT}/iService-Info.plist\"\n\nrootFile=\"${SRCROOT}/Classes/Debriefing/Resources/Settings.bundle/Root.plist\"\n\necho \"Target file \" $targetFile\n\necho \"Root file \" $rootFile\n\nversion=`/usr/libexec/PlistBuddy -c \"Print:CFBundleVersion\" \"$targetFile\"`\n\necho \"Project Version =\" $version\n\n/usr/libexec/PlistBuddy -c \"Set PreferenceSpecifiers:9:DefaultValue $version\" \"$rootFile\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -8402,10 +8452,12 @@
 				A837EC7E170D4DF700229855 /* Item.m in Sources */,
 				A837EC7F170D4DF900229855 /* GridViewCell.m in Sources */,
 				AC1BF8B8171C395500F0EA14 /* SyncProgressBar.m in Sources */,
-				AC89129E173A8B1300061C14 /* OAuthClientInterface.m in Sources */,
-				ACFEC5E9174A1803000D5299 /* OAuthController.m in Sources */,
 				A83F22BF174E48410024466E /* PerformanceAnalytics.m in Sources */,
 				A83F22C0174E48410024466E /* Util.m in Sources */,
+				ACB56C5B176B623800E46D08 /* SFMEditDetailViewController.m in Sources */,
+				ACB56C5E176B623800E46D08 /* SVMAccessoryButton.m in Sources */,
+				ACB56C6F176B629F00E46D08 /* SFMChildView.m in Sources */,
+				ACB56C71176B629F00E46D08 /* SWitchViewButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

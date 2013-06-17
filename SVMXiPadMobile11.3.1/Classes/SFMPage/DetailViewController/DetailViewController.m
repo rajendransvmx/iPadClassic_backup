@@ -21,24 +21,49 @@
 #import "Chatter.h"
 #import "databaseIntefaceSfm.h"
 #import "ManualDataSync.h"
+
+ //Debrief
+//#import "SFMEditDetailViewController.h"
+#import "SVMAccessoryButton.h"
+
 #import "Utility.h"
 #import "HTMLJSWrapper.h"
+
+//Radha :- Child SFM UI 6/june/2012 
+#import "SWitchViewButton.h"
 
 extern void SVMXLog(NSString *format, ...);
 
 
 @interface DetailViewController ()
-@property (nonatomic, retain) UIPopoverController *popoverController;
+@property (nonatomic, retain) UIPopoverController * popoverController;
+@property (nonatomic, retain) NSMutableDictionary * child_sfm_process_node;
 - (void)configureView;
+- (SFMEditDetailViewController *) getEditViewOfLine; // KRI
 - (BOOL) isValidUrl:(NSString *)url;
 - (void) showAlertForInvalidUrl;
+- (void) resetTableViewFrame;
+-(void)pushtViewProcessToStack:(NSString *)process_id  record_id:(NSString *)record_id;
+//Radha :- Child SFM UI
+- (SFMChildView *) allocChildLinkedViewProcess;
+- (void) hideChildLinkedViewProcess;
+- (void) showChildViewProcessTable:(UIView *)parentView indexpath:(NSIndexPath *)_indexpath;
 
+-(void)FindLinkedProcessForLayoutId:(NSString *)layout_id;
+
+-(NSArray *)getAllLinkedProcessForDetailLine:(NSString *)layout_id;
+
+//-(NSInteger)findHeightOftheChildSfmView:(NSIndexPath *)index_path;
+
+-(void)invokeChildSfMForProcess_id:(NSString *)child_process_id records_id:(NSString *)child_record_id ChildobjectName:(NSString *)child_obj_name;
 @end
 
 @implementation DetailViewController
 
+//KRI
+@synthesize editDetailObject;
 @synthesize EventUpdate_Continue;
-
+@synthesize child_sfm_process_node = _child_sfm_process_node;
 @synthesize updateGreenButtonFlag;
 @synthesize parentReference;
 
@@ -92,6 +117,12 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize jsExecuter;
 @synthesize priceBookData;
 
+ //Debrief
+@synthesize selectedIndexPathForEdit;
+//Radha :- Child SFM UI
+@synthesize SFMChildTableview;
+@synthesize selectedIndexPathForchildView;
+
 - (BOOL) isValidUrl:(NSString *)url
 {
     NSString * urlRegEx = @"(http|https)://((\\w)*|([0-9]*)|([-|_])*)+([\\.|/]((\\w)*|([0-9]*)|([-|_])*))+";
@@ -141,6 +172,11 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) didSelectRow:(NSInteger)row ForSection:(NSInteger)section
 {
+    [self hideExpandedChildViews];
+    self.selectedIndexPathForEdit = nil;
+	//Radha :- Child SFM UI - 11/June/2013
+	[self hideChildLinkedViewProcess];
+	self.selectedIndexPathForchildView = nil;
     
     if (detailViewObject != nil)
     {
@@ -151,7 +187,7 @@ extern void SVMXLog(NSString *format, ...);
     
     selectedSection = -1;
     selectedRow = -1;
-    currentEditRow = nil;
+    self.currentEditRow = nil;
     
     switch (section)
     {
@@ -172,27 +208,27 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     switch (section) {
-        /*
+        
         case SHOWALL_HEADERS:
             selectedSection = SHOWALL_HEADERS;
             isDefault = YES;
             [tableView reloadData];
             break;
-        */
+	
         case SHOW_HEADER_ROW:
             isDefault = NO;
             selectedSection = SHOW_HEADER_ROW;
             selectedRow = row;
             [tableView reloadData];
             break;
-        /*
+        
          
         case SHOWALL_LINES:
             selectedSection = SHOWALL_LINES;
             isDefault = YES;
             [tableView reloadData];
             break;
-        */
+        
         case SHOW_LINES_ROW:
             isDefault = NO;
             selectedSection = SHOW_LINES_ROW;
@@ -215,6 +251,8 @@ extern void SVMXLog(NSString *format, ...);
 
 -(void) didselectSection:(NSInteger) section;
 {
+     //Debrief
+    [self hideExpandedChildViews];
     
     if (detailViewObject != nil)
     {
@@ -353,10 +391,6 @@ extern void SVMXLog(NSString *format, ...);
     
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     isDefault = YES;
-    // Set up keyboard notifications
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyBoardDidShow:) name:UIKeyboardDidShowNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidHide:) name:UIKeyboardWillHideNotification object:nil];
     
     currentRecordId =  appDelegate.sfmPageController.recordId;
     currentProcessId = appDelegate.sfmPageController.processId;
@@ -473,6 +507,77 @@ extern void SVMXLog(NSString *format, ...);
 {
     appDelegate.showUI = TRUE;     //btn merge
     clickedBack = YES;
+	//Radha :- Child SFM UI
+    [self hideChildLinkedViewProcess];
+	[self hideEditViewOfLine];
+    
+    
+    if([appDelegate.sfmPageController.process_stack count] != 0)
+    {
+        
+        NSString * next_process_id = nil , *next_record_id = nil;
+        
+        while([appDelegate.sfmPageController.process_stack count] != 0)
+        {
+            NSDictionary * dict = [appDelegate.sfmPageController.process_stack objectAtIndex:[appDelegate.sfmPageController.process_stack count] -1];
+            NSString * process_id = [[dict objectForKey:PROCESSID] retain];
+             NSString * record_id = [[dict objectForKey:RECORDID] retain];
+
+            [appDelegate.sfmPageController.process_stack removeLastObject];
+            
+            NSString * top_process_obejct = [appDelegate.databaseInterface getObjectNameForProcessId:process_id];
+            
+            NSString * current_process_object = [appDelegate.databaseInterface getObjectNameForProcessId:appDelegate.sfmPageController.processId];
+            
+            if([top_process_obejct isEqualToString:current_process_object] && [record_id isEqualToString:appDelegate.sfmPageController.recordId] && [[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"VIEWRECORD"] ) //check for top process is view process
+            {
+                continue;
+            }
+            else
+            {
+                next_process_id = process_id;
+                next_record_id = record_id;
+                break;
+            }
+            
+        }
+        
+        if(next_process_id == nil && next_record_id == nil)
+        {
+            NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
+            NSString * headerObjName = [hdr_object objectForKey:gHEADER_OBJECT_NAME];
+            if([headerObjName isEqualToString:@"Event"])
+            {
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_EVENT_DATA_SYNC object:nil];
+            }
+            
+            appDelegate.SFMPage = nil;
+            appDelegate.SFMoffline = nil;
+            [delegate Back:sender];
+            return;
+        }
+        else
+        {
+            [self fillSFMdictForOfflineforProcess:next_process_id  forRecord:next_record_id];
+            [self didReceivePageLayoutOffline];
+        }
+     }
+    else
+    {
+        
+        NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
+        NSString * headerObjName = [hdr_object objectForKey:gHEADER_OBJECT_NAME];
+        if([headerObjName isEqualToString:@"Event"])
+        {
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_EVENT_DATA_SYNC object:nil];
+        }
+        appDelegate.SFMPage = nil;
+        appDelegate.SFMoffline = nil;
+        [delegate Back:sender];
+    }
+    return;
+    
+
     if ([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"EDIT"] || [[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"SOURCETOTARGETONLYCHILDROWS"]) 
     {
         [activity startAnimating];
@@ -495,6 +600,8 @@ extern void SVMXLog(NSString *format, ...);
 
         
         SMLog(@"%@",appDelegate.sfmPageController.sourceProcessId);
+	 //Debrief
+		[self resetTableViewFrame];
         [self fillSFMdictForOfflineforProcess:appDelegate.sfmPageController.sourceProcessId  forRecord:appDelegate.sfmPageController.sourceRecordId];
         [self didReceivePageLayoutOffline];
     }
@@ -514,6 +621,9 @@ extern void SVMXLog(NSString *format, ...);
         appDelegate.SFMoffline = nil;
         [delegate Back:sender];
     }
+ 	//Debrief
+	if (self.currentEditRow != nil)
+		self.currentEditRow = nil;
 }
 
 
@@ -824,11 +934,28 @@ extern void SVMXLog(NSString *format, ...);
     self.isInViewMode = YES;
     [tableView reloadData];
 }
+-(void)FindLinkedProcessForLayoutId:(NSString *)detail_layout_id
+{
+    //check for enableChild SFM for Layout_id
+    NSArray * linked_process_ids = [self   getAllLinkedProcessForDetailLine:detail_layout_id];
+    if([linked_process_ids count] != 0)
+    {
+        [_child_sfm_process_node setObject:linked_process_ids forKey: [detail_layout_id mutableCopy]];
+    }
+}
+
 
 #pragma mark = fill the sfmData equivalent for didsubmitProcess method in offline
 -(void)fillSFMdictForOfflineforProcess:(NSString *) processId forRecord:(NSString *)recordId
 {
 	@try{
+        
+        
+        
+    appDelegate.sfmPageController.processId = processId;
+    appDelegate.sfmPageController.recordId = recordId;
+        
+        
     appDelegate.isWorkinginOffline = TRUE;
     
    // databaseIntefaceSfm * database = [[databaseIntefaceSfm alloc] init];
@@ -858,6 +985,23 @@ extern void SVMXLog(NSString *format, ...);
         return;
     }
     NSString * process_type = [page_layoutInfo objectForKey:gPROCESSTYPE];
+        
+        
+    if([process_type isEqualToString:VIEWRECORD] || [process_type isEqualToString:EDIT ])
+    {
+        
+        if(_child_sfm_process_node == nil)
+        {
+            _child_sfm_process_node = [[NSMutableDictionary alloc] initWithCapacity:0];
+            
+        }
+        else
+        {
+            [_child_sfm_process_node removeAllObjects];
+        }
+
+    }
+        
         
     NSMutableDictionary * _header =  [page_layoutInfo objectForKey:@"header"];
     
@@ -1208,6 +1352,11 @@ extern void SVMXLog(NSString *format, ...);
             NSString * detailObjectName = [dict objectForKey:gDETAIL_OBJECT_NAME];
             NSString * detailaliasName = [dict objectForKey:gDETAIL_OBJECT_ALIAS_NAME];
             NSString * detail_layout_id = [dict objectForKey:gDETAILS_LAYOUT_ID];
+            NSMutableArray * detail_Values_id = [dict objectForKey:gDETAIL_VALUES_RECORD_ID];
+
+            //check for enableChild SFM for Layout_id
+            [self FindLinkedProcessForLayoutId:detail_layout_id];
+            
             
             for(int k =0 ;k<[filedsArray count];k++)
             {
@@ -1228,9 +1377,28 @@ extern void SVMXLog(NSString *format, ...);
             {
                 [detailValuesArray addObject:[detail_values objectAtIndex:l]]; 
                 
+                //sahana - child sfm
+                NSMutableArray *  eachArray = [detail_values objectAtIndex:l];
+                BOOL value_id_flag = FALSE;
+                NSString  * id_ = @"";
+                for(int m = 0 ; m < [eachArray count];m++)
+                {
+                    NSMutableDictionary * dict = [eachArray objectAtIndex:m];
+                    NSString * api_name = [dict objectForKey:gVALUE_FIELD_API_NAME];
+                    NSString * key = [dict objectForKey:gVALUE_FIELD_VALUE_KEY];
+                    if([api_name isEqualToString:@"local_id"])
+                    {
+                        id_ = key;
+                        value_id_flag = TRUE;
+                    }
+                  
+                }
+                if(value_id_flag)
+                {
+                    [detail_Values_id addObject:id_];
+                }
+                
             }
-            
-//            [details_api_keys release];
             
         }
         
@@ -1317,10 +1485,8 @@ extern void SVMXLog(NSString *format, ...);
     else if ([process_type isEqualToString:@"SOURCETOTARGETONLYCHILDROWS"])
     {
         NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGET process_id:processId layoutId:layout_id objectName:headerObjName];
-        //[appDelegate.databaseInterface  getValueMappingForlayoutId:layout_id process_id:processId objectName:headerObjName];
         
         NSString * expression_id = [process_components objectForKey:EXPRESSION_ID];
-        //SMLog(" record id %@" ,appDelegate.sfmPageController.recordId);
         NSMutableDictionary * headerValueDict = [appDelegate.databaseInterface queryDataFromObjectTable:api_names tableName:headerObjName record_id:appDelegate.sfmPageController.recordId expression:expression_id];
         
 		//Change of Code for quick save. --> 10/07/2012  -- #4665
@@ -1523,9 +1689,8 @@ extern void SVMXLog(NSString *format, ...);
     {
         //HEADER VALUE MAPPING
         //fetch all value for value mapping 
-            
-        NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGET process_id:processId layoutId:layout_id objectName:headerObjName];//[appDelegate.databaseInterface  getValueMappingForlayoutId:layout_id process_id:processId objectName:headerObjName];
-       
+        
+        NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGET process_id:processId layoutId:layout_id objectName:headerObjName];
         NSMutableDictionary * object_mapping_dict = [appDelegate.databaseInterface getObjectMappingForMappingId:process_components mappingType:VALUE_MAPPING];
         
         NSArray * all_Keys_values = [object_mapping_dict allKeys];
@@ -2204,6 +2369,10 @@ extern void SVMXLog(NSString *format, ...);
             NSString * detailaliasName = [dict objectForKey:gDETAIL_OBJECT_ALIAS_NAME];
             NSString * detail_layout_id = [dict objectForKey:gDETAILS_LAYOUT_ID];
             
+            //check for enableChild SFM for Layout_id
+            [self FindLinkedProcessForLayoutId:detail_layout_id];
+            
+            
             for(int k =0 ;k<[filedsArray count];k++)
             {
                 NSMutableDictionary * detailFiled_info =[filedsArray objectAtIndex:k];
@@ -2284,7 +2453,41 @@ extern void SVMXLog(NSString *format, ...);
     
 }
 
+-(NSArray *)getAllLinkedProcessForDetailLine:(NSString *)layout_id
+{
+//    childSFM = TRUE;
+    
+    //get sf_id for Process
+    NSString * process_sf_id = [appDelegate.databaseInterface getProcessSfIdForProcess_uniqueName:appDelegate.sfmPageController.processId];
+    
+    //get layout_id for the clicked process  
+    NSString * processNode_id = [appDelegate.databaseInterface getProcessNodeIdForLayoutId:layout_id process_id:appDelegate.sfmPageController.processId];
+    
+    // pass these to infor to fetch all the linked processes
+    NSArray * linked_process_ids = [appDelegate.databaseInterface getLinkedProcessIdsForProcess_node_id:processNode_id process_sf_id:process_sf_id];
+    
+    NSArray * linked_process_sf_ids = [appDelegate.databaseInterface getAllProcessId_forProcess_sf_id:linked_process_ids];
+    return linked_process_sf_ids;
+}
 
+-(void)pushtViewProcessToStack:(NSString *)process_id  record_id:(NSString *)record_id
+{
+    
+    NSString * temp_process_id = [process_id mutableCopy];
+    NSString * temp_record_id = [record_id  mutableCopy];
+    
+    if(appDelegate.sfmPageController.process_stack == nil)
+    {
+        NSMutableArray * temp_arry = [[NSMutableArray alloc] initWithCapacity:0];
+        appDelegate.sfmPageController.process_stack = temp_arry;
+        [temp_arry release];
+    }
+    
+    [appDelegate.sfmPageController.process_stack addObject:[NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:temp_process_id,temp_record_id, nil] forKeys:[NSArray arrayWithObjects:PROCESSID,RECORDID, nil]]];
+    
+//    [temp_process_id release];
+//    [temp_record_id release];
+}
 #pragma mark = Select Process ID
 - (void) didSubmitProcess:(NSString *)processId forRecord:(NSString *)recordId
 {
@@ -2388,6 +2591,20 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) action:(id)sender
 {
+	
+	if (self.selectedIndexPathForchildView != nil)
+	{
+		self.editDetailObject = nil;
+		[self hideChildLinkedViewProcess];
+		[self.tableView reloadData];
+	}
+	if (self.selectedIndexPathForEdit != nil)
+	{
+		self.SFMChildTableview = nil;
+		[self hideExpandedChildViews];
+	}
+	
+	
     if (actionMenu)
     {
         [actionMenu.popover dismissPopoverAnimated:YES];
@@ -3966,6 +4183,8 @@ extern void SVMXLog(NSString *format, ...);
     if (didSelectViewLayout)
     {
         didSelectViewLayout = NO;
+        NSMutableDictionary * header_ =  [appDelegate.SFMPage objectForKey:@"header"];
+        NSString * headerObjName = [header_ objectForKey:gHEADER_OBJECT_NAME];
         [appDelegate.wsInterface saveSwitchView:appDelegate.sfmPageController.processId forObject:appDelegate.sfmPageController.objectName];
     }
     
@@ -4224,6 +4443,24 @@ extern void SVMXLog(NSString *format, ...);
         }
         else
         {
+	     //Debrief
+            if(self.selectedIndexPathForEdit != nil && indexPath.section == self.selectedIndexPathForEdit.section && indexPath.row == self.selectedIndexPathForEdit.row) {
+				float height = [self.editDetailObject getHeightForEditView];
+                if ( height >= 1) {
+                    return height+35;
+                }
+				return gSTANDARD_TABLE_ROW_HEIGHT + 200.0;
+            }
+			
+			else if (self.selectedIndexPathForchildView != nil && indexPath.section == self.selectedIndexPathForchildView.section && indexPath.row == self.selectedIndexPathForchildView.row)
+			{
+
+				if ([self.SFMChildTableview getHeightForChildLinkedProcess] >= 1) {
+					float height1 = [self.SFMChildTableview getHeightForChildLinkedProcess];
+					return height1 + 40;
+                }
+				return 150.0;
+			}
             return gSTANDARD_TABLE_ROW_HEIGHT;
         }
     }
@@ -4239,7 +4476,27 @@ extern void SVMXLog(NSString *format, ...);
         }
         
     }
-    return gSTANDARD_TABLE_ROW_HEIGHT;
+ //Debrief
+    if(self.selectedIndexPathForEdit != nil && indexPath.section == self.selectedIndexPathForEdit.section && indexPath.row == self.selectedIndexPathForEdit.row) {
+        if ([self.editDetailObject getHeightForEditView] >= 1) {
+            return [self.editDetailObject getHeightForEditView];
+        }
+        return gSTANDARD_TABLE_ROW_HEIGHT + 320.0;
+//		return 453+30;
+    }
+	else if (self.selectedIndexPathForchildView != nil && indexPath.section == self.selectedIndexPathForchildView.section && indexPath.row == self.selectedIndexPathForchildView.row)
+	{
+//		return 394+40;
+		if ([self.SFMChildTableview getHeightForChildLinkedProcess] >= 1) {
+			self.view.clipsToBounds=YES;
+//			return 100*5;
+			return [self.SFMChildTableview getHeightForChildLinkedProcess]+ gSTANDARD_TABLE_ROW_HEIGHT;
+		}
+		return 150.0;
+	}
+//	 if (isDefault)
+		 return gSTANDARD_TABLE_ROW_HEIGHT;
+//    return 40;
 }
 
 - (NSString *) getDictionary
@@ -4323,14 +4580,14 @@ extern void SVMXLog(NSString *format, ...);
         if([Disclosure_dict count] == 0)
             return nil;
         NSString * section_title = [Disclosure_dict objectForKey:gDETAILS_OBJECT_LABEL];
-        return section_title;
+        return section_title; // KRI
     }    
     return nil;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    return 31; // 44
+    return 44; // 44
 }
 
 - (UIView *) tableView:(UITableView *)_tableView viewForHeaderInSection:(NSInteger)section
@@ -4596,6 +4853,10 @@ extern void SVMXLog(NSString *format, ...);
 	{
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellSelectionStyleNone reuseIdentifier:CellIdentifier];
 		cell.selectionStyle = UITableViewCellSelectionStyleNone;
+		//Debrief
+        CGRect cellframe = cell.frame;
+        cellframe.size.width = 704;
+        cell.frame = cellframe;
         background = [[UIView alloc] initWithFrame:CGRectMake(0, 0, width, 28)];
 	}
 	else
@@ -4704,7 +4965,7 @@ extern void SVMXLog(NSString *format, ...);
             CGFloat x = 2*j*field_width+8;
             CGFloat width1 = (CGFloat)field_width-8;
             UILabel * lbl;
-            CGRect label_frame = CGRectMake(x, 0, width1, 31);
+            CGRect label_frame = CGRectMake(x, 3, width1, 31);
             SMLog(@"Label Frame %f %f %f %f",label_frame.origin.x,label_frame.origin.y,label_frame.size.width,label_frame.size.height);
             if (label_name == nil )
             {
@@ -4891,7 +5152,8 @@ extern void SVMXLog(NSString *format, ...);
         
         
 	}
-	else if (selectedSection == SHOW_LINES_ROW || selectedSection == SHOWALL_LINES)
+	BOOL isEditRow = NO;
+	if (selectedSection == SHOW_LINES_ROW || selectedSection == SHOWALL_LINES)
 	{
         header = FALSE;
     
@@ -4901,10 +5163,12 @@ extern void SVMXLog(NSString *format, ...);
 		NSMutableArray * detail_fields = [detail objectForKey:gDETAILS_FIELDS_ARRAY];
         
         NSInteger columns = [[detail objectForKey:gDETAILS_NUMBER_OF_COLUMNS] intValue];
-		//columns = [detail_fields count];
+
+        NSString * detail_layout_id = [detail objectForKey:gDETAILS_LAYOUT_ID];
+        
+        NSArray * detail_values_ids = [detail objectForKey:gDETAIL_VALUES_RECORD_ID];
 		NSInteger field_width = background_width/columns;
         
-//        NSMutableArray * lines_fields_array = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
         
         BOOL allowEdit = [[detail objectForKey:gDETAILS_ALLOW_NEW_LINES] boolValue];
 		if (row == 0) //display the column titles
@@ -4912,12 +5176,11 @@ extern void SVMXLog(NSString *format, ...);
             background.clipsToBounds = YES;
 			for (int j = 0; j < columns; j++)
 			{
-				UILabel * lbl = [[[UILabel alloc] initWithFrame:CGRectMake(j*field_width+8, 0, field_width-8, control_height)] autorelease];
+				UILabel * lbl = [[[UILabel alloc] initWithFrame:CGRectMake(j*field_width+8, 5, field_width-125, control_height)] autorelease];
 				NSString * label_name = nil;
                 if ([detail_fields count] > j)//sahana
                 {
                     label_name = [[detail_fields objectAtIndex:j] objectForKey:gFIELD_LABEL];
-//                    [lines_fields_array addObject:[[detail_fields objectAtIndex:j] objectForKey:gFIELD_API_NAME]];
                 }
 				lbl.text = label_name;
                 lbl.textColor = [UIColor whiteColor];
@@ -4925,6 +5188,14 @@ extern void SVMXLog(NSString *format, ...);
                 lbl.font = [UIFont fontWithName:@"HelveticaBold" size:19];
                 lbl.font = [UIFont boldSystemFontOfSize:lbl.font.pointSize];
                 lbl.backgroundColor = [UIColor clearColor];
+				//Debrief
+				lbl.lineBreakMode = UILineBreakModeTailTruncation;
+				
+				//Radha :- WO Debrief
+				lbl.userInteractionEnabled = YES;
+				UITapGestureRecognizer * tapMe = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapRecognizedForEdit:)];
+				[lbl addGestureRecognizer:tapMe];
+				[tapMe release];
 				[background addSubview:lbl];
 			}
 
@@ -4972,79 +5243,79 @@ extern void SVMXLog(NSString *format, ...);
 		else // Display the column values for the row
 		{
             cell.accessoryView = nil;
-            [cell setAccessoryType:UITableViewCellAccessoryDetailDisclosureButton];
+         //   [cell setAccessoryType:UITableViewCellAccessoryDetailDisclosureButton];
 
             {
                
-                NSMutableArray * detail_values = [[detail objectForKey:gDETAILS_VALUES_ARRAY] objectAtIndex:row-1];
-                           
-                for (int j = 0; j < columns; j++)
-                {
-                        if([detail_fields count]>j)
-                        {
-                        NSString * control_type = [[detail_fields objectAtIndex:j]objectForKey:gFIELD_DATA_TYPE];
-                        NSString * api_name = [[detail_fields objectAtIndex:j]objectForKey:gFIELD_API_NAME];
-                        NSString * value = @"";
-                        for (int i = 0; i < [detail_values count]; i++)
-                        {
-                            NSString * value_Field_API = [[detail_values objectAtIndex:i] objectForKey:gVALUE_FIELD_API_NAME];
-                            if ([api_name isEqualToString:value_Field_API])
-                            {
-                                value = [[detail_values objectAtIndex:i] objectForKey:gVALUE_FIELD_VALUE_VALUE];
-                                break;
-                            }
-                        }
-                            
-                            
-                       // NSString * value = [[detail_values objectAtIndex:j] objectForKey:gVALUE_FIELD_VALUE_VALUE];
-                        CGRect   frame = CGRectMake(j*field_width, 6, field_width-4,control_height-6);
-                        
-                        if ([control_type isEqualToString:@"boolean"] )
-                        {
-                            UIImageView *v1;
-                            if ([value isEqualToString:@"True"] || [value isEqualToString:@"true"] || [value isEqualToString:@"1"] ) 
-                            {
-                                v1 = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM-Screen-boolean-tick-Icon.png"]] autorelease];
-                                v1.backgroundColor = [UIColor clearColor];
-                                v1.frame = CGRectMake(frame.origin.x+30, 12, 18, 18);
-                                v1.contentMode = UIViewContentModeCenter;
-                                [background addSubview:v1];
-                            }
-                            else
-                            {  
-                                v1 = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM-Screen-boolean-Cancel-Icon.png"]] autorelease];
-                                v1.backgroundColor = [UIColor clearColor];
-                                v1.frame = CGRectMake(frame.origin.x+30, 12, 18, 18);
-                                v1.contentMode = UIViewContentModeCenter;
-                                [background addSubview:v1];
-                            }
-                        }
-                        else
-                        {
-                            lbl2 = [[UILabel alloc]initWithFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)];
-                            SMLog(@"%@", value);
+			NSMutableArray * detail_values = [[detail objectForKey:gDETAILS_VALUES_ARRAY] objectAtIndex:row-1];
+					   
+			for (int j = 0; j < columns; j++)
+			{
+					if([detail_fields count]>j)
+					{
+					NSString * control_type = [[detail_fields objectAtIndex:j]objectForKey:gFIELD_DATA_TYPE];
+					NSString * api_name = [[detail_fields objectAtIndex:j]objectForKey:gFIELD_API_NAME];
+					NSString * value = @"";
+					for (int i = 0; i < [detail_values count]; i++)
+					{
+						NSString * value_Field_API = [[detail_values objectAtIndex:i] objectForKey:gVALUE_FIELD_API_NAME];
+						if ([api_name isEqualToString:value_Field_API])
+						{
+							value = [[detail_values objectAtIndex:i] objectForKey:gVALUE_FIELD_VALUE_VALUE];
+							break;
+						}
+					}
+						
+						
+				   // NSString * value = [[detail_values objectAtIndex:j] objectForKey:gVALUE_FIELD_VALUE_VALUE];
+					CGRect   frame = CGRectMake(j*field_width, 8, field_width-4,control_height-6);
+					
+					if ([control_type isEqualToString:@"boolean"] )
+					{
+						UIImageView *v1;
+						if ([value isEqualToString:@"True"] || [value isEqualToString:@"true"] || [value isEqualToString:@"1"] ) 
+						{
+							v1 = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM-Screen-boolean-tick-Icon.png"]] autorelease];
+							v1.backgroundColor = [UIColor clearColor];
+							v1.frame = CGRectMake(frame.origin.x+30, 12, 18, 18);
+							v1.contentMode = UIViewContentModeCenter;
+							[background addSubview:v1];
+						}
+						else
+						{  
+							v1 = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM-Screen-boolean-Cancel-Icon.png"]] autorelease];
+							v1.backgroundColor = [UIColor clearColor];
+							v1.frame = CGRectMake(frame.origin.x+30, 12, 18, 18);
+							v1.contentMode = UIViewContentModeCenter;
+							[background addSubview:v1];
+						}
+					}
+					else
+					{
+						lbl2 = [[UILabel alloc]initWithFrame:CGRectMake(frame.origin.x+5, frame.origin.y+2, frame.size.width, frame.size.height)];
+						SMLog(@"%@", value);
 
-                            if([control_type isEqualToString:@"datetime"])
-                            {
-                                value = [value stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-                                value = [value stringByReplacingOccurrencesOfString:@".000Z" withString:@""];
-                                value = [iOSInterfaceObject getLocalTimeFromGMT:value];
-                                value = [value stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-                                value = [value stringByReplacingOccurrencesOfString:@"Z" withString:@""];
-                                NSDateFormatter * frm = [[[NSDateFormatter alloc] init] autorelease];
-                                [frm setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
-                                NSDate * date = [frm dateFromString:value];
-                                [frm  setDateFormat:DATETIMEFORMAT];
-                                value = [frm stringFromDate:date];
-                            }
-                            if([control_type isEqualToString:@"date"])
-                            {
-                                NSDateFormatter * formatter = [[[NSDateFormatter alloc] init] autorelease];
-                                [formatter setDateFormat:@"yyyy-MM-dd"];
-                                NSDate * date = [formatter dateFromString:value];
-                                [formatter setDateFormat:DATEFORMAT];
-                                value = [formatter stringFromDate:date];
-                            }
+						if([control_type isEqualToString:@"datetime"])
+						{
+							value = [value stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+							value = [value stringByReplacingOccurrencesOfString:@".000Z" withString:@""];
+							value = [iOSInterfaceObject getLocalTimeFromGMT:value];
+							value = [value stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+							value = [value stringByReplacingOccurrencesOfString:@"Z" withString:@""];
+							NSDateFormatter * frm = [[[NSDateFormatter alloc] init] autorelease];
+							[frm setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
+							NSDate * date = [frm dateFromString:value];
+							[frm  setDateFormat:DATETIMEFORMAT];
+							value = [frm stringFromDate:date];
+						}
+						if([control_type isEqualToString:@"date"])
+						{
+							NSDateFormatter * formatter = [[[NSDateFormatter alloc] init] autorelease];
+							[formatter setDateFormat:@"yyyy-MM-dd"];
+							NSDate * date = [formatter dateFromString:value];
+							[formatter setDateFormat:DATEFORMAT];
+							value = [formatter stringFromDate:date];
+						}
 
                             lbl2.text = value;
                             lbl2.textAlignment = UITextAlignmentLeft;
@@ -5054,9 +5325,168 @@ extern void SVMXLog(NSString *format, ...);
                     }
                 }
             }
+            
+            //KRI to remove the header part
+            //KRI get edit view from sfmeditVC
+            UIImage *disclosureImg = [UIImage imageNamed:@"detail_disclosure.png"];
+            float xValForDisclosure = cell.frame.size.width - ( disclosureImg.size.width + 100 );
+
+            CGRect disclosurebtnFrame = CGRectMake(xValForDisclosure, 6, 30, 30);
+            SVMAccessoryButton *triangleBtn = [[SVMAccessoryButton alloc] initWithFrame:disclosurebtnFrame];;
+            triangleBtn.indexpath = indexPath;
+            triangleBtn.tag = 9746;
+            [triangleBtn setBackgroundImage:disclosureImg forState:UIControlStateNormal];
+            [triangleBtn addTarget:self action:@selector(lineDetailBtnActionCheck:) forControlEvents:UIControlEventTouchUpInside];
+            [background addSubview:triangleBtn];
+            [triangleBtn release];
+			
+			//Radha : 3/june/2013
+			//			UIImage * switchImage = [UIImage imageNamed:@"SFM-Screen-Switch-Views-button.png"];
+			UIImage * switchImage = [UIImage imageNamed:@"SFM-Screen-Switch-Views-button_transparent.png"];
+			float xValForSwitchbutton = cell.frame.size.width - ( switchImage.size.width + 130 );
+			
+			CGRect swithchButtonFrame = CGRectMake(xValForSwitchbutton, 6, 35, 30);
+		if([[_child_sfm_process_node  allKeys] containsObject:detail_layout_id])
+            {
+                NSString * record_id = [detail_values_ids objectAtIndex:row-1];
+                NSString * objectName_  =  [detail objectForKey:gDETAIL_OBJECT_NAME];
+                NSString * sf_id = [appDelegate.databaseInterface  getSfid_For_LocalId_From_Object_table:objectName_ local_id:record_id];
+                if([sf_id length] > 0)
+                {	
+			SWitchViewButton * switchButton = [[SWitchViewButton alloc] initWithFrame:swithchButtonFrame];
+			[switchButton setBackgroundImage:switchImage forState:UIControlStateNormal];
+			switchButton.indexPath = indexPath;
+			switchButton.tag = 2345;
+			[switchButton addTarget:self action:@selector(showChildLinkedProcess:) forControlEvents:UIControlEventTouchUpInside];
+			[background addSubview:switchButton];
+			[switchButton release];
+ }
+            }
+
+			if(self.selectedIndexPathForEdit != nil && indexPath.section == self.selectedIndexPathForEdit.section && indexPath.row == self.selectedIndexPathForEdit.row && self.selectedIndexPathForchildView == nil)
+            {
+				
+                cell.clipsToBounds = YES;
+					
+				[[background subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+				
+//                self.editDetailObject = nil;
+				
+			
+				UIImage * switchImage = [UIImage imageNamed:@"SFM-Screen-Switch-Views-button_transparent.png"];
+				UIImageView *seperatorView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, cell.contentView.frame.size.width, 32)];
+                seperatorView.image = [UIImage imageNamed:@"shadow_gray_light_blue-1.png" ];
+                [background addSubview:seperatorView];
+                [seperatorView release];
+				
+				if([[_child_sfm_process_node  allKeys] containsObject:detail_layout_id])
+                {
+                    NSString * record_id = [detail_values_ids objectAtIndex:row-1];
+                    NSString * objectName_  =  [detail objectForKey:gDETAIL_OBJECT_NAME];
+                    NSString * sf_id = [appDelegate.databaseInterface  getSfid_For_LocalId_From_Object_table:objectName_ local_id:record_id];
+                    if([sf_id length] > 0)
+                    {
+						CGRect swithchButtonFrame = CGRectMake(xValForSwitchbutton, 6, 35, 30);
+						//Radha : 3/june/2013
+						SWitchViewButton * switchButton = [[SWitchViewButton alloc] initWithFrame:swithchButtonFrame];
+						[switchButton setBackgroundImage:switchImage forState:UIControlStateNormal];
+						switchButton.indexPath = indexPath;
+						[switchButton addTarget:self action:@selector(showChildLinkedProcess:) forControlEvents:UIControlEventTouchUpInside];
+						[background addSubview:switchButton];
+						[switchButton release];
+					}
+                }
+				
+                
+                UIImage *disclosureImg = [UIImage imageNamed:@"detail_disclosure_open.png"];
+                UIImage *savImg = [UIImage imageNamed:@"SFM-Screen-Done-Back-Button.png"];
+                int padding = 100;
+                UIView *viewPadding=[[UIView alloc] initWithFrame:cell.frame];
+                viewPadding.backgroundColor=[UIColor clearColor];
+                [background  addSubview:viewPadding];
+                float xValForDisclosure = cell.frame.size.width - ( disclosureImg.size.width + padding );
+                
+                CGRect disclosurebtnFrame = CGRectMake(xValForDisclosure, 2, 30, 30);
+                
+                SVMAccessoryButton *triangleBtn = [[SVMAccessoryButton alloc] initWithFrame:disclosurebtnFrame];;
+                triangleBtn.indexpath = self.selectedIndexPathForEdit;
+                triangleBtn.tag = 9743;
+                [triangleBtn setBackgroundImage:disclosureImg forState:UIControlStateNormal];
+                [triangleBtn addTarget:self action:@selector(lineDetailBtnAction:) forControlEvents:UIControlEventTouchUpInside];
+                [background addSubview:triangleBtn];
+                [triangleBtn release];
+			
+                CGRect btnFrame = CGRectMake(6, 4, 70, 31);      //TODO : PLEASE CHANGE (hard coded)
+                
+                UIButton *saveBtn = [[UIButton alloc] initWithFrame:btnFrame];
+                saveBtn.tag = 9742;
+				 NSString * done = [appDelegate.wsInterface.tagsDictionary objectForKey:DONE_BUTTON_TITLE];
+				[saveBtn setTitle:done forState:UIControlStateNormal];
+                [saveBtn setBackgroundImage:savImg forState:UIControlStateNormal];
+                [saveBtn addTarget:self action:@selector(lineDetailBtnAction:) forControlEvents:UIControlEventTouchUpInside];
+                [background addSubview:saveBtn];
+                			
+				
+				CGRect removeBtnFrame = CGRectMake(saveBtn.frame.size.width+10, 4, 70, 31);
+				
+				UIButton * removeBtn = [[UIButton alloc] initWithFrame:removeBtnFrame];
+				removeBtn.tag= index;
+				NSString * cancelTitle = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON];
+				[removeBtn setTitle:cancelTitle forState:UIControlStateNormal];
+                [removeBtn setBackgroundImage:savImg forState:UIControlStateNormal];
+                [removeBtn addTarget:self action:@selector(removeDetailLine:) forControlEvents:UIControlEventTouchUpInside];
+                [background addSubview:removeBtn];
+				
+				[saveBtn release];
+                [removeBtn release];
+
+				[self showEditViewOfLineInView:background forIndexPath:indexPath forEditMode:YES];
+					isEditRow = YES;
+
+                background.backgroundColor = [UIColor clearColor];//kri
+            }
+			else
+            {
+                background.backgroundColor = [UIColor clearColor];//kri
+            }
+            if(self.selectedIndexPathForchildView != nil && indexPath.section == self.selectedIndexPathForchildView.section && indexPath.row == self.selectedIndexPathForchildView.row && self.selectedIndexPathForEdit == nil)
+            {
+                self.SFMChildTableview = nil;
+				
+				
+				//Radha :- 14/June/2013
+				//Remove the child view button and add it again
+				
+				[[background viewWithTag:2345] removeFromSuperview];
+				
+				UIImage * switchImage = [UIImage imageNamed:@"SFM-Screen-Switch-Views-button_transparent.png"];
+				float xValForSwitchbutton = cell.frame.size.width - ( switchImage.size.width + 130 );
+				
+				UIImageView *seperatorView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, cell.contentView.frame.size.width, 32)];
+                seperatorView.image = [UIImage imageNamed:@"shadow_gray_light_blue-1.png" ];
+                [background addSubview:seperatorView];
+                [seperatorView release];
+				
+				CGRect swithchButtonFrame = CGRectMake(xValForSwitchbutton, 6, 35, 30);
+				
+				SWitchViewButton * switchButton = [[SWitchViewButton alloc] initWithFrame:swithchButtonFrame];
+				[switchButton setBackgroundImage:switchImage forState:UIControlStateNormal];
+				switchButton.indexPath = indexPath;
+				switchButton.tag = 2345;
+				[switchButton addTarget:self action:@selector(closeSFMChildViewProcess:) forControlEvents:UIControlEventTouchUpInside];
+				[background addSubview:switchButton];
+				[switchButton release];
+
+               [self showChildViewProcessTable:cell.contentView indexpath:indexPath];
+                            isEditRow = YES;
+                background.backgroundColor = [UIColor clearColor];
+            }
+            else
+            {
+                background.backgroundColor = [UIColor clearColor];//kri
+            }
+            
 		}
-        
-        background.backgroundColor = [UIColor clearColor];
 		[cell.contentView addSubview:background];
     }
 
@@ -5075,10 +5505,11 @@ extern void SVMXLog(NSString *format, ...);
             bgView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM-Screen-Table-Header.png"]] autorelease];
         }
     }
-    cell.backgroundView = bgView;
+	cell.backgroundView = isEditRow ? nil : bgView;
+    
+
 	return cell;
 }
-
 
 - (UITableViewCell *) SFMViewCellForTable:(UITableView *)_tableView AtIndexPath:(NSIndexPath *)indexPath
 {
@@ -5096,12 +5527,14 @@ extern void SVMXLog(NSString *format, ...);
 	{
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellSelectionStyleNone reuseIdentifier:@"Cell"];
 		cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        CGRect cellframe = cell.frame;
+        cellframe.size.width = 704;
+        cell.frame = cellframe;
+
         background = [[UIView alloc] initWithFrame:CGRectMake(0, 0, width, 28)];
-//        isCellNew = YES;
 	}
 	else
     {
-//        isCellNew = NO;
         NSArray * recognizers = [cell gestureRecognizers];
         for(id gest_recognizer in recognizers)
         {
@@ -5127,7 +5560,7 @@ extern void SVMXLog(NSString *format, ...);
 	
     if(background == nil)
     {
-        background = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, width, 28)] autorelease];
+        background = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, width, 100)] autorelease];
     }
 
     NSInteger background_width = background.frame.size.width;
@@ -5178,14 +5611,11 @@ extern void SVMXLog(NSString *format, ...);
                     {
                         lbl = [[[UILabel alloc] initWithFrame:CGRectMake((i+1)*20, 0, width, control_height)] autorelease];
                         lbl.text = [appDelegate.wsInterface.tagsDictionary objectForKey:SLA_RESTORATION];
-                        // [self getLabelForObject:@"SVMXC__Resolution_Customer_By__c"];
-
                     }
                     else
                     {
                         lbl = [[[UILabel alloc] initWithFrame:CGRectMake(i*400, 0, width, control_height)] autorelease];
                         lbl.text = [appDelegate.wsInterface.tagsDictionary objectForKey:SLA_RESOLUTION];
-                        // [self getLabelForObject:@"SVMXC__Restoration_Customer_By__c"];
                     }
                     lbl.font = [UIFont fontWithName:@"HelveticaBold" size:19];
                     lbl.font = [UIFont boldSystemFontOfSize:lbl.font.pointSize];
@@ -5347,7 +5777,7 @@ extern void SVMXLog(NSString *format, ...);
             //get  the control Type
             NSString * field_data_type = [dict objectForKey:gFIELD_DATA_TYPE];
                        
-            UILabel * lbl = [[[UILabel alloc] initWithFrame:CGRectMake(x, 0, width,control_height)] autorelease];
+            UILabel * lbl = [[[UILabel alloc] initWithFrame:CGRectMake(x, 5, width,control_height)] autorelease];
             lbl.backgroundColor = [UIColor clearColor];
             NSString * label_name = [dict objectForKey:gFIELD_LABEL];
 			lbl.text = label_name;
@@ -5368,7 +5798,7 @@ extern void SVMXLog(NSString *format, ...);
                 NSString * related_to_table_name = [dict objectForKey:gFIELD_RELATED_OBJECT_NAME];
                 NSString * api_name = [dict objectForKey:gFIELD_API_NAME];
                 NSString * value = [[field_columns objectAtIndex:j] objectForKey:gFIELD_VALUE_VALUE];
-                CusLabel * custLabel = [[CusLabel alloc] initWithFrame:CGRectMake((2*j+1)*field_width , 6, field_width,control_height-8)];
+                CusLabel * custLabel = [[CusLabel alloc] initWithFrame:CGRectMake((2*j+1)*field_width , 10, field_width,control_height-8)];
                 custLabel.backgroundColor = [UIColor clearColor];
                 
                 custLabel.tapRecgLabel=value;
@@ -5382,6 +5812,7 @@ extern void SVMXLog(NSString *format, ...);
                 custLabel.id_ = key;
                 custLabel.refered_to_table_name = related_to_table_name;
                 custLabel.object_api_name = api_name;
+				custLabel.isInDetailMode = NO;
                 
                 
                 //Radha 2012june08
@@ -5424,7 +5855,7 @@ extern void SVMXLog(NSString *format, ...);
             
             else
             {
-                lbl1 = [[UILabel alloc]initWithFrame:CGRectMake((2*j+1)*field_width , 6, field_width,control_height-8)];
+                lbl1 = [[UILabel alloc]initWithFrame:CGRectMake((2*j+1)*field_width , 10, field_width,control_height-8)];
                 NSString * value = [[field_columns objectAtIndex:j] objectForKey:gFIELD_VALUE_VALUE];
                 lbl1.text =  [[field_columns objectAtIndex:j] objectForKey:gFIELD_VALUE_VALUE];
                 lbl1.backgroundColor = [UIColor clearColor];
@@ -5445,7 +5876,7 @@ extern void SVMXLog(NSString *format, ...);
                     {
                         v1 = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM-Screen-boolean-tick-Icon.png"]] autorelease];
                         v1.backgroundColor = [UIColor clearColor];
-                        v1.frame = CGRectMake((2*j+1)*field_width +10, 6, 18, 18);
+                        v1.frame = CGRectMake((2*j+1)*field_width +10, 8, 18, 18);
                         v1.contentMode = UIViewContentModeCenter;
                         [background addSubview:v1];
                     }
@@ -5498,13 +5929,17 @@ extern void SVMXLog(NSString *format, ...);
         background.backgroundColor = [UIColor clearColor];
 		[cell.contentView addSubview:background];
 	}
-	else if (selectedSection == SHOW_LINES_ROW || selectedSection == SHOWALL_LINES)
+    BOOL isEditRow = NO;
+    if (selectedSection == SHOW_LINES_ROW || selectedSection == SHOWALL_LINES)
 	{
         header = FALSE;
 		NSMutableArray * details = [appDelegate.SFMPage objectForKey:gDETAILS];
 		NSMutableDictionary * detail = [details objectAtIndex:index];
 		NSMutableArray * detail_fields = [detail objectForKey:gDETAILS_FIELDS_ARRAY];
         NSInteger columns = [[detail objectForKey:gDETAILS_NUMBER_OF_COLUMNS] intValue];
+        NSString * detail_layout_id = [detail objectForKey:gDETAILS_LAYOUT_ID];
+        NSArray * detail_values_ids = [detail objectForKey:gDETAIL_VALUES_RECORD_ID];
+        
 		NSInteger field_width = background_width/columns;   
             
         if (row == 0) //display the column titles
@@ -5515,7 +5950,7 @@ extern void SVMXLog(NSString *format, ...);
             {
                 for (int j=0;j<columns && j<[detail_fields count];j++)
                 {
-                    UILabel * lbl = [[[UILabel alloc] initWithFrame:CGRectMake(j*field_width+8, 0, field_width-8,control_height)] autorelease];
+                    UILabel * lbl = [[[UILabel alloc] initWithFrame:CGRectMake(j*field_width+8, 5, field_width-8,control_height)] autorelease];
                     NSString * label_name = [[detail_fields objectAtIndex:j] objectForKey:gFIELD_LABEL];
                     lbl.text = label_name;
                     lbl.font = [UIFont fontWithName:@"HelveticaBold" size:19];
@@ -5556,7 +5991,7 @@ extern void SVMXLog(NSString *format, ...);
            
 			for (int j = 0; j < columns && j < [detail_fields count]; j++)//[detail_values count ]
 			{
-                CGRect frame =  CGRectMake(j*field_width, 6, field_width-4,control_height-6);
+                CGRect frame =  CGRectMake(j*field_width, 9, field_width-4,control_height-6);
                 lbl2 = [[UILabel alloc]initWithFrame:frame];
                 NSString * field_data_type = [[detail_fields objectAtIndex:j] objectForKey:gFIELD_DATA_TYPE];
                 NSString * value = [[detail_values objectAtIndex:j] objectForKey:gVALUE_FIELD_VALUE_VALUE];
@@ -5659,7 +6094,7 @@ extern void SVMXLog(NSString *format, ...);
                     {
                         v1 = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM-Screen-boolean-tick-Icon.png"]] autorelease];
                         v1.backgroundColor = [UIColor clearColor];
-                        v1.frame = CGRectMake(j*field_width+20, 12, 18, 18);
+                        v1.frame = CGRectMake(j*field_width+20, 15, 18, 18);
                         v1.contentMode = UIViewContentModeCenter;
                         [background addSubview:v1];
                     }
@@ -5668,27 +6103,154 @@ extern void SVMXLog(NSString *format, ...);
                         v1 = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM-Screen-boolean-Cancel-Icon.png"]] autorelease];
                         v1.backgroundColor = [UIColor clearColor];
                         v1.contentMode = UIViewContentModeCenter;
-                        v1.frame = CGRectMake(j*field_width+20, 12, 18, 18);
+                        v1.frame = CGRectMake(j*field_width+20, 15, 18, 18);
                         [background addSubview:v1];
                     }
                 }                   
 			}
-            
-            [cell setAccessoryType:UITableViewCellAccessoryDetailDisclosureButton];
-            
-            
+            cell.accessoryView = nil;
 		}
-        cell.contentView.userInteractionEnabled = YES;
-        
         background.backgroundColor = [UIColor clearColor];
-        background.frame = CGRectMake(0, 0, tableView.frame.size.width-42, cell.contentView.frame.size.height);
-        cell.clipsToBounds = YES;
-        cell.contentView.clipsToBounds = YES;
+        //Kri
+        //background.frame = CGRectMake(0, 0, cell.contentView.frame.size.width-42, cell.contentView.frame.size.height);
+        
+        
+        //KRI to remove the header part
+        //KRI get edit view from sfmeditVC
+        
+        if (row!=0)
+		{
+            //Radha : 3/june/2013
+			UIImage * switchImage = [UIImage imageNamed:@"SFM-Screen-Switch-Views-button_transparent.png"];
+			float xValForSwitchbutton = cell.frame.size.width - ( switchImage.size.width + 130 );
+			
+			CGRect swithchButtonFrame = CGRectMake(xValForSwitchbutton, 6, 35, 30);
+			
+			if([[_child_sfm_process_node  allKeys] containsObject:detail_layout_id])
+            {
+                 NSString * record_id = [detail_values_ids objectAtIndex:row-1];
+                NSString * objectName_  =  [detail objectForKey:gDETAIL_OBJECT_NAME];
+                NSString * sf_id = [appDelegate.databaseInterface  getSfid_For_LocalId_From_Object_table:objectName_ local_id:record_id];
+                if([sf_id length] > 0)
+                {
+					SWitchViewButton * switchButton = [[SWitchViewButton alloc] initWithFrame:swithchButtonFrame];
+					[switchButton setBackgroundImage:switchImage forState:UIControlStateNormal];
+					switchButton.indexPath = indexPath;
+					switchButton.tag = 2345;
+					[switchButton addTarget:self action:@selector(showChildLinkedProcess:) forControlEvents:UIControlEventTouchUpInside];
+					[background addSubview:switchButton];
+					[switchButton release];
+				}
+            }
+			
+            UIImage *disclosureImg = [UIImage imageNamed:@"detail_disclosure.png"];
+            float xValForDisclosure = cell.frame.size.width - ( disclosureImg.size.width + 100 );
+
+            CGRect disclosurebtnFrame = CGRectMake(xValForDisclosure, 6, 30, 30);
+            SVMAccessoryButton *triangleBtn = [[SVMAccessoryButton alloc] initWithFrame:disclosurebtnFrame];;
+            triangleBtn.indexpath = indexPath;
+            triangleBtn.tag = 9746;
+            [triangleBtn setBackgroundImage:disclosureImg forState:UIControlStateNormal];
+            [triangleBtn addTarget:self action:@selector(lineDetailBtnActionCheck:) forControlEvents:UIControlEventTouchUpInside];
+			
+			
+            [background addSubview:triangleBtn];
+            [triangleBtn release];
+        }
+        if(self.selectedIndexPathForEdit != nil && indexPath.section == self.selectedIndexPathForEdit.section && indexPath.row == self.selectedIndexPathForEdit.row )
+        {
+            cell.clipsToBounds = YES;
+            
+            [[background subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+//            self.editDetailObject = nil;
+			
+			            
+            UIImageView *seperatorView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, cell.contentView.frame.size.width, 32)];
+            seperatorView.image = [UIImage imageNamed:@"shadow_gray_light_blue-1.png" ];
+            [background addSubview:seperatorView];
+            [seperatorView release];
+            
+            UIImage *disclosureImg = [UIImage imageNamed:@"detail_disclosure_open.png"];
+            int padding = 100;
+            
+            float xValForDisclosure = cell.frame.size.width - ( disclosureImg.size.width + padding );
+            
+            CGRect disclosurebtnFrame = CGRectMake(xValForDisclosure, 2, 30, 30);
+            SVMAccessoryButton *triangleBtn = [[SVMAccessoryButton alloc] initWithFrame:disclosurebtnFrame];;
+            triangleBtn.indexpath = self.selectedIndexPathForEdit;
+            triangleBtn.tag = 9743;
+            [triangleBtn setBackgroundImage:disclosureImg forState:UIControlStateNormal];
+            [triangleBtn addTarget:self action:@selector(lineDetailBtnAction:) forControlEvents:UIControlEventTouchUpInside];
+            [background addSubview:triangleBtn];
+            [triangleBtn release];
+			
+			//Radha : 3/june/2013
+			UIImage * switchImage = [UIImage imageNamed:@"SFM-Screen-Switch-Views-button_transparent.png"];
+			float xValForSwitchbutton = cell.frame.size.width - ( switchImage.size.width + 130 );
+			
+			CGRect swithchButtonFrame = CGRectMake(xValForSwitchbutton, 6, 35, 30);
+			
+
+			if([[_child_sfm_process_node  allKeys] containsObject:detail_layout_id])
+            {
+                NSString * record_id = [detail_values_ids objectAtIndex:row-1];
+                NSString * objectName_  =  [detail objectForKey:gDETAIL_OBJECT_NAME];
+                NSString * sf_id = [appDelegate.databaseInterface  getSfid_For_LocalId_From_Object_table:objectName_ local_id:record_id];
+                if([sf_id length] > 0)
+                {
+					SWitchViewButton * switchButton = [[SWitchViewButton alloc] initWithFrame:swithchButtonFrame];
+					[switchButton setBackgroundImage:switchImage forState:UIControlStateNormal];
+					switchButton.indexPath = indexPath;
+					[switchButton addTarget:self action:@selector(showChildLinkedProcess:) forControlEvents:UIControlEventTouchUpInside];
+					[background addSubview:switchButton];
+					[switchButton release];
+                }
+            }
+
+
+            
+            [self showEditViewOfLineInView:cell.contentView forIndexPath:indexPath forEditMode:NO];
+            
+            background.backgroundColor = [UIColor clearColor];
+            isEditRow = YES;
+        }
+		
+		if(self.selectedIndexPathForchildView != nil && indexPath.section == self.selectedIndexPathForchildView.section && indexPath.row == self.selectedIndexPathForchildView.row )
+		{
+			self.SFMChildTableview = nil;
+			
+			
+			//Radha :- 14/June/2013
+			//Remove the child view button and add it again
+			
+			[[background viewWithTag:2345] removeFromSuperview];
+			
+			UIImage * switchImage = [UIImage imageNamed:@"SFM-Screen-Switch-Views-button_transparent.png"];
+			float xValForSwitchbutton = cell.frame.size.width - ( switchImage.size.width + 130 );
+			
+			UIImageView *seperatorView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, cell.contentView.frame.size.width, 32)];
+            seperatorView.image = [UIImage imageNamed:@"shadow_gray_light_blue-1.png" ];
+            [background addSubview:seperatorView];
+            [seperatorView release];
+			
+			CGRect swithchButtonFrame = CGRectMake(xValForSwitchbutton, 6, 35, 30);
+			
+			SWitchViewButton * switchButton = [[SWitchViewButton alloc] initWithFrame:swithchButtonFrame];
+			[switchButton setBackgroundImage:switchImage forState:UIControlStateNormal];
+			switchButton.indexPath = indexPath;
+			switchButton.tag = 2345;
+			[switchButton addTarget:self action:@selector(closeSFMChildViewProcess:) forControlEvents:UIControlEventTouchUpInside];
+			[background addSubview:switchButton];
+			[switchButton release];			
+            
+			[self showChildViewProcessTable:cell.contentView indexpath:indexPath ];
+            isEditRow = YES;
+             background.backgroundColor = [UIColor clearColor];
+		}
 		[cell.contentView addSubview:background];
 	}
     else if(selectedSection == SHOW_ADDITIONALINFO_ROW || selectedSection == SHOW_ALL_ADDITIONALINFO)
     {
-        // NSString * additional_info = [appDelegate.additionalInfo objectAtIndex:index];
         NSDictionary * additional_info_dict = [appDelegate.additionalInfo objectAtIndex:index];
         NSString * additional_info = [[additional_info_dict allKeys] objectAtIndex:0];
         NSMutableArray * additional_dict = nil;
@@ -5738,14 +6300,10 @@ extern void SVMXLog(NSString *format, ...);
             {
                 
                 NSArray * keys = [info_dict allKeys];
-                UILabel * lbl = nil;
                 NSInteger colmn_count = 0;
                 for (int j = 0; j < [keys count]; j++)
                 {
-                    CGRect frame =  CGRectMake(j*field_width+8, 0, field_width-8,control_height);//(colmn_count*field_width, 6, field_width-4,control_height-6);
-                    
-                    //CGRect frame = CGRectMake(colmn_count*field_width, 6, field_width-4,control_height-6);
-
+                    CGRect frame =  CGRectMake(j*field_width+8, 0, field_width-8,control_height);
                     UILabel * lbl = [[[UILabel alloc]initWithFrame:frame] autorelease];
                     
                 //    UILabel * lbl = [[[UILabel alloc]init] autorelease];
@@ -5762,22 +6320,7 @@ extern void SVMXLog(NSString *format, ...);
                         
                         if(appDelegate.isWorkinginOffline)
                         {   
-                           /* value = [info_dict objectForKey:@"CreatedDate"];
-                            value = [value stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-                            value = [value stringByReplacingOccurrencesOfString:@".000Z" withString:@""];
-                            value = [iOSInterfaceObject getLocalTimeFromGMT:value];
-                            value = [value stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-                            value = [value stringByReplacingOccurrencesOfString:@"Z" withString:@""];
-                            NSDateFormatter * frm = [[[NSDateFormatter alloc] init] autorelease];
-                            [frm setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
-                            NSDate * date = [frm dateFromString:value];
-                            [frm  setDateFormat:DATETIMEFORMAT];
-                            value = [frm stringFromDate:date];
-                            lbl.text = value;
-                            lbl.backgroundColor = [UIColor clearColor];
-                            [background addSubview:lbl];
-                            colmn_count ++;*/
-                            
+                                                      
                             id date = [info_dict objectForKey:@"CreatedDate"];
                             NSDateFormatter * frm = [[[NSDateFormatter alloc] init] autorelease];
                             [frm setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
@@ -5801,7 +6344,6 @@ extern void SVMXLog(NSString *format, ...);
                             
                             [frm setDateFormat:DATETIMEFORMAT];
                             value = [frm stringFromDate:_date];
-                       ///     lbl.frame = CGRectMake(j*field_width+8, 0, field_width-8,control_height);
                             lbl.text = value;
                             lbl.backgroundColor = [UIColor clearColor];
                             [background addSubview:lbl];
@@ -5867,7 +6409,15 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     bgView.frame = CGRectMake(0, 0, _tableView.frame.size.width, 32);
-    cell.backgroundView = bgView;
+    cell.backgroundView = isEditRow ? nil : bgView;
+	if(self.selectedIndexPathForchildView != nil && indexPath.section == self.selectedIndexPathForchildView.section && indexPath.row == self.selectedIndexPathForchildView.row )
+	{
+		[cell.contentView bringSubviewToFront:self.SFMChildTableview.view];
+	}
+	else if(self.selectedIndexPathForEdit != nil && indexPath.section == self.selectedIndexPathForchildView.section && indexPath.row == self.selectedIndexPathForEdit.row )
+	{
+		[cell.contentView bringSubviewToFront:self.editDetailObject.view];
+	}
  	return cell;
 }
 
@@ -5915,7 +6465,6 @@ extern void SVMXLog(NSString *format, ...);
                     
             
             NSString * objectName_  =  [detail objectForKey:gDETAIL_OBJECT_NAME];;
-          //  NSString * record_id = [appDelegate.databaseInterface  getLocalIdFromSFId:temp_record_id tableName:objectName_];
             
             NSString * record_id = temp_record_id;
            
@@ -6097,7 +6646,7 @@ extern void SVMXLog(NSString *format, ...);
             custLabel.id_ = key;
             custLabel.refered_to_table_name = related_to_table_name;
             custLabel.object_api_name = api_name;
-            
+            custLabel.isInDetailMode = NO;
             
             //Radha 2012june08
             BOOL recordExists = [appDelegate.dataBase checkIfRecordExistForObject:related_to_table_name Id:key];
@@ -6255,10 +6804,6 @@ extern void SVMXLog(NSString *format, ...);
             NSMutableArray * descObjArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
             NSMutableArray * descObjValidFor = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
             
-//            NSMutableDictionary * _header =  [appDelegate.SFMPage objectForKey:@"header"];
-            
-//            NSString * headerObjName = [_header objectForKey:gHEADER_OBJECT_NAME];
-            
             isdependentPicklist  = [[appDelegate.databaseInterface getPicklistINfo_isdependentOrControllername_For_field_name:DEPENDENT_PICKLIST field_api_name:fieldAPIName object_name:detail_objectName] boolValue];
             
             dependPick_controllerName = [appDelegate.databaseInterface getPicklistINfo_isdependentOrControllername_For_field_name:CONTROLLER_FIRLD field_api_name:fieldAPIName object_name:detail_objectName];
@@ -6274,15 +6819,7 @@ extern void SVMXLog(NSString *format, ...);
             
             NSMutableArray * allkeys_ordered = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
             [allkeys_ordered addObject:@" "];
-            
-            //Abinash Fix
-            
-//            if ([allvalues count] > 0)
-//            {
-//                //                       allvalues = [self orderingAnArray:allvalues];
-//                allvalues = [allvalues sortedArrayUsingSelector:@selector(compare:)];
-//            }
-
+		
 			
 			//Fix for Defect #4656
 			allvalues = [appDelegate.calDataBase sortPickListUsingIndexes:allvalues WithfieldAPIName:fieldAPIName tableName:SFPicklist objectName:detail_objectName];
@@ -6423,12 +6960,14 @@ extern void SVMXLog(NSString *format, ...);
             NSInteger i =  indexPath.row ;
             if(i == 0)
             {
-                currentEditRow = nil;
+                self.currentEditRow = nil;
                 return;
             }
         }
     }
-     currentEditRow = [indexPath retain];
+     self.currentEditRow = [indexPath retain];
+    
+    NSLog(@"DetailView didselectrow %@", indexPath);
 }
 
 - (void)viewDidUnload
@@ -6467,9 +7006,7 @@ extern void SVMXLog(NSString *format, ...);
 {
     if (self != viewController)
     {
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidShowNotification object:nil];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+
     }
     else
     {
@@ -6479,9 +7016,7 @@ extern void SVMXLog(NSString *format, ...);
     
     DetailViewController * detailView = (DetailViewController *)viewController;
     [detailView.tableView reloadData];
-    [[NSNotificationCenter defaultCenter] addObserver:detailView selector:@selector(keyBoardDidShow:) name:UIKeyboardDidShowNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:detailView selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
-	[[NSNotificationCenter defaultCenter] addObserver:detailView selector:@selector(keyboardDidHide:) name:UIKeyboardWillHideNotification object:nil];
+
     
     [self enableSFMUI];
 }
@@ -6509,7 +7044,6 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     [self enableSFMUI];
-    
     [self.tableView reloadData];
     
     if (didReceiveMemoryWarning)
@@ -6539,6 +7073,13 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void)dealloc
 {
+    //Radha :- Child SFM UI
+    [SFMChildTableview release];
+    SFMChildTableview = nil;
+    
+    //KRI
+    [editDetailObject release];
+	editDetailObject = nil;
     if ([self.view isHidden])
     {
         
@@ -6553,6 +7094,9 @@ extern void SVMXLog(NSString *format, ...);
     indicatorForAddRow = nil;
     [webView release];
     [backBtn release];
+    //Radha :- Child SFM UI
+    [selectedIndexPathForEdit release];
+    [editViewOfLine release]; 
     [jsExecuter release];
     [priceBookData release];
 	[super dealloc];
@@ -6592,14 +7136,14 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) controlIndexPath:(NSIndexPath *)indexPath
 {
-    currentEditRow = [indexPath retain];
+    self.currentEditRow = [indexPath retain];
     SMLog(@"%@", currentEditRow);
 }
 
 // This one's ONLY for LOOKUP
 - (void) selectControlAtIndexPath:(NSIndexPath *)indexPath
 {
-    currentEditRow = [indexPath retain];
+    self.currentEditRow = [indexPath retain];
 }
 
 - (void) deselectControlAtIndexPath:(NSIndexPath *)indexPath
@@ -7518,6 +8062,16 @@ extern void SVMXLog(NSString *format, ...);
 #pragma mark - accessoryTapped: Method
 - (void) accessoryTapped:(id)sender
 {
+    //Radha :- Child SFM UI 9/June/2013
+    if (self.selectedIndexPathForEdit != nil)
+    {
+        [self hideEditViewOfLine];
+    }
+	if (self.selectedIndexPathForchildView != nil)
+	{
+		[self hideChildLinkedViewProcess];
+	}
+    
     if(appDelegate.isWorkinginOffline)
     {
        
@@ -7774,26 +8328,27 @@ extern void SVMXLog(NSString *format, ...);
             _indexPath = [NSIndexPath indexPathForRow:indexPath.row inSection:index];
         }
         
+		
+		//Radha
+		if (currentEditRow)
+		{
+			self.currentEditRow = nil;
+		}
+		self.currentEditRow = indexPath;
         
         Disclosure_dict = nil;
         Disclosure_Details = nil;
         [self fillDictionary:_indexPath];
-        detailViewObject = [[DetailViewController alloc] initWithNibName:@"DetailView" bundle:nil];
-        self.navigationController.delegate = self;
-        detailViewObject.parentReference = self;
-        detailViewObject.selectedIndexPath = _indexPath;
-        detailViewObject.selectedRowForDetailEdit = _indexPath.row-1;
-        detailViewObject.isInEditDetail = YES;
-        detailViewObject.isInViewMode = isInViewMode;
-        detailViewObject.header = self.header;
-        detailViewObject.line = self.line;
-        detailViewObject.Disclosure_dict = self.Disclosure_dict;
-        detailViewObject.Disclosure_Fields = self.Disclosure_Fields;
-        detailViewObject.Disclosure_Details = self.Disclosure_Details;
-        detailViewObject.showSyncUI = self.showSyncUI;
-        //sahana navigation custom butto
-        detailViewObject.navigationItem.leftBarButtonItem = nil;
-        [detailViewObject.navigationItem setHidesBackButton:YES animated:YES];
+        
+//      if(isEditingDetail)
+		{
+            self.editDetailObject = nil;
+			[self getEditViewOfLine];
+            UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+            
+            [self showEditViewOfLineInView:cell.contentView forIndexPath:_indexPath forEditMode:YES];
+        }
+
         
         // ################ BACK BUTTON HERE ################# //
         UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectZero] autorelease];
@@ -7869,7 +8424,8 @@ extern void SVMXLog(NSString *format, ...);
 			}
 		}
         [self enableSFMUI];
-        
+        self.selectedIndexPathForEdit = indexPath;
+        [self.tableView reloadData];//Kri
     }
     else
     {
@@ -8150,14 +8706,20 @@ extern void SVMXLog(NSString *format, ...);
 #pragma mark- multiAccessoryTapped:Method
 - (IBAction) multiAccessoryTapped:(id)sender
 {
-    if(appDelegate.isWorkinginOffline)
+    //Radha :- Child SFM UI 9/June/2013
+    if (self.selectedIndexPathForEdit != nil)
     {
+        [self hideExpandedChildViews];
+        [self hideEditViewOfLine];
         
     }
-    else
-    {
-        
-    }
+	if (self.selectedIndexPathForchildView != nil)
+	{
+		[self hideChildLinkedViewProcess];
+		[self.tableView reloadData];
+	}
+
+	self.currentEditRow = nil;
 
     control = (UIControl *)sender;
     NSInteger  _section = control.tag;
@@ -8166,7 +8728,6 @@ extern void SVMXLog(NSString *format, ...);
     
     NSString * multiadd_search_filed = [[details objectAtIndex:_section] objectForKey:gDETAIL_MULTIADD_SEARCH];
     NSString * multiadd_seach_object = [[details objectAtIndex:_section] objectForKey:gDETAIL_MULTIADD_SEARCH_OBJECT];
-//    NSString * mutlti_add_config = [[details objectAtIndex:_section] objectForKey:gDETAIL_MULTIADD_SEARCH_OBJECT];
     NSMutableArray * detailFieldsArray = [[details objectAtIndex:_section] objectForKey:gDETAILS_FIELDS_ARRAY];
     NSString * multiadd_label = nil;
 	
@@ -8714,18 +9275,12 @@ extern void SVMXLog(NSString *format, ...);
     {
         [multiLookupPopover presentPopoverFromRect:CGRectMake(5, 0, 10, 20) inView:multiControl permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
     }
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidShowNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 
 } 
 
 #pragma  mark - tableView delegate
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidShowNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
-	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
     
     NSInteger index;
     NSInteger section = indexPath.section;
@@ -8853,11 +9408,6 @@ extern void SVMXLog(NSString *format, ...);
         return;
     }
     
-//    NSInteger section = self.selectedIndexPath.section;
-//    NSMutableArray * details = [appDelegate.SFMPage objectForKey:gDETAILS];
-
-//    NSMutableDictionary * detail = [details objectAtIndex:section];
-
     NSInteger reqiredFieldCount = 0;
     // COLLECT ALL DATA FROM EDIT DETAIL SCREEN AND DUMP THEM ON APP DELEGATE SFM PAGE DATA (PROBABLY BUBBLE INFO)
     //control type
@@ -8867,7 +9417,7 @@ extern void SVMXLog(NSString *format, ...);
         NSIndexPath * indexPath = [NSIndexPath indexPathForRow:i inSection:0];
         UITableViewCell * cell = [self.tableView cellForRowAtIndexPath:indexPath];
         
-        NSString * fieldValue = @"", * fieldType = @"";
+        NSString * fieldValue = @"";
         
         UIView * background = [[cell.contentView subviews] objectAtIndex:0];
         NSArray * backgroundSubViews = [background subviews];
@@ -8883,7 +9433,6 @@ extern void SVMXLog(NSString *format, ...);
                 
                 NSDictionary * dict = [self valueForcontrol:view];
               
-//                fieldType = [dict objectForKey:DapiName];
                 fieldValue = [dict objectForKey:Dvalue];
                 if([fieldValue length] == 0 && check_required == TRUE)
                 {
@@ -9031,6 +9580,9 @@ extern void SVMXLog(NSString *format, ...);
             BOOL allowDeleteLines = [[detail objectForKey:@"details_Allow_Delete_Lines"] boolValue];
             if(allowDeleteLines)
             {
+                if([indexPath isEqual:self.selectedIndexPathForEdit] ) {
+                    return NO;  //KRI
+                }
                 return YES;
             }
             else
@@ -9098,6 +9650,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%d", a);
 
         [tableView deleteRowsAtIndexPaths:[NSMutableArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        [self hideExpandedChildViews];
     }
     
     [tableView endUpdates];
@@ -9413,6 +9966,60 @@ extern void SVMXLog(NSString *format, ...);
         
     }
 }
+-(void)tapRecognizedForEdit:(id)sender
+{
+    UITapGestureRecognizer * tap = sender;
+    if ([tap.view isKindOfClass:[UILabel  class]])
+    {
+        UILabel * label = (UILabel *) tap.view;
+        if(label.text == nil)
+            return;
+        //if the text length is 0 then dont show the popover
+        if([label.text length] == 0)
+            return;
+        
+        // content View class
+        label_popOver_content = [[LabelPOContentView alloc ] init];
+        
+        // calculating the size for the popover
+        UIFont * font = [UIFont systemFontOfSize:17.0];
+        CGSize size =[label.text  sizeWithFont:font];
+        
+        //subview for the content view
+        UITextView * contentView_textView;
+        if(size.width > 240)
+        {
+            label_popOver_content.view.frame = CGRectMake(0, 0, label_popOver_content.view.frame.size.width, 70);
+            contentView_textView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, label_popOver_content.view.frame.size.width, 70)];
+        }
+        else
+        {
+            label_popOver_content.view.frame = CGRectMake(0, 0, label_popOver_content.view.frame.size.width, 34);
+            contentView_textView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, label_popOver_content.view.frame.size.width, 34)];
+        }
+        
+        contentView_textView.text = label.text;
+        contentView_textView.font = font;
+        contentView_textView.userInteractionEnabled = YES;
+        contentView_textView.editable = NO;
+        contentView_textView.textAlignment = UITextAlignmentCenter;
+        [label_popOver_content.view addSubview:contentView_textView];
+        
+        CGSize size_po = CGSizeMake(label_popOver_content.view.frame.size.width, label_popOver_content.view.frame.size.height);
+        label_popOver = [[UIPopoverController alloc] initWithContentViewController:label_popOver_content];
+        [label_popOver setPopoverContentSize:size_po animated:YES];
+        
+        label_popOver.delegate = self;
+		
+        [label_popOver presentPopoverFromRect:CGRectMake(label.frame.size.width/2,14, 10, 10) inView:label permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+		
+        [contentView_textView release];
+        [label_popOver_content release];
+        
+    }
+}
+
+
 -(void)tapRecognized1:(UIGestureRecognizer *)sender
 {
     
@@ -9908,18 +10515,23 @@ extern void SVMXLog(NSString *format, ...);
     else
     {
         //sahana 20th August 2011
-        NSMutableArray * detailValue = [detail_values objectAtIndex:self.selectedRowForDetailEdit];
-        for(int i =0; i< [detailValue count]; i++)
-        {
-            NSMutableDictionary  * dict = [detailValue objectAtIndex:i];
-            NSString * api_name = [dict objectForKey:gVALUE_FIELD_API_NAME];
-            if([api_name isEqualToString:gDETAIL_SAVED_RECORD])
-            {
-                [dict  setObject:[NSNumber numberWithInt:1] forKey:gVALUE_FIELD_VALUE_VALUE];
-                [dict  setObject:[NSNumber numberWithInt:1] forKey:gVALUE_FIELD_VALUE_KEY];
-            }
-        }
-        [self.navigationController popViewControllerAnimated:YES];
+
+		if ([detail_values count] > 0)
+		{
+			NSMutableArray * detailValue = [detail_values objectAtIndex:self.selectedRowForDetailEdit];
+			for(int i =0; i< [detailValue count]; i++)
+			{
+				NSMutableDictionary  * dict = [detailValue objectAtIndex:i];
+				NSString * api_name = [dict objectForKey:gVALUE_FIELD_API_NAME];
+				if([api_name isEqualToString:gDETAIL_SAVED_RECORD])
+				{
+					[dict  setObject:[NSNumber numberWithInt:1] forKey:gVALUE_FIELD_VALUE_VALUE];
+					[dict  setObject:[NSNumber numberWithInt:1] forKey:gVALUE_FIELD_VALUE_KEY];
+				}
+			}
+
+		}
+		[self.navigationController popViewControllerAnimated:YES];
     }
 }
 
@@ -10074,6 +10686,9 @@ extern void SVMXLog(NSString *format, ...);
 -(void)offlineActions:(NSDictionary *)buttonDict
 {  
 
+	//Radha - june/10/2013 - child Sfm
+	[self hideChildLinkedViewProcess];
+	
     [self dismissActionMenu];
     NSString * warning = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_WARNING];
     NSString * invalidEmail = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_TEXT_INVALID_EMAIL]; 
@@ -10179,6 +10794,8 @@ extern void SVMXLog(NSString *format, ...);
                         }
                         else
                         {
+                            [self pushtViewProcessToStack:appDelegate.sfmPageController.processId record_id:appDelegate.sfmPageController.recordId];
+                            
                             appDelegate.sfmPageController.sourceProcessId = appDelegate.sfmPageController.processId;
                             appDelegate.sfmPageController.sourceRecordId = appDelegate.sfmPageController.recordId;
                             
@@ -10207,7 +10824,9 @@ extern void SVMXLog(NSString *format, ...);
 						{
 							syncType = AGRESSIVESYNC;
 						}
-
+                        
+                         [self pushtViewProcessToStack:appDelegate.sfmPageController.processId record_id:appDelegate.sfmPageController.recordId];
+                        
                         appDelegate.sfmPageController.sourceProcessId = appDelegate.sfmPageController.processId;
                         appDelegate.sfmPageController.sourceRecordId = nil;
                         
@@ -10325,6 +10944,9 @@ extern void SVMXLog(NSString *format, ...);
                             }
                             else
                             {
+                                
+                                [self pushtViewProcessToStack:appDelegate.sfmPageController.processId record_id:appDelegate.sfmPageController.recordId];
+                                
                                 appDelegate.sfmPageController.sourceProcessId = appDelegate.sfmPageController.processId;
                                 appDelegate.sfmPageController.sourceRecordId = appDelegate.sfmPageController.recordId;
                                 
@@ -13913,5 +14535,617 @@ extern void SVMXLog(NSString *format, ...);
     
     return [appDelegate.calDataBase checkIfBillablePriceExistForWorkOrderId:appDelegate.sfmPageController.recordId andFieldName:@"SVMXC__Billable_Quantity__c"];
 }
+#pragma mark -
+#pragma mark Manage edit view od lines
+- (SFMEditDetailViewController *) getEditViewOfLine {
+    
+    if(self.editDetailObject == nil) {
+        
+    SFMEditDetailViewController *editDetailObj = [[SFMEditDetailViewController alloc] initWithNibName:@"SFMEditDetailViewController" bundle:nil];
+        self.editDetailObject = editDetailObj;
+		self.editDetailObject.detailDelegate = self;
+        [editDetailObj release];
+    }
+    return self.editDetailObject;
+}
+- (IBAction)lineDetailBtnActionCheck:(id)sender {
+    
+	SVMAccessoryButton *btn = (SVMAccessoryButton *)sender;
+    NSIndexPath *indexpath = btn.indexpath;
+	
+	if(self.selectedIndexPathForchildView != nil && indexpath.section == self.selectedIndexPathForchildView.section && indexpath.row == self.selectedIndexPathForchildView.row )
+	{
+        [self hideChildLinkedViewProcess];
+		[self.tableView reloadData];
+		
+	}
+	else if (self.selectedIndexPathForchildView != nil)
+	{
+		[self hideChildLinkedViewProcess];
+	}
+    
+	//Krishna debrief
+    self.selectedIndexPathForEdit = nil;
+    [self.editDetailObject.view removeFromSuperview];
+	self.editDetailObject = nil;
+ 	
+	self.currentEditRow = indexpath;
+    
+    if(self.selectedIndexPathForEdit != nil && indexpath.section == self.selectedIndexPathForEdit.section && indexpath.row == self.selectedIndexPathForEdit.row) {
+        
+        [self hideEditViewOfLine];
+        return;
+    }
+    
+
+    NSInteger index;
+    NSInteger section = indexpath.section;
+    if (isDefault)
+        index = section;
+    else
+        index = selectedRow;
+    Disclosure_dict = nil;
+    Disclosure_Details = nil;
+    NSIndexPath * _indexPath = [NSIndexPath indexPathForRow:indexpath.row inSection:index];
+    
+    //KRI : check for new class
+    [self fillDictionary:_indexPath];
+	self.showSyncUI = self.showSyncUI;
+    showSyncUI=YES;
+    
+    
+	if (appDelegate.sfmPageController.conflictExists)
+	{
+		NSMutableString *Confilct= [appDelegate isConflictInEvent:[appDelegate.dataBase getApiNameFromFieldLabel: appDelegate.sfmPageController.objectName] local_id:appDelegate.sfmPageController.recordId];
+		
+		if([Confilct length]>0)
+		{
+			[self moveTableViewforDisplayingConflict:Confilct];
+		}
+	}
+    [self showEditViewOfLineInView:nil forIndexPath:indexpath forEditMode:YES];
+    self.selectedIndexPathForEdit = indexpath;
+    
+	[self.editDetailObject.tableView reloadData];
+	[self.tableView reloadData];//Kri
+    
+	
+}
+
+- (void)showEditViewOfLineInView:(UIView *)parentView forIndexPath:(NSIndexPath *)_indexpath forEditMode:(BOOL)isEditMode {
+    
+//	self.editDetailObject = nil;
+	    
+	[self getEditViewOfLine];
+	self.selectedIndexPathForEdit = _indexpath;
+    self.navigationController.delegate = self;
+    self.editDetailObject.parentReference = self;
+    self.editDetailObject.selectedIndexPath = _indexpath;
+    self.editDetailObject.selectedRowForDetailEdit = _indexpath.row-1;
+    self.editDetailObject.selectedSection = selectedSection;
+    
+    self.editDetailObject.header = self.header;
+    self.editDetailObject.line = self.line;
+    self.editDetailObject.isInEditDetail = isEditMode;
+    self.editDetailObject.isInViewMode = isInViewMode;
+    
+    
+    self.editDetailObject.Disclosure_dict = self.Disclosure_dict;
+    self.editDetailObject.Disclosure_Fields = self.Disclosure_Fields;
+    self.editDetailObject.Disclosure_Details = self.Disclosure_Details;
+    self.editDetailObject.navigationItem.leftBarButtonItem = nil;
+    [self.editDetailObject.navigationItem setHidesBackButton:YES animated:YES];
+
+    self.editDetailObject.tableView.hidden = NO;
+        
+    parentView.clipsToBounds = YES;
+
+    CGRect tblViewHt = self.editDetailObject.tableView.frame;
+    tblViewHt.size.height = [self.editDetailObject getHeightForEditView];
+    editDetailObject.tableView.frame = tblViewHt;
+    if (parentView == nil)
+	{
+		CGRect viewFrame = self.editDetailObject.view.frame;
+		viewFrame.origin.y = 35;
+		viewFrame.size.width = self.tableView.frame.size.width;
+		self.editDetailObject.view.frame = viewFrame;
+	}
+	
+	else
+	{
+		//make tableview compatible to parent view ie cells content view
+		CGRect viewFrame = self.editDetailObject.view.frame;
+		viewFrame.origin.y = 35;
+		viewFrame.size.width = parentView.frame.size.width;
+		self.editDetailObject.view.frame = viewFrame;
+	}
+    
+    //change height of parent view
+    CGRect parentFrame = parentView.frame;
+    parentFrame.size.height = self.editDetailObject.tableView.frame.size.height;
+    parentView.frame = parentFrame;
+    
+    UIImageView *seperatorView = [[UIImageView alloc] initWithFrame:CGRectMake(0, editDetailObject.tableView.frame.size.height, self.editDetailObject.view.frame.size.width, 03)];
+    seperatorView.image=[UIImage imageNamed:@"shadow_gray_light_blue-1.png"];
+    
+   [self.editDetailObject.view addSubview:seperatorView];
+    [seperatorView release];
+		
+    [parentView addSubview:self.editDetailObject.view];
+	
+	CGFloat heightOfTable = self.tableView.frame.size.height+ parentFrame.size.height;
+	if (heightOfTable > self.view.frame.size.height)
+	{
+		@try {
+			NSLog(@"Soubld move");
+			if (_indexpath.row > 5)
+				[self.tableView scrollToRowAtIndexPath:_indexpath atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+
+		}
+		@catch (NSException *exception) {
+			NSLog(@"%@", exception.name);
+		}
+	}
+		
+	[self.editDetailObject.tableView reloadData];
+
+}
+- (void)hideEditViewOfLine {
+
+    self.selectedIndexPathForEdit = nil;
+    [self.editDetailObject.view removeFromSuperview];
+}
+
+- (void) hideExpandedChildViews{
+    if(self.selectedIndexPathForEdit != nil) {
+        [self hideEditViewOfLine];
+    }
+    [self.tableView reloadData];
+}
+- (IBAction)lineDetailBtnAction:(id)sender {
+
+    UIButton *btn = (UIButton *) sender;
+    if(btn.tag == 9742) {
+        if(![self.editDetailObject isNecessaryFieldsFilled]) {
+            return;
+        }
+        [self hideExpandedChildViews];
+        [self lineseditingDone];            //done saving for now
+
+    }
+    else if(btn.tag == 9743) {
+        
+        [self hideExpandedChildViews];
+    }
+}
+
+- (IBAction)removeDetailLine:(id)sender
+{
+	[self hideExpandedChildViews];
+	
+}
+- (void)moveTableviewForKeyboardHeight:(NSNotification *)notification
+{
+	 self.selectedIndexPathForEdit = self.currentEditRow;
+	
+	@try {
+		if ([[notification name] isEqual:UIKeyboardDidShowNotification])
+		{
+			NSDictionary * info = [notification userInfo];
+			NSValue * keyBounds = [info objectForKey:UIKeyboardFrameEndUserInfoKey];
+			
+			CGRect boundRect;
+			[keyBounds getValue:&boundRect];
+			UIDeviceOrientation interfaceOrientation = [[UIDevice currentDevice] orientation];
+			if ((interfaceOrientation == UIInterfaceOrientationPortrait) || (interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown))
+			{
+				if(appDelegate.sfmPageController.conflictExists)
+					tableView.frame = CGRectMake(0, 100, self.view.frame.size.width, self.view.frame.size.height - boundRect.size.height - 100);
+				else
+					tableView.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - boundRect.size.height);
+			}
+			else
+			{
+				if(appDelegate.sfmPageController.conflictExists)
+					tableView.frame = CGRectMake(0, 100, self.view.frame.size.width, self.view.frame.size.height - boundRect.size.width - 100);
+				else
+					tableView.frame = CGRectMake(0, 0, self.view.frame.size.width, (self.view.frame.size.height) - boundRect.size.width);
+				
+			}
+			
+			
+			if (self.currentEditRow != nil)
+			{
+				NSLog(@"*******%@", self.currentEditRow);
+				UITableViewCell * cell = [self.tableView cellForRowAtIndexPath:self.currentEditRow];
+				
+				if (cell != nil)
+				{
+					[self.tableView scrollRectToVisible:cell.frame animated:YES];
+					
+				}
+				[self.tableView scrollToRowAtIndexPath:self.currentEditRow atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+			}
+		}
+		
+		else if ([[notification name] isEqualToString:UIKeyboardDidHideNotification])
+		{
+			
+			UIDeviceOrientation interfaceOrientation = [[UIDevice currentDevice] orientation];
+			if ((interfaceOrientation == UIInterfaceOrientationPortrait) || (interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown))
+			{
+				if(!table_view_moved)
+					tableView.frame = CGRectMake( 0, 0, self.view.frame.size.width, self.view.frame.size.height);
+				else
+					tableView.frame = CGRectMake(self.tableView.frame.origin.x, self.tableView.frame.origin.y,self.tableView.frame.size.width, self.tableView.frame.size.width);
+			}
+			else
+			{
+				if(!table_view_moved)
+					tableView.frame = CGRectMake( 0, 0, self.view.frame.size.width, self.view.frame.size.height);
+				else
+					tableView.frame = CGRectMake(self.tableView.frame.origin.x, self.tableView.frame.origin.y,self.tableView.frame.size.width, self.tableView.frame.size.width);
+			}
+			
+			if (self.editDetailObject.lookupPopover)
+			{
+				if (UIDeviceOrientationIsLandscape(interfaceOrientation))
+				{
+					[self.editDetailObject.lookupPopover setPopoverContentSize:CGSizeMake(320, self.tableView.frame.size.height) animated:YES];
+				}
+				else
+				{
+					[self.editDetailObject.lookupPopover setPopoverContentSize:CGSizeMake(320, self.tableView.frame.size.height) animated:YES];
+				}
+			}
+			
+			//Shrinivas Fix for #005845
+			if (appDelegate.sfmPageController.conflictExists)
+			{
+				NSMutableString *Confilct= [appDelegate isConflictInEvent:[appDelegate.dataBase getApiNameFromFieldLabel: appDelegate.sfmPageController.objectName] local_id:appDelegate.sfmPageController.recordId];
+				
+				if([Confilct length]>0)
+				{
+					[self moveTableViewforDisplayingConflict:Confilct];
+				}
+			}
+			[self.tableView scrollToRowAtIndexPath:self.currentEditRow atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+		}
+
+	}
+	@catch (NSException *exception) {
+		NSLog(@"%@", exception.name);
+	}
+		
+}
+- (void) resetTableViewFrame
+{
+	appDelegate.SFMPage = nil;
+	appDelegate.SFMoffline = nil;
+	tableView.frame = CGRectMake(0, 0, 0, 0);
+	tableView.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
+
+}
+//KRI
+#pragma mark END
+
+#pragma mark -
+#pragma mark - SHOW CHILD VIEW PROCESS
+- (SFMChildView *) allocChildLinkedViewProcess
+{
+    if(self.SFMChildTableview == nil) {
+        
+        SFMChildView * object  = [[SFMChildView alloc] initWithNibName:@"SFMChildView" bundle:nil];
+        self.SFMChildTableview = object;
+		
+        self.SFMChildTableview.childViewDelegate = self;
+        [object release];
+    }
+    return self.SFMChildTableview;
+}
+
+- (void) hideChildLinkedViewProcess
+{
+    self.selectedIndexPathForchildView = nil;
+    [self.SFMChildTableview.view removeFromSuperview];
+}
+
+- (IBAction) closeSFMChildViewProcess:(id)sender
+{
+	if (self.selectedIndexPathForchildView != nil)
+	{
+		[self hideChildLinkedViewProcess];
+	}
+	[self.tableView reloadData];
+}
+
+
+- (IBAction) showChildLinkedProcess:(id)sender
+{
+	SWitchViewButton * button = (SWitchViewButton *)sender;
+	
+	NSIndexPath * indexpath = button.indexPath;
+    
+	self.selectedIndexPathForchildView = nil;
+	[self.SFMChildTableview.view removeFromSuperview];
+	
+	self.selectedIndexPathForEdit = nil;
+	[self.editDetailObject.view removeFromSuperview];
+	
+	if(self.selectedIndexPathForchildView != nil && indexpath.section == self.selectedIndexPathForchildView.section && indexpath.row == self.selectedIndexPathForchildView.row )
+	{
+		[self hideChildLinkedViewProcess];
+		[self.tableView reloadData];
+		return;
+        
+	}
+	
+	if(self.selectedIndexPathForEdit != nil && indexpath.section == self.selectedIndexPathForEdit.section && indexpath.row == self.selectedIndexPathForEdit.row) {
+        
+        [self hideEditViewOfLine];
+    }
+	 if (self.selectedIndexPathForEdit != nil)
+	{
+		[self hideEditViewOfLine];
+	}
+	
+	self.selectedIndexPathForchildView = indexpath;
+    
+
+    [self showChildViewProcessTable:nil indexpath:indexpath];
+	[self.tableView reloadData];
+}
+
+
+- (void) showChildViewProcessTable:(UIView *)parentView indexpath:(NSIndexPath *)_indexpath
+{
+	NSInteger index;
+    NSInteger section = _indexpath.section;
+    if (isDefault)
+        index = section;
+    else
+        index = selectedRow;
+	
+	NSMutableArray * details = [appDelegate.SFMPage objectForKey:@"details"];
+    NSMutableDictionary * detail = [details objectAtIndex:index];
+	NSString * detailObjectName = [detail objectForKey:gDETAIL_OBJECT_NAME];
+    NSString * layout_id = [detail objectForKey:gDETAILS_LAYOUT_ID];
+    NSMutableArray * detail_Values_id = [detail objectForKey:gDETAIL_VALUES_RECORD_ID];
+    NSString * local_id = [detail_Values_id objectAtIndex:(_indexpath.row)-1];
+    
+    NSArray * linkedProcess = [_child_sfm_process_node objectForKey:layout_id];
+    
+    
+    
+	self.SFMChildTableview = nil;
+	
+	self.SFMChildTableview = [self allocChildLinkedViewProcess];
+    
+    self.SFMChildTableview.linkedProcess = linkedProcess;
+	self.SFMChildTableview.detailObjectname = detailObjectName;
+	self.SFMChildTableview.record_id = local_id;
+	
+	self.SFMChildTableview.childTableview.hidden = NO;
+    
+	parentView.clipsToBounds = YES;
+    self.tableView.clipsToBounds = YES;
+	
+	NSInteger incrementHeight = [self.SFMChildTableview getHeightForChildLinkedProcess];
+	
+	
+	CGRect viewFrame = self.SFMChildTableview.view.frame;
+    
+	viewFrame.origin.y =  40;
+    viewFrame.size.height =  incrementHeight; //[self.SFMChildTableview getHeightForChildLinkedProcess];
+    viewFrame.size.width = parentView.frame.size.width;
+	
+	
+	
+	CGRect frame = parentView.frame;
+    frame.origin.x = 0;
+	frame.origin.y = 0; // REmove later
+	frame.size.height = frame.size.height; //+ incrementHeight;
+	parentView.frame = frame;
+	
+    self.SFMChildTableview.view.frame = viewFrame;
+	self.SFMChildTableview.childTableview.frame = CGRectMake(0, 0, self.SFMChildTableview.view.frame.size.width, self.SFMChildTableview.view.frame.size.height);
+    
+    
+    self.SFMChildTableview.view.clipsToBounds=YES;
+    [parentView addSubview:self.SFMChildTableview.view];
+	
+	UIImageView *seperatorView = [[UIImageView alloc] initWithFrame:CGRectMake(0, self.SFMChildTableview.childTableview.frame.size.height, self.SFMChildTableview.view.frame.size.width, 03)];
+    seperatorView.image=[UIImage imageNamed:@"shadow_gray_light_blue-1.png"];
+    
+	[self.SFMChildTableview.view addSubview:seperatorView];
+	[seperatorView release];
+
+	[self.SFMChildTableview.childTableview reloadData];
+}
+
+//Delagte Method to show child process when click on button;
+- (void) showSFMPageForChildLinkedProcessWithProcessId:(NSString *)processId record_id:(NSString *)recordId  detailObjectName:(NSString *)detailObjectName
+{
+    
+    if (self.SFMChildTableview != nil)
+    {
+        [self hideChildLinkedViewProcess];
+        [self.tableView reloadData];
+    }
+    
+   
+	if([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"VIEWRECORD"])
+    {
+        [self pushtViewProcessToStack:appDelegate.sfmPageController.processId record_id:appDelegate.sfmPageController.recordId];
+    }
+    
+    [self invokeChildSfMForProcess_id:processId records_id:recordId ChildobjectName:detailObjectName];
+
+    
+}
+#pragma END
+
+
+-(void)invokeChildSfMForProcess_id:(NSString *)child_process_id records_id:(NSString *)child_record_id ChildobjectName:(NSString *)child_obj_name
+{
+    
+    NSString * process_type = [appDelegate.databaseInterface getprocessTypeForProcessId:child_process_id];
+
+    if([process_type isEqualToString:@"EDIT"] || [process_type isEqualToString:@"SOURCETOTARGETONLYCHILDROWS"])
+    {
+        
+        NSMutableDictionary * page_layoutInfo = [appDelegate.databaseInterface  queryProcessInfo:child_process_id object_name:@""];
+        
+        NSMutableDictionary * _header =  [page_layoutInfo objectForKey:@"header"];
+        
+        NSString * headerObjName = [_header objectForKey:gHEADER_OBJECT_NAME];
+        
+        NSString * layout_id = [_header objectForKey:gHEADER_HEADER_LAYOUT_ID];
+        
+        NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGET process_id:child_process_id layoutId:layout_id objectName:headerObjName];
+        // NSString * source_parent_object_name = [process_components objectForKey:SOURCE_OBJECT_NAME];
+        NSString * expression_id = [process_components objectForKey:EXPRESSION_ID];
+        
+        BOOL Entry_criteria = [appDelegate.databaseInterface EntryCriteriaForRecordFortableName:headerObjName record_id:child_record_id expression:expression_id];
+        if(!Entry_criteria)
+        {
+            NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
+            NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
+            NSString * cancel_ = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
+            
+            UIAlertView * enty_criteris = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:cancel_ otherButtonTitles:nil, nil];
+            [enty_criteris show];
+            [enty_criteris release];
+        }
+        else
+        {
+                
+            processInfo * pinfo =  [appDelegate getViewProcessForObject:headerObjName record_id:child_record_id processId:@"" isswitchProcess:FALSE];
+            BOOL process_exist =  pinfo.process_exists;
+            NSString *  dest_process_id = pinfo.process_id;
+            
+            
+            appDelegate.sfmPageController.sourceProcessId = dest_process_id;
+            appDelegate.sfmPageController.sourceRecordId =  child_record_id;
+            
+            appDelegate.sfmPageController.processId = child_process_id;
+            appDelegate.sfmPageController.recordId  = child_record_id;
+            
+            currentRecordId  = child_record_id;
+            currentProcessId = child_process_id;
+            //check For view process - dont require
+            [self fillSFMdictForOfflineforProcess:child_process_id forRecord:child_record_id];
+            [self didReceivePageLayoutOffline];
+        }
+    }
+          
+    else if([process_type isEqualToString:@"SOURCETOTARGET"] )
+    {
+        
+        //check out the record any child or parent  local_id
+        
+        BOOL record_is_not_syncd = FALSE;
+        
+        NSMutableDictionary * page_layoutInfo = [appDelegate.databaseInterface  queryProcessInfo:child_process_id object_name:@""];
+        
+        NSMutableDictionary * _header =  [page_layoutInfo objectForKey:@"header"];
+        
+        NSString * headerObjName = [_header objectForKey:gHEADER_OBJECT_NAME];
+        
+        NSString * layout_id = [_header objectForKey:gHEADER_HEADER_LAYOUT_ID];
+        NSMutableArray * details = [page_layoutInfo objectForKey:gDETAILS];
+        
+        NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGET process_id:child_process_id layoutId:layout_id objectName:headerObjName];
+        NSString * source_parent_object_name = [process_components objectForKey:SOURCE_OBJECT_NAME];
+        NSString * expression_id = [process_components objectForKey:EXPRESSION_ID];
+        
+        BOOL Entry_criteria = [appDelegate.databaseInterface EntryCriteriaForRecordFortableName:source_parent_object_name record_id:child_record_id expression:expression_id];
+        
+        
+        if(!Entry_criteria)
+        {
+            NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
+            NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
+            NSString * cancel_ = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
+            
+            UIAlertView * enty_criteris = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:cancel_ otherButtonTitles:nil, nil];
+            [enty_criteris show];
+            [enty_criteris release];
+            
+        }
+        else
+        {
+            if ([source_parent_object_name length] == 0)
+                source_parent_object_name = headerObjName;
+            
+            NSString * parent_sf_id =  [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:source_parent_object_name local_id:child_record_id];
+            
+            if([parent_sf_id isEqualToString:@""] || parent_sf_id == nil || [parent_sf_id length] ==0)
+            {
+                record_is_not_syncd = TRUE;
+                
+            }
+            if(!record_is_not_syncd)
+            {
+                for(int j= 0; j < [details count]; j++)
+                {
+                    NSMutableDictionary * dict = [details objectAtIndex:j];
+                    NSMutableArray * filedsArray = [dict objectForKey:gDETAILS_FIELDS_ARRAY];
+                    NSMutableArray * details_api_keys = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+                    NSString * detailObjectName = [dict objectForKey:gDETAIL_OBJECT_NAME];
+                    
+                    //NSString * detailaliasName = [dict objectForKey:gDETAIL_OBJECT_ALIAS_NAME];
+                    NSString * detail_layout_id = [dict objectForKey:gDETAILS_LAYOUT_ID];
+                    
+                    for(int k =0 ;k<[filedsArray count];k++)
+                    {
+                        NSMutableDictionary * detailFiled_info =[filedsArray objectAtIndex:k];
+                        NSString * api_name = [detailFiled_info objectForKey:gFIELD_API_NAME];
+                        [details_api_keys addObject:api_name];
+                    }
+                    
+                    NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGETCHILD process_id:child_process_id layoutId:detail_layout_id objectName:detailObjectName];
+                    
+                    NSString * source_child_object_name = [process_components objectForKey:SOURCE_OBJECT_NAME];
+                    NSMutableArray * source_child_ids = [appDelegate.databaseInterface getChildLocalIdForParentId:child_record_id childTableName:source_child_object_name sourceTableName:source_parent_object_name];
+                    for(NSString * detail_record_id in  source_child_ids)
+                    {
+                        NSString * Child_parent_sf_id = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:source_child_object_name local_id:detail_record_id];
+                        if([Child_parent_sf_id isEqualToString:@""])
+                        {
+                            record_is_not_syncd = TRUE;
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            if(record_is_not_syncd)
+            {
+                NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_sync_error];
+                NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_synchronize_error];
+                NSString * Ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+                
+                UIAlertView * alert_view = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:Ok otherButtonTitles:nil, nil];
+                [alert_view show];
+            }
+            else
+            {
+                appDelegate.sfmPageController.sourceProcessId = @"";
+                appDelegate.sfmPageController.sourceRecordId = child_record_id;
+                
+                appDelegate.sfmPageController.processId = child_process_id;
+                appDelegate.sfmPageController.recordId  = nil;
+                
+                currentRecordId  = nil;
+                currentProcessId = child_process_id;
+                //check For view process  - dont require
+                [self fillSFMdictForOfflineforProcess:child_process_id forRecord:currentRecordId];
+                [self didReceivePageLayoutOffline];
+            }
+        }
+    }
+}
+
 
 @end

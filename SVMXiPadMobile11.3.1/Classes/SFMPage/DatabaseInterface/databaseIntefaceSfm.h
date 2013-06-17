@@ -333,6 +333,15 @@
 // Vipind-db-optmz
 - (void)deleteRecordFromTable:(NSString *)tableName byCollectionsOfId:(NSArray *)ids forColumn:(NSString *)columnName;
 
+//sahana child sfm
+-(NSString *)getProcessSfIdForProcess_uniqueName:(NSString *)process_id;
+-(NSString *)getProcessNameForProcessSfId:(NSString *)process_sf_id;
+-(NSString *)getProcessNodeIdForLayoutId:(NSString *)layout_id process_id:(NSString *)preocess_unique_id;
+-(NSArray *)getLinkedProcessIdsForProcess_node_id:(NSString *)Processnode_id  process_sf_id:(NSString *)process_sf_id;
+-(NSArray *)getAllProcessId_forProcess_sf_id:(NSArray *)process_sf_id;
+-(NSString *)getObjectNameForProcessId:(NSString *)process_id;
+
+
 
 #define SERVER_OVERRIDE                     @"Server_Override"
 #define CLIENT_OVERRIDE                     @"Client_Override"

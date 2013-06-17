@@ -33,9 +33,13 @@
     int Total_calls;
     NSTimer *initial_sync_timer;
     int temp_percentage;
-
+    NSMutableArray * process_stack;
+    NSString * parent_process_id;
+    NSString * parent_record_id;
 }
 
+@property (nonatomic,retain)  NSString * parent_process_id ,* parent_record_id;
+@property (nonatomic, retain) NSMutableArray * process_stack;
 @property (retain, nonatomic) IBOutlet UIView *progressView;
 @property (retain, nonatomic) IBOutlet UILabel *progressTitle;
 @property (retain, nonatomic) IBOutlet UILabel *display_percentage;

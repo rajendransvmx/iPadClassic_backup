@@ -18,6 +18,8 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize controlDelegate;
 @synthesize tapRecgLabel;
 
+@synthesize isInDetailMode;
+
 #define DOUBLE_TAP_DELAY   0.35
 
 -(id)initWithFrame:(CGRect)frame
@@ -67,6 +69,10 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
+	if (self.isInDetailMode)
+	{
+		return;
+	}
     UITouch * touch = [touches anyObject];
     NSUInteger tapCount = [touch tapCount];
     switch (tapCount)

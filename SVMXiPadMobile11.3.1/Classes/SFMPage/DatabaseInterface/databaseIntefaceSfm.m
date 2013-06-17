@@ -5056,7 +5056,18 @@ extern void SVMXLog(NSString *format, ...);
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     
     today_Date = [dateFormatter stringFromDate:date];
-	
+    BOOL ischild =  [appDelegate.databaseInterface IsChildObject:object_name];
+    
+    NSString * temp_record_type = @"";
+    
+    if(ischild)
+    {
+        temp_record_type = DETAIL;
+    }
+    else
+    {
+        temp_record_type = MASTER;
+    }
 	
 	////Sync_Override check if colunm exists (Backward Compatibility)
 	BOOL columnExists = [self checkColumnExists:@"webservice_name" tableName:SFDATATRAILER];
@@ -5088,14 +5099,14 @@ extern void SVMXLog(NSString *format, ...);
 		
 		else
 		{
-			insert_statement = [NSString stringWithFormat:@"INSERT INTO '%@' (local_id ,sf_id ,record_type, operation, object_name, sync_flag, parent_object_name, parent_local_id,timestamp,record_sent, webservice_name, class_name, sync_type, header_localId) VALUES ('%@' , '%@' , '%@' , '%@' , '%@' ,'%@', '%@', '%@','%@','false', '%@', '%@', '%@', '%@')",SFDATATRAILER,local_id , sf_id , record_type, operation ,object_name , sync, parentObjectName, parent_local_id,today_Date, webservice_name, class_name, sync_type, header_localId];
+			insert_statement = [NSString stringWithFormat:@"INSERT INTO '%@' (local_id ,sf_id ,record_type, operation, object_name, sync_flag, parent_object_name, parent_local_id,timestamp,record_sent, webservice_name, class_name, sync_type, header_localId) VALUES ('%@' , '%@' , '%@' , '%@' , '%@' ,'%@', '%@', '%@','%@','false', '%@', '%@', '%@', '%@')",SFDATATRAILER,local_id , sf_id , temp_record_type, operation ,object_name , sync, parentObjectName, parent_local_id,today_Date, webservice_name, class_name, sync_type, header_localId];
 		}
 		
 		
 	}
 	else
 	{
-		insert_statement = [NSString stringWithFormat:@"INSERT INTO '%@' (local_id ,sf_id ,record_type, operation, object_name, sync_flag, parent_object_name, parent_local_id,timestamp,record_sent) VALUES ('%@' , '%@' , '%@' , '%@' , '%@' ,'%@', '%@', '%@','%@','false')",SFDATATRAILER,local_id , sf_id , record_type, operation ,object_name , sync, parentObjectName, parent_local_id,today_Date];
+		insert_statement = [NSString stringWithFormat:@"INSERT INTO '%@' (local_id ,sf_id ,record_type, operation, object_name, sync_flag, parent_object_name, parent_local_id,timestamp,record_sent) VALUES ('%@' , '%@' , '%@' , '%@' , '%@' ,'%@', '%@', '%@','%@','false')",SFDATATRAILER,local_id , sf_id , temp_record_type, operation ,object_name , sync, parentObjectName, parent_local_id,today_Date];
 	}
         
     char * err;
@@ -9811,9 +9822,177 @@ extern void SVMXLog(NSString *format, ...);
     [request_ids_str release];
 }
 
+//Get the sf_id for process_unique id
+-(NSString *)getProcessSfIdForProcess_uniqueName:(NSString *)process_id
+{
+    
+    NSString * query = [NSString stringWithFormat:@"SELECT sfID FROM '%@' WHERE process_id = '%@'",SFPROCESS,process_id];
+    sqlite3_stmt * statement ;
+    
+    NSString * process_sf_id = @"";
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, nil) ==  SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            char * temp_process_sf_id= (char * ) synchronized_sqlite3_column_text(statement, 0);
+            if(temp_process_sf_id != nil)
+            {
+                process_sf_id  = [NSString stringWithUTF8String:temp_process_sf_id];
+            }
+            
+        }
+    }
+    synchronized_sqlite3_finalize(statement);
+    return process_sf_id;
+}
+-(NSString *)getProcessNameForProcessSfId:(NSString *)process_sf_id 
+{
+    NSString * query = [NSString stringWithFormat:@"SELECT process_id FROM '%@' WHERE sfID = '%@'",SFPROCESS,process_sf_id];
+    sqlite3_stmt * statement ;
+    
+    NSString * process_id = @"";
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, nil) ==  SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            char * temp_process_id= (char * ) synchronized_sqlite3_column_text(statement, 0);
+            if(temp_process_id != nil)
+            {
+                process_id  = [NSString stringWithUTF8String:temp_process_id];
+            }
+        }
+    }
+    synchronized_sqlite3_finalize(statement);
+    return process_sf_id;
+
+}
+-(NSString *)getProcessNodeIdForLayoutId:(NSString *)layout_id process_id:(NSString *)process_unique_id
+{
+    
+    NSString * query = [NSString stringWithFormat:@"SELECT process_node_id FROM '%@' WHERE layout_id = '%@'  and process_id = '%@'",SFPROCESSCOMPONENT,layout_id,process_unique_id];
+    sqlite3_stmt * statement ;
+    
+    NSString * ProcessNodeId = @"";
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, nil) ==  SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            char * temp_ProcessNodeId= (char * ) synchronized_sqlite3_column_text(statement, 0);
+            if(temp_ProcessNodeId != nil)
+            {
+                if([ProcessNodeId length] == 0)
+                {
+                    ProcessNodeId  = [NSString stringWithUTF8String:temp_ProcessNodeId];
+                }
+            }
+        }
+    }
+    synchronized_sqlite3_finalize(statement);
+    return ProcessNodeId;
+}
+
+-(NSArray *)getLinkedProcessIdsForProcess_node_id:(NSString *)Processnode_id  process_sf_id:(NSString *)process_sf_id
+{
+    NSMutableArray * linked_process_ids = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    
+    NSString * query = [NSString stringWithFormat:@"SELECT target_header FROM '%@' WHERE source_header = '%@' and source_detail = '%@' ",LINKED_SFMProcess,process_sf_id,Processnode_id];
+    sqlite3_stmt * statement ;
+    
+    NSString * linked_process_id = @"";
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, nil) ==  SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            char * temp_linked_process_id= (char * ) synchronized_sqlite3_column_text(statement, 0);
+            if(temp_linked_process_id != nil)
+            {
+                    linked_process_id  = [NSString stringWithUTF8String:temp_linked_process_id];
+            }
+            
+            if([linked_process_id length] != 0 || linked_process_ids != nil)
+            {
+                [linked_process_ids addObject:linked_process_id];
+            }
+            
+            linked_process_id = @"";
+        }
+    }
+    synchronized_sqlite3_finalize(statement);
+    return linked_process_ids;
+}
+
+-(NSArray *)getAllProcessId_forProcess_sf_id:(NSArray *)process_sf_id
+{
+    NSMutableArray * process_ids = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    
+    NSMutableString * list_of_process_sf_ids = [[NSMutableString alloc] initWithCapacity:0];
+    
+    for(int count =0; count < [process_sf_id count]; count++)
+    {
+       NSString * linked_process =  [process_sf_id objectAtIndex:count];
+        if(count != 0)
+        {
+            [list_of_process_sf_ids appendString:@","];
+        }
+        [list_of_process_sf_ids appendFormat:@"'%@'",linked_process];
+    }
+    
+    NSString * query = [NSString stringWithFormat:@"SELECT process_id , process_name FROM '%@' WHERE  sfID  in (%@) ",SFPROCESS,list_of_process_sf_ids];
+    sqlite3_stmt * statement ;
+    
+    NSString * linked_process_id = @"" , * linked_process_name = @"";
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, nil) ==  SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            char * temp_linked_process_id= (char * ) synchronized_sqlite3_column_text(statement, 0);
+            if(temp_linked_process_id != nil)
+            {
+                linked_process_id  = [NSString stringWithUTF8String:temp_linked_process_id];
+            }
+            
+            char * temp_linked_process_name = (char * ) synchronized_sqlite3_column_text(statement, 1);
+            if(temp_linked_process_name != nil)
+            {
+                linked_process_name  = [NSString stringWithUTF8String:temp_linked_process_name];
+            }
+            
+            if([linked_process_id length] != 0 || linked_process_id != nil)
+            {
+                
+                NSMutableDictionary * dict = [NSMutableDictionary dictionary];
+                [dict setObject:(linked_process_name != nil)?linked_process_name:@"" forKey:linked_process_id];
+                [process_ids addObject:dict];
+            }
+            
+            linked_process_id = @"", linked_process_name = @"";
+        }
+    }
+    synchronized_sqlite3_finalize(statement);
+    [list_of_process_sf_ids release];
+    return process_ids;
+}
+-(NSString *)getObjectNameForProcessId:(NSString *)process_id
+{
+    NSString * query = [NSString stringWithFormat:@"SELECT object_api_name FROM '%@' WHERE process_id = '%@' ",SFPROCESS,process_id];
+    sqlite3_stmt * statement ;
+    
+    NSString * object_name = @"";
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, nil) ==  SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            char * temp_linked_process_id= (char * ) synchronized_sqlite3_column_text(statement, 0);
+            if(temp_linked_process_id != nil)
+            {
+                object_name  = [NSString stringWithUTF8String:temp_linked_process_id];
+            }
+            
+        }
+    }
+    synchronized_sqlite3_finalize(statement);
+    return object_name;
+
+}
+
 @end
-
-
-
-
-

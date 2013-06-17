@@ -10,10 +10,11 @@
 #import "iServiceAppDelegate.h"
 extern void SVMXLog(NSString *format, ...);
 @implementation SFMPageController
+@synthesize parent_process_id,parent_record_id;
 @synthesize sourceProcessId,sourceRecordId;
 @synthesize delegate, rootView, detailView;
 @synthesize processId, recordId, objectName, activityDate, accountId, topLevelId;
-
+@synthesize process_stack;
 @synthesize conflictExists;
 @synthesize progressView;
 @synthesize progressTitle;

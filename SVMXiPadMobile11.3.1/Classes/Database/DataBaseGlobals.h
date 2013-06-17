@@ -48,7 +48,12 @@
 #define SFCHILDRELATIONSHIP         @"SFChildRelationship"
 #define SFRTPICKLIST                @"SFRTPicklist"
 
+//linked sfm process
+#define LINKED_SFMProcess           @"LINKED_SFMProcess"
 
+#define source_detail               @"source_detail"
+#define source_header               @"source_header"
+#define target_header               @"target_header"
 
 //SFProcess
 #define SOURCETOTARGET                      @"SOURCETOTARGET"
@@ -188,6 +193,8 @@
 #define SORTING_ORDER            @"Sorting_Order"
 #define SORT_CRITERIA            @"SVMXC__Values__c"
 
+#define process_node_id          @"process_node_id"
+
 //SFwizard and Component
 #define MWIZARD_ID               @"wizard_id"
 #define MWIZARD_DESCRIPTION      @"wizard_description"
@@ -214,6 +221,7 @@
 #define COLUMNPARENT_COLUMN      7
 #define COLUNMVALUEMAP           8
 #define COLUMNSORTING_ORDER      10
+#define COLUMNPROCESS_NODE       11 
 
 //Tags
 #define COLUMNTAG_ID             0

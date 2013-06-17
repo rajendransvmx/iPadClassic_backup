@@ -4270,6 +4270,17 @@ last_sync_time:(NSString *)last_sync_time
                         parent_local_id = [appDelegate.databaseInterface getParentIdFrom:object_name WithId:local_id andParentColumnName:parent_column_name id_type:@"local_id"];
                     }
                     parent_column_name = [appDelegate.databaseInterface  getParentColumnNameFormChildInfoTable:SFChildRelationShip childApiName:object_name parentApiName:parent_object_name];
+                    
+//sahana child sfm
+                    
+                    if([parent_object_name length] == 0 || [parent_local_id length] == 0)
+                    {
+                        parent_object_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_name field_name:@"parent_name"];
+                         parent_column_name = [appDelegate.databaseInterface  getParentColumnNameFormChildInfoTable:SFChildRelationShip childApiName:object_name parentApiName:parent_object_name];
+                        parent_local_id = [appDelegate.databaseInterface getParentIdFrom:object_name WithId:local_id andParentColumnName:parent_column_name id_type:@"local_id"];
+                    }
+                    
+                    
                     //update the parent local id to the child record
                     //Get  SF_id From parent object for the local_id  search in heap table and  alson search in  
                     
@@ -4521,6 +4532,16 @@ last_sync_time:(NSString *)last_sync_time
                             if([key isEqualToString:@"Child_Object"])
                             {
                                 if(appDelegate.speacialSyncIsGoingOn)
+                                {
+                                    parent_object_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_name field_name:@"parent_name"];
+                                    
+                                    NSString * parent_column_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_name field_name:@"parent_column_name"];
+                                    
+                                    parent_local_id = [appDelegate.databaseInterface getParentIdFrom:object_name WithId:local_id andParentColumnName:parent_column_name id_type:@"local_id"];
+                                }
+
+//child sfm
+                                if([parent_object_name length] == 0 || [parent_local_id length] ==0)
                                 {
                                     parent_object_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_name field_name:@"parent_name"];
                                     
