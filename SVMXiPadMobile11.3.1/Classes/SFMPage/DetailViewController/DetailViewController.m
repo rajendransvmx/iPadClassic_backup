@@ -4479,7 +4479,7 @@ extern void SVMXLog(NSString *format, ...);
  //Debrief
     if(self.selectedIndexPathForEdit != nil && indexPath.section == self.selectedIndexPathForEdit.section && indexPath.row == self.selectedIndexPathForEdit.row) {
         if ([self.editDetailObject getHeightForEditView] >= 1) {
-            return [self.editDetailObject getHeightForEditView];
+            return [self.editDetailObject getHeightForEditView]+35;
         }
         return gSTANDARD_TABLE_ROW_HEIGHT + 320.0;
 //		return 453+30;
@@ -5416,7 +5416,7 @@ extern void SVMXLog(NSString *format, ...);
                 [background addSubview:triangleBtn];
                 [triangleBtn release];
 			
-                CGRect btnFrame = CGRectMake(6, 4, 70, 31);      //TODO : PLEASE CHANGE (hard coded)
+                CGRect btnFrame = CGRectMake(6, 4, 70, 28);      //TODO : PLEASE CHANGE (hard coded)
                 
                 UIButton *saveBtn = [[UIButton alloc] initWithFrame:btnFrame];
                 saveBtn.tag = 9742;
@@ -5427,7 +5427,7 @@ extern void SVMXLog(NSString *format, ...);
                 [background addSubview:saveBtn];
                 			
 				
-				CGRect removeBtnFrame = CGRectMake(saveBtn.frame.size.width+10, 4, 70, 31);
+				CGRect removeBtnFrame = CGRectMake(saveBtn.frame.size.width+10, 4, 70, 28);
 				
 				UIButton * removeBtn = [[UIButton alloc] initWithFrame:removeBtnFrame];
 				removeBtn.tag= index;
@@ -6037,6 +6037,8 @@ extern void SVMXLog(NSString *format, ...);
 				//Radha Fix for defect - 4683
 				if ([field_data_type isEqualToString:@"reference"])
 				{
+					//6889
+					 NSString * related_to_table_name = [[detail_fields objectAtIndex:j] objectForKey:gFIELD_RELATED_OBJECT_NAME];
 					NSString * objectName_  =  [detail objectForKey:gDETAIL_OBJECT_NAME];
 					
 					NSString * newProcessId = @"";
@@ -6047,7 +6049,8 @@ extern void SVMXLog(NSString *format, ...);
 						NSString * objName = [viewLayoutDict objectForKey:VIEW_OBJECTNAME];
 						
 						SMLog(@"%@ %@", objName , objectName_);
-						if ([objName isEqualToString:objectName_])
+						//6889
+						if ([objName isEqualToString:related_to_table_name])
 						{
 							SMLog(@" after %@ %@", objName , objectName_);
 							newProcessId = [viewLayoutDict objectForKey:@"SVMXC__ProcessID__c"];
@@ -14639,9 +14642,11 @@ extern void SVMXLog(NSString *format, ...);
     self.editDetailObject.tableView.hidden = NO;
         
     parentView.clipsToBounds = YES;
+	
+	NSInteger height = [self.editDetailObject getHeightForEditView];
 
     CGRect tblViewHt = self.editDetailObject.tableView.frame;
-    tblViewHt.size.height = [self.editDetailObject getHeightForEditView];
+    tblViewHt.size.height = height;
     editDetailObject.tableView.frame = tblViewHt;
     if (parentView == nil)
 	{
@@ -14662,8 +14667,11 @@ extern void SVMXLog(NSString *format, ...);
     
     //change height of parent view
     CGRect parentFrame = parentView.frame;
-    parentFrame.size.height = self.editDetailObject.tableView.frame.size.height;
+    parentFrame.size.height = self.editDetailObject.tableView.frame.size.height+40;
     parentView.frame = parentFrame;
+	
+	//Radha - Debrief changes - 18th June '13
+	self.editDetailObject.tableView.clipsToBounds = YES;
     
     UIImageView *seperatorView = [[UIImageView alloc] initWithFrame:CGRectMake(0, editDetailObject.tableView.frame.size.height, self.editDetailObject.view.frame.size.width, 03)];
     seperatorView.image=[UIImage imageNamed:@"shadow_gray_light_blue-1.png"];

@@ -19,7 +19,9 @@
         // Initialization code
 		self.userInteractionEnabled = YES;
 		self.hidden = NO;
-		self.highlighted = YES;
+		
+		self.enabled = YES; //Radha - 18th June - Linked Process Debrief
+		self.highlighted = NO; 
     }
     return self;
 }

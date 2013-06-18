@@ -2121,6 +2121,13 @@
             
             //Radha 2012june08
             BOOL recordExists = [appDelegate.dataBase checkIfRecordExistForObject:related_to_table_name Id:key];
+			
+			//Aparna: 6889
+            if (!recordExists)
+            {
+                NSString *sf_id =  [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:related_to_table_name local_id:key];
+                recordExists = [appDelegate.dataBase checkIfRecordExistForObject:related_to_table_name Id:sf_id];
+            }
             
             
             BOOL flag_ = FALSE;
@@ -2235,6 +2242,8 @@
         bgView.backgroundColor=[UIColor colorWithRed:215 green:241 blue:252 alpha:1];
 
         cell.backgroundView = bgView;
+        //Radha - Debrief UI Changes - separator - 18th June '13
+		tableView.separatorColor = [UIColor  colorWithRed:255 green:251 blue:255 alpha:1];
         return cell;
     }
     
@@ -2424,9 +2433,8 @@
     bgView.backgroundColor=[UIColor colorWithRed:215 green:241 blue:252 alpha:1];
     
     cell.backgroundView = bgView;
-    
+	tableView.separatorColor = [UIColor whiteColor]; // Radha - Debrief UI Changes - 18 June '13
     return cell;
-
 }
 
 - (BOOL)tableView:(UITableView *)_tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
@@ -2546,10 +2554,25 @@
 		
         //Radha 2012june08 08:00
         BOOL recordExists = [appDelegate.dataBase checkIfRecordExistForObject:reffered_to_table_name Id:temp_record_id];
+		
+		//Aparna: 6889
+        if (!recordExists)
+        {
+            NSString *sf_id =  [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:reffered_to_table_name local_id:temp_record_id];
+            recordExists = [appDelegate.dataBase checkIfRecordExistForObject:reffered_to_table_name Id:sf_id];
+        }
+
         if (recordExists == FALSE)
             return;
 		
         NSString * record_id = [appDelegate.databaseInterface  getLocalIdFromSFId:temp_record_id tableName:reffered_to_table_name];
+		
+		//Aparna: 6889
+        if (record_id == nil || [record_id isEqualToString:@""] || [record_id isEqualToString:@" "])
+        {
+            record_id = temp_record_id;
+        }
+
         
         NSString * newProcessId = @"";
         for (int j = 0; j < [appDelegate.view_layout_array count]; j++)

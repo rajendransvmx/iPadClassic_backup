@@ -187,6 +187,8 @@
     cell.accessoryType = UITableViewCellAccessoryNone;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
+    //Radha - Debrief Linked Process change
+	childTableview.separatorColor = [UIColor colorWithRed:255 green:255 blue:255 alpha:1];
     
 	return cell;
 }
