@@ -1894,7 +1894,9 @@ extern void SVMXLog(NSString *format, ...);
         {
             SMLog(@"%@", insert_statement);
             NSLog(@"Failure insertdataIntoTable - insert_statement => %@", insert_statement);
-            
+           // Vipin - Fix for defect 7352
+            success = FALSE;
+
             if([tableName isEqualToString:@"Event"])
             {
                 NSString * startDateTime = [valuesDict objectForKey:@"StartDateTime"];
@@ -4270,8 +4272,7 @@ extern void SVMXLog(NSString *format, ...);
                                                                        andRecordCount:1];
     
     
-    
-    NSMutableDictionary * lookUpDict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
+    //Vipin - defect 7350
     NSMutableDictionary * final_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
     
     // Vipin-db-optmz
@@ -4307,15 +4308,17 @@ extern void SVMXLog(NSString *format, ...);
                     [apiNameForNameFieldDict setObject:Name forKey:object];
                 }
                 
-                
+                // Vipin - issue Fix #7350
+                NSMutableDictionary * lookUpDict = [[NSMutableDictionary alloc] initWithCapacity:0];
+
                 [lookUpDict setValue:[dict objectForKey:@"Id"] forKey:@"Id"];
                 [lookUpDict setValue:[dict objectForKey:Name] forKey:@"Name"];
                 [lookUpDict setValue:[dict objectForKey:@"type"] forKey:@"type"];
                 
                 // Vipind-db-optmz
                 [lookupDictionaryArray addObject:lookUpDict];
-                //[appDelegate.dataBase addvaluesToLookUpFieldTable:lookUpDict WithId:lookUp_id];
-                
+                [lookUpDict release];// Vipin - 7350
+                lookUpDict = nil;
             }
         }
         else
@@ -6449,8 +6452,7 @@ extern void SVMXLog(NSString *format, ...);
     SBJsonParser * jsonParser = [[[SBJsonParser alloc] init] autorelease];
     NSDictionary * json_dict = [jsonParser objectWithString:json_record];
 
-    NSMutableDictionary * lookUpDict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
-    NSMutableDictionary * final_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+    NSMutableDictionary * final_dict = [[NSMutableDictionary alloc] initWithCapacity:0]; //Vipin - 7350
     NSArray * json_allkeys = [json_dict allKeys];
     //NSInteger lookUp_id = 0;
     
@@ -6484,11 +6486,14 @@ extern void SVMXLog(NSString *format, ...);
                     [apiNameForNameFieldDict setObject:Name forKey:object];
                 }
                 
-				
+                // issue Fix #7350
+				NSMutableDictionary * lookUpDict = [[NSMutableDictionary alloc] initWithCapacity:0];
                 [lookUpDict setValue:[dict objectForKey:@"Id"] forKey:@"Id"];
                 [lookUpDict setValue:[dict objectForKey:Name] forKey:@"Name"];
                 [lookUpDict setValue:[dict objectForKey:@"type"] forKey:@"type"];
                 [lookupDictionaryArray addObject:lookUpDict];
+                [lookUpDict release];
+                lookUpDict = nil;
                // [appDelegate.dataBase addvaluesToLookUpFieldTable:lookUpDict WithId:lookUp_id];
             }                        
         }
