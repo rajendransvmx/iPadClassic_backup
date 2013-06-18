@@ -1558,11 +1558,6 @@ const float progress_ = 0.07;
         }
     }
     
-    //NSString* txnstmt = @"BEGIN TRANSACTION";
-    //char * err ;
-    //int retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
-    
-    
     appDelegate.initial_sync_status = INITIAL_SYNC_SFM_METADATA;
     appDelegate.Sync_check_in = FALSE;
     
@@ -1737,9 +1732,7 @@ const float progress_ = 0.07;
         return;
     }
     
-    //txnstmt = @"END TRANSACTION";
-    //retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
-	}@catch (NSException *exp) {
+    }@catch (NSException *exp) {
 	NSLog(@"testing for exception thrown :%@",exp);
 	 [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
 	}
@@ -1747,9 +1740,12 @@ const float progress_ = 0.07;
 
 -(void)doDataSync
 {
-    //NSString* txnstmt = @"BEGIN TRANSACTION";
-    //char * err ;
-    //int retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+    
+    /* Shravya - Advanced look up- User trunk location */
+    SMLog(@"Shravya-User location update starts");
+    [appDelegate.wsInterface getUserTrunkLocationRequest];
+    SMLog(@"Shravya-User location update ends");
+
     
     SMLog(@"  DataSync WS Start: %@", [NSDate date]);
     appDelegate.wsInterface.didOpComplete = FALSE;
@@ -1870,8 +1866,6 @@ const float progress_ = 0.07;
       SMLog(@"  DataSync WS End: %@", [NSDate date]);
     SMLog(@"  Incremental DataSync WS Start: %@", [NSDate date]);
 
-    //txnstmt = @"END TRANSACTION";
-    //retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
 }
 
 -(void)doTxFetch

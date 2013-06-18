@@ -208,6 +208,21 @@ PopoverButtons *popOver_view;
 -(NSString*) getLoggedInUser:(NSString *)username;
 -(NSString*)getReferencetoFiledForObject:(NSString*)objectName api_Name:(NSString*)api_name;
 
+/*Shra-lookup*/
+- (void)insertFilterComponents:(NSArray *)filterComponents;
+- (void)insertCriteriaComponents:(NSArray *)filterArray;
+- (BOOL)checkIfGivenSFMId:(NSString *)sfmId
+             existInTable:(NSString *)tableName
+             andFieldName:(NSString *)fieldName;
+
+- (void)storeTechnicianLocation:(NSString *)currentLocation;
+- (NSString *)getTechnicianLocation;
+- (void)removeUserTechnicianLocation;
+- (NSString *)getTechnicianLocationId;
+- (void)storeTechnicianLocationId:(NSString *)currentLocation;
+/*Shra-lookup ends*/
+
+
 //DataSync Methods
 - (void) insertDataInToTables:(NSMutableArray *)fieldValueArray;
 

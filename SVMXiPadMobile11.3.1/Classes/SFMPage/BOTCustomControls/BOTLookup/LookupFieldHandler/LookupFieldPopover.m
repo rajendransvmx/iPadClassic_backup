@@ -251,7 +251,7 @@ extern void SVMXLog(NSString *format, ...);
 - (void) getSearchIdandObjectName:(NSString *)keyword
 {
     NSDictionary *dict;
-    dict = [appDelegate.databaseInterface getLookupDataFromDBWith:self.searchId referenceTo:self.relatedObjectName searchFor:keyword];
+    dict = [appDelegate.databaseInterface getLookupDataFromDBWith:self.searchId referenceTo:self.relatedObjectName searchFor:keyword withPreFilters:self.lookupView.preFilters andFilters:self.lookupView.advancedFilters];
 //    SMLog(@"%@", dict);
     [lookupView setLookupData:dict];
 }

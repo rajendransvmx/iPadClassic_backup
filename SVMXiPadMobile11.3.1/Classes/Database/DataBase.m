@@ -20,6 +20,8 @@ static NSString * const kDBEndTransaction = @"END TRANSACTION";
 
 
 extern void SVMXLog(NSString *format, ...);
+static NSString *const TECHNICIAN_CURRENT_LOCATION = @"usr_tech_loc_filters";
+static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_id";
 
 @implementation DataBase 
 
@@ -6470,9 +6472,6 @@ extern void SVMXLog(NSString *format, ...);
         
         [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:[sfProcess_comp count]];
         
-        //txnstmt = @"END TRANSACTION";
-        //exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
-        
         synchronized_sqlite3_finalize(bulkStmt);
         [self endTransaction];
     }
@@ -6815,9 +6814,8 @@ extern void SVMXLog(NSString *format, ...);
     BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS 'LINKED_SFMProcess' ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE, 'Id' VARCHAR,'source_header' VARCHAR,'source_detail' VARCHAR,'target_header' VARCHAR )"]];
     if(result)
     {
-        char * err;
-        NSString * txnstmt = @"BEGIN TRANSACTION";
-        int exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+
+        int exec_value = [self beginTransaction];
 
         NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5)", LINKED_SFMProcess, _ID, source_detail, source_header,target_header,MLOCAL_ID];
         
@@ -6862,12 +6860,13 @@ extern void SVMXLog(NSString *format, ...);
                 
                 sqlite3_reset(bulkStmt);
             }
+            
+            sqlite3_finalize(bulkStmt);
 
         }
         
-        
-        txnstmt = @"END TRANSACTION";
-        exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+
+        exec_value = [self endTransaction];
     }
     
     
@@ -7549,6 +7548,13 @@ extern void SVMXLog(NSString *format, ...);
         [self endTransaction];
     }
     
+     /* Shra-lookup */
+    NSArray *filtersArray = [processDictionary objectForKey:@"SFNAMEDSEARCH_CRITERIA"];
+    if (filtersArray != nil && [filtersArray count] > 0) {
+        [self insertCriteriaComponents:filtersArray];
+    }
+    /* Shra-lookup ends */
+   
     // Vipin-db-optmz
     result = [self createTable:[NSString stringWithFormat:@"CREATE INDEX IF NOT EXISTS SFNamedSearchIndex ON SFNamedSearch (default_lookup_column, object_name, is_default,is_standard)"]];
 
@@ -7559,6 +7565,11 @@ extern void SVMXLog(NSString *format, ...);
     if (result == YES)
     {
         result = [self createTable:[NSString stringWithFormat:@"CREATE INDEX IF NOT EXISTS SFNamedSearchComponentIndex ON SFNamedSearchComponent (field_name, search_object_field_type, sequence,field_type,field_relationship_name )"]];
+
+       /* Shra-lookup */
+        NSMutableArray *filterComponentsArray = [[NSMutableArray alloc] init];
+        /* Shra-lookup ends */
+      
 
         NSArray * sfNameSearchComp = [processDictionary objectForKey:MSFNAMEDSEARCH_COMPONENT];
         
@@ -7582,8 +7593,15 @@ extern void SVMXLog(NSString *format, ...);
             {
                 NSDictionary * nameSearchComp = [sfNameSearchComp objectAtIndex:i];
                 
+                /* Shra-lookup */
+                NSString *expType = [nameSearchComp objectForKey:MEXPRESSION_TYPE];
+                if ([expType isEqualToString:@"LKUP_Prefilter_Criteria"] || [expType isEqualToString:@"LKUP_Criteria"]) {
+                    [filterComponentsArray addObject:nameSearchComp];
+                }
+                /*Shra-lookup ends*/
+                
                 NSString * relationshipName = ([nameSearchComp objectForKey:MFIELD_RELATIONSHIPNAME] != nil)?[nameSearchComp objectForKey:MFIELD_RELATIONSHIPNAME]:@"";
-                if (![relationshipName isEqualToString:@""])
+                if (![relationshipName isEqualToString:@"LKUP_Criteria"])
                     relationshipName = [relationshipName stringByReplacingOccurrencesOfString:@"__r" withString:@"__c"];
 				
 				char * _expressionType = [appDelegate convertStringIntoChar:([nameSearchComp objectForKey:MEXPRESSION_TYPE] != nil)?[nameSearchComp objectForKey:MEXPRESSION_TYPE]:@""];
@@ -7633,6 +7651,14 @@ extern void SVMXLog(NSString *format, ...);
         }
         synchronized_sqlite3_finalize(bulkStmt);
         [self endTransaction];
+        
+         /* Shra-lookup - inserting the filterComponent */
+        if ([filterComponentsArray count] > 0) {
+            [self insertFilterComponents:filterComponentsArray];
+        }
+        [filterComponentsArray release];
+        filterComponentsArray = nil;
+
     }
     
     // Vipin-db-optmz
@@ -8163,6 +8189,256 @@ extern void SVMXLog(NSString *format, ...);
     appDelegate.initial_sync_status = SYNC_MOBILE_DEVICE_TAGS;
     appDelegate.Sync_check_in = FALSE;
     [appDelegate.wsInterface metaSyncWithEventName:MOBILE_DEVICE_TAGS eventType:SYNC values:nil];
+}
+
+            /* Shra-lookup */
+/* Inserting filters defined for look up */
+- (void)insertCriteriaComponents:(NSArray *)filterArray {
+
+       [self beginTransaction];
+    
+        /* Create table if not exist */
+        BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFNamedSearchFilters ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'Id' TEXT, 'name' TEXT, 'named_search_id' VARCHAR, 'rule_type' VARCHAR,  'parent_object_criteria' VARCHAR,'source_object_name' VARCHAR , 'field_name' VARCHAR, 'sequence' VARCHAR, 'advanced_expression' VARCHAR, 'allow_override' BOOLEAN , 'default_on' BOOLEAN, 'description' TEXT)"]];
+        if (result) {
+            /*Insert values into table */
+            NSString *queryStatement = [NSString stringWithFormat:@"INSERT INTO SFNamedSearchFilters ('Id','name','named_search_id','rule_type','parent_object_criteria','source_object_name','field_name','sequence','advanced_expression','allow_override','default_on') VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11)"];
+            
+            sqlite3_stmt *insertStatement = nil;
+            NSInteger success = synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &insertStatement, NULL);
+            if (success == SQLITE_OK) {
+               
+                for (int counter = 0; counter < [filterArray count]; counter++) {
+                    NSDictionary *filterDictionary = [filterArray objectAtIndex:counter];
+                    int i = 1;
+                    NSString *someString = [filterDictionary objectForKey:@"id"];
+                    someString = someString ? someString:@"";
+                    if ([someString isEqualToString:@""]) {
+                        
+                    }
+                    BOOL exists =  [self checkIfGivenSFMId:someString existInTable:@"SFNamedSearchFilters" andFieldName:@"Id"];
+                    if (exists) {
+                        continue;
+                    }
+                    /* Check if Id already exists */
+                    if (someString != nil) {
+                        sqlite3_bind_text(insertStatement, i, [someString UTF8String], someString.length, SQLITE_TRANSIENT);
+                    }
+                    
+                    someString = nil;
+                    i++;
+                    someString = [filterDictionary objectForKey:@"name"];
+                    someString = someString ? someString:@"";
+                    if (someString != nil) {
+                        sqlite3_bind_text(insertStatement, i, [someString UTF8String], someString.length, SQLITE_TRANSIENT);
+                    }
+                    
+                    someString = nil;
+                    i++;
+                    someString = [filterDictionary objectForKey:@"module"];
+                    someString = someString ? someString:@"";
+                    if (someString != nil) {
+                        sqlite3_bind_text(insertStatement, i, [someString UTF8String], someString.length, SQLITE_TRANSIENT);
+                    }
+                    
+                    someString = nil;
+                    i++;
+                    someString = [filterDictionary objectForKey:@"rule_type"];
+                    someString = someString ? someString:@"";
+                    if (someString != nil) {
+                        sqlite3_bind_text(insertStatement, i, [someString UTF8String], someString.length, SQLITE_TRANSIENT);
+                    }
+                    
+                    someString = nil;
+                    i++;
+                    someString = [filterDictionary objectForKey:@"parent_object_criteria"];
+                    someString = someString ? someString:@"";
+                    if (someString != nil) {
+                        sqlite3_bind_text(insertStatement, i, [someString UTF8String], someString.length, SQLITE_TRANSIENT);
+                    }
+                    
+                    someString = nil;
+                    i++;
+                    someString = [filterDictionary objectForKey:@"source_object_name"];
+                    someString = someString ? someString:@"";
+                    if (someString != nil) {
+                        sqlite3_bind_text(insertStatement, i, [someString UTF8String], someString.length, SQLITE_TRANSIENT);
+                    }
+                    
+                    someString = nil;
+                    i++;
+                    someString = [filterDictionary objectForKey:@"field_name"];
+                    someString = someString ? someString:@"";
+                    if (someString != nil) {
+                        sqlite3_bind_text(insertStatement, i, [someString UTF8String], someString.length, SQLITE_TRANSIENT);
+                    }
+                    
+                    someString = nil;
+                    i++;
+                    someString = [filterDictionary objectForKey:@"sequence"];
+                    someString = someString ? someString:@"";
+                    if (someString != nil) {
+                        sqlite3_bind_text(insertStatement, i, [someString UTF8String], someString.length, SQLITE_TRANSIENT);
+                    }
+                    
+                    someString = nil;
+                    i++;
+                    someString = [filterDictionary objectForKey:@"advanced_exp"];
+                    someString = someString ? someString:@"";
+                    if (someString != nil) {
+                        sqlite3_bind_text(insertStatement, i, [someString UTF8String], someString.length, SQLITE_TRANSIENT);
+                    }
+                    
+                    someString = nil;
+                    i++;
+                    someString = [filterDictionary objectForKey:@"default_on"];
+                    someString = someString ? someString:@"";
+                    someString = [someString lowercaseString];
+                    if (someString != nil) {
+                        sqlite3_bind_text(insertStatement, i, [someString UTF8String], someString.length, SQLITE_TRANSIENT);
+                    }
+                    
+                    someString = nil;
+                    i++;
+                    someString = [filterDictionary objectForKey:@"allow_override"];
+                    someString = someString ? someString:@"";
+                    someString = [someString lowercaseString];
+                    if (someString != nil) {
+                        sqlite3_bind_text(insertStatement, i, [someString UTF8String], someString.length, SQLITE_TRANSIENT);
+                    }
+                    
+                    someString = nil;
+                    i++;
+                    someString = [filterDictionary objectForKey:@"description"];
+                    someString = someString ? someString:@"";
+                    someString = [someString lowercaseString];
+                    if (someString != nil) {
+                        sqlite3_bind_text(insertStatement, i, [someString UTF8String], someString.length, SQLITE_TRANSIENT);
+                    }
+                    
+                   int success =  sqlite3_step(insertStatement);
+                    if (success == SQLITE_DONE || success == SQLITE_OK) {
+                        SMLog(@"Successfully inserted the Filter ");
+                    }
+                    else {
+                        SMLog(@"Error while inserting the Filter");
+                    }
+                    sqlite3_reset(insertStatement);
+                }
+            }
+            synchronized_sqlite3_finalize(insertStatement);
+        }
+
+        [self endTransaction];
+}
+
+- (void)insertFilterComponents:(NSArray *)filterComponents {
+   
+    /* start transaction */
+    
+    [self beginTransaction];
+    
+    /* Insert filter components into SFEXpression table*/
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFExpressionComponent ('local_id' INTEGER PRIMARY KEY  NOT NULL ,'expression_id' VARCHAR,'component_sequence_number' VARCHAR,'component_lhs' VARCHAR,'component_rhs' VARCHAR,'operator'CHAR)"]];
+    
+    if (result == YES)
+    {
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6)", SFEXPRESSIONCOMPONENT, MEXPRESSION_ID, MCOMPONENT_SEQ_NUM, MCOMPONENT_LHS, MCOMPONENT_RHS, MOPERATOR, MLOCAL_ID];
+        
+        sqlite3_stmt * bulkStmt = nil;
+        
+        int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
+        
+        if (ret_value == SQLITE_OK)
+        {
+            for (int i = 0; i < [filterComponents count]; i++)
+            {
+                NSDictionary *filterComponent = [filterComponents objectAtIndex:i];
+                int k = 0;
+                /*Bind the statements */
+                
+                NSString *someString = nil;
+                k++;
+                someString = [filterComponent objectForKey:@"exp_rule"];
+                someString = someString ? someString:@"";
+               
+                if (someString != nil) {
+                    sqlite3_bind_text(bulkStmt, k, [someString UTF8String], someString.length, SQLITE_TRANSIENT);
+                }
+                
+                someString = nil;
+                k++;
+                someString = [filterComponent objectForKey:@"sequence"];
+                someString = someString ? someString:@"";
+                if (someString != nil) {
+                    sqlite3_bind_text(bulkStmt, k, [someString UTF8String], someString.length, SQLITE_TRANSIENT);
+                }
+                
+                someString = nil;
+                k++;
+                someString = [filterComponent objectForKey:@"field_name"];
+                someString = someString ? someString:@"";
+                if (someString != nil) {
+                    sqlite3_bind_text(bulkStmt, k, [someString UTF8String], someString.length, SQLITE_TRANSIENT);
+                }
+
+                someString = nil;
+                k++;
+                someString = [filterComponent objectForKey:@"operand"];
+                someString = someString ? someString:@"";
+                if (someString != nil) {
+                    sqlite3_bind_text(bulkStmt, k, [someString UTF8String], someString.length, SQLITE_TRANSIENT);
+                }
+                
+                someString = nil;
+                k++;
+                someString = [filterComponent objectForKey:@"operator"];
+                someString = someString ? someString:@"";
+                if (someString != nil) {
+                    sqlite3_bind_text(bulkStmt, k, [someString UTF8String], someString.length, SQLITE_TRANSIENT);
+                }
+                
+                k++;
+                sqlite3_bind_int(bulkStmt, k, i + 3000);
+                
+                /*Executing the query */
+                int success =  synchronized_sqlite3_step(bulkStmt);
+                if (success == SQLITE_DONE || success == SQLITE_OK)
+                {
+                    SMLog(@"SFEXpressionComponent insertion successful");
+                }
+                else {
+                    SMLog(@"SFEXpressionComponent insertion failed..");
+                }
+                sqlite3_reset(bulkStmt);
+            }
+        }
+        synchronized_sqlite3_finalize(bulkStmt);
+    }
+    /* end transaction */
+    
+    [self  endTransaction];
+}
+
+
+- (BOOL)checkIfGivenSFMId:(NSString *)sfmId
+             existInTable:(NSString *)tableName
+             andFieldName:(NSString *)fieldName {
+    NSString * query = [NSString stringWithFormat:@"SELECT COUNT(*) FROM %@ where %@ = '%@'",tableName, fieldName, sfmId];
+    sqlite3_stmt * stmt;
+    int count = 0;
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        if (synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            count = synchronized_sqlite3_column_int(stmt, 0);
+        }
+    }
+    synchronized_sqlite3_finalize(stmt);
+    
+    if (count > 0) {
+        return YES;
+    }
+    return NO;
 }
 
 #pragma mark - SYNC OVERRIDE
@@ -11331,7 +11607,12 @@ extern void SVMXLog(NSString *format, ...);
 
 - (BOOL) startEventSync
 {
+    SMLog(@"Shravya-User location update starts");
     
+    /* Shravya - Advanced look up- User trunk location */
+    [appDelegate.wsInterface getUserTrunkLocationRequest];
+     SMLog(@"Shravya-User location update ends");
+       
     NSString * event_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_events];
     appDelegate.connection_error = FALSE;
     BOOL retVal = TRUE;
@@ -12673,6 +12954,44 @@ extern void SVMXLog(NSString *format, ...);
         
     }
     return data;
+}
+
+#pragma mark - GET/SET technician location - vipindas-lookup
+- (void)storeTechnicianLocation:(NSString *)currentLocation
+{
+    NSUserDefaults * userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults setObject:currentLocation forKey:TECHNICIAN_CURRENT_LOCATION];
+    [userDefaults synchronize];
+}
+
+- (void)removeUserTechnicianLocation {
+    NSUserDefaults * userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults removeObjectForKey:TECHNICIAN_CURRENT_LOCATION];
+    [userDefaults synchronize];
+    
+    [userDefaults removeObjectForKey:TECHNICIAN_CURRENT_LOCATION_ID];
+    [userDefaults synchronize];
+}
+
+- (NSString *)getTechnicianLocation
+{
+    NSUserDefaults * userDefaults = [NSUserDefaults standardUserDefaults];
+    NSString *location = [userDefaults objectForKey:TECHNICIAN_CURRENT_LOCATION];
+    return location;
+}
+
+- (NSString *)getTechnicianLocationId
+{
+    NSUserDefaults * userDefaults = [NSUserDefaults standardUserDefaults];
+    NSString *location = [userDefaults objectForKey:TECHNICIAN_CURRENT_LOCATION_ID];
+    return location;
+}
+
+- (void)storeTechnicianLocationId:(NSString *)currentLocation
+{
+    NSUserDefaults * userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults setObject:currentLocation forKey:TECHNICIAN_CURRENT_LOCATION_ID];
+    [userDefaults synchronize];
 }
 
 

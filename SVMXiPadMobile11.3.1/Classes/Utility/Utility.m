@@ -185,4 +185,43 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
+#pragma mark-
+#pragma mark Literal utilities
++ (NSString *)today:(NSInteger)numberOfDays andJusDate:(BOOL)isDateOnly{
+    NSDate *date = [NSDate date];
+    NSTimeInterval timeIntervalToBeAdded = 60* 60.0 * 24 * numberOfDays;
+    NSDate *finalDate = [date dateByAddingTimeInterval:timeIntervalToBeAdded];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    NSTimeZone *gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
+    [dateFormatter setTimeZone:gmt];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    NSString *someDate = [dateFormatter stringFromDate:finalDate];
+    
+    NSString *newDateString = nil;
+    if (isDateOnly) {
+        newDateString = [NSString stringWithFormat:@"%@ 00:00:00",[someDate substringToIndex:10]];
+    }
+    else {
+        newDateString = someDate;
+    }
+    newDateString = [newDateString stringByReplacingOccurrencesOfString:@" " withString:@"T"];
+    [dateFormatter release];
+    dateFormatter = nil;
+    return newDateString;
+}
+
++ (NSString *)getUserTrunkRequestStatus {
+    return [[NSUserDefaults standardUserDefaults] objectForKey:@"USER_TRUNK_LOCATION"];
+}
+
++ (void )setUserTrunkRequestStatus:(NSString *)statusValue {
+    [[NSUserDefaults standardUserDefaults] setObject:statusValue forKey:@"USER_TRUNK_LOCATION"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
++ (void )removeUserTrunkRequestStatus {
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"USER_TRUNK_LOCATION"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
 @end

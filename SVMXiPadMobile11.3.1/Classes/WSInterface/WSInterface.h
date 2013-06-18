@@ -299,7 +299,8 @@ typedef enum CUSTOM_SYNC_STATUS{
 //krishna 6580
 - (BOOL) checkForConflictsForId:(NSString *)record_id andObject_name:(NSString *)object_name;
 
-
+/* Shra-lookup */
+- (void)getUserTrunkLocationRequest;
 -(NSString *)requestSnapShot;
 - (void) getSvmxVersion;
 // Web Service Caller Methods

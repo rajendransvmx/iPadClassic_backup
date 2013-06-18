@@ -33,6 +33,7 @@
 #define kMinPkgForRESETTag						9.40003
 #define kMinPkgForGetPriceModule                @"10.40000"
 #define NoExceptionRecord                       10
+#define kMinPkgForLookupFilters                 11.2
 
 @class iServiceViewController;
 @class LoginController;

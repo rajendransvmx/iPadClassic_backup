@@ -413,6 +413,56 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     return value;
 }
 
+// Vipindas - advnced Lookup
+
+- (void)bindUserTrunkLocationToClientInfo
+{
+    NSString *userTrunkLocation = @"usertrunklocation:";
+    
+    NSString *previousTrunkLocation = nil;
+    
+    // Check Does it have already user location assigned
+    for (NSString *valueString in svmxc_client.clientInfo)
+    {
+        if ([valueString hasPrefix:userTrunkLocation])
+        {
+            previousTrunkLocation =  valueString;
+            break;
+        }
+    }
+    
+    // Validating the user-trunk-location
+    if ([dataBase getTechnicianLocationId] == nil)
+    {
+        if (previousTrunkLocation != nil)
+        {
+            // There are no user-trunk-location exist now. Lets remove previous value
+            [svmxc_client.clientInfo removeObject:previousTrunkLocation];
+        }
+    }
+    else
+    {
+        NSString *trunkLocation = [NSString stringWithFormat:@"%@%@",userTrunkLocation,[dataBase getTechnicianLocationId]];
+        
+        // 1. No previous user-trunk-location exist. Lets add now. 
+        if (previousTrunkLocation == nil)
+        {
+            [svmxc_client.clientInfo addObject:trunkLocation];
+        }
+        else if (![previousTrunkLocation isEqualToString:trunkLocation])
+        {
+            // 2. User has previous user-trunk-location but not matching with current
+            
+            [svmxc_client.clientInfo removeObject:previousTrunkLocation];
+            [svmxc_client.clientInfo addObject:trunkLocation];
+        }
+        
+        // 3. It is maching.. so we are not rewriting user-trunk-location
+    }
+}
+
+
+
 //Changed krishna.
 #pragma mark - Client info param
 //Request paremeters for client Info
@@ -463,6 +513,8 @@ NSString* machineName()
 //create new object
 - (INTF_WebServicesDefServiceSvc_SVMXClient  *) getSVMXClientObject
 {
+    // Vipindas - Adv.lookup search
+    [self bindUserTrunkLocationToClientInfo];
     //ADD SVMXClient
     return svmxc_client;
 }

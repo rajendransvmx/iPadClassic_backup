@@ -26,4 +26,10 @@
 + (void )setPriceDownloadStatus:(NSString *)statusValue;
 + (void )removePriceDownloadStatus;
 
+
++ (NSString *)getUserTrunkRequestStatus ;
++ (void )setUserTrunkRequestStatus:(NSString *)statusValue;
++ (void )removeUserTrunkRequestStatus ;
++ (NSString *)today:(NSInteger)numberOfDays andJusDate:(BOOL)isDateOnly;
+
 @end

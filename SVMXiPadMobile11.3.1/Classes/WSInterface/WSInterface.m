@@ -1786,6 +1786,12 @@ last_sync_time:(NSString *)last_sync_time
 	//Radha Sync ProgressBar
 	//appDelegate.syncTypeInProgress = DATASYNC_INPROGRESS;
 
+ /* Shravya - Advanced look up filters - User trunk location */
+    SMLog(@"Shravya-User location update Incremental starts");
+    /* Shravya - Advanced look up- User trunk location */
+    [appDelegate.wsInterface getUserTrunkLocationRequest];
+    SMLog(@"Shravya-User location update ends");
+
     [self GetDelete];
     
     [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"GetDelete-VP"
@@ -8659,7 +8665,45 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             SMLog(@"Results = %@",resultsArray);
             [appDelegate setOnlineDataArray:resultsArray];
         }
-        else if ([wsResponse.result.eventName isEqualToString:EVENT_SYNC] || [wsResponse.result.eventName isEqualToString:DOWNLOAD_CREITERIA_SYNC])
+        else if([wsResponse.result.eventName isEqualToString:@"USER_TRUNK"] && [wsResponse.result.eventType isEqualToString:@"SYNC"]){
+             NSAutoreleasePool * autoreleasePool = [[NSAutoreleasePool alloc] init];
+                [appDelegate.dataBase removeUserTechnicianLocation];
+                NSArray * array = [wsResponse.result valueMap];
+                for(int counter =0;counter < [array count];counter++){
+                    INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [array objectAtIndex:counter];
+                    NSString * key = (svmxMap.key != nil)?(svmxMap.key):@"";
+                    SMLog(@"%@",key);
+                    if ([key isEqualToString:@"SVMXC__Site__c"]) {
+                        
+                        NSString *jsonValue = svmxMap.value;
+                        if (jsonValue != nil && jsonValue.length > 0) {
+                            SBJsonParser *parser = [[SBJsonParser alloc] init];
+                            NSArray *objectsArray =  [parser  objectWithString:jsonValue];
+                            if ([objectsArray count] > 0) {
+                                NSDictionary *locationDictionary = [objectsArray objectAtIndex:0];
+                                NSString *siteName = [locationDictionary objectForKey:@"Name"];
+                                SMLog(@"Name is %@",siteName);
+                                if (![Utility isStringEmpty:siteName]) {
+                                    [appDelegate.dataBase storeTechnicianLocation:siteName];
+                                }
+                                
+                                
+                                NSString *siteIdentifier = [locationDictionary objectForKey:@"Id"];
+                                SMLog(@"Id is %@",siteIdentifier);
+                                if (![Utility isStringEmpty:siteIdentifier]) {
+                                    [appDelegate.dataBase storeTechnicianLocationId:siteIdentifier];
+                                }
+                            }
+                            [parser release];
+                            parser = nil;
+                        }
+                    }
+                }
+                [Utility setUserTrunkRequestStatus:@"true"];
+                [autoreleasePool release];
+                autoreleasePool = nil;
+            
+        } else if ([wsResponse.result.eventName isEqualToString:EVENT_SYNC] || [wsResponse.result.eventName isEqualToString:DOWNLOAD_CREITERIA_SYNC])
         {
             //[self  calculateMemory];
             
@@ -13849,8 +13893,54 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         [delegate didFinishWithError:sFault];
 }
 
-@end
+#pragma mark - Advanced lookup filter User Trunk location
+- (void)getUserTrunkLocationRequest {
+  
+    
+    NSString *currentServerPkgVersion = [[NSUserDefaults standardUserDefaults] objectForKey:kPkgVersionCheckForGPS_AND_SFM_SEARCH];
+    NSInteger package = [currentServerPkgVersion intValue];
+    double minVersion =  kMinPkgForLookupFilters * 100000;
+    if (package <  minVersion) {
+        [appDelegate.dataBase removeUserTechnicianLocation];
+         SMLog(@"Lookup filters is not supported in %@",currentServerPkgVersion);
+        return;
+    }
+    SMLog(@"%@",currentServerPkgVersion);
+    
+    appDelegate.connection_error = NO;
+    appDelegate.wsInterface.didOpComplete = NO;
+    [Utility setUserTrunkRequestStatus:@"false"];
+    
+    [self dataSyncWithEventName:@"USER_TRUNK" eventType:@"SYNC" values:nil];
+    
+    /* waiting till request finishes */
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
+    {
+        SMLog(@"User trunk request");
+        
+        if (![appDelegate isInternetConnectionAvailable])
+        {
+            SMLog(@"User trunk request: Failed due to Internet Lost");
+            
+            break;
+        }
+        
+        if(appDelegate.connection_error)
+        {
+             SMLog(@"User trunk request: Failed due to Connection Error");
+            
+            break;
+        }
+        NSString *currentStaus =  [Utility getUserTrunkRequestStatus];
+        if ([currentStaus isEqualToString:@"true"])
+        {   SMLog(@"User trunk request Completed successfully");
+            break;
+        }
+    }
+}
 
+@end
+#pragma mark -
 @implementation NSString (Helper)
 - (BOOL)Contains:(NSString *)string
 {

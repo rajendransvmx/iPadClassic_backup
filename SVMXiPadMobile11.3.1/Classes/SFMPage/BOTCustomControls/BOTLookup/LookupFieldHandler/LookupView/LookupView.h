@@ -37,12 +37,22 @@
     //sahana offline
     NSMutableDictionary * label_key;
     UITextField *txtField;
+    UIView *someView;
+    NSArray *preFilters;
+    NSArray *advancedFilters;
+    
+    
 }
-@property (nonatomic , retain) NSMutableDictionary * label_key;
-@property (nonatomic, assign) id <LookupViewDelegate> delegate;
-@property (nonatomic, retain) NSDictionary * lookupData;
-@property (nonatomic, retain) UIPopoverController * popover;
-@property (nonatomic, retain) NSString * objectName, * searchKey , * searchId;
+@property (nonatomic,retain) NSMutableDictionary * label_key;
+@property (nonatomic,assign) id <LookupViewDelegate> delegate;
+@property (nonatomic,retain) NSDictionary * lookupData;
+@property (nonatomic,retain) UIPopoverController * popover;
+@property (nonatomic,retain) NSString * objectName, * searchKey , * searchId;
+@property (nonatomic,retain) NSArray *preFilters;
+@property (nonatomic,retain) NSArray *advancedFilters;
+@property (nonatomic,retain) UIView *advancedFilterView;
+
+
 @property BOOL history;
 
 - (void) reloadData;

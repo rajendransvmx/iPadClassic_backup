@@ -132,7 +132,12 @@
 -(NSMutableDictionary *)getDataForMultiAdd:(NSString *)object_name searchField:(NSString *)search_field lookUpSearchId:(NSString *)searchId;
 
 //get the lookup information from database 
-- (NSDictionary *) getLookupDataFromDBWith:(NSString *)lookupID referenceTo:(NSString *)object searchFor:(NSString *)searchForString;
+//- (NSDictionary *) getLookupDataFromDBWith:(NSString *)lookupID referenceTo:(NSString *)object searchFor:(NSString *)searchForString;
+- (NSDictionary *) getLookupDataFromDBWith:(NSString *)lookupID
+                               referenceTo:(NSString *)object
+                                 searchFor:(NSString *)searchForString
+                            withPreFilters:(NSArray *)preFilters
+                                andFilters:(NSArray *)advancedFilters;
 
 -(NSString *)queryForExpression:(NSString *)expression_id forObject:(NSString *)object_name;
 -(NSString *) queryForExpressionComponent:(NSString *)expression expression_id:(NSString *)expression_id object_name:(NSString *) object_name;
@@ -341,8 +346,21 @@
 -(NSArray *)getAllProcessId_forProcess_sf_id:(NSArray *)process_sf_id;
 -(NSString *)getObjectNameForProcessId:(NSString *)process_id;
 
+/*Shra-lookup starts*/
+- (NSMutableArray *)getAllSearchCriteriaForId:(NSString *)namedSearchId andFilterType:(NSString *)filterType;
+- (NSArray *)getLookupfiltersForNamedSearchId:(NSString *)namedSearchId andfilterType:(NSString *)filterType;
+- (NSArray *)getFilterStringArrayForAdvancedFilters:(NSArray *)filters;
+- (NSArray *)getIdsFromObjectName:(NSString *)objectName withCriteria:(NSString *)criteria andFieldName:(NSString *)fieldName;
+- (NSString *)queryForExpressionComponent:(NSString *)expression expressionId:(NSString *)expression_id object_name:(NSString *)object_name;
+- (NSString *)getAdvanceExpressionComponentExpressionId:(NSString *)expressionId ;
+- (NSString *)getPreFilters:(NSArray *)preFilters;
+- (NSString *)getUserNameofLoggedInUser;
+- (NSString*)getNameFieldForObject:(NSString*)objectName;
+- (NSInteger)getFieldCountForObject:(NSString*)objectName ;
+/*Shra-lookup*/
 
 
+#define SVMX_USER_TRUNK                     @"SVMX_USER_TRUNK"
 #define SERVER_OVERRIDE                     @"Server_Override"
 #define CLIENT_OVERRIDE                     @"Client_Override"
 #define UNDO                                @"Undo"

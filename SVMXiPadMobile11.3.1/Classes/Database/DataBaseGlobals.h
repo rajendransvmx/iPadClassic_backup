@@ -280,3 +280,8 @@
 #define OBJECTNAME						@"OBJECTNAME"
 #define HEADERID						@"HEADERID"
 
+/*Shra-Lookup filters*/
+#define kLOOKUP_PRE_FILTER              @"SRCH_OBJECT"
+#define kLOOKUP_ADVANCED_FILTER         @"SRCH_CRITERIA"
+/*Shra-Lookup ends*/
+

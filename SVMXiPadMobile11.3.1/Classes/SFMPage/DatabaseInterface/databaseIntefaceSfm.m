@@ -15,10 +15,8 @@
 #import "ZKPicklistEntry.h"
 #import "NSObject+SBJson.h"
 #import "Utility.h"
-
-// Vipin-db-optmz
+#import "SVMXLookupFilter.h"
 #import "PerformanceAnalytics.h"
-
 
 extern void SVMXLog(NSString *format, ...);
 
@@ -2056,8 +2054,51 @@ extern void SVMXLog(NSString *format, ...);
 }
 
 
-- (NSDictionary *) getLookupDataFromDBWith:(NSString *)lookupID referenceTo:(NSString *)object  searchFor:(NSString *)searchForString
+- (NSDictionary *) getLookupDataFromDBWith:(NSString *)lookupID
+                               referenceTo:(NSString *)object
+                                 searchFor:(NSString *)searchForString
+                            withPreFilters:(NSArray *)preFilters
+                                andFilters:(NSArray *)advancedFilters
 {
+    /*Shra-lookup*/
+    
+    /* Reading pre filters*/
+    
+    NSMutableString *  advancedFilterString = nil;
+    NSString *preFiltersString = [self getPreFilters:preFilters];
+    if (![Utility isStringEmpty:preFiltersString]) {
+         advancedFilterString = [[NSMutableString alloc] init];
+        [advancedFilterString appendFormat:@" %@ ",preFiltersString];
+    }
+    
+    /* Reading advanced filters*/
+    NSArray *allFilters = [self getFilterStringArrayForAdvancedFilters:advancedFilters];
+   
+    NSInteger filterCount = [allFilters count];
+    if (filterCount > 0) {
+       
+        if (advancedFilterString == nil) {
+            advancedFilterString = [[NSMutableString alloc] init];
+        }
+        else {
+            [advancedFilterString appendFormat:@" AND "];
+        }
+
+        for (int counter = 0; counter < [allFilters count]; counter++) {
+            NSString *filterString = [allFilters objectAtIndex:counter];
+            if (counter == (filterCount - 1)) {
+                [advancedFilterString appendFormat:@" Id IN ( %@ )",filterString];
+            }
+            else {
+                [advancedFilterString appendFormat:@" Id IN ( %@ ) AND ", filterString];
+            }
+        }
+        NSLog(@"ADVANCED FILTER STRING is %@",advancedFilterString);
+    }
+    
+  
+    /*Shra-lookup ends*/
+    
     NSMutableDictionary * finalDict = [[NSMutableDictionary alloc] initWithCapacity:0];
     NSMutableArray * fields_array = [[NSMutableArray alloc] initWithCapacity:0];
     NSMutableArray * each_record = [[NSMutableArray alloc] initWithCapacity:0];
@@ -2373,7 +2414,17 @@ extern void SVMXLog(NSString *format, ...);
             [searchFieldNames appendFormat:@"  Id  NOT NULL AND Id != ' ' "];
         }
         
-        NSString * querystring2 = [NSString stringWithFormat:@"Select %@ from '%@'  where %@ LIMIT %d ", result_fieldNames, object, searchFieldNames, records];
+        /* Shra-lookup */
+        NSString * querystring2 = nil;
+        if ([Utility isStringEmpty:advancedFilterString]) {
+            querystring2 = [NSString stringWithFormat:@"Select %@ from '%@'  where %@ LIMIT %d ", result_fieldNames, object, searchFieldNames, records];
+        }
+        else {
+            querystring2 = [NSString stringWithFormat:@"Select %@ from '%@'  where %@ AND %@ LIMIT %d ", result_fieldNames, object, searchFieldNames,advancedFilterString, records];
+        }
+        
+        NSLog(@"QUERY: Executed %@",querystring2);
+        /* Shra-lookup ends*/
               
         if(synchronized_sqlite3_prepare_v2(appDelegate.db, [querystring2 UTF8String], -1, &stmt, nil) == SQLITE_OK)
         {
@@ -5504,10 +5555,6 @@ extern void SVMXLog(NSString *format, ...);
     
     NSArray * objects_names = [self getAllObjectsFromHeap];
     
-   // NSString* txnstmt = @"BEGIN TRANSACTION";
-    //char * err ;
-    //int retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
-    
     [appDelegate.dataBase beginTransaction];
     
     sqlite3_stmt * statement ;
@@ -5826,10 +5873,7 @@ extern void SVMXLog(NSString *format, ...);
         synchronized_sqlite3_finalize(statement);
     }
     
-    
-    //txnstmt = @"END TRANSACTION";
-    //retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
-    
+
     //Sahana Fixed memory oct4th
     NSMutableDictionary * parent_obejct_dict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
     NSMutableDictionary * parent_column_dict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
@@ -9998,6 +10042,842 @@ extern void SVMXLog(NSString *format, ...);
     synchronized_sqlite3_finalize(statement);
     return object_name;
 
+}
+
+
+// Vipin - Shra-lookup
+
+
+#pragma mark - Look up filters 
+- (NSArray *)getLookupfiltersForNamedSearchId:(NSString *)namedSearchId andfilterType:(NSString *)filterType {
+    
+        /* Get all the main filters from SFNamedSearchFilters depending on the rule type */
+        NSArray *lookupFilters = [self getAllSearchCriteriaForId:namedSearchId andFilterType:filterType];
+    
+        /* For each of the main filters , get expression components */
+    
+        if ([filterType isEqualToString:kLOOKUP_ADVANCED_FILTER]) {
+            for (int counter = 0; counter < [lookupFilters count]; counter++) {
+                SVMXLookupFilter *aFilter = [lookupFilters objectAtIndex:counter];
+                NSString *objectName = aFilter.sourceObjectName;
+                NSInteger fieldCount = [self getFieldCountForObject:objectName];
+                
+                if (fieldCount < 2) {
+                    aFilter.objectPermission = NO;
+                }
+                else {
+                    aFilter.objectPermission = YES;
+                }
+            }
+        }
+        return lookupFilters;
+}
+
+- (NSMutableArray *)getAllSearchCriteriaForId:(NSString *)namedSearchId andFilterType:(NSString *)filterType {
+   
+    NSString *sqlQuery = [NSString stringWithFormat:@"Select Id, name, named_search_id, rule_type, parent_object_criteria, source_object_name, field_name, sequence, advanced_expression, allow_override, default_on, description from SFNamedSearchFilters where rule_type = '%@' AND  named_search_id = '%@'", filterType,namedSearchId];
+    sqlite3_stmt *selectStatement = nil;
+     int i = 0;
+     NSMutableArray *finalArray = [[NSMutableArray alloc] init];
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStatement, nil) == SQLITE_OK  )
+    {
+        while(synchronized_sqlite3_step(selectStatement) == SQLITE_ROW)
+        {
+            i = 0;
+            SVMXLookupFilter *lookupfilter = [[SVMXLookupFilter alloc] init];
+            NSString *valueString = nil;
+            char *tempCharStr = (char *)sqlite3_column_text(selectStatement,i);
+            if (tempCharStr != NULL) {
+                valueString = [NSString stringWithUTF8String:tempCharStr];
+                lookupfilter.identifier = valueString;
+            }
+            
+            valueString = nil; tempCharStr = NULL;i++;
+            tempCharStr = (char *)sqlite3_column_text(selectStatement,i);
+            if (tempCharStr != NULL) {
+                valueString = [NSString stringWithUTF8String:tempCharStr];
+                lookupfilter.name = valueString;
+            }
+            
+            valueString = nil; tempCharStr = NULL;i++;
+            tempCharStr = (char *)sqlite3_column_text(selectStatement,i);
+            if (tempCharStr != NULL) {
+                valueString = [NSString stringWithUTF8String:tempCharStr];
+                lookupfilter.namedSearchId = valueString;
+            }
+            
+            valueString = nil; tempCharStr = NULL;i++;
+            tempCharStr = (char *)sqlite3_column_text(selectStatement,i);
+            if (tempCharStr != NULL) {
+                valueString = [NSString stringWithUTF8String:tempCharStr];
+                lookupfilter.ruleType = valueString;
+            }
+            
+            valueString = nil; tempCharStr = NULL;i++;
+            tempCharStr = (char *)sqlite3_column_text(selectStatement,i);
+            if (tempCharStr != NULL) {
+                valueString = [NSString stringWithUTF8String:tempCharStr];
+                lookupfilter.parentObjectCriteria = valueString;
+            }
+            
+            valueString = nil; tempCharStr = NULL;i++;
+            tempCharStr = (char *)sqlite3_column_text(selectStatement,i);
+            if (tempCharStr != NULL) {
+                valueString = [NSString stringWithUTF8String:tempCharStr];
+                lookupfilter.sourceObjectName = valueString;
+            }
+            
+            valueString = nil; tempCharStr = NULL;i++;
+            tempCharStr = (char *)sqlite3_column_text(selectStatement,i);
+            if (tempCharStr != NULL) {
+                valueString = [NSString stringWithUTF8String:tempCharStr];
+                lookupfilter.fieldName = valueString;
+            }
+            
+            valueString = nil; tempCharStr = NULL;i++;
+            tempCharStr = (char *)sqlite3_column_text(selectStatement,i);
+            if (tempCharStr != NULL) {
+                valueString = [NSString stringWithUTF8String:tempCharStr];
+                lookupfilter.sequence = [valueString intValue];
+            }
+            
+            valueString = nil; tempCharStr = NULL;i++;
+            tempCharStr = (char *)sqlite3_column_text(selectStatement,i);
+            if (tempCharStr != NULL) {
+                valueString = [NSString stringWithUTF8String:tempCharStr];
+                lookupfilter.advancedExpressions = valueString;
+            }
+            
+            valueString = nil; tempCharStr = NULL;i++;
+            tempCharStr = (char *)sqlite3_column_text(selectStatement,i);
+            if (tempCharStr != NULL) {
+                valueString = [NSString stringWithUTF8String:tempCharStr];
+                if ([Utility isItTrue:valueString]) {
+                    lookupfilter.isDefaultOn = YES;
+                }
+                else {
+                    lookupfilter.isDefaultOn = NO;
+                }
+                
+            }
+            
+            valueString = nil; tempCharStr = NULL;i++;
+            tempCharStr = (char *)sqlite3_column_text(selectStatement,i);
+            if (tempCharStr != NULL) {
+                valueString = [NSString stringWithUTF8String:tempCharStr];
+                if ([Utility isItTrue:valueString]) {
+                    lookupfilter.allowOverride = YES;
+                }
+                else {
+                    lookupfilter.allowOverride = NO;
+                }
+            }
+            
+            valueString = nil; tempCharStr = NULL;i++;
+            tempCharStr = (char *)sqlite3_column_text(selectStatement,i);
+            if (tempCharStr != NULL) {
+                valueString = [NSString stringWithUTF8String:tempCharStr];
+                lookupfilter.description = valueString;
+            }
+            
+            [finalArray addObject:lookupfilter];
+            [lookupfilter release];
+            lookupfilter = nil;
+        }
+    }
+    synchronized_sqlite3_finalize(selectStatement);
+    return [finalArray autorelease];
+}
+
+#pragma mark -  Advanced filters
+- (NSString *)getPreFilters:(NSArray *)preFilters {
+    NSMutableString *finalString = [[NSMutableString alloc] init];
+     for (int counter = 0; counter < [preFilters count]; counter++) {
+         
+         SVMXLookupFilter *aFilter = [preFilters objectAtIndex:counter];
+         
+         NSString *sourceObjectName = aFilter.sourceObjectName;
+         NSString *identifier = aFilter.identifier;
+         NSString *advancedExpression  = nil;
+        
+         if (![Utility isStringEmpty:aFilter.advancedExpressions]) {
+             advancedExpression =  [NSString stringWithFormat:@"( %@ )",aFilter.advancedExpressions];
+         }
+         else {
+             /* If expression is not there */
+             advancedExpression =  [self getAdvanceExpressionComponentExpressionId:identifier];
+         }
+          NSString *criteriaString =  [self queryForExpressionComponent:advancedExpression expressionId:identifier object_name:sourceObjectName];
+         
+         if (counter == 0) {
+               [finalString appendFormat:@"%@",criteriaString];
+         }
+         else{
+               [finalString appendFormat:@" AND %@ ",criteriaString];
+         }
+       
+
+     }
+    return [finalString autorelease];
+}
+- (NSArray *)getFilterStringArrayForAdvancedFilters:(NSArray *)filters {
+   
+    NSMutableArray *queryArray = [[NSMutableArray alloc] init];
+    for (int counter = 0; counter < [filters count]; counter++) {
+        
+        SVMXLookupFilter *aFilter = [filters objectAtIndex:counter];
+        if (!aFilter.isDefaultOn || !aFilter.objectPermission) {
+            continue;
+        }
+        NSString *sourceObjectName = aFilter.sourceObjectName;
+        NSString *identifier = aFilter.identifier;
+        NSString *advancedExpression  = nil;
+        
+       
+        if (![Utility isStringEmpty:aFilter.advancedExpressions]) {
+            advancedExpression =  [NSString stringWithFormat:@"( %@ )",aFilter.advancedExpressions];
+        }
+        else {
+            /* If expression is not there */
+           advancedExpression =  [self getAdvanceExpressionComponentExpressionId:identifier];
+        }
+        
+        NSString *criteriaString =  [self queryForExpressionComponent:advancedExpression expressionId:identifier object_name:sourceObjectName];
+        NSString *queryString = [NSString stringWithFormat:@"SELECT %@ FROM '%@' ",aFilter.fieldName,sourceObjectName];
+        if (![Utility isStringEmpty:criteriaString]) {
+            queryString = [queryString stringByAppendingFormat:@" WHERE %@",criteriaString];
+        }
+        
+        [queryArray addObject:queryString];
+    }
+    return [queryArray autorelease];
+}
+
+- (NSArray *)getIdsFromObjectName:(NSString *)objectName withCriteria:(NSString *)criteria andFieldName:(NSString *)fieldName {
+    
+    NSString *queryString = [NSString stringWithFormat:@"SELECT %@ FROM %@ ",fieldName,objectName];
+    if (![Utility isStringEmpty:criteria]) {
+        queryString = [queryString stringByAppendingFormat:@" WHERE %@",criteria];
+    }
+    sqlite3_stmt *selectStatement = nil;
+    NSMutableArray *finalArray = [[NSMutableArray alloc] init];
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [queryString UTF8String], -1, &selectStatement, nil) == SQLITE_OK  )
+    {
+        while(synchronized_sqlite3_step(selectStatement) == SQLITE_ROW)
+        {
+           
+            NSString *valueString = nil;
+            char *tempCharStr = (char *)sqlite3_column_text(selectStatement,0);
+            if (tempCharStr != NULL) {
+                valueString = [NSString stringWithUTF8String:tempCharStr];
+               
+            }
+            if (valueString != nil) {
+                [finalArray addObject:valueString];
+            }
+        }
+    }
+    synchronized_sqlite3_finalize(selectStatement);
+    return [finalArray autorelease];
+}
+
+
+- (NSString *)queryForExpressionComponent:(NSString *)expression expressionId:(NSString *)expression_id object_name:(NSString *)object_name {
+    NSString  * expression_ = expression;
+    
+    NSString * modified_expr = [expression_ stringByReplacingOccurrencesOfString:@"(" withString:@"#(#"];
+    modified_expr = [modified_expr stringByReplacingOccurrencesOfString:@")" withString:@"#)#"];
+    modified_expr  = [modified_expr stringByReplacingOccurrencesOfString:@"and" withString:@"#and#"];
+    modified_expr  = [modified_expr stringByReplacingOccurrencesOfString:@"AND" withString:@"#AND#"];
+    modified_expr  = [modified_expr stringByReplacingOccurrencesOfString:@"OR" withString:@"#OR#"];
+    modified_expr = [modified_expr stringByReplacingOccurrencesOfString:@"or" withString:@"#or#"];
+    
+    NSArray * array = [modified_expr componentsSeparatedByString:@"#"];
+    
+    
+    NSMutableArray * components = [[NSMutableArray alloc] initWithCapacity:0];
+    NSMutableArray * operators = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    
+    NSMutableArray * final_Comonent_array = [[NSMutableArray alloc] initWithCapacity:0];
+    NSString * retExpression = @"";
+    @try
+    {
+        
+        for(int i = 0 ; i<[array count]; i++)
+        {
+            NSString * str = [array objectAtIndex:i];
+            str = [str  stringByReplacingOccurrencesOfString:@" " withString:@""];
+            if([str isEqualToString:@"("])
+            {
+                [operators addObject:str];
+            }
+            else if ([str isEqualToString:@")"])
+            {
+                [operators addObject:str];
+            }
+            else if([str isEqualToString:@"or"] || [str isEqualToString:@"OR"])
+            {
+                [operators addObject:str];
+            }
+            else if([str isEqualToString:@"and"] || [str isEqualToString:@"AND"])
+            {
+                [operators addObject:str];
+            }
+            else if([str length] == 0)
+            {
+                
+            }
+            else
+            {
+                str = [str  stringByReplacingOccurrencesOfString:@" " withString:@""];
+                
+                BOOL flag = FALSE;
+                
+                for(int k=0 ;k< [components count]; k++)
+                {
+                    if([[components objectAtIndex:k] isEqualToString:str])
+                    {
+                        flag = TRUE;
+                        break;
+                    }
+                }
+                if(flag)
+                {
+                    
+                }
+                else
+                {
+                    [components addObject:str];
+                }
+            }
+        }
+        
+        
+        NSArray * keys = [NSArray arrayWithObjects:@"component_lhs",@"component_rhs",@"component_operator",@"sequence", nil];
+        
+        NSString * lhs_value;
+        
+        for(int j = 0 ; j<[components count]; j++)
+        {
+            NSString * component_number = [components objectAtIndex:j];
+            int f = [component_number intValue];
+            NSString * appended_component_number = [NSString stringWithFormat:@"%d.0000",f];
+            
+            
+            NSString * query = [NSString stringWithFormat:@"SELECT component_lhs , component_rhs , operator  FROM '%@' where expression_id = '%@'  and component_sequence_number = '%@' GROUP BY component_sequence_number",SFEXPRESSION_COMPONENT, expression_id ,appended_component_number];
+            
+            //SMLog(@"%@", query);
+            SMLog(@"%@",query);
+            sqlite3_stmt * stmt ;
+            
+            NSString * component_lhs = @"";
+            
+            NSString * component_rhs = @"";
+            
+            NSString * component_operator = @"";
+            
+            NSString * operator_ = @"";
+            
+            if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+            {
+                while (synchronized_sqlite3_step(stmt)  == SQLITE_ROW)
+                {
+                    operator_ = @"";
+                    component_lhs = @"";
+                    component_rhs = @"";
+                    
+                    
+                    char * lhs = (char *)synchronized_sqlite3_column_text(stmt, 0);
+                    if(lhs != nil)
+                    {
+                        component_lhs = [NSString stringWithUTF8String:lhs];
+                    }
+                    
+                    char * rhs = (char *)synchronized_sqlite3_column_text(stmt, 1);
+                    if(rhs != nil)
+                    {
+                        component_rhs = [NSString stringWithUTF8String:rhs];
+                        if ([component_rhs isEqualToString:@"SVMX.CURRENTUSER"] || [component_rhs Contains:@"SVMX.OWNER"]) {
+                            
+                            component_rhs = [self getUserNameofLoggedInUser];
+                        }
+                        else {
+                            if ([component_rhs isEqualToString:SVMX_USER_TRUNK]) {
+                                component_rhs = [appDelegate.dataBase getTechnicianLocation];
+                                if ([Utility isStringEmpty:component_rhs]) {
+                                    component_rhs = SVMX_USER_TRUNK;
+                                }
+                            }
+                        }
+                    }
+                    
+                    char * operator = (char *)synchronized_sqlite3_column_text(stmt, 2);
+                    if(operator != nil)
+                    {
+                        component_operator = [NSString stringWithUTF8String:operator];
+                    }
+                    
+                    if ([component_rhs isEqualToString:SVMX_USER_TRUNK]) {
+                        component_rhs = SVMX_USER_TRUNK;
+                        component_operator = @"LIKE";
+                        operator_ = @" LIKE ";
+                        
+                    }
+                    if([component_lhs length] != 0 && [component_operator length] != 0)
+                    {
+                        
+                        SMLog(@"component_operator %@",component_operator);
+                        
+                        if([component_operator isEqualToString:@"eq"])
+                        {
+                            operator_  = @"=";
+                        }
+                        else if([component_operator isEqualToString:@"gt"])
+                        {
+                            operator_  = @">";
+                        }
+                        else if([component_operator isEqualToString:@"lt"])
+                        {
+                            operator_  = @"<";
+                        }
+                        else if([component_operator isEqualToString:@"Less or Equal To"])
+                        {
+                            
+                        }
+                        else if ([component_operator isEqualToString:@"ne"])
+                        {
+                            operator_  = @"!=";
+                        }
+                        else if ([component_operator isEqualToString:@"ge"])
+                        {
+                            operator_  = @">=";
+                        }
+                        else if ([component_operator isEqualToString:@"le"])
+                        {
+                            operator_  = @"<=";
+                        }
+                        else if([component_operator isEqualToString:@"isnotnull"])
+                        {
+                            //#4722 defect fix for wizard billing type null
+                            operator_ = @"isnotnull";
+                            component_rhs = @"";
+                        }
+                        else if([component_operator isEqualToString:@"contains"])
+                        {
+                            operator_ = @" LIKE ";
+                            NSString * temp = [NSString stringWithFormat:@"%%%@%%",component_rhs];
+                            component_rhs = [temp retain];
+                        }
+                        else if([component_operator isEqualToString:@"notcontain"])
+                        {
+                            operator_ =  @" NOT LIKE ";
+                            NSString * temp = [NSString stringWithFormat:@"%%%@%%",component_rhs];
+                            component_rhs = [temp retain];
+                        }
+                        else if ([component_operator isEqualToString:@"in"])
+                        {
+                            operator_ = @" LIKE ";
+                        }
+                        else if ([component_operator isEqualToString:@"notin"])
+                        {
+                            operator_ = @" NOT LIKE ";
+                        }
+                        else if ([component_operator  isEqualToString:@"starts"])
+                        {
+                            operator_ = @" LIKE ";
+                            NSString * temp = [NSString stringWithFormat:@"%%%@",component_rhs];
+                            component_rhs = [temp retain];
+                        }
+                        else if([component_operator  isEqualToString:@"isnull"])
+                        {
+                            lhs_value = component_lhs;
+                            component_lhs = [NSString stringWithFormat:@"%@", component_lhs];
+                            operator_ = @"=";
+                            component_rhs = @"null";
+                        }
+                        
+                        SMLog(@"%@" ,operator_ );
+                        
+                        if([operator_ length] != 0)
+                        {
+                            if(component_rhs == nil)
+                            {
+                                component_rhs = @"";
+                            }
+                            if([component_operator isEqualToString:@"in" ] || [component_operator isEqualToString:@"notin"])
+                            {
+                                
+                                NSArray * comp = [component_rhs componentsSeparatedByString:@","];
+                                
+                                int count = 0;
+                                for(NSString * value in comp)
+                                {
+                                    NSString * seq = [NSString stringWithFormat:@"%d",count];
+                                    NSMutableString * temp = [[NSMutableString alloc] initWithCapacity:0];
+                                    [temp appendString:@"%"];
+                                    [temp appendFormat:@"%@",value];
+                                    [temp appendString:@"%"];
+                                    component_rhs = [temp retain];
+                                    NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:component_lhs,component_rhs,operator_ ,seq,nil] forKeys:keys];
+                                    NSMutableDictionary * component_dict = [NSMutableDictionary dictionaryWithObject:dict forKey:component_number];
+                                    [final_Comonent_array addObject:component_dict];
+                                    
+                                    [temp release];
+                                    count ++;
+                                }
+                            }
+                            else
+                            {
+                                NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:component_lhs,component_rhs,operator_ ,@"",nil] forKeys:keys];
+                                NSMutableDictionary * component_dict = [NSMutableDictionary dictionaryWithObject:dict forKey:component_number];
+                                [final_Comonent_array addObject:component_dict];
+                            }
+                        }
+                        SMLog(@"%@",expression_);
+                    }
+                }
+            }
+            synchronized_sqlite3_finalize(stmt);
+            
+        }
+        
+        SMLog(@" final component array %@",final_Comonent_array);
+        
+        NSString * regular_expression = expression_;
+        for(int k = 0 ; k<[components count]; k++)
+        {
+            NSString * value = [components objectAtIndex:k];
+            NSString * replace_value = [NSString stringWithFormat:@"#$%@",value];// if 2 is there concatinate with #$
+            regular_expression = [regular_expression stringByReplacingOccurrencesOfString:value withString:replace_value];
+        }
+        
+        for(int p = 0 ; p < [final_Comonent_array count];p++)
+        {
+            NSMutableDictionary * dict = [final_Comonent_array objectAtIndex:p];
+            NSArray * keys =[dict allKeys];
+            
+            for(int q = 0; q <[keys count]; q++)
+            {
+                NSString * key = [keys objectAtIndex:q];
+                
+                NSDictionary * values_dict = [dict objectForKey:key];
+                //Major Change for Sorting lines
+                //**********************************************************
+                NSString * temp_lhs = [values_dict objectForKey:@"component_lhs"];
+                NSString * lhs = [NSString  stringWithFormat:@"'%@'.%@",object_name,temp_lhs];
+                //**********************************************************
+                
+                
+                NSString * rhs = [values_dict objectForKey:@"component_rhs"];
+                NSString * operator = [values_dict objectForKey:@"component_operator"];
+                NSString * sequence = [values_dict objectForKey:@"sequence"];
+                
+                
+                NSString * component_expression = @"";
+               
+                NSString * data_type = [[appDelegate.databaseInterface getFieldDataType:object_name filedName:temp_lhs] lowercaseString];
+                
+                if ([data_type isEqualToString:@"date"] || [data_type isEqualToString:@"datetime"]) {
+                    BOOL isDateOnly = NO;
+                    if ([data_type isEqualToString:@"date"]){
+                        isDateOnly = YES;
+                    }
+                    NSString *newRhsValue = rhs;
+                    if([rhs caseInsensitiveCompare:MACRO_NOW]== NSOrderedSame)
+                    {
+                        newRhsValue = [Utility today:0 andJusDate:isDateOnly];
+                    }
+                    else if([rhs caseInsensitiveCompare:MACRO_TODAY]== NSOrderedSame) {
+                        newRhsValue = [Utility today:0 andJusDate:isDateOnly];
+                    }
+                    else if([rhs caseInsensitiveCompare:MACRO_TOMMOROW]== NSOrderedSame) {
+                        newRhsValue = [Utility today:1 andJusDate:isDateOnly];
+                    }
+                    else if([rhs caseInsensitiveCompare:MACRO_YESTERDAY]== NSOrderedSame) {
+                        newRhsValue = [Utility today:-1 andJusDate:isDateOnly];
+                    }
+                    rhs = newRhsValue;
+                }
+                else if ([data_type isEqualToString:@"boolean"] || [data_type isEqualToString:@"bool"]) {
+                    rhs = [rhs lowercaseString];
+                    if ([Utility isItTrue:rhs]) {
+                        
+                        rhs = [rhs stringByReplacingOccurrencesOfString:@"true" withString:@"1" ];
+                    }
+                    else {
+                         rhs = [rhs stringByReplacingOccurrencesOfString:@"false" withString:@"0" ];
+                    }
+               }
+                
+                
+                // This check is for RecordTypeId
+                if([rhs isEqualToString:SVMX_USER_TRUNK]) {
+                    component_expression = @" 1 ";
+                }
+                else if([temp_lhs isEqualToString:@"RecordTypeId"])
+                {
+                    component_expression = [NSString stringWithFormat:@" %@   in   (select  record_type_id  from SFRecordType where record_type = '%@' )" ,lhs, rhs];
+                    
+                }
+                else if([data_type isEqualToString:@"reference"])
+                {
+                    NSString * referenceToTable = [appDelegate.dataBase getReferencetoFiledForObject:object_name api_Name:temp_lhs];
+                    NSInteger fieldCount = [self getFieldCountForObject:referenceToTable];
+                    
+                    if (fieldCount > 1) {
+                        if([operator isEqualToString:@"isnotnull"]) //#4722 defect fix for wizard billing type null
+                        {
+                            operator = @"!=";
+                            NSString * temp_operator = @"is not null";
+                            
+                            component_expression = [NSString stringWithFormat:@" ( %@ %@ null or trim(%@) %@ or ( trim(%@) != '') ) ",lhs,operator,lhs,temp_operator, lhs];
+                        }
+                        else if ([rhs isEqualToString:@"null"])
+                        {
+                            component_expression = [NSString stringWithFormat:@" ( %@ = ' ' or typeof(%@) %@ '%@' or %@ = '' ) ",lhs,lhs,operator,rhs, lhs];
+                        }
+                        else
+                        {
+                            NSString *nameField = [self getNameFieldForObject:referenceToTable];
+                            if ([Utility isStringEmpty:nameField]) {
+                                component_expression = [NSString stringWithFormat:@" %@   in   (select  Id  from %@ where Name %@ '%@' )" , lhs,referenceToTable , operator ,rhs];
+                            }
+                            else {
+                                component_expression = [NSString stringWithFormat:@" %@   in   (select  Id  from %@ where %@ %@ '%@' )" , lhs,referenceToTable , nameField, operator ,rhs];
+                            }
+                            
+                            if ([operator isEqualToString: @"!="] || [operator isEqualToString: @" NOT LIKE "]){
+                                component_expression = [NSString stringWithFormat:@"( %@  OR %@ = \"\" OR %@ isnull)",component_expression,lhs,lhs];
+                            }
+                            
+                        }
+                    }
+                    else {
+                        component_expression = @" 1 ";
+                    }
+                   
+                    
+                }
+                else if ([operator isEqualToString: @"!="])
+                {
+                    component_expression = [NSString stringWithFormat:@" ( %@ isnull or %@ %@ '%@' ) ",lhs,lhs,operator,rhs];
+                }
+                else if([operator isEqualToString:@"isnotnull"]) //#4722 defect fix for wizard billing type null
+                {
+                    //#4722 defect fix for wizard billing type null
+                    operator = @"!=";
+                    NSString * temp_operator = @"is not null";
+                    
+                    component_expression = [NSString stringWithFormat:@" ( %@ %@ null or trim(%@) %@ or ( trim(%@) != '') ) ",lhs,operator,lhs,temp_operator, lhs];
+                }
+               
+                else if ([rhs isEqualToString:@"null"])
+                {
+                    component_expression = [NSString stringWithFormat:@" ( %@ = ' ' or typeof(%@) %@ '%@' or %@ = '' ) ",lhs,lhs,operator,rhs, lhs];
+                }
+                else
+                {
+                    component_expression = [component_expression stringByAppendingString:lhs];
+                    component_expression = [component_expression stringByAppendingString:operator];
+                    rhs = [NSString stringWithFormat:@"'%@'",rhs];
+                    component_expression = [component_expression stringByAppendingString:rhs];
+                }
+                
+                BOOL isIncludeTrue = NO;
+                for(int p = 0 ; p < [final_Comonent_array count];p++)
+                {
+                    NSMutableDictionary * dict_test = [final_Comonent_array objectAtIndex:p];
+                    NSArray * keys_test =[dict_test allKeys];
+                    
+                    for(int q = 0; q <[keys_test count]; q++)
+                    {
+                        NSString * key_test = [keys_test objectAtIndex:q];
+                        
+                        if([key isEqualToString:key_test])
+                        {
+                            NSDictionary * values_dict_test = [dict_test objectForKey:key];
+                            NSString * lhs_ = [values_dict_test objectForKey:@"component_lhs"];
+                            NSString * rhs_ = [values_dict_test objectForKey:@"component_rhs"];
+                            NSString * operator_ = [values_dict_test objectForKey:@"component_operator"];
+                            NSString * sequence_test = [values_dict_test objectForKey:@"sequence"];
+                            int sequence_no= [sequence intValue];
+                            int sequencetest_no = [sequence_test intValue];
+                            if(sequence_no != sequencetest_no)
+                            {
+                                isIncludeTrue = YES;
+                                if([operator_ isEqualToString:@" LIKE "])
+                                {
+                                    component_expression = [component_expression stringByAppendingString:@" OR "];
+                                }
+                                else
+                                {
+                                    component_expression = [component_expression stringByAppendingString:@" AND "];
+                                }
+                                
+                                if ([data_type isEqualToString:@"reference"]) {
+                                    NSString *newExpression = @"1";
+                                    NSString * referenceToTable = [appDelegate.dataBase getReferencetoFiledForObject:object_name api_Name:lhs_];
+                                    NSInteger fieldCount = [self getFieldCountForObject:referenceToTable];
+                                    
+                                    if (fieldCount > 1) {
+                                            NSString *nameField = [self getNameFieldForObject:referenceToTable];
+                                            NSString *newLhsField = [NSString stringWithFormat:@"'%@'.%@",object_name,lhs_];
+                                            if ([Utility isStringEmpty:nameField]) {
+                                                newExpression = [NSString stringWithFormat:@" %@   in   (select  Id  from %@ where Name %@ '%@' )" , newLhsField,referenceToTable , operator_ ,rhs_];
+                                            }
+                                            else {
+                                                newExpression = [NSString stringWithFormat:@" %@   in   (select  Id  from %@ where %@ %@ '%@' )" , newLhsField,referenceToTable , nameField, operator_ ,rhs_];
+                                            }
+                                            
+                                            if ([operator isEqualToString: @"!="] || [operator isEqualToString: @" NOT LIKE "]){
+                                                newExpression = [NSString stringWithFormat:@"( %@  OR %@ = \"\" OR %@ isnull)",newExpression,newLhsField,newLhsField];
+                                            }
+                                    }
+                                    else {
+                                        newExpression = @" 1 ";
+                                    }
+                                     component_expression = [component_expression stringByAppendingFormat:@" %@ ",newExpression];   
+                                }
+                                else {
+                                    component_expression = [component_expression stringByAppendingFormat:@"'%@'.%@",object_name,lhs_];
+                                    component_expression = [component_expression stringByAppendingString:operator_];
+                                    rhs = [NSString stringWithFormat:@"'%@'",rhs_];
+                                    component_expression = [component_expression stringByAppendingString:rhs];
+                                }
+                            }
+                        }
+                    }
+                }
+                //for the key concatinate #$ and replace it with the expression
+                NSString * concatinate_key = [NSString stringWithFormat:@"#$%@",key];
+                SMLog(@"%@", component_expression);
+                if (isIncludeTrue) {
+                    component_expression = [NSString stringWithFormat:@" ( %@ ) ",component_expression];
+                    regular_expression = [regular_expression stringByReplacingOccurrencesOfString:concatinate_key withString:component_expression];
+                }
+                else {
+                    regular_expression = [regular_expression stringByReplacingOccurrencesOfString:concatinate_key withString:component_expression];
+                }
+                
+            }
+        }
+        
+        if ([regular_expression length] > 0)
+        {
+            retExpression = [NSString stringWithFormat:@"(%@)", regular_expression];
+        }
+        else
+        {
+            retExpression = [NSString stringWithFormat:@"%@", regular_expression];
+        }
+    }@catch (NSException *exp) {
+        SMLog(@"Exception Name Database :queryForExpressionComponent %@",exp.name);
+        SMLog(@"Exception Reason Database :queryForExpressionComponent %@",exp.reason);
+        [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+    }
+    
+    return retExpression;
+}
+
+- (NSString *)getAdvanceExpressionComponentExpressionId:(NSString *)expressionId  {
+    
+    
+   NSString * query = [NSString stringWithFormat:@"SELECT DISTINCT component_sequence_number  FROM '%@' where expression_id = '%@'  ORDER BY component_sequence_number",SFEXPRESSION_COMPONENT, expressionId];
+    
+    SMLog(@"%@",query);
+    sqlite3_stmt * stmt = nil;
+    
+    NSMutableString *advancedExpression = [[NSMutableString alloc] init];
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(stmt)  == SQLITE_ROW)
+        {
+                    
+            char * sequence = (char *)synchronized_sqlite3_column_text(stmt, 0);
+            if(sequence != nil)
+            {
+               NSString *sequenceString = [NSString stringWithUTF8String:sequence];
+                NSInteger se = [sequenceString intValue];
+                if (se >=1 && se < 2) {
+                    [advancedExpression appendFormat:@"%d ",se];
+                }
+                else {
+                     [advancedExpression appendFormat:@" AND %d ",se];
+                }
+            }
+       }
+    }
+    
+    NSString *finalString = @"";
+    if (![Utility isStringEmpty:advancedExpression]) {
+        finalString = [NSString stringWithFormat:@"( %@ )",advancedExpression];
+    }
+    [advancedExpression release];
+    advancedExpression = nil;
+    
+    synchronized_sqlite3_finalize(stmt);
+    return finalString;
+}
+
+- (NSString *)getUserNameofLoggedInUser{
+    NSString *UserFullName=@"";
+    if(![appDelegate.currentUserName length]>0)
+    {
+        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+        if ([[userDefaults objectForKey:@"UserFullName"] length]>0)
+        {
+            UserFullName = [userDefaults objectForKey:@"UserFullName"];
+            SMLog(@"User Full Name  = %@",UserFullName);
+        }
+        else
+        {
+            UserFullName=[appDelegate.dataBase getLoggedInUser:appDelegate.username];
+        }
+    }
+    else
+    {
+        UserFullName=appDelegate.currentUserName;
+    }
+    return UserFullName;
+}
+
+- (NSString*)getNameFieldForObject:(NSString*)objectName {
+    NSString *queryStatement1 = [NSMutableString stringWithFormat:@"SELECT api_name FROM SFObjectField where object_api_name = '%@'and (name_field = 'TRUE' OR name_field = 'True' OR name_field = 'true' OR name_field = '1') and api_name != \"\"",objectName];
+    sqlite3_stmt * labelstmt = nil;
+    char *refrence_to=nil;
+    NSString *fieldName = @"";
+    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement1 UTF8String],-1, &labelstmt, nil) == SQLITE_OK )
+    {
+        if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
+        {
+            refrence_to = (char *) synchronized_sqlite3_column_text(labelstmt,0);
+            if((refrence_to != nil)&& strlen(refrence_to))
+                fieldName = [NSString stringWithUTF8String:refrence_to];
+            else
+                fieldName = @"";
+        }
+    }
+    sqlite3_finalize(labelstmt);
+    return fieldName;
+}
+
+
+- (NSInteger)getFieldCountForObject:(NSString*)objectName {
+    NSString *queryStatement1 = [NSMutableString stringWithFormat:@"SELECT count(*) FROM SFObjectField where object_api_name = '%@' and api_name != \"\"",objectName];
+    sqlite3_stmt * labelstmt = nil;
+   
+    NSInteger fieldCount = 0;
+    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement1 UTF8String],-1, &labelstmt, nil) == SQLITE_OK )
+    {
+        if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
+        {
+            fieldCount =  synchronized_sqlite3_column_int(labelstmt,0);
+           
+        }
+    }
+    sqlite3_finalize(labelstmt);
+    return fieldCount;
 }
 
 @end

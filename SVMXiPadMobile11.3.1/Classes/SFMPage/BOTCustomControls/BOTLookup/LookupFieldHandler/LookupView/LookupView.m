@@ -9,7 +9,25 @@
 #import "LookupView.h"
 #import "WSInterface.h"
 #import "iServiceAppDelegate.h"
+
+/* Vipin start Advanced Lookup*/
+#import "SVMXLookupFilter.h"
+#define kFlipAnimationSpeed 0.5
+#define kTableviewTag       1022
+#define kFilterNameLabelTag 1801
+#define kkFilterSwitchTag   1802
+/* Vipin ends */
+
+static NSString *const kCellBackgroundColorForDisableState = @"f4f3f1";
+
+
 extern void SVMXLog(NSString *format, ...);
+
+//Vipin - Advanced Lookup
+@interface LookupView (hidden)
+- (void)loadLookupFilters;
+@end
+
 
 @implementation LookupView
 
@@ -18,6 +36,11 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize objectName, searchKey,searchId;
 @synthesize history;
 @synthesize label_key;
+
+//Vipin - Advanced Lookup
+@synthesize preFilters,advancedFilters;
+@synthesize advancedFilterView;
+
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -33,6 +56,9 @@ extern void SVMXLog(NSString *format, ...);
     [describeObject release];
     [lookupData release];
     [popover release];
+    [preFilters release];
+    [advancedFilters release];
+    [advancedFilterView release];
     [super dealloc];
 }
 
@@ -77,6 +103,87 @@ extern void SVMXLog(NSString *format, ...);
     }
 
 }
+
+#pragma mark - Flip View Management
+
+- (void)advanceFilterSelectionDoneButtonClicked:(id)sender {
+     [delegate getSearchIdandObjectName:searchBar.text];
+    
+    [UIView transitionFromView:self.advancedFilterView
+                        toView:self.view
+                      duration:kFlipAnimationSpeed
+                       options:UIViewAnimationOptionTransitionFlipFromLeft
+                    completion:^(BOOL finished) {
+                        
+                        
+                        UIBarButtonItem *someItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"filter-icon.png"]
+                                                                                     style:UIBarButtonItemStyleDone
+                                                                                    target:self
+                                                                                    action:@selector(advancedFilterButtonClicked:)];
+                        
+                        self.navigationItem.rightBarButtonItem = someItem;
+                        
+                    }];
+    
+
+      
+}
+
+
+- (void)advancedFilterButtonClicked:(id)sender {
+    
+  
+    [searchBar resignFirstResponder];
+    [self.popover setPopoverContentSize:CGSizeMake(320, 1100) animated:YES];
+    self.contentSizeForViewInPopover = CGSizeMake(320, 1100);
+    
+
+    if (advancedFilterView == nil) {
+        
+        UIView *filterView = [[UIScrollView alloc] initWithFrame:CGRectMake(0,
+                                                                            0,
+                                                                            self.view.frame.size.width,
+                                                                            self.view.frame.size.height)];
+        self.advancedFilterView = filterView;
+        [filterView release];
+        
+        [self.view addSubview:advancedFilterView];
+        advancedFilterView.backgroundColor = [UIColor whiteColor];
+        [self.view sendSubviewToBack:advancedFilterView];
+        
+        // Create TableView to display Advanced filter items
+        UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0,
+                                                                               0,
+                                                                               advancedFilterView.frame.size.width,
+                                                                               advancedFilterView.frame.size.height + 100)];
+        tableView.dataSource = self;
+        tableView.delegate = self;
+        tableView.tag = kTableviewTag;
+        [advancedFilterView addSubview:tableView];
+        [tableView  release];
+        tableView = nil;
+    }
+    
+    self.advancedFilterView.frame = CGRectMake(0,
+                                               0,
+                                               self.view.frame.size.width,
+                                               self.view.frame.size.height);
+    
+    [UIView transitionFromView:self.view
+                        toView:advancedFilterView
+                      duration:kFlipAnimationSpeed
+                       options:UIViewAnimationOptionTransitionFlipFromRight
+                    completion:^(BOOL finished) {
+                        // animation completed
+                        UIBarButtonItem *someItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                                                  target:self
+                                                                                                  action:@selector(advanceFilterSelectionDoneButtonClicked:)];
+                        self.navigationItem.rightBarButtonItem = someItem;
+                        
+                    }];
+    
+}
+
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
@@ -118,6 +225,26 @@ extern void SVMXLog(NSString *format, ...);
         }
         
     }
+    
+    //Vipin - Advanced Lookup
+    [self loadLookupFilters];
+    
+    // Add filter icon on navigation bar
+    UIBarButtonItem *filterButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"filter-icon.png"]
+                                                                         style:UIBarButtonItemStyleDone
+                                                                        target:self
+                                                                        action:@selector(advancedFilterButtonClicked:)];
+    
+    if ( (self.advancedFilters != nil) &&  ([self.advancedFilters count] > 0) )
+    {
+        filterButtonItem.enabled = YES;
+    }else
+    {
+        filterButtonItem.enabled = NO;
+    }
+    
+    self.navigationItem.rightBarButtonItem = filterButtonItem;
+    [filterButtonItem release];
 }
 
 -(void)DismissPopover
@@ -269,11 +396,18 @@ extern void SVMXLog(NSString *format, ...);
 
 #pragma mark - UITableView Delegate Methods
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{    
-    NSArray * array = [[lookupData objectForKey:@"DATA"] objectAtIndex:indexPath.row];
-    NSString * defaultLookupColumn = @"";
-    defaultLookupColumn = [lookupData objectForKey:DEFAULT_LOOKUP_COLUMN];
-    [delegate didSelectObject:array defaultDisplayColumn:defaultLookupColumn];
+{
+    if (tableView.tag == kTableviewTag )
+    {
+        return ;
+    }
+    else
+    {
+        NSArray * array = [[lookupData objectForKey:@"DATA"] objectAtIndex:indexPath.row];
+        NSString * defaultLookupColumn = @"";
+        defaultLookupColumn = [lookupData objectForKey:DEFAULT_LOOKUP_COLUMN];
+        [delegate didSelectObject:array defaultDisplayColumn:defaultLookupColumn];
+    }
 }
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
@@ -338,6 +472,28 @@ extern void SVMXLog(NSString *format, ...);
     [_array release];
 }
 
+- (void)switchValueChanged:(id)sender
+{
+    if ([sender isKindOfClass:[UISwitch class]])
+    {
+        UISwitch *filterSwitch = (UISwitch *) sender;
+        
+        //int switchTag = kkFilterSwitchTag + indexPath.row;
+        NSInteger  switchRow =  filterSwitch.tag - kkFilterSwitchTag;
+        
+        NSLog(@" filterSwitch  switchRow  : %d ->  %@", switchRow, (filterSwitch.on) ? @"ON" : @"OFF");
+        
+        if ([self.advancedFilters count] > switchRow)
+        {
+            SVMXLookupFilter *lookupfilter = [self.advancedFilters objectAtIndex:switchRow];
+            lookupfilter.isDefaultOn = filterSwitch.on;
+            [self reloadData];
+        }
+    }
+}
+
+
+
 #pragma mark - UILookupDetail Delegate Method
 - (void) didSelectDetailAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -350,6 +506,10 @@ extern void SVMXLog(NSString *format, ...);
 #pragma mark - UITAbleView Data Source Methods
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    if (tableView.tag == kTableviewTag ) {
+        
+        return ([[self advancedFilters] count] == 0) ? 0 : [[self advancedFilters] count];
+    }
     NSArray * array = [lookupData objectForKey:@"DATA"];
     return [array count];
 }
@@ -367,6 +527,13 @@ extern void SVMXLog(NSString *format, ...);
     {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId] autorelease];
     }
+   
+    if (tableView.tag == kTableviewTag)
+    {
+        return cell;
+    }
+    
+    
 	@try{
     NSArray * super_array = [lookupData objectForKey:@"DATA"];
     NSArray * array = [super_array objectAtIndex:indexPath.row];
@@ -411,6 +578,133 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
     }
     return cell;
+}
+
+- (void)tableView: (UITableView*)tableView
+  willDisplayCell: (UITableViewCell*)cell
+forRowAtIndexPath: (NSIndexPath*)indexPath
+{
+    if (tableView.tag == kTableviewTag)
+    {
+        if ( (self.advancedFilters == nil) || ([self.advancedFilters count] < 1))
+        {
+            // no valid data array
+            return;
+        }
+        
+        
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        
+        SVMXLookupFilter *lookupfilter = [self.advancedFilters objectAtIndex:indexPath.row];
+        
+        
+        UILabel *filterName = (UILabel *)[cell.contentView viewWithTag:kFilterNameLabelTag];
+        
+        CGRect cellFrame  = cell.contentView.frame;
+        
+        float textX = 10.0f;
+        float textHeight = 30.0f;
+        float textWidth = cellFrame.size.width - 100.0;
+        float textY = (cellFrame.size.height / 2.0) - (textHeight / 2.0f);
+        
+        float buttonX = textWidth + 10.0;
+        
+        if (filterName == nil)
+        {
+            CGRect labelFrame = CGRectMake(textX, textY, textWidth, textHeight);
+            filterName = [[UILabel alloc] initWithFrame:labelFrame];
+            filterName.backgroundColor = [UIColor clearColor];
+            filterName.font = [UIFont boldSystemFontOfSize:14.0f];
+            filterName.textAlignment = UITextAlignmentLeft;
+            filterName.textColor = [UIColor blackColor];
+            filterName.backgroundColor = [UIColor clearColor];
+            filterName.tag = kFilterNameLabelTag;
+            filterName.text = lookupfilter.name;
+            [cell.contentView addSubview:filterName];
+            [filterName release];
+            filterName = nil;
+        }else
+        {
+            filterName.text = lookupfilter.name;
+        }
+        
+        int switchTag = kkFilterSwitchTag + indexPath.row;
+        
+        UISwitch *filterSwitch = (UISwitch *) cell.accessoryView;
+        
+        cell.backgroundColor = [UIColor clearColor];
+        
+        if (filterSwitch == nil)
+        {
+            CGRect switchFrame = CGRectMake(buttonX, 8.0f, 0.0f, 0.0f);
+            filterSwitch = [[UISwitch alloc] initWithFrame:switchFrame];
+            filterSwitch.tag = switchTag;
+            [filterSwitch setBackgroundColor:[UIColor clearColor]];
+            
+            if (lookupfilter.objectPermission)
+            {
+                // set value to UISwitch
+                [filterSwitch setOn:lookupfilter.isDefaultOn animated:YES];
+                
+                if (lookupfilter.allowOverride)
+                {
+                    cell.userInteractionEnabled = YES;
+                }else
+                {
+                    cell.userInteractionEnabled = NO;
+                    cell.backgroundColor = [appDelegate colorForHex:kCellBackgroundColorForDisableState];
+                }
+            }
+            else
+            {
+                // set value to UISwitch to NO
+                [filterSwitch setOn:NO  animated:YES];
+                cell.userInteractionEnabled = NO;
+                cell.backgroundColor = [appDelegate colorForHex:kCellBackgroundColorForDisableState];
+            }
+            
+            [filterSwitch addTarget:self action:@selector(switchValueChanged:) forControlEvents:UIControlEventValueChanged];
+            // [cell.contentView addSubview:filterSwitch];
+            cell.accessoryView = filterSwitch;
+            [filterSwitch release];
+            filterSwitch = nil;
+            
+        } else
+        {
+            if (lookupfilter.objectPermission)
+            {
+                // set value to UISwitch
+                [filterSwitch setOn:lookupfilter.isDefaultOn animated:YES];
+                
+                if (lookupfilter.allowOverride)
+                {
+                    cell.userInteractionEnabled = YES;
+                }else{
+                    cell.userInteractionEnabled = NO;
+                    cell.backgroundColor = [appDelegate colorForHex:kCellBackgroundColorForDisableState];
+                }
+            } else{
+                // set value to UISwitch to NO
+                [filterSwitch setOn:NO  animated:YES];
+                cell.userInteractionEnabled = NO;
+                cell.backgroundColor = [appDelegate colorForHex:kCellBackgroundColorForDisableState];
+            }
+        }
+    }
+}
+
+#pragma mark -
+#pragma mark Advanced look up filers
+- (void)loadLookupFilters {
+    NSArray *advancedlookupFilters =  [appDelegate.databaseInterface  getLookupfiltersForNamedSearchId:self.searchId andfilterType:kLOOKUP_ADVANCED_FILTER];
+    if ([advancedlookupFilters count] > 0) {
+        self.advancedFilters = advancedlookupFilters;
+    }
+    
+    NSArray *prelookupFilters =  [appDelegate.databaseInterface  getLookupfiltersForNamedSearchId:self.searchId andfilterType:kLOOKUP_PRE_FILTER];
+    if ([prelookupFilters count] > 0) {
+        self.preFilters = prelookupFilters;
+    }
 }
 
 @end
