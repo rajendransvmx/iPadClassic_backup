@@ -192,6 +192,8 @@ extern void SVMXLog(NSString *format, ...);
         [markerString appendString:@"\n"];
     }
     watermark.text = markerString;
+    [watermark setIsAccessibilityElement:YES];//BOT_TA
+    [watermark setAccessibilityLabel:@"WaterMark"];//BOT_TA
 	}@catch (NSException *exp) {
 	SMLog(@"Exception Name SignatureViewController :viewDidLoad %@",exp.name);
 	SMLog(@"Exception Reason SignatureViewController :viewDidLoad %@",exp.reason);

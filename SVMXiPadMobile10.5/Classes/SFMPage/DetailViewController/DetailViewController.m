@@ -4924,6 +4924,8 @@ extern void SVMXLog(NSString *format, ...);
                 [control addTarget:self action:@selector(multiAccessoryTapped:) forControlEvents:UIControlEventTouchUpInside];
                 //control.frame = CGRectMake(0, 0, 23, 23);
                 control.frame = CGRectMake(0, 0, 38, 31);
+                control.isAccessibilityElement = YES;
+                [control setAccessibilityIdentifier:@"AddMultiLinesButton"];
                 [addLinesView addSubview:control];
                 multiControl = [control retain];
                 [control release];
@@ -5366,6 +5368,8 @@ extern void SVMXLog(NSString *format, ...);
                     if(flag_)
                     {
                         custLabel.textColor = [UIColor blueColor];
+                        custLabel.isAccessibilityElement = YES;
+                        custLabel.accessibilityValue = @"{text_color: blue}";
                     }
                     else
                     {              
@@ -5577,6 +5581,8 @@ extern void SVMXLog(NSString *format, ...);
                 if([newProcessId length] != 0 && newProcessId != nil && [record_id length] != 0 && record_id  != nil )
                 {
                     lbl2.textColor = [UIColor blueColor];
+                    lbl2.isAccessibilityElement = YES;
+                    lbl2.accessibilityValue = @"{text_color: blue}";
                 }
                 
                 [background addSubview:lbl2];
@@ -6082,7 +6088,8 @@ extern void SVMXLog(NSString *format, ...);
                 if(flag_)
                 {
                     custLabel.textColor = [UIColor blueColor];
-                    
+                    custLabel.isAccessibilityElement = YES;
+                    custLabel.accessibilityValue = @"{text_color: blue}";                    
                 }
             }
             [background addSubview:custLabel];
@@ -8958,6 +8965,13 @@ extern void SVMXLog(NSString *format, ...);
             NSMutableArray * details = [appDelegate.SFMPage objectForKey:@"details"];
             NSMutableDictionary * detail = [details objectAtIndex:index];
             BOOL allowDeleteLines = [[detail objectForKey:@"details_Allow_Delete_Lines"] boolValue];
+            //TA_BOT :
+            UITableViewCell *theCurrentCell = [_tableView cellForRowAtIndexPath:indexPath];
+            NSMutableDictionary *dict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
+            [dict setValue:[NSNumber numberWithBool:allowDeleteLines] forKey:@"DeleteAppeared"];
+            SBJsonWriter *writer = [[[SBJsonWriter alloc] init] autorelease];
+            NSString *json = [writer stringWithObject:dict];
+            [theCurrentCell setAccessibilityValue:json];
             if(allowDeleteLines)
             {
                 return YES;

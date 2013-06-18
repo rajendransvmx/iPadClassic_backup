@@ -1865,7 +1865,7 @@ NSString * GO_Online = @"GO_Online";
 
 - (void) setSyncStatus2
 {
-	UIImage *img;
+    UIImage *img;
     
     if( animatedImageView == nil )
     {
@@ -1874,11 +1874,14 @@ NSString * GO_Online = @"GO_Online";
     
     if (_SyncStatus == SYNC_RED)
     {
-		NSString * statusImage = @"red.png";
+        NSString * statusImage = @"red.png";
         [animatedImageView stopAnimating];
         animatedImageView.image = [UIImage imageNamed:statusImage];
         img = [UIImage imageNamed:statusImage];
         [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
+        animatedImageView.isAccessibilityElement = YES;
+        animatedImageView.accessibilityIdentifier = @"red.png";
+        
     }
     else if (_SyncStatus == SYNC_GREEN)
     {
@@ -1887,6 +1890,9 @@ NSString * GO_Online = @"GO_Online";
         animatedImageView.image = [UIImage imageNamed:statusImage];
         img = [UIImage imageNamed:statusImage];
         [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
+        animatedImageView.isAccessibilityElement = YES;
+        animatedImageView.accessibilityIdentifier = @"green.png";
+        
     }
     else if (_SyncStatus == SYNC_ORANGE)
     {

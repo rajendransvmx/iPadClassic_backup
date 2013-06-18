@@ -553,6 +553,7 @@ enum  {
                     control.tag = indexPath.section;
                     [control setAccessibilityIdentifier:@"FullResultDetailButton"];
                     [control addTarget:self action:@selector(onDemandDataFecthing:) forControlEvents:UIControlEventTouchUpInside];
+                     control.isAccessibilityElement = YES;
                     [backgroundView addSubview:control];
                     [control release];
                 }
@@ -565,6 +566,7 @@ enum  {
                     control.tag = indexPath.section;
                     control.layer.contents = (id)image1.CGImage;
                     [control addTarget:self action:@selector(onDemandDataFecthing:) forControlEvents:UIControlEventTouchUpInside];
+                    control.isAccessibilityElement = YES;
                     [backgroundView addSubview:control];
                     [control release];
                     
