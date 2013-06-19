@@ -49,7 +49,7 @@
 @property (retain, nonatomic) IBOutlet UIButton *_cancelButt;
 - (NSString *) getRandomString;
 - (NSString *) getWrappedStringFromString:(NSString *)data;
-
+- (void) updateAccessibilityValue;
 @end
 
 @protocol SignatureDelegate <NSObject>

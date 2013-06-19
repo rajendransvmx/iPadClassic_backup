@@ -1477,7 +1477,8 @@ NSString * GO_Online = @"GO_Online";
 
     
     sqlite3_close(self.db);
-	
+	self.db = nil;
+    
     [appDelegate.dataBase removecache];
     self.wsInterface.didOpComplete = FALSE;
     loginController.didEnterAlertView = FALSE;
@@ -2108,6 +2109,8 @@ int percent = 0;
 		SyncProgress.percentage.hidden = YES;
         img = [UIImage imageNamed:statusImage];
         [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
+        animatedImageView.isAccessibilityElement = YES;
+        animatedImageView.accessibilityIdentifier = @"red.png";
     }
     else if (_SyncStatus == SYNC_GREEN)
     {
@@ -2117,6 +2120,8 @@ int percent = 0;
 		SyncProgress.percentage.hidden = YES;
         img = [UIImage imageNamed:statusImage];
         [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
+        animatedImageView.isAccessibilityElement = YES;
+        animatedImageView.accessibilityIdentifier = @"green.png";
     }
 	else if (_SyncStatus == SYNC_ORANGE)
 	{
@@ -2129,6 +2134,8 @@ int percent = 0;
         SyncProgress.progressIndicator.animationImages = [NSArray arrayWithArray:imgArr];
         SyncProgress.progressIndicator.animationDuration = 1.0f;
         SyncProgress.progressIndicator.animationRepeatCount = 0;
+        animatedImageView.isAccessibilityElement = YES;
+        animatedImageView.accessibilityIdentifier = @"orange.png";
         [SyncProgress.progressIndicator startAnimating];
 
 	}

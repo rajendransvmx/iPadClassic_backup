@@ -177,6 +177,8 @@ extern void SVMXLog(NSString *format, ...);
         iServiceAppDelegate *appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
         if([appDelegate enableGPS_SFMSearch])
 		{
+            if(appDelegate.db == nil)
+                [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
 			[appDelegate.dataBase createUserGPSTable];
             numberOfModules = 9;			
 		}

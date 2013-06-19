@@ -94,6 +94,7 @@ extern void SVMXLog(NSString *format, ...);
             [detailButton setBackgroundImage:[UIImage imageNamed:@"download.png"] forState:UIControlStateNormal];
             [detailButton addTarget:self action:@selector(onlineDemandData:) forControlEvents:UIControlEventTouchUpInside];
             [self.view reloadInputViews];
+            [detailButton setAccessibilityIdentifier:@"DownloadDetailButton"];
         }
         else if(processAvailbleForRecord &&!recordExists)
         {

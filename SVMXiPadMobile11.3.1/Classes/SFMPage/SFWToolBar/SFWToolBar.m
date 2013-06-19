@@ -299,9 +299,12 @@ extern void SVMXLog(NSString *format, ...);
                 {
                     [[btn layer] setBorderWidth:3.0f];
                     [btn.layer setBorderColor:[[UIColor greenColor] CGColor]];
-                    
+                    btn.accessibilityValue = @"{border_color: green}";
                 }
-                
+                else
+                {
+                    btn.accessibilityValue = @"{border_color: none}";
+                }
                 
                 /******shrinivas*******/
                 btn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
@@ -326,7 +329,7 @@ extern void SVMXLog(NSString *format, ...);
                 [btn setBackgroundImage:highlightBtnImg forState:UIControlStateHighlighted];
         
                  btn.tag = i;
-                
+                btn.isAccessibilityElement = YES;
                 [btn addTarget:self action:@selector(buttonClicked:) forControlEvents:UIControlEventTouchUpInside];
                 [background addSubview:btn];
 

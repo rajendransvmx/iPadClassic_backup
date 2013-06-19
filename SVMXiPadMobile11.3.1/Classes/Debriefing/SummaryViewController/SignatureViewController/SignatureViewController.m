@@ -23,6 +23,7 @@ extern void SVMXLog(NSString *format, ...);
 {
     [delegate setSignImageData:nil];
 	[self.view removeFromSuperview];
+    [self updateAccessibilityValue];
 }
 
 - (IBAction) Done
@@ -65,11 +66,13 @@ extern void SVMXLog(NSString *format, ...);
 	[parent SignatureDone];
     [delegate setSignImageData:encryptedImageData];
 	[self.view removeFromSuperview];
+    [self updateAccessibilityValue];
 }
 
 - (IBAction) Erase
 {
 	drawImage.image = nil;
+    [self updateAccessibilityValue];
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
@@ -124,6 +127,7 @@ extern void SVMXLog(NSString *format, ...);
         drawImage.image = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
     }
+    [self updateAccessibilityValue];
 }
 
 /*
@@ -187,6 +191,9 @@ extern void SVMXLog(NSString *format, ...);
         [markerString appendString:@"\n"];
     }
     watermark.text = markerString;
+    [watermark setIsAccessibilityElement:YES];//BOT_TA
+    [watermark setAccessibilityLabel:@"WaterMark"];//BOT_TA
+
 	}@catch (NSException *exp) {
 	SMLog(@"Exception Name SignatureViewController :viewDidLoad %@",exp.name);
 	SMLog(@"Exception Reason SignatureViewController :viewDidLoad %@",exp.reason);
@@ -309,5 +316,17 @@ extern void SVMXLog(NSString *format, ...);
     
     return randomString;
 }
-
+- (void) updateAccessibilityValue
+{
+    [drawImage setIsAccessibilityElement:YES];
+    [drawImage setAccessibilityIdentifier:@"SigntaureImageView"];
+    NSData *theImgData = UIImagePNGRepresentation(drawImage.image);
+    NSUInteger theDataSize = [theImgData length];
+    NSNumber *thenum = [NSNumber numberWithUnsignedInteger:theDataSize];
+    NSMutableDictionary *theValDict = [NSMutableDictionary dictionaryWithCapacity:0];
+    [theValDict setObject:thenum forKey:@"DataSize"];
+    SBJsonWriter *writer = [[[SBJsonWriter alloc] init] autorelease];
+    NSString *json = [writer stringWithObject:theValDict];
+    drawImage.accessibilityValue = json;
+}
 @end

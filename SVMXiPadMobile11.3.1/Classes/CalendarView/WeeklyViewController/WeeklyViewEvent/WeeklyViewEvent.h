@@ -48,6 +48,8 @@ NSMutableArray * weeklyEventPositionArray;
     BOOL edit_event;
     
     BOOL conflictFlag;
+    
+    NSMutableDictionary *mAccessibilityDict;
 }
 
 /*
@@ -115,6 +117,7 @@ NSMutableArray * weeklyEventPositionArray;
 
 - (void) setColor:(UIColor *)color;
 
+- (void)updateAccesibilityDictValue:(NSString*)inValue forKey:(NSString*)inKey;
 // Constants
 // 609 + 11 approx to allow a little movement
 

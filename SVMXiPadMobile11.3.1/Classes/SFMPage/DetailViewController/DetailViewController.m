@@ -717,7 +717,9 @@ extern void SVMXLog(NSString *format, ...);
         [actionButton setTitle:act forState:UIControlStateNormal];
         [actionButton setImage:[UIImage imageNamed:@"sfm_signature_capture"] forState:UIControlStateNormal];
         [actionButton addTarget:self action:@selector(ShowSignature) forControlEvents:UIControlEventTouchUpInside];
-    
+        actionButton.isAccessibilityElement = YES;
+        actionButton.accessibilityLabel = @"sfm_signature_capture";
+
         UIBarButtonItem * actionBtn1 = [[UIBarButtonItem alloc] initWithCustomView:actionButton];
         actionBtn1.width = 43;
         [actionBtn1 setTarget:self];
@@ -831,7 +833,9 @@ extern void SVMXLog(NSString *format, ...);
         UIButton * actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 35, 33)];
         [actionButton setImage:[UIImage imageNamed:@"sfm_signature_capture"] forState:UIControlStateNormal];
         [actionButton addTarget:self action:@selector(ShowSignature) forControlEvents:UIControlEventTouchUpInside];
-        
+        actionButton.isAccessibilityElement = YES;
+        actionButton.accessibilityLabel = @"sfm_signature_capture";
+
         UIBarButtonItem * actionBtn1 = [[UIBarButtonItem alloc] initWithCustomView:actionButton];
         actionBtn1.width = 37;
         [actionBtn1 setTarget:self];
@@ -5206,10 +5210,13 @@ extern void SVMXLog(NSString *format, ...);
             
             // Add Item
             UIImage * image = [UIImage imageNamed:@"add.png"];
-            UIControl * c = [[UIControl alloc] initWithFrame:(CGRect){CGPointZero, image.size}];
+            UIButton * c = [[UIButton alloc] initWithFrame:(CGRect){CGPointZero, image.size}];
             c.backgroundColor = [UIColor clearColor];
             c.tag = index;
-            c.layer.contents = (id)image.CGImage;
+            [c setImage:image forState:UIControlStateNormal];
+            [c setImage:image forState:UIControlStateHighlighted];
+            c.isAccessibilityElement = YES;
+            [c setAccessibilityIdentifier:@"AddLinesButton"];
             [c addTarget:self action:@selector(accessoryTapped:) forControlEvents:UIControlEventTouchUpInside];
             //c.frame = CGRectMake(30, 0, 23, 23);
             c.frame = CGRectMake(45, 0, 38, 31);
@@ -5233,6 +5240,8 @@ extern void SVMXLog(NSString *format, ...);
                 [control addTarget:self action:@selector(multiAccessoryTapped:) forControlEvents:UIControlEventTouchUpInside];
                 //control.frame = CGRectMake(0, 0, 23, 23);
                 control.frame = CGRectMake(0, 0, 38, 31);
+                control.isAccessibilityElement = YES;
+                [control setAccessibilityIdentifier:@"AddMultiLinesButton"];
                 [addLinesView addSubview:control];
                 multiControl = [control retain];
                 [control release];
@@ -5843,6 +5852,8 @@ extern void SVMXLog(NSString *format, ...);
                     if(flag_)
                     {
                         custLabel.textColor = [UIColor blueColor];
+                        custLabel.isAccessibilityElement = YES;
+                        custLabel.accessibilityValue = @"{text_color: blue}";
                     }
                     else
                     {              
@@ -6067,6 +6078,8 @@ extern void SVMXLog(NSString *format, ...);
 
                         
                         lbl2.backgroundColor = [UIColor clearColor];
+                        lbl2.isAccessibilityElement = YES;
+                        lbl2.accessibilityValue = @"{text_color: blue}";
                         CusLabel *referenceLabel = [[CusLabel alloc] initWithFrame:CGRectMake(0, 0, lbl2.frame.size.width, lbl2.frame.size.height)];
                         [referenceLabel setBackgroundColor:[UIColor clearColor]];
                         referenceLabel.textColor = [UIColor blueColor];
@@ -6680,6 +6693,8 @@ extern void SVMXLog(NSString *format, ...);
                 if(flag_)
                 {
                     custLabel.textColor = [UIColor blueColor];
+                    custLabel.isAccessibilityElement = YES;
+                    custLabel.accessibilityValue = @"{text_color: blue}";
                     
                 }
             }
@@ -9581,6 +9596,13 @@ extern void SVMXLog(NSString *format, ...);
 			}
 			
             BOOL allowDeleteLines = [[detail objectForKey:@"details_Allow_Delete_Lines"] boolValue];
+            //TA_BOT :
+            UITableViewCell *theCurrentCell = [_tableView cellForRowAtIndexPath:indexPath];
+            NSMutableDictionary *dict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
+            [dict setValue:[NSNumber numberWithBool:allowDeleteLines] forKey:@"DeleteAppeared"];
+            SBJsonWriter *writer = [[[SBJsonWriter alloc] init] autorelease];
+            NSString *json = [writer stringWithObject:dict];
+            [theCurrentCell setAccessibilityValue:json];
             if(allowDeleteLines)
             {
                 if([indexPath isEqual:self.selectedIndexPathForEdit] ) {
@@ -14010,6 +14032,8 @@ extern void SVMXLog(NSString *format, ...);
     view.font = [UIFont boldSystemFontOfSize:18.0];
     view.textColor = [UIColor blackColor];
     view.editable = NO;
+    view.isAccessibilityElement = YES;
+    view.accessibilityIdentifier = @"DetailViewError";
     NSString * colourCode = @"#F75D59";
     UIColor * color = [appDelegate colorForHex:colourCode];
     

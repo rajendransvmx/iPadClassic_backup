@@ -299,6 +299,7 @@ enum  {
         NSArray *cellArray = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"Values"] ;
         [cell clearsContextBeforeDrawing];
         UIButton * button = [[[UIButton alloc] initWithFrame:CGRectMake(tableView.frame.size.width-103, 7, 20, 21)] autorelease];
+        button.isAccessibilityElement = YES;
         button.userInteractionEnabled = TRUE;
         NSString *objname=[[tableDataArray objectAtIndex:indexPath.section ] objectForKey:@"ObjectName"];
         objname = [appDelegate.dataBase getApiNameFromFieldLabel:objname];
@@ -443,11 +444,14 @@ enum  {
                     if( isparent && recordExists &&tabel_Exists)
                     {
                         UIImage * image1 = [UIImage imageNamed:@"download.png"];
-                        UIControl *control = [[UIControl alloc] initWithFrame:CGRectMake(tableView.frame.size.width-103, 7, 20, 21)];
+                        UIButton *control = [[UIButton alloc] initWithFrame:CGRectMake(tableView.frame.size.width-103, 7, 20, 21)];
+                        [control  setImage:image1 forState:UIControlStateNormal];
+                        [control  setImage:image1 forState:UIControlStateHighlighted];
                         control.backgroundColor = [UIColor clearColor];
                         control.tag = indexPath.section;
-                        control.layer.contents = (id)image1.CGImage;
+                        [control setAccessibilityIdentifier:@"FullResultDetailButton"];
                         [control addTarget:self action:@selector(onDemandDataFecthing:) forControlEvents:UIControlEventTouchUpInside];
+                        control.isAccessibilityElement = YES;
                         [backgroundView addSubview:control];
                         [control release];
                     }

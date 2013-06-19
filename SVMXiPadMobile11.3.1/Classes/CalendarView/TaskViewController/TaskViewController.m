@@ -69,6 +69,7 @@ extern void SVMXLog(NSString *format, ...);
     selectedRow = indexPath.row;
     // Configure the cell...
     cell.imageView.image = [self getImageForPriority:[[tasks objectAtIndex:indexPath.row] objectAtIndex:0]];
+    cell.imageView.isAccessibilityElement = YES;
     [cell setTask:[[tasks objectAtIndex:indexPath.row] objectAtIndex:1]];
     
     return cell;
