@@ -144,6 +144,8 @@ extern void SVMXLog(NSString *format, ...);
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [drawImage setIsAccessibilityElement:YES];
+    [drawImage setAccessibilityIdentifier:@"SigntaureImageView"];
     iServiceAppDelegate * appDelegte = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     @try
     {

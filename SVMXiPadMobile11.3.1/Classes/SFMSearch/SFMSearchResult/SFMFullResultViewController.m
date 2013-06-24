@@ -103,6 +103,7 @@ extern void SVMXLog(NSString *format, ...);
             
             conflict=[appDelegate.dataBase checkIfConflictsExistsForEvent:[data objectForKey:@"Id"] objectName:[appDelegate.dataBase getApiNameFromFieldLabel:objectName] local_id:local_id];
             [detailButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Disclosure-Button.png"] forState:UIControlStateNormal];
+            [detailButton setAccessibilityIdentifier:@"DisclosureDetailButton"];
             [onlineImageView setImage:nil];
             if (conflict)
             {
