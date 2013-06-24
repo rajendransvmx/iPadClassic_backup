@@ -104,7 +104,7 @@
     {
         self.detailViewController.isLogFromFileSystem = 1;
         self.detailViewController.detailItem = _objects[indexPath.row];
-        NSLog(@"Display Device Log");
+        NSLog(@"Display Device Logs");
     }
 }
 
