@@ -89,7 +89,10 @@ extern void SVMXLog(NSString *format, ...);
     
     [ prevWeek setAccessibilityIdentifier:@"PrevButton"];
     [ nextWeek setAccessibilityIdentifier:@"NextButton"];
-    
+    prevWeek.isAccessibilityElement = YES;
+    [ prevWeek setAccessibilityIdentifier:@"PrevButton"];
+    nextWeek.isAccessibilityElement = YES;
+    [ nextWeek setAccessibilityIdentifier:@"NextButton"];
     [self populateWeekView];
 }
 
