@@ -855,4 +855,8 @@ extern void SVMXLog(NSString *format, ...);
     [super dealloc];
 }
 
+- (NSIndexPath *)getSelectedIndexPath {
+    return lastSelectedIndexPath;
+}
+
 @end

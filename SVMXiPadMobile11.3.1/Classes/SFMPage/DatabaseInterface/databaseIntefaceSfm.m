@@ -2071,7 +2071,7 @@ extern void SVMXLog(NSString *format, ...);
         [advancedFilterString appendFormat:@" %@ ",preFiltersString];
     }
     
-    /* Reading advanced filters*/
+    /* Reading advanced filters: Fix for issue 7375 */
     NSArray *allFilters = [self getFilterStringArrayForAdvancedFilters:advancedFilters];
    
     NSInteger filterCount = [allFilters count];
@@ -2087,10 +2087,10 @@ extern void SVMXLog(NSString *format, ...);
         for (int counter = 0; counter < [allFilters count]; counter++) {
             NSString *filterString = [allFilters objectAtIndex:counter];
             if (counter == (filterCount - 1)) {
-                [advancedFilterString appendFormat:@" Id IN ( %@ )",filterString];
+                [advancedFilterString appendFormat:@" ( Id IN ( %@ )  OR local_id IN ( %@ )) ",filterString, filterString];
             }
             else {
-                [advancedFilterString appendFormat:@" Id IN ( %@ ) AND ", filterString];
+                [advancedFilterString appendFormat:@" ( Id IN ( %@ )  OR local_id IN ( %@ )) AND ", filterString, filterString];
             }
         }
         NSLog(@"ADVANCED FILTER STRING is %@",advancedFilterString);
@@ -2510,21 +2510,38 @@ extern void SVMXLog(NSString *format, ...);
             [sequenceArray addObject:sequence_dict];
         }
 		
-        NSString * default_display_column = @"";
-        for(int k = 0 ; k< [lookup_object_info count]; k++)
-        {
-            NSDictionary * look_up =  [lookup_object_info objectAtIndex:k];
-			
-			//Shrinivas : Fix for defect : 5916
-			NSString * is_standard  = [look_up objectForKey:LOOkUP_IS_DEFAULT]; //Please verufy this change before commiting contact coder : Shrinivas D
-            if([is_standard boolValue])
+        NSString * default_display_column = @""; 
+        /* Fix for the issue 7386 */
+        if ([Utility isStringEmpty:lookupID] ) {
+            for(int k = 0 ; k< [lookup_object_info count]; k++)
             {
-                default_display_column = [look_up objectForKey:LOOKUP_DEFAULT_LOOK_UP_CLMN];
+                NSDictionary * look_up =  [lookup_object_info objectAtIndex:k];
+                
+                //Shrinivas : Fix for defect : 5916
+                NSString * is_standard  = [look_up objectForKey:LOOkUP_IS_DEFAULT];
+                if([is_standard boolValue])
+                {
+                    default_display_column = [look_up objectForKey:LOOKUP_DEFAULT_LOOK_UP_CLMN];
+                }
+            }
+            
+        }
+        else {
+            if ([lookup_object_info count] > 0) {
+                
+                for(NSDictionary * look_up in lookup_object_info)
+                {
+                   
+                    default_display_column = [look_up objectForKey:LOOKUP_DEFAULT_LOOK_UP_CLMN];
+                    if ([default_display_column length] > 0 && ![Utility isStringEmpty:default_display_column])
+                        break;
+                }
+                
             }
         }
         
-        finalDict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:each_record, sequenceArray,default_display_column, nil] forKeys:_dictKeys];        
-        
+
+        finalDict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:each_record, sequenceArray,default_display_column, nil] forKeys:_dictKeys];
     }
 	[each_record release];
     }@catch (NSException *exp) {
@@ -10208,12 +10225,14 @@ extern void SVMXLog(NSString *format, ...);
              advancedExpression =  [self getAdvanceExpressionComponentExpressionId:identifier];
          }
           NSString *criteriaString =  [self queryForExpressionComponent:advancedExpression expressionId:identifier object_name:sourceObjectName];
-         
-         if (counter == 0) {
+         if ([Utility isStringEmpty:criteriaString]) {
+             continue;
+         }
+         if (counter ==  ([preFilters count] - 1)) {
                [finalString appendFormat:@"%@",criteriaString];
          }
          else{
-               [finalString appendFormat:@" AND %@ ",criteriaString];
+               [finalString appendFormat:@" %@  AND ",criteriaString];
          }
        
 
@@ -10394,35 +10413,40 @@ extern void SVMXLog(NSString *format, ...);
                         component_lhs = [NSString stringWithUTF8String:lhs];
                     }
                     
-                    char * rhs = (char *)synchronized_sqlite3_column_text(stmt, 1);
-                    if(rhs != nil)
-                    {
-                        component_rhs = [NSString stringWithUTF8String:rhs];
-                        if ([component_rhs isEqualToString:@"SVMX.CURRENTUSER"] || [component_rhs Contains:@"SVMX.OWNER"]) {
-                            
-                            component_rhs = [self getUserNameofLoggedInUser];
-                        }
-                        else {
-                            if ([component_rhs isEqualToString:SVMX_USER_TRUNK]) {
-                                component_rhs = [appDelegate.dataBase getTechnicianLocation];
-                                if ([Utility isStringEmpty:component_rhs]) {
-                                    component_rhs = SVMX_USER_TRUNK;
-                                }
-                            }
-                        }
-                    }
-                    
                     char * operator = (char *)synchronized_sqlite3_column_text(stmt, 2);
                     if(operator != nil)
                     {
                         component_operator = [NSString stringWithUTF8String:operator];
                     }
                     
-                    if ([component_rhs isEqualToString:SVMX_USER_TRUNK]) {
+                    char * rhs = (char *)synchronized_sqlite3_column_text(stmt, 1);
+                    if(rhs != nil)
+                    {
+                        component_rhs = [NSString stringWithUTF8String:rhs];
+                        component_rhs = [component_rhs stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                        if ([component_rhs isEqualToString:@"SVMX.CURRENTUSER"] || [component_rhs Contains:@"SVMX.OWNER"]) {
+                            
+                            component_rhs = [self getUserNameofLoggedInUser];
+                        }
+                        else {
+                            if ([component_rhs isEqualToString:SVMX_USER_TRUNK] ) {
+                                component_rhs = [appDelegate.dataBase getTechnicianLocation];
+                                
+                                if ([Utility isStringEmpty:component_rhs]) {
+                                    component_rhs = SVMX_USER_TRUNK;
+                                }
+                            }
+                            else if ([Utility containsString:CURRENTRECORD inString:component_rhs] && ![component_operator isEqualToString:@"in"] && ![component_operator isEqualToString:@"notin"]) {
+                               
+                                component_rhs = [self getLiteralValue:component_rhs];
+                            }
+                        }
+                    }
+                    
+                   if ([component_rhs isEqualToString:SVMX_USER_TRUNK]) {
                         component_rhs = SVMX_USER_TRUNK;
                         component_operator = @"LIKE";
                         operator_ = @" LIKE ";
-                        
                     }
                     if([component_lhs length] != 0 && [component_operator length] != 0)
                     {
@@ -10513,17 +10537,37 @@ extern void SVMXLog(NSString *format, ...);
                                 int count = 0;
                                 for(NSString * value in comp)
                                 {
+                                    
+                                    if ([value isEqualToString:@"SVMX.CURRENTUSER"] || [value Contains:@"SVMX.OWNER"]) {
+                                        
+                                        value = [self getUserNameofLoggedInUser];
+                                    }
+                                    else {
+                                        if ([value isEqualToString:SVMX_USER_TRUNK]) {
+                                            value = [appDelegate.dataBase getTechnicianLocation];
+                                            
+                                            if ([Utility isStringEmpty:value]) {
+                                                value = SVMX_USER_TRUNK;
+                                            }
+                                        }
+                                        else if ([Utility containsString:CURRENTRECORD inString:value]) {
+                                            
+                                            value = [self getLiteralValue:value];
+                                        }
+                                    }
+                                    
                                     NSString * seq = [NSString stringWithFormat:@"%d",count];
                                     NSMutableString * temp = [[NSMutableString alloc] initWithCapacity:0];
                                     [temp appendString:@"%"];
                                     [temp appendFormat:@"%@",value];
                                     [temp appendString:@"%"];
-                                    component_rhs = [temp retain];
-                                    NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:component_lhs,component_rhs,operator_ ,seq,nil] forKeys:keys];
+                                    
+                                    NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:component_lhs,temp,operator_ ,seq,nil] forKeys:keys];
                                     NSMutableDictionary * component_dict = [NSMutableDictionary dictionaryWithObject:dict forKey:component_number];
                                     [final_Comonent_array addObject:component_dict];
                                     
                                     [temp release];
+                                    temp = nil;
                                     count ++;
                                 }
                             }
@@ -10641,10 +10685,10 @@ extern void SVMXLog(NSString *format, ...);
                         {
                             NSString *nameField = [self getNameFieldForObject:referenceToTable];
                             if ([Utility isStringEmpty:nameField]) {
-                                component_expression = [NSString stringWithFormat:@" %@   in   (select  Id  from %@ where Name %@ '%@' )" , lhs,referenceToTable , operator ,rhs];
+                                component_expression = [NSString stringWithFormat:@" ( %@   in   (select  Id  from %@ where Name %@ '%@' ) OR %@   in   (select  local_id  from %@ where Name %@ '%@' ) )" , lhs,referenceToTable , operator ,rhs,lhs,referenceToTable , operator ,rhs];
                             }
                             else {
-                                component_expression = [NSString stringWithFormat:@" %@   in   (select  Id  from %@ where %@ %@ '%@' )" , lhs,referenceToTable , nameField, operator ,rhs];
+                                component_expression = [NSString stringWithFormat:@" ( %@   in   (select  Id  from %@ where %@ %@ '%@' ) OR %@   in   (select  local_id  from %@ where %@ %@ '%@' ) )" , lhs,referenceToTable , nameField, operator ,rhs,lhs,referenceToTable , nameField, operator ,rhs];
                             }
                             
                             if ([operator isEqualToString: @"!="] || [operator isEqualToString: @" NOT LIKE "]){
@@ -10715,7 +10759,10 @@ extern void SVMXLog(NSString *format, ...);
                                     component_expression = [component_expression stringByAppendingString:@" AND "];
                                 }
                                 
-                                if ([data_type isEqualToString:@"reference"]) {
+                                if ([Utility containsString:SVMX_USER_TRUNK inString:rhs_]) {
+                                   
+                                    component_expression = [component_expression stringByAppendingFormat:@" 1 "];   
+                                } else if ([data_type isEqualToString:@"reference"]) {
                                     NSString *newExpression = @"1";
                                     NSString * referenceToTable = [appDelegate.dataBase getReferencetoFiledForObject:object_name api_Name:lhs_];
                                     NSInteger fieldCount = [self getFieldCountForObject:referenceToTable];
@@ -10724,10 +10771,10 @@ extern void SVMXLog(NSString *format, ...);
                                             NSString *nameField = [self getNameFieldForObject:referenceToTable];
                                             NSString *newLhsField = [NSString stringWithFormat:@"'%@'.%@",object_name,lhs_];
                                             if ([Utility isStringEmpty:nameField]) {
-                                                newExpression = [NSString stringWithFormat:@" %@   in   (select  Id  from %@ where Name %@ '%@' )" , newLhsField,referenceToTable , operator_ ,rhs_];
+                                                newExpression = [NSString stringWithFormat:@" ( %@   in   (select  Id  from %@ where Name %@ '%@' ) OR %@   in   (select  local_id  from %@ where Name %@ '%@' ) )" , newLhsField,referenceToTable , operator_ ,rhs_,newLhsField,referenceToTable , operator_ ,rhs_];
                                             }
                                             else {
-                                                newExpression = [NSString stringWithFormat:@" %@   in   (select  Id  from %@ where %@ %@ '%@' )" , newLhsField,referenceToTable , nameField, operator_ ,rhs_];
+                                                newExpression = [NSString stringWithFormat:@" (%@   in   (select  Id  from %@ where %@ %@ '%@' ) OR  %@   in   (select  local_id  from %@ where %@ %@ '%@' ) )" , newLhsField,referenceToTable , nameField, operator_ ,rhs_,newLhsField,referenceToTable , nameField, operator_ ,rhs_];
                                             }
                                             
                                             if ([operator isEqualToString: @"!="] || [operator isEqualToString: @" NOT LIKE "]){
@@ -10880,4 +10927,186 @@ extern void SVMXLog(NSString *format, ...);
     return fieldCount;
 }
 
+#pragma mark -
+#pragma mark get value for Current record literal
+- (NSString *)getLiteralValue:(NSString *)literalValue {
+    /*Checking if the CURRENTRECORD and CURRENTRECORD_HEADER literal exists in RHS value*/
+   // NSString *jsonRep = [appDelegate.SFMPage JSONRepresentation];
+    if (![Utility containsString:CURRENTRECORD inString:literalValue]) {
+        return literalValue;
+    }
+    NSString *fieldValue = @"";
+    NSDictionary *indexDictonary =  [appDelegate.sfmPageController.detailView getCurrentSelectedIndex];
+
+    NSInteger isHeader = [[indexDictonary objectForKey:@"isHeader"] intValue];
+    NSIndexPath *detailIndexPath = [indexDictonary objectForKey:@"detail"];
+    
+    
+    NSString *processId = appDelegate.sfmPageController.processId;
+    NSLog(@"Process Id: %@", processId);
+    
+    NSString *recordId = appDelegate.sfmPageController.recordId;
+    NSLog(@"recordId Id: %@", recordId);
+    
+    NSDictionary *currentPageDictionary = appDelegate.SFMPage;
+    NSDictionary *headerDictionary = [currentPageDictionary objectForKey:gHEADER];
+   
+    if (isHeader == 1) {
+        
+        /*If trying to refer the header of header, then return the literal value */
+        if ([Utility containsString:CURRENTRECORD_HEADER inString:literalValue]) {
+            return literalValue;
+        }
+        
+        NSArray *componentsArray =  [Utility splitString:literalValue byString:@"."];
+        if ([componentsArray count] > 1) {
+            NSString *fieldName = [componentsArray objectAtIndex:1];
+            
+            /* look for field name in the page layout*/
+            /* If field value is empty then look into database */
+            fieldValue =  [self getFieldValueForFieldName:fieldName fromHeaderSections:headerDictionary andRecordId:recordId];
+       }
+    }
+    else if (isHeader == 2){
+        if ([Utility containsString:CURRENTRECORD_HEADER inString:literalValue]) {
+            NSArray *componentsArray =  [Utility splitString:literalValue byString:@"."];
+            if ([componentsArray count] > 2) {
+                NSString *fieldName = [componentsArray objectAtIndex:2];
+                /* look for field name in the page layout*/
+                /* If field value is empty then look into database */
+                fieldValue =  [self getFieldValueForFieldName:fieldName fromHeaderSections:headerDictionary andRecordId:recordId];
+            }
+        }
+        else {
+            NSArray *componentsArray =  [Utility splitString:literalValue byString:@"."];
+            if ([componentsArray count] > 1) {
+                NSString *fieldName = [componentsArray objectAtIndex:1];
+                
+                NSArray *details = [currentPageDictionary objectForKey:gDETAILS];
+                if ([details count] > detailIndexPath.section) {
+                    NSDictionary *detailDictionary = [details objectAtIndex:detailIndexPath.section];
+                    
+                   fieldValue = [self getFieldValueForFieldName:fieldName fromDetailsDictionary:detailDictionary andRecordId:detailIndexPath.row];
+                }
+           }
+        }
+    }
+   //NSString *jsonRep = [appDelegate.SFMPage JSONRepresentation];
+   // NSLog(@"JSON: %@",jsonRep);
+    SMLog(@"%@  fieldValue: %@",literalValue,fieldValue);
+    if ([Utility isStringEmpty:fieldValue]) {
+        fieldValue = @"";
+    }
+    return fieldValue;
+}
+
+- (NSString *)getFieldValueForFieldName:(NSString *)fieldName fromHeaderSections:(NSDictionary *)headerDictionary andRecordId:(NSString *)recordId{
+    
+    NSString *headerObjectName = [headerDictionary objectForKey:gHEADER_OBJECT_NAME];
+    NSArray *headerSections = [headerDictionary objectForKey:gHEADER_SECTIONS];
+    int totalCount = [headerSections count];
+    NSString *fieldValue =  nil;
+    BOOL isItInPage = NO;
+    for (int counter = 0; counter < totalCount; counter++) {
+        NSDictionary *sectionFieldDict = [headerSections objectAtIndex:counter];
+        NSArray *fieldsArray = [sectionFieldDict objectForKey:gSECTION_FIELDS];
+        int fieldLength = [fieldsArray count];
+        for (int innerCounter = 0; innerCounter < fieldLength; innerCounter++) {
+            NSDictionary *fieldDictionary = [fieldsArray objectAtIndex:innerCounter];
+            NSString *fieldApiName = [fieldDictionary objectForKey:gFIELD_API_NAME];
+            if ([fieldApiName isEqualToString:fieldName]) {
+                fieldValue = [fieldDictionary objectForKey:gFIELD_VALUE_KEY];
+                isItInPage = YES;
+                 NSString *fieldType =  [fieldDictionary objectForKey:@"Field_Data_Type"];
+                if ([[fieldType lowercaseString] isEqualToString:@"boolean"]) {
+                    fieldValue = [fieldValue lowercaseString];
+                }
+            }
+        }
+    }
+    if ([Utility isStringEmpty:fieldValue] && recordId != nil && !isItInPage) {
+        fieldValue = [self getValueForField:fieldName objectName:headerObjectName recordId:recordId andWhereField:@"local_id"];
+    }
+    return fieldValue;
+}
+
+- (NSString *)getFieldValueForFieldName:(NSString *)fieldName fromDetailsDictionary:(NSDictionary *)detailDictionary andRecordId:(NSInteger )recordIndex{
+    
+    NSString *recordLocalId = nil;
+    NSArray *fieldsValueArray = nil;
+    NSString *fieldValue = nil;
+    NSString *detailObjectName = [detailDictionary objectForKey:gDETAIL_OBJECT_NAME];
+    BOOL isBoolField = NO;
+    BOOL isItInPage = NO;
+    
+    /* Checking if field type is boolean */
+    NSArray *pageFieldsInfo = [detailDictionary objectForKey:gDETAILS_FIELDS_ARRAY];
+    for (int counter = 0; counter < [pageFieldsInfo count] ; counter++) {
+        NSDictionary *fieldDictionary = [pageFieldsInfo objectAtIndex:counter];
+        NSString *fieldApiName = [fieldDictionary objectForKey:gFIELD_API_NAME];
+        if ([fieldApiName isEqualToString:fieldName]) {
+            isItInPage = YES;
+            NSString *fieldType =  [fieldDictionary objectForKey:@"Field_Data_Type"];
+            if ([[fieldType lowercaseString] isEqualToString:@"boolean"]) {
+                isBoolField = YES;
+                break;
+            }
+        }
+
+    }
+    /* Getting local record if of detail record */
+    NSArray *detailObjectRecordIdsArray = [detailDictionary objectForKey:gDETAIL_VALUES_RECORD_ID];
+    if ([detailObjectRecordIdsArray count] > recordIndex) {
+        recordLocalId = [detailObjectRecordIdsArray objectAtIndex:recordIndex];
+    }
+    
+     /* Getting the data record from page   */
+    NSArray *valueArray = [detailDictionary objectForKey:gDETAILS_VALUES_ARRAY];
+    if ([valueArray count] > recordIndex) {
+        fieldsValueArray = [valueArray objectAtIndex:recordIndex];
+        
+        for (int counter = 0; counter < [fieldsValueArray count]; counter++) {
+            NSDictionary *fieldDictionary = [fieldsValueArray objectAtIndex:counter];
+            NSString *fieldApiName = [fieldDictionary objectForKey:gVALUE_FIELD_API_NAME];
+            if ([fieldApiName isEqualToString:fieldName]) {
+                 fieldValue = [fieldDictionary objectForKey:gVALUE_FIELD_VALUE_KEY];
+                if (isBoolField) {
+                    fieldValue = [fieldValue lowercaseString];
+                }
+                
+            }
+        }
+    }
+    
+    if ([Utility isStringEmpty:recordLocalId]) {
+        recordLocalId = nil;
+    }
+      /* if page does not have data , then try the db */
+    if ([Utility isStringEmpty:fieldValue] && recordLocalId != nil && !isItInPage) {
+         fieldValue = [self getValueForField:fieldName objectName:detailObjectName recordId:recordLocalId andWhereField:@"local_id"];
+    }
+    
+    return fieldValue;
+}
+
+- (NSString *)getValueForField:(NSString *)fieldName objectName:(NSString *)objectName recordId:(NSString *)localId andWhereField:(NSString *)whereField
+{
+    NSString * fieldValue = @"";
+    NSString * query = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE %@ = '%@' ",fieldName,objectName,whereField,localId];
+    sqlite3_stmt * statement ;
+    
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, nil) ==  SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            char * temp_field_value= (char * ) synchronized_sqlite3_column_text(statement, 0);
+            if(temp_field_value != nil)
+            {
+                fieldValue  = [NSString stringWithUTF8String:temp_field_value];
+            }
+        }
+    }
+    synchronized_sqlite3_finalize(statement);
+    return fieldValue;
+}
 @end

@@ -357,8 +357,20 @@
 - (NSString *)getUserNameofLoggedInUser;
 - (NSString*)getNameFieldForObject:(NSString*)objectName;
 - (NSInteger)getFieldCountForObject:(NSString*)objectName ;
+- (NSString *)getValueForField:(NSString *)fieldName
+                    objectName:(NSString *)objectName
+                      recordId:(NSString *)localId
+                 andWhereField:(NSString *)whereField;
+- (NSString *)getFieldValueForFieldName:(NSString *)fieldName
+                     fromHeaderSections:(NSDictionary *)headerDictionary
+                            andRecordId:(NSString *)recordId;
+- (NSString *)getFieldValueForFieldName:(NSString *)fieldName fromDetailsDictionary:(NSDictionary *)detailDictionary andRecordId:(NSInteger )recordIndex;
+- (NSString *)getLiteralValue:(NSString *)literalValue;
+
 /*Shra-lookup*/
 
+#define CURRENTRECORD                       @"CURRENTRECORD"
+#define CURRENTRECORD_HEADER                @"CURRENTRECORD.HEADER"
 
 #define SVMX_USER_TRUNK                     @"SVMX_USER_TRUNK"
 #define SERVER_OVERRIDE                     @"Server_Override"

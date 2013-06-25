@@ -224,4 +224,10 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
++ (NSArray *)splitString:(NSString *)stringToBeSplit byString:(NSString *)subString {
+    stringToBeSplit = [stringToBeSplit stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    NSArray *componentsArray = [stringToBeSplit componentsSeparatedByString:subString];
+    return componentsArray;
+}
+
 @end

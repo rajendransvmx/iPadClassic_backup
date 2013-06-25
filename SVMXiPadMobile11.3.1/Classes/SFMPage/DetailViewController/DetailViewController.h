@@ -369,6 +369,7 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
 -(void) LaunchMultiAddPopover;
 //-(void) reDrawBackground;
 
+- (NSDictionary *)getCurrentSelectedIndex;
 
 /* GetPrice - shr */
 - (void)getPriceForCurrentContext;

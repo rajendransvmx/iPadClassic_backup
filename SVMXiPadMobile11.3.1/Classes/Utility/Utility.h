@@ -31,5 +31,6 @@
 + (void )setUserTrunkRequestStatus:(NSString *)statusValue;
 + (void )removeUserTrunkRequestStatus ;
 + (NSString *)today:(NSInteger)numberOfDays andJusDate:(BOOL)isDateOnly;
++ (NSArray *)splitString:(NSString *)stringToBeSplit byString:(NSString *)subString;
 
 @end

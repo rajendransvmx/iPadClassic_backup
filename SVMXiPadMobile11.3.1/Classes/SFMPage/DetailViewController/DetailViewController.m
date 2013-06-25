@@ -15179,5 +15179,39 @@ extern void SVMXLog(NSString *format, ...);
     }
 }
 
+- (NSDictionary *)getCurrentSelectedIndex {
+    
+    NSIndexPath *selectedRootIndexPath = [appDelegate.sfmPageController.rootView getSelectedIndexPath];
+     NSInteger isHeader = -1, detailRow = 0, detailSection = 0;
+    if (selectedSection == SHOW_HEADER_ROW || selectedSection == SHOWALL_HEADERS ) {
+            isHeader = 1;
+    }
+    else {
+        isHeader = 2;
+        if (selectedSection == SHOWALL_LINES ) {
+            detailSection = currentEditRow.section;
+            if (currentEditRow.row > 0) {
+                detailRow = currentEditRow.row - 1;
+            }
+        }
+        else if (selectedSection == SHOW_LINES_ROW){
+            detailSection = selectedRootIndexPath.row;
+            if (currentEditRow.row > 0) {
+                detailRow = currentEditRow.row - 1;
+            }
+        }
+    }
+    if(isHeader == 1) {
+        NSLog(@"HEADER");
+    }
+    else {
+        NSLog(@"DETAIL  %d  %d",detailSection,detailRow);
+    }
+
+    NSIndexPath *finalIndexPath = [NSIndexPath indexPathForRow:detailRow inSection:detailSection];
+    NSDictionary *someDict = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%d",isHeader],@"isHeader",finalIndexPath,@"detail", nil];
+
+    return someDict;
+}
 
 @end

@@ -61,6 +61,7 @@ SelectProcessControllerDelegate>
 - (void) refreshTable;
 - (void) displaySwitchViews;
 - (void) showLastModifiedTimeForSFMRecord;
+- (NSIndexPath *)getSelectedIndexPath;
 
 @end
 
