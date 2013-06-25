@@ -7453,7 +7453,9 @@ extern void SVMXLog(NSString *format, ...);
             NSString * type = [field_describe  type];
             
 			//Shrinvas : Fix for Defect : 6011
-			if ([type isEqualToString:@"multipicklist"])
+            
+            //5878: Aparna: Commented the block of code
+            /*if ([type isEqualToString:@"multipicklist"])
 			{
 				if ([field_api_name isEqualToString:@"multipicklist_multiplelenght__c"])
 				{
@@ -7468,9 +7470,9 @@ extern void SVMXLog(NSString *format, ...);
                     
                     [self UpdateSFPicklistForMultiSelect_IndexValue_For_Oject_Name:object_name field_api_name:field_api_name value:value index:k];
                 }
-			}
+			}*/
 			
-            if([type isEqualToString:@"picklist"])
+            if([type isEqualToString:@"picklist"] || [type isEqualToString:@"multipicklist"])
             {
                 BOOL  isdependentPicklist = [field_describe dependentPicklist];
                 

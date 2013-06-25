@@ -12,11 +12,13 @@
 
 @synthesize controlDelegate;
 
-@synthesize str;
 @synthesize indexPath;
 @synthesize fieldAPIName;
 @synthesize required;
 @synthesize control_type;
+
+//5878:Aparna
+@synthesize TextFieldDelegate;
 
 -(id) initWithFrame:(CGRect)frame  initArray:(NSArray *)arr
 {
@@ -32,8 +34,7 @@
         self.autoresizesSubviews=TRUE;
         self.autoresizingMask=UIViewAutoresizingFlexibleWidth;
         self.borderStyle=UITextBorderStyleRoundedRect;
-        self.str=@"";
-        TextFieldDelegate.str=str;
+        TextFieldDelegate.str=@"";
         TextFieldDelegate.flag=TRUE;
     }
     return self;
@@ -55,28 +56,25 @@
 {
     TextFieldDelegate.pickListValues=values;
     
-    if (str != nil)
-    {
-        [str release];
-        str = nil;
-    }
-    str = [[NSString alloc] init]; 
     NSInteger len;
     NSString * textFieldValue=[[[NSString alloc] init] autorelease];
     NSMutableDictionary *dict;
+    
+    NSString *value = nil;
     int i;
     @try{
     for(i = 0; i < [values count]; i++)
     {
-        dict=[values objectAtIndex:i]; 
-        str = [dict valueForKey:[TextFieldDelegate.pickerContent objectAtIndex:i]];
+        dict=[values objectAtIndex:i];
+        //5878:Aparna
+        value = [dict valueForKey:[[dict allKeys] objectAtIndex:0]];
         //Radha 9th Aug 2011
-        if([str isEqualToString:@"1"])
+        if([value intValue] == 1)
         {
             if ([textFieldValue length] > 0)
-                textFieldValue = [textFieldValue stringByAppendingString:[NSString stringWithFormat:@";%@", [TextFieldDelegate.pickerContent objectAtIndex:i]]];
+                textFieldValue = [textFieldValue stringByAppendingString:[NSString stringWithFormat:@";%@", [[dict allKeys] objectAtIndex:0]]];
             else
-                textFieldValue = [textFieldValue stringByAppendingString:[TextFieldDelegate.pickerContent objectAtIndex:i]];
+                textFieldValue = [textFieldValue stringByAppendingString:[[dict allKeys] objectAtIndex:0]];
         }
     }
 
@@ -132,7 +130,6 @@
 -(void)dealloc
 {
     [TextFieldDelegate release];
-    [str release];
     [super dealloc];
     
 }

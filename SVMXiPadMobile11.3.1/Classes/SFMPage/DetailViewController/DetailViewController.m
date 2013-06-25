@@ -5018,12 +5018,13 @@ extern void SVMXLog(NSString *format, ...);
             NSString * dependPick_controllerName = @"";           
             NSString * fieldAPIName = [dict objectForKey:gFIELD_API_NAME];
             
-            if([field_datatype isEqualToString: @"picklist"])
+            //Aparna: 5878
+            if([field_datatype isEqualToString: @"picklist"] || [field_datatype isEqualToString: @"multipicklist"])
             {
                if(appDelegate.isWorkinginOffline)
                {
-                   NSMutableArray * descObjArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-                   NSMutableArray * descObjValidFor = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+                   NSMutableArray * descObjArray = [[NSMutableArray alloc] initWithCapacity:0];
+                   NSMutableArray * descObjValidFor = [[NSMutableArray alloc] initWithCapacity:0];
                    
                    NSMutableDictionary * _header =  [appDelegate.SFMPage objectForKey:@"header"];
                    
@@ -5034,8 +5035,6 @@ extern void SVMXLog(NSString *format, ...);
                    isdependentPicklist = [[appDelegate.databaseInterface getPicklistINfo_isdependentOrControllername_For_field_name:DEPENDENT_PICKLIST field_api_name:fieldAPIName object_name:headerObjName] boolValue];
                  
                    dependPick_controllerName = [appDelegate.databaseInterface getPicklistINfo_isdependentOrControllername_For_field_name:CONTROLLER_FIRLD field_api_name:fieldAPIName object_name:headerObjName];
-                   [descObjArray addObject:@" "];
-                   [descObjValidFor addObject:@" "];
                    
                         //query to acces the picklist values for lines 
                    NSMutableDictionary * picklistValues = [appDelegate.databaseInterface  getPicklistValuesForTheFiled:fieldAPIName tableName:SFPicklist objectName:headerObjName];
@@ -5048,7 +5047,16 @@ extern void SVMXLog(NSString *format, ...);
 				   allvalues = [appDelegate.calDataBase sortPickListUsingIndexes:allvalues WithfieldAPIName:fieldAPIName tableName:SFPicklist objectName:headerObjName];
 					
                    NSMutableArray * allkeys_ordered = [[NSMutableArray alloc] initWithCapacity:0];
-                   [allkeys_ordered addObject:@" "];
+                   //5878:
+                   if ([field_datatype isEqualToString: @"picklist"])
+                   {
+                       [allkeys_ordered addObject:@" "];
+                       [descObjArray addObject:@" "];
+                       [descObjValidFor addObject:@" "];
+
+                   }
+                   
+
         
 				   
                    for (NSString * str in allvalues) 
@@ -5086,28 +5094,15 @@ extern void SVMXLog(NSString *format, ...);
                        }
                    }
                    
-                   arr = [[NSMutableArray  alloc] initWithArray:descObjArray];
-                   validFor = [[NSMutableArray alloc] initWithArray:descObjValidFor];
+                   arr = [[[NSMutableArray  alloc] initWithArray:descObjArray]autorelease];
+                   validFor = [[[NSMutableArray alloc] initWithArray:descObjValidFor]autorelease];
+                   
+                   [descObjArray release];
+                   [descObjValidFor release];
+                   [allkeys_ordered release];
+                   
                }
             
-            }
-            
-            if([field_datatype isEqualToString: @"multipicklist"])
-            {
-               
-                    NSMutableDictionary * _header =  [appDelegate.SFMPage objectForKey:@"header"];
-                    NSString * headerObjName = [_header objectForKey:gHEADER_OBJECT_NAME];
-                    
-                    NSMutableDictionary * picklistValues = [appDelegate.databaseInterface  getPicklistValuesForTheFiled:fieldAPIName tableName:SFPicklist objectName:headerObjName];
-                    NSArray * allvalues = [picklistValues allValues];
-				
-					//Shrinivas Fix for Defect : 6011.
-					allvalues = [appDelegate.calDataBase sortPickListUsingIndexes:allvalues WithfieldAPIName:fieldAPIName tableName:SFPicklist objectName:headerObjName];
-                    
-                    arr = [[NSMutableArray  alloc] initWithArray:allvalues];
-                   
-                
-                                
             }
 
             NSString * refObjName = nil;
@@ -6813,8 +6808,8 @@ extern void SVMXLog(NSString *format, ...);
     NSString * fieldAPIName = [[Disclosure_Details objectAtIndex:row] objectForKey:gFIELD_API_NAME];
 
    
-    if([control_type isEqualToString:  @"picklist"])
-    {   
+    if([control_type isEqualToString:@"picklist"] || [control_type isEqualToString:@"multipicklist"])
+    {
         if(appDelegate.isWorkinginOffline)
 
         {
@@ -6883,23 +6878,6 @@ extern void SVMXLog(NSString *format, ...);
         }
                
     }
-    
-    if([control_type isEqualToString:@"multipicklist"])
-    {   
-        if(appDelegate.isWorkinginOffline)
-        {
-            NSString * detail_objectName = [Disclosure_dict objectForKey:gDETAIL_OBJECT_NAME];
-            NSMutableDictionary * picklistValues = [appDelegate.databaseInterface  getPicklistValuesForTheFiled:fieldAPIName tableName:SFPicklist objectName:detail_objectName];
-            
-            NSArray * allvalues = [picklistValues allValues];
-			
-			//Shrinivas Fix for Defect : 6011.
-			allvalues = [appDelegate.calDataBase sortPickListUsingIndexes:allvalues WithfieldAPIName:fieldAPIName tableName:SFPicklist objectName:detail_objectName];
-			
-            arr = [[[NSMutableArray  alloc] initWithArray:allvalues] autorelease];
-        }
-    }
-   
       
     if ([control_type isEqualToString:@"reference"] && [fieldAPIName isEqualToString:@"RecordTypeId"])
     {
@@ -7966,6 +7944,12 @@ extern void SVMXLog(NSString *format, ...);
         multipicklist_type.required = required;
         multipicklist_type.control_type= controlType;
         multipicklist_type.controlDelegate = self;
+        
+        //5878:Aparna
+        multipicklist_type.TextFieldDelegate.isdependentPicklist =isdependentPicklist;
+        multipicklist_type.TextFieldDelegate.validFor = validFor;
+        multipicklist_type.TextFieldDelegate.controllerName = dependPick_controllerName;
+        
         return multipicklist_type;
     }
     return nil;
@@ -13587,7 +13571,8 @@ extern void SVMXLog(NSString *format, ...);
             NSString * dict_value =  [[detail_values objectAtIndex:i] objectForKey:gVALUE_FIELD_VALUE_VALUE];
             if([fieldApi_name isEqualToString:value_Field_API])
             {
-                if([controlType isEqualToString: @"picklist"])
+                //5878: Aparna
+                if([controlType isEqualToString: @"picklist"] || [controlType isEqualToString: @"multipicklist"])
                 {
                     /*for (int i = 0; i < [appDelegate.describeObjectsArray count]; i++)
                     {
@@ -13775,7 +13760,7 @@ extern void SVMXLog(NSString *format, ...);
                     
                    // NSString * dict_value = [filed_info objectForKey:gFIELD_VALUE_VALUE];
                     
-                    if([control_type isEqualToString:@"picklist"])
+                    if([control_type isEqualToString:@"picklist"] || [control_type isEqualToString:@"multipicklist"])
                     {
                         if([dependent_picklists containsObject:filed_api_name])
                         {
@@ -13847,8 +13832,8 @@ extern void SVMXLog(NSString *format, ...);
                 }
             }
             
-             
-            if([control_type isEqualToString:@"picklist"])
+            //5878: Aparna
+            if([control_type isEqualToString:@"picklist"] || [control_type isEqualToString:@"multipicklist"])
             {
                               
                 if([dependent_picklists containsObject:value_Field_API])

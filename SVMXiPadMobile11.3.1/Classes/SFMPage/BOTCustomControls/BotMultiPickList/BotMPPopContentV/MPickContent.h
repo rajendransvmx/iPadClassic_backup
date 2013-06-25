@@ -17,7 +17,7 @@ NSInteger pickListcount;
 @interface MPickContent : UIViewController <UITableViewDataSource,UITableViewDelegate,UIPopoverControllerDelegate> 
 {
     NSString   * lookUp;  
-    NSArray    * pickListContent;
+    NSMutableArray    * pickListContent;//5878
     NSIndexPath	* lastIndexPath;
     NSMutableArray * index;
     id <setTextfield>  MPickerDelegate;  
@@ -33,7 +33,7 @@ NSInteger pickListcount;
 @property (nonatomic , retain)  NSMutableArray *dictArray;
 @property (nonatomic , retain) NSString * lookUp;
 @property (nonatomic ,retain) NSMutableArray * index;
-@property (nonatomic ,retain)  NSArray * pickListContent;
+@property (nonatomic ,retain)  NSMutableArray * pickListContent;//5878
 @property (nonatomic, retain) NSIndexPath * lastIndexPath;
 @property (nonatomic, assign)  id <setTextfield>  MPickerDelegate;
 @property (nonatomic ,assign) id <releasePopOver> releasPODelegate;

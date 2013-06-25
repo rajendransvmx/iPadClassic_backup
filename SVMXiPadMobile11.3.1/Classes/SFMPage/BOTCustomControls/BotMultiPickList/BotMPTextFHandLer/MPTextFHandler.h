@@ -21,6 +21,13 @@
     NSMutableArray * pickListValues;
     BOOL flag;
 }
+
+//5878: Aparna
+@property (nonatomic) BOOL isdependentPicklist;
+@property (nonatomic , retain) NSString * controllerName;
+@property (nonatomic , retain) NSMutableArray * validFor;
+
+
 @property (nonatomic )   BOOL flag;
 @property (nonatomic ,retain)  NSMutableArray * pickListValues;
 @property (nonatomic) CGRect   pickerrect;

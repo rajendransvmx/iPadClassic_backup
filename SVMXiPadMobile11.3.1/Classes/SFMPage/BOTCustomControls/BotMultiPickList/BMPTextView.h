@@ -18,20 +18,19 @@ extern void SVMXLog(NSString *format, ...);
 {
     //Radha 9 August
     id <ControlDelegate> controlDelegate;
-    
-    MPTextFHandler * TextFieldDelegate;
-    
     NSArray * PickerValue;
-    NSString * str;
     NSIndexPath * indexPath;
     NSString * fieldAPIName;
     NSString * control_type;
     BOOL required;
 }
 
+//5878:Aparna
+@property (nonatomic, retain)MPTextFHandler * TextFieldDelegate;
+
+
 @property (nonatomic, retain) id <ControlDelegate> controlDelegate;
 @property (nonatomic , retain) NSString * control_type;
-@property (nonatomic, retain) NSString * str;
 @property (nonatomic, retain) NSIndexPath * indexPath;
 @property (nonatomic, retain) NSString * fieldAPIName;
 @property (nonatomic) BOOL required;
