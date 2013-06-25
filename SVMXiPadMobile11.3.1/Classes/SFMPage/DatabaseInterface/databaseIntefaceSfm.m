@@ -10425,7 +10425,7 @@ extern void SVMXLog(NSString *format, ...);
                     if(rhs != nil)
                     {
                         component_rhs = [NSString stringWithUTF8String:rhs];
-                        component_rhs = [component_rhs stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                        
                         if ([component_rhs isEqualToString:@"SVMX.CURRENTUSER"] || [component_rhs Contains:@"SVMX.OWNER"]) {
                             
                             component_rhs = [self getUserNameofLoggedInUser];
@@ -10443,6 +10443,7 @@ extern void SVMXLog(NSString *format, ...);
                                 component_rhs = [self getLiteralValue:component_rhs];
                             }
                         }
+                        component_rhs = [component_rhs stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
                     }
                     
                    if ([component_rhs isEqualToString:SVMX_USER_TRUNK]) {
@@ -10543,11 +10544,12 @@ extern void SVMXLog(NSString *format, ...);
                                     if ([value isEqualToString:@"SVMX.CURRENTUSER"] || [value Contains:@"SVMX.OWNER"]) {
                                         
                                         value = [self getUserNameofLoggedInUser];
+                                        value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
                                     }
                                     else {
                                         if ([value isEqualToString:SVMX_USER_TRUNK]) {
                                             value = [appDelegate.dataBase getTechnicianLocation];
-                                            
+                                            value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
                                             if ([Utility isStringEmpty:value]) {
                                                 value = SVMX_USER_TRUNK;
                                             }
@@ -10555,6 +10557,7 @@ extern void SVMXLog(NSString *format, ...);
                                         else if ([Utility containsString:CURRENTRECORD inString:value]) {
                                             
                                             value = [self getLiteralValue:value];
+                                            value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
                                         }
                                     }
                                     
@@ -10635,13 +10638,13 @@ extern void SVMXLog(NSString *format, ...);
                         newRhsValue = [Utility today:0 andJusDate:isDateOnly];
                     }
                     else if([rhs caseInsensitiveCompare:MACRO_TODAY]== NSOrderedSame) {
-                        newRhsValue = [Utility today:0 andJusDate:isDateOnly];
+                        newRhsValue = [Utility today:0 andJusDate:YES];
                     }
                     else if([rhs caseInsensitiveCompare:MACRO_TOMMOROW]== NSOrderedSame) {
-                        newRhsValue = [Utility today:1 andJusDate:isDateOnly];
+                        newRhsValue = [Utility today:1 andJusDate:YES];
                     }
                     else if([rhs caseInsensitiveCompare:MACRO_YESTERDAY]== NSOrderedSame) {
-                        newRhsValue = [Utility today:-1 andJusDate:isDateOnly];
+                        newRhsValue = [Utility today:-1 andJusDate:YES];
                     }
                     rhs = newRhsValue;
                 }
