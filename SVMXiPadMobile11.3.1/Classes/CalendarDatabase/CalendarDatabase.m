@@ -856,6 +856,9 @@ extern void SVMXLog(NSString *format, ...);
     NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
     NSString * Name1 = @"";
     sqlite3_stmt *statement1;
+//    defect 007237
+    SVMXC__Product__c=[SVMXC__Product__c stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+    
     queryStatement = [NSString stringWithFormat:@"SELECT Name from Product2 where Id = '%@'", SVMXC__Product__c];
     const  char * selectStatement = [queryStatement UTF8String];
     if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &statement1, nil) == SQLITE_OK )
@@ -2607,6 +2610,8 @@ extern void SVMXLog(NSString *format, ...);
 {
     NSString * stringData = [Base64 encode:troubleShootData];
     productName=[productName stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+//defect    007237
+    docID=[docID stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     NSMutableString *queryString = [NSMutableString stringWithFormat:@"Update '%@' Set '%@' = '%@' Where DocId = '%@' and ProductName = '%@'", @"trobleshootdata", @"Product_Doc", 
                                     stringData, docID, productName];
     
@@ -2661,6 +2666,8 @@ extern void SVMXLog(NSString *format, ...);
     SMLog(@"Hi I am in Chatter....");
     
     SMLog(@"%@", chatterDetails);
+    //defect 007237
+    productId=[productId stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     
     [appDelegate.dataBase beginTransaction];
     NSString *deleteQuery = [NSString stringWithFormat:@"Delete From ChatterPostDetails where ProductId = '%@'", productId];
@@ -2715,6 +2722,8 @@ extern void SVMXLog(NSString *format, ...);
 {
     NSMutableArray *chatterArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
     NSArray *keys = [[NSArray alloc]initWithObjects:BODY, CREATEDBYID, CREATEDDATE,_USERID, POSTTYPE, USERNAME_CHATTER, EMAIL, FEEDPOSTID,FULLPHOTOURL, nil];
+// defect 007237
+    productId=[productId stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     
     sqlite3_stmt *statement;
     NSMutableString *queryString = [NSString stringWithFormat:@"Select Body, CreatedById, CreatedDate, Id, POSTTYPE, Username, Email, FeedPostId,FullPhotoUrl From ChatterPostDetails            where productId = '%@'", productId];
@@ -2792,6 +2801,9 @@ extern void SVMXLog(NSString *format, ...);
 - (void) insertImageDataInChatterDetailsForUserName:(NSString *)UserName WithData:(NSData *)imageData
 {
     [appDelegate.dataBase beginTransaction];
+    // defect 007237
+    UserName=[UserName stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+
     NSMutableString *deleteQuery = [NSString stringWithFormat:@"Delete From UserImages Where username = '%@'", UserName];
     
 	char *err;
@@ -2804,7 +2816,6 @@ extern void SVMXLog(NSString *format, ...);
    
     
     NSString * stringData = [Base64 encode:imageData];
-    UserName=[UserName stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     // UserImages (username, userimage)  Values('%@','%@')", UserName, imageData
     NSMutableString *queryString = [NSMutableString stringWithFormat:@"Insert into UserImages (username, userimage) Values ('%@', '%@')", UserName, stringData];
     
@@ -2833,6 +2844,8 @@ extern void SVMXLog(NSString *format, ...);
     {
         return NULL;
     }
+    //defect 007237
+    userName=[userName stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
 
     NSData * _data = nil;
     NSMutableString *query = [NSString stringWithFormat:@"Select userimage from UserImages where username = '%@'", userName];
@@ -2860,6 +2873,9 @@ extern void SVMXLog(NSString *format, ...);
 - (void) insertProductPicture:(NSString *)pictureData ForId:(NSString *)productId
 {
     [appDelegate.dataBase beginTransaction];
+    // defect 007237
+    productId=[productId stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+    
     NSMutableString *deleteQuery = [NSString stringWithFormat:@"Delete From ProductImage Where productId = '%@'", productId];
     
     char *err;
@@ -2871,7 +2887,6 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:deleteQuery type:DELETEQUERY];
     }
     
-    productId=[productId stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     NSMutableString *insertQuery = [NSString stringWithFormat:@"Insert into ProductImage (productId, productImage) Values ('%@', '%@')", productId, pictureData];
     SMLog(@"%@", insertQuery);
     
@@ -2891,6 +2906,8 @@ extern void SVMXLog(NSString *format, ...);
 
 - (NSData *) getProductPictureForProductId:(NSString *)productId
 {
+    //defect 007237
+    productId=[productId stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     NSMutableString *query = [NSString stringWithFormat:@"Select productImage from ProductImage where productId = '%@'", productId];
     sqlite3_stmt *statement;
     SMLog(@"%@", query);
@@ -2985,6 +3002,9 @@ extern void SVMXLog(NSString *format, ...);
     BOOL does_reportexists = FALSE;
     
     NSString * stringData = [Base64 encode:signatureData];
+// defect 007237
+    signatureId=[signatureId stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+    recordId =[recordId stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     
     [appDelegate.dataBase beginTransaction];
     if ([sign_type isEqualToString:@"ViewWorkOrder"])
@@ -3074,6 +3094,8 @@ extern void SVMXLog(NSString *format, ...);
     NSData * data;
     NSString * stringData = @"";
     NSString * queryStatement = @"";
+// defect 007237
+    recordId=[recordId stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     
     queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM SFSignatureData where record_Id = '%@' and sign_type = '%@'", @"signature_data", recordId, @"ServiceReport"];
     
@@ -3340,6 +3362,8 @@ extern void SVMXLog(NSString *format, ...);
 
 - (NSMutableArray *) retrieveManualsForProductWithId:(NSString *)productId
 {
+    // defect 007237
+    productId=[productId stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     NSString *queryString = [NSString stringWithFormat:@"Select prod_manual_name, prod_manual_Id from trobleshootdata Where ProductId = '%@'", productId];
     sqlite3_stmt * stmt;
     
@@ -3448,7 +3472,9 @@ extern void SVMXLog(NSString *format, ...);
     for ( int i = 0; i < [troubleshooting count]; i++ )
     {
         NSMutableDictionary *dict = [troubleshooting objectAtIndex:i];
-		NSString * selectQuery = [NSString stringWithFormat:@"Select Name from Document where Id = '%@'", [dict objectForKey:DOCUMENTS_ID]];
+        // defect 007237
+        NSString *doc_ID=[[dict objectForKey:DOCUMENTS_ID] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+		NSString * selectQuery = [NSString stringWithFormat:@"Select Name from Document where Id = '%@'", doc_ID];
 		
 		sqlite3_stmt * stmt;
 		NSString * docName = @"";
@@ -3515,8 +3541,12 @@ extern void SVMXLog(NSString *format, ...);
 {
 	@try{
     NSDictionary *dict = [troubleshooting objectAtIndex:0];
+        // defect 007237
+NSString *Doc_Name=[[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+    NSString *docId=[[dict objectForKey:DOCUMENTS_ID] stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+        
     NSMutableString *queryString = [NSString stringWithFormat:@"Update Document Set Body = '%@' Where Name = '%@' and Id = '%@'",Body,
-                                    [dict objectForKey:DOCUMENTS_NAME],[dict objectForKey:DOCUMENTS_ID]]; 
+                                    Doc_Name,docId]; 
     
     char *err;
     if (synchronized_sqlite3_exec(appDelegate.db, [queryString UTF8String], NULL, NULL, &err) != SQLITE_OK)
@@ -3541,6 +3571,8 @@ extern void SVMXLog(NSString *format, ...);
 {
     sqlite3_stmt *statement;
     name=[name stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+    //defect 007237
+    docID=[docID stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     NSMutableString *query = [NSString stringWithFormat:@"Select Body from Document where Id = '%@' and Name = '%@'", docID, name];
     
     SMLog(@"%@", query);
