@@ -245,6 +245,12 @@
 	return NO;
 }
 
+//Defect Fix :- 7394
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return UITableViewCellEditingStyleNone;
+}
+
 -(CGFloat) getHeightForChildLinkedProcess {
     
     NSInteger numberOfRows = [self tableView:self.childTableview numberOfRowsInSection:0 ];

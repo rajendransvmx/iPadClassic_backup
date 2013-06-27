@@ -122,6 +122,8 @@ extern void SVMXLog(NSString *format, ...);
 //Radha :- Child SFM UI
 @synthesize SFMChildTableview;
 @synthesize selectedIndexPathForchildView;
+//Adjusting WIDTH across Debrief Ui
+#define WIDTH	617
 
 - (BOOL) isValidUrl:(NSString *)url
 {
@@ -4875,20 +4877,11 @@ extern void SVMXLog(NSString *format, ...);
         }
         else
         {
-            //sahana 16th August
-            for(int j = 0; j< [[cell.contentView subviews] count]; j++)
-            {
-                background = [[cell.contentView subviews] objectAtIndex:j];
-                
-                NSArray * backgroundSubViews = [background subviews];
-               
-                for (int i = 0; i < [backgroundSubViews count]; i++)
-                {
-                    [[backgroundSubViews objectAtIndex:i] removeFromSuperview];
-                }
-                [background removeFromSuperview];
-            }
-            background = nil;
+			//Defect Fix :- 007391
+			for (UIView * view in [cell.contentView subviews])
+			{
+				[view removeFromSuperview];
+			}
         }
         
     }
@@ -5956,14 +5949,24 @@ extern void SVMXLog(NSString *format, ...);
             {
                 for (int j=0;j<columns && j<[detail_fields count];j++)
                 {
-                    UILabel * lbl = [[[UILabel alloc] initWithFrame:CGRectMake(j*field_width+8, 5, field_width-8,control_height)] autorelease];
+					//#Defect Fix :- Radha 7372
+                    UILabel * lbl = [[[UILabel alloc] initWithFrame:CGRectMake(j*field_width+8, 5, field_width-80,control_height)] autorelease];
                     NSString * label_name = [[detail_fields objectAtIndex:j] objectForKey:gFIELD_LABEL];
                     lbl.text = label_name;
                     lbl.font = [UIFont fontWithName:@"HelveticaBold" size:19];
                     lbl.font = [UIFont boldSystemFontOfSize:lbl.font.pointSize];
                     lbl.textColor = [UIColor whiteColor];
                     lbl.backgroundColor = [UIColor clearColor];
-                    [background addSubview:lbl];
+					//#Defect Fix :- Radha 7372
+					lbl.lineBreakMode = UILineBreakModeTailTruncation;
+					
+					//Radha :- WO Debrief #7372
+					lbl.userInteractionEnabled = YES;
+					UITapGestureRecognizer * tapMe = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapRecognizedForEdit:)];
+					[lbl addGestureRecognizer:tapMe];
+					[tapMe release];
+
+					[background addSubview:lbl];
                 }
                 flag = TRUE;
                 [cell setAccessoryType:UITableViewCellAccessoryNone];
@@ -5997,7 +6000,7 @@ extern void SVMXLog(NSString *format, ...);
            
 			for (int j = 0; j < columns && j < [detail_fields count]; j++)//[detail_values count ]
 			{
-                CGRect frame =  CGRectMake(j*field_width, 9, field_width-4,control_height-6);
+                CGRect frame =  CGRectMake(j*field_width+6, 9, field_width-4,control_height-6);
                 lbl2 = [[UILabel alloc]initWithFrame:frame];
                 NSString * field_data_type = [[detail_fields objectAtIndex:j] objectForKey:gFIELD_DATA_TYPE];
                 NSString * value = [[detail_values objectAtIndex:j] objectForKey:gVALUE_FIELD_VALUE_VALUE];
@@ -6220,7 +6223,7 @@ extern void SVMXLog(NSString *format, ...);
 
 
             
-            [self showEditViewOfLineInView:cell.contentView forIndexPath:indexPath forEditMode:NO];
+            [self showEditViewOfLineInView:background forIndexPath:indexPath forEditMode:NO];
             
             background.backgroundColor = [UIColor clearColor];
             isEditRow = YES;
@@ -8349,73 +8352,11 @@ extern void SVMXLog(NSString *format, ...);
             UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
             
             [self showEditViewOfLineInView:cell.contentView forIndexPath:_indexPath forEditMode:YES];
-        }
-
-        
-        // ################ BACK BUTTON HERE ################# //
-        UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectZero] autorelease];
-        [backButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Back-Arrow-Button"] forState:UIControlStateNormal];
-        [backButton addTarget:detailViewObject action:@selector(PopNavigationController:) forControlEvents:UIControlEventTouchUpInside];
-        [backButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-		[backButton sizeToFit];
-        UIBarButtonItem * backBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:backButton] autorelease];
-        detailViewObject.navigationItem.leftBarButtonItem = backBarButtonItem;
-        // ################################################### //
-        
-        //Radha 20th august 2011
-        UIButton * actionButton = [[UIButton alloc] initWithFrame:CGRectZero];
-        [actionButton setBackgroundImage:[UIImage imageNamed:@"iService-Screen-Help.png"] forState:UIControlStateNormal];
-		[actionButton sizeToFit];
-        [actionButton addTarget:self action:@selector(showHelp) forControlEvents:UIControlEventTouchUpInside];
-        UIBarButtonItem * helpBarButton = [[UIBarButtonItem alloc] initWithCustomView:actionButton];  
-        
-        NSMutableArray * buttons = [[NSMutableArray alloc] initWithCapacity:0];
-        showSyncUI=YES;
-        //[appDelegate setSyncStatus:appDelegate.SyncStatus];
-        
-        UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:appDelegate.SyncProgress];
-        [buttons addObject:syncBarButton];
-        [syncBarButton setTarget:self];
-        //sahana offline
-        UIToolbar * toolBar;
-        // adding the done button
-        // ################ DONE BUTTON HERE ################# //
-        if(isInViewMode)
-        {
-			UIButton * doneButton = [[[UIButton alloc] initWithFrame:CGRectZero] autorelease];
-            [doneButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Done-Back-Button.png"] forState:UIControlStateNormal];
-            [doneButton addTarget:detailViewObject action:@selector(lineseditingDone) forControlEvents:UIControlEventTouchUpInside];
-            [doneButton.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
-			[doneButton sizeToFit];
-            NSString * done = [appDelegate.wsInterface.tagsDictionary objectForKey:DONE_BUTTON_TITLE];
-            
-            [doneButton setTitle:done forState:UIControlStateNormal];
-            [doneButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-            UIBarButtonItem * doneBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:doneButton];
-//            [actionButton release];
-            [buttons addObject:doneBarButtonItem];
-            [doneBarButtonItem release];
 			
-            toolBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, 190, 44)] autorelease];
-			 //toolBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, actionButton.frame.size.width + syncBarButton.width + doneButton.frame.size.width, 44)] autorelease];
-        }
-        // ################################################### //
-        else
-		{
-            toolBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, actionButton.frame.size.width + syncBarButton.width, 44)] autorelease];
 		}
-        [buttons addObject:helpBarButton];
-        [toolBar setItems:buttons];
-        [helpBarButton release];
-        [actionButton release];
-        [syncBarButton release];
-        [buttons release];
-        
-		SMLog(@"%@", CGRectCreateDictionaryRepresentation(self.navigationController.navigationBar.frame));
-		detailViewObject.navigationController.navigationBar.frame = self.navigationController.navigationBar.frame;
-        detailViewObject.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:toolBar] autorelease];
-        showSyncUI=YES;
-        [self.navigationController pushViewController:detailViewObject animated:YES];
+		//Defect Fix :- 7356
+		[self addNavigationButtons:@""];
+		
 		if (appDelegate.sfmPageController.conflictExists)
 		{
 			NSMutableString *Confilct= [appDelegate isConflictInEvent:[appDelegate.dataBase getApiNameFromFieldLabel: appDelegate.sfmPageController.objectName] local_id:appDelegate.sfmPageController.recordId];
@@ -8429,279 +8370,7 @@ extern void SVMXLog(NSString *format, ...);
         self.selectedIndexPathForEdit = indexPath;
         [self.tableView reloadData];//Kri
     }
-    else
-    {
-        
-    
-        //Special handling only for accessory tap
-        didRunOperation = NO;
-        //[self disableSFMUI];
-        [activity startAnimating];
-        // Create new line item with default values
-        UIControl * control = (UIControl *)sender;
-        NSInteger section = control.tag;
-        NSMutableArray * details = [appDelegate.SFMPage objectForKey:@"details"];
-        NSMutableArray * detailFieldsArray = [[details objectAtIndex:section] objectForKey:gDETAILS_FIELDS_ARRAY];
-        NSString * layout_id = [[details objectAtIndex:section] objectForKey:gDETAILS_LAYOUT_ID];
-        
-        //calling the web service to add the rows to 
-        NSString * process_id = currentProcessId;
-        
-        WSInterface * wsinterface = [[WSInterface alloc] init];
-        wsinterface.delegate = self;
-        wsinterface.add_WS = FALSE;
-        [wsinterface  AddRecordForLines:process_id ForDetailLayoutId:layout_id];
 
-       while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
-        {
-            SMLog(@"accessoryTapped in while loop");
-            if(appDelegate.isWorkinginOffline)
-            {
-                
-            }
-            else
-            {
-                if (![appDelegate isInternetConnectionAvailable])
-                {
-                    [activity stopAnimating];
-                    //[appDelegate displayNoInternetAvailable];
-                    [self enableSFMUI];
-                    return;
-                }
-            }
-            if(wsinterface.add_WS == YES)
-            {
-                break;
-            }
-            if (appDelegate.connection_error)
-            {
-                break;
-            }
-        }
-        
-        NSMutableDictionary * insert_items = wsinterface.detail_addRecordItems;
-        NSArray * insert_keys = nil;
-        if([insert_items  count]!= 0)
-           insert_keys = [insert_items allKeys];
-        
-        NSMutableDictionary * detail = [details objectAtIndex:section];
-        NSMutableArray * detail_values = [detail objectForKey:gDETAILS_VALUES_ARRAY];
-        NSMutableArray * detail_Values_id = [detail objectForKey:gDETAIL_VALUES_RECORD_ID];
-        //sahana 9th sept 2011
-        NSMutableArray * detail_sobject = [detail objectForKey:gDETAIL_SOBJECT_ARRAY];
-        // [detail_values removeObjectAtIndex:indexPath.row-1];
-        
-        NSMutableArray * detailValue = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-        for (int i = 0; i < [detailFieldsArray count]; i++)
-        {
-            NSString * value = @"";
-            NSMutableArray * keys = [NSMutableArray arrayWithObjects:
-                                    gVALUE_FIELD_API_NAME,
-                                    gVALUE_FIELD_VALUE_KEY,
-                                    gVALUE_FIELD_VALUE_VALUE,
-                                    nil];
-            NSMutableDictionary * field = [detailFieldsArray objectAtIndex:i];
-            NSString * field_api_name = [field objectForKey:gFIELD_API_NAME];
-            if(insert_keys  != nil)
-            {
-                for(int j = 0 ; j< [insert_keys count];j++)
-                {
-                    NSString * api_key = [insert_keys objectAtIndex:j];
-                   if([api_key isEqualToString:field_api_name] )
-                   {
-                       value = [insert_items objectForKey:api_key];
-                       break;
-                   }
-                }
-            }
-            
-            NSMutableArray * objects = [NSMutableArray arrayWithObjects:[field objectForKey:gFIELD_API_NAME], value, value, nil];
-            NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:objects forKeys:keys];
-            [detailValue addObject:dict];
-        }
-        
-        if(insert_keys  != nil)
-        {
-            for(int j = 0 ;j<[insert_keys count]; j++)
-            {
-                NSString * api_name = [insert_keys objectAtIndex:j];
-                NSInteger count1 = 0;
-                for(int k=0; k < [detailValue count];k++)
-                {
-                     NSString  * field_api_name = [[detailValue objectAtIndex:k] objectForKey:gVALUE_FIELD_API_NAME];
-                    if([api_name isEqualToString:field_api_name])
-                    {
-                        
-                    }
-                    else
-                    {
-                        count1++;
-                    }
-                }
-                if(count1 == [detailValue count])
-                {
-                    NSMutableArray * keys = [NSMutableArray arrayWithObjects:
-                                             gVALUE_FIELD_API_NAME,
-                                             gVALUE_FIELD_VALUE_KEY,
-                                             gVALUE_FIELD_VALUE_VALUE,
-                                             nil];
-                    NSMutableArray * objects = [NSMutableArray arrayWithObjects:api_name, [insert_items objectForKey:api_name],[insert_items objectForKey:api_name], nil];
-                    NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:objects forKeys:keys];
-                    [detailValue addObject:dict];
-                }
-            }
-        }
-        
-        //sahana 20th August 2011
-        NSMutableArray * keys = [NSMutableArray arrayWithObjects:
-                                 gVALUE_FIELD_API_NAME,
-                                 gVALUE_FIELD_VALUE_KEY,
-                                 gVALUE_FIELD_VALUE_VALUE,
-                                 nil];
-        NSMutableArray * objects = [NSMutableArray arrayWithObjects:gDETAIL_SAVED_RECORD,[NSNumber numberWithInt:0],[NSNumber numberWithInt:0], nil];
-        NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:objects forKeys:keys];
-        [detailValue addObject:dict];
-        
-        //ends
-        
-        [activity stopAnimating];
-        NSIndexPath * indexPath = nil;
-        if (selectedSection == SHOWALL_LINES)
-        {
-            indexPath = [NSIndexPath indexPathForRow:[detail_values count]+1 inSection:section];
-        }
-        if(selectedSection == SHOW_LINES_ROW)
-        {
-            indexPath = [NSIndexPath indexPathForRow:[detail_values count]+1 inSection:0];
-        }
-            
-        [detail_values addObject:detailValue];
-        [detail_Values_id addObject:@""];
-        //sahana 9th sept 2011
-        [detail_sobject addObject:@""];
-        
-        [tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-        
-        // Automatically navigate to the detail edit screen
-        
-        NSInteger index;
-        NSInteger _section1 = indexPath.section;
-        
-        if (isDefault)
-            index = _section1;
-        else
-            index = selectedRow;
-        
-        NSIndexPath  *_indexPath = nil;
-        if (selectedSection == SHOWALL_LINES)
-        {
-            _indexPath = indexPath;
-        }
-        if(selectedSection == SHOW_LINES_ROW)
-        {
-            _indexPath = [NSIndexPath indexPathForRow:indexPath.row inSection:index];
-        }
-
-    [wsinterface release];
-    Disclosure_dict = nil;
-    Disclosure_Details = nil;
-    [self fillDictionary:_indexPath];
-    detailViewObject = [[DetailViewController alloc] initWithNibName:@"DetailView" bundle:nil];
-    self.navigationController.delegate = self;
-    detailViewObject.selectedIndexPath = _indexPath;
-    detailViewObject.selectedRowForDetailEdit = _indexPath.row-1;
-    detailViewObject.isInEditDetail = YES;
-    detailViewObject.isInViewMode = isInViewMode;
-    detailViewObject.header = self.header;
-    detailViewObject.line = self.line;
-    detailViewObject.Disclosure_dict = self.Disclosure_dict;
-    detailViewObject.Disclosure_Fields = self.Disclosure_Fields;
-    detailViewObject.Disclosure_Details = self.Disclosure_Details;
-    
-    
-    //sahana navigation custom button
-    detailViewObject.navigationItem.leftBarButtonItem = nil;
-    [detailViewObject.navigationItem setHidesBackButton:YES animated:YES];
-    
-    // ################ BACK BUTTON HERE ################# //
-    UIButton * backButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)] autorelease];
-    [backButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Back-Arrow-Button"] forState:UIControlStateNormal];
-    [backButton addTarget:detailViewObject action:@selector(PopNavigationController:) forControlEvents:UIControlEventTouchUpInside];
-    [backButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    UIBarButtonItem * backBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:backButton] autorelease];
-    detailViewObject.navigationItem.leftBarButtonItem = backBarButtonItem;
-    // ################################################### //
-
-        //Radha 20th august 2011
-        UIButton * actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)];
-        [actionButton setBackgroundImage:[UIImage imageNamed:@"iService-Screen-Help.png"] forState:UIControlStateNormal];
-        [actionButton addTarget:self action:@selector(showHelp) forControlEvents:UIControlEventTouchUpInside];
-        UIBarButtonItem * helpBarButton = [[UIBarButtonItem alloc] initWithCustomView:actionButton];  
-        
-        NSMutableArray * buttons = [[NSMutableArray alloc] initWithCapacity:0];
-        //[appDelegate setSyncStatus:appDelegate.SyncStatus];
-        showSyncUI=YES;
-
-        UIBarButtonItem * syncBarButton = [[UIBarButtonItem alloc] initWithCustomView:appDelegate.SyncProgress];
-        [buttons addObject:syncBarButton];
-        [syncBarButton setTarget:self];
-        //sahana offline
-        UIToolbar * toolBar;
-        // adding the done button
-        // ################ DONE BUTTON HERE ################# //
-        if(isInViewMode)
-        {
-			UIButton * doneButton = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 67, 31)] autorelease];
-            [actionButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Done-Back-Button.png"] forState:UIControlStateNormal];
-            [actionButton addTarget:detailViewObject action:@selector(lineseditingDone) forControlEvents:UIControlEventTouchUpInside];
-            [actionButton.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
-            NSString * done = [appDelegate.wsInterface.tagsDictionary objectForKey:DONE_BUTTON_TITLE];
-            
-            [actionButton setTitle:done forState:UIControlStateNormal];
-            [actionButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-            UIBarButtonItem * doneBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:doneButton];
-            //[actionButton release];
-            [buttons addObject:doneBarButtonItem];
-            [doneBarButtonItem release];
-            toolBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, 200, 44)] autorelease];
-        }
-        // ################################################### //
-        else
-            toolBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, 100, 44)] autorelease];
-        [buttons addObject:helpBarButton];
-        [toolBar setItems:buttons];
-        [syncBarButton release];
-        [actionButton release];
-        [helpBarButton release];
-        [buttons release];
-        
-        detailViewObject.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:toolBar] autorelease];
-        
-        
-        if (![appDelegate isInternetConnectionAvailable])
-        {
-            if (appDelegate.SFMPage != nil)
-            {
-                //[appDelegate.SFMPage release];
-                //appDelegate.SFMPage = nil;
-                
-                [self.tableView reloadData];
-                [appDelegate.sfmPageController.rootView refreshTable];
-            }
-            
-            [activity stopAnimating];
-            //[appDelegate displayNoInternetAvailable];
-            [self enableSFMUI];
-            return;
-        }
-       showSyncUI=YES;
-        [self.navigationController pushViewController:detailViewObject animated:YES];
-        [detailViewObject release];
-        
-        [self enableSFMUI];
-    
-    }
-    
 }
 
 
@@ -9551,6 +9220,9 @@ extern void SVMXLog(NSString *format, ...);
 
 - (BOOL)tableView:(UITableView *)_tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    //Defect Fix :- 7394
+    if (self.selectedIndexPathForchildView || self.selectedIndexPathForEdit)
+        return NO;
     // Return NO if you do not want the specified item to be editable.
     if (self.isInEditDetail)
         return NO;
@@ -11540,7 +11212,11 @@ extern void SVMXLog(NSString *format, ...);
                 }
                 if(error == TRUE)
                 {
-                    [self requireFieldWarning];
+                    
+
+		    //Defect Fix :- Radha 5716
+		    [activity stopAnimating];
+		    [self requireFieldWarning];
                     requiredFieldCheck = TRUE;
                     [self enableSFMUI];
                     return;
@@ -11623,7 +11299,9 @@ extern void SVMXLog(NSString *format, ...);
                 
                 if(line_error)
                 {
-                    [self requireFieldWarning];
+                    //Defect Fix :- Radha 5716
+		    [activity stopAnimating];
+		    [self requireFieldWarning];
                     requiredFieldCheck = TRUE;
                     [self enableSFMUI];
                     return;
@@ -14591,6 +14269,15 @@ extern void SVMXLog(NSString *format, ...);
 	SVMAccessoryButton *btn = (SVMAccessoryButton *)sender;
     NSIndexPath *indexpath = btn.indexpath;
 	
+	//Defect Fix :- 007391
+	self.selectedIndexPathForchildView = nil;
+	[self.SFMChildTableview.view removeFromSuperview];
+	
+	//Defect Fix :- 007391
+	self.selectedIndexPathForEdit = nil;
+	[self.editDetailObject.view removeFromSuperview];
+	[self.tableView reloadData];
+	
 	if(self.selectedIndexPathForchildView != nil && indexpath.section == self.selectedIndexPathForchildView.section && indexpath.row == self.selectedIndexPathForchildView.row )
 	{
         [self hideChildLinkedViewProcess];
@@ -14603,9 +14290,8 @@ extern void SVMXLog(NSString *format, ...);
 	}
     
 	//Krishna debrief
-    self.selectedIndexPathForEdit = nil;
-    [self.editDetailObject.view removeFromSuperview];
-	self.editDetailObject = nil;
+    
+//	self.editDetailObject = nil;
  	
 	self.currentEditRow = indexpath;
     
@@ -14682,11 +14368,14 @@ extern void SVMXLog(NSString *format, ...);
 
     CGRect tblViewHt = self.editDetailObject.tableView.frame;
     tblViewHt.size.height = height;
+	//#Defect Fix :- 7365, 7373
+	editDetailObject.view.frame = tblViewHt;
     editDetailObject.tableView.frame = tblViewHt;
     if (parentView == nil)
 	{
 		CGRect viewFrame = self.editDetailObject.view.frame;
-		viewFrame.origin.y = 35;
+		//#Defect Fix :- 7365, 7373
+		viewFrame.origin.y = 40;
 		viewFrame.size.width = self.tableView.frame.size.width;
 		self.editDetailObject.view.frame = viewFrame;
 	}
@@ -14695,7 +14384,8 @@ extern void SVMXLog(NSString *format, ...);
 	{
 		//make tableview compatible to parent view ie cells content view
 		CGRect viewFrame = self.editDetailObject.view.frame;
-		viewFrame.origin.y = 35;
+		//#Defect Fix :- 7365, 7373
+		viewFrame.origin.y = 40;
 		viewFrame.size.width = parentView.frame.size.width;
 		self.editDetailObject.view.frame = viewFrame;
 	}
@@ -14707,13 +14397,8 @@ extern void SVMXLog(NSString *format, ...);
 	
 	//Radha - Debrief changes - 18th June '13
 	self.editDetailObject.tableView.clipsToBounds = YES;
-    
-    UIImageView *seperatorView = [[UIImageView alloc] initWithFrame:CGRectMake(0, editDetailObject.tableView.frame.size.height, self.editDetailObject.view.frame.size.width, 03)];
-    seperatorView.image=[UIImage imageNamed:@"shadow_gray_light_blue-1.png"];
-    
-   [self.editDetailObject.view addSubview:seperatorView];
-    [seperatorView release];
-		
+    //#Defect Fix :- 7365, 7373
+    self.editDetailObject.tableView.frame = CGRectMake(0, 0, parentView.frame.size.width, self.editDetailObject.view.frame.size.height);		
     [parentView addSubview:self.editDetailObject.view];
 	
 	CGFloat heightOfTable = self.tableView.frame.size.height+ parentFrame.size.height;
@@ -14721,8 +14406,8 @@ extern void SVMXLog(NSString *format, ...);
 	{
 		@try {
 			NSLog(@"Soubld move");
-			if (_indexpath.row > 5)
-				[self.tableView scrollToRowAtIndexPath:_indexpath atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+			//Radha - #007381
+			[self.tableView scrollToRowAtIndexPath:_indexpath atScrollPosition:UITableViewScrollPositionTop animated:YES];
 
 		}
 		@catch (NSException *exception) {
@@ -14736,6 +14421,7 @@ extern void SVMXLog(NSString *format, ...);
 - (void)hideEditViewOfLine {
 
     self.selectedIndexPathForEdit = nil;
+    self.editDetailObject.isInEditDetail = NO; //Defect Fix #7407
     [self.editDetailObject.view removeFromSuperview];
 }
 
@@ -14769,7 +14455,9 @@ extern void SVMXLog(NSString *format, ...);
 }
 - (void)moveTableviewForKeyboardHeight:(NSNotification *)notification
 {
-	 self.selectedIndexPathForEdit = self.currentEditRow;
+    //Defect Fix :- #7390 #7407
+    if((selectedSection != SHOWALL_HEADERS) && (selectedSection != SHOW_HEADER_ROW) && self.editDetailObject.isInEditDetail)
+        self.selectedIndexPathForEdit = self.currentEditRow;
 	
 	@try {
 		if ([[notification name] isEqual:UIKeyboardDidShowNotification])
@@ -14914,6 +14602,8 @@ extern void SVMXLog(NSString *format, ...);
 	
 	self.selectedIndexPathForEdit = nil;
 	[self.editDetailObject.view removeFromSuperview];
+	// Defect Fix 007391
+	[self.tableView reloadData];
 	
 	if(self.selectedIndexPathForchildView != nil && indexpath.section == self.selectedIndexPathForchildView.section && indexpath.row == self.selectedIndexPathForchildView.row )
 	{
@@ -14991,19 +14681,13 @@ extern void SVMXLog(NSString *format, ...);
 	parentView.frame = frame;
 	
     self.SFMChildTableview.view.frame = viewFrame;
-	self.SFMChildTableview.childTableview.frame = CGRectMake(0, 0, self.SFMChildTableview.view.frame.size.width, self.SFMChildTableview.view.frame.size.height);
+	self.SFMChildTableview.childTableview.frame = CGRectMake(0, 0, WIDTH, self.SFMChildTableview.view.frame.size.height);
     
     
     self.SFMChildTableview.view.clipsToBounds=YES;
     [parentView addSubview:self.SFMChildTableview.view];
-	
-	UIImageView *seperatorView = [[UIImageView alloc] initWithFrame:CGRectMake(0, self.SFMChildTableview.childTableview.frame.size.height, self.SFMChildTableview.view.frame.size.width, 03)];
-    seperatorView.image=[UIImage imageNamed:@"shadow_gray_light_blue-1.png"];
-    
-	[self.SFMChildTableview.view addSubview:seperatorView];
-	[seperatorView release];
 
-	[self.SFMChildTableview.childTableview reloadData];
+    [self.SFMChildTableview.childTableview reloadData];
 }
 
 //Delagte Method to show child process when click on button;
@@ -15015,6 +14699,8 @@ extern void SVMXLog(NSString *format, ...);
         [self hideChildLinkedViewProcess];
         [self.tableView reloadData];
     }
+	
+	[self hideEditViewOfLine];
     
    
 	if([[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"VIEWRECORD"])

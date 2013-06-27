@@ -2416,6 +2416,11 @@
                 v1.frame = CGRectMake(idFrame.origin.x, 12, 18, 18);
                 [background addSubview:v1];
             }
+			//Defect Fix #7415
+            UIImageView * bgView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM-Screen-Table-Strip-Edit.png"]] autorelease];
+            bgView.backgroundColor=[UIColor colorWithRed:215 green:241 blue:252 alpha:1];
+            
+            cell.backgroundView = bgView;
             [cell.contentView addSubview:background];
             return cell;
         }
