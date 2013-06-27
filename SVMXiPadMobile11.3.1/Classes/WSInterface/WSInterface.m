@@ -4277,9 +4277,8 @@ last_sync_time:(NSString *)last_sync_time
                     }
                     parent_column_name = [appDelegate.databaseInterface  getParentColumnNameFormChildInfoTable:SFChildRelationShip childApiName:object_name parentApiName:parent_object_name];
                     
-//sahana child sfm
-                    
-                    if([parent_object_name length] == 0 || [parent_local_id length] == 0)
+					//sahana child sfm
+                    if([parent_object_name length] == 0 || [parent_local_id length] == 0 || [parent_object_name isEqualToString:object_name])
                     {
                         parent_object_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_name field_name:@"parent_name"];
                          parent_column_name = [appDelegate.databaseInterface  getParentColumnNameFormChildInfoTable:SFChildRelationShip childApiName:object_name parentApiName:parent_object_name];
@@ -4546,8 +4545,8 @@ last_sync_time:(NSString *)last_sync_time
                                     parent_local_id = [appDelegate.databaseInterface getParentIdFrom:object_name WithId:local_id andParentColumnName:parent_column_name id_type:@"local_id"];
                                 }
 
-//child sfm
-                                if([parent_object_name length] == 0 || [parent_local_id length] ==0)
+								//child sfm
+                                if([parent_object_name length] == 0 || [parent_local_id length] ==0  || [parent_object_name isEqualToString:object_name])
                                 {
                                     parent_object_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_name field_name:@"parent_name"];
                                     
