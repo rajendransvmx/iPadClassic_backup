@@ -4189,7 +4189,7 @@ extern void SVMXLog(NSString *format, ...);
         didSelectViewLayout = NO;
         NSMutableDictionary * header_ =  [appDelegate.SFMPage objectForKey:@"header"];
         NSString * headerObjName = [header_ objectForKey:gHEADER_OBJECT_NAME];
-        [appDelegate.wsInterface saveSwitchView:appDelegate.sfmPageController.processId forObject:appDelegate.sfmPageController.objectName];
+        [appDelegate.wsInterface saveSwitchView:appDelegate.sfmPageController.processId forObject:headerObjName];
     }
     
     if (appDelegate.SFMoffline != nil)
@@ -11241,6 +11241,9 @@ extern void SVMXLog(NSString *format, ...);
                     
                 }
                 
+                //sahana currentRecord fix
+                [appDelegate.databaseInterface replaceCurrentRecordOrheaderLiteral:header_fields_dict headerRecordId:@"" headerObjectName:@"" currentRecordId:header_record_local_id currentObjectName:headerObjName];
+                
                 BOOL data_inserted = [appDelegate.databaseInterface insertdataIntoTable:headerObjName data:header_fields_dict];
                 
                 if([headerObjName isEqualToString:@"Event"])
@@ -11349,8 +11352,12 @@ extern void SVMXLog(NSString *format, ...);
                             //get the GUID 
                             NSString * detail_record_local_id = [iServiceAppDelegate GetUUID];
                             [detail_fields_dict setObject:detail_record_local_id forKey:@"local_id"];
-                            BOOL data_inserted = [appDelegate.databaseInterface insertdataIntoTable:detail_object_name data:detail_fields_dict];
                             
+                            [appDelegate.databaseInterface replaceCurrentRecordOrheaderLiteral:detail_fields_dict headerRecordId:header_record_local_id headerObjectName:headerObjName currentRecordId:@"" currentObjectName:detail_object_name];
+                            
+                            //sahana currentRecord_fix
+                            BOOL data_inserted = [appDelegate.databaseInterface insertdataIntoTable:detail_object_name data:detail_fields_dict];
+                        
                             if(data_inserted )
                             {
                                 SMLog(@"insertion success");
@@ -11716,7 +11723,8 @@ extern void SVMXLog(NSString *format, ...);
                     }
                     
                 }
-                    
+                [appDelegate.databaseInterface replaceCurrentRecordOrheaderLiteral:all_header_fields headerRecordId:@"" headerObjectName:@"" currentRecordId:currentRecordId currentObjectName:headerObjName];
+                
                 BOOL success_flag = [appDelegate.databaseInterface  UpdateTableforId:currentRecordId forObject:headerObjName data:all_header_fields];
               
                 
@@ -11908,6 +11916,10 @@ extern void SVMXLog(NSString *format, ...);
                                 NSString * line_local_id = [iServiceAppDelegate GetUUID];
                                 [detail_fields_dict  setObject:line_local_id forKey:@"local_id"];
                                 
+                                
+                                //sahana currentRecord_fix
+                                [appDelegate.databaseInterface replaceCurrentRecordOrheaderLiteral:detail_fields_dict headerRecordId:currentRecordId headerObjectName:headerObjName currentRecordId:line_local_id currentObjectName:detail_object_name];
+                                
                                 BOOL data_inserted = [appDelegate.databaseInterface insertdataIntoTable:detail_object_name data:detail_fields_dict];
                                 
                                 if(data_inserted )
@@ -12029,6 +12041,10 @@ extern void SVMXLog(NSString *format, ...);
                                     //set newly created header object id in child table
                                     [sfm_detail_field_keyValue setObject:currentRecordId forKey:parent_column_name];
                                     
+                                    
+                                    //sahana currentRecord_fix
+                                    [appDelegate.databaseInterface replaceCurrentRecordOrheaderLiteral:sfm_detail_field_keyValue headerRecordId:currentRecordId headerObjectName:headerObjName currentRecordId:@"" currentObjectName:detail_object_name];
+                                    
                                     BOOL data_inserted = [appDelegate.databaseInterface insertdataIntoTable:detail_object_name data:sfm_detail_field_keyValue];
                                     
                                     if(data_inserted )
@@ -12052,6 +12068,8 @@ extern void SVMXLog(NSString *format, ...);
                                 }
                                 else
                                 {
+                                    //sahana currentrecord_fix
+                                    [appDelegate.databaseInterface replaceCurrentRecordOrheaderLiteral:sfm_detail_field_keyValue headerRecordId:currentRecordId headerObjectName:headerObjName currentRecordId:line_record_id currentObjectName:detail_object_name];
                                 
                                     BOOL detail_success_flag = [appDelegate.databaseInterface  UpdateTableforId:line_record_id forObject:detail_object_name data:sfm_detail_field_keyValue];
                                     if(detail_success_flag)
@@ -12506,6 +12524,10 @@ extern void SVMXLog(NSString *format, ...);
                     }
                     
                 }
+                
+                //sahana currentRecord_fix
+                [appDelegate.databaseInterface replaceCurrentRecordOrheaderLiteral:header_fields_dict headerRecordId:@"" headerObjectName:@"" currentRecordId:@"" currentObjectName:headerObjName];
+                
                 BOOL data_inserted = [appDelegate.databaseInterface insertdataIntoTable:headerObjName data:header_fields_dict];
 
                 if(data_inserted)
@@ -12587,6 +12609,10 @@ extern void SVMXLog(NSString *format, ...);
                             
                             NSString * detail_local_id = [iServiceAppDelegate  GetUUID]; 
                             [detail_fields_dict  setObject:detail_local_id forKey:@"local_id"];
+                            
+                            //sahana currentRecord_fix
+                            [appDelegate.databaseInterface replaceCurrentRecordOrheaderLiteral:detail_fields_dict headerRecordId:header_record_local_id headerObjectName:headerObjName currentRecordId:@"" currentObjectName:detail_object_name];
+                            
                             BOOL data_inserted = [appDelegate.databaseInterface insertdataIntoTable:detail_object_name data:detail_fields_dict];
                             
                             if(data_inserted )

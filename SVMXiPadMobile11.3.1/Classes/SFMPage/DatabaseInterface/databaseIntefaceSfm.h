@@ -367,6 +367,11 @@
 - (NSString *)getFieldValueForFieldName:(NSString *)fieldName fromDetailsDictionary:(NSDictionary *)detailDictionary andRecordId:(NSInteger )recordIndex;
 - (NSString *)getLiteralValue:(NSString *)literalValue;
 
+//Sahana - CURRENTRECORD literal support
+-(void)replaceCurrentRecordOrheaderLiteral:(NSMutableDictionary * )RecordDict headerRecordId:(NSString *)headerRecordId headerObjectName:(NSString *)headerObjectNAme currentRecordId:(NSString *)currentRecordId currentObjectName:(NSString *)currentObjectName;
+-(NSString *)getValueForField:(NSString *)fieldName objectName:(NSString *)objectName recordId:(NSString *)localId;
+
+
 /*Shra-lookup*/
 
 #define CURRENTRECORD                       @"CURRENTRECORD"

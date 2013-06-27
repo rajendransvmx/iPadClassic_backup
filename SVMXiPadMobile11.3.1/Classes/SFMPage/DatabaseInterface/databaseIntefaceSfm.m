@@ -3696,6 +3696,18 @@ extern void SVMXLog(NSString *format, ...);
             }
             
         }
+ 		//sahana - Child sfm fix
+        NSMutableDictionary * dataTypeForFeilds = [NSMutableDictionary dictionary];
+        
+        for(NSString * src_field_name in source_field_names)
+        {
+            NSString * data_type = [appDelegate.databaseInterface getFieldDataType:source_object_name filedName:src_field_name];
+            if(data_type != nil)
+            {
+                [dataTypeForFeilds setObject:data_type forKey:src_field_name];
+            }
+            
+        }
         NSString * query = @"";
         if(expression_ != nil && [expression_ length] != 0)
         {
@@ -3708,6 +3720,11 @@ extern void SVMXLog(NSString *format, ...);
             SMLog(@"SOURCETOTARGET %@", query);
         }
        
+        //sahana - child sfm fix
+        BOOL Src_obj_isChild = [self IsChildObject:source_object_name];
+        NSString *parent_obj_name = [self getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:source_object_name field_name:@"parent_name"];
+        NSString * parent_column_name = [self getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:source_object_name field_name:@"parent_column_name"];
+        
         
         NSString * field_value = @"";
         sqlite3_stmt * stmt ;
@@ -3721,10 +3738,32 @@ extern void SVMXLog(NSString *format, ...);
                 for(int k = 0 ; k < [source_field_names count]; k++ )
                 {
                     field_value = @"";
+                    
+                    NSString * field_type = [dataTypeForFeilds objectForKey:[source_field_names objectAtIndex:k]];
+                    NSString * Source_field_api = [source_field_names objectAtIndex:k];
+                    
                     char * temp_field_value = (char *)synchronized_sqlite3_column_text(stmt,k);
                     if(temp_field_value != nil)
                     {
                         field_value = [NSString stringWithUTF8String:temp_field_value];
+                        
+                        //sahana - child sfm fix
+                        if([field_type isEqualToString:@"reference"])
+                        {
+                            if(![source_object_name isEqualToString:target_object_name])
+                            {
+                                if(Src_obj_isChild)
+                                {
+                                    if([Source_field_api isEqualToString:parent_column_name])
+                                    {
+                                        //get sf_id for local id use it for mapping
+                                        NSString * sf_id = [self getSfid_For_LocalId_From_Object_table:parent_obj_name local_id:field_value];
+                                        [dict setObject:sf_id forKey:[target_field_names  objectAtIndex:k]];
+                                        continue;
+                                    }
+                                }
+                            }
+                        }
                     }
                     [dict setObject:field_value forKey:[target_field_names  objectAtIndex:k]];
                 }
@@ -11114,4 +11153,90 @@ extern void SVMXLog(NSString *format, ...);
     synchronized_sqlite3_finalize(statement);
     return fieldValue;
 }
+
+-(void)replaceCurrentRecordOrheaderLiteral:(NSMutableDictionary * )RecordDict headerRecordId:(NSString *)headerRecordId headerObjectName:(NSString *)headerObjectNAme currentRecordId:(NSString *)currentRecordId currentObjectName:(NSString *)currentObjectName
+{
+    NSArray * allField_names = [RecordDict allKeys];
+    for (NSString * fieldApiName in  allField_names)
+    {
+        NSString * mappingValue = [RecordDict objectForKey:fieldApiName];
+        
+        if([mappingValue length] == 0)
+        {
+            continue;
+        }
+    
+        if([[mappingValue lowercaseString] rangeOfString:[CURRENTRECORD_HEADER lowercaseString]].location != NSNotFound )
+        {
+            NSString * referenceFieldName = @"";
+            NSArray * SeperateComponents = [mappingValue componentsSeparatedByString:@"."];
+            
+            if([SeperateComponents count] == 3)
+            {
+                referenceFieldName = [SeperateComponents objectAtIndex:2];
+            }
+                      
+            if([headerRecordId length] != 0)
+            {
+                NSString * newValue = [self getValueForField:referenceFieldName objectName:headerObjectNAme recordId:headerRecordId];
+                [RecordDict setObject:newValue forKey:fieldApiName];
+            }
+            else
+            {
+                [RecordDict setObject:@"" forKey:fieldApiName];
+            }
+
+        }
+        else if([[mappingValue lowercaseString] rangeOfString:[CURRENTRECORD lowercaseString]].location != NSNotFound )
+        {
+
+            NSString * referenceFieldName = @"";
+            NSArray * SeperateComponents = [mappingValue componentsSeparatedByString:@"."];
+            
+            if([SeperateComponents count] == 2)
+            {
+                referenceFieldName = [SeperateComponents objectAtIndex:1];
+            }
+            
+            if([allField_names containsObject:referenceFieldName])
+            {
+                NSString * newValue= [RecordDict objectForKey:referenceFieldName];
+                [RecordDict setObject:newValue forKey:fieldApiName];
+                
+            }
+            else if([currentRecordId length] != 0)
+            {
+                NSString * newValue = [self getValueForField:referenceFieldName objectName:currentObjectName recordId:currentRecordId];
+                [RecordDict setObject:newValue forKey:fieldApiName];
+            }
+            else
+            {
+                [RecordDict setObject:@"" forKey:fieldApiName];
+            }
+      
+        }
+
+    }
+}
+-(NSString *)getValueForField:(NSString *)fieldName objectName:(NSString *)objectName recordId:(NSString *)localId
+{
+    NSString * fieldValue = @"";
+    NSString * query = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE local_id = '%@' ",fieldName,objectName,localId];
+    sqlite3_stmt * statement ;
+    
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, nil) ==  SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            char * temp_field_value= (char * ) synchronized_sqlite3_column_text(statement, 0);
+            if(temp_field_value != nil)
+            {
+                fieldValue  = [NSString stringWithUTF8String:temp_field_value];
+            }
+        }
+    }
+    synchronized_sqlite3_finalize(statement);
+    return fieldValue;
+}
+
 @end
