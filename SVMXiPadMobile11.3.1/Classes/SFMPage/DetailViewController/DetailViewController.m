@@ -5303,6 +5303,17 @@ extern void SVMXLog(NSString *format, ...);
 					{
 						lbl2 = [[UILabel alloc]initWithFrame:CGRectMake(frame.origin.x+5, frame.origin.y+2, frame.size.width, frame.size.height)];
 						SMLog(@"%@", value);
+                        
+                        //#Defect Fix :- Radha 7372
+                        lbl2.lineBreakMode = UILineBreakModeTailTruncation;
+                        
+                        //#Defect Fix :- Radha 7372
+                        lbl2.userInteractionEnabled = YES;
+                        UITapGestureRecognizer * tapMe = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapRecognized:)];
+                        [lbl2 addGestureRecognizer:tapMe];
+                        [tapMe release];
+
+                        
 
 						if([control_type isEqualToString:@"datetime"])
 						{
@@ -6021,6 +6032,16 @@ extern void SVMXLog(NSString *format, ...);
                 lbl2 = [[UILabel alloc]initWithFrame:frame];
                 NSString * field_data_type = [[detail_fields objectAtIndex:j] objectForKey:gFIELD_DATA_TYPE];
                 NSString * value = [[detail_values objectAtIndex:j] objectForKey:gVALUE_FIELD_VALUE_VALUE];
+                
+                //#Defect Fix :- Radha 7372
+                lbl2.lineBreakMode = UILineBreakModeTailTruncation;
+                
+                //Radha :- WO Debrief #7372
+                lbl2.userInteractionEnabled = YES;
+                UITapGestureRecognizer * tapMe = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapRecognized:)];
+                [lbl2 addGestureRecognizer:tapMe];
+                [tapMe release];
+
                 
                 if([field_data_type isEqualToString:@"datetime"])
                 {
