@@ -5277,7 +5277,7 @@ extern void SVMXLog(NSString *format, ...);
 						
 						
 				   // NSString * value = [[detail_values objectAtIndex:j] objectForKey:gVALUE_FIELD_VALUE_VALUE];
-					CGRect   frame = CGRectMake(j*field_width, 8, field_width-4,control_height-6);
+					CGRect   frame = CGRectMake(j*field_width, 8, field_width-40,control_height-6);
 					
 					if ([control_type isEqualToString:@"boolean"] )
 					{
@@ -6028,7 +6028,7 @@ extern void SVMXLog(NSString *format, ...);
            
 			for (int j = 0; j < columns && j < [detail_fields count]; j++)//[detail_values count ]
 			{
-                CGRect frame =  CGRectMake(j*field_width+6, 9, field_width-4,control_height-6);
+                CGRect frame =  CGRectMake(j*field_width+6, 9, field_width-40,control_height-6);
                 lbl2 = [[UILabel alloc]initWithFrame:frame];
                 NSString * field_data_type = [[detail_fields objectAtIndex:j] objectForKey:gFIELD_DATA_TYPE];
                 NSString * value = [[detail_values objectAtIndex:j] objectForKey:gVALUE_FIELD_VALUE_VALUE];
