@@ -7967,7 +7967,7 @@ extern void SVMXLog(NSString *format, ...);
         cusTextFieldAlpha  * url_control = [[cusTextFieldAlpha alloc] initWithFrame:frame control_type:controlType isInViewMode:isInViewMode];
         url_control.controlDelegate = self;
         url_control.text = value;
-        // url_control.enabled = readOnly;
+        url_control.enabled = readOnly; // defect 007354
         url_control.indexPath = indexPath;
         url_control.fieldAPIName = fieldType;
         url_control.required = required;
