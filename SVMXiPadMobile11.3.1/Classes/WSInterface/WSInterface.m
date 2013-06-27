@@ -8893,8 +8893,9 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                    
                     /* For initial sync do not escape the single quote as it is handled by sqlite3_bind :InitialSync-shr*/
                     if(appDelegate.do_meta_data_sync != ALLOW_META_AND_DATA_SYNC) {
-                        NSInteger val =  [temp_json_string replaceOccurrencesOfString:@"'" withString:@"''" options:NSCaseInsensitiveSearch range: NSMakeRange(0, [temp_json_string length])];
-                        SMLog(@"%d" , val);
+                       //6046
+                    //NSInteger val =  [temp_json_string replaceOccurrencesOfString:@"'" withString:@"''" options:NSCaseInsensitiveSearch range: NSMakeRange(0, [temp_json_string length])];
+                       // SMLog(@"%d" , val);
                     }
                    
                     
