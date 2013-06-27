@@ -63,6 +63,10 @@ SelectProcessControllerDelegate>
 - (void) showLastModifiedTimeForSFMRecord;
 - (NSIndexPath *)getSelectedIndexPath;
 
+//Radha :- Implementation  for  Required Field alert in Debrief UI 
+//Radha :- HighlightSelectedRow
+- (void) highlightSelectRowWithIndexpath:(NSIndexPath *)indexPath;
+
 @end
 
 

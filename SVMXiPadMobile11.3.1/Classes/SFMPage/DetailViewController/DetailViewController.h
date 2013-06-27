@@ -68,7 +68,7 @@ WSInterFaceDelegateForDetailView,
 SignatureDelegate,
 SummaryViewControllerDelegate,
 ChatterDelegate,
-SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceProtocol,JSExecuterDelegate, SFMEditDetailDelegate, SFMChildViewDelegate>
+SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceProtocol,JSExecuterDelegate, SFMEditDetailDelegate, SFMChildViewDelegate, UIAlertViewDelegate> //Radha :- Implementation  for  Required Field alert in Debrief UI
 {
     SAVE_STATUS save_status;
     
@@ -222,7 +222,10 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
     //Debrief
     NSIndexPath  *selectedIndexPathForEdit;
     UIView       *editViewOfLine;
-    
+	//Radha :- Implementation  for  Required Field alert in Debrief UI
+	UIAlertView * requiredFields;
+	NSDictionary * mandatoryRowDetails;
+	
     /* GET_PRICE_JS-shr*/
     JSExecuter *jsExecuter;
     PriceBookData *priceBookData;
@@ -426,6 +429,12 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
 #define GETPRICE                            @"GETPRICE"
 
 #define DOD_BUTTON                          @"Refresh from Salesforce"
+
+//Debrief :- Radha
+#define ROW									@"ROW"
+#define CURRENTROW							@"CURRENTROW"
+#define CURRENTSECTION						@"CURRENTSCTION"
+
 #pragma mark = offline
 //sahana and shrinivas 3rd November
 -(void)fillSFMdictForOfflineforProcess:(NSString *) processId forRecord:(NSString *)recordId;

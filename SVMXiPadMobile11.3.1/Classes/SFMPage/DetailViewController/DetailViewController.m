@@ -43,6 +43,13 @@ extern void SVMXLog(NSString *format, ...);
 - (BOOL) isValidUrl:(NSString *)url;
 - (void) showAlertForInvalidUrl;
 - (void) resetTableViewFrame;
+//Radha :- Debrief :- 19 june '13
+//Radha :- Implementation  for  Required Field alert in Debrief UI
+- (void) showCurrentRowForMandatoryFields:(NSDictionary *)details isLine:(BOOL)IsLine;
+- (void) populateMandatoryRow:(NSInteger)section indexpath:(NSIndexPath *)currentindexpath;
+//Radha :- Implementation for cancel button in Debrief UI
+- (BOOL) cancelIfNewLineAdded:(NSInteger)index;
+
 -(void)pushtViewProcessToStack:(NSString *)process_id  record_id:(NSString *)record_id;
 //Radha :- Child SFM UI
 - (SFMChildView *) allocChildLinkedViewProcess;
@@ -255,6 +262,11 @@ extern void SVMXLog(NSString *format, ...);
 {
      //Debrief
     [self hideExpandedChildViews];
+    
+	
+    //Radha 22 June 13
+	//Radha :- Implementation  for  Required Field alert in Debrief UI
+    [self hideEditViewOfLine];
     
     if (detailViewObject != nil)
     {
@@ -4340,9 +4352,11 @@ extern void SVMXLog(NSString *format, ...);
     NSString * response = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_RESPONSE];
     NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
     NSString * required_fields = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_REQUIRED_FIELDS];
-    UIAlertView * alert = [[UIAlertView alloc] initWithTitle:response message:required_fields delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
-    [alert show];
-    [alert release];
+	//Radha :- Implementation  for  Required Field alert in Debrief UI
+    requiredFields = [[UIAlertView alloc] initWithTitle:response message:required_fields delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
+	requiredFields.delegate = self;
+    [requiredFields show];
+    [requiredFields release];
    
 
 }
@@ -4452,20 +4466,21 @@ extern void SVMXLog(NSString *format, ...);
 	     //Debrief
             if(self.selectedIndexPathForEdit != nil && indexPath.section == self.selectedIndexPathForEdit.section && indexPath.row == self.selectedIndexPathForEdit.row) {
 				float height = [self.editDetailObject getHeightForEditView];
+				//Adjusting HEIGHT across Debrief UI
                 if ( height >= 1) {
-                    return height+35;
+                    return height+40;
                 }
-				return gSTANDARD_TABLE_ROW_HEIGHT + 200.0;
+				return gSTANDARD_TABLE_ROW_HEIGHT;
             }
 			
 			else if (self.selectedIndexPathForchildView != nil && indexPath.section == self.selectedIndexPathForchildView.section && indexPath.row == self.selectedIndexPathForchildView.row)
 			{
-
-				if ([self.SFMChildTableview getHeightForChildLinkedProcess] >= 1) {
-					float height1 = [self.SFMChildTableview getHeightForChildLinkedProcess];
-					return height1 + 40;
+				//Adjusting HEIGHT across Debrief UI
+				float height = [self.SFMChildTableview getHeightForChildLinkedProcess];
+				if (height >= 1) {
+					return height + 40;
                 }
-				return 150.0;
+				return gSTANDARD_TABLE_ROW_HEIGHT;
 			}
             return gSTANDARD_TABLE_ROW_HEIGHT;
         }
@@ -4484,25 +4499,22 @@ extern void SVMXLog(NSString *format, ...);
     }
  //Debrief
     if(self.selectedIndexPathForEdit != nil && indexPath.section == self.selectedIndexPathForEdit.section && indexPath.row == self.selectedIndexPathForEdit.row) {
-        if ([self.editDetailObject getHeightForEditView] >= 1) {
-            return [self.editDetailObject getHeightForEditView]+35;
-        }
-        return gSTANDARD_TABLE_ROW_HEIGHT + 320.0;
-//		return 453+30;
+        float height = [self.editDetailObject getHeightForEditView];
+		//Adjusting HEIGHT across Debrief UI
+		if ( height >= 1) {
+			return height+40;
+		}
+        return gSTANDARD_TABLE_ROW_HEIGHT;
     }
 	else if (self.selectedIndexPathForchildView != nil && indexPath.section == self.selectedIndexPathForchildView.section && indexPath.row == self.selectedIndexPathForchildView.row)
 	{
-//		return 394+40;
-		if ([self.SFMChildTableview getHeightForChildLinkedProcess] >= 1) {
-			self.view.clipsToBounds=YES;
-//			return 100*5;
-			return [self.SFMChildTableview getHeightForChildLinkedProcess]+ gSTANDARD_TABLE_ROW_HEIGHT;
+		float height = [self.SFMChildTableview getHeightForChildLinkedProcess];
+		if (height >= 1) {
+			return height + 40;
 		}
-		return 150.0;
+		return gSTANDARD_TABLE_ROW_HEIGHT;
 	}
-//	 if (isDefault)
-		 return gSTANDARD_TABLE_ROW_HEIGHT;
-//    return 40;
+	return gSTANDARD_TABLE_ROW_HEIGHT;
 }
 
 - (NSString *) getDictionary
@@ -5371,8 +5383,11 @@ extern void SVMXLog(NSString *format, ...);
 				
 			
 				UIImage * switchImage = [UIImage imageNamed:@"SFM-Screen-Switch-Views-button_transparent.png"];
-				UIImageView *seperatorView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, cell.contentView.frame.size.width, 32)];
+//				UIImageView *seperatorView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, cell.contentView.frame.size.width, 32)];
+				//Adding Macro for Width
+				UIImageView *seperatorView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, WIDTH, 32)];
                 seperatorView.image = [UIImage imageNamed:@"shadow_gray_light_blue-1.png" ];
+                seperatorView.tag = 87445;
                 [background addSubview:seperatorView];
                 [seperatorView release];
 				
@@ -5458,9 +5473,10 @@ extern void SVMXLog(NSString *format, ...);
 				
 				UIImage * switchImage = [UIImage imageNamed:@"SFM-Screen-Switch-Views-button_transparent.png"];
 				float xValForSwitchbutton = cell.frame.size.width - ( switchImage.size.width + 130 );
-				
-				UIImageView *seperatorView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, cell.contentView.frame.size.width, 32)];
+				//Adding Macro for Width
+				UIImageView *seperatorView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, WIDTH, 32)];
                 seperatorView.image = [UIImage imageNamed:@"shadow_gray_light_blue-1.png" ];
+                seperatorView.tag = 87445;
                 [background addSubview:seperatorView];
                 [seperatorView release];
 				
@@ -5967,6 +5983,7 @@ extern void SVMXLog(NSString *format, ...);
 					[tapMe release];
 
 					[background addSubview:lbl];
+					[background bringSubviewToFront:lbl];
                 }
                 flag = TRUE;
                 [cell setAccessoryType:UITableViewCellAccessoryNone];
@@ -6178,9 +6195,10 @@ extern void SVMXLog(NSString *format, ...);
             [[background subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
 //            self.editDetailObject = nil;
 			
-			            
-            UIImageView *seperatorView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, cell.contentView.frame.size.width, 32)];
+			//Adding Macro for Width            
+            UIImageView *seperatorView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, WIDTH, 32)];
             seperatorView.image = [UIImage imageNamed:@"shadow_gray_light_blue-1.png" ];
+            seperatorView.tag = 87445;
             [background addSubview:seperatorView];
             [seperatorView release];
             
@@ -6241,9 +6259,10 @@ extern void SVMXLog(NSString *format, ...);
 			
 			UIImage * switchImage = [UIImage imageNamed:@"SFM-Screen-Switch-Views-button_transparent.png"];
 			float xValForSwitchbutton = cell.frame.size.width - ( switchImage.size.width + 130 );
-			
-			UIImageView *seperatorView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, cell.contentView.frame.size.width, 32)];
+			//Adding Macro for Width
+			UIImageView *seperatorView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, WIDTH, 32)];
             seperatorView.image = [UIImage imageNamed:@"shadow_gray_light_blue-1.png" ];
+            seperatorView.tag = 87445;
             [background addSubview:seperatorView];
             [seperatorView release];
 			
@@ -8684,7 +8703,8 @@ extern void SVMXLog(NSString *format, ...);
                                      gVALUE_FIELD_VALUE_KEY,
                                      gVALUE_FIELD_VALUE_VALUE,
                                      nil];
-            NSMutableArray * objects = [NSMutableArray arrayWithObjects:gDETAIL_SAVED_RECORD,[NSNumber numberWithInt:1],[NSNumber numberWithInt:1], nil];
+			//Radha :- Implementation  for  Required Field alert in Debrief UI : - Replaced value 1 to 0
+            NSMutableArray * objects = [NSMutableArray arrayWithObjects:gDETAIL_SAVED_RECORD,[NSNumber numberWithInt:0],[NSNumber numberWithInt:0], nil];
             NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:objects forKeys:keys];
             [detailValue addObject:dict];
             //ends
@@ -8703,154 +8723,16 @@ extern void SVMXLog(NSString *format, ...);
             [detail_Values_id addObject:@""];
             //sahana 9th sept 2011
             [detail_sobject addObject:@""];
-            [tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];    
-        }
-        
-    }
-    else
-    {
-        for(int i= 0; i<[_array count];i++)
-        {
-            WSInterface * wsinterface = [[WSInterface alloc] init];
-            wsinterface.delegate = self;
-            wsinterface.add_WS = FALSE;
-            [wsinterface  AddRecordForLines:process_id ForDetailLayoutId:layout_id];
-            
-           while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
-            {
-                SMLog(@"addMultiChildRows in while loop");
-                if(appDelegate.isWorkinginOffline)
-                {
-                    
-                }
-                else
-                {
-                    
-                }
-                if(wsinterface.add_WS == TRUE)
-                {
-                    break;
-                }
-                if (appDelegate.connection_error)
-                {
-                    break;
-                }
-            }
-            
-            NSMutableDictionary * insert_items = wsinterface.detail_addRecordItems;
-            [wsinterface release];
-            NSArray * insert_keys = nil;
-            
-            if([insert_items  count]!= 0)
-                insert_keys = [insert_items allKeys];
-            
-            NSMutableDictionary * detail = [details objectAtIndex:index];
-            NSMutableArray * detail_values = [detail objectForKey:gDETAILS_VALUES_ARRAY];
-            NSMutableArray * detail_Values_id = [detail objectForKey:gDETAIL_VALUES_RECORD_ID];
-            //sahana 9th sept 2011
-            NSMutableArray * detail_sobject = [detail objectForKey:gDETAIL_SOBJECT_ARRAY];
-            
-            NSMutableArray * detailValue = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-            for (int l = 0; l < [detailFieldsArray count]; l++)
-            {
-                NSString * value = @"";
-                NSString * key = @"";
-                NSMutableArray * keys = [NSMutableArray arrayWithObjects:
-                                         gVALUE_FIELD_API_NAME,
-                                         gVALUE_FIELD_VALUE_KEY,
-                                         gVALUE_FIELD_VALUE_VALUE,
-                                         nil];
-                NSMutableDictionary * field = [detailFieldsArray objectAtIndex:l];
-                NSString * field_api_name = [field objectForKey:gFIELD_API_NAME];
-                if(insert_keys  != nil)
-                {
-                    for(int j = 0 ; j< [insert_keys count];j++)
-                    {
-                        NSString * api_key = [insert_keys objectAtIndex:j];
-                        if([api_key isEqualToString:field_api_name] )
-                        {
-                            value = [insert_items objectForKey:api_key];
-                            key = [insert_items  objectForKey:api_key];
-                            break;
-                        }
-                        
-                        
-                    }
-                }
-                SMLog(@"%@",multi_add_search);
-                if( [field_api_name isEqualToString:multiadd_search_filed])
-                {
-                    value = [_array  objectForKey:[multi_add_result objectAtIndex:i]];
-                    key = [multi_add_result objectAtIndex:i];
-                }
-                
-                NSMutableArray * objects = [NSMutableArray arrayWithObjects:[field objectForKey:gFIELD_API_NAME], key, value, nil];
-                NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:objects forKeys:keys];
-                [detailValue addObject:dict];
-            }
-            if(insert_keys  != nil)
-            {
-                for(int j = 0 ;j<[insert_keys count]; j++)
-                {
-                    NSString * api_name = [insert_keys objectAtIndex:j];
-                    NSInteger count1 = 0;
-                    for(int k=0; k < [detailValue count];k++)
-                    {
-                        NSString  * field_api_name = [[detailValue objectAtIndex:k] objectForKey:gVALUE_FIELD_API_NAME];
-                        if([api_name isEqualToString:field_api_name])
-                        {
-                            
-                        }
-                        else
-                        {
-                            count1++;
-                        }
-                    }
-                    if(count1 == [detailValue count])
-                    {
-                        NSMutableArray * keys = [NSMutableArray arrayWithObjects:
-                                                 gVALUE_FIELD_API_NAME,
-                                                 gVALUE_FIELD_VALUE_KEY,
-                                                 gVALUE_FIELD_VALUE_VALUE,
-                                                 nil];
-                        NSMutableArray * objects = [NSMutableArray arrayWithObjects:api_name, [insert_items objectForKey:api_name],[insert_items objectForKey:api_name], nil];
-                        NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:objects forKeys:keys];
-                        [detailValue addObject:dict];
-                    }
-                }
-            }
-            
-            //sahana 20th August 2011
-            NSMutableArray * keys = [NSMutableArray arrayWithObjects:
-                                     gVALUE_FIELD_API_NAME,
-                                     gVALUE_FIELD_VALUE_KEY,
-                                     gVALUE_FIELD_VALUE_VALUE,
-                                     nil];
-            NSMutableArray * objects = [NSMutableArray arrayWithObjects:gDETAIL_SAVED_RECORD,[NSNumber numberWithInt:1],[NSNumber numberWithInt:1], nil];
-            NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:objects forKeys:keys];
-            [detailValue addObject:dict];
-            
-            //ends
-            
-            NSIndexPath * indexPath = nil;
-            if (selectedSection == SHOWALL_LINES)
-            {
-                indexPath = [NSIndexPath indexPathForRow:[detail_values count]+1 inSection:index];
-            }
-            if(selectedSection == SHOW_LINES_ROW)
-            {
-                indexPath = [NSIndexPath indexPathForRow:[detail_values count]+1 inSection:0];
-            }
-            
-            [detail_values addObject:detailValue];
-            [detail_Values_id addObject:@""];
-            //sahana 9th sept 2011
-            [detail_sobject addObject:@""];
-            [tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];        
-        }
+			
+			//Radha :- Implementation  for  Required Field alert in Debrief UI
+			Disclosure_dict = nil;
+			Disclosure_Details = nil;
+			[self fillDictionary:indexPath];
 
+            [tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+			
+		}
     }
-    
     [activity stopAnimating];
 }
 #pragma MultiAddLookupViewDelegate
@@ -10679,6 +10561,9 @@ extern void SVMXLog(NSString *format, ...);
 				
 				NSMutableDictionary * customDataDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
                 
+				//Radha 21 june '13
+				//Radha :- Implementation  for  Required Field alert in Debrief UI
+				NSInteger headerRow = -1;
                 
                 BOOL error = FALSE;
                 for (int i=0;i<[header_sections count];i++)
@@ -10705,6 +10590,11 @@ extern void SVMXLog(NSString *format, ...);
                         {
                             if([value length] == 0 )
                             {
+								//Radha :- Implementation  for  Required Field alert in Debrief UI
+								if (headerRow < 0 && !error)
+								{
+									headerRow = i;
+								}
                                 error = TRUE;
                                 //sahana TEMP change
                                 break;
@@ -10746,6 +10636,11 @@ extern void SVMXLog(NSString *format, ...);
                 }
                 if(error == TRUE)
                 {
+					//Radha :- Implementation  for  Required Field alert in Debrief UI
+					NSDictionary * details = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%d", headerRow], ROW,
+											  [NSString stringWithFormat:@"%d", 0], CURRENTSECTION,  nil];
+					
+					mandatoryRowDetails = [[NSDictionary alloc] initWithDictionary:details];
                     [self requireFieldWarning];
                     requiredFieldCheck = TRUE;
                     [self enableSFMUI];
@@ -10754,6 +10649,12 @@ extern void SVMXLog(NSString *format, ...);
                 
                 //child records
                 BOOL line_error = FALSE;
+				
+				//Radha :- Debrief :- 19 june '13
+				//Radha :- Implementation  for  Required Field alert in Debrief UI
+				NSInteger row = -1;
+				NSInteger currentRow = -1;
+
                
                 NSArray * details = [appDelegate.SFMPage objectForKey:gDETAILS]; //as many as number of lines sections
                 
@@ -10784,6 +10685,13 @@ extern void SVMXLog(NSString *format, ...);
                                     {
                                         if([deatil_value length]== 0)
                                         {
+											//Radha :- Implementation  for  Required Field alert in Debrief UI
+											if ((row < 0 || currentRow < 0) && !line_error)
+											{
+												row = i;
+												currentRow = j+1;
+											}
+
                                             line_error = TRUE; 
                                             //sahana TEMP chage
                                             break;
@@ -10829,6 +10737,12 @@ extern void SVMXLog(NSString *format, ...);
                 
                 if(line_error)
                 {
+					//Radha :- Debrief :- 19 june '13
+					//Radha :- Implementation  for  Required Field alert in Debrief UI
+					NSDictionary * details = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%d", row], ROW,
+											[NSString stringWithFormat:@"%d", currentRow], CURRENTROW, [NSString stringWithFormat:@"%d", 1], CURRENTSECTION,  nil];
+					
+					mandatoryRowDetails = [[NSDictionary alloc] initWithDictionary:details];
                     [self requireFieldWarning];
                     requiredFieldCheck = TRUE;
                     [self enableSFMUI];
@@ -11151,6 +11065,10 @@ extern void SVMXLog(NSString *format, ...);
                     
                 NSMutableDictionary * customDataDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
 				
+				//Radha 21 june '13
+				//Radha :- Implementation  for  Required Field alert in Debrief UI
+				NSInteger headerRow = -1;
+				
                 BOOL error = FALSE;
                 for (int i=0;i<[header_sections count];i++)
                 {
@@ -11169,6 +11087,11 @@ extern void SVMXLog(NSString *format, ...);
                         {
                             if([value length] == 0 )
                             {
+								//Radha :- Implementation  for  Required Field alert in Debrief UI
+								if (headerRow < 0 && !error)
+								{
+									headerRow = i;
+								}
                                 error = TRUE;
                                 break;
                             }
@@ -11216,6 +11139,11 @@ extern void SVMXLog(NSString *format, ...);
 
 		    //Defect Fix :- Radha 5716
 		    [activity stopAnimating];
+		    //Radha :- Implementation  for  Required Field alert in Debrief UI
+		    NSDictionary * details = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%d", headerRow], ROW,
+											  [NSString stringWithFormat:@"%d", 0], CURRENTSECTION,  nil];
+					
+		    mandatoryRowDetails = [[NSDictionary alloc] initWithDictionary:details];
 		    [self requireFieldWarning];
                     requiredFieldCheck = TRUE;
                     [self enableSFMUI];
@@ -11225,6 +11153,12 @@ extern void SVMXLog(NSString *format, ...);
                 //child records
                 BOOL line_error = FALSE;
                 
+				//Radha :- Debrief :- 19 june '13
+				//Radha :- Implementation  for  Required Field alert in Debrief UI
+				NSInteger row = -1;
+				NSInteger currentRow = -1;
+				
+				
                 NSArray * details = [appDelegate.SFMPage objectForKey:gDETAILS]; //as many as number of lines sections
                 
                 for (int i=0;i<[details count];i++) //parts, labor, expense for instance
@@ -11254,8 +11188,14 @@ extern void SVMXLog(NSString *format, ...);
                                     if(required)
                                     {
                                         if([deatil_value length]== 0)
-                                        {
-                                            line_error = TRUE; 
+                                        {										//Radha :- Implementation  for  Required Field alert in Debrief UI	
+											if ((row < 0 || currentRow < 0) && !line_error)
+											{
+												row = i;
+												currentRow = j+1;
+											}
+                                            line_error = TRUE;
+											
                                             //sahana TEMP chage
                                             break;
                                         }
@@ -11299,9 +11239,17 @@ extern void SVMXLog(NSString *format, ...);
                 
                 if(line_error)
                 {
-                    //Defect Fix :- Radha 5716
-		    [activity stopAnimating];
-		    [self requireFieldWarning];
+					//Radha :- Debrief :- 19 june '13
+					//Radha :- Implementation  for  Required Field alert in Debrief UI
+					NSDictionary * details = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%d", row], ROW,
+											[NSString stringWithFormat:@"%d", currentRow], CURRENTROW, [NSString stringWithFormat:@"%d", 1], CURRENTSECTION,  nil];
+					
+					mandatoryRowDetails = [[NSDictionary alloc] initWithDictionary:details];
+					
+					//Defect Fix :- Radha 5716
+					[activity stopAnimating];
+					
+					[self requireFieldWarning];
                     requiredFieldCheck = TRUE;
                     [self enableSFMUI];
                     return;
@@ -11959,6 +11907,10 @@ extern void SVMXLog(NSString *format, ...);
 				
 				NSMutableDictionary * customDataDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
                 
+				//Radha 21 june '13
+				//Radha :- Implementation  for  Required Field alert in Debrief UI
+				NSInteger headerRow = -1;
+				
                 BOOL error = FALSE;
                 for (int i=0;i<[header_sections count];i++)
                 {
@@ -11984,6 +11936,11 @@ extern void SVMXLog(NSString *format, ...);
                         {
                             if([value length] == 0 )
                             {
+								//Radha :- Implementation  for  Required Field alert in Debrief UI
+								if (headerRow < 0 && !error)
+								{
+									headerRow = i;
+								}
                                 error = TRUE;
                                 //sahana TEMP change
                                 break;
@@ -12027,6 +11984,12 @@ extern void SVMXLog(NSString *format, ...);
                 }
                 if(error == TRUE)
                 {
+					//Radha :- Implementation  for  Required Field alert in Debrief UI
+					NSDictionary * details = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%d", headerRow], ROW,
+											  [NSString stringWithFormat:@"%d", 0], CURRENTSECTION,  nil];
+					
+					mandatoryRowDetails = [[NSDictionary alloc] initWithDictionary:details];
+
                     [self requireFieldWarning];
                     requiredFieldCheck = TRUE;
                     [self enableSFMUI];
@@ -12036,6 +11999,11 @@ extern void SVMXLog(NSString *format, ...);
                 //child records
                 BOOL line_error = FALSE;
                 
+				//Radha :- Debrief :- 19 june '13
+				//Radha :- Implementation  for  Required Field alert in Debrief UI
+				NSInteger row = -1;
+				NSInteger currentRow = -1;
+				
                 NSArray * details = [appDelegate.SFMPage objectForKey:gDETAILS]; //as many as number of lines sections
                 
                 for (int i=0;i<[details count];i++) //parts, labor, expense for instance
@@ -12065,6 +12033,13 @@ extern void SVMXLog(NSString *format, ...);
                                     {
                                         if([deatil_value length]== 0)
                                         {
+											//Radha :- Implementation  for  Required Field alert in Debrief UI
+											if ((row < 0 || currentRow < 0) && !line_error)
+											{
+												row = i;
+												currentRow = j+1;
+											}
+
                                             line_error = TRUE; 
                                             //sahana TEMP chage
                                             break;
@@ -12111,6 +12086,12 @@ extern void SVMXLog(NSString *format, ...);
                 
                 if(line_error)
                 {
+					//Radha :- Debrief :- 19 june '13
+					//Radha :- Implementation  for  Required Field alert in Debrief UI
+					NSDictionary * details = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%d", row], ROW,
+											[NSString stringWithFormat:@"%d", currentRow], CURRENTROW, [NSString stringWithFormat:@"%d", 1], CURRENTSECTION,  nil];
+					
+					mandatoryRowDetails = [[NSDictionary alloc] initWithDictionary:details];
                     [self requireFieldWarning];
                     requiredFieldCheck = TRUE;
                     [self enableSFMUI];
@@ -13754,32 +13735,48 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
 {
-    if(buttonIndex == 1)
-    {
+	//Radha :- Implementation  for  Required Field alert in Debrief UI
+	
+	if([requiredFields isEqual:alertView])
+	{
+		if (buttonIndex == 0)
+		{
+			[self showCurrentRowForMandatoryFields:mandatoryRowDetails isLine:YES];
+			[mandatoryRowDetails release];
+		}
+		
+	}
+	//Radha :- Implementation  for  Required Field alert in Debrief UI
+	else
+	{
+		if(buttonIndex == 1)
+		{
+			EventUpdate_Continue = TRUE;
+			[appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:LOCAL_EVENT_UPDATE];
+			NSMutableArray  *keys_event = nil, *objects_event = nil;
+			keys_event = [NSArray arrayWithObjects:SFW_ACTION_ID,SFW_ACTION_DESCRIPTION,SFW_EXPRESSION_ID,SFW_PROCESS_ID,SFW_ACTION_TYPE ,SFW_WIZARD_ID,SFW_ENABLE_ACTION_BUTTON,nil];
+			if(save_status == EDIT_QUICKSAVE)
+			{
+				
+				objects_event = [NSArray arrayWithObjects:@"",quick_save,@"",@"",gBUTTON_TYPE_TDM_IPAD_ONLY ,@"",@"true",nil];
+			}
+			else
+			{
+				objects_event = [NSArray arrayWithObjects:@"",save,@"",@"",gBUTTON_TYPE_TDM_IPAD_ONLY ,@"",@"true",nil];
+			}
+			NSMutableDictionary * dict_events_save = [NSMutableDictionary dictionaryWithObjects:objects_event forKeys:keys_event];
+			[self offlineActions:dict_events_save];
+			
+		}
+		else if(buttonIndex == 0){
+			
+			EventUpdate_Continue =FALSE;
+			[appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:Event_local_Ids];
+			[appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:LOCAL_EVENT_UPDATE];
+		}
 
-        EventUpdate_Continue = TRUE;
-        [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:LOCAL_EVENT_UPDATE];
-        NSMutableArray  *keys_event = nil, *objects_event = nil;
-        keys_event = [NSArray arrayWithObjects:SFW_ACTION_ID,SFW_ACTION_DESCRIPTION,SFW_EXPRESSION_ID,SFW_PROCESS_ID,SFW_ACTION_TYPE ,SFW_WIZARD_ID,SFW_ENABLE_ACTION_BUTTON,nil];
-        if(save_status == EDIT_QUICKSAVE)
-        {
-            
-            objects_event = [NSArray arrayWithObjects:@"",quick_save,@"",@"",gBUTTON_TYPE_TDM_IPAD_ONLY ,@"",@"true",nil];
-        }
-        else
-        {
-            objects_event = [NSArray arrayWithObjects:@"",save,@"",@"",gBUTTON_TYPE_TDM_IPAD_ONLY ,@"",@"true",nil];
-        }
-        NSMutableDictionary * dict_events_save = [NSMutableDictionary dictionaryWithObjects:objects_event forKeys:keys_event];
-        [self offlineActions:dict_events_save];
-        
-    }
-     else if(buttonIndex == 0){
-         
-        EventUpdate_Continue =FALSE;
-        [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:Event_local_Ids];
-        [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:LOCAL_EVENT_UPDATE];
-    }
+	}
+	
     
 }
 
@@ -14438,21 +14435,298 @@ extern void SVMXLog(NSString *format, ...);
         if(![self.editDetailObject isNecessaryFieldsFilled]) {
             return;
         }
+		[self.editDetailObject lineseditingDone];   //done saving for now
         [self hideExpandedChildViews];
-        [self lineseditingDone];            //done saving for now
-
+                
     }
     else if(btn.tag == 9743) {
         
         [self hideExpandedChildViews];
     }
 }
-
+//Radha :- Implementation for cancel button in Debrief UI
 - (IBAction)removeDetailLine:(id)sender
 {
+	UIButton * detail = (UIButton *) sender;
+	NSInteger index = detail.tag;
+	
+    BOOL isNewLine = [self cancelIfNewLineAdded:index];
+    
+    if (isNewLine)
+    {
+        [tableView beginUpdates];
+        
+        [tableView deleteRowsAtIndexPaths:[NSMutableArray arrayWithObject:self.selectedIndexPathForEdit] withRowAnimation:UITableViewRowAnimationFade];
+        
+        [tableView endUpdates];
+    }
 	[self hideExpandedChildViews];
 	
 }
+
+//Radha 22 June '13
+//Radha :- Implementation for cancel button in Debrief UI 
+- (BOOL) cancelIfNewLineAdded:(NSInteger)index
+{
+//    NSInteger section = self.editDetailObject.selectedIndexPath.section;
+	NSInteger section = index;
+    NSMutableArray * details = [appDelegate.SFMPage objectForKey:gDETAILS];
+	
+    
+    NSMutableDictionary * detail = [details objectAtIndex:section];
+    NSMutableArray * detail_values = [detail objectForKey:gDETAILS_VALUES_ARRAY];
+    NSMutableArray * detail_Values_RECID = [detail objectForKey:gDETAIL_VALUES_RECORD_ID];
+    
+    
+    NSMutableArray * detailValue = [detail_values objectAtIndex:self.editDetailObject.selectedRowForDetailEdit];
+    NSString * record_id = [detail_Values_RECID objectAtIndex:self.editDetailObject.selectedRowForDetailEdit];
+    
+    BOOL deleteFlag = FALSE;
+    for(int i =0; i< [detailValue count]; i++)
+    {
+        NSMutableDictionary  * dict = [detailValue objectAtIndex:i];
+        NSString * api_name = [dict objectForKey:gVALUE_FIELD_API_NAME];
+        if([api_name isEqualToString:gDETAIL_SAVED_RECORD])
+        {
+            deleteFlag = [[dict  objectForKey:gVALUE_FIELD_VALUE_VALUE] boolValue];
+        }
+    }
+    if([record_id isEqualToString:@""])
+    {
+        if(deleteFlag == FALSE)
+        {
+            [detail_values removeObjectAtIndex:self.editDetailObject.selectedRowForDetailEdit];
+            return YES;
+        }
+    }
+
+    return NO;
+    
+}
+
+- (void) populateMandatoryRow:(NSInteger)section indexpath:(NSIndexPath *)currentindexpath
+{
+	NSMutableArray * details = [appDelegate.SFMPage objectForKey:@"details"];
+	NSMutableArray * detailFieldsArray = [[details objectAtIndex:section] objectForKey:gDETAILS_FIELDS_ARRAY];
+	NSString * layout_id = [[details objectAtIndex:section] objectForKey:gDETAILS_LAYOUT_ID];
+	NSString * process_id = currentProcessId;
+	
+	
+	NSMutableDictionary * detail = [details objectAtIndex:section];
+	NSMutableArray * detail_values = [detail objectForKey:gDETAILS_VALUES_ARRAY];
+	NSString * detailObjectName = [detail objectForKey:gDETAIL_OBJECT_NAME];
+	
+	NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGETCHILD process_id:process_id layoutId:layout_id objectName:detailObjectName];
+	
+	NSMutableDictionary * object_mapping_dict = [appDelegate.databaseInterface getObjectMappingForMappingId:process_components mappingType:VALUE_MAPPING];
+	
+	NSArray * all_Keys_values = [object_mapping_dict allKeys];
+	
+	
+	NSMutableArray * detailValue = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+	for (int i = 0; i < [detailFieldsArray count]; i++)
+	{
+		NSString * value = @"";
+		NSString * key = @"";
+		NSMutableArray * keys = [NSMutableArray arrayWithObjects:
+								 gVALUE_FIELD_API_NAME,
+								 gVALUE_FIELD_VALUE_KEY,
+								 gVALUE_FIELD_VALUE_VALUE,
+								 nil];
+		NSMutableDictionary * field = [detailFieldsArray objectAtIndex:i];
+		NSString * field_api_name = [field objectForKey:gFIELD_API_NAME];
+		
+		for(int j = 0 ; j < [all_Keys_values count];j++)
+		{
+			NSString * field_api = [all_Keys_values  objectAtIndex:j];
+			if([field_api isEqualToString:field_api_name])
+			{
+				key = [object_mapping_dict objectForKey:field_api];
+				
+				NSString * filedDataType = [appDelegate.databaseInterface getFieldDataType:detailObjectName filedName:field_api_name];
+				
+				
+				if([filedDataType isEqualToString:@"picklist"])
+				{
+					NSMutableDictionary * picklistValues = [appDelegate.databaseInterface  getPicklistValuesForTheFiled:field_api_name tableName:SFPicklist objectName:detailObjectName];
+					NSArray * allKeys = [picklistValues allKeys];
+					for(NSString * value_dict in allKeys)
+					{
+						if([value_dict isEqualToString:key])
+						{
+							value =[picklistValues objectForKey:key];
+							break;
+						}
+					}
+				}
+				
+				//Radha
+				else if([filedDataType isEqualToString:@"reference"] && (![field_api_name isEqualToString:@"RecordTypeId"]))
+				{
+					if([key isEqualToString:@""] || key == nil || [key length] == 0 )
+					{
+						value = key;
+						
+					}
+					else
+					{
+						NSMutableArray * referenceTotableNames = [appDelegate.databaseInterface getReferenceToForField:field_api_name objectapiName:detailObjectName tableName:SF_REFERENCE_TO];
+						
+						if([referenceTotableNames count ] > 0)
+						{
+							NSString * reference_to_tableName = [referenceTotableNames objectAtIndex:0];
+							
+							NSString * referenceTo_Table_fieldName = [appDelegate.databaseInterface getFieldNameForReferenceTable:reference_to_tableName tableName:SFOBJECTFIELD];
+							
+							
+							value = [appDelegate.databaseInterface getReferenceValueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:key];
+							
+						}
+						if([value isEqualToString:@"" ]||[value isEqualToString:@" "] || value == nil)
+						{
+							value = [appDelegate.databaseInterface getLookUpNameForId:key];
+							if([value isEqualToString:@"" ]||[value isEqualToString:@" "] || value == nil)
+							{
+								value = key;
+							}
+						}
+					}
+					
+				}
+				
+				else if([filedDataType isEqualToString:@"reference"] && [field_api_name isEqualToString:@"RecordTypeId"])
+				{
+					if([key isEqualToString:@""] || key == nil || [key length] == 0 )
+					{
+						value = key;
+						
+					}
+					else
+					{
+						NSMutableArray * referenceTotableNames = [appDelegate.databaseInterface getReferenceToForField:field_api_name objectapiName:detailObjectName tableName:SF_REFERENCE_TO];
+						
+						if([referenceTotableNames count ] > 0)
+						{
+							NSString * reference_to_tableName = [referenceTotableNames objectAtIndex:0];
+							
+							NSString * referenceTo_Table_fieldName = [appDelegate.databaseInterface getFieldNameForReferenceTable:reference_to_tableName tableName:SFOBJECTFIELD];
+							
+							
+							value = [appDelegate.databaseInterface getReferenceValueFromReferenceToTable:reference_to_tableName field_name:referenceTo_Table_fieldName record_id:key];
+							if([value isEqualToString:@"" ]||[value isEqualToString:@" "] || value == nil)
+							{
+								value = [appDelegate.dataBase getValueForRecordtypeId:key object_api_name:detailObjectName];
+							}
+						}
+						if([value isEqualToString:@"" ]||[value isEqualToString:@" "] || value == nil)
+						{
+							value = [appDelegate.databaseInterface getLookUpNameForId:key];
+							if([value isEqualToString:@"" ]||[value isEqualToString:@" "] || value == nil)
+							{
+								value = key;
+							}
+						}
+					}
+					
+				}
+				else if([filedDataType isEqualToString:@"datetime"])
+				{
+					NSString * date = key;
+					date = [date stringByDeletingPathExtension];
+					value = date;
+					key = date;
+				}
+				else if([filedDataType isEqualToString:@"date"])
+				{
+					NSString * date = key;
+					date = [date stringByDeletingPathExtension];
+					value = date;
+					key = date;
+				}
+				else if([filedDataType isEqualToString:@"multipicklist"])
+				{
+					NSArray * valuearray = [key componentsSeparatedByString:@";"];
+					NSMutableArray * labelArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+					NSMutableDictionary * picklistValues = [appDelegate.databaseInterface  getPicklistValuesForTheFiled:field_api_name tableName:SFPicklist objectName:detailObjectName];
+					
+					NSArray * allKeys = [picklistValues allKeys];
+					for(NSString * value_dict in allKeys)
+					{
+						for(NSString * key  in valuearray)
+						{
+							if([value_dict isEqualToString:key])
+							{
+								[labelArray addObject:[picklistValues objectForKey:key]];
+								break;
+							}
+						}
+					}
+					
+					NSInteger count_ = 0;
+					for(NSString * each_label in labelArray)
+					{
+						if(count_ != 0)
+							value = [value stringByAppendingString:@";"];
+						
+						value = [value stringByAppendingString:each_label];
+						count_++;
+					}
+					
+				}
+				else
+				{
+					value = key;
+				}
+				
+			}
+			
+		}
+		
+		NSMutableArray * objects = [NSMutableArray arrayWithObjects:field_api_name, key, value, nil];
+		NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:objects forKeys:keys];
+		[detailValue addObject:dict];
+	}
+	
+	NSIndexPath * indexPath = nil;
+	if (selectedSection == SHOWALL_LINES)
+	{
+		indexPath = [NSIndexPath indexPathForRow:currentindexpath.row inSection:section];
+	}
+	if(selectedSection == SHOW_LINES_ROW)
+	{
+		indexPath = [NSIndexPath indexPathForRow:currentindexpath.row inSection:0];
+	}
+	
+	NSInteger index;
+	NSInteger _section1 = indexPath.section;
+	
+	if (isDefault)
+		index = _section1;
+	else
+		index = selectedRow;
+	
+	NSIndexPath  *_indexPath = nil;
+	if (selectedSection == SHOWALL_LINES)
+	{
+		_indexPath = indexPath;
+	}
+	if(selectedSection == SHOW_LINES_ROW)
+	{
+		_indexPath = [NSIndexPath indexPathForRow:indexPath.row inSection:index];
+	}
+	//Radha
+	if (currentEditRow)
+	{
+		self.currentEditRow = nil;
+	}
+	self.currentEditRow = indexPath;
+	
+	Disclosure_dict = nil;
+	Disclosure_Details = nil;
+	[self fillDictionary:_indexPath];
+}
+
+
 - (void)moveTableviewForKeyboardHeight:(NSNotification *)notification
 {
     //Defect Fix :- #7390 #7407
@@ -14558,6 +14832,38 @@ extern void SVMXLog(NSString *format, ...);
 
 }
 //KRI
+//Radha :- Debrief :- 19 june '13
+//Radha :- Implementation  for  Required Field alert in Debrief UI 
+- (void) showCurrentRowForMandatoryFields:(NSDictionary *)details isLine:(BOOL)IsLine
+{
+	NSInteger row = [[details objectForKey:ROW] integerValue];
+	
+	NSInteger currentRow = [[details objectForKey:CURRENTROW] integerValue];
+	
+	NSInteger currentSection = [[details objectForKey:CURRENTSECTION] integerValue];
+	
+	NSIndexPath * indexpath = [NSIndexPath indexPathForRow:currentRow inSection:0];
+		
+	[self didSelectRow:row ForSection:currentSection];
+	    
+    NSIndexPath * rowIndexpath = [NSIndexPath indexPathForItem:row inSection:currentSection];
+    
+    [appDelegate.sfmPageController.rootView highlightSelectRowWithIndexpath:rowIndexpath];
+	
+	if (currentSection == 1)
+	{
+			[self populateMandatoryRow:row indexpath:indexpath];
+		
+		UITableViewCell * cell = [self.tableView cellForRowAtIndexPath:indexpath];
+		self.selectedIndexPathForEdit = indexpath;
+		[self showEditViewOfLineInView:cell.contentView forIndexPath:indexpath forEditMode:YES];
+
+		
+		[self.tableView reloadData];
+	}
+}
+
+
 #pragma mark END
 
 #pragma mark -
@@ -14670,7 +14976,8 @@ extern void SVMXLog(NSString *format, ...);
     
 	viewFrame.origin.y =  40;
     viewFrame.size.height =  incrementHeight; //[self.SFMChildTableview getHeightForChildLinkedProcess];
-    viewFrame.size.width = parentView.frame.size.width;
+//    viewFrame.size.width = parentView.frame.size.width;
+	viewFrame.size.width = WIDTH;
 	
 	
 	

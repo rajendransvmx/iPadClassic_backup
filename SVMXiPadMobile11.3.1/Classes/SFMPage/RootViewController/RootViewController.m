@@ -783,14 +783,22 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     delegate = appDelegate.sfmPageController.detailView;
+	//Radha :- Implementation  for  Required Field alert in Debrief UI
+    [self highlightSelectRowWithIndexpath:indexPath];
+
 
     [delegate didSelectRow:indexPath.row ForSection:indexPath.section];
 
+}
+
+//Radha :- Implementation  for  Required Field alert in Debrief UI :- Highlighth's selected row
+- (void) highlightSelectRowWithIndexpath:(NSIndexPath *)indexPath
+{
     UIImage * image = nil;
 
     if (lastSelectedIndexPath == indexPath)
     {
-        UITableViewCell * selectedCell = [tableView cellForRowAtIndexPath:indexPath];
+        UITableViewCell * selectedCell = [self.tableView cellForRowAtIndexPath:indexPath];
         UIView * cellBackgroundView = selectedCell.backgroundView;
         UIImageView * bgImage = (UIImageView *)[cellBackgroundView viewWithTag:BGIMAGETAG];
         image = [UIImage imageNamed:@"SFM_left_button_selected.png"];
@@ -803,7 +811,7 @@ extern void SVMXLog(NSString *format, ...);
     else
     {
         
-        UITableViewCell * lastSelectedCell = [tableView cellForRowAtIndexPath:lastSelectedIndexPath];
+        UITableViewCell * lastSelectedCell = [self.tableView cellForRowAtIndexPath:lastSelectedIndexPath];
         UIView * lastSelectedCellBackgroundView = lastSelectedCell.backgroundView;
         UIImageView * lastSelectedCellBGImage = (UIImageView *)[lastSelectedCellBackgroundView viewWithTag:BGIMAGETAG];
         image = [UIImage imageNamed:@"SFM_left_button_UP.png"];
@@ -814,7 +822,7 @@ extern void SVMXLog(NSString *format, ...);
         lastSelectedCellLabel.textColor = [UIColor blackColor];
     }
     
-    UITableViewCell * selectedCell = [tableView cellForRowAtIndexPath:indexPath];
+    UITableViewCell * selectedCell = [self.tableView cellForRowAtIndexPath:indexPath];
     UIView * cellBackgroundView = selectedCell.backgroundView;
     UIImageView * bgImage = (UIImageView *)[cellBackgroundView viewWithTag:BGIMAGETAG];
     image = [UIImage imageNamed:@"SFM_left_button_selected.png"];

@@ -628,7 +628,7 @@ extern void SVMXLog(NSString *format, ...);
     // Just got it from cache, lets go back
     if (datatype != nil)
     {
-        NSLog(@" Go it from cache fieldDataTypeDictionary  %@ -> %@ ", cacheKey,  datatype);
+//        NSLog(@" Go it from cache fieldDataTypeDictionary  %@ -> %@ ", cacheKey,  datatype);
         return datatype;
     }
     
@@ -661,7 +661,7 @@ extern void SVMXLog(NSString *format, ...);
         && (cacheKey != nil))
     {
         // Stored in cache
-        NSLog(@" Storing in cache fieldDataTypeDictionary  %@  > %@ ", cacheKey,  datatype);
+//        NSLog(@" Storing in cache fieldDataTypeDictionary  %@  > %@ ", cacheKey,  datatype);
         if ([self.fieldDataTypeDictionary count] > 100)
         {
             // Clear all objects it is exceeding the limit
