@@ -712,8 +712,10 @@ PopoverButtons *popOver_view;
         [appDelegate updateMetasyncTimeinSynchistory];
 		[appDelegate.wsInterface.updateSyncStatus refreshMetaSyncStatus];
 		[self updateMetsSyncStatus:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_succeeded]];
-
-
+        
+        // Fix for defect 007377
+        
+        [appDelegate pingServer];
     }
     //Radha Progress Bar
 	//appDelegate.syncTypeInProgress = NO_SYNCINPROGRESS;
@@ -727,7 +729,6 @@ PopoverButtons *popOver_view;
     {
 		appDelegate.event_thread = nil;
     }
-    [appDelegate pingServer];
     appDelegate.wsInterface.tagsDictionary = [appDelegate.dataBase getTagsDictionary];
     NSMutableDictionary * temp_dict = [appDelegate.wsInterface fillEmptyTags:appDelegate.wsInterface.tagsDictionary];
     appDelegate.wsInterface.tagsDictionary = temp_dict;

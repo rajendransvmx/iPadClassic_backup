@@ -670,7 +670,8 @@ extern void SVMXLog(NSString *format, ...);
         NSMutableDictionary *dicttemp=[[NSMutableDictionary alloc]init];
         [dicttemp setObject:@"" forKey:@"userInfo"];
         [Errordict setObject:dicttemp forKey:@"userInfo"];
-        [appDelegate CustomizeAletView:nil alertType:SOAP_ERROR Dict:Errordict exception:nil];
+        // Defect 7377
+//        [appDelegate CustomizeAletView:nil alertType:SOAP_ERROR Dict:Errordict exception:nil];
         [dicttemp release];
         [Errordict release];
         return;
@@ -1123,7 +1124,8 @@ extern void SVMXLog(NSString *format, ...);
         appDelegate.wsInterface.isLoggedIn = YES;
         SMLog(@"Installed Package Version = %@",stringNumber);
         NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-        if (userDefaults) 
+        //Defect 007128
+        if (userDefaults && [stringNumber length]>0 && stringNumber != nil && stringNumber != NULL )
         {            
             [userDefaults setObject:stringNumber forKey:kPkgVersionCheckForGPS_AND_SFM_SEARCH];
             SMLog(@"Installed Package Version = %@",stringNumber);

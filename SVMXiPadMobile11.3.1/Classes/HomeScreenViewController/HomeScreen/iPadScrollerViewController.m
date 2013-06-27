@@ -2286,6 +2286,12 @@ const float progress_ = 0.07;
                 itemView.index = -1;
 
             }
+            else
+            {
+                // defect 007128
+                CALayer *layer = [itemView layer];
+                layer.borderColor = [UIColor lightGrayColor].CGColor;
+            }
         }
         
         

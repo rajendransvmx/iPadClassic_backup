@@ -618,7 +618,8 @@ NSString* machineName()
     loginController = [[LoginController alloc] initWithNibName:@"LoginController" bundle:nil];
 
     NSString * status = [self getUSerInfoForKey:INITIAL_SYNC_LOGIN_SATUS];
-    if([status isEqualToString:@"false"])
+    // Fix defect 007357
+    if([status length]>0 && [status isEqualToString:@"false"])
     {
         NSError * error = nil;
         self.username = [SFHFKeychainUtils getPasswordForUsername:@"username" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
@@ -629,6 +630,8 @@ NSString* machineName()
             self.IsLogedIn = ISLOGEDIN_TRUE;
             self.do_meta_data_sync = ALLOW_META_AND_DATA_SYNC;
             
+            [appDelegate.dataBase clearDatabase];
+            [self performInitialSynchronization];
             homeScreenView = [[iPadScrollerViewController alloc] initWithNibName:@"iPadScrollerViewController" bundle:nil];
             homeScreenView.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
             homeScreenView.modalPresentationStyle = UIModalPresentationFullScreen;
@@ -1030,7 +1033,18 @@ NSString* machineName()
     }
     return;
 }
+// Fix defect 007357
 
+- (sqlite3 *)getDatabase {
+    
+    if (db == nil)
+    {
+        NSLog(@" DB initialising...");
+        [self initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+    }
+    
+    return db;
+}
 -(processInfo *) getViewProcessForObject:(NSString *)object_name record_id:(NSString *)recordId processId:(NSString *)LastprocessId_  isswitchProcess:(BOOL)isSwitchProcess
 {
     
@@ -1249,7 +1263,8 @@ NSString * GO_Online = @"GO_Online";
         NSMutableDictionary *dicttemp=[[NSMutableDictionary alloc]init];
         [dicttemp setObject:@"" forKey:@"userInfo"];
         [Errordict setObject:dicttemp forKey:@"userInfo"];
-        [appDelegate CustomizeAletView:nil alertType:SOAP_ERROR Dict:Errordict exception:nil];
+       //defect 007237
+//        [appDelegate CustomizeAletView:nil alertType:SOAP_ERROR Dict:Errordict exception:nil];
         [dicttemp release];
         [Errordict release];
         self._pingServer = FALSE;
@@ -2531,7 +2546,8 @@ int percent = 0;
     NSString * stringNumber = [self.SVMX_Version stringByReplacingOccurrencesOfString:@"." withString:@""];
     SMLog(@"Latest Installed Package = %@",stringNumber);
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    if (userDefaults) 
+    //Defect 007128
+    if (userDefaults && [stringNumber length]>0 && stringNumber != nil && stringNumber != NULL )
     {            
         [userDefaults setObject:stringNumber forKey:kPkgVersionCheckForGPS_AND_SFM_SEARCH];
     }
@@ -2907,9 +2923,21 @@ int percent = 0;
                 break;
             case APPLICATION_ERROR:
                 SMLog(@"Application Error");
+                       //defect 007237
+
+                if(exp)
+                {
                 errorType=[exp name];
                 errorMessage=[exp description];
                 title=[appDelegate.wsInterface.tagsDictionary objectForKey:alert_application_error];
+                }
+                else if(errorDict !=nil)
+                {
+                    errorType =[errorDict objectForKey:@"ExpName"];
+                    errorMessage = [errorDict objectForKey:@"ExpReason"];
+                    detail_desc=[[errorDict objectForKey:@"userInfo"]objectForKey:@"userInfo"];
+                
+                }
                 break;
                 
         }
@@ -3106,6 +3134,164 @@ int percent = 0;
 		[self  setSyncStatus:SYNC_GREEN];
 	}
 }
+
+// ########## Initial 3 calls
+
+-(void)performInitialSynchronization
+
+{
+    
+    //GET VERSION :
+    
+//    self.wasPerformInitialSycn = TRUE;
+    
+    BOOL checkVersion = [self checkVersion];
+    
+    if (!checkVersion)
+    {
+        [[ZKServerSwitchboard switchboard] setApiUrl:nil];
+        
+        [loginController enableControls];
+        
+        return;
+    }
+    // GET PROFILE :
+    
+    self.didCheckProfile = FALSE;
+    
+    self.userProfileId = @"";
+    
+    //Dont remove the code in the comments below
+    
+    [self.wsInterface checkIfProfileExistsWithEventName:VALIDATE_PROFILE type:GROUP_PROFILE];
+    
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
+        
+    {
+        
+        if (![self isInternetConnectionAvailable])
+            
+        {
+            
+            self.shouldShowConnectivityStatus = YES;
+            
+            return;
+            
+        }
+        
+        if (self.didCheckProfile)
+            
+        {
+            
+            break;
+            
+        }
+        
+        if (self.connection_error)
+            
+        {
+            
+            break;
+            
+        }
+        
+    }
+    
+    
+    //GET TAGS FOR FIRST TIME :
+    
+    [self getTagsForTheFirstTime];
+    [self.dataBase getImageForServiceReportLogo]; //Get Service Report from online.
+}
+
+-(BOOL)checkVersion
+{
+	self.didGetVersion = FALSE;
+	
+    [self.wsInterface getSvmxVersion];
+	
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+    {
+		//#Radha Defect Fix 7168
+		if (appDelegate.connection_error)
+		{
+			self.didGetVersion = FALSE;
+			return NO;
+		}
+		
+        if ( ![self isInternetConnectionAvailable] )
+            return NO;
+		
+        SMLog (@"iserviceAppdelegate checkVersion in while loop");
+		
+        if ( self.didGetVersion )
+            break;
+		
+        SMLog ( @"4" );
+    }
+    
+    NSString * stringNumber = [self.SVMX_Version stringByReplacingOccurrencesOfString:@"." withString:@""];
+	
+    int _stringNumber = [stringNumber intValue];
+    int version = (APPVERSION * 100000);
+	
+    if( _stringNumber >= version )
+    {
+        SMLog(@"greater than %f", APPVERSION);
+		
+        self.wsInterface.isLoggedIn = YES;
+		
+        SMLog(@"Installed Package Version = %@",stringNumber);
+        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+		
+        if ( userDefaults )
+        {
+            [userDefaults setObject:stringNumber forKey:kPkgVersionCheckForGPS_AND_SFM_SEARCH];
+            SMLog(@"Installed Package Version = %@",stringNumber);
+        }
+        else
+        {
+            SMLog(@"Getting User Defaults Failed");
+        }
+		
+        return YES;
+    }
+    else
+    {
+        NSString * title = [self.wsInterface.tagsDictionary objectForKey:login_incorrect_version];
+        NSString * ipad_version = [self.wsInterface.tagsDictionary objectForKey:login_ipad_app_version];
+        NSString * servicemax_version = [self.wsInterface.tagsDictionary objectForKey:login_serivcemax_version];
+        
+        // Read version info from plist
+        NSString * version_app  = [NSString stringWithFormat:@"%@", [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey]];
+        
+        NSString * message  = [NSString stringWithFormat:@"%@ %@  %@ %.5f .",ipad_version, version_app , servicemax_version,APPVERSION];
+        UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:title message:message  delegate:self cancelButtonTitle:ALERT_ERROR_OK_DEFAULT otherButtonTitles:nil, nil];
+		
+        [alertView show];
+        [alertView release];
+		
+        SMLog(@"lesser than %f", APPVERSION);
+		
+        return NO;
+    }
+    
+    return NO;
+}
+
+-(void)getTagsForTheFirstTime
+{
+    appDelegate.download_tags_done = FALSE;
+    appDelegate.firstTimeCallForTags = TRUE;
+    [appDelegate.wsInterface metaSyncWithEventName:MOBILE_DEVICE_TAGS eventType:SYNC values:nil];
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+    {
+        if(appDelegate.download_tags_done)
+            break;
+    }
+    appDelegate.firstTimeCallForTags= FALSE;
+}
+
 
 @end
 
