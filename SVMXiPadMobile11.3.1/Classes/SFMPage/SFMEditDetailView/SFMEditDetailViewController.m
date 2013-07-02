@@ -46,7 +46,10 @@
     if (self) {
         // Custom initialization
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyBoardDidShow:) name:UIKeyboardDidShowNotification object:nil];
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidHide:) name:UIKeyboardDidHideNotification object:nil];
+		//Defect Fix :- 7382
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidHide:) name:UIKeyboardWillHideNotification object:nil];
+		//Defect Fix :- 7447
+		heightForTableView = 0;
 
     }
     return self;
@@ -57,7 +60,8 @@
 - (void) dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidShowNotification object:nil];
-	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidHideNotification object:nil];
+	//Defect Fix :- 7382
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 
 	[Disclosure_Fields release];
     [Disclosure_Details release];
@@ -1021,7 +1025,17 @@
     if([controlType isEqualToString:@"percent"])
     {
         CTextField * PercentType;
-        PercentType = [[CTextField alloc] initWithFrame:frame lableValue:labelValue controlType:@"percent" isinViewMode:isInViewMode];
+        //Keyboard fix for readonly fields 
+        BOOL isFieldEnable;
+        if (!isInViewMode)
+        {
+            isFieldEnable=NO;
+        }
+        else
+        {
+            isFieldEnable=readOnly;
+        }
+        PercentType = [[CTextField alloc] initWithFrame:frame lableValue:labelValue controlType:@"percent" isinViewMode:isInViewMode isEditable:isFieldEnable];
         PercentType.controlDelegate = self;
         PercentType.indexPath = indexPath;
         if (!isInViewMode)
@@ -1039,7 +1053,17 @@
     if([controlType isEqualToString:@"phone"])
     {
         CTextField * phonetype;
-        phonetype = [[CTextField  alloc] initWithFrame:frame lableValue:labelValue controlType:@"phone" isinViewMode:isInViewMode];
+		//Keyboard fix for readonly fields
+        BOOL isFiledEditable;
+        if (!isInViewMode)
+        {
+            isFiledEditable=NO;
+        }
+        else
+        {
+            isFiledEditable=readOnly;
+        }
+        phonetype = [[CTextField  alloc] initWithFrame:frame lableValue:labelValue controlType:@"phone" isinViewMode:isInViewMode isEditable:isFiledEditable];
         phonetype.controlDelegate = self;
         phonetype.indexPath = indexPath;
         if (!isInViewMode)
@@ -1066,7 +1090,7 @@
         }
         else
         {
-            currency = [[CTextField  alloc] initWithFrame:frame lableValue:labelValue controlType:@"currency" isinViewMode:isInViewMode];
+            currency = [[CTextField  alloc] initWithFrame:frame lableValue:labelValue controlType:@"currency" isinViewMode:isInViewMode isEditable:readOnly]; //Keyboard fix for readonly fields
             currency.controlDelegate = self;
             currency.indexPath = indexPath;
             currency.enabled = readOnly;
@@ -1089,7 +1113,13 @@
         }
         else
         {
-            doubleType = [[CTextField  alloc] initWithFrame:frame lableValue:labelValue controlType:@"double" isinViewMode:isInViewMode];
+            //Keyboard fix for readonly fields
+			BOOL isFieldEditable;
+			if (!isInViewMode)
+				isFieldEditable=NO;
+			else
+				isFieldEditable=readOnly;
+			doubleType = [[CTextField  alloc] initWithFrame:frame lableValue:labelValue controlType:@"double" isinViewMode:isInViewMode isEditable:isFieldEditable];
             doubleType.controlDelegate = self;
             doubleType.text = value;
             doubleType.indexPath = indexPath;
@@ -1106,7 +1136,18 @@
     
     if([controlType isEqualToString:@"textarea"])
     {
-        CusTextView * textarea = [[CusTextView alloc] initWithFrame:frame lableValue:labelValue];
+        //Keyboard fix for readonly fields
+        BOOL isFieldEditable ;
+        if (!isInViewMode)
+        {
+            isFieldEditable=NO;
+        }
+        else
+        {
+            isFieldEditable=readOnly;
+        }
+        
+        CusTextView * textarea = [[CusTextView alloc] initWithFrame:frame lableValue:labelValue isEditable:isFieldEditable];
         textarea.controlDelegate = self;
         if (!isInViewMode)
             textarea.editable = NO;
@@ -1225,6 +1266,7 @@
             lookup.Override_Related_Lookup = Override_Related_Lookup;
             lookup.Field_Lookup_Context = Field_Lookup_Context;
             lookup.Field_Lookup_Query = Field_Lookup_Query;
+			lookup.heightForPopover = heightForTableView; //Defect Fix :- 7447
             return lookup;
         }
     }
@@ -1296,8 +1338,14 @@
     
     if([controlType isEqualToString:@"string"])
     {
-        cusTextFieldAlpha  * string_control = [[cusTextFieldAlpha alloc] initWithFrame:frame control_type:controlType isInViewMode:isInViewMode];
-        string_control.controlDelegate = self;
+        //Keyboard fix for readonly fields
+        BOOL isFieldEditable;
+        if (!isInViewMode)
+            isFieldEditable = NO;
+        else
+            isFieldEditable = readOnly;
+        
+        cusTextFieldAlpha  * string_control = [[cusTextFieldAlpha alloc] initWithFrame:frame control_type:controlType isInViewMode:isInViewMode isEditable:isFieldEditable];        string_control.controlDelegate = self;
         string_control.text = value;
         if (!isInViewMode)
             string_control.enabled = NO;
@@ -1311,7 +1359,14 @@
     }
     if([controlType isEqualToString:@"email"])
     {
-        cusTextFieldAlpha  * email_control = [[cusTextFieldAlpha alloc] initWithFrame:frame control_type:controlType isInViewMode:isInViewMode];
+        //Keyboard fix for readonly fields
+        BOOL isFieldEditable;
+        if (!isInViewMode)
+            isFieldEditable = NO;
+        else
+            isFieldEditable = readOnly;
+		
+        cusTextFieldAlpha  * email_control = [[cusTextFieldAlpha alloc] initWithFrame:frame control_type:controlType isInViewMode:isInViewMode isEditable:isFieldEditable];
         email_control.controlDelegate = self;
         email_control.text = value;
         if (!isInViewMode)
@@ -1327,7 +1382,8 @@
     }
     if([controlType isEqualToString:@"url"])
     {
-        cusTextFieldAlpha  * url_control = [[cusTextFieldAlpha alloc] initWithFrame:frame control_type:controlType isInViewMode:isInViewMode];
+        //Keyboard fix for readonly fields
+        cusTextFieldAlpha  * url_control = [[cusTextFieldAlpha alloc] initWithFrame:frame control_type:controlType isInViewMode:isInViewMode isEditable:YES];
         url_control.controlDelegate = self;
         url_control.text = value;
         url_control.enabled = readOnly; // defect 007354
@@ -2115,18 +2171,6 @@
             custLabel.object_api_name = api_name;
 			custLabel.isInDetailMode = YES;
 			
-			
-			
-			
-			UITapGestureRecognizer * doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleTapOnReferenceLabel:)];
-			doubleTap.numberOfTapsRequired = 2;
-			[custLabel addGestureRecognizer:doubleTap];
-			[doubleTap release];
-			
-//			UITapGestureRecognizer * singltTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapRecognized:)];
-//			singltTap.numberOfTapsRequired = 1;
-//			[custLabel addGestureRecognizer:singltTap];
-//			[singltTap release];
             
             //Radha 2012june08
             BOOL recordExists = [appDelegate.dataBase checkIfRecordExistForObject:related_to_table_name Id:key];
@@ -2156,9 +2200,32 @@
                 if(flag_)
                 {
                     custLabel.textColor = [UIColor blueColor];
+					
+					UITapGestureRecognizer * doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleTapOnReferenceLabel:)];
+					doubleTap.numberOfTapsRequired = 2;
+					[custLabel addGestureRecognizer:doubleTap];
+					[doubleTap release];
+
                     
-                }
+                }//Changes updated for reference fields
+				else
+				{
+					UITapGestureRecognizer * singltTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapRecognized:)];
+					singltTap.numberOfTapsRequired = 1;
+					[custLabel addGestureRecognizer:singltTap];
+					[singltTap release];
+					
+				}
+
             }
+			else
+			{
+				UITapGestureRecognizer * singltTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapRecognized:)];
+				singltTap.numberOfTapsRequired = 1;
+				[custLabel addGestureRecognizer:singltTap];
+				[singltTap release];
+
+			}
             
             CGPoint cellCenter=cell.center;
             CGPoint controlCentre=custLabel.center;
@@ -2457,6 +2524,7 @@
     }
     self.tableView.backgroundColor=[UIColor clearColor];
     self.tableView.backgroundColor=[UIColor colorWithPatternImage:[UIImage imageNamed:@"SFM_right_panel_bg_main_top.png"]];
+	heightForTableView = heightForView; //Defect Fix :- 7447
     return heightForView;
 }
 
@@ -2617,6 +2685,10 @@
 }
 
 - (void)viewDidUnload {
+	
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidShowNotification object:nil];
+	//Defect Fix :- 7382
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
     [self setTableView:nil];
     [super viewDidUnload];
 }

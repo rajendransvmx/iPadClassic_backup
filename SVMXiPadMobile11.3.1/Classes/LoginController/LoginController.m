@@ -671,7 +671,8 @@ extern void SVMXLog(NSString *format, ...);
         [dicttemp setObject:@"" forKey:@"userInfo"];
         [Errordict setObject:dicttemp forKey:@"userInfo"];
         // Defect 7377
-//        [appDelegate CustomizeAletView:nil alertType:SOAP_ERROR Dict:Errordict exception:nil];
+		//Uncommenting the below code for the defect 7453
+        [appDelegate CustomizeAletView:nil alertType:SOAP_ERROR Dict:Errordict exception:nil];
         [dicttemp release];
         [Errordict release];
         return;

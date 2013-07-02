@@ -47,6 +47,8 @@
 
 @property (nonatomic, retain) NSIndexPath * selectedIndexPath;
 @property (nonatomic, retain) NSDictionary * Disclosure_dict;
+//Defect Fix :- 7447
+@property (nonatomic, assign) NSInteger heightForPopover;
 
 -(id) initWithFrame:(CGRect)frame labelValue:(NSString *)labelValue inView:(UIView *)poview;
 - (void) setReadOnly:(BOOL)flag;

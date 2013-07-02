@@ -25,6 +25,8 @@
 	id <SFMEditDetailDelegate> detailDelegate;
 	
 	UIPopoverController * lookupPopover;
+	//Defect Fix :- 7447
+	NSInteger heightForTableView;
 }
 
 @property (nonatomic, assign) id <SFMEditDetailDelegate> detailDelegate;
@@ -54,6 +56,7 @@
 
 - (float) getHeightForEditView ;
 -(BOOL)isNecessaryFieldsFilled;
+-(void) lineseditingDone;
 
 #define SHOWALL_HEADERS                     0
 #define SHOW_HEADER_ROW                     1

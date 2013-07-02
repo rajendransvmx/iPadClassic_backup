@@ -630,8 +630,12 @@ NSString* machineName()
             self.IsLogedIn = ISLOGEDIN_TRUE;
             self.do_meta_data_sync = ALLOW_META_AND_DATA_SYNC;
             
-            [appDelegate.dataBase clearDatabase];
-            [self performInitialSynchronization];
+            if ([appDelegate isInternetConnectionAvailable])
+            {
+                [appDelegate.dataBase clearDatabase];
+
+                [self performInitialSynchronization];
+            }
             homeScreenView = [[iPadScrollerViewController alloc] initWithNibName:@"iPadScrollerViewController" bundle:nil];
             homeScreenView.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
             homeScreenView.modalPresentationStyle = UIModalPresentationFullScreen;
@@ -1263,7 +1267,7 @@ NSString * GO_Online = @"GO_Online";
         NSMutableDictionary *dicttemp=[[NSMutableDictionary alloc]init];
         [dicttemp setObject:@"" forKey:@"userInfo"];
         [Errordict setObject:dicttemp forKey:@"userInfo"];
-       //defect 007237
+       //defect 007377
 //        [appDelegate CustomizeAletView:nil alertType:SOAP_ERROR Dict:Errordict exception:nil];
         [dicttemp release];
         [Errordict release];

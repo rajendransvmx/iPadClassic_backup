@@ -101,6 +101,8 @@ extern void SVMXLog(NSString *format, ...);
     
     popOver.delegate = self;
     lookupView.popover = popOver;
+	NSInteger height = parent.heightForPopover; //Defect Fix :- 7447
+
     
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
 
@@ -108,12 +110,14 @@ extern void SVMXLog(NSString *format, ...);
     
     if (UIDeviceOrientationIsLandscape(deviceOrientation))
     {
-        [popOver presentPopoverFromRect:CGRectMake(768, 0, 0, 0) inView:POView permittedArrowDirections:0 animated:YES];
+        //Defect Fix :- 7447
+        [popOver presentPopoverFromRect:CGRectMake(768, height, 0, 0) inView:POView permittedArrowDirections:0 animated:YES];
         [popOver release];
     }
     else
     {
-        [popOver presentPopoverFromRect:CGRectMake(768, 0, 0, 0) inView:POView permittedArrowDirections:0 animated:YES];
+        //Defect Fix :- 7447
+        [popOver presentPopoverFromRect:CGRectMake(768, height, 0, 0) inView:POView permittedArrowDirections:0 animated:YES];
         [popOver release];
     }
 

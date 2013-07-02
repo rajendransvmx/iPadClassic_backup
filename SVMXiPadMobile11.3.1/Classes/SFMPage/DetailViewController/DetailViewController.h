@@ -226,6 +226,9 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
 	UIAlertView * requiredFields;
 	NSDictionary * mandatoryRowDetails;
 	
+	//Radha Defect Fix 7446
+	NSInteger currentRowIndex;
+	
     /* GET_PRICE_JS-shr*/
     JSExecuter *jsExecuter;
     PriceBookData *priceBookData;

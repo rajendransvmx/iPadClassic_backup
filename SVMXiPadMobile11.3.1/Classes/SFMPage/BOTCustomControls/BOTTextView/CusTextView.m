@@ -22,8 +22,8 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize control_type;
 
 @synthesize object_api_name;
-
--(id) initWithFrame:(CGRect)frame lableValue:(NSString *)lableValue
+//Keyboard fix for readonly fields
+-(id) initWithFrame:(CGRect)frame lableValue:(NSString *)lableValue isEditable:(BOOL)isEditable
 {
     
     self=[super initWithFrame:frame];
@@ -42,7 +42,7 @@ extern void SVMXLog(NSString *format, ...);
         [self.layer setBorderWidth:1.0];
         [self.layer setBorderColor:[[UIColor grayColor]CGColor]];
         iServiceAppDelegate *appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-        if([appDelegate isCameraAvailable])
+        if([appDelegate isCameraAvailable] && isEditable) //Keyboard fix for readonly fields
         {UIView *barCodeView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 768, 46)];
             barCodeView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"accessoryView_bg.png"]];
             UIButton *barCodeButton = [[UIButton alloc] initWithFrame:CGRectMake(676, 4, 72, 37)];

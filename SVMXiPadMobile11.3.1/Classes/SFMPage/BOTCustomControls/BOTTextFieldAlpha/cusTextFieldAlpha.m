@@ -19,8 +19,8 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize required;
 @synthesize control_type;
 extern void SVMXLog(NSString *format, ...);
-
--(id) initWithFrame:(CGRect)frame control_type:(NSString *)_control_type isInViewMode:(BOOL)mode
+//Keyboard fix for readonly fields
+-(id) initWithFrame:(CGRect)frame control_type:(NSString *)_control_type isInViewMode:(BOOL)mode isEditable:(BOOL)isEditable
 {
     self = [super initWithFrame:frame];
     if (self)
@@ -45,7 +45,7 @@ extern void SVMXLog(NSString *format, ...);
             self.keyboardType = UIKeyboardTypeEmailAddress;
         }
         iServiceAppDelegate *appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-        if([appDelegate isCameraAvailable])
+        if([appDelegate isCameraAvailable] && isEditable) //Keyboard fix for readonly fields
         {
             UIView *barCodeView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 768, 46)];
             barCodeView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"accessoryView_bg.png"]];

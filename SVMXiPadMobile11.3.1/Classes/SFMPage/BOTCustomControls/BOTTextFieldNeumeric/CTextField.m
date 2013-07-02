@@ -22,7 +22,8 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize isinViewMode;
 @synthesize control_type;
 
--(id) initWithFrame:(CGRect)frame lableValue:(NSString *)lableValue controlType:(NSString *)controlType isinViewMode:(BOOL)mode
+//Keyboard fix for readonly fields
+-(id) initWithFrame:(CGRect)frame lableValue:(NSString *)lableValue controlType:(NSString *)controlType isinViewMode:(BOOL)mode isEditable:(BOOL)isEditable
 {
     self = [super initWithFrame:frame];
     if (self)
@@ -43,7 +44,7 @@ extern void SVMXLog(NSString *format, ...);
         self.keyboardType = UIKeyboardTypeNumberPad;
 
         iServiceAppDelegate *appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-        if([appDelegate isCameraAvailable])
+        if([appDelegate isCameraAvailable] && isEditable) //Keyboard fix for readonly fields
         {
             UIView *barCodeView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 768, 46)];
             barCodeView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"accessoryView_bg.png"]];

@@ -49,6 +49,8 @@ extern void SVMXLog(NSString *format, ...);
 - (void) populateMandatoryRow:(NSInteger)section indexpath:(NSIndexPath *)currentindexpath;
 //Radha :- Implementation for cancel button in Debrief UI
 - (BOOL) cancelIfNewLineAdded:(NSInteger)index;
+//Radha Defect Fix 7446
+- (NSIndexPath *) getCurrentIndexPath:(NSInteger)section;
 
 -(void)pushtViewProcessToStack:(NSString *)process_id  record_id:(NSString *)record_id;
 //Radha :- Child SFM UI
@@ -372,6 +374,9 @@ extern void SVMXLog(NSString *format, ...);
 {
     [super viewDidLoad];
 	
+	//Defect Fix :- 7382
+	[self getEditViewOfLine];
+	
 	CGRect rect = self.view.frame;
 	self.navigationController.navigationBar.frame = CGRectMake(0, 0, rect.size.width, self.navigationController.navigationBar.frame.size.height);
     
@@ -426,6 +431,9 @@ extern void SVMXLog(NSString *format, ...);
       
     //[appDelegate setSyncStatus:appDelegate.SyncStatus];
      showSyncUI = YES;
+	//Defect Fixed 7364
+	tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    tableView.separatorColor = [UIColor clearColor];
 }
 
 - (void) didInternetConnectionChange:(NSNotification *)notification
@@ -478,7 +486,10 @@ extern void SVMXLog(NSString *format, ...);
     
     //6347 & 6757: Aparna
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(handleIncrementalDataSyncNotification:) name:kIncrementalDataSyncDone object:nil];
-
+	
+	//Defect Fixed 7364
+	tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    tableView.separatorColor = [UIColor clearColor];
     
     //[appDelegate setSyncStatus:appDelegate.SyncStatus];
 }
@@ -525,7 +536,7 @@ extern void SVMXLog(NSString *format, ...);
     [self hideChildLinkedViewProcess];
 	[self hideEditViewOfLine];
     
-    
+    [self resetTableViewFrame];
     if([appDelegate.sfmPageController.process_stack count] != 0)
     {
         
@@ -5354,6 +5365,8 @@ extern void SVMXLog(NSString *format, ...);
             CGRect disclosurebtnFrame = CGRectMake(xValForDisclosure, 6, 30, 30);
             SVMAccessoryButton *triangleBtn = [[SVMAccessoryButton alloc] initWithFrame:disclosurebtnFrame];;
             triangleBtn.indexpath = indexPath;
+			//Radha Defect Fix 7446
+			triangleBtn.index = index;
             triangleBtn.tag = 9746;
             [triangleBtn setBackgroundImage:disclosureImg forState:UIControlStateNormal];
             [triangleBtn addTarget:self action:@selector(lineDetailBtnActionCheck:) forControlEvents:UIControlEventTouchUpInside];
@@ -5366,21 +5379,21 @@ extern void SVMXLog(NSString *format, ...);
 			float xValForSwitchbutton = cell.frame.size.width - ( switchImage.size.width + 130 );
 			
 			CGRect swithchButtonFrame = CGRectMake(xValForSwitchbutton, 6, 35, 30);
-		if([[_child_sfm_process_node  allKeys] containsObject:detail_layout_id])
+			if([[_child_sfm_process_node  allKeys] containsObject:detail_layout_id])
             {
                 NSString * record_id = [detail_values_ids objectAtIndex:row-1];
                 NSString * objectName_  =  [detail objectForKey:gDETAIL_OBJECT_NAME];
                 NSString * sf_id = [appDelegate.databaseInterface  getSfid_For_LocalId_From_Object_table:objectName_ local_id:record_id];
                 if([sf_id length] > 0)
                 {	
-			SWitchViewButton * switchButton = [[SWitchViewButton alloc] initWithFrame:swithchButtonFrame];
-			[switchButton setBackgroundImage:switchImage forState:UIControlStateNormal];
-			switchButton.indexPath = indexPath;
-			switchButton.tag = 2345;
-			[switchButton addTarget:self action:@selector(showChildLinkedProcess:) forControlEvents:UIControlEventTouchUpInside];
-			[background addSubview:switchButton];
-			[switchButton release];
- }
+					SWitchViewButton * switchButton = [[SWitchViewButton alloc] initWithFrame:swithchButtonFrame];
+					[switchButton setBackgroundImage:switchImage forState:UIControlStateNormal];
+					switchButton.indexPath = indexPath;
+					switchButton.tag = 2345;
+					[switchButton addTarget:self action:@selector(showChildLinkedProcess:) forControlEvents:UIControlEventTouchUpInside];
+					[background addSubview:switchButton];
+					[switchButton release];
+				}
             }
 
 			if(self.selectedIndexPathForEdit != nil && indexPath.section == self.selectedIndexPathForEdit.section && indexPath.row == self.selectedIndexPathForEdit.row && self.selectedIndexPathForchildView == nil)
@@ -5434,6 +5447,8 @@ extern void SVMXLog(NSString *format, ...);
                 SVMAccessoryButton *triangleBtn = [[SVMAccessoryButton alloc] initWithFrame:disclosurebtnFrame];;
                 triangleBtn.indexpath = self.selectedIndexPathForEdit;
                 triangleBtn.tag = 9743;
+				//Radha Defect Fix 7446
+				triangleBtn.index = index;
                 [triangleBtn setBackgroundImage:disclosureImg forState:UIControlStateNormal];
                 [triangleBtn addTarget:self action:@selector(lineDetailBtnAction:) forControlEvents:UIControlEventTouchUpInside];
                 [background addSubview:triangleBtn];
@@ -5441,8 +5456,10 @@ extern void SVMXLog(NSString *format, ...);
 			
                 CGRect btnFrame = CGRectMake(6, 4, 70, 28);      //TODO : PLEASE CHANGE (hard coded)
                 
-                UIButton *saveBtn = [[UIButton alloc] initWithFrame:btnFrame];
+				//Radha Defect Fix 7446
+                SVMAccessoryButton *saveBtn = [[SVMAccessoryButton alloc] initWithFrame:btnFrame];
                 saveBtn.tag = 9742;
+				saveBtn.index = index;
 				 NSString * done = [appDelegate.wsInterface.tagsDictionary objectForKey:DONE_BUTTON_TITLE];
 				[saveBtn setTitle:done forState:UIControlStateNormal];
                 [saveBtn setBackgroundImage:savImg forState:UIControlStateNormal];
@@ -5702,7 +5719,8 @@ extern void SVMXLog(NSString *format, ...);
                 }
                 restorationTimer.type = TimerClassTypeRestoration;
                 restorationTimer.slaTimer = slaTimer;
-                restorationTimer.view.frame = CGRectMake(0, 10, width, control_height-10);
+				//Defect Fix :- 7421
+                restorationTimer.view.frame = CGRectMake(0, 0, width, control_height-10);
                 [restorationTimer ResetTimer];
                 if (restorationTimerValue != nil)
                 {
@@ -5733,7 +5751,8 @@ extern void SVMXLog(NSString *format, ...);
                     
                 resolutionTimer.type = TimerClassTypeResolution;
                 resolutionTimer.slaTimer = slaTimer;
-                resolutionTimer.view.frame = CGRectMake(380, 10, width, control_height-10);
+				//Defect Fix :- 7421
+                resolutionTimer.view.frame = CGRectMake(380, 0, width, control_height-10);
                 [resolutionTimer ResetTimer];
                 if (resolutionTimerValue != nil)
                 {
@@ -5757,6 +5776,8 @@ extern void SVMXLog(NSString *format, ...);
                     }
                     
                 }
+				//Defect Fix :- 7421
+				[background setFrame:CGRectMake(0, 0, cell.frame.size.width, cell.frame.size.height)];
                 [background addSubview:resolutionTimer.view];
                 
                 [cell.contentView addSubview:background];
@@ -6116,7 +6137,8 @@ extern void SVMXLog(NSString *format, ...);
                         lbl2.backgroundColor = [UIColor clearColor];
                         lbl2.isAccessibilityElement = YES;
                         lbl2.accessibilityValue = @"{text_color: blue}";
-                        CusLabel *referenceLabel = [[CusLabel alloc] initWithFrame:CGRectMake(0, 0, lbl2.frame.size.width, lbl2.frame.size.height)];
+						//Reference fields change
+                        CusLabel *referenceLabel = [[CusLabel alloc] initWithFrame:CGRectMake(lbl2.frame.origin.x, lbl2.frame.origin.y, lbl2.frame.size.width, lbl2.frame.size.height)];
                         [referenceLabel setBackgroundColor:[UIColor clearColor]];
                         referenceLabel.textColor = [UIColor blueColor];
                         referenceLabel.text = value;
@@ -6126,13 +6148,21 @@ extern void SVMXLog(NSString *format, ...);
                         referenceLabel.refered_to_table_name = related_to_table_name;
                         referenceLabel.id_ = recordId;
                         referenceLabel.object_api_name = fieldApiName;
-                        lbl2.userInteractionEnabled = YES;
-                        [lbl2 addSubview:referenceLabel];
+						//Changes for reference label in view mode
+						[background addSubview:referenceLabel];
                         [referenceLabel release];
                         cell.userInteractionEnabled = TRUE;
 					}
+					//Reference fields change
+					else
+					{
+						[background addSubview:lbl2];
+					}
 				}
-                [background addSubview:lbl2];
+				else
+				{
+					[background addSubview:lbl2];
+				}
                 
                 if ( [field_data_type isEqualToString:@"boolean"] )
                 {
@@ -6201,6 +6231,8 @@ extern void SVMXLog(NSString *format, ...);
             CGRect disclosurebtnFrame = CGRectMake(xValForDisclosure, 6, 30, 30);
             SVMAccessoryButton *triangleBtn = [[SVMAccessoryButton alloc] initWithFrame:disclosurebtnFrame];;
             triangleBtn.indexpath = indexPath;
+			//Radha Defect Fix 7446
+			triangleBtn.index = index;
             triangleBtn.tag = 9746;
             [triangleBtn setBackgroundImage:disclosureImg forState:UIControlStateNormal];
             [triangleBtn addTarget:self action:@selector(lineDetailBtnActionCheck:) forControlEvents:UIControlEventTouchUpInside];
@@ -6232,6 +6264,8 @@ extern void SVMXLog(NSString *format, ...);
             SVMAccessoryButton *triangleBtn = [[SVMAccessoryButton alloc] initWithFrame:disclosurebtnFrame];;
             triangleBtn.indexpath = self.selectedIndexPathForEdit;
             triangleBtn.tag = 9743;
+			//Radha Defect Fix 7446
+			triangleBtn.index = index;
             [triangleBtn setBackgroundImage:disclosureImg forState:UIControlStateNormal];
             [triangleBtn addTarget:self action:@selector(lineDetailBtnAction:) forControlEvents:UIControlEventTouchUpInside];
             [background addSubview:triangleBtn];
@@ -7653,7 +7687,17 @@ extern void SVMXLog(NSString *format, ...);
     if([controlType isEqualToString:@"percent"])
     {
         CTextField * PercentType;
-        PercentType = [[CTextField alloc] initWithFrame:frame lableValue:labelValue controlType:@"percent" isinViewMode:isInViewMode];
+		//Keyboard fix for readonly fields
+        BOOL isFieldEnable;
+        if (!isInViewMode)
+        {
+            isFieldEnable=NO;
+        }
+        else
+        {
+            isFieldEnable=readOnly;
+        }
+        PercentType = [[CTextField alloc] initWithFrame:frame lableValue:labelValue controlType:@"percent" isinViewMode:isInViewMode isEditable:isFieldEnable];
         PercentType.controlDelegate = self;
         PercentType.indexPath = indexPath;
         if (!isInViewMode)
@@ -7671,7 +7715,17 @@ extern void SVMXLog(NSString *format, ...);
     if([controlType isEqualToString:@"phone"])
     {
         CTextField * phonetype;
-        phonetype = [[CTextField  alloc] initWithFrame:frame lableValue:labelValue controlType:@"phone" isinViewMode:isInViewMode];
+		//Keyboard fix for readonly fields
+        BOOL isFiledEditable;
+        if (!isInViewMode)
+        {
+            isFiledEditable=NO;
+        }
+        else
+        {
+            isFiledEditable=readOnly;
+        }
+        phonetype = [[CTextField  alloc] initWithFrame:frame lableValue:labelValue controlType:@"phone" isinViewMode:isInViewMode isEditable:isFiledEditable];
         phonetype.controlDelegate = self;
         phonetype.indexPath = indexPath;
         if (!isInViewMode)
@@ -7698,7 +7752,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         else 
         {
-            currency = [[CTextField  alloc] initWithFrame:frame lableValue:labelValue controlType:@"currency" isinViewMode:isInViewMode];
+            currency = [[CTextField  alloc] initWithFrame:frame lableValue:labelValue controlType:@"currency" isinViewMode:isInViewMode isEditable:readOnly]; //Keyboard fix for readonly fields
             currency.controlDelegate = self;
             currency.indexPath = indexPath;
             // if (!isInViewMode)
@@ -7721,25 +7775,42 @@ extern void SVMXLog(NSString *format, ...);
             return doubleType;
         }
         else
-	{
-        doubleType = [[CTextField  alloc] initWithFrame:frame lableValue:labelValue controlType:@"double" isinViewMode:isInViewMode];
-        doubleType.controlDelegate = self;
-        doubleType.text = value;
-        doubleType.indexPath = indexPath;
-        if (!isInViewMode)
-            doubleType.enabled = NO;
-        else
-            doubleType.enabled = readOnly;
-        doubleType.fieldAPIName = fieldType;
-        doubleType.required = required;
-        doubleType.control_type = controlType;
-        return doubleType;
-	}
+		{
+			//Keyboard fix for readonly fields
+			BOOL isFieldEditable;
+			if (!isInViewMode)
+				isFieldEditable=NO;
+			else
+				isFieldEditable=readOnly;
+			doubleType = [[CTextField  alloc] initWithFrame:frame lableValue:labelValue controlType:@"double" isinViewMode:isInViewMode isEditable:isFieldEditable];
+			doubleType.controlDelegate = self;
+			doubleType.text = value;
+			doubleType.indexPath = indexPath;
+			if (!isInViewMode)
+				doubleType.enabled = NO;
+			else
+				doubleType.enabled = readOnly;
+			doubleType.fieldAPIName = fieldType;
+			doubleType.required = required;
+			doubleType.control_type = controlType;
+			return doubleType;
+		}
     }
     
     if([controlType isEqualToString:@"textarea"])    
     {
-        CusTextView * textarea = [[CusTextView alloc] initWithFrame:frame lableValue:labelValue];
+		//Keyboard fix for readonly fields
+        BOOL isFieldEditable ;
+        if (!isInViewMode)
+        {
+            isFieldEditable=NO;
+        }
+        else
+        {
+            isFieldEditable=readOnly;
+        }
+        
+        CusTextView * textarea = [[CusTextView alloc] initWithFrame:frame lableValue:labelValue isEditable:isFieldEditable];
         textarea.controlDelegate = self;
         if (!isInViewMode)
             textarea.editable = NO;
@@ -7933,7 +8004,14 @@ extern void SVMXLog(NSString *format, ...);
 
     if([controlType isEqualToString:@"string"])
     {
-        cusTextFieldAlpha  * string_control = [[cusTextFieldAlpha alloc] initWithFrame:frame control_type:controlType isInViewMode:isInViewMode];
+		//Keyboard fix for readonly fields
+        BOOL isFieldEditable;
+        if (!isInViewMode)
+            isFieldEditable = NO;
+        else
+            isFieldEditable = readOnly;
+        
+        cusTextFieldAlpha  * string_control = [[cusTextFieldAlpha alloc] initWithFrame:frame control_type:controlType isInViewMode:isInViewMode isEditable:isFieldEditable];
         string_control.controlDelegate = self;
         string_control.text = value;
         if (!isInViewMode)
@@ -7948,7 +8026,14 @@ extern void SVMXLog(NSString *format, ...);
     }
     if([controlType isEqualToString:@"email"])
     {
-        cusTextFieldAlpha  * email_control = [[cusTextFieldAlpha alloc] initWithFrame:frame control_type:controlType isInViewMode:isInViewMode];
+		//Keyboard fix for readonly fields
+        BOOL isFieldEditable;
+        if (!isInViewMode)
+            isFieldEditable = NO;
+        else
+            isFieldEditable = readOnly;
+
+        cusTextFieldAlpha  * email_control = [[cusTextFieldAlpha alloc] initWithFrame:frame control_type:controlType isInViewMode:isInViewMode isEditable:isFieldEditable];
         email_control.controlDelegate = self;
         email_control.text = value;
         if (!isInViewMode)
@@ -7964,7 +8049,8 @@ extern void SVMXLog(NSString *format, ...);
     }
     if([controlType isEqualToString:@"url"])
     {
-        cusTextFieldAlpha  * url_control = [[cusTextFieldAlpha alloc] initWithFrame:frame control_type:controlType isInViewMode:isInViewMode];
+		//Keyboard fix for readonly fields
+        cusTextFieldAlpha  * url_control = [[cusTextFieldAlpha alloc] initWithFrame:frame control_type:controlType isInViewMode:isInViewMode isEditable:YES];
         url_control.controlDelegate = self;
         url_control.text = value;
         url_control.enabled = readOnly; // defect 007354
@@ -8390,7 +8476,8 @@ extern void SVMXLog(NSString *format, ...);
             self.editDetailObject = nil;
 			[self getEditViewOfLine];
             UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
-            
+            //Radha Defect Fix 7446
+	    currentRowIndex = index;
             [self showEditViewOfLineInView:cell.contentView forIndexPath:_indexPath forEditMode:YES];
 			
 		}
@@ -14282,10 +14369,13 @@ extern void SVMXLog(NSString *format, ...);
     }
     return self.editDetailObject;
 }
+
 - (IBAction)lineDetailBtnActionCheck:(id)sender {
     
 	SVMAccessoryButton *btn = (SVMAccessoryButton *)sender;
     NSIndexPath *indexpath = btn.indexpath;
+	//Radha Defect Fix 7446
+	currentRowIndex = btn.index;
 	
 	//Defect Fix :- 007391
 	self.selectedIndexPathForchildView = nil;
@@ -14357,13 +14447,15 @@ extern void SVMXLog(NSString *format, ...);
 - (void)showEditViewOfLineInView:(UIView *)parentView forIndexPath:(NSIndexPath *)_indexpath forEditMode:(BOOL)isEditMode {
     
 //	self.editDetailObject = nil;
+	//Defect Fix 7446
+	NSIndexPath * currentIndexPath = [self getCurrentIndexPath:currentRowIndex];
 	    
 	[self getEditViewOfLine];
 	self.selectedIndexPathForEdit = _indexpath;
     self.navigationController.delegate = self;
     self.editDetailObject.parentReference = self;
-    self.editDetailObject.selectedIndexPath = _indexpath;
-    self.editDetailObject.selectedRowForDetailEdit = _indexpath.row-1;
+    self.editDetailObject.selectedIndexPath = currentIndexPath;
+    self.editDetailObject.selectedRowForDetailEdit = currentIndexPath.row-1;
     self.editDetailObject.selectedSection = selectedSection;
     
     self.editDetailObject.header = self.header;
@@ -14450,8 +14542,11 @@ extern void SVMXLog(NSString *format, ...);
     [self.tableView reloadData];
 }
 - (IBAction)lineDetailBtnAction:(id)sender {
-
-    UIButton *btn = (UIButton *) sender;
+	
+	
+	//Radha Defect Fix 7446
+    SVMAccessoryButton *btn = (SVMAccessoryButton *) sender;
+	currentRowIndex = btn.index;
     if(btn.tag == 9742) {
         if(![self.editDetailObject isNecessaryFieldsFilled]) {
             return;
@@ -14747,6 +14842,42 @@ extern void SVMXLog(NSString *format, ...);
 	[self fillDictionary:_indexPath];
 }
 
+//Defect Fix 7446
+- (NSIndexPath *) getCurrentIndexPath:(NSInteger)section
+{
+	NSIndexPath * indexPath = nil;
+	
+	if (selectedSection == SHOWALL_LINES)
+	{
+		indexPath = [NSIndexPath indexPathForRow:self.selectedIndexPathForEdit.row inSection:section];
+	}
+	if(selectedSection == SHOW_LINES_ROW)
+	{
+		indexPath = [NSIndexPath indexPathForRow:self.selectedIndexPathForEdit.row inSection:0];
+	}
+	
+	NSInteger index;
+	NSInteger _section1 = indexPath.section;
+	
+	if (isDefault)
+		index = _section1;
+	else
+		index = selectedRow;
+	
+	NSIndexPath  *_indexPath = nil;
+	if (selectedSection == SHOWALL_LINES)
+	{
+		_indexPath = indexPath;
+	}
+	if(selectedSection == SHOW_LINES_ROW)
+	{
+		_indexPath = [NSIndexPath indexPathForRow:indexPath.row inSection:index];
+	}	
+	
+	
+	return _indexPath;
+}
+
 
 - (void)moveTableviewForKeyboardHeight:(NSNotification *)notification
 {
@@ -14762,80 +14893,105 @@ extern void SVMXLog(NSString *format, ...);
 			
 			CGRect boundRect;
 			[keyBounds getValue:&boundRect];
-			UIDeviceOrientation interfaceOrientation = [[UIDevice currentDevice] orientation];
-			if ((interfaceOrientation == UIInterfaceOrientationPortrait) || (interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown))
-			{
-				if(appDelegate.sfmPageController.conflictExists)
-					tableView.frame = CGRectMake(0, 100, self.view.frame.size.width, self.view.frame.size.height - boundRect.size.height - 100);
-				else
-					tableView.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - boundRect.size.height);
-			}
-			else
-			{
-				if(appDelegate.sfmPageController.conflictExists)
-					tableView.frame = CGRectMake(0, 100, self.view.frame.size.width, self.view.frame.size.height - boundRect.size.width - 100);
-				else
-					tableView.frame = CGRectMake(0, 0, self.view.frame.size.width, (self.view.frame.size.height) - boundRect.size.width);
-				
-			}
+					
 			
+			UITableViewCell * cell = [self.tableView cellForRowAtIndexPath:self.currentEditRow];
 			
-			if (self.currentEditRow != nil)
+			//Fix for keyboard movement for header section. 
+			if ( !self.editDetailObject.isInEditDetail )
 			{
-				NSLog(@"*******%@", self.currentEditRow);
-				UITableViewCell * cell = [self.tableView cellForRowAtIndexPath:self.currentEditRow];
+				UIDeviceOrientation interfaceOrientation = [[UIDevice currentDevice] orientation];
+				if ((interfaceOrientation == UIInterfaceOrientationPortrait) || (interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown))
+				{
+					if(appDelegate.sfmPageController.conflictExists)
+						tableView.frame = CGRectMake(0, 100, self.view.frame.size.width, self.view.frame.size.height - boundRect.size.height - 100);
+					else
+						tableView.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - boundRect.size.height);
+				}
+				else
+				{
+					if(appDelegate.sfmPageController.conflictExists)
+						tableView.frame = CGRectMake(0, 100, self.view.frame.size.width, self.view.frame.size.height - boundRect.size.width - 100);
+					else
+						tableView.frame = CGRectMake(0, 0, self.view.frame.size.width, (self.view.frame.size.height) - boundRect.size.width);
+					
+				}
 				
 				if (cell != nil)
 				{
 					[self.tableView scrollRectToVisible:cell.frame animated:YES];
 					
 				}
-				[self.tableView scrollToRowAtIndexPath:self.currentEditRow atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+			}
+			//Shrinivas
+			//Fix for keyboard movement for details section. //Defect Fix :- 7382
+			else if (self.currentEditRow != nil && self.selectedIndexPathForEdit != nil)
+			{
+				
+				if (cell != nil)
+				{
+					CGFloat Y_Pos = 0;
+                    if(appDelegate.sfmPageController.conflictExists)
+                    {
+                        Y_Pos = self.editDetailObject.currentEditRow.row * 42 + (cell.frame.origin.y + self.editDetailObject.currentEditRow.row);
+                    }
+                    else
+                    {
+                        Y_Pos = self.editDetailObject.currentEditRow.row * 40 + (cell.frame.origin.y + self.editDetailObject.currentEditRow.row);
+                    }
+					
+					[self.tableView setContentOffset:CGPointMake(0, Y_Pos) animated:YES];
+					
+				}
 			}
 		}
-		
-		else if ([[notification name] isEqualToString:UIKeyboardDidHideNotification])
+		//Defect Fix :- 7382
+		else if ([[notification name] isEqualToString:UIKeyboardWillHideNotification])
 		{
-			
-			UIDeviceOrientation interfaceOrientation = [[UIDevice currentDevice] orientation];
-			if ((interfaceOrientation == UIInterfaceOrientationPortrait) || (interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown))
+			//Defect Fix :- 7382
+			if (!self.editDetailObject.isInEditDetail)
 			{
-				if(!table_view_moved)
-					tableView.frame = CGRectMake( 0, 0, self.view.frame.size.width, self.view.frame.size.height);
-				else
-					tableView.frame = CGRectMake(self.tableView.frame.origin.x, self.tableView.frame.origin.y,self.tableView.frame.size.width, self.tableView.frame.size.width);
-			}
-			else
-			{
-				if(!table_view_moved)
-					tableView.frame = CGRectMake( 0, 0, self.view.frame.size.width, self.view.frame.size.height);
-				else
-					tableView.frame = CGRectMake(self.tableView.frame.origin.x, self.tableView.frame.origin.y,self.tableView.frame.size.width, self.tableView.frame.size.width);
-			}
-			
-			if (self.editDetailObject.lookupPopover)
-			{
-				if (UIDeviceOrientationIsLandscape(interfaceOrientation))
+				UIDeviceOrientation interfaceOrientation = [[UIDevice currentDevice] orientation];
+				if ((interfaceOrientation == UIInterfaceOrientationPortrait) || (interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown))
 				{
-					[self.editDetailObject.lookupPopover setPopoverContentSize:CGSizeMake(320, self.tableView.frame.size.height) animated:YES];
+					if(!table_view_moved)
+						tableView.frame = CGRectMake( 0, 0, self.view.frame.size.width, self.view.frame.size.height);
+					else
+						tableView.frame = CGRectMake(self.tableView.frame.origin.x, self.tableView.frame.origin.y,self.tableView.frame.size.width, self.tableView.frame.size.width);
 				}
 				else
 				{
-					[self.editDetailObject.lookupPopover setPopoverContentSize:CGSizeMake(320, self.tableView.frame.size.height) animated:YES];
+					if(!table_view_moved)
+						tableView.frame = CGRectMake( 0, 0, self.view.frame.size.width, self.view.frame.size.height);
+					else
+						tableView.frame = CGRectMake(self.tableView.frame.origin.x, self.tableView.frame.origin.y,self.tableView.frame.size.width, self.tableView.frame.size.width);
 				}
-			}
-			
-			//Shrinivas Fix for #005845
-			if (appDelegate.sfmPageController.conflictExists)
-			{
-				NSMutableString *Confilct= [appDelegate isConflictInEvent:[appDelegate.dataBase getApiNameFromFieldLabel: appDelegate.sfmPageController.objectName] local_id:appDelegate.sfmPageController.recordId];
 				
-				if([Confilct length]>0)
+				if (self.editDetailObject.lookupPopover)
 				{
-					[self moveTableViewforDisplayingConflict:Confilct];
+					if (UIDeviceOrientationIsLandscape(interfaceOrientation))
+					{
+						[self.editDetailObject.lookupPopover setPopoverContentSize:CGSizeMake(320, self.tableView.frame.size.height) animated:YES];
+					}
+					else
+					{
+						[self.editDetailObject.lookupPopover setPopoverContentSize:CGSizeMake(320, self.tableView.frame.size.height) animated:YES];
+					}
 				}
+				
+				//Shrinivas Fix for #005845
+				if (appDelegate.sfmPageController.conflictExists)
+				{
+					NSMutableString *Confilct= [appDelegate isConflictInEvent:[appDelegate.dataBase getApiNameFromFieldLabel: appDelegate.sfmPageController.objectName] local_id:appDelegate.sfmPageController.recordId];
+					
+					if([Confilct length]>0)
+					{
+						[self moveTableViewforDisplayingConflict:Confilct];
+					}
+				}
+
 			}
-			[self.tableView scrollToRowAtIndexPath:self.currentEditRow atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+            
 		}
 
 	}
@@ -14846,10 +15002,16 @@ extern void SVMXLog(NSString *format, ...);
 }
 - (void) resetTableViewFrame
 {
-	appDelegate.SFMPage = nil;
-	appDelegate.SFMoffline = nil;
 	tableView.frame = CGRectMake(0, 0, 0, 0);
-	tableView.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
+    
+    if (appDelegate.sfmPageController.conflictExists)
+    {
+        tableView.frame = CGRectMake(0, 100, self.view.frame.size.width, self.view.frame.size.height);
+    }
+    else
+    {
+        tableView.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
+    }
 
 }
 //KRI
@@ -14877,6 +15039,8 @@ extern void SVMXLog(NSString *format, ...);
 		
 		UITableViewCell * cell = [self.tableView cellForRowAtIndexPath:indexpath];
 		self.selectedIndexPathForEdit = indexpath;
+		//Radha Defect Fix 7446
+		currentRowIndex = row;
 		[self showEditViewOfLineInView:cell.contentView forIndexPath:indexpath forEditMode:YES];
 
 		

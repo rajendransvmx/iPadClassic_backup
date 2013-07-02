@@ -30,5 +30,7 @@
 @property (nonatomic) BOOL required;
 
 - (void) setReadOnly:(BOOL)flag;
--(id) initWithFrame:(CGRect)frame lableValue:(NSString *)lableValue controlType:(NSString *)controlType  isinViewMode:(BOOL)mode;
+//Keyboard fix for readonly fields
+-(id) initWithFrame:(CGRect)frame lableValue:(NSString *)lableValue controlType:(NSString *)controlType isinViewMode:(BOOL)mode isEditable:(BOOL)isEditable;
+
 @end

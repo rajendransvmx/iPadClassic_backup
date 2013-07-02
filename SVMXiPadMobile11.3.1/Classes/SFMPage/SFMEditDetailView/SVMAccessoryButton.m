@@ -10,6 +10,8 @@
 
 @implementation SVMAccessoryButton
 @synthesize indexpath;
+//Radha Defect Fix 7446
+@synthesize index;
 
 - (id)initWithFrame:(CGRect)frame
 {

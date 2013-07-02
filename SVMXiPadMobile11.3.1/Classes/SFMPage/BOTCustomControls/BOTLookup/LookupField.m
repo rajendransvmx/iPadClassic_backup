@@ -27,6 +27,8 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize selectedIndexPath;
 @synthesize Disclosure_dict;
 @synthesize barCodeScannedData;
+//Defect Fix :- 7447
+@synthesize heightForPopover;
 
 -(id) initWithFrame:(CGRect)frame labelValue:(NSString *)labelValue inView:(UIView *)poview
 {
