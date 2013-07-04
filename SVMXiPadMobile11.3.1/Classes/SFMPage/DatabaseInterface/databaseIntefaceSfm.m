@@ -10733,10 +10733,10 @@ extern void SVMXLog(NSString *format, ...);
                         {
                             NSString *nameField = [self getNameFieldForObject:referenceToTable];
                             if ([Utility isStringEmpty:nameField]) {
-                                component_expression = [NSString stringWithFormat:@" ( %@   in   (select  Id  from %@ where Name %@ '%@' ) OR %@   in   (select  local_id  from %@ where Name %@ '%@' ) )" , lhs,referenceToTable , operator ,rhs,lhs,referenceToTable , operator ,rhs];
+                                component_expression = [NSString stringWithFormat:@" ( %@   in   (select  Id  from %@ where ( Name %@ '%@'  OR Id %@ '%@' )) OR %@   in   (select  local_id  from %@ where (Name %@ '%@'  OR Id %@ '%@')) )" , lhs,referenceToTable , operator ,rhs,operator ,rhs,lhs,referenceToTable , operator ,rhs,operator ,rhs];
                             }
                             else {
-                                component_expression = [NSString stringWithFormat:@" ( %@   in   (select  Id  from %@ where %@ %@ '%@' ) OR %@   in   (select  local_id  from %@ where %@ %@ '%@' ) )" , lhs,referenceToTable , nameField, operator ,rhs,lhs,referenceToTable , nameField, operator ,rhs];
+                                component_expression = [NSString stringWithFormat:@" ( %@   in   (select  Id  from %@ where ( %@ %@ '%@'  OR Id %@ '%@') ) OR %@   in   (select  local_id  from %@ where ( %@ %@ '%@' OR Id %@ '%@')) )" , lhs,referenceToTable , nameField, operator ,rhs,operator ,rhs,lhs,referenceToTable , nameField, operator ,rhs,operator ,rhs];
                             }
                             
                             if ([operator isEqualToString: @"!="] || [operator isEqualToString: @" NOT LIKE "]){
@@ -10816,18 +10816,18 @@ extern void SVMXLog(NSString *format, ...);
                                     NSInteger fieldCount = [self getFieldCountForObject:referenceToTable];
                                     
                                     if (fieldCount > 1) {
-                                            NSString *nameField = [self getNameFieldForObject:referenceToTable];
-                                            NSString *newLhsField = [NSString stringWithFormat:@"'%@'.%@",object_name,lhs_];
-                                            if ([Utility isStringEmpty:nameField]) {
-                                                newExpression = [NSString stringWithFormat:@" ( %@   in   (select  Id  from %@ where Name %@ '%@' ) OR %@   in   (select  local_id  from %@ where Name %@ '%@' ) )" , newLhsField,referenceToTable , operator_ ,rhs_,newLhsField,referenceToTable , operator_ ,rhs_];
-                                            }
-                                            else {
-                                                newExpression = [NSString stringWithFormat:@" (%@   in   (select  Id  from %@ where %@ %@ '%@' ) OR  %@   in   (select  local_id  from %@ where %@ %@ '%@' ) )" , newLhsField,referenceToTable , nameField, operator_ ,rhs_,newLhsField,referenceToTable , nameField, operator_ ,rhs_];
-                                            }
-                                            
-                                            if ([operator isEqualToString: @"!="] || [operator isEqualToString: @" NOT LIKE "]){
-                                                newExpression = [NSString stringWithFormat:@"( %@  OR %@ = \"\" OR %@ isnull)",newExpression,newLhsField,newLhsField];
-                                            }
+                                        NSString *nameField = [self getNameFieldForObject:referenceToTable];
+                                        NSString *newLhsField = [NSString stringWithFormat:@"'%@'.%@",object_name,lhs_];
+                                        if ([Utility isStringEmpty:nameField]) {
+                                            newExpression = [NSString stringWithFormat:@" ( %@   in   (select  Id  from %@ where (Name %@ '%@'  OR Id %@ '%@') ) OR %@   in   (select  local_id  from %@ where (Name %@ '%@' OR OR Id %@ '%@')) )" , newLhsField,referenceToTable , operator_ ,rhs_,operator_ ,rhs_,newLhsField,referenceToTable , operator_ ,rhs_,operator_ ,rhs_];
+                                        }
+                                        else {
+                                            newExpression = [NSString stringWithFormat:@" (%@   in   (select  Id  from %@ where ( %@ %@ '%@' OR Id %@ '%@')) OR  %@   in   (select  local_id  from %@ where ( %@ %@ '%@' OR Id %@ '%@' )) )" , newLhsField,referenceToTable , nameField, operator_ ,rhs_,operator_ ,rhs_,newLhsField,referenceToTable , nameField, operator_ ,rhs_,operator_ ,rhs_];
+                                        }
+                                        
+                                        if ([operator isEqualToString: @"!="] || [operator isEqualToString: @" NOT LIKE "]){
+                                            newExpression = [NSString stringWithFormat:@"( %@  OR %@ = \"\" OR %@ isnull)",newExpression,newLhsField,newLhsField];
+                                        }
                                     }
                                     else {
                                         newExpression = @" 1 ";
