@@ -85,6 +85,8 @@
 #define MOBILEDEVICESETTINGS        @"MobileDeviceSettings"
 #define SFCHILDRELATIONSHIP         @"SFChildRelationship"
 #define SFRTPICKLIST                @"SFRTPicklist"
+#define SFBUSINESSRULE              @"BusinessRule"
+#define SFPROCESSBUSINESSRULE       @"ProcessBusinessRule"
 
 //linked sfm process
 #define LINKED_SFMProcess           @"LINKED_SFMProcess"
@@ -202,6 +204,7 @@
 
 
 //SFNameSearchComp
+#define MPARAMETER_TYPE          @"parameter_type"
 #define MEXPRESSION_TYPE         @"expression_type"
 #define MFIELD_NAME              @"field_name"
 #define MNAMED_SEARCH            @"named_search"
@@ -309,6 +312,8 @@
 #define MSFW_wizard_steps               @"SFW_wizard_steps"
 #define MASTERDETAILS                   @"MASTERDETAILS"
 #define SFW_Custom_Actions              @"SFW_Custom_Actions"
+#define SFM_BUSINESS_RULE               @"Business_Rule"
+#define SFM_PROCESS_BUSINESS_RULE       @"Process_Business_Rule"
 
 #define METASYNCDUE                     @"meta_sync_due"
 

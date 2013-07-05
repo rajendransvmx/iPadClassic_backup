@@ -460,6 +460,8 @@ PopoverButtons *popOver_view;
 - (NSMutableArray *) getDocumentTemplatesForProcessId:(NSString *)processId ;
 -(void)UpdateDocumentTemplateId:(NSString *)docTemplateId forProcessId:(NSString *)processId;
 
-
+// SFM Biz Rules
+- (void) insertValuesIntoProcessBusinessRuleTable:(NSDictionary *)processDictionary;
+- (void) insertValuesIntoBusinessRuleTable:(NSDictionary *)processDictionary;
 
 @end

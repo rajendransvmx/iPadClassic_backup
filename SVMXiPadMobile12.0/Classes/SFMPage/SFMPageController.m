@@ -32,7 +32,7 @@ extern void SVMXLog(NSString *format, ...);
     {
         _viewMode = viewMode;
         // Custom initialization
-        rootView = [[[RootViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
+        rootView=[[[RootViewController alloc] init] autorelease];
         UIImageView * bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_left_panel_bg_main_2.png"]];
         rootView.tableView.backgroundView = bgImage;
         [bgImage release];
@@ -104,7 +104,7 @@ extern void SVMXLog(NSString *format, ...);
         appDelegate.didSFMUnload = NO;
         
         // Custom initialization
-        rootView = [[[RootViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
+        rootView = [[[RootViewController alloc] init] autorelease];
         UIImageView * bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_left_panel_bg_main_2.png"]];
         rootView.tableView.backgroundView = bgImage;
         [bgImage release];

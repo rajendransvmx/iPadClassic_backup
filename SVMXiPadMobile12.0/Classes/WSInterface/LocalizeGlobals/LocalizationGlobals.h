@@ -303,6 +303,8 @@
 #define sfm_sfw_header                      @"IPAD014_TAG029"
 #define sync_meta_sync_failed               @"IPAD014_TAG030"
 #define getPrice_Objects_not_found          @"IPAD014_TAG032"
+#define BIZ_RULE_WARNING_TITLE              @"SFM002_TAG033"
+#define BIZ_RULE_ERROR_TITLE                @"SFM002_TAG073"
 #define getPrice_not_entitled               @"EVER005_TAG087"
 
 #define login_switch_user                   @"IPAD015_TAG005"

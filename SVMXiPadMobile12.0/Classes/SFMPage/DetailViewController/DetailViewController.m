@@ -31,13 +31,23 @@
 
 //Radha :- Child SFM UI 6/june/2012 
 #import "SWitchViewButton.h"
+//SFM Biz Rules
+#import "JSExecuter.h"
+#import "SBJson.h"
 
 extern void SVMXLog(NSString *format, ...);
+enum BizRuleConfirmViewStatus{
+    kBizRuleConfirmMessageInit = 0,
+    kBizRuleConfirmMessageCancelled = 1,
+    kBizRuleConfirmMessageSaved = 2,
+}alertViewStatus;
 
 
 @interface DetailViewController ()
 @property (nonatomic, retain) UIPopoverController * popoverController;
 @property (nonatomic, retain) NSMutableDictionary * child_sfm_process_node;
+@property (nonatomic, assign) int bizAlertStatus;
+
 - (void)configureView;
 - (SFMEditDetailViewController *) getEditViewOfLine; // KRI
 - (BOOL) isValidUrl:(NSString *)url;
@@ -66,8 +76,8 @@ extern void SVMXLog(NSString *format, ...);
 @end
 
 @implementation DetailViewController
-
-@synthesize executer;
+@synthesize bizRuleResult;
+@synthesize bizRuleExecutionStatus;
 
 //KRI
 @synthesize editDetailObject;
@@ -523,6 +533,7 @@ extern void SVMXLog(NSString *format, ...);
 {
     appDelegate.showUI = TRUE;     //btn merge
     clickedBack = YES;
+    [appDelegate.sfmPageController.rootView hideErrors];
 	//Radha :- Child SFM UI
     [self hideChildLinkedViewProcess];
 	[self hideEditViewOfLine];
@@ -929,7 +940,7 @@ extern void SVMXLog(NSString *format, ...);
 {
     if (masterPopover == nil)
     {
-        RootViewController * master = [[[RootViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
+        RootViewController * master = [[[RootViewController alloc] init] autorelease];
         UINavigationController * navController = [[UINavigationController alloc] initWithRootViewController:master];
         masterPopover = [[UIPopoverController alloc] initWithContentViewController:navController];
         [masterPopover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
@@ -7008,25 +7019,12 @@ extern void SVMXLog(NSString *format, ...);
     }
      self.currentEditRow = [indexPath retain];
     
-    NSLog(@"DetailView didselectrow %@", indexPath);
+    SMLog(@"DetailView didselectrow %@", indexPath);
 }
 
 - (void)viewDidUnload
 {
-    /*
-    [tableView release];
-    tableView = nil;
-    [indicatorForAddRow release];
-    indicatorForAddRow = nil;
-    [signature release];
-    signature = nil;
-    [activity release];
-    activity = nil;
-    [indicatorForAddRow release];
-    indicatorForAddRow = nil;
-    [webView release];
-    webView = nil;
-    */
+
 	[super viewDidUnload];
 	// Release any retained subviews of the main view.
 	// e.g. self.myOutlet = nil;
@@ -7117,7 +7115,8 @@ extern void SVMXLog(NSString *format, ...);
     //Radha :- Child SFM UI
     [SFMChildTableview release];
     SFMChildTableview = nil;
-    
+    [bizRuleResult release];
+
     //KRI
     [editDetailObject release];
 	editDetailObject = nil;
@@ -10306,7 +10305,449 @@ extern void SVMXLog(NSString *format, ...);
     NSString * targetCall = [buttonDict objectForKey:SFW_ACTION_DESCRIPTION];
     NSString * action_type = [buttonDict objectForKey:SFW_ACTION_TYPE];
     NSString * action_process_id = [buttonDict objectForKey:SFW_PROCESS_ID];
-    
+    //SFM Biz Rule
+    if([targetCall isEqualToString:save] || [targetCall isEqualToString:quick_save] )
+    {
+        SMLog(@"Save / Quick Save Called.");
+        
+        //Show Activity Indicator
+        activity.hidden = NO;
+        [activity startAnimating];
+        [self.view bringSubviewToFront:activity];
+        
+        SBJsonWriter * jsonWriter_ = [[[SBJsonWriter alloc] init] autorelease];
+        NSMutableDictionary *fields = [[[NSMutableDictionary alloc] init] autorelease];
+        NSString *parentObjectName = [[appDelegate.SFMPage objectForKey:MHEADER] objectForKey:MHEADER_OBJECT_NAME];
+        NSMutableDictionary *SFMPageHeaderDetail = [[NSMutableDictionary alloc] init];
+        [SFMPageHeaderDetail setObject:parentObjectName forKey:MHEADER];
+        NSArray *childObjectsArray = [appDelegate.SFMPage objectForKey:gDETAILS];
+        NSArray *columnsArray = [NSArray arrayWithObjects:MFIELD_API_NAME,MTYPEM, nil];
+        NSString *filterCriteria = [NSString stringWithFormat:@"object_api_name = '%@'",parentObjectName];
+        NSArray *headerFieldsArray = [appDelegate.dataBase getAllRecordsFromTable:SFOBJECTFIELD
+                                                                       forColumns:columnsArray
+                                                                   filterCriteria:filterCriteria
+                                                                            limit:nil];
+        NSMutableDictionary *headerFieldsDict = [[[NSMutableDictionary alloc] init] autorelease];
+        for(NSDictionary *dict in headerFieldsArray)
+        {
+            NSString *fieldName = [dict objectForKey:MFIELD_API_NAME];
+            NSString *fieldType = [dict objectForKey:MTYPEM];
+            [headerFieldsDict setObject:fieldType forKey:fieldName];
+        }
+        [fields setObject:headerFieldsDict forKey:parentObjectName];
+        
+        NSMutableArray *childObjects = [[NSMutableArray alloc] init];
+        NSMutableArray *childObjectNamesArray = [[NSMutableArray alloc] init];
+        for(NSDictionary *childDict in childObjectsArray)
+        {
+            NSString *childObjectName = [childDict objectForKey:gDETAIL_OBJECT_NAME];
+            if(childObjectName == nil)
+                continue;
+            if(![childObjectNamesArray containsObject:childObjectName])
+            {
+                [childObjectNamesArray addObject:childObjectName];
+            }
+        }
+        [SFMPageHeaderDetail setObject:childObjectNamesArray forKey:gDETAILS];
+        for(NSString *childObjName in childObjectNamesArray)
+        {
+            NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+            NSMutableDictionary *childFieldsDict = [[NSMutableDictionary alloc] init];
+            filterCriteria = [NSString stringWithFormat:@"object_api_name = '%@'",childObjName];
+            NSArray *childFieldsArray = [appDelegate.dataBase getAllRecordsFromTable:SFOBJECTFIELD
+                                                                          forColumns:columnsArray
+                                                                      filterCriteria:filterCriteria
+                                                                               limit:nil];
+            for(NSDictionary *dict in childFieldsArray)
+            {
+                NSString *fieldName = [dict objectForKey:MFIELD_API_NAME];
+                NSString *fieldType = [dict objectForKey:MTYPEM];
+                [childFieldsDict setObject:fieldType forKey:fieldName];
+            }
+            [fields setObject:childFieldsDict forKey:childObjName];
+            [childFieldsDict release];
+            [pool drain];
+            
+        }
+        [childObjectNamesArray release];
+        [childObjects release];
+        
+        
+        NSMutableDictionary *dataToValidate = [[[NSMutableDictionary alloc] init] autorelease];
+        
+        NSArray *headerFields = [[fields objectForKey:parentObjectName] allKeys];
+        filterCriteria = [NSString stringWithFormat:@"local_id = '%@'",self.currentRecordId];
+        NSArray *headerValuesArray = [appDelegate.dataBase getAllRecordsFromTable:parentObjectName
+                                                                       forColumns:headerFields
+                                                                   filterCriteria:filterCriteria
+                                                                            limit:nil];
+        
+        if([headerValuesArray count])
+        {
+            NSMutableDictionary *headerDataDict = [headerValuesArray objectAtIndex:0];
+            if([[headerValuesArray objectAtIndex:0] isKindOfClass:[NSDictionary class]])
+            {
+                
+                NSArray *headerArray = [[appDelegate.SFMPage objectForKey:MHEADER] objectForKey:gHEADER_SECTIONS];
+                NSString *sectionFieldName;
+                id sectionFieldValue;
+                for(NSDictionary *sectionDict in headerArray)
+                {
+                    NSArray *sectionFieldsArray = [sectionDict objectForKey:@"section_Fields"];
+                    for(NSDictionary *section in sectionFieldsArray)
+                    {
+                        sectionFieldName = [section objectForKey:gFIELD_API_NAME];
+                        sectionFieldValue = [section objectForKey:gFIELD_VALUE_VALUE];
+                        NSString *fieldType = [[fields objectForKey:parentObjectName] objectForKey:sectionFieldName];
+                        if([fieldType isEqualToString:@"picklist"])
+                        {
+                            NSString *value = (NSString *)sectionFieldValue;
+                            if(([value length] == 1) && ([value isEqualToString:@" "]))
+                            {
+                                sectionFieldValue = @"";
+                            }
+                        }
+                        else if([fieldType isEqualToString:@"datetime"])
+                        {
+                            sectionFieldValue = [iOSInterfaceObject getLocalTimeFromGMT:(NSString *)sectionFieldValue];
+                        }
+                        [headerDataDict setObject:sectionFieldValue forKey:sectionFieldName];
+                    }
+                }
+                NSDictionary *attributeDict = [NSDictionary dictionaryWithObject:parentObjectName forKey:MTYPEM];
+                [headerDataDict setObject:attributeDict forKey:@"attributes"];
+                [dataToValidate setDictionary:headerDataDict];
+            }
+        }
+        else
+        {
+            NSArray *headerArray = [[appDelegate.SFMPage objectForKey:MHEADER] objectForKey:gHEADER_SECTIONS];
+            NSString *sectionFieldName;
+            id sectionFieldValue;
+            NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+            for(NSDictionary *sectionDict in headerArray)
+            {
+                NSArray *sectionFieldsArray = [sectionDict objectForKey:@"section_Fields"];
+                for(NSDictionary *section in sectionFieldsArray)
+                {
+                    sectionFieldName = [section objectForKey:gFIELD_API_NAME];
+                    sectionFieldValue = [section objectForKey:gFIELD_VALUE_VALUE];
+                    NSString *fieldType = [[fields objectForKey:parentObjectName] objectForKey:sectionFieldName];
+                    if([fieldType isEqualToString:@"picklist"])
+                    {
+                        NSString *value = (NSString *)sectionFieldValue;
+                        if(([value length] == 1) && ([value isEqualToString:@" "]))
+                        {
+                            sectionFieldValue = @"";
+                        }
+                    }
+                    else if([fieldType isEqualToString:@"datetime"])
+                    {
+                        sectionFieldValue = [iOSInterfaceObject getLocalTimeFromGMT:(NSString *)sectionFieldValue];
+                    }
+                    [dict setObject:sectionFieldValue forKey:sectionFieldName];
+                }
+            }
+            SMLog(@" New Record. Get the key and value from the SFMPage");
+            NSDictionary *attributeDict = [NSDictionary dictionaryWithObject:parentObjectName forKey:MTYPEM];
+            [dict setObject:attributeDict forKey:@"attributes"];
+            [dataToValidate setDictionary:dict];
+            [dict release];
+        }
+        
+        NSMutableDictionary *detailsDict = [[[NSMutableDictionary alloc] init] autorelease];
+        for(NSDictionary *childDict in childObjectsArray)
+        {
+            NSArray *valuesArray = [childDict objectForKey:gDETAILS_VALUES_ARRAY];
+            if([valuesArray count] == 0)
+                continue;
+            NSString *layoutID = [childDict objectForKey:gDETAILS_LAYOUT_ID];
+            NSString *childObjectName = [childDict objectForKey:gDETAIL_OBJECT_NAME];
+            NSMutableDictionary *detailDict = [[NSMutableDictionary alloc] init];
+            NSMutableArray *detailArray = [[NSMutableArray alloc] init];
+            NSArray *childObjFields = [[fields objectForKey:childObjectName] allKeys];
+            // Populate array
+            filterCriteria = [NSString stringWithFormat:@"object_api_name_child = '%@'",childObjectName];
+            NSArray *fieldApiNameArray = [appDelegate.dataBase getAllRecordsFromTable:SFCHILDRELATIONSHIP
+                                                                           forColumns:[NSArray arrayWithObjects:@"field_api_name", nil]
+                                                                       filterCriteria:filterCriteria
+                                                                                limit:nil];
+            
+            if(![fieldApiNameArray count])
+            {
+                SMLog(@"Child Relationship is not found");
+                continue;
+            }
+            NSString *columnName = [[fieldApiNameArray objectAtIndex:0] objectForKey:_MFIELD_API_NAME];
+            if(!columnName)
+            {
+                SMLog(@"Column Name is not there");
+                continue;
+            }
+            NSMutableArray *lines = [[NSMutableArray alloc] init];
+            for(NSArray *lineInfoArray in valuesArray)
+            {
+                NSString *localID = nil;
+                for(NSDictionary *linedict in lineInfoArray)
+                {
+                    NSString *apiName = [linedict objectForKey:gVALUE_FIELD_API_NAME];
+                    if([apiName caseInsensitiveCompare:MLOCAL_ID] == NSOrderedSame)
+                    {
+                        localID = [linedict objectForKey:gVALUE_FIELD_VALUE_KEY];
+                        break;
+                    }
+                }
+                if(localID == nil)
+                {
+                    SMLog(@"Newly Created Record");
+                    NSString *detailObjectName = [[appDelegate.SFMPage objectForKey:gDETAILS] objectForKey:gDETAIL_OBJECT_ALIAS_NAME];
+                    if([detailObjectName caseInsensitiveCompare:childObjectName] == NSOrderedSame)
+                    {
+                        NSArray *detailsArray = [[appDelegate.SFMPage objectForKey:gDETAILS] objectForKey:gDETAILS_VALUES_ARRAY];
+                        
+                        NSString *detailFieldName;
+                        id detailFieldValue;
+                        NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+                        for(NSDictionary *detailDict in detailsArray)
+                        {
+                            NSArray *detailFieldsArray = [detailDict objectForKey:gSECTION_FIELDS];
+                            for(NSDictionary *detail in detailFieldsArray)
+                            {
+                                detailFieldName = [detail objectForKey:gFIELD_API_NAME];
+                                detailFieldValue = [detail objectForKey:gFIELD_VALUE_VALUE];
+                                NSString *fieldType = [[fields objectForKey:childObjectName] objectForKey:detailFieldName];
+                                if([fieldType isEqualToString:@"picklist"])
+                                {
+                                    NSString *value = (NSString *)detailFieldValue;
+                                    if(([value length] == 1) && ([value isEqualToString:@" "]))
+                                    {
+                                        detailFieldValue = @"";
+                                    }
+                                }
+                                else if([fieldType isEqualToString:@"datetime"])
+                                {
+                                    detailFieldValue = [iOSInterfaceObject getLocalTimeFromGMT:(NSString *)detailFieldValue];
+                                }
+                                [dict setObject:detailFieldValue forKey:detailFieldName];
+                            }
+                        }
+                        SMLog(@" New Record. Get the key and value from the SFMPage");
+                        NSDictionary *attributeDict = [NSDictionary dictionaryWithObject:childObjectName forKey:MTYPEM];
+                        [dict setObject:attributeDict forKey:@"attributes"];
+                        [lines addObject:dict];
+                        [dict release];
+                    }
+                }
+                else
+                {
+                    SMLog(@"Existing Record");
+                    filterCriteria = [NSString stringWithFormat:@"local_id = '%@'",localID];
+                    NSArray *linesArray = [appDelegate.dataBase getAllRecordsFromTable:childObjectName
+                                                                            forColumns:childObjFields
+                                                                        filterCriteria:filterCriteria
+                                                                                 limit:nil];
+                    if([linesArray count])
+                    {
+                        NSMutableDictionary *dbValue = [[NSMutableDictionary alloc] init];
+                        for(NSDictionary *linedict in lineInfoArray)
+                        {
+                            NSString *apiName = [linedict objectForKey:gVALUE_FIELD_API_NAME];
+                            id fieldvalue = [linedict objectForKey:gVALUE_FIELD_VALUE_VALUE];
+                            NSString *fieldType = [[fields objectForKey:childObjectName] objectForKey:apiName];
+                            if([fieldType isEqualToString:@"picklist"])
+                            {
+                                NSString *value = (NSString *)fieldvalue;
+                                if(([value length] == 1) && ([value isEqualToString:@" "]))
+                                {
+                                    fieldvalue = @"";
+                                }
+                            }
+                            else if([fieldType isEqualToString:@"datetime"])
+                            {
+                                fieldvalue = [iOSInterfaceObject getLocalTimeFromGMT:(NSString *)fieldvalue];
+                            }
+                            [dbValue setObject:fieldvalue forKey:apiName];
+                        }
+                        NSDictionary *attributeDict = [NSDictionary dictionaryWithObject:childObjectName forKey:MTYPEM];
+                        [dbValue setObject:attributeDict forKey:@"attributes"];
+                        [lines addObject:dbValue];
+                        [dbValue release];
+                    }
+                    else
+                    {
+                        // Get the values from the
+                        SMLog(@"Lines Array is Empty");
+                    }
+                }
+            }
+            [detailDict setObject:lines forKey:@"lines"];
+            [lines release];
+            [detailArray release];
+            [detailsDict setObject:detailDict forKey:layoutID];
+            [detailDict release];
+        }
+        [dataToValidate setObject:detailsDict forKey:gDETAILS];
+        filterCriteria = [NSString stringWithFormat:@"process_id = '%@'",currentProcessId];
+        NSArray *processColumn = [NSArray arrayWithObjects:@"sfID",nil];
+        NSString *processID = [[[appDelegate.dataBase getAllRecordsFromTable:SFPROCESS
+                                                                  forColumns:processColumn
+                                                              filterCriteria:filterCriteria
+                                                                       limit:@"1"] objectAtIndex:0] objectForKey:@"sfID"];
+        
+        NSString *criteria = [NSString stringWithFormat:@"Id in  (select business_rule from ProcessBusinessRule where target_manager ='%@' order by 'sequence') and source_object_name = '%@'",processID,parentObjectName];
+        NSArray *columns = [NSArray arrayWithObjects:@"Id",@"advanced_expression",@"error_msg",@"source_object_name",@"message_type", nil];
+        NSArray *headerBusinessRulesArray = [appDelegate.dataBase getAllRecordsFromTable:@"BusinessRule"
+                                                                              forColumns:columns
+                                                                          filterCriteria:criteria
+                                                                                   limit:nil];
+        
+        NSMutableDictionary *fullRulesDict = [[[NSMutableDictionary alloc] init] autorelease];
+        
+        
+        NSArray *headerRulesArray = [self getBusinessRulesDict:headerBusinessRulesArray];
+        NSDictionary *headerRulesDict = [NSDictionary dictionaryWithObject:headerRulesArray forKey:@"rules"];
+        [fullRulesDict setObject:headerRulesDict forKey:MHEADER];
+        
+        for(NSDictionary *dict in childObjectsArray)
+        {
+            NSString *layoutID = [dict objectForKey:gDETAILS_LAYOUT_ID];
+            NSString *detailName = [dict objectForKey:gDETAIL_OBJECT_ALIAS_NAME];
+            
+            NSMutableDictionary *childDict = [[NSMutableDictionary alloc] init];
+            [childDict setObject:layoutID forKey:@"key"];
+            criteria = [NSString stringWithFormat:@"process_id IN (select process_id from SFProcess where sfID = '%@') and target_object_label = '%@'",processID,detailName];
+            columns = [NSArray arrayWithObjects:@"sfID", nil];
+            NSArray *processBusinessRuleIDs = [appDelegate.dataBase getAllRecordsFromTable:PROCESS_COMPONENT
+                                                                                forColumns:columns
+                                                                            filterCriteria:criteria
+                                                                                     limit:nil];
+            if([processBusinessRuleIDs count] == 0)
+                continue;
+            NSDictionary *dict =  [processBusinessRuleIDs objectAtIndex:0]; //Asuming only one record
+            NSString *processBizRuleID = [dict objectForKey:@"sfID"];
+            criteria = [NSString stringWithFormat:@"Id in (select business_rule from ProcessBusinessRule where process_node_object ='%@')",processBizRuleID];
+            columns = [NSArray arrayWithObjects:@"Id",@"advanced_expression",@"error_msg",SOURCE_OBJECT_NAME,@"message_type", nil];
+            NSArray *detailBusinessRulesArray = [appDelegate.dataBase getAllRecordsFromTable:@"BusinessRule"
+                                                                                  forColumns:columns
+                                                                              filterCriteria:criteria
+                                                                                       limit:@"1"];
+            
+            NSArray *childRulesArray = [self getBusinessRulesDict:detailBusinessRulesArray];
+            [childDict setObject:childRulesArray forKey:@"rules"];
+            if([childRulesArray count])
+                [fullRulesDict setObject:childDict forKey:detailName];
+            [childDict release];
+        }
+        
+        NSString * rulesString = [jsonWriter_  stringWithObject:fullRulesDict];
+        NSString * fieldsString = [jsonWriter_  stringWithObject:fields];
+        NSString * dataToValidateString = [jsonWriter_  stringWithObject:dataToValidate];
+        
+        SMLog(@"Rules = %@",rulesString);
+        SMLog(@"Fields = %@",fieldsString);
+        SMLog(@"Data To Field = %@",dataToValidateString);
+        
+        NSString *bootstrapPath = [self getPathForBSLibrary:@"com.servicemax.client.lib/src/bootstrap.js"];
+        NSString *pathToLibrary = [[self getPathForLibrary:@"com.servicemax.client.lib"] stringByAppendingString:@"/com.servicemax.client.lib"];
+        NSString *pathToModule = [self getPathForLibrary:@"modules"];
+        
+        NSString *htmlFilePath = [[NSBundle mainBundle] pathForResource:@"mobile-bizrules-app" ofType:@"html"];
+        NSString *htmlContent = [NSString stringWithContentsOfFile:htmlFilePath encoding:NSUTF8StringEncoding error:nil];
+        
+        
+        NSString *appConfig = [NSString stringWithFormat:@"var appConfig = { \"title\" : \"Mobile business rules application\", \"version\" : \"1.0.0\",\
+                               \"modules\" : [{ \"id\" : \"com.servicemax.client.app\",      			\"version\" : \"1.0.0\" , \"codebase\" : pathToModule },\
+                               { \"id\" : \"com.servicemax.client.runtime\",      		\"version\" : \"1.0.0\" , \"codebase\" : pathToModule },\
+                               { \"id\" : \"com.servicemax.client.sfmbizrules\",       \"version\" : \"1.0.0\" , \"codebase\" : pathToModule }\
+                               ],\"app-config\" : {\"application-id\" : \"application\",\"enable-cache\" : true,\"enable-log\" : true},\"platform-config\" : {}};"];
+        
+        NSString *temp = [NSString stringWithFormat:@"var __SVMX_LOAD_VERSION__ = \"debug\";\
+                          __SVMX_LOAD_APPLICATION__({appParams : {},\
+                          configType : \"local\",\
+                          loadVersion : __SVMX_LOAD_VERSION__,\
+                          configData : appConfig,handler : function(){var bizrules = SVMX.create(\"com.servicemax.client.sfmbizrules.impl.BusinessRuleValidator\");"];
+        
+        NSString *htmlString = [NSString stringWithFormat:@"<html><script type=\"text/javascript\" src=\"%@\"></script><script type=\"text/javascript\" src=\"%@\"></script><script type=\"text/javascript\" src=\"CommunicationBridgeJS.js\"></script><script type=\"text/javascript\" src=\"bizRules-index.js\"></script><script>jQuery(document).ready(function(){ var pathToModule=\"%@\";var __SVMX_CLIENT_LIB_PATH__ = \"%@\"; %@ %@ var fields = %@; var dataToValidate = %@; var rules = %@;",bootstrapPath,pathToLibrary,pathToModule,pathToLibrary,appConfig,temp,fieldsString,dataToValidateString,rulesString];
+        
+        
+        
+        NSString *finalString = [htmlString stringByAppendingString:htmlContent];
+        JSExecuter *jsExecuterObj = [[JSExecuter alloc] initWithParentView:self.view
+                                                         andCodeSnippet:finalString
+                                                            andDelegate:self
+                                                               andFrame:CGRectZero];
+        
+        self.jsExecuter = jsExecuterObj;
+        [jsExecuterObj release];
+        jsExecuterObj = nil;
+        
+        bizRuleExecutionStatus = FALSE;
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, FALSE))
+        {
+            if (bizRuleExecutionStatus)
+            {
+                break;
+            }
+        }
+        SMLog(@"bizRuleResult Warnings = %@",[bizRuleResult objectForKey:@"warnings"]);
+        SMLog(@"bizRuleResult Errors = %@",[bizRuleResult objectForKey:@"errors"]);
+        NSArray *errorsArray = [bizRuleResult objectForKey:@"errors"];
+        activity.hidden = YES;
+        [activity stopAnimating];
+        
+        if([errorsArray count])
+        {
+            if([[SFMPageHeaderDetail allKeys] count]>0 && SFMPageHeaderDetail != nil && SFMPageHeaderDetail != NULL)
+            {
+                NSMutableDictionary *dictResponse=[[NSMutableDictionary alloc]init];
+                [dictResponse setObject:SFMPageHeaderDetail forKey:@"SFMPPAGE_DETAILS"];
+                [dictResponse setObject:errorsArray forKey:@"RULE_ERROR"];
+                [appDelegate.sfmPageController.rootView setErrorDictonary:dictResponse];
+            }
+            appDelegate.sfmPageController.rootView.isErrorDisplayed = NO;
+            [appDelegate.sfmPageController.rootView displayErrors];
+        }
+        else
+        {
+            [appDelegate.sfmPageController.rootView hideErrors];
+        }
+        
+        NSArray *warningsArray = [bizRuleResult objectForKey:@"warnings"];
+        int warningsCount = [warningsArray count];
+        int tag ;
+        for(int i = 0; i< warningsCount; i++)
+        {
+            NSString * message = [[warningsArray objectAtIndex:i] objectForKey:@"message"];
+            NSString * alertTitle = [appDelegate.wsInterface.tagsDictionary objectForKey:BIZ_RULE_WARNING_TITLE];
+            NSString *title = [NSString stringWithFormat:@"%@ (%d/%d)",alertTitle,i+1,warningsCount];
+            NSString * okButtonTitle = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+            NSString * cancelButtonTitle = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:title
+                                                                message:message
+                                                               delegate:self
+                                                      cancelButtonTitle:okButtonTitle
+                                                      otherButtonTitles:cancelButtonTitle, nil];
+            tag = i + 1000;
+            [alertView setTag:tag];
+            alertViewStatus = kBizRuleConfirmMessageInit;
+            [alertView show];
+            [alertView release];
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, YES))
+            {
+                if (alertViewStatus == kBizRuleConfirmMessageCancelled || alertViewStatus == kBizRuleConfirmMessageSaved)
+                    break;
+            }
+            if (alertViewStatus == kBizRuleConfirmMessageCancelled)
+                break;
+        }
+        if ((alertViewStatus == kBizRuleConfirmMessageCancelled) || ([errorsArray count]))
+        {
+            SMLog(@"Don't Save the record");
+            [self enableSFMUI];
+            return;
+        }
+        SMLog(@"Wait for Ok(continue) or Cancel (return)");
+    }
     //Krishna OpDoc
     
     
@@ -10579,7 +11020,7 @@ extern void SVMXLog(NSString *format, ...);
                     if ( [process_type isEqualToString:@"OUTPUT DOCUMENT"] )
                     {
                         
-                        NSLog(@"Output Document!! process id = %@ and record_id = %@",action_process_id,action_rec_id);
+                        SMLog(@"Output Document!! process id = %@ and record_id = %@",action_process_id,action_rec_id);
                         
                         [self loadOPDocViewControllerForProcessId:action_process_id andRecordId:action_rec_id];
 
@@ -12552,7 +12993,105 @@ extern void SVMXLog(NSString *format, ...);
     [self enableSFMUI];
     
 }
-
+- (NSString *) getPathForLibrary:(NSString *)library {
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
+    NSString *dataPath = documentsDirectory;
+    
+    if (![[NSFileManager defaultManager] fileExistsAtPath:dataPath]){
+        
+    }
+    return dataPath;
+    
+}
+- (NSString *) getPathForBSLibrary:(NSString *)library {
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
+    NSString *dataPath =[documentsDirectory stringByAppendingPathComponent:library];
+    
+    if (![[NSFileManager defaultManager] fileExistsAtPath:dataPath]){
+        
+    }
+    return dataPath;
+    
+}
+- (NSArray *) getBusinessRulesDict:(NSArray *)businessRulesArray
+{
+    NSMutableArray *rulesArray = [[NSMutableArray alloc] init];
+    
+    NSString *criteria;
+    NSArray *columns;
+    int sequence = 0;
+    for(NSDictionary *dict in businessRulesArray)
+    {
+        NSMutableDictionary *rulesDict = [[NSMutableDictionary alloc] init];
+        NSMutableDictionary *ruleInfoDict = [[NSMutableDictionary alloc] init];
+        NSNumber *sequenceNumber = [NSNumber numberWithInt:sequence++];
+        [rulesDict setValue:sequenceNumber forKey:@"sequence"];
+        [rulesDict setObject:[dict objectForKey:@"error_msg"] forKey:@"message"];
+        NSString *expressionID = [dict objectForKey:@"Id"];
+        criteria = [NSString stringWithFormat:@"expression_id = '%@'",expressionID];
+        columns = [NSArray arrayWithObjects:@"parameter_type",@"operator",@"component_lhs",@"component_rhs", nil];
+        NSArray *bizRuleDetailsArray = [appDelegate.dataBase getAllRecordsFromTable:@"SFExpressionComponent"
+                                                                         forColumns:columns
+                                                                     filterCriteria:criteria
+                                                                              limit:nil];
+        
+        NSString *defaultValue = @"";
+        NSMutableArray *bizRulesDetailsArray = [[NSMutableArray alloc] init];
+        for(NSDictionary *detailsDict in bizRuleDetailsArray)
+        {
+            NSString *parameterType = [detailsDict objectForKey:@"parameter_type"];
+            NSString *operator = [detailsDict objectForKey:@"operator"];
+            NSString *fieldName = [detailsDict objectForKey:@"component_lhs"];
+            NSString *operand = [detailsDict objectForKey:@"component_rhs"];
+            
+            if(parameterType == nil) parameterType = defaultValue;
+            if(operator == nil)  operator = defaultValue;
+            if(fieldName == nil) fieldName = defaultValue;
+            if(operand == nil) operand = defaultValue;
+            
+            NSMutableDictionary *details = [[NSMutableDictionary alloc] init];
+            
+            [details setObject:operand forKey:@"SVMXC__Operand__c"];
+            [details setObject:expressionID forKey:@"SVMXC__Expression_Rule__c"];
+            [details setObject:parameterType forKey:@"SVMXC__Parameter_Type__c"];
+            [details setObject:operator forKey:@"SVMXC__Operator__c"];
+            [details setObject:fieldName forKey:@"SVMXC__Field_Name__c"];
+            
+            [bizRulesDetailsArray addObject:details];
+            [details release];
+        }
+        [ruleInfoDict setObject:bizRulesDetailsArray forKey:@"bizRuleDetails"];
+        [bizRulesDetailsArray release];
+        
+        NSString *sourceObjectName = [dict objectForKey:@"source_object_name"];
+        NSString *advancedExpression = [dict objectForKey:@"advanced_expression"];
+        NSString *messageType = [dict objectForKey:@"message_type"];
+        
+        if(sourceObjectName == nil) sourceObjectName = defaultValue;
+        if(advancedExpression == nil) advancedExpression = defaultValue;
+        if(messageType == nil) messageType = defaultValue;
+        
+        NSMutableDictionary *ruleDict = [[NSMutableDictionary alloc] init];
+        [ruleDict setObject:sourceObjectName forKey:@"SVMXC__Source_Object_Name__c"];
+        [ruleDict setObject:advancedExpression forKey:@"SVMXC__Advance_Expression__c"];
+        [ruleDict setObject:messageType forKey:@"SVMXC__Message_Type__c"];
+        
+        [ruleInfoDict setObject:ruleDict forKey:@"bizRule"];
+        [ruleDict release];
+        
+        [rulesDict setObject:ruleInfoDict forKey:@"ruleInfo"];
+        [ruleInfoDict release];
+        
+        [rulesArray addObject:rulesDict];
+        
+    }
+    
+    return [rulesArray autorelease];
+}
 -(void) initAllrequriredDetailsForProcessId:(NSString *)process_id recordId:(NSString *)recordId object_name:(NSString *)object_name
 {
     appDelegate.sfmPageController.recordId = recordId;
@@ -13796,48 +14335,62 @@ extern void SVMXLog(NSString *format, ...);
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
 {
 	//Radha :- Implementation  for  Required Field alert in Debrief UI
-	
-	if([requiredFields isEqual:alertView])
-	{
-		if (buttonIndex == 0)
-		{
-			[self showCurrentRowForMandatoryFields:mandatoryRowDetails isLine:YES];
-			[mandatoryRowDetails release];
-		}
-		
-	}
-	//Radha :- Implementation  for  Required Field alert in Debrief UI
-	else
-	{
-		if(buttonIndex == 1)
-		{
-			EventUpdate_Continue = TRUE;
-			[appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:LOCAL_EVENT_UPDATE];
-			NSMutableArray  *keys_event = nil, *objects_event = nil;
-			keys_event = [NSArray arrayWithObjects:SFW_ACTION_ID,SFW_ACTION_DESCRIPTION,SFW_EXPRESSION_ID,SFW_PROCESS_ID,SFW_ACTION_TYPE ,SFW_WIZARD_ID,SFW_ENABLE_ACTION_BUTTON,nil];
-			if(save_status == EDIT_QUICKSAVE)
-			{
-				
-				objects_event = [NSArray arrayWithObjects:@"",quick_save,@"",@"",gBUTTON_TYPE_TDM_IPAD_ONLY ,@"",@"true",nil];
-			}
-			else
-			{
-				objects_event = [NSArray arrayWithObjects:@"",save,@"",@"",gBUTTON_TYPE_TDM_IPAD_ONLY ,@"",@"true",nil];
-			}
-			NSMutableDictionary * dict_events_save = [NSMutableDictionary dictionaryWithObjects:objects_event forKeys:keys_event];
-			[self offlineActions:dict_events_save];
-			
-		}
-		else if(buttonIndex == 0){
-			
-			EventUpdate_Continue =FALSE;
-			[appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:Event_local_Ids];
-			[appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:LOCAL_EVENT_UPDATE];
-		}
+    NSInteger alertTag = alertView.tag;
+    if(alertTag >= 1000)
+    {
+        if(buttonIndex)
+        {
+            alertViewStatus = kBizRuleConfirmMessageCancelled;
+            SMLog(@"[Alert %d] Confirm Message Cancelled",alertView.tag);
+        }
+        else
+        {
+            alertViewStatus = kBizRuleConfirmMessageSaved;
+            SMLog(@"[Alert %d] Confirm Message Saved",alertView.tag);
+        }
+    }
+    else
+    {
+        if([requiredFields isEqual:alertView])
+        {
+            if (buttonIndex == 0)
+            {
+                [self showCurrentRowForMandatoryFields:mandatoryRowDetails isLine:YES];
+                [mandatoryRowDetails release];
+            }
+            
+        }
+        //Radha :- Implementation  for  Required Field alert in Debrief UI
+        else
+        {
+            if(buttonIndex == 1)
+            {
+                EventUpdate_Continue = TRUE;
+                [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:LOCAL_EVENT_UPDATE];
+                NSMutableArray  *keys_event = nil, *objects_event = nil;
+                keys_event = [NSArray arrayWithObjects:SFW_ACTION_ID,SFW_ACTION_DESCRIPTION,SFW_EXPRESSION_ID,SFW_PROCESS_ID,SFW_ACTION_TYPE ,SFW_WIZARD_ID,SFW_ENABLE_ACTION_BUTTON,nil];
+                if(save_status == EDIT_QUICKSAVE)
+                {
+                    
+                    objects_event = [NSArray arrayWithObjects:@"",quick_save,@"",@"",gBUTTON_TYPE_TDM_IPAD_ONLY ,@"",@"true",nil];
+                }
+                else
+                {
+                    objects_event = [NSArray arrayWithObjects:@"",save,@"",@"",gBUTTON_TYPE_TDM_IPAD_ONLY ,@"",@"true",nil];
+                }
+                NSMutableDictionary * dict_events_save = [NSMutableDictionary dictionaryWithObjects:objects_event forKeys:keys_event];
+                [self offlineActions:dict_events_save];
+                
+            }
+            else if(buttonIndex == 0){
+                
+                EventUpdate_Continue =FALSE;
+                [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:Event_local_Ids];
+                [appDelegate.databaseInterface deleteRecordsFromEventLocalIdsFromTable:LOCAL_EVENT_UPDATE];
+            }
 
-	}
-	
-    
+        }
+    }
 }
 
 /* GET_PRICE_JS-shr*/
@@ -13899,9 +14452,9 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     else  if ([eventName isEqualToString:@"pricebook"])  {
-        NSLog(@"GP_request_JSExcecuter %@",self.priceBookData.jsonRepresentation);
+        SMLog(@"GP_request_JSExcecuter %@",self.priceBookData.jsonRepresentation);
         NSString *responseRecieved =  [self.jsExecuter response:self.priceBookData.jsonRepresentation forEventName:eventName];
-        NSLog(@"GP_response_JSExcecuter %@",responseRecieved);
+        SMLog(@"GP_response_JSExcecuter %@",responseRecieved);
         SBJsonParser *jsonParser =  [[SBJsonParser alloc] init];
         NSDictionary *finalDictionary = [jsonParser objectWithString:responseRecieved];
         [jsonParser release];
@@ -13916,7 +14469,19 @@ extern void SVMXLog(NSString *format, ...);
             [self performSelectorOnMainThread:@selector(showAlertView:) withObject:message waitUntilDone:NO];
         }
     }
-    
+    else if ([eventName isEqualToString:@"result"])
+    {
+        bizRuleExecutionStatus = TRUE;
+        SBJsonParser * jsonParser = [[[SBJsonParser alloc] init] autorelease];
+        NSDictionary *result = [jsonParser objectWithString:jsonParameterString];
+        if(result != bizRuleResult)
+        {
+            [bizRuleResult release];
+            bizRuleResult = [result retain];
+        }
+        SMLog(@"Event Name = %@",eventName);
+        SMLog(@"Data  = %@",jsonParameterString);
+    }
 }
 
 - (BOOL)shouldDisplayMessage:(NSString *)message {
@@ -14462,13 +15027,13 @@ extern void SVMXLog(NSString *format, ...);
 	if (heightOfTable > self.view.frame.size.height)
 	{
 		@try {
-			NSLog(@"Soubld move");
+			SMLog(@"Soubld move");
 			//Radha - #007381
 			[self.tableView scrollToRowAtIndexPath:_indexpath atScrollPosition:UITableViewScrollPositionTop animated:YES];
 
 		}
 		@catch (NSException *exception) {
-			NSLog(@"%@", exception.name);
+			SMLog(@"%@", exception.name);
 		}
 	}
 		
@@ -14821,7 +15386,7 @@ extern void SVMXLog(NSString *format, ...);
 			
 			if (self.currentEditRow != nil)
 			{
-				NSLog(@"*******%@", self.currentEditRow);
+				SMLog(@"*******%@", self.currentEditRow);
 				UITableViewCell * cell = [self.tableView cellForRowAtIndexPath:self.currentEditRow];
 				
 				if (cell != nil)
@@ -14879,7 +15444,7 @@ extern void SVMXLog(NSString *format, ...);
 
 	}
 	@catch (NSException *exception) {
-		NSLog(@"%@", exception.name);
+		SMLog(@"%@", exception.name);
 	}
 		
 }
@@ -15266,10 +15831,10 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     if(isHeader == 1) {
-        NSLog(@"HEADER");
+        SMLog(@"HEADER");
     }
     else {
-        NSLog(@"DETAIL  %d  %d",detailSection,detailRow);
+        SMLog(@"DETAIL  %d  %d",detailSection,detailRow);
     }
 
     NSIndexPath *finalIndexPath = [NSIndexPath indexPathForRow:detailRow inSection:detailSection];

@@ -620,5 +620,9 @@
 	<string>Records</string>
 	<key>EVER005_TAG087</key>
 	<string>Price not calculated, because entitlement check has not been performed</string>
+	<key>SFM002_TAG033</key>
+	<string>SFM Transaction Manager</string>
+	<key>SFM002_TAG073</key>
+	<string>Error Details</string>
 </dict>
 </plist>

@@ -419,7 +419,6 @@
 		6B18E3E21785481A00224F72 /* DARequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B18E3D61785481A00224F72 /* DARequest.m */; };
 		6B18E3E31785481A00224F72 /* DARequestParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B18E3D81785481A00224F72 /* DARequestParser.m */; };
 		6B18E3E41785481A00224F72 /* DAResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B18E3DA1785481A00224F72 /* DAResponse.m */; };
-		6B18E3E51785481A00224F72 /* CommunicationBridgeJS.js in Sources */ = {isa = PBXBuildFile; fileRef = 6B18E3DC1785481A00224F72 /* CommunicationBridgeJS.js */; };
 		6B18E3E61785481A00224F72 /* DataAcessLayer.js in Sources */ = {isa = PBXBuildFile; fileRef = 6B18E3DD1785481A00224F72 /* DataAcessLayer.js */; };
 		6B18E3E71785481A00224F72 /* OutputDocs.js in Sources */ = {isa = PBXBuildFile; fileRef = 6B18E3DE1785481A00224F72 /* OutputDocs.js */; };
 		6B18E3E81785481A00224F72 /* Utility.js in Sources */ = {isa = PBXBuildFile; fileRef = 6B18E3DF1785481A00224F72 /* Utility.js */; };
@@ -760,6 +759,8 @@
 		A8E259CA1786958B0063ADD9 /* com.servicemax.client.sfmopdocdelivery.zip in Resources */ = {isa = PBXBuildFile; fileRef = A8E259C11786958B0063ADD9 /* com.servicemax.client.sfmopdocdelivery.zip */; };
 		A8E259CB1786958B0063ADD9 /* com.servicemax.client.tablet.sal.sfmopdoc.model.zip in Resources */ = {isa = PBXBuildFile; fileRef = A8E259C21786958B0063ADD9 /* com.servicemax.client.tablet.sal.sfmopdoc.model.zip */; };
 		A8E259CC1786958B0063ADD9 /* com.servicemax.client.zip in Resources */ = {isa = PBXBuildFile; fileRef = A8E259C31786958B0063ADD9 /* com.servicemax.client.zip */; };
+		A8E259D2178697A80063ADD9 /* mobile-bizrules-app.html in Resources */ = {isa = PBXBuildFile; fileRef = A8E259CF178697A80063ADD9 /* mobile-bizrules-app.html */; };
+		A8E259D3178697C80063ADD9 /* bizRules-index.js in Resources */ = {isa = PBXBuildFile; fileRef = A8E259CD178697A80063ADD9 /* bizRules-index.js */; };
 		A8FBA65B155A503600F52346 /* DetailViewControllerForSFM.m in Sources */ = {isa = PBXBuildFile; fileRef = A8FBA641155A503600F52346 /* DetailViewControllerForSFM.m */; };
 		A8FBA65C155A503600F52346 /* DetailViewControllerForSFM.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8FBA642155A503600F52346 /* DetailViewControllerForSFM.xib */; };
 		A8FBA65D155A503600F52346 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8FBA644155A503600F52346 /* MainViewController.m */; };
@@ -2460,6 +2461,8 @@
 		A8E259C11786958B0063ADD9 /* com.servicemax.client.sfmopdocdelivery.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.sfmopdocdelivery.zip; sourceTree = "<group>"; };
 		A8E259C21786958B0063ADD9 /* com.servicemax.client.tablet.sal.sfmopdoc.model.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.tablet.sal.sfmopdoc.model.zip; sourceTree = "<group>"; };
 		A8E259C31786958B0063ADD9 /* com.servicemax.client.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.zip; sourceTree = "<group>"; };
+		A8E259CD178697A80063ADD9 /* bizRules-index.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "bizRules-index.js"; sourceTree = "<group>"; };
+		A8E259CF178697A80063ADD9 /* mobile-bizrules-app.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "mobile-bizrules-app.html"; sourceTree = "<group>"; };
 		A8FBA640155A503600F52346 /* DetailViewControllerForSFM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailViewControllerForSFM.h; sourceTree = "<group>"; };
 		A8FBA641155A503600F52346 /* DetailViewControllerForSFM.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailViewControllerForSFM.m; sourceTree = "<group>"; };
 		A8FBA642155A503600F52346 /* DetailViewControllerForSFM.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DetailViewControllerForSFM.xib; sourceTree = "<group>"; };
@@ -4733,6 +4736,8 @@
 		3E34689913E95C4D00B5790F /* DetailViewController */ = {
 			isa = PBXGroup;
 			children = (
+				A8E259CD178697A80063ADD9 /* bizRules-index.js */,
+				A8E259CF178697A80063ADD9 /* mobile-bizrules-app.html */,
 				ACB56C69176B629F00E46D08 /* SFMChildView */,
 				3E34689A13E95C4D00B5790F /* DetailView.xib */,
 				3E34689B13E95C4D00B5790F /* DetailViewController.h */,
@@ -7095,6 +7100,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A8E259D3178697C80063ADD9 /* bizRules-index.js in Resources */,
 				77F7B61E1785971500AD476C /* CommunicationBridgeJS.js in Resources */,
 				77F7B61F1785971500AD476C /* DataAcessLayer.js in Resources */,
 				77F7B6201785971500AD476C /* OutputDocs.js in Resources */,
@@ -8360,6 +8366,7 @@
 				A8E259CA1786958B0063ADD9 /* com.servicemax.client.sfmopdocdelivery.zip in Resources */,
 				A8E259CB1786958B0063ADD9 /* com.servicemax.client.tablet.sal.sfmopdoc.model.zip in Resources */,
 				A8E259CC1786958B0063ADD9 /* com.servicemax.client.zip in Resources */,
+				A8E259D2178697A80063ADD9 /* mobile-bizrules-app.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8627,7 +8634,6 @@
 				6B18E3E21785481A00224F72 /* DARequest.m in Sources */,
 				6B18E3E31785481A00224F72 /* DARequestParser.m in Sources */,
 				6B18E3E41785481A00224F72 /* DAResponse.m in Sources */,
-				6B18E3E51785481A00224F72 /* CommunicationBridgeJS.js in Sources */,
 				6B18E3E61785481A00224F72 /* DataAcessLayer.js in Sources */,
 				6B18E3E71785481A00224F72 /* OutputDocs.js in Sources */,
 				6B18E3E81785481A00224F72 /* Utility.js in Sources */,

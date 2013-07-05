@@ -237,6 +237,8 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
 
 }
 
+@property (nonatomic, retain) NSDictionary *bizRuleResult;
+@property (nonatomic) BOOL bizRuleExecutionStatus;
 // SFM OPDocs
 @property (nonatomic, retain) JSExecuter *executer;
 
@@ -405,6 +407,11 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
 //Radha :- Child SFM UI
 - (void)hideEditViewOfLine;
 - (void)hideExpandedChildViews;
+
+//Biz Rules
+- (NSArray *) getBusinessRulesDict:(NSArray *)businessRulesArray;
+- (NSString *) getPathForBSLibrary:(NSString *)library;
+- (NSString *) getPathForLibrary:(NSString *)library;
 
 #define SHOWALL_HEADERS                     0
 #define SHOW_HEADER_ROW                     1

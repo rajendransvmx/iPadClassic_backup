@@ -21,9 +21,9 @@
 #define BGIMAGETAG               1100
 #define CELLLABELTAG             1101
 
-@interface RootViewController : UITableViewController
+@interface RootViewController : UIViewController
 <UISplitViewControllerDelegate,
-SelectProcessControllerDelegate>
+SelectProcessControllerDelegate,UITableViewDataSource,UITableViewDelegate>
 {
     UILabel * timeStamp ;
     UILabel * lastModifiedTime;
@@ -41,6 +41,7 @@ SelectProcessControllerDelegate>
     NSIndexPath * lastSelectedIndexPath;
     
     SelectProcessController * switchProcess;
+    int heightForErrorTable;
 }
 @property (nonatomic , retain) NSArray * addition_info_items ;
 @property (nonatomic) BOOL product_history;
@@ -52,6 +53,12 @@ SelectProcessControllerDelegate>
 @property (nonatomic, retain) iServiceAppDelegate *appDelegate;
 @property (nonatomic ) BOOL isinViewMode;
 
+@property (nonatomic, retain) UITableView *errorTableView;
+@property (nonatomic, retain) UITableView *tableView;
+@property (nonatomic, retain) NSMutableArray *conflictsArray;
+@property (nonatomic, retain) NSMutableDictionary *errorDictonary;
+@property (nonatomic, assign) BOOL isErrorDisplayed;
+
 - (void) receivedErrorFromAPICall:(NSError *)err;
 - (void) describeSObject:(NSString *)sObjectType;
 - (void) describeSObjectResult:(id)result error:(NSError *)error context:(id)context;
@@ -61,11 +68,9 @@ SelectProcessControllerDelegate>
 - (void) refreshTable;
 - (void) displaySwitchViews;
 - (void) showLastModifiedTimeForSFMRecord;
-- (NSIndexPath *)getSelectedIndexPath;
 
-//Radha :- Implementation  for  Required Field alert in Debrief UI 
-//Radha :- HighlightSelectedRow
-- (void) highlightSelectRowWithIndexpath:(NSIndexPath *)indexPath;
+- (void) displayErrors;
+- (void) hideErrors;
 
 @end
 

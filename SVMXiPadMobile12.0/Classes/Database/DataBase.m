@@ -6362,14 +6362,14 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     // Vipin - db-opt
     [self endTransaction];
     
-    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFProcess_test ('process_id' VARCHAR,'layout_id' VARCHAR,'object_name' VARCHAR,'expression_id' VARCHAR,'object_mapping_id' VARCHAR,'component_type' VARCHAR,'local_id' INTEGER PRIMARY KEY  NOT NULL , 'parent_column' VARCHAR, 'value_id' VARCHAR, 'parent_object' VARCHAR, 'Sorting_Order' VARCHAR, 'process_node_id' VARCHAR, 'doc_template_Detail_id' VARCHAR)"]]; // Damodar -OPDoc
+    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFProcess_test ('process_id' VARCHAR,'layout_id' VARCHAR,'object_name' VARCHAR,'expression_id' VARCHAR,'object_mapping_id' VARCHAR,'component_type' VARCHAR,'local_id' INTEGER PRIMARY KEY  NOT NULL , 'parent_column' VARCHAR, 'value_id' VARCHAR, 'parent_object' VARCHAR, 'Sorting_Order' VARCHAR, 'process_node_id' VARCHAR, 'doc_template_Detail_id' VARCHAR, 'target_object_label' VARCHAR, 'sfID' VARCHAR)"]]; // Damodar -OPDoc
     
     if (result == YES)
     {
         // Vipin-db-optmz
         [self beginTransaction];
         
-       NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@',  '%@', '%@', '%@', '%@', '%@','%@', '%@', '%@', '%@' ,'%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10 ,?11, ?12, ?13)", @"SFProcess_test", MPROCESS_ID, @"layout_id", @"object_name", @"expression_id", @"object_mapping_id", @"component_type", @"parent_column", @"value_id", @"parent_object", MLOCAL_ID,SORTING_ORDER, process_node_id, MDOC_TEMPLATE_DETAIL_ID]; // Damodar -OPDoc
+       NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@',  '%@', '%@', '%@', '%@', '%@','%@', '%@', '%@', '%@' ,'%@', '%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10 ,?11, ?12, ?13, ?14, ?15)", @"SFProcess_test", MPROCESS_ID, @"layout_id", @"object_name", @"expression_id", @"object_mapping_id", @"component_type", @"parent_column", @"value_id", @"parent_object", MLOCAL_ID,SORTING_ORDER, process_node_id, MDOC_TEMPLATE_DETAIL_ID,@"target_object_label",@"sfID"]; // Damodar -OPDoc
         
         sqlite3_stmt * bulkStmt = nil;
         
@@ -6466,7 +6466,14 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                 
                 sqlite3_bind_text(bulkStmt, 13, _doc_template_detail_id, strlen(_doc_template_detail_id), SQLITE_TRANSIENT);
 
+                char * _targetObjectLabel = [appDelegate convertStringIntoChar:([dict objectForKey:@"target_object_label"] != nil)?[dict objectForKey:@"target_object_label"]: @""];
                 
+                sqlite3_bind_text(bulkStmt, 14, _targetObjectLabel, strlen(_targetObjectLabel), SQLITE_TRANSIENT);
+                
+                char * _sfID = [appDelegate convertStringIntoChar:([dict objectForKey:@"local_id"] != nil)?[dict objectForKey:@"local_id"]: @""];
+                
+                sqlite3_bind_text(bulkStmt, 15, _sfID, strlen(_sfID), SQLITE_TRANSIENT);
+
                 if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed -  SFProcess_test!\n");
@@ -6510,8 +6517,8 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         
         synchronized_sqlite3_finalize(statement);
         
-        NSArray * keys = [NSArray arrayWithObjects:MPROCESS_ID, MLAYOUT_ID, TARGET_OBJECT_NAME, SOURCE_OBJECT_NAME, EXPRESSION_ID, OBJECT_MAPPING_ID, MCOMPONENT_TYPE, MPARENT_COLUMN, MVALUE_MAPPING_ID,SORTING_ORDER, process_node_id, MDOC_TEMPLATE_DETAIL_ID, nil]; // Damodar -OPDoc
-        NSString * processId = @"", * layoutId = @"", * sourceName = @"", * expressionId = @"", * oMappingId = @"",* componentType = @"", * parentColumn = @"", * targetName = @"", * vMappingid = @"", * sorting_order_value = @"", * processnode_id = @"", *doc_temp_detail_id = @""; // Damodar -OPDoc
+        NSArray * keys = [NSArray arrayWithObjects:MPROCESS_ID, MLAYOUT_ID, TARGET_OBJECT_NAME, SOURCE_OBJECT_NAME, EXPRESSION_ID, OBJECT_MAPPING_ID, MCOMPONENT_TYPE, MPARENT_COLUMN, MVALUE_MAPPING_ID,SORTING_ORDER, process_node_id, MDOC_TEMPLATE_DETAIL_ID,@"target_object_label",@"sfID",nil]; // Damodar -OPDoc
+        NSString * processId = @"", * layoutId = @"", * sourceName = @"", * expressionId = @"", * oMappingId = @"",* componentType = @"", * parentColumn = @"", * targetName = @"", * vMappingid = @"", * sorting_order_value = @"", * processnode_id = @"", *doc_temp_detail_id = @"",*targetObjectLabel = @"",*sfID = @""; // Damodar -OPDoc
                                                     
         if ([processType isEqualToString:VIEWRECORD])
         {
@@ -6570,13 +6577,20 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                     if ((temp_process_node != nil) && strlen(temp_process_node))
                         processnode_id = [NSString stringWithUTF8String:temp_process_node];
 
-                        
+                    char * _targetObjectLabel = (char *) synchronized_sqlite3_column_text(viewstatement, 13);
+                    if ((_targetObjectLabel != nil) && strlen(_targetObjectLabel))
+                        targetObjectLabel = [NSString stringWithUTF8String:_targetObjectLabel];
+                    
+                    char * _sfID = (char *) synchronized_sqlite3_column_text(viewstatement, 14);
+                    if ((_sfID != nil) && strlen(_sfID))
+                        sfID = [NSString stringWithUTF8String:_sfID];
+    
                     NSArray * objects = [NSArray arrayWithObjects:processId, layoutId, targetName, sourceName, expressionId, oMappingId, componentType, parentColumn, vMappingid,sorting_order_value,processnode_id, doc_temp_detail_id, nil]; // Damodar -OPDoc
                     
                     NSDictionary * dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
                     NSArray * arr = [NSArray arrayWithObject:dict];
                     [process_comp_array addObjectsFromArray:arr];
-                    processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"" , sorting_order_value = @"", processnode_id = @"", doc_temp_detail_id = @"";// Damodar OPdoc
+                    processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"" , sorting_order_value = @"", processnode_id = @"", doc_temp_detail_id = @"",targetObjectLabel = @"",sfID = @"";// Damodar OPdoc
                 }
                 
             }
@@ -6640,12 +6654,20 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                         doc_temp_detail_id = [NSString stringWithUTF8String:_docTemplateDetail_id];
 
                     
-                    NSArray * objects = [NSArray arrayWithObjects:processId, layoutId, targetName, sourceName, expressionId, oMappingId, componentType, parentColumn,vMappingid, sorting_order_value, processnode_id, doc_temp_detail_id, nil]; // Damodar OPDoc
+                    char * _targetObjectLabel = (char *) synchronized_sqlite3_column_text(editstatement, 13);
+                    if ((_targetObjectLabel != nil) && strlen(_targetObjectLabel))
+                        targetObjectLabel = [NSString stringWithUTF8String:_targetObjectLabel];
+                    
+                    char * _sfID = (char *) synchronized_sqlite3_column_text(editstatement, 14);
+                    if ((_sfID != nil) && strlen(_sfID))
+                        sfID = [NSString stringWithUTF8String:_sfID];
+
+                    NSArray * objects = [NSArray arrayWithObjects:processId, layoutId, targetName, sourceName, expressionId, oMappingId, componentType, parentColumn,vMappingid, sorting_order_value, processnode_id, doc_temp_detail_id,targetObjectLabel,sfID, nil]; // Damodar OPDoc
                     
                     NSDictionary * dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
                     NSArray * arr = [NSArray arrayWithObject:dict];
                     [process_comp_array addObjectsFromArray:arr];
-                    processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", sorting_order_value = @"", processnode_id = @"", doc_temp_detail_id = @""; // Damodar OPDoc
+                    processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", sorting_order_value = @"", processnode_id = @"", doc_temp_detail_id = @"",targetObjectLabel = @"",sfID = @""; // Damodar OPDoc
                 }
                
             }
@@ -6708,12 +6730,20 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                     if ((_docTemplateDetail_id != nil) && strlen(_docTemplateDetail_id))
                         doc_temp_detail_id = [NSString stringWithUTF8String:_docTemplateDetail_id];
 
-                    NSArray * objects = [NSArray arrayWithObjects:processId, layoutId, targetName, sourceName, expressionId, oMappingId, componentType, parentColumn, vMappingid,sorting_order_value,processnode_id, doc_temp_detail_id, nil]; // Damodar OPDoc
+                    char * _targetObjectLabel = (char *) synchronized_sqlite3_column_text(createstatement, 13);
+                    if ((_targetObjectLabel != nil) && strlen(_targetObjectLabel))
+                        targetObjectLabel = [NSString stringWithUTF8String:_targetObjectLabel];
+                    
+                    char * _sfID = (char *) synchronized_sqlite3_column_text(createstatement, 14);
+                    if ((_sfID != nil) && strlen(_sfID))
+                        sfID = [NSString stringWithUTF8String:_sfID];
+
+                    NSArray * objects = [NSArray arrayWithObjects:processId, layoutId, targetName, sourceName, expressionId, oMappingId, componentType, parentColumn, vMappingid,sorting_order_value,processnode_id, doc_temp_detail_id,targetObjectLabel,sfID, nil]; // Damodar OPDoc
                     
                     NSDictionary * dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
                     NSArray * arr = [NSArray arrayWithObject:dict];
                     [process_comp_array addObjectsFromArray:arr];
-                    processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"",sorting_order_value = @"", processnode_id = @"", doc_temp_detail_id = @""; // Damodar OPDoc
+                    processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"",sorting_order_value = @"", processnode_id = @"", doc_temp_detail_id = @"",targetObjectLabel = @"", sfID = @""; // Damodar OPDoc
                 }
                 
             }
@@ -6722,12 +6752,12 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         }
               
     }
-    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFProcessComponent ('process_id' VARCHAR,'layout_id' VARCHAR,'target_object_name' VARCHAR,'source_object_name' VARCHAR,'expression_id' VARCHAR,'object_mapping_id' VARCHAR,'component_type' VARCHAR,'local_id' INTEGER PRIMARY KEY  NOT NULL ,'parent_column' VARCHAR, 'value_mapping_id' VARCHAR, 'source_child_parent_column' VARCHAR, 'Sorting_Order' VARCHAR, 'process_node_id' VARCHAR, 'doc_template_Detail_id' VARCHAR)"]]; // Damodar OPDoc
+    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFProcessComponent ('process_id' VARCHAR,'layout_id' VARCHAR,'target_object_name' VARCHAR,'source_object_name' VARCHAR,'expression_id' VARCHAR,'object_mapping_id' VARCHAR,'component_type' VARCHAR,'local_id' INTEGER PRIMARY KEY  NOT NULL ,'parent_column' VARCHAR, 'value_mapping_id' VARCHAR, 'source_child_parent_column' VARCHAR, 'Sorting_Order' VARCHAR, 'process_node_id' VARCHAR, 'doc_template_Detail_id' VARCHAR, 'target_object_label' VARCHAR, 'sfID' VARCHAR)"]]; // Damodar OPDoc
     
     if (result == YES)
     {
         
-	NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@',  '%@', '%@', '%@', '%@','%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6,?7, ?8, ?9, ?10, ?11,?12, ?13, ?14)", SFPROCESSCOMPONENT, MPROCESS_ID, MLAYOUT_ID, MTARGET_OBJECT_NAME, MSOURCE_OBJECT_NAME, MEXPRESSION_ID, MOBJECT_MAPPING_ID, MCOMPONENT_TYPE, MPARENT_COLUMN,MVALUE_MAPPING_ID,@"source_child_parent_column", MLOCAL_ID,SORTING_ORDER, process_node_id,MDOC_TEMPLATE_DETAIL_ID]; // Damodar OPDoc
+	NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@',  '%@', '%@', '%@', '%@','%@', '%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6,?7, ?8, ?9, ?10, ?11,?12, ?13, ?14, ?15, ?16)", SFPROCESSCOMPONENT, MPROCESS_ID, MLAYOUT_ID, MTARGET_OBJECT_NAME, MSOURCE_OBJECT_NAME, MEXPRESSION_ID, MOBJECT_MAPPING_ID, MCOMPONENT_TYPE, MPARENT_COLUMN,MVALUE_MAPPING_ID,@"source_child_parent_column", MLOCAL_ID,SORTING_ORDER, process_node_id,MDOC_TEMPLATE_DETAIL_ID,@"target_object_label", @"sfID"]; // Damodar OPDoc
         
         sqlite3_stmt * bulkStmt;
         
@@ -6807,6 +6837,14 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                 char * _doc_template_detail_id = [appDelegate convertStringIntoChar:([dict objectForKey:MDOC_TEMPLATE_DETAIL_ID] != nil)?[dict objectForKey:MDOC_TEMPLATE_DETAIL_ID]:@""];
                 
                 sqlite3_bind_text(bulkStmt, 14, _doc_template_detail_id, strlen(_doc_template_detail_id), SQLITE_TRANSIENT);
+
+                char * _targetObjectLabel = [appDelegate convertStringIntoChar:([dict objectForKey:@"target_object_label"] != nil)?[dict objectForKey:@"target_object_label"]:@""];
+                
+                sqlite3_bind_text(bulkStmt, 15, _targetObjectLabel, strlen(_targetObjectLabel), SQLITE_TRANSIENT);
+                
+                char * _sfID = [appDelegate convertStringIntoChar:([dict objectForKey:@"sfID"] != nil)?[dict objectForKey:@"sfID"]:@""];
+                
+                sqlite3_bind_text(bulkStmt, 16, _sfID, strlen(_sfID), SQLITE_TRANSIENT);
 
                 if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
@@ -7478,31 +7516,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
             else
             {
                 SMLog(@" ************ Update Attachments query ************ %@ \n DIDNOT WORK!!!! ***************** ", updateQuery);
-                //                [self writeSignatureToSFDC:SFID];
             }
-            
-            /*
-             
-             ******************** Not needed : Added just for verification ********************
-             
-             NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-             NSString *saveDirectory = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"OutputDocs"];
-             
-             NSString *filePath = [saveDirectory stringByAppendingPathComponent:fileName];
-             
-             NSString *pathExtension = [filePath pathExtension];
-             NSString *newFileName = [[[filePath stringByDeletingPathExtension] stringByAppendingFormat:@"_%@",Id] stringByAppendingPathExtension:pathExtension];
-             
-             NSFileManager * fileManager = [NSFileManager defaultManager];
-             BOOL isDir;
-             if(![fileManager fileExistsAtPath:saveDirectory isDirectory:&isDir])
-             {
-             [fileManager createDirectoryAtPath:saveDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
-             }
-             
-             [fileManager createFileAtPath:newFileName contents:bodyData attributes:nil];
-             
-             */
         }
         didRcvAttachment = YES;
     }
@@ -8407,13 +8421,13 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     }
     id_value = 0;
     
-    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFExpressionComponent ('local_id' INTEGER PRIMARY KEY  NOT NULL ,'expression_id' VARCHAR,'component_sequence_number' VARCHAR,'component_lhs' VARCHAR,'component_rhs' VARCHAR,'operator'CHAR)"]];
+    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFExpressionComponent ('local_id' INTEGER PRIMARY KEY  NOT NULL ,'expression_id' VARCHAR,'component_sequence_number' VARCHAR,'component_lhs' VARCHAR,'component_rhs' VARCHAR,'operator'CHAR,'field_type' TEXT,'expression_type' TEXT,'parameter_type' TEXT)"]];
     
     if (result == YES)
     {
         [self beginTransaction];
         
-        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6)", SFEXPRESSIONCOMPONENT, MEXPRESSION_ID, MCOMPONENT_SEQ_NUM, MCOMPONENT_LHS, MCOMPONENT_RHS, MOPERATOR, MLOCAL_ID];
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)", SFEXPRESSIONCOMPONENT, MEXPRESSION_ID, MCOMPONENT_SEQ_NUM, MCOMPONENT_LHS, MCOMPONENT_RHS, MOPERATOR, MLOCAL_ID,MEXPRESSION_TYPE,MPARAMETER_TYPE,MFIELD_TYPE];
         
         sqlite3_stmt * bulkStmt;
         
@@ -8453,7 +8467,17 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                 sqlite3_bind_text(bulkStmt, 5, _operator, strlen(_operator), SQLITE_TRANSIENT);
                 
                 sqlite3_bind_int(bulkStmt, 6, ++id_value);
+                char * _expressionType = [appDelegate convertStringIntoChar:([dict objectForKey:MEXPRESSION_TYPE] != nil)?[dict objectForKey:MEXPRESSION_TYPE]:@""];
                 
+                sqlite3_bind_text(bulkStmt, 7, _expressionType, strlen(_expressionType), SQLITE_TRANSIENT);
+                
+                char * _parameterType = [appDelegate convertStringIntoChar:([dict objectForKey:MPARAMETER_TYPE] != nil)?[dict objectForKey:MPARAMETER_TYPE]:@""];
+                sqlite3_bind_text(bulkStmt, 8, _parameterType, strlen(_parameterType), SQLITE_TRANSIENT);
+                
+                char * _fieldType = [appDelegate convertStringIntoChar:([dict objectForKey:MFIELD_TYPE] != nil)?[dict objectForKey:MFIELD_TYPE]:@""];
+                
+                sqlite3_bind_text(bulkStmt, 9, _fieldType, strlen(_fieldType), SQLITE_TRANSIENT);
+
                 if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed - SFEXPRESSIONCOMPONENT!\n");
@@ -8859,10 +8883,162 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     // Vipin-db-optmz
     result = [self createTable:[NSString stringWithFormat:@"CREATE INDEX IF NOT EXISTS SFNamedSearchComponentIndex ON SFNamedSearchComponent (field_name, search_object_field_type, sequence,field_type,field_relationship_name )"]];
 
-    
+    [self insertValuesIntoProcessBusinessRuleTable:processDictionary];
+    [self insertValuesIntoBusinessRuleTable:processDictionary];
     appDelegate.wsInterface.didGetPageDataDb = TRUE;
 }
 
+- (void) insertValuesIntoProcessBusinessRuleTable:(NSDictionary *)processDictionary
+{
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS ProcessBusinessRule ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'Id' VARCHAR, 'business_rule' VARCHAR, 'error_msg' VARCHAR, 'name' VARCHAR,  'process_node_object' VARCHAR, 'sequence' VARCHAR, 'target_manager' VARCHAR)"]];
+    
+    int id_value = 0;
+    if (result == YES)
+    {
+        result = [self createTable:[NSString stringWithFormat:@"CREATE INDEX IF NOT EXISTS ProcessBusinessRuleIndex ON ProcessBusinessRule (business_rule, error_msg, sequence,process_node_object,target_manager )"]];
+        
+        NSArray * processBusinessRules = [processDictionary objectForKey:SFM_PROCESS_BUSINESS_RULE];
+        
+        char * err;
+        
+        NSString * txnstmt = @"BEGIN TRANSACTION";
+        
+        int exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+        
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@' ) VALUES (?1, ?2, ?3, ?4, ?5, ?6,?7, ?8)", SFPROCESSBUSINESSRULE, @"Id", @"business_rule", @"error_msg", @"name", @"process_node_object", @"sequence", @"target_manager", MLOCAL_ID];
+        
+        sqlite3_stmt * bulkStmt;
+        
+        int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
+        
+        if (ret_value == SQLITE_OK)
+        {
+            for (int i = 0; i < [processBusinessRules count]; i++)
+            {
+                NSDictionary * processBusinessRule = [processBusinessRules objectAtIndex:i];
+                
+                NSString * processBusinessRuleID = ([processBusinessRule objectForKey:@"Id"] != nil)?[processBusinessRule objectForKey:@"Id"]:@"";
+				char * _ruleID = [appDelegate convertStringIntoChar:processBusinessRuleID];
+                sqlite3_bind_text(bulkStmt, 1, _ruleID, strlen(_ruleID), SQLITE_TRANSIENT);
+				
+                NSString * businessRule = ([processBusinessRule objectForKey:@"business_rule"] != nil)?[processBusinessRule objectForKey:@"business_rule"]:@"";
+				char * _businessRule = [appDelegate convertStringIntoChar:businessRule];
+                sqlite3_bind_text(bulkStmt, 2, _businessRule, strlen(_businessRule), SQLITE_TRANSIENT);
+                
+				NSString * errorMessage = ([processBusinessRule objectForKey:@"error_msg"] != nil)?[processBusinessRule objectForKey:@"error_msg"]:@"";
+				char * _errorMessage = [appDelegate convertStringIntoChar:errorMessage];
+                sqlite3_bind_text(bulkStmt, 3, _errorMessage, strlen(_errorMessage), SQLITE_TRANSIENT);
+                
+				NSString * name = ([processBusinessRule objectForKey:@"name"] != nil)?[processBusinessRule objectForKey:@"name"]:@"";
+				char * _name = [appDelegate convertStringIntoChar:name];
+                sqlite3_bind_text(bulkStmt, 4, _name, strlen(_name), SQLITE_TRANSIENT);
+                
+				NSString * processNodeObject = ([processBusinessRule objectForKey:@"process_node_object"] != nil)?[processBusinessRule objectForKey:@"process_node_object"]:@"";
+				char * _processNodeObject = [appDelegate convertStringIntoChar:processNodeObject];
+                sqlite3_bind_text(bulkStmt, 5, _processNodeObject, strlen(_processNodeObject), SQLITE_TRANSIENT);
+                
+                NSString * sequence = ([processBusinessRule objectForKey:@"sequence"] != nil)?[processBusinessRule objectForKey:@"sequence"]:@"";
+				char * _sequence = [appDelegate convertStringIntoChar:sequence];
+                sqlite3_bind_text(bulkStmt, 6, _sequence, strlen(_sequence), SQLITE_TRANSIENT);
+                
+				NSString * targetManager = ([processBusinessRule objectForKey:@"target_manager"] != nil)?[processBusinessRule objectForKey:@"target_manager"]:@"";
+				char * _targetManager = [appDelegate convertStringIntoChar:targetManager];
+                sqlite3_bind_text(bulkStmt, 7, _targetManager, strlen(_targetManager), SQLITE_TRANSIENT);
+                
+                sqlite3_bind_int(bulkStmt, 8, ++id_value);
+                
+                if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
+                {
+                    printf("Commit Failed!\n");
+                }
+                
+                sqlite3_reset(bulkStmt);
+            }
+        }
+        txnstmt = @"END TRANSACTION";
+        exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+    }
+}
+- (void) insertValuesIntoBusinessRuleTable:(NSDictionary *)processDictionary
+{
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS BusinessRule ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'Id' VARCHAR,'advanced_expression' VARCHAR, 'description' VARCHAR, 'error_msg' VARCHAR, 'message_type' VARCHAR,  'name' VARCHAR, 'process_ID' VARCHAR, 'source_object_name' VARCHAR)"]];
+    
+    int id_value = 0;
+    if (result == YES)
+    {
+        result = [self createTable:[NSString stringWithFormat:@"CREATE INDEX IF NOT EXISTS BusinessRuleIndex ON BusinessRule (Id, description, error_msg,message_type,name,process_ID,source_object_name )"]];
+        
+        NSArray * sfmBusinessRule = [processDictionary objectForKey:SFM_BUSINESS_RULE];
+        
+        char * err;
+        
+        NSString * txnstmt = @"BEGIN TRANSACTION";
+        //BusinessRule
+        int exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+        
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@','%@' ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)", SFBUSINESSRULE, @"Id", @"advanced_expression", @"description", @"error_msg", @"message_type", @"name", @"process_ID", @"source_object_name",MLOCAL_ID];
+        
+        sqlite3_stmt * bulkStmt;
+        
+        int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
+        
+        if (ret_value == SQLITE_OK)
+        {
+            for (int i = 0; i < [sfmBusinessRule count]; i++)
+            {
+                NSDictionary * businessRule = [sfmBusinessRule objectAtIndex:i];
+                
+                NSString * recordId = ([businessRule objectForKey:@"Id"] != nil)?[businessRule objectForKey:@"Id"]:@"";
+				char * _recordId = [appDelegate convertStringIntoChar:recordId];
+                sqlite3_bind_text(bulkStmt, 1, _recordId, strlen(_recordId), SQLITE_TRANSIENT);
+				
+                NSString *advExpression = ([businessRule objectForKey:@"advanced_expression"] != nil)?[businessRule objectForKey:@"advanced_expression"]:@"";
+                
+				char * _advExpression = [appDelegate convertStringIntoChar:advExpression];
+                
+                sqlite3_bind_text(bulkStmt, 2, _advExpression, strlen(_advExpression), SQLITE_TRANSIENT);
+				
+                NSString * description = ([businessRule objectForKey:@"description"] != nil)?[businessRule objectForKey:@"description"]:@"";
+				char * _description = [appDelegate convertStringIntoChar:description];
+                
+                sqlite3_bind_text(bulkStmt, 3, _description, strlen(_description), SQLITE_TRANSIENT);
+				
+                
+                NSString *errorMsg = ([businessRule objectForKey:@"error_msg"] != nil)?[businessRule objectForKey:@"error_msg"]:@"";
+				char * _errorMsg = [appDelegate convertStringIntoChar:errorMsg];
+                
+                sqlite3_bind_text(bulkStmt, 4, _errorMsg, strlen(_errorMsg), SQLITE_TRANSIENT);
+				
+                NSString *messageType = ([businessRule objectForKey:@"message_type"] != nil)?[businessRule objectForKey:@"message_type"]:@"";
+				char * _messageType = [appDelegate convertStringIntoChar:messageType];
+                sqlite3_bind_text(bulkStmt, 5, _messageType, strlen(_messageType), SQLITE_TRANSIENT);
+                
+                NSString *name = ([businessRule objectForKey:@"name"] != nil)?[businessRule objectForKey:@"name"]:@"";
+				char * _name = [appDelegate convertStringIntoChar:name];
+                sqlite3_bind_text(bulkStmt, 6, _name, strlen(_name), SQLITE_TRANSIENT);
+				
+                NSString *processId = ([businessRule objectForKey:@"process_ID"] != nil)?[businessRule objectForKey:@"process_ID"]:@"";
+				char * _processID = [appDelegate convertStringIntoChar:processId];
+                sqlite3_bind_text(bulkStmt, 7, _processID, strlen(_processID), SQLITE_TRANSIENT);
+                
+                NSString *sourceObjectName = ([businessRule objectForKey:@"source_object_name"] != nil)?[businessRule objectForKey:@"source_object_name"]:@"";
+				char * _sourceObjectName = [appDelegate convertStringIntoChar:sourceObjectName];
+                sqlite3_bind_text(bulkStmt, 8, _sourceObjectName, strlen(_sourceObjectName), SQLITE_TRANSIENT);
+                
+                sqlite3_bind_int(bulkStmt, 9, ++id_value);
+                
+                if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
+                {
+                    printf("Commit Failed!\n");
+                }
+                
+                sqlite3_reset(bulkStmt);
+            }
+        }
+        txnstmt = @"END TRANSACTION";
+        exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+    }
+}
 
 - (void) insertValuesInToTagsTable:(NSMutableDictionary *)tagsDictionary
 {
@@ -14130,7 +14306,6 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                     [recordDict setObject:@"" forKey:[columnsArray objectAtIndex:i]];
                 }
             }
-            NSLog(@"Record = %@",recordDict);
             [result addObject:recordDict];
             [recordDict release];
             [pool drain];
