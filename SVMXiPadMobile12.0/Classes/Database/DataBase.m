@@ -6585,7 +6585,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                     if ((_sfID != nil) && strlen(_sfID))
                         sfID = [NSString stringWithUTF8String:_sfID];
     
-                    NSArray * objects = [NSArray arrayWithObjects:processId, layoutId, targetName, sourceName, expressionId, oMappingId, componentType, parentColumn, vMappingid,sorting_order_value,processnode_id, doc_temp_detail_id, nil]; // Damodar -OPDoc
+                    NSArray * objects = [NSArray arrayWithObjects:processId, layoutId, targetName, sourceName, expressionId, oMappingId, componentType, parentColumn, vMappingid,sorting_order_value,processnode_id, doc_temp_detail_id, targetObjectLabel, sfID, nil]; // Damodar -OPDoc
                     
                     NSDictionary * dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
                     NSArray * arr = [NSArray arrayWithObject:dict];
@@ -6977,7 +6977,6 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 // damodar OPDOCS
 - (void) didGetPDFAttachmentWithResult:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
-    NSLog(@"result %@ error :%@",result, error);
     // Store the image in a appDelegate UIImage
     
     NSArray * array = [result records];
@@ -7007,6 +7006,9 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
             
             NSFileManager * fileManager = [NSFileManager defaultManager];
             
+            if(![[newFileName pathExtension] isEqualToString:@"pdf"])
+                newFileName = [[newFileName stringByDeletingPathExtension] stringByAppendingPathExtension:@"pdf"];
+            
             [fileManager createFileAtPath:newFileName contents:bodyData attributes:nil];
             
             
@@ -7033,8 +7035,9 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
             [self deleteRequiredPdfForAttachement:Id];
             
         }
-        didRcvAttachment = YES;
+        
     }
+    didRcvAttachment = YES;
 }
 
 //krishna OPDOCS

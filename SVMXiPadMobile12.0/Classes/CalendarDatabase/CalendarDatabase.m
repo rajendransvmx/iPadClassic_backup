@@ -3051,6 +3051,9 @@ extern void SVMXLog(NSString *format, ...);
     NSMutableArray *opdocsArray = [self getAllOPDocsArray];
     NSMutableArray * docs_= [[NSMutableArray alloc] init];
     
+    if((opdocsArray == nil) || ([opdocsArray count] == 0))
+        appDelegate.wsInterface.didWriteOPDOC = YES;
+    
     for(NSMutableDictionary *dict in opdocsArray) {
         
         NSString * obj_api_name = [dict objectForKey:@"object_api_name"];
@@ -3062,7 +3065,7 @@ extern void SVMXLog(NSString *format, ...);
         opdocName = [opdocName stringByAppendingPathExtension:@"html"];
         [docs_ addObject:opdocName];
         [self attachHtmlDataTOSFDCForLocalId:localId sfid:sf_id opdocName:opdocName forProcessId:processId];
-        appDelegate.wsInterface.didWriteOPDOC = YES;
+        
         
     }
     
@@ -3189,9 +3192,10 @@ extern void SVMXLog(NSString *format, ...);
 //krishna opdoc
 - (void) opDocumentAttached:(NSString * )result withError:(NSError *)error forSFID:(NSString *)sfid andProcessID:(NSString *)processId {
     
-    [appDelegate.dataBase insertIntoRequiredPdf:sfid processId:processId andAttachmentId:result];
+    if(([result length] != 0) && (result != nil))
+        [appDelegate.dataBase insertIntoRequiredPdf:sfid processId:processId andAttachmentId:result];
     //store the data in database in required pdf table
-    
+    appDelegate.wsInterface.didWriteOPDOC = YES;
 }
 //krishna opdoc
 - (NSMutableArray *) retrieveAllSignatureOfOutputDocForId:(NSString *)signId {
