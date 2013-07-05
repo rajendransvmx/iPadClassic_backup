@@ -9,8 +9,11 @@
 #import <Foundation/Foundation.h>
 #include <sqlite3.h>
 
+#import "OPDocViewController.h"
+
+
 @class iServiceAppDelegate;
-@interface CalendarDatabase : NSObject
+@interface CalendarDatabase : NSObject <PDFCreatorDelegate>
 {
     NSString *dbFilePath;
     NSMutableArray *resultArray;
@@ -30,6 +33,8 @@
     BOOL settingsPresent;
     
 }
+//krishna OPDOC refernce
+@property (nonatomic, assign) OPDocViewController *opDocController;
 
 @property (nonatomic, retain) NSString *dbFilePath;
 //@property (nonatomic, retain) NSString *whatId1;
@@ -112,17 +117,45 @@
 - (NSMutableArray *) retrieveManualsForProductWithId:(NSString *)productId;
 - (NSData *) retrieveProductManualWithManID:(NSString *)Id andManName:(NSString *)ManName;
 
+//krishna opdoc html data
+- (void) insertOPDocHtmlData:(NSData *)htmlData WithId:(NSString *)docId localId:(NSString *)recordId  apiName:(NSString *)opdocApiName WONumber:(NSString *)WONumber docNsme:(NSString *)documentName forProcessId:(NSString *)processId;
+- (void)syncOutPutDoc;
+- ( NSMutableDictionary *) getAllLocalIdsForOPDOCData;
+//krishna opdoc html data
+
+- (NSString  *)getOPDocNameAndSFidforLocalId:(NSString *)localId andObjectName:(NSString *)objName;
+- (void) attachHtmlDataTOSFDCForLocalId:(NSString *)localId sfid:(NSString *)sfid opdocName:(NSString *)docName forProcessId:(NSString *)processId;
+- (NSData *) retrieveOPDOCData:(NSString *)Id;
+- (BOOL) isSignatureExistsForOpDoc:(NSString *)signId type:(NSString *)sign_type tableName:(NSString *)tableName;
+- (BOOL)isDocExistsFor:(NSString *)local_id tableName:(NSString *)tableName;
+- (NSString *) getSFIdOfDocForlocalId:(NSString *)name;
+
+- (void) deleteAllSignatureData:(NSString *)operationTYpe andSignType:(NSString *)signType;
+- (void) getAllLocalIdsForSignature:(NSString *)operation_type andSignType:(NSString *)sigType;
+//krishnasign
+- (void) deleteOPDocSignatureForSignId:(NSString *)signId andSignType:(NSString *)signType ;
+- (void) deleteSignatureForOPDocWhereLikeSignId:(NSString *)sign andSignType:(NSString *)signType;
+- (void) getSFIdForSignature:(NSString *)localId objectName:(NSString *)objectName signatureTyprId:(NSString *)sigTypeId andSignType:(NSString *)sigType;
+- (void) writeSignatureToSFDC:(NSString *)SFId andSignType:(NSString *)signType forSignId:(NSString *)signTypeId;
+- (NSMutableArray *) retrieveAllSignatureOfOutputDocForId:(NSString *)signId;
 
 //radha - Signature Controller
-- (void) insertSignatureData:(NSData *)signatureData WithId:(NSString *)signatureId RecordId:(NSString *)recordId                  apiName:(NSString *)oApiName WONumber:(NSString *)WONumber flag:(NSString *)sign_type;
+- (void) insertSignatureData:(NSData *)signatureData WithId:(NSString *)signatureId RecordId:(NSString *)recordId                  apiName:(NSString *)oApiName WONumber:(NSString *)WONumber flag:(NSString *)sign_type andSignName:(NSString *)signName;
 - (NSData *) retreiveSignatureimage:(NSString *)WONumber recordId:(NSString *)recordId;
 - (void) deleteSignature:(NSString *)WONumber;
-- (void) deleteAllSignatureData:(NSString *) operationType;
+
+//krishnasign changed method
+
+//- (void) deleteAllSignatureData:(NSString *) operationType;
 //shrinivas
-- (void) getSFIdForSignature:(NSString *)localId objectName:(NSString *)objectName;   //Method to be called only after Data Sync 
+//- (void) getSFIdForSignature:(NSString *)localId objectName:(NSString *)objectName;   //Method to be called only after Data Sync
+
 - (void) retrieveSignatureFromSFDC:(NSString *)ID;
-- (void) writeSignatureToSFDC:(NSString *)SFId;
-- (void) getAllLocalIdsForSignature:(NSString *)operation_type;
+
+//krishnasign changed method
+//- (void) getAllLocalIdsForSignature:(NSString *)operation_type;
+//- (void) writeSignatureToSFDC:(NSString *)SFId;
+
 //Radha
 - (void) deleteSignatureDataWRTId:(NSString *)local_id  type:(NSString *)operationType;
 
@@ -359,6 +392,5 @@
 #define DOCUMENTS_ID                       @"DocId"
 #define DOCUMENTS_NAME                     @"Name"
 #define DOCUMENTS_KEYWORDS                 @"Keywords"
-
 
 @end

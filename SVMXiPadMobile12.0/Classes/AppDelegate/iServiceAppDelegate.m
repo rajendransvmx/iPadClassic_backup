@@ -15,6 +15,7 @@
 #import <SystemConfiguration/SystemConfiguration.h>
 #import "SFHFKeychainUtils.h"
 #import <sys/utsname.h>
+#import "SSZipArchive.h"//Damodar - OPDocs
 
 extern void SVMXLog(NSString *format, ...);
 
@@ -165,6 +166,10 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 //================================================================
 
 @implementation iServiceAppDelegate
+
+//Damodar - OPDocs
+@synthesize did_fetch_static_resource_ids;
+
 //RADHA Defect Fix 5542
 @synthesize shouldScheduleTimer;
 @synthesize isDataSyncTimerTriggered;
@@ -387,7 +392,6 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize errorDescription;
 @synthesize language;
 @synthesize isSfmSearchSortingAvailable;
-
 
 -(BOOL)shouldAutorotate
 {
@@ -691,9 +695,76 @@ NSString* machineName()
     [svmxc_client.clientInfo addObject:[clientInfoDict objectForKey:applicationVersion]];
     [svmxc_client.clientInfo addObject:[clientInfoDict objectForKey:devVersion]];
     
+    [self moveJavascriptFiles];
+    
 	return YES;
 }
 
+- (void)moveJavascriptFiles
+{
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSString *resourcePath = [[NSBundle mainBundle] resourcePath];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDir = [paths objectAtIndex:0]; // Get documents folder
+    
+    if([fm fileExistsAtPath:[documentsDir stringByAppendingPathComponent:@"OutputDocs.js"]])
+        [fm removeItemAtPath:[documentsDir stringByAppendingPathComponent:@"OutputDocs.js"] error:NULL];
+    if([fm fileExistsAtPath:[documentsDir stringByAppendingPathComponent:@"CommunicationBridgeJS.js"]])
+        [fm removeItemAtPath:[documentsDir stringByAppendingPathComponent:@"CommunicationBridgeJS.js"] error:NULL];
+    if([fm fileExistsAtPath:[documentsDir stringByAppendingPathComponent:@"Utility.js"]])
+        [fm removeItemAtPath:[documentsDir stringByAppendingPathComponent:@"Utility.js"] error:NULL];
+    if([fm fileExistsAtPath:[documentsDir stringByAppendingPathComponent:@"DataAcessLayer.js"]])
+        [fm removeItemAtPath:[documentsDir stringByAppendingPathComponent:@"DataAcessLayer.js"] error:NULL];
+    
+    [fm copyItemAtPath:[resourcePath stringByAppendingPathComponent:@"Utility.js"] toPath:[documentsDir stringByAppendingPathComponent:@"Utility.js"] error:NULL];
+    [fm copyItemAtPath:[resourcePath stringByAppendingPathComponent:@"OutputDocs.js"] toPath:[documentsDir stringByAppendingPathComponent:@"OutputDocs.js"] error:NULL];
+    [fm copyItemAtPath:[resourcePath stringByAppendingPathComponent:@"CommunicationBridgeJS.js"] toPath:[documentsDir stringByAppendingPathComponent:@"CommunicationBridgeJS.js"] error:NULL];
+    [fm copyItemAtPath:[resourcePath stringByAppendingPathComponent:@"DataAcessLayer.js"] toPath:[documentsDir stringByAppendingPathComponent:@"DataAcessLayer.js"] error:NULL];
+    [fm copyItemAtPath:[resourcePath stringByAppendingPathComponent:@"svmx_client_api.js"] toPath:[documentsDir stringByAppendingPathComponent:@"svmx_client_api.js"] error:NULL];
+    [fm copyItemAtPath:[resourcePath stringByAppendingPathComponent:@"iOStoJsBridge.js"] toPath:[documentsDir stringByAppendingPathComponent:@"iOStoJsBridge.js"] error:NULL];
+
+}
+
+// Damodar - OPDoc
+- (void)installCoreLibrary
+{
+    NSString *resourcePath = [[NSBundle mainBundle] resourcePath];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDir = [paths objectAtIndex:0]; // Get documents folder
+
+    [SSZipArchive unzipFileAtPath:[resourcePath stringByAppendingPathComponent:@"com.servicemax.client.zip"] toDestination:documentsDir];
+    [SSZipArchive unzipFileAtPath:[resourcePath stringByAppendingPathComponent:@"com.servicemax.client.lib.zip"] toDestination:documentsDir];
+    [SSZipArchive unzipFileAtPath:[resourcePath stringByAppendingPathComponent:@"com.servicemax.client.mvc.zip"] toDestination:documentsDir];
+    [SSZipArchive unzipFileAtPath:[resourcePath stringByAppendingPathComponent:@"com.servicemax.client.runtime.zip"] toDestination:documentsDir];
+    [SSZipArchive unzipFileAtPath:[resourcePath stringByAppendingPathComponent:@"com.servicemax.client.sfmbizrules.zip"] toDestination:documentsDir];
+    [SSZipArchive unzipFileAtPath:[resourcePath stringByAppendingPathComponent:@"com.servicemax.client.sfmconsole.zip"] toDestination:documentsDir];
+    [SSZipArchive unzipFileAtPath:[resourcePath stringByAppendingPathComponent:@"com.servicemax.client.sfmopdocdelivery.zip"] toDestination:documentsDir];
+    [SSZipArchive unzipFileAtPath:[resourcePath stringByAppendingPathComponent:@"com.servicemax.client.sfmopdocdelivery.model.zip"] toDestination:documentsDir];
+    [SSZipArchive unzipFileAtPath:[resourcePath stringByAppendingPathComponent:@"com.servicemax.client.tablet.sal.sfmopdoc.model.zip"] toDestination:documentsDir];
+}
+
+- (void)clearDocumentDirectoryForOPDOCS {
+    
+    NSFileManager *fManager = [NSFileManager defaultManager];
+    NSString *item;
+    NSArray *contents = [fManager contentsOfDirectoryAtPath:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents"] error:nil];
+    NSString *databaseFileName = [NSString stringWithFormat:@"%@.%@", DATABASENAME1,DATABASETYPE1 ];
+
+    NSString *docDirectoryPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    
+    for (item in contents){
+    
+        NSString *itemPath = [docDirectoryPath stringByAppendingPathComponent:item];
+        if ([item isEqualToString:OBJECT_HISTORY_PLIST] ||[item isEqualToString:DOWNLOAD_CRITERIA_PLIST] || [item isEqualToString:SYNC_HISTORY] || [item isEqualToString:SESSION_INFO] || [item isEqualToString:USER_INFO_PLIST] || [item isEqualToString:@"processInfo.plist"]||[item isEqualToString:databaseFileName]) {
+            continue;
+        }
+        else {
+            [fManager removeItemAtPath:itemPath error:nil];
+        }
+    }
+    
+    
+}
 //Called by Reachability whenever status changes.
 - (void) reachabilityChanged: (NSNotification* )note
 {

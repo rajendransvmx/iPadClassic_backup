@@ -237,6 +237,9 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
 
 }
 
+// SFM OPDocs
+@property (nonatomic, retain) JSExecuter *executer;
+
 @property (nonatomic) BOOL EventUpdate_Continue;
 //0:uninitialized
 //1:first controller flag

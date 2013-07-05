@@ -908,7 +908,7 @@ extern void SVMXLog(NSString *format, ...);
             workOrderNumber = [WONumner substringFromIndex:7];
     }
     
-    [AppDelegate.calDataBase insertSignatureData:encryptedImage WithId:WONumner RecordId:recordId apiName:objectApiName WONumber:WONumner flag:@"ServiceReport"];
+    [AppDelegate.calDataBase insertSignatureData:encryptedImage WithId:WONumner RecordId:recordId apiName:objectApiName WONumber:WONumner flag:@"ServiceReport" andSignName:@""];
 	}@catch (NSException *exp) {
 	SMLog(@"Exception Name SmmaryViewController :setTotalCost %@",exp.name);
 	SMLog(@"Exception Reason SummaryViewController :setTotalCost %@",exp.reason);

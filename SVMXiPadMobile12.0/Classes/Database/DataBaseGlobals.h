@@ -13,7 +13,45 @@
 
 #endif
 
+#define doc_template_id             @"doc_template_id"
 
+// Start: SFM OP Docs
+#define STATIC_RESOURCE_KEY         @"STATIC_RESOURCE"
+#define STATIC_RESOURCE             @"StaticResource"
+#define STATIC_RES_ID               @"Id"
+#define STATIC_RES_NAME             @"Name"
+
+#define SFDOC_TEMPLATE              @"DOC_TEMPLATE"
+
+#define doc_template_name           @"doc_template_name"
+#define DOC_detail_object_count     @"detail_object_count"
+#define DOC_Id                      @"Id"
+#define Doc_is_standard             @"is_standard"
+#define MEDIA_RESOURCES             @"media_resources"
+
+#define SFDOC_TEMPLATE_DETAILS      @"DOC_TEMPLATE_DETAILS"
+#define doc_template                @"doc_template"
+#define doc_template_detail_id      @"doc_template_detail_id"
+#define doc_header_ref_fld          @"header_ref_fld"
+#define DOC_alias                   @"alias"
+#define DOC_object_name             @"object_name"
+#define DOC_soql                    @"soql"
+#define doc_template_detail_unique_id @"doc_template_detail_unique_id"
+#define DOC_fields                  @"fields"
+#define DOC_type                    @"type"
+
+
+#define SFDOC_ATTACHMENT            @"ATTACHMENTS"
+#define DOC_name_attchment          @"attachment_name"
+#define DOC_ParentId                @"parent_id"
+#define DOC_BODY                    @"body"
+
+//krishna requiredPDF and signature
+#define SFDOC_REQUIRED_PDF          @"SFRequiredPdf"
+#define SFDOC_REQUIRED_SIGNATURE    @"SFRequiredSignature"
+
+
+// END: SFM OP Docs
 #define User_created_events         @"user_created_events"
 #define Event_local_Ids             @"Event_local_ids"
 #define LOCAL_EVENT_UPDATE          @"local_event_update"
@@ -66,6 +104,10 @@
 #define STANDALONE_CREATE                   @"STANDALONE CREATE"
 #define STANDALONE_EDIT                     @"STANDALONE EDIT"
 #define VIEW_RECORD                         @"VIEW RECORD"
+#define OUTPUT_DOCUMENT                     @"OUTPUT DOCUMENT"
+
+//krishna opdocs
+#define DOCUMENT_TEMPLATE_ID                @"doc_template_id"
 
 //Common
 #define MLOCAL_ID                @"local_id"
@@ -83,6 +125,7 @@
 #define MOBJECT_NAME             @"object_name"
 #define MVALUE_MAPPING_ID        @"value_mapping_id"
 #define MPERFORM_SYNC            @"perform_sync"
+#define MDOC_TEMPLATE_DETAIL_ID  @"doc_template_Detail_id"
 //SYNC Overrride : Radha
 #define MWIZARD_STEP_ID			 @"wizard_step_id"
 
@@ -111,6 +154,9 @@
 #define MRECORDTYPE_LABEL        @"recordtype_label"
 #define MRECORD_TYPE             @"record_type"
 #define MRECORD_TYPE_ID          @"record_type_id"
+
+//krishna opdoc
+#define MATTACHMENT_ID           @"attachment_id"
 
 //SFobject
 #define MKEY_PREFIX              @"key_prefix"
@@ -222,6 +268,7 @@
 #define COLUNMVALUEMAP           8
 #define COLUMNSORTING_ORDER      10
 #define COLUMNPROCESS_NODE       11 
+#define COLUMNDOCTEMP_DETAIL_ID  12
 
 //Tags
 #define COLUMNTAG_ID             0

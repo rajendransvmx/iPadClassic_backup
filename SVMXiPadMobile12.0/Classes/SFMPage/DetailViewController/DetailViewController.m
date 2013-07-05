@@ -14,7 +14,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "LocalizationGlobals.h"
 #import "LookupFieldPopover.h"
-
+#import "OPDocViewController.h"
 #import "SummaryViewController.h"
 #import "TimerClass.h"
 #import "Troubleshooting.h"
@@ -66,6 +66,8 @@ extern void SVMXLog(NSString *format, ...);
 @end
 
 @implementation DetailViewController
+
+@synthesize executer;
 
 //KRI
 @synthesize editDetailObject;
@@ -10198,7 +10200,8 @@ extern void SVMXLog(NSString *format, ...);
     if ([WoNumber isEqualToString:nil] || [WoNumber isEqualToString:@""])
         WoNumber = @"";
     
-    [appDelegate.calDataBase insertSignatureData:imageData WithId:WoNumber RecordId:appDelegate.sfmPageController.recordId apiName:HeaberObjectName WONumber:WoNumber flag:@"ViewWorkOrder"];
+    //krishna opdoc added signName
+    [appDelegate.calDataBase insertSignatureData:imageData WithId:WoNumber RecordId:appDelegate.sfmPageController.recordId apiName:HeaberObjectName WONumber:WoNumber flag:@"ViewWorkOrder" andSignName:@""];
     
     isShowingSignatureCapture = NO;
 }
@@ -10231,6 +10234,26 @@ extern void SVMXLog(NSString *format, ...);
     [(SFMPageController *)delegate presentViewController:help animated:YES completion:nil];
     [help release];
     appDelegate.isDetailActive = NO;
+}
+
+
+- (void)loadOPDocViewControllerForProcessId:(NSString *)processId andRecordId:(NSString *)recordId
+{
+    OPDocViewController *sfmopdoc = [[OPDocViewController alloc] initWithNibName:@"OPDocViewController" bundle:[NSBundle mainBundle] forRecordId:recordId andProcessId:processId];
+    
+    NSMutableDictionary * header_ =  [appDelegate.SFMPage objectForKey:@"header"];
+    NSString * headerObjName = [header_ objectForKey:gHEADER_OBJECT_NAME];
+    
+    NSString * objName = [appDelegate.databaseInterface getObjectName:headerObjName recordId:appDelegate.sfmPageController.recordId];
+        
+    sfmopdoc.opdocTitleString = objName;
+    sfmopdoc.modalPresentationStyle = UIModalPresentationFullScreen;
+	UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:sfmopdoc] autorelease];
+	navController.delegate = sfmopdoc;
+	navController.modalPresentationStyle = UIModalPresentationFullScreen;
+	navController.navigationBar.hidden = NO;
+    [(SFMPageController *)delegate presentViewController:navController animated:YES completion:nil];
+    [sfmopdoc release];
 }
 
 #pragma SummaryViewController Delegate Method
@@ -10283,6 +10306,13 @@ extern void SVMXLog(NSString *format, ...);
     NSString * targetCall = [buttonDict objectForKey:SFW_ACTION_DESCRIPTION];
     NSString * action_type = [buttonDict objectForKey:SFW_ACTION_TYPE];
     NSString * action_process_id = [buttonDict objectForKey:SFW_PROCESS_ID];
+    
+    //Krishna OpDoc
+    
+    
+    NSString * objNameForRecord = [[appDelegate.SFMPage objectForKey:@"header"] objectForKey:gHEADER_OBJECT_NAME];
+      NSString *action_rec_id = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:objNameForRecord local_id:appDelegate.sfmPageController.recordId];
+    
     if([action_type isEqualToString:SFM] ||
        [action_type isEqualToString:@"WEBSERVICE"] ||
        [action_type isEqualToString:@"JAVASCRIPT"] ||
@@ -10544,6 +10574,15 @@ extern void SVMXLog(NSString *format, ...);
                                 [self didReceivePageLayoutOffline];
                             }
                         }
+                    }
+                    
+                    if ( [process_type isEqualToString:@"OUTPUT DOCUMENT"] )
+                    {
+                        
+                        NSLog(@"Output Document!! process id = %@ and record_id = %@",action_process_id,action_rec_id);
+                        
+                        [self loadOPDocViewControllerForProcessId:action_process_id andRecordId:action_rec_id];
+
                     }
                 }
                 //RADHA 2012june07 

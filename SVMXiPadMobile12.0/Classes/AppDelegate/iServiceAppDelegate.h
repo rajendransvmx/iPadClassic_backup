@@ -545,6 +545,10 @@ extern  NSString const *devVersion;
     //sync_override
     DATA_SYNC_TYPE data_sync_type;
 }
+
+//Damodar - OPDocs
+@property (nonatomic) BOOL did_fetch_static_resource_ids;
+
 //RADHA Defect Fix 5542
 @property (nonatomic, assign)BOOL shouldScheduleTimer;
 @property (nonatomic, assign)BOOL isDataSyncTimerTriggered;
@@ -809,6 +813,10 @@ extern  NSString const *devVersion;
 
 //SM Krishna client info
 - (INTF_WebServicesDefServiceSvc_SVMXClient  *) getSVMXClientObject;
+//Krishna OPDOCS
+- (void)clearDocumentDirectoryForOPDOCS;
+- (void)installCoreLibrary;
+- (void)moveJavascriptFiles;
 
 //sahana dec 4th
 -(void)updateMetasyncTimeinSynchistory;

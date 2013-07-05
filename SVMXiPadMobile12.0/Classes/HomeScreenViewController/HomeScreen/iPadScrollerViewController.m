@@ -1742,9 +1742,9 @@ const float progress_ = 0.07;
 {
     
     /* Shravya - Advanced look up- User trunk location */
-    SMLog(@"Shravya-User location update starts");
+    SMLog(@"User location update starts");
     [appDelegate.wsInterface getUserTrunkLocationRequest];
-    SMLog(@"Shravya-User location update ends");
+    SMLog(@"User location update ends");
 
     
     SMLog(@"  DataSync WS Start: %@", [NSDate date]);

@@ -185,6 +185,44 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
++ (void)showLog:(NSString *)loggedMessage {
+    
+    NSLog(@"DALAYER: %@ ",loggedMessage);
+}
+
++ (NSDictionary *) getParameterDictionaryFromURL:(NSString *) urlParams {
+    
+    NSArray *componentsArray =  [urlParams componentsSeparatedByString:@"&"];
+    if ([componentsArray count] <= 0) {
+        return nil;
+    }
+    
+    NSMutableDictionary *parameterDictionary = [[NSMutableDictionary alloc] init];
+    for (NSString *component in componentsArray) {
+        
+        NSArray *subComponents = [component componentsSeparatedByString:@"="];
+        NSString *fieldName = nil, *fieldValue = nil;
+        
+        if ([subComponents count] > 0) {
+            fieldName = [subComponents objectAtIndex:0];
+        }
+        
+        if ([subComponents count] > 1) {
+            fieldValue = [subComponents objectAtIndex:1];
+        }
+        
+        if (![Utility isStringEmpty:fieldName] && ![Utility isStringEmpty:fieldValue] ) {
+            
+            fieldName = [fieldName stringByTrimmingCharactersInSet:[NSCharacterSet  whitespaceAndNewlineCharacterSet]];
+            fieldValue = [fieldValue stringByTrimmingCharactersInSet:[NSCharacterSet  whitespaceAndNewlineCharacterSet]];
+            [parameterDictionary setObject:fieldValue forKey:fieldName];
+        }
+    }
+    
+    return [parameterDictionary autorelease];
+    
+}
+
 #pragma mark-
 #pragma mark Literal utilities
 + (NSString *)today:(NSInteger)numberOfDays andJusDate:(BOOL)isDateOnly{

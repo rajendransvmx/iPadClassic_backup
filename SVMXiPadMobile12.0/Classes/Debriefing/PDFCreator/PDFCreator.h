@@ -13,12 +13,13 @@
 #import "iOSInterfaceObject.h"
 #include <CoreText/CoreText.h>
 
-@protocol PDFCreatorDelegate
+@protocol PDFCreatorDelegate<NSObject>
 
 @optional
 - (void) attachPDF:(NSString *)pdf target:(id)target;
 - (void) CloseServiceReport:(id)sender;
-
+//krishna opdoc sending error
+- (void) opDocumentAttached:(NSString * )result withError:(NSError *)error forSFID:(NSString *)sfid andProcessID:(NSString *)processId;
 @end
 
 
@@ -131,6 +132,9 @@
 - (void) showServiceReportForId:(NSString *)woId fileName:(NSString *)saveFileName;
 - (void) getServiceReport:(NSString *)filename;
 - (void) didQueryAttachmentForServiceReport:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
+
+//Krishna Opdoc
+- (void) attachOPDOC:(NSString *)opdoc andDocName:(NSString *)docName forSFId:(NSString *)sf_id andProcessId:(NSString *)processId ;
 
 // PDF Creation API
 - (void) CreatePDF;

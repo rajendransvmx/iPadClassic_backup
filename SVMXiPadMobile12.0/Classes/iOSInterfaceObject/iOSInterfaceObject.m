@@ -318,9 +318,56 @@ extern void SVMXLog(NSString *format, ...);
     
     [_query release];
 }
-
+//krishnasign
 #pragma mark - Signature Capture
-- (void) setSignImageData:(NSData *)imageData WithId:(NSString *)SFId WithImageName:(NSString *)imageName
+- (BOOL) isSignatureForOPDOC:(NSString *)sfId andUniqueId:(NSString *)uniqueId {
+    
+    
+    //since sig-id will be updated by sfid
+    NSString *sqlQuery = [NSString  stringWithFormat:@"select COUNT(*) from SFSignatureData where sig_Id = '%@' and signature_type_id = '%@'  and sign_type = 'OPDOC'",sfId,uniqueId];
+    
+    sqlite3_stmt *selectStmt = nil;
+    int count = 0;
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, NULL) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(selectStmt) == SQLITE_ROW)
+        {
+            count = synchronized_sqlite3_column_int(selectStmt, 0);
+        }
+    }
+    
+    if (count > 0)
+        return TRUE;
+    else
+        return FALSE;
+}
+//krishnasign
+- (NSString *)nameForFile:(NSString *)sfid andSignatureId:(NSString *)sigUniqueId {
+    
+    NSString * signatureString = @"";
+    NSString * sigId = @"";
+    NSString * selectQuery = [NSString stringWithFormat:@"Select WorkOrderNumber from SFSignatureData Where sig_Id = '%@' and sign_type = 'OPDOC' and signature_type_id = '%@'", sfid,sigUniqueId];
+    sqlite3_stmt * stmt;
+
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        if (synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            char *field = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_1);
+            if ( field != nil )
+                signatureString = [NSString stringWithUTF8String:field];
+            
+            char *field1 = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_2);
+            if ( field1 != nil )
+                sigId = [NSString stringWithUTF8String:field1];
+        }
+    }
+    synchronized_sqlite3_finalize(stmt);
+    NSString *file = [NSString stringWithFormat:@"%@_%@.png",signatureString,sigUniqueId];
+    return file;
+}
+- (void) setSignImageData:(NSData *)imageData WithId:(NSString *)SFId WithRecordId:(NSString *)recordId andSignId:(NSString *)sign
 {
     // Cut the workOrderId to 15 chars from left
     NSString * fileName = SFId;
@@ -328,7 +375,19 @@ extern void SVMXLog(NSString *format, ...);
         fileName = [SFId substringToIndex:15];
     }
     
+    
     fileName = [NSString stringWithFormat:@"%@_sign.png", fileName];
+    
+    //krishnasign
+    BOOL isOpdoc = [self isSignatureForOPDOC:SFId andUniqueId:sign];
+    NSString *opdocTypeId = @"";
+    if(isOpdoc) {
+        fileName = [sign stringByAppendingPathExtension:@"png"];
+        if(![fileName isEqualToString:@""] || fileName != nil)
+            //second half consists of opdoc_signature_id
+        opdocTypeId = [fileName stringByDeletingPathExtension];
+    
+    }
     SMLog(@"%@", fileName);
     
     didRemovePreviousSignature = NO;
@@ -360,7 +419,14 @@ extern void SVMXLog(NSString *format, ...);
     [obj setFieldValue:SFId field:@"ParentId"];
     [obj setFieldValue:@"False" field:@"isPrivate"];
     NSArray * array = [[NSArray alloc] initWithObjects:obj, nil];
-    [[ZKServerSwitchboard switchboard] create:array target:self selector:@selector(didAttachSignature:error:context:) context:nil];
+    
+    NSNumber *isSignatureForOpDoc = [NSNumber numberWithBool:isOpdoc];
+    
+    NSMutableDictionary *contextDict = [NSMutableDictionary dictionary];
+    [contextDict setObject:sign forKey:@"signid"];
+    [contextDict setObject:isSignatureForOpDoc forKey:@"isopdoc"];
+    
+    [[ZKServerSwitchboard switchboard] create:array target:self selector:@selector(didAttachSignature:error:context:) context:contextDict];
     
     attachNewSignature = NO;
     
@@ -383,8 +449,14 @@ extern void SVMXLog(NSString *format, ...);
     
     if (attachNewSignature)
     {
-        NSString * query = [NSString stringWithFormat:@"DELETE FROM SFSignatureData WHERE sig_id = '%@'", SFId];
+        NSString * query = @"";
         
+        if(isOpdoc) {
+         query = [NSString stringWithFormat:@"DELETE FROM SFSignatureData WHERE sig_id = '%@' and signature_type_id = '%@'", SFId,opdocTypeId];
+        }
+        else {
+         query = [NSString stringWithFormat:@"DELETE FROM SFSignatureData WHERE sig_id = '%@' and sign_type != 'OPDOC'", SFId];
+        }
         char * err;
         if (synchronized_sqlite3_exec(appDelegate.db, [query UTF8String], NULL, NULL, &err) != SQLITE_OK)
         {
@@ -402,9 +474,20 @@ extern void SVMXLog(NSString *format, ...);
     [obj release];
 }
 
-- (void) didAttachSignature:(ZKQueryResult *)result error:(NSError *)error context:(id)context
+- (void) didAttachSignature:(NSArray *)result error:(NSError *)error context:(id)context
 {
-    attachNewSignature = YES;    
+    attachNewSignature = YES;
+    
+    NSString *attachmentId = @"";
+    if([result count] > 0) {
+    id resultRecord = [result objectAtIndex:0];
+        attachmentId = [resultRecord id];
+    }
+    
+    BOOL isOPDocSignature = [[context objectForKey:@"isopdoc"] boolValue];
+    if(isOPDocSignature) {
+        [appDelegate.dataBase insertIntoRequiredSignature:attachmentId andSignatureId:[context objectForKey:@"signid"]];
+    }
 }
 
 - (void) removePreviousSignature:(NSString *)signatureName

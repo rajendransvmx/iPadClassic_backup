@@ -175,6 +175,9 @@ typedef enum CUSTOM_SYNC_STATUS{
     BOOL  didWriteSignature;
     BOOL  didWritePDF;
 
+    //krishna Opdoc
+    BOOL didWriteOPDOC;
+    BOOL didWriteSignatures;
  //RT Dependent Picklist
     BOOL didDescribeLayoutReceived;
     NSString *recordTypeID_Value;
@@ -222,6 +225,10 @@ typedef enum CUSTOM_SYNC_STATUS{
 
 @property (nonatomic) BOOL  didWriteSignature;
 @property (nonatomic) BOOL  didWritePDF;
+
+//krishna opdoc
+@property (nonatomic, assign) BOOL didWriteOPDOC;
+@property (nonatomic, assign) BOOL didWriteSignatures;
 @property (nonatomic) BOOL didGetProductHistory;
 @property (nonatomic) BOOL didGetAccountHistory;
 @property (nonatomic)  BOOL didGetProcessId;
@@ -476,6 +483,10 @@ last_sync_time:(NSString *)last_sync_time;
 
 -(BOOL)ConflictExists;
 
+// Damodar - OPDocs
+- (void)requestForStaticResources;
+- (void)submitHTMLDocuments:(NSArray*)docs withSignatures:(NSArray*)signatures;
+- (void)generatePDFfor:(NSArray*)docs withSignatures:(NSArray*)signatures;
 //Sync -Override
 - (void) releaseSyncThread;
     

@@ -10,7 +10,7 @@
 #include <sqlite3.h>
 #include "ZKSforce.h"
 #import "DataBaseGlobals.h"
-
+#import "ZipArchive.h"
 #import "SBJsonParser.h"
 
 # define SUCCESS_           @"SUCCESS_"
@@ -85,7 +85,17 @@ PopoverButtons *popOver_view;
     //Keerti - 7275
     BOOL isSortingDone;
     NSMutableArray *arrayofAlias;
+    //krishna
+    BOOL didRcvAttachment;
+    BOOL didRcvStaticresource;
+    BOOL didReceiveImageDocument;
 }
+
+// Damodar
+@property (nonatomic, retain) ZipArchive *zipArchiver;
+@property (assign) int didSubmitHTML;
+@property (assign) int didGeneratePDF;
+
 
 //RADHA
 
@@ -423,5 +433,33 @@ PopoverButtons *popOver_view;
 
 // Vipin-db-optmz
 - (void)addValuesToLookUpFieldTable:(NSMutableArray *)values;
+
+//Krishna OPDocs
+- (void) insertIntoRequiredPdf:(NSString *)recordId processId:(NSString *)processId andAttachmentId:(NSString *)attachmentId;
+- (void)deleteRequiredPdfRecord:(NSString *)recordId forProcessId:(NSString *)processId;
+- (NSMutableArray *) getAllRequiredPdf;
+- (void)deleteRequiredPdfForAttachement:(NSString *)attachementId;
+- (void) insertIntoRequiredSignature:(NSString *)attachmentId andSignatureId:(NSString*)signId;
+- (NSMutableArray *) getAllRequiredSignature;
+- (void)deleteRequiredSignatureFor:(NSString *)attachmentId;
+
+- (void)insertIntoDocTemplate:(NSDictionary*)process_dict;
+- (void)insertIntoDocTemplateDetails:(NSDictionary*)process_dict;
+- (void)insertIntoAttachment:(NSDictionary*)process_dict;
+- (void)downloadResources:(NSDictionary*)resourceDict;
+- (void)retrieveImages:(NSDictionary*)resourceDict;
+- (void)retrieveImageDocumentFor:(NSString*)docId;
+- (void)insertIntoStaticResource:(NSDictionary*)resourceDict;
+- (void)retrieveStaticResourceFor:(NSString*)resId;
+- (void)getAttachmentForId:(NSString *)attachmentId;
+- (void)requestForStaticResources;
+- (void)downloadPDFsForUploadedHtml;
+- (void)downloadPdfFor:(NSString*)att_id;
+
+
+- (NSMutableArray *) getDocumentTemplatesForProcessId:(NSString *)processId ;
+-(void)UpdateDocumentTemplateId:(NSString *)docTemplateId forProcessId:(NSString *)processId;
+
+
 
 @end

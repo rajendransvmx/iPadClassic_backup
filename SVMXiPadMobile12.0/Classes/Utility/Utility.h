@@ -25,7 +25,9 @@
 + (NSString *)getPriceDownloadStatus ;
 + (void )setPriceDownloadStatus:(NSString *)statusValue;
 + (void )removePriceDownloadStatus;
++ (void)showLog:(NSString *)loggedMessage;
 
++ (NSDictionary *) getParameterDictionaryFromURL:(NSString *) urlParams;
 
 + (NSString *)getUserTrunkRequestStatus ;
 + (void )setUserTrunkRequestStatus:(NSString *)statusValue;

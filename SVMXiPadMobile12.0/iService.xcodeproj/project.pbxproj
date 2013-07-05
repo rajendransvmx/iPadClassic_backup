@@ -416,6 +416,26 @@
 		3EE1313813D22B040048A062 /* iService-Screen-Manual.png in Resources */ = {isa = PBXBuildFile; fileRef = 3EE1313713D22B040048A062 /* iService-Screen-Manual.png */; };
 		3EE1313A13D22F110048A062 /* iService-Share.png in Resources */ = {isa = PBXBuildFile; fileRef = 3EE1313913D22F110048A062 /* iService-Share.png */; };
 		3EF079D21517A530001FFF6A /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EF079D11517A530001FFF6A /* CoreData.framework */; };
+		6B18E3E21785481A00224F72 /* DARequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B18E3D61785481A00224F72 /* DARequest.m */; };
+		6B18E3E31785481A00224F72 /* DARequestParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B18E3D81785481A00224F72 /* DARequestParser.m */; };
+		6B18E3E41785481A00224F72 /* DAResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B18E3DA1785481A00224F72 /* DAResponse.m */; };
+		6B18E3E51785481A00224F72 /* CommunicationBridgeJS.js in Sources */ = {isa = PBXBuildFile; fileRef = 6B18E3DC1785481A00224F72 /* CommunicationBridgeJS.js */; };
+		6B18E3E61785481A00224F72 /* DataAcessLayer.js in Sources */ = {isa = PBXBuildFile; fileRef = 6B18E3DD1785481A00224F72 /* DataAcessLayer.js */; };
+		6B18E3E71785481A00224F72 /* OutputDocs.js in Sources */ = {isa = PBXBuildFile; fileRef = 6B18E3DE1785481A00224F72 /* OutputDocs.js */; };
+		6B18E3E81785481A00224F72 /* Utility.js in Sources */ = {isa = PBXBuildFile; fileRef = 6B18E3DF1785481A00224F72 /* Utility.js */; };
+		6B18E3E91785481A00224F72 /* SVMXDatabaseMaster.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B18E3E11785481A00224F72 /* SVMXDatabaseMaster.m */; };
+		6B18E3F61785483D00224F72 /* OPDoc.html in Resources */ = {isa = PBXBuildFile; fileRef = 6B18E3EC1785483D00224F72 /* OPDoc.html */; };
+		6B18E3F71785483D00224F72 /* OPDocSignatureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B18E3EE1785483D00224F72 /* OPDocSignatureViewController.m */; };
+		6B18E3F81785483D00224F72 /* OPDocSignatureViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6B18E3EF1785483D00224F72 /* OPDocSignatureViewController.xib */; };
+		6B18E3F91785483D00224F72 /* OPDocTemplateSelectorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B18E3F11785483D00224F72 /* OPDocTemplateSelectorViewController.m */; };
+		6B18E3FA1785483D00224F72 /* OPDocTemplateSelectorViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6B18E3F21785483D00224F72 /* OPDocTemplateSelectorViewController.xib */; };
+		6B18E3FB1785483D00224F72 /* OPDocViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B18E3F41785483D00224F72 /* OPDocViewController.m */; };
+		6B18E3FC1785483D00224F72 /* OPDocViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6B18E3F51785483D00224F72 /* OPDocViewController.xib */; };
+		6B18E3FF17854F5E00224F72 /* SSZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B18E3FE17854F5E00224F72 /* SSZipArchive.m */; };
+		77F7B61E1785971500AD476C /* CommunicationBridgeJS.js in Resources */ = {isa = PBXBuildFile; fileRef = 6B18E3DC1785481A00224F72 /* CommunicationBridgeJS.js */; };
+		77F7B61F1785971500AD476C /* DataAcessLayer.js in Resources */ = {isa = PBXBuildFile; fileRef = 6B18E3DD1785481A00224F72 /* DataAcessLayer.js */; };
+		77F7B6201785971500AD476C /* OutputDocs.js in Resources */ = {isa = PBXBuildFile; fileRef = 6B18E3DE1785481A00224F72 /* OutputDocs.js */; };
+		77F7B6211785971500AD476C /* Utility.js in Resources */ = {isa = PBXBuildFile; fileRef = 6B18E3DF1785481A00224F72 /* Utility.js */; };
 		7B001EA21227BA3A002E1770 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B001EA11227BA3A002E1770 /* MapKit.framework */; };
 		7B00224212282B08002E1770 /* add-task.png in Resources */ = {isa = PBXBuildFile; fileRef = 7B00216A12282B08002E1770 /* add-task.png */; };
 		7B00224312282B08002E1770 /* big-date-bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 7B00216B12282B08002E1770 /* big-date-bg.png */; };
@@ -2037,6 +2057,30 @@
 		3EE1313713D22B040048A062 /* iService-Screen-Manual.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iService-Screen-Manual.png"; sourceTree = "<group>"; };
 		3EE1313913D22F110048A062 /* iService-Share.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iService-Share.png"; sourceTree = "<group>"; };
 		3EF079D11517A530001FFF6A /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		6B18E3D51785481A00224F72 /* DARequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DARequest.h; sourceTree = "<group>"; };
+		6B18E3D61785481A00224F72 /* DARequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DARequest.m; sourceTree = "<group>"; };
+		6B18E3D71785481A00224F72 /* DARequestParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DARequestParser.h; sourceTree = "<group>"; };
+		6B18E3D81785481A00224F72 /* DARequestParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DARequestParser.m; sourceTree = "<group>"; };
+		6B18E3D91785481A00224F72 /* DAResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DAResponse.h; sourceTree = "<group>"; };
+		6B18E3DA1785481A00224F72 /* DAResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DAResponse.m; sourceTree = "<group>"; };
+		6B18E3DC1785481A00224F72 /* CommunicationBridgeJS.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = CommunicationBridgeJS.js; sourceTree = "<group>"; };
+		6B18E3DD1785481A00224F72 /* DataAcessLayer.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = DataAcessLayer.js; sourceTree = "<group>"; };
+		6B18E3DE1785481A00224F72 /* OutputDocs.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = OutputDocs.js; sourceTree = "<group>"; };
+		6B18E3DF1785481A00224F72 /* Utility.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = Utility.js; sourceTree = "<group>"; };
+		6B18E3E01785481A00224F72 /* SVMXDatabaseMaster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVMXDatabaseMaster.h; sourceTree = "<group>"; };
+		6B18E3E11785481A00224F72 /* SVMXDatabaseMaster.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVMXDatabaseMaster.m; sourceTree = "<group>"; };
+		6B18E3EC1785483D00224F72 /* OPDoc.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = OPDoc.html; sourceTree = "<group>"; };
+		6B18E3ED1785483D00224F72 /* OPDocSignatureViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OPDocSignatureViewController.h; sourceTree = "<group>"; };
+		6B18E3EE1785483D00224F72 /* OPDocSignatureViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OPDocSignatureViewController.m; sourceTree = "<group>"; };
+		6B18E3EF1785483D00224F72 /* OPDocSignatureViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OPDocSignatureViewController.xib; sourceTree = "<group>"; };
+		6B18E3F01785483D00224F72 /* OPDocTemplateSelectorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OPDocTemplateSelectorViewController.h; sourceTree = "<group>"; };
+		6B18E3F11785483D00224F72 /* OPDocTemplateSelectorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OPDocTemplateSelectorViewController.m; sourceTree = "<group>"; };
+		6B18E3F21785483D00224F72 /* OPDocTemplateSelectorViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OPDocTemplateSelectorViewController.xib; sourceTree = "<group>"; };
+		6B18E3F31785483D00224F72 /* OPDocViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OPDocViewController.h; sourceTree = "<group>"; };
+		6B18E3F41785483D00224F72 /* OPDocViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OPDocViewController.m; sourceTree = "<group>"; };
+		6B18E3F51785483D00224F72 /* OPDocViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OPDocViewController.xib; sourceTree = "<group>"; };
+		6B18E3FD17854F5E00224F72 /* SSZipArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSZipArchive.h; sourceTree = "<group>"; };
+		6B18E3FE17854F5E00224F72 /* SSZipArchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSZipArchive.m; sourceTree = "<group>"; };
 		7B001EA11227BA3A002E1770 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		7B00216A12282B08002E1770 /* add-task.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "add-task.png"; sourceTree = "<group>"; };
 		7B00216B12282B08002E1770 /* big-date-bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "big-date-bg.png"; sourceTree = "<group>"; };
@@ -4884,6 +4928,8 @@
 		3E34698713E95C4D00B5790F /* ZipArchive */ = {
 			isa = PBXGroup;
 			children = (
+				6B18E3FD17854F5E00224F72 /* SSZipArchive.h */,
+				6B18E3FE17854F5E00224F72 /* SSZipArchive.m */,
 				3E34698813E95C4D00B5790F /* minizip */,
 				3E34699213E95C4D00B5790F /* ZipArchive.h */,
 				3E34699313E95C4D00B5790F /* ZipArchive.mm */,
@@ -4954,9 +5000,55 @@
 			path = "Button Assets";
 			sourceTree = "<group>";
 		};
+		6B18E3D41785481A00224F72 /* DataAccessLayer */ = {
+			isa = PBXGroup;
+			children = (
+				6B18E3D51785481A00224F72 /* DARequest.h */,
+				6B18E3D61785481A00224F72 /* DARequest.m */,
+				6B18E3D71785481A00224F72 /* DARequestParser.h */,
+				6B18E3D81785481A00224F72 /* DARequestParser.m */,
+				6B18E3D91785481A00224F72 /* DAResponse.h */,
+				6B18E3DA1785481A00224F72 /* DAResponse.m */,
+				6B18E3DB1785481A00224F72 /* JsB */,
+				6B18E3E01785481A00224F72 /* SVMXDatabaseMaster.h */,
+				6B18E3E11785481A00224F72 /* SVMXDatabaseMaster.m */,
+			);
+			path = DataAccessLayer;
+			sourceTree = "<group>";
+		};
+		6B18E3DB1785481A00224F72 /* JsB */ = {
+			isa = PBXGroup;
+			children = (
+				6B18E3DC1785481A00224F72 /* CommunicationBridgeJS.js */,
+				6B18E3DD1785481A00224F72 /* DataAcessLayer.js */,
+				6B18E3DE1785481A00224F72 /* OutputDocs.js */,
+				6B18E3DF1785481A00224F72 /* Utility.js */,
+			);
+			path = JsB;
+			sourceTree = "<group>";
+		};
+		6B18E3EB1785483D00224F72 /* OPDocs */ = {
+			isa = PBXGroup;
+			children = (
+				6B18E3EC1785483D00224F72 /* OPDoc.html */,
+				6B18E3ED1785483D00224F72 /* OPDocSignatureViewController.h */,
+				6B18E3EE1785483D00224F72 /* OPDocSignatureViewController.m */,
+				6B18E3EF1785483D00224F72 /* OPDocSignatureViewController.xib */,
+				6B18E3F01785483D00224F72 /* OPDocTemplateSelectorViewController.h */,
+				6B18E3F11785483D00224F72 /* OPDocTemplateSelectorViewController.m */,
+				6B18E3F21785483D00224F72 /* OPDocTemplateSelectorViewController.xib */,
+				6B18E3F31785483D00224F72 /* OPDocViewController.h */,
+				6B18E3F41785483D00224F72 /* OPDocViewController.m */,
+				6B18E3F51785483D00224F72 /* OPDocViewController.xib */,
+			);
+			path = OPDocs;
+			sourceTree = "<group>";
+		};
 		7B001E101227BA1F002E1770 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				6B18E3EB1785483D00224F72 /* OPDocs */,
+				6B18E3D41785481A00224F72 /* DataAccessLayer */,
 				AC1BF894171C395500F0EA14 /* SyncProgressBar */,
 				A8DB1D0916E0B590007D1A4F /* GetPriceBook */,
 				A8DB1CFB16E0B58B007D1A4F /* JSExecuter */,
@@ -6968,6 +7060,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				77F7B61E1785971500AD476C /* CommunicationBridgeJS.js in Resources */,
+				77F7B61F1785971500AD476C /* DataAcessLayer.js in Resources */,
+				77F7B6201785971500AD476C /* OutputDocs.js in Resources */,
+				77F7B6211785971500AD476C /* Utility.js in Resources */,
 				39C8F5621521F51200F81B51 /* tooltip.js in Resources */,
 				FA9A0D6B14DFB6660077B1EB /* json2.js in Resources */,
 				A8DB1D0516E0B58B007D1A4F /* iOStoJsBridge.js in Resources */,
@@ -8216,6 +8312,10 @@
 				ACB56C70176B629F00E46D08 /* SFMChildView.xib in Resources */,
 				AC6D8E451770571C00B43124 /* filter-icon.png in Resources */,
 				AC6D8E471770575400B43124 /* filter-icon@2x.png in Resources */,
+				6B18E3F61785483D00224F72 /* OPDoc.html in Resources */,
+				6B18E3F81785483D00224F72 /* OPDocSignatureViewController.xib in Resources */,
+				6B18E3FA1785483D00224F72 /* OPDocTemplateSelectorViewController.xib in Resources */,
+				6B18E3FC1785483D00224F72 /* OPDocViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8480,6 +8580,18 @@
 				ACB56C6F176B629F00E46D08 /* SFMChildView.m in Sources */,
 				ACB56C71176B629F00E46D08 /* SWitchViewButton.m in Sources */,
 				AC6D8E421770561E00B43124 /* SVMXLookupFilter.m in Sources */,
+				6B18E3E21785481A00224F72 /* DARequest.m in Sources */,
+				6B18E3E31785481A00224F72 /* DARequestParser.m in Sources */,
+				6B18E3E41785481A00224F72 /* DAResponse.m in Sources */,
+				6B18E3E51785481A00224F72 /* CommunicationBridgeJS.js in Sources */,
+				6B18E3E61785481A00224F72 /* DataAcessLayer.js in Sources */,
+				6B18E3E71785481A00224F72 /* OutputDocs.js in Sources */,
+				6B18E3E81785481A00224F72 /* Utility.js in Sources */,
+				6B18E3E91785481A00224F72 /* SVMXDatabaseMaster.m in Sources */,
+				6B18E3F71785483D00224F72 /* OPDocSignatureViewController.m in Sources */,
+				6B18E3F91785483D00224F72 /* OPDocTemplateSelectorViewController.m in Sources */,
+				6B18E3FB1785483D00224F72 /* OPDocViewController.m in Sources */,
+				6B18E3FF17854F5E00224F72 /* SSZipArchive.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

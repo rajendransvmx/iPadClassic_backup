@@ -347,9 +347,15 @@
 #define SFM_PAGEDATA                                    @"SFM_PAGEDATA"
 #define SFM_BATCH_OBJECT_DEFINITIONS                    @"SFM_BATCH_OBJECT_DEFINITIONS"
 
+ // Damodar - OPDOC
+#define SUBMIT_DOCUMENT                                 @"SUBMIT_DOCUMENT"
+#define GENERATE_PDF                                    @"GENERATE_PDF"
+
 #define CLIENT_TYPE                                     @"iPad"
 #define CLIENT_INFO                                     @""
 
+
+#define STATIC_RESOURCES_LIBRARY                        @"SVMX_LIBRARY"
 
 //Macro For profile check
 #define VALIDATE_PROFILE                                @"VALIDATE_PROFILE"

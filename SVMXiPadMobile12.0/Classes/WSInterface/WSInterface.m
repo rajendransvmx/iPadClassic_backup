@@ -108,6 +108,11 @@ extern void SVMXLog(NSString *format, ...);
 
 @synthesize jsonParserForDataSync;
 
+
+//krishna opdoc
+@synthesize didWriteOPDOC;
+@synthesize didWriteSignatures;
+
 #define VALUE 100
 
 - (id) init
@@ -565,7 +570,6 @@ extern void SVMXLog(NSString *format, ...);
     //Krishna client info
     INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client =  [appDelegate getSVMXClientObject];
     [sfmRequest addClientInfo:svmxc_client];
-    
     [Overide_sync setRequest:sfmRequest];
     
     
@@ -1607,8 +1611,6 @@ last_sync_time:(NSString *)last_sync_time
     return request_time;
     
 }
-
-
 -(void)resetSyncLastindexAndObjectName
 {
     appDelegate.initial_Sync_last_index = 0;
@@ -1787,10 +1789,10 @@ last_sync_time:(NSString *)last_sync_time
 	//appDelegate.syncTypeInProgress = DATASYNC_INPROGRESS;
 
  /* Shravya - Advanced look up filters - User trunk location */
-    SMLog(@"Shravya-User location update Incremental starts");
+    SMLog(@"User location update Incremental starts");
     /* Shravya - Advanced look up- User trunk location */
     [appDelegate.wsInterface getUserTrunkLocationRequest];
-    SMLog(@"Shravya-User location update ends");
+    SMLog(@"User location update ends");
 
     [self GetDelete];
     
@@ -2295,7 +2297,7 @@ last_sync_time:(NSString *)last_sync_time
 //		[appDelegate setCurrentSyncStatusProgress:GETINSERT_DC_DONE optimizedSynstate:0];
     }
     didWriteSignature = NO;
-    [appDelegate.calDataBase getAllLocalIdsForSignature:SIG_BEFOREUPDATE];
+    [appDelegate.calDataBase getAllLocalIdsForSignature:SIG_BEFOREUPDATE andSignType:@"ViewWorkOrder"];
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
         SMLog(@"Signature to SFDC");
@@ -2381,7 +2383,8 @@ last_sync_time:(NSString *)last_sync_time
 	
     
     didWriteSignature = NO;
-    [appDelegate.calDataBase getAllLocalIdsForSignature:SIG_AFTERUPDATE];
+        //krishnasign empty refers to ViewWorkOrder
+    [appDelegate.calDataBase getAllLocalIdsForSignature:SIG_AFTERUPDATE andSignType:@""];
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
         SMLog(@"Signature to SFDC");
@@ -2819,7 +2822,8 @@ last_sync_time:(NSString *)last_sync_time
     //Shrinivas 
     //Sync signature to server
     didWriteSignature = NO;
-    [appDelegate.calDataBase getAllLocalIdsForSignature:SIG_AFTERSYNC];
+        //krishnasign empty refers to ViewWorkOrder
+    [appDelegate.calDataBase getAllLocalIdsForSignature:SIG_AFTERSYNC andSignType:@""];
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
         SMLog(@"Signature to SFDC");
@@ -2832,7 +2836,43 @@ last_sync_time:(NSString *)last_sync_time
         if(appDelegate.connection_error)
             break;
     }
-    
+      //krishnasignature
+        
+        didWriteSignatures = NO;
+        [appDelegate.calDataBase getAllLocalIdsForSignature:SIG_AFTERSYNC andSignType:@"OPDOC"];
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+        {
+            SMLog(@"Signature to SFDC");
+            if (didWriteSignature == YES)
+                break;
+            if (![appDelegate isInternetConnectionAvailable])
+            {
+                break;
+            }
+            if(appDelegate.connection_error)
+                break;
+        }
+
+
+        
+        //krishna sync
+        didWriteOPDOC = NO;
+        [appDelegate.calDataBase syncOutPutDoc];
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+        {
+            SMLog(@"Signature to SFDC");
+            if (didWriteOPDOC == YES)
+                break;
+            if (![appDelegate isInternetConnectionAvailable])
+            {
+                break;
+            }
+            if(appDelegate.connection_error)
+                break;
+        }
+        
+        [appDelegate.dataBase downloadPDFsForUploadedHtml];
+        
     //Sync PDF to SFDC
     didWritePDF = NO;
     [appDelegate.calDataBase getAllLocalIdsForPDF];
@@ -3023,6 +3063,179 @@ last_sync_time:(NSString *)last_sync_time
 	{
         [userDefaults setValue:value forKey:key];
 	}
+}
+
+//Damodar OPDOC
+- (void)requestForStaticResources
+{
+    [INTF_WebServicesDefServiceSvc initialize];
+    
+    INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
+    sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
+    
+    INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
+    callOptions.client = nil;
+    
+    INTF_WebServicesDefServiceSvc_DebuggingHeader * debuggingHeader = [[[INTF_WebServicesDefServiceSvc_DebuggingHeader alloc] init] autorelease];
+    debuggingHeader.debugLevel = 0;
+    
+    INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * allowFieldTruncationHeader = [[[INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader alloc] init] autorelease];
+    allowFieldTruncationHeader.allowFieldTruncation = NO;
+    
+    INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
+    binding.logXMLInOut = YES;
+    
+    
+    INTF_WebServicesDefServiceSvc_INTF_MetaSync_WS * metaSync = [[[INTF_WebServicesDefServiceSvc_INTF_MetaSync_WS alloc] init]
+                                                                 autorelease];
+    
+    
+    INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init]
+                                                                  autorelease];
+    
+    
+    sfmRequest.eventName = STATIC_RESOURCES_LIBRARY;
+    sfmRequest.eventType = SYNC;
+    
+    sfmRequest.userId = [appDelegate.loginResult userId];
+    sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
+    sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
+    
+    INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client =  [appDelegate getSVMXClientObject];
+    [sfmRequest addClientInfo:svmxc_client];
+    
+    [metaSync setRequest:sfmRequest];
+    
+    [binding INTF_MetaSync_WSAsyncUsingParameters:metaSync
+                                    SessionHeader:sessionHeader
+                                      CallOptions:callOptions
+                                  DebuggingHeader:debuggingHeader
+                       AllowFieldTruncationHeader:allowFieldTruncationHeader
+                                         delegate:self];
+    NSLog(@"Requested!!");
+}
+//Damodar OPDOC
+
+- (void)submitHTMLDocuments:(NSArray*)docs withSignatures:(NSArray*)signatures
+{
+    [INTF_WebServicesDefServiceSvc initialize];
+    @try
+    {
+        INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
+        sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
+        
+        INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
+        callOptions.client = nil;
+        
+        INTF_WebServicesDefServiceSvc_DebuggingHeader * debuggingHeader = [[[INTF_WebServicesDefServiceSvc_DebuggingHeader alloc] init] autorelease];
+        debuggingHeader.debugLevel = 0;
+        
+        INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * allowFieldTruncationHeader = [[[INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader alloc] init] autorelease];
+        allowFieldTruncationHeader.allowFieldTruncation = NO;
+        
+        INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
+        binding.logXMLInOut = YES;
+        
+        
+        INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] autorelease];
+        
+        INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] autorelease];
+        sfmRequest.eventName = SUBMIT_DOCUMENT;
+        sfmRequest.eventType = SYNC;
+        sfmRequest.userId = [appDelegate.loginResult userId];
+        sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
+        sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
+        sfmRequest.value = Insert_requestId;
+        
+        INTF_WebServicesDefServiceSvc_SVMXMap * html_id =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+        html_id.key = @"HTMLID";
+        [html_id.values addObjectsFromArray:docs];
+        
+        INTF_WebServicesDefServiceSvc_SVMXMap * signature_id =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+        signature_id.key  = @"SIGNATURE";
+        [signature_id.values addObjectsFromArray:signatures];
+        
+        [sfmRequest.valueMap addObject:html_id];
+        [sfmRequest.valueMap addObject:signature_id];
+        
+        INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client =  [appDelegate getSVMXClientObject];
+        [sfmRequest addClientInfo:svmxc_client];
+        [datasync setRequest:sfmRequest];
+        
+        binding.logXMLInOut = YES;
+        [binding INTF_DataSync_WSAsyncUsingParameters:datasync
+                                        SessionHeader:sessionHeader
+                                          CallOptions:callOptions
+                                      DebuggingHeader:debuggingHeader
+                           AllowFieldTruncationHeader:allowFieldTruncationHeader delegate:self];
+    }
+    @catch (NSException *exp)
+    {
+        SMLog(@"Exception Name WSInterface : Submit_Document %@",exp.name);
+        SMLog(@"Exception Reason WSInterface : Submit_Document %@",exp.reason);
+    }
+}
+
+//Damodar OPDOC
+
+- (void)generatePDFfor:(NSArray*)docs withSignatures:(NSArray*)signatures
+{
+    [INTF_WebServicesDefServiceSvc initialize];
+    @try
+    {
+        INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
+        sessionHeader.sessionId = [[ZKServerSwitchboard switchboard] sessionId];
+        
+        INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
+        callOptions.client = nil;
+        
+        INTF_WebServicesDefServiceSvc_DebuggingHeader * debuggingHeader = [[[INTF_WebServicesDefServiceSvc_DebuggingHeader alloc] init] autorelease];
+        debuggingHeader.debugLevel = 0;
+        
+        INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * allowFieldTruncationHeader = [[[INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader alloc] init] autorelease];
+        allowFieldTruncationHeader.allowFieldTruncation = NO;
+        
+        INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
+        binding.logXMLInOut = YES;
+        
+        
+        INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] autorelease];
+        
+        INTF_WebServicesDefServiceSvc_INTF_SFMRequest * sfmRequest = [[[INTF_WebServicesDefServiceSvc_INTF_SFMRequest alloc] init] autorelease];
+        sfmRequest.eventName = GENERATE_PDF;
+        sfmRequest.eventType = SYNC;
+        sfmRequest.userId = [appDelegate.loginResult userId];
+        sfmRequest.groupId = [[appDelegate.loginResult userInfo] organizationId];
+        sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
+        sfmRequest.value = Insert_requestId;
+        
+        INTF_WebServicesDefServiceSvc_SVMXMap * html_id =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+        html_id.key = @"HTMLID";
+        [html_id.values addObjectsFromArray:docs];
+        
+        INTF_WebServicesDefServiceSvc_SVMXMap * signature_id =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+        signature_id.key  = @"SIGNATURE";
+        [signature_id.values addObjectsFromArray:signatures];
+        
+        [sfmRequest.valueMap addObject:html_id];
+        [sfmRequest.valueMap addObject:signature_id];
+        
+        INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client =  [appDelegate getSVMXClientObject];
+        [sfmRequest addClientInfo:svmxc_client];
+        [datasync setRequest:sfmRequest];
+        
+        binding.logXMLInOut = YES;
+        [binding INTF_DataSync_WSAsyncUsingParameters:datasync
+                                        SessionHeader:sessionHeader
+                                          CallOptions:callOptions
+                                      DebuggingHeader:debuggingHeader
+                           AllowFieldTruncationHeader:allowFieldTruncationHeader delegate:self];
+    }
+    @catch (NSException *exp)
+    {
+        SMLog(@"Exception Name WSInterface : GENERATE_PDF %@",exp.name);
+        SMLog(@"Exception Reason WSInterface : GENERATE_PDF %@",exp.reason);
+    }
 }
 
 - (void)doGetPrice
@@ -7279,6 +7492,43 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
              
         }
         
+        if ([wsResponse.result.eventName isEqualToString:STATIC_RESOURCES_LIBRARY] && [wsResponse.result.eventType isEqualToString:SYNC])
+        {
+            NSArray *maps = [wsResponse.result valueMap];
+            NSMutableDictionary *finalDict = [NSMutableDictionary dictionary];
+            for (INTF_WebServicesDefServiceSvc_SVMXMap* mapObj in maps)
+            {
+                NSMutableArray *staticRsrcArr = [NSMutableArray array];
+                
+                NSString *key = mapObj.key;
+                NSArray *valMap  = mapObj.valueMap;
+                for (INTF_WebServicesDefServiceSvc_SVMXMap* mapObj2 in valMap)
+                {
+                    NSMutableDictionary *innerDict = [NSMutableDictionary dictionary];
+                    NSArray *valMap2 = mapObj2.valueMap;
+                    INTF_WebServicesDefServiceSvc_SVMXMap* obj1 = [valMap2 objectAtIndex:0];
+                    INTF_WebServicesDefServiceSvc_SVMXMap* obj2 = [valMap2 objectAtIndex:1];
+
+                    NSString *key1 = obj1.key;
+                    NSString *value1 = obj1.value;
+                    
+                    NSString *key2 = obj2.key;
+                    NSString *value2 = obj2.value;
+                    
+                    [innerDict setObject:value1 forKey:key1];
+                    [innerDict setObject:value2 forKey:key2];
+                    
+                    [staticRsrcArr addObject:innerDict];
+                }
+                
+                [finalDict setObject:staticRsrcArr forKey:key];
+            }
+            
+            [appDelegate.dataBase downloadResources:finalDict];
+            
+            appDelegate.did_fetch_static_resource_ids = YES;
+        }
+        
         if ([wsResponse.result.eventName isEqualToString:VALIDATE_PROFILE])
         {
             if ([wsResponse.result.values count] > 0)
@@ -8604,6 +8854,14 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                 
                 [obj release];
             }
+        }
+        if([wsResponse.result.eventName isEqualToString:SUBMIT_DOCUMENT] && [wsResponse.result.eventType isEqualToString:SYNC])
+        {
+            appDelegate.dataBase.didSubmitHTML = (int)(wsResponse.result.success);
+        }
+        if([wsResponse.result.eventName isEqualToString:GENERATE_PDF] && [wsResponse.result.eventType isEqualToString:SYNC])
+        {
+            appDelegate.dataBase.didGeneratePDF = (int)(wsResponse.result.success);
         }
 
 		if ([wsResponse.result.eventName isEqualToString:@"LOCATION_HISTORY"] && [wsResponse.result.eventType isEqualToString:SYNC]

@@ -341,7 +341,63 @@ extern void SVMXLog(NSString *format, ...);
     return;
     //[self attachPDF:newFilePath];    //Please verify this it might be harmful Please
 }
+#pragma mark - attach
+//Krishna OPDOC attach
+- (void) attachOPDOC:(NSString *)opdoc andDocName:(NSString *)docName forSFId:(NSString *)sf_id andProcessId:(NSString *)processId {
+    
+    //krishna opdoc added signName
+    ZKSObject * obj = [[ZKSObject alloc] initWithType:@"Attachment"];
 
+    [obj setFieldValue:docName field:@"Name"];
+    [obj setFieldValue:@"Work Order Output Doc" field:@"Description"];
+    
+    NSData * fileData = [NSData dataWithContentsOfFile:opdoc];
+    NSString * fileString = [Base64 encode:fileData];
+    
+    [obj setFieldValue:fileString field:@"Body"];
+    [obj setFieldValue:sf_id field:@"ParentId"];
+    [obj setFieldValue:@"False" field:@"isPrivate"];
+    
+    NSArray * array = [[NSArray alloc] initWithObjects:obj, nil];
+    
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+    [dict setObject:sf_id forKey:@"SF_ID"];
+    [dict setObject:processId forKey:@"ProcessID"];
+    
+    [[ZKServerSwitchboard switchboard] create:array target:self selector:@selector(didAttachDocument:error:context:) context:dict];
+    
+    // Analyser
+    [dict release];
+    [array release];
+    [obj release];
+
+}
+- (void) didAttachDocument:(NSArray *)result error:(NSError *)error context:(id)context
+{
+    NSLog(@"Attach PDF successful");
+    NSLog(@"%@", [error description]);
+    NSLog(@"result %@",result);
+    
+    NSString *attachedResult = @"";
+    NSArray *recordsArray = result;
+    
+    if([recordsArray count] > 0) {
+    id someObj =  [recordsArray objectAtIndex:0];
+    attachedResult = [someObj id];
+    }
+    NSDictionary *dictionary = (NSDictionary *)context;
+    NSString *processId = [dictionary objectForKey:@"ProcessID"];
+    NSString *sfID = [dictionary objectForKey:@"SF_ID"];
+    
+    //send delegate to the view controller. so that it can disable buttons.
+    
+    //krishna opdoc
+    if(self.delegate && [self.delegate respondsToSelector:@selector(opDocumentAttached:withError:forSFID:andProcessID:)] ) {
+        [self.delegate opDocumentAttached:attachedResult withError:error forSFID:sfID andProcessID:processId];
+    }
+    
+    //disable buttons
+}
 - (void) attachPDF:(NSString *)pdf
 {
     NSString * SFId = @"";

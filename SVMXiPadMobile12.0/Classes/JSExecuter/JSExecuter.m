@@ -7,10 +7,12 @@
 //
 
 #import "JSExecuter.h"
+#import "SVMXDatabaseMaster.h"
+#define kDataRequest @"darequest"
 
 @interface JSExecuter()
 
-- (void)createWebview;
+- (void)createWebviewWithFrame:(CGRect)newFrame ;
 - (void)passEventToDelegate:(NSURL *)absoluteUrl andScheme:(NSString *)scheme;
 
 @end
@@ -33,6 +35,33 @@
 
 #pragma mark-
 #pragma mark Init method
+- (id)initWithParentView:(UIView *)newParentView
+          andCodeSnippet:(NSString *)newCodeSnippet
+             andDelegate:(id)newDelegate
+                andFrame:(CGRect)newFrame  {
+    
+    if (newParentView == nil) {
+        [self release];
+        self = nil;
+        return nil;
+    }
+    self = [super init];
+    self.jsWebView.backgroundColor = [UIColor redColor];
+    if (self != nil) {
+        
+        self.codeSnippet = newCodeSnippet;
+        self.parentView = newParentView;
+        self.delegate = newDelegate;
+        [self createWebviewWithFrame:CGRectMake(0, 0, newFrame.size.width, newFrame.size.height)];
+       
+        
+        if (newCodeSnippet != nil && newCodeSnippet.length > 3) {
+            [self executeJavascriptCode:newCodeSnippet];
+        }
+    }
+    return self;
+}
+
 - (id)initWithParentView:(UIView *)newParentView andCodeSnippet:(NSString *)newCodeSnippet andDelegate:(id)newDelegate {
     
     if (newParentView == nil) {
@@ -43,10 +72,10 @@
     self = [super init];
     if (self != nil) {
         
-        [self createWebview];
         self.codeSnippet = newCodeSnippet;
         self.parentView = newParentView;
         self.delegate = newDelegate;
+        [self createWebviewWithFrame:CGRectZero]; //shravya Getprice
         
         if (newCodeSnippet != nil && newCodeSnippet.length > 3) {
             [self executeJavascriptCode:newCodeSnippet];
@@ -58,9 +87,9 @@
 #pragma mark -
 #pragma mark Webview creation and loading 
 
-- (void)createWebview {
+- (void)createWebviewWithFrame:(CGRect)newFrame {
     
-    UIWebView *webview = [[UIWebView alloc]initWithFrame:CGRectZero];
+    UIWebView *webview = [[UIWebView alloc]initWithFrame:newFrame];
     self.jsWebView = webview;
     webview.delegate = self;
     [self.parentView addSubview:webview];
@@ -75,6 +104,11 @@
     [self.jsWebView loadHTMLString:jsCodeSnippet baseURL:[[NSBundle mainBundle]resourceURL]];
 }
 
+- (void)loadHTMLFileFromPath:(NSString *)htmlFilePath
+{
+    [self.jsWebView loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:htmlFilePath]]];
+}
+
 #pragma mark-
 #pragma mark utility methods
 - (BOOL)shouldContiueLoading:(NSString *)scheme {
@@ -87,12 +121,21 @@
 
 - (void)passEventToDelegate:(NSURL *)absoluteUrl andScheme:(NSString *)scheme {
     
-    if ([delegate conformsToProtocol:@protocol(JSExecuterDelegate)]) {
+    NSString *parameterString =  [[absoluteUrl absoluteString] stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@://params?",scheme] withString:@""];
+    NSString *paramString=  [parameterString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    if ([scheme hasPrefix:kDataRequest]) {
         
-        NSString *parameterString =  [[absoluteUrl absoluteString] stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@://params?",scheme] withString:@""];
-        NSString *paramString=  [parameterString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        
-        [self.delegate eventOccured:scheme andParameter:paramString];
+        if (paramString == nil) {
+            paramString = @"";
+        }
+        NSDictionary *parmDict =  [NSDictionary dictionaryWithObjectsAndKeys:paramString,@"param",scheme,@"scheme",nil];
+        [self performSelectorOnMainThread:@selector(passPreRegisteredEventWithData:) withObject:parmDict waitUntilDone:NO];
+    }
+    else {
+        if ([delegate conformsToProtocol:@protocol(JSExecuterDelegate)]) {
+            [self.delegate eventOccured:scheme andParameter:paramString];
+        }
     }
 }
  
@@ -125,9 +168,26 @@
 #pragma mark Interaction with webview 
 - (NSString *)response:(NSString *)responseJsonString   forEventName:(NSString *)eventName{
     
-    NSString *function =  [[[NSString alloc] initWithFormat:@"$EXPR.responseReceivedForEventName(\"%@\",%@)",eventName,responseJsonString] autorelease];
+    NSString *function = nil;
+    if ([eventName isEqualToString:@"pricebook"]) {
+        function =  [[[NSString alloc] initWithFormat:@"$EXPR.responseReceivedForEventName(\"%@\",%@)",eventName,responseJsonString] autorelease];
+    }
+    else{
+        function =  [[[NSString alloc] initWithFormat:@"$COMM.responseReceivedForEventName(\"%@\",%@)",eventName,responseJsonString] autorelease];
+    }
     NSString *result = [jsWebView stringByEvaluatingJavaScriptFromString:function];
     return result;
+}
+
+
+#pragma mark - Pre registered event
+- (void)passPreRegisteredEventWithData:(NSDictionary *)parameterDict {
+    
+    NSString *paramString = [parameterDict objectForKey:@"param"];
+    NSString *eventName = [parameterDict objectForKey:@"scheme"];
+    NSString *responseData = [[SVMXDatabaseMaster sharedDataBaseMaterObject] getDataForParams:paramString andEventName:eventName];
+    NSString *eventt =  [self response:responseData forEventName:eventName];
+    NSLog(@"Return value is %@",eventt);
 }
 
 @end

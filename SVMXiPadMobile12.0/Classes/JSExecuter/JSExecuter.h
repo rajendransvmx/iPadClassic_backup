@@ -24,9 +24,12 @@
 
 - (id)initWithParentView:(UIView *)parentView andCodeSnippet:(NSString *)codeSnippet andDelegate:(id)delegate;
 - (void)executeJavascriptCode:(NSString *)jsCodeSnippet;
-
+- (void)loadHTMLFileFromPath:(NSString *)htmlFilePath;
 - (NSString *)response:(NSString *)responseJsonString   forEventName:(NSString *)eventName;
-
+- (id)initWithParentView:(UIView *)newParentView
+          andCodeSnippet:(NSString *)newCodeSnippet
+             andDelegate:(id)newDelegate
+                andFrame:(CGRect)newFrame;
 @end
 
 

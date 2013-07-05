@@ -17,6 +17,7 @@ extern void SVMXLog(NSString *format, ...);
 
 @implementation CalendarDatabase
 @synthesize dbFilePath;
+@synthesize opDocController;
 //@synthesize whatId1, subject;
 -(id)init
 {
@@ -2930,6 +2931,333 @@ extern void SVMXLog(NSString *format, ...);
     else
         return NULL;
 }
+//krishnaOPDOC
+#pragma mark - OPDoc html data
+- (void) insertOPDocHtmlData:(NSData *)htmlData WithId:(NSString *)docId localId:(NSString *)recordId  apiName:(NSString *)opdocApiName WONumber:(NSString *)WONumber docNsme:(NSString *)documentName forProcessId:(NSString *)processId
+{
+        
+    NSString * queryStatement = @"";
+    NSString * stringData = [Base64 encode:htmlData];
+    
+    BOOL does_exists = FALSE;
+
+    //removed sign_type 
+    does_exists = [self isDocExistsFor:recordId tableName:@"SFOPDocHtmlData"];
+    
+    if (does_exists)
+    {
+        
+        //where process id = sent process id
+        queryStatement =[NSString stringWithFormat:@"UPDATE %@ SET %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@',%@ = '%@' WHERE local_id = '%@' and process_id = '%@'", @"SFOPDocHtmlData", @"sf_id", docId , @"object_api_name",opdocApiName, @"opdoc_data", stringData, @"WorkOrderNumber", WONumber,  @"local_id", recordId,@"doc_name",documentName,recordId,processId];
+    }
+    
+    else
+    {
+        queryStatement = [NSString stringWithFormat:@"INSERT INTO SFOPDocHtmlData ('sf_id', 'object_api_name', 'opdoc_data', 'WorkOrderNumber', 'local_id','doc_name','process_id') VALUES ('%@','%@', '%@', '%@', '%@', '%@','%@')", docId, opdocApiName, stringData, WONumber, recordId,documentName,processId];
+    }
+    
+    char *err;
+    
+    int ret = synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err);
+    if (ret != SQLITE_OK)
+    {
+		if (does_exists)
+		{
+			SMLog(@"%@", queryStatement);
+			SMLog(@"METHOD:inserthtmlintoDB " );
+			SMLog(@"ERROR IN UPDATING %s", err);
+            [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryStatement type:UPDATEQUERY];
+		}
+		else
+		{
+			SMLog(@"%@", queryStatement);
+			SMLog(@"METHOD: inserthtmlintoDB");
+			SMLog(@"ERROR IN INSERTING %s", err);
+            [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryStatement type:INSERTQUERY];
+            
+		}
+        
+    }
+    [appDelegate callDataSync];
+}
+////krishna opdoc 
+- (void)deleteOpdocFor:(NSString *)SFID andProcessId:(NSString *)processId {
+    
+    NSString * queryStatement = [NSString stringWithFormat:@"DELETE FROM SFOPDocHtmldata WHERE process_id = '%@' and sf_id = '%@'",processId,SFID];
+    
+    char *err;
+    if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+    {
+        SMLog(@"%@", queryStatement);
+		SMLog(@"METHOD:deleteSignature");
+		SMLog(@"ERROR IN DELETE %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryStatement type:DELETEQUERY];
+	}
+}
+//krishna opdoc added signName
+- (NSMutableArray *) getAllOPDocsArray {
+    
+    NSString *selectQuery = [NSString stringWithFormat:@"Select local_id, object_api_name,process_id From SFOPDocHtmlData"];
+    sqlite3_stmt * stmt;
+    
+    NSMutableArray *docArray = [NSMutableArray array];
+    NSString  * recordId = @"";
+    NSString  * objectapiName = @"";
+    NSString  * processID = @"";
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            NSMutableDictionary * OPDOC_Data = [[NSMutableDictionary alloc] init];
+            
+            char *field = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_1);
+            if ( field != nil )
+                recordId = [NSString stringWithUTF8String:field];
+            
+            char *field1 = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_2);
+            if ( field1 != nil )
+                objectapiName = [NSString stringWithUTF8String:field1];
+            
+            char *field2 = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_3);
+            if ( field2 != nil )
+                processID = [NSString stringWithUTF8String:field2];
+            
+            [OPDOC_Data setObject:processID forKey:@"process_id"];
+            [OPDOC_Data setObject:recordId forKey:@"record_id"];
+            [OPDOC_Data setObject:objectapiName forKey:@"object_api_name"];
+            
+            [docArray addObject:OPDOC_Data];
+            [OPDOC_Data release];
+            OPDOC_Data = nil;
+            
+            recordId = @"";
+            objectapiName = @"";
+            processID = @"";
+            
+        }
+    }
+    
+    return docArray;
+    
+}
+//krishna opdoc added signName
+-(void)syncOutPutDoc
+{
+
+    //get sf_id, wo name for all local_ids
+    NSString * processId = @"";
+    NSString * sf_id = @"";
+    NSMutableArray *opdocsArray = [self getAllOPDocsArray];
+    NSMutableArray * docs_= [[NSMutableArray alloc] init];
+    
+    for(NSMutableDictionary *dict in opdocsArray) {
+        
+        NSString * obj_api_name = [dict objectForKey:@"object_api_name"];
+        processId = [dict objectForKey:@"process_id"];
+        NSString * localId = [dict objectForKey:@"record_id"];
+        
+        sf_id = [self getOPDocNameAndSFidforLocalId:localId  andObjectName:obj_api_name];//remove name, changed
+        NSString *opdocName = [NSString stringWithFormat:@"%@_%@",processId,sf_id];
+        opdocName = [opdocName stringByAppendingPathExtension:@"html"];
+        [docs_ addObject:opdocName];
+        [self attachHtmlDataTOSFDCForLocalId:localId sfid:sf_id opdocName:opdocName forProcessId:processId];
+        appDelegate.wsInterface.didWriteOPDOC = YES;
+        
+    }
+    
+    //delete all opdoc html data
+    
+    for (NSString *str in docs_) {
+        [self deleteOpdocFor:sf_id andProcessId:processId];
+    }
+    [docs_ release];
+    docs_ = nil;
+    
+  /*  //[self getAllLocalIdsForOPDOCData];
+//    NSArray *allKeys = [localIdsDict allKeys];
+//    for (NSString * local_id in allKeys) {
+//       NSDictionary * sf_id_dict = [self getOPDocNameAndSFidforLocalId:local_id  andObjectName:[localIdsDict objectForKey:local_id]];
+//        NSArray * sf_ids= [sf_id_dict allKeys];
+//        for(NSString * sf_id in sf_ids)
+//        {
+//            [self attachHtmlDataTOSFDCForLocalId:local_id sfid:sf_id workorderName:[sf_id_dict objectForKey:sf_id]];
+//        }
+//    }
+//    appDelegate.wsInterface.didWriteOPDOC = YES;
+    */
+    //update op_doc table with doc name
+    
+    // sync all the out_odcs
+    
+}
+//krishna opdoc
+- ( NSMutableDictionary *) getAllLocalIdsForOPDOCData
+{
+
+    NSString *selectQuery = [NSString stringWithFormat:@"Select local_id, object_api_name From SFOPDocHtmlData"];
+    sqlite3_stmt * stmt;
+    
+    NSString  * recordId = @"";
+    NSString  * objectapiName = @"";
+    
+    NSMutableDictionary * OPDOC_Data = [NSMutableDictionary dictionary];
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            char *field = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_1);
+            if ( field != nil )
+                recordId = [NSString stringWithUTF8String:field];
+            
+            char *field1 = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_2);
+            if ( field1 != nil )
+                objectapiName = [NSString stringWithUTF8String:field1];
+            
+            [OPDOC_Data setValue:objectapiName forKey:recordId];
+        }
+    }
+    SMLog(@"%@", OPDOC_Data);
+    synchronized_sqlite3_finalize(stmt);
+    
+    return OPDOC_Data;
+    
+}
+//krishna opdoc
+- (NSString  *)getOPDocNameAndSFidforLocalId:(NSString *)localId andObjectName:(NSString *)objName {
+    
+    NSString *selectQuery = [NSString stringWithFormat:@"Select Id, Name From '%@' Where local_id = '%@'", objName, localId];
+    sqlite3_stmt * stmt;
+    NSString *SFID = @"";
+    
+    
+    
+    NSString * serviceReport = [appDelegate.wsInterface.tagsDictionary objectForKey:PDF_SERVICE_REPORT];
+    serviceReport=[serviceReport stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        if (synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            char *field = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_1);
+            if ( field != nil )
+                SFID = [NSString stringWithUTF8String:field];
+            
+           /* char * _name = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_2);
+            if ( _name != nil )
+                Name = [NSString stringWithUTF8String:_name];
+            
+            [dict setValue:Name forKey:SFID];*/
+
+        }
+    }
+    synchronized_sqlite3_finalize(stmt);
+    return SFID;
+
+}
+//krishna opdoc docName
+- (void) attachHtmlDataTOSFDCForLocalId:(NSString *)localId sfid:(NSString *)sfid opdocName:(NSString *)docName forProcessId:(NSString *)processId  {
+        
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+	NSString *saveDirectory = [paths objectAtIndex:0];
+
+    //TODO kri change the doc name
+    NSString * newFilePath = [[saveDirectory stringByAppendingPathComponent:docName] retain];
+    
+    PDFCreator *pdfCreator = [[[PDFCreator alloc] init] autorelease] ;
+    [pdfCreator removeAllPDF:docName];
+    pdfCreator.delegate = self;
+    //Radha 2/5/12
+    BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:newFilePath];
+    
+    if (fileExists)
+    {
+        SMLog(@"FILE EXISTS");
+    }
+    else
+    {
+    
+        NSData * data = [self retrieveOPDOCData:localId];
+        [data writeToFile:newFilePath atomically:YES];
+        
+    }
+
+    [pdfCreator attachOPDOC:newFilePath andDocName:docName forSFId:sfid andProcessId:processId];
+    
+}
+//krishna opdoc
+- (void) opDocumentAttached:(NSString * )result withError:(NSError *)error forSFID:(NSString *)sfid andProcessID:(NSString *)processId {
+    
+    [appDelegate.dataBase insertIntoRequiredPdf:sfid processId:processId andAttachmentId:result];
+    //store the data in database in required pdf table
+    
+}
+//krishna opdoc
+- (NSMutableArray *) retrieveAllSignatureOfOutputDocForId:(NSString *)signId {
+    
+    NSMutableArray *signatureArray = [NSMutableArray array];
+    
+    NSString * selectQuery = [NSString stringWithFormat:@"Select signature_name From SFSignatureData Where sign_type = '%@' and signature_type_id Like '%@%%'", @"OPDOC",signId];
+    sqlite3_stmt * statement;
+    const char * _query = [selectQuery UTF8String];
+    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, _query,-1, &statement, nil) == SQLITE_OK ){
+        
+        while(synchronized_sqlite3_step(statement) == SQLITE_ROW){
+            
+            char *field1 = (char *) synchronized_sqlite3_column_text(statement,COLUMN_1);
+            if (field1 != nil) {
+                NSString *name = [NSString stringWithUTF8String:field1];
+                if(name!=nil || ![name isEqualToString:@""]) {
+                [signatureArray addObject:name];
+                }
+            }
+        }
+    }
+    synchronized_sqlite3_finalize(statement);
+    return signatureArray;
+}
+- (NSData *) retrieveOPDOCData:(NSString *)Id
+{
+
+    NSData * data;
+    NSString *opdocData = @"";
+    NSString * selectQuery = [NSString stringWithFormat:@"Select opdoc_data from SFOPDocHtmlData Where local_id = '%@'", Id];
+    
+    sqlite3_stmt * statement;
+    const char * _query = [selectQuery UTF8String];
+    
+    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, _query,-1, &statement, nil) == SQLITE_OK ){
+        
+        while(synchronized_sqlite3_step(statement) == SQLITE_ROW){
+            
+            char *field1 = (char *) synchronized_sqlite3_column_text(statement,COLUMN_1);
+            if (field1 != nil)
+                opdocData = [[NSString alloc] initWithUTF8String:field1];
+            
+        }
+    }
+    data = [Base64 decode:opdocData];
+    
+    return data;
+}
+- (NSString *) getSFIdOfDocForlocalId:(NSString *)name
+{
+    NSString * selectQuery = [NSString stringWithFormat:@"Select sf_id From SFOPDocHtmlData Where doc_name = '%@'", name];
+    sqlite3_stmt * stmt;
+    NSString *SFID = @"";
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        if (synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            char *field = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_1);
+            if ( field != nil )
+                SFID = [NSString stringWithUTF8String:field];
+        }
+    }
+    return SFID;
+}
 
 -(NSString *)getOperationTypeForSignature:(NSString *)recordId  forObject:(NSString *)object_name
 {
@@ -2990,8 +3318,8 @@ extern void SVMXLog(NSString *format, ...);
 }
 
 #pragma mark - Signature Controller
-
-- (void) insertSignatureData:(NSData *)signatureData WithId:(NSString *)signatureId RecordId:(NSString *)recordId  apiName:(NSString *)oApiName WONumber:(NSString *)WONumber flag:(NSString *)sign_type
+//krishna opdoc added signName
+- (void) insertSignatureData:(NSData *)signatureData WithId:(NSString *)signatureId RecordId:(NSString *)recordId  apiName:(NSString *)oApiName WONumber:(NSString *)WONumber flag:(NSString *)sign_type andSignName:(NSString *)signName
 {
     
     NSString * operation_type = [self getOperationTypeForSignature:recordId forObject:oApiName];
@@ -3000,6 +3328,7 @@ extern void SVMXLog(NSString *format, ...);
     
     BOOL does_viewexists = FALSE;
     BOOL does_reportexists = FALSE;
+    BOOL does_docexists = FALSE;
     
     NSString * stringData = [Base64 encode:signatureData];
 // defect 007237
@@ -3011,23 +3340,44 @@ extern void SVMXLog(NSString *format, ...);
         does_viewexists = [self isSignatureExists:recordId type:sign_type tableName:@"SFSignatureData"];
     else if ([sign_type isEqualToString:@"ServiceReport"])
         does_reportexists = [self isSignatureExists:recordId type:sign_type tableName:@"SFSignatureData"];
+    else if([sign_type isEqualToString:@"OPDOC"])
+        does_docexists = [self isSignatureExistsForOpDoc:signatureId type:sign_type tableName:@"SFSignatureData"];
     
-    if (does_viewexists)
-    {
-        queryStatement =[NSString stringWithFormat:@"UPDATE %@ SET %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@' ,operation_type = '%@' WHERE record_id = '%@' AND sign_type = '%@'", @"SFSignatureData", @"sig_Id", signatureId , @"object_api_name",oApiName, @"signature_data", stringData, @"WorkOrderNumber", WONumber,  @"record_Id", recordId, @"sign_type", sign_type, operation_type, recordId, sign_type];
-    }
-    else
-    {
-        if (does_reportexists)
+    
+    if ([sign_type isEqualToString:@"ViewWorkOrder"] || [sign_type isEqualToString:@"ServiceReport"]) {
+        
+        if (does_viewexists)
         {
-            queryStatement =[NSString stringWithFormat:@"UPDATE %@ SET %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@' ,operation_type = '%@' WHERE record_id = '%@' AND sign_type = '%@'", @"SFSignatureData", @"sig_Id", signatureId , @"object_api_name",oApiName, @"signature_data", stringData, @"WorkOrderNumber", WONumber,  @"record_Id", recordId, @"sign_type", sign_type, operation_type,recordId, sign_type];
+            queryStatement =[NSString stringWithFormat:@"UPDATE %@ SET %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@' ,operation_type = '%@' WHERE record_id = '%@' AND sign_type = '%@'", @"SFSignatureData", @"sig_Id", signatureId , @"object_api_name",oApiName, @"signature_data", stringData, @"WorkOrderNumber", WONumber,  @"record_Id", recordId, @"sign_type", sign_type, operation_type, recordId, sign_type];
         }
         else
         {
-            queryStatement = [NSString stringWithFormat:@"INSERT INTO %@ ('%@', '%@', '%@', '%@', '%@' ,'%@' ,'%@') VALUES ('%@','%@', '%@', '%@', '%@', '%@','%@')", @"SFSignatureData", @"sig_Id", @"object_api_name", @"signature_data", @"WorkOrderNumber", @"sign_type",  @"record_Id",@"operation_type", signatureId, oApiName, stringData, WONumber, sign_type, recordId,operation_type];
+            if (does_reportexists)
+            {
+                queryStatement =[NSString stringWithFormat:@"UPDATE %@ SET %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@' ,operation_type = '%@' WHERE record_id = '%@' AND sign_type = '%@'", @"SFSignatureData", @"sig_Id", signatureId , @"object_api_name",oApiName, @"signature_data", stringData, @"WorkOrderNumber", WONumber,  @"record_Id", recordId, @"sign_type", sign_type, operation_type,recordId, sign_type];
+            }
+            
+            
+            else
+            {
+                queryStatement = [NSString stringWithFormat:@"INSERT INTO %@ ('%@', '%@', '%@', '%@', '%@' ,'%@' ,'%@') VALUES ('%@','%@', '%@', '%@', '%@', '%@','%@')", @"SFSignatureData", @"sig_Id", @"object_api_name", @"signature_data", @"WorkOrderNumber", @"sign_type",  @"record_Id",@"operation_type", signatureId, oApiName, stringData, WONumber, sign_type, recordId,operation_type];
+            }
+            
         }
     }
-    
+    else if([sign_type isEqualToString:@"OPDOC"]) {
+        //signature id is set to wonumber
+        if (does_docexists) {
+            
+            queryStatement =[NSString stringWithFormat:@"UPDATE %@ SET %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@', %@ = '%@' ,operation_type = '%@',signature_name = '%@' WHERE signature_type_id = '%@' AND sign_type = '%@'", @"SFSignatureData", @"sig_Id", WONumber , @"object_api_name",oApiName, @"signature_data", stringData, @"WorkOrderNumber", WONumber,  @"record_Id", recordId, @"sign_type", sign_type, @"",signName,signatureId, sign_type];
+            
+        }
+        else if(!does_docexists){
+            
+            queryStatement = [NSString stringWithFormat:@"INSERT INTO %@ ('%@', '%@', '%@', '%@', '%@' ,'%@' ,'%@','%@','%@') VALUES ('%@','%@', '%@', '%@', '%@', '%@','%@','%@','%@')", @"SFSignatureData", @"sig_Id", @"object_api_name", @"signature_data", @"WorkOrderNumber", @"sign_type",  @"record_Id",@"operation_type",@"signature_type_id",@"signature_name", WONumber, oApiName, stringData, WONumber, sign_type, recordId,@"",signatureId,signName];
+        }
+
+    }
     char *err;
     
     int ret = synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err);
@@ -3060,7 +3410,53 @@ extern void SVMXLog(NSString *format, ...);
 	}
 
 }
+//krishnaOPdoc html data
+- (BOOL)isDocExistsFor:(NSString *)local_id tableName:(NSString *)tableName {
+    
+    //where process id is equal to process id
+    NSString * query = [NSString stringWithFormat:@"SELECT COUNT(*) FROM %@ WHERE local_id = '%@'", tableName, local_id];
+    
+    sqlite3_stmt * statement;
+    
+    int count = 0;
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, NULL) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            count = synchronized_sqlite3_column_int(statement, 0);
+        }
+    }
+    
+    if (count > 0)
+        return TRUE;
+    else
+        return FALSE;
 
+}
+
+- (BOOL) isSignatureExistsForOpDoc:(NSString *)signId type:(NSString *)sign_type tableName:(NSString *)tableName {
+    
+    NSString * query = [NSString stringWithFormat:@"SELECT COUNT(*) FROM %@ WHERE signature_type_id = '%@'", tableName, signId];
+    
+    sqlite3_stmt * statement;
+    
+    int count = 0;
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, NULL) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            count = synchronized_sqlite3_column_int(statement, 0);
+        }
+    }
+    
+    if (count > 0)
+        return TRUE;
+    else
+        return FALSE;
+
+}
 - (BOOL) isSignatureExists:(NSString *)local_id type:(NSString *)sign_type tableName:(NSString *)tableName
  {
  
@@ -3132,11 +3528,16 @@ extern void SVMXLog(NSString *format, ...);
 	}
     
 }
-
-- (void) deleteAllSignatureData:(NSString *)operationTYpe
+//krishnasign
+- (void) deleteAllSignatureData:(NSString *)operationTYpe andSignType:(NSString *)signType
 {
-    NSString * queryStatement = [NSString stringWithFormat:@"DELETE From SFSignatureData where operation_type = '%@' ",operationTYpe];
-    
+    NSString * queryStatement = @"";
+    if ([signType isEqualToString:@"OPDOC"]) {
+        queryStatement = [NSString stringWithFormat:@"DELETE From SFSignatureData where sign_type = '%@' ",signType];
+    }
+    else {
+        queryStatement = [NSString stringWithFormat:@"DELETE From SFSignatureData where operation_type = '%@' ",operationTYpe];
+    }
     char * err;
     if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
@@ -3147,7 +3548,40 @@ extern void SVMXLog(NSString *format, ...);
 
 	}
 }
+//krishna opdoc
+- (void) deleteSignatureForOPDocWhereLikeSignId:(NSString *)sign andSignType:(NSString *)signType {
+    NSString * queryStatement = @"";
+    if ([signType isEqualToString:@"OPDOC"]) {
+        queryStatement = [NSString stringWithFormat:@"DELETE From SFSignatureData where sign_type = '%@' and signature_type_id like '%@%%' ",signType,sign];
+    }
+    char * err;
+    if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+    {
+        SMLog(@"%@", queryStatement);
+		SMLog(@"METHOD:deleteAllSignatureData");
+		SMLog(@"ERROR IN DELETE %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryStatement type:DELETEQUERY];
+        
+	}
+}
+//krishna opdoc
+- (void) deleteOPDocSignatureForSignId:(NSString *)signId andSignType:(NSString *)signType {
+   
+    NSString * queryStatement = @"";
+    if ([signType isEqualToString:@"OPDOC"]) {
+        queryStatement = [NSString stringWithFormat:@"DELETE From SFSignatureData where sign_type = '%@' and signature_type_id = '%@' ",signType,signId];
+    }
+    char * err;
+    if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+    {
+        SMLog(@"%@", queryStatement);
+		SMLog(@"METHOD:deleteAllSignatureData");
+		SMLog(@"ERROR IN DELETE %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryStatement type:DELETEQUERY];
+        
+	}
 
+}
 - (void) deleteSignatureDataWRTId:(NSString *)local_id  type:(NSString *)operationType
 {
     NSString * queryStatement = [NSString stringWithFormat:@"DELETE From SFSignatureData where operation_type = '%@' and record_Id = '%@' ",operationType, local_id];
@@ -3166,20 +3600,34 @@ extern void SVMXLog(NSString *format, ...);
 //####################################################################################//
                         //PLEASE CALL THIS METHODS ONCE DATA SYNC IS OVER
 //Shrinivas - This method to be only called when Data Sync Over.
-- (void) getAllLocalIdsForSignature:(NSString *)operation_type
+
+//krishnasignature opdaoc
+- (void) getAllLocalIdsForSignature:(NSString *)operation_type andSignType:(NSString *)sigType
 {
-    NSString *selectQuery = [NSString stringWithFormat:@"Select record_Id, object_api_name From SFSignatureData Where sign_type = 'ViewWorkOrder' and operation_type = '%@'",operation_type]; 
+    //krishnasign
+    NSString *selectQuery = @"";
+    
+    if([sigType isEqualToString:@"OPDOC"]) {
+        
+        selectQuery = [NSString stringWithFormat:@"Select record_Id, object_api_name,signature_type_id  From SFSignatureData Where sign_type = '%@'",sigType];
+    }
+    else {
+        //krishnasign
+        selectQuery = [NSString stringWithFormat:@"Select record_Id, object_api_name,signature_type_id  From SFSignatureData Where sign_type = 'ViewWorkOrder' and operation_type = '%@'",operation_type];
+    }
     sqlite3_stmt * stmt;
     
     NSString  * recordId = @"";
     NSString * objectapiName = @"";
+    NSString *signatureTypeId = @"";
     
-    NSMutableDictionary * signatureData = [[NSMutableDictionary alloc] initWithCapacity:0];
-    
+    NSMutableArray *opdocSignArray = [NSMutableArray array];
     if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, NULL) == SQLITE_OK)
     {
-        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW) 
+        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
         {
+            NSMutableDictionary * signatureData = [NSMutableDictionary dictionary];
+            
             char *field = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_1);
             if ( field != nil )
                 recordId = [NSString stringWithUTF8String:field];
@@ -3188,21 +3636,65 @@ extern void SVMXLog(NSString *format, ...);
             if ( field1 != nil )
                 objectapiName = [NSString stringWithUTF8String:field1];
             
-            [signatureData setValue:objectapiName forKey:recordId];
+            //krishnasign : extra field which depicts the unique id for signature.
+            char *field2 = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_3);
+            if ( field2 != nil )
+                signatureTypeId = [NSString stringWithUTF8String:field2];
+            
+            NSMutableDictionary *tempDict = [NSMutableDictionary dictionary];
+            [tempDict setValue:objectapiName forKey:@"objectapiNameKey"];
+            [tempDict setValue:signatureTypeId forKey:@"sigTypeId"];
+            
+            [signatureData setValue:tempDict forKey:recordId];
+            [opdocSignArray addObject:signatureData];
+            
+            signatureTypeId = @"";
+            objectapiName = @"";
         }
+        
     }
     synchronized_sqlite3_finalize(stmt);
-    NSArray * allkeys = [signatureData allKeys];
     
-    for (int i = 0; i < [allkeys count]; i++)
-    {
-        [self getSFIdForSignature:[allkeys objectAtIndex:i] objectName:[signatureData objectForKey:[allkeys objectAtIndex:i]]];
+    NSString *objectName = @"";
+    NSString *signatureID = @"";
+   
+    //krishnsign modified as to allow capablity to support multiple signature
+    for(int k=0; k<[opdocSignArray count]; k++) {
+        NSDictionary *dict = [opdocSignArray objectAtIndex:k];
+        NSArray * allkeys = [dict allKeys];
+        for (int i = 0; i < [allkeys count]; i++)
+        {
+            NSMutableDictionary *tempD = [dict objectForKey:[allkeys objectAtIndex:i]];
+            objectName = [tempD valueForKey:@"objectapiNameKey"];
+            signatureID = [tempD valueForKey:@"sigTypeId"];
+            
+            [self getSFIdForSignature:[allkeys objectAtIndex:i] objectName:objectName signatureTyprId:signatureID andSignType:sigType];
+        }
     }
-    [self deleteAllSignatureData:operation_type];
+    //    else {
+    //        NSArray * allkeys = [signatureData allKeys];
+    //
+    //        for (int i = 0; i < [allkeys count]; i++)
+    //        {
+    //
+    //            [self getSFIdForSignature:[allkeys objectAtIndex:i] objectName:[signatureData objectForKey:[allkeys objectAtIndex:i]] andSignType:sigType];
+    //        }
+    //    }
+    
+    
+    //clear all the database contents
+   
+    [self deleteAllSignatureData:operation_type andSignType:sigType];
+    
+    //clear all document folder (stored signatures)
+    
+    
     appDelegate.wsInterface.didWriteSignature = YES;
+    appDelegate.wsInterface.didWriteSignatures = YES;
 }
 
-- (void) getSFIdForSignature:(NSString *)localId objectName:(NSString *)objectName
+//krishnasign
+- (void) getSFIdForSignature:(NSString *)localId objectName:(NSString *)objectName signatureTyprId:(NSString *)sigTypeId andSignType:(NSString *)sigType
 {
     NSString *selectQuery = [NSString stringWithFormat:@"Select Id From '%@' Where local_id = '%@'", objectName, localId];
     sqlite3_stmt * stmt;
@@ -3231,20 +3723,33 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:updateQuery type:UPDATEQUERY];
     }
     else
-    { 
-        [self writeSignatureToSFDC:SFID];
+    {
+        NSString *signId = @"";
+        //krishnasign
+        if([sigType isEqualToString:@"OPDOC"]) {
+        signId = sigTypeId;
+        }
+        [self writeSignatureToSFDC:SFID andSignType:sigType forSignId:signId];
     }
     [appDelegate.dataBase endTransaction];
 }
-
-- (void) writeSignatureToSFDC:(NSString *)SFId
+//krishnasign
+- (void) writeSignatureToSFDC:(NSString *)SFId andSignType:(NSString *)signType forSignId:(NSString *)signTypeId
 {
     //Write the signature to SFDC
     NSString * signatureString = @"";
-    NSString * recordId = @"";
-    NSData * decryptedSignature;
-    NSString *selectQuery = [NSString stringWithFormat:@"Select signature_data, record_Id from SFSignatureData Where sig_Id = '%@' and sign_type = 'ViewWorkOrder'", SFId];
     
+    NSString * uniqueId = @"";
+    NSData * decryptedSignature;
+    
+    //krishnasign
+    NSString *selectQuery = @"";
+    if([signType isEqualToString:@"OPDOC"]) {
+       selectQuery = [NSString stringWithFormat:@"Select signature_data, record_Id from SFSignatureData Where sig_Id = '%@' and sign_type = '%@' and signature_type_id = '%@'", SFId,signType,signTypeId];
+    }
+    else {
+    selectQuery = [NSString stringWithFormat:@"Select signature_data, record_Id from SFSignatureData Where sig_Id = '%@' and sign_type = 'ViewWorkOrder'", SFId];
+    }
     sqlite3_stmt * stmt;
     
     if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, NULL) == SQLITE_OK)
@@ -3257,7 +3762,7 @@ extern void SVMXLog(NSString *format, ...);
             
             char *field1 = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_2);
             if ( field1 != nil )
-                recordId = [NSString stringWithUTF8String:field1];
+                uniqueId = [NSString stringWithUTF8String:field1];
         }
     }
     
@@ -3267,8 +3772,8 @@ extern void SVMXLog(NSString *format, ...);
     decryptedSignature = [signatureData AESDecryptWithPassphrase:@"hello123_!@#$%^&*()"];
     
     iOSInterfaceObject *iosInterface = [[iOSInterfaceObject alloc] init];
-    [iosInterface setSignImageData:decryptedSignature WithId:SFId WithImageName:recordId];
-    
+    [iosInterface setSignImageData:decryptedSignature WithId:SFId WithRecordId:uniqueId andSignId:signTypeId];
+
     [iosInterface release];
     synchronized_sqlite3_finalize(stmt);
 }
@@ -4305,10 +4810,6 @@ NSString *Doc_Name=[[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurren
         
         
     }
-    
-    
-
-    
     
     [pdfCreator attachPDF:newFilePath];
     

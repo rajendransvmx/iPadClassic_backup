@@ -105,7 +105,9 @@
 
 // Signature Capture
 //- (void) setSignImageData:(NSData *)imageData;
-- (void) setSignImageData:(NSData *)imageData WithId:(NSString *)SFId WithImageName:(NSString *)imageName;
+
+//krishnasign added extra param and changed the imagename to recordId
+- (void) setSignImageData:(NSData *)imageData WithId:(NSString *)SFId WithRecordId:(NSString *)recordId andSignId:(NSString *)sign;
 - (void) removePreviousSignature:(NSString *)signatureName;
 - (void) didGetSignatureList:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
 - (void) didRemoveSignature:(ZKQueryResult *)result error:(NSError *)error context:(id)context;

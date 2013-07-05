@@ -12,4 +12,6 @@
 
 +(NSString *)getWrapperForCodeSnippet:(NSString *)codeSnippet;
 
++ (NSString *)getWrapperForOPDocs:(NSString *)codeSnippet forRecord:(NSString *)recordId andProcessId:(NSString *)processId;
+
 @end
