@@ -751,6 +751,15 @@
 		A8DB1D0816E0B58B007D1A4F /* JSExecuter.m in Sources */ = {isa = PBXBuildFile; fileRef = A8DB1D0316E0B58B007D1A4F /* JSExecuter.m */; };
 		A8DB1D0C16E0B590007D1A4F /* PriceBookData.m in Sources */ = {isa = PBXBuildFile; fileRef = A8DB1D0B16E0B590007D1A4F /* PriceBookData.m */; };
 		A8E07D8F15FDDECC00070821 /* CustomLibXml.m in Sources */ = {isa = PBXBuildFile; fileRef = A8E07D8815FDD93C00070821 /* CustomLibXml.m */; };
+		A8E259C41786958B0063ADD9 /* com.servicemax.client.lib.zip in Resources */ = {isa = PBXBuildFile; fileRef = A8E259BB1786958B0063ADD9 /* com.servicemax.client.lib.zip */; };
+		A8E259C51786958B0063ADD9 /* com.servicemax.client.mvc.zip in Resources */ = {isa = PBXBuildFile; fileRef = A8E259BC1786958B0063ADD9 /* com.servicemax.client.mvc.zip */; };
+		A8E259C61786958B0063ADD9 /* com.servicemax.client.runtime.zip in Resources */ = {isa = PBXBuildFile; fileRef = A8E259BD1786958B0063ADD9 /* com.servicemax.client.runtime.zip */; };
+		A8E259C71786958B0063ADD9 /* com.servicemax.client.sfmbizrules.zip in Resources */ = {isa = PBXBuildFile; fileRef = A8E259BE1786958B0063ADD9 /* com.servicemax.client.sfmbizrules.zip */; };
+		A8E259C81786958B0063ADD9 /* com.servicemax.client.sfmconsole.zip in Resources */ = {isa = PBXBuildFile; fileRef = A8E259BF1786958B0063ADD9 /* com.servicemax.client.sfmconsole.zip */; };
+		A8E259C91786958B0063ADD9 /* com.servicemax.client.sfmopdocdelivery.model.zip in Resources */ = {isa = PBXBuildFile; fileRef = A8E259C01786958B0063ADD9 /* com.servicemax.client.sfmopdocdelivery.model.zip */; };
+		A8E259CA1786958B0063ADD9 /* com.servicemax.client.sfmopdocdelivery.zip in Resources */ = {isa = PBXBuildFile; fileRef = A8E259C11786958B0063ADD9 /* com.servicemax.client.sfmopdocdelivery.zip */; };
+		A8E259CB1786958B0063ADD9 /* com.servicemax.client.tablet.sal.sfmopdoc.model.zip in Resources */ = {isa = PBXBuildFile; fileRef = A8E259C21786958B0063ADD9 /* com.servicemax.client.tablet.sal.sfmopdoc.model.zip */; };
+		A8E259CC1786958B0063ADD9 /* com.servicemax.client.zip in Resources */ = {isa = PBXBuildFile; fileRef = A8E259C31786958B0063ADD9 /* com.servicemax.client.zip */; };
 		A8FBA65B155A503600F52346 /* DetailViewControllerForSFM.m in Sources */ = {isa = PBXBuildFile; fileRef = A8FBA641155A503600F52346 /* DetailViewControllerForSFM.m */; };
 		A8FBA65C155A503600F52346 /* DetailViewControllerForSFM.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8FBA642155A503600F52346 /* DetailViewControllerForSFM.xib */; };
 		A8FBA65D155A503600F52346 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8FBA644155A503600F52346 /* MainViewController.m */; };
@@ -2442,6 +2451,15 @@
 		A8E07D8715FDD93C00070821 /* CustomLibXml.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomLibXml.h; sourceTree = "<group>"; };
 		A8E07D8815FDD93C00070821 /* CustomLibXml.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomLibXml.m; sourceTree = "<group>"; };
 		A8E07D8D15FDDCE200070821 /* LoggingController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoggingController.h; sourceTree = "<group>"; };
+		A8E259BB1786958B0063ADD9 /* com.servicemax.client.lib.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.lib.zip; sourceTree = "<group>"; };
+		A8E259BC1786958B0063ADD9 /* com.servicemax.client.mvc.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.mvc.zip; sourceTree = "<group>"; };
+		A8E259BD1786958B0063ADD9 /* com.servicemax.client.runtime.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.runtime.zip; sourceTree = "<group>"; };
+		A8E259BE1786958B0063ADD9 /* com.servicemax.client.sfmbizrules.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.sfmbizrules.zip; sourceTree = "<group>"; };
+		A8E259BF1786958B0063ADD9 /* com.servicemax.client.sfmconsole.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.sfmconsole.zip; sourceTree = "<group>"; };
+		A8E259C01786958B0063ADD9 /* com.servicemax.client.sfmopdocdelivery.model.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.sfmopdocdelivery.model.zip; sourceTree = "<group>"; };
+		A8E259C11786958B0063ADD9 /* com.servicemax.client.sfmopdocdelivery.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.sfmopdocdelivery.zip; sourceTree = "<group>"; };
+		A8E259C21786958B0063ADD9 /* com.servicemax.client.tablet.sal.sfmopdoc.model.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.tablet.sal.sfmopdoc.model.zip; sourceTree = "<group>"; };
+		A8E259C31786958B0063ADD9 /* com.servicemax.client.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.zip; sourceTree = "<group>"; };
 		A8FBA640155A503600F52346 /* DetailViewControllerForSFM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailViewControllerForSFM.h; sourceTree = "<group>"; };
 		A8FBA641155A503600F52346 /* DetailViewControllerForSFM.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailViewControllerForSFM.m; sourceTree = "<group>"; };
 		A8FBA642155A503600F52346 /* DetailViewControllerForSFM.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DetailViewControllerForSFM.xib; sourceTree = "<group>"; };
@@ -3430,6 +3448,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A8E259BA1786958B0063ADD9 /* Static Resources */,
 				AC891297173A8AB400061C14 /* Default-Landscape~ipad.png */,
 				ACEACE411721201B00837555 /* Retina Images */,
 				39C8F4481521ED9D00F81B51 /* Help Files */,
@@ -5606,6 +5625,22 @@
 				A8DB1D0B16E0B590007D1A4F /* PriceBookData.m */,
 			);
 			path = GetPriceBook;
+			sourceTree = "<group>";
+		};
+		A8E259BA1786958B0063ADD9 /* Static Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A8E259BB1786958B0063ADD9 /* com.servicemax.client.lib.zip */,
+				A8E259BC1786958B0063ADD9 /* com.servicemax.client.mvc.zip */,
+				A8E259BD1786958B0063ADD9 /* com.servicemax.client.runtime.zip */,
+				A8E259BE1786958B0063ADD9 /* com.servicemax.client.sfmbizrules.zip */,
+				A8E259BF1786958B0063ADD9 /* com.servicemax.client.sfmconsole.zip */,
+				A8E259C01786958B0063ADD9 /* com.servicemax.client.sfmopdocdelivery.model.zip */,
+				A8E259C11786958B0063ADD9 /* com.servicemax.client.sfmopdocdelivery.zip */,
+				A8E259C21786958B0063ADD9 /* com.servicemax.client.tablet.sal.sfmopdoc.model.zip */,
+				A8E259C31786958B0063ADD9 /* com.servicemax.client.zip */,
+			);
+			path = "Static Resources";
 			sourceTree = "<group>";
 		};
 		A8FBA63D155A503600F52346 /* SFMSearch */ = {
@@ -8316,6 +8351,15 @@
 				6B18E3F81785483D00224F72 /* OPDocSignatureViewController.xib in Resources */,
 				6B18E3FA1785483D00224F72 /* OPDocTemplateSelectorViewController.xib in Resources */,
 				6B18E3FC1785483D00224F72 /* OPDocViewController.xib in Resources */,
+				A8E259C41786958B0063ADD9 /* com.servicemax.client.lib.zip in Resources */,
+				A8E259C51786958B0063ADD9 /* com.servicemax.client.mvc.zip in Resources */,
+				A8E259C61786958B0063ADD9 /* com.servicemax.client.runtime.zip in Resources */,
+				A8E259C71786958B0063ADD9 /* com.servicemax.client.sfmbizrules.zip in Resources */,
+				A8E259C81786958B0063ADD9 /* com.servicemax.client.sfmconsole.zip in Resources */,
+				A8E259C91786958B0063ADD9 /* com.servicemax.client.sfmopdocdelivery.model.zip in Resources */,
+				A8E259CA1786958B0063ADD9 /* com.servicemax.client.sfmopdocdelivery.zip in Resources */,
+				A8E259CB1786958B0063ADD9 /* com.servicemax.client.tablet.sal.sfmopdoc.model.zip in Resources */,
+				A8E259CC1786958B0063ADD9 /* com.servicemax.client.zip in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
