@@ -68,7 +68,11 @@ SelectProcessControllerDelegate,UITableViewDataSource,UITableViewDelegate>
 - (void) refreshTable;
 - (void) displaySwitchViews;
 - (void) showLastModifiedTimeForSFMRecord;
+- (NSIndexPath *)getSelectedIndexPath;
 
+//Radha :- Implementation  for  Required Field alert in Debrief UI 
+//Radha :- HighlightSelectedRow
+- (void) highlightSelectRowWithIndexpath:(NSIndexPath *)indexPath;
 - (void) displayErrors;
 - (void) hideErrors;
 

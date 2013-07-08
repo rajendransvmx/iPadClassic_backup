@@ -195,6 +195,9 @@ extern void SVMXLog(NSString *format, ...);
     [segmentButton setTitle:str forSegmentAtIndex:1];
     str = [appDelegate.wsInterface.tagsDictionary objectForKey:SLIDERTODAYBTN];
     [todayBtn setTitle:str forState:UIControlStateNormal];
+	//Defect Fix :- 7454
+	[todayBtn.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
+	todayBtn.titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
     
     [segmentButton setImage:[UIImage imageNamed:@"iService-Day-Button-Down-State.png"] forSegmentAtIndex:0];
     [segmentButton setImage:[UIImage imageNamed:@"iService-Week-Button-Up-State.png"] forSegmentAtIndex:1];

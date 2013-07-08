@@ -34,8 +34,14 @@ extern void SVMXLog(NSString *format, ...);
     
     [cancelBuuton setTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:ADD_TASKS_CANCEL_BUTTON] forState:UIControlStateNormal];
     [cancelBuuton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+	//Defect Fix :- 7454
+    [cancelBuuton.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
+	cancelBuuton.titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
     [doneButton setTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:ADD_TASKS_DONE_BUTTON] forState:UIControlStateNormal];
     [doneButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+	//Defect Fix :- 7454
+    [doneButton.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
+	doneButton.titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
     taskPrompt.text = [appDelegate.wsInterface.tagsDictionary objectForKey:ADD_TASKS_PROMPT];
     priority.text = [appDelegate.wsInterface.tagsDictionary objectForKey:ADD_TASKS_SET_PRIORITY_TITLE];
     
@@ -46,8 +52,12 @@ extern void SVMXLog(NSString *format, ...);
     pickerValues = [[NSArray alloc] initWithObjects:low, normal, high, nil];
 	
 	[setPriorityLable setText:[appDelegate.wsInterface.tagsDictionary objectForKey:ADD_TASKS_SET_PRIORITY_TITLE]];
+	//Defect Fix :- 7454
+	setPriorityLable.lineBreakMode = UILineBreakModeTailTruncation;
 	[enterTaskLabel setText:[appDelegate.wsInterface.tagsDictionary objectForKey:ADD_TASKS_PROMPT]];
 	enterTaskLabel.font = [UIFont fontWithName:@"helvetica" size:20];
+	//Defect Fix :- 7454
+	enterTaskLabel.lineBreakMode = UILineBreakModeTailTruncation;
     
 }
 

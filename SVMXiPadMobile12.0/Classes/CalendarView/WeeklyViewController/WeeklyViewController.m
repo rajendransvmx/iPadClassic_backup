@@ -70,6 +70,11 @@ extern void SVMXLog(NSString *format, ...);
     
     NSString * str = [appDelegate.wsInterface.tagsDictionary objectForKey:SLIDERCURWEEKLABEL];
     [curWeek setTitle:str forState:UIControlStateNormal];
+	
+	//Defect Fix :- 7454
+	[curWeek.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
+	curWeek.titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
+
     //Localizing the days in the week_view
     day1Label.font = [UIFont systemFontOfSize:12];
     day2Label.font = [UIFont systemFontOfSize:12];

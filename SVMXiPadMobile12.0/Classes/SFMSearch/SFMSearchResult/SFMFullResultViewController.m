@@ -867,4 +867,9 @@ extern void SVMXLog(NSString *format, ...);
     [self.view setUserInteractionEnabled:NO];
 }
 
+//july 01 '13 :- Keyboard fix, Defect Fix 7447
+//Overding the below method to dismiss keyboard from a view presented from a form sheet.
+- (BOOL)disablesAutomaticKeyboardDismissal {
+    return NO;
+}
 @end

@@ -97,6 +97,8 @@ PopoverButtons *popOver_view;
 	[button addTarget:self action:@selector(ShowActions) forControlEvents:UIControlEventTouchUpInside];
 	[button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
 	[button sizeToFit];
+	//Defect Fix :- 7454
+	button.titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
 	toolBarWidth += button.frame.size.width + SPACE_BUFFER;
 	UIBarButtonItem * barButton = [[[UIBarButtonItem alloc] initWithCustomView:button] autorelease];
 	[arrayForRightBarButton addObject:barButton];
@@ -109,6 +111,8 @@ PopoverButtons *popOver_view;
 	[statusButton addTarget:self action:@selector(showSyncronisationStatus) forControlEvents:UIControlEventTouchUpInside];
 	[statusButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
 	[statusButton sizeToFit];
+	//Defect Fix :- 7454
+	statusButton.titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
 	toolBarWidth += statusButton.frame.size.width + SPACE_BUFFER;
 	UIBarButtonItem * statusBarButton = [[[UIBarButtonItem alloc] initWithCustomView:statusButton] autorelease];
 	[arrayForRightBarButton addObject:statusBarButton];

@@ -2074,7 +2074,7 @@ NSString * GO_Online = @"GO_Online";
         NSMutableDictionary *dicttemp=[[NSMutableDictionary alloc]init];
         [dicttemp setObject:@"" forKey:@"userInfo"];
         [Errordict setObject:dicttemp forKey:@"userInfo"];
-       //defect 007237
+       //defect 007377
 //        [appDelegate CustomizeAletView:nil alertType:SOAP_ERROR Dict:Errordict exception:nil];
         [dicttemp release];
         [Errordict release];

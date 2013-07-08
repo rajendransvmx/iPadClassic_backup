@@ -156,7 +156,12 @@ extern void SVMXLog(NSString *format, ...);
 	[doneButton setTitle:[appDelegte.wsInterface.tagsDictionary objectForKey:SFM_SIGNATURE_DONE_BUTTON] forState:UIControlStateNormal];
 	[_cancelButt setTitle:[appDelegte.wsInterface.tagsDictionary objectForKey:SFM_SIGNATURE_CANCEL_BUTTON] forState:UIControlStateNormal];
 	
-	
+	//Defect Fix :- 7454
+	[done_button.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
+	done_button.titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
+	[_cancelButt.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
+	_cancelButt.titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
+
     
     // ################################ //
     // Fill the marker with marker text

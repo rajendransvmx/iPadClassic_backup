@@ -35,6 +35,8 @@
 
 - (void) setReadOnly:(BOOL)flag;
 - (void) setShouldResizeAutomatically:(BOOL)_shouldResizeAutomatically;
--(id) initWithFrame:(CGRect)frame lableValue:(NSString *)lableValue;
+//Keyboard fix for readonly fields
+-(id) initWithFrame:(CGRect)frame lableValue:(NSString *)lableValue isEditable:(BOOL)isEditable;
+
 
 @end

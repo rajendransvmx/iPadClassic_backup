@@ -95,6 +95,10 @@ extern void SVMXLog(NSString *format, ...);
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
 	@try{
     [sendMailButton setTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:PDF_EMAIL] forState:UIControlStateNormal];
+	//Defect Fix :- 7454
+	[sendMailButton.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
+	sendMailButton.titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
+
     NSDictionary * dict = [appDelegate.SFMPage objectForKey:gHEADER];
     woId = [dict objectForKey:gHEADER_ID];
     

@@ -952,39 +952,21 @@ extern void SVMXLog(NSString *format, ...);
             return;
         }
         
-        delegate = appDelegate.sfmPageController.detailView;
-        
-        [delegate didSelectRow:indexPath.row ForSection:indexPath.section];
-        
-        UIImage * image = nil;
-        
-        if (lastSelectedIndexPath == indexPath)
-        {
-            UITableViewCell * selectedCell = [tableView cellForRowAtIndexPath:indexPath];
-            UIView * cellBackgroundView = selectedCell.backgroundView;
-            UIImageView * bgImage = (UIImageView *)[cellBackgroundView viewWithTag:BGIMAGETAG];
-            image = [UIImage imageNamed:@"SFM_left_button_selected.png"];
-            image = [image stretchableImageWithLeftCapWidth:11 topCapHeight:8];
-            [bgImage setImage:image];
-            [bgImage setContentMode:UIViewContentModeScaleToFill];
-            UILabel * selectedCellLabel = (UILabel *)[cellBackgroundView viewWithTag:CELLLABELTAG];
-            selectedCellLabel.textColor = [UIColor whiteColor];
-        }
-        else
-        {
-            
-            UITableViewCell * lastSelectedCell = [tableView cellForRowAtIndexPath:lastSelectedIndexPath];
-            UIView * lastSelectedCellBackgroundView = lastSelectedCell.backgroundView;
-            UIImageView * lastSelectedCellBGImage = (UIImageView *)[lastSelectedCellBackgroundView viewWithTag:BGIMAGETAG];
-            image = [UIImage imageNamed:@"SFM_left_button_UP.png"];
-            image = [image stretchableImageWithLeftCapWidth:8 topCapHeight:8];
-            [lastSelectedCellBGImage setImage:image];
-            [lastSelectedCellBGImage setContentMode:UIViewContentModeScaleToFill];
-            UILabel * lastSelectedCellLabel = (UILabel *)[lastSelectedCellBackgroundView viewWithTag:CELLLABELTAG];
-            lastSelectedCellLabel.textColor = [UIColor blackColor];
-        }
-        
-        UITableViewCell * selectedCell = [tableView cellForRowAtIndexPath:indexPath];
+         delegate = appDelegate.sfmPageController.detailView;
+		//Radha :- Implementation  for  Required Field alert in Debrief UI
+		[self highlightSelectRowWithIndexpath:indexPath];        
+		[delegate didSelectRow:indexPath.row ForSection:indexPath.section];
+     }
+
+}
+//Radha :- Implementation  for  Required Field alert in Debrief UI :- Highlighth's selected row
+- (void) highlightSelectRowWithIndexpath:(NSIndexPath *)indexPath
+{
+    UIImage * image = nil;
+
+    if (lastSelectedIndexPath == indexPath)
+    {
+        UITableViewCell * selectedCell = [self.tableView cellForRowAtIndexPath:indexPath];
         UIView * cellBackgroundView = selectedCell.backgroundView;
         UIImageView * bgImage = (UIImageView *)[cellBackgroundView viewWithTag:BGIMAGETAG];
         image = [UIImage imageNamed:@"SFM_left_button_selected.png"];
@@ -992,12 +974,34 @@ extern void SVMXLog(NSString *format, ...);
         [bgImage setImage:image];
         [bgImage setContentMode:UIViewContentModeScaleToFill];
         UILabel * selectedCellLabel = (UILabel *)[cellBackgroundView viewWithTag:CELLLABELTAG];
-        selectedCellLabel.textColor = [UIColor whiteColor];
-        
-        lastSelectedIndexPath = [indexPath retain];
+        selectedCellLabel.textColor = [UIColor whiteColor]; 
     }
+    else
+    {
+        
+        UITableViewCell * lastSelectedCell = [self.tableView cellForRowAtIndexPath:lastSelectedIndexPath];
+        UIView * lastSelectedCellBackgroundView = lastSelectedCell.backgroundView;
+        UIImageView * lastSelectedCellBGImage = (UIImageView *)[lastSelectedCellBackgroundView viewWithTag:BGIMAGETAG];
+        image = [UIImage imageNamed:@"SFM_left_button_UP.png"];
+        image = [image stretchableImageWithLeftCapWidth:8 topCapHeight:8];
+        [lastSelectedCellBGImage setImage:image];
+        [lastSelectedCellBGImage setContentMode:UIViewContentModeScaleToFill];
+        UILabel * lastSelectedCellLabel = (UILabel *)[lastSelectedCellBackgroundView viewWithTag:CELLLABELTAG];
+        lastSelectedCellLabel.textColor = [UIColor blackColor];
+    }
+    
+    UITableViewCell * selectedCell = [self.tableView cellForRowAtIndexPath:indexPath];
+    UIView * cellBackgroundView = selectedCell.backgroundView;
+    UIImageView * bgImage = (UIImageView *)[cellBackgroundView viewWithTag:BGIMAGETAG];
+    image = [UIImage imageNamed:@"SFM_left_button_selected.png"];
+    image = [image stretchableImageWithLeftCapWidth:11 topCapHeight:8];
+    [bgImage setImage:image];
+    [bgImage setContentMode:UIViewContentModeScaleToFill];
+    UILabel * selectedCellLabel = (UILabel *)[cellBackgroundView viewWithTag:CELLLABELTAG];
+    selectedCellLabel.textColor = [UIColor whiteColor];
+    
+    lastSelectedIndexPath = [indexPath retain];
 }
-
 - (void) refreshTable
 {
     lastSelectedIndexPath = nil;
@@ -1031,6 +1035,9 @@ extern void SVMXLog(NSString *format, ...);
     [tableView release];
     [errorTableView release];
     [super dealloc];
+}
+- (NSIndexPath *)getSelectedIndexPath {
+    return lastSelectedIndexPath;
 }
 
 - (void)hideTableViewToRemoveError
