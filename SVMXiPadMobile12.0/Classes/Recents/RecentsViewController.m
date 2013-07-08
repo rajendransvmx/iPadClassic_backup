@@ -63,16 +63,12 @@
     // Load appDelegate.recentObject from the plist
     [appDelegate.recentObject removeAllObjects];
     
-	NSMutableArray * recentObjectsArray = [self getRecentsArrayFromObjectHistoryPlist];
-   
 	rootView = [[RecentObjectRoot alloc] initWithNibName:@"RecentObjectRoot" bundle:nil];
-    rootView.recentObjectsArray = recentObjectsArray;
     UIImageView * bgImage = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_left_panel_bg_main_2.png"]] autorelease];
     rootView.tableView.backgroundView = bgImage;
     UINavigationController * master = [[[UINavigationController alloc] initWithRootViewController:rootView] autorelease];
     
     detailView = [[RecentObjectDetail alloc] initWithNibName:@"RecentObjectDetail" bundle:nil];
-    detailView.recentObjectsArray = recentObjectsArray;
     detailView.delegate = self;
     UINavigationController * detail = [[[UINavigationController alloc] initWithRootViewController:detailView] autorelease];
     
@@ -85,17 +81,16 @@
 	splitView.view.autoresizingMask = UIViewAutoresizingNone;
     [self.view addSubview:splitView.view];
 	splitView.view.frame = self.view.frame;
-//	}@catch (NSException *exp)
-//    {
-//        SMLog(@"Exception Name RecentViewController :viewDidLoad %@",exp.name);
-//        SMLog(@"Exception Reason RecentViewController :viewDidLoad %@",exp.reason);
-//    }
-
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    
+    //7418:
+    [super viewWillAppear:animated];
+    NSMutableArray * recentObjectsArray = [self getRecentsArrayFromObjectHistoryPlist];
+	
+	rootView.recentObjectsArray = recentObjectsArray;
+	detailView.recentObjectsArray = recentObjectsArray;
 }
 
 - (void)viewDidAppear:(BOOL)animated

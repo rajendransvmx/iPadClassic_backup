@@ -11698,15 +11698,13 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     {
         NSString * nameField = [recentsDict objectForKey:NAME_FIELD];
         
-        if ([nameField isEqualToString:nil] || [nameField isEqualToString:@""])
-        {
-            NSString * headerObjectName = [recentsDict objectForKey:OBJ_NAME];
+        //7418: Removed condition to check if nameField isEqualToString:nil and inner condition
+        
+        NSString * headerObjectName = [recentsDict objectForKey:OBJ_NAME];
             
-            NSString * name = [self getNameFieldForObject:headerObjectName WithRecordId:[recentsDict objectForKey:RESULTID]];
+        NSString * name = [self getNameFieldForObject:headerObjectName WithRecordId:[recentsDict objectForKey:RESULTID]];
             
-            if (![name isEqualToString:@""])
-                [recentsDict setValue:name forKey:NAME_FIELD];
-        }
+        [recentsDict setValue:name forKey:NAME_FIELD];
         
         [updated_array addObject:recentsDict];
     }
