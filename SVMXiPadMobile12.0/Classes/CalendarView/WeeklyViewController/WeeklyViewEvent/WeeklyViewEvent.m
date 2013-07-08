@@ -329,158 +329,51 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     // Check if location intersects any event
-    if ([self isEventInRect:location])
-    {
-        // Check which point in location intersects
-        // if self.left.top intersects
-        // if self.left.bottom intersects
-        // revert back to original selfRect
-        // else
-        // find CGRect of self.left.bottom and add on height of self
-        // if CGRect intersects with any event
-        // revert back to original selfRect
-        // else
-        // set position
-        // else if self.left.bottom intersects - top no longer intersects as top also intersecting is already handled above
-        // find CGRect of self.left.top - kGAP - kTIMEMULTIPLE
-        // if CGRect intersects with any event
-        // revert back to original selfRect
-        // else
-        // set position
-        NSArray * intersectionArray = [self getIntersectedEventsWithLocation:location];
-        CGRect topIntersectionRect = [[intersectionArray objectAtIndex:0] CGRectValue];
-        CGRect bottomIntersectionRect = [[intersectionArray objectAtIndex:1] CGRectValue];
-        if (!CGRectEqualToRect(topIntersectionRect, CGRectZero))
-        {
-            if (!CGRectEqualToRect(bottomIntersectionRect, CGRectZero))
-            {
-                // revert back to original selfRect
-                [UIView beginAnimations:@"move" context:nil];
-                [UIView setAnimationDuration:0.3];
-                self.view.frame = selfFrame;
-                [UIView commitAnimations];
-                
-                return;
-            }
-            else 
-            {
-                CGRect rectToBeIn = [self bringEventDownFromLocation:location];
-                
-                CGPoint bottomLeft = CGPointMake(location.origin.x, (location.origin.y + location.size.height) - kwYCORRECTION);
-                CGRect rectToBe = [self getRectForLocation:bottomLeft];
+    //6482: Comment to fix the issue
+    
+	UIView * superView = [self.view superview];
+	// Check for bottom out of frame condition
+	if ((self.view.frame.origin.y + self.view.frame.size.height) > superView.frame.size.height)
+	{
+		CGPoint topLeft = CGPointMake(location.origin.x, (location.origin.y - kwYGAP - kwTIMEMULTIPLE) + kwYCORRECTION);
+		CGRect rectToBe = [self getRectForLocation:topLeft];
 
-                rectToBe.size.height = self.view.frame.size.height;
-
-                if (CGRectEqualToRect(rectToBeIn, CGRectZero) || (rectToBeIn.origin.y > kwTIMEFLOOR))
-                {
-                    // revert back to original selfRect
-                    [UIView beginAnimations:@"move" context:nil];
-                    [UIView setAnimationDuration:0.3];
-                    self.view.frame = selfFrame;
-                    [UIView commitAnimations];
-                    
-                    return;
-                }
-                else
-                {
-                    // Check if rectToBe for bottom is within kwTIMEFLOOR
-                    if ((rectToBeIn.origin.y + self.view.frame.size.height) > kwTIMEFLOOR+kwYCORRECTION)
-                    {
-                        // revert back to original selfRect
-                        [UIView beginAnimations:@"move" context:nil];
-                        [UIView setAnimationDuration:0.3];
-                        self.view.frame = selfFrame;
-                        [UIView commitAnimations];
-                        
-                        return;
-                    }
-                    else
-                    {
-                        {
-                            selfFrame = rectToBeIn;
-                            [UIView beginAnimations:@"move" context:nil];
-                            [UIView setAnimationDuration:0.3];
-                            self.view.frame = selfFrame;
-                            [UIView commitAnimations];
-                        }
-                    }
-                }
-            }
-        }
-        else if (!CGRectEqualToRect(bottomIntersectionRect, CGRectZero))
-        {
-            CGRect rectToBeIn = [self bringEventUpFromLocation:location];
-            
-            CGPoint topLeft = CGPointMake(location.origin.x, (location.origin.y - kwYGAP - kwTIMEMULTIPLE) + kwYCORRECTION);
-            CGRect rectToBe = [self getRectForLocation:topLeft];
-
-            rectToBe.size.height = self.view.frame.size.height;
-
-            if (CGRectEqualToRect(rectToBeIn, CGRectZero) || (rectToBeIn.origin.y < kwLOCATIONYZERO))
-            {
-                // revert back to original selfRect
-                [UIView beginAnimations:@"move" context:nil];
-                [UIView setAnimationDuration:0.3];
-                self.view.frame = selfFrame;
-                [UIView commitAnimations];
-                
-                return;
-            }
-            else
-            {
-                selfFrame = rectToBeIn;
-                [UIView beginAnimations:@"move" context:nil];
-                [UIView setAnimationDuration:0.3];
-                self.view.frame = selfFrame;
-                [UIView commitAnimations];
-            }
-        }
-    }
-    else
-    {
-        UIView * superView = [self.view superview];
-        // Check for bottom out of frame condition
-        if ((self.view.frame.origin.y + self.view.frame.size.height) > superView.frame.size.height)
-        {
-            CGPoint topLeft = CGPointMake(location.origin.x, (location.origin.y - kwYGAP - kwTIMEMULTIPLE) + kwYCORRECTION);
-            CGRect rectToBe = [self getRectForLocation:topLeft];
-
-            rectToBe.size.height = self.view.frame.size.height;
-            if ([self isEventInRect:rectToBe])
-            {
-                // revert back to original selfRect
-                [UIView beginAnimations:@"move" context:nil];
-                [UIView setAnimationDuration:0.3];
-                self.view.frame = selfFrame;
-                [UIView commitAnimations];
-                
-                return;
-            }
-            else
-            {
-                // Check if rectToBe for bottom is within top of weekview frame
-                if ((rectToBe.origin.y + rectToBe.size.height) > superView.frame.size.height)
-                {
-                    // revert back to original selfRect
-                    [UIView beginAnimations:@"move" context:nil];
-                    [UIView setAnimationDuration:0.3];
-                    self.view.frame = selfFrame;
-                    [UIView commitAnimations];
-                    
-                    return;
-                }
-                else
-                {
-                    // set position at rectToBe with corrected size
-                    selfFrame = CGRectMake(rectToBe.origin.x, rectToBe.origin.y, self.view.frame.size.width, self.view.frame.size.height);
-                    [UIView beginAnimations:@"move" context:nil];
-                    [UIView setAnimationDuration:0.3];
-                    self.view.frame = selfFrame;
-                    [UIView commitAnimations];
-                }
-            }
-        }
-    }
+		rectToBe.size.height = self.view.frame.size.height;
+		if ([self isEventInRect:rectToBe])
+		{
+			// revert back to original selfRect
+			[UIView beginAnimations:@"move" context:nil];
+			[UIView setAnimationDuration:0.3];
+			self.view.frame = selfFrame;
+			[UIView commitAnimations];
+			
+			return;
+		}
+		else
+		{
+			// Check if rectToBe for bottom is within top of weekview frame
+			if ((rectToBe.origin.y + rectToBe.size.height) > superView.frame.size.height)
+			{
+				// revert back to original selfRect
+				[UIView beginAnimations:@"move" context:nil];
+				[UIView setAnimationDuration:0.3];
+				self.view.frame = selfFrame;
+				[UIView commitAnimations];
+				
+				return;
+			}
+			else
+			{
+				// set position at rectToBe with corrected size
+				selfFrame = CGRectMake(rectToBe.origin.x, rectToBe.origin.y, self.view.frame.size.width, self.view.frame.size.height);
+				[UIView beginAnimations:@"move" context:nil];
+				[UIView setAnimationDuration:0.3];
+				self.view.frame = selfFrame;
+				[UIView commitAnimations];
+			}
+		}
+	}
+    
     selfFrame = self.view.frame;
     [WeeklyViewEvent modifyEvent:self.view.tag WithRect:selfFrame];
     

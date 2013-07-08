@@ -307,7 +307,8 @@ extern void SVMXLog(NSString *format, ...);
  
     
     // Check if location intersects any event
-    if ([self isEventInRect:location])
+    //6482: Comment to fix the issue
+    /*if ([self isEventInRect:location])
     {
         // Check which point in location intersects
         // if self.left.top intersects
@@ -397,7 +398,7 @@ extern void SVMXLog(NSString *format, ...);
                 [UIView commitAnimations];
             }
         }
-    }
+    }*/
     selfFrame = self.view.frame;
     [EventViewController modifyEvent:self.view.tag WithRect:selfFrame];
     
