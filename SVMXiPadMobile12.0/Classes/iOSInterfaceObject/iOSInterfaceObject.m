@@ -9,6 +9,8 @@
 #import "iOSInterfaceObject.h"
 #import "iServiceAppDelegate.h"
 #import "ModalViewController.h"
+#import "Utility.h"
+
 extern void SVMXLog(NSString *format, ...);
 
 @implementation iOSInterfaceObject
@@ -382,7 +384,19 @@ extern void SVMXLog(NSString *format, ...);
     BOOL isOpdoc = [self isSignatureForOPDOC:SFId andUniqueId:sign];
     NSString *opdocTypeId = @"";
     if(isOpdoc) {
-        fileName = [sign stringByAppendingPathExtension:@"png"];
+        
+        NSFileManager * fileManager = [NSFileManager defaultManager];
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *saveDirectory = [paths objectAtIndex:0];
+        NSArray *itemsInDocDir = [fileManager contentsOfDirectoryAtPath:saveDirectory error:NULL];
+        for (NSString *itm in itemsInDocDir)
+        {
+            if([Utility containsString:sign inString:itm])
+            {
+                fileName = itm;
+            }
+        }
+        
         if(![fileName isEqualToString:@""] || fileName != nil)
             //second half consists of opdoc_signature_id
         opdocTypeId = [fileName stringByDeletingPathExtension];

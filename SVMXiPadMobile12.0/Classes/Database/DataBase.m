@@ -10263,8 +10263,8 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
             }
         }
         synchronized_sqlite3_finalize(statement);
-        NSArray * keys = [NSArray arrayWithObjects:MPROCESS_ID, MLAYOUT_ID, TARGET_OBJECT_NAME, SOURCE_OBJECT_NAME, EXPRESSION_ID, OBJECT_MAPPING_ID, MCOMPONENT_TYPE, MPARENT_COLUMN, MVALUE_MAPPING_ID, @"source_child_parent_column",SORTING_ORDER, process_node_id, MDOC_TEMPLATE_DETAIL_ID, nil];// Damodar OPDoc
-        NSString * processId = @"", * layoutId = @"", * sourceName = @"", * expressionId = @"", * oMappingId = @"",* componentType = @"", * parentColumn = @"", * targetName = @"", * vMappingid = @"", * source_child_column = @"" , * sorting_order_value = @"",      * processnode_id = @"", * doc_temp_detail_id = @"";// Damodar OPDoc
+        NSArray * keys = [NSArray arrayWithObjects:MPROCESS_ID, MLAYOUT_ID, TARGET_OBJECT_NAME, SOURCE_OBJECT_NAME, EXPRESSION_ID, OBJECT_MAPPING_ID, MCOMPONENT_TYPE, MPARENT_COLUMN, MVALUE_MAPPING_ID, @"source_child_parent_column",SORTING_ORDER, process_node_id, MDOC_TEMPLATE_DETAIL_ID,@"target_object_label",@"sfID", nil];// Damodar OPDoc
+        NSString * processId = @"", * layoutId = @"", * sourceName = @"", * expressionId = @"", * oMappingId = @"",* componentType = @"", * parentColumn = @"", * targetName = @"", * vMappingid = @"", * source_child_column = @"" , * sorting_order_value = @"",      * processnode_id = @"", * doc_temp_detail_id = @"",*targetObjectLabel = @"",*sfID = @"";// Damodar OPDoc
         NSArray * objects;
         
         NSString * query = @"";
@@ -10324,17 +10324,25 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                      if ((_docTempDetail_id != nil) && strlen(_docTempDetail_id))
                          doc_temp_detail_id = [NSString stringWithUTF8String:_docTempDetail_id];
 
-                     objects = [NSArray arrayWithObjects:processId, layoutId, targetName, sourceName, expressionId, oMappingId, componentType, parentColumn, vMappingid, @"", sorting_order_value, processnode_id, doc_temp_detail_id, nil];// Damodar OPDoc
+                     char * _targetObjectLabel = (char *) synchronized_sqlite3_column_text(stmt, 13);
+                     if ((_targetObjectLabel != nil) && strlen(_targetObjectLabel))
+                         targetObjectLabel = [NSString stringWithUTF8String:_targetObjectLabel];
+                     
+                     char * _sfID = (char *) synchronized_sqlite3_column_text(stmt, 14);
+                     if ((_sfID != nil) && strlen(_sfID))
+                         sfID = [NSString stringWithUTF8String:_sfID];
+
+                     objects = [NSArray arrayWithObjects:processId, layoutId, targetName, sourceName, expressionId, oMappingId, componentType, parentColumn, vMappingid, @"", sorting_order_value, processnode_id, doc_temp_detail_id,targetObjectLabel,sfID, nil];// Damodar OPDoc
                      
                      NSDictionary * dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
                      [mappingArray addObject:dict];
-                     processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"",sorting_order_value = @"", processnode_id = @"", doc_temp_detail_id = @"";// Damodar OPDoc
+                     processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"",sorting_order_value = @"", processnode_id = @"", doc_temp_detail_id = @"",targetObjectLabel = @"",sfID = @"";// Damodar OPDoc
                 }
                 
                 NSDictionary * source_dict = nil;
                 NSDictionary * target_dict = nil;
                 
-                NSArray * obj = [NSArray arrayWithObjects: processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"",sorting_order_value = @"", processnode_id = @"", doc_temp_detail_id = @"", nil]; // Damodar OPDoc
+                NSArray * obj = [NSArray arrayWithObjects: processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"",sorting_order_value = @"", processnode_id = @"", doc_temp_detail_id = @"",targetObjectLabel = @"",sfID = @"",nil]; // Damodar OPDoc
                 
                 source_dict = [mappingArray objectAtIndex:0];
                 if ([mappingArray count] == 2)
@@ -10399,7 +10407,10 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                            ([source_dict objectForKey:@"source_child_parent_column"]!=@"")?[source_dict objectForKey:@"source_child_parent_column"]:[target_dict  objectForKey:@"source_child_parent_column"],
                            (final_sorting_order!= nil)?final_sorting_order:@"",
                            ([source_dict objectForKey:process_node_id]!=@"")?[source_dict objectForKey:process_node_id]:[target_dict  objectForKey:process_node_id],
-                           ([source_dict objectForKey:MDOC_TEMPLATE_DETAIL_ID]!=@"")?[source_dict objectForKey:MDOC_TEMPLATE_DETAIL_ID]:[target_dict  objectForKey:MDOC_TEMPLATE_DETAIL_ID], nil]; // Damodar OPDoc
+                           ([source_dict objectForKey:MDOC_TEMPLATE_DETAIL_ID]!=@"")?[source_dict objectForKey:MDOC_TEMPLATE_DETAIL_ID]:[target_dict  objectForKey:MDOC_TEMPLATE_DETAIL_ID],
+                           ([[source_dict objectForKey:@"target_object_label"]isEqualToString:@""])?[source_dict objectForKey:@"target_object_label"]:[target_dict  objectForKey:@"target_object_label"],
+                            ([[source_dict objectForKey:@"sfID"] isEqualToString:@""])?[source_dict objectForKey:@"sfID"]:[target_dict  objectForKey:@"sfID"], nil]
+                ; // Damodar OPDoc
 
                 NSDictionary * dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
                 
@@ -10410,7 +10421,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
             
             [mappingArray release];
             processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"" , sorting_order_value = @"", processnode_id = @"";
-            query = @"", doc_temp_detail_id = @""; // Damodar OPDoc
+            query = @"", doc_temp_detail_id = @"",targetObjectLabel = @"",sfID = @""; // Damodar OPDoc
             sqlite3_stmt * childStmt;
             
             query = [NSString stringWithFormat:@"SELECT * FROM SFprocess_test WHERE process_id = '%@' AND (component_type =  'TARGETCHILD')", [processIdList objectAtIndex:i]];
@@ -10464,16 +10475,24 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                     if ((_docTempDetail_id != nil) && strlen(_docTempDetail_id))
                         doc_temp_detail_id = [NSString stringWithUTF8String:_docTempDetail_id];
 
+                    char * _targetObjectLabel = (char *) synchronized_sqlite3_column_text(childStmt, 13);
+                    if ((_targetObjectLabel != nil) && strlen(_targetObjectLabel))
+                        targetObjectLabel = [NSString stringWithUTF8String:_targetObjectLabel];
+                    
+                    char * _sfID = (char *) synchronized_sqlite3_column_text(childStmt, 14);
+                    if ((_sfID != nil) && strlen(_sfID))
+                        sfID = [NSString stringWithUTF8String:_sfID];
+
                     NSString * source_objectName =  [self getObjectNameFromSFobjMapping:oMappingId];
                     
                     NSString * source_childName = [self getSourceChildNameFromProcessId:source_objectName processid:[processIdList objectAtIndex:i]];
                     
-                    objects = [NSArray arrayWithObjects:processId, layoutId, sourceName, source_objectName, expressionId, oMappingId, componentType, parentColumn, vMappingid, source_childName, sorting_order_value,processnode_id, doc_temp_detail_id, nil]; // Damodar OPDoc
+                    objects = [NSArray arrayWithObjects:processId, layoutId, sourceName, source_objectName, expressionId, oMappingId, componentType, parentColumn, vMappingid, source_childName, sorting_order_value,processnode_id, doc_temp_detail_id,targetObjectLabel,sfID, nil]; // Damodar OPDoc
                     
                     NSDictionary * dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
                     
                     [process_info addObject:dict];
-                    processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"" , sorting_order_value = @"", processnode_id = @"", doc_temp_detail_id = @""; // Damodar OPDoc
+                    processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"" , sorting_order_value = @"", processnode_id = @"", doc_temp_detail_id = @"",targetObjectLabel = @"",sfID = @""; // Damodar OPDoc
                 }
                 
             }
@@ -10535,11 +10554,19 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                     if ((_docTempDetail_id != nil) && strlen(_docTempDetail_id))
                         doc_temp_detail_id = [NSString stringWithUTF8String:_docTempDetail_id];
 
-                    objects = [NSArray arrayWithObjects:processId, layoutId, targetName, sourceName, expressionId, oMappingId, componentType, parentColumn, vMappingid, @"", sorting_order_value,processnode_id, doc_temp_detail_id, nil]; // Damodar OPDoc
+                    char * _targetObjectLabel = (char *) synchronized_sqlite3_column_text(stmt, 13);
+                    if ((_targetObjectLabel != nil) && strlen(_targetObjectLabel))
+                        targetObjectLabel = [NSString stringWithUTF8String:_targetObjectLabel];
+                    
+                    char * _sfID = (char *) synchronized_sqlite3_column_text(stmt, 14);
+                    if ((_sfID != nil) && strlen(_sfID))
+                        sfID = [NSString stringWithUTF8String:_sfID];
+
+                    objects = [NSArray arrayWithObjects:processId, layoutId, targetName, sourceName, expressionId, oMappingId, componentType, parentColumn, vMappingid, @"", sorting_order_value,processnode_id, doc_temp_detail_id,targetObjectLabel,sfID, nil]; // Damodar OPDoc
                     
                     NSDictionary * dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
                     [mappingArray addObject:dict];
-                    processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"", sorting_order_value = @"", processnode_id = @"", doc_temp_detail_id = @""; // Damodar OPDoc
+                    processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"", sorting_order_value = @"", processnode_id = @"", doc_temp_detail_id = @"",targetObjectLabel = @"", sfID = @""; // Damodar OPDoc
                 }
                 
                 
@@ -10608,7 +10635,9 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                            ([source_dict objectForKey:MVALUE_MAPPING_ID]!=@"")?[source_dict objectForKey:MVALUE_MAPPING_ID]:[target_dict  objectForKey:MVALUE_MAPPING_ID],
                            ([source_dict objectForKey:@"source_child_parent_column"]!=@"")?[source_dict objectForKey:@"source_child_parent_column"]:[target_dict  objectForKey:@"source_child_parent_column"],(final_sorting_order!= nil)? final_sorting_order:@"",
                            ([source_dict objectForKey:process_node_id]!=@"")?[source_dict objectForKey:process_node_id]:[target_dict  objectForKey:process_node_id],
-                           ([source_dict objectForKey:MDOC_TEMPLATE_DETAIL_ID]!=@"")?[source_dict objectForKey:MDOC_TEMPLATE_DETAIL_ID]:[target_dict  objectForKey:MDOC_TEMPLATE_DETAIL_ID], nil]; // Damodar OPDoc
+                           ([source_dict objectForKey:MDOC_TEMPLATE_DETAIL_ID]!=@"")?[source_dict objectForKey:MDOC_TEMPLATE_DETAIL_ID]:[target_dict  objectForKey:MDOC_TEMPLATE_DETAIL_ID],
+                           ([[source_dict objectForKey:@"target_object_label"] isEqualToString:@""])?[source_dict objectForKey:@"target_object_label"]:[target_dict  objectForKey:@"target_object_label"],
+                           ([[source_dict objectForKey:@"sfID"] isEqualToString:@""])?[source_dict objectForKey:@"sfID"]:[target_dict  objectForKey:@"sfID"], nil]; // Damodar OPDoc
 
                 
                 NSDictionary * dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
@@ -10619,7 +10648,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
             synchronized_sqlite3_finalize(stmt);
             [mappingArray release];
             processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"",sorting_order_value = @"", processnode_id = @"";
-            query = @"", doc_temp_detail_id = @"";// Damodar OPDoc
+            query = @"", doc_temp_detail_id = @"",targetObjectLabel = @"", sfID = @"";// Damodar OPDoc
             sqlite3_stmt * childStmt;
             
             query = [NSString stringWithFormat:@"SELECT * FROM SFprocess_test WHERE process_id = '%@' AND (component_type =  'TARGETCHILD')", [processIdList objectAtIndex:i]];
@@ -10674,16 +10703,24 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                     if ((_docTempDetail_id != nil) && strlen(_docTempDetail_id))
                         doc_temp_detail_id = [NSString stringWithUTF8String:_docTempDetail_id];
 
+                    char * _targetObjectLabel = (char *) synchronized_sqlite3_column_text(childStmt, 13);
+                    if ((_targetObjectLabel != nil) && strlen(_targetObjectLabel))
+                        targetObjectLabel = [NSString stringWithUTF8String:_targetObjectLabel];
+                    
+                    char * _sfID = (char *) synchronized_sqlite3_column_text(childStmt, 14);
+                    if ((_sfID != nil) && strlen(_sfID))
+                        sfID = [NSString stringWithUTF8String:_sfID];
+
                     NSString * source_objectName =  [self getObjectNameFromSFobjMapping:oMappingId];
                     
                     NSString * source_childName = [self getSourceChildNameFromProcessId:source_objectName processid:[processIdList objectAtIndex:i]];
                     
-                    objects = [NSArray arrayWithObjects:processId, layoutId, sourceName, source_objectName, expressionId, oMappingId, componentType, parentColumn, vMappingid, source_childName,sorting_order_value, processnode_id, doc_temp_detail_id, nil]; // Damodar OPDoc
+                    objects = [NSArray arrayWithObjects:processId, layoutId, sourceName, source_objectName, expressionId, oMappingId, componentType, parentColumn, vMappingid, source_childName,sorting_order_value, processnode_id, doc_temp_detail_id,targetObjectLabel,sfID, nil]; // Damodar OPDoc
                     
                     NSDictionary * dict = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
                     
                     [process_info addObject:dict];
-                    processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"", sorting_order_value = @"", processnode_id = @"", doc_temp_detail_id = @""; // Damodar OPDoc
+                    processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"", sorting_order_value = @"", processnode_id = @"", doc_temp_detail_id = @"",targetObjectLabel = @"", sfID = @""; // Damodar OPDoc
                 }
                 
             }
@@ -10707,7 +10744,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     // Vipin-db-optmz
     [self beginTransaction];
     
-    NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@',  '%@', '%@', '%@', '%@','%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6,?7, ?8, ?9, ?10, ?11,?12, ?13, ?14)", SFPROCESSCOMPONENT, MPROCESS_ID, MLAYOUT_ID, MTARGET_OBJECT_NAME, MSOURCE_OBJECT_NAME, MEXPRESSION_ID, MOBJECT_MAPPING_ID, MCOMPONENT_TYPE, MPARENT_COLUMN,MVALUE_MAPPING_ID,@"source_child_parent_column", MLOCAL_ID,SORTING_ORDER, process_node_id, MDOC_TEMPLATE_DETAIL_ID]; // Damodar OPDoc
+    NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@',  '%@', '%@', '%@', '%@','%@', '%@', '%@' ,'%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6,?7, ?8, ?9, ?10, ?11,?12, ?13, ?14, ?15, ?16)", SFPROCESSCOMPONENT, MPROCESS_ID, MLAYOUT_ID, MTARGET_OBJECT_NAME, MSOURCE_OBJECT_NAME, MEXPRESSION_ID, MOBJECT_MAPPING_ID, MCOMPONENT_TYPE, MPARENT_COLUMN,MVALUE_MAPPING_ID,@"source_child_parent_column", MLOCAL_ID,SORTING_ORDER, process_node_id, MDOC_TEMPLATE_DETAIL_ID,@"target_object_label",@"sfID"]; // Damodar OPDoc
     
     sqlite3_stmt * bulkStmt;
     
@@ -10783,6 +10820,14 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
             char * _docTempDetailId = [appDelegate convertStringIntoChar:([dict objectForKey:MDOC_TEMPLATE_DETAIL_ID] != nil)?[dict objectForKey:MDOC_TEMPLATE_DETAIL_ID]:@""];
             
             sqlite3_bind_text(bulkStmt, 14, _docTempDetailId, strlen(_docTempDetailId), SQLITE_TRANSIENT);
+
+            char * _targetObjectLabel = [appDelegate convertStringIntoChar:([dict objectForKey:@"target_object_label"] != nil)?[dict objectForKey:@"target_object_label"]: @""];
+            
+            sqlite3_bind_text(bulkStmt, 15, _targetObjectLabel, strlen(_targetObjectLabel), SQLITE_TRANSIENT);
+            
+            char * _sfID = [appDelegate convertStringIntoChar:([dict objectForKey:@"local_id"] != nil)?[dict objectForKey:@"local_id"]: @""];
+            
+            sqlite3_bind_text(bulkStmt, 16, _sfID, strlen(_sfID), SQLITE_TRANSIENT);
 
             if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
             {
