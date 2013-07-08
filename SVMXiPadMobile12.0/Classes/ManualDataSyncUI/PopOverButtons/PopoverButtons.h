@@ -66,6 +66,9 @@
     BOOL continueFalg;
     BOOL didDismissAlertView;
 }
+
+
+@property (nonatomic, retain)NSThread * manualEventThread; //10-June-2013 Shrini Oauth
 @property (nonatomic) BOOL syncConfigurationFailed;
 
 @property (nonatomic , retain)  UIPopoverController * popover;

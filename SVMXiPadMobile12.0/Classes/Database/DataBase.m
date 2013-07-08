@@ -5158,7 +5158,11 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         [resultArray release];
         return;
     }
-    [appDelegate goOnlineIfRequired];
+	
+	//OAuth.
+	if ( ![[ZKServerSwitchboard switchboard] doCheckSession] )
+		return;
+		
     didUserGPSLocationUpdated=FALSE;
     SMLog(@"Updating User GPS Location Table");
     [appDelegate.wsInterface dataSyncWithEventName:@"LOCATION_HISTORY" eventType:SYNC values:resultArray];
@@ -5242,7 +5246,11 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         didTechnicianLocationUpdated=TRUE;
         return;
     }
-    [appDelegate goOnlineIfRequired];
+	
+	//OAuth.
+	if ( ![[ZKServerSwitchboard switchboard] doCheckSession] )
+		return;
+	
     didTechnicianLocationUpdated=FALSE;
     SMLog(@"Updating Technician Location");
     [appDelegate.wsInterface dataSyncWithEventName:@"TECH_LOCATION_UPDATE" eventType:SYNC values:location];
@@ -11834,8 +11842,10 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     
     appDelegate.wsInterface.didOpComplete = FALSE;
     appDelegate.connection_error = FALSE;
-
-   // [appDelegate goOnlineIfRequired];
+	
+	//OAuth.
+	[[ZKServerSwitchboard switchboard] doCheckSession];
+	
     [appDelegate updateInstalledPackageVersion];    
     NSString * retVal = [self callMetaSync];
 
@@ -11968,8 +11978,10 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     appDelegate.connection_error = FALSE;
     
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
-    {
-        [appDelegate goOnlineIfRequired];
+    {		
+		//OAuth.
+		[[ZKServerSwitchboard switchboard] doCheckSession];
+
         if(!appDelegate.connection_error)
         {
             break;
@@ -13039,6 +13051,8 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 {
     SMLog(@"User location update starts");
     
+    [appDelegate.refreshIcons RefreshIcons]; //20-June-2013. ---> Refreshing home incons when sync is running.
+	
     /* Shravya - Advanced look up- User trunk location */
     [appDelegate.wsInterface getUserTrunkLocationRequest];
      SMLog(@"User location update ends");
@@ -13486,8 +13500,10 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 
 
 #pragma mark - ServiceReportLogo
-- (void) getImageForServiceReportLogo
+- (BOOL) getImageForServiceReportLogo
 {
+	didGetServiceReportLogo = FALSE;
+	
     NSString * _query = [NSString stringWithFormat:@"SELECT Body FROM Document Where Name = 'ServiceMax_iPad_CompanyLogo'"];
 	
 	SVMXLog(@"getImageForServiceReportLogo = %@", _query);
@@ -13507,7 +13523,10 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                break;
     }
     
-    
+	if (didGetServiceReportLogo)
+		return TRUE;
+	else
+		return FALSE;
 }
 
 - (void) didGetServiceReportLogo:(ZKQueryResult *)result error:(NSError *)error context:(id)context
@@ -14423,5 +14442,66 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     [userDefaults synchronize];
 }
 
+//Shrinivas : OAuth.
+- (NSString *)getLocalIdFromUserTable:(NSString *)userName
+{
+	NSString *query = nil;
+	NSString *local_Id = nil;
+   
+	query = [NSString stringWithFormat:@"SELECT local_id From User where Username = '%@'", userName];
+    
+    sqlite3_stmt * statement;
+	
+	if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, NULL) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            const char * value = (char *) synchronized_sqlite3_column_text(statement, 0);
+            if(value != nil)
+            {
+                local_Id = [NSString stringWithUTF8String:value];
+				
+			}
+        
+        }
+		synchronized_sqlite3_finalize(statement);
+    }
+
+	if ( local_Id != nil )
+		return local_Id;
+	else
+		return @"";
+
+}
+
+
+- (NSString *)getUserNameFromUserTable:(NSString *)local_Id
+{
+	NSString *query = nil;
+	NSString *Name = nil;
+	
+	query = [NSString stringWithFormat:@"SELECT Username From User where local_id = '%@'", local_Id];
+    
+    sqlite3_stmt * statement;
+	
+	if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, NULL) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            const char * value = (char *) synchronized_sqlite3_column_text(statement, 0);
+            if(value != nil)
+            {
+                Name = [NSString stringWithUTF8String:value];
+			}
+        }
+		synchronized_sqlite3_finalize(statement);
+    }
+	
+	if ( Name != nil )
+		return Name;
+	else
+		return @"";
+
+}
 
 @end

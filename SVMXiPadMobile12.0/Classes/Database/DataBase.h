@@ -337,7 +337,7 @@ PopoverButtons *popOver_view;
 - (BOOL) checkIfRecordExistForObjectWithRecordId:(NSString *)tableName Id :(NSString *)Id;
 
 //ServiceReportLogo
-- (void) getImageForServiceReportLogo;
+- (BOOL) getImageForServiceReportLogo;
 - (void) didGetServiceReportLogo:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
 //Aparna
 - (NSData *)serviceReportLogoInDB;
@@ -413,6 +413,10 @@ PopoverButtons *popOver_view;
 - (NSMutableArray *) getResultsForSFM:(NSString *)object withConfigData:(NSDictionary *)dataForObject;
 -(NSMutableString*)getJoinFieldsForSFM:(NSDictionary*)dict;
 -(NSMutableDictionary*) getupdatedTokenForSFM:(NSMutableDictionary*)dictforparsing;
+
+//Shrinivas : OAuth.
+- (NSString *)getLocalIdFromUserTable:(NSString *)userName;
+- (NSString *)getUserNameFromUserTable:(NSString *)local_Id;
 
 //PB Sync Conflict - Check if object is in conflict
 -(int)checkIfObjectIsInConflict:(NSString *)objectName Id:(NSString *)local_id;

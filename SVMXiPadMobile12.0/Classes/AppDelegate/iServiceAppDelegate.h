@@ -19,6 +19,13 @@
 #import <MessageUI/MessageUI.h>
 #import "MessageUI/MFMailComposeViewController.h"
 #include  <sqlite3.h>
+
+//Shrinivas - OAuth.
+//#import "iPadScrollerViewController.h"
+#import "OAuthClientInterface.h"
+//Fix for defect#7167
+#import "OAuthController.h"
+
 //Radha
 #import "DataBase.h"
 
@@ -33,18 +40,26 @@
 #define kMinPkgForRESETTag						9.40003
 #define kMinPkgForGetPriceModule                @"10.40000"
 #define NoExceptionRecord                       10
+
+//OAuth
+#define KEYCHAIN_SERVICE						@"ServiceMaxMobile"
 #define kMinPkgForLookupFilters                 11.2
 
 @class iServiceViewController;
 @class LoginController;
-@class iPadScrollerViewController;
 @class JobViewController;
 @class ModalViewController;
 @class processInfo;
 @class ZKLoginResult;
 @class ManualDataSync;    //btn merge
 @class DetailViewController;       ///can remove
+
+//Shrinivas - OAuth.
+@class OAuthClientInterface;
+
 @class CLLocation;
+
+@class iPadScrollerViewController;
 
 BOOL didSessionResume;
 
@@ -228,6 +243,14 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt);
 
 @end
 
+//OAuth : Refreshing Home Screen Icons
+@protocol RefreshHomeScreenIcons <NSObject>
+
+- (void) RefreshIcons;
+
+@end
+
+
 //krishna : client info
 extern  NSString const *deviceType;
 extern  NSString const *osVersion;
@@ -291,7 +314,6 @@ extern  NSString const *devVersion;
     sqlite3  *db;
     UIWindow *window;
     LoginController * loginController;
-    iPadScrollerViewController * homeScreenView;
     
     Reachability* hostReach;
     Reachability* internetReach;
@@ -538,6 +560,39 @@ extern  NSString const *devVersion;
 
 //    NSMutableDictionary *tempDict;
 //    NSInteger Custom_alert_count;
+	
+	
+	
+	//Shrinivas : Access token:OAUTH LOGIN 
+	BOOL didReceiveAccess;
+	iPadScrollerViewController * homeScreenView;
+	OAuthController *_OAuthController;
+	UIImageView *servicemaxLogo;
+	UIImageView *backGround;
+	OAuthClientInterface *oauthClient;
+	NSString *session_Id;
+	NSString *apiURl;
+	NSString *refresh_token;
+	NSString *organization_Id;
+	NSDate *sessionExpiry;
+	NSString *htmlString;
+	UIImageView *logo;
+	BOOL refreshHomeIcons;
+	UIImageView *logoImg;
+	NSString *userOrg;
+	NSString *customURLValue; //For Defect #7085
+	NSString *previousUser; ////Fix for Defect #:7076 - 15/May/2013 :Using this variable incase of upgrade from non-oauth to oauth.
+	UIActivityIndicatorView *activity;
+	//Defect #7238
+	UILabel * loadingLabel;
+	
+	BOOL _continueFalg;
+	BOOL _didDismissalertview;
+	BOOL _didEnterAlertView;
+	BOOL switchUser;
+	BOOL isUserOnAuthenticationPage;
+	BOOL wasPerformInitialSycn;
+
     
     //changed krishna : client Info
     INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client;
@@ -556,6 +611,27 @@ extern  NSString const *devVersion;
 //Radha Sync ProgressBar
 @property (nonatomic, retain) SyncProgressBar * SyncProgress;
 @property (nonatomic ) SYNC_TYPE_INPROGRESS syncTypeInProgress;
+
+//Shrinivas : OAuth
+@property (nonatomic, assign)id <RefreshHomeScreenIcons> refreshIcons;
+@property (nonatomic, retain)NSString *organization_Id;
+@property (nonatomic, retain)NSString *refresh_token;
+@property (nonatomic, retain)NSString *apiURl;
+@property (nonatomic, retain)NSString *session_Id;
+@property (nonatomic, retain)OAuthClientInterface *oauthClient;
+@property (nonatomic, retain)NSDate *sessionExpiry;
+@property (nonatomic, retain)OAuthController *_OAuthController;
+@property (nonatomic, retain)NSString *htmlString;
+@property (nonatomic, assign)BOOL refreshHomeIcons;
+@property (nonatomic, assign)BOOL _continueFalg;
+@property (nonatomic, assign)BOOL _didDismissalertview;
+@property (nonatomic, assign)BOOL _didEnterAlertView;
+@property (nonatomic, retain)NSString *userOrg;
+@property (nonatomic, assign)BOOL isUserOnAuthenticationPage;
+@property (nonatomic, retain)UIActivityIndicatorView *activity;
+@property (nonatomic, assign)BOOL wasPerformInitialSycn;
+//For Defect #7085
+@property (nonatomic, retain)NSString *customURLValue;
 
 @property (nonatomic) DATA_SYNC_TYPE data_sync_type;
 @property (nonatomic)BOOL Enable_aggresssiveSync;
@@ -852,7 +928,7 @@ extern  NSString const *devVersion;
 -(void)popupActionSheet:(NSString *)message;
 
 //Test
-- (void) showloginScreen;
+- (BOOL) showloginScreen; //#7177
 
 - (void)registerDefaultsFromSettingsBundle;
 
@@ -921,6 +997,26 @@ extern  NSString const *devVersion;
 - (void) updateNextSyncTimeIfSyncFails;
 - (NSDate *) getGMTTimeForNextDataSyncFromPList;
 
+//Shrinivas : OAuth.
+-(void)showSalesforcePage;
+-(void)didLoginWithOAuth;
+-(void)performInitialLogin;
+-(void)performAuthorization;
+-(BOOL)checkVersion;
+-(void)checkSwitchUser;
+-(void)handleSwitchUser;
+-(void)removeSyncHistoryPlist;
+-(void)showScreen;
+-(void)performInitialSynchronization;
+-(void)getTagsForTheFirstTime;
+-(void)handleChangedConnection;
+-(void)addBackgroundImageAndLogo;
+-(void)removeBackgroundImageAndLogo;
+-(void)showHomeScreenForAutoInitialSync;
+-(void)showAlertForSyncFailure;
+
+
+
 //Radha : Sync Progress Bar
 - (void) setCurrentSyncStatusProgress:(int)syncState optimizedSynstate:(int)oSyncState;
 - (NSString *) getStatusImageForCustomSync;
@@ -929,9 +1025,9 @@ extern  NSString const *devVersion;
 - (void) checkifConflictExistsForConnectionError;
 
 // Initial 3 calls
--(BOOL)checkVersion;
+//-(BOOL)checkVersion;
 
--(void)getTagsForTheFirstTime;
+//-(void)getTagsForTheFirstTime;
 
 
 

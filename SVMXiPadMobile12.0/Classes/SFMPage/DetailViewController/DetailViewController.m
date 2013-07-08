@@ -3189,7 +3189,9 @@ enum BizRuleConfirmViewStatus{
             }            
         }   
         
-        [appDelegate goOnlineIfRequired];
+		//OAuth.
+		[[ZKServerSwitchboard switchboard] doCheckSession];
+
         SMLog(@" getPrice1");
         NSMutableDictionary * sfm_temp = [appDelegate.SFMPage mutableCopy];
         NSArray * keys = [NSArray arrayWithObjects:WEBSERVICE_NAME, SFM_DICTIONARY, nil];
@@ -13322,13 +13324,13 @@ enum BizRuleConfirmViewStatus{
         [appDelegate displayNoInternetAvailable];
         return;
     } 
+	
+	//OAuth.
+	if ( ![[ZKServerSwitchboard switchboard] doCheckSession] )
+		return;
 
-    
-    [activity startAnimating];
-    [appDelegate goOnlineIfRequired];
-    
-    
-    
+	[activity startAnimating];
+
     if ([appDelegate.syncThread isExecuting])
     {
         

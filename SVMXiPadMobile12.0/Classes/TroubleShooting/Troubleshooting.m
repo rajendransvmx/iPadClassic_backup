@@ -65,7 +65,10 @@ extern void SVMXLog(NSString *format, ...);
     [super viewDidLoad];
     
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    [appDelegate goOnlineIfRequired];
+	
+	//OAuth.
+	[[ZKServerSwitchboard switchboard] doCheckSession];
+
     serviceMax = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_TITLE];
     alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
     noMatch = [appDelegate.wsInterface.tagsDictionary objectForKey:TROUBLESHOOTING_ERROR];
