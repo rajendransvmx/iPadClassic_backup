@@ -10574,7 +10574,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                 NSDictionary * target_dict = nil;
                 //Sahana 31-May-2013
 
-                NSArray * obj = [NSArray arrayWithObjects: processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"",sorting_order_value = @"", processnode_id = @"", doc_temp_detail_id = @"", nil]; // Damodar OPDoc
+                NSArray * obj = [NSArray arrayWithObjects: processId = @"", layoutId = @"", sourceName = @"", expressionId = @"", oMappingId = @"",componentType = @"",  parentColumn = @"", targetName = @"", vMappingid = @"", source_child_column = @"",sorting_order_value = @"", processnode_id = @"", doc_temp_detail_id = @"",targetObjectLabel = @"", sfID = @"", nil]; // Damodar OPDoc
                 source_dict = [mappingArray objectAtIndex:0];
                 if ([mappingArray count] == 2)
                 {
