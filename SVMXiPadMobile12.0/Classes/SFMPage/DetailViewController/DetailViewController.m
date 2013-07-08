@@ -10603,21 +10603,21 @@ enum BizRuleConfirmViewStatus{
                 if(localID == nil)
                 {
                     SMLog(@"Newly Created Record");
-                    NSString *detailObjectName = [[appDelegate.SFMPage objectForKey:gDETAILS] objectForKey:gDETAIL_OBJECT_ALIAS_NAME];
+                    NSString *detailObjectName = [childDict objectForKey:@"detail_object_name"];
                     if([detailObjectName caseInsensitiveCompare:childObjectName] == NSOrderedSame)
                     {
-                        NSArray *detailsArray = [[appDelegate.SFMPage objectForKey:gDETAILS] objectForKey:gDETAILS_VALUES_ARRAY];
+                        NSArray *detailsArray = [childDict objectForKey:gDETAILS_VALUES_ARRAY];
                         
                         NSString *detailFieldName;
                         id detailFieldValue;
-                        NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-                        for(NSDictionary *detailDict in detailsArray)
+                        for(NSArray *detailFieldsArray in detailsArray)
                         {
-                            NSArray *detailFieldsArray = [detailDict objectForKey:gSECTION_FIELDS];
+                            NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+                            NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
                             for(NSDictionary *detail in detailFieldsArray)
                             {
-                                detailFieldName = [detail objectForKey:gFIELD_API_NAME];
-                                detailFieldValue = [detail objectForKey:gFIELD_VALUE_VALUE];
+                                detailFieldName = [detail objectForKey:gVALUE_FIELD_API_NAME];
+                                detailFieldValue = [detail objectForKey:gVALUE_FIELD_VALUE_VALUE];
                                 NSString *fieldType = [[fields objectForKey:childObjectName] objectForKey:detailFieldName];
                                 if([fieldType isEqualToString:@"picklist"])
                                 {
@@ -10633,12 +10633,13 @@ enum BizRuleConfirmViewStatus{
                                 }
                                 [dict setObject:detailFieldValue forKey:detailFieldName];
                             }
+                            NSDictionary *attributeDict = [NSDictionary dictionaryWithObject:childObjectName forKey:MTYPEM];
+                            [dict setObject:attributeDict forKey:@"attributes"];
+                            [lines addObject:dict];
+                            [dict release];
+                            [pool drain];
                         }
                         SMLog(@" New Record. Get the key and value from the SFMPage");
-                        NSDictionary *attributeDict = [NSDictionary dictionaryWithObject:childObjectName forKey:MTYPEM];
-                        [dict setObject:attributeDict forKey:@"attributes"];
-                        [lines addObject:dict];
-                        [dict release];
                     }
                 }
                 else
