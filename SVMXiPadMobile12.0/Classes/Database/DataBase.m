@@ -7529,8 +7529,8 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                 SMLog(@" ************ Update Attachments query ************ %@ \n DIDNOT WORK!!!! ***************** ", updateQuery);
             }
         }
-        didRcvAttachment = YES;
     }
+    didRcvAttachment = YES;
 }
 //Krishna OPDocs
 -(void)UpdateDocumentTemplateId:(NSString *)docTemplateId forProcessId:(NSString *)processId
@@ -7762,8 +7762,8 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
             if(success)
                 NSLog(@"stored : %@",filePath);
         }
-        didReceiveImageDocument = YES;
     }
+    didReceiveImageDocument = YES;
 }
 
 
@@ -7972,8 +7972,8 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
             }
             
         }
-        didRcvStaticresource = YES;
     }
+    didRcvStaticresource = YES;
 }
 
 - (BOOL) unzipAndViewFile:(NSString *)_file andFolderName:(NSString *)folderPath deleteArchive:(BOOL)delete

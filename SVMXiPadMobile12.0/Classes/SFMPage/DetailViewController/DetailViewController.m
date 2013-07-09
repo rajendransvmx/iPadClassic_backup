@@ -10409,7 +10409,7 @@ enum BizRuleConfirmViewStatus{
     NSString * action_type = [buttonDict objectForKey:SFW_ACTION_TYPE];
     NSString * action_process_id = [buttonDict objectForKey:SFW_PROCESS_ID];
     //SFM Biz Rule
-    if([targetCall isEqualToString:save] || [targetCall isEqualToString:quick_save] )
+    if(([targetCall isEqualToString:save] || [targetCall isEqualToString:quick_save] ) && [appDelegate doesServerSupportsModule:kMinPkgForSFMBizRuleModule])
     {
         SMLog(@"Save / Quick Save Called.");
         

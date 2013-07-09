@@ -40,6 +40,7 @@
 #define kMinPkgForRESETTag						9.40003
 #define kMinPkgForGetPriceModule                @"10.40000"
 #define NoExceptionRecord                       10
+#define kMinPkgForSFMBizRuleModule                @"12.00000"
 
 //OAuth
 #define KEYCHAIN_SERVICE						@"ServiceMaxMobile"
