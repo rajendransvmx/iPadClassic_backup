@@ -7256,7 +7256,8 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     
     if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery2 UTF8String], -1, &stmt, NULL) == SQLITE_OK)
     {
-        if(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        //kri OPDOC2
+        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
         {
             //            NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] init];
             
@@ -7277,9 +7278,15 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
             //            [tempDict setValue:attachmentId forKey:MATTACHMENT_ID];
             [requiredPdfArray addObject:attachmentId];
             //            [tempDict release];
+            //kri OPDOC2
+            processId = @"";
+            recordId = @"";
+            attachmentId = @"";
         }
-        synchronized_sqlite3_finalize(stmt);
     }
+    //kri OPDOC2
+    synchronized_sqlite3_finalize(stmt);
+
     return requiredPdfArray;
     
 }
@@ -7370,16 +7377,19 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     
     if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery2 UTF8String], -1, &stmt, NULL) == SQLITE_OK)
     {
-        if(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        //kri OPDOC2
+        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
         {
             char *field = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_1);
-            if ( field != nil )
+            //kri OPDOC2
+            if ( field != nil ) {
                 attachmentId = [NSString stringWithUTF8String:field];
-            
-            [requiredSignatureArray addObject:attachmentId];
+                [requiredSignatureArray addObject:attachmentId];
+            }
         }
-        synchronized_sqlite3_finalize(stmt);
     }
+    //kri OPDOC2
+    synchronized_sqlite3_finalize(stmt);
     return requiredSignatureArray;
     
 }
@@ -7886,7 +7896,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         
         
     }
-    
+    [idsList removeAllObjects]; // Temporary fix. TODO : To be removed for production
     for(NSString * each_id in idsList)
     {
         [self retrieveStaticResourceFor:each_id];

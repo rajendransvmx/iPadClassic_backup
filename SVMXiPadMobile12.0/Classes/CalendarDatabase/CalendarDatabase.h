@@ -127,7 +127,8 @@
 - (void) attachHtmlDataTOSFDCForLocalId:(NSString *)localId sfid:(NSString *)sfid opdocName:(NSString *)docName forProcessId:(NSString *)processId;
 - (NSData *) retrieveOPDOCData:(NSString *)Id;
 - (BOOL) isSignatureExistsForOpDoc:(NSString *)signId type:(NSString *)sign_type tableName:(NSString *)tableName;
-- (BOOL)isDocExistsFor:(NSString *)local_id tableName:(NSString *)tableName;
+//kri OPDOC2
+- (BOOL)isDocExistsFor:(NSString *)local_id processId:(NSString *)process tableName:(NSString *)tableName;
 - (NSString *) getSFIdOfDocForlocalId:(NSString *)name;
 
 - (void) deleteAllSignatureData:(NSString *)operationTYpe andSignType:(NSString *)signType;

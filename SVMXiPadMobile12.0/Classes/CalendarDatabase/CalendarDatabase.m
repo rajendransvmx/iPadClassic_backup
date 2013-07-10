@@ -2940,9 +2940,9 @@ extern void SVMXLog(NSString *format, ...);
     NSString * stringData = [Base64 encode:htmlData];
     
     BOOL does_exists = FALSE;
-
+//kri OPDOC2
     //removed sign_type 
-    does_exists = [self isDocExistsFor:recordId tableName:@"SFOPDocHtmlData"];
+    does_exists = [self isDocExistsFor:recordId processId:processId tableName:@"SFOPDocHtmlData"];
     
     if (does_exists)
     {
@@ -3068,7 +3068,8 @@ extern void SVMXLog(NSString *format, ...);
         
         
     }
-    
+    //kri OPDOC2
+    appDelegate.wsInterface.didWriteOPDOC = YES;
     //delete all opdoc html data
     
     for (NSString *str in docs_) {
@@ -3195,7 +3196,6 @@ extern void SVMXLog(NSString *format, ...);
     if(([result length] != 0) && (result != nil))
         [appDelegate.dataBase insertIntoRequiredPdf:sfid processId:processId andAttachmentId:result];
     //store the data in database in required pdf table
-    appDelegate.wsInterface.didWriteOPDOC = YES;
 }
 //krishna opdoc
 - (NSMutableArray *) retrieveAllSignatureOfOutputDocForId:(NSString *)signId {
@@ -3415,10 +3415,12 @@ extern void SVMXLog(NSString *format, ...);
 
 }
 //krishnaOPdoc html data
-- (BOOL)isDocExistsFor:(NSString *)local_id tableName:(NSString *)tableName {
-    
+//kri OPDOC2
+- (BOOL)isDocExistsFor:(NSString *)local_id processId:(NSString *)process tableName:(NSString *)tableName {
+
+    //kri OPDOC2
     //where process id is equal to process id
-    NSString * query = [NSString stringWithFormat:@"SELECT COUNT(*) FROM %@ WHERE local_id = '%@'", tableName, local_id];
+    NSString * query = [NSString stringWithFormat:@"SELECT COUNT(*) FROM %@ WHERE local_id = '%@' and process_id = '%@'", tableName, local_id, process];
     
     sqlite3_stmt * statement;
     

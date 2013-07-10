@@ -10409,7 +10409,14 @@ enum BizRuleConfirmViewStatus{
     NSString * action_type = [buttonDict objectForKey:SFW_ACTION_TYPE];
     NSString * action_process_id = [buttonDict objectForKey:SFW_PROCESS_ID];
     //SFM Biz Rule
-    if(([targetCall isEqualToString:save] || [targetCall isEqualToString:quick_save] ) && [appDelegate doesServerSupportsModule:kMinPkgForSFMBizRuleModule])
+    //BOOL executeBizRule = [appDelegate doesServerSupportsModule:kMinPkgForSFMBizRuleModule];
+    BOOL executeBizRule = YES;
+    BOOL bizRulesAvailable = NO;    
+    if(executeBizRule)
+    {
+       bizRulesAvailable = [self bizRuleResourcesAvailable];
+    }
+    if(([targetCall isEqualToString:save] || [targetCall isEqualToString:quick_save]) && bizRulesAvailable)
     {
         SMLog(@"Save / Quick Save Called.");
         
@@ -13195,6 +13202,27 @@ enum BizRuleConfirmViewStatus{
     }
     
     return [rulesArray autorelease];
+}
+- (BOOL) bizRuleResourcesAvailable
+{
+    BOOL resourcesAvailable = NO;
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
+    
+    NSString *dataPath = nil;
+    NSArray * resourceList = [NSArray arrayWithObjects:@"com.servicemax.client.lib",@"com.servicemax.client.runtime",@"com.servicemax.client.app",@"com.servicemax.client.sfmbizrules", nil];
+    for(NSString *library in resourceList)
+    {
+        dataPath =[documentsDirectory stringByAppendingPathComponent:library];
+        if (![[NSFileManager defaultManager] fileExistsAtPath:dataPath])
+        {
+            SMLog(@"Resource %@ is not available",dataPath);
+            resourcesAvailable  = NO;
+            break;
+        }
+        resourcesAvailable = YES;
+    }
+    return resourcesAvailable;
 }
 -(void) initAllrequriredDetailsForProcessId:(NSString *)process_id recordId:(NSString *)recordId object_name:(NSString *)object_name
 {

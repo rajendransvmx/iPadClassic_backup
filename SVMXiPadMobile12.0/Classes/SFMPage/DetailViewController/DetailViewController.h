@@ -415,6 +415,7 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
 - (NSArray *) getBusinessRulesDict:(NSArray *)businessRulesArray;
 - (NSString *) getPathForBSLibrary:(NSString *)library;
 - (NSString *) getPathForLibrary:(NSString *)library;
+- (BOOL) bizRuleResourcesAvailable;
 
 #define SHOWALL_HEADERS                     0
 #define SHOW_HEADER_ROW                     1

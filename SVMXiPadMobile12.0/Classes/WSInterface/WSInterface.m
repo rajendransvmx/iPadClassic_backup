@@ -8896,11 +8896,11 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         }
         if([wsResponse.result.eventName isEqualToString:SUBMIT_DOCUMENT] && [wsResponse.result.eventType isEqualToString:SYNC])
         {
-            appDelegate.dataBase.didSubmitHTML = (int)(wsResponse.result.success);
+            appDelegate.dataBase.didSubmitHTML = (int)[wsResponse.result.success boolValue];
         }
         if([wsResponse.result.eventName isEqualToString:GENERATE_PDF] && [wsResponse.result.eventType isEqualToString:SYNC])
         {
-            appDelegate.dataBase.didGeneratePDF = (int)(wsResponse.result.success);
+            appDelegate.dataBase.didGeneratePDF = (int)[wsResponse.result.success boolValue];
         }
 
 		if ([wsResponse.result.eventName isEqualToString:@"LOCATION_HISTORY"] && [wsResponse.result.eventType isEqualToString:SYNC]
