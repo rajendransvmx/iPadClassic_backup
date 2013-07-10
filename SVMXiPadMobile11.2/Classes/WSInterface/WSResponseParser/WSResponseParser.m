@@ -13,6 +13,7 @@
 #import "SMGPCodeSnippetResponseParser.h"
 #import "SMGPDataSyncResponseParser.h"
 #import "iServiceAppDelegate.h"
+#import "PerformanceAnalytics.h"
 
 extern void SVMXLog(NSString *format, ...);
 @implementation WSResponseParser
@@ -45,6 +46,8 @@ extern void SVMXLog(NSString *format, ...);
     return FALSE;
 }
 #pragma mark - DataBase Functions
+
+/*
 - (void)insertRecords:(NSArray *)array intoTable:(NSString *)tableName
 {
     for(int index = 0 ;index <[array count]; index++)
@@ -54,6 +57,72 @@ extern void SVMXLog(NSString *format, ...);
         [self execStatementOnDataBase:insertStatement];
     };
 }
+ */
+
+- (void)insertRecords:(NSArray *)array intoTable:(NSString *)tableName
+{
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"insertRecords : total"
+                                                         andRecordCount:[array count]];
+    
+    // Vipin-db-optmz 2
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:[NSString stringWithFormat:@"insertRecords : %@", tableName]
+                                                         andRecordCount:[array count]];
+    
+    [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:[array count]];
+    
+    
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    [self.dataBase beginTransaction];
+        for (NSDictionary *dict in array)
+        {
+            NSArray *keys   = [dict allKeys];
+            NSArray *values = [dict allValues];
+            
+            NSString *keysString   = [keys componentsJoinedByString:@","];
+            NSString *valuesString = [values componentsJoinedByString:@","];
+            
+            NSString * query = [NSString stringWithFormat:@"INSERT INTO %@ (%@) VALUES (%@)", tableName, keysString, valuesString];
+            
+            sqlite3_stmt * statement;
+            
+            int returnValue =  synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1 , &statement , nil);
+            
+            if (returnValue ==  SQLITE_OK)
+            {
+                if (synchronized_sqlite3_step(statement) != SQLITE_DONE)
+                {
+                    SMLog(@"%@", query);
+                    NSLog(@"Failure insertRecords - query => %@", query);
+                } else
+                {
+                    //NSLog(@"Success updateAllRecordsToSyncRecordsHeap - update_query => %@", update_query);
+                }
+            
+                sqlite3_clear_bindings(statement);
+                sqlite3_reset(statement);
+            }
+            else
+            {
+                sqlite3_errmsg(appDelegate.db);
+                NSLog(@" Failure prepared insertRecords  -  %d \n%s", returnValue, sqlite3_errmsg(appDelegate.db) );
+            }
+             sqlite3_finalize(statement);
+
+        }
+    [self.dataBase endTransaction];
+    [pool drain];
+    pool = nil;
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:[NSString stringWithFormat:@"insertRecords :%@", tableName]
+                                                                      andRecordCount:0];
+    
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"insertRecords : total"
+                                                                      andRecordCount:0];
+}
+
+
+
 - (NSString *)createInsertSQLStatmentWithDict:(NSDictionary *)dict forTable:(NSString *)tableName
 {
     NSArray *keys   = [dict allKeys];

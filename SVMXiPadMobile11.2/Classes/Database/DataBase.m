@@ -10,6 +10,15 @@
 #import "LocalizationGlobals.h"
 #import "iServiceAppDelegate.h"
 #import "PopoverButtons.h"
+#import "PerformanceAnalytics.h"
+
+// Vipin-db-optmz
+// DB Constatns
+static NSString * const kDBBeginTransaction = @"BEGIN TRANSACTION";
+static NSString * const kDBEndTransaction = @"END TRANSACTION";
+
+
+
 extern void SVMXLog(NSString *format, ...);
 
 @implementation DataBase 
@@ -27,6 +36,71 @@ extern void SVMXLog(NSString *format, ...);
     return self;
 }
 
+// Vipin-db-optmz
+#pragma mark - Database Transaction Management
+- (int)beginTransaction
+{
+    
+    char * err;
+    int  executionResult = synchronized_sqlite3_exec(appDelegate.db, [kDBBeginTransaction UTF8String], NULL, NULL, &err);
+    
+    if (executionResult != SQLITE_OK )
+    {
+        NSLog(@" beginTransaction : %d %@", executionResult, [NSString stringWithUTF8String:err]);
+    }
+    
+    return executionResult;
+}
+
+// Vipin-db-optmz
+- (int)endTransaction
+{
+    
+    
+    char * err;
+    int  executionResult = synchronized_sqlite3_exec(appDelegate.db, [kDBEndTransaction UTF8String], NULL, NULL, &err);
+    
+    if (executionResult != SQLITE_OK )
+    {
+        NSLog(@" endTransaction : %d %@", executionResult, [NSString stringWithUTF8String:err]);
+    }
+    
+    return executionResult;
+}
+
+#pragma mark - Prepared Statement Binding Text
+
+- (void)preparedStatement:(sqlite3_stmt *)preparedStatement
+           bindTextString:(NSString *)text
+                  atIndex:(int)index
+{
+    char * _textValue = [appDelegate convertStringIntoChar:text];
+    sqlite3_bind_text(preparedStatement, index, _textValue, strlen(_textValue), SQLITE_TRANSIENT);
+}
+
+-(BOOL)isColumnPresentInTable:(NSString*)TableName columnName:(NSString*)colName
+{
+    NSString *tempString=[NSString stringWithFormat:@"%%%@%%",colName];
+    NSString *queryStatementName = [NSString stringWithFormat:@"SELECT * FROM sqlite_master WHERE name = '%@' and sql like '%@'",TableName,tempString];
+    sqlite3_stmt * labelstmtName;
+    BOOL isfieldPresent=FALSE;
+    const char *selectStatementName = [queryStatementName UTF8String];
+    char *nameofObjectField;
+    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatementName,-1, &labelstmtName, nil) == SQLITE_OK )
+    {
+        if(synchronized_sqlite3_step(labelstmtName) == SQLITE_ROW)
+        {
+            nameofObjectField = (char *) synchronized_sqlite3_column_text(labelstmtName,0);
+            if((nameofObjectField !=nil)&&strlen(nameofObjectField))
+                isfieldPresent = TRUE;
+            else
+                isfieldPresent=FALSE;
+            
+        }
+    }
+    synchronized_sqlite3_finalize(labelstmtName);
+    return isfieldPresent;
+}
 
 #pragma mark - SFM Search
 
@@ -113,100 +187,636 @@ extern void SVMXLog(NSString *format, ...);
 }
 - (void) insertValuesintoSFMObjectTable:(NSMutableArray *) processData
 {
-    for(int k=0; k< [ processData count]; k++)
+    
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    
+    NSString  *queryStatementSearchObject =  [NSString stringWithFormat:@"INSERT INTO SFM_Search_Objects ('SVMXC__Module__c','SVMXC__ProcessID__c','SVMXC__Target_Object_Name__c','ProcessName','ProcessId','ObjectId','SVMXC__Advance_Expression__c','SVMXC__Name__c') VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)"];
+
+    sqlite3_stmt * preparedStmtSearchObject;
+    int preparedStmtSearchObjectResult = synchronized_sqlite3_prepare_v2(appDelegate.db,
+                                                 [queryStatementSearchObject UTF8String],
+                                                 strlen([queryStatementSearchObject UTF8String]),
+                                                 &preparedStmtSearchObject, NULL);
+    
+    
+    
+   /*NSString *queryStatementSearchFieldSorting = [NSString stringWithFormat:@"INSERT INTO SFM_Search_Field ('Id','SVMXC__Expression_Rule__c','SVMXC__Field_Name__c','SVMXC__Object_Name2__c','SVMXC__Search_Object_Field_Type__c','ObjectId','SVMXC__Display_Type__c','SVMXC__Lookup_Field_API_Name__c','SVMXC__Field_Relationship_Name__c','SVMXC__Object_Name__c','SVMXC__Sort_Order__c') VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)"];
+    
+    sqlite3_stmt * preparedStmtSearchFieldSorting;
+    int preparedStmtSearchFieldSortingResult = synchronized_sqlite3_prepare_v2(appDelegate.db,
+                                                                         [queryStatementSearchFieldSorting UTF8String],
+                                                                         strlen([queryStatementSearchFieldSorting UTF8String]),
+                                                                         &preparedStmtSearchFieldSorting, NULL);*/
+    
+    
+    
+  
+    NSString *queryStatementSearchField = [NSString stringWithFormat:@"INSERT INTO SFM_Search_Field ('Id','SVMXC__Expression_Rule__c','SVMXC__Field_Name__c','SVMXC__Object_Name2__c','SVMXC__Search_Object_Field_Type__c','ObjectId') VALUES (?1,?2, ?3, ?4, ?5, ?6)"];
+    
+    sqlite3_stmt * preparedStmtSearchField;
+    int preparedStmtSearchFieldResult = synchronized_sqlite3_prepare_v2(appDelegate.db,
+                                                                               [queryStatementSearchField UTF8String],
+                                                                               strlen([queryStatementSearchField UTF8String]),
+                                                                               &preparedStmtSearchField, NULL);
+    
+    
+    NSString *queryStatementFilterCriteria = [NSString stringWithFormat:@"INSERT INTO SFM_Search_Filter_Criteria ('Id','SVMXC__Display_Type__c','SVMXC__Expression_Rule__c','SVMXC__Field_Name__c','SVMXC__Object_Name2__c','SVMXC__Operand__c','SVMXC__Operator__c','ObjectId') VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)"];
+    
+    sqlite3_stmt * preparedStmtFilterCriteria;
+    int preparedStmtFilterCriteriaResult = synchronized_sqlite3_prepare_v2(appDelegate.db,
+                                                                        [queryStatementFilterCriteria UTF8String],
+                                                                        strlen([queryStatementFilterCriteria UTF8String]),
+                                                                        &preparedStmtFilterCriteria, NULL);
+    
+    
+
+    // Vipin-db-optmz
+    [self beginTransaction];
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"SFM_Search_Process"
+                                                         andRecordCount:0];
+    
+    
+    for(int k=0; k< [processData count]; k++)
     {
         NSDictionary *processDict = [processData objectAtIndex:k];
         NSString *processName = [processDict objectForKey:@"Name"];
-        processName=[processName stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+        processName=[processName stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
         NSString *processId = [processDict objectForKey:@"Id"];
         NSArray *objectsArray = [processDict objectForKey:@"Objects"];
         SMLog(@"Process Name = %@ and Objects = %@",processName, objectsArray);
-        NSString *str;
-        for(int m=0; m<[objectsArray count]; m++)
+        NSString *str=@"";
+        
+        //if(appDelegate.isSfmSearchSortingAvailable)
         {
-            NSDictionary *objectDict = [objectsArray objectAtIndex:m];
-            SMLog(@"Object ID = %@",[objectDict objectForKey:@"Id"] );
-             str= [objectDict  objectForKey:@"SVMXC__Advance_Expression__c"];
-            SMLog(@"%@",str);
-            if(![[objectDict  objectForKey:@"SVMXC__Advance_Expression__c"] isEqualToString:@"(null)"])
+           
+            NSLog(@" isSfmSearchSortingAvailable - TRUE ");
+            for(int m=0; m<[objectsArray count]; m++)
             {
-                if(!(str ==NULL))
+                NSDictionary *objectDict = [objectsArray objectAtIndex:m];
+                SMLog(@"Object ID = %@",[objectDict objectForKey:@"Id"] );
+                str= [objectDict  objectForKey:@"SVMXC__Advance_Expression__c"];
+//                str= [objectDict  objectForKey:@"SVMXC__Parent_Object_Criteria__c"];
+
+                SMLog(@"%@",str);
+                if(![[objectDict  objectForKey:@"SVMXC__Advance_Expression__c"] isEqualToString:@"(null)"])
                 {
-                    str=[str stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                    if(!(str ==NULL))
+                    {
+                        str=[str stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
+                    }
+                    else
+                    {
+                        str=@"(null)";
+                    }
                 }
                 else
                 {
                     str=@"(null)";
                 }
-            
-            }
-            else
-            {
-                str=@"(null)";
-            }
-            NSString *targetObjectNameFull = [objectDict objectForKey:@"SVMXC__Target_Object_Name__c"];
-            targetObjectNameFull= [targetObjectNameFull stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
-            NSString *targetObjectName = [self getFieldLabelForApiName:targetObjectNameFull];
-            targetObjectName=[targetObjectName stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
-            NSString * Name = [objectDict objectForKey:@"SVMXC__Name__c"];
-            Name = [Name stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
-            NSString * Module = [objectDict objectForKey:@"SVMXC__Module__c"];
-            Module = [Module  stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
-            
-            NSString  *queryStatement =  [NSString stringWithFormat:@"INSERT INTO SFM_Search_Objects ('SVMXC__Module__c','SVMXC__ProcessID__c','SVMXC__Target_Object_Name__c','ProcessName','ProcessId','ObjectId','SVMXC__Advance_Expression__c','SVMXC__Name__c') VALUES ('%@','%@','%@','%@','%@','%@','%@','%@')",Module,[objectDict objectForKey:@"SVMXC__ProcessID__c"],targetObjectName,processName,processId,[objectDict objectForKey:@"Id"] ,str,Name];
-            
-            char * err;
-            if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
-            {
-                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                    [MyPopoverDelegate performSelector:@selector(throwException)];
-                SMLog(@"%@", queryStatement);
-				SMLog(@"METHOD: insertValuesintoSFMObjectTable");
-				SMLog(@"ERROR IN INSERTING %s", err);
-                /*
-				[appDelegate printIfError:nil ForQuery:queryStatement type:INSERTQUERY];          
-                 */
-            }
-            NSArray *objectConfigDataArray = [objectDict objectForKey:@"ConfigData"];
-            for(int n=0; n<[objectConfigDataArray count]; n++)
-            {
-                NSDictionary *objectConfigDict = [objectConfigDataArray objectAtIndex:n];
-                NSArray *keys = [objectConfigDict allKeys];
-                NSString  *queryStatement;
-                NSString *fieldNameFull = [objectConfigDict objectForKey:@"SVMXC__Field_Name__c"];
-                NSString *fieldName = [self getFieldLabelForApiName:fieldNameFull];
+                
+                NSString *targetObjectNameFull = [objectDict objectForKey:@"SVMXC__Target_Object_Name__c"];
+                targetObjectNameFull= [targetObjectNameFull stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                NSString *targetObjectName = [self getFieldLabelForApiName:targetObjectNameFull];
+                targetObjectName=[targetObjectName stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
+                NSString * Name = [objectDict objectForKey:@"SVMXC__Name__c"];
+                Name = [Name stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
+                NSString * Module = [objectDict objectForKey:@"SVMXC__Module__c"];
+                Module = [Module  stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
+               // NSString *AdvanceExp=[objectDict objectForKey:@"SVMXC__Parent_Object_Criteria__c"];
+//                NSString *AdvanceExp=[objectDict objectForKey:@"SVMXC__Advance_Expression__c"];
 
-                NSString *objectName2Full = [objectConfigDict objectForKey:@"SVMXC__Object_Name2__c"];
-                NSString *objectName2 = [self getFieldLabelForApiName:objectName2Full];
-
-                if([keys containsObject:@"SVMXC__Search_Object_Field_Type__c"])
+                
+                // Vipin-db-optmz
+                [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"SFM_Searc_Objects"
+                                                                     andRecordCount:0];
+                
+                if (preparedStmtSearchObjectResult == SQLITE_OK)
                 {
+                    char * _Module = [appDelegate convertStringIntoChar:Module];
+                    sqlite3_bind_text(preparedStmtSearchObject, 1, _Module, strlen(_Module), SQLITE_TRANSIENT);
                     
-                    queryStatement = [NSString stringWithFormat:@"INSERT INTO SFM_Search_Field ('Id','SVMXC__Expression_Rule__c','SVMXC__Field_Name__c','SVMXC__Object_Name2__c','SVMXC__Search_Object_Field_Type__c','ObjectId') VALUES ('%@','%@','%@','%@','%@','%@')",[objectConfigDict objectForKey:@"Id"],[objectConfigDict objectForKey:@"SVMXC__Expression_Rule__c"],fieldName,objectName2,[objectConfigDict objectForKey:@"SVMXC__Search_Object_Field_Type__c"],[objectDict objectForKey:@"Id"] ];
+                    char * _processID = [appDelegate convertStringIntoChar:[objectDict objectForKey:@"SVMXC__ProcessID__c"]];
+                    sqlite3_bind_text(preparedStmtSearchObject, 2, _processID, strlen(_processID), SQLITE_TRANSIENT);
+                    
+                    char * _targetObjectName = [appDelegate convertStringIntoChar:targetObjectName];
+                    sqlite3_bind_text(preparedStmtSearchObject, 3, _targetObjectName, strlen(_targetObjectName), SQLITE_TRANSIENT);
+                    
+                    char * _processName = [appDelegate convertStringIntoChar:processName];
+                    sqlite3_bind_text(preparedStmtSearchObject, 4, _processName, strlen(_processName), SQLITE_TRANSIENT);
+                    
+                    char * _processId = [appDelegate convertStringIntoChar:processId];
+                    sqlite3_bind_text(preparedStmtSearchObject, 5, _processId, strlen(_processId), SQLITE_TRANSIENT);
+                    
+                    char * _id = [appDelegate convertStringIntoChar:[objectDict objectForKey:@"Id"]];
+                    sqlite3_bind_text(preparedStmtSearchObject, 6, _id, strlen(_id), SQLITE_TRANSIENT);
+                    
+                    char * _AdvanceExp = [appDelegate convertStringIntoChar:str];
+                    sqlite3_bind_text(preparedStmtSearchObject, 7, _AdvanceExp, strlen(_AdvanceExp), SQLITE_TRANSIENT);
+                    
+                    char * _Name = [appDelegate convertStringIntoChar:Name];
+                    sqlite3_bind_text(preparedStmtSearchObject, 8, _Name, strlen(_Name), SQLITE_TRANSIENT);
+                    
+                    if (synchronized_sqlite3_step(preparedStmtSearchObject) != SQLITE_DONE)
+                    {
+                        NSLog(@"insertValuesintoSFMObjectTable : Commit Failed! - SFM_Search_Objects\n");
+                    }
+                    
+                    sqlite3_clear_bindings(preparedStmtSearchObject);
+                    sqlite3_reset(preparedStmtSearchObject);
                 }
                 else
                 {
-                    queryStatement = [NSString stringWithFormat:@"INSERT INTO SFM_Search_Filter_Criteria ('Id','SVMXC__Display_Type__c','SVMXC__Expression_Rule__c','SVMXC__Field_Name__c','SVMXC__Object_Name2__c','SVMXC__Operand__c','SVMXC__Operator__c','ObjectId') VALUES ('%@','%@','%@','%@','%@','%@','%@','%@')",[objectConfigDict objectForKey:@"Id"],[objectConfigDict objectForKey:@"SVMXC__Display_Type__c"],[objectConfigDict objectForKey:@"SVMXC__Expression_Rule__c"],fieldName,objectName2,[objectConfigDict objectForKey:@"SVMXC__Operand__c"],[objectConfigDict objectForKey:@"SVMXC__Operator__c"],[objectDict objectForKey:@"Id"] ];
-                }
-                char * err;
-                if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
-                {
-                    if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                        [MyPopoverDelegate performSelector:@selector(throwException)];
-                    SMLog(@"%@", queryStatement);
-					SMLog(@"METHOD: insertValuesintoSFMObjectTable");
-					SMLog(@"ERROR IN INSERTING %s", err);
-                    /*
-					[appDelegate printIfError:nil ForQuery:queryStatement type:INSERTQUERY];
-                     */
+                    NSLog(@"insertValuesintoSFMObjectTable : prepare Failed! - SFM_Search_Objects - SFM_Searc_Objects\n   message : %d - %@",  preparedStmtSearchObjectResult, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
                 }
                 
+                [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:1];
+                // Vipin-db-optmz
+                [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"SFM_Searc_Objects"
+                                                                     andRecordCount:1];
 
-            }                
+                
+                
+                NSArray *objectConfigDataArray = [objectDict objectForKey:@"ConfigData"];
+                for(int n=0; n<[objectConfigDataArray count]; n++)
+                {
+                    NSDictionary *objectConfigDict = [objectConfigDataArray objectAtIndex:n];
+                    NSArray *keys = [objectConfigDict allKeys];
+                    
+                    NSString *fieldNameFull = [objectConfigDict objectForKey:@"SVMXC__Field_Name__c"];
+                    NSString *fieldName     = [self getFieldLabelForApiName:fieldNameFull];
+
+                    NSString *objectName2Full = [objectConfigDict objectForKey:@"SVMXC__Object_Name2__c"];
+                    NSString *objectName2     = [self getFieldLabelForApiName:objectName2Full];
+                    
+                    NSString *fieldType = ([objectConfigDict objectForKey:@"SVMXC__Display_Type__c"]!=nil||[[objectConfigDict objectForKey:@"SVMXC__Display_Type__c"] length]>0)?[objectConfigDict objectForKey:@"SVMXC__Display_Type__c"]:@"";
+                    
+                    NSString *lookUpField=([objectConfigDict objectForKey:@"SVMXC__Lookup_Field_API_Name__c"]!=nil||[[objectConfigDict objectForKey:@"SVMXC__Lookup_Field_API_Name__c"] length]>0)?[objectConfigDict objectForKey:@"SVMXC__Lookup_Field_API_Name__c"]:@"";
+                    
+                    NSString *fieldRelationShip=([objectConfigDict objectForKey:@"SVMXC__Field_Relationship_Name__c"]!=nil||[[objectConfigDict objectForKey:@"SVMXC__Field_Relationship_Name__c"] length]>0)?[objectConfigDict objectForKey:@"SVMXC__Field_Relationship_Name__c"]:@"";
+                   
+                    NSString *objectName=([objectConfigDict objectForKey:@"SVMXC__Object_Name__c"]!=nil||[[objectConfigDict objectForKey:@"SVMXC__Object_Name__c"] length]>0)?[objectConfigDict objectForKey:@"SVMXC__Object_Name__c"]:@"";
+                    
+                    NSString *sortOrder=([objectConfigDict objectForKey:@"SVMXC__Sort_Order__c"]!=nil||[[objectConfigDict objectForKey:@"SVMXC__Sort_Order__c"] length]>0)?[objectConfigDict objectForKey:@"SVMXC__Sort_Order__c"]:@"";
+                        BOOL isSortingFieldPresent=[self isColumnPresentInTable:@"SFM_Search_Field" columnName:@"SVMXC__Sort_Order__c"];
+                    
+                    
+                    if([keys containsObject:@"SVMXC__Search_Object_Field_Type__c"])
+                    {
+                        /*if(isSortingFieldPresent)
+                        {
+                            if (preparedStmtSearchFieldSortingResult == SQLITE_OK)
+                            {
+                                // Vipin-db-optmz
+                                [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"SFO-FieldSorting"
+                                                                                     andRecordCount:0];
+                                
+                                
+                                [self preparedStatement:preparedStmtSearchFieldSorting
+                                         bindTextString:[objectConfigDict objectForKey:@"Id"]
+                                                atIndex:1];
+                                [self preparedStatement:preparedStmtSearchFieldSorting
+                                         bindTextString:[objectConfigDict objectForKey:@"SVMXC__Expression_Rule__c"]
+                                                atIndex:2];
+                                [self preparedStatement:preparedStmtSearchFieldSorting
+                                         bindTextString:fieldName
+                                                atIndex:3];
+                                [self preparedStatement:preparedStmtSearchFieldSorting
+                                         bindTextString:objectName2
+                                                atIndex:4];
+                                [self preparedStatement:preparedStmtSearchFieldSorting
+                                         bindTextString:[objectConfigDict objectForKey:@"SVMXC__Search_Object_Field_Type__c"]
+                                                atIndex:5];
+                                [self preparedStatement:preparedStmtSearchFieldSorting
+                                         bindTextString:[objectDict objectForKey:@"Id"]
+                                                atIndex:6];
+                                [self preparedStatement:preparedStmtSearchFieldSorting
+                                         bindTextString:fieldType
+                                                atIndex:7];
+                                [self preparedStatement:preparedStmtSearchFieldSorting
+                                         bindTextString:lookUpField
+                                                atIndex:8];
+                                [self preparedStatement:preparedStmtSearchFieldSorting
+                                         bindTextString:fieldRelationShip
+                                                atIndex:9];                                
+                                [self preparedStatement:preparedStmtSearchFieldSorting
+                                         bindTextString:objectName
+                                                atIndex:10];                                
+                                [self preparedStatement:preparedStmtSearchFieldSorting
+                                         bindTextString:sortOrder
+                                                atIndex:11];                                
+                                
+                                if (synchronized_sqlite3_step(preparedStmtSearchFieldSorting) != SQLITE_DONE)
+                                {
+                                    NSLog(@"insertValuesintoSFMObjectTable : Commit Failed! - SFM_Search_Objects - FieldSorting\n");
+                                }
+                                
+                                sqlite3_clear_bindings(preparedStmtSearchFieldSorting);
+                                sqlite3_reset(preparedStmtSearchFieldSorting);
+                                
+                                // Vipin-db-optmz
+                                [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"SFO-FieldSorting"
+                                                                                                  andRecordCount:1];
+                                [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:1];
+                                
+                                
+                            }
+                            else
+                            {
+                                NSLog(@"insertValuesintoSFMObjectTable : prepare Failed! - SFM_Search_Objects - FieldSorting \n  message : %d - %@",  preparedStmtSearchFieldSortingResult, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
+                            }
+                        }*/
+                        //else
+                        {
+                            if (preparedStmtSearchFieldResult == SQLITE_OK) 
+                            {
+                                // Vipin-db-optmz
+                                [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"SFO-Search Field"
+                                                                                     andRecordCount:0];
+                                
+                                
+                                [self preparedStatement:preparedStmtSearchField
+                                         bindTextString:[objectConfigDict objectForKey:@"Id"]
+                                                atIndex:1];
+                                
+                                [self preparedStatement:preparedStmtSearchField
+                                         bindTextString:[objectConfigDict objectForKey:@"SVMXC__Expression_Rule__c"]
+                                                atIndex:2];
+                                
+                                [self preparedStatement:preparedStmtSearchField
+                                         bindTextString:fieldName
+                                                atIndex:3];
+                                
+                                [self preparedStatement:preparedStmtSearchField
+                                         bindTextString:objectName2
+                                                atIndex:4];
+                                
+                                [self preparedStatement:preparedStmtSearchField
+                                         bindTextString:[objectConfigDict objectForKey:@"SVMXC__Search_Object_Field_Type__c"]
+                                                atIndex:5];
+                                
+                                [self preparedStatement:preparedStmtSearchField
+                                         bindTextString:[objectDict objectForKey:@"Id"]
+                                                atIndex:6];
+                            
+                                if (synchronized_sqlite3_step(preparedStmtSearchField) != SQLITE_DONE)
+                                {
+                                    NSLog(@"insertValuesintoSFMObjectTable : Commit Failed! - SFM_Search_Objects - Search Field \n");
+                                }
+                                
+                                sqlite3_clear_bindings(preparedStmtSearchField);
+                                sqlite3_reset(preparedStmtSearchField);
+                                
+                                // Vipin-db-optmz
+                                [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"SFO-Search Field"
+                                                                                                  andRecordCount:1];
+                                [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:1];
+                                
+                            }
+                            else
+                            {
+                                NSLog(@"insertValuesintoSFMObjectTable : prepare Failed! - SFM_Search_Objects - Search Field \n  message : %d - %@",  preparedStmtSearchFieldResult, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (preparedStmtFilterCriteriaResult == SQLITE_OK)
+                        {
+                            // Vipin-db-optmz
+                            [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"SFO-Filter Criteria"
+                                                                                 andRecordCount:0];
+                            
+
+                            [self preparedStatement:preparedStmtFilterCriteria
+                                     bindTextString:[objectConfigDict objectForKey:@"Id"]
+                                            atIndex:1];
+                            
+                            [self preparedStatement:preparedStmtFilterCriteria
+                                     bindTextString:[objectConfigDict objectForKey:@"SVMXC__Display_Type__c"]
+                                            atIndex:2];
+                            
+                            [self preparedStatement:preparedStmtFilterCriteria
+                                     bindTextString:[objectConfigDict objectForKey:@"SVMXC__Expression_Rule__c"]
+                                            atIndex:3];
+                            
+                            [self preparedStatement:preparedStmtFilterCriteria
+                                     bindTextString:fieldName
+                                            atIndex:4];
+                            
+                            [self preparedStatement:preparedStmtFilterCriteria
+                                     bindTextString:objectName2
+                                            atIndex:5];
+                            
+                            [self preparedStatement:preparedStmtFilterCriteria
+                                     bindTextString:[objectConfigDict objectForKey:@"SVMXC__Operand__c"]
+                                            atIndex:6];
+                            
+                            [self preparedStatement:preparedStmtFilterCriteria
+                                     bindTextString:[objectConfigDict objectForKey:@"SVMXC__Operator__c"]
+                                            atIndex:7];
+                            
+                            [self preparedStatement:preparedStmtFilterCriteria
+                                     bindTextString:[objectDict objectForKey:@"Id"]
+                                            atIndex:8];
+                            
+                            
+                            if (synchronized_sqlite3_step(preparedStmtFilterCriteria) != SQLITE_DONE)
+                            {
+                                NSLog(@"insertValuesintoSFMObjectTable : Commit Failed! - SFM_Search_Objects - Filter Criteria\n");
+                            }
+                            
+                            sqlite3_clear_bindings(preparedStmtFilterCriteria);
+                            sqlite3_reset(preparedStmtFilterCriteria);
+                            
+                            // Vipin-db-optmz
+                            [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"SFO-Filter Criteria"
+                                                                                              andRecordCount:1];
+                            [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:1];
+                            
+                        }
+                        else
+                        {
+                            NSLog(@"insertValuesintoSFMObjectTable : prepare Failed! - SFM_Search_Objects - Filter Criteria\n message %d - %@",  preparedStmtFilterCriteriaResult, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
+                        }
+                    }
+                }
+            }
         }
-     }
+        /*else
+        {
+            sqlite3_stmt * bulkStmt;
+            
+            //Query 1
+            NSString  *queryStatement =  [NSString stringWithFormat:@"INSERT INTO SFM_Search_Objects ('SVMXC__Module__c','SVMXC__ProcessID__c','SVMXC__Target_Object_Name__c','ProcessName','ProcessId','ObjectId','SVMXC__Advance_Expression__c','SVMXC__Name__c') VALUES (?1,?2,?3,?4,?5,?6,?7,?8)"];
+            
+            sqlite3_stmt * bulkStmtForSearch;
+            sqlite3_stmt * bulkStmtForFilter;
+            
+            //Query 2
+            NSString  *queryStatementSearchField = [NSString stringWithFormat:@"INSERT INTO SFM_Search_Field ('Id','SVMXC__Expression_Rule__c','SVMXC__Field_Name__c','SVMXC__Object_Name2__c','SVMXC__Search_Object_Field_Type__c','ObjectId') VALUES (?1, ?2, ?3, ?4, ?5, ?6)"];
 
+            //[objectConfigDict objectForKey:@"Id"],[objectConfigDict objectForKey:@"SVMXC__Expression_Rule__c"],fieldName,objectName2,[objectConfigDict objectForKey:@"SVMXC__Search_Object_Field_Type__c"],[objectDict objectForKey:@"Id"]
+            
+            //Query 3
+            
+            NSString  *queryStatementFilterCriteria = [NSString stringWithFormat:@"INSERT INTO SFM_Search_Filter_Criteria ('Id','SVMXC__Display_Type__c','SVMXC__Expression_Rule__c','SVMXC__Field_Name__c','SVMXC__Object_Name2__c','SVMXC__Operand__c','SVMXC__Operator__c','ObjectId') VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)"];
+                                                       
+            //,[objectConfigDict objectForKey:@"Id"],[objectConfigDict objectForKey:@"SVMXC__Display_Type__c"],[objectConfigDict objectForKey:@"SVMXC__Expression_Rule__c"],fieldName,objectName2,[objectConfigDict objectForKey:@"SVMXC__Operand__c"],[objectConfigDict objectForKey:@"SVMXC__Operator__c"],[objectDict objectForKey:@"Id"] ];
+
+            
+            
+    
+            int result = synchronized_sqlite3_prepare_v2(appDelegate.db,
+                                                        [queryStatement UTF8String],
+                                                        strlen([queryStatement UTF8String]),
+                                                        &bulkStmt, NULL);
+            
+            int resultSearch = synchronized_sqlite3_prepare_v2(appDelegate.db,
+                                                         [queryStatementSearchField UTF8String],
+                                                         strlen([queryStatementSearchField UTF8String]),
+                                                         &bulkStmtForSearch, NULL);
+            
+            int resultFilter = synchronized_sqlite3_prepare_v2(appDelegate.db,
+                                                               [queryStatementFilterCriteria UTF8String],
+                                                               strlen([queryStatementFilterCriteria UTF8String]),
+                                                               &bulkStmtForFilter, NULL);
+
+            if (result == SQLITE_OK)
+            {
+                // Vipin-db-optmz
+                [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"SFM_Search_Objects"
+                                                                     andRecordCount:0];
+                for(int m=0; m<[objectsArray count]; m++)
+                {
+
+                    
+                   
+                    
+                    NSDictionary *objectDict = [objectsArray objectAtIndex:m];
+                    SMLog(@"Object ID = %@",[objectDict objectForKey:@"Id"] );
+                    
+                    str= [objectDict  objectForKey:@"SVMXC__Advance_Expression__c"];
+                    SMLog(@"%@",str);
+                    
+                    if(![[objectDict  objectForKey:@"SVMXC__Advance_Expression__c"] isEqualToString:@"(null)"])
+                    {
+                        if(!(str ==NULL))
+                        {
+                            str=[str stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
+                        }
+                        else
+                        {
+                            str=@"(null)";
+                        }
+                    }
+                    else
+                    {
+                        str=@"(null)";
+                    }
+                    
+                    
+                    NSString *targetObjectNameFull = [objectDict objectForKey:@"SVMXC__Target_Object_Name__c"];
+                    targetObjectNameFull= [targetObjectNameFull stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
+                    
+                    NSString *targetObjectName = [self getFieldLabelForApiName:targetObjectNameFull];
+                    targetObjectName=[targetObjectName stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
+                    
+                    NSString * Name = [objectDict objectForKey:@"SVMXC__Name__c"];
+                    Name = [Name stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
+                    
+                    NSString * Module = [objectDict objectForKey:@"SVMXC__Module__c"];
+                    Module = [Module  stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
+                
+                    char * _Module = [appDelegate convertStringIntoChar:Module];
+                    sqlite3_bind_text(bulkStmt, 1, _Module, strlen(_Module), SQLITE_TRANSIENT);
+            
+                    char * _process = [appDelegate convertStringIntoChar:[objectDict objectForKey:@"SVMXC__ProcessID__c"]];
+                    sqlite3_bind_text(bulkStmt, 2, _process, strlen(_process), SQLITE_TRANSIENT);                
+                    
+                    char * _targetObjectName = [appDelegate convertStringIntoChar:targetObjectName];
+                    sqlite3_bind_text(bulkStmt, 3, _targetObjectName, strlen(_targetObjectName), SQLITE_TRANSIENT);
+                
+                    char * _processName = [appDelegate convertStringIntoChar:processName];
+                    sqlite3_bind_text(bulkStmt, 4, _processName, strlen(_processName), SQLITE_TRANSIENT);
+                    
+                    char * _processId = [appDelegate convertStringIntoChar:processId];
+                    sqlite3_bind_text(bulkStmt, 5, _processId, strlen(_processId), SQLITE_TRANSIENT);
+
+                    char * _Id = [appDelegate convertStringIntoChar:[objectDict objectForKey:@"Id"]];
+                    sqlite3_bind_text(bulkStmt, 6, _Id, strlen(_Id), SQLITE_TRANSIENT);
+
+                    char * _parentObjCriteria = [appDelegate convertStringIntoChar:str];
+                    sqlite3_bind_text(bulkStmt, 7, _parentObjCriteria, strlen(_parentObjCriteria), SQLITE_TRANSIENT);
+
+                    char * _Name = [appDelegate convertStringIntoChar:Name];
+                    sqlite3_bind_text(bulkStmt, 8, _Name, strlen(_Name), SQLITE_TRANSIENT);
+
+                   if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
+                   {
+                       printf(" insertValuesintoSFMObjectTable : Commit Failed! - SFM_Search_Objects \n");
+                   }
+                    
+                   sqlite3_clear_bindings(bulkStmt);
+                   sqlite3_reset(bulkStmt);
+                   [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:1];
+                    
+                    NSArray *objectConfigDataArray = [objectDict objectForKey:@"ConfigData"];
+                    for(int n=0; n<[objectConfigDataArray count]; n++)
+                    {
+                        NSDictionary *objectConfigDict = [objectConfigDataArray objectAtIndex:n];
+                        NSArray   *keys = [objectConfigDict allKeys];
+                        
+                        NSString  *fieldNameFull = [objectConfigDict objectForKey:@"SVMXC__Field_Name__c"];
+                        NSString  *fieldName = [self getFieldLabelForApiName:fieldNameFull];
+                        
+                        NSString *objectName2Full = [objectConfigDict objectForKey:@"SVMXC__Object_Name2__c"];
+                        NSString *objectName2 = [self getFieldLabelForApiName:objectName2Full];
+
+                        if([keys containsObject:@"SVMXC__Search_Object_Field_Type__c"])
+                        {
+                            if (resultSearch == SQLITE_OK)
+                            {
+                                [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"ConfigData : SFM_Search_Field"
+                                                                                     andRecordCount:0];
+                                
+                            
+                                char * _Id = [appDelegate convertStringIntoChar:[objectConfigDict objectForKey:@"Id"]];
+                                sqlite3_bind_text(bulkStmtForSearch, 1, _Id, strlen(_Id), SQLITE_TRANSIENT);
+                                
+                                char * _expRules = [appDelegate convertStringIntoChar:[objectConfigDict objectForKey:@"SVMXC__Expression_Rule__c"]];
+                                sqlite3_bind_text(bulkStmtForSearch, 2, _expRules, strlen(_expRules), SQLITE_TRANSIENT);
+                                
+                                char * _fieldName = [appDelegate convertStringIntoChar:fieldName];
+                                sqlite3_bind_text(bulkStmtForSearch, 3, _fieldName, strlen(_fieldName), SQLITE_TRANSIENT);
+                                
+                                char * _objectName2 = [appDelegate convertStringIntoChar:objectName2];
+                                sqlite3_bind_text(bulkStmtForSearch, 4, _objectName2, strlen(_objectName2), SQLITE_TRANSIENT);
+                                
+                                char * _fieldType = [appDelegate convertStringIntoChar:[objectConfigDict objectForKey:@"SVMXC__Search_Object_Field_Type__c"]];
+                                sqlite3_bind_text(bulkStmtForSearch, 5, _fieldType, strlen(_fieldType), SQLITE_TRANSIENT);
+                                
+                                char * _objectId = [appDelegate convertStringIntoChar:[objectDict objectForKey:@"Id"]];
+                                sqlite3_bind_text(bulkStmtForSearch, 6, _objectId, strlen(_objectId), SQLITE_TRANSIENT);
+                                
+                                
+                                if (synchronized_sqlite3_step(bulkStmtForSearch) != SQLITE_DONE)
+                                {
+                                    NSLog(@"insertValuesintoSFMObjectTable : Commit Failed! - ConfigData : SFM_Search_Field\n");
+                                }
+                                
+                                sqlite3_clear_bindings(bulkStmtForSearch);
+                                sqlite3_reset(bulkStmtForSearch);
+                            
+                                // Vipin-db-optmz
+                                [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"ConfigData : SFM_Search_Field"
+                                                                                                  andRecordCount:1];
+                                
+                                [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:1];
+                            }
+                            else
+                            {
+                                  NSLog(@"insertValuesintoSFMObjectTable : Prepared Failed! - ConfigData : SFM_Search_Field \n message %d - %@",  resultSearch, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
+                            }
+                        }
+                        else
+                        {
+                            if (resultFilter == SQLITE_OK)
+                            {
+                                // Vipin-db-optmz
+                                [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"ConfigData : SFM_Filter_Criteria"
+                                                                                     andRecordCount:0];
+                                int result = SQLITE_OK;
+                                char * _Id = [appDelegate convertStringIntoChar:[objectConfigDict objectForKey:@"Id"]];
+                                result = sqlite3_bind_text(bulkStmtForFilter, 1, _Id, strlen(_Id), SQLITE_TRANSIENT);
+                                
+                                
+                                char * _types = [appDelegate convertStringIntoChar:[objectConfigDict objectForKey:@"SVMXC__Display_Type__c"]];
+                                result = sqlite3_bind_text(bulkStmtForFilter, 2, _types, strlen(_types), SQLITE_TRANSIENT);
+                                
+                                
+                                char * _expRules = [appDelegate convertStringIntoChar:[objectConfigDict objectForKey:@"SVMXC__Expression_Rule__c"]];
+                                result = sqlite3_bind_text(bulkStmtForFilter, 3, _expRules, strlen(_expRules), SQLITE_TRANSIENT);
+                                
+                                
+                                char * _fieldName = [appDelegate convertStringIntoChar:fieldName];
+                                result = sqlite3_bind_text(bulkStmtForFilter, 4, _fieldName, strlen(_fieldName), SQLITE_TRANSIENT);
+                                
+                                char * _objectName2 = [appDelegate convertStringIntoChar:objectName2];
+                                result =  sqlite3_bind_text(bulkStmtForFilter, 5, _objectName2, strlen(_objectName2), SQLITE_TRANSIENT);
+                                
+                                char * _operand = [appDelegate convertStringIntoChar:[objectConfigDict objectForKey:@"SVMXC__Operand__c"]];
+                                result = sqlite3_bind_text(bulkStmtForFilter, 6, _operand, strlen(_operand), SQLITE_TRANSIENT);
+                                
+                                
+                                char * _operator = [appDelegate convertStringIntoChar:[objectConfigDict objectForKey:@"SVMXC__Operator__c"]];
+                                result = sqlite3_bind_text(bulkStmtForFilter, 7, _operator, strlen(_operator), SQLITE_TRANSIENT);
+                                
+                                char * _objectId = [appDelegate convertStringIntoChar:[objectDict objectForKey:@"Id"]];
+                                result = sqlite3_bind_text(bulkStmtForFilter, 8, _objectId, strlen(_objectId), SQLITE_TRANSIENT);
+                                
+                                int successfullyExecuted = synchronized_sqlite3_step(bulkStmtForFilter);
+                                
+                                if ( successfullyExecuted != SQLITE_DONE)
+                                {
+                                    NSLog(@"insertValuesintoSFMObjectTable : Commit Failed! - ConfigData : SFM_Filter_Criteria \n message %d - %@",  successfullyExecuted, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
+                                }
+                                
+                                sqlite3_clear_bindings(bulkStmtForFilter);
+                                sqlite3_reset(bulkStmtForFilter);
+                                
+                                // Vipin-db-optmz
+                                [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"ConfigData : SFM_Filter_Criteria"
+                                                                                                  andRecordCount:1];
+                                
+                                [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:1];
+                                
+                            }else
+                            {
+                                NSLog(@"insertValuesintoSFMObjectTable : Prepared Failed! - ConfigData : SFM_Filter_Criteria\n message %d - %@",  resultFilter, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
+                            }
+                        }
+                        
+
+                    }
+                }
+                
+                // Vipin-db-optmz
+                [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"SFM_Search_Objects"
+                                                                                  andRecordCount:[objectsArray count]];
+                
+                 synchronized_sqlite3_finalize(bulkStmtForFilter);
+                 synchronized_sqlite3_finalize(bulkStmtForSearch);
+                 synchronized_sqlite3_finalize(bulkStmt);
+            }
+            else
+            {
+                
+                NSLog(@"insertValuesintoSFMObjectTable : prepare Failed! - SFM_Search_Objects - second\n message : %d - %@", result, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
+                
+            }
+        }*/
+    }
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"SFM_Search_Process"
+                                                                      andRecordCount:[processData count]];
+    [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:0];
+    
+    
+    // Vipin-db-optmz
+    [self endTransaction];
+    
+    synchronized_sqlite3_finalize(preparedStmtSearchObject);
+    //synchronized_sqlite3_finalize(preparedStmtSearchFieldSorting);
+    synchronized_sqlite3_finalize(preparedStmtSearchField);
+    synchronized_sqlite3_finalize(preparedStmtFilterCriteria);
+    
+    [pool drain];
+    pool = nil;
 }
+
 - (NSMutableArray *) getSFMSearchConfigurationSettings
 {
     NSMutableArray *configSettings = [[NSMutableArray alloc] init];
@@ -6021,30 +6631,163 @@ extern void SVMXLog(NSString *format, ...);
     [self updateChildSfIdWithParentLocalId:appDelegate.wsInterface.childObject];
 }
 
+// Vipin-db-optmz
+- (void)addValuesToLookUpFieldTable:(NSMutableArray *)values
+{
+    if ( (values == nil) || ([values count] == 0) )
+    {
+        // Not valid values
+        return;
+    }
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance]  observePerformanceForContext:@"addValuesToLookUpFieldTable"
+                                                          andRecordCount:0];
+    
+    [self beginTransaction];
+    
+    NSString * query = [NSString stringWithFormat:@"INSERT OR REPLACE INTO LookUpFieldValue ('%@', '%@', '%@') VALUES (?1, ?2, ?3)", MOBJECT_API_NAME, @"Id",
+                        MVALUEM];
+    
+    sqlite3_stmt *bulkStmt;
+    
+    NSString * type = @"", * idValue = @"";
+    
+    int reult = synchronized_sqlite3_prepare_v2(appDelegate.db,
+                                                [query UTF8String],
+                                                strlen([query UTF8String]),
+                                                &bulkStmt, NULL);
+    for (NSDictionary *lookUpDict in values)
+    {
+        NSString * value = ([lookUpDict objectForKey:@"Name"] != nil)?[lookUpDict objectForKey:@"Name"]:@"";
+        
+        if (![value isEqualToString:@""])
+        {
+            value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
+        }
+        
+        type = ([lookUpDict objectForKey:@"type"] != nil) ? [lookUpDict objectForKey:@"type"] : @"";
+        
+        
+        idValue = ([lookUpDict objectForKey:@"Id"] != nil) ? [lookUpDict objectForKey:@"Id"] : @"";
+        
+        if (reult == SQLITE_OK)
+        {
+            char * _type = [appDelegate convertStringIntoChar:type];
+            sqlite3_bind_text(bulkStmt, 1, _type, strlen(_type), SQLITE_TRANSIENT);
+            
+            char * _Id = [appDelegate convertStringIntoChar:idValue];
+            sqlite3_bind_text(bulkStmt, 2, _Id, strlen(_Id), SQLITE_TRANSIENT);
+            
+            char * _value = [appDelegate convertStringIntoChar:value];
+            sqlite3_bind_text(bulkStmt, 3, _value, strlen(_value), SQLITE_TRANSIENT);
+            
+            char * err;
+            
+            if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+            {
+                NSLog(@"insertRecordIdsIntosyncRecordHeap failed Query :%@ \n\n reason: \n %s", query, err);
+                if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                    [MyPopoverDelegate performSelector:@selector(throwException)];
+                SMLog(@"%@", query);
+                SMLog(@"METHOD: addvaluesToLookUpFieldTable");
+                SMLog(@"ERROR IN INSERTING %s", err);
+            }
+            
+            sqlite3_clear_bindings(bulkStmt);
+            sqlite3_reset(bulkStmt);
+            
+        }
+        
+    }
+    
+    synchronized_sqlite3_finalize(bulkStmt);
+    
+    [self endTransaction];
+    
+    [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:[values count]];
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance]  observePerformanceForContext:@"addValuesToLookUpFieldTable"
+                                                          andRecordCount:[values count]];
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"addValuesToLookUpFieldTable"
+                                                                      andRecordCount:0];
+}
+
 -(void) addvaluesToLookUpFieldTable:(NSDictionary *)lookUpDict WithId:(NSInteger)Id
 {
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance]  observePerformanceForContext:@"addvaluesToLookUpFieldTable-x"
+                                                          andRecordCount:0];
+    
+    [self beginTransaction];
     NSString * value = ([lookUpDict objectForKey:@"Name"] != nil)?[lookUpDict objectForKey:@"Name"]:@"";
     
     if (![value isEqualToString:@""])
-        value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
-    
-    
-    NSString * query = [NSString stringWithFormat:@"INSERT OR REPLACE INTO LookUpFieldValue ('%@', '%@', '%@') VALUES ('%@',    '%@', '%@')", MOBJECT_API_NAME, @"Id", MVALUEM, 
-                        ([lookUpDict objectForKey:@"type"] != nil)?[lookUpDict objectForKey:@"type"]:@"", 
-                        ([lookUpDict objectForKey:@"Id"] != nil)?[lookUpDict objectForKey:@"Id"]:@"", 
-                        value];
-    
-    char * err;
-    if(synchronized_sqlite3_exec(appDelegate.db, [query UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
-        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-            [MyPopoverDelegate performSelector:@selector(throwException)];
-        SMLog(@"%@", query);
-		SMLog(@"METHOD: addvaluesToLookUpFieldTable");
-        SMLog(@"ERROR IN INSERTING %s", err);
+        value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
     }
     
+    NSString * query = [NSString stringWithFormat:@"INSERT OR REPLACE INTO LookUpFieldValue ('%@', '%@', '%@') VALUES (?1, ?2, ?3)", MOBJECT_API_NAME, @"Id",
+                        MVALUEM];
+    
+    sqlite3_stmt *bulkStmt;
+    
+    NSString * type = @"", * idValue = @"";
+    
+    
+    type = ([lookUpDict objectForKey:@"type"] != nil) ? [lookUpDict objectForKey:@"type"] : @"";
+    
+    
+    idValue = ([lookUpDict objectForKey:@"Id"] != nil) ? [lookUpDict objectForKey:@"Id"] : @"";
+    
+    int reult = synchronized_sqlite3_prepare_v2(appDelegate.db,
+                                                [query UTF8String],
+                                                strlen([query UTF8String]),
+                                                &bulkStmt, NULL);
+    if (reult == SQLITE_OK)
+    {
+        char * _type = [appDelegate convertStringIntoChar:type];
+        sqlite3_bind_text(bulkStmt, 1, _type, strlen(_type), SQLITE_TRANSIENT);
+        
+        char * _Id = [appDelegate convertStringIntoChar:idValue];
+        sqlite3_bind_text(bulkStmt, 2, _Id, strlen(_Id), SQLITE_TRANSIENT);
+        
+        char * _value = [appDelegate convertStringIntoChar:value];
+        sqlite3_bind_text(bulkStmt, 3, _value, strlen(_value), SQLITE_TRANSIENT);
+        
+        char * err;
+        
+        if (sqlite3_step(bulkStmt) != SQLITE_DONE)
+        {
+            NSLog(@"addvaluesToLookUpFieldTable failed Query :%@ \n\n reason: \n %s", query, err);
+            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+                [MyPopoverDelegate performSelector:@selector(throwException)];
+            SMLog(@"%@", query);
+            SMLog(@"METHOD: addvaluesToLookUpFieldTable");
+            SMLog(@"ERROR IN INSERTING %s", err);
+        }
+        
+        sqlite3_clear_bindings(bulkStmt);
+        sqlite3_reset(bulkStmt);
+    }
+    
+    synchronized_sqlite3_finalize(bulkStmt);
+    
+    [self endTransaction];
+    
+    [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:1];
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance]  observePerformanceForContext:@"addvaluesToLookUpFieldTable-x"
+                                                          andRecordCount:1];
+    
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"addvaluesToLookUpFieldTable-x"
+                                                                      andRecordCount:0];
+    
+    
 }
+
 -(void) updateChildSfIdWithParentLocalId:(NSArray *)childObject
 {
     for (NSString * objectName in childObject)
@@ -6174,6 +6917,12 @@ extern void SVMXLog(NSString *format, ...);
 
 -(BOOL) checkForDuplicateId:(NSString *)objectName sfId:(NSString *)sfId
 {
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"checkForDuplicateId"
+                                                         andRecordCount:1];
+    
+    
+    
     int count = 0;
     
     if([objectName isEqualToString:@"Case"])
@@ -6193,6 +6942,13 @@ extern void SVMXLog(NSString *format, ...);
     }
     synchronized_sqlite3_finalize(stmt);
     [query release];
+    
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"checkForDuplicateId"
+                                                                      andRecordCount:0];
+    
+    
     if (count > 0)
         return FALSE;
     else 
@@ -8027,6 +8783,9 @@ extern void SVMXLog(NSString *format, ...);
 }
 - (NSString *) getApiNameForNameField:(NSString *)headerObjectName
 {
+    [[PerformanceAnalytics sharedInstance]  observePerformanceForContext:@"getApiNameForNameField"
+                                                          andRecordCount:0];
+    
     NSString * fieldName = @"";
     NSString * query = [NSString stringWithFormat:@"SELECT api_name FROM 'SFObjectField' where object_api_name = '%@' and name_field = 'TRUE'",headerObjectName];
     sqlite3_stmt * stmt ;
@@ -8042,6 +8801,13 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     synchronized_sqlite3_finalize(stmt);
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance]  observePerformanceForContext:@"getApiNameForNameField"
+                                                          andRecordCount:1];
+    
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"getApiNameForNameField"
+                                                                      andRecordCount:0];
     return fieldName;
     
 }

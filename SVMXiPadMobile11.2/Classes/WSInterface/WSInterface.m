@@ -11,6 +11,9 @@
 #import "LoginController.h"
 #import "WSResponseParser.h"
 #import "Utility.h"
+#import "PerformanceAnalytics.h"
+
+
 extern void SVMXLog(NSString *format, ...);
 
 //sahana Note 
@@ -1574,6 +1577,20 @@ last_sync_time:(NSString *)last_sync_time
 //DATA SYNC METHOD
 -(void)DoIncrementalDataSync
 {
+    
+    SMLog(@"[isync] DoIncrementalDataSync  - started");
+    
+    [[PerformanceAnalytics sharedInstance] stopPerformAnalysis];
+    
+    //VP-Optmz2
+
+    [[PerformanceAnalytics sharedInstance] setCode:@"PA-INCR-502"
+                                    andDescription:@"Incr-sync-Caching-Deletion"];
+    
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"DoIncrementalDataSync"
+                                                         andRecordCount:0];
+    
+    
     @try{
     //RADHA 2012june12
     if (appDelegate.metaSyncRunning)
@@ -1726,6 +1743,10 @@ last_sync_time:(NSString *)last_sync_time
 
     [self GetDelete];
 
+        [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"GetDelete-VP"
+                                                             andRecordCount:1];
+        
+        
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
 #ifdef kPrintLogsDuringWebServiceCall
@@ -2044,7 +2065,15 @@ last_sync_time:(NSString *)last_sync_time
 //	[appDelegate setCurrentSyncStatusProgress:PUTINSERT_DONE optimizedSynstate:oPUTINSERT_DONE];
 	       
     [self resetSyncLastindexAndObjectName];  //sahana
-    [self GetInsert];                        //once all insertion is over call call reverse insert  method 
+       
+        [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"GetDelete-VP"
+                                                                          andRecordCount:0];
+        
+    [self GetInsert];                        //once all insertion is over call call reverse insert  method
+        
+        [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"GetInsert-VP"
+                                                             andRecordCount:1];
+        
     
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
@@ -2309,8 +2338,14 @@ last_sync_time:(NSString *)last_sync_time
             break;
     }
     
-    
+        [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"GetInsert-VP"
+                                                                          andRecordCount:0];
+        
     [self GetUpdate];
+        
+        [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"GetUpdate-VP"
+                                                             andRecordCount:1];
+        
     
     while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
     {
@@ -2870,6 +2905,17 @@ last_sync_time:(NSString *)last_sync_time
     }
     
     
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"GetUpdate-VP"
+                                                                      andRecordCount:0];
+    
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"DoIncrementalDataSync"
+                                                                      andRecordCount:0];
+    
+    [[PerformanceAnalytics sharedInstance] displayCurrentStatics];
+    
+    //NSLog(@" [isync] DoIncrementalDataSync - completed");
+    
+    
 }
 - (void) releaseSyncThread
 {
@@ -3103,12 +3149,17 @@ last_sync_time:(NSString *)last_sync_time
 
 -(void)copyTrailertoTempTrailer:(NSString *)operation_type
 {
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:[NSString stringWithFormat:@"copyTrailertoTempTrailer : %@", operation_type]
+                                                         andRecordCount:0];
+    
     [appDelegate.databaseInterface cleartable:SFDATATRAILER_TEMP];   //clear trailer temp
     
     [appDelegate.databaseInterface copyTrailerTableToTempTrailerForOperationType:operation_type];    
     
     [self setsyncHistoryForSyncType:operation_type requestOrResponse:REQUEST request_id:Insert_requestId last_sync_time:@""];  //Take time snap for insert and set it for last_insert request
-       
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:[NSString stringWithFormat:@"copyTrailertoTempTrailer : %@", operation_type]
+                                                                      andRecordCount:1];
+    
 }
 
 #pragma mark incremental Data SYNC
@@ -3119,6 +3170,11 @@ last_sync_time:(NSString *)last_sync_time
     //get all the master records
     //recordType  can be MASETR  Or Detail
     appDelegate.dataSync_dict = nil;
+    
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:[NSString stringWithFormat:@"getAllRecordsForOperationType : %@", OpearationType]
+                                                         andRecordCount:0];
+    
+    
     NSMutableArray * object_array = [[appDelegate.databaseInterface getAllInsertRecords:OpearationType] retain];
     
     if( appDelegate.dataSync_dict == nil)
@@ -3194,6 +3250,10 @@ last_sync_time:(NSString *)last_sync_time
         SMLog(@"Exception Name WSInterface :getAllRecordsForOperationType %@",exp.name);
         SMLog(@"Exception Reason WSInterface :getAllRecordsForOperationType %@",exp.reason);
     }
+    
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:[NSString stringWithFormat:@"getAllRecordsForOperationType : %@", OpearationType]
+                                                                      andRecordCount:1];
+
 }
 
 -(void)getOnDemandRecords:(NSString*)objectName record_id:(NSString*)record_id

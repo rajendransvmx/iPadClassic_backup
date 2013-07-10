@@ -24,6 +24,11 @@
     //sqlite3 * db;
     iServiceAppDelegate * appDelegate;
     id <databaseInterfaceProtocol> databaseInterfaceDelegate;
+    
+    // Vipind-db-optmz
+    NSMutableDictionary  *fieldDataTypeDict;
+    NSMutableDictionary   *childInfoDict;
+
 }
 
 @property (nonatomic , assign)  id  <databaseInterfaceProtocol> databaseInterfaceDelegate;
@@ -272,6 +277,17 @@
 /* Shravya-InitialSync :InitialSync-shr */
 @property(nonatomic,retain)NSMutableDictionary *objectFieldDictionary;
 
+/* vipindas Palli*/
+
+// Vipind-db-optmz
+@property(nonatomic,retain)NSMutableDictionary *apiNameToInsertionQueryDictionary
+;
+@property (nonatomic, retain) NSMutableDictionary   *fieldDataTypeDictionary;
+@property (nonatomic, retain) NSMutableDictionary   *childInfoDictionary;
+
+@property (nonatomic, retain) NSMutableDictionary   *childObjectCacheDictionary; // Vipin-PB-Optimization on 10 July 2013
+
+
 /* this is not used as of now*/
 @property(nonatomic,retain)NSMutableDictionary *localIdOfFutureMasterRecords;
 @property(nonatomic,retain)NSMutableDictionary *parentobjectDictionary;
@@ -316,6 +332,8 @@
 - (BOOL) checkIfCustomEntryExistsInTrailerTable:(NSString *)parentLocalId;
 -(BOOL)doesIdexistsinSyncrecord:(NSDictionary *)sync_record new_local_id:(NSString *)new_id idType:(NSString *)id_type;
 
+// Vipind-db-optmz
+- (void)deleteRecordFromTable:(NSString *)tableName byCollectionsOfId:(NSArray *)ids forColumn:(NSString *)columnName;
 
 #define SERVER_OVERRIDE                     @"Server_Override"
 #define CLIENT_OVERRIDE                     @"Client_Override"
