@@ -165,6 +165,10 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 //================================================================
 
 @implementation iServiceAppDelegate
+
+//7444
+@synthesize IsSynctriggeredAtLaunch;
+
 //RADHA Defect Fix 5542
 @synthesize shouldScheduleTimer;
 @synthesize isDataSyncTimerTriggered;
@@ -1893,28 +1897,18 @@ NSString * GO_Online = @"GO_Online";
     //Radha 2012june16
     
     [dataBase insertMetaSyncDue:METASYNCDUE];
-    [self updateMetasyncTimeinSynchistory];
-//    if (metaSyncThread != nil)
-//    {
-//        if ([metaSyncThread isFinished] == YES)
-//        {
-//            SMLog(@"Meta Sync");
-//        }
-//        else
-//        {
-//            SMLog(@"Meta Sync");
-//            return;
-//        }
-//        
-//        
-//    }
-//    
-//    [metaSyncThread release]; 
-//    metaSyncThread = [[NSThread alloc] initWithTarget:self.dataBase selector:@selector(callIncrementalMetasync) object:nil];
-//    [metaSyncThread start];
+    //7444
+	NSDate * nextConfigSync = [appDelegate getGMTTimeForNextConfigSyncFromPList];
+    [self updateMetasyncTimeinSynchistory:nextConfigSync];
+	if ([self.wsInterface.updateSyncStatus respondsToSelector:@selector(refreshConfigSyncTime)])
+	{
+		[self.wsInterface.updateSyncStatus refreshConfigSyncTime];
+	}
+
 
 }
--(void)updateMetasyncTimeinSynchistory
+//7444
+-(void)updateMetasyncTimeinSynchistory:(NSDate *)currentTime
 {
     NSString * timerInterval = ([self.settingsDict objectForKey:@"Frequency of Application Changes"] != nil)?[self.settingsDict objectForKey:@"Frequency of Application Changes"]:@"";
     
@@ -1930,10 +1924,7 @@ NSString * GO_Online = @"GO_Online";
         double interval = [timerInterval doubleValue];
         
         metaSyncTimeInterval = interval * 60;
-    }
-    
-    
-//    refreshMetaSyncTimeStamp
+    }    
    
     NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:SYNC_HISTORY];
@@ -1943,10 +1934,8 @@ NSString * GO_Online = @"GO_Online";
     NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
 	[dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]]; //Change for Time Stamp	
-
-    NSDate * current_date = [NSDate date];
-
-    NSDate * next_sync_dateTime = [NSDate dateWithTimeInterval:metaSyncTimeInterval sinceDate:current_date];
+	//7444
+    NSDate * next_sync_dateTime = [NSDate dateWithTimeInterval:metaSyncTimeInterval sinceDate:currentTime];
     NSString * next_sync = [dateFormatter stringFromDate:next_sync_dateTime];
     [dict_temp  setObject:next_sync forKey:NEXT_META_SYNC_TIME];
     
@@ -2735,6 +2724,37 @@ int percent = 0;
 	NSDate * nextSyncTime = [self getGMTTimeForNextDataSyncFromPList];
 	[self updateNextDataSyncTimeToBeDisplayed:nextSyncTime];
 }
+
+//7444
+- (NSDate *) getGMTTimeForNextConfigSyncFromPList
+{
+	NSDateFormatter * formatter = [[[NSDateFormatter alloc] init] autorelease];
+	[formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+	[formatter setTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]];
+	
+	NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:SYNC_HISTORY];
+	
+    NSMutableDictionary * tempDict = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST];
+	
+	NSArray * keys = [tempDict allKeys];
+	
+	NSString * nextSyncTime = @"";
+	
+	for (NSString * value in keys)
+	{
+		if ([value isEqualToString:NEXT_META_SYNC_TIME])
+		{
+			nextSyncTime = [tempDict objectForKey:NEXT_META_SYNC_TIME];
+			break;
+		}
+	}
+	
+	NSDate * currentDateTime = [formatter dateFromString:nextSyncTime];
+	
+	return currentDateTime;
+}
+
 
 //PRINTING ERROR MESSEGES:
 - (void) printIfError:(NSString *)err ForQuery:(NSString *)query type:(SQL_QUERY)type

@@ -708,7 +708,6 @@ PopoverButtons *popOver_view;
         }
 		
 		[self refreshMetaSyncTimeStamp];
-        [appDelegate updateMetasyncTimeinSynchistory];
 		[appDelegate.wsInterface.updateSyncStatus refreshMetaSyncStatus];
 		[self updateMetsSyncStatus:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_succeeded]];
 
@@ -727,6 +726,7 @@ PopoverButtons *popOver_view;
 		appDelegate.event_thread = nil;
     }
     [appDelegate pingServer];
+    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
     [self performSelectorOnMainThread:@selector(scheduletimer) withObject:nil waitUntilDone:NO];
     
 }
@@ -767,6 +767,8 @@ PopoverButtons *popOver_view;
     [appDelegate ScheduleTimerForEventSync];
 	//Radha Defect Fix 5542
 	[appDelegate updateNextDataSyncTimeToBeDisplayed:[NSDate date]];
+	//7444
+	[appDelegate updateMetasyncTimeinSynchistory:[NSDate date]];
 
 }
 

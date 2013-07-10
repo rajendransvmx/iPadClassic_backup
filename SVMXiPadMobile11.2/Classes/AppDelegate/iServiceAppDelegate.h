@@ -534,6 +534,8 @@ extern  NSString const *devVersion;
 	//RADHA Defect Fix 5542
 	BOOL shouldScheduleTimer;
 	BOOL isDataSyncTimerTriggered;
+	//7444
+	BOOL IsSynctriggeredAtLaunch;
 
 //    NSMutableDictionary *tempDict;
 //    NSInteger Custom_alert_count;
@@ -544,6 +546,9 @@ extern  NSString const *devVersion;
     //sync_override
     DATA_SYNC_TYPE data_sync_type;
 }
+//7444
+@property (nonatomic, assign)BOOL IsSynctriggeredAtLaunch;
+
 //RADHA Defect Fix 5542
 @property (nonatomic, assign)BOOL shouldScheduleTimer;
 @property (nonatomic, assign)BOOL isDataSyncTimerTriggered;
@@ -806,8 +811,8 @@ extern  NSString const *devVersion;
 -(void)setAgrressiveSync_flag;
 
 
-//sahana dec 4th
--(void)updateMetasyncTimeinSynchistory;
+//sahana dec 4th //7444
+-(void)updateMetasyncTimeinSynchistory:(NSDate *)currentTime;
 
 - (BOOL) isInternetConnectionAvailable;
 // get GUID 
@@ -908,6 +913,8 @@ extern  NSString const *devVersion;
 - (void) updateNextDataSyncTimeToBeDisplayed:(NSDate *)CureentDateTime;
 - (void) updateNextSyncTimeIfSyncFails;
 - (NSDate *) getGMTTimeForNextDataSyncFromPList;
+//7444
+- (NSDate *) getGMTTimeForNextConfigSyncFromPList;
 
 //Radha : Sync Progress Bar
 - (void) setCurrentSyncStatusProgress:(int)syncState optimizedSynstate:(int)oSyncState;

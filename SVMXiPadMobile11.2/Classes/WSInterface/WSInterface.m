@@ -1574,6 +1574,9 @@ last_sync_time:(NSString *)last_sync_time
     [custom_ws_records release];
 }
 
+//7444
+NSDate * syncCompleted;
+
 //DATA SYNC METHOD
 -(void)DoIncrementalDataSync
 {
@@ -1740,7 +1743,9 @@ last_sync_time:(NSString *)last_sync_time
         
 	//Radha Sync ProgressBar
 	//appDelegate.syncTypeInProgress = DATASYNC_INPROGRESS;
-
+	//7444
+	NSDate * syncStarted = [NSDate date];
+	syncCompleted = nil;
     [self GetDelete];
 
         [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"GetDelete-VP"
@@ -2708,11 +2713,46 @@ last_sync_time:(NSString *)last_sync_time
 	//RADHA Defect Fix 5542
 	if(![appDelegate.databaseInterface ContinueIncrementalDataSync])
 	{
-		if(appDelegate.shouldScheduleTimer)
+		//7444
+		NSDate * scheduledTimerdate = [appDelegate getGMTTimeForNextDataSyncFromPList];
+		
+		if (appDelegate.IsSynctriggeredAtLaunch)
 		{
-			[[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
-			[appDelegate performSelectorOnMainThread:@selector(ScheduleIncrementalDatasyncTimer) withObject:nil waitUntilDone:NO];
+			NSComparisonResult result = [scheduledTimerdate compare:syncCompleted];
+			
+			if (result == NSOrderedAscending)
+			{
+				[[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
+				[appDelegate performSelectorOnMainThread:@selector(ScheduleIncrementalDatasyncTimer) withObject:nil waitUntilDone:NO];
+				[appDelegate updateNextDataSyncTimeToBeDisplayed:[NSDate date]];
+
+			}
+			appDelegate.IsSynctriggeredAtLaunch = NO;
 			appDelegate.shouldScheduleTimer = NO;
+		}
+		
+		else if(appDelegate.shouldScheduleTimer)
+		{
+			//7444
+		
+			NSComparisonResult result = [syncStarted compare:scheduledTimerdate];
+			
+			NSComparisonResult result2 = [syncCompleted compare:scheduledTimerdate];
+			
+			NSLog(@"%d %d", result, result2);
+			
+			if (result == NSOrderedAscending && result2 == NSOrderedDescending)
+			{
+				[[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
+				[appDelegate performSelectorOnMainThread:@selector(ScheduleIncrementalDatasyncTimer) withObject:nil waitUntilDone:NO];
+				[appDelegate updateNextDataSyncTimeToBeDisplayed:[NSDate date]];
+			}
+			appDelegate.shouldScheduleTimer = NO;
+		}
+		//7444
+		if ([updateSyncStatus respondsToSelector:@selector(refreshSyncTime)])
+		{
+			[updateSyncStatus refreshSyncTime];
 		}
 
 	}
@@ -3933,8 +3973,17 @@ last_sync_time:(NSString *)last_sync_time
 		}
     }
     [dict writeToFile:plistPath_SYNHIST atomically:YES];
-	//Defect Fix 5542
-	[appDelegate updateNextDataSyncTimeToBeDisplayed:current_dateTime];
+	
+	syncCompleted = current_dateTime;
+	
+	//7444
+	NSDate * nextSyncTime = [appDelegate getGMTTimeForNextDataSyncFromPList];
+	
+	if (!appDelegate.shouldScheduleTimer)
+	{
+		//Defect Fix 5542
+		[appDelegate updateNextDataSyncTimeToBeDisplayed:nextSyncTime];
+	}
 	
 
 }
