@@ -35,6 +35,7 @@ extern void SVMXLog(NSString *format, ...);
         rootView=[[[RootViewController alloc] init] autorelease];
         UIImageView * bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_left_panel_bg_main_2.png"]];
         rootView.tableView.backgroundView = bgImage;
+        [rootView view];
         [bgImage release];
         masterView = [[[UINavigationController alloc] initWithRootViewController:rootView] autorelease];
         
@@ -107,6 +108,7 @@ extern void SVMXLog(NSString *format, ...);
         rootView = [[[RootViewController alloc] init] autorelease];
         UIImageView * bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SFM_left_panel_bg_main_2.png"]];
         rootView.tableView.backgroundView = bgImage;
+        [rootView view];
         [bgImage release];
         masterView = [[[UINavigationController alloc] initWithRootViewController:rootView] autorelease];
         
