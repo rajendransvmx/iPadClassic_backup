@@ -32,6 +32,12 @@
 @synthesize signatureInfoDict;
 //@synthesize popOver;
 
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    // Return YES for supported orientations
+    return UIInterfaceOrientationIsLandscape(interfaceOrientation);
+}
+
 #pragma mark - Memory management methods
 - (void)dealloc {
    //[popOver release];
