@@ -45,7 +45,7 @@
 	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
 	if (userDefaults)
 	{
-		appDelegate.currentUserName = [userDefaults objectForKey:@"UserFullName"];
+		appDelegate.currentUserName = [userDefaults objectForKey:USERFULLNAME]; //To get user display name not email id 
 		appDelegate.loggedInOrg = [userDefaults objectForKey:@"loggedInOrg"];
 	}
 	
