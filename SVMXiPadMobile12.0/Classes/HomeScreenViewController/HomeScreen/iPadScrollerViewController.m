@@ -706,10 +706,14 @@ const NSUInteger kNumImages = 7;
 			}
 			if ([flag isEqualToString:STRUE])
 			{
+				//7444
+				appDelegate.IsSynctriggeredAtLaunch = NO;
 				BOOL ConflictExists = [appDelegate.databaseInterface getConflictsStatus];
 				if (!ConflictExists && [appDelegate isInternetConnectionAvailable])
 				{
 					//RADHA Defect Fix 5542
+					//7444
+					appDelegate.IsSynctriggeredAtLaunch = YES;
 					appDelegate.shouldScheduleTimer = YES;
 					[appDelegate callDataSync];
 				}
@@ -1029,11 +1033,21 @@ const NSUInteger kNumImages = 7;
          }
     }
 	
+	//7444
+	appDelegate.settingsDict = [appDelegate.dataBase getSettingsDictionary];
+	
+	[appDelegate  ScheduleIncrementalDatasyncTimer];
+	
+	[appDelegate ScheduleIncrementalMetaSyncTimer];
+	
+	[appDelegate ScheduleTimerForEventSync];
+
 	//Radha Defect Fix 5542
 	[appDelegate updateNextDataSyncTimeToBeDisplayed:current_dateTime];
-   
-    
 	
+	//7444
+	[appDelegate updateMetasyncTimeinSynchistory:current_dateTime];
+
 	NSUserDefaults * userDefaults = [NSUserDefaults standardUserDefaults];
 	
 	appDelegate.currentServerUrl = [userDefaults objectForKey:SERVERURL];
@@ -1084,14 +1098,7 @@ const NSUInteger kNumImages = 7;
     NSMutableArray * createprocessArray;
     //if ( retVal == YES )
     {
-        appDelegate.settingsDict = [appDelegate.dataBase getSettingsDictionary];
-        
-        [appDelegate  ScheduleIncrementalDatasyncTimer];      
-        
-        [appDelegate ScheduleIncrementalMetaSyncTimer];
-        
-        [appDelegate ScheduleTimerForEventSync];
-        
+                
        /* if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
         {
             if(appDelegate.do_meta_data_sync == ALLOW_META_AND_DATA_SYNC)
@@ -1130,10 +1137,6 @@ const NSUInteger kNumImages = 7;
         [dateFormatter release];
 		[currentDateRange release];
     }
-
-    
-    //sahana dec 4th2012
-	[appDelegate updateMetasyncTimeinSynchistory];
 }
 - (void)continueMetaAndDataSync
 {

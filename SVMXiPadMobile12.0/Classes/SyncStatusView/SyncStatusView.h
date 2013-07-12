@@ -22,6 +22,11 @@
     
     UILabel * lastSync;
     UILabel * nextSync;
+	
+	//7444
+	UILabel * lastConfigTime;
+	UILabel * nextConfigTime;
+	
     UILabel * _status;
     UILabel * _statusForMetaSync;
     
@@ -38,5 +43,14 @@
 
 
 -(NSString *)getSyncronisationStatus;
+
+//7444
+- (NSDateComponents *) getTodatDateComponents;
+- (NSDictionary *) getRootPlistDictionary;
+- (NSString *) updateLastDataSynctime;
+- (NSString *) updateNextDataSyncTime;
+- (NSString *) updateLastConfigsyncTime;
+- (NSString *) updateNextConfigsyncTime;
+- (void) refreshSyncTime;
 
 @end

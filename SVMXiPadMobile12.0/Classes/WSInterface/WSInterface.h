@@ -518,6 +518,9 @@ last_sync_time:(NSString *)last_sync_time;
 @optional
 -(void) refreshSyncStatus;
 -(void) refreshMetaSyncStatus;
+//7444
+-(void) refreshSyncTime;
+- (void) refreshConfigSyncTime;
 
 @end
 
