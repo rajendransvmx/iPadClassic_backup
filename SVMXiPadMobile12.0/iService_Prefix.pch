@@ -31,6 +31,7 @@
 #define USER_ORG			@"user_org"
 #define IDENTITY_URL		@"identity_url"
 #define _USERNAME			@"username"
+#define USERFULLNAME		@"USERFULLNAME"
 
 
 #define PREFFERED_API_VERSION		@"20"

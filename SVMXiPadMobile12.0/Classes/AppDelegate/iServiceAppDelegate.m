@@ -415,6 +415,7 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize customURLValue;
 @synthesize activity;
 @synthesize wasPerformInitialSycn;
+@synthesize userDisplayFullName;
 
 
 -(BOOL)shouldAutorotate
@@ -733,6 +734,7 @@ NSString* machineName()
 		self.refresh_token    = refreshToken;
 		self.session_Id       = accessToken;
 		self.username         = [userDefaults valueForKey:@"UserFullName"];
+		self.userDisplayFullName = [userDefaults valueForKey:USERFULLNAME]; // Shrinivas : Getting user display name
 		
 		//Re-write the users org incase he has changed it accidently : 
 		if ( ![userOrg isEqualToString:preference] )
@@ -921,6 +923,7 @@ NSString* machineName()
 	[userDefaults setObject:self.organization_Id forKey:ORGANIZATION_ID];
 	[userDefaults setObject:self.apiURl forKey:API_URL];
 	[userDefaults setObject:self.userOrg forKey:USER_ORG];
+	[userDefaults setObject:self.userDisplayFullName forKey:USERFULLNAME];
     [userDefaults synchronize];
 	
 	[SFHFKeychainUtils deleteKeychainValue:KEYCHAIN_SERVICE];
@@ -1174,49 +1177,58 @@ NSString* machineName()
 		previousUser = [SFHFKeychainUtils getPasswordForUsername:@"username"
 										  andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
 		
-		userName = previousUser;
+		//userName = previousUser;
 		
-		//Defect #:7129
-		BOOL retVal = [self.calDataBase isUsernameValid:userName];
-        
-		if ( retVal == FALSE )
+		//Shrinivas : Fix for defect #007493 - 10/July/2013.
+		BOOL retVal;
+		if ( [appDelegate.currentUserName isEqualToString:previousUser] || (previousUser == Nil || [previousUser isEqualToString:@""]) )
 		{
-			NSError *error;
-			[SFHFKeychainUtils deleteItemForUsername:@"username" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
-			[SFHFKeychainUtils deleteItemForUsername:@"password" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
+			//Defect #:7129
+			retVal = [self.calDataBase isUsernameValid:previousUser];
 			
-			[self addBackgroundImageAndLogo]; //Code for Indicator - 24/May/2013
-			[self.dataBase deleteDatabase:DATABASENAME1];
-			[self removeSyncHistoryPlist];
-			[self initWithDBName:DATABASENAME1 type:DATABASETYPE1];
-			[self updateSyncFailedFlag:SFALSE];
-			
-			self.do_meta_data_sync = ALLOW_META_AND_DATA_SYNC;
-
-			[self performInitialSynchronization];
-			
+			if ( retVal == FALSE )
+			{
+				NSError *error;
+				[SFHFKeychainUtils deleteItemForUsername:@"username" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
+				[SFHFKeychainUtils deleteItemForUsername:@"password" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
+				
+				[self addBackgroundImageAndLogo]; //Code for Indicator - 24/May/2013
+				[self.dataBase deleteDatabase:DATABASENAME1];
+				[self removeSyncHistoryPlist];
+				[self initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+				[self updateSyncFailedFlag:SFALSE];
+				
+				self.do_meta_data_sync = ALLOW_META_AND_DATA_SYNC;
+				
+				[self performInitialSynchronization];
+				
+			}
+			else
+			{
+				self.do_meta_data_sync = DONT_ALLOW_META_DATA_SYNC;
+				
+				self.serviceReportLogo = [[[UIImage alloc] initWithData:[self.dataBase serviceReportLogoInDB]] autorelease]; //Get logo from DB if no Initial sync is performed.
+				
+				
+				ZKServerSwitchboard *switchBoard = [[ZKServerSwitchboard switchboard] init];
+				switchBoard.logXMLInOut = TRUE;
+				
+				if ( homeScreenView == nil )
+				{
+					homeScreenView = [[iPadScrollerViewController alloc] initWithNibName:@"iPadScrollerViewController" bundle:nil];
+					homeScreenView.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+					homeScreenView.modalPresentationStyle = UIModalPresentationFullScreen;
+					[_OAuthController presentViewController:homeScreenView animated:YES completion:nil];
+					refreshIcons = homeScreenView;
+					[homeScreenView release];
+				}
+			}
 		}
 		else
 		{
-			self.do_meta_data_sync = DONT_ALLOW_META_DATA_SYNC;
-			
-			self.serviceReportLogo = [[[UIImage alloc] initWithData:[self.dataBase serviceReportLogoInDB]] autorelease]; //Get logo from DB if no Initial sync is performed.
-			
-			
-			ZKServerSwitchboard *switchBoard = [[ZKServerSwitchboard switchboard] init];
-			switchBoard.logXMLInOut = TRUE;
-			
-			if ( homeScreenView == nil )
-			{
-				homeScreenView = [[iPadScrollerViewController alloc] initWithNibName:@"iPadScrollerViewController" bundle:nil];
-				homeScreenView.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-				homeScreenView.modalPresentationStyle = UIModalPresentationFullScreen;
-				[_OAuthController presentViewController:homeScreenView animated:YES completion:nil];
-				refreshIcons = homeScreenView;
-				[homeScreenView release];
-			}
-
+			[self handleSwitchUser];
 		}
+		
 	}
 	
 	else if ( ![userName isEqualToString:@""] )
@@ -2323,8 +2335,10 @@ NSString * GO_Online = @"GO_Online";
 	{
 		//Radha :- OAuth Fix for defect 7243
 		self.logoutFlag = TRUE;
-		sqlite3_close(self.db);
-		self.db = nil;
+		
+		//Fix for DB lock issue . - 11/July/2013
+		//sqlite3_close(self.db);
+		//self.db = nil;
 		
 		[self.dataBase removecache];
 		self.wsInterface.didOpComplete = FALSE;

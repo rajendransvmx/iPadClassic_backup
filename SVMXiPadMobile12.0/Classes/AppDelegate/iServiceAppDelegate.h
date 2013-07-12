@@ -591,6 +591,8 @@ extern  NSString const *devVersion;
 	//Defect #7238
 	UILabel * loadingLabel;
 	
+	NSString *userDisplayFullName;//Shrini OAuth
+	
 	BOOL _continueFalg;
 	BOOL _didDismissalertview;
 	BOOL _didEnterAlertView;
@@ -637,6 +639,7 @@ extern  NSString const *devVersion;
 @property (nonatomic, assign)BOOL isUserOnAuthenticationPage;
 @property (nonatomic, retain)UIActivityIndicatorView *activity;
 @property (nonatomic, assign)BOOL wasPerformInitialSycn;
+@property (nonatomic, retain)NSString *userDisplayFullName; //Shrini OAUth
 //For Defect #7085
 @property (nonatomic, retain)NSString *customURLValue;
 

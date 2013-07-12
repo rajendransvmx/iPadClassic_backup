@@ -318,7 +318,7 @@
 
     NSString *userFullName=@"";
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    userFullName = [userDefaults objectForKey:@"UserFullName"];
+    userFullName = [userDefaults objectForKey:USERFULLNAME];  //To get user display name not email id
     return userFullName;
     
 }

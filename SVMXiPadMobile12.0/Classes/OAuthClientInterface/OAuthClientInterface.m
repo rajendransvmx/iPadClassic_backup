@@ -216,6 +216,7 @@
 	appDelegate.language		= [dict valueForKey:@"language"];
 	appDelegate.loggedInUserId  = [dict objectForKey:@"user_id"];
 	appDelegate.organization_Id = [dict valueForKey:@"organization_id"];
+	appDelegate.userDisplayFullName = [dict valueForKey:@"display_name"];
 	
 	appDelegate.isUserOnAuthenticationPage = FALSE;
 	[appDelegate didLoginWithOAuth];

@@ -10920,9 +10920,9 @@ extern void SVMXLog(NSString *format, ...);
     if(![appDelegate.currentUserName length]>0)
     {
         NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-        if ([[userDefaults objectForKey:@"UserFullName"] length]>0)
+        if ([[userDefaults objectForKey:USERFULLNAME] length]>0)
         {
-            UserFullName = [userDefaults objectForKey:@"UserFullName"];
+            UserFullName = [userDefaults objectForKey:USERFULLNAME];  //To get user display name not email id 
             SMLog(@"User Full Name  = %@",UserFullName);
         }
         else

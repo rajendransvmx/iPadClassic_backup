@@ -727,19 +727,21 @@ const NSUInteger kNumImages = 7;
         if(appDelegate == nil)
             appDelegate = (iServiceAppDelegate *)[[ UIApplication sharedApplication] delegate];
         NSString *UserFullName=@"",*language=@"";
-        if(![appDelegate.currentUserName length]>0)
+		
+		//To get user display name not email id - Shrinivas 
+        if(![appDelegate.userDisplayFullName length] > 0 )
         {
             NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
             if (userDefaults)
             {
-                UserFullName = [userDefaults objectForKey:@"UserFullName"];
+                UserFullName = [userDefaults objectForKey:USERFULLNAME]; 
                 SMLog(@"User Full Name  = %@",UserFullName);
             }
             
         }
         else
         {
-            UserFullName=appDelegate.currentUserName;
+            UserFullName=appDelegate.userDisplayFullName; //Change
         }
         if(appDelegate.loggedInUserId != nil && UserFullName!=nil)
         {

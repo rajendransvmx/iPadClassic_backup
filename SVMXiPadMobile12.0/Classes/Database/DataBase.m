@@ -2866,9 +2866,9 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                         if(![appDelegate.currentUserName length]>0)
                         {
                             NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-                            if ([[userDefaults objectForKey:@"UserFullName"] length]>0)
+                            if ([[userDefaults objectForKey:USERFULLNAME] length]>0)
                             {
-                                UserFullName = [userDefaults objectForKey:@"UserFullName"];
+                                UserFullName = [userDefaults objectForKey:USERFULLNAME]; //To get user display name not email id
                                 SMLog(@"User Full Name  = %@",UserFullName);
                             }
                             else
@@ -4375,9 +4375,9 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                             if(![appDelegate.currentUserName length]>0)
                             {
                                 NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-                                if ([[userDefaults objectForKey:@"UserFullName"] length]>0)
+                                if ([[userDefaults objectForKey:USERFULLNAME] length]>0)
                                 {
-                                    UserFullName = [userDefaults objectForKey:@"UserFullName"];
+                                    UserFullName = [userDefaults objectForKey:USERFULLNAME]; //To get user display name not email id 
                                     SMLog(@"User Full Name  = %@",UserFullName);
                                 }
                                 else
@@ -10077,6 +10077,9 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     NSString * queryStatement = [NSString stringWithFormat:@"SELECT Name,Id FROM User Where Username='%@'",appDelegate.username];
     sqlite3_stmt * stmt;
     BOOL flag=FALSE;
+	
+	NSString * username = @"";
+	
     if (synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &stmt, NULL) == SQLITE_OK)
     {
         if (synchronized_sqlite3_step(stmt) == SQLITE_ROW)
@@ -10084,6 +10087,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
             char * _name = (char *) synchronized_sqlite3_column_text(stmt, 0);
             if ((_name != nil) && strlen(_name))
             {
+		username = [NSString stringWithUTF8String:_name];
                 flag=TRUE;
             }
             
@@ -10098,6 +10102,12 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         }
     }
     synchronized_sqlite3_finalize(stmt);
+	
+	if (![username isEqualToString:name])
+	{
+		flag = FALSE;
+	}
+	
     
     [self beginTransaction];
     if(!flag)
