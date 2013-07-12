@@ -1741,6 +1741,11 @@ PopoverButtons *popOver_view;
 			appDelegate.metaSyncRunning = NO;
 			appDelegate.eventSyncRunning = NO;
 			
+            
+            //krishna opdocs
+            [appDelegate clearDocumentDirectoryForOPDOCS];
+            [appDelegate moveJavascriptFiles];
+            
 			//[appDelegate.dataBase clearDatabase];
 			//Remove database
 			[appDelegate.dataBase deleteDatabase:DATABASENAME1];

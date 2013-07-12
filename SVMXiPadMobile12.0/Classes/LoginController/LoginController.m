@@ -300,6 +300,10 @@ extern void SVMXLog(NSString *format, ...);
         if (appDelegate.loginResult == nil) //RADHA 21/05/2011
             return FALSE;
         
+        //krishna opdocs
+        [appDelegate clearDocumentDirectoryForOPDOCS];
+        [appDelegate moveJavascriptFiles];
+        
         [appDelegate.dataBase deleteDatabase:DATABASENAME1];
         //sahana dec 4 2012
         [self removeSyncHistoryPlist];
