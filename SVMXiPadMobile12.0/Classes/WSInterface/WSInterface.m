@@ -2054,6 +2054,10 @@ last_sync_time:(NSString *)last_sync_time
 		
 //	[appDelegate setCurrentSyncStatusProgress:PUTDELETE_DONE optimizedSynstate:oPUTDELETE_DONE];
 	       
+        //Adv Download Criteria Start
+        [self doAdvanceDownloadCriteria];
+        //Adv Download Criteria Stop
+        
     [appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:GET_DELETE];
     [appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:PUT_DELETE];
     
@@ -3389,6 +3393,61 @@ last_sync_time:(NSString *)last_sync_time
                                                          andRecordCount:0];
 
 }
+
+//######################### ADVANCE DOWNLOAD CRITERIA #############################
+- (void)doAdvanceDownloadCriteria
+{
+    
+    if (![appDelegate isInternetConnectionAvailable])
+    {
+        return;
+    }
+    
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"doAdvanceDownloadCriteria"
+                                                         andRecordCount:1];
+    
+    if(![appDelegate doesServerSupportsModule:kMinPkgForSFMBizRuleModule])
+        return;
+
+    NSString *requestId = [iServiceAppDelegate GetUUID];
+    appDelegate.initial_sync_status = SYNC_ADV_DWN_CRT;
+    appDelegate.Sync_check_in = FALSE;
+    [self dataSyncWithEventName:@"ADV_DOWNLOAD_CRITERIA" eventType:SYNC requestId:requestId withData:nil lastIndex:@""];
+    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
+    {
+        SMLog(@"WSInterface.m :Download Advance Download Criteria ");
+        if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED)
+        {
+            SMLog(@"Adv Download Criteria Failed");
+            appDelegate.initial_sync_succes_or_failed = DATA_SYNC_FAILED;
+            break;
+        }
+        if (![appDelegate isInternetConnectionAvailable])
+        {
+            SMLog(@"Adv Download Criteria Data Sync Failed due to Internet Lost");
+            appDelegate.initial_sync_succes_or_failed = DATA_SYNC_FAILED;
+            break;
+        }
+        if(appDelegate.connection_error)
+        {
+			[appDelegate checkifConflictExistsForConnectionError];
+            SMLog(@"Adv Download Criteria Data Sync Failed due to Connection Error");
+            return;
+        }
+        if (appDelegate.Incremental_sync_status == SYNC_ADV_DWN_CRT_DONE)
+        {
+            SMLog(@"Adv Download Criteria Data Sync Completed for Request ID = %@",requestId);
+            break;
+        }
+    }
+    
+       
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"doAdvanceDownloadCriteria"
+                                                                      andRecordCount:0];
+    
+}
+//#####################################
+
 
 -(void)setSyncStatus
 {
@@ -5596,6 +5655,46 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             }
             
         }
+        else if([eventName isEqualToString:@"ADV_DOWNLOAD_CRITERIA"] && [eventType  isEqualToString:SYNC])
+        {
+            
+            if([data count]>0)
+            {
+                [sfmRequest.values addObjectsFromArray:data];
+            }
+
+            
+            INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_lastModified =[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+            
+            SVMXCMap_lastModified.key = @"LAST_SYNC_TIME";
+            SVMXCMap_lastModified.value = [self get_SYNCHISTORYTime_ForKey:LAST_INSERT_RESONSE_TIME] == nil ?@"":[self get_SYNCHISTORYTime_ForKey:LAST_INSERT_RESONSE_TIME];
+            
+            [sfmRequest.valueMap addObject:SVMXCMap_lastModified];
+            [SVMXCMap_lastModified release];
+            
+                      
+            if ([lastIndex length]>0)
+            {
+               INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMapPartialObject =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+                SVMXCMapPartialObject.key = @"PARTIAL_EXECUTED_OBJECT";
+                SVMXCMapPartialObject.value =lastIndex; // Passing Object Name as LastIndex string
+                NSString *criteria = [NSString stringWithFormat:@"sync_flag = 'false' AND object_name = '%@'",SVMXCMapPartialObject.value];
+                NSArray *columns = [NSArray arrayWithObjects:@"sf_id", nil];
+                
+                NSArray *partialObjectIds = [appDelegate.dataBase getAllRecordsFromTable:@"sync_Records_Heap"
+                                                                              forColumns:columns
+                                                                          filterCriteria:criteria
+                                                                                   limit:nil];
+                for(NSDictionary *recordID in partialObjectIds)
+                {
+                    [SVMXCMapPartialObject.values addObject:[recordID objectForKey:@"sf_id"]];
+                }
+                
+                [sfmRequest.valueMap addObject:SVMXCMapPartialObject];
+                [SVMXCMapPartialObject release];
+            }
+        }
+        
         SMLog(@"  Incremental DataSync request looping  ends: %@", [NSDate date]);
         
         //chenged : krishna 10.4.404
@@ -8889,6 +8988,35 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                 }
                 else {
                     appDelegate.Incremental_sync_status = GET_PRICE_DONE;
+                }
+                
+                [obj release];
+            }
+            else if([eventName isEqualToString:@"ADV_DOWNLOAD_CRITERIA"])
+            {
+                NSArray * array = [wsResponse.result valueMap];
+                NSArray *remainingObjects=[wsResponse.result values];
+                WSResponseParser *obj = [[WSResponseParser classForEventName:eventName
+                                                                   eventType:SYNC] retain];
+                obj.dataBase = appDelegate.dataBase;
+                obj.dataBaseInterface = appDelegate.databaseInterface;
+                
+                BOOL callBack  = [obj parseResponse:array];
+                if(callBack && [remainingObjects count]>0)
+                {
+                    NSString *requestId = [iServiceAppDelegate GetUUID];
+                    NSString *partialExceutedObject=[obj getRequiredData:@"partialObject"];
+                    // remainingObjects need to send again
+                    
+                    [appDelegate.wsInterface dataSyncWithEventName:@"ADV_DOWNLOAD_CRITERIA"
+                                                         eventType:SYNC
+                                                         requestId:requestId
+                                                          withData:remainingObjects
+                                                         lastIndex:partialExceutedObject];
+                }
+                else
+                {
+                    appDelegate.Incremental_sync_status = SYNC_ADV_DWN_CRT_DONE;
                 }
                 
                 [obj release];

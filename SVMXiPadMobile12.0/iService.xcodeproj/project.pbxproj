@@ -694,6 +694,7 @@
 		A837EC7F170D4DF900229855 /* GridViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A837EC78170D4DCA00229855 /* GridViewCell.m */; };
 		A83F22BF174E48410024466E /* PerformanceAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = A83F22BC174E48410024466E /* PerformanceAnalytics.m */; };
 		A83F22C0174E48410024466E /* Util.m in Sources */ = {isa = PBXBuildFile; fileRef = A83F22BE174E48410024466E /* Util.m */; };
+		A85184F0178FC9730029FC6D /* SMADVDownoadCriteriaResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = A85184EF178FC9730029FC6D /* SMADVDownoadCriteriaResponse.m */; };
 		A895DA4115A2CB710083204F /* sync-getOnline.png in Resources */ = {isa = PBXBuildFile; fileRef = A895DA3E15A2CB710083204F /* sync-getOnline.png */; };
 		A895DA4215A2CB710083204F /* sync-hold.png in Resources */ = {isa = PBXBuildFile; fileRef = A895DA3F15A2CB710083204F /* sync-hold.png */; };
 		A895DA4315A2CB710083204F /* sync-retry.png in Resources */ = {isa = PBXBuildFile; fileRef = A895DA4015A2CB710083204F /* sync-retry.png */; };
@@ -2368,6 +2369,8 @@
 		A83F22BC174E48410024466E /* PerformanceAnalytics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PerformanceAnalytics.m; sourceTree = "<group>"; };
 		A83F22BD174E48410024466E /* Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Util.h; sourceTree = "<group>"; };
 		A83F22BE174E48410024466E /* Util.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Util.m; sourceTree = "<group>"; };
+		A85184EE178FC9730029FC6D /* SMADVDownoadCriteriaResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMADVDownoadCriteriaResponse.h; sourceTree = "<group>"; };
+		A85184EF178FC9730029FC6D /* SMADVDownoadCriteriaResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMADVDownoadCriteriaResponse.m; sourceTree = "<group>"; };
 		A895DA3E15A2CB710083204F /* sync-getOnline.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sync-getOnline.png"; sourceTree = "<group>"; };
 		A895DA3F15A2CB710083204F /* sync-hold.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sync-hold.png"; sourceTree = "<group>"; };
 		A895DA4015A2CB710083204F /* sync-retry.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sync-retry.png"; sourceTree = "<group>"; };
@@ -5519,6 +5522,8 @@
 		A89B534B16CCBFF400849FBC /* WSResponseParser */ = {
 			isa = PBXGroup;
 			children = (
+				A85184EE178FC9730029FC6D /* SMADVDownoadCriteriaResponse.h */,
+				A85184EF178FC9730029FC6D /* SMADVDownoadCriteriaResponse.m */,
 				A89B534C16CCBFF400849FBC /* SMGPCodeSnippetResponseParser.h */,
 				A89B534D16CCBFF400849FBC /* SMGPCodeSnippetResponseParser.m */,
 				A89B534E16CCBFF400849FBC /* SMGPDataSyncResponseParser.h */,
@@ -8663,6 +8668,7 @@
 				6B18E3FF17854F5E00224F72 /* SSZipArchive.m in Sources */,
 				AC1C6F9B1786E5B100C320B3 /* OAuthClientInterface.m in Sources */,
 				AC1C6F9C1786E5B100C320B3 /* OAuthController.m in Sources */,
+				A85184F0178FC9730029FC6D /* SMADVDownoadCriteriaResponse.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

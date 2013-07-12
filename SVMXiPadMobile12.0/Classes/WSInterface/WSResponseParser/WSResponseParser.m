@@ -14,6 +14,7 @@
 #import "SMGPDataSyncResponseParser.h"
 #import "iServiceAppDelegate.h"
 #import "PerformanceAnalytics.h"
+#import "SMADVDownoadCriteriaResponse.h"
 
 extern void SVMXLog(NSString *format, ...);
 @implementation WSResponseParser
@@ -21,23 +22,27 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize dataBaseInterface;
 + (id) classForEventName:(NSString *)eventName eventType:(NSString *)eventType
 {
-    id object;
+    id object=nil;
     if([eventType isEqualToString:SYNC])
     {
         if([eventName isEqualToString:GET_PRICE_OBJECTS])
         {
-            object = [[SMGPObjectsResponseParser alloc] init];
+            object = [[SMGPObjectsResponseParser alloc] autorelease];
         }
         if([eventName isEqualToString:GET_PRICE_CODE_SNIPPET])
         {
-            object = [[SMGPCodeSnippetResponseParser alloc] init];
+            object = [[SMGPCodeSnippetResponseParser alloc] autorelease];
         }
         if([eventName isEqualToString:GET_PRICE_DATA])
         {
-            object = [[SMGPDataSyncResponseParser alloc] init];
+            object = [[SMGPDataSyncResponseParser alloc] autorelease];
+        }
+        if([eventName isEqualToString:@"ADV_DOWNLOAD_CRITERIA"])
+        {
+            object = [[SMADVDownoadCriteriaResponse alloc] autorelease];
         }
     }
-    return [object autorelease];
+    return object;
 }
 
 - (BOOL) parseResponse:(NSArray *)result

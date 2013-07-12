@@ -495,6 +495,9 @@ last_sync_time:(NSString *)last_sync_time;
 
 #pragma mark - Handle Session expiry for initial login : 
 - (BOOL)handleSessionExpiryForInitialLogin;
+
+//Adv Download Criteria
+- (void)doAdvanceDownloadCriteria;
 @end
 
 @protocol RefrehManualDataSyncUI <NSObject>
