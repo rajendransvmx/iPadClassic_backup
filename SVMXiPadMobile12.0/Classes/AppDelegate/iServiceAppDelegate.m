@@ -1844,13 +1844,26 @@ NSString* machineName()
         didBackUpDatabase = TRUE;
     }
     
+    // Vipind-db-optmz -
+    // config sqlite to work with the same connection on multiple threads
+    if (sqlite3_config(SQLITE_CONFIG_SERIALIZED) == SQLITE_OK)
+    {
+        NSLog(@"[OPMX] Use sqlite on multiple threads, using the same connection");
+    }
+    else
+    {
+        NSLog(@"[OPMX] Single connection single thread");
+    }
+    
     int ret = sqlite3_open ([dataBase.dbFilePath UTF8String],&db);
     if( ret != SQLITE_OK)
     { 
         SMLog (@"couldn't open db:");
         NSAssert(0, @"Database failed to open.");		//throw another exception here
         
-    } else {
+    }
+    else
+    {
             
         NSLog(@" iServiceAppDelegate : initWithDBName : Reset DB Config");
             

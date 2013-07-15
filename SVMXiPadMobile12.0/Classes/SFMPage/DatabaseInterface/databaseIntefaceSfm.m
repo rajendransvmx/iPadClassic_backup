@@ -32,6 +32,7 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize apiNameToInsertionQueryDictionary;
 @synthesize fieldDataTypeDictionary;
 @synthesize childInfoDictionary;
+@synthesize childInfoCacheDictionary;
 
 
 - (void)dealloc {
@@ -47,6 +48,9 @@ extern void SVMXLog(NSString *format, ...);
     
     [childInfoDictionary release];
     childInfoDictionary = nil;
+    
+    [childInfoCacheDictionary release];
+    childInfoCacheDictionary = nil;
     
     
     [localIdOfFutureMasterRecords release];
@@ -3978,8 +3982,6 @@ extern void SVMXLog(NSString *format, ...);
 
 -(BOOL)UpdateTableforSFId:(NSString *)sf_id  forObject:(NSString *)objectName  data:(NSDictionary *)dict1
 {
-    NSLog(@" it is missing ..... UpdateTableforSFId ");
-    
     // Vipin-db-optmz  Chance here done
     [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"UpdateTableforSFId"
                                                          andRecordCount:1];
@@ -5021,11 +5023,10 @@ extern void SVMXLog(NSString *format, ...);
                         char * _sync_flag = [appDelegate convertStringIntoChar:sync_flag];
                         sqlite3_bind_text(bulkStmt, 6, _sync_flag, strlen(_sync_flag), SQLITE_TRANSIENT);
                         
-                        char * err;
                         
                         if (sqlite3_step(bulkStmt) != SQLITE_DONE)
                         {
-                            NSLog(@"insertRecordIdsIntosyncRecordHeap failed Query :%@ \n\n reason: \n %s", update_query, err);
+                            NSLog(@"insertRecordIdsIntosyncRecordHeap failed Query :%@ \n\n reason: \n %@", update_query, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
                         }
                         
                         sqlite3_clear_bindings(bulkStmt);
@@ -6452,6 +6453,10 @@ extern void SVMXLog(NSString *format, ...);
 
 -(NSString *) getchildInfoFromChildRelationShip:(NSString * )tableName  ForChild:(NSString *)child_table  field_name:(NSString *)field_name
 {
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:[NSString  stringWithFormat:@"getchildInfoFromChildRelationShip - %@ - %@", tableName, child_table]
+                                                         andRecordCount:1];
+    
     NSString * fieldName = @"";
     if([field_name isEqualToString:@"parent_name"])
     {
@@ -6479,6 +6484,10 @@ extern void SVMXLog(NSString *format, ...);
         synchronized_sqlite3_finalize(stmt);
         [query release];
     }
+    
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:[NSString  stringWithFormat:@"getchildInfoFromChildRelationShip - %@ - %@", tableName, child_table]
+                                                         andRecordCount:0];
+    
     
     return fieldName;
 
@@ -6691,8 +6700,52 @@ extern void SVMXLog(NSString *format, ...);
     return Id_;
 }
 
+
+- (NSMutableDictionary *)getChildObjectRegisteredDictionary
+{
+    @synchronized(self)
+    {
+        return childInfoCacheDictionary;
+    }
+}
+
+- (void)clearChildInfoCacheDictionary
+{
+    if (self.childInfoCacheDictionary != nil)
+    {
+        [self.childInfoCacheDictionary removeAllObjects];
+    }
+}
+
 -(BOOL)IsChildObject:(NSString *)object_name
 {
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"IsChildObject-x"
+                                                         andRecordCount:1];
+    
+    // Load lazy
+    if (self.childInfoCacheDictionary == nil)
+    {
+        NSMutableDictionary *tempDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
+        self.childInfoCacheDictionary = tempDictionary;
+        [tempDictionary release];
+    }
+
+    BOOL isChildObject = NO;
+    
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"IsChildObject-x"
+                                                                      andRecordCount:0];
+    
+    
+    NSNumber *existObjectStatus = [self.childInfoCacheDictionary objectForKey:object_name];
+    if (existObjectStatus != nil)
+    {
+        // Yes got from cache
+        return [existObjectStatus boolValue];
+    }
+    
+    
     // Vipin-db-optmz
     [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"IsChildObject"
                                                          andRecordCount:1];
@@ -6723,13 +6776,16 @@ extern void SVMXLog(NSString *format, ...);
     
     if(count == 1)
     {
-        return TRUE;
+        isChildObject = TRUE;
     }
     else 
     {
-        return FALSE;
+        isChildObject = FALSE;
     }
     
+    [self.childInfoCacheDictionary setObject:[NSNumber numberWithBool:isChildObject] forKey:object_name];
+
+    return isChildObject;
 }
 
 -(BOOL)DeleterecordFromTable:(NSString *)object_name Forlocal_id:(NSString *)local_id

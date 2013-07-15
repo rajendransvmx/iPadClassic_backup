@@ -28,6 +28,7 @@
     // Vipind-db-optmz
     NSMutableDictionary  *fieldDataTypeDict;
     NSMutableDictionary   *childInfoDict;
+    NSMutableDictionary   *childInfoCacheDictionary;
 
 }
 
@@ -291,6 +292,7 @@
 ;
 @property (nonatomic, retain) NSMutableDictionary   *fieldDataTypeDictionary;
 @property (nonatomic, retain) NSMutableDictionary   *childInfoDictionary;
+@property (nonatomic, retain, getter = getChildObjectRegisteredDictionary) NSMutableDictionary   *childInfoCacheDictionary;
 
 
 /* this is not used as of now*/
@@ -337,6 +339,7 @@
 
 // Vipind-db-optmz
 - (void)deleteRecordFromTable:(NSString *)tableName byCollectionsOfId:(NSArray *)ids forColumn:(NSString *)columnName;
+- (void)clearChildInfoCacheDictionary;
 
 //sahana child sfm
 -(NSString *)getProcessSfIdForProcess_uniqueName:(NSString *)process_id;

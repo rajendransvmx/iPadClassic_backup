@@ -79,6 +79,12 @@ extern void SVMXLog(NSString *format, ...);
     
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [self.dataBase beginTransaction];
+    
+    if ([tableName isEqualToString:SFChildRelationShip])
+    {
+        [appDelegate.databaseInterface clearChildInfoCacheDictionary];
+    }
+    
         for (NSDictionary *dict in array)
         {
             NSArray *keys   = [dict allKeys];

@@ -5987,6 +5987,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     
     result = [self createTable:[NSString stringWithFormat:@"CREATE INDEX IF NOT EXISTS SFChildRelationshipIndex_2 ON SFChildRelationship (object_api_name_parent, object_api_name_child)"]];
     
+    [appDelegate.databaseInterface clearChildInfoCacheDictionary];
     [self createObjectTable:object coulomns:objectDefinition];
     
     // Vipin-db-optmz
@@ -12183,11 +12184,25 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                 NSAssert1(0, @"Failed to create writable database file with message '%@'.", [error localizedDescription]);
         } 
     }
+    
+    // Vipind-db-optmz -
+    // config sqlite to work with the same connection on multiple threads
+    if (sqlite3_config(SQLITE_CONFIG_SERIALIZED) == SQLITE_OK)
+    {
+        NSLog(@"[OPMX] Use sqlite on multiple threads, using the same connection");
+    }
+    else
+    {
+        NSLog(@"[OPMX] Single connection single thread");
+    }
+    
     if( sqlite3_open ([filepath UTF8String], &tempDb) != SQLITE_OK )
     { 
         SMLog (@"couldn't open db:");
         NSAssert(0, @"Database failed to open.");		//throw another exception here
-    } else {
+    }
+    else
+    {
         // Vipin-db-optmz
         NSLog(@" Database : openDB : Reset DB Configuration - %@ - %@", TEMPDATABASENAME, name);
         [self resetConfigurationForDataBase:tempDb];
