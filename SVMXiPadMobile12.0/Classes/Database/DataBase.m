@@ -7055,12 +7055,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS  '%@' ('doc_template_name' text(100), Id text(18) ,doc_template_id text(40), is_standard BOOLEAN , detail_object_count  INTEGER, media_resources TEXT)",SFDOC_TEMPLATE]];
     if (result)
     {
-        char * err;
-        
-        NSString * txnstmt = @"BEGIN TRANSACTION";
-        
-        int exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
-        
+        [appDelegate.dataBase beginTransaction];
         NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@','%@', '%@') VALUES (?1, ?2,   ?3, ?4, ?5, ?6)", SFDOC_TEMPLATE,doc_template_name, DOC_Id,doc_template_id,Doc_is_standard,DOC_detail_object_count,MEDIA_RESOURCES];
         
         sqlite3_stmt * bulkStmt;
@@ -7101,7 +7096,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                 
                 if ( synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
-                    printf("Commit Failed!\n");
+                    printf("Commit Failed  : insertIntoDocTemplate!\n");
                 }
                 
                 sqlite3_reset(bulkStmt);
@@ -7109,9 +7104,8 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
             }
             
         }
-        txnstmt = @"END TRANSACTION";
-        exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
-        
+        synchronized_sqlite3_finalize(bulkStmt);
+        [appDelegate.dataBase endTransaction];
     }
 }
 //krishna OPDOCS
@@ -7121,12 +7115,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS %@ (doc_template VARCHAR ,doc_template_detail_id Text(255),header_ref_fld  Text(100)  ,alias Text(80), object_name Text(100) ,soql Text(32768) , doc_template_detail_unique_id  Text(40), fields Text(32768),type VARCHAR, Id VARCHAR)",SFDOC_TEMPLATE_DETAILS]];
     if(result)
     {
-        char * err;
-        
-        NSString * txnstmt = @"BEGIN TRANSACTION";
-        
-        int exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
-        
+        [appDelegate.dataBase beginTransaction];
         NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@','%@','%@', '%@','%@','%@', '%@') VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10)",SFDOC_TEMPLATE_DETAILS,doc_template,doc_template_detail_id, doc_header_ref_fld, DOC_alias,DOC_object_name,DOC_soql,doc_template_detail_unique_id,DOC_fields,DOC_type,DOC_Id];
         
         sqlite3_stmt * bulkStmt;
@@ -7184,16 +7173,15 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                 
                 if ( synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
-                    printf("Commit Failed!\n");
+                    printf("Commit Failed! insertIntoDocTemplateDetails\n");
                 }
                 sqlite3_reset(bulkStmt);
                 
             }
             
         }
-        txnstmt = @"END TRANSACTION";
-        exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
-        
+        synchronized_sqlite3_finalize(bulkStmt);
+        [appDelegate.dataBase endTransaction];
     }
 }
 //Krishna OPDOCS requiredPdf
@@ -7202,12 +7190,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS '%@' ('process_id' TEXT, 'record_id' TEXT, 'attachment_id' TEXT)",SFDOC_REQUIRED_PDF]];
     if (result)
     {
-        char * err;
-        
-        NSString * txnstmt = @"BEGIN TRANSACTION";
-        
-        int exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
-        
+        [appDelegate.dataBase beginTransaction];
         NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('process_id', 'record_id', 'attachment_id') VALUES (?1, ?2, ?3)", SFDOC_REQUIRED_PDF];
         
         sqlite3_stmt * bulkStmt;
@@ -7232,13 +7215,13 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
             
             if ( val  != SQLITE_DONE)
             {
-                printf("Commit Failed!\n");
+                printf("Commit Failed : insertIntoRequiredPdf!\n");
             }
             sqlite3_reset(bulkStmt);
             
         }
-        txnstmt = @"END TRANSACTION";
-        exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+        synchronized_sqlite3_finalize(bulkStmt);
+        [appDelegate.dataBase endTransaction];
     }
 }
 //Krishna OPDOCS requiredPdf
@@ -7328,12 +7311,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS '%@' ('sign_id' TEXT,'signature_id' TEXT)", SFDOC_REQUIRED_SIGNATURE]];
     if (result)
     {
-        char * err;
-        
-        NSString * txnstmt = @"BEGIN TRANSACTION";
-        
-        int exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
-        
+        [appDelegate.dataBase beginTransaction];
         NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('sign_id','signature_id') VALUES (?1,?2)", SFDOC_REQUIRED_SIGNATURE];
         
         sqlite3_stmt * bulkStmt;
@@ -7353,13 +7331,13 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
             
             if ( val  != SQLITE_DONE)
             {
-                printf("Commit Failed!\n");
+                printf("Commit Failed! insertIntoRequiredSignature\n");
             }
             sqlite3_reset(bulkStmt);
             
         }
-        txnstmt = @"END TRANSACTION";
-        exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+        synchronized_sqlite3_finalize(bulkStmt);
+        [appDelegate.dataBase endTransaction];
     }
     
 }
@@ -7421,12 +7399,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS '%@' (Id text(18) ,attachment_name text(255), parent_id  VARCHAR, body BLOB)",SFDOC_ATTACHMENT]];
     if (result)
     {
-        char * err;
-        
-        NSString * txnstmt = @"BEGIN TRANSACTION";
-        
-        int exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
-        
+        [appDelegate.dataBase beginTransaction];
         NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3, '')", SFDOC_ATTACHMENT,DOC_Id, DOC_name_attchment,DOC_ParentId, DOC_BODY];
         
         sqlite3_stmt * bulkStmt;
@@ -7459,15 +7432,14 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                 
                 if ( val  != SQLITE_DONE)
                 {
-                    printf("Commit Failed!\n");
+                    printf("Commit Failed! : insertIntoAttachment\n");
                 }
                 sqlite3_reset(bulkStmt);
                 
             }
         }
-        txnstmt = @"END TRANSACTION";
-        exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
-        
+        synchronized_sqlite3_finalize(bulkStmt);
+        [appDelegate.dataBase endTransaction];
         
     }
     
@@ -7518,11 +7490,9 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         
         NSString *bodyString = [dict objectForKey:@"Body"];
         NSString * Id = [dict objectForKey:@"Id"];
-        NSString *fileName = [dict objectForKey:@"Name"];
         
         if (bodyString != nil && [bodyString length] > 0)
         {
-            NSData * bodyData = [Base64 decode:bodyString];
             
             NSString *updateQuery = [NSString stringWithFormat:@"Update %@ Set body = '%@' Where Id = '%@'", SFDOC_ATTACHMENT, bodyString, Id];
             char *err;
@@ -7641,12 +7611,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     
     if (result)
     {
-        char * err;
-        
-        NSString * txnstmt = @"BEGIN TRANSACTION";
-        
-        int exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
-        
+        [appDelegate.dataBase beginTransaction];
         NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO Document ('DeveloperName', 'Name') VALUES (?1, ?2)"];
         
         sqlite3_stmt * bulkStmt;
@@ -7674,15 +7639,14 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                 
                 if ( val  != SQLITE_DONE)
                 {
-                    printf("Commit Failed!\n");
+                    printf("Commit Failed!  retrieveImages\n");
                 }
                 sqlite3_reset(bulkStmt);
                 
             }
         }
-        txnstmt = @"END TRANSACTION";
-        exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
-        
+        synchronized_sqlite3_finalize(bulkStmt);
+        [appDelegate.dataBase endTransaction];
         
     }
     
@@ -7852,12 +7816,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS '%@' (%@ text(18) ,%@ text(255))",STATIC_RESOURCE, STATIC_RES_ID, STATIC_RES_NAME]];
     if (result)
     {
-        char * err;
-        
-        NSString * txnstmt = @"BEGIN TRANSACTION";
-        
-        int exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
-        
+        [appDelegate.dataBase beginTransaction];
         NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@') VALUES (?1, ?2)", STATIC_RESOURCE, STATIC_RES_ID, STATIC_RES_NAME];
         
         sqlite3_stmt * bulkStmt;
@@ -7885,15 +7844,14 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                 
                 if ( val  != SQLITE_DONE)
                 {
-                    printf("Commit Failed!\n");
+                    printf("Commit Failed!   insertIntoStaticResource\n");
                 }
                 sqlite3_reset(bulkStmt);
                 
             }
         }
-        txnstmt = @"END TRANSACTION";
-        exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
-        
+        synchronized_sqlite3_finalize(bulkStmt);
+        [appDelegate.dataBase endTransaction];
         
     }
     [idsList removeAllObjects]; // Temporary fix. TODO : To be removed for production
