@@ -219,6 +219,8 @@
 - (void) enableUI;
 - (void) disableUI;
 
+- (void)setDoNotLoadWeekviewFlag:(BOOL)flag; /*Shravya-Calendar view 7408 */
+
 @end
 
 #define wWEEKDAY            @"WEEKDAY"

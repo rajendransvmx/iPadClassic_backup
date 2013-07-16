@@ -285,6 +285,17 @@
 
 /* End GET_PRICE_JS-shr*/
 
+/*Shravya-Calendar view */
+- (NSString *)executeThisQueryForSingleColumnName:(NSString *)query;
+- (NSString *)getParentNameForChildObjectName:(NSString *)childObjectName;
+- (void)getParentIdIfany:(NSMutableArray *)conflictArray;
+- (NSArray *)readConflictTableForEventInfo;
+- (BOOL)checkSyncConflictFor:(NSString *)sfId
+                 WithLocalId:(NSString *)localId
+              withObjectName:(NSString *)objectName
+                    andArray:(NSArray *)conflictArray;
+/*Shravya-Calendar view */
+
 #define DATABASENAME   @"sfm"
 #define DATABASETYPE   @"sqlite"
 //Abinash

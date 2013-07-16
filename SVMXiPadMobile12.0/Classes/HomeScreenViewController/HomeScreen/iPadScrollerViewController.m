@@ -1135,7 +1135,11 @@ const NSUInteger kNumImages = 7;
         [appDelegate.calDataBase startQueryConfiguration];
         NSMutableArray * currentDateRange = [[appDelegate getWeekdates:dateString] retain];
         
+        /*Shravya-Calendar view 7408 */
+        NSAutoreleasePool *aPool = [[NSAutoreleasePool alloc] init];
         appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0]  endDate:[currentDateRange objectAtIndex:1]];
+        [aPool drain];
+        
         [dateFormatter release];
 		[currentDateRange release];
     }

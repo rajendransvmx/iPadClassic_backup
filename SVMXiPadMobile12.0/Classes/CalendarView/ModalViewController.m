@@ -33,6 +33,9 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize Event_edit_flag;
 @synthesize Add_event_Button;
 @synthesize didDismissalertview;
+@synthesize isDayButtonClicked;
+@synthesize rescheduledAnEvent;
+@synthesize shouldRedrawWeekView;
 
 - (void)viewWillLayoutSubviews
 {
@@ -519,16 +522,25 @@ extern void SVMXLog(NSString *format, ...);
 - (void) refresh
 {
     [self disableUI];
-    // Samman - 24 Sep, 2011 - Need to call WSInterface Method to perform an actual REFRESH
+    
+    /*Shravya-Calendar view 7408 */
+    //Shravya - @synchronized is needed as refresh gets called from multiple threads during Sync
+    @synchronized(self){
+    
+    // Need to call WSInterface Method to perform an actual REFRESH
         
     NSMutableArray * currentDateRange = [[appDelegate getWeekdates:currentDate] retain];
     
     [self setupTasksForDate:appDelegate.dateClicked];
     
+    /*Shravya-Calendar view 7408 */
+    NSAutoreleasePool *aPool = [[NSAutoreleasePool alloc] init];
     appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0]  endDate:[currentDateRange objectAtIndex:1]];
+    [aPool drain];
 	[currentDateRange release];
     [self reloadCalendar];
-    
+        
+    }
 }
 
 - (void) reloadCalendar
@@ -540,8 +552,15 @@ extern void SVMXLog(NSString *format, ...);
     if ((weekView != nil) && ([weekView retainCount] > 0))
     {
         //[weekView populateWeekView];
-        [weekView setupEvents];
-        [weekView.activity stopAnimating];
+	/*Shravya-Calendar view 7408 */
+        if (!isDayButtonClicked) {
+            [weekView setupEvents];
+            isDayButtonClicked = NO;
+        }
+        else {
+            [weekView.activity stopAnimating];
+        }
+            
     }
 	//    [rightPaneParent setUserInteractionEnabled:YES];
     [self enableUI];
@@ -816,6 +835,7 @@ extern void SVMXLog(NSString *format, ...);
     
     if (isShowingDailyView)
     {
+        isDayButtonClicked = NO;
         if (restoreDate)
             [restoreDate release];
         restoreDate = [[calendar getCalendarDate] retain];
@@ -826,10 +846,12 @@ extern void SVMXLog(NSString *format, ...);
             weekView = [[WeeklyViewController alloc] initWithNibName:@"WeeklyViewController" bundle:nil];
             weekView.delegate = self;
             weekView.calendar = [calendar retain];
+            
             // [weekView setupWeeks];
             weekView.view.alpha = 0;
             weekView.view.frame = CGRectMake(0, 44, weekView.view.frame.size.width, weekView.view.frame.size.height);
             [self.view addSubview:weekView.view];
+            [weekView.activity startAnimating];/*Shravya-Calendar view 7408 */
         }
         else
         {
@@ -839,12 +861,22 @@ extern void SVMXLog(NSString *format, ...);
 			if ([weekView isViewDirty] == YES)
 				isViewDirty = [weekView isViewDirty];
 			
-            if (isViewDirty)
+            if (isViewDirty) {
                 if (!didSetupWeekView)
                 {
+                    [weekView.activity startAnimating];/*Shravya-Calendar view 7408 */
                     [weekView setupEvents];
                     didSetupWeekView = NO;
                 }
+                shouldRedrawWeekView = NO;
+            }
+            else if(shouldRedrawWeekView){
+                [weekView.activity startAnimating];/*Shravya-Calendar view 7408 */
+                [weekView setupEvents];
+                didSetupWeekView = NO;
+                shouldRedrawWeekView = NO;
+            }
+            
         }
 		
         [self.view addSubview:weekView.view];
@@ -891,18 +923,32 @@ extern void SVMXLog(NSString *format, ...);
         // Show daily view
         [weekView RefreshLandscape];
         
-        [calendar setCalendarDate:[[restoreDate objectAtIndex:0] intValue] Month:[[restoreDate objectAtIndex:1] intValue] Year:[[restoreDate objectAtIndex:2] intValue]];
+        /*Shravya-Calendar view 7408 */
+        // Shravya below comments applies to this line as well
         
+        //[calendar setCalendarDate:[[restoreDate objectAtIndex:0] intValue] Month:[[restoreDate objectAtIndex:1] intValue] Year:[[restoreDate objectAtIndex:2] intValue]];
+        //isDayButtonClicked = YES;
+        
+         /*Shravya-Calendar view 7408 */
+        //Shravya- If there is any reorder of events in the weekview , then reload the day view on toggle
+        if (rescheduledAnEvent) {
+            [self setEventsView:currentDate];
+            rescheduledAnEvent = NO;
+        }
         if (weekView.isViewDirty)
         {
-			//pavaman 3rd Jan 2011 Should we do SetDate here instead? Otherwise weekview does not get refreshed
-			[self setDate:[calendar getSelDate]];
-            // Retrieve data for new date and refresh day view
-			weekView.isViewDirty = NO;
+             /*Shravya-Calendar view 7408 */
+            // Shravya - Below line are commented: Reasons are below
+            // Shravya - We dont have to load the day view every time.
+            // Shravya - Day view will be reloaded automatically whenver user changes or sync finishes by external entities.
+            // Shravya - Same comments applies to "else" part of this "if".
+           
+            //[self setDate:[calendar getSelDate]];
+            weekView.isViewDirty = NO;
         }
 		else {
-			//pavaman 3rd Jan 2011 Should we do SetDate here as the 'slider' needs to be snapped to correct date in any case?
-			[self setDate:[calendar getSelDate]];					
+			
+			//[self setDate:[calendar getSelDate]];
 			
 		}
         
@@ -1311,7 +1357,13 @@ extern void SVMXLog(NSString *format, ...);
     [eventPositionArray removeAllObjects];
     
 	//pavaman 3rd Jan 2011 We need to call SetDate here just like date clicked event, right? Otherwise week view cache does not get updated
-	[self setDate:slider.value];
+	
+    /*Shravya-Calendar view 7408 */
+    self.isDayButtonClicked = YES;
+    self.shouldRedrawWeekView = YES;
+    [self setDate:slider.value];
+    self.isDayButtonClicked = NO;
+    /*Shravya-Calendar view 7408 */
 }
 
 #pragma mark -
@@ -1417,8 +1469,13 @@ extern void SVMXLog(NSString *format, ...);
 	
     NSMutableArray * currentDateRange = [[appDelegate getWeekdates:currentDate] retain];
     
-    appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0] endDate:[currentDateRange objectAtIndex:1]];   //Shrinivas 
-	[currentDateRange release];
+        /*Shravya-Calendar view 7408 */
+    NSAutoreleasePool *aPool = [[NSAutoreleasePool alloc] init];
+    appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0] endDate:[currentDateRange objectAtIndex:1]];
+        [aPool drain];
+        
+    
+        [currentDateRange release];
     SMLog(@"app = %@", appDelegate.wsInterface.eventArray);
     
     
@@ -1451,9 +1508,12 @@ extern void SVMXLog(NSString *format, ...);
             
             NSMutableArray * currentDateRange = [[appDelegate getWeekdates:[appDelegate.wsInterface.currentDateRange objectAtIndex:0]] retain];
             
-            appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0] endDate:[currentDateRange objectAtIndex:1]]; 
+            /*Shravya-Calendar view 7408 */
+            NSAutoreleasePool *aPool = [[NSAutoreleasePool alloc] init];
+            appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0] endDate:[currentDateRange objectAtIndex:1]];
             //Shrinivas 
-			[currentDateRange release];
+			[aPool drain];
+            [currentDateRange release];
             SMLog(@"app = %@", appDelegate.wsInterface.eventArray);
             [self reloadCalendar];
         }
@@ -1466,8 +1526,12 @@ extern void SVMXLog(NSString *format, ...);
         
         NSMutableArray * currentDateRange = [[appDelegate getWeekdates:currentDate] retain];
         
-        appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0] endDate:[currentDateRange objectAtIndex:1]]; 
-		[currentDateRange release];
+        /*Shravya-Calendar view 7408 */
+        NSAutoreleasePool *aPool = [[NSAutoreleasePool alloc] init];
+        appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0] endDate:[currentDateRange objectAtIndex:1]];
+        
+		[aPool drain];
+        [currentDateRange release];
         SMLog(@"app = %@", appDelegate.wsInterface.eventArray);
         [self reloadCalendar];
     }
@@ -1481,7 +1545,7 @@ extern void SVMXLog(NSString *format, ...);
 - (void) setEventsView:(NSString *)_date
 {
     SMLog(@"%@", appDelegate.wsInterface.eventArray);
-	
+	 NSLog(@"setEventsView %d", [appDelegate.wsInterface.eventArray count]);
     EventViewController * events = nil;
     NSDictionary * dict;
     NSString * workOrderName;
@@ -1497,10 +1561,13 @@ extern void SVMXLog(NSString *format, ...);
     [eventPositionArray removeAllObjects];
     [eventViewArray removeAllObjects];
 	
+    /*Shravya-Calendar view 7408*/
+    NSArray *conflictObjects = [appDelegate.calDataBase readConflictTableForEventInfo];
+
     SMLog(@"%@", appDelegate.wsInterface.eventArray);
     for ( int i = 0; i < [appDelegate.wsInterface.eventArray count]; i++ )
     {
-        dict = [appDelegate.wsInterface.eventArray objectAtIndex:i];
+        dict = [[appDelegate.wsInterface.eventArray objectAtIndex:i] retain]; /*Shravya-Calendar view 7408*/
         SMLog(@"%@", dict);
         workOrderName = [dict objectForKey:ADDITIONALINFO];
         subject = [dict objectForKey:SUBJECT];
@@ -1539,6 +1606,10 @@ extern void SVMXLog(NSString *format, ...);
         NSString * eventDate = [startDateTime substringToIndex:10];
 		SMLog(@"eventDate = %@", eventDate);
 		
+        /*Shravya-Calendar view If the event is not today, no need to create nib for it 7408 */
+        if ( [_date isEqualToString:eventDate] == NO ) {
+            continue;
+        }
         eventDateTime = [dict objectForKey:ENDDATETIME];
         temp_end_date_time =  [dict objectForKey:ENDDATETIME];
         
@@ -1620,12 +1691,14 @@ extern void SVMXLog(NSString *format, ...);
         {
 			NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:events.recordId tableName:[dict objectForKey:OBJECTAPINAME]];
 			
-            BOOL conflictExists = [appDelegate.dataBase checkIfConflictsExistsForEvent:events.recordId objectName:[dict objectForKey:OBJECTAPINAME] local_id:local_id];
-            
-            if (conflictExists == FALSE)
-            {
-                conflictExists = [appDelegate.dataBase checkIfChildConflictexist:[dict objectForKey:OBJECTAPINAME] sfId:events.recordId];
+            /*Shravya-Calendar view 7408*/
+            //Conflict logic is changed. Rather than checking conflict for every event, set of conflict is stored in conflictObjects
+            BOOL conflictExists = NO;
+            if ([conflictObjects count] > 0) {
+                conflictExists = [appDelegate.calDataBase checkSyncConflictFor:events.recordId WithLocalId:local_id withObjectName:[dict objectForKey:OBJECTAPINAME] andArray:conflictObjects];
             }
+            /*Shravya-Calendar view */
+            
             
             events.conflictFlag = conflictExists;
             SMLog(@"%@ %@", [rightPane description], events.processName);
@@ -1642,8 +1715,15 @@ extern void SVMXLog(NSString *format, ...);
             [swipeRecognizer release];
             
             [eventViewArray addObject:events];
-            [events release];
+           
         }
+        
+         /*Shravya-Calendar view 7408 */
+         [events release];
+         events = nil;
+        [dict release];
+        dict = nil;
+         /*Shravya-Calendar view 7408 */
     }
      }@catch (NSException *exp) {
         SMLog(@"Exception Name ModalViewController :setEventsView %@",exp.name);
@@ -2167,8 +2247,15 @@ extern void SVMXLog(NSString *format, ...);
                     SMLog(@"%@ %@",appDelegate.wsInterface.startDate, appDelegate.wsInterface.endDate);
                     NSMutableArray * currentDateRange = [[appDelegate getWeekdates:currentDate] retain];
                     
-                    appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0] endDate:[currentDateRange objectAtIndex:1]];  
-					[currentDateRange release];
+                    
+                    /*Shravya-Calendar view 7408 */
+                    NSAutoreleasePool *aPool = [[NSAutoreleasePool alloc] init];
+                    appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0] endDate:[currentDateRange objectAtIndex:1]];
+                    
+                    
+					[aPool drain];
+                    
+                    [currentDateRange release];
 					
                     if ([appDelegate.wsInterface.rescheduleEvent isEqualToString:@"SUCCESS"])
                     {

@@ -153,6 +153,11 @@ DetailViewControllerDelegate, RefreshModalSyncStatusButton>
     //Shrinivas
     UIButton * statusButton;
     UIImageView* animatedImageView;
+    
+    /*Shravya-Calendar view 7408 */
+    BOOL   isDayButtonClicked;
+    BOOL   rescheduledAnEvent;
+    BOOL   shouldRedrawWeekView;
 }
 
 @property (nonatomic) BOOL Event_edit_flag;
@@ -166,6 +171,9 @@ DetailViewControllerDelegate, RefreshModalSyncStatusButton>
 @property (nonatomic, retain) NSArray * eventDetails;
 
 @property (nonatomic, retain) IBOutlet UIActivityIndicatorView * activity;
+@property (nonatomic,assign) BOOL   isDayButtonClicked;  /*Shravya-Calendar view 7408 */
+@property (nonatomic,assign) BOOL   rescheduledAnEvent;
+@property (nonatomic,assign) BOOL   shouldRedrawWeekView;
 
 //Radha 5th April 2011
 @property (nonatomic, retain) EventViewController * eventView;

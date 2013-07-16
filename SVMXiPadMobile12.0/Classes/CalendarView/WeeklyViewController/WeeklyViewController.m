@@ -63,7 +63,7 @@ extern void SVMXLog(NSString *format, ...);
     // Event setup
     [self setUpDayRect];
     
-	[self setupEvents];
+	
     
     //Radha 21st April 2011
     //For localization
@@ -99,7 +99,9 @@ extern void SVMXLog(NSString *format, ...);
     nextWeek.isAccessibilityElement = YES;
     [ nextWeek setAccessibilityIdentifier:@"NextButton"];
 
-    [self populateWeekView];
+    /*Shravya-Calendar view 7408 Only one time call is enough*/
+    [self setupEvents];
+    //[self populateWeekView];
 }
 
 - (void) didInternetConnectionChange:(NSNotification *)notification
@@ -146,193 +148,224 @@ extern void SVMXLog(NSString *format, ...);
 - (void) viewWillAppear:(BOOL)animated
 {
     [self enableUI];
-    [self populateWeekView];
+    
+    NSLog(@"VIEW WILL APPEAR IN WEEKVIEW");
+    /*Shravya-Calendar view 7408 */
+    //Shravya - No need to load everytimes view will appear 
+    //[self populateWeekView];
 }
 
 #pragma mark - Populate Week View
 - (void) populateWeekView
 {
-    WeeklyViewEvent * events = nil;
+    /*Shravya-Calendar view 7408 */
+    // Shravya - Perform selector has been placed to induce a small delay so the activity indicator will be displayed in the screen
+   [self clearWeekView];
+   [self performSelector:@selector(contiuePopulateWeekView) withObject:nil afterDelay:0.0];
+}
+
+- (void)contiuePopulateWeekView {
+    
     NSDictionary * dict;
     NSString * workOrderName;
     NSString * subject;
     NSArray * event;
     
-    [self clearWeekView];
-
     SMLog(@"%@", appDelegate.wsInterface.eventArray);
+    
+    /*Shravya-Calendar view 7408 */
+    //Shravya - @synchronized is needed as refresh(Internally this function) gets called from multiple threads during Sync
+    @synchronized(self){
+    NSLog(@"populateWeekView %d", [appDelegate.wsInterface.eventArray count]);
     @try{
-    for ( int i = 0; i < [appDelegate.wsInterface.eventArray count]; i++ )
-    {
-        NSDate * temp_start_date_time , *temp_end_date_time ;
-        dict = [appDelegate.wsInterface.eventArray objectAtIndex:i];
         
-        workOrderName = [dict objectForKey:ADDITIONALINFO];
-        subject = [dict objectForKey:SUBJECT];
+        /*Shravya-Calendar view 7408*/
+        NSArray *conflictObjects = [appDelegate.calDataBase readConflictTableForEventInfo];
         
-        //Taking the time and date of an event
-        NSDate * eventDateTime = [dict objectForKey:ACTIVITYDATE];
-        
-        eventDateTime = [dict objectForKey:ACTIVITYDTIME];
-        
-        NSString * dateString = [self dateToStringConversion:eventDateTime];
-        
-        eventDateTime = [dict objectForKey:STARTDATETIME];
-        temp_start_date_time = [dict objectForKey:STARTDATETIME];
-        
-        
-        dateString = [self dateToStringConversion:eventDateTime];
-        
-        NSString * startDateTime = dateString;
-        
-        eventDateTime = [dict objectForKey:ENDDATETIME];
-        temp_end_date_time = [dict objectForKey:ENDDATETIME];
-        
-        dateString = [self dateToStringConversion:eventDateTime];
-        
-        NSString * endDateTime = dateString;
-        
-        NSString * startime = [startDateTime substringFromIndex:11];
-        [startime substringToIndex:2];
-        
-        NSString * endTime = [endDateTime substringFromIndex:11];
-        endTime = [endTime substringToIndex:2];
-        
-        
-        event = [NSArray arrayWithObjects:subject, workOrderName, nil];
-        
-        weeksArray = [calendar getWeeksArray];
-        if(currentSliderPositionIndex+1 > [weeksArray count])
-            currentSliderPositionIndex = 0;//#3845 
-
-        NSMutableArray * array = [weeksArray objectAtIndex:currentSliderPositionIndex];
-        
-        NSUInteger dayIndex = 0;
-        
-        //Radha 9th NOV 2011
-        BOOL flag = FALSE;
-        
-        //Radha 22 sep 2011 
-        NSString * eventActualDate = [startDateTime substringToIndex:10];
-        eventActualDate = [eventActualDate substringFromIndex:8];
-        
-        int day = [eventActualDate intValue];
-        
-        for (int i = 0; i < [array count]; i++)
+        for ( int i = 0; i < [appDelegate.wsInterface.eventArray count]; i++ )
         {
-            for (int j = 0; j < [array count]; j++)
+            
+            NSDate * temp_start_date_time , *temp_end_date_time ;
+            dict = [[appDelegate.wsInterface.eventArray objectAtIndex:i] retain]; /*Shravya-Calendar view 7408 */
+            
+            workOrderName = [dict objectForKey:ADDITIONALINFO];
+            subject = [dict objectForKey:SUBJECT];
+            
+            //Taking the time and date of an event
+            NSDate * eventDateTime = [dict objectForKey:ACTIVITYDATE];
+            
+            eventDateTime = [dict objectForKey:ACTIVITYDTIME];
+            
+            NSString * dateString = [self dateToStringConversion:eventDateTime];
+            
+            eventDateTime = [dict objectForKey:STARTDATETIME];
+            temp_start_date_time = [dict objectForKey:STARTDATETIME];
+            
+            
+            dateString = [self dateToStringConversion:eventDateTime];
+            
+            NSString * startDateTime = dateString;
+            
+            eventDateTime = [dict objectForKey:ENDDATETIME];
+            temp_end_date_time = [dict objectForKey:ENDDATETIME];
+            
+            dateString = [self dateToStringConversion:eventDateTime];
+            
+            NSString * endDateTime = dateString;
+            
+            NSString * startime = [startDateTime substringFromIndex:11];
+            [startime substringToIndex:2];
+            
+            NSString * endTime = [endDateTime substringFromIndex:11];
+            endTime = [endTime substringToIndex:2];
+            
+            
+            event = [NSArray arrayWithObjects:subject, workOrderName, nil];
+            
+            weeksArray = [calendar getWeeksArray];
+            if(currentSliderPositionIndex+1 > [weeksArray count])
+                currentSliderPositionIndex = 0;//#3845
+            
+            NSMutableArray * array = [weeksArray objectAtIndex:currentSliderPositionIndex];
+            
+            NSUInteger dayIndex = 0;
+            
+            //Radha 9th NOV 2011
+            BOOL flag = FALSE;
+            
+            //Radha 22 sep 2011
+            NSString * eventActualDate = [startDateTime substringToIndex:10];
+            eventActualDate = [eventActualDate substringFromIndex:8];
+            
+            int day = [eventActualDate intValue];
+            
+            for (int i = 0; i < [array count]; i++)
             {
-                int checkArrayDay = [[array objectAtIndex:j] intValue];
-                if (day == checkArrayDay)
+                for (int j = 0; j < [array count]; j++)
                 {
-                    flag = TRUE;
+                    int checkArrayDay = [[array objectAtIndex:j] intValue];
+                    if (day == checkArrayDay)
+                    {
+                        flag = TRUE;
+                        break;
+                    }
+                    else
+                        flag = FALSE;
+                }
+                if (!flag)
+                    break;
+                int arrayDay = [[array objectAtIndex:i] intValue];
+                if (arrayDay == day)
+                {
+                    dayIndex = i;
                     break;
                 }
-                else
-                    flag = FALSE;
             }
-            if (!flag)
-                break;
-            int arrayDay = [[array objectAtIndex:i] intValue];
-            if (arrayDay == day)
-            {
-                dayIndex = i;
-                break;
-            }
-        }
-        if (events == nil)
-        {
-            events = [[WeeklyViewEvent alloc] initWithNibName:[WeeklyViewEvent description] bundle:nil];
-        }
-        events.delegate = self;
             
-        
-        events.view.tag = [eventViewArray count];
-       
-        SMLog(@"%@", [dict objectForKey:SUBJECT]);
-        events.processId = @"";
-        events.eventId = ([dict objectForKey:EVENTID] != nil)?[dict objectForKey:EVENTID]:@"";
-        
-        events.recordId = ([dict objectForKey:WHATID] != nil)?[dict objectForKey:WHATID]:@"";
-        events.objectName = ([dict objectForKey:OBJECTAPINAME] != nil)?[dict objectForKey:OBJECTAPINAME]:@"";
-        events.createdDate = ([dict objectForKey:CREATEDDATE] != nil)?[dict objectForKey:CREATEDDATE]:@"";
-        events.accountId = ([dict objectForKey:ACCOUNTID] != nil)?[dict objectForKey:ACCOUNTID]:@"";
-        events.startDate = [self dateToStringConversion:[dict objectForKey:STARTDATETIME]];
-        events.endDate = [self dateToStringConversion:[dict objectForKey:ENDDATETIME]];    
-        events.activityDate = ([dict objectForKey:ACTIVITYDATE] != nil)?[dict objectForKey:ACTIVITYDATE]:@"";
-        events.local_id = ([dict objectForKey:EVENT_LOCAL_ID] != nil)?[dict objectForKey:EVENT_LOCAL_ID]:@"";
-        
-        NSString * objectAPIName = [dict objectForKey:OBJECTAPINAME];
-        
-        objectAPIName = [objectAPIName uppercaseString];
-        
-        for (int v = 0; v < [appDelegate.view_layout_array count]; v++)
-        {
-            NSDictionary * dict = [appDelegate.view_layout_array objectAtIndex:v];
-            NSString * object_label = [dict objectForKey:VIEW_OBJECTNAME];
-            object_label = [object_label uppercaseString];
-            if ([object_label isEqualToString:objectAPIName])
+            WeeklyViewEvent * events = nil;
+            if (events == nil)
             {
-                events.processId = [dict objectForKey:VIEW_SVMXC_ProcessID];
-                break;
+                events = [[WeeklyViewEvent alloc] initWithNibName:[WeeklyViewEvent description] bundle:nil];
             }
-        }
-        
-        NSString * duration = [dict objectForKey:DURATIONINMIN];
-        
-        NSTimeInterval interval;
-        if([duration length] == 0)
-        {
-            if([duration intValue] == 0)
-            {
-                interval = [temp_end_date_time timeIntervalSinceDate:temp_start_date_time];
-            }
-            if(interval > 0)
-            {
-                int duration_temp = interval/60;
-                duration = @"";
-                duration = [duration stringByAppendingFormat:@"%d",duration_temp];// [NSString stringWithFormat:@"%d",duration_temp];
-            }
-        }
-
-		
-		//30 minute event 8/sept/2012   ----> Changes for 30 min Event Defect.
-		UIColor * color;
-		int _duration = [duration intValue];
-		if (_duration != 0)
-		{
-			NSString * colourCode = [appDelegate.calDataBase getColorCodeForPriority:([dict objectForKey:WHATID] != nil)?[dict objectForKey:WHATID]:@"" objectname:([dict objectForKey:OBJECTAPINAME] != nil)?[dict objectForKey:OBJECTAPINAME]:@""];
-			color = [appDelegate colorForHex:colourCode];
-		}else{
-			color = [UIColor clearColor];
-		}
-		
-		NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:events.recordId tableName:[dict objectForKey:OBJECTAPINAME]];
-		
-        BOOL conflictExists = [appDelegate.dataBase checkIfConflictsExistsForEvent:events.recordId objectName:[dict objectForKey:OBJECTAPINAME] local_id:local_id];
-        
-        if (conflictExists == FALSE)
-        {
-            conflictExists = [appDelegate.dataBase checkIfChildConflictexist:[dict objectForKey:OBJECTAPINAME] sfId:events.recordId];
-        }        
-        events.conflictFlag = conflictExists;
-        
-        if (flag)
-        {
+            events.delegate = self;
             
-            UISwipeGestureRecognizer * swipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(EvntgestureRecognizer)];
-            swipeRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
-            [events.view addGestureRecognizer:swipeRecognizer];
             
-            [weekViewPane addSubview:events.view];
-            [events setEvent:event Day:dayIndex Time:startime Duration:(CGFloat)[duration intValue]/60*2 Color:color];
-            [events setLabelsweeklyview:event];
-            [eventViewArray addObject:events];
+            events.view.tag = [eventViewArray count];
+            
+            SMLog(@"%@", [dict objectForKey:SUBJECT]);
+            events.processId = @"";
+            events.eventId = ([dict objectForKey:EVENTID] != nil)?[dict objectForKey:EVENTID]:@"";
+            
+            events.recordId = ([dict objectForKey:WHATID] != nil)?[dict objectForKey:WHATID]:@"";
+            events.objectName = ([dict objectForKey:OBJECTAPINAME] != nil)?[dict objectForKey:OBJECTAPINAME]:@"";
+            events.createdDate = ([dict objectForKey:CREATEDDATE] != nil)?[dict objectForKey:CREATEDDATE]:@"";
+            events.accountId = ([dict objectForKey:ACCOUNTID] != nil)?[dict objectForKey:ACCOUNTID]:@"";
+            events.startDate = [self dateToStringConversion:[dict objectForKey:STARTDATETIME]];
+            events.endDate = [self dateToStringConversion:[dict objectForKey:ENDDATETIME]];
+            events.activityDate = ([dict objectForKey:ACTIVITYDATE] != nil)?[dict objectForKey:ACTIVITYDATE]:@"";
+            events.local_id = ([dict objectForKey:EVENT_LOCAL_ID] != nil)?[dict objectForKey:EVENT_LOCAL_ID]:@"";
+            
+            NSString * objectAPIName = [dict objectForKey:OBJECTAPINAME];
+            
+            objectAPIName = [objectAPIName uppercaseString];
+            
+            for (int v = 0; v < [appDelegate.view_layout_array count]; v++)
+            {
+                NSDictionary * dict = [appDelegate.view_layout_array objectAtIndex:v];
+                NSString * object_label = [dict objectForKey:VIEW_OBJECTNAME];
+                object_label = [object_label uppercaseString];
+                if ([object_label isEqualToString:objectAPIName])
+                {
+                    events.processId = [dict objectForKey:VIEW_SVMXC_ProcessID];
+                    break;
+                }
+            }
+            
+            NSString * duration = [dict objectForKey:DURATIONINMIN];
+            
+            NSTimeInterval interval;
+            if([duration length] == 0)
+            {
+                if([duration intValue] == 0)
+                {
+                    interval = [temp_end_date_time timeIntervalSinceDate:temp_start_date_time];
+                }
+                if(interval > 0)
+                {
+                    int duration_temp = interval/60;
+                    duration = @"";
+                    duration = [duration stringByAppendingFormat:@"%d",duration_temp];// [NSString stringWithFormat:@"%d",duration_temp];
+                }
+            }
+            
+            
+            //30 minute event 8/sept/2012   ----> Changes for 30 min Event Defect.
+            UIColor * color;
+            int _duration = [duration intValue];
+            if (_duration != 0)
+            {
+                NSString * colourCode = [appDelegate.calDataBase getColorCodeForPriority:([dict objectForKey:WHATID] != nil)?[dict objectForKey:WHATID]:@"" objectname:([dict objectForKey:OBJECTAPINAME] != nil)?[dict objectForKey:OBJECTAPINAME]:@""];
+                color = [appDelegate colorForHex:colourCode];
+            }else{
+                color = [UIColor clearColor];
+            }
+            
+            NSString * local_id = [appDelegate.databaseInterface getLocalIdFromSFId:events.recordId tableName:[dict objectForKey:OBJECTAPINAME]];
+            
+            /*Shravya-Calendar view 7408*/
+            //Conflict logic is changed. Rather than checking conflict for every event, set of conflict is stored in conflictObjects
+            BOOL conflictExists = NO;
+            if ([conflictObjects count] > 0) {
+                conflictExists = [appDelegate.calDataBase checkSyncConflictFor:events.recordId WithLocalId:local_id withObjectName:[dict objectForKey:OBJECTAPINAME] andArray:conflictObjects];
+            }
+            /*Shravya-Calendar view */
+            
+            events.conflictFlag = conflictExists;
+            
+            if (flag)
+            {
+                
+                UISwipeGestureRecognizer * swipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(EvntgestureRecognizer)];
+                swipeRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
+                [events.view addGestureRecognizer:swipeRecognizer];
+                
+                [weekViewPane addSubview:events.view];
+                [events setEvent:event Day:dayIndex Time:startime Duration:(CGFloat)[duration intValue]/60*2 Color:color];
+                [events setLabelsweeklyview:event];
+                [eventViewArray addObject:events];
+                
+            }
+            else {
+                NSLog(@"shouldNotHappen");
+            }
+            /*Shravya-Calendar view 7408 */
             [events release];
             events = nil;
+            [dict release];
+            dict = nil;
+            /*Shravya-Calendar view 7408 */
         }
-    }
-	 }@catch (NSException *exp) {
+    }@catch (NSException *exp) {
         SMLog(@"Exception Name WeeklyViewController :populateWeekView %@",exp.name);
         SMLog(@"Exception Reason WeeklyViewController :populateWeekView %@",exp.reason);
     }
@@ -342,8 +375,8 @@ extern void SVMXLog(NSString *format, ...);
     
     calendarDidLoad = YES;
     [self didAllDataLoad];
+    }
 }
-
 -(void)EvntgestureRecognizer
 {
     NSLog(@"Swipe Recorgnized weeklyview");
@@ -931,9 +964,19 @@ extern void SVMXLog(NSString *format, ...);
     
     NSMutableArray * currentDateRange = [[appDelegate getWeekdates:_currentDate] retain];
     
-    appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0]  endDate:[currentDateRange objectAtIndex:1]];  
+     /*Shravya-Calendar view 7408 */
+    NSAutoreleasePool *aPool = [[NSAutoreleasePool alloc] init];
+    appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0]  endDate:[currentDateRange objectAtIndex:1]];
+        
+        
+       
+    [aPool drain];
 	[currentDateRange release];
-    [self populateWeekView];
+        
+    /*Shravya-Calendar view 7408 */
+    //Shravya- populateWeekView has to be called on main thread as UI operation happens in that function.
+    [self performSelectorOnMainThread:@selector(populateWeekView) withObject:nil waitUntilDone:YES];
+    //[self populateWeekView];
     
     //[appDelegate.wsInterface getEventsForStartDate:startDate EndDate:endDate];
     }@catch (NSException *exp) {
@@ -1641,7 +1684,11 @@ extern void SVMXLog(NSString *format, ...);
                                         
                     NSMutableArray * currentDateRange = [[appDelegate getWeekdates:_currentDate] retain];
                     
-                    appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0]  endDate:[currentDateRange objectAtIndex:1]];     
+                    /*Shravya-Calendar view 7408 */
+                    NSAutoreleasePool *aPool = [[NSAutoreleasePool alloc] init];
+                    appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0]  endDate:[currentDateRange objectAtIndex:1]];
+                    
+                    [aPool drain];
 					[currentDateRange release];
                 }
                 
@@ -1663,8 +1710,16 @@ extern void SVMXLog(NSString *format, ...);
                 
                 NSMutableArray * currentDateRange = [[appDelegate getWeekdates:date] retain];
                 
-                appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0]  endDate:[currentDateRange objectAtIndex:1]];   
+                /*Shravya-Calendar view 7408 */
+                NSAutoreleasePool *aPool = [[NSAutoreleasePool alloc] init];
+                appDelegate.wsInterface.eventArray = [appDelegate.calDataBase GetEventsFromDBWithStartDate:[currentDateRange objectAtIndex:0]  endDate:[currentDateRange objectAtIndex:1]];
+                
+                [aPool drain];
+                
 				[currentDateRange release];
+                if ([self.delegate respondsToSelector:@selector(setRescheduledAnEvent:)]) {
+                    [self.delegate setRescheduledAnEvent:YES];
+                }
                 if ([appDelegate.wsInterface.rescheduleEvent isEqualToString:@"SUCCESS"])
                 {
                     [activity stopAnimating];

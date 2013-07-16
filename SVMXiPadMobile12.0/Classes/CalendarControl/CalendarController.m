@@ -302,7 +302,13 @@ extern void SVMXLog(NSString *format, ...);
 		selYear++;
 	}
 	
+    /*Shravya-Calendar view 7408*/
+    [self setDoNotLoadWeekviewFlag:YES];
+    
 	[self RefreshCalendar];
+    /*Shravya-Calendar view */
+    [self setDoNotLoadWeekviewFlag:NO];
+    
     [self setDayLabel];
 }
 
@@ -320,7 +326,14 @@ extern void SVMXLog(NSString *format, ...);
 		selYear--;
 	}
 
+    /*Shravya-Calendar view 7408*/
+    [self setDoNotLoadWeekviewFlag:YES];
+    
 	[self RefreshCalendar];
+    
+    /*Shravya-Calendar view */
+    [self setDoNotLoadWeekviewFlag:NO];
+    
     [self setDayLabel];
 }
 
@@ -705,8 +718,14 @@ extern void SVMXLog(NSString *format, ...);
     
     dateLabel.text = selectedDate.titleLabel.text;
     
+    /*Shravya-Calendar view */
+    [self setDoNotLoadWeekviewFlag:YES];
+        
     [delegate setDate:[dateLabel.text intValue]];
-    
+        
+    [self setDoNotLoadWeekviewFlag:NO];
+    /*Shravya-Calendar view */
+        
     [self highlightCurrentDate];
     
     [dayOne release];
@@ -1119,5 +1138,12 @@ extern void SVMXLog(NSString *format, ...);
     }
 }
 
+/*Shravya-Calendar view 7408 */
+- (void)setDoNotLoadWeekviewFlag:(BOOL)flag {
+    if ([delegate respondsToSelector:@selector(setIsDayButtonClicked:)]) {
+        [delegate  setIsDayButtonClicked:flag];
+        [delegate setShouldRedrawWeekView:YES];
+    }
+}
 
 @end

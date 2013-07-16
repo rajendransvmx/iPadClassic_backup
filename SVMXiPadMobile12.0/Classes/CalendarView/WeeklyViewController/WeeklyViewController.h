@@ -13,8 +13,8 @@
 #import "iOSInterfaceObject.h"
 
 // Portrait mode - 610, 854
-
-@protocol WeeklyViewControllerDelegate
+/*Shravya-Calendar view 7408 */
+@protocol WeeklyViewControllerDelegate<NSObject> 
 
 @optional
 - (void) finishedLoading;

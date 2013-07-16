@@ -176,7 +176,7 @@ extern void SVMXLog(NSString *format, ...);
 - (NSMutableArray *) GetEventsFromDBWithStartDate:(NSString *)startdate endDate:(NSString *)endDate
 {
    // sqlite3_stmt * dbps;
-    NSMutableArray * resultSet = [[NSMutableArray alloc] initWithCapacity:0];
+    NSMutableArray * resultSet = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];/*Shravya-Calendar view 7408 */
     NSMutableString * queryStatement = [[NSMutableString alloc]initWithCapacity:0];
     
     sqlite3_stmt * statement;
@@ -548,9 +548,17 @@ extern void SVMXLog(NSString *format, ...);
                                          whatId,eventId, objectApiName,City,Zip,Street,State,Country,event_local_Id, nil] retain];
             
             NSDictionary * dictionary = [[NSDictionary alloc] initWithObjects:objects forKeys:keys];
-            NSDictionary * dict = [NSDictionary dictionaryWithDictionary:dictionary];
+            NSDictionary * dict = [[NSDictionary alloc ] initWithDictionary:dictionary];
             [resultSet addObject:dict];
-            [objects release]; 
+            [objects release];
+            
+            /*Shravya-Calendar view 7408 */
+            [dictionary release];
+            dictionary = nil;
+            [dict release];
+            dict = nil;
+            /*Shravya-Calendar view 7408 */
+            
             ret = synchronized_sqlite3_step(statement);
         }
         synchronized_sqlite3_finalize(statement);
@@ -7382,6 +7390,223 @@ NSString *Doc_Name=[[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurren
     }
     synchronized_sqlite3_finalize(stmt);
     return NO;
+}
+
+
+/*Shravya-Calendar view */
+#pragma mark - New conflict handling in calendar events
+
+- (NSArray *)readConflictTableForEventInfo {
+    
+    NSString * query = [NSString stringWithFormat:@"SELECT sf_id, local_id, object_name, record_type FROM 'sync_error_conflict'"];
+    sqlite3_stmt * statement = nil;
+    int i = 0;
+    NSString *fieldValue = nil;
+    NSMutableArray *conflictArray = [[NSMutableArray alloc] init];
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, nil) ==  SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            i = 0;
+            NSMutableDictionary *conflictDictionary = [[NSMutableDictionary alloc] init];
+            
+            char * temp_field_value= (char * ) synchronized_sqlite3_column_text(statement, i);
+            if(temp_field_value != nil)
+            {
+                fieldValue  = [NSString stringWithUTF8String:temp_field_value];
+                if (fieldValue != nil) {
+                    [conflictDictionary setObject:fieldValue forKey:@"sf_id"];
+                }
+            }
+            temp_field_value = nil;
+            fieldValue = nil;
+            i++;
+            
+            temp_field_value= (char * ) synchronized_sqlite3_column_text(statement, i);
+            if(temp_field_value != nil)
+            {
+                fieldValue  = [NSString stringWithUTF8String:temp_field_value];
+                if (fieldValue != nil) {
+                    [conflictDictionary setObject:fieldValue forKey:@"local_id"];
+                }
+            }
+            temp_field_value = nil;
+            fieldValue = nil;
+            i++;
+            
+            
+            temp_field_value= (char * ) synchronized_sqlite3_column_text(statement, i);
+            if(temp_field_value != nil)
+            {
+                fieldValue  = [NSString stringWithUTF8String:temp_field_value];
+                if (fieldValue != nil) {
+                    [conflictDictionary setObject:fieldValue forKey:@"object_name"];
+                }
+            }
+            temp_field_value = nil;
+            fieldValue = nil;
+            i++;
+            
+            
+            temp_field_value= (char * ) synchronized_sqlite3_column_text(statement, i);
+            if(temp_field_value != nil)
+            {
+                fieldValue  = [NSString stringWithUTF8String:temp_field_value];
+                if (fieldValue != nil) {
+                    [conflictDictionary setObject:fieldValue forKey:@"record_type"];
+                }
+            }
+            temp_field_value = nil;
+            fieldValue = nil;
+            i++;
+            
+            
+            [conflictArray addObject:conflictDictionary];
+            [conflictDictionary release];
+            conflictDictionary = nil;
+        }
+    }
+    synchronized_sqlite3_finalize(statement);
+    
+    if([conflictArray count] > 0){
+        [self getParentIdIfany:conflictArray];
+        return [conflictArray autorelease];
+    }
+    [conflictArray release];
+    conflictArray = nil;
+    return nil;
+}
+
+
+- (void)getParentIdIfany:(NSMutableArray *)conflictArray {
+    
+    NSMutableDictionary *parentColumnNameDictionary = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *isChildDictionary = [[NSMutableDictionary alloc] init];
+    
+    for(int counter = 0; counter < [conflictArray count];counter++){
+        NSMutableDictionary *conflictDict = [conflictArray objectAtIndex:counter];
+        NSString *objectName = [conflictDict objectForKey:@"object_name"];
+        if (objectName == nil) {
+            continue;
+        }
+        
+        NSInteger someIntValue = [[isChildDictionary objectForKey:objectName] intValue];
+        if (someIntValue < 1) {
+            BOOL isItTrue =  [appDelegate.databaseInterface IsChildObject:objectName];
+            if (isItTrue) {
+                someIntValue = 11; //true
+            }
+            else{
+                someIntValue = 12;//false
+            }
+            [isChildDictionary setObject:[NSString stringWithFormat:@"%d",someIntValue] forKey:objectName];
+        }
+        
+        if(someIntValue == 12){
+            continue;
+        }
+        
+        
+        NSString *parentColumnName = [parentColumnNameDictionary objectForKey:objectName];
+        
+        if(parentColumnName == nil){
+            parentColumnName = [self getParentNameForChildObjectName:objectName];
+            if(parentColumnName != nil){
+                [parentColumnNameDictionary setObject:parentColumnName forKey:objectName];
+            }
+        }
+        
+        if (![Utility isStringEmpty:parentColumnName]) {
+            NSString *localId = [conflictDict objectForKey:@"local_id"];
+            NSString *sfId = [conflictDict objectForKey:@"sf_id"];
+            NSString *query = [NSString stringWithFormat:@"Select %@ from '%@' where ( Id = '%@' OR local_id = '%@') ",parentColumnName,objectName,sfId,localId];
+            NSString *parentId = [self executeThisQueryForSingleColumnName:query];
+            if (![Utility isStringEmpty:parentId]) {
+                [conflictDict setObject:parentId forKey:@"parent_id"];
+            }
+        }
+    }
+    
+    [parentColumnNameDictionary release];
+    [isChildDictionary release];
+}
+
+- (NSString *)getParentNameForChildObjectName:(NSString *)childObjectName {
+    NSString * fieldValue = @"";
+    NSString * query = [NSString stringWithFormat:@"SELECT object_api_name_parent FROM SFChildRelationship Where object_api_name_parent = field_api_name and object_api_name_child = '%@' and object_api_name_parent != \"\"",childObjectName];
+    sqlite3_stmt * statement = nil;
+    
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, nil) ==  SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            char * temp_field_value= (char * ) synchronized_sqlite3_column_text(statement, 0);
+            if(temp_field_value != nil)
+            {
+                fieldValue  = [NSString stringWithUTF8String:temp_field_value];
+            }
+        }
+    }
+    synchronized_sqlite3_finalize(statement);
+    return fieldValue;
+    
+}
+
+- (NSString *)executeThisQueryForSingleColumnName:(NSString *)query {
+    NSString * fieldValue = @"";
+    sqlite3_stmt * statement = nil;
+    
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, nil) ==  SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            char * temp_field_value= (char * ) synchronized_sqlite3_column_text(statement, 0);
+            if(temp_field_value != nil)
+            {
+                fieldValue  = [NSString stringWithUTF8String:temp_field_value];
+            }
+        }
+    }
+    synchronized_sqlite3_finalize(statement);
+    return fieldValue;
+    
+}
+
+#pragma - Sync conflict exist
+- (BOOL)checkSyncConflictFor:(NSString *)sfId
+                 WithLocalId:(NSString *)localId
+              withObjectName:(NSString *)objectName
+                    andArray:(NSArray *)conflictArray {
+    
+    BOOL conflictExist = NO;
+    
+    for (int counter = 0; counter < [conflictArray count]; counter++) {
+        
+        NSDictionary *finalDictionary = [conflictArray objectAtIndex:counter];
+        NSString *sfIdConflict = [finalDictionary objectForKey:@"sf_id"];
+        NSString *localIdConflict = [finalDictionary objectForKey:@"local_id"];
+        
+        if (![Utility isStringEmpty:sfIdConflict] && ([sfIdConflict isEqualToString:sfId] || [sfIdConflict isEqualToString:localId])) {
+            conflictExist = YES;
+        }
+        
+        if (![Utility isStringEmpty:localId] && [localId isEqualToString:localIdConflict]) {
+            conflictExist = YES;
+        }
+        
+        if (!conflictExist) {
+            NSString *parentIdConflict = [finalDictionary objectForKey:@"parent_id"];
+            
+            if (![Utility isStringEmpty:parentIdConflict] && ([parentIdConflict isEqualToString:localId] || [parentIdConflict isEqualToString:sfId])) {
+                conflictExist = YES;
+            }
+            
+        }
+        if (conflictExist) {
+            break;
+        }
+    }
+    return conflictExist;
 }
 
 @end
