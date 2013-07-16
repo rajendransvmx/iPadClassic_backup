@@ -10826,6 +10826,7 @@ enum BizRuleConfirmViewStatus{
         NSArray *warningsArray = [bizRuleResult objectForKey:@"warnings"];
         int warningsCount = [warningsArray count];
         int tag ;
+        alertViewStatus = kBizRuleConfirmMessageInit;
         for(int i = 0; i< warningsCount; i++)
         {
             NSString * message = [[warningsArray objectAtIndex:i] objectForKey:@"message"];
