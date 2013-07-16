@@ -213,7 +213,7 @@ static SVMXDatabaseMaster *sharedDatamasterObject = nil;
        
        
         sqlite3_stmt *selectStatement = nil;
-        if (sqlite3_prepare_v2(database, [finalQuery UTF8String], -1, &selectStatement, NULL) != SQLITE_OK) {
+        if (synchronized_sqlite3_prepare_v2(database, [finalQuery UTF8String], -1, &selectStatement, NULL) != SQLITE_OK) {
             [Utility showLog:@"Prepare statement failed in testFunction"];
             
             DAResponse *responseObject = [[DAResponse alloc] init];
@@ -311,7 +311,7 @@ static SVMXDatabaseMaster *sharedDatamasterObject = nil;
         NSString * query = [NSString stringWithFormat:@"SELECT DISTINCT api_name , type from '%@' where object_api_name = '%@'" , tableName , objectName];
         sqlite3_stmt * stmt;
         
-        if(sqlite3_prepare_v2(database, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+        if(synchronized_sqlite3_prepare_v2(database, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
         {
             while (sqlite3_step(stmt)  == SQLITE_ROW)
             {
@@ -363,7 +363,7 @@ static SVMXDatabaseMaster *sharedDatamasterObject = nil;
         [Utility showLog:finalQuery];
         
         sqlite3_stmt *insertStatement = nil;
-        if (sqlite3_prepare_v2(database, [finalQuery UTF8String], -1, &insertStatement, NULL) != SQLITE_OK) {
+        if (synchronized_sqlite3_prepare_v2(database, [finalQuery UTF8String], -1, &insertStatement, NULL) != SQLITE_OK) {
             [Utility showLog:@"Prepare statement failed in testFunction"];
             
             DAResponse *responseObject = [[DAResponse alloc] init];
@@ -398,7 +398,7 @@ static SVMXDatabaseMaster *sharedDatamasterObject = nil;
         [Utility showLog:finalQuery];
         
         sqlite3_stmt *updateStatement = nil;
-        if (sqlite3_prepare_v2(database, [finalQuery UTF8String], -1, &updateStatement, NULL) != SQLITE_OK) {
+        if (synchronized_sqlite3_prepare_v2(database, [finalQuery UTF8String], -1, &updateStatement, NULL) != SQLITE_OK) {
             [Utility showLog:@"Prepare statement failed in testFunction"];
             
             DAResponse *responseObject = [[DAResponse alloc] init];
@@ -433,7 +433,7 @@ static SVMXDatabaseMaster *sharedDatamasterObject = nil;
         [Utility showLog:finalQuery];
         
         sqlite3_stmt *updateStatement = nil;
-        if (sqlite3_prepare_v2(database, [finalQuery UTF8String], -1, &updateStatement, NULL) != SQLITE_OK) {
+        if (synchronized_sqlite3_prepare_v2(database, [finalQuery UTF8String], -1, &updateStatement, NULL) != SQLITE_OK) {
             [Utility showLog:@"Prepare statement failed in testFunction"];
             
             DAResponse *responseObject = [[DAResponse alloc] init];
@@ -464,7 +464,7 @@ static SVMXDatabaseMaster *sharedDatamasterObject = nil;
     sqlite3_stmt *selectStmt = nil;
     NSString *fieldValue = nil;
     NSLog(@"%@",queryStatement);
-    if(sqlite3_prepare_v2(database, [queryStatement UTF8String], -1, &selectStmt, nil) == SQLITE_OK)
+    if(synchronized_sqlite3_prepare_v2(database, [queryStatement UTF8String], -1, &selectStmt, nil) == SQLITE_OK)
     {
         while (sqlite3_step(selectStmt)  == SQLITE_ROW)
         {
@@ -539,7 +539,7 @@ static SVMXDatabaseMaster *sharedDatamasterObject = nil;
         [Utility showLog:sqlQuery];
         
         sqlite3_stmt *selectStatement = nil;
-        if (sqlite3_prepare_v2(database, [sqlQuery UTF8String], -1, &selectStatement, NULL) != SQLITE_OK) {
+        if (synchronized_sqlite3_prepare_v2(database, [sqlQuery UTF8String], -1, &selectStatement, NULL) != SQLITE_OK) {
             [Utility showLog:@"Prepare statement failed in testFunction"];
             
             DAResponse *responseObject = [[DAResponse alloc] init];
@@ -606,7 +606,7 @@ static SVMXDatabaseMaster *sharedDatamasterObject = nil;
         NSString *sqlQuery = [NSString stringWithFormat:@"Select label, label_plural from SFObject where api_name = '%@'",objectName];
         NSString *objectLabel = @"", *labelPlural = @"";
         sqlite3_stmt *selectStmt = nil;
-        if(sqlite3_prepare_v2(database, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK)
+        if(synchronized_sqlite3_prepare_v2(database, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK)
         {
             while (sqlite3_step(selectStmt)  == SQLITE_ROW)
             {
@@ -637,7 +637,7 @@ static SVMXDatabaseMaster *sharedDatamasterObject = nil;
         sqlQuery = [NSString stringWithFormat:@"Select api_name, label ,type, reference_to, nillable, dependent_picklist, controler_field from SFObjectField where object_api_name = '%@'",objectName];
         selectStmt = nil;
         NSArray *someArray = [[NSArray alloc] initWithObjects:@"name",@"label",@"dataType",@"referenceTo",@"nillable", @"dependentPicklist", @"controlerName", nil];
-        if(sqlite3_prepare_v2(database, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK)
+        if(synchronized_sqlite3_prepare_v2(database, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK)
         {
             while (sqlite3_step(selectStmt)  == SQLITE_ROW)
             {

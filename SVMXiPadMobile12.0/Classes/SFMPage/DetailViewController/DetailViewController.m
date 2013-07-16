@@ -10841,7 +10841,7 @@ enum BizRuleConfirmViewStatus{
             tag = i + 1000;
             [alertView setTag:tag];
             alertViewStatus = kBizRuleConfirmMessageInit;
-            [alertView show];
+            [alertView performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
             [alertView release];
             while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1, YES))
             {

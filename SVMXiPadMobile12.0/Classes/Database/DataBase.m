@@ -13238,7 +13238,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 
     sqlite3_stmt * stmt;
     
-    if (sqlite3_prepare_v2(tempDb, [queryStatement UTF8String], -1, &stmt, NULL) == SQLITE_OK){
+    if (synchronized_sqlite3_prepare_v2(tempDb, [queryStatement UTF8String], -1, &stmt, NULL) == SQLITE_OK){
         
         while (synchronized_sqlite3_step(stmt) == SQLITE_ROW) 
         {

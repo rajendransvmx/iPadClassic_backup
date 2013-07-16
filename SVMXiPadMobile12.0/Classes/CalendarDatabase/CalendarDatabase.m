@@ -5793,7 +5793,7 @@ NSString *Doc_Name=[[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurren
     
     NSMutableDictionary *dataDictionary = [[NSMutableDictionary alloc] init];
     sqlite3_stmt *selectStmt = nil;
-    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
     {
         
         while(sqlite3_step(selectStmt) == SQLITE_ROW)
@@ -6113,7 +6113,7 @@ NSString *Doc_Name=[[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurren
     
     NSMutableArray *dataArray = [[NSMutableArray alloc] init];
     sqlite3_stmt *selectStmt = nil;
-    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
     {
         
         while(sqlite3_step(selectStmt) == SQLITE_ROW)
@@ -6183,7 +6183,7 @@ NSString *Doc_Name=[[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurren
     
     NSMutableArray *dataArray = [[NSMutableArray alloc] init];
     sqlite3_stmt *selectStmt = nil;
-    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
     {
         
         while(sqlite3_step(selectStmt) == SQLITE_ROW)
@@ -6233,7 +6233,7 @@ NSString *Doc_Name=[[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurren
     
     NSMutableArray *dataArray = [[NSMutableArray alloc] init];
     sqlite3_stmt *selectStmt = nil;
-    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
     {
         
         while(sqlite3_step(selectStmt) == SQLITE_ROW)
@@ -6390,7 +6390,7 @@ NSString *Doc_Name=[[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurren
     NSString *sqlQuery = [NSString stringWithFormat:@"Select SVMXC__Advance_Expression__c,Id from SVMXC__ServiceMax_Processes__c where %@ and recordTypeId = '%@'",concatenatedExpId,recordTypeRule];
     sqlite3_stmt *selectStmt = nil;
     NSMutableDictionary *expressionDictionary = [[NSMutableDictionary alloc] init ];
-    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
     {
         while(sqlite3_step(selectStmt) == SQLITE_ROW) {
             
@@ -6452,7 +6452,7 @@ NSString *Doc_Name=[[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurren
     NSString *sqlQuery = [NSString stringWithFormat:@"Select SVMXC__Field_Name__c,SVMXC__Operator__c,SVMXC__Operand__c,SVMXC__Sequence__c,SVMXC__Expression_Type__c,SVMXC__Expression_Rule__c,Id from SVMXC__SERVICEMAX_CONFIG_DATA__C where SVMXC__Expression_Rule__c LIKE '%@%%' and recordTypeId = '%@'",expressionId,recordTypeId];
     sqlite3_stmt *selectStmt = nil;
     NSMutableArray *expressionComponents = [[NSMutableArray alloc] init];
-    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
     {
         while(sqlite3_step(selectStmt) == SQLITE_ROW) {
             NSMutableDictionary *recordDictionary = [[NSMutableDictionary alloc] init];
@@ -6586,7 +6586,7 @@ NSString *Doc_Name=[[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurren
     
     NSMutableDictionary *recordDictionary = [[NSMutableDictionary alloc] init];
     sqlite3_stmt *selectStmt = nil;
-    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
     {
         
         while(sqlite3_step(selectStmt) == SQLITE_ROW)
@@ -6656,7 +6656,7 @@ NSString *Doc_Name=[[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurren
     NSString *sqlQuery = [NSString stringWithFormat:@"SELECT Name FROM %@ where Id = '%@' OR local_id = '%@' ",tableName,idValueOfTheField,idValueOfTheField];
     sqlite3_stmt *selectStmt = nil;
     NSString *  nameValue= nil;
-    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
     {
         
         while(sqlite3_step(selectStmt) == SQLITE_ROW)
@@ -6683,7 +6683,7 @@ NSString *Doc_Name=[[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurren
     sqlite3_stmt *selectStmt = nil;
     NSString *  nameValue= nil;
     NSString *sfId = nil;
-    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
     {
         
         while(sqlite3_step(selectStmt) == SQLITE_ROW)
@@ -6961,7 +6961,7 @@ NSString *Doc_Name=[[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurren
     
     NSMutableArray *dataArray = [[NSMutableArray alloc] init];
     sqlite3_stmt *selectStmt = nil;
-    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
     {
         
         while(sqlite3_step(selectStmt) == SQLITE_ROW)
@@ -7105,7 +7105,7 @@ NSString *Doc_Name=[[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurren
     NSString * fieldId = @"", *fieldData = nil;
     NSString * query = [NSString stringWithFormat:@"SELECT Id ,SVMXC__Data__c  from SVMXC__Code_Snippet__c  where Id = '%@' and SVMXC__Data__c <> \"\"" , codeSnippetId];
     sqlite3_stmt * stmt;
-    if(sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
     {
         while (sqlite3_step(stmt)  == SQLITE_ROW)
         {
@@ -7138,7 +7138,7 @@ NSString *Doc_Name=[[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurren
     NSString * fieldId = @"", *fieldData = nil;
     NSString * query = [NSString stringWithFormat:@"SELECT Id ,SVMXC__Data__c  from SVMXC__Code_Snippet__c  where SVMXC__Name__c  = '%@' and SVMXC__Data__c <> \"\"" , codeSnippetName];
     sqlite3_stmt * stmt;
-    if(sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
     {
         while (sqlite3_step(stmt)  == SQLITE_ROW)
         {
@@ -7168,7 +7168,7 @@ NSString *Doc_Name=[[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurren
     NSString * SVMXC__Code_Snippet_Manifest__c = nil;
     NSString * query = [NSString stringWithFormat:@"SELECT SVMXC__Referenced_Code_Snippet__c  from SVMXC__Code_Snippet_Manifest__c  where SVMXC__Code_Snippet__c = '%@' and SVMXC__Referenced_Code_Snippet__c <> \"\"" ,codeSnippetReference];
     sqlite3_stmt * stmt = nil;;
-    if(sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
     {
         while (sqlite3_step(stmt)  == SQLITE_ROW)
         {
@@ -7190,7 +7190,7 @@ NSString *Doc_Name=[[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurren
     NSString * fieldId = @"";
     NSString * query = [NSString stringWithFormat:@"SELECT api_name FROM SFObjectField where object_api_name = '%@' and type = 'boolean'",tablenName];
     sqlite3_stmt * stmt;
-    if(sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
     {
         while (sqlite3_step(stmt)  == SQLITE_ROW)
         {
@@ -7218,7 +7218,7 @@ NSString *Doc_Name=[[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurren
     NSMutableArray *tagsArray = [[NSMutableArray alloc] init];
     NSString * query = [NSString stringWithFormat:@"SELECT tag_id, value FROM MobileDeviceTags where tag_id IN %@",tagsConacatenatedString];
     sqlite3_stmt * stmt = nil;
-    if(sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
     {
         while (sqlite3_step(stmt)  == SQLITE_ROW)
         {

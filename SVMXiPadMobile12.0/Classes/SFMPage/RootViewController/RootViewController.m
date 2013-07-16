@@ -86,11 +86,11 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void)viewDidLoad
 {
+    [super viewDidLoad];
+
     CGRect frame = self.view.frame;
     frame.size.height = 768;
     self.view.frame = frame;
-    
-    [super viewDidLoad];
     
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height) style:UITableViewStylePlain];
@@ -100,7 +100,7 @@ extern void SVMXLog(NSString *format, ...);
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     
-    self.errorTableView = [[UITableView alloc] init ];
+    self.errorTableView = [[UITableView alloc] initWithFrame:CGRectZero];
     [self.view addSubview:self.errorTableView];
     self.errorTableView.dataSource=self;
     self.errorTableView.delegate=self;
@@ -722,19 +722,22 @@ extern void SVMXLog(NSString *format, ...);
     {
         static NSString *erorCellIdentifier = @"Error Cell";
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:erorCellIdentifier];
-        UILabel * cellLabel = [[[UILabel alloc] init] autorelease];
+        UILabel * cellLabel = [[UILabel alloc] init] ;
         NSString * colourCode = @"#F75D59";
         UIColor * color = [appDelegate colorForHex:colourCode];
         //        self.errorTableView.backgroundColor=color;
-        if (nil == cell)
+        if (cell == nil)
         {
             cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:erorCellIdentifier] autorelease];
-            cellLabel.numberOfLines = 0;
-            cellLabel.backgroundColor = [UIColor clearColor];
-            cellLabel.font=[UIFont boldSystemFontOfSize:18.0];
-            cellLabel.lineBreakMode=NSLineBreakByWordWrapping;
-            [cell.contentView addSubview:cellLabel];
         }
+        else
+        {
+            for (UIView *subview in [cell.contentView subviews])
+            {
+                [subview removeFromSuperview];
+            }
+        }
+        // defect 007565
         CGSize constraint = CGSizeMake(self.view.frame.size.width, CELL_CONTENT_HEIGHT);
         
         NSString *errorString=[[self.conflictsArray objectAtIndex:indexPath.row]objectForKey:@"message" ];
@@ -742,11 +745,18 @@ extern void SVMXLog(NSString *format, ...);
         CGSize size = [errorString sizeWithFont:[UIFont boldSystemFontOfSize:18.0] constrainedToSize:constraint lineBreakMode:UILineBreakModeWordWrap];
         
         cellLabel.frame = CGRectMake(0, 0, cell.contentView.bounds.size.width, size.height);
-        NSLog(@"cellLabel frame %@",NSStringFromCGRect(cellLabel.frame));
+        SMLog(@"cellLabel frame %@",NSStringFromCGRect(cellLabel.frame));
         cellLabel.text = errorString;
-        NSLog(@"cellLabel  %@",cellLabel.text);
+        SMLog(@"cellLabel  %@",cellLabel.text);
         [cell setSelectionStyle:UITableViewCellSelectionStyleBlue];
+        cellLabel.numberOfLines = 0;
+        cellLabel.backgroundColor = [UIColor clearColor];
+        cellLabel.font=[UIFont boldSystemFontOfSize:18.0];
+        cellLabel.lineBreakMode=NSLineBreakByWordWrapping;
+        cell.backgroundColor=[UIColor clearColor];
         cell.contentView.backgroundColor=color;
+        [cell.contentView addSubview:cellLabel];
+        [cellLabel release];
         return cell;
     }
     else
@@ -926,18 +936,18 @@ extern void SVMXLog(NSString *format, ...);
         if(errorDictonary != nil || errorDictonary != NULL)
         {
             NSMutableDictionary *SFMPageDetailDict=[errorDictonary objectForKey:@"SFMPPAGE_DETAILS"];
-            NSLog(@"SFMPageHeaderDetail %@",SFMPageDetailDict);
+            SMLog(@"SFMPageHeaderDetail %@",SFMPageDetailDict);
             if([[SFMPageDetailDict allKeys] count]>0 && SFMPageDetailDict != nil && SFMPageDetailDict != NULL)
             {
                 
                 NSString *str= [[[[self.conflictsArray objectAtIndex:indexPath.row] objectForKey:@"ruleInfo"] objectForKey:@"bizRule"] objectForKey:@"SVMXC__Source_Object_Name__c"];
-                NSLog(@"test string %@",str);
+                SMLog(@"test string %@",str);
                 
                 if([[SFMPageDetailDict objectForKey:@"header"] isEqualToString:str])
                 {
                     [appDelegate.sfmPageController.detailView  didselectSection:0];
                 }
-                else if([[[SFMPageDetailDict objectForKey:@"detail"] objectAtIndex:0] isEqualToString:str])
+                else if([[[SFMPageDetailDict objectForKey:@"details"] objectAtIndex:0] isEqualToString:str]) // Defect 007562
                 {
                     [appDelegate.sfmPageController.detailView  didselectSection:1];
                 }

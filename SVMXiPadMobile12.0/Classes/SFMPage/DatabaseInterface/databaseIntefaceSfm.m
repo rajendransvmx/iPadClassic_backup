@@ -1885,7 +1885,7 @@ extern void SVMXLog(NSString *format, ...);
     
     sqlite3_stmt * bulk_statement = nil;
     
-    int prepare = sqlite3_prepare_v2(appDelegate.db, [insert_statement UTF8String], strlen([insert_statement UTF8String]), &bulk_statement, NULL);
+    int prepare = synchronized_sqlite3_prepare_v2(appDelegate.db, [insert_statement UTF8String], strlen([insert_statement UTF8String]), &bulk_statement, NULL);
     
     [appDelegate.dataBase beginTransaction];
     
@@ -4057,7 +4057,7 @@ extern void SVMXLog(NSString *format, ...);
         
         update_statement = [NSString stringWithFormat:@"UPDATE %@ SET %@ WHERE Id = ?", objectName, updateValue];
         
-        int ret_val = sqlite3_prepare_v2(appDelegate.db, [update_statement UTF8String], strlen([update_statement UTF8String]),  &statement, NULL);
+        int ret_val = synchronized_sqlite3_prepare_v2(appDelegate.db, [update_statement UTF8String], strlen([update_statement UTF8String]),  &statement, NULL);
         
         // Good prepare statement
         if (ret_val == SQLITE_OK)
@@ -4534,7 +4534,7 @@ extern void SVMXLog(NSString *format, ...);
         /* Compile it for the records and insert them */
         sqlite3_stmt * bulk_statement = nil;
         
-        int preparedSuccessfully =  sqlite3_prepare_v2(appDelegate.db, [insertionQuery UTF8String], strlen([insertionQuery UTF8String]), &bulk_statement, NULL);
+        int preparedSuccessfully =  synchronized_sqlite3_prepare_v2(appDelegate.db, [insertionQuery UTF8String], strlen([insertionQuery UTF8String]), &bulk_statement, NULL);
         
         int counter = 0;
         
@@ -4747,7 +4747,7 @@ extern void SVMXLog(NSString *format, ...);
         
         sqlite3_stmt * bulkStmt;
         
-        int ret_val = sqlite3_prepare_v2(appDelegate.db, [update_query UTF8String], strlen([update_query UTF8String]),  &bulkStmt, NULL);
+        int ret_val = synchronized_sqlite3_prepare_v2(appDelegate.db, [update_query UTF8String], strlen([update_query UTF8String]),  &bulkStmt, NULL);
         
         if (ret_val == SQLITE_OK)
         {
@@ -5655,7 +5655,7 @@ extern void SVMXLog(NSString *format, ...);
         
         sqlite3_stmt * bulk_statement = nil;
         
-        int prepare_ = sqlite3_prepare_v2(appDelegate.db, [query_string UTF8String], strlen([query_string UTF8String]), &bulk_statement, NULL);
+        int prepare_ = synchronized_sqlite3_prepare_v2(appDelegate.db, [query_string UTF8String], strlen([query_string UTF8String]), &bulk_statement, NULL);
         
         // Vipin-db-optmz 2
         NSMutableDictionary *parentColumnToObjectNameDict = [[NSMutableDictionary alloc] initWithCapacity:0];
@@ -6279,7 +6279,7 @@ extern void SVMXLog(NSString *format, ...);
     
     @try {
         
-        int ret_val = sqlite3_prepare_v2(appDelegate.db, [updateStatement UTF8String], strlen([updateStatement UTF8String]),  &bulkStmt, NULL);
+        int ret_val = synchronized_sqlite3_prepare_v2(appDelegate.db, [updateStatement UTF8String], strlen([updateStatement UTF8String]),  &bulkStmt, NULL);
         
         if (ret_val == SQLITE_OK)
         {
@@ -6338,7 +6338,7 @@ extern void SVMXLog(NSString *format, ...);
     
     @try {
         
-        int ret_val = sqlite3_prepare_v2(appDelegate.db, [updateStatement UTF8String], strlen([updateStatement UTF8String]),  &bulkStmt, NULL);
+        int ret_val = synchronized_sqlite3_prepare_v2(appDelegate.db, [updateStatement UTF8String], strlen([updateStatement UTF8String]),  &bulkStmt, NULL);
         
         if (ret_val == SQLITE_OK)
         {
@@ -8951,7 +8951,7 @@ extern void SVMXLog(NSString *format, ...);
             /* Compile it for the records and insert them */
             sqlite3_stmt * bulk_statement = nil;
             
-            int preparedSuccessfully = sqlite3_prepare_v2(appDelegate.db, [insertionQuery UTF8String], strlen([insertionQuery UTF8String]), &bulk_statement, NULL);
+            int preparedSuccessfully = synchronized_sqlite3_prepare_v2(appDelegate.db, [insertionQuery UTF8String], strlen([insertionQuery UTF8String]), &bulk_statement, NULL);
             int counter = 0;
             
             NSString *sfid=nil,*jsonRecord = nil;
