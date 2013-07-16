@@ -8878,12 +8878,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         result = [self createTable:[NSString stringWithFormat:@"CREATE INDEX IF NOT EXISTS ProcessBusinessRuleIndex ON ProcessBusinessRule (business_rule, error_msg, sequence,process_node_object,target_manager )"]];
         
         NSArray * processBusinessRules = [processDictionary objectForKey:SFM_PROCESS_BUSINESS_RULE];
-        
-        char * err;
-        
-        NSString * txnstmt = @"BEGIN TRANSACTION";
-        
-        int exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+        [self beginTransaction];
         
         NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@' ) VALUES (?1, ?2, ?3, ?4, ?5, ?6,?7, ?8)", SFPROCESSBUSINESSRULE, @"Id", @"business_rule", @"error_msg", @"name", @"process_node_object", @"sequence", @"target_manager", MLOCAL_ID];
         
@@ -8931,12 +8926,12 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                 {
                     printf("Commit Failed!\n");
                 }
-                
+                sqlite3_clear_bindings(bulkStmt);
                 sqlite3_reset(bulkStmt);
             }
         }
-        txnstmt = @"END TRANSACTION";
-        exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+        synchronized_sqlite3_finalize(bulkStmt);
+        [self endTransaction];
     }
 }
 - (void) insertValuesIntoBusinessRuleTable:(NSDictionary *)processDictionary
@@ -8950,12 +8945,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         
         NSArray * sfmBusinessRule = [processDictionary objectForKey:SFM_BUSINESS_RULE];
         
-        char * err;
-        
-        NSString * txnstmt = @"BEGIN TRANSACTION";
-        //BusinessRule
-        int exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
-        
+        [self beginTransaction];
         NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@','%@' ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)", SFBUSINESSRULE, @"Id", @"advanced_expression", @"description", @"error_msg", @"message_type", @"name", @"process_ID", @"source_object_name",MLOCAL_ID];
         
         sqlite3_stmt * bulkStmt;
@@ -9011,12 +9001,12 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                 {
                     printf("Commit Failed!\n");
                 }
-                
+                sqlite3_clear_bindings(bulkStmt);
                 sqlite3_reset(bulkStmt);
             }
         }
-        txnstmt = @"END TRANSACTION";
-        exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+        synchronized_sqlite3_finalize(bulkStmt);
+        [self endTransaction];
     }
 }
 
