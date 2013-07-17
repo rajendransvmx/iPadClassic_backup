@@ -84,58 +84,62 @@ static PerformanceAnalytics *sharedPerformanceAnalytics = nil;
 - (void)observePerformanceForContext:(NSString *)contextName
                      andRecordCount:(long long int)count
 {
-    if (self.nameToStartTimeDictionary == nil)
+    @synchronized(self)
     {
-        NSMutableDictionary *startTimeDictionary = [[NSMutableDictionary alloc] init] ;
-        self.nameToStartTimeDictionary =  startTimeDictionary;
-        [startTimeDictionary release];
-    }
     
-    
-    if (self.nameToEndTimeDictionary == nil)
-    {
-        NSMutableDictionary *endTimeDictionary = [[NSMutableDictionary alloc] init] ;
-        self.nameToEndTimeDictionary =  endTimeDictionary;
-        [endTimeDictionary release];
-    }
-    
-    
-    if (self.nameToRecordCount == nil)
-    {
-        NSMutableDictionary *recordCountDictionary = [[NSMutableDictionary alloc] init] ;
-        self.nameToRecordCount =  recordCountDictionary;
-        [recordCountDictionary release];
-    }
-    
-    if (self.names == nil)
-    {
-        NSMutableArray *tempNames = [[NSMutableArray alloc] init] ;
-        self.names =  tempNames;
-        [tempNames release];
-    }
-    
-    
-    if ([self.nameToStartTimeDictionary objectForKey:contextName] == nil)
-    {
-        NSDate *currentDate = [NSDate date];
-        
-        if ([self.names indexOfObject:contextName] == NSNotFound)
+        if (self.nameToStartTimeDictionary == nil)
         {
-            [self.names addObject:contextName];
+            NSMutableDictionary *startTimeDictionary = [[NSMutableDictionary alloc] init] ;
+            self.nameToStartTimeDictionary =  startTimeDictionary;
+            [startTimeDictionary release];
         }
         
-        [self.nameToStartTimeDictionary setObject:currentDate forKey:contextName];
-        [self.nameToEndTimeDictionary setObject:currentDate forKey:contextName];
-        [self.nameToRecordCount setObject:[NSNumber numberWithLongLong:count] forKey:contextName];
-    }
-    else
-    {
-        NSDate *currentDate = [NSDate date];
-        [self.nameToEndTimeDictionary setObject:currentDate forKey:contextName];
         
-        NSNumber *existCount =  (NSNumber *) [self.nameToRecordCount objectForKey:contextName];
-        long long newCount = [existCount longLongValue] + count;
-        [self.nameToRecordCount setObject:[NSNumber numberWithLongLong:newCount] forKey:contextName];
+        if (self.nameToEndTimeDictionary == nil)
+        {
+            NSMutableDictionary *endTimeDictionary = [[NSMutableDictionary alloc] init] ;
+            self.nameToEndTimeDictionary =  endTimeDictionary;
+            [endTimeDictionary release];
+        }
+        
+        
+        if (self.nameToRecordCount == nil)
+        {
+            NSMutableDictionary *recordCountDictionary = [[NSMutableDictionary alloc] init] ;
+            self.nameToRecordCount =  recordCountDictionary;
+            [recordCountDictionary release];
+        }
+        
+        if (self.names == nil)
+        {
+            NSMutableArray *tempNames = [[NSMutableArray alloc] init] ;
+            self.names =  tempNames;
+            [tempNames release];
+        }
+        
+        
+        if ([self.nameToStartTimeDictionary objectForKey:contextName] == nil)
+        {
+            NSDate *currentDate = [NSDate date];
+            
+            if ([self.names indexOfObject:contextName] == NSNotFound)
+            {
+                [self.names addObject:contextName];
+            }
+            
+            [self.nameToStartTimeDictionary setObject:currentDate forKey:contextName];
+            [self.nameToEndTimeDictionary setObject:currentDate forKey:contextName];
+            [self.nameToRecordCount setObject:[NSNumber numberWithLongLong:count] forKey:contextName];
+        }
+        else
+        {
+            NSDate *currentDate = [NSDate date];
+            [self.nameToEndTimeDictionary setObject:currentDate forKey:contextName];
+            
+            NSNumber *existCount =  (NSNumber *) [self.nameToRecordCount objectForKey:contextName];
+            long long newCount = [existCount longLongValue] + count;
+            [self.nameToRecordCount setObject:[NSNumber numberWithLongLong:newCount] forKey:contextName];
+        }
     }
 }
 
@@ -143,53 +147,56 @@ static PerformanceAnalytics *sharedPerformanceAnalytics = nil;
 - (void)completedPerformanceObservationForContext:(NSString *)context
                                    andRecordCount:(long long int)count
 {
-    if (self.nameToTimeCountDictionary == nil)
+    @synchronized(self)
     {
-        NSMutableDictionary *timeDictionary = [[NSMutableDictionary alloc] init];
-        self.nameToTimeCountDictionary =  timeDictionary;
-        [timeDictionary release];
+        if (self.nameToTimeCountDictionary == nil)
+        {
+            NSMutableDictionary *timeDictionary = [[NSMutableDictionary alloc] init];
+            self.nameToTimeCountDictionary =  timeDictionary;
+            [timeDictionary release];
+        }
+        
+        NSMutableArray *storedReports = [self.nameToTimeCountDictionary objectForKey:context];
+        
+        if (storedReports == nil)
+        {
+            storedReports = [NSMutableArray arrayWithCapacity:0];
+        }
+        
+        
+        NSDate *startDate =  [self.nameToStartTimeDictionary objectForKey:context];
+        
+        if (startDate == nil)
+        {
+            // No valid entry. Lets stops here
+            return;
+        }
+        
+        NSDate *endDate   =  [self.nameToEndTimeDictionary objectForKey:context];
+        
+        if ([startDate compare:endDate] == NSOrderedSame)
+        {
+            endDate = [NSDate date];
+        }
+       
+        NSNumber *existCount =  (NSNumber *) [self.nameToRecordCount objectForKey:context];
+        long long newCount = [existCount longLongValue] + count;
+        
+        NSTimeInterval  timeDiff = [endDate timeIntervalSinceDate:startDate];
+        NSNumber *totalTime    = [NSNumber numberWithDouble:timeDiff];
+        NSNumber *totalRecords = [NSNumber numberWithLongLong:newCount];
+        
+        NSArray *report = [NSArray arrayWithObjects:totalRecords, totalTime, nil];
+        
+        [storedReports addObject:report];
+        
+        [self.nameToTimeCountDictionary setObject:storedReports forKey:context];
+        
+        // Reset all
+        [self.nameToStartTimeDictionary removeObjectForKey:context];
+        [self.nameToEndTimeDictionary removeObjectForKey:context];
+        [self.nameToRecordCount removeObjectForKey:context];
     }
-    
-    NSMutableArray *storedReports = [self.nameToTimeCountDictionary objectForKey:context];
-    
-    if (storedReports == nil)
-    {
-        storedReports = [NSMutableArray arrayWithCapacity:0];
-    }
-    
-    
-    NSDate *startDate =  [self.nameToStartTimeDictionary objectForKey:context];
-    
-    if (startDate == nil)
-    {
-        // No valid entry. Lets stops here
-        return;
-    }
-    
-    NSDate *endDate   =  [self.nameToEndTimeDictionary objectForKey:context];
-    
-    if ([startDate compare:endDate] == NSOrderedSame)
-    {
-        endDate = [NSDate date];
-    }
-   
-    NSNumber *existCount =  (NSNumber *) [self.nameToRecordCount objectForKey:context];
-    long long newCount = [existCount longLongValue] + count;
-    
-    NSTimeInterval  timeDiff = [endDate timeIntervalSinceDate:startDate];
-    NSNumber *totalTime    = [NSNumber numberWithDouble:timeDiff];
-    NSNumber *totalRecords = [NSNumber numberWithLongLong:newCount];
-    
-    NSArray *report = [NSArray arrayWithObjects:totalRecords, totalTime, nil];
-    
-    [storedReports addObject:report];
-    
-    [self.nameToTimeCountDictionary setObject:storedReports forKey:context];
-    
-    // Reset all
-    [self.nameToStartTimeDictionary removeObjectForKey:context];
-    [self.nameToEndTimeDictionary removeObjectForKey:context];
-    [self.nameToRecordCount removeObjectForKey:context];
 }
 
 
