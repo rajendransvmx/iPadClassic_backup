@@ -274,6 +274,7 @@
 #define gDETAILS_FIELDS_ARRAY                           @"details_Fields_Array"
 #define gDETAILS_VALUES_ARRAY                           @"details_Values_Array"
 #define gDETAILS_LAYOUT_ID                              @"details_Layout_Id"
+#define gDETAILS_PAGE_LAYOUT_ID                         @"details_Page_Layout_Id"
 #define gDETAILS_EVENT_INFO                             @"SVMXC__SFM_Event__c"
 #define gDETAILS_ALLOW_NEW_LINES                        @"details_Allow_New_Lines"
 #define gDETAILS_ALLOW_DELETE_LINES                     @"details_Allow_Delete_Lines"

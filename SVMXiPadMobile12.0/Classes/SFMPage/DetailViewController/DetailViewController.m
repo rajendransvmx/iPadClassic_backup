@@ -10722,7 +10722,7 @@ enum BizRuleConfirmViewStatus{
         for(NSDictionary *dict in childObjectsArray)
         {
             NSString *layoutID = [dict objectForKey:gDETAILS_LAYOUT_ID];
-            NSString *detailName = [dict objectForKey:gDETAIL_OBJECT_ALIAS_NAME];
+            NSString *detailName = [dict objectForKey:gDETAILS_PAGE_LAYOUT_ID];
             
             NSMutableDictionary *childDict = [[NSMutableDictionary alloc] init];
             [childDict setObject:layoutID forKey:@"key"];

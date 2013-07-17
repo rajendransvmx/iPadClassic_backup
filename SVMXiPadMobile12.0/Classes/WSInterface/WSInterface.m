@@ -8082,6 +8082,8 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                     NSString * detail_multi_add_config = pageDetail.DetailLayout.SVMXC__Multi_Add_Configuration__c;
                     NSString * detail_multi_add_search_field = pageDetail.DetailLayout.SVMXC__Multi_Add_Search_Field__c;
                     NSString * detail_mutlti_add_search_object = pageDetail.DetailLayout.SVMXC__Multi_Add_Search_Object__c;
+                    NSString * detail_page_layout_id = pageDetail.DetailLayout.SVMXC__Page_Layout_ID__c;
+                    detail_page_layout_id = (detail_page_layout_id != nil)?detail_page_layout_id:@"";
                     
                     NSMutableArray * detailKeys = [NSMutableArray arrayWithObjects:
                                                    gDETAILS_FIELDS_ARRAY,
@@ -8100,6 +8102,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                                    gDetail_MULTIADD_CONFIG,
                                                    gDETAIL_MULTIADD_SEARCH,
                                                    gDETAIL_MULTIADD_SEARCH_OBJECT,
+                                                   gDETAILS_PAGE_LAYOUT_ID,
                                                    nil];
                     
                     NSMutableArray * detailObjects = [NSMutableArray arrayWithObjects:
@@ -8118,7 +8121,8 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                                       detail_deleted_rec,
                                                       (detail_multi_add_config != nil)?detail_multi_add_config:@"",
                                                       (detail_multi_add_search_field!= nil)?detail_multi_add_search_field:@"",
-                                                      (detail_mutlti_add_search_object!= nil)?detail_mutlti_add_search_object:@"",      
+                                                      (detail_mutlti_add_search_object!= nil)?detail_mutlti_add_search_object:@"",
+                                                      detail_page_layout_id,
                                                       nil];
                     
                     NSMutableDictionary * detailsDataDict = [[NSMutableDictionary dictionaryWithObjects:detailObjects forKeys:detailKeys] retain];
