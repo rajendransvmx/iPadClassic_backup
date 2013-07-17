@@ -521,6 +521,9 @@ NSString* machineName()
     NSString *appVersion = [[NSBundle mainBundle]
                             objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
     
+    //Krishna : Temperory change (HardCoded), siva.
+    appVersion = @"12.0.0.0"; //TODO: remove this line
+    
     NSString *deviceVersion = [self getDeviceVersion];
     
     NSLog(@"model : %@ systemVersion : %@ appversion %@",type,systemOSVersion,appVersion);
