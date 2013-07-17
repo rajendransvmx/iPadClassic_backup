@@ -2465,16 +2465,33 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                     {
                         for (int join = 0; join < [arrApiName count]; join++)
                         {
+                            BOOL isChild =  [appDelegate.databaseInterface IsChildObject:[dict objectForKey:@"object"]];
+                            SMLog(@"isChild :%d",isChild);
                             NSDictionary * refDict = [arrApiName objectAtIndex:join];
                             if (join == 0)
                             {
-                                [joinFields appendFormat:@"('%@'.%@ = '%@'.Id",[dict objectForKey:@"object"],[refDict objectForKey:@"apiName"],[self getApiNameFromFieldLabel:[TableArray objectAtIndex:i]]];
+                                if(!isChild)
+                                {
+                                    [joinFields appendFormat:@"('%@'.%@ = '%@'.Id",[dict objectForKey:@"object"],[refDict objectForKey:@"apiName"],[self getApiNameFromFieldLabel:[TableArray objectAtIndex:i]]];
+                                }
+                                else
+                                {
+                                    [joinFields appendFormat:@"('%@'.%@ = '%@'.local_id",[dict objectForKey:@"object"],[refDict objectForKey:@"apiName"],[self getApiNameFromFieldLabel:[TableArray objectAtIndex:i]]];                                    
+                                }
                             }
                             else 
                             {
                                 if([[refDict objectForKey:@"type"] isEqualToString:@"reference"])
                                 {
-                                    [joinFields appendFormat:@" or '%@'.%@ = '%@'.Id",[dict objectForKey:@"object"],[refDict objectForKey:@"apiName"],[self getApiNameFromFieldLabel:[TableArray objectAtIndex:i]]];
+                                     if(!isChild)
+                                     {
+                                        [joinFields appendFormat:@" or '%@'.%@ = '%@'.Id",[dict objectForKey:@"object"],[refDict objectForKey:@"apiName"],[self getApiNameFromFieldLabel:[TableArray objectAtIndex:i]]];
+                                     }
+                                    else
+                                    {
+                                        [joinFields appendFormat:@" or '%@'.%@ = '%@'.local_id",[dict objectForKey:@"object"],[refDict objectForKey:@"apiName"],[self getApiNameFromFieldLabel:[TableArray objectAtIndex:i]]];
+
+                                    }
                                 }
                             }
                             
@@ -3811,7 +3828,13 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                 NSString *displayType = [dict objectForKey:@"SVMXC__Display_Type__c"];
                 if ([displayType isEqualToString:@"REFERENCE"])
                 {
+                    // Direct Object 
                     TableName=[self getReferencetoFiledForObject:object api_Name:[dict objectForKey:@"SVMXC__Field_Name__c"]];
+                    if(![TableName length]>0)
+                    {
+                        // For reference object of process object
+                        TableName=[self getReferencetoFiledForObject:object api_Name:[dict objectForKey:@"SVMXC__Object_Name__c"]];
+                    }
                     fieldName=[self getNameFiled:object];
                     /*
                      NSMutableString * queryStatement1 = [[NSMutableString alloc]initWithCapacity:0];
@@ -4635,13 +4658,24 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
             SMLog(@"%@ ",dictApiName);
             for (int j=0; j<[[dictApiName allKeys] count]; j++)
             {
+                BOOL isChild =  [appDelegate.databaseInterface IsChildObject:[dict objectForKey:@"object"]];
+                SMLog(@"isChild New:%d",isChild);
                 NSString *relationshipName=[[dictApiName allKeys] objectAtIndex:j];
                 NSString *alias=[dictApiName objectForKey:relationshipName]!=nil ?[dictApiName objectForKey:relationshipName]:relationshipName;
                 [joinFields appendFormat:@" LEFT OUTER JOIN"];
                 [joinFields appendFormat:@" '%@'",[TableArray objectAtIndex:i]];
                 [joinFields appendFormat:@" %@ ",alias];
                 [joinFields appendFormat:@" ON "];
+                
+                if(!isChild)
+                {
                 [joinFields appendFormat:@"('%@'.%@ = %@.Id",[dict objectForKey:@"object"],[self getapiNameforObject:[dict objectForKey:@"object"] RelationshipName:relationshipName],alias];
+                }
+                else
+                {
+                    [joinFields appendFormat:@"('%@'.%@ = %@.local_id",[dict objectForKey:@"object"],[self getapiNameforObject:[dict objectForKey:@"object"] RelationshipName:relationshipName],alias];
+
+                }
                 [joinFields appendFormat:@" )"];
             }
         }
