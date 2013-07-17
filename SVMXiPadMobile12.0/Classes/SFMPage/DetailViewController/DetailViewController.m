@@ -8680,13 +8680,27 @@ enum BizRuleConfirmViewStatus{
     
     if (UIDeviceOrientationIsLandscape(deviceOrientation))
     {
-        [multiLookupPopover presentPopoverFromRect:CGRectMake(5, 10, 10, 10) inView:control permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-//        [multiLookupPopover release];
-    }
+		// Defect Fix #7517
+		if(appDelegate.sfmPageController.conflictExists)
+		{
+			 [multiLookupPopover presentPopoverFromRect:CGRectMake(900, 200, 10, 20) inView:appDelegate.sfmPageController.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+		}
+		else
+		{
+			 [multiLookupPopover presentPopoverFromRect:CGRectMake(900, 100, 10, 20) inView:appDelegate.sfmPageController.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+		}
+	}
     else
     {
-        [multiLookupPopover presentPopoverFromRect:CGRectMake(5, 0, 10, 20) inView:control permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-//        [multiLookupPopover release];
+		// Defect Fix #7517
+		if(appDelegate.sfmPageController.conflictExists)
+		{
+			[multiLookupPopover presentPopoverFromRect:CGRectMake(900, 200, 10, 20) inView:appDelegate.sfmPageController.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+		}
+		else
+		{
+			[multiLookupPopover presentPopoverFromRect:CGRectMake(900, 100, 10, 20) inView:appDelegate.sfmPageController.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+		}
     }
 }
 
