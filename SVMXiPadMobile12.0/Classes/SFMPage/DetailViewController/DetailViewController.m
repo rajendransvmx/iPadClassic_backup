@@ -44,9 +44,15 @@ enum BizRuleConfirmViewStatus{
 
 
 @interface DetailViewController ()
+@property (nonatomic,retain) NSMutableDictionary * headerValueMappingDict;
+@property (nonatomic,retain) NSString * s2t_recordId;
+@property (nonatomic ) BOOL business_rules_success;
 @property (nonatomic, retain) UIPopoverController * popoverController;
 @property (nonatomic, retain) NSMutableDictionary * child_sfm_process_node;
 @property (nonatomic, assign) int bizAlertStatus;
+
+@property (nonatomic, retain) NSIndexPath * SfmChildSelectedIndexPath;//childSfm Jul 1st
+@property (nonatomic, retain) NSString * sfmChildSelectedRecordId;
 
 - (void)configureView;
 - (SFMEditDetailViewController *) getEditViewOfLine; // KRI
@@ -74,12 +80,25 @@ enum BizRuleConfirmViewStatus{
 
 //-(NSInteger)findHeightOftheChildSfmView:(NSIndexPath *)index_path;
 
--(void)invokeChildSfMForProcess_id:(NSString *)child_process_id records_id:(NSString *)child_record_id ChildobjectName:(NSString *)child_obj_name;
+//sahana child sfm  -July 1st
+-(void)invokeChildSfMForProcess_id:(NSString *)child_process_id records_id:(NSString *)child_record_id ChildobjectName:(NSString *)child_obj_name selectedIndexPath:(NSIndexPath *)indexPath;
+-(void)getRecordIdForChildSfmForSection:(NSInteger)section row:(NSInteger)row recordId:(NSString *)localRecordId  actiondict:(NSDictionary *)actionDict;
+-(NSInteger)getSection:(NSIndexPath *)_indexpath;
+-(NSInteger)getRow:(NSIndexPath *)_indexpath;
+-(BOOL)isInvokedFromChildSfm:(NSDictionary *)actionDict;
+-(BOOL)checkForEmptyRequireFields;
+-(void)SaveCreatedRecordInfoIntoPlistForRecordId:(NSString *)recordId objectName:(NSString *)ObjectName;
+-(void)reloadCurrentProcess:(NSString *)processType;
 @end
 
 @implementation DetailViewController
 @synthesize bizRuleResult;
 @synthesize bizRuleExecutionStatus;
+@synthesize headerValueMappingDict;
+
+//ChildSfm
+@synthesize SfmChildSelectedIndexPath,sfmChildSelectedRecordId;
+@synthesize business_rules_success,s2t_recordId;
 
 //KRI
 @synthesize editDetailObject;
@@ -996,7 +1015,8 @@ enum BizRuleConfirmViewStatus{
 {
 	@try{
         
-        
+
+    self.headerValueMappingDict = nil;
         
     appDelegate.sfmPageController.processId = processId;
     appDelegate.sfmPageController.recordId = recordId;
@@ -1929,6 +1949,7 @@ enum BizRuleConfirmViewStatus{
         {
            headerValueDict = [header_Value_array objectAtIndex:0];
         }
+        self.headerValueMappingDict = headerValueDict;
         
         NSArray *  all_Keys_values = [headerValueDict allKeys];
         
@@ -2164,7 +2185,12 @@ enum BizRuleConfirmViewStatus{
                 NSMutableDictionary * object_mapping_dict = [object_mapping_array  objectAtIndex:p];
                 NSArray * object_mapping_keys = [object_mapping_dict allKeys];
                 NSMutableArray * each_detail_array = [[NSMutableArray alloc] initWithCapacity:0];
+               
                 
+                //sahana jul15
+              
+                [appDelegate.databaseInterface replaceCURRENTRECORDLiteral:object_mapping_dict sourceDict:headerValueDict];
+
                 for(int x = 0 ; x < [object_mapping_keys count]; x++)
                 {
                     NSString * object_mapping_key = [object_mapping_keys objectAtIndex:x]; 
@@ -2314,6 +2340,7 @@ enum BizRuleConfirmViewStatus{
 		
 		
 		NSMutableDictionary * value_mapping_dict = [appDelegate.databaseInterface getObjectMappingForMappingId:process_components mappingType:VALUE_MAPPING];
+        self.headerValueMappingDict = value_mapping_dict;
 		
 		NSArray * valueMapping_keys = [value_mapping_dict allKeys];
 
@@ -2430,6 +2457,11 @@ enum BizRuleConfirmViewStatus{
 			NSMutableDictionary * detail_value_mapping_dict = [appDelegate.databaseInterface getObjectMappingForMappingId:process_components mappingType:VALUE_MAPPING];
 			
 			NSArray * detail_value_mapping_keys = [detail_value_mapping_dict allKeys];
+            
+            //sahana jul15
+            [appDelegate.databaseInterface replaceCURRENTRECORDLiteral:detail_value_mapping_dict sourceDict:value_mapping_dict];
+
+            
             NSString * expressionId = [process_components objectForKey:EXPRESSION_ID];
             NSString * parent_column_name = [dict objectForKey:gDETAIL_HEADER_REFERENCE_FIELD];
             NSString * sorting_order = ([process_components objectForKey:SORTING_ORDER]!= nil)?[process_components objectForKey:SORTING_ORDER]:@"";
@@ -5403,7 +5435,7 @@ enum BizRuleConfirmViewStatus{
                 NSString * record_id = [detail_values_ids objectAtIndex:row-1];
                 NSString * objectName_  =  [detail objectForKey:gDETAIL_OBJECT_NAME];
                 NSString * sf_id = [appDelegate.databaseInterface  getSfid_For_LocalId_From_Object_table:objectName_ local_id:record_id];
-                if([sf_id length] > 0)
+                //if([sf_id length] > 0)
                 {	
 			SWitchViewButton * switchButton = [[SWitchViewButton alloc] initWithFrame:swithchButtonFrame];
 			[switchButton setBackgroundImage:switchImage forState:UIControlStateNormal];
@@ -5412,7 +5444,7 @@ enum BizRuleConfirmViewStatus{
 			[switchButton addTarget:self action:@selector(showChildLinkedProcess:) forControlEvents:UIControlEventTouchUpInside];
 			[background addSubview:switchButton];
 			[switchButton release];
- }
+		}
             }
 
 			if(self.selectedIndexPathForEdit != nil && indexPath.section == self.selectedIndexPathForEdit.section && indexPath.row == self.selectedIndexPathForEdit.row && self.selectedIndexPathForchildView == nil)
@@ -5434,12 +5466,12 @@ enum BizRuleConfirmViewStatus{
                 [background addSubview:seperatorView];
                 [seperatorView release];
 				
-				if([[_child_sfm_process_node  allKeys] containsObject:detail_layout_id])
+		if([[_child_sfm_process_node  allKeys] containsObject:detail_layout_id])
                 {
                     NSString * record_id = [detail_values_ids objectAtIndex:row-1];
                     NSString * objectName_  =  [detail objectForKey:gDETAIL_OBJECT_NAME];
                     NSString * sf_id = [appDelegate.databaseInterface  getSfid_For_LocalId_From_Object_table:objectName_ local_id:record_id];
-                    if([sf_id length] > 0)
+                   // if([sf_id length] > 0)
                     {
 						CGRect swithchButtonFrame = CGRectMake(xValForSwitchbutton, 6, 35, 30);
 						//Radha : 3/june/2013
@@ -5449,7 +5481,7 @@ enum BizRuleConfirmViewStatus{
 						[switchButton addTarget:self action:@selector(showChildLinkedProcess:) forControlEvents:UIControlEventTouchUpInside];
 						[background addSubview:switchButton];
 						[switchButton release];
-					}
+		    }
                 }
 				
                 
@@ -6237,12 +6269,12 @@ enum BizRuleConfirmViewStatus{
 			
 			CGRect swithchButtonFrame = CGRectMake(xValForSwitchbutton, 6, 35, 30);
 			
-			if([[_child_sfm_process_node  allKeys] containsObject:detail_layout_id])
+	    if([[_child_sfm_process_node  allKeys] containsObject:detail_layout_id])
             {
                  NSString * record_id = [detail_values_ids objectAtIndex:row-1];
                 NSString * objectName_  =  [detail objectForKey:gDETAIL_OBJECT_NAME];
                 NSString * sf_id = [appDelegate.databaseInterface  getSfid_For_LocalId_From_Object_table:objectName_ local_id:record_id];
-                if([sf_id length] > 0)
+              //  if([sf_id length] > 0)
                 {
 					SWitchViewButton * switchButton = [[SWitchViewButton alloc] initWithFrame:swithchButtonFrame];
 					[switchButton setBackgroundImage:switchImage forState:UIControlStateNormal];
@@ -6251,7 +6283,7 @@ enum BizRuleConfirmViewStatus{
 					[switchButton addTarget:self action:@selector(showChildLinkedProcess:) forControlEvents:UIControlEventTouchUpInside];
 					[background addSubview:switchButton];
 					[switchButton release];
-				}
+		}
             }
 			
             UIImage *disclosureImg = [UIImage imageNamed:@"detail_disclosure.png"];
@@ -6312,7 +6344,7 @@ enum BizRuleConfirmViewStatus{
                 NSString * record_id = [detail_values_ids objectAtIndex:row-1];
                 NSString * objectName_  =  [detail objectForKey:gDETAIL_OBJECT_NAME];
                 NSString * sf_id = [appDelegate.databaseInterface  getSfid_For_LocalId_From_Object_table:objectName_ local_id:record_id];
-                if([sf_id length] > 0)
+                //if([sf_id length] > 0)
                 {
 					SWitchViewButton * switchButton = [[SWitchViewButton alloc] initWithFrame:swithchButtonFrame];
 					[switchButton setBackgroundImage:switchImage forState:UIControlStateNormal];
@@ -7189,6 +7221,16 @@ enum BizRuleConfirmViewStatus{
     [editViewOfLine release]; 
     [jsExecuter release];
     [priceBookData release];
+    
+    
+    //sahana child SFM
+    [sfmChildSelectedRecordId release];
+    sfmChildSelectedRecordId = nil;
+    
+    [SfmChildSelectedIndexPath release];
+    SfmChildSelectedIndexPath = nil;
+    
+    
 	[super dealloc];
 }
 
@@ -8246,7 +8288,10 @@ enum BizRuleConfirmViewStatus{
         
         NSArray * all_Keys_values = [object_mapping_dict allKeys];
         
+        //sahana July15        
+        [appDelegate.databaseInterface replaceCURRENTRECORDLiteral:object_mapping_dict sourceDict:self.headerValueMappingDict];
 
+        
         NSMutableArray * detailValue = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
         for (int i = 0; i < [detailFieldsArray count]; i++)
         {
@@ -8683,6 +8728,10 @@ enum BizRuleConfirmViewStatus{
             
             NSMutableDictionary * object_mapping_dict = [appDelegate.databaseInterface getObjectMappingForMappingId:process_components mappingType:VALUE_MAPPING];
             
+            //sahana July15
+            [appDelegate.databaseInterface replaceCURRENTRECORDLiteral:object_mapping_dict sourceDict:self.headerValueMappingDict];
+            
+
             NSArray * all_Keys_values = [object_mapping_dict allKeys];
             
             
@@ -10856,6 +10905,7 @@ enum BizRuleConfirmViewStatus{
         {
             SMLog(@"Don't Save the record");
             [self enableSFMUI];
+            business_rules_success = FALSE;
             return;
         }
         SMLog(@"Wait for Ok(continue) or Cancel (return)");
@@ -11058,7 +11108,7 @@ enum BizRuleConfirmViewStatus{
                             if ([source_parent_object_name length] == 0)
                                 source_parent_object_name = headerObjName;
                             
-                            NSString * parent_sf_id =  [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:source_parent_object_name local_id:appDelegate.sfmPageController.recordId];
+                         /*   NSString * parent_sf_id =  [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:source_parent_object_name local_id:appDelegate.sfmPageController.recordId];
                             
                             if([parent_sf_id isEqualToString:@""] || parent_sf_id == nil || [parent_sf_id length] ==0)
                             {
@@ -11110,7 +11160,7 @@ enum BizRuleConfirmViewStatus{
                                 [alert_view show];
                             }
                             else
-                            {
+                            {*/
                                 
                                 [self pushtViewProcessToStack:appDelegate.sfmPageController.processId record_id:appDelegate.sfmPageController.recordId];
                                 
@@ -11125,7 +11175,7 @@ enum BizRuleConfirmViewStatus{
                                 //check For view process  - dont require
                                 [self fillSFMdictForOfflineforProcess:action_process_id forRecord:currentRecordId];
                                 [self didReceivePageLayoutOffline];
-                            }
+                           //}
                         }
                     }
                     
@@ -11560,7 +11610,10 @@ enum BizRuleConfirmViewStatus{
                             if(data_inserted )
                             {
                                 SMLog(@"insertion success");
-                              
+                                //childSfmofflineAction
+                                [self getRecordIdForChildSfmForSection:i row:j recordId:detail_record_local_id actiondict:buttonDict];
+                                
+                                
                                 [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:detail_record_local_id SF_id:@"" record_type:DETAIL  operation:INSERT object_name:detail_object_name sync_flag:@"false"  parentObjectName:headerObjName parent_loacl_id:header_record_local_id webserviceName:webserviceName className:className synctype:syncType headerLocalId:header_record_local_id requestData:customDataDictionary finalEntry:NO];
 
                             }
@@ -11572,7 +11625,15 @@ enum BizRuleConfirmViewStatus{
                         }
                     }
                   
-                    [self SaveRecordIntoPlist:header_record_local_id objectName:headerObjName];
+                    if(![self isInvokedFromChildSfm:buttonDict])
+                    {
+                        //need to split the below method it does both saving the record to plist and invoking the sfmpage
+                        [self SaveRecordIntoPlist:header_record_local_id objectName:headerObjName];
+                    }
+                    else
+                    {
+                        [self SaveCreatedRecordInfoIntoPlistForRecordId:header_record_local_id objectName:headerObjName];
+                    }
                     //[appDelegate.wsInterface  CallIncrementalDataSync];
                     [appDelegate setAgrressiveSync_flag];
                     if ([syncType isEqualToString:CUSTOMSYNC])
@@ -12163,6 +12224,10 @@ enum BizRuleConfirmViewStatus{
                                 
                                 if(data_inserted )
                                 {
+                                    //childSfmofflineAction
+                                    
+                                    [self getRecordIdForChildSfmForSection:i row:j recordId:line_local_id actiondict:buttonDict];
+                                    
                                     SMLog(@"insertion success");
                                     if(isSalesForceRecord)
                                     {
@@ -12288,6 +12353,9 @@ enum BizRuleConfirmViewStatus{
                                     
                                     if(data_inserted )
                                     {
+                                        //childSfmofflineAction
+                                        [self getRecordIdForChildSfmForSection:i row:j recordId:line_record_id actiondict:buttonDict];
+                                        
                                         SMLog(@"insertion success");
                                         if(isSalesForceRecord)
                                         {
@@ -12313,6 +12381,10 @@ enum BizRuleConfirmViewStatus{
                                     BOOL detail_success_flag = [appDelegate.databaseInterface  UpdateTableforId:line_record_id forObject:detail_object_name data:sfm_detail_field_keyValue];
                                     if(detail_success_flag)
                                     {
+                                        
+                                        //childSfmofflineAction
+                                        [self getRecordIdForChildSfmForSection:i row:j recordId:line_record_id actiondict:buttonDict];
+                                        
                                         SMLog(@"detail Update succeded");
                                         //check whether the record is Salesforce record if it is insert into Data Trailer table
                                         
@@ -12411,7 +12483,7 @@ enum BizRuleConfirmViewStatus{
                 }
                 
             }
-            if([targetCall isEqualToString:save])
+            if([targetCall isEqualToString:save] && ![self isInvokedFromChildSfm:buttonDict])
             {
                 NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
                 NSString * headerObjName = [hdr_object objectForKey:gHEADER_OBJECT_NAME];
@@ -12889,6 +12961,10 @@ enum BizRuleConfirmViewStatus{
                             
                             if(data_inserted )
                             {
+                                 //childSfmofflineAction
+                                
+                                [self getRecordIdForChildSfmForSection:i row:j recordId:detail_local_id actiondict:buttonDict];
+                                
                                  [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:detail_local_id SF_id:@"" record_type:DETAIL operation:INSERT object_name:detail_object_name sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:header_record_local_id webserviceName:webserviceName className:className synctype:syncType headerLocalId:header_record_local_id requestData:customDataDictionary finalEntry:NO];
                                 SMLog(@"insertion success");
                             }
@@ -12900,9 +12976,14 @@ enum BizRuleConfirmViewStatus{
                         }
                     }
                     
-					
-					
-                    [self SaveRecordIntoPlist:header_record_local_id objectName:headerObjName];
+					if(![self isInvokedFromChildSfm:buttonDict])
+                    {
+                        [self SaveRecordIntoPlist:header_record_local_id objectName:headerObjName];
+                    }
+                    else
+                    {
+                        [self SaveCreatedRecordInfoIntoPlistForRecordId:header_record_local_id objectName:headerObjName];
+                    }
                     [appDelegate setAgrressiveSync_flag];
                     if ([syncType isEqualToString:CUSTOMSYNC])
 					{
@@ -15799,7 +15880,8 @@ enum BizRuleConfirmViewStatus{
     self.SFMChildTableview.linkedProcess = linkedProcess;
 	self.SFMChildTableview.detailObjectname = detailObjectName;
 	self.SFMChildTableview.record_id = local_id;
-	
+	self.SFMChildTableview.selectedIndexPath  = _indexpath;
+    
 	self.SFMChildTableview.childTableview.hidden = NO;
     
 	parentView.clipsToBounds = YES;
@@ -15834,7 +15916,7 @@ enum BizRuleConfirmViewStatus{
 }
 
 //Delagte Method to show child process when click on button;
-- (void) showSFMPageForChildLinkedProcessWithProcessId:(NSString *)processId record_id:(NSString *)recordId  detailObjectName:(NSString *)detailObjectName
+- (void) showSFMPageForChildLinkedProcessWithProcessId:(NSString *)processId record_id:(NSString *)recordId  detailObjectName:(NSString *)detailObjectName selectedIndexPath:(NSIndexPath *)indexPath
 {
     
     if (self.SFMChildTableview != nil)
@@ -15851,18 +15933,64 @@ enum BizRuleConfirmViewStatus{
         [self pushtViewProcessToStack:appDelegate.sfmPageController.processId record_id:appDelegate.sfmPageController.recordId];
     }
     
-    [self invokeChildSfMForProcess_id:processId records_id:recordId ChildobjectName:detailObjectName];
+    [self invokeChildSfMForProcess_id:processId records_id:recordId ChildobjectName:detailObjectName selectedIndexPath:indexPath];
 
     
 }
 #pragma END
 
 
--(void)invokeChildSfMForProcess_id:(NSString *)child_process_id records_id:(NSString *)child_record_id ChildobjectName:(NSString *)child_obj_name
+-(void)invokeChildSfMForProcess_id:(NSString *)child_process_id records_id:(NSString *)child_record_id_ ChildobjectName:(NSString *)child_obj_name selectedIndexPath:(NSIndexPath *)indexPath
 {
+    SfmChildSelectedIndexPath = nil;
+    sfmChildSelectedRecordId = nil;
+    s2t_recordId = nil;
+    business_rules_success = TRUE;
+    //check all require fields are filled
+    NSString * current_processType = [appDelegate.SFMPage objectForKey:gPROCESSTYPE];
     
     NSString * process_type = [appDelegate.databaseInterface getprocessTypeForProcessId:child_process_id];
-
+    if(![[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"VIEWRECORD"] )
+    {
+        BOOL proceedSave = [self checkForEmptyRequireFields];
+        if(proceedSave)
+        {
+            SfmChildSelectedIndexPath = indexPath;
+            
+            NSMutableArray  *keys_event = nil, *objects_event = nil;
+            keys_event = [NSArray arrayWithObjects:SFW_ACTION_ID,SFW_ACTION_DESCRIPTION,SFW_EXPRESSION_ID,SFW_PROCESS_ID,SFW_ACTION_TYPE ,SFW_WIZARD_ID,SFW_ENABLE_ACTION_BUTTON,CHILD_SFM,nil];
+           
+            objects_event = [NSArray arrayWithObjects:@"",save,@"",@"",gBUTTON_TYPE_TDM_IPAD_ONLY ,@"",@"true",@"",nil];
+            
+            NSMutableDictionary * dict_events_save = [NSMutableDictionary dictionaryWithObjects:objects_event forKeys:keys_event];
+            [self offlineActions:dict_events_save];
+        }
+        else
+        {
+            return;
+        }
+    }
+    
+    NSString * child_record_id = nil;
+    
+    if([child_record_id_ length] != 0)
+    {
+        child_record_id = child_record_id_;
+    }
+    else
+    {
+        child_record_id = sfmChildSelectedRecordId;
+    }
+    if([child_record_id isEqualToString:sfmChildSelectedRecordId])
+    {
+        NSLog(@"Both Ids are Equal");
+    }
+    if(child_record_id == nil || [child_record_id length] == 0 || !business_rules_success)
+    {
+        [self reloadCurrentProcess:current_processType];
+        return;
+    }
+    
     if([process_type isEqualToString:@"EDIT"] || [process_type isEqualToString:@"SOURCETOTARGETONLYCHILDROWS"])
     {
         
@@ -15888,6 +16016,7 @@ enum BizRuleConfirmViewStatus{
             UIAlertView * enty_criteris = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:cancel_ otherButtonTitles:nil, nil];
             [enty_criteris show];
             [enty_criteris release];
+            [self reloadCurrentProcess:current_processType];
         }
         else
         {
@@ -15916,8 +16045,6 @@ enum BizRuleConfirmViewStatus{
         
         //check out the record any child or parent  local_id
         
-        BOOL record_is_not_syncd = FALSE;
-        
         NSMutableDictionary * page_layoutInfo = [appDelegate.databaseInterface  queryProcessInfo:child_process_id object_name:@""];
         
         NSMutableDictionary * _header =  [page_layoutInfo objectForKey:@"header"];
@@ -15925,7 +16052,6 @@ enum BizRuleConfirmViewStatus{
         NSString * headerObjName = [_header objectForKey:gHEADER_OBJECT_NAME];
         
         NSString * layout_id = [_header objectForKey:gHEADER_HEADER_LAYOUT_ID];
-        NSMutableArray * details = [page_layoutInfo objectForKey:gDETAILS];
         
         NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGET process_id:child_process_id layoutId:layout_id objectName:headerObjName];
         NSString * source_parent_object_name = [process_components objectForKey:SOURCE_OBJECT_NAME];
@@ -15943,66 +16069,13 @@ enum BizRuleConfirmViewStatus{
             UIAlertView * enty_criteris = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:cancel_ otherButtonTitles:nil, nil];
             [enty_criteris show];
             [enty_criteris release];
-            
+            [self reloadCurrentProcess:current_processType];
         }
         else
         {
             if ([source_parent_object_name length] == 0)
                 source_parent_object_name = headerObjName;
-            
-            NSString * parent_sf_id =  [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:source_parent_object_name local_id:child_record_id];
-            
-            if([parent_sf_id isEqualToString:@""] || parent_sf_id == nil || [parent_sf_id length] ==0)
-            {
-                record_is_not_syncd = TRUE;
-                
-            }
-            if(!record_is_not_syncd)
-            {
-                for(int j= 0; j < [details count]; j++)
-                {
-                    NSMutableDictionary * dict = [details objectAtIndex:j];
-                    NSMutableArray * filedsArray = [dict objectForKey:gDETAILS_FIELDS_ARRAY];
-                    NSMutableArray * details_api_keys = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-                    NSString * detailObjectName = [dict objectForKey:gDETAIL_OBJECT_NAME];
-                    
-                    //NSString * detailaliasName = [dict objectForKey:gDETAIL_OBJECT_ALIAS_NAME];
-                    NSString * detail_layout_id = [dict objectForKey:gDETAILS_LAYOUT_ID];
-                    
-                    for(int k =0 ;k<[filedsArray count];k++)
-                    {
-                        NSMutableDictionary * detailFiled_info =[filedsArray objectAtIndex:k];
-                        NSString * api_name = [detailFiled_info objectForKey:gFIELD_API_NAME];
-                        [details_api_keys addObject:api_name];
-                    }
-                    
-                    NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGETCHILD process_id:child_process_id layoutId:detail_layout_id objectName:detailObjectName];
-                    
-                    NSString * source_child_object_name = [process_components objectForKey:SOURCE_OBJECT_NAME];
-                    NSMutableArray * source_child_ids = [appDelegate.databaseInterface getChildLocalIdForParentId:child_record_id childTableName:source_child_object_name sourceTableName:source_parent_object_name];
-                    for(NSString * detail_record_id in  source_child_ids)
-                    {
-                        NSString * Child_parent_sf_id = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:source_child_object_name local_id:detail_record_id];
-                        if([Child_parent_sf_id isEqualToString:@""])
-                        {
-                            record_is_not_syncd = TRUE;
-                            break;
-                        }
-                    }
-                }
-            }
-            
-            if(record_is_not_syncd)
-            {
-                NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_sync_error];
-                NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_synchronize_error];
-                NSString * Ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
-                
-                UIAlertView * alert_view = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:Ok otherButtonTitles:nil, nil];
-                [alert_view show];
-            }
-            else
-            {
+          
                 appDelegate.sfmPageController.sourceProcessId = @"";
                 appDelegate.sfmPageController.sourceRecordId = child_record_id;
                 
@@ -16014,8 +16087,31 @@ enum BizRuleConfirmViewStatus{
                 //check For view process  - dont require
                 [self fillSFMdictForOfflineforProcess:child_process_id forRecord:currentRecordId];
                 [self didReceivePageLayoutOffline];
-            }
         }
+    }
+
+}
+-(void)reloadCurrentProcess:(NSString *)processType
+{
+    if([processType isEqualToString:@"SOURCETOTARGET"])
+    {
+        if(self.s2t_recordId != nil)
+        {
+            NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
+            NSString * headerObjName = [hdr_object objectForKey:gHEADER_OBJECT_NAME];
+            
+            processInfo * pinfo =  [appDelegate getViewProcessForObject:headerObjName record_id:self.s2t_recordId processId:@"" isswitchProcess:FALSE];
+            BOOL process_exist = pinfo.process_exists;
+            NSString * process_id = pinfo.process_id;
+
+            [self fillSFMdictForOfflineforProcess:process_id forRecord:s2t_recordId];
+            [self didReceivePageLayoutOffline];
+        }
+    }
+    else 
+    {
+        [self fillSFMdictForOfflineforProcess:appDelegate.sfmPageController.processId forRecord:appDelegate.sfmPageController.recordId];
+        [self didReceivePageLayoutOffline];
     }
 }
 
@@ -16052,6 +16148,273 @@ enum BizRuleConfirmViewStatus{
     NSDictionary *someDict = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%d",isHeader],@"isHeader",finalIndexPath,@"detail", nil];
 
     return someDict;
+}
+
+-(BOOL)checkForEmptyRequireFields
+{
+    NSString * warning = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_WARNING];
+    NSString * invalidEmail = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_TEXT_INVALID_EMAIL];
+    NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+    
+    NSDictionary *hdr_object = [appDelegate.SFMPage objectForKey:@"header"];
+    
+    NSArray * header_sections = [hdr_object objectForKey:@"hdr_Sections"];
+
+    //Radha 21 june '13
+    //Radha :- Implementation  for  Required Field alert in Debrief UI
+    NSInteger headerRow = -1;
+    
+    BOOL error = FALSE;
+    for (int i=0;i<[header_sections count];i++)
+    {
+        NSDictionary * section = [header_sections objectAtIndex:i];
+        NSArray *section_fields = [section objectForKey:@"section_Fields"];
+        for (int j=0;j<[section_fields count];j++)
+        {
+            NSDictionary *section_field = [section_fields objectAtIndex:j];
+            
+            //add key values to SM_header_fields dictionary
+            NSString * value = [section_field objectForKey:gFIELD_VALUE_VALUE];
+            NSString * key = [section_field objectForKey:gFIELD_VALUE_KEY];
+            NSString * dataType = [section_field objectForKey:gFIELD_DATA_TYPE];
+            if(key == nil)
+            {
+                key = @"";
+            }
+            
+            BOOL required = [[section_field objectForKey:gFIELD_REQUIRED] boolValue];
+            if(required)
+            {
+                if([value length] == 0 )
+                {
+                    //Radha :- Implementation  for  Required Field alert in Debrief UI
+                    if (headerRow < 0 && !error)
+                    {
+                        headerRow = i;
+                    }
+                    error = TRUE;
+                    //sahana TEMP change
+                    break;
+                }
+            }
+            if ([dataType isEqualToString:@"email"] )  //Shrinivas Fix for Email Validation 03/04/2012
+            {
+                /*
+                 BOOL result;
+                 NSString * emailRegEx = @"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}";
+                 NSPredicate * emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegEx];
+                 result = [emailTest evaluateWithObject:value];
+                 
+                 if (result == NO && [value length] > 0)
+                 {
+                 UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:warning message:invalidEmail delegate:self cancelButtonTitle:alert_ok otherButtonTitles:nil, nil];
+                 [alertView show];
+                 [alertView release];
+                 
+                 [self enableSFMUI];
+                 return;
+                 }*/
+                
+            }
+            // Fix for the defect 4547: Url validation
+            /*else if ([dataType isEqualToString:@"url"] )
+             {
+             BOOL isValidUrl = [self isValidUrl:value];
+             if ((isValidUrl == NO) && ([value length] > 0))
+             {
+             [self showAlertForInvalidUrl];
+             [self enableSFMUI];
+             return;
+             
+             }
+             }*/
+            
+        }
+    }
+    if(error == TRUE)
+    {
+        //Radha :- Implementation  for  Required Field alert in Debrief UI
+        NSDictionary * details = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%d", headerRow], ROW,
+                                  [NSString stringWithFormat:@"%d", 0], CURRENTSECTION,  nil];
+        
+        mandatoryRowDetails = [[NSDictionary alloc] initWithDictionary:details];
+        [self requireFieldWarning];
+        requiredFieldCheck = TRUE;
+        [self enableSFMUI];
+        return FALSE;
+    }
+    
+    //child records
+    BOOL line_error = FALSE;
+    
+    //Radha :- Debrief :- 19 june '13
+    //Radha :- Implementation  for  Required Field alert in Debrief UI
+    NSInteger row = -1;
+    NSInteger currentRow = -1;
+    
+    
+    NSArray * details = [appDelegate.SFMPage objectForKey:gDETAILS]; //as many as number of lines sections
+    
+    for (int i=0;i<[details count];i++) //parts, labor, expense for instance
+    {
+        NSDictionary *detail = [details objectAtIndex:i];
+        
+        NSArray * fields_array = [detail  objectForKey:gDETAILS_FIELDS_ARRAY];
+        NSArray *details_values = [detail objectForKey:gDETAILS_VALUES_ARRAY];
+        
+        for (int j=0;j<[details_values count];j++) //parts for instance
+        {
+            NSArray *child_record_fields = [details_values objectAtIndex:j];
+            for (int k = 0; k < [child_record_fields count];k++) //fields of one part for instance
+            {
+                NSDictionary * field = [child_record_fields objectAtIndex:k];
+                NSString * detail_api_name = [field objectForKey:gVALUE_FIELD_API_NAME];
+                NSString * deatil_value = [field objectForKey:gVALUE_FIELD_VALUE_VALUE];
+                NSString *detailDataType = [field objectForKey:gFIELD_DATA_TYPE];
+                for(int l = 0 ;l < [fields_array count]; l++)
+                {
+                    NSDictionary *field_array_value = [fields_array  objectAtIndex:l];
+                    BOOL required  = [[field_array_value objectForKey:gFIELD_REQUIRED]boolValue];
+                    NSString * api_name = [field_array_value objectForKey:gFIELD_API_NAME];
+                    if([api_name isEqualToString:detail_api_name])
+                    {
+                        if(required)
+                        {
+                            if([deatil_value length]== 0)
+                            {
+                                //Radha :- Implementation  for  Required Field alert in Debrief UI
+                                if ((row < 0 || currentRow < 0) && !line_error)
+                                {
+                                    row = i;
+                                    currentRow = j+1;
+                                }
+                                
+                                line_error = TRUE;
+                                //sahana TEMP chage
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if ([detail_api_name isEqualToString:@"SVMXC__Email__c"] )  //Shrinivas Fix for Email Validation 03/04/2012
+                    {
+                        BOOL result;
+                        NSString * emailRegEx = @"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}";
+                        NSPredicate * emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegEx];
+                        result = [emailTest evaluateWithObject:deatil_value];
+                        
+                        if (result == NO && [deatil_value length] > 0)
+                        {
+                            UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:warning message:invalidEmail delegate:self cancelButtonTitle:alert_ok otherButtonTitles:nil, nil];
+                            [alertView show];
+                            [alertView release];
+                            
+                            [self enableSFMUI];
+                            return FALSE;
+                        }
+                        
+                    }
+                    // Fix for the defect 4547: Url validation
+                    /*else if ([detailDataType isEqualToString:@"url"])
+                     {
+                     BOOL isValidUrl = [self isValidUrl:deatil_value];
+                     if ((isValidUrl == NO) && ([deatil_value length] > 0))
+                     {
+                     [self showAlertForInvalidUrl];
+                     [self enableSFMUI];
+                     return;
+                     
+                     }
+                     }*/
+                    
+                }
+            }
+        }
+    }
+    
+    if(line_error)
+    {
+        //Radha :- Debrief :- 19 june '13
+        //Radha :- Implementation  for  Required Field alert in Debrief UI
+        NSDictionary * details = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%d", row], ROW,
+                                  [NSString stringWithFormat:@"%d", currentRow], CURRENTROW, [NSString stringWithFormat:@"%d", 1], CURRENTSECTION,  nil];
+        
+        mandatoryRowDetails = [[NSDictionary alloc] initWithDictionary:details];
+        [self requireFieldWarning];
+        requiredFieldCheck = TRUE;
+        [self enableSFMUI];
+        return FALSE;
+    }
+    
+    return TRUE;
+}
+
+-(void)getRecordIdForChildSfmForSection:(NSInteger)section row:(NSInteger)row recordId:(NSString *)localRecordId  actiondict:(NSDictionary *)actionDict
+{
+    //sahana child sfm
+    if(![self isInvokedFromChildSfm:actionDict])
+    {
+        return;
+    }
+    if((section == [self getSection:SfmChildSelectedIndexPath]) && (row == [self getRow:SfmChildSelectedIndexPath]))
+    {
+        self.sfmChildSelectedRecordId = localRecordId ;
+    }
+    
+}
+
+-(NSInteger)getSection:(NSIndexPath *)_indexpath
+{
+    //sahana child sfm
+    NSInteger index;
+    NSInteger section = _indexpath.section;
+    if (isDefault)
+        index = section;
+    else
+        index = selectedRow;
+    return index;
+}
+
+-(NSInteger)getRow:(NSIndexPath *)_indexpath
+{
+    return [_indexpath row]-1;
+}
+-(BOOL)isInvokedFromChildSfm:(NSDictionary *)actionDict
+{
+    if([[actionDict allKeys] containsObject:CHILD_SFM])
+    {
+        
+        return TRUE;
+    }
+    return FALSE;
+}
+
+-(void)SaveCreatedRecordInfoIntoPlistForRecordId:(NSString *)recordId objectName:(NSString *)ObjectName
+{
+    self.s2t_recordId = recordId;
+    
+    NSDate * date = [NSDate date];
+    NSDateFormatter * frm = [[[NSDateFormatter alloc] init] autorelease];
+    [frm setDateFormat:DATETIMEFORMAT];
+    NSString * date_str = [frm stringFromDate:date];
+    
+    NSString * object_label = [appDelegate.databaseInterface getObjectLabel:SFOBJECT objectApi_name:ObjectName];
+    
+    NSMutableDictionary * created_object_info = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
+    [created_object_info setObject:ObjectName forKey:OBJECT_NAME];
+    NSString * process_id = @"";
+    
+    processInfo * pinfo =  [appDelegate getViewProcessForObject:ObjectName record_id:recordId processId:@"" isswitchProcess:FALSE];
+    BOOL process_exist = pinfo.process_exists;
+    process_id = pinfo.process_id;
+    
+    [created_object_info setObject:process_id forKey:gPROCESS_ID];
+    [created_object_info setObject:date_str forKey:gDATE_TODAY];
+    [created_object_info setObject:recordId forKey:RESULTID];
+    //Need to changed when the proper incremental data sync happens.
+    [created_object_info setObject:@"" forKey:NAME_FIELD];
+    [created_object_info setObject:object_label forKey:OBJECT_LABEL];
+    [appDelegate.wsInterface saveDictionaryToPList:created_object_info];
 }
 
 @end

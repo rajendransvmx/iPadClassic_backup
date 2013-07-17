@@ -855,6 +855,7 @@
 		AC1BF8B8171C395500F0EA14 /* SyncProgressBar.m in Sources */ = {isa = PBXBuildFile; fileRef = AC1BF8A7171C395500F0EA14 /* SyncProgressBar.m */; };
 		AC1C6F9B1786E5B100C320B3 /* OAuthClientInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = AC1C6F981786E5B100C320B3 /* OAuthClientInterface.m */; };
 		AC1C6F9C1786E5B100C320B3 /* OAuthController.m in Sources */ = {isa = PBXBuildFile; fileRef = AC1C6F9A1786E5B100C320B3 /* OAuthController.m */; };
+		AC5F323E1796C372001D9393 /* plistUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = AC5F323D1796C372001D9393 /* plistUtility.m */; };
 		AC6D8E421770561E00B43124 /* SVMXLookupFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = AC6D8E411770561E00B43124 /* SVMXLookupFilter.m */; };
 		AC6D8E451770571C00B43124 /* filter-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = AC6D8E441770571C00B43124 /* filter-icon.png */; };
 		AC6D8E471770575400B43124 /* filter-icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AC6D8E461770575400B43124 /* filter-icon@2x.png */; };
@@ -2572,6 +2573,8 @@
 		AC1C6F981786E5B100C320B3 /* OAuthClientInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OAuthClientInterface.m; sourceTree = "<group>"; };
 		AC1C6F991786E5B100C320B3 /* OAuthController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAuthController.h; sourceTree = "<group>"; };
 		AC1C6F9A1786E5B100C320B3 /* OAuthController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OAuthController.m; sourceTree = "<group>"; };
+		AC5F323C1796C372001D9393 /* plistUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = plistUtility.h; sourceTree = "<group>"; };
+		AC5F323D1796C372001D9393 /* plistUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = plistUtility.m; sourceTree = "<group>"; };
 		AC6D8E401770561E00B43124 /* SVMXLookupFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVMXLookupFilter.h; sourceTree = "<group>"; };
 		AC6D8E411770561E00B43124 /* SVMXLookupFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVMXLookupFilter.m; sourceTree = "<group>"; };
 		AC6D8E441770571C00B43124 /* filter-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "filter-icon.png"; sourceTree = "<group>"; };
@@ -4411,6 +4414,7 @@
 		3E34683213E95C4D00B5790F /* SFMPage */ = {
 			isa = PBXGroup;
 			children = (
+				AC5F323B1796C372001D9393 /* PlistUtility */,
 				AC6D8E3F1770561E00B43124 /* Lookupfilters */,
 				ACB56C4A176B623700E46D08 /* SFMEditDetailView */,
 				A8C1B0A315AD7D3E00E5B76D /* ZBarSDK */,
@@ -5830,6 +5834,15 @@
 				AC1C6F9A1786E5B100C320B3 /* OAuthController.m */,
 			);
 			path = OAuthClientInterface;
+			sourceTree = "<group>";
+		};
+		AC5F323B1796C372001D9393 /* PlistUtility */ = {
+			isa = PBXGroup;
+			children = (
+				AC5F323C1796C372001D9393 /* plistUtility.h */,
+				AC5F323D1796C372001D9393 /* plistUtility.m */,
+			);
+			path = PlistUtility;
 			sourceTree = "<group>";
 		};
 		AC6D8E3F1770561E00B43124 /* Lookupfilters */ = {
@@ -8669,6 +8682,7 @@
 				AC1C6F9B1786E5B100C320B3 /* OAuthClientInterface.m in Sources */,
 				AC1C6F9C1786E5B100C320B3 /* OAuthController.m in Sources */,
 				A85184F0178FC9730029FC6D /* SMADVDownoadCriteriaResponse.m in Sources */,
+				AC5F323E1796C372001D9393 /* plistUtility.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8683,8 +8697,8 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"ARCHS[sdk=iphoneos*]" = "$(ARCHS_STANDARD_32_BIT)";
 				"ARCHS[sdk=iphonesimulator*]" = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = YES;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -8708,8 +8722,6 @@
 				MACOSX_DEPLOYMENT_TARGET = "";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_NAME = "ServiceMax Mobile";
-				PROVISIONING_PROFILE = "2E79475A-2C8A-45C2-8858-4E920E107C63";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "2E79475A-2C8A-45C2-8858-4E920E107C63";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -8726,8 +8738,8 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"ARCHS[sdk=iphoneos*]" = "$(ARCHS_STANDARD_32_BIT)";
 				"ARCHS[sdk=iphonesimulator*]" = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_OBJC_GC = unsupported;
@@ -8749,8 +8761,6 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = "";
 				PRODUCT_NAME = "ServiceMax Mobile";
-				PROVISIONING_PROFILE = "2E79475A-2C8A-45C2-8858-4E920E107C63";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "2E79475A-2C8A-45C2-8858-4E920E107C63";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -8792,8 +8802,8 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"ARCHS[sdk=iphoneos*]" = "$(ARCHS_STANDARD_32_BIT)";
 				"ARCHS[sdk=iphonesimulator*]" = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_OBJC_GC = unsupported;
@@ -8816,8 +8826,6 @@
 				MACOSX_DEPLOYMENT_TARGET = "";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_NAME = "ServiceMax Mobile";
-				PROVISIONING_PROFILE = "2E79475A-2C8A-45C2-8858-4E920E107C63";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "2E79475A-2C8A-45C2-8858-4E920E107C63";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = YES;

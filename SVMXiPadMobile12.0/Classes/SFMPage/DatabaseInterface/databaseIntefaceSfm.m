@@ -328,11 +328,22 @@ extern void SVMXLog(NSString *format, ...);
     
     if(isChild)
     {
-        if([expression_ length ] != 0 && expression_ != nil)
-            
-            sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@'  %@  WHERE '%@'.%@ = '%@' and %@  %@",fieldsString,detailObjectName,Join_str,detailObjectName,parent_column_name,local_record_id, expression_,orderBy_str];
+        NSString * parent_sf_id = [self getSfid_For_LocalId_From_Object_table:headerObjectName local_id:local_record_id];
+
+        if([parent_sf_id length] == 0)
+        {
+            if([expression_ length ] != 0 && expression_ != nil)
+                sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@'  %@  WHERE '%@'.%@ = '%@' and %@  %@",fieldsString,detailObjectName,Join_str,detailObjectName,parent_column_name,local_record_id, expression_,orderBy_str];
+            else
+                sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE '%@'.%@ = '%@' %@",fieldsString,detailObjectName,Join_str,detailObjectName,parent_column_name,local_record_id, orderBy_str];
+        }
         else
-            sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE '%@'.%@ = '%@' %@",fieldsString,detailObjectName,Join_str,detailObjectName,parent_column_name,local_record_id, orderBy_str];
+        {
+            if([expression_ length ] != 0 && expression_ != nil)
+                sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@'  %@  WHERE ('%@'.%@ = '%@'  or '%@'.%@ = '%@') and %@  %@",fieldsString,detailObjectName,Join_str,detailObjectName,parent_column_name,local_record_id,detailObjectName,parent_column_name,parent_sf_id, expression_,orderBy_str];
+            else
+                sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE ('%@'.%@ = '%@' or '%@'.%@ = '%@')  %@  ",fieldsString,detailObjectName,Join_str,detailObjectName,parent_column_name,local_record_id, detailObjectName,parent_column_name, parent_sf_id,orderBy_str];
+        }
     }
     else
     {
@@ -340,6 +351,11 @@ extern void SVMXLog(NSString *format, ...);
         NSString * releated_column_name = [self getRefernceToFieldnameForObjct:detailObjectName reference_table:headerObjectName table_name:SF_REFERENCE_TO];
         
         NSString * SF_id = [self getSfid_For_LocalId_From_Object_table:headerObjectName local_id:local_record_id ];
+        
+        if([SF_id length] == 0)
+        {
+            return array;
+        }
         
        if([parent_column length] != 0)
         {
@@ -779,7 +795,16 @@ extern void SVMXLog(NSString *format, ...);
 	BOOL isTableExists = [appDelegate.databaseInterface checkForTheTableInTheDataBase:tableName];
     if(isTableExists)
     {
-        NSString * query = [NSString stringWithFormat:@"SELECT %@ FROM '%@' where id = '%@'",filed_name,tableName,record_id];
+        NSString * query ;
+        if([record_id length ] > 33)
+        {
+            query = [NSString stringWithFormat:@"SELECT %@ FROM '%@' where local_id = '%@'",filed_name,tableName,record_id];
+
+        }
+        else
+        {
+            query = [NSString stringWithFormat:@"SELECT %@ FROM '%@' where id = '%@'",filed_name,tableName,record_id];
+        }
         sqlite3_stmt * stmt ;
         if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK  )
         {
@@ -2920,7 +2945,7 @@ extern void SVMXLog(NSString *format, ...);
                 }
 				else
 				{
-					component_expression = [NSString stringWithFormat:@" %@   in   (select  Id  from %@ where Name %@ '%@' )" , lhs,referenceToTable , operator ,rhs];
+					component_expression = [NSString stringWithFormat:@" %@   in   (select  Id  from '%@' where Name %@ '%@' )" , lhs,referenceToTable , operator ,rhs];
 				}
                 
             }
@@ -3700,8 +3725,8 @@ extern void SVMXLog(NSString *format, ...);
             }
             
         }
- 		//sahana - Child sfm fix
-        NSMutableDictionary * dataTypeForFeilds = [NSMutableDictionary dictionary];
+ 		//sahana - Child sfm fix  - stand alone
+     /*   NSMutableDictionary * dataTypeForFeilds = [NSMutableDictionary dictionary];
         
         for(NSString * src_field_name in source_field_names)
         {
@@ -3711,7 +3736,7 @@ extern void SVMXLog(NSString *format, ...);
                 [dataTypeForFeilds setObject:data_type forKey:src_field_name];
             }
             
-        }
+        }*/
         NSString * query = @"";
         if(expression_ != nil && [expression_ length] != 0)
         {
@@ -3724,11 +3749,11 @@ extern void SVMXLog(NSString *format, ...);
             SMLog(@"SOURCETOTARGET %@", query);
         }
        
-        //sahana - child sfm fix
+       /* //sahana - child sfm fix
         BOOL Src_obj_isChild = [self IsChildObject:source_object_name];
         NSString *parent_obj_name = [self getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:source_object_name field_name:@"parent_name"];
         NSString * parent_column_name = [self getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:source_object_name field_name:@"parent_column_name"];
-        
+        */
         
         NSString * field_value = @"";
         sqlite3_stmt * stmt ;
@@ -3743,29 +3768,35 @@ extern void SVMXLog(NSString *format, ...);
                 {
                     field_value = @"";
                     
-                    NSString * field_type = [dataTypeForFeilds objectForKey:[source_field_names objectAtIndex:k]];
+                 //   NSString * field_type = [dataTypeForFeilds objectForKey:[source_field_names objectAtIndex:k]];
                     NSString * Source_field_api = [source_field_names objectAtIndex:k];
+                    NSString * targetFieldApi = [target_field_names  objectAtIndex:k];
                     
                     char * temp_field_value = (char *)synchronized_sqlite3_column_text(stmt,k);
                     if(temp_field_value != nil)
                     {
                         field_value = [NSString stringWithUTF8String:temp_field_value];
-                        
-                        //sahana - child sfm fix
-                        if([field_type isEqualToString:@"reference"])
+                    }
+                    else
+                    {
+                        if([Source_field_api isEqualToString:@"Id"] && [field_value length] == 0)
                         {
-                            if(![source_object_name isEqualToString:target_object_name])
+                            field_value = source_record_id;
+                            //handling Event object in fieldmapping.
+                            if([target_object_name isEqualToString:@"Event"] && [targetFieldApi isEqualToString:@"WhatId"])
                             {
-                                if(Src_obj_isChild)
+                                NSMutableDictionary * plist_dict = nil;
+                                if([plistUtility DoesFileExist:EVENT_REFERENCE_PLIST])
                                 {
-                                    if([Source_field_api isEqualToString:parent_column_name])
-                                    {
-                                        //get sf_id for local id use it for mapping
-                                        NSString * sf_id = [self getSfid_For_LocalId_From_Object_table:parent_obj_name local_id:field_value];
-                                        [dict setObject:sf_id forKey:[target_field_names  objectAtIndex:k]];
-                                        continue;
-                                    }
+                                   plist_dict = [plistUtility readFromPlist:EVENT_REFERENCE_PLIST];
                                 }
+                                else
+                                {
+                                    plist_dict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
+                                }
+                                [plist_dict setObject:source_object_name forKey:source_record_id];
+
+                                [plistUtility writeIntoPlist:EVENT_REFERENCE_PLIST data:plist_dict];
                             }
                         }
                     }
@@ -6681,7 +6712,7 @@ extern void SVMXLog(NSString *format, ...);
 
 -(NSString *)getSfid_For_LocalId_FROM_SfHeapTable:(NSString *)local_id 
 {
-    NSString * query = [NSString stringWithFormat:@"SELECT Id FROM '%@' WHERE local_id = '%@'" , SYNC_RECORD_HEAP, local_id];
+    NSString * query = [NSString stringWithFormat:@"SELECT sf_id FROM '%@' WHERE local_id = '%@'" , SYNC_RECORD_HEAP, local_id];
     sqlite3_stmt * stmt ;
     NSString * Id_ = @"";
     
@@ -11299,4 +11330,244 @@ extern void SVMXLog(NSString *format, ...);
     return fieldValue;
 }
 
+-(NSMutableDictionary *)getReferenceToForObjectapiName:(NSString *)objectApiName
+{
+    NSMutableDictionary * referenceToTableNames = [[NSMutableDictionary alloc] initWithCapacity:0];
+    NSString * referencetoName = @"", * field_api_name= @"";
+    NSString * query = [NSString stringWithFormat:@"SELECT reference_to,field_api_name FROM '%@' where object_api_name = '%@'" ,SFREFERENCETO,objectApiName ];
+    sqlite3_stmt * stmt ;
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK  )
+    {
+        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            char * temp_referenceToName = (char *)synchronized_sqlite3_column_text(stmt, 0);
+            if(temp_referenceToName != nil)
+            {
+                referencetoName = [NSString stringWithUTF8String:temp_referenceToName];
+            }
+            
+            char * temp_fieldApiName = (char *)synchronized_sqlite3_column_text(stmt, 1);
+            if(temp_fieldApiName != nil)
+            {
+                field_api_name = [NSString stringWithUTF8String:temp_fieldApiName];
+            }
+            if(![[referenceToTableNames allKeys] containsObject:field_api_name])
+            {
+                NSMutableArray * reference_objs = [[NSMutableArray alloc] initWithCapacity:0];
+                [reference_objs addObject:referencetoName];
+                [referenceToTableNames setObject:reference_objs forKey:field_api_name];
+                [reference_objs release];
+            }
+            else
+            {
+                NSMutableArray * reference_objs = [referenceToTableNames objectForKey:field_api_name];
+                [reference_objs addObject:referencetoName];
+            }
+            
+            referencetoName = @"",field_api_name= @"";
+        }
+    }
+    synchronized_sqlite3_finalize(stmt);
+    return referenceToTableNames;
+}
+
+
+- (BOOL)checkRecordExistForObject:(NSString *)tableName LocalId:(NSString *)LocalId
+{
+    NSString * query = [NSString stringWithFormat:@"SELECT COUNT(*) FROM '%@' WHERE local_id = '%@'", tableName, LocalId];
+    
+    sqlite3_stmt * stmt;
+    
+    int count = 0;
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        
+        while (sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            count = synchronized_sqlite3_column_int(stmt, 0);
+        }
+    }
+    
+    synchronized_sqlite3_finalize(stmt);
+    
+    if (count > 0)
+        return TRUE;
+    else
+        return FALSE;
+}
+
+-(BOOL)checkSentFlagForReferenceId:(NSString *)loalId forOperation:(NSString *)OperationType
+{
+    NSString * getcount = [NSString stringWithFormat:@"SELECT COUNT(*) FROM '%@' WHERE local_id = '%@' and operation = '%@' and  record_sent = 'true' " ,SFDATATRAILER_TEMP , loalId , OperationType];
+    
+    sqlite3_stmt * stmt;
+    
+    int count = 0;
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [getcount UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        
+        while (sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            count = synchronized_sqlite3_column_int(stmt, 0);
+        }
+    }
+    
+    synchronized_sqlite3_finalize(stmt);
+    
+    if (count > 0)
+        return TRUE;
+    else
+        return FALSE;
+}
+-(void)deleteRecordFromConflictTableForRecord:(NSString *)local_id operation:(NSString *)operationType
+{
+    
+    NSString * delete_stmt ;
+    
+    delete_stmt = [NSString stringWithFormat:@"DELETE FROM '%@'  WHERE sync_type = '%@'  and local_id = '%@'",SYNC_ERROR_CONFLICT,operationType, local_id];
+    
+    char * err ;
+    if(synchronized_sqlite3_exec(appDelegate.db, [delete_stmt UTF8String], NULL, NULL, &err))
+    {
+        SMLog(@"%@", delete_stmt);
+		SMLog(@"METHOD:deleteRecordFromConflictTableForRecord");
+		SMLog(@"ERROR IN DELETE %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:delete_stmt type:DELETEQUERY];
+    }
+    
+}
+
+-(BOOL)DeleterecordFromDataTrailerTableForlocal_id:(NSString *)local_id
+{
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"DeleterecordFromTable"
+                                                         andRecordCount:1];
+    BOOL success = YES;
+    
+    // Vipin-db-optmz -rm
+    
+    NSString * delete_query = [NSString stringWithFormat:@"DELETE FROM '%@' WHERE local_id = '%@' and sync_type != '%@'" ,SFDATATRAILER , local_id ,CUSTOMSYNC];
+    
+    char * err ;
+    if(synchronized_sqlite3_exec(appDelegate.db, [delete_query UTF8String], NULL, NULL, &err))
+    {
+        SMLog(@"%@", delete_query);
+		SMLog(@"METHOD:DeleterecordFromTable");
+		SMLog(@"ERROR IN DELETE %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:delete_query type:DELETEQUERY];
+        
+        success = NO;
+    }
+    
+    [[PerformanceAnalytics sharedInstance] addDeletedRecordsNumber:1];
+    // Vipin-db-optmz
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"DeleterecordFromTable"
+                                                                      andRecordCount:0];
+    
+    return success;
+}
+-(BOOL)DoesEntryExistsForInsertOperationForLocalId:(NSString *)localId
+{
+    NSString * getcount = [NSString stringWithFormat:@"SELECT COUNT(*) FROM '%@' WHERE local_id = '%@' and operation = 'INSERT' " ,SFDATATRAILER , localId];
+    
+    sqlite3_stmt * stmt;
+    
+    int count = 0;
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [getcount UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        
+        while (sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            count = synchronized_sqlite3_column_int(stmt, 0);
+        }
+    }
+    
+    synchronized_sqlite3_finalize(stmt);
+    
+    if (count > 0)
+        return TRUE;
+    else
+        return FALSE;
+}
+
+-(BOOL)DeleteEntryFromDataTrailerTableFor:(NSString *)Id forObject:(NSString *)object  sync_type:(NSString *)sync_type fieldName:(NSString *)fieldName
+{
+    
+    BOOL success = YES;
+     
+    if([sync_type isEqualToString:PUT_INSERT])
+    {
+        sync_type = INSERT;
+    }
+    else if([sync_type isEqualToString:PUT_UPDATE])
+    {
+        sync_type = UPDATE;
+    }
+    else if ([sync_type isEqualToString:PUT_DELETE ])
+    {
+        sync_type = DELETE;
+    }
+    
+    NSString * update = @"";
+    update = [NSString stringWithFormat:@"DELETE FROM '%@' WHERE  %@ = '%@' and object_name = '%@' and operation = '%@' ", SFDATATRAILER,fieldName,Id,object,sync_type ];
+    
+    char * err;
+    if (synchronized_sqlite3_exec(appDelegate.db, [update UTF8String], NULL, NULL, &err) != SQLITE_OK)
+    {
+		SMLog(@"%@", update);
+		SMLog(@"DeleteEntryFromDataTrailerTableFor");
+		SMLog(@"ERROR IN DELETE %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:update type:DELETEQUERY];
+        success = NO;
+    }
+    return success;
+}
+-(void)replaceCURRENTRECORDLiteral:(NSMutableDictionary *)detailDict sourceDict:(NSDictionary *)sourceDict
+{
+    NSArray * allkeys = [detailDict allKeys];
+    for(NSString * fieldApi in allkeys)
+    {
+        NSString * fieldValue = [detailDict objectForKey:fieldApi];
+        if([fieldValue length] == 0)
+        {
+            continue;
+        }
+        if([self findLeteral:fieldValue literal:CURRENTRECORD] || [self findLeteral:fieldValue literal:CURRENTRECORD_HEADER])
+        {
+            NSString * sourceFieldName = [self getFielApiNameFromString:fieldValue forLiteral:CURRENTRECORD];
+            if([sourceFieldName length] != 0)
+            {
+                NSString * sourceFieldValue = ([sourceDict objectForKey:sourceFieldName]!=nil)?[sourceDict objectForKey:sourceFieldName]:@"";
+                if([sourceFieldValue length] != 0)
+                {
+                  [detailDict setObject:sourceFieldValue forKey:fieldApi];
+                }
+            }
+        }
+    }
+}
+
+-(BOOL)findLiteral:(NSString *)FieldValue literal:(NSString *)literal
+{
+    BOOL flag = FALSE;
+    if([[FieldValue lowercaseString] rangeOfString:[literal lowercaseString]].location != NSNotFound )
+    {
+        flag = TRUE;
+    }
+    return flag;
+}
+-(NSString *)getFieldApiNameFromString:(NSString *)valueString forLiteral:(NSString *)literal
+{
+   NSArray * componentArray = [Utility splitString:valueString byString:@"."];
+    NSInteger count = [componentArray count];
+     NSString * fieldName = @"";
+    if(count != 0)
+    {
+        fieldName = [componentArray objectAtIndex:count-1];
+    }
+    return fieldName;
+}
 @end

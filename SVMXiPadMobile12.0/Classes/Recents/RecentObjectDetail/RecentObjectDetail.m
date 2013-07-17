@@ -323,20 +323,20 @@ extern void SVMXLog(NSString *format, ...);
     NSString * objectName = [dict objectForKey:OBJECT_NAME];
     NSString * processId = [dict objectForKey:@"SVMXC__ProcessID__c"];
     
-    BOOL status = [Reachability connectivityStatus];
+    
+    //fix for 7451
+    /*BOOL status = [Reachability connectivityStatus];*/
     @try{
-    if(status)
+   
+    appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+   
+    for (NSDictionary * dict in appDelegate.wsInterface.viewLayoutsArray)
     {
-        appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-       
-        for (NSDictionary * dict in appDelegate.wsInterface.viewLayoutsArray)
+        NSString * viewLayoutObjectName = [dict objectForKey:@"objectName"];
+        if ([viewLayoutObjectName isEqualToString:objectName])
         {
-            NSString * viewLayoutObjectName = [dict objectForKey:@"objectName"];
-            if ([viewLayoutObjectName isEqualToString:objectName])
-            {
-                processId = [dict objectForKey:gPROCESS_ID];
-                break;
-            }
+            processId = [dict objectForKey:gPROCESS_ID];
+            break;
         }
     }
     if(processId == nil || [processId length] == 0){

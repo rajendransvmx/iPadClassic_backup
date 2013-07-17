@@ -20,6 +20,7 @@
 @synthesize headerObjectName = _headerObjectName;
 @synthesize record_id = _record_id;
 @synthesize childViewDelegate = _childViewDelegate;
+@synthesize selectedIndexPath = _selectedIndexPath;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -273,7 +274,7 @@
 - (IBAction) showSFMProcess:(id)sender
 {
     NSLog(@"button clicked");
-    if ([self.childViewDelegate respondsToSelector:@selector(showSFMPageForChildLinkedProcessWithProcessId:record_id:detailObjectName:)])
+    if ([self.childViewDelegate respondsToSelector:@selector(showSFMPageForChildLinkedProcessWithProcessId:record_id:detailObjectName:selectedIndexPath:)])
     {
 		NSString * processId = @"";
         
@@ -286,7 +287,7 @@
             processId = [allkeys objectAtIndex:0];
         }
         
-          [self.childViewDelegate showSFMPageForChildLinkedProcessWithProcessId:processId record_id:self.record_id detailObjectName:self.detailObjectname];
+          [self.childViewDelegate showSFMPageForChildLinkedProcessWithProcessId:processId record_id:self.record_id detailObjectName:self.detailObjectname selectedIndexPath:self.selectedIndexPath];
     }
 	
 }

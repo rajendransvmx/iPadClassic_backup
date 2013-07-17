@@ -374,6 +374,17 @@
 -(void)replaceCurrentRecordOrheaderLiteral:(NSMutableDictionary * )RecordDict headerRecordId:(NSString *)headerRecordId headerObjectName:(NSString *)headerObjectNAme currentRecordId:(NSString *)currentRecordId currentObjectName:(NSString *)currentObjectName;
 -(NSString *)getValueForField:(NSString *)fieldName objectName:(NSString *)objectName recordId:(NSString *)localId;
 
+//Sahana - ChildSfm
+-(NSMutableDictionary *)getReferenceToForObjectapiName:(NSString *)objectApiName;
+- (BOOL)checkRecordExistForObject:(NSString *)tableName LocalId:(NSString *)LocalId;
+-(BOOL)checkSentFlagForReferenceId:(NSString *)loalId forOperation:(NSString *)OperationType;
+-(void)deleteRecordFromConflictTableForRecord:(NSString *)local_id operation:(NSString *)operationType;
+-(BOOL)DeleterecordFromDataTrailerTableForlocal_id:(NSString *)local_id;
+-(BOOL)DoesEntryExistsForInsertOperationForLocalId:(NSString *)localId;
+-(BOOL)DeleteEntryFromDataTrailerTableFor:(NSString *)Id forObject:(NSString *)object  sync_type:(NSString *)sync_type fieldName:(NSString *)fieldName;
+-(void)replaceCURRENTRECORDLiteral:(NSMutableDictionary *)detailDict sourceDict:(NSDictionary *)sourceDict;
+-(BOOL)findLiteral:(NSString *)FieldValue literal:(NSString *)literal;
+-(NSString *)getFieldApiNameFromString:(NSString *)valueString forLiteral:(NSString *)literal;
 
 /*Shra-lookup*/
 
@@ -533,6 +544,12 @@
 #define cw_header_obj_name       @"HEADER_OBJECT_NAME"
 #define cw_error_mesg            @"ERROR_MSG"
 #define cw_error_type            @"ERROR_TYPE"
+
+
+#define CHILD_SFM                @"CHILD_SFM"
+
+#define EVENT_REFERENCE_PLIST    @"EVENT_REFERENCE_PLIST.plist"
+
 @end
 
 @protocol databaseInterfaceProtocol <NSObject>

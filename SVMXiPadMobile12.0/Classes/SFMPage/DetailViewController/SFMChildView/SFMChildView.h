@@ -21,6 +21,8 @@
 @property (retain, nonatomic) NSString * record_id;
 @property (retain, nonatomic) id <SFMChildViewDelegate> childViewDelegate;
 
+@property (retain, nonatomic) NSIndexPath * selectedIndexPath; 
+
 -(CGFloat) getHeightForChildLinkedProcess;
 
 #define ITEMCOUNT	3
@@ -31,5 +33,5 @@
 
 @optional
 //Methods to be called
-- (void) showSFMPageForChildLinkedProcessWithProcessId:(NSString *)processId record_id:(NSString *)recordId  detailObjectName:(NSString *)detailObjectName;
+- (void) showSFMPageForChildLinkedProcessWithProcessId:(NSString *)processId record_id:(NSString *)recordId  detailObjectName:(NSString *)detailObjectName selectedIndexPath:(NSIndexPath *)indexPath;
 @end

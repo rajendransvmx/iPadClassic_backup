@@ -496,6 +496,11 @@ last_sync_time:(NSString *)last_sync_time;
 #pragma mark - Handle Session expiry for initial login : 
 - (BOOL)handleSessionExpiryForInitialLogin;
 
+
+/*sahana -sync change*/
+-(BOOL)replaceReferenceLocalIdWithSfidForRecord:(NSMutableDictionary *)record_dict isChild:(BOOL)isChild referenceTo:(NSMutableDictionary *)referenceTo parentColoumnName:(NSString *)parentColumnName ObjectName:(NSString *)ObjectName recordLocalId:(NSString *)currentRecordLocalId  recordSfId:(NSString *)currentRecordSfId;
+
+
 //Adv Download Criteria
 - (void)doAdvanceDownloadCriteria;
 @end
