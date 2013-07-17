@@ -2061,7 +2061,14 @@ NSDate * syncCompleted;
 //	[appDelegate setCurrentSyncStatusProgress:PUTDELETE_DONE optimizedSynstate:oPUTDELETE_DONE];
 	       
         //Adv Download Criteria Start
-        [self doAdvanceDownloadCriteria];
+    [self doAdvanceDownloadCriteria];
+    
+    if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED || ![appDelegate isInternetConnectionAvailable])
+    {
+        SMLog(@"Adv Download Criteria Failed");
+        appDelegate.initial_sync_succes_or_failed = DATA_SYNC_FAILED;
+        return;
+    }
         //Adv Download Criteria Stop
         
     [appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:GET_DELETE];
@@ -3336,6 +3343,7 @@ NSDate * syncCompleted;
         {
 			//Defect 6774
 			[appDelegate checkifConflictExistsForConnectionError];
+            appDelegate.connection_error=FALSE;
             SMLog(@"GetPrice Data Sync Failed due to Connection Error");
             return;
         }
@@ -3471,7 +3479,7 @@ NSDate * syncCompleted;
         }
         if(appDelegate.connection_error)
         {
-			[appDelegate checkifConflictExistsForConnectionError];
+            appDelegate.connection_error=FALSE;
             SMLog(@"Adv Download Criteria Data Sync Failed due to Connection Error");
             return;
         }
