@@ -7146,7 +7146,6 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 //krishna OPDOCS
 - (void)insertIntoDocTemplateDetails:(NSDictionary*)process_dict
 {
-    NSLog(@"process dictionary for template details :  %@",process_dict);
     BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS %@ (doc_template VARCHAR ,doc_template_detail_id Text(255),header_ref_fld  Text(100)  ,alias Text(80), object_name Text(100) ,soql Text(32768) , doc_template_detail_unique_id  Text(40), fields Text(32768),type VARCHAR, Id VARCHAR)",SFDOC_TEMPLATE_DETAILS]];
     if(result)
     {
@@ -7158,7 +7157,6 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         NSArray * SF_DOC_template_details = [process_dict objectForKey:SFDOC_TEMPLATE_DETAILS];
         int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
         
-        NSLog(@"error %s",sqlite3_errmsg(appDelegate.db));
         if (ret_value == SQLITE_OK) {
             
             for(int i = 0;i<[SF_DOC_template_details count];i++)
@@ -7260,45 +7258,28 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     }
 }
 //Krishna OPDOCS requiredPdf
+// Modified - Kri OPDOC-CR
 - (NSMutableArray *) getAllRequiredPdf {
     
     sqlite3_stmt * stmt;
-    
-    NSString *processId = @"";
-    NSString *recordId = @"";
     NSString *attachmentId = @"";
     
     NSMutableArray *requiredPdfArray = [NSMutableArray array];
     
-    NSString *selectQuery2 = [NSString stringWithFormat:@"SELECT process_id,record_id,attachment_id From %@",SFDOC_REQUIRED_PDF];
+    NSString *selectQuery2 = [NSString stringWithFormat:@"SELECT attachment_id From %@",SFDOC_REQUIRED_PDF];
     
     if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery2 UTF8String], -1, &stmt, NULL) == SQLITE_OK)
     {
         //kri OPDOC2
         while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
         {
-            //            NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] init];
             
-            char *field = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_1);
-            if ( field != nil )
-                processId = [NSString stringWithUTF8String:field];
-            
-            char *field1 = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_2);
-            if ( field1 != nil )
-                recordId = [NSString stringWithUTF8String:field1];
-            
-            char *field2 = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_3);
-            if ( field2 != nil )
+            char *field2 = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_1);
+            if ( field2 != nil ) {
                 attachmentId = [NSString stringWithUTF8String:field2];
-            
-            //            [tempDict setValue:processId forKey:MPROCESS_ID];
-            //            [tempDict setValue:recordId forKey:MRECORD_TYPE_ID];
-            //            [tempDict setValue:attachmentId forKey:MATTACHMENT_ID];
-            [requiredPdfArray addObject:attachmentId];
-            //            [tempDict release];
+                [requiredPdfArray addObject:attachmentId];
+            }
             //kri OPDOC2
-            processId = @"";
-            recordId = @"";
             attachmentId = @"";
         }
     }
@@ -7512,7 +7493,6 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 //krishna OPDOCS
 - (void) didGetAttachmentWithResult:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
-    NSLog(@"result %@ error :%@",result, error);
     // Store the image in a appDelegate UIImage
     
     NSArray * array = [result records];
@@ -7719,7 +7699,6 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 
 - (void) didRetrieveImageWithResult:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
-    NSLog(@"result %@ error :%@",result, error);
     // Store the image in a appDelegate UIImage
     
     NSArray * array = [result records];
@@ -7730,7 +7709,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         
         NSDictionary *dict = [obj fields];
         
-        NSLog(@"filename: %@ :: Type: %@",[dict objectForKey:@"Name"],[dict objectForKey:@"Type"]);
+        SMLog(@"filename: %@ :: Type: %@",[dict objectForKey:@"Name"],[dict objectForKey:@"Type"]);
         
         NSString *Id                = [dict objectForKey:@"Id"];
         NSString *Type              = [dict objectForKey:@"Type"];
@@ -7769,7 +7748,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
             BOOL success = [fileManager createFileAtPath:filePath contents:bodyData attributes:nil];
             
             if(success)
-                NSLog(@"stored : %@",filePath);
+                SMLog(@"stored : %@",filePath);
         }
     }
     didReceiveImageDocument = YES;
@@ -7778,8 +7757,6 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 
 - (void)insertIntoStaticResource:(NSDictionary*)resourceDict
 {
-    NSLog(@"\n====================================================\n STATIC RESOURCE %@",resourceDict);
-    
     /*
      
      STATIC RESOURCE (
@@ -7932,7 +7909,6 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 
 - (void) didRetrieveStaticresourceWithResult:(ZKQueryResult *)result error:(NSError *)error context:(id)context
 {
-    NSLog(@"result %@ error :%@",result, error);
     // Store the image in a appDelegate UIImage
     
     NSArray * array = [result records];
@@ -7957,15 +7933,13 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
             NSFileManager * fileManager = [NSFileManager defaultManager];
             
             BOOL success = [fileManager createFileAtPath:filePath contents:bodyData attributes:nil];
-            NSLog(@"archive saved = %d",success);
             if(success)
             {
                 //                success = [self unzipAndViewFile:filePath andFolderName:nil deleteArchive:YES];
                 success = [SSZipArchive unzipFileAtPath:filePath toDestination:documentsDir]; // ZipArchive doesn't unzip manifest folder inside root folder of each library, hence SSZipArchive is used
-                NSLog(@"unarchived = %d",success);
                 if(!success)
                 {
-                    NSLog(@"!!!!!!! Unarchive failed for %@.%@ !!!!!!!!",fileName,fileExtension);
+                    SMLog(@"!!!!!!! Unarchive failed for %@.%@ !!!!!!!!",fileName,fileExtension);
                 }
                 else
                 {
@@ -7992,7 +7966,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     
     if (!retVal)
     {
-        NSLog(@"UnzipOpenFile encountered an error.");
+        SMLog(@"UnzipOpenFile encountered an error.");
         return NO;
     }
     
@@ -8018,7 +7992,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     
     if (!retVal)
     {
-        NSLog(@"Unzip encountered an error.");
+        SMLog(@"Unzip encountered an error.");
         return NO;
     }
     else

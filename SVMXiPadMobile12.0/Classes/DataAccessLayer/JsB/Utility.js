@@ -41,14 +41,17 @@
  param : any date which requires to be formatted to (dd/M/yyyy)
  return : formatted date string
  */
+ //Kri Modified OPDOC-CR
+ $UTILITY.nextDateForDate = function(DateStr) {
  
- $UTILITY.nextDateForDate = function(Date) {
+ var d = new Date(DateStr.getTime() + 24 * 60 * 60 * 1000);
  
- var temp_date = Date.getDate()+1;
- var temp_month = Date.getMonth() + 1;
- var temp_year = Date.getFullYear();
+ var temp_date = d.getDate();
+ var temp_month = d.getMonth() + 1;
+ var temp_year = d.getFullYear();
  
  var tempDateString =  temp_date + "/" + temp_month + "/" + temp_year;
+
  return tempDateString;
  }
  
@@ -56,14 +59,17 @@
  param : any date which requires to be formatted to (dd/M/yyyy)
  return : formatted date string
  */
+ //Kri Modified OPDOC-CR
+ $UTILITY.previousDateForDate = function(DateSt) {
  
- $UTILITY.previousDateForDate = function(Date) {
+ var d = new Date(DateSt.getTime() - 24 * 60 * 60 * 1000);
  
- var temp_date = Date.getDate()-1;
- var temp_month = Date.getMonth() + 1;
- var temp_year = Date.getFullYear();
+ var temp_date = d.getDate();
+ var temp_month = d.getMonth() + 1;
+ var temp_year = d.getFullYear();
  
  var tempDateString =  temp_date + "/" + temp_month + "/" + temp_year;
+ 
  return tempDateString;
  
  }

@@ -143,20 +143,17 @@ extern void SVMXLog(NSString *format, ...);
         return nil;
     //669
     CGSize oldSize = [data sizeWithFont:[UIFont boldSystemFontOfSize:31]
-                      
                       constrainedToSize:CGSizeMake(MAX_WIDTH, MAX_HEIGHT)
-                      
                           lineBreakMode:UILineBreakModeWordWrap];
     
     
     NSString *newData = [data substringToIndex:0];
     
-    CGSize newSize;
-    
+    //Modified Kri - OPDOC-CR
+    CGSize newSize = CGSizeZero;
     int position = 0;
     
     while ((MAX_WIDTH-10)> newSize.width)
-        
     {
         
         NSRange range;
@@ -166,10 +163,9 @@ extern void SVMXLog(NSString *format, ...);
         range.location = position;
         
         oldSize = [newData sizeWithFont:[UIFont boldSystemFontOfSize:31]
-                   
                       constrainedToSize:CGSizeMake(MAX_WIDTH, MAX_HEIGHT)
-                   
                           lineBreakMode:UILineBreakModeWordWrap];
+        
         SMLog(@"Range Position = %d Data Length = %d",range.location,[data length]);
         if(range.location >= [data length])
         {
@@ -178,9 +174,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         newData = [newData stringByAppendingFormat:@"%@",[data substringWithRange:range]];
         newSize = [newData sizeWithFont:[UIFont boldSystemFontOfSize:31]
-                   
                       constrainedToSize:CGSizeMake(MAX_WIDTH, MAX_HEIGHT)
-                   
                           lineBreakMode:UILineBreakModeWordWrap];
         position++;
         if(oldSize.width >= newSize.width)

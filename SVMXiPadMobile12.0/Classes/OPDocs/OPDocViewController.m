@@ -15,6 +15,7 @@
 #import "NSData-AES.h"
 #import "SBJsonParser.h"
 #import "Utility.h"
+#import "SVMXDatabaseMaster.h"
 
 @interface OPDocViewController ()
 //krishna opdoc syncOPDocHtmlData
@@ -235,6 +236,9 @@
     
     [containingRightView addSubview:syncContainer];
 
+    //Modified kri OPDOC-CR
+    [syncContainer release];
+    
     UIButton *button2 =  [UIButton buttonWithType:UIButtonTypeCustom];
     [button2 setImage:btn2Image forState:UIControlStateNormal];
     [button2 addTarget:self action:@selector(backView) forControlEvents:UIControlEventTouchUpInside];
@@ -285,6 +289,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    //Modified shravya - OPDOC-CR
+    NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+    if (![Utility isStringEmpty:alert_ok]) {
+         [[SVMXDatabaseMaster sharedDataBaseMaterObject] setOkayMessageForErrorAlerts:alert_ok];
+    }
+   
     [self populateNavigationBar];
     
 }
@@ -356,7 +366,7 @@
         [popOver release];
         popOver = nil;
     }
-    NSLog(@"doc Id %@ process id %@",docId,processId);
+    SMLog(@"doc Id %@ process id %@",docId,processId);
     [appDelegate.dataBase UpdateDocumentTemplateId:docId forProcessId:processId];
     [self addJsExecuterToView];
     
@@ -400,7 +410,7 @@
         [self finalizeAndStoreHTML:finalizeDict];
     }
     else if ([eventName isEqualToString:@"console"]){
-        NSLog(@"Console: %@",jsonParameterString);
+        SMLog(@"Console: %@",jsonParameterString);
     }
 }
 #pragma mark - Popover delegate.
@@ -530,7 +540,7 @@
     NSFileManager *filemanager = [NSFileManager defaultManager];
     
     self.signatureInfoDict = [self signatureDictionary];
-    NSLog(@"signInfoDict %@",[self.signatureInfoDict description]);
+    SMLog(@"signInfoDict %@",[self.signatureInfoDict description]);
     NSString *oldfilePath = @"";
     for(NSString *file in [self.signatureInfoDict allKeys]) {
         if ([file isEqualToString:signId]) {

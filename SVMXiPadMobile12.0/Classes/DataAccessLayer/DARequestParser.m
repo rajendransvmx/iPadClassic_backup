@@ -414,6 +414,9 @@
     
     NSArray *fieldNames = [query componentsSeparatedByString:@","];
     if ([fieldNames count] <= 0) {
+        //Modified shravya - OPDOC-CR
+        [finalQuery release];
+        finalQuery = nil;
         return nil;
     }
     NSMutableArray *finalArray = [[NSMutableArray alloc] init ];
@@ -437,7 +440,11 @@
     
     NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] initWithDictionary:criterion];
     NSString *operator = [tempDict objectForKey:kDAOperator];
-    NSString *lhs = [tempDict objectForKey:kDAFieldName];
+    
+    //Modified shravya - OPDOC-CR
+    //NSString *lhs = [tempDict objectForKey:kDAFieldName]; //uncoment this if we need lhs
+
+    
     NSString *rhs = [tempDict objectForKey:kDAFieldValue];
     NSString *operator_ = operator;
     

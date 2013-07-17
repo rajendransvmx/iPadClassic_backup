@@ -46,11 +46,11 @@ typedef enum {
     
     sqlite3  *database;
 }
-
+@property (nonatomic, retain) NSString *okMessage;
 + (SVMXDatabaseMaster *)sharedDataBaseMaterObject;
 
 
-
+- (void)setOkayMessageForErrorAlerts:(NSString *)okMesg;
 - (NSMutableArray *)getAllObjectFields:(NSString *)objectName fromTableName:(NSString *)tableName;
 - (id)getNewFieldValue:(NSString *)fieldValue basedOnType:(NSString *)fieldType;
 - (id)getDataForParams:(NSString *)parameterString andEventName:(NSString *)eventname;

@@ -15,7 +15,7 @@
 static SVMXDatabaseMaster *sharedDatamasterObject = nil;
 
 #define DATABASE_NAME @"sfm.sqlite"
-
+extern void SVMXLog(NSString *format, ...);
 @interface SVMXDatabaseMaster()
 
 - (BOOL)openDatabase;
@@ -26,10 +26,11 @@ static SVMXDatabaseMaster *sharedDatamasterObject = nil;
 @end
 
 @implementation SVMXDatabaseMaster
-
+@synthesize okMessage;
 #pragma mark - Dealloc & init functions
 
 - (void)dealloc {
+    [okMessage release];
     [self closeDatabase];
     [super dealloc];
 }
@@ -70,21 +71,21 @@ static SVMXDatabaseMaster *sharedDatamasterObject = nil;
     if (sqlite3_open([writableDBPath UTF8String], &database) != SQLITE_OK) {
         /* Even though the open failed, call close to properly clean up resources.*/
         sqlite3_close(database);
-        NSLog(@"DALAYER: Unable to load Database ");
+        SMLog(@"DALAYER: Unable to load Database ");
         return NO;
         /* Additional error handling, as appropriate... */
     }
-    NSLog(@"DALAYER: Database opened successfully ");
+    SMLog(@"DALAYER: Database opened successfully ");
     return YES;
 }
 
 
 - (BOOL)closeDatabase {
     if (sqlite3_close(database) != SQLITE_OK) {
-         NSLog(@"DALAYER: Closing Database failed");
+         SMLog(@"DALAYER: Closing Database failed");
          return NO;
     }
-    NSLog(@"DALAYER: Closing Database ");
+    SMLog(@"DALAYER: Closing Database ");
     return YES;
 }
 
@@ -107,7 +108,9 @@ static SVMXDatabaseMaster *sharedDatamasterObject = nil;
     
 }
 
-
+- (void)setOkayMessageForErrorAlerts:(NSString *)okMesg {
+    self.okMessage = okMesg;
+}
 #pragma mark - database access request object parser 
 
 - (id)getDataForParams:(NSString *)parameterString andEventName:(NSString *)eventname {
@@ -179,7 +182,13 @@ static SVMXDatabaseMaster *sharedDatamasterObject = nil;
         
         NSString * errorType=[exception name];
         NSString * errorMessage=[exception description];
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:errorType message:errorMessage delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+        
+        //Modified shravya - OPDOC-CR
+        NSString *okMsg = self.okMessage;
+        if ([Utility isStringEmpty:okMsg]) {
+            okMsg = @"Ok";
+        }
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:errorType message:errorMessage delegate:nil cancelButtonTitle:okMsg otherButtonTitles:nil, nil];
         [alertView show];
         [alertView release];
         alertView = nil;
@@ -559,7 +568,9 @@ static SVMXDatabaseMaster *sharedDatamasterObject = nil;
                 NSDictionary *fieldDict = [request.fieldsArray objectAtIndex:counter];
                 
                 NSString *fieldName = [fieldDict objectForKey:kDAFieldName];
-                NSString *fieldType = [fieldDict objectForKey:kDAFieldType];
+                
+                //Modified Shavya - OPDOC-CR
+                NSString *fieldType = nil;//[fieldDict objectForKey:kDAFieldType];
                 
                 id newFieldValue = @"";
                 fieldType = @"TEXT";
