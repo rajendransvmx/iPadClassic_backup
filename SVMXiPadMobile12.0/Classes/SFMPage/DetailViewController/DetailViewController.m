@@ -10877,6 +10877,8 @@ enum BizRuleConfirmViewStatus{
                 [dictResponse setObject:SFMPageHeaderDetail forKey:@"SFMPPAGE_DETAILS"];
                 [dictResponse setObject:errorsArray forKey:@"RULE_ERROR"];
                 [appDelegate.sfmPageController.rootView setErrorDictonary:dictResponse];
+                [SFMPageHeaderDetail release];
+                [dictResponse release];
             }
             appDelegate.sfmPageController.rootView.isErrorDisplayed = NO;
             [appDelegate.sfmPageController.rootView displayErrors];
