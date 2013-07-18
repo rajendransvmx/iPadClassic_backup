@@ -753,6 +753,7 @@ NSString* machineName()
     
     //shrinivas
     self.isBackground = TRUE;
+    self.isForeGround = FALSE;
     self.wsInterface.didOpComplete = FALSE;
     loginController.didEnterAlertView = FALSE;
 }
@@ -763,6 +764,7 @@ NSString* machineName()
     //shrinivas
 	
     self.isForeGround = TRUE;
+    self.isBackground = FALSE;
 }
 
 - (void) applicationDidBecomeActive:(UIApplication *)application
@@ -1448,6 +1450,13 @@ NSString * GO_Online = @"GO_Online";
 
 -(void)callDataSync
 {
+    if(self.isBackground == TRUE)
+    {
+        [self.datasync_timer invalidate];
+        [self ScheduleIncrementalDatasyncTimer];
+        [self updateNextDataSyncTimeToBeDisplayed:[NSDate date]];
+        return;
+    }
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc]init];
     SMLog(@"Return No Datasync triggred");
 	
@@ -1460,7 +1469,7 @@ NSString * GO_Online = @"GO_Online";
 		//Radha Defect Fix 5542
 		if (self.isDataSyncTimerTriggered)
 		{
-			[self updateNextSyncTimeIfSyncFails];
+			[self updateNextSyncTimeIfSyncFails:nil syncCompleted:nil];
 			isDataSyncTimerTriggered = NO;
 			
 		}
@@ -1473,7 +1482,7 @@ NSString * GO_Online = @"GO_Online";
 		//Radha Defect Fix 5542
 		if (self.isDataSyncTimerTriggered)
 		{
-			[self updateNextSyncTimeIfSyncFails];
+			[self updateNextSyncTimeIfSyncFails:nil syncCompleted:nil];
 			isDataSyncTimerTriggered = NO;
 			
 		}
@@ -1989,12 +1998,18 @@ NSString * GO_Online = @"GO_Online";
 
 - (void) callEventSyncTimer
 {
+    if(self.isBackground == TRUE)
+    {
+        [self.event_timer invalidate];
+        [self ScheduleTimerForEventSync];
+        return;
+    }
     
     if (![appDelegate isInternetConnectionAvailable])
     {
         return;
     }
-
+    
     if (event_thread != nil)
     {
         if ([event_thread isExecuting])
@@ -2718,11 +2733,37 @@ int percent = 0;
 	return currentDateTime;
 }
 
-//RADHA Defect Fix 5542
-- (void) updateNextSyncTimeIfSyncFails
+//RADHA Defect Fix 5542, 7444
+- (void) updateNextSyncTimeIfSyncFails:(NSDate *)syncStarted syncCompleted:(NSDate *)syncCompleted
 {
 	NSDate * nextSyncTime = [self getGMTTimeForNextDataSyncFromPList];
-	[self updateNextDataSyncTimeToBeDisplayed:nextSyncTime];
+	
+	if (syncStarted != nil && syncCompleted != nil)
+	{
+		NSComparisonResult result = [syncStarted compare:nextSyncTime];
+		
+		NSComparisonResult result2 = [syncCompleted compare:nextSyncTime];
+		
+		NSLog(@"%d %d", result, result2);
+		
+		if (result == NSOrderedAscending && result2 == NSOrderedDescending)
+		{
+			[[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
+			[appDelegate performSelectorOnMainThread:@selector(ScheduleIncrementalDatasyncTimer) withObject:nil waitUntilDone:NO];
+			[appDelegate updateNextDataSyncTimeToBeDisplayed:[NSDate date]];
+		}
+	}
+	
+	else
+	{
+		[self updateNextDataSyncTimeToBeDisplayed:nextSyncTime];
+	}
+
+	if ([self.wsInterface.updateSyncStatus respondsToSelector:@selector(refreshSyncTime)])
+	{
+		[self.wsInterface.updateSyncStatus refreshSyncTime];
+	}
+	
 }
 
 //7444

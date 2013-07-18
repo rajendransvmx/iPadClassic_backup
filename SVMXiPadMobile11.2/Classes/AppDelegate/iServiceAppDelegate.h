@@ -911,7 +911,8 @@ extern  NSString const *devVersion;
 
 //Radha DefectFix - 5542
 - (void) updateNextDataSyncTimeToBeDisplayed:(NSDate *)CureentDateTime;
-- (void) updateNextSyncTimeIfSyncFails;
+//7444
+- (void) updateNextSyncTimeIfSyncFails:(NSDate *)syncStarted syncCompleted:(NSDate *)syncCompleted;
 - (NSDate *) getGMTTimeForNextDataSyncFromPList;
 //7444
 - (NSDate *) getGMTTimeForNextConfigSyncFromPList;
