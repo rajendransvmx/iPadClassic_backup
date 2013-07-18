@@ -11535,9 +11535,9 @@ extern void SVMXLog(NSString *format, ...);
         {
             continue;
         }
-        if([self findLeteral:fieldValue literal:CURRENTRECORD] || [self findLeteral:fieldValue literal:CURRENTRECORD_HEADER])
+        if([self findLiteral:fieldValue literal:CURRENTRECORD] || [self findLiteral:fieldValue literal:CURRENTRECORD_HEADER])
         {
-            NSString * sourceFieldName = [self getFielApiNameFromString:fieldValue forLiteral:CURRENTRECORD];
+            NSString * sourceFieldName = [self getFieldApiNameFromString:fieldValue forLiteral:CURRENTRECORD];
             if([sourceFieldName length] != 0)
             {
                 NSString * sourceFieldValue = ([sourceDict objectForKey:sourceFieldName]!=nil)?[sourceDict objectForKey:sourceFieldName]:@"";
