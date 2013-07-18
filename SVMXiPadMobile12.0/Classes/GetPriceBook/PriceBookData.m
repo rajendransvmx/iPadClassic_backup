@@ -481,8 +481,8 @@
         
         
         /**/
-        NSString *stringTemp =  [targetRecordDictionary JSONRepresentation];
-        NSLog(@"%@",stringTemp);
+        //NSString *stringTemp =  [targetRecordDictionary JSONRepresentation];
+
     }@catch (NSException *exp) {
         SMLog(@"Exception Name WSInterface :getTargetRecordsFromSFMPage %@",exp.name);
         SMLog(@"Exception Reason WSInterface :getTargetRecordsFromSFMPage %@",exp.reason);
