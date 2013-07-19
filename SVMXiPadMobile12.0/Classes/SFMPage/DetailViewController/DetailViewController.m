@@ -1001,6 +1001,13 @@ enum BizRuleConfirmViewStatus{
 }
 -(void)FindLinkedProcessForLayoutId:(NSString *)detail_layout_id
 {
+    //compatibility check
+    BOOL doesTableExists = [appDelegate.databaseInterface checkForTheTableInTheDataBase:LINKED_SFMProcess];
+    if(!doesTableExists)
+    {
+        return;
+    }
+
     //check for enableChild SFM for Layout_id
     NSArray * linked_process_ids = [self   getAllLinkedProcessForDetailLine:detail_layout_id];
     if([linked_process_ids count] != 0)
@@ -1053,7 +1060,7 @@ enum BizRuleConfirmViewStatus{
     NSString * process_type = [page_layoutInfo objectForKey:gPROCESSTYPE];
         
         
-    if([process_type isEqualToString:VIEWRECORD] || [process_type isEqualToString:EDIT ])
+    if([process_type isEqualToString:VIEWRECORD] || [process_type isEqualToString:EDIT ] || [process_type isEqualToString:SOURCETOTARGET] || [process_type isEqualToString:SOURCETOTARGETONLYCHILDROWS])
     {
         
         if(_child_sfm_process_node == nil)
@@ -1676,6 +1683,9 @@ enum BizRuleConfirmViewStatus{
             NSString * detailaliasName = [dict objectForKey:gDETAIL_OBJECT_ALIAS_NAME];
             NSString * detail_layout_id = [dict objectForKey:gDETAILS_LAYOUT_ID];
             
+            //check for enableChild SFM for Layout_id
+            [self FindLinkedProcessForLayoutId:detail_layout_id];
+
             for(int k =0 ;k<[filedsArray count];k++)
             {
                 NSMutableDictionary * detailFiled_info =[filedsArray objectAtIndex:k];
@@ -2154,6 +2164,9 @@ enum BizRuleConfirmViewStatus{
             
             //NSString * detailaliasName = [dict objectForKey:gDETAIL_OBJECT_ALIAS_NAME];
             NSString * detail_layout_id = [dict objectForKey:gDETAILS_LAYOUT_ID];
+            
+            //check for enableChild SFM for Layout_id
+            [self FindLinkedProcessForLayoutId:detail_layout_id];
             
             for(int k =0 ;k<[filedsArray count];k++)
             {

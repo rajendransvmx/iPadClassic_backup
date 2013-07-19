@@ -696,6 +696,11 @@ forRowAtIndexPath: (NSIndexPath*)indexPath
 #pragma mark -
 #pragma mark Advanced look up filers
 - (void)loadLookupFilters {
+   
+    if (![self isCriteriaSupportedOnLookup]) {
+        return;
+    }
+    
     NSArray *advancedlookupFilters =  [appDelegate.databaseInterface  getLookupfiltersForNamedSearchId:self.searchId andfilterType:kLOOKUP_ADVANCED_FILTER];
     if ([advancedlookupFilters count] > 0) {
         self.advancedFilters = advancedlookupFilters;
@@ -705,6 +710,18 @@ forRowAtIndexPath: (NSIndexPath*)indexPath
     if ([prelookupFilters count] > 0) {
         self.preFilters = prelookupFilters;
     }
+}
+
+- (BOOL)isCriteriaSupportedOnLookup {
+    NSString *currentServerPkgVersion = [[NSUserDefaults standardUserDefaults] objectForKey:kPkgVersionCheckForGPS_AND_SFM_SEARCH];
+    NSInteger package = [currentServerPkgVersion intValue];
+    double minVersion =  kMinPkgForLookupFilters * 100000;
+    if (package <  minVersion) {
+        SMLog(@"Lookup filters is not supported in %@",currentServerPkgVersion);
+        return NO;
+    }
+    SMLog(@"Lookup filters is supported %@",currentServerPkgVersion);
+    return YES;
 }
 
 @end

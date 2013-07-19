@@ -17,6 +17,7 @@
 #import "Utility.h"
 #import "SVMXLookupFilter.h"
 #import "PerformanceAnalytics.h"
+#import "Util.h"
 
 extern void SVMXLog(NSString *format, ...);
 
@@ -646,7 +647,7 @@ extern void SVMXLog(NSString *format, ...);
     }
     
     // Just got it from cache, lets go back
-    if (datatype != nil)
+    if ([Util isValidString:datatype])
     {
 //        NSLog(@" Go it from cache fieldDataTypeDictionary  %@ -> %@ ", cacheKey,  datatype);
         return datatype;
@@ -2452,11 +2453,12 @@ extern void SVMXLog(NSString *format, ...);
             querystring2 = [NSString stringWithFormat:@"Select %@ from '%@'  where %@ AND %@ LIMIT %d ", result_fieldNames, object, searchFieldNames,advancedFilterString, records];
         }
         
-        NSLog(@"QUERY: Executed %@",querystring2);
+        SMLog(@"QUERY: Executed %@",querystring2);
         /* Shra-lookup ends*/
               
         if(synchronized_sqlite3_prepare_v2(appDelegate.db, [querystring2 UTF8String], -1, &stmt, nil) == SQLITE_OK)
         {
+            SMLog(@"QUERY: Compiled Successfully");
             while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
             {
                 NSMutableArray *subdataArray = [[NSMutableArray alloc]initWithCapacity:0];
@@ -11004,22 +11006,19 @@ extern void SVMXLog(NSString *format, ...);
 
 - (NSString *)getUserNameofLoggedInUser{
     NSString *UserFullName=@"";
-    if(![appDelegate.currentUserName length]>0)
+   
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    if ([[userDefaults objectForKey:USERFULLNAME] length]>0)
     {
-        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-        if ([[userDefaults objectForKey:USERFULLNAME] length]>0)
-        {
-            UserFullName = [userDefaults objectForKey:USERFULLNAME];  //To get user display name not email id 
-            SMLog(@"User Full Name  = %@",UserFullName);
-        }
-        else
-        {
-            UserFullName=[appDelegate.dataBase getLoggedInUser:appDelegate.username];
-        }
+        UserFullName = [userDefaults objectForKey:USERFULLNAME];  //To get user display name not email id
+        SMLog(@"User Full Name  = %@",UserFullName);
     }
     else
     {
-        UserFullName=appDelegate.currentUserName;
+            UserFullName=[appDelegate.dataBase getLoggedInUser:appDelegate.username];
+    }
+    if (UserFullName == nil) {
+         UserFullName = @"";
     }
     return UserFullName;
 }
@@ -11094,8 +11093,8 @@ extern void SVMXLog(NSString *format, ...);
         }
         
         NSArray *componentsArray =  [Utility splitString:literalValue byString:@"."];
-        if ([componentsArray count] > 1) {
-            NSString *fieldName = [componentsArray objectAtIndex:1];
+        if ([componentsArray count] > 2) {
+            NSString *fieldName = [componentsArray objectAtIndex:2];
             
             /* look for field name in the page layout*/
             /* If field value is empty then look into database */
@@ -11114,8 +11113,8 @@ extern void SVMXLog(NSString *format, ...);
         }
         else {
             NSArray *componentsArray =  [Utility splitString:literalValue byString:@"."];
-            if ([componentsArray count] > 1) {
-                NSString *fieldName = [componentsArray objectAtIndex:1];
+            if ([componentsArray count] > 2) {
+                NSString *fieldName = [componentsArray objectAtIndex:2];
                 
                 NSArray *details = [currentPageDictionary objectForKey:gDETAILS];
                 if ([details count] > detailIndexPath.section) {
@@ -11284,9 +11283,9 @@ extern void SVMXLog(NSString *format, ...);
             NSString * referenceFieldName = @"";
             NSArray * SeperateComponents = [mappingValue componentsSeparatedByString:@"."];
             
-            if([SeperateComponents count] == 2)
+            if([SeperateComponents count] == 3)
             {
-                referenceFieldName = [SeperateComponents objectAtIndex:1];
+                referenceFieldName = [SeperateComponents objectAtIndex:2];
             }
             
             if([allField_names containsObject:referenceFieldName])

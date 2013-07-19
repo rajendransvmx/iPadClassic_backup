@@ -388,10 +388,10 @@
 
 /*Shra-lookup*/
 
-#define CURRENTRECORD                       @"CURRENTRECORD"
-#define CURRENTRECORD_HEADER                @"CURRENTRECORD.HEADER"
+#define CURRENTRECORD                       @"SVMX.CURRENTRECORD"
+#define CURRENTRECORD_HEADER                @"SVMX.CURRENTRECORDHEADER"
+#define SVMX_USER_TRUNK                     @"SVMX.USERTRUNK"
 
-#define SVMX_USER_TRUNK                     @"SVMX_USER_TRUNK"
 #define SERVER_OVERRIDE                     @"Server_Override"
 #define CLIENT_OVERRIDE                     @"Client_Override"
 #define UNDO                                @"Undo"

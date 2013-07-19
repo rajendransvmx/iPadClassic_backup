@@ -61,6 +61,9 @@
 -(void)DismissPopover;
 -(void) updateTxtField: (NSString *) barCodeData;
 - (void)searchBarCodeScannerData:(NSString *)_searchBartext;
+
+- (BOOL)isCriteriaSupportedOnLookup ; /*Shravya-lookup package check*/
+
 @end
 
 @protocol LookupViewDelegate
