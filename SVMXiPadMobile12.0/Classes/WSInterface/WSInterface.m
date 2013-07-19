@@ -5950,8 +5950,14 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_lastModified =[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
             
             SVMXCMap_lastModified.key = @"LAST_SYNC_TIME";
-            SVMXCMap_lastModified.value = [self get_SYNCHISTORYTime_ForKey:LAST_INSERT_RESONSE_TIME] == nil ?@"":[self get_SYNCHISTORYTime_ForKey:LAST_INSERT_RESONSE_TIME];
-            
+            if(appDelegate.dataSyncRunning)
+            {
+                SVMXCMap_lastModified.value = [self get_SYNCHISTORYTime_ForKey:LAST_INSERT_RESONSE_TIME] == nil ?@"":[self get_SYNCHISTORYTime_ForKey:LAST_INSERT_RESONSE_TIME];
+            }
+            else
+            {
+                SVMXCMap_lastModified.value =@"";
+            }
             [sfmRequest.valueMap addObject:SVMXCMap_lastModified];
             [SVMXCMap_lastModified release];
             

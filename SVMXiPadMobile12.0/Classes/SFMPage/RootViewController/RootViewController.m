@@ -107,7 +107,7 @@ extern void SVMXLog(NSString *format, ...);
     self.contentSizeForViewInPopover = CGSizeMake(320.0, 600.0);
     NSMutableDictionary *bizRuleError= [errorDictonary objectForKey:@"RULE_ERROR"];
     self.conflictsArray = [bizRuleError objectForKey:@"errors"];
-    NSLog(@"self.frame %@",NSStringFromCGRect(self.view.frame));}
+    SMLog(@"self.frame %@",NSStringFromCGRect(self.view.frame));}
 
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -593,7 +593,7 @@ extern void SVMXLog(NSString *format, ...);
     if (tableView == self.errorTableView)
     {
         self.conflictsArray = [errorDictonary objectForKey:@"RULE_ERROR"];
-        NSLog(@"Errors Count %d",[self.conflictsArray count]);
+        SMLog(@"Errors Count %d",[self.conflictsArray count]);
         return [self.conflictsArray count];
     }
     
@@ -666,13 +666,12 @@ extern void SVMXLog(NSString *format, ...);
     
     if (tableView == self.errorTableView) {
         //Set the maximum size
-        
-        NSString *text = [[self.conflictsArray objectAtIndex:[indexPath row]] objectForKey:@"Error"];
+        NSString *text = [[self.conflictsArray objectAtIndex:[indexPath row]] objectForKey:@"message"];
         [text uppercaseString];
         CGSize constraint = CGSizeMake(self.view.frame.size.width, CELL_CONTENT_HEIGHT);
         
         CGSize size = [text sizeWithFont:[UIFont boldSystemFontOfSize:18.0] constrainedToSize:constraint lineBreakMode:UILineBreakModeWordWrap];
-        NSLog(@"%@",NSStringFromCGSize(size));
+        SMLog(@"%@",NSStringFromCGSize(size));
         CGFloat minimumHeight=SectionHeaderHeight;
         if (size.height < minimumHeight)
         {
@@ -743,8 +742,7 @@ extern void SVMXLog(NSString *format, ...);
         NSString *errorString=[[self.conflictsArray objectAtIndex:indexPath.row]objectForKey:@"message" ];
         [errorString uppercaseString];
         CGSize size = [errorString sizeWithFont:[UIFont boldSystemFontOfSize:18.0] constrainedToSize:constraint lineBreakMode:UILineBreakModeWordWrap];
-        
-        cellLabel.frame = CGRectMake(0, 0, cell.contentView.bounds.size.width, size.height);
+        cellLabel.frame = CGRectMake(0, 0, tableView.bounds.size.width, size.height);
         SMLog(@"cellLabel frame %@",NSStringFromCGRect(cellLabel.frame));
         cellLabel.text = errorString;
         SMLog(@"cellLabel  %@",cellLabel.text);
@@ -1100,7 +1098,7 @@ extern void SVMXLog(NSString *format, ...);
         tableViewHeight += sectionRect.size.height;
     }
     
-    NSLog(@"tableViewHeight %f",tableViewHeight);
+    SMLog(@"tableViewHeight %f",tableViewHeight);
     
     return tableViewHeight;
 }
@@ -1111,20 +1109,20 @@ extern void SVMXLog(NSString *format, ...);
     self.conflictsArray = [errorDictonary objectForKey:@"RULE_ERROR"];
     [self.errorTableView reloadData];
     [self.tableView reloadInputViews];
-    NSLog(@"self.frame %@",NSStringFromCGRect(self.view.frame));
+    SMLog(@"self.frame %@",NSStringFromCGRect(self.view.frame));
     
     CGFloat errorTableViewHeight = [self heightForTableView:self.errorTableView];
     
     CGFloat maxHeight = self.view.frame.size.height/2.50;
     
-    NSLog(@"maxHeight %f",maxHeight);
+    SMLog(@"maxHeight %f",maxHeight);
     
     
     if (errorTableViewHeight>maxHeight) {
         errorTableViewHeight = maxHeight;
     }
     
-    NSLog(@"errorTableViewHeight %f",errorTableViewHeight);
+    SMLog(@"errorTableViewHeight %f",errorTableViewHeight);
     
     CGRect errorTableViewframe = CGRectMake(0, 0, self.view.bounds.size.width, errorTableViewHeight);
     [self.errorTableView setFrame:errorTableViewframe];
