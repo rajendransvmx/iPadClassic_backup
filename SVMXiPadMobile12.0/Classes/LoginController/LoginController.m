@@ -377,7 +377,7 @@ extern void SVMXLog(NSString *format, ...);
     
     if (![appDelegate isInternetConnectionAvailable])
     {
-        [ZKServerSwitchboard switchboard].logXMLInOut = YES;
+        [ZKServerSwitchboard switchboard].logXMLInOut = [appDelegate enableLogs];
         [activity stopAnimating];
         appDelegate.shouldShowConnectivityStatus = YES;
         [appDelegate displayNoInternetAvailable];
@@ -411,7 +411,7 @@ extern void SVMXLog(NSString *format, ...);
         }
 
     }
-    [ZKServerSwitchboard switchboard].logXMLInOut = YES;
+    [ZKServerSwitchboard switchboard].logXMLInOut = [appDelegate enableLogs];
     
     [self getServiceReportLogo];
     

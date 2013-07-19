@@ -187,7 +187,7 @@ extern void SVMXLog(NSString *format, ...);
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl webService:webServiceClass];
     
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     INTF_WebServicesDefServiceSvc_INTF_SyncOverRide_WS
       * Overide_sync = [[[INTF_WebServicesDefServiceSvc_INTF_SyncOverRide_WS alloc] init] autorelease];
@@ -610,7 +610,7 @@ extern void SVMXLog(NSString *format, ...);
         [customSync_records release];
     }
         
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     //[[ZKServerSwitchboard switchboard] doCheckSession];
     
@@ -1470,7 +1470,7 @@ last_sync_time:(NSString *)last_sync_time
     allowFieldTruncationHeader.allowFieldTruncation = NO;
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     INTF_WebServicesDefServiceSvc_INTF_MetaSync_WS * profileCheck = [[[INTF_WebServicesDefServiceSvc_INTF_MetaSync_WS alloc] init] autorelease];
     
@@ -1569,7 +1569,7 @@ last_sync_time:(NSString *)last_sync_time
     
 
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
      
     INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init]   autorelease];
     
@@ -3228,7 +3228,7 @@ NSDate * syncCompleted;
     allowFieldTruncationHeader.allowFieldTruncation = NO;
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     
     INTF_WebServicesDefServiceSvc_INTF_MetaSync_WS * metaSync = [[[INTF_WebServicesDefServiceSvc_INTF_MetaSync_WS alloc] init]
@@ -3280,7 +3280,7 @@ NSDate * syncCompleted;
         allowFieldTruncationHeader.allowFieldTruncation = NO;
         
         INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-        binding.logXMLInOut = YES;
+        binding.logXMLInOut = [appDelegate enableLogs];
         
         
         INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] autorelease];
@@ -3308,7 +3308,7 @@ NSDate * syncCompleted;
         [sfmRequest addClientInfo:svmxc_client];
         [datasync setRequest:sfmRequest];
         
-        binding.logXMLInOut = YES;
+        binding.logXMLInOut = [appDelegate enableLogs];
         [binding INTF_DataSync_WSAsyncUsingParameters:datasync
                                         SessionHeader:sessionHeader
                                           CallOptions:callOptions
@@ -3342,7 +3342,7 @@ NSDate * syncCompleted;
         allowFieldTruncationHeader.allowFieldTruncation = NO;
         
         INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-        binding.logXMLInOut = YES;
+        binding.logXMLInOut = [appDelegate enableLogs];
         
         
         INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] autorelease];
@@ -3370,7 +3370,7 @@ NSDate * syncCompleted;
         [sfmRequest addClientInfo:svmxc_client];
         [datasync setRequest:sfmRequest];
         
-        binding.logXMLInOut = YES;
+        binding.logXMLInOut = [appDelegate enableLogs];
         [binding INTF_DataSync_WSAsyncUsingParameters:datasync
                                         SessionHeader:sessionHeader
                                           CallOptions:callOptions
@@ -3779,7 +3779,7 @@ NSDate * syncCompleted;
     allowFieldTruncationHeader.allowFieldTruncation = NO;
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     
     INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] autorelease];
@@ -3934,7 +3934,7 @@ NSDate * syncCompleted;
     [datasync setRequest:sfmRequest];
     
     
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     [binding INTF_DataSync_WSAsyncUsingParameters:datasync
                                     SessionHeader:sessionHeader
                                       CallOptions:callOptions
@@ -3968,7 +3968,7 @@ NSDate * syncCompleted;
     
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     
     INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] autorelease];
@@ -4012,7 +4012,7 @@ NSDate * syncCompleted;
     [datasync setRequest:sfmRequest];
     
     
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_DataSync_WSAsyncUsingParameters:datasync 
                                     SessionHeader:sessionHeader 
@@ -4051,7 +4051,7 @@ NSDate * syncCompleted;
     allowFieldTruncationHeader.allowFieldTruncation = NO;
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     
     INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] autorelease];
@@ -4096,7 +4096,7 @@ NSDate * syncCompleted;
         [datasync setRequest:sfmRequest];
     
     
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_DataSync_WSAsyncUsingParameters:datasync 
                                     SessionHeader:sessionHeader 
@@ -4139,7 +4139,7 @@ NSDate * syncCompleted;
     allowFieldTruncationHeader.allowFieldTruncation = NO;
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     
     INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] autorelease];
@@ -4188,7 +4188,7 @@ NSDate * syncCompleted;
         [datasync setRequest:sfmRequest];
     
     
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_DataSync_WSAsyncUsingParameters:datasync 
                                     SessionHeader:sessionHeader 
@@ -4228,7 +4228,7 @@ NSDate * syncCompleted;
     allowFieldTruncationHeader.allowFieldTruncation = NO;
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     
     INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] autorelease];
@@ -4261,7 +4261,7 @@ NSDate * syncCompleted;
         [datasync setRequest:sfmRequest];
     
     
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_DataSync_WSAsyncUsingParameters:datasync 
                                     SessionHeader:sessionHeader 
@@ -4304,7 +4304,7 @@ NSDate * syncCompleted;
     allowFieldTruncationHeader.allowFieldTruncation = NO;
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     
     INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] autorelease];
@@ -4417,7 +4417,7 @@ NSDate * syncCompleted;
     [datasync setRequest:sfmRequest];
     
     
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_DataSync_WSAsyncUsingParameters:datasync 
                                     SessionHeader:sessionHeader 
@@ -4548,7 +4548,7 @@ NSDate * syncCompleted;
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
 
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     
     INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] autorelease];
@@ -5248,7 +5248,7 @@ NSDate * syncCompleted;
     [datasync setRequest:sfmRequest];
     
     
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     //[[ZKServerSwitchboard switchboard] doCheckSession];
     
@@ -5391,7 +5391,7 @@ NSDate * syncCompleted;
     keyvalue.name = nil;
     [getVersion.prequest addObject:keyvalue];
     
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
 
     //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding SVMX_GetSvmxVersionAsyncUsingParameters:getVersion
@@ -5429,7 +5429,7 @@ NSDate * syncCompleted;
     allowFieldTruncationHeader.allowFieldTruncation = NO;
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     INTF_WebServicesDefServiceSvc_INTF_MetaSync_WS * metaSync = [[[INTF_WebServicesDefServiceSvc_INTF_MetaSync_WS alloc] init] autorelease];
     
@@ -5545,7 +5545,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     allowFieldTruncationHeader.allowFieldTruncation = NO;
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     
     INTF_WebServicesDefServiceSvc_INTF_DataSync_WS * dataSync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] 
@@ -5774,7 +5774,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         allowFieldTruncationHeader.allowFieldTruncation = NO;
         
         INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-        binding.logXMLInOut = YES;
+        binding.logXMLInOut = [appDelegate enableLogs];
         
         INTF_WebServicesDefServiceSvc_INTF_DataSync_WS * dataSync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] autorelease];
         
@@ -6038,7 +6038,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     allowFieldTruncationHeader.allowFieldTruncation = NO;
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     INTF_WebServicesDefServiceSvc_INTF_DataSync_WS * dataSync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] autorelease];
     
@@ -6154,7 +6154,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     getTags.tagsReq = requestForTags;
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_Get_Tags_WSAsyncUsingParameters:getTags
@@ -6176,7 +6176,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
     sessionHeader.sessionId = [appDelegate.loginResult sessionId];
@@ -6214,7 +6214,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
     sessionHeader.sessionId = [appDelegate.loginResult sessionId];
@@ -6251,7 +6251,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
     sessionHeader.sessionId = [appDelegate.loginResult sessionId];
@@ -6359,7 +6359,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     getPageLayout.PmaxReqPageUI = reqPageUI;
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     //[[ZKServerSwitchboard switchboard] doCheckSession];
     [binding INTF_getPageLayout_WSAsyncUsingParameters:getPageLayout
@@ -6382,7 +6382,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
     sessionHeader.sessionId = [appDelegate.loginResult sessionId];
@@ -6486,7 +6486,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
     sessionHeader.sessionId = [appDelegate.loginResult sessionId];
@@ -6548,7 +6548,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
     sessionHeader.sessionId = [appDelegate.loginResult sessionId];
@@ -6622,7 +6622,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
     callOptions.client = nil;
@@ -6671,7 +6671,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
     sessionHeader.sessionId = [appDelegate.loginResult sessionId];
@@ -6860,7 +6860,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
     sessionHeader.sessionId = appDelegate.session_Id; //OAuth
@@ -6906,7 +6906,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init];
     sessionHeader.sessionId = appDelegate.session_Id;//OAuth
@@ -6960,7 +6960,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
     sessionHeader.sessionId = [appDelegate.loginResult sessionId];
@@ -7017,7 +7017,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
     sessionHeader.sessionId = [appDelegate.loginResult sessionId];
@@ -7082,7 +7082,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:serverURL webService:webServiceClass];
     
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
 	sessionHeader.sessionId = appDelegate.session_Id; //OAuth
@@ -7141,7 +7141,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl webService:webServiceClass];
        
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
 	sessionHeader.sessionId = appDelegate.session_Id; //OAuth
@@ -7223,7 +7223,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
     sessionHeader.sessionId = [appDelegate.loginResult sessionId];
@@ -7354,7 +7354,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     
     
     INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = YES;
+    binding.logXMLInOut = [appDelegate enableLogs];
     
     INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] autorelease];
     
@@ -13743,7 +13743,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         allowFieldTruncationHeader.allowFieldTruncation = NO;
         
         INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-        binding.logXMLInOut = YES;
+        binding.logXMLInOut = [appDelegate enableLogs];
         
         
         INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] autorelease];
@@ -13793,7 +13793,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         [datasync setRequest:sfmRequest];
         
         
-        binding.logXMLInOut = YES;
+        binding.logXMLInOut = [appDelegate enableLogs];
         [binding INTF_DataSync_WSAsyncUsingParameters:datasync
                                         SessionHeader:sessionHeader
                                           CallOptions:callOptions

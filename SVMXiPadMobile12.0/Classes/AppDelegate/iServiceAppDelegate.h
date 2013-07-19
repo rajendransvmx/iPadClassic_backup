@@ -1035,7 +1035,7 @@ extern  NSString const *devVersion;
 
 //Defect 6774
 - (void) checkifConflictExistsForConnectionError;
-
+- (BOOL) enableLogs;
 // Initial 3 calls
 //-(BOOL)checkVersion;
 

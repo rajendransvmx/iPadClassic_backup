@@ -778,7 +778,7 @@ NSString* machineName()
 			self.IsLogedIn = ISLOGEDIN_TRUE;
 			
 			ZKServerSwitchboard *switchBoard = [[ZKServerSwitchboard switchboard] init];
-			switchBoard.logXMLInOut = TRUE;
+			switchBoard.logXMLInOut =  [appDelegate enableLogs];
 			
 			homeScreenView = nil;
 			//Changed
@@ -1122,7 +1122,7 @@ NSString* machineName()
 	self.IsLogedIn = ISLOGEDIN_TRUE;
 	
 	ZKServerSwitchboard *switchBoard = [[ZKServerSwitchboard switchboard] init];
-	switchBoard.logXMLInOut = TRUE;
+	switchBoard.logXMLInOut =  [appDelegate enableLogs];
 	
 	homeScreenView = nil;
 	[self removeBackgroundImageAndLogo];
@@ -1214,7 +1214,7 @@ NSString* machineName()
 				
 				
 				ZKServerSwitchboard *switchBoard = [[ZKServerSwitchboard switchboard] init];
-				switchBoard.logXMLInOut = TRUE;
+				switchBoard.logXMLInOut =  [appDelegate enableLogs];
 				
 				if ( homeScreenView == nil )
 				{
@@ -1249,7 +1249,7 @@ NSString* machineName()
 			
 			
 			ZKServerSwitchboard *switchBoard = [[ZKServerSwitchboard switchboard] init];
-			switchBoard.logXMLInOut = TRUE;
+			switchBoard.logXMLInOut =  [appDelegate enableLogs];
 			
 			if ( homeScreenView == nil )
 			{
@@ -2028,7 +2028,7 @@ NSString * GO_Online = @"GO_Online";
 						break;
 					}
 				}
-				[ZKServerSwitchboard switchboard].logXMLInOut = YES;
+				[ZKServerSwitchboard switchboard].logXMLInOut = [appDelegate enableLogs];
 				
 			}
 			if (isServerInValid)
@@ -2069,7 +2069,7 @@ NSString * GO_Online = @"GO_Online";
         if (didLoginAgain)
             break;
     }
-    [ZKServerSwitchboard switchboard].logXMLInOut = YES;
+    [ZKServerSwitchboard switchboard].logXMLInOut = [appDelegate enableLogs];
     if (isServerInValid == TRUE)
     {
         self.isServerInValid = FALSE;
@@ -4080,6 +4080,13 @@ int percent = 0;
 	{
 		[self  setSyncStatus:SYNC_GREEN];
 	}
+}
+
+- (BOOL) enableLogs
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL enabled_logging = [defaults boolForKey:@"enabled_logging"];
+    return enabled_logging;
 }
 
 @end
