@@ -2752,18 +2752,38 @@ int percent = 0;
 			[appDelegate performSelectorOnMainThread:@selector(ScheduleIncrementalDatasyncTimer) withObject:nil waitUntilDone:NO];
 			[appDelegate updateNextDataSyncTimeToBeDisplayed:[NSDate date]];
 		}
+        else
+        {
+            [appDelegate updateNextDataSyncTimeToBeDisplayed:nextSyncTime];
+        }
 	}
 	
 	else
 	{
-		[self updateNextDataSyncTimeToBeDisplayed:nextSyncTime];
+        NSComparisonResult result = [syncCompleted compare:nextSyncTime];
+        
+        if (result == NSOrderedDescending)
+        {
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
+            [appDelegate performSelectorOnMainThread:@selector(ScheduleIncrementalDatasyncTimer) withObject:nil waitUntilDone:NO];
+            [appDelegate updateNextDataSyncTimeToBeDisplayed:[NSDate date]];
+        }
+        else
+        {
+            [appDelegate updateNextDataSyncTimeToBeDisplayed:nextSyncTime];
+        }
 	}
 
 	if ([self.wsInterface.updateSyncStatus respondsToSelector:@selector(refreshSyncTime)])
 	{
 		[self.wsInterface.updateSyncStatus refreshSyncTime];
-	}
-	
+    }
+    [self setSyncStatus:SYNC_RED];
+    if ([self.wsInterface.updateSyncStatus respondsToSelector:@selector(refreshSyncStatus)])
+	{
+		[self.wsInterface.updateSyncStatus refreshSyncStatus];
+    }
+   
 }
 
 //7444

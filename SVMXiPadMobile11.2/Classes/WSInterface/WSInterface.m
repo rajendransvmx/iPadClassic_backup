@@ -3865,8 +3865,19 @@ NSDate * syncCompleted;
 	
 	if (!appDelegate.shouldScheduleTimer)
 	{
-		//Defect Fix 5542
-		[appDelegate updateNextDataSyncTimeToBeDisplayed:nextSyncTime];
+        NSComparisonResult result = [current_dateTime compare:nextSyncTime];
+        
+        if (result == NSOrderedDescending)
+        {
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
+            [appDelegate performSelectorOnMainThread:@selector(ScheduleIncrementalDatasyncTimer) withObject:nil waitUntilDone:NO];
+            [appDelegate updateNextDataSyncTimeToBeDisplayed:[NSDate date]];
+        }
+        else
+        {
+            //Defect Fix 5542
+            [appDelegate updateNextDataSyncTimeToBeDisplayed:nextSyncTime];
+        }
 	}
 	
 
