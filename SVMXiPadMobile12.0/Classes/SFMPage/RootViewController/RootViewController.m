@@ -107,7 +107,8 @@ extern void SVMXLog(NSString *format, ...);
     self.contentSizeForViewInPopover = CGSizeMake(320.0, 600.0);
     NSMutableDictionary *bizRuleError= [errorDictonary objectForKey:@"RULE_ERROR"];
     self.conflictsArray = [bizRuleError objectForKey:@"errors"];
-    SMLog(@"self.frame %@",NSStringFromCGRect(self.view.frame));}
+    SMLog(@"self.frame %@",NSStringFromCGRect(self.view.frame));
+}
 
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -331,7 +332,8 @@ extern void SVMXLog(NSString *format, ...);
         dummyView.userInteractionEnabled=FALSE;
         [headerView addSubview:dummyView];
         [dummyView release];
-        
+        if(!isErrorDisplayed)
+            isErrorDisplayed=YES;
         return [headerView autorelease];
     }
     else
