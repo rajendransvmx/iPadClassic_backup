@@ -11544,6 +11544,21 @@ extern void SVMXLog(NSString *format, ...);
                 {
                   [detailDict setObject:sourceFieldValue forKey:fieldApi];
                 }
+                else
+                {
+                    NSString *recordId = appDelegate.sfmPageController.recordId;
+                    if([recordId length] != 0)
+                    {
+                        NSDictionary *currentPageDictionary = appDelegate.SFMPage;
+                        NSDictionary *headerDictionary = [currentPageDictionary objectForKey:gHEADER];
+                        NSString * headerObjName = [headerDictionary objectForKey:gHEADER_OBJECT_NAME];
+                        NSString * newValue = [self getValueForField:sourceFieldName objectName:headerObjName recordId:recordId];
+                        if([newValue length] != 0)
+                        {
+                            [detailDict setObject:newValue forKey:fieldApi];
+                        }
+                    }
+                }
             }
         }
     }
