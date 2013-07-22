@@ -18,7 +18,8 @@
     NSString * local_id = @"";
     NSString *record_type;
     NSMutableDictionary * record_dict = [[NSMutableDictionary alloc] init];
-    NSMutableArray * array = [[NSMutableArray alloc] init];
+    NSMutableDictionary * record_dictForDelete = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary * record_dictForRecord = [[NSMutableDictionary alloc] init];
     NSString * event_name=@"";
     partialExecutedObjects=[[NSMutableDictionary alloc]init];
     for(int i=0; i<[result count]; i++)
@@ -36,6 +37,8 @@
 
             for (INTF_WebServicesDefServiceSvc_SVMXMap * obj in arrayOfDeleteObj)
             {
+                NSMutableArray * arrofDeleteObject = [[NSMutableArray alloc] init];
+
                 BOOL isChild = [self.dataBaseInterface IsChildObject:obj.key];
                 if(isChild)
                     record_type = @"DETAIL";
@@ -51,8 +54,8 @@
                                       @"",sf_id,event_name,record_type,nil];
                     NSDictionary * dict = [NSDictionary dictionaryWithObjects:values forKeys:keys];
                     
-                    [array addObject:dict];
-                    [record_dict setObject:array forKey:obj.key];
+                    [arrofDeleteObject addObject:dict];
+                    [record_dictForDelete setObject:arrofDeleteObject forKey:obj.key];
                 }
             }
           
@@ -69,6 +72,7 @@
         else
         {
             NSArray *arrayOfObjects=svmxMapObject.valueMap;
+            NSMutableArray * array = [[NSMutableArray alloc] init];
             for (INTF_WebServicesDefServiceSvc_SVMXMap * obj in arrayOfObjects)
             {
                 NSString * sf_Id = [obj.value stringByReplacingOccurrencesOfString:@"\"" withString:@""];
@@ -86,21 +90,46 @@
                 NSArray *values =[NSArray arrayWithObjects:local_id,
                                   @"",sf_Id,event_name,record_type,nil];
                 NSDictionary * dict = [NSDictionary dictionaryWithObjects:values forKeys:keys];
-                
                 [array addObject:dict];
-                [record_dict setObject:array forKey:key];
-                
+                [record_dictForRecord setObject:array forKey:key];
             }
+            [array release];
         }
         
     }
-    [array release];
+    
+    NSArray *arrOfObject=  [record_dictForRecord allKeys];
+    NSMutableSet *setObject=[NSMutableSet setWithArray:arrOfObject];
+    NSArray *arroOfDeletedObject= [record_dictForDelete allKeys];
+    NSSet *setDeleteObject=[NSSet setWithArray:arroOfDeletedObject];
+    [setObject unionSet:setDeleteObject];
+    
+    NSArray *array=[setObject allObjects];
+    for (int i=0; i<[array count]; i++)
+    {
+        NSMutableArray *finalArray=[[NSMutableArray alloc]init];
 
+        if([[record_dictForRecord allKeys] containsObject:[array objectAtIndex:i]])
+        {
+            [finalArray addObjectsFromArray:[record_dictForRecord objectForKey:[array objectAtIndex:i]]];
+        }
+        if([[record_dictForDelete allKeys] containsObject:[array objectAtIndex:i]])
+        {
+            [finalArray addObjectsFromArray:[record_dictForDelete objectForKey:[array objectAtIndex:i]]];
+        }
+        
+        [record_dict setObject:finalArray forKey:[array objectAtIndex:i]];
+    }
     if(record_dict !=nil && [record_dict count]>0)
     {
         [self.dataBaseInterface insertRecordIdsIntosyncRecordHeap:record_dict];
     }
+    [record_dictForDelete release];
+    record_dictForDelete = nil;
+    [record_dictForRecord release];
+    record_dictForRecord = nil;
     [record_dict release];
+    record_dict = nil;
 
     return callBack;
 }
