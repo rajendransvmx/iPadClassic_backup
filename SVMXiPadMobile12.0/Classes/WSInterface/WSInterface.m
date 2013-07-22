@@ -1720,6 +1720,10 @@ NSDate * syncCompleted;
     
     [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"DoIncrementalDataSync"
                                                          andRecordCount:0];
+        //7444
+	NSDate * syncStarted = nil;
+	syncCompleted = nil;
+
     
     @try{
     //RADHA 2012june12
@@ -1749,7 +1753,8 @@ NSDate * syncCompleted;
 		//Radha Defect Fix 5542
 		if (appDelegate.isDataSyncTimerTriggered)
 		{
-			[appDelegate updateNextSyncTimeIfSyncFails];
+ 			//7444
+			[appDelegate updateNextSyncTimeIfSyncFails:nil syncCompleted:nil];
 			appDelegate.isDataSyncTimerTriggered = NO;
 			
 		}
@@ -1784,7 +1789,8 @@ NSDate * syncCompleted;
 		//Radha Defect Fix 5542
 		if (appDelegate.isDataSyncTimerTriggered)
 		{
-			[appDelegate updateNextSyncTimeIfSyncFails];
+			//7444
+			[appDelegate updateNextSyncTimeIfSyncFails:nil syncCompleted:nil];
 			appDelegate.isDataSyncTimerTriggered = NO;
 			
 		}
@@ -1873,6 +1879,8 @@ NSDate * syncCompleted;
         
 	//Radha Sync ProgressBar
 	//appDelegate.syncTypeInProgress = DATASYNC_INPROGRESS;
+	syncStarted = [NSDate date];
+
 
  /* Shravya - Advanced look up filters - User trunk location */
     SMLog(@"User location update Incremental starts");
@@ -1880,9 +1888,6 @@ NSDate * syncCompleted;
     [appDelegate.wsInterface getUserTrunkLocationRequest];
     SMLog(@"User location update ends");
 
-	//7444
-	NSDate * syncStarted = [NSDate date];
-	syncCompleted = nil;
     [self GetDelete];
     
     [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"GetDelete-VP"
@@ -1913,13 +1918,9 @@ NSDate * syncCompleted;
 			[appDelegate checkifConflictExistsForConnectionError];
             [self internetConnectivityHandling:data_sync];
              appDelegate.Enable_aggresssiveSync = FALSE;
-			//Radha Defect Fix 5542
-			if (appDelegate.isDataSyncTimerTriggered)
-			{
-				[appDelegate updateNextSyncTimeIfSyncFails];
-				appDelegate.isDataSyncTimerTriggered = NO;
-				
-			}
+			//Radha Defect Fix 7444
+             [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+
             return;
         }
 		
@@ -1932,15 +1933,10 @@ NSDate * syncCompleted;
             //Defect 6774
 			[appDelegate checkifConflictExistsForConnectionError];
 		}
-		 appDelegate.Enable_aggresssiveSync = FALSE;
+		appDelegate.Enable_aggresssiveSync = FALSE;
 		appDelegate.dataSyncRunning = NO;
-		//Radha Defect Fix 5542
-		if (appDelegate.isDataSyncTimerTriggered)
-		{
-			[appDelegate updateNextSyncTimeIfSyncFails];
-			appDelegate.isDataSyncTimerTriggered = NO;
-			
-		}
+		//Radha Defect Fix 7444
+		[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
         return;
     }
     
@@ -1975,13 +1971,8 @@ NSDate * syncCompleted;
 				[appDelegate checkifConflictExistsForConnectionError];
                 [self internetConnectivityHandling:data_sync];
                  appDelegate.Enable_aggresssiveSync = FALSE;
-				//Radha Defect Fix 5542
-				if (appDelegate.isDataSyncTimerTriggered)
-				{
-					[appDelegate updateNextSyncTimeIfSyncFails];
-					appDelegate.isDataSyncTimerTriggered = NO;
-					
-				}
+				//Radha Defect Fix 7444
+				[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
                 return;
             }
         }
@@ -1995,13 +1986,8 @@ NSDate * syncCompleted;
             
             appDelegate.dataSyncRunning = NO;
              appDelegate.Enable_aggresssiveSync = FALSE;
-			//Radha Defect Fix 5542
-			if (appDelegate.isDataSyncTimerTriggered)
-			{
-				[appDelegate updateNextSyncTimeIfSyncFails];
-				appDelegate.isDataSyncTimerTriggered = NO;
-				
-			}
+			//Radha Defect Fix 7444
+             [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
             return;
         }    
 
@@ -2029,13 +2015,8 @@ NSDate * syncCompleted;
 				//Defect 6774
 				[appDelegate checkifConflictExistsForConnectionError];
                  appDelegate.Enable_aggresssiveSync = FALSE;
-				//Radha Defect Fix 5542
-				if (appDelegate.isDataSyncTimerTriggered)
-				{
-					[appDelegate updateNextSyncTimeIfSyncFails];
-					appDelegate.isDataSyncTimerTriggered = NO;
-					
-				}
+				//Radha Defect Fix 7444
+				[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
                 return;
             }
             
@@ -2047,13 +2028,8 @@ NSDate * syncCompleted;
             appDelegate.dataSyncRunning = NO;
             [self internetConnectivityHandling:data_sync];
              appDelegate.Enable_aggresssiveSync = FALSE;
-			//Radha Defect Fix 5542
-			if (appDelegate.isDataSyncTimerTriggered)
-			{
-				[appDelegate updateNextSyncTimeIfSyncFails];
-				appDelegate.isDataSyncTimerTriggered = NO;
-				
-			}
+			//Radha Defect Fix 7444
+             [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
             return;
         }
         //Radha Sync ProgressBar
@@ -2090,13 +2066,8 @@ NSDate * syncCompleted;
 				[appDelegate checkifConflictExistsForConnectionError];
                 [self internetConnectivityHandling:data_sync];
                  appDelegate.Enable_aggresssiveSync = FALSE;
-				//Radha Defect Fix 5542
-				if (appDelegate.isDataSyncTimerTriggered)
-				{
-					[appDelegate updateNextSyncTimeIfSyncFails];
-					appDelegate.isDataSyncTimerTriggered = NO;
-					
-				}
+				//Radha Defect Fix 7444
+				[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
                 return;
             }
         }
@@ -2116,13 +2087,8 @@ NSDate * syncCompleted;
             appDelegate.dataSyncRunning = NO;
             [updateSyncStatus refreshSyncStatus];
              appDelegate.Enable_aggresssiveSync = FALSE;
-			//Radha Defect Fix 5542
-			if (appDelegate.isDataSyncTimerTriggered)
-			{
-				[appDelegate updateNextSyncTimeIfSyncFails];
-				appDelegate.isDataSyncTimerTriggered = NO;
-				
-			}
+			//Radha Defect Fix 7444
+             [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
             return;
         }
     
@@ -2134,13 +2100,44 @@ NSDate * syncCompleted;
 	       
         //Adv Download Criteria Start
     [self doAdvanceDownloadCriteria];
-    
-    if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED || ![appDelegate isInternetConnectionAvailable])
+	if (![appDelegate isInternetConnectionAvailable])
+	{
+		[self internetConnectivityHandling:data_sync];
+		appDelegate.dataSyncRunning = NO;
+	}
+
+    if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED || [appDelegate isInternetConnectionAvailable] == FALSE)
     {
         SMLog(@"Adv Download Criteria Failed");
-        appDelegate.initial_sync_succes_or_failed = DATA_SYNC_FAILED;
+		if ([appDelegate isInternetConnectionAvailable])
+		{
+			//Defect 6774
+			[appDelegate checkifConflictExistsForConnectionError];
+		}
+		
+		appDelegate.dataSyncRunning = NO;
+		[updateSyncStatus refreshSyncStatus];
+		appDelegate.Enable_aggresssiveSync = FALSE;
+		//Radha Defect Fix 7444
+		[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+
         return;
     }
+		
+	if (appDelegate.connection_error)
+	{
+		appDelegate.dataSyncRunning = NO;
+		appDelegate.connection_error = FALSE;
+		//Defect 6774
+		[appDelegate checkifConflictExistsForConnectionError];
+		[self internetConnectivityHandling:data_sync];
+		appDelegate.Enable_aggresssiveSync = FALSE;
+		//Radha Defect Fix 7444
+		[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+		return;
+
+	}
+	
         //Adv Download Criteria Stop
         
     [appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:GET_DELETE];
@@ -2181,13 +2178,8 @@ NSDate * syncCompleted;
 				[appDelegate checkifConflictExistsForConnectionError];
                 [self internetConnectivityHandling:data_sync];
                  appDelegate.Enable_aggresssiveSync = FALSE;
-				//Radha Defect Fix 5542
-				if (appDelegate.isDataSyncTimerTriggered)
-				{
-					[appDelegate updateNextSyncTimeIfSyncFails];
-					appDelegate.isDataSyncTimerTriggered = NO;
-					
-				}
+				//Radha Defect Fix 7444
+				[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
                 return;
             }
         }
@@ -2199,15 +2191,10 @@ NSDate * syncCompleted;
 				[appDelegate checkifConflictExistsForConnectionError];
 			}
 
-            appDelegate.dataSyncRunning = NO;
-             appDelegate.Enable_aggresssiveSync = FALSE;
-			//Radha Defect Fix 5542
-			if (appDelegate.isDataSyncTimerTriggered)
-			{
-				[appDelegate updateNextSyncTimeIfSyncFails];
-				appDelegate.isDataSyncTimerTriggered = NO;
-				
-			}
+			appDelegate.dataSyncRunning = NO;
+			appDelegate.Enable_aggresssiveSync = FALSE;
+			//Radha Defect Fix 7444
+			[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
             return;
         }
     
@@ -2252,13 +2239,8 @@ NSDate * syncCompleted;
 			[appDelegate checkifConflictExistsForConnectionError];
             [self internetConnectivityHandling:data_sync];
              appDelegate.Enable_aggresssiveSync = FALSE;
-			//Radha Defect Fix 5542
-			if (appDelegate.isDataSyncTimerTriggered)
-			{
-				[appDelegate updateNextSyncTimeIfSyncFails];
-				appDelegate.isDataSyncTimerTriggered = NO;
-				
-			}
+			//Radha Defect Fix 7444
+             [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
             return;
         }
     }  
@@ -2271,13 +2253,8 @@ NSDate * syncCompleted;
 		}
          appDelegate.Enable_aggresssiveSync = FALSE;
 		appDelegate.dataSyncRunning = NO;
-		//Radha Defect Fix 5542
-		if (appDelegate.isDataSyncTimerTriggered)
-		{
-			[appDelegate updateNextSyncTimeIfSyncFails];
-			appDelegate.isDataSyncTimerTriggered = NO;
-			
-		}
+		//Radha Defect Fix 7444
+		[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
         return;
     }                                                             //call delete
                                                                         //call Update
@@ -2313,13 +2290,8 @@ NSDate * syncCompleted;
 				[appDelegate checkifConflictExistsForConnectionError];
                 [self internetConnectivityHandling:data_sync];
                  appDelegate.Enable_aggresssiveSync = FALSE;
-				//Radha Defect Fix 5542
-				if (appDelegate.isDataSyncTimerTriggered)
-				{
-					[appDelegate updateNextSyncTimeIfSyncFails];
-					appDelegate.isDataSyncTimerTriggered = NO;
-					
-				}
+				//Radha Defect Fix 7444
+				[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
                 return;
             }
         }
@@ -2332,13 +2304,8 @@ NSDate * syncCompleted;
 			}
         
             appDelegate.dataSyncRunning = NO;
-			//Radha Defect Fix 5542
-			if (appDelegate.isDataSyncTimerTriggered)
-			{
-				[appDelegate updateNextSyncTimeIfSyncFails];
-				appDelegate.isDataSyncTimerTriggered = NO;
-				
-			}
+			//Radha Defect Fix 7444
+             [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
             return;
         }    
         
@@ -2366,13 +2333,8 @@ NSDate * syncCompleted;
 				[appDelegate checkifConflictExistsForConnectionError];
                 [self internetConnectivityHandling:data_sync];
                  appDelegate.Enable_aggresssiveSync = FALSE;
-				//Radha Defect Fix 5542
-				if (appDelegate.isDataSyncTimerTriggered)
-				{
-					[appDelegate updateNextSyncTimeIfSyncFails];
-					appDelegate.isDataSyncTimerTriggered = NO;
-					
-				}
+				//Radha Defect Fix 7444
+				[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
                 return;
             }
         }
@@ -2383,13 +2345,8 @@ NSDate * syncCompleted;
 			[appDelegate checkifConflictExistsForConnectionError];
             [self internetConnectivityHandling:data_sync];
             appDelegate.Enable_aggresssiveSync = FALSE;
-			//Radha Defect Fix 5542
-			if (appDelegate.isDataSyncTimerTriggered)
-			{
-				[appDelegate updateNextSyncTimeIfSyncFails];
-				appDelegate.isDataSyncTimerTriggered = NO;
-				
-			}
+			//Radha Defect Fix 7444
+             [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
             return;
         }
 		
@@ -2444,13 +2401,8 @@ NSDate * syncCompleted;
 				[appDelegate checkifConflictExistsForConnectionError];
                 [self internetConnectivityHandling:data_sync];
                 appDelegate.Enable_aggresssiveSync = FALSE;
-				//Radha Defect Fix 5542
-				if (appDelegate.isDataSyncTimerTriggered)
-				{
-					[appDelegate updateNextSyncTimeIfSyncFails];
-					appDelegate.isDataSyncTimerTriggered = NO;
-					
-				}
+				//Radha Defect Fix 7444
+				[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
                 return;
             }
         }
@@ -2464,13 +2416,8 @@ NSDate * syncCompleted;
 
             appDelegate.dataSyncRunning = NO;
              appDelegate.Enable_aggresssiveSync = FALSE;
-			//Radha Defect Fix 5542
-			if (appDelegate.isDataSyncTimerTriggered)
-			{
-				[appDelegate updateNextSyncTimeIfSyncFails];
-				appDelegate.isDataSyncTimerTriggered = NO;
-				
-			}
+			//Radha Defect Fix 7444
+             [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
             return;
         }
     
@@ -2525,13 +2472,8 @@ NSDate * syncCompleted;
 			[appDelegate checkifConflictExistsForConnectionError];
             [self internetConnectivityHandling:data_sync];
               appDelegate.Enable_aggresssiveSync = FALSE;
-			//Radha Defect Fix 5542
-			if (appDelegate.isDataSyncTimerTriggered)
-			{
-				[appDelegate updateNextSyncTimeIfSyncFails];
-				appDelegate.isDataSyncTimerTriggered = NO;
-				
-			}
+			//Radha Defect Fix 7444
+             [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
             return;
         }
     }
@@ -2546,13 +2488,8 @@ NSDate * syncCompleted;
         
         appDelegate.Enable_aggresssiveSync = FALSE;
 		appDelegate.dataSyncRunning = NO;
-		//Radha Defect Fix 5542
-		if (appDelegate.isDataSyncTimerTriggered)
-		{
-			[appDelegate updateNextSyncTimeIfSyncFails];
-			appDelegate.isDataSyncTimerTriggered = NO;
-			
-		}
+		//Radha Defect Fix 7444
+		[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
         return;
     }
         
@@ -2588,13 +2525,8 @@ NSDate * syncCompleted;
 				[appDelegate checkifConflictExistsForConnectionError];
                 [self internetConnectivityHandling:data_sync];
                   appDelegate.Enable_aggresssiveSync = FALSE;
-				//Radha Defect Fix 5542
-				if (appDelegate.isDataSyncTimerTriggered)
-				{
-					[appDelegate updateNextSyncTimeIfSyncFails];
-					appDelegate.isDataSyncTimerTriggered = NO;
-					
-				}
+				//Radha Defect Fix 7444
+				[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
                 return;
             }
         }
@@ -2608,13 +2540,8 @@ NSDate * syncCompleted;
         
             appDelegate.dataSyncRunning = NO;
              appDelegate.Enable_aggresssiveSync = FALSE;
-			//Radha Defect Fix 5542
-			if (appDelegate.isDataSyncTimerTriggered)
-			{
-				[appDelegate updateNextSyncTimeIfSyncFails];
-				appDelegate.isDataSyncTimerTriggered = NO;
-				
-			}
+			//Radha Defect Fix 7444
+             [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
             return;
         }
         
@@ -2643,13 +2570,8 @@ NSDate * syncCompleted;
 				[appDelegate checkifConflictExistsForConnectionError];
                 [self internetConnectivityHandling:data_sync];
                 appDelegate.Enable_aggresssiveSync = FALSE;
-				//Radha Defect Fix 5542
-				if (appDelegate.isDataSyncTimerTriggered)
-				{
-					[appDelegate updateNextSyncTimeIfSyncFails];
-					appDelegate.isDataSyncTimerTriggered = NO;
-					
-				}
+				//Radha Defect Fix 7444
+				[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
                 return;
             }
         }
@@ -2659,13 +2581,8 @@ NSDate * syncCompleted;
 			[appDelegate checkifConflictExistsForConnectionError];
             appDelegate.dataSyncRunning = NO;
             appDelegate.Enable_aggresssiveSync = FALSE;
-			//Radha Defect Fix 5542
-			if (appDelegate.isDataSyncTimerTriggered)
-			{
-				[appDelegate updateNextSyncTimeIfSyncFails];
-				appDelegate.isDataSyncTimerTriggered = NO;
-				
-			}
+			//Radha Defect Fix 7444
+             [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
             return;
         }
 //		[appDelegate setCurrentSyncStatusProgress:GETUPDATE_DC_DONE optimizedSynstate:0];
@@ -2709,13 +2626,8 @@ NSDate * syncCompleted;
 			[appDelegate checkifConflictExistsForConnectionError];
             [self internetConnectivityHandling:data_sync];
              appDelegate.Enable_aggresssiveSync = FALSE;
-			//Radha Defect Fix 5542
-			if (appDelegate.isDataSyncTimerTriggered)
-			{
-				[appDelegate updateNextSyncTimeIfSyncFails];
-				appDelegate.isDataSyncTimerTriggered = NO;
-				
-			}
+			//Radha Defect Fix 7444
+             [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
             return;
         }
     }
@@ -2730,13 +2642,8 @@ NSDate * syncCompleted;
         
 		appDelegate.dataSyncRunning = NO;
         appDelegate.Enable_aggresssiveSync = FALSE;
-		//Radha Defect Fix 5542
-		if (appDelegate.isDataSyncTimerTriggered)
-		{
-			[appDelegate updateNextSyncTimeIfSyncFails];
-			appDelegate.isDataSyncTimerTriggered = NO;
-			
-		}
+		//Radha Defect Fix 7444
+		[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
         return;
     }
         
@@ -3095,7 +3002,7 @@ NSDate * syncCompleted;
 	
 
         
-    [autoreleasePool release];
+   
     
     //sahana starts june 8
     //check the database for false entries
@@ -3148,6 +3055,7 @@ NSDate * syncCompleted;
 		
 		
     [appDelegate.refreshIcons RefreshIcons]; //20-June-2013. ---> Refreshing home incons when sync is running.
+ [autoreleasePool release];
     }@catch (NSException *exp) {
 		
 		[appDelegate.refreshIcons RefreshIcons]; //20-June-2013. ---> Refreshing home incons when sync is running.
@@ -3556,7 +3464,6 @@ NSDate * syncCompleted;
         }
         if(appDelegate.connection_error)
         {
-            appDelegate.connection_error=FALSE;
             SMLog(@"Adv Download Criteria Data Sync Failed due to Connection Error");
             return;
         }
@@ -4479,9 +4386,6 @@ NSDate * syncCompleted;
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
 	[dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]]; //Change for Time Stamp
     
-  /*  NSTimeZone *gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
-    [dateFormatter setTimeZone:gmt];*/
-    
     for(NSString *  str in allkeys)
     {
         if([str isEqualToString:LAST_INITIAL_SYNC_IME])
@@ -4506,8 +4410,19 @@ NSDate * syncCompleted;
 	
 	if (!appDelegate.shouldScheduleTimer)
 	{
-		//Defect Fix 5542
-		[appDelegate updateNextDataSyncTimeToBeDisplayed:nextSyncTime];
+        NSComparisonResult result = [current_dateTime compare:nextSyncTime];
+        
+        if (result == NSOrderedDescending)
+        {
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.datasync_timer];
+            [appDelegate performSelectorOnMainThread:@selector(ScheduleIncrementalDatasyncTimer) withObject:nil waitUntilDone:NO];
+            [appDelegate updateNextDataSyncTimeToBeDisplayed:[NSDate date]];
+        }
+        else
+        {
+            //Defect Fix 5542
+            [appDelegate updateNextDataSyncTimeToBeDisplayed:nextSyncTime];
+        }
 	}
 	
 

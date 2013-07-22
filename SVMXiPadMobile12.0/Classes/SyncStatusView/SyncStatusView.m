@@ -107,7 +107,7 @@ extern void SVMXLog(NSString *format, ...);
     
     lastSync = [[UILabel alloc] initWithFrame:CGRectMake(320, 28, 450, 45)];
     [lastSync setBackgroundColor:[UIColor clearColor]];
-    lastSync.text = lastSyncTime;
+    lastSync.text = lastDataSyncTime;
     [self.view addSubview:lastSync];
 	[label1 release];
     
@@ -136,15 +136,17 @@ extern void SVMXLog(NSString *format, ...);
     bgView3.frame = CGRectMake(0, 0, 550, 45);
     label3.backgroundColor = [UIColor clearColor];
     label3.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_last_status];
-    [label3 addSubview:bgView3];
-    [self.view addSubview:label3];
+	[label3 addSubview:bgView3];
+   
 	    
-    _status = [[UILabel alloc] initWithFrame:CGRectMake(320, 124, 450, 45)];
+    _status = [[UILabel alloc] initWithFrame:CGRectMake(284, -10, 300, 60)];
     _status.backgroundColor = [UIColor clearColor];
+	_status.lineBreakMode = UILineBreakModeMiddleTruncation;
+	_status.clipsToBounds = NO;
+	_status.text = [self getSyncronisationStatus];
+	[label3 addSubview:_status];
 	
-	SMLog(@"%d", appDelegate.SyncStatus);
-    _status.text = [self getSyncronisationStatus];
-    [self.view addSubview:_status];
+	[self.view addSubview:label3];
     [label3 release];
 			
 		
