@@ -2123,7 +2123,7 @@ extern void SVMXLog(NSString *format, ...);
                 [advancedFilterString appendFormat:@" ( Id IN ( %@ )  OR local_id IN ( %@ )) AND ", filterString, filterString];
             }
         }
-        NSLog(@"ADVANCED FILTER STRING is %@",advancedFilterString);
+        //NSLog(@"ADVANCED FILTER STRING is %@",advancedFilterString);
     }
     
   
