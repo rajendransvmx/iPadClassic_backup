@@ -8878,9 +8878,8 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 
 - (void) insertValuesIntoProcessBusinessRuleTable:(NSDictionary *)processDictionary
 {
-    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS ProcessBusinessRule ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'Id' VARCHAR, 'business_rule' VARCHAR, 'error_msg' VARCHAR, 'name' VARCHAR,  'process_node_object' VARCHAR, 'sequence' VARCHAR, 'target_manager' VARCHAR)"]];
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS ProcessBusinessRule ('Id' VARCHAR PRIMARY KEY NOT NULL  UNIQUE, 'business_rule' VARCHAR, 'error_msg' VARCHAR, 'name' VARCHAR,  'process_node_object' VARCHAR, 'sequence' VARCHAR, 'target_manager' VARCHAR)"]];
     
-    int id_value = 0;
     if (result == YES)
     {
         result = [self createTable:[NSString stringWithFormat:@"CREATE INDEX IF NOT EXISTS ProcessBusinessRuleIndex ON ProcessBusinessRule (business_rule, error_msg, sequence,process_node_object,target_manager )"]];
@@ -8888,7 +8887,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         NSArray * processBusinessRules = [processDictionary objectForKey:SFM_PROCESS_BUSINESS_RULE];
         [self beginTransaction];
         
-        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@' ) VALUES (?1, ?2, ?3, ?4, ?5, ?6,?7, ?8)", SFPROCESSBUSINESSRULE, @"Id", @"business_rule", @"error_msg", @"name", @"process_node_object", @"sequence", @"target_manager", MLOCAL_ID];
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6,?7)", SFPROCESSBUSINESSRULE, @"Id", @"business_rule", @"error_msg", @"name", @"process_node_object", @"sequence", @"target_manager"];
         
         sqlite3_stmt * bulkStmt;
         
@@ -8928,8 +8927,6 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 				char * _targetManager = [appDelegate convertStringIntoChar:targetManager];
                 sqlite3_bind_text(bulkStmt, 7, _targetManager, strlen(_targetManager), SQLITE_TRANSIENT);
                 
-                sqlite3_bind_int(bulkStmt, 8, ++id_value);
-                
                 if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
                     printf("Commit Failed!\n");
@@ -8944,9 +8941,8 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 }
 - (void) insertValuesIntoBusinessRuleTable:(NSDictionary *)processDictionary
 {
-    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS BusinessRule ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'Id' VARCHAR,'advanced_expression' VARCHAR, 'description' VARCHAR, 'error_msg' VARCHAR, 'message_type' VARCHAR,  'name' VARCHAR, 'process_ID' VARCHAR, 'source_object_name' VARCHAR)"]];
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS BusinessRule ('Id' VARCHAR PRIMARY KEY  NOT NULL  UNIQUE ,'advanced_expression' VARCHAR, 'description' VARCHAR, 'error_msg' VARCHAR, 'message_type' VARCHAR,  'name' VARCHAR, 'process_ID' VARCHAR, 'source_object_name' VARCHAR)"]];
     
-    int id_value = 0;
     if (result == YES)
     {
         result = [self createTable:[NSString stringWithFormat:@"CREATE INDEX IF NOT EXISTS BusinessRuleIndex ON BusinessRule (Id, description, error_msg,message_type,name,process_ID,source_object_name )"]];
@@ -8954,7 +8950,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         NSArray * sfmBusinessRule = [processDictionary objectForKey:SFM_BUSINESS_RULE];
         
         [self beginTransaction];
-        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@','%@' ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)", SFBUSINESSRULE, @"Id", @"advanced_expression", @"description", @"error_msg", @"message_type", @"name", @"process_ID", @"source_object_name",MLOCAL_ID];
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)", SFBUSINESSRULE, @"Id", @"advanced_expression", @"description", @"error_msg", @"message_type", @"name", @"process_ID", @"source_object_name"];
         
         sqlite3_stmt * bulkStmt;
         
@@ -9002,8 +8998,6 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                 NSString *sourceObjectName = ([businessRule objectForKey:@"source_object_name"] != nil)?[businessRule objectForKey:@"source_object_name"]:@"";
 				char * _sourceObjectName = [appDelegate convertStringIntoChar:sourceObjectName];
                 sqlite3_bind_text(bulkStmt, 8, _sourceObjectName, strlen(_sourceObjectName), SQLITE_TRANSIENT);
-                
-                sqlite3_bind_int(bulkStmt, 9, ++id_value);
                 
                 if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {

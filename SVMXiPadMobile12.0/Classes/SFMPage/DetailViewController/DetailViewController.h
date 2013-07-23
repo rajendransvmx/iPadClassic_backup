@@ -313,6 +313,7 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
 
 
 @property(nonatomic,retain) JSExecuter *jsExecuter;
+@property(nonatomic,retain) JSExecuter *bizRuleJSExecuter;
 @property(nonatomic,retain) PriceBookData *priceBookData;
 
 //Sync_Overide :- Adding the new parameters to the existing method (webservice_name, class_name, synctype)
@@ -412,10 +413,24 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
 - (void)hideExpandedChildViews;
 
 //Biz Rules
+- (BOOL) executeBizRules;
+- (BOOL) isBizRuleTablesAndFieldsAvailable;
 - (NSArray *) getBusinessRulesDict:(NSArray *)businessRulesArray;
 - (NSString *) getPathForBSLibrary:(NSString *)library;
 - (NSString *) getPathForLibrary:(NSString *)library;
 - (BOOL) bizRuleResourcesAvailable;
+- (NSDictionary *) getBizRulesAndFieldsForParentObject:(NSString *)parentObjectName
+                                          childObjects:(NSArray *)childObjectsArray;
+- (NSDictionary *) getFieldsInfoForRuleFields:(NSDictionary *)ruleFields
+                                  detailNames:(NSArray *)childObjectNamesArray
+                             parentObjectName:(NSString *)parentObjectName;
+- (NSDictionary *) getDataForRulesWithFieldsInfo:(NSDictionary *)fields
+                                     detailNames:(NSArray *)childObjectNamesArray
+                                withParentObject:(NSString *)parentObjectName;
+- (NSString *) getBizRuleHTMLStringWithFields:(NSString *)fieldsString
+                                    withRules:(NSString *)rulesString
+                                     withData:(NSString *)dataToValidateString;
+- (BOOL) handleBizRuleWarnings:(NSArray *)warningsArray errors:(NSArray *)errorsArray;
 
 #define SHOWALL_HEADERS                     0
 #define SHOW_HEADER_ROW                     1

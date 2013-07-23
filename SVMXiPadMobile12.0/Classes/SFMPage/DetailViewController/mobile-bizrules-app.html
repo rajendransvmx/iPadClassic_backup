@@ -6,7 +6,7 @@ var results = svmxExecuteBusinessRules({
     
     //document.writeln("RESULT:<pre>" + SVMX.prettyPrint(results) + "</pre>");
     var jsonString= JSON.stringify(results);
-    $COMM.requestDataForType("result",jsonString,function(){});
+    $COMM.requestDataForType("bizruleresult",jsonString,function(){});
     
 },
 context : {}

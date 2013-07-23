@@ -7323,9 +7323,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     int ret;
     NSException* myException;
     ALERT_VIEW_ERROR var=APPLICATION_ERROR;
-    SMLog(@"OPERATION COMPLETED RESPONSE");
-    
-    NSLog(@"____________  WSInterface OPERATION COMPLETED RESPONSE");
+    SMLog(@"____________  WSInterface OPERATION COMPLETED RESPONSE ____________");
     
 
     [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"Web Service Call Waiting time"
