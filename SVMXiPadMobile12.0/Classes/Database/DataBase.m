@@ -10796,7 +10796,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
             
             sqlite3_bind_text(bulkStmt, 15, _targetObjectLabel, strlen(_targetObjectLabel), SQLITE_TRANSIENT);
             
-            char * _sfID = [appDelegate convertStringIntoChar:([dict objectForKey:@"local_id"] != nil)?[dict objectForKey:@"local_id"]: @""];
+            char * _sfID = [appDelegate convertStringIntoChar:([dict objectForKey:@"sfID"] != nil)?[dict objectForKey:@"sfID"]: @""];
             
             sqlite3_bind_text(bulkStmt, 16, _sfID, strlen(_sfID), SQLITE_TRANSIENT);
 
