@@ -31,7 +31,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void)dealloc {
     [okMessage release];
-    [self closeDatabase];
+    //[self closeDatabase];
     [super dealloc];
 }
 
@@ -747,7 +747,9 @@ extern void SVMXLog(NSString *format, ...);
         return TEXT;
 }
 
-
-    
-
+//7609 defect - krishna //shravya
++(void) releaseTheDb{
+    [sharedDatamasterObject release];
+    sharedDatamasterObject = nil;
+}
 @end

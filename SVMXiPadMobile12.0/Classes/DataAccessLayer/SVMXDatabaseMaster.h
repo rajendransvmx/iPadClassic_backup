@@ -65,4 +65,7 @@ typedef enum {
 - (id)submitQuery:(DARequest *)request;
 - (id)describeObject:(DARequest *)request;
 
+//7609 defect - krishna //shravya
+- (BOOL) closeDatabase;
++ (void) releaseTheDb;
 @end

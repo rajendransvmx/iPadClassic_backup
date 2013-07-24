@@ -7086,8 +7086,9 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 //krishna OPDOCS
 - (void)insertIntoDocTemplate:(NSDictionary*)process_dict
 {
-    
-    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS  '%@' ('doc_template_name' text(100), Id text(18) ,doc_template_id text(40), is_standard BOOLEAN , detail_object_count  INTEGER, media_resources TEXT)",SFDOC_TEMPLATE]];
+    //defect:7609 krishna
+    //added id as primary key
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS  '%@' ('doc_template_name' text(100), Id text(18) PRIMARY KEY  NOT NULL ,doc_template_id text(40) , is_standard BOOLEAN , detail_object_count  INTEGER, media_resources TEXT)",SFDOC_TEMPLATE]];
     if (result)
     {
         [appDelegate.dataBase beginTransaction];
@@ -7146,7 +7147,9 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 //krishna OPDOCS
 - (void)insertIntoDocTemplateDetails:(NSDictionary*)process_dict
 {
-    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS %@ (doc_template VARCHAR ,doc_template_detail_id Text(255),header_ref_fld  Text(100)  ,alias Text(80), object_name Text(100) ,soql Text(32768) , doc_template_detail_unique_id  Text(40), fields Text(32768),type VARCHAR, Id VARCHAR)",SFDOC_TEMPLATE_DETAILS]];
+    //defect:7609 krishna
+    //added id as primary key
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS %@ (doc_template VARCHAR ,doc_template_detail_id Text(255),header_ref_fld  Text(100)  ,alias Text(80), object_name Text(100) ,soql Text(32768) , doc_template_detail_unique_id  Text(40), fields Text(32768),type VARCHAR, Id VARCHAR PRIMARY KEY  NOT NULL)",SFDOC_TEMPLATE_DETAILS]];
     if(result)
     {
         [appDelegate.dataBase beginTransaction];
@@ -7408,11 +7411,11 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 //krishna OPDOCS
 -(void) insertIntoAttachment:(NSDictionary *)process_dict
 {
-    
-    SMLog(@"\n\n\n\n OUTPUT DOCS: Process dict: %@ \n\n\n\n",process_dict);
+    //defect:7609 krishna
+    //added id as primary key
     
     NSMutableArray *idsList = [NSMutableArray arrayWithCapacity:0];
-    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS '%@' (Id text(18) ,attachment_name text(255), parent_id  VARCHAR, body BLOB)",SFDOC_ATTACHMENT]];
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS '%@' (Id text(18) PRIMARY KEY  NOT NULL ,attachment_name text(255), parent_id  VARCHAR, body BLOB)",SFDOC_ATTACHMENT]];
     if (result)
     {
         [appDelegate.dataBase beginTransaction];

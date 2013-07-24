@@ -624,14 +624,21 @@ function continueGetDocumentData(finalOutputArray,docTemplateDetailArray,recordI
                                                         var fName = specialfieldNames[ii].fn;
                                                         var fType = specialfieldNames[ii].ft;
                                                         var fValue = record[''+fName];
+                                 
+                                                        //7594 defect - krishna
+                                                        //changes:Only to make local
                                                         if(fValue != null && fValue.length > 2){
-                                                                fieldsTobeAdded.push({key:fName,value:fValue,info:fType});
+                                                                fValue = $UTILITY.dateAndTimeForGMTString(fValue);
+                                                        }
+                                 
+                                                        if(fValue != null && fValue.length > 2){
+                                                                fieldsTobeAdded.push({Key:fName,Value:fValue,Info:fType});
                                                         }
                                                 }
                                                 var recSpeKey = record['Id'];
                                                 if(fieldsTobeAdded.length > 0 && recSpeKey != null  ){
                                                             aSpecialField.Value = fieldsTobeAdded;
-                                                            aSpecialField.key = record['Id'];
+                                                            aSpecialField.Key = record['Id'];
                                                             specialFieldsArray.push(aSpecialField);
                                                 }
                                         }
@@ -698,6 +705,8 @@ function OPDGetUserInfo(request, callbackFunction, context)
     $COMM.requestDataForType("relateduserinput","",function(dateString) {
                              
                              dateFrmt = dateString.dateformat;
+                             //7594 defect - krishna
+                             dateFrmt = dateFrmt.toUpperCase();
                              timeFrmt = dateString.timeformat;
                              amTxt = dateString.amtext;
                              pmTxt = dateString.pmtext;

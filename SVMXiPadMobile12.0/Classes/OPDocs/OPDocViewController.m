@@ -42,6 +42,11 @@
 #pragma mark - Memory management methods
 - (void)dealloc {
    //[popOver release];
+    
+    //7609 defect - krishna //shravya
+    [[SVMXDatabaseMaster sharedDataBaseMaterObject]  closeDatabase];
+    [SVMXDatabaseMaster releaseTheDb];
+    
     [opdocTitleString release];
     
     if(existingFilePath)
@@ -342,8 +347,9 @@
 - (NSString *)dictionaryResponseForRelatedUserInfo {
     
     NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
-    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
-    NSString *dateformat = [dateFormatter dateFormat];
+    //7594 defect - krishna
+    NSString *formatString = [NSDateFormatter dateFormatFromTemplate:@"MM/dd/YYYY" options:0 locale:[NSLocale currentLocale]];
+    NSString *dateformat = formatString;//[dateFormatter dateFormat];
     NSString *amtext = [dateFormatter AMSymbol];
     NSString *pmtext = [dateFormatter PMSymbol];
     
