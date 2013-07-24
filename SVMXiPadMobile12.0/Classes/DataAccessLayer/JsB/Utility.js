@@ -21,6 +21,20 @@
             return decodedValue;
     }
 
+/* Get zero prefixed , if string is single digit
+ */
+
+ $UTILITY.getTwoDigits = function (dateDigit) {
+ 
+ var dateDigitStr = dateDigit + "";
+ if(dateDigit < 10 && dateDigitStr.length < 2) {
+ 
+ return "0" + dateDigit;
+ }
+ return dateDigit;
+ }
+
+ 
 /* get date in (dd/M/yyyy) format.
  param : any date which requires to be formatted to (dd/M/yyyy)
  return : formatted date string
@@ -96,11 +110,40 @@
  var requiredString = DateString.split("+"); //+000 needs to be removed
  var string = requiredString[0];
  var localeDate = new Date(string);
- var localDateStringWithTime = $UTILITY.dateWithTimeStringForDate(localeDate);
+ var localDateStringWithTime =  $UTILITY.localeDateWithTimeStringForDate(localeDate);
  return localDateStringWithTime;
  
  }
+ /* get the date and time string
+  param: string in GMT / UTC format
+  return : string in date and time format (yyyy-mm-dd HH:MM:ss)
+  */
 
+ $UTILITY.localeDateWithTimeStringForDate = function (localeDate) {
+  
+ var curr_date = localeDate.getDate();
+ curr_date = $UTILITY.getTwoDigits(curr_date);
+ 
+ var curr_month = localeDate.getMonth() + 1;
+ curr_month = $UTILITY.getTwoDigits(curr_month);
+ 
+ var curr_year = localeDate.getFullYear();
+ 
+ var hours = localeDate.getHours();
+ hours = $UTILITY.getTwoDigits(hours);
+ 
+ var minutes = localeDate.getMinutes();
+ minutes = $UTILITY.getTwoDigits(minutes);
+ 
+ var seconds = localeDate.getSeconds();
+ seconds = $UTILITY.getTwoDigits(seconds);
+ 
+ var todayDate = curr_year + "-" + curr_month + "-" + curr_date + " " + hours + ":" + minutes + ":" + seconds;
+ 
+ return todayDate;
+ }
+
+ 
 /* get yesterdays date in (dd/M/yyyy hh:mm a) format.
  param : any date which requires to be formatted to (dd/M/yyyy)
  return : formatted date string
