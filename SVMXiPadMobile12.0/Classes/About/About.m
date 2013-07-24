@@ -45,12 +45,11 @@
 	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
 	if (userDefaults)
 	{
-		appDelegate.currentUserName = [userDefaults objectForKey:USERFULLNAME]; //To get user display name not email id 
+		//appDelegate.currentUserName = [userDefaults objectForKey:USERFULLNAME]; //To get user display name not email id
 		appDelegate.loggedInOrg = [userDefaults objectForKey:@"loggedInOrg"];
 	}
 	
-
-    userNameLabel.text = appDelegate.currentUserName;
+    userNameLabel.text = appDelegate.userDisplayFullName; //Changing the variable
     userLoginLabel.text = appDelegate.username;
     NSString * version = [appDelegate.wsInterface.tagsDictionary objectForKey:ABOUT_VERSION_TITLE];
     NSString * loggedIn = [appDelegate.wsInterface.tagsDictionary objectForKey:ABOUT_LOGGED_INTO_TITLE];
@@ -60,9 +59,8 @@
     appVersionLabel.text = [NSString stringWithFormat:@"%@ %@", version, [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey]];
     
     userInfo.text = [NSString stringWithFormat:@"%@ %@", loggedIn, appDelegate.loggedInOrg];
-	
 	    
-    userNameLabel.text = [NSString stringWithFormat:@"%@ %@", as, appDelegate.currentUserName];
+    userNameLabel.text = [NSString stringWithFormat:@"%@ %@", as, appDelegate.userDisplayFullName];//Changing the variable
     userLoginLabel.text = [NSString stringWithFormat:@"(%@)", appDelegate.username];
 }
 

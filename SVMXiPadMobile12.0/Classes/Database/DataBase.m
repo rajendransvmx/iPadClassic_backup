@@ -2880,7 +2880,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                     {
                         
                         NSString *UserFullName=@"", *UserNameValue=@"";
-                        if(![appDelegate.currentUserName length]>0)
+                        if(![appDelegate.userDisplayFullName length]>0)
                         {
                             NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
                             if ([[userDefaults objectForKey:USERFULLNAME] length]>0)
@@ -2895,7 +2895,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                         }
                         else
                         {
-                            UserFullName=appDelegate.currentUserName;
+                            UserFullName=appDelegate.userDisplayFullName;
                         }
                         if([UserFullName length]>0)
                         {
@@ -4395,7 +4395,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                         {
                             
                             NSString *UserFullName=@"", *UserNameValue=@"";
-                            if(![appDelegate.currentUserName length]>0)
+                            if(![appDelegate.userDisplayFullName length] > 0 )
                             {
                                 NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
                                 if ([[userDefaults objectForKey:USERFULLNAME] length]>0)
@@ -4410,7 +4410,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                             }
                             else
                             {
-                                UserFullName=appDelegate.currentUserName;
+                                UserFullName=appDelegate.userDisplayFullName;
                             }
                             if([UserFullName length]>0)
                             {

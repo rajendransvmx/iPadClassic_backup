@@ -822,6 +822,10 @@ PopoverButtons *popOver_view;
 
  - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
 {
+	NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
+	NSString * warning = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_WARNING];
+	NSString * noView = [appDelegate.wsInterface.tagsDictionary objectForKey:NO_VIEW_PROCESS];
+
     NSString * SFId          = @"";
     NSString * objectAPIName = @"";
     NSString * sync_type     = @"";
@@ -866,35 +870,61 @@ PopoverButtons *popOver_view;
             }
             else if ([[[[objectsDict objectForKey:[objectsArray objectAtIndex:selectedRow]]objectAtIndex:indexPath.row] objectForKey:@"record_type"] isEqualToString:@"DETAIL"])
             {
-                NSString *parent_obj_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectAPIName field_name:@"parent_name"];
-                NSString * parent_column_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectAPIName field_name:@"parent_column_name"];
-                
-                SMLog(@"%@ %@", parent_obj_name, parent_column_name);
-                
-                SMLog(@"%@", SFId);
-                
-                if ([SFId length] > 0 && SFId != nil && ![SFId isEqualToString:@""])
-                {
-                    localId = [appDelegate.dataBase getParentColumnValueFromchild:parent_obj_name childTable:objectAPIName sfId:SFId];
-                }
-                else 
-                {
-                    localId = [appDelegate.dataBase getParentlocalIdchild:parent_obj_name childTable:objectAPIName local_id:localId];
-                }
-                SMLog(@"%@", localId);
-                
-                for (int v = 0; v < [appDelegate.view_layout_array count]; v++)
-                {
-                    NSDictionary * dict = [appDelegate.view_layout_array objectAtIndex:v];
-                    NSString * object_label = [dict objectForKey:VIEW_OBJECTNAME];
-                    if ([object_label isEqualToString:parent_obj_name])
-                    {
-                        processId = ([dict objectForKey:VIEW_SVMXC_ProcessID]!=nil)?[dict objectForKey:VIEW_SVMXC_ProcessID]:@"";
-                        break;
-                    }
-                }
-                
-                [dataSync showSFMWithProcessId:processId recordId:localId objectName:parent_obj_name];
+				if ([SFId length])
+					localId = [self getlocalIdForSFId:SFId ForObject:objectAPIName];
+
+				processInfo * pinfo =  [appDelegate getViewProcessForObject:objectAPIName record_id:localId processId:@"" isswitchProcess:FALSE];
+				BOOL process_exist = pinfo.process_exists;
+				
+				//check For view process
+				if(process_exist)
+				{
+					NSString * process_id = pinfo.process_id;
+					[dataSync showSFMWithProcessId:process_id recordId:localId objectName:objectAPIName];
+
+				}
+				else{
+					
+					NSString *parent_obj_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectAPIName field_name:@"parent_name"];
+					NSString * parent_column_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectAPIName field_name:@"parent_column_name"];
+					
+					SMLog(@"%@ %@", parent_obj_name, parent_column_name);
+					
+					SMLog(@"%@", SFId);
+					NSString * parent_local_id = @"";
+					
+					if ([SFId length] > 0 && SFId != nil && ![SFId isEqualToString:@""])
+					{
+						parent_local_id = [appDelegate.dataBase getParentColumnValueFromchild:parent_obj_name childTable:objectAPIName sfId:SFId];
+					}
+					else
+					{
+						parent_local_id = [appDelegate.dataBase getParentlocalIdchild:parent_obj_name childTable:objectAPIName local_id:localId];
+					}
+										
+					//If the detail does not have a parent reference i.e parent_local_id = nil
+					if ( parent_local_id == nil || [parent_local_id isEqualToString:@""] )
+					{						
+						UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:warning message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
+						[alert1 show];
+						[alert1 release];
+
+					}
+					else
+					{
+						processInfo * pinfo =  [appDelegate getViewProcessForObject:parent_obj_name record_id:parent_local_id processId:@"" isswitchProcess:FALSE];
+						
+						BOOL process_exist = pinfo.process_exists;
+						
+						if(process_exist)
+						{
+							NSString * process_id = pinfo.process_id;
+							[dataSync showSFMWithProcessId:process_id recordId:parent_local_id objectName:parent_obj_name];
+						}
+
+					}
+					
+				}
                 
             }
             
@@ -941,33 +971,62 @@ PopoverButtons *popOver_view;
             
             else if ([[[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"record_type"] isEqualToString:@"DETAIL"])
             {
-                NSString *parent_obj_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectAPIName field_name:@"parent_name"];
+				if ([SFId length] && ([local_Id isEqualToString:@""] || local_Id == nil))
+					local_Id = [self getlocalIdForSFId:SFId ForObject:objectAPIName];
+
+ 				processInfo * pinfo =  [appDelegate getViewProcessForObject:objectAPIName record_id:local_Id processId:@"" isswitchProcess:FALSE];
+				BOOL process_exist = pinfo.process_exists;
 				
-                NSString * parent_column_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectAPIName field_name:@"parent_column_name"];
-                
-                SMLog(@"%@ %@", parent_obj_name, parent_column_name);
-                if ([SFId length] > 0 && SFId != nil && ![SFId isEqualToString:@""])
-                {
-                    localId = [appDelegate.dataBase getParentColumnValueFromchild:parent_obj_name childTable:objectAPIName sfId:SFId];
-                }
-                else 
-                {
-                    localId = [appDelegate.dataBase getParentlocalIdchild:parent_obj_name childTable:objectAPIName local_id:local_Id];
-                }
-                SMLog(@"%@", localId);
-                
-                for (int v = 0; v < [appDelegate.view_layout_array count]; v++)
-                {
-                    NSDictionary * dict = [appDelegate.view_layout_array objectAtIndex:v];
-                    NSString * object_label = [dict objectForKey:VIEW_OBJECTNAME];
-                    if ([object_label isEqualToString:parent_obj_name])
-                    {
-                        processId = ([dict objectForKey:VIEW_SVMXC_ProcessID]!=nil)?[dict objectForKey:VIEW_SVMXC_ProcessID]:@"";
-                        break;
-                    }
-                }
-                
-                [dataSync showSFMWithProcessId:processId recordId:localId objectName:parent_obj_name];
+				//check For view process
+				if( process_exist )
+				{
+					NSString * process_id = pinfo.process_id;
+					[dataSync showSFMWithProcessId:process_id recordId:local_Id objectName:objectAPIName];
+					
+				}
+				else{
+					
+					NSString *parent_obj_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectAPIName field_name:@"parent_name"];
+					NSString * parent_column_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:objectAPIName field_name:@"parent_column_name"];
+					
+					SMLog(@"%@ %@", parent_obj_name, parent_column_name);
+					
+					SMLog(@"%@", SFId);
+					NSString * parent_local_id = @"";
+					
+					if ( [SFId length] > 0 && SFId != nil && ![SFId isEqualToString:@""] )
+					{
+						parent_local_id = [appDelegate.dataBase getParentColumnValueFromchild:parent_obj_name childTable:objectAPIName sfId:SFId];
+					}
+					else
+					{
+						parent_local_id = [appDelegate.dataBase getParentlocalIdchild:parent_obj_name childTable:objectAPIName local_id:local_Id];
+					}
+					
+					//If the detail does not have a parent reference i.e parent_local_id = nil
+					if ( parent_local_id == nil || [parent_local_id isEqualToString:@""] )
+					{
+						UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:warning message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
+						
+						[alert1 show];
+						[alert1 release];
+						
+					}
+					else
+					{
+						processInfo * pinfo =  [appDelegate getViewProcessForObject:parent_obj_name record_id:parent_local_id processId:@"" isswitchProcess:FALSE];
+						
+						BOOL process_exist = pinfo.process_exists;
+						
+						if(process_exist)
+						{
+							NSString * process_id = pinfo.process_id;
+							[dataSync showSFMWithProcessId:process_id recordId:parent_local_id objectName:parent_obj_name];
+						}
+
+					}
+					
+				}
             }
             
         }
