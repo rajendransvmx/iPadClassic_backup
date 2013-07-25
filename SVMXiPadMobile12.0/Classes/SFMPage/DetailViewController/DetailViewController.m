@@ -12842,7 +12842,7 @@ enum BizRuleConfirmViewStatus{
         
         SMLog(@"Rules = %@",rulesString);
         SMLog(@"Fields = %@",fieldsString);
-        SMLog(@"Data To Field = %@",dataToValidateString);
+        SMLog(@"Data To Validate = %@",dataToValidateString);
         
         NSString *htmlString = [self getBizRuleHTMLStringWithFields:fieldsString
                                                           withRules:rulesString
@@ -13186,6 +13186,21 @@ enum BizRuleConfirmViewStatus{
                         {
                             sectionFieldValue = [iOSInterfaceObject getLocalTimeFromGMT:(NSString *)sectionFieldValue];
                         }
+                        else if([fieldType isEqualToString:@"boolean"])
+                        {
+                            NSString *value = (NSString *)sectionFieldValue;
+                            if(([value caseInsensitiveCompare:@"true"] == NSOrderedSame)||
+                               ([value caseInsensitiveCompare:@"1"] == NSOrderedSame)    ||
+                               ([value caseInsensitiveCompare:@"yes"] == NSOrderedSame)
+                               )
+                            {
+                                sectionFieldValue = @"True";
+                            }
+                            else
+                            {
+                                sectionFieldValue = @"False";
+                            }
+                        }
                         [headerDataDict setObject:sectionFieldValue forKey:sectionFieldName];
                     }
                 }
@@ -13223,6 +13238,21 @@ enum BizRuleConfirmViewStatus{
                     else if([fieldType isEqualToString:@"datetime"])
                     {
                         sectionFieldValue = [iOSInterfaceObject getLocalTimeFromGMT:(NSString *)sectionFieldValue];
+                    }
+                    else if([fieldType isEqualToString:@"boolean"])
+                    {
+                        NSString *value = (NSString *)sectionFieldValue;
+                        if(([value caseInsensitiveCompare:@"true"] == NSOrderedSame)||
+                           ([value caseInsensitiveCompare:@"1"] == NSOrderedSame)    ||
+                           ([value caseInsensitiveCompare:@"yes"] == NSOrderedSame)
+                           )
+                        {
+                            sectionFieldValue = @"True";
+                        }
+                        else
+                        {
+                            sectionFieldValue = @"False";
+                        }
                     }
                     [dict setObject:sectionFieldValue forKey:sectionFieldName];
                 }
@@ -13316,6 +13346,21 @@ enum BizRuleConfirmViewStatus{
                                 {
                                     detailFieldValue = [iOSInterfaceObject getLocalTimeFromGMT:(NSString *)detailFieldValue];
                                 }
+                                else if([fieldType isEqualToString:@"boolean"])
+                                {
+                                    NSString *value = (NSString *)detailFieldValue;
+                                    if(([value caseInsensitiveCompare:@"true"] == NSOrderedSame)||
+                                       ([value caseInsensitiveCompare:@"1"] == NSOrderedSame)    ||
+                                       ([value caseInsensitiveCompare:@"yes"] == NSOrderedSame)
+                                       )
+                                    {
+                                        detailFieldValue = @"True";
+                                    }
+                                    else
+                                    {
+                                        detailFieldValue = @"False";
+                                    }
+                                }
                                 [dict setObject:detailFieldValue forKey:detailFieldName];
                             }
                         }
@@ -13362,6 +13407,21 @@ enum BizRuleConfirmViewStatus{
                             else if([fieldType isEqualToString:@"datetime"])
                             {
                                 fieldvalue = [iOSInterfaceObject getLocalTimeFromGMT:(NSString *)fieldvalue];
+                            }
+                            else if([fieldType isEqualToString:@"boolean"])
+                            {
+                                NSString *value = (NSString *)fieldvalue;
+                                if(([value caseInsensitiveCompare:@"true"] == NSOrderedSame)||
+                                   ([value caseInsensitiveCompare:@"1"] == NSOrderedSame)    ||
+                                   ([value caseInsensitiveCompare:@"yes"] == NSOrderedSame)
+                                   )
+                                {
+                                    fieldvalue = @"True";
+                                }
+                                else
+                                {
+                                    fieldvalue = @"False";
+                                }
                             }
                             [dbValue setObject:fieldvalue forKey:apiName];
                         }
