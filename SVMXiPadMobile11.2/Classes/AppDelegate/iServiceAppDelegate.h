@@ -641,7 +641,8 @@ extern  NSString const *devVersion;
 
 @property BOOL didLoginAgain;
 @property BOOL didBackUpDatabase;
-@property (nonatomic) sqlite3 * db;
+//@property (nonatomic) sqlite3 * db;
+@property (nonatomic, getter=getDatabase) sqlite3 * db;
 @property (nonatomic , retain) NSMutableArray * view_layout_array;
 @property (nonatomic , retain) NSString * sourceProcessId;
 @property (nonatomic , retain) NSString * sourceRecordId;

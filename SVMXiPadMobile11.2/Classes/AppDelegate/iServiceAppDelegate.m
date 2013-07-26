@@ -974,11 +974,28 @@ NSString* machineName()
     { 
         SMLog (@"couldn't open db:");
         NSAssert(0, @"Database failed to open.");		//throw another exception here
-        return;
+        
+    }
+    else
+    {
+            
+        NSLog(@"[DB] iServiceAppDelegate : initWithDBName : Reset DB Config");
+            
+        [dataBase resetConfigurationForDataBase:db];
     }
     return;
 }
+// Fix defect 007357
 
+- (sqlite3 *)getDatabase {
+    
+    if (db == nil)
+    {
+        [self initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+    }
+    
+    return db;
+}
 -(processInfo *) getViewProcessForObject:(NSString *)object_name record_id:(NSString *)recordId processId:(NSString *)LastprocessId_  isswitchProcess:(BOOL)isSwitchProcess
 {
     

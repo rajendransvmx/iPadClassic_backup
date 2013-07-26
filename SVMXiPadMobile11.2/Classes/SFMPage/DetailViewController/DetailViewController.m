@@ -1254,6 +1254,8 @@ extern void SVMXLog(NSString *format, ...);
                     {
                         [page_layoutInfo setObject:accountHistory forKey:ACCOUNTHISTORY];
                     }
+                    
+                    sqlite3_finalize(stmt);
                 }
             }
             
@@ -1273,6 +1275,8 @@ extern void SVMXLog(NSString *format, ...);
                             Id = [NSString stringWithUTF8String:_id];
                     }
                 }
+                
+                sqlite3_finalize(stmt);
 
                 NSMutableArray * productHistory = nil;
                 if(toplevelId != nil && [toplevelId length] != 0)
@@ -12531,7 +12535,7 @@ extern void SVMXLog(NSString *format, ...);
                 productId = [NSString stringWithUTF8String:_productId];
         }
     }
-        
+    sqlite3_finalize(stmt);
     return productId;
 }
 
@@ -12552,6 +12556,8 @@ extern void SVMXLog(NSString *format, ...);
             else
                 productName = @"";
         }
+        
+        sqlite3_finalize(stmt);
     }
     
     if ([productName isEqualToString:@""])
@@ -12569,6 +12575,7 @@ extern void SVMXLog(NSString *format, ...);
                     productName = @"";
             }
         }
+        sqlite3_finalize(stmt);
     }
     return productName;
 }

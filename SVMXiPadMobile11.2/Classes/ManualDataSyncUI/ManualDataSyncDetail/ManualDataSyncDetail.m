@@ -1312,6 +1312,8 @@ PopoverButtons *popOver_view;
             
         }
     }
+    sqlite3_finalize(stmt);
+    
     return localId;
     
 }

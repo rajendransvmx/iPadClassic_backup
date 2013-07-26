@@ -73,6 +73,12 @@ extern void SVMXLog(NSString *format, ...);
     
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [self.dataBase beginTransaction];
+    
+    if ([tableName isEqualToString:SFChildRelationShip])
+    {
+        [appDelegate.databaseInterface clearChildInfoCacheDictionary];
+    }
+    
         for (NSDictionary *dict in array)
         {
             NSArray *keys   = [dict allKeys];
@@ -91,8 +97,7 @@ extern void SVMXLog(NSString *format, ...);
             {
                 if (synchronized_sqlite3_step(statement) != SQLITE_DONE)
                 {
-                    SMLog(@"%@", query);
-                    NSLog(@"Failure insertRecords - query => %@", query);
+                    SMLog(@"Failure insertRecords - query => %@", query);
                 } else
                 {
                     //NSLog(@"Success updateAllRecordsToSyncRecordsHeap - update_query => %@", update_query);
@@ -103,8 +108,7 @@ extern void SVMXLog(NSString *format, ...);
             }
             else
             {
-                sqlite3_errmsg(appDelegate.db);
-                NSLog(@" Failure prepared insertRecords  -  %d \n%s", returnValue, sqlite3_errmsg(appDelegate.db) );
+                SMLog(@" Failure prepared insertRecords  -  %d \n%s", returnValue, sqlite3_errmsg(appDelegate.db) );
             }
              sqlite3_finalize(statement);
 

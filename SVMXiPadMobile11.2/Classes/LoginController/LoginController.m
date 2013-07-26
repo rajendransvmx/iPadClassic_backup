@@ -434,9 +434,10 @@ extern void SVMXLog(NSString *format, ...);
     time_t t1;
     time(&t1);
     
-    NSString* txnstmt = @"BEGIN TRANSACTION";
-    char * err ;
-    int retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);    
+    // Vipind-db-optmz - as part of commenting db optimization
+   // NSString* txnstmt = @"BEGIN TRANSACTION";
+   // char * err ;
+   // int retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
     
     
     appDelegate.wsInterface.didOpComplete = FALSE;
@@ -632,8 +633,9 @@ extern void SVMXLog(NSString *format, ...);
     //Temperory Method - Removed after DataSync is implemented completly
     [appDelegate.dataBase insertUsernameToUserTable:txtUsernameLandscape.text];
 
-    txnstmt = @"END TRANSACTION";
-    retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);    
+    // Vipind-db-optmz - commenting as part of db optimization
+    //txnstmt = @"END TRANSACTION";
+    //retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
     
     time_t t2;
     time(&t2);

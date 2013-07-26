@@ -207,7 +207,7 @@ extern void SVMXLog(NSString *format, ...);
     
     int ret = synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement, -1, &statement, NULL);
     
-    if (synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement, -1, &statement, NULL) == SQLITE_OK)
+    if (ret == SQLITE_OK)
     {
         NSDateFormatter * dateFormatter = [[[NSDateFormatter alloc] init]autorelease];
         [dateFormatter setDateFormat:@"yyyy-MM-dd"];
@@ -577,6 +577,7 @@ extern void SVMXLog(NSString *format, ...);
     {
         sql = [NSString stringWithFormat: @"Update Event Set StartDateTime = '%@', EndDateTime = '%@', ActivityDateTime = '%@' Where local_id = '%@'", _startDT, _endDT,_startDT, event_LocalId];
     }
+    [appDelegate.dataBase beginTransaction];
     char *err;
     if (synchronized_sqlite3_exec(appDelegate.db, [sql UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
@@ -585,6 +586,7 @@ extern void SVMXLog(NSString *format, ...);
 		SMLog(@"ERROR IN UPDATING %s", err);
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:sql type:UPDATEQUERY];
     }
+    [appDelegate.dataBase endTransaction];
 }
 
 //28/Sep/2012
@@ -2567,6 +2569,7 @@ extern void SVMXLog(NSString *format, ...);
                     }
             }
         }
+    synchronized_sqlite3_finalize(statement);
     
     return tableName;
 }
@@ -2595,6 +2598,8 @@ extern void SVMXLog(NSString *format, ...);
             
         }
     }
+    
+    synchronized_sqlite3_finalize(queryStatement);
     return nameField;
 }
 
@@ -2607,6 +2612,8 @@ extern void SVMXLog(NSString *format, ...);
     
     SMLog(@"%@", queryString);
     
+    [appDelegate.dataBase beginTransaction];
+    
     char *err;
     int retVal = synchronized_sqlite3_exec(appDelegate.db, [queryString UTF8String], NULL, NULL, &err);
     SMLog(@"%d", retVal);
@@ -2618,13 +2625,13 @@ extern void SVMXLog(NSString *format, ...);
 		SMLog(@"ERROR IN UPDATING %s", err);
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryString type:UPDATEQUERY];
     }
-    
+    [appDelegate.dataBase endTransaction];
 }
 
 
 - (void) insertProductName:(NSMutableArray *)productInfo WithId:(NSString *)productId
 {
-    
+    [appDelegate.dataBase beginTransaction];
     for ( int i = 0; i < [productInfo count]; i++ )
     {
         productId=[productId stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
@@ -2642,6 +2649,7 @@ extern void SVMXLog(NSString *format, ...);
 			[appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryString type:INSERTQUERY];
         }  
     }
+    [appDelegate.dataBase endTransaction];
 }
 
 
@@ -2654,6 +2662,7 @@ extern void SVMXLog(NSString *format, ...);
     
     SMLog(@"%@", chatterDetails);
     
+    [appDelegate.dataBase beginTransaction];
     NSString *deleteQuery = [NSString stringWithFormat:@"Delete From ChatterPostDetails where ProductId = '%@'", productId];
     sqlite3_stmt *statement;
     
@@ -2697,6 +2706,7 @@ extern void SVMXLog(NSString *format, ...);
         }  
         
     }
+    [appDelegate.dataBase endTransaction];
 }
 
 
@@ -2780,6 +2790,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) insertImageDataInChatterDetailsForUserName:(NSString *)UserName WithData:(NSData *)imageData
 {
+  [appDelegate.dataBase beginTransaction];
     
     NSMutableString *deleteQuery = [NSString stringWithFormat:@"Delete From UserImages Where username = '%@'", UserName];
     
@@ -2810,6 +2821,8 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"ERROR IN INSERTING %s", err);
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryString type:INSERTQUERY];
     }
+    
+    [appDelegate.dataBase endTransaction];
 }
 
 
@@ -2846,6 +2859,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) insertProductPicture:(NSString *)pictureData ForId:(NSString *)productId
 {
+ [appDelegate.dataBase beginTransaction];
     
     NSMutableString *deleteQuery = [NSString stringWithFormat:@"Delete From ProductImage Where productId = '%@'", productId];
     
@@ -2872,6 +2886,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"ERROR IN INSERTING %s", err);
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:insertQuery type:INSERTQUERY];
     }
+    [appDelegate.dataBase endTransaction];
 }
 
 
@@ -2949,6 +2964,8 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     
+    synchronized_sqlite3_finalize(statement);
+    
     if (count > 0)
         return SIG_AFTERUPDATE;
     else 
@@ -2970,6 +2987,7 @@ extern void SVMXLog(NSString *format, ...);
     
     NSString * stringData = [Base64 encode:signatureData];
     
+    [appDelegate.dataBase beginTransaction];
     if ([sign_type isEqualToString:@"ViewWorkOrder"])
         does_viewexists = [self isSignatureExists:recordId type:sign_type tableName:@"SFSignatureData"];
     else if ([sign_type isEqualToString:@"ServiceReport"])
@@ -3013,6 +3031,7 @@ extern void SVMXLog(NSString *format, ...);
 		}
     }
 	
+    [appDelegate.dataBase endTransaction];
 	//10/07/2012  - Agreesive Sync for Work Order Signature.  #4740
 	if ([sign_type isEqualToString:@"ViewWorkOrder"])
 	{
@@ -3039,6 +3058,8 @@ extern void SVMXLog(NSString *format, ...);
              count = synchronized_sqlite3_column_int(statement, 0);
          }
      }
+     
+     synchronized_sqlite3_finalize(statement);
      
      if (count > 0)
          return TRUE;
@@ -3179,18 +3200,20 @@ extern void SVMXLog(NSString *format, ...);
     NSString *updateQuery = [NSString stringWithFormat:@"Update SFSignatureData Set sig_Id = '%@' Where record_Id = '%@'", SFID, localId];
     
     char *err;
+    
+    [appDelegate.dataBase beginTransaction];
     if (synchronized_sqlite3_exec(appDelegate.db, [updateQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
 		SMLog(@"%@", updateQuery);
 		SMLog(@"METHOD: getSFIdForSignature" );
 		SMLog(@"ERROR IN UPDATING %s", err);
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:updateQuery type:UPDATEQUERY];
-        return;
     }
     else
     { 
         [self writeSignatureToSFDC:SFID];
     }
+[appDelegate.dataBase endTransaction];
 }
 
 - (void) writeSignatureToSFDC:(NSString *)SFId
@@ -3251,6 +3274,7 @@ extern void SVMXLog(NSString *format, ...);
 #pragma mark - Product Manual
 - (void) insertProductManualNameInDB:(NSDictionary *)manualInfo WithID:(NSString *)productID
 {
+    [appDelegate.dataBase beginTransaction];
     SMLog(@"%@", manualInfo);
     for ( int i = 0; i < [manualInfo count]; i++ )
     {
@@ -3285,7 +3309,9 @@ extern void SVMXLog(NSString *format, ...);
 			SMLog(@"ERROR IN INSERTING %s", err);
             [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryString type:INSERTQUERY];
         }  
-    } 
+    }
+    
+    [appDelegate.dataBase endTransaction];
 }
 
 - (void) insertProductManualBody:(NSString *)manualBody WithId:(NSString *)ManId WithName:(NSString *)ManName
@@ -3295,6 +3321,7 @@ extern void SVMXLog(NSString *format, ...);
     ManName=[ManName stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     NSString *updateString = [NSString stringWithFormat:@"Update trobleshootdata Set productmanbody = '%@' Where prod_manual_Id = '%@' and prod_manual_name = '%@'",manualBody, ManId, ManName];
     
+    [appDelegate.dataBase beginTransaction];
     char *err;
     if (synchronized_sqlite3_exec(appDelegate.db, [updateString UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
@@ -3304,6 +3331,7 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:updateString type:UPDATEQUERY];
 
     }
+    [appDelegate.dataBase endTransaction];
 }
 
 
@@ -3412,6 +3440,7 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void) insertTroubleshootingIntoDB:(NSMutableArray *)troubleshooting
 {
+    [appDelegate.dataBase beginTransaction];
 	//Change for Troubleshooting 22/06/2012
     for ( int i = 0; i < [troubleshooting count]; i++ )
     {
@@ -3433,6 +3462,7 @@ extern void SVMXLog(NSString *format, ...);
 			}
 		}
 		
+        synchronized_sqlite3_finalize(stmt);
 		
 		if ([[dict objectForKey:DOCUMENTS_NAME] isEqualToString:docName])
 		{
@@ -3473,6 +3503,8 @@ extern void SVMXLog(NSString *format, ...);
 		}
 		
 	}
+    
+    [appDelegate.dataBase endTransaction];
     
 }
 
@@ -3728,6 +3760,8 @@ extern void SVMXLog(NSString *format, ...);
                 [objects addObject:[NSString stringWithUTF8String:_objects]];
         }
     }
+    
+    synchronized_sqlite3_finalize(stmt);
     return [objects retain];
 }
 
@@ -3825,7 +3859,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         
     }
-    
+    synchronized_sqlite3_finalize(stmt);
     SMLog(@"%@", records);
     
     return records;
@@ -3863,6 +3897,7 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
 
+    synchronized_sqlite3_finalize(stmt);
     return objectName;
 }
 
@@ -3906,7 +3941,7 @@ extern void SVMXLog(NSString *format, ...);
             [mDict release];
         }
     }
-    
+    synchronized_sqlite3_finalize(stmt);
     SMLog(@"%@", records);
     for( int i=0; i < [records count]; i++)
     {
@@ -4079,6 +4114,8 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
 
+    synchronized_sqlite3_finalize(stmt);
+    
     SMLog(@"%@", SFID);
     for (int i = 0; i < [SFID count]; i++)
     {
@@ -4155,6 +4192,7 @@ extern void SVMXLog(NSString *format, ...);
                 SFID = [NSString stringWithUTF8String:field];
         }
     }
+    synchronized_sqlite3_finalize(stmt);
     return SFID;
 }
 
@@ -4270,6 +4308,7 @@ extern void SVMXLog(NSString *format, ...);
             
         }
     }
+    synchronized_sqlite3_finalize(stmt);
     return Name;
 }
 
@@ -4291,6 +4330,8 @@ extern void SVMXLog(NSString *format, ...);
             
         }
     }
+    
+    synchronized_sqlite3_finalize(stmt);
     return flag;
 }
 
@@ -4331,6 +4372,9 @@ extern void SVMXLog(NSString *format, ...);
             
         }
     }
+    
+    synchronized_sqlite3_finalize(statement);
+    
     return contactImageData;
 }
 
@@ -4355,7 +4399,7 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     data = [Base64 decode:pdfData];
-    
+    synchronized_sqlite3_finalize(statement);
     return data;
 }
 
@@ -4446,6 +4490,8 @@ extern void SVMXLog(NSString *format, ...);
         }
         
     }
+    
+    synchronized_sqlite3_finalize(statement);
     return internetConflict;
 }
 
@@ -4517,7 +4563,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         
     }
-
+    synchronized_sqlite3_finalize(statement);
     return sync_Status;
 }
 
@@ -4560,7 +4606,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         
     }
-	
+	synchronized_sqlite3_finalize(statement);
 	return final_api_name;
 }
 
@@ -4583,7 +4629,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         
     }
-	
+	synchronized_sqlite3_finalize(statement);
 	return value;
 }
 
@@ -4605,7 +4651,7 @@ extern void SVMXLog(NSString *format, ...);
             
         }
     }
-	
+	synchronized_sqlite3_finalize(statement);
 	return Id;
 }
 
@@ -4624,6 +4670,8 @@ extern void SVMXLog(NSString *format, ...);
 			count = synchronized_sqlite3_column_int(statement, 0);
 		}
 	}
+    synchronized_sqlite3_finalize(statement);
+
 	
 	if (count > 0)
 		return TRUE;
@@ -5241,7 +5289,7 @@ extern void SVMXLog(NSString *format, ...);
             }
             
         }
-		sqlite3_finalize(selectStmt);
+		synchronized_sqlite3_finalize(selectStmt);
     }
     return [dataDictionary autorelease];
 }
@@ -6975,13 +7023,13 @@ extern void SVMXLog(NSString *format, ...);
                 NSString *priceValue = [NSString stringWithUTF8String:fieldValue];
                 if (![Utility isStringEmpty:priceValue]) {
                     
-                    sqlite3_finalize(stmt);
+                    synchronized_sqlite3_finalize(stmt);
                     return YES;
                 }
             }
         }
     }
-    sqlite3_finalize(stmt);
+    synchronized_sqlite3_finalize(stmt);
     return NO;
 }
 

@@ -1370,6 +1370,7 @@ enum  {
         UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:warning message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
         [alert1 show];
         [alert1 release];
+        synchronized_sqlite3_finalize(labelstmt);
         return;
 
     }

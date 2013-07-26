@@ -1583,6 +1583,8 @@ extern void SVMXLog(NSString *format, ...);
        }
         
     }
+    
+    sqlite3_finalize(stmt);
 	@try{
     if ([imageData length] > 0)
     {

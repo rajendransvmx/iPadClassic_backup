@@ -1452,6 +1452,9 @@ last_sync_time:(NSString *)last_sync_time
 #pragma mark - incremental Data Sync
 -(void) PutAllTheRecordsForIds
 {
+    NSLog(@"\n ------- PutAllTheRecordsForIds  Started ----- \n\n");
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"PutAllTheRecordsForIds"
+                                                         andRecordCount:1];
     @try{
     [INTF_WebServicesDefServiceSvc initialize];
     
@@ -1482,15 +1485,25 @@ last_sync_time:(NSString *)last_sync_time
     sfmRequest.profileId = [[appDelegate.loginResult userInfo] profileId];
     
     
+
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"WS-PutAllTheRecordsForIds-Query"
+                                                             andRecordCount:0];
+        
     NSMutableDictionary * dict = [appDelegate.databaseInterface getAllRecordsFromRecordsHeap];
     NSArray * allKeys = [dict allKeys];
-    
+
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"WS-PutAllTheRecordsForIds-Query"
+                                                                          andRecordCount:1];
+
     //If no records exists dont send the response
     if([allKeys count] == 0)
     {
         SMLog(@"NO getRecords ");
         //update all the records in the heap table to 
         appDelegate.Incremental_sync_status = PUT_RECORDS_DONE;
+        
+        [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"PutAllTheRecordsForIds"
+                                                                          andRecordCount:0];
         return;
     }
     for(int i = 0 ; i < [allKeys count] ; i++)
@@ -1503,6 +1516,9 @@ last_sync_time:(NSString *)last_sync_time
             svmxcmap.key = @"TX_OBJECT" ;
             svmxcmap.value = object_api_name; //object  api name
             NSMutableArray * array_of_record_ids = [dict  objectForKey:object_api_name];
+            
+            [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"WS-PutAllTheRecordsForIds-Delete"
+                                                                 andRecordCount:[array_of_record_ids count]];
             
             for(NSString * record_id in array_of_record_ids)
             {
@@ -1517,6 +1533,12 @@ last_sync_time:(NSString *)last_sync_time
             }
             [sfmRequest.valueMap addObject:svmxcmap];
             [svmxcmap release];
+            
+            [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"WS-PutAllTheRecordsForIds-Delete"
+                                                                 andRecordCount:0];
+            
+            [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"WS-PutAllTheRecordsForIds-Delete"
+                                                                              andRecordCount:0];
         }
     }
     
@@ -1539,6 +1561,15 @@ last_sync_time:(NSString *)last_sync_time
         SMLog(@"Exception Name WSInterface :PutAllTheRecordsForIds %@",exp.name);
         SMLog(@"Exception Reason WSInterface :PutAllTheRecordsForIds %@",exp.reason);
     }
+    
+    NSLog(@" ------- PutAllTheRecordsForIds  Finished -----");
+    
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"PutAllTheRecordsForIds"
+                                                         andRecordCount:0];
+
+    
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"Web Service Call Waiting time"
+                                                         andRecordCount:1];
 }
 
 -(NSString *)requestSnapShot
@@ -1586,7 +1617,7 @@ NSDate * syncCompleted;
     [[PerformanceAnalytics sharedInstance] stopPerformAnalysis];
     
     //VP-Optmz2
-
+    [appDelegate.dataBase cleanupDatabase];
     [[PerformanceAnalytics sharedInstance] setCode:@"PA-INCR-502"
                                     andDescription:@"Incr-sync-Caching-Deletion"];
     
@@ -2478,7 +2509,13 @@ NSDate * syncCompleted;
             if([appDelegate enableGPS_SFMSearch])
             {
                 [appDelegate.dataBase createUserGPSTable];
+   [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"updateTechnicianLocation"
+                                                                 andRecordCount:1];
+         
                 [appDelegate.dataBase updateTechnicianLocation];
+      [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"updateTechnicianLocation"
+                                                                 andRecordCount:0];
+      
                 while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
                 {
                     if (appDelegate.dataBase.didTechnicianLocationUpdated == TRUE)
@@ -2834,7 +2871,7 @@ NSDate * syncCompleted;
     
     [[PerformanceAnalytics sharedInstance] displayCurrentStatics];
     
-    //NSLog(@" [isync] DoIncrementalDataSync - completed");
+    NSLog(@"[isync] DoIncrementalDataSync - completed");
  
 
 
@@ -2870,6 +2907,10 @@ NSDate * syncCompleted;
 
 - (void)doGetPrice
 {
+    
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"doGetPrice"
+                                                         andRecordCount:1];
+
     if(![appDelegate doesServerSupportsModule:kMinPkgForGetPriceModule])
         return;
     if(![[self getValueFromUserDefaultsForKey:@"doesGetPriceRequired"] boolValue])
@@ -2993,6 +3034,10 @@ NSDate * syncCompleted;
             break;
         }
     }
+    
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"doGetPrice"
+                                                         andRecordCount:0];
+
 }
 
 -(void)setSyncStatus
@@ -3366,6 +3411,10 @@ NSDate * syncCompleted;
 }
 -(void)GetInsert
 {
+    NSLog(@" GetInsert started....");
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"GetInsert"
+                                                                      andRecordCount:0];
+
 @try{
     [INTF_WebServicesDefServiceSvc initialize];
     
@@ -3436,10 +3485,19 @@ NSDate * syncCompleted;
     SMLog(@"Exception Name WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.name);
     SMLog(@"Exception Reason WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.reason);
 }
+    
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"GetInsert"
+                                                                      andRecordCount:1];
+
+    NSLog(@" GetInsert ends....");
 }
 
 -(void)GetUpdate
 {
+    NSLog(@" GetUpdate started....");
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"GetUpdate"
+                                                         andRecordCount:1];
+
     [INTF_WebServicesDefServiceSvc initialize];
     @try{
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
@@ -3509,10 +3567,22 @@ NSDate * syncCompleted;
         SMLog(@"Exception Name WSInterface :GetUpdate %@",exp.name);
         SMLog(@"Exception Reason WSInterface :GetUpdate %@",exp.reason);
     }
+    
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"GetUpdate"
+                                                         andRecordCount:0];
+    
+    NSLog(@" GetUpdate end....");
+
 }
 
 -(void)GetDelete
 {
+    
+    NSLog(@" GetDelete started....");
+    
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"GetDelete"
+                                                         andRecordCount:1];
+    
     @try{
     [INTF_WebServicesDefServiceSvc initialize];
     
@@ -3587,10 +3657,20 @@ NSDate * syncCompleted;
         SMLog(@"Exception Name WSInterface :GetDelete %@",exp.name);
         SMLog(@"Exception Reason WSInterface :GetDelete %@",exp.reason);
     }
+
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"GetDelete"
+                                                         andRecordCount:0];
+    
+    NSLog(@" GetDelete Ends...");
 }
 
 -(void)cleanUpForRequestId:(NSString *)requestId  forEventName:(NSString *)eventName
 {
+    NSLog(@" cleanUpForRequestId : %@ - %@", requestId, eventName);
+    
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"cleanUpForRequestId"
+                                                         andRecordCount:1];
+    
     [INTF_WebServicesDefServiceSvc initialize];
     @try{
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
@@ -3650,12 +3730,21 @@ NSDate * syncCompleted;
     }
 
 
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"cleanUpForRequestId"
+                                                         andRecordCount:0];
+    
 }
 
 //sahana  -Download criteria sync
 -(void)GETDownloadCriteriaRecordsFor:(NSString *)event_name
 {
 @try{
+    
+    NSLog(@"GETDownloadCriteriaRecordsFor : %@ starts", event_name);
+    
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"GETDownloadCriteriaRecordsFor"
+                                                         andRecordCount:1];
+    
     [INTF_WebServicesDefServiceSvc initialize];
     
     INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
@@ -3793,6 +3882,12 @@ NSDate * syncCompleted;
         SMLog(@"Exception Name WSInterface :GETDownloadCriteriaRecordsFor %@",exp.name);
         SMLog(@"Exception Reason WSInterface :GETDownloadCriteriaRecordsFor %@",exp.reason);
     }
+    
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"GETDownloadCriteriaRecordsFor"
+                                                         andRecordCount:0];
+    
+    
+    NSLog(@"GETDownloadCriteriaRecordsFor : %@ ends...", event_name);
 }
 
 -(void)setLastSyncTime
@@ -3894,6 +3989,12 @@ NSDate * syncCompleted;
 
 -(void) Put:(NSString *)event_name
 {
+    
+    NSLog(@" PUT %@ started.... ", event_name);
+    
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:[NSString stringWithFormat:@"Put : %@", event_name]
+                                                         andRecordCount:1];
+
 @try{
     NSString * event_type = @"SYNC";
     [INTF_WebServicesDefServiceSvc initialize];
@@ -4551,6 +4652,10 @@ NSDate * syncCompleted;
         SMLog(@"Exception Name WSInterface :Put %@",exp.name);
         SMLog(@"Exception Reason WSInterface :Put %@",exp.reason);
     }
+  
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:[NSString stringWithFormat:@"Put : %@", event_name]
+                                                         andRecordCount:0];
+    NSLog(@" PUT %@ ends.... ", event_name);
 }
 
 #pragma mark - ServiceMax Version check method
@@ -6544,6 +6649,14 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     NSException* myException;
     ALERT_VIEW_ERROR var=APPLICATION_ERROR;
     SMLog(@"OPERATION COMPLETED RESPONSE");
+    
+
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"Web Service Call Waiting time"
+                                                         andRecordCount:0];
+    
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"Web Service Call Waiting time"
+                                                                      andRecordCount:0];
+    
     @try
     {
     if (response.error != nil)
@@ -8662,11 +8775,35 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             /* If this is initial sync , then insert all the records :InitialSync-shr*/
             if(appDelegate.do_meta_data_sync == ALLOW_META_AND_DATA_SYNC)
             {
+                [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"insertAllRecordsToRespectiveTables - OUTER"
+                                                                     andRecordCount:[record_dict count]];
+                
+                NSLog(@"insertAllRecordsToRespectiveTables - OUTER");
                 [appDelegate.databaseInterface insertAllRecordsToRespectiveTables:record_dict andParser:jsonParserForDataSync];
-               
+                
+                [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"insertAllRecordsToRespectiveTables - OUTER"
+                                                                     andRecordCount:0];
+                
+                NSLog(@"insertAllRecordsToRespectiveTables - OUTER-ended");
+                
+                [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"insertAllRecordsToRespectiveTables - OUTER"
+                                                                                  andRecordCount:0];
+                
+                
             }
             else {
+                
+                [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"updateAllRecordsToSyncRecordsHeap - OUTER"
+                                                                     andRecordCount:[record_dict count]];
+                
                 [appDelegate.databaseInterface updateAllRecordsToSyncRecordsHeap:record_dict];
+                
+                [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"updateAllRecordsToSyncRecordsHeap - OUTER"
+                                                                     andRecordCount:0];
+                
+                [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"updateAllRecordsToSyncRecordsHeap - OUTER"
+                                                                                  andRecordCount:0];
+                
             }
             
             [record_dict release];

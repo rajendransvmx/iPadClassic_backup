@@ -68,6 +68,9 @@ PopoverButtons *popOver_view;
     BOOL didGetServiceReportLogo;
     BOOL RecordTypeflag;
     
+    // Vipindas Palli - Optimization
+    int dbTransactionCount;
+    
 }
 
 //RADHA
@@ -81,6 +84,9 @@ PopoverButtons *popOver_view;
 @property BOOL didInsertTable;
 @property(nonatomic,assign) BOOL didTechnicianLocationUpdated;
 @property(nonatomic,assign) BOOL didUserGPSLocationUpdated;
+
+// Vipindas Palli - Optimization
+@property(assign) int dbTransactionCount;
 
 //- initWithDBName:(NSString *)name type:(NSString *)type sqlite:(sqlite3 *)db;
 
@@ -355,7 +361,21 @@ PopoverButtons *popOver_view;
 //PB Sync Conflict - Check if object is in conflict
 -(int)checkIfObjectIsInConflict:(NSString *)objectName Id:(NSString *)local_id;
 - (int)countRecordsInSyncConflictWith:(NSString *)objectName Id:(NSString *)localORsfid;
+
+// Vipin-db-optmz
+/* Database - Configuration management */
+- (void)resetConfigurationForDataBase:(sqlite3 *)database;
+- (void)cleanupDatabase;
+
+/* Index creation - Sync Record Heap table */
+- (void)doTableIndexCreation;
+- (void)dropAllExistingTableIndex;
+
 /* Database Transaction management */
 - (int)beginTransaction;
 - (int)endTransaction;
+
+// Vipin-db-optmz
+- (void)addValuesToLookUpFieldTable:(NSMutableArray *)values;
+
 @end

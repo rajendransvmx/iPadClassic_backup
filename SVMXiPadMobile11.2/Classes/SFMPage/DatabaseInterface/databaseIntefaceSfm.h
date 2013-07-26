@@ -28,6 +28,7 @@
     // Vipind-db-optmz
     NSMutableDictionary  *fieldDataTypeDict;
     NSMutableDictionary   *childInfoDict;
+    NSMutableDictionary   *childInfoCacheDictionary;
 
 }
 
@@ -284,8 +285,7 @@
 ;
 @property (nonatomic, retain) NSMutableDictionary   *fieldDataTypeDictionary;
 @property (nonatomic, retain) NSMutableDictionary   *childInfoDictionary;
-
-@property (nonatomic, retain) NSMutableDictionary   *childObjectCacheDictionary; // Vipin-PB-Optimization on 10 July 2013
+@property (nonatomic, retain, getter = getChildObjectRegisteredDictionary) NSMutableDictionary   *childInfoCacheDictionary;
 
 
 /* this is not used as of now*/
@@ -294,8 +294,6 @@
 @property(nonatomic,retain)NSMutableDictionary *parentColumnDictionary;
 
 /* Shravya-InitialSync :InitialSync-shr */
-- (NSInteger)startTransaction;
-- (NSInteger)endTransaction;
 - (void)insertAllRecordsToRespectiveTables:(NSMutableDictionary *)syncedData andParser:(SBJsonParser *)jsonParser;
 - (void)updateTheStatusOfSynRecordsToTrue:(NSMutableDictionary *)sync_data;
 - (void)updatesfmIdsOfMasterToLocalIds ;
@@ -334,6 +332,7 @@
 
 // Vipind-db-optmz
 - (void)deleteRecordFromTable:(NSString *)tableName byCollectionsOfId:(NSArray *)ids forColumn:(NSString *)columnName;
+- (void)clearChildInfoCacheDictionary;
 
 #define SERVER_OVERRIDE                     @"Server_Override"
 #define CLIENT_OVERRIDE                     @"Client_Override"
