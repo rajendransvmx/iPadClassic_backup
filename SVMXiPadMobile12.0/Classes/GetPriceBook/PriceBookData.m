@@ -237,9 +237,6 @@
             
             NSMutableArray * details_values = [detail objectForKey:gDETAILS_VALUES_ARRAY];
             NSMutableArray * details_record_ids = [detail objectForKey:gDETAIL_VALUES_RECORD_ID];
-            
-            
-            NSMutableArray * details_deleted_records = [detail objectForKey:gDETAIL_DELETED_RECORDS];
             NSMutableArray * detailSObjectDataArray = [detail objectForKey:gDETAIL_SOBJECT_ARRAY];
             
             NSArray * detailSobjectKeys = nil;

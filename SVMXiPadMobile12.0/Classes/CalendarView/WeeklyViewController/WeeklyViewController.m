@@ -1035,7 +1035,6 @@ extern void SVMXLog(NSString *format, ...);
     for (int i = 0; i < [workOrderArray count]; i++)
     {
         
-        NSDate * temp_end_date_time , *temp_start_date_time;
         NSArray * event = [[NSArray arrayWithObjects:
                         [[[workOrderArray objectAtIndex:i] objectForKey:WORKORDERNAME] isKindOfClass:[NSString class]]?[[workOrderArray objectAtIndex:i] objectForKey:WORKORDERNAME]:@"",
                         [[[workOrderArray objectAtIndex:i] objectForKey:WORKORDERTYPE] isKindOfClass:[NSString class]]?[[workOrderArray objectAtIndex:i] objectForKey:WORKORDERTYPE]:@"",
@@ -1646,7 +1645,6 @@ extern void SVMXLog(NSString *format, ...);
         {
             [self disableUI];
             SMLog(@"%@", weeklyEventPositionArray);
-            CGRect oldRect = calEvent.selfFrame;
             [calEvent moveTo:calEvent.view.frame];
 
             if(ContinueRescheduling == TRUE)

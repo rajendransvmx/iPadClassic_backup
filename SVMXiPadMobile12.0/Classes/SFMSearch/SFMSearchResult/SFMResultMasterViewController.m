@@ -173,8 +173,6 @@ extern void SVMXLog(NSString *format, ...);
 - (void)setState:(id)sender 
 {
     BOOL state = [sender isOn];
-    NSString *rez = state == YES ? @"YES" : @"NO";
-//    SMLog(@"%@",rez);
     if( state == NO)
     {
         [resultDetailView.detailTable reloadData];
@@ -484,7 +482,7 @@ extern void SVMXLog(NSString *format, ...);
     [resultDetailView updateResultArray:indexPath.row];
     //[resultDetailView showObjects:[NSArray arrayWithObject:[tableArray objectAtIndex:indexPath.row]] forAllObjects:NO];
     [searchMasterTable reloadData];
-	NSTimer* myTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 target: self
+	[NSTimer scheduledTimerWithTimeInterval:0.3 target: self
 													  selector: @selector(stopAnimatingTheIndicator) userInfo: nil repeats:NO];
 
 }

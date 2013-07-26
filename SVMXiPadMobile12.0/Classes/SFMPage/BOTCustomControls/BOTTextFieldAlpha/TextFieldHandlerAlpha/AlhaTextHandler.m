@@ -40,12 +40,6 @@ extern void SVMXLog(NSString *format, ...);
 
 - (BOOL) textFieldShouldEndEditing:(UITextField *)textField
 {
-    iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    NSString * warning = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_WARNING];
-    NSString * invalidEmail = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_TEXT_INVALID_EMAIL]; 
-    NSString * invalidUrl = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_TEXT_INVALID_URL];
-    NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
-    
     if([control_type isEqualToString:@"email"])
     {
         /*

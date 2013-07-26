@@ -628,7 +628,6 @@ enum  {
 {
     NSDictionary *fullDataDict;
     NSArray *cellArray = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"Values"];
-    NSString *objectId = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"ObjectId"];
     NSArray *headerArray =[[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"TableHeader"];
     NSString *objectName = [[tableDataArray objectAtIndex:indexPath.section] objectForKey:@"ObjectName"];
     SFMFullResultViewController *resultController = [[SFMFullResultViewController alloc] initWithNibName:@"SFMFullResultViewController" bundle:nil];
@@ -1113,11 +1112,7 @@ enum  {
     UIImageView *bgView = (UIImageView *)[ownerCell viewWithTag:backgroundImage];
     [bgView setImage:[UIImage imageNamed:@"SFM-Screen-Table-Strip-Selected.png"]];
     @try{
-    NSArray *cellArray = [[tableDataArray objectAtIndex:ownerCellIndexPath.section] objectForKey:@"Values"];
-    NSString *objectName = [[tableDataArray objectAtIndex:ownerCellIndexPath.section] objectForKey:@"ObjectName"];    
-    NSDictionary *sectionDict = [tableDataArray objectAtIndex:ownerCellIndexPath.section];
-    NSString *sectionObjectId = [sectionDict objectForKey:@"ObjectId"];
-    NSMutableArray *onlineDataArray = [onlineDataDict objectForKey:sectionObjectId];
+    NSString *objectName = [[tableDataArray objectAtIndex:ownerCellIndexPath.section] objectForKey:@"ObjectName"];        
     NSString *objectID =[[tableDataArray  objectAtIndex:ownerCellIndexPath.section] objectForKey:@"ObjectId"];
     NSMutableArray *array=[onlineresultsObjectDict objectForKey:objectID];
     NSDictionary *mDict = [array  objectAtIndex:(ownerCellIndexPath.row)];

@@ -56,7 +56,6 @@
 {
     TextFieldDelegate.pickListValues=values;
     
-    NSInteger len;
     NSString * textFieldValue=[[[NSString alloc] init] autorelease];
     NSMutableDictionary *dict;
     

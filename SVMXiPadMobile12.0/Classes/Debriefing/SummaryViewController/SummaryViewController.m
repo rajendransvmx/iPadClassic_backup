@@ -212,8 +212,6 @@ extern void SVMXLog(NSString *format, ...);
     //sahana Aug 16th 
     iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
     @try{
-     NSDictionary *  header_sfm = [appDelegate.SFMPage objectForKey:@"header"];
-   
     //temp change commented the enable_summary_generation flag
     
      //BOOL enable_summary_generation = [[header_sfm objectForKey:gENABLE_SUMMURY_GENERATION] boolValue];
@@ -409,11 +407,6 @@ extern void SVMXLog(NSString *format, ...);
     for (int i = 0; i < count; i++)
     {
         NSDictionary *dict = [Parts objectAtIndex:i];
-       /* ZKSObject * obj = [dict objectForKey:@"CONSUMEDPARTS"];
-        
-        if (![obj isKindOfClass:[NSNull class]])
-            costPerPart = [[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] floatValue];
-        else*/
         float costPerPart = 0.0;
         costPerPart = [[dict objectForKey:KEY_COSTPERPART] floatValue];
         float discount = [[dict valueForKey:@"Discount"] floatValue];
@@ -530,7 +523,6 @@ extern void SVMXLog(NSString *format, ...);
 	{
         case 0:
         {
-			UIFont *sysfont = [UIFont systemFontOfSize:[UIFont systemFontSize]];
 			NSString * wfText = [[workOrderDetails objectForKey:SVMXCWORKPERFORMED] isKindOfClass:[NSString class]]?[workOrderDetails objectForKey:SVMXCWORKPERFORMED]:@"";
             
             if ([reportEssentials count] > 0)
@@ -542,7 +534,7 @@ extern void SVMXLog(NSString *format, ...);
 			CGSize maxsize;
 			maxsize.height = 44*100;
 			maxsize.width = 768;
-			CGSize textsize = CGSizeZero; // [wfText sizeWithFont:sysfont constrainedToSize:maxsize];
+			CGSize textsize = CGSizeZero; 
 			WorkPerformedCellView * workPerformedCell = [[[WorkPerformedCellView alloc] initWithFrame:CGRectMake(0, 0, 768, 44)] autorelease];
             
 			maxsize.width = workPerformedCell.workPerformed.frame.size.width;
@@ -574,16 +566,8 @@ extern void SVMXLog(NSString *format, ...);
                 partcell.Qty.text = [[dict valueForKey:KEY_PARTSUSED] isKindOfClass:[NSString class]]?[dict valueForKey:KEY_PARTSUSED]:@"";
             }
             
-           
-            
-            
-            ZKSObject * obj = [[dict objectForKey:@"CONSUMEDPARTS"] isKindOfClass:[ZKSObject class]]?[dict objectForKey:@"CONSUMEDPARTS"]:nil;
             float costPerPart = 0.0;
-           /* if (![obj isKindOfClass:[NSNull class]])
-                costPerPart = [[[obj fields] objectForKey:@"SVMXC__Actual_Price2__c"] floatValue];
-            else*/
-                costPerPart = [[dict objectForKey:KEY_COSTPERPART] floatValue];
-			// partcell.UnitPrice.text = [NSString stringWithFormat:@"%.2f", costPerPart];
+            costPerPart = [[dict objectForKey:KEY_COSTPERPART] floatValue];
             partcell.UnitPrice.text = [self getFormattedCost:costPerPart];
             NSString * discountStr = [dict valueForKey:@"Discount"];
             if (![discountStr isKindOfClass:[NSString class]])
@@ -819,11 +803,7 @@ extern void SVMXLog(NSString *format, ...);
 		}
 
 	}
-	
-	else {
-		return 30;
-	}
-
+    return 30;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section

@@ -920,8 +920,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
     }
     appDelegate.sfmPageController = [[SFMPageController alloc] initWithNibName:@"SFMPageController" bundle:nil mode:NO];
     
-       
-    NSString * process = [currentWorkOrderDetails objectForKey:PROCESSID];
+    
     appDelegate.sfmPageController.processId = [currentWorkOrderDetails objectForKey:PROCESSID];
     appDelegate.sfmPageController.objectName = [currentWorkOrderDetails objectForKey:OBJECTAPINAME];
     appDelegate.sfmPageController.recordId = [currentWorkOrderDetails objectForKey:WHATID];
@@ -1293,8 +1292,7 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 
 - (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFailWithError:(NSError *)error
 {
-    // SMLog(@"Reverse Geocoder error = %@", error.description);
-    MKPlacemark * placemark = geocoder.placemark;
+    // SMLog(@"Reverse Geocoder error = %@", error.description);    
     //SMLog(@"%@", placemark.addressDictionary);
 }
 

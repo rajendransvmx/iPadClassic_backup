@@ -260,8 +260,7 @@ extern void SVMXLog(NSString *format, ...);
     if(appDelegate.isWorkinginOffline)
     {
         NSDictionary * buttonDict = [buttons objectAtIndex:indexPath.row];
-        NSString * title = [buttonDict objectForKey:SFW_ACTION_DESCRIPTION];
-        NSString * action_type = [buttonDict objectForKey:SFW_ACTION_TYPE];
+        NSString * title = [buttonDict objectForKey:SFW_ACTION_DESCRIPTION];        
         NSString * enable = [buttonDict objectForKey:SFW_ENABLE_ACTION_BUTTON];
         
         

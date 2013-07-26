@@ -330,8 +330,6 @@ extern void SVMXLog(NSString *format, ...);
 {
 	@try{
     UITableViewCell * cell = [_tableView cellForRowAtIndexPath:indexPath];
-    NSString * cellText = cell.textLabel.text ;
-   
 	if (cell.accessoryType == UITableViewCellAccessoryNone)
     {
 		cell.accessoryType = UITableViewCellAccessoryCheckmark;

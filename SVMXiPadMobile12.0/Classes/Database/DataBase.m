@@ -11669,8 +11669,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     }
     
     for (NSDictionary * recentsDict in array)
-    {
-        NSString * nameField = [recentsDict objectForKey:NAME_FIELD];
+    {        
         
         //7418: Removed condition to check if nameField isEqualToString:nil and inner condition
         

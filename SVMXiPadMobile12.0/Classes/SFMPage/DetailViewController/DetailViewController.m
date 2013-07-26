@@ -2470,8 +2470,6 @@ enum BizRuleConfirmViewStatus{
             NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGETCHILD process_id:processId layoutId:detail_layout_id objectName:detailObjectName];
 			NSMutableDictionary * detail_value_mapping_dict = [appDelegate.databaseInterface getObjectMappingForMappingId:process_components mappingType:VALUE_MAPPING];
 			
-			NSArray * detail_value_mapping_keys = [detail_value_mapping_dict allKeys];
-            
             //sahana jul15
             [appDelegate.databaseInterface replaceCURRENTRECORDLiteral:detail_value_mapping_dict sourceDict:value_mapping_dict];
 
@@ -2482,9 +2480,6 @@ enum BizRuleConfirmViewStatus{
             
             NSMutableArray * detail_values = [appDelegate.databaseInterface queryLinesInfo:details_api_keys detailObjectName:detailObjectName headerObjectName:headerObjName detailaliasName:detailaliasName headerRecordId:appDelegate.sfmPageController.recordId expressionId:expressionId parent_column_name:parent_column_name sorting_order:sorting_order];
             
-			NSMutableDictionary * api_name_dataType = [appDelegate.databaseInterface getAllFieldsAndItsDataTypesForObject:detailObjectName tableName:SFOBJECTFIELD];
-			
-			
             for(int l = 0 ;l < [detail_values count]; l++)
             {
                 [detailValuesArray addObject:[detail_values objectAtIndex:l]]; 
@@ -5239,17 +5234,10 @@ enum BizRuleConfirmViewStatus{
     
 		NSMutableArray * details = [appDelegate.SFMPage objectForKey:gDETAILS];
 		NSMutableDictionary * detail = [details objectAtIndex:index];
-
 		NSMutableArray * detail_fields = [detail objectForKey:gDETAILS_FIELDS_ARRAY];
-        
         NSInteger columns = [[detail objectForKey:gDETAILS_NUMBER_OF_COLUMNS] intValue];
-
         NSString * detail_layout_id = [detail objectForKey:gDETAILS_LAYOUT_ID];
-        
-        NSArray * detail_values_ids = [detail objectForKey:gDETAIL_VALUES_RECORD_ID];
 		NSInteger field_width = background_width/columns;
-        
-        
         BOOL allowEdit = [[detail objectForKey:gDETAILS_ALLOW_NEW_LINES] boolValue];
 		if (row == 0) //display the column titles
 		{
@@ -5445,12 +5433,8 @@ enum BizRuleConfirmViewStatus{
 			
 			CGRect swithchButtonFrame = CGRectMake(xValForSwitchbutton, 6, 35, 30);
 		if([[_child_sfm_process_node  allKeys] containsObject:detail_layout_id])
-            {
-                NSString * record_id = [detail_values_ids objectAtIndex:row-1];
-                NSString * objectName_  =  [detail objectForKey:gDETAIL_OBJECT_NAME];
-                NSString * sf_id = [appDelegate.databaseInterface  getSfid_For_LocalId_From_Object_table:objectName_ local_id:record_id];
-                //if([sf_id length] > 0)
-                {	
+            {                
+                {
 			SWitchViewButton * switchButton = [[SWitchViewButton alloc] initWithFrame:swithchButtonFrame];
 			[switchButton setBackgroundImage:switchImage forState:UIControlStateNormal];
 			switchButton.indexPath = indexPath;
@@ -5482,10 +5466,6 @@ enum BizRuleConfirmViewStatus{
 				
 		if([[_child_sfm_process_node  allKeys] containsObject:detail_layout_id])
                 {
-                    NSString * record_id = [detail_values_ids objectAtIndex:row-1];
-                    NSString * objectName_  =  [detail objectForKey:gDETAIL_OBJECT_NAME];
-                    NSString * sf_id = [appDelegate.databaseInterface  getSfid_For_LocalId_From_Object_table:objectName_ local_id:record_id];
-                   // if([sf_id length] > 0)
                     {
 						CGRect swithchButtonFrame = CGRectMake(xValForSwitchbutton, 6, 35, 30);
 						//Radha : 3/june/2013
@@ -6060,7 +6040,6 @@ enum BizRuleConfirmViewStatus{
 		NSMutableArray * detail_fields = [detail objectForKey:gDETAILS_FIELDS_ARRAY];
         NSInteger columns = [[detail objectForKey:gDETAILS_NUMBER_OF_COLUMNS] intValue];
         NSString * detail_layout_id = [detail objectForKey:gDETAILS_LAYOUT_ID];
-        NSArray * detail_values_ids = [detail objectForKey:gDETAIL_VALUES_RECORD_ID];
         
 		NSInteger field_width = background_width/columns;   
             
@@ -6285,10 +6264,6 @@ enum BizRuleConfirmViewStatus{
 			
 	    if([[_child_sfm_process_node  allKeys] containsObject:detail_layout_id])
             {
-                 NSString * record_id = [detail_values_ids objectAtIndex:row-1];
-                NSString * objectName_  =  [detail objectForKey:gDETAIL_OBJECT_NAME];
-                NSString * sf_id = [appDelegate.databaseInterface  getSfid_For_LocalId_From_Object_table:objectName_ local_id:record_id];
-              //  if([sf_id length] > 0)
                 {
 					SWitchViewButton * switchButton = [[SWitchViewButton alloc] initWithFrame:swithchButtonFrame];
 					[switchButton setBackgroundImage:switchImage forState:UIControlStateNormal];
@@ -6355,10 +6330,6 @@ enum BizRuleConfirmViewStatus{
 
 			if([[_child_sfm_process_node  allKeys] containsObject:detail_layout_id])
             {
-                NSString * record_id = [detail_values_ids objectAtIndex:row-1];
-                NSString * objectName_  =  [detail objectForKey:gDETAIL_OBJECT_NAME];
-                NSString * sf_id = [appDelegate.databaseInterface  getSfid_For_LocalId_From_Object_table:objectName_ local_id:record_id];
-                //if([sf_id length] > 0)
                 {
 					SWitchViewButton * switchButton = [[SWitchViewButton alloc] initWithFrame:swithchButtonFrame];
 					[switchButton setBackgroundImage:switchImage forState:UIControlStateNormal];
@@ -6931,7 +6902,6 @@ enum BizRuleConfirmViewStatus{
     
     NSString * refObjName = nil;
     NSString * refObjSearchId = nil;
-    BOOL idAvailable = NO;
     
     // Special handling for Lookup Additional Filter
     NSNumber * Override_Related_Lookup = nil;
@@ -10672,8 +10642,6 @@ enum BizRuleConfirmViewStatus{
 						
                         //check out the record any child or parent  local_id
                         
-                        BOOL record_is_not_syncd = FALSE;
-                        
                         NSMutableDictionary * page_layoutInfo = [appDelegate.databaseInterface  queryProcessInfo:action_process_id object_name:@""];
                         
                         NSMutableDictionary * _header =  [page_layoutInfo objectForKey:@"header"];
@@ -10681,7 +10649,6 @@ enum BizRuleConfirmViewStatus{
                         NSString * headerObjName = [_header objectForKey:gHEADER_OBJECT_NAME];
                         
                         NSString * layout_id = [_header objectForKey:gHEADER_HEADER_LAYOUT_ID];
-                        NSMutableArray * details = [page_layoutInfo objectForKey:gDETAILS];
                         
                         NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGET process_id:action_process_id layoutId:layout_id objectName:headerObjName];
                         NSString * source_parent_object_name = [process_components objectForKey:SOURCE_OBJECT_NAME];
@@ -10934,7 +10901,6 @@ enum BizRuleConfirmViewStatus{
                             NSDictionary * field = [child_record_fields objectAtIndex:k];
                             NSString * detail_api_name = [field objectForKey:gVALUE_FIELD_API_NAME];
                             NSString * deatil_value = [field objectForKey:gVALUE_FIELD_VALUE_VALUE];
-                            NSString *detailDataType = [field objectForKey:gFIELD_DATA_TYPE];
                             for(int l = 0 ;l < [fields_array count]; l++)
                             {
                                 NSDictionary *field_array_value = [fields_array  objectAtIndex:l];
@@ -11448,7 +11414,6 @@ enum BizRuleConfirmViewStatus{
                             NSDictionary * field = [child_record_fields objectAtIndex:k];
                             NSString * detail_api_name = [field objectForKey:gVALUE_FIELD_API_NAME];
                             NSString * deatil_value = [field objectForKey:gVALUE_FIELD_VALUE_VALUE];
-                            NSString * detailDataType = [field objectForKey:gFIELD_DATA_TYPE];
 
                             for(int l = 0 ;l < [fields_array count]; l++)
                             {
@@ -12304,7 +12269,6 @@ enum BizRuleConfirmViewStatus{
                             NSDictionary * field = [child_record_fields objectAtIndex:k];
                             NSString * detail_api_name = [field objectForKey:gVALUE_FIELD_API_NAME];
                             NSString * deatil_value = [field objectForKey:gVALUE_FIELD_VALUE_VALUE];
-                            NSString *detailValue = [field objectForKey:gFIELD_DATA_TYPE];
                             for(int l = 0 ;l < [fields_array count]; l++)
                             {
                                 NSDictionary *field_array_value = [fields_array  objectAtIndex:l];
@@ -15672,7 +15636,6 @@ enum BizRuleConfirmViewStatus{
 	
 	
 	NSMutableDictionary * detail = [details objectAtIndex:section];
-	NSMutableArray * detail_values = [detail objectForKey:gDETAILS_VALUES_ARRAY];
 	NSString * detailObjectName = [detail objectForKey:gDETAIL_OBJECT_NAME];
 	
 	NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGETCHILD process_id:process_id layoutId:layout_id objectName:detailObjectName];
@@ -16335,7 +16298,6 @@ enum BizRuleConfirmViewStatus{
         {
                 
             processInfo * pinfo =  [appDelegate getViewProcessForObject:headerObjName record_id:child_record_id processId:@"" isswitchProcess:FALSE];
-            BOOL process_exist =  pinfo.process_exists;
             NSString *  dest_process_id = pinfo.process_id;
             
             
@@ -16414,7 +16376,6 @@ enum BizRuleConfirmViewStatus{
             NSString * headerObjName = [hdr_object objectForKey:gHEADER_OBJECT_NAME];
             
             processInfo * pinfo =  [appDelegate getViewProcessForObject:headerObjName record_id:self.s2t_recordId processId:@"" isswitchProcess:FALSE];
-            BOOL process_exist = pinfo.process_exists;
             NSString * process_id = pinfo.process_id;
 
             [self fillSFMdictForOfflineforProcess:process_id forRecord:s2t_recordId];
@@ -16583,7 +16544,6 @@ enum BizRuleConfirmViewStatus{
                 NSDictionary * field = [child_record_fields objectAtIndex:k];
                 NSString * detail_api_name = [field objectForKey:gVALUE_FIELD_API_NAME];
                 NSString * deatil_value = [field objectForKey:gVALUE_FIELD_VALUE_VALUE];
-                NSString *detailDataType = [field objectForKey:gFIELD_DATA_TYPE];
                 for(int l = 0 ;l < [fields_array count]; l++)
                 {
                     NSDictionary *field_array_value = [fields_array  objectAtIndex:l];
@@ -16717,8 +16677,7 @@ enum BizRuleConfirmViewStatus{
     [created_object_info setObject:ObjectName forKey:OBJECT_NAME];
     NSString * process_id = @"";
     
-    processInfo * pinfo =  [appDelegate getViewProcessForObject:ObjectName record_id:recordId processId:@"" isswitchProcess:FALSE];
-    BOOL process_exist = pinfo.process_exists;
+    processInfo * pinfo =  [appDelegate getViewProcessForObject:ObjectName record_id:recordId processId:@"" isswitchProcess:FALSE];    
     process_id = pinfo.process_id;
     
     [created_object_info setObject:process_id forKey:gPROCESS_ID];

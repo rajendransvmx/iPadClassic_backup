@@ -1737,8 +1737,7 @@ extern void SVMXLog(NSString *format, ...);
     
     CGContextSelectFont (pdfContext, CBOLDFONTNAME, 18, kCGEncodingMacRoman);
 	CGContextSetTextDrawingMode (pdfContext, kCGTextFill);
-	CGContextSetRGBFillColor (pdfContext, 0, 0, 0, 1);
-	const char *text = [detailsTitle cStringUsingEncoding:NSUTF8StringEncoding];
+	CGContextSetRGBFillColor (pdfContext, 0, 0, 0, 1);	
     
     // Calculate dimensions of text based on text font properties
     CGSize textSize = [detailsTitle sizeWithFont:[UIFont fontWithName:@"Verdana-Bold" size:18]];
@@ -2455,10 +2454,7 @@ extern void SVMXLog(NSString *format, ...);
 	CFRelease(line1);
 	CFRelease(attrString1);
 	CFRelease(sfont1);
-
-    
-    UIFont * font = [UIFont fontWithName:@"Verdana-Bold" size:14];
-    CGSize textSize = CGSizeZero; // [workOrderNumber sizeWithFont:font];
+    CGSize textSize = CGSizeZero;
     
     CGContextSelectFont (pdfContext, CFONTNAME, 12, kCGEncodingMacRoman);
 	CGContextSetTextDrawingMode (pdfContext, kCGTextFill);

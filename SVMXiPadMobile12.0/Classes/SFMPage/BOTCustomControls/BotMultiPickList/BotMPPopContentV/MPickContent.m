@@ -180,8 +180,6 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	@try{
-    NSInteger row = indexPath.row;    
-    
     UITableViewCell * cell = [tableView cellForRowAtIndexPath:indexPath];
 
     

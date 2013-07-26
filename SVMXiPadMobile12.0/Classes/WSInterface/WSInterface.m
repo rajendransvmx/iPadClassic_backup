@@ -4599,9 +4599,7 @@ NSDate * syncCompleted;
                         NSString * child_sf_id  = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:object_name local_id:local_id];
                         
                         if([child_sf_id length] == 0)
-                        {
-                           
-                            BOOL flag = [appDelegate.databaseInterface DeleteEntryFromDataTrailerTableFor:local_id forObject:object_name sync_type:event_name fieldName:@"local_id"];
+                        {                           
                             continue;
                         }
                     }
@@ -9087,7 +9085,6 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             for (int i = 0; i < [valueMaps count]; i++)
             {
                     INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [valueMaps objectAtIndex:i];
-                    NSString * key = (svmxMap.key)!=nil?(svmxMap.key):@"";
                     code_snippet = svmxMap.value;
                     SMLog(@"%@",code_snippet);
                     [appDelegate.dataBase createEventTrigger:code_snippet];
@@ -9284,8 +9281,6 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                     [resultDict setObject:mapForResult.value forKey:[fieldsForTableHeader objectAtIndex:j]];
                     if(j ==0)
                     {
-                        NSArray *resultIDMapArray = [mapForResult valueMap];                    
-                        INTF_WebServicesDefServiceSvc_SVMXMap * mapForID = [resultIDMapArray objectAtIndex:0];
                         [resultDict setObject:idValue forKey:@"Id"];
                     }
                 }
@@ -12711,8 +12706,6 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         NSMutableArray * detailsValuesArray = [[NSMutableArray alloc] initWithCapacity:0];
         NSMutableArray * detailValuesId = [[NSMutableArray alloc] initWithCapacity:0];
         NSMutableArray * detail_deleted_rec = [[NSMutableArray alloc] initWithCapacity:0];
-        NSMutableArray * detailsValuesArray_temp = [[NSMutableArray alloc] initWithCapacity:0];
-        NSMutableArray * detailValuesId_temp = [[NSMutableArray alloc] initWithCapacity:0];
         NSMutableArray * detailSObjectDataArray = [[NSMutableArray alloc] initWithCapacity:0];
         
         NSString  * detail_values_id = nil;
@@ -12720,7 +12713,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         for (int v = 0; v < [pageDetail.bubbleinfolist count]; v++)
         {
             INTF_WebServicesDefServiceSvc_INTF_DetailBubbleWrapper * detail = [pageDetail.bubbleinfolist objectAtIndex:v];
-            INTF_WebServicesDefServiceSvc_sObject * detail_sobject = detail.sobjectinfo;
+            
             
             NSMutableDictionary * detailSObjectData = [[NSMutableDictionary alloc] initWithCapacity:0];
 
@@ -13122,8 +13115,6 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
         
         NSString * detail_object_name = [detail objectForKey:gDETAIL_OBJECT_NAME];
         NSString * detail_layout_id = [detail objectForKey:gDETAILS_LAYOUT_ID];
-         NSString *parent_column_name = [detail objectForKey:gDETAIL_HEADER_REFERENCE_FIELD];
-        
         
         [targetRecordObjectDetails setObjName:[detail objectForKey:gDETAIL_OBJECT_NAME]];
         //sahana for get price
@@ -14727,7 +14718,6 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-    iServiceAppDelegate * appDelegate_ = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
     //appDelegate_.isInternetConnectionAvailable = NO;
     [[NSNotificationCenter defaultCenter] postNotificationName:kInternetConnectionChanged object:[NSNumber numberWithInt:0] userInfo:nil];
 }
@@ -14743,7 +14733,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-    iServiceAppDelegate * appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+    
     //[appDelegate isInternetConnectionAvailable] = NO;
     [[NSNotificationCenter defaultCenter] postNotificationName:kInternetConnectionChanged object:[NSNumber numberWithInt:0] userInfo:nil];
 }

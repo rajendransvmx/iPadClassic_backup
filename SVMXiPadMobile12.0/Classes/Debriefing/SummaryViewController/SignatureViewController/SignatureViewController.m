@@ -28,8 +28,6 @@ extern void SVMXLog(NSString *format, ...);
 
 - (IBAction) Done
 {
-    iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    
     [watermarkedSignature bringSubviewToFront:watermark];
     
     CGSize size = [watermarkedSignature bounds].size;
@@ -110,8 +108,6 @@ extern void SVMXLog(NSString *format, ...);
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {    
-    UITouch *touch = [touches anyObject];
-    
     
     if(!mouseSwiped)
 	{

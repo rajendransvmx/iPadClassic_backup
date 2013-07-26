@@ -1053,7 +1053,6 @@ extern void SVMXLog(NSString *format, ...);
     
     NSMutableDictionary * additional_info = [[NSMutableDictionary alloc] initWithCapacity:0];
     
-    NSArray * keys = [NSArray arrayWithObjects:@"SVMXC__Top_Level__c",@"SVMXC__Component__c",@"SVMXC__Company__c", nil];
     if(record_id != nil)
     {
         NSString * query = [NSString stringWithFormat:@"SELECT  SVMXC__Top_Level__c,SVMXC__Component__c,SVMXC__Company__c  FROM '%@' where local_id = '%@'", tablename ,record_id];

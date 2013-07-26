@@ -1486,8 +1486,7 @@ extern void SVMXLog(NSString *format, ...);
 {
     
     NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
-    sqlite3_stmt *statement;
-    NSString * nameField = @"";
+    sqlite3_stmt *statement;    
     
     NSMutableArray *travel = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
     
@@ -2680,7 +2679,6 @@ extern void SVMXLog(NSString *format, ...);
     
     [appDelegate.dataBase beginTransaction];
     NSString *deleteQuery = [NSString stringWithFormat:@"Delete From ChatterPostDetails where ProductId = '%@'", productId];
-    sqlite3_stmt *statement;
     
 	char *err;
 	if (synchronized_sqlite3_exec(appDelegate.db, [deleteQuery UTF8String], NULL, NULL, &err) != SQLITE_OK)
@@ -5723,13 +5721,8 @@ NSString *Doc_Name=[[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurren
     {
         while(synchronized_sqlite3_step(selectStmt) == SQLITE_ROW)
         {
-            
-			
-            int index = synchronized_sqlite3_column_int(selectStmt, 0);
             char * temp_label = (char *)synchronized_sqlite3_column_text(selectStmt, 1);
             char * temp_value = (char *)(char*)synchronized_sqlite3_column_text(selectStmt, 2);
-			
-            
             if(temp_label != nil)
             {
                 settingId = [NSString stringWithUTF8String:temp_label];
