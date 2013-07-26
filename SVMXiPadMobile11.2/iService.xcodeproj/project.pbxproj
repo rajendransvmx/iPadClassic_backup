@@ -1356,8 +1356,6 @@
 		ACEAD2681721209900837555 /* 72x72@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = ACEAD2671721209900837555 /* 72x72@2x.png */; };
 		BA9A95591578F3B0008A0475 /* blue button.png in Resources */ = {isa = PBXBuildFile; fileRef = BA9A95581578F3B0008A0475 /* blue button.png */; };
 		FA0722D914DFBA79008CAFB3 /* GTMStringEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = FA0722D814DFBA79008CAFB3 /* GTMStringEncoding.m */; };
-		FA0F7B8414F58C1400052BD6 /* ___INTF_WebServicesDefServiceSvc___m___l7j8pj in Resources */ = {isa = PBXBuildFile; fileRef = FA0F7B7014F58C1400052BD6 /* ___INTF_WebServicesDefServiceSvc___m___l7j8pj */; };
-		FA0F7B8514F58C1400052BD6 /* ___INTF_WebServicesDefServiceSvc___m___Riwcoq in Resources */ = {isa = PBXBuildFile; fileRef = FA0F7B7114F58C1400052BD6 /* ___INTF_WebServicesDefServiceSvc___m___Riwcoq */; };
 		FA0F7B8614F58C1400052BD6 /* INTF_WebServicesDefServiceSvc.m in Sources */ = {isa = PBXBuildFile; fileRef = FA0F7B7314F58C1400052BD6 /* INTF_WebServicesDefServiceSvc.m */; };
 		FA0F7B8714F58C1400052BD6 /* KeyValue.m in Sources */ = {isa = PBXBuildFile; fileRef = FA0F7B7514F58C1400052BD6 /* KeyValue.m */; };
 		FA0F7B8814F58C1400052BD6 /* NSDate+ISO8601Parsing.m in Sources */ = {isa = PBXBuildFile; fileRef = FA0F7B7714F58C1400052BD6 /* NSDate+ISO8601Parsing.m */; };
@@ -3020,8 +3018,6 @@
 		FA0722D614DFBA79008CAFB3 /* GTMDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMDefines.h; sourceTree = "<group>"; };
 		FA0722D714DFBA79008CAFB3 /* GTMStringEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMStringEncoding.h; sourceTree = "<group>"; };
 		FA0722D814DFBA79008CAFB3 /* GTMStringEncoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMStringEncoding.m; sourceTree = "<group>"; };
-		FA0F7B7014F58C1400052BD6 /* ___INTF_WebServicesDefServiceSvc___m___l7j8pj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "___INTF_WebServicesDefServiceSvc___m___l7j8pj"; sourceTree = "<group>"; };
-		FA0F7B7114F58C1400052BD6 /* ___INTF_WebServicesDefServiceSvc___m___Riwcoq */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "___INTF_WebServicesDefServiceSvc___m___Riwcoq"; sourceTree = "<group>"; };
 		FA0F7B7214F58C1400052BD6 /* INTF_WebServicesDefServiceSvc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = INTF_WebServicesDefServiceSvc.h; sourceTree = "<group>"; };
 		FA0F7B7314F58C1400052BD6 /* INTF_WebServicesDefServiceSvc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = INTF_WebServicesDefServiceSvc.m; sourceTree = "<group>"; };
 		FA0F7B7414F58C1400052BD6 /* KeyValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyValue.h; sourceTree = "<group>"; };
@@ -6191,8 +6187,6 @@
 			children = (
 				A8E07D8715FDD93C00070821 /* CustomLibXml.h */,
 				A8E07D8815FDD93C00070821 /* CustomLibXml.m */,
-				FA0F7B7014F58C1400052BD6 /* ___INTF_WebServicesDefServiceSvc___m___l7j8pj */,
-				FA0F7B7114F58C1400052BD6 /* ___INTF_WebServicesDefServiceSvc___m___Riwcoq */,
 				FA0F7B7214F58C1400052BD6 /* INTF_WebServicesDefServiceSvc.h */,
 				FA0F7B7314F58C1400052BD6 /* INTF_WebServicesDefServiceSvc.m */,
 				FA0F7B7414F58C1400052BD6 /* KeyValue.h */,
@@ -7390,8 +7384,6 @@
 				FA11A46E14F5769600ACABA8 /* ManualDataSyncRoot.xib in Resources */,
 				FA11A47014F5769600ACABA8 /* ManualDataSync.xib in Resources */,
 				FA11A47C14F576C500ACABA8 /* SyncStatusView.xib in Resources */,
-				FA0F7B8414F58C1400052BD6 /* ___INTF_WebServicesDefServiceSvc___m___l7j8pj in Resources */,
-				FA0F7B8514F58C1400052BD6 /* ___INTF_WebServicesDefServiceSvc___m___Riwcoq in Resources */,
 				FAE64EEB14F61023002548E6 /* DataSyncLabelPopover.xib in Resources */,
 				FADA2A8D1511B93A00E7414A /* required_textarea.png in Resources */,
 				FA9F86E6151A6A160013F4BE /* animation1.gif in Resources */,
