@@ -88,7 +88,7 @@ typedef enum SYNC_STATUS {
     SYNC_RED = 2
     } SYNC_STATUS;
 
-
+//Changes for optimized sync - one sync call
 typedef enum  INCREMENTAL_SYNC{
     INCR_STARTS     = 0, 
     PUT_INSERT_DONE = 1,
@@ -106,7 +106,12 @@ typedef enum  INCREMENTAL_SYNC{
     GET_PRICE_DL_START = 13,
     GET_PRICE_INSERT_START = 14,
     GET_PRICE_DL_FINISH = 15,
-    CUSTOM_AGGRESSIVESYNC_DONE = 16
+    CUSTOM_AGGRESSIVESYNC_DONE = 16,
+	GET_INSERT_DC_OPTIMZED_DONE = 17,
+    GET_UPDATE_DC_OPTIMZED_DONE = 18,
+    GET_DELETE_DC_OPTIMZED_DONE = 19,
+	TX_FETCH_OPTIMIZED_DONE = 20
+	
     
     } INCREMENTAL_SYNC;
 
@@ -924,6 +929,8 @@ extern  NSString const *devVersion;
 
 //Defect 6774
 - (void) checkifConflictExistsForConnectionError;
+
+- (INTF_WebServicesDefServiceSvc_SVMXClient  *) getSVMXClientObject;
 
 @end
 

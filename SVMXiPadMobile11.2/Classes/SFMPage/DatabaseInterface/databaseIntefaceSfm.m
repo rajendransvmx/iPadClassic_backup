@@ -3964,6 +3964,10 @@ extern void SVMXLog(NSString *format, ...);
 
 -(NSMutableDictionary *) getAllRecordsFromRecordsHeap
 {
+	
+	//Changes for optimized sync - one sync call
+	NSInteger count = [self getCountOfRecordsFromSyncRecordsHeap];
+	
     NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithCapacity:0];
     
     NSMutableArray * Objects_Array  = [[NSMutableArray alloc] initWithCapacity:0];
@@ -3987,6 +3991,9 @@ extern void SVMXLog(NSString *format, ...);
     synchronized_sqlite3_finalize(stmt_);
     
     [query_ release];
+	
+	//Changes for optimized sync - one sync call
+	static int noOfId = 0;
     for(NSString * obj in Objects_Array)
     {
     
@@ -4021,6 +4028,8 @@ extern void SVMXLog(NSString *format, ...);
                     {
                         NSMutableArray * array = [dict objectForKey:object_name];
                         [array addObject:sf_id];
+						//Changes for optimized sync - one sync call
+						noOfId++;
                         flag = TRUE;
                         break;
                     }
@@ -4029,6 +4038,8 @@ extern void SVMXLog(NSString *format, ...);
                 {
                     NSMutableArray * array = [[NSMutableArray alloc] initWithCapacity:0] ;
                     [array addObject:sf_id];
+					//Changes for optimized sync - one sync call
+					noOfId++;
                     [dict setObject:array forKey:object_name];
                     [array release];                //18Apr 
                 }
@@ -4037,9 +4048,36 @@ extern void SVMXLog(NSString *format, ...);
         synchronized_sqlite3_finalize(stmt);
         [query release];
     }
-    
+	//Changes for optimized sync - one sync call
+	NSString * lastBatch = @"false";
+    if (noOfId == count)
+	{
+		lastBatch = @"true";
+	}
+	[dict setObject:lastBatch forKey:@"LAST_BATCH"];
     [Objects_Array release];
     return dict;
+}
+
+//Changes for optimized sync - one sync call
+- (NSInteger) getCountOfRecordsFromSyncRecordsHeap
+{
+	NSString * query = @"SELECT COUNT (*) FROM sync_Records_Heap WHERE sync_flag = 'false'";
+	
+	sqlite3_stmt * stmt_;
+	NSInteger count = 0;
+	
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt_, nil) == SQLITE_OK)
+    {
+        if (synchronized_sqlite3_step(stmt_) == SQLITE_ROW)
+        {
+            count = synchronized_sqlite3_column_int(stmt_, 0);
+        }
+		
+		synchronized_sqlite3_finalize(stmt_);
+    }
+	
+	return count;
 }
 
 /*

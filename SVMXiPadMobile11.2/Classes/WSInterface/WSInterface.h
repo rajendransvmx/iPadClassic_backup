@@ -20,6 +20,8 @@
 #import "ZKRecordTypeMapping.h"
 #import "ZKPicklistEntry.h"
 
+//Changes for optimized sync - one sync call
+#import "OptimizedSyncCalls.h"
 
 typedef enum CUSTOM_SYNC_STATUS{
         NO_ACTIVE_CUSTOM_SYNC  = 0,
@@ -198,6 +200,10 @@ typedef enum CUSTOM_SYNC_STATUS{
     NSString * cus_class_name ,* cus_method_name , * cus_sync_req_id , * custom_sync_object_name;
  
     CUSTOM_SYNC_STATUS custom_sync_status;
+	
+	//Changes for optimized sync - one sync call
+	OptimizedSyncCalls * optimizeSyncCalls;
+
 }
 //sahana
 @property ( nonatomic) CUSTOM_SYNC_STATUS custom_sync_status;
@@ -472,6 +478,10 @@ last_sync_time:(NSString *)last_sync_time;
 
 //Sync -Override
 - (void) releaseSyncThread;
+    
+
+//Changes for optimized sync - one sync call
+- (void) CustomSingleSyncCall;
     
 
 @end

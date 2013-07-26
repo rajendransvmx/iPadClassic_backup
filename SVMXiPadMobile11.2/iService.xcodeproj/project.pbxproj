@@ -820,6 +820,7 @@
 		AC1BF8B6171C395500F0EA14 /* sync8.png in Resources */ = {isa = PBXBuildFile; fileRef = AC1BF8A4171C395500F0EA14 /* sync8.png */; };
 		AC1BF8B7171C395500F0EA14 /* sync9.png in Resources */ = {isa = PBXBuildFile; fileRef = AC1BF8A5171C395500F0EA14 /* sync9.png */; };
 		AC1BF8B8171C395500F0EA14 /* SyncProgressBar.m in Sources */ = {isa = PBXBuildFile; fileRef = AC1BF8A7171C395500F0EA14 /* SyncProgressBar.m */; };
+		AC8CE09D17A29F7100D88CFB /* OptimizedSyncCalls.m in Sources */ = {isa = PBXBuildFile; fileRef = AC8CE09C17A29F7100D88CFB /* OptimizedSyncCalls.m */; };
 		ACE3D713178ABC1E00666F59 /* PerformanceAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = ACE3D712178ABC1E00666F59 /* PerformanceAnalytics.m */; };
 		ACE3D717178ABC7F00666F59 /* Util.m in Sources */ = {isa = PBXBuildFile; fileRef = ACE3D716178ABC7F00666F59 /* Util.m */; };
 		ACEAD0541721201F00837555 /* 0@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = ACEACE421721201B00837555 /* 0@2x.png */; };
@@ -2478,6 +2479,8 @@
 		AC1BF8A5171C395500F0EA14 /* sync9.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sync9.png; sourceTree = "<group>"; };
 		AC1BF8A6171C395500F0EA14 /* SyncProgressBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyncProgressBar.h; sourceTree = "<group>"; };
 		AC1BF8A7171C395500F0EA14 /* SyncProgressBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyncProgressBar.m; sourceTree = "<group>"; };
+		AC8CE09B17A29F7100D88CFB /* OptimizedSyncCalls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptimizedSyncCalls.h; sourceTree = "<group>"; };
+		AC8CE09C17A29F7100D88CFB /* OptimizedSyncCalls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OptimizedSyncCalls.m; sourceTree = "<group>"; };
 		ACE3D711178ABC1E00666F59 /* PerformanceAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PerformanceAnalytics.h; path = ../PerformanceAnalytics.h; sourceTree = "<group>"; };
 		ACE3D712178ABC1E00666F59 /* PerformanceAnalytics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PerformanceAnalytics.m; path = ../PerformanceAnalytics.m; sourceTree = "<group>"; };
 		ACE3D715178ABC7F00666F59 /* Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Util.h; sourceTree = "<group>"; };
@@ -4916,6 +4919,7 @@
 		7B001E101227BA1F002E1770 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				AC8CE09A17A29F7100D88CFB /* OptimizedSync */,
 				AC1BF894171C395500F0EA14 /* SyncProgressBar */,
 				A8DB1D0916E0B590007D1A4F /* GetPriceBook */,
 				A8DB1CFB16E0B58B007D1A4F /* JSExecuter */,
@@ -5634,6 +5638,15 @@
 				AC1BF8A5171C395500F0EA14 /* sync9.png */,
 			);
 			path = SyncIndicatorImages;
+			sourceTree = "<group>";
+		};
+		AC8CE09A17A29F7100D88CFB /* OptimizedSync */ = {
+			isa = PBXGroup;
+			children = (
+				AC8CE09B17A29F7100D88CFB /* OptimizedSyncCalls.h */,
+				AC8CE09C17A29F7100D88CFB /* OptimizedSyncCalls.m */,
+			);
+			path = OptimizedSync;
 			sourceTree = "<group>";
 		};
 		ACEACE411721201B00837555 /* Retina Images */ = {
@@ -8365,6 +8378,7 @@
 				AC1BF8B8171C395500F0EA14 /* SyncProgressBar.m in Sources */,
 				ACE3D713178ABC1E00666F59 /* PerformanceAnalytics.m in Sources */,
 				ACE3D717178ABC7F00666F59 /* Util.m in Sources */,
+				AC8CE09D17A29F7100D88CFB /* OptimizedSyncCalls.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

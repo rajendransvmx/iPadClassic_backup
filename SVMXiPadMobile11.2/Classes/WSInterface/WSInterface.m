@@ -12,8 +12,8 @@
 #import "WSResponseParser.h"
 #import "Utility.h"
 #import "PerformanceAnalytics.h"
-
-
+//Changes for optimized sync - one sync call
+#import "OptimizedSyncCalls.h"
 extern void SVMXLog(NSString *format, ...);
 
 //sahana Note 
@@ -131,6 +131,9 @@ extern void SVMXLog(NSString *format, ...);
     picklistValues = [[NSMutableArray alloc] initWithCapacity:0];
     pageUiHistory = [[NSMutableArray alloc] initWithCapacity:0];
     processDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
+	
+	//Changes for optimized sync - one sync call
+	optimizeSyncCalls = [[OptimizedSyncCalls alloc] init];
     
     return self;
 }
@@ -1496,7 +1499,8 @@ last_sync_time:(NSString *)last_sync_time
                                                                           andRecordCount:1];
 
     //If no records exists dont send the response
-    if([allKeys count] == 0)
+		//Changes for optimized sync - one sync call
+    if([allKeys count] == 1)
     {
         SMLog(@"NO getRecords ");
         //update all the records in the heap table to 
@@ -1512,6 +1516,9 @@ last_sync_time:(NSString *)last_sync_time
         
         if([object_api_name length] != 0 && ![object_api_name isEqualToString:@""])
         {
+			//Changes for optimized sync - one sync call
+			if ([object_api_name isEqualToString:@"LAST_BATCH"])
+				continue;
             INTF_WebServicesDefServiceSvc_SVMXMap  * svmxcmap = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
             svmxcmap.key = @"TX_OBJECT" ;
             svmxcmap.value = object_api_name; //object  api name
@@ -1781,6 +1788,16 @@ NSDate * syncCompleted;
         //Radha Sync ProgressBar
         //appDelegate.syncTypeInProgress = DATASYNC_INPROGRESS;
         syncStarted = [NSDate date];
+	
+	//Changes for optimized sync - one sync call
+	if (temp_aggressiveSync)
+	{
+		[self CustomSingleSyncCall];
+	}
+	//Changes for optimized sync - one sync call
+	else 
+	{
+
             
         [self GetDelete];
 
@@ -2535,6 +2552,7 @@ NSDate * syncCompleted;
                 [appDelegate.dataBase updateUserGPSLocation];
             }
         }
+}
         [appDelegate.databaseInterface  updateSyncRecordsIntoLocalDatabase];
         //check download criteria match
     /*******************************************************DOWNLOAD_CRITERIA_CHANGE*************************************************************************/
@@ -2715,39 +2733,43 @@ NSDate * syncCompleted;
         [appDelegate.dataBase updateRecentsPlist];
         
 
-        //Shrinivas 
-        //Sync signature to server
-        didWriteSignature = NO;
-        [appDelegate.calDataBase getAllLocalIdsForSignature:SIG_AFTERSYNC];
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-        {
-            SMLog(@"Signature to SFDC");
-            if (didWriteSignature == YES)
-                break;
-            if (![appDelegate isInternetConnectionAvailable])
-            {
-                break;
-            }
-            if(appDelegate.connection_error)
-                break;
-        }
-        
-        //Sync PDF to SFDC
-        didWritePDF = NO;
-        [appDelegate.calDataBase getAllLocalIdsForPDF];
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-        {
-            SMLog(@"PDF to SFDC");
-            if (didWritePDF == YES)
-                break;
-            if (![appDelegate isInternetConnectionAvailable])
-            {
-                break;
-            }
-            if(appDelegate.connection_error)
-                break;
+//Changes for optimized sync - one sync call
+	if (0)
+	{
+		//Shrinivas
+		//Sync signature to server
+		didWriteSignature = NO;
+		[appDelegate.calDataBase getAllLocalIdsForSignature:SIG_AFTERSYNC];
+		while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+		{
+			SMLog(@"Signature to SFDC");
+			if (didWriteSignature == YES)
+				break;
+			if (![appDelegate isInternetConnectionAvailable])
+			{
+				break;
+			}
+			if(appDelegate.connection_error)
+				break;
+		}
+		
+		//Sync PDF to SFDC
+		didWritePDF = NO;
+		[appDelegate.calDataBase getAllLocalIdsForPDF];
+		while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+		{
+			SMLog(@"PDF to SFDC");
+			if (didWritePDF == YES)
+				break;
+			if (![appDelegate isInternetConnectionAvailable])
+			{
+				break;
+			}
+			if(appDelegate.connection_error)
+				break;
 
-        }
+		}
+	}
           
 
         AfterSaveEventsCalls = TRUE;
@@ -2878,6 +2900,138 @@ NSDate * syncCompleted;
 
 
 }
+
+
+
+//Changes for optimized sync - one sync call
+- (void) CustomSingleSyncCall
+{
+	/* Start : Signature before update block */
+	didWriteSignature = NO;
+    [appDelegate.calDataBase getAllLocalIdsForSignature:SIG_BEFOREUPDATE];
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+    {
+        SMLog(@"Signature to SFDC");
+        if (didWriteSignature == YES)
+            break;
+        if (![appDelegate isInternetConnectionAvailable])
+        {
+            break;
+        }
+        if(appDelegate.connection_error)
+            break;
+    }
+	/* END : Signature before update block */
+	NSLog(@" ********************** START : SINGLE SYNC CALL ********************** %@",[NSDate date]);
+
+	[appDelegate.databaseInterface cleartable:SFDATATRAILER_TEMP];
+	
+	[self copyTrailertoTempTrailer:DELETE];
+	
+	[self getAllRecordsForOperationType:DELETE];
+	
+	[optimizeSyncCalls GetOptimizedDownloadCriteriaRecordsFor:@"GET_DELETE_DC_OPTIMZED" requestId:Insert_requestId];
+	
+	while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+	{
+#ifdef kPrintLogsDuringWebServiceCall
+		SMLog(@"WSinterface.m : DOINC_DATA_SYNC: CustomSingleSyncCall");
+#endif
+		
+		if (![appDelegate isInternetConnectionAvailable])
+		{
+			appDelegate.dataSyncRunning = NO;
+			break;
+		}
+		
+		if(appDelegate.connection_error)
+		{
+			break;
+		}
+		
+		if (appDelegate.Incremental_sync_status == GET_DELETE_DC_OPTIMZED_DONE || appDelegate.Incremental_sync_status == GET_INSERT_DC_OPTIMZED_DONE || appDelegate.Incremental_sync_status ==  GET_UPDATE_DC_OPTIMZED_DONE)
+		{
+			break;
+		}
+	}
+	NSLog(@" ********************** END : SINGLE SYNC CALL ********************** %@",[NSDate date]);
+	appDelegate.Incremental_sync_status = INCR_STARTS;
+	if (optimizeSyncCalls.callBackValue)
+	{
+		[self CustomSingleSyncCall];
+	}
+	
+	NSLog(@" ********************** START : TXFETCH SYNC CALL OPT ********************** %@",[NSDate date]);
+	[optimizeSyncCalls tx_fetch];
+	while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+	{
+#ifdef kPrintLogsDuringWebServiceCall
+		SMLog(@"WSinterface.m : DOINC_DATA_SYNC: CustomSingleSyncCall");
+#endif
+		
+		if (![appDelegate isInternetConnectionAvailable])
+		{
+			appDelegate.dataSyncRunning = NO;
+			break;
+		}
+		
+		if(appDelegate.connection_error)
+		{
+			break;
+		}
+		
+		if (appDelegate.Incremental_sync_status == TX_FETCH_OPTIMIZED_DONE)
+		{
+			break;
+		}
+	}
+	NSLog(@" ********************** END : TXFETCH SYNC CALL OPT ********************** %@",[NSDate date]);
+	[appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:GET_DELETE];
+    [appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:PUT_DELETE];
+	/* Start : Signature and PDF sync after update */
+	didWriteSignature = NO;
+    [appDelegate.calDataBase getAllLocalIdsForSignature:SIG_AFTERUPDATE];
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+    {
+        SMLog(@"Signature to SFDC");
+        if (didWriteSignature == YES)
+            break;
+    }
+
+	didWriteSignature = NO;
+    [appDelegate.calDataBase getAllLocalIdsForSignature:SIG_AFTERSYNC];
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+    {
+        SMLog(@"Signature to SFDC");
+        if (didWriteSignature == YES)
+            break;
+        if (![appDelegate isInternetConnectionAvailable])
+        {
+            break;
+        }
+        if(appDelegate.connection_error)
+            break;
+    }
+
+	didWritePDF = NO;
+    [appDelegate.calDataBase getAllLocalIdsForPDF];
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+    {
+        SMLog(@"PDF to SFDC");
+        if (didWritePDF == YES)
+            break;
+        if (![appDelegate isInternetConnectionAvailable])
+        {
+            break;
+        }
+        if(appDelegate.connection_error)
+            break;
+		
+    }
+	/* END : Signature and PDF sync after update */
+}
+
+
 - (void) releaseSyncThread
 {
 	if (appDelegate.syncThread)
@@ -8478,7 +8632,30 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                 [obj release];
             }
         }
-
+		//Changes for optimized sync - one sync call
+		if ([wsResponse.result.eventName isEqualToString:@"GET_INSERT_DC_OPTIMZED"] || [wsResponse.result.eventName isEqualToString:@"GET_UPDATE_DC_OPTIMZED"] || [wsResponse.result.eventName isEqualToString:@"GET_DELETE_DC_OPTIMZED"])
+		{
+			NSString * event_name = wsResponse.result.eventName;
+			
+			[optimizeSyncCalls parseOptimizedDownloadCriteriaResponse:event_name response:[wsResponse.result valueMap]];
+//			if ([event_name isEqualToString:@"GET_INSERT_DC_OPTIMZED"])
+//			{
+//				appDelegate.Incremental_sync_status = GET_INSERT_DC_OPTIMZED_DONE;
+//			}
+//			else if ([event_name isEqualToString:@"GET_UPDATE_DC_OPTIMZED"])
+//			{
+//				appDelegate.Incremental_sync_status = GET_UPDATE_DC_OPTIMZED_DONE;
+//			}
+//			else if ([event_name isEqualToString:@"GET_DELETE_DC_OPTIMZED"])
+//			{
+//				appDelegate.Incremental_sync_status = GET_DELETE_DC_OPTIMZED_DONE;
+//			}
+		}
+		//Changes for optimized sync - one sync call
+		if ([wsResponse.result.eventName isEqualToString:@"TX_FETCH_OPTIMZED"])
+		{
+			[optimizeSyncCalls parseTXFetch:wsResponse.result.valueMap];
+		}
 		if ([wsResponse.result.eventName isEqualToString:@"LOCATION_HISTORY"] && [wsResponse.result.eventType isEqualToString:SYNC]
             )
         {

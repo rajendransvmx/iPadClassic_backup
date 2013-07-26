@@ -334,6 +334,9 @@
 - (void)deleteRecordFromTable:(NSString *)tableName byCollectionsOfId:(NSArray *)ids forColumn:(NSString *)columnName;
 - (void)clearChildInfoCacheDictionary;
 
+//Changes for optimized sync - one sync call
+- (NSInteger) getCountOfRecordsFromSyncRecordsHeap;
+
 #define SERVER_OVERRIDE                     @"Server_Override"
 #define CLIENT_OVERRIDE                     @"Client_Override"
 #define UNDO                                @"Undo"
@@ -461,6 +464,9 @@
 #define GET_INSERT_DOWNLOAD_CRITERIA  @"GET_INSERT_DOWNLOAD_CRITERIA"
 #define GET_UPDATE_DOWNLOAD_CRITERIA  @"GET_UPDATE_DOWNLOAD_CRITERIA"
 #define GET_DELETE_DOWNLOAD_CRITERIA  @"GET_DELETE_DOWNLOAD_CRITERIA"
+
+//Radha - //Changes for optimized sync - one sync call
+#define GET_DELETE_DC_OPTIMZED		  @"GET_DELETE_DC_OPTIMZED"
 
 
 
