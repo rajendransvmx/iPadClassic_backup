@@ -268,4 +268,18 @@
     return componentsArray;
 }
 
+
+
+#pragma mark - 7751
++ (void)setRefreshCalendarView {
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"REFRESH_CALENDAR_VIEW"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
++ (BOOL)getRefreshCalendarView {
+     return [[NSUserDefaults standardUserDefaults] boolForKey:@"REFRESH_CALENDAR_VIEW"];
+}
++ (void)clearRefreshCalendarView {
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"REFRESH_CALENDAR_VIEW"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
 @end

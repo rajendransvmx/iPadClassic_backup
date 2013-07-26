@@ -17,6 +17,7 @@
 #import "ManualDataSync.h"
 #import "SFMPageController.h"
 #import "ManualDataSync.h"
+#import "Utility.h"
 extern void SVMXLog(NSString *format, ...);
 
 
@@ -74,6 +75,17 @@ extern void SVMXLog(NSString *format, ...);
 	
 }
 
+/* Shravya-Calendar 7751*/
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+     NSLog(@"MODAL VIEW WILL APPEAR");
+    if ([Utility getRefreshCalendarView]) {
+        NSLog(@"Reloading the events on save");
+        [self performSelector:@selector(reloadCalendar) withObject:nil afterDelay:0];
+        [Utility clearRefreshCalendarView];
+    }
+}
+
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
@@ -104,7 +116,7 @@ extern void SVMXLog(NSString *format, ...);
     [super viewDidLoad];
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refresh) name:NOTIFICATION_EVENT_DATA_SYNC object:nil];
-    
+    [Utility clearRefreshCalendarView]; /* Shravya-Calendar 7751*/
     [self disableUI];
 	
     isActive = YES;
@@ -527,6 +539,9 @@ extern void SVMXLog(NSString *format, ...);
     //Shravya - @synchronized is needed as refresh gets called from multiple threads during Sync
     @synchronized(self){
     
+    //7751
+    [Utility clearRefreshCalendarView];
+        
     // Need to call WSInterface Method to perform an actual REFRESH
         
     NSMutableArray * currentDateRange = [[appDelegate getWeekdates:currentDate] retain];

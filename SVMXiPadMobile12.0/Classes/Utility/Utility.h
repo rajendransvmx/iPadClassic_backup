@@ -35,4 +35,7 @@
 + (NSString *)today:(NSInteger)numberOfDays andJusDate:(BOOL)isDateOnly;
 + (NSArray *)splitString:(NSString *)stringToBeSplit byString:(NSString *)subString;
 
++ (void)setRefreshCalendarView;
++ (BOOL)getRefreshCalendarView ;
++ (void)clearRefreshCalendarView;
 @end

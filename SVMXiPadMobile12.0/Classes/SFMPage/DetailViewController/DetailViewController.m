@@ -10500,6 +10500,14 @@ enum BizRuleConfirmViewStatus{
         if([self executeBizRules])
             return;
     }
+    
+    
+    if(([targetCall isEqualToString:save] || [targetCall isEqualToString:quick_save]))
+    {
+        /*Shravya-Calendar 7751*/
+        [Utility setRefreshCalendarView];
+    }
+    
     //Krishna OpDoc
     
     
