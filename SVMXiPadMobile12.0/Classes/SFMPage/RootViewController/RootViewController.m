@@ -744,7 +744,7 @@ extern void SVMXLog(NSString *format, ...);
         NSString *errorString=[[self.conflictsArray objectAtIndex:indexPath.row]objectForKey:@"message" ];
         [errorString uppercaseString];
         CGSize size = [errorString sizeWithFont:[UIFont boldSystemFontOfSize:18.0] constrainedToSize:constraint lineBreakMode:UILineBreakModeWordWrap];
-        cellLabel.frame = CGRectMake(5, 0, tableView.bounds.size.width-5, size.height);
+        cellLabel.frame = CGRectMake(5, 0, tableView.bounds.size.width-10, size.height);
         cellLabel.text = errorString;
         [cell setSelectionStyle:UITableViewCellSelectionStyleBlue];
         cellLabel.numberOfLines = 0;
