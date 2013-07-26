@@ -597,7 +597,6 @@ const NSUInteger kNumImages = 7;
             
             // Drop All Data sync
             
-            [appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:GET_DELETE];
 			SMLog(@" ------- Adv Download Criteria End -----");
 			NSLog(@" ------- doTxFetch  Started -----");
             NSLog(@" ------- doTxFetch Started -  creating indexes now -----");
@@ -1199,7 +1198,6 @@ const NSUInteger kNumImages = 7;
         }
         [appDelegate.wsInterface doGetPrice];
         [appDelegate.wsInterface doAdvanceDownloadCriteria];
-        [appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:GET_DELETE];
         [self doTxFetch];
         if (appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED && ![appDelegate isInternetConnectionAvailable])
         {
@@ -1247,7 +1245,6 @@ const NSUInteger kNumImages = 7;
         }
         [appDelegate.wsInterface doGetPrice];
         [appDelegate.wsInterface doAdvanceDownloadCriteria];
-        [appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:GET_DELETE];
         [self doTxFetch];
         if (appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED && ![appDelegate isInternetConnectionAvailable])
         {
@@ -1278,7 +1275,6 @@ const NSUInteger kNumImages = 7;
         }
         [appDelegate.wsInterface doGetPrice];
         [appDelegate.wsInterface doAdvanceDownloadCriteria];
-        [appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:GET_DELETE];
         [self doTxFetch];
         if (appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED && ![appDelegate isInternetConnectionAvailable])
         {
