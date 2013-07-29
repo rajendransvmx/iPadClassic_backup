@@ -155,6 +155,7 @@
 //pavaman 21st Jan 2011
 @property (nonatomic, assign) BOOL didLoadWeekData;
 
+@property (nonatomic,retain)  WeeklyViewEvent * eventView;  ////007746
 //Radha 10th April 2011
 - (void) populateWeekView;
 - (NSString *)dateToStringConversion:(NSDate*)date;

@@ -34,6 +34,7 @@ extern void SVMXLog(NSString *format, ...);
 
 @synthesize didMoveEvent;
 @synthesize edit_event;
+@synthesize eventView; //eventView
 
 - (id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -1414,7 +1415,7 @@ extern void SVMXLog(NSString *format, ...);
 	// We only support single touches, so anyObject retrieves just that touch from touches
 	UITouch *touch = [touches anyObject];
 	BOOL flag = NO;
-    eventView = nil;
+    self.eventView = nil; //007746 
     
     if ([touch view] == weekViewPane)
     {
@@ -1425,7 +1426,7 @@ extern void SVMXLog(NSString *format, ...);
 	// Only move the event view if the touch was in the placard view
     for (int i = 0; i < [eventViewArray count]; i++)
     {
-        eventView = [eventViewArray objectAtIndex:i];
+        self.eventView = [eventViewArray objectAtIndex:i]; ////007746
         if ([touch view] == eventView.view)
         {
             initialPosition = eventView.view.frame;
@@ -1436,8 +1437,8 @@ extern void SVMXLog(NSString *format, ...);
             break;
         }
         else
-        {
-            eventView = nil;
+        { 
+            self.eventView = nil;  ////007746
         }
     }
     
@@ -1890,6 +1891,7 @@ extern void SVMXLog(NSString *format, ...);
     [day5Label release];
     [day6Label release];
     [day7Label release];
+    [eventView release]; //eventView
     [super dealloc];
 }
 
