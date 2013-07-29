@@ -25,6 +25,18 @@ extern void SVMXLog(NSString *format, ...);
 static NSString *const TECHNICIAN_CURRENT_LOCATION = @"usr_tech_loc_filters";
 static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_id";
 
+//Aparna: Source Update
+@interface DataBase()
+
+- (NSString *)sourceObjectNameForProcessId:(NSString *)processId;
+- (NSString *)sourceObjectNameForSettingId:(NSString *)settingId;
+- (NSString *)targetObjectNameForSettingId:(NSString *)settingId;
+- (void)insertIntoSourceUpdateTable:(NSDictionary *)processDictionary;
+- (NSString *)processIdForSfId:(NSString *)sfId;
+
+@end
+
+
 @implementation DataBase 
 
 @synthesize dbFilePath;
@@ -6922,6 +6934,9 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     [self requestForStaticResources];
 
     
+    //Source object update
+    [self insertIntoSourceUpdateTable:processDictionary];
+    
     // Vipin-db-optmz
     [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"SFProcess Segment"
                                                          andRecordCount:0];
@@ -7260,6 +7275,339 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         [appDelegate.dataBase endTransaction];
     }
 }
+
+//Aparna: Source Update
+#pragma mark -
+#pragma mark Source Update
+- (NSString *)evaluateLiteral:(NSString *)literal forControlType:(NSString *)controlType
+{
+    NSString *evaluatedLiteral = nil;
+    if ([controlType isEqualToString:@"date"] || [controlType isEqualToString:@"datetime"])
+    {
+        BOOL isDateOnly = NO;
+        if ([controlType isEqualToString:@"date"])
+        {
+            isDateOnly = YES;
+        }
+        if([literal caseInsensitiveCompare:MACRO_NOW]== NSOrderedSame)
+        {
+            evaluatedLiteral = [Utility today:0 andJusDate:isDateOnly];
+        }
+        else if([literal caseInsensitiveCompare:MACRO_TODAY]== NSOrderedSame)
+        {
+            evaluatedLiteral = [Utility today:0 andJusDate:YES];
+        }
+        else if([literal caseInsensitiveCompare:MACRO_TOMMOROW]== NSOrderedSame)
+        {
+            evaluatedLiteral = [Utility today:1 andJusDate:YES];
+        }
+        else if([literal caseInsensitiveCompare:MACRO_YESTERDAY]== NSOrderedSame)
+        {
+            evaluatedLiteral = [Utility today:-1 andJusDate:YES];
+        }
+    }
+    else
+    {
+        if(([literal caseInsensitiveCompare:SVMX_CURRENTUSER]== NSOrderedSame) || ([literal caseInsensitiveCompare:SVMX_OWNER]== NSOrderedSame))
+        {
+            evaluatedLiteral = [appDelegate.databaseInterface getUserNameofLoggedInUser];
+        }
+        else if(([literal caseInsensitiveCompare:CURRENTRECORD]) || ([literal caseInsensitiveCompare:CURRENTRECORD_HEADER]))
+        {
+            evaluatedLiteral = [appDelegate.databaseInterface getLiteralValue:literal];
+        }
+        else if([literal caseInsensitiveCompare:SVMX_USER_TRUNK] == NSOrderedSame)
+        {
+            evaluatedLiteral = [appDelegate.dataBase getTechnicianLocation];
+        }
+    }
+    return evaluatedLiteral;
+}
+
+- (NSString *)processIdForSfId:(NSString *)sfId
+{
+    NSString *processId = nil;
+    sqlite3_stmt * stmt;
+    
+    NSString *selectQuery = [NSString stringWithFormat:@"SELECT process_id From SFProcess WHERE sfID = '%@'",sfId];
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        if(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            const char * _type = (char *)synchronized_sqlite3_column_text(stmt, 0);
+            if (strlen(_type))
+                processId = [NSString stringWithUTF8String:_type];
+        }
+    }
+    synchronized_sqlite3_finalize(stmt);
+    return processId;
+}
+
+
+- (NSString *)sfIdForProcessId:(NSString *)processId
+{
+    NSString *sfId = nil;
+    sqlite3_stmt * stmt;
+    
+    NSString *selectQuery = [NSString stringWithFormat:@"SELECT sfID From SFProcess WHERE process_id = '%@'",processId];
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        if(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            const char * _type = (char *)synchronized_sqlite3_column_text(stmt, 0);
+            if (strlen(_type))
+                sfId = [NSString stringWithUTF8String:_type];
+        }
+    }
+    synchronized_sqlite3_finalize(stmt);
+    return sfId;
+}
+
+- (NSString *)sourceObjectNameForProcessId:(NSString *)processId
+{
+    NSString *sourceObjName = nil;
+    sqlite3_stmt * stmt;
+    
+    NSString *selectQuery = [NSString stringWithFormat:@"SELECT source_object_name From SFProcessComponent WHERE process_id = '%@' AND component_type = 'TARGET'",processId];
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        if(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            const char * _type = (char *)synchronized_sqlite3_column_text(stmt, 0);
+            if (strlen(_type))
+                sourceObjName = [NSString stringWithUTF8String:_type];
+        }
+    }
+    synchronized_sqlite3_finalize(stmt);
+    return sourceObjName;
+}
+
+- (NSString *)sourceObjectNameForSettingId:(NSString *)settingId
+{
+    NSString *sourceObjName = nil;
+    sqlite3_stmt * stmt;
+    NSString *selectQuery = [NSString stringWithFormat:@"SELECT source_object_name From SFProcessComponent WHERE process_node_id = '%@'",settingId];
+        
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        if(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            const char * _type = (char *)synchronized_sqlite3_column_text(stmt, 0);
+            if (strlen(_type))
+                sourceObjName = [NSString stringWithUTF8String:_type];
+        }
+    }
+    synchronized_sqlite3_finalize(stmt);
+    return sourceObjName;
+}
+
+
+- (NSString *)targetObjectNameForSettingId:(NSString *)settingId
+{
+    NSString *targetObjName = nil;
+    sqlite3_stmt * stmt;
+    NSString *selectQuery = [NSString stringWithFormat:@"SELECT target_object_name From SFProcessComponent WHERE process_node_id = '%@'",settingId];
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        if(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            const char * _type = (char *)synchronized_sqlite3_column_text(stmt, 0);
+            if (strlen(_type))
+                targetObjName = [NSString stringWithUTF8String:_type];
+        }
+    }
+    synchronized_sqlite3_finalize(stmt);
+    
+    return targetObjName;
+}
+
+
+- (void)insertIntoSourceUpdateTable:(NSDictionary *)processDictionary
+{
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS '%@' ('%@' text(18), '%@' VARCHAR, '%@' VARCHAR, '%@' VARCHAR, '%@' VARCHAR, '%@' VARCHAR, '%@' VARCHAR, '%@' VARCHAR, '%@' VARCHAR, '%@' VARCHAR)",SOURCE_UPDATE,SOURCE_UPDATE_ID,SOURCE_UPDATE_ACTION,SOURCE_UPDATE_CONFIGURATION_TYPE,SOURCE_UPDATE_DISPLAY_VALUE,SOURCE_UPDATE_PROCESS,SOURCE_UPDATE_SETTING_ID,SOURCE_UPDATE_SOURCE_FIELD_NAME,SOURCE_UPDATE_TARGET_FIELD_NAME,SOURCE_UPDATE_SOURCE_OBJECT_NAME, SOURCE_UPDATE_TARGET_OBJECT_NAME]];
+    if (result)
+    {
+        [appDelegate.dataBase beginTransaction];
+            
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@','%@', '%@', '%@', '%@', '%@', %@) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)",SOURCE_UPDATE, SOURCE_UPDATE_ID,SOURCE_UPDATE_ACTION,SOURCE_UPDATE_CONFIGURATION_TYPE,SOURCE_UPDATE_DISPLAY_VALUE,SOURCE_UPDATE_PROCESS,SOURCE_UPDATE_SETTING_ID,SOURCE_UPDATE_SOURCE_FIELD_NAME,SOURCE_UPDATE_TARGET_FIELD_NAME, SOURCE_UPDATE_SOURCE_OBJECT_NAME,SOURCE_UPDATE_TARGET_OBJECT_NAME];
+            
+        sqlite3_stmt * bulkStmt;
+        NSArray * sourceUpdateArray = [processDictionary objectForKey:SOURCE_UPDATE];
+            
+        int  ret_value = synchronized_sqlite3_prepare_v2(appDelegate.db, [bulkQueryStmt UTF8String], strlen([bulkQueryStmt UTF8String]), &bulkStmt, NULL);
+        if (ret_value == SQLITE_OK)
+        {
+            for(NSDictionary *sourceUpdateDict in sourceUpdateArray)
+            {
+                NSString *processId = [self processIdForSfId:[sourceUpdateDict valueForKey:SOURCE_UPDATE_PROCESS]];
+                NSString *sourceObjectName = [self sourceObjectNameForProcessId:processId];
+                //For OP docs target update feature target object name is not required. Hence we are not handling it now.
+                NSString *targetObjectName = nil;
+                char * sourceUpdateId = [appDelegate convertStringIntoChar:([sourceUpdateDict objectForKey:SOURCE_UPDATE_ID] != nil)?[sourceUpdateDict objectForKey:SOURCE_UPDATE_ID]:@""];
+                sqlite3_bind_text(bulkStmt, 1, sourceUpdateId, strlen(sourceUpdateId), SQLITE_TRANSIENT);
+                
+                char * action = [appDelegate convertStringIntoChar:([sourceUpdateDict objectForKey:SOURCE_UPDATE_ACTION] != nil)?[sourceUpdateDict objectForKey:SOURCE_UPDATE_ACTION]:@""];
+                sqlite3_bind_text(bulkStmt, 2, action, strlen(action), SQLITE_TRANSIENT);
+                
+                char * configType = [appDelegate convertStringIntoChar:([sourceUpdateDict objectForKey:SOURCE_UPDATE_CONFIGURATION_TYPE] != nil)?[sourceUpdateDict objectForKey:SOURCE_UPDATE_CONFIGURATION_TYPE]:@""];
+                sqlite3_bind_text(bulkStmt, 3, configType, strlen(configType), SQLITE_TRANSIENT);
+                
+                
+                char * displayValue = [appDelegate convertStringIntoChar:([sourceUpdateDict objectForKey:SOURCE_UPDATE_DISPLAY_VALUE] != nil)?[sourceUpdateDict objectForKey:SOURCE_UPDATE_DISPLAY_VALUE]:@""];
+                sqlite3_bind_text(bulkStmt, 4, displayValue, strlen(displayValue), SQLITE_TRANSIENT);
+                
+                char * process = [appDelegate convertStringIntoChar:([sourceUpdateDict objectForKey:SOURCE_UPDATE_PROCESS] != nil)?[sourceUpdateDict objectForKey:SOURCE_UPDATE_PROCESS]:@""];
+                sqlite3_bind_text(bulkStmt, 5, process, strlen(process), SQLITE_TRANSIENT);
+                
+                char * settingId = [appDelegate convertStringIntoChar:([sourceUpdateDict objectForKey:SOURCE_UPDATE_SETTING_ID] != nil)?[sourceUpdateDict objectForKey:SOURCE_UPDATE_SETTING_ID]:@""];
+                sqlite3_bind_text(bulkStmt, 6, settingId, strlen(settingId), SQLITE_TRANSIENT);
+
+                char * sourceFieldName = [appDelegate convertStringIntoChar:([sourceUpdateDict objectForKey:SOURCE_UPDATE_SOURCE_FIELD_NAME] != nil)?[sourceUpdateDict objectForKey:SOURCE_UPDATE_SOURCE_FIELD_NAME]:@""];
+                sqlite3_bind_text(bulkStmt, 7, sourceFieldName, strlen(sourceFieldName), SQLITE_TRANSIENT);
+
+                char * targetFieldtName = [appDelegate convertStringIntoChar:([sourceUpdateDict objectForKey:SOURCE_UPDATE_TARGET_FIELD_NAME] != nil)?[sourceUpdateDict objectForKey:SOURCE_UPDATE_TARGET_FIELD_NAME]:@""];
+                sqlite3_bind_text(bulkStmt, 8, targetFieldtName, strlen(targetFieldtName), SQLITE_TRANSIENT);
+
+                char * sourceObjName = [appDelegate convertStringIntoChar:sourceObjectName];
+                sqlite3_bind_text(bulkStmt, 9, sourceObjName, strlen(sourceObjName), SQLITE_TRANSIENT);
+                
+                char * targetObjName = [appDelegate convertStringIntoChar:targetObjectName];
+                sqlite3_bind_text(bulkStmt, 10, targetObjName, strlen(targetObjName), SQLITE_TRANSIENT);
+                
+                if ( synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
+                {
+                    printf("Commit Failed  : insertIntoDocTemplate!\n");
+                }
+                sqlite3_reset(bulkStmt);
+            }
+        }
+        synchronized_sqlite3_finalize(bulkStmt);
+        [appDelegate.dataBase endTransaction];
+    }
+}
+
+
+- (NSArray *)sourceUpdatesForProcessId:(NSString *)processId
+{
+    NSMutableArray *sourceUpdatesArray = [[NSMutableArray alloc] init];
+    sqlite3_stmt * stmt;
+    NSString *selectQuery = [NSString stringWithFormat:@"SELECT %@ , %@, %@, %@, %@ From %@ WHERE %@ = '%@'",SOURCE_UPDATE_ACTION, SOURCE_UPDATE_DISPLAY_VALUE, SOURCE_UPDATE_SOURCE_FIELD_NAME, SOURCE_UPDATE_TARGET_FIELD_NAME, SOURCE_UPDATE_SOURCE_OBJECT_NAME, SOURCE_UPDATE, SOURCE_UPDATE_PROCESS,processId];
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            NSMutableDictionary *sourceUpdateDict = [[NSMutableDictionary alloc] init];
+            char * action= (char *) synchronized_sqlite3_column_text(stmt, 0);
+            if ((action != nil) && strlen(action))
+            {
+                NSString *actionObj = [NSString stringWithUTF8String:action];
+                [sourceUpdateDict setValue:actionObj forKey:SOURCE_UPDATE_ACTION];
+            }
+            
+            char * displayValue= (char *) synchronized_sqlite3_column_text(stmt, 1);
+            if ((displayValue != nil) && strlen(displayValue))
+            {
+                NSString *displayValueObj = [NSString stringWithUTF8String:displayValue];
+                [sourceUpdateDict setValue:displayValueObj forKey:SOURCE_UPDATE_DISPLAY_VALUE];
+            }
+            
+            char * sourceFieldName = (char *) synchronized_sqlite3_column_text(stmt, 2);
+            if ((sourceFieldName != nil) && strlen(sourceFieldName))
+            {
+                NSString *sourceFieldNameObj = [NSString stringWithUTF8String:sourceFieldName];
+                [sourceUpdateDict setValue:sourceFieldNameObj forKey:SOURCE_UPDATE_SOURCE_FIELD_NAME];
+            }
+            
+            char * targetFieldName = (char *) synchronized_sqlite3_column_text(stmt, 3);
+            if ((targetFieldName != nil) && strlen(targetFieldName))
+            {
+                NSString *targetFieldNameObj = [NSString stringWithUTF8String:targetFieldName];
+                [sourceUpdateDict setValue:targetFieldNameObj forKey:SOURCE_UPDATE_TARGET_FIELD_NAME];
+            }
+            
+            char * sourceObjectName = (char *) synchronized_sqlite3_column_text(stmt, 4);
+            if ((sourceObjectName != nil) && strlen(sourceObjectName))
+            {
+                NSString *sourceObjectNameObj = [NSString stringWithUTF8String:sourceObjectName];
+                [sourceUpdateDict setValue:sourceObjectNameObj forKey:SOURCE_UPDATE_SOURCE_OBJECT_NAME];
+            }
+            [sourceUpdatesArray addObject:sourceUpdateDict];
+            [sourceUpdateDict release];
+        }
+    }
+    synchronized_sqlite3_finalize(stmt);
+    return [sourceUpdatesArray autorelease];
+}
+
+- (void) updateSourceObjects:(NSArray *)sourceObjects forSFId:(NSString *)sfId
+{
+    
+    //First get the local id for recordId (in OP Doc recordId = sfId)
+    
+    NSString * sourceObjName = [[appDelegate.SFMPage objectForKey:gHEADER] objectForKey:gHEADER_OBJECT_NAME];
+    NSString *localId = [appDelegate.databaseInterface getLocalIdFromSFId:sfId tableName:sourceObjName];
+   
+    for (NSDictionary *sourceUpdateDict in sourceObjects)
+    {
+        NSString *sourceObjName = [sourceUpdateDict valueForKey:SOURCE_UPDATE_SOURCE_OBJECT_NAME];
+        NSString *action = [sourceUpdateDict valueForKey:SOURCE_UPDATE_ACTION];
+        NSString *displayValue = [sourceUpdateDict valueForKey:SOURCE_UPDATE_DISPLAY_VALUE];
+        NSString *fieldName = [sourceUpdateDict valueForKey:SOURCE_UPDATE_SOURCE_FIELD_NAME];
+        
+        NSString *newDisplayValue = nil;//[appDelegate.databaseInterface getValueForField:fieldName objectName:sourceObjName recordId:localId];
+
+        if ([action isEqualToString:@"Set"])
+        {
+            NSString * data_type = [[appDelegate.databaseInterface getFieldDataType:sourceObjName filedName:fieldName] lowercaseString];
+
+            newDisplayValue = [self evaluateLiteral:displayValue forControlType:data_type];
+            if (nil == newDisplayValue)
+            {
+                newDisplayValue = [NSString stringWithString:displayValue];
+            }
+            
+        }
+        else if([action isEqualToString:@"Increase"])
+        {
+            newDisplayValue = [appDelegate.databaseInterface getValueForField:fieldName objectName:sourceObjName recordId:localId];
+            float newValue = [newDisplayValue floatValue]+[displayValue floatValue];
+            newDisplayValue = [NSString stringWithFormat:@"%f",newValue];
+        }
+        else if([action isEqualToString:@"Decrease"])
+        {
+            newDisplayValue = [appDelegate.databaseInterface getValueForField:fieldName objectName:sourceObjName recordId:localId];
+            float newValue = [newDisplayValue floatValue]-[displayValue floatValue];
+            newDisplayValue = [NSString stringWithFormat:@"%f",newValue];
+        }
+        
+       NSString *queryStatement =[NSString stringWithFormat:@"UPDATE %@ SET %@ = '%@' WHERE local_id = '%@'",sourceObjName,fieldName, newDisplayValue,localId];
+        char *err;
+        int ret = synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err);
+        
+        if (ret != SQLITE_OK)
+        {
+            SMLog(@"%@", queryStatement);
+            SMLog(@"ERROR IN UPDATING %s", err);
+                [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryStatement type:INSERTQUERY];
+        }
+    
+    }
+    BOOL does_exists = [appDelegate.databaseInterface DoesTrailerContainTheRecord:localId operation_type:UPDATE object_name:sourceObjName];
+    if(!does_exists)
+    {
+        //Add the data to SFDataTrailer table to make sure that the record is sent for sync during next data sync
+        [appDelegate.databaseInterface insertdataIntoTrailerTableForRecord:localId SF_id:sfId record_type:MASTER operation:UPDATE object_name:sourceObjName sync_flag:@"false" parentObjectName:@"" parent_loacl_id:localId webserviceName:@"" className:@"" synctype:AGRESSIVESYNC headerLocalId:localId requestData:nil finalEntry:false];
+    }
+}
+
+#pragma mark -
+#pragma mark Output Doc
+
 //Krishna OPDOCS requiredPdf
 // Modified - Kri OPDOC-CR
 - (NSMutableArray *) getAllRequiredPdf {

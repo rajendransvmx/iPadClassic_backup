@@ -20,6 +20,9 @@
 @interface OPDocViewController ()
 //krishna opdoc syncOPDocHtmlData
 - (void)syncOPDocHtmlData:(NSData *)fileData andFileName:(NSString *)fileName;
+
+//Aparna: Source Update
+- (void)updateAndSyncSourceObjects;
 @end
 
 @implementation OPDocViewController
@@ -106,6 +109,18 @@
     existingFilePath = nil;
     return NO;
 }
+
+#pragma mark -
+#pragma mark Source Update Methods
+//Aparna: Source Update
+- (void)updateAndSyncSourceObjects
+{
+    NSArray *sourceObjToBeUpdated = [appDelegate.dataBase sourceUpdatesForProcessId:[appDelegate.dataBase sfIdForProcessId:self.processIdentifier]];
+    [appDelegate.dataBase updateSourceObjects:sourceObjToBeUpdated forSFId:recordIdentifier];
+    //Sync happens along with html data upload.. so comment the below line of code
+    //[appDelegate callDataSync];
+}
+
 #pragma mark - Init Methods
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil forRecordId:(NSString *)recordId andProcessId:(NSString *)processId
 {
@@ -194,6 +209,9 @@
     }
     appDelegate.calDataBase.opDocController = nil;
     [self.navigationController dismissModalViewControllerAnimated:YES];
+   
+    //Aparna: Source Update
+    [appDelegate.sfmPageController.detailView performSelectorOnMainThread:@selector(refreshDetails) withObject:nil waitUntilDone:YES];
     
 }
 
@@ -412,6 +430,9 @@
     }
     else if([eventName isEqualToString:@"finalize"])
     {
+        //Aparna: Source Update
+        [self updateAndSyncSourceObjects];
+        
         SBJsonParser *jsonpr = [[SBJsonParser alloc] init];
         NSDictionary *finalizeDict = [jsonpr objectWithString:jsonParameterString];
         [jsonpr release];

@@ -337,3 +337,17 @@
 #define kLOOKUP_ADVANCED_FILTER         @"SRCH_CRITERIA"
 /*Shra-Lookup ends*/
 
+//Aparna: Source Update
+#define SOURCE_UPDATE                       @"SOURCE_UPDATE"
+#define SOURCE_UPDATE_ID                    @"Id"
+#define SOURCE_UPDATE_ACTION                @"action"
+#define SOURCE_UPDATE_CONFIGURATION_TYPE    @"configuration_type"
+#define SOURCE_UPDATE_DISPLAY_VALUE         @"display_value"
+#define SOURCE_UPDATE_PROCESS               @"process"
+#define SOURCE_UPDATE_SETTING_ID            @"setting_Id"
+#define SOURCE_UPDATE_SOURCE_FIELD_NAME     @"source_field_name"
+#define SOURCE_UPDATE_TARGET_FIELD_NAME     @"target_field_name"
+#define SOURCE_UPDATE_SOURCE_OBJECT_NAME    @"source_object_name"
+#define SOURCE_UPDATE_TARGET_OBJECT_NAME    @"target_object_name"
+
+

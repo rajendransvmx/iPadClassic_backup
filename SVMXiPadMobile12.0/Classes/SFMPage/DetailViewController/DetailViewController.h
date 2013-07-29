@@ -432,6 +432,10 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
                                      withData:(NSString *)dataToValidateString;
 - (BOOL) handleBizRuleWarnings:(NSArray *)warningsArray errors:(NSArray *)errorsArray;
 
+//Aparna: Source Update
+- (void)refreshDetails;
+
+
 #define SHOWALL_HEADERS                     0
 #define SHOW_HEADER_ROW                     1
 #define SHOWALL_LINES                       2

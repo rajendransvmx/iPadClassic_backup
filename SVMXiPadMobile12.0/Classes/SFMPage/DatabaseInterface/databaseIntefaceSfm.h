@@ -550,6 +550,11 @@
 
 #define EVENT_REFERENCE_PLIST    @"EVENT_REFERENCE_PLIST.plist"
 
+//Aparna: Source Update
+#define SVMX_CURRENTUSER               @"SVMX.CURRENTUSER"
+#define SVMX_OWNER                     @"SVMX.OWNER"
+
+
 @end
 
 @protocol databaseInterfaceProtocol <NSObject>

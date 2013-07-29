@@ -468,4 +468,10 @@ PopoverButtons *popOver_view;
 - (void) insertValuesIntoProcessBusinessRuleTable:(NSDictionary *)processDictionary;
 - (void) insertValuesIntoBusinessRuleTable:(NSDictionary *)processDictionary;
 
+//Aparna: Source Update
+- (NSArray *)sourceUpdatesForProcessId:(NSString *)processId;
+- (void) updateSourceObjects:(NSArray *)sourceObjects forSFId:(NSString *)recordId;
+- (NSString *)sfIdForProcessId:(NSString *)processId;
+
+
 @end
