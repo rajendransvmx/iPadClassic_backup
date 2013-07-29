@@ -89,6 +89,7 @@ enum BizRuleConfirmViewStatus{
 -(BOOL)checkForEmptyRequireFields;
 -(void)SaveCreatedRecordInfoIntoPlistForRecordId:(NSString *)recordId objectName:(NSString *)ObjectName;
 -(void)reloadCurrentProcess:(NSString *)processType;
+-(void)updateParentReferenceForDetailLines:(NSMutableDictionary * )pageLayout;
 @end
 
 @implementation DetailViewController
@@ -1016,7 +1017,27 @@ enum BizRuleConfirmViewStatus{
         [_child_sfm_process_node setObject:linked_process_ids forKey: [detail_layout_id mutableCopy]];
     }
 }
+-(void)updateParentReferenceForDetailLines:(NSMutableDictionary * )pageLayout
+{
+    NSMutableDictionary * _header =  [pageLayout objectForKey:@"header"];
+    NSString * headerObjName = [_header objectForKey:gHEADER_OBJECT_NAME];
 
+    NSMutableArray * details = [pageLayout objectForKey:gDETAILS];
+    for(int j= 0; j < [details count]; j++)
+    {
+        NSMutableDictionary * detailDict = [details objectAtIndex:j];
+        NSString * detailObjectName = [detailDict objectForKey:gDETAIL_OBJECT_NAME];
+
+        NSString * parent_column_name = [detailDict objectForKey:gDETAIL_HEADER_REFERENCE_FIELD];
+        if([parent_column_name length] == 0)
+        {
+            NSString * NewParentColumnName = [appDelegate.databaseInterface getRefernceToFieldnameForObjct:detailObjectName reference_table:headerObjName table_name:SFREFERENCETO];
+            [detailDict setObject:NewParentColumnName forKey:gDETAIL_HEADER_REFERENCE_FIELD];
+        }
+
+    }
+
+}
 
 #pragma mark = fill the sfmData equivalent for didsubmitProcess method in offline
 -(void)fillSFMdictForOfflineforProcess:(NSString *) processId forRecord:(NSString *)recordId
@@ -2529,6 +2550,8 @@ enum BizRuleConfirmViewStatus{
 
     }
     appDelegate.SFMoffline = page_layoutInfo;
+    //Fix for defect #7820 
+    [self updateParentReferenceForDetailLines:appDelegate.SFMoffline];
 
     appDelegate.didsubmitModelView = TRUE;
 	}@catch (NSException *exp) {

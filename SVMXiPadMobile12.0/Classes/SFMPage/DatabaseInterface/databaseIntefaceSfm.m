@@ -321,59 +321,37 @@ extern void SVMXLog(NSString *format, ...);
     
         
     //fetch the parent  column name  in child table from  CHildInfo Table   -- IMP headerObjectName
-    
+    //Fix for defect #7679
     NSString * sql = @"";
     
-    BOOL isChild =  [self IsChildObject:detailObjectName];
-    
-    
-    if(isChild)
+    NSString * releated_column_name = [self getRefernceToFieldnameForObjct:detailObjectName reference_table:headerObjectName table_name:SF_REFERENCE_TO];
+    if([parent_column length] == 0)
     {
-        NSString * parent_sf_id = [self getSfid_For_LocalId_From_Object_table:headerObjectName local_id:local_record_id];
-
-        if([parent_sf_id length] == 0)
-        {
-            if([expression_ length ] != 0 && expression_ != nil)
-                sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@'  %@  WHERE '%@'.%@ = '%@' and %@  %@",fieldsString,detailObjectName,Join_str,detailObjectName,parent_column_name,local_record_id, expression_,orderBy_str];
-            else
-                sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE '%@'.%@ = '%@' %@",fieldsString,detailObjectName,Join_str,detailObjectName,parent_column_name,local_record_id, orderBy_str];
-        }
+        parent_column_name = releated_column_name;
+    }
+    
+    NSString * parent_sf_id = [self getSfid_For_LocalId_From_Object_table:headerObjectName local_id:local_record_id ];
+    
+    if([parent_sf_id length] == 0 && [local_record_id length] == 0)
+    {
+        return array;
+    }
+    
+    if([parent_sf_id length] == 0)
+    {
+        if([expression_ length ] != 0 && expression_ != nil)
+            sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@'  %@  WHERE '%@'.%@ = '%@' and %@  %@",fieldsString,detailObjectName,Join_str,detailObjectName,parent_column_name,local_record_id, expression_,orderBy_str];
         else
-        {
-            if([expression_ length ] != 0 && expression_ != nil)
-                sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@'  %@  WHERE ('%@'.%@ = '%@'  or '%@'.%@ = '%@') and %@  %@",fieldsString,detailObjectName,Join_str,detailObjectName,parent_column_name,local_record_id,detailObjectName,parent_column_name,parent_sf_id, expression_,orderBy_str];
-            else
-                sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE ('%@'.%@ = '%@' or '%@'.%@ = '%@')  %@  ",fieldsString,detailObjectName,Join_str,detailObjectName,parent_column_name,local_record_id, detailObjectName,parent_column_name, parent_sf_id,orderBy_str];
-        }
+            sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE '%@'.%@ = '%@' %@",fieldsString,detailObjectName,Join_str,detailObjectName,parent_column_name,local_record_id, orderBy_str];
     }
     else
     {
-        //sahana 16th June 2012
-        NSString * releated_column_name = [self getRefernceToFieldnameForObjct:detailObjectName reference_table:headerObjectName table_name:SF_REFERENCE_TO];
-        
-        NSString * SF_id = [self getSfid_For_LocalId_From_Object_table:headerObjectName local_id:local_record_id ];
-        
-        if([SF_id length] == 0)
-        {
-            return array;
-        }
-        
-       if([parent_column length] != 0)
-        {
-            if([expression_ length ] != 0 && expression_ != nil)
-                sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE '%@'.%@ = '%@' and %@  %@",fieldsString,detailObjectName,Join_str,detailObjectName,parent_column,SF_id, expression_,orderBy_str];
-            else
-                sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE '%@'.%@ = '%@' %@ ",fieldsString,detailObjectName,Join_str,detailObjectName,parent_column,SF_id ,orderBy_str];
-        }
-        else if([releated_column_name length] != 0)
-        {
-            if([expression_ length ] != 0 && expression_ != nil)
-                sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE '%@'.%@ = '%@' and %@ %@",fieldsString,detailObjectName,Join_str,detailObjectName,releated_column_name,SF_id, expression_,orderBy_str];
-            else
-                sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@'  %@ WHERE '%@'.%@ = '%@'  %@",fieldsString,detailObjectName,Join_str,detailObjectName,releated_column_name,SF_id,orderBy_str];
-        }
-         //sahana 16th June 2012
+        if([expression_ length ] != 0 && expression_ != nil)
+            sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@'  %@  WHERE ('%@'.%@ = '%@'  or '%@'.%@ = '%@') and %@  %@",fieldsString,detailObjectName,Join_str,detailObjectName,parent_column_name,local_record_id,detailObjectName,parent_column_name,parent_sf_id, expression_,orderBy_str];
+        else
+            sql = [NSString stringWithFormat:@"SELECT %@ FROM '%@' %@ WHERE ('%@'.%@ = '%@' or '%@'.%@ = '%@')  %@  ",fieldsString,detailObjectName,Join_str,detailObjectName,parent_column_name,local_record_id, detailObjectName,parent_column_name, parent_sf_id,orderBy_str];
     }
+
     SMLog(@" LineRecord %@",sql);
     
     sqlite3_stmt * sql_stmt;
@@ -11267,7 +11245,17 @@ extern void SVMXLog(NSString *format, ...);
                       
             if([headerRecordId length] != 0)
             {
-                NSString * newValue = [self getValueForField:referenceFieldName objectName:headerObjectNAme recordId:headerRecordId];
+                //Fix for defect #7811
+
+                NSString * newValue = @"";
+                
+                newValue = [self getValueForField:referenceFieldName objectName:headerObjectNAme recordId:headerRecordId];
+
+                if([referenceFieldName isEqualToString:@"Id"] && [newValue length] == 0)
+                {
+                    newValue = headerRecordId;
+                }
+                
                 [RecordDict setObject:newValue forKey:fieldApiName];
             }
             else
@@ -11551,7 +11539,15 @@ extern void SVMXLog(NSString *format, ...);
                         NSDictionary *currentPageDictionary = appDelegate.SFMPage;
                         NSDictionary *headerDictionary = [currentPageDictionary objectForKey:gHEADER];
                         NSString * headerObjName = [headerDictionary objectForKey:gHEADER_OBJECT_NAME];
-                        NSString * newValue = [self getValueForField:sourceFieldName objectName:headerObjName recordId:recordId];
+                        NSString * newValue = @"";
+                        
+                        //Fix for defect #7811
+                        newValue = [self getValueForField:sourceFieldName objectName:headerObjName recordId:recordId];
+                        if([sourceFieldName isEqualToString:@"Id"] && [newValue length] == 0)
+                        {
+                            newValue = recordId;
+                        }
+                       
                         if([newValue length] != 0)
                         {
                             [detailDict setObject:newValue forKey:fieldApi];
