@@ -612,7 +612,37 @@ function continueGetDocumentData(finalOutputArray,docTemplateDetailArray,recordI
                                                         specialfieldNames.push({fn:aFiledName,ft:aFieldtype});
                                                 }
                                         }
-                                       
+                                 
+                                        /* Shravya-7594*/
+                                 
+                                        var metaDataJSON =  JSON.parse(jsonString);
+                                        var metaDataArray = metaDataJSON['Metadata'];
+                                        var secondLevelSpecialFields = [];
+                                 
+                                        for(var newCounter = 0; newCounter < metaDataArray.length;newCounter++){
+                                            var metaDataObject = metaDataArray[newCounter];
+                                            var newTyp  = metaDataObject.TYP;
+                                            var newRTyp = metaDataObject.RTYP;
+                                            var newRLN = metaDataObject.RLN;
+                                            var newFn = metaDataObject.FN;
+                                            var newRFN = metaDataObject.RFN;
+                                            if(newTyp == 'reference' && newRLN != null && (newRTyp == 'datetime' ||  newRTyp == 'date')){
+                                 
+                                                var finalRLN = newRLN;
+                                                finalRLN = finalRLN.replace("__r","__c");
+                                                finalRLN = finalRLN+'.'+newRFN;
+                                                var secondField = {};
+                                                secondField.rln  = newRLN;
+                                                secondField.frln = finalRLN;
+                                                secondField.rfn = newRFN;
+                                                secondField.rtyp = newRTyp;
+                                                secondLevelSpecialFields.push(secondField);
+                                            }
+                                 
+                                        }
+                                 
+                                 /* Shravya-7594*/
+                                 
                                         var specialFieldsArray = [];
                                         for(var counter = 0;counter < objectData.length;counter++) {
                                                 var record = objectData[counter];
@@ -635,6 +665,32 @@ function continueGetDocumentData(finalOutputArray,docTemplateDetailArray,recordI
                                                                 fieldsTobeAdded.push({Key:fName,Value:fValue,Info:fType});
                                                         }
                                                 }
+                                 
+                                                /*secondLevel Special fields 7594*/
+                                            for(var newCounter = 0; newCounter < secondLevelSpecialFields.length;newCounter++){
+                                                    var secondLevelObject = secondLevelSpecialFields[newCounter];
+                                                    var newRLN = secondLevelObject.rln;
+                                                    var newRfn = secondLevelObject.rfn;
+                                                    var newFrln = secondLevelObject.frln;
+                                                    var newRtyp = secondLevelObject.rtyp;
+                                 
+                                                    var secondDictionary = record[''+newRLN];
+                                                    var newRFnValue = secondDictionary[''+newRfn];
+                                                    if(newRFnValue == null || newRFnValue.length < 2){
+                                                            continue;
+                                                    }
+                                                    //7594 defect - krishna
+                                                    //changes:Only to make local
+                                                    if(newRFnValue != null && newRFnValue.length > 2){
+                                                            newRFnValue = $UTILITY.dateAndTimeForGMTString(newRFnValue);
+                                                    }
+                                 
+                                                    if(newRFnValue != null && newRFnValue.length > 2){
+                                                            fieldsTobeAdded.push({Key:newFrln,Value:newRFnValue,Info:newRtyp});
+                                                    }
+                                            }
+                                           /* Shravya-7594*/
+                                 
                                                 var recSpeKey = record['Id'];
                                                 if(fieldsTobeAdded.length > 0 && recSpeKey != null  ){
                                                             aSpecialField.Value = fieldsTobeAdded;

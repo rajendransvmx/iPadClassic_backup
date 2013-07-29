@@ -131,6 +131,7 @@
     [popOver presentPopoverFromRect:btn.frame inView:self.view permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 
 }
+//7749 defect - Krishna
 -(IBAction)displayUser:(id)sender {
     
     UIButton * button = (UIButton *)sender;
@@ -139,7 +140,8 @@
     [popover setContentViewController:about animated:YES];
     [popover setPopoverContentSize:about.view.frame.size];
     popover.delegate = self;
-    [popover presentPopoverFromRect:button.frame inView:self.view permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+    CGRect btnFrame = CGRectMake(button.frame.origin.x, button.frame.origin.y + 18, button.frame.size.width, button.frame.size.height);
+    [popover presentPopoverFromRect:btnFrame inView:self.navigationController.view permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 
 }
 
@@ -213,9 +215,10 @@
     
     // Create a custom button with the image for left
     UIButton *button =  [UIButton buttonWithType:UIButtonTypeCustom];
+    [button setFrame:CGRectMake(0, 0, logoImage.size.width, logoImage.size.height)];
     [button setImage:logoImage forState:UIControlStateNormal];
     [button addTarget:self action:@selector(displayUser:) forControlEvents:UIControlEventTouchUpInside];
-    [button setFrame:CGRectMake(0, 0, logoImage.size.width, logoImage.size.height)];
+    
     
     [containingLeftView addSubview:button];
         

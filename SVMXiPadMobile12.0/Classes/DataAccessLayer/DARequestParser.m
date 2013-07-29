@@ -87,7 +87,8 @@
     
     
     /* Adding FROM OBJECT */
-    [finalQuery appendFormat:@" FROM %@ ",requestObject.objectName];
+    //7805 defect shravya - ''
+    [finalQuery appendFormat:@" FROM '%@' ",requestObject.objectName];
     
     
     /* Adding CRTIERIA PART and Parsing advance expression */
@@ -307,6 +308,8 @@
                             andRecordDictionary:(NSDictionary *)recordDictionary {
     
     NSMutableDictionary *mainObjectDictionary = [[NSMutableDictionary alloc] init];
+     /* Shravya - 7805*/
+    NSMutableDictionary *nameFieldValueDictionary = [[NSMutableDictionary alloc] init];
     
     for (int counter = 0; counter < [allObjects count]; counter++) {
         
@@ -338,10 +341,42 @@
                 NSString *objectName = [tableFields objectForKey:kROBJ];
                 NSString *fieldTypeName = [tableFields objectForKey:kRTYP];
                 NSString *fieldValue = [[SVMXDatabaseMaster sharedDataBaseMaterObject] executeQuery:fieldName andObjectName:objectName andCriria:[NSString stringWithFormat:@" Id = '%@'",firstRecordValue]];
+               
+               /* Shravya - 7805*/
+               if ([Utility isStringEmpty:fieldValue] && ![fieldTypeName isEqualToString:@"reference"]) {
+                   NSString  *nameField = [nameFieldValueDictionary objectForKey:objectName];
+                   if (nameField == nil) {
+                       nameField = [[SVMXDatabaseMaster sharedDataBaseMaterObject] getNameFieldForObject:objectName];
+                       if (nameField != nil && objectName != nil) {
+                           [nameFieldValueDictionary setObject:nameField forKey:objectName];
+                       }
+                   }
+                   if ([fieldName isEqualToString:nameField]) {
+                       fieldValue = [[SVMXDatabaseMaster sharedDataBaseMaterObject] getNameValueForId:firstRecordValue];
+                   }
+               }
+               /* Shravya - 7805*/
+               
                 if (fieldValue == nil) {
                     fieldValue = @"";
                 }
-                if (relationship != nil) {
+               //defect 7744 : shravya converting 1/0 to true/false [OPDOC3]
+               NSString *lowerFieldType = [fieldTypeName lowercaseString];
+               if ([lowerFieldType isEqualToString:@"boolean"] || [lowerFieldType isEqualToString:@"bool"] ){
+                   if ([Utility isItTrue:fieldValue]) {
+                       fieldValue = @"true";
+                   }
+                   else{
+                       fieldValue = @"false";
+                   }
+               }
+
+//               NSString *lowerFieldType = [fieldTypeName lowercaseString];
+//               if ([lowerFieldType isEqualToString:@"date"] || [lowerFieldType isEqualToString:@"datetime"] ) {
+//                   NSDictionary *tempDict = [[NSDictionary alloc] initWithObjectsAndKeys:fieldName,@"fn", nil];
+//               }
+                if (relationship != nil)
+                {
                     NSMutableDictionary *relationShipDict = [mainObjectDictionary objectForKey:relationship];
                     if (relationShipDict == nil) {
                         NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] init];
@@ -370,6 +405,22 @@
                 NSString *fieldName = [tableFields objectForKey:kRFN2];
                 NSString *objectName = [tableFields objectForKey:kROBJ2];
                 NSString *fieldValue = [[SVMXDatabaseMaster sharedDataBaseMaterObject] executeQuery:fieldName andObjectName:objectName andCriria:[NSString stringWithFormat:@" Id = '%@'",secondRecordValue]];
+                
+                /* Shravya - 7805*/
+                if ([Utility isStringEmpty:fieldValue]) {
+                    NSString  *nameField = [nameFieldValueDictionary objectForKey:objectName];
+                    if (nameField == nil && objectName != nil) {
+                        nameField = [[SVMXDatabaseMaster sharedDataBaseMaterObject] getNameFieldForObject:objectName];
+                        if (nameField != nil) {
+                            [nameFieldValueDictionary setObject:nameField forKey:objectName];
+                        }
+                    }
+                    if ([fieldName isEqualToString:nameField]) {
+                        fieldValue = [[SVMXDatabaseMaster sharedDataBaseMaterObject] getNameValueForId:secondRecordValue];
+                    }
+                }
+                /* Shravya - 7805*/
+                
                 if (fieldValue == nil) {
                     fieldValue = @"";
                 }
@@ -392,6 +443,9 @@
             }
         }
     }
+    /* Shravya - 7805*/
+    [nameFieldValueDictionary release];
+    nameFieldValueDictionary = nil;
     return [mainObjectDictionary autorelease];
 }
 

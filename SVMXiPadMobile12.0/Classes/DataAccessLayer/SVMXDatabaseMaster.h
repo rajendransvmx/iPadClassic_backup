@@ -68,4 +68,8 @@ typedef enum {
 //7609 defect - krishna //shravya
 - (BOOL) closeDatabase;
 + (void) releaseTheDb;
+
+//7805 defect shravya
+- (NSString *)getNameValueForId:(NSString *)recordSfid;
+- (NSString *)getNameFieldForObject:(NSString*)objectName;
 @end

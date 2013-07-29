@@ -469,7 +469,9 @@ extern void SVMXLog(NSString *format, ...);
 
 
 - (NSString *)executeQuery:(NSString *)fieldName andObjectName:(NSString *)objectName andCriria:(NSString *)criteria {
-    NSString * queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM %@ where %@",fieldName,objectName,criteria];
+    
+    //defect 7805 - ''
+    NSString * queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' where %@",fieldName,objectName,criteria];
     sqlite3_stmt *selectStmt = nil;
     NSString *fieldValue = nil;
     NSLog(@"%@",queryStatement);
@@ -711,7 +713,51 @@ extern void SVMXLog(NSString *format, ...);
   }
     return nil;
 }
-
+//7805 defect shravya
+- (NSString *)getNameValueForId:(NSString *)recordSfid {
+    NSString *nameValue = @"";
+    @synchronized(self) {
+        NSString *sqlQuery = [NSString stringWithFormat:@"Select value from LookUpFieldValue where Id = '%@'",recordSfid];
+        sqlite3_stmt *selectStmt = nil;
+        if(synchronized_sqlite3_prepare_v2(database, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK)
+        {
+            while (sqlite3_step(selectStmt)  == SQLITE_ROW)
+            {
+                char * tempLabel  = (char *)sqlite3_column_text(selectStmt, 0);
+                if(tempLabel != NULL){
+                    nameValue = [NSString stringWithUTF8String:tempLabel];
+                    if (nameValue == nil) {
+                        nameValue  = @"";
+                    }
+                }
+            }
+        }
+    }
+    return nameValue;
+}
+//7805 defect shravya
+- (NSString*)getNameFieldForObject:(NSString*)objectName {
+    NSString *queryStatement1 = [NSMutableString stringWithFormat:@"SELECT api_name FROM SFObjectField where object_api_name = '%@'and (name_field = 'TRUE' OR name_field = 'True' OR name_field = 'true' OR name_field = '1') and api_name != \"\"",objectName];
+    sqlite3_stmt * labelstmt = nil;
+    char *refrence_to=nil;
+    NSString *fieldName = @"";
+    if ( synchronized_sqlite3_prepare_v2(database, [queryStatement1 UTF8String],-1, &labelstmt, nil) == SQLITE_OK )
+    {
+        if(sqlite3_step(labelstmt) == SQLITE_ROW)
+        {
+            refrence_to = (char *) sqlite3_column_text(labelstmt,0);
+            if((refrence_to != nil)&& strlen(refrence_to))
+                fieldName = [NSString stringWithUTF8String:refrence_to];
+            else
+                fieldName = @"";
+        }
+    }
+    sqlite3_finalize(labelstmt);
+    if ([Utility isStringEmpty:fieldName]) {
+        fieldName = @"Name";
+    }
+    return fieldName;
+}
 #pragma mark - Data base utility functions
 - (id)getNewFieldValue:(NSString *)fieldValue basedOnType:(NSString *)fieldType {
     
@@ -726,6 +772,15 @@ extern void SVMXLog(NSString *format, ...);
     else if ([newFieldType isEqualToString:INTEGER]) {
         someObject = [NSNumber numberWithInt:[fieldValue intValue]];
         
+    }
+    else if ([newFieldType isEqualToString:_BOOL]) {            //defect 7744 :shravya converting 1/0 to true/false [OPDOC3]
+
+        if ([Utility isItTrue:someObject]) {
+            someObject = @"true";
+        }
+        else{
+            someObject = @"false";
+        }
     }
     
     return someObject;
