@@ -11859,9 +11859,6 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     appDelegate.wsInterface.didOpComplete = FALSE;
     appDelegate.connection_error = FALSE;
 	
-	//OAuth.
-	[[ZKServerSwitchboard switchboard] doCheckSession];
-	
     [appDelegate updateInstalledPackageVersion];    
     NSString * retVal = [self callMetaSync];
 

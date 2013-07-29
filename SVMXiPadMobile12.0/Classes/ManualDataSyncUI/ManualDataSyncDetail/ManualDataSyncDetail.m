@@ -1790,6 +1790,7 @@ PopoverButtons *popOver_view;
                 return;
             }
             
+			[self disableControls];				//-------------> Disable controls if users continues with resetting application.
 			[appDelegate invalidateAllTimers];
 			[appDelegate.dataBase removecache];
 			appDelegate.wsInterface.didOpComplete = FALSE;
@@ -1816,7 +1817,7 @@ PopoverButtons *popOver_view;
 		}
 		else if(buttonIndex == 1)
 		{
-					
+			[self enableControls];
 		}
 	}
 	else

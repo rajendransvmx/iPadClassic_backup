@@ -521,6 +521,7 @@ PopoverButtons *popOver_view;
         return;
     }
     
+	[delegate disableControls];
    
 	//new code to handle meta sync whenever the application is logged of the authentication module.
 	//OAuth.
@@ -538,6 +539,7 @@ PopoverButtons *popOver_view;
     {
 		[delegate dismisspopover];
         [appDelegate setSyncStatus:SYNC_GREEN];
+		[delegate enableControls];
         return;
     }
 
@@ -545,9 +547,11 @@ PopoverButtons *popOver_view;
     {
         [delegate dismisspopover];
         [appDelegate setSyncStatus:SYNC_GREEN];
+		[delegate enableControls];
         return;
     }
-     [delegate disableControls];
+	
+//	[delegate disableControls];
     
     //RADHA AUG 30/2012
     [appDelegate.dataBase deleteDatabase:TEMPDATABASENAME];    
@@ -629,9 +633,6 @@ PopoverButtons *popOver_view;
         //appDelegate.syncTypeInProgress = METASYNC_INPROGRESS;
 
         [appDelegate setCurrentSyncStatusProgress:METASYNC_STARTS optimizedSynstate:0];
-      
-       //OAuth.
-		[[ZKServerSwitchboard switchboard] doCheckSession];
         [appDelegate.dataBase removecache];
         appDelegate.didincrementalmetasyncdone = FALSE;
         
