@@ -438,6 +438,8 @@ PopoverButtons *popOver_view;
 // Vipin-db-optmz
 - (void)addValuesToLookUpFieldTable:(NSMutableArray *)values;
 
+//krishna defect 7713
+- (NSString *) getProcessNameForProcesId:(NSString *)processId;
 //Krishna OPDocs
 - (void) insertIntoRequiredPdf:(NSString *)recordId processId:(NSString *)processId andAttachmentId:(NSString *)attachmentId;
 - (void)deleteRequiredPdfRecord:(NSString *)recordId forProcessId:(NSString *)processId;

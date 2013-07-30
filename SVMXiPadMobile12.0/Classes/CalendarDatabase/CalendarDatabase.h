@@ -122,7 +122,8 @@
 - (void)syncOutPutDoc;
 - ( NSMutableDictionary *) getAllLocalIdsForOPDOCData;
 //krishna opdoc html data
-
+////krishna opdoc defect 7800
+- (void)deleteOPdocForName:(NSString *)opdocName;
 - (NSString  *)getOPDocNameAndSFidforLocalId:(NSString *)localId andObjectName:(NSString *)objName;
 - (void) attachHtmlDataTOSFDCForLocalId:(NSString *)localId sfid:(NSString *)sfid opdocName:(NSString *)docName forProcessId:(NSString *)processId;
 - (NSData *) retrieveOPDOCData:(NSString *)Id;

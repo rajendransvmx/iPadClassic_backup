@@ -2986,7 +2986,21 @@ extern void SVMXLog(NSString *format, ...);
     }
     [appDelegate callDataSync];
 }
-////krishna opdoc 
+////krishna opdoc defect 7800
+- (void)deleteOPdocForName:(NSString *)opdocName {
+    NSString * queryStatement = [NSString stringWithFormat:@"DELETE FROM SFOPDocHtmldata WHERE doc_name = '%@'",opdocName];
+    
+    char *err;
+    if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+    {
+        SMLog(@"%@", queryStatement);
+		SMLog(@"METHOD:deleteSignature");
+		SMLog(@"ERROR IN DELETE %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:queryStatement type:DELETEQUERY];
+	}
+
+}
+////krishna opdoc
 - (void)deleteOpdocFor:(NSString *)SFID andProcessId:(NSString *)processId {
     
     NSString * queryStatement = [NSString stringWithFormat:@"DELETE FROM SFOPDocHtmldata WHERE process_id = '%@' and sf_id = '%@'",processId,SFID];
@@ -3079,7 +3093,8 @@ extern void SVMXLog(NSString *format, ...);
     //delete all opdoc html data
     
     for (NSString *str in docs_) {
-        [self deleteOpdocFor:sf_id andProcessId:processId];
+        ////krishna opdoc defect 7800
+        [self deleteOPdocForName:str];
     }
     [docs_ release];
     docs_ = nil;

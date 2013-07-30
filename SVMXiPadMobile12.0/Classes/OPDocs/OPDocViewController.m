@@ -155,7 +155,8 @@
     [popover setContentViewController:about animated:YES];
     [popover setPopoverContentSize:about.view.frame.size];
     popover.delegate = self;
-    CGRect btnFrame = CGRectMake(button.frame.origin.x, button.frame.origin.y + 18, button.frame.size.width, button.frame.size.height);
+    //7749 defect - Krishna
+    CGRect btnFrame = CGRectMake(button.frame.origin.x, button.frame.origin.y + 29, button.frame.size.width, button.frame.size.height);
     [popover presentPopoverFromRect:btnFrame inView:self.navigationController.view permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 
 }
@@ -217,10 +218,10 @@
 
 #pragma mark - Set title for OPDocs
 - (void) setTitleForOutputDocs {
-    
+    //Krishna defect 7713
     iServiceAppDelegate *AppDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    NSString * serviceReport = [AppDelegate.wsInterface.tagsDictionary objectForKey:SFM_SUMMARY_BACK_HEADER];
-    self.navigationItem.title = [NSString stringWithFormat:@"%@ %@",serviceReport, self.opdocTitleString];
+    NSString *processName = [AppDelegate.dataBase getProcessNameForProcesId:self.processIdentifier];
+    self.navigationItem.title = [NSString stringWithFormat:@"%@ - %@",processName, self.opdocTitleString];
 }
 
 #pragma mark - Populate navigation bar

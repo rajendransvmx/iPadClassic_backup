@@ -7086,11 +7086,11 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
             NSString *htmlFileNameExt = [[newFileName stringByDeletingPathExtension] stringByAppendingPathExtension:@"html"];
             [fileManager removeItemAtPath:htmlFileNameExt error:NULL];
             
-            // Delete signature ids whose signid starts with processId_recordId
-            [self deleteRequiredSignatureFor:htmlFileName];
-            
             // Delete the IDs from @"SFRequiredPdf" and html+signature images from documents directory
             [self deleteRequiredPdfForAttachement:Id];
+            
+            // Delete signature ids whose signid starts with processId_recordId
+            [self deleteRequiredSignatureFor:htmlFileName];
             
         }
         
@@ -7607,6 +7607,26 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 
 #pragma mark -
 #pragma mark Output Doc
+
+//Krishna defect 7713
+- (NSString *) getProcessNameForProcesId:(NSString *)processId {
+    
+    NSString * queryStatement = [NSString stringWithFormat:@"SELECT process_name FROM SFProcess WHERE process_id = '%@'", processId];
+    sqlite3_stmt * statement;
+    NSString * processName = @"";
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &statement, NULL) == SQLITE_OK)
+    {
+        if (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+        {
+            const char * _type = (char *)synchronized_sqlite3_column_text(statement, 0);
+            if (strlen(_type))
+                processName = [NSString stringWithUTF8String:_type];
+        }
+    }
+    
+    return processName;
+}
+
 
 //Krishna OPDOCS requiredPdf
 // Modified - Kri OPDOC-CR
