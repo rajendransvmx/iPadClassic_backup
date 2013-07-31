@@ -2875,7 +2875,8 @@ NSDate * syncCompleted;
 			appDelegate.Enable_aggresssiveSync = FALSE;
 			//Radha Defect Fix 7444
 			[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-            returnFlag = FALSE;
+			returnFlag = FALSE;
+			break;
 		}
 		
 		if (appDelegate.Incremental_sync_status == GET_DELETE_DC_OPTIMZED_DONE || appDelegate.Incremental_sync_status == GET_INSERT_DC_OPTIMZED_DONE || appDelegate.Incremental_sync_status ==  GET_UPDATE_DC_OPTIMZED_DONE)
@@ -2948,6 +2949,7 @@ NSDate * syncCompleted;
                 //Radha Defect Fix 7444
                 [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
                 returnFlag = FALSE;
+				break;
             }
         }
         
@@ -2970,6 +2972,9 @@ NSDate * syncCompleted;
 	else
 	{
 		NSLog(@" ********************** START : TXFETCH SYNC CALL OPT ********************** %@",[NSDate date]);
+		[appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:GET_DELETE];
+		[appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:PUT_DELETE];
+
 		[optimizeSyncCalls tx_fetch];
 		while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
 		{
@@ -2993,7 +2998,9 @@ NSDate * syncCompleted;
 				appDelegate.Enable_aggresssiveSync = FALSE;
                 //Radha Defect Fix 7444
                 [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-                returnFlag = FALSE;
+				returnFlag = FALSE;
+				break;
+               
 			}
 			
 			if (appDelegate.Incremental_sync_status == TX_FETCH_OPTIMIZED_DONE)
@@ -3017,8 +3024,6 @@ NSDate * syncCompleted;
             returnFlag = FALSE;
         }
 		NSLog(@" ********************** END : TXFETCH SYNC CALL OPT ********************** %@",[NSDate date]);
-		[appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:GET_DELETE];
-		[appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:PUT_DELETE];
 	}
 
 	return returnFlag;

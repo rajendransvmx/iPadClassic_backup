@@ -3993,7 +3993,7 @@ extern void SVMXLog(NSString *format, ...);
     [query_ release];
 	
 	//Changes for optimized sync - one sync call
-	static int noOfId = 0;
+	int noOfId = 0;
     for(NSString * obj in Objects_Array)
     {
     
