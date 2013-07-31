@@ -21,6 +21,12 @@
 -(NSInteger) HeaderColumns;
 -(NSInteger) linesColumns;
 
+//Aparna: FORMFILL
+- (void) setFormFillInfo:(NSDictionary *)formFillDict
+       forPageLayoutDict:(NSMutableDictionary *)pageLayoutDict
+                recordId:(NSString *)recordId;
+- (void)fillMappedFieldsForFieldAPIName:fieldAPI fieldKeyValue:fieldKeyValue;
+
 @end
 
 @implementation SFMEditDetailViewController
@@ -1429,6 +1435,89 @@
 {
     return [Disclosure_Details count];
 }
+
+#pragma mark -
+#pragma mark FORMFILL
+//Aparna: FORMFILL
+- (void) setFormFillInfo:(NSDictionary *)formFillDict
+       forPageLayoutDict:(NSMutableDictionary *)pageLayoutDict
+                recordId:(NSString *)recordId
+{
+    NSMutableDictionary *detailDictionary = pageLayoutDict;    NSString *detailObjectName = [detailDictionary objectForKey:gDETAIL_OBJECT_NAME];
+    NSMutableArray *pageFieldsInfo = [detailDictionary objectForKey:gDETAILS_FIELDS_ARRAY];
+    for(NSMutableDictionary *detailFieldDict in pageFieldsInfo)
+    {
+        
+        NSString * fieldApiName = [detailFieldDict valueForKey:gFIELD_API_NAME];
+        NSString * fieldDataType = [detailFieldDict valueForKey:gFIELD_DATA_TYPE];
+        
+        NSArray *formFillFieldArray = [formFillDict allKeys];
+        if ([formFillFieldArray containsObject:fieldApiName])
+        {
+            NSString *fieldValue = [formFillDict valueForKey:fieldApiName];
+            
+            NSString *evaluatedLiteral = [appDelegate.dataBase evaluateLiteral:fieldValue forControlType:fieldDataType];
+            if ([evaluatedLiteral length] > 0 )
+            {
+                fieldValue = evaluatedLiteral;
+            }
+            
+            if ([fieldDataType isEqualToString:@"date"] || [fieldDataType isEqualToString:@"datetime"])
+            {
+                fieldValue = [fieldValue stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+            }
+            
+            NSMutableArray *detailValuesArray = [pageLayoutDict valueForKey:gDETAILS_VALUES_ARRAY];
+            if ([detailValuesArray count]>0)
+            {
+                NSMutableArray *allValuesArray = [detailValuesArray objectAtIndex:selectedRowForDetailEdit];
+                for (NSMutableDictionary *dict in allValuesArray)
+                {
+                    
+                    if ([[dict valueForKey:gVALUE_FIELD_API_NAME] isEqualToString:fieldApiName])
+                    {
+                        [dict setValue:fieldValue forKey:gVALUE_FIELD_VALUE_KEY];
+                        NSString *value = [self.parentReference getValueForApiName:fieldApiName dataType:fieldDataType object_name:detailObjectName field_key:fieldValue];
+                        [dict setValue:value forKey:gVALUE_FIELD_VALUE_VALUE];
+                        
+                    }
+                    
+                }
+                
+            }
+            
+        }
+    }
+    
+}
+
+- (void)fillMappedFieldsForFieldAPIName:fieldAPI fieldKeyValue:fieldKeyValue
+{
+    NSMutableArray * fieldsArray = [self.Disclosure_dict objectForKey:gDETAILS_FIELDS_ARRAY];
+    for(NSDictionary * detailValueDict in fieldsArray)
+    {
+        if([[detailValueDict objectForKey:gFIELD_API_NAME] isEqualToString:fieldAPI])
+        {
+            NSString * fieldMapping = [detailValueDict objectForKey:gFIELD_MAPPING];
+            if ([fieldMapping length] != 0)
+            {
+                
+                NSIndexPath *selectedRootIndexPath = [appDelegate.sfmPageController.rootView getSelectedIndexPath];
+                
+                NSString * referenceObj = [detailValueDict objectForKey:gFIELD_RELATED_OBJECT_NAME];
+                NSMutableArray *detailArray = [appDelegate.SFMPage objectForKey:gDETAILS];
+                
+                NSDictionary * formfillDict = [appDelegate.databaseInterface recordsToUpdateForObjectId:fieldKeyValue mappingId:fieldMapping objectName:referenceObj];
+                if([detailArray count] >= selectedRootIndexPath.row)
+                {
+                    [self setFormFillInfo:formfillDict forPageLayoutDict:[detailArray objectAtIndex:selectedRootIndexPath.row] recordId:nil];
+                }
+            }
+        }
+    }
+
+}
+
 #pragma mark - Custom Controls' Delegate Method
 
 // Called when the Lookup value is updated by the user.
@@ -1858,6 +1947,12 @@
                         fieldValue = @"";
                     }
                 }
+                //Aparna: FORMFILL
+                if([control_type isEqualToString:@"reference"])
+                {
+                    [self fillMappedFieldsForFieldAPIName:fieldAPI fieldKeyValue:fieldKeyValue];
+                }
+
                 
                 [[detail_values objectAtIndex:i] setValue:fieldValue forKey:gVALUE_FIELD_VALUE_VALUE];
                 [[detail_values objectAtIndex:i] setValue:fieldKeyValue forKey:gVALUE_FIELD_VALUE_KEY];

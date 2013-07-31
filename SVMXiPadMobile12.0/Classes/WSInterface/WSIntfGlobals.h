@@ -217,6 +217,8 @@
 #define gFIELD_VALUE_VALUE                              @"Field_Value_Value"
 #define gSLA_CLOCK                                      @"SVMXC__Use_For_SLA_Clock__c"
 #define gFIELD_OVERRIDE_RELATED_LOOKUP                  @"SVMXC__Override_Related_Lookup__c"
+//Aparna: FORMFILL
+#define gFIELD_MAPPING                                  @"SVMXC__Field_Mapping__c"
 
 // Header Section
 #define gSECTION_NUMBER_OF_COLUMNS                      @"section_Number_Of_Columns"

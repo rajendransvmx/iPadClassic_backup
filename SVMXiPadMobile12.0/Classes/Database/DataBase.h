@@ -474,6 +474,8 @@ PopoverButtons *popOver_view;
 - (NSArray *)sourceUpdatesForProcessId:(NSString *)processId;
 - (void) updateSourceObjects:(NSArray *)sourceObjects forSFId:(NSString *)recordId;
 - (NSString *)sfIdForProcessId:(NSString *)processId;
+//Aparna: FORMFILL
+- (NSString *)evaluateLiteral:(NSString *)literal forControlType:(NSString *)controlType;
 
 
 @end

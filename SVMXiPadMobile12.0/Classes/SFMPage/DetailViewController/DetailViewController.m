@@ -90,6 +90,12 @@ enum BizRuleConfirmViewStatus{
 -(void)SaveCreatedRecordInfoIntoPlistForRecordId:(NSString *)recordId objectName:(NSString *)ObjectName;
 -(void)reloadCurrentProcess:(NSString *)processType;
 -(void)updateParentReferenceForDetailLines:(NSMutableDictionary * )pageLayout;
+
+//Aparna: FORMFILL
+- (void) setFormFillInfo:(NSDictionary *)formFillDict
+       forPageLayoutDict:(NSMutableDictionary *)pageLayoutDict
+                recordId:(NSString *)recordId;
+
 @end
 
 @implementation DetailViewController
@@ -199,6 +205,52 @@ enum BizRuleConfirmViewStatus{
         [alertView release];
     }
 }
+
+//Aparna : FORMFILL
+#pragma mark -
+#pragma mark FORMFILL
+
+- (void) setFormFillInfo:(NSDictionary *)formFillDict
+       forPageLayoutDict:(id)pageLayoutDict
+                recordId:(NSString *)recordId
+{
+    NSMutableDictionary *headerDictionary = pageLayoutDict;
+    NSString *headerObjectName = [headerDictionary objectForKey:gHEADER_OBJECT_NAME];
+    NSMutableArray *headerSections = [headerDictionary objectForKey:gHEADER_SECTIONS];
+    for(NSMutableDictionary *sectionFieldDict in headerSections)
+    {
+        NSMutableArray *fieldsArray = [sectionFieldDict objectForKey:gSECTION_FIELDS];
+        for (NSMutableDictionary *fieldDictionary in fieldsArray)
+        {
+            
+            NSString * fieldApiName = [fieldDictionary valueForKey:gFIELD_API_NAME];
+            NSString * fieldDataType = [fieldDictionary valueForKey:gFIELD_DATA_TYPE];
+            
+            NSArray *formFillFieldArray = [formFillDict allKeys];
+            if([formFillFieldArray containsObject:fieldApiName])
+            {
+                NSString *fieldValue = [formFillDict valueForKey:fieldApiName];
+                
+                NSString *evaluatedLiteral = [appDelegate.dataBase evaluateLiteral:fieldValue forControlType:fieldDataType];
+                if ([evaluatedLiteral length] > 0 )
+                {
+                    fieldValue = evaluatedLiteral;
+                }
+                
+                if ([fieldDataType isEqualToString:@"date"] || [fieldDataType isEqualToString:@"datetime"])
+                {
+                    fieldValue = [fieldValue stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+                }
+                
+                [fieldDictionary setValue:fieldValue forKey:gFIELD_VALUE_KEY];
+                NSString *value = [self getValueForApiName:fieldApiName dataType:fieldDataType object_name:headerObjectName field_key:fieldValue];
+                [fieldDictionary setValue:value forKey:gFIELD_VALUE_VALUE];
+            }
+        }
+        
+    }
+}
+
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -7520,6 +7572,20 @@ enum BizRuleConfirmViewStatus{
                             fieldKeyValue = @"";
                             fieldValue = @"";
                         }
+                    }
+                    
+                    //Aparna: FORMFILL
+                    if([control_type isEqualToString:@"reference"])
+                    {
+                        NSString * fieldMapping = [dict objectForKey:gFIELD_MAPPING];
+                        if ([fieldMapping length] != 0)
+                        {
+                            NSString * referenceObj = [dict objectForKey:gFIELD_RELATED_OBJECT_NAME];
+                            NSDictionary * formfillDict = [appDelegate.databaseInterface recordsToUpdateForObjectId:fieldKeyValue mappingId:fieldMapping objectName:referenceObj];
+                            [self setFormFillInfo:formfillDict forPageLayoutDict:[appDelegate.SFMPage objectForKey:gHEADER] recordId:nil];
+
+                        }
+                        
                     }
                     
                     [dict setValue:fieldKeyValue forKey:gFIELD_VALUE_KEY];

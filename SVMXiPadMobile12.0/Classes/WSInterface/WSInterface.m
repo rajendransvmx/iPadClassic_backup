@@ -8150,7 +8150,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                     for (int k = 0; k < [pageDetail.fields count]; k++)
                     {
                         INTF_WebServicesDefServiceSvc_INTF_UIField * detailUiField = [pageDetail.fields objectAtIndex:k];
-                        
+                        /*Aparna: FORMFILL -> Added 'SVMXC__Field_Mapping__c'*/
                         NSMutableArray * detailFieldKeys = [NSMutableArray arrayWithObjects:
                                                             gFIELD_API_NAME,
                                                             gFIELD_DISPLAY_COLUMN,
@@ -8167,6 +8167,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                                             gFIELD_VALUE_KEY,
                                                             gFIELD_VALUE_VALUE,
                                                             gFIELD_OVERRIDE_RELATED_LOOKUP,
+                                                            gFIELD_MAPPING,
                                                             nil];
                         
                         
@@ -8185,7 +8186,8 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                                                @"",
                                                                @"",
                                                                @"",
-                                                               [NSNumber numberWithInt:detailUiField.fieldDetail.SVMXC__Override_Related_Lookup__c.boolValue], 
+                                                               [NSNumber numberWithInt:detailUiField.fieldDetail.SVMXC__Override_Related_Lookup__c.boolValue],
+                                                               (detailUiField.fieldDetail.SVMXC__Field_Mapping__c != nil)?detailUiField.fieldDetail.SVMXC__Field_Mapping__c:@"",
                                                                nil];
                         
                         NSMutableDictionary * fieldDetailDict = [NSMutableDictionary dictionaryWithObjects:detailFieldObjects forKeys:detailFieldKeys];
@@ -8355,6 +8357,8 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                     for (int j = 0; j < [fields count]; j++)
                     {
                         INTF_WebServicesDefServiceSvc_INTF_UIField * uiField = [fields objectAtIndex:j];
+                        
+                        /*Aparna: FORMFILL -> Added 'SVMXC__Field_Mapping__c'*/
                         NSMutableArray * hdrSectionFieldKeys = [NSMutableArray arrayWithObjects:
                                                                 @"Name",
                                                                 gFIELD_API_NAME,
@@ -8373,6 +8377,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                                                 gFIELD_VALUE_VALUE,
                                                                 gSLA_CLOCK,
                                                                 gFIELD_OVERRIDE_RELATED_LOOKUP,
+                                                                gFIELD_MAPPING,
                                                                 nil];
                         
                         NSMutableArray * hdrSectionFieldValues = [NSMutableArray arrayWithObjects:
@@ -8393,6 +8398,8 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                                                                   @"",
                                                                   [NSNumber numberWithBool:uiField.fieldDetail.SVMXC__Use_For_SLA_Clock__c.boolValue],
                                                                   [NSNumber numberWithInt:uiField.fieldDetail.SVMXC__Override_Related_Lookup__c.boolValue],
+                                                                  (uiField.fieldDetail.SVMXC__Field_Mapping__c != nil)?uiField.fieldDetail.SVMXC__Field_Mapping__c:@"",
+
                                                                   nil];
                         
                         if (hdrSectionFields == nil)

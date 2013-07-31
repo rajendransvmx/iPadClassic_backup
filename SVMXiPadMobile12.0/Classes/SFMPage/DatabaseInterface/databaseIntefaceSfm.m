@@ -11298,7 +11298,8 @@ extern void SVMXLog(NSString *format, ...);
 -(NSString *)getValueForField:(NSString *)fieldName objectName:(NSString *)objectName recordId:(NSString *)localId
 {
     NSString * fieldValue = @"";
-    NSString * query = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE local_id = '%@' ",fieldName,objectName,localId];
+    //Aparna: FORMFILL
+    NSString * query = [NSString stringWithFormat:@"SELECT %@ FROM '%@' WHERE ( local_id = '%@' OR Id = '%@')",fieldName,objectName,localId,localId];
     sqlite3_stmt * statement ;
     
     if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, nil) ==  SQLITE_OK)
@@ -11579,4 +11580,129 @@ extern void SVMXLog(NSString *format, ...);
     }
     return fieldName;
 }
+
+#pragma mark -
+#pragma mark FORMFILL
+//Aparna: FORMFILL
+- (NSDictionary *)objectMappingInfoForMapping:(NSString *)mappingId
+{
+    NSMutableDictionary *objMappingDict = [NSMutableDictionary dictionary];
+    
+    sqlite3_stmt * stmt;
+    NSString *selectQuery = [NSString stringWithFormat:@"SELECT %@ , %@, %@ From %@ WHERE %@ = '%@'",TARGET_OBJECT_NAME, SOURCE_OBJECT_NAME, OBJECT_MAPPING_ID, OBJECT_MAPPING, OBJECT_MAPPING_ID, mappingId];
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        if (synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            char * targetObjNameChar= (char *) synchronized_sqlite3_column_text(stmt, 0);
+            if ((targetObjNameChar != nil) && strlen(targetObjNameChar))
+            {
+                NSString *targetObjName = [NSString stringWithUTF8String:targetObjNameChar];
+                [objMappingDict setValue:targetObjName forKey:TARGET_OBJECT_NAME];
+            }
+            
+            char * sourceObjNameChar= (char *) synchronized_sqlite3_column_text(stmt, 1);
+            if ((sourceObjNameChar != nil) && strlen(sourceObjNameChar))
+            {
+                NSString *sourceObjName = [NSString stringWithUTF8String:sourceObjNameChar];
+                [objMappingDict setValue:sourceObjName forKey:SOURCE_OBJECT_NAME];
+            }
+            
+            char * objMappingIdChar = (char *) synchronized_sqlite3_column_text(stmt, 2);
+            if ((objMappingIdChar != nil) && strlen(objMappingIdChar))
+            {
+                NSString *objMappingId = [NSString stringWithUTF8String:objMappingIdChar];
+                [objMappingDict setValue:objMappingId forKey:OBJECT_MAPPING_ID];
+            }
+            
+        }
+    }
+    synchronized_sqlite3_finalize(stmt);
+    return objMappingDict;
+}
+
+- (NSArray *) objectMappingComponentInfoForMappingId:(NSString *)mappingId
+{
+    NSMutableArray *objMappingCompInfoArray = [NSMutableArray array];
+    
+    sqlite3_stmt * stmt;
+    NSString *selectQuery = [NSString stringWithFormat:@"SELECT DISTINCT %@ , %@, %@, %@ From %@ WHERE %@ = '%@'", MSOURCE_FIELD_NAME, MTARGET_FIELD_NAME, MMAPPING_VALUE, MMAPPING_COMP_TYPE, SFOBJECTMAPCOMPONENT, MOBJECT_MAPPING_ID,mappingId];
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            
+            NSMutableDictionary *objMappingDict = [[NSMutableDictionary alloc] init];
+            
+            char * sourceFieldNameChar= (char *) synchronized_sqlite3_column_text(stmt, 0);
+            if ((sourceFieldNameChar != nil) && strlen(sourceFieldNameChar))
+            {
+                NSString *sourceFieldName = [NSString stringWithUTF8String:sourceFieldNameChar];
+                [objMappingDict setValue:sourceFieldName forKey:MSOURCE_FIELD_NAME];
+            }
+            
+            char * targetFieldNameChar= (char *) synchronized_sqlite3_column_text(stmt, 1);
+            if ((targetFieldNameChar != nil) && strlen(targetFieldNameChar))
+            {
+                NSString *targetFieldName = [NSString stringWithUTF8String:targetFieldNameChar];
+                [objMappingDict setValue:targetFieldName forKey:MTARGET_FIELD_NAME];
+            }
+            
+            char * mappingValChar = (char *) synchronized_sqlite3_column_text(stmt, 2);
+            if ((mappingValChar != nil) && strlen(mappingValChar))
+            {
+                NSString *mappingValue = [NSString stringWithUTF8String:mappingValChar];
+                [objMappingDict setValue:mappingValue forKey:MMAPPING_VALUE];
+            }
+            
+            char * mappingComTypeChar = (char *) synchronized_sqlite3_column_text(stmt, 3);
+            if ((mappingComTypeChar != nil) && strlen(mappingComTypeChar))
+            {
+                NSString *mappingCompType = [NSString stringWithUTF8String:mappingComTypeChar];
+                [objMappingDict setValue:mappingCompType forKey:MMAPPING_COMP_TYPE];
+            }
+            
+            [objMappingCompInfoArray addObject:objMappingDict];
+            [objMappingDict release];
+        }
+    }
+    synchronized_sqlite3_finalize(stmt);
+    return objMappingCompInfoArray;
+}
+
+
+- (NSDictionary *)recordsToUpdateForObjectId:(NSString *)objectId
+                                   mappingId:(NSString *)mappingId
+                                  objectName:(NSString *)objName
+{
+    
+    NSMutableDictionary *formFillRecords = [NSMutableDictionary dictionary];
+    NSArray *objMappingComponentArray = [appDelegate.databaseInterface objectMappingComponentInfoForMappingId:mappingId];
+    
+    for (NSDictionary *dict in objMappingComponentArray)
+    {
+        NSString *targetFieldName = [dict valueForKey:MTARGET_FIELD_NAME];
+        NSString *mappingType = [dict valueForKey:MMAPPING_COMP_TYPE];
+        NSString *mappedValue = nil;
+        
+        if ([mappingType isEqualToString:FIELD_MAPPING ])
+        {
+            NSString *sourceFieldName = [dict valueForKey:MSOURCE_FIELD_NAME];
+            mappedValue = [appDelegate.databaseInterface getValueForField:sourceFieldName objectName:objName recordId:objectId];
+        }
+        else if([mappingType isEqualToString:VALUE_MAPPING])
+        {
+            NSString *mappingValue = [dict valueForKey:MMAPPING_VALUE];
+            mappedValue = mappingValue;
+        }
+        
+        [formFillRecords setValue:mappedValue forKey:targetFieldName];
+    }
+    
+    return formFillRecords;
+}
+
+
 @end
