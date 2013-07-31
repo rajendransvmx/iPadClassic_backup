@@ -2875,6 +2875,7 @@ NSDate * syncCompleted;
 			appDelegate.Enable_aggresssiveSync = FALSE;
 			//Radha Defect Fix 7444
 			[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+            returnFlag = FALSE;
 		}
 		
 		if (appDelegate.Incremental_sync_status == GET_DELETE_DC_OPTIMZED_DONE || appDelegate.Incremental_sync_status == GET_INSERT_DC_OPTIMZED_DONE || appDelegate.Incremental_sync_status ==  GET_UPDATE_DC_OPTIMZED_DONE)
