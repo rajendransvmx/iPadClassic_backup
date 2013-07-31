@@ -22,10 +22,15 @@
 	NSString * syncRequestId;
 	SBJsonWriter * jsonWriter;
 	SBJsonParser *jsonParserForDataSync;
-
+	
+	NSString * lastSyncTime;
+	NSString * putUpdateSyncTime;
 }
 
 @property (nonatomic, assign) BOOL callBackValue;
+
+@property (nonatomic, retain) NSString * lastSyncTime;
+@property (nonatomic, retain) NSString * putUpdateSyncTime;
 
 //Methods
 -(void)GetOptimizedDownloadCriteriaRecordsFor:(NSString *)event_name requestId:(NSString *)requestId;

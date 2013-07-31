@@ -596,6 +596,9 @@ const NSUInteger kNumImages = 7;
                                                                  andRecordCount:0];
 
             [self initialDataSetUpAfterSyncOrLogin];
+			
+			//One call sync
+			[appDelegate overrideOptimizeSyncSettingsFromRooTPlist];
             [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"initialDataSetUpAfterSyncOrLogin"
                                                                  andRecordCount:0];
 
@@ -916,40 +919,40 @@ const NSUInteger kNumImages = 7;
 		//Radha Defect Fix 5542
 		current_gmt_timedispalyed = [dateFormatter stringFromDate:current_dateTime];
         
-        NSArray * sync_hist_keys = [NSArray arrayWithObjects:LAST_INITIAL_SYNC_IME, REQUEST_ID, LAST_INSERT_REQUEST_TIME,LAST_INSERT_RESONSE_TIME,LAST_UPDATE_REQUEST_TIME,LAST_UPDATE_RESONSE_TIME, LAST_DELETE_REQUEST_TIME, LAST_DELETE_RESPONSE_TIME,INSERT_SUCCESS,UPDATE_SUCCESS,DELETE_SUCCESS, LAST_INITIAL_META_SYNC_TIME, SYNC_FAILED, META_SYNC_STATUS,NEXT_META_SYNC_TIME,LAST_DC_INSERT_RESPONSE_TIME,LAST_DC_UPDATE_RESPONSE_TIME,LAST_DC_DELETE_RESPONSE_TIME, DATASYNC_TIME_TOBE_DISPLAYED, NEXT_DATA_SYNC_TIME_DISPLAYED, nil];
-        NSMutableDictionary * sync_info = [[[NSMutableDictionary alloc] initWithObjects:[NSArray arrayWithObjects:current_gmt_time,@"",current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,@"true",@"",@"", current_gmt_timedispalyed, @"false", [appDelegate.wsInterface.tagsDictionary objectForKey:sync_succeeded],@"",current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_timedispalyed, @"", nil] forKeys:sync_hist_keys] autorelease];
+        NSArray * sync_hist_keys = [NSArray arrayWithObjects:LAST_INITIAL_SYNC_IME, REQUEST_ID, LAST_INSERT_REQUEST_TIME,LAST_INSERT_RESONSE_TIME,LAST_UPDATE_REQUEST_TIME,LAST_UPDATE_RESONSE_TIME, LAST_DELETE_REQUEST_TIME, LAST_DELETE_RESPONSE_TIME,INSERT_SUCCESS,UPDATE_SUCCESS,DELETE_SUCCESS, LAST_INITIAL_META_SYNC_TIME, SYNC_FAILED, META_SYNC_STATUS,NEXT_META_SYNC_TIME,LAST_DC_INSERT_RESPONSE_TIME,LAST_DC_UPDATE_RESPONSE_TIME,LAST_DC_DELETE_RESPONSE_TIME, DATASYNC_TIME_TOBE_DISPLAYED, NEXT_DATA_SYNC_TIME_DISPLAYED, LAST_OSC_TIMESTAMP, nil];
+        NSMutableDictionary * sync_info = [[[NSMutableDictionary alloc] initWithObjects:[NSArray arrayWithObjects:current_gmt_time,@"",current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_time,@"true",@"",@"", current_gmt_timedispalyed, @"false", [appDelegate.wsInterface.tagsDictionary objectForKey:sync_succeeded],@"",current_gmt_time,current_gmt_time,current_gmt_time,current_gmt_timedispalyed, @"", current_gmt_time, nil] forKeys:sync_hist_keys] autorelease];
         [sync_info writeToFile:plistPath_SYNHIST atomically:YES];
     }
     else
     {
         NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST];
         NSArray * keys = [dict allKeys];
-         if(![keys containsObject:LAST_DC_INSERT_RESPONSE_TIME] || ![keys containsObject:LAST_DC_DELETE_RESPONSE_TIME] || ![keys containsObject:LAST_DC_UPDATE_RESPONSE_TIME] || ![keys containsObject:DATASYNC_TIME_TOBE_DISPLAYED])
-         {
-            if(![keys containsObject:LAST_DC_INSERT_RESPONSE_TIME])
-            {
-                NSString * last_insert_response_time = [dict objectForKey:LAST_INSERT_RESONSE_TIME];
-                if(last_insert_response_time != nil)
-                {
-                   [dict setObject:last_insert_response_time forKey:LAST_DC_INSERT_RESPONSE_TIME];
-                }
-            }
-            if(![keys containsObject:LAST_DC_DELETE_RESPONSE_TIME])
-            {
-                NSString * last_delete_response_time = [dict objectForKey:LAST_DELETE_RESPONSE_TIME];
-                if(last_delete_response_time != nil)
-                {
-                  [dict setObject:last_delete_response_time forKey:LAST_DC_DELETE_RESPONSE_TIME];
-                }
-            }
-            if(![keys containsObject:LAST_DC_UPDATE_RESPONSE_TIME])
-            {
-                NSString * last_update_response_time = [dict objectForKey:LAST_UPDATE_RESONSE_TIME];
-                if(last_update_response_time != nil)
-                {
-                    [dict setObject:last_update_response_time forKey:LAST_DC_UPDATE_RESPONSE_TIME];
-                }
-            }
+		if(![keys containsObject:LAST_DC_INSERT_RESPONSE_TIME] || ![keys containsObject:LAST_DC_DELETE_RESPONSE_TIME] || ![keys containsObject:LAST_DC_UPDATE_RESPONSE_TIME] || ![keys containsObject:DATASYNC_TIME_TOBE_DISPLAYED] || ![keys containsObject:LAST_OSC_TIMESTAMP])
+		{
+			if(![keys containsObject:LAST_DC_INSERT_RESPONSE_TIME])
+			{
+				NSString * last_insert_response_time = [dict objectForKey:LAST_INSERT_RESONSE_TIME];
+				if(last_insert_response_time != nil)
+				{
+				   [dict setObject:last_insert_response_time forKey:LAST_DC_INSERT_RESPONSE_TIME];
+				}
+			}
+			if(![keys containsObject:LAST_DC_DELETE_RESPONSE_TIME])
+			{
+				NSString * last_delete_response_time = [dict objectForKey:LAST_DELETE_RESPONSE_TIME];
+				if(last_delete_response_time != nil)
+				{
+				  [dict setObject:last_delete_response_time forKey:LAST_DC_DELETE_RESPONSE_TIME];
+				}
+			}
+			if(![keys containsObject:LAST_DC_UPDATE_RESPONSE_TIME])
+			{
+				NSString * last_update_response_time = [dict objectForKey:LAST_UPDATE_RESONSE_TIME];
+				if(last_update_response_time != nil)
+				{
+					[dict setObject:last_update_response_time forKey:LAST_DC_UPDATE_RESPONSE_TIME];
+				}
+			}
 			 
 			//Radha Defect Fix 5542
 			 if(![keys containsObject:DATASYNC_TIME_TOBE_DISPLAYED])
@@ -961,10 +964,17 @@ const NSUInteger kNumImages = 7;
 					 [dict setObject:initialSyncTime forKey:DATASYNC_TIME_TOBE_DISPLAYED];
 				 }
 			 }
-			 
-            
-            [dict writeToFile:plistPath_SYNHIST atomically:YES];
-         }
+			
+			//One Call Sync
+			if (![keys containsObject:LAST_OSC_TIMESTAMP])
+			{
+				NSString * last_delete_time =[dict objectForKey:LAST_DELETE_RESPONSE_TIME];
+				
+				[dict setObject:last_delete_time forKey:LAST_OSC_TIMESTAMP];
+				
+			}
+			[dict writeToFile:plistPath_SYNHIST atomically:YES];
+		}
     }
 	
 	//7444

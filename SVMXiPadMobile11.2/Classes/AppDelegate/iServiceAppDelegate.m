@@ -3126,6 +3126,33 @@ int percent = 0;
     
 }
 
+//One Call sync
+- (BOOL) shouldDoOneCallSync
+{	
+	BOOL oneCallSync = FALSE;
+	
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL USDefault_aggressiveSync = [defaults boolForKey:@"USDefault_Aggressive_flag"];
+		
+	if (USDefault_aggressiveSync)
+	{
+		oneCallSync = TRUE;
+	}
+	
+	return oneCallSync;
+	
+}
+
+- (void) overrideOptimizeSyncSettingsFromRooTPlist
+{
+	NSString * settingValue = [self.settingsDict objectForKey:@"IPAD018_SET010"];
+	if ([settingValue length] > 0)
+	{
+		NSUserDefaults * userDefaults = [NSUserDefaults standardUserDefaults];
+		//Rewrite the user's actual org to settings :
+		[userDefaults setValue:settingValue forKey:@"USDefault_Aggressive_flag"];
+	}
+}
 
 //Defect 6774
 - (void) checkifConflictExistsForConnectionError

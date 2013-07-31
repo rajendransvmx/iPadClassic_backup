@@ -105,6 +105,9 @@
 #define GET_UPDATE_FOR_DOWNLOAD_CRITERIA                @"GET_UPDATE_FOR_DOWNLOAD_CRITERIA"
 
 
+//One Sync Call
+#define LAST_OSC_TIMESTAMP								@"last_osc_timestamp"
+
 
 
 #define DOWNLOAD_CRITERIA_PLIST                         @"download_criteria_plist.plist"

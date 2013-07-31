@@ -162,10 +162,7 @@ PopoverButtons *popOver_view;
 }
 - (void) Syncronise
 {
-    //sync_override
-//    appDelegate.data_sync_type = NORMAL_DATA_SYNC;
-    
-	BOOL retVal;
+  	BOOL retVal;
     [delegate dismisspopover];
 	
 	
@@ -710,6 +707,8 @@ PopoverButtons *popOver_view;
 		[self refreshMetaSyncTimeStamp];
 		[appDelegate.wsInterface.updateSyncStatus refreshMetaSyncStatus];
 		[self updateMetsSyncStatus:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_succeeded]];
+		//One call sync
+		[appDelegate overrideOptimizeSyncSettingsFromRooTPlist];
 
 
     }

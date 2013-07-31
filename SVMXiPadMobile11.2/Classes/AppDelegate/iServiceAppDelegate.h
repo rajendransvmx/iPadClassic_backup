@@ -932,6 +932,11 @@ extern  NSString const *devVersion;
 
 - (INTF_WebServicesDefServiceSvc_SVMXClient  *) getSVMXClientObject;
 
+
+//One Call sync
+- (BOOL) shouldDoOneCallSync;
+- (void) overrideOptimizeSyncSettingsFromRooTPlist;
+
 @end
 
 @interface processInfo : NSObject {

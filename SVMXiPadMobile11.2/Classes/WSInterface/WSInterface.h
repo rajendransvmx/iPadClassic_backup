@@ -481,8 +481,11 @@ last_sync_time:(NSString *)last_sync_time;
     
 
 //Changes for optimized sync - one sync call
-- (void) CustomSingleSyncCall;
-    
+- (BOOL) CustomSingleSyncCall:(NSDate *)syncStarted;
+- (BOOL) getAllDataForIds:(NSDate *)syncStarted flag:(BOOL)doOnesync;
+- (void) doSignatureAndPDF:(BOOL)doOnesync;
+- (void) updateSyncTimeStampINSyncHistoryPlist:(BOOL)doOnesync;
+- (void) copyTrailertoTempTrailerForOneCallSync:(NSString *)operation_type;
 
 @end
 

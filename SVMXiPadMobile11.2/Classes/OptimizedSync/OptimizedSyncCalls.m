@@ -27,6 +27,8 @@
 @implementation OptimizedSyncCalls
 
 @synthesize callBackValue;
+@synthesize lastSyncTime;
+@synthesize putUpdateSyncTime;
 
 - (id) init
 {
@@ -86,7 +88,7 @@
 		
 		if([event_name isEqualToString:GET_DELETE_DC_OPTIMZED])
 		{
-			SVMXCMap_lastModified.value = [appDelegate.wsInterface get_SYNCHISTORYTime_ForKey:LAST_DELETE_RESPONSE_TIME] == nil ?@"":[appDelegate.wsInterface get_SYNCHISTORYTime_ForKey:LAST_DELETE_RESPONSE_TIME];
+			SVMXCMap_lastModified.value = [appDelegate.wsInterface get_SYNCHISTORYTime_ForKey:LAST_OSC_TIMESTAMP] == nil ?@"":[appDelegate.wsInterface get_SYNCHISTORYTime_ForKey:LAST_OSC_TIMESTAMP];
 			//Compressing Putdelete
 			if ([appDelegate.dataSync_dict count] > 0)
 			{
@@ -94,7 +96,7 @@
 				[put_delete.lstInternal_Request addObject:[self Put:PUT_DELETE]];
 			}
 			
-			[appDelegate.wsInterface copyTrailertoTempTrailer:INSERT];                         			
+			[appDelegate.wsInterface copyTrailertoTempTrailerForOneCallSync:INSERT];                         			
 			[appDelegate.wsInterface  getAllRecordsForOperationType:INSERT];
 			
 			if ([appDelegate.dataSync_dict count] > 0)
@@ -102,7 +104,7 @@
 				put_insert.key = PUT_INSERT;
 				[put_insert.lstInternal_Request addObject:[self Put:PUT_INSERT]];
 			}
-			[appDelegate.wsInterface copyTrailertoTempTrailer:UPDATE];
+			[appDelegate.wsInterface copyTrailertoTempTrailerForOneCallSync:UPDATE];
 			[appDelegate.wsInterface  getAllRecordsForOperationType:UPDATE];
 			
 			if ([appDelegate.dataSync_dict count] > 0)
@@ -947,6 +949,11 @@
 			callBackContextKey = contextValue.key;
 			callBackContextValue = contextValue.value;
 		}
+		
+		if ([key isEqualToString:@"LAST_SYNC"])
+		{
+			self.lastSyncTime = svmxMap.value;
+		}
 	}
 	if ([event_name isEqualToString:@"GET_INSERT_DC_OPTIMZED"])
 	{
@@ -1368,7 +1375,7 @@
 		
 		if([key isEqualToString:@"LAST_SYNC"] || [key isEqualToString:@"SYNC_TIME_STAMP"])
 		{
-			appDelegate.wsInterface.update_last_sync_time = object_name;
+			self.putUpdateSyncTime = object_name;
 		}
 		else if([key isEqualToString:@"Object_Name"] ||[key isEqualToString:@"Parent_Object"] || [key isEqualToString:@"Child_Object"])
 		{
