@@ -11524,37 +11524,44 @@ extern void SVMXLog(NSString *format, ...);
         }
         if([self findLiteral:fieldValue literal:CURRENTRECORD] || [self findLiteral:fieldValue literal:CURRENTRECORD_HEADER])
         {
-            NSString * sourceFieldName = [self getFieldApiNameFromString:fieldValue forLiteral:CURRENTRECORD];
-            if([sourceFieldName length] != 0)
+            if([self findLiteral:fieldValue literal:CURRENTRECORD_HEADER])
             {
-                NSString * sourceFieldValue = ([sourceDict objectForKey:sourceFieldName]!=nil)?[sourceDict objectForKey:sourceFieldName]:@"";
-                if([sourceFieldValue length] != 0)
+                NSString * sourceFieldName = [self getFieldApiNameFromString:fieldValue forLiteral:CURRENTRECORD];
+                if([sourceFieldName length] != 0)
                 {
-                  [detailDict setObject:sourceFieldValue forKey:fieldApi];
-                }
-                else
-                {
-                    NSString *recordId = appDelegate.sfmPageController.recordId;
-                    if([recordId length] != 0)
+                    NSString * sourceFieldValue = ([sourceDict objectForKey:sourceFieldName]!=nil)?[sourceDict objectForKey:sourceFieldName]:@"";
+                    if([sourceFieldValue length] != 0)
                     {
-                        NSDictionary *currentPageDictionary = appDelegate.SFMPage;
-                        NSDictionary *headerDictionary = [currentPageDictionary objectForKey:gHEADER];
-                        NSString * headerObjName = [headerDictionary objectForKey:gHEADER_OBJECT_NAME];
-                        NSString * newValue = @"";
-                        
-                        //Fix for defect #7811
-                        newValue = [self getValueForField:sourceFieldName objectName:headerObjName recordId:recordId];
-                        if([sourceFieldName isEqualToString:@"Id"] && [newValue length] == 0)
+                      [detailDict setObject:sourceFieldValue forKey:fieldApi];
+                    }
+                    else
+                    {
+                        NSString *recordId = appDelegate.sfmPageController.recordId;
+                        if([recordId length] != 0)
                         {
-                            newValue = recordId;
-                        }
-                       
-                        if([newValue length] != 0)
-                        {
+                            NSDictionary *currentPageDictionary = appDelegate.SFMPage;
+                            NSDictionary *headerDictionary = [currentPageDictionary objectForKey:gHEADER];
+                            NSString * headerObjName = [headerDictionary objectForKey:gHEADER_OBJECT_NAME];
+                            NSString * newValue = @"";
+                            
+                            //Fix for defect #7811
+                            newValue = [self getValueForField:sourceFieldName objectName:headerObjName recordId:recordId];
+                            if([sourceFieldName isEqualToString:@"Id"] && [newValue length] == 0)
+                            {
+                                newValue = recordId;
+                            }
                             [detailDict setObject:newValue forKey:fieldApi];
+                        }
+                        else
+                        {   
+                            [detailDict setObject:@"" forKey:fieldApi];
                         }
                     }
                 }
+            }
+            else if([self findLiteral:fieldValue literal:CURRENTRECORD])
+            {
+                [detailDict setObject:@"" forKey:fieldApi];
             }
         }
     }

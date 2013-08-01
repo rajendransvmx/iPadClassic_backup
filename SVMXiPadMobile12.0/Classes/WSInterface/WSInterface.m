@@ -4494,7 +4494,21 @@ NSDate * syncCompleted;
         {
             
             NSString * object_name = [all_objects objectAtIndex:i] ;
-            //find the type of the object name 
+            
+            NSMutableDictionary * referenceTo = [appDelegate.databaseInterface getReferenceToForObjectapiName:object_name];
+            NSString * parent_object_name = @"" ,*parent_column_name = @"";
+            
+            BOOL isChild_object =[appDelegate.databaseInterface IsChildObject:object_name];
+            
+            if(isChild_object)
+            {
+                parent_object_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_name field_name:@"parent_name"];
+                
+                parent_column_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_name field_name:@"parent_column_name"];
+            }
+
+            
+            //find the type of the object name
             
             // BOOL MasterObject = FALSE ;
             
@@ -4537,7 +4551,6 @@ NSDate * syncCompleted;
                 NSArray * keys = [dict allKeys];
                 
                 NSString * local_id = @"";
-                NSString * parent_object_name = @"";
                 NSString * parent_local_id = @"";
                 NSString * time_stamp = @"";
                 NSString * record_type = @"";
@@ -4550,14 +4563,6 @@ NSDate * syncCompleted;
                     if([key isEqualToString:@"local_id"])
                     {
                         local_id = [dict objectForKey:key];
-                    }
-                    if([key isEqualToString:@"parent_object_name"])
-                    {
-                        parent_object_name = [dict objectForKey:@"parent_object_name"];
-                    }
-                    if([key isEqualToString:@"parent_local_id"])
-                    {
-                        parent_local_id = [dict objectForKey:@"parent_local_id"];
                     }
                     if([key isEqualToString:@"time_stamp"])
                     {
@@ -4611,30 +4616,48 @@ NSDate * syncCompleted;
                         local_id =  [appDelegate.databaseInterface getLocalIdFromSFId:sf_id  tableName:object_name];
                 }
                         
-                NSMutableDictionary * each_record = [appDelegate.databaseInterface getRecordsForRecordId:local_id  ForObjectName:object_name fields:field_string];        
+                NSMutableDictionary * each_record = [appDelegate.databaseInterface getRecordsForRecordId:local_id  ForObjectName:object_name fields:field_string];
+                
+                BOOL  replaceSuccess = [self replaceReferenceLocalIdWithSfidForRecord:each_record isChild:isChild_object referenceTo:referenceTo parentColoumnName:parent_column_name ObjectName:object_name recordLocalId:local_id recordSfId:@""];
+                if(!replaceSuccess)
+                {
+                    NSArray * referenceFields = [referenceTo allKeys];
+                    NSArray * record_fields = [each_record allKeys];
+                    for(NSString * fieldApiName in referenceFields)
+                    {
+                        if([record_fields containsObject:fieldApiName])
+                        {
+                            if([fieldApiName isEqualToString:parent_column_name] && isChild_object)
+                            {
+                                continue;
+                            }
+                            
+                            NSString * referenceFieldId = [each_record objectForKey:fieldApiName];
+                            
+                            if([referenceFieldId length] > 30)
+                            {
+                                [each_record setObject:@"" forKey:fieldApiName];
+                            }
+                        }
+                    }
+                }
+                
+                
                 if([record_type isEqualToString:DETAIL])
                 {
                     NSString * parent_SF_Id = @"";
-                    NSString * parent_column_name = @"";
   
-                    if(appDelegate.speacialSyncIsGoingOn)
-                    {
-                        parent_object_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_name field_name:@"parent_name"];
-                        
-                        NSString * parent_column_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_name field_name:@"parent_column_name"];
-                        
-                        parent_local_id = [appDelegate.databaseInterface getParentIdFrom:object_name WithId:local_id andParentColumnName:parent_column_name id_type:@"local_id"];
-                    }
-                    parent_column_name = [appDelegate.databaseInterface  getParentColumnNameFormChildInfoTable:SFChildRelationShip childApiName:object_name parentApiName:parent_object_name];
-                    
-					//sahana child sfm
-                    if([parent_object_name length] == 0 || [parent_local_id length] == 0 || [parent_object_name isEqualToString:object_name])
+                    //sahana child sfm
+                    if([parent_object_name length] == 0  || [parent_object_name isEqualToString:object_name] || appDelegate.speacialSyncIsGoingOn || [parent_column_name length] == 0)
                     {
                         parent_object_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_name field_name:@"parent_name"];
                          parent_column_name = [appDelegate.databaseInterface  getParentColumnNameFormChildInfoTable:SFChildRelationShip childApiName:object_name parentApiName:parent_object_name];
-                        parent_local_id = [appDelegate.databaseInterface getParentIdFrom:object_name WithId:local_id andParentColumnName:parent_column_name id_type:@"local_id"];
                     }
                     
+                    if([parent_local_id length] == 0)
+                    {
+                        parent_local_id = [each_record objectForKey:parent_column_name];
+                    }
                     
                     //update the parent local id to the child record
                     //Get  SF_id From parent object for the local_id  search in heap table and  alson search in  
@@ -4650,6 +4673,11 @@ NSDate * syncCompleted;
                     else if (![Parent_SF_ID_from_heap_table isEqualToString:@""] && [ parent_SF_Id isEqualToString:@""])
                     {
                         parent_SF_Id = Parent_SF_ID_from_heap_table;
+                    }
+                    
+                    if([parent_local_id length] < 30 && [parent_local_id length] != 0)
+                    {
+                        parent_SF_Id = parent_local_id;
                     }
                     
                     NSArray * all_keys = [each_record allKeys];

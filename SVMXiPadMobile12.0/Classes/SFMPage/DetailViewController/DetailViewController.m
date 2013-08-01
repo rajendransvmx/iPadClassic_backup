@@ -11928,6 +11928,26 @@ enum BizRuleConfirmViewStatus{
                                     [sfm_detail_field_keyValue setObject:deatail_value forKey:detail_api_name];
                                 }
 
+                                //fill for each row
+								//FILL OBJECTMAPPING VALUE
+                            
+                                for(NSString * detail_key in detail_object_mapping_keys )
+                                {
+                                    if([[sfm_detail_field_keyValue allKeys] containsObject:detail_key])
+                                    {
+                                        NSString * mappingValue = [detail_object_mapping_dict objectForKey:detail_key];
+                                        NSString * Displayvalue = [sfm_detail_field_keyValue objectForKey:detail_key];
+                                        if([Displayvalue length ] == 0 || Displayvalue == nil)
+                                        {
+                                            if([mappingValue length] != 0 && mappingValue != nil)
+                                            {
+                                                [sfm_detail_field_keyValue setObject:mappingValue forKey:detail_key];
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                
 								//PLZ DONT DELETE THIS COMMENTED CODE
 //                                NSArray * all_keys = [sfm_detail_field_keyValue allKeys];
 //                                for(NSString * mapping_key in detail_object_mapping_keys)
@@ -12092,11 +12112,19 @@ enum BizRuleConfirmViewStatus{
 												}
 												else
 												{
-													[appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:line_record_id SF_id:@"" record_type:DETAIL operation:UPDATE object_name:detail_object_name sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:currentRecordId webserviceName:webserviceName className:className synctype:syncType headerLocalId:appDelegate.sfmPageController.recordId requestData:customDataDictionary finalEntry:NO];
-													
+                                                    BOOL does_exists = [appDelegate.databaseInterface  DoesTrailerContainTheRecord:line_record_id operation_type:INSERT object_name:detail_object_name];
+
+                                                    if(!does_exists)
+                                                    {
+                                                        [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:line_record_id SF_id:@"" record_type:DETAIL operation:INSERT object_name:detail_object_name sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:currentRecordId webserviceName:webserviceName className:className synctype:syncType headerLocalId:appDelegate.sfmPageController.recordId requestData:customDataDictionary finalEntry:NO];
+
+                                                    }
+                                                    else
+                                                    {
+                                                        [appDelegate.databaseInterface  insertdataIntoTrailerTableForRecord:line_record_id SF_id:@"" record_type:DETAIL operation:UPDATE object_name:detail_object_name sync_flag:@"false" parentObjectName:headerObjName parent_loacl_id:currentRecordId webserviceName:webserviceName className:className synctype:syncType headerLocalId:appDelegate.sfmPageController.recordId requestData:customDataDictionary finalEntry:NO];
+                                                    }
 												}
 											}
-
 										}
 										else
 										{
@@ -12549,15 +12577,21 @@ enum BizRuleConfirmViewStatus{
                     {
                         NSDictionary *detail = [details objectAtIndex:i];
                         
-    //                    NSArray * fields_array = [detail  objectForKey:gDETAILS_FIELDS_ARRAY];
                         NSArray *details_values = [detail objectForKey:gDETAILS_VALUES_ARRAY];
-    //                    NSString * detail_layout_id = [detail objectForKey:gDETAILS_LAYOUT_ID];
                         NSString * detail_object_name = [detail objectForKey:gDETAIL_OBJECT_NAME];
                         NSString * header_reference_field_name = [detail objectForKey:gDETAIL_HEADER_REFERENCE_FIELD];
                         
                         
                         //call database method to 
                         NSMutableDictionary * detail_fields_dict  = [appDelegate.databaseInterface getAllObjectFields:detail_object_name tableName:SFOBJECTFIELD]; //method to get the all the fields from the objectField table
+                        
+                        NSString * layout_id = [detail objectForKey:gDETAILS_LAYOUT_ID];
+                        
+                        NSMutableDictionary * processComponents = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGETCHILD process_id:appDelegate.sfmPageController.processId layoutId:layout_id objectName:detail_object_name];
+                        
+                        NSMutableDictionary * valueMappingDict = [appDelegate.databaseInterface getObjectMappingForMappingId:processComponents mappingType:VALUE_MAPPING];
+                        NSArray * ValuemappingKeys = [valueMappingDict allKeys];
+
                         
                         NSArray * detail_field_keys = [detail_fields_dict allKeys];
                         
@@ -12600,6 +12634,19 @@ enum BizRuleConfirmViewStatus{
                                         break;
                                     }
                                     
+                                }
+                            }
+                            for(int p = 0 ; p  < [detail_field_keys count]; p++)
+                            {
+                                NSString * detail_field_api_name = [detail_field_keys objectAtIndex:p];
+                                if([ValuemappingKeys containsObject:detail_field_api_name])
+                                {
+                                    NSString * fieldValue = [detail_fields_dict objectForKey:detail_field_api_name];
+                                    if([fieldValue length] == 0)
+                                    {
+                                        NSString * mappingValue = [valueMappingDict objectForKey:detail_field_api_name];
+                                        [detail_fields_dict setObject:mappingValue forKey:detail_field_api_name];
+                                    }
                                 }
                             }
                             
