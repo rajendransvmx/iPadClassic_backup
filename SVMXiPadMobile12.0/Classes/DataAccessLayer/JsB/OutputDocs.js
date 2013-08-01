@@ -614,9 +614,17 @@ function continueGetDocumentData(finalOutputArray,docTemplateDetailArray,recordI
                                         }
                                  
                                         /* Shravya-7594*/
+                                 //defect 7913 : loading prob opdoc shravya.
+                                        var metaDataJSON = null;;
+                                        var metaDataArray = [];
                                  
-                                        var metaDataJSON =  JSON.parse(jsonString);
-                                        var metaDataArray = metaDataJSON['Metadata'];
+                                        if(jsonString.length > 3) {
+                                            metaDataJSON =  JSON.parse(jsonString);
+                                            metaDataArray = metaDataJSON['Metadata'];
+                                        }
+                                                                            
+                                        
+                                      
                                         var secondLevelSpecialFields = [];
                                  
                                         for(var newCounter = 0; newCounter < metaDataArray.length;newCounter++){
