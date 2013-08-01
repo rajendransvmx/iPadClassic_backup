@@ -626,7 +626,26 @@ PopoverButtons *popOver_view;
                 [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.event_timer];
             }            
         }   
-        
+        // Defect 7410
+        if ([appDelegate.special_incremental_thread isExecuting])
+        {
+            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
+            {
+#ifdef kPrintLogsDuringWebServiceCall
+                SMLog(@"popoverButtons.m : startSyncConfiguration: check for special incremental thread thread");
+#endif
+                
+                if (![appDelegate isInternetConnectionAvailable])
+                {
+                    break;
+                }
+                
+                if ([appDelegate.special_incremental_thread isFinished])
+                {
+                    break;
+                }
+            }
+        }
         
 
         [refreshMetaSyncDelegate refreshMetaSyncStatus];
