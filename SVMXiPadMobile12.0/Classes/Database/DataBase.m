@@ -3050,7 +3050,8 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                         if(!((i==0) && ([operator isEqualToString:@" NOT IN "] || [operator isEqualToString:@" IN "])))
 	                        [finalQuery appendFormat:@"  COLLATE NOCASE )"];
                     }
-                    
+                    [finalQuery appendString:@"'"];
+
                 }
                 
                 if([[self getDataTypeFor:fieldName inArray:criteria_array] isEqualToString:@"DATETIME"])
@@ -3085,6 +3086,15 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                             [finalQuery appendFormat:@"'%@",end_datetime];
                             
                         }
+                        else if ([operator isEqualToString:@"<>"])
+                        {
+                            [finalQuery appendFormat:@"<"];
+                            [finalQuery appendFormat:@"'%@'",start_datetime];
+                            [finalQuery appendFormat:@" AND %@",rhs];
+                            
+                            [finalQuery appendFormat:@">"];
+                            [finalQuery appendFormat:@"'%@",end_datetime];
+                        }
                     }
                     
                     if([svmxLiterals caseInsensitiveCompare:MACRO_TOMMOROW] == NSOrderedSame)
@@ -3110,6 +3120,15 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                             [finalQuery appendFormat:@" %@",operator];
                             [finalQuery appendFormat:@"'%@",end_datetime];
                             
+                        }
+                        else if ([operator isEqualToString:@"<>"])
+                        {
+                            [finalQuery appendFormat:@"<"];
+                            [finalQuery appendFormat:@"'%@'",start_datetime];
+                            [finalQuery appendFormat:@" AND %@",rhs];
+                            
+                            [finalQuery appendFormat:@">"];
+                            [finalQuery appendFormat:@"'%@",end_datetime];
                         }
                     }
                     
@@ -3137,6 +3156,15 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                             [finalQuery appendFormat:@"'%@",end_datetime];
                             
                         }
+                        else if ([operator isEqualToString:@"<>"])
+                        {
+                            [finalQuery appendFormat:@"<"];
+                            [finalQuery appendFormat:@"'%@'",start_datetime];
+                            [finalQuery appendFormat:@" AND %@",rhs];
+                            
+                            [finalQuery appendFormat:@">"];
+                            [finalQuery appendFormat:@"'%@",end_datetime];
+                        }
                     }
                     for (int i=0; i<[[Bracesinvalue objectForKey:@"leftBraces"] intValue]; i++) 
                     {
@@ -3145,8 +3173,8 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                             [finalQuery appendFormat:@" COLLATE NOCASE )"];
                         }
                     }
+                    [finalQuery appendString:@"'"];
                 }
-                [finalQuery appendString:@"'"];
             }
             else
             {
@@ -3162,7 +3190,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                     }
                     else
                     {
-                        [finalQuery appendString:operator];
+                        [finalQuery appendFormat:@" %@",operator];
                         [finalQuery appendString:objectValueWithoutBrace];
 						if([operator isEqualToString:@">="] || [operator isEqualToString:@">"]) //Keerti Fix for #5157
 						{
@@ -4524,6 +4552,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                         {
                             [finalQuery appendString:yesterday_date];
                         }
+                         [finalQuery appendString:@"'"];
                     }
                     
                     if([[self getDataTypeFor:fieldName inArray:criteria_array] isEqualToString:@"DATETIME"])
@@ -4558,6 +4587,15 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                                 [finalQuery appendFormat:@"'%@",end_datetime];
                                 
                             }
+                            else if ([operator isEqualToString:@"<>"])
+                            {
+                                [finalQuery appendFormat:@"<"];
+                                [finalQuery appendFormat:@"'%@'",start_datetime];
+                                [finalQuery appendFormat:@" AND %@",rhs];
+                                
+                                [finalQuery appendFormat:@">"];
+                                [finalQuery appendFormat:@"'%@",end_datetime];
+                            }
                         }
                         
                         if([objectValue caseInsensitiveCompare:MACRO_TOMMOROW] == NSOrderedSame)
@@ -4583,6 +4621,15 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                                 [finalQuery appendFormat:@" %@",operator];
                                 [finalQuery appendFormat:@"'%@",end_datetime];
                                 
+                            }
+                            else if ([operator isEqualToString:@"<>"])
+                            {
+                                [finalQuery appendFormat:@"<"];
+                                [finalQuery appendFormat:@"'%@'",start_datetime];
+                                [finalQuery appendFormat:@" AND %@",rhs];
+                                
+                                [finalQuery appendFormat:@">"];
+                                [finalQuery appendFormat:@"'%@",end_datetime];
                             }
                         }
                         
@@ -4610,9 +4657,19 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                                 [finalQuery appendFormat:@"'%@",end_datetime];
                                 
                             }
+                            else if ([operator isEqualToString:@"<>"])
+                            {
+                                [finalQuery appendFormat:@"<"];
+                                [finalQuery appendFormat:@"'%@'",start_datetime];
+                                [finalQuery appendFormat:@" AND %@",rhs];
+
+                                [finalQuery appendFormat:@">"];
+                                [finalQuery appendFormat:@"'%@",end_datetime];
+                            }
                         }
+                         [finalQuery appendString:@"'"];
                     }
-                    [finalQuery appendString:@"'"];
+                   
                 }
                 else
                 {
@@ -4627,7 +4684,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                         }
                         else
                         {
-                            [finalQuery appendString:operator];
+                            [finalQuery appendFormat:@" %@",operator];
                             [finalQuery appendString:objectValue];
                             if([operator isEqualToString:@">="] || [operator isEqualToString:@">"]) //Keerti Fix for #5157
                             {
@@ -12364,6 +12421,11 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 		[[ZKServerSwitchboard switchboard] doCheckSession];
 
         if(!appDelegate.connection_error)
+        {
+            break;
+        }
+        //Fix for Defect 007410
+        if (![appDelegate isInternetConnectionAvailable])
         {
             break;
         }

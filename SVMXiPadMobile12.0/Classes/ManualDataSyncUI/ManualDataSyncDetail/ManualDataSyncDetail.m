@@ -1830,6 +1830,8 @@ PopoverButtons *popOver_view;
 			}
 			else
 			{
+                // Fix for defect 007410
+                [self disableControls];
 				[appDelegate.dataBase clearDatabase];
 				[appDelegate.dataBase doMetaSync];
 			   

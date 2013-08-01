@@ -4871,10 +4871,9 @@ enum BizRuleConfirmViewStatus{
                 NSMutableDictionary *header_section = [appDelegate.wsInterface GetHeaderSectionForSequenceNumber:section];
                 if (header_section == nil)
                     return 0;
-                int coloumns = [[header_section objectForKey:gSECTION_NUMBER_OF_COLUMNS] intValue];
                 int fields = 0;
                 BOOL SLA_FLAG = [[header_section objectForKey:gSLA_CLOCK] boolValue];
-                int rows ;
+                int rows=0 ;
                 if(SLA_FLAG)
                 {
                     return 2;
@@ -4884,7 +4883,15 @@ enum BizRuleConfirmViewStatus{
                     NSArray * array = [header_section  objectForKey:gSECTION_FIELDS];
                     if ([array isKindOfClass:[NSArray class]])
                         fields = [array count];
-                    rows = 1.0*fields/coloumns+0.5;
+                    //defect 007403
+                    for (int i=0; i<fields; i++)
+                    {
+                        if (rows <[[[array objectAtIndex:i] objectForKey:gFIELD_DISPLAY_ROW]intValue])
+                        {
+                            rows=[[[array objectAtIndex:i] objectForKey:gFIELD_DISPLAY_ROW]intValue];
+                        }
+                    }
+                    SMLog(@"Rows %d",rows);
                     return rows;
                 }
                 
@@ -4925,10 +4932,9 @@ enum BizRuleConfirmViewStatus{
                 NSMutableDictionary *header_section = [appDelegate.wsInterface GetHeaderSectionForSequenceNumber:selectedRow];
                 if (header_section == nil)
                     return 0;
-                int coloumns = [[header_section  objectForKey:gSECTION_NUMBER_OF_COLUMNS] intValue];
                 
                 int fields;
-                int rows;
+                int rows=0;
                 BOOL SLA_FLAG = [[header_section objectForKey:gSLA_CLOCK] boolValue];
                 if(SLA_FLAG)
                 {
@@ -4937,7 +4943,15 @@ enum BizRuleConfirmViewStatus{
                 else
                 {
                     fields = [[header_section  objectForKey:gSECTION_FIELDS] count];
-                    rows = 1.0*fields/coloumns+0.5;
+                    //defect 007403
+                    for (int i=0; i<fields; i++)
+                    {
+                        if (rows <[[[[header_section  objectForKey:gSECTION_FIELDS]  objectAtIndex:i] objectForKey:gFIELD_DISPLAY_ROW]intValue])
+                        {
+                            rows=[[[[header_section  objectForKey:gSECTION_FIELDS]  objectAtIndex:i] objectForKey:gFIELD_DISPLAY_ROW]intValue];
+                        }
+                    }
+                    SMLog(@"Rows %d",rows);
                     return rows;
                 }
 
