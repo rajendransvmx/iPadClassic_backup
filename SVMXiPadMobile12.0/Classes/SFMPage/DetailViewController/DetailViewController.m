@@ -49,8 +49,6 @@ enum BizRuleConfirmViewStatus{
 @property (nonatomic ) BOOL business_rules_success;
 @property (nonatomic, retain) UIPopoverController * popoverController;
 @property (nonatomic, retain) NSMutableDictionary * child_sfm_process_node;
-@property (nonatomic, assign) int bizAlertStatus;
-
 @property (nonatomic, retain) NSIndexPath * SfmChildSelectedIndexPath;//childSfm Jul 1st
 @property (nonatomic, retain) NSString * sfmChildSelectedRecordId;
 
@@ -13270,123 +13268,66 @@ enum BizRuleConfirmViewStatus{
     NSMutableDictionary *dataToValidate = [[NSMutableDictionary alloc] init];
     NSArray *fieldsForHeader = [[fields objectForKey:parentObjectName] allKeys];
     NSArray *childObjectsArray = [appDelegate.SFMPage objectForKey:gDETAILS];
-    NSString *filterCriteria = [NSString stringWithFormat:@"local_id = '%@'",self.currentRecordId];
-    NSArray *headerValuesArray = [appDelegate.dataBase getAllRecordsFromTable:parentObjectName
-                                                                   forColumns:fieldsForHeader
-                                                               filterCriteria:filterCriteria
-                                                                        limit:nil];
-    
-    if([headerValuesArray count])
+    NSString *filterCriteria = nil;  
+    NSArray *headerArray = [[appDelegate.SFMPage objectForKey:MHEADER] objectForKey:gHEADER_SECTIONS];
+    NSString *sectionFieldName;
+    id sectionFieldValue;
+    NSDictionary *parentObjectFields = [fields objectForKey:parentObjectName];
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+    // initialize all the header fields with the blank value
+    NSArray *headerFields = [parentObjectFields allKeys];
+    for(NSString *headerFieldName in headerFields)
     {
-        NSMutableDictionary *headerDataDict = [headerValuesArray objectAtIndex:0];
-        if([[headerValuesArray objectAtIndex:0] isKindOfClass:[NSDictionary class]])
-        {
-            
-            NSArray *headerArray = [[appDelegate.SFMPage objectForKey:MHEADER] objectForKey:gHEADER_SECTIONS];
-            NSString *sectionFieldName;
-            id sectionFieldValue;
-            NSDictionary *parentObjectFields = [fields objectForKey:parentObjectName];
-            for(NSDictionary *sectionDict in headerArray)
-            {
-                NSArray *sectionFieldsArray = [sectionDict objectForKey:@"section_Fields"];
-                for(NSDictionary *section in sectionFieldsArray)
-                {
-                    sectionFieldName = [section objectForKey:gFIELD_API_NAME];
-                    if([fieldsForHeader containsObject:sectionFieldName])
-                    {
-                        sectionFieldValue = [section objectForKey:gFIELD_VALUE_VALUE];
-                        NSString *fieldType = [parentObjectFields objectForKey:sectionFieldName];
-                        if([fieldType isEqualToString:@"picklist"])
-                        {
-                            NSString *value = (NSString *)sectionFieldValue;
-                            if(([value length] == 1) && ([value isEqualToString:@" "]))
-                            {
-                                sectionFieldValue = @"";
-                            }
-                        }
-                        else if([fieldType isEqualToString:@"datetime"])
-                        {
-                            sectionFieldValue = [iOSInterfaceObject getLocalTimeFromGMT:(NSString *)sectionFieldValue];
-                        }
-                        else if([fieldType isEqualToString:@"boolean"])
-                        {
-                            NSString *value = (NSString *)sectionFieldValue;
-                            if(([value caseInsensitiveCompare:@"true"] == NSOrderedSame)||
-                               ([value caseInsensitiveCompare:@"1"] == NSOrderedSame)    ||
-                               ([value caseInsensitiveCompare:@"yes"] == NSOrderedSame)
-                               )
-                            {
-                                sectionFieldValue = @"True";
-                            }
-                            else
-                            {
-                                sectionFieldValue = @"False";
-                            }
-                        }
-                        [headerDataDict setObject:sectionFieldValue forKey:sectionFieldName];
-                    }
-                }
-            }
-            NSDictionary *attributeDict = [NSDictionary dictionaryWithObject:parentObjectName forKey:MTYPEM];
-            [headerDataDict setObject:attributeDict forKey:@"attributes"];
-            [dataToValidate setDictionary:headerDataDict];
-        }
+        [dict setObject:@"" forKey:headerFieldName];
     }
-    else
+
+    for(NSDictionary *sectionDict in headerArray)
     {
-        NSArray *headerArray = [[appDelegate.SFMPage objectForKey:MHEADER] objectForKey:gHEADER_SECTIONS];
-        NSString *sectionFieldName;
-        id sectionFieldValue;
-        NSDictionary *parentObjectFields = [fields objectForKey:parentObjectName];
-        NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-        for(NSDictionary *sectionDict in headerArray)
+        NSArray *sectionFieldsArray = [sectionDict objectForKey:@"section_Fields"];
+        for(NSDictionary *section in sectionFieldsArray)
         {
-            NSArray *sectionFieldsArray = [sectionDict objectForKey:@"section_Fields"];
-            for(NSDictionary *section in sectionFieldsArray)
+            sectionFieldName = [section objectForKey:gFIELD_API_NAME];
+            if([fieldsForHeader containsObject:sectionFieldName])
             {
-                sectionFieldName = [section objectForKey:gFIELD_API_NAME];
-                if([fieldsForHeader containsObject:sectionFieldName])
+                sectionFieldValue = [section objectForKey:gFIELD_VALUE_VALUE];
+                NSString *fieldType = [parentObjectFields objectForKey:sectionFieldName];
+                if([fieldType isEqualToString:@"picklist"])
                 {
-                    sectionFieldValue = [section objectForKey:gFIELD_VALUE_VALUE];
-                    NSString *fieldType = [parentObjectFields objectForKey:sectionFieldName];
-                    if([fieldType isEqualToString:@"picklist"])
+                    NSString *value = (NSString *)sectionFieldValue;
+                    if(([value length] == 1) && ([value isEqualToString:@" "]))
                     {
-                        NSString *value = (NSString *)sectionFieldValue;
-                        if(([value length] == 1) && ([value isEqualToString:@" "]))
-                        {
-                            sectionFieldValue = @"";
-                        }
+                        sectionFieldValue = @"";
                     }
-                    else if([fieldType isEqualToString:@"datetime"])
-                    {
-                        sectionFieldValue = [iOSInterfaceObject getLocalTimeFromGMT:(NSString *)sectionFieldValue];
-                    }
-                    else if([fieldType isEqualToString:@"boolean"])
-                    {
-                        NSString *value = (NSString *)sectionFieldValue;
-                        if(([value caseInsensitiveCompare:@"true"] == NSOrderedSame)||
-                           ([value caseInsensitiveCompare:@"1"] == NSOrderedSame)    ||
-                           ([value caseInsensitiveCompare:@"yes"] == NSOrderedSame)
-                           )
-                        {
-                            sectionFieldValue = @"True";
-                        }
-                        else
-                        {
-                            sectionFieldValue = @"False";
-                        }
-                    }
-                    [dict setObject:sectionFieldValue forKey:sectionFieldName];
                 }
+                else if([fieldType isEqualToString:@"datetime"])
+                {
+                    sectionFieldValue = [iOSInterfaceObject getLocalTimeFromGMT:(NSString *)sectionFieldValue];
+                }
+                else if([fieldType isEqualToString:@"boolean"])
+                {
+                    NSString *value = (NSString *)sectionFieldValue;
+                    if(([value caseInsensitiveCompare:@"true"] == NSOrderedSame)||
+                       ([value caseInsensitiveCompare:@"1"] == NSOrderedSame)    ||
+                       ([value caseInsensitiveCompare:@"yes"] == NSOrderedSame)
+                       )
+                    {
+                        sectionFieldValue = @"True";
+                    }
+                    else
+                    {
+                        sectionFieldValue = @"False";
+                    }
+                }
+                [dict setObject:sectionFieldValue forKey:sectionFieldName];
             }
         }
         SMLog(@" New Record. Get the key and value from the SFMPage");
-        NSDictionary *attributeDict = [NSDictionary dictionaryWithObject:parentObjectName forKey:MTYPEM];
-        [dict setObject:attributeDict forKey:@"attributes"];
-        [dataToValidate setDictionary:dict];
-        [dict release];
-        dict = nil;
     }
+    NSDictionary *attributeDict = [NSDictionary dictionaryWithObject:parentObjectName forKey:MTYPEM];
+    [dict setObject:attributeDict forKey:@"attributes"];
+    [dataToValidate setDictionary:dict];
+    [dict release];
+    dict = nil;
     
     NSMutableDictionary *detailsDict = [[NSMutableDictionary alloc] init];
     for(NSDictionary *childDict in childObjectsArray)
@@ -13398,7 +13339,6 @@ enum BizRuleConfirmViewStatus{
         NSString *childObjectName = [childDict objectForKey:gDETAIL_OBJECT_NAME];
         NSMutableDictionary *detailDict = [[NSMutableDictionary alloc] init];
         NSMutableArray *detailArray = [[NSMutableArray alloc] init];
-        NSArray *childObjFields = [[fields objectForKey:childObjectName] allKeys];
         // Populate array
         filterCriteria = [NSString stringWithFormat:@"object_api_name_child = '%@'",childObjectName];
         NSArray *fieldApiNameArray = [appDelegate.dataBase getAllRecordsFromTable:SFCHILDRELATIONSHIP
@@ -13424,143 +13364,70 @@ enum BizRuleConfirmViewStatus{
         NSMutableArray *lines = [[NSMutableArray alloc] init];
         for(NSArray *lineInfoArray in valuesArray)
         {
-            NSString *localID = nil;
-            for(NSDictionary *linedict in lineInfoArray)
+            NSString *detailObjectName = [childDict objectForKey:@"detail_object_name"];
+            if([detailObjectName caseInsensitiveCompare:childObjectName] == NSOrderedSame)
             {
-                NSString *apiName = [linedict objectForKey:gVALUE_FIELD_API_NAME];
-                if([apiName caseInsensitiveCompare:MLOCAL_ID] == NSOrderedSame)
+                NSArray *detailsArray = [childDict objectForKey:gDETAILS_VALUES_ARRAY];
+                
+                NSString *detailFieldName;
+                id detailFieldValue;
+                for(NSArray *detailFieldsArray in detailsArray)
                 {
-                    localID = [linedict objectForKey:gVALUE_FIELD_VALUE_KEY];
-                    break;
-                }
-            }
-            if(localID == nil)
-            {
-                SMLog(@"Newly Created Record");
-                NSString *detailObjectName = [childDict objectForKey:@"detail_object_name"];
-                if([detailObjectName caseInsensitiveCompare:childObjectName] == NSOrderedSame)
-                {
-                    NSArray *detailsArray = [childDict objectForKey:gDETAILS_VALUES_ARRAY];
-                    
-                    NSString *detailFieldName;
-                    id detailFieldValue;
-                    for(NSArray *detailFieldsArray in detailsArray)
-                    {
-                        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-                        NSArray *fieldsForChild = [[fields objectForKey:childObjectName] allKeys];
-                        NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-                        for(NSDictionary *detail in detailFieldsArray)
-                        {
-                            detailFieldName = [detail objectForKey:gVALUE_FIELD_API_NAME];
-                            if([fieldsForChild containsObject:detailFieldName])
-                            {
-                                detailFieldValue = [detail objectForKey:gVALUE_FIELD_VALUE_VALUE];
-                                NSString *fieldType = [[fields objectForKey:childObjectName] objectForKey:detailFieldName];
-                                if([fieldType isEqualToString:@"picklist"])
-                                {
-                                    NSString *value = (NSString *)detailFieldValue;
-                                    if(([value length] == 1) && ([value isEqualToString:@" "]))
-                                    {
-                                        detailFieldValue = @"";
-                                    }
-                                }
-                                else if([fieldType isEqualToString:@"datetime"])
-                                {
-                                    detailFieldValue = [iOSInterfaceObject getLocalTimeFromGMT:(NSString *)detailFieldValue];
-                                }
-                                else if([fieldType isEqualToString:@"boolean"])
-                                {
-                                    NSString *value = (NSString *)detailFieldValue;
-                                    if(([value caseInsensitiveCompare:@"true"] == NSOrderedSame)||
-                                       ([value caseInsensitiveCompare:@"1"] == NSOrderedSame)    ||
-                                       ([value caseInsensitiveCompare:@"yes"] == NSOrderedSame)
-                                       )
-                                    {
-                                        detailFieldValue = @"True";
-                                    }
-                                    else
-                                    {
-                                        detailFieldValue = @"False";
-                                    }
-                                }
-                                [dict setObject:detailFieldValue forKey:detailFieldName];
-                            }
-                        }
-                        if([dict count])
-                        {
-                            NSDictionary *attributeDict = [NSDictionary dictionaryWithObject:childObjectName forKey:MTYPEM];
-                            [dict setObject:attributeDict forKey:@"attributes"];
-                            [lines addObject:dict];
-                        }
-                        [dict release];
-                        dict = nil;
-                        [pool drain];
-                    }
-                    SMLog(@" New Record. Get the key and value from the SFMPage");
-                }
-            }
-            else
-            {
-                SMLog(@"Existing Record");
-                filterCriteria = [NSString stringWithFormat:@"local_id = '%@'",localID];
-                NSArray *linesArray = [appDelegate.dataBase getAllRecordsFromTable:childObjectName
-                                                                        forColumns:childObjFields
-                                                                    filterCriteria:filterCriteria
-                                                                             limit:nil];
-                if([linesArray count])
-                {
-                    NSMutableDictionary *dbValue = [[NSMutableDictionary alloc] init];
+                    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
                     NSArray *fieldsForChild = [[fields objectForKey:childObjectName] allKeys];
-                    for(NSDictionary *linedict in lineInfoArray)
+                    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+                    // initialize all the detail fields with the blank value
+                    for(NSString *detailFieldName in fieldsForChild)
                     {
-                        NSString *apiName = [linedict objectForKey:gVALUE_FIELD_API_NAME];
-                        if([fieldsForChild containsObject:apiName])
+                        [dict setObject:@"" forKey:detailFieldName];
+                    }
+
+                    for(NSDictionary *detail in detailFieldsArray)
+                    {
+                        detailFieldName = [detail objectForKey:gVALUE_FIELD_API_NAME];
+                        if([fieldsForChild containsObject:detailFieldName])
                         {
-                            id fieldvalue = [linedict objectForKey:gVALUE_FIELD_VALUE_VALUE];
-                            NSString *fieldType = [[fields objectForKey:childObjectName] objectForKey:apiName];
+                            detailFieldValue = [detail objectForKey:gVALUE_FIELD_VALUE_VALUE];
+                            NSString *fieldType = [[fields objectForKey:childObjectName] objectForKey:detailFieldName];
                             if([fieldType isEqualToString:@"picklist"])
                             {
-                                NSString *value = (NSString *)fieldvalue;
+                                NSString *value = (NSString *)detailFieldValue;
                                 if(([value length] == 1) && ([value isEqualToString:@" "]))
                                 {
-                                    fieldvalue = @"";
+                                    detailFieldValue = @"";
                                 }
                             }
                             else if([fieldType isEqualToString:@"datetime"])
                             {
-                                fieldvalue = [iOSInterfaceObject getLocalTimeFromGMT:(NSString *)fieldvalue];
+                                detailFieldValue = [iOSInterfaceObject getLocalTimeFromGMT:(NSString *)detailFieldValue];
                             }
                             else if([fieldType isEqualToString:@"boolean"])
                             {
-                                NSString *value = (NSString *)fieldvalue;
+                                NSString *value = (NSString *)detailFieldValue;
                                 if(([value caseInsensitiveCompare:@"true"] == NSOrderedSame)||
                                    ([value caseInsensitiveCompare:@"1"] == NSOrderedSame)    ||
                                    ([value caseInsensitiveCompare:@"yes"] == NSOrderedSame)
                                    )
                                 {
-                                    fieldvalue = @"True";
+                                    detailFieldValue = @"True";
                                 }
                                 else
                                 {
-                                    fieldvalue = @"False";
+                                    detailFieldValue = @"False";
                                 }
                             }
-                            [dbValue setObject:fieldvalue forKey:apiName];
+                            [dict setObject:detailFieldValue forKey:detailFieldName];
                         }
                     }
-                    if([dbValue count])
+                    if([dict count])
                     {
                         NSDictionary *attributeDict = [NSDictionary dictionaryWithObject:childObjectName forKey:MTYPEM];
-                        [dbValue setObject:attributeDict forKey:@"attributes"];
-                        [lines addObject:dbValue];
+                        [dict setObject:attributeDict forKey:@"attributes"];
+                        [lines addObject:dict];
                     }
-                    [dbValue release];
-                    dbValue = nil;
-                }
-                else
-                {
-                    // Get the values from the
-                    SMLog(@"Lines Array is Empty");
+                    [dict release];
+                    dict = nil;
+                    [pool drain];
                 }
             }
         }

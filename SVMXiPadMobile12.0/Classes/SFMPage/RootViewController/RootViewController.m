@@ -739,7 +739,7 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
         // defect 007565
-        CGSize constraint = CGSizeMake(self.view.frame.size.width, CELL_CONTENT_HEIGHT);
+        CGSize constraint = CGSizeMake(self.view.frame.size.width-15, CELL_CONTENT_HEIGHT);
         
         NSString *errorString=[[self.conflictsArray objectAtIndex:indexPath.row]objectForKey:@"message" ];
         [errorString uppercaseString];
