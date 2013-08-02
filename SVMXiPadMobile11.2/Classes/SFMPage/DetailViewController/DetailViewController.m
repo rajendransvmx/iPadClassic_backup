@@ -600,7 +600,9 @@ extern void SVMXLog(NSString *format, ...);
     // Samman - 20 July, 2011 - Signature Capture - BEGIN
 
     BOOL isStandAloneCreate = [[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"STANDALONECREATE"];
-    if (appDelegate.signatureCaptureUpload && !isInEditDetail && !isStandAloneCreate && !isInViewMode)
+    //NSLog(@"%d %d %d %d", appDelegate.signatureCaptureUpload, isInEditDetail, isStandAloneCreate, isInViewMode);
+    //if (appDelegate.signatureCaptureUpload && !isInEditDetail && !isStandAloneCreate && !isInViewMode)
+    if (appDelegate.signatureCaptureUpload && !isInEditDetail && !isStandAloneCreate)
     {
 		NSString *act = [appDelegate.wsInterface.tagsDictionary objectForKey:ACTIONS];
         actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 43, 35)];
@@ -642,7 +644,9 @@ extern void SVMXLog(NSString *format, ...);
     SMLog(@"Tool Bar Width = %d",toolBarWidth);
     
         UIToolbar* toolbar;
-    if (appDelegate.signatureCaptureUpload && !isInEditDetail && !isStandAloneCreate && !isInViewMode){
+    //if (appDelegate.signatureCaptureUpload && !isInEditDetail && !isStandAloneCreate && !isInViewMode)
+    if (appDelegate.signatureCaptureUpload && !isInEditDetail && !isStandAloneCreate)
+    {
 
         toolbar = [[[UIToolbar alloc] initWithFrame:CGRectMake(self.view.frame.size.width -220, 0, 220, 44)] autorelease];
     }
@@ -716,7 +720,9 @@ extern void SVMXLog(NSString *format, ...);
     
     
     BOOL isStandAloneCreate = [[appDelegate.SFMPage objectForKey:gPROCESSTYPE] isEqualToString:@"STANDALONECREATE"];
-    if (appDelegate.signatureCaptureUpload && !isInEditDetail && !isStandAloneCreate && !isInViewMode)
+    //if (appDelegate.signatureCaptureUpload && !isInEditDetail && !isStandAloneCreate && !isInViewMode)
+    //NSLog(@"%d %d %d %d", appDelegate.signatureCaptureUpload, isInEditDetail, isStandAloneCreate, isInViewMode);
+    if (appDelegate.signatureCaptureUpload && !isInEditDetail && !isStandAloneCreate)
     {
         UIButton * actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 35, 33)];
         [actionButton setImage:[UIImage imageNamed:@"sfm_signature_capture"] forState:UIControlStateNormal];
