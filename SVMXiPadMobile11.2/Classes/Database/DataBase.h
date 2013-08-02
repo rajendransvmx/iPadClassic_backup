@@ -181,7 +181,6 @@ PopoverButtons *popOver_view;
 // Location Ping
 - (void) createUserGPSTable;
 - (NSString *) getSettingValueWithName:(NSString *)settingName;
-- (void) deleteSequenceofTable;
 - (void) insertrecordIntoUserGPSLog:(NSDictionary *)locationInfo;
 - (void) purgeLocationPingTable;
 - (void) deleteSequenceofTable:(NSString *)tableName;

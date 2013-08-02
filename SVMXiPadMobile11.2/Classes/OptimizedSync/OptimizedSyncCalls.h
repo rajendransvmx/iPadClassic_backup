@@ -25,12 +25,14 @@
 	
 	NSString * lastSyncTime;
 	NSString * putUpdateSyncTime;
+	NSMutableArray * purgingEventIdArray;
 }
 
 @property (nonatomic, assign) BOOL callBackValue;
 
 @property (nonatomic, retain) NSString * lastSyncTime;
 @property (nonatomic, retain) NSString * putUpdateSyncTime;
+@property (nonatomic, retain) NSMutableArray * purgingEventIdArray;
 
 //Methods
 -(void)GetOptimizedDownloadCriteriaRecordsFor:(NSString *)event_name requestId:(NSString *)requestId;

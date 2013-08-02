@@ -29,6 +29,7 @@
 @synthesize callBackValue;
 @synthesize lastSyncTime;
 @synthesize putUpdateSyncTime;
+@synthesize purgingEventIdArray;
 
 - (id) init
 {
@@ -86,7 +87,7 @@
 		
 		INTF_WebServicesDefServiceSvc_SVMXMap * put_update = [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
 		
-		if([event_name isEqualToString:GET_DELETE_DC_OPTIMZED])
+		if([event_name isEqualToString:@"ONE_CALL_SYNC"])
 		{
 			SVMXCMap_lastModified.value = [appDelegate.wsInterface get_SYNCHISTORYTime_ForKey:LAST_OSC_TIMESTAMP] == nil ?@"":[appDelegate.wsInterface get_SYNCHISTORYTime_ForKey:LAST_OSC_TIMESTAMP];
 			//Compressing Putdelete
@@ -880,22 +881,34 @@
 		
 		NSString * key = (svmxMap.key != nil)?(svmxMap.key):@"";
 		
-		if ([key isEqualToString:@"GET_DELETE_DC_OPTIMZED"])
+		if ([key isEqualToString:GET_DELETE_DC_OPTIMZED])
 		{
 			temp_event_name = GET_DELETE;
 			[self parseGetOptimizedData:temp_event_name data:svmxMap.valueMap];
 		}
-		if ([key isEqualToString:@"GET_INSERT_DC_OPTIMZED"])
+		else if ([key isEqualToString:GET_INSERT_DC_OPTIMZED])
 		{
 			temp_event_name = GET_INSERT;
 			[self parseGetOptimizedData:temp_event_name data:svmxMap.valueMap];
 		}
-		if ([key isEqualToString:@"GET_UPDATE_DC_OPTIMZED"])
+		else if ([key isEqualToString:GET_UPDATE_DC_OPTIMZED])
 		{
 			temp_event_name = GET_UPDATE;
 			[self parseGetOptimizedData:temp_event_name data:svmxMap.valueMap];
 		}
-		if ([key isEqualToString:@"PUT_DELETE"])
+		else if ([key isEqualToString:GET_DELETE])
+		{
+			[self parseGetOptimizedData:key data:svmxMap.valueMap];
+		}
+		else if ([key isEqualToString:GET_UPDATE])
+		{
+			[self parseGetOptimizedData:key data:svmxMap.valueMap];
+		}
+		else if ([key isEqualToString:GET_INSERT])
+		{
+			[self parseGetOptimizedData:key data:svmxMap.valueMap];
+		}
+		else if ([key isEqualToString:@"PUT_DELETE"])
 		{
 			NSString * delete_event_name = key;
 			NSMutableArray * internal_response =  svmxMap.lstInternal_Response;
@@ -910,7 +923,7 @@
 			}
 
 		}
-		if ([key isEqualToString:@"PUT_UPDATE"])
+		else if ([key isEqualToString:@"PUT_UPDATE"])
 		{
 			NSString * updateEvent_name = key;
 			NSMutableArray * internal_response =  svmxMap.lstInternal_Response;
@@ -924,7 +937,7 @@
 				[self put_update:updateEvent_name valuemap:update_array];
 			}
 		}
-		if ([key isEqualToString:@"PUT_INSERT"])
+		else if ([key isEqualToString:@"PUT_INSERT"])
 		{
 			NSString * insertEventName = key;
 			
@@ -940,7 +953,7 @@
 				
 			}
 		}
-		if ([key isEqualToString:@"CALL_BACK"])
+		else if ([key isEqualToString:@"CALL_BACK"])
 		{
 			callBackValue = [svmxMap.value boolValue];
 			NSMutableArray * context = svmxMap.valueMap;
@@ -950,25 +963,12 @@
 			callBackContextValue = contextValue.value;
 		}
 		
-		if ([key isEqualToString:@"LAST_SYNC"])
+		else if ([key isEqualToString:@"LAST_SYNC"])
 		{
 			self.lastSyncTime = svmxMap.value;
 		}
 	}
-	if ([event_name isEqualToString:@"GET_INSERT_DC_OPTIMZED"])
-	{
-		appDelegate.Incremental_sync_status = GET_INSERT_DC_OPTIMZED_DONE;
-	}
-	else if ([event_name isEqualToString:@"GET_UPDATE_DC_OPTIMZED"])
-	{
-		appDelegate.Incremental_sync_status = GET_UPDATE_DC_OPTIMZED_DONE;
-	}
-	else if ([event_name isEqualToString:@"GET_DELETE_DC_OPTIMZED"])
-	{
-		appDelegate.Incremental_sync_status = GET_DELETE_DC_OPTIMZED_DONE;
-	}
-	
-	
+	appDelegate.Incremental_sync_status = ONE_CALL_SYNC_DONE;
 }
 
 - (void) parseTXFetch:(NSMutableArray *) array
@@ -1113,6 +1113,17 @@
 				}
 			}
 		}
+		else if ([key isEqualToString:@"ALL_EVENTS"])
+		{
+			NSMutableArray * allEvents = [svmxMap valueMap];
+			
+			for (INTF_WebServicesDefServiceSvc_SVMXMap * eventId in allEvents)
+			{
+				NSString * eventString = eventId.value;
+				self.purgingEventIdArray =  [appDelegate.wsInterface getIdsFromJsonString:eventString];
+				
+			}
+		}
 		else if([key isEqualToString:@"Object_Name"] ||[key isEqualToString:@"Parent_Object"] || [key isEqualToString:@"Child_Object"])
 		{
 			NSString * record_type = @"";
@@ -1179,39 +1190,6 @@
 		}
 	}
 	[appDelegate.databaseInterface  insertRecordIdsIntosyncRecordHeap:record_dict];
-//	if([eventname isEqualToString:GET_UPDATE])
-//	{
-//		appDelegate.Incremental_sync_status = GET_UPDATE_DONE;
-//	}
-//	else if ([eventname isEqualToString:GET_INSERT])
-//	{
-//		appDelegate.Incremental_sync_status = GET_INSERT_DONE;
-//	}
-//	else if ([eventname isEqualToString:GET_DELETE])
-//	{
-//		appDelegate.Incremental_sync_status = GET_DELETE_DONE;
-//	}
-//
-//	if(callBackValue)
-//	{
-//		//		[self  GetOptimizedDownloadCriteriaRecordsFor:event_name requestId:syncRequestId];
-//	}
-//	else
-//	{
-//		if ([eventname isEqualToString:@"GET_INSERT_DC_OPTIMZED"])
-//		{
-//			appDelegate.Incremental_sync_status = GET_INSERT_DC_OPTIMZED_DONE;
-//		}
-//		else if ([eventname isEqualToString:@"GET_UPDATE_DC_OPTIMZED"])
-//		{
-//			appDelegate.Incremental_sync_status = GET_UPDATE_DC_OPTIMZED_DONE;
-//		}
-//		else if ([eventname isEqualToString:@"GET_DELETE_DC_OPTIMZED"])
-//		{
-//			appDelegate.Incremental_sync_status = GET_DELETE_DC_OPTIMZED_DONE;
-//		}
-//	}
-
 }
 
 
@@ -1342,22 +1320,6 @@
 	SMLog(@"  GET_INSERT/PUT_INSERT Processing ends: %@", [NSDate date]);
 	[appDelegate.databaseInterface insertRecordIdsIntosyncRecordHeap:record_dict];
 	[appDelegate.databaseInterface insertSyncConflictsIntoSYNC_CONFLICT:conflict_dict];
-	
-	//            [self getAllRecordsForOperationType:INSERT];
-	//
-	//            if([appDelegate.dataSync_dict count] > 0)
-	//            {
-	//                [self Put:@"PUT_INSERT"];
-	//            }
-	//            else
-	//            {
-	//                appDelegate.Incremental_sync_status = PUT_INSERT_DONE;
-	//            }
-	//
-	//            if ([wsResponse.result.eventName isEqualToString:@"GET_INSERT"])
-	//            {
-	//                appDelegate.Incremental_sync_status = GET_INSERT_DONE;
-	//            }
 }
 
 - (void) put_update:(NSString *)event_name valuemap:(NSMutableArray *)update_array
@@ -1488,14 +1450,6 @@
 	SMLog(@"UPDATE %@", record_dict);
 	[appDelegate.databaseInterface  insertRecordIdsIntosyncRecordHeap:record_dict];
 	[appDelegate.databaseInterface  insertSyncConflictsIntoSYNC_CONFLICT:conflict_dict];
-	//            if([wsResponse.result.eventName isEqualToString:@"GET_UPDATE"])
-	//            {
-	//                appDelegate.Incremental_sync_status = GET_UPDATE_DONE;
-	//            }
-	//            else if ([wsResponse.result.eventName isEqualToString:@"PUT_UPDATE"])
-	//            {
-	//                appDelegate.Incremental_sync_status = PUT_UPDATE_DONE;
-	//            }
 }
 - (void) put_delete:(NSString *)event_name valuemap:(NSMutableArray *)delete_array
 {
@@ -1614,16 +1568,6 @@
 	
 	[appDelegate.databaseInterface  insertRecordIdsIntosyncRecordHeap:record_dict];
 	[appDelegate.databaseInterface  insertSyncConflictsIntoSYNC_CONFLICT:conflict_dict];
-	//				if([delete_event_name isEqualToString:@"GET_DELETE"])
-	//				{
-	//					appDelegate.Incremental_sync_status = GET_DELETE_DONE;
-	//				}
-	//				else if ([delete_event_name isEqualToString:@"PUT_DELETE"])
-	//				{
-	//					appDelegate.Incremental_sync_status = PUT_DELETE_DONE;
-	//				}
-	//		}
-
 }
 
 
@@ -1634,6 +1578,8 @@
 	[syncRequestId release];
 	[jsonWriter release];
 	[jsonParserForDataSync release];
+	[lastSyncTime release];
+	[putUpdateSyncTime release];
 	[super dealloc];
 }
 

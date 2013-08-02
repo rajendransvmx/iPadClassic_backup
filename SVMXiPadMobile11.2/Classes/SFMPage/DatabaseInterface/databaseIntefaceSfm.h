@@ -467,8 +467,8 @@
 
 //Radha - //Changes for optimized sync - one sync call
 #define GET_DELETE_DC_OPTIMZED		  @"GET_DELETE_DC_OPTIMZED"
-
-
+#define GET_INSERT_DC_OPTIMZED		  @"GET_INSERT_DC_OPTIMZED"
+#define GET_UPDATE_DC_OPTIMZED		  @"GET_UPDATE_DC_OPTIMZED"
 
 #define DEPENDENT_PICKLIST       @"dependent_picklist"
 #define CONTROLLER_FIRLD         @"controler_field"

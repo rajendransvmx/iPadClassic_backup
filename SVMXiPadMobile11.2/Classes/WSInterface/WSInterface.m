@@ -2572,6 +2572,16 @@ NSDate * syncCompleted;
         
         //sahana dec 14 2012
         [appDelegate.dataBase purgingDataOnSyncSettings:date tableName:@"Event" Action:NOT_OWNER_GREATERTHAN];
+		
+		//One Call Sync
+		if (doOneCallSync && optimizeSyncCalls.purgingEventIdArray != nil)
+		{
+			NSString * value = [optimizeSyncCalls.purgingEventIdArray componentsJoinedByString:@"','"];
+			NSMutableString * eventId = [NSMutableString stringWithFormat:@"'%@'", value];
+			[appDelegate.dataBase deleteEventNotRelatedToLoggedInUser:eventId tableName:@"Event"];
+			[optimizeSyncCalls.purgingEventIdArray release];
+			optimizeSyncCalls.purgingEventIdArray = nil;
+		}
 
         //Radha - Defect Fic 4558
         [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_EVENT_DATA_SYNC object:nil];
@@ -2656,27 +2666,30 @@ NSDate * syncCompleted;
         else
         {
             //sahana
-            [self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP"];
-            while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-            {
-    #ifdef kPrintLogsDuringWebServiceCall
-                SMLog(@"WSinterface.m : DOINC_DATA_SYNC: CLEAN_UP");
-    #endif
+			if (!doOneCallSync)
+			{
+				[self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP"];
+				while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+				{
+		#ifdef kPrintLogsDuringWebServiceCall
+					SMLog(@"WSinterface.m : DOINC_DATA_SYNC: CLEAN_UP");
+		#endif
 
-                if ( ![appDelegate isInternetConnectionAvailable])
-                {
-                    [appDelegate setSyncStatus:SYNC_GREEN];
-                }
-                if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
-                    break;
-                if(appDelegate.connection_error)
-                {
-                    //Defect 6774
-                    [appDelegate checkifConflictExistsForConnectionError];
-                    break;
-                }
-                
-            }
+					if ( ![appDelegate isInternetConnectionAvailable])
+					{
+						[appDelegate setSyncStatus:SYNC_GREEN];
+					}
+					if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
+						break;
+					if(appDelegate.connection_error)
+					{
+						//Defect 6774
+						[appDelegate checkifConflictExistsForConnectionError];
+						break;
+					}
+					
+				}
+			}
             
             [self setSyncReqId:@""];
         }
@@ -2850,7 +2863,12 @@ NSDate * syncCompleted;
 	
 	[self getAllRecordsForOperationType:DELETE];
 	
-	[optimizeSyncCalls GetOptimizedDownloadCriteriaRecordsFor:@"GET_DELETE_DC_OPTIMZED" requestId:Insert_requestId];
+	if (optimizeSyncCalls.purgingEventIdArray == nil)
+	{
+		optimizeSyncCalls.purgingEventIdArray = [[NSMutableArray alloc] initWithCapacity:0];
+	}
+	
+	[optimizeSyncCalls GetOptimizedDownloadCriteriaRecordsFor:@"ONE_CALL_SYNC" requestId:Insert_requestId];
 	
 	while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
 	{
@@ -2879,7 +2897,7 @@ NSDate * syncCompleted;
 			break;
 		}
 		
-		if (appDelegate.Incremental_sync_status == GET_DELETE_DC_OPTIMZED_DONE || appDelegate.Incremental_sync_status == GET_INSERT_DC_OPTIMZED_DONE || appDelegate.Incremental_sync_status ==  GET_UPDATE_DC_OPTIMZED_DONE)
+		if (appDelegate.Incremental_sync_status == ONE_CALL_SYNC_DONE)
 		{
 			break;
 		}
@@ -8789,23 +8807,11 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             }
         }
 		//Changes for optimized sync - one sync call
-		if ([wsResponse.result.eventName isEqualToString:@"GET_INSERT_DC_OPTIMZED"] || [wsResponse.result.eventName isEqualToString:@"GET_UPDATE_DC_OPTIMZED"] || [wsResponse.result.eventName isEqualToString:@"GET_DELETE_DC_OPTIMZED"])
+		if ([wsResponse.result.eventName isEqualToString:@"GET_INSERT_DC_OPTIMZED"] || [wsResponse.result.eventName isEqualToString:@"GET_UPDATE_DC_OPTIMZED"] || [wsResponse.result.eventName isEqualToString:@"GET_DELETE_DC_OPTIMZED"] || [wsResponse.result.eventName isEqualToString:@"ONE_CALL_SYNC"])
 		{
 			NSString * event_name = wsResponse.result.eventName;
 			
 			[optimizeSyncCalls parseOptimizedDownloadCriteriaResponse:event_name response:[wsResponse.result valueMap]];
-//			if ([event_name isEqualToString:@"GET_INSERT_DC_OPTIMZED"])
-//			{
-//				appDelegate.Incremental_sync_status = GET_INSERT_DC_OPTIMZED_DONE;
-//			}
-//			else if ([event_name isEqualToString:@"GET_UPDATE_DC_OPTIMZED"])
-//			{
-//				appDelegate.Incremental_sync_status = GET_UPDATE_DC_OPTIMZED_DONE;
-//			}
-//			else if ([event_name isEqualToString:@"GET_DELETE_DC_OPTIMZED"])
-//			{
-//				appDelegate.Incremental_sync_status = GET_DELETE_DC_OPTIMZED_DONE;
-//			}
 		}
 		//Changes for optimized sync - one sync call
 		if ([wsResponse.result.eventName isEqualToString:@"TX_FETCH_OPTIMZED"])
