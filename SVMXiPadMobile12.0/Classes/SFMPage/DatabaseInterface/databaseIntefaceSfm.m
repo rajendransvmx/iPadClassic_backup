@@ -11591,44 +11591,6 @@ extern void SVMXLog(NSString *format, ...);
 #pragma mark -
 #pragma mark FORMFILL
 //Aparna: FORMFILL
-- (NSDictionary *)objectMappingInfoForMapping:(NSString *)mappingId
-{
-    NSMutableDictionary *objMappingDict = [NSMutableDictionary dictionary];
-    
-    sqlite3_stmt * stmt;
-    NSString *selectQuery = [NSString stringWithFormat:@"SELECT %@ , %@, %@ From %@ WHERE %@ = '%@'",TARGET_OBJECT_NAME, SOURCE_OBJECT_NAME, OBJECT_MAPPING_ID, OBJECT_MAPPING, OBJECT_MAPPING_ID, mappingId];
-    
-    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, NULL) == SQLITE_OK)
-    {
-        if (synchronized_sqlite3_step(stmt) == SQLITE_ROW)
-        {
-            char * targetObjNameChar= (char *) synchronized_sqlite3_column_text(stmt, 0);
-            if ((targetObjNameChar != nil) && strlen(targetObjNameChar))
-            {
-                NSString *targetObjName = [NSString stringWithUTF8String:targetObjNameChar];
-                [objMappingDict setValue:targetObjName forKey:TARGET_OBJECT_NAME];
-            }
-            
-            char * sourceObjNameChar= (char *) synchronized_sqlite3_column_text(stmt, 1);
-            if ((sourceObjNameChar != nil) && strlen(sourceObjNameChar))
-            {
-                NSString *sourceObjName = [NSString stringWithUTF8String:sourceObjNameChar];
-                [objMappingDict setValue:sourceObjName forKey:SOURCE_OBJECT_NAME];
-            }
-            
-            char * objMappingIdChar = (char *) synchronized_sqlite3_column_text(stmt, 2);
-            if ((objMappingIdChar != nil) && strlen(objMappingIdChar))
-            {
-                NSString *objMappingId = [NSString stringWithUTF8String:objMappingIdChar];
-                [objMappingDict setValue:objMappingId forKey:OBJECT_MAPPING_ID];
-            }
-            
-        }
-    }
-    synchronized_sqlite3_finalize(stmt);
-    return objMappingDict;
-}
-
 - (NSArray *) objectMappingComponentInfoForMappingId:(NSString *)mappingId
 {
     NSMutableArray *objMappingCompInfoArray = [NSMutableArray array];

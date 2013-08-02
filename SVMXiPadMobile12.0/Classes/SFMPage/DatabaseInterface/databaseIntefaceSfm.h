@@ -387,7 +387,6 @@
 -(NSString *)getFieldApiNameFromString:(NSString *)valueString forLiteral:(NSString *)literal;
 
 //Aparna: FORMFILL
-- (NSDictionary *)objectMappingInfoForMappingId:(NSString *)mappingId;
 - (NSArray *)objectMappingComponentInfoForMappingId:(NSString *)mappingId;
 - (NSDictionary *)recordsToUpdateForObjectId:(NSString *)objectId
                                    mappingId:(NSString *)mappingId
