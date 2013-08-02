@@ -1645,6 +1645,8 @@ extern void SVMXLog(NSString *format, ...);
        }
         
     }
+    
+    synchronized_sqlite3_finalize(stmt);
 	@try{
     if ([imageData length] > 0)
     {

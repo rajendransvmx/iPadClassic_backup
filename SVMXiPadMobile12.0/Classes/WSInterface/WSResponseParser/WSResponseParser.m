@@ -115,10 +115,9 @@ extern void SVMXLog(NSString *format, ...);
             }
             else
             {
-                sqlite3_errmsg(appDelegate.db);
                 NSLog(@" Failure prepared insertRecords  -  %d \n%s", returnValue, sqlite3_errmsg(appDelegate.db) );
             }
-             sqlite3_finalize(statement);
+            synchronized_sqlite3_finalize(statement);
 
         }
     [self.dataBase endTransaction];

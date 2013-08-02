@@ -462,8 +462,12 @@ const NSUInteger kNumImages = 7;
     
     [[PerformanceAnalytics sharedInstance] stopPerformAnalysis];
     
-    [[PerformanceAnalytics sharedInstance] setCode:@"PA-IN-012"
-                                    andDescription:@"Initial Sync - Stage 3 : Caching + Deletion"];
+    [[PerformanceAnalytics sharedInstance] setCode:@"PA-IN-015"
+                                    andDescription:@"Initial Sync - Stage 3 : DB Mem "];
+    
+    [[PerformanceAnalytics sharedInstance] recordDBMemoryUsage:[appDelegate.dataBase dbMemoryUsage]
+                                                    perContext:@"Initial Sync"];
+    [[PerformanceAnalytics sharedInstance] setDbVersion:[appDelegate.dataBase dbVersion]];
     
     [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"Initial Sync"
                                                          andRecordCount:0];
@@ -512,6 +516,12 @@ const NSUInteger kNumImages = 7;
             appDelegate.initial_sync_succes_or_failed = INITIAL_SYNC_SUCCESS;
             
             NSLog(@" ------- doMetaSync  Started -----");
+            
+            int c1 = [appDelegate.dataBase totalNumberOfOperationCountForDatabase:appDelegate.db];
+
+            
+            [[PerformanceAnalytics sharedInstance] registerOperationCount:c1
+                                                              forDatabase:@"DB"];
             
             [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"doMetaSync"
                                                                  andRecordCount:0];
@@ -784,6 +794,36 @@ const NSUInteger kNumImages = 7;
     [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"Initial Sync"
                                                          andRecordCount:0];
     
+    int c1 = [appDelegate.dataBase totalNumberOfOperationCountForDatabase:appDelegate.db];
+    
+    [[PerformanceAnalytics sharedInstance] registerOperationCount:c1
+                                                      forDatabase:@"DB"];
+    
+    if ( (appDelegate.dataBase != nil) && (appDelegate.dataBase.tempDb != nil) )
+    {
+        int c2 = [appDelegate.dataBase totalNumberOfOperationCountForDatabase:appDelegate.dataBase.tempDb];
+    
+        [[PerformanceAnalytics sharedInstance] registerOperationCount:c2
+                                                      forDatabase:@"tempDB"];
+        
+        [[PerformanceAnalytics sharedInstance] recordDBMemoryUsage:[appDelegate.dataBase dbMemoryUsage]
+                                                        perContext:@"Current-insyc-before-tmp"];
+        [appDelegate.dataBase releaseHeapMemoryForDatabase:appDelegate.dataBase.tempDb];
+        [[PerformanceAnalytics sharedInstance] recordDBMemoryUsage:[appDelegate.dataBase dbMemoryUsage]
+                                                        perContext:@"Current-insyc-after-tmp"];
+        
+    }
+    
+
+    [[PerformanceAnalytics sharedInstance] recordDBMemoryUsage:[appDelegate.dataBase dbMemoryUsage]
+                                                    perContext:@"Current-insyc-before"];
+    [appDelegate.dataBase releaseHeapMemoryForDatabase:appDelegate.db];
+    
+    [[PerformanceAnalytics sharedInstance] recordDBMemoryUsage:[appDelegate.dataBase dbMemoryUsage]
+                                                    perContext:@"Current-insyc-after"];
+    
+    [[PerformanceAnalytics sharedInstance] recordDBMemoryUsage:[appDelegate.dataBase dbMemoryUsage]
+                                                        perContext:@"Current"];
     [[PerformanceAnalytics sharedInstance] displayCurrentStatics];
 }
 

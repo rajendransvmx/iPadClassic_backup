@@ -224,6 +224,8 @@ extern void SVMXLog(NSString *format, ...);
                 localId = @"";
         }
     }
+        
+    synchronized_sqlite3_finalize(labelstmt);
     
     NSString *processId =nil;
     

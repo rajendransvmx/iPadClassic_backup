@@ -304,11 +304,17 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate clearDocumentDirectoryForOPDOCS];
         [appDelegate moveJavascriptFiles];
         
+        // Vipind-db-optmz - 3
+        [appDelegate.dataBase closeDatabase:appDelegate.db];
+        [appDelegate releaseMainDatabase];
         [appDelegate.dataBase deleteDatabase:DATABASENAME1];
         //sahana dec 4 2012
         [self removeSyncHistoryPlist];
         
-        [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+        if(appDelegate.db == nil)
+        {
+            [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+        }
 
       
         if(![appDelegate isInternetConnectionAvailable])

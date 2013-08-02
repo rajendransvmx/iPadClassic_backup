@@ -339,6 +339,7 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     
+    synchronized_sqlite3_finalize(selectStmt);
     if (count > 0)
         return TRUE;
     else

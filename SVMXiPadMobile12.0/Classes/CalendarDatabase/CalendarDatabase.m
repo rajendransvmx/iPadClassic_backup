@@ -2177,7 +2177,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%d", ret);
         
         
-        if ( synchronized_sqlite3_prepare_v2(appDelegate.db, _query9,-1, &statement9, nil) == SQLITE_OK )
+        if ( ret  == SQLITE_OK )
         {
             while(synchronized_sqlite3_step(statement9) == SQLITE_ROW)
             {
@@ -3058,6 +3058,8 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     
+     synchronized_sqlite3_finalize(stmt);
+    
     return docArray;
     
 }
@@ -3263,7 +3265,7 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     data = [Base64 decode:opdocData];
-    
+    synchronized_sqlite3_finalize(statement);
     return data;
 }
 - (NSString *) getSFIdOfDocForlocalId:(NSString *)name
@@ -3281,6 +3283,7 @@ extern void SVMXLog(NSString *format, ...);
                 SFID = [NSString stringWithUTF8String:field];
         }
     }
+    synchronized_sqlite3_finalize(stmt);
     return SFID;
 }
 
@@ -3455,6 +3458,7 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     
+    synchronized_sqlite3_finalize(statement);
     if (count > 0)
         return TRUE;
     else
@@ -3478,6 +3482,7 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     
+    synchronized_sqlite3_finalize(statement);
     if (count > 0)
         return TRUE;
     else

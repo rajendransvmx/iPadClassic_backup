@@ -13,11 +13,16 @@
 #import "PerformanceAnalytics.h"
 #import "Utility.h" // Damodar - OPDoc
 #import "SSZipArchive.h"
+#import "Util.h"
 
 // Vipin-db-optmz
 // DB Constatns
 static NSString * const kDBBeginTransaction = @"BEGIN TRANSACTION";
 static NSString * const kDBEndTransaction = @"END TRANSACTION";
+
+// Attachment name constant
+static NSString * const kAttachementNameTempSFM = @"tempsfm";
+static NSString * const kAttachementNameSFM = @"sfm";
 
 
 
@@ -48,6 +53,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 
 // Vipin-db-optmz
 @synthesize dbTransactionCount;
+@synthesize dbOperationCounterDict;
 
 
 //Damodar - OPDoc
@@ -61,6 +67,14 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     return self;
 }
 
+- (void)loadTempDatabaseFileFromPath
+{
+    filepath = @"";
+    NSArray *searchPaths =NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentFolderPath = [searchPaths objectAtIndex: 0];
+    filepath = [documentFolderPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.%@", TEMPDATABASENAME, DATABASETYPE1]];
+}
+
 
 // Vipin-db-optmz
 #pragma mark - Database Transaction Management
@@ -69,7 +83,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     if (self.dbTransactionCount > 0)
     {
         self.dbTransactionCount++;
-        NSLog(@" [TXN]  incrmented transaction count - %d", self.dbTransactionCount);
+        SMLog(@"[TXN] + db_txn_count - %d", self.dbTransactionCount);
         
         return SQLITE_OK;
     }
@@ -79,13 +93,13 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     
     if (executionResult != SQLITE_OK )
     {
-        NSLog(@" beginTransaction : %d %@", executionResult, [NSString stringWithUTF8String:err]);
+        NSLog(@"[TXN] + db_txn begin failed : %d : %@", executionResult, [NSString stringWithUTF8String:err]);
     }
     else
     {
         // Lets record as first transaction
         self.dbTransactionCount = 1;
-        NSLog(@" [TXN]  incrmented transaction count - %d - begin", self.dbTransactionCount);
+        NSLog(@"[TXN] + db_txn_count - %d - begin", self.dbTransactionCount);
     }
     return executionResult;
 }
@@ -96,7 +110,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     if (self.dbTransactionCount > 1)
     {
         self.dbTransactionCount--;
-        NSLog(@" [TXN]  decremented transaction count - %d", self.dbTransactionCount);
+        SMLog(@"[TXN] - db_txn_count - %d", self.dbTransactionCount);
         return SQLITE_OK;
     }
     
@@ -105,13 +119,13 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     
     if (executionResult != SQLITE_OK )
     {
-        NSLog(@" endTransaction : %d %@", executionResult, [NSString stringWithUTF8String:err]);
+        NSLog(@"[TXN] - db_txn end failed : %d : %@", executionResult, [NSString stringWithUTF8String:err]);
     }
     else
     {
         // Lets reset to Zero since we closed all transaction safely.
         self.dbTransactionCount = 0;
-        NSLog(@" [TXN]  decremented transaction count - %d - commit", self.dbTransactionCount);
+        NSLog(@"[TXN] - db_txn_count - %d - commit", self.dbTransactionCount);
     }
     
     return executionResult;
@@ -132,7 +146,6 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     }
     else
     {
-        NSLog(@"[DB] NOT Vacuumed DataBase : %d %@", executionResult, [NSString stringWithUTF8String:err]);
         SMLog(@"[DB] NOT Vacuumed DataBase : %d %@", executionResult, [NSString stringWithUTF8String:err]);
     }
     
@@ -147,7 +160,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 - (void)doTableIndexCreation
 {
     
-    NSLog(@"sync_Record_Heap_Index Creating....");
+    SMLog(@"sync_Record_Heap_Index Creating....");
     
     NSString *query = [NSString stringWithFormat:@"CREATE INDEX IF NOT EXISTS sync_Record_Heap_Index ON sync_Records_Heap (sf_id ASC, local_id ASC, object_name ASC, sync_flag ASC)"];
     [self createTable:query];
@@ -234,7 +247,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     
     // NSLog(@"%@\n", SyncRecordHeapIndexDeletionMessage);
     
-    NSLog(@"\n%@\n%@\n%@\n%@", SyncRecordHeapIndexDeletionMessage1, SyncRecordHeapIndexDeletionMessage2, SyncRecordHeapIndexDeletionMessage3, SyncRecordHeapIndexDeletionMessage4);
+    SMLog(@"\n%@\n%@\n%@\n%@", SyncRecordHeapIndexDeletionMessage1, SyncRecordHeapIndexDeletionMessage2, SyncRecordHeapIndexDeletionMessage3, SyncRecordHeapIndexDeletionMessage4);
     
     
     //NSLog(@"  %@ \n %@ \n %@ \n %@ \n %@ \n", SFObjectFieldIndexDeletionMessage, RTIndexDeletionMessage, SFNamedSearchIndexDeletionMessage, SFNamedSearchComponentIndexDeletionMessage, SyncRecordHeapIndexDeletionMessage);
@@ -461,7 +474,6 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         if(appDelegate.isSfmSearchSortingAvailable)
         {
            
-            NSLog(@" isSfmSearchSortingAvailable - TRUE ");
             for(int m=0; m<[objectsArray count]; m++)
             {
                 NSDictionary *objectDict = [objectsArray objectAtIndex:m];
@@ -534,7 +546,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                     
                     if (synchronized_sqlite3_step(preparedStmtSearchObject) != SQLITE_DONE)
                     {
-                        NSLog(@"insertValuesintoSFMObjectTable : Commit Failed! - SFM_Search_Objects\n");
+                        SMLog(@"insertValuesintoSFMObjectTable : Commit Failed! - SFM_Search_Objects\n");
                     }
                     
                     sqlite3_clear_bindings(preparedStmtSearchObject);
@@ -623,7 +635,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                                 
                                 if (synchronized_sqlite3_step(preparedStmtSearchFieldSorting) != SQLITE_DONE)
                                 {
-                                    NSLog(@"insertValuesintoSFMObjectTable : Commit Failed! - SFM_Search_Objects - FieldSorting\n");
+                                    SMLog(@"insertValuesintoSFMObjectTable : Commit Failed! - SFM_Search_Objects - FieldSorting\n");
                                 }
                                 
                                 sqlite3_clear_bindings(preparedStmtSearchFieldSorting);
@@ -638,7 +650,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                             }
                             else
                             {
-                                NSLog(@"insertValuesintoSFMObjectTable : prepare Failed! - SFM_Search_Objects - FieldSorting \n  message : %d - %@",  preparedStmtSearchFieldSortingResult, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
+                                SMLog(@"insertValuesintoSFMObjectTable : prepare Failed! - SFM_Search_Objects - FieldSorting \n  message : %d - %@",  preparedStmtSearchFieldSortingResult, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
                             }
                         }
                         else
@@ -692,7 +704,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                                 
                                 if (synchronized_sqlite3_step(preparedStmtSearchField) != SQLITE_DONE)
                                 {
-                                    NSLog(@"insertValuesintoSFMObjectTable : Commit Failed! - SFM_Search_Objects - Search Field \n");
+                                    SMLog(@"insertValuesintoSFMObjectTable : Commit Failed! - SFM_Search_Objects - Search Field \n");
                                 }
                                 
                                 sqlite3_clear_bindings(preparedStmtSearchField);
@@ -706,7 +718,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                             }
                             else
                             {
-                                NSLog(@"insertValuesintoSFMObjectTable : prepare Failed! - SFM_Search_Objects - Search Field \n  message : %d - %@",  preparedStmtSearchFieldResult, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
+                                SMLog(@"insertValuesintoSFMObjectTable : prepare Failed! - SFM_Search_Objects - Search Field \n  message : %d - %@",  preparedStmtSearchFieldResult, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
                             }
                         }
                     }
@@ -766,7 +778,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                             
                             if (synchronized_sqlite3_step(preparedStmtFilterCriteria) != SQLITE_DONE)
                             {
-                                NSLog(@"insertValuesintoSFMObjectTable : Commit Failed! - SFM_Search_Objects - Filter Criteria\n");
+                                SMLog(@"insertValuesintoSFMObjectTable : Commit Failed! - SFM_Search_Objects - Filter Criteria\n");
                             }
                             
                             sqlite3_clear_bindings(preparedStmtFilterCriteria);
@@ -780,7 +792,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                         }
                         else
                         {
-                            NSLog(@"insertValuesintoSFMObjectTable : prepare Failed! - SFM_Search_Objects - Filter Criteria\n message %d - %@",  preparedStmtFilterCriteriaResult, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
+                            SMLog(@"insertValuesintoSFMObjectTable : prepare Failed! - SFM_Search_Objects - Filter Criteria\n message %d - %@",  preparedStmtFilterCriteriaResult, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
                         }
                     }
                 }
@@ -949,7 +961,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                                 
                                 if (synchronized_sqlite3_step(bulkStmtForSearch) != SQLITE_DONE)
                                 {
-                                    NSLog(@"insertValuesintoSFMObjectTable : Commit Failed! - ConfigData : SFM_Search_Field\n");
+                                    SMLog(@"insertValuesintoSFMObjectTable : Commit Failed! - ConfigData : SFM_Search_Field\n");
                                 }
                                 
                                 sqlite3_clear_bindings(bulkStmtForSearch);
@@ -963,7 +975,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                             }
                             else
                             {
-                                  NSLog(@"insertValuesintoSFMObjectTable : Prepared Failed! - ConfigData : SFM_Search_Field \n message %d - %@",  resultSearch, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
+                                  SMLog(@"insertValuesintoSFMObjectTable : Prepared Failed! - ConfigData : SFM_Search_Field \n message %d - %@",  resultSearch, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
                             }
                         }
                         else
@@ -1006,7 +1018,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                                 
                                 if ( successfullyExecuted != SQLITE_DONE)
                                 {
-                                    NSLog(@"insertValuesintoSFMObjectTable : Commit Failed! - ConfigData : SFM_Filter_Criteria \n message %d - %@",  successfullyExecuted, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
+                                    SMLog(@"insertValuesintoSFMObjectTable : Commit Failed! - ConfigData : SFM_Filter_Criteria \n message %d - %@",  successfullyExecuted, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
                                 }
                                 
                                 sqlite3_clear_bindings(bulkStmtForFilter);
@@ -1020,7 +1032,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                                 
                             }else
                             {
-                                NSLog(@"insertValuesintoSFMObjectTable : Prepared Failed! - ConfigData : SFM_Filter_Criteria\n message %d - %@",  resultFilter, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
+                                SMLog(@"insertValuesintoSFMObjectTable : Prepared Failed! - ConfigData : SFM_Filter_Criteria\n message %d - %@",  resultFilter, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
                             }
                         }
                         
@@ -1031,17 +1043,18 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                 // Vipin-db-optmz
                 [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"SFM_Search_Objects"
                                                                                   andRecordCount:[objectsArray count]];
-                
-                 synchronized_sqlite3_finalize(bulkStmtForFilter);
-                 synchronized_sqlite3_finalize(bulkStmtForSearch);
-                 synchronized_sqlite3_finalize(bulkStmt);
             }
             else
             {
                 
-                NSLog(@"insertValuesintoSFMObjectTable : prepare Failed! - SFM_Search_Objects - second\n message : %d - %@", result, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
+                SMLog(@"insertValuesintoSFMObjectTable : prepare Failed! - SFM_Search_Objects - second\n message : %d - %@", result, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
                 
             }
+            
+            synchronized_sqlite3_finalize(bulkStmtForFilter);
+            synchronized_sqlite3_finalize(bulkStmtForSearch);
+            synchronized_sqlite3_finalize(bulkStmt);
+            
         }
     }
     
@@ -3378,8 +3391,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         synchronized_sqlite3_finalize(queryRefrefieldstmt); //Keerti - 7276
     }
     }@catch (NSException *exp) {
-        SMLog(@"Exception Name Database :getvalueforReference %@",exp.name);
-        SMLog(@"Exception Reason Database :getvalueforReference %@",exp.reason);
+        SMLog(@"Exception Reason Database :getvalueforReference %@ \n reason :%@",exp.name, exp.reason);
         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
     }
     return strName_field;
@@ -4230,8 +4242,8 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         synchronized_sqlite3_finalize(statement);
         SMLog( @"result %@",results);
     }@catch (NSException *exp) {
-        SMLog(@"Exception Name Database :getResultsForSFM %@",exp.name);
-        SMLog(@"Exception Reason Database :getResultsForSFM %@",exp.reason);
+    
+         SMLog(@"Exception Name Database :getResultsForSFM name : %@ \n reason : %@",exp.name, exp.reason);
         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
     }
     isSortingDone=TRUE;//keerti - 7275
@@ -4989,6 +5001,10 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         SMLog(@"ERROR IN INSERTING %s", err);
 		[appDelegate printIfError:nil ForQuery:sql type:INSERTQUERY];
     }
+        
+    // Vipin-db-optmz
+    [self endTransaction];
+    
    
     if(isInsertedIntoLocationTable)
     {
@@ -5005,8 +5021,6 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
     }
     
-    // Vipin-db-optmz
-   [self endTransaction];
 }
 
 - (void) purgeLocationPingTable
@@ -5652,7 +5666,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                         
                         if (errorCodeX != SQLITE_DONE)
                         {
-                            NSLog(@" Commit Failed! - SFReferenceTo : %d %@", errorCodeX, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
+                            SMLog(@" Commit Failed! - SFReferenceTo : %d %@", errorCodeX, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
                             
                         }
                         
@@ -5794,7 +5808,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                         
                         if ( errorCode != SQLITE_DONE)
                         {
-                            NSLog(@" Commit Failed! - SFRecordType : %d %@", errorCode, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
+                            SMLog(@" Commit Failed! - SFRecordType : %d %@", errorCode, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
                         }
                         
                         sqlite3_clear_bindings(bulkStmt);
@@ -6243,7 +6257,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     
     if (result)
     {
-        NSLog(@" [indx] success : index query \n %@ ", query);
+        SMLog(@" [indx] success : index query \n %@ ", query);
     }else{
         NSLog(@" [indx] failure : index query \n %@ ", query);
     }
@@ -6272,7 +6286,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         
         if ([fieldName isEqualToString:@"Id"])
         {
-            NSLog(@"[Index] It has Id column \n for table : %@", tableName);
+            //NSLog(@"[Index] It has Id column \n for table : %@", tableName);
             [fieldNames addObject:fieldName];
             shouldCreateIndexOnIDColumn = YES;
         }
@@ -7680,7 +7694,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                 processName = [NSString stringWithUTF8String:_type];
         }
     }
-    
+    synchronized_sqlite3_finalize(statement);
     return processName;
 }
 
@@ -8049,7 +8063,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 - (void)retrieveImages:(NSDictionary*)resourceDict
 {
     NSMutableArray *idsList = [NSMutableArray arrayWithCapacity:0];
-    NSString *query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS Document ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0), 'AuthorId' VARCHAR, 'Body' VARCHAR, 'BodyLength' INTEGER, 'ContentType' VARCHAR, 'CreatedById' VARCHAR, 'Description' VARCHAR, 'DeveloperName' VARCHAR, 'FolderId' VARCHAR, 'Id' VARCHAR, 'IsBodySearchable' BOOL, 'IsDeleted' BOOL, 'IsInternalUseOnly' BOOL, 'IsPublic' BOOL, 'Keywords' TEXT, 'LastModifiedById' VARCHAR, 'LastModifiedDate' DATETIME, 'Name' VARCHAR, 'NamespacePrefix' VARCHAR, 'SystemModstamp' VARCHAR, 'Type' VARCHAR)"];
+    NSString *query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS Document ('local_id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE DEFAULT (0), 'AuthorId' VARCHAR, 'Body' VARCHAR, 'BodyLength' INTEGER, 'ContentType' VARCHAR, 'CreatedById' VARCHAR, 'Description' VARCHAR, 'DeveloperName' VARCHAR, 'FolderId' VARCHAR, 'Id' VARCHAR, 'IsBodySearchable' BOOL, 'IsDeleted' BOOL, 'IsInternalUseOnly' BOOL, 'IsPublic' BOOL, 'Keywords' TEXT, 'LastModifiedById' VARCHAR, 'LastModifiedDate' DATETIME, 'Name' VARCHAR, 'NamespacePrefix' VARCHAR, 'SystemModstamp' VARCHAR, 'Type' VARCHAR)"];
     BOOL result = [self createTable:query];
     
     if (result)
@@ -10232,7 +10246,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 
 	sqlite3_stmt * bulkStatement = nil;
 	
-	if (sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &bulkStatement, NULL) == SQLITE_OK)
+	if (synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &bulkStatement, NULL) == SQLITE_OK)
 	{
 		for (NSDictionary * customDict in customArray)
 		{
@@ -11311,7 +11325,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     NSString * query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS  ChatterPostDetails ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0), 'ProductId' VARCHAR NOT NULL ,'Body' TEXT,'CreatedById' VARCHAR,'CreatedDate' VARCHAR,'Id' VARCHAR,'POSTTYPE' VARCHAR,'Username' VARCHAR,'Email' VARCHAR,'FeedPostId' VARCHAR,'FullPhotoUrl' VARCHAR)"];
     [self createTable:query];
     
-    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS Document ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0), 'AuthorId' VARCHAR, 'Body' VARCHAR, 'BodyLength' INTEGER, 'ContentType' VARCHAR, 'CreatedById' VARCHAR, 'Description' VARCHAR, 'DeveloperName' VARCHAR, 'FolderId' VARCHAR, 'Id' VARCHAR, 'IsBodySearchable' BOOL, 'IsDeleted' BOOL, 'IsInternalUseOnly' BOOL, 'IsPublic' BOOL, 'Keywords' TEXT, 'LastModifiedById' VARCHAR, 'LastModifiedDate' DATETIME, 'Name' VARCHAR, 'NamespacePrefix' VARCHAR, 'SystemModstamp' VARCHAR, 'Type' VARCHAR)"];
+    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS Document ('local_id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE DEFAULT (0), 'AuthorId' VARCHAR, 'Body' VARCHAR, 'BodyLength' INTEGER, 'ContentType' VARCHAR, 'CreatedById' VARCHAR, 'Description' VARCHAR, 'DeveloperName' VARCHAR, 'FolderId' VARCHAR, 'Id' VARCHAR, 'IsBodySearchable' BOOL, 'IsDeleted' BOOL, 'IsInternalUseOnly' BOOL, 'IsPublic' BOOL, 'Keywords' TEXT, 'LastModifiedById' VARCHAR, 'LastModifiedDate' DATETIME, 'Name' VARCHAR, 'NamespacePrefix' VARCHAR, 'SystemModstamp' VARCHAR, 'Type' VARCHAR)"];
     [self createTable:query];
     
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS  ProductImage ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0), 'productId' VARCHAR, 'productImage' VARCHAR)"];
@@ -11356,7 +11370,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     [self createTable:query];
     
     // Vipin-db-optmz
-    NSLog(@"sync_Record_Heap_Index Index creation skipping now..");
+    SMLog(@"sync_Record_Heap_Index Index creation skipping now..");
     //query = [NSString stringWithFormat:@"CREATE INDEX IF NOT EXISTS sync_Record_Heap_Index ON sync_Records_Heap (sf_id ASC, local_id ASC, object_name ASC, sync_flag ASC)"];
     //[self createTable:query];
     
@@ -11414,20 +11428,18 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     if (synchronized_sqlite3_exec(appDelegate.db, [statement UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
         isSuccess = NO;
-        
+        NSLog(@" ERROR IN createTable \n  stetement: %@ \n %s", statement, err);
+        NSLog(@" ERROR in detail  : %@",[NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
         {
             [MyPopoverDelegate performSelector:@selector(throwException)];
         }
-        SMLog(@"%@", statement);
-		SMLog(@"METHOD: createTable");
-        SMLog(@"ERROR IN INSERTING %s", err);
+       
         /*
 		[appDelegate printIfError:nil ForQuery:statement type:INSERTQUERY];
          */
         // Vipin 31-May-2013
-        NSLog(@" ERROR IN createTable \n  stetement: %@ \n %s", statement, err);
-        NSLog(@" ERROR in detail  : %@",[NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
+        
     }
     return isSuccess;
 }
@@ -11441,7 +11453,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     int lookUp_id = 1;
     
     // Vipin-db-optmz -rm
-    NSLog(@" [OBS] insertDataInToTables  --- starting ...");
+   // NSLog(@" [OBS] insertDataInToTables  --- starting ...");
     
     // Vipin-db-optmz
     [[PerformanceAnalytics sharedInstance]  observePerformanceForContext:@"insertDataInToTables-OBs"
@@ -11607,7 +11619,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
             
             if (sqlite3_step(bulkStmt) != SQLITE_DONE)
             {
-                NSLog(@"insertRecordIdsIntosyncRecordHeap failed Query :%@ \n\n reason: \n %s", query, err);
+                SMLog(@"insertRecordIdsIntosyncRecordHeap failed Query :%@ \n\n reason: \n %s", query, err);
                 if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                     [MyPopoverDelegate performSelector:@selector(throwException)];
                 SMLog(@"%@", query);
@@ -11681,7 +11693,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         
         if (sqlite3_step(bulkStmt) != SQLITE_DONE)
         {
-            NSLog(@"addvaluesToLookUpFieldTable failed Query :%@ \n\n reason: \n %s", query, err);
+            SMLog(@"addvaluesToLookUpFieldTable failed Query :%@ \n\n reason: \n %s", query, err);
             if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                 [MyPopoverDelegate performSelector:@selector(throwException)];
             SMLog(@"%@", query);
@@ -12067,7 +12079,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         NSString * query =[NSString stringWithFormat:@"INSERT INTO %@ (%@) VALUES (%@)",TableName, field_string, field_value];
         [self createTable:query];
         
-        NSLog(@" [OBSERV] insertSettingsIntoTable :Query  => \n %@", query);
+       // NSLog(@" [OBSERV] insertSettingsIntoTable :Query  => \n %@", query);
         
     }
     
@@ -12213,7 +12225,12 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 -(void)StartIncrementalmetasync
 {
 	//appDelegate.syncTypeInProgress = METASYNC_INPROGRESS;
-    [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
+    NSLog(@"  StartIncrementalmetasync  .... st");
+    
+    if (self.tempDb == nil)
+    {
+        [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
+    }
     
     //We are retriving the SFObjectField table here so that we can compare the fields of the tables of the two databases
     //not necessary
@@ -12246,12 +12263,23 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 
 - (void) createBackUpDb
 {  
-    NSString * query1 = [NSString stringWithFormat:@"ATTACH DATABASE '%@' AS sfm",self.dbFilePath];
+    //NSString * query1 = [NSString stringWithFormat:@"ATTACH DATABASE '%@' AS sfm",self.dbFilePath];
     
-    NSLog(@" [MON]  createBackUpDb : ATTACH DATABASE %@", query1);
+    //NSLog(@" [MON]  createBackUpDb : ATTACH DATABASE %@", query1);
     
-    [self createTemporaryTable:query1];
+    //[self createTemporaryTable:query1];
+    NSLog(@"  createBackUpDb  .... st");
+    
+    BOOL hasCreated = [self attachDatabase:self.tempDb byName:kAttachementNameSFM andPath:self.dbFilePath];
+    
+    if (! hasCreated)
+    {
+        NSLog(@" Unable to create attachment for db backup!");
+        return;
+    }
 
+    NSString * query1 = nil;
+    
     NSArray *tableNames = [NSArray arrayWithObjects:@"SVMXC__Code_Snippet__c",@"SVMXC__Code_Snippet_Manifest__c", nil ];
 
      [self beginTransaction];
@@ -12264,20 +12292,40 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         if ([objectName isEqualToString:@"Case"])
             objectName = @"'Case'";
         
-        query1 = [NSString stringWithFormat:@"INSERT INTO %@ SELECT * FROM sfm.%@", objectName, objectName];
+       // query1 = [NSString stringWithFormat:@"INSERT INTO %@ SELECT * FROM sfm.%@", objectName, objectName];
+        query1 = [NSString stringWithFormat:@"INSERT INTO %@ SELECT * FROM %@.%@", objectName, kAttachementNameSFM, objectName];
+        
         [self createTemporaryTable:query1];
     }
-       
-    //Delete the old database after creating the backup
-    [self deleteDatabase:DATABASENAME];
     
     [self endTransaction];
 
-    //we again start metasync here
+     NSLog(@"  createBackUpDb  .... releasing main DB");
+    // Vipind-db-optmz - 3
+    [self closeDatabase:appDelegate.db];
+    [appDelegate releaseMainDatabase];
+    //Delete the old database after creating the backup
+    [self deleteDatabase:DATABASENAME];
+    
+    // Dettach kAttachementNameSFM
+    
+    NSLog(@"  createBackUpDb  .... dettaching  kAttachementNameSFM");
+    
+    [self detachDatabase:self.tempDb byName:kAttachementNameSFM];
 
-    appDelegate.db = nil;
-    self.dbFilePath = @"";
-    [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+    
+   //we again start metasync here
+
+   //if ([self closeDatabase:appDelegate.db])
+   //{
+     //  [appDelegate releaseMainDatabase];
+   //}
+   
+    if (appDelegate.db == nil)
+    {
+        [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+    }
+    
     
     [self doMetaSync];
     
@@ -12512,24 +12560,42 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     if (object_names == nil)
         object_names = [[NSMutableArray alloc] initWithCapacity:0];
     
-    [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
+    if (self.tempDb == nil)
+    {
+        [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
+    }
     
-    object_names = [self retreiveTableNamesFronDB:tempDb];
+    object_names = [self retreiveTableNamesFronDB:self.tempDb];
     
     [appDelegate.dataBase clearDatabase];
     
     for (NSString * objectName in object_names)
     {
-        NSString * query = [self retrieveQuery:objectName sqlite:tempDb];
+        NSString * query = [self retrieveQuery:objectName sqlite:self.tempDb];
         
         [self createTable:query];
     }
 
     
+    if (appDelegate.db == nil)
+    {
+        [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+    }
     
-    [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
-      NSString * query1 = [NSString stringWithFormat:@"ATTACH DATABASE '%@' AS tempsfm",filepath];
-    [self createTable:query1];
+   // NSString * query1 = [NSString stringWithFormat:@"ATTACH DATABASE '%@' AS tempsfm",filepath];
+   // [self createTable:query1];
+    
+    [self loadTempDatabaseFileFromPath];
+    
+    BOOL hasCreatedAttachment = [self attachDatabase:appDelegate.db byName:kAttachementNameTempSFM andPath:filepath];
+    
+    if ( ! hasCreatedAttachment)
+    {
+        NSLog(@"Unable to create attachment for copying temp sql to SFM");
+        return;
+    }
+    
+    NSString * query1 = nil;
     
      [self beginTransaction];
     //Here we fill up the tables with data  
@@ -12548,14 +12614,15 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 	//Radha - Fix for the defect 5745
 	[appDelegate.calDataBase insertMetaSyncStatus:@"Red" WithDB:appDelegate.db];
     [self settingAfterIncrementalMetaSync];
+    
+    // Dettach tempsfm
+    [self detachDatabase:appDelegate.db byName:kAttachementNameTempSFM];
 
 }
 
 // Vipin-db-optmz
 - (void)resetConfigurationForDataBase:(sqlite3 *)database
 {
-    NSLog(@"resetConfigurationForDataBase:  Reset db configuration");
-    
     if (self.dbTransactionCount > 0)
     {
         NSLog(@"Skipping db configuration reset since %d live transaction exist", dbTransactionCount);
@@ -12568,33 +12635,39 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     
     int  pageSizeResult =  synchronized_sqlite3_exec(database, "PRAGMA page_size = 4096", NULL, NULL, &errMessagePageSize);
     int  syncResult     =  synchronized_sqlite3_exec(database, "PRAGMA synchronous = OFF", NULL, NULL, &errMessageSynch);
-    int  journalResult  =  synchronized_sqlite3_exec(database, "PRAGMA journal_mode = MEMORY", NULL, NULL, &errMessageJournalMod);
+    //int  journalResult  =  synchronized_sqlite3_exec(database, "PRAGMA journal_mode = MEMORY", NULL, NULL, &errMessageJournalMod);
+    int  journalResult  =  synchronized_sqlite3_exec(database, "PRAGMA journal_mode = WAL", NULL, NULL, &errMessageJournalMod);
+    // Vipin: we are moving more safer journal mode to avoid database corruption
     
     if (pageSizeResult != SQLITE_OK)
     {
-        NSLog(@" ConfigDatabase Page Size : %d %@", pageSizeResult, [NSString stringWithUTF8String:errMessagePageSize]);
+        SMLog(@" ConfigDatabase Page Size : %d %@", pageSizeResult, [NSString stringWithUTF8String:errMessagePageSize]);
     }
     
     if (syncResult != SQLITE_OK)
     {
-        NSLog(@" ConfigDatabase Synchronous : %d %@", syncResult, [NSString stringWithUTF8String:errMessageSynch]);
+        SMLog(@" ConfigDatabase Synchronous : %d %@", syncResult, [NSString stringWithUTF8String:errMessageSynch]);
     }
     
     if (journalResult != SQLITE_OK)
     {
-        NSLog(@" ConfigDatabase journal mod: %d %@", journalResult, [NSString stringWithUTF8String:errMessageJournalMod]);
+        SMLog(@" ConfigDatabase journal mod: %d %@", journalResult, [NSString stringWithUTF8String:errMessageJournalMod]);
     }
 }
 
 
 -(void)openDB:(NSString *)name type:(NSString *)type sqlite:(sqlite3 *)database
 {
-    filepath = @"";
+
+    [self loadTempDatabaseFileFromPath];
     
-    NSError *error; 
-    NSArray *searchPaths =NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentFolderPath = [searchPaths objectAtIndex: 0];
-    filepath = [documentFolderPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.%@", TEMPDATABASENAME, DATABASETYPE1]];
+    NSError *error;
+    
+    if (tempDb != nil)
+    {
+        NSLog(@"[DBOPX] temp database exist.. skipping initialisation of DB");
+        return;
+    }
     
     BOOL success=[[NSFileManager defaultManager] fileExistsAtPath:filepath];
     if ( success)
@@ -12618,6 +12691,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     
     // Vipind-db-optmz -
     // config sqlite to work with the same connection on multiple threads
+    /*
     if (sqlite3_config(SQLITE_CONFIG_SERIALIZED) == SQLITE_OK)
     {
         NSLog(@"[OPMX] Use sqlite on multiple threads, using the same connection");
@@ -12626,6 +12700,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     {
         NSLog(@"[OPMX] Single connection single thread");
     }
+     */
     
     if( sqlite3_open ([filepath UTF8String], &tempDb) != SQLITE_OK )
     { 
@@ -12636,10 +12711,11 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     {
         // Vipin-db-optmz
         NSLog(@" Database : openDB : Reset DB Configuration - %@ - %@", TEMPDATABASENAME, name);
-        [self resetConfigurationForDataBase:tempDb];
+        
+        [self resetConfigurationForDataBase:self.tempDb];
+        [[PerformanceAnalytics sharedInstance] registerOperationCount:0 forDatabase:@"tempDB"];
     }
-
-} 
+}
 
 
 -(NSString *)retrieveQuery:(NSString *)tableName sqlite:(sqlite3 *)database
@@ -12670,8 +12746,8 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 - (BOOL) createTemporaryTable:(NSString *)statement
 {
     char * err;
-
-    if (synchronized_sqlite3_exec(tempDb, [statement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+    /// Position pbserve
+    if (synchronized_sqlite3_exec(self.tempDb, [statement UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
             [MyPopoverDelegate performSelector:@selector(throwException)];
@@ -12680,8 +12756,9 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         SMLog(@"ERROR IN INSERTING %s", err);
 		[appDelegate printIfError:nil ForQuery:statement type:INSERTQUERY];
         return NO;
-    }else{
-        
+    }
+    else
+    {
         NSLog(@"[MON] Created createTemporaryTable");
     }
     return YES;
@@ -12692,7 +12769,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     NSString * query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS  ChatterPostDetails ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0), 'ProductId' VARCHAR NOT NULL ,'Body' TEXT,'CreatedById' VARCHAR,'CreatedDate' VARCHAR,'Id' VARCHAR,'POSTTYPE' VARCHAR,'Username' VARCHAR,'Email' VARCHAR,'FeedPostId' VARCHAR,'FullPhotoUrl' VARCHAR)"];
     [self createTemporaryTable:query];
     
-    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS Document ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0), 'AuthorId' VARCHAR, 'Body' VARCHAR, 'BodyLength' INTEGER, 'ContentType' VARCHAR, 'CreatedById' VARCHAR, 'Description' VARCHAR, 'DeveloperName' VARCHAR, 'FolderId' VARCHAR, 'Id' VARCHAR, 'IsBodySearchable' BOOL, 'IsDeleted' BOOL, 'IsInternalUseOnly' BOOL, 'IsPublic' BOOL, 'Keywords' TEXT, 'LastModifiedById' VARCHAR, 'LastModifiedDate' DATETIME, 'Name' VARCHAR, 'NamespacePrefix' VARCHAR, 'SystemModstamp' VARCHAR, 'Type' VARCHAR)"];
+    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS Document ('local_id' INTEGER PRIMARY KEY  NOT NULL UNIQUE DEFAULT (0), 'AuthorId' VARCHAR, 'Body' VARCHAR, 'BodyLength' INTEGER, 'ContentType' VARCHAR, 'CreatedById' VARCHAR, 'Description' VARCHAR, 'DeveloperName' VARCHAR, 'FolderId' VARCHAR, 'Id' VARCHAR, 'IsBodySearchable' BOOL, 'IsDeleted' BOOL, 'IsInternalUseOnly' BOOL, 'IsPublic' BOOL, 'Keywords' TEXT, 'LastModifiedById' VARCHAR, 'LastModifiedDate' DATETIME, 'Name' VARCHAR, 'NamespacePrefix' VARCHAR, 'SystemModstamp' VARCHAR, 'Type' VARCHAR)"];
     [self createTemporaryTable:query];
     
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS  ProductImage ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0), 'productId' VARCHAR, 'productImage' VARCHAR)"];
@@ -12784,13 +12861,34 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 }
 -(void)populateDatabaseFromBackUp
 {
-    [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
-    [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
-     
-    NSString * query1 = [NSString stringWithFormat:@"ATTACH DATABASE '%@' AS tempsfm",filepath];
-    [self createTable:query1];
+    NSLog(@"  ----- populateDatabaseFromBackUp ----- ");
     
-    NSLog(@" [MON]  populateDatabaseFromBackUp : ATTACH DATABASE %@", query1);
+    if (appDelegate.db == nil)
+    {
+        [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+    }
+    
+    if (self.tempDb == nil)
+    {
+        [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
+    }
+
+    [self loadTempDatabaseFileFromPath];
+    
+    //NSString * query1 = [NSString stringWithFormat:@"ATTACH DATABASE '%@' AS tempsfm",filepath];
+    //[self createTable:query1];
+    
+    //NSLog(@" [MON]  populateDatabaseFromBackUp : ATTACH DATABASE %@", query1);
+    
+    
+    BOOL hasCreatedAttachment = [self attachDatabase:appDelegate.db
+                                              byName:kAttachementNameTempSFM
+                                             andPath:filepath];
+    if (! hasCreatedAttachment)
+    {
+        NSLog(@"Unable to create attachment for populating database from backup");
+        return;
+    }
     
     NSMutableArray * objects = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
     
@@ -12800,7 +12898,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     
     NSString * object_api_name = @"";
     
-    if ( synchronized_sqlite3_prepare_v2(tempDb, [queryStatement UTF8String],-1, &objectStatement, nil) == SQLITE_OK )
+    if ( synchronized_sqlite3_prepare_v2(self.tempDb, [queryStatement UTF8String],-1, &objectStatement, nil) == SQLITE_OK )
     {
         while(synchronized_sqlite3_step(objectStatement) == SQLITE_ROW)
         {
@@ -12869,7 +12967,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         NSString * query = [NSString stringWithFormat:@"PRAGMA table_info (%@)", tableName];
         
         
-        if ( synchronized_sqlite3_prepare_v2(tempDb, [query UTF8String],-1, &stmt, nil) == SQLITE_OK )
+        if ( synchronized_sqlite3_prepare_v2(self.tempDb, [query UTF8String],-1, &stmt, nil) == SQLITE_OK )
         {
             while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
             {
@@ -12946,21 +13044,34 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         SMLog(@"%@",finalQuery);
         [self createTable:finalQuery];
         [self endTransaction];
-        
+        NSLog(@" Populate database  step 1 end"); 
+        [field_type release];
+        field_type=nil;
     }
     //Radha 2012june08
     
-    [self beginTransaction];
-    NSArray * tempArray = [self createTempTableForSummaryAndTroubleShooting];
-    
+   
+   NSLog(@" Populate database  step 2 start");
+   NSArray * tempArray = [self createTempTableForSummaryAndTroubleShooting];
+   NSLog(@" Populate database  step 2 end");
+   NSLog(@" Populate database  step 3 start");
+   [self beginTransaction];
     
     for (NSString * table in tempArray)
     {
-        NSString * temp_query = [NSString stringWithFormat:@"INSERT INTO %@ SELECT * FROM tempsfm.%@", table, table];
-        [self createTable:temp_query];
+        NSString * temp_query = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ SELECT * FROM tempsfm.%@", table, table];
+        int success = [self createTable:temp_query];
+        
+        
+        
     }
     
     [self endTransaction];
+    
+    NSLog(@" Populate database  step 3 end");
+    
+    // Dettach - tempsfm;
+    [self detachDatabase:appDelegate.db byName:kAttachementNameTempSFM];
     
     appDelegate.internetAlertFlag = TRUE;
     
@@ -13042,8 +13153,16 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     NSMutableDictionary * temp_dict = [appDelegate.wsInterface fillEmptyTags:appDelegate.wsInterface.tagsDictionary];
     appDelegate.wsInterface.tagsDictionary = temp_dict;
     
+    // Vipind-db-optmz - 3
+    [self closeDatabase:tempDb];
+    self.tempDb = nil;
     [appDelegate.dataBase deleteDatabase:TEMPDATABASENAME];
-    [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+    
+    
+    if(appDelegate.db == nil)
+    {
+        [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+    }
     
     if ([appDelegate.StandAloneCreateProcess count] > 0)
     {
@@ -13091,6 +13210,8 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
             {
                 NSString *field1Str = [[NSString alloc] initWithUTF8String:field1];
                 queryStatement = [NSString stringWithFormat:@"%@",field1Str];
+                [field1Str release];
+                field1Str = nil;
             }
         }
     }
@@ -13649,14 +13770,26 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 {
     for (NSString * objectName in metaTable)
     {
-        NSString * query = [self retrieveQuery:objectName sqlite:tempDb];
+        NSString * query = [self retrieveQuery:objectName sqlite:self.tempDb];
         [self createTable:query];
     }
     
-    NSString * query1 = [NSString stringWithFormat:@"ATTACH DATABASE '%@' AS tempSfm",filepath];
-    [self createTable:query1];
+    [self loadTempDatabaseFileFromPath];
     
-    NSLog(@" [MON]  copyMetaTableInToSfm : ATTACH DATABASE %@", query1);
+   // NSString * query1 = [NSString stringWithFormat:@"ATTACH DATABASE '%@' AS tempSfm",filepath];
+    //[self createTable:query1];
+    
+    BOOL hasCreatedAttachment = [self attachDatabase:appDelegate.db byName:@"tempSfm" andPath:filepath];
+    
+   // NSLog(@" [MON]  copyMetaTableInToSfm : ATTACH DATABASE %@", query1);
+    
+    if (! hasCreatedAttachment)
+    {
+        NSLog(@"Unable to create attachment for copying meta table into SFM table");
+        return;
+    }
+    
+    NSString * query1 = nil;
     
     [self beginTransaction];
     //Here we fill up the tables with data  
@@ -13669,6 +13802,8 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     }
     [self endTransaction];
     
+    // Dettach
+    [self detachDatabase:appDelegate.db byName:@"tempSfm"];
 }
 
 
@@ -13679,7 +13814,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 
     sqlite3_stmt * stmt;
     
-    if (synchronized_sqlite3_prepare_v2(tempDb, [queryStatement UTF8String], -1, &stmt, NULL) == SQLITE_OK){
+    if (synchronized_sqlite3_prepare_v2(self.tempDb, [queryStatement UTF8String], -1, &stmt, NULL) == SQLITE_OK){
         
         while (synchronized_sqlite3_step(stmt) == SQLITE_ROW) 
         {
@@ -13721,14 +13856,17 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 
 - (void) clearTempDatabase
 {
-    [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
-    
+    if (self.tempDb == nil)
+    {
+        [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
+    }
+
     sqlite3_stmt *stmt;
     NSMutableArray * tables = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
     
     NSString * queryStatemnt = [NSString stringWithFormat:@"SELECT * FROM sqlite_master WHERE type = 'table'"];
     
-    if (synchronized_sqlite3_prepare_v2(tempDb, [queryStatemnt UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    if (synchronized_sqlite3_prepare_v2(self.tempDb, [queryStatemnt UTF8String], -1, &stmt, NULL) == SQLITE_OK)
     {
         while (synchronized_sqlite3_step(stmt) == SQLITE_ROW) 
         {
@@ -13752,7 +13890,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     for (int i = 0; i < [tables count]; i++)
     {
         queryStatemnt = [NSString stringWithFormat:@"DROP TABLE '%@'", [tables objectAtIndex:i]];
-        if (synchronized_sqlite3_exec(tempDb, [queryStatemnt UTF8String], NULL, NULL, &err) != SQLITE_OK)
+        if (synchronized_sqlite3_exec(self.tempDb, [queryStatemnt UTF8String], NULL, NULL, &err) != SQLITE_OK)
         {
             if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                 [MyPopoverDelegate performSelector:@selector(throwException)];
@@ -14548,7 +14686,6 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 
 -(void)UpdateSFRecordTypeForId:(NSString *)_id value:(NSString *)valueField
 {
-    NSLog(@"[MON]  UpdateSFRecordTypeForId ");
     [self beginTransaction];
     // Vipin-db-optmz
     [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"UpdateSFRecordTypeForId"
@@ -14970,5 +15107,174 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 		return @"";
 
 }
+
+#pragma mark - Database Monitoring Management
+
+
+- (int)totalNumberOfOperationCountForDatabase:(sqlite3 *)database
+{
+    int totalChanges = sqlite3_total_changes(database);
+    
+    NSLog(@"[DBOPX] DB  totalChanges %d", totalChanges);
+    
+    return totalChanges;
+}
+
+
+- (NSNumber *)dbMemoryUsage
+{
+    long long int usedBytes = sqlite3_memory_used();
+    
+    long long int inKB = usedBytes / 1024;
+    
+    NSLog(@"[DBOPX] DB usedBytes %lld", usedBytes);
+
+    return [NSNumber numberWithLongLong:inKB];
+}
+
+
+- (NSString *)dbVersion
+{
+  return  [NSString stringWithUTF8String:sqlite3_libversion()];
+}
+
+
+- (int)releaseHeapMemoryForDatabase:(sqlite3*)database
+{
+    if (database != nil)
+    {
+        //1048576 - 1 MB
+        int freedMemoryInbytes = sqlite3_release_memory(1048576); // Ask to release 1 MB
+        int releasedMemoryInbytes = sqlite3_db_release_memory(database);
+        NSLog(@"[DB] db : freedMemoryInbytes    %d ", freedMemoryInbytes);
+        NSLog(@"[DB] db : releasedMemoryInbytes %d ", releasedMemoryInbytes);
+    }
+    else
+    {
+        NSLog(@"[DB] releaseHeapMemoryForDatabase  - bad momery pointer");
+    }
+    return 1;
+}
+
+
+- (BOOL)attachDatabase:(sqlite3*)database byName:(NSString *)attachmentName andPath:(NSString *)path
+{
+    [path retain];
+    [attachmentName  retain];
+    NSLog(@" Database ATTACH now ");
+    BOOL isSuccess = YES;
+    
+    if (database == nil)
+    {
+        //Skipping database attachment operation since db is Null pointer
+        NSLog(@"[DB] Skipping database attachment operation since db is Null pointer!");
+        isSuccess = NO;
+    }      // Validating file path and attachment name 
+    else if ( (! [Util isValidString:path]) || (! [Util isValidString:attachmentName]) )
+    {
+        //Skipping database attachment operation since invalid file path or database name
+        NSLog(@"[DB] Skipping database attachment operation since invalid file path or database name!");
+        isSuccess = NO;
+    }
+    else
+    {
+        NSString * attachementQuery = [[NSString alloc] initWithFormat:@"ATTACH DATABASE '%@' AS %@", path, attachmentName];
+        
+        NSLog(@" attachementQuery  : %@", attachementQuery);
+        char * err;
+        
+        int result = synchronized_sqlite3_exec(database, [attachementQuery UTF8String], NULL, NULL, &err);
+        
+        if (result != SQLITE_OK)
+        {
+            isSuccess = NO;
+            
+            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+            {
+                [MyPopoverDelegate performSelector:@selector(throwException)];
+            }
+           
+            // Vipin 29-July-2013
+            NSLog(@" ERROR IN ATTACH DATABASE \n error code : %d,  statement: %@ \n  error message : %s \n detail : %@",
+                  result,
+                  attachementQuery,
+                  err,
+                  [NSString stringWithUTF8String:sqlite3_errmsg(database)]);
+        }
+        
+        [attachementQuery release];
+    }
+    
+    [path release];
+    [attachmentName  release];
+    return isSuccess;
+}
+
+
+- (BOOL)detachDatabase:(sqlite3*)database byName:(NSString *)databaseName
+{
+    NSLog(@" Database dettaching now ");
+    if (database == nil)
+    {
+        //Skipping database detachment operation since db is Null pointer
+        NSLog(@"[DB] Skipping database detachment operation since db is Null pointer!");
+        return NO;
+    }
+    
+    NSString * detachQuery = [NSString stringWithFormat:@"DETACH DATABASE '%@'", databaseName];
+
+    char * err;
+    BOOL isSuccess = YES;
+    
+    int result = synchronized_sqlite3_exec(database, [detachQuery UTF8String], NULL, NULL, &err);
+    
+    if (result != SQLITE_OK)
+    {
+        isSuccess = NO;
+        
+        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+        {
+            [MyPopoverDelegate performSelector:@selector(throwException)];
+        }
+        
+        // Vipin 22-July-2013
+        NSLog(@" ERROR IN DETACH DATABASE error code : %d, \n  statement: %@ \n  error message : %s \n detail : %@",
+              result,
+              detachQuery,
+              err,
+              [NSString stringWithUTF8String:sqlite3_errmsg(database)]);
+    }
+    return isSuccess;
+}
+
+
+- (BOOL)closeDatabase:(sqlite3*)database
+{
+    int executionResult = sqlite3_close(database);
+  
+    BOOL isSuccessfull = YES;
+    
+    if (SQLITE_OK != executionResult)
+    {
+        isSuccessfull = NO;
+        
+        NSLog(@" Could not able to close database connection - error code : %d,  message : %@", executionResult, [NSString stringWithUTF8String:sqlite3_errmsg(database)]);
+    }
+    
+    return isSuccessfull;
+}
+
+
+- (sqlite3 *)getTempDatabase {
+    
+    if (tempDb == nil)
+    {
+        NSLog(@"[DBOPX] Temp DB initialising...");
+        [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
+    }
+    
+    return tempDb;
+}
+
 
 @end

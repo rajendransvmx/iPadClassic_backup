@@ -1586,6 +1586,8 @@ enum BizRuleConfirmViewStatus{
                         }
                     }
                     
+                    synchronized_sqlite3_finalize(stmt);
+                    
                     NSMutableArray * accountHistory = [appDelegate.databaseInterface getAccountHistoryForanWorkOrder:Id account_id:account_id tableName:headerObjName ];
                     if(accountHistory != nil)
                     {
@@ -1610,6 +1612,8 @@ enum BizRuleConfirmViewStatus{
                             Id = [NSString stringWithUTF8String:_id];
                     }
                 }
+                
+                 synchronized_sqlite3_finalize(stmt);
 
                 NSMutableArray * productHistory = nil;
                 if(toplevelId != nil && [toplevelId length] != 0)
@@ -14024,6 +14028,7 @@ enum BizRuleConfirmViewStatus{
                 productId = [NSString stringWithUTF8String:_productId];
         }
     }
+     synchronized_sqlite3_finalize(stmt);
         
     return productId;
 }
@@ -14046,6 +14051,7 @@ enum BizRuleConfirmViewStatus{
                 productName = @"";
         }
     }
+    synchronized_sqlite3_finalize(stmt);
     
     if ([productName isEqualToString:@""])
     {
@@ -14062,6 +14068,7 @@ enum BizRuleConfirmViewStatus{
                     productName = @"";
             }
         }
+         synchronized_sqlite3_finalize(stmt);
     }
     return productName;
 }

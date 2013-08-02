@@ -17,6 +17,7 @@
     NSMutableDictionary *nameToTimeCountDictionary;
     NSString            *codeName;
     NSString            *description;
+    NSString            *dbVersion;
     
     long long int  createdRecords;
     long long int  deletedRecords;
@@ -26,9 +27,13 @@
 @property (nonatomic, retain)  NSMutableDictionary *nameToEndTimeDictionary;
 @property (nonatomic, retain)  NSMutableDictionary *nameToRecordCount;
 @property (nonatomic, retain)  NSMutableDictionary *nameToTimeCountDictionary;
+@property (nonatomic, retain)  NSMutableDictionary *dbOperationCounterDictionary;
+@property (nonatomic, retain)  NSMutableDictionary *dbMemoryRecords;
 @property (nonatomic, retain)  NSMutableArray      *names;
 @property (nonatomic, retain)  NSString            *codeName;
 @property (nonatomic, retain)  NSString            *description;
+@property (nonatomic, retain)  NSString            *dbVersion;
+
 
 @property (nonatomic, assign)  long long int  createdRecords;
 @property (nonatomic, assign)  long long int  deletedRecords;
@@ -48,5 +53,9 @@
 
 - (void)addCreatedRecordsNumber:(long long int)records;
 - (void)addDeletedRecordsNumber:(long long int)records;
+
+- (void)registerOperationCount:(int)count forDatabase:(NSString *)connectionName;
+- (void)clearOperationCounter;
+- (void)recordDBMemoryUsage:(NSNumber *)memoryUsed perContext:(NSString *) context;
 
 @end

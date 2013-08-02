@@ -1312,6 +1312,7 @@ enum  {
                 localId = @"";
         }
     }
+     synchronized_sqlite3_finalize(labelstmt);    
     NSString *processId = @"";
         
     for (int v = 0; v < [appDelegate.view_layout_array count]; v++)
@@ -1366,7 +1367,7 @@ enum  {
     //[appDelegate.sfmPageController release];
 	// //appDelegate.sfmPageController = nil;
     
-    synchronized_sqlite3_finalize(labelstmt);
+   
 	 }@catch (NSException *exp) {
         SMLog(@"Exception Name SFMResultDetailViewController :accessoryButtonTapped %@",exp.name);
         SMLog(@"Exception Reason SFMResultDetailViewController :accessoryButtonTapped %@",exp.reason);

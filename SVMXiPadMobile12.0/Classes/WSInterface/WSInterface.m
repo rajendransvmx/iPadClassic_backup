@@ -1715,8 +1715,19 @@ NSDate * syncCompleted;
     
     //VP-Optmz2
     [appDelegate.dataBase cleanupDatabase];
-    [[PerformanceAnalytics sharedInstance] setCode:@"PA-IC-208"
-                                    andDescription:@"Incr-sync-Caching-Deletion"];
+    [[PerformanceAnalytics sharedInstance] setCode:@"PA-IC-221"
+                                    andDescription:@"Incr-sync-Mem-Mon"];
+    
+    [[PerformanceAnalytics sharedInstance] recordDBMemoryUsage:[appDelegate.dataBase dbMemoryUsage]
+                                                    perContext:@"Incremental Sync"];
+    [[PerformanceAnalytics sharedInstance] setDbVersion:[appDelegate.dataBase dbVersion]];
+    
+    int c1 = [appDelegate.dataBase totalNumberOfOperationCountForDatabase:appDelegate.db];
+    
+    
+    [[PerformanceAnalytics sharedInstance] registerOperationCount:c1
+                                                      forDatabase:@"DB"];
+    
     
     [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"DoIncrementalDataSync"
                                                          andRecordCount:0];
@@ -3068,6 +3079,38 @@ NSDate * syncCompleted;
         
     [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"DoIncrementalDataSync"
                                                                           andRecordCount:0];
+    
+    c1 = [appDelegate.dataBase totalNumberOfOperationCountForDatabase:appDelegate.db];
+    
+    [[PerformanceAnalytics sharedInstance] registerOperationCount:c1
+                                                      forDatabase:@"DB"];
+    
+    if ( (appDelegate.dataBase != nil) && (appDelegate.dataBase.tempDb != nil) )
+    {
+        int c2 = [appDelegate.dataBase totalNumberOfOperationCountForDatabase:appDelegate.dataBase.tempDb];
+        
+        [[PerformanceAnalytics sharedInstance] registerOperationCount:c2
+                                                          forDatabase:@"tempDB"];
+        
+        [[PerformanceAnalytics sharedInstance] recordDBMemoryUsage:[appDelegate.dataBase dbMemoryUsage]
+                                                        perContext:@"Current-incrsync-before-temp"];
+        
+        [appDelegate.dataBase releaseHeapMemoryForDatabase:appDelegate.dataBase.tempDb];
+        
+        [[PerformanceAnalytics sharedInstance] recordDBMemoryUsage:[appDelegate.dataBase dbMemoryUsage]
+                                                        perContext:@"Current-incrsync-after-temp"];
+
+        
+    }
+    
+    [[PerformanceAnalytics sharedInstance] recordDBMemoryUsage:[appDelegate.dataBase dbMemoryUsage]
+                                                    perContext:@"Current-incrsync-before"];
+ 
+    [appDelegate.dataBase releaseHeapMemoryForDatabase:appDelegate.db];
+    
+    [[PerformanceAnalytics sharedInstance] recordDBMemoryUsage:[appDelegate.dataBase dbMemoryUsage]
+                                                    perContext:@"Current-incrsync-after"];
+
         
     [[PerformanceAnalytics sharedInstance] displayCurrentStatics];
         

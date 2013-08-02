@@ -81,6 +81,7 @@ PopoverButtons *popOver_view;
     
     // Vipindas Palli - Optimization
     int dbTransactionCount;
+    NSMutableDictionary *dbOperationCounterDict;
     
     //Keerti - 7275
     BOOL isSortingDone;
@@ -99,7 +100,7 @@ PopoverButtons *popOver_view;
 
 //RADHA
 
-@property (nonatomic,assign) sqlite3 * tempDb;
+@property (nonatomic, getter = getTempDatabase) sqlite3 * tempDb;
 @property (nonatomic, retain) id MyPopoverDelegate;
 
 @property (nonatomic, retain) NSString *dbFilePath;
@@ -111,6 +112,7 @@ PopoverButtons *popOver_view;
 
 // Vipindas Palli - Optimization
 @property(assign) int dbTransactionCount;
+@property(nonatomic, retain)NSMutableDictionary *dbOperationCounterDict;
 
 //- initWithDBName:(NSString *)name type:(NSString *)type sqlite:(sqlite3 *)db;
 
@@ -198,7 +200,7 @@ PopoverButtons *popOver_view;
 - (NSString *) getFieldLabelForApiName:(NSString *)apiName;
 - (NSString *) getApiNameFromFieldLabel:(NSString *)apiName;
 - (NSString*) getLabelFromApiName:(NSString*)api_name objectName:(NSString*) objectName;
-- (NSString *) getSearchQueryPartFromArray:(NSArray *)objectsArray withSearchString:(NSString *)searchString withUserData:(NSString *)criteriaString;
+//- (NSString *) getSearchQueryPartFromArray:(NSArray *)objectsArray withSearchString:(NSString *)searchString withUserData:(NSString *)criteriaString;
 - (NSString *) getSearchCriteriaStringFromUserData:(NSString *)criteriaString withSearchString:searchString;
 - (NSArray *) getConfigurationForProcess:(NSString *) processName ;
 -(NSString*) getRefrenceToField:(NSString*)objectName relationship:(NSString*) relationship_name;
@@ -208,7 +210,7 @@ PopoverButtons *popOver_view;
 // Location Ping
 - (void) createUserGPSTable;
 - (NSString *) getSettingValueWithName:(NSString *)settingName;
-- (void) deleteSequenceofTable;
+//- (void) deleteSequenceofTable;
 - (void) insertrecordIntoUserGPSLog:(NSDictionary *)locationInfo;
 - (void) purgeLocationPingTable;
 - (void) deleteSequenceofTable:(NSString *)tableName;
@@ -371,7 +373,7 @@ PopoverButtons *popOver_view;
 - (BOOL) checkIfConflictsExistsForEvent:(NSString *)SF_Id objectName:(NSString *)objectName local_id:(NSString *)local_id;
 - (BOOL) checkIfChildConflictexist:(NSString *)objectName sfId:(NSString *)SF_Id;
 - (NSString *) getChildColumnForParent:(NSString *)objectName;
-- (NSString *) getchildSfIdOrLocalId:(NSString *)tablename Id:(NSString *)Id  parentColumn:(NSString *)parentColumn  Key:(NSString *)key;
+//- (NSString *) getchildSfIdOrLocalId:(NSString *)tablename Id:(NSString *)Id  parentColumn:(NSString *)parentColumn  Key:(NSString *)key;
 - (BOOL) checkIfConflictsExistsForEventWithLocalId:(NSString *)local_id objectName:(NSString *)objectName;
 - (NSMutableString *) getAllTheConflictRecordsForObject:(NSString *)ObjectName local_id:(NSString *)local_id;
 - (BOOL) checkIfConflictsExistsForEventWithSFID:(NSString *)sfid objectName:(NSString *)objectName;
@@ -403,7 +405,8 @@ PopoverButtons *popOver_view;
 
 //Keerti - 7275
 -(NSString *) CreateRandomString:(NSString*)objectName;
--(NSString*)random;
+//-(NSString*)random;
+
 -(NSString*)getapiNameforObject:(NSString*)objectName RelationshipName:(NSString*)relName;
 -(NSMutableArray*)parsingExpression:(NSString*)Expression;
 -(BOOL)isColumnPresentInTable:(NSString*)TableName columnName:(NSString*)colName;
@@ -476,6 +479,17 @@ PopoverButtons *popOver_view;
 - (NSString *)sfIdForProcessId:(NSString *)processId;
 //Aparna: FORMFILL
 - (NSString *)evaluateLiteral:(NSString *)literal forControlType:(NSString *)controlType;
+
+#pragma mark - Database Monitoring Management
+// Vipin-db-optmz
+- (int)totalNumberOfOperationCountForDatabase:(sqlite3 *)database;
+- (NSString *)dbVersion;
+- (NSNumber *)dbMemoryUsage;
+
+- (BOOL)attachDatabase:(sqlite3*)database byName:(NSString *)attachmentName andPath:(NSString *)path;
+- (BOOL)detachDatabase:(sqlite3*)database byName:(NSString *)databaseName;
+- (BOOL)closeDatabase:(sqlite3*)database;
+- (int)releaseHeapMemoryForDatabase:(sqlite3*)database;
 
 
 @end

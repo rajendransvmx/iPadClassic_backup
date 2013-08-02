@@ -297,8 +297,8 @@
                     andArray:(NSArray *)conflictArray;
 /*Shravya-Calendar view */
 
-#define DATABASENAME   @"sfm"
-#define DATABASETYPE   @"sqlite"
+//#define DATABASENAME   @"sfm"
+//#define DATABASETYPE   @"sqlite"
 //Abinash
 //Summary
 #define DATABASENAME   @"sfm"

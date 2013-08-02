@@ -732,6 +732,7 @@ extern void SVMXLog(NSString *format, ...);
                 }
             }
         }
+        sqlite3_finalize(selectStmt);
     }
     return nameValue;
 }

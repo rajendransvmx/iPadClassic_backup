@@ -1375,6 +1375,9 @@ PopoverButtons *popOver_view;
             
         }
     }
+    
+    synchronized_sqlite3_finalize(stmt);
+    
     return localId;
     
 }
@@ -1808,8 +1811,17 @@ PopoverButtons *popOver_view;
             
 			//[appDelegate.dataBase clearDatabase];
 			//Remove database
+            // Reset application :
+            // Vipind-db-optmz - 3
+            [appDelegate.dataBase closeDatabase:appDelegate.db];
+            [appDelegate releaseMainDatabase];
 			[appDelegate.dataBase deleteDatabase:DATABASENAME1];
-			[appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+            
+            if(appDelegate.db == nil)
+            {
+                [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+            }
+            
 			appDelegate.IsLogedIn = ISLOGEDIN_TRUE;
 			appDelegate.do_meta_data_sync = ALLOW_META_AND_DATA_SYNC;
 			[dataSync dissmisController];

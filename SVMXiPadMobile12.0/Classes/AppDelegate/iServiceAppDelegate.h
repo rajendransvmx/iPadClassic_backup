@@ -914,7 +914,8 @@ extern  NSString const *devVersion;
 -(void)invalidateAllTimers;
 -(NSMutableArray *) getWeekdates:(NSString *)date;
 
--(void)initWithDBName:(NSString *)name type:(NSString *)type ;
+- (void)initWithDBName:(NSString *)name type:(NSString *)type;
+- (void)releaseMainDatabase; // Vipind-db-optmz 
 // Reachability
 - (BOOL) isReachable:(Reachability *)curReach;
 - (void) updateInterfaceWithReachability:(Reachability*)curReach;

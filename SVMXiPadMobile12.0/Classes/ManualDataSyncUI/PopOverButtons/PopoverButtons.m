@@ -554,7 +554,11 @@ PopoverButtons *popOver_view;
 //	[delegate disableControls];
     
     //RADHA AUG 30/2012
-    [appDelegate.dataBase deleteDatabase:TEMPDATABASENAME];    
+    // Vipind-db-optmz - 3
+    [appDelegate.dataBase closeDatabase:appDelegate.dataBase.tempDb];
+    appDelegate.dataBase.tempDb = nil;
+    [appDelegate.dataBase deleteDatabase:TEMPDATABASENAME];
+    
     appDelegate.metaSyncRunning = YES;
     
     syncConfigurationFailed = FALSE;
