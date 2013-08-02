@@ -1830,10 +1830,23 @@ PopoverButtons *popOver_view;
 			}
 			else
 			{
-                // Fix for defect 007410
-                [self disableControls];
-				[appDelegate.dataBase clearDatabase];
-				[appDelegate.dataBase doMetaSync];
+                @try
+                {
+                    // Fix for defect 007410
+                    [self disableControls];
+                    [appDelegate.dataBase clearDatabase];
+                    [appDelegate.dataBase doMetaSync];
+                }
+                @catch (NSException *e)
+                {
+                    if(![appDelegate isInternetConnectionAvailable])
+                    {
+                         appDelegate.internetAlertFlag = FALSE;
+                        [self showInternetAletView];
+                    }
+                    SMLog(@"ManualDataSyncDetail :didDismissWithButtonIndex - Exception Name  %@",e.name);
+                    SMLog(@"ManualDataSyncDetail :didDismissWithButtonIndex - Exception Reason  %@",e.reason);
+                }
 			   
 			}
 		}
