@@ -188,6 +188,10 @@
 #define MMAPPING_VALUE           @"mapping_value"
 #define MMAPPING_COMP_TYPE       @"mapping_component_type"
 #define MMAPPING_VALUE_FLAG      @"mapping_value_flag"
+//Aparna: FORMFILL (ADDITIONAL MAPPING SUPPORT)
+#define MMAPPING_PREFERENCE2    @"preference_2"
+#define MMAPPING_PREFERENCE3    @"preference_3"
+
 
 
 //SFNamedSearch

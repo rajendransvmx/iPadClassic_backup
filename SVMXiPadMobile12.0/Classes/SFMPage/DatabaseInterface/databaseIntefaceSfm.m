@@ -11634,7 +11634,9 @@ extern void SVMXLog(NSString *format, ...);
     NSMutableArray *objMappingCompInfoArray = [NSMutableArray array];
     
     sqlite3_stmt * stmt;
-    NSString *selectQuery = [NSString stringWithFormat:@"SELECT DISTINCT %@ , %@, %@, %@ From %@ WHERE %@ = '%@'", MSOURCE_FIELD_NAME, MTARGET_FIELD_NAME, MMAPPING_VALUE, MMAPPING_COMP_TYPE, SFOBJECTMAPCOMPONENT, MOBJECT_MAPPING_ID,mappingId];
+    
+    //Aparna: FORMFILL (ADDITIONAL MAPPING SUPPORT)
+    NSString *selectQuery = [NSString stringWithFormat:@"SELECT DISTINCT %@ , %@, %@, %@, %@, %@ From %@ WHERE %@ = '%@'", MSOURCE_FIELD_NAME, MTARGET_FIELD_NAME, MMAPPING_VALUE, MMAPPING_COMP_TYPE, MMAPPING_PREFERENCE2, MMAPPING_PREFERENCE3,SFOBJECTMAPCOMPONENT, MOBJECT_MAPPING_ID,mappingId];
     
     if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, NULL) == SQLITE_OK)
     {
@@ -11671,6 +11673,23 @@ extern void SVMXLog(NSString *format, ...);
                 [objMappingDict setValue:mappingCompType forKey:MMAPPING_COMP_TYPE];
             }
             
+            //Aparna: FORMFILL (ADDITIONAL MAPPING SUPPORT)
+            char * preference2Char = (char *) synchronized_sqlite3_column_text(stmt, 4);
+            if ((preference2Char != nil) && strlen(preference2Char))
+            {
+                NSString *preference2 = [NSString stringWithUTF8String:preference2Char];
+                [objMappingDict setValue:preference2 forKey:MMAPPING_PREFERENCE2];
+            }
+
+            char * preference3Char = (char *) synchronized_sqlite3_column_text(stmt, 5);
+            if ((preference3Char != nil) && strlen(preference3Char))
+            {
+                NSString *preference3 = [NSString stringWithUTF8String:preference3Char];
+                [objMappingDict setValue:preference3 forKey:MMAPPING_PREFERENCE3];
+            }
+
+            
+            
             [objMappingCompInfoArray addObject:objMappingDict];
             [objMappingDict release];
         }
@@ -11698,6 +11717,22 @@ extern void SVMXLog(NSString *format, ...);
         {
             NSString *sourceFieldName = [dict valueForKey:MSOURCE_FIELD_NAME];
             mappedValue = [appDelegate.databaseInterface getValueForField:sourceFieldName objectName:objName recordId:objectId];
+            
+            //Aparna: FORMFILL (ADDITIONAL MAPPING SUPPORT)
+            if ((mappedValue == nil) || ([mappedValue length] ==0))
+            {
+                //Set the value from preference2 field
+                NSString *preference2 = [dict valueForKey:MMAPPING_PREFERENCE2];
+                mappedValue = [appDelegate.databaseInterface getValueForField:preference2 objectName:objName recordId:objectId];
+            }
+            if ((mappedValue == nil) || ([mappedValue length] ==0))
+            {
+                //Set the value from preference3 field
+                NSString *preference3 = [dict valueForKey:MMAPPING_PREFERENCE3];
+                mappedValue = [appDelegate.databaseInterface getValueForField:preference3 objectName:objName recordId:objectId];
+            }
+
+
         }
         else if([mappingType isEqualToString:VALUE_MAPPING])
         {

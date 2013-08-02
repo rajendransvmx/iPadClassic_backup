@@ -8991,8 +8991,8 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     
     [self insertSourceToTargetInToSFProcessComponent];
     
-    
-    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFObjectMappingComponent ('local_id' INTEGER PRIMARY KEY  NOT NULL ,'object_mapping_id' VARCHAR,'source_field_name' VARCHAR,'target_field_name' VARCHAR,'mapping_value' VARCHAR,'mapping_component_type' VARCHAR,'mapping_value_flag' BOOL)"]];
+    //Aparna: FORMFILL (ADDITIONAL MAPPING SUPPORT)
+    result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFObjectMappingComponent ('local_id' INTEGER PRIMARY KEY  NOT NULL ,'object_mapping_id' VARCHAR,'source_field_name' VARCHAR,'target_field_name' VARCHAR,'mapping_value' VARCHAR,'mapping_component_type' VARCHAR,'mapping_value_flag' BOOL, 'preference_2' VARCHAR, 'preference_3' VARCHAR)"]];
     
     if (result == YES)
     {
@@ -9004,7 +9004,9 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 
         [self beginTransaction];
         NSString * bulkQueryStmt = @"";
-        bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)", SFOBJECTMAPCOMPONENT, MOBJECT_MAPPING_ID , MSOURCE_FIELD_NAME, MTARGET_FIELD_NAME, MMAPPING_VALUE, MMAPPING_COMP_TYPE, MMAPPING_VALUE_FLAG, MLOCAL_ID];
+        
+        //Aparna: FORMFILL (ADDITIONAL MAPPING SUPPORT)
+        bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)", SFOBJECTMAPCOMPONENT, MOBJECT_MAPPING_ID , MSOURCE_FIELD_NAME, MTARGET_FIELD_NAME, MMAPPING_VALUE, MMAPPING_COMP_TYPE, MMAPPING_VALUE_FLAG, MLOCAL_ID, MMAPPING_PREFERENCE2, MMAPPING_PREFERENCE3];
         
         sqlite3_stmt * bulkStmt;
         
@@ -9067,6 +9069,14 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                 sqlite3_bind_text(bulkStmt, 6, _flag, strlen(_flag), SQLITE_TRANSIENT);
                 
                 sqlite3_bind_int(bulkStmt, 7, ++id_value);
+                
+                //Aparna: FORMFILL (ADDITIONAL MAPPING SUPPORT)
+                char * _prefrence2 = [appDelegate convertStringIntoChar:([dict_ objectForKey:MMAPPING_PREFERENCE2] != nil)?[dict_ objectForKey:MMAPPING_PREFERENCE2]:@""];
+                sqlite3_bind_text(bulkStmt, 8, _prefrence2, strlen(_prefrence2), SQLITE_TRANSIENT);
+                
+                char * _prefrence3 = [appDelegate convertStringIntoChar:([dict_ objectForKey:MMAPPING_PREFERENCE3] != nil)?[dict_ objectForKey:MMAPPING_PREFERENCE3]:@""];
+                sqlite3_bind_text(bulkStmt, 9, _prefrence3, strlen(_prefrence3), SQLITE_TRANSIENT);
+
                 
                 if (synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
