@@ -13628,7 +13628,8 @@ enum BizRuleConfirmViewStatus{
 {
     
     NSString * field_value = @"";
-    if([field_data_type isEqualToString:@"picklist"])
+    //007976: Check for multipicklist data type
+    if([field_data_type isEqualToString:@"picklist"] || [field_data_type isEqualToString:@"multipicklist"])
     {
         //query to acces the picklist values for lines 
         NSMutableDictionary * picklistValues = [appDelegate.databaseInterface  getPicklistValuesForTheFiled:filed_api_name tableName:SFPicklist objectName:object_name];
