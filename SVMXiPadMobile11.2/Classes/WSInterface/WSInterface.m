@@ -2455,7 +2455,11 @@ NSDate * syncCompleted;
         
         [appDelegate.databaseInterface deleteAllConflictedRecordsFrom:SYNC_RECORD_HEAP];
         //Get Price
-        [self doGetPrice];
+		
+		NSString * priceValue = [appDelegate getSettingValueFromMobileSettings:@"IPAD018_SET009"];
+		
+		if ([priceValue caseInsensitiveCompare:@"True"] == NSOrderedSame)
+			[self doGetPrice];
         //Get Price ends
         
         //delete All custom ws entries from Sync_records_heap
@@ -2470,46 +2474,44 @@ NSDate * syncCompleted;
 		
         //Radha Sync ProgressBar
     //	[appDelegate setCurrentSyncStatusProgress:TXFETCH_DONE optimizedSynstate:oTXFETCH_DONE];	
-            
-//        if( !temp_aggressiveSync)
-//        {
-		if([appDelegate enableGPS_SFMSearch])
+        
+		NSString * enableLocation = [appDelegate getSettingValueFromMobileSettings:ENABLE_LOCATION_UPDATE];
+		if ([enableLocation caseInsensitiveCompare:@"True"] == NSOrderedSame)
 		{
-			[appDelegate.dataBase createUserGPSTable];
-			[[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"updateTechnicianLocation"
-															 andRecordCount:1];
-	 
-			[appDelegate.dataBase updateTechnicianLocation];
-			[[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"updateTechnicianLocation"
-															 andRecordCount:0];
-  
-			while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
+			if([appDelegate enableGPS_SFMSearch])
 			{
-				if (appDelegate.dataBase.didTechnicianLocationUpdated == TRUE)
-					break;   
-				if (![appDelegate isInternetConnectionAvailable])
+				[appDelegate.dataBase createUserGPSTable];
+				[[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"updateTechnicianLocation"
+																 andRecordCount:1];
+		 
+				[appDelegate.dataBase updateTechnicianLocation];
+				[[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"updateTechnicianLocation"
+																 andRecordCount:0];
+	  
+				while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
 				{
-					break;
+					if (appDelegate.dataBase.didTechnicianLocationUpdated == TRUE)
+						break;   
+					if (![appDelegate isInternetConnectionAvailable])
+					{
+						break;
+					}
+					if (appDelegate.connection_error)
+					{
+						break;
+					}
+					
+					SMLog(@"Technician Location Updated");
 				}
-				if (appDelegate.connection_error)
-				{
-					break;
-				}
-				
-				SMLog(@"Technician Location Updated");
-			}
 
-			[appDelegate.dataBase updateUserGPSLocation];
+				[appDelegate.dataBase updateUserGPSLocation];
+			}
 		}
-//        }
-//	}
+
         [appDelegate.databaseInterface  updateSyncRecordsIntoLocalDatabase];
         //check download criteria match
     /*******************************************************DOWNLOAD_CRITERIA_CHANGE*************************************************************************/
-        
-//        if(!temp_aggressiveSync)
-//        {
-        
+
 		NSDictionary * get_old_criteria = [self getdownloadCriteriaObjects];
 	  
 		NSArray * old_criteria_objects = [get_old_criteria allKeys];
@@ -2530,7 +2532,6 @@ NSDate * syncCompleted;
 		
 		[deletedObjects release];
 		[self downloadcriteriaplist:dcobjects_incrementalSync];
-//        }
     /*******************************************************DOWNLOAD_CRITERIA_CHANGE*************************************************************************/
        
 
@@ -2634,7 +2635,7 @@ NSDate * syncCompleted;
                 
                 NSComparisonResult result2 = [syncCompleted compare:scheduledTimerdate];
                 
-                NSLog(@"%d %d", result, result2);
+                SMLog(@"%d %d", result, result2);
                 
                 if (result == NSOrderedAscending && result2 == NSOrderedDescending)
                 {
@@ -2852,7 +2853,7 @@ NSDate * syncCompleted;
             break;
     }
 	/* END : Signature before update block */
-	NSLog(@" ********************** START : SINGLE SYNC CALL ********************** %@",[NSDate date]);
+	SMLog(@" ********************** START : SINGLE SYNC CALL ********************** %@",[NSDate date]);
 	
 	BOOL returnFlag = TRUE;
 	NSString * data_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_data_sync];
@@ -2917,7 +2918,7 @@ NSDate * syncCompleted;
 		returnFlag = FALSE;
 	}
 
-	NSLog(@" ********************** END : SINGLE SYNC CALL ********************** %@",[NSDate date]);
+	SMLog(@" ********************** END : SINGLE SYNC CALL ********************** %@",[NSDate date]);
 	appDelegate.Incremental_sync_status = INCR_STARTS;
 	if (optimizeSyncCalls.callBackValue)
 	{
@@ -2989,7 +2990,7 @@ NSDate * syncCompleted;
 	}
 	else
 	{
-		NSLog(@" ********************** START : TXFETCH SYNC CALL OPT ********************** %@",[NSDate date]);
+		SMLog(@" ********************** START : TXFETCH SYNC CALL OPT ********************** %@",[NSDate date]);
 		[appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:GET_DELETE];
 		[appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:PUT_DELETE];
 
@@ -3041,7 +3042,7 @@ NSDate * syncCompleted;
             [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
             returnFlag = FALSE;
         }
-		NSLog(@" ********************** END : TXFETCH SYNC CALL OPT ********************** %@",[NSDate date]);
+		SMLog(@" ********************** END : TXFETCH SYNC CALL OPT ********************** %@",[NSDate date]);
 	}
 
 	return returnFlag;
@@ -8812,6 +8813,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 			NSString * event_name = wsResponse.result.eventName;
 			
 			[optimizeSyncCalls parseOptimizedDownloadCriteriaResponse:event_name response:[wsResponse.result valueMap]];
+			SMLog(@"************************* END Parsing - Once sync Call **********************************");
 		}
 		//Changes for optimized sync - one sync call
 		if ([wsResponse.result.eventName isEqualToString:@"TX_FETCH_OPTIMZED"])

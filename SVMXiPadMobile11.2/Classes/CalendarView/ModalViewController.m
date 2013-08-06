@@ -300,7 +300,6 @@ extern void SVMXLog(NSString *format, ...);
     //Shrinivas
     NSMutableArray * _tasks = [[[NSMutableArray alloc] initWithCapacity:0]autorelease]; 
     _tasks = [appDelegate.calDataBase didGetTaskFromDB:date];
-    SMLog(@"%@", _tasks);
     if (taskView == nil)
         taskView = [[TaskViewController alloc] initWithNibName:@"TaskViewController" bundle:nil];
     [taskView refreshWithTasks:_tasks];
@@ -1493,27 +1492,21 @@ extern void SVMXLog(NSString *format, ...);
     [eventPositionArray removeAllObjects];
     [eventViewArray removeAllObjects];
 	
-    SMLog(@"%@", appDelegate.wsInterface.eventArray);
     for ( int i = 0; i < [appDelegate.wsInterface.eventArray count]; i++ )
     {
         dict = [appDelegate.wsInterface.eventArray objectAtIndex:i];
-        SMLog(@"%@", dict);
         workOrderName = [dict objectForKey:ADDITIONALINFO];
         subject = [dict objectForKey:SUBJECT];
         NSDate * temp_start_date_time , *temp_end_date_time ;
-        SMLog(@"%@ %@", workOrderName, subject);
         
         NSDate * eventDateTime = [dict objectForKey:ACTIVITYDATE];
-        SMLog(@"%@",eventDateTime);
 		
-        SMLog(@"Setdate = %@", _date);
         
         NSString * activtyDate  = [self dateStringConversion:eventDateTime];
         SMLog(@"%@",activtyDate);
 		
         
         eventDateTime = [dict objectForKey:ACTIVITYDTIME];
-        SMLog(@"%@",eventDateTime);
         
         NSString * dateString = [self dateStringConversion:eventDateTime];
         
@@ -1525,20 +1518,16 @@ extern void SVMXLog(NSString *format, ...);
         
         eventDateTime = [dict objectForKey:STARTDATETIME];
         temp_start_date_time = [dict objectForKey:STARTDATETIME];
-        SMLog(@"%@",eventDateTime);
         
         dateString = [self dateStringConversion:eventDateTime];
         
         NSString * startDateTime = dateString;
-        SMLog(@"Startdatetime = %@", startDateTime);
         
         NSString * eventDate = [startDateTime substringToIndex:10];
-		SMLog(@"eventDate = %@", eventDate);
 		
         eventDateTime = [dict objectForKey:ENDDATETIME];
         temp_end_date_time =  [dict objectForKey:ENDDATETIME];
         
-        SMLog(@"%@",eventDateTime);
         
         dateString = [self dateStringConversion:eventDateTime];
         
@@ -1548,7 +1537,6 @@ extern void SVMXLog(NSString *format, ...);
         NSString * startime = [startDateTime substringFromIndex:11];
         [startime substringToIndex:2];
 		
-        SMLog(@"Starttime = %@", startime);
         
         NSString * duration = [dict objectForKey:DURATIONINMIN];
         NSTimeInterval interval;

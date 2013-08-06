@@ -20,9 +20,6 @@
 	NSString * callBackContextKey;
 	NSString * callBackContextValue;
 	NSString * syncRequestId;
-	SBJsonWriter * jsonWriter;
-	SBJsonParser *jsonParserForDataSync;
-	
 	NSString * lastSyncTime;
 	NSString * putUpdateSyncTime;
 	NSMutableArray * purgingEventIdArray;

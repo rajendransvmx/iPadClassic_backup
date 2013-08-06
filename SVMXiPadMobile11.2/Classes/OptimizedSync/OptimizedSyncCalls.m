@@ -176,11 +176,13 @@
 		
 		
 		binding.logXMLInOut = YES;
+		SMLog(@"**************************** Start binding - One call sync *******************************");
 		[binding INTF_DataSync_WSAsyncUsingParameters:datasync
 										SessionHeader:sessionHeader
 										  CallOptions:callOptions
 									  DebuggingHeader:debuggingHeader
 						   AllowFieldTruncationHeader:allowFieldTruncationHeader delegate:appDelegate.wsInterface];
+		SMLog(@"**************************** END binding - One call sync *******************************");
     }
 	@catch (NSException *exp)
 	{
@@ -204,7 +206,7 @@
 		sfmRequest.eventType = event_type;
 		sfmRequest.value = syncRequestId;
 		
-		if([event_name isEqualToString:@"PUT_UPDATE"] && [event_type isEqualToString:@"SYNC"])//PUT_UPSATE
+		if([event_name isEqualToString:@"PUT_UPDATE"] && [event_type isEqualToString:@"SYNC"])//PUT_UPDATE
 		{
 			INTF_WebServicesDefServiceSvc_SVMXMap * SVMXCMap_lastModified =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init]  autorelease];
 			SVMXCMap_lastModified.key = @"SYNC_TIME_STAMP";
@@ -399,7 +401,7 @@
 					if(!check_id_exists)
 					{
 						
-						jsonWriter = [[SBJsonWriter alloc] init];
+						SBJsonWriter * jsonWriter = [[SBJsonWriter alloc] init];
 						
 						NSString * json_record= [jsonWriter stringWithObject:each_record ];
 						if([override_flag isEqualToString:CLIENT_OVERRIDE])
@@ -424,8 +426,11 @@
 						
 						[record_svmxc.valueMap addObject:testSVMXCMap];
 						value_map_count++;
+						[jsonWriter release];
 						
 					}
+					
+					[testSVMXCMap release];
 					
 					if(appDelegate.speacialSyncIsGoingOn)
 					{
@@ -437,11 +442,7 @@
 				svmxcmap.key = @"Object_Name";
 				svmxcmap.value = object_name;
 								
-				//SYNC_TIMESTAMP
-				INTF_WebServicesDefServiceSvc_SVMXMap * timestap = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
-				timestap.key = @"SYNC_TIMESTAMP";
-				timestap.value = @"";
-				
+								
 				if(value_map_count !=0)
 				{
 					[svmxcmap.valueMap addObject:record_svmxc];
@@ -600,7 +601,7 @@
 									
 								}
 								
-								jsonWriter = [[SBJsonWriter alloc] init];
+								SBJsonWriter * jsonWriter = [[SBJsonWriter alloc] init];
 								
 								NSString * json_record = [jsonWriter stringWithObject:each_record];
 								testSVMXCMap.key = local_id;
@@ -617,21 +618,18 @@
 								{
 									[appDelegate.databaseInterface deleterecordsFromConflictTableForOperationType:PUT_INSERT overrideFlag:RETRY table_name:SYNC_ERROR_CONFLICT id_value:local_id field_name:@"local_id"];
 								}
+								[jsonWriter release];
 								
+								[testSVMXCMap release];
 							}
 							
-							//SYNC_TIMESTAMP
-							INTF_WebServicesDefServiceSvc_SVMXMap * timestap = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
-							timestap.key = @"SYNC_TIMESTAMP";
-							timestap.value = @"";
 							
 							[svmxcmap.valueMap addObject:record_svmxc];
 							
 							[sfmRequest.valueMap addObject:svmxcmap];
 							
 							[record_svmxc release];  
-							[timestap release];     
-							[svmxcmap release];        
+							[svmxcmap release];
 							break;
 						}
 						
@@ -731,11 +729,6 @@
 				
 				svmxcmap.key = @"Object_Name";
 				svmxcmap.value = object_name;
-				
-				//SYNC_TIMESTAMP
-				INTF_WebServicesDefServiceSvc_SVMXMap * timestap = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
-				timestap.key = @"SYNC_TIMESTAMP";
-				timestap.value = @"";
 				
 				[svmxcmap.valueMap addObject:record_svmxc];
 				[sfmRequest.valueMap addObject:svmxcmap];
@@ -975,13 +968,6 @@
 {
 	NSAutoreleasePool * autoreleasePool = [[NSAutoreleasePool alloc] init];
 	
-	if(jsonParserForDataSync == nil) {
-		SBJsonParser *tempParser = [[SBJsonParser alloc] init];
-		jsonParserForDataSync = tempParser;
-		[tempParser release];
-		tempParser = nil;
-	}
-	
 	SMLog(@"  TX_FETCH Response recived: %@", [NSDate date]);
 	SMLog(@"  TX_FETCH Processing starts: %@", [NSDate date]);
 	NSMutableDictionary * record_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
@@ -1176,7 +1162,7 @@
 						else
 						{
 							NSDictionary * dict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:local_id, @"",sf_id,eventname,record_type,nil] forKeys:[NSArray arrayWithObjects:@"LOCAL_ID",@"JSON_RECORD",@"SF_ID", @"SYNC_TYPE", @"RECORD_TYPE",nil]];
-							NSMutableArray * array = [[NSMutableArray alloc] initWithCapacity:0];
+							NSMutableArray * array = [NSMutableArray arrayWithCapacity:0];
 							[array addObject:dict];
 							[record_dict setObject:array forKey:object_name];
 						}
@@ -1196,7 +1182,7 @@
 - (void) put_insert:(NSString *)event_name valuemap:(NSMutableArray *)insert_array
 {
 	NSString * insertEventName = event_name;
-	NSMutableDictionary * record_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+	NSMutableDictionary * record_dict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
 	NSMutableDictionary * conflict_dict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
 	
 	for (int insert = 0; insert < [insert_array count]; insert++)
@@ -1250,7 +1236,7 @@
 				else
 				{
 					NSDictionary * dict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:local_id, @"",sf_id,event_name,record_type,nil] forKeys:[NSArray arrayWithObjects:@"LOCAL_ID",@"JSON_RECORD",@"SF_ID", @"SYNC_TYPE", @"RECORD_TYPE",nil]];
-					NSMutableArray * array = [[NSMutableArray alloc] initWithCapacity:0];
+					NSMutableArray * array = [NSMutableArray arrayWithCapacity:0];
 					[array addObject:dict];
 					[record_dict setObject:array forKey:object_name];
 				}
@@ -1454,7 +1440,7 @@
 - (void) put_delete:(NSString *)event_name valuemap:(NSMutableArray *)delete_array
 {
 	NSString * delete_event_name = event_name;
-	NSMutableDictionary * record_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+	NSMutableDictionary * record_dict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
 	NSMutableDictionary * conflict_dict = [[[NSMutableDictionary alloc] initWithCapacity:0] autorelease];
 		
 	for (int del = 0; del < [delete_array count]; del++)
@@ -1499,7 +1485,7 @@
 				else
 				{
 					NSDictionary * dict = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:local_id, @"",sf_id,delete_event_name,record_type,nil] forKeys:[NSArray arrayWithObjects:@"LOCAL_ID",@"JSON_RECORD",@"SF_ID", @"SYNC_TYPE", @"RECORD_TYPE",nil]];
-					NSMutableArray * array = [[NSMutableArray alloc] initWithCapacity:0];
+					NSMutableArray * array = [NSMutableArray arrayWithCapacity:0];
 					[array addObject:dict];
 					[record_dict setObject:array forKey:object_name];
 				}
@@ -1576,10 +1562,9 @@
 	[callBackContextKey release];
 	[callBackContextValue release];
 	[syncRequestId release];
-	[jsonWriter release];
-	[jsonParserForDataSync release];
 	[lastSyncTime release];
 	[putUpdateSyncTime release];
+	[purgingEventIdArray release];
 	[super dealloc];
 }
 

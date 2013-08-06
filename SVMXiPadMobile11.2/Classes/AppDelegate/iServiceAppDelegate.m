@@ -3145,13 +3145,27 @@ int percent = 0;
 
 - (void) overrideOptimizeSyncSettingsFromRooTPlist
 {
-	NSString * settingValue = [self.settingsDict objectForKey:@"IPAD018_SET010"];
+	NSUserDefaults * userDefaults = [NSUserDefaults standardUserDefaults];
+	
+	BOOL value = [userDefaults boolForKey:@"USDefault_Aggressive_flag"];
+	NSString * settingValue = [self getSettingValueFromMobileSettings:@"IPAD018_SET010"];
 	if ([settingValue length] > 0)
-	{
-		NSUserDefaults * userDefaults = [NSUserDefaults standardUserDefaults];
+		value = [settingValue  boolValue];
+
 		//Rewrite the user's actual org to settings :
-		[userDefaults setValue:settingValue forKey:@"USDefault_Aggressive_flag"];
-	}
+	[userDefaults setBool:value forKey:@"USDefault_Aggressive_flag"];
+	[userDefaults synchronize];
+}
+
+
+- (NSString *) getSettingValueFromMobileSettings:(NSString *)SETID
+{
+	NSString * settingValue = @"";
+	settingValue = [self.settingsDict objectForKey:SETID];
+	
+	return settingValue;
+	
+	
 }
 
 //Defect 6774
