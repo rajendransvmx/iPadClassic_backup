@@ -368,12 +368,12 @@ extern void SVMXLog(NSString *format, ...);
     appDelegate.loginResult = nil;
     appDelegate.currentServerUrl = nil;
     
-    [ZKServerSwitchboard switchboard].logXMLInOut = NO;
+    [ZKServerSwitchboard switchboard].logXMLInOut = [appDelegate enableLogs];
     [[ZKServerSwitchboard switchboard] loginWithUsername:txtUsernameLandscape.text password:txtPasswordLandscape.text target:self selector:@selector(didLogin:error:context:)];
     
     if (![appDelegate isInternetConnectionAvailable])
     {
-        [ZKServerSwitchboard switchboard].logXMLInOut = YES;
+        [ZKServerSwitchboard switchboard].logXMLInOut = [appDelegate enableLogs];
         [activity stopAnimating];
         appDelegate.shouldShowConnectivityStatus = YES;
         [appDelegate displayNoInternetAvailable];
@@ -407,7 +407,7 @@ extern void SVMXLog(NSString *format, ...);
         }
 
     }
-    [ZKServerSwitchboard switchboard].logXMLInOut = YES;
+    [ZKServerSwitchboard switchboard].logXMLInOut = [appDelegate enableLogs];
     
     [self getServiceReportLogo];
     

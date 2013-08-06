@@ -933,6 +933,7 @@ extern  NSString const *devVersion;
 - (BOOL) shouldDoOneCallSync;
 - (void) overrideOptimizeSyncSettingsFromRooTPlist;
 - (NSString *) getSettingValueFromMobileSettings:(NSString *)SETID;
+- (BOOL) enableLogs;
 
 @end
 

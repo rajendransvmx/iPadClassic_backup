@@ -65,7 +65,7 @@
 		allowFieldTruncationHeader.allowFieldTruncation = NO;
 		
 		INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-		binding.logXMLInOut = YES;
+		binding.logXMLInOut = [appDelegate enableLogs];
 		
 		
 		INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init] autorelease];
@@ -175,7 +175,7 @@
 		[datasync setRequest:sfmRequest];
 		
 		
-		binding.logXMLInOut = YES;
+		binding.logXMLInOut = [appDelegate enableLogs];
 		SMLog(@"**************************** Start binding - One call sync *******************************");
 		[binding INTF_DataSync_WSAsyncUsingParameters:datasync
 										SessionHeader:sessionHeader
@@ -769,7 +769,7 @@
 		
 		
 		INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-		binding.logXMLInOut = YES;
+		binding.logXMLInOut = [appDelegate enableLogs];
 		
 		INTF_WebServicesDefServiceSvc_INTF_DataSync_WS  * datasync = [[[INTF_WebServicesDefServiceSvc_INTF_DataSync_WS alloc] init]   autorelease];
 		
