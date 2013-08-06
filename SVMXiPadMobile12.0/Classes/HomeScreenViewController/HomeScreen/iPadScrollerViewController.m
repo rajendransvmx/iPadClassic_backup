@@ -2498,10 +2498,16 @@ const float progress_ = 0.07;
 {
 	if ( appDelegate.refreshHomeIcons )
 	{
-		[menuTableView reloadData];
+        //Shravya - 7933
+        NSLog(@"Reloading Main Menu table");
+        [self performSelectorOnMainThread:@selector(reloadMenuTable) withObject:nil waitUntilDone:NO];
+       
+		//[menuTableView reloadData];
 	}
 }
 
-
+- (void)reloadMenuTable {
+    [self.menuTableView reloadData];
+}
 
 @end

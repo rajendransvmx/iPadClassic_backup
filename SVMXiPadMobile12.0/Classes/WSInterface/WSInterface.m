@@ -3065,13 +3065,16 @@ NSDate * syncCompleted;
     appDelegate.dataSyncRunning = NO;
 		
 		
-    [appDelegate.refreshIcons RefreshIcons]; //20-June-2013. ---> Refreshing home incons when sync is running.
+    //[appDelegate.refreshIcons RefreshIcons]; //20-June-2013. ---> Refreshing home incons when sync is running. //7933 been placed @ end of method
  [autoreleasePool release];
     }@catch (NSException *exp) {
 		
-		[appDelegate.refreshIcons RefreshIcons]; //20-June-2013. ---> Refreshing home incons when sync is running.
+		
         SMLog(@"Exception Name WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.name);
         SMLog(@"Exception Reason WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.reason);
+        [self performSelectorOnMainThread:@selector(releaseSyncThread) withObject:nil waitUntilDone:YES];
+        [appDelegate.refreshIcons RefreshIcons]; //20-June-2013. ---> Refreshing home incons when sync is running. //7933 re-arrage
+       
     }
     
     [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"GetUpdate-VP"
@@ -3115,7 +3118,8 @@ NSDate * syncCompleted;
     [[PerformanceAnalytics sharedInstance] displayCurrentStatics];
         
     NSLog(@" [isync] DoIncrementalDataSync  - completed");
-    
+    [appDelegate.refreshIcons RefreshIcons]; ////20-June-2013. ---> Refreshing home incons when sync is running - 7933
+    /*Shravya - Do not put any statements after [appDelegate.refreshIcons RefreshIcons]; method call. This should be the last call*/
 }
 - (void) releaseSyncThread
 {
