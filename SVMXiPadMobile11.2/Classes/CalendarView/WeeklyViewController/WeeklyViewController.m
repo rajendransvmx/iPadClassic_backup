@@ -23,6 +23,7 @@ extern void SVMXLog(NSString *format, ...);
 @synthesize currentWeekDateRange;
 @synthesize workOrderDictionary;
 @synthesize activity;
+@synthesize eventView; //7981
 //sahana  12th Sept
 @synthesize didDismissAlertView, ContinueRescheduling;
 
@@ -1342,7 +1343,7 @@ extern void SVMXLog(NSString *format, ...);
 	// We only support single touches, so anyObject retrieves just that touch from touches
 	UITouch *touch = [touches anyObject];
 	BOOL flag = NO;
-    eventView = nil;
+    self.eventView = nil; //7981
     
     if ([touch view] == weekViewPane)
     {
@@ -1353,7 +1354,7 @@ extern void SVMXLog(NSString *format, ...);
 	// Only move the event view if the touch was in the placard view
     for (int i = 0; i < [eventViewArray count]; i++)
     {
-        eventView = [eventViewArray objectAtIndex:i];
+        self.eventView = [eventViewArray objectAtIndex:i]; //7981
         if ([touch view] == eventView.view)
         {
             initialPosition = eventView.view.frame;
@@ -1365,7 +1366,7 @@ extern void SVMXLog(NSString *format, ...);
         }
         else
         {
-            eventView = nil;
+            self.eventView = nil;//7981
         }
     }
     
@@ -1807,6 +1808,7 @@ extern void SVMXLog(NSString *format, ...);
     [day5Label release];
     [day6Label release];
     [day7Label release];
+    [eventView release]; //7981
     [super dealloc];
 }
 

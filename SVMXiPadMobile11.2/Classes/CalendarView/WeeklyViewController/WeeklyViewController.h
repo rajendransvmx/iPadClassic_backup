@@ -159,6 +159,8 @@
 - (void) populateWeekView;
 - (NSString *)dateToStringConversion:(NSDate*)date;
 
+@property (nonatomic,retain)  WeeklyViewEvent * eventView;  ////007981
+
 
 - (void) highlightToday;
 - (void) setupWeeks;
