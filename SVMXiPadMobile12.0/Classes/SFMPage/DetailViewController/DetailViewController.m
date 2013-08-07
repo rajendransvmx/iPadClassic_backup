@@ -4497,6 +4497,8 @@ enum BizRuleConfirmViewStatus{
 
 - (void) requireFieldWarning
 {
+    //defect 006690 krishna
+    [activity stopAnimating];
     NSString * response = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_RESPONSE];
     NSString * alert_ok = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_OK];
     NSString * required_fields = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_REQUIRED_FIELDS];
