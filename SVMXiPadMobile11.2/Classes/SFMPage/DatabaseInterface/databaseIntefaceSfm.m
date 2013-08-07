@@ -78,6 +78,7 @@ extern void SVMXLog(NSString *format, ...);
     NSString * sql = [NSString stringWithFormat:@"SELECT process_info FROM SFProcess where process_id = '%@'",Process_id];
 
     sqlite3_stmt * stmt;
+    NSMutableDictionary * dict = nil;
     
     if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sql UTF8String], -1, &stmt, nil) == SQLITE_OK  )
     {
@@ -102,16 +103,15 @@ extern void SVMXLog(NSString *format, ...);
             {
                 SMLog(@"No error creating XML data.");
                 [propertyList writeToFile:filePath atomically:YES];
-                NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithContentsOfFile:filePath];
-	synchronized_sqlite3_finalize(stmt);
-                return dict;
-
+                dict = [NSMutableDictionary dictionaryWithContentsOfFile:filePath];
+                
+                break;
             }
         }
     }
-    
+    // Vipind-db-optmz
     synchronized_sqlite3_finalize(stmt);
-    return nil;
+    return dict;
     
 }
 
@@ -1681,7 +1681,7 @@ extern void SVMXLog(NSString *format, ...);
 				}
 			}
 			
-            sqlite3_finalize(stmt);
+            synchronized_sqlite3_finalize(stmt);
 		}
 	}
     
@@ -1835,7 +1835,7 @@ extern void SVMXLog(NSString *format, ...);
     
     sqlite3_stmt * bulk_statement = nil;
     
-    int prepare = sqlite3_prepare_v2(appDelegate.db, [insert_statement UTF8String], strlen([insert_statement UTF8String]), &bulk_statement, NULL);
+    int prepare = synchronized_sqlite3_prepare_v2(appDelegate.db, [insert_statement UTF8String], strlen([insert_statement UTF8String]), &bulk_statement, NULL);
     
     [appDelegate.dataBase beginTransaction];
     
@@ -1867,7 +1867,6 @@ extern void SVMXLog(NSString *format, ...);
             [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:1];
             SMLog(@"Success insertdataIntoTable insert_statement");
         }
-        
         sqlite3_clear_bindings(bulk_statement);
         sqlite3_reset(bulk_statement);
         synchronized_sqlite3_finalize(bulk_statement);
@@ -3843,7 +3842,7 @@ extern void SVMXLog(NSString *format, ...);
         
         update_statement = [NSString stringWithFormat:@"UPDATE %@ SET %@ WHERE Id = ?", objectName, updateValue];
         
-        int ret_val = sqlite3_prepare_v2(appDelegate.db, [update_statement UTF8String], strlen([update_statement UTF8String]),  &statement, NULL);
+        int ret_val = synchronized_sqlite3_prepare_v2(appDelegate.db, [update_statement UTF8String], strlen([update_statement UTF8String]),  &statement, NULL);
         
         // Good prepare statement
         if (ret_val == SQLITE_OK)
@@ -4414,7 +4413,8 @@ extern void SVMXLog(NSString *format, ...);
         /* Compile it for the records and insert them */
         sqlite3_stmt * bulk_statement = nil;
         
-        int preparedSuccessfully = sqlite3_prepare_v2(appDelegate.db, [insertionQuery UTF8String], strlen([insertionQuery UTF8String]), &bulk_statement, NULL);
+        int preparedSuccessfully =  synchronized_sqlite3_prepare_v2(appDelegate.db, [insertionQuery UTF8String], strlen([insertionQuery UTF8String]), &bulk_statement, NULL);
+        
         int counter = 0;
         
         NSString *localId = nil,*sfid=nil,*jsonRecord = nil;
@@ -4619,7 +4619,7 @@ extern void SVMXLog(NSString *format, ...);
         
         sqlite3_stmt * bulkStmt;
         
-        int ret_val = sqlite3_prepare_v2(appDelegate.db, [update_query UTF8String], strlen([update_query UTF8String]),  &bulkStmt, NULL);
+        int ret_val = synchronized_sqlite3_prepare_v2(appDelegate.db, [update_query UTF8String], strlen([update_query UTF8String]),  &bulkStmt, NULL);
         
         if (ret_val == SQLITE_OK)
         {
@@ -5506,7 +5506,7 @@ extern void SVMXLog(NSString *format, ...);
         
         sqlite3_stmt * bulk_statement = nil;
         
-        int prepare_ = sqlite3_prepare_v2(appDelegate.db, [query_string UTF8String], strlen([query_string UTF8String]), &bulk_statement, NULL);
+        int prepare_ = synchronized_sqlite3_prepare_v2(appDelegate.db, [query_string UTF8String], strlen([query_string UTF8String]), &bulk_statement, NULL);
         
         // Vipin-db-optmz 2
         NSMutableDictionary *parentColumnToObjectNameDict = [[NSMutableDictionary alloc] initWithCapacity:0];
@@ -5772,12 +5772,12 @@ extern void SVMXLog(NSString *format, ...);
                 }
             }
         }
+        synchronized_sqlite3_finalize(bulk_statement);
         
         // Vipin-db-optmz 2
         [parentColumnToObjectNameDict release];
         parentColumnToObjectNameDict = nil;
         
-        synchronized_sqlite3_finalize(bulk_statement);
         synchronized_sqlite3_finalize(statement);
     }
     
@@ -6031,15 +6031,16 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     
+    synchronized_sqlite3_finalize(statement);
     // Vipin-db-optmz
     [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"sync_Records_Heap - Field selection"
                                                          andRecordCount:counter];
     
     [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"sync_Records_Heap - Field selection"
                                                                       andRecordCount:0];
-    
+ 
     [appDelegate.dataBase endTransaction];
-    synchronized_sqlite3_finalize(statement);
+
 }
 
 -(void)InsertInto_User_created_event_for_local_id:(NSString *)local_id sf_id:(NSString *)sf_id
@@ -6129,7 +6130,7 @@ extern void SVMXLog(NSString *format, ...);
     
     @try {
         
-        int ret_val = sqlite3_prepare_v2(appDelegate.db, [updateStatement UTF8String], strlen([updateStatement UTF8String]),  &bulkStmt, NULL);
+        int ret_val = synchronized_sqlite3_prepare_v2(appDelegate.db, [updateStatement UTF8String], strlen([updateStatement UTF8String]),  &bulkStmt, NULL);
         
         if (ret_val == SQLITE_OK)
         {
@@ -6187,7 +6188,7 @@ extern void SVMXLog(NSString *format, ...);
     
     @try {
         
-        int ret_val = sqlite3_prepare_v2(appDelegate.db, [updateStatement UTF8String], strlen([updateStatement UTF8String]),  &bulkStmt, NULL);
+        int ret_val = synchronized_sqlite3_prepare_v2(appDelegate.db, [updateStatement UTF8String], strlen([updateStatement UTF8String]),  &bulkStmt, NULL);
         
         if (ret_val == SQLITE_OK)
         {
@@ -6213,7 +6214,7 @@ extern void SVMXLog(NSString *format, ...);
         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
     }
     
-    sqlite3_finalize(bulkStmt);
+    synchronized_sqlite3_finalize(bulkStmt);
     [appDelegate.dataBase endTransaction];
     
     [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:1];
@@ -8724,7 +8725,7 @@ extern void SVMXLog(NSString *format, ...);
             /* Compile it for the records and insert them */
             sqlite3_stmt * bulk_statement = nil;
             
-            int preparedSuccessfully = sqlite3_prepare_v2(appDelegate.db, [insertionQuery UTF8String], strlen([insertionQuery UTF8String]), &bulk_statement, NULL);
+            int preparedSuccessfully = synchronized_sqlite3_prepare_v2(appDelegate.db, [insertionQuery UTF8String], strlen([insertionQuery UTF8String]), &bulk_statement, NULL);
             int counter = 0;
             
             NSString *sfid=nil,*jsonRecord = nil;
@@ -8846,7 +8847,7 @@ extern void SVMXLog(NSString *format, ...);
                 NSLog(@"Failed to insert Initial Sync");
             }
             
-            sqlite3_finalize(bulk_statement);
+            synchronized_sqlite3_finalize(bulk_statement);
             
             [autoreleaseExternal release];
             autoreleaseExternal = nil;
@@ -9268,7 +9269,8 @@ extern void SVMXLog(NSString *format, ...);
 			if([columnname isEqualToString:fieldName])
 			{
 				columnExists = YES;
-				return columnExists;
+				break;
+				//return columnExists;
 			}
         }
     }
@@ -9297,7 +9299,6 @@ extern void SVMXLog(NSString *format, ...);
 		{
 			count = synchronized_sqlite3_column_int(statement, 0);
 		}
-		synchronized_sqlite3_finalize(statement);
 	}
 	
 	if (count > 0)

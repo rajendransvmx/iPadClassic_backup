@@ -185,383 +185,386 @@ extern void SVMXLog(NSString *format, ...);
 	
 	if (value >= 0 && value <= 10)
 		string = [NSString stringWithFormat:@"0%d", --value];
-	else 
+	else
 		string = [NSString stringWithFormat:@"%d", --value];
-		
+    
 	startdate = [startdate stringByReplacingCharactersInRange:NSMakeRange(8, 2) withString:string];
 	
 	value = [[endDate substringWithRange:NSMakeRange(8, 2)] intValue];
 	
 	if (value >= 0 && value <= 8)
 		string = [NSString stringWithFormat:@"0%d", ++value];
-	else 
+	else
 		string = [NSString stringWithFormat:@"%d", ++value];
-
+    
 	
 	endDate = [endDate stringByReplacingCharactersInRange:NSMakeRange(8, 2) withString:string];
-
-	@try{
-    queryStatement = [NSString stringWithFormat:@"SELECT  ActivityDate, ActivityDateTime,DurationInMinutes,EndDateTime,StartDateTime,Subject,WhatId,Id ,local_id FROM Event where ((StartDateTime >= '%@' and StartDateTime < '%@') or (EndDateTime >= '%@' and EndDateTime < '%@'))", startdate, endDate, startdate, endDate];
-        
-    const char * selectStatement = [queryStatement UTF8String];
     
-    int ret = synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement, -1, &statement, NULL);
-    
-    if (ret == SQLITE_OK)
+	@try
     {
-        NSDateFormatter * dateFormatter = [[[NSDateFormatter alloc] init]autorelease];
-        [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+        queryStatement = [NSString stringWithFormat:@"SELECT  ActivityDate, ActivityDateTime,DurationInMinutes,EndDateTime,StartDateTime,Subject,WhatId,Id ,local_id FROM Event where ((StartDateTime >= '%@' and StartDateTime < '%@') or (EndDateTime >= '%@' and EndDateTime < '%@'))", startdate, endDate, startdate, endDate];
         
-        NSDateFormatter * datetimeFormatter=[[[NSDateFormatter alloc]init]autorelease];
-        [datetimeFormatter  setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-        NSTimeZone * gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
-        [datetimeFormatter setTimeZone:gmt];
+        const char * selectStatement = [queryStatement UTF8String];
         
+        int ret = synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement, -1, &statement, NULL);
         
-        NSArray * keys = [NSArray arrayWithObjects:
-                          ACTIVITYDATE,
-                          ACTIVITYDTIME,
-                          DURATIONINMIN,
-                          ENDDATETIME,
-                          STARTDATETIME,
-                          SUBJECT,
-                          ADDITIONALINFO,
-                          WHATID,
-                          EVENTID,
-                          OBJECTAPINAME,
-                          CITY,
-                          ZIP,
-                          STREET,
-                          STATE,
-                          COUNTRY,
-                          EVENT_LOCAL_ID,
-                          nil];
-        
-        ret = synchronized_sqlite3_step(statement);
-        while (ret == SQLITE_ROW)
+        if (ret == SQLITE_OK)
         {
-            NSString *City = @"";
-            NSString *Zip = @"";
-            NSString *Street = @"";
-            NSString *State = @"";
-            NSString *Country = @"";
+            NSDateFormatter * dateFormatter = [[[NSDateFormatter alloc] init]autorelease];
+            [dateFormatter setDateFormat:@"yyyy-MM-dd"];
             
-            NSString * subject = @"";   
-            NSString * additonalInfo = @"";
-            NSString * whatId1 = @"";
+            NSDateFormatter * datetimeFormatter=[[[NSDateFormatter alloc]init]autorelease];
+            [datetimeFormatter  setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+            NSTimeZone * gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
+            [datetimeFormatter setTimeZone:gmt];
             
             
-            char * _activityDate = (char *) synchronized_sqlite3_column_text(statement,0);
-            NSString * activitydate = @"";
-            NSDate * activityDate = nil;
-            if (activityDate == nil)
-                activityDate = [[NSDate alloc] init];
-            if ((_activityDate != nil) && strlen(_activityDate))
-            {
-                activitydate = [NSString stringWithUTF8String:_activityDate];
-                activitydate = [activitydate stringByDeletingPathExtension];
-                if ([activitydate length] > 10)
-                    activityDate = [datetimeFormatter dateFromString:activitydate];
-                else
-                    activityDate = [dateFormatter dateFromString:activitydate];
-            }
+            NSArray * keys = [NSArray arrayWithObjects:
+                              ACTIVITYDATE,
+                              ACTIVITYDTIME,
+                              DURATIONINMIN,
+                              ENDDATETIME,
+                              STARTDATETIME,
+                              SUBJECT,
+                              ADDITIONALINFO,
+                              WHATID,
+                              EVENTID,
+                              OBJECTAPINAME,
+                              CITY,
+                              ZIP,
+                              STREET,
+                              STATE,
+                              COUNTRY,
+                              EVENT_LOCAL_ID,
+                              nil];
             
-            char * _activityDateTime = (char *) synchronized_sqlite3_column_text(statement,1);
-            NSString *activitydateTime = @"";
-            NSDate *activityDateTime = nil; 
-            if (activityDateTime == nil)
-                activityDateTime = [[NSDate alloc] init];
-            
-            if ((_activityDateTime != nil) && strlen(_activityDateTime))
-            {
-                activitydateTime = [NSString stringWithUTF8String:_activityDateTime];
-                activitydateTime = [activitydateTime stringByDeletingPathExtension];
-                activitydateTime = [activitydateTime stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-                if ([activitydateTime length] > 10)
-                    activityDateTime = [datetimeFormatter dateFromString:activitydateTime];
-                else
-                    activityDateTime = [dateFormatter dateFromString:activitydateTime];            
-            }
-            
-            char * _durationInMins = (char *) synchronized_sqlite3_column_text(statement,2);
-            NSString * durationInMins = @"";
-            if ((_durationInMins != nil) && strlen(_durationInMins))
-            {
-                durationInMins = [NSString stringWithUTF8String:_durationInMins];
-            }
-            
-            char * _endDateTime = (char *) synchronized_sqlite3_column_text(statement,3);
-            NSString * enddateTime = @"";
-            NSDate * endDateTime = nil;
-            if (endDateTime == nil)
-                endDateTime = [[NSDate alloc] init];
-            if ((_endDateTime != nil) && strlen(_endDateTime))
-            {
-                enddateTime = [NSString stringWithUTF8String:_endDateTime];
-                enddateTime = [enddateTime stringByDeletingPathExtension];
-                enddateTime = [enddateTime stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-
-                if ([enddateTime length] > 10)
-                    endDateTime = [datetimeFormatter dateFromString:enddateTime];
-                else
-                    endDateTime = [dateFormatter dateFromString:enddateTime];  
-            }
-            
-            
-            char * _startDateTime = (char *) synchronized_sqlite3_column_text(statement,4);
-            NSString * startdateTime = @"";
-            NSDate * startDateTime = nil;
-            if (startDateTime == nil)
-                startDateTime = [[NSDate alloc] init];
-            if ((_startDateTime != nil) && strlen(_startDateTime))
-            {
-                startdateTime = [NSString stringWithUTF8String:_startDateTime];
-                startdateTime = [startdateTime stringByDeletingPathExtension];
-                startdateTime = [startdateTime stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-                if ([startdateTime length] > 10)
-                    startDateTime = [datetimeFormatter dateFromString:startdateTime];
-                else
-                    startDateTime = [dateFormatter dateFromString:startdateTime];  
-            }
-            
-            char * _subject = (char *) synchronized_sqlite3_column_text(statement,5);
-            
-            if ((_subject != nil) && strlen(_subject))
-            {
-                subject = [NSString stringWithUTF8String:_subject];
-            }
-            
-            
-            char * _whatId = (char *) synchronized_sqlite3_column_text(statement,6);
-            NSString *whatId = @"";
-            if ((_whatId != nil) && strlen(_whatId))
-            {
-                whatId = [NSString stringWithUTF8String:_whatId];
-                
-                whatId1 = whatId;
-            }
-            
-            char *_eventId = (char *) synchronized_sqlite3_column_text(statement,7);
-            NSString * eventId = @"";
-            if ((_eventId != nil) && strlen(_eventId))
-            {
-                eventId = [NSString stringWithUTF8String: _eventId];
-            }
-            
-            
-            char *_local_id= (char *) synchronized_sqlite3_column_text(statement,8);
-            NSString * event_local_Id = @"";
-            if ((_local_id != nil) && strlen(_local_id))
-            {
-                event_local_Id = [NSString stringWithUTF8String: _local_id];
-            }
-            
-            
-            BOOL retVal, retVal1;
-           // retVal = [self isWorkOrder:whatId1];
-			
-			retVal = [self isWorkOrderOrCase:whatId1 objectName:@"SVMXC__Service_Order__c"];
-            
-            retVal1 = [self isWorkOrderOrCase:whatId1 objectName:@"Case"];
-			
-            if ( retVal == YES && (!([whatId1 isEqualToString:@""]) || whatId1 != nil) )
-            {
-                NSString *subject1  = @"";
-                NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
-                
-                if((_startDateTime!=nil) && strlen(_startDateTime) && (_endDateTime!=nil) && strlen(_endDateTime))
-                    queryStatement =[NSString stringWithFormat:@"Select Subject From Event where WhatId = '%@' and StartDateTime = '%s' and EndDateTime = '%s'", whatId1,_startDateTime,_endDateTime];
-                else
-                    queryStatement =[NSString stringWithFormat:@"Select Subject From Event where WhatId = '%@'", whatId1];
-                
-                const char * selectStatement = [queryStatement UTF8String];
-                sqlite3_stmt * eventsubject;
-                if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &eventsubject, nil) == SQLITE_OK )
-                {
-                    while(synchronized_sqlite3_step(eventsubject) == SQLITE_ROW)
-                    {
-                        char * _subject = (char *) synchronized_sqlite3_column_text(eventsubject,0);
-                        
-                        if ((_subject != nil) && strlen(_subject))
-                        {
-                            subject1 = [NSString stringWithUTF8String:_subject];
-                            subject = nil;
-                            subject = subject1;
-                        }
-                        
-                    }
-                    
-                } 
-                synchronized_sqlite3_finalize(eventsubject);
-                //SHRINIVAS
-                NSString * WorkOrderLabel = @"";
-                NSMutableString * queryStatement1 = [[NSMutableString alloc]initWithCapacity:0];
-                queryStatement1 = [NSMutableString stringWithFormat:@"Select Name,SVMXC__City__c,SVMXC__Zip__c,SVMXC__Street__c,SVMXC__State__c,SVMXC__Country__c From SVMXC__Service_Order__c where Id = '%@'",whatId1];
-                const char * selectStatement1 = [queryStatement1 UTF8String];
-                sqlite3_stmt * details;
-                if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement1, -1, &details, nil) == SQLITE_OK)
-                {
-                    while (synchronized_sqlite3_step(details) == SQLITE_ROW) 
-                    {
-                        char * _WorkOrderLabel = (char *) synchronized_sqlite3_column_text(details, 0);
-                        if ((_WorkOrderLabel !=nil) && strlen(_WorkOrderLabel))
-                        {
-                            WorkOrderLabel = [NSString stringWithUTF8String:_WorkOrderLabel];
-                        }
-                        
-                        char * _city = (char *) synchronized_sqlite3_column_text(details, 1);
-                        if ((_city !=nil) && strlen(_city))
-                        {
-                            City = [NSString stringWithUTF8String:_city];
-                        }
-                        
-                        char * _zip = (char *) synchronized_sqlite3_column_text(details, 2);
-                        if ((_zip !=nil) && strlen(_zip))
-                        {
-                            Zip = [NSString stringWithUTF8String:_zip];
-                        }
-                        
-                        char * _street = (char *) synchronized_sqlite3_column_text(details, 3);
-                        if ((_street !=nil) && strlen(_street))
-                        {
-                            Street = [NSString stringWithUTF8String:_street];
-                        }
-                        
-                        char * _state = (char *) synchronized_sqlite3_column_text(details, 4);
-                        if ((_state !=nil) && strlen(_state))
-                        {
-                            State = [NSString stringWithUTF8String:_state];
-                        }
-                        
-                        char * _country = (char *) synchronized_sqlite3_column_text(details, 5);
-                        if ((_country !=nil) && strlen(_country))
-                        {
-                            Country = [NSString stringWithUTF8String:_country];
-                        }
-                    }
-                }
-                synchronized_sqlite3_finalize(details);
-                additonalInfo = @"";
-                NSString * info = @"";
-                queryStatement = [NSString stringWithFormat:@"SELECT label from SFObject where api_name = '%@'", objectApiName];
-                sqlite3_stmt * labelstmt;
-                selectStatement = [queryStatement UTF8String];
-                if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &labelstmt, nil) == SQLITE_OK )
-                {
-                    while(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
-                    {
-                        char * _addInfo = (char *) synchronized_sqlite3_column_text(labelstmt,0);
-                        
-                        if ((_addInfo != nil) && strlen(_addInfo))
-                            info = [NSString stringWithUTF8String:_addInfo];
-                    }
-                }
-                additonalInfo = [NSString stringWithFormat:@"%@ : %@", info, WorkOrderLabel];
-                synchronized_sqlite3_finalize(labelstmt);
-            }
-            //Case 
-            else if( retVal == YES && (!([whatId1 isEqualToString:@""]) || whatId1 != nil) )
-            {
-                NSString * subject1  = @"";
-                NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
-                queryStatement = [NSString stringWithFormat:@"SELECT CaseNumber from Case where Id = '%@'", whatId1];
-                const char * selectStatement = [queryStatement UTF8String];
-                
-                sqlite3_stmt * casestmt;
-                if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &casestmt, nil) == SQLITE_OK )
-                {
-                    while(synchronized_sqlite3_step(casestmt) == SQLITE_ROW)
-                    {
-                        char * _subject = (char *) synchronized_sqlite3_column_text(casestmt,0);
-                        
-                        if ((_subject != nil) && strlen(_subject))
-                        {
-                            subject1 = [NSString stringWithUTF8String:_subject];
-                            subject = nil;
-                            subject = subject1;
-                        }
-                        
-                    }
-                    
-                }   
-                synchronized_sqlite3_finalize(casestmt);
-                additonalInfo = @"";
-                NSString * info = @"";
-                queryStatement = [NSString stringWithFormat:@"SELECT label from SFObject where api_name = '%@'", objectApiName];
-                selectStatement = [queryStatement UTF8String];
-                sqlite3_stmt * stmt;
-                if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &stmt, nil) == SQLITE_OK )
-                {
-                    while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
-                    {
-                        char * _addInfo = (char *) synchronized_sqlite3_column_text(stmt,0);
-                        
-                        if ((_addInfo != nil) && strlen(_addInfo))
-                            info = [NSString stringWithUTF8String:_addInfo];
-                    }
-                }
-                additonalInfo = [NSString stringWithFormat:@"%@ : %@", info, subject];
-                synchronized_sqlite3_finalize(stmt);
-            }  
-            
-            //Other 
-            // Radha and abinash 
-            else
-            {
-                NSString * tableName = [self getTableNameForWhatId:whatId1];
-                
-                NSString * info = @"";
-                sqlite3_stmt * stmt;
-                queryStatement = [NSString stringWithFormat:@"SELECT label from SFObject where api_name = '%@'", tableName];
-                selectStatement = [queryStatement UTF8String];
-                if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &stmt, nil) == SQLITE_OK )
-                {
-                    while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
-                    {
-                        char * _addInfo = (char *) synchronized_sqlite3_column_text(stmt,0);
-                        
-                        if ((_addInfo != nil) && strlen(_addInfo))
-                            info = [NSString stringWithUTF8String:_addInfo];
-                    }
-                }
-                synchronized_sqlite3_finalize(stmt);
-                if ([whatId1 isEqualToString:@""])
-                {
-                    if([eventId length] > 0)
-                    {
-                        subject = [self getNameFieldForEvent:eventId];
-                    }
-                    else
-                    {
-                        subject = [self getNameFieldForEventLocal_id:event_local_Id];
-                    }
-                }
-                
-                objectApiName = tableName;
-                
-            }
-            
-            NSMutableArray * objects = [[NSArray arrayWithObjects:activityDate,
-                                         activityDateTime,durationInMins,
-                                         endDateTime,startDateTime,subject,additonalInfo,
-                                         whatId,eventId, objectApiName,City,Zip,Street,State,Country,event_local_Id, nil] retain];
-            
-            NSDictionary * dictionary = [[NSDictionary alloc] initWithObjects:objects forKeys:keys];
-            NSDictionary * dict = [NSDictionary dictionaryWithDictionary:dictionary];
-            [resultSet addObject:dict];
-            [objects release]; 
             ret = synchronized_sqlite3_step(statement);
+            while (ret == SQLITE_ROW)
+            {
+                NSString *City = @"";
+                NSString *Zip = @"";
+                NSString *Street = @"";
+                NSString *State = @"";
+                NSString *Country = @"";
+                
+                NSString * subject = @"";
+                NSString * additonalInfo = @"";
+                NSString * whatId1 = @"";
+                
+                
+                char * _activityDate = (char *) synchronized_sqlite3_column_text(statement,0);
+                NSString * activitydate = @"";
+                NSDate * activityDate = nil;
+                if (activityDate == nil)
+                    activityDate = [[NSDate alloc] init];
+                if ((_activityDate != nil) && strlen(_activityDate))
+                {
+                    activitydate = [NSString stringWithUTF8String:_activityDate];
+                    activitydate = [activitydate stringByDeletingPathExtension];
+                    if ([activitydate length] > 10)
+                        activityDate = [datetimeFormatter dateFromString:activitydate];
+                    else
+                        activityDate = [dateFormatter dateFromString:activitydate];
+                }
+                
+                char * _activityDateTime = (char *) synchronized_sqlite3_column_text(statement,1);
+                NSString *activitydateTime = @"";
+                NSDate *activityDateTime = nil;
+                if (activityDateTime == nil)
+                    activityDateTime = [[NSDate alloc] init];
+                
+                if ((_activityDateTime != nil) && strlen(_activityDateTime))
+                {
+                    activitydateTime = [NSString stringWithUTF8String:_activityDateTime];
+                    activitydateTime = [activitydateTime stringByDeletingPathExtension];
+                    activitydateTime = [activitydateTime stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+                    if ([activitydateTime length] > 10)
+                        activityDateTime = [datetimeFormatter dateFromString:activitydateTime];
+                    else
+                        activityDateTime = [dateFormatter dateFromString:activitydateTime];
+                }
+                
+                char * _durationInMins = (char *) synchronized_sqlite3_column_text(statement,2);
+                NSString * durationInMins = @"";
+                if ((_durationInMins != nil) && strlen(_durationInMins))
+                {
+                    durationInMins = [NSString stringWithUTF8String:_durationInMins];
+                }
+                
+                char * _endDateTime = (char *) synchronized_sqlite3_column_text(statement,3);
+                NSString * enddateTime = @"";
+                NSDate * endDateTime = nil;
+                if (endDateTime == nil)
+                    endDateTime = [[NSDate alloc] init];
+                if ((_endDateTime != nil) && strlen(_endDateTime))
+                {
+                    enddateTime = [NSString stringWithUTF8String:_endDateTime];
+                    enddateTime = [enddateTime stringByDeletingPathExtension];
+                    enddateTime = [enddateTime stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+                    
+                    if ([enddateTime length] > 10)
+                        endDateTime = [datetimeFormatter dateFromString:enddateTime];
+                    else
+                        endDateTime = [dateFormatter dateFromString:enddateTime];
+                }
+                
+                
+                char * _startDateTime = (char *) synchronized_sqlite3_column_text(statement,4);
+                NSString * startdateTime = @"";
+                NSDate * startDateTime = nil;
+                if (startDateTime == nil)
+                    startDateTime = [[NSDate alloc] init];
+                if ((_startDateTime != nil) && strlen(_startDateTime))
+                {
+                    startdateTime = [NSString stringWithUTF8String:_startDateTime];
+                    startdateTime = [startdateTime stringByDeletingPathExtension];
+                    startdateTime = [startdateTime stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+                    if ([startdateTime length] > 10)
+                        startDateTime = [datetimeFormatter dateFromString:startdateTime];
+                    else
+                        startDateTime = [dateFormatter dateFromString:startdateTime];
+                }
+                
+                char * _subject = (char *) synchronized_sqlite3_column_text(statement,5);
+                
+                if ((_subject != nil) && strlen(_subject))
+                {
+                    subject = [NSString stringWithUTF8String:_subject];
+                }
+                
+                
+                char * _whatId = (char *) synchronized_sqlite3_column_text(statement,6);
+                NSString *whatId = @"";
+                if ((_whatId != nil) && strlen(_whatId))
+                {
+                    whatId = [NSString stringWithUTF8String:_whatId];
+                    
+                    whatId1 = whatId;
+                }
+                
+                char *_eventId = (char *) synchronized_sqlite3_column_text(statement,7);
+                NSString * eventId = @"";
+                if ((_eventId != nil) && strlen(_eventId))
+                {
+                    eventId = [NSString stringWithUTF8String: _eventId];
+                }
+                
+                
+                char *_local_id= (char *) synchronized_sqlite3_column_text(statement,8);
+                NSString * event_local_Id = @"";
+                if ((_local_id != nil) && strlen(_local_id))
+                {
+                    event_local_Id = [NSString stringWithUTF8String: _local_id];
+                }
+                
+                
+                BOOL retVal, retVal1;
+                // retVal = [self isWorkOrder:whatId1];
+                
+                retVal = [self isWorkOrderOrCase:whatId1 objectName:@"SVMXC__Service_Order__c"];
+                
+                retVal1 = [self isWorkOrderOrCase:whatId1 objectName:@"Case"];
+                
+                if ( retVal == YES && (!([whatId1 isEqualToString:@""]) || whatId1 != nil) )
+                {
+                    NSString *subject1  = @"";
+                    NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
+                    
+                    if((_startDateTime!=nil) && strlen(_startDateTime) && (_endDateTime!=nil) && strlen(_endDateTime))
+                        queryStatement =[NSString stringWithFormat:@"Select Subject From Event where WhatId = '%@' and StartDateTime = '%s' and EndDateTime = '%s'", whatId1,_startDateTime,_endDateTime];
+                    else
+                        queryStatement =[NSString stringWithFormat:@"Select Subject From Event where WhatId = '%@'", whatId1];
+                    
+                    const char * selectStatement = [queryStatement UTF8String];
+                    sqlite3_stmt * eventsubject;
+                    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &eventsubject, nil) == SQLITE_OK )
+                    {
+                        while(synchronized_sqlite3_step(eventsubject) == SQLITE_ROW)
+                        {
+                            char * _subject = (char *) synchronized_sqlite3_column_text(eventsubject,0);
+                            
+                            if ((_subject != nil) && strlen(_subject))
+                            {
+                                subject1 = [NSString stringWithUTF8String:_subject];
+                                subject = nil;
+                                subject = subject1;
+                            }
+                            
+                        }
+                        
+                    }
+                    synchronized_sqlite3_finalize(eventsubject);
+                    //SHRINIVAS
+                    NSString * WorkOrderLabel = @"";
+                    NSMutableString * queryStatement1 = [[NSMutableString alloc]initWithCapacity:0];
+                    queryStatement1 = [NSMutableString stringWithFormat:@"Select Name,SVMXC__City__c,SVMXC__Zip__c,SVMXC__Street__c,SVMXC__State__c,SVMXC__Country__c From SVMXC__Service_Order__c where Id = '%@'",whatId1];
+                    const char * selectStatement1 = [queryStatement1 UTF8String];
+                    sqlite3_stmt * details;
+                    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement1, -1, &details, nil) == SQLITE_OK)
+                    {
+                        while (synchronized_sqlite3_step(details) == SQLITE_ROW)
+                        {
+                            char * _WorkOrderLabel = (char *) synchronized_sqlite3_column_text(details, 0);
+                            if ((_WorkOrderLabel !=nil) && strlen(_WorkOrderLabel))
+                            {
+                                WorkOrderLabel = [NSString stringWithUTF8String:_WorkOrderLabel];
+                            }
+                            
+                            char * _city = (char *) synchronized_sqlite3_column_text(details, 1);
+                            if ((_city !=nil) && strlen(_city))
+                            {
+                                City = [NSString stringWithUTF8String:_city];
+                            }
+                            
+                            char * _zip = (char *) synchronized_sqlite3_column_text(details, 2);
+                            if ((_zip !=nil) && strlen(_zip))
+                            {
+                                Zip = [NSString stringWithUTF8String:_zip];
+                            }
+                            
+                            char * _street = (char *) synchronized_sqlite3_column_text(details, 3);
+                            if ((_street !=nil) && strlen(_street))
+                            {
+                                Street = [NSString stringWithUTF8String:_street];
+                            }
+                            
+                            char * _state = (char *) synchronized_sqlite3_column_text(details, 4);
+                            if ((_state !=nil) && strlen(_state))
+                            {
+                                State = [NSString stringWithUTF8String:_state];
+                            }
+                            
+                            char * _country = (char *) synchronized_sqlite3_column_text(details, 5);
+                            if ((_country !=nil) && strlen(_country))
+                            {
+                                Country = [NSString stringWithUTF8String:_country];
+                            }
+                        }
+                    }
+                    synchronized_sqlite3_finalize(details);
+                    additonalInfo = @"";
+                    NSString * info = @"";
+                    queryStatement = [NSString stringWithFormat:@"SELECT label from SFObject where api_name = '%@'", objectApiName];
+                    sqlite3_stmt * labelstmt;
+                    selectStatement = [queryStatement UTF8String];
+                    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &labelstmt, nil) == SQLITE_OK )
+                    {
+                        while(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
+                        {
+                            char * _addInfo = (char *) synchronized_sqlite3_column_text(labelstmt,0);
+                            
+                            if ((_addInfo != nil) && strlen(_addInfo))
+                                info = [NSString stringWithUTF8String:_addInfo];
+                        }
+                    }
+                    additonalInfo = [NSString stringWithFormat:@"%@ : %@", info, WorkOrderLabel];
+                    synchronized_sqlite3_finalize(labelstmt);
+                }
+                //Case
+                else if( retVal == YES && (!([whatId1 isEqualToString:@""]) || whatId1 != nil) )
+                {
+                    NSString * subject1  = @"";
+                    NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
+                    queryStatement = [NSString stringWithFormat:@"SELECT CaseNumber from Case where Id = '%@'", whatId1];
+                    const char * selectStatement = [queryStatement UTF8String];
+                    
+                    sqlite3_stmt * casestmt;
+                    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &casestmt, nil) == SQLITE_OK )
+                    {
+                        while(synchronized_sqlite3_step(casestmt) == SQLITE_ROW)
+                        {
+                            char * _subject = (char *) synchronized_sqlite3_column_text(casestmt,0);
+                            
+                            if ((_subject != nil) && strlen(_subject))
+                            {
+                                subject1 = [NSString stringWithUTF8String:_subject];
+                                subject = nil;
+                                subject = subject1;
+                            }
+                            
+                        }
+                        
+                    }
+                    synchronized_sqlite3_finalize(casestmt);
+                    additonalInfo = @"";
+                    NSString * info = @"";
+                    queryStatement = [NSString stringWithFormat:@"SELECT label from SFObject where api_name = '%@'", objectApiName];
+                    selectStatement = [queryStatement UTF8String];
+                    sqlite3_stmt * stmt;
+                    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &stmt, nil) == SQLITE_OK )
+                    {
+                        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+                        {
+                            char * _addInfo = (char *) synchronized_sqlite3_column_text(stmt,0);
+                            
+                            if ((_addInfo != nil) && strlen(_addInfo))
+                                info = [NSString stringWithUTF8String:_addInfo];
+                        }
+                    }
+                    additonalInfo = [NSString stringWithFormat:@"%@ : %@", info, subject];
+                    synchronized_sqlite3_finalize(stmt);
+                }
+                
+                //Other
+                // Radha and abinash
+                else
+                {
+                    NSString * tableName = [self getTableNameForWhatId:whatId1];
+                    
+                    NSString * info = @"";
+                    sqlite3_stmt * stmt;
+                    queryStatement = [NSString stringWithFormat:@"SELECT label from SFObject where api_name = '%@'", tableName];
+                    selectStatement = [queryStatement UTF8String];
+                    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &stmt, nil) == SQLITE_OK )
+                    {
+                        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+                        {
+                            char * _addInfo = (char *) synchronized_sqlite3_column_text(stmt,0);
+                            
+                            if ((_addInfo != nil) && strlen(_addInfo))
+                                info = [NSString stringWithUTF8String:_addInfo];
+                        }
+                    }
+                    synchronized_sqlite3_finalize(stmt);
+                    if ([whatId1 isEqualToString:@""])
+                    {
+                        if([eventId length] > 0)
+                        {
+                            subject = [self getNameFieldForEvent:eventId];
+                        }
+                        else
+                        {
+                            subject = [self getNameFieldForEventLocal_id:event_local_Id];
+                        }
+                    }
+                    
+                    objectApiName = tableName;
+                    
+                }
+                
+                NSMutableArray * objects = [[NSArray arrayWithObjects:activityDate,
+                                             activityDateTime,durationInMins,
+                                             endDateTime,startDateTime,subject,additonalInfo,
+                                             whatId,eventId, objectApiName,City,Zip,Street,State,Country,event_local_Id, nil] retain];
+                
+                NSDictionary * dictionary = [[NSDictionary alloc] initWithObjects:objects forKeys:keys];
+                NSDictionary * dict = [NSDictionary dictionaryWithDictionary:dictionary];
+                [resultSet addObject:dict];
+                [objects release]; 
+                ret = synchronized_sqlite3_step(statement);
+            }
+            
         }
         synchronized_sqlite3_finalize(statement);
-    }
-	}@catch (NSException *exp)
+	}
+    @catch (NSException *exp)
     {
         SMLog(@"Exception Name CalendarDatabase :GetEventsFromDBWithStartDate %@",exp.name);
         SMLog(@"Exception Reason CalendarDatabase :GetEventsFromDBWithStartDate %@",exp.reason);
         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
         
     }
-
+    
     return resultSet;
 }
 
@@ -1285,8 +1288,8 @@ extern void SVMXLog(NSString *format, ...);
 			[LaborArray addObject:LabourValuesDictionary];
 			
         }
-        synchronized_sqlite3_finalize(statement1);
     }
+        synchronized_sqlite3_finalize(statement1);
     
     sqlite3_stmt *statement6;
     NSMutableString *queryStatement6 = [[NSMutableString alloc]initWithCapacity:0];
@@ -1809,8 +1812,8 @@ extern void SVMXLog(NSString *format, ...);
             [dictionary4 release];
             [objects4 release];
         }
-        synchronized_sqlite3_finalize(statement4);
     }
+        synchronized_sqlite3_finalize(statement4);
     
     
     if ([GetSettingsValueArray count] > 0)
@@ -2166,7 +2169,7 @@ extern void SVMXLog(NSString *format, ...);
         SMLog(@"%d", ret);
         
         
-        if ( synchronized_sqlite3_prepare_v2(appDelegate.db, _query9,-1, &statement9, nil) == SQLITE_OK )
+        if ( ret == SQLITE_OK )
         {
             while(synchronized_sqlite3_step(statement9) == SQLITE_ROW)
             {
@@ -3678,8 +3681,8 @@ extern void SVMXLog(NSString *format, ...);
             else
                 productId = @"";
         }
-    synchronized_sqlite3_finalize(stmt);
     }
+    synchronized_sqlite3_finalize(stmt);
     
     sqlite3_stmt * stmt1;
     if ([productId isEqualToString:@""])
@@ -4236,7 +4239,8 @@ extern void SVMXLog(NSString *format, ...);
                 PDF_name = [NSString stringWithUTF8String:field3];
         }
     }
-    
+    synchronized_sqlite3_finalize(stmt);
+
    
     NSString * saveFileName = [[NSString stringWithFormat:@"%@_%@.pdf",serviceReport, WO_Number] retain];
     NSString * newFilePath = [[saveDirectory stringByAppendingPathComponent:saveFileName] retain];
@@ -4273,7 +4277,6 @@ extern void SVMXLog(NSString *format, ...);
     
     [pdfCreator attachPDF:newFilePath];
     
-    synchronized_sqlite3_finalize(stmt);
 }
 
 - (void) deletePDFF
@@ -4709,9 +4712,9 @@ extern void SVMXLog(NSString *format, ...);
             [allValuesArray insertObject:label atIndex:index];
         }
 		
-		synchronized_sqlite3_finalize(stmt);
     }
-    
+    synchronized_sqlite3_finalize(stmt);
+
     return [allValuesArray retain];
 }
 
@@ -5186,8 +5189,8 @@ extern void SVMXLog(NSString *format, ...);
             }
        }
 		
-		synchronized_sqlite3_finalize(selectStmt);
     }
+    synchronized_sqlite3_finalize(selectStmt);
     return settingValue;
 }
 
@@ -5221,8 +5224,8 @@ extern void SVMXLog(NSString *format, ...);
             [dataDictionary setObject:recordId forKey:recordType];
         }
 		
-		synchronized_sqlite3_finalize(selectStmt);
     }
+    synchronized_sqlite3_finalize(selectStmt);
     return [dataDictionary autorelease];
 }
 
@@ -5239,7 +5242,7 @@ extern void SVMXLog(NSString *format, ...);
     
     NSMutableDictionary *dataDictionary = [[NSMutableDictionary alloc] init];
     sqlite3_stmt *selectStmt = nil;
-    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
     {
         
         while(sqlite3_step(selectStmt) == SQLITE_ROW)
@@ -5289,8 +5292,8 @@ extern void SVMXLog(NSString *format, ...);
             }
             
         }
-		synchronized_sqlite3_finalize(selectStmt);
     }
+    synchronized_sqlite3_finalize(selectStmt);
     return [dataDictionary autorelease];
 }
 
@@ -5466,8 +5469,9 @@ extern void SVMXLog(NSString *format, ...);
                 
             }
         }
-		sqlite3_finalize(selectStmt);
+		
     }
+    synchronized_sqlite3_finalize(selectStmt);
     return [dataDictionary autorelease];
 }
 
@@ -5548,8 +5552,9 @@ extern void SVMXLog(NSString *format, ...);
             
             
         }
-		sqlite3_finalize(selectStmt);
+		
     }
+    synchronized_sqlite3_finalize(selectStmt);
     return [dataArray autorelease];
 }
 
@@ -5559,7 +5564,7 @@ extern void SVMXLog(NSString *format, ...);
     
     NSMutableArray *dataArray = [[NSMutableArray alloc] init];
     sqlite3_stmt *selectStmt = nil;
-    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
     {
         
         while(sqlite3_step(selectStmt) == SQLITE_ROW)
@@ -5599,8 +5604,8 @@ extern void SVMXLog(NSString *format, ...);
             
             
         }
-		sqlite3_finalize(selectStmt);
     }
+    synchronized_sqlite3_finalize(selectStmt);
     return [dataArray autorelease];
     
     
@@ -5629,7 +5634,7 @@ extern void SVMXLog(NSString *format, ...);
     
     NSMutableArray *dataArray = [[NSMutableArray alloc] init];
     sqlite3_stmt *selectStmt = nil;
-    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
     {
         
         while(sqlite3_step(selectStmt) == SQLITE_ROW)
@@ -5653,7 +5658,7 @@ extern void SVMXLog(NSString *format, ...);
             [dataArray addObject:recordDictionary];
         }
     }
-    sqlite3_finalize(selectStmt);
+    synchronized_sqlite3_finalize(selectStmt);
     return [dataArray autorelease];
 }
 
@@ -5679,7 +5684,7 @@ extern void SVMXLog(NSString *format, ...);
     
     NSMutableArray *dataArray = [[NSMutableArray alloc] init];
     sqlite3_stmt *selectStmt = nil;
-    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
     {
         
         while(sqlite3_step(selectStmt) == SQLITE_ROW)
@@ -5703,7 +5708,7 @@ extern void SVMXLog(NSString *format, ...);
             [dataArray addObject:recordDictionary];
         }
     }
-    sqlite3_finalize(selectStmt);
+    synchronized_sqlite3_finalize(selectStmt);
     return [dataArray autorelease];
 }
 
@@ -5836,7 +5841,7 @@ extern void SVMXLog(NSString *format, ...);
     NSString *sqlQuery = [NSString stringWithFormat:@"Select SVMXC__Advance_Expression__c,Id from SVMXC__ServiceMax_Processes__c where %@ and recordTypeId = '%@'",concatenatedExpId,recordTypeRule];
     sqlite3_stmt *selectStmt = nil;
     NSMutableDictionary *expressionDictionary = [[NSMutableDictionary alloc] init ];
-    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
     {
         while(sqlite3_step(selectStmt) == SQLITE_ROW) {
             
@@ -5862,7 +5867,7 @@ extern void SVMXLog(NSString *format, ...);
             
         }
     }
-    sqlite3_finalize(selectStmt);
+    synchronized_sqlite3_finalize(selectStmt);
       NSMutableArray *expressionArray = [[NSMutableArray alloc] init];
     if ([expressionDictionary count] > 0) {
         for (int counter = 0; counter < [namedExpressionArray count]; counter++) {
@@ -5898,7 +5903,7 @@ extern void SVMXLog(NSString *format, ...);
     NSString *sqlQuery = [NSString stringWithFormat:@"Select SVMXC__Field_Name__c,SVMXC__Operator__c,SVMXC__Operand__c,SVMXC__Sequence__c,SVMXC__Expression_Type__c,SVMXC__Expression_Rule__c,Id from SVMXC__SERVICEMAX_CONFIG_DATA__C where SVMXC__Expression_Rule__c LIKE '%@%%' and recordTypeId = '%@'",expressionId,recordTypeId];
     sqlite3_stmt *selectStmt = nil;
     NSMutableArray *expressionComponents = [[NSMutableArray alloc] init];
-    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
     {
         while(sqlite3_step(selectStmt) == SQLITE_ROW) {
             NSMutableDictionary *recordDictionary = [[NSMutableDictionary alloc] init];
@@ -5976,7 +5981,7 @@ extern void SVMXLog(NSString *format, ...);
             recordDictionary = nil;
         }
     }
-    sqlite3_finalize(selectStmt);
+    synchronized_sqlite3_finalize(selectStmt);
     return [expressionComponents autorelease];
 }
 
@@ -6004,7 +6009,7 @@ extern void SVMXLog(NSString *format, ...);
 //
 //    /*get expression array*/
 //    NSString * expression = nil;
-//    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+//    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
 //    {
 //        while(sqlite3_step(selectStmt) == SQLITE_ROW) {
 //
@@ -6018,7 +6023,7 @@ extern void SVMXLog(NSString *format, ...);
 //            }
 //        }
 //    }
-//    sqlite3_finalize(selectStmt);
+//    synchronized_sqlite3_finalize(selectStmt);
 //
 //
 //    /* Get operand information from operation */
@@ -6113,7 +6118,7 @@ extern void SVMXLog(NSString *format, ...);
 //            NSString *componentLhs = nil,*componentRhs = nil,*componentOperator = nil;
 //            NSMutableDictionary *recordDictionary = [[NSMutableDictionary alloc] init];
 //
-//            if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK)
+//            if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK)
 //            {
 //                while (sqlite3_step(selectStmt)  == SQLITE_ROW)
 //                {
@@ -6157,7 +6162,7 @@ extern void SVMXLog(NSString *format, ...);
 //                }
 //                [operandArray addObject:recordDictionary];
 //            }
-//            sqlite3_finalize(selectStmt);
+//            synchronized_sqlite3_finalize(selectStmt);
 //            [recordDictionary release];
 //            recordDictionary =nil;
 //        }
@@ -6227,7 +6232,7 @@ extern void SVMXLog(NSString *format, ...);
     
     NSMutableDictionary *recordDictionary = [[NSMutableDictionary alloc] init];
     sqlite3_stmt *selectStmt = nil;
-    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
     {
         
         while(sqlite3_step(selectStmt) == SQLITE_ROW)
@@ -6284,7 +6289,7 @@ extern void SVMXLog(NSString *format, ...);
         
         
     }
-    sqlite3_finalize(selectStmt);
+    synchronized_sqlite3_finalize(selectStmt);
     return [recordDictionary autorelease];
 }
 - (NSString *)parentColumnNameFor:(NSString *)tableName {
@@ -6297,7 +6302,7 @@ extern void SVMXLog(NSString *format, ...);
     NSString *sqlQuery = [NSString stringWithFormat:@"SELECT Name FROM %@ where Id = '%@' OR local_id = '%@' ",tableName,idValueOfTheField,idValueOfTheField];
     sqlite3_stmt *selectStmt = nil;
     NSString *  nameValue= nil;
-    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
     {
         
         while(sqlite3_step(selectStmt) == SQLITE_ROW)
@@ -6314,7 +6319,7 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
-    sqlite3_finalize(selectStmt);
+    synchronized_sqlite3_finalize(selectStmt);
     return nameValue;
 }
 
@@ -6324,7 +6329,7 @@ extern void SVMXLog(NSString *format, ...);
     sqlite3_stmt *selectStmt = nil;
     NSString *  nameValue= nil;
     NSString *sfId = nil;
-    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
     {
         
         while(sqlite3_step(selectStmt) == SQLITE_ROW)
@@ -6350,7 +6355,7 @@ extern void SVMXLog(NSString *format, ...);
             
         }
     }
-    sqlite3_finalize(selectStmt);
+    synchronized_sqlite3_finalize(selectStmt);
     if (sfId != nil) {
         return [NSDictionary dictionaryWithObjectsAndKeys:nameValue,sfId,nil];
     }
@@ -6459,7 +6464,7 @@ extern void SVMXLog(NSString *format, ...);
         }
 		
     }
-    sqlite3_finalize(selectStmt);
+    synchronized_sqlite3_finalize(selectStmt);
     [sqlQuery release];
     sqlQuery = nil;
     
@@ -6570,7 +6575,7 @@ extern void SVMXLog(NSString *format, ...);
         }
 		
     }
-    sqlite3_finalize(selectStmt);
+    synchronized_sqlite3_finalize(selectStmt);
     [sqlQuery release];
     sqlQuery = nil;
     
@@ -6602,7 +6607,7 @@ extern void SVMXLog(NSString *format, ...);
     
     NSMutableArray *dataArray = [[NSMutableArray alloc] init];
     sqlite3_stmt *selectStmt = nil;
-    if(sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK  )
     {
         
         while(sqlite3_step(selectStmt) == SQLITE_ROW)
@@ -6746,7 +6751,7 @@ extern void SVMXLog(NSString *format, ...);
     NSString * fieldId = @"", *fieldData = nil;
     NSString * query = [NSString stringWithFormat:@"SELECT Id ,SVMXC__Data__c  from SVMXC__Code_Snippet__c  where Id = '%@' and SVMXC__Data__c <> \"\"" , codeSnippetId];
     sqlite3_stmt * stmt;
-    if(sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
     {
         while (sqlite3_step(stmt)  == SQLITE_ROW)
         {
@@ -6766,7 +6771,7 @@ extern void SVMXLog(NSString *format, ...);
             break;
         }
     }
-    sqlite3_finalize(stmt);
+    synchronized_sqlite3_finalize(stmt);
     
     return [dict autorelease];
     
@@ -6779,7 +6784,7 @@ extern void SVMXLog(NSString *format, ...);
     NSString * fieldId = @"", *fieldData = nil;
     NSString * query = [NSString stringWithFormat:@"SELECT Id ,SVMXC__Data__c  from SVMXC__Code_Snippet__c  where SVMXC__Name__c  = '%@' and SVMXC__Data__c <> \"\"" , codeSnippetName];
     sqlite3_stmt * stmt;
-    if(sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
     {
         while (sqlite3_step(stmt)  == SQLITE_ROW)
         {
@@ -6799,7 +6804,7 @@ extern void SVMXLog(NSString *format, ...);
             break;
         }
     }
-    sqlite3_finalize(stmt);
+    synchronized_sqlite3_finalize(stmt);
     
     return [dict autorelease];
     
@@ -6809,7 +6814,7 @@ extern void SVMXLog(NSString *format, ...);
     NSString * SVMXC__Code_Snippet_Manifest__c = nil;
     NSString * query = [NSString stringWithFormat:@"SELECT SVMXC__Referenced_Code_Snippet__c  from SVMXC__Code_Snippet_Manifest__c  where SVMXC__Code_Snippet__c = '%@' and SVMXC__Referenced_Code_Snippet__c <> \"\"" ,codeSnippetReference];
     sqlite3_stmt * stmt = nil;;
-    if(sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
     {
         while (sqlite3_step(stmt)  == SQLITE_ROW)
         {
@@ -6821,7 +6826,7 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
-    sqlite3_finalize(stmt);
+    synchronized_sqlite3_finalize(stmt);
     
     return SVMXC__Code_Snippet_Manifest__c;
 }
@@ -6831,7 +6836,7 @@ extern void SVMXLog(NSString *format, ...);
     NSString * fieldId = @"";
     NSString * query = [NSString stringWithFormat:@"SELECT api_name FROM SFObjectField where object_api_name = '%@' and type = 'boolean'",tablenName];
     sqlite3_stmt * stmt;
-    if(sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
     {
         while (sqlite3_step(stmt)  == SQLITE_ROW)
         {
@@ -6844,7 +6849,7 @@ extern void SVMXLog(NSString *format, ...);
             
         }
     }
-    sqlite3_finalize(stmt);
+    synchronized_sqlite3_finalize(stmt);
     
     return [dict autorelease];
 }
@@ -6859,7 +6864,7 @@ extern void SVMXLog(NSString *format, ...);
     NSMutableArray *tagsArray = [[NSMutableArray alloc] init];
     NSString * query = [NSString stringWithFormat:@"SELECT tag_id, value FROM MobileDeviceTags where tag_id IN %@",tagsConacatenatedString];
     sqlite3_stmt * stmt = nil;
-    if(sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
     {
         while (sqlite3_step(stmt)  == SQLITE_ROW)
         {
@@ -6887,7 +6892,7 @@ extern void SVMXLog(NSString *format, ...);
             dict = nil;
         }
     }
-    sqlite3_finalize(stmt);
+    synchronized_sqlite3_finalize(stmt);
     
     return [tagsArray autorelease];
 }
@@ -6911,7 +6916,7 @@ extern void SVMXLog(NSString *format, ...);
             }            
         }
     }
-    sqlite3_finalize(stmt);
+    synchronized_sqlite3_finalize(stmt);
     return fieldId;
 }
 
@@ -6961,7 +6966,7 @@ extern void SVMXLog(NSString *format, ...);
             counter = sqlite3_column_int(selectStmt, 0);
         }
     }
-    sqlite3_finalize(selectStmt);
+    synchronized_sqlite3_finalize(selectStmt);
     return counter;
 }
 
@@ -6980,7 +6985,7 @@ extern void SVMXLog(NSString *format, ...);
             }
         }
     }
-    sqlite3_finalize(stmt);
+    synchronized_sqlite3_finalize(stmt);
     return fieldId;
     
 }

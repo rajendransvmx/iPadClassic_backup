@@ -1322,6 +1322,7 @@ enum  {
                 localId = @"";
         }
     }
+     synchronized_sqlite3_finalize(labelstmt);    
     NSString *processId = @"";
         
     for (int v = 0; v < [appDelegate.view_layout_array count]; v++)
@@ -1370,14 +1371,13 @@ enum  {
         UIAlertView * alert1 = [[UIAlertView alloc] initWithTitle:warning message:noView delegate:nil cancelButtonTitle:alert_ok otherButtonTitles:nil];
         [alert1 show];
         [alert1 release];
-        synchronized_sqlite3_finalize(labelstmt);
         return;
 
     }
     //[appDelegate.sfmPageController release];
 	// //appDelegate.sfmPageController = nil;
     
-    synchronized_sqlite3_finalize(labelstmt);
+   
 	 }@catch (NSException *exp) {
         SMLog(@"Exception Name SFMResultDetailViewController :accessoryButtonTapped %@",exp.name);
         SMLog(@"Exception Reason SFMResultDetailViewController :accessoryButtonTapped %@",exp.reason);

@@ -222,6 +222,8 @@ extern void SVMXLog(NSString *format, ...);
                 localId = @"";
         }
     }
+        
+    synchronized_sqlite3_finalize(labelstmt);
     
     NSString *processId =nil;
     
@@ -237,8 +239,6 @@ extern void SVMXLog(NSString *format, ...);
     }
     NSString * processId_ =  [appDelegate.switchViewLayouts objectForKey:objName];
     appDelegate.sfmPageController.processId = (processId_ != nil)?processId_:processId;
-        
-    sqlite3_finalize(labelstmt);
     
 
     processInfo * pinfo =  [appDelegate getViewProcessForObject:objName record_id:localId processId:appDelegate.sfmPageController.processId isswitchProcess:FALSE];

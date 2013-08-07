@@ -960,6 +960,11 @@ extern void SVMXLog(NSString *format, ...);
 -(void)setsyncHistoryForSyncType:(NSString *)sync_type requestOrResponse:(NSString *)operation_type  request_id:(NSString *)request_id 
 last_sync_time:(NSString *)last_sync_time
 {
+    
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:[NSString stringWithFormat:@"setsyncHistoryForSyncType : %@ - %@", operation_type, request_id]
+                                                                      andRecordCount:1];
+    
+    
     NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:SYNC_HISTORY];
     
@@ -1085,6 +1090,10 @@ last_sync_time:(NSString *)last_sync_time
     }  
     [dict writeToFile:plistPath_SYNHIST atomically:YES];
     [dict release];                    //sahana30April
+    
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:[NSString stringWithFormat:@"setsyncHistoryForSyncType : %@ - %@", operation_type, request_id]
+                                                                      andRecordCount:1];
+    
 }
 
 -(void)DoSpecialIncrementalSync
@@ -1619,14 +1628,25 @@ NSDate * syncCompleted;
 -(void)DoIncrementalDataSync
 {
     
-    SMLog(@"[isync] DoIncrementalDataSync  - started");
-    
+    NSLog(@"[isync] DoIncrementalDataSync  - started");
+
     [[PerformanceAnalytics sharedInstance] stopPerformAnalysis];
     
     //VP-Optmz2
     [appDelegate.dataBase cleanupDatabase];
-    [[PerformanceAnalytics sharedInstance] setCode:@"PA-INCR-502"
-                                    andDescription:@"Incr-sync-Caching-Deletion"];
+    [[PerformanceAnalytics sharedInstance] setCode:@"PA-IC-221"
+                                    andDescription:@"Incr-sync-Mem-Mon"];
+    
+    [[PerformanceAnalytics sharedInstance] recordDBMemoryUsage:[appDelegate.dataBase dbMemoryUsage]
+                                                    perContext:@"Incremental Sync"];
+    [[PerformanceAnalytics sharedInstance] setDbVersion:[appDelegate.dataBase dbVersion]];
+    
+    int c1 = [appDelegate.dataBase totalNumberOfOperationCountForDatabase:appDelegate.db];
+    
+    
+    [[PerformanceAnalytics sharedInstance] registerOperationCount:c1
+                                                      forDatabase:@"DB"];
+    
     
     [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"DoIncrementalDataSync"
                                                          andRecordCount:0];
@@ -2822,17 +2842,28 @@ NSDate * syncCompleted;
     [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"DoIncrementalDataSync"
                                                                       andRecordCount:0];
     
-    [[PerformanceAnalytics sharedInstance] displayCurrentStatics];
+    c1 = [appDelegate.dataBase totalNumberOfOperationCountForDatabase:appDelegate.db];
     
-    NSLog(@"[isync] DoIncrementalDataSync - completed");
- 
+    [[PerformanceAnalytics sharedInstance] registerOperationCount:c1
+                                                      forDatabase:@"DB"];
+    
+    if ( (appDelegate.dataBase != nil) && (appDelegate.dataBase.tempDb != nil) )
+    {
+        int c2 = [appDelegate.dataBase totalNumberOfOperationCountForDatabase:appDelegate.dataBase.tempDb];
+        
+        [[PerformanceAnalytics sharedInstance] registerOperationCount:c2
+                                                          forDatabase:@"tempDB"];
+        
+        [[PerformanceAnalytics sharedInstance] recordDBMemoryUsage:[appDelegate.dataBase dbMemoryUsage]
+                                                        perContext:@"Current-incrsync-before-temp"];
+        
+        [appDelegate.dataBase releaseHeapMemoryForDatabase:appDelegate.dataBase.tempDb];
+        
+        [[PerformanceAnalytics sharedInstance] recordDBMemoryUsage:[appDelegate.dataBase dbMemoryUsage]
+                                                        perContext:@"Current-incrsync-after-temp"];
 
-
-
-
+    }
 }
-
-
 
 //Changes for optimized sync - one sync call
 - (BOOL) CustomSingleSyncCall:(NSDate *)syncStarted

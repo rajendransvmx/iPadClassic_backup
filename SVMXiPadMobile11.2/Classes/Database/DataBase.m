@@ -11,11 +11,17 @@
 #import "iServiceAppDelegate.h"
 #import "PopoverButtons.h"
 #import "PerformanceAnalytics.h"
+#import "Util.h"
+
 
 // Vipin-db-optmz
 // DB Constatns
 static NSString * const kDBBeginTransaction = @"BEGIN TRANSACTION";
 static NSString * const kDBEndTransaction = @"END TRANSACTION";
+
+// Attachment name constant
+static NSString * const kAttachementNameTempSFM = @"tempsfm";
+static NSString * const kAttachementNameSFM = @"sfm";
 
 
 
@@ -32,6 +38,7 @@ extern void SVMXLog(NSString *format, ...);
 
 // Vipin-db-optmz
 @synthesize dbTransactionCount;
+@synthesize dbOperationCounterDict;
 
 
 
@@ -41,6 +48,15 @@ extern void SVMXLog(NSString *format, ...);
     appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
     return self;
 }
+
+- (void)loadTempDatabaseFileFromPath
+{
+    filepath = @"";
+    NSArray *searchPaths =NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentFolderPath = [searchPaths objectAtIndex: 0];
+    filepath = [documentFolderPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.%@", TEMPDATABASENAME, DATABASETYPE1]];
+}
+
 
 // Vipin-db-optmz
 #pragma mark - Database Transaction Management
@@ -59,7 +75,7 @@ extern void SVMXLog(NSString *format, ...);
     
     if (executionResult != SQLITE_OK )
     {
-        NSLog(@"[TXN] db_txn begin failed : %d %@", executionResult, [NSString stringWithUTF8String:err]);
+        NSLog(@"[TXN] + db_txn begin failed : %d : %@", executionResult, [NSString stringWithUTF8String:err]);
     }
     else
     {
@@ -85,7 +101,7 @@ extern void SVMXLog(NSString *format, ...);
     
     if (executionResult != SQLITE_OK )
     {
-        NSLog(@"[TXN] db_txn end failed : %d %@", executionResult, [NSString stringWithUTF8String:err]);
+        NSLog(@"[TXN] - db_txn end failed : %d : %@", executionResult, [NSString stringWithUTF8String:err]);
     }
     else
     {
@@ -112,7 +128,6 @@ extern void SVMXLog(NSString *format, ...);
     }
     else
     {
-        NSLog(@"[DB] NOT Vacuumed DataBase : %d %@", executionResult, [NSString stringWithUTF8String:err]);
         SMLog(@"[DB] NOT Vacuumed DataBase : %d %@", executionResult, [NSString stringWithUTF8String:err]);
     }
     
@@ -1329,6 +1344,7 @@ extern void SVMXLog(NSString *format, ...);
                        
                 }
             }
+            synchronized_sqlite3_finalize(labelstmt);
             if(!(fieldIsTable != nil &&strlen(fieldIsTable)))
             {
                 sqlite3_stmt * labelstmtGetTableName;
@@ -1428,6 +1444,7 @@ extern void SVMXLog(NSString *format, ...);
                     searchableFieldTableName = @"";
             }
         }
+        synchronized_sqlite3_finalize(labelstmt);
         
         NSMutableString * queryStatementIstable = [[NSMutableString alloc]initWithCapacity:0];
         queryStatementIstable = [NSMutableString stringWithFormat:@"SELECT name FROM sqlite_master WHERE type='table' AND name='%@'",searchableFieldTableName];    
@@ -1442,6 +1459,7 @@ extern void SVMXLog(NSString *format, ...);
                 
             }
         }
+        synchronized_sqlite3_finalize(labelstmtIstable);
         if(!(fieldIsTable != nil &&strlen(fieldIsTable)))
         {
             sqlite3_stmt * labelstmtGetTableName;
@@ -1478,6 +1496,7 @@ extern void SVMXLog(NSString *format, ...);
                 
             }
         }
+        synchronized_sqlite3_finalize(labelstmtIstable2);
 	    if((fieldIsTable2 != nil &&strlen(fieldIsTable2))||(fieldIsTable != nil &&strlen(fieldIsTable)))
            {
                if([searchableFieldTableName length] > 0)
@@ -1707,7 +1726,6 @@ extern void SVMXLog(NSString *format, ...);
 
                     }
                 }
-               
                 NSMutableString * queryStatement2 = [[NSMutableString alloc]initWithCapacity:0];
                 queryStatement2 = [NSMutableString stringWithFormat:@"SELECT api_name FROM SFObjectField where name_field='TRUE' and object_api_name='%@'",object];    
                 sqlite3_stmt * labelstmt2;
@@ -2914,9 +2932,9 @@ extern void SVMXLog(NSString *format, ...);
 
             }
         }
-        synchronized_sqlite3_finalize(statement);
+        
     }
-    
+    synchronized_sqlite3_finalize(statement);
     
     return [apiName retain];
     
@@ -3120,8 +3138,9 @@ extern void SVMXLog(NSString *format, ...);
             SMLog(@"No of location records in DB %d",row_count );
             
         }
-        synchronized_sqlite3_finalize(statement);
+        
     }
+    synchronized_sqlite3_finalize(statement);
     //get limit from table
     NSString *limitLocationRecords = [appDelegate.settingsDict objectForKey:MAX_LOCATION_RECORD];
     limitLocationRecords = (limitLocationRecords!=nil)?limitLocationRecords:@"100";
@@ -3882,11 +3901,12 @@ extern void SVMXLog(NSString *format, ...);
                         {
                             SMLog(@" Commit Failed! - SFRecordType : %d %@", errorCode, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
                         }
-                        
                         sqlite3_clear_bindings(bulkStmt);
                         sqlite3_reset(bulkStmt);
+                        
                     }
                 }
+                
                 
                 // Vipin-db-optmz
                 [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"SFRecordType"
@@ -3895,6 +3915,7 @@ extern void SVMXLog(NSString *format, ...);
                 [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:[recordKeys count]];
 
             }
+            
         }
         synchronized_sqlite3_finalize(bulkStmt);
     }
@@ -4522,13 +4543,13 @@ extern void SVMXLog(NSString *format, ...);
                                 process_type = [NSString stringWithUTF8String:_type];
                         }
                     }
-                    
+                    synchronized_sqlite3_finalize(statement);
                     [page_dict setValue:process_type forKey:MPROCESSTYPE];
                     
                     NSString * err;
                     data = [NSPropertyListSerialization dataFromPropertyList:page_dict format:NSPropertyListXMLFormat_v1_0 errorDescription:&err];
                     
-                    synchronized_sqlite3_finalize(statement);
+                    
                     break;
                 }                                                               
             }  
@@ -4861,10 +4882,10 @@ extern void SVMXLog(NSString *format, ...);
     
     if (result == YES)
     {
-        char * err;
-        NSString * txnstmt = @"BEGIN TRANSACTION";
+     //   char * err;
+      //  NSString * txnstmt = @"BEGIN TRANSACTION";
         
-        int exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);        
+       // int exec_value = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
         
         
         NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@', '%@', '%@',  '%@', '%@', '%@', '%@') VALUES (?1, ?2, ?3, ?4, ?5, ?6,?7, ?8, ?9, ?10, ?11)", SFPROCESSCOMPONENT, MPROCESS_ID, MLAYOUT_ID, MTARGET_OBJECT_NAME, MSOURCE_OBJECT_NAME, MEXPRESSION_ID, MOBJECT_MAPPING_ID, MCOMPONENT_TYPE, MPARENT_COLUMN,MVALUE_MAPPING_ID,@"source_child_parent_column", MLOCAL_ID];
@@ -6089,16 +6110,15 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
                 sqlite3_reset(bulkStmt);
                 
             }
-            
-            synchronized_sqlite3_finalize(bulkStmt);
             // Vipin-db-optmz
             [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"SFWizardComponent"
                                                                  andRecordCount:[sfWizComponent count]];
             
             [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:[sfWizComponent count]];
-
-        
         }
+        
+        synchronized_sqlite3_finalize(bulkStmt);
+        
 		[self updateWebserviceNameInWizarsTable:[wizardDict objectForKey:SFW_Sync_Override]];
     }
     
@@ -6261,7 +6281,7 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
 
 	sqlite3_stmt * bulkStatement = nil;
 	
-	if (sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &bulkStatement, NULL) == SQLITE_OK)
+	if (synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &bulkStatement, NULL) == SQLITE_OK)
 	{
 		for (NSDictionary * customDict in customArray)
 		{
@@ -6333,9 +6353,8 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
             
             [signatureData setValue:objectapiName forKey:recordId];
         }
-		synchronized_sqlite3_finalize(stmt);
     }
-    
+    synchronized_sqlite3_finalize(stmt);
     NSArray * allkeys = [signatureData allKeys];
     
     for (int i = 0; i < [allkeys count]; i++)
@@ -7146,7 +7165,7 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
     NSString * query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS  ChatterPostDetails ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0), 'ProductId' VARCHAR NOT NULL ,'Body' TEXT,'CreatedById' VARCHAR,'CreatedDate' VARCHAR,'Id' VARCHAR,'POSTTYPE' VARCHAR,'Username' VARCHAR,'Email' VARCHAR,'FeedPostId' VARCHAR,'FullPhotoUrl' VARCHAR)"];
     [self createTable:query];
     
-    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS Document ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0), 'AuthorId' VARCHAR, 'Body' VARCHAR, 'BodyLength' INTEGER, 'ContentType' VARCHAR, 'CreatedById' VARCHAR, 'Description' VARCHAR, 'DeveloperName' VARCHAR, 'FolderId' VARCHAR, 'Id' VARCHAR, 'IsBodySearchable' BOOL, 'IsDeleted' BOOL, 'IsInternalUseOnly' BOOL, 'IsPublic' BOOL, 'Keywords' TEXT, 'LastModifiedById' VARCHAR, 'LastModifiedDate' DATETIME, 'Name' VARCHAR, 'NamespacePrefix' VARCHAR, 'SystemModstamp' VARCHAR, 'Type' VARCHAR)"];
+    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS Document ('local_id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE DEFAULT (0), 'AuthorId' VARCHAR, 'Body' VARCHAR, 'BodyLength' INTEGER, 'ContentType' VARCHAR, 'CreatedById' VARCHAR, 'Description' VARCHAR, 'DeveloperName' VARCHAR, 'FolderId' VARCHAR, 'Id' VARCHAR, 'IsBodySearchable' BOOL, 'IsDeleted' BOOL, 'IsInternalUseOnly' BOOL, 'IsPublic' BOOL, 'Keywords' TEXT, 'LastModifiedById' VARCHAR, 'LastModifiedDate' DATETIME, 'Name' VARCHAR, 'NamespacePrefix' VARCHAR, 'SystemModstamp' VARCHAR, 'Type' VARCHAR)"];
     [self createTable:query];
     
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS  ProductImage ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0), 'productId' VARCHAR, 'productImage' VARCHAR)"];
@@ -8028,7 +8047,12 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
 -(void)StartIncrementalmetasync
 {
 	//appDelegate.syncTypeInProgress = METASYNC_INPROGRESS;
-    [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
+    NSLog(@"  StartIncrementalmetasync  .... st");
+    
+    if (self.tempDb == nil)
+    {
+        [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
+    }
     
     //We are retriving the SFObjectField table here so that we can compare the fields of the tables of the two databases
     //not necessary
@@ -8061,8 +8085,18 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
 
 - (void) createBackUpDb
 {  
-    NSString * query1 = [NSString stringWithFormat:@"ATTACH DATABASE '%@' AS sfm",self.dbFilePath];
-    [self createTemporaryTable:query1];
+  //  NSString * query1 = [NSString stringWithFormat:@"ATTACH DATABASE '%@' AS sfm",self.dbFilePath];
+   // [self createTemporaryTable:query1];
+ BOOL hasCreated = [self attachDatabase:self.tempDb byName:kAttachementNameSFM andPath:self.dbFilePath];
+    
+    if (! hasCreated)
+    {
+        NSLog(@" Unable to create attachment for db backup!");
+        return;
+    }
+
+    NSString * query1 = nil;
+   
 
     NSArray *tableNames = [NSArray arrayWithObjects:@"SVMXC__Code_Snippet__c",@"SVMXC__Code_Snippet_Manifest__c", nil ];
 
@@ -8076,20 +8110,40 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
         if ([objectName isEqualToString:@"Case"])
             objectName = @"'Case'";
         
-        query1 = [NSString stringWithFormat:@"INSERT INTO %@ SELECT * FROM sfm.%@", objectName, objectName];
+       // query1 = [NSString stringWithFormat:@"INSERT INTO %@ SELECT * FROM sfm.%@", objectName, objectName];
+        query1 = [NSString stringWithFormat:@"INSERT INTO %@ SELECT * FROM %@.%@", objectName, kAttachementNameSFM, objectName];
+        
         [self createTemporaryTable:query1];
     }
-       
-    //Delete the old database after creating the backup
-    [self deleteDatabase:DATABASENAME];
     
     [self endTransaction];
 
-    //we again start metasync here
+     NSLog(@"  createBackUpDb  .... releasing main DB");
+    // Vipind-db-optmz - 3
+    [self closeDatabase:appDelegate.db];
+    [appDelegate releaseMainDatabase];
+    //Delete the old database after creating the backup
+    [self deleteDatabase:DATABASENAME];
+    
+    // Dettach kAttachementNameSFM
+    
+    NSLog(@"  createBackUpDb  .... dettaching  kAttachementNameSFM");
+    
+    [self detachDatabase:self.tempDb byName:kAttachementNameSFM];
 
-    appDelegate.db = nil;
-    self.dbFilePath = @"";
-    [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+    
+   //we again start metasync here
+
+   //if ([self closeDatabase:appDelegate.db])
+   //{
+     //  [appDelegate releaseMainDatabase];
+   //}
+   
+    if (appDelegate.db == nil)
+    {
+        [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+    }
+    
     
     [self doMetaSync];
     
@@ -8318,24 +8372,43 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
     if (object_names == nil)
         object_names = [[NSMutableArray alloc] initWithCapacity:0];
     
-    [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
+    if (self.tempDb == nil)
+    {
+        [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
+    }
     
-    object_names = [self retreiveTableNamesFronDB:tempDb];
+    object_names = [self retreiveTableNamesFronDB:self.tempDb];
     
     [appDelegate.dataBase clearDatabase];
     
+    /// Position 1
     for (NSString * objectName in object_names)
     {
-        NSString * query = [self retrieveQuery:objectName sqlite:tempDb];
+        NSString * query = [self retrieveQuery:objectName sqlite:self.tempDb];
         
         [self createTable:query];
     }
 
     
+    if (appDelegate.db == nil)
+    {
+        [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+    }
     
-    [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
-      NSString * query1 = [NSString stringWithFormat:@"ATTACH DATABASE '%@' AS tempsfm",filepath];
-    [self createTable:query1];
+   // NSString * query1 = [NSString stringWithFormat:@"ATTACH DATABASE '%@' AS tempsfm",filepath];
+   // [self createTable:query1];
+    
+    [self loadTempDatabaseFileFromPath];
+    
+    BOOL hasCreatedAttachment = [self attachDatabase:appDelegate.db byName:kAttachementNameTempSFM andPath:filepath];
+    
+    if ( ! hasCreatedAttachment)
+    {
+        NSLog(@"Unable to create attachment for copying temp sql to SFM");
+        return;
+    }
+    
+    NSString * query1 = nil;
     
      [self beginTransaction];
     //Here we fill up the tables with data  
@@ -8354,14 +8427,15 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
 	//Radha - Fix for the defect 5745
 	[appDelegate.calDataBase insertMetaSyncStatus:@"Red" WithDB:appDelegate.db];
     [self settingAfterIncrementalMetaSync];
+    
+    // Dettach tempsfm
+    [self detachDatabase:appDelegate.db byName:kAttachementNameTempSFM];
 
 }
 
 // Vipin-db-optmz
 - (void)resetConfigurationForDataBase:(sqlite3 *)database
 {
-    NSLog(@"[DB] ResetConfigurationForDataBase:  Reset db configuration");
-    
     if (self.dbTransactionCount > 0)
     {
         NSLog(@"[DB] Skipping db configuration reset since %d live transaction exist", dbTransactionCount);
@@ -8374,11 +8448,13 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
     
     int  pageSizeResult =  synchronized_sqlite3_exec(database, "PRAGMA page_size = 4096", NULL, NULL, &errMessagePageSize);
     int  syncResult     =  synchronized_sqlite3_exec(database, "PRAGMA synchronous = OFF", NULL, NULL, &errMessageSynch);
-    int  journalResult  =  synchronized_sqlite3_exec(database, "PRAGMA journal_mode = MEMORY", NULL, NULL, &errMessageJournalMod);
+    //int  journalResult  =  synchronized_sqlite3_exec(database, "PRAGMA journal_mode = MEMORY", NULL, NULL, &errMessageJournalMod);
+    int  journalResult  =  synchronized_sqlite3_exec(database, "PRAGMA journal_mode = WAL", NULL, NULL, &errMessageJournalMod);
+    // Vipin: we are moving more safer journal mode to avoid database corruption
     
     if (pageSizeResult != SQLITE_OK)
     {
-        NSLog(@"[DB] ConfigDatabase Page Size : %d %@", pageSizeResult, [NSString stringWithUTF8String:errMessagePageSize]);
+        SMLog(@" ConfigDatabase Page Size : %d %@", pageSizeResult, [NSString stringWithUTF8String:errMessagePageSize]);
     }
     
     if (syncResult != SQLITE_OK)
@@ -8395,12 +8471,16 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
 
 -(void)openDB:(NSString *)name type:(NSString *)type sqlite:(sqlite3 *)database
 {
-    filepath = @"";
+
+    [self loadTempDatabaseFileFromPath];
     
-    NSError *error; 
-    NSArray *searchPaths =NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentFolderPath = [searchPaths objectAtIndex: 0];
-    filepath = [documentFolderPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.%@", TEMPDATABASENAME, DATABASETYPE1]];
+    NSError *error;
+    
+    if (tempDb != nil)
+    {
+        NSLog(@"[DBOPX] temp database exist.. skipping initialisation of DB");
+        return;
+    }
     
     BOOL success=[[NSFileManager defaultManager] fileExistsAtPath:filepath];
     if ( success)
@@ -8430,7 +8510,7 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
     {
         // Vipin-db-optmz
         SMLog(@" Database : openDB : Reset DB Configuration - %@ - %@", TEMPDATABASENAME, name);
-        [self resetConfigurationForDataBase:tempDb];
+        [self resetConfigurationForDataBase:self.tempDb];
     }
 
 } 
@@ -8465,7 +8545,7 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
 {
     char * err;
 
-    if (synchronized_sqlite3_exec(tempDb, [statement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+    if (synchronized_sqlite3_exec(self.tempDb, [statement UTF8String], NULL, NULL, &err) != SQLITE_OK)
     {
         if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
             [MyPopoverDelegate performSelector:@selector(throwException)];
@@ -8483,7 +8563,7 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
     NSString * query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS  ChatterPostDetails ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0), 'ProductId' VARCHAR NOT NULL ,'Body' TEXT,'CreatedById' VARCHAR,'CreatedDate' VARCHAR,'Id' VARCHAR,'POSTTYPE' VARCHAR,'Username' VARCHAR,'Email' VARCHAR,'FeedPostId' VARCHAR,'FullPhotoUrl' VARCHAR)"];
     [self createTemporaryTable:query];
     
-    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS Document ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0), 'AuthorId' VARCHAR, 'Body' VARCHAR, 'BodyLength' INTEGER, 'ContentType' VARCHAR, 'CreatedById' VARCHAR, 'Description' VARCHAR, 'DeveloperName' VARCHAR, 'FolderId' VARCHAR, 'Id' VARCHAR, 'IsBodySearchable' BOOL, 'IsDeleted' BOOL, 'IsInternalUseOnly' BOOL, 'IsPublic' BOOL, 'Keywords' TEXT, 'LastModifiedById' VARCHAR, 'LastModifiedDate' DATETIME, 'Name' VARCHAR, 'NamespacePrefix' VARCHAR, 'SystemModstamp' VARCHAR, 'Type' VARCHAR)"];
+    query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS Document ('local_id' INTEGER PRIMARY KEY  NOT NULL UNIQUE DEFAULT (0), 'AuthorId' VARCHAR, 'Body' VARCHAR, 'BodyLength' INTEGER, 'ContentType' VARCHAR, 'CreatedById' VARCHAR, 'Description' VARCHAR, 'DeveloperName' VARCHAR, 'FolderId' VARCHAR, 'Id' VARCHAR, 'IsBodySearchable' BOOL, 'IsDeleted' BOOL, 'IsInternalUseOnly' BOOL, 'IsPublic' BOOL, 'Keywords' TEXT, 'LastModifiedById' VARCHAR, 'LastModifiedDate' DATETIME, 'Name' VARCHAR, 'NamespacePrefix' VARCHAR, 'SystemModstamp' VARCHAR, 'Type' VARCHAR)"];
     [self createTemporaryTable:query];
     
     query = [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS  ProductImage ('local_id' INTEGER PRIMARY KEY  NOT NULL  DEFAULT (0), 'productId' VARCHAR, 'productImage' VARCHAR)"];
@@ -8560,12 +8640,34 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
 }
 -(void)populateDatabaseFromBackUp
 {
-    [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
-    [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
-     
-    NSString * query1 = [NSString stringWithFormat:@"ATTACH DATABASE '%@' AS tempsfm",filepath];
-    [self createTable:query1];
+    NSLog(@"  ----- populateDatabaseFromBackUp ----- ");
     
+    if (appDelegate.db == nil)
+    {
+        [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+    }
+    
+    if (self.tempDb == nil)
+    {
+        [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
+    }
+
+    [self loadTempDatabaseFileFromPath];
+    
+    //NSString * query1 = [NSString stringWithFormat:@"ATTACH DATABASE '%@' AS tempsfm",filepath];
+    //[self createTable:query1];
+    
+    //NSLog(@" [MON]  populateDatabaseFromBackUp : ATTACH DATABASE %@", query1);
+    
+    
+    BOOL hasCreatedAttachment = [self attachDatabase:appDelegate.db
+                                              byName:kAttachementNameTempSFM
+                                             andPath:filepath];
+    if (! hasCreatedAttachment)
+    {
+        NSLog(@"Unable to create attachment for populating database from backup");
+        return;
+    }
     
     NSMutableArray * objects = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
     
@@ -8575,7 +8677,7 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
     
     NSString * object_api_name = @"";
     
-    if ( synchronized_sqlite3_prepare_v2(tempDb, [queryStatement UTF8String],-1, &objectStatement, nil) == SQLITE_OK )
+    if ( synchronized_sqlite3_prepare_v2(self.tempDb, [queryStatement UTF8String],-1, &objectStatement, nil) == SQLITE_OK )
     {
         while(synchronized_sqlite3_step(objectStatement) == SQLITE_ROW)
         {
@@ -8644,7 +8746,7 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
         NSString * query = [NSString stringWithFormat:@"PRAGMA table_info (%@)", tableName];
         
         
-        if ( synchronized_sqlite3_prepare_v2(tempDb, [query UTF8String],-1, &stmt, nil) == SQLITE_OK )
+        if ( synchronized_sqlite3_prepare_v2(self.tempDb, [query UTF8String],-1, &stmt, nil) == SQLITE_OK )
         {
             while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
             {
@@ -8731,11 +8833,14 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
     
     for (NSString * table in tempArray)
     {
-        NSString * temp_query = [NSString stringWithFormat:@"INSERT INTO %@ SELECT * FROM tempsfm.%@", table, table];
+        NSString * temp_query = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ SELECT * FROM tempsfm.%@", table, table];
         [self createTable:temp_query];
     }
     
     [self endTransaction];
+    
+ // Dettach - tempsfm;
+    [self detachDatabase:appDelegate.db byName:kAttachementNameTempSFM];
     
     appDelegate.internetAlertFlag = TRUE;
     
@@ -8815,8 +8920,16 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
     NSMutableDictionary * temp_dict = [appDelegate.wsInterface fillEmptyTags:appDelegate.wsInterface.tagsDictionary];
     appDelegate.wsInterface.tagsDictionary = temp_dict;
     
+    // Vipind-db-optmz - 3
+    [self closeDatabase:tempDb];
+    self.tempDb = nil;
     [appDelegate.dataBase deleteDatabase:TEMPDATABASENAME];
-    [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+    
+    
+    if(appDelegate.db == nil)
+    {
+        [appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+    }
     
     if ([appDelegate.StandAloneCreateProcess count] > 0)
     {
@@ -8864,6 +8977,8 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
             {
                 NSString *field1Str = [[NSString alloc] initWithUTF8String:field1];
                 queryStatement = [NSString stringWithFormat:@"%@",field1Str];
+                [field1Str release];
+                field1Str = nil;
             }
         }
     }
@@ -9415,12 +9530,26 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
 {
     for (NSString * objectName in metaTable)
     {
-        NSString * query = [self retrieveQuery:objectName sqlite:tempDb];
+        NSString * query = [self retrieveQuery:objectName sqlite:self.tempDb];
         [self createTable:query];
     }
     
-    NSString * query1 = [NSString stringWithFormat:@"ATTACH DATABASE '%@' AS tempSfm",filepath];
-    [self createTable:query1];
+    [self loadTempDatabaseFileFromPath];
+    
+   // NSString * query1 = [NSString stringWithFormat:@"ATTACH DATABASE '%@' AS tempSfm",filepath];
+    //[self createTable:query1];
+    
+    BOOL hasCreatedAttachment = [self attachDatabase:appDelegate.db byName:@"tempSfm" andPath:filepath];
+    
+   // NSLog(@" [MON]  copyMetaTableInToSfm : ATTACH DATABASE %@", query1);
+    
+    if (! hasCreatedAttachment)
+    {
+        NSLog(@"Unable to create attachment for copying meta table into SFM table");
+        return;
+    }
+    
+    NSString * query1 = nil;
     
     [self beginTransaction];
     //Here we fill up the tables with data  
@@ -9433,6 +9562,8 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
     }
     [self endTransaction];
     
+    // Dettach
+    [self detachDatabase:appDelegate.db byName:@"tempSfm"];
 }
 
 
@@ -9443,7 +9574,7 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
 
     sqlite3_stmt * stmt;
     
-    if (sqlite3_prepare_v2(tempDb, [queryStatement UTF8String], -1, &stmt, NULL) == SQLITE_OK){
+    if (synchronized_sqlite3_prepare_v2(self.tempDb, [queryStatement UTF8String], -1, &stmt, NULL) == SQLITE_OK){
         
         while (synchronized_sqlite3_step(stmt) == SQLITE_ROW) 
         {
@@ -9485,14 +9616,17 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
 
 - (void) clearTempDatabase
 {
-    [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
-    
+    if (self.tempDb == nil)
+    {
+        [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
+    }
+
     sqlite3_stmt *stmt;
     NSMutableArray * tables = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
     
     NSString * queryStatemnt = [NSString stringWithFormat:@"SELECT * FROM sqlite_master WHERE type = 'table'"];
     
-    if (synchronized_sqlite3_prepare_v2(tempDb, [queryStatemnt UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    if (synchronized_sqlite3_prepare_v2(self.tempDb, [queryStatemnt UTF8String], -1, &stmt, NULL) == SQLITE_OK)
     {
         while (synchronized_sqlite3_step(stmt) == SQLITE_ROW) 
         {
@@ -9516,7 +9650,7 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
     for (int i = 0; i < [tables count]; i++)
     {
         queryStatemnt = [NSString stringWithFormat:@"DROP TABLE '%@'", [tables objectAtIndex:i]];
-        if (synchronized_sqlite3_exec(tempDb, [queryStatemnt UTF8String], NULL, NULL, &err) != SQLITE_OK)
+        if (synchronized_sqlite3_exec(self.tempDb, [queryStatemnt UTF8String], NULL, NULL, &err) != SQLITE_OK)
         {
             if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
                 [MyPopoverDelegate performSelector:@selector(throwException)];
@@ -9572,10 +9706,9 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
         {
             count = synchronized_sqlite3_column_int(stmt, 0);
         }
-        
-        synchronized_sqlite3_finalize(stmt);
+
     }
-    
+    synchronized_sqlite3_finalize(stmt);
     if (count > 0)
         return TRUE;
     else
@@ -9629,9 +9762,8 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
             count = synchronized_sqlite3_column_int(stmt, 0);
         }
         
-         synchronized_sqlite3_finalize(stmt);
     }
-    
+    synchronized_sqlite3_finalize(stmt);
     if (count > 0)
         return TRUE;
     else
@@ -9663,9 +9795,9 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
             }
             
         }
-        synchronized_sqlite3_finalize(stmt);
+        
     }
-    
+    synchronized_sqlite3_finalize(stmt);
     
     return type;
 
@@ -10276,9 +10408,9 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
 			textLength = synchronized_sqlite3_column_int(stmt, 0);
 		}
 		
-		synchronized_sqlite3_finalize(stmt);
-	}
 
+	}
+    synchronized_sqlite3_finalize(stmt);
 	return textLength;
 }
 
@@ -10307,9 +10439,9 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
 			}
 		}
 		
-		synchronized_sqlite3_finalize(stmt);
+		
 	}
-	
+	synchronized_sqlite3_finalize(stmt);
 	
 	return Id;
 	
@@ -10401,9 +10533,9 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
                 isTabel=TRUE;
             }
         }
-		synchronized_sqlite3_finalize(labelstmt);
+		
     }
-    
+    synchronized_sqlite3_finalize(labelstmt);
     // Vipin-db-optmz
     [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"isTabelExistInDB"
                                                                       andRecordCount:0];
@@ -10429,8 +10561,9 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
             SMLog(@"No of location records in DB %d",row_count );
             
         }
-        synchronized_sqlite3_finalize(statement);
+        
     }
+    synchronized_sqlite3_finalize(statement);
     if(row_count == 0)
         return TRUE;
     else
@@ -10453,8 +10586,9 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
             SMLog(@"No of location records in DB %d",row_count );
             
         }
-        synchronized_sqlite3_finalize(statement);
+        
     }
+    synchronized_sqlite3_finalize(statement);
     if(row_count == 0)
         return FALSE;
     else
@@ -10637,9 +10771,9 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
             }
             [pool drain];
         }
-        
-        synchronized_sqlite3_finalize(statement);
+   
     }
+    synchronized_sqlite3_finalize(statement);
     return [result autorelease];
 }
 
@@ -10678,5 +10812,172 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
     return data;
 }
 
+#pragma mark - Database Monitoring Management
+
+
+- (int)totalNumberOfOperationCountForDatabase:(sqlite3 *)database
+{
+    int totalChanges = sqlite3_total_changes(database);
+    
+    NSLog(@"[DBOPX] DB  totalChanges %d", totalChanges);
+    
+    return totalChanges;
+}
+
+
+- (NSNumber *)dbMemoryUsage
+{
+    long long int usedBytes = sqlite3_memory_used();
+    
+    long long int inKB = usedBytes / 1024;
+    
+    NSLog(@"[DBOPX] DB usedBytes %lld", usedBytes);
+
+    return [NSNumber numberWithLongLong:inKB];
+}
+
+
+- (NSString *)dbVersion
+{
+  return  [NSString stringWithUTF8String:sqlite3_libversion()];
+}
+
+
+- (int)releaseHeapMemoryForDatabase:(sqlite3*)database
+{
+    if (database != nil)
+    {
+        //1048576 - 1 MB
+        int freedMemoryInbytes = sqlite3_release_memory(1048576); // Ask to release 1 MB
+        int releasedMemoryInbytes = sqlite3_db_release_memory(database);
+        NSLog(@"[DB] db : freedMemoryInbytes    %d ", freedMemoryInbytes);
+        NSLog(@"[DB] db : releasedMemoryInbytes %d ", releasedMemoryInbytes);
+    }
+    else
+    {
+        NSLog(@"[DB] releaseHeapMemoryForDatabase  - bad momery pointer");
+    }
+    return 1;
+}
+
+
+- (BOOL)attachDatabase:(sqlite3*)database byName:(NSString *)attachmentName andPath:(NSString *)path
+{
+    [path retain];
+    [attachmentName  retain];
+    NSLog(@" Database ATTACH now ");
+    BOOL isSuccess = YES;
+    
+    if (database == nil)
+    {
+        //Skipping database attachment operation since db is Null pointer
+        NSLog(@"[DB] Skipping database attachment operation since db is Null pointer!");
+        isSuccess = NO;
+    }      // Validating file path and attachment name 
+    else if ( (! [Util isValidString:path]) || (! [Util isValidString:attachmentName]) )
+    {
+        //Skipping database attachment operation since invalid file path or database name
+        NSLog(@"[DB] Skipping database attachment operation since invalid file path or database name!");
+        isSuccess = NO;
+    }
+    else
+    {
+        NSString * attachementQuery = [[NSString alloc] initWithFormat:@"ATTACH DATABASE '%@' AS %@", path, attachmentName];
+        
+        NSLog(@" attachementQuery  : %@", attachementQuery);
+        char * err;
+        
+        int result = synchronized_sqlite3_exec(database, [attachementQuery UTF8String], NULL, NULL, &err);
+        
+        if (result != SQLITE_OK)
+        {
+            isSuccess = NO;
+            
+            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+            {
+                [MyPopoverDelegate performSelector:@selector(throwException)];
+            }
+           
+            // Vipin 29-July-2013
+            NSLog(@" ERROR IN ATTACH DATABASE \n error code : %d,  statement: %@ \n  error message : %s \n detail : %@",
+                  result,
+                  attachementQuery,
+                  err,
+                  [NSString stringWithUTF8String:sqlite3_errmsg(database)]);
+        }
+        
+        [attachementQuery release];
+    }
+    
+    [path release];
+    [attachmentName  release];
+    return isSuccess;
+}
+
+
+- (BOOL)detachDatabase:(sqlite3*)database byName:(NSString *)databaseName
+{
+    NSLog(@" Database dettaching now ");
+    if (database == nil)
+    {
+        //Skipping database detachment operation since db is Null pointer
+        NSLog(@"[DB] Skipping database detachment operation since db is Null pointer!");
+        return NO;
+    }
+    
+    NSString * detachQuery = [NSString stringWithFormat:@"DETACH DATABASE '%@'", databaseName];
+
+    char * err;
+    BOOL isSuccess = YES;
+    
+    int result = synchronized_sqlite3_exec(database, [detachQuery UTF8String], NULL, NULL, &err);
+    
+    if (result != SQLITE_OK)
+    {
+        isSuccess = NO;
+        
+        if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+        {
+            [MyPopoverDelegate performSelector:@selector(throwException)];
+        }
+        
+        // Vipin 22-July-2013
+        NSLog(@" ERROR IN DETACH DATABASE error code : %d, \n  statement: %@ \n  error message : %s \n detail : %@",
+              result,
+              detachQuery,
+              err,
+              [NSString stringWithUTF8String:sqlite3_errmsg(database)]);
+    }
+    return isSuccess;
+}
+
+
+- (BOOL)closeDatabase:(sqlite3*)database
+{
+    int executionResult = sqlite3_close(database);
+    
+    BOOL isSuccessfull = YES;
+    
+    if (SQLITE_OK != executionResult)
+    {
+        isSuccessfull = NO;
+        
+        NSLog(@" Could not able to close database connection - error code : %d,  message : %@", executionResult, [NSString stringWithUTF8String:sqlite3_errmsg(database)]);
+    }
+    
+    return isSuccessfull;
+}
+
+
+- (sqlite3 *)getTempDatabase {
+    
+    if (tempDb == nil)
+    {
+        NSLog(@"[DBOPX] Temp DB initialising...");
+        [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
+    }
+    
+    return tempDb;
+}
 
 @end

@@ -14,7 +14,7 @@ extern void SVMXLog(NSString *format, ...);
 
 static PerformanceAnalytics *sharedPerformanceAnalytics = nil;
 
-@synthesize nameToStartTimeDictionary, nameToEndTimeDictionary, nameToRecordCount, nameToTimeCountDictionary, names, codeName, description, createdRecords, deletedRecords;
+@synthesize nameToStartTimeDictionary, nameToEndTimeDictionary, nameToRecordCount, nameToTimeCountDictionary, names, codeName, description, createdRecords, deletedRecords, dbOperationCounterDictionary, dbVersion, dbMemoryRecords;
 
 
 + (PerformanceAnalytics*)sharedInstance
@@ -80,62 +80,98 @@ static PerformanceAnalytics *sharedPerformanceAnalytics = nil;
     self.deletedRecords += records;
 }
 
+- (long long int)getDBOperationCount
+{
+
+  long long int totalOperations = 0;
+    
+  if ((self.dbOperationCounterDictionary != nil)
+      && ([self.dbOperationCounterDictionary count] > 0))
+  {
+    
+      NSArray *dbNames  = [self.dbOperationCounterDictionary allKeys];
+      for (NSString *dbName in dbNames)
+      {
+          NSArray *readings = [self.dbOperationCounterDictionary objectForKey:dbName];
+         
+          int totalReading = [readings count];
+          if ( totalReading > 1)
+          {
+              NSNumber *currentReading = [readings objectAtIndex:totalReading - 1];
+              NSNumber *previousReading = [readings objectAtIndex:totalReading - 2];
+              
+              int diff = [currentReading intValue] -  [previousReading intValue];
+              
+              totalOperations += diff;
+              NSLog(@" %@   cur : %d  pre : %d  diff : %d", dbName, [currentReading intValue],  [previousReading intValue], diff);
+          }
+      }
+  }
+   
+  NSLog(@" totalOperations : %lld ", totalOperations);
+  return totalOperations;
+}
+
 
 - (void)observePerformanceForContext:(NSString *)contextName
                      andRecordCount:(long long int)count
 {
-    if (self.nameToStartTimeDictionary == nil)
+    @synchronized(self)
     {
-        NSMutableDictionary *startTimeDictionary = [[NSMutableDictionary alloc] init] ;
-        self.nameToStartTimeDictionary =  startTimeDictionary;
-        [startTimeDictionary release];
-    }
     
-    
-    if (self.nameToEndTimeDictionary == nil)
-    {
-        NSMutableDictionary *endTimeDictionary = [[NSMutableDictionary alloc] init] ;
-        self.nameToEndTimeDictionary =  endTimeDictionary;
-        [endTimeDictionary release];
-    }
-    
-    
-    if (self.nameToRecordCount == nil)
-    {
-        NSMutableDictionary *recordCountDictionary = [[NSMutableDictionary alloc] init] ;
-        self.nameToRecordCount =  recordCountDictionary;
-        [recordCountDictionary release];
-    }
-    
-    if (self.names == nil)
-    {
-        NSMutableArray *tempNames = [[NSMutableArray alloc] init] ;
-        self.names =  tempNames;
-        [tempNames release];
-    }
-    
-    
-    if ([self.nameToStartTimeDictionary objectForKey:contextName] == nil)
-    {
-        NSDate *currentDate = [NSDate date];
-        
-        if ([self.names indexOfObject:contextName] == NSNotFound)
+        if (self.nameToStartTimeDictionary == nil)
         {
-            [self.names addObject:contextName];
+            NSMutableDictionary *startTimeDictionary = [[NSMutableDictionary alloc] init] ;
+            self.nameToStartTimeDictionary =  startTimeDictionary;
+            [startTimeDictionary release];
         }
         
-        [self.nameToStartTimeDictionary setObject:currentDate forKey:contextName];
-        [self.nameToEndTimeDictionary setObject:currentDate forKey:contextName];
-        [self.nameToRecordCount setObject:[NSNumber numberWithLongLong:count] forKey:contextName];
-    }
-    else
-    {
-        NSDate *currentDate = [NSDate date];
-        [self.nameToEndTimeDictionary setObject:currentDate forKey:contextName];
         
-        NSNumber *existCount =  (NSNumber *) [self.nameToRecordCount objectForKey:contextName];
-        long long newCount = [existCount longLongValue] + count;
-        [self.nameToRecordCount setObject:[NSNumber numberWithLongLong:newCount] forKey:contextName];
+        if (self.nameToEndTimeDictionary == nil)
+        {
+            NSMutableDictionary *endTimeDictionary = [[NSMutableDictionary alloc] init] ;
+            self.nameToEndTimeDictionary =  endTimeDictionary;
+            [endTimeDictionary release];
+        }
+        
+        
+        if (self.nameToRecordCount == nil)
+        {
+            NSMutableDictionary *recordCountDictionary = [[NSMutableDictionary alloc] init] ;
+            self.nameToRecordCount =  recordCountDictionary;
+            [recordCountDictionary release];
+        }
+        
+        if (self.names == nil)
+        {
+            NSMutableArray *tempNames = [[NSMutableArray alloc] init] ;
+            self.names =  tempNames;
+            [tempNames release];
+        }
+        
+        
+        if ([self.nameToStartTimeDictionary objectForKey:contextName] == nil)
+        {
+            NSDate *currentDate = [NSDate date];
+            
+            if ([self.names indexOfObject:contextName] == NSNotFound)
+            {
+                [self.names addObject:contextName];
+            }
+            
+            [self.nameToStartTimeDictionary setObject:currentDate forKey:contextName];
+            [self.nameToEndTimeDictionary setObject:currentDate forKey:contextName];
+            [self.nameToRecordCount setObject:[NSNumber numberWithLongLong:count] forKey:contextName];
+        }
+        else
+        {
+            NSDate *currentDate = [NSDate date];
+            [self.nameToEndTimeDictionary setObject:currentDate forKey:contextName];
+            
+            NSNumber *existCount =  (NSNumber *) [self.nameToRecordCount objectForKey:contextName];
+            long long newCount = [existCount longLongValue] + count;
+            [self.nameToRecordCount setObject:[NSNumber numberWithLongLong:newCount] forKey:contextName];
+        }
     }
 }
 
@@ -143,53 +179,56 @@ static PerformanceAnalytics *sharedPerformanceAnalytics = nil;
 - (void)completedPerformanceObservationForContext:(NSString *)context
                                    andRecordCount:(long long int)count
 {
-    if (self.nameToTimeCountDictionary == nil)
+    @synchronized(self)
     {
-        NSMutableDictionary *timeDictionary = [[NSMutableDictionary alloc] init];
-        self.nameToTimeCountDictionary =  timeDictionary;
-        [timeDictionary release];
+        if (self.nameToTimeCountDictionary == nil)
+        {
+            NSMutableDictionary *timeDictionary = [[NSMutableDictionary alloc] init];
+            self.nameToTimeCountDictionary =  timeDictionary;
+            [timeDictionary release];
+        }
+        
+        NSMutableArray *storedReports = [self.nameToTimeCountDictionary objectForKey:context];
+        
+        if (storedReports == nil)
+        {
+            storedReports = [NSMutableArray arrayWithCapacity:0];
+        }
+        
+        
+        NSDate *startDate =  [self.nameToStartTimeDictionary objectForKey:context];
+        
+        if (startDate == nil)
+        {
+            // No valid entry. Lets stops here
+            return;
+        }
+        
+        NSDate *endDate   =  [self.nameToEndTimeDictionary objectForKey:context];
+        
+        if ([startDate compare:endDate] == NSOrderedSame)
+        {
+            endDate = [NSDate date];
+        }
+       
+        NSNumber *existCount =  (NSNumber *) [self.nameToRecordCount objectForKey:context];
+        long long newCount = [existCount longLongValue] + count;
+        
+        NSTimeInterval  timeDiff = [endDate timeIntervalSinceDate:startDate];
+        NSNumber *totalTime    = [NSNumber numberWithDouble:timeDiff];
+        NSNumber *totalRecords = [NSNumber numberWithLongLong:newCount];
+        
+        NSArray *report = [NSArray arrayWithObjects:totalRecords, totalTime, nil];
+        
+        [storedReports addObject:report];
+        
+        [self.nameToTimeCountDictionary setObject:storedReports forKey:context];
+        
+        // Reset all
+        [self.nameToStartTimeDictionary removeObjectForKey:context];
+        [self.nameToEndTimeDictionary removeObjectForKey:context];
+        [self.nameToRecordCount removeObjectForKey:context];
     }
-    
-    NSMutableArray *storedReports = [self.nameToTimeCountDictionary objectForKey:context];
-    
-    if (storedReports == nil)
-    {
-        storedReports = [NSMutableArray arrayWithCapacity:0];
-    }
-    
-    
-    NSDate *startDate =  [self.nameToStartTimeDictionary objectForKey:context];
-    
-    if (startDate == nil)
-    {
-        // No valid entry. Lets stops here
-        return;
-    }
-    
-    NSDate *endDate   =  [self.nameToEndTimeDictionary objectForKey:context];
-    
-    if ([startDate compare:endDate] == NSOrderedSame)
-    {
-        endDate = [NSDate date];
-    }
-   
-    NSNumber *existCount =  (NSNumber *) [self.nameToRecordCount objectForKey:context];
-    long long newCount = [existCount longLongValue] + count;
-    
-    NSTimeInterval  timeDiff = [endDate timeIntervalSinceDate:startDate];
-    NSNumber *totalTime    = [NSNumber numberWithDouble:timeDiff];
-    NSNumber *totalRecords = [NSNumber numberWithLongLong:newCount];
-    
-    NSArray *report = [NSArray arrayWithObjects:totalRecords, totalTime, nil];
-    
-    [storedReports addObject:report];
-    
-    [self.nameToTimeCountDictionary setObject:storedReports forKey:context];
-    
-    // Reset all
-    [self.nameToStartTimeDictionary removeObjectForKey:context];
-    [self.nameToEndTimeDictionary removeObjectForKey:context];
-    [self.nameToRecordCount removeObjectForKey:context];
 }
 
 
@@ -208,11 +247,10 @@ static PerformanceAnalytics *sharedPerformanceAnalytics = nil;
     
     NSDictionary *infoPList = [[NSBundle mainBundle] infoDictionary];
     NSString     *appName   = [infoPList objectForKey:@"CFBundleDisplayName"];
+    NSString     *build     = [infoPList objectForKey:@"CFBundleVersion"];
+    NSString     *versionStr = [infoPList objectForKey:@"CFBundleShortVersionString"];
 
     NSDate   *timeNow       = [NSDate date];
-    //NSString *codeName      = @"PA2005";
-    //NSString *description   = @"Incremental Sync optmztn -  Testing ";
-    
     NSString *timeOfCreation    = [timeNow descriptionWithLocale:[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]];
     
     NSString *fileName          = [NSString stringWithFormat:@"%@_%@_%@_on_%@", self.codeName, appName, device, timeOfCreation];
@@ -224,11 +262,29 @@ static PerformanceAnalytics *sharedPerformanceAnalytics = nil;
     [string1 appendFormat:@"\n    =============      Performance Analysis Report      ==============\n\n"];
     [string1 appendFormat:@"\n    File Name                                           :  %@", fileName];
     [string1 appendFormat:@"\n    Time of Creation                                    :  %@", timeOfCreation];
-    [string1 appendFormat:@"\n    Application                                         :  %@", appName];
+    [string1 appendFormat:@"\n    Application                                         :  %@ %@ - %@", appName, build, versionStr];
     [string1 appendFormat:@"\n    Device                                              :  %@ - iOS %@", device, version];
     [string1 appendFormat:@"\n    Device Name                                         :  %@", customName];
     [string1 appendFormat:@"\n    Code                                                :  %@", self.codeName];
     [string1 appendFormat:@"\n    Description                                         :  %@\n", self.description];
+   
+    [string1 appendFormat:@"\n    DB Version                                          :  %@", self.dbVersion];
+    
+    if (self.dbMemoryRecords != nil)
+    {
+        NSArray *keys = [self.dbMemoryRecords allKeys];
+        
+        for (NSString *key in keys)
+        {
+            NSNumber *number = [dbMemoryRecords objectForKey:key];
+            NSLog(@" %@ : %lld", key, [number longLongValue]);
+            if([key hasPrefix:@"Current"])
+            {
+               [string1 appendFormat:@"\n    DB Current Memory Size                              :  %lld KB", [number longLongValue]];
+            }
+        }
+    }
+    
     [string1 appendFormat:@"\n    ==================================================================\n"];
     [string1 appendFormat:@"\n\n\n"];
     
@@ -329,6 +385,13 @@ static PerformanceAnalytics *sharedPerformanceAnalytics = nil;
         NSString *recordText  = [@"Total number of records" stringByPaddingToLength:60
                                                                          withString:@" "
                                                                     startingAtIndex:0];
+        
+        NSString *recordText4  = [@"Total number of db operations" stringByPaddingToLength:60
+                                                                         withString:@" "
+                                                                    startingAtIndex:0];
+
+        
+        
 
         [string1 appendFormat:@"\n"];
         [string1 appendFormat:@"%@  - %lld", recordText1, self.createdRecords];
@@ -339,6 +402,10 @@ static PerformanceAnalytics *sharedPerformanceAnalytics = nil;
         
        [string1 appendFormat:@"\n"];
        [string1 appendFormat:@"%@  - %lld", recordText, totalNumberOfRecords];
+      
+        [string1 appendFormat:@"\n"];
+        [string1 appendFormat:@"%@  - %lld", recordText4, [self getDBOperationCount]];
+        
         
        SMLog(string);
        NSLog(@" %@ \n %@", string1, string);
@@ -351,7 +418,6 @@ static PerformanceAnalytics *sharedPerformanceAnalytics = nil;
 }
 
 
-
 - (void)setCode:(NSString *)code
  andDescription:(NSString *)descriptionName
 {
@@ -359,61 +425,6 @@ static PerformanceAnalytics *sharedPerformanceAnalytics = nil;
     self.codeName = code;
 }
 
-/*- (void)displayCurrentStatics
- {
- SMLog(@" =============      Performance Report    ==============");
- NSMutableString *string = [[NSMutableString alloc] init];
- NSMutableString *string1 = [[NSMutableString alloc] init];
- 
- [string appendFormat:@"\n\n --------------------------------------------- \n"];
- [string appendFormat:@"\n\n\n"];
- 
- if (self.nameToStartTimeDictionary != nil)
- {
- NSArray *keys = self.names; //[self.nameToStartTimeDictionary allKeys];
- 
- for (NSString *key in keys)
- {
- NSDate *startDate =  [self.nameToStartTimeDictionary objectForKey:key];
- NSDate *endDate   =  [self.nameToEndTimeDictionary objectForKey:key];
- NSNumber *number  =  (NSNumber *)[self.nameToRecordCount objectForKey:key];
- 
- NSTimeInterval  timeDiff = [endDate timeIntervalSinceDate:startDate];
- 
- double  speed = [number longLongValue] / timeDiff;
- 
- NSString *fs  = [key stringByPaddingToLength:60
- withString:@" "
- startingAtIndex:0];
- 
- 
- if ([number longLongValue] > 0)
- {
- [string appendFormat:@"\n"];
- 
- //           [string appendFormat:@"%@  %lld records in %@  --->  %02g records/sec", key, [number longLongValue],
- //         [NSString stringWithFormat:@"%04g",timeDiff], speed];
- 
- [string appendFormat:@"%@  %lld records in %@ s  --->  %02g rec/sec", fs, [number longLongValue],
- [NSString stringWithFormat:@"%04g",timeDiff], speed];
- 
- }
- else
- {
- // [string appendFormat:@"%@ sec taken to complete the operation %@ ", [NSString stringWithFormat:@"%02g",timeDiff],  key];
- 
- [string1 appendFormat:@"\n"];
- [string1 appendFormat:@"%@  - %@", fs, [NSString stringWithFormat:@"%02g\n", timeDiff]];
- }
- }
- 
- SMLog(string);
- NSLog(@" %@ \n %@", string1, string);
- [string release];
- [string1 release];
- }
- }
-*/
 
 - (void)stopPerformAnalysis
 {
@@ -422,11 +433,69 @@ static PerformanceAnalytics *sharedPerformanceAnalytics = nil;
     self.nameToRecordCount = nil;
     self.names = nil;
     self.nameToTimeCountDictionary = nil;
+    
+    [self clearOperationCounter];
 }
 
 - (void)removeContext:(NSString *)contextName
 {
  
+}
+
+- (void)registerOperationCount:(int)count forDatabase:(NSString *)connectionName
+{
+    if (self.dbOperationCounterDictionary == nil)
+    {
+        NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
+        self.dbOperationCounterDictionary = dictionary;
+        [dictionary release];
+    }
+    
+    NSMutableArray *readings = [self.dbOperationCounterDictionary objectForKey:connectionName];
+    
+    if (readings == nil)
+    {
+        readings = [NSMutableArray arrayWithCapacity:0];
+    }
+    
+    NSLog(@"[DBOPX] Reg Opcount for %@  - %d", connectionName, count);
+    
+    [readings addObject:[NSNumber numberWithInt:count]];
+    
+    [self.dbOperationCounterDictionary setObject:readings forKey:connectionName];
+}
+
+- (void)clearOperationCounter
+{
+   if (self.dbOperationCounterDictionary != nil)
+   {
+       [self.dbOperationCounterDictionary removeAllObjects];
+       self.dbOperationCounterDictionary = nil;
+   }
+    
+    if (self.dbMemoryRecords != nil)
+    {
+        [self.dbMemoryRecords removeAllObjects];
+        self.dbMemoryRecords = nil;
+    }
+}
+
+- (void)recordDBMemoryUsage:(NSNumber *)memoryUsed perContext:(NSString *) context
+{
+   if (self.dbMemoryRecords == nil)
+   {
+       NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+       self.dbMemoryRecords = dict;
+       [dict release];
+   }
+
+    NSDateFormatter* df = [[NSDateFormatter alloc]init];
+    [df setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    NSString *result = [df stringFromDate:[NSDate date]];
+    [df release];
+    NSString *key    = [NSString stringWithFormat:@"%@_%@", context, result];
+    
+    [self.dbMemoryRecords setObject:memoryUsed forKey:key];
 }
 
 @end

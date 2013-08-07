@@ -70,12 +70,13 @@ PopoverButtons *popOver_view;
     
     // Vipindas Palli - Optimization
     int dbTransactionCount;
+    NSMutableDictionary *dbOperationCounterDict;
     
 }
 
 //RADHA
 
-@property (nonatomic,assign) sqlite3 * tempDb;
+@property (nonatomic, getter = getTempDatabase) sqlite3 * tempDb;
 @property (nonatomic, retain) id MyPopoverDelegate;
 
 @property (nonatomic, retain) NSString *dbFilePath;
@@ -87,6 +88,7 @@ PopoverButtons *popOver_view;
 
 // Vipindas Palli - Optimization
 @property(assign) int dbTransactionCount;
+@property(nonatomic, retain)NSMutableDictionary *dbOperationCounterDict;
 
 //- initWithDBName:(NSString *)name type:(NSString *)type sqlite:(sqlite3 *)db;
 
@@ -181,6 +183,7 @@ PopoverButtons *popOver_view;
 // Location Ping
 - (void) createUserGPSTable;
 - (NSString *) getSettingValueWithName:(NSString *)settingName;
+- (void) deleteSequenceofTable;
 - (void) insertrecordIntoUserGPSLog:(NSDictionary *)locationInfo;
 - (void) purgeLocationPingTable;
 - (void) deleteSequenceofTable:(NSString *)tableName;
@@ -377,4 +380,14 @@ PopoverButtons *popOver_view;
 // Vipin-db-optmz
 - (void)addValuesToLookUpFieldTable:(NSMutableArray *)values;
 
+#pragma mark - Database Monitoring Management
+// Vipin-db-optmz
+- (int)totalNumberOfOperationCountForDatabase:(sqlite3 *)database;
+- (NSString *)dbVersion;
+- (NSNumber *)dbMemoryUsage;
+
+- (BOOL)attachDatabase:(sqlite3*)database byName:(NSString *)attachmentName andPath:(NSString *)path;
+- (BOOL)detachDatabase:(sqlite3*)database byName:(NSString *)databaseName;
+- (BOOL)closeDatabase:(sqlite3*)database;
+- (int)releaseHeapMemoryForDatabase:(sqlite3*)database;
 @end

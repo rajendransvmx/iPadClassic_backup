@@ -1255,13 +1255,13 @@ extern void SVMXLog(NSString *format, ...);
                         }
                     }
                     
+                    synchronized_sqlite3_finalize(stmt);
+                    
                     NSMutableArray * accountHistory = [appDelegate.databaseInterface getAccountHistoryForanWorkOrder:Id account_id:account_id tableName:headerObjName ];
                     if(accountHistory != nil)
                     {
                         [page_layoutInfo setObject:accountHistory forKey:ACCOUNTHISTORY];
                     }
-                    
-                    sqlite3_finalize(stmt);
                 }
             }
             
@@ -1282,7 +1282,7 @@ extern void SVMXLog(NSString *format, ...);
                     }
                 }
                 
-                sqlite3_finalize(stmt);
+                 synchronized_sqlite3_finalize(stmt);
 
                 NSMutableArray * productHistory = nil;
                 if(toplevelId != nil && [toplevelId length] != 0)

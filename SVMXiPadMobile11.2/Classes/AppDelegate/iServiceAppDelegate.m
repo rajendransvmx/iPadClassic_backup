@@ -415,6 +415,29 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
     return value;
 }
 
+// Vipind-db-optmz - 3
+- (void)serializeDatabaseConnection
+{
+    /*------------------------------------------------------------------*/
+    
+    // Configuring SQLite database for serialising database connection.
+    
+    // This will be one time configuration at the time of application launch,
+    
+    // on successful of this, multiple thread can use same database connection.
+    
+    /*------------------------------------------------------------------*/
+    
+    int configResult = sqlite3_config(SQLITE_CONFIG_SERIALIZED);
+    if ( configResult == SQLITE_OK)
+    {
+        NSLog(@"[OPMX] - 1 Use sqlite on multiple threads, using the same connection");
+    }
+    else
+    {
+        NSLog(@"[OPMX] - 1 Single connection single thread - configResult : %d", configResult);
+    }
+}
 //Changed krishna.
 #pragma mark - Client info param
 //Request paremeters for client Info
@@ -544,10 +567,14 @@ NSString* machineName()
     
 	//Radha Progress Bar
 	self.syncTypeInProgress = NO_SYNCINPROGRESS;
+    
+    [self serializeDatabaseConnection];
 	
-	
-    [self initWithDBName:DATABASENAME1 type:DATABASETYPE1];
-        
+    if(appDelegate.db == nil)
+	{
+        [self initWithDBName:DATABASENAME1 type:DATABASETYPE1];
+    }
+    
     //sahana
     databaseInterface  = [[databaseIntefaceSfm alloc] init];
     
@@ -985,6 +1012,17 @@ NSString* machineName()
     }
     return;
 }
+
+// Vipind-db-optmz - 
+- (void)releaseMainDatabase
+{
+    if (db != nil)
+    {
+        db = nil;
+        dataBase.dbFilePath = nil;
+    }
+}
+
 // Fix defect 007357
 
 - (sqlite3 *)getDatabase {
@@ -1441,7 +1479,7 @@ NSString * GO_Online = @"GO_Online";
     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:locationPingSettingTimer];
 
     
-    sqlite3_close(self.db);
+    //sqlite3_close(self.db);
 	
     [appDelegate.dataBase removecache];
     self.wsInterface.didOpComplete = FALSE;
@@ -1452,7 +1490,11 @@ NSString * GO_Online = @"GO_Online";
     self.isSpecialSyncDone = FALSE;
     metaSyncRunning = NO;
 	eventSyncRunning = NO;
-    [loginController readUsernameAndPasswordFromKeychain];
+// Vipindas - db-lock-optm
+    // Lets close main database connection here to release database resource.
+    [appDelegate.dataBase closeDatabase:appDelegate.db];
+    [appDelegate releaseMainDatabase];
+        [loginController readUsernameAndPasswordFromKeychain];
     if(!appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
     {
          loginController.txtPasswordLandscape.text = @"";
