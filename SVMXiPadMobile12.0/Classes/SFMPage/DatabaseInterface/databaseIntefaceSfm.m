@@ -11568,6 +11568,47 @@ extern void SVMXLog(NSString *format, ...);
 #pragma mark -
 #pragma mark FORMFILL
 //Aparna: FORMFILL
+//8013 : Added new method
+- (NSDictionary *)objectMappingInfoForMappingId:(NSString *)mappingId
+{
+    NSMutableDictionary *objMappingDict = [NSMutableDictionary dictionary];
+    
+    sqlite3_stmt * stmt;
+    NSString *selectQuery = [NSString stringWithFormat:@"SELECT %@ , %@, %@ From %@ WHERE %@ = '%@'",TARGET_OBJECT_NAME, SOURCE_OBJECT_NAME, OBJECT_MAPPING_ID, OBJECT_MAPPING, OBJECT_MAPPING_ID, mappingId];
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        if (synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            char * targetObjNameChar= (char *) synchronized_sqlite3_column_text(stmt, 0);
+            if ((targetObjNameChar != nil) && strlen(targetObjNameChar))
+            {
+                NSString *targetObjName = [NSString stringWithUTF8String:targetObjNameChar];
+                [objMappingDict setValue:targetObjName forKey:TARGET_OBJECT_NAME];
+            }
+            
+            char * sourceObjNameChar= (char *) synchronized_sqlite3_column_text(stmt, 1);
+            if ((sourceObjNameChar != nil) && strlen(sourceObjNameChar))
+            {
+                NSString *sourceObjName = [NSString stringWithUTF8String:sourceObjNameChar];
+                [objMappingDict setValue:sourceObjName forKey:SOURCE_OBJECT_NAME];
+            }
+            
+            char * objMappingIdChar = (char *) synchronized_sqlite3_column_text(stmt, 2);
+            if ((objMappingIdChar != nil) && strlen(objMappingIdChar))
+            {
+                NSString *objMappingId = [NSString stringWithUTF8String:objMappingIdChar];
+                [objMappingDict setValue:objMappingId forKey:OBJECT_MAPPING_ID];
+            }
+            
+        }
+    }
+    synchronized_sqlite3_finalize(stmt);
+    return objMappingDict;
+}
+
+
+
 - (NSArray *) objectMappingComponentInfoForMappingId:(NSString *)mappingId
 {
     NSMutableArray *objMappingCompInfoArray = [NSMutableArray array];
@@ -11645,6 +11686,7 @@ extern void SVMXLog(NSString *format, ...);
     
     NSMutableDictionary *formFillRecords = [NSMutableDictionary dictionary];
     NSArray *objMappingComponentArray = [appDelegate.databaseInterface objectMappingComponentInfoForMappingId:mappingId];
+    NSDictionary *objMappingDict = nil; //8013
     
     for (NSDictionary *dict in objMappingComponentArray)
     {
@@ -11670,8 +11712,36 @@ extern void SVMXLog(NSString *format, ...);
                 NSString *preference3 = [dict valueForKey:MMAPPING_PREFERENCE3];
                 mappedValue = [appDelegate.databaseInterface getValueForField:preference3 objectName:objName recordId:objectId];
             }
-
-
+            
+            //8013 : Below code is to display name instead of SFId if source field type is reference.
+            NSString *sourceDataType = [appDelegate.databaseInterface getFieldDataType:objName filedName:sourceFieldName];
+            if ([sourceDataType isEqualToString:@"reference"])
+            {
+                if (nil == objMappingDict)
+                {
+                    objMappingDict = [self objectMappingInfoForMappingId:mappingId];
+                }
+                NSString *targetObjName = [objMappingDict valueForKey:TARGET_OBJECT_NAME];
+                NSString *targetDataType = [appDelegate.databaseInterface getFieldDataType:targetObjName filedName:targetFieldName];
+                if(![targetDataType isEqualToString:@"reference"])
+                {
+                    NSString *refernce = [appDelegate.dataBase getReferencetoFiledForObject:objName api_Name:sourceFieldName];
+                    NSString *nameField = [appDelegate.databaseInterface getNameFieldForObject:refernce];
+                    NSString *nameValue = [appDelegate.databaseInterface getValueForField:nameField objectName:refernce recordId:mappedValue];
+                    SMLog(@"\n[sourceDataType: %@]\n[targetDataType: %@]\n[sourceObjName: %@]\n[targetObjName: %@]\n[sourceFieldName: %@]\n[targetFieldName: %@]\n[mappedValue: %@]\n[refernce: %@]\n[nameValue: %@]\n[nameField: %@]",sourceDataType,targetDataType,objName,targetObjName,sourceFieldName,targetFieldName,mappedValue,refernce,nameValue,nameField);
+                    if ([nameValue length]>0)
+                    {
+                        mappedValue = nameValue;
+                    }else
+                    {
+                        NSString *valueFromLookUp = [appDelegate.dataBase getValueFromLookupwithId:mappedValue];
+                        if ([valueFromLookUp length]>0)
+                        {
+                            mappedValue = valueFromLookUp;
+                        }
+                    }
+                }
+            }
         }
         else if([mappingType isEqualToString:VALUE_MAPPING])
         {
