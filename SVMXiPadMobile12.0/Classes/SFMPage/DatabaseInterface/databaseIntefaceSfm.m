@@ -2912,10 +2912,8 @@ extern void SVMXLog(NSString *format, ...);
 				NSString * referenceToTable = [appDelegate.dataBase getReferencetoFiledForObject:object_name api_Name:temp_lhs];
 				if([operator isEqualToString:@"isnotnull"]) //#4722 defect fix for wizard billing type null
 				{
-                    operator = @"!=";
-                    NSString * temp_operator = @"is not null";
-                    
-                    component_expression = [NSString stringWithFormat:@" ( %@ %@ null or trim(%@) %@ or ( trim(%@) != '') ) ",lhs,operator,lhs,temp_operator, lhs];
+                    //7960
+                    component_expression = [NSString stringWithFormat:@" (length(%@) > 0) ",lhs];
 				}
                 else if ([rhs isEqualToString:@"null"])
                 {
@@ -2933,11 +2931,8 @@ extern void SVMXLog(NSString *format, ...);
             }
 			else if([operator isEqualToString:@"isnotnull"]) //#4722 defect fix for wizard billing type null
 			{
-				//#4722 defect fix for wizard billing type null
-				operator = @"!=";
-				NSString * temp_operator = @"is not null";
-				
-				component_expression = [NSString stringWithFormat:@" ( %@ %@ null or trim(%@) %@ or ( trim(%@) != '') ) ",lhs,operator,lhs,temp_operator, lhs];
+                //7960
+				component_expression = [NSString stringWithFormat:@" (length(%@) > 0) ",lhs];
 			}
             //Test
             else if ([rhs isEqualToString:@"null"])
