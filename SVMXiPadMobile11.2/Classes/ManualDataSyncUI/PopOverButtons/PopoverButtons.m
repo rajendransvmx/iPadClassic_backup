@@ -713,7 +713,7 @@ PopoverButtons *popOver_view;
 		[self updateMetsSyncStatus:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_succeeded]];
 		//One call sync
 		[appDelegate overrideOptimizeSyncSettingsFromRooTPlist];
-
+        [appDelegate pingServer]; //Keerti 7377
 
     }
     //Radha Progress Bar
@@ -728,7 +728,7 @@ PopoverButtons *popOver_view;
     {
 		appDelegate.event_thread = nil;
     }
-    [appDelegate pingServer];
+    
     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
     [self performSelectorOnMainThread:@selector(scheduletimer) withObject:nil waitUntilDone:NO];
     

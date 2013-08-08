@@ -1252,7 +1252,8 @@ NSString * GO_Online = @"GO_Online";
         NSMutableDictionary *dicttemp=[[NSMutableDictionary alloc]init];
         [dicttemp setObject:@"" forKey:@"userInfo"];
         [Errordict setObject:dicttemp forKey:@"userInfo"];
-        [appDelegate CustomizeAletView:nil alertType:SOAP_ERROR Dict:Errordict exception:nil];
+        //Keerti 7377
+        //[appDelegate CustomizeAletView:nil alertType:SOAP_ERROR Dict:Errordict exception:nil];
         [dicttemp release];
         [Errordict release];
         self._pingServer = FALSE;
