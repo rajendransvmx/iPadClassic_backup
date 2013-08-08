@@ -1741,6 +1741,7 @@ PopoverButtons *popOver_view;
 			
 			//[appDelegate.dataBase clearDatabase];
 			//Remove database
+            [appDelegate.dataBase closeDatabase:appDelegate.db];
 			[appDelegate.dataBase deleteDatabase:DATABASENAME1];
 			[appDelegate initWithDBName:DATABASENAME1 type:DATABASETYPE1];
 			appDelegate.IsLogedIn = ISLOGEDIN_TRUE;

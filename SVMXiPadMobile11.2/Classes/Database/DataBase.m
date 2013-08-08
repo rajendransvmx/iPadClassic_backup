@@ -10847,9 +10847,14 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
 {
     if (database != nil)
     {
+        NSString *requiredFor_db_release_mem = @"6.0";
+        NSString *thisiosVersion = [[UIDevice currentDevice] systemVersion];
+        
         //1048576 - 1 MB
         int freedMemoryInbytes = sqlite3_release_memory(1048576); // Ask to release 1 MB
-        int releasedMemoryInbytes = sqlite3_db_release_memory(database);
+        int releasedMemoryInbytes = 0;
+        if ([thisiosVersion compare:requiredFor_db_release_mem options:NSNumericSearch] != NSOrderedAscending)
+            releasedMemoryInbytes = sqlite3_db_release_memory(database);
         NSLog(@"[DB] db : freedMemoryInbytes    %d ", freedMemoryInbytes);
         NSLog(@"[DB] db : releasedMemoryInbytes %d ", releasedMemoryInbytes);
     }
