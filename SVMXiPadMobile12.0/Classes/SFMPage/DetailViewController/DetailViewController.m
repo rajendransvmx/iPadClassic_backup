@@ -7026,7 +7026,6 @@ enum BizRuleConfirmViewStatus{
     if([control_type isEqualToString:@"picklist"] || [control_type isEqualToString:@"multipicklist"])
     {
         if(appDelegate.isWorkinginOffline)
-
         {
             NSString * detail_objectName = [Disclosure_dict objectForKey:gDETAIL_OBJECT_NAME];
             NSMutableArray * descObjArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
@@ -15926,9 +15925,38 @@ enum BizRuleConfirmViewStatus{
 			
 			CGRect boundRect;
 			[keyBounds getValue:&boundRect];
-					
+            
+            UITableViewCell * cell = [self.tableView cellForRowAtIndexPath:self.currentEditRow];
+            if(boundRect.origin.x >700 || boundRect.origin.x <0 ) // External Keyboard used
+            {
+                CGFloat Y_Pos = 0,default_frame_Y=625;
+        
+                 Y_Pos = cell.frame.origin.y ;
+                if(appDelegate.sfmPageController.conflictExists)
+                {
+                    if(Y_Pos >default_frame_Y)
+                    {
+                        Y_Pos=(Y_Pos-default_frame_Y)+146;
+                    }
+
+                    tableView.frame= CGRectMake(cell.frame.origin.x, 0, self.view.frame.size.width,self.view.frame.size.height - 146);
+                    [self resetTableViewFrame];
+
+                }
+                else
+                {
+                    if(Y_Pos >default_frame_Y)
+                    {
+                        Y_Pos=(Y_Pos-default_frame_Y)+46;
+                    }
+
+                    tableView.frame = CGRectMake(cell.frame.origin.x, 0, self.view.frame.size.width, (self.view.frame.size.height) - 46);
+                }
+                    [self.tableView setContentOffset:CGPointMake(0, Y_Pos) animated:YES];
+                return;
+            }
 			
-			UITableViewCell * cell = [self.tableView cellForRowAtIndexPath:self.currentEditRow];
+			
 			
 			//Fix for keyboard movement for header section. 
 			if ( !self.editDetailObject.isInEditDetail )
@@ -15939,7 +15967,7 @@ enum BizRuleConfirmViewStatus{
 					if(appDelegate.sfmPageController.conflictExists)
 						tableView.frame = CGRectMake(0, 100, self.view.frame.size.width, self.view.frame.size.height - boundRect.size.height - 100);
 					else
-						tableView.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - boundRect.size.height);
+						tableView.frame = CGRectMake(0, 0, self.view.frame.size.width, (self.view.frame.size.height) - boundRect.size.width);
 				}
 				else
 				{
@@ -15999,6 +16027,16 @@ enum BizRuleConfirmViewStatus{
 					else
 						tableView.frame = CGRectMake(self.tableView.frame.origin.x, self.tableView.frame.origin.y,self.tableView.frame.size.width, self.tableView.frame.size.width);
 				}
+                NSDictionary * info = [notification userInfo];
+                NSValue * keyBounds = [info objectForKey:UIKeyboardFrameEndUserInfoKey];
+                
+                CGRect boundRect;
+                [keyBounds getValue:&boundRect];
+
+                if(boundRect.origin.x >700 || boundRect.origin.x <0 )
+                {
+                    [self  resetTableViewFrame];
+                }
 				
 				if (self.editDetailObject.lookupPopover)
 				{
@@ -16024,6 +16062,10 @@ enum BizRuleConfirmViewStatus{
 				}
 
 			}
+            else
+            {
+                [self resetTableViewFrame];
+            }
             
 		}
 
