@@ -826,6 +826,10 @@ PopoverButtons *popOver_view;
     @try{
     if (selectedSection == 0 && HeaderSelected == 0)
     {
+        //8048
+        if ([objectsArray count] == 0)
+            return;
+        
         objectAPIName = [objectsArray objectAtIndex:selectedRow];
         sync_type = [[[objectsDict objectForKey:[objectsArray objectAtIndex:selectedRow]]objectAtIndex:indexPath.row] objectForKey:@"sync_type"];
         
@@ -899,6 +903,10 @@ PopoverButtons *popOver_view;
     
     else if (HeaderSelected == 1)
     {
+        //8048
+        if ([objectsArray count] == 0)
+            return;
+        
 		NSString * local_Id = @"";
         objectAPIName = [objectsArray objectAtIndex:indexPath.section];
         sync_type = [[[objectsDict objectForKey:[objectsArray objectAtIndex:indexPath.section]]objectAtIndex:indexPath.row] objectForKey:@"sync_type"];

@@ -2706,7 +2706,12 @@ NSDate * syncCompleted;
 					{
 						//Defect 6774
 						[appDelegate checkifConflictExistsForConnectionError];
-						break;
+                        //8060
+                        [self internetConnectivityHandling:data_sync];
+                        appDelegate.Enable_aggresssiveSync = FALSE;
+                            //Radha Defect Fix 7444
+                        [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+                        break;
 					}
 					
 				}
@@ -3371,6 +3376,8 @@ NSDate * syncCompleted;
 
 -(void)generateRequestId
 {
+     //8060
+    NSString * data_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_data_sync];
     Insert_requestId = [self  get_SYNCHISTORYTime_ForKey:REQUEST_ID];
     Insert_requestId = [ Insert_requestId stringByReplacingOccurrencesOfString:@" " withString:@""];
     
@@ -3393,6 +3400,8 @@ NSDate * syncCompleted;
             }
             if (appDelegate.connection_error)
             {
+                //8060
+                [self internetConnectivityHandling:data_sync];
                 break;
             }
 

@@ -2816,6 +2816,8 @@ int percent = 0;
         {
             [appDelegate updateNextDataSyncTimeToBeDisplayed:nextSyncTime];
         }
+        //8060
+        [self setSyncStatus:SYNC_RED];
 	}
 	
 	else
@@ -2838,7 +2840,6 @@ int percent = 0;
 	{
 		[self.wsInterface.updateSyncStatus refreshSyncTime];
     }
-    [self setSyncStatus:SYNC_RED];
     if ([self.wsInterface.updateSyncStatus respondsToSelector:@selector(refreshSyncStatus)])
 	{
 		[self.wsInterface.updateSyncStatus refreshSyncStatus];
