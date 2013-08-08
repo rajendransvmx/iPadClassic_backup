@@ -1182,6 +1182,7 @@ last_sync_time:(NSString *)last_sync_time
     if (![appDelegate isInternetConnectionAvailable])
     {
         appDelegate.isSpecialSyncDone = TRUE;
+        [self internetConnectivityHandling:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_data_sync]]; //7779
         return;
     }
     
@@ -1760,6 +1761,8 @@ NSDate * syncCompleted;
     
     if (![appDelegate isInternetConnectionAvailable])
     {
+        [self internetConnectivityHandling:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_data_sync]];//7779
+
          appDelegate.Enable_aggresssiveSync = FALSE;
 		//Radha Defect Fix 5542
 		if (appDelegate.isDataSyncTimerTriggered)
@@ -1863,6 +1866,8 @@ NSDate * syncCompleted;
             //Defect 6774
 			[appDelegate checkifConflictExistsForConnectionError];
 		}
+        [self internetConnectivityHandling:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_data_sync]];//7779
+
         appDelegate.Enable_aggresssiveSync = FALSE;
         appDelegate.dataSyncRunning = NO;
         return;
@@ -1875,6 +1880,8 @@ NSDate * syncCompleted;
             //Defect 6774
 			[appDelegate checkifConflictExistsForConnectionError];
 		}
+        [self internetConnectivityHandling:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_data_sync]];//7779
+
         appDelegate.Enable_aggresssiveSync = FALSE;
         appDelegate.dataSyncRunning = NO;
         appDelegate.data_sync_type = NORMAL_DATA_SYNC;
@@ -2679,6 +2686,8 @@ NSDate * syncCompleted;
                     break;   
                 if (![appDelegate isInternetConnectionAvailable])
                 {
+                    [self internetConnectivityHandling:data_sync];//7779
+
                     break;
                 }
                 if (appDelegate.connection_error)
@@ -2884,6 +2893,8 @@ NSDate * syncCompleted;
             break;
         if (![appDelegate isInternetConnectionAvailable])
         {
+            [self internetConnectivityHandling:data_sync];//7779
+
             break;
         }
         if(appDelegate.connection_error)
@@ -2900,6 +2911,8 @@ NSDate * syncCompleted;
                 break;
             if (![appDelegate isInternetConnectionAvailable])
             {
+                [self internetConnectivityHandling:data_sync];//7779
+
                 break;
             }
             if(appDelegate.connection_error)
@@ -2918,6 +2931,7 @@ NSDate * syncCompleted;
                 break;
             if (![appDelegate isInternetConnectionAvailable])
             {
+                [self internetConnectivityHandling:data_sync];//7779
                 break;
             }
             if(appDelegate.connection_error)
@@ -2936,6 +2950,7 @@ NSDate * syncCompleted;
             break;
         if (![appDelegate isInternetConnectionAvailable])
         {
+            [self internetConnectivityHandling:data_sync];//7779
             break;
         }
         if(appDelegate.connection_error)
@@ -2977,6 +2992,7 @@ NSDate * syncCompleted;
                         break;
                     if (![appDelegate isInternetConnectionAvailable])
                     {
+                        [self internetConnectivityHandling:data_sync];//7779
                         break;
                     }
                     if(appDelegate.connection_error)
