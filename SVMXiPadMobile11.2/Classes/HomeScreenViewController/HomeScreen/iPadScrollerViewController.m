@@ -402,6 +402,9 @@ const NSUInteger kNumImages = 7;
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    //sahana - fix for defect #8068
+    [self refreshArray];
+    [self.menuTableView reloadData];
     [super viewWillAppear:animated];
     [customerLogoImageView setImage:appDelegate.serviceReportLogo];
 }
@@ -410,8 +413,8 @@ const NSUInteger kNumImages = 7;
 {
     //[appDelegate.wsInterface doGetPrice];
     
-    [self refreshArray];
- [[PerformanceAnalytics sharedInstance] stopPerformAnalysis];
+  
+    [[PerformanceAnalytics sharedInstance] stopPerformAnalysis];
     
     [[PerformanceAnalytics sharedInstance] setCode:@"PA-IN-015"
                                     andDescription:@"Initial Sync - Stage 3 : DB Mem "];
