@@ -7572,7 +7572,8 @@ extern void SVMXLog(NSString *format, ...);
 
 -(int)getIndexOfPicklistValueForOject_Name:(NSString *)object_name  field_api_name:(NSString *)field_api_name value:(NSString *)value
 {
-    NSString * query = [NSString  stringWithFormat:@"SELECT  index_value  FROM SFPicklist  WHERE object_api_name = '%@' AND field_api_name = '%@' AND label = '%@' ", object_name , field_api_name , value];
+	//8079
+    NSString * query = [NSString  stringWithFormat:@"SELECT  index_value  FROM SFPicklist  WHERE object_api_name = '%@' AND field_api_name = '%@' AND label = '%@' ", object_name , field_api_name , [value stringByReplacingOccurrencesOfString:@"'" withString:@"''"]];
     sqlite3_stmt * statement;
     int index_value = 9999999;
     if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1 , &statement , nil)  ==  SQLITE_OK)
@@ -7693,7 +7694,8 @@ extern void SVMXLog(NSString *format, ...);
 -(NSString *)getRecordTypeIdForRecordTypename:(NSString *)recorTypeName objectApi_name:(NSString *)objectApiName
 {
     NSString * picklist_value = @"";
-    NSString * query = [NSString stringWithFormat:@"SELECT recordtypeid FROM SFRTPicklist Where object_api_name = '%@' AND recordtypename = '%@' ",objectApiName,recorTypeName];
+	//8079
+    NSString * query = [NSString stringWithFormat:@"SELECT recordtypeid FROM SFRTPicklist Where object_api_name = '%@' AND recordtypename = '%@' ",objectApiName,[recorTypeName stringByReplacingOccurrencesOfString:@"'" withString:@"''"]];
     sqlite3_stmt * statement;
     if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1 , &statement , nil)  ==  SQLITE_OK)
     {
@@ -7718,7 +7720,8 @@ extern void SVMXLog(NSString *format, ...);
     NSMutableArray * RTPicklistValues = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
     [RTPicklistValues addObject:@""];
     NSString * picklist_value = @"";
-    NSString * query = [NSString stringWithFormat:@"SELECT  DISTINCT field_api_name FROM SFRTPicklist Where object_api_name = '%@' AND recordtypename = '%@'",objectName,recordtypeName];
+	//8079
+    NSString * query = [NSString stringWithFormat:@"SELECT  DISTINCT field_api_name FROM SFRTPicklist Where object_api_name = '%@' AND recordtypename = '%@'",objectName,[recordtypeName stringByReplacingOccurrencesOfString:@"'" withString:@"''"]];
     sqlite3_stmt * statement;
     if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1 , &statement , nil)  ==  SQLITE_OK)
     {
@@ -7745,12 +7748,13 @@ extern void SVMXLog(NSString *format, ...);
     NSString * query =@"";
     NSString * default_value = @"" ;
     if([returnField  isEqualToString:@"Label"])
-    {    
-        query = [NSString stringWithFormat:@"SELECT  DISTINCT defaultlabel FROM SFRTPicklist Where object_api_name = '%@' AND recordtypename = '%@' AND field_api_name = '%@'",objectName,recordtypeName , field_api_name];
+    {    //8079
+        query = [NSString stringWithFormat:@"SELECT  DISTINCT defaultlabel FROM SFRTPicklist Where object_api_name = '%@' AND recordtypename = '%@' AND field_api_name = '%@'",objectName,[recordtypeName stringByReplacingOccurrencesOfString:@"'" withString:@"''"] , field_api_name];
     }
     else  if([returnField  isEqualToString:@"Value"])
     {
-        query = [NSString stringWithFormat:@"SELECT  DISTINCT defaultvalue FROM SFRTPicklist Where object_api_name = '%@' AND recordtypename = '%@'  AND field_api_name = '%@'",objectName,recordtypeName, field_api_name];
+		//8079
+        query = [NSString stringWithFormat:@"SELECT  DISTINCT defaultvalue FROM SFRTPicklist Where object_api_name = '%@' AND recordtypename = '%@'  AND field_api_name = '%@'",objectName,[recordtypeName stringByReplacingOccurrencesOfString:@"'" withString:@"''"], field_api_name];
     }
     sqlite3_stmt * statement;
     if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1 , &statement , nil)  ==  SQLITE_OK)

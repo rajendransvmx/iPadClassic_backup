@@ -30,6 +30,7 @@
 @synthesize lastSyncTime;
 @synthesize putUpdateSyncTime;
 @synthesize purgingEventIdArray;
+@synthesize callBackValuemap;
 
 - (id) init
 {
@@ -153,10 +154,13 @@
 		if (callBackValue)
 		{
 			callBack.value = @"true";
-			INTF_WebServicesDefServiceSvc_SVMXMap * callBackContext = [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
-			callBackContext.key = callBackContextKey;
-			callBackContext.value = callBackContextValue;
-			[callBack.valueMap addObject:callBackContext];
+			for (INTF_WebServicesDefServiceSvc_SVMXMap * callBackContext in self.callBackValuemap)
+			{
+				INTF_WebServicesDefServiceSvc_SVMXMap * callBackVal =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init] autorelease];
+				callBackVal.key = callBackContext.key;
+				callBackVal.value = callBackContext.value;
+				[callBack.valueMap addObject:callBackVal];
+			}
 		}
 		else
 		{
@@ -806,6 +810,7 @@
 				svmxcmap.value = object_api_name; //object  api name
 				NSMutableArray * array_of_record_ids = [dict  objectForKey:object_api_name];
 				
+				NSLog(@"OBJECT = %@, COUNT + %D", object_api_name, [array_of_record_ids count]);
 				for(NSString * record_id in array_of_record_ids)
 				{
 					NSString * record_id_str = (NSString *)record_id;
@@ -949,11 +954,7 @@
 		else if ([key isEqualToString:@"CALL_BACK"])
 		{
 			callBackValue = [svmxMap.value boolValue];
-			NSMutableArray * context = svmxMap.valueMap;
-			
-			INTF_WebServicesDefServiceSvc_SVMXMap * contextValue = [context objectAtIndex:0];
-			callBackContextKey = contextValue.key;
-			callBackContextValue = contextValue.value;
+			 self.callBackValuemap = svmxMap.valueMap;
 		}
 		
 		else if ([key isEqualToString:@"LAST_SYNC"])
@@ -1565,6 +1566,7 @@
 	[lastSyncTime release];
 	[putUpdateSyncTime release];
 	[purgingEventIdArray release];
+	[callBackValuemap release];
 	[super dealloc];
 }
 

@@ -5052,9 +5052,9 @@ extern void SVMXLog(NSString *format, ...);
                                 continue;
                             
                             pickValue = [value objectAtIndex:r];
-                            pickValue = [pickValue stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                            pickValue = [pickValue stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];//8079
                             pickLabel = [value objectAtIndex:++r];
-                            pickLabel = [pickLabel stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                            pickLabel = [pickLabel stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];//8079
                             
                             if ( r < [key count] - 1)
                             {
@@ -5178,8 +5178,8 @@ extern void SVMXLog(NSString *format, ...);
                             NSString * label = ([labelValueDict objectForKey:@"label"] != nil)?[labelValueDict objectForKey:@"label"]:@"";
                             NSString * value = ([labelValueDict objectForKey:@"value"] != nil)?[labelValueDict objectForKey:@"value"]:@"";
                             
-                            label = [label stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
-                            value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+                            label = [label stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];//8079
+                            value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];//8079
                             
 							char * _objectName = [appDelegate convertStringIntoChar:objectName];
 							
@@ -5783,7 +5783,8 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
             for (int i = 0; i < [keys count]; i++)
             {
                 NSString * value = ([values objectAtIndex:i] != nil)?[values objectAtIndex:i]:@"";
-                value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+				//8076
+                value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
             
 				char * _keys = [appDelegate convertStringIntoChar:[keys objectAtIndex:i]];
                 

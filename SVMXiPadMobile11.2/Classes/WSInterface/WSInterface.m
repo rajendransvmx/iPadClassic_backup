@@ -1535,7 +1535,7 @@ last_sync_time:(NSString *)last_sync_time
             
             [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"WS-PutAllTheRecordsForIds-Delete"
                                                                  andRecordCount:[array_of_record_ids count]];
-            
+            NSLog(@"OBJECT = %@, COUNT + %D", object_api_name, [array_of_record_ids count]);
             for(NSString * record_id in array_of_record_ids)
             {
                 NSString * record_id_str = (NSString *)record_id;
@@ -1688,7 +1688,8 @@ NSDate * syncCompleted;
                 appDelegate.isDataSyncTimerTriggered = NO;
                 
             }
-            SMLog(@"Return No Datasync triggred");
+			[self internetConnectivityHandling:data_sync];
+            SMLog(@"Return No Datasync triggred6");
             return;
         }
        
@@ -1724,7 +1725,8 @@ NSDate * syncCompleted;
                 appDelegate.isDataSyncTimerTriggered = NO;
                 
             }
-            SMLog(@"Return No Datasync triggred");
+			[self internetConnectivityHandling:data_sync];
+            SMLog(@"Return No Datasync triggred7");
             return;
         }
         
@@ -2698,7 +2700,8 @@ NSDate * syncCompleted;
 
 					if ( ![appDelegate isInternetConnectionAvailable])
 					{
-						[appDelegate setSyncStatus:SYNC_GREEN];
+						appDelegate.dataSyncRunning = NO;
+						[self internetConnectivityHandling:data_sync];
 					}
 					if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
 						break;
@@ -2782,6 +2785,7 @@ NSDate * syncCompleted;
         }
         else
         {
+			[self internetConnectivityHandling:data_sync];
             appDelegate.SyncStatus = SYNC_GREEN;
             [updateSyncStatus refreshSyncStatus];
         }
@@ -3396,11 +3400,13 @@ NSDate * syncCompleted;
                 break;
             if (![appDelegate isInternetConnectionAvailable])
             {
+				[self internetConnectivityHandling:data_sync];
                 return;
             }
             if (appDelegate.connection_error)
             {
                 //8060
+				[appDelegate checkifConflictExistsForConnectionError];
                 [self internetConnectivityHandling:data_sync];
                 break;
             }
@@ -9109,8 +9115,9 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                    
                     /* For initial sync do not escape the single quote as it is handled by sqlite3_bind :InitialSync-shr*/
                     if(appDelegate.do_meta_data_sync != ALLOW_META_AND_DATA_SYNC) {
-                        NSInteger val =  [temp_json_string replaceOccurrencesOfString:@"'" withString:@"''" options:NSCaseInsensitiveSearch range: NSMakeRange(0, [temp_json_string length])];
-                        SMLog(@"%d" , val);
+						//8079
+//                        NSInteger val =  [temp_json_string replaceOccurrencesOfString:@"'" withString:@"''" options:NSCaseInsensitiveSearch range: NSMakeRange(0, [temp_json_string length])];
+//                        SMLog(@"%d" , val);
                     }
                    
                     

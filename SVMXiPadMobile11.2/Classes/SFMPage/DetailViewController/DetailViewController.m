@@ -4894,7 +4894,8 @@ extern void SVMXLog(NSString *format, ...);
             background.clipsToBounds = YES;
 			for (int j = 0; j < columns; j++)
 			{
-				UILabel * lbl = [[[UILabel alloc] initWithFrame:CGRectMake(j*field_width+8, 0, field_width-8, control_height)] autorelease];
+				//8076
+				UILabel * lbl = [[[UILabel alloc] initWithFrame:CGRectMake(j*field_width+8, 5, field_width-120, control_height)] autorelease];
 				NSString * label_name = nil;
                 if ([detail_fields count] > j)//sahana
                 {
@@ -4908,6 +4909,8 @@ extern void SVMXLog(NSString *format, ...);
                 lbl.font = [UIFont boldSystemFontOfSize:lbl.font.pointSize];
                 lbl.backgroundColor = [UIColor clearColor];
 				[background addSubview:lbl];
+				//8076
+				lbl.lineBreakMode = UILineBreakModeTailTruncation;
 			}
 
             flag = 1;

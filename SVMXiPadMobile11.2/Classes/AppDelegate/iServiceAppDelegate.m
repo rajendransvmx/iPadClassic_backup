@@ -1510,15 +1510,18 @@ NSString * GO_Online = @"GO_Online";
 
 -(void)callDataSync
 {
+	NSString * data_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_data_sync];//8060
+	
     if(self.isBackground == TRUE)
     {
         [self.datasync_timer invalidate];
         [self ScheduleIncrementalDatasyncTimer];
         [self updateNextDataSyncTimeToBeDisplayed:[NSDate date]];
+		[self.wsInterface internetConnectivityHandling:data_sync];//8060
         return;
     }
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc]init];
-    SMLog(@"Return No Datasync triggred");
+    SMLog(@"Return No Datasync triggred1");//8060
 	
     [self performSelectorInBackground:@selector(goOnlineIfRequired) withObject:nil];
 
@@ -1533,7 +1536,8 @@ NSString * GO_Online = @"GO_Online";
 			isDataSyncTimerTriggered = NO;
 			
 		}
-		SMLog(@"Return No Datasync triggred");
+		[self.wsInterface internetConnectivityHandling:data_sync];//8060
+		SMLog(@"Return No Datasync triggred2");
         return;
     }
     
@@ -1546,7 +1550,8 @@ NSString * GO_Online = @"GO_Online";
 			isDataSyncTimerTriggered = NO;
 			
 		}
-		SMLog(@"Return No Datasync triggred");
+		[self.wsInterface internetConnectivityHandling:data_sync];//8060
+		SMLog(@"Return No Datasync triggred3");
         return;
     }
     
@@ -1560,7 +1565,8 @@ NSString * GO_Online = @"GO_Online";
         {
             Enable_aggresssiveSync = FALSE;
             SMLog(@"thread is not finished its work");
-			SMLog(@"Return No Datasync triggred");
+			SMLog(@"Return No Datasync triggred4");//8060
+			[self.wsInterface internetConnectivityHandling:data_sync];
             return; //Please don't comment return
         }
         
