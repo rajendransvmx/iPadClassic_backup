@@ -5782,7 +5782,7 @@ appDelegate.wsInterface.didGetPageDataDb = TRUE;
             
             for (int i = 0; i < [keys count]; i++)
             {
-                NSString * value = ([values objectAtIndex:i] != nil)?[values objectAtIndex:i]:@"";
+                NSString * value = ([values objectAtIndex:i] != nil)?[values objectAtIndex:i]:@""; 
 				//8076
                 value = [value stringByReplacingOccurrencesOfString:@"'" withString:@"\'"];
             
