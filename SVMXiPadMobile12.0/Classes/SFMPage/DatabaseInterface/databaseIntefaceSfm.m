@@ -2901,6 +2901,31 @@ extern void SVMXLog(NSString *format, ...);
             NSString * component_expression = @"";
             NSString * data_type = [[appDelegate.databaseInterface getFieldDataType:object_name filedName:temp_lhs] lowercaseString];
 
+            
+            /* 7438 - Support for date literals in process entry criteria and wizard entry criteria*/
+            if ([data_type isEqualToString:@"date"] || [data_type isEqualToString:@"datetime"]) {
+                BOOL isDateOnly = NO;
+                if ([data_type isEqualToString:@"date"]){
+                    isDateOnly = YES;
+                }
+                NSString *newRhsValue = rhs;
+                if([rhs caseInsensitiveCompare:MACRO_NOW]== NSOrderedSame)
+                {
+                    newRhsValue = [Utility today:0 andJusDate:isDateOnly];
+                }
+                else if([rhs caseInsensitiveCompare:MACRO_TODAY]== NSOrderedSame) {
+                    newRhsValue = [Utility today:0 andJusDate:YES];
+                }
+                else if([rhs caseInsensitiveCompare:MACRO_TOMMOROW]== NSOrderedSame) {
+                    newRhsValue = [Utility today:1 andJusDate:YES];
+                }
+                else if([rhs caseInsensitiveCompare:MACRO_YESTERDAY]== NSOrderedSame) {
+                    newRhsValue = [Utility today:-1 andJusDate:YES];
+                }
+                rhs = newRhsValue;
+            }
+            
+            
             // This check is for RecordTypeId
             if([temp_lhs isEqualToString:@"RecordTypeId"])
             {
