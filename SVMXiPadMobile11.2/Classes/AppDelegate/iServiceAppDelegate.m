@@ -1517,7 +1517,6 @@ NSString * GO_Online = @"GO_Online";
         [self.datasync_timer invalidate];
         [self ScheduleIncrementalDatasyncTimer];
         [self updateNextDataSyncTimeToBeDisplayed:[NSDate date]];
-		[self.wsInterface internetConnectivityHandling:data_sync];//8060
         return;
     }
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc]init];
@@ -1536,7 +1535,6 @@ NSString * GO_Online = @"GO_Online";
 			isDataSyncTimerTriggered = NO;
 			
 		}
-		[self.wsInterface internetConnectivityHandling:data_sync];//8060
 		SMLog(@"Return No Datasync triggred2");
         return;
     }
@@ -1550,7 +1548,6 @@ NSString * GO_Online = @"GO_Online";
 			isDataSyncTimerTriggered = NO;
 			
 		}
-		[self.wsInterface internetConnectivityHandling:data_sync];//8060
 		SMLog(@"Return No Datasync triggred3");
         return;
     }
@@ -1566,7 +1563,6 @@ NSString * GO_Online = @"GO_Online";
             Enable_aggresssiveSync = FALSE;
             SMLog(@"thread is not finished its work");
 			SMLog(@"Return No Datasync triggred4");//8060
-			[self.wsInterface internetConnectivityHandling:data_sync];
             return; //Please don't comment return
         }
         

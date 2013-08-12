@@ -2785,8 +2785,7 @@ NSDate * syncCompleted;
         }
         else
         {
-			[self internetConnectivityHandling:data_sync];
-            appDelegate.SyncStatus = SYNC_GREEN;
+			appDelegate.SyncStatus = SYNC_GREEN;
             [updateSyncStatus refreshSyncStatus];
         }
         
