@@ -1359,7 +1359,8 @@ PopoverButtons *popOver_view;
 
 - (NSString *) getlocalIdForSFId:(NSString *)SFId ForObject:(NSString *)Objectname
 {
-    NSString * query = [NSString stringWithFormat:@"SELECT local_id FROM %@ WHERE Id = '%@'", Objectname, SFId];
+    //7220: Added single quote for table name.
+    NSString * query = [NSString stringWithFormat:@"SELECT local_id FROM '%@' WHERE Id = '%@'", Objectname, SFId];
     
     NSString * localId = @"";
     sqlite3_stmt *stmt;
