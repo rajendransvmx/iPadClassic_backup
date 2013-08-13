@@ -416,53 +416,58 @@ extern void SVMXLog(NSString *format, ...);
     NSDictionary * rowDict = nil; // [array objectAtIndex:indexPath.row];
     NSMutableArray * _array = [[NSMutableArray alloc] initWithCapacity:0];
     NSArray * sequenceArray = [lookupData objectForKey:@"SEQUENCE"];
+    NSMutableArray * field_sequence = [[NSMutableArray alloc] initWithCapacity:0];
+    
+        
     @try{
-    for (int i = 0; i < [sequenceArray count]; i++)
-    {
-        NSDictionary * dict = [sequenceArray objectAtIndex:i];
-        NSString * field = [[dict allValues] objectAtIndex:0]; // for e.g. field is Name
-        NSString * fieldLabel = @"";
         
-       if(appDelegate.isWorkinginOffline){
-           
-           fieldLabel = [appDelegate.dataBase getLabelFromApiName:field objectName:objectName];
-           if ([fieldLabel length] == 0)
-           {
-               fieldLabel = field;
-           }
-           
-       }else{
-            fieldLabel = [[describeObject fieldWithName:field] label];
-       }
-        
-		//RADHA check for duplicates
-		NSMutableArray * array2=[[NSMutableArray alloc]init];
-		for (NSDictionary * obj in array)
-		{
-			if (![array2 containsObject:obj])
-			{
-				[array2 addObject:obj];
-			}
-		}
-        
-       for (int j = 0; j < [array2 count]; j++)
-       {
-            rowDict = [array2 objectAtIndex:j];
-            if ([[rowDict objectForKey:@"key"] isEqualToString:field])
+        for(int j = 0 ; j < [sequenceArray count];j++)
+        {
+            for(int i = 0 ;i < [sequenceArray count]; i++)
             {
-                NSString * fieldValue = [rowDict objectForKey:@"value"];
-                NSArray * keys = [NSArray arrayWithObjects:gLOOKUP_FIELD_LABEL, gLOOKUP_FIELD_VALUE, nil];
-                NSArray * objects = [NSArray arrayWithObjects:fieldLabel, fieldValue, nil];
-                NSDictionary * fieldDictionary = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
-                [_array addObject:fieldDictionary];
+                NSDictionary * eachDict = [sequenceArray objectAtIndex:i];
+                int sequenceNo = [[[eachDict allKeys] objectAtIndex:0] intValue];
+                NSString * fieldName = [[eachDict allValues] objectAtIndex:0];
+                if(j+ 1 == sequenceNo)
+                {
+                    [field_sequence addObject:fieldName];
+                    break;
+                }
             }
         }
-    }
+        //remove duplicate items from array
+        NSMutableArray * tempArray = [[NSMutableArray alloc] initWithCapacity:0];//to avoid duplicates
+        
+        for(NSString * fieldName in field_sequence)
+        {
+            if([tempArray containsObject:fieldName])
+            {
+                //check if duplicate fieldname exists
+                continue;
+            }
+            for (NSDictionary * rowDict in array)
+            {
+                if([[rowDict objectForKey:KEY] isEqualToString:fieldName])
+                {
+                    NSString * fieldLabel = [appDelegate.dataBase getLabelFromApiName:fieldName objectName:objectName];
+                    NSString * fieldValue = [rowDict objectForKey:@"value"];
+                    NSArray * keys = [NSArray arrayWithObjects:gLOOKUP_FIELD_LABEL, gLOOKUP_FIELD_VALUE, nil];
+                    NSArray * objects = [NSArray arrayWithObjects:fieldLabel, fieldValue, nil];
+                    NSDictionary * fieldDictionary = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
+                    [_array addObject:fieldDictionary];
+                    [tempArray addObject:fieldName];
+                    break;
+                }
+            }
+        }
+        [tempArray release];
 	 }@catch (NSException *exp) {
         SMLog(@"Exception Name LookupView :accessoryButtonTappedForRowWithIndexPath %@",exp.name);
         SMLog(@"Exception Reason LookupView :accessoryButtonTappedForRowWithIndexPath %@",exp.reason);
         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
     }
+    [field_sequence release];
+    
     lookupDetails = [[LookupDetails alloc] initWithNibName:@"LookupDetails" bundle:nil];
     lookupDetails.delegate = self;
     lookupDetails.indexPath = indexPath;
