@@ -19,8 +19,8 @@
 
 /*####### MACROS FOR OAUTH LOGIN #########*/
 
-#define CLIENT_ID		@"3MVG9A2kN3Bn17htYzCiGjrk6NlnIUI.KJ.N1uoBrLpeZBxyzlI5Nix5ioJ6sAlU_XkGwig5g4u0J5dIpzNsN"
-#define CLIENT_SECRET	@"4721842946563404924"
+#define CLIENT_ID		@"3MVG9VmVOCGHKYBRKMhA_p09I9xzela3emYDXjFy8a9UOXbcwI2nGsrOGc3RGGA08q4Q8X94lyZ.tIn.WWW71"
+#define CLIENT_SECRET	@"780972445943803573"
 #define REDIRECT_URL    @"sfdc://success"
 #define _TOKEN_URL		@"/services/oauth2/authorize"
 #define REVOKE_URL		@"/services/oauth2/revoke"
