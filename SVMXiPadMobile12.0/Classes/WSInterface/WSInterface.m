@@ -1772,6 +1772,7 @@ NSDate * syncCompleted;
 			appDelegate.isDataSyncTimerTriggered = NO;
 			
 		}
+		[self internetConnectivityHandling:data_sync];//7344
         return;
     }
    
@@ -1808,6 +1809,7 @@ NSDate * syncCompleted;
 			appDelegate.isDataSyncTimerTriggered = NO;
 			
 		}
+		[self internetConnectivityHandling:data_sync];//7344
         return;
     }
 	
@@ -2862,7 +2864,8 @@ NSDate * syncCompleted;
 
             if ( ![appDelegate isInternetConnectionAvailable])
             {
-                [appDelegate setSyncStatus:SYNC_GREEN];
+                appDelegate.dataSyncRunning = NO;
+						[self internetConnectivityHandling:data_sync];//7344
             }
             if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
                 break;
@@ -2870,6 +2873,11 @@ NSDate * syncCompleted;
 			{
 				//Defect 6774
 				[appDelegate checkifConflictExistsForConnectionError];
+				 //7344
+                        [self internetConnectivityHandling:data_sync];
+                        appDelegate.Enable_aggresssiveSync = FALSE;
+                            //Radha Defect Fix 7444
+                        [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
 				break;
 			}
             
@@ -3589,6 +3597,8 @@ NSDate * syncCompleted;
 
 -(void)generateRequestId
 {
+	//7344
+    NSString * data_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_data_sync];
     Insert_requestId = [self  get_SYNCHISTORYTime_ForKey:REQUEST_ID];
     Insert_requestId = [ Insert_requestId stringByReplacingOccurrencesOfString:@" " withString:@""];
     
@@ -3607,10 +3617,16 @@ NSDate * syncCompleted;
                 break;
             if (![appDelegate isInternetConnectionAvailable])
             {
+				//7344
+				[self internetConnectivityHandling:data_sync];
                 return;
             }
             if (appDelegate.connection_error)
             {
+				//7344
+				[appDelegate checkifConflictExistsForConnectionError];
+                [self internetConnectivityHandling:data_sync];
+
                 break;
             }
 

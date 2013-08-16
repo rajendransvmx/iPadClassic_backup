@@ -227,8 +227,8 @@ PopoverButtons *popOver_view;
             [appDelegate.reloadTable ReloadSyncTable];
             return;
         }
-        [appDelegate setSyncStatus:SYNC_ORANGE];
-        appDelegate.dataSyncRunning = YES;
+//        [appDelegate setSyncStatus:SYNC_ORANGE];//7344
+//        appDelegate.dataSyncRunning = YES;
         
         if ([appDelegate.metaSyncThread isExecuting])
         {
