@@ -789,16 +789,30 @@
     else
     {
         NSMutableArray * array = [Disclosure_dict objectForKey:gDETAILS_VALUES_ARRAY];
+		NSMutableArray * fieldArray = [Disclosure_dict objectForKey:@"details_Fields_Array"];
         NSMutableArray * detail_values = [array objectAtIndex:self.selectedRowForDetailEdit];
         
         for (int i = 0; i < [detail_values count]; i++)
         {
             NSString * value_Field_API = [[detail_values objectAtIndex:i] objectForKey:gVALUE_FIELD_API_NAME];
             NSString * dict_value =  [[detail_values objectAtIndex:i] objectForKey:gVALUE_FIELD_VALUE_VALUE];
+			NSString * control_type_name = @"";
+			//#008082
+			for (NSDictionary *  field_type_dict in fieldArray)
+			{
+				control_type_name = @"";
+				NSString * field_type_name = [field_type_dict objectForKey:@"Field_API_Name"];
+				if([fieldApi_name isEqualToString:field_type_name])
+				{
+					control_type_name = [field_type_dict objectForKey:@"Field_Data_Type"];
+					break;
+				}
+			}
+			
             if([fieldApi_name isEqualToString:value_Field_API])
             {
-                //5878
-                if([controlType isEqualToString: @"picklist"] || [controlType isEqualToString: @"multipicklist"])
+                //5878 #008082
+                if([control_type_name isEqualToString: @"picklist"] || [control_type_name isEqualToString: @"multipicklist"])
                 {
                     NSString * detailObjectName = [Disclosure_dict objectForKey:gDETAIL_OBJECT_NAME];
                     
@@ -806,7 +820,8 @@
                     
                     return index_value;
                 }
-                if([controlType isEqualToString:@"boolean"])
+				//#008082
+                if([control_type_name isEqualToString:@"boolean"])
                 {
                     if([dict_value isEqualToString:@"True"] || [dict_value isEqualToString:@"true"] || [dict_value isEqualToString:@"1"])
                     {
