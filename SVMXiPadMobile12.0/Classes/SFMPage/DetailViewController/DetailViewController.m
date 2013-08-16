@@ -15964,8 +15964,9 @@ enum BizRuleConfirmViewStatus{
 				UIDeviceOrientation interfaceOrientation = [[UIDevice currentDevice] orientation];
 				if ((interfaceOrientation == UIInterfaceOrientationPortrait) || (interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown))
 				{
+                    // defect krishna : 007310
 					if(appDelegate.sfmPageController.conflictExists)
-						tableView.frame = CGRectMake(0, 100, self.view.frame.size.width, self.view.frame.size.height - boundRect.size.height - 100);
+						tableView.frame = CGRectMake(0, 100, self.view.frame.size.width, self.view.frame.size.height - boundRect.size.width - 100);
 					else
 						tableView.frame = CGRectMake(0, 0, self.view.frame.size.width, (self.view.frame.size.height) - boundRect.size.width);
 				}
