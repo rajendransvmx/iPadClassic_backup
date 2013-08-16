@@ -449,6 +449,9 @@ const NSUInteger kNumImages = 7;
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    //sahana - fix for defect #8068
+    [self refreshArray];
+    [self.menuTableView reloadData];
     [super viewWillAppear:animated];
     [customerLogoImageView setImage:appDelegate.serviceReportLogo];
 }
@@ -458,8 +461,7 @@ const NSUInteger kNumImages = 7;
     [super viewDidAppear:animated];
     //[appDelegate.wsInterface doGetPrice];
     
-    [self refreshArray];
-    
+  
     [[PerformanceAnalytics sharedInstance] stopPerformAnalysis];
     
     [[PerformanceAnalytics sharedInstance] setCode:@"PA-IN-015"
@@ -676,6 +678,8 @@ const NSUInteger kNumImages = 7;
             //6941:Aparna
             [customerLogoImageView setImage:appDelegate.serviceReportLogo];
             
+            [self refreshViewAfterMetaSync];
+
         }
         else
         {
@@ -826,7 +830,12 @@ const NSUInteger kNumImages = 7;
                                                         perContext:@"Current"];
     [[PerformanceAnalytics sharedInstance] displayCurrentStatics];
 }
-
+-(void)refreshViewAfterMetaSync;
+{
+    //sahana
+    [self refreshArray];
+    [self.menuTableView reloadData];
+}
 -(void)createUserInfoPlist
 {
     NSDictionary * dict = [[NSDictionary alloc] initWithObjects:[NSArray arrayWithObjects:appDelegate.username,@"false", nil] forKeys:[NSArray arrayWithObjects:USER_NAME_AUTHANTICATED,INITIAL_SYNC_LOGIN_SATUS, nil]];

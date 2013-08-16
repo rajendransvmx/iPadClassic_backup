@@ -115,7 +115,7 @@
 -(void)showAlertViewForAppwasinBackground;
 - (void)continueMetaAndDataSync;
 -(void)RefreshProgressBarNativeMethod:(NSString *)sync;
-
+-(void)refreshViewAfterMetaSync;
 //Location Ping
 - (void) scheduleLocationPingService;
 #define NUM_CALLS_INTIAL_SYNC  15;

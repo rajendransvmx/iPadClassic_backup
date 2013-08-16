@@ -13167,15 +13167,18 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     if ([appDelegate.StandAloneCreateProcess count] > 0)
     {
         [appDelegate.StandAloneCreateProcess  removeAllObjects];
-        NSMutableArray * createprocessArray = [appDelegate.databaseInterface getAllTheProcesses:@"STANDALONECREATE"];
-        [appDelegate getCreateProcessArray:createprocessArray];
     }
+    //sahana Aug16th
+    NSMutableArray * createprocessArray = [appDelegate.databaseInterface getAllTheProcesses:@"STANDALONECREATE"];
+    [appDelegate getCreateProcessArray:createprocessArray];
     
     if ([appDelegate.view_layout_array count] > 0)
     {
         [appDelegate.view_layout_array removeAllObjects];
-        appDelegate.view_layout_array = [appDelegate.databaseInterface getAllTheProcesses:@"VIEWRECORD"]; 
     }
+    //sahana Aug16th
+    appDelegate.view_layout_array = [appDelegate.databaseInterface getAllTheProcesses:@"VIEWRECORD"];
+
     
     if (appDelegate.soqlQuery != nil)
         appDelegate.soqlQuery = nil;
