@@ -159,9 +159,10 @@
 
 - (BOOL)splitViewController: (UISplitViewController*)svc shouldHideViewController:(UIViewController *)vc inOrientation:(UIInterfaceOrientation)orientation
 {
+    //#7118
     UIDeviceOrientation deviceOrientation = [[UIDevice currentDevice] orientation];
     if (deviceOrientation == UIInterfaceOrientationPortrait || deviceOrientation == UIInterfaceOrientationPortraitUpsideDown)
-        return YES;
+        return NO;
     return NO;
 }
 
