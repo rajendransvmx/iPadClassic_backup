@@ -7654,7 +7654,7 @@ enum BizRuleConfirmViewStatus{
                     if([control_type isEqualToString:@"multipicklist"])
                     {
                         
-                        NSMutableArray * keyVal	 = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+                         NSMutableArray * keyVal	 = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
                         NSString * keyValueString =[[[NSString alloc] init] autorelease];
                         
                         if(appDelegate.isWorkinginOffline)
@@ -7663,7 +7663,7 @@ enum BizRuleConfirmViewStatus{
                             
                             //query to acces the picklist values for lines 
                             NSMutableDictionary * picklistValues = [appDelegate.databaseInterface  getPicklistValuesForTheFiled:value_Field_API tableName:SFPicklist objectName:detailObjectName];
-                            
+
                             
                             NSArray * allvalues = [picklistValues allValues];
                             NSArray * allkeys = [picklistValues allKeys];
@@ -10922,7 +10922,9 @@ enum BizRuleConfirmViewStatus{
                         BOOL required = [[section_field objectForKey:gFIELD_REQUIRED] boolValue];
                         if(required)
                         {
-                            if([value length] == 0 )
+                            //krishna defect 6690
+                            value = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+                            if([value length] == 0)
                             {
 								//Radha :- Implementation  for  Required Field alert in Debrief UI
 								if (headerRow < 0 && !error)
@@ -11016,6 +11018,8 @@ enum BizRuleConfirmViewStatus{
                                 {
                                     if(required)
                                     {
+                                        //krishna defect 6690
+                                        deatil_value = [deatil_value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
                                         if([deatil_value length]== 0)
                                         {
 											//Radha :- Implementation  for  Required Field alert in Debrief UI
@@ -11429,7 +11433,10 @@ enum BizRuleConfirmViewStatus{
                         BOOL required = [[section_field objectForKey:gFIELD_REQUIRED] boolValue];
                         if(required)
                         {
-                            if([value length] == 0 )
+                            //krishna defect 6690
+                            value = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+
+                            if([value length] == 0)
                             {
 								//Radha :- Implementation  for  Required Field alert in Debrief UI
 								if (headerRow < 0 && !error)
@@ -11530,6 +11537,9 @@ enum BizRuleConfirmViewStatus{
                                 {
                                     if(required)
                                     {
+                                        //krishna defect 6690
+                                        deatil_value = [deatil_value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+
                                         if([deatil_value length]== 0)
                                         {										//Radha :- Implementation  for  Required Field alert in Debrief UI	
 											if ((row < 0 || currentRow < 0) && !line_error)
@@ -12316,7 +12326,10 @@ enum BizRuleConfirmViewStatus{
                         }
                         if(required)
                         {
-                            if([value length] == 0 )
+                            //krishna defect 6690
+                            value = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+
+                            if([value length] == 0)
                             {
 								//Radha :- Implementation  for  Required Field alert in Debrief UI
 								if (headerRow < 0 && !error)
@@ -12412,6 +12425,9 @@ enum BizRuleConfirmViewStatus{
                                 {
                                     if(required)
                                     {
+                                        //krishna defect 6690
+                                        deatil_value = [deatil_value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+
                                         if([deatil_value length]== 0)
                                         {
 											//Radha :- Implementation  for  Required Field alert in Debrief UI
