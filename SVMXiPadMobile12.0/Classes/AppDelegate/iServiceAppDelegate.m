@@ -4000,6 +4000,10 @@ int percent = 0;
 			[SFHFKeychainUtils deleteItemForUsername:@"username" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
 			[SFHFKeychainUtils deleteItemForUsername:@"password" andServiceName:KEYCHAIN_SERVICE_NAME error:&error];
 			
+            //krishna opdocs 17/8/2013 8166
+            [appDelegate clearDocumentDirectoryForOPDOCS];
+            [appDelegate moveJavascriptFiles];
+
 			[self addBackgroundImageAndLogo]; //Code for Indicator - 24/May/2013
             
             // Need to cross check with Praveen - It is happening behalf of Switch user -- Will remove
