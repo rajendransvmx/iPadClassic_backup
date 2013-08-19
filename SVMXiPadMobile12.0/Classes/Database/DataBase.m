@@ -12635,8 +12635,8 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     
     int  pageSizeResult =  synchronized_sqlite3_exec(database, "PRAGMA page_size = 4096", NULL, NULL, &errMessagePageSize);
     int  syncResult     =  synchronized_sqlite3_exec(database, "PRAGMA synchronous = OFF", NULL, NULL, &errMessageSynch);
-    //int  journalResult  =  synchronized_sqlite3_exec(database, "PRAGMA journal_mode = MEMORY", NULL, NULL, &errMessageJournalMod);
-    int  journalResult  =  synchronized_sqlite3_exec(database, "PRAGMA journal_mode = WAL", NULL, NULL, &errMessageJournalMod);
+    int  journalResult  =  synchronized_sqlite3_exec(database, "PRAGMA journal_mode = MEMORY", NULL, NULL, &errMessageJournalMod);
+    //int  journalResult  =  synchronized_sqlite3_exec(database, "PRAGMA journal_mode = WAL", NULL, NULL, &errMessageJournalMod);
     // Vipin: we are moving more safer journal mode to avoid database corruption
     
     if (pageSizeResult != SQLITE_OK)
