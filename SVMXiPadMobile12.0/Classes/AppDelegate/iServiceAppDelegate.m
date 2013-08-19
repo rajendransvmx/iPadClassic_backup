@@ -2404,7 +2404,7 @@ NSString * GO_Online = @"GO_Online";
 		[appDelegate ScheduleIncrementalMetaSyncTimer];
 		[appDelegate ScheduleTimerForEventSync];
 		[appDelegate updateNextDataSyncTimeToBeDisplayed:[NSDate date]];
-		[appDelegate updateMetasyncTimeinSynchistory];
+		[appDelegate updateMetasyncTimeinSynchistory:[NSDate date]];
 		[appDelegate startBackgroundThreadForLocationServiceSettings];
 		NSLog(@"Revoke tokens failed...");
 		//return FALSE;
