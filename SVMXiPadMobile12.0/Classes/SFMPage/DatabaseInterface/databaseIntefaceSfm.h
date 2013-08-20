@@ -392,6 +392,9 @@
                                    mappingId:(NSString *)mappingId
                                   objectName:(NSString *)objName;
 
+//OUTPUT docs Entry criteria : 8166
+- (NSArray *) getExpressionIdsForOPDocForProcessId:(NSString *)processId;
+
 
 /*Shra-lookup*/
 

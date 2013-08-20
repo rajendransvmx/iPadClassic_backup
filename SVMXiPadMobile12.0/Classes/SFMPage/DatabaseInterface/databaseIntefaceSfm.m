@@ -1394,7 +1394,55 @@ extern void SVMXLog(NSString *format, ...);
     return dict;
     
 }
-
+//OUTPUT docs Entry criteria : 8166
+- (NSArray *) getExpressionIdsForOPDocForProcessId:(NSString *)processId {
+    
+    if([processId length ] != 0 ||  processId != nil)
+    {
+        NSString * query = @"";
+        query = [NSString stringWithFormat:@"SELECT target_object_name, expression_id FROM '%@' WHERE process_id = '%@' and component_type = '%@' ",PROCESS_COMPONENT , processId, @"TARGET"];
+        SMLog(@" process component%@ ",query );
+        NSMutableArray *tempArray = [NSMutableArray array];
+        
+        
+        sqlite3_stmt * stmt ;
+        if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+        {
+            while (synchronized_sqlite3_step(stmt)  == SQLITE_ROW)
+            {
+                NSString *expressionId = @"";
+                NSString *targetObjName = @"";
+                NSMutableDictionary *tempDict  = [[NSMutableDictionary alloc] init];
+                
+                char * temp_object_mapping_id = (char *)synchronized_sqlite3_column_text(stmt, 0);
+                if(temp_object_mapping_id != nil && strlen(temp_object_mapping_id))
+                {
+                    targetObjName = [NSString stringWithUTF8String:temp_object_mapping_id];
+                }
+                
+                char * temp_expression_id = (char *)synchronized_sqlite3_column_text(stmt, 1);
+                if(temp_expression_id != nil && strlen(temp_expression_id))
+                {
+                    expressionId = [NSString stringWithUTF8String:temp_expression_id];
+                }
+                
+                if(![expressionId isEqualToString:@""] && ![targetObjName isEqualToString:@""]) {
+                    [tempDict setObject:expressionId forKey:EXPRESSION_ID];
+                    [tempDict setObject:targetObjName forKey:TARGET_OBJECT_NAME];
+                }
+                [tempArray addObject:tempDict];
+                [tempDict release];
+                
+                
+            }
+            
+        }
+        synchronized_sqlite3_finalize(stmt);
+        
+        return tempArray;
+    }
+return nil;
+}
 
 -(NSMutableDictionary *)getProcessComponentsForComponentType:(NSString *)componentType process_id:(NSString *)processId  layoutId:(NSString *)layoutId  objectName:(NSString *)objectName  
 {

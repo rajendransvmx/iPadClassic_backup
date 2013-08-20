@@ -7047,8 +7047,8 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         }
         
     }
-    
-    if(!self.didSubmitHTML) return;
+    //defect : 8166
+    if(self.didSubmitHTML <= 0) return;
     
     // In the response call generatePDFfor:(NSArray*)docs withSignatures:(NSArray*)signatures
     self.didGeneratePDF = -1;
@@ -7069,8 +7069,8 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         }
         
     }
-    
-    if(!self.didGeneratePDF) return;
+    //defect : 8166
+    if(self.didGeneratePDF <= 0) return;
     
     
     // Once generate pdf returns success use zks calls to download pdf

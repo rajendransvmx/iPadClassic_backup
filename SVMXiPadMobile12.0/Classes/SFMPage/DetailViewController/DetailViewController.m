@@ -10849,13 +10849,42 @@ enum BizRuleConfirmViewStatus{
                            //}
                         }
                     }
-                    
+                    //OUTPUT docs Entry criteria : 8166
                     if ( [process_type isEqualToString:@"OUTPUT DOCUMENT"] )
                     {
                         
-                        SMLog(@"Output Document!! process id = %@ and record_id = %@",action_process_id,action_rec_id);
+                        BOOL Entry_criteria = NO;
+                        NSArray *componentsArray = [appDelegate.databaseInterface getExpressionIdsForOPDocForProcessId:action_process_id];
+                        if([componentsArray count] > 0) {
+                            
+                            for (NSDictionary *dict in componentsArray) {
+                                
+                                NSString *expressionId = [dict objectForKey:EXPRESSION_ID];
+                                NSString *targetObjectName = [dict objectForKey:TARGET_OBJECT_NAME];
+                                
+                                Entry_criteria = [appDelegate.databaseInterface EntryCriteriaForRecordFortableName:targetObjectName record_id:appDelegate.sfmPageController.recordId expression:expressionId];
+                                if (!Entry_criteria) {
+                                    break;
+                                }
+                                
+                            }
                         
-                        [self loadOPDocViewControllerForProcessId:action_process_id andRecordId:action_rec_id];
+                        }
+                        
+                        if(!Entry_criteria)
+                        {
+                            NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
+                            NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
+                            NSString * cancel_ = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
+                            
+                            UIAlertView * enty_criteris = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:cancel_ otherButtonTitles:nil, nil];
+                            [enty_criteris show];
+                            [enty_criteris release];
+                        }
+                        else
+                        {
+                            [self loadOPDocViewControllerForProcessId:action_process_id andRecordId:action_rec_id];
+                        }
 
                     }
                 }
