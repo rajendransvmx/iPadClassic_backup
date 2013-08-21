@@ -1457,7 +1457,7 @@ extern void SVMXLog(NSString *format, ...);
         [sampleDataButton setBackgroundImage:[UIImage imageNamed:@"login-checkbox-nonselected.png"] forState:UIControlStateNormal];
         [sampleDataButton setBackgroundImage:[UIImage imageNamed:@"login-checkbox-nonselected.png"] forState:UIControlStateNormal];
     }
-
+}
 //  Unused methods
 //- (void) checkSampleDataCreation
 //{
