@@ -137,16 +137,16 @@ extern void SVMXLog(NSString *format, ...);
     label3.backgroundColor = [UIColor clearColor];
     label3.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_last_status];
 	[label3 addSubview:bgView3];
+    [self.view addSubview:label3];
    
 	    
-    _status = [[UILabel alloc] initWithFrame:CGRectMake(284, -10, 300, 60)];
+    _status = [[UILabel alloc] initWithFrame:CGRectMake(320, 124, 450, 45)]; /*UIAutomation-Shra*/
     _status.backgroundColor = [UIColor clearColor];
 	_status.lineBreakMode = UILineBreakModeMiddleTruncation;
 	_status.clipsToBounds = NO;
 	_status.text = [self getSyncronisationStatus];
-	[label3 addSubview:_status];
 	
-	[self.view addSubview:label3];
+	[self.view addSubview:_status]; /*UIAutomation-Shra*/
     [label3 release];
 			
 		

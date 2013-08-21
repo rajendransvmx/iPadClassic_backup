@@ -47,6 +47,7 @@ iServiceAppDelegate *appDelegate;
 @synthesize temp_percentage;
 @synthesize titleBackground;
 @synthesize menuTableView;
+@synthesize accessIdentifiersHomeScreen; /*UIAutomation-Shra*/
 
 const NSUInteger kNumImages = 7;
 
@@ -64,6 +65,9 @@ const NSUInteger kNumImages = 7;
     [transparent_layer release];
     [display_pecentage release];
     [menuTableView release];
+    
+    [accessIdentifiersHomeScreen release]; /*UIAutomation-Shra*/
+    
     [super dealloc];
 }
 
@@ -2352,7 +2356,13 @@ const float progress_ = 0.07;
      [appDelegate.wsInterface.tagsDictionary objectForKey:ipad_logout_text],
      nil] retain];
 
-        
+    
+    /*UIAutomation-Shra*/
+    NSArray *arrayTemp = [[NSArray alloc] initWithObjects:@"HomeCalendar",@"HomeSFMSearch",@"HomeCreateNew",@"HomeMap",@"HomeRecents",@"HomeTasks",@"HomeSync",@"HomeHelp",@"HomeLogout", nil];
+    self.accessIdentifiersHomeScreen = arrayTemp;
+    [arrayTemp release];
+    arrayTemp = nil;
+    
     /*
     if (![appDelegate enableGPS_SFMSearch])
     {
@@ -2427,6 +2437,13 @@ const float progress_ = 0.07;
         itemView.descriptionLabel.text = [descriptionArray objectAtIndex:columnIndex];
         itemView.iconImageView.image = [UIImage imageNamed:[imageArray objectAtIndex:columnIndex]];
 
+        /*UIAutomation-Shra*/
+        [itemView setIsAccessibilityElement:YES];
+        NSString *accIndentifier = [self getAccessibilityForItemAtIndex:columnIndex];
+        if (accIndentifier != nil) {
+            [itemView setAccessibilityIdentifier:accIndentifier];
+        }
+        
         if((columnIndex == 1) && (i == 1))
         {
             if(![appDelegate enableGPS_SFMSearch])
@@ -2519,5 +2536,17 @@ const float progress_ = 0.07;
 - (void)reloadMenuTable {
     [self.menuTableView reloadData];
 }
+
+/*UIAutomation-Shra*/
+#pragma mark -
+#pragma mark
+
+- (NSString *)getAccessibilityForItemAtIndex:(NSInteger)index {
+    if ([self.accessIdentifiersHomeScreen count] > index) {
+        return [self.accessIdentifiersHomeScreen objectAtIndex:index];
+    }
+    return nil;
+}
+
 
 @end

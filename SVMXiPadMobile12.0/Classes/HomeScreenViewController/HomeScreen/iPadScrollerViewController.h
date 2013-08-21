@@ -54,6 +54,9 @@
     //Aparna: Home screen layout changes
     UITableView *menuTableView;
     IBOutlet UIImageView *customerLogoImageView;
+    
+    /*UIAutomation-Shra*/
+    NSArray *accessIdentifiersHomeScreen;
 }
 
 //Aparna: Home screen layout changes
@@ -78,6 +81,9 @@
 //sahana
 -(void)clearuserinfoPlist;
 -(void)createUserInfoPlist;
+
+/*UIAutomation-Shra*/
+@property (nonatomic,retain) NSArray *accessIdentifiersHomeScreen;
 
 
 - (NSMutableArray *) getScrollViewNames;
@@ -104,6 +110,7 @@
 
 - (void) refreshArray;
 
+- (NSString *)getAccessibilityForItemAtIndex:(NSInteger)index;    /*UIAutomation-Shra*/
 
 //sahana
 -(void)fillNumberOfStepsCompletedLabel;

@@ -3043,8 +3043,9 @@ NSString * GO_Online = @"GO_Online";
     
 }
 
-
+/*UIAutomation-Shra*/
 //Radha Sync ProgressBar :
+
 int percent = 0;
 - (void) setSyncStatus2
 {
@@ -3054,6 +3055,8 @@ int percent = 0;
     {
         CGRect frame = CGRectMake(0, 0, 35, 35);
         SyncProgress = [[SyncProgressBar alloc]initWithFrame:frame];
+         SyncProgress.isAccessibilityElement = YES;
+        
     }
     
     if (_SyncStatus == SYNC_RED)
@@ -3064,8 +3067,9 @@ int percent = 0;
 		SyncProgress.percentage.hidden = YES;
         img = [UIImage imageNamed:statusImage];
         [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
-        animatedImageView.isAccessibilityElement = YES;
-        animatedImageView.accessibilityIdentifier = @"red.png";
+        animatedImageView.isAccessibilityElement = NO;
+        SyncProgress.accessibilityIdentifier = @"red.png";
+        //animatedImageView.accessibilityIdentifier = @"red.png";
     }
     else if (_SyncStatus == SYNC_GREEN)
     {
@@ -3075,8 +3079,9 @@ int percent = 0;
 		SyncProgress.percentage.hidden = YES;
         img = [UIImage imageNamed:statusImage];
         [img stretchableImageWithLeftCapWidth:10 topCapHeight:10];
-        animatedImageView.isAccessibilityElement = YES;
-        animatedImageView.accessibilityIdentifier = @"green.png";
+        animatedImageView.isAccessibilityElement = NO;
+        SyncProgress.accessibilityIdentifier = @"green.png";
+        //animatedImageView.accessibilityIdentifier = @"green.png";
     }
 	else if (_SyncStatus == SYNC_ORANGE)
 	{
@@ -3089,8 +3094,9 @@ int percent = 0;
         SyncProgress.progressIndicator.animationImages = [NSArray arrayWithArray:imgArr];
         SyncProgress.progressIndicator.animationDuration = 1.0f;
         SyncProgress.progressIndicator.animationRepeatCount = 0;
-        animatedImageView.isAccessibilityElement = YES;
-        animatedImageView.accessibilityIdentifier = @"orange.png";
+        animatedImageView.isAccessibilityElement = NO;
+        SyncProgress.accessibilityIdentifier = @"orange.png";
+        //animatedImageView.accessibilityIdentifier = @"orange.png";
         [SyncProgress.progressIndicator startAnimating];
 
 	}
@@ -4064,7 +4070,7 @@ int percent = 0;
 		{
 			SMLog(@"Copy To clipBoard");
 			
-			[self sendingEmail:alertView];
+			[self sendingEmail:alertView];  
 			
 		}
 		else if ( buttonIndex == 2 )
