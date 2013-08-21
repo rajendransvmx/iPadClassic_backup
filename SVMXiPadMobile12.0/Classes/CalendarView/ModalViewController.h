@@ -191,8 +191,8 @@ DetailViewControllerDelegate, RefreshModalSyncStatusButton>
 //-(NSArray *) getWeeksdatesarray;//  Unused methods
 
 // Calendar Methods
-//- (IBAction) SetToday;//  Unused methods
-//- (IBAction) SetSlider;//  Unused methods
+- (IBAction) SetToday;//  Unused methods
+- (IBAction) SetSlider;//  Unused methods
 
 // Right Pane Methods
 - (void) setupEventsOnView:(UIView *)theView;
@@ -212,15 +212,15 @@ DetailViewControllerDelegate, RefreshModalSyncStatusButton>
 - (IBAction) ShowMap;
 - (IBAction) ToggleLandscapeView;
 
-//- (IBAction) goToHomePage:(id)sender;//  Unused methods
+- (IBAction) goToHomePage:(id)sender;//  Unused methods
 -(IBAction)AddEvent:(id)sender;
 
 - (void) setDate:(NSUInteger)date;
 //- (void) setEventsFromWeekCache:(NSString *)_date;//  Unused methods
 - (BOOL) isDate:(NSString *)date inRange:(NSArray *)dateRange;
 
-//- (IBAction) IncrDate;//  Unused methods
-//- (IBAction) DecrDate;//  Unused methods
+- (IBAction) IncrDate;//  Unused methods
+- (IBAction) DecrDate;//  Unused methods
 
 - (IBAction) Help;
 // Event Methods
