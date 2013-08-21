@@ -1238,26 +1238,26 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 
 #pragma mark -
 #pragma mark Location Related Methods
-
-- (void)startStandardUpdates
-{
-    // Check if location services are available
-    // [CLLocationManager locationServicesEnabled];
-    // Create the location manager if this object does not
-    // already have one.
-    if (nil == locationManager)
-        locationManager = [[CLLocationManager alloc] init];
-    
-    [locationManager locationServicesEnabled];
-    
-    locationManager.delegate = self;
-    locationManager.desiredAccuracy = kCLLocationAccuracyKilometer;
-    
-    // Set a movement threshold for new events.
-    locationManager.distanceFilter = 500;
-    
-    [locationManager startUpdatingLocation];
-}
+//  Unused methods
+//- (void)startStandardUpdates
+//{
+//    // Check if location services are available
+//    // [CLLocationManager locationServicesEnabled];
+//    // Create the location manager if this object does not
+//    // already have one.
+//    if (nil == locationManager)
+//        locationManager = [[CLLocationManager alloc] init];
+//    
+//    [locationManager locationServicesEnabled];
+//    
+//    locationManager.delegate = self;
+//    locationManager.desiredAccuracy = kCLLocationAccuracyKilometer;
+//    
+//    // Set a movement threshold for new events.
+//    locationManager.distanceFilter = 500;
+//    
+//    [locationManager startUpdatingLocation];
+//}
 
 #pragma mark -
 #pragma mark Delegate method from the CLLocationManagerDelegate protocol.

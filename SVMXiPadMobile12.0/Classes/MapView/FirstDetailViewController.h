@@ -130,9 +130,9 @@ MKReverseGeocoderDelegate>
 
 - (void) setContactImage;
 - (void) queryImagesForAccount:(NSString *)companyId Contact:(NSString *)contactId;
-// - (void) showDetails:(NSString *)string;
+// - (void) showDetails:(NSString *)string;//  Unused methods
 
-// - (void) SetMap;
+// - (void) SetMap;//  Unused methods
 
 - (NSUInteger) getPriorityColorByPriority:(NSString *)priority;
 - (UIImage *) getImageForColorIndex:(NSUInteger)colorIndex;
@@ -151,7 +151,7 @@ MKReverseGeocoderDelegate>
 - (IBAction) didChangeRecentVisit:(id)sender;
 
 // Location Related Methods
-- (void)startStandardUpdates;
+//- (void)startStandardUpdates;//  Unused methods
 - (void) reverseGeocodeWithCoordinate:(CLLocation *)coordinate;
 
 - (IBAction) launchSmartVan;
@@ -166,6 +166,6 @@ MKReverseGeocoderDelegate>
 @protocol MapViewDelegate
 
 @optional
-- (void) closeMapView;
+//- (void) closeMapView;//  Unused methods
 
 @end

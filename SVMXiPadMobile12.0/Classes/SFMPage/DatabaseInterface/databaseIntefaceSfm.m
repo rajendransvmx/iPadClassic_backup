@@ -917,32 +917,32 @@ extern void SVMXLog(NSString *format, ...);
     
     return fieldName;
 }
-
--(NSString *)findTheTypeofTheRecordFromRecordTypeIdTable:(NSString *)tableName record_typeId:(NSString *)record_type_id objectOrLineApiName:(NSString *)apiName
-{
-    
-    NSString * recordType = @"";
-    if(record_type_id != nil && apiName != nil)
-    {
-        NSString * query = [NSString stringWithFormat:@"SELECT record_type FROM '%@' where object_api_name = '%@' && record_type_id = '%@' ", tableName ,apiName,record_type_id];
-        sqlite3_stmt * stmt ;
-        if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK  )
-        {
-            while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
-            {
-                char * temp_fieldName = (char *)synchronized_sqlite3_column_text(stmt, 0);
-                if(temp_fieldName != nil)
-                {
-                    recordType = [NSString stringWithUTF8String:temp_fieldName];
-                }
-            }
-        }
-        synchronized_sqlite3_finalize(stmt);
-        
-    }
-    
-    return recordType;
-}
+//  Unused Methods
+//-(NSString *)findTheTypeofTheRecordFromRecordTypeIdTable:(NSString *)tableName record_typeId:(NSString *)record_type_id objectOrLineApiName:(NSString *)apiName
+//{
+//    
+//    NSString * recordType = @"";
+//    if(record_type_id != nil && apiName != nil)
+//    {
+//        NSString * query = [NSString stringWithFormat:@"SELECT record_type FROM '%@' where object_api_name = '%@' && record_type_id = '%@' ", tableName ,apiName,record_type_id];
+//        sqlite3_stmt * stmt ;
+//        if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK  )
+//        {
+//            while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+//            {
+//                char * temp_fieldName = (char *)synchronized_sqlite3_column_text(stmt, 0);
+//                if(temp_fieldName != nil)
+//                {
+//                    recordType = [NSString stringWithUTF8String:temp_fieldName];
+//                }
+//            }
+//        }
+//        synchronized_sqlite3_finalize(stmt);
+//        
+//    }
+//    
+//    return recordType;
+//}
 
 -(NSMutableDictionary *)getRestorationAndResolutionTimeForWorkOrder:(NSString *)record_id  tableName:(NSString *)tableName;
 {
@@ -2607,26 +2607,27 @@ return nil;
     return finalDict;
 }
 
--(NSString *)getTheDefaultDisplayColumnForLookUpId:(NSString *)lookup_id 
-{
-    NSString * query = [NSString stringWithFormat:@"SELECT SVMXC_Field_Name_c FROM '%@' where Id = '%@' and default_desplay_column = '%@' ",SFCONFIG_DATA_TABLE ,lookup_id,@"true" ];
-    sqlite3_stmt * stmt ;
-    NSString * field_name = @"";
-    
-    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
-    {
-        while (synchronized_sqlite3_step(stmt)  == SQLITE_ROW) 
-        {
-            char * value = (char *)synchronized_sqlite3_column_text(stmt, 0);
-            if(value != nil)
-            {
-                field_name = [NSString stringWithUTF8String:value];
-            }
-        }
-    }
-    synchronized_sqlite3_finalize(stmt);
-    return field_name;
-}
+//  Unused Methods
+//-(NSString *)getTheDefaultDisplayColumnForLookUpId:(NSString *)lookup_id 
+//{
+//    NSString * query = [NSString stringWithFormat:@"SELECT SVMXC_Field_Name_c FROM '%@' where Id = '%@' and default_desplay_column = '%@' ",SFCONFIG_DATA_TABLE ,lookup_id,@"true" ];
+//    sqlite3_stmt * stmt ;
+//    NSString * field_name = @"";
+//    
+//    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+//    {
+//        while (synchronized_sqlite3_step(stmt)  == SQLITE_ROW) 
+//        {
+//            char * value = (char *)synchronized_sqlite3_column_text(stmt, 0);
+//            if(value != nil)
+//            {
+//                field_name = [NSString stringWithUTF8String:value];
+//            }
+//        }
+//    }
+//    synchronized_sqlite3_finalize(stmt);
+//    return field_name;
+//}
 
 -(NSString *)queryForExpression:(NSString *)expression_id forObject:(NSString *)object_name;
 {
@@ -8285,33 +8286,33 @@ return nil;
     return ondemand_objects;
     
 }
-
--(NSArray *)getAllIdsFromDatabaseForSyncType:(NSString *)sync_type
-{
-    
-    NSString * str = [[NSString alloc] initWithFormat:@"SELECT sf_id FROM sync_Records_Heap WHERE sync_type = '%@' " , sync_type];
-    NSString * default_value = @"";
-    
-    NSMutableArray * array = [[[NSMutableArray alloc] initWithCapacity:0]autorelease];
-    sqlite3_stmt * statement;
-    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [str UTF8String], -1 , &statement , nil)  ==  SQLITE_OK)
-    {
-        while (synchronized_sqlite3_step(statement)== SQLITE_ROW)
-        {
-            default_value = @"";
-            char * temp_id_value = (char *) synchronized_sqlite3_column_text(statement, 0);
-            if(temp_id_value != nil)
-            {
-                default_value = [NSString stringWithUTF8String:temp_id_value];
-                [array addObject:default_value];
-            }
-        }
-    }
-    
-    [str release];
-    synchronized_sqlite3_finalize(statement);
-    return array;
-}
+//  Unused Methods
+//-(NSArray *)getAllIdsFromDatabaseForSyncType:(NSString *)sync_type
+//{
+//    
+//    NSString * str = [[NSString alloc] initWithFormat:@"SELECT sf_id FROM sync_Records_Heap WHERE sync_type = '%@' " , sync_type];
+//    NSString * default_value = @"";
+//    
+//    NSMutableArray * array = [[[NSMutableArray alloc] initWithCapacity:0]autorelease];
+//    sqlite3_stmt * statement;
+//    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [str UTF8String], -1 , &statement , nil)  ==  SQLITE_OK)
+//    {
+//        while (synchronized_sqlite3_step(statement)== SQLITE_ROW)
+//        {
+//            default_value = @"";
+//            char * temp_id_value = (char *) synchronized_sqlite3_column_text(statement, 0);
+//            if(temp_id_value != nil)
+//            {
+//                default_value = [NSString stringWithUTF8String:temp_id_value];
+//                [array addObject:default_value];
+//            }
+//        }
+//    }
+//    
+//    [str release];
+//    synchronized_sqlite3_finalize(statement);
+//    return array;
+//}
 
 -(void)updateOndemandRecordForId:(NSString *)record_id
 {
@@ -9399,12 +9400,12 @@ return nil;
     synchronized_sqlite3_finalize(statement);
     return sync_record_dict ;
 }
-
--(BOOL)ShouldTriggerCustomAggressive
-{
-    BOOL flag = [self checkColumnExists:@"sync_type" tableName:SFDATATRAILER];
-    return flag;
-}
+//  Unused Methods
+//-(BOOL)ShouldTriggerCustomAggressive
+//{
+//    BOOL flag = [self checkColumnExists:@"sync_type" tableName:SFDATATRAILER];
+//    return flag;
+//}
 
 -(void)fillSyncRecordDictForRecordType:(NSString *)record_type SF_Id:(NSString *)SF_id local_id:(NSString *)local_id  operation_type:(NSString *)operation_type  final_dictionary:(NSMutableDictionary *)sync_record_dict  object_naem:(NSString *)object_name parent_object_name:(NSString *)parent_object_name parent_local_id:(NSString *)parent_local_id
 {
@@ -10072,27 +10073,28 @@ return nil;
     synchronized_sqlite3_finalize(statement);
     return process_sf_id;
 }
--(NSString *)getProcessNameForProcessSfId:(NSString *)process_sf_id 
-{
-    NSString * query = [NSString stringWithFormat:@"SELECT process_id FROM '%@' WHERE sfID = '%@'",SFPROCESS,process_sf_id];
-    sqlite3_stmt * statement ;
-    
-    NSString * process_id = @"";
-    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, nil) ==  SQLITE_OK)
-    {
-        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
-        {
-            char * temp_process_id= (char * ) synchronized_sqlite3_column_text(statement, 0);
-            if(temp_process_id != nil)
-            {
-                process_id  = [NSString stringWithUTF8String:temp_process_id];
-            }
-        }
-    }
-    synchronized_sqlite3_finalize(statement);
-    return process_sf_id;
-
-}
+//  Unused Methods
+//-(NSString *)getProcessNameForProcessSfId:(NSString *)process_sf_id 
+//{
+//    NSString * query = [NSString stringWithFormat:@"SELECT process_id FROM '%@' WHERE sfID = '%@'",SFPROCESS,process_sf_id];
+//    sqlite3_stmt * statement ;
+//    
+//    NSString * process_id = @"";
+//    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &statement, nil) ==  SQLITE_OK)
+//    {
+//        while (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+//        {
+//            char * temp_process_id= (char * ) synchronized_sqlite3_column_text(statement, 0);
+//            if(temp_process_id != nil)
+//            {
+//                process_id  = [NSString stringWithUTF8String:temp_process_id];
+//            }
+//        }
+//    }
+//    synchronized_sqlite3_finalize(statement);
+//    return process_sf_id;
+//
+//}
 -(NSString *)getProcessNodeIdForLayoutId:(NSString *)layout_id process_id:(NSString *)process_unique_id
 {
     
@@ -10432,34 +10434,34 @@ return nil;
     }
     return [queryArray autorelease];
 }
-
-- (NSArray *)getIdsFromObjectName:(NSString *)objectName withCriteria:(NSString *)criteria andFieldName:(NSString *)fieldName {
-    
-    NSString *queryString = [NSString stringWithFormat:@"SELECT %@ FROM %@ ",fieldName,objectName];
-    if (![Utility isStringEmpty:criteria]) {
-        queryString = [queryString stringByAppendingFormat:@" WHERE %@",criteria];
-    }
-    sqlite3_stmt *selectStatement = nil;
-    NSMutableArray *finalArray = [[NSMutableArray alloc] init];
-    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [queryString UTF8String], -1, &selectStatement, nil) == SQLITE_OK  )
-    {
-        while(synchronized_sqlite3_step(selectStatement) == SQLITE_ROW)
-        {
-           
-            NSString *valueString = nil;
-            char *tempCharStr = (char *)sqlite3_column_text(selectStatement,0);
-            if (tempCharStr != NULL) {
-                valueString = [NSString stringWithUTF8String:tempCharStr];
-               
-            }
-            if (valueString != nil) {
-                [finalArray addObject:valueString];
-            }
-        }
-    }
-    synchronized_sqlite3_finalize(selectStatement);
-    return [finalArray autorelease];
-}
+//  Unused Methods
+//- (NSArray *)getIdsFromObjectName:(NSString *)objectName withCriteria:(NSString *)criteria andFieldName:(NSString *)fieldName {
+//    
+//    NSString *queryString = [NSString stringWithFormat:@"SELECT %@ FROM %@ ",fieldName,objectName];
+//    if (![Utility isStringEmpty:criteria]) {
+//        queryString = [queryString stringByAppendingFormat:@" WHERE %@",criteria];
+//    }
+//    sqlite3_stmt *selectStatement = nil;
+//    NSMutableArray *finalArray = [[NSMutableArray alloc] init];
+//    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [queryString UTF8String], -1, &selectStatement, nil) == SQLITE_OK  )
+//    {
+//        while(synchronized_sqlite3_step(selectStatement) == SQLITE_ROW)
+//        {
+//           
+//            NSString *valueString = nil;
+//            char *tempCharStr = (char *)sqlite3_column_text(selectStatement,0);
+//            if (tempCharStr != NULL) {
+//                valueString = [NSString stringWithUTF8String:tempCharStr];
+//               
+//            }
+//            if (valueString != nil) {
+//                [finalArray addObject:valueString];
+//            }
+//        }
+//    }
+//    synchronized_sqlite3_finalize(selectStatement);
+//    return [finalArray autorelease];
+//}
 
 
 - (NSString *)queryForExpressionComponent:(NSString *)expression expressionId:(NSString *)expression_id object_name:(NSString *)object_name {
@@ -11505,30 +11507,31 @@ return nil;
     
     return success;
 }
--(BOOL)DoesEntryExistsForInsertOperationForLocalId:(NSString *)localId
-{
-    NSString * getcount = [NSString stringWithFormat:@"SELECT COUNT(*) FROM '%@' WHERE local_id = '%@' and operation = 'INSERT' " ,SFDATATRAILER , localId];
-    
-    sqlite3_stmt * stmt;
-    
-    int count = 0;
-    
-    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [getcount UTF8String], -1, &stmt, NULL) == SQLITE_OK)
-    {
-        
-        while (sqlite3_step(stmt) == SQLITE_ROW)
-        {
-            count = synchronized_sqlite3_column_int(stmt, 0);
-        }
-    }
-    
-    synchronized_sqlite3_finalize(stmt);
-    
-    if (count > 0)
-        return TRUE;
-    else
-        return FALSE;
-}
+//  Unused Methods
+//-(BOOL)DoesEntryExistsForInsertOperationForLocalId:(NSString *)localId
+//{
+//    NSString * getcount = [NSString stringWithFormat:@"SELECT COUNT(*) FROM '%@' WHERE local_id = '%@' and operation = 'INSERT' " ,SFDATATRAILER , localId];
+//    
+//    sqlite3_stmt * stmt;
+//    
+//    int count = 0;
+//    
+//    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [getcount UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+//    {
+//        
+//        while (sqlite3_step(stmt) == SQLITE_ROW)
+//        {
+//            count = synchronized_sqlite3_column_int(stmt, 0);
+//        }
+//    }
+//    
+//    synchronized_sqlite3_finalize(stmt);
+//    
+//    if (count > 0)
+//        return TRUE;
+//    else
+//        return FALSE;
+//}
 
 -(BOOL)DeleteEntryFromDataTrailerTableFor:(NSString *)Id forObject:(NSString *)object  sync_type:(NSString *)sync_type fieldName:(NSString *)fieldName
 {

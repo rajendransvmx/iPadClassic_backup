@@ -120,10 +120,10 @@ typedef enum
 @protocol ProgressBarDelegate <NSObject>
 
 // This method will be called to inform delegate when progressBar is ready to accept progress
-- (void)progressBarDidStartUpdating:(SyncProgressBar*)progressbar;
+//- (void)progressBarDidStartUpdating:(SyncProgressBar*)progressbar;//  Unused Methods
 
 // This method will be called to inform delegate when progressBar no more accepts progrss from it.
-- (void)progressBarDidStopUpdating:(SyncProgressBar*)progressbar;
+//- (void)progressBarDidStopUpdating:(SyncProgressBar*)progressbar;//  Unused Methods
 
 @end
 
@@ -156,23 +156,23 @@ typedef enum
 
 
 // Returns the singleton instance of ProgressBar class object
-+ (SyncProgressBar*)getInstance;
+//+ (SyncProgressBar*)getInstance;//  Unused Methods
 
 
 // Returns success if progressbar will be reset and updates can be started.
-- (BOOL)startWithPriority:(Priority)priority forObject:(id)sender withTextHidden:(BOOL)hideText;
+//- (BOOL)startWithPriority:(Priority)priority forObject:(id)sender withTextHidden:(BOOL)hideText;//  Unused Methods
 
 
 // Updates about the progressBar state
-- (void)setProgressBarState:(ProgressBarState)state forObject:(id)sender forProgress:(NSUInteger)percent; // Commented to make it private for now
-- (ProgressBarState)progressBarState;
+//- (void)setProgressBarState:(ProgressBarState)state forObject:(id)sender forProgress:(NSUInteger)percent; // Commented to make it private for now//  Unused Methods
+//- (ProgressBarState)progressBarState;//  Unused Methods
 
 
 // Optional : You not need you can choose to hide the text. Also check whether its hidden.
 // For eHigh priority by default there will be no text displayed.
 // For others by default text will be displayed even if it was hidden earlier.
-- (void)setPercentageTextHidden:(BOOL)hidden; // Commented to make it private for now
-- (BOOL)isPercentageTextHidden;
+//- (void)setPercentageTextHidden:(BOOL)hidden; // Commented to make it private for now //  Unused Methods
+//- (BOOL)isPercentageTextHidden;//  Unused Methods
 
 
 // Updates progressBar only if there is a sender and it should be the delegate else progress will be ignored.

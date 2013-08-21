@@ -14,8 +14,8 @@
 }
 
 - (NSString *) getReadableDateFromDate:(NSString *)_date;
-- (NSString *) getReadableDateFromLongDateString:(NSString *)_date;
-- (NSString *) getReadableDateFromShortDateString:(NSString *)_date;
+//- (NSString *) getReadableDateFromLongDateString:(NSString *)_date;//  Unused methods
+//- (NSString *) getReadableDateFromShortDateString:(NSString *)_date;//  Unused methods
 - (NSString *) getFormattedDateFromComponents:(NSDateComponents *)components;
 - (NSString *) getWeekDayForIndex:(NSUInteger)index;
 - (NSString *) getMonthForIndex:(NSUInteger)index;

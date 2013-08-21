@@ -503,75 +503,75 @@ extern void SVMXLog(NSString *format, ...);
     
     return rect;
 }
-
-- (NSUInteger)getGapMultipleFromTime:(NSUInteger)_time
-{
-    NSUInteger retVal = 0;
-    switch (_time)
-    {
-        case 930:
-            retVal = 0;
-            break;
-        case 1000:
-            retVal = 1;
-            break;
-        case 1030:
-            retVal = 2;
-            break;
-        case 1100:
-            retVal = 3;
-            break;
-        case 1130:
-            retVal = 4;
-            break;
-        case 1200:
-            retVal = 5;
-            break;
-        case 1230:
-            retVal = 6;
-            break;
-        case 1300:
-            retVal = 7;
-            break;
-        case 1330:
-            retVal = 8;
-            break;
-        case 1400:
-            retVal = 9;
-            break;
-        case 1430:
-            retVal = 10;
-            break;
-        case 1500:
-            retVal = 11;
-            break;
-        case 1530:
-            retVal = 12;
-            break;
-        case 1600:
-            retVal = 13;
-            break;
-        case 1630:
-            retVal = 14;
-            break;
-        case 1700:
-            retVal = 15;
-            break;
-        case 1730:
-            retVal = 16;
-            break;
-        case 1800:
-            retVal = 17;
-            break;
-        case 1830:
-            retVal = 18;
-            break;
-        case 1900:
-            retVal = 19;
-            break;
-    }
-    return retVal;
-}
+//  Unused methods
+//- (NSUInteger)getGapMultipleFromTime:(NSUInteger)_time
+//{
+//    NSUInteger retVal = 0;
+//    switch (_time)
+//    {
+//        case 930:
+//            retVal = 0;
+//            break;
+//        case 1000:
+//            retVal = 1;
+//            break;
+//        case 1030:
+//            retVal = 2;
+//            break;
+//        case 1100:
+//            retVal = 3;
+//            break;
+//        case 1130:
+//            retVal = 4;
+//            break;
+//        case 1200:
+//            retVal = 5;
+//            break;
+//        case 1230:
+//            retVal = 6;
+//            break;
+//        case 1300:
+//            retVal = 7;
+//            break;
+//        case 1330:
+//            retVal = 8;
+//            break;
+//        case 1400:
+//            retVal = 9;
+//            break;
+//        case 1430:
+//            retVal = 10;
+//            break;
+//        case 1500:
+//            retVal = 11;
+//            break;
+//        case 1530:
+//            retVal = 12;
+//            break;
+//        case 1600:
+//            retVal = 13;
+//            break;
+//        case 1630:
+//            retVal = 14;
+//            break;
+//        case 1700:
+//            retVal = 15;
+//            break;
+//        case 1730:
+//            retVal = 16;
+//            break;
+//        case 1800:
+//            retVal = 17;
+//            break;
+//        case 1830:
+//            retVal = 18;
+//            break;
+//        case 1900:
+//            retVal = 19;
+//            break;
+//    }
+//    return retVal;
+//}
 
 - (CGRect) getRectForLocation:(CGPoint)point
 {

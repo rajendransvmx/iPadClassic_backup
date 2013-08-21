@@ -13,6 +13,6 @@
 {
 }
 
-- (YouTubeView *)initWithStringAsURL:(NSString *)urlString frame:(CGRect)frame;
+//- (YouTubeView *)initWithStringAsURL:(NSString *)urlString frame:(CGRect)frame;//  Unused methods
 
 @end

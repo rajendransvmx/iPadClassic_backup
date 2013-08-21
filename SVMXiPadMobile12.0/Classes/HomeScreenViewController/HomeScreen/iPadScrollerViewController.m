@@ -906,18 +906,19 @@ const NSUInteger kNumImages = 7;
     return array;
 }
 
-- (NSMutableArray *) getScrollViews
-{
-    NSMutableArray * array = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-    for (int i = 0; i < [itemArray count]; i++)
-    {
-        NSString * imageName = [NSString stringWithFormat:@"%d.png", i];
-        TapImage * imageView = [[[TapImage alloc] initWithImage:[UIImage imageNamed:imageName]] autorelease];
-        [array addObject:imageView];
-    }
-    
-    return array;
-}
+//  Unused methods
+//- (NSMutableArray *) getScrollViews
+//{
+//    NSMutableArray * array = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+//    for (int i = 0; i < [itemArray count]; i++)
+//    {
+//        NSString * imageName = [NSString stringWithFormat:@"%d.png", i];
+//        TapImage * imageView = [[[TapImage alloc] initWithImage:[UIImage imageNamed:imageName]] autorelease];
+//        [array addObject:imageView];
+//    }
+//    
+//    return array;
+//}
 
 #pragma mark -
 #pragma mark - TapImage Delegate Method

@@ -436,221 +436,221 @@ extern void SVMXLog(NSString *format, ...);
     
 }
 
-
-- (void) doMetaAndDataSync
-{
-    SMLog(@"  MetaSync WS Start: %@", [NSDate date]);
-    
-    time_t t1;
-    time(&t1);
-    
-//    NSString* txnstmt = @"BEGIN TRANSACTION";
-//    char * err ;
-//    int retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);    
+//  Unused methods
+//- (void) doMetaAndDataSync
+//{
+//    SMLog(@"  MetaSync WS Start: %@", [NSDate date]);
 //    
-    
-    appDelegate.wsInterface.didOpComplete = FALSE;
-    [appDelegate.wsInterface metaSyncWithEventName:SFM_METADATA eventType:INITIAL_SYNC values:nil];
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
-    {
-        //shrinivas
-        if (appDelegate.isForeGround == TRUE)
-        {
-            appDelegate.didFinishWithError = FALSE;
-            [activity stopAnimating];
-            [self enableControls];
-            return;
-        }   
-
-        if (appDelegate.wsInterface.didOpComplete == TRUE)
-            break; 
-        
-        if (![appDelegate isInternetConnectionAvailable])
-            break;
-        
-    }
-    
-    SMLog(@"  MetaSync WS End: %@", [NSDate date]);
-    if([appDelegate enableGPS_SFMSearch])
-    {
-        //SFM Search 
-        
-        appDelegate.wsInterface.didOpSFMSearchComplete = FALSE;
-        [appDelegate.wsInterface metaSyncWithEventName:SFM_SEARCH eventType:SYNC values:nil];
-        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
-        {
-            if (![appDelegate isInternetConnectionAvailable])
-                break;
-
-            if (appDelegate.wsInterface.didOpSFMSearchComplete == TRUE)
-                break; 
-        }
-        SMLog(@"  MetaSync SFM Search End: %@", [NSDate date]);
-        
-        //SFM Search End
-    }    
-    [appDelegate getDPpicklistInfo];
-    SMLog(@"META SYNC 1");
-    
-    if (appDelegate.didFinishWithError == TRUE)
-    {
-        appDelegate.didFinishWithError = FALSE;
-        [activity stopAnimating];
-        [self enableControls];
-        return;
-    }
-    
-    SMLog(@"  DataSync WS Start: %@", [NSDate date]);
-    appDelegate.wsInterface.didOpComplete = FALSE;
-  
-    //sahaan generate client req id for initital data sync                                                                                                                                                                                                                                                                     
-   
-    [appDelegate.wsInterface dataSyncWithEventName:EVENT_SYNC eventType:SYNC requestId:@""];
-    
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
-    {
-        //shrinivas
-        if (appDelegate.isForeGround == TRUE)
-        {
-            appDelegate.didFinishWithError = FALSE;
-            [activity stopAnimating];
-            [self enableControls];
-            return;
-        }   
-        
-        if (![appDelegate isInternetConnectionAvailable])
-            break;
-        
-
-        if (appDelegate.wsInterface.didOpComplete == TRUE)
-        {
-            break; 
-        }
-    }
- 
-    
-    appDelegate.wsInterface.didOpComplete = FALSE;
-    
-    appDelegate.initial_dataSync_reqid = [iServiceAppDelegate GetUUID];
-    
-    SMLog(@"reqId%@" , appDelegate.initial_dataSync_reqid);
-    [appDelegate.wsInterface dataSyncWithEventName:DOWNLOAD_CREITERIA_SYNC eventType:SYNC requestId:appDelegate.initial_dataSync_reqid];
-    
-    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
-    {
-        //shrinivas
-        if (appDelegate.isForeGround == TRUE)
-        {
-            appDelegate.didFinishWithError = FALSE;
-            [activity stopAnimating];
-            [self enableControls];
-            return;
-        }   
-        
-
-        if (appDelegate.wsInterface.didOpComplete == TRUE)
-        {
-            break; 
-        }
-        if (![appDelegate isInternetConnectionAvailable] && appDelegate.data_sync_chunking == REQUEST_SENT)
-        {
-            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
-            {
-                //shrinivas
-                if (appDelegate.isForeGround == TRUE)
-                {
-                    appDelegate.didFinishWithError = FALSE;
-                    [activity stopAnimating];
-                    [self enableControls];
-                    return;
-                }  
-                if ([appDelegate isInternetConnectionAvailable])
-                {
-                    [appDelegate goOnlineIfRequired];
-                    [appDelegate.wsInterface dataSyncWithEventName:DOWNLOAD_CREITERIA_SYNC eventType:SYNC requestId:appDelegate.initial_dataSync_reqid];
-                    break;
-                }
-            }
-        }
-    }
-    SMLog(@"  DataSync WS End: %@", [NSDate date]);
-    SMLog(@"  Incremental DataSync WS Start: %@", [NSDate date]);
-    
-    [appDelegate.wsInterface cleanUpForRequestId:appDelegate.initial_dataSync_reqid forEventName:@"CLEAN_UP_SELECT"];
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-    {
-        //shrinivas
-        if (appDelegate.isForeGround == TRUE)
-        {
-            appDelegate.didFinishWithError = FALSE;
-            [activity stopAnimating];
-            [self enableControls];
-            return;
-        }  
-        if (![appDelegate isInternetConnectionAvailable])
-            break;
-        
-        if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
-            break;
-    }
-    appDelegate.Incremental_sync_status = INCR_STARTS;
-    
-    [appDelegate.wsInterface PutAllTheRecordsForIds];
-      while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
-    {
-        //shrinivas
-        if (appDelegate.isForeGround == TRUE)
-        {
-            appDelegate.didFinishWithError = FALSE;
-            [activity stopAnimating];
-            [self enableControls];
-            return;
-        }  
-        if (![appDelegate isInternetConnectionAvailable])
-            break;
-
-        if (appDelegate.Incremental_sync_status == PUT_RECORDS_DONE)
-            break; 
-    }
-    
-            
-    SMLog(@"  Incremental DataSync WS End: %@", [NSDate date]);
-    
-    SMLog(@"  Update Sync Records Start: %@", [NSDate date]);
-
-    if (appDelegate.isForeGround == FALSE)
-        [appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
-
-    //Radha purging - 10/April/12
-    NSMutableArray * recordId = [appDelegate.dataBase getAllTheRecordIdsFromEvent];
-    
-     appDelegate.initialEventMappinArray = [appDelegate.dataBase checkForTheObjectWithRecordId:recordId];
-    //Radha End
-
-    
-    SMLog(@"  Update Sync Records End: %@", [NSDate date]);
-    //remove recents
-    NSFileManager * fileManager = [NSFileManager defaultManager];
-    NSString * rootPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString * plistPath = [rootPath stringByAppendingPathComponent:OBJECT_HISTORY_PLIST];
-    NSError *delete_error;
-    if ([fileManager fileExistsAtPath:plistPath] == YES)
-    {
-        [fileManager removeItemAtPath:plistPath error:&delete_error];		
-    }
-    
-    //Temperory Method - Removed after DataSync is implemented completly
-    [appDelegate.dataBase insertUsernameToUserTable:txtUsernameLandscape.text];
-
-    //txnstmt = @"END TRANSACTION";
-    //retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
-    
-    time_t t2;
-    time(&t2);
-    double diff = difftime(t2,t1);
-    SMLog(@"time taken for meta and data sync = %f",diff);
-    
-}
+//    time_t t1;
+//    time(&t1);
+//    
+////    NSString* txnstmt = @"BEGIN TRANSACTION";
+////    char * err ;
+////    int retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);    
+////    
+//    
+//    appDelegate.wsInterface.didOpComplete = FALSE;
+//    [appDelegate.wsInterface metaSyncWithEventName:SFM_METADATA eventType:INITIAL_SYNC values:nil];
+//    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
+//    {
+//        //shrinivas
+//        if (appDelegate.isForeGround == TRUE)
+//        {
+//            appDelegate.didFinishWithError = FALSE;
+//            [activity stopAnimating];
+//            [self enableControls];
+//            return;
+//        }   
+//
+//        if (appDelegate.wsInterface.didOpComplete == TRUE)
+//            break; 
+//        
+//        if (![appDelegate isInternetConnectionAvailable])
+//            break;
+//        
+//    }
+//    
+//    SMLog(@"  MetaSync WS End: %@", [NSDate date]);
+//    if([appDelegate enableGPS_SFMSearch])
+//    {
+//        //SFM Search 
+//        
+//        appDelegate.wsInterface.didOpSFMSearchComplete = FALSE;
+//        [appDelegate.wsInterface metaSyncWithEventName:SFM_SEARCH eventType:SYNC values:nil];
+//        while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
+//        {
+//            if (![appDelegate isInternetConnectionAvailable])
+//                break;
+//
+//            if (appDelegate.wsInterface.didOpSFMSearchComplete == TRUE)
+//                break; 
+//        }
+//        SMLog(@"  MetaSync SFM Search End: %@", [NSDate date]);
+//        
+//        //SFM Search End
+//    }    
+//    [appDelegate getDPpicklistInfo];
+//    SMLog(@"META SYNC 1");
+//    
+//    if (appDelegate.didFinishWithError == TRUE)
+//    {
+//        appDelegate.didFinishWithError = FALSE;
+//        [activity stopAnimating];
+//        [self enableControls];
+//        return;
+//    }
+//    
+//    SMLog(@"  DataSync WS Start: %@", [NSDate date]);
+//    appDelegate.wsInterface.didOpComplete = FALSE;
+//  
+//    //sahaan generate client req id for initital data sync                                                                                                                                                                                                                                                                     
+//   
+//    [appDelegate.wsInterface dataSyncWithEventName:EVENT_SYNC eventType:SYNC requestId:@""];
+//    
+//    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
+//    {
+//        //shrinivas
+//        if (appDelegate.isForeGround == TRUE)
+//        {
+//            appDelegate.didFinishWithError = FALSE;
+//            [activity stopAnimating];
+//            [self enableControls];
+//            return;
+//        }   
+//        
+//        if (![appDelegate isInternetConnectionAvailable])
+//            break;
+//        
+//
+//        if (appDelegate.wsInterface.didOpComplete == TRUE)
+//        {
+//            break; 
+//        }
+//    }
+// 
+//    
+//    appDelegate.wsInterface.didOpComplete = FALSE;
+//    
+//    appDelegate.initial_dataSync_reqid = [iServiceAppDelegate GetUUID];
+//    
+//    SMLog(@"reqId%@" , appDelegate.initial_dataSync_reqid);
+//    [appDelegate.wsInterface dataSyncWithEventName:DOWNLOAD_CREITERIA_SYNC eventType:SYNC requestId:appDelegate.initial_dataSync_reqid];
+//    
+//    while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
+//    {
+//        //shrinivas
+//        if (appDelegate.isForeGround == TRUE)
+//        {
+//            appDelegate.didFinishWithError = FALSE;
+//            [activity stopAnimating];
+//            [self enableControls];
+//            return;
+//        }   
+//        
+//
+//        if (appDelegate.wsInterface.didOpComplete == TRUE)
+//        {
+//            break; 
+//        }
+//        if (![appDelegate isInternetConnectionAvailable] && appDelegate.data_sync_chunking == REQUEST_SENT)
+//        {
+//            while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
+//            {
+//                //shrinivas
+//                if (appDelegate.isForeGround == TRUE)
+//                {
+//                    appDelegate.didFinishWithError = FALSE;
+//                    [activity stopAnimating];
+//                    [self enableControls];
+//                    return;
+//                }  
+//                if ([appDelegate isInternetConnectionAvailable])
+//                {
+//                    [appDelegate goOnlineIfRequired];
+//                    [appDelegate.wsInterface dataSyncWithEventName:DOWNLOAD_CREITERIA_SYNC eventType:SYNC requestId:appDelegate.initial_dataSync_reqid];
+//                    break;
+//                }
+//            }
+//        }
+//    }
+//    SMLog(@"  DataSync WS End: %@", [NSDate date]);
+//    SMLog(@"  Incremental DataSync WS Start: %@", [NSDate date]);
+//    
+//    [appDelegate.wsInterface cleanUpForRequestId:appDelegate.initial_dataSync_reqid forEventName:@"CLEAN_UP_SELECT"];
+//    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+//    {
+//        //shrinivas
+//        if (appDelegate.isForeGround == TRUE)
+//        {
+//            appDelegate.didFinishWithError = FALSE;
+//            [activity stopAnimating];
+//            [self enableControls];
+//            return;
+//        }  
+//        if (![appDelegate isInternetConnectionAvailable])
+//            break;
+//        
+//        if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
+//            break;
+//    }
+//    appDelegate.Incremental_sync_status = INCR_STARTS;
+//    
+//    [appDelegate.wsInterface PutAllTheRecordsForIds];
+//      while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, kRunLoopTimeInterval, YES))
+//    {
+//        //shrinivas
+//        if (appDelegate.isForeGround == TRUE)
+//        {
+//            appDelegate.didFinishWithError = FALSE;
+//            [activity stopAnimating];
+//            [self enableControls];
+//            return;
+//        }  
+//        if (![appDelegate isInternetConnectionAvailable])
+//            break;
+//
+//        if (appDelegate.Incremental_sync_status == PUT_RECORDS_DONE)
+//            break; 
+//    }
+//    
+//            
+//    SMLog(@"  Incremental DataSync WS End: %@", [NSDate date]);
+//    
+//    SMLog(@"  Update Sync Records Start: %@", [NSDate date]);
+//
+//    if (appDelegate.isForeGround == FALSE)
+//        [appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
+//
+//    //Radha purging - 10/April/12
+//    NSMutableArray * recordId = [appDelegate.dataBase getAllTheRecordIdsFromEvent];
+//    
+//     appDelegate.initialEventMappinArray = [appDelegate.dataBase checkForTheObjectWithRecordId:recordId];
+//    //Radha End
+//
+//    
+//    SMLog(@"  Update Sync Records End: %@", [NSDate date]);
+//    //remove recents
+//    NSFileManager * fileManager = [NSFileManager defaultManager];
+//    NSString * rootPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+//    NSString * plistPath = [rootPath stringByAppendingPathComponent:OBJECT_HISTORY_PLIST];
+//    NSError *delete_error;
+//    if ([fileManager fileExistsAtPath:plistPath] == YES)
+//    {
+//        [fileManager removeItemAtPath:plistPath error:&delete_error];		
+//    }
+//    
+//    //Temperory Method - Removed after DataSync is implemented completly
+//    [appDelegate.dataBase insertUsernameToUserTable:txtUsernameLandscape.text];
+//
+//    //txnstmt = @"END TRANSACTION";
+//    //retval = synchronized_sqlite3_exec(appDelegate.db, [txnstmt UTF8String], NULL, NULL, &err);
+//    
+//    time_t t2;
+//    time(&t2);
+//    double diff = difftime(t2,t1);
+//    SMLog(@"time taken for meta and data sync = %f",diff);
+//    
+//}
 
 - (void) didLogin:(ZKLoginResult *)lr error:(NSError *)error context:(id)context
 {
@@ -1086,20 +1086,21 @@ extern void SVMXLog(NSString *format, ...);
 	}
 }
 
-- (void) showModalViewController
-{
-    didRunProcess = NO;
-    
-    /*if (![appDelegate isInternetConnectionAvailable])
-    {
-        [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
-        [self enableControls];
-        return;
-    }*/
-
-    [appDelegate.wsInterface getTags];
-}
+//  Unused methods
+//- (void) showModalViewController
+//{
+//    didRunProcess = NO;
+//    
+//    /*if (![appDelegate isInternetConnectionAvailable])
+//    {
+//        [activity stopAnimating];
+//        [appDelegate displayNoInternetAvailable];
+//        [self enableControls];
+//        return;
+//    }*/
+//
+//    [appDelegate.wsInterface getTags];
+//}
 
 - (BOOL) checkVersion
 {
@@ -1200,15 +1201,17 @@ extern void SVMXLog(NSString *format, ...);
     }
 }
 
--(void)hadLoginError:(ZKSoapException *)e
-{
-	[appDelegate popupActionSheet:[e reason]];
-}
+//  Unused methods
+//-(void)hadLoginError:(ZKSoapException *)e
+//{
+//	[appDelegate popupActionSheet:[e reason]];
+//}
 
-- (NSString *) getUserId
-{
-    return userId;
-}
+//  Unused methods
+//- (NSString *) getUserId
+//{
+//    return userId;
+//}
 
 - (void)initialCheckup
 {
@@ -1455,13 +1458,12 @@ extern void SVMXLog(NSString *format, ...);
         [sampleDataButton setBackgroundImage:[UIImage imageNamed:@"login-checkbox-nonselected.png"] forState:UIControlStateNormal];
     }
 
-}
-
-- (void) checkSampleDataCreation
-{
-    if (isSampleDataButtonChecked)
-        [self createSampleData];
-}
+//  Unused methods
+//- (void) checkSampleDataCreation
+//{
+//    if (isSampleDataButtonChecked)
+//        [self createSampleData];
+//}
 
 - (void) createSampleData;
 {
@@ -1644,9 +1646,10 @@ extern void SVMXLog(NSString *format, ...);
     }
 }
 
-- (void) updateSampleDataCreationProgress;
-{
-}
+//  Unused methods
+//- (void) updateSampleDataCreationProgress;
+//{
+//}
 
 // #################################################################################################
 #pragma mark -

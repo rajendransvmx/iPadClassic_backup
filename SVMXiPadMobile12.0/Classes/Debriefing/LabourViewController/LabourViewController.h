@@ -39,7 +39,7 @@
 
 - (IBAction) SliderValueChanged:(id)sender;
 - (void) InitLaborData;
-- (NSString *) GetLaborRate;
+//- (NSString *) GetLaborRate;//  Unused Methods
 - (IBAction) ShowDesc:(id)sender;
 
 @end

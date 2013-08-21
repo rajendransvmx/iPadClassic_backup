@@ -27,11 +27,11 @@
 + (void )removePriceDownloadStatus;
 + (void)showLog:(NSString *)loggedMessage;
 
-+ (NSDictionary *) getParameterDictionaryFromURL:(NSString *) urlParams;
+//+ (NSDictionary *) getParameterDictionaryFromURL:(NSString *) urlParams;//  Unused Methods
 
 + (NSString *)getUserTrunkRequestStatus ;
 + (void )setUserTrunkRequestStatus:(NSString *)statusValue;
-+ (void )removeUserTrunkRequestStatus ;
+//+ (void )removeUserTrunkRequestStatus ;//  Unused Methods
 + (NSString *)today:(NSInteger)numberOfDays andJusDate:(BOOL)isDateOnly;
 + (NSArray *)splitString:(NSString *)stringToBeSplit byString:(NSString *)subString;
 

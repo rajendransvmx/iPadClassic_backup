@@ -324,8 +324,8 @@ typedef enum CUSTOM_SYNC_STATUS{
 - (void) getProductHistoryForWorkOrderId:(NSString *)woId;
 - (void) saveTargetRecords:(id)sender;
 - (void) getViewLayouts;
-- (void) getTasksForStartDate:(NSString *)startDate EndDate:(NSString *)endDate;
-- (void) getWorkOrderMapViewForWorkOrderId:(NSString *)workOrderId;
+//- (void) getTasksForStartDate:(NSString *)startDate EndDate:(NSString *)endDate;//  Unused Methods
+//- (void) getWorkOrderMapViewForWorkOrderId:(NSString *)workOrderId;//  Unused Methods
 -(void)internetConnectivityHandling:(NSString *)data_sync;
 // Wrapper Layer to extract REQUIRED data from response received from Web Service 
 
@@ -398,7 +398,7 @@ typedef enum CUSTOM_SYNC_STATUS{
 
 //Radha
 - (NSMutableArray *) getAllPageLauoutId;
-- (void) getAdditionalObjectdefinition;
+//- (void) getAdditionalObjectdefinition;//  Unused Methods
 
 //RADHA 12/04/12
 - (NSMutableArray *) getAllProcessId;
@@ -437,15 +437,15 @@ typedef enum CUSTOM_SYNC_STATUS{
 -(void)setsyncHistoryForSyncType:(NSString *)sync_type requestOrResponse:(NSString *)operation_type  request_id:(NSString *)request_id 
 last_sync_time:(NSString *)last_sync_time;
 #define CHUNCKING_LIMIT  150
--(NSString *)escapeSIngleQute:(NSString *)jsonString;
+//-(NSString *)escapeSIngleQute:(NSString *)jsonString;//  Unused Methods
 -(void)getAllRecordsForOperationTypeFromSYNCCONFLICT:(NSString *)operationType OverRideFlag:(NSString *)overrideFlag;
-//-(void)LoadHeapTableFromConflictTable;
+//-(void)LoadHeapTableFromConflictTable;//  Unused Methods
 -(void)DoSpecialIncrementalSync;
 -(NSString *)requestSnapShot;
 -(void)setSyncReqId:(NSString *)req_id;
 -(BOOL)getSyncStatusForRequestId;
 -(void)setLastSyncOccured;
-- (NSString *) getValueFromPlistForKey:(NSString *) key;
+//- (NSString *) getValueFromPlistForKey:(NSString *) key;//  Unused Methods
 -(void)generateRequestId;
 -(void)resetSyncLastindexAndObjectName;
 -(NSString *)getIdFromJsonString:(NSString *)jsonString;
@@ -508,7 +508,7 @@ last_sync_time:(NSString *)last_sync_time;
 @protocol RefrehManualDataSyncUI <NSObject>
 
 @optional
--(void)refreshdataSyncUI;
+//-(void)refreshdataSyncUI;//  Unused Methods
 
 @end
 

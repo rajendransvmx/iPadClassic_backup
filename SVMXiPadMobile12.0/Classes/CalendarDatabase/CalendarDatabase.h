@@ -42,7 +42,7 @@
 
 - (NSString *) getNameFieldForEventLocal_id:(NSString *)eventId;
 - initWithDBName;
-//- (BOOL) isUsernamePresent:(NSString *)username password:(NSString *)passWord;
+//- (BOOL) isUsernamePresent:(NSString *)username password:(NSString *)passWord;//  Unused methods
 
 //sahana  SIgnature change
 -(NSString *)getRecordoperationTypeforSignaturewithRecordId:(NSString *)recordId  objectApiNAme:(NSString *)apiname;
@@ -50,7 +50,7 @@
 
 
 - (NSMutableArray*) getProcessFromDatabase;
-//- (NSMutableArray*) getViewLayoutsFromDB;
+//- (NSMutableArray*) getViewLayoutsFromDB;//  Unused methods
 - (NSMutableArray*) GetEventsFromDBWithStartDate:(NSString*)startdate endDate:(NSString*)endDate;
 - (NSMutableArray*) didGetTaskFromDB:(NSString *)_date;
 - (BOOL) insertTasksIntoDB:(NSArray *)_tasks WithDate:(NSString*)_date local_id:(NSString *)local_id;
@@ -59,13 +59,13 @@
 - (NSString *)getColorCodeForPriority:(NSString *)whatId objectname:(NSString *)objectName;
 - (void)deleteTaskFromDB:(NSString *)taskId;
 - (NSString *)getTableName:(NSString *)key;
-- (NSString *) retreiveCurrentTaskIdCreated;
+//- (NSString *) retreiveCurrentTaskIdCreated;//  Unused methods
 
 //28/Sep/2012 - ADD objectname
 - (NSString *) getPriorityForWhatId:(NSString *)whatId  objectname:(NSString *)objectName;
 
 //radha and abinash
-//- (BOOL) isCase:(NSString *)whatId;
+//- (BOOL) isCase:(NSString *)whatId;//  Unused methods
 
 //28/Sep/2012
 - (BOOL) isWorkOrderOrCase:(NSString *)whatId objectName:(NSString *)_ObjectName;
@@ -74,7 +74,7 @@
 - (NSString *) getTableNameForWhatId:(NSString *)whatId;
 //ServiceReportEssentialMethods
 //Abinash
-- (NSString *) getNameFieldForTableName:(NSString *)tableName;
+//- (NSString *) getNameFieldForTableName:(NSString *)tableName; //  Unused methods
 - (NSString *) getNameFieldForEvent:(NSString *)eventId;
 
 
@@ -88,7 +88,7 @@
 - (NSMutableArray *) queryForExpenses:(NSString *)currentRecordId;
 - (NSMutableArray *) queryForLabor:(NSString *)currentRecordId;
 - (void) startQueryConfiguration;
-- (NSString *) getNameFieldForCreateProcessFromDB:(NSString *)ID;
+//- (NSString *) getNameFieldForCreateProcessFromDB:(NSString *)ID;//  Unused methods
 
 
 //Shrinivas - TroubleShooting
@@ -130,7 +130,7 @@
 - (BOOL) isSignatureExistsForOpDoc:(NSString *)signId type:(NSString *)sign_type tableName:(NSString *)tableName;
 //kri OPDOC2
 - (BOOL)isDocExistsFor:(NSString *)local_id processId:(NSString *)process tableName:(NSString *)tableName;
-- (NSString *) getSFIdOfDocForlocalId:(NSString *)name;
+//- (NSString *) getSFIdOfDocForlocalId:(NSString *)name;//  Unused methods
 
 - (void) deleteAllSignatureData:(NSString *)operationTYpe andSignType:(NSString *)signType;
 - (void) getAllLocalIdsForSignature:(NSString *)operation_type andSignType:(NSString *)sigType;
@@ -152,7 +152,7 @@
 //shrinivas
 //- (void) getSFIdForSignature:(NSString *)localId objectName:(NSString *)objectName;   //Method to be called only after Data Sync
 
-- (void) retrieveSignatureFromSFDC:(NSString *)ID;
+//- (void) retrieveSignatureFromSFDC:(NSString *)ID;//  Unused methods
 
 //krishnasign changed method
 //- (void) getAllLocalIdsForSignature:(NSString *)operation_type;
@@ -208,7 +208,7 @@
 - (void) insertIntoConflictInternetErrorWithSyncType:(NSString *)sync_type;
 - (void) insertIntoConflictInternetErrorForMetaSync:(NSString *)sync_type WithDB:(sqlite3 *)db;
 - (NSMutableArray *) getInternetConflicts;
-//- (NSMutableArray *) getInternetConflictsForMetaSyncWithDB:(sqlite3 *)db;
+//- (NSMutableArray *) getInternetConflictsForMetaSyncWithDB:(sqlite3 *)db;//  Unused methods
 - (void) removeInternetConflicts;
 
 
@@ -248,7 +248,7 @@
 - (NSDictionary *)preparePBEstimateId:(NSString *)estimateValue andUsageValue:(NSString *)usageValue andKey:(NSString *)key andRecordTypeId:(NSDictionary *)recordTypeIds ;
 - (void)addNamedExpressionsFrom:(NSArray *)dataArray ToArray:(NSMutableArray *)namedExpressionArray;
 - (NSArray *)getNamedExpressionsForIds:(NSArray *)namedExpressionArray;
-- (NSDictionary *)getAllAdvancedExpressionForIds:(NSArray *)expressionIds;
+//- (NSDictionary *)getAllAdvancedExpressionForIds:(NSArray *)expressionIds;//  Unused methods
 
 - (NSArray *)getLookUpDefinition:(NSDictionary *)workOrderData;
 - (NSDictionary *)getLookUpFor:(NSString *)parentColumnName andFieldDictionary:(NSDictionary *)parentColumnDictionary andTableName:(NSString *)tableName;
@@ -263,7 +263,7 @@
 - (NSArray *)getValidLabourPriceBookNames:(NSArray *)labourPbNames andLabourIdArray:(NSArray *)labourIdArray andCurrency:(NSString *)currency;
 - (NSString *)getValueFOrKey:(NSString *)key FromArray:(NSArray *)array;
 - (NSArray *) getExpressionComponentsForExpressionId:(NSString *)expressionId andExpression:(NSString *)expressionName;
-- (NSDictionary *)getexpressionDictionaryForExpressionId:(NSString *)expressionId ;
+//- (NSDictionary *)getexpressionDictionaryForExpressionId:(NSString *)expressionId ;//  Unused methods
 - (NSString *)changeTheBooleanValue:(NSString *)someString;
 - (NSMutableDictionary *)getAllObjectFields:(NSString *)objectName tableName:(NSString *)tableName;
 - (NSString *)getGetPriceCodeSnippet:(NSString *)codeSnippetName ;
@@ -274,7 +274,7 @@
 - (NSArray *)getPriceBookObjectsForLabourPriceBookIds:(NSArray *)priceBookIds OrPriceBookNames:(NSArray *)priceBookNames ;
 - (NSDictionary *)preparePBForLabourSettings:(NSString *)estimateValue andUsageValue:(NSString *)usageValue andKey:(NSString *)key andRecordTypeId:(NSDictionary *)recordTypeIds;
 - (NSDictionary *)preparePBLaourEstimateId:(NSString *)estimateValue andUsageValue:(NSString *)usageValue andKey:(NSString *)key andRecordTypeId:(NSDictionary *)recordTypeIds;
-- (NSArray *)getAllMessagesForTagsArray:(NSArray *)tags;
+//- (NSArray *)getAllMessagesForTagsArray:(NSArray *)tags;//  Unused methods
 - (NSArray *) getExpressionComponentsForExpressionId:(NSString *)expressionId andExpression:(NSString *)expressionName andRecordId:(NSString *)recordTypeId;
 - (NSString *)getEntitlementStatus:(NSString *)recordIdentfier recordIdFromTable:(NSString *)tableName;
 - (BOOL)doesAllRecordsForGetPriceCalculationExist:(NSString *)recordId;

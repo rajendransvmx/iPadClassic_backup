@@ -18,10 +18,10 @@
 	}
 	return self;
 }
-
-- (void) SetButtonTitle:(NSString *) title
-{
-	[self setTitle:title forState:UIControlStateNormal];
-}
+//  Unused methods
+//- (void) SetButtonTitle:(NSString *) title
+//{
+//	[self setTitle:title forState:UIControlStateNormal];
+//}
 
 @end

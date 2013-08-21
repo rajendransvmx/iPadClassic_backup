@@ -103,8 +103,8 @@ NSMutableArray * eventPositionArray;
 - (BOOL) isEventInRect:(CGRect)_rect;
 - (CGRect) getRectForLocation:(CGPoint)point;
 
-- (CGFloat) getPortraitHeight;
-- (CGFloat) getPortraitWidth;
+//- (CGFloat) getPortraitHeight;//  Unused methods
+//- (CGFloat) getPortraitWidth;//  Unused methods
 
 - (CGFloat) getLandscapeHeight;
 - (CGFloat) getLandscapeWidth;

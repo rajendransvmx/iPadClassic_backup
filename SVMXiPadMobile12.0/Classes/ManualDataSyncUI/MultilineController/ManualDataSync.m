@@ -172,29 +172,29 @@
 }
 
 //wsinterface Delegate
-
--(void)refreshdataSyncUI
-{
-    iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    dataSyncDetail.objectsArray = nil;
-    dataSyncRoot.objectsArray = nil;
-    dataSyncDetail.objectsArray  = [appDelegate.calDataBase getConflictObjects];
-    dataSyncRoot.objectsArray = [appDelegate.calDataBase getConflictObjects];
-    [dataSyncDetail.activity stopAnimating];
-  
-      
-    for(int i=0; i < [dataSyncDetail.objectsArray count]; i++)
-    {
-        dataSyncRoot.objectDetailsArray = [appDelegate.calDataBase getrecordIdsForObject:[dataSyncDetail.objectsArray objectAtIndex:i]];
-        
-        [dataSyncDetail.objectsDict setObject:dataSyncDetail.objectDetailsArray forKey:[dataSyncDetail.objectsArray objectAtIndex:i]];
-    }
-
-    [dataSyncRoot.tableView reloadData];
-    dataSyncDetail._tableView.hidden = NO;
-    [dataSyncDetail._tableView reloadData];
-    
-}
+//  Unused Methods
+//-(void)refreshdataSyncUI
+//{
+//    iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+//    dataSyncDetail.objectsArray = nil;
+//    dataSyncRoot.objectsArray = nil;
+//    dataSyncDetail.objectsArray  = [appDelegate.calDataBase getConflictObjects];
+//    dataSyncRoot.objectsArray = [appDelegate.calDataBase getConflictObjects];
+//    [dataSyncDetail.activity stopAnimating];
+//  
+//      
+//    for(int i=0; i < [dataSyncDetail.objectsArray count]; i++)
+//    {
+//        dataSyncRoot.objectDetailsArray = [appDelegate.calDataBase getrecordIdsForObject:[dataSyncDetail.objectsArray objectAtIndex:i]];
+//        
+//        [dataSyncDetail.objectsDict setObject:dataSyncDetail.objectDetailsArray forKey:[dataSyncDetail.objectsArray objectAtIndex:i]];
+//    }
+//
+//    [dataSyncRoot.tableView reloadData];
+//    dataSyncDetail._tableView.hidden = NO;
+//    [dataSyncDetail._tableView reloadData];
+//    
+//}
 
 -(void) disableRootControls
 {

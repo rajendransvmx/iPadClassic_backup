@@ -35,6 +35,6 @@
 
 @protocol releasePickerPopOver <NSObject>
 
--(void) releasePickerPopOver;
+//-(void) releasePickerPopOver;//  Unused Methods
 
 @end

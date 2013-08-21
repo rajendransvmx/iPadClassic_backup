@@ -187,12 +187,12 @@ DetailViewControllerDelegate, RefreshModalSyncStatusButton>
 //set up the events
 - (void) setEventsView:(NSString *)date;
 - (NSString *)dateStringConversion:(NSDate*)date;
-//-(void) getWeekDays:(NSDate *)date;
-//-(NSArray *) getWeeksdatesarray;
+//-(void) getWeekDays:(NSDate *)date;//  Unused methods
+//-(NSArray *) getWeeksdatesarray;//  Unused methods
 
 // Calendar Methods
-- (IBAction) SetToday;
-- (IBAction) SetSlider;
+//- (IBAction) SetToday;//  Unused methods
+//- (IBAction) SetSlider;//  Unused methods
 
 // Right Pane Methods
 - (void) setupEventsOnView:(UIView *)theView;
@@ -203,24 +203,24 @@ DetailViewControllerDelegate, RefreshModalSyncStatusButton>
 
 - (void) dismissPopOver:(UIPopoverController *)popOver;
 
-// - (UIColor *) getColorFromIndex:(NSUInteger)index;
-// - (CGFloat) getHeightForRow:(NSUInteger) row;
-// - (NSString *) getCellIdForIndex:(NSUInteger) index;
+// - (UIColor *) getColorFromIndex:(NSUInteger)index;//  Unused methods
+// - (CGFloat) getHeightForRow:(NSUInteger) row;//  Unused methods
+// - (NSString *) getCellIdForIndex:(NSUInteger) index;//  Unused methods
 
-// - (CellRepository *) createNewCustomCellWithIndex:(NSUInteger)index;
+// - (CellRepository *) createNewCustomCellWithIndex:(NSUInteger)index;//  Unused methods
 
 - (IBAction) ShowMap;
 - (IBAction) ToggleLandscapeView;
 
-- (IBAction) goToHomePage:(id)sender;
+//- (IBAction) goToHomePage:(id)sender;//  Unused methods
 -(IBAction)AddEvent:(id)sender;
 
 - (void) setDate:(NSUInteger)date;
-//- (void) setEventsFromWeekCache:(NSString *)_date;
+//- (void) setEventsFromWeekCache:(NSString *)_date;//  Unused methods
 - (BOOL) isDate:(NSString *)date inRange:(NSArray *)dateRange;
 
-- (IBAction) IncrDate;
-- (IBAction) DecrDate;
+//- (IBAction) IncrDate;//  Unused methods
+//- (IBAction) DecrDate;//  Unused methods
 
 - (IBAction) Help;
 // Event Methods

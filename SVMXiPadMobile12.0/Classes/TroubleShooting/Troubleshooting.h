@@ -93,7 +93,7 @@ UISearchBarDelegate>
 @property (nonatomic, retain) NSString * productId;
 @property BOOL isSessionInvalid;
 
-- (void) showResults;
+//- (void) showResults;//  Unused Methods
 
 //Radha 20th August 2011
 - (void) getProductNameForProductID:(NSString *)productTd;
@@ -109,7 +109,7 @@ UISearchBarDelegate>
 - (BOOL) unzipAndViewFile:(NSString *)_file;
 - (NSString *) showTroubleshootingForIndex:(NSUInteger)index;
 
-- (void) showFirstTroubleshooting;
+//- (void) showFirstTroubleshooting;//  Unused Methods
 
 - (IBAction) goPrev;
 - (IBAction) goNext;

@@ -79,7 +79,7 @@
 + (NSString *) getLocalTimeFromGMT:(NSString *)gmtDate;
 + (NSString *) getGMTFromLocalTime:(NSString *)localTime;
 //pavaman 1st Jan 2011
-+ (NSString *) adjustDateWrapAround:(NSString *)startTime:(NSString *)endTime;
+//+ (NSString *) adjustDateWrapAround:(NSString *)startTime:(NSString *)endTime;//  Unused Methods
 
 - (void) queryTasksForDate:(NSString *)date;
 
@@ -95,8 +95,8 @@
 - (void) queryChatterForProductId:(NSString *)_productId;
 - (void) getUserNameFromId:(NSArray *)userId;
 - (NSString *) dayByComparingTodayWithDate:(NSString *)date;
-- (void) getImagesForIds:(NSArray *)Ids;
-- (void) didGetUserNamesForIds:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
+//- (void) getImagesForIds:(NSArray *)Ids;//  Unused Methods
+//- (void) didGetUserNamesForIds:(ZKQueryResult *)result error:(NSError *)error context:(id)context;//  Unused Methods
 
 // Product Manual
 - (void) queryManualForProductName:(NSString *)productName;

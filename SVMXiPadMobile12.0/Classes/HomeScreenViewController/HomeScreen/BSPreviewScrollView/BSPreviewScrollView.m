@@ -48,15 +48,16 @@ extern void SVMXLog(NSString *format, ...);
 	return self;
 }
 
-- (id)initWithFrameAndPageSize:(CGRect)frame pageSize:(CGSize)size 
-{
-    self = [super initWithFrame:frame];
-	if (self) 
-	{
-		self.pageSize = size;
-    }
-    return self;
-}
+//  Unused methods
+//- (id)initWithFrameAndPageSize:(CGRect)frame pageSize:(CGSize)size 
+//{
+//    self = [super initWithFrame:frame];
+//	if (self) 
+//	{
+//		self.pageSize = size;
+//    }
+//    return self;
+//}
 
 -(void)loadPage:(int)page
 {
@@ -76,11 +77,11 @@ extern void SVMXLog(NSString *format, ...);
 	UIView *view = [scrollViewPages objectAtIndex:page];
 	
 	// if the view is null we request the view from our delegate
-	if ((NSNull *)view == [NSNull null]) 
-	{
-		view = [delegate viewForItemAtIndex:self index:page];
-		[scrollViewPages replaceObjectAtIndex:page withObject:view];
-	}
+//	if ((NSNull *)view == [NSNull null]) 
+//	{
+//		view = [delegate viewForItemAtIndex:self index:page]; //  Unused methods
+//		[scrollViewPages replaceObjectAtIndex:page withObject:view];
+//	}
 	
 	// add the controller's view to the scroll view	if it's not already added
 	if (view.superview == nil) 

@@ -63,38 +63,38 @@ static NSInteger MY_TAG = 0x666;
         }
     }
 }
-
-- (void)setSubTitle:(NSString *)title forSegmentAtIndex:(NSUInteger)segment
-{
-    [self layoutSubviews];
-    
-    for (UIView * segmentView in self.subviews)
-    {
-        UILabel *segmentLabel = nil;
-        for( id view in segmentView.subviews )
-        {
-            if( [view isKindOfClass:[UILabel class]] )
-            {
-                segmentLabel = view;
-                break;
-            }
-        }
-//        UILabel *segmentLabel = (UILabel *)[[segmentView subviews] objectAtIndex:1];
-        if ([segmentLabel.text isEqualToString:[self titleForSegmentAtIndex:segment]])
-        {
-            
-            UILabel *myLabel = (UILabel *)[segmentView viewWithTag:MY_TAG];
-            if (myLabel) 
-            {
-                myLabel.text = title;
-				myLabel.font = [UIFont systemFontOfSize:12.0];
-				[myLabel setBackgroundColor:[UIColor clearColor]];
-				[myLabel setTextColor:[UIColor whiteColor]];
-            }
-            break;
-        }
-    }
-}
+//  Unused methods
+//- (void)setSubTitle:(NSString *)title forSegmentAtIndex:(NSUInteger)segment
+//{
+//    [self layoutSubviews];
+//    
+//    for (UIView * segmentView in self.subviews)
+//    {
+//        UILabel *segmentLabel = nil;
+//        for( id view in segmentView.subviews )
+//        {
+//            if( [view isKindOfClass:[UILabel class]] )
+//            {
+//                segmentLabel = view;
+//                break;
+//            }
+//        }
+////        UILabel *segmentLabel = (UILabel *)[[segmentView subviews] objectAtIndex:1];
+//        if ([segmentLabel.text isEqualToString:[self titleForSegmentAtIndex:segment]])
+//        {
+//            
+//            UILabel *myLabel = (UILabel *)[segmentView viewWithTag:MY_TAG];
+//            if (myLabel) 
+//            {
+//                myLabel.text = title;
+//				myLabel.font = [UIFont systemFontOfSize:12.0];
+//				[myLabel setBackgroundColor:[UIColor clearColor]];
+//				[myLabel setTextColor:[UIColor whiteColor]];
+//            }
+//            break;
+//        }
+//    }
+//}
 
 
 @end

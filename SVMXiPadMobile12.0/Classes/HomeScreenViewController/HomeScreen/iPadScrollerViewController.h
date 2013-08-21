@@ -81,7 +81,7 @@
 
 
 - (NSMutableArray *) getScrollViewNames;
-- (NSMutableArray *) getScrollViews;
+//- (NSMutableArray *) getScrollViews;//  Unused methods
 
 - (void) showTasks;
 - (void) showCreateObject;
@@ -96,7 +96,7 @@
 //Abinash
 -(void)logout;
 -(void)sync;
-- (void) doMetaAndDataSync;
+//- (void) doMetaAndDataSync;//  Unused methods
 -(void)disableControls;
 -(void)enableControls;
 -(void)InitsyncSetting;
@@ -112,7 +112,7 @@
 -(void)doDataSync;
 -(void)doTxFetch;
 -(void)doAfterSyncSetttings;
--(void)showAlertViewForAppwasinBackground;
+//-(void)showAlertViewForAppwasinBackground;//  Unused methods
 - (void)continueMetaAndDataSync;
 -(void)RefreshProgressBarNativeMethod:(NSString *)sync;
 -(void)refreshViewAfterMetaSync;

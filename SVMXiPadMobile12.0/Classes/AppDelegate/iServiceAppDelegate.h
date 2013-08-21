@@ -936,7 +936,7 @@ extern  NSString const *devVersion;
 // Get Color from HEX
 - (UIColor *) colorForHex:(NSString *)hexColor;
 
--(void)popupActionSheet:(NSString *)message;
+//-(void)popupActionSheet:(NSString *)message;//  Unused Methods
 
 //Test
 - (BOOL) showloginScreen; //#7177
@@ -965,7 +965,7 @@ extern  NSString const *devVersion;
 
 //RADHA - Sync events, task and related data
 - (void) ScheduleTimerForEventSync;
-- (void) eventSyncTimer;
+//- (void) eventSyncTimer;//  Unused methods
 - (void) callEventSyncTimer;
 
 //Location Ping

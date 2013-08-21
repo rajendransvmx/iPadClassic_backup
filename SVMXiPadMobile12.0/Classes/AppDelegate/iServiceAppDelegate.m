@@ -1749,12 +1749,13 @@ NSString* machineName()
     [_alert release];
 }
 
--(void)popupActionSheet:(NSString *)message
-{
-    alert = [[UIAlertView alloc] initWithTitle:@"" message:message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-    [alert show];
-    [alert release];
-}
+//  Unused Methods
+//-(void)popupActionSheet:(NSString *)message
+//{
+//    alert = [[UIAlertView alloc] initWithTitle:@"" message:message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+//    [alert show];
+//    [alert release];
+//}
 
 - (void)dealloc
 {
@@ -2999,11 +3000,11 @@ NSString * GO_Online = @"GO_Online";
     }
     SMLog(@"%d", event_timer.retainCount);
 }
-
-- (void) eventSyncTimer
-{
-    [self performSelectorOnMainThread:@selector(callEventSyncTimer) withObject:nil waitUntilDone:NO];
-}
+//  Unused Methods
+//- (void) eventSyncTimer
+//{
+//    [self performSelectorOnMainThread:@selector(callEventSyncTimer) withObject:nil waitUntilDone:NO];
+//}
 
 - (void) callEventSyncTimer
 {

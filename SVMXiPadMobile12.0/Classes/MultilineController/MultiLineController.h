@@ -15,6 +15,6 @@
 
 }
 
-- (void)setSubTitle:(NSString *)title forSegmentAtIndex:(NSUInteger)segment;
+//- (void)setSubTitle:(NSString *)title forSegmentAtIndex:(NSUInteger)segment;//  Unused methods
 
 @end

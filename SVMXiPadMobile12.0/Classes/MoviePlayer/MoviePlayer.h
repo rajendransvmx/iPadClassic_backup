@@ -19,9 +19,9 @@
 @property (nonatomic, retain) MPMoviePlayerController * movieController;
 @property (nonatomic, retain) NSURL * movieURL;
 
-- (void) playMovie;
-- (NSURL *) localMovieURL;
+//- (void) playMovie;//  Unused methods
+//- (NSURL *) localMovieURL;//  Unused Methods
 
-- (MPMoviePlayerController *) initMovie;
+//- (MPMoviePlayerController *) initMovie;//  Unused methods
 
 @end

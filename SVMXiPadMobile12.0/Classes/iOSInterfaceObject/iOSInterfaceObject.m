@@ -91,33 +91,34 @@ extern void SVMXLog(NSString *format, ...);
 }
 
 //pavaman 1st Jan 2011
-+ (NSString *) adjustDateWrapAround:(NSString *)startTime:(NSString *)endTime;
-{
-    NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-	
-    NSString * tmpDate = [startTime substringToIndex:[startTime length]-1];
-    tmpDate = [tmpDate stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-	NSDate * startDateTime = [dateFormatter dateFromString:tmpDate];
-    
-    tmpDate = [endTime substringToIndex:[endTime length]-1];
-    tmpDate = [tmpDate stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-	NSDate * endDateTime = [dateFormatter dateFromString:tmpDate];
-	
-	if ([endDateTime compare:startDateTime] == NSOrderedAscending)
-	{
-		NSTimeInterval oneday = 3600*24;
-		endDateTime = [endDateTime addTimeInterval:oneday];		
-	}
-	
-	NSString * newDate = [dateFormatter stringFromDate:endDateTime];
-    newDate = [newDate stringByReplacingOccurrencesOfString:@" " withString:@"T"];
-    newDate = [NSString stringWithFormat:@"%@Z", newDate];
-
-    [dateFormatter release];
-
-    return newDate;
-}
+//  Unused Methods
+//+ (NSString *) adjustDateWrapAround:(NSString *)startTime:(NSString *)endTime;
+//{
+//    NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
+//    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+//	
+//    NSString * tmpDate = [startTime substringToIndex:[startTime length]-1];
+//    tmpDate = [tmpDate stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+//	NSDate * startDateTime = [dateFormatter dateFromString:tmpDate];
+//    
+//    tmpDate = [endTime substringToIndex:[endTime length]-1];
+//    tmpDate = [tmpDate stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+//	NSDate * endDateTime = [dateFormatter dateFromString:tmpDate];
+//	
+//	if ([endDateTime compare:startDateTime] == NSOrderedAscending)
+//	{
+//		NSTimeInterval oneday = 3600*24;
+//		endDateTime = [endDateTime addTimeInterval:oneday];		
+//	}
+//	
+//	NSString * newDate = [dateFormatter stringFromDate:endDateTime];
+//    newDate = [newDate stringByReplacingOccurrencesOfString:@" " withString:@"T"];
+//    newDate = [NSString stringWithFormat:@"%@Z", newDate];
+//
+//    [dateFormatter release];
+//
+//    return newDate;
+//}
 
 - (void) queryTasksForDate:(NSString *)date
 {
@@ -259,37 +260,37 @@ extern void SVMXLog(NSString *format, ...);
     [dateFormatter release];
     return day;
 }
-
-- (void) getImagesForIds:(NSArray *)idArray
-{
-    // [idArray retain];
-    NSMutableString * _query = [[NSMutableString stringWithFormat:@"SELECT Username, Id FROM User WHERE Id = '%@'", [idArray objectAtIndex:0]] retain];
-    
-    for (int i = 1; i < [idArray count]; i++)
-    {
-        [_query appendFormat:@" OR Id = '%@'", [idArray objectAtIndex:i]];
-    }
-    
-    [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetUserNamesForIds:error:context:) context:nil];
-    
-    [_query release];
-}
-
-- (void) didGetUserNamesForIds:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
-{
-    NSArray * nameArray = [result records];
-    
-    NSMutableString * _query = [[NSMutableString stringWithFormat:@"SELECT Name, Body FROM Document WHERE Name = '%@'", [[[nameArray objectAtIndex:0] fields] objectForKey:@"Username"]] retain];
-    
-    for (int i = 1; i < [nameArray count]; i++)
-    {
-        [_query appendFormat:@" OR Name = '%@'", [[[nameArray objectAtIndex:i] fields] objectForKey:@"Username"]];
-    }
-    
-    [[ZKServerSwitchboard switchboard] query:_query target:caller selector:@selector(didGetImagesForIds:error:context:) context:nameArray];
-    
-    [_query release];
-}
+//  Unused Methods
+//- (void) getImagesForIds:(NSArray *)idArray
+//{
+//    // [idArray retain];
+//    NSMutableString * _query = [[NSMutableString stringWithFormat:@"SELECT Username, Id FROM User WHERE Id = '%@'", [idArray objectAtIndex:0]] retain];
+//    
+//    for (int i = 1; i < [idArray count]; i++)
+//    {
+//        [_query appendFormat:@" OR Id = '%@'", [idArray objectAtIndex:i]];
+//    }
+//    
+//    [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didGetUserNamesForIds:error:context:) context:nil];
+//    
+//    [_query release];
+//}
+//  Unused Methods
+//- (void) didGetUserNamesForIds:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
+//{
+//    NSArray * nameArray = [result records];
+//    
+//    NSMutableString * _query = [[NSMutableString stringWithFormat:@"SELECT Name, Body FROM Document WHERE Name = '%@'", [[[nameArray objectAtIndex:0] fields] objectForKey:@"Username"]] retain];
+//    
+//    for (int i = 1; i < [nameArray count]; i++)
+//    {
+//        [_query appendFormat:@" OR Name = '%@'", [[[nameArray objectAtIndex:i] fields] objectForKey:@"Username"]];
+//    }
+//    
+//    [[ZKServerSwitchboard switchboard] query:_query target:caller selector:@selector(didGetImagesForIds:error:context:) context:nameArray];
+//    
+//    [_query release];
+//}
 
 #pragma Product Manual
 - (void) queryManualForProductName:(NSString *)productName

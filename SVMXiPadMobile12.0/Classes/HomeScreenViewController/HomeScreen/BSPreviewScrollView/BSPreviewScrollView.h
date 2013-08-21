@@ -17,7 +17,7 @@
 
 @protocol BSPreviewScrollViewDelegate
 @required
--(UIView*)viewForItemAtIndex:(BSPreviewScrollView*)scrollView index:(int)index;
+//-(UIView*)viewForItemAtIndex:(BSPreviewScrollView*)scrollView index:(int)index;//  Unused methods
 -(int)itemCount:(BSPreviewScrollView*)scrollView;
 
 @end
@@ -46,7 +46,7 @@
 @property (nonatomic, assign) BOOL dropShadow;
 
 - (void)didReceiveMemoryWarning;
-- (id)initWithFrameAndPageSize:(CGRect)frame pageSize:(CGSize)size;
+//- (id)initWithFrameAndPageSize:(CGRect)frame pageSize:(CGSize)size;//  Unused methods
 - (void) scrollToIndex:(NSInteger)index;
 
 @end

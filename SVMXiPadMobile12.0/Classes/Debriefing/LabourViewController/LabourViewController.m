@@ -641,10 +641,11 @@ extern void SVMXLog(NSString *format, ...);
     }
 }
 
-- (NSString *) GetLaborRate
-{
-	return rate;
-}
+//  Unused methods
+//- (NSString *) GetLaborRate
+//{
+//	return rate;
+//}
 
 - (IBAction) ShowDesc:(NSString *)sender
 {

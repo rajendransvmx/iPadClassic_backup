@@ -437,11 +437,11 @@ static PerformanceAnalytics *sharedPerformanceAnalytics = nil;
     
     [self clearOperationCounter];
 }
-
-- (void)removeContext:(NSString *)contextName
-{
- 
-}
+//  Unused Methods
+//- (void)removeContext:(NSString *)contextName
+//{
+// 
+//}
 
 - (void)registerOperationCount:(int)count forDatabase:(NSString *)connectionName
 {

@@ -97,7 +97,7 @@
 - (IBAction) Done;
 
 - (void) fetchPosts;
-- (IBAction) postNewChat;
+//- (IBAction) postNewChat;//  Unused methods
 - (void) resetAndStartTimer;
 
 - (void) processUsrStringArray;
@@ -109,7 +109,7 @@
 
 - (void) loadChatter;
 
-- (NSMutableArray *) getTableDataFromChatterArray:(NSMutableArray *)_chatterArray;
+//- (NSMutableArray *) getTableDataFromChatterArray:(NSMutableArray *)_chatterArray;//  Unused methods
 
 - (IBAction) launchSmartVan;
 

@@ -330,7 +330,7 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
 - (NSDictionary *) valueForcontrol:(UIView *) control_Type;
 - (void) didShrinkTable:(NSString *)animationID finished:(BOOL)finished context:(void *)context;
 // - (void) Back:(id)sender;
-- (IBAction) showMaster:(id)sender;
+- (IBAction) showMaster:(id)sender;//  Unused Methods
 // sahana
 -(BOOL)getViewRequired:(UIView *) view;
 -(BOOL)gettheChangedValue:(UIView *)view;
@@ -370,16 +370,16 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
 - (void) enableSFMUI;
 - (void) disableSFMUI;
 //Abinash Fix
--(NSArray *)orderingAnArray:(NSArray *)array;
+//-(NSArray *)orderingAnArray:(NSArray *)array;//  Unused Methods
 
 //To get the status Image
 //- (UIImage *) getStatusImage;
-- (void) refreshStatusImage;
+//- (void) refreshStatusImage;//  Unused Methods
 -(void)pageLevelEventsForEvent:(NSString *)event_Name;
 //Bar code
 -(void)launchBarcodeScanner;
 -(void) LaunchMultiAddPopover;
-//-(void) reDrawBackground;
+//-(void) reDrawBackground;//  Unused Methods
 
 - (NSDictionary *)getCurrentSelectedIndex;
 
@@ -389,7 +389,7 @@ SFWToolBarDelegate,RefreshSyncStatusButton,ZBarReaderDelegate,databaseInterfaceP
 - (NSDictionary *)getTheValueFOrKey:(NSString *)key andAliasName:(NSString *)aliasName andIndex:(NSInteger)index andArray:(NSArray *)detailArray;
 - (NSDictionary *)getServiceBooleanTypeDictionary:(NSString *)tableName;
 - (void)createJSExcecuter:(UIView *)parentView andCodeSnippet:(NSString *)codeSnippet;
-- (BOOL)checkIfAllAnyOneLinePresent;
+//- (BOOL)checkIfAllAnyOneLinePresent;//  Unused Methods
 - (void)showAlertView:(NSString *)message;
 - (BOOL)shouldDisplayMessage:(NSString *)message;
 - (void)showAlertViewWhenGPCalculationNotPossible:(NSString * )message;

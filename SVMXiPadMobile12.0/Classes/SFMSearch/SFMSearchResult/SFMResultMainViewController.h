@@ -39,6 +39,6 @@
 @property (nonatomic, retain) SFMResultDetailViewController *resultdetailView;
 @property (nonatomic, retain) NSArray *masterTableData;
 @property (nonatomic, assign) BOOL switchStatus;
--(void)ShowProgressBar;
+//-(void)ShowProgressBar;//  Unused Methods
 -(void)fillNumberOfStepsCompletedLabel;
 @end

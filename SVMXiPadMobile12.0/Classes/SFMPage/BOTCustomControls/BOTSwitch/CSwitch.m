@@ -44,11 +44,11 @@
     return self.selected;
 }
 
-
--(id)initAtPoint:(CGPoint)point
-{
-    return self;
-}
+//  Unused Methods
+//-(id)initAtPoint:(CGPoint)point
+//{
+//    return self;
+//}
 
 -(void)dealloc
 {

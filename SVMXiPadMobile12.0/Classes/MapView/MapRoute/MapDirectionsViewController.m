@@ -411,9 +411,9 @@ static NSString* const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 			rightButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
             
             
-            [rightButton addTarget:self
-                            action:@selector(showDetails:) 
-                  forControlEvents:UIControlEventTouchUpInside];
+//            [rightButton addTarget:self
+//                            action:@selector(showDetails:) 
+//                  forControlEvents:UIControlEventTouchUpInside]; //  Unused methods
             annotationView.rightCalloutAccessoryView = rightButton;
             
             return annotationView;

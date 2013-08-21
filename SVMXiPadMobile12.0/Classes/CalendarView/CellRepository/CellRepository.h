@@ -20,7 +20,7 @@
 @property (nonatomic, retain) IBOutlet UIView * mView;
 @property (nonatomic, retain) IBOutlet UILabel * label;
 
-- (void) setLabelText:(NSString *)labelText;
+//- (void) setLabelText:(NSString *)labelText;//  Unused methods
 - (void) setColor:(UIColor *)color;
 
 @end

@@ -748,127 +748,128 @@ extern void SVMXLog(NSString *format, ...);
     }
 }
 
-- (IBAction) changeWeek
-{
-
-}
-
-- (IBAction) NextWeek
-{
-   /* if (![appDelegate isInternetConnectionAvailable])
-    {
-        [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
-        return;
-    }*/
-    [self disableUI];
-    if (currentSliderPositionIndex < ([sliderBoundsArray count]-1))
-    {
-        ++currentSliderPositionIndex;
-        CGRect locationRect = [[sliderBoundsArray objectAtIndex:currentSliderPositionIndex] CGRectValue];
-        if (CGRectEqualToRect(locationRect, CGRectZero))
-        {
-            return;
-        }
-        
-        if (!CGRectContainsRect(locationRect, sliderImage.frame))
-        {
-            // SMLog(@"Location contains Rect %f, %f, %f, %f", sliderImage.frame.origin.x, sliderImage.frame.origin.y, sliderImage.frame.size.width, sliderImage.frame.size.height);
-            [UIView beginAnimations:@"moveslider" context:nil];
-            [UIView setAnimationDuration:0.3];
-            [UIView setAnimationDelegate:self];
-            [UIView setAnimationDidStopSelector:@selector(SliderMoved:finished:context:)];
-            sliderImage.center = CGPointMake((locationRect.origin.x + locationRect.size.width/2), sliderImage.center.y);
-            [UIView commitAnimations];
-        }   
-    }
-    else
-    {
-        // go to next "calendar" month and retrieve details
-        // show slider in the first location
-        //pavaman 16th jan 2011 - we should go to NextMonthStart
-		//[calendar NextMonth];
-		[calendar NextMonthStart];
-        [self RefreshLandscape];
-        // Calendar function
-        [self setupWeeks];
-        // Event setup
-        [self setUpDayRect];
-        [self setupEvents];
-        // Move slider to the first date
-        [self setSliderToFirst];
-    }
-    NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithCapacity:0];
-    NSArray * startEnd = [self getWeekStartEndDatesAtOptionalIndex:[NSString stringWithFormat:@"%d", currentSliderPositionIndex]];
-    NSString * _currentDate = [startEnd objectAtIndex:0];
-    NSMutableArray * currentDateRange = [[appDelegate getWeekdates:_currentDate] retain];
-    
-    [dict setValue:currentDateRange forKey:@"CurrentRange"];
-    SBJsonWriter *writer = [[[SBJsonWriter alloc] init] autorelease];
-    NSString *json = [writer stringWithObject:dict];
-    [dict release];
-    [nextWeek setAccessibilityValue:json];
-}
-
-- (IBAction) PrevWeek
-{
-    /*if (![appDelegate isInternetConnectionAvailable])
-    {
-        [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
-        return;
-    }*/
-    
-    [self disableUI];
-    
-    if (currentSliderPositionIndex > 0)
-    {
-        --currentSliderPositionIndex;
-        CGRect locationRect = [[sliderBoundsArray objectAtIndex:currentSliderPositionIndex] CGRectValue];
-        if (CGRectEqualToRect(locationRect, CGRectZero))
-        {
-            return;
-        }
-        
-        if (!CGRectContainsRect(locationRect, sliderImage.frame))
-        {
-            // SMLog(@"Location contains Rect %f, %f, %f, %f", sliderImage.frame.origin.x, sliderImage.frame.origin.y, sliderImage.frame.size.width, sliderImage.frame.size.height);
-            [UIView beginAnimations:@"moveslider" context:nil];
-            [UIView setAnimationDuration:0.3];
-            [UIView setAnimationDelegate:self];
-            [UIView setAnimationDidStopSelector:@selector(SliderMoved:finished:context:)];
-            sliderImage.center = CGPointMake((locationRect.origin.x + locationRect.size.width/2), sliderImage.center.y);
-            [UIView commitAnimations];
-        }
-    }
-    else 
-    {
-        // go to previous "calendar" month and retrieve details
-        // show slider in the first location
-        //pavaman 16th Jan 2011 - we should go the prev month end
-		//[calendar PrevMonth];
-        [calendar PrevMonthEnd];
-
-		[self RefreshLandscape];
-        // Calendar function
-        [self setupWeeks];
-        // Event setup
-        [self setUpDayRect];
-        // [self setupEvents];
-        // Move slider to the last date
-        [self setSliderToLast];
-    }
-    NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithCapacity:0];
-    NSArray * startEnd = [self getWeekStartEndDatesAtOptionalIndex:[NSString stringWithFormat:@"%d", currentSliderPositionIndex]];
-    NSString * _currentDate = [startEnd objectAtIndex:0];
-    NSMutableArray * currentDateRange = [[appDelegate getWeekdates:_currentDate] retain];
-    
-    [dict setValue:currentDateRange forKey:@"CurrentRange"];
-    SBJsonWriter *writer = [[[SBJsonWriter alloc] init] autorelease];
-    NSString *json = [writer stringWithObject:dict];
-    [dict release];
-    [prevWeek setAccessibilityValue:json];
-}
+//  Unused methods
+//- (IBAction) changeWeek
+//{
+//
+//}
+//  Unused methods
+//- (IBAction) NextWeek
+//{
+//   /* if (![appDelegate isInternetConnectionAvailable])
+//    {
+//        [activity stopAnimating];
+//        [appDelegate displayNoInternetAvailable];
+//        return;
+//    }*/
+//    [self disableUI];
+//    if (currentSliderPositionIndex < ([sliderBoundsArray count]-1))
+//    {
+//        ++currentSliderPositionIndex;
+//        CGRect locationRect = [[sliderBoundsArray objectAtIndex:currentSliderPositionIndex] CGRectValue];
+//        if (CGRectEqualToRect(locationRect, CGRectZero))
+//        {
+//            return;
+//        }
+//        
+//        if (!CGRectContainsRect(locationRect, sliderImage.frame))
+//        {
+//            // SMLog(@"Location contains Rect %f, %f, %f, %f", sliderImage.frame.origin.x, sliderImage.frame.origin.y, sliderImage.frame.size.width, sliderImage.frame.size.height);
+//            [UIView beginAnimations:@"moveslider" context:nil];
+//            [UIView setAnimationDuration:0.3];
+//            [UIView setAnimationDelegate:self];
+//            [UIView setAnimationDidStopSelector:@selector(SliderMoved:finished:context:)];
+//            sliderImage.center = CGPointMake((locationRect.origin.x + locationRect.size.width/2), sliderImage.center.y);
+//            [UIView commitAnimations];
+//        }   
+//    }
+//    else
+//    {
+//        // go to next "calendar" month and retrieve details
+//        // show slider in the first location
+//        //pavaman 16th jan 2011 - we should go to NextMonthStart
+//		//[calendar NextMonth];
+//		[calendar NextMonthStart];
+//        [self RefreshLandscape];
+//        // Calendar function
+//        [self setupWeeks];
+//        // Event setup
+//        [self setUpDayRect];
+//        [self setupEvents];
+//        // Move slider to the first date
+//        [self setSliderToFirst];
+//    }
+//    NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+//    NSArray * startEnd = [self getWeekStartEndDatesAtOptionalIndex:[NSString stringWithFormat:@"%d", currentSliderPositionIndex]];
+//    NSString * _currentDate = [startEnd objectAtIndex:0];
+//    NSMutableArray * currentDateRange = [[appDelegate getWeekdates:_currentDate] retain];
+//    
+//    [dict setValue:currentDateRange forKey:@"CurrentRange"];
+//    SBJsonWriter *writer = [[[SBJsonWriter alloc] init] autorelease];
+//    NSString *json = [writer stringWithObject:dict];
+//    [dict release];
+//    [nextWeek setAccessibilityValue:json];
+//}
+//  Unused methods
+//- (IBAction) PrevWeek
+//{
+//    /*if (![appDelegate isInternetConnectionAvailable])
+//    {
+//        [activity stopAnimating];
+//        [appDelegate displayNoInternetAvailable];
+//        return;
+//    }*/
+//    
+//    [self disableUI];
+//    
+//    if (currentSliderPositionIndex > 0)
+//    {
+//        --currentSliderPositionIndex;
+//        CGRect locationRect = [[sliderBoundsArray objectAtIndex:currentSliderPositionIndex] CGRectValue];
+//        if (CGRectEqualToRect(locationRect, CGRectZero))
+//        {
+//            return;
+//        }
+//        
+//        if (!CGRectContainsRect(locationRect, sliderImage.frame))
+//        {
+//            // SMLog(@"Location contains Rect %f, %f, %f, %f", sliderImage.frame.origin.x, sliderImage.frame.origin.y, sliderImage.frame.size.width, sliderImage.frame.size.height);
+//            [UIView beginAnimations:@"moveslider" context:nil];
+//            [UIView setAnimationDuration:0.3];
+//            [UIView setAnimationDelegate:self];
+//            [UIView setAnimationDidStopSelector:@selector(SliderMoved:finished:context:)];
+//            sliderImage.center = CGPointMake((locationRect.origin.x + locationRect.size.width/2), sliderImage.center.y);
+//            [UIView commitAnimations];
+//        }
+//    }
+//    else 
+//    {
+//        // go to previous "calendar" month and retrieve details
+//        // show slider in the first location
+//        //pavaman 16th Jan 2011 - we should go the prev month end
+//		//[calendar PrevMonth];
+//        [calendar PrevMonthEnd];
+//
+//		[self RefreshLandscape];
+//        // Calendar function
+//        [self setupWeeks];
+//        // Event setup
+//        [self setUpDayRect];
+//        // [self setupEvents];
+//        // Move slider to the last date
+//        [self setSliderToLast];
+//    }
+//    NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+//    NSArray * startEnd = [self getWeekStartEndDatesAtOptionalIndex:[NSString stringWithFormat:@"%d", currentSliderPositionIndex]];
+//    NSString * _currentDate = [startEnd objectAtIndex:0];
+//    NSMutableArray * currentDateRange = [[appDelegate getWeekdates:_currentDate] retain];
+//    
+//    [dict setValue:currentDateRange forKey:@"CurrentRange"];
+//    SBJsonWriter *writer = [[[SBJsonWriter alloc] init] autorelease];
+//    NSString *json = [writer stringWithObject:dict];
+//    [dict release];
+//    [prevWeek setAccessibilityValue:json];
+//}
 
 - (void) setSliderToFirst
 {
@@ -892,27 +893,28 @@ extern void SVMXLog(NSString *format, ...);
     [UIView commitAnimations];
 }
 
-- (IBAction) goToCurrentWeek
-{
-    /*if (![appDelegate isInternetConnectionAvailable])
-    {
-        [activity stopAnimating];
-        [appDelegate displayNoInternetAvailable];
-        return;
-    }*/
-    
-    [self disableUI];
-    
-    [self clearWeekView];
-    [activity startAnimating];
-    [calendar GoToToday];
-    
-    // Calendar function
-    [self setupWeeks];
-    // Event setup
-    [self setUpDayRect];
-    [self setupEvents];
-}
+//  Unused methods
+//- (IBAction) goToCurrentWeek
+//{
+//    /*if (![appDelegate isInternetConnectionAvailable])
+//    {
+//        [activity stopAnimating];
+//        [appDelegate displayNoInternetAvailable];
+//        return;
+//    }*/
+//    
+//    [self disableUI];
+//    
+//    [self clearWeekView];
+//    [activity startAnimating];
+//    [calendar GoToToday];
+//    
+//    // Calendar function
+//    [self setupWeeks];
+//    // Event setup
+//    [self setUpDayRect];
+//    [self setupEvents];
+//}
 
 - (void) goToWeek:(NSUInteger)weekNum
 {

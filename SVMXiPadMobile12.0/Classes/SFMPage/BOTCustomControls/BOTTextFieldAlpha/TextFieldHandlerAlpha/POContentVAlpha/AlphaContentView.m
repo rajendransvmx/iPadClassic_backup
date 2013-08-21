@@ -70,7 +70,7 @@ extern void SVMXLog(NSString *format, ...);
 {
     /*NSString * str= [[NSString  alloc] init];
     str=poTextField.text;*/
-    [cVdelegate settextfieldValue:poTextField.text];
+//    [cVdelegate settextfieldValue:poTextField.text];//  Unused Methods
  }
 
 

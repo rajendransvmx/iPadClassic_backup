@@ -81,8 +81,8 @@ extern void SVMXLog(NSString *format, ...);
     
     if (calledFromSummary)
         [self dismissViewControllerAnimated:YES completion:nil];
-    else
-        [delegate CloseServiceReport:self];
+//    else
+//        [delegate CloseServiceReport:self];//  Unused methods
 }
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
@@ -2050,21 +2050,22 @@ extern void SVMXLog(NSString *format, ...);
     [self newPara:textSize.height];
 }
 
-- (void) setHeaderText:(NSString *)headerText
-{
-    CGContextSelectFont (pdfContext, "Verdana-Bold", 12, kCGEncodingMacRoman);
-	CGContextSetTextDrawingMode (pdfContext, kCGTextFill);
-	CGContextSetRGBFillColor (pdfContext, 0, 0, 0, 1);
-	const char *text = [headerText cStringUsingEncoding:NSUTF8StringEncoding];
-    
-    // Calculate dimensions of text based on text font properties
-    CGSize textSize = [headerText sizeWithFont:[UIFont fontWithName:FONTNAME size:12]];
-    
-	CGContextShowTextAtPoint (pdfContext, (pageRect.size.width/2) - (textSize.width/2), pageRect.size.height-currentPoint.y, text, strlen(text));
-    // CGContextShowTextAtPoint (pdfContext, (pageRect.size.width/2) - (textSize.width/2) + 180, pageRect.size.height - currentPoint.y - yBuffer*11, text, strlen(text));
-    
-    [self newPara:textSize.height];
-}
+//  Unused methods
+//- (void) setHeaderText:(NSString *)headerText
+//{
+//    CGContextSelectFont (pdfContext, "Verdana-Bold", 12, kCGEncodingMacRoman);
+//	CGContextSetTextDrawingMode (pdfContext, kCGTextFill);
+//	CGContextSetRGBFillColor (pdfContext, 0, 0, 0, 1);
+//	const char *text = [headerText cStringUsingEncoding:NSUTF8StringEncoding];
+//    
+//    // Calculate dimensions of text based on text font properties
+//    CGSize textSize = [headerText sizeWithFont:[UIFont fontWithName:FONTNAME size:12]];
+//    
+//	CGContextShowTextAtPoint (pdfContext, (pageRect.size.width/2) - (textSize.width/2), pageRect.size.height-currentPoint.y, text, strlen(text));
+//    // CGContextShowTextAtPoint (pdfContext, (pageRect.size.width/2) - (textSize.width/2) + 180, pageRect.size.height - currentPoint.y - yBuffer*11, text, strlen(text));
+//    
+//    [self newPara:textSize.height];
+//}
 
 - (void) drawHorizontalLine
 {
@@ -2095,25 +2096,27 @@ extern void SVMXLog(NSString *format, ...);
     return currentPoint;
 }
 
-- (void) insertSpaces:(NSUInteger)numSpaces
-{
-    currentPoint = CGPointMake(currentPoint.x + numSpaces * spaceBuffer, currentPoint.y);
-}
+//  Unused methods
+//- (void) insertSpaces:(NSUInteger)numSpaces
+//{
+//    currentPoint = CGPointMake(currentPoint.x + numSpaces * spaceBuffer, currentPoint.y);
+//}
 
-- (void) writeText:(NSString *)_text
-{
-    CGContextSelectFont (pdfContext, "Verdana-Bold", 12, kCGEncodingMacRoman);
-	CGContextSetTextDrawingMode (pdfContext, kCGTextFill);
-	CGContextSetRGBFillColor (pdfContext, 0, 0, 0, 1);
-	const char *text = [_text cStringUsingEncoding:NSUTF8StringEncoding];
-
-    // Calculate dimensions of text based on text font properties
-    CGSize textSize = [_text sizeWithFont:[UIFont fontWithName:FONTNAME size:12]];
-    
-	CGContextShowTextAtPoint (pdfContext, currentPoint.x + spaceBuffer*3, pageRect.size.height-currentPoint.y, text, strlen(text));
-
-    [self newLine:(textSize.height > 0)?textSize.height:16];
-}
+//  Unused methods
+//- (void) writeText:(NSString *)_text
+//{
+//    CGContextSelectFont (pdfContext, "Verdana-Bold", 12, kCGEncodingMacRoman);
+//	CGContextSetTextDrawingMode (pdfContext, kCGTextFill);
+//	CGContextSetRGBFillColor (pdfContext, 0, 0, 0, 1);
+//	const char *text = [_text cStringUsingEncoding:NSUTF8StringEncoding];
+//
+//    // Calculate dimensions of text based on text font properties
+//    CGSize textSize = [_text sizeWithFont:[UIFont fontWithName:FONTNAME size:12]];
+//    
+//	CGContextShowTextAtPoint (pdfContext, currentPoint.x + spaceBuffer*3, pageRect.size.height-currentPoint.y, text, strlen(text));
+//
+//    [self newLine:(textSize.height > 0)?textSize.height:16];
+//}
 
 - (void) setWorkOrder:(NSString *)wonumber
 {

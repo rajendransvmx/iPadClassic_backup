@@ -44,11 +44,11 @@ extern void SVMXLog(NSString *format, ...);
             [appDelegate CustomizeAletView:error alertType:SOAP_ERROR Dict:nil exception:nil];
     }
 }
-
--(void)receivedErrorFromAPICall:(NSError *)err 
-{
-	[appDelegate popupActionSheet:err.description];
-}
+//  Unused Methods
+//-(void)receivedErrorFromAPICall:(NSError *)err 
+//{
+//	[appDelegate popupActionSheet:err.description];
+//}
 
 - (void)describeSObject:(NSString *)sObjectType
 {

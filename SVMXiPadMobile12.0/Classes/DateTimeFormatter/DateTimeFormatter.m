@@ -36,62 +36,63 @@
     return [self getFormattedDateFromComponents:components];
 }
 
-- (NSString *) getReadableDateFromLongDateString:(NSString *)_date
-{
-    NSDateFormatter * _dateFormatter = [[NSDateFormatter alloc] init];
-    [_dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-    NSDate * thisDate = [_dateFormatter dateFromString:_date];
-    [_dateFormatter setDateStyle:kCFDateFormatterFullStyle];
-    
-    NSCalendar * calendar = [NSCalendar currentCalendar];
-    NSDateComponents * components = nil;
-    
-    if ([_date length] > 10)
-        components = [calendar components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit|NSWeekdayCalendarUnit|NSHourCalendarUnit|NSMinuteCalendarUnit|NSSecondCalendarUnit fromDate:thisDate];
-    else
-        components = [calendar components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit|NSWeekdayCalendarUnit fromDate:thisDate];
-    
-    [_dateFormatter release];
-    
-    NSString * longDateString = [self getFormattedDateFromComponents:components];
-    
-    NSString * timeString = [_date substringFromIndex:11];
-    NSArray * timeComponents = [timeString componentsSeparatedByString:@":"];
-    if ([[timeComponents objectAtIndex:0] intValue] > 12)
-        timeString = [NSString stringWithFormat:@"%d:%@:%@ PM", [[timeComponents objectAtIndex:0] intValue]-12, [timeComponents objectAtIndex:1], [timeComponents objectAtIndex:2]];
-    else if ([[timeComponents objectAtIndex:0] intValue] == 0)
-    {
-        timeString = [NSString stringWithFormat:@"12:%@:%@ AM", [timeComponents objectAtIndex:1], [timeComponents objectAtIndex:2]];
-    }
-    else if ([[timeComponents objectAtIndex:0] intValue] < 12 && [[timeComponents objectAtIndex:0] intValue] > 0)
-        timeString = [NSString stringWithFormat:@"%d:%@:%@ AM", [[timeComponents objectAtIndex:0] intValue], [timeComponents objectAtIndex:1], [timeComponents objectAtIndex:2]];
-    else
-        timeString = [NSString stringWithFormat:@"%d:%@:%@ PM", [[timeComponents objectAtIndex:0] intValue], [timeComponents objectAtIndex:1], [timeComponents objectAtIndex:2]];
-    
-    longDateString = [longDateString stringByAppendingFormat:@" %@", timeString];
-    
-    return longDateString;
-}
-
-- (NSString *) getReadableDateFromShortDateString:(NSString *)_date
-{
-    NSDateFormatter * _dateFormatter = [[NSDateFormatter alloc] init];
-    [_dateFormatter setDateFormat:@"yyyy-MM-dd"];
-    NSDate * thisDate = [_dateFormatter dateFromString:_date];
-    [_dateFormatter setDateStyle:kCFDateFormatterFullStyle];
-    
-    NSCalendar * calendar = [NSCalendar currentCalendar];
-    NSDateComponents * components = nil;
-    
-    if ([_date length] > 10)
-        components = [calendar components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit|NSWeekdayCalendarUnit|NSHourCalendarUnit|NSMinuteCalendarUnit|NSSecondCalendarUnit fromDate:thisDate];
-    else
-        components = [calendar components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit|NSWeekdayCalendarUnit fromDate:thisDate];
-    
-    [_dateFormatter release];
-    
-    return [self getFormattedDateFromComponents:components];
-}
+//  Unused methods
+//- (NSString *) getReadableDateFromLongDateString:(NSString *)_date
+//{
+//    NSDateFormatter * _dateFormatter = [[NSDateFormatter alloc] init];
+//    [_dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+//    NSDate * thisDate = [_dateFormatter dateFromString:_date];
+//    [_dateFormatter setDateStyle:kCFDateFormatterFullStyle];
+//    
+//    NSCalendar * calendar = [NSCalendar currentCalendar];
+//    NSDateComponents * components = nil;
+//    
+//    if ([_date length] > 10)
+//        components = [calendar components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit|NSWeekdayCalendarUnit|NSHourCalendarUnit|NSMinuteCalendarUnit|NSSecondCalendarUnit fromDate:thisDate];
+//    else
+//        components = [calendar components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit|NSWeekdayCalendarUnit fromDate:thisDate];
+//    
+//    [_dateFormatter release];
+//    
+//    NSString * longDateString = [self getFormattedDateFromComponents:components];
+//    
+//    NSString * timeString = [_date substringFromIndex:11];
+//    NSArray * timeComponents = [timeString componentsSeparatedByString:@":"];
+//    if ([[timeComponents objectAtIndex:0] intValue] > 12)
+//        timeString = [NSString stringWithFormat:@"%d:%@:%@ PM", [[timeComponents objectAtIndex:0] intValue]-12, [timeComponents objectAtIndex:1], [timeComponents objectAtIndex:2]];
+//    else if ([[timeComponents objectAtIndex:0] intValue] == 0)
+//    {
+//        timeString = [NSString stringWithFormat:@"12:%@:%@ AM", [timeComponents objectAtIndex:1], [timeComponents objectAtIndex:2]];
+//    }
+//    else if ([[timeComponents objectAtIndex:0] intValue] < 12 && [[timeComponents objectAtIndex:0] intValue] > 0)
+//        timeString = [NSString stringWithFormat:@"%d:%@:%@ AM", [[timeComponents objectAtIndex:0] intValue], [timeComponents objectAtIndex:1], [timeComponents objectAtIndex:2]];
+//    else
+//        timeString = [NSString stringWithFormat:@"%d:%@:%@ PM", [[timeComponents objectAtIndex:0] intValue], [timeComponents objectAtIndex:1], [timeComponents objectAtIndex:2]];
+//    
+//    longDateString = [longDateString stringByAppendingFormat:@" %@", timeString];
+//    
+//    return longDateString;
+//}
+//  Unused methods
+//- (NSString *) getReadableDateFromShortDateString:(NSString *)_date
+//{
+//    NSDateFormatter * _dateFormatter = [[NSDateFormatter alloc] init];
+//    [_dateFormatter setDateFormat:@"yyyy-MM-dd"];
+//    NSDate * thisDate = [_dateFormatter dateFromString:_date];
+//    [_dateFormatter setDateStyle:kCFDateFormatterFullStyle];
+//    
+//    NSCalendar * calendar = [NSCalendar currentCalendar];
+//    NSDateComponents * components = nil;
+//    
+//    if ([_date length] > 10)
+//        components = [calendar components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit|NSWeekdayCalendarUnit|NSHourCalendarUnit|NSMinuteCalendarUnit|NSSecondCalendarUnit fromDate:thisDate];
+//    else
+//        components = [calendar components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit|NSWeekdayCalendarUnit fromDate:thisDate];
+//    
+//    [_dateFormatter release];
+//    
+//    return [self getFormattedDateFromComponents:components];
+//}
 
 - (NSString *) getFormattedDateFromComponents:(NSDateComponents *)components
 {

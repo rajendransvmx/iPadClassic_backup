@@ -5097,47 +5097,48 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     }
     
 }
-- (NSString *) getSettingValueWithName:(NSString *)settingName
-{
-	NSString *settingValue = nil;
-    NSString *queryStatement;
-    sqlite3_stmt * statement;
-    if(appDelegate == nil)
-        appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
-    if(appDelegate.metaSyncRunning )
-    {
-        SMLog(@"Meta Sync is Running");
-        return  nil;
-    }
-    queryStatement = [NSString stringWithFormat:@"SELECT 'SettingsValue'.SVMXC__Internal_Value__c FROM 'SettingsValue' LEFT OUTER  JOIN 'SettingsInfo' ON ('SettingsInfo'.Id= 'SettingsValue'.'SVMXC__Setting_ID__c')  where SVMXC__Setting_Unique_ID__c ='%@'",settingName];
-        if (synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &statement, NULL) == SQLITE_OK)
-        {
-            if (synchronized_sqlite3_step(statement) == SQLITE_ROW)
-            {
-                const char * value = (char *)synchronized_sqlite3_column_text(statement, 0);
-                if ((value !=nil) && strlen(value))
-                {
-                    settingValue = [NSString stringWithUTF8String:value];   
-                }
-                else 
-                {
-                    SMLog(@"Value is nil");
-                    //return nil; vipin-db-
-                }
-            }
-            else 
-            {
-                SMLog(@"No Records Found");
-            }
-        }
-        else
-        {
-            SMLog(@"Query Execution Failed");
-        }
-    
-    synchronized_sqlite3_finalize(statement);
-    return settingValue;
-}
+//  Unused methods
+//- (NSString *) getSettingValueWithName:(NSString *)settingName
+//{
+//	NSString *settingValue = nil;
+//    NSString *queryStatement;
+//    sqlite3_stmt * statement;
+//    if(appDelegate == nil)
+//        appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
+//    if(appDelegate.metaSyncRunning )
+//    {
+//        SMLog(@"Meta Sync is Running");
+//        return  nil;
+//    }
+//    queryStatement = [NSString stringWithFormat:@"SELECT 'SettingsValue'.SVMXC__Internal_Value__c FROM 'SettingsValue' LEFT OUTER  JOIN 'SettingsInfo' ON ('SettingsInfo'.Id= 'SettingsValue'.'SVMXC__Setting_ID__c')  where SVMXC__Setting_Unique_ID__c ='%@'",settingName];
+//        if (synchronized_sqlite3_prepare_v2(appDelegate.db, [queryStatement UTF8String], -1, &statement, NULL) == SQLITE_OK)
+//        {
+//            if (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+//            {
+//                const char * value = (char *)synchronized_sqlite3_column_text(statement, 0);
+//                if ((value !=nil) && strlen(value))
+//                {
+//                    settingValue = [NSString stringWithUTF8String:value];   
+//                }
+//                else 
+//                {
+//                    SMLog(@"Value is nil");
+//                    //return nil; vipin-db-
+//                }
+//            }
+//            else 
+//            {
+//                SMLog(@"No Records Found");
+//            }
+//        }
+//        else
+//        {
+//            SMLog(@"Query Execution Failed");
+//        }
+//    
+//    synchronized_sqlite3_finalize(statement);
+//    return settingValue;
+//}
 - (void)updateUserGPSLocation
 {
     if(appDelegate == nil)
@@ -7748,21 +7749,22 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     
 }
 //Krishna OPDOCS requiredPdf
-- (void)deleteRequiredPdfRecord:(NSString *)recordId forProcessId:(NSString *)processId {
-    
-    NSString * query = [NSString stringWithFormat:@"DELETE FROM %@ where process_id = '%@' AND record_id = '%@'", SFDOC_REQUIRED_PDF,processId, recordId];
-	
-    char * err;
-	
-	if (synchronized_sqlite3_exec(appDelegate.db, [query UTF8String], NULL, NULL, &err) != SQLITE_OK)
-	{
-		SMLog(@"Failed to delete");
-        SMLog(@"METHOD:deleteEventNotRelatedToLoggedInUser");
-		SMLog(@"ERROR IN DELETE %s", err);
-        //[appDelegate printIfError:nil ForQuery:query type:DELETEQUERY];
-	}
-    
-}
+//  Unused methods
+//- (void)deleteRequiredPdfRecord:(NSString *)recordId forProcessId:(NSString *)processId {
+//    
+//    NSString * query = [NSString stringWithFormat:@"DELETE FROM %@ where process_id = '%@' AND record_id = '%@'", SFDOC_REQUIRED_PDF,processId, recordId];
+//	
+//    char * err;
+//	
+//	if (synchronized_sqlite3_exec(appDelegate.db, [query UTF8String], NULL, NULL, &err) != SQLITE_OK)
+//	{
+//		SMLog(@"Failed to delete");
+//        SMLog(@"METHOD:deleteEventNotRelatedToLoggedInUser");
+//		SMLog(@"ERROR IN DELETE %s", err);
+//        //[appDelegate printIfError:nil ForQuery:query type:DELETEQUERY];
+//	}
+//    
+//}
 //Krishna OPDOCS requiredSignature
 - (void) insertIntoRequiredSignature:(NSString *)attachmentId andSignatureId:(NSString*)signId {
     
@@ -13809,43 +13811,44 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     [self detachDatabase:appDelegate.db byName:@"tempSfm"];
 }
 
-
-- (NSMutableArray *) retreiveDataObjectTable
-{
-    NSMutableArray * array = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-    NSString * queryStatement = [NSString stringWithFormat:@"SELECT DISTINCT object_api_name FROM SFObjectField"];
-
-    sqlite3_stmt * stmt;
-    
-    if (synchronized_sqlite3_prepare_v2(self.tempDb, [queryStatement UTF8String], -1, &stmt, NULL) == SQLITE_OK){
-        
-        while (synchronized_sqlite3_step(stmt) == SQLITE_ROW) 
-        {
-            char * _object = (char *)sqlite3_column_text(stmt, 0);
-            
-            if (_object != nil && strlen(_object))
-                [array addObject:[NSString stringWithUTF8String:_object]];
-        }
-        
-    }
-    
-    synchronized_sqlite3_finalize(stmt);
-    
-    return array;
-    
-}
+//  Unused methods
+//- (NSMutableArray *) retreiveDataObjectTable
+//{
+//    NSMutableArray * array = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+//    NSString * queryStatement = [NSString stringWithFormat:@"SELECT DISTINCT object_api_name FROM SFObjectField"];
+//
+//    sqlite3_stmt * stmt;
+//    
+//    if (synchronized_sqlite3_prepare_v2(self.tempDb, [queryStatement UTF8String], -1, &stmt, NULL) == SQLITE_OK){
+//        
+//        while (synchronized_sqlite3_step(stmt) == SQLITE_ROW) 
+//        {
+//            char * _object = (char *)sqlite3_column_text(stmt, 0);
+//            
+//            if (_object != nil && strlen(_object))
+//                [array addObject:[NSString stringWithUTF8String:_object]];
+//        }
+//        
+//    }
+//    
+//    synchronized_sqlite3_finalize(stmt);
+//    
+//    return array;
+//    
+//}
 
 #pragma mark - END
 
 #pragma mark - Incremental Meta And Event
-- (void) callIncrementalMetasync
-{
-    if (popOver_view == nil)
-        popOver_view = [[PopoverButtons alloc] init];
-    
-    [popOver_view startSyncConfiguration];
-
-}
+//  Unused methods
+//- (void) callIncrementalMetasync
+//{
+//    if (popOver_view == nil)
+//        popOver_view = [[PopoverButtons alloc] init];
+//    
+//    [popOver_view startSyncConfiguration];
+//
+//}
 
 - (void) scheduleEventSync
 {
@@ -13856,54 +13859,54 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     
 }
 #pragma mark - END
-
-- (void) clearTempDatabase
-{
-    if (self.tempDb == nil)
-    {
-        [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
-    }
-
-    sqlite3_stmt *stmt;
-    NSMutableArray * tables = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
-    
-    NSString * queryStatemnt = [NSString stringWithFormat:@"SELECT * FROM sqlite_master WHERE type = 'table'"];
-    
-    if (synchronized_sqlite3_prepare_v2(self.tempDb, [queryStatemnt UTF8String], -1, &stmt, NULL) == SQLITE_OK)
-    {
-        while (synchronized_sqlite3_step(stmt) == SQLITE_ROW) 
-        {
-            char * _table = (char *) synchronized_sqlite3_column_text(stmt, 1);
-            
-            if ((_table != nil) && strlen(_table))
-            {
-                NSString * table_name = [NSString stringWithUTF8String:_table];
-                if ((![table_name isEqualToString:@"sqlite_sequence"]))
-                    [tables addObject:table_name];
-            }
-            
-        }
-    }
-    
-    synchronized_sqlite3_finalize(stmt);
-    
-    
-    char * err;
-    
-    for (int i = 0; i < [tables count]; i++)
-    {
-        queryStatemnt = [NSString stringWithFormat:@"DROP TABLE '%@'", [tables objectAtIndex:i]];
-        if (synchronized_sqlite3_exec(self.tempDb, [queryStatemnt UTF8String], NULL, NULL, &err) != SQLITE_OK)
-        {
-            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
-                [MyPopoverDelegate performSelector:@selector(throwException)];
-            SMLog(@"Failed to drop");
-            
-        }
-        
-    }    
-
-}
+//  Unused methods
+//- (void) clearTempDatabase
+//{
+//    if (self.tempDb == nil)
+//    {
+//        [self openDB:TEMPDATABASENAME type:DATABASETYPE1 sqlite:nil];
+//    }
+//
+//    sqlite3_stmt *stmt;
+//    NSMutableArray * tables = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+//    
+//    NSString * queryStatemnt = [NSString stringWithFormat:@"SELECT * FROM sqlite_master WHERE type = 'table'"];
+//    
+//    if (synchronized_sqlite3_prepare_v2(self.tempDb, [queryStatemnt UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+//    {
+//        while (synchronized_sqlite3_step(stmt) == SQLITE_ROW) 
+//        {
+//            char * _table = (char *) synchronized_sqlite3_column_text(stmt, 1);
+//            
+//            if ((_table != nil) && strlen(_table))
+//            {
+//                NSString * table_name = [NSString stringWithUTF8String:_table];
+//                if ((![table_name isEqualToString:@"sqlite_sequence"]))
+//                    [tables addObject:table_name];
+//            }
+//            
+//        }
+//    }
+//    
+//    synchronized_sqlite3_finalize(stmt);
+//    
+//    
+//    char * err;
+//    
+//    for (int i = 0; i < [tables count]; i++)
+//    {
+//        queryStatemnt = [NSString stringWithFormat:@"DROP TABLE '%@'", [tables objectAtIndex:i]];
+//        if (synchronized_sqlite3_exec(self.tempDb, [queryStatemnt UTF8String], NULL, NULL, &err) != SQLITE_OK)
+//        {
+//            if ([MyPopoverDelegate respondsToSelector:@selector(throwException)])
+//                [MyPopoverDelegate performSelector:@selector(throwException)];
+//            SMLog(@"Failed to drop");
+//            
+//        }
+//        
+//    }    
+//
+//}
 
 
 //RADHA 2012june08
@@ -14865,26 +14868,27 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
    
     
 }
--(NSString *)getSettingUniqueIdForSettingId:(NSString *)setting_id submodule_id:(NSString *)submodule_id
-{
-    sqlite3_stmt * statement;
-    NSString * Setting_Unique_ID__c = @"";
-    NSString  * select_stmt = [NSString stringWithFormat:@"SELECT SVMXC__Values__c FROM  SettingsInfo WHERE SVMXC__SettingID__c = '%@' AND SVMXC__SubmoduleID__c = '%@'",setting_id , submodule_id];
-    
-    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [select_stmt UTF8String], -1, &statement, NULL) == SQLITE_OK)
-    {
-        if (synchronized_sqlite3_step(statement) == SQLITE_ROW)
-        {
-            char * temp_field_name_value = (char *) synchronized_sqlite3_column_text(statement, 0);
-            if(temp_field_name_value != nil)
-            {
-                Setting_Unique_ID__c = [NSString stringWithUTF8String:temp_field_name_value];
-            }
-        }
-    }
-     synchronized_sqlite3_finalize(statement);
-    return Setting_Unique_ID__c;
-}
+//  Unused methods
+//-(NSString *)getSettingUniqueIdForSettingId:(NSString *)setting_id submodule_id:(NSString *)submodule_id
+//{
+//    sqlite3_stmt * statement;
+//    NSString * Setting_Unique_ID__c = @"";
+//    NSString  * select_stmt = [NSString stringWithFormat:@"SELECT SVMXC__Values__c FROM  SettingsInfo WHERE SVMXC__SettingID__c = '%@' AND SVMXC__SubmoduleID__c = '%@'",setting_id , submodule_id];
+//    
+//    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [select_stmt UTF8String], -1, &statement, NULL) == SQLITE_OK)
+//    {
+//        if (synchronized_sqlite3_step(statement) == SQLITE_ROW)
+//        {
+//            char * temp_field_name_value = (char *) synchronized_sqlite3_column_text(statement, 0);
+//            if(temp_field_name_value != nil)
+//            {
+//                Setting_Unique_ID__c = [NSString stringWithUTF8String:temp_field_name_value];
+//            }
+//        }
+//    }
+//     synchronized_sqlite3_finalize(statement);
+//    return Setting_Unique_ID__c;
+//}
 
 -(void)createEventTrigger:(NSString *)code_snippet;
 {

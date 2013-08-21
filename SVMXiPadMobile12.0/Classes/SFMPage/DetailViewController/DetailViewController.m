@@ -9870,10 +9870,11 @@ enum BizRuleConfirmViewStatus{
 }
 
 #pragma mark -  Action Delegate Method
--(void) stopActivityIndicator
-{
-    [activity stopAnimating];
-}
+//  Unused methods
+//-(void) stopActivityIndicator
+//{
+//    [activity stopAnimating];
+//}
 
 #pragma mark - SLA Clock Methods
 - (void) restorationTimeLeftFromDateTime:(NSString *)_restoration
@@ -13853,28 +13854,29 @@ enum BizRuleConfirmViewStatus{
 }
 
 //Abinash Fix
--(NSArray *)orderingAnArray:(NSArray *)array
-{
-    NSArray * arr = nil;
-    NSMutableArray * sortedArray = [[[NSMutableArray alloc] initWithArray:array] autorelease];
-    int i = 0;
-    for (i = 0; i < [sortedArray count] - 1; i++)
-    {
-        
-        for (int j = 0; j < ([sortedArray count] - (i +1)); j++)
-        {
-            NSString * label = [sortedArray objectAtIndex:j];
-            NSString * label1;
-            label1 = [sortedArray objectAtIndex:j+1];
-            if (strcmp([label UTF8String], [label1 UTF8String]) > 0)
-            {
-                [sortedArray exchangeObjectAtIndex:j withObjectAtIndex:j+1];
-            }
-        }
-    } 
-    arr = sortedArray;
-    return arr;
-}
+//  Unused Methods
+//-(NSArray *)orderingAnArray:(NSArray *)array
+//{
+//    NSArray * arr = nil;
+//    NSMutableArray * sortedArray = [[[NSMutableArray alloc] initWithArray:array] autorelease];
+//    int i = 0;
+//    for (i = 0; i < [sortedArray count] - 1; i++)
+//    {
+//        
+//        for (int j = 0; j < ([sortedArray count] - (i +1)); j++)
+//        {
+//            NSString * label = [sortedArray objectAtIndex:j];
+//            NSString * label1;
+//            label1 = [sortedArray objectAtIndex:j+1];
+//            if (strcmp([label UTF8String], [label1 UTF8String]) > 0)
+//            {
+//                [sortedArray exchangeObjectAtIndex:j withObjectAtIndex:j+1];
+//            }
+//        }
+//    } 
+//    arr = sortedArray;
+//    return arr;
+//}
 
 - (void) SeeMoreButtonClicked:(id)sender
 {
@@ -14738,12 +14740,12 @@ enum BizRuleConfirmViewStatus{
 //    [statusButton setBackgroundImage:[self getStatusImage] forState:UIControlStateNormal]; 
     //[appDelegate setSyncStatus:appDelegate.SyncStatus];
 }
-
-- (void) refreshStatusImage
-{
-//    [statusButton setBackgroundImage:[self getStatusImage] forState:UIControlStateNormal];
-    //[appDelegate setSyncStatus:appDelegate.SyncStatus];
-}
+//  Unused Methods
+//- (void) refreshStatusImage
+//{
+////    [statusButton setBackgroundImage:[self getStatusImage] forState:UIControlStateNormal];
+//    //[appDelegate setSyncStatus:appDelegate.SyncStatus];
+//}
 
 -(void)pageLevelEventsForEvent:(NSString *)event_Name
 {
@@ -15321,19 +15323,19 @@ enum BizRuleConfirmViewStatus{
     }
     return [someDictionary autorelease];
 }
-
-- (BOOL)checkIfAllAnyOneLinePresent {
-   
-    NSArray *detailRecords = [appDelegate.SFMPage objectForKey:@"details"];
-    for (int counter = 0; counter < [detailRecords count]; counter++) {
-        NSDictionary *oneDict = [detailRecords objectAtIndex:counter];
-        NSArray *valuesArra = [oneDict objectForKey:@"details_Values_Array"];
-        if ([valuesArra count] > 0) {
-             return YES;
-        }
-    }
-    return NO;
-}
+//  Unused Methods
+//- (BOOL)checkIfAllAnyOneLinePresent {
+//   
+//    NSArray *detailRecords = [appDelegate.SFMPage objectForKey:@"details"];
+//    for (int counter = 0; counter < [detailRecords count]; counter++) {
+//        NSDictionary *oneDict = [detailRecords objectAtIndex:counter];
+//        NSArray *valuesArra = [oneDict objectForKey:@"details_Values_Array"];
+//        if ([valuesArra count] > 0) {
+//             return YES;
+//        }
+//    }
+//    return NO;
+//}
 
 - (BOOL)recordsAvailableForPriceCalculation:(NSString *)workOrderLocalId {
     

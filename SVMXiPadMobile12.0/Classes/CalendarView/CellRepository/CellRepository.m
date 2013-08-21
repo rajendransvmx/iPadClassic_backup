@@ -12,11 +12,11 @@
 @implementation CellRepository
 
 @synthesize mView, label;
-
-- (void) setLabelText:(NSString *)_text
-{
-    label.text = _text;
-}
+//  Unused methods
+//- (void) setLabelText:(NSString *)_text
+//{
+//    label.text = _text;
+//}
 
 - (void) setColor:(UIColor *)color
 {

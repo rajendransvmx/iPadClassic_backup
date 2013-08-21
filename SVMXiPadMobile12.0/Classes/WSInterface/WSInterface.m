@@ -4506,15 +4506,16 @@ NSDate * syncCompleted;
 	
 
 }
-- (NSString *) getValueFromPlistForKey:(NSString *) key
-{
-    NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:SYNC_HISTORY];
-    
-    NSMutableDictionary * dict = [[[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST] autorelease];
-    
-    return [dict objectForKey:key];
-}
+//  Unused Methods
+//- (NSString *) getValueFromPlistForKey:(NSString *) key
+//{
+//    NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+//    NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:SYNC_HISTORY];
+//    
+//    NSMutableDictionary * dict = [[[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST] autorelease];
+//    
+//    return [dict objectForKey:key];
+//}
 
 -(void) Put:(NSString *)event_name
 {
@@ -6263,66 +6264,66 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     }
         
 }
-
-- (void) getTasksForStartDate:(NSString *)_startDate EndDate:(NSString *)_endDate
-{
-    // Essentials
-    @try{
-    [INTF_WebServicesDefServiceSvc initialize];
-    
-    INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = [appDelegate enableLogs];
-    
-    INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
-    sessionHeader.sessionId = [appDelegate.loginResult sessionId];
-    
-    INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
-    callOptions.client = nil;
-    
-    INTF_WebServicesDefServiceSvc_DebuggingHeader * debuggingHeader = [[[INTF_WebServicesDefServiceSvc_DebuggingHeader alloc] init] autorelease];
-    debuggingHeader.debugLevel = 0;
-    
-    INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * allowFieldTruncationHeader = [[[INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader alloc] init] autorelease];
-    allowFieldTruncationHeader.allowFieldTruncation = NO;
-    
-    // Get Tasks for date
-    INTF_WebServicesDefServiceSvc_INTF_Get_Tasks_WS * getTasks = [[[INTF_WebServicesDefServiceSvc_INTF_Get_Tasks_WS alloc] init] autorelease];
-    INTF_WebServicesDefServiceSvc_INTF_Request_For_Tasks * requestForTasks = [[[INTF_WebServicesDefServiceSvc_INTF_Request_For_Tasks alloc] init] autorelease];
-    
-    INTF_WebServicesDefServiceSvc_INTF_StringMap * objStrMap = nil;
-    
-    objStrMap = [[INTF_WebServicesDefServiceSvc_INTF_StringMap alloc] init];
-    objStrMap.key = CALENDAR_START_DATE;
-    objStrMap.value = _startDate; // @"2011-04-24";
-    [requestForTasks addTaskReqInfo:objStrMap];
-    [objStrMap release];
-    
-    objStrMap = [[INTF_WebServicesDefServiceSvc_INTF_StringMap alloc] init];
-    objStrMap.key = CALENDAR_END_DATE;
-    objStrMap.value = @"2011-07-02";
-    [requestForTasks addTaskReqInfo:objStrMap];
-    [objStrMap release];
-    
-    objStrMap = [[INTF_WebServicesDefServiceSvc_INTF_StringMap alloc] init];
-    objStrMap.key = USERID;
-    objStrMap.value = [appDelegate.loginResult userId];
-    [requestForTasks addTaskReqInfo:objStrMap];
-    [objStrMap release];
-
-    [getTasks setIPadReqTask:requestForTasks];
-    
-    //[[ZKServerSwitchboard switchboard] doCheckSession];
-    [binding INTF_Get_Tasks_WSAsyncUsingParameters:getTasks
-                                     SessionHeader:sessionHeader
-                                       CallOptions:callOptions
-                                   DebuggingHeader:debuggingHeader
-                        AllowFieldTruncationHeader:allowFieldTruncationHeader
-                                          delegate:self];
-    }@catch (NSException *exp) {
-        SMLog(@"Exception Name WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.name);
-        SMLog(@"Exception Reason WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.reason);
-    }
-}
+//  Unused Methods
+//- (void) getTasksForStartDate:(NSString *)_startDate EndDate:(NSString *)_endDate
+//{
+//    // Essentials
+//    @try{
+//    [INTF_WebServicesDefServiceSvc initialize];
+//    
+//    INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
+//    binding.logXMLInOut = [appDelegate enableLogs];
+//    
+//    INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
+//    sessionHeader.sessionId = [appDelegate.loginResult sessionId];
+//    
+//    INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
+//    callOptions.client = nil;
+//    
+//    INTF_WebServicesDefServiceSvc_DebuggingHeader * debuggingHeader = [[[INTF_WebServicesDefServiceSvc_DebuggingHeader alloc] init] autorelease];
+//    debuggingHeader.debugLevel = 0;
+//    
+//    INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * allowFieldTruncationHeader = [[[INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader alloc] init] autorelease];
+//    allowFieldTruncationHeader.allowFieldTruncation = NO;
+//    
+//    // Get Tasks for date
+//    INTF_WebServicesDefServiceSvc_INTF_Get_Tasks_WS * getTasks = [[[INTF_WebServicesDefServiceSvc_INTF_Get_Tasks_WS alloc] init] autorelease];
+//    INTF_WebServicesDefServiceSvc_INTF_Request_For_Tasks * requestForTasks = [[[INTF_WebServicesDefServiceSvc_INTF_Request_For_Tasks alloc] init] autorelease];
+//    
+//    INTF_WebServicesDefServiceSvc_INTF_StringMap * objStrMap = nil;
+//    
+//    objStrMap = [[INTF_WebServicesDefServiceSvc_INTF_StringMap alloc] init];
+//    objStrMap.key = CALENDAR_START_DATE;
+//    objStrMap.value = _startDate; // @"2011-04-24";
+//    [requestForTasks addTaskReqInfo:objStrMap];
+//    [objStrMap release];
+//    
+//    objStrMap = [[INTF_WebServicesDefServiceSvc_INTF_StringMap alloc] init];
+//    objStrMap.key = CALENDAR_END_DATE;
+//    objStrMap.value = @"2011-07-02";
+//    [requestForTasks addTaskReqInfo:objStrMap];
+//    [objStrMap release];
+//    
+//    objStrMap = [[INTF_WebServicesDefServiceSvc_INTF_StringMap alloc] init];
+//    objStrMap.key = USERID;
+//    objStrMap.value = [appDelegate.loginResult userId];
+//    [requestForTasks addTaskReqInfo:objStrMap];
+//    [objStrMap release];
+//
+//    [getTasks setIPadReqTask:requestForTasks];
+//    
+//    //[[ZKServerSwitchboard switchboard] doCheckSession];
+//    [binding INTF_Get_Tasks_WSAsyncUsingParameters:getTasks
+//                                     SessionHeader:sessionHeader
+//                                       CallOptions:callOptions
+//                                   DebuggingHeader:debuggingHeader
+//                        AllowFieldTruncationHeader:allowFieldTruncationHeader
+//                                          delegate:self];
+//    }@catch (NSException *exp) {
+//        SMLog(@"Exception Name WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.name);
+//        SMLog(@"Exception Reason WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.reason);
+//    }
+//}
 
 - (void) getPageLayoutWithProcessId:(NSString *)processId RecordId:(NSString *)recordId
 {
@@ -6635,54 +6636,54 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 }
 
 //WorkOrderMapView
+//  Unused Methods
+//- (void) getWorkOrderMapViewForWorkOrderId:(NSString *)workOrderId
+//{
+//    //Essentials
+//    [INTF_WebServicesDefServiceSvc initialize];
+//    
+//    INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
+//    binding.logXMLInOut = [appDelegate enableLogs];
+//    
+//    INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
+//    callOptions.client = nil;
+//    
+//    INTF_WebServicesDefServiceSvc_DebuggingHeader * debuggingHeader = [[[INTF_WebServicesDefServiceSvc_DebuggingHeader alloc] init] autorelease];
+//    debuggingHeader.debugLevel = 0;
+//    
+//    INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
+//    sessionHeader.sessionId = [appDelegate.loginResult sessionId];
+//    
+//    INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * allowFieldTruncationHeader = [[[INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader alloc] init] autorelease];
+//    allowFieldTruncationHeader.allowFieldTruncation = NO;
+//    
+//    //Get MapView Details
+//    
+//    INTF_WebServicesDefServiceSvc_INTF_Get_WorkOrderMapView_WS * getWordOrderMapView = [[[INTF_WebServicesDefServiceSvc_INTF_Get_WorkOrderMapView_WS alloc] init] autorelease];
+//    
+//    INTF_WebServicesDefServiceSvc_INTF_Request * request = [[[INTF_WebServicesDefServiceSvc_INTF_Request alloc] init] autorelease];
+//    
+//    INTF_WebServicesDefServiceSvc_INTF_StringMap * stringMap = [[INTF_WebServicesDefServiceSvc_INTF_StringMap alloc] init];
+//    
+//    stringMap.key = @"WORKORDERID";
+//    stringMap.value = workOrderId;
+//    
+//    [request addStringMap:stringMap];
+//    
+//    [stringMap release];
+//    
+//    [getWordOrderMapView setRequest:request];
+//    
+//    //[[ZKServerSwitchboard switchboard] doCheckSession];
+//    [binding INTF_Get_WorkOrderMapView_WSAsyncUsingParameters:getWordOrderMapView
+//                                                SessionHeader:sessionHeader
+//                                                  CallOptions:callOptions
+//                                              DebuggingHeader:debuggingHeader
+//                                   AllowFieldTruncationHeader:allowFieldTruncationHeader
+//                                                     delegate:self];
+//    
+//}
 
-- (void) getWorkOrderMapViewForWorkOrderId:(NSString *)workOrderId
-{
-    //Essentials
-    [INTF_WebServicesDefServiceSvc initialize];
-    
-    INTF_WebServicesDefBinding * binding = [INTF_WebServicesDefServiceSvc INTF_WebServicesDefBindingWithServer:appDelegate.currentServerUrl];
-    binding.logXMLInOut = [appDelegate enableLogs];
-    
-    INTF_WebServicesDefServiceSvc_CallOptions * callOptions = [[[INTF_WebServicesDefServiceSvc_CallOptions alloc] init] autorelease];
-    callOptions.client = nil;
-    
-    INTF_WebServicesDefServiceSvc_DebuggingHeader * debuggingHeader = [[[INTF_WebServicesDefServiceSvc_DebuggingHeader alloc] init] autorelease];
-    debuggingHeader.debugLevel = 0;
-    
-    INTF_WebServicesDefServiceSvc_SessionHeader * sessionHeader = [[[INTF_WebServicesDefServiceSvc_SessionHeader alloc] init] autorelease];
-    sessionHeader.sessionId = [appDelegate.loginResult sessionId];
-    
-    INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader * allowFieldTruncationHeader = [[[INTF_WebServicesDefServiceSvc_AllowFieldTruncationHeader alloc] init] autorelease];
-    allowFieldTruncationHeader.allowFieldTruncation = NO;
-    
-    //Get MapView Details
-    
-    INTF_WebServicesDefServiceSvc_INTF_Get_WorkOrderMapView_WS * getWordOrderMapView = [[[INTF_WebServicesDefServiceSvc_INTF_Get_WorkOrderMapView_WS alloc] init] autorelease];
-    
-    INTF_WebServicesDefServiceSvc_INTF_Request * request = [[[INTF_WebServicesDefServiceSvc_INTF_Request alloc] init] autorelease];
-    
-    INTF_WebServicesDefServiceSvc_INTF_StringMap * stringMap = [[INTF_WebServicesDefServiceSvc_INTF_StringMap alloc] init];
-    
-    stringMap.key = @"WORKORDERID";
-    stringMap.value = workOrderId;
-    
-    [request addStringMap:stringMap];
-    
-    [stringMap release];
-    
-    [getWordOrderMapView setRequest:request];
-    
-    //[[ZKServerSwitchboard switchboard] doCheckSession];
-    [binding INTF_Get_WorkOrderMapView_WSAsyncUsingParameters:getWordOrderMapView
-                                                SessionHeader:sessionHeader
-                                                  CallOptions:callOptions
-                                              DebuggingHeader:debuggingHeader
-                                   AllowFieldTruncationHeader:allowFieldTruncationHeader
-                                                     delegate:self];
-    
-}
-                               
 - (void) getLookUpFieldsWithKeyword:(NSString *)keyword forObject:(NSString *)objectName returnTo:(id)caller setting:(BOOL)idAvailable overrideRelatedLookup:(NSNumber *)Override_Related_Lookup lookupContext:(NSString *)Lookup_Context lookupQuery:(NSString *)Lookup_Query_Field
 {
     lookupCaller = caller;
@@ -11864,12 +11865,12 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
     }
     return SF_id;
 }
-
--(NSString *)escapeSIngleQute:(NSString *)jsonString
-{
-    jsonString = [jsonString stringByReplacingOccurrencesOfString:@"'"  withString:@"''"];
-    return jsonString;
-}
+//  Unused Methods
+//-(NSString *)escapeSIngleQute:(NSString *)jsonString
+//{
+//    jsonString = [jsonString stringByReplacingOccurrencesOfString:@"'"  withString:@"''"];
+//    return jsonString;
+//}
 
 -(NSMutableArray *)getIdsFromJsonString:(NSString *)jsonstrings
 {
@@ -12105,10 +12106,11 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 }
 
 #pragma mark - GetAdditional object definitions
-- (void) getAdditionalObjectdefinition
-{
-    
-}
+//  Unused Methods
+//- (void) getAdditionalObjectdefinition
+//{
+//    
+//}
 
 #pragma mark WSInterface Layer Helper Methods
 

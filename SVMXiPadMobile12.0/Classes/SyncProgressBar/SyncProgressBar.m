@@ -56,52 +56,53 @@
  */
 
 static SyncProgressBar *singleInstance = NULL;
-+ (SyncProgressBar*)getInstance
-{
-    if(singleInstance == NULL)
-    {
-        singleInstance = [[SyncProgressBar alloc] initWithFrame:CGRectMake(0, 0, 26, 26)];
-    }
-    
-    return singleInstance;
-}
-
-- (BOOL)startWithPriority:(Priority)priority forObject:(id)sender withTextHidden:(BOOL)hideText
-{
-    BOOL didStart = NO;
-    
-    if(sender == nil) return didStart;
-    
-    [progressIndicator stopAnimating];
-    [delegate progressBarDidStopUpdating:self];
-    delegate = sender;
-    
-    currentPriority = priority;
-    
-    if(priority == eHigh)
-    {
-        [self setPercentageTextHidden:YES];
-        [progressIndicator setImage:[UIImage imageNamed:@"sync-orange.jpg"]];
-        
-        // set animation image and start animating
-        NSMutableArray *animArray = [NSMutableArray array];
-        for (int i = 1; i <= 26; i++) {
-            [animArray addObject:[UIImage imageNamed:[NSString stringWithFormat:@"ani%d.png",i]]];
-        }
-        progressIndicator.animationImages = animArray;
-        [progressIndicator startAnimating];
-        
-    }
-    
-    if(priority == eMedium)
-    {
-        [self setPercentageTextHidden:hideText];
-        [self setProgressBarState:eStart forObject:sender forProgress:0];
-        didStart = YES;
-    }
-    
-    return didStart;
-}
+//  Unused Methods
+//+ (SyncProgressBar*)getInstance
+//{
+//    if(singleInstance == NULL)
+//    {
+//        singleInstance = [[SyncProgressBar alloc] initWithFrame:CGRectMake(0, 0, 26, 26)];
+//    }
+//    
+//    return singleInstance;
+//}
+//  Unused Methods
+//- (BOOL)startWithPriority:(Priority)priority forObject:(id)sender withTextHidden:(BOOL)hideText
+//{
+//    BOOL didStart = NO;
+//    
+//    if(sender == nil) return didStart;
+//    
+//    [progressIndicator stopAnimating];
+////    [delegate progressBarDidStopUpdating:self];//  Unused Methods
+//    delegate = sender;
+//    
+//    currentPriority = priority;
+//    
+//    if(priority == eHigh)
+//    {
+//        [self setPercentageTextHidden:YES];
+//        [progressIndicator setImage:[UIImage imageNamed:@"sync-orange.jpg"]];
+//        
+//        // set animation image and start animating
+//        NSMutableArray *animArray = [NSMutableArray array];
+//        for (int i = 1; i <= 26; i++) {
+//            [animArray addObject:[UIImage imageNamed:[NSString stringWithFormat:@"ani%d.png",i]]];
+//        }
+//        progressIndicator.animationImages = animArray;
+//        [progressIndicator startAnimating];
+//        
+//    }
+//    
+//    if(priority == eMedium)
+//    {
+//        [self setPercentageTextHidden:hideText];
+//        [self setProgressBarState:eStart forObject:sender forProgress:0];
+//        didStart = YES;
+//    }
+//    
+//    return didStart;
+//}
 
 - (void)stopProgressBarAnimation
 {
@@ -111,67 +112,71 @@ static SyncProgressBar *singleInstance = NULL;
     }
 }
 
-- (void)setProgressBarState:(ProgressBarState)state forObject:(id)sender forProgress:(NSUInteger)percent
-{
-    if(sender != delegate) return;
-    
-    switch (state) {
-        case eStart:
-            currentState = eStart;
-            [self updateProgress:percent forObject:sender];
-            break;
-        case ePause:
-            currentState = ePause;
-            currentPriority = eLow;
-            [self stopProgressBarAnimation];
-            [self.progressIndicator setImage:[UIImage imageNamed:@"sync-orange.jpg"]];
-            break;
-        case eResume:
-            currentState = eResume;
-            [self updateProgress:percent forObject:sender];
-            break;
-        case eStop:
-            currentState = eStop;
-            currentPriority = eLow;
-            [self stopProgressBarAnimation];
-            [self.progressIndicator setImage:[UIImage imageNamed:@"sync-green.jpg"]];
-            break;
-        case eRunning:
-            currentState = eRunning;
-            break;
-        case eCompleted:
-            currentState = eCompleted;
-            currentPriority = eLow;
-            [self stopProgressBarAnimation];
-            [self.progressIndicator setImage:[UIImage imageNamed:@"sync-green.jpg"]];
-            break;
-        case eFailed:
-            currentState = eFailed;
-            currentPriority = eLow;
-            [self stopProgressBarAnimation];
-            [self.progressIndicator setImage:[UIImage imageNamed:@"sync-red.jpg"]];
-            break;
-        default:
-            break;
-    }
-    
-    currentState = state;
-}
+//  Unused Methods
+//- (void)setProgressBarState:(ProgressBarState)state forObject:(id)sender forProgress:(NSUInteger)percent
+//{
+//    if(sender != delegate) return;
+//    
+//    switch (state) {
+//        case eStart:
+//            currentState = eStart;
+//            [self updateProgress:percent forObject:sender];
+//            break;
+//        case ePause:
+//            currentState = ePause;
+//            currentPriority = eLow;
+//            [self stopProgressBarAnimation];
+//            [self.progressIndicator setImage:[UIImage imageNamed:@"sync-orange.jpg"]];
+//            break;
+//        case eResume:
+//            currentState = eResume;
+//            [self updateProgress:percent forObject:sender];
+//            break;
+//        case eStop:
+//            currentState = eStop;
+//            currentPriority = eLow;
+//            [self stopProgressBarAnimation];
+//            [self.progressIndicator setImage:[UIImage imageNamed:@"sync-green.jpg"]];
+//            break;
+//        case eRunning:
+//            currentState = eRunning;
+//            break;
+//        case eCompleted:
+//            currentState = eCompleted;
+//            currentPriority = eLow;
+//            [self stopProgressBarAnimation];
+//            [self.progressIndicator setImage:[UIImage imageNamed:@"sync-green.jpg"]];
+//            break;
+//        case eFailed:
+//            currentState = eFailed;
+//            currentPriority = eLow;
+//            [self stopProgressBarAnimation];
+//            [self.progressIndicator setImage:[UIImage imageNamed:@"sync-red.jpg"]];
+//            break;
+//        default:
+//            break;
+//    }
+//    
+//    currentState = state;
+//}
 
-- (ProgressBarState)progressBarState
-{
-    return currentState;
-}
+//  Unused Methods
+//- (ProgressBarState)progressBarState
+//{
+//    return currentState;
+//}
 
-- (void)setPercentageTextHidden:(BOOL)hidden
-{
-    percentage.hidden = hidden;
-}
+//  Unused Methods
+//- (void)setPercentageTextHidden:(BOOL)hidden
+//{
+//    percentage.hidden = hidden;
+//}
 
-- (BOOL)isPercentageTextHidden
-{
-    return percentage.hidden;
-}
+//  Unused Methods
+//- (BOOL)isPercentageTextHidden
+//{
+//    return percentage.hidden;
+//}
 
 - (void)updateProgress:(NSInteger)percent forObject:(id)sender
 {

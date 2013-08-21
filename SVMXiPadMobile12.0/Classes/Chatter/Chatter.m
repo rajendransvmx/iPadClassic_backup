@@ -502,35 +502,36 @@ extern void SVMXLog(NSString *format, ...);
     [appDelegate.calDataBase insertImageDataInChatterDetailsForUserName:userName WithData:data];
 }
 
-- (void) didGetImagesForIds:(ZKQueryResult *)result error:(NSError *)error context:(id)context
-{
-    userRecordArray = (NSArray *)context;
-    [userRecordArray retain];
-    @try
-    {
-    NSArray * array = [result records];
-    for (int i = 0; i < [array count]; i++)
-    {
-        ZKSObject * obj = [array objectAtIndex:i];
-        NSString * imageDataString = [[obj fields] objectForKey:@"Body"];
-        NSData * imageData = [Base64 decode:imageDataString];
-        NSString * username = [[obj fields] objectForKey:@"Name"];
-        // Save the image data
-        NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-        NSString * documentsDirectoryPath = [paths objectAtIndex:0];
-        NSString * filePath = [documentsDirectoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@%@", username, @".png"]];
-        NSFileManager * fileManager = [NSFileManager defaultManager];
-        // Create file
-        [fileManager createFileAtPath:filePath contents:imageData attributes:nil];
-    }
-     }@catch (NSException *exp) {
-        SMLog(@"Exception Name Chatter :didGetImagesForIds %@",exp.name);
-        SMLog(@"Exception Reason Chatter :didGetImagesForIds %@",exp.reason);
-         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
-    }
-    if (chatterArray != nil)
-        [self loadChatter];
-}
+//  Unused Methods
+//- (void) didGetImagesForIds:(ZKQueryResult *)result error:(NSError *)error context:(id)context
+//{
+//    userRecordArray = (NSArray *)context;
+//    [userRecordArray retain];
+//    @try
+//    {
+//    NSArray * array = [result records];
+//    for (int i = 0; i < [array count]; i++)
+//    {
+//        ZKSObject * obj = [array objectAtIndex:i];
+//        NSString * imageDataString = [[obj fields] objectForKey:@"Body"];
+//        NSData * imageData = [Base64 decode:imageDataString];
+//        NSString * username = [[obj fields] objectForKey:@"Name"];
+//        // Save the image data
+//        NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+//        NSString * documentsDirectoryPath = [paths objectAtIndex:0];
+//        NSString * filePath = [documentsDirectoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@%@", username, @".png"]];
+//        NSFileManager * fileManager = [NSFileManager defaultManager];
+//        // Create file
+//        [fileManager createFileAtPath:filePath contents:imageData attributes:nil];
+//    }
+//     }@catch (NSException *exp) {
+//        SMLog(@"Exception Name Chatter :didGetImagesForIds %@",exp.name);
+//        SMLog(@"Exception Reason Chatter :didGetImagesForIds %@",exp.reason);
+//         [appDelegate CustomizeAletView:nil alertType:APPLICATION_ERROR Dict:nil exception:exp];
+//    }
+//    if (chatterArray != nil)
+//        [self loadChatter];
+//}
 
 - (NSString *) getUserNameFromArray:(NSArray *)userArray WithId:(NSString *)usrString
 {
@@ -601,36 +602,37 @@ extern void SVMXLog(NSString *format, ...);
                [NSTimer scheduledTimerWithTimeInterval:TIMERINTERVAL target:self selector:@selector(fetchPosts) userInfo:nil repeats:NO];
 }
 
-- (IBAction) postNewChat
-{
-    if (![appDelegate isInternetConnectionAvailable])
-    {
-        [activity stopAnimating];
-        appDelegate.shouldShowConnectivityStatus = TRUE;
-        [appDelegate displayNoInternetAvailable];
-        return;
-    }
-    
-    didEditRow = NO;
-    
-    [newPostText resignFirstResponder];
-
-    ZKSObject * cObj = [[ZKSObject alloc] initWithType:@"FeedPost"];
-
-    [cObj setFieldValue:newPostText.text field:@"Body"];
-    [cObj setFieldValue:productId field:@"ParentId"];
-
-    NSArray *objects = [[NSArray alloc] initWithObjects:cObj, nil];
-
-    didRunOperation = YES;
-    [iOSObject create:objects];
-    
-    // Analyser
-    [objects release];
-    [cObj release];
-    
-    newPostText.text = @"";
-}
+//  Unused methods
+//- (IBAction) postNewChat
+//{
+//    if (![appDelegate isInternetConnectionAvailable])
+//    {
+//        [activity stopAnimating];
+//        appDelegate.shouldShowConnectivityStatus = TRUE;
+//        [appDelegate displayNoInternetAvailable];
+//        return;
+//    }
+//    
+//    didEditRow = NO;
+//    
+//    [newPostText resignFirstResponder];
+//
+//    ZKSObject * cObj = [[ZKSObject alloc] initWithType:@"FeedPost"];
+//
+//    [cObj setFieldValue:newPostText.text field:@"Body"];
+//    [cObj setFieldValue:productId field:@"ParentId"];
+//
+//    NSArray *objects = [[NSArray alloc] initWithObjects:cObj, nil];
+//
+//    didRunOperation = YES;
+//    [iOSObject create:objects];
+//    
+//    // Analyser
+//    [objects release];
+//    [cObj release];
+//    
+//    newPostText.text = @"";
+//}
 
 - (void) didCreateObjects:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
 {
@@ -872,17 +874,18 @@ extern void SVMXLog(NSString *format, ...);
     return 1;
 }
 
-- (NSMutableArray *) getTableDataFromChatterArray:(NSMutableArray *)_chatterArray
-{
-    NSMutableArray * tableArray = [[[NSMutableArray alloc] initWithCapacity:[chatterArray count]] autorelease];
-    for (int i = 0; i < [chatterArray count]; i++)
-    {
-        // Analyser
-        [tableArray addObject:[chatterArray objectAtIndex:i]];
-        // [tableArray addObject:[[chatterArray objectAtIndex:i] retain]];
-    }
-    return tableArray;
-}
+//  Unused methods
+//- (NSMutableArray *) getTableDataFromChatterArray:(NSMutableArray *)_chatterArray
+//{
+//    NSMutableArray * tableArray = [[[NSMutableArray alloc] initWithCapacity:[chatterArray count]] autorelease];
+//    for (int i = 0; i < [chatterArray count]; i++)
+//    {
+//        // Analyser
+//        [tableArray addObject:[chatterArray objectAtIndex:i]];
+//        // [tableArray addObject:[[chatterArray objectAtIndex:i] retain]];
+//    }
+//    return tableArray;
+//}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {

@@ -99,11 +99,11 @@
 
 
 - (UIColor *) colorForHex:(NSString *)hexColor;
-- (void) _didSelectRow:(NSInteger )row ForSection:(NSInteger )section;
+//- (void) _didSelectRow:(NSInteger )row ForSection:(NSInteger )section;//  Unused methods
 - (void) headerSelected;
 //- (void) rowSelected;
 //- (void) showSFMWithProcessId:(NSString *)processId recordId:(NSString *)recordId objectName:(NSString *)objectName;
-- (void) deleteUndoneRecords;
+//- (void) deleteUndoneRecords;//  Unused methods
 - (NSString *) getlocalIdForSFId:(NSString *)SFId ForObject:(NSString *)Objectname;
 - (UIImage *) getStatusImage;
 

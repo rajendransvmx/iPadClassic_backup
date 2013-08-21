@@ -59,7 +59,7 @@ SelectProcessControllerDelegate,UITableViewDataSource,UITableViewDelegate>
 @property (nonatomic, retain) NSMutableDictionary *errorDictonary;
 @property (nonatomic, assign) BOOL isErrorDisplayed;
 
-- (void) receivedErrorFromAPICall:(NSError *)err;
+//- (void) receivedErrorFromAPICall:(NSError *)err;//  Unused Methods
 - (void) describeSObject:(NSString *)sObjectType;
 - (void) describeSObjectResult:(id)result error:(NSError *)error context:(id)context;
 - (void) describeSObjects:(NSArray *)sObjectTypes;

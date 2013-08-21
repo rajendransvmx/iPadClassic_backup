@@ -631,15 +631,17 @@ extern void SVMXLog(NSString *format, ...);
     return nil;
 }
 
-- (CGFloat) getPortraitHeight
-{
-    return duration * EVENTPORTRAITHEIGHT * 2 + (duration - 1) * kGAP;
-}
+//  Unused methods
+//- (CGFloat) getPortraitHeight
+//{
+//    return duration * EVENTPORTRAITHEIGHT * 2 + (duration - 1) * kGAP;
+//}
 
-- (CGFloat) getPortraitWidth
-{
-    return EVENTPORTRAITWIDTH;
-}
+//  Unused methods
+//- (CGFloat) getPortraitWidth
+//{
+//    return EVENTPORTRAITWIDTH;
+//}
 
 - (CGFloat) getLandscapeHeight
 {

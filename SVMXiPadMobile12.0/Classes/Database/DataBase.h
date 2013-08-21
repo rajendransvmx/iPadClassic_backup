@@ -117,7 +117,7 @@ PopoverButtons *popOver_view;
 //- initWithDBName:(NSString *)name type:(NSString *)type sqlite:(sqlite3 *)db;
 
 //sahana
--(NSString *)getSettingUniqueIdForSettingId:(NSString *)setting_id submodule_id:(NSString *)submodule_id;
+//-(NSString *)getSettingUniqueIdForSettingId:(NSString *)setting_id submodule_id:(NSString *)submodule_id;//  Unused methods
 -(void)getCodeSnippetSetting;
 -(void)createEventTrigger:(NSString *)code_snippet;
 -(BOOL)isHeaderRecord:(NSString*)objectName;
@@ -183,7 +183,7 @@ PopoverButtons *popOver_view;
 //RTDependentPicklist
 - (void) insertValuesInToRTPicklistTableForObject:objects Values:(NSMutableDictionary *)recordTypeDict;
 
-//- (NSMutableArray *) collectAllPicklistField;
+//- (NSMutableArray *) collectAllPicklistField;//  Unused methods
 
 //Method to create extra table for trouble shooting and summary
 - (void) createTableForSummaryAndTroubleShooting;
@@ -200,7 +200,7 @@ PopoverButtons *popOver_view;
 - (NSString *) getFieldLabelForApiName:(NSString *)apiName;
 - (NSString *) getApiNameFromFieldLabel:(NSString *)apiName;
 - (NSString*) getLabelFromApiName:(NSString*)api_name objectName:(NSString*) objectName;
-//- (NSString *) getSearchQueryPartFromArray:(NSArray *)objectsArray withSearchString:(NSString *)searchString withUserData:(NSString *)criteriaString;
+//- (NSString *) getSearchQueryPartFromArray:(NSArray *)objectsArray withSearchString:(NSString *)searchString withUserData:(NSString *)criteriaString;//  Unused methods
 - (NSString *) getSearchCriteriaStringFromUserData:(NSString *)criteriaString withSearchString:searchString;
 - (NSArray *) getConfigurationForProcess:(NSString *) processName ;
 -(NSString*) getRefrenceToField:(NSString*)objectName relationship:(NSString*) relationship_name;
@@ -209,7 +209,7 @@ PopoverButtons *popOver_view;
 
 // Location Ping
 - (void) createUserGPSTable;
-- (NSString *) getSettingValueWithName:(NSString *)settingName;
+//- (NSString *) getSettingValueWithName:(NSString *)settingName;//  Unused methods
 //- (void) deleteSequenceofTable;
 - (void) insertrecordIntoUserGPSLog:(NSDictionary *)locationInfo;
 - (void) purgeLocationPingTable;
@@ -276,7 +276,7 @@ PopoverButtons *popOver_view;
 - (void) removecache;
 
 //May-24-2011
-//- (void) startMetaSync;
+//- (void) startMetaSync;//  Unused methods
 
 - (NSString *) getDataTypeFor:(NSString *)objectName inArray:(NSArray *)dataArray;
 
@@ -314,16 +314,16 @@ PopoverButtons *popOver_view;
 - (void) purgingDataOnSyncSettings:(NSString *)Date tableName:(NSString *)tableName Action:(NSString*)Action;
 
 
-- (void) callIncrementalMetasync;
+//- (void) callIncrementalMetasync;//  Unused methods
 
-- (void) clearTempDatabase;
+//- (void) clearTempDatabase;//  Unused methods
 
 //DATA SYNC
-//- (void) startFullDataSync;
-//- (void) copyMetaSyncDataInToSfm;
-- (NSMutableArray *) retreiveDataObjectTable;
+//- (void) startFullDataSync;//  Unused methods
+//- (void) copyMetaSyncDataInToSfm;//  Unused methods
+//- (NSMutableArray *) retreiveDataObjectTable;//  Unused methods
 - (void) copyMetaTableInToSfm:(NSMutableArray *)metaTable;
-//- (void) startDataSync;
+//- (void) startDataSync;//  Unused methods
 
 //RADHA only event sync
 - (BOOL) startEventSync;
@@ -373,7 +373,7 @@ PopoverButtons *popOver_view;
 - (BOOL) checkIfConflictsExistsForEvent:(NSString *)SF_Id objectName:(NSString *)objectName local_id:(NSString *)local_id;
 - (BOOL) checkIfChildConflictexist:(NSString *)objectName sfId:(NSString *)SF_Id;
 - (NSString *) getChildColumnForParent:(NSString *)objectName;
-//- (NSString *) getchildSfIdOrLocalId:(NSString *)tablename Id:(NSString *)Id  parentColumn:(NSString *)parentColumn  Key:(NSString *)key;
+//- (NSString *) getchildSfIdOrLocalId:(NSString *)tablename Id:(NSString *)Id  parentColumn:(NSString *)parentColumn  Key:(NSString *)key;//  Unused methods
 - (BOOL) checkIfConflictsExistsForEventWithLocalId:(NSString *)local_id objectName:(NSString *)objectName;
 - (NSMutableString *) getAllTheConflictRecordsForObject:(NSString *)ObjectName local_id:(NSString *)local_id;
 - (BOOL) checkIfConflictsExistsForEventWithSFID:(NSString *)sfid objectName:(NSString *)objectName;
@@ -445,7 +445,7 @@ PopoverButtons *popOver_view;
 - (NSString *) getProcessNameForProcesId:(NSString *)processId;
 //Krishna OPDocs
 - (void) insertIntoRequiredPdf:(NSString *)recordId processId:(NSString *)processId andAttachmentId:(NSString *)attachmentId;
-- (void)deleteRequiredPdfRecord:(NSString *)recordId forProcessId:(NSString *)processId;
+//- (void)deleteRequiredPdfRecord:(NSString *)recordId forProcessId:(NSString *)processId;//  Unused methods
 - (NSMutableArray *) getAllRequiredPdf;
 - (void)deleteRequiredPdfForAttachement:(NSString *)attachementId;
 - (void) insertIntoRequiredSignature:(NSString *)attachmentId andSignatureId:(NSString*)signId;

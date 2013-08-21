@@ -2038,24 +2038,25 @@ extern void SVMXLog(NSString *format, ...);
 	
 }
 
-- (void) showJobWithEventDetail:(ZKSObject *)eventDetail WorkOrderDetail:(NSDictionary *)workOrderDetail
-{
-    
-}
+//- (void) showJobWithEventDetail:(ZKSObject *)eventDetail WorkOrderDetail:(NSDictionary *)workOrderDetail
+//{
+//    
+//}
 
-- (void) finishedLoading
-{
-    NSArray * array = [rightPane subviews];
-    for (int i = 0; i < [array count]; i++)
-    {
-        [[array objectAtIndex:i] removeFromSuperview];
-    }    
-    
-    [eventViewArray removeAllObjects];
-    [eventPositionArray removeAllObjects];
-    
-    [activity stopAnimating];
-}
+//  Unused methods
+//- (void) finishedLoading
+//{
+//    NSArray * array = [rightPane subviews];
+//    for (int i = 0; i < [array count]; i++)
+//    {
+//        [[array objectAtIndex:i] removeFromSuperview];
+//    }    
+//    
+//    [eventViewArray removeAllObjects];
+//    [eventPositionArray removeAllObjects];
+//    
+//    [activity stopAnimating];
+//}
 
 - (BOOL)tableView:(UITableView *)tableView shouldIndentWhileEditingRowAtIndexPath:(NSIndexPath *)indexPath
 {

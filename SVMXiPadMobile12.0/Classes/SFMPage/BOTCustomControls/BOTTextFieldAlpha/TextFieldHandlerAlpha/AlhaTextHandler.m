@@ -131,10 +131,10 @@ extern void SVMXLog(NSString *format, ...);
 
     return YES;
 }
-
-- (void) releaseTextHandlerPO
-{
-    [POC release];
-}
+//  Unused Methods
+//- (void) releaseTextHandlerPO
+//{
+//    [POC release];
+//}
 
 @end

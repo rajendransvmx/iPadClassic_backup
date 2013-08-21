@@ -32,8 +32,8 @@
 - (void) didSubmitAction:(NSString *)processId processTitle:(NSString *)processTitle;
 - (void) didInvokeWebService:(NSString *)method event_name:(NSString *)event_name;
 - (void) BackOnSave:(NSString *) tergetCall;
-- (void)  OnQuickSave:(NSString *) tergetCall;
-- (void) stopActivityIndicator;
+//- (void)  OnQuickSave:(NSString *) tergetCall;//  Unused methods
+//- (void) stopActivityIndicator;//  Unused methods
 - (void) dismissActionMenu;
 -(void) offlineActions:(NSDictionary *)buttonDict;
 

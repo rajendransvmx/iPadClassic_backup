@@ -25,7 +25,7 @@
 @property (nonatomic, retain) NSString * fieldAPIName;
 @property (nonatomic) BOOL required;
 
--(id)initAtPoint: (CGPoint )point;
+//-(id)initAtPoint: (CGPoint )point;//  Unused Methods
 -(BOOL)getSelected;
 -(void)switchValueChanged:(id)sender;
 

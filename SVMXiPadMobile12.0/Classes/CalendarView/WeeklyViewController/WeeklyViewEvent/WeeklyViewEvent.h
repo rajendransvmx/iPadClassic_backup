@@ -105,7 +105,7 @@ NSMutableArray * weeklyEventPositionArray;
 - (void) moveTo:(CGRect)location;
 - (CGRect) bringEventDownFromLocation:(CGRect)location;
 - (CGRect) bringEventUpFromLocation:(CGRect)location;
-- (NSUInteger)getGapMultipleFromTime:(NSUInteger)_time;
+//- (NSUInteger)getGapMultipleFromTime:(NSUInteger)_time;//  Unused methods
 - (BOOL) canMoveToLocation;
 - (void) setPositionAtY:(CGFloat)y;
 - (UIImage *) getImageForColorIndex:(NSUInteger)colorIndex;

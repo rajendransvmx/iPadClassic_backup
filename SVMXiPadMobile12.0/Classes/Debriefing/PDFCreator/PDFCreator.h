@@ -17,7 +17,7 @@
 
 @optional
 - (void) attachPDF:(NSString *)pdf target:(id)target;
-- (void) CloseServiceReport:(id)sender;
+//- (void) CloseServiceReport:(id)sender;//  Unused methods
 //krishna opdoc sending error
 - (void) opDocumentAttached:(NSString * )result withError:(NSError *)error forSFID:(NSString *)sfid andProcessID:(NSString *)processId;
 @end
@@ -174,14 +174,14 @@
 // Set Total Cost
 - (void) setTotalCost:(NSString *)totalCost;
 // Set Header Text
-- (void) setHeaderText:(NSString *)headerText;
+//- (void) setHeaderText:(NSString *)headerText;//  Unused methods
 // Go to newline
 - (CGPoint) newLine:(float_t)height;
 - (void) newPara:(float_t)height;
 // Draw horizontal line
 - (void) drawHorizontalLine;
 // Write Text
-- (void) writeText:(NSString *)_text;
+//- (void) writeText:(NSString *)_text;//  Unused methods
 
 - (void) setWorkOrder:(NSString *)wonumber;
 - (void) setDate:(NSDate *)date;
@@ -197,7 +197,7 @@
 // Write Parts with Discount
 - (void) writePartsNo:(NSString *)sno part:(NSString *)part qty:(NSString *)qty unitprice:(NSString *)unitprice lineprice:(NSString *)lineprice discount:(NSString *)discount;
 // Insert spaces
-- (void) insertSpaces:(NSUInteger)numSpaces;
+//- (void) insertSpaces:(NSUInteger)numSpaces;//  Unused methods
 
 - (IBAction) Help;
 

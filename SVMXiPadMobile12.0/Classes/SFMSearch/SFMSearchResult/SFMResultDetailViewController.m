@@ -1202,6 +1202,8 @@ enum  {
     }
 
 }
+
+//  Unused Methods
 //- (void) presentProgressbarForFulview
 //{
 ////    UITableViewCell *ownerCell =lastSelectedIndexPath;
@@ -1376,10 +1378,11 @@ enum  {
 
 }
 #pragma mark - SFM Full Result View Delegate
-- (void) DismissSplitViewControllerByLaunchingSFMProcess
-{
-    [resultViewController dismissViewControllerAnimated:YES completion:nil];
-}
+//  Unused Methods
+//- (void) DismissSplitViewControllerByLaunchingSFMProcess
+//{
+//    [resultViewController dismissViewControllerAnimated:YES completion:nil];
+//}
 - (void)tapRecognized:(id)sender
 { 
     UITapGestureRecognizer * tap = sender;

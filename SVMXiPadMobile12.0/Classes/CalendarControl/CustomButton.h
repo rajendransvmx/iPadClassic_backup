@@ -13,7 +13,7 @@
 
 @optional
 
-- (void) SetButtonTitle:(NSString *) title;
+//- (void) SetButtonTitle:(NSString *) title;//  Unused methods
 
 @end
 

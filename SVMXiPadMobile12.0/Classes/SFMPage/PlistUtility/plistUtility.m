@@ -16,13 +16,14 @@
     NSString * filepath = [plistUtility getFilePath:plistName];
     [dict writeToFile:filepath atomically:YES];
 }
-+(void)deletePlist:(NSString *)plistName
-{
-    NSString * filePath = [plistUtility getFilePath:plistName];
-    NSFileManager * fileManager = [NSFileManager defaultManager];
-    NSError * error = nil;
-    [fileManager removeItemAtPath:filePath error:&error];
-}
+//  Unused Methods
+//+(void)deletePlist:(NSString *)plistName
+//{
+//    NSString * filePath = [plistUtility getFilePath:plistName];
+//    NSFileManager * fileManager = [NSFileManager defaultManager];
+//    NSError * error = nil;
+//    [fileManager removeItemAtPath:filePath error:&error];
+//}
 +(void)clearPlist:(NSString *)clearPlist
 {
     if([plistUtility DoesFileExist:clearPlist])

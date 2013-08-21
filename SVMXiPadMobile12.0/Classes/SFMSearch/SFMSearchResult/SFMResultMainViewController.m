@@ -133,10 +133,11 @@ extern void SVMXLog(NSString *format, ...);
 {
     [self dismissViewControllerAnimated:YES completion:^(void){}];
 }
--(void)dismissProgressBar
-{
-    
-}
+//  Unused Methods
+//-(void)dismissProgressBar
+//{
+//    
+//}
 -(void)presentProgressBar:(NSString *)object_name sf_id:(NSString *)sf_id  reocrd_name:(NSString *)record_name
 {
 

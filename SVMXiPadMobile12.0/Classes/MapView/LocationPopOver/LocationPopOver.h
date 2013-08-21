@@ -56,6 +56,6 @@
 
 - (IBAction) DrivingDirections;
 - (IBAction) JobDetails;
-- (void) disableJobDetail;
+//- (void) disableJobDetail;//  Unused methods
 
 @end

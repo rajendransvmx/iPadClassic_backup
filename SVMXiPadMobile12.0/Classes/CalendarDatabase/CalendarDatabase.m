@@ -741,28 +741,28 @@ extern void SVMXLog(NSString *format, ...);
     }
     
 }
-
-- (NSString *) retreiveCurrentTaskIdCreated
-{
-    NSString *field1Str = @"";
-    sqlite3_stmt * stmt;
-    
-    NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
-    queryStatement = [NSString stringWithFormat:@"Select local_id from Task where local_id = (Select MAX (local_id) From Task)"];
-    const char * selectStatement = [queryStatement UTF8String];
-    
-    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &stmt, nil) == SQLITE_OK )
-    {
-        if(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
-        {
-            char *field1 = (char *) synchronized_sqlite3_column_text(stmt,0);
-            field1Str = [[NSString alloc] initWithUTF8String: field1];
-        }
-        
-    }
-    synchronized_sqlite3_finalize(stmt);
-    return  field1Str;
-}
+//  Unused methods
+//- (NSString *) retreiveCurrentTaskIdCreated
+//{
+//    NSString *field1Str = @"";
+//    sqlite3_stmt * stmt;
+//    
+//    NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
+//    queryStatement = [NSString stringWithFormat:@"Select local_id from Task where local_id = (Select MAX (local_id) From Task)"];
+//    const char * selectStatement = [queryStatement UTF8String];
+//    
+//    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &stmt, nil) == SQLITE_OK )
+//    {
+//        if(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+//        {
+//            char *field1 = (char *) synchronized_sqlite3_column_text(stmt,0);
+//            field1Str = [[NSString alloc] initWithUTF8String: field1];
+//        }
+//        
+//    }
+//    synchronized_sqlite3_finalize(stmt);
+//    return  field1Str;
+//}
 
 - (NSString *) getTableNameForWhatId:(NSString *)whatId
 {
@@ -788,30 +788,30 @@ extern void SVMXLog(NSString *format, ...);
     return objectName;
     
 }
-
-- (NSString *) getNameFieldForTableName:(NSString *)tableName
-{
-    NSString *fieldStr = @"";
-    sqlite3_stmt * stmt;
-    NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
-    queryStatement = [NSString stringWithFormat:@"Select Name From SFObject where ObjectAPIName = '%@'",tableName];
-    const char * selectStatement = [queryStatement UTF8String];
-    
-    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &stmt, nil) == SQLITE_OK )
-    {
-        if(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
-        {
-            char *field1 = (char *) synchronized_sqlite3_column_text(stmt,0);
-            fieldStr = [[NSString alloc] initWithUTF8String:field1];
-            
-        }
-    }
-    synchronized_sqlite3_finalize(stmt);
-    return  fieldStr;
-    
-    
-    
-}
+//  Unused methods
+//- (NSString *) getNameFieldForTableName:(NSString *)tableName
+//{
+//    NSString *fieldStr = @"";
+//    sqlite3_stmt * stmt;
+//    NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
+//    queryStatement = [NSString stringWithFormat:@"Select Name From SFObject where ObjectAPIName = '%@'",tableName];
+//    const char * selectStatement = [queryStatement UTF8String];
+//    
+//    if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &stmt, nil) == SQLITE_OK )
+//    {
+//        if(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+//        {
+//            char *field1 = (char *) synchronized_sqlite3_column_text(stmt,0);
+//            fieldStr = [[NSString alloc] initWithUTF8String:field1];
+//            
+//        }
+//    }
+//    synchronized_sqlite3_finalize(stmt);
+//    return  fieldStr;
+//    
+//    
+//    
+//}
 
 - (NSString *) getNameFieldForEvent:(NSString *)eventId
 {
@@ -2586,33 +2586,33 @@ extern void SVMXLog(NSString *format, ...);
 }
 
 //Abinash
-
-- (NSString *) getNameFieldForCreateProcessFromDB:(NSString *)ID
-{
-    NSString * name = [appDelegate.createObjectContext objectForKey:NAME_FIELD];
-    NSString * objname = [appDelegate.createObjectContext objectForKey:OBJ_NAME];
-    NSString * _query = [NSString stringWithFormat:@"SELECT %@ From %@ WHERE ID = '%@'",name, objname, ID]; 
-    sqlite3_stmt * queryStatement;
-    NSString * nameField = [[NSString alloc]init];
-    const char * query = [_query UTF8String];
-    if (synchronized_sqlite3_prepare_v2(appDelegate.db, query, -1, &queryStatement, nil) == SQLITE_OK)
-    {
-        while (synchronized_sqlite3_step(queryStatement)==SQLITE_ROW)
-        {
-            char * _name = (char*) synchronized_sqlite3_column_text(queryStatement, 0);
-            if (_name != nil)
-            {
-                NSString * Name = [[NSString alloc]initWithUTF8String:_name];
-                nameField = [nameField stringByAppendingString:Name];
-                [Name release];
-            }
-            
-        }
-    }
-    
-    synchronized_sqlite3_finalize(queryStatement);
-    return nameField;
-}
+//  Unused methods
+//- (NSString *) getNameFieldForCreateProcessFromDB:(NSString *)ID
+//{
+//    NSString * name = [appDelegate.createObjectContext objectForKey:NAME_FIELD];
+//    NSString * objname = [appDelegate.createObjectContext objectForKey:OBJ_NAME];
+//    NSString * _query = [NSString stringWithFormat:@"SELECT %@ From %@ WHERE ID = '%@'",name, objname, ID]; 
+//    sqlite3_stmt * queryStatement;
+//    NSString * nameField = [[NSString alloc]init];
+//    const char * query = [_query UTF8String];
+//    if (synchronized_sqlite3_prepare_v2(appDelegate.db, query, -1, &queryStatement, nil) == SQLITE_OK)
+//    {
+//        while (synchronized_sqlite3_step(queryStatement)==SQLITE_ROW)
+//        {
+//            char * _name = (char*) synchronized_sqlite3_column_text(queryStatement, 0);
+//            if (_name != nil)
+//            {
+//                NSString * Name = [[NSString alloc]initWithUTF8String:_name];
+//                nameField = [nameField stringByAppendingString:Name];
+//                [Name release];
+//            }
+//            
+//        }
+//    }
+//    
+//    synchronized_sqlite3_finalize(queryStatement);
+//    return nameField;
+//}
 
 - (void) insertTroubleShootDataInDB:(NSData *)troubleShootData WithId:(NSString *)docID  andName:(NSString *)productName andProductId:(NSString *)productId
 {
@@ -3268,24 +3268,25 @@ extern void SVMXLog(NSString *format, ...);
     synchronized_sqlite3_finalize(statement);
     return data;
 }
-- (NSString *) getSFIdOfDocForlocalId:(NSString *)name
-{
-    NSString * selectQuery = [NSString stringWithFormat:@"Select sf_id From SFOPDocHtmlData Where doc_name = '%@'", name];
-    sqlite3_stmt * stmt;
-    NSString *SFID = @"";
-    
-    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, NULL) == SQLITE_OK)
-    {
-        if (synchronized_sqlite3_step(stmt) == SQLITE_ROW)
-        {
-            char *field = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_1);
-            if ( field != nil )
-                SFID = [NSString stringWithUTF8String:field];
-        }
-    }
-    synchronized_sqlite3_finalize(stmt);
-    return SFID;
-}
+//  Unused methods
+//- (NSString *) getSFIdOfDocForlocalId:(NSString *)name
+//{
+//    NSString * selectQuery = [NSString stringWithFormat:@"Select sf_id From SFOPDocHtmlData Where doc_name = '%@'", name];
+//    sqlite3_stmt * stmt;
+//    NSString *SFID = @"";
+//    
+//    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+//    {
+//        if (synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+//        {
+//            char *field = (char *) synchronized_sqlite3_column_text(stmt, COLUMN_1);
+//            if ( field != nil )
+//                SFID = [NSString stringWithUTF8String:field];
+//        }
+//    }
+//    synchronized_sqlite3_finalize(stmt);
+//    return SFID;
+//}
 
 -(NSString *)getOperationTypeForSignature:(NSString *)recordId  forObject:(NSString *)object_name
 {
@@ -3809,15 +3810,15 @@ extern void SVMXLog(NSString *format, ...);
     [iosInterface release];
     synchronized_sqlite3_finalize(stmt);
 }
-
-- (void) retrieveSignatureFromSFDC:(NSString *)ID
-{
-    NSString * _query = [[NSString stringWithFormat:@"SELECT Body FROM Attachment WHERE Id = '%@'", ID] retain];
-    
-    [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didQueryAttachmentForSignature:error:context:) context:nil];
-    
-    [_query release];
-}
+//  Unused methods
+//- (void) retrieveSignatureFromSFDC:(NSString *)ID
+//{
+//    NSString * _query = [[NSString stringWithFormat:@"SELECT Body FROM Attachment WHERE Id = '%@'", ID] retain];
+//    
+//    [[ZKServerSwitchboard switchboard] query:_query target:self selector:@selector(didQueryAttachmentForSignature:error:context:) context:nil];
+//    
+//    [_query release];
+//}
 
 - (void) didQueryAttachmentForSignature:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
 {
@@ -7220,49 +7221,49 @@ NSString *Doc_Name=[[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurren
     
     return [dict autorelease];
 }
-
-- (NSArray *)getAllMessagesForTagsArray:(NSArray *)tags {
-    
-    NSString *tagsConacatenatedString = [self getConcatenatedStringFromArray:tags withSingleQuotesAndBraces:YES];
-    if (tagsConacatenatedString == nil) {
-        tagsConacatenatedString  = @"()";
-    }
-   
-    NSMutableArray *tagsArray = [[NSMutableArray alloc] init];
-    NSString * query = [NSString stringWithFormat:@"SELECT tag_id, value FROM MobileDeviceTags where tag_id IN %@",tagsConacatenatedString];
-    sqlite3_stmt * stmt = nil;
-    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
-    {
-        while (sqlite3_step(stmt)  == SQLITE_ROW)
-        {
-              NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithCapacity:0];
-            
-            NSString *tagId = nil, *tagValue = nil;
-            char * someCharStr  = (char *)sqlite3_column_text(stmt, 0);
-            
-            if(someCharStr!= nil) {
-                tagId = [NSString stringWithUTF8String:someCharStr];
-               
-            }
-            someCharStr = NULL;
-            someCharStr  = (char *)sqlite3_column_text(stmt, 1);
-            if(someCharStr!= nil) {
-                tagValue = [NSString stringWithUTF8String:someCharStr];
-                
-            }
-            if (tagValue != nil && tagId != nil) {
-                [dict setObject:tagValue forKey:@"value"];
-                [dict setObject:tagId forKey:@"key"];
-                [tagsArray addObject:dict];
-            }
-            [dict release];
-            dict = nil;
-        }
-    }
-    synchronized_sqlite3_finalize(stmt);
-    
-    return [tagsArray autorelease];
-}
+//  Unused methods
+//- (NSArray *)getAllMessagesForTagsArray:(NSArray *)tags {
+//    
+//    NSString *tagsConacatenatedString = [self getConcatenatedStringFromArray:tags withSingleQuotesAndBraces:YES];
+//    if (tagsConacatenatedString == nil) {
+//        tagsConacatenatedString  = @"()";
+//    }
+//   
+//    NSMutableArray *tagsArray = [[NSMutableArray alloc] init];
+//    NSString * query = [NSString stringWithFormat:@"SELECT tag_id, value FROM MobileDeviceTags where tag_id IN %@",tagsConacatenatedString];
+//    sqlite3_stmt * stmt = nil;
+//    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+//    {
+//        while (sqlite3_step(stmt)  == SQLITE_ROW)
+//        {
+//              NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+//            
+//            NSString *tagId = nil, *tagValue = nil;
+//            char * someCharStr  = (char *)sqlite3_column_text(stmt, 0);
+//            
+//            if(someCharStr!= nil) {
+//                tagId = [NSString stringWithUTF8String:someCharStr];
+//               
+//            }
+//            someCharStr = NULL;
+//            someCharStr  = (char *)sqlite3_column_text(stmt, 1);
+//            if(someCharStr!= nil) {
+//                tagValue = [NSString stringWithUTF8String:someCharStr];
+//                
+//            }
+//            if (tagValue != nil && tagId != nil) {
+//                [dict setObject:tagValue forKey:@"value"];
+//                [dict setObject:tagId forKey:@"key"];
+//                [tagsArray addObject:dict];
+//            }
+//            [dict release];
+//            dict = nil;
+//        }
+//    }
+//    synchronized_sqlite3_finalize(stmt);
+//    
+//    return [tagsArray autorelease];
+//}
 
 #pragma mark -
 #pragma mark Getting entitlement status of record

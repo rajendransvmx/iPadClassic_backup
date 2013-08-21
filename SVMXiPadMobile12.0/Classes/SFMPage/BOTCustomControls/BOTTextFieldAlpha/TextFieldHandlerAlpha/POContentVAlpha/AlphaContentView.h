@@ -28,12 +28,12 @@
 @protocol setAlphaTextField <NSObject>
 
 @optional
--(void) settextfieldValue:(NSString *) str;
+//-(void) settextfieldValue:(NSString *) str;//  Unused Methods
 
 @end
 
 @protocol releasetextFieldAlphaPO <NSObject>
 
--(void) releaseTextHandlerPO;
+//-(void) releaseTextHandlerPO;//  Unused Methods
 
 @end

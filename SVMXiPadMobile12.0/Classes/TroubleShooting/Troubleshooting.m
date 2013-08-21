@@ -301,11 +301,12 @@ extern void SVMXLog(NSString *format, ...);
     }
 }
 
-- (void) showFirstTroubleshooting
-{
-    if ([array count] > 0)
-        [self showTroubleshootingForIndex:0];
-}
+//  Unused Methods
+//- (void) showFirstTroubleshooting
+//{
+//    if ([array count] > 0)
+//        [self showTroubleshootingForIndex:0];
+//}
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
@@ -355,10 +356,11 @@ extern void SVMXLog(NSString *format, ...);
     }
 }*/
 
-- (void) showResults
-{
-    
-}
+//  Unused Methods
+//- (void) showResults
+//{
+//    
+//}
 
 
 - (NSString *) showTroubleshootingForIndex:(NSUInteger)index

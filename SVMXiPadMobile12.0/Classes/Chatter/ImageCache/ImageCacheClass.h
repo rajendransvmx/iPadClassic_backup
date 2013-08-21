@@ -17,6 +17,6 @@
 @property (nonatomic, retain) NSMutableDictionary * imageCache;
 
 - (UIImage *) getImage:(NSString *)filename;
-- (void) clearMemory;
+//- (void) clearMemory;//  Unused methods
 
 @end

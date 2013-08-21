@@ -12,7 +12,7 @@
 #define SectionHeaderHeight      45 
 @protocol SFMFullResultViewControllerDelegate
 @optional
-- (void) DismissSplitViewControllerByLaunchingSFMProcess;
+//- (void) DismissSplitViewControllerByLaunchingSFMProcess;//  Unused Methods
 -(void) LoadResultDetailViewController:(BOOL)isondemand;
 @end
 

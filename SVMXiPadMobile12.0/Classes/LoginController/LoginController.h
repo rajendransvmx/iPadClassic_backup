@@ -135,7 +135,7 @@
 //-(NSString *)getUSerInfoForKey:(NSString *)key;
 
 //Radha 27th April 2011
-//-(void) callModalViewController;
+//-(void) callModalViewController;//  Unused methods
 
 //Abinash
 - (IBAction)doIncrementalMetasync:(id)sender;
@@ -143,20 +143,20 @@
 - (IBAction)clickInitialMetaSync:(id)sender;
 
 -(IBAction)callLogin:(id)sender;
--(void)hadLoginError:(ZKSoapException *)e;
+//-(void)hadLoginError:(ZKSoapException *)e;
 
-- (NSString *) getUserId;
+//- (NSString *) getUserId;//  Unused methods
 
 - (IBAction) signup:(id)sender;
 
 - (IBAction) clickSampleDataButton;
-- (void) checkSampleDataCreation;
+//- (void) checkSampleDataCreation;
 - (void) createSampleData;
 - (void) getSampleDataCreationProgressForServiceMax_List_Id:(NSString *)Id;
 - (void) storeLoginDetails;
-- (void) updateSampleDataCreationProgress;
+//- (void) updateSampleDataCreationProgress;
 
-- (void) showModalViewController;
+//- (void) showModalViewController;//  Unused methods
 - (void) showHomeScreenviewController;
 //Methods to retrieve the technician id and address
 - (void) initDebriefData:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
@@ -191,7 +191,7 @@
 
 
 //Radha ->Login
-- (void) doMetaAndDataSync;
+//- (void) doMetaAndDataSync;//  Unused methods
 //- (void) CheckForUserNamePassword;
 - (BOOL) CheckForUserNamePassword;
 - (void) loginWithUsernamePassword;

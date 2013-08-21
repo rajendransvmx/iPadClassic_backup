@@ -1096,12 +1096,12 @@ PopoverButtons *popOver_view;
     return view;
 }
 
-
-- (void) _didSelectRow:(NSInteger )row ForSection:(NSInteger )section
-{ 
-    selectedRow = row;
-    selectedSection = section;
-}
+//  Unused methods
+//- (void) _didSelectRow:(NSInteger )row ForSection:(NSInteger )section
+//{ 
+//    selectedRow = row;
+//    selectedSection = section;
+//}
 
 - (void) headerSelected
 {
@@ -1589,11 +1589,12 @@ PopoverButtons *popOver_view;
 
 }
 
-- (void) deleteUndoneRecords
-{
-    [appDelegate.calDataBase selectUndoneRecords];
-}
-             
+//  Unused methods
+//- (void) deleteUndoneRecords
+//{
+//    [appDelegate.calDataBase selectUndoneRecords];
+//}
+
 #pragma mark - Table view delegate
 
 

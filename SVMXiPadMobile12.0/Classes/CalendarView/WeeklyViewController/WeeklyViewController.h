@@ -17,8 +17,8 @@
 @protocol WeeklyViewControllerDelegate<NSObject> 
 
 @optional
-- (void) finishedLoading;
-- (void) showJobWithEventDetail:(ZKSObject *)eventDetail WorkOrderDetail:(NSDictionary *)workOrderDetail;
+//- (void) finishedLoading;//  Unused methods
+//- (void) showJobWithEventDetail:(ZKSObject *)eventDetail WorkOrderDetail:(NSDictionary *)workOrderDetail;//  Unused methods
 - (void) showSFMForWeek:(NSDictionary *)event;
 - (void) enableRefreshButton:(BOOL)flag;
 -(void) SFMEditForWeekView:(NSDictionary *)dict;
@@ -163,10 +163,10 @@
 
 - (void) highlightToday;
 - (void) setupWeeks;
-- (IBAction) changeWeek;
-- (IBAction) NextWeek;
-- (IBAction) PrevWeek;
-- (IBAction) goToCurrentWeek;
+//- (IBAction) changeWeek;//  Unused methods
+//- (IBAction) NextWeek;//  Unused methods
+//- (IBAction) PrevWeek;//  Unused methods
+//- (IBAction) goToCurrentWeek;//  Unused methods
 - (void) setSliderBounds:(NSUInteger)div;
 - (CGRect) getSliderRectForLocation:(CGPoint)location;
 

@@ -48,7 +48,7 @@
 
 - (void)displayCurrentStatics;
 - (void)stopPerformAnalysis;
-- (void)removeContext:(NSString *)contextName;
+//- (void)removeContext:(NSString *)contextName;//  Unused Methods
 - (void)setCode:(NSString *)codeName andDescription:(NSString *)descriptionName;
 
 - (void)addCreatedRecordsNumber:(long long int)records;

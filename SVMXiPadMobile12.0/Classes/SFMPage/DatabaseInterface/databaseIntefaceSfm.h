@@ -95,7 +95,7 @@
 -(NSString *)getParentColumnNameFormChildInfoTable:(NSString *)tableName  childApiName:(NSString *)objectApiNameChild parentApiName:(NSString *)objectApiNameParent;
 
 //method to get the record type of the record
--(NSString *)findTheTypeofTheRecordFromRecordTypeIdTable:(NSString *)tableName record_typeId:(NSString *)record_type_id objectOrLineApiName:(NSString *)apiName;
+//-(NSString *)findTheTypeofTheRecordFromRecordTypeIdTable:(NSString *)tableName record_typeId:(NSString *)record_type_id objectOrLineApiName:(NSString *)apiName;//  Unused Methods
 
 //method to fetch the restorationtime and resolvedTime for the SLA clock
 -(NSMutableDictionary *)getRestorationAndResolutionTimeForWorkOrder:(NSString *)record_id  tableName:(NSString *)tableName;
@@ -143,7 +143,7 @@
 -(NSString *)queryForExpression:(NSString *)expression_id forObject:(NSString *)object_name;
 -(NSString *) queryForExpressionComponent:(NSString *)expression expression_id:(NSString *)expression_id object_name:(NSString *) object_name;
 
--(NSString *)getTheDefaultDisplayColumnForLookUpId:(NSString *)lookup_id;
+//-(NSString *)getTheDefaultDisplayColumnForLookUpId:(NSString *)lookup_id;//  Unused Methods
 
 //Action Buttons Information - SFW
 -(NSMutableArray *)getButtonsForWizardInformation:(NSMutableArray *)wizard_ids_array  record_id:(NSString *)record_id  object_name:(NSString *)objectName;
@@ -219,7 +219,7 @@
 -(BOOL)getConflictsStatus;
 -(void)deleterecordsFromConflictTableForOperationType:(NSString *)opeation_type overrideFlag:(NSString *)override_flag  table_name:(NSString *)table_name   id_value:(NSString *)id_   field_name:(NSString *)field_name;
 
-//-(BOOL)DoesConflictContainTheRecord:(NSString *)local_id  operation_type:(NSString *)operation_type  object_name:(NSString *)object_name;
+//-(BOOL)DoesConflictContainTheRecord:(NSString *)local_id  operation_type:(NSString *)operation_type  object_name:(NSString *)object_name;//  Unused Methods
 
 -(NSMutableDictionary *)getValidForDictForObject:(NSString *)object_name  field_api_name:(NSString *)field_api_name;
 
@@ -266,7 +266,7 @@
 //On Demand Data
 - (BOOL) checkOndemandRecord:(NSString *)local_id;
 - (void) deleteAllOndemandRecordsPartOfDownloadCriteriaForSfId:(NSString *)sync_type;
-- (NSArray *) getAllIdsFromDatabaseForSyncType:(NSString *)sync_type;
+//- (NSArray *) getAllIdsFromDatabaseForSyncType:(NSString *)sync_type;//  Unused Methods
 - (void) updateOndemandRecordForId:(NSString *)record_id;
 - (NSString *) getTimeLastModifiedTimeOfTheRecordForRecordId:(NSString *)record_id;
 -(NSDictionary *)getAllChildRelationShipForObject:(NSString *)object_name;
@@ -311,7 +311,7 @@
 - (NSMutableDictionary *)getRecordsGPForRecordId:(NSString *)record_id ForObjectName:(NSString *)object_name fields:(NSString *)fields;
 
 //Sahana Custom Aggressive Sync
-- (BOOL)ShouldTriggerCustomAggressive;
+//- (BOOL)ShouldTriggerCustomAggressive;//  Unused Methods
 - (void)fillSyncRecordDictForRecordType:(NSString *)record_type SF_Id:(NSString *)SF_id local_id:(NSString *)local_id  operation_type:(NSString *)operation_type  final_dictionary:(NSMutableDictionary *)sync_record_dict  object_naem:(NSString *)object_name parent_object_name:(NSString *)parent_object_name parent_local_id:(NSString *)parent_local_id;
 - (NSMutableDictionary * )getCustomAggressiveSyncRecordsForHearedRecord:(NSString *)header_reco_id;
 - (NSArray *)getallmasterRecordsForCustomAggressiveSync;
@@ -343,7 +343,7 @@
 
 //sahana child sfm
 -(NSString *)getProcessSfIdForProcess_uniqueName:(NSString *)process_id;
--(NSString *)getProcessNameForProcessSfId:(NSString *)process_sf_id;
+//-(NSString *)getProcessNameForProcessSfId:(NSString *)process_sf_id;//  Unused Methods
 -(NSString *)getProcessNodeIdForLayoutId:(NSString *)layout_id process_id:(NSString *)preocess_unique_id;
 -(NSArray *)getLinkedProcessIdsForProcess_node_id:(NSString *)Processnode_id  process_sf_id:(NSString *)process_sf_id;
 -(NSArray *)getAllProcessId_forProcess_sf_id:(NSArray *)process_sf_id;
@@ -353,7 +353,7 @@
 - (NSMutableArray *)getAllSearchCriteriaForId:(NSString *)namedSearchId andFilterType:(NSString *)filterType;
 - (NSArray *)getLookupfiltersForNamedSearchId:(NSString *)namedSearchId andfilterType:(NSString *)filterType;
 - (NSArray *)getFilterStringArrayForAdvancedFilters:(NSArray *)filters;
-- (NSArray *)getIdsFromObjectName:(NSString *)objectName withCriteria:(NSString *)criteria andFieldName:(NSString *)fieldName;
+//- (NSArray *)getIdsFromObjectName:(NSString *)objectName withCriteria:(NSString *)criteria andFieldName:(NSString *)fieldName;//  Unused Methods
 - (NSString *)queryForExpressionComponent:(NSString *)expression expressionId:(NSString *)expression_id object_name:(NSString *)object_name;
 - (NSString *)getAdvanceExpressionComponentExpressionId:(NSString *)expressionId ;
 - (NSString *)getPreFilters:(NSArray *)preFilters;
@@ -380,7 +380,7 @@
 -(BOOL)checkSentFlagForReferenceId:(NSString *)loalId forOperation:(NSString *)OperationType;
 -(void)deleteRecordFromConflictTableForRecord:(NSString *)local_id operation:(NSString *)operationType;
 -(BOOL)DeleterecordFromDataTrailerTableForlocal_id:(NSString *)local_id;
--(BOOL)DoesEntryExistsForInsertOperationForLocalId:(NSString *)localId;
+//-(BOOL)DoesEntryExistsForInsertOperationForLocalId:(NSString *)localId;//  Unused Methods
 -(BOOL)DeleteEntryFromDataTrailerTableFor:(NSString *)Id forObject:(NSString *)object  sync_type:(NSString *)sync_type fieldName:(NSString *)fieldName;
 -(void)replaceCURRENTRECORDLiteral:(NSMutableDictionary *)detailDict sourceDict:(NSDictionary *)sourceDict;
 -(BOOL)findLiteral:(NSString *)FieldValue literal:(NSString *)literal;

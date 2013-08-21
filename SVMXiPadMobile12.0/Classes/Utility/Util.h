@@ -67,7 +67,7 @@ typedef NSInteger SFActionType;
  *    Returns YES if emailAddress is valid otherwise NO.
  */
 
-+ (BOOL)isValidEmailAddress:(NSString *)emailAddress;
+//+ (BOOL)isValidEmailAddress:(NSString *)emailAddress;//  Unused Methods
 
 
 
@@ -79,8 +79,8 @@ typedef NSInteger SFActionType;
  *    returns YES if matching otherwise NO.
  */
 
-+ (BOOL)caseInsensitiveCompareString:(NSString *)string
-                     withOtherString:(NSString *)otherString;
+//+ (BOOL)caseInsensitiveCompareString:(NSString *)string
+//                     withOtherString:(NSString *)otherString;//  Unused Methods
 
 
 
@@ -91,7 +91,7 @@ typedef NSInteger SFActionType;
  *    Returns SFM process type enum value based on the name of process. 
  */
 
-+ (SFMProcessType)getSFMProcessTypeByName:(NSString *)name;
+//+ (SFMProcessType)getSFMProcessTypeByName:(NSString *)name;//  Unused Methods
 
 /*
  *  getSFActioTypeByName:
@@ -100,7 +100,7 @@ typedef NSInteger SFActionType;
  *    Returns SFM action type enum value based on the name of action.
  */
 
-+ (SFActionType)getSFActioTypeByName:(NSString *)name;
+//+ (SFActionType)getSFActioTypeByName:(NSString *)name;//  Unused Methods
 
 
 @end

@@ -18,7 +18,7 @@
 - (void) throwException;
 - (void) enableControls;
 - (void) disableControls;
-- (void) refreshRootView;
+//- (void) refreshRootView;//  Unused methods
 //Radha 2012june16
 - (void) resetTableview;
 - (void) showInternetAletView;
@@ -87,7 +87,7 @@
 - (void) Syncronise;
 - (void) synchronizeConfiguration;
 - (void) synchronizeEvents;
-//- (void) schdulesynchronizeConfiguration;
+//- (void) schdulesynchronizeConfiguration;//  Unused methods
 
 
 - (void) startSyncEvents;

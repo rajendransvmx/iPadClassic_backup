@@ -23,10 +23,11 @@
 	return self;
 }
 
-- (void) clearMemory
-{
-	[imageCache removeAllObjects];
-}
+//  Unused methods
+//- (void) clearMemory
+//{
+//	[imageCache removeAllObjects];
+//}
 
 - (UIImage *) getImage:(NSString *)filename
 {

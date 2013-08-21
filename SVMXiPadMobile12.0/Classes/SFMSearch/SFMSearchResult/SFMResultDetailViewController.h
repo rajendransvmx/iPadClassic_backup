@@ -19,7 +19,7 @@
 @optional
 - (void) DismissSplitViewController;
 -(void)presentProgressBar:(NSString *)object_name sf_id:(NSString *)sf_id reocrd_name:(NSString *)record_name;
--(void)dismissProgressBar;
+//-(void)dismissProgressBar;//  Unused Methods
 @end
 
 @interface SFMResultDetailViewController : UIViewController <UITableViewDataSource,UITableViewDelegate,SFMFullResultViewControllerDelegate,UIPopoverControllerDelegate>
@@ -57,6 +57,6 @@
 -(void) initilizeToolBar;
 - (void) disableSFMUI;
 - (void) enableSFMUI;
-//- (void) presentProgressbarForFulview;
+//- (void) presentProgressbarForFulview;//  Unused Methods
 
 @end

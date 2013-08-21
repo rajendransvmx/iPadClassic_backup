@@ -82,12 +82,13 @@
     self.postComment.enabled = NO;
 }
 
-- (IBAction)facetime_call:(id)sender
-{
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"facetime://%@", email]];
-    // NSURL *url = [NSURL URLWithString:@"facetime:+919980063682"];
-    [[UIApplication sharedApplication] openURL:url];
-}
+//  Unused methods
+//- (IBAction)facetime_call:(id)sender
+//{
+//    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"facetime://%@", email]];
+//    // NSURL *url = [NSURL URLWithString:@"facetime:+919980063682"];
+//    [[UIApplication sharedApplication] openURL:url];
+//}
 
 - (void)dealloc
 {
