@@ -4010,6 +4010,11 @@ int percent = 0;
             // Need to cross check with Praveen - It is happening behalf of Switch user -- Will remove
             // Vipind-db-optmz - 3 - Removed
 			[self removeSyncHistoryPlist];
+            
+            [self.dataBase closeDatabase:appDelegate.db];
+            [self releaseMainDatabase];
+			[self.dataBase deleteDatabase:DATABASENAME1];
+            
             if(appDelegate.db == nil)
             {
                 [self initWithDBName:DATABASENAME1 type:DATABASETYPE1];
