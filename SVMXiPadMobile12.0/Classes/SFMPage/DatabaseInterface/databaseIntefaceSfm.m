@@ -1256,7 +1256,8 @@ extern void SVMXLog(NSString *format, ...);
     if(record_id != nil)
     {
         //Shrinivas - 13.07.2012
-        NSString * query = [NSString stringWithFormat:@"select c.phone ,c.Email, c.Name, w.Name ,w.SVMXC__Problem_Description__c ,w.SVMXC__Order_Type__c, w.SVMXC__Contact__c from SVMXC__Service_Order__c  as w  inner join  Contact  as c on  w.SVMXC__Contact__c = c. id   where  w.local_id = '%@'" ,record_id];
+        //Krishna Map 008225 //changed inner join to left outer join
+        NSString * query = [NSString stringWithFormat:@"select c.phone ,c.Email, c.Name, w.Name ,w.SVMXC__Problem_Description__c ,w.SVMXC__Order_Type__c, w.SVMXC__Contact__c from SVMXC__Service_Order__c  as w  LEFT OUTER join  Contact  as c on  w.SVMXC__Contact__c = c. id   where  w.local_id = '%@'" ,record_id];
         sqlite3_stmt * stmt ;
         
         if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK  )
