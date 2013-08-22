@@ -13,7 +13,9 @@
 
 - (void) setCellText:(NSString *)cellText;
 {
+    //Krishna Map 7005
     // [textView setContentToHTMLString:cellText];
+    [textView setFont:[UIFont fontWithName:@"Helvetica" size:14.0f]];
     [textView setText:[self flattenHTML:cellText]];
 }
 

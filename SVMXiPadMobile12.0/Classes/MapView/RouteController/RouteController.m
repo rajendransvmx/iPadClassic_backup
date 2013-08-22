@@ -219,7 +219,24 @@ extern void SVMXLog(NSString *format, ...);
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 66.0;
+    //Krishna Map 7005
+    NSDictionary *step = [[self getStepsForLegAtIndex:indexPath.section] objectAtIndex:indexPath.row];//[route stepAtIndex:indexPath.row];
+    
+	NSString *cellText = [step objectForKey:@"instructions"];
+    
+    //Since width of the text view is 199 the constraint size width should be 30-40 pixel less than width to adequate the words to be within the required area 160
+    //constraint height is 1000, coz its the max allowed limit.
+    
+    float constraintWidth = 160;
+    float constraintHeight = 1000;
+    
+    CGSize cellTextSize = [cellText sizeWithFont:[UIFont fontWithName:@"Helvetica" size:14.0f] constrainedToSize:CGSizeMake(constraintWidth, constraintHeight)];
+    
+    float retValue = 0.0f;
+    float padding = 10.0f;
+    
+    retValue = cellTextSize.height + padding;
+    return retValue;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
