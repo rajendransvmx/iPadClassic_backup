@@ -661,9 +661,10 @@ extern void SVMXLog(NSString *format, ...);
         return;
     }
     
-    [appDelegate invalidateAllTimers];
-    
     [self disableControl];
+   //[appDelegate invalidateAllTimers]; /*Shravya-8226*/
+    
+    
     Total_calls = 3;
     appDelegate.connection_error = FALSE;
     ProgressBarViewController.layer.cornerRadius = 5;
@@ -742,10 +743,13 @@ extern void SVMXLog(NSString *format, ...);
     initial_sync_timer = nil;
     [ProgressBarViewController removeFromSuperview];
     
-    [appDelegate ScheduleIncrementalDatasyncTimer];
+    /*Shravya-8226*/
+    //Shravya - Commented because we do not invalidate the timer. So need to schedule it.
+    /*[appDelegate ScheduleIncrementalDatasyncTimer];
     [appDelegate ScheduleIncrementalMetaSyncTimer];
     [appDelegate ScheduleTimerForEventSync];
     [appDelegate scheduleLocationPingTimer];
+     */
 	
 	//Radha Defect Fix 5542
 	[appDelegate updateNextDataSyncTimeToBeDisplayed:[NSDate date]];

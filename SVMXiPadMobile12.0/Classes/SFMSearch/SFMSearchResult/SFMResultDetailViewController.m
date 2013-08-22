@@ -1060,21 +1060,31 @@ enum  {
 
     return NO;
 }
+/*Shravya-8226*/
 - (void) enableSFMUI
 {
+  
+    [self performSelectorOnMainThread:@selector(doUIEnableOnMainthread) withObject:nil waitUntilDone:NO];
+}
+- (void)doUIEnableOnMainthread {
     [self.masterView.view setUserInteractionEnabled:YES];
     self.navigationItem.leftBarButtonItem.enabled=TRUE;
     self.navigationItem.rightBarButtonItem.enabled=TRUE;
     [self.view setUserInteractionEnabled:YES];
     [[super view] setUserInteractionEnabled:YES];
+   
 }
 - (void) disableSFMUI
 {
+   [self performSelectorOnMainThread:@selector(doUIDisableInMainThread) withObject:nil waitUntilDone:NO];
+}
+- (void)doUIDisableInMainThread {
     [self.masterView.view setUserInteractionEnabled:NO];
     self.navigationItem.leftBarButtonItem.enabled=FALSE;
     self.navigationItem.rightBarButtonItem.enabled=FALSE;
     [self.view setUserInteractionEnabled:NO];
     [[super view] setUserInteractionEnabled:NO];
+    
 }
 - (void) onDemandDataFecthing:(id)sender
 {
