@@ -2938,6 +2938,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                             [strTemp appendString:UserNameValue];
                             [strTemp appendString:@" COLLATE NOCASE "];
                             UserNameValue=strTemp;
+                            [strTemp release];
                         }
 
                         if([refrence_to length]>0)
