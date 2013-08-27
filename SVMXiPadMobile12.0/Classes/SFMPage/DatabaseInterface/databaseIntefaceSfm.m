@@ -4950,6 +4950,12 @@ return nil;
 {
     NSMutableDictionary * final_dict = [[NSMutableDictionary alloc] initWithCapacity:0];
     NSArray * keys = [NSArray arrayWithObjects:@"LOCAL_ID",@"JSON_RECORD",@"SF_ID",@"SYNC_TYPE", @"RECORD_TYPE",nil];
+    //sahana Aug 27 fix for retry delete
+    NSString * temp_syncType = @"";
+    if([sync_type isEqualToString:PUT_DELETE] || [sync_type isEqualToString:PUT_UPDATE])
+    {
+        temp_syncType = PUT_UPDATE;
+    }
     
     sqlite3_stmt * statement;
     NSString * local_id = @"", * object_name = @""  , * record_type = @"" , * sf_id = @"" ;
@@ -4993,14 +4999,14 @@ return nil;
             if(object_exists)
             {
                 NSMutableArray * array  = [final_dict objectForKey:object_name];
-                NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:local_id,@"",sf_id,sync_type,record_type, nil] forKeys:keys];
+                NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:local_id,@"",sf_id,temp_syncType,record_type, nil] forKeys:keys];
                 [array addObject:dict];
                 
             }
             else
             {
                 NSMutableArray * array = [[NSMutableArray alloc] initWithCapacity:0];
-                NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:local_id,@"",sf_id,sync_type,record_type, nil] forKeys:keys];
+                NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:local_id,@"",sf_id,temp_syncType,record_type, nil] forKeys:keys];
                 [array addObject:dict];
                 [final_dict setObject:array forKey:object_name];
                 

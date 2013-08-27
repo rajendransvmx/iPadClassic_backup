@@ -1276,7 +1276,10 @@ last_sync_time:(NSString *)last_sync_time
             break;
         }
     }
-	
+    //sahana Aug 27 fix for retry delete
+    
+    [appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:PUT_DELETE];
+
 //	[appDelegate setCurrentSyncStatusProgress:cSYNC_PUTDELETE optimizedSynstate:0];
 	
     [self getAllRecordsForOperationTypeFromSYNCCONFLICT:PUT_UPDATE OverRideFlag:CLIENT_OVERRIDE];
@@ -5551,7 +5554,9 @@ NSDate * syncCompleted;
 				//Check the change
 				if ( sf_id == nil || [sf_id isEqualToString:@""])
 				{
-					sf_id = [[info_dict objectAtIndex:0] valueForKey:@"sf_id"];
+                      //sahana Aug 27 fix for retry delete
+                    //sahana Aug 21
+					sf_id = [dict valueForKey:@"sf_id"];
 				}
                 testSVMXCMap.value = sf_id;
 				
