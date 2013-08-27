@@ -478,12 +478,15 @@ extern void SVMXLog(NSString *format, ...);
                 additonalInfo = [NSString stringWithFormat:@"%@ : %@", info, WorkOrderLabel];
                 synchronized_sqlite3_finalize(labelstmt);
             }
-            //Case 
-            else if( retVal == YES && (!([whatId1 isEqualToString:@""]) || whatId1 != nil) )
+            //Case
+            //8211: Replaced retVal with retVal1
+            else if( retVal1 == YES && (!([whatId1 isEqualToString:@""]) || whatId1 != nil) )
             {
-                NSString * subject1  = @"";
+                
+                NSString * caseNumber  = @"";
                 NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
-                queryStatement = [NSString stringWithFormat:@"SELECT CaseNumber from Case where Id = '%@'", whatId1];
+                //8211: 
+                queryStatement = [NSString stringWithFormat:@"SELECT CaseNumber from 'Case' where Id = '%@'", whatId1];
                 const char * selectStatement = [queryStatement UTF8String];
                 
                 sqlite3_stmt * casestmt;
@@ -491,13 +494,11 @@ extern void SVMXLog(NSString *format, ...);
                 {
                     while(synchronized_sqlite3_step(casestmt) == SQLITE_ROW)
                     {
-                        char * _subject = (char *) synchronized_sqlite3_column_text(casestmt,0);
+                        char * _caseNumber = (char *) synchronized_sqlite3_column_text(casestmt,0);
                         
-                        if ((_subject != nil) && strlen(_subject))
+                        if ((_caseNumber != nil) && strlen(_caseNumber))
                         {
-                            subject1 = [NSString stringWithUTF8String:_subject];
-                            subject = nil;
-                            subject = subject1;
+                            caseNumber = [NSString stringWithUTF8String:_caseNumber];
                         }
                         
                     }
@@ -519,9 +520,34 @@ extern void SVMXLog(NSString *format, ...);
                             info = [NSString stringWithUTF8String:_addInfo];
                     }
                 }
-                additonalInfo = [NSString stringWithFormat:@"%@ : %@", info, subject];
+                additonalInfo = [NSString stringWithFormat:@"%@ : %@", info, caseNumber];
                 synchronized_sqlite3_finalize(stmt);
-            }  
+                
+                
+                queryStatement = nil;
+                
+                if((_startDateTime!=nil) && strlen(_startDateTime) && (_endDateTime!=nil) && strlen(_endDateTime))
+                    queryStatement =[NSString stringWithFormat:@"Select Subject From Event where WhatId = '%@' and StartDateTime = '%s' and EndDateTime = '%s'", whatId1,_startDateTime,_endDateTime];
+                else
+                    queryStatement =[NSString stringWithFormat:@"Select Subject From Event where WhatId = '%@'", whatId1];
+                
+                selectStatement = [queryStatement UTF8String];
+                sqlite3_stmt * caseSubject;
+                if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &caseSubject, nil) == SQLITE_OK )
+                {
+                    while(synchronized_sqlite3_step(caseSubject) == SQLITE_ROW)
+                    {
+                        char * _subject = (char *) synchronized_sqlite3_column_text(caseSubject,0);
+                        
+                        if ((_subject != nil) && strlen(_subject))
+                        {
+                            subject = [NSString stringWithUTF8String:_subject];
+                        }
+                    }
+                    
+                }
+                synchronized_sqlite3_finalize(caseSubject);
+            }
             
             //Other 
             // Radha and abinash 
@@ -544,6 +570,30 @@ extern void SVMXLog(NSString *format, ...);
                     }
                 }
                 synchronized_sqlite3_finalize(stmt);
+                
+                NSString * name = nil;
+                queryStatement = [NSString stringWithFormat:@"SELECT Name from '%@' WHERE Id = '%@'",tableName,whatId1];
+                selectStatement = [queryStatement UTF8String];
+            
+                if ( synchronized_sqlite3_prepare_v2(appDelegate.db, selectStatement,-1, &stmt, nil) == SQLITE_OK )
+                {
+                    while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+                    {
+                        char * _name = (char *) synchronized_sqlite3_column_text(stmt,0);
+                        
+                        if ((_name != nil) && strlen(_name))
+                            name = [NSString stringWithUTF8String:_name];
+                    }
+                }
+                
+                synchronized_sqlite3_finalize(stmt);
+                if ([name length]>0)
+                {
+                    additonalInfo = [NSString stringWithFormat:@"%@ : %@", info, name];
+                }
+                
+                
+                
                 if ([whatId1 isEqualToString:@""])
                 {
                     if([eventId length] > 0)
@@ -638,16 +688,12 @@ extern void SVMXLog(NSString *format, ...);
         }
     }
     synchronized_sqlite3_finalize(stmt);
-    if ([objectName isEqualToString:@"SVMXC__Service_Order__c"])
+    //8211
+    if ([objectName isEqualToString:_ObjectName])
     {
         objectApiName = objectName;
         return YES;
     }
-	else if ([objectName isEqualToString:@"Case"])
-	{
-		objectApiName = objectName;
-        return YES;
-	}
     
     return NO;
 
