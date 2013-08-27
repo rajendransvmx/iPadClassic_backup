@@ -212,6 +212,22 @@ extern void SVMXLog(NSString *format, ...);
     return YES;
 }
 */
+- (NSString *)trimHTML:(NSString *)html
+{
+    NSScanner *theScanner;
+    NSString *text = nil;
+    
+    theScanner = [NSScanner scannerWithString:html];
+    
+    while ([theScanner isAtEnd] == NO) {
+        [theScanner scanUpToString:@"<" intoString:NULL] ;
+        [theScanner scanUpToString:@">" intoString:&text] ;
+        html = [html stringByReplacingOccurrencesOfString:
+                [ NSString stringWithFormat:@"%@>", text]
+                                               withString:@" "];
+    }
+    return html;
+}
 
 
 #pragma mark -
@@ -223,7 +239,7 @@ extern void SVMXLog(NSString *format, ...);
     NSDictionary *step = [[self getStepsForLegAtIndex:indexPath.section] objectAtIndex:indexPath.row];//[route stepAtIndex:indexPath.row];
     
 	NSString *cellText = [step objectForKey:@"instructions"];
-    
+    cellText = [self trimHTML:cellText];
     //Since width of the text view is 199 the constraint size width should be 30-40 pixel less than width to adequate the words to be within the required area 160
     //constraint height is 1000, coz its the max allowed limit.
     
