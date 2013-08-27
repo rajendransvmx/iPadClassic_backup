@@ -3994,7 +3994,7 @@ int percent = 0;
 
 #pragma CustomizeAlertView
 
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex;  // after animation
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex  // after animation
 {
 	if ( switchUser )
 	{
@@ -4218,6 +4218,46 @@ int percent = 0;
     
 }
 
+//One Call sync
+- (BOOL) shouldDoOneCallSync
+{
+	BOOL oneCallSync = FALSE;
+	
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL USDefault_aggressiveSync = [defaults boolForKey:@"USDefault_Aggressive_flag"];
+	
+	if (USDefault_aggressiveSync)
+	{
+		oneCallSync = TRUE;
+	}
+	
+	return oneCallSync;
+	
+}
+
+- (void) overrideOptimizeSyncSettingsFromRooTPlist
+{
+	NSUserDefaults * userDefaults = [NSUserDefaults standardUserDefaults];
+	
+	BOOL value = [userDefaults boolForKey:@"USDefault_Aggressive_flag"];
+	NSString * settingValue = [self getSettingValueFromMobileSettings:@"IPAD018_SET010"];
+	if ([settingValue length] > 0)
+		value = [settingValue  boolValue];
+	
+	//Rewrite the user's actual org to settings :
+	[userDefaults setBool:value forKey:@"USDefault_Aggressive_flag"];
+	[userDefaults synchronize];
+}
+
+
+- (NSString *) getSettingValueFromMobileSettings:(NSString *)SETID
+{
+	NSString * settingValue = @"";
+	settingValue = [self.settingsDict objectForKey:SETID];
+	
+	return settingValue;
+}
+//One Call sync End
 
 //Defect 6774
 - (void) checkifConflictExistsForConnectionError

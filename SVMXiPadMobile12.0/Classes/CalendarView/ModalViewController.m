@@ -1560,7 +1560,7 @@ extern void SVMXLog(NSString *format, ...);
 - (void) setEventsView:(NSString *)_date
 {
     SMLog(@"%@", appDelegate.wsInterface.eventArray);
-	 NSLog(@"setEventsView %d", [appDelegate.wsInterface.eventArray count]);
+	
     EventViewController * events = nil;
     NSDictionary * dict;
     NSString * workOrderName;
@@ -1579,27 +1579,25 @@ extern void SVMXLog(NSString *format, ...);
     /*Shravya-Calendar view 7408*/
     NSArray *conflictObjects = [appDelegate.calDataBase readConflictTableForEventInfo];
 
-    SMLog(@"%@", appDelegate.wsInterface.eventArray);
+   
     for ( int i = 0; i < [appDelegate.wsInterface.eventArray count]; i++ )
     {
         dict = [[appDelegate.wsInterface.eventArray objectAtIndex:i] retain]; /*Shravya-Calendar view 7408*/
-        SMLog(@"%@", dict);
+     
         workOrderName = [dict objectForKey:ADDITIONALINFO];
         subject = [dict objectForKey:SUBJECT];
         NSDate * temp_start_date_time , *temp_end_date_time ;
-        SMLog(@"%@ %@", workOrderName, subject);
+       
         
         NSDate * eventDateTime = [dict objectForKey:ACTIVITYDATE];
-        SMLog(@"%@",eventDateTime);
-		
-        SMLog(@"Setdate = %@", _date);
+       
         
         NSString * activtyDate  = [self dateStringConversion:eventDateTime];
         SMLog(@"%@",activtyDate);
 		
         
         eventDateTime = [dict objectForKey:ACTIVITYDTIME];
-        SMLog(@"%@",eventDateTime);
+      
         
         NSString * dateString = [self dateStringConversion:eventDateTime];
         
@@ -1611,15 +1609,15 @@ extern void SVMXLog(NSString *format, ...);
         
         eventDateTime = [dict objectForKey:STARTDATETIME];
         temp_start_date_time = [dict objectForKey:STARTDATETIME];
-        SMLog(@"%@",eventDateTime);
+       
         
         dateString = [self dateStringConversion:eventDateTime];
         
         NSString * startDateTime = dateString;
-        SMLog(@"Startdatetime = %@", startDateTime);
+        
         
         NSString * eventDate = [startDateTime substringToIndex:10];
-		SMLog(@"eventDate = %@", eventDate);
+		
 		
         /*Shravya-Calendar view If the event is not today, no need to create nib for it 7408 */
         if ( [_date isEqualToString:eventDate] == NO ) {
@@ -1628,7 +1626,7 @@ extern void SVMXLog(NSString *format, ...);
         eventDateTime = [dict objectForKey:ENDDATETIME];
         temp_end_date_time =  [dict objectForKey:ENDDATETIME];
         
-        SMLog(@"%@",eventDateTime);
+       
         
         dateString = [self dateStringConversion:eventDateTime];
         
@@ -1638,7 +1636,6 @@ extern void SVMXLog(NSString *format, ...);
         NSString * startime = [startDateTime substringFromIndex:11];
         [startime substringToIndex:2];
 		
-        SMLog(@"Starttime = %@", startime);
         
         NSString * duration = [dict objectForKey:DURATIONINMIN];
         NSTimeInterval interval;

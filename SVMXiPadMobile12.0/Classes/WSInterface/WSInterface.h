@@ -20,6 +20,8 @@
 #import "ZKRecordTypeMapping.h"
 #import "ZKPicklistEntry.h"
 
+//Changes for optimized sync - One Call sync
+#import "OptimizedSyncCalls.h"
 
 typedef enum CUSTOM_SYNC_STATUS{
         NO_ACTIVE_CUSTOM_SYNC  = 0,
@@ -201,7 +203,15 @@ typedef enum CUSTOM_SYNC_STATUS{
     NSString * cus_class_name ,* cus_method_name , * cus_sync_req_id , * custom_sync_object_name;
  
     CUSTOM_SYNC_STATUS custom_sync_status;
+	
+	//Changes for optimized sync - One Call sync
+	OptimizedSyncCalls * optimizeSyncCalls;
+
 }
+
+//Radha - #defect 8227
+@property (nonatomic, retain) NSString * put_insert_time;
+
 //sahana
 @property ( nonatomic) CUSTOM_SYNC_STATUS custom_sync_status;
 @property (nonatomic ,retain) NSString * cus_class_name ,* cus_method_name , * cus_sync_req_id , * custom_sync_object_name;
@@ -502,7 +512,15 @@ last_sync_time:(NSString *)last_sync_time;
 
 
 //Adv Download Criteria
-- (void)doAdvanceDownloadCriteria;
+- (BOOL)doAdvanceDownloadCriteria; //One Call sync
+
+//Changes for optimized sync - one sync call
+- (BOOL) CustomSingleSyncCall:(NSDate *)syncStarted;
+- (BOOL) getAllDataForIds:(NSDate *)syncStarted flag:(BOOL)doOnesync;
+- (void) doSignatureAndPDF:(BOOL)doOnesync;
+- (void) updateSyncTimeStampINSyncHistoryPlist:(BOOL)doOnesync;
+- (void) copyTrailertoTempTrailerForOneCallSync:(NSString *)operation_type;
+
 @end
 
 @protocol RefrehManualDataSyncUI <NSObject>

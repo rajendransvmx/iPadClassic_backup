@@ -97,7 +97,7 @@
 - (IBAction) Done;
 
 - (void) fetchPosts;
-//- (IBAction) postNewChat;//  Unused methods
+- (IBAction) postNewChat;
 - (void) resetAndStartTimer;
 
 - (void) processUsrStringArray;

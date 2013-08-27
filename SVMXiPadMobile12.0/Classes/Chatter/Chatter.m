@@ -602,37 +602,36 @@ extern void SVMXLog(NSString *format, ...);
                [NSTimer scheduledTimerWithTimeInterval:TIMERINTERVAL target:self selector:@selector(fetchPosts) userInfo:nil repeats:NO];
 }
 
-//  Unused methods
-//- (IBAction) postNewChat
-//{
-//    if (![appDelegate isInternetConnectionAvailable])
-//    {
-//        [activity stopAnimating];
-//        appDelegate.shouldShowConnectivityStatus = TRUE;
-//        [appDelegate displayNoInternetAvailable];
-//        return;
-//    }
-//    
-//    didEditRow = NO;
-//    
-//    [newPostText resignFirstResponder];
-//
-//    ZKSObject * cObj = [[ZKSObject alloc] initWithType:@"FeedPost"];
-//
-//    [cObj setFieldValue:newPostText.text field:@"Body"];
-//    [cObj setFieldValue:productId field:@"ParentId"];
-//
-//    NSArray *objects = [[NSArray alloc] initWithObjects:cObj, nil];
-//
-//    didRunOperation = YES;
-//    [iOSObject create:objects];
-//    
-//    // Analyser
-//    [objects release];
-//    [cObj release];
-//    
-//    newPostText.text = @"";
-//}
+- (IBAction) postNewChat
+{
+    if (![appDelegate isInternetConnectionAvailable])
+    {
+        [activity stopAnimating];
+        appDelegate.shouldShowConnectivityStatus = TRUE;
+        [appDelegate displayNoInternetAvailable];
+        return;
+    }
+    
+    didEditRow = NO;
+    
+    [newPostText resignFirstResponder];
+
+    ZKSObject * cObj = [[ZKSObject alloc] initWithType:@"FeedPost"];
+
+    [cObj setFieldValue:newPostText.text field:@"Body"];
+    [cObj setFieldValue:productId field:@"ParentId"];
+
+    NSArray *objects = [[NSArray alloc] initWithObjects:cObj, nil];
+
+    didRunOperation = YES;
+    [iOSObject create:objects];
+    
+    // Analyser
+    [objects release];
+    [cObj release];
+    
+    newPostText.text = @"";
+}
 
 - (void) didCreateObjects:(ZKQueryResult *)result error:(NSError *)error context:(id)context;
 {

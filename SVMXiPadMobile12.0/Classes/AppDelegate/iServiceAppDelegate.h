@@ -105,7 +105,7 @@ typedef enum SYNC_STATUS {
     SYNC_RED = 2
     } SYNC_STATUS;
 
-
+//Changes for optimized sync - One Call sync
 typedef enum  INCREMENTAL_SYNC{
     INCR_STARTS     = 0, 
     PUT_INSERT_DONE = 1,
@@ -123,8 +123,9 @@ typedef enum  INCREMENTAL_SYNC{
     GET_PRICE_DL_START = 13,
     GET_PRICE_INSERT_START = 14,
     GET_PRICE_DL_FINISH = 15,
-    CUSTOM_AGGRESSIVESYNC_DONE = 16
-    
+    CUSTOM_AGGRESSIVESYNC_DONE = 16,
+	ONE_CALL_SYNC_DONE = 17,
+	TX_FETCH_OPTIMIZED_DONE = 18
     } INCREMENTAL_SYNC;
 
 typedef enum INITIAL_SYNC_SUCCES_OR_FAILED
@@ -1043,6 +1044,10 @@ extern  NSString const *devVersion;
 
 //-(void)getTagsForTheFirstTime;
 
+//One Call sync
+- (BOOL) shouldDoOneCallSync;
+- (void) overrideOptimizeSyncSettingsFromRooTPlist;
+- (NSString *) getSettingValueFromMobileSettings:(NSString *)SETID;
 
 
 @end

@@ -163,10 +163,10 @@
 
 - (void) highlightToday;
 - (void) setupWeeks;
-//- (IBAction) changeWeek;//  Unused methods
-//- (IBAction) NextWeek;//  Unused methods
-//- (IBAction) PrevWeek;//  Unused methods
-//- (IBAction) goToCurrentWeek;//  Unused methods
+- (IBAction) changeWeek;
+- (IBAction) NextWeek;
+- (IBAction) PrevWeek;
+- (IBAction) goToCurrentWeek;
 - (void) setSliderBounds:(NSUInteger)div;
 - (CGRect) getSliderRectForLocation:(CGPoint)location;
 

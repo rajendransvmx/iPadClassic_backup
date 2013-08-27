@@ -6134,7 +6134,11 @@ enum BizRuleConfirmViewStatus{
         NSInteger columns = [[detail objectForKey:gDETAILS_NUMBER_OF_COLUMNS] intValue];
         NSString * detail_layout_id = [detail objectForKey:gDETAILS_LAYOUT_ID];
         
-		NSInteger field_width = background_width/columns;   
+		
+		NSInteger field_width = 0;
+		//Fix for crash  when tap on back button
+		if (columns > 0)
+			field_width = background_width/columns;
             
         if (row == 0) //display the column titles
 		{

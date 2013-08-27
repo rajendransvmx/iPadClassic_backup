@@ -398,6 +398,9 @@
 
 /*Shra-lookup*/
 
+//Changes for optimized sync - One Call sync
+- (NSInteger) getCountOfRecordsFromSyncRecordsHeap;
+
 #define CURRENTRECORD                       @"SVMX.CURRENTRECORD"
 #define CURRENTRECORD_HEADER                @"SVMX.CURRENTRECORDHEADER"
 #define SVMX_USER_TRUNK                     @"SVMX.USERTRUNK"
@@ -529,6 +532,11 @@
 #define GET_INSERT_DOWNLOAD_CRITERIA  @"GET_INSERT_DOWNLOAD_CRITERIA"
 #define GET_UPDATE_DOWNLOAD_CRITERIA  @"GET_UPDATE_DOWNLOAD_CRITERIA"
 #define GET_DELETE_DOWNLOAD_CRITERIA  @"GET_DELETE_DOWNLOAD_CRITERIA"
+
+//Radha - //Changes for optimized sync - One Call sync
+#define GET_DELETE_DC_OPTIMZED		  @"GET_DELETE_DC_OPTIMZED"
+#define GET_INSERT_DC_OPTIMZED		  @"GET_INSERT_DC_OPTIMZED"
+#define GET_UPDATE_DC_OPTIMZED		  @"GET_UPDATE_DC_OPTIMZED"
 
 
 

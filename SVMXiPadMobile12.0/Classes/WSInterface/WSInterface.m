@@ -27,6 +27,9 @@ extern void SVMXLog(NSString *format, ...);
 @end
 
 @implementation WSInterface
+
+//Radha #defect 8227
+@synthesize put_insert_time;
 @synthesize customSync_unsynched_records,custom_unsync_reqIds;
 @synthesize custom_sync_status;
 @synthesize cus_class_name,cus_method_name , custom_sync_object_name , cus_sync_req_id;
@@ -143,9 +146,19 @@ extern void SVMXLog(NSString *format, ...);
     picklistValues = [[NSMutableArray alloc] initWithCapacity:0];
     pageUiHistory = [[NSMutableArray alloc] initWithCapacity:0];
     processDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
+	
+	//Changes for optimized sync - One Call sync
+	optimizeSyncCalls = [[OptimizedSyncCalls alloc] init];
     
     return self;
 }
+
+- (void) dealloc
+{
+	[jsonParserForDataSync release];
+	[super dealloc];
+}
+
 -(BOOL)ConflictExists
 {
      BOOL conflict_exists = [appDelegate.databaseInterface getConflictsStatus];
@@ -356,9 +369,9 @@ extern void SVMXLog(NSString *format, ...);
                     }
                     
                     
-                    jsonWriter = [[SBJsonWriter alloc] init];
+                    SBJsonWriter * localJsonWriter = [[SBJsonWriter alloc] init];
                     NSRange range = {0,1};
-                    NSString * json_record= [ jsonWriter stringWithObject:each_record ];
+                    NSString * json_record= [ localJsonWriter stringWithObject:each_record ];
                     NSMutableString * json_record_str = [[NSMutableString alloc] initWithString:json_record];
                     NSString * attribute = [NSString stringWithFormat:@"{ \"attributes\":{\"type\":\"%@\"},",object_name];
                     NSString * json_ = [json_record_str stringByReplacingCharactersInRange:range withString:attribute];
@@ -417,6 +430,7 @@ extern void SVMXLog(NSString *format, ...);
                         }
                         [Delete_operation addValueMap:records_map];
                     }
+					[localJsonWriter release];
                 }
             }
             //---TO DO----
@@ -1594,7 +1608,8 @@ last_sync_time:(NSString *)last_sync_time
                                                                           andRecordCount:1];
 
     //If no records exists dont send the response
-    if([allKeys count] == 0)
+		//Changes for optimized sync - One Call sync
+    if([allKeys count] == 1)
     {
         SMLog(@"NO getRecords ");
         //update all the records in the heap table to 
@@ -1610,6 +1625,9 @@ last_sync_time:(NSString *)last_sync_time
         
         if([object_api_name length] != 0 && ![object_api_name isEqualToString:@""])
         {
+			//Changes for optimized sync - One Call sync
+			if ([object_api_name isEqualToString:@"LAST_BATCH"])
+				continue;
             INTF_WebServicesDefServiceSvc_SVMXMap  * svmxcmap = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
             svmxcmap.key = @"TX_OBJECT" ;
             svmxcmap.value = object_api_name; //object  api name
@@ -1617,7 +1635,7 @@ last_sync_time:(NSString *)last_sync_time
             
             [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"WS-PutAllTheRecordsForIds-Delete"
                                                                  andRecordCount:[array_of_record_ids count]];
-            
+            NSLog(@"OBJECT = %@, COUNT + %D", object_api_name, [array_of_record_ids count]);
             for(NSString * record_id in array_of_record_ids)
             {
                 NSString * record_id_str = (NSString *)record_id;
@@ -1778,8 +1796,8 @@ NSDate * syncCompleted;
    
     BOOL retVal;
     NSAutoreleasePool * autoreleasePool = [[NSAutoreleasePool alloc] init];
-
-    BOOL temp_aggressiveSync = appDelegate.Enable_aggresssiveSync;
+	//One Call sync
+	BOOL doOneCallSync = [appDelegate shouldDoOneCallSync];
     
     //shrinivas : 
     retVal = [[ZKServerSwitchboard switchboard] doCheckSession];
@@ -1907,771 +1925,740 @@ NSDate * syncCompleted;
     /* Shravya - Advanced look up- User trunk location */
     [appDelegate.wsInterface getUserTrunkLocationRequest];
     SMLog(@"User location update ends");
-
-    [self GetDelete];
-    
-    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"GetDelete-VP"
-                                                             andRecordCount:1];
-        
-
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-    {
-#ifdef kPrintLogsDuringWebServiceCall
-        SMLog(@"WSinterface.m : DOINC_DATA_SYNC: GET_DELETE");
-#endif
-
-        if (![appDelegate isInternetConnectionAvailable])
-        {
-             appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];
-            break;
-        }
-
-        if (![appDelegate isInternetConnectionAvailable] || appDelegate.Incremental_sync_status == GET_DELETE_DONE || appDelegate.incrementalSync_Failed == TRUE)
-        {
-            break;
-        }
-        if(appDelegate.connection_error)
-        {
-             appDelegate.dataSyncRunning = NO;
-            //Defect 6774
-			[appDelegate checkifConflictExistsForConnectionError];
-            [self internetConnectivityHandling:data_sync];
-             appDelegate.Enable_aggresssiveSync = FALSE;
-			//Radha Defect Fix 7444
-             [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-
-            return;
-        }
 		
-    }
-	
-    if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
-    {
-        if ([appDelegate isInternetConnectionAvailable])
-		{
-            //Defect 6774
-			[appDelegate checkifConflictExistsForConnectionError];
-		}
-		appDelegate.Enable_aggresssiveSync = FALSE;
-		appDelegate.dataSyncRunning = NO;
-		//Radha Defect Fix 7444
-		[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-        return;
-    }
-    
-    //Radha Sync ProgressBar
-//	[appDelegate setCurrentSyncStatusProgress:GETDELETE_DONE optimizedSynstate:oGETDELETE_DONE];
-
-    if(!temp_aggressiveSync)
-    {
-        [self GETDownloadCriteriaRecordsFor:GET_DELETE_DOWNLOAD_CRITERIA];
-
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-        {
-        #ifdef kPrintLogsDuringWebServiceCall
-            SMLog(@"WSinterface.m : DOINC_DATA_SYNC: GET_DELETE_DWN_CRIT");
-        #endif
-
-            if (![appDelegate isInternetConnectionAvailable])
-            {
-                 appDelegate.dataSyncRunning = NO;
-                [self internetConnectivityHandling:data_sync];        
-                break;
-            }
-            if(appDelegate.Incremental_sync_status == GET_DELETE_DC_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
-            {
-                break;
-            }
-            if(appDelegate.connection_error)
-            {
-                appDelegate.dataSyncRunning = NO;
-                appDelegate.connection_error = TRUE;
-				//Defect 6774
-				[appDelegate checkifConflictExistsForConnectionError];
-                [self internetConnectivityHandling:data_sync];
-                 appDelegate.Enable_aggresssiveSync = FALSE;
-				//Radha Defect Fix 7444
-				[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-                return;
-            }
-        }
-        if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
-        {
-            if ([appDelegate isInternetConnectionAvailable])
-            {
-				//Defect 6774
-				[appDelegate checkifConflictExistsForConnectionError];
-			}
-            
-            appDelegate.dataSyncRunning = NO;
-             appDelegate.Enable_aggresssiveSync = FALSE;
-			//Radha Defect Fix 7444
-             [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-            return;
-        }    
-
-        [self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP_SELECT"];
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-        {
-        #ifdef kPrintLogsDuringWebServiceCall
-            SMLog(@"WSinterface.m : DOINC_DATA_SYNC: CLEAN_UP_SELECT 1");
-        #endif
-
-            if (![appDelegate isInternetConnectionAvailable])
-            {
-                appDelegate.dataSyncRunning = NO;
-                [self internetConnectivityHandling:data_sync];            
-                break;
-            }
-
-            if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
-                break;
-            
-            if(appDelegate.connection_error)
-            {
-                appDelegate.dataSyncRunning = NO;
-                [self internetConnectivityHandling:data_sync];
-				//Defect 6774
-				[appDelegate checkifConflictExistsForConnectionError];
-                 appDelegate.Enable_aggresssiveSync = FALSE;
-				//Radha Defect Fix 7444
-				[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-                return;
-            }
-            
-        }
-        if (![appDelegate isInternetConnectionAvailable])
-        {
-			//Defect 6774
-			[appDelegate checkifConflictExistsForConnectionError];
-            appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];
-             appDelegate.Enable_aggresssiveSync = FALSE;
-			//Radha Defect Fix 7444
-             [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-            return;
-        }
-        //Radha Sync ProgressBar
-//		[appDelegate setCurrentSyncStatusProgress:GETEDELETE_DC_DONE optimizedSynstate:0];
+		
+	//Changes for optimized sync - One Call sync
+	if (doOneCallSync)
+	{
+		BOOL syncFlag = [self CustomSingleSyncCall:syncStarted];
+		
+		if (!syncFlag)
+			return;
 	}
-    
-    [self copyTrailertoTempTrailer:DELETE];
-    
-    [self getAllRecordsForOperationType:DELETE];
-    
-    if([appDelegate.dataSync_dict count] >0)
-    {
-        [self Put:PUT_DELETE];
-        
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-        {
-        #ifdef kPrintLogsDuringWebServiceCall
-            SMLog(@"WSinterface.m : DOINC_DATA_SYNC: PUT_DELETE");
-        #endif
+	//Changes for optimized sync - one sync call
+	else
+	{
+		
+		self.put_insert_time = @"";
+		[self GetDelete];
+		
+		[[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"GetDelete-VP"
+																 andRecordCount:1];
+			
 
-            if (![appDelegate isInternetConnectionAvailable])
-            {
-                appDelegate.dataSyncRunning = NO;
-                break;
-            }
-            if(appDelegate.Incremental_sync_status == PUT_DELETE_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
-            {
-                break;
-            }
-            if(appDelegate.connection_error)
-            {
-                appDelegate.dataSyncRunning = NO;
-                //Defect 6774
+		while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+		{
+			#ifdef kPrintLogsDuringWebServiceCall
+				SMLog(@"WSinterface.m : DOINC_DATA_SYNC: GET_DELETE");
+			#endif
+
+			if (![appDelegate isInternetConnectionAvailable])
+			{
+				 appDelegate.dataSyncRunning = NO;
+				[self internetConnectivityHandling:data_sync];
+				break;
+			}
+
+			if (![appDelegate isInternetConnectionAvailable] || appDelegate.Incremental_sync_status == GET_DELETE_DONE || appDelegate.incrementalSync_Failed == TRUE)
+			{
+				break;
+			}
+			if(appDelegate.connection_error)
+			{
+				 appDelegate.dataSyncRunning = NO;
+				//Defect 6774
 				[appDelegate checkifConflictExistsForConnectionError];
-                [self internetConnectivityHandling:data_sync];
-                 appDelegate.Enable_aggresssiveSync = FALSE;
+				[self internetConnectivityHandling:data_sync];
+				 appDelegate.Enable_aggresssiveSync = FALSE;
 				//Radha Defect Fix 7444
-				[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-                return;
-            }
-        }
-        if (![appDelegate isInternetConnectionAvailable])
-        {
-            [self internetConnectivityHandling:data_sync];        
-        }
+				 [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
 
-        if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
-        {
-            if ([appDelegate isInternetConnectionAvailable])
+				return;
+			}
+			
+		}
+		
+		if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+		{
+			if ([appDelegate isInternetConnectionAvailable])
 			{
 				//Defect 6774
 				[appDelegate checkifConflictExistsForConnectionError];
 			}
-            
-            appDelegate.dataSyncRunning = NO;
-            [updateSyncStatus refreshSyncStatus];
-             appDelegate.Enable_aggresssiveSync = FALSE;
-			//Radha Defect Fix 7444
-             [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-            return;
-        }
-    
-    }
-        
-    //Radha Sync ProgressBar
-		
-//	[appDelegate setCurrentSyncStatusProgress:PUTDELETE_DONE optimizedSynstate:oPUTDELETE_DONE];
-	       
-        //Adv Download Criteria Start
-    [self doAdvanceDownloadCriteria];
-	if (![appDelegate isInternetConnectionAvailable])
-	{
-		[self internetConnectivityHandling:data_sync];
-		appDelegate.dataSyncRunning = NO;
-	}
-
-    if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED || [appDelegate isInternetConnectionAvailable] == FALSE)
-    {
-        SMLog(@"Adv Download Criteria Failed");
-		if ([appDelegate isInternetConnectionAvailable])
-		{
-			//Defect 6774
-			[appDelegate checkifConflictExistsForConnectionError];
-		}
-		
-		appDelegate.dataSyncRunning = NO;
-		[updateSyncStatus refreshSyncStatus];
-		appDelegate.Enable_aggresssiveSync = FALSE;
-		//Radha Defect Fix 7444
-		[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-
-        return;
-    }
-		
-	if (appDelegate.connection_error)
-	{
-		appDelegate.dataSyncRunning = NO;
-		appDelegate.connection_error = FALSE;
-		//Defect 6774
-		[appDelegate checkifConflictExistsForConnectionError];
-		[self internetConnectivityHandling:data_sync];
-		appDelegate.Enable_aggresssiveSync = FALSE;
-		//Radha Defect Fix 7444
-		[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-		return;
-
-	}
-	
-        //Adv Download Criteria Stop
-        
-    [appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:GET_DELETE];
-    [appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:PUT_DELETE];
-    
-    //clean up all delete operations from object tables , Heap table and  from  trailer table .
-    
-    [self copyTrailertoTempTrailer:INSERT];                           //This is the 1st method called in 
-   
-    [self  getAllRecordsForOperationType:INSERT];
-    
-        
-    if([appDelegate.dataSync_dict count] >0)
-    {
-        [self Put:PUT_INSERT];   //call incremental insert
-        
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-        {
-            #ifdef kPrintLogsDuringWebServiceCall
-                SMLog(@"WSinterface.m : DOINC_DATA_SYNC: PUT_INSERT");
-            #endif
-
-            if (![appDelegate isInternetConnectionAvailable])
-            {
-                [self internetConnectivityHandling:data_sync];
-                appDelegate.dataSyncRunning = NO;
-                break;
-            }
-
-            if(appDelegate.Incremental_sync_status == PUT_INSERT_DONE || appDelegate.incrementalSync_Failed == TRUE  || [appDelegate isInternetConnectionAvailable] == FALSE)
-            {
-                break;
-            }
-            if(appDelegate.connection_error)
-            {
-                appDelegate.dataSyncRunning = NO;
-                //Defect 6774
-				[appDelegate checkifConflictExistsForConnectionError];
-                [self internetConnectivityHandling:data_sync];
-                 appDelegate.Enable_aggresssiveSync = FALSE;
-				//Radha Defect Fix 7444
-				[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-                return;
-            }
-        }
-        if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
-        {
-            if ([appDelegate isInternetConnectionAvailable])
-			{
-				//Defect 6774
-				[appDelegate checkifConflictExistsForConnectionError];
-			}
-
+			appDelegate.Enable_aggresssiveSync = FALSE;
 			appDelegate.dataSyncRunning = NO;
+			//Radha Defect Fix 7444
+			[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+			return;
+		}
+		
+		//Radha Sync ProgressBar
+	//	[appDelegate setCurrentSyncStatusProgress:GETDELETE_DONE optimizedSynstate:oGETDELETE_DONE];
+
+
+		[self GETDownloadCriteriaRecordsFor:GET_DELETE_DOWNLOAD_CRITERIA];
+
+		while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+		{
+			#ifdef kPrintLogsDuringWebServiceCall
+				SMLog(@"WSinterface.m : DOINC_DATA_SYNC: GET_DELETE_DWN_CRIT");
+			#endif
+
+			if (![appDelegate isInternetConnectionAvailable])
+			{
+				 appDelegate.dataSyncRunning = NO;
+				[self internetConnectivityHandling:data_sync];        
+				break;
+			}
+			if(appDelegate.Incremental_sync_status == GET_DELETE_DC_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+			{
+				break;
+			}
+			if(appDelegate.connection_error)
+			{
+				appDelegate.dataSyncRunning = NO;
+				appDelegate.connection_error = TRUE;
+				//Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
+				[self internetConnectivityHandling:data_sync];
+				 appDelegate.Enable_aggresssiveSync = FALSE;
+				//Radha Defect Fix 7444
+				[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+				return;
+			}
+		}
+		if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+		{
+			if ([appDelegate isInternetConnectionAvailable])
+			{
+				//Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
+			}
+			
+			appDelegate.dataSyncRunning = NO;
+			 appDelegate.Enable_aggresssiveSync = FALSE;
+			//Radha Defect Fix 7444
+			 [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+			return;
+		}    
+
+		[self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP_SELECT"];
+		while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+		{
+			#ifdef kPrintLogsDuringWebServiceCall
+				SMLog(@"WSinterface.m : DOINC_DATA_SYNC: CLEAN_UP_SELECT 1");
+			#endif
+
+			if (![appDelegate isInternetConnectionAvailable])
+			{
+				appDelegate.dataSyncRunning = NO;
+				[self internetConnectivityHandling:data_sync];            
+				break;
+			}
+
+			if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
+				break;
+			
+			if(appDelegate.connection_error)
+			{
+				appDelegate.dataSyncRunning = NO;
+				[self internetConnectivityHandling:data_sync];
+				//Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
+				 appDelegate.Enable_aggresssiveSync = FALSE;
+				//Radha Defect Fix 7444
+				[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+				return;
+			}
+			
+		}
+		if (![appDelegate isInternetConnectionAvailable])
+		{
+			//Defect 6774
+			[appDelegate checkifConflictExistsForConnectionError];
+			appDelegate.dataSyncRunning = NO;
+			[self internetConnectivityHandling:data_sync];
+			 appDelegate.Enable_aggresssiveSync = FALSE;
+			//Radha Defect Fix 7444
+			 [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+			return;
+		}
+			//Radha Sync ProgressBar
+	//		[appDelegate setCurrentSyncStatusProgress:GETEDELETE_DC_DONE optimizedSynstate:0];
+		
+		[self copyTrailertoTempTrailer:DELETE];
+		
+		[self getAllRecordsForOperationType:DELETE];
+		
+		if([appDelegate.dataSync_dict count] >0)
+		{
+			[self Put:PUT_DELETE];
+			
+			while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+			{
+			#ifdef kPrintLogsDuringWebServiceCall
+				SMLog(@"WSinterface.m : DOINC_DATA_SYNC: PUT_DELETE");
+			#endif
+
+				if (![appDelegate isInternetConnectionAvailable])
+				{
+					appDelegate.dataSyncRunning = NO;
+					break;
+				}
+				if(appDelegate.Incremental_sync_status == PUT_DELETE_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+				{
+					break;
+				}
+				if(appDelegate.connection_error)
+				{
+					appDelegate.dataSyncRunning = NO;
+					//Defect 6774
+					[appDelegate checkifConflictExistsForConnectionError];
+					[self internetConnectivityHandling:data_sync];
+					 appDelegate.Enable_aggresssiveSync = FALSE;
+					//Radha Defect Fix 7444
+					[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+					return;
+				}
+			}
+			if (![appDelegate isInternetConnectionAvailable])
+			{
+				[self internetConnectivityHandling:data_sync];        
+			}
+
+			if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+			{
+				if ([appDelegate isInternetConnectionAvailable])
+				{
+					//Defect 6774
+					[appDelegate checkifConflictExistsForConnectionError];
+				}
+				
+				appDelegate.dataSyncRunning = NO;
+				[updateSyncStatus refreshSyncStatus];
+				 appDelegate.Enable_aggresssiveSync = FALSE;
+				//Radha Defect Fix 7444
+				 [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+				return;
+			}
+		
+		}
+			
+		//Radha Sync ProgressBar
+			
+	//	[appDelegate setCurrentSyncStatusProgress:PUTDELETE_DONE optimizedSynstate:oPUTDELETE_DONE];
+			   
+			//Adv Download Criteria Start
+		[self doAdvanceDownloadCriteria];
+		if (![appDelegate isInternetConnectionAvailable])
+		{
+			[self internetConnectivityHandling:data_sync];
+			appDelegate.dataSyncRunning = NO;
+		}
+
+		if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED || [appDelegate isInternetConnectionAvailable] == FALSE)
+		{
+			SMLog(@"Adv Download Criteria Failed");
+			if ([appDelegate isInternetConnectionAvailable])
+			{
+				//Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
+			}
+			
+			appDelegate.dataSyncRunning = NO;
+			[updateSyncStatus refreshSyncStatus];
 			appDelegate.Enable_aggresssiveSync = FALSE;
 			//Radha Defect Fix 7444
 			[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-            return;
-        }
-    
-    }
-        
-    //Radha Sync ProgressBar
-		
-//	[appDelegate setCurrentSyncStatusProgress:PUTINSERT_DONE optimizedSynstate:oPUTINSERT_DONE];
-	       
-    [self resetSyncLastindexAndObjectName];  //sahana
-        
-        [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"GetDelete-VP"
-                                                             andRecordCount:0];
-        
-    [self GetInsert];                        //once all insertion is over call call reverse insert  method
-        
-    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"GetInsert-VP"
-                                                             andRecordCount:1];
-        
-    
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-    {
-#ifdef kPrintLogsDuringWebServiceCall
-        SMLog(@"WSinterface.m : DOINC_DATA_SYNC: GET_INSERT");
-#endif
 
-        if (![appDelegate isInternetConnectionAvailable])
-        {
-            appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];
-            break;
-        }
-
-        if(appDelegate.Incremental_sync_status == GET_INSERT_DONE ||  appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
-        {
-            break;
-        }
-        if(appDelegate.connection_error)
-        {
-            appDelegate.dataSyncRunning = NO;
-            //Defect 6774
-			[appDelegate checkifConflictExistsForConnectionError];
-            [self internetConnectivityHandling:data_sync];
-             appDelegate.Enable_aggresssiveSync = FALSE;
-			//Radha Defect Fix 7444
-             [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-            return;
-        }
-    }  
-    if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
-    {
-        if ([appDelegate isInternetConnectionAvailable])
-		{
-            //Defect 6774
-			[appDelegate checkifConflictExistsForConnectionError];
+			return;
 		}
-         appDelegate.Enable_aggresssiveSync = FALSE;
-		appDelegate.dataSyncRunning = NO;
-		//Radha Defect Fix 7444
-		[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-        return;
-    }                                                             //call delete
-                                                                        //call Update
-    
-    //Radha Sync ProgressBar
-//	[appDelegate setCurrentSyncStatusProgress:GETINSERT_DONE optimizedSynstate:oGETINSERT_DONE];
-    
-    if( !temp_aggressiveSync)
-    {
+			
+		if (appDelegate.connection_error)
+		{
+			appDelegate.dataSyncRunning = NO;
+			appDelegate.connection_error = FALSE;
+			//Defect 6774
+			[appDelegate checkifConflictExistsForConnectionError];
+			[self internetConnectivityHandling:data_sync];
+			appDelegate.Enable_aggresssiveSync = FALSE;
+			//Radha Defect Fix 7444
+			[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+			return;
 
-        [self GETDownloadCriteriaRecordsFor:GET_INSERT_DOWNLOAD_CRITERIA];
-        
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-        {
-            #ifdef kPrintLogsDuringWebServiceCall
-                SMLog(@"WSinterface.m : DOINC_DATA_SYNC: GET_INSERT_DWN_CRIT");
-            #endif
+		}
+		
+			//Adv Download Criteria Stop
+			
+		[appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:GET_DELETE];
+		[appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:PUT_DELETE];
+		
+		//clean up all delete operations from object tables , Heap table and  from  trailer table .
+		
+		[self copyTrailertoTempTrailer:INSERT];                           //This is the 1st method called in 
+	   
+		[self  getAllRecordsForOperationType:INSERT];
+		
+			
+		if([appDelegate.dataSync_dict count] >0)
+		{
+			[self Put:PUT_INSERT];   //call incremental insert
+			
+			while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+			{
+				#ifdef kPrintLogsDuringWebServiceCall
+					SMLog(@"WSinterface.m : DOINC_DATA_SYNC: PUT_INSERT");
+				#endif
 
-            if (![appDelegate isInternetConnectionAvailable])
-            {
-                appDelegate.dataSyncRunning = NO;
-                [self internetConnectivityHandling:data_sync];            
-                break;
-            }
-            if(appDelegate.Incremental_sync_status == GET_INSERT_DC_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
-            {
-                break;
-            }
-            if(appDelegate.connection_error)
-            {
-                appDelegate.dataSyncRunning = NO;
-				//Defect 6774
-				[appDelegate checkifConflictExistsForConnectionError];
-                [self internetConnectivityHandling:data_sync];
-                 appDelegate.Enable_aggresssiveSync = FALSE;
+				if (![appDelegate isInternetConnectionAvailable])
+				{
+					[self internetConnectivityHandling:data_sync];
+					appDelegate.dataSyncRunning = NO;
+					break;
+				}
+
+				if(appDelegate.Incremental_sync_status == PUT_INSERT_DONE || appDelegate.incrementalSync_Failed == TRUE  || [appDelegate isInternetConnectionAvailable] == FALSE)
+				{
+					break;
+				}
+				if(appDelegate.connection_error)
+				{
+					appDelegate.dataSyncRunning = NO;
+					//Defect 6774
+					[appDelegate checkifConflictExistsForConnectionError];
+					[self internetConnectivityHandling:data_sync];
+					 appDelegate.Enable_aggresssiveSync = FALSE;
+					//Radha Defect Fix 7444
+					[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+					return;
+				}
+			}
+			if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+			{
+				if ([appDelegate isInternetConnectionAvailable])
+				{
+					//Defect 6774
+					[appDelegate checkifConflictExistsForConnectionError];
+				}
+
+				appDelegate.dataSyncRunning = NO;
+				appDelegate.Enable_aggresssiveSync = FALSE;
 				//Radha Defect Fix 7444
 				[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-                return;
-            }
-        }
-        if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
-        {
-            if ([appDelegate isInternetConnectionAvailable])
+				return;
+			}
+		
+		}
+			
+		//Radha Sync ProgressBar
+			
+	//	[appDelegate setCurrentSyncStatusProgress:PUTINSERT_DONE optimizedSynstate:oPUTINSERT_DONE];
+			   
+		[self resetSyncLastindexAndObjectName];  //sahana
+			
+			[[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"GetDelete-VP"
+																 andRecordCount:0];
+			
+		[self GetInsert];                        //once all insertion is over call call reverse insert  method
+			
+		[[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"GetInsert-VP"
+																 andRecordCount:1];
+			
+		
+		while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+		{
+			#ifdef kPrintLogsDuringWebServiceCall
+				SMLog(@"WSinterface.m : DOINC_DATA_SYNC: GET_INSERT");
+			#endif
+
+			if (![appDelegate isInternetConnectionAvailable])
+			{
+				appDelegate.dataSyncRunning = NO;
+				[self internetConnectivityHandling:data_sync];
+				break;
+			}
+
+			if(appDelegate.Incremental_sync_status == GET_INSERT_DONE ||  appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+			{
+				break;
+			}
+			if(appDelegate.connection_error)
+			{
+				appDelegate.dataSyncRunning = NO;
+				//Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
+				[self internetConnectivityHandling:data_sync];
+				 appDelegate.Enable_aggresssiveSync = FALSE;
+				//Radha Defect Fix 7444
+				 [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+				return;
+			}
+		}  
+		if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+		{
+			if ([appDelegate isInternetConnectionAvailable])
 			{
 				//Defect 6774
 				[appDelegate checkifConflictExistsForConnectionError];
 			}
-        
-            appDelegate.dataSyncRunning = NO;
+			 appDelegate.Enable_aggresssiveSync = FALSE;
+			appDelegate.dataSyncRunning = NO;
 			//Radha Defect Fix 7444
-             [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-            return;
-        }    
-        
-        [self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP_SELECT"];
-        
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-        {
-    #ifdef kPrintLogsDuringWebServiceCall
-            SMLog(@"WSinterface.m : DOINC_DATA_SYNC: CLEAN_UP_SELECT 2");
-    #endif
-
-            if (![appDelegate isInternetConnectionAvailable])
-            {
-                appDelegate.dataSyncRunning = NO;
-                [self internetConnectivityHandling:data_sync];
-                break;
-            }
-            
-            if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
-                break;
-            if(appDelegate.connection_error)
-            {
-                appDelegate.dataSyncRunning = NO;
-                //Defect 6774
-				[appDelegate checkifConflictExistsForConnectionError];
-                [self internetConnectivityHandling:data_sync];
-                 appDelegate.Enable_aggresssiveSync = FALSE;
-				//Radha Defect Fix 7444
-				[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-                return;
-            }
-        }
-        if (![appDelegate isInternetConnectionAvailable])
-        {
-            appDelegate.dataSyncRunning = NO;
-				//Defect 6774
-			[appDelegate checkifConflictExistsForConnectionError];
-            [self internetConnectivityHandling:data_sync];
-            appDelegate.Enable_aggresssiveSync = FALSE;
-			//Radha Defect Fix 7444
-             [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-            return;
-        }
+			[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+			return;
+		}                                                             //call delete
+																			//call Update
 		
 		//Radha Sync ProgressBar
-//		[appDelegate setCurrentSyncStatusProgress:GETINSERT_DC_DONE optimizedSynstate:0];
-    }
-    didWriteSignature = NO;
-    [appDelegate.calDataBase getAllLocalIdsForSignature:SIG_BEFOREUPDATE andSignType:@"ViewWorkOrder"];
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-    {
-        SMLog(@"Signature to SFDC");
-        if (didWriteSignature == YES)
-            break;
-        if (![appDelegate isInternetConnectionAvailable])
-        {
-            break;
-        }
-        if(appDelegate.connection_error)
-            break;
-    }
-    
-    
-    //call update
-    [self copyTrailertoTempTrailer:UPDATE];
-    [self  getAllRecordsForOperationType:UPDATE];
-    
-    if([appDelegate.dataSync_dict count] >0)
-    {
-        [self Put:PUT_UPDATE];
-        
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-        {
-            #ifdef kPrintLogsDuringWebServiceCall
-                SMLog(@"WSinterface.m : DOINC_DATA_SYNC: PUT_UPDATE");
-            #endif
-
-            if (![appDelegate isInternetConnectionAvailable])
-            {
-                appDelegate.dataSyncRunning = NO;
-                [self internetConnectivityHandling:data_sync];
-                 
-                break;
-            }
-            if(appDelegate.Incremental_sync_status == PUT_UPDATE_DONE  || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
-            {
-                break;
-            }
-            if(appDelegate.connection_error)
-            {
-                appDelegate.dataSyncRunning = NO;
-				//Defect 6774
-				[appDelegate checkifConflictExistsForConnectionError];
-                [self internetConnectivityHandling:data_sync];
-                appDelegate.Enable_aggresssiveSync = FALSE;
-				//Radha Defect Fix 7444
-				[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-                return;
-            }
-        }
-        if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
-        {
-            if ([appDelegate isInternetConnectionAvailable])
-			{
-				//Defect 6774
-				[appDelegate checkifConflictExistsForConnectionError];
-			}
-
-            appDelegate.dataSyncRunning = NO;
-             appDelegate.Enable_aggresssiveSync = FALSE;
-			//Radha Defect Fix 7444
-             [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-            return;
-        }
-    
-    }
-    [self resetSyncLastindexAndObjectName];  //sahana
-    
-    
-    //Radha Sync ProgressBar
-//	[appDelegate setCurrentSyncStatusProgress:PUTUPDATE_DONE optimizedSynstate:oPUTUPDATE_DONE];
-	
-    
-    didWriteSignature = NO;
-        //krishnasign empty refers to ViewWorkOrder
-    [appDelegate.calDataBase getAllLocalIdsForSignature:SIG_AFTERUPDATE andSignType:@""];
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-    {
-        SMLog(@"Signature to SFDC");
-        if (didWriteSignature == YES)
-            break;
-    }
-        
-    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"GetInsert-VP"
-                                                             andRecordCount:0];
-        
-    [self GetUpdate];
-        
-    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"GetUpdate-VP"
-                                                             andRecordCount:1];
-        
-    
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-    {
-#ifdef kPrintLogsDuringWebServiceCall
-        SMLog(@"WSinterface.m : DOINC_DATA_SYNC: GET_UPDATE");
-#endif
-
-        if (![appDelegate isInternetConnectionAvailable])
-        {
-            appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];
-             
-            break;
-        }
-        if(appDelegate.Incremental_sync_status == GET_UPDATE_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
-        {
-            break;
-        }
-        if(appDelegate.connection_error)
-        {
-            appDelegate.dataSyncRunning = NO;
-            //Defect 6774
-			[appDelegate checkifConflictExistsForConnectionError];
-            [self internetConnectivityHandling:data_sync];
-              appDelegate.Enable_aggresssiveSync = FALSE;
-			//Radha Defect Fix 7444
-             [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-            return;
-        }
-    }
-    
-    if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
-    {
-        if ([appDelegate isInternetConnectionAvailable])
-		{
-            //Defect 6774
-			[appDelegate checkifConflictExistsForConnectionError];
-		}
-        
-        appDelegate.Enable_aggresssiveSync = FALSE;
-		appDelegate.dataSyncRunning = NO;
-		//Radha Defect Fix 7444
-		[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-        return;
-    }
-        
-    //Radha Sync ProgressBar
-//	[appDelegate setCurrentSyncStatusProgress:GETUPDATE_DONE optimizedSynstate:oGETUPDATE_DONE];
+	//	[appDelegate setCurrentSyncStatusProgress:GETINSERT_DONE optimizedSynstate:oGETINSERT_DONE];
 		
-    if( !temp_aggressiveSync)
-    {
-        [self GETDownloadCriteriaRecordsFor:GET_UPDATE_DOWNLOAD_CRITERIA];
-        
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-        {
-            #ifdef kPrintLogsDuringWebServiceCall
-                SMLog(@"WSinterface.m : DOINC_DATA_SYNC: GET_UPDATE_DWN_CRIT");
-            #endif
+		[self GETDownloadCriteriaRecordsFor:GET_INSERT_DOWNLOAD_CRITERIA];
+		
+		while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+		{
+			#ifdef kPrintLogsDuringWebServiceCall
+				SMLog(@"WSinterface.m : DOINC_DATA_SYNC: GET_INSERT_DWN_CRIT");
+			#endif
 
-            if (![appDelegate isInternetConnectionAvailable])
-            {
-                appDelegate.dataSyncRunning = NO;
-                [self internetConnectivityHandling:data_sync];
-                 
-                
-                break;
-            }
-            if(appDelegate.Incremental_sync_status == GET_UPDATE_DC_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
-            {
-                break;
-            }
-            if(appDelegate.connection_error)
-            {
-                appDelegate.dataSyncRunning = NO;
-                //Defect 6774
+			if (![appDelegate isInternetConnectionAvailable])
+			{
+				appDelegate.dataSyncRunning = NO;
+				[self internetConnectivityHandling:data_sync];            
+				break;
+			}
+			if(appDelegate.Incremental_sync_status == GET_INSERT_DC_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+			{
+				break;
+			}
+			if(appDelegate.connection_error)
+			{
+				appDelegate.dataSyncRunning = NO;
+				//Defect 6774
 				[appDelegate checkifConflictExistsForConnectionError];
-                [self internetConnectivityHandling:data_sync];
-                  appDelegate.Enable_aggresssiveSync = FALSE;
+				[self internetConnectivityHandling:data_sync];
+				 appDelegate.Enable_aggresssiveSync = FALSE;
 				//Radha Defect Fix 7444
 				[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-                return;
-            }
-        }
-        if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
-        {
-            if ([appDelegate isInternetConnectionAvailable])
+				return;
+			}
+		}
+		if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+		{
+			if ([appDelegate isInternetConnectionAvailable])
 			{
 				//Defect 6774
 				[appDelegate checkifConflictExistsForConnectionError];
 			}
-        
-            appDelegate.dataSyncRunning = NO;
-             appDelegate.Enable_aggresssiveSync = FALSE;
+		
+			appDelegate.dataSyncRunning = NO;
 			//Radha Defect Fix 7444
-             [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-            return;
-        }
-        
-        [self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP_SELECT"];
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-        {
-    #ifdef kPrintLogsDuringWebServiceCall
-            SMLog(@"WSinterface.m : DOINC_DATA_SYNC: CLN_UP_SELECT 3");
-    #endif
+			 [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+			return;
+		}    
+		
+		[self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP_SELECT"];
+		
+		while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+		{
+			#ifdef kPrintLogsDuringWebServiceCall
+				SMLog(@"WSinterface.m : DOINC_DATA_SYNC: CLEAN_UP_SELECT 2");
+			#endif
 
-            if ( ![appDelegate isInternetConnectionAvailable])
-            {
-                appDelegate.dataSyncRunning = NO;
-                [self internetConnectivityHandling:data_sync];
-                 
-                break;
-            }
-            
-            if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
-                break;
-            
-            if(appDelegate.connection_error)
-            {
-                appDelegate.dataSyncRunning = NO;
-                //Defect 6774
+			if (![appDelegate isInternetConnectionAvailable])
+			{
+				appDelegate.dataSyncRunning = NO;
+				[self internetConnectivityHandling:data_sync];
+				break;
+			}
+			
+			if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
+				break;
+			if(appDelegate.connection_error)
+			{
+				appDelegate.dataSyncRunning = NO;
+				//Defect 6774
 				[appDelegate checkifConflictExistsForConnectionError];
-                [self internetConnectivityHandling:data_sync];
-                appDelegate.Enable_aggresssiveSync = FALSE;
+				[self internetConnectivityHandling:data_sync];
+				 appDelegate.Enable_aggresssiveSync = FALSE;
 				//Radha Defect Fix 7444
 				[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-                return;
-            }
-        }
-        if ( ![appDelegate isInternetConnectionAvailable])
-        {
+				return;
+			}
+		}
+		if (![appDelegate isInternetConnectionAvailable])
+		{
+			appDelegate.dataSyncRunning = NO;
 				//Defect 6774
 			[appDelegate checkifConflictExistsForConnectionError];
-            appDelegate.dataSyncRunning = NO;
-            appDelegate.Enable_aggresssiveSync = FALSE;
+			[self internetConnectivityHandling:data_sync];
+			appDelegate.Enable_aggresssiveSync = FALSE;
 			//Radha Defect Fix 7444
-             [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-            return;
-        }
-//		[appDelegate setCurrentSyncStatusProgress:GETUPDATE_DC_DONE optimizedSynstate:0];
-    }
-        
-        //Radha Sync ProgressBar
+			 [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+			return;
+		}
+			
+			//Radha Sync ProgressBar
+	//		[appDelegate setCurrentSyncStatusProgress:GETINSERT_DC_DONE optimizedSynstate:0];
+		didWriteSignature = NO;
+		[appDelegate.calDataBase getAllLocalIdsForSignature:SIG_BEFOREUPDATE andSignType:@"ViewWorkOrder"];
+		while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+		{
+			SMLog(@"Signature to SFDC");
+			if (didWriteSignature == YES)
+				break;
+			if (![appDelegate isInternetConnectionAvailable])
+			{
+				break;
+			}
+			if(appDelegate.connection_error)
+				break;
+		}
+		
+		
+		//call update
+		[self copyTrailertoTempTrailer:UPDATE];
+		[self  getAllRecordsForOperationType:UPDATE];
+		
+		if([appDelegate.dataSync_dict count] >0)
+		{
+			[self Put:PUT_UPDATE];
+			
+			while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+			{
+				#ifdef kPrintLogsDuringWebServiceCall
+					SMLog(@"WSinterface.m : DOINC_DATA_SYNC: PUT_UPDATE");
+				#endif
+
+				if (![appDelegate isInternetConnectionAvailable])
+				{
+					appDelegate.dataSyncRunning = NO;
+					[self internetConnectivityHandling:data_sync];
+					 
+					break;
+				}
+				if(appDelegate.Incremental_sync_status == PUT_UPDATE_DONE  || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+				{
+					break;
+				}
+				if(appDelegate.connection_error)
+				{
+					appDelegate.dataSyncRunning = NO;
+					//Defect 6774
+					[appDelegate checkifConflictExistsForConnectionError];
+					[self internetConnectivityHandling:data_sync];
+					appDelegate.Enable_aggresssiveSync = FALSE;
+					//Radha Defect Fix 7444
+					[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+					return;
+				}
+			}
+			if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+			{
+				if ([appDelegate isInternetConnectionAvailable])
+				{
+					//Defect 6774
+					[appDelegate checkifConflictExistsForConnectionError];
+				}
+
+				appDelegate.dataSyncRunning = NO;
+				 appDelegate.Enable_aggresssiveSync = FALSE;
+				//Radha Defect Fix 7444
+				 [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+				return;
+			}
+		
+		}
+		[self resetSyncLastindexAndObjectName];  //sahana
+		
+		
+		//Radha Sync ProgressBar
+	//	[appDelegate setCurrentSyncStatusProgress:PUTUPDATE_DONE optimizedSynstate:oPUTUPDATE_DONE];
+		
+		
+		didWriteSignature = NO;
+			//krishnasign empty refers to ViewWorkOrder
+		[appDelegate.calDataBase getAllLocalIdsForSignature:SIG_AFTERUPDATE andSignType:@""];
+		while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+		{
+			SMLog(@"Signature to SFDC");
+			if (didWriteSignature == YES)
+				break;
+		}
+			
+		[[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"GetInsert-VP"
+																 andRecordCount:0];
+			
+		[self GetUpdate];
+			
+		[[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"GetUpdate-VP"
+																 andRecordCount:1];
+			
+		
+		while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+		{
+			#ifdef kPrintLogsDuringWebServiceCall
+				SMLog(@"WSinterface.m : DOINC_DATA_SYNC: GET_UPDATE");
+			#endif
+
+			if (![appDelegate isInternetConnectionAvailable])
+			{
+				appDelegate.dataSyncRunning = NO;
+				[self internetConnectivityHandling:data_sync];
+				 
+				break;
+			}
+			if(appDelegate.Incremental_sync_status == GET_UPDATE_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+			{
+				break;
+			}
+			if(appDelegate.connection_error)
+			{
+				appDelegate.dataSyncRunning = NO;
+				//Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
+				[self internetConnectivityHandling:data_sync];
+				  appDelegate.Enable_aggresssiveSync = FALSE;
+				//Radha Defect Fix 7444
+				 [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+				return;
+			}
+		}
+		
+		if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+		{
+			if ([appDelegate isInternetConnectionAvailable])
+			{
+				//Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
+			}
+			
+			appDelegate.Enable_aggresssiveSync = FALSE;
+			appDelegate.dataSyncRunning = NO;
+			//Radha Defect Fix 7444
+			[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+			return;
+		}
+			
+		//Radha Sync ProgressBar
+	//	[appDelegate setCurrentSyncStatusProgress:GETUPDATE_DONE optimizedSynstate:oGETUPDATE_DONE];
+			
+		[self GETDownloadCriteriaRecordsFor:GET_UPDATE_DOWNLOAD_CRITERIA];
+		
+		while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+		{
+			#ifdef kPrintLogsDuringWebServiceCall
+				SMLog(@"WSinterface.m : DOINC_DATA_SYNC: GET_UPDATE_DWN_CRIT");
+			#endif
+
+			if (![appDelegate isInternetConnectionAvailable])
+			{
+				appDelegate.dataSyncRunning = NO;
+				[self internetConnectivityHandling:data_sync];
+				 
+				
+				break;
+			}
+			if(appDelegate.Incremental_sync_status == GET_UPDATE_DC_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+			{
+				break;
+			}
+			if(appDelegate.connection_error)
+			{
+				appDelegate.dataSyncRunning = NO;
+				//Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
+				[self internetConnectivityHandling:data_sync];
+				  appDelegate.Enable_aggresssiveSync = FALSE;
+				//Radha Defect Fix 7444
+				[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+				return;
+			}
+		}
+		if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+		{
+			if ([appDelegate isInternetConnectionAvailable])
+			{
+				//Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
+			}
+		
+			appDelegate.dataSyncRunning = NO;
+			 appDelegate.Enable_aggresssiveSync = FALSE;
+			//Radha Defect Fix 7444
+			 [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+			return;
+		}
+		
+		[self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP_SELECT"];
+		while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+		{
+			#ifdef kPrintLogsDuringWebServiceCall
+				SMLog(@"WSinterface.m : DOINC_DATA_SYNC: CLN_UP_SELECT 3");
+			#endif
+
+			if ( ![appDelegate isInternetConnectionAvailable])
+			{
+				appDelegate.dataSyncRunning = NO;
+				[self internetConnectivityHandling:data_sync];
+				 
+				break;
+			}
+			
+			if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
+				break;
+			
+			if(appDelegate.connection_error)
+			{
+				appDelegate.dataSyncRunning = NO;
+				//Defect 6774
+				[appDelegate checkifConflictExistsForConnectionError];
+				[self internetConnectivityHandling:data_sync];
+				appDelegate.Enable_aggresssiveSync = FALSE;
+				//Radha Defect Fix 7444
+				[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+				return;
+			}
+		}
+		if ( ![appDelegate isInternetConnectionAvailable])
+		{
+				//Defect 6774
+			[appDelegate checkifConflictExistsForConnectionError];
+			appDelegate.dataSyncRunning = NO;
+			appDelegate.Enable_aggresssiveSync = FALSE;
+			//Radha Defect Fix 7444
+			 [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+			return;
+		}
+	//		[appDelegate setCurrentSyncStatusProgress:GETUPDATE_DC_DONE optimizedSynstate:0];
+			
+			//Radha Sync ProgressBar
+	}
     
         
     [appDelegate.databaseInterface deleteAllConflictedRecordsFrom:SYNC_RECORD_HEAP];
-    //Get Price
-    [self doGetPrice];
+    //Get Price - One Call sync
+	NSString * priceValue = [appDelegate getSettingValueFromMobileSettings:@"IPAD018_SET009"];
+	
+	if ([priceValue caseInsensitiveCompare:@"True"] == NSOrderedSame)
+		[self doGetPrice];
+
     //Get Price ends
     
     //delete All custom ws entries from Sync_records_heap
     [self deleteALlCustomWsEntriesFromSyncHeap];
     
-    [self PutAllTheRecordsForIds];                                    //After update or delere ,insert are done  ,call getallrecords
-    //After Insert Claer the trailer_temp table
-    
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-    {
-#ifdef kPrintLogsDuringWebServiceCall
-        SMLog(@"WSinterface.m : DOINC_DATA_SYNC: TX_FETCH");
-#endif
-
-        if (![appDelegate isInternetConnectionAvailable])
-        {
-            appDelegate.dataSyncRunning = NO;
-            [self internetConnectivityHandling:data_sync];
-             
-            break;
-        }
-        if(appDelegate.Incremental_sync_status == PUT_RECORDS_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
-        {
-            break;
-        }
-        if(appDelegate.connection_error)
-        {
-            appDelegate.dataSyncRunning = NO;
-			//Defect 6774
-			[appDelegate checkifConflictExistsForConnectionError];
-            [self internetConnectivityHandling:data_sync];
-             appDelegate.Enable_aggresssiveSync = FALSE;
-			//Radha Defect Fix 7444
-             [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-            return;
-        }
-    }
-    
-    if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
-    {
-        if ([appDelegate isInternetConnectionAvailable])
-		{
-            //Defect 6774
-			[appDelegate checkifConflictExistsForConnectionError];
-		}
-        
-		appDelegate.dataSyncRunning = NO;
-        appDelegate.Enable_aggresssiveSync = FALSE;
-		//Radha Defect Fix 7444
-		[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-        return;
-    }
+		//One Call sync
+	BOOL istrue = [self getAllDataForIds:syncStarted flag:doOneCallSync];
+	
+	if (!istrue)
+		return;                                      
         
     //Radha Sync ProgressBar
 //	[appDelegate setCurrentSyncStatusProgress:TXFETCH_DONE optimizedSynstate:oTXFETCH_DONE];	
 		
-    if( !temp_aggressiveSync)
-    {
+	NSString * enableLocation = [appDelegate getSettingValueFromMobileSettings:ENABLE_LOCATION_UPDATE]; //One Call sync
+	if ([enableLocation caseInsensitiveCompare:@"True"] == NSOrderedSame)
+	{
         if([appDelegate enableGPS_SFMSearch])
         {
             [appDelegate.dataBase createUserGPSTable];
@@ -2706,34 +2693,27 @@ NSDate * syncCompleted;
     [appDelegate.databaseInterface  updateSyncRecordsIntoLocalDatabase];
     //check download criteria match
 /*******************************************************DOWNLOAD_CRITERIA_CHANGE*************************************************************************/
-    
-    if(!temp_aggressiveSync)
-    {
-        
-        NSDictionary * get_old_criteria = [self getdownloadCriteriaObjects];
-      
-        NSArray * old_criteria_objects = [get_old_criteria allKeys];
-        
-        NSArray * new_criteria_objects = [dcobjects_incrementalSync allKeys];
-        
-        NSMutableArray * deletedObjects = [[NSMutableArray alloc] initWithCapacity:0];
-     
-        for(NSString * str in old_criteria_objects)
-        {
-            if(![new_criteria_objects containsObject:str])
-            {
-                [deletedObjects addObject:str];
-            }
-        }
-        
-        [appDelegate.databaseInterface deleteDownloadCriteriaObjects:deletedObjects];
-        
-        [deletedObjects release];
-        //if([dcobjects_incrementalSync count] > 0)
-        {
-            [self downloadcriteriaplist:dcobjects_incrementalSync];
-        }
-    }
+
+	NSDictionary * get_old_criteria = [self getdownloadCriteriaObjects];
+  
+	NSArray * old_criteria_objects = [get_old_criteria allKeys];
+	
+	NSArray * new_criteria_objects = [dcobjects_incrementalSync allKeys];
+	
+	NSMutableArray * deletedObjects = [[NSMutableArray alloc] initWithCapacity:0];
+ 
+	for(NSString * str in old_criteria_objects)
+	{
+		if(![new_criteria_objects containsObject:str])
+		{
+			[deletedObjects addObject:str];
+		}
+	}
+	
+	[appDelegate.databaseInterface deleteDownloadCriteriaObjects:deletedObjects];
+	
+	[deletedObjects release];
+	[self downloadcriteriaplist:dcobjects_incrementalSync];
 /*******************************************************DOWNLOAD_CRITERIA_CHANGE*************************************************************************/
    
 
@@ -2775,6 +2755,16 @@ NSDate * syncCompleted;
     
     //sahana dec 14 2012
     [appDelegate.dataBase purgingDataOnSyncSettings:date tableName:@"Event" Action:NOT_OWNER_GREATERTHAN];
+		
+	//One Call Sync
+	if (doOneCallSync && optimizeSyncCalls.purgingEventIdArray != nil)
+	{
+		NSString * value = [optimizeSyncCalls.purgingEventIdArray componentsJoinedByString:@"','"];
+		NSMutableString * eventId = [NSMutableString stringWithFormat:@"'%@'", value];
+		[appDelegate.dataBase deleteEventNotRelatedToLoggedInUser:eventId tableName:@"Event"];
+		[optimizeSyncCalls.purgingEventIdArray release];
+		optimizeSyncCalls.purgingEventIdArray = nil;
+	}
 
 	//Radha - Defect Fic 4558
 	[[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_EVENT_DATA_SYNC object:nil];
@@ -2783,17 +2773,21 @@ NSDate * syncCompleted;
     
     [appDelegate.databaseInterface deleteAllConflictedRecordsFrom:SFDATATRAILER];
     
-    if(!temp_aggressiveSync)
-    {
-//        normal sync
-        [self setLastSyncTime];   // update the plist to last sync time
-        [self setLastSyncTimeForDownloadCriteriaSync];
-    }
-    else
-    {
-//        aggressive sync
-         [self setLastSyncTime];   // update the plist to last sync time
-    }
+//    if(!temp_aggressiveSync)
+//    {
+////        normal sync
+//        [self setLastSyncTime];   // update the plist to last sync time
+//        [self setLastSyncTimeForDownloadCriteriaSync];
+//    }
+//    else
+//    {
+////        aggressive sync
+//         [self setLastSyncTime];   // update the plist to last sync time
+//    }
+		
+		//One call sync
+	[self updateSyncTimeStampINSyncHistoryPlist:doOneCallSync];
+
 	//RADHA Defect Fix 5542
 	if(![appDelegate.databaseInterface ContinueIncrementalDataSync])
 	{
@@ -2854,118 +2848,46 @@ NSDate * syncCompleted;
     }
     else
     {
-        //sahana
-        [self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP"];
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-        {
-#ifdef kPrintLogsDuringWebServiceCall
-            SMLog(@"WSinterface.m : DOINC_DATA_SYNC: CLEAN_UP");
-#endif
-
-            if ( ![appDelegate isInternetConnectionAvailable])
-            {
-                appDelegate.dataSyncRunning = NO;
-						[self internetConnectivityHandling:data_sync];//7344
-            }
-            if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
-                break;
-            if(appDelegate.connection_error)
+        //sahana - One Call sync
+		if (!doOneCallSync)
+		{
+			[self cleanUpForRequestId:Insert_requestId forEventName:@"CLEAN_UP"];
+			while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
 			{
-				//Defect 6774
-				[appDelegate checkifConflictExistsForConnectionError];
-				 //7344
-                        [self internetConnectivityHandling:data_sync];
-                        appDelegate.Enable_aggresssiveSync = FALSE;
-                            //Radha Defect Fix 7444
-                        [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
-				break;
+				#ifdef kPrintLogsDuringWebServiceCall
+					SMLog(@"WSinterface.m : DOINC_DATA_SYNC: CLEAN_UP");
+				#endif
+
+				if ( ![appDelegate isInternetConnectionAvailable])
+				{
+					appDelegate.dataSyncRunning = NO;
+							[self internetConnectivityHandling:data_sync];//7344
+				}
+				if(appDelegate.Incremental_sync_status == CLEANUP_DONE)
+					break;
+				if(appDelegate.connection_error)
+				{
+					//Defect 6774
+					[appDelegate checkifConflictExistsForConnectionError];
+					 //7344
+					[self internetConnectivityHandling:data_sync];
+					appDelegate.Enable_aggresssiveSync = FALSE;
+						//Radha Defect Fix 7444
+					[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+					break;
+				}
+				
 			}
-            
-        }
+		}
         
         [self setSyncReqId:@""];
     }
     
     [appDelegate.dataBase updateRecentsPlist];
+		
+	//Changes for optimized sync - One Call sync
+	[self doSignatureAndPDF:doOneCallSync];
     
-
-    //Shrinivas 
-    //Sync signature to server
-    didWriteSignature = NO;
-        //krishnasign empty refers to ViewWorkOrder
-    [appDelegate.calDataBase getAllLocalIdsForSignature:SIG_AFTERSYNC andSignType:@""];
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-    {
-        SMLog(@"Signature to SFDC");
-        if (didWriteSignature == YES)
-            break;
-        if (![appDelegate isInternetConnectionAvailable])
-        {
-            [self internetConnectivityHandling:data_sync];//7779
-
-            break;
-        }
-        if(appDelegate.connection_error)
-            break;
-    }
-      //krishnasignature
-        
-        didWriteSignatures = NO;
-        [appDelegate.calDataBase getAllLocalIdsForSignature:SIG_AFTERSYNC andSignType:@"OPDOC"];
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-        {
-            SMLog(@"Signature to SFDC");
-            if (didWriteSignature == YES)
-                break;
-            if (![appDelegate isInternetConnectionAvailable])
-            {
-                [self internetConnectivityHandling:data_sync];//7779
-
-                break;
-            }
-            if(appDelegate.connection_error)
-                break;
-        }
-
-
-        
-        //krishna sync
-        didWriteOPDOC = NO;
-        [appDelegate.calDataBase syncOutPutDoc];
-        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-        {
-            SMLog(@"Signature to SFDC");
-            if (didWriteOPDOC == YES)
-                break;
-            if (![appDelegate isInternetConnectionAvailable])
-            {
-                [self internetConnectivityHandling:data_sync];//7779
-                break;
-            }
-            if(appDelegate.connection_error)
-                break;
-        }
-        
-        [appDelegate.dataBase downloadPDFsForUploadedHtml];
-        
-    //Sync PDF to SFDC
-    didWritePDF = NO;
-    [appDelegate.calDataBase getAllLocalIdsForPDF];
-    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
-    {
-        SMLog(@"PDF to SFDC");
-        if (didWritePDF == YES)
-            break;
-        if (![appDelegate isInternetConnectionAvailable])
-        {
-            [self internetConnectivityHandling:data_sync];//7779
-            break;
-        }
-        if(appDelegate.connection_error)
-            break;
-
-    }
-      
 
     AfterSaveEventsCalls = TRUE;
     
@@ -3145,6 +3067,340 @@ NSDate * syncCompleted;
     [appDelegate.refreshIcons RefreshIcons]; ////20-June-2013. ---> Refreshing home incons when sync is running - 7933
     /*Shravya - Do not put any statements after [appDelegate.refreshIcons RefreshIcons]; method call. This should be the last call*/
 }
+
+
+//Changes for optimized sync - One Call sync
+- (BOOL) CustomSingleSyncCall:(NSDate *)syncStarted
+{
+	/* Start : Signature before update block */
+	didWriteSignature = NO;
+    [appDelegate.calDataBase getAllLocalIdsForSignature:SIG_BEFOREUPDATE andSignType:@"ViewWorkOrder"];
+    while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+    {
+        SMLog(@"Signature to SFDC");
+        if (didWriteSignature == YES)
+            break;
+        if (![appDelegate isInternetConnectionAvailable])
+        {
+            break;
+        }
+        if(appDelegate.connection_error)
+            break;
+    }
+	/* END : Signature before update block */
+	NSLog(@" ********************** START : SINGLE SYNC CALL ********************** %@",[NSDate date]);
+	
+	BOOL returnFlag = TRUE;
+	NSString * data_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_data_sync];
+	
+	[appDelegate.databaseInterface cleartable:SFDATATRAILER_TEMP];
+	
+	[self copyTrailertoTempTrailerForOneCallSync:DELETE];
+	
+	[self getAllRecordsForOperationType:DELETE];
+	
+	if (optimizeSyncCalls.purgingEventIdArray == nil)
+	{
+		optimizeSyncCalls.purgingEventIdArray = [[NSMutableArray alloc] initWithCapacity:0];
+	}
+	
+	[optimizeSyncCalls GetOptimizedDownloadCriteriaRecordsFor:@"ONE_CALL_SYNC" requestId:Insert_requestId];
+	
+	while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+	{
+		#ifdef kPrintLogsDuringWebServiceCall
+			SMLog(@"WSinterface.m : DOINC_DATA_SYNC: CustomSingleSyncCall");
+		#endif
+		
+		if (![appDelegate isInternetConnectionAvailable])
+		{
+			appDelegate.dataSyncRunning = NO;
+			[self internetConnectivityHandling:data_sync];
+			
+			break;
+		}
+		
+		if(appDelegate.connection_error)
+		{
+			appDelegate.dataSyncRunning = NO;
+			//Defect 6774
+			[appDelegate checkifConflictExistsForConnectionError];
+			[self internetConnectivityHandling:data_sync];
+			appDelegate.Enable_aggresssiveSync = FALSE;
+			//Radha Defect Fix 7444
+			[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+			returnFlag = FALSE;
+			break;
+		}
+		
+		if (appDelegate.Incremental_sync_status == ONE_CALL_SYNC_DONE)
+		{
+			break;
+		}
+	}
+	if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+	{
+		if ([appDelegate isInternetConnectionAvailable])
+		{
+			//Defect 6774
+			[appDelegate checkifConflictExistsForConnectionError];
+		}
+		
+		appDelegate.dataSyncRunning = NO;
+		appDelegate.Enable_aggresssiveSync = FALSE;
+		//Radha Defect Fix 7444
+		[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+		returnFlag = FALSE;
+	}
+	
+	NSLog(@" ********************** END : SINGLE SYNC CALL ********************** %@",[NSDate date]);
+	appDelegate.Incremental_sync_status = INCR_STARTS;
+	if (optimizeSyncCalls.callBackValue)
+	{
+		[self CustomSingleSyncCall:syncStarted];
+	}
+	
+	returnFlag = TRUE;
+	
+	returnFlag = [self doAdvanceDownloadCriteria];
+	
+	if (![appDelegate isInternetConnectionAvailable])
+	{
+		[self internetConnectivityHandling:data_sync];
+		appDelegate.dataSyncRunning = NO;
+	}
+	
+    if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED || [appDelegate isInternetConnectionAvailable] == FALSE)
+    {
+        SMLog(@"Adv Download Criteria Failed");
+		if ([appDelegate isInternetConnectionAvailable])
+		{
+			//Defect 6774
+			[appDelegate checkifConflictExistsForConnectionError];
+		}
+		
+		appDelegate.dataSyncRunning = NO;
+		[updateSyncStatus refreshSyncStatus];
+		appDelegate.Enable_aggresssiveSync = FALSE;
+		//Radha Defect Fix 7444
+		[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+	}
+	
+	if (appDelegate.connection_error)
+	{
+		appDelegate.dataSyncRunning = NO;
+		appDelegate.connection_error = FALSE;
+		//Defect 6774
+		[appDelegate checkifConflictExistsForConnectionError];
+		[self internetConnectivityHandling:data_sync];
+		appDelegate.Enable_aggresssiveSync = FALSE;
+		//Radha Defect Fix 7444
+		[appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+	}
+	return returnFlag;
+	
+}
+
+
+- (BOOL) getAllDataForIds:(NSDate *)syncStarted flag:(BOOL)doOnesync
+{
+	BOOL returnFlag = TRUE;
+	
+	NSString * data_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_data_sync];
+	
+	if (!doOnesync)
+	{
+		[self PutAllTheRecordsForIds];                                    //After update or delere ,insert are done  ,call getallrecords
+        //After Insert Claer the trailer_temp table
+        
+        while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+        {
+			#ifdef kPrintLogsDuringWebServiceCall
+				SMLog(@"WSinterface.m : DOINC_DATA_SYNC: TX_FETCH");
+			#endif
+			
+            if (![appDelegate isInternetConnectionAvailable])
+            {
+                appDelegate.dataSyncRunning = NO;
+                [self internetConnectivityHandling:data_sync];
+				
+                break;
+            }
+            if(appDelegate.Incremental_sync_status == PUT_RECORDS_DONE || appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+            {
+                break;
+            }
+            if(appDelegate.connection_error)
+            {
+                appDelegate.dataSyncRunning = NO;
+                //Defect 6774
+                [appDelegate checkifConflictExistsForConnectionError];
+                [self internetConnectivityHandling:data_sync];
+				appDelegate.Enable_aggresssiveSync = FALSE;
+                //Radha Defect Fix 7444
+                [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+                returnFlag = FALSE;
+				break;
+            }
+        }
+        
+        if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+        {
+            if ([appDelegate isInternetConnectionAvailable])
+            {
+                //Defect 6774
+                [appDelegate checkifConflictExistsForConnectionError];
+            }
+            
+            appDelegate.dataSyncRunning = NO;
+            appDelegate.Enable_aggresssiveSync = FALSE;
+            //Radha Defect Fix 7444
+            [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+            returnFlag = FALSE;
+        }
+		
+	}
+	else
+	{
+		NSLog(@" ********************** START : TXFETCH SYNC CALL OPT ********************** %@",[NSDate date]);
+		[appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:GET_DELETE];
+		[appDelegate.databaseInterface deleteAll_GET_DELETES_And_PUT_DELETE_From_HeapAndObject_tables:PUT_DELETE];
+		
+		[optimizeSyncCalls tx_fetch];
+		while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+		{
+			#ifdef kPrintLogsDuringWebServiceCall
+				SMLog(@"WSinterface.m : DOINC_DATA_SYNC: CustomSingleSyncCall");
+			#endif
+			
+			if (![appDelegate isInternetConnectionAvailable])
+			{
+				appDelegate.dataSyncRunning = NO;
+                [self internetConnectivityHandling:data_sync];
+                break;
+			}
+			
+			if(appDelegate.connection_error)
+			{
+				appDelegate.dataSyncRunning = NO;
+                //Defect 6774
+                [appDelegate checkifConflictExistsForConnectionError];
+                [self internetConnectivityHandling:data_sync];
+				appDelegate.Enable_aggresssiveSync = FALSE;
+                //Radha Defect Fix 7444
+                [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+				returnFlag = FALSE;
+				break;
+				
+			}
+			
+			if (appDelegate.Incremental_sync_status == TX_FETCH_OPTIMIZED_DONE)
+			{
+				break;
+			}
+		}
+		
+		if(appDelegate.incrementalSync_Failed == TRUE || [appDelegate isInternetConnectionAvailable] == FALSE)
+        {
+            if ([appDelegate isInternetConnectionAvailable])
+            {
+                //Defect 6774
+                [appDelegate checkifConflictExistsForConnectionError];
+            }
+            
+            appDelegate.dataSyncRunning = NO;
+            appDelegate.Enable_aggresssiveSync = FALSE;
+            //Radha Defect Fix 7444
+            [appDelegate updateNextSyncTimeIfSyncFails:syncStarted syncCompleted:[NSDate date]];
+            returnFlag = FALSE;
+        }
+		NSLog(@" ********************** END : TXFETCH SYNC CALL OPT ********************** %@",[NSDate date]);
+	}
+	
+	return returnFlag;
+}
+- (void) doSignatureAndPDF:(BOOL)doOnesync
+{
+	NSString * data_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_data_sync];
+	if (doOnesync)
+	{
+		
+		/* Start : Signature and PDF sync after update */
+		didWriteSignature = NO;
+		[appDelegate.calDataBase getAllLocalIdsForSignature:SIG_AFTERUPDATE andSignType:@""];
+		while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+		{
+			SMLog(@"Signature to SFDC");
+			if (didWriteSignature == YES)
+				break;
+			if (![appDelegate isInternetConnectionAvailable])
+			{
+				[self internetConnectivityHandling:data_sync];//7779
+				
+				break;
+			}
+			if(appDelegate.connection_error)
+				break;
+		}
+		
+	}
+	didWriteSignatures = NO;
+	[appDelegate.calDataBase getAllLocalIdsForSignature:SIG_AFTERSYNC andSignType:@"OPDOC"];
+	while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+	{
+		SMLog(@"Signature to SFDC");
+		if (didWriteSignature == YES)
+			break;
+		if (![appDelegate isInternetConnectionAvailable])
+		{
+			[self internetConnectivityHandling:data_sync];//7779
+			
+			break;
+		}
+		if(appDelegate.connection_error)
+			break;
+	}
+	
+	
+	
+	//krishna sync
+	didWriteOPDOC = NO;
+	[appDelegate.calDataBase syncOutPutDoc];
+	while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+	{
+		SMLog(@"Signature to SFDC");
+		if (didWriteOPDOC == YES)
+			break;
+		if (![appDelegate isInternetConnectionAvailable])
+		{
+			[self internetConnectivityHandling:data_sync];//7779
+			break;
+		}
+		if(appDelegate.connection_error)
+			break;
+	}
+	
+	[appDelegate.dataBase downloadPDFsForUploadedHtml];
+	
+	didWritePDF = NO;
+	[appDelegate.calDataBase getAllLocalIdsForPDF];
+	while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, NO))
+	{
+		SMLog(@"PDF to SFDC");
+		if (didWritePDF == YES)
+			break;
+		if (![appDelegate isInternetConnectionAvailable])
+		{
+			[self internetConnectivityHandling:data_sync];//7779
+			break;
+		}
+		if(appDelegate.connection_error)
+			break;
+	}
+	/* END : Signature and PDF sync after update */
+}
+
+
 - (void) releaseSyncThread
 {
 	if (appDelegate.syncThread)
@@ -3500,19 +3756,20 @@ NSDate * syncCompleted;
 }
 
 //######################### ADVANCE DOWNLOAD CRITERIA #############################
-- (void)doAdvanceDownloadCriteria
+//One Call sync
+- (BOOL)doAdvanceDownloadCriteria 
 {
     
     if (![appDelegate isInternetConnectionAvailable])
     {
-        return;
+        return FALSE;
     }
     
     [[PerformanceAnalytics sharedInstance] observePerformanceForContext:@"doAdvanceDownloadCriteria"
                                                          andRecordCount:1];
     
     if(![appDelegate doesServerSupportsModule:kMinPkgForSFMBizRuleModule])
-        return;
+        return TRUE;
 
     NSString *requestId = [iServiceAppDelegate GetUUID];
     appDelegate.initial_sync_status = SYNC_ADV_DWN_CRT;
@@ -3525,18 +3782,18 @@ NSDate * syncCompleted;
         {
             SMLog(@"Adv Download Criteria Failed");
             appDelegate.initial_sync_succes_or_failed = DATA_SYNC_FAILED;
-            break;
+            return FALSE;
         }
         if (![appDelegate isInternetConnectionAvailable])
         {
             SMLog(@"Adv Download Criteria Data Sync Failed due to Internet Lost");
             appDelegate.initial_sync_succes_or_failed = DATA_SYNC_FAILED;
-            break;
+            return FALSE;
         }
         if(appDelegate.connection_error)
         {
             SMLog(@"Adv Download Criteria Data Sync Failed due to Connection Error");
-            return;
+            return FALSE;
         }
         if (appDelegate.Incremental_sync_status == SYNC_ADV_DWN_CRT_DONE)
         {
@@ -3548,6 +3805,7 @@ NSDate * syncCompleted;
        
     [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:@"doAdvanceDownloadCriteria"
                                                                       andRecordCount:0];
+	return TRUE;
     
 }
 //#####################################
@@ -3653,6 +3911,20 @@ NSDate * syncCompleted;
                                                          andRecordCount:1];
     
 }
+//One Call sync
+-(void)copyTrailertoTempTrailerForOneCallSync:(NSString *)operation_type
+{
+    [[PerformanceAnalytics sharedInstance] observePerformanceForContext:[NSString stringWithFormat:@"copyTrailertoTempTrailer : %@", operation_type]
+                                                         andRecordCount:0];
+	
+    [appDelegate.databaseInterface copyTrailerTableToTempTrailerForOperationType:operation_type];
+    
+    [self setsyncHistoryForSyncType:operation_type requestOrResponse:REQUEST request_id:Insert_requestId last_sync_time:@""];  //Take time snap for insert and set it for last_insert request
+    [[PerformanceAnalytics sharedInstance] completedPerformanceObservationForContext:[NSString stringWithFormat:@"copyTrailertoTempTrailer : %@", operation_type]
+                                                                      andRecordCount:1];
+    
+}
+
 
 #pragma mark incremental Data SYNC
 -(void)getAllRecordsForOperationType:(NSString *)OpearationType
@@ -4424,30 +4696,30 @@ NSDate * syncCompleted;
 
 -(void)setLastSyncTime
 {
-    if(insert_last_sync_time !=  nil)
-        [self setsyncHistoryForSyncType:INSERT requestOrResponse:RESPONSE request_id:@"" last_sync_time:insert_last_sync_time];
+    if(self.insert_last_sync_time !=  nil)
+        [self setsyncHistoryForSyncType:INSERT requestOrResponse:RESPONSE request_id:@"" last_sync_time:self.insert_last_sync_time];
     
-    if(update_last_sync_time != nil)
-        [self setsyncHistoryForSyncType:UPDATE requestOrResponse:RESPONSE request_id:@"" last_sync_time:update_last_sync_time];
+    if(self.update_last_sync_time != nil)
+        [self setsyncHistoryForSyncType:UPDATE requestOrResponse:RESPONSE request_id:@"" last_sync_time:self.update_last_sync_time];
     
-    if(delete_last_sync_time != nil)
-         [self setsyncHistoryForSyncType:DELETE  requestOrResponse:RESPONSE request_id:@"" last_sync_time:delete_last_sync_time];
+    if(self.delete_last_sync_time != nil)
+         [self setsyncHistoryForSyncType:DELETE  requestOrResponse:RESPONSE request_id:@"" last_sync_time:self.delete_last_sync_time];
    
     
-    //set the last sync time 
-    [self  setLastSyncOccured];
+	//set the last sync time
+//	    [self  setLastSyncOccured];
 }
 
 -(void)setLastSyncTimeForDownloadCriteriaSync
 {
-    if(insert_last_sync_time !=  nil)
-        [self setsyncHistoryForSyncType:GET_INSERT_DOWNLOAD_CRITERIA requestOrResponse:RESPONSE request_id:@"" last_sync_time:insert_last_sync_time];
+    if(self.insert_last_sync_time !=  nil)
+        [self setsyncHistoryForSyncType:GET_INSERT_DOWNLOAD_CRITERIA requestOrResponse:RESPONSE request_id:@"" last_sync_time:self.insert_last_sync_time];
     
     if(update_last_sync_time != nil)
-        [self setsyncHistoryForSyncType:GET_UPDATE_DOWNLOAD_CRITERIA requestOrResponse:RESPONSE request_id:@"" last_sync_time:update_last_sync_time];
+        [self setsyncHistoryForSyncType:GET_UPDATE_DOWNLOAD_CRITERIA requestOrResponse:RESPONSE request_id:@"" last_sync_time:self.update_last_sync_time];
     
     if(delete_last_sync_time != nil)
-        [self setsyncHistoryForSyncType:GET_DELETE_DOWNLOAD_CRITERIA  requestOrResponse:RESPONSE request_id:@"" last_sync_time:delete_last_sync_time];
+        [self setsyncHistoryForSyncType:GET_DELETE_DOWNLOAD_CRITERIA  requestOrResponse:RESPONSE request_id:@"" last_sync_time:self.delete_last_sync_time];
 }
 
 -(void)setLastSyncOccured
@@ -4506,6 +4778,64 @@ NSDate * syncCompleted;
 	
 
 }
+
+//One Call sync
+- (void) updateSyncTimeStampINSyncHistoryPlist:(BOOL)doOnesync
+{
+	
+	NSString * rootpath_SYNHIST = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+	NSString * plistPath_SYNHIST = [rootpath_SYNHIST stringByAppendingPathComponent:SYNC_HISTORY];
+	
+	NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_SYNHIST];
+	NSArray * allkeys= [dict allKeys];
+	
+	if (doOnesync)
+	{
+		for(NSString *  str in allkeys)
+		{
+			if([str isEqualToString:LAST_OSC_TIMESTAMP])
+			{
+				if ([optimizeSyncCalls.lastSyncTime length] > 0)
+					[dict setObject:optimizeSyncCalls.lastSyncTime forKey:LAST_OSC_TIMESTAMP];
+			}
+			
+			else if ([str isEqualToString:LAST_UPDATE_RESONSE_TIME])
+			{
+				if ([optimizeSyncCalls.putUpdateSyncTime length] > 0)
+					[dict setObject:optimizeSyncCalls.putUpdateSyncTime forKey:LAST_UPDATE_RESONSE_TIME];
+			}
+		}
+		
+		if(optimizeSyncCalls.lastSyncTime !=  nil)
+		{
+			[self setsyncHistoryForSyncType:INSERT requestOrResponse:RESPONSE request_id:@"" last_sync_time:optimizeSyncCalls.lastSyncTime];
+			[self setsyncHistoryForSyncType:DELETE requestOrResponse:RESPONSE request_id:@"" last_sync_time:optimizeSyncCalls.lastSyncTime];
+			[self setsyncHistoryForSyncType:GET_INSERT_DOWNLOAD_CRITERIA requestOrResponse:RESPONSE request_id:@"" last_sync_time:optimizeSyncCalls.lastSyncTime];
+			[self setsyncHistoryForSyncType:GET_UPDATE_DOWNLOAD_CRITERIA requestOrResponse:RESPONSE request_id:@"" last_sync_time:optimizeSyncCalls.lastSyncTime];
+			[self setsyncHistoryForSyncType:GET_DELETE_DOWNLOAD_CRITERIA  requestOrResponse:RESPONSE request_id:@"" last_sync_time:optimizeSyncCalls.lastSyncTime];
+		}
+	}
+	else
+	{
+		[self setLastSyncTime];
+		[self setLastSyncTimeForDownloadCriteriaSync];
+		
+		for(NSString *  str in allkeys)
+		{
+			if([str isEqualToString:LAST_OSC_TIMESTAMP])
+			{
+				NSString * last_delete_time =[dict objectForKey:LAST_DELETE_RESPONSE_TIME];
+				
+				[dict setObject:last_delete_time forKey:LAST_OSC_TIMESTAMP];
+			}
+		}
+	}
+	
+	[dict writeToFile:plistPath_SYNHIST atomically:YES];
+	[self setLastSyncOccured];
+}
+
+
 //  Unused Methods
 //- (NSString *) getValueFromPlistForKey:(NSString *) key
 //{
@@ -4566,6 +4896,14 @@ NSDate * syncCompleted;
         SVMXCMap_lastModified.value = [self get_SYNCHISTORYTime_ForKey:LAST_UPDATE_RESONSE_TIME] == nil ?@"":[self get_SYNCHISTORYTime_ForKey:LAST_UPDATE_RESONSE_TIME];
         
         [sfmRequest.valueMap addObject:SVMXCMap_lastModified];
+		
+		//Radha - #defect 8227
+		SMLog(@"put_insert_time = %@", put_insert_time);
+		INTF_WebServicesDefServiceSvc_SVMXMap * putInsertTime =  [[[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init]  autorelease];
+        putInsertTime.key = @"PUT_INSERT_TIME";
+        putInsertTime.value = self.put_insert_time;
+		
+		[sfmRequest.valueMap addObject:putInsertTime];
         
         NSArray * all_objects = [appDelegate.dataSync_dict allKeys];
         NSMutableArray * record_id_list = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
@@ -4801,9 +5139,9 @@ NSDate * syncCompleted;
                 if(!check_id_exists)
                 {
                    
-                    jsonWriter = [[SBJsonWriter alloc] init];
+                    SBJsonWriter * localJsonWriter = [[SBJsonWriter alloc] init];
                     
-                    NSString * json_record= [ jsonWriter stringWithObject:each_record ];
+                    NSString * json_record= [ localJsonWriter stringWithObject:each_record ];
                     if([override_flag isEqualToString:CLIENT_OVERRIDE])
                     {
                         testSVMXCMap.key = @"CLIENT_OVERRIDE";
@@ -4826,6 +5164,8 @@ NSDate * syncCompleted;
                     
                     [record_svmxc.valueMap addObject:testSVMXCMap];
                     value_map_count++;
+					[localJsonWriter release];
+					[testSVMXCMap release];
                     
                 }
                 
@@ -4858,11 +5198,6 @@ NSDate * syncCompleted;
             INTF_WebServicesDefServiceSvc_SVMXMap  * iscallBack = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
             iscallBack.key = @"IS_CALLBACK";
             iscallBack.value = @"YES";
-            
-            //SYNC_TIMESTAMP  
-            INTF_WebServicesDefServiceSvc_SVMXMap * timestap = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
-            timestap.key = @"SYNC_TIMESTAMP";
-            timestap.value = @"";
             
             if(value_map_count !=0)
             {
@@ -5089,8 +5424,8 @@ NSDate * syncCompleted;
                             
                             if(replaceSuccess)
                             {
-                                jsonWriter = [[SBJsonWriter alloc] init];
-                                NSString * json_record = [jsonWriter stringWithObject:each_record];
+                                SBJsonWriter * localJsonWriter = [[SBJsonWriter alloc] init];
+                                NSString * json_record = [localJsonWriter stringWithObject:each_record];
                             
                                 testSVMXCMap.key = local_id;
                                 testSVMXCMap.value = json_record;
@@ -5107,7 +5442,9 @@ NSDate * syncCompleted;
                                 {
                                     [appDelegate.databaseInterface deleterecordsFromConflictTableForOperationType:PUT_INSERT overrideFlag:RETRY table_name:SYNC_ERROR_CONFLICT id_value:local_id field_name:@"local_id"];
                                 }
+								[localJsonWriter release];
                             }
+							[testSVMXCMap release];
                         }
                         
                         //ISCALLBACK   method
@@ -5237,10 +5574,6 @@ NSDate * syncCompleted;
             iscallBack.key = @"IS_CALLBACK";
             iscallBack.value = @"YES";
             
-            //SYNC_TIMESTAMP  
-            INTF_WebServicesDefServiceSvc_SVMXMap * timestap = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
-            timestap.key = @"SYNC_TIMESTAMP";
-            timestap.value = @"";
             
             [svmxcmap.valueMap addObject:record_svmxc];
             [svmxcmap.valueMap addObject:iscallBack];
@@ -5255,13 +5588,6 @@ NSDate * syncCompleted;
         }
         
     }
-        //ADD SVMXClient
-//   INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client = [[[INTF_WebServicesDefServiceSvc_SVMXClient alloc] init]  autorelease];
-//    
-//    svmxc_client.clientType = @"iPad";
-//    [svmxc_client.clientInfo addObject:@"OS:iPadOS"];
-//    [svmxc_client.clientInfo addObject:@"R4B2"];
-    //[client_listMap.valueList addObject:svmxc_client];
     
     //changed kri : 10.4.404
     INTF_WebServicesDefServiceSvc_SVMXClient  * svmxc_client =  [appDelegate getSVMXClientObject];
@@ -9340,6 +9666,19 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                 [obj release];
             }
         }
+		//Changes for optimized sync - One Call sync
+		if ([wsResponse.result.eventName isEqualToString:@"GET_INSERT_DC_OPTIMZED"] || [wsResponse.result.eventName isEqualToString:@"GET_UPDATE_DC_OPTIMZED"] || [wsResponse.result.eventName isEqualToString:@"GET_DELETE_DC_OPTIMZED"] || [wsResponse.result.eventName isEqualToString:@"ONE_CALL_SYNC"])
+		{
+			NSString * event_name = wsResponse.result.eventName;
+			
+			[optimizeSyncCalls parseOptimizedDownloadCriteriaResponse:event_name response:[wsResponse.result valueMap]];
+			NSLog(@"************************* END Parsing - Once sync Call **********************************");
+		}
+		//Changes for optimized sync - one sync call
+		if ([wsResponse.result.eventName isEqualToString:@"TX_FETCH_OPTIMZED"])
+		{
+			[optimizeSyncCalls parseTXFetch:wsResponse.result.valueMap];
+		}
         if([wsResponse.result.eventName isEqualToString:SUBMIT_DOCUMENT] && [wsResponse.result.eventType isEqualToString:SYNC])
         {
             appDelegate.dataBase.didSubmitHTML = (int)[wsResponse.result.success boolValue];
@@ -9746,6 +10085,11 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                 {
                     insert_last_sync_time = object_name ;
                 }
+				//Radha - defect 8227
+				else if ([key isEqualToString:@"PUT_INSERT_TIME"])
+				{
+					self.put_insert_time = object_name;
+				}
                 else  if([key isEqualToString:@"Parent_Object"] || [key isEqualToString:@"Child_Object"])
                 {
                     NSString * record_type = @"";
@@ -9925,6 +10269,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             {
                 appDelegate.Incremental_sync_status = GET_INSERT_DONE;
             }
+			[record_dict release];
             
         }
         else if ( [wsResponse.result.eventName isEqualToString:@"PUT_UPDATE"] )//INSERT
@@ -10320,6 +10665,7 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
             {
                 appDelegate.Incremental_sync_status = PUT_DELETE_DONE;
             }
+			[record_dict release];
         }
         else if([wsResponse.result.eventName isEqualToString:GET_DELETE]|| [wsResponse.result.eventName isEqualToString:GET_UPDATE] || [wsResponse.result.eventName isEqualToString:GET_INSERT] || [wsResponse.result.eventName isEqualToString:GET_INSERT_DOWNLOAD_CRITERIA] || [wsResponse.result.eventName isEqualToString:GET_UPDATE_DOWNLOAD_CRITERIA] || [wsResponse.result.eventName isEqualToString:GET_DELETE_DOWNLOAD_CRITERIA])
         {

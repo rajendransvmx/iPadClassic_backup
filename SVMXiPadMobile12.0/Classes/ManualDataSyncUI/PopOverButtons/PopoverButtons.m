@@ -170,10 +170,7 @@ PopoverButtons *popOver_view;
 }
 - (void) Syncronise
 {
-    //sync_override
-//    appDelegate.data_sync_type = NORMAL_DATA_SYNC;
-    
-	BOOL retVal;
+   	BOOL retVal;
     [delegate dismisspopover];
 	
 	
@@ -194,16 +191,7 @@ PopoverButtons *popOver_view;
 			[appDelegate.reloadTable ReloadSyncTable];
 		}
 	}
-    
-
-//	//OAuth.
-//    retVal = [[ZKServerSwitchboard switchboard] doCheckSession];
-//    
-//    if(retVal == NO)
-//    {
-//        return;
-//    }
-    
+        
      NSString * data_sync = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_data_sync];
 	
 	retVal = [appDelegate.calDataBase selectCountFromSync_Conflicts];
@@ -752,6 +740,8 @@ PopoverButtons *popOver_view;
 		[self refreshMetaSyncTimeStamp];
 		[appDelegate.wsInterface.updateSyncStatus refreshMetaSyncStatus];
 		[self updateMetsSyncStatus:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_succeeded]];
+		//One Call sync
+		[appDelegate overrideOptimizeSyncSettingsFromRooTPlist];
 
 
     }
