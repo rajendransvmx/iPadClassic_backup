@@ -670,7 +670,7 @@ extern void SVMXLog(NSString *format, ...);
         //Set the maximum size
         NSString *text = [[self.conflictsArray objectAtIndex:[indexPath row]] objectForKey:@"message"];
         [text uppercaseString];
-        CGSize constraint = CGSizeMake(self.view.frame.size.width, CELL_CONTENT_HEIGHT);
+        CGSize constraint = CGSizeMake(self.view.frame.size.width-15, CELL_CONTENT_HEIGHT);
         
         CGSize size = [text sizeWithFont:[UIFont boldSystemFontOfSize:18.0] constrainedToSize:constraint lineBreakMode:UILineBreakModeWordWrap];
         SMLog(@"%@",NSStringFromCGSize(size));
