@@ -15,6 +15,12 @@
 #import "Utility.h"
 extern void SVMXLog(NSString *format, ...);
 
+@interface CalendarDatabase () //7280 - Displaying the events only related to logged in user using owner Id 
+
+- (NSString *) getUserIdFromUserTable;
+
+@end
+
 @implementation CalendarDatabase
 @synthesize dbFilePath;
 @synthesize opDocController;
@@ -202,7 +208,19 @@ extern void SVMXLog(NSString *format, ...);
 	endDate = [endDate stringByReplacingCharactersInRange:NSMakeRange(8, 2) withString:string];
 
 	@try{
-    queryStatement = [NSString stringWithFormat:@"SELECT  ActivityDate, ActivityDateTime,DurationInMinutes,EndDateTime,StartDateTime,Subject,WhatId,Id ,local_id FROM Event where ((StartDateTime >= '%@' and StartDateTime < '%@') or (EndDateTime >= '%@' and EndDateTime < '%@'))", startdate, endDate, startdate, endDate];
+	//7280
+	NSString * ownerId = [self getUserIdFromUserTable]; //Displaying the events only related to logged in user using owner Id 
+		
+	if (ownerId != nil && [ownerId length] > 0)
+	{
+		queryStatement = [NSString stringWithFormat:@"SELECT  ActivityDate, ActivityDateTime,DurationInMinutes,EndDateTime,StartDateTime,Subject,WhatId,Id ,local_id FROM Event where (((StartDateTime >= '%@' and StartDateTime < '%@') or (EndDateTime >= '%@' and EndDateTime < '%@')) and OwnerId = '%@' )", startdate, endDate, startdate, endDate, ownerId];
+	}
+	
+	else
+	{
+		queryStatement = [NSString stringWithFormat:@"SELECT  ActivityDate, ActivityDateTime,DurationInMinutes,EndDateTime,StartDateTime,Subject,WhatId,Id ,local_id FROM Event where ((StartDateTime >= '%@' and StartDateTime < '%@') or (EndDateTime >= '%@' and EndDateTime < '%@'))", startdate, endDate, startdate, endDate];
+	}
+    
         
     const char * selectStatement = [queryStatement UTF8String];
     
@@ -7621,6 +7639,24 @@ NSString *Doc_Name=[[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurren
         }
     }
     return conflictExist;
+}
+
+//7280
+- (NSString *) getUserIdFromUserTable
+{
+	NSString * Id = nil;
+	
+	NSUserDefaults * userDefaults = [NSUserDefaults standardUserDefaults];
+	
+	NSString * currentUserName = [userDefaults valueForKey:@"UserFullName"];
+	
+	if ([currentUserName length] > 0 && currentUserName != nil)
+	{
+		Id = [appDelegate.dataBase getLoggedInUserId:currentUserName];
+	}
+	
+	return Id;
+	
 }
 
 @end
