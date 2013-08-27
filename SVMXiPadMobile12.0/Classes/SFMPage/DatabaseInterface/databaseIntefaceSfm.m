@@ -5467,6 +5467,12 @@ return nil;
             
                 if([value isEqualToString:@""])
                 {
+                    //7931
+                    NSString *lowerCaseType = [field_data_type lowercaseString];
+                    if ([lowerCaseType isEqualToString:@"multipicklist"]) {
+                        
+                        [dict setValue:@"" forKey:field];
+                    }
                     
                 }
                 else
