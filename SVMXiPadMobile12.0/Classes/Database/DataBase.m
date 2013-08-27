@@ -2924,7 +2924,15 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                         }
                         if([UserFullName length]>0)
                         {
-                            UserNameValue=[objectValue stringByReplacingOccurrencesOfString:@"SVMX.CURRENTUSER" withString:UserFullName];
+                            if([objectValue Contains:@"SVMX.CURRENTUSER"])
+                            {
+                                UserNameValue=[objectValue stringByReplacingOccurrencesOfString:@"SVMX.CURRENTUSER" withString:UserFullName];
+                            }
+                            else if([objectValue Contains:@"SVMX.OWNER"])
+                            {
+                                UserNameValue=[objectValue stringByReplacingOccurrencesOfString:@"SVMX.OWNER" withString:UserFullName];
+
+                            }
                             //Keerti - 7275
                             NSMutableString *strTemp=[[NSMutableString alloc]init];
                             [strTemp appendString:UserNameValue];
@@ -4466,7 +4474,15 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                             }
                             if([UserFullName length]>0)
                             {
-                                UserNameValue=[objectValue stringByReplacingOccurrencesOfString:@"SVMX.CURRENTUSER" withString:UserFullName];
+                                if([objectValue Contains:@"SVMX.CURRENTUSER"])
+                                {
+                                    UserNameValue=[objectValue stringByReplacingOccurrencesOfString:@"SVMX.CURRENTUSER" withString:UserFullName];
+                                }
+                                else if([objectValue Contains:@"SVMX.OWNER"])
+                                {
+                                    UserNameValue=[objectValue stringByReplacingOccurrencesOfString:@"SVMX.OWNER" withString:UserFullName];
+                                }
+
                             }
                             
                             if([refrence_to length]>0)
