@@ -1797,6 +1797,8 @@ PopoverButtons *popOver_view;
             
 			[self disableControls];				//-------------> Disable controls if users continues with resetting application.
 			[appDelegate invalidateAllTimers];
+            //7113: Aparna
+            [appDelegate removeSyncHistoryPlist];
 			[appDelegate.dataBase removecache];
 			appDelegate.wsInterface.didOpComplete = FALSE;
 			
