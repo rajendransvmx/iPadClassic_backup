@@ -13458,11 +13458,11 @@ enum BizRuleConfirmViewStatus{
                             }
                             else if([fieldType isEqualToString:@"datetime"])
                             {
-                                NSString *dateTimeFieldValue = [iOSInterfaceObject getLocalTimeFromGMT:(NSString *)sectionFieldValue];
+                                NSString *dateTimeFieldValue = [iOSInterfaceObject getLocalTimeFromGMT:(NSString *)detailFieldValue];
                                 if(dateTimeFieldValue && ( [dateTimeFieldValue length] > 16))
-                                    sectionFieldValue = [NSString stringWithFormat:@"%@:00z",[dateTimeFieldValue substringToIndex:16]];
+                                    detailFieldValue = [NSString stringWithFormat:@"%@:00z",[dateTimeFieldValue substringToIndex:16]];
                                 else
-                                    sectionFieldValue = dateTimeFieldValue;
+                                    detailFieldValue = dateTimeFieldValue;
                             }
                             else if([fieldType isEqualToString:@"boolean"])
                             {
