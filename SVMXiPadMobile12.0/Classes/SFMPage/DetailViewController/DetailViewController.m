@@ -13352,7 +13352,11 @@ enum BizRuleConfirmViewStatus{
                 }
                 else if([fieldType isEqualToString:@"datetime"])
                 {
-                    sectionFieldValue = [iOSInterfaceObject getLocalTimeFromGMT:(NSString *)sectionFieldValue];
+                    NSString *dateTimeFieldValue = [iOSInterfaceObject getLocalTimeFromGMT:(NSString *)sectionFieldValue];
+                    if(dateTimeFieldValue && ( [dateTimeFieldValue length] > 16))
+                        sectionFieldValue = [NSString stringWithFormat:@"%@:00z",[dateTimeFieldValue substringToIndex:16]];
+                    else
+                        sectionFieldValue = dateTimeFieldValue;
                 }
                 else if([fieldType isEqualToString:@"boolean"])
                 {
@@ -13450,7 +13454,11 @@ enum BizRuleConfirmViewStatus{
                             }
                             else if([fieldType isEqualToString:@"datetime"])
                             {
-                                detailFieldValue = [iOSInterfaceObject getLocalTimeFromGMT:(NSString *)detailFieldValue];
+                                NSString *dateTimeFieldValue = [iOSInterfaceObject getLocalTimeFromGMT:(NSString *)sectionFieldValue];
+                                if(dateTimeFieldValue && ( [dateTimeFieldValue length] > 16))
+                                    sectionFieldValue = [NSString stringWithFormat:@"%@:00z",[dateTimeFieldValue substringToIndex:16]];
+                                else
+                                    sectionFieldValue = dateTimeFieldValue;
                             }
                             else if([fieldType isEqualToString:@"boolean"])
                             {
