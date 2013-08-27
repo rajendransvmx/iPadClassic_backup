@@ -8327,7 +8327,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         [appDelegate.dataBase endTransaction];
         
     }
-    [idsList removeAllObjects]; // Temporary fix. TODO : To be removed for production
+    
     for(NSString * each_id in idsList)
     {
         [self retrieveStaticResourceFor:each_id];

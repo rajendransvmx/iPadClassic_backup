@@ -716,6 +716,7 @@ NSString* machineName()
     [svmxc_client.clientInfo addObject:[clientInfoDict objectForKey:devVersion]];
     
     [self moveJavascriptFiles];
+    [self installCoreLibrary];
     
 
 	//Shrinivas : OAuth.
@@ -4010,7 +4011,8 @@ int percent = 0;
             //krishna opdocs 17/8/2013 8166
             [appDelegate clearDocumentDirectoryForOPDOCS];
             [appDelegate moveJavascriptFiles];
-
+            [self installCoreLibrary];
+            
 			[self addBackgroundImageAndLogo]; //Code for Indicator - 24/May/2013
             
             // Need to cross check with Praveen - It is happening behalf of Switch user -- Will remove
