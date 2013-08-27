@@ -91,8 +91,116 @@ function OPDGetTemplate(processIdObj, callbackFunction, context){
     }
   });
 }
-
-
+//Krishna defect 008268
+function GetMediaResourceJSONArray(media_res_array,media_res_json_array,index, templateId, callbackFunction,globalObjectData)
+{
+    var i = index;
+    var media_name = media_res_array[i];
+    
+    var objName = "Document";
+    var fldNames = [{fieldName:'Name',fieldType:'TEXT'},{fieldName:'Type',fieldType:'TEXT'}];
+    var crtria = [{fieldName:'DeveloperName',fieldValue:media_name,operator:'='}];
+    var media_res_id;
+    $DAL.executeQuery(objName,fldNames,crtria,null,null,function(request)
+                      {
+                      if(request.response.statusCode != '1')
+                      {
+                      //alert("Data base error ");
+                      } /* if(request.response.statusCode != '1') */
+                      else
+                      {
+                      //alert(JSON.stringify(request));
+                      
+                      var objectData = request.response.objectData;
+                      if(objectData.length > 0)
+                      {
+                      var procObj = objectData[0];
+                      media_res_id =  procObj.Name + "." + procObj.Type;
+                      //alert(media_res_id);
+                      
+                      /* Once you get the Id for each media_res values, convert them into one JSON string representation */
+                      var json_str = {Id:media_res_id,DeveloperName:media_name};
+                      media_res_json_array[i] = json_str;
+                      
+                      if(media_res_array.length > (i+1))
+                      {
+                      index = i+1;
+                      GetMediaResourceJSONArray(media_res_array,media_res_json_array,index,templateId, callbackFunction,globalObjectData);
+                      }
+                      else {
+                      DocDetailsAfterMediaResources(media_res_array,media_res_json_array,templateId, callbackFunction,globalObjectData);
+                      }
+                      
+                      } /* if(objectData.length > 0) */
+                      else
+                      {
+                        if(media_res_array.length > (i+1))
+                        {
+                            index = i+1;
+                            GetMediaResourceJSONArray(media_res_array,media_res_json_array,index,templateId, callbackFunction,globalObjectData);
+                        }
+                        else
+                        {
+                        DocDetailsAfterMediaResources(media_res_array,media_res_json_array,templateId, callbackFunction,globalObjectData);
+                        }
+                      }
+                      } /* else if(request.response.statusCode == '1') */
+                      }); /* executeQuery on Document object */
+}
+// krishna defect 008268
+function DocDetailsAfterMediaResources(media_res_array,media_res_json_array,templateId, callbackFunction,gObjectData)
+{
+        gObjectData[0].media_resources = media_res_json_array;
+        
+        templateRecord = JSON.stringify(gObjectData);
+        templateRecord=templateRecord.replace("media_resources","SVMXC__Media_Resources__c");
+        //alert("new templateRecord : " + templateRecord);
+    
+        
+        /* Retrieve the doc_template_details corresponding to the record in JSON format */
+        var templateDetailsRecord;
+        var dtdObj = "DOC_TEMPLATE_DETAILS";
+        // var dtdfields = [{fieldName:'doc_template',fieldType:'TEXT'},{fieldName:'doc_template_detail_id',fieldType:'TEXT'},{fieldName:'header_ref_fld',fieldType:'TEXT'},{fieldName:'alias',fieldType:'TEXT'},{fieldName:'object_name',fieldType:'TEXT'},{fieldName:'soql',fieldType:'TEXT'},{fieldName:'doc_template_detail_unique_id',fieldType:'TEXT'},{fieldName:'fields',fieldType:'TEXT'},{fieldName:'type',fieldType:'TEXT'},{fieldName:'Id',fieldType:'TEXT'}];
+        var dtdfields = [{fieldName:'Id',fieldType:'TEXT'},{fieldName:'fields',fieldType:'TEXT'},{fieldName:'object_name',fieldType:'TEXT'},{fieldName:'alias',fieldType:'TEXT'},{fieldName:'type',fieldType:'TEXT'}];
+        var dtdcriteria = [{fieldName:'doc_template',fieldValue:templateId,operator:'='}];
+        $DAL.executeQuery(dtdObj,dtdfields,dtdcriteria,null,null,function(request)
+                          {
+                          if(request.response.statusCode != '1')
+                          {
+                          //alert("Data base error ");
+                          }
+                          else
+                          {
+                          //alert(JSON.stringify(request));
+                          
+                          var objectData = request.response.objectData;
+                          if(objectData.length > 0)
+                          {
+                          /* Club these details into one JSON string and pass in the response callback */
+                          templateDetailsRecord = JSON.stringify(objectData);
+                          
+                          //alert("template detail records : " + templateDetailsRecord);
+                          
+                          templateDetailsRecord=templateDetailsRecord.replace(/fields/g,"SVMXC__Fields__c");
+                          templateDetailsRecord=templateDetailsRecord.replace(/object_name/g,"SVMXC__Object_Name__c");
+                          templateDetailsRecord=templateDetailsRecord.replace(/alias/g,"SVMXC__Alias__c");
+                          templateDetailsRecord=templateDetailsRecord.replace(/type/g,"SVMXC__Type__c");
+                          
+                          // JSON.parse() converts json string to json object
+                          var finaljson = {TemplateRecord:JSON.parse(templateRecord), AllObjectInfo:JSON.parse(templateDetailsRecord)};
+                          var finalResponseString = JSON.stringify(finaljson);
+                          
+                          
+                          callbackFunction.call(context, finaljson, 'GetDocumentMetadata');
+                          OPDGetDocumentData(docData.Input, docData.Callback, docData.Context);
+                          //alert(finalResponseString);
+                          
+                          //alert("GetDocumentMetaData : Ends");
+                          }
+                          }
+                          });/* executeQuery for Doc_template_details */
+            
+}
 function OPDGetDocumentMetaData(processIdObj, callbackFunction, context)
 {
   /* Get doc_template_id from process_id from SFProcess table */
@@ -145,95 +253,20 @@ function OPDGetDocumentMetaData(processIdObj, callbackFunction, context)
               //alert("ProcessObj ( ObjectData[0] ) : " + JSON.stringify(objectData[0]));
               
               var media_res_json_array = [];
-              if(media_res.length > 0)
-              {
-                /* media_resources will have comma separated values - Separate the values */
-                var media_res_array = media_res.split(",");
-                var templateRecord;
-                /* <-- LOOP --> for each media_res value find the corresponding Id from Document table <-- END LOOP --> */
-                for ( var i = 0; i < media_res_array.length; i++ )
-                {
-                  var media_name = media_res_array[i];
-                  
-                  var objName = "Document";
-                  var fldNames = [{fieldName:'Name',fieldType:'TEXT'},{fieldName:'Type',fieldType:'TEXT'}];
-                  var crtria = [{fieldName:'DeveloperName',fieldValue:media_name,operator:'='}];
-                  var media_res_id;
-                  $DAL.executeQuery(objName,fldNames,crtria,null,null,function(request)
-                  {
-                    if(request.response.statusCode != '1')
-                    {
-                      //alert("Data base error ");
-                    } /* if(request.response.statusCode != '1') */
-                    else
-                    {
-                      //alert(JSON.stringify(request));
-                      
-                      var objectData = request.response.objectData;
-                      if(objectData.length > 0)
-                      {
-                        var procObj = objectData[0];
-                        media_res_id =  procObj.Name + "." + procObj.Type;
-                        //alert(media_res_id);
-                        
-                        /* Once you get the Id for each media_res values, convert them into one JSON string representation */
-                        var json_str = {Id:media_res_id,DeveloperName:media_name};
-                        media_res_json_array[i] = json_str;
-                      } /* if(objectData.length > 0) */
-                    } /* else if(request.response.statusCode == '1') */
-                  }); /* executeQuery on Document object */
-} /* <-- LOOP : for loop end --> */
-}
+              //krishna defect 008268
+              if(media_res.length > 0) {
+               /* media_resources will have comma separated values - Separate the values */
+               var media_res_array = media_res.split(",");
+               var arrayLength = media_res_array.length;
+               // alert("shya" + arrayLength);
+               var templateRecord;
+               GetMediaResourceJSONArray(media_res_array,media_res_json_array,0, templateId, callbackFunction,objectData);
+               }
+               else
+               {
+               DocDetailsAfterMediaResources(media_res_array,media_res_json_array,templateId, callbackFunction,objectData);
+               }
 
-objectData[0].media_resources = media_res_json_array;
-
-templateRecord = JSON.stringify(objectData);
-templateRecord=templateRecord.replace("media_resources","SVMXC__Media_Resources__c");
-//alert("new templateRecord : " + templateRecord);
-
-
-/* Retrieve the doc_template_details corresponding to the record in JSON format */
-var templateDetailsRecord;
-var dtdObj = "DOC_TEMPLATE_DETAILS";
-// var dtdfields = [{fieldName:'doc_template',fieldType:'TEXT'},{fieldName:'doc_template_detail_id',fieldType:'TEXT'},{fieldName:'header_ref_fld',fieldType:'TEXT'},{fieldName:'alias',fieldType:'TEXT'},{fieldName:'object_name',fieldType:'TEXT'},{fieldName:'soql',fieldType:'TEXT'},{fieldName:'doc_template_detail_unique_id',fieldType:'TEXT'},{fieldName:'fields',fieldType:'TEXT'},{fieldName:'type',fieldType:'TEXT'},{fieldName:'Id',fieldType:'TEXT'}];
-var dtdfields = [{fieldName:'Id',fieldType:'TEXT'},{fieldName:'fields',fieldType:'TEXT'},{fieldName:'object_name',fieldType:'TEXT'},{fieldName:'alias',fieldType:'TEXT'},{fieldName:'type',fieldType:'TEXT'}];
-var dtdcriteria = [{fieldName:'doc_template',fieldValue:templateId,operator:'='}];
-$DAL.executeQuery(dtdObj,dtdfields,dtdcriteria,null,null,function(request)
-{
-  if(request.response.statusCode != '1')
-  {
-    //alert("Data base error ");
-  }
-  else
-  {
-    //alert(JSON.stringify(request));
-    
-    var objectData = request.response.objectData;
-    if(objectData.length > 0)
-    {
-      /* Club these details into one JSON string and pass in the response callback */
-      templateDetailsRecord = JSON.stringify(objectData);
-      
-      //alert("template detail records : " + templateDetailsRecord);
-      
-      templateDetailsRecord=templateDetailsRecord.replace(/fields/g,"SVMXC__Fields__c");
-      templateDetailsRecord=templateDetailsRecord.replace(/object_name/g,"SVMXC__Object_Name__c");
-      templateDetailsRecord=templateDetailsRecord.replace(/alias/g,"SVMXC__Alias__c");
-      templateDetailsRecord=templateDetailsRecord.replace(/type/g,"SVMXC__Type__c");
-
-      // JSON.parse() converts json string to json object
-      var finaljson = {TemplateRecord:JSON.parse(templateRecord), AllObjectInfo:JSON.parse(templateDetailsRecord)};
-      var finalResponseString = JSON.stringify(finaljson);
-      
-                  
-      callbackFunction.call(context, finaljson, 'GetDocumentMetadata');
-                  OPDGetDocumentData(docData.Input, docData.Callback, docData.Context);
-      //alert(finalResponseString);
-      
-      //alert("GetDocumentMetaData : Ends");
-    }
-  }
-});/* executeQuery for Doc_template_details */
 } /* if(objectData.length > 0) for Doc_template object execute query */
 } /* else part for Doc_template record retrieval from executeQuery */
 }); /* executeQuery for Doc_template record retrieval */
