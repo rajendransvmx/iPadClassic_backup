@@ -2776,19 +2776,13 @@ NSDate * syncCompleted;
     
     [appDelegate.databaseInterface deleteAllConflictedRecordsFrom:SFDATATRAILER];
     
-//    if(!temp_aggressiveSync)
-//    {
-////        normal sync
-//        [self setLastSyncTime];   // update the plist to last sync time
-//        [self setLastSyncTimeForDownloadCriteriaSync];
-//    }
-//    else
-//    {
-////        aggressive sync
-//         [self setLastSyncTime];   // update the plist to last sync time
-//    }
-		
-		//One call sync
+    if(!doOneCallSync)
+    {
+//        normal sync
+        [self setLastSyncTime];   // update the plist to last sync time
+        [self setLastSyncTimeForDownloadCriteriaSync];
+    }
+	//One call sync
 	[self updateSyncTimeStampINSyncHistoryPlist:doOneCallSync];
 
 	//RADHA Defect Fix 5542
@@ -4710,7 +4704,7 @@ NSDate * syncCompleted;
    
     
 	//set the last sync time
-//	    [self  setLastSyncOccured];
+	[self  setLastSyncOccured];
 }
 
 -(void)setLastSyncTimeForDownloadCriteriaSync
@@ -4817,12 +4811,11 @@ NSDate * syncCompleted;
 			[self setsyncHistoryForSyncType:GET_UPDATE_DOWNLOAD_CRITERIA requestOrResponse:RESPONSE request_id:@"" last_sync_time:optimizeSyncCalls.lastSyncTime];
 			[self setsyncHistoryForSyncType:GET_DELETE_DOWNLOAD_CRITERIA  requestOrResponse:RESPONSE request_id:@"" last_sync_time:optimizeSyncCalls.lastSyncTime];
 		}
+		[self setLastSyncOccured];
+
 	}
 	else
 	{
-		[self setLastSyncTime];
-		[self setLastSyncTimeForDownloadCriteriaSync];
-		
 		for(NSString *  str in allkeys)
 		{
 			if([str isEqualToString:LAST_OSC_TIMESTAMP])
@@ -4835,7 +4828,6 @@ NSDate * syncCompleted;
 	}
 	
 	[dict writeToFile:plistPath_SYNHIST atomically:YES];
-	[self setLastSyncOccured];
 }
 
 
