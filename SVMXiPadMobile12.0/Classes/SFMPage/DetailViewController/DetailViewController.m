@@ -13196,17 +13196,32 @@ enum BizRuleConfirmViewStatus{
                                                           filterCriteria:filterCriteria
                                                                    limit:@"1"] objectAtIndex:0] objectForKey:@"sfID"];
     
-    NSString *criteria = [NSString stringWithFormat:@"Id in  (select business_rule from ProcessBusinessRule where target_manager ='%@' order by 'sequence') and source_object_name = '%@'",processID,parentObjectName];
-    NSArray *columns = [NSArray arrayWithObjects:@"Id",@"advanced_expression",@"error_msg",@"source_object_name",@"message_type", nil];
-    NSArray *headerBusinessRulesArray = [appDelegate.dataBase getAllRecordsFromTable:@"BusinessRule"
+    NSString *criteria = nil;
+    NSArray *columns =nil;
+    criteria = [NSString stringWithFormat:@"target_manager ='%@' order by sequence",processID];
+    columns = [NSArray arrayWithObjects:@"business_rule", nil];
+    NSArray *processBusinessRulesArray = [appDelegate.dataBase getAllRecordsFromTable:@"ProcessBusinessRule"
                                                                           forColumns:columns
                                                                       filterCriteria:criteria
                                                                                limit:nil];
-    
+    NSMutableArray *headerBusinessRulesArray = [[NSMutableArray alloc] init] ;
+    for(NSDictionary *processBizRuleDict in processBusinessRulesArray)
+    {
+        NSString *bizRuleId = [processBizRuleDict objectForKey:@"business_rule"];
+     criteria = [NSString stringWithFormat:@"Id like  \"%@\" and source_object_name = '%@'",bizRuleId,parentObjectName];
+    columns = [NSArray arrayWithObjects:@"Id",@"advanced_expression",@"error_msg",@"source_object_name",@"message_type", nil];
+        NSArray *headerBizRulesArray = [appDelegate.dataBase getAllRecordsFromTable:@"BusinessRule"
+                                                                              forColumns:columns
+                                                                          filterCriteria:criteria
+                                                                                   limit:@"1"];
+        if([headerBizRulesArray count])
+            [headerBusinessRulesArray addObject:[headerBizRulesArray objectAtIndex:0]];
+    }
     NSMutableDictionary *fullRulesDict = [[NSMutableDictionary alloc] init];
     NSMutableDictionary    *fieldsDict = [[NSMutableDictionary alloc] init];
     
     NSArray *headerRulesArray = [self getBusinessRulesDict:headerBusinessRulesArray];
+    [headerBusinessRulesArray release];
     NSMutableArray *headerFields = [[NSMutableArray alloc] init];
     for(NSDictionary *ruleDict in headerRulesArray)
     {
