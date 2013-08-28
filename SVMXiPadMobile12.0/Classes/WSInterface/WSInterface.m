@@ -1763,7 +1763,7 @@ NSDate * syncCompleted;
 		
     [appDelegate.refreshIcons RefreshIcons]; //20-June-2013. ---> Refreshing home incons when sync is running.
 	
-    if (appDelegate.metaSyncRunning)
+    if (appDelegate.metaSyncRunning || [appDelegate.metaSyncThread isExecuting])//8291
     {
          appDelegate.Enable_aggresssiveSync = FALSE;
         return;

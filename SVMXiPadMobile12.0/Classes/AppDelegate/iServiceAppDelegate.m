@@ -690,7 +690,7 @@ NSString* machineName()
     
     special_incremental_thread = nil;
     
-    metaSyncThread = nil;
+    self.metaSyncThread = nil; //8291
     
     _manualDataSync = [[ManualDataSync alloc] init];   //btn merge
     
@@ -2560,6 +2560,12 @@ NSString * GO_Online = @"GO_Online";
 
 -(void)MethodForTimer:(NSTimer *)timer
 {
+	//008291
+	if ([self.metaSyncThread isExecuting] || self.metaSyncRunning) //Return is config sync is already initiated
+	{
+		return;
+	}
+	
 	//Radha Defect Fix 5542
 	self.isDataSyncTimerTriggered = YES;
     appDelegate.data_sync_type = NORMAL_DATA_SYNC;
@@ -3009,6 +3015,12 @@ NSString * GO_Online = @"GO_Online";
 
 - (void) callEventSyncTimer
 {
+	//008291
+	if ([self.metaSyncThread isExecuting] || self.metaSyncRunning) //Return is config sync is already initiated
+	{
+		return;
+	}
+	
     if(self.isBackground == TRUE)
     {
         [self.event_timer invalidate];

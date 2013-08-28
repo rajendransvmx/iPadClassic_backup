@@ -482,6 +482,7 @@ PopoverButtons *popOver_view;
     if ([manualEventThread isExecuting])
     {
         SMLog(@"Manual event sync executing");
+		return; //8291
     }
     
     else 
@@ -763,7 +764,19 @@ PopoverButtons *popOver_view;
 	//7444
     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_INVALIDATE object:appDelegate.metasync_timer];
     [self performSelectorOnMainThread:@selector(scheduletimer) withObject:nil waitUntilDone:NO];
+	
+	//8291
+	[self performSelectorOnMainThread:@selector(releaseMetaSyncThread) withObject:nil waitUntilDone:NO];
     
+}
+
+//8291
+- (void) releaseMetaSyncThread
+{
+	if (appDelegate.metaSyncThread)
+	{
+		appDelegate.metaSyncThread = nil;
+	}
 }
 
 //Update meta sync status
@@ -810,6 +823,12 @@ PopoverButtons *popOver_view;
 //EVENT SYNC METHOD
 - (void) startSyncEvents
 {
+	//008291
+	if ([appDelegate.metaSyncThread isExecuting] || appDelegate.metaSyncRunning) //Return is config sync is already initiated
+	{
+		return;
+	}
+	
     if (appDelegate == nil)
         appDelegate = (iServiceAppDelegate *) [[UIApplication sharedApplication] delegate];
 
