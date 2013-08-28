@@ -15078,12 +15078,16 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 @implementation NSString (Helper)
 - (BOOL)Contains:(NSString *)string
 {
-	NSRange range = [self rangeOfString:string];
-	if( NSEqualRanges(range, NSMakeRange(NSNotFound, 0)) )
-	{
-		return NO;
-	}
-	return YES;
+    if(string != nil)
+    {
+        NSRange range = [self rangeOfString:string];
+        if(!(NSEqualRanges(range, NSMakeRange(NSNotFound, 0))) )
+        {
+            return YES;
+        }
+    }
+    return NO;
+
 }
 @end
 

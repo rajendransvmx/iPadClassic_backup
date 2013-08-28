@@ -5207,7 +5207,7 @@ NSString *Doc_Name=[[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurren
 - (NSString *) getApi_NameWithReference:(NSString *)reference_to
 {
 	NSString * api_name = @"";
-	NSString * label = @"";
+	NSString * label = [NSString new];
 	NSString * final_api_name = @"";
 	
 	NSMutableArray * apiArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
@@ -5232,6 +5232,9 @@ NSString *Doc_Name=[[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurren
 			char * field2 = (char *) synchronized_sqlite3_column_text(statement, COLUMN_2);
             if (field2 != nil)
 			{
+                if(label)
+                    [label release];
+                
                 label = [[NSString alloc] initWithUTF8String:field2];
 				[apiArray addObject:label];
 			}
@@ -5241,8 +5244,9 @@ NSString *Doc_Name=[[dict objectForKey:DOCUMENTS_NAME] stringByReplacingOccurren
 				final_api_name = api_name;
 			}
         }
-        
     }
+    if(label)
+        [label release];
 	synchronized_sqlite3_finalize(statement);
 	return final_api_name;
 }

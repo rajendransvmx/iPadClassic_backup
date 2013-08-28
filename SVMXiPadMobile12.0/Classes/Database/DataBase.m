@@ -10366,7 +10366,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     {
         while (synchronized_sqlite3_step(statement) == SQLITE_ROW) 
         {
-            NSString * key = @"";
+            NSString * key = [NSString string];
             NSString * value = @"";
             char * _key = (char *) synchronized_sqlite3_column_text(statement, 1);
            
