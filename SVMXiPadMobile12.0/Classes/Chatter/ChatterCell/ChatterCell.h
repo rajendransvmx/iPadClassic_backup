@@ -67,7 +67,7 @@
 - (void) resetImages;
 
 - (IBAction) post;
-//- (IBAction)facetime_call:(id)sender;//  Unused methods
+- (IBAction)facetime_call:(id)sender;//  Unused methods
 
 #define CHATTEREMAIL   @"Email"
 
