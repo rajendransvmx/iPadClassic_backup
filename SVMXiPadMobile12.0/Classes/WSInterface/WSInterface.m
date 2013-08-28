@@ -2759,15 +2759,15 @@ NSDate * syncCompleted;
     //sahana dec 14 2012
     [appDelegate.dataBase purgingDataOnSyncSettings:date tableName:@"Event" Action:NOT_OWNER_GREATERTHAN];
 		
-	//One Call Sync
-	if (doOneCallSync && optimizeSyncCalls.purgingEventIdArray != nil)
-	{
-		NSString * value = [optimizeSyncCalls.purgingEventIdArray componentsJoinedByString:@"','"];
-		NSMutableString * eventId = [NSMutableString stringWithFormat:@"'%@'", value];
-		[appDelegate.dataBase deleteEventNotRelatedToLoggedInUser:eventId tableName:@"Event"];
-		[optimizeSyncCalls.purgingEventIdArray release];
-		optimizeSyncCalls.purgingEventIdArray = nil;
-	}
+	//One Call Sync - Commented to fix 7280
+//    if (doOneCallSync && optimizeSyncCalls.purgingEventIdArray != nil)
+//    {
+//        NSString * value = [optimizeSyncCalls.purgingEventIdArray componentsJoinedByString:@"','"];
+//        NSMutableString * eventId = [NSMutableString stringWithFormat:@"'%@'", value];
+//        [appDelegate.dataBase deleteEventNotRelatedToLoggedInUser:eventId tableName:@"Event"];
+//        [optimizeSyncCalls.purgingEventIdArray release];
+//        optimizeSyncCalls.purgingEventIdArray = nil;
+//    }
 
 	//Radha - Defect Fic 4558
 	[[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_EVENT_DATA_SYNC object:nil];
