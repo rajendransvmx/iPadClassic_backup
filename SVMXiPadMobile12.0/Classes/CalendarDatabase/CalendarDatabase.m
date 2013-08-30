@@ -213,7 +213,7 @@ extern void SVMXLog(NSString *format, ...);
 		
 	if (ownerId != nil && [ownerId length] > 0)
 	{
-		queryStatement = [NSString stringWithFormat:@"SELECT  ActivityDate, ActivityDateTime,DurationInMinutes,EndDateTime,StartDateTime,Subject,WhatId,Id ,local_id FROM Event where (((StartDateTime >= '%@' and StartDateTime < '%@') or (EndDateTime >= '%@' and EndDateTime < '%@')) and OwnerId = '%@' )", startdate, endDate, startdate, endDate, ownerId];
+		queryStatement = [NSString stringWithFormat:@"SELECT  ActivityDate, ActivityDateTime,DurationInMinutes,EndDateTime,StartDateTime,Subject,WhatId,Id ,local_id FROM Event where (((StartDateTime >= '%@' and StartDateTime < '%@') or (EndDateTime >= '%@' and EndDateTime < '%@')) and OwnerId = '%@' or ( Id = '' or Id = null or Id = ' ') )", startdate, endDate, startdate, endDate, ownerId];
 	}
 	
 	else
