@@ -8329,11 +8329,10 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     }
     [appDelegate installCoreLibrary];//damodar 30/aug/2013
     
-    //commented only for 11.1.0.12 build - TODO uncomment for production
-//    for(NSString * each_id in idsList)
-//    {
-//        [self retrieveStaticResourceFor:each_id];
-//    }
+    for(NSString * each_id in idsList)
+    {
+        [self retrieveStaticResourceFor:each_id];
+    }
 }
 
 - (void)retrieveStaticResourceFor:(NSString*)resId
