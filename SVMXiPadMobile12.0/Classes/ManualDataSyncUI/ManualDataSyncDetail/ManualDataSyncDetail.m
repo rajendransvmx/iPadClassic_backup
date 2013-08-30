@@ -1812,6 +1812,7 @@ PopoverButtons *popOver_view;
             //krishna opdocs
             [appDelegate clearDocumentDirectoryForOPDOCS];
             [appDelegate moveJavascriptFiles];
+            [appDelegate installCoreLibrary];
             
 			//[appDelegate.dataBase clearDatabase];
 			//Remove database

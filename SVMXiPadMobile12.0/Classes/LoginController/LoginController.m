@@ -303,6 +303,7 @@ extern void SVMXLog(NSString *format, ...);
         //krishna opdocs
         [appDelegate clearDocumentDirectoryForOPDOCS];
         [appDelegate moveJavascriptFiles];
+        [appDelegate installCoreLibrary];
         
         // Vipind-db-optmz - 3
         [appDelegate.dataBase closeDatabase:appDelegate.db];
