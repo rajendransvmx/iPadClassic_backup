@@ -716,7 +716,7 @@ NSString* machineName()
     [svmxc_client.clientInfo addObject:[clientInfoDict objectForKey:devVersion]];
     
     [self moveJavascriptFiles];
-    [self installCoreLibrary];
+    //[self installCoreLibrary]; //krishna commented line on 30 Aug 2013
     
 
 	//Shrinivas : OAuth.
@@ -4023,7 +4023,7 @@ int percent = 0;
             //krishna opdocs 17/8/2013 8166
             [appDelegate clearDocumentDirectoryForOPDOCS];
             [appDelegate moveJavascriptFiles];
-            [self installCoreLibrary];
+            //[self installCoreLibrary]; //krishna commented 30 Aug 2013
             
 			[self addBackgroundImageAndLogo]; //Code for Indicator - 24/May/2013
             

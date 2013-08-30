@@ -8327,7 +8327,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         [appDelegate.dataBase endTransaction];
         
     }
-    
+    [appDelegate installCoreLibrary];//damodar 30/aug/2013
     for(NSString * each_id in idsList)
     {
         [self retrieveStaticResourceFor:each_id];
@@ -8335,10 +8335,10 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     
     // Damodar - OPDoc
     // If there are no core library in the list then install them from resource folder
-    if([idsList count] == 0)
-    {
-        [appDelegate installCoreLibrary];
-    }
+//    if([idsList count] == 0)
+//    {
+//        [appDelegate installCoreLibrary];
+//    }
 }
 
 - (void)retrieveStaticResourceFor:(NSString*)resId
