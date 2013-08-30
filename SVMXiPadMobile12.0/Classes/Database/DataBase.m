@@ -2934,11 +2934,10 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 
                             }
                             //Keerti - 7275
-                            NSMutableString *strTemp=[[NSMutableString alloc]init];
+                            NSMutableString *strTemp=[[[NSMutableString alloc]init]autorelease]; // Defect 008301 
                             [strTemp appendString:UserNameValue];
                             [strTemp appendString:@" COLLATE NOCASE "];
                             UserNameValue=strTemp;
-                            [strTemp release];
                         }
 
                         if([refrence_to length]>0)
