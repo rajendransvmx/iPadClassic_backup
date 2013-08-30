@@ -1928,7 +1928,13 @@ NSDate * syncCompleted;
     /* Shravya - Advanced look up- User trunk location */
     [appDelegate.wsInterface getUserTrunkLocationRequest];
     SMLog(@"User location update ends");
-		
+	
+	//008378
+	if (optimizeSyncCalls.purgingEventIdArray == nil)
+	{
+		optimizeSyncCalls.purgingEventIdArray = [[NSMutableArray alloc] initWithCapacity:0];
+	}
+
 		
 	//Changes for optimized sync - One Call sync
 	if (doOneCallSync)
@@ -2769,6 +2775,16 @@ NSDate * syncCompleted;
 //        optimizeSyncCalls.purgingEventIdArray = nil;
 //    }
 
+	//Purging events not related to logged in user id except child events
+	if (optimizeSyncCalls.purgingEventIdArray != nil && [optimizeSyncCalls.purgingEventIdArray count] > 0)
+	{
+		NSString * value = [optimizeSyncCalls.purgingEventIdArray componentsJoinedByString:@"','"];
+		NSMutableString * eventId = [NSMutableString stringWithFormat:@"'%@'", value];
+		[appDelegate.dataBase purgeEventsNotRelatedToLoggedInUser:eventId];
+		[optimizeSyncCalls.purgingEventIdArray release];
+		optimizeSyncCalls.purgingEventIdArray = nil;
+	}
+	
 	//Radha - Defect Fic 4558
 	[[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_EVENT_DATA_SYNC object:nil];
 	
@@ -3095,11 +3111,6 @@ NSDate * syncCompleted;
 	[self copyTrailertoTempTrailerForOneCallSync:DELETE];
 	
 	[self getAllRecordsForOperationType:DELETE];
-	
-	if (optimizeSyncCalls.purgingEventIdArray == nil)
-	{
-		optimizeSyncCalls.purgingEventIdArray = [[NSMutableArray alloc] initWithCapacity:0];
-	}
 	
 	[optimizeSyncCalls GetOptimizedDownloadCriteriaRecordsFor:@"ONE_CALL_SYNC" requestId:Insert_requestId];
 	
@@ -10720,6 +10731,18 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
                 {
                     appDelegate.initial_Sync_last_index = (svmxMap.value != nil)?svmxMap.value:@"";
                 }
+				//008378
+				else if ([key isEqualToString:@"ALL_EVENTS"])
+				{
+					NSMutableArray * allEvents = [svmxMap valueMap];
+					
+					for (INTF_WebServicesDefServiceSvc_SVMXMap * eventId in allEvents)
+					{
+						NSString * eventString = eventId.value;
+						optimizeSyncCalls.purgingEventIdArray =  [appDelegate.wsInterface getIdsFromJsonString:eventString];
+						
+					}
+				}
                 else if([key isEqualToString:DOWNLOAD_CRITERIA_OBJECTS])
                 {
                   //  NSMutableDictionary * dcobjects = [[NSMutableDictionary alloc] initWithCapacity:0];

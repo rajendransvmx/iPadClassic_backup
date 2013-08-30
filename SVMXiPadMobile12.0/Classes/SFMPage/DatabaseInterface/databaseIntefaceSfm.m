@@ -1883,6 +1883,27 @@ return nil;
                                                          andRecordCount:1];
         
     NSAutoreleasePool * autorelease_pool = [[NSAutoreleasePool alloc] init];
+	
+	//8374
+	if ([tableName caseInsensitiveCompare:@"Event"] == NSOrderedSame )
+	{
+		
+		NSUserDefaults * userDefaults = [NSUserDefaults standardUserDefaults];
+		
+		NSString * currentUserName = [userDefaults valueForKey:@"UserFullName"];
+		NSString * ownerId = @"";
+		
+		if ([currentUserName length] > 0 && currentUserName != nil)
+		{
+			ownerId  = [appDelegate.dataBase getLoggedInUserId:currentUserName];
+		}
+		
+		if (ownerId != nil && [ownerId length] > 0)
+		{
+			[valuesDict setValue:ownerId forKey:@"OwnerId"];
+		}
+	}
+	
     BOOL success;
     NSArray * fields_array = [valuesDict allKeys];
     

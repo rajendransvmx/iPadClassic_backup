@@ -491,5 +491,8 @@ PopoverButtons *popOver_view;
 - (BOOL)closeDatabase:(sqlite3*)database;
 - (int)releaseHeapMemoryForDatabase:(sqlite3*)database;
 
+//8378
+- (void) purgeEventsNotRelatedToLoggedInUser:(NSMutableString *)eventId;
+
 
 @end

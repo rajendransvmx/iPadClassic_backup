@@ -3474,10 +3474,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         }
         synchronized_sqlite3_finalize(statement);
     }
-    
-    
-    return [apiName retain];
-    
+    return apiName;
 }
 - (NSString*) getLabelFromApiName:(NSString*)api_name objectName:(NSString*) objectName
 { 
@@ -13772,9 +13769,9 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 	
 	//Radha #6176
 	NSMutableString * eventId = [self getAllEventRelatedIdFromSyncRecordHeap];
-	
+	[appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
 	[self deleteEventNotRelatedToLoggedInUser:eventId tableName:@"Event"];
-    [appDelegate.databaseInterface updateSyncRecordsIntoLocalDatabase];
+    
 	
 //	[appDelegate setCurrentSyncStatusProgress:eEVENTSYNC_PUTDATA optimizedSynstate:0];
 	
@@ -14670,9 +14667,11 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 	NSString * settingValue = [appDelegate.settingsDict objectForKey:@"Synchronization To Remove Events"];
     
     NSTimeInterval value = [settingValue integerValue];
-	value = value - 1;
+	value = value;
     
     NSString * startDate = [self getDateToDeleteEventsAndTaskOlder:value];
+	
+	[self purgingDataOnSyncSettings:startDate tableName:@"Event" Action:@"LESSTHAN"];
 	
 	settingValue = @"";
     
@@ -14682,9 +14681,11 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 	value = value + 1;
     
     NSString * endDate = [appDelegate.dataBase getDateToDeleteEventsAndTaskForNext:value];
+	
+	[appDelegate.dataBase purgingDataOnSyncSettings:endDate tableName:@"Event" Action:@"GRETERTHAN"];
 
 	
-	NSString * query = [NSString stringWithFormat:@"DELETE FROM %@ where StartDateTime >= '%@' AND EndDateTime <= '%@' AND Id not in (%@) AND (Id != ' ' AND ID NOT NULL AND Id != '')", tableName,startDate, endDate, Id];
+	NSString * query = [NSString stringWithFormat:@"DELETE FROM %@ where (( Id not in (%@)) AND (Id != ' ' AND ID NOT NULL AND Id != ''))", tableName, Id];
 	
     char * err;
 	
@@ -15296,6 +15297,24 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     }
     
     return tempDb;
+}
+- (void) purgeEventsNotRelatedToLoggedInUser:(NSMutableString *)eventId
+{
+	NSString * queryStatement = nil;
+	
+	NSString * ownerId = [self getLoggedInUserId:appDelegate.currentUserName];
+	
+	queryStatement = [NSString stringWithFormat:@"DELETE from Event WHERE OwnerId = '%@' AND Id NOT IN (%@)", ownerId, eventId];
+	
+	char * err;
+	
+	if (synchronized_sqlite3_exec(appDelegate.db, [queryStatement UTF8String], NULL, NULL, &err) != SQLITE_OK)
+    {
+		SMLog(@"Failed to delete");
+        SMLog(@"purgeEventsNotRelatedToLoggedInUser");
+		SMLog(@"ERROR IN DELETE %s", err);
+    }
+	
 }
 
 
