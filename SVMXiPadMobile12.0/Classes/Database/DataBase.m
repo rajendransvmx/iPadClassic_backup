@@ -3474,7 +3474,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         }
         synchronized_sqlite3_finalize(statement);
     }
-    return apiName;
+    return [apiName retain];
 }
 - (NSString*) getLabelFromApiName:(NSString*)api_name objectName:(NSString*) objectName
 { 
