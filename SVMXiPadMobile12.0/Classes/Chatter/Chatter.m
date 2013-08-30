@@ -416,7 +416,7 @@ extern void SVMXLog(NSString *format, ...);
         
         appDelegate.userNameImageList = userNameImageList;
         
-        NSString * fullPhotoUrlRequest = [NSString stringWithFormat:@"%@?oauth_token=%@", fullPhotoUrl, [[ZKServerSwitchboard switchboard]sessionId]];
+        NSString * fullPhotoUrlRequest = [NSString stringWithFormat:@"%@?oauth_token=%@", fullPhotoUrl, [appDelegate session_Id]];
         
         NSURLRequest * urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:fullPhotoUrlRequest]];
         
