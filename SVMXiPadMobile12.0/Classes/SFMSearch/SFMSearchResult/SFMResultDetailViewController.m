@@ -914,8 +914,8 @@ enum  {
             [objResultArray release];
         }
         
-        
-        NSString *criteria = self.masterView.searchCriteria.text;
+        //Fix 8386
+        NSString *criteria = [appDelegate.dataBase getOriginalValueForTags:self.masterView.searchCriteria.text];
         NSString *userFilterString = self.masterView.searchString.text;
         [ searchResultData addObject:self.masterView.processId];
         [ searchResultData addObject:objectList];

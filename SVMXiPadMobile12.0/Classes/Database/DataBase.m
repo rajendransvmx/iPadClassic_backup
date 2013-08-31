@@ -15317,5 +15317,46 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 	
 }
 
+//8386
+-(NSString*)getOriginalValueForTags:(NSString*)value
+{
+    NSDictionary *dict = [appDelegate.wsInterface getDefaultTags];
+    NSString * tagId = [self getTagFor:value];
+    NSString *masterValue=[dict objectForKey:tagId];
+    
+    return masterValue;
+
+}
+
+//8386
+-(NSString*)getTagFor:(NSString*)value
+{
+    NSString * query = [NSString stringWithFormat:@"SELECT tag_id FROM MobileDeviceTags where value = '%@'",value];
+    
+    sqlite3_stmt * stmt;
+    
+    NSString *  master_value= @"";
+    
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        while (synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            char * masterValue_ = (char *)synchronized_sqlite3_column_text(stmt, 0);
+            
+            if ((masterValue_ != nil) && strlen(masterValue_))
+            {
+                master_value = [NSString stringWithUTF8String:masterValue_];
+            }
+            
+        }
+    }
+    
+    synchronized_sqlite3_finalize(stmt);
+    
+    return master_value;
+
+}
+
 
 @end

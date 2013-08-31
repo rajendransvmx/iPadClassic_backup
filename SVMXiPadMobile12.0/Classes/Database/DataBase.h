@@ -494,5 +494,9 @@ PopoverButtons *popOver_view;
 //8378
 - (void) purgeEventsNotRelatedToLoggedInUser:(NSMutableString *)eventId;
 
+//  SFM Search : Translations 8386
+-(NSString*)getOriginalValueForTags:(NSString*)value;
+-(NSString*)getTagFor:(NSString*)value;
+
 
 @end
