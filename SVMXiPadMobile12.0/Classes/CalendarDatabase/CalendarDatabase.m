@@ -18,6 +18,7 @@ extern void SVMXLog(NSString *format, ...);
 @interface CalendarDatabase () //7280 - Displaying the events only related to logged in user using owner Id 
 
 - (NSString *) getUserIdFromUserTable;
+- (BOOL) isWorkOrderOrCaseForColorCode:(NSString *)whatId; //008387
 
 @end
 
@@ -699,6 +700,38 @@ extern void SVMXLog(NSString *format, ...);
 
 }
 
+//8387
+- (BOOL) isWorkOrderOrCaseForColorCode:(NSString *)whatId
+{
+	NSString * str = @"";
+    if (![whatId isEqualToString:@""])
+        str = [whatId substringToIndex:3];
+    
+    NSString * query = [NSString stringWithFormat:@"SELECT api_name FROM SFObject WHERE key_prefix = '%@'", str];
+    
+    sqlite3_stmt * stmt;
+    NSString * objectName = @"";
+    
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        if (synchronized_sqlite3_step(stmt) ==  SQLITE_ROW)
+        {
+            char * _api_name = (char *) synchronized_sqlite3_column_text(stmt, 0);
+            if ((_api_name != nil) && strlen(_api_name))
+                objectName = [NSString stringWithUTF8String:_api_name];
+        }
+    }
+    synchronized_sqlite3_finalize(stmt);
+    if ([objectName isEqualToString:@"Case"] ||[objectName isEqualToString:@"SVMXC__Service_Order__c"] )
+    {
+        return YES;
+    }
+    
+    return NO;
+	
+}
+
+
 
 - (void)dealloc
 {
@@ -711,8 +744,7 @@ extern void SVMXLog(NSString *format, ...);
     BOOL retVal;
     sqlite3_stmt * colorStatement;
     NSString *priority  = @"";
- //   retVal = [self isWorkOrder:whatId];
-	retVal = [self  isWorkOrderOrCase:whatId objectName:objectName];
+	retVal = [self  isWorkOrderOrCaseForColorCode:whatId]; //8387
     if ( retVal == YES )
     {
         NSMutableString *queryStatement = [[NSMutableString alloc]initWithCapacity:0];
