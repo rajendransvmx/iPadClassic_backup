@@ -13274,14 +13274,29 @@ enum BizRuleConfirmViewStatus{
         }
         NSDictionary *dict =  [processBusinessRuleIDs objectAtIndex:0]; //Asuming only one record
         NSString *processBizRuleID = [dict objectForKey:@"sfID"];
-        criteria = [NSString stringWithFormat:@"Id in (select business_rule from ProcessBusinessRule where process_node_object ='%@')",processBizRuleID];
-        columns = [NSArray arrayWithObjects:@"Id",@"advanced_expression",@"error_msg",SOURCE_OBJECT_NAME,@"message_type", nil];
-        NSArray *detailBusinessRulesArray = [appDelegate.dataBase getAllRecordsFromTable:@"BusinessRule"
+        criteria = [NSString stringWithFormat:@" process_node_object ='%@' order by sequence",processBizRuleID];
+        columns = [NSArray arrayWithObjects:@"business_rule", nil];
+        NSArray *detailBusinessRuleArray = [appDelegate.dataBase getAllRecordsFromTable:@"ProcessBusinessRule"
                                                                               forColumns:columns
                                                                           filterCriteria:criteria
                                                                                    limit:nil];
-        
+        NSMutableArray *detailBusinessRulesArray = [[NSMutableArray alloc] init];
+        for(NSDictionary *dict in detailBusinessRuleArray)
+        {
+            NSString *childBizRuleId = [dict objectForKey:@"business_rule"];
+            criteria = [NSString stringWithFormat:@"Id = '%@'",childBizRuleId];
+            columns = [NSArray arrayWithObjects:@"Id",@"advanced_expression",@"error_msg",SOURCE_OBJECT_NAME,@"message_type", nil];
+            NSArray *detailBizRulesArray = [appDelegate.dataBase getAllRecordsFromTable:@"BusinessRule"
+                                                                                  forColumns:columns
+                                                                              filterCriteria:criteria
+                                                                                       limit:@"1"];
+            
+            if([detailBizRulesArray count])
+                [detailBusinessRulesArray addObject:[detailBizRulesArray objectAtIndex:0]];
+        }
         NSArray *childRulesArray = [self getBusinessRulesDict:detailBusinessRulesArray];
+        [detailBusinessRulesArray release];
+        
         if([childRulesArray count] == 0)
         {
             [childDict release];
