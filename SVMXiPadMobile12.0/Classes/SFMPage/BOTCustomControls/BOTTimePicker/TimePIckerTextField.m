@@ -40,6 +40,9 @@
         NSDateFormatter *frm=[[[NSDateFormatter alloc] init] autorelease];
         [frm setDateFormat:@"hh:mm:ss a"];
         self.text=[frm stringFromDate:date];
+        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:delegateHandler action:@selector(tapTimePicker:)];
+        [self addGestureRecognizer:tapGesture];
+        [tapGesture release];
     }
     return self;
 }

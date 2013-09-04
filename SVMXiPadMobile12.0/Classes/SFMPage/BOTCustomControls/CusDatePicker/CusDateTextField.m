@@ -35,6 +35,9 @@
         self.autoresizesSubviews=TRUE;
         self.autoresizingMask=UIViewAutoresizingFlexibleRightMargin;
         self.autoresizingMask=UIViewAutoresizingFlexibleWidth;
+        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:delegateHandler action:@selector(tapDatePicker:)];
+        [self addGestureRecognizer:tapGesture];
+        [tapGesture release];
     }
     
     return self;

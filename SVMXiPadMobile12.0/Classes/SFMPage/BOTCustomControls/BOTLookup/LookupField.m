@@ -52,7 +52,10 @@ extern void SVMXLog(NSString *format, ...);
         UIImageView * rightImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"lookup_search.png"]];
         self.rightView = rightImageView;
         self.rightViewMode = UITextFieldViewModeAlways;
-    
+        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:delegateHandler action:@selector(tapLookup:)];
+        [self addGestureRecognizer:tapGesture];
+        [tapGesture release];
+        
         [rightImageView release];
     }
     return self;

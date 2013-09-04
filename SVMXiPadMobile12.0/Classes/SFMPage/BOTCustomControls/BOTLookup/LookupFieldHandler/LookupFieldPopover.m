@@ -28,15 +28,18 @@ extern void SVMXLog(NSString *format, ...);
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
-    appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
+    return NO;
+}
 
+- (void) tapLookup:(id)sender
+{
     // display lookup popover
     lookupView = [[LookupView alloc] initWithNibName:@"LookupView" bundle:nil];
     lookupView.delegate = self;
     LookupField * lookupField = (LookupField *)lookupDelegate;
     lookupView.objectName = lookupField.objectName;
     lookupView.searchId = lookupField.searchId;
-    LookupField * lField = (LookupField *)textField;
+    LookupField * lField = (LookupField*) [sender view];
     
     //Shrinivas
     self.searchId = lField.searchId;
@@ -111,20 +114,18 @@ extern void SVMXLog(NSString *format, ...);
     if (UIDeviceOrientationIsLandscape(deviceOrientation))
     {
         //Defect Fix :- 7447
-        [popOver presentPopoverFromRect:CGRectMake(768, height, 0, 0) inView:POView permittedArrowDirections:0 animated:YES];
+        [popOver presentPopoverFromRect:CGRectMake(768, height, 10,10) inView:POView permittedArrowDirections:0 animated:YES];
         [popOver release];
     }
     else
     {
         //Defect Fix :- 7447
-        [popOver presentPopoverFromRect:CGRectMake(768, height, 0, 0) inView:POView permittedArrowDirections:0 animated:YES];
+        [popOver presentPopoverFromRect:CGRectMake(768, height, 10, 10) inView:POView permittedArrowDirections:0 animated:YES];
         [popOver release];
     }
 
     [parent.controlDelegate controlIndexPath:parent.indexPath];
     [parent.controlDelegate selectControlAtIndexPath:parent.indexPath];
-    
-    return NO;
 }
 
 -(void) LaunchPopover

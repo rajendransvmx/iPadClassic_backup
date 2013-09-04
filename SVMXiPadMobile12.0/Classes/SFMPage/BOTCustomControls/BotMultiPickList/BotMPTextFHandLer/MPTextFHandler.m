@@ -33,6 +33,12 @@ extern void SVMXLog(NSString *format, ...);
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
+    return NO;
+    
+}
+
+-(void) tapMultiPicklist:(id)sender
+{
     BMPTextView * parent = (BMPTextView *)delegate;
     //[parent.controlDelegate controlIndexPath:parent.indexPath];
     
@@ -143,9 +149,6 @@ extern void SVMXLog(NSString *format, ...);
     CGRect rect=CGRectMake(0 , 0, pickerrect.size.width, pickerrect.size.height);
     
     [poc presentPopoverFromRect:rect    inView:view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-
-    return NO;
-    
 }
 -(void) releasPopover
 {

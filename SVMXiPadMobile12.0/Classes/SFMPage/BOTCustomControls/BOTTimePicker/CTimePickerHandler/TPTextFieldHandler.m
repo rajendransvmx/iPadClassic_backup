@@ -21,6 +21,11 @@
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
+    return NO;
+
+}
+-(void) tapTimePicker:(id)sender
+{
     timePicker = [[TimePickerView alloc] init];
     timePicker.delegate=delegate;
     timePicker.TimePickerDelegate =self;
@@ -33,9 +38,6 @@
     CGRect rect = CGRectMake(0, 0, pickerFrame.size.width, pickerFrame.size.height);
     [timePickerPopOver presentPopoverFromRect:rect inView:superView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
     [classdelegate setTimePickertoTextFielddate];
-
-    return NO;
-
 }
 - (void) didTimePickerDismiss
 {

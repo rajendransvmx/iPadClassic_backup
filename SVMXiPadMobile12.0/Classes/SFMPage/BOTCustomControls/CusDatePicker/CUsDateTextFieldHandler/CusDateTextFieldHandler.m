@@ -19,6 +19,11 @@
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
+    return NO;
+    
+}
+-(void)tapDatePicker:(id)sender
+{
     CusDateTextField * parent = (CusDateTextField *)delegate;
     [parent.controlDelegate controlIndexPath:parent.indexPath];
 
@@ -31,8 +36,6 @@
     [popOver presentPopoverFromRect:CGRectMake(0, 0, pickerFrame.size.width, pickerFrame.size.height) inView:superView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
     popOver.delegate = contentView;
     [PODatePickerdelegate setPODatepickerValue];
-    return NO;
-    
 }
 -(void) cusDatePickerRelease;
 {

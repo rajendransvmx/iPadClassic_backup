@@ -32,6 +32,11 @@
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
+    return NO;
+}
+
+-(void) tapDateTimePicker:(id)sender
+{
     CtextFieldWithDatePicker * parent = (CtextFieldWithDatePicker *)delegate;
     [parent.controlDelegate controlIndexPath:parent.indexPath];
 
@@ -53,7 +58,6 @@
     [datePickerPopOver presentPopoverFromRect:rect inView:super_view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
     [classdelegate setDatePickerDatetoTextFielddate];
     
-    return NO;
 }
 
 #pragma mark - DatePickerClass Delegate

@@ -36,6 +36,10 @@
         self.borderStyle=UITextBorderStyleRoundedRect;
         TextFieldDelegate.str=@"";
         TextFieldDelegate.flag=TRUE;
+        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:TextFieldDelegate action:@selector(tapMultiPicklist:)];
+        [self addGestureRecognizer:tapGesture];
+        [tapGesture release];
+
     }
     return self;
 }

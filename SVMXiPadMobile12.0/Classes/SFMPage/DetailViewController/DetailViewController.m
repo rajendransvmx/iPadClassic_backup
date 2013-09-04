@@ -16038,8 +16038,8 @@ enum BizRuleConfirmViewStatus{
                     {
                         Y_Pos=(Y_Pos-default_frame_Y)+46;
                     }
-
-                    tableView.frame = CGRectMake(cell.frame.origin.x, 0, self.view.frame.size.width, (self.view.frame.size.height) - 46);
+                    
+                    tableView.frame = CGRectMake(cell.frame.origin.x, 0, self.view.frame.size.width, self.view.frame.size.height);
                 }
                     [self.tableView setContentOffset:CGPointMake(0, Y_Pos) animated:YES];
                 return;

@@ -37,6 +37,10 @@ extern void SVMXLog(NSString *format, ...);
         self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         self.borderStyle = UITextBorderStyleRoundedRect;
         self.spinnerData = arr;
+        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:TFHandler action:@selector(tapSpinner:)];
+        [self addGestureRecognizer:tapGesture];
+        [tapGesture release];
+
     }
     
     return  self;
