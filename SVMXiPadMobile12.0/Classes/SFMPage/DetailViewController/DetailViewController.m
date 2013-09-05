@@ -11306,7 +11306,24 @@ enum BizRuleConfirmViewStatus{
                                 }
                             }
                             
-                            //get the GUID 
+                            
+                            //8321
+                            NSString *childCurrencyCode = [detail_fields_dict valueForKey:gCurrencyIsoCode];
+                            if ((childCurrencyCode == nil) || ([childCurrencyCode length] == 0))
+                            {
+                                BOOL isFieldExists = [appDelegate.databaseInterface ColumnExists:gCurrencyIsoCode tableName:headerObjName];
+                                if (isFieldExists)
+                                {
+                                    NSString *currencyISOCode = [appDelegate.databaseInterface getValueForField:gCurrencyIsoCode objectName:headerObjName recordId:header_record_local_id];
+                                    if ([currencyISOCode length]>0)
+                                    {
+                                        [detail_fields_dict setObject:currencyISOCode forKey:gCurrencyIsoCode];
+                                    }
+                                }
+                            }
+
+                            
+                            //get the GUID
                             NSString * detail_record_local_id = [iServiceAppDelegate GetUUID];
                             [detail_fields_dict setObject:detail_record_local_id forKey:@"local_id"];
                             
@@ -11929,6 +11946,22 @@ enum BizRuleConfirmViewStatus{
                                 NSString * line_local_id = [iServiceAppDelegate GetUUID];
                                 [detail_fields_dict  setObject:line_local_id forKey:@"local_id"];
                                 
+                                
+                                //8321
+                                NSString *childCurrencyCode = [detail_fields_dict valueForKey:gCurrencyIsoCode];
+                                if ((childCurrencyCode == nil) || ([childCurrencyCode length] == 0))
+                                {
+                                    BOOL isFieldExists = [appDelegate.databaseInterface ColumnExists:gCurrencyIsoCode tableName:headerObjName];
+                                    if (isFieldExists)
+                                    {
+                                        NSString *currencyISOCode = [appDelegate.databaseInterface getValueForField:gCurrencyIsoCode objectName:headerObjName recordId:appDelegate.sfmPageController.recordId];
+                                        if ([currencyISOCode length]>0)
+                                        {
+                                            [detail_fields_dict setObject:currencyISOCode forKey:gCurrencyIsoCode];
+                                        }
+                                    }
+                                }
+
                                 
                                 //sahana currentRecord_fix
                                 [appDelegate.databaseInterface replaceCurrentRecordOrheaderLiteral:detail_fields_dict headerRecordId:currentRecordId headerObjectName:headerObjName currentRecordId:line_local_id currentObjectName:detail_object_name];
@@ -12721,6 +12754,24 @@ enum BizRuleConfirmViewStatus{
                             
                             //sahana currentRecord_fix
                             [appDelegate.databaseInterface replaceCurrentRecordOrheaderLiteral:detail_fields_dict headerRecordId:header_record_local_id headerObjectName:headerObjName currentRecordId:@"" currentObjectName:detail_object_name];
+                            
+                            //here add
+                            //8321
+                            NSString *childCurrencyCode = [detail_fields_dict valueForKey:gCurrencyIsoCode];
+                            if ((childCurrencyCode == nil) || ([childCurrencyCode length] == 0))
+                            {
+                                BOOL isFieldExists = [appDelegate.databaseInterface ColumnExists:gCurrencyIsoCode tableName:headerObjName];
+                                if (isFieldExists)
+                                {
+                                    NSString *currencyISOCode = [appDelegate.databaseInterface getValueForField:gCurrencyIsoCode objectName:headerObjName recordId:header_record_local_id];
+                                    
+                                    if ([currencyISOCode length]>0)
+                                    {
+                                        [detail_fields_dict setObject:currencyISOCode forKey:gCurrencyIsoCode];
+                                    }
+                                }
+                            }
+
                             
                             BOOL data_inserted = [appDelegate.databaseInterface insertdataIntoTable:detail_object_name data:detail_fields_dict];
                             
