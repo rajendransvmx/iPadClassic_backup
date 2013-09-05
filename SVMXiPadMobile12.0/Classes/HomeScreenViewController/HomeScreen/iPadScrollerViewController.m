@@ -2232,6 +2232,9 @@ const float progress_ = 0.07;
         progressBar.progress = 0.0;
         //StepLabel.text = @"Step 0 of 17";
         temp_percentage = 0;
+        //8176
+        display_pecentage.text = @"0%";
+
     }
     else if([sync isEqualToString:DATA_SYNC_])
     {
