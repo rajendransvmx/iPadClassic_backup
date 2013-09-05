@@ -109,6 +109,9 @@
 
 - (void) moveTableView;
 
+//7221:
+- (void) refreshView;
+
 @end
 
 @protocol ManualDataSync <NSObject>

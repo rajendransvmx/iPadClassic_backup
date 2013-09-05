@@ -43,6 +43,9 @@ PopoverButtons *popOver_view;
     self = [super initWithStyle:style];
     if (self) {
         // Custom initialization
+        //7221
+        statusButton = nil;
+        button = nil;
     }
     return self;
 }
@@ -88,8 +91,10 @@ PopoverButtons *popOver_view;
 	UIBarButtonItem *activityButton = [[[UIBarButtonItem alloc] initWithCustomView:appDelegate.SyncProgress] autorelease];
 	[arrayForRightBarButton addObject:activityButton];
 	toolBarWidth += appDelegate.SyncProgress.frame.size.width + SPACE_BUFFER;
-	
-	button = [UIButton buttonWithType:UIButtonTypeCustom];
+	if (button == nil) {
+        button = [[UIButton buttonWithType:UIButtonTypeCustom]retain];
+    }
+    
 	button.backgroundColor = [UIColor clearColor];
 	[button setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Done-Back-Button"] forState:UIControlStateNormal];
 	[button setTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_synchronize_button] forState:UIControlStateNormal];
@@ -102,8 +107,11 @@ PopoverButtons *popOver_view;
 	toolBarWidth += button.frame.size.width + SPACE_BUFFER;
 	UIBarButtonItem * barButton = [[[UIBarButtonItem alloc] initWithCustomView:button] autorelease];
 	[arrayForRightBarButton addObject:barButton];
-	
-	statusButton = [UIButton buttonWithType:UIButtonTypeCustom];
+	//7221
+    if (statusButton == nil)
+    {
+        statusButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
+    }
 	statusButton.backgroundColor = [UIColor clearColor];
 	[statusButton setBackgroundImage:[UIImage imageNamed:@"SFM-Screen-Done-Back-Button"] forState:UIControlStateNormal];
 	[statusButton setTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button] forState:UIControlStateNormal];
@@ -1902,6 +1910,11 @@ PopoverButtons *popOver_view;
 	self.popoverController = nil;
     syncStatus.popOver = nil;
     popOver_view.popover = nil;
+    
+    //7221:
+    [statusButton release];
+    [button release];
+    
     [popOver_view release];
     [objectsArray release];
     [_tableView release];
@@ -1931,7 +1944,18 @@ PopoverButtons *popOver_view;
 	resetAnApplication = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:continue_ otherButtonTitles:cancel, nil];
 	
 	[resetAnApplication show];
-	
-	
+}
+
+
+//7221:
+- (void) refreshView
+{
+    [statusButton setTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_status_button] forState:UIControlStateNormal];
+    [button setTitle:[appDelegate.wsInterface.tagsDictionary objectForKey:sync_synchronize_button] forState:UIControlStateNormal];
+    UILabel *titleLabel = (UILabel *)self.navigationItem.titleView;
+	titleLabel.text = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_conflicts];
+	[titleLabel sizeToFit];
+    [_tableView reloadData];
+    
 }
 @end

@@ -370,3 +370,6 @@
 
 //6347: Aparna
 #define kIncrementalDataSyncDone                    @"IncrementalDataSyncDone"
+
+//7221
+#define CONFIGURATTON_SYNC_COMPLETED                          @"CONFIGURATTON_SYNC_COMPLETED"

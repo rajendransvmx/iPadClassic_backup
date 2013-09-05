@@ -10,6 +10,14 @@
 
 #import "iServiceAppDelegate.h"
 
+//7221
+@interface ManualDataSync()
+
+- (void)refreshView:(NSNotification *)notification;
+
+@end
+
+
 @implementation ManualDataSync
 
 @synthesize didAppearFromSFMScreen;
@@ -30,6 +38,15 @@
     [super didReceiveMemoryWarning];
     // Release any cached data, images, etc that aren't in use.
 }
+
+//7221
+#pragma mark Notification Handler
+- (void)refreshView:(NSNotification *)notification
+{
+    [dataSyncDetail performSelectorOnMainThread:@selector(refreshView) withObject:nil waitUntilDone:YES];
+    [dataSyncRoot.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
+}
+
 
 #pragma mark - View lifecycle
 
@@ -95,9 +112,15 @@
 {
 	[super viewDidAppear:YES];
 	
-//	iServiceAppDelegate * appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-//	appDelegate.SyncProgress.center = CGPointMake(450, 21);
-//    [dataSyncDetail.navigationController.view addSubview:appDelegate.SyncProgress];
+    //7221
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshView:) name:CONFIGURATTON_SYNC_COMPLETED object:nil];
+}
+
+//7221
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:CONFIGURATTON_SYNC_COMPLETED object:nil];
 }
 
 - (void) showSFMWithProcessId:(NSString *)processId recordId:(NSString *)recordId objectName:(NSString *)objectName

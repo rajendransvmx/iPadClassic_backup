@@ -123,6 +123,31 @@ PopoverButtons *popOver_view;
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    //Aparna: 007221: Refreshing the label to reflect the changes after config sync
+    NSArray *syncButtons = [[NSArray alloc]initWithObjects:button, button1, button2,button3,nil];
+    NSArray *syncButtonTitleKeys = [[NSArray alloc] initWithObjects:sync_data_sync, sync_meta_data_configuration,sync_events,SYNC_RESETAPPLICATION,nil];
+    int count = [syncButtons count];
+    
+    for (int i=0; i<count; i++)
+    {
+        UIButton *syncButton = [syncButtons objectAtIndex:i];
+        NSArray *buttonSubviews = nil;
+        buttonSubviews = [syncButton subviews];
+        if ([buttonSubviews count]>0)
+        {
+            for (id subview in buttonSubviews)
+            {
+                if ([subview isKindOfClass:[UILabel class]])
+                {
+                    [subview setText:[appDelegate.wsInterface.tagsDictionary valueForKey:[syncButtonTitleKeys objectAtIndex:i]]];
+                    
+                }
+            }
+        }
+    }
+    [syncButtonTitleKeys release];
+    [syncButtons release];
+
 }
 
 - (void)viewDidAppear:(BOOL)animated

@@ -12135,6 +12135,19 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
             
         [recentsDict setValue:name forKey:NAME_FIELD];
         
+        //7221:
+        NSString *objectLabel = [recentsDict valueForKey:OBJECT_LABEL];
+        for (NSDictionary *labelDict in appDelegate.objectLabelName_array)
+        {
+            if ([[labelDict allKeys] containsObject:headerObjectName])
+            {
+                objectLabel = [labelDict valueForKey:headerObjectName];
+                break;
+            }
+        }
+        [recentsDict setValue:objectLabel forKey:OBJECT_LABEL];
+
+        
         [updated_array addObject:recentsDict];
     }
     
@@ -12472,6 +12485,8 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
         
     }
     //Radha End
+    //7221
+    [[NSNotificationCenter defaultCenter] postNotificationName:CONFIGURATTON_SYNC_COMPLETED object:nil];
 
 }
 
@@ -13197,6 +13212,10 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
     appDelegate.isIncrementalMetaSyncInProgress = FALSE;
     
     [popOver_view syncSuccess];
+    
+    //7221:
+    [self updateRecentsPlist ];
+
     
 }
 
