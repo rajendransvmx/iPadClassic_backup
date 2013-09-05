@@ -2963,6 +2963,9 @@ NSDate * syncCompleted;
 		
 		[appDelegate setSyncStatus:SYNC_RED];
 		
+		//8394 - Refresh  syncUI
+		[self performSelectorOnMainThread:@selector(refreshSynUiIFConflictExists) withObject:nil waitUntilDone:NO];
+		
 	}
 	else
 	{
@@ -3081,6 +3084,11 @@ NSDate * syncCompleted;
     /*Shravya - Do not put any statements after [appDelegate.refreshIcons RefreshIcons]; method call. This should be the last call*/
 }
 
+//8394
+- (void) refreshSynUiIFConflictExists
+{
+	[appDelegate.reloadTable ReloadSyncTable];
+}
 
 //Changes for optimized sync - One Call sync
 - (BOOL) CustomSingleSyncCall:(NSDate *)syncStarted

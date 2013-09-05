@@ -434,7 +434,15 @@ PopoverButtons *popOver_view;
     }
     
 	[delegate activityStop];
-    [appDelegate.reloadTable ReloadSyncTable];
+//    [appDelegate.reloadTable ReloadSyncTable];
+	//8394 - Refresh  syncUI
+	[self performSelectorOnMainThread:@selector(refreshSynUiIFConflictExists) withObject:nil waitUntilDone:NO];
+}
+
+//8394
+- (void) refreshSynUiIFConflictExists
+{
+	[appDelegate.reloadTable ReloadSyncTable];
 }
 
 - (void) synchronizeConfiguration
