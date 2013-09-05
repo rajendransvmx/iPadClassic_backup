@@ -515,6 +515,8 @@ const NSUInteger kNumImages = 7;
             progressBar.progress = 0.0;
             total_progress = 0.0;
 			display_pecentage.text = @"0%";
+            //8176
+            temp_percentage = 0;
             appDelegate.isInitialMetaSyncInProgress = TRUE;
             if(initial_sync_timer == nil)
                 initial_sync_timer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(updateProgressBar:) userInfo:nil repeats:YES];
