@@ -431,11 +431,11 @@
 	<key>IPAD018_TAG010</key>
 	<string>Data Synchronization</string>
 	<key>IPAD018_TAG011</key>
-	<string>Synchronize Configuration</string>
+	<string>Sync Configuration</string>
 	<key>IPAD018_TAG012</key>
-	<string>Synchronize Events</string>
+	<string>Sync Events</string>
 	<key>IPAD018_TAG013</key>
-	<string>Synchronize Data</string>
+	<string>Sync Data</string>
 	<key>IPAD018_TAG014</key>
 	<string>Configuration Synchronization</string>
 	<key>IPAD018_TAG015</key>
