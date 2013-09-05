@@ -568,8 +568,9 @@ PopoverButtons *popOver_view;
             lbl.font = [UIFont fontWithName:@"HelveticaBold" size:19];
             lbl.textColor = [UIColor blackColor];
             lbl.backgroundColor = [UIColor clearColor];
+			lbl.userInteractionEnabled = YES;
             [background addSubview:lbl];
-            lbl.userInteractionEnabled = YES;
+            
             
             UILabel * textView = [[UILabel alloc] initWithFrame:CGRectMake(180, 3, 300, 50)];
             textView.font = [UIFont systemFontOfSize:19.0];
@@ -1645,19 +1646,22 @@ PopoverButtons *popOver_view;
         UITextView * contentView_textView;
         if(size.width > 240)
         {
-            labelPopover.view.frame = CGRectMake(0, 0, labelPopover.view.frame.size.width, 90);
-            contentView_textView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, labelPopover.view.frame.size.width, 90)];
+            labelPopover.view.frame = CGRectMake(0, 0, labelPopover.view.frame.size.width, 40); //7325
+            contentView_textView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, labelPopover.view.frame.size.width, 32)];//7325
         }
         else
         {
             labelPopover.view.frame = CGRectMake(0, 0, labelPopover.view.frame.size.width, 34);
-            contentView_textView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, labelPopover.view.frame.size.width, 34)];  
+            contentView_textView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, labelPopover.view.frame.size.width, 32)];//7325
         }
         
         contentView_textView.text = label.text;
+		//7325
         contentView_textView.font = font;
         contentView_textView.userInteractionEnabled = YES;
         contentView_textView.editable = NO;
+		[contentView_textView setScrollEnabled:YES];
+		[contentView_textView setScrollsToTop:YES];
         contentView_textView.textAlignment = UITextAlignmentCenter;
         [labelPopover.view addSubview:contentView_textView];
         
