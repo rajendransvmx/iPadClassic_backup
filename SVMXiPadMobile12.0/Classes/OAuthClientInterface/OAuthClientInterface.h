@@ -27,6 +27,7 @@
 	id<OAuth2ClientDelegate> delegate;
 	UIWebView *view;
 	iServiceAppDelegate *appDelegate;
+	UIImageView *servicemaxLogo; //Fix for defect #7539
 
 	BOOL debug;
 	NSMutableData *responseData;

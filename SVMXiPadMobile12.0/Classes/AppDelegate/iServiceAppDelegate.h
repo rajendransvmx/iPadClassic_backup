@@ -623,6 +623,8 @@ extern  NSString const *devVersion;
 @property (nonatomic ) SYNC_TYPE_INPROGRESS syncTypeInProgress;
 
 //Shrinivas : OAuth
+@property (nonatomic, assign)BOOL isUserInactive; //Shrini fix for defect #7189
+@property (nonatomic, retain)iPadScrollerViewController * homeScreenView;
 @property (nonatomic, assign)id <RefreshHomeScreenIcons> refreshIcons;
 @property (nonatomic, retain)NSString *organization_Id;
 @property (nonatomic, retain)NSString *refresh_token;

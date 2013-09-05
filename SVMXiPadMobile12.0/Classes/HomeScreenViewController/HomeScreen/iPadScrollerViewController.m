@@ -558,6 +558,14 @@ const NSUInteger kNumImages = 7;
                 
                 return;
             }
+			else if (appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED || appDelegate.connection_error == TRUE || appDelegate.isUserInactive) //Check weather user is inactive.  ----> Shrini Fix for defect #7189
+			{
+				[initial_sync_timer invalidate];    //invalidate the timer
+                initial_sync_timer = nil;
+				appDelegate.isUserInactive = FALSE;
+                return;
+				
+			}
             else if (appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED || appDelegate.connection_error == TRUE)
             {
                 SMLog(@"I dont come here -Control");
@@ -596,7 +604,14 @@ const NSUInteger kNumImages = 7;
                 initial_sync_timer = nil;
                 return;
             }
-            
+            else if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED || appDelegate.connection_error == TRUE || appDelegate.isUserInactive) //Check weather user is inactive. ----> Shrini Fix for defect #7189
+			{
+				[initial_sync_timer invalidate];    //invalidate the timer
+                initial_sync_timer = nil;
+				appDelegate.isUserInactive = FALSE;
+                return;
+				
+			}
             else if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED || appDelegate.connection_error == TRUE)
             {
                 
@@ -644,6 +659,14 @@ const NSUInteger kNumImages = 7;
                 initial_sync_timer = nil;
                 return;
             }
+			else if (appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED || appDelegate.connection_error == TRUE || appDelegate.isUserInactive) //Check weather user is inactive.----> Shrini Fix for defect #7189
+			{
+				[initial_sync_timer invalidate];    //invalidate the timer
+                initial_sync_timer = nil;
+				appDelegate.isUserInactive = FALSE;
+                return;
+
+			}
             else if(appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED || appDelegate.connection_error == TRUE)
             {
                 [initial_sync_timer invalidate];    //invalidate the timer
@@ -1239,6 +1262,15 @@ const NSUInteger kNumImages = 7;
             initial_sync_timer = nil;
             return;
         }
+		else if (appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED || appDelegate.connection_error == TRUE || appDelegate.isUserInactive) //Check weather user is inactive.  ----> Shrini Fix for defect #7189
+		{
+			[initial_sync_timer invalidate];    //invalidate the timer
+			initial_sync_timer = nil;
+			appDelegate.isUserInactive = FALSE;
+			return;
+			
+		}
+
         else if (appDelegate.initial_sync_succes_or_failed == META_SYNC_FAILED || appDelegate.connection_error == TRUE)
         {
             [initial_sync_timer invalidate];    //invalidate the timer
@@ -1254,6 +1286,14 @@ const NSUInteger kNumImages = 7;
             initial_sync_timer = nil;
             return;
         }
+		else if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED || appDelegate.connection_error == TRUE || appDelegate.isUserInactive) //Check weather user is inactive.  ----> Shrini Fix for defect #7189
+		{
+			[initial_sync_timer invalidate];    //invalidate the timer
+			initial_sync_timer = nil;
+			appDelegate.isUserInactive = FALSE;
+			return;
+			
+		}
         else if (appDelegate.initial_sync_succes_or_failed == DATA_SYNC_FAILED || appDelegate.connection_error == TRUE )
         {
             [initial_sync_timer invalidate];    //invalidate the timer
@@ -1270,6 +1310,14 @@ const NSUInteger kNumImages = 7;
             initial_sync_timer = nil;
             return;
         }
+		else if (appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED || appDelegate.connection_error == TRUE || appDelegate.isUserInactive) //Check weather user is inactive.  ----> Shrini Fix for defect #7189
+		{
+			[initial_sync_timer invalidate];    //invalidate the timer
+			initial_sync_timer = nil;
+			appDelegate.isUserInactive = FALSE;
+			return;
+			
+		}
         else if (appDelegate.initial_sync_succes_or_failed == TX_FETCH_FAILED || appDelegate.connection_error == TRUE)
         {
             [initial_sync_timer invalidate];    //invalidate the timer

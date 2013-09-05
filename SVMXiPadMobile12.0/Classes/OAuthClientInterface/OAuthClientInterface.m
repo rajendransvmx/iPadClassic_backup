@@ -38,6 +38,7 @@
 	[redirectURL release];
 	[cancelURL release];
 	[view release];
+	[servicemaxLogo release];
 	[super dealloc];
 	
 }
@@ -134,7 +135,7 @@
 	
 	
 	//Fix for Defect #7079 : 16/May/2013 : Changed  code for adding service max logo.
-	UIImageView *servicemaxLogo = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"logo.png"]];
+	servicemaxLogo = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"logo.png"]];
 	servicemaxLogo.contentMode = UIViewContentModeScaleAspectFit;
 	servicemaxLogo.bounds = CGRectMake(0, 0, 350, 96);
 //	CGPoint center = CGPointMake(CGRectGetMidX(self.view.frame), CGRectGetMidY(self.view.frame)+150);
@@ -146,7 +147,7 @@
 
 	//view.scrollView.scrollEnabled = NO;
 	[view.scrollView addSubview:servicemaxLogo];
-	[servicemaxLogo release];		
+	//[servicemaxLogo release];
 }
 
 
@@ -294,6 +295,7 @@
 	//Set flag to indicated if its on the authorization page. - 24/May/2013.
 	if ( [[request.URL absoluteString] Contains:@"frontdoor.jsp"] )
 	{
+		[servicemaxLogo removeFromSuperview]; //Fix for defect #7539.
 		NSLog(@"%@", [[request.URL absoluteString] pathComponents]);
 		appDelegate.isUserOnAuthenticationPage = FALSE;
 	}
@@ -413,6 +415,12 @@
 	//Alert user incase of inability to get new access tokens via refresh token.
 	if ( [[dict valueForKey:@"error"] isEqualToString:@"invalid_grant"] )
 	{
+		/*Shrini fix for defect 7189*/
+		if ([[dict valueForKey:@"error_description"] isEqualToString:@"inactive user"])
+		{
+			return NO;
+		}
+		
 		NSException *exp;
 		NSString *ExpName = [appDelegate.wsInterface.tagsDictionary valueForKey:alert_connection_error];
 		NSString *ExpReason = [appDelegate.wsInterface.tagsDictionary valueForKey:remote_access_error];

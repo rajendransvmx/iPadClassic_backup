@@ -416,7 +416,8 @@ int synchronized_sqlite3_finalize(sqlite3_stmt *pStmt)
 @synthesize activity;
 @synthesize wasPerformInitialSycn;
 @synthesize userDisplayFullName;
-
+@synthesize homeScreenView;
+@synthesize isUserInactive; //Shrini fix for defect #7189
 
 -(BOOL)shouldAutorotate
 {

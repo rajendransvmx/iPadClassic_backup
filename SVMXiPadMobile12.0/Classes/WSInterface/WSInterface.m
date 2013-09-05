@@ -12122,6 +12122,17 @@ INTF_WebServicesDefServiceSvc_SVMXMap * svmxMap = [[[INTF_WebServicesDefServiceS
 		{
 			appDelegate.connection_error = FALSE;
 			didOpComplete = FALSE;
+			
+			/*Check weather session expiry is due to invalidating the user.  ----> Shrini Fix for defect #7189*/
+			if ( ![appDelegate.oauthClient refreshAccessToken:appDelegate.refresh_token] )
+			{
+				appDelegate.isUserInactive = TRUE;
+				appDelegate.connection_error = TRUE;
+				[appDelegate.homeScreenView logout];
+				
+				return;
+			}
+			
 			if ([self handleSessionExpiryForInitialLogin])
 				return;
 		}
