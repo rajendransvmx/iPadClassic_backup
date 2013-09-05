@@ -175,6 +175,7 @@
 #define MEXPRESSION_NAME         @"expression_name"
 #define MEXPRESSION              @"expression"
 #define MADVANCE_EXPRESSION      @"advance_expression"
+#define MEXPRESSION_ERROR_MSG    @"error_message" 
 
 //SfExpression Component
 #define MCOMPONENT_SEQ_NUM       @"component_sequence_number"

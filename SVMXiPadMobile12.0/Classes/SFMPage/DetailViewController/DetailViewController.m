@@ -27,6 +27,7 @@
 #import "SVMAccessoryButton.h"
 
 #import "Utility.h"
+#import "Util.h"
 #import "HTMLJSWrapper.h"
 
 //Radha :- Child SFM UI 6/june/2012 
@@ -1269,7 +1270,17 @@ enum BizRuleConfirmViewStatus{
                 return;
             }
             else{
-                NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_no_pagelayout];
+                
+                // 8303 - Vipindas Sep 4 2013
+                
+                // Load custom error message if exists
+                NSString * message = [appDelegate.dataBase expressionErrorMessageById:expression_id];
+                
+                if (! [Util isValidString:message] )
+                {
+                    message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_no_pagelayout];
+                }
+                
                 NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
                 NSString * cancel_ = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
                 
@@ -1648,10 +1659,18 @@ enum BizRuleConfirmViewStatus{
             
             [self initAllrequriredDetailsForProcessId:appDelegate.sfmPageController.sourceProcessId recordId:appDelegate.sfmPageController.recordId object_name:headerObjName];
             [self fillSFMdictForOfflineforProcess:appDelegate.sfmPageController.sourceProcessId forRecord:appDelegate.sfmPageController.recordId ];
-            [self didReceivePageLayoutOffline]; 
-			
-            NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
-            NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
+            [self didReceivePageLayoutOffline];
+            
+            // 8303 - Vipindas Sep 4 2013
+            
+            // Load custom error message if exists
+            NSString * message = [appDelegate.dataBase expressionErrorMessageById:expression_id];
+            
+            if (! [Util isValidString:message] )
+            {
+                message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
+            }
+            NSString * title   = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
             NSString * cancel_ = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
 			
             UIAlertView * enty_criteris = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:cancel_ otherButtonTitles:nil, nil];
@@ -2417,7 +2436,17 @@ enum BizRuleConfirmViewStatus{
             [self fillSFMdictForOfflineforProcess:appDelegate.sfmPageController.sourceProcessId forRecord:appDelegate.sfmPageController.recordId ];
             [self didReceivePageLayoutOffline]; 
 			
-            NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
+            // 8303 - Vipindas Sep 4 2013
+            
+            // Load custom error message if exists
+            NSString * message = [appDelegate.dataBase expressionErrorMessageById:expression_id];
+            
+            if (! [Util isValidString:message] )
+            {
+                message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
+            }
+            
+            //NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
             NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
             NSString * cancel_ = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
 			
@@ -10680,7 +10709,17 @@ enum BizRuleConfirmViewStatus{
                         BOOL Entry_criteria = [appDelegate.databaseInterface EntryCriteriaForRecordFortableName:headerObjName record_id:appDelegate.sfmPageController.recordId expression:expression_id];
                         if(!Entry_criteria)
                         {
-                            NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
+                            // 8303 - Vipindas Sep 4 2013
+                            
+                            // Load custom error message if exists
+                            NSString * message = [appDelegate.dataBase expressionErrorMessageById:expression_id];
+                            
+                            if (! [Util isValidString:message] )
+                            {
+                                message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
+                            }
+                            
+                            //NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
                             NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
                             NSString * cancel_ = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
                             
@@ -10770,7 +10809,17 @@ enum BizRuleConfirmViewStatus{
                         
                         if(!Entry_criteria)
                         {
-                            NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
+                            // 8303 - Vipindas Sep 4 2013
+                            
+                            // Load custom error message if exists
+                            NSString * message = [appDelegate.dataBase expressionErrorMessageById:expression_id];
+                            
+                            if (! [Util isValidString:message] )
+                            {
+                                message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
+                            }
+                            
+                            //NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
                             NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
                             NSString * cancel_ = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
                             
@@ -10860,11 +10909,14 @@ enum BizRuleConfirmViewStatus{
                         
                         BOOL Entry_criteria = NO;
                         NSArray *componentsArray = [appDelegate.databaseInterface getExpressionIdsForOPDocForProcessId:action_process_id];
+
+                        // 8303 - Vipindas Sep 4 2013
+                        NSString *expressionId = nil;
                         if([componentsArray count] > 0) {
                             
                             for (NSDictionary *dict in componentsArray) {
-                                
-                                NSString *expressionId = [dict objectForKey:EXPRESSION_ID];
+                                // 8303 - Vipindas Sep 4 2013
+                                expressionId  = [dict objectForKey:EXPRESSION_ID];
                                 NSString *targetObjectName = [dict objectForKey:TARGET_OBJECT_NAME];
                                 
                                 Entry_criteria = [appDelegate.databaseInterface EntryCriteriaForRecordFortableName:targetObjectName record_id:appDelegate.sfmPageController.recordId expression:expressionId];
@@ -10878,7 +10930,17 @@ enum BizRuleConfirmViewStatus{
                         
                         if(!Entry_criteria)
                         {
-                            NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
+                            // 8303 - Vipindas Sep 4 2013
+                            
+                            // Load custom error message if exists
+                            NSString * message = [appDelegate.dataBase expressionErrorMessageById:expressionId];
+                            
+                            if (! [Util isValidString:message] )
+                            {
+                                message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
+                            }
+                            
+                            //NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
                             NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
                             NSString * cancel_ = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
                             
@@ -16495,7 +16557,17 @@ enum BizRuleConfirmViewStatus{
         BOOL Entry_criteria = [appDelegate.databaseInterface EntryCriteriaForRecordFortableName:headerObjName record_id:child_record_id expression:expression_id];
         if(!Entry_criteria)
         {
-            NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
+            // 8303 - Vipindas Sep 4 2013
+            
+            // Load custom error message if exists
+            NSString * message = [appDelegate.dataBase expressionErrorMessageById:expression_id];
+            
+            if (! [Util isValidString:message] )
+            {
+                message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
+            }
+            
+            //NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
             NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
             NSString * cancel_ = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
             
@@ -16547,7 +16619,17 @@ enum BizRuleConfirmViewStatus{
         
         if(!Entry_criteria)
         {
-            NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
+            // 8303 - Vipindas Sep 4 2013
+            
+            // Load custom error message if exists
+            NSString * message = [appDelegate.dataBase expressionErrorMessageById:expression_id];
+            
+            if (! [Util isValidString:message] )
+            {
+                message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
+            }
+            
+            //NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
             NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
             NSString * cancel_ = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
             

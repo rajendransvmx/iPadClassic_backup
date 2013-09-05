@@ -8797,12 +8797,13 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 {
     int id_value = 0;
     
-    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFExpression ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , 'expression_id' VARCHAR, 'expression' VARCHAR, 'expression_name' VARCHAR)"]];
+    //8303 - Vipindas - Sep 4, 2013
+    BOOL result = [self createTable:[NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS SFExpression ('local_id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , 'expression_id' VARCHAR, 'expression' VARCHAR, 'expression_name' VARCHAR, 'error_message' VARCHAR)"]];
     if (result == YES)
     {
          [self beginTransaction];
         
-        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@') VALUES (?1, ?2,   ?3, ?4)", SFEXPRESSION, MEXPRESSION_ID , MEXPRESSION_NAME, MEXPRESSION, MLOCAL_ID];
+        NSString * bulkQueryStmt = [NSString stringWithFormat:@"INSERT OR REPLACE INTO '%@' ('%@', '%@', '%@', '%@', '%@') VALUES (?1, ?2,   ?3, ?4, ?5)", SFEXPRESSION, MEXPRESSION_ID , MEXPRESSION_NAME, MEXPRESSION, MLOCAL_ID, MEXPRESSION_ERROR_MSG];
         
         sqlite3_stmt * bulkStmt;
         
@@ -8821,6 +8822,8 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
             for (int i = 0; i < [sfExpression count]; i++)
             {
                 NSDictionary * dict = [sfExpression objectAtIndex:i];
+                
+                NSLog(@"  SFExpression  dict  :\n%@", dict);
 				
 				char * _expressionId = [appDelegate convertStringIntoChar:([dict objectForKey:MEXPRESSION_ID] != nil)?[dict objectForKey:MEXPRESSION_ID]:@""];
                 
@@ -8835,6 +8838,11 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                 sqlite3_bind_text(bulkStmt, 3, _advanceExpression, strlen(_advanceExpression), SQLITE_TRANSIENT);
                 
                 sqlite3_bind_int(bulkStmt, 4, ++id_value);
+                
+                char * errorMessage = [appDelegate convertStringIntoChar:([dict objectForKey:MEXPRESSION_ERROR_MSG] != nil)?[dict objectForKey:MEXPRESSION_ERROR_MSG]:@""];
+                
+                sqlite3_bind_text(bulkStmt, 5, errorMessage, strlen(errorMessage), SQLITE_TRANSIENT);
+                
                                 
                 if ( synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
@@ -8852,6 +8860,12 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
             
             [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:[sfExpression count]];
             
+        }
+        else
+        {
+            NSLog(@"Failed prepared statement - SFExpression! \n %d - %@", ret_value, [NSString stringWithUTF8String:sqlite3_errmsg(appDelegate.db)]);
+            
+            SMLog(@" SFExpression Prepared statement %@", bulkQueryStmt);
         }
         synchronized_sqlite3_finalize(bulkStmt);
         [self endTransaction];
@@ -15377,5 +15391,43 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 
 }
 
+    //8303 - Vipindas - Sep 4, 2013
+- (NSString *)expressionErrorMessageById:(NSString *)expressionId
+{
+    if (! [Util isValidString:expressionId])
+    {
+        return nil;
+    }
+    
+    NSString * errorMessage = nil;
+
+    NSString *queryString = [[NSString alloc] initWithFormat:@" SELECT %@ FROM %@ WHERE %@='%@'",
+                             MEXPRESSION_ERROR_MSG,
+                             SFEXPRESSION,
+                             MEXPRESSION_ID,
+                             expressionId];
+
+    SMLog(@"  expressionErrorMessageById  Query : %@", queryString);
+
+    sqlite3_stmt * stmt;
+
+    if (synchronized_sqlite3_prepare_v2(appDelegate.db, [queryString UTF8String], -1, &stmt, NULL) == SQLITE_OK)
+    {
+        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            char * message = (char *)synchronized_sqlite3_column_text(stmt, 0);
+            
+            if(message != nil)
+            {
+                errorMessage = [NSString stringWithUTF8String:message];
+            }
+        }
+    }
+
+    [queryString release];
+    queryString = nil;
+
+    return errorMessage;
+}
 
 @end

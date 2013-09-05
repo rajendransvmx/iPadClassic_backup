@@ -498,5 +498,8 @@ PopoverButtons *popOver_view;
 -(NSString*)getOriginalValueForTags:(NSString*)value;
 -(NSString*)getTagFor:(NSString*)value;
 
+// 8303 Vipindas Sep 4, 2013
+- (NSString *)expressionErrorMessageById:(NSString *)expressionId;
+
 
 @end

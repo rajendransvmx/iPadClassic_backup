@@ -8,6 +8,8 @@
 
 #import "SFMFullResultViewController.h"
 #import "iServiceAppDelegate.h"
+#import "Util.h"
+
 #define TableViewResultViewCellHeight 50
 const int percentage_SFMResult = 30;
 const float progress_SFMResult = 0.33;
@@ -319,6 +321,9 @@ extern void SVMXLog(NSString *format, ...);
     BOOL record_is_not_syncd = FALSE;
     BOOL Entry_criteria = FALSE;
     NSString * final_process_id = @"";
+    
+    // 8303 - Vipindas Sep 4 2013
+    NSString * expression_id = nil;
 
     for(NSString * process_id in processids_array)
     {
@@ -333,7 +338,8 @@ extern void SVMXLog(NSString *format, ...);
         
         NSMutableDictionary * process_components = [appDelegate.databaseInterface getProcessComponentsForComponentType:TARGET process_id:process_id layoutId:layout_id objectName:headerObjName];
         NSString * source_parent_object_name = [process_components objectForKey:SOURCE_OBJECT_NAME];
-        NSString * expression_id = [process_components objectForKey:EXPRESSION_ID];
+        //NSString * expression_id = [process_components objectForKey:EXPRESSION_ID];
+        expression_id = [process_components objectForKey:EXPRESSION_ID];
         
         Entry_criteria = [appDelegate.databaseInterface EntryCriteriaForRecordFortableName:source_parent_object_name record_id:source_object_local_id expression:expression_id];
 
@@ -425,7 +431,17 @@ extern void SVMXLog(NSString *format, ...);
     {
         if(!Entry_criteria)
         {
-            NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
+            // 8303 - Vipindas Sep 4 2013
+            
+            // Load custom error message if exists
+            NSString * message = [appDelegate.dataBase expressionErrorMessageById:expression_id];
+            
+            if (! [Util isValidString:message] )
+            {
+                message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
+            }
+            
+            //NSString * message = [appDelegate.wsInterface.tagsDictionary objectForKey:sfm_swich_process];
             NSString * title = [appDelegate.wsInterface.tagsDictionary objectForKey:alert_ipad_error];
             NSString * cancel_ = [appDelegate.wsInterface.tagsDictionary objectForKey:CANCEL_BUTTON_TITLE];
             
