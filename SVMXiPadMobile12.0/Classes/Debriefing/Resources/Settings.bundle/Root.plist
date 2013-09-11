@@ -276,7 +276,7 @@
 		</dict>
 		<dict>
 			<key>Title</key>
-			<string>Optimize Aggressive Sync</string>
+			<string>Enable Sync v2.0</string>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 		</dict>
