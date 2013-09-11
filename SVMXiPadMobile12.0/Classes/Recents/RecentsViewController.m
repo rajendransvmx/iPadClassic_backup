@@ -213,7 +213,11 @@
 #pragma mark - UITableViewDataSource Methods
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSInteger count = [appDelegate.recentObject count];
+    NSInteger count = 0;
+	
+	if (appDelegate.recentObject != nil && [appDelegate.recentObject count] > 0)
+		count = [appDelegate.recentObject count];
+	
     @try{
     for (int i = 0; i < [appDelegate.recentObject count]; i++)
     {
@@ -335,7 +339,9 @@
 - (NSMutableArray *) getRecentsArrayFromObjectHistoryPlist
 {
 	// Load appDelegate.recentObject from the plist
-    [appDelegate.recentObject removeAllObjects];
+	//8418 
+	if (appDelegate.recentObject != nil && [appDelegate.recentObject count] > 0)
+		[appDelegate.recentObject removeAllObjects];
     
     NSString *rootPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString *plistPath = [rootPath stringByAppendingPathComponent:OBJECT_HISTORY_PLIST];
@@ -474,9 +480,10 @@
 //6347:
 - (void) handleIncrementalDataSyncNotification:(NSNotification *)notification
 {
+	//8418 
     [self performSelectorOnMainThread:@selector(refreshRecents) withObject:nil waitUntilDone:YES];
 }
-
+	
 //6347:
 - (void) refreshRecents
 {

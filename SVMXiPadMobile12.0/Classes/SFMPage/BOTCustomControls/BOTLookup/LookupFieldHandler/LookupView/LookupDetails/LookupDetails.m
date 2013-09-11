@@ -129,7 +129,14 @@
 {
     // #warning Incomplete method implementation.
     // Return the number of rows in the section.
-    return [lookupDetailsArray count];
+	//Fix for avoiding crash
+	NSUInteger rowCount = 0;
+	
+	if (lookupDetailsArray != nil && [lookupDetailsArray count] > 0)
+	{
+		rowCount = [lookupDetailsArray count];
+	}
+    return rowCount;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)_indexPath

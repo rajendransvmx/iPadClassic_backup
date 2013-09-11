@@ -4861,24 +4861,40 @@ enum BizRuleConfirmViewStatus{
 {
     if (!isInEditDetail)
     {
+		//Fix for avoiding crash
+		NSUInteger rowCount = 0;
+		
         if (isDefault)
         {
             if (selectedSection == SHOWALL_HEADERS)
             {
                 NSMutableDictionary *_header = [appDelegate.SFMPage objectForKey:gHEADER];
                 NSMutableArray *header_sections = [_header objectForKey:gHEADER_SECTIONS];
-                return [header_sections count];
+				
+				if (header_sections != nil && [header_sections count] > 0)
+				{
+					rowCount = [header_sections count];
+				}
+				return rowCount;
             }
             else if (selectedSection == SHOWALL_LINES)
             {
                 NSMutableArray *details = [appDelegate.SFMPage objectForKey:gDETAILS];
-                return [details count];
+				if (details != nil && [details count] > 0)
+				{
+					rowCount = [details count];
+				}
+				return rowCount;
             }
             else if (selectedSection == SHOW_ALL_ADDITIONALINFO)
             {
                 // NSArray * array = appDelegate.additionalInfo;
                 // NSInteger count_info = [appDelegate.additionalInfo count];
-                return [appDelegate.additionalInfo count];
+				if (appDelegate.additionalInfo != nil && [appDelegate.additionalInfo count] > 0)
+				{
+					rowCount = [appDelegate.additionalInfo  count];
+				}
+				return rowCount;
             }
         }
         else
@@ -4914,7 +4930,8 @@ enum BizRuleConfirmViewStatus{
                 else
                 {
                     NSArray * array = [header_section  objectForKey:gSECTION_FIELDS];
-                    if ([array isKindOfClass:[NSArray class]])
+					//Fix for avoiding crash
+                    if ([array isKindOfClass:[NSArray class]] && [array count] > 0 && array != nil)
                         fields = [array count];
                     //defect 007403
                     for (int i=0; i<fields; i++)
@@ -4934,7 +4951,8 @@ enum BizRuleConfirmViewStatus{
             {
                 NSMutableArray * details = [appDelegate.SFMPage objectForKey:gDETAILS];
                 NSMutableDictionary * detail = [details objectAtIndex:section];
-                if (detail == nil)
+				//Fix for avoiding crash
+                if (detail == nil && [detail count] > 0)
                     return 0;
                 int rows = [[detail objectForKey:gDETAILS_VALUES_ARRAY] count];
 
@@ -4945,7 +4963,7 @@ enum BizRuleConfirmViewStatus{
                 // NSString * additional_info = [appDelegate.additionalInfo objectAtIndex:section];
                 NSDictionary * additional_info_dict = [appDelegate.additionalInfo objectAtIndex:section];
                 NSString * additional_info = [[additional_info_dict allKeys] objectAtIndex:0];
-                NSInteger count_info;
+                NSInteger count_info = 0;
                 if([additional_info isEqualToString:PRODUCT_ADDITIONALINFO])
                 {
                     count_info = [[appDelegate.SFMPage objectForKey:PRODUCTHISTORY] count];
@@ -4994,7 +5012,7 @@ enum BizRuleConfirmViewStatus{
             {
                 NSMutableArray * details = [appDelegate.SFMPage objectForKey:gDETAILS];
                 NSMutableDictionary * detail = [details objectAtIndex:selectedRow];
-                if (detail == nil)
+                if (detail == nil && [detail count] > 0)
                     return 0;
                 int rows = [[detail objectForKey:gDETAILS_VALUES_ARRAY] count];
                 
@@ -5005,13 +5023,17 @@ enum BizRuleConfirmViewStatus{
                 // NSString * additional_info = [appDelegate.additionalInfo objectAtIndex:selectedRow];
                 NSDictionary * additional_info_dict = [appDelegate.additionalInfo objectAtIndex:selectedRow];
                 NSString * additional_info = [[additional_info_dict allKeys] objectAtIndex:0];
+				//Fix for avoiding crash
+				NSUInteger row = 0;
                 if([additional_info isEqualToString:PRODUCT_ADDITIONALINFO])
                 {
-                    return [[appDelegate.SFMPage objectForKey:PRODUCTHISTORY] count]+1;
+					row = [[appDelegate.SFMPage objectForKey:PRODUCTHISTORY] count]+1;
+                    return row;
                 }
                 if([additional_info isEqualToString:ACCOUNT_ADITIONALINFO])
                 {
-                    return [[appDelegate.SFMPage objectForKey:ACCOUNTHISTORY] count]+1;
+					row = [[appDelegate.SFMPage objectForKey:ACCOUNTHISTORY] count]+1;
+                    return row; 
                 }
 
             }
@@ -9383,12 +9405,24 @@ enum BizRuleConfirmViewStatus{
 // get the columns for the descriptor 
 -(NSInteger) HeaderColumns
 {
-    return [Disclosure_Fields count];    
+	NSUInteger headerCount = 0;
+	if (Disclosure_Fields != nil && [Disclosure_Fields count] > 0)
+	{
+		headerCount = [Disclosure_Fields count];
+
+	}
+	return headerCount;
 }
 
 -(NSInteger) linesColumns
 {
-    return [Disclosure_Details count];
+	NSUInteger lineCount = 0;
+	if (Disclosure_Details != nil && [Disclosure_Details count] > 0)
+	{
+		lineCount = [Disclosure_Details count];
+		
+	}
+	return lineCount;
 }
 
 -(void) fillDictionary:(NSIndexPath *)indexPath

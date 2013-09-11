@@ -80,7 +80,16 @@ extern void SVMXLog(NSString *format, ...);
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     // Return the number of sections.
-    return [[self getLegsForRoute] count];
+	//Fix for avoiding crash
+	NSArray * array = [self getLegsForRoute];
+	
+	NSUInteger count = 0;
+	if (array != nil && [array count] > 0)
+	{
+		count  = [array count];
+	}
+	return count;
+    //return [[self getLegsForRoute] count];
 }
 
 // V3:KRI
@@ -88,7 +97,16 @@ extern void SVMXLog(NSString *format, ...);
     // Return the number of rows in the section.
 //    UICGRoute *route = [directionArray objectAtIndex:section];
 //    return [route numberOfSteps];
-    return [[self getStepsForLegAtIndex:section] count];
+	//Fix for avoiding crash
+	NSUInteger rowCount = 0;
+	NSArray * array = [self getStepsForLegAtIndex:section];
+	
+    if (array != nil && [array count] > 0)
+	{
+		rowCount =  [array count];
+	}
+	
+    return rowCount;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section

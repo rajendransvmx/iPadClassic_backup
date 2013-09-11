@@ -67,7 +67,15 @@
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     
-    return [self.docTemplatesArray count];
+	//Fix for avoiding crash
+	NSUInteger rowCount = 0;
+	
+    if (self.docTemplatesArray != nil && [self.docTemplatesArray count] > 0)
+	{
+		rowCount =  [self.docTemplatesArray count];
+	}
+	
+    return rowCount;
 }
 
 #pragma mark - Tableview delegate

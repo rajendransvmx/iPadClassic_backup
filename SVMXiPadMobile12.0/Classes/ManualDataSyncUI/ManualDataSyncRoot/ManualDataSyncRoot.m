@@ -93,11 +93,15 @@ extern void SVMXLog(NSString *format, ...);
     objectsArray = nil;
     objectsArray  = [appDelegate.calDataBase getConflictObjects];
     [objectsArray retain];
-    
-    if (section == 0)
-        return [objectsArray count];
-    else
-        return 0;
+    //Fix for avoiding crash
+	NSUInteger rowCount = 0;
+	
+    if (section == 0 && objectsArray != nil && [objectsArray count] > 0)
+	{
+		rowCount =  [objectsArray count];
+	}
+        
+    return rowCount;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath

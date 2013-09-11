@@ -511,12 +511,25 @@ extern void SVMXLog(NSString *format, ...);
 #pragma mark - UITAbleView Data Source Methods
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+	//Fix for avoiding crash
+	NSUInteger rowCount = 0;
+	
     if (tableView.tag == kTableviewTag ) {
-        
-        return ([[self advancedFilters] count] == 0) ? 0 : [[self advancedFilters] count];
+        if (advancedFilters != nil && [advancedFilters count] > 0)
+		
+		rowCount = ([[self advancedFilters] count] == 0) ? 0 : [[self advancedFilters] count];
+        return rowCount;
     }
-    NSArray * array = [lookupData objectForKey:@"DATA"];
-    return [array count];
+	
+	NSArray * array = [lookupData objectForKey:@"DATA"];
+	
+	
+	if (array != nil && [array count] > 0)
+	{
+		rowCount = [array count];
+	}
+    return rowCount;
+
 }
 
 // Row display. Implementers should *always* try to reuse cells by setting each cell's reuseIdentifier and querying for available reusable cells with dequeueReusableCellWithIdentifier:

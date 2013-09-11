@@ -590,13 +590,16 @@ extern void SVMXLog(NSString *format, ...);
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    
+    //Fix for avoiding crash
+	NSUInteger rowCount = 0;
 	
     if (tableView == self.errorTableView)
     {
         self.conflictsArray = [errorDictonary objectForKey:@"RULE_ERROR"];
         SMLog(@"Errors Count %d",[self.conflictsArray count]);
-        return [self.conflictsArray count];
+		if (self.conflictsArray != nil && [self.conflictsArray count] > 0)
+			rowCount = [self.conflictsArray count];
+        return rowCount;
     }
     
     else
@@ -608,12 +611,16 @@ extern void SVMXLog(NSString *format, ...);
                 {
                     NSDictionary *header = [appDelegate.SFMPage objectForKey:@"header"];
                     NSArray * header_sections = [header objectForKey:@"hdr_Sections"];
-                    return [header_sections count];
+					if (header_sections != nil && [header_sections count] > 0)
+						rowCount = [header_sections count];
+					return rowCount;
                 }
                 case 1:
                 {
                     NSArray *details = [appDelegate.SFMPage objectForKey:@"details"];
-                    return [details count];
+					if (details != nil && [details count] > 0)
+						rowCount = [details count];
+					return rowCount;
                 }
                 case 2:
                 {

@@ -235,7 +235,7 @@ enum  {
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSArray *cellArray = [[tableDataArray objectAtIndex:section] objectForKey:@"Values"];
-    NSInteger noOfRows;
+    NSInteger noOfRows = 0;
     if([self.masterView.searchFilterSwitch isOn])
     {
         @try{
@@ -622,7 +622,15 @@ enum  {
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
 //    SMLog(@"Sections Data = %d",[tableDataArray count]);
-    return [tableDataArray count];
+	//Fix for avoiding crash
+	NSUInteger rowCount = 0;
+	if (tableDataArray != nil && [tableDataArray count] > 0)
+	{
+		rowCount = [tableDataArray count];
+	}
+	
+	return rowCount;
+//    return [tableDataArray count];
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {

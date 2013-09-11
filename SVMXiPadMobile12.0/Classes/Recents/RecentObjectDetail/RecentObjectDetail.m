@@ -207,21 +207,24 @@ extern void SVMXLog(NSString *format, ...);
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+	//8418 - Fix for crash
+	NSUInteger rowCount = 0;
     // Return the number of rows in the section.
     @try{
-    if ([recentObjectsArray count] != 0)
+    if ([recentObjectsArray count] > 0)
     {
         SMLog(@"%@", [recentObjectsArray objectAtIndex:selectedRootViewRow]);
         NSMutableDictionary * dictionary = [recentObjectsArray objectAtIndex:selectedRootViewRow];
         NSString * key = [[dictionary allKeys] objectAtIndex:0];
-        array = [dictionary objectForKey:key]; 
+        array = [dictionary objectForKey:key];
+		rowCount = [array count];
     }
 	}@catch (NSException *exp) {
 	SMLog(@"Exception Name RecentObjectDetail :numberOfRowsInSection %@",exp.name);
 	SMLog(@"Exception Reason RecentObjectDetail :numberOfRowsInSection %@",exp.reason);
     }
-
-    return [array count];
+	
+    return rowCount;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath

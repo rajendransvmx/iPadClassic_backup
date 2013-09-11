@@ -374,24 +374,40 @@ extern void SVMXLog(NSString *format, ...);
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
+	//Fix for avoiding crash
+	NSUInteger rowCount = 0;
+	
 	switch (section)
     {
         case 0:
             return 1;
 		case 1:
-			return [Parts count];
+			if (Parts != nil && [Parts count] > 0)
+			{
+				rowCount = [Parts count];
+			}
+			return  rowCount;
 			break;
 		case 2:
-			return [Labour count];
+			if (Labour != nil && [Labour count] > 0)
+			{
+				rowCount = [Labour count];
+			}
+			return  rowCount;
 			break;
 		case 3:
-			return [Expenses count];
+			if (Expenses != nil && [Expenses count] > 0)
+			{
+				rowCount = [Expenses count];
+			}
+			return  rowCount;
 			break;
         case 4:
             //Krishna defect 5813
-            if([travel count] > 0) {
-            return [travel count];
+            if(travel != nil && [travel count] > 0) {
+				rowCount = [travel count];
             }
+			return  rowCount;
             break;
 		default:
 			break;

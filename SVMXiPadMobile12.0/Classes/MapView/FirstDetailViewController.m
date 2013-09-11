@@ -1030,7 +1030,14 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return [appDelegate.workOrderEventArray count];
+	NSUInteger rowCount = 0;
+	
+	if (appDelegate.workOrderEventArray != nil && [appDelegate.workOrderEventArray count] > 0)
+	{
+		rowCount = [appDelegate.workOrderEventArray count];
+	}
+    return rowCount;
+	
 }
 
 - (MapTableCell *) createCustomCellWithId:(NSString *) cellIdentifier

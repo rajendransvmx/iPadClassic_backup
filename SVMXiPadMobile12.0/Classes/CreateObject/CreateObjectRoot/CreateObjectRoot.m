@@ -109,8 +109,16 @@ extern void SVMXLog(NSString *format, ...);
 {
     // Return the number of rows in the section.
     appDelegate = (iServiceAppDelegate *)[[UIApplication sharedApplication] delegate];
-    return [appDelegate.objectLabelName_array count];
-    // appDelegate.objectLabel_array can also be used
+	
+	//Fix for avoiding crash
+	NSUInteger rowCount = 0;
+	
+	if (appDelegate.objectLabelName_array != nil && [appDelegate.objectLabelName_array count] > 0)
+	{
+		rowCount = [appDelegate.objectLabelName_array count];
+	}
+	
+    return rowCount;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath

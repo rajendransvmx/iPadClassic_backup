@@ -15337,7 +15337,8 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
 	
 	NSString * ownerId = [self getLoggedInUserId:appDelegate.currentUserName];
 	
-	queryStatement = [NSString stringWithFormat:@"DELETE from Event WHERE OwnerId = '%@' AND Id NOT IN (%@)", ownerId, eventId];
+	//Fix Defect: 8418. Make sure that local created events will not get purged
+	queryStatement = [NSString stringWithFormat:@"DELETE from Event WHERE OwnerId = '%@' AND Id NOT IN (%@) AND (Id != nil OR Id != '') ", ownerId, eventId];
 	
 	char * err;
 	

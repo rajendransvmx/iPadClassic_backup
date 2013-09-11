@@ -144,7 +144,14 @@ extern void SVMXLog(NSString *format, ...);
 #pragma mark - UITableViewDataSource Methods
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [[appDelegate.StandAloneCreateProcess objectAtIndex:section] count];
+	//Fix for avoiding crash
+	NSUInteger rowCount = 0;
+	
+	if (appDelegate.StandAloneCreateProcess != nil && [appDelegate.StandAloneCreateProcess count] > 0 )
+	{
+		rowCount = [[appDelegate.StandAloneCreateProcess objectAtIndex:section] count];
+	}
+    return rowCount;
 }
 
 // Row display. Implementers should *always* try to reuse cells by setting each cell's reuseIdentifier and querying for available reusable cells with dequeueReusableCellWithIdentifier:
@@ -270,7 +277,14 @@ extern void SVMXLog(NSString *format, ...);
 }
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;
 {
-    return [appDelegate.objectNames_array count];
+	//Fix for avoiding crash
+	NSUInteger rowCount = 0;
+	
+	if (appDelegate.objectNames_array != nil && [appDelegate.objectNames_array count] > 0)
+	{
+		rowCount = [appDelegate.objectNames_array count];
+	}
+    return rowCount;
 }
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section; 
 {

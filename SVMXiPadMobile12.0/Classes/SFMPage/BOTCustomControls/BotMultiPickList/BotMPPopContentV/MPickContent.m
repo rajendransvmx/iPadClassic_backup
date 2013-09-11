@@ -135,9 +135,16 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-       
-    return [pickListContent  count];
     
+	//Fix for avoiding crash
+	NSUInteger rowCount = 0;
+	
+    if (pickListContent != nil && [pickListContent count] > 0)
+	{
+		rowCount =  [pickListContent count];
+	}
+	
+    return rowCount;     
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath

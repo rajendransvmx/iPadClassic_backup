@@ -351,7 +351,7 @@ extern void SVMXLog(NSString *format, ...);
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;
 {
     NSMutableArray * array = [wizard_info objectForKey:SFW_WIZARD_INFO];
-    if([array count] > 0)
+    if([array count] > 0 && array != nil)
     {
         return [array count];
     }

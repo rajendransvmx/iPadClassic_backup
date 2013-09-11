@@ -220,7 +220,14 @@ extern void SVMXLog(NSString *format, ...);
 {
     // #warning Incomplete method implementation.
     // Return the number of rows in the section.
-    return [buttons count];
+	//Fix for avoiding crash
+	NSUInteger rowCount = 0;
+	
+	if (buttons != nil)
+	{
+		rowCount = [buttons count];
+	}
+    return rowCount;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath

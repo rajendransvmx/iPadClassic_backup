@@ -473,7 +473,14 @@ extern void SVMXLog(NSString *format, ...);
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [tableHeaderArray count];
+	//Fix for avoiding crash
+	NSUInteger rowCount = 0;
+	
+	if (tableHeaderArray != nil && [tableHeaderArray count] > 0)
+	{
+		rowCount = [tableHeaderArray count];
+	}
+    return rowCount;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath

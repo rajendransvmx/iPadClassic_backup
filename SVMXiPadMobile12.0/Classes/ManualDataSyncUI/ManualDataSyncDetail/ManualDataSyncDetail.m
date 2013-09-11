@@ -252,31 +252,47 @@ PopoverButtons *popOver_view;
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
+	NSUInteger rowCount = 0;
+	
     if ([appDelegate.internet_Conflicts count] > 0)
     {
         return 1;
     }
     
     if (selectedSection == 0 && HeaderSelected == 1)
-        return [objectsArray count];
+	{
+		rowCount = [objectsArray count];
+		return rowCount;
+	}
+        
     else
         return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if ([appDelegate.internet_Conflicts count] > 0)
+	NSUInteger rowCount = 0;
+    if (appDelegate.internet_Conflicts != nil && [appDelegate.internet_Conflicts count] > 0)
     {
-        return [appDelegate.internet_Conflicts count];
+		rowCount = [appDelegate.internet_Conflicts count];
+        return rowCount;
     }
 
-    if ((objectsDict != nil) && ([objectsDict count] > 0) && [objectsArray count] > 0)
+    else if ((objectsDict != nil) && ([objectsDict count] > 0) &&  objectsArray != nil && [objectsArray count] > 0)
     {
         if (HeaderSelected == 0)
-            return [[objectsDict objectForKey:[objectsArray objectAtIndex:selectedRow]] count];
+		{
+			rowCount =  [[objectsDict objectForKey:[objectsArray objectAtIndex:selectedRow]] count];
+			return rowCount;
+		}
+            
         else if (HeaderSelected == 1)
-            return [[objectsDict objectForKey:[objectsArray objectAtIndex:section]] count];
-        else
+		{
+			rowCount = [[objectsDict objectForKey:[objectsArray objectAtIndex:section]] count];
+			return rowCount;
+
+		}
+		else
             return 0;
     }
     else

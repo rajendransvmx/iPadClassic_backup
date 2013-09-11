@@ -313,7 +313,15 @@ extern void SVMXLog(NSString *format, ...);
 #pragma mark - table view delegate methods
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [tableArray count];
+	//Fix for avoiding crash
+	NSUInteger rowCount = 0;
+	
+	if (tableArray != nil && [tableArray count] > 0)
+	{
+		rowCount = [tableArray count];
+	}
+    return rowCount;
+
 }
 /*
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section

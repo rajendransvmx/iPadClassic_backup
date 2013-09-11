@@ -171,7 +171,15 @@ extern void SVMXLog(NSString *format, ...);
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return [array count];
+	//Fix for avoiding crash
+	NSUInteger rowCount = 0;
+	
+    if (array != nil && [array count] > 0)
+	{
+		rowCount =  [array count];
+	}
+	
+    return rowCount;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath

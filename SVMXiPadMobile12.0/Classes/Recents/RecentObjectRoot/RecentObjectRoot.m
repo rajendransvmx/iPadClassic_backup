@@ -107,7 +107,15 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return [recentObjectsArray count];
+	//Fix for avoiding crash
+	NSUInteger rowCount = 0;
+	
+    if (recentObjectsArray != nil && [recentObjectsArray count] > 0)
+	{
+		rowCount =  [recentObjectsArray count];
+	}
+	
+    return rowCount;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath

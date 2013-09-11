@@ -277,7 +277,15 @@ extern void SVMXLog(NSString *format, ...);
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	return [Parts count];
+	//Fix for avoiding crash
+	NSUInteger rowCount = 0;
+	
+    if (Parts != nil && [Parts count] > 0)
+	{
+		rowCount =  [Parts count];
+	}
+	
+    return rowCount;
 }
 
 // PriceBook data retrieve

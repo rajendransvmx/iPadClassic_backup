@@ -53,7 +53,13 @@ extern void SVMXLog(NSString *format, ...);
 {
     // Return the number of rows in the section.
     SMLog(@"%@", tasks);
-    return [tasks count];
+	//Fix for avoiding crash
+	NSUInteger rowCount = 0;
+	if (tasks != nil && [tasks count] > 0)
+	{
+		rowCount = [tasks count];
+	}
+    return rowCount;
 }
 
 // Customize the appearance of table view cells.

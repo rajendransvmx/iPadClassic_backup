@@ -1044,10 +1044,15 @@ extern void SVMXLog(NSString *format, ...);
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    if (chatterArray == nil)
-        return 0;
-    return [chatterArray count];
+{	
+	//Fix for avoiding crash
+	NSUInteger rowCount = 0;
+	
+	if (chatterArray != nil && [chatterArray count] > 0)
+	{
+		rowCount = [chatterArray count];
+	}
+    return rowCount;
 }
 
 #pragma mark - Launch SmartVan

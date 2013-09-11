@@ -1442,13 +1442,27 @@
 // get the columns for the descriptor
 -(NSInteger) HeaderColumns
 {
-    return [Disclosure_Fields count];
+	//Fix for avoiding crash
+	NSUInteger count = 0;
+	
+	if (Disclosure_Fields != nil && [Disclosure_Fields count] > 0)
+	{
+		count = [Disclosure_Fields count];
+	}
+    return count;
 }
 
 //return number of rows
 -(NSInteger) linesColumns
 {
-    return [Disclosure_Details count];
+	//Fix for avoiding crash
+	NSUInteger count = 0;
+	
+	if (Disclosure_Details != nil && [Disclosure_Details count] > 0)
+	{
+		count = [Disclosure_Details count];
+	}
+    return count;
 }
 
 #pragma mark -
@@ -1984,22 +1998,40 @@
 {
     if (!self.isInEditDetail)
     {
+		//Fix for avoiding crash
+		NSUInteger rowCount = 0;
         if (isDefault)
         {
             if (selectedSection == SHOWALL_HEADERS)
             {
                 NSMutableDictionary *_header = [appDelegate.SFMPage objectForKey:gHEADER];
                 NSMutableArray *header_sections = [_header objectForKey:gHEADER_SECTIONS];
-                return [header_sections count];
+				
+				if (header_sections != nil && [header_sections count] > 0)
+				{
+					rowCount = [header_sections count];
+				}
+				
+                return rowCount;
             }
             else if (selectedSection == SHOWALL_LINES)
             {
                 NSMutableArray *details = [appDelegate.SFMPage objectForKey:gDETAILS];
-                return [details count];
+				if (details != nil && [details count] > 0)
+				{
+					rowCount = [details count];
+				}
+				
+                return rowCount;
             }
             else if (selectedSection == SHOW_ALL_ADDITIONALINFO)
             {
-                return [appDelegate.additionalInfo count];
+				if (appDelegate.additionalInfo != nil && [appDelegate.additionalInfo count] > 0)
+				{
+					rowCount = [appDelegate.additionalInfo count];
+				}
+				
+                return rowCount;
             }
         }
         else
@@ -2017,7 +2049,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     
-        NSInteger row;
+        NSInteger row = 0;
         if (self.header == YES && self.line == NO)
         {
             row = [self HeaderColumns];

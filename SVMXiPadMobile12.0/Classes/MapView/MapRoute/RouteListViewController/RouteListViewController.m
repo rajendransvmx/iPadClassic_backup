@@ -41,14 +41,28 @@
 #pragma mark Table view methods
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return [routes count];
+	
+	//Fix for avoiding crash
+	NSUInteger count = 0;
+	if (routes != nil && [routes count] > 0)
+	{
+		count  = [routes count];
+	}
+	return count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (routes == nil)
         return 0;
 	UICGRoute *route = [routes objectAtIndex:section];
-    return [route numberOfSteps];
+	//Fix for avoiding crash
+	NSUInteger count = 0;
+	if (route != nil)
+	{
+		count = [route numberOfSteps];
+	}
+	
+    return count;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
