@@ -128,8 +128,6 @@
     if (self) {
         self.recordIdentifier = recordId;
         self.processIdentifier = processId;
-        
-        ifFileAvailable = [self isFilePresentForRecord:recordId forProcess:processId];
     }
     return self;
 }
@@ -304,13 +302,7 @@
 #pragma mark - View life cycle
 - (void)viewDidAppear:(BOOL)animated
 {
-    [super viewDidAppear:animated];
-    [self setTitleForOutputDocs];
-    
-    if(!ifFileAvailable)
-        [self addJsExecuterToView];
-    else
-        [self loadExistingFileInReadonlyMode];
+    [super viewDidAppear:animated];    
 }
 
 - (void)viewDidLoad
@@ -323,6 +315,14 @@
     }
    
     [self populateNavigationBar];
+    //Krishna -- 008457
+    [self setTitleForOutputDocs];
+    ifFileAvailable = [self isFilePresentForRecord:self.recordIdentifier forProcess:self.processIdentifier];
+    
+    if(!ifFileAvailable)
+        [self addJsExecuterToView];
+    else
+        [self loadExistingFileInReadonlyMode];
     
 }
 
