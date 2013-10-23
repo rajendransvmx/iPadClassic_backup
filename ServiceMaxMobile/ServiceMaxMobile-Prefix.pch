@@ -1,0 +1,51 @@
+//
+//  Prefix header
+//
+//  The contents of this file are implicitly included at the beginning of every source file.
+//
+
+#import <Availability.h>
+
+#ifndef __IPHONE_5_0
+#warning "This project uses features only available in iOS SDK 5.0 and later."
+#endif
+
+#ifdef __OBJC__
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#import"ZBarSDK.h"
+#import "plistUtility.h"
+#define SMLog(...) SMXLog(__PRETTY_FUNCTION__,[NSString stringWithFormat:__VA_ARGS__])
+#define NOTIFICATION_EVENT_DATA_SYNC @"NOTIFICATION_EVENT_DATA_SYNC"
+#define NOTIFICATION_TIMER_INVALIDATE @"NOTIFICATION_TIMER_INVALIDATE"
+#define KEYCHAIN_SERVICE_NAME               @"ServiceMaxEnterprise"
+#define FROM_SFM_SEARCH @"FROM_SFM_SEARCH"
+#define SERVERURL       @"serverurl"
+#define kPrintLogsDuringWebServiceCall
+//#undef kPrintLogsDuringWebServiceCall
+#define kRunLoopTimeInterval   1
+#define APPVERSION                                  8.41000
+
+
+/*####### MACROS FOR OAUTH LOGIN #########*/
+
+#define CLIENT_ID		@"3MVG9VmVOCGHKYBRKMhA_p09I9xzela3emYDXjFy8a9UOXbcwI2nGsrOGc3RGGA08q4Q8X94lyZ.tIn.WWW71"
+#define CLIENT_SECRET	@"780972445943803573"
+#define REDIRECT_URL    @"sfdc://success"
+#define _TOKEN_URL		@"/services/oauth2/authorize"
+#define REVOKE_URL		@"/services/oauth2/revoke"
+
+#define ACCESS_TOKEN		@"access_token"
+#define ORGANIZATION_ID		@"organization_id"
+#define CURRENT_USER_ID		@"user_id"
+#define API_URL				@"api_url"
+#define USER_ORG			@"user_org"
+#define IDENTITY_URL		@"identity_url"
+#define _USERNAME			@"username"
+#define USERFULLNAME		@"USERFULLNAME"
+
+
+#define PREFFERED_API_VERSION		@"20"
+
+
+#endif
