@@ -1,0 +1,94 @@
+//
+//  SMGPCodeSnippetResponseParser.m
+//  iService
+//
+//  Created by Siva Manne on 30/01/13.
+//
+//
+
+#import "SMGPCodeSnippetResponseParser.h"
+#import "INTF_WebServicesDefServiceSvc.h"
+
+#undef kEnableLog
+@implementation SMGPCodeSnippetResponseParser
+- (BOOL) parseResponse:(NSArray *)result
+{
+    for(int i=0; i<[result count]; i++)
+    {
+        NSAutoreleasePool *iPool = [[NSAutoreleasePool alloc] init];
+        INTF_WebServicesDefServiceSvc_SVMXMap * svmxMapObject = [result objectAtIndex:i];
+#ifdef kEnableLog
+        SMLog(kLogLevelVerbose,@"Code Snippet Response = %@",svmxMapObject);
+#endif
+        NSString *jsonRecord = [svmxMapObject value];
+#ifdef kEnableLog
+        SMLog(kLogLevelVerbose,@"JSON Response  = %@",jsonRecord);
+#endif
+        SBJsonParser * jsonParser = [[[SBJsonParser alloc] init] autorelease];
+        NSDictionary * json_dict = [jsonParser objectWithString:jsonRecord];
+        
+        NSString *codeSnippet = nil;
+        NSString *referencedCodeSnippet = nil;
+        NSString *data = nil;
+        NSString *name = nil;
+        NSString *type = nil;
+        NSString *snippetId = nil;
+        NSString *snippetName = nil;
+        NSString *ID = nil;
+        NSString *localId = nil;
+        codeSnippet = [json_dict objectForKey:@"SPR14__Code_Snippet__c"];
+        referencedCodeSnippet = [json_dict objectForKey:@"SPR14__Referenced_Code_Snippet__c"];
+
+        if(codeSnippet != nil)
+        {
+            if(referencedCodeSnippet != nil)
+            {
+                data = [json_dict objectForKey:@"SPR14__Data__c"];
+                ID = [json_dict objectForKey:@"Id"];
+                snippetName = [json_dict objectForKey:@"Name"];
+
+                // Mem_leak_fix - Vipindas 9493 Jan 18
+                localId = [[self getUUID] retain];
+
+                if(snippetName == nil) snippetName = @"";
+                if(ID == nil) ID = @"";
+
+                NSString *values = [NSString stringWithFormat:@"'%@','%@','%@','%@','%@'",localId,ID,codeSnippet,snippetName,referencedCodeSnippet];
+                NSArray *keys = [NSArray arrayWithObjects:@"local_id",@"Id",@"SPR14__Code_Snippet__c",@"Name",@"SPR14__Referenced_Code_Snippet__c", nil];
+                
+                NSString  *queryStatement = [NSString stringWithFormat:@"INSERT INTO SPR14__Code_Snippet_Manifest__c (%@) VALUES (%@)",[keys componentsJoinedByString:@","],values];
+                [self execStatementOnDataBase:queryStatement];
+                [localId release];
+            }
+        }
+        else
+        {
+            data = [json_dict objectForKey:@"SPR14__Data__c"];
+            name = [json_dict objectForKey:@"SPR14__Name__c"];
+            type = [json_dict objectForKey:@"SPR14__Type__c"];
+            snippetId = [json_dict objectForKey:@"SPR14__SnippetId__c"];
+            ID = [json_dict objectForKey:@"Id"];
+            snippetName = [json_dict objectForKey:@"Name"];
+            // Mem_leak_fix - Vipindas 9493 Jan 18
+            localId = [[self getUUID] retain];
+            
+            if(data == nil) data = @"";
+            if(name == nil) name = @"";
+            if(type == nil) type = @"";
+            if(snippetId == nil) snippetId = @"";
+            if(ID == nil) ID = @"";
+            
+            data = [data stringByReplacingOccurrencesOfString:@"\"" withString:@"&quot;" ];
+            
+            NSString *values = [NSString stringWithFormat:@"\"%@\",'%@','%@','%@','%@','%@','%@'",data,name,type,snippetId,localId,ID,snippetName];
+            NSArray *keys = [NSArray arrayWithObjects:@"SPR14__Data__c",@"SPR14__Name__c",@"SPR14__Type__c",@"SPR14__SnippetId__c",@"local_id",@"id",@"Name", nil];
+            
+            NSString  *queryStatement = [NSString stringWithFormat:@"INSERT INTO SPR14__Code_Snippet__c (%@) VALUES (%@)",[keys componentsJoinedByString:@","],values];
+            [self execStatementOnDataBase:queryStatement];
+            [localId release];
+        }
+        [iPool drain];
+    }
+    return FALSE;
+}
+@end
