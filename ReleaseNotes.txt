@@ -1,0 +1,32 @@
+*******************************************
+Release Notes Starts For Version 14.39.101
+===========================================
+
+
+
+-------------
+Fixed Defects
+-------------
+11411: iOS6:Tap multiple times on Document section; delete and share icon blinks and Select overlaps cancel
+11338 : While sharing single/Multiple; video/image/document files the actual file name is replaced with some alpha numeric name.
+
+
+-------------
+Known Issues
+-------------
+
+
+
+---------------------
+Features Implemented
+---------------------
+Sum 14 
+
+
+
+---------------------
+Additional Notes
+---------------------
+
+
+
