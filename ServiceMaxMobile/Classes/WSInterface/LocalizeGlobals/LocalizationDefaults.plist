@@ -1,0 +1,740 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ALERT_FILL_REQUIRED_FIELD</key>
+	<string>Please fill the required fields</string>
+	<key>IPAD018_TAG045</key>
+	<string>Connecting to Salesforce...</string>
+	<key>IPAD018_TAG046</key>
+	<string>Retrieving data from Salesforce...</string>
+	<key>IPAD018_TAG047</key>
+	<string>Saving data for offline use....</string>
+	<key>IPAD018_TAG048</key>
+	<string>Data On Demand (DOD): Preparing for DOD download</string>
+	<key>IPAD018_TAG049</key>
+	<string>Downloading</string>
+	<key>IPAD018_TAG050</key>
+	<string>Last Updated On:</string>
+	<key>IPAD018_TAG051</key>
+	<string>Refresh from Salesforce</string>
+	<key>IPAD018_TAG057</key>
+	<string>Push Logs</string>
+	<key>IPAD018_TAG058</key>
+	<string>Push Log Status</string>
+	<key>IPAD018_TAG059</key>
+	<string>In Progress</string>
+	<key>IPAD018_TAG060</key>
+	<string>Success</string>
+	<key>IPAD018_TAG061</key>
+	<string>Failed</string>
+	<key>IPAD018_TAG062</key>
+	<string>Are you sure you want to purge data?</string>
+	<key>IPAD018_TAG063</key>
+	<string>Data purge is due </string>
+	<key>IPAD018_TAG064</key>
+	<string>Last Data Purge</string>
+	<key>IPAD018_TAG065</key>
+	<string>Next Data Purge</string>
+	<key>IPAD018_TAG066</key>
+	<string>Last Data Purge Status</string>
+	<key>IPAD018_TAG067</key>
+	<string>Data purge in progress</string>
+	<key>IPAD018_TAG068</key>
+	<string>Data purge succeeded</string>
+	<key>IPAD018_TAG069</key>
+	<string>Data purge failed </string>
+	<key>IPAD018_TAG070</key>
+	<string>Not Scheduled</string>
+	<key>IPAD018_TAG071</key>
+	<string>Data Purge</string>
+	<key>IPAD018_TAG072</key>
+	<string>Validating Configuration</string>
+	<key>IPAD018_TAG073</key>
+	<string>Identifying configuration changes</string>
+	<key>IPAD018_TAG074</key>
+	<string>Your configuration is out of date. From Sync screen, initiate a Sync Configuration then re-initiate data purge</string>
+	<key>IPAD018_TAG075</key>
+	<string>Validating Database</string>
+	<key>IPAD018_TAG076</key>
+	<string>Retrieving download criteria</string>
+	<key>IPAD018_TAG077</key>
+	<string>Retrieving advanced download criteria</string>
+	<key>IPAD018_TAG078</key>
+	<string>Retrieving data for price calculation</string>
+	<key>IPAD018_TAG079</key>
+	<string>Database Clean Up</string>
+	<key>IPAD018_TAG080</key>
+	<string>Identifying data to remove</string>
+	<key>IPAD018_TAG081</key>
+	<string>Removing data that is no longer necessary</string>
+	<key>IPAD018_TAG082</key>
+	<string>Data purge canceled</string>
+	<key>CANCEL_BUTTON</key>
+	<string>Cancel</string>
+	<key>IPAD004_TAG001</key>
+	<string>Service Report for</string>
+	<key>IPAD004_TAG002</key>
+	<string>Total Amount:</string>
+	<key>IPAD004_TAG003</key>
+	<string>Attaching</string>
+	<key>IPAD004_TAG004</key>
+	<string>Service Report</string>
+	<key>IPAD004_TAG005</key>
+	<string>Work Performed</string>
+	<key>IPAD004_TAG006</key>
+	<string>Sr. No.</string>
+	<key>IPAD004_TAG007</key>
+	<string>Parts</string>
+	<key>IPAD004_TAG008</key>
+	<string>Labor</string>
+	<key>IPAD004_TAG009</key>
+	<string>Expenses</string>
+	<key>IPAD004_TAG010</key>
+	<string>Quatity</string>
+	<key>IPAD004_TAG011</key>
+	<string>Rate (/Hr)</string>
+	<key>IPAD004_TAG012</key>
+	<string>Unit Price</string>
+	<key>IPAD004_TAG013</key>
+	<string>Hours</string>
+	<key>IPAD004_TAG014</key>
+	<string>Line Price</string>
+	<key>IPAD004_TAG015</key>
+	<string>Customer Signature</string>
+	<key>IPAD004_TAG016</key>
+	<string>Total Cost</string>
+	<key>IPAD004_TAG017</key>
+	<string>Work Order Number</string>
+	<key>IPAD004_TAG018</key>
+	<string>Date</string>
+	<key>IPAD004_TAG019</key>
+	<string>Address</string>
+	<key>IPAD004_TAG020</key>
+	<string>Contact</string>
+	<key>IPAD004_TAG021</key>
+	<string>Phone</string>
+	<key>IPAD004_TAG022</key>
+	<string>Part</string>
+	<key>IPAD004_TAG023</key>
+	<string>Qty</string>
+	<key>IPAD004_TAG024</key>
+	<string>Discount</string>
+	<key>IPAD004_TAG025</key>
+	<string>Problem Description</string>
+	<key>IPAD004_TAG026</key>
+	<string>Rate</string>
+	<key>IPAD004_TAG027</key>
+	<string>Expense Type</string>
+	<key>IPAD004_TAG031</key>
+	<string>Retrieving Service Report</string>
+	<key>IPAD004_TAG032</key>
+	<string>Details Of Work Performed</string>
+	<key>IPAD004_TAG033</key>
+	<string>Email error.</string>
+	<key>IPAD004_TAG034</key>
+	<string>Please set up email first.</string>
+	<key>IPAD005_TAG001</key>
+	<string>No matching knowledgebase articles found</string>
+	<key>IPAD005_TAG002</key>
+	<string>Product information not available on the work order.</string>
+	<key>IPAD005_TAG003</key>
+	<string>No view process available for the logged in user</string>
+	<key>IPAD014_TAG030</key>
+	<string>This schedule is overlapping with the following event(s). Are you sure you want to continue?</string>
+	<key>IPAD006_TAG001</key>
+	<string>Tasks</string>
+	<key>IPAD006_TAG002</key>
+	<string>Schedule</string>
+	<key>IPAD006_TAG003</key>
+	<string>Day</string>
+	<key>IPAD006_TAG004</key>
+	<string>Week</string>
+	<key>IPAD006_TAG005</key>
+	<string>Today</string>
+	<key>IPAD006_TAG006</key>
+	<string>January</string>
+	<key>IPAD006_TAG008</key>
+	<string>Current Week</string>
+	<key>IPAD006_TAG009</key>
+	<string>Monday</string>
+	<key>IPAD006_TAG010</key>
+	<string>Tuesday</string>
+	<key>IPAD006_TAG011</key>
+	<string>Wednesday</string>
+	<key>IPAD006_TAG012</key>
+	<string>Thursday</string>
+	<key>IPAD006_TAG013</key>
+	<string>Friday</string>
+	<key>IPAD006_TAG014</key>
+	<string>Saturday</string>
+	<key>IPAD006_TAG015</key>
+	<string>Sunday</string>
+	<key>IPAD006_TAG017</key>
+	<string>February</string>
+	<key>IPAD006_TAG018</key>
+	<string>March</string>
+	<key>IPAD006_TAG019</key>
+	<string>April</string>
+	<key>IPAD006_TAG020</key>
+	<string>May</string>
+	<key>IPAD006_TAG021</key>
+	<string>June</string>
+	<key>IPAD006_TAG022</key>
+	<string>July</string>
+	<key>IPAD006_TAG023</key>
+	<string>August</string>
+	<key>IPAD006_TAG024</key>
+	<string>September</string>
+	<key>IPAD006_TAG025</key>
+	<string>October</string>
+	<key>IPAD006_TAG026</key>
+	<string>November</string>
+	<key>IPAD006_TAG027</key>
+	<string>December</string>
+	<key>IPAD006_TAG037</key>
+	<string>Yes</string>
+	<key>IPAD006_TAG038</key>
+	<string>No</string>
+	<key>IPAD006_TAG039</key>
+	<string>This event is not associated with any record</string>
+	<key>IPAD007_TAG001</key>
+	<string>Back</string>
+	<key>IPAD007_TAG002</key>
+	<string>Installed Product is not available on the work order</string>
+	<key>IPAD007_TAG003</key>
+	<string>Cancel</string>
+	<key>IPAD007_TAG004</key>
+	<string>Done</string>
+	<key>IPAD007_TAG005</key>
+	<string>Time Left To Restore</string>
+	<key>IPAD007_TAG006</key>
+	<string>Time Left To Resolve</string>
+	<key>IPAD008_TAG001</key>
+	<string>Chatter is either not enabled in your org or not enabled for Installed Products. Please contact your Salesforce administrator</string>
+	<key>IPAD008_TAG002</key>
+	<string>Chatter</string>
+	<key>IPAD008_TAG003</key>
+	<string>Post</string>
+	<key>IPAD008_TAG004</key>
+	<string>Today</string>
+	<key>IPAD008_TAG005</key>
+	<string>Yesterday</string>
+	<key>IPAD008_TAG006</key>
+	<string>Day Before Yesterday</string>
+	<key>IPAD008_TAG007</key>
+	<string>Share</string>
+	<key>IPAD009_TAG001</key>
+	<string>Version</string>
+	<key>IPAD009_TAG002</key>
+	<string>You are logged in to </string>
+	<key>IPAD009_TAG003</key>
+	<string>as</string>
+	<key>IPAD010_TAG001</key>
+	<string>Enter your task here:</string>
+	<key>IPAD010_TAG002</key>
+	<string>Set Priority:</string>
+	<key>IPAD010_TAG003</key>
+	<string>Low</string>
+	<key>IPAD010_TAG004</key>
+	<string>Normal</string>
+	<key>IPAD010_TAG005</key>
+	<string>High</string>
+	<key>IPAD010_TAG006</key>
+	<string>Cancel</string>
+	<key>IPAD010_TAG007</key>
+	<string>Unable to connect to the internet. Please retry action once the connection is available.</string>
+	<key>IPAD011_TAG001</key>
+	<string>ServiceMax</string>
+	<key>IPAD011_TAG002</key>
+	<string>OK</string>
+	<key>IPAD011_TAG003</key>
+	<string>Response Error</string>
+	<key>IPAD011_TAG004</key>
+	<string>Response</string>
+	<key>IPAD011_TAG005</key>
+	<string>Please fill the required fields</string>
+	<key>IPAD011_TAG006</key>
+	<string>Warning</string>
+	<key>IPAD011_TAG007</key>
+	<string>Authentication Error</string>
+	<key>IPAD012_TAG001</key>
+	<string>Tasks</string>
+	<key>IPAD012_TAG002</key>
+	<string>Track the tasks you plan to perform or have performed, such as making phone calls or sending mail.</string>
+	<key>IPAD012_TAG003</key>
+	<string>Create New...</string>
+	<key>IPAD012_TAG004</key>
+	<string>Create new Service Flow transactions such as Parts Orders or Work Orders</string>
+	<key>IPAD012_TAG005</key>
+	<string>Calendar</string>
+	<key>IPAD012_TAG006</key>
+	<string>View work orders and other activities assigned on your calendar.</string>
+	<key>IPAD012_TAG007</key>
+	<string>Map</string>
+	<key>IPAD012_TAG008</key>
+	<string>See today&apos;s work orders on a map and plan your route</string>
+	<key>IPAD012_TAG009</key>
+	<string>Recents</string>
+	<key>IPAD012_TAG010</key>
+	<string>View the list of recently created records</string>
+	<key>IPAD012_TAG011</key>
+	<string>Help</string>
+	<key>IPAD012_TAG012</key>
+	<string>Show ServiceMax help</string>
+	<key>IPAD012_TAG013</key>
+	<string>No events present for the day.</string>
+	<key>IPAD013_TAG001</key>
+	<string>No work order events assigned to you for this day.</string>
+	<key>IPAD013_TAG002</key>
+	<string>Work Order:</string>
+	<key>IPAD013_TAG003</key>
+	<string>Home Location</string>
+	<key>IPAD013_TAG004</key>
+	<string>Map Directions</string>
+	<key>IPAD013_TAG005</key>
+	<string>To</string>
+	<key>IPAD013_TAG006</key>
+	<string>Driving Directions</string>
+	<key>IPAD013_TAG008</key>
+	<string>Minutes</string>
+	<key>IPAD013_TAG007</key>
+	<string>Job Details</string>
+	<key>IPAD014_TAG001</key>
+	<string>Chatter</string>
+	<key>IPAD014_TAG002</key>
+	<string>Summary</string>
+	<key>IPAD014_TAG003</key>
+	<string>Share</string>
+	<key>IPAD014_TAG004</key>
+	<string>Post</string>
+	<key>IPAD014_TAG005</key>
+	<string>Troubleshooting</string>
+	<key>IPAD014_TAG006</key>
+	<string>Total Amount</string>
+	<key>IPAD014_TAG007</key>
+	<string>Service Report For</string>
+	<key>IPAD014_TAG008</key>
+	<string>Header Info</string>
+	<key>IPAD014_TAG009</key>
+	<string>Lines</string>
+	<key>IPAD014_TAG010</key>
+	<string>Additional Info</string>
+	<key>IPAD014_TAG011</key>
+	<string>Attachments</string>
+	<key>IPAD014_TAG012</key>
+	<string>Switch View</string>
+	<key>IPAD014_TAG013</key>
+	<string>Save</string>
+	<key>IPAD014_TAG014</key>
+	<string>Quick Save</string>
+	<key>IPAD014_TAG015</key>
+	<string>information</string>
+	<key>IPAD014_TAG016</key>
+	<string>Product History</string>
+	<key>IPAD014_TAG017</key>
+	<string>Account History</string>
+	<key>IPAD014_TAG024</key>
+	<string>Cancel</string>
+	<key>IPAD014_TAG025</key>
+	<string>Done</string>
+	<key>IPAD015_TAG001</key>
+	<string>Username</string>
+	<key>IPAD015_TAG002</key>
+	<string>Password</string>
+	<key>IPAD015_TAG003</key>
+	<string>I don&apos;t have a ServiceMax login. I want to sign-up for a free trial.</string>
+	<key>IPAD015_TAG004</key>
+	<string>Create Sample Data</string>
+	<key>IPAD016_TAG001</key>
+	<string>Product Manual</string>
+	<key>IPAD016_TAG002</key>
+	<string>Product manual not present.</string>
+	<key>IPAD017_TAG001</key>
+	<string>Map Directions</string>
+	<key>SERVICE_REPORT_EXPENSE_SECTION_TITLE</key>
+	<string>Expenses</string>
+	<key>SERVICE_REPORT_EXPENSES_LINE_PRICE</key>
+	<string>Line Price</string>
+	<key>SERVICE_REPORT_LABOR_HOURS_TITLE</key>
+	<string>Hours</string>
+	<key>SERVICE_REPORT_LABOR_LABOR_TITLE</key>
+	<string>Labor</string>
+	<key>SERVICE_REPORT_LABOR_SECTION_TITLE</key>
+	<string>Labor</string>
+	<key>SERVICE_REPORT_LINE_PRICE</key>
+	<string>Line Price</string>
+	<key>SERVICE_REPORT_PARTS_SECTION_TITLE</key>
+	<string>Parts</string>
+	<key>SERVICE_REPORT_PARTS_UNIT_PRICE_TITLE</key>
+	<string>Unit Price</string>
+	<key>SERVICE_REPORT_SNO</key>
+	<string>Sr. No.</string>
+	<key>SFM_ACTION_BUTTON_CANCEL_TITLE</key>
+	<string>Cancel</string>
+	<key>SFM_ACTIONPOPOVER_LIST_2</key>
+	<string>Troubleshooting</string>
+	<key>SFM_LEFT_PANE_SWITCH_PROCESS_POPOVER_TITLE</key>
+	<string>Switch View</string>
+	<key>SVMX_ORG_PREFIX</key>
+	<string>SVMX</string>
+	<key>IPAD014_TAG018</key>
+	<string>Field Not Accessible</string>
+	<key>IPAD014_TAG019</key>
+	<string>Invalid Email Id</string>
+	<key>IPAD014_TAG020</key>
+	<string>Invalid Url</string>
+	<key>IPAD014_TAG021</key>
+	<string>Search</string>
+	<key>IPAD014_TAG022</key>
+	<string>Search For</string>
+	<key>IPAD014_TAG023</key>
+	<string>Actions</string>
+	<key>IPAD004_TAG028</key>
+	<string>Service_Report_</string>
+	<key>IPAD004_TAG029</key>
+	<string>eMail</string>
+	<key>IPAD004_TAG030</key>
+	<string>Service_Report</string>
+	<key>IPAD006_TAG028</key>
+	<string>No View Layout has been configured for this object. Please contact the system administrator.</string>
+	<key>IPAD006_TAG029</key>
+	<string>MON</string>
+	<key>IPAD006_TAG030</key>
+	<string>TUE</string>
+	<key>IPAD006_TAG031</key>
+	<string>WED</string>
+	<key>IPAD006_TAG032</key>
+	<string>THU</string>
+	<key>IPAD006_TAG033</key>
+	<string>FRI</string>
+	<key>IPAD006_TAG034</key>
+	<string>SAT</string>
+	<key>IPAD006_TAG035</key>
+	<string>SUN</string>
+	<key>IPAD006_TAG036</key>
+	<string>This action will reschedule the selected event. Are you sure you want to continue?</string>
+	<key>IPAD005_TAG004</key>
+	<string>Try downloading the document when online.</string>
+	<key>IPAD008_TAG008</key>
+	<string>No Posts Available</string>
+	<key>IPAD008_TAG009</key>
+	<string>Error connecting to facetime user. Internet connection is not available.</string>
+	<key>IPAD008_TAG010</key>
+	<string>Invalid facetime configuration.</string>
+	<key>IPAD011_TAG008</key>
+	<string>Connection Error</string>
+	<key>IPAD011_TAG009</key>
+	<string>Switch User</string>
+	<key>IPAD011_TAG010</key>
+	<string>ServiceMax for iPad</string>
+	<key>IPAD011_TAG011</key>
+	<string>Application Error</string>
+	<key>IPAD011_TAG012</key>
+	<string>Synchronization error</string>
+	<key>IPAD011_TAG013</key>
+	<string>Invalid Configuration</string>
+	<key>IPAD012_TAG014</key>
+	<string>Sync</string>
+	<key>IPAD012_TAG015</key>
+	<string>Do synchronization, view sync conflicts, or view last sync status.</string>
+	<key>IPAD012_TAG016</key>
+	<string>Logout</string>
+	<key>IPAD012_TAG017</key>
+	<string>Show Login Screen</string>
+	<key>IPAD013_TAG009</key>
+	<string>Map is displayed only when internet connection is available. </string>
+	<key>IPAD014_TAG026</key>
+	<string>This SFM Process does not have a Page Layout</string>
+	<key>IPAD014_TAG027</key>
+	<string>This record does not meet the entry criteria for this SFM Process. Please select another process.</string>
+	<key>IPAD014_TAG028</key>
+	<string>Please sync with online before proceeding with this operation</string>
+	<key>IPAD014_TAG029</key>
+	<string>TrobleShooting and Summary</string>
+	<key>IPAD014_TAG033</key>
+	<string>Show All</string>
+	<key>IPAD014_TAG034</key>
+	<string>Views</string>
+	<key>IPAD014_TAG035</key>
+	<string>More</string>
+	<key>IPAD015_TAG005</key>
+	<string>Connecting as new user removes all the unsaved data. Application configuration will be downloaded and this may take some time. Are you sure you want to continue?</string>
+	<key>IPAD015_TAG006</key>
+	<string>Error connecting to ServiceMax. Internet connection is not available.</string>
+	<key>IPAD015_TAG007</key>
+	<string>This iPad App version requires the following ServiceMax version or above</string>
+	<key>IPAD015_TAG008</key>
+	<string>iPad App Version:</string>
+	<key>IPAD015_TAG009</key>
+	<string>ServiceMax Version:</string>
+	<key>IPAD018_TAG001</key>
+	<string>Invalid user credentials.</string>
+	<key>IPAD018_TAG002</key>
+	<string>Synchronize</string>
+	<key>IPAD018_TAG003</key>
+	<string>Status</string>
+	<key>IPAD018_TAG004</key>
+	<string>Online</string>
+	<key>IPAD018_TAG005</key>
+	<string>Mobile</string>
+	<key>IPAD018_TAG006</key>
+	<string>Record Id</string>
+	<key>IPAD018_TAG007</key>
+	<string>Error Message</string>
+	<key>IPAD018_TAG008</key>
+	<string>Select Change To Apply</string>
+	<key>IPAD018_TAG009</key>
+	<string>Synchronization Conflicts</string>
+	<key>IPAD018_TAG010</key>
+	<string>Data Synchronization</string>
+	<key>IPAD018_TAG011</key>
+	<string>Sync Configuration</string>
+	<key>IPAD018_TAG012</key>
+	<string>Sync Events</string>
+	<key>IPAD018_TAG013</key>
+	<string>Sync Data</string>
+	<key>IPAD018_TAG014</key>
+	<string>Configuration Synchronization</string>
+	<key>IPAD018_TAG015</key>
+	<string>Event Synchronization</string>
+	<key>IPAD018_TAG016</key>
+	<string>Last Sync Time</string>
+	<key>IPAD018_TAG017</key>
+	<string>Next Sync Time</string>
+	<key>IPAD018_TAG018</key>
+	<string>Last Sync Status</string>
+	<key>IPAD018_TAG019</key>
+	<string>The referred record does not exist</string>
+	<key>IPAD018_TAG020</key>
+	<string>Synchronization failed</string>
+	<key>IPAD018_TAG021</key>
+	<string>Synchronization succeeded</string>
+	<key>IPAD018_TAG022</key>
+	<string>Synchronization in progress...</string>
+	<key>IPAD018_TAG023</key>
+	<string>Synchronization completed successfully</string>
+	<key>IPAD018_TAG024</key>
+	<string>Choose an object to view sync errors</string>
+	<key>IPAD018_TAG025</key>
+	<string>Synchronization failed. Correct the errors and try again.</string>
+	<key>IPAD018_TAG026</key>
+	<string>Sync Status</string>
+	<key>IPAD018_TAG027</key>
+	<string>Hold</string>
+	<key>IPAD018_TAG028</key>
+	<string>Undo</string>
+	<key>IPAD018_TAG030</key>
+	<string>Full Data Synchronization</string>
+	<key>IPAD015_TAG010</key>
+	<string>Continue</string>
+	<key>IPAD011_TAG014</key>
+	<string>Copy to Clipboard</string>
+	<key>IPAD011_TAG015</key>
+	<string>System Error</string>
+	<key>IPAD011_TAG016</key>
+	<string>Functional Error</string>
+	<key>IPAD011_TAG017</key>
+	<string>Type of Error</string>
+	<key>IPAD012_TAG018</key>
+	<string>Now downloading SFM Transactions</string>
+	<key>IPAD012_TAG019</key>
+	<string>Downloading Mobile Configuration</string>
+	<key>IPAD012_TAG020</key>
+	<string>Now downloading SFM page layouts</string>
+	<key>IPAD012_TAG021</key>
+	<string>Downloading Mobile Configuration</string>
+	<key>IPAD012_TAG022</key>
+	<string>Now downloading object definitions</string>
+	<key>IPAD012_TAG023</key>
+	<string>Downloading Mobile Configuration</string>
+	<key>IPAD012_TAG024</key>
+	<string>Now downloading object definitions</string>
+	<key>IPAD012_TAG025</key>
+	<string>Downloading Mobile Configuration</string>
+	<key>IPAD012_TAG026</key>
+	<string>Now downloading picklists</string>
+	<key>IPAD012_TAG027</key>
+	<string>Downloading Mobile Configuration</string>
+	<key>IPAD012_TAG028</key>
+	<string>Now downloading picklists</string>
+	<key>IPAD012_TAG029</key>
+	<string>Downloading Mobile Configuration</string>
+	<key>IPAD012_TAG030</key>
+	<string>Now downloading SFM wizards</string>
+	<key>IPAD012_TAG031</key>
+	<string>Downloading Mobile Configuration</string>
+	<key>IPAD012_TAG033</key>
+	<string>Created Date</string>
+	<key>IPAD012_TAG034</key>
+	<string>Now downloading configuration settings</string>
+	<key>IPAD012_TAG035</key>
+	<string>Downloading Mobile Configuration</string>
+	<key>IPAD012_TAG036</key>
+	<string></string>
+	<key>IPAD012_TAG032</key>
+	<string>See More</string>
+	<key>IPAD012_TAG038</key>
+	<string>Now downloading dependent picklists</string>
+	<key>IPAD012_TAG039</key>
+	<string>Downloading Mobile Configuration</string>
+	<key>IPAD012_TAG040</key>
+	<string>Assessing volume of data to download</string>
+	<key>IPAD012_TAG041</key>
+	<string>Downloading Data</string>
+	<key>IPAD012_TAG042</key>
+	<string>Assessing volume of data to download</string>
+	<key>IPAD012_TAG043</key>
+	<string>Downloading Data</string>
+	<key>IPAD012_TAG044</key>
+	<string>Setting up batches to download</string>
+	<key>IPAD012_TAG045</key>
+	<string>Downloading Data</string>
+	<key>IPAD012_TAG046</key>
+	<string>Downloading records</string>
+	<key>IPAD012_TAG047</key>
+	<string>Downloading Data</string>
+	<key>IPAD012_TAG048</key>
+	<string>Setting up downloaded records for offline use</string>
+	<key>IPAD012_TAG049</key>
+	<string>Downloading Data</string>
+	<key>IPAD012_TAG050</key>
+	<string> </string>
+	<key>IPAD012_TAG051</key>
+	<string> </string>
+	<key>IPAD012_TAG052</key>
+	<string>Retry</string>
+	<key>IPAD012_TAG053</key>
+	<string>I will try later</string>
+	<key>IPAD012_TAG054</key>
+	<string>Initial Setup: Preparing application for the first time use</string>
+	<key>IPAD012_TAG055</key>
+	<string>Step</string>
+	<key>IPAD012_TAG056</key>
+	<string>of</string>
+	<key>IPAD019_TAG001</key>
+	<string>ServiceMax Search</string>
+	<key>IPAD019_TAG002</key>
+	<string>Search for records in local database and in server, based on pre-configured searches.</string>
+	<key>IPAD019_TAG003</key>
+	<string>Search Criteria</string>
+	<key>IPAD019_TAG004</key>
+	<string> Include online results</string>
+	<key>IPAD019_TAG005</key>
+	<string>Enter keyword here...</string>
+	<key>IPAD019_TAG006</key>
+	<string>Go!</string>
+	<key>IPAD019_TAG007</key>
+	<string>Search Results</string>
+	<key>IPAD019_TAG008</key>
+	<string>Contains</string>
+	<key>IPAD019_TAG009</key>
+	<string>Exact Match</string>
+	<key>IPAD019_TAG010</key>
+	<string>Ends With</string>
+	<key>IPAD019_TAG011</key>
+	<string>Starts With</string>
+	<key>IPAD019_TAG012</key>
+	<string>Close</string>
+	<key>IPAD018_TAG031</key>
+	<string>Internet connectivity lost. Please retry when connectivity is available</string>
+	<key>IPAD018_TAG032</key>
+	<string>Configuration sync is due</string>
+	<key>IPAD018_TAG033</key>
+	<string>Sync Now</string>
+	<key>IPAD015_TAG011</key>
+	<string>Your Salesforce Profile is not associated with any active ServiceMax Group Profile. Please contact your ServiceMax administrator to resolve this.</string>
+	<key>IPAD015_TAG012</key>
+	<string>Your remote access has been revoked.Please navigate back to the home screen to logout and re-authenticate.</string>
+	<key>IPAD018_TAG040</key>
+	<string>Retry</string>
+	<key>IPAD018_TAG037</key>
+	<string>Retry</string>
+	<key>IPAD018_TAG035</key>
+	<string>Remove</string>
+	<key>IPAD018_TAG039</key>
+	<string>Hold</string>
+	<key>IPAD018_TAG043</key>
+	<string>Apply My</string>
+	<key>IPAD018_TAG038</key>
+	<string>Get From</string>
+	<key>IPAD018_TAG044</key>
+	<string>changes</string>
+	<key> IPAD018_TAG041</key>
+	<string>Are you sure you want to synchronize configuration?</string>
+	<key> IPAD018_TAG042</key>
+	<string>Are you sure you want to reset application?</string>
+	<key>IPAD012_TAG057</key>
+	<string>Meta sync failed due to too many script. Please contact your system administrator.</string>
+	<key>IPAD006_TAG040</key>
+	<string>Edit Event</string>
+	<key>IPAD014_TAG031</key>
+	<string>Related To</string>
+	<key>IPAD014_TAG032</key>
+	<string>Data required for price calculation is not available. Please try when online.</string>
+	<key>IPAD024_TAG001</key>
+	<string>Error in Upload</string>
+	<key>IPAD024_TAG002</key>
+	<string>Error in Download</string>
+	<key>IPAD024_TAG003</key>
+	<string>Tap to Download</string>
+	<key>IPAD024_TAG004</key>
+	<string>Documents</string>
+	<key>IPAD024_TAG005</key>
+	<string>Select</string>
+	<key>IPAD024_TAG006</key>
+	<string>Documents List</string>
+	<key>IPAD024_TAG007</key>
+	<string>Delete Permanently</string>
+	<key>IPAD024_TAG008</key>
+	<string>Add Photo or Video</string>
+	<key>IPAD024_TAG009</key>
+	<string>Photos and Videos</string>
+	<key>IPAD024_TAG010</key>
+	<string>Add from Camera Roll</string>
+	<key>IPAD024_TAG011</key>
+	<string>Take new picture</string>
+	<key>IPAD024_TAG012</key>
+	<string>Take 30 second video</string>
+	<key>IPAD024_TAG013</key>
+	<string>This image is too large. Please select another.</string>
+	<key>IPAD024_TAG014</key>
+	<string>This video is too large. Videos may not exceed 30 seconds in length.</string>
+	<key>IPAD024_TAG015</key>
+	<string>The item you selected could not be found on your device. It may have been moved or deleted.</string>
+	<key>IPAD018_TAG034</key>
+	<string>Reset Application</string>
+	<key>IPAD020_TAG001</key>
+	<string>Show</string>
+	<key>IPAD020_TAG002</key>
+	<string>Records</string>
+	<key>EVER005_TAG087</key>
+	<string>Price not calculated, because entitlement check has not been performed</string>
+	<key>SFM002_TAG033</key>
+	<string>SFM Transaction Manager</string>
+	<key>SFM002_TAG073</key>
+	<string>Error Details</string>
+	<key>IPAD024_TAG016</key>
+	<string>Downloading...</string>
+	<key>IPAD024_TAG017</key>
+	<string>The selected item(s) will be permanently deleted from the work order.</string>
+	<key>IPAD024_TAG018</key>
+	<string>File corruption error has occurred during download</string>
+	<key>IPAD024_TAG019</key>
+	<string>File not found. Please perform a data sync and try again</string>
+	<key>IPAD024_TAG020</key>
+	<string>The file could not be saved to the local device. Please check your available device storage</string>
+	<key>IPAD024_TAG021</key>
+	<string>Unauthorized Access. You do not have permission to perform this action</string>
+	<key>IPAD024_TAG022</key>
+	<string>The network connection has timed out. Please try again later</string>
+	<key>IPAD024_TAG023</key>
+	<string>An unknown error has occurred. Please try again later</string>
+	<key>IPAD024_TAG024</key>
+	<string>This action cannot be undone.</string>
+	<key>IPAD024_TAG025</key>
+	<string>Delete</string>
+	<key>IPAD014_TAG076</key>
+	<string>Limit to</string>
+</dict>
+</plist>

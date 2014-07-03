@@ -1,0 +1,34 @@
+*******************************************
+Release Notes Starts For Version 14.39.103
+===========================================
+
+
+
+-------------
+Fixed Defects
+-------------
+
+9090 : Service contract expiration date not honored by Get Price
+
+11309: Recents history stops functioning correctly after it reaches 100 items.
+
+
+-------------
+Known Issues
+-------------
+
+Unit test is in progress from client and QA side.
+
+---------------------
+Features Implemented
+---------------------
+Sum 14 
+
+
+
+---------------------
+Additional Notes
+---------------------
+
+
+
