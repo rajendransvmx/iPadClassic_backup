@@ -1,0 +1,32 @@
+*******************************************
+Release Notes Starts For Version 14.39.102
+===========================================
+
+
+
+-------------
+Fixed Defects
+-------------
+
+Field Level Merge - Code Changes
+
+
+-------------
+Known Issues
+-------------
+
+Unit test is in progress from client and QA side.
+
+---------------------
+Features Implemented
+---------------------
+Sum 14 
+
+
+
+---------------------
+Additional Notes
+---------------------
+
+
+
