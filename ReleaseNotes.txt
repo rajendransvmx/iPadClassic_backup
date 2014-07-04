@@ -1,0 +1,32 @@
+*******************************************
+Release Notes Starts For Version 14.39.104
+===========================================
+
+
+
+-------------
+Fixed Defects
+-------------
+
+iPad Mobile - Attached image getting squashed after SAVE.
+
+
+-------------
+Known Issues
+-------------
+
+Unit test is in progress from client and QA side.
+
+---------------------
+Features Implemented
+---------------------
+Sum 14 
+
+
+
+---------------------
+Additional Notes
+---------------------
+
+
+
