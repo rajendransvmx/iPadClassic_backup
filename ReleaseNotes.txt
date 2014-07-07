@@ -1,0 +1,32 @@
+*******************************************
+Release Notes Starts For Version 14.39.105
+===========================================
+
+
+
+-------------
+Fixed Defects
+-------------
+
+11246 : SFM Search throws functional error if search criteria are on user name, and name contains single quotes
+ 11447 :  Biz rules are not fired in latest build
+
+-------------
+Known Issues
+-------------
+
+
+
+---------------------
+Features Implemented
+---------------------
+Sum 14 
+
+
+
+---------------------
+Additional Notes
+---------------------
+
+
+
