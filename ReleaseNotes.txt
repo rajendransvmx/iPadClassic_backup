@@ -1,0 +1,34 @@
+*******************************************
+Release Notes Starts For Version 14.39.106
+===========================================
+
+
+
+-------------
+Fixed Defects
+-------------
+
+App icons are added from Doug and colby for Sum 14
+
+Changed App Bundle identifier
+
+
+-------------
+Known Issues
+-------------
+
+
+
+---------------------
+Features Implemented
+---------------------
+Sum 14 
+
+
+
+---------------------
+Additional Notes
+---------------------
+
+
+
