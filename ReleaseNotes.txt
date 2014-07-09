@@ -1,0 +1,39 @@
+*******************************************
+Release Notes Starts For Version 14.39.107
+===========================================
+
+
+
+-------------
+Fixed Defects
+-------------
+
+11514 : Special Character-Single quote ' is not handled in SFM Search
+
+11429 : Select Items and NN Items Selected functionality not implemente
+
+11450 : If a mail is not configure then popup should come to configure the email account.
+
+
+
+
+
+-------------
+Known Issues
+-------------
+
+
+
+---------------------
+Features Implemented
+---------------------
+Sum 14 
+
+
+
+---------------------
+Additional Notes
+---------------------
+
+
+
