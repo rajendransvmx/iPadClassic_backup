@@ -1,0 +1,40 @@
+*******************************************
+Release Notes Starts For Version 14.39.108
+===========================================
+
+
+
+-------------
+Fixed Defects
+-------------
+
+011366 :Update of Contact in iPad is failing with error "Account ID: id value of   incorrect type: A442B859-2548-4A03-974B-CDB7F8F122C9
+10180 : Reset application brings events outside the event window 
+11510: Warranty related to ID are not getting downloaded in Data sync
+
+11435: When a document made private and try to download the same in attachment, the message displayed is not consistent across 
+
+NS Log for Attachment Sharing 
+
+
+Memory Optimization
+
+-------------
+Known Issues
+-------------
+
+
+
+---------------------
+Features Implemented
+---------------------
+Sum 14 
+
+
+
+---------------------
+Additional Notes
+---------------------
+
+
+
