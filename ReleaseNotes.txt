@@ -1,0 +1,33 @@
+*******************************************
+Release Notes Starts For Version 14.39.109
+===========================================
+
+
+
+-------------
+Fixed Defects
+-------------
+
+9456 : When the Privacy settings in Photos is off for ServiceMax app, the uploading existing file shows a blank Error message
+
+11524: App throws conflict even though different details lines of same work order are updated
+
+-------------
+Known Issues
+-------------
+
+
+
+---------------------
+Features Implemented
+---------------------
+Sum 14 
+
+
+
+---------------------
+Additional Notes
+---------------------
+
+
+
