@@ -1,0 +1,33 @@
+*******************************************
+Release Notes Starts For Version 14.39.110
+===========================================
+
+
+
+-------------
+Fixed Defects
+-------------
+
+ 9208 : Is Not Null operator does not work in ServiceMax Search's filter criteria for picklist data type.
+
+11436:iOS6-User cannot proceed working on application when tap on disallow,on Assign Contact
+
+-------------
+Known Issues
+-------------
+
+
+
+---------------------
+Features Implemented
+---------------------
+Sum 14 
+
+
+
+---------------------
+Additional Notes
+---------------------
+
+
+
