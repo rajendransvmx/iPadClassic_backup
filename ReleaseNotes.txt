@@ -1,0 +1,38 @@
+*******************************************
+Release Notes Starts For Version 14.39.111
+===========================================
+
+
+
+-------------
+Fixed Defects
+-------------
+
+  
+11595 : Data base error during opdoc generation if user name has double byte characters
+
+9208 : Is Not Null operator does not work in ServiceMax Search's filter criteria for picklist data type.Values is trimmed for white space and then evaluated with the empty string.
+
+Memory optimization in Advanced Conflict - Field Level Merging.
+
+Updated tags for attachment sharing
+
+-------------
+Known Issues
+-------------
+
+
+
+---------------------
+Features Implemented
+---------------------
+Sum 14 
+
+
+
+---------------------
+Additional Notes
+---------------------
+
+
+
