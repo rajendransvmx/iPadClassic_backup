@@ -1,0 +1,44 @@
+*******************************************
+Release Notes Starts For Version 14.39.112
+===========================================
+
+
+
+-------------
+Fixed Defects
+-------------
+
+  
+11637: Sync not trigging after deleting lines and tapping on save and Quick Save
+
+11436: Print Option with cancel
+
+             1. Increase video limit to 2mins from 30 sec  
+
+              2. Dough to share default image for the attachment files un identified
+
+
+11639 : Check box mapping is not respected in lookup form fill
+
+
+11619 :Any photo that was taken in portrait mode rotates into landscape after being added.
+
+-------------
+Known Issues
+-------------
+
+
+
+---------------------
+Features Implemented
+---------------------
+Sum 14 
+
+
+
+---------------------
+Additional Notes
+---------------------
+
+
+
