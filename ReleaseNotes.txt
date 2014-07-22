@@ -1,0 +1,34 @@
+*******************************************
+Release Notes Starts For Version 14.40.001
+===========================================
+
+
+
+-------------
+Fixed Defects
+-------------
+
+  
+11611 : App should not throw conflict if same values are set for a field from both iPad and server
+11650 : Default view process is displayed on saving a record
+
+
+-------------
+Known Issues
+-------------
+
+
+
+---------------------
+Features Implemented
+---------------------
+Sum 14 
+
+
+
+---------------------
+Additional Notes
+---------------------
+
+
+
