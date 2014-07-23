@@ -1,0 +1,39 @@
+*******************************************
+Release Notes Starts For Version 14.40.002
+===========================================
+
+
+
+-------------
+Fixed Defects
+-------------
+
+  
+011644: SFM Output Doc: Last zeroes in Precision Scale are not being displayed in Smart Doc
+
+011686 : Handled single quote in the value field
+
+11501 : Config sync continues even after tapping option 'I will try Later'
+
+11012  : Data Purge Tag in Synchronization menu doesn't get refreshed after config sync at times
+
+
+-------------
+Known Issues
+-------------
+
+
+
+---------------------
+Features Implemented
+---------------------
+Sum 14 
+
+
+
+---------------------
+Additional Notes
+---------------------
+
+
+
