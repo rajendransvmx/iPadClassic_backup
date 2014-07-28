@@ -1,0 +1,33 @@
+*******************************************
+Release Notes Starts For Version 14.40.006
+===========================================
+
+
+
+-------------
+Fixed Defects
+-------------
+
+  
+11758: On iPad login page if user taps on salesforce link ,it opens up in the web view
+
+
+-------------
+Known Issues
+-------------
+
+
+
+---------------------
+Features Implemented
+---------------------
+Sum 14 
+
+
+
+---------------------
+Additional Notes
+---------------------
+
+
+
