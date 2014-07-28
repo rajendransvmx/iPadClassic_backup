@@ -1,0 +1,32 @@
+*******************************************
+Release Notes Starts For Version 14.40.005
+===========================================
+
+
+
+-------------
+Fixed Defects
+-------------
+
+  
+Defect 011698 - Conflict is not getting cleared even though user has corrected the record
+
+-------------
+Known Issues
+-------------
+
+
+
+---------------------
+Features Implemented
+---------------------
+Sum 14 
+
+
+
+---------------------
+Additional Notes
+---------------------
+
+
+
