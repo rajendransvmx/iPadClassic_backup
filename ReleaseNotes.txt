@@ -1,0 +1,35 @@
+*******************************************
+Release Notes Starts For Version 14.49.001
+===========================================
+
+
+
+-------------
+Fixed Defects
+-------------
+
+010797 : Calendar on iPad has the word 'Noon' in all languages.
+
+This "Noon" is converted into "12 PM"
+
+
+
+-------------
+Known Issues
+-------------
+
+
+
+---------------------
+Features Implemented
+---------------------
+Sum 14 SP
+
+
+
+---------------------
+Additional Notes
+---------------------
+
+
+
