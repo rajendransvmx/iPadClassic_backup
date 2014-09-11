@@ -1,0 +1,42 @@
+*******************************************
+Release Notes Starts For Version 14.49.100
+===========================================
+
+
+
+-------------
+Fixed Defects
+-------------
+
+  
+11766: Config sync does not download new image added to output doc.
+
+9794: On iPad "is Billable flag" remains checked though Work orders with Billing Type of Warranty or Contract.
+
+8590:Child SFM is not working when Enable sync is set to ON.
+
+11782: App does not show up the data for record when we switch the users
+
+11448: iPad Mobile - Attached Video getting compressed after SAVE.
+
+11934 : Genrated Service Report has incorrect data from Work Order
+
+-------------
+Known Issues
+-------------
+
+
+
+---------------------
+Features Implemented
+---------------------
+Sum 14 SP
+
+
+
+---------------------
+Additional Notes
+---------------------
+
+
+
