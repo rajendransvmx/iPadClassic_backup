@@ -1,0 +1,34 @@
+*******************************************
+Release Notes Starts For Version 14.49.101
+===========================================
+
+
+
+-------------
+Fixed Defects
+-------------
+
+ 10128 : If custom webservice call fails on new record, in such cases data sync does not go through
+
+ Noon text font changed
+
+
+-------------
+Known Issues
+-------------
+
+
+
+---------------------
+Features Implemented
+---------------------
+Sum 14 SP
+
+
+
+---------------------
+Additional Notes
+---------------------
+
+
+
