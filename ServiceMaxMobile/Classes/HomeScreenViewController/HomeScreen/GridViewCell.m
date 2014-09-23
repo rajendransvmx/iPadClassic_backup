@@ -25,7 +25,10 @@
     {
         // Initialization code
         self.columnCount = 1;
-        isNotIOS7 = floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1;
+     //   isNotIOS7 = floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1;
+        //iOS 8 crash fix
+        
+        isNotIOS7 = ([[[UIDevice currentDevice] systemVersion] integerValue] < 7 || [[[UIDevice currentDevice] systemVersion] integerValue] >= 8);
     }
     
     return self;
