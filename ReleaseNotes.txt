@@ -1,0 +1,31 @@
+*******************************************
+Release Notes Starts For Version 14.50.001
+===========================================
+
+
+
+-------------
+Fixed Defects
+-------------
+
+11934: Genrated Service Report has incorrect data from Work Order
+
+-------------
+Known Issues
+-------------
+
+
+
+---------------------
+Features Implemented
+---------------------
+Sum 14 SP
+
+
+
+---------------------
+Additional Notes
+---------------------
+
+
+
