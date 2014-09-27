@@ -1,0 +1,61 @@
+*******************************************
+Release Notes Starts For Version 14.50.003
+===========================================
+
+
+
+-------------
+Fixed Defects
+-------------
+
+Crashes:
+
+Version Supporting -Fixed
+Language Support - Fixed
+iOS8 -initial sync crashLib xml( Invalid because of Apple SDk)  - Not  reproving
+
+When sync in progress if we try to perform any actions like adding an event or editing a record , app crashes. But there is no crash details updated in device or console logs. 2 logs attached out of 5 crashes observed.The crashes are not consistent on following same steps. Not reproving
+
+During reset application, switched from offline to online mode twice. Then on switching to online mode app is not detecting connectivity followed by crash. Not reproving
+
+invoked Linked SfM , got not meeting qualifying criteria message Not reproving
+
+Tapped on map button when sync in progress - Memory related crash Not consistent
+
+
+ Attachment - cancel print hang/crash 
+-------------- 
+Select any image form Photos and videos section form sharing option, tap on print. Select available printer and navigate back and tap on cancel. 
+The app displays blank white screen or sometimes crashes. 
+Note:No crash logs are generated though verbose are On. 
+
+Scenario5:App Crash 
+-------------- 
+App closes by itself when: 
+i)App is in ideal state 
+ii)Select any image for printing and do cancel print 
+
+Sharing dialog appears in vertical position 
+-------------- 
+Sharing dialog in iOS8 changed 
+
+
+-------------
+Known Issues
+-------------
+
+
+
+---------------------
+Features Implemented
+---------------------
+Sum 14 SP
+
+
+
+---------------------
+Additional Notes
+---------------------
+
+
+
