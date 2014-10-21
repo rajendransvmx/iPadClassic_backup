@@ -208,6 +208,18 @@
 	[request setValue:postLength forHTTPHeaderField:@"Content-Length"];
 	[request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
 	[request setHTTPBody:postData];
+    
+    /*
+     Anil Kumar - 20 / Oct / 2014
+     Fixed defect #012319 -  Unable to login to the app, tapping on 'Allow' in salesforce authentication page app logs out
+     Refernce : https://help.salesforce.com/HTViewHelpDoc?id=remoteaccess_using_openid.htm&language=en_US
+     */
+    if (appDelegate.session_Id != nil)
+    {
+        NSString *tokenWithPrefix = [@"OAuth " stringByAppendingString:appDelegate.session_Id];
+        [request setValue:tokenWithPrefix forHTTPHeaderField:@"Authorization"];
+    }
+
 	
 	NSError *error = nil;
 	NSURLResponse *response = nil;
