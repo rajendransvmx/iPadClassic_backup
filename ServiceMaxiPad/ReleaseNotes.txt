@@ -1,0 +1,67 @@
+*******************************************
+Release Notes Starts For Version 14.58.006
+===========================================
+-------------
+Fixed Defects
+-------------
+1. 12311 - Partner Portal user is unable to login to iPad app.
+2. 12282 - Case Number is not dislaying on screen header.
+-------------
+Known Issues
+-------------
+
+SFM-View
+1. Attachment will not be listed under SFMPage master view
+2. Winter 15 defects are not fixed
+3. Screen refresh after sync is not implemented
+4. Online search in Product/Account is not implemented
+5. Precision handling is not done for number, currency and percentage fields.
+6. Data loading in background is not implemented
+7. Dependent picklist is not itegrated - WS call skipped
+
+SFM-Edit
+
+1. Save
+2. Add and Remove child lines
+3. Value mapping and field mapping
+4. Source To Target and Source to target child only
+5. Precision handling for number, currency and percentage fields
+6. Dependency on multi pick list
+7. Barcode in lookup
+8. Readonly boolean fields are not supported
+9. Field data validation is not supported on any type of field.
+
+---------------------
+Features Implemented
+---------------------
+
+1. Login
+2. Initial Sync
+3. Home
+4. Logout
+5. Manual Data Sync
+6. Scheduled Data Sync
+7. Manual Config Sync
+8. About
+9. Reset Application
+10. Connectivity
+11. SFM View
+12. Switch View
+13. Actions
+14. Product  History
+15. Account History
+16. Work Order Debrief
+17. SFMEdit
+18. LookupFields
+19. PickList
+20. Dependent Picklist
+21. Tasks
+22. TroubleShooting
+
+---------------------
+Additional Notes
+---------------------
+
+- This build using SVMXDEV as org name space.
+
+

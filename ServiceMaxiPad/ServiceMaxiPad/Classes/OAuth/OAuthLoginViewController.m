@@ -1,0 +1,408 @@
+//
+//  OAuthLoginViewController.m
+//  ServiceMaxMobile
+//
+//  Created by Vipindas on 4/3/14.
+//  Copyright (c) 2014 ServiceMax, Inc. All rights reserved.
+//
+/**
+ *  @file   OAuthLoginViewController.m
+ *  @class  OAuthLoginViewController
+ *
+ *  @brief  Load OAuth authentication page.
+ *
+ *
+ *  @author  Vipindas Palli
+ *
+ *  @bug     No known bugs.
+ *
+ *  @copyright 2014 ServiceMax, Inc. All rights reserved.
+ *
+ **/
+
+
+#import "OAuthLoginViewController.h"
+#import "PlistManager.h"
+#import "StringUtil.h"
+#import "SNetworkReachabilityManager.h"
+#import "AppManager.h"
+#import "OAuthService.h"
+#import "SMAppDelegate.h"
+#import "AlertMessageHandler.h"
+
+#import "MBProgressHUD.h"
+@interface OAuthLoginViewController ()
+{
+    BOOL loadFailedBool;
+}
+
+@property (nonatomic, strong)UIWebView *webview;
+@property (nonatomic, strong)UIImageView *servicemaxLogo;
+@property (nonatomic, strong)MBProgressHUD *HUD;
+
+- (void)addActivityAndLoadingLabel;
+- (void)removeActivityAndLoadingLabel;
+
+- (void)addServiceMaxLogo;
+- (void)removeServiceMaxLogo;
+
+@end
+
+@implementation OAuthLoginViewController
+
+NSInteger webViewLoadCounter;
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    self.view.backgroundColor = [UIColor colorWithRed:42.0/255.0 green:148.0/255.0 blue:214.0/255.0 alpha:1.0];
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+}
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
+{
+    return YES;
+}
+
+- (void)addServiceMaxLogo
+{
+    if (self.servicemaxLogo == nil)
+    {
+        self.servicemaxLogo = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"login-servicemax-logo.png"]];
+    }
+    //CGFloat imageWidth = 350;
+    CGFloat imageHeight = 66;
+    //rectForImageLogo.origin = CGPointMake(self.view.bounds.size.width-imageWidth, 0);
+    //rectForImageLogo.origin = CGPointMake(self.view.center.x-(imageWidth/2), 0);
+    //rectForImageLogo.size = CGSizeMake(imageWidth, imageHeight);
+    CGRect rectForImageLogo = CGRectMake(0, 20, self.view.bounds.size.width,imageHeight);
+    self.servicemaxLogo.frame = rectForImageLogo;
+    self.servicemaxLogo.contentMode = UIViewContentModeScaleAspectFit;
+    self.servicemaxLogo.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    self.servicemaxLogo.layer.borderColor = [UIColor greenColor].CGColor;
+	[self.view addSubview:self.servicemaxLogo];
+}
+
+
+- (void)removeServiceMaxLogo
+{
+    if (self.servicemaxLogo != nil)
+    {
+        [self.servicemaxLogo removeFromSuperview];
+        self.servicemaxLogo = nil;
+    }
+}
+
+/*
+ 1. User Authorization Request
+ 2. VerifyAuthorization Access code
+ */
+
+- (void)makeUserAuthorizationRequest
+{
+    [[AppManager sharedInstance] setApplicationStatus:ApplicationStatusInAuthenticationPage];
+    
+    if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable])
+    {
+        // If webview exist lets remove it from the view
+        if (self.webview)
+        {
+            self.webview.delegate = nil;
+            [self.webview removeFromSuperview];
+            webViewLoadCounter = 0;
+            self.webview = nil;
+        }
+        CGRect viewRect = self.view.bounds;
+        viewRect.origin.y =86; //Space for servicemaxlogo.
+        self.webview = [[UIWebView alloc]initWithFrame:viewRect];
+        self.webview.delegate = self;
+        [self.webview setScalesPageToFit:YES];
+        self.webview.autoresizesSubviews = YES;
+        self.webview.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+        self.webview.backgroundColor = [UIColor clearColor];
+        self.webview.opaque = NO;
+        
+        [self.view addSubview:self.webview];
+        [self addServiceMaxLogo];
+        
+        NSURL *url = [NSURL URLWithString:[OAuthService authorizationURLString]];
+        NSURLRequest *request = [NSURLRequest requestWithURL:url];
+        webViewLoadCounter = 0;
+        [self.webview loadRequest:request];
+        
+        [self addActivityAndLoadingLabel];
+    }
+    else
+    {
+        // Network is not reachable will go back to Launch Page
+        [self handleRequestFailedWithNetworkErrorEvent];
+    }
+}
+
+#pragma mark Activity Management
+
+- (void)addActivityAndLoadingLabel
+{
+    if (!self.HUD) {
+        self.HUD = [[MBProgressHUD alloc] initWithView:self.view];
+        [self.view addSubview:self.HUD];
+        // Set determinate mode
+        self.HUD.mode = MBProgressHUDModeIndeterminate;
+        self.HUD.labelText = @"Loading...";
+        [self.HUD show:YES];
+    }
+}
+
+- (void)removeActivityAndLoadingLabel
+{
+    if (self.HUD) {
+        [self.HUD hide:YES];
+        self.HUD = nil;
+    }
+}
+
+- (void)verifyCallBackURL:(NSURL *)callBackURL
+{
+    [self addActivityAndLoadingLabel];
+    
+    double delayInSeconds = 0.5;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+    
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+        //code to be executed on the main queue after delay
+        [OAuthService extractAccessCodeFromCallbackURL:callBackURL];
+    });
+}
+
+- (void)handleRequestFailedWithNetworkErrorEvent
+{
+    /**  Wooohh Internet not reachable */
+    [[AlertMessageHandler sharedInstance] showAlertMessageWithType:AlertMessageTypeInternetNotReachable
+                                                       andDelegate:nil];
+    [[AppManager sharedInstance] setApplicationStatus:ApplicationStatusInLaunchScreen];
+    [[AppManager sharedInstance] loadScreen];
+}
+
+#pragma mark UIWebViewDelegate implementation
+
+/**
+ * @name  webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
+ *
+ * @author Vipindas Palli
+ *
+ * @brief Load authentication web page with failure error
+ *
+ * \par
+ *  Custom URL schemes will typically cause a failure so we should handle those here
+ *
+ *
+ * @param  webView UIWebView Object
+ * @param  error NSError object
+ *
+ * @return void
+ *
+ */
+
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
+{
+    webViewLoadCounter--;
+    
+	NSString *failingURLString = [error.userInfo objectForKey:NSURLErrorFailingURLStringErrorKey];
+    
+	NSString *failureReason = [error.userInfo objectForKey:NSLocalizedDescriptionKey];
+    
+    NSLog(@" didFailLoadWithError : %@ \n %@", failureReason, failingURLString);
+    
+    [self removeActivityAndLoadingLabel];
+    
+	NSString *message;
+    
+	if (failureReason == nil)
+	{
+		message = failureReason;
+	}
+    else
+    {
+		message = [NSString stringWithFormat:@"%d %@",[error code], [error localizedDescription]];
+	}
+	
+    /**  Verifying  */
+	if ([failingURLString hasPrefix:kRedirectURL])
+	{
+		[webView stopLoading];
+        
+        NSLog(@" didFailLoadWithError : kRedirectURL");
+        
+        [OAuthService extractAccessCodeFromCallbackURL:[NSURL URLWithString:failingURLString]];
+        
+	}
+	else if ( [error code] != NSURLErrorCancelled )
+	{
+        if ( ! [[SNetworkReachabilityManager sharedInstance] isNetworkReachable])
+        {
+            /**  Wooohh Internet not reachable */
+            //[[AlertMessageHandler sharedInstance] showAlertMessageWithType:AlertMessageTypeInternetNotReachable
+            //    andDelegate:self];
+            [self handleRequestFailedWithNetworkErrorEvent];
+        }
+        else
+        {
+            if ([[PlistManager userPreferedPlatformName] caseInsensitiveCompare:kPreferenceOrganizationCustom] == NSOrderedSame)
+            {
+                //cannotFindHostMsg = @"A server with the specified hostname could not be found. Please check your custom host URL settings.";
+                
+                [[AlertMessageHandler sharedInstance] showAlertMessageWithType:AlertMessageTypeCannotFindCustomHost
+                                                                   andDelegate:self];
+            }
+            else
+            {
+                [[AlertMessageHandler sharedInstance] showAlertMessageWithType:AlertMessageTypeCannotFindHost
+                                                                   andDelegate:self];
+            }
+            
+            [[AppManager sharedInstance] completedLoginProcessWithStatus:ApplicationStatusAuthorizationFailedWithError];
+        }
+	}
+    
+	loadFailedBool = YES;
+}
+
+- (void)webViewDidStartLoad:(UIWebView *)webView
+{
+	loadFailedBool = NO;
+    webViewLoadCounter++;
+    NSLog(@" webViewDidStartLoad --- ");
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView
+{
+    webViewLoadCounter--;
+    [self performSelector:@selector(webViewFinishLoadWithCondition) withObject:nil afterDelay:0.05];
+	NSLog(@" webViewDidFinishLoad --- ");
+    
+}
+
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request
+ navigationType:(UIWebViewNavigationType)navigationType
+{
+    NSLog(@" navigationType  :%d", navigationType);
+    NSLog(@" absoluteString  :%@", [request.URL absoluteString]);
+    
+    /**
+     *  1. Forgot Password
+     *  2. Authorization Page
+     *  3. On success response
+     *  4. Error code 1800 - inn case of app idle
+     *  5. Logout
+     */
+    
+	if (navigationType == UIWebViewNavigationTypeLinkClicked)
+	{
+        // Krishna : Fixed With reference to defect 011758.
+        // Apart from Custom domain lets redirect to mobile safari.
+        // logout.jsp, because 'Not you?' in confirmation page should not redirect to mobile safari
+        if (![StringUtil containsString:@"logout.jsp" inString:[request.URL absoluteString]])
+		{
+            /**  User in forgot password page, lets redirect to mobile safari */
+			[[UIApplication sharedApplication] openURL:request.URL];
+            NSLog(@"Return NO : kRedirectURL %@", request.URL);
+            
+			return NO;
+		}
+	}
+    
+    if ([[request.URL absoluteString] hasPrefix:kRedirectURL])
+	{
+		[webView stopLoading];
+        NSLog(@"Return NO : kRedirectURL matches sfdc://success ");
+        
+        if ([[request.URL absoluteString] hasPrefix:@"sfdc://success?error=access_denied"])
+        {
+            /** User denied access. Lets go back to Authenitcation Page */
+            [self reloadAuthorization];
+        }
+        else
+        {
+            //[OAuthService extractAccessCodeFromCallbackURL:request.URL];
+            [self verifyCallBackURL:request.URL];
+        }
+		return NO;
+	}
+	
+    if ([StringUtil containsString:@"frontdoor.jsp" inString:[request.URL absoluteString]])
+	{
+        NSLog(@" OAuth : frontdoor.jsp");
+        
+        /** Loading Authorization web page now - user expect to press Allow or Deny */
+        
+        [[AppManager sharedInstance] setApplicationStatus:ApplicationStatusInAuthorizationPage];
+        [self removeServiceMaxLogo];
+	}
+    else if ([StringUtil containsString:@"oauth_error_code=1800" inString:[request.URL absoluteString]])
+	{
+        NSLog(@" OAuth :  oauth_error_code - 1800");
+        [self removeActivityAndLoadingLabel];
+        [self reloadAuthorization];
+	}
+	else if ([StringUtil containsString:@"logout.jsp" inString:[request.URL absoluteString]])
+	{
+        NSLog(@" OAuth :  logout.jsp");
+        [self reloadAuthorization];
+	}
+    else
+    {
+        NSLog(@"  OAuth - Yes. for url %@", [request.URL absoluteString]);
+    }
+    
+	return YES;
+}
+
+/**
+ * @name  reloadAuthorization
+ *
+ * @author Vipindas Palli
+ *
+ * @brief Reload OAuth authentication page
+ *
+ * \par
+ *  <Longer description starts here>
+ *
+ *
+ * @return void
+ *
+ */
+- (void)reloadAuthorization
+{
+    [OAuthService deleteSalesForceCookies];
+    [self makeUserAuthorizationRequest];
+}
+
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == 0 )
+	{
+        NSLog(@" AlertView for button ");
+    }
+}
+
+-(void)webViewFinishLoadWithCondition{
+    
+    if(webViewLoadCounter==0){
+        //We can be safe to treat this as place where everything is loaded.
+        if (([[AppManager sharedInstance] applicationStatus] == ApplicationStatusInAuthenticationPage))
+        {
+            [self removeActivityAndLoadingLabel];
+        }
+    }
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    self.webview.delegate = nil;
+}
+@end
