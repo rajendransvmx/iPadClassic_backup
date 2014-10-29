@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.iPad.XIB" version="3.0" toolsVersion="5053" systemVersion="13F34" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none">
+    <dependencies>
+        <deployment defaultVersion="1536" identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="AddOrEditTaskVC">
+            <connections>
+                <outlet property="cancelBarButton" destination="soD-Wu-Re0" id="VrZ-nd-hXe"/>
+                <outlet property="descriptionTextView" destination="Qv7-wy-y38" id="NLY-jY-F2A"/>
+                <outlet property="priorityTableView" destination="bEz-ie-gSi" id="v4w-N0-F9i"/>
+                <outlet property="saveBarButton" destination="BK1-2n-wgy" id="LmN-pE-KFP"/>
+                <outlet property="titleBarButtonItem" destination="uYF-bs-gpm" id="kRZ-AJ-aSv"/>
+                <outlet property="titleToolBar" destination="2GQ-78-Xog" id="Mgf-tl-PaV"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="768" height="460"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="2GQ-78-Xog">
+                    <rect key="frame" x="0.0" y="0.0" width="768" height="44"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                    <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                    <items>
+                        <barButtonItem title="Item" style="plain" id="soD-Wu-Re0" userLabel="Cancel">
+                            <color key="tintColor" red="1" green="0.17778025580000001" blue="0.26601686479999997" alpha="1" colorSpace="calibratedRGB"/>
+                            <connections>
+                                <action selector="cancelButtonClicked:" destination="-1" id="UWk-Lh-n2p"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="ua5-hU-1JX"/>
+                        <barButtonItem enabled="NO" title="Item" style="plain" id="uYF-bs-gpm" userLabel="Title">
+                            <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="3l8-OU-nKZ"/>
+                        <barButtonItem title="Item" style="plain" id="BK1-2n-wgy" userLabel="Save">
+                            <color key="tintColor" red="1" green="0.17778025580000001" blue="0.26601686479999997" alpha="1" colorSpace="calibratedRGB"/>
+                            <connections>
+                                <action selector="saveButtonClicked:" destination="-1" id="hNL-BN-sII"/>
+                            </connections>
+                        </barButtonItem>
+                    </items>
+                </toolbar>
+                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" text="This is where text goes..." id="Qv7-wy-y38">
+                    <rect key="frame" x="20" y="69" width="728" height="198"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                </textView>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="bEz-ie-gSi">
+                    <rect key="frame" x="20" y="275" width="728" height="165"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="wxk-Fq-BNi"/>
+                        <outlet property="delegate" destination="-1" id="jQE-RZ-FEa"/>
+                    </connections>
+                </tableView>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+        </view>
+    </objects>
+</document>

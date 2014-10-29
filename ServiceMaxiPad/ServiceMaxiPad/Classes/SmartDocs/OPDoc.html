@@ -1,0 +1,79 @@
+                               
+var config = {title : "SFM Output Documents - Delivery", version : "1.0.0",
+modules : [
+{ id : "com.servicemax.client.sfmconsole",version : "1.0.0" , codebase : client_console },
+{ id : "com.servicemax.client.runtime",version : "1.0.0" , codebase : client_runtime },
+{ id : "com.servicemax.client.mvc",version : "1.0.0" , codebase : client_mvc },
+{ id : "com.servicemax.client.sfmopdocdelivery",version : "1.0.0" , codebase : client_opdocdelivery },
+{ id : "com.servicemax.client.tablet.sal.sfmopdoc.model", version : "1.0.0" , codebase :client_opdocdelivery_model },
+{ id : "com.servicemax.client.sal.sfmconsole.model", version : "1.0.0" , codebase :client_sfmconsole_model }],
+                               
+"app-config" : {
+"application-id" : "console",
+"enable-cache" : true,
+"enable-log" : true,
+"org-name-space" : "SVCMAX",
+"allow-draft" : false,
+"allow-signatures" : true
+},
+
+"platform-config" : {
+
+}
+};
+
+/*,
+{ id : "com.servicemax.client.tablet.sal.sfmopdoc.model", version : "1.0.0" , codebase :client_opdocdelivery_model }
+*/
+
+// create a console logger
+new com.servicemax.client.lib.services.BrowserConsoleLogTarget();
+
+// create the client instance
+var client = new com.servicemax.client.lib.core.Client();
+
+// set up the session id
+client.addApplicationParameter("session-id", "xyzTest2");
+client.run({configType : "local", data : config, loadVersion : "debug" });
+}
+//);
+//       alert(client.run);
+
+function addParameters(recordId,processId)
+{
+    alert("Parameters add");
+    var uri = location.href;
+//    location.href = uri + "#?SVMX_recordId=" + recordId + "&SVMX_processId=DAMO_OPDOC_001";
+    location.href = uri + "#?SVMX_recordId=" + recordId + "&SVMX_processId=" + processId;
+}
+
+function finalizeMe()
+{
+    var x=document.getElementById("client_display_root");
+    var inrhtml = x.innerHTML;
+    var req = { ProcessId : "Pidx0001" , RecordId : "RecIdx0001" , HTMLContent : inrhtml };
+    Finalize(req,null, this);
+}
+
+function insertImage()
+{
+    var request = { ProcessId : "Pidx0001" , RecordId : "RecIdx0001" , UniqueName : "sign1" , ImgHeight : "100" , ImgWidth : "100" };
+    CaptureSignature(request,
+            function(response, eventName, context) {
+                document.getElementById('signature').src = response.path;
+            },
+            this);
+}
+
+        </script>
+    <body>
+        <div id="client_display_root">
+            <h1> HTML File loaded with Core library imports ! </h1>
+            <img id="signature" src="" height="100" width="200"></img>
+        </div>
+        <div> <button type="button" onclick="insertImage()">Sign here</button> </div>
+        <div> <button type="button" onclick="finalizeMe()">Finalize</button> </div>
+        <div> <br></br><br></br><button type="button" onclick="initiatejs()">Click Me developer!</button> </div>
+    </body>
+
+</html>

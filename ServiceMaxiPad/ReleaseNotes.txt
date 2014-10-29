@@ -1,0 +1,92 @@
+*******************************************
+Release Notes Starts For Version 14.58.009
+===========================================
+-------------
+Fixed Defects
+-------------
+None
+
+-------------
+Known Issues
+-------------
+
+SFM-View
+1. Attachment will not be listed under SFMPage master view
+2. Winter 15 defects are not fixed
+3. Screen refresh after sync is not implemented
+4. Online search in Product/Account is not implemented
+5. Precision handling is not done for number, currency and percentage fields.
+6. Data loading in background is not implemented
+7. Dependent Picklist is not integrated - WS call skipped
+
+SFM-Edit
+
+1. Save
+2. Add and Remove child lines
+3. Value mapping and field mapping
+4. Source To Target and Source to target child only
+5. Precision handling for number, currency and percentage fields
+6. Dependency on multi pick list
+7. Barcode in lookup
+8. Readonly boolean fields are not supported
+9. Field data validation is not supported on any type of field.
+
+Tasks
+1. Priority icons are template icons 
+
+Calendar
+1. Multi day events not supported
+2. Event Rescheduling by drag and drop supported. View editing not supported
+3. Calendar Actions are not supporting
+4. Create/Add events are not supporting
+5. Need to wait for data sync to completion to do next drag and drop rescheduling, other case we observed crashes 
+
+---------------------
+Fixed - Known Issues 
+--------------------- 
+ 1. Save 
+
+---------------------
+Features Implemented
+---------------------
+
+1. Login
+2. Initial Sync
+3. Home
+4. Logout
+5. Manual Data Sync
+6. Scheduled Data Sync
+7. Manual Config Sync
+8. About
+9. Reset Application
+10. Connectivity
+11. SFM View
+12. Switch View
+13. Actions
+14. Product  History
+15. Account History
+16. Work Order Debrief
+17. SFMEdit
+18. LookupFields
+19. PickList
+20. Dependent Picklist
+21. Tasks
+22. TroubleShooting
+23. Map  
+24. Calendar Day View 
+25. Calendar Week View 
+26. Calendar Month view 
+27. Event Rescheduling
+28. Push Logs  [New]
+29. SFM Search [New]
+30. Barcode Scanning [New]
+31. Location Ping [New]
+32. Stand alone Edit [New]
+---------------------
+Additional Notes
+---------------------
+
+- This build using SVMXDEV as org name space.
+- Integrated new Splash Screen and Login screen.
+
+

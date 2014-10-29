@@ -1,0 +1,147 @@
+//
+//  Plist Manager.h
+//  ServiceMaxMobile
+//
+//  Created by Naveen Vasu on 21/03/14.
+//  Copyright (c) 2014 ServiceMax. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+#import "AppManager.h"
+#import <CoreLocation/CoreLocation.h>
+
+extern  NSString *const kPreferenceIdentifier;
+extern  NSString *const kPreferenceOrganizationProduction;
+extern  NSString *const kPreferenceOrganizationSandbox;
+extern  NSString *const kPreferenceOrganizationCustom;
+
+@interface PlistManager : NSObject
+
++ (void)registerDefaultAppSettings;
++ (NSMutableDictionary *)getDefaultTags;
++ (NSDictionary *)getDictionaryFromPlistWithName:(NSString *)plistFileName;
+
+
+// User Default Storage
+
++ (void)saveCustomerOrganisationInfo:(NSDictionary *)infoDictionary;
++ (void)loadCustomerOrgInfo;
++ (void)saveCallBackInformation:(NSDictionary *)infoDictionary;
+
++ (void)storeUserPreferedPlatformName:(NSString *)platformName;
++ (NSString *)userPreferedPlatformName;
+
++ (void)storeCustomURLString:(NSString *)urlString;
++ (NSString *)customURLString;
+
++ (NSString *)baseURLString;
+
++ (void)storeApplicationStatus:(ApplicationStatus)status;
++ (NSUInteger)getStoredApplicationStatus;
+
++ (void)storeApplicationFailedStatus:(ApplicationStatus)status;
++ (NSUInteger)getStoredApplicationFailedStatus;
+
++ (void)storeUserStatus:(UserStatus)status;
++ (NSUInteger)getStoredUserStatus;
+
++ (void)storeCurrentServerPackage:(NSString *)newPackage;
++ (NSString *)getStoredCurrentServerPackage;
+
++ (void)storePreviousUserName:(NSString *)userName;
++ (NSString *)getStoredPreviousUserName;
+
++ (void)storeUserPreferedLastPlatformName:(NSString *)platformName;
++ (NSString *)userPreferedLastPlatformName;
+
++ (void)storeApiUrl:(NSString *)urlString;
++ (NSString *)getStoredApiUrl;
+
++ (void)storeInstanceUrl:(NSString *)urlString;
++ (NSString *)getStoredInstanceUrl;
+
++ (NSString *)getLoggedInUserName;
+
++ (NSString *)getTechnicianLocation;
+
++ (NSString *)getLastUsedViewProcessForObjectName:(NSString *)objectName;
++ (void) storeLastUsedViewProcess:(NSString *)processId objectName:(NSString *)objectName;
+
++ (void)saveAccessTokenGeneratedTime;
++ (NSUInteger)storedAccessTokenGeneratedTime;
+
++ (void)saveAccessToken:(NSString *)newAccesToken;
+
++ (void)saveApplicationInstalledTime;
++ (NSUInteger)storedApplicationInstalledTime;
+
++ (void)saveApplicationWakeupTime;
++ (NSUInteger)storedApplicationWakeupTime;
+
++ (void)saveApplicationUpdatedTime;
++ (NSUInteger)storedApplicationUpdatedTime;
+
++ (void)recordApplicationVersion;
++ (NSString *)storedrecordApplicationVersion;
+
++ (void)recordApplicationLaunchPoint;
+
++ (NSString *)getOneCallSyncTime;
++ (void)storeOneCallSyncTime:(NSString *)time;
+
++ (NSString *)getPutUpdateTime;
++ (void)storePutUpdateTime:(NSString *)time;
+
++ (NSString *)getTempOneCallSyncTime;
++ (void)storeTempOneCallSyncTime:(NSString *)time;
+
++ (void)storeLastLocalIdnDefaults:(NSString *)lastSyncTime;
++ (NSInteger )getLastLocalIdFromDefaults ;
++ (void )removeLastLocalIdFromDefaults;
+
++ (void)moveDataSyncTimeFromTemp;
+
++ (NSError *)lastOAuthErrorMessage;
++ (void)storeOAuthErrorMessage:(NSError *)error;
++ (void)resetOAuthError;
+
++ (NSInteger)storedCheckBoxValueForDataSyncConfirmMessage;
++ (void)storeDataSyncConfirmMessageCheckBoxValue:(NSInteger)value;
+
+#pragma mark -Last Sync Time And Status
++ (NSString *)getLastConfigSyncGMTTime;
++ (void)storeLastConfigSyncGMTTime:(NSString *)lastConfigSyncTime;
++ (NSString *)getLastConfigSyncStatus;
++ (void)storeLastConfigSyncStatus:(NSString *)lastConfigSyncStatus;
+
++ (NSString *)getLastDataSyncGMTTime;
++ (void)storeLastDataSyncGMTTime:(NSString *)lastDataSyncTime;
++ (NSString *)getLastDataSyncStatus;
++ (void)storeLastDataSyncStatus:(NSString *)lastDataSyncStatus;
+
+//Push Log related.
++ (NSString *)getLastPushLogGMTTime;
++ (void)storeLastPushLogGMTTime:(NSString *)lastPushLogTime;
++ (NSString *)getLastPushLogStatus;
++ (void)storeLastPushLogStatus:(NSString *)lastPushLogStatus;
+#pragma mark - End
+
++(BOOL)isFirstTimeLogin;
+
++ (NSMutableDictionary *) getSwitchLayoutDict;
++ (void)updateSwitchLayoutDictionary:(NSMutableDictionary *)dict;
+
+#pragma mark - Location Ping methods
++ (CLLocation *)getTechnicianCLLocation;
++ (void)storeTechnicianCLLocation:(CLLocation *)location;
+
++ (NSDictionary *)getTechnicianLastLocationStatus;
++ (void)storeTechnicianLastLocationStatus:(NSDictionary *)statusDict;
+#pragma mark - End
+
++ (void)storeObjectName:(NSString *)objectName
+                  forId:(NSString *)localId;
++ (NSString *)objectNameForId:(NSString *)whatId;
++ (void)clearAllWhatIdObjectInformation;
+@end
