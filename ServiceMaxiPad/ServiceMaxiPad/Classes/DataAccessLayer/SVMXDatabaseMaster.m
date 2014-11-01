@@ -1,0 +1,719 @@
+//
+//  SVMXDatabaseMaster.m
+//  JavascriptInterface
+//
+//  Created by Shravya shridhar on 4/19/13.
+//  Copyright (c) 2013 Shravya shridhar. All rights reserved.
+//
+
+#import "SVMXDatabaseMaster.h"
+#import "Utility.h"
+#import "DARequestParser.h"
+#import "DAResponse.h"
+#import "SBJsonParser.h"
+#import "SBJsonWriter.h"
+#import "SFObjectFieldDAO.h"
+#import "FactoryDAO.h"
+
+//#import "SMXiPhone_Database.h"
+//#import "SMXiPhone_ObjectDefinitionService.h"
+#import "Base64.h"
+
+static SVMXDatabaseMaster *sharedDatamasterObject = nil;
+
+@interface SVMXDatabaseMaster()
+
+- (NSString *)columnType:(NSString *)type;
+- (void)showLog:(NSString *)logs;
+- (NSString *)extractTextFromSqliteStmt:(sqlite3_stmt *)selectStatement
+                                AtIndex:(NSInteger)index;
+
+@end
+
+@implementation SVMXDatabaseMaster
+@synthesize okMessage;
+#pragma mark -  init functions
+
++ (SVMXDatabaseMaster *)sharedDataBaseMaterObject {
+    
+    if (sharedDatamasterObject == nil) {
+        
+        sharedDatamasterObject = [[SVMXDatabaseMaster alloc] init];
+    }
+    
+    return sharedDatamasterObject;
+}
+
+- (id)init {
+    self = [super init];
+    if (self != nil) {
+    //  database = [[SMXiPhone_Database sharedDataBase] databaseObject];
+    }
+    
+    return self;
+}
+- (void)initialize {
+   // database = [[SMXiPhone_Database sharedDataBase] databaseObject];
+}
+
+
+#pragma mark - Initialization functions
+
+
+#pragma mark - Transactions functions 
+
+- (void)startTransaction {
+    //[[SMXiPhone_Database sharedDataBase] beginTransaction];
+    
+}
+- (void)endTransaction {
+    //[[SMXiPhone_Database sharedDataBase] endTransaction];
+}
+
+- (void)setOkayMessageForErrorAlerts:(NSString *)okMesg {
+    self.okMessage = okMesg;
+}
+
+- (void)showLog:(NSString *)logs {
+    NSLog(@"OP_DOC:: %@",logs);
+}
+
+#pragma mark - Common functions
+- (NSString *)extractTextFromSqliteStmt:(sqlite3_stmt *)selectStatement
+                                AtIndex:(NSInteger)index {
+    @synchronized([self class]){
+//        char *_cString = (char *)synchronized_sqlite3_column_text(selectStatement,index);
+//        if (_cString != NULL) {
+//            NSString *tempString = [NSString stringWithUTF8String:_cString];
+//            return tempString;
+//        }
+        return nil;
+    }
+}
+#pragma End
+#pragma mark - database access request object parser 
+
+- (id)getDataForParams:(NSString *)parameterString andEventName:(NSString *)eventname {
+    @try {
+        /* Parse the params and find out the request type */
+        @autoreleasepool {
+            NSString *requestParameterString = parameterString;
+            
+            [self showLog:[NSString stringWithFormat:@"Request: %@",requestParameterString]];
+            
+            NSString *sssr = [eventname stringByReplacingOccurrencesOfString:@"darequest" withString:@""];
+            NSInteger functionValue = [sssr intValue];
+            SBJsonParser *tempParser = [[SBJsonParser alloc] init];
+            NSDictionary *jsonDictionary = [tempParser objectWithString:requestParameterString];
+            
+            
+            DARequest *request = [[DARequest alloc] initWithDictionary:jsonDictionary];
+            
+            switch (functionValue) {
+                case ExecuteQuery:
+                    [self executeSelectQuery:request];
+                    break;
+//                case ObjectSchema:
+//                    [self getobjectSchema:request];
+//                    break;
+//                case InsertQuery:
+//                    [self insertValuesToTableFromRequest:request];
+//                    break;
+//                case UpdateQuery:
+//                    [self updateValuesToTableFromRequest:request];
+//                    break;
+//                case DeleteQuery:
+//                    [self deleteValuesToTableFromRequest:request];
+//                    break;
+//                case SOQLJson:
+//                {
+//                    [self parseSOQLJsonStringFromDARequest:request];
+//                }
+//                    break;
+//                case SubmitQuery:
+//                    [self submitQuery:request];
+//                    break;
+//                case DescribeObject:
+//                    [self describeObject:request];
+//                    break;
+                default:
+                    break;
+            }
+            
+            NSDictionary *requestDict = [request dictionaryRepresentation];
+            
+            SBJsonWriter *writer = [[SBJsonWriter alloc] init];
+            NSString *json = [writer stringWithObject:requestDict];
+            NSString *finalString = [[NSString alloc] initWithString:json];
+            [self showLog:[NSString stringWithFormat:@"Response: %@",finalString]];
+            return finalString;
+        }
+    }
+    @catch (NSException *exception) {
+        
+        NSString * errorType=[exception name];
+        NSString * errorMessage=[exception description];
+        
+        //Modified shravya - OPDOC-CR
+        NSString *okMsg = self.okMessage;
+        if ([Utility isStringEmpty:okMsg]) {
+            okMsg = @"Ok";
+        }
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:errorType message:errorMessage delegate:nil cancelButtonTitle:okMsg otherButtonTitles:nil, nil];
+        [alertView show];
+    }
+    return @"";
+}
+
+
+
+
+#pragma mark -
+#pragma mark - Data base access functions
+
+- (id)executeSelectQuery:(DARequest *)request {
+    
+    @synchronized(self) {
+        
+        if ([request.fieldsArray count] <= 0) {
+            
+            NSArray *objectFields = [self getAllObjectFields:request.objectName fromTableName:@"SFObjectField"];
+            if ([objectFields count] > 0) {
+                request.fieldsArray = objectFields;
+            }
+        }
+        
+        DARequestParser *requestParser = [[DARequestParser alloc] init];
+        NSString *finalQuery =  [requestParser selectSqliteQueryRepresentationOfDARequest:request];
+        //Execute query
+        
+        [self showLog:finalQuery];
+//
+//        sqlite3_stmt *selectStatement = nil;
+//        if (synchronized_sqlite3_prepare_v2(database, [finalQuery UTF8String], -1, &selectStatement, NULL) != SQLITE_OK) {
+//            [self showLog:@"Prepare statement failed in testFunction"];
+//            
+//            DAResponse *responseObject = [[DAResponse alloc] init];
+//            responseObject.statusCode = [NSString stringWithFormat:@"%d",DAL_DATABASE_ERROR];
+//            request.responseObject = responseObject;
+//            return responseObject;
+//        }
+//        
+//        
+//        NSMutableArray *objectsArray = [[NSMutableArray alloc] init];
+//        DAResponse *responseObject = [[DAResponse alloc] init];
+//        
+//        while (synchronized_sqlite3_step(selectStatement) == SQLITE_ROW) {
+//            
+//            NSMutableDictionary *finalDictionary = [[NSMutableDictionary alloc] init];
+//            
+//            for (int counter = 0; counter < [request.fieldsArray count]; counter++) {
+//                
+//                NSDictionary *fieldDict = [request.fieldsArray objectAtIndex:counter];
+//                
+//                NSString *fieldName = [fieldDict objectForKey:kDAFieldName];
+//                NSString *fieldType = [fieldDict objectForKey:kDAFieldType];
+//                
+//            
+//                id newFieldValue = @"";
+//                if ([[fieldType uppercaseString] isEqualToString:@"BLOB"]) {
+//                    
+//                     NSData * data = [[NSData alloc] initWithBytes:sqlite3_column_blob(selectStatement, counter) length:sqlite3_column_bytes(selectStatement, counter)];
+//                    NSString *someStr =   [Base64 encode:data];//[[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
+//                    newFieldValue = someStr;
+//                }
+//                else {
+//                    NSString *someStr = [self extractTextFromSqliteStmt:selectStatement AtIndex:counter];
+//                    if (![Utility isStringEmpty:someStr]) {
+//                        newFieldValue =  [self getNewFieldValue:someStr basedOnType:fieldType];
+//                    }
+//                }
+//                if(newFieldValue == nil) newFieldValue = @"";
+//                [finalDictionary setObject:newFieldValue forKey:fieldName];
+//           }
+//            [objectsArray addObject:finalDictionary];
+//        }
+//        synchronized_sqlite3_finalize(selectStatement);
+//        
+//        responseObject.objectName = request.objectName;
+//        responseObject.objectData = objectsArray;
+//        responseObject.statusCode = [NSString stringWithFormat:@"%d",DAL_SUCCESS];
+//        request.responseObject = responseObject;
+//        
+//        return responseObject;
+    }
+    return nil;
+}
+
+
+//- (id)getobjectSchema:(DARequest *)request {
+//    @synchronized(self) {
+//        NSString *tableName = request.objectName;
+//        if (tableName != nil) {
+//            NSArray *objectFields = [self getAllObjectFields:tableName fromTableName:@"SFObjectField"];
+//            if ([objectFields count] > 0) {
+//               
+//                DAResponse *responseObject = [[DAResponse alloc] init];
+//                responseObject.objectName = request.objectName;
+//                responseObject.objectData = objectFields;
+//                responseObject.statusCode = [NSString stringWithFormat:@"%d",DAL_SUCCESS];
+//                request.responseObject = responseObject;
+//                return responseObject;
+//            }
+//        }
+//    }
+//    return nil;
+//}
+//
+- (NSMutableArray *)getAllObjectFields:(NSString *)objectName fromTableName:(NSString *)tableName
+{
+    NSMutableArray * fieldObjectsArray = [[NSMutableArray alloc] initWithCapacity:0];
+    if(objectName != nil || [objectName length ] != 0)
+    {
+        id <SFObjectFieldDAO> objectFieldDao =  [FactoryDAO serviceByServiceType:ServiceTypeSFObjectField];
+        NSArray * fieldsArray = [objectFieldDao getSFObjectFieldsForObject:objectName];
+        
+        for (SFObjectFieldModel *model in fieldsArray) {
+            
+            NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] init];
+            if (model.fieldName != nil) {
+                [tempDict setObject:model.fieldName forKey:kDAFieldName];
+            }
+            if (model.type!= nil) {
+                [tempDict setObject:model.type forKey:kDAFieldType];
+            }
+            [fieldObjectsArray addObject:tempDict];
+            
+        }
+        
+//        if(synchronized_sqlite3_prepare_v2(database, [query UTF8String], -1, &stmt, nil) == SQLITE_OK)
+//        {
+//            while (synchronized_sqlite3_step(stmt)  == SQLITE_ROW)
+//            {
+//                field_api_name = [self extractTextFromSqliteStmt:stmt AtIndex:0];
+//                fieldType = [self extractTextFromSqliteStmt:stmt AtIndex:1];
+//                
+//                NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] init];
+//                if (field_api_name != nil) {
+//                    [tempDict setObject:field_api_name forKey:kDAFieldName];
+//                }
+//                if (fieldType != nil) {
+//                    [tempDict setObject:fieldType forKey:kDAFieldType];
+//                }
+//                [fieldsArray addObject:tempDict];
+//            }
+//        }
+//        synchronized_sqlite3_finalize(stmt);
+    }
+    return fieldObjectsArray;
+    
+}
+//
+//- (id)insertValuesToTableFromRequest:(DARequest *)request {
+//    @synchronized(self) {
+//        
+//        if ([request.fieldsArray count] <= 0) {
+//            NSArray *objectFields = [self getAllObjectFields:request.objectName fromTableName:@"SFObjectField"];
+//            if ([objectFields count] > 0) {
+//                request.fieldsArray = objectFields;
+//            }
+//        }
+//        
+//        DARequestParser *requestParser = [[DARequestParser alloc] init];
+//        
+//        NSString *finalQuery =  [requestParser insertSqliteQueryRepresentationOfDARequest:request];
+//        
+//        [self showLog:finalQuery];
+//        
+//        sqlite3_stmt *insertStatement = nil;
+//        if (synchronized_sqlite3_prepare_v2(database, [finalQuery UTF8String], -1, &insertStatement, NULL) != SQLITE_OK) {
+//            [self showLog:@"Prepare statement failed in testFunction"];
+//            
+//            DAResponse *responseObject = [[DAResponse alloc] init];
+//            responseObject.statusCode = [NSString stringWithFormat:@"%d",DAL_DATABASE_ERROR];
+//            request.responseObject = responseObject;
+//            return responseObject;
+//        }
+//        
+//        DAResponse *responseObject = [[DAResponse alloc] init];
+//        int success = synchronized_sqlite3_step(insertStatement);
+//        synchronized_sqlite3_finalize(insertStatement);
+//        if (success != SQLITE_DONE ) {
+//            [self showLog:[NSString stringWithFormat:@"Step statement failed in testFunction %d",success]];
+//            responseObject.statusCode = [NSString stringWithFormat:@"%d",DAL_DATABASE_ERROR];
+//        }
+//        else {
+//             responseObject.statusCode = [NSString stringWithFormat:@"%d",DAL_SUCCESS];
+//        }
+//        request.responseObject = responseObject;
+//        return responseObject;
+//    }
+//}
+//
+//- (id)updateValuesToTableFromRequest:(DARequest *)request {
+//    @synchronized(self) {
+//        
+//        DARequestParser *requestParser = [[DARequestParser alloc] init];
+//        
+//        NSString *finalQuery =  [requestParser updateSqliteQueryRepresentationOfDARequest:request];
+//        
+//        [self showLog:finalQuery];
+//        
+//        sqlite3_stmt *updateStatement = nil;
+//        if (synchronized_sqlite3_prepare_v2(database, [finalQuery UTF8String], -1, &updateStatement, NULL) != SQLITE_OK) {
+//            [self showLog:@"Prepare statement failed in testFunction"];
+//            
+//            DAResponse *responseObject = [[DAResponse alloc] init];
+//            responseObject.statusCode = [NSString stringWithFormat:@"%d",DAL_DATABASE_ERROR];
+//            request.responseObject = responseObject;
+//            return responseObject;
+//        }
+//        
+//        DAResponse *responseObject = [[DAResponse alloc] init];
+//        int success = synchronized_sqlite3_step(updateStatement);
+//        synchronized_sqlite3_finalize(updateStatement);
+//        if (success != SQLITE_DONE ) {
+//            [self showLog:[NSString stringWithFormat:@"Step statement failed in testFunction %d",success]];
+//            responseObject.statusCode = [NSString stringWithFormat:@"%d",DAL_DATABASE_ERROR];
+//        }
+//        else {
+//            responseObject.statusCode = [NSString stringWithFormat:@"%d",DAL_SUCCESS];
+//        }
+//        request.responseObject = responseObject;
+//        return responseObject;
+//    }
+//}
+//
+//- (id)deleteValuesToTableFromRequest:(DARequest *)request {
+//    @synchronized(self) {
+//        
+//        DARequestParser *requestParser = [[DARequestParser alloc] init];
+//        
+//        NSString *finalQuery =  [requestParser deleteSqliteQueryRepresentationOfDARequest:request];
+//        
+//        [self showLog:finalQuery];
+//        
+//        sqlite3_stmt *updateStatement = nil;
+//        if (synchronized_sqlite3_prepare_v2(database, [finalQuery UTF8String], -1, &updateStatement, NULL) != SQLITE_OK) {
+//            [self showLog:@"Prepare statement failed in testFunction"];
+//            
+//            DAResponse *responseObject = [[DAResponse alloc] init];
+//            responseObject.statusCode = [NSString stringWithFormat:@"%d",DAL_DATABASE_ERROR];
+//            request.responseObject = responseObject;
+//            return responseObject;
+//        }
+//        
+//        
+//        DAResponse *responseObject = [[DAResponse alloc] init];
+//        int success = synchronized_sqlite3_step(updateStatement);
+//        synchronized_sqlite3_finalize(updateStatement);
+//        if (success != SQLITE_DONE ) {
+//            [self showLog:[NSString stringWithFormat:@"Step statement failed in testFunction %d",success]];
+//            responseObject.statusCode = [NSString stringWithFormat:@"%d",DAL_DATABASE_ERROR];
+//        }
+//        else {
+//            responseObject.statusCode = [NSString stringWithFormat:@"%d",DAL_SUCCESS];
+//        }
+//        request.responseObject = responseObject;
+//        return responseObject;
+//    }
+//}
+//
+//
+//- (NSString *)executeQuery:(NSString *)fieldName andObjectName:(NSString *)objectName andCriria:(NSString *)criteria {
+//    
+//    NSString * queryStatement = [NSString stringWithFormat:@"SELECT %@ FROM '%@' where %@",fieldName,objectName,criteria];
+//    sqlite3_stmt *selectStmt = nil;
+//    NSString *fieldValue = nil;
+//    [self showLog:queryStatement];
+//    if(synchronized_sqlite3_prepare_v2(database, [queryStatement UTF8String], -1, &selectStmt, nil) == SQLITE_OK)
+//    {
+//        while (synchronized_sqlite3_step(selectStmt)  == SQLITE_ROW)
+//        {   fieldValue =   [self extractTextFromSqliteStmt:selectStmt AtIndex:0];
+//            
+//        }
+//    }
+//    synchronized_sqlite3_finalize(selectStmt);
+//    
+//    return fieldValue;
+//}
+//
+//- (id)parseSOQLJsonStringFromDARequest:(DARequest *)requestObject {
+//    
+//    DARequestParser *requestParser = [[DARequestParser alloc] init];
+//    SBJsonParser *tempParser = [[SBJsonParser alloc] init];
+//    NSDictionary *jsonDictionary = [tempParser objectWithString:requestObject.query];
+//  
+//    
+//    NSDictionary *maintableDict = nil;
+//    
+//    NSMutableArray *testArray =  [NSMutableArray arrayWithArray:[jsonDictionary objectForKey:@"Metadata"]];
+//    
+//    if ([testArray count] > 0 && requestObject.objectName != nil) {
+//        NSDictionary *idDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"Id",@"FN",@"TEXT",@"TYP",requestObject.objectName,@"OBJ",nil];
+//        [testArray addObject:idDict];
+//    }
+//    
+//    
+//    NSMutableArray *allColumnFieldArr = [[NSMutableArray alloc] init];
+//   
+//    /*Getting main record data */
+//    DAResponse *response = [self executeSelectQuery:requestObject];
+//    if ([response.objectData count] > 0) {
+//        for (int i =0 ; i < [response.objectData count]; i++) {
+//            maintableDict = [response.objectData objectAtIndex:i];
+//            NSMutableDictionary *finalNewDictionary = [requestParser parseJsonToSqlFunction:testArray andRecordId:@"" andRecordDictionary:maintableDict];
+//            if (finalNewDictionary != nil) {
+//                 [allColumnFieldArr addObject:finalNewDictionary];
+//            }
+//        }
+//    }
+//    /* Ends */
+//
+//    DAResponse *responseObject = [[DAResponse alloc] init];
+//    responseObject.objectData = allColumnFieldArr;
+//    responseObject.statusCode = [NSString stringWithFormat:@"%d",DAL_SUCCESS];
+//    requestObject.responseObject = responseObject;
+//    return responseObject;
+//}
+//
+//- (id)submitQuery:(DARequest *)request {
+//         
+//    @synchronized(self) {
+//        
+//        DARequestParser *requestParser = [[DARequestParser alloc] init];
+//        NSArray *fieldsArray = [requestParser parseFieldsFromQuery:request.query];
+//        NSString *sqlQuery = request.query;
+//        request.fieldsArray = fieldsArray;
+//        [self showLog:sqlQuery];
+//        
+//        sqlite3_stmt *selectStatement = nil;
+//        if (synchronized_sqlite3_prepare_v2(database, [sqlQuery UTF8String], -1, &selectStatement, NULL) != SQLITE_OK) {
+//            [self showLog:@"Prepare statement failed in testFunction"];
+//            
+//            DAResponse *responseObject = [[DAResponse alloc] init];
+//            responseObject.statusCode = [NSString stringWithFormat:@"%d",DAL_DATABASE_ERROR];
+//            request.responseObject = responseObject;
+//            return responseObject;
+//        }
+//        
+//        DAResponse *responseObject = [[DAResponse alloc] init];
+//        NSMutableArray *objectsArray = [[NSMutableArray alloc] init];
+//        while (synchronized_sqlite3_step(selectStatement) == SQLITE_ROW) {
+//            
+//            NSMutableDictionary *finalDictionary = [[NSMutableDictionary alloc] init];
+//            
+//            for (int counter = 0; counter < [request.fieldsArray count]; counter++) {
+//                
+//                NSDictionary *fieldDict = [request.fieldsArray objectAtIndex:counter];
+//                NSString *fieldName = [fieldDict objectForKey:kDAFieldName];
+//                
+//                //Modified Shavya - OPDOC-CR
+//                NSString *fieldType = nil;//[fieldDict objectForKey:kDAFieldType];
+//                id newFieldValue = @"";
+//                fieldType = @"TEXT";
+//                
+//                NSString *someStr =  [self extractTextFromSqliteStmt:selectStatement AtIndex:counter];
+//                if (![Utility     isStringEmpty:someStr]) {
+//                        newFieldValue =  [self getNewFieldValue:someStr basedOnType:fieldType];
+//                }
+//                [self showLog:[NSString stringWithFormat:@"%@   %@,",fieldName,someStr]];
+//                [finalDictionary setObject:newFieldValue forKey:fieldName];
+//           }
+//            
+//            [objectsArray addObject:finalDictionary];
+//        }
+//        synchronized_sqlite3_finalize(selectStatement);
+//        
+//        responseObject.objectName = request.objectName;
+//        responseObject.objectData = objectsArray;
+//        responseObject.statusCode = [NSString stringWithFormat:@"%d",DAL_SUCCESS];
+//        request.responseObject = responseObject;
+//        return responseObject;
+//    }
+//    return nil;
+//}
+//
+//- (id)describeObject:(DARequest *)request {
+//    
+//    @synchronized(self) {
+//        
+//        NSString *objectName = request.objectName;
+//        NSMutableDictionary *tableInfo = [[NSMutableDictionary alloc] init];
+//        [tableInfo setObject:objectName forKey:@"name"];
+//        
+//        NSString *sqlQuery = [NSString stringWithFormat:@"Select label, label_plural from SFObject where object_name = '%@'",objectName];
+//        NSString *objectLabel = @"", *labelPlural = @"";
+//        sqlite3_stmt *selectStmt = nil;
+//        if(synchronized_sqlite3_prepare_v2(database, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK)
+//        {
+//            while (synchronized_sqlite3_step(selectStmt)  == SQLITE_ROW)
+//            {
+//                objectLabel = [self extractTextFromSqliteStmt:selectStmt AtIndex:0];
+//                objectLabel = objectLabel ? objectLabel:@"";
+//                [tableInfo setObject:objectLabel forKey:@"label"];
+//                
+//                labelPlural = [self extractTextFromSqliteStmt:selectStmt AtIndex:1];
+//                labelPlural = labelPlural ? labelPlural:@"";
+//                [tableInfo setObject:labelPlural forKey:@"labelPlural"];
+//            }
+//        }
+//        synchronized_sqlite3_finalize(selectStmt);
+//        
+//        
+//        /*Getting fieldInfo*/
+//        NSMutableArray *fieldsArray = [[NSMutableArray alloc] init];
+//        sqlQuery = [NSString stringWithFormat:@"Select field_name, label ,type, reference_to, nillable, dependent_picklist, controler_field from SFObjectField where object_name = '%@'",objectName];
+//        selectStmt = nil;
+//        NSArray *someArray = [[NSArray alloc] initWithObjects:@"name",@"label",@"dataType",@"referenceTo",@"nillable", @"dependentPicklist", @"controlerName", nil];
+//        if(synchronized_sqlite3_prepare_v2(database, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK)
+//        {
+//            while (synchronized_sqlite3_step(selectStmt)  == SQLITE_ROW)
+//            {
+//                NSMutableDictionary *fieldInfo = [[NSMutableDictionary alloc] init];
+//                NSString *tempValue = @"";
+//                
+//                for (int counter = 0;counter < 7; counter++) {
+//                    tempValue = [self extractTextFromSqliteStmt:selectStmt AtIndex:counter];
+//                    
+//                    NSString *keyName = [someArray objectAtIndex:counter];
+//                    if (counter == 3) {
+//                        [fieldInfo setObject:[NSArray arrayWithObject:tempValue] forKey:keyName];
+//                    }
+//                    else{
+//                        if (counter > 3 && counter < 7) {
+//                            if ([Utility isItTrue:tempValue]) {
+//                                tempValue = @"true";
+//                            }
+//                            else {
+//                                tempValue = @"false";
+//                            }
+//                        }
+//                        
+//                        [fieldInfo setObject:tempValue forKey:keyName];
+//                    }
+//                }
+//                [fieldInfo setObject:@"true" forKey:@"accessible"];
+//                [fieldInfo setObject:@"true" forKey:@"updateable"];
+//                [fieldsArray addObject:fieldInfo];
+//            }
+//        }
+//        synchronized_sqlite3_finalize(selectStmt);
+//        
+//        if ([fieldsArray count] > 0) {
+//            [tableInfo setObject:@"true" forKey:@"updateable"];
+//            [tableInfo setObject:fieldsArray forKey:@"fields"];
+//        }
+//        DAResponse *responseObject =  [[DAResponse alloc] init];
+//        responseObject.objectName = objectName;
+//        responseObject.objectData = [NSArray arrayWithObject:tableInfo];
+//        request.responseObject = responseObject;
+//       
+//        return responseObject;
+//  }
+//    return nil;
+//}
+//
+//- (NSString *)getNameValueForId:(NSString *)recordSfid {
+//    NSString *nameValue = @"";
+//    @synchronized(self) {
+//        NSString *sqlQuery = [NSString stringWithFormat:@"Select value from ObjectNameFieldValue where Id = '%@'",recordSfid];
+//        sqlite3_stmt *selectStmt = nil;
+//        if(synchronized_sqlite3_prepare_v2(database, [sqlQuery UTF8String], -1, &selectStmt, nil) == SQLITE_OK)
+//        {
+//            while (synchronized_sqlite3_step(selectStmt)  == SQLITE_ROW)
+//            {   nameValue = [self extractTextFromSqliteStmt:selectStmt AtIndex:0];
+//                nameValue = (nameValue != nil) ? nameValue:@"";
+//            }
+//        }
+//        synchronized_sqlite3_finalize(selectStmt);
+//    }
+//    return nameValue;
+//}
+//
+//- (NSString*)getNameFieldForObject:(NSString*)objectName {
+//    NSString *queryStatement1 = [NSMutableString stringWithFormat:@"SELECT field_name FROM SFObjectField where object_name = '%@'and (name_field = 'TRUE' OR name_field = 'True' OR name_field = 'true' OR name_field = '1') and field_name != \"\"",objectName];
+//    sqlite3_stmt * labelstmt = nil;
+//    NSString *fieldName = @"";
+//    if ( synchronized_sqlite3_prepare_v2(database, [queryStatement1 UTF8String],-1, &labelstmt, nil) == SQLITE_OK )
+//    {
+//        if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
+//        {   fieldName = [self extractTextFromSqliteStmt:labelstmt AtIndex:0];
+//            fieldName = (fieldName != nil) ? fieldName:@"";
+//        }
+//    }
+//    synchronized_sqlite3_finalize(labelstmt);
+//    if ([Utility isStringEmpty:fieldName]) {
+//        fieldName = @"Name";
+//    }
+//    return fieldName;
+//}
+//
+//#pragma mark - 
+//#pragma mark 8906
+//
+//- (NSDictionary*)getFieldTypeForFieldName:(NSString *)fieldName Object:(NSString*)objectName {
+//    NSString *queryStatement1 = [NSMutableString stringWithFormat:@"SELECT type,reference_to FROM SFObjectField where object_name = '%@' and field_name = '%@' ",objectName,fieldName];
+//    sqlite3_stmt * labelstmt = nil;
+//    NSString *fieldType = nil,*referenceTable = nil;
+//    if (synchronized_sqlite3_prepare_v2(database, [queryStatement1 UTF8String],-1, &labelstmt, nil) == SQLITE_OK )
+//    {
+//        if(synchronized_sqlite3_step(labelstmt) == SQLITE_ROW)
+//        {
+//            fieldType = [self extractTextFromSqliteStmt:labelstmt AtIndex:0];
+//            referenceTable = [self extractTextFromSqliteStmt:labelstmt AtIndex:1];
+//        }
+//    }
+//    synchronized_sqlite3_finalize(labelstmt);
+//    if (![Utility isStringEmpty:fieldType]) {
+//        NSMutableDictionary *fieldDict = [[NSMutableDictionary alloc] init];
+//        [fieldDict setObject:fieldType forKey:@"type"];
+//        if (![Utility isStringEmpty:referenceTable]) {
+//            [fieldDict setObject:referenceTable forKey:@"object"];
+//        }
+//        return fieldDict;
+//    }
+//    return nil;
+//}
+//
+//#pragma mark - Data base utility functions
+//- (id)getNewFieldValue:(NSString *)fieldValue basedOnType:(NSString *)fieldType {
+//    
+//    id someObject = fieldValue;
+//    fieldType = [fieldType uppercaseString];
+//    NSString *newFieldType = [self columnType:fieldType];
+//    if ([newFieldType isEqualToString:DOUBLE]) {
+//        someObject = [NSNumber numberWithDouble:[fieldValue doubleValue]];
+//    }
+//    else if ([newFieldType isEqualToString:INTEGER]) {
+//        someObject = [NSNumber numberWithInt:[fieldValue intValue]];
+//    }
+//    else if ([newFieldType isEqualToString:_BOOL]) {            //defect 7744 :shravya converting 1/0 to true/false [OPDOC3]
+//
+//        if ([Utility isItTrue:someObject]) {
+//            someObject = @"true";
+//        }
+//        else{
+//            someObject = @"false";
+//        }
+//    }
+//    
+//    return someObject;
+//}
+//
+//- (NSString *)columnType:(NSString *)type {
+//    if ([type isEqualToString:BOOLEAN])
+//        return _BOOL;
+//    else if ([type isEqualToString:CURRENCY] || [type isEqualToString:DOUBLE] || [type isEqualToString:PERCENT])
+//        return DOUBLE;
+//    else if ([type isEqualToString:INTEGER])
+//        return INTEGER;
+//    else if ([type isEqualToString:DATE] || [type isEqualToString:DATETIME])
+//        return DATETIME;
+//    else if ([type isEqualToString:TEXTAREA])
+//        return VARCHAR;
+//    else
+//        return TEXT;
+//}
+
+@end
