@@ -1,0 +1,95 @@
+*******************************************
+Release Notes Starts For Version 14.58.011
+===========================================
+-------------
+Fixed Defects
+-------------
+12486 - Month View: ‘Calendar’ dates are not according to the selected ‘Month’ on the Date selector calendar modal.
+12433 - Calendar day and week view shows 'a' and 'p' instead of 'AM' and 'PM'
+12381 - Tapping on blank cell in month view the app is navigating to day view with wrong date
+12386 - Event displays work order number instead of account name, even when work order is associated with account.
+12397 - Sliding Cal day slightly when event selected, the right pane content replaces with default text message and event remains selected.
+12396 - Cal day view:No events selected, right pane message repositions when navigating back and forth to cal day view
+12385 - Cal Day View:Overlapping event not visible
+12466 - Orange color Patch/Box appeared on Calendar day selector when selected Date & Current day is same.
+
+-------------
+Known Issues
+-------------
+
+SFM-View
+1. Attachment will not be listed under SFMPage master view
+2. Winter 15 defects are not fixed
+3. Online search in Product/Account is not implemented
+4. Precision handling is not done for number, currency and percentage fields.
+5. Data loading in background is not implemented
+
+
+SFM-Edit
+
+1. Precision handling for number, currency and percentage fields
+
+Calendar
+1. Multi day events not supported
+2. Event Rescheduling by drag and drop supported. View editing not supported
+3. Need to wait for data sync to completion to do next drag and drop rescheduling, other case we observed crashes 
+
+Localisation
+1. New set of tags generation in progress on server side. Existing iPhone and iPad tags supported  
+
+---------------------
+Fixed - Known Issues 
+--------------------- 
+None
+
+
+---------------------
+Features Implemented
+---------------------
+
+1. Login
+2. Initial Sync
+3. Home
+4. Logout
+5. Manual Data Sync
+6. Scheduled Data Sync
+7. Manual Config Sync
+8. About
+9. Reset Application
+10. Connectivity
+11. SFM View
+12. Switch View
+13. Actions
+14. Product  History
+15. Account History
+16. Work Order Debrief
+17. SFMEdit
+18. LookupFields
+19. PickList
+20. Dependent Picklist
+21. Tasks
+22. TroubleShooting
+23. Map  
+24. Calendar Day View 
+25. Calendar Week View 
+26. Calendar Month view 
+27. Event Rescheduling
+28. Push Logs  
+29. SFM Search
+30. Barcode Scanning 
+31. Location Ping 
+32. Stand alone Edit 
+33. Source To Target
+34. Source To Target Child
+35. Create New Record
+36. Recents [New]
+37. Create a Event [New]
+38. Localisation [New]
+
+---------------------
+Additional Notes
+---------------------
+
+- This build using SVMXDEV as org name space.
+- Major fix on database - to handle multi thread database access.
+
