@@ -59,36 +59,78 @@ void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message
     return newDate;
 }
 
-+ (NSString *) getGMTFromLocalTime:(NSString *)localTime
+//Krishna : fix for defect 12534
++ (NSString *)getGMTFromLocalTime:(NSString *)localTime
 {
     if ([localTime isEqualToString:@""])
+    {
         return localTime;
-    NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
+    }
     
+    NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
+    //10312
+    [dateFormatter setLocale:[[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"] autorelease]];
+    //To Test need to remove
+    NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    [dateFormatter setCalendar:cal];
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     
-    NSString * tmpDate = [localTime substringToIndex:[localTime length]-0];
+    NSString * tmpDate = [localTime substringToIndex:[localTime length]- 0];
     tmpDate = [tmpDate stringByReplacingOccurrencesOfString:@"T" withString:@" "];
     tmpDate = [tmpDate stringByReplacingOccurrencesOfString:@"Z" withString:@""];
     tmpDate = [tmpDate stringByDeletingPathExtension];
     
+    // Local DateTime object from local date-time string
     NSDate * originalDate = [dateFormatter dateFromString:tmpDate];
     
-    NSTimeInterval timeZoneOffset = [[NSTimeZone systemTimeZone] secondsFromGMT];
+    // From Gregorian calendar collecting date and time components baed on GMT
+    [cal setTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]];
+    NSDateComponents *date_comp = [cal components: NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit fromDate:originalDate];
     
-    NSTimeInterval gmtTimeInterval = [originalDate timeIntervalSinceReferenceDate] - timeZoneOffset;
+    // Formating date into database compatible format
+    NSString *someDateString = [iOSInterfaceObject getLocalizedString:date_comp];
+    [cal release];
     
-    NSDate * localDate = [NSDate dateWithTimeIntervalSinceReferenceDate:gmtTimeInterval];
-    
-    // Convert localDate back into string using dateFormatter
-    NSString * newDate = [dateFormatter stringFromDate:localDate];
-    newDate = [newDate stringByReplacingOccurrencesOfString:@" " withString:@"T"];
-    newDate = [NSString stringWithFormat:@"%@Z", newDate];
+    someDateString = [someDateString stringByReplacingOccurrencesOfString:@" " withString:@"T"];
+    someDateString = [NSString stringWithFormat:@"%@Z", someDateString];
     
     [dateFormatter release];
     
-    return newDate;
+    return someDateString;
 }
+
+
+
+//+ (NSString *) getGMTFromLocalTime:(NSString *)localTime
+//{
+//    if ([localTime isEqualToString:@""])
+//        return localTime;
+//    NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
+//
+//    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+//
+//    NSString * tmpDate = [localTime substringToIndex:[localTime length]-0];
+//    tmpDate = [tmpDate stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+//    tmpDate = [tmpDate stringByReplacingOccurrencesOfString:@"Z" withString:@""];
+//    tmpDate = [tmpDate stringByDeletingPathExtension];
+//
+//    NSDate * originalDate = [dateFormatter dateFromString:tmpDate];
+//
+//    NSTimeInterval timeZoneOffset = [[NSTimeZone systemTimeZone] secondsFromGMT];
+//
+//    NSTimeInterval gmtTimeInterval = [originalDate timeIntervalSinceReferenceDate] - timeZoneOffset;
+//
+//    NSDate * localDate = [NSDate dateWithTimeIntervalSinceReferenceDate:gmtTimeInterval];
+//
+//    // Convert localDate back into string using dateFormatter
+//    NSString * newDate = [dateFormatter stringFromDate:localDate];
+//    newDate = [newDate stringByReplacingOccurrencesOfString:@" " withString:@"T"];
+//    newDate = [NSString stringWithFormat:@"%@Z", newDate];
+//
+//    [dateFormatter release];
+//
+//    return newDate;
+//}
 
 //pavaman 1st Jan 2011
 //  Unused Methods
