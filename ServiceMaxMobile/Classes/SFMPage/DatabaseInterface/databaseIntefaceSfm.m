@@ -6135,7 +6135,7 @@ return nil;
                             int ret = synchronized_sqlite3_step(bulk_statement);
                             if (ret!= SQLITE_DONE)
                             {
-                                SMLog(kLogLevelError,"Commit Failed!\n");
+                                SMLog(kLogLevelError,@"Commit Failed!\n");
 								SMLog(kLogLevelError,@"%@", query_string);
 								SMLog(kLogLevelError,@"METHOD: updateSyncRecordsIntoLocalDatabase");
                             }
