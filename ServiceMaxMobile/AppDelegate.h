@@ -922,7 +922,9 @@ extern  NSString const *devVersion;
 // SFM Search conflict status
 @property (nonatomic, assign) NSString *From_SFM_Search;
 @property (nonatomic, assign) NSString *errorDescription;
-@property (nonatomic, assign) NSString *language;
+//@property (nonatomic, assign) NSString *language;
+
+@property (nonatomic, copy) NSString *language;
 @property (nonatomic ,assign) BOOL isSfmSearchSortingAvailable;
 
 

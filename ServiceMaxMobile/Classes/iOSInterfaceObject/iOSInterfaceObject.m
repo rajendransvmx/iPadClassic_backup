@@ -59,7 +59,48 @@ void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message
     return newDate;
 }
 
-+ (NSString *) getGMTFromLocalTime:(NSString *)localTime
+
+//Krishna : fix for defect 12534
++ (NSString *)getGMTFromLocalTime:(NSString *)localTime
+{
+    if ([localTime isEqualToString:@""])
+    {
+        return localTime;
+    }
+    
+    NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
+
+    NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    [dateFormatter setCalendar:cal];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    
+    NSString * tmpDate = [localTime substringToIndex:[localTime length]- 0];
+    tmpDate = [tmpDate stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+    tmpDate = [tmpDate stringByReplacingOccurrencesOfString:@"Z" withString:@""];
+    tmpDate = [tmpDate stringByDeletingPathExtension];
+    
+    // Local DateTime object from local date-time string
+    NSDate * originalDate = [dateFormatter dateFromString:tmpDate];
+    
+    // From Gregorian calendar collecting date and time components baed on GMT
+    [cal setTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]];
+    NSDateComponents *date_comp = [cal components: NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit fromDate:originalDate];
+    
+    // Formating date into database compatible format
+    NSString *someDateString = [iOSInterfaceObject getLocalizedString:date_comp];
+    [cal release];
+    
+    someDateString = [someDateString stringByReplacingOccurrencesOfString:@" " withString:@"T"];
+    someDateString = [NSString stringWithFormat:@"%@Z", someDateString];
+    
+    [dateFormatter release];
+    
+    return someDateString;
+}
+
+/////// Method commenting for daylight saving defect 12534
+
+/*+ (NSString *) getGMTFromLocalTime:(NSString *)localTime
 {
     if ([localTime isEqualToString:@""])
         return localTime;
@@ -88,8 +129,8 @@ void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message
     [dateFormatter release];
     
     return newDate;
-}
-
+}*/
+//////////// end of comment
 //pavaman 1st Jan 2011
 //  Unused Methods
 //+ (NSString *) adjustDateWrapAround:(NSString *)startTime:(NSString *)endTime;
