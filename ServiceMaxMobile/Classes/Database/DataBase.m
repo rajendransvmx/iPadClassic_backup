@@ -8605,7 +8605,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                 
                 if ( val  != SQLITE_DONE)
                 {
-                    SMLog(kLogLevelError,"Commit Failed! : insertIntoAttachment\n");
+                    SMLog(kLogLevelError,@"Commit Failed! : insertIntoAttachment\n");
                 }
                 sqlite3_reset(bulkStmt);
                 
@@ -9602,7 +9602,7 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
                                 
                 if ( synchronized_sqlite3_step(bulkStmt) != SQLITE_DONE)
                 {
-                    SMLog(kLogLevelError,"Commit Failed - SFExpression!\n");
+                    SMLog(kLogLevelError,@"Commit Failed - SFExpression!\n");
                 }
                 
                 sqlite3_clear_bindings(bulkStmt);
