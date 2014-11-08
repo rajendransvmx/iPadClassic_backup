@@ -1,0 +1,92 @@
+*******************************************
+Release Notes Starts For Version 14.59.101
+===========================================
+-------------
+Fixed Defects
+-------------
+None
+
+-------------
+Known Issues
+-------------
+
+SFM-View
+1. Attachment will not be listed under SFMPage master view
+2. Winter 15 defects are not fixed
+3. Online search in Product/Account is not implemented
+4. Precision handling is not done for number, currency and percentage fields.
+5. Data loading in background is not implemented
+
+
+SFM-Edit
+
+1. Precision handling for number, currency and percentage fields
+
+Calendar
+1. Multi day events not supported
+2. Event Rescheduling by drag and drop supported. View editing not supported
+3. Need to wait for data sync to completion to do next drag and drop rescheduling, other case we observed crashes 
+
+Localisation
+1. New set of tags generation in progress on server side. Existing iPhone and iPad tags supported  
+
+Advanced Lookup Fields
+1. UserTrunk not supported
+
+---------------------
+Fixed - Known Issues 
+--------------------- 
+None
+
+
+---------------------
+Features Implemented
+---------------------
+
+1. Login
+2. Initial Sync
+3. Home
+4. Logout
+5. Manual Data Sync
+6. Scheduled Data Sync
+7. Manual Config Sync
+8. About
+9. Reset Application
+10. Connectivity
+11. SFM View
+12. Switch View
+13. Actions
+14. Product  History
+15. Account History
+16. Work Order Debrief
+17. SFMEdit
+18. LookupFields
+19. PickList
+20. Dependent Picklist
+21. Tasks
+22. TroubleShooting
+23. Map  
+24. Calendar Day View 
+25. Calendar Week View 
+26. Calendar Month view 
+27. Event Rescheduling
+28. Push Logs  
+29. SFM Search
+30. Barcode Scanning 
+31. Location Ping 
+32. Stand alone Edit 
+33. Source To Target
+34. Source To Target Child
+35. Create New Record
+36. Recents
+37. Create a Event
+38. Localisation
+39. Successive Sync [New]
+40. Get Price [New]
+41. Advanced Lookup Fields [New]
+42. Source updates [New]
+
+---------------------
+Additional Notes
+---------------------
+None

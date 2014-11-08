@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6245" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment defaultVersion="1792" identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="DownloadedCollectionViewCell" id="Fn0-ys-l1j" customClass="DownloadedCollectionViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="170" height="170"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="170" height="170"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="u259.png" translatesAutoresizingMaskIntoConstraints="NO" id="fO3-bl-nzB">
+                        <rect key="frame" x="0.0" y="0.0" width="170" height="170"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                    </imageView>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sao-5m-2D3">
+                        <rect key="frame" x="0.0" y="150" width="170" height="20"/>
+                        <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1KW-gh-g2R">
+                        <rect key="frame" x="8" y="149" width="100" height="21"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3Ie-uQ-XNr">
+                        <rect key="frame" x="139" y="150" width="30" height="20"/>
+                        <color key="backgroundColor" red="0.2043449704467285" green="1" blue="0.18264086419181413" alpha="1" colorSpace="calibratedRGB"/>
+                    </imageView>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Selection Check empty.png" translatesAutoresizingMaskIntoConstraints="NO" id="Q0b-vZ-xSW">
+                        <rect key="frame" x="2" y="2" width="40" height="40"/>
+                    </imageView>
+                </subviews>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            </view>
+            <connections>
+                <outlet property="bottomBar" destination="sao-5m-2D3" id="1fN-rH-Gxm"/>
+                <outlet property="datelbl" destination="1KW-gh-g2R" id="iIh-AN-DC5"/>
+                <outlet property="imageIcon" destination="fO3-bl-nzB" id="3fq-bk-0ia"/>
+                <outlet property="selectedIcon" destination="Q0b-vZ-xSW" id="dhX-1h-Ske"/>
+                <outlet property="videoIcon" destination="3Ie-uQ-XNr" id="ukL-OS-Rex"/>
+            </connections>
+            <point key="canvasLocation" x="202" y="329"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="Selection Check empty.png" width="80" height="82"/>
+        <image name="u259.png" width="320" height="320"/>
+    </resources>
+</document>
