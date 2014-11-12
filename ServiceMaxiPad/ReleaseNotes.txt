@@ -1,0 +1,126 @@
+*******************************************
+Release Notes Starts For Version 14.59.103
+===========================================
+-------------
+Fixed Defects
+-------------
+1.  012320 SFM Process related to inactive SFM WIzards are also downloaded   
+2.  012374 Initial sync is failing with unexpected token 'ID' error for tech user
+3.  012372 App crash on viewing multiple lines
+4.  012375 Cal Day View:Tap on blank space of calendar picker picks previous or next month
+5.  012381 Tapping on blank cell in month view the app is navigating to day view with wrong date
+6.  012385 Cal Day View:Overlapping event not visible   
+7.  012526 Local Id is displayed in calendar for local event
+8.  012396 Cal day view:No events selected, right pane message repositions when navigating back and forth to cal day view
+9.  012386 Event displays work order number instead of account name, even when work order is associated with account.
+10. 012388 Events created for one technician are available on other technecian's calendar
+11. 012397 Sliding Cal day slightly when event selected, the right pane content replaces with default text message and event remains selected.
+12. 012403 Reschedule dialog displays a warning “This time overlaps with another appointment” even though the appointment is not overlapping with any other event
+13. 012433 Calendar day and week view shows 'a' and 'p' instead of 'AM' and 'PM'
+14. 012443 iOS 8 : In Calendar Day view, scrolling down Appointment list goes back to the Current Time line & not able to view & select the Event/Appointment
+15. 012448 Event View: Fields values are hardcoded and field alignment is not proper
+16. 012465 iOS 8 : iPad App launched in Landscape & Changing to Portrait view makes the Time slot (on the Left hand side) of Calendar ‘Week’ view disappear.
+17. 012466 Orange color Patch/Box appeared on Calendar day selector when selected Date
+18. 012482 iOS 8 & 8.1: The Date/Day selector get disappeared on the Day view of Calendar
+19. 012486 Month View: ‘Calendar’ dates are not according to the selected ‘Month’ on the Date selector calendar modal.
+20. 012557 Cal Day/Week view: State and City not appearing on event.
+21. 012687 Calendar Day view: ‘Description’ of the Non work order Event is not shown & it is indicated with double hyphen - -
+22. 012229 Tools:App header is not displaying the correct header name.
+23. 012656 Variation is font and positioning of message 'No tasks found....'
+24. 012489 Popup : Extra line is displayed below the primary button
+
+-------------
+Known Issues
+-------------
+
+SFM-View
+1. Winter 15 defects are not fixed
+2. Online search in Product/Account is not implemented
+3. Precision handling is not done for number, currency and percentage fields.
+4. Data loading in background is not implemented
+
+SFM-Edit
+1. Precision handling for number, currency and percentage fields
+
+Calendar
+1. Multi day events not supported
+
+Localisation
+1. New set of tags generation in progress on server side. Existing iPhone and iPad tags supported  
+
+Advanced Lookup Fields
+1. UserTrunk not supported
+
+Attachments
+1. Support only for Documents
+2. Attachment enabling is hard coded.
+
+
+---------------------
+Fixed - Known Issues 
+--------------------- 
+1. Attachment will not be listed under SFMPage master view
+2. Event Rescheduling by drag and drop supported. View editing not supported
+3. Need to wait for data sync to completion to do next drag and drop rescheduling, other case we observed crashes 
+4. Create record with validation error scenario. Update the record locally again and save. Data sync will go into loop.
+5. Create record for Object A. With object A reference, create record for Object B (with validation error scenario), and record for Object C with Object B reference. Data sync will go into loop.
+
+
+---------------------
+Features Implemented
+---------------------
+
+1. Login
+2. Initial Sync
+3. Home
+4. Logout
+5. Manual Data Sync
+6. Scheduled Data Sync
+7. Manual Config Sync
+8. About
+9. Reset Application
+10. Connectivity
+11. SFM View
+12. Switch View
+13. Actions
+14. Product  History
+15. Account History
+16. Work Order Debrief
+17. SFMEdit
+18. LookupFields
+19. PickList
+20. Dependent Picklist
+21. Tasks
+22. TroubleShooting
+23. Map  
+24. Calendar Day View 
+25. Calendar Week View 
+26. Calendar Month view 
+27. Event Rescheduling
+28. Push Logs  
+29. SFM Search
+30. Barcode Scanning 
+31. Location Ping 
+32. Stand alone Edit 
+33. Source To Target
+34. Source To Target Child
+35. Create New Record
+36. Recents
+37. Create a Event
+38. Localisation
+39. Successive Sync 
+40. Get Price 
+41. Advanced Lookup Fields 
+42. Source updates
+43. Conflict Resolution 
+44. Product Manual
+45. Attachments
+46. Attachment Sharing
+47. Smart Documents [New]
+48. Signature [New]
+49. Target Updates [New]
+
+---------------------
+Additional Notes
+---------------------
+None
