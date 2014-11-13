@@ -1,0 +1,99 @@
+*******************************************
+Release Notes Starts For Version 14.59.104
+===========================================
+-------------
+Fixed Defects
+-------------
+012646 - iPad Air - iOS 8 App is crashing during initial sync.
+
+-------------
+Known Issues
+-------------
+
+SFM-View
+1. Winter 15 defects are not fixed
+2. Online search in Product/Account is not implemented
+3. Precision handling is not done for number, currency and percentage fields.
+4. Data loading in background is not implemented
+
+SFM-Edit
+1. Precision handling for number, currency and percentage fields
+
+Calendar
+1. Multi day events not supported
+
+Localisation
+1. New set of tags generation in progress on server side. Existing iPhone and iPad tags supported  
+
+Advanced Lookup Fields
+1. UserTrunk not supported
+
+Attachments
+1. Support only for Documents
+2. Attachment enabling is hard coded.
+
+
+---------------------
+Fixed - Known Issues 
+--------------------- 
+None
+
+---------------------
+Features Implemented
+---------------------
+1. Login
+2. Initial Sync
+3. Home
+4. Logout
+5. Manual Data Sync
+6. Scheduled Data Sync
+7. Manual Config Sync
+8. About
+9. Reset Application
+10. Connectivity
+11. SFM View
+12. Switch View
+13. Actions
+14. Product  History
+15. Account History
+16. Work Order Debrief
+17. SFMEdit
+18. LookupFields
+19. PickList
+20. Dependent Picklist
+21. Tasks
+22. TroubleShooting
+23. Map  
+24. Calendar Day View 
+25. Calendar Week View 
+26. Calendar Month view 
+27. Event Rescheduling
+28. Push Logs  
+29. SFM Search
+30. Barcode Scanning 
+31. Location Ping 
+32. Stand alone Edit 
+33. Source To Target
+34. Source To Target Child
+35. Create New Record
+36. Recents
+37. Create a Event
+38. Localisation
+39. Successive Sync 
+40. Get Price 
+41. Advanced Lookup Fields 
+42. Source updates
+43. Conflict Resolution 
+44. Product Manual
+45. Attachments
+46. Attachment Sharing
+47. Smart Documents
+48. Signature
+49. Target Updates
+50. Linked  SFM [New]
+51. Form Fill [New]
+
+---------------------
+Additional Notes
+---------------------
+Made code change for defect ‘operation could not completed’ during sync in progress.
