@@ -1530,6 +1530,9 @@ last_sync_time:(NSString *)last_sync_time
 
 -(void)getAllRecordsForOperationTypeFromSYNCCONFLICT:(NSString *)operationType OverRideFlag:(NSString *)overrideFlag; 
 {
+    //Defect - 012749
+    NSMutableArray *localIdArray = [NSMutableArray new];
+    
     NSMutableArray * object_array = [[appDelegate.databaseInterface getAllRecordsFromConflictTableForOperationType:operationType overrideFlag:overrideFlag] retain];
     
 	if(appDelegate.dataSync_dict != nil)
@@ -1577,6 +1580,9 @@ last_sync_time:(NSString *)last_sync_time
                 override_flag = [dict objectForKey:key];
             }
         }
+        if ([local_id length] > 0) {
+            [localIdArray addObject:local_id];
+        }
         
         NSArray * object_names_array = [appDelegate.dataSync_dict allKeys];
         BOOL  flag  = FALSE;
@@ -1607,8 +1613,39 @@ last_sync_time:(NSString *)last_sync_time
         SMLog(kLogLevelError,@"Exception Reason WSInterface :getAllRecordsForOperationTypeFromSYNCCONFLICT %@",exp.reason);
     }
 
+    //Defect - 012749
+    if ([localIdArray count] > 0 ) {
+        NSString *idSeparetedByComas = nil;
+        
+        if ([localIdArray count] > 1)
+        {
+            NSString *baseString = [localIdArray componentsJoinedByString:@"','"];
+            idSeparetedByComas = [NSString stringWithFormat:@"'%@'", baseString];
+        }
+        else
+        {
+            idSeparetedByComas = [NSString stringWithFormat:@"'%@'", [localIdArray objectAtIndex:0]];
+        }
+        [self deleteConflictRecordsFromTrailerTable:idSeparetedByComas];
+    }
 }
 
+//Defect - 012749
+- (void)deleteConflictRecordsFromTrailerTable:(NSString *)localIds
+{
+    NSString *deleteQuery = [NSString stringWithFormat:@"DELETE FROM %@ WHERE operation = '%@' AND local_id IN (%@)",
+                             SFDATATRAILER, INSERT, localIds];
+    
+    char * err ;
+    if(synchronized_sqlite3_exec(appDelegate.db, [deleteQuery UTF8String], NULL, NULL, &err))
+    {
+        SMLog(kLogLevelError,@"%@", deleteQuery);
+		SMLog(kLogLevelError,@"METHOD:deleteConflictRecordsFromTrailerTable");
+		SMLog(kLogLevelError,@"ERROR IN DELETE %s", err);
+        [appDelegate printIfError:[NSString stringWithUTF8String:err] ForQuery:deleteQuery type:DELETEQUERY];
+        
+    }
+}
 
 #pragma mark - CheckForProfile
 - (void) checkIfProfileExistsWithEventName:(NSString *)eventName type:(NSString *)eventType
