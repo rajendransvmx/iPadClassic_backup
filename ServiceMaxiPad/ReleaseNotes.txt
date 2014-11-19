@@ -1,0 +1,126 @@
+*******************************************
+Release Notes Starts For Version 14.59.108
+===========================================
+-------------
+Fixed Defects
+-------------
+012689 App crashes when we tap on Remove link in the Childline
+012701 CURRENTRECORDHEADER not respected in Stand-alone Edit process
+012367 Additional record type 'MASTER' is displayed in the edit paglayout
+012725 ‘Product Manual’ link/option is not listed under the ‘Actions’ list on the Troubleshooting page.
+012370 Date time field is reset to previous value in Edit page layout
+012847 Calendar Day View: Month is not getting displayed according to date selected
+012784 Invoking “Output Doc” process from Day view ‘Actions’ will display ’This SFM Process does not have a Page Layout’ message.
+012767 In iPad Air 64 bit Tapping on Get price Button App is crashing.	
+012752 App crash, when tap on Get price button for record type Estimates lines.
+012824 Troubleshooting: App Crashes on tapping ‘Product Manual’.
+012723 Troubleshooting page: Spelling mistake observed in ‘Product Manual’ link i.e. there is No space between Product & Manual.
+012762 App crash on tapping of Attachment section
+012761 Current hour time display is missing on cal day and week view.
+012815 Calendar Day view- work order event selection goes off in the appointment list after Rescheduling the event.
+012801 SFM Linked Process: Tapping work details lines tapping on lines App crashes.
+012249 SFM Wizard screen process name is overlapping Switching to portrait mode.
+012208 Steps do not provide complete information during initial sync & reset app
+012210 last Sync time of Data Sync and next Sync time of Config Sync are hard coded
+012595 BugBash: iPad Mini App crash during initial Sync
+012514 In Week View, “+Add Event” button get grayed out/disabled when user slides ‘Week’ view horizontally.
+012745 Spacing is more between attachment section and WO section
+012491 'Sign In ' Button Size is too small
+012455 Map: Plotting WO events scheduled for next day and not the current day events.
+012517 Month view refresh issue, Scrolling Month view up/down will not refresh page properly from 2nd or 3rd time & grey colored patch observed on top/bottom
+012542 Week View: Non work order Event’s “subject” line goes out of the box when there is a small event for Half an hour within a big Event(Concurrent Event)
+012600 BugBash: Confusing map error message
+
+-------------
+Known Issues
+-------------
+
+SFM-View
+1. Winter 15 defects are not fixed
+2. Online search in Product/Account is not implemented
+3. Precision handling is not done for number, currency and percentage fields.
+4. Data loading in background is not implemented
+
+SFM-Edit
+1. Precision handling for number, currency and percentage fields
+
+Localisation
+1. New set of tags generation in progress on server side. Existing iPhone and iPad tags supported  
+
+Advanced Lookup Fields
+1. UserTrunk not supported
+
+Attachments
+1. Attachment enabling is hard coded.
+
+
+---------------------
+Fixed - Known Issues 
+--------------------- 
+None
+
+---------------------
+Features Implemented
+---------------------
+1. Login
+2. Initial Sync
+3. Home
+4. Logout
+5. Manual Data Sync
+6. Scheduled Data Sync
+7. Manual Config Sync
+8. About
+9. Reset Application
+10. Connectivity
+11. SFM View
+12. Switch View
+13. Actions
+14. Product  History
+15. Account History
+16. Work Order Debrief
+17. SFMEdit
+18. LookupFields
+19. PickList
+20. Dependent Picklist
+21. Tasks
+22. TroubleShooting
+23. Map  
+24. Calendar Day View 
+25. Calendar Week View 
+26. Calendar Month view 
+27. Event Rescheduling
+28. Push Logs  
+29. SFM Search
+30. Barcode Scanning 
+31. Location Ping 
+32. Stand alone Edit 
+33. Source To Target
+34. Source To Target Child
+35. Create New Record
+36. Recents
+37. Create a Event
+38. Localisation
+39. Successive Sync 
+40. Get Price 
+41. Advanced Lookup Fields 
+42. Source updates
+43. Conflict Resolution 
+44. Product Manual
+45. Attachments
+46. Attachment Sharing
+47. Smart Documents
+48. Signature
+49. Target Updates
+50. Linked SFM 
+51. Form Fill
+52. Scheduled Config Sync
+53. SFM Data validation - Business Rules 
+54. Context Filters 
+55. iPad Job Log Report 
+56. Download on Demand
+
+---------------------
+Additional Notes
+---------------------
+1. Removed links for Data Purge, Text Size and Notifications
+
