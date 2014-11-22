@@ -1,0 +1,52 @@
+*******************************************
+Release Notes Starts For Version 14.60.003
+===========================================
+-------------
+Fixed Defects
+-------------
+012792 Output Doc: “Sync” does not start on tapping ‘Finalize’ button in the generated Output/Smart Document.
+012371 Product lookup search is not displaying any results
+012984 SFM –Smart Process in Target object Update, “Date time “fields not respecting the literals. “Today”, “Tomorrow”, and “Yesterday”.
+012847 Calendar Day View: Month is not getting displayed according to date selected
+012823 CurrentRecordHeader not respected in Field and Value Map for Source-Target process
+012991 +Add link is displayed on the right corner of ‘Map’ screen when user navigates from ‘Day’ view to ‘Map’.
+012699 More than 100 records are being displayed in the iPad Recents
+
+-------------
+Known Issues
+-------------
+
+SFM-View
+1. Winter 15 defects are not fixed
+2. Online search in Product/Account is not implemented
+3. Precision handling is not done for number, currency and percentage fields.
+4. Data loading in background is not implemented
+
+SFM-Edit
+1. Precision handling for number, currency and percentage fields
+
+Localisation
+1. New set of tags generation in progress on server side. Existing iPhone and iPad tags supported  
+
+Advanced Lookup Fields
+1. UserTrunk not supported
+
+Attachments
+1. Attachment enabling is hard coded.
+
+
+---------------------
+Fixed - Known Issues 
+--------------------- 
+None
+
+---------------------
+Features Implemented
+---------------------
+No new features implemented
+
+---------------------
+Additional Notes
+---------------------
+1. Minor modification Action screen loading and Reset application
+
