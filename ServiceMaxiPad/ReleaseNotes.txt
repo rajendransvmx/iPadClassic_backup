@@ -1,0 +1,66 @@
+*******************************************
+Release Notes Starts For Version 14.60.004
+===========================================
+-------------
+Fixed Defects
+-------------
+012987 App displaying “No Connectivity message”, For case and WO object when user tap on Finalized in service report offline mode.
+012935 App Crashes on tapping ‘Push Logs Now’ button in the Tools > ‘Push Logs Status’ section.
+012622 Tools- Left Navigation by default selection goes to the first option even though user selection is different (say About or Notification History).
+012787 Fields in the Hard Wired area of the related event in the calender disappears when the permission of any of the hard wired field is taken off.
+012720 Product Manual: The user message “Product Manual not present” is Not displayed.
+012635 Failure in location updates are not sent to server when location tracking is turned off in device
+012792 Output Doc: “Sync” does not start on tapping ‘Finalize’ button in the generated Output/Smart Document.
+012555 Application hangs when remote access revoked during reset app
+013025 Rescheduling the existing events does not occupy complete space.
+012985 Changing iPad ‘Time Zone’ & ‘International-region format’ is not respected in Calendar day view appointment list “Time” & “Events”.
+012846 IB search look up font size is not according to UI spec.
+012366 Record type dependency is not respected and on changing value the page is not refreshed
+012878 SFM- 'Add/Edit Products Serviced' for the 'Product Warranty', in the lookup does not display records for the IB
+012435 Tools: Alignment is not proper
+012353 Troubleshooting:Scroll Blank screen and black image appears
+012417 App logs out when network connetion error message appears during initial sync or reset app
+012924 ‘Troubleshooting’ option in view process ‘Actions’ list & ‘Product Manual’ option/link in Troubleshooting page is missing.
+013009 Troublshooting files are not listed & user message saying “no manuals found for the product” is displayed.
+012600 BugBash: Confusing map error message
+012315 During Initial Sync, turn ipad to standby mode and turn on again-Network connection error pop up.
+012345 TroubleShooting:Search icon and text box, search result text font and font color is not as per spec
+
+-------------
+Known Issues
+-------------
+
+SFM-View
+1. Winter 15 defects are not fixed
+2. Online search in Product/Account is not implemented
+3. Precision handling is not done for number, currency and percentage fields.
+4. Data loading in background is not implemented
+
+SFM-Edit
+1. Precision handling for number, currency and percentage fields
+
+Localisation
+1. New set of tags generation in progress on server side. Existing iPhone and iPad tags supported  
+
+Advanced Lookup Fields
+1. UserTrunk not supported
+
+Attachments
+1. Attachment enabling is hard coded.
+
+
+---------------------
+Fixed - Known Issues 
+--------------------- 
+None
+
+---------------------
+Features Implemented
+---------------------
+No new features implemented
+
+---------------------
+Additional Notes
+---------------------
+None
+
