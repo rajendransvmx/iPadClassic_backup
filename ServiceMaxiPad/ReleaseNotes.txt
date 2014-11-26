@@ -1,0 +1,78 @@
+*******************************************
+Release Notes Starts For Version 14.60.005
+===========================================
+-------------
+Fixed Defects
+-------------
+013068  Not able to enter data on any editable text fields edit/create process
+012678  Conflict is not getting cleared even though the record is deleted.
+012822  Special Characters and Alphabets allowed on numeric field
+012615  Behaviour after killing the app when any sync is in progress is not correct
+013049	Product History title is missing, appears as "Information" under History
+012660	Day/Week view:Work order event 'View process' having qualifying criteria does not block user for the first time & Error message shown from 2nd time.
+012221	Sync status shown as success even in case of failure
+012883	App freeze when data sync in progress
+012564  Performing a config sync existing events and recent create records are getting deleted
+012795  Take video form ipad:Take 30 seconds video tag appears instead of 120 second video
+012353  Troubleshooting:Scroll Blank screen and black image appears
+012580  Tapping on ‘Owner ID’ lookup mandatory field in a standard process (say ‘Create RMA from Work Order) not listing the ‘User’ details.
+012741	iPad Reset throws error at step 5, when the technician doesnt have object level permissions.
+012480	Explore:More than 2 display fields configured from server are no longer respected on ipad
+012522	Explore(SFM Search), by default 1st process get selected from the list & contents for selected process displayed on the right pane.
+012543	In Explore, the object records(on right pane) expands automatically when user switch between search process having same filter criteria for a Object.
+012576	SFM Search: Process description displays only till 45 characters
+012362	Config sync -Spell mistake in the warning message
+012493	About: No proper spacing is provided between the displayed text.
+012771	SLA Clocks display and orientation issue
+012301	iOS8:Reste App/Data Sync/Config Sync pop up with grey background slides to left
+012471	Explore:search box is not as in spec, in portrait mode the lines are not appearing correctly
+012597	BugBash: Typo error in SLA Clock section
+012389	Data sync goes to loop after login to app and performing data sync
+012596	BugBash: After completion of manual Sync configuration App returns to Calendar home page
+012617	Config Syn after completion takes to Cal Day view
+012818	Activity indicator is spinning continuously
+012401	Reschedule the event by drag and drop starts the sync rorator but doesn't reflect to server
+012204	Retry and SignOut option is not displayed if connectivity goes off during initial sync
+012318	Reloging with same user when session expired, triggers initial sync
+012364  Cocoa error while initial sync, config sync and reset app.
+012360  Actions: Wizard, process and picklist values are duplicating after changing screen design form browser
+
+-------------
+Known Issues
+-------------
+
+SFM-View
+1. Winter 15 defects are not fixed
+2. Online search in Product/Account is not implemented
+3. Precision handling is not done for number, currency and percentage fields.
+4. Data loading in background is not implemented
+
+SFM-Edit
+1. Precision handling for number, currency and percentage fields
+
+Localisation
+1. New set of tags generation in progress on server side. Existing iPhone and iPad tags supported  
+
+Advanced Lookup Fields
+1. UserTrunk not supported
+
+Attachments
+1. Attachment enabling is hard coded.
+
+
+---------------------
+Fixed - Known Issues 
+--------------------- 
+None
+
+---------------------
+Features Implemented
+---------------------
+No new features implemented
+
+---------------------
+Additional Notes
+---------------------
+- Option for Sync Version 2.0 and Performance level log removed from app settings. 
+
+
