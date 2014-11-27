@@ -1,0 +1,104 @@
+--------------------------------------------------------------------------------------------
+ServiceMax iPad Release
+
+*******************************************
+Version = 14.60.006
+===========================================
+-------------
+Fixed Defects
+-------------
+12739	Attachments form serer are not available on ipad and photos and videos not able to add form ipad.
+12766	Page doesn't get refreshed
+12830	Generated ‘Service Report’ from iPad not available in the ‘Attachments > Documents’ section of the work order.
+13029	Map: App is crashing when tap on back button WO which viewed from Map popover link
+13037	Map: Work order, which has UK and Australia address, does not plot the map
+13051	IPad Air: App is crashes on tapping on Take new picture from Attachment section.
+12221	Sync status shown as success even in case of failure 
+12811	Conflict indicator is not displayed on the record in calendar day view
+12985	Changing iPad ‘Time Zone’ & ‘International-region format’ is not respected in Calendar day view appointment list “Time” & “Events”.
+12720	Product Manual: The user message “Product Manual not present” is Not displayed.
+12601	During Initial sync, the app crashes. This happens in low connectivity.
+13012	In Offline, App crashes on tapping "Finalize" in the output/smart Doc (service report).
+12873	DOD record cannot be distinguished after download and refresh form sales force process unavailable
+12884	iPad Localization - List of Tags on which localization changes did not get applied.
+12616	During Data Sync, the app allows user to sign out.
+12988	Data Sync’ pop up not displayed to the next user who log into app, when Don’t show data sync pop up again set by 1st user & then Switch user is done.
+13089	Generating smart doc the template name is displaying “update” instead of “Customer Sign off”.
+12919	In Week/Day View: App crashes when trying to reschedule multiple Events during Sync in progress.
+13060	Changing Time zone in iPad in Calendar Week and month scrolling week and Month is not displaying selected month and week
+13074	Push Logs: User pop up messages are not appropriate & it is not as expected Servicemax app pop up messages.
+13075	Push Logs: 'Error' & 'Warning' Application Level Logs set in iPad Settings are not respected in app.
+12519	From day View calendar app is not responding when invoking the Source target process from action
+12585	The app doesn't have feature to create Event on Work Order
+12663	Issues with the new UI & UX of SFM Search results screen - loss of functionality
+12680	"Dependent class is invalid and needs recompilation" Error and App crash during Initial Sync
+12753	Connectivity loss during ‘Data Sync’ will not show any user message & status will be ‘In Progress’.
+12826	Warning messages doesn't take user to respective record.
+12363	No connectivity message keeps popping up until connectivity is regained
+12373	Initial sync is failing with Network error 303
+12887	Config Sync: No user option to continue working with app("Retry" and "I will try Later" option) when Connectivity goes off during ‘Config sync’.
+12983	After Config sync performed Pick List values are getting duplicates.
+13042	Data sync next sync time is not displaying correctly after scheduled data sync completion
+12401	Reschedule the event by drag and drop starts the sync rorator but doesn't reflect to server.
+12452	Calendar DayView-Date selector & Appointment list disappeared when user switch back to Landscape view from other Portrait Screen view (say “Explore”).
+12778	For Case record SLA Clock and Priority indicator is not displayed
+13030	“Refresh from Salesforce” should be available instead ‘Update DOD Records from Salesforce’ in the "Actions" menu of Explore > Work order’s View proces
+12364	Cocoa error while initial sync, config sync and reset app.
+13076	Search Window is not displayed properly in iPad - 7.0.6
+13079	Tasks: On Creation or Edit of tasks, error message is retained even after edit/create action is cancelled
+13091	iPad Tags - Tag Names are being displayed instead of values
+12246	Labels not legible completely
+12714	App crashes on invoking particular SFM process on a specific WO
+12791	Look up UI not as per the UI spec
+12360	Actions: Wizard, process and picklist values are duplicating after changing screen design form browser
+12204	Retry and SignOut option is not displayed if connectivity goes off during initial sync
+12235	Error message while app in ideal state and initial sync starts after re login
+12257	View Detail Line layout overlaps when expand child lines and scroll up
+12301	iOS8:Reste App/Data Sync/Config Sync pop up with grey background slides to left
+12389	Data sync goes to loop after login to app and performing data sync
+12471	Explore:search box is not as in spec, in portrait mode the lines are not appearing correctly
+12480	Explore:More than 2 display fields configured from server are no longer respected on ipad
+12493	About: No proper spacing is provided between the displayed text.
+12522	Explore(SFM Search), by default 1st process get selected from the list & contents for selected process displayed on the right pane.
+12543	In Explore, the object records(on right pane) expands automatically when user switch between search process having same filter criteria for a Object.
+12574	Current Location pop up displays duplicate message
+12576	SFM Search: Process description displays only till 45 characters
+12578	Events disappear after performing config sync
+12626	Request time out during initial sync takes to log in page
+12741	iPad Reset throws error at step 5, when the technician doesnt have object level permissions.
+12771	SLA Clocks display and orientation issue
+12818	Activity indicator is spinning continuously
+
+-------------
+Known Issues
+-------------
+
+SFM-View
+1. Winter 15 defects are not fixed
+2. Data loading in background is not implemented
+3. Precision handling is not done for number, currency and percentage fields.
+ 
+
+SFM-Edit
+1. Precision handling for number, currency and percentage fields
+
+Advanced Lookup Fields
+1. UserTrunk not supported
+
+
+---------------------
+Fixed - Known Issues 
+--------------------- 
+1. Attachment enabling is hard coded.
+2. Online search in Product/Account is not implemented
+
+---------------------
+Features Implemented
+---------------------
+No new features implemented
+
+---------------------
+Additional Notes
+---------------------
+None
+
