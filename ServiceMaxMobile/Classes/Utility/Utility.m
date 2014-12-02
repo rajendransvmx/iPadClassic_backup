@@ -682,7 +682,9 @@ void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message
 
 //10346
 #pragma mark - Precsion Handling
-+ (NSString *) getFormattedString:(NSString *)value decimalPoint:(NSInteger)scale
+/*
+ 
+ + (NSString *) getFormattedString:(NSString *)value decimalPoint:(NSInteger)scale
 {
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     // Use decimal style - this includes grouping
@@ -693,6 +695,24 @@ void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message
     [formatter release];
     
     formattedNumber = [formattedNumber stringByReplacingOccurrencesOfString:@"," withString:@""];
+    
+    return formattedNumber;
+}*/
+
++ (NSString *) getFormattedString:(NSString *)value decimalPoint:(NSInteger)scale
+{
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    [formatter setLocale:[[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"] autorelease]];
+    // Use decimal style - this includes grouping
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    NSDecimalNumber* number = [NSDecimalNumber decimalNumberWithString:value];
+    [formatter setMaximumFractionDigits:scale];
+    NSString * formattedNumber = [formatter stringFromNumber:number];
+    [formatter release];
+    
+    formattedNumber = [formattedNumber stringByReplacingOccurrencesOfString:@"," withString:@""];
+    formattedNumber = [formattedNumber stringByReplacingOccurrencesOfString:@" " withString:@""];
+    formattedNumber = [formattedNumber stringByReplacingOccurrencesOfString:@"." withString:@""];
     
     return formattedNumber;
 }
