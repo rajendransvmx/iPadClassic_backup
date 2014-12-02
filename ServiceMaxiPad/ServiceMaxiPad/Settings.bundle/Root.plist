@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PreferenceSpecifiers</key>
+	<array>
+		<dict>
+			<key>Title</key>
+			<string>Connection</string>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+		</dict>
+		<dict>
+			<key>DefaultValue</key>
+			<string>Production</string>
+			<key>Key</key>
+			<string>preference_identifier</string>
+			<key>Title</key>
+			<string>Login Host</string>
+			<key>Titles</key>
+			<array>
+				<string>Production</string>
+				<string>Sandbox</string>
+				<string>Custom Host</string>
+			</array>
+			<key>Type</key>
+			<string>PSMultiValueSpecifier</string>
+			<key>Values</key>
+			<array>
+				<string>Production</string>
+				<string>Sandbox</string>
+				<string>Custom</string>
+			</array>
+		</dict>
+		<dict>
+			<key>DefaultValue</key>
+			<string></string>
+			<key>IsSecure</key>
+			<false/>
+			<key>Key</key>
+			<string>custom_url</string>
+			<key>KeyboardType</key>
+			<string>String</string>
+			<key>Title</key>
+			<string>Custom Host</string>
+			<key>Type</key>
+			<string>PSTextFieldSpecifier</string>
+		</dict>
+		<dict>
+			<key>Title</key>
+			<string>Use Logging</string>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+		</dict>
+		<dict>
+			<key>DefaultValue</key>
+			<string>0</string>
+			<key>Key</key>
+			<string>application_level</string>
+			<key>Title</key>
+			<string>Application Level</string>
+			<key>Titles</key>
+			<array>
+				<string>Off</string>
+				<string>Error</string>
+				<string>Warning</string>
+				<string>Verbose</string>
+			</array>
+			<key>Type</key>
+			<string>PSMultiValueSpecifier</string>
+			<key>Values</key>
+			<array>
+				<string>0</string>
+				<string>1</string>
+				<string>2</string>
+				<string>3</string>
+			</array>
+		</dict>
+		<dict>
+			<key>Title</key>
+			<string>Select request timeout (in mins)</string>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+		</dict>
+		<dict>
+			<key>DefaultValue</key>
+			<integer>3</integer>
+			<key>Key</key>
+			<string>reqTimeout_Setting</string>
+			<key>MaximumValue</key>
+			<integer>10</integer>
+			<key>MaximumValueImage</key>
+			<string>10.png</string>
+			<key>MinimumValue</key>
+			<integer>3</integer>
+			<key>MinimumValueImage</key>
+			<string>3.png</string>
+			<key>Type</key>
+			<string>PSSliderSpecifier</string>
+		</dict>
+		<dict>
+			<key>Title</key>
+			<string>Application Information</string>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+		</dict>
+		<dict>
+			<key>DefaultValue</key>
+			<string>14.60.010</string>
+			<key>Key</key>
+			<string>appVersion</string>
+			<key>Title</key>
+			<string>Version</string>
+			<key>Type</key>
+			<string>PSTitleValueSpecifier</string>
+		</dict>
+	</array>
+	<key>StringsTable</key>
+	<string>Root</string>
+</dict>
+</plist>
