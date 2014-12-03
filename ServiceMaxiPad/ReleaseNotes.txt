@@ -1,0 +1,43 @@
+--------------------------------------------------------------------------------------------
+ServiceMax iPad Release
+
+*******************************************
+Version = 14.60.011
+===========================================
+-------------
+Fixed Defects
+-------------
+Fixed high and medium priority defects
+
+-------------
+Known Issues
+-------------
+
+SFM-View
+1. Winter 15 defects are not fixed
+2. Data loading in background is not implemented
+3. Precision handling is not done for number, currency and percentage fields.
+ 
+
+SFM-Edit
+1. Precision handling for number, currency and percentage fields
+
+Advanced Lookup Fields
+1. UserTrunk not supported
+
+
+---------------------
+Fixed - Known Issues 
+--------------------- 
+None
+
+---------------------
+Features Implemented
+---------------------
+No new features implemented
+
+---------------------
+Additional Notes
+---------------------
+None
+
