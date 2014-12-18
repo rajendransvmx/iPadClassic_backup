@@ -1178,14 +1178,23 @@ enum  {
     }
 
     UITableViewCell *ownerCell;
-    if([Utility notIOS7])
-    {
-         ownerCell = (UITableViewCell*)[[[sender superview] superview] superview];
+    /*ios7_support Keerti*/
+    /* if(![Utility notIOS7])
+     {
+     ownerCell = (UITableViewCell*)[[[[sender superview] superview] superview]superview];
+     }
+     else
+     {
+     ownerCell = (UITableViewCell*)[[[sender superview] superview] superview];
+     }*/
+    
+    //Defect 12508(12763)
+    id superView = [sender superview];
+    while (superView && ![superView isKindOfClass:[UITableViewCell class]]) {
+        superView = [superView superview];
     }
-    else
-    {
-         ownerCell = (UITableViewCell*)[[[[sender superview] superview] superview]superview];
-    }
+    
+    ownerCell = (UITableViewCell *)superView;
     NSIndexPath *ownerCellIndexPath;
     if (ownerCell != nil)
     {
@@ -1349,14 +1358,22 @@ enum  {
     NSString * noView = [appDelegate.wsInterface.tagsDictionary objectForKey:NO_VIEW_PROCESS];
     UITableViewCell *ownerCell;
     /*ios7_support Keerti*/
-    if(![Utility notIOS7])
-    {
-        ownerCell = (UITableViewCell*)[[[[sender superview] superview] superview]superview];
+    /* if(![Utility notIOS7])
+     {
+     ownerCell = (UITableViewCell*)[[[[sender superview] superview] superview]superview];
+     }
+     else
+     {
+     ownerCell = (UITableViewCell*)[[[sender superview] superview] superview];
+     }*/
+    
+    //Defect 12508(12763)
+    id superView = [sender superview];
+    while (superView && ![superView isKindOfClass:[UITableViewCell class]]) {
+        superView = [superView superview];
     }
-    else
-    {
-        ownerCell = (UITableViewCell*)[[[sender superview] superview] superview];
-    }
+    
+    ownerCell = (UITableViewCell *)superView;
 
     NSIndexPath *ownerCellIndexPath;
     if (ownerCell != nil)
