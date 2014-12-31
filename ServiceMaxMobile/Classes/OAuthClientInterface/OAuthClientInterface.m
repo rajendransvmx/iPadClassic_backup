@@ -614,7 +614,7 @@
 	
 	SMLog(kLogLevelVerbose,@"%@ REVOKE STATUS : %d", data, [response statusCode]);
 	
-	if ( ([response statusCode] == 200) || (refresh_token == nil))
+	if ( ([response statusCode] == 200) || (refresh_token == nil) || ([response statusCode] == 404))
 	{
 		SMLog(kLogLevelVerbose,@"Sucessfully Revoked the Tokens...");
 		
