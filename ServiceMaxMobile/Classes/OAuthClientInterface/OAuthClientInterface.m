@@ -169,7 +169,9 @@
 	
 	appDelegate.logoutFlag = FALSE;
 	
+    SMLog(kLogLevelVerbose, @"appDelegate.userOrg = %@", appDelegate.userOrg);
 	appDelegate.userOrg = [userDefaults valueForKey:@"preference_identifier"]; //Capture user org if Success :a
+    SMLog(kLogLevelVerbose, @"appDelegate.userOrg = %@", appDelegate.userOrg);
 	
 	
 	//Fix for Defect #7079 : 16/May/2013 : Changed  code for adding service max logo.

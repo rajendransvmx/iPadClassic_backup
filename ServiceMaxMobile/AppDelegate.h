@@ -663,7 +663,7 @@ extern  NSString const *devVersion;
 @property (nonatomic, assign)BOOL _continueFalg;
 @property (nonatomic, assign)BOOL _didDismissalertview;
 @property (nonatomic, assign)BOOL _didEnterAlertView;
-@property (nonatomic, retain)NSString *userOrg;
+@property (nonatomic, copy)NSString *userOrg;
 @property (nonatomic, assign)BOOL isUserOnAuthenticationPage;
 @property (nonatomic, retain)UIActivityIndicatorView *activity;
 @property (nonatomic, assign)BOOL wasPerformInitialSycn;

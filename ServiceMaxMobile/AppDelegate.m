@@ -765,7 +765,7 @@ NSString* machineName()
 	NSString *refreshToken = [SFHFKeychainUtils getValueForIdentifier:KEYCHAIN_SERVICE];
 	NSString *preference = [userDefaults valueForKey:@"preference_identifier"];
 	[userDefaults setObject:nil forKey:@"checkSessionTimeStamp"];
-	userOrg = [userDefaults valueForKey:USER_ORG]; //Read the user org here to check for correct org :
+	self.userOrg = [userDefaults valueForKey:USER_ORG]; //Read the user org here to check for correct org :
 	
 	NSMutableDictionary * temp_dict = [self.wsInterface getDefaultTags];
 	self.wsInterface.tagsDictionary = temp_dict;
@@ -802,9 +802,9 @@ NSString* machineName()
 		self.userDisplayFullName = [userDefaults valueForKey:USERFULLNAME]; // Shrinivas : Getting user display name
 		
 		//Re-write the users org incase he has changed it accidently :
-		if ( ![userOrg isEqualToString:preference] )
+		if ( ![self.userOrg isEqualToString:preference] )
 		{
-			[userDefaults setValue:userOrg forKey:@"preference_identifier"];
+			[userDefaults setValue:self.userOrg forKey:@"preference_identifier"];
 		}
 		BOOL retVal = [appDelegate.calDataBase isUsernameValid:userName];
         
@@ -1703,14 +1703,14 @@ NSString* machineName()
 	{
 		NSString * preference = [userDefaults valueForKey:@"preference_identifier"];
 		
-		if ( ![userOrg isEqualToString:preference] )
+		if ( ![self.userOrg isEqualToString:preference] )
 		{
 			[oauthClient.webview removeFromSuperview];
 			[oauthClient deleteAllCookies];
 			[oauthClient userAuthorizationRequestWithParameters:nil];
 			[_OAuthController.view addSubview:oauthClient.webview];
 		}
-		else if ( [userOrg isEqualToString:@"Custom"] && [self isInternetConnectionAvailable] )
+		else if ( [self.userOrg isEqualToString:@"Custom"] && [self isInternetConnectionAvailable] )
 		{
 			//For Defect #7085
 			[oauthClient.webview removeFromSuperview];
@@ -1734,10 +1734,10 @@ NSString* machineName()
 	else
 	{
 		NSString * preference = [userDefaults valueForKey:@"preference_identifier"];
-		if ( ![userOrg isEqualToString:preference] )
+		if ( ![self.userOrg isEqualToString:preference] )
 		{
 			//Rewrite the user's actual org to settings :
-			[userDefaults setValue:userOrg forKey:@"preference_identifier"];
+			[userDefaults setValue:self.userOrg forKey:@"preference_identifier"];
 		}
 	}
     
