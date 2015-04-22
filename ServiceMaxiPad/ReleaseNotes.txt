@@ -1,0 +1,34 @@
+
+-—————————————————————————————————————————————-
+ServiceMax Win 15 SP iPad Release
+
+*******************************************
+Version = 15.20.020
+===========================================
+-------------
+Fixed Defects
+-------------
+14381 - iPad app is timing out and requiring sign-in after an hour or so of inactivity on the app.
+
+016231 -Data is not syncing from the iPad to the Server, session is getting revoked and when logging back in initial sync is forced causing data to be lost.
+
+13449 - It is not possible to drill down into line records in a View Process screen, by tapping / double tapping the record
+-------------
+Known Issues
+-------------
+None
+---------------------
+Fixed - Known Issues 
+--------------------- 
+None
+
+---------------------
+Features Implemented
+---------------------
+None
+
+---------------------
+Additional Notes
+---------------------
+None
+
