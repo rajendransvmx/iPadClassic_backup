@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.iPad.XIB" version="3.0" toolsVersion="5053" systemVersion="13E28" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment defaultVersion="1792" identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SFMLookUpViewController">
+            <connections>
+                <outlet property="SerachObjectName" destination="RWj-Tq-rG2" id="ppM-FZ-AgG"/>
+                <outlet property="addSelectedButtonItem" destination="R9X-QZ-M35" id="frf-jd-BJ7"/>
+                <outlet property="barcodeImage" destination="dRE-KR-blu" id="TmP-5g-pFo"/>
+                <outlet property="cancelBarButtonItem" destination="1Wt-Mk-wDN" id="z4I-O9-B1f"/>
+                <outlet property="filterButton" destination="5Vz-RS-kXW" id="AEW-TN-BRA"/>
+                <outlet property="lookUpToolBar" destination="CoE-Nx-wQ5" id="Lyy-Sw-2X0"/>
+                <outlet property="searchView" destination="fwY-WG-jyj" id="vJU-wW-fBc"/>
+                <outlet property="singleAddButton" destination="Fek-gz-6nr" id="s8d-rQ-czF"/>
+                <outlet property="tableView" destination="m4q-Ob-BHH" id="syL-Gg-Hdd"/>
+                <outlet property="titleBarButtonItem" destination="hNn-6w-B9d" id="BYN-Mw-xwg"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CoE-Nx-wQ5">
+                    <rect key="frame" x="0.0" y="1" width="768" height="44"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                    <color key="backgroundColor" red="1" green="0.96223078555345898" blue="0.94463847990956251" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="44" id="47l-vy-NIv"/>
+                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="44" id="iwG-ne-tpb"/>
+                    </constraints>
+                    <items>
+                        <barButtonItem title="Cancel" id="1Wt-Mk-wDN">
+                            <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            <connections>
+                                <action selector="cancelButtonClicked:" destination="-1" id="U5J-g1-DNK"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="9at-Xh-jeW"/>
+                        <barButtonItem enabled="NO" title="Part LookUp" width="418" id="hNn-6w-B9d"/>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="X7u-oT-gWH"/>
+                        <barButtonItem title="Add Selected" id="R9X-QZ-M35" userLabel="Bar Button Item - AddSelected">
+                            <connections>
+                                <action selector="addSelectedItems:" destination="-1" id="aeD-V0-ZMV"/>
+                            </connections>
+                        </barButtonItem>
+                    </items>
+                    <color key="tintColor" red="0.1357421875" green="0.11228057484567901" blue="0.11228057484567901" alpha="1" colorSpace="calibratedRGB"/>
+                </toolbar>
+                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Part Name or Number" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RWj-Tq-rG2">
+                    <rect key="frame" x="10" y="49" width="747" height="30"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="747" id="84t-EG-O9D"/>
+                        <constraint firstAttribute="height" constant="30" id="hTW-dD-N4q"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="fwY-WG-jyj">
+                    <rect key="frame" x="10" y="85" width="506" height="44"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="506" id="8sf-Ol-9Wo"/>
+                        <constraint firstAttribute="height" constant="44" id="kaB-HO-Y1K"/>
+                    </constraints>
+                    <color key="barTintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <textInputTraits key="textInputTraits"/>
+                    <connections>
+                        <outlet property="delegate" destination="-1" id="XUt-KW-lV6"/>
+                    </connections>
+                </searchBar>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Fek-gz-6nr" userLabel="Button - Click Me">
+                    <rect key="frame" x="10" y="142" width="747" height="65"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="65" id="bAK-Ds-TOZ"/>
+                    </constraints>
+                    <state key="normal" title="Button">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="singleAddClicked:" destination="-1" eventType="touchUpInside" id="yPf-5L-7qg"/>
+                    </connections>
+                </button>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="m4q-Ob-BHH">
+                    <rect key="frame" x="0.0" y="142" width="768" height="872"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="znH-TD-RqW"/>
+                        <outlet property="delegate" destination="-1" id="HLW-G1-B6G"/>
+                    </connections>
+                </tableView>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="barcode.png" translatesAutoresizingMaskIntoConstraints="NO" id="dRE-KR-blu">
+                    <rect key="frame" x="543" y="94" width="49" height="26"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="26" id="5AS-Wr-1bJ"/>
+                        <constraint firstAttribute="width" constant="49" id="EVL-R0-Soe"/>
+                    </constraints>
+                </imageView>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5Vz-RS-kXW">
+                    <rect key="frame" x="708" y="94" width="49" height="26"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="26" id="17p-ZA-lFy"/>
+                        <constraint firstAttribute="width" constant="49" id="onN-Ph-JvZ"/>
+                    </constraints>
+                    <state key="normal" title="Filters">
+                        <color key="titleColor" red="1" green="0.3921568627" blue="0.039215686270000001" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="addFilters:" destination="-1" eventType="touchUpInside" id="e3J-Cg-UjS"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="CoE-Nx-wQ5" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="6CX-EO-mSs"/>
+                <constraint firstItem="Fek-gz-6nr" firstAttribute="top" secondItem="fwY-WG-jyj" secondAttribute="bottom" constant="13" id="6lb-I4-orS"/>
+                <constraint firstItem="fwY-WG-jyj" firstAttribute="top" secondItem="RWj-Tq-rG2" secondAttribute="bottom" constant="6" id="Ce2-5Y-TdO"/>
+                <constraint firstItem="RWj-Tq-rG2" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="10" id="FSh-Ed-YfG"/>
+                <constraint firstItem="Fek-gz-6nr" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="10" id="HPv-4l-3jC"/>
+                <constraint firstItem="m4q-Ob-BHH" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="JFr-hS-8Tv"/>
+                <constraint firstItem="5Vz-RS-kXW" firstAttribute="top" secondItem="RWj-Tq-rG2" secondAttribute="bottom" constant="15" id="JTm-M9-jDN"/>
+                <constraint firstAttribute="trailing" secondItem="m4q-Ob-BHH" secondAttribute="trailing" id="PUu-TJ-iwO"/>
+                <constraint firstItem="dRE-KR-blu" firstAttribute="top" secondItem="RWj-Tq-rG2" secondAttribute="bottom" constant="15" id="eaI-TQ-Fvg"/>
+                <constraint firstItem="RWj-Tq-rG2" firstAttribute="top" secondItem="CoE-Nx-wQ5" secondAttribute="bottom" constant="4" id="euq-eh-uIs"/>
+                <constraint firstItem="fwY-WG-jyj" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="10" id="hrw-Rt-mEc"/>
+                <constraint firstItem="dRE-KR-blu" firstAttribute="leading" secondItem="fwY-WG-jyj" secondAttribute="trailing" constant="27" id="jkb-it-ahi"/>
+                <constraint firstAttribute="trailing" secondItem="CoE-Nx-wQ5" secondAttribute="trailing" id="miB-Gc-mfw"/>
+                <constraint firstAttribute="trailing" secondItem="5Vz-RS-kXW" secondAttribute="trailing" constant="11" id="nZ6-A2-vcd"/>
+                <constraint firstAttribute="trailing" secondItem="Fek-gz-6nr" secondAttribute="trailing" constant="11" id="oTC-q6-HC0"/>
+                <constraint firstItem="CoE-Nx-wQ5" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="1" id="pAd-3S-hUT"/>
+                <constraint firstAttribute="bottom" secondItem="m4q-Ob-BHH" secondAttribute="bottom" constant="10" id="sd0-dd-1fK"/>
+                <constraint firstItem="m4q-Ob-BHH" firstAttribute="top" secondItem="fwY-WG-jyj" secondAttribute="bottom" constant="13" id="v3m-9x-dKe"/>
+            </constraints>
+        </view>
+    </objects>
+    <resources>
+        <image name="barcode.png" width="47" height="25"/>
+    </resources>
+</document>
