@@ -1,0 +1,33 @@
+*******************************************
+Release Notes Starts For Version 14.40.008
+===========================================
+
+
+
+-------------
+Fixed Defects
+-------------
+
+  
+012051 -  Unable to login to the app, tapping on 'Allow' in salesforce authentication page app logs out.
+
+
+-------------
+Known Issues
+-------------
+
+
+
+---------------------
+Features Implemented
+---------------------
+Sum 14 
+
+
+
+---------------------
+Additional Notes
+---------------------
+
+
+
