@@ -316,6 +316,7 @@ typedef enum CUSTOM_SYNC_STATUS{
 - (BOOL) checkForConflictsForId:(NSString *)record_id andObject_name:(NSString *)object_name;
 //14076
 @property (nonatomic, retain) NSMutableArray * customSync_unsynched_records;
+@property (nonatomic,retain) NSMutableArray * custom_unsync_reqIds;
 
 /* Shra-lookup */
 - (void)getUserTrunkLocationRequest;

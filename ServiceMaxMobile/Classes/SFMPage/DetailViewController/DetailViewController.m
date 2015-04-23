@@ -295,7 +295,8 @@ static dispatch_once_t _sharedInstanceGuard;
 
 - (void) didSelectRow:(NSInteger)row ForSection:(NSInteger)section
 {
-    [self hideExpandedChildViews];
+    //[self hideExpandedChildViews];
+    [self hideExpandedChildViewsWithSave]; //14455
     self.selectedIndexPathForEdit = nil;
 	//Radha :- Child SFM UI - 11/June/2013
 	[self hideChildLinkedViewProcess];
@@ -417,7 +418,8 @@ static dispatch_once_t _sharedInstanceGuard;
 -(void) didselectSection:(NSInteger) section;
 {
      //Debrief
-    [self hideExpandedChildViews];
+    //[self hideExpandedChildViews];
+    [self hideExpandedChildViewsWithSave]; //14455
     [self removeAttachmentView];
 	
     //Radha 22 June 13
@@ -3337,7 +3339,8 @@ static dispatch_once_t _sharedInstanceGuard;
 	if (self.selectedIndexPathForEdit != nil)
 	{
 		self.SFMChildTableview = nil;
-		[self hideExpandedChildViews];
+		//[self hideExpandedChildViews];
+        [self hideExpandedChildViewsWithSave]; //14455
 	}
 	
 	
@@ -9771,7 +9774,9 @@ static dispatch_once_t _sharedInstanceGuard;
     //Radha :- Child SFM UI 9/June/2013
     if (self.selectedIndexPathForEdit != nil)
     {
-        [self hideExpandedChildViews];
+        //[self hideExpandedChildViews];
+        [self hideExpandedChildViewsWithSave];//14455
+
         [self hideEditViewOfLine];
         
     }
@@ -13080,13 +13085,21 @@ static dispatch_once_t _sharedInstanceGuard;
                     //return FALSE;
                     isSalesForceRecord = FALSE;
                 }
+                
+                //SUCCESSIVE_SYNC - //14455
+                NSMutableDictionary * successiveSyncDict = [self getSuccessiveSyncDictionaryFor:MASTER visibleFields:header_sections hiddenFields:object_mapping_dict detailFields:nil];
+                [appDelegate.databaseInterface replaceCurrentRecordOrheaderLiteral:successiveSyncDict headerRecordId:@"" headerObjectName:@"" currentRecordId:currentRecordId currentObjectName:headerObjName];
+                
+                [appDelegate.databaseInterface  successiveSyncEntryForLocalId:currentRecordId sfId:id_value operation:UPDATE recordType:MASTER objName:headerObjName parentObjName:@"" parentLocalId:@"" headerLocalId:appDelegate.sfmPageController.recordId syncType:AGRESSIVESYNC dataDict:successiveSyncDict syncFlag:@"false" valuemapping: YES ];
+
+                
                 if(isSalesForceRecord)
                 {
                     //SUCCESSIVE_SYNC
-                    NSMutableDictionary * successiveSyncDict = [self getSuccessiveSyncDictionaryFor:MASTER visibleFields:header_sections hiddenFields:object_mapping_dict detailFields:nil];
+                    /*NSMutableDictionary * successiveSyncDict = [self getSuccessiveSyncDictionaryFor:MASTER visibleFields:header_sections hiddenFields:object_mapping_dict detailFields:nil];
                     [appDelegate.databaseInterface replaceCurrentRecordOrheaderLiteral:successiveSyncDict headerRecordId:@"" headerObjectName:@"" currentRecordId:currentRecordId currentObjectName:headerObjName];
 
-                    [appDelegate.databaseInterface  successiveSyncEntryForLocalId:currentRecordId sfId:id_value operation:UPDATE recordType:MASTER objName:headerObjName parentObjName:@"" parentLocalId:@"" headerLocalId:appDelegate.sfmPageController.recordId syncType:AGRESSIVESYNC dataDict:successiveSyncDict syncFlag:@"false" valuemapping: YES ];
+                    [appDelegate.databaseInterface  successiveSyncEntryForLocalId:currentRecordId sfId:id_value operation:UPDATE recordType:MASTER objName:headerObjName parentObjName:@"" parentLocalId:@"" headerLocalId:appDelegate.sfmPageController.recordId syncType:AGRESSIVESYNC dataDict:successiveSyncDict syncFlag:@"false" valuemapping: YES ];*/
                     
 					if ([syncType isEqualToString:AGRESSIVESYNC])
 					{
@@ -13495,10 +13508,14 @@ static dispatch_once_t _sharedInstanceGuard;
                                         //check whether the entry exists for an  id  in the DataTrailer table  if it exists dont insert it again
                                         
                                         //SUCCESSIVE_SYNC
+                                        //14455
+                                        NSMutableDictionary * successivesyncDict = [self getSuccessiveSyncDictionaryFor:DETAIL visibleFields:child_record_fields hiddenFields:detail_object_mapping_dict detailFields:[detail  objectForKey:gDETAILS_FIELDS_ARRAY]];
+                                        [appDelegate.databaseInterface successiveSyncEntryForLocalId:line_record_id sfId:childSfId operation:UPDATE recordType:DETAIL objName:detail_object_name parentObjName:headerObjName parentLocalId:currentRecordId headerLocalId:appDelegate.sfmPageController.recordId syncType:AGRESSIVESYNC dataDict:successivesyncDict syncFlag:@"false" valuemapping:(([detail_object_mapping_dict count] > 0)?YES:NO)];
+
                                         if(child_isSalesForceRecord)
                                         {
-                                            NSMutableDictionary * successivesyncDict = [self getSuccessiveSyncDictionaryFor:DETAIL visibleFields:child_record_fields hiddenFields:detail_object_mapping_dict detailFields:[detail  objectForKey:gDETAILS_FIELDS_ARRAY]];
-                                            [appDelegate.databaseInterface successiveSyncEntryForLocalId:line_record_id sfId:childSfId operation:UPDATE recordType:DETAIL objName:detail_object_name parentObjName:headerObjName parentLocalId:currentRecordId headerLocalId:appDelegate.sfmPageController.recordId syncType:AGRESSIVESYNC dataDict:successivesyncDict syncFlag:@"false" valuemapping:(([detail_object_mapping_dict count] > 0)?YES:NO)];
+                                            /*NSMutableDictionary * successivesyncDict = [self getSuccessiveSyncDictionaryFor:DETAIL visibleFields:child_record_fields hiddenFields:detail_object_mapping_dict detailFields:[detail  objectForKey:gDETAILS_FIELDS_ARRAY]];
+                                            [appDelegate.databaseInterface successiveSyncEntryForLocalId:line_record_id sfId:childSfId operation:UPDATE recordType:DETAIL objName:detail_object_name parentObjName:headerObjName parentLocalId:currentRecordId headerLocalId:appDelegate.sfmPageController.recordId syncType:AGRESSIVESYNC dataDict:successivesyncDict syncFlag:@"false" valuemapping:(([detail_object_mapping_dict count] > 0)?YES:NO)];*/
                                         }
                                         
 										if ([syncType isEqualToString:AGRESSIVESYNC])
@@ -17525,6 +17542,25 @@ static dispatch_once_t _sharedInstanceGuard;
     [self.editDetailObject.view removeFromSuperview];
 }
 
+//14455
+- (void)hideExpandedChildViewsWithSave{
+    NSArray *details = [appDelegate.SFMPage objectForKey:gDETAILS];
+    if([details count]>self.selectedIndexPathForEdit.section)
+    {
+        NSMutableDictionary * detail = [details objectAtIndex:self.selectedIndexPathForEdit.section];
+        NSMutableArray * detail_Values_RECID = [detail objectForKey:gDETAIL_VALUES_RECORD_ID];
+        
+        if ([detail_Values_RECID count]>self.editDetailObject.selectedRowForDetailEdit) {
+            NSString * record_id = [detail_Values_RECID objectAtIndex:self.editDetailObject.selectedRowForDetailEdit];
+            
+            if (![appDelegate.databaseInterface.modifiedLineRecords containsObject:record_id]) {
+                [appDelegate.databaseInterface.modifiedLineRecords addObject:record_id];
+            }
+        }
+    }
+    [self hideExpandedChildViews];
+}
+
 - (void) hideExpandedChildViews{
     if(self.selectedIndexPathForEdit != nil) {
         [self hideEditViewOfLine];
@@ -17548,6 +17584,13 @@ static dispatch_once_t _sharedInstanceGuard;
     else if(btn.tag == 9743) {
         
         [self hideExpandedChildViews];
+                
+    }
+    else if(btn.tag == 9743) {
+        
+        //[self hideExpandedChildViews];
+        [self hideExpandedChildViewsWithSave]; //14455
+
     }
 }
 //Radha :- Implementation for cancel button in Debrief UI
@@ -17566,7 +17609,8 @@ static dispatch_once_t _sharedInstanceGuard;
         
         [tableView endUpdates];
     }
-	[self hideExpandedChildViews];
+	//[self hideExpandedChildViews];
+    [self hideExpandedChildViewsWithSave]; //14455
 	
 }
 

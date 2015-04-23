@@ -3628,6 +3628,7 @@ return nil;
         
         SMLog(kLogLevelVerbose, @"Expression query = %@ \n", query);
         
+        SMLog(kLogLevelVerbose,@"Expression query = %@ \n", query);
         sqlite3_stmt * stmt ;
         
         if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK  )
@@ -7722,6 +7723,10 @@ return nil;
         
     [appDelegate.dataBase beginTransaction];
         
+    //14455
+    NSMutableArray *localIds = [NSMutableArray new];
+    NSMutableArray *sfIds = [NSMutableArray new];
+        
     for(NSString * object_name in  all_objects)
     {
         NSMutableArray *  object_info = [conflictDict objectForKey:object_name];
@@ -7735,10 +7740,16 @@ return nil;
                 if([key isEqualToString:@"LOCAL_ID"])
                 {
                     local_id = [dict objectForKey:@"LOCAL_ID"];
+                    if ([local_id length] > 0) {
+                        [localIds addObject:local_id]; //14455
+                    }
                 }
                 else if ([key isEqualToString:@"SF_ID"])
                 {
                     sf_id = [dict objectForKey:@"SF_ID"];
+                    if ([sf_id length] > 0) {
+                        [sfIds  addObject:sf_id]; //14455
+                    }
                 }
                 else if ([key isEqualToString:@"SYNC_TYPE"])
                 {
@@ -7757,6 +7768,15 @@ return nil;
                     error_type = [dict objectForKey:@"ERROR_TYPE"];
                 }
             }
+            //14455
+            if ([sfIds count] > 0) {
+              NSArray *ids = [self getAllLocalIdsForSfIds:sfIds objectName:object_name];
+                
+                if ([ids count]) {
+                    [localIds addObjectsFromArray:ids];
+                }
+            }
+            
             error_message=[error_message stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
             
             NSString * insert_query = [NSString stringWithFormat:@"INSERT INTO '%@' (local_id , sf_id, object_name, sync_type,record_type,error_message,error_type) VALUES ('%@','%@','%@','%@','%@','%@','%@')", SYNC_ERROR_CONFLICT, local_id , sf_id, object_name, sync_type, record_type, error_message, error_type];
@@ -7775,6 +7795,14 @@ return nil;
             }
             
         }
+        //14455
+        [self deleteConflictRecordEntriesFormSuccesiveModel:localIds];
+        [localIds release];
+        localIds = nil;
+        
+        [sfIds release];
+        sfIds = nil;
+        
          [[PerformanceAnalytics sharedInstance] addCreatedRecordsNumber:[object_info count]];
     }
 	}@catch (NSException *exp) {
@@ -7788,11 +7816,49 @@ return nil;
     SMLog(kLogLevelVerbose,@"  insertSyncConflictsIntoSYNC_CONFLICT Processing ends: %@", [NSDate date]);
 }
 
+//14455
+- (NSArray *)getAllLocalIdsForSfIds:(NSArray *)sfIds objectName:(NSString *)objectName
+{
+    NSString *idSeparetedByComas = nil;
+    
+    if ([sfIds count] > 1)
+    {
+        NSString *ids = [sfIds componentsJoinedByString:@"','"];
+        idSeparetedByComas = [NSString stringWithFormat:@"'%@'", ids];
+    }
+    else
+    {
+        idSeparetedByComas = [NSString stringWithFormat:@"'%@'", [sfIds objectAtIndex:0]];
+    }
+
+    
+    NSString * selectQuery = [NSString stringWithFormat:@"Select local_id From '%@' Where Id IN (%@)",objectName, idSeparetedByComas];
+
+    sqlite3_stmt * stmt ;
+    NSMutableArray *localIds = nil;
+    
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [selectQuery UTF8String], -1, &stmt, nil) == SQLITE_OK)
+    {
+        localIds = [NSMutableArray new];
+        
+        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            char * _local_Id = (char *)synchronized_sqlite3_column_text(stmt, COLUMN_1);
+            if(_local_Id != nil)
+            {
+                  [localIds addObject:[NSString stringWithUTF8String:_local_Id]];
+            }
+        }
+    }
+    synchronized_sqlite3_finalize(stmt);
+    return [localIds autorelease];
+}
+
 -(BOOL)DoesTrailerContainTheRecord:(NSString *)local_id  operation_type:(NSString *)operation_type  object_name:(NSString *)object_name
 {
     NSString * query = [NSString stringWithFormat:@"SELECT COUNT(*) FROM '%@' WHERE object_name = '%@' and operation = '%@' and local_id = '%@'" ,SFDATATRAILER ,object_name , operation_type , local_id ];
     sqlite3_stmt * stmt;
-    int count;
+    int count = 0;
     if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK  )
     {
         while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
@@ -13487,7 +13553,13 @@ return nil;
     NSArray *keys = [successiveSyncRecords allKeys];
     for (NSString *key in keys) {
         SuccessiveSyncModel *sucSyncObj = [successiveSyncRecords objectForKey:key];
-        if(sucSyncObj.isDBUpdated) {
+        
+        //14455
+        if ([sucSyncObj.sfId length]<=0) {
+            sucSyncObj.sfId = [self getSfid_For_LocalId_From_Object_table:sucSyncObj.objectName local_id:sucSyncObj.localId];
+        }
+        
+        if(sucSyncObj.isDBUpdated && [sucSyncObj.sfId length]>0 ) {
             // insert into trailer table
             [self insertdataIntoTrailerTableForRecord:sucSyncObj.localId
                                                 SF_id:sucSyncObj.sfId
@@ -13508,13 +13580,24 @@ return nil;
     }
 }
 
+//14455
+- (void)deleteConflictRecordEntriesFormSuccesiveModel:(NSArray *)localIds
+{
+    if ([localIds count] > 0) {
+        [appDelegate.databaseInterface.successiveSyncRecords removeObjectsForKeys:localIds];
+    }
+}
+
 
  //SUCCESSIVE_SYNC
 -(BOOL)ShouldRecordRespectSuccessiveSync:(NSString *)TargetId objectName:(NSString *)objectName headerRecordId:(NSString *)headerRecordId operationType:(NSString *)operationType
 {
     // check Trailer table for Normal sync(direct entry) and custom sync(custom entry)
     //
-    BOOL does_exists = [self DoesTrailerContainTheRecord:TargetId operation_type:operationType object_name:objectName];
+    //BOOL does_exists = [self DoesTrailerContainTheRecord:TargetId operation_type:operationType object_name:objectName];
+    //14455
+    BOOL does_exists = [self DoesRecordEntryExistsInTrailerTable:TargetId object_name:objectName];
+    
     BOOL custom_entry = [self doesEntryExistsForCutomSyncForId:headerRecordId targetId:TargetId operationType:operationType objectName:objectName];
     
     if((does_exists || custom_entry )&& appDelegate.dataSyncRunning)
@@ -13523,6 +13606,32 @@ return nil;
     }
     return NO;
 }
+
+//14455
+-(BOOL)DoesRecordEntryExistsInTrailerTable:(NSString *)local_id  object_name:(NSString *)object_name
+{
+    NSString * query = [NSString stringWithFormat:@"SELECT COUNT(*) FROM '%@' WHERE object_name = '%@' and (operation = 'UPDATE' or operation = 'INSERT') and local_id = '%@'" ,SFDATATRAILER ,object_name , local_id ];
+    sqlite3_stmt * stmt;
+    int count = 0;
+    if(synchronized_sqlite3_prepare_v2(appDelegate.db, [query UTF8String], -1, &stmt, nil) == SQLITE_OK  )
+    {
+        while(synchronized_sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            int temp_count = synchronized_sqlite3_column_int(stmt, 0);
+            count = temp_count;
+        }
+    }
+    
+    synchronized_sqlite3_finalize(stmt);
+    
+    if(count == 0) {
+        return NO;
+    }
+    else {
+        return YES;
+    }
+}
+
 -(BOOL)doesEntryExistsForCutomSyncForId:(NSString *)headerId targetId:(NSString *)targetId operationType:(NSString *)operationType objectName:(NSString *)objectName
 {
     BOOL entryExists = FALSE;
@@ -13560,7 +13669,7 @@ return nil;
                 NSArray * all_operations = [operation_type_dict allKeys];
                 for(NSString  * single_operation in all_operations)
                 {
-                    if([single_operation isEqualToString:operationType])
+                    if([single_operation isEqualToString:operationType] || [single_operation isEqualToString:INSERT] ) //14455
                     {
                         NSArray * record_info_dict_array = [operation_type_dict objectForKey:single_operation];
                         
