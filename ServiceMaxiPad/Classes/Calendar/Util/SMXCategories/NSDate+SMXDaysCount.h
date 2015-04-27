@@ -39,4 +39,7 @@
 + (BOOL)isTheSameTimeTheCompA:(NSDateComponents *)compA compB:(NSDateComponents *)compB;
 + (NSDate *)combineDate:(NSDate *)date withTime:(NSDate *)time;
 
+//Niraj: Defect number 017148
++(NSString *)localStringFromDate:(NSDate *)date;
+//Niraj: Defect number 017148
 @end

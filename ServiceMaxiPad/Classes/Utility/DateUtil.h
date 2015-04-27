@@ -495,5 +495,8 @@ static NSString *kDateFormatType24Hr  = @"%H:%M";
 + (NSString *)getLiteralSupportedDateStringForChatterDate:(NSDate *)date;
 
 + (NSDate *)getLocalTimeFromDateBaseDate:(NSString *)date;
+//Niraj: Defect number 017148
++(NSDate *)getUserReadableDateForDateBaseDateString:(NSString *)dateString;
+//Niraj: Defect number 017148
 @end
 

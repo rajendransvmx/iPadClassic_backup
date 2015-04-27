@@ -496,6 +496,16 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
     }
     return dateString;
 }
+//Niraj: Defect number 017148
++(NSDate *)getUserReadableDateForDateBaseDateString:(NSString *)dateString
+{
+    if ([dateString length] > 0){
+        NSDate * date = [self getDateFromDatabaseString:dateString];
+        return date;
+    }
+    return nil;
+}
+//Niraj: Defect number 017148
 
 + (NSString *)getDateStringForDBDateTime:(NSString *)dateTime inFormat:(NSString*)format
 {

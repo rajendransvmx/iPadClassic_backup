@@ -26,7 +26,7 @@
 #import "TagConstant.h"
 #import "Utility.h"
 #import "StringUtil.h"
-
+#import "NSDate+SMXDaysCount.h"
 #import "DataTypeUtility.h"
 
 #import "SVMXSystemConstant.h"
@@ -495,10 +495,24 @@ PageManagerErrorType;
     return fieldValueData;
 }
 
+//-(NSString *)getUserReadableDateTime:(NSString *)dateTime
+//{
+//    return [DateUtil getUserReadableDateForDateBaseDate:dateTime];
+//}
+
 -(NSString *)getUserReadableDateTime:(NSString *)dateTime
 {
-    return [DateUtil getUserReadableDateForDateBaseDate:dateTime];
+    //Niraj: Defect number 017148
+    //return [DateUtil getUserReadableDateForDateBaseDate:dateTime];
+    return [self convertDateAndTime:[DateUtil getUserReadableDateForDateBaseDateString:dateTime]];
+    //Niraj: Defect number 017148
 }
+
+//Niraj: Defect number 017148
+-(NSString *)convertDateAndTime:(NSDate *)dateLoc{
+    return [NSDate localStringFromDate:dateLoc];;
+}
+//Niraj: Defect number 017148
 
 -(NSString *)getUserReadableDate:(NSString *)dateTime
 {
