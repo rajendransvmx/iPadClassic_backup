@@ -50,6 +50,8 @@
 @synthesize eventTableName;
 @synthesize eventType;
 @synthesize isAllDay;
+@synthesize priorityString;
+
 
 /*
 -(instancetype)initWithCalendarModel:(CalenderEventObjectModel*)model;

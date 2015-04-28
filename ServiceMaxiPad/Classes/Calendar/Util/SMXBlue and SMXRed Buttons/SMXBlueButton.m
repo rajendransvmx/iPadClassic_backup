@@ -19,6 +19,7 @@
 #import "SMXBlueButton.h"
 #import "SMXCalendarViewController.h"
 #import "CalenderHelper.h"
+#import "StyleManager.h"
 
 @interface SMXBlueButton ()
 
@@ -453,7 +454,35 @@
     else {
         self.eventName.text = text;
     }
-    
+    [self setFlagColor];
+
 }
+-(void)setFlagColor{
+    
+    UIColor *borderColor;
+    NSString *colorString;
+    if ([self.event.priorityString isEqualToString:@"High"]) {
+        
+        colorString = [CalenderHelper getTheHexaCodeForTheSettingId:@"IPAD006_SET001"];
+    }
+    else     if ([self.event.priorityString isEqualToString:@"Medium"]) {
+        colorString = [CalenderHelper getTheHexaCodeForTheSettingId:@"IPAD006_SET002"];
+        
+        
+    }
+    else     if ([self.event.priorityString isEqualToString:@"Low"]) {
+        colorString = [CalenderHelper getTheHexaCodeForTheSettingId:@"IPAD006_SET003"];
+        
+    }
+    else
+    {
+        colorString = [CalenderHelper getTheHexaCodeForTheSettingId:@"IPAD006_SET004"];
+        
+    }
+    borderColor = [UIColor colorWithHexString:colorString];
+    
+    self.borderView.backgroundColor = borderColor;//[UIColor colorWithRed:67.0/255.0 green:67.0/255.0 blue:67.0/255.0 alpha:1.0];
+}
+
 
 @end

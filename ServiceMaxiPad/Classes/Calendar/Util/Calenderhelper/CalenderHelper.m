@@ -394,6 +394,8 @@
             {
                 eventModel.priority = NO;
             }
+            eventModel.priorityString = priorityStatus;
+
             
             if ([lAllWOWhatIDs containsObject:eventModel.whatId]) {
                 WorkOrderSummaryModel *model = [[SMXCalendarViewController sharedInstance].cWODetailsDict objectForKey:eventModel.whatId];
@@ -1240,6 +1242,15 @@
     MobileDeviceSettingsModel *mobDeviceSettings = [mobileDeviceSettingService fetchDataForSettingId:@"GLOB001_GBL025"];
     return  mobDeviceSettings.value;
 }
+
++ (NSString *)getTheHexaCodeForTheSettingId:(NSString *)settingId
+{
+    MobileDeviceSettingService *mobileDeviceSettingService = [[MobileDeviceSettingService alloc]init];
+    MobileDeviceSettingsModel *mobDeviceSettings = [mobileDeviceSettingService fetchDataForSettingId:settingId];
+    return  mobDeviceSettings.value;
+    
+}
+
 #pragma mark - end
 
 @end
