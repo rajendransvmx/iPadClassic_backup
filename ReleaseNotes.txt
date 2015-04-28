@@ -3,18 +3,18 @@
 ServiceMax Spring 15 iPad Release
 
 *******************************************
-Version = 15.29.108
+Version = 15.39.004
 ===========================================
 -------------
 Fixed Defects
 -------------
-012591 - Data Loss Warning Popup not happening
-013197 - After adding lines and tapping on save in view page added line is not displaying
-014695 - App is crashing on Data Sync after selecting Remove option in Conflict.
-015563 - iPad App after session expire or Remote access token and re login app is 
-         starting initial sync.
-015568 - Based on GBL025 Setting either Event or ServiceMax Event should be visible under   
-         New Items
+16396 - Duplication of lines on Stock Transfer parts requests Ipad only
+17122 - Data purge does not get past advanced download criteria.
+17151 - Multiple detail lines are being automatically created on iPad SFM
+16806 - Sync time - Next sync & Last Sync time are not displayed in 24 Hour format in the Tools screen
+17148 - Format date translation not working on work detail view
+14492 - User name is not updated in db 'User' table, when user name changed from online & then user re-login to app with same credential.
+
 -------------
 Known Issues
 -------------
