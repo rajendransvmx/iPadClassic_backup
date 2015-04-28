@@ -169,7 +169,7 @@
                 
                 if (httpPostDictionary != nil) {
                     
-                   // NSLog(@"httpPostDictionary : %@", [httpPostDictionary description]);
+                    NSLog(@"httpPostDictionary : %@", [httpPostDictionary description]);
                     
                     NSData *someData = [NSJSONSerialization dataWithJSONObject:httpPostDictionary options:0 error:nil];
                     [urlRequest setValue:@"gzip"      forHTTPHeaderField:@"Content-Encoding"];

@@ -10,6 +10,11 @@
 #import "WebServiceParser.h"
 #import "ParserFactory.h"
 #import "SMDataPurgeManager.h"
+#import "PlistManager.h"
+#import "FactoryDAO.h"
+#import "SFPicklistService.h"
+#import "TransactionObjectService.h"
+#import "SFPicklistModel.h"
 
 @implementation DataPurgeServiceLayer
 
@@ -96,4 +101,137 @@
             break;
     }
 }
+
+
+
+- (NSArray*)getRequestParametersWithRequestCount:(NSInteger)requestCount {
+    
+    switch (self.requestType) {
+        case RequestDataPurgeGetPriceDataTypeZero:
+            return [self getRequestParamModelForGetPriceData:RequestDataPurgeGetPriceDataTypeZero];
+            break;
+        case RequestDataPurgeGetPriceDataTypeOne:
+            return [self getRequestParamModelForGetPriceData:RequestDataPurgeGetPriceDataTypeOne];
+            break;
+        case RequestDataPurgeGetPriceDataTypeTwo:
+            return [self getRequestParamModelForGetPriceData:RequestDataPurgeGetPriceDataTypeTwo];
+            break;
+        case RequestDataPurgeGetPriceDataTypeThree:
+            return [self getRequestParamModelForGetPriceData:RequestDataPurgeGetPriceDataTypeThree];
+            break;
+        default:
+            break;
+    }
+    
+    // NSLog(@"Invalid request type");
+    return nil;
+    
+}
+
+
+
+-(NSArray*)getRequestParamModelForGetPriceData:(RequestType)getPriceDataType {
+    
+    RequestParamModel *paramObj = [[RequestParamModel alloc]init];
+    
+    switch (getPriceDataType) {
+            
+        case RequestDataPurgeGetPriceDataTypeZero:
+            paramObj.valueMap = [NSArray arrayWithObject:[NSDictionary dictionaryWithObjectsAndKeys:kGetPriceDataLastIndex,kSVMXKey,@0,kSVMXValue, nil]];
+            break;
+            
+        case RequestDataPurgeGetPriceDataTypeOne:
+            paramObj.valueMap = [NSArray arrayWithObject:[NSDictionary dictionaryWithObjectsAndKeys:kGetPriceDataLastIndex,kSVMXKey,@1,kSVMXValue, nil]];
+            break;
+            
+        case RequestDataPurgeGetPriceDataTypeTwo: {
+            
+            NSMutableArray *valueMaps = [[NSMutableArray alloc] initWithCapacity:0];
+            NSArray *valuesLabour = [self getValuesArrayForLabour];
+            if (valuesLabour == nil) {
+                valuesLabour = @[];
+            }
+            NSArray *valuesIsoCurrency = [self getValuesArrayForCurrencyISO];
+            
+            if ([valuesLabour count]) {
+                NSDictionary *laborDict = [NSDictionary dictionaryWithObjectsAndKeys:@"Labor",kSVMXRequestKey,valuesLabour,kSVMXRequestValues, nil];
+                [valueMaps addObject:laborDict];
+            }
+            
+            if ([valuesIsoCurrency count]) {
+                NSDictionary *currencyDict = [NSDictionary dictionaryWithObjectsAndKeys:@"CurrencyISO",kSVMXRequestKey,valuesIsoCurrency,kSVMXRequestValues, nil];
+                [valueMaps addObject:currencyDict];
+            }
+            
+            [valueMaps addObject:[NSDictionary dictionaryWithObjectsAndKeys:kGetPriceDataLastIndex,kSVMXKey,@2,kSVMXValue, nil]];
+            paramObj.valueMap = [NSArray arrayWithArray:valueMaps];
+            
+        }
+            break;
+            
+        case RequestDataPurgeGetPriceDataTypeThree:
+            paramObj.valueMap = [NSArray arrayWithObject:[NSDictionary dictionaryWithObjectsAndKeys:kGetPriceDataLastIndex,kSVMXKey,@3,kSVMXValue, nil]];
+            break;
+            
+        default:
+            SXLogWarning(@"Invalid post body parama for unidentified get price request");
+            break;
+    }
+    
+//    if(self.categoryType == CategoryTypeOneCallDataSync)
+//    {
+//        NSDictionary *lastSyncTimeDict = [self getLastSyncTimeForRecords];
+//        paramObj.valueMap = [paramObj.valueMap arrayByAddingObject:lastSyncTimeDict];
+//    }
+    
+    return [NSArray arrayWithObject:paramObj];
+}
+
+-(NSArray*)getValuesArrayForLabour {
+    
+    NSMutableArray *values = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    id daoService = [FactoryDAO serviceByServiceType:ServiceTypeSFPickList];
+    NSArray * objectsList = nil;
+    if ([daoService conformsToProtocol:@protocol(SFPicklistDAO)]) {
+        objectsList = [daoService getListOfLaborActivityType];
+    }
+    for(SFPicklistModel *picklistModel in objectsList)
+    {
+        [values addObject:picklistModel.value];
+    }
+    return values;
+    
+}
+
+-(NSArray*)getValuesArrayForCurrencyISO {
+    
+    NSMutableArray *values = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    id daoService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+    NSArray * objectsList = nil;
+    if ([daoService conformsToProtocol:@protocol(TransactionObjectDAO)]) {
+        objectsList = [daoService getListWorkorderCurrencies];
+    }
+    for(TransactionObjectModel *transObjectModel in objectsList)
+    {
+        if ([transObjectModel valueForField:@"CurrencyISO"]) {
+            [values addObject:[transObjectModel valueForField:@"CurrencyISO"]];
+        }
+    }
+    return values;
+}
+
+
+/*- (NSDictionary *)getLastSyncTimeForRecords {
+    NSMutableDictionary *lastSyncTimeDict = [NSMutableDictionary dictionary];
+    [lastSyncTimeDict setObject:kLastSyncTime forKey:kSVMXRequestKey];
+    NSString *lastSyncTime = [PlistManager getInitialSyncTime];
+    if (lastSyncTime == nil) {
+        lastSyncTime = @"";
+    }
+    [lastSyncTimeDict setObject:lastSyncTime forKey:kSVMXRequestValue];
+    return lastSyncTimeDict;
+}*/
+
 @end

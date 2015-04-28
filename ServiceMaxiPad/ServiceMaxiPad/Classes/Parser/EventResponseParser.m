@@ -117,6 +117,7 @@
     NSString *lastDate = [lastSyncDictionary objectForKey:kSVMXRequestValue];
     if (![StringUtil isStringEmpty:lastDate]) {
         [PlistManager storeOneCallSyncTime:lastDate];
+        [PlistManager storeInitiaSyncSyncTimeForDP:lastDate];
     }
 }
 
