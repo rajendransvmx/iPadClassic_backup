@@ -178,4 +178,7 @@ extern  NSString *const kPreferenceOrganizationCustom;
 + (void)storeTechnicianId:(NSString *)technicianId;
 + (NSString *)getTechnicianId;
 
++ (NSString *)getInitialSyncTime;
++ (void)storeInitiaSyncSyncTimeForDP:(NSString *)time;
+
 @end

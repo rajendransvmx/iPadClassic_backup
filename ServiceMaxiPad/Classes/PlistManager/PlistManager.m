@@ -106,6 +106,9 @@ static NSString *const kPersistantStorageOneCallSyncPutUpdateTime     = @"one_ca
 static NSString *const kPersistantStorageOneCallSyncTemporaryTime     = @"one_call_sync_temp_time";
 static NSString *const kOneCallLastLocalid                            = @"kOneCallLastLocalid";
 
+static NSString *const kPersistantStorageInitialSyncTime             = @"InitailSyncTime";
+
+
 /** Public constant declaration */
 
 NSString *const kPreferenceIdentifier  = @"preference_identifier";
@@ -928,6 +931,18 @@ static NSString * const kEventWhatIdToObjectName = @"EventWhatIdToObjectName";
 + (void)storeOneCallSyncTime:(NSString *)time {
     if (time != nil) {
         [[NSUserDefaults standardUserDefaults] setObject:time forKey:kPersistantStorageOneCallSyncTime];
+        [[NSUserDefaults standardUserDefaults]  synchronize];
+    }
+}
+
+
++ (NSString *)getInitialSyncTime {
+    
+    return  [[NSUserDefaults standardUserDefaults] stringForKey:kPersistantStorageInitialSyncTime];
+}
++ (void)storeInitiaSyncSyncTimeForDP:(NSString *)time {
+    if (time != nil) {
+        [[NSUserDefaults standardUserDefaults] setObject:time forKey:kPersistantStorageInitialSyncTime];
         [[NSUserDefaults standardUserDefaults]  synchronize];
     }
 }

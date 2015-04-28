@@ -15,6 +15,25 @@
 #import "DataPurgeModel.h"
 #import "SVMXSystemConstant.h"
 #import "SMDataPurgeManager.h"
+#import "PlistManager.h"
+
+@interface DataPurgeParser ()
+
+@property (nonatomic, assign) BOOL isWOCountZero;
+@property (nonatomic, assign) BOOL shouldCallBack;
+@property (nonatomic, assign) BOOL warrantyHasValues;
+
+@property (nonatomic, strong) NSString* lastIndex;
+@property (nonatomic, strong) NSString* lastID;
+
+@property (nonatomic, strong) NSMutableArray *callBackValuesFromFirstAPIResponse;
+
+@property (nonatomic, strong) NSMutableDictionary *heapModelDict;
+@property (nonatomic, strong) NSMutableDictionary *partiallyExecutedObjectValueMap;
+
+@property (nonatomic, strong) NSMutableArray *objectNames;
+
+@end
 
 @implementation DataPurgeParser
 - (ResponseCallback*)parseResponseWithRequestParam:(RequestParamModel*)requestParamModel
@@ -87,6 +106,8 @@
      */
     NSMutableDictionary *partiallyExecutedObjectDictionary = [[NSMutableDictionary alloc] init];
     
+     NSArray *valuesArray = [responseDict objectForKey:kSVMXRequestValues];
+    
     ResponseCallback *callbk = [[ResponseCallback alloc] init];
     callbk.callBack = NO;
     
@@ -132,7 +153,14 @@
                 if (finalValue != nil) {
                     [partiallyExecutedObjectDictionary setObject:@[finalValue] forKey:kSVMXRequestValues];
                     newRequestModel.valueMap = @[partiallyExecutedObjectDictionary];
-                    callBack = YES;
+                    callbk.callBack = YES;
+                    [partiallyExecutedObjectDictionary setObject:@[] forKey:kSVMXRequestSVMXMap];
+                    if (valuesArray != nil) {
+                        newRequestModel.values = valuesArray;
+                    }
+                    else{
+                        newRequestModel.values = @[];
+                    }
                 }
             }
         }
@@ -186,6 +214,9 @@
     callbk.callBack = NO;
     
     NSArray *objectsArray = [responseDict objectForKey:kSVMXRequestSVMXMap];
+    
+    NSArray *objectNameValues = [responseDict objectForKey:kSVMXRequestValues];
+    
     if ([objectsArray isKindOfClass:[NSArray class]] && [objectsArray count] > 0)
     {
         /* Parse every object in main valueMap of response */
@@ -214,6 +245,46 @@
                 [self saveSFIDsFromADCResponse:objectValueMap forObjectName:objectName];
             }
         }
+        
+        NSArray *sfidsArray = nil;
+        // Only if there are entries inside partiallyExecutedObjectValueMap then fill in the data
+        if([partiallyExecutedObjectDictionary count])
+        {
+            NSString *partiallyExecutedObjName = [partiallyExecutedObjectDictionary objectForKey:kSVMXRequestValue];
+            
+            if((![partiallyExecutedObjName isEqualToString:@""]) && (partiallyExecutedObjName != nil))
+            {
+                id daoService = [FactoryDAO serviceByServiceType:ServiceTypeDataPurge];
+                
+                if ([daoService conformsToProtocol:@protocol(DataPurgeDAO)]) {
+                    sfidsArray = [daoService fetchSfIdsForObjectName:partiallyExecutedObjName];
+                    NSMutableArray *sfids = [[NSMutableArray alloc] init];
+                    for (DataPurgeModel *model in sfidsArray) {
+                        [sfids addObject:model.sfId];
+                    }
+                    
+                    //Add sfids to partiallyExecutedObjectDictionary with values
+                    [partiallyExecutedObjectDictionary setObject:sfids forKey:kSVMXRequestValues];
+                }
+            }
+        }
+        
+        // First object  : Remaining Objects;
+        // Second object : Partially Executed Object ValueMap;
+        if (callbk.callBack) {
+            
+            RequestParamModel *callbackData = [[RequestParamModel alloc] init];
+            callbackData.values = objectNameValues;
+            
+            //[NSArray arrayWithObjects:callBackValues, sfidsArray, nil];
+            
+            if ([partiallyExecutedObjectDictionary count] > 0) {
+                callbackData.valueMap = [NSArray arrayWithObjects:[self getLastSyncTimeForRecords], partiallyExecutedObjectDictionary, nil];
+            }
+            callbk.callBackData = callbackData;
+            
+        }
+
     }
     return callbk;
 }
@@ -244,9 +315,151 @@
 - (ResponseCallback *)parseAnaAddaIdsForGetPriceResponse:(NSDictionary *)rawResponseData
 {
     ResponseCallback * callBack;
-    NSDictionary *svmxReturnMapObject = [NSDictionary dictionary];
     NSString *lastIndex;
     if(lastIndex == nil)
+    {
+        NSArray *objectsArray = [rawResponseData objectForKey:kSVMXSVMXMap];
+        if ([objectsArray isKindOfClass:[NSArray class]] && [objectsArray count] > 0)
+        {
+            for (NSDictionary * svmxMapObject in objectsArray)
+            {
+                NSString *key = [svmxMapObject objectForKey:kSVMXRequestKey];
+                
+                
+                if([key isEqualToString:kGetPriceDataPricingData])
+                {
+                    NSString *apiIndex = [svmxMapObject objectForKey:kSVMXValue];
+                    
+                    // TODO : 010974 : Response is not proper; To be solved while configuring on server or in server side code
+                    if(((NSNull *) apiIndex == [NSNull null]) || [apiIndex isKindOfClass:[NSNull class]] || apiIndex == NULL || apiIndex == nil)
+                        return nil;
+                    
+                    NSDictionary *lastIndexValueMap = [self getLastIndexValueMap:rawResponseData];
+                    switch ([apiIndex intValue])
+                    {
+                        case 1:
+                            SXLogDebug(@"Call One");
+                            callBack.callBack = [self processFirstAndLastResponse:svmxMapObject];
+                            if(callBack.callBack && !self.isWOCountZero) {
+                                callBack.callBackData.valueMap = [NSArray arrayWithObjects:lastIndexValueMap, [self getCallBackValueMap:rawResponseData], self.callBackValuesFromFirstAPIResponse, nil];
+                                callBack.callBackData.values = [NSArray arrayWithArray:self.objectNames];
+                            }
+                            break;
+                        case 2:
+                            SXLogDebug(@"Call Two");
+                            callBack.callBack = [self processResponse:svmxMapObject];
+                            if(callBack.callBack)
+                            {
+                                NSDictionary *peo =[self getPartiallyExecutedObjectValueMap];
+                                if([[peo allKeys] count]) {
+                                    callBack.callBackData.valueMap = [NSArray arrayWithObjects:lastIndexValueMap, [self getCallBackValueMap:rawResponseData], peo, nil];
+                                }
+                                else {
+                                    callBack.callBackData.valueMap = [NSArray arrayWithObjects:lastIndexValueMap, [self getCallBackValueMap:rawResponseData], peo, nil];
+                                }
+                                callBack.callBackData.values = [NSArray arrayWithArray:self.objectNames];
+                            }
+                            break;
+                        case 3:
+                            callBack.callBack = [self processResponse:svmxMapObject];
+                            if(callBack.callBack)
+                            {
+                                NSDictionary *peo =[self getPartiallyExecutedObjectValueMap];
+                                if([[peo allKeys] count]) {
+                                    callBack.callBackData.valueMap = [NSArray arrayWithObjects:lastIndexValueMap, [self getCallBackValueMap:rawResponseData], peo, nil];
+                                }
+                                else {
+                                    callBack.callBackData.valueMap = [NSArray arrayWithObjects:lastIndexValueMap, [self getCallBackValueMap:rawResponseData], peo, nil];
+                                }
+                                callBack.callBackData.values = [NSArray arrayWithArray:self.objectNames];
+                            }
+                            SXLogDebug(@"Call Three");
+                            break;
+                        case 4:
+                            callBack.callBack = [self processFirstAndLastResponse:svmxMapObject];
+                            
+                            if(callBack.callBack && (![self.lastID isEqualToString:@""]) && (self.lastID != nil) && self.warrantyHasValues)
+                            {
+                                callBack.callBackData.valueMap = [NSArray arrayWithObjects:lastIndexValueMap, [self getCallBackValueMap:rawResponseData], [self getLastIDValueMap:rawResponseData], nil];
+                                callBack.callBackData.values = [NSArray arrayWithArray:self.objectNames];
+                            }
+                            else
+                            {
+                                callBack.callBack = NO;
+                            }
+                            
+                            SXLogDebug(@"Call Four");
+                            break;
+                        default:
+                            break;
+                    } // END : Switch
+                    
+                }
+            }
+        }
+    }
+    return callBack;
+}
+
+
+
+- (NSDictionary*)getCallBackValueMap:(NSDictionary *)rawResponseData
+{
+    NSDictionary *svmxReturnMapObject = [NSDictionary dictionary];
+    NSArray *objectsArray = [rawResponseData objectForKey:kSVMXSVMXMap];
+    if ([objectsArray isKindOfClass:[NSArray class]] && [objectsArray count] > 0)
+    {
+        for (NSDictionary * svmxMapObject in objectsArray)
+        {
+            NSString *key = [svmxMapObject objectForKey:kSVMXRequestKey];
+            if([key isEqualToString:kGetPriceDataPricingData])
+            {
+                NSArray *valueMapArray = [svmxMapObject objectForKey:kSVMXSVMXMap];
+                for(int j = 0; j < [valueMapArray count]; j++)
+                {
+                    svmxReturnMapObject = [valueMapArray objectAtIndex:j];
+                    NSString *key = [svmxReturnMapObject objectForKey:kSVMXRequestKey];
+                    if([key isEqualToString:kSVMXCallBack])
+                        break;
+                }
+            }
+        }
+    }
+    
+    return svmxReturnMapObject;
+}
+
+- (NSDictionary*)getLastIDValueMap:(NSDictionary *)rawResponseData
+{
+    NSDictionary *svmxReturnMapObject = [NSDictionary dictionary];
+    NSArray *objectsArray = [rawResponseData objectForKey:kSVMXSVMXMap];
+    if ([objectsArray isKindOfClass:[NSArray class]] && [objectsArray count] > 0)
+    {
+        for (NSDictionary * svmxMapObject in objectsArray)
+        {
+            NSString *key = [svmxMapObject objectForKey:kSVMXRequestKey];
+            if([key isEqualToString:kGetPriceDataPricingData])
+            {
+                NSArray *valueMapArray = [svmxMapObject objectForKey:kSVMXSVMXMap];
+                for(int j = 0; j < [valueMapArray count]; j++)
+                {
+                    svmxReturnMapObject = [valueMapArray objectAtIndex:j];
+                    NSString *key = [svmxReturnMapObject objectForKey:kSVMXKey];
+                    if([key isEqualToString:kGetPriceDataLastId])
+                        break;
+                }
+            }
+        }
+    }
+    
+    return svmxReturnMapObject;
+}
+
+
+- (NSDictionary*)getLastIndexValueMap:(NSDictionary *)rawResponseData
+{
+    NSDictionary *svmxReturnMapObject = [NSDictionary dictionary];
+    if(self.lastIndex == nil)
     {
         NSArray *objectsArray = [rawResponseData objectForKey:kSVMXSVMXMap];
         if ([objectsArray isKindOfClass:[NSArray class]] && [objectsArray count] > 0)
@@ -263,22 +476,8 @@
                         NSString *key = [svmxReturnMapObject objectForKey:kSVMXRequestKey];
                         if([key isEqualToString:kGetPriceDataLastIndex])
                         {
-                            
-                        }
-                        if([key isEqualToString:kADCCallBackKey])
-                        {
-                            if (callBack == nil) {
-                                callBack = [ResponseCallback new];
-                            }
-                            
-                            callBack.callBack = [[svmxReturnMapObject objectForKey:kSVMXValue] boolValue];;
-                            
-                        }
-                        else
-                        {
-                            NSArray *sfIdArray = [[NSArray alloc]initWithObjects:svmxReturnMapObject, nil];
-                            [self parseSfIdsWithTheArray:sfIdArray forTheObjectName:key];
-                            
+                           // [self setLastIndexAndCurrentRequestType:svmxReturnMapObject];
+                            break;
                         }
                     }
                     
@@ -286,7 +485,225 @@
             }
         }
     }
+    return svmxReturnMapObject;
+}
+
+
+
+- (BOOL)processFirstAndLastResponse:(NSDictionary*)inputMapObject
+{
+    self.isWOCountZero = FALSE;
+    
+    NSArray *valueMapArray = [inputMapObject objectForKey:kSVMXSVMXMap];
+    
+    for(int j = 0; j < [valueMapArray count]; j++)
+    {
+        NSDictionary *svmxMapObject = [valueMapArray objectAtIndex:j];
+        NSString *key = [svmxMapObject objectForKey:kSVMXRequestKey];
+        
+        if([key isEqualToString:kSVMXCallBack])
+        {
+            self.shouldCallBack = [[svmxMapObject objectForKey:kSVMXValue] boolValue];
+        }
+        else if([key isEqualToString:kGetPriceDataLastIndex])
+        {
+            //[self setLastIndexAndCurrentRequestType:svmxMapObject];
+        }
+        else if([key isEqualToString:kGetPriceDataLastId])
+        {
+            self.lastID = [svmxMapObject objectForKey:kSVMXValue];
+        }
+        else if([key isEqualToString:kWorkOrderTableName])
+        {
+            NSString *jsonRecord = [svmxMapObject objectForKey:kSVMXValue];
+            NSData *jsonData = [jsonRecord dataUsingEncoding:NSUTF8StringEncoding];
+        
+            
+            NSArray *sfIdArray = [[NSArray alloc]initWithObjects:svmxMapObject, nil];
+            [self parseSfIdsWithTheArray:sfIdArray forTheObjectName:key];
+            
+            if ([jsonData length] && ![jsonRecord isKindOfClass:[NSNull class]]) {
+                
+                NSError *e;
+                NSArray * json_array = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableContainers error:&e];
+                if(json_array && [json_array count])
+                {
+                    [self.callBackValuesFromFirstAPIResponse addObjectsFromArray:json_array];
+                }
+                else
+                {
+                    self.isWOCountZero = TRUE;
+                }
+            }
+        }
+        else
+        {
+            NSArray *sfIdArray = [[NSArray alloc]initWithObjects:svmxMapObject, nil];
+            [self parseSfIdsWithTheArray:sfIdArray forTheObjectName:key];
+            
+            NSString *jsonRecord = [svmxMapObject objectForKey:kSVMXValue];
+            NSData *jsonData = [jsonRecord dataUsingEncoding:NSUTF8StringEncoding];
+            
+            if([jsonData length] && ![jsonRecord isKindOfClass:[NSNull class]])
+            {
+                NSError *e;
+                NSArray * json_array = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableContainers error:&e];
+                
+                if(json_array && [json_array count])
+                {
+                  // For fourth API call
+                    if([key isEqualToString:kGetPriceWarrantyObjectName])
+                        self.warrantyHasValues = TRUE;
+                    
+                } // END : if json_array
+                
+            } // END : if jsonRecord
+            
+        } // END : else
+        
+    } // END : valueMap loop
+    
+    return self.shouldCallBack;
+    
+}
+
+- (BOOL)processResponse:(NSDictionary*)smxMapObject
+{
+    BOOL callBack = FALSE;
+    NSArray *objectsArray = [smxMapObject objectForKey:kSVMXSVMXMap];
+    NSMutableDictionary *objectNameDict = [[NSMutableDictionary alloc] init];
+    
+    if ([objectsArray isKindOfClass:[NSArray class]] && [objectsArray count])
+    {
+        
+        /* Parse every object in main valueMap of response */
+        for (int counter = 0; counter < [objectsArray count]; counter++)
+        {
+            NSDictionary *objectValueMap = objectsArray[counter];
+            NSString *objectName = [objectValueMap objectForKey:kSVMXRequestKey];
+            
+            if([objectName isEqualToString:kADCPartiallyExecutedObjectKey])  /* Partially executed object valueMap */
+            {
+                self.partiallyExecutedObjectValueMap = [NSMutableDictionary dictionary];
+                [self.partiallyExecutedObjectValueMap addEntriesFromDictionary:objectValueMap];
+            }
+            else if([objectName isEqualToString:kGetPriceDataLastIndex])
+            {
+               // [self setLastIndexAndCurrentRequestType:objectValueMap];
+            }
+            else if([objectName isEqualToString:kADCCallBackKey]) /*  CallBack valueMap */
+            {
+                callBack = [[objectValueMap objectForKey:kSVMXValue] boolValue];
+            }
+            else if([objectName isEqualToString:kGetPriceDataLastId])
+            {
+                self.lastID = [objectValueMap objectForKey:kSVMXValue];
+            }
+            else  /* Objects' valueMap */
+            {
+                /* Parse valuemaps for all other objects */
+                
+                NSArray *sfIdResponseArray = [objectValueMap objectForKey:kSVMXSVMXMap];
+                
+                if ([sfIdResponseArray isKindOfClass:[NSArray class]] && [sfIdResponseArray count] > 0)
+                {
+                    
+                    NSMutableArray *valueArray = [[NSMutableArray alloc] init];
+                    
+                    for (NSDictionary *sfIdValueMap in sfIdResponseArray)
+                    {
+                        NSString *jsonString = [sfIdValueMap objectForKey:kSVMXValue];
+                        NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+                        
+                        if([jsonData length] && ![jsonString isKindOfClass:[NSNull class]])
+                        {
+                            NSError *e;
+                            
+                            NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableContainers error:&e];
+                            NSString *sfId = [jsonDict objectForKey:@"Id"];
+                            sfId = [sfId stringByReplacingOccurrencesOfString:@"\\" withString:@""];
+                            sfId = [sfId stringByReplacingOccurrencesOfString:@"\"" withString:@""];
+                            
+                            if (![valueArray containsObject:sfId] && [sfId length]) {
+                                [valueArray addObject:sfId];
+                            }
+                            
+                            /*if(json_array && [json_array count])
+                            {
+                                // For fourth API call
+                                if([objectName isEqualToString:kGetPriceWarrantyObjectName])
+                                    self.warrantyHasValues = TRUE;
+                                
+                            }*/ // END : if json_array
+                            
+                        } // END : if jsonRecord
+                    }
+                    if([valueArray count])
+                    {
+                        [self insertSfIdsWithTheArray:valueArray forTheObjectName:objectName];
+                        // For fourth API call
+                        if([objectName isEqualToString:kGetPriceWarrantyObjectName])
+                            self.warrantyHasValues = TRUE;
+                    }
+                }
+            }
+        }
+        
+        /* Only if there are entries inside partiallyExecutedObjectValueMap then fill in the data */
+        if([[self.partiallyExecutedObjectValueMap allKeys] count])
+        {
+            NSString *partiallyExecutedObjName = [self.partiallyExecutedObjectValueMap objectForKey:kSVMXValue];
+            
+            if((![partiallyExecutedObjName isEqualToString:@""]) && (partiallyExecutedObjName != nil))
+            {
+                NSDictionary *sfids = [objectNameDict objectForKey:partiallyExecutedObjName];
+                NSArray *listOfPEOIds = [sfids allKeys];
+                if((listOfPEOIds != nil) || [listOfPEOIds count])
+                    [self.partiallyExecutedObjectValueMap setObject:listOfPEOIds forKey:kSVMXValues];
+                else
+                {
+                    self.partiallyExecutedObjectValueMap = nil;
+                    if([self.objectNames count])
+                    {
+                        [self.objectNames removeObject:partiallyExecutedObjName];
+                        if(![self.objectNames count])
+                            callBack = FALSE;
+                    }
+                }
+            }
+        }
+    }
     return callBack;
+}
+
+
+- (NSDictionary*)getPartiallyExecutedObjectValueMap
+{
+    return self.partiallyExecutedObjectValueMap;
+}
+
+
+
+- (void)insertSfIdsWithTheArray:(NSArray *)sfIdArray forTheObjectName:(NSString *)objectName
+{
+    NSMutableArray *models = [[NSMutableArray alloc] init];
+    
+
+    for(NSString *string in sfIdArray)
+    {
+        NSString *sfId = string;
+        if ([StringUtil isStringEmpty:sfId]) {
+            continue;
+        }
+        sfId = [sfId stringByReplacingOccurrencesOfString:@"\\" withString:@""];
+        sfId = [sfId stringByReplacingOccurrencesOfString:@"\"" withString:@""];
+        
+        DataPurgeModel *model = [DataPurgeModel new];
+        model.sfId = sfId;
+        model.objectName = objectName;
+        [models addObject:model];
+    }
+    [self saveModelsToDataPurgeTable:models];
 }
 
 - (void)parseSfIdsWithTheArray:(NSArray *)sfIdArray forTheObjectName:(NSString *)objectName
@@ -363,4 +780,17 @@
     }
     return callbk;
 }
+
+- (NSDictionary *)getLastSyncTimeForRecords {
+    NSMutableDictionary *lastSyncTimeDict = [NSMutableDictionary dictionary];
+    [lastSyncTimeDict setObject:kLastSyncTime forKey:kSVMXRequestKey];
+    NSString *lastSyncTime = [PlistManager getInitialSyncTime];
+    if (lastSyncTime == nil) {
+        lastSyncTime = @"";
+    }
+    [lastSyncTimeDict setObject:lastSyncTime forKey:kSVMXRequestValue];
+    return lastSyncTimeDict;
+}
+
+
 @end
