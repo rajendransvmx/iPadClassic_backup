@@ -26,6 +26,7 @@
 #import "NonTagConstant.h"
 #import "CustomTabBar.h"
 #import "SMDataPurgeManager.h"
+#import "SyncManager.h"
 
 //#import "PushNotificationWebServiceHelper.h"
 
@@ -656,6 +657,9 @@
             chinna */
 
             [self loadScreen];
+            /*if same user login again, then we are not initiating initial sync, but we have to update userinfo*/
+             //SyncManager *up=[[SyncManager al]];
+            [[SyncManager sharedInstance] updateUserTableIfRecordDoesnotExist];
         }
         else
         {
