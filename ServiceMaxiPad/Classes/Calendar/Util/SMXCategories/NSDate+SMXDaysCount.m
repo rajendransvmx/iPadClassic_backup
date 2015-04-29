@@ -153,7 +153,8 @@
 +(NSString *)localStringFromDate:(NSDate *)date{
     NSDateComponents *comp = [NSDate componentsOfDate:date];
     NSString *lTime = [NSDate stringTimeWithAMPMOfDate:date];
-    return [NSString stringWithFormat:@"%@, %li %@ %li - %@", [dictWeekNumberName objectForKey:[NSNumber numberWithInt:(int)comp.weekday]], (long)comp.day,[arrayMonthNameAbrev objectAtIndex:comp.month-1], (long)comp.year,lTime];
+    //return [NSString stringWithFormat:@"%@, %li %@ %li - %@", [dictWeekNumberName objectForKey:[NSNumber numberWithInt:(int)comp.weekday]], (long)comp.day,[arrayMonthNameAbrev objectAtIndex:comp.month-1], (long)comp.year,lTime];
+    return [NSString stringWithFormat:@"%@ %@ %li, %li - %@", [dictWeekNumberName objectForKey:[NSNumber numberWithInt:(int)comp.weekday]], [arrayMonthNameAbrev objectAtIndex:comp.month-1], (long)comp.day, (long)comp.year, lTime];
 }
 //Niraj: Defect number 017148
 
