@@ -57,6 +57,8 @@
 @property(nonatomic, assign)BOOL isKeyboardShowing;
 
 @property(nonatomic, strong)NSTimer *timer;
+@property (nonatomic, strong) NSString *chatMessage;
+@property (nonatomic)CGFloat widthOfChatText;
 
 @end
 
@@ -64,6 +66,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.widthOfChatText = 0;
     
     [self registerNotification];
     [self registerNetoworkNotification];
@@ -279,12 +282,10 @@
         cell = [[ChatterCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Chatter"];
     }
     ChatterFeedComments *comment = [self getFeetCommentForIndexPath:indexPath];
-    
+    cell.chatText.numberOfLines = 0;
     [cell updateCellView:comment];
     [cell updateUserImage];
-    
     cell.path = indexPath;
-    
     cell.separatorInset =  UIEdgeInsetsMake(0, 85, 0, 0);
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
@@ -293,7 +294,26 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 80.0f;
+    CGFloat height ;
+    CGFloat value = 0;
+    ChatterCell *cell = [[ChatterCell alloc] init];
+    
+    ChatterFeedComments *comment = [self getFeetCommentForIndexPath:indexPath];
+    if([comment.commentBody length] > 0)
+    {
+     height= [self getTheHeightOfTheMessageLableForTheString:comment.commentBody withTheWIdth:cell.frame.size.width];
+        
+        if(height > 25)
+        {
+            value = 80 + height - 25;
+            return value;
+        }
+        else
+        {
+            return 80.0f;
+        }
+    }
+    return 0;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
@@ -619,6 +639,19 @@
 - (void)deRegisterNetoworkNotification
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kNetworkConnectionChanged object:nil];
+}
+
+- (CGFloat)getTheHeightOfTheMessageLableForTheString:(NSString *)message withTheWIdth:(CGFloat)width
+{
+    width = width - 90;
+    
+   NSDictionary *userAttributes = @{NSFontAttributeName:[UIFont fontWithName:kHelveticaNeueRegular size:10]};
+    CGRect expectedRect = [message boundingRectWithSize:CGSizeMake(width, CGFLOAT_MAX)
+                                                options:(NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading)
+                                             attributes:userAttributes
+                                                context:nil];
+    return expectedRect.size.height;
+
 }
 
 #pragma mark -END

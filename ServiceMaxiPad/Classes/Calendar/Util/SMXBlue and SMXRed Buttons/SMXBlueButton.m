@@ -20,6 +20,7 @@
 #import "SMXCalendarViewController.h"
 #import "CalenderHelper.h"
 #import "StyleManager.h"
+#import "CaseObjectModel.h"
 
 @interface SMXBlueButton ()
 
@@ -368,13 +369,24 @@
     NSString *lEventTitle;
     NSString *lLocation = (self.event.isWorkOrder ? [CalenderHelper getServiceLocation:self.event.whatId]:@"");
     
+    NSString *priorityString = nil;
 
     if (self.event.isWorkOrder) {
         WorkOrderSummaryModel *model = [[SMXCalendarViewController sharedInstance].cWODetailsDict objectForKey:self.event.whatId];
         lEventTitle = (model.companyName.length ? model.companyName : self.event.stringCustomerName);
+        priorityString = model.priorityString;
+        
+    } else if (self.event.isCaseEvent){
+        
+        CaseObjectModel *model = [[SMXCalendarViewController sharedInstance].cCaseDetailsDict objectForKey:self.event.whatId];
+        priorityString = model.priorityString;
+
+         lEventTitle = self.event.stringCustomerName;
+
     }
     else{
         lEventTitle = self.event.stringCustomerName;
+        
     }
     
     lEventTitle = [lEventTitle stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
@@ -454,23 +466,23 @@
     else {
         self.eventName.text = text;
     }
-    [self setFlagColor];
+    [self setFlagColor:priorityString];
 
 }
--(void)setFlagColor{
+-(void)setFlagColor:(NSString *)priorityString{
     
     UIColor *borderColor;
     NSString *colorString;
-    if ([self.event.priorityString isEqualToString:@"High"]) {
+    if ([priorityString isEqualToString:@"High"]) {
         
         colorString = [CalenderHelper getTheHexaCodeForTheSettingId:@"IPAD006_SET001"];
     }
-    else     if ([self.event.priorityString isEqualToString:@"Medium"]) {
+    else     if ([priorityString isEqualToString:@"Medium"]) {
         colorString = [CalenderHelper getTheHexaCodeForTheSettingId:@"IPAD006_SET002"];
         
         
     }
-    else     if ([self.event.priorityString isEqualToString:@"Low"]) {
+    else     if ([priorityString isEqualToString:@"Low"]) {
         colorString = [CalenderHelper getTheHexaCodeForTheSettingId:@"IPAD006_SET003"];
         
     }

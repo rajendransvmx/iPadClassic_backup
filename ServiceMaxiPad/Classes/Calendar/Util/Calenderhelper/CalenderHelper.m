@@ -406,6 +406,7 @@
             else if ([lAllCaseWhatIDs containsObject:eventModel.whatId]) {
                 CaseObjectModel *tempModel = [[SMXCalendarViewController sharedInstance].cCaseDetailsDict objectForKey:eventModel.whatId];
                 tempModel.sla = [slaMetric boolValue];
+                tempModel.priorityString = priorityStatus;
                 if ([priorityStatus isEqualToString:@"High"]) {
                     tempModel.priority = YES;
                 }
