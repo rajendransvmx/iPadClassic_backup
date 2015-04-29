@@ -495,5 +495,6 @@ static NSString *kDateFormatType24Hr  = @"%H:%M";
 + (NSString *)getLiteralSupportedDateStringForChatterDate:(NSDate *)date;
 
 + (NSDate *)getLocalTimeFromDateBaseDate:(NSString *)date;
++ (NSString*)getLocalDateForGetpriceFromDateString:(NSString*)date;
 @end
 

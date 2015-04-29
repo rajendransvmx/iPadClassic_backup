@@ -652,5 +652,29 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
     }
     return format;
 }
+
++ (NSString*)getLocalDateForGetpriceFromDateString:(NSString*)date
+{
+    // NSString *date = @"Sun, 09 Mar 2015 12:00:52 AM"; //@"2015-03-08 06:00:09";
+    NSString *localDateInString = nil;
+    NSDate *dateTime;
+    if (date != nil) {
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"EEE, dd MMM yyyy hh:mm:ss a"];
+        NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
+        [dateFormatter setLocale:locale];
+        [dateFormatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+        dateTime = [dateFormatter dateFromString:date];
+        
+        NSDateFormatter *dateFormatterTwo = [[NSDateFormatter alloc] init];
+        [dateFormatterTwo setDateFormat:@"yyyy-MM-dd HH:mm:ss"]; // "2015-03-08 00:00:00"
+        [dateFormatterTwo setLocale:locale];
+        [dateFormatterTwo setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+        localDateInString = [dateFormatterTwo stringFromDate:dateTime];
+        return localDateInString;
+        
+    }
+    return nil;
+}
 @end
 
