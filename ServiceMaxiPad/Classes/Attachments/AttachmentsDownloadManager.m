@@ -112,6 +112,7 @@ static AttachmentsDownloadManager *attachmentDownloadManager = nil;
         {
             configuration = [NSURLSessionConfiguration backgroundSessionConfiguration:@"com.servicemaxinc.DocumentsDownloadManager.SimpleBackgroundTransfer.BackgroundSession"];
         }
+        configuration.HTTPMaximumConnectionsPerHost = 1;
         session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:nil];
     });
     return session;

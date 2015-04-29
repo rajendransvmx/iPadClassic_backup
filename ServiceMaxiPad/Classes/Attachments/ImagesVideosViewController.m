@@ -597,14 +597,17 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
 
 - (void)showPreviewViewController:(AttachmentTXModel *)attachmentModel {
     
-    AttachmentWebView *attachmentWebview = [[AttachmentWebView alloc] initWithNibName:@"AttachmentWebView" bundle:[NSBundle mainBundle]];
-    attachmentWebview.isInViewMode = self.isViewMode;
-    attachmentWebview.attachmentTXModel = attachmentModel;
-    attachmentWebview.parentObjectName = self.parentObjectName;
-    attachmentWebview.parentSFObjectName = self.parentSFObjectName;
-    attachmentWebview.parentId = self.parentId;
-    attachmentWebview.webviewdelgate = self;
-    [self.navigationController pushViewController:attachmentWebview animated:YES];
+    if(![self.navigationController.topViewController isKindOfClass:[AttachmentWebView class]])
+    {
+        AttachmentWebView *attachmentWebview = [[AttachmentWebView alloc] initWithNibName:@"AttachmentWebView" bundle:[NSBundle mainBundle]];
+        attachmentWebview.isInViewMode = self.isViewMode;
+        attachmentWebview.attachmentTXModel = attachmentModel;
+        attachmentWebview.parentObjectName = self.parentObjectName;
+        attachmentWebview.parentSFObjectName = self.parentSFObjectName;
+        attachmentWebview.parentId = self.parentId;
+        attachmentWebview.webviewdelgate = self;
+        [self.navigationController pushViewController:attachmentWebview animated:YES];
+    }
     
 }
 
@@ -832,19 +835,58 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
             __block NSData *dataToSaveFromImage;
             
             [library assetForURL:[info valueForKey:UIImagePickerControllerReferenceURL] resultBlock:^(ALAsset *asset) {
-                image = [UIImage imageWithCGImage:[[asset defaultRepresentation] fullResolutionImage]];
                 
-                ALAssetRepresentation *rep = [asset defaultRepresentation];
-                Byte *buffer = (Byte*)malloc(rep.size);
-                NSUInteger buffered = [rep getBytes:buffer fromOffset:0.0 length:rep.size error:nil];
-                dataToSaveFromImage = [NSData dataWithBytesNoCopy:buffer length:buffered freeWhenDone:YES];
-                
-                if(self && [self respondsToSelector:@selector(dataFromCapturedImage:extension:)]) {
-                    [self performSelector:@selector(dataFromCapturedImage:extension:) withObject:dataToSaveFromImage withObject:extension];
+                if (asset){
+                    //////////////////////////////////////////////////////
+                    // SUCCESS POINT #1 - asset is what we are looking for
+                    //////////////////////////////////////////////////////
+                    image = [UIImage imageWithCGImage:[[asset defaultRepresentation] fullResolutionImage]];
+                    
+                    ALAssetRepresentation *rep = [asset defaultRepresentation];
+                    Byte *buffer = (Byte*)malloc(rep.size);
+                    NSUInteger buffered = [rep getBytes:buffer fromOffset:0.0 length:rep.size error:nil];
+                    dataToSaveFromImage = [NSData dataWithBytesNoCopy:buffer length:buffered freeWhenDone:YES];
+                    
+                    if(self && [self respondsToSelector:@selector(dataFromCapturedImage:extension:)]) {
+                        [self performSelector:@selector(dataFromCapturedImage:extension:) withObject:dataToSaveFromImage withObject:extension];
+                    }
+                    SXLogInfo(@"Camera");
+                    [self hideImagePickerPopover];
+                    
                 }
-                SXLogInfo(@"Camera");
-                [self hideImagePickerPopover];
-                
+                else {
+                    // On iOS 8.0 and above [library assetForUrl] Photo Streams always returns nil. Try to obtain it in an alternative way
+                    
+                    [library enumerateGroupsWithTypes:ALAssetsGroupPhotoStream
+                                           usingBlock:^(ALAssetsGroup *group, BOOL *stop)
+                     {
+                         [group enumerateAssetsWithOptions:NSEnumerationReverse usingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
+                             if([result.defaultRepresentation.url isEqual:[info valueForKey:UIImagePickerControllerReferenceURL]])
+                             {
+                                 ///////////////////////////////////////////////////////
+                                 // SUCCESS POINT #2 - result is what we are looking for
+                                 ///////////////////////////////////////////////////////
+                                 image = [UIImage imageWithCGImage:[[result defaultRepresentation] fullResolutionImage]];
+                                 
+                                 ALAssetRepresentation *rep = [result defaultRepresentation];
+                                 Byte *buffer = (Byte*)malloc(rep.size);
+                                 NSUInteger buffered = [rep getBytes:buffer fromOffset:0.0 length:rep.size error:nil];
+                                 dataToSaveFromImage = [NSData dataWithBytesNoCopy:buffer length:buffered freeWhenDone:YES];
+                                 
+                                 if(self && [self respondsToSelector:@selector(dataFromCapturedImage:extension:)]) {
+                                     [self performSelector:@selector(dataFromCapturedImage:extension:) withObject:dataToSaveFromImage withObject:extension];
+                                 }
+                                 SXLogInfo(@"Camera");
+                                 [self hideImagePickerPopover];
+                                 *stop = YES;
+                             }
+                         }];
+                     }
+                                         failureBlock:^(NSError *error)
+                     {
+                         NSLog(@"Error: Cannot load asset from photo stream - %@", [error localizedDescription]);
+                     }];
+                }
             } failureBlock:^(NSError *error) {
                 
                 NSLog(@"error : %@", error);
