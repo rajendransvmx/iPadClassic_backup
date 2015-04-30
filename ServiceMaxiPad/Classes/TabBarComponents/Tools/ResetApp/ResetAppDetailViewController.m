@@ -88,6 +88,7 @@
     //self.smSplitViewController.navigationItem.titleView = [UILabel navBarTitleLabel:[[TagManager sharedInstance]tagByName:kTagResetApp]];
     resetAppBtn.layer.borderWidth = 0.8;
     [self.smPopover dismissPopoverAnimated:YES];
+    resetAppBtn.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     
     [self registerNetworkChangeNotification];
     [self loadResetAppButton];

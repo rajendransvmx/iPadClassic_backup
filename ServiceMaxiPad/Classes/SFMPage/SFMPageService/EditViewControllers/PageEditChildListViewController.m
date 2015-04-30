@@ -98,6 +98,7 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
     NSString *title = [NSString stringWithFormat:@"+ %@",[[TagManager sharedInstance]tagByName:kTag_Add]];
     
     [addButton setTitle:title forState:UIControlStateNormal];
+    addButton.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     [footerView addSubview:addButton];
     self.tableView.tableFooterView = footerView;
 }

@@ -164,6 +164,7 @@
 - (void)viewWillAppear:(BOOL)animated {
     
     [super viewWillAppear:animated];
+    self.addEventBtn.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     self.navigationController.navigationBar.barTintColor = [UIColor navBarBG];
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     self.navigationController.navigationBar.translucent = NO;
@@ -929,6 +930,8 @@
     NSString *title = [NSString stringWithFormat:@"+ %@",[[TagManager sharedInstance]tagByName:kTag_Add]];
    // self.addEventBtn.backgroundColor = [UIColor redColor];//HS 2 Jan
     [self.addEventBtn setTitle:title forState:UIControlStateNormal];
+    self.addEventBtn.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+
     
     /* chinna changed color to gray for the add event button if no process exist */  //19 feb 15
     NSArray *processArrayCount = [self checkForCreateNewEventAvailable];
@@ -1396,6 +1399,7 @@
         leftButton.tag=1;
        
         [rightButton setTitle:[NSString stringWithFormat:@"+ %@",[[TagManager sharedInstance]tagByName:kTag_AddEvent]] forState:UIControlStateNormal]; //Fix for Issue 013034
+        rightButton.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
         [rightButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         //[rightButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
         self.navigationItem.rightBarButtonItem.enabled = YES;
@@ -1412,6 +1416,8 @@
         leftButton.tag=2;
         //[rightButton setTitle:[[TagManager sharedInstance] tagByName:kTagActions] forState:UIControlStateNormal];
         [rightButton setTitle:[NSString stringWithFormat:@"+ %@",[[TagManager sharedInstance]tagByName:kTag_AddEvent]] forState:UIControlStateNormal];
+        rightButton.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+
 
         [rightButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
 

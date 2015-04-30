@@ -137,6 +137,7 @@
       {
           self.tableView.hidden = YES;
           [self.singleAddButton setTitle:@"Click here to add a single line" forState:UIControlStateNormal];
+          self.singleAddButton.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
 
       }
       else

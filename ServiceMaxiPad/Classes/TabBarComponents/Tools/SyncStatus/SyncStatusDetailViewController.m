@@ -67,7 +67,10 @@ const NSInteger alertViewTagForConfigSync   = 888889;
     statusTitleLabel_Config.text = [[TagManager sharedInstance]tagByName:kTag_status];
     [syncConfigBtn setTitle:[[TagManager sharedInstance]tagByName:kTag_SyncConfigNow] forState:UIControlStateNormal];
     
+   syncConfigBtn.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+
     [syncDataBtn setTitle:[[TagManager sharedInstance]tagByName:kTag_SyncDataNow] forState:UIControlStateNormal];
+    syncDataBtn.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     
     syncDataBtn.layer.borderColor = [UIColor orangeColor].CGColor;
     syncDataBtn.layer.borderWidth = 0.8;

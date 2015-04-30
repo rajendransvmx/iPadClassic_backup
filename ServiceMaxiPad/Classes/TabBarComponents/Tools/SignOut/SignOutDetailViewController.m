@@ -173,6 +173,7 @@
     //self.smSplitViewController.navigationItem.titleView = [UILabel navBarTitleLabel:[[TagManager sharedInstance]tagByName:kTagSignOut]];
     signOutBtn.layer.borderColor = [UIColor orangeColor].CGColor;
     signOutBtn.layer.borderWidth = 0.8;
+    signOutBtn.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     [self.smPopover dismissPopoverAnimated:YES];
     CGRect theFrame = self.view.bounds;
 
