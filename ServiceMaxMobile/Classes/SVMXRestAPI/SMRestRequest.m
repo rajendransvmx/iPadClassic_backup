@@ -36,7 +36,7 @@ NSString * const kSFDefaultDataService   = @"/services/data";
     return self;
 }
 
-- (id)initWithMethod:(RKRequestMethod )methodName path:(NSString *)pathName andParameters:(NSDictionary *)parameterDict
+- (id)initWithMethod:(id )methodName path:(NSString *)pathName andParameters:(NSDictionary *)parameterDict
 {
     self = [super init];
     if (self)
@@ -48,6 +48,21 @@ NSString * const kSFDefaultDataService   = @"/services/data";
     }
     return self;
 }
+
+
+- (id)initWithMethod:(id )methodName objectName:(NSString *)objectName andSfId:(NSString *)sfId
+{
+    self = [super init];
+    if (self)
+    {
+        self.method = methodName;
+        self.objectName = objectName;
+        self.sfId = sfId;
+        self.shouldCancel  = NO;
+    }
+    return self;
+}
+
 
 
 - (void)cancelRequest

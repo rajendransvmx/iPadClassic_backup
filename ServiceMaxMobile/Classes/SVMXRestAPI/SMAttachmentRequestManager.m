@@ -518,14 +518,15 @@ static SMAttachmentRequestManager *_instance;
 #pragma Mark -
 #pragma mark SMRestRequestDelegate methods
 
-- (void)request:(SMRestRequest *)request didLoadResponse:(RKResponse *)response
+- (void)request:(SMRestRequest *)request didLoadResponse:(id )response
 {
     [response retain];
     
     // Call File to save here.
     NSString *localId = [self getLocalIdForRequest:request];
     SMAttachmentModel *model = [self.requestDictionary objectForKey:localId];
-    BOOL hasFileSaved = [self saveAttachmentData:response.body inFileName:model.fileName];
+    BOOL hasFileSaved = YES;//[self saveAttachmentData:response.body inFileName:model.fileName];
+    //check file exists
 
     if (hasFileSaved)
     {
@@ -579,32 +580,6 @@ static SMAttachmentRequestManager *_instance;
 }
 
 
-- (void)requestDidStartLoad:(SMRestRequest *)request
-{
-    [self postNotificationForObject:[self getLocalIdForRequest:request]
-                            status:statusInProgress
-                              error:nil
-                       progressMessage:@""];
-}
-
-
-- (void)request:(SMRestRequest *)request
-          didSendBodyData:(NSInteger)bytesWritten
-        totalBytesWritten:(NSInteger)totalBytesWritten
-totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite
-{
-    NSString *localId =  [self getLocalIdForRequest:request];
-    SMAttachmentModel *model = [self.requestDictionary objectForKey:localId];
-    
-    NSString *progressStatus = [NSString stringWithFormat:@"%d/%d",totalBytesWritten, model.fileSize];
-    
-    [self postNotificationForObject:[self getLocalIdForRequest:request]
-                            status:statusInProgress
-                              error:nil
-                       progressMessage:progressStatus];
-    
-}
-
 - (void)request:(SMRestRequest*)request
              didReceiveData:(NSInteger)bytesReceived
          totalBytesReceived:(NSInteger)totalBytesReceived
@@ -640,29 +615,26 @@ totalBytesExpectedToReceive:(NSInteger)totalBytesExpectedToReceive
     }
 }
 
-
-- (void)requestDidTimeout:(SMRestRequest *)request
+- (NSString *)getFilePath:(SMRestRequest *)request;
 {
-    NSString *localId = [self getLocalIdForRequest:request];
     
-    NSError *error =  [NSError errorWithDomain:kSVMXRestAPIErrorDomain
-                                          code:SMAttachmentRequestErrorCodeRequestTimeOut
-                                      userInfo:[NSDictionary
-                                                dictionaryWithObject:kRequestTimeOutMsg forKey:@"ErrorMessage"]];
     
-    [self handleError:error forAttachmentId:localId andActionType:kAttachmentActionTypeDownload];
+    NSString *rootPath = [self getRootFolderForSavingAttachments];
+    
+    NSString *localId  = [self getLocalIdForRequest:request];
+    SMAttachmentModel *model = [self.requestDictionary objectForKey:localId];
 
-    [self postNotificationForObject:localId
-                            status:statusFailure
-                              error:error
-                       progressMessage:kRequestTimeOutMsg];
-    
-    [self completedActionServiceForRequest:request];
-    
+    NSString *filePath = [rootPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@",model.fileName]];
+
+    return filePath;
 }
 
 #pragma mark-
 #pragma mark Saving downloaded file
+
+
+
+
 - (BOOL)saveAttachmentData:(NSData *)attachmentData inFileName:(NSString *)fileName
 {
     BOOL isSuccess = NO;

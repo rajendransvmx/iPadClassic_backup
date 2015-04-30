@@ -7,8 +7,6 @@
 //
 
 #import "SMSalesForceRestAPI.h"
-#import "SMConnectionManager.h"
-#import "SMRequestHelper.h"
 
 
 NSString * const kMobileSDKVersion   = @"2.4.2";
@@ -23,7 +21,6 @@ static SMSalesForceRestAPI *_instance;
 @implementation SMSalesForceRestAPI
 
 @synthesize apiVersion=_apiVersion;
-@synthesize rkClient;
 @synthesize currentRequests;
 
 
@@ -48,7 +45,6 @@ static SMSalesForceRestAPI *_instance;
 
 - (void)dealloc
 {
-    [_client release]; _client = nil;
     [currentRequests release]; currentRequests = nil;
      
     [super dealloc];
@@ -66,43 +62,12 @@ static SMSalesForceRestAPI *_instance;
 }
 
 
-- (RKClient *)rkClient
-{
-    if (nil == _client)
-    {
-        [[SMConnectionManager sharedInstance] refreshConnectionInfo];
-        // Vipin - 9167
-        _client = [[RKClient clientWithBaseURLString:[SMConnectionManager sharedInstance].instanceURL] retain];//009382
-        //_client = [[RKClient alloc] initWithBaseURLString:[SMConnectionManager sharedInstance].instanceURL];
-        [_client setValue:kSFRestAPIContentTypeJSON forHTTPHeaderField:@"Content-Type"];
-        [_client setValue:[SMSalesForceRestAPI userAgentString] forHTTPHeaderField:@"User-Agent"];
-    }
-    return _client;
-}
 
-
-+ (NSString *)userAgentString
-{
-    UIDevice *curDevice  = [UIDevice currentDevice];
-    NSString *appName    = [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString*)kCFBundleNameKey];
-    NSString *appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString*)kCFBundleVersionKey];
-    
-    NSString *userAgent = [NSString stringWithFormat:
-                             @"SalesforceMobileSDK/%@ %@/%@ (%@) %@/%@",
-                             kMobileSDKVersion,
-                             [curDevice systemName],
-                             [curDevice systemVersion],
-                             [curDevice model],
-                             appName,
-                             appVersion];
-    
-    return userAgent;
-}
 
 
 - (void)sendRequest:(SMRestRequest *)request withDelegate:(id<SMRestRequestDelegate>)reqDelegate
 {
-    SMRequestHelper *helper = [SMRequestHelper getHelperForRequest:request];
+    RestRequest *helper = [RestRequest getHelperForRequest:request];
     [helper sendRequestWithDelegate:reqDelegate];
     [self.currentRequests addObject:helper];
     // Vipin - 9167
@@ -114,7 +79,7 @@ static SMSalesForceRestAPI *_instance;
     NSString            *path = [NSString stringWithFormat:@"/%@/query", self.apiVersion];
     NSDictionary *queryParams = [NSDictionary dictionaryWithObjectsAndKeys:soql, @"q", nil];
     
-    return [[[SMRestRequest alloc] initWithMethod:RKRequestMethodGET path:path andParameters:queryParams] autorelease];
+    return [[[SMRestRequest alloc] initWithMethod:@"GET" path:path andParameters:queryParams] autorelease];
 }
 
 
@@ -127,7 +92,7 @@ static SMSalesForceRestAPI *_instance;
                                  : nil);
     NSString *path = [NSString stringWithFormat:@"/%@/sobjects/%@/%@", self.apiVersion, objectType, objectId];
     
-    return [[[SMRestRequest alloc] initWithMethod:RKRequestMethodGET path:path andParameters:queryParams] autorelease];
+    return [[[SMRestRequest alloc] initWithMethod:@"GET" path:path andParameters:queryParams] autorelease];
 }
 
 /*
@@ -141,9 +106,12 @@ static SMSalesForceRestAPI *_instance;
                                               fieldName:(NSString *)fieldName
 {
     
-    NSString *path = [NSString stringWithFormat:@"/%@/sobjects/%@/%@/%@", self.apiVersion, objectType, objectId, fieldName];
+   // NSString *path = [NSString stringWithFormat:@"/%@/sobjects/%@/%@/%@", self.apiVersion, objectType, objectId, fieldName];
     
-    return [[[SMRestRequest alloc] initWithMethod:RKRequestMethodGET path:path andParameters:nil] autorelease];
+   // return [[[SMRestRequest alloc] initWithMethod:@"GET" path:path andParameters:nil] autorelease];
+    
+    
+    return [[[SMRestRequest alloc] initWithMethod:@"GET" objectName:objectType andSfId:objectId] autorelease];
 }
 
 - (void)sendRequestForQuery:(SMRestRequest *)request withDelegate:(id<SMRestRequestDelegate>)reqDelegate
@@ -152,7 +120,7 @@ static SMSalesForceRestAPI *_instance;
 }
 
 
-- (void)removeCurrentRequestsObject:(SMRequestHelper *)requestHelper
+- (void)removeCurrentRequestsObject:(RestRequest *)requestHelper
 {
     // Vipin - 9167
     [requestHelper retain];
@@ -167,7 +135,7 @@ static SMSalesForceRestAPI *_instance;
 }
 
 // Vipin - 9167
-- (void)removeRequest:(SMRequestHelper *)requestHelper
+- (void)removeRequest:(RestRequest *)requestHelper
 {
     [requestHelper retain];
     [self.currentRequests removeObject:requestHelper];
