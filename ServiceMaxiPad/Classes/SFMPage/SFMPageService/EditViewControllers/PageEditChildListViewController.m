@@ -836,11 +836,6 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
     SFMRecordFieldData *localIdDataField = [[SFMRecordFieldData alloc] initWithFieldName:kLocalId value:localId andDisplayValue:localId];
     [chidLineDict setObject:localIdDataField forKey:kLocalId];
     
-    /*Update parent Column name*/
-    SFProcessComponentModel  *processComponent = [self.sfmPage.process.component objectForKey:self.detailLayout.processComponentId];
-    [chidLineDict setValue:[self parentColumnNameData:processComponent] forKey:processComponent.parentColumnName];
-
-    
     /* Create fields */
     NSArray *fields = self.detailLayout.detailSectionFields;
     for (SFMPageField *aField in fields) {
@@ -855,6 +850,9 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
         }
     }
     
+    /*Update parent Column name*/
+    SFProcessComponentModel  *processComponent = [self.sfmPage.process.component objectForKey:self.detailLayout.processComponentId];
+    [chidLineDict setValue:[self parentColumnNameData:processComponent] forKey:processComponent.parentColumnName];
     
     
     SFMRecordFieldData *aField = [chidLineDict objectForKey:kLocalId];
