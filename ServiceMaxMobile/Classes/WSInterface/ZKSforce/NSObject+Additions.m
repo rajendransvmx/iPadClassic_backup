@@ -27,7 +27,12 @@
 
 - (void)performSelector:(SEL)selector withObject:(id)object1 withObject:(id)object2 withObject:(id)object3
 {
-    (void)objc_msgSend(self, selector, object1, object2, object3);
+    // Pushpak
+    // Supporting arm64. iPad Air , iPad mini retina.
+    // (void)objc_msgSend(self, selector, object1, object2, object3);
+    // 64bit support changes.
+    void (*response)(id, SEL, id, id,id) = (void (*)(id, SEL, id, id,id)) objc_msgSend;
+    response(self, selector, object1, object2, object3);
 }
 
 @end

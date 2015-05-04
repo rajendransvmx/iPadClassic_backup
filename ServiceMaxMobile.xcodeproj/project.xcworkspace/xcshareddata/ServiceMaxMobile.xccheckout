@@ -12,27 +12,41 @@
 	<dict>
 		<key>5a4fd11e-6138-4d43-ace2-00eb939f7215++5435</key>
 		<string>https://subversion.assembla.com/svn/servicemax-ipad-r4b2/branches/Spring14SP-GE-64BIT</string>
+		<key>5a4fd11e-6138-4d43-ace2-00eb939f7215++580</key>
+		<string>https://subversion.assembla.com/svn/servicemax-ipad-r4b2.SVNREPO/branches/14.31-64-BIT</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>ServiceMaxMobile.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>5a4fd11e-6138-4d43-ace2-00eb939f7215++5435</key>
+		<string>../../../Spring14SP_GE</string>
+		<key>5a4fd11e-6138-4d43-ace2-00eb939f7215++580</key>
 		<string>../..</string>
 	</dict>
 	<key>IDESourceControlProjectRepositoryRootDictionary</key>
 	<dict>
 		<key>5a4fd11e-6138-4d43-ace2-00eb939f7215++5435</key>
 		<string>https://subversion.assembla.com/svn/servicemax-ipad-r4b2</string>
+		<key>5a4fd11e-6138-4d43-ace2-00eb939f7215++580</key>
+		<string>https://subversion.assembla.com/svn/servicemax-ipad-r4b2.SVNREPO</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>https://subversion.assembla.com/svn/servicemax-ipad-r4b2/branches/Spring14SP-GE-64BIT/ServiceMaxMobile.xcodeproj</string>
+	<string>https://subversion.assembla.com/svn/servicemax-ipad-r4b2.SVNREPO/branches/14.31-64-BIT/ServiceMaxMobile.xcodeproj</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>5a4fd11e-6138-4d43-ace2-00eb939f7215++5435</string>
+	<string>5a4fd11e-6138-4d43-ace2-00eb939f7215++580</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.subversion</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>5a4fd11e-6138-4d43-ace2-00eb939f7215++580</string>
+			<key>IDESourceControlWCCName</key>
+			<string>14.31-64-BIT</string>
+		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.subversion</string>
