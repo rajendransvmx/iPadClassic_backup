@@ -7,7 +7,6 @@
 //
 
 #import "SMRestRequest.h"
-#import "SFJsonUtils.h"
 
 NSString * const kSFDefaultDataService   = @"/services/data";
 
