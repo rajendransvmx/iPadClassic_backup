@@ -35,6 +35,8 @@ extern NSString * const kSFDefaultDataService;
 
 - (NSString *)getFilePath:(SMRestRequest *)request;
 
+- (void)requestDidCancelLoad:(SMRestRequest *)request;
+
 
 @end
 

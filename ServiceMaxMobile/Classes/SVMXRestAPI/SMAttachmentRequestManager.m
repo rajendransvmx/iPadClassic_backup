@@ -599,6 +599,8 @@ totalBytesExpectedToReceive:(NSInteger)totalBytesExpectedToReceive
 
 - (void)requestDidCancelLoad:(SMRestRequest *)request
 {
+    NSString * filePath = [self getFilePath:request];
+    [self removeFileAtIndexPath:filePath];
     if (self.processCurrentStatus == ActionStatus_Cancelled_By_User)
     {
         [self processCancelledRequest:request];
@@ -652,6 +654,19 @@ totalBytesExpectedToReceive:(NSInteger)totalBytesExpectedToReceive
     return isSuccess;
 }
 
+-(void)removeFileAtIndexPath:(NSString *)filePath
+{
+    
+
+    NSLog(@"File PAth %@",filePath);
+    NSError *error = nil;
+    [[NSFileManager defaultManager] removeItemAtPath:filePath error:&error];
+    if(error)
+    {
+        
+    }
+
+}
 
 - (NSString *)getRootFolderForSavingAttachments
 {

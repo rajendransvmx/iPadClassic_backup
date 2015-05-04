@@ -182,10 +182,19 @@ NSString * const kSFSessionTokenPrefix   = @"OAuth ";
         if (response != nil) {
             code = response.statusCode;
         }
+        if(error.code == NSURLErrorCancelled){
+            
+            [self didRequestCancelError:error andResponse:nil];
+        }
+        else
+        {
+            NSLog(@"REQUEST FAILED FOR: %@", self);
+            [self didRequestFailedWithError:[NSError errorWithDomain:error.domain code:code userInfo:error.userInfo] andResponse:operation.responseObject];
+        }
         
+        //if(error.domain isEqualToString:NSURLErrorCancelled)
         
-        NSLog(@"REQUEST FAILED FOR: %@", self);
-        [self didRequestFailedWithError:[NSError errorWithDomain:error.domain code:code userInfo:error.userInfo] andResponse:operation.responseObject];
+       
     }];
     
    
@@ -259,5 +268,14 @@ NSString * const kSFSessionTokenPrefix   = @"OAuth ";
         }
     }
 }
+- (void)didRequestCancelError:(NSError *)error andResponse:(id)someResponseObj
+{
+    @synchronized([self class]){
+        if (self.smRestRequest.requestDelegate != nil && [self.smRestRequest.requestDelegate conformsToProtocol:@protocol(SMRestRequestDelegate)]) {
+            [self.smRestRequest.requestDelegate requestDidCancelLoad:self.smRestRequest];
+        }
+    }
+}
+
 
 @end
