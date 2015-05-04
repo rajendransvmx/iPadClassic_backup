@@ -559,9 +559,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
             }
             
             if (canUpdateDetail || canUpdateHeader) {
-                if ( [[SNetworkReachabilityManager sharedInstance] isNetworkReachable]){
-                    [[SyncManager sharedInstance] performSyncWithType:SyncTypeData];
-                }
+               [[SyncManager sharedInstance] performDataSyncIfNetworkReachable];
             }
             
             if(self.saveflow == SaveFlowOnSaveTapped)
@@ -875,10 +873,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
             if([self isSourceToTargetProcess] || [self isSourceToTargetChildOnlyProcess]){
                 [self.sfmEditPageManager performSourceUpdate:self.sfmPage];
             }
-            
-            if ( [[SNetworkReachabilityManager sharedInstance] isNetworkReachable]){
-                [[SyncManager sharedInstance] performSyncWithType:SyncTypeData];
-            }
+            [[SyncManager sharedInstance] performDataSyncIfNetworkReachable];
             didSave = YES;
             
             if ([self isEditProcess]) {

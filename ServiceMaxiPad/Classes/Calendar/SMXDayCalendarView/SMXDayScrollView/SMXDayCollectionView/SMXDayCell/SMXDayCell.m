@@ -172,7 +172,7 @@
         SMXHourAndMinLabel *theHourBeforeLineLabel = [arrayLabelsHourAndMin objectAtIndex:i];
         if (boolIsToday)
         {
-            if (abs(labelRed.frame.origin.y - theHourBeforeLineLabel.frame.origin.y)>=18)
+            if (fabs(labelRed.frame.origin.y - theHourBeforeLineLabel.frame.origin.y)>=18)
             {
                 [theHourBeforeLineLabel showText];
             }
@@ -874,7 +874,7 @@
             
             float lDifferenceInPosition = cOriginalFrame.origin.y - cDraggedForReschedulingButton.frame.origin.y ;
             
-            int min = abs (lDifferenceInPosition * 60 / DAYVIEW_HEIGHT_CELL_HOUR);
+            int min = fabs (lDifferenceInPosition * 60 / DAYVIEW_HEIGHT_CELL_HOUR);
 
             if (lDifferenceInPosition > 0)
             {

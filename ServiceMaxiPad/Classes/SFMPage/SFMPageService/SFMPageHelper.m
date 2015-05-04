@@ -574,7 +574,7 @@
     
 }
 
-+ (NSString *)getSettingValueForSeetingId:(NSString *)Id
++ (NSString *)getSettingValueForSettingId:(NSString *)Id
 {
     id  mobileSettings = [FactoryDAO serviceByServiceType:ServiceTypeMobileDeviceSettings];
     

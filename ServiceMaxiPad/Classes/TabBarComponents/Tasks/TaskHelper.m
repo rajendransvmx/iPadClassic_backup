@@ -176,11 +176,7 @@ NSString *const kTaskPriorityHigh = @"High";
 
 + (void)triggerDataSync
 {
-    if ( [[SNetworkReachabilityManager sharedInstance] isNetworkReachable]){
-        
-        [[SyncManager sharedInstance] performSyncWithType:SyncTypeData];
-        
-    }
+   [[SyncManager sharedInstance] performDataSyncIfNetworkReachable];
 }
 
 

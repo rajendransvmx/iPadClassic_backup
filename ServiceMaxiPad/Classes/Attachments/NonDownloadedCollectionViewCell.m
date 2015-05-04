@@ -53,7 +53,7 @@
     self.cloudImageView.image = [UIImage imageNamed:@"Attachment-FileinCloud"];
     [self.fileNameLabel setTextColor:[UIColor colorWithHexString:@"#157DFB"]];
     [self.fileSizeLabel setTextColor:[UIColor colorWithHexString:@"#157DFB"]];
-    [self.progressView setProgressTintColor:[UIColor colorWithHexString:@"#157DFB"]];
+    [self.progressView setProgressTintColor:[UIColor colorWithHexString:@"#FF6633"]];// Anoop: SPR 15SP
 }
 
 @end

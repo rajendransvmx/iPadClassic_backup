@@ -13,7 +13,7 @@
 NSString *const kMobileSettingsUniqueId         = ORG_NAME_SPACE@"__Setting_Unique_ID__c";
 NSString *const kMobileSettingsValue            = ORG_NAME_SPACE@"__Internal_Value__c";
 NSString *const kMobileSettingsDisplayValue     = ORG_NAME_SPACE@"__Display_Type__c";
-
+NSString *const kMobileSettingsAggressiveSync   = @"IPAD018_SET019";
 
 /* TargetManager constant */
 NSString *const kProcessUniqueId    = ORG_NAME_SPACE@"__ProcessID__c";

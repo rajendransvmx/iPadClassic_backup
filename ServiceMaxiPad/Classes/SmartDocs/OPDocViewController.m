@@ -448,10 +448,7 @@
 - (void)syncOPDocHtmlData:(NSData *)fileData andFileName:(NSString *)fileName
 {
     /* Call Request class for starting the sync and uploading the documents */
-    if([[SNetworkReachabilityManager sharedInstance] isNetworkReachable])
-    {
-        [[SyncManager sharedInstance] performSyncWithType:SyncTypeData];
-    }
+   [[SyncManager sharedInstance] performDataSyncIfNetworkReachable];
 }
 
 #pragma mark - Signature Capture modules

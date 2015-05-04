@@ -714,7 +714,7 @@ static UIImage *lineImage;
             //TODO: Update the relevant table to update event listing in the DB.
             
             float lDifferenceInPosition = cOriginalFrame.origin.y - cSelectedEventButton.frame.origin.y ;
-            int min = abs (lDifferenceInPosition * 60 / HEIGHT_CELL_HOUR);
+            int min = fabs (lDifferenceInPosition * 60 / HEIGHT_CELL_HOUR);
             [cSelectedEventButton.event explainMe];
 
             int numberOfDayChange=[self numberOfDayCahnged];

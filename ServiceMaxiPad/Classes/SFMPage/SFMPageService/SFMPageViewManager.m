@@ -108,9 +108,9 @@
 {
     if ([self.objectName isEqualToString:kWorkOrderTableName]) {
         
-        return [SFMPageHelper getSettingValueForSeetingId:@"SLAT003_SET001"];
+        return [SFMPageHelper getSettingValueForSettingId:@"SLAT003_SET001"];
     }
-    return [SFMPageHelper getSettingValueForSeetingId:@"SLAT002_SET001"];
+    return [SFMPageHelper getSettingValueForSettingId:@"SLAT002_SET001"];
 }
 
 

@@ -40,6 +40,7 @@
 #import "PerformanceAnalyser.h"
 #import "SNetworkReachabilityManager.h"
 #import "SMDataPurgeManager.h"
+#import "SFMPageHelper.h"
 
 const NSInteger alertViewTagForDataSync     = 888888;
 const NSInteger alertViewTagForInitialSync  = 888890;
@@ -1547,7 +1548,11 @@ static SyncManager *_instance;
     {
         if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable])
         {
-            [self performSyncWithType:SyncTypeData];
+            NSString *aggressiveSyncEnabled = [SFMPageHelper getSettingValueForSettingId:kMobileSettingsAggressiveSync];
+            if (![[aggressiveSyncEnabled uppercaseString] isEqualToString:@"FALSE"])
+            {
+                [self performSyncWithType:SyncTypeData];
+            }
         }
     }
     return;
