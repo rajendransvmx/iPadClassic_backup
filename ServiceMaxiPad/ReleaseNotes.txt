@@ -3,16 +3,14 @@
 ServiceMax Win 15 SP iPad Release
 
 *******************************************
-Version = 15.20.020
+Version = 15.20.021
 ===========================================
 -------------
 Fixed Defects
 -------------
-14381 - iPad app is timing out and requiring sign-in after an hour or so of inactivity on the app.
-
-016231 -Data is not syncing from the iPad to the Server, session is getting revoked and when logging back in initial sync is forced causing data to be lost.
-
-13449 - It is not possible to drill down into line records in a View Process screen, by tapping / double tapping the record
+17119 - Calculate Billable results 22 hours instead of 24 hours
+17122 - Data purge does not get past advanced download criteria.
+16396 - Duplication of lines on Stock Transfer parts requests Ipad only
 -------------
 Known Issues
 -------------
