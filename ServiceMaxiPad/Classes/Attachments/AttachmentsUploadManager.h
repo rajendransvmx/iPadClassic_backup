@@ -22,6 +22,7 @@
 @interface AttachmentsUploadManager : NSObject <FlowDelegate>
 
 @property(nonatomic, assign) id <AttachmentCustomDelegate> attachmentCustomDelegate;
+@property(nonatomic, strong) NSMutableArray *localIdsModifiedArray;
 
 + (id)sharedManager;
 - (void)startAttachmentFileUploadProcess;

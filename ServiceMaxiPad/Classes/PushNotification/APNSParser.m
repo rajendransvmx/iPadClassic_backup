@@ -37,10 +37,8 @@
         if ([responseData isKindOfClass:[NSDictionary class]]) {
             
             NSString * requestId = nil;
-            NSString *eventValue = nil;
             
             for(NSDictionary * internalDict in  requestParamModel.valueMap){
-                eventValue = [internalDict objectForKey:kSVMXValue];
                 NSArray * internalValueMap = [internalDict objectForKey:kSVMXSVMXMap];
                 for (NSDictionary  * finalValueMapdict in internalValueMap) {
                     NSString * key = [finalValueMapdict objectForKey:kSVMXKey];
@@ -85,14 +83,13 @@
                 }
                 else
                 {
-                    
+                
                     NSString *jsonStr = [map objectForKey:kSVMXValue];
                     
                     
                     objectrecords = [self getTxnObjectForJsonString:jsonStr objectName:objectName];
-                      BOOL isEventWebServiceCall =[self isEventWebServiceCall:requestParamModel];
-                   
-                    //HS 31Mar
+                  //  BOOL isEventWebServiceCall =[self isEventWebServiceCall:requestParamModel];
+
                     //[objectrecords addObject:model];
                     
                     if ([objectrecords count] > 0) {
@@ -103,54 +100,52 @@
                             //NSDictionary *valueDict = model.v
                             
                             NSString *sfID = [model valueForField:kId];
-                            //  BOOL isRecordExists = [self isRecordExistwithObjectName:objectName andSFID:sfID];
+                          //  BOOL isRecordExists = [self isRecordExistwithObjectName:objectName andSFID:sfID];
                             NSArray *objectArray = [[NSArray alloc]initWithObjects:model, nil];
                             
-                            //update in objecttable
-                            [self.helper insertObjects:objectArray withObjectName:objectName]; //it will check if not exist it will insert or update if exists
+                        
                             
-                            //check in DOD ,if there delete
+                                    //update in objecttable
+                                    [self.helper insertObjects:objectArray withObjectName:objectName]; //it will check if not exist it will insert or update if exists
+                                    
+                                    //check in DOD ,if there delete
                             
-                           // if(![objectName isEqualToString:kEventObject ] && ![objectName isEqualToString:kSVMXTableName])
-                            if (isEventWebServiceCall)
-                               {
-                                id dodService = [FactoryDAO serviceByServiceType:ServiceTypeDOD];
-                                BOOL isDODRecord = [dodService doesRecordAlreadyExistWithfieldName:kSyncRecordSFId withFieldValue:sfID inTable:@"DODRecords"];
-                                if (isDODRecord)
-                                {
-                                    //Delete the record from DOD Table
+                                    if(![objectName isEqualToString:kEventObject ] && ![objectName isEqualToString:kSVMXTableName])
+                                    {
+                                        id dodService = [FactoryDAO serviceByServiceType:ServiceTypeDOD];
+                                        BOOL isDODRecord = [dodService doesRecordAlreadyExistWithfieldName:kSyncRecordSFId withFieldValue:sfID inTable:@"DODRecords"];
+                                        if (isDODRecord)
+                                        {
+                                            //Delete the record from DOD Table
+                                            
+                                            DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:kSyncRecordSFId
+                                                                                              operatorType:SQLOperatorEqual
+                                                                                             andFieldValue:sfID];
+                                            
+                                            BOOL status = [dodService deleteRecordsFromObject:@"DODRecords"
+                                                                          whereCriteria:[NSArray arrayWithObject:criteriaOne]
+                                                                   andAdvanceExpression:nil];
+                                        }
+                                    }
                                     
-                                    DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:kSyncRecordSFId
-                                                                                      operatorType:SQLOperatorEqual
-                                                                                     andFieldValue:sfID];
-                                    
-                                    BOOL status = [dodService deleteRecordsFromObject:@"DODRecords"
-                                                                        whereCriteria:[NSArray arrayWithObject:criteriaOne]
-                                                                 andAdvanceExpression:nil];
-                                }
-                                   
-                                   
-                                   
-                                   
+                            
+                                
+                            }
+                        
+                            
                             }
                             
                             
-                            
                         }
-                        
-                        
-                    }
-                    
+
+                        [objectrecords removeAllObjects];
                     
                 }
-                
-                [objectrecords removeAllObjects];
-                
+            
             }
            
 
             
-        }
         
     }
     return nil;
@@ -228,6 +223,20 @@
     
 }
 
+//function to check whether the record is DOD record by comapring in respective objects
+-(BOOL)isRecordExistwithObjectName:(NSString *)objectName andSFID:(NSString *)sfID
+{
+    //NSString *sfID = @"a1LF0000002O2t8MAC";
+
+    
+    id dodService = [FactoryDAO serviceByServiceType:ServiceTypeDOD];
+    
+    BOOL isRecordAlreadyExists = [dodService doesRecordAlreadyExistWithfieldName:@"Id" withFieldValue:sfID
+                                                                       inTable:objectName];
+    
+    return isRecordAlreadyExists;
+}
+
 -(BOOL)isEventWebServiceCall:(RequestParamModel *)requestParamModel
 {
     BOOL isEventRecord = NO;
@@ -238,7 +247,7 @@
         if (valueMapDict)
         {
             NSString *objectName = [valueMapDict objectForKey:kSVMXValue];
-            if ([objectName isEqualToString:kEventObject] || ([objectName isEqualToString:kSVMXTableName]))
+            if ([objectName isEqualToString:@"Event"])
             {
                 isEventRecord = YES;
             }

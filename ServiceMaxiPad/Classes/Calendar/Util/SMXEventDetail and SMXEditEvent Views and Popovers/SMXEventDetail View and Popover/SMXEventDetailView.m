@@ -914,7 +914,6 @@
 -(void)addProductsAtLocation
 {
     
-    
     productsAtThisLocationTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(problemDescriptionLabel.frame.origin.x
                                                                              , problemDescriptionLabel.frame.origin.y+problemDescriptionLabel.frame.size.height + 15, self.frame.size.width - 30, problemDescriptionTitleLabel.frame.size.height)];
     productsAtThisLocationTitleLabel.backgroundColor = [UIColor clearColor];
@@ -924,9 +923,15 @@
     
     [cBGScrollView addSubview:productsAtThisLocationTitleLabel];
     
+    NSArray *productLocation = [NSArray new];
     
+    if ([cWOModel.IPAtLocation count] > 0)
+    {
+         productLocation =   [self getTheModifiedProductLocationArray];
+    }
+
     NSString *lProductsAtLocation = @"";
-    for (NSString *lString in cWOModel.IPAtLocation) {
+    for (NSString *lString in productLocation) {
         lProductsAtLocation = [lProductsAtLocation stringByAppendingString:lString];
         lProductsAtLocation = [lProductsAtLocation stringByAppendingString:@"\n"];
     }
@@ -1071,5 +1076,44 @@
 
 -(void)dealloc{
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (NSArray *)getTheModifiedProductLocationArray
+{
+    NSArray *unsortedArray = cWOModel.IPAtLocation;
+    
+    NSArray *sortedArray = [unsortedArray sortedArrayUsingSelector:@selector(compare:)];
+    
+    NSMutableArray *comparedArray = [NSMutableArray new];
+    NSMutableArray *resultArray = [NSMutableArray new];
+    int count=0;
+    
+    for(NSString *string in sortedArray)
+    {
+        if(![comparedArray containsObject:string])
+        {
+            [comparedArray addObject:string];
+            [resultArray addObject:string];
+            count=0;
+        }
+        else
+        {
+            count++;
+            if(count == 1)
+            {
+                [resultArray removeObject:string];
+                [resultArray addObject:[NSString stringWithFormat:@"%@ (%d)",string,count+1]];
+                
+            }
+            else
+            {
+                [resultArray removeObject:[NSString stringWithFormat:@"%@ (%d)",string,count ]];
+                [resultArray addObject:[NSString stringWithFormat:@"%@ (%d)",string,count +1]];
+                
+            }
+            
+        }
+    }
+        return resultArray;
 }
 @end

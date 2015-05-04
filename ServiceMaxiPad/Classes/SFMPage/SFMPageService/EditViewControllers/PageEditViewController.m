@@ -219,6 +219,13 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 
 - (void)cancelButtonClicked:(id)sender
 {
+    [self showActivityIndicator];
+    
+    [self performSelector:@selector(checkForChanges) withObject:self afterDelay:0.01];
+}
+- (void)checkForChanges
+{
+    
     NSString *modifiedFieldAsJsonString = nil;
     [self disableUI];
     self.sfmEditPageManager.dataDictionaryAfterModification = self.sfmPage.headerRecord;
@@ -234,49 +241,74 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
         
         if(!modifiedChildString)
         {
+            NSString *parentId = nil;
+            if ([self.sfmPage isAttachmentEnabled])
+            {
+                parentId = [SFMPageHelper getSfIdForLocalId:self.sfmPage.recordId objectName:self.sfmPage.objectName];
+                if ([StringUtil isStringEmpty:parentId])
+                {
+                    parentId = self.sfmPage.recordId;
+                }
+                NSArray *recentlyAddedAttachments = [AttachmentHelper getRecentlyAddedImagesAndVideosForParentId:parentId];
+                
+                if ([recentlyAddedAttachments count]) {
+                    self.sfmPage.isAttachmentEdited = YES;
+                }
+            }
+            
             if(!self.sfmPage.isAttachmentEdited)
             {
-                if ([self.sfmPage isAttachmentEnabled])
+                if([self.sfmPage isAttachmentEnabled])
                 {
-                    NSString *parentId = [SFMPageHelper getSfIdForLocalId:self.sfmPage.recordId objectName:self.sfmPage.objectName];
-                    if ([StringUtil isStringEmpty:parentId])
+                    [AttachmentHelper revertImagesAndVideosForUploadForParentId:parentId];
+                    NSArray *imagesAndVideosArray = [AttachmentHelper getImagesAndVideosForUploadForParentId:parentId];
+                    if ([parentId isEqualToString:self.sfmPage.recordId] && ![imagesAndVideosArray count])
                     {
-                        parentId = self.sfmPage.recordId;
                         [AttachmentHelper deleteAttachmentLocalModelFromDB:parentId];
                     }
-                    
-                    [AttachmentHelper revertImagesAndVideosForUploadForParentId:parentId];
-                    [AttachmentHelper revertDeleteAttachmentsFromModifiedRecordsForParentId:parentId];
-                    [self enableUI];
+                    BOOL status = [AttachmentHelper revertDeleteAttachmentsFromModifiedRecordsForParentId:parentId andLocalIds:[AttachmentHelper modifiedRecordLocalIds]];
+                    if (status) {
+                        [AttachmentHelper removeModifiedRecordLocalIds];
+                    }
                 }
+                [self stopActivityIndicator];
+                
+                [self dismissViewControllerAnimated:YES completion:nil];
+                [self enableUI];
+                
             }
             else
             {
+                [self stopActivityIndicator];
+                
                 [self showConfirmationMessage];
             }
-            
-            [self dismissViewControllerAnimated:YES completion:nil];
-            [self enableUI];
-
         }
         else
         {
+            [self stopActivityIndicator];
+            
             [self showConfirmationMessage];
             
         }
     }
     else
     {
+        [self stopActivityIndicator];
+        
         [self showConfirmationMessage];
+        
     }
+
 }
+
 - (void)showConfirmationMessage
 {
-    UIAlertView *alertview = [[UIAlertView alloc] initWithTitle:@"Save Changes? "
-                                                        message:nil
+    UIAlertView *alertview = [[UIAlertView alloc] initWithTitle:nil
+                                                        message:[[TagManager sharedInstance] tagByName:kTag_SaveChanges]
                                                        delegate:@"self"
-                                              cancelButtonTitle:@"Abandon Changes"
-                                              otherButtonTitles:@"save", nil];
+                                              cancelButtonTitle:[[TagManager sharedInstance] tagByName:kTag_AbandonChanges]
+                                              otherButtonTitles:[[TagManager sharedInstance] tagByName:kTagSfmActionButtonSave], nil];
     alertview.tag = 10;
     alertview.delegate = self;
     [alertview show];
@@ -499,18 +531,30 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     }
     if (![self.sfmPage.objectName isEqualToString:kServicemaxEventObject] || technicianId != nil) {
         [self invalidateLinkedSfm];
+        
         if ([self.sfmPage isAttachmentEnabled]) {
+            
             NSString *parentId = [SFMPageHelper getSfIdForLocalId:self.sfmPage.recordId objectName:self.sfmPage.objectName];
             if ([StringUtil isStringEmpty:parentId]) {
                 parentId = self.sfmPage.recordId;
             }
+            NSArray *recentlyAddedAttachments = [AttachmentHelper getRecentlyAddedImagesAndVideosForParentId:parentId];
+            if ([recentlyAddedAttachments count]) {
+                self.sfmPage.isAttachmentEdited = YES;
+            }
+            [AttachmentHelper updateLastModifiedDateOfAttachmentForParentId:parentId];
             NSArray *localIds = [AttachmentHelper getLocalIdsOfDeleteAttachmentsFromModifiedRecordsForParentId:parentId];
-            [AttachmentHelper deleteAttachmentsWithLocalIds:localIds];
+            BOOL status = [AttachmentHelper deleteAttachmentsWithLocalIds:localIds];
+            if (status)
+            {
+                [AttachmentHelper removeModifiedRecordLocalIds];
+            }
             NSArray *imagesAndVideosArray = [AttachmentHelper getImagesAndVideosForUploadForParentId:parentId];
             if ([parentId isEqualToString:self.sfmPage.recordId] && ![imagesAndVideosArray count])
             {
                 [AttachmentHelper deleteAttachmentLocalModelFromDB:parentId];
             }
+            
         }
         if (![self isValidEvent]) {
             return;
@@ -973,7 +1017,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
         [self enableUI];
         if(buttonIndex == 1)
         {
-            [self saveButtonTapped:self];
+            [self saveButtonTapped:nil];
         }
         else
         {
@@ -983,12 +1027,17 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
                 if ([StringUtil isStringEmpty:parentId])
                 {
                     parentId = self.sfmPage.recordId;
+                }
+                [AttachmentHelper revertImagesAndVideosForUploadForParentId:parentId];
+                NSArray *imagesAndVideosArray = [AttachmentHelper getImagesAndVideosForUploadForParentId:parentId];
+                if ([parentId isEqualToString:self.sfmPage.recordId] && ![imagesAndVideosArray count])
+                {
                     [AttachmentHelper deleteAttachmentLocalModelFromDB:parentId];
                 }
-                
-                [AttachmentHelper revertImagesAndVideosForUploadForParentId:parentId];
-                [AttachmentHelper revertDeleteAttachmentsFromModifiedRecordsForParentId:parentId];
-                
+                BOOL status = [AttachmentHelper revertDeleteAttachmentsFromModifiedRecordsForParentId:parentId andLocalIds:[AttachmentHelper modifiedRecordLocalIds]];
+                if (status) {
+                    [AttachmentHelper removeModifiedRecordLocalIds];
+                }
             }
             [self dismissViewControllerAnimated:YES completion:nil];
             return;
@@ -1113,8 +1162,13 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
             if ([StringUtil isStringEmpty:parentId]) {
                 parentId = self.sfmPage.recordId;
             }
+             [AttachmentHelper updateLastModifiedDateOfAttachmentForParentId:parentId];
             NSArray *localIds = [AttachmentHelper getLocalIdsOfDeleteAttachmentsFromModifiedRecordsForParentId:parentId];
-            [AttachmentHelper deleteAttachmentsWithLocalIds:localIds];
+            BOOL status = [AttachmentHelper deleteAttachmentsWithLocalIds:localIds];
+            if (status)
+            {
+                [AttachmentHelper removeModifiedRecordLocalIds];
+            }
             NSArray *imagesAndVideosArray = [AttachmentHelper getImagesAndVideosForUploadForParentId:parentId];
             if ([parentId isEqualToString:self.sfmPage.recordId] && ![imagesAndVideosArray count])
             {
@@ -1143,6 +1197,56 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     
 }
 
+
+
+- (void)saveRecordDataPushNotification
+{
+    if (!self.isLinkedSfmProcess) {
+        [self performSelectorInBackground:@selector(saveRecordPushNotification) withObject:nil];
+    }
+    else{
+        [self performSelectorOnMainThread:@selector(stopActivityIndicator) withObject:nil waitUntilDone:YES];
+        [self notifyNotificationManager:NotificationEditSaveStatusFailure];
+
+    }
+    [self invalidateLinkedSfm];
+    
+}
+- (void)saveRecordPushNotification {
+    @synchronized([self class]){
+        
+        /* Check field level validation */
+        if ([self validatePageData]) {
+            
+            BOOL canUpdateHeader = [self.sfmEditPageManager saveHeaderRecord:self.sfmPage];
+            BOOL canUpdateDetail = [self.sfmEditPageManager saveDetailRecords:self.sfmPage];
+            
+            if([self isSourceToTargetProcess] || [self isSourceToTargetChildOnlyProcess]){
+                [self.sfmEditPageManager performSourceUpdate:self.sfmPage];
+            }
+            
+            if (canUpdateDetail || canUpdateHeader) {
+                if ( [[SNetworkReachabilityManager sharedInstance] isNetworkReachable]){
+                    [[SyncManager sharedInstance] performSyncWithType:SyncTypeData];
+                }
+            }
+            
+            
+            [self notifyNotificationManager:NotificationEditSaveStatusSuccess];
+            [self performSelectorOnMainThread:@selector(dismissUIPushNotification) withObject:self waitUntilDone:NO];
+            
+        }
+        
+        else {
+            
+            [self notifyNotificationManager:NotificationEditSaveStatusFailure];
+            [self performSelectorOnMainThread:@selector(showAlert) withObject:self waitUntilDone:NO];
+        }
+        [self performSelectorOnMainThread:@selector(enableUI) withObject:self waitUntilDone:NO];
+        [self performSelectorOnMainThread:@selector(stopActivityIndicator) withObject:nil waitUntilDone:YES];
+    }
+    
+}
 
 -(void)dismissUIPushNotification
 {

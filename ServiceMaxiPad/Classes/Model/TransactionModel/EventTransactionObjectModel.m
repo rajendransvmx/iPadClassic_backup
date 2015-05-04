@@ -47,8 +47,26 @@
 //    NSDate *startDate = [DateUtil getLocalTimeFromDateBaseDate:[self valueForField:keyStartDateTime]];
 //    NSDate *endDate = [DateUtil getLocalTimeFromDateBaseDate:[self valueForField:keyEndDateTime]];
     
-    NSDate *startDate = [CalenderHelper getStartEndDateTime:[self valueForField:keyStartDateTime]];
-    NSDate *endDate = [CalenderHelper getStartEndDateTime:[self valueForField:keyEndDateTime]];
+    NSDate *startDate;
+    NSDate *endDate;
+    
+    NSMutableDictionary *theDict = (NSMutableDictionary *) [self getFieldValueDictionary];
+
+    isAllDayEvent=[[theDict objectForKey:keyIsAllDayEvent] boolValue];
+    if (isAllDayEvent) {
+        NSArray *theDateArray =[self getDateForAllDayEventOnDate:[self valueForField:keyStartDateTime] endDate:[self valueForField:keyEndDateTime]];
+        
+        startDate = [theDateArray objectAtIndex:0];
+        endDate = [theDateArray objectAtIndex:1];
+        
+    }
+    else
+    {
+        startDate = [CalenderHelper getStartEndDateTime:[self valueForField:keyStartDateTime]];
+        endDate = [CalenderHelper getStartEndDateTime:[self valueForField:keyEndDateTime]];
+    }
+    
+
     
     
     if ([startDate isSameDay:endDate])
@@ -86,7 +104,7 @@
         /* index of the event */
         keyIndex=kEventIndex;
         keyNumberofevent=kEventNumber;
-        keyIsAllDayEvent=nil;
+        keyIsAllDayEvent=kSVMXIsAlldayEvent;
     }
     else
     {
@@ -104,8 +122,28 @@
 -(void)splittingTheEvent{
     
     [self setTheKeys];
-    NSDate *startDate = [CalenderHelper getStartEndDateTime:[self valueForField:keyStartDateTime]];
-    NSDate *endDate = [CalenderHelper getStartEndDateTime:[self valueForField:keyEndDateTime]];
+    
+    NSMutableDictionary *theDict = (NSMutableDictionary *) [self getFieldValueDictionary];
+    isAllDayEvent=[[theDict objectForKey:keyIsAllDayEvent] boolValue];
+    
+    NSDate *startDate;
+    NSDate *endDate;
+
+        
+    if (isAllDayEvent) {
+       NSArray *theDateArray =[self getDateForAllDayEventOnDate:[self valueForField:keyStartDateTime] endDate:[self valueForField:keyEndDateTime]];
+        
+        startDate = [theDateArray objectAtIndex:0];
+        endDate = [theDateArray objectAtIndex:1];
+
+    }
+    else
+    {
+        startDate = [CalenderHelper getStartEndDateTime:[self valueForField:keyStartDateTime]];
+        endDate = [CalenderHelper getStartEndDateTime:[self valueForField:keyEndDateTime]];
+
+    }
+  
     
     if(!self.jsonEventArray)
         self.jsonEventArray = [NSMutableArray new];
@@ -115,11 +153,7 @@
     if (![self isMultidayForStartDate:startDate andEndDate:endDate])
         return;
     
-    NSMutableDictionary *theDict = (NSMutableDictionary *) [self getFieldValueDictionary];
-    if ([self.objectAPIName isEqualToString:kSVMXTableName])
-        isAllDayEvent=FALSE;
-    else
-        isAllDayEvent=[[theDict objectForKey:keyIsAllDayEvent] boolValue];
+
     int numberOfDays = [self numberOfDaysFromDate:startDate andEndDate:endDate];
     NSDate *newStartDate;
     NSDate *newEndDate;
@@ -284,6 +318,39 @@
     comp.second = 00;
     NSDate *sevenDaysAgo = [cal dateFromComponents:comp];
     return sevenDaysAgo;
+}
+
+
+-(NSArray *)getDateForAllDayEventOnDate:(NSString *)startDate endDate:(NSString *)endDate{
+    NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSDateComponents *comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[self dateFromString:startDate]];
+    
+    comp.second = 00;
+    comp.hour = 00;
+    comp.minute = 00;
+    
+    NSDate *theStartDate = [cal dateFromComponents:comp];
+    comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[self dateFromString:endDate]];
+    comp.hour = 23;
+    comp.minute = 59;
+    
+    NSDate *theEndDate = [cal dateFromComponents:comp];
+    
+    
+    
+    return @[theStartDate, theEndDate];
+}
+
+-(NSDate *)dateFromString:(NSString *)dateString
+{
+    NSRange range = [dateString rangeOfString:@"T"];
+    
+    dateString = [dateString substringToIndex:range.location];
+    NSDateFormatter *lDF = [[NSDateFormatter alloc] init];
+    [lDF setDateFormat:@"yyyy-MM-dd"];
+    
+    NSDate *date = [lDF dateFromString:dateString];
+    return date;
 }
 
 @end

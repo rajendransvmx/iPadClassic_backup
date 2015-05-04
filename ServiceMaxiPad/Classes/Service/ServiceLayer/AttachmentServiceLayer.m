@@ -92,14 +92,12 @@
         model.extensionName = [NSString stringWithFormat:@".%@",[model.name pathExtension]];
         ZKSObject * obj = [[ZKSObject alloc] initWithType:@"Attachment"];
         NSString *fileDataString = [AttachmentUtility getEncodedBlobDataForAttachment:model];
-        
         [obj setFieldValue:fileDataString field:@"Body"];
         [obj setFieldValue:model.name field:@"Name"];
         [obj setFieldValue:model.parentId field:@"ParentId"];
-        [obj setFieldValue:(model.isPrivate? @"True":@"False") field:@"isPrivate"];
+        [obj setFieldValue:kFalse field:@"isPrivate"];
 
         NSArray * array = [[NSArray alloc] initWithObjects:obj, nil];
-        
         NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
         [dict setObject:model.parentId forKey:@"SF_ID"];
         [dict setObject:model.name forKey:@"Name"];

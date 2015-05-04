@@ -492,6 +492,10 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
 
 - (void)didDeleteAttachment:(AttachmentTXModel*)attachment {
     
+    if (![StringUtil isStringEmpty:attachment.idOfAttachment])
+    {
+        self.sfmPage.isAttachmentEdited = YES;
+    }
     if ([self.imagesAndVideosArray containsObject:attachment]) {
         [self.imagesAndVideosArray removeObject:attachment];
     }
@@ -534,7 +538,6 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
         
         if (buttonIndex != [alertView cancelButtonIndex])
         {
-            NSMutableArray *localIdsToDelete = [[NSMutableArray alloc] initWithCapacity:0];
             NSMutableArray *localCreatedIds = [[NSMutableArray alloc] initWithCapacity:0];
             NSMutableArray *modifiedArray = [[NSMutableArray alloc] initWithCapacity:0];
             
@@ -559,13 +562,13 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
                             modifiedModel.parentLocalId = self.parentId;
                             modifiedModel.timeStamp = [DateUtil getDatabaseStringForDate:[NSDate date]];
                             [modifiedArray addObject:modifiedModel];
+                            [AttachmentHelper addModifiedRecordLocalId:deleteModel.localId];
                         }
                         else
                         {
                             [localCreatedIds addObject:deleteModel.localId];
                         }
                         
-                        [localIdsToDelete addObject:deleteModel.localId];
                         [_uploadManager deleteFileFromQueue:deleteModel.localId];
                         
                         if ([self.imagesAndVideosArray containsObject:deleteModel]) {
@@ -596,8 +599,8 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
 }
 
 - (void)showPreviewViewController:(AttachmentTXModel *)attachmentModel {
-    
-    if(![self.navigationController.topViewController isKindOfClass:[AttachmentWebView class]])
+   
+    if (![self.navigationController.topViewController isKindOfClass:[AttachmentWebView class]])
     {
         AttachmentWebView *attachmentWebview = [[AttachmentWebView alloc] initWithNibName:@"AttachmentWebView" bundle:[NSBundle mainBundle]];
         attachmentWebview.isInViewMode = self.isViewMode;
@@ -835,7 +838,7 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
             __block NSData *dataToSaveFromImage;
             
             [library assetForURL:[info valueForKey:UIImagePickerControllerReferenceURL] resultBlock:^(ALAsset *asset) {
-                
+
                 if (asset){
                     //////////////////////////////////////////////////////
                     // SUCCESS POINT #1 - asset is what we are looking for
@@ -852,7 +855,7 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
                     }
                     SXLogInfo(@"Camera");
                     [self hideImagePickerPopover];
-                    
+
                 }
                 else {
                     // On iOS 8.1 [library assetForUrl] Photo Streams always returns nil. Try to obtain it in an alternative way
@@ -866,9 +869,9 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
                                  ///////////////////////////////////////////////////////
                                  // SUCCESS POINT #2 - result is what we are looking for
                                  ///////////////////////////////////////////////////////
-                                 image = [UIImage imageWithCGImage:[[result defaultRepresentation] fullResolutionImage]];
+                                 image = [UIImage imageWithCGImage:[[asset defaultRepresentation] fullResolutionImage]];
                                  
-                                 ALAssetRepresentation *rep = [result defaultRepresentation];
+                                 ALAssetRepresentation *rep = [asset defaultRepresentation];
                                  Byte *buffer = (Byte*)malloc(rep.size);
                                  NSUInteger buffered = [rep getBytes:buffer fromOffset:0.0 length:rep.size error:nil];
                                  dataToSaveFromImage = [NSData dataWithBytesNoCopy:buffer length:buffered freeWhenDone:YES];
@@ -882,7 +885,7 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
                              }
                          }];
                      }
-                                         failureBlock:^(NSError *error)
+                     failureBlock:^(NSError *error)
                      {
                          NSLog(@"Error: Cannot load asset from photo stream - %@", [error localizedDescription]);
                      }];
@@ -1006,11 +1009,14 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
     attachmentModel.extensionName = extension;
     attachmentModel.name = [AttachmentUtility generateAttachmentNamefor:self.parentObjectName extension:extension];
     attachmentModel.nameWithoutExtension = [attachmentModel.name stringByDeletingPathExtension];
-    attachmentModel.lastModifiedDate = [DateUtil getDatabaseStringForDate:[NSDate date]];
-    attachmentModel.displayDateString = [DateUtil getDateStringForDBDateTime:attachmentModel.lastModifiedDate inFormat:kDateImagesAndVideosAttachment];
+    attachmentModel.createdDate = [DateUtil getDatabaseStringForDate:[NSDate date]];
+    //Anoop: This will be updated on PageEditViewController
+    //attachmentModel.lastModifiedDate = [DateUtil getDatabaseStringForDate:[NSDate date]];
+    attachmentModel.displayDateString = [DateUtil getDateStringForDBDateTime:attachmentModel.createdDate inFormat:kDateImagesAndVideosAttachment];
     attachmentModel.parentId = self.parentId;
-    attachmentModel.isPrivate = @"False";
+    attachmentModel.isPrivate = kFalse;
     attachmentModel.isDownloaded = YES;
+    attachmentModel.bodyLength = [AttachmentUtility getSizeforFileAtPath:[AttachmentUtility filePathForAttachment:attachmentModel]];
     if ([_downloadManager.imgDict valueForKey:extension])
     {
         attachmentModel.thumbnailImage = [AttachmentUtility scaleImage:[AttachmentUtility filePathForAttachment:attachmentModel] toSize:CGSizeMake(170.0f, 170.0f)];

@@ -442,7 +442,10 @@ PageManagerErrorType;
             }
             else if ([aPageField.dataType isEqualToString:kSfDTDateTime]) {
                 if (![StringUtil isStringEmpty:internalValue]) {
-                    NSString *dateTime = [self getUserReadableDateTime:internalValue];
+                    
+                    //BSP-1-Apr-2015. Changes to account for the All Day Event.
+                     NSString *dateTime =   [self checkAllDayAndReturnDateTime:aPageField andInternalValue:internalValue];
+                    
                     if (dateTime != nil) {
                         displayValue = dateTime;
                     }
@@ -495,10 +498,54 @@ PageManagerErrorType;
     return fieldValueData;
 }
 
-//-(NSString *)getUserReadableDateTime:(NSString *)dateTime
-//{
-//    return [DateUtil getUserReadableDateForDateBaseDate:dateTime];
-//}
+-(NSString *)checkAllDayAndReturnDateTime:(SFMPageField *)aPageField andInternalValue:(NSString *)internalValue
+{
+    NSString *isAlldayEventKey = ([self.objectName isEqualToString:kEventObject]?kIsAlldayEvent:kSVMXIsAlldayEvent);
+    
+    NSDictionary *dataDict = [SFMPageHelper getSlAInFo:self.objectName localId:self.recordId fieldNames:@[isAlldayEventKey]];
+
+    NSString *dateTime;
+    
+    if (isAlldayEventKey !=nil) {
+        if ([[dataDict objectForKey:isAlldayEventKey] caseInsensitiveCompare:@"true"] == NSOrderedSame)
+        {
+            if (([aPageField.fieldName isEqualToString:kStartDateTime] && [self.objectName isEqualToString:kEventObject]) || ([aPageField.fieldName isEqualToString:kSVMXStartDateTime] && [self.objectName isEqualToString:kSVMXTableName]))
+            {
+                //For starttime of All day event.
+                NSArray *dateTimeArray = [self getDateForAllDayEventOnDate:internalValue endDate:internalValue];
+                
+                dateTime = [DateUtil stringFromDate:[dateTimeArray objectAtIndex:0] inFormat:[DateUtil getUserTimeFormat]];
+                
+            }
+            
+            else if(([aPageField.fieldName isEqualToString:kEndDateTime] && [self.objectName isEqualToString:kEventObject]) || ([aPageField.fieldName isEqualToString:kSVMXEndDateTime] && [self.objectName isEqualToString:kSVMXTableName])) {
+                
+                //For endTime of All day event.
+
+                NSArray *dateTimeArray = [self getDateForAllDayEventOnDate:internalValue endDate:internalValue];
+                dateTime = [DateUtil stringFromDate:[dateTimeArray objectAtIndex:1] inFormat:[DateUtil getUserTimeFormat]];
+            }
+            else
+                dateTime = [self getUserReadableDateTime:internalValue];
+        }
+        else
+        {
+            //In case the alldayevent is false.
+            dateTime = [self getUserReadableDateTime:internalValue];
+            
+        }
+    }
+    else
+    {
+        //If the object is not of event or svmx_event.
+
+        dateTime = [self getUserReadableDateTime:internalValue];
+
+    }
+    
+    return dateTime;
+
+}
 
 -(NSString *)getUserReadableDateTime:(NSString *)dateTime
 {
@@ -925,4 +972,40 @@ PageManagerErrorType;
     }
     return boolValue;
 }
+
+
+#pragma DateTimeFor All Day event
+
+-(NSArray *)getDateForAllDayEventOnDate:(NSString *)startDate endDate:(NSString *)endDate{
+    NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSDateComponents *comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[self dateFromString:startDate]];
+    
+    comp.second = 00;
+    comp.hour = 00;
+    comp.minute = 00;
+    
+    NSDate *theStartDate = [cal dateFromComponents:comp];
+    comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[self dateFromString:endDate]];
+    comp.hour = 23;
+    comp.minute = 59;
+    
+    NSDate *theEndDate = [cal dateFromComponents:comp];
+    
+    
+    //First Object is the start date, second object is End date.
+    return @[theStartDate, theEndDate];
+}
+
+-(NSDate *)dateFromString:(NSString *)dateString
+{
+    NSRange range = [dateString rangeOfString:@"T"];
+    
+    dateString = [dateString substringToIndex:range.location];
+    NSDateFormatter *lDF = [[NSDateFormatter alloc] init];
+    [lDF setDateFormat:@"yyyy-MM-dd"];
+    
+    NSDate *date = [lDF dateFromString:dateString];
+    return date;
+}
+
 @end

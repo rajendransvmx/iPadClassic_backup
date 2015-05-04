@@ -10,5 +10,7 @@
 #import "DODRecordsDAO.h"
 
 @interface DODRecordsService : CommonServices <DODRecordsDAO>
+-(BOOL)deleteRecordWithSfId:(NSString *)sfId;
+
 
 @end

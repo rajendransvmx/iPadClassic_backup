@@ -179,16 +179,12 @@
     
     if ((self.cEventListArray == nil) || (self.arrayWithEvents == nil))
     {
-        
         [self showDayCalender];
-        
-//        NSLog(@"Lets load events now");
+        [self changeSegementControlText];
         [[SMXDateManager sharedManager] setCurrentDate:[NSDate dateWithYear:[NSDate componentsOfCurrentDate].year
                                                                       month:[NSDate componentsOfCurrentDate].month
                                                                         day:[NSDate componentsOfCurrentDate].day]];
         [self fetchEventsFromDb];
-        //[cSegmentedControl setSelectedSegmentIndex:0];
-        
         if (viewCalendarDay.viewDetail) {
             [viewCalendarDay.viewDetail removeFromSuperview];
             viewCalendarDay.viewDetail = nil;
@@ -261,7 +257,7 @@
 {
     NSString *eventType = [CalenderHelper getEventTypeFromMobileDeviceSettings];
     NSString *objectName = kEventObject;
-    if (![eventType isEqualToString:@"Salesforce Event"]) {
+    if (![eventType isEqualToString:kSalesforceEvent]) {
         objectName = kServicemaxEventObject;
     }
     DBCriteria * criteria1 = [[DBCriteria alloc] initWithFieldName:kobjectApiName operatorType:SQLOperatorEqual andFieldValue:objectName];
@@ -314,7 +310,6 @@
 
 -(void)setTheNotifications
 {
-    
     [self addObserver:self selector:@selector(dataSyncFinished:) withName:kDataSyncStatusNotification AndObject:nil];
     [self addObserver:self selector:@selector(configSyncFinished:) withName:kConfigSyncStatusNotification AndObject:nil];
     [self addObserver:self selector:@selector(eventDisplayReset:) withName:EVENT_DISPLAY_RESET AndObject:nil];
@@ -339,12 +334,10 @@
 {
     NSTimeZone *currentTimeZone = [NSTimeZone localTimeZone];
     if (![currentTimeZone isEqualToTimeZone:cPreviousTimeZone]) {
-        
         // If the timezone is chaged, then the events have to be feteched again from the db.
         cPreviousTimeZone = nil;
         cPreviousTimeZone = [[NSTimeZone localTimeZone] copy];
         [self getEventsFromDBAndRender];
-        
     }
 }
 
@@ -1063,7 +1056,6 @@
     NSDateFormatter *f = [[NSDateFormatter alloc] init];
     [f setDateFormat:@"yyyy-MM-ddHH:mm:ss ZZZ"];
     NSDate *startDate = event.dateTimeBegin;
-//    NSLog(@"%@",startDate);
     NSDate *endDate = event.dateTimeEnd;
     NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     NSDateComponents *components = [gregorianCalendar components:NSDayCalendarUnit

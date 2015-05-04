@@ -231,6 +231,7 @@ static NSInteger const kDeleteButton = 321;
                     modifiedModel.parentLocalId = _parentId;
                     modifiedModel.timeStamp = [DateUtil getDatabaseStringForDate:[NSDate date]];
                     [AttachmentHelper saveDeleteAttachmentsToModifiedRecords:[NSMutableArray arrayWithObject:modifiedModel]];
+                    [AttachmentHelper addModifiedRecordLocalId:_attachmentTXModel.localId];
                 }
                 else
                 {

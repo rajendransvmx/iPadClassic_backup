@@ -53,6 +53,7 @@
 @property (strong, nonatomic) IBOutlet UITextView               *watermark; /*!< Watermark text view */
 @property (strong, nonatomic) IBOutlet UIImageView              *drawImage; /*!< Image view to display the signature after watermarking */
 @property (strong, nonatomic) IBOutlet UIView                   *drawView; /*!< Canvas view to draw the signature */
+@property (strong, nonatomic) IBOutlet UILabel                  *titleLabel; /*!< Title of signature panel */
 
 @property (nonatomic, weak) OPDocViewController               *parent; /*!< Parent view controller of the Signature view controller */
 

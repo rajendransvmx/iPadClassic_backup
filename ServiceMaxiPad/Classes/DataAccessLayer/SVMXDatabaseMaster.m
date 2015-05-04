@@ -537,6 +537,17 @@ static SVMXDatabaseMaster *sharedDatamasterObject = nil;
 
 - (id)parseSOQLJsonStringFromDARequest:(DARequest *)requestObject {
     
+    //14097
+    if ([requestObject.fieldsArray count] <= 0) {
+        
+        NSMutableArray *objectFields = [self getAllObjectFields:requestObject.objectName fromTableName:@"SFObjectField"];
+        [objectFields addObject:[NSDictionary dictionaryWithObjectsAndKeys:kLocalId,@"fieldName",@"string",@"fieldType", nil]];
+        if ([objectFields count] > 0) {
+            requestObject.fieldsArray = objectFields;
+        }
+    }
+
+    
     
     DARequestParser *requestParser = [[DARequestParser alloc] init];
     NSDictionary *jsonDictionary = nil;

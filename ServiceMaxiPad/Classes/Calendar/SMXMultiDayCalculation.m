@@ -14,9 +14,7 @@
 @synthesize multiEvent;
 @synthesize eventDictinory;
 @synthesize eventObjects;
-//-(void)processEvent:(SMXEvent *)event{
-//    
-//}
+
 -(void)updateMultiDayEvent:(SMXEvent *)event fromActivityDate:(NSDate *)fromActivityDate toActivityDate:(NSDate *)toActivityDate andStartTime:(NSDate *)startTime withEndTime:(NSDate *)endTim cellIndex:(int)fromIndex toIndex:(int)toIndex{
     eventObjects =[[NSMutableArray alloc] init];
     eventDictinory=[[SMXDateManager sharedManager] getdictEvents];
@@ -58,7 +56,6 @@
     NSMutableArray *array = [eventDictinory objectForKey:newDate];
     for (SMXEvent *event in array) {
         if ([multiDayEvent.localID isEqualToString:event.localID]) {
-            NSLog(@"remove item");
             [array removeObject:event];
             break;
         }
@@ -86,20 +83,28 @@
     [f setDateFormat:@"yyyy-MM-ddHH:mm:ss ZZZ"];
     NSDate *startDate = event.dateTimeBegin_multi;
     NSDate *endDate = event.dateTimeEnd_multi;
+    if ([event.dateTimeBegin_multi isSameDay:event.dateTimeEnd_multi]) {
+        return 0;
+    }
     NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     NSDateComponents *components = [gregorianCalendar components:NSDayCalendarUnit
                                                         fromDate:startDate
                                                           toDate:endDate
                                                          options:0];
-    if (components.day>0) {
-//        NSLog(@"number Of day %ld",(long)components.day);
+    if (components.day>0)
         return (int)components.day;
-    }
+    else
+        return 1;
+    
     return 0;
 }
+
 +(int)isMultidayEvent:(NSDate *)startDate endDate:(NSDate *)endDate{
     NSDateFormatter *f = [[NSDateFormatter alloc] init];
     [f setDateFormat:@"yyyy-MM-ddHH:mm:ss ZZZ"];
+    if ([startDate isSameDay:endDate]) {
+        return 0;
+    }
     NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     NSDateComponents *components = [gregorianCalendar components:NSDayCalendarUnit
                                                         fromDate:startDate
@@ -129,7 +134,7 @@
     if (range>0) {
         range=0;
     }else{
-        NSLog(@"less range");
+        
     }
     return NSMakeRange(location, range);
 }
@@ -137,6 +142,9 @@
 /*This method giving number of day diffrence beteen two date*/
 -(int )numberOfDate:(NSDate *)startDate endDate:(NSDate *)endDate{
     if ((startDate !=nil) && (endDate!=nil)) {
+        if ([startDate isSameDay:endDate]) {
+            return 0;
+        }
         NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
         NSDateComponents *components = [gregorianCalendar components:NSDayCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit
                                                             fromDate:startDate
@@ -158,7 +166,6 @@
     
     //Time zone change for weekview change, here we are considering system reagion.
     NSCalendar *calender = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    //  NSCalendar *calender = [NSCalendar currentCalendar];
     NSDateComponents *comp0 = [calender components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear | NSCalendarUnitWeekday | NSCalendarUnitWeekOfMonth| NSHourCalendarUnit |
                                NSMinuteCalendarUnit fromDate:date];
     return comp0;
@@ -248,23 +255,16 @@
 }
 -(void)createObjectWithEvnet:(SMXEvent *)eventLocal{
     NSMutableDictionary *eventObject = [NSMutableDictionary new];
-    
-//    NSString *startDateString = [DateUtil stringFromDate:eventLocal.dateTimeBegin inFormat:kDateFormatType1];
-//    NSString *endDateString = [DateUtil stringFromDate:eventLocal.dateTimeEnd inFormat:kDateFormatType1];
-    
     NSString *startDateString = [self dateForTheString:eventLocal.dateTimeBegin];
     NSString *endDateString = [self dateForTheString:eventLocal.dateTimeEnd];
     
-    
-    if ([eventLocal.eventTableName isEqualToString:kSVMXTableName])
-    {
+    if ([eventLocal.eventTableName isEqualToString:kSVMXTableName]){
         [eventObject setObject:startDateString forKey:kSVMXStartDateTime];
         [eventObject setObject:endDateString forKey:kSVMXEndDateTime];
         [eventObject setObject:[NSString stringWithFormat:@"%d",eventLocal.numberOfDays] forKey:kEventNumber];
         [eventObject setObject:[NSString stringWithFormat:@"%d",eventLocal.eventIndex] forKey:kEventIndex];
         [eventObject setObject:[NSString stringWithFormat:@"%f",eventLocal.duration] forKey:kSVMXDurationInMinutes];
-    }else
-    {
+    }else{
         [eventObject setObject:startDateString forKey:kStartDateTime];
         [eventObject setObject:endDateString forKey:kEndDateTime];
         [eventObject setObject:[NSString stringWithFormat:@"%d",eventLocal.numberOfDays] forKey:kEventNumber];
@@ -277,18 +277,12 @@
 -(NSString *)dateForTheString:(NSDate *)date
 {
     NSDateFormatter * lDF = [[NSDateFormatter alloc] init];
-    
     [lDF setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
-    
     [lDF setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
     lDF.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
     lDF.calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    
     return [lDF stringFromDate:date];
-    
 }
-
-
 
 /*Here changing date , adding number of day*/
 -(NSDate *)changeTime:(NSDate *)date newHour:(int )hour newMin:(int)min numberOfday:(int)numberOfDay{

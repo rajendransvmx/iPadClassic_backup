@@ -346,6 +346,11 @@ static NSString *const kDocumentsErrorTableViewCell = @"DocumentsErrorTableViewC
 
 - (void)didDeleteAttachment:(AttachmentTXModel*)attachment {
     
+    if (![StringUtil isStringEmpty:attachment.idOfAttachment])
+    {
+        self.sfmPage.isAttachmentEdited = YES;
+    }
+    
     if ([self.documentsArray containsObject:attachment]) {
         [self.documentsArray removeObject:attachment];
     }
@@ -456,7 +461,6 @@ static NSString *const kDocumentsErrorTableViewCell = @"DocumentsErrorTableViewC
                 if (isSuccess) {
                     
                     if (![StringUtil isStringEmpty:deleteModel.idOfAttachment]) {
-                        
                         self.sfmPage.isAttachmentEdited = YES;
                         ModifiedRecordModel *modifiedModel = [[ModifiedRecordModel alloc] init];
                         modifiedModel.syncFlag = YES;
@@ -469,6 +473,7 @@ static NSString *const kDocumentsErrorTableViewCell = @"DocumentsErrorTableViewC
                         modifiedModel.parentLocalId = _parentId;
                         modifiedModel.timeStamp = [DateUtil getDatabaseStringForDate:[NSDate date]];
                         [modifiedArray addObject:modifiedModel];
+                        [AttachmentHelper addModifiedRecordLocalId:deleteModel.localId];
                     }
                     
                     if ([self.documentsArray containsObject:deleteModel]) {
@@ -491,14 +496,17 @@ static NSString *const kDocumentsErrorTableViewCell = @"DocumentsErrorTableViewC
 
 - (void)showPreviewViewController:(AttachmentTXModel *)attachmentModel {
     
-    AttachmentWebView *attachmentWebview = [[AttachmentWebView alloc] initWithNibName:@"AttachmentWebView" bundle:[NSBundle mainBundle]];
-    attachmentWebview.isInViewMode = self.isViewMode;
-    attachmentWebview.attachmentTXModel = attachmentModel;
-    attachmentWebview.parentObjectName = self.parentObjectName;
-    attachmentWebview.parentSFObjectName = self.parentSFObjectName;
-    attachmentWebview.parentId = self.parentId;
-    attachmentWebview.webviewdelgate = self;
-    [self.navigationController pushViewController:attachmentWebview animated:YES];
+    if (![self.navigationController.topViewController isKindOfClass:[AttachmentWebView class]])
+    {
+        AttachmentWebView *attachmentWebview = [[AttachmentWebView alloc] initWithNibName:@"AttachmentWebView" bundle:[NSBundle mainBundle]];
+        attachmentWebview.isInViewMode = self.isViewMode;
+        attachmentWebview.attachmentTXModel = attachmentModel;
+        attachmentWebview.parentObjectName = self.parentObjectName;
+        attachmentWebview.parentSFObjectName = self.parentSFObjectName;
+        attachmentWebview.parentId = self.parentId;
+        attachmentWebview.webviewdelgate = self;
+        [self.navigationController pushViewController:attachmentWebview animated:YES];
+    }
     
 }
 

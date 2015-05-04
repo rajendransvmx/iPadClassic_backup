@@ -148,8 +148,8 @@
     
     id <TransactionObjectDAO> transactionModel = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
     
-     NSArray * dataArray = [transactionModel fetchDataForObject:lookUpObj.objectName fields:fieldsArray expression:advanceExpression criteria:criteriaArray recordsLimit:lookUpObj.recordLimit];
-    
+    NSArray * dataArray = [transactionModel fetchDataForObject:lookUpObj.objectName fields:fieldsArray expression:advanceExpression criteria:criteriaArray recordsLimit:lookUpObj.recordLimit];
+  
     NSArray * recordsArray = [self getRecordArrayFromTransactionModel:dataArray lookUpObject:lookUpObj forDisplayFields:fieldsArray];
     
     lookUpObj.dataArray = recordsArray;
@@ -794,9 +794,11 @@
     
     DBCriteria *criteriaId = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorIn andInnerQUeryRequest:select];
     
-    DBCriteria *criteriaLocalId = [[DBCriteria alloc] initWithFieldName:kLocalId operatorType:SQLOperatorIn andInnerQUeryRequest:select];
+    //DBCriteria *criteriaLocalId = [[DBCriteria alloc] initWithFieldName:kLocalId operatorType:SQLOperatorIn andInnerQUeryRequest:select];
     
-    return [NSArray arrayWithObjects:criteriaId, criteriaLocalId, nil];
+   // return [NSArray arrayWithObjects:criteriaId, criteriaLocalId, nil];
+    
+    return [NSArray arrayWithObjects:criteriaId, nil];
 }
 
 - (void)updateExpressionCount:(SFMLookUp *)lookUpObj
@@ -846,10 +848,12 @@
                 model.advanceExpression = [self getExpresionForExpressionId:model.searchId];
             }
             if ([model.advanceExpression length] > 0) {
-                NSString *expression = [NSString stringWithFormat:@"(%d OR %d)", (int)self.expressionCount+1,
-                              (int)(self.expressionCount +2)];
-                [advanceexpression appendFormat:@" AND (%@)", expression];
-                self.expressionCount += 2;
+//                NSString *expression = [NSString stringWithFormat:@" %d OR %d ", (int)self.expressionCount+1,
+//                              (int)(self.expressionCount +2)];
+                
+                NSString *expression = [NSString stringWithFormat:@" %d ", (int)self.expressionCount+1];
+                [advanceexpression appendFormat:@" AND  ( %@ )", expression];
+                self.expressionCount += 1;
             }
         }
     }

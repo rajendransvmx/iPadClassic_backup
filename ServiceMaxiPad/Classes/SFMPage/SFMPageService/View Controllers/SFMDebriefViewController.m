@@ -360,7 +360,7 @@
 -(NSString *)titleForSection:(NSInteger)section
 {
     
-    NSString  * title = @"?";
+    NSString  * title = @"--";
     NSMutableDictionary * detailDict =  self.sfmPageView.sfmPage.detailsRecord;
     
     SFMPageLayout *pageLayout = self.sfmPageView.sfmPage.process.pageLayout;
@@ -382,10 +382,9 @@
         NSDictionary * recordDict = [detailRecords objectAtIndex:section];
         SFMRecordFieldData * fieldData = [recordDict objectForKey:field.fieldName];
         title = fieldData.displayValue;
-        title = (![StringUtil isStringEmpty:title])?title:@"?";
+        title = (![StringUtil isStringEmpty:title])?title:@"--";
     }
     return  title;
-    
 }
 
 -(void)expandImageWidth

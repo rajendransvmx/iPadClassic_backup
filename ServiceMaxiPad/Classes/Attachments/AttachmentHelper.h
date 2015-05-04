@@ -18,13 +18,20 @@
 
 +(NSArray*)getLocalIdsOfDeleteAttachmentsFromModifiedRecordsForParentId:(NSString*)parentId;
 
-+(BOOL)revertDeleteAttachmentsFromModifiedRecordsForParentId:(NSString*)parentId;
++(BOOL)revertDeleteAttachmentsFromModifiedRecordsForParentId:(NSString*)parentId
+                                                 andLocalIds:(NSArray*)localIdsArray;
+
++(NSArray*)modifiedRecordLocalIds;
+
++(void)addModifiedRecordLocalId:(NSString*)localId;
+
++(void)removeModifiedRecordLocalIds;
 
 +(NSArray*)getImagesAndVideosForUpload;
 
-+(BOOL)revertImagesAndVideosForUpload;
-
 +(NSArray*)getImagesAndVideosForUploadForParentId:(NSString*)parentId;
+
++(NSArray*)getRecentlyAddedImagesAndVideosForParentId:(NSString*)parentId;
 
 +(BOOL)revertImagesAndVideosForUploadForParentId:(NSString*)parentId;
 
@@ -43,6 +50,8 @@
 +(NSArray*)getAllLocalAttachments;
 
 +(BOOL)updateSFIdInAttachmentForCurrentParentLocalId:(NSString*)parentLocalId toParentId:(NSString*)parentId;
+
++(BOOL)updateLastModifiedDateOfAttachmentForParentId:(NSString*)parentId;
 
 +(void)deleteAttachmentsFromDBDirectoryForParentId:(NSString*)parentId;
 
