@@ -869,9 +869,9 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
                                  ///////////////////////////////////////////////////////
                                  // SUCCESS POINT #2 - result is what we are looking for
                                  ///////////////////////////////////////////////////////
-                                 image = [UIImage imageWithCGImage:[[asset defaultRepresentation] fullResolutionImage]];
+                                 image = [UIImage imageWithCGImage:[[result defaultRepresentation] fullResolutionImage]];
                                  
-                                 ALAssetRepresentation *rep = [asset defaultRepresentation];
+                                 ALAssetRepresentation *rep = [result defaultRepresentation];
                                  Byte *buffer = (Byte*)malloc(rep.size);
                                  NSUInteger buffered = [rep getBytes:buffer fromOffset:0.0 length:rep.size error:nil];
                                  dataToSaveFromImage = [NSData dataWithBytesNoCopy:buffer length:buffered freeWhenDone:YES];
