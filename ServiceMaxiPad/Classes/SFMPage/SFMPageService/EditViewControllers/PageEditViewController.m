@@ -1226,9 +1226,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
             }
             
             if (canUpdateDetail || canUpdateHeader) {
-                if ( [[SNetworkReachabilityManager sharedInstance] isNetworkReachable]){
-                    [[SyncManager sharedInstance] performSyncWithType:SyncTypeData];
-                }
+                    [[SyncManager sharedInstance] performDataSyncIfNetworkReachable];
             }
             
             
