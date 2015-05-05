@@ -701,7 +701,7 @@
     return [self.lookUpHelper getLookupSearchFiltersForId:self.lookUpObject.lookUpId forType:kSearchFilterCriteria];
 }
 
-- (NSString *)getValueForLiteral:(NSString *)literal
+- (SFMRecordFieldData *)getValueForLiteral:(NSString *)literal
 {    
     return [self.delegate getInternalValueForLiteral:literal];
 }

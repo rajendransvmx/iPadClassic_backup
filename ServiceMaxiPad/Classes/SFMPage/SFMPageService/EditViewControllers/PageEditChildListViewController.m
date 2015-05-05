@@ -1183,6 +1183,25 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
 }
 
 
+- (SFMRecordFieldData *)getInternalValueForLiteral:(NSString *)lietral
+{
+    if ([StringUtil containsString:kLiteralCurrentRecordHeader inString:lietral])
+    {
+        SFMPageEditManager *manager = [[SFMPageEditManager alloc] init];
+        
+        ValueMappingModel * mappingModel = [[ValueMappingModel alloc] init];
+        mappingModel.currentRecord = self.sfmPage.headerRecord;
+        mappingModel.headerRecord = self.sfmPage.headerRecord;
+        mappingModel.currentObjectName = self.sfmPage.objectName;
+        mappingModel.headerObjectName = self.sfmPage.objectName;
+        
+        SFMRecordFieldData *recordData = [manager getDisplayValueForLiteral:lietral mappingObject:mappingModel];
+        
+        return recordData;
+    }
+    return nil;
+}
+
 
 
 @end

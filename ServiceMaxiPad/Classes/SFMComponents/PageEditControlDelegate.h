@@ -17,7 +17,7 @@
 -(void)valuesForField:(NSArray *)modelsArray forIndexPath:(NSIndexPath *)indexPath selectionMode:(NSInteger)selectionMode;
 - (void)resetDependentPicklistFieldsForIndexpth:(NSIndexPath *)indexPath recordTyeId:(NSString *)recordTypeId;
 - (void)clearDependentFields:(NSArray *)pageFields dataDict:(NSDictionary *)defaultValueDict;
-- (NSString *)getInternalValueForLiteral:(NSString *)lietral;
+- (SFMRecordFieldData *)getInternalValueForLiteral:(NSString *)lietral;
 - (SFMRecordFieldData *)filterCriteriaForContextFilter:(NSString *)fieldName forHeaderObject:(NSString *)headerValue;
 
 @end

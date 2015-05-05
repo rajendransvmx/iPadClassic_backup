@@ -248,7 +248,7 @@
     [super reloadDataAsync];
 }
 #pragma mark End
-- (NSString *)getInternalValueForLiteral:(NSString *)lietral
+- (SFMRecordFieldData *)getInternalValueForLiteral:(NSString *)lietral
 {
     SFMPageEditManager *manager = [[SFMPageEditManager alloc] init];
     
@@ -260,7 +260,7 @@
     
     SFMRecordFieldData *recordData = [manager getDisplayValueForLiteral:lietral mappingObject:mappingModel];
 
-    return recordData.internalValue;
+    return recordData;
 }
 - (SFMRecordFieldData *)filterCriteriaForContextFilter:(NSString *)fieldName forHeaderObject:(NSString *)headerValue{
     

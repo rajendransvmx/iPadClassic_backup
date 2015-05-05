@@ -38,7 +38,7 @@ typedef enum : NSUInteger {
 @property (strong, nonatomic) IBOutlet UIButton *singleAddButton;
 @property (strong, nonatomic) NSString *contextObjectName;
 
-- (NSString *)getValueForLiteral:(NSString *)literal;
+- (SFMRecordFieldData *)getValueForLiteral:(NSString *)literal;
 - (SFMRecordFieldData *)getValueForContextFilterForfieldName:(NSString *)fieldName forHeaderObject:(NSString *)headerValue;
 
 @end

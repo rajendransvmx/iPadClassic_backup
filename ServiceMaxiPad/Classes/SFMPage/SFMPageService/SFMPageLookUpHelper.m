@@ -777,10 +777,56 @@
     NSArray *literalArray = [criteriaObjects filteredArrayUsingPredicate:predicate];
     
     for (DBCriteria *criteria in literalArray) {
-            NSString *literalValue = [self.viewControllerdelegate getValueForLiteral:criteria.rhsValue];
-            criteria.rhsValue = (literalValue != nil)?literalValue:@"";
+            SFMRecordFieldData *recordData = [self.viewControllerdelegate getValueForLiteral:criteria.rhsValue];
+            criteria.rhsValue = (recordData.internalValue != nil)?recordData.internalValue:@"";
+
+        
+        if ([[criteria getSubCriterias] count]) {
+            [self updateLiteralValueForSubCriterai:[criteria getSubCriterias] data:recordData];
+        }
     }
 }
+
+- (NSString *)getNameFieldForId:(NSString *)Id objectName:(NSString *)objectName
+{
+    id <TransactionObjectDAO> transactionModel = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+    
+    DBCriteria * criteria = [[DBCriteria alloc]initWithFieldName:kId operatorType:SQLOperatorEqual andFieldValue:Id];
+    
+    TransactionObjectModel *model = [transactionModel getDataForObject:objectName
+                                                                fields:nil
+                                                            expression:nil
+                                                              criteria:@[criteria]];
+    
+    NSString *fieldName = [SFMPageHelper getNameFieldForObject:objectName];
+    
+    return [model valueForField:fieldName];
+}
+
+- (void)updateLiteralValueForSubCriterai:(NSArray *)criteriaObjects data:(SFMRecordFieldData *)recordData
+{
+    NSString *tableName = nil;
+    
+    for (DBCriteria *criteria in criteriaObjects) {
+        
+        if ([[criteria getInnerQueryRequest] isKindOfClass:[DBRequestSelect class]]) {
+            DBRequestSelect *innerRequest = [criteria getInnerQueryRequest];
+            
+            if ([recordData.displayValue isEqualToString:recordData.internalValue] && tableName == nil) {
+                
+                tableName = innerRequest.tableName;
+                NSString *nameValue = [self getNameFieldForId:recordData.internalValue objectName:tableName];
+                recordData.displayValue = (nameValue != nil)?nameValue:@"";
+            }
+            NSArray *innerCriteria = [innerRequest criteriaArray];
+            
+            for (DBCriteria *criteria1 in innerCriteria) {
+                criteria1.rhsValue = (recordData.displayValue != nil)?recordData.displayValue:@"";
+            }
+        }        
+    }
+}
+
 
 - (NSArray *)getCriteriaObjectForAdvanceFilter:(SFMLookUpFilter *)filter
 {

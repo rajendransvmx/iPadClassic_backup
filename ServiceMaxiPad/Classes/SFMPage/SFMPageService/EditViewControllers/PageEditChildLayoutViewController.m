@@ -222,7 +222,7 @@
 }
 #pragma mark End
 
-- (NSString *)getInternalValueForLiteral:(NSString *)lietral
+- (SFMRecordFieldData *)getInternalValueForLiteral:(NSString *)lietral
 {
     SFMDetailLayout * layout = [self.sfmPage.process.pageLayout.detailLayouts
                                 objectAtIndex:self.selectedIndexPath.section];
@@ -241,7 +241,7 @@
     
     SFMRecordFieldData *recordData = [pageManager getDisplayValueForLiteral:lietral mappingObject:mappingModel];
     
-    return recordData.internalValue;
+    return recordData;
 }
 - (SFMRecordFieldData *)filterCriteriaForContextFilter:(NSString *)fieldName forHeaderObject:(NSString *)headerValue {
     
