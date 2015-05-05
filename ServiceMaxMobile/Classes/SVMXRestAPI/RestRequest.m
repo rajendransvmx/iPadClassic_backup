@@ -9,6 +9,8 @@
 #import "RestRequest.h"
 #import "SMRestRequest.h"
 #import "AFHTTPRequestOperation.h"
+#import "AttachmentErrorUtility.h"
+#import "SVMXSystemConstant.h"
 
 NSString * const kSFSessionTokenPrefix   = @"OAuth ";
 
@@ -178,21 +180,24 @@ NSString * const kSFSessionTokenPrefix   = @"OAuth ";
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSInteger code = error.code;
+        NSInteger newCode = [AttachmentErrorUtility getErrorCodeForNetworkError:code];
+        
+        
         NSHTTPURLResponse *response =  [error.userInfo objectForKey:AFNetworkingOperationFailingURLResponseErrorKey];
+        
+        NSError * newErrorObj = [NSError errorWithDomain:kSVMXRestAPIErrorDomain code:newCode userInfo:error.userInfo] ;
         if (response != nil) {
             code = response.statusCode;
         }
         if(error.code == NSURLErrorCancelled){
             
-            [self didRequestCancelError:error andResponse:nil];
+            [self didRequestCancelError:newErrorObj andResponse:nil];
         }
         else
         {
             NSLog(@"REQUEST FAILED FOR: %@", self);
-            [self didRequestFailedWithError:[NSError errorWithDomain:error.domain code:code userInfo:error.userInfo] andResponse:operation.responseObject];
+            [self didRequestFailedWithError:newErrorObj andResponse:operation.responseObject];
         }
-        
-        //if(error.domain isEqualToString:NSURLErrorCancelled)
         
        
     }];

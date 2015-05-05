@@ -1693,6 +1693,7 @@
 		A8DDC6CC17CDD78200A18541 /* com.servicemax.client.tablet.sal.sfmopdoc.model.zip in Resources */ = {isa = PBXBuildFile; fileRef = A8DDC2D317CDD78100A18541 /* com.servicemax.client.tablet.sal.sfmopdoc.model.zip */; };
 		A8DDC6CD17CDD78200A18541 /* com.servicemax.client.zip in Resources */ = {isa = PBXBuildFile; fileRef = A8DDC2D417CDD78100A18541 /* com.servicemax.client.zip */; };
 		AC906A2E17D7553C001BFE51 /* ModalViewControlleriOS7.xib in Resources */ = {isa = PBXBuildFile; fileRef = AC906A2D17D7553C001BFE51 /* ModalViewControlleriOS7.xib */; };
+		DE89A77E1AF89B84003625A4 /* AttachmentErrorUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = DE89A77D1AF89B84003625A4 /* AttachmentErrorUtility.m */; };
 		DECA78221AF22B3500D97B13 /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = DECA78101AF22B3500D97B13 /* AFHTTPRequestOperation.m */; };
 		DECA78231AF22B3500D97B13 /* AFHTTPRequestOperationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DECA78121AF22B3500D97B13 /* AFHTTPRequestOperationManager.m */; };
 		DECA78241AF22B3500D97B13 /* AFHTTPSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DECA78141AF22B3500D97B13 /* AFHTTPSessionManager.m */; };
@@ -1818,8 +1819,6 @@
 		424971D2183B392300D6C727 /* SMAttachmentRequestManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMAttachmentRequestManager.m; sourceTree = "<group>"; };
 		424971D3183B392300D6C727 /* SMConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMConnectionManager.h; sourceTree = "<group>"; };
 		424971D4183B392300D6C727 /* SMConnectionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMConnectionManager.m; sourceTree = "<group>"; };
-		424971D5183B392300D6C727 /* SMRequestHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMRequestHelper.h; sourceTree = "<group>"; };
-		424971D6183B392300D6C727 /* SMRequestHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMRequestHelper.m; sourceTree = "<group>"; };
 		424971D7183B392300D6C727 /* SMRestRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMRestRequest.h; sourceTree = "<group>"; };
 		424971D8183B392300D6C727 /* SMRestRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMRestRequest.m; sourceTree = "<group>"; };
 		424971D9183B392300D6C727 /* SMSalesForceRestAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMSalesForceRestAPI.h; sourceTree = "<group>"; };
@@ -3783,6 +3782,8 @@
 		AC906A2D17D7553C001BFE51 /* ModalViewControlleriOS7.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ModalViewControlleriOS7.xib; sourceTree = "<group>"; };
 		AC906A2F17D76144001BFE51 /* CustomToolBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomToolBar.h; sourceTree = "<group>"; };
 		AC906A3017D76144001BFE51 /* CustomToolBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomToolBar.m; sourceTree = "<group>"; };
+		DE89A77C1AF89B84003625A4 /* AttachmentErrorUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttachmentErrorUtility.h; sourceTree = "<group>"; };
+		DE89A77D1AF89B84003625A4 /* AttachmentErrorUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttachmentErrorUtility.m; sourceTree = "<group>"; };
 		DECA780F1AF22B3500D97B13 /* AFHTTPRequestOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPRequestOperation.h; sourceTree = "<group>"; };
 		DECA78101AF22B3500D97B13 /* AFHTTPRequestOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFHTTPRequestOperation.m; sourceTree = "<group>"; };
 		DECA78111AF22B3500D97B13 /* AFHTTPRequestOperationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPRequestOperationManager.h; sourceTree = "<group>"; };
@@ -4039,8 +4040,6 @@
 				424971D2183B392300D6C727 /* SMAttachmentRequestManager.m */,
 				424971D3183B392300D6C727 /* SMConnectionManager.h */,
 				424971D4183B392300D6C727 /* SMConnectionManager.m */,
-				424971D5183B392300D6C727 /* SMRequestHelper.h */,
-				424971D6183B392300D6C727 /* SMRequestHelper.m */,
 				424971D7183B392300D6C727 /* SMRestRequest.h */,
 				424971D8183B392300D6C727 /* SMRestRequest.m */,
 				424971D9183B392300D6C727 /* SMSalesForceRestAPI.h */,
@@ -4049,6 +4048,8 @@
 				F8CD9DC6183DE8A40007907E /* SMZKSHelper.m */,
 				424971DB183B392300D6C727 /* SVMXSystemConstant.h */,
 				424971DC183B392300D6C727 /* SVMXSystemConstant.m */,
+				DE89A77C1AF89B84003625A4 /* AttachmentErrorUtility.h */,
+				DE89A77D1AF89B84003625A4 /* AttachmentErrorUtility.m */,
 			);
 			path = SVMXRestAPI;
 			sourceTree = "<group>";
@@ -9750,6 +9751,7 @@
 				A8395C4217CC7D85007DD3ED /* SearchViewController.m in Sources */,
 				A8395BCD17CC7D85007DD3ED /* svmx_client_api.js in Sources */,
 				A8395BF317CC7D85007DD3ED /* ManualDataSync.m in Sources */,
+				DE89A77E1AF89B84003625A4 /* AttachmentErrorUtility.m in Sources */,
 				A8395B5A17CC7D85007DD3ED /* DateTimeFormatter.m in Sources */,
 				A8395B9F17CC7D85007DD3ED /* TravelcellView.m in Sources */,
 				A8395CE817CC7D85007DD3ED /* MainViewController.m in Sources */,
@@ -10048,7 +10050,7 @@
 				);
 				PRODUCT_NAME = ServiceMax;
 				PROVISIONING_PROFILE = "";
-				VALID_ARCHS = "armv7 armv7s arm64";
+				VALID_ARCHS = armv7;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -10080,7 +10082,7 @@
 				);
 				PRODUCT_NAME = ServiceMax;
 				PROVISIONING_PROFILE = "";
-				VALID_ARCHS = "armv7 armv7s arm64";
+				VALID_ARCHS = armv7;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

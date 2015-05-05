@@ -567,6 +567,8 @@ static SMAttachmentRequestManager *_instance;
     @synchronized([self class])
     {
         NSString *localId  = [self getLocalIdForRequest:request];
+        NSString * filePath = [self getFilePath:request];
+        [self removeFileAtIndexPath:filePath];
         
         [self handleError:error forAttachmentId:localId andActionType:kAttachmentActionTypeDownload];
         
