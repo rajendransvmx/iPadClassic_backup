@@ -175,6 +175,7 @@ NSString * const kSFSessionTokenPrefix   = @"OAuth ";
     
     [requestOp setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         
+        
         NSLog(@"REQUEST FINISHED FOR: %@", self);
         [self performSelectorInBackground:@selector(didReceiveResponseSuccessfully:) withObject:responseObject];
         
@@ -217,7 +218,7 @@ NSString * const kSFSessionTokenPrefix   = @"OAuth ";
 {
      if (self.smRestRequest.requestDelegate != nil && [self.smRestRequest.requestDelegate conformsToProtocol:@protocol(SMRestRequestDelegate)]) {
       
-        return  [self.smRestRequest.requestDelegate  getFilePath:self.smRestRequest];
+        return  [self.smRestRequest.requestDelegate  getTempFilePath:self.smRestRequest];
      }
     return nil;
 }

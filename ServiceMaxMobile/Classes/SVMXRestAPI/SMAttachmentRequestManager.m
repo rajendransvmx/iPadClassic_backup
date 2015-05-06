@@ -14,6 +14,7 @@
 #import "SVMXSystemConstant.h"
 #import "AttachmentDatabase.h"
 #import "SMZKSHelper.h"
+#import "AttachmentUtility.h"
 
 
 static dispatch_once_t _sharedInstanceGuard;
@@ -22,7 +23,7 @@ static SMAttachmentRequestManager *_instance;
 @interface SMAttachmentRequestManager()
 
 - (NSString *)getRootFolderForSavingAttachments;
-- (BOOL)saveAttachmentData:(NSData *)attachmentData inFileName:(NSString *)fileName;
+- (BOOL)saveAttachmentData:(SMRestRequest *)request inFileName:(NSString *)fileName;
 - (BOOL)updateAttachmentRequestStatus:(ATTACHMENT_STATUS)status forRecordId:(NSString *)localId;
 - (void)removeAttachmentFromTrailerTable:(NSString *)localId;
 
@@ -525,7 +526,7 @@ static SMAttachmentRequestManager *_instance;
     // Call File to save here.
     NSString *localId = [self getLocalIdForRequest:request];
     SMAttachmentModel *model = [self.requestDictionary objectForKey:localId];
-    BOOL hasFileSaved = YES;//[self saveAttachmentData:response.body inFileName:model.fileName];
+    BOOL hasFileSaved = [self saveAttachmentData:request inFileName:model.fileName];
     //check file exists
 
     if (hasFileSaved)
@@ -569,6 +570,9 @@ static SMAttachmentRequestManager *_instance;
         NSString *localId  = [self getLocalIdForRequest:request];
         NSString * filePath = [self getFilePath:request];
         [self removeFileAtIndexPath:filePath];
+        [self removeFileAtIndexPath:request.tempFileName];
+
+        
         
         [self handleError:error forAttachmentId:localId andActionType:kAttachmentActionTypeDownload];
         
@@ -603,6 +607,8 @@ totalBytesExpectedToReceive:(NSInteger)totalBytesExpectedToReceive
 {
     NSString * filePath = [self getFilePath:request];
     [self removeFileAtIndexPath:filePath];
+    [self removeFileAtIndexPath:request.tempFileName];
+    
     if (self.processCurrentStatus == ActionStatus_Cancelled_By_User)
     {
         [self processCancelledRequest:request];
@@ -622,7 +628,6 @@ totalBytesExpectedToReceive:(NSInteger)totalBytesExpectedToReceive
 - (NSString *)getFilePath:(SMRestRequest *)request;
 {
     
-    
     NSString *rootPath = [self getRootFolderForSavingAttachments];
     
     NSString *localId  = [self getLocalIdForRequest:request];
@@ -633,13 +638,38 @@ totalBytesExpectedToReceive:(NSInteger)totalBytesExpectedToReceive
     return filePath;
 }
 
+
+- (NSString *)getTempFilePath:(SMRestRequest *)request;
+{
+   NSString * tempId = [AppDelegate GetUUID];
+    
+    NSString *rootPath = [self getRootFolderForSavingAttachments];
+    
+    NSString *localId  = [self getLocalIdForRequest:request];
+    SMAttachmentModel *model = [self.requestDictionary objectForKey:localId];
+    
+   NSString * extension =  [AttachmentUtility fileExtension:model.fileName];
+    
+    NSString *tempFielName = [tempId stringByAppendingPathExtension:extension];
+    request.tempFileName = [rootPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@",tempFielName]];;
+    
+    return request.tempFileName;
+}
+
+
+-(void)copyFileFromTempPathForRequest:(SMRestRequest *)request
+{
+    
+}
+
+
 #pragma mark-
 #pragma mark Saving downloaded file
 
 
 
 
-- (BOOL)saveAttachmentData:(NSData *)attachmentData inFileName:(NSString *)fileName
+- (BOOL)saveAttachmentData:(SMRestRequest *)request inFileName:(NSString *)fileName
 {
     BOOL isSuccess = NO;
     NSString *rootPath = [self getRootFolderForSavingAttachments];
@@ -650,11 +680,19 @@ totalBytesExpectedToReceive:(NSInteger)totalBytesExpectedToReceive
     }
     
     NSString *filePath = [rootPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@",fileName]];
-    NSError *error = nil;
-    [[NSFileManager defaultManager] removeItemAtPath:filePath error:&error];
-    isSuccess = [attachmentData writeToFile:filePath atomically:YES];
+  
+    //copy from
+    NSError * err;
+    
+    [[NSFileManager defaultManager] copyItemAtPath:request.tempFileName toPath:filePath error:&err];
+    
+    [self removeFileAtIndexPath:request.tempFileName];
+    
     return isSuccess;
 }
+
+
+
 
 -(void)removeFileAtIndexPath:(NSString *)filePath
 {

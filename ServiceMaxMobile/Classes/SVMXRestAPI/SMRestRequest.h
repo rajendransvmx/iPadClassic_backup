@@ -37,6 +37,8 @@ extern NSString * const kSFDefaultDataService;
 
 - (void)requestDidCancelLoad:(SMRestRequest *)request;
 
+- (NSString *)getTempFilePath:(SMRestRequest *)request;
+
 
 @end
 
@@ -58,6 +60,7 @@ extern NSString * const kSFDefaultDataService;
 @property (nonatomic,  assign) BOOL shouldCancel;
 @property (nonatomic,  assign) NSString *objectName;
 @property (nonatomic,  assign) NSString *sfId;
+@property (nonatomic,  strong) NSString *tempFileName;
 
 
 /* Constructors */
