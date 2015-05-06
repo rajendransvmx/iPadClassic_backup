@@ -671,12 +671,12 @@ totalBytesExpectedToReceive:(NSInteger)totalBytesExpectedToReceive
 
 - (BOOL)saveAttachmentData:(SMRestRequest *)request inFileName:(NSString *)fileName
 {
-    BOOL isSuccess = NO;
+    BOOL isSuccess = YES;
     NSString *rootPath = [self getRootFolderForSavingAttachments];
    
     if (rootPath == nil)
     {
-        return isSuccess;
+        return !isSuccess;
     }
     
     NSString *filePath = [rootPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@",fileName]];
