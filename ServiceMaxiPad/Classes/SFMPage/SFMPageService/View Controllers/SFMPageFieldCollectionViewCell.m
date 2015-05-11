@@ -79,7 +79,10 @@
     self.fieldName.frame = fieldNameLabelFrame;
     
     //CGRect fieldValueLabelFrame = CGRectMake(contentViewFrame.origin.x, CGRectGetMaxY(self.fieldName.bounds), contentViewFrame.size.width, contentViewFrame.size.height/2+5); //HS 12 Jan commented
-    CGRect fieldValueLabelFrame = CGRectMake(contentViewFrame.origin.x, CGRectGetMaxY(self.fieldName.bounds), SMXLableWidth-22, contentViewFrame.size.height/2+5); //HS 12 Jan
+    
+    /* chinna changed width to dynamic instead of SMXLableWidth-22 */
+
+    CGRect fieldValueLabelFrame = CGRectMake(contentViewFrame.origin.x, CGRectGetMaxY(self.fieldName.bounds), contentViewFrame.size.width, contentViewFrame.size.height/2+5); //HS 12 Jan
 
     
     self.fieldValue.frame = fieldValueLabelFrame;
@@ -92,7 +95,11 @@
     if (self.isShowMoreButton) {
         
        // fieldValueLabelFrame = CGRectMake(contentViewFrame.origin.x, CGRectGetMaxY(self.fieldName.bounds), contentViewFrame.size.width - buttonLength - 5, contentViewFrame.size.height/2+5);//HS 12 Jan
-        fieldValueLabelFrame = CGRectMake(contentViewFrame.origin.x, CGRectGetMaxY(self.fieldName.bounds), SMXLableWidth-62, contentViewFrame.size.height/2+5);//HS 12 Jan
+        
+        /* chinna changed width to dynamic instead of SMXLableWidth-62 */
+        fieldValueLabelFrame = CGRectMake(contentViewFrame.origin.x, CGRectGetMaxY(self.fieldName.bounds), contentViewFrame.size.width - buttonLength - 5, contentViewFrame.size.height/2+5);//HS 12 Jan
+        
+        
 
         self.fieldValue.frame = fieldValueLabelFrame;
 
