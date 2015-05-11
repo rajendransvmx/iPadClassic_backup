@@ -490,6 +490,7 @@
     [self setBorder];
 }
 
+
 -(void)detailTapped:(DebriefSectionView *)dbriefView
 {
     NSString * key = [self getKeyForSection:dbriefView.section];
@@ -504,7 +505,7 @@
     SFMPageLayout *pageLayout = self.sfmPageView.sfmPage.process.pageLayout;
     NSArray *detailLayouts =pageLayout.detailLayouts;
     SFMDetailLayout *detailLayout= [detailLayouts objectAtIndex:self.selectedSection];
-
+    
     NSArray *detailRecords = [self.sfmPageView.sfmPage.detailsRecord objectForKey:detailLayout.processComponentId];
     
     NSDictionary *detailDict = [detailRecords objectAtIndex:dbriefView.section];

@@ -28,7 +28,7 @@
     DBField *orderBy = [[DBField alloc] initWithFieldName:@"sequence" tableName:[self tableName]
                                              andOrderType:SQLOrderByTypesAscending];
     [requestSelect addOrderByFields:@[orderBy]];
-    
+
     [requestSelect setDistinctRowsOnly];
     NSMutableArray * records = [[NSMutableArray alloc] initWithCapacity:0];
     NSMutableArray * tempRecords = [[NSMutableArray alloc]initWithCapacity:0];

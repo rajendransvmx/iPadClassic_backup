@@ -312,11 +312,11 @@ extern NSString * const kConflict;
 extern NSString * const kCallBack;
 extern NSString * const kCallbackContext;
 extern NSString * const kCallBackInCaps;
-extern NSString * const  kCurrentContextKey;
-extern NSString * const  kPartiallyExecutedobj;
-extern NSString * const  kPartiallyExecutedobjUpdate;
-extern NSString * const  kPartiallyExecutedobjDelete;
-extern NSString * const  kLastOneCallSyncPutUpdateTime;
+extern NSString * const kCurrentContextKey;
+extern NSString * const kPartiallyExecutedobj;
+extern NSString * const kPartiallyExecutedobjUpdate;
+extern NSString * const kPartiallyExecutedobjDelete;
+extern NSString * const kLastOneCallSyncPutUpdateTime;
 extern NSString * const kAllEvents;
 extern NSString * const kRecordIds;
 
@@ -336,6 +336,7 @@ extern NSString *const ktimeLogType;
 extern NSString *const kTimeLogSucess;
 extern NSString *const kTimeLogFailure;
 extern NSString *const kTimeLogFailureID;
+
 
 /* SEARCH_OBJECT Server Contants  */
 extern NSString *const kSearchFilterParentObjectCriteria;
@@ -386,3 +387,6 @@ extern NSString *const kMapErrorInvalidRequest;
 extern NSString *const kMapErrorOverQueryLimit;
 extern NSString *const kMapErrorRequestDenied;
 extern NSString *const kMapErrorUnknownError;
+
+
+

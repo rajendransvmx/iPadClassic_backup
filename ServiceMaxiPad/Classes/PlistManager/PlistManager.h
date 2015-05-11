@@ -181,4 +181,7 @@ extern  NSString *const kPreferenceOrganizationCustom;
 + (NSString *)getInitialSyncTime;
 + (void)storeInitiaSyncSyncTimeForDP:(NSString *)time;
 
++ (void)setRefreshToken:(NSString*)refreshToken;
++ (NSString*)getRefreshToken;
+
 @end

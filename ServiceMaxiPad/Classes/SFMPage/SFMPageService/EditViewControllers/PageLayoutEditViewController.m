@@ -620,12 +620,12 @@ static NSString *collectionViewHeaderIdentifier = @"headerIdentifier";
 #pragma mark - End
 
 -(void)formatNumericField:(SFMPageField*)pageField recordData:(SFMRecordFieldData *)recordField{
-    
-    if( (![StringUtil isStringEmpty:recordField.internalValue])
-       && ([pageField.dataType isEqualToString:kSfDTCurrency]
-           || [pageField.dataType isEqualToString:kSfDTDouble]
-           || [pageField.dataType isEqualToString:kSfDTPercent])){
-        
+   
+     if( (![StringUtil isStringEmpty:recordField.internalValue])
+         && ([pageField.dataType isEqualToString:kSfDTCurrency]
+         || [pageField.dataType isEqualToString:kSfDTDouble]
+         || [pageField.dataType isEqualToString:kSfDTPercent])){  //Except integer for other numberfields should consider.
+            
         double value = recordField.internalValue.doubleValue;
         NSString * finalValue  = [[NSString alloc] initWithFormat:@"%.*f",pageField.scale.intValue,value];
         recordField.internalValue = finalValue;

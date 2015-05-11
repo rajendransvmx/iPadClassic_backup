@@ -57,8 +57,10 @@
     self.detailImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"sfm_right_arrow.png"]];
     self.detailImage.contentMode  = UIViewContentModeScaleAspectFit;
     [self.detailView addSubview:self.detailImage];
-        
+    
     [self addSubview:self.detailView];
+
+    
 }
 
 -(void)layoutSubviews
@@ -97,6 +99,7 @@
     self.detailImage.frame = detailImageFrame;
 }
 
+
 -(void)addGesture
 {
     UITapGestureRecognizer * gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(sectionTapped)];
@@ -128,6 +131,7 @@
 {
     self.detailLabel.text = [[TagManager sharedInstance] tagByName:kTag_Details];
 }
+
 - (void)dealloc {
     
 }

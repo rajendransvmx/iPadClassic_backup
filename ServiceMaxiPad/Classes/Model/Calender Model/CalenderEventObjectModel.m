@@ -28,6 +28,7 @@
 @synthesize sla;
 @synthesize isWorkOrder;
 @synthesize isCaseEvent;
+@synthesize isAllDayEvent;
 
 @synthesize eventObject;
 @synthesize eventType;

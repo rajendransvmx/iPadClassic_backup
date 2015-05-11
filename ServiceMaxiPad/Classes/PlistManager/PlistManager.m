@@ -108,6 +108,9 @@ static NSString *const kOneCallLastLocalid                            = @"kOneCa
 
 static NSString *const kPersistantStorageInitialSyncTime             = @"InitailSyncTime";
 
+static NSString *const kRefreshToken    = @"rfrt";
+
+
 
 /** Public constant declaration */
 
@@ -120,6 +123,8 @@ NSString *const kPreferenceOrganizationProduction  = @"Production";
 static NSString *const kSwitchLayout = @"SwitchLayout";
 
 static NSString * const kEventWhatIdToObjectName = @"EventWhatIdToObjectName";
+
+static NSUInteger const kRefreshTokenSplitIndex      = 10;        /** Refresh token split index  */
 
 @implementation PlistManager
 
@@ -292,6 +297,8 @@ static NSString * const kEventWhatIdToObjectName = @"EventWhatIdToObjectName";
     /*** Lets remove existing refresh token and store new one in key chain utils. */
     [SMKeychain deleteRefreshToken];
     [SMKeychain storeRefreshToken:refreshToken];
+    /* Lets store refresh token in plist as well as back up plan */
+    [PlistManager setRefreshToken:refreshToken];
     
     [[CustomerOrgInfo sharedInstance] setRefreshToken:refreshToken];
     [[CustomerOrgInfo sharedInstance] setAccessToken:accessToken];
@@ -412,7 +419,23 @@ static NSString * const kEventWhatIdToObjectName = @"EventWhatIdToObjectName";
     [orgInfo setPreviousOrg:[userDefaults objectForKey:kPersistanceStoreLastPreferenceId]];
     [orgInfo setUserLoggedInHost:[userDefaults objectForKey:kPersistanceStoreLastPreferenceId]];
     
-    [[CustomerOrgInfo sharedInstance] setRefreshToken:[SMKeychain getRefreshToken]];
+    NSString *refreshToken = [SMKeychain getRefreshToken];
+    
+    if ([StringUtil isStringEmpty:refreshToken]) {
+        SXLogWarning(@"Key Chain token is invalid            : %@ ", refreshToken);
+        refreshToken = [PlistManager getRefreshToken];
+        SXLogWarning(@"Stored Plist Token            : %@ ", refreshToken);
+    }
+    else
+    {
+        NSString * storedToken = [PlistManager getRefreshToken];
+        if ([StringUtil isStringEmpty:storedToken])
+        {
+            [PlistManager setRefreshToken:refreshToken];
+        }
+    }
+    
+    [[CustomerOrgInfo sharedInstance] setRefreshToken:refreshToken];
     [[CustomerOrgInfo sharedInstance] explainMe];
 }
 
@@ -1271,6 +1294,68 @@ static NSString * const kEventWhatIdToObjectName = @"EventWhatIdToObjectName";
 }
 + (id)unArchiveObject:(id)objecttoBeUnArchived {
     return [NSKeyedUnarchiver unarchiveObjectWithData:objecttoBeUnArchived];
+}
+
+
++ (NSString *)reformedTokenFromRefreshToken:(NSString *)token
+{
+    // Yes, token should not be null and token length should be greater than split length
+    if (([StringUtil isStringEmpty:token]) || (token.length < kRefreshTokenSplitIndex + 1)) {
+        return token;
+    }
+    
+    NSString * secondPartOfString  = [token substringFromIndex:kRefreshTokenSplitIndex];
+    NSString * firstPartOfString   = [token substringToIndex:kRefreshTokenSplitIndex];
+
+    NSMutableString *reformedString = [[NSMutableString alloc] initWithFormat:@"%@%@", secondPartOfString, firstPartOfString];
+    
+    return reformedString;
+}
+
+
++ (NSString *)recreatedRefreshTokenFromStoredToken:(NSString *)storedToken
+{
+    // Yes, stored token should not be null and token length should be greater than split length
+    if (([StringUtil isStringEmpty:storedToken]) || (storedToken.length < kRefreshTokenSplitIndex + 1)) {
+        return storedToken;
+    }
+
+    NSUInteger range = storedToken.length - kRefreshTokenSplitIndex;
+    
+    NSString * secondPartOfString = [storedToken substringFromIndex:range];
+    NSString * firstPartOfString   = [storedToken substringToIndex:range];
+    
+    NSMutableString *reconstructedToken = [[NSMutableString alloc] initWithFormat:@"%@%@", secondPartOfString, firstPartOfString];
+    
+    return reconstructedToken;
+}
+
+
++ (void)setRefreshToken:(NSString*)refreshToken
+{
+    NSString *reformedToken = [self reformedTokenFromRefreshToken:refreshToken];
+    
+    if ([StringUtil isStringEmpty:reformedToken]) {
+        reformedToken = kEmptyString;
+    }
+    
+    [[NSUserDefaults standardUserDefaults] setObject:reformedToken
+                                              forKey:kRefreshToken];
+    [[NSUserDefaults standardUserDefaults]  synchronize];
+}
+
+
++ (NSString*)getRefreshToken
+{
+    NSString *storedToken = [[NSUserDefaults standardUserDefaults] objectForKey:kRefreshToken];
+    
+    NSString *reconstructedToken = [self recreatedRefreshTokenFromStoredToken:storedToken];
+    
+    if ([StringUtil isStringEmpty:reconstructedToken]) {
+        reconstructedToken = kEmptyString;
+    }
+
+    return reconstructedToken;
 }
 
 @end

@@ -362,8 +362,8 @@
     }
     
     NSString *attachmentId = fileModel.sfId;
-   
-    if (attachmentId) {
+    if(attachmentId)
+    {
         NSString *filepath = [rootPath stringByAppendingPathComponent:attachmentId];
         
         AttachmentModel *attachmentModel = [[AttachmentModel alloc]init];

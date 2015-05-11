@@ -346,9 +346,9 @@ NSString *const kTimeLogId                          = @"SVMX_LOG_ID";
 NSString *const kRequestTypeKey                     = @"type";
 NSString *const kAttributeKey                       = @"attributes";
 NSString *const kTimeLogRequestID                   = @"SVMX_Job_Log";
-NSString *const kTimeLogFailureID                   = @"SVMX_Log_Failed";
 NSString *const kTimeLogSucess                      = @"Completed";
 NSString *const kTimeLogFailure                     = @"Failed";
+NSString *const kTimeLogFailureID                   = @"SVMX_Log_Failed";
 
 NSString *const kTimeLogClientProcessingTimeStamp   = ORG_NAME_SPACE@"__Client_Response_Processing_Timestamp__c";
 NSString *const kTimeLogClientReceivingTimeStamp    = ORG_NAME_SPACE@"__Client_Response_Receive_Timestamp__c";
@@ -403,5 +403,3 @@ NSString *const kMapErrorInvalidRequest     = @"INVALID_REQUEST";
 NSString *const kMapErrorOverQueryLimit     = @"OVER_QUERY_LIMIT";
 NSString *const kMapErrorRequestDenied      = @"REQUEST_DENIED";
 NSString *const kMapErrorUnknownError       = @"UNKNOWN_ERROR";
-
-

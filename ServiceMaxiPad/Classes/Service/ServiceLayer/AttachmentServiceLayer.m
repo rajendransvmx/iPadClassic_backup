@@ -15,6 +15,7 @@
 #import "AttachmentHelper.h"
 #import "ZKSaveResult.h"
 #import "SMLogger.h"
+#import "StringUtil.h"
 
 @implementation AttachmentServiceLayer
 
@@ -64,7 +65,7 @@
         NSString *lResultantSFIDString = [savedResult id];
         
         //lResultantSFIDs will return array of zksresultObject
-        if([lResultantSFIDString length])
+        if(![StringUtil isStringEmpty:lResultantSFIDString])
         {
             AttachmentTXModel *model = [[AttachmentsUploadManager sharedManager] modelUnderUploadProcess];
             

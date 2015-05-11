@@ -96,7 +96,7 @@
             if (model != nil) {
                 NSString *sfId = model.Id;
                 NSString *value = model.value;
-                if ([sfId length] > 0 && [value length] > 0) {
+                if (![StringUtil isStringEmpty:sfId] && ![StringUtil isStringEmpty:value]) {
                     [idValue setValue:value forKey:sfId];
                 }
             }
@@ -411,7 +411,7 @@
     
     NSMutableDictionary *objectValueMapDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
     
-    [objectValueMapDictionary setValue:[workOrder.name length] ? workOrder.name : @""
+    [objectValueMapDictionary setValue:![StringUtil isStringEmpty:workOrder.name] ? workOrder.name : @""
                                  forKey:[[TagManager sharedInstance] tagByName:kTag_number]];
     
     workOrder.companyName = [MapHelper getAccountNameForId:workOrder.companyId];
@@ -425,7 +425,7 @@
         workOrder.companyName = workOrder.companyId;
     }
     
-    [objectValueMapDictionary setValue:[workOrder.companyName length] ? workOrder.companyName : @""
+    [objectValueMapDictionary setValue:![StringUtil isStringEmpty:workOrder.companyName] ? workOrder.companyName : @""
                                  forKey:[[TagManager sharedInstance] tagByName:kTag_account]];
     
     [objectValueMapDictionary setValue:workOrder.serviceLocationModel
@@ -435,7 +435,7 @@
         workOrder.localScheduleDateTime = workOrder.localEventStartDateTime;
     }
     
-    [objectValueMapDictionary setValue:[workOrder.localScheduleDateTime length] ? workOrder.localScheduleDateTime : @""
+    [objectValueMapDictionary setValue:![StringUtil isStringEmpty:workOrder.localScheduleDateTime] ? workOrder.localScheduleDateTime : @""
                                  forKey:[[TagManager sharedInstance] tagByName:kTag_appointment]];
     
     ContactImageModel *contactModel = [MapHelper getContactObjectForId:workOrder.contactId];
@@ -443,10 +443,10 @@
                                  forKey:[[TagManager sharedInstance] tagByName:kTag_contact]];
     
     NSString *purposeOfVisitValue = [self getPickListLabelForPurposeOfVisit:workOrder.purposeOfVisit];
-    [objectValueMapDictionary setValue:[purposeOfVisitValue length] ? purposeOfVisitValue : @""
+    [objectValueMapDictionary setValue:![StringUtil isStringEmpty:purposeOfVisitValue] ? purposeOfVisitValue : @""
                                  forKey:[[TagManager sharedInstance] tagByName:kTag_purposeofvisit]];
     
-    [objectValueMapDictionary setValue:[workOrder.problemDescription length] ? workOrder.problemDescription : @""
+    [objectValueMapDictionary setValue:![StringUtil isStringEmpty:workOrder.problemDescription] ? workOrder.problemDescription : @""
                                  forKey:[[TagManager sharedInstance] tagByName:kTag_problemdescription]];
     
     return objectValueMapDictionary;
@@ -519,7 +519,7 @@
     else
     {
         CacheManager *cache = [CacheManager sharedInstance];
-        if ([StringUtil isStringEmpty:technicianId]) {
+        if ([StringUtil  isStringEmpty:technicianId]) {
             technicianId = @"";
         }
         [cache pushToCache:technicianId byKey:TECHNICIANID];

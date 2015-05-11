@@ -3,7 +3,7 @@
 //  ServiceMaxMobile
 //
 //  Created by Anoop on 9/15/14.
-//  Copyright (c) 2014 Servicemax. All rights reserved.
+//  Copyright (c) 2015 Servicemax. All rights reserved.
 //
 
 #import "UICGoogleMapsAPI.h"
