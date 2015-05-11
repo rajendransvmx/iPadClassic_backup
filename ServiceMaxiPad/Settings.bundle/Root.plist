@@ -90,11 +90,11 @@
 			<key>MaximumValue</key>
 			<integer>10</integer>
 			<key>MaximumValueImage</key>
-			<string>10.png</string>
+			<string>10_settings.png</string>
 			<key>MinimumValue</key>
 			<integer>3</integer>
 			<key>MinimumValueImage</key>
-			<string>3.png</string>
+			<string>3_settings.png</string>
 			<key>Type</key>
 			<string>PSSliderSpecifier</string>
 		</dict>
