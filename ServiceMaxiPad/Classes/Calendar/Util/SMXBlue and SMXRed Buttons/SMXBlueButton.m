@@ -246,13 +246,8 @@
 
 -(void)setEventSubjectLabelPosition
 {
-
     NSString *thebusinesshours = [[SMXDateManager sharedManager] businessHours];
-    
-    if(!thebusinesshours){
-        thebusinesshours = @"08:00"; //Default. IF nothing is received from the Db, set 8 Am as the business hrs.
-    }
-        
+    thebusinesshours=[self checkingCorrectTimeFormate:thebusinesshours];
     NSRange startRange = [thebusinesshours rangeOfString:@":"];
     
     long hour = [[thebusinesshours substringToIndex:startRange.location] doubleValue];
@@ -323,7 +318,25 @@
 //    self.backgroundColor = [UIColor clearColor];
 
 }
-
+-(NSString *)checkingCorrectTimeFormate:(NSString *)time{
+    if(!time){
+        return @"08:00"; //Default. IF nothing is received from the Db, set 8 Am as the business hrs.
+    }else{
+        NSRange startRange = [time rangeOfString:@":"];
+        if (startRange.length==0) {
+            //if time formate is creating problem
+        }else{
+            int hour = [[time substringToIndex:startRange.location] intValue];
+            int minutes = [[time substringFromIndex:startRange.location+1] intValue];
+            //checking time whether time is proper or not
+            if ((hour>=0 && hour<24) && (minutes>=0 && minutes<60)) {
+                //this is the correct time formate
+                return time;
+            }
+        }
+    }
+    return @"08:00"; //Default. if time formate is not proper
+}
 -(void)checkIfSubjectIsInsidetheButton
 {
     
