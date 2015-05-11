@@ -1160,7 +1160,6 @@ const float progress = 0.05;
     }
     
     NSDate * olderThen = [currentDateTime dateByAddingTimeInterval:(-value * 24 * 60 * 60)];
-    
     NSString * date = [DateUtil getDatabaseStringForDate:olderThen];
     if (date != nil || [date length] > 0)
     {

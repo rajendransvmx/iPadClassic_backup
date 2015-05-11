@@ -216,6 +216,48 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
     }
 }
 
+
+/**
+ * @name   getSecZeroedDatabaseStringForDate:(NSDate *)dateToBeConverted
+ *
+ * @author Anoop
+ *
+ * @brief  Returns a string representation of a given date formatted via `strftime_l()` using the receiver’s current settings.
+ *
+ * \par
+ *   By default class internally will use  "%Y-%m-%dT%H:%M:00.000%z" format
+ *
+ *
+ * @param  date The date to format.
+ *
+ * @return A string representation of *date* formatted via `strftime_l()` using the receiver’s current settings.
+ *
+ */
+
++ (NSString *)getSecZeroedDatabaseStringForDate:(NSDate *)dateToBeConverted
+{
+    @synchronized(self)
+    {
+        char *tz;
+        //Get current time zone
+        tz = getenv("TZ");
+        //Set zone to GMT
+        setenv("TZ", "GMT", 1);
+        tzset();
+        
+        NSString *result = [self stringFromDate:dateToBeConverted inFormat:@"%Y-%m-%dT%H:%M:00.000%z"];
+        
+        //Check and revert to previous time zone
+        if (tz)
+            setenv("TZ", tz, 1);
+        else
+            unsetenv("TZ");
+        tzset();
+        return result;
+    }
+}
+
+
 /**
  * @name   getDateFromDatabaseString:(NSString *)dateString
  *
@@ -487,6 +529,18 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
     return dateFormat;
 }
 
++(NSString *)getSecsZeroedUserTimeFormat
+{
+    NSString *dateFormat;
+    if ([self iSDeviceTime24HourFormat]) {
+        dateFormat = @"%a, %d %b %Y %H:%M:00";
+    }
+    else{
+        dateFormat = @"%a, %d %b %Y %I:%M:00 %p";
+    }
+    return dateFormat;
+}
+
 + (NSString *)getUserReadableDateForDBDateTime:(NSString *)dateTime
 {
     NSString *dateString = nil;
@@ -523,6 +577,17 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
     
     if (date != nil){
         userdateString = [self stringFromDate:date inFormat:[self getUserTimeFormat]];
+    }
+    return userdateString;
+    
+}
+
++(NSString *)getSecZeroedUserReadableDateForGMT:(NSDate *)date
+{
+    NSString *userdateString = nil;
+    
+    if (date != nil){
+        userdateString = [self stringFromDate:date inFormat:[self getSecsZeroedUserTimeFormat]];
     }
     return userdateString;
     
