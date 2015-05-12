@@ -45,8 +45,27 @@
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *leftViewWidthConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *topViewHeightContraint;
 
+@property (weak, nonatomic) IBOutlet UIView *rightView;
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *labelHeightContraint;
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *labelVerticalSpacing;
+
+@property (weak, nonatomic) IBOutlet UILabel *rightViewProductLabel;
+
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *rightViewHorizontalSpacing;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *rightViewTrailing;
+
 @property NSInteger leftViewOriginalWidth;
 @property NSInteger topViewOriginalHeight;
+
+@property NSInteger labelHeight;
+@property NSInteger labelSpacing;
+
+@property NSInteger horizontalSpacing;
+@property NSInteger trailingSpace;
+
 
 @property (nonatomic, strong)MBProgressHUD *hudView;
 @property (nonatomic, strong)CusTextField  *textField;
@@ -102,6 +121,14 @@
     self.leftViewOriginalWidth = self.leftViewWidthConstraint.constant;
     self.topViewOriginalHeight = self.topViewHeightContraint.constant;
     
+    self.labelHeight = self.labelHeightContraint.constant;
+    self.labelSpacing = self.labelVerticalSpacing.constant;
+    
+    
+    self.horizontalSpacing = self.rightViewHorizontalSpacing.constant;
+    self.trailingSpace = self.rightViewTrailing.constant;
+    
+    
     self.isKeyboardShowing = NO;
 }
 
@@ -112,8 +139,8 @@
     
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    self.tableView.tableHeaderView = [self tableHeaderView];
     self.tableView.backgroundColor = [UIColor whiteColor];
+    [self tableHeaderView];
 }
 
 - (void)updateLabelText:(UILabel *)label
@@ -131,6 +158,19 @@
 {
     [super viewWillLayoutSubviews];
     
+    if (self.leftImageView.image || self.topImageView.image) {
+        [self updateViewForProductImage];
+    }
+    else {
+        [self updateViewForNoProductImage];
+    }
+    
+    [self setUpImageView];
+}
+
+
+- (void)updateViewForProductImage
+{
     if ([self isViewInLandScape]) {
         self.topViewHeightContraint.constant = 0;
         self.leftViewWidthConstraint.constant = self.leftViewOriginalWidth;
@@ -141,7 +181,27 @@
         self.topViewHeightContraint.constant = self.topViewOriginalHeight;
         [self updateLabelText:self.topProductLabel];
     }
-    [self setUpImageView];
+    self.labelHeightContraint.constant = 0;
+    self.labelVerticalSpacing.constant = 0;
+    
+    
+    self.rightViewHorizontalSpacing.constant = self.horizontalSpacing;
+    self.rightViewTrailing.constant = self.trailingSpace;
+}
+
+- (void)updateViewForNoProductImage
+{
+    self.leftViewWidthConstraint.constant = 0;
+    self.topViewHeightContraint.constant = 0;
+    
+    self.rightViewHorizontalSpacing.constant = 120;
+    self.rightViewTrailing.constant = 120;
+    
+    [self updateLabelText:self.rightViewProductLabel];
+    
+    self.labelHeightContraint.constant = self.labelHeight;
+    self.labelVerticalSpacing.constant = self.labelSpacing;
+
 }
 
 - (void)setUpImageView
@@ -153,14 +213,16 @@
     self.topImageView.clipsToBounds = YES;
 }
 
-- (UIView *)tableHeaderView
-{    
-    CGRect frame = self.tableView.frame;
+- (void)tableHeaderView
+{
+    NSArray *subViews = [self.rightView subviews];
     
-    ChatterSectionView *view = [[ChatterSectionView alloc] initWithFrame:CGRectMake(frame.origin.x,
-                                                            frame.origin.y, frame.size.width, 50)];
-    view.sectionTextFieldDelegate = self;
-    return view;
+    for (id subView in subViews) {
+       if ([subView isKindOfClass:[ChatterSectionView class]]){
+           ChatterSectionView *view = (ChatterSectionView *)subView;
+           view.sectionTextFieldDelegate = self;
+       }
+    }
 }
 
 - (void)pushProductIdToCache
@@ -419,6 +481,7 @@
     if (image) {
         [self setUpProductImage:image];
     }
+    [self.view setNeedsLayout];
 }
 
 - (void)getChatterPostDetails

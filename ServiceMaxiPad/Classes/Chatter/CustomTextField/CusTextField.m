@@ -15,14 +15,26 @@
 - (id)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
-        self.borderStyle = UITextBorderStyleNone;
-        self.layer.borderColor = [UIColor lightGrayColor].CGColor;
-        self.layer.borderWidth = 1.0f;
-        self.layer.cornerRadius = 3.0f;
-        self.backgroundColor = [UIColor whiteColor];
+        [self setUP];
     }
     return self;
 }
+
+- (void)awakeFromNib
+{
+    [super awakeFromNib];
+    [self setUP];
+}
+
+- (void)setUP
+{
+    self.borderStyle = UITextBorderStyleNone;
+    self.layer.borderColor = [UIColor lightGrayColor].CGColor;
+    self.layer.borderWidth = 1.0f;
+    self.layer.cornerRadius = 3.0f;
+    self.backgroundColor = [UIColor whiteColor];
+}
+
 
 - (void)drawPlaceholderInRect:(CGRect)rect
 {
