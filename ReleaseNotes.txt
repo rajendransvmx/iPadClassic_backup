@@ -3,13 +3,12 @@
 ServiceMax Spring 15 iPad Release
 
 *******************************************
-Version = 15.39.100
+Version = 15.39.101
 ===========================================
 -------------
 Fixed Defects
 -------------
-016775 - On iOS 8.X Adding Attachments form My Photo Stream option, images appear black.
-017336 - SET019 is not respected in the Spring 15 SP Client Build 15.39.004
+
 -------------
 Known Issues
 -------------
@@ -27,7 +26,7 @@ None
 ---------------------
 Additional Notes
 ---------------------
-changes merged from Spring 15 to Spring 15 SP
+Changes merged from Winter 15 SP to Spring 15 SP
 
 
 
