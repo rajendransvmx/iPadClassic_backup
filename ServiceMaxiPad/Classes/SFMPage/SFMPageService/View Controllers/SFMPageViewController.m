@@ -44,6 +44,7 @@
 #import "CacheManager.h"
 #import "WebserviceResponseStatus.h"
 #import "PushNotificationManager.h"
+#import "CalenderHelper.h"
 
 @interface SFMPageViewController ()<SMActionSideBarViewControllerDelegate>
 @property (nonatomic, strong) SMActionSideBarViewController *mySideBar;
@@ -165,8 +166,12 @@
 }
 
 -(void)addEventAndServicemaxEventProcessWizard:(NSMutableArray *)addEventWizard{
-    [self addEventWizard:addEventWizard targetObject:kEventObject];
+    NSString *eventType = [CalenderHelper getEventTypeFromMobileDeviceSettings];
+    if ([eventType isEqualToString:kSalesforceEvent]) {
+        [self addEventWizard:addEventWizard targetObject:kEventObject];
+    }else {
     [self addEventWizard:addEventWizard targetObject:kServicemaxEventObject];
+    }
 }
 
 -(void)addEventWizard:(NSMutableArray *)addEventWizard  targetObject:(NSString *)targetObjectName

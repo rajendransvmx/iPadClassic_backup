@@ -98,6 +98,7 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
     NSString *title = [NSString stringWithFormat:@"+ %@",[[TagManager sharedInstance]tagByName:kTag_Add]];
     
     [addButton setTitle:title forState:UIControlStateNormal];
+    addButton.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     [footerView addSubview:addButton];
     self.tableView.tableFooterView = footerView;
 }
@@ -836,11 +837,6 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
     SFMRecordFieldData *localIdDataField = [[SFMRecordFieldData alloc] initWithFieldName:kLocalId value:localId andDisplayValue:localId];
     [chidLineDict setObject:localIdDataField forKey:kLocalId];
     
-    /*Update parent Column name*/
-    SFProcessComponentModel  *processComponent = [self.sfmPage.process.component objectForKey:self.detailLayout.processComponentId];
-    [chidLineDict setValue:[self parentColumnNameData:processComponent] forKey:processComponent.parentColumnName];
-
-    
     /* Create fields */
     NSArray *fields = self.detailLayout.detailSectionFields;
     for (SFMPageField *aField in fields) {
@@ -855,6 +851,9 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
         }
     }
     
+    /*Update parent Column name*/
+    SFProcessComponentModel  *processComponent = [self.sfmPage.process.component objectForKey:self.detailLayout.processComponentId];
+    [chidLineDict setValue:[self parentColumnNameData:processComponent] forKey:processComponent.parentColumnName];
     
     
     SFMRecordFieldData *aField = [chidLineDict objectForKey:kLocalId];
@@ -1183,6 +1182,25 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
     }
 }
 
+
+- (SFMRecordFieldData *)getInternalValueForLiteral:(NSString *)lietral
+{
+    if ([StringUtil containsString:kLiteralCurrentRecordHeader inString:lietral])
+    {
+        SFMPageEditManager *manager = [[SFMPageEditManager alloc] init];
+        
+        ValueMappingModel * mappingModel = [[ValueMappingModel alloc] init];
+        mappingModel.currentRecord = self.sfmPage.headerRecord;
+        mappingModel.headerRecord = self.sfmPage.headerRecord;
+        mappingModel.currentObjectName = self.sfmPage.objectName;
+        mappingModel.headerObjectName = self.sfmPage.objectName;
+        
+        SFMRecordFieldData *recordData = [manager getDisplayValueForLiteral:lietral mappingObject:mappingModel];
+        
+        return recordData;
+    }
+    return nil;
+}
 
 
 

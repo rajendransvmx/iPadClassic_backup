@@ -54,6 +54,7 @@
 @property (nonatomic, strong) NSString *eventTableName;
 @property (nonatomic, strong) NSString *eventType;
 @property (nonatomic, assign) BOOL isAllDay;
+@property (nonatomic, strong) NSString *priorityString;
 
 //-(instancetype)initWithCalendarModel:(CalenderEventObjectModel*)model;
 -(SMXEvent *) initWithEventTransactionObjectModel:(EventTransactionObjectModel*)model;

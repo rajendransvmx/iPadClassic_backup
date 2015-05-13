@@ -18,6 +18,12 @@
 @property(nonatomic, strong)NSString *photoUrl;
 @property(nonatomic, strong)NSIndexPath *path;
 
+@property (weak, nonatomic) IBOutlet UILabel *chatText;
+@property (weak, nonatomic) IBOutlet ImageView *userImageView;
+@property (weak, nonatomic) IBOutlet UILabel *userName;
+@property (weak, nonatomic) IBOutlet UILabel *time;
+
+
 - (void)updateCellView:(ChatterFeedComments *)comments;
 - (void)updateUserImage;
 

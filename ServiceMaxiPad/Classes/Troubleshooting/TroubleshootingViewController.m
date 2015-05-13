@@ -69,7 +69,7 @@
 
 - (void)addNavigationBarButtonItem
 {
-    UIBarButtonItem *productManual = [[UIBarButtonItem alloc] initWithTitle:@"Actions"
+    UIBarButtonItem *productManual = [[UIBarButtonItem alloc] initWithTitle:[[TagManager sharedInstance] tagByName:kTagActions]
                                                                       style:UIBarButtonItemStyleBordered
                                                                      target:self
                                                                      action:@selector(showMenu:)];
@@ -292,7 +292,7 @@
     
     if(self.productId != nil)
     {
-        [self.tempViewController.list addObject:@"Product Manual"];
+        [self.tempViewController.list addObject: [[TagManager sharedInstance] tagByName:kTagProductManualTitle]];
         [self.tempViewController.list addObject:[[TagManager sharedInstance] tagByName:kTagChatterTitle]];
     }
 }
@@ -302,7 +302,7 @@
     if ( [StringUtil isStringEmpty:self.productId])
     {
         UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError]
-                                                           message:@"Product manual not present"
+                                                           message:[[TagManager sharedInstance] tagByName:kTagProductManualNotPresent]
                                                           delegate:self
                                                  cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ]
                                                  otherButtonTitles:nil, nil];

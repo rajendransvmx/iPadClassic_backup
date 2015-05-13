@@ -337,8 +337,8 @@ NSString *const kSyncTypeAttachmentSync              = @"SyncTypeAttachmentSync"
     NSString *parentId = [SFMPageHelper getSfIdForLocalId:recordId objectName:objectName];
     if ([StringUtil isStringEmpty:parentId])
     {
-        parentId = recordId;
-        [AttachmentHelper deleteAttachmentsFromDBDirectoryForParentId:parentId];
+       parentId = recordId;
+       [AttachmentHelper deleteAttachmentsFromDBDirectoryForParentId:parentId];
     }
     DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:fieldName operatorType:SQLOperatorEqual andFieldValue:recordId];
     id service = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];

@@ -96,8 +96,8 @@
 - (void)updateRecordDataToPageView:(NSDate *)date
 {
     if (date != nil){
-        NSString *internaValue = [DateUtil getDatabaseStringForDate:date];
-        NSString *dateString = [DateUtil getUserReadableDateForGMT:date];
+        NSString *internaValue = [DateUtil getSecZeroedDatabaseStringForDate:date];
+        NSString *dateString = [DateUtil getSecZeroedUserReadableDateForGMT:date];
         if (![StringUtil isStringEmpty:dateString] && ![StringUtil isStringEmpty:internaValue])
         {
             self.recordData.displayValue = dateString;

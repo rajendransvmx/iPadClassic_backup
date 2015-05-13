@@ -19,6 +19,8 @@
 #import "SMXBlueButton.h"
 #import "SMXCalendarViewController.h"
 #import "CalenderHelper.h"
+#import "StyleManager.h"
+#import "CaseObjectModel.h"
 
 @interface SMXBlueButton ()
 
@@ -244,13 +246,8 @@
 
 -(void)setEventSubjectLabelPosition
 {
-
     NSString *thebusinesshours = [[SMXDateManager sharedManager] businessHours];
-    
-    if(!thebusinesshours){
-        thebusinesshours = @"08:00"; //Default. IF nothing is received from the Db, set 8 Am as the business hrs.
-    }
-        
+    thebusinesshours=[self checkingCorrectTimeFormate:thebusinesshours];
     NSRange startRange = [thebusinesshours rangeOfString:@":"];
     
     long hour = [[thebusinesshours substringToIndex:startRange.location] doubleValue];
@@ -321,7 +318,25 @@
 //    self.backgroundColor = [UIColor clearColor];
 
 }
-
+-(NSString *)checkingCorrectTimeFormate:(NSString *)time{
+    if(!time){
+        return @"08:00"; //Default. IF nothing is received from the Db, set 8 Am as the business hrs.
+    }else{
+        NSRange startRange = [time rangeOfString:@":"];
+        if (startRange.length==0) {
+            //if time formate is creating problem
+        }else{
+            int hour = [[time substringToIndex:startRange.location] intValue];
+            int minutes = [[time substringFromIndex:startRange.location+1] intValue];
+            //checking time whether time is proper or not
+            if ((hour>=0 && hour<24) && (minutes>=0 && minutes<60)) {
+                //this is the correct time formate
+                return time;
+            }
+        }
+    }
+    return @"08:00"; //Default. if time formate is not proper
+}
 -(void)checkIfSubjectIsInsidetheButton
 {
     
@@ -367,13 +382,24 @@
     NSString *lEventTitle;
     NSString *lLocation = (self.event.isWorkOrder ? [CalenderHelper getServiceLocation:self.event.whatId]:@"");
     
+    NSString *priorityString = nil;
 
     if (self.event.isWorkOrder) {
         WorkOrderSummaryModel *model = [[SMXCalendarViewController sharedInstance].cWODetailsDict objectForKey:self.event.whatId];
         lEventTitle = (model.companyName.length ? model.companyName : self.event.stringCustomerName);
+        priorityString = model.priorityString;
+        
+    } else if (self.event.isCaseEvent){
+        
+        CaseObjectModel *model = [[SMXCalendarViewController sharedInstance].cCaseDetailsDict objectForKey:self.event.whatId];
+        priorityString = model.priorityString;
+
+         lEventTitle = self.event.stringCustomerName;
+
     }
     else{
         lEventTitle = self.event.stringCustomerName;
+        
     }
     
     lEventTitle = [lEventTitle stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
@@ -453,7 +479,35 @@
     else {
         self.eventName.text = text;
     }
-    
+    [self setFlagColor:priorityString];
+
 }
+-(void)setFlagColor:(NSString *)priorityString{
+    
+    UIColor *borderColor;
+    NSString *colorString;
+    if ([priorityString isEqualToString:@"High"]) {
+        
+        colorString = [CalenderHelper getTheHexaCodeForTheSettingId:@"IPAD006_SET001"];
+    }
+    else     if ([priorityString isEqualToString:@"Medium"]) {
+        colorString = [CalenderHelper getTheHexaCodeForTheSettingId:@"IPAD006_SET002"];
+        
+        
+    }
+    else     if ([priorityString isEqualToString:@"Low"]) {
+        colorString = [CalenderHelper getTheHexaCodeForTheSettingId:@"IPAD006_SET003"];
+        
+    }
+    else
+    {
+        colorString = [CalenderHelper getTheHexaCodeForTheSettingId:@"IPAD006_SET004"];
+        
+    }
+    borderColor = [UIColor colorWithHexString:colorString];
+    
+    self.borderView.backgroundColor = borderColor;//[UIColor colorWithRed:67.0/255.0 green:67.0/255.0 blue:67.0/255.0 alpha:1.0];
+}
+
 
 @end

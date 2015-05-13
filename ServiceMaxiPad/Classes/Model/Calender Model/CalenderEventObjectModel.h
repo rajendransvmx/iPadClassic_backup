@@ -27,6 +27,7 @@
 @property(nonatomic, assign) BOOL sla;
 @property (nonatomic, assign) BOOL isWorkOrder;
 @property (nonatomic, assign) BOOL isCaseEvent;
+@property(nonatomic, copy) NSString *isAllDayEvent;
 
 
 @property(nonatomic, copy) NSString *eventObject;

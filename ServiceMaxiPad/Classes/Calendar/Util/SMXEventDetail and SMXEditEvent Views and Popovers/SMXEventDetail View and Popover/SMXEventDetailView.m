@@ -47,6 +47,7 @@
 #define LABEL_TITLE_COLOR [UIColor colorWithRed:121.0/255.0 green:121.0/255.0 blue:121.0/255.0 alpha:1]
 #define LABEL_VALUE_COLOR [UIColor colorWithRed:67.0/255.0 green:67.0/255.0 blue:67.0/255.0 alpha:1]
 #define SMXLableWidth 270
+#define stringLimitInProduct 70
 
 
 @interface SMXEventDetailView ()
@@ -914,7 +915,6 @@
 -(void)addProductsAtLocation
 {
     
-    
     productsAtThisLocationTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(problemDescriptionLabel.frame.origin.x
                                                                              , problemDescriptionLabel.frame.origin.y+problemDescriptionLabel.frame.size.height + 15, self.frame.size.width - 30, problemDescriptionTitleLabel.frame.size.height)];
     productsAtThisLocationTitleLabel.backgroundColor = [UIColor clearColor];
@@ -924,9 +924,15 @@
     
     [cBGScrollView addSubview:productsAtThisLocationTitleLabel];
     
+    NSArray *productLocation = [NSArray new];
     
+    if ([cWOModel.IPAtLocation count] > 0)
+    {
+         productLocation =   [self getTheModifiedProductLocationArray];
+    }
+
     NSString *lProductsAtLocation = @"";
-    for (NSString *lString in cWOModel.IPAtLocation) {
+    for (NSString *lString in productLocation) {
         lProductsAtLocation = [lProductsAtLocation stringByAppendingString:lString];
         lProductsAtLocation = [lProductsAtLocation stringByAppendingString:@"\n"];
     }
@@ -937,7 +943,7 @@
     
 //    NSString *lProductsAtLocation = @"UX9600 Laser Milling Machine\nRhino-Grip Can Opener and Food Processor\nT-850 Series 1 Terminator";
     
-    
+    /* we are giving fram for parts order*/
     productsAtThisLocationLabel = [[UILabel alloc] initWithFrame:CGRectMake(productsAtThisLocationTitleLabel.frame.origin.x
                                                                         , productsAtThisLocationTitleLabel.frame.origin.y+productsAtThisLocationTitleLabel.frame.size.height, self.frame.size.width - 30, productsAtThisLocationTitleLabel.frame.size.height)];
     productsAtThisLocationLabel.backgroundColor = [UIColor clearColor];
@@ -1071,5 +1077,49 @@
 
 -(void)dealloc{
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (NSArray *)getTheModifiedProductLocationArray
+{
+    NSArray *unsortedArray = cWOModel.IPAtLocation;
+    NSArray *sortedArray = [unsortedArray sortedArrayUsingSelector:@selector(compare:)];
+    NSMutableArray *comparedArray = [NSMutableArray new];
+    NSMutableArray *resultArray = [NSMutableArray new];
+    int count=0;
+    
+    for(NSString *mString in sortedArray)
+    {
+        //triming string with some length, so string should not go to other line
+        NSString *string=[self trimStringWithGivenLength:mString];
+        if(![comparedArray containsObject:string])
+        {
+            [comparedArray addObject:string];
+            [resultArray addObject:string];
+            count=0;
+        }else
+        {
+            count++;
+            if(count == 1)
+            {
+                [resultArray removeObject:string];
+                [resultArray addObject:[NSString stringWithFormat:@"%@ (%d)",string,count+1]];
+                
+            }else
+            {
+                [resultArray removeObject:[NSString stringWithFormat:@"%@ (%d)",string,count ]];
+                [resultArray addObject:[NSString stringWithFormat:@"%@ (%d)",string,count +1]];
+            } 
+        }
+    }
+        return resultArray;
+}
+
+/* just truncate with the ellipsis */
+-(NSString *)trimStringWithGivenLength:(NSString *)string{
+    if (string.length>stringLimitInProduct) {
+        string =[NSString stringWithFormat:@"%@... ",[string substringToIndex:stringLimitInProduct]];
+        return string;
+    }
+    return string;
 }
 @end

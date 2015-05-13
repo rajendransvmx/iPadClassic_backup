@@ -3,18 +3,12 @@
 ServiceMax Spring 15 iPad Release
 
 *******************************************
-Version = 15.29.108
+Version = 15.39.101
 ===========================================
 -------------
 Fixed Defects
 -------------
-012591 - Data Loss Warning Popup not happening
-013197 - After adding lines and tapping on save in view page added line is not displaying
-014695 - App is crashing on Data Sync after selecting Remove option in Conflict.
-015563 - iPad App after session expire or Remote access token and re login app is 
-         starting initial sync.
-015568 - Based on GBL025 Setting either Event or ServiceMax Event should be visible under   
-         New Items
+
 -------------
 Known Issues
 -------------
@@ -32,7 +26,7 @@ None
 ---------------------
 Additional Notes
 ---------------------
-None 
+Changes merged from Winter 15 SP to Spring 15 SP
 
 
 

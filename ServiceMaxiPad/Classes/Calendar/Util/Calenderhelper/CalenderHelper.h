@@ -43,4 +43,7 @@
 
 +(NSDate *)getStartEndDateTime:(NSString *)lTempDateTime;
 
++ (NSString *)getTheHexaCodeForTheSettingId:(NSString *)settingId;
+
+
 @end

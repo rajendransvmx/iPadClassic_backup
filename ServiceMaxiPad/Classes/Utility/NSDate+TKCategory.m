@@ -119,7 +119,7 @@
 }
 - (NSInteger) daysBetweenDate:(NSDate*)date {
     NSTimeInterval time = [self timeIntervalSinceDate:date];
-    return ((abs(time) / (60.0 * 60.0 * 24.0)) + 0.5);
+    return ((fabs(time) / (60.0 * 60.0 * 24.0)) + 0.5);
 }
 
 #pragma mark Same Day

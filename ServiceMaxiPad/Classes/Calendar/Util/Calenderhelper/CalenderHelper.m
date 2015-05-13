@@ -394,6 +394,8 @@
             {
                 eventModel.priority = NO;
             }
+            eventModel.priorityString = priorityStatus;
+
             
             if ([lAllWOWhatIDs containsObject:eventModel.whatId]) {
                 WorkOrderSummaryModel *model = [[SMXCalendarViewController sharedInstance].cWODetailsDict objectForKey:eventModel.whatId];
@@ -404,6 +406,7 @@
             else if ([lAllCaseWhatIDs containsObject:eventModel.whatId]) {
                 CaseObjectModel *tempModel = [[SMXCalendarViewController sharedInstance].cCaseDetailsDict objectForKey:eventModel.whatId];
                 tempModel.sla = [slaMetric boolValue];
+                tempModel.priorityString = priorityStatus;
                 if ([priorityStatus isEqualToString:@"High"]) {
                     tempModel.priority = YES;
                 }
@@ -677,7 +680,7 @@
         lRangeDayInt = 1;
     }
     
-    NSArray *fieldsArray = [[NSArray alloc] initWithObjects:kSVMXActivityDate,kSVMXActivityDateTime,kSVMXDurationInMinutes,kSVMXEndDateTime, kSVMXStartDateTime, kSVMXWhatId, kSVMXEventName, klocalId, kSVMXID, kSVMXEventDescription, kIsMultiDayEvent, kSplitDayEvents, kTimeZone, nil];
+    NSArray *fieldsArray = [[NSArray alloc] initWithObjects:kSVMXActivityDate,kSVMXActivityDateTime,kSVMXDurationInMinutes,kSVMXEndDateTime, kSVMXStartDateTime, kSVMXWhatId, kSVMXEventName, kSVMXIsAlldayEvent, klocalId, kSVMXID, kSVMXEventDescription, kIsMultiDayEvent, kSplitDayEvents, kTimeZone, nil];
     
     NSDate *lStartDate = [self dateWithOutTime:[[NSDate date] dateByAddingTimeInterval:-60*60*24*lRangeDayInt]];
     NSDate *lEndDate = [self dateWithOutTime:[[NSDate date] dateByAddingDays:lRangeDayInt+1]];
@@ -836,6 +839,7 @@
     NSString *startDateTime = [lFieldsArray objectAtIndex:2];
     NSString *endDateTime = [lFieldsArray objectAtIndex:3];
     NSString *durationDateTime = [lFieldsArray objectAtIndex:4];
+    NSString *allDayEvent = [lFieldsArray objectAtIndex:5];
 
 
     if (event != nil)
@@ -874,9 +878,7 @@
         
         [dict setObject:[NSNumber numberWithBool:event.isMultidayEvent] forKey:kIsMultiDayEvent]; // if splitArray = nil, that means the method has been called from somewhere else which doesnt update the DB.
 
-        if (![event.eventTableName isEqualToString:kSVMXTableName]) {
-            [dict setObject:@"false" forKey:kIsAlldayEvent];
-        }
+        [dict setObject:@"false" forKey:allDayEvent];
         
         
         if (splitArray) {
@@ -908,12 +910,12 @@
 +(NSArray *)getEventFieldsForEvent:(SMXEvent *)event
 {
     if ([event.eventTableName isEqualToString:kSVMXTableName]) {
-        return @[kSVMXActivityDate,kSVMXActivityDateTime, kSVMXStartDateTime, kSVMXEndDateTime, kSVMXDurationInMinutes, kIsMultiDayEvent, kSplitDayEvents, kLocalId];
+        return @[kSVMXActivityDate,kSVMXActivityDateTime, kSVMXStartDateTime, kSVMXEndDateTime, kSVMXDurationInMinutes, kSVMXIsAlldayEvent, kIsMultiDayEvent, kSplitDayEvents, kLocalId];
 
     }
     else
     {
-        return @[kActivityDate,kActivityDateTime, kStartDateTime, kEndDateTime, kDurationInMinutes, kIsMultiDayEvent, kSplitDayEvents, kLocalId, kIsAlldayEvent];
+        return @[kActivityDate,kActivityDateTime, kStartDateTime, kEndDateTime, kDurationInMinutes, kIsAlldayEvent, kIsMultiDayEvent, kSplitDayEvents, kLocalId];
 
     }
 }
@@ -1019,7 +1021,6 @@
     [lDF setLocale:[NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"]];
     
     [lDF setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
-    lDF.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
     lDF.calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     
     return [lDF dateFromString:lTempDateTime];
@@ -1240,6 +1241,15 @@
     MobileDeviceSettingsModel *mobDeviceSettings = [mobileDeviceSettingService fetchDataForSettingId:@"GLOB001_GBL025"];
     return  mobDeviceSettings.value;
 }
+
++ (NSString *)getTheHexaCodeForTheSettingId:(NSString *)settingId
+{
+    MobileDeviceSettingService *mobileDeviceSettingService = [[MobileDeviceSettingService alloc]init];
+    MobileDeviceSettingsModel *mobDeviceSettings = [mobileDeviceSettingService fetchDataForSettingId:settingId];
+    return  mobDeviceSettings.value;
+    
+}
+
 #pragma mark - end
 
 @end

@@ -11,6 +11,7 @@
 #import "NSData-AES.h"
 #import "OPDocViewController.h"
 #import "StyleManager.h"
+#import "TagManager.h"
 
 void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message);
 
@@ -143,7 +144,10 @@ void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message
         [self.titleBG.layer setShadowRadius:0.5f];
         [self.titleBG.layer setShadowOffset:CGSizeMake(0.0, 0.5)];
 
-        
+        self.titleLabel.text = [[TagManager sharedInstance] tagByName:kTagServiceReportCustomerSignature];
+        [self.doneButton setTitle:[[TagManager sharedInstance] tagByName:kTagSfmSignatureDoneButton] forState:UIControlStateNormal];
+        [self.cancelButton setTitle:[[TagManager sharedInstance] tagByName:kTagSfmSignatureCancelButton] forState:UIControlStateNormal];
+
 	}
     @catch (NSException *exp) {
         SXLogError(@"Watermark text creation failed!");

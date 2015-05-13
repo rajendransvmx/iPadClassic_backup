@@ -137,6 +137,7 @@
       {
           self.tableView.hidden = YES;
           [self.singleAddButton setTitle:@"Click here to add a single line" forState:UIControlStateNormal];
+          self.singleAddButton.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
 
       }
       else
@@ -700,7 +701,7 @@
     return [self.lookUpHelper getLookupSearchFiltersForId:self.lookUpObject.lookUpId forType:kSearchFilterCriteria];
 }
 
-- (NSString *)getValueForLiteral:(NSString *)literal
+- (SFMRecordFieldData *)getValueForLiteral:(NSString *)literal
 {    
     return [self.delegate getInternalValueForLiteral:literal];
 }

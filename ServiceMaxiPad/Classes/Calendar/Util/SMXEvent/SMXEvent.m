@@ -50,44 +50,9 @@
 @synthesize eventTableName;
 @synthesize eventType;
 @synthesize isAllDay;
+@synthesize priorityString;
 
-/*
--(instancetype)initWithCalendarModel:(CalenderEventObjectModel*)model;
-{
-    if (self = [super init]) {
-        
-        NSString *lActivityDate =   [NSString stringWithFormat:@"%@",model.activityDate];
-        NSString *lStartDateTime =   [NSString stringWithFormat:@"%@",model.startDateTime];
-        NSString *lEndDateTime = [NSString stringWithFormat:@"%@",model.endDateTime];
-        
-        self.localID = model.localId;
-        self.IDString = model.Id;
-        self.stringCustomerName = model.subject;
-        
-        self.description = model.description;
-        self.whatId = model.WhatId;
-        self.sla = model.sla;
-        self.priority = model.priority;
-        self.conflict = model.conflict;
-        self.duration = [model.durationInMinutes floatValue];
-        self.newData = NO;
-        self.dateTimeBegin = [self getStartEndDateTime:lStartDateTime];
-        self.ActivityDateDay = [self getActivityDate:lActivityDate];
-        self.dateTimeBegin_multi = [self getStartEndDateTime:lStartDateTime];
-        self.dateTimeEnd_multi= [self getStartEndDateTime:lEndDateTime];
-        self.dateTimeEnd = [self getStartEndDateTime:lEndDateTime];
-//        self.cWorkOrderSummaryModel = model.cWorkOrderSummaryModel;
-        self.isWorkOrder = model.isWorkOrder;
-        self.isCaseEvent = model.isCaseEvent;
-        
-        self.eventTableName = model.eventObject;
-        self.eventType = model.eventType;
-    }
-    return self;
-    
-}
-*/
-
+/* This method responsible for creating event model from DB */
 -(SMXEvent *) initWithEventTransactionObjectModel:(EventTransactionObjectModel *)model
 {
     if (self = [super init]) {
@@ -102,7 +67,8 @@
         NSString *key_Title;
         NSString *key_Description;
         NSString *key_Duration;
-        
+        NSString *key_IsAllDay;
+
         if ([model.objectAPIName isEqualToString:kSVMXTableName])
         {
             key_LocalID = kSVMXlocalId;
@@ -115,6 +81,7 @@
             key_Title = kSVMXEventName;
             key_Description = kSVMXEventDescription;
             key_Duration = kSVMXDurationInMinutes;
+            key_IsAllDay = kSVMXIsAlldayEvent;
         }
         else
         {
@@ -128,16 +95,12 @@
             key_Title = kSubject;
             key_Description = kEventDescription;
             key_Duration = kDurationInMinutes;
+            key_IsAllDay = kIsAlldayEvent;
+
         }
         
         NSDictionary *dict = [model getFieldValueDictionary];
-        
-//        NSDate *ActivityDate =   [DateUtil getLocalTimeFromDateBaseDate:[dict objectForKey:key_ActivityDate]];
-
-//        NSDate *startDate = [DateUtil getLocalTimeFromDateBaseDate:[dict objectForKey:key_StartDateTime]];
-//        NSDate *endDate = [DateUtil getLocalTimeFromDateBaseDate:[dict objectForKey:key_EndDateTime]];
-//
-        BOOL isAllday = [[dict objectForKey:kIsAlldayEvent] boolValue];
+        BOOL isAllday = [[dict objectForKey:key_IsAllDay] boolValue];
         
         NSDate *startDate;
         NSDate *endDate;
@@ -182,6 +145,7 @@
 }
 
 // CALLED FROM MULTIDAY
+/* This method responsible for creating multiday event model from DB */
 -(SMXEvent *) initWithEventWithKeyValue:(NSMutableDictionary *)dict EventTransactionObjectModel:(EventTransactionObjectModel *)model
 {
     if (self = [super init]) {
@@ -196,6 +160,8 @@
         NSString *key_Title;
         NSString *key_Description;
         NSString *key_Duration;
+        NSString *key_IsAllDay;
+
         
         if ([model.objectAPIName isEqualToString:kSVMXTableName])
         {
@@ -209,6 +175,7 @@
             key_Title = kSVMXEventName;
             key_Description = kSVMXEventDescription;
             key_Duration = kSVMXDurationInMinutes;
+            key_IsAllDay = kSVMXIsAlldayEvent;
         }
         else
         {
@@ -222,8 +189,12 @@
             key_Title = kSubject;
             key_Description = kEventDescription;
             key_Duration = kDurationInMinutes;
+            key_IsAllDay = kIsAlldayEvent;
+
         }
-        BOOL isAllday = [[dict objectForKey:kIsAlldayEvent] boolValue];
+        BOOL isAllday = [[dict objectForKey:key_IsAllDay] boolValue];
+
+        
         NSDate *startDate;
         NSDate *endDate;
         if (isAllday) {
@@ -264,6 +235,7 @@
     return self;
 }
 
+/* multiday event part, making multiday event into each day event */
 -(SMXEvent *)initWithCalendarModel_self:(SMXEvent*)model
 {
     self.localID = model.localID;
@@ -275,20 +247,16 @@
     self.priority = model.priority;
     self.conflict = model.conflict;
     self.newData = NO;
-    self.dateTimeBegin = model.dateTimeBegin; //[self getStartEndDateTime:lStartDateTime];
+    self.dateTimeBegin = model.dateTimeBegin;
     self.dateTimeBegin_multi=model.dateTimeBegin;
     self.dateTimeEnd_multi=model.dateTimeEnd;
-    self.ActivityDateDay =model.ActivityDateDay;// [self getActivityDate:lActivityDate];
-    self.dateTimeEnd = model.dateTimeEnd;//[self getStartEndDateTime:lEndDateTime];
-    //        self.cWorkOrderSummaryModel = model.cWorkOrderSummaryModel;
+    self.ActivityDateDay =model.ActivityDateDay;
+    self.dateTimeEnd = model.dateTimeEnd;
     self.duration = model.duration;
-    
     self.isWorkOrder = model.isWorkOrder;
     self.isCaseEvent = model.isCaseEvent;
-    
     self.eventTableName = model.eventTableName;
     self.eventType = model.eventType;
-    
     self.isMultidayEvent = NO;
     self.eventIndex=model.eventIndex;
     self.isAllDay=model.isAllDay;
@@ -298,34 +266,10 @@
 
 -(NSDate *)getActivityDate:(NSDate *)date
 {
-
-    
     NSDateComponents *comp = [NSDate componentsOfDate:date];
     NSDate *newDate = [NSDate dateWithYear:comp.year month:comp.month day:comp.day];
-
     return newDate;
-
 }
-
-/*
--(NSDate *)getStartEndDateTime:(NSString *)lTempDateTime
-{
-    lTempDateTime = [lTempDateTime stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-    lTempDateTime = [lTempDateTime stringByReplacingOccurrencesOfString:@".000Z" withString:@""];
-    lTempDateTime = [CalenderHelper localTimeFromGMT:lTempDateTime];
-    lTempDateTime = [lTempDateTime stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-    lTempDateTime = [lTempDateTime stringByReplacingOccurrencesOfString:@"Z" withString:@""];
-    
-    NSDateFormatter * lDF = [[NSDateFormatter alloc] init];
-    [lDF setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
-    lDF.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
-    lDF.calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    
-    return [lDF dateFromString:lTempDateTime];
-}
-*/
-
-
 
 -(NSArray *)getDateForAllDayEventOnDate:(NSString *)startDate endDate:(NSString *)endDate{
     NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
@@ -341,9 +285,6 @@
     comp.minute = 59;
     
     NSDate *theEndDate = [cal dateFromComponents:comp];
-
-    
-
     return @[theStartDate, theEndDate];
 }
 
@@ -366,15 +307,12 @@
 
 
 
-- (id)copyWithZone:(NSZone *)zone
-{
+- (id)copyWithZone:(NSZone *)zone{
     id copy = [[[self class] alloc] init];
-    
     if (copy)
     {
         
     }
-    
     return copy;
 }
 

@@ -47,11 +47,12 @@ static NSInteger const kDeleteButton = 321;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.webView.backgroundColor = [UIColor navBarBG];
-    self.view.backgroundColor = [UIColor navBarBG];
+    
     [self populateNavigationBar];
     [self loadwebview];
+    self.webView.scrollView.contentInset = UIEdgeInsetsMake(0.0,0.0,0.0,0.0);
     [self registerForPopOverDismissNotification];
+    
 }
 
 -(void)loadwebview
@@ -230,6 +231,7 @@ static NSInteger const kDeleteButton = 321;
                     modifiedModel.parentLocalId = _parentId;
                     modifiedModel.timeStamp = [DateUtil getDatabaseStringForDate:[NSDate date]];
                     [AttachmentHelper saveDeleteAttachmentsToModifiedRecords:[NSMutableArray arrayWithObject:modifiedModel]];
+                    [AttachmentHelper addModifiedRecordLocalId:_attachmentTXModel.localId];
                 }
                 else
                 {

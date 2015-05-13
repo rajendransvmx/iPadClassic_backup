@@ -12,5 +12,6 @@
 @property(nonatomic, assign) BOOL sla;
 @property(nonatomic, assign) BOOL priority;
 @property(nonatomic, assign) BOOL conflict;
+@property (nonatomic, copy) NSString *priorityString;
 
 @end

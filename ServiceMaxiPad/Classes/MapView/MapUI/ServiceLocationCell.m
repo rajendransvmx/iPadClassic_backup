@@ -11,6 +11,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import "ServiceLocationModel.h"
 #import <AddressBook/ABPerson.h>
+#import "StringUtil.h"
 
 @implementation ServiceLocationCell
 
@@ -36,11 +37,11 @@
     if (mapItemClass && [mapItemClass respondsToSelector:@selector(openMapsWithItems:launchOptions:)])
     {
         NSDictionary *addressDict = @{
-                                      (NSString *) kABPersonAddressStreetKey : [self.serviceLocationModel.street length] ? self.serviceLocationModel.street : @"",
-                                      (NSString *) kABPersonAddressCityKey : [self.serviceLocationModel.city length] ? self.serviceLocationModel.city : @"",
-                                      (NSString *) kABPersonAddressStateKey : [self.serviceLocationModel.state length] ? self.serviceLocationModel.state : @"",
-                                      (NSString *) kABPersonAddressZIPKey : [self.serviceLocationModel.zip length] ? self.serviceLocationModel.zip : @"",
-                                      (NSString *) kABPersonAddressCountryKey : [self.serviceLocationModel.country length] ? self.serviceLocationModel.country : @"",
+                                      (NSString *) kABPersonAddressStreetKey : ![StringUtil isStringEmpty:self.serviceLocationModel.street] ? self.serviceLocationModel.street : @"",
+                                      (NSString *) kABPersonAddressCityKey : ![StringUtil isStringEmpty:self.serviceLocationModel.city] ? self.serviceLocationModel.city : @"",
+                                      (NSString *) kABPersonAddressStateKey : ![StringUtil isStringEmpty:self.serviceLocationModel.state] ? self.serviceLocationModel.state : @"",
+                                      (NSString *) kABPersonAddressZIPKey : ![StringUtil isStringEmpty:self.serviceLocationModel.zip] ? self.serviceLocationModel.zip : @"",
+                                      (NSString *) kABPersonAddressCountryKey : ![StringUtil isStringEmpty:self.serviceLocationModel.country] ? self.serviceLocationModel.country : @"",
                                       };
         MKPlacemark *placemark = [[MKPlacemark alloc] initWithCoordinate:self.serviceLocationModel.latLonCoordinates
                                                        addressDictionary:addressDict];

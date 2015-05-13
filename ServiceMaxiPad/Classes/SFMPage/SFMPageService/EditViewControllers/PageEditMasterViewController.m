@@ -548,14 +548,14 @@
     
     //If you want to select first show all then uncomment this
     
-    //SFMPageMasterSectionView *pageHeaderSectionView = (SFMPageMasterSectionView *)[self.masterTableView headerViewForSection:0];
-    //[self tappedOnButton:pageHeaderSectionView.rightButton withIndex:0];
+    SFMPageMasterSectionView *pageHeaderSectionView = (SFMPageMasterSectionView *)[self.masterTableView headerViewForSection:0];
+    [self tappedOnButton:pageHeaderSectionView.rightButton withIndex:0];
   
     [self.masterTableView reloadData];
     
     //Select first row of first section by default.
-    [self.masterTableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:YES scrollPosition:0];
-    [self.masterTableView.delegate tableView:self.masterTableView didSelectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+//    [self.masterTableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:YES scrollPosition:0];
+//    [self.masterTableView.delegate tableView:self.masterTableView didSelectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     
 }
 

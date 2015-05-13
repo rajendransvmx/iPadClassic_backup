@@ -13,6 +13,7 @@
 #import "DBCriteria.h"
 #import "SFProcessDAO.h"
 #import "FactoryDAO.h"
+#import "StringUtil.h"
 
 @implementation SfmPageDataParser
 @synthesize referenceObjects;

@@ -42,6 +42,7 @@
         textView.text = @"";
         textView.font = [UIFont fontWithName:kHelveticaNeueRegular size:kFontSize18];
         textView.textColor = [UIColor darkGrayColor];
+        textView.textColor = [UIColor colorWithHexString:kTextFieldFontColor];
         textView.layer.borderColor = [[UIColor colorWithHexString:kSeperatorLineColor] CGColor];
         textView.layer.cornerRadius = 4;
         textView.layer.borderWidth = 1;

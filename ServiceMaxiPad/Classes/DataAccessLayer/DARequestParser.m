@@ -364,7 +364,21 @@
                 if (fieldValue == nil) {
                     fieldValue = @"";
                 }
-                [mainObjectDictionary setObject:fieldValue forKey:fieldName];
+                
+                //fix for 13740
+                if ([fieldName isEqualToString:@"Id"] && fieldValue.length < 5) {
+                    
+                    NSString *fieldValueLocalId =  [recordDictionary objectForKey:@"localId"];
+                    if (fieldValueLocalId == nil) {
+                        fieldValueLocalId = @"";
+                    }
+                    [mainObjectDictionary setObject:fieldValueLocalId forKey:fieldName];
+                }
+                else{
+                    [mainObjectDictionary setObject:fieldValue forKey:fieldName];
+                }
+                 
+                
                  firstRecordValue = fieldValue;
                 if (![fieldTypeName isEqualToString:@"reference"]) {
                    

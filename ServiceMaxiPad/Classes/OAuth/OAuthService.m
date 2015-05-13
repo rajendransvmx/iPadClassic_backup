@@ -100,19 +100,31 @@ static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Secon
         serviceURI = kRevokeTokenURL;
         NSString *post      = [NSString stringWithFormat:@"token=%@", [[CustomerOrgInfo sharedInstance] refreshToken]];
         postData = [post dataUsingEncoding:NSUTF8StringEncoding];
+        SXLogWarning(@" ServiceName :  %@ , uri : %@", serviceName, post);
     }
     else if ([kOAuthServiceAuthorization isEqualToString:serviceName])
     {
         NSString *post = [NSString stringWithFormat:@"oauth_token=%@",[[CustomerOrgInfo sharedInstance] accessToken]];
         postData = [post dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES];
         orgURL   = [[CustomerOrgInfo sharedInstance] identityURL];
+        SXLogWarning(@" ServiceName :  %@ , uri : %@", serviceName, post);
     }
     else
     {
         // Refresh Access Token
         serviceURI = kRefreshTokenURL;
-        NSString *post   = [NSString stringWithFormat:kRefreshTokenParamURLString, kClientID, kClientSecret, [[CustomerOrgInfo sharedInstance] refreshToken]];
+        NSString *refreshToken = [[CustomerOrgInfo sharedInstance] refreshToken];
+        
+        if (([StringUtil isStringEmpty:refreshToken]) || (refreshToken.length < 10))
+        {
+            SXLogWarning(@"Refresh token - invalid : %@", refreshToken);
+            refreshToken = @"";
+        }
+        
+        NSString *post   = [NSString stringWithFormat:kRefreshTokenParamURLString, kClientID, kClientSecret, refreshToken];
+    
          postData = [post dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES];
+         SXLogWarning(@" ServiceName :  %@ , uri : %@", serviceName, post);
     }
 
     if (orgURL == nil)
@@ -147,8 +159,8 @@ static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Secon
         [request setValue:tokenWithPrefix forHTTPHeaderField:@"Authorization"];
     }
         
-    /*[[self class] explainRequest:request
-                 andResponseData:@"Just making request. No response yet recieved"];*/
+    [[self class] explainRequest:request
+                 andResponseData:@"Request made. Waiting for response"];
     
     return request;
 }
@@ -178,15 +190,23 @@ static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Secon
     
     int diffTime  = (unsigned int)  (timeNow - savedTokenBornTime);
     
+    SXLogInfo(@"Access token validity - %lld - %lld = %d", savedTokenBornTime, timeNow, diffTime);
+    
     //if ((abs((NSInteger) timeNow - savedTokenBornTime) >  kOAuthAccessTokenRefreshDurationInSec)
     if ((abs(diffTime) >  kOAuthAccessTokenRefreshDurationInSec)
         || (savedTokenBornTime == 0))
     {
+        SXLogInfo(@"Requesting for new access token");
         hasTokenValid = [self refreshAccessToken];
+        
+        if (hasTokenValid) {SXLogInfo(@"New  Access token recieved");}
+        else {SXLogInfo(@"Access token failed");}
     }
     else
     {
         hasTokenValid = YES;
+        
+        SXLogInfo(@"Has valid token");
     }
 
     return hasTokenValid;
@@ -222,6 +242,10 @@ static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Secon
         if ( (error != nil) && [StringUtil containsString:@"NSURLErrorDomain" inString:error.domain])
         {
             [PlistManager storeOAuthErrorMessage:error];
+            
+            NSString *responseString = [[NSString alloc] initWithData:urlData encoding:NSUTF8StringEncoding];
+            
+            SXLogInfo(@"Refresh Access Token failed response : %@", responseString);
         }
         else
         {
@@ -229,7 +253,7 @@ static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Secon
             NSDictionary *responseDictionary = [Utility objectFromJsonString:responseString];
             responseString = nil;
             
-            SXLogInfo(@"Access Tokens response : %@", responseDictionary);
+            SXLogInfo(@"Refresh Access Token response : %@", responseDictionary);
             
             //Alert user incase of inability to get new access tokens via refresh token.
             if ([[responseDictionary valueForKey:@"error"] isEqualToString:@"invalid_grant"] )
@@ -268,7 +292,7 @@ static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Secon
                 error = nil;
             }
             
-            SXLogInfo(@"Refresh Token reponse : %@ ", [responseDictionary description]);
+            //SXLogInfo(@"Refresh Token response : %@ ", [responseDictionary description]);
             
             if (   (responseDictionary != nil)
                 && ([responseDictionary valueForKey:kOAuthAccessToken] != nil))

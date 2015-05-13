@@ -14,4 +14,16 @@
 {
     return @"DODRecords";
 }
+
+-(BOOL)deleteRecordWithSfId:(NSString *)sfId
+{
+    DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:@"parentLocalId"
+                                                      operatorType:SQLOperatorEqual
+                                                     andFieldValue:sfId];
+    
+    BOOL status = [self deleteRecordsFromObject:[self tableName]
+                                  whereCriteria:[NSArray arrayWithObject:criteriaOne]
+                           andAdvanceExpression:nil];
+    return status;
+}
 @end

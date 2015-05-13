@@ -27,6 +27,7 @@
 @property (nonatomic, strong)MBProgressHUD *HUD;
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;
 @property (weak, nonatomic) IBOutlet UILabel *lastSyncLabel;
+@property (weak, nonatomic) IBOutlet UIButton *pushLog;
 
 @end
 
@@ -48,6 +49,7 @@
     //self.smSplitViewController.navigationItem.titleView = [UILabel navBarTitleLabel:[[TagManager sharedInstance]tagByName:kTagPushLogs]];
     [self.smPopover dismissPopoverAnimated:YES];
     [self updateLastPushLogTimeAndStatusUI];
+    self.pushLog.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
 }
 
 - (void)didReceiveMemoryWarning

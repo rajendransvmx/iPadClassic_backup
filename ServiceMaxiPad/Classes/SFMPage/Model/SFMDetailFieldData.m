@@ -38,18 +38,31 @@
 {
     NSMutableArray * criteriaObjects = [[NSMutableArray alloc] initWithCapacity:0];
     
-    if ([self.parentColumnName length] > 0 && [self.parentSfID length] > 0) {
-        //NSString *fieldName = [NSString stringWithFormat:@"'%@'.%@", self.objectName, self.parentColumnName];
-         NSString *fieldName = [NSString stringWithFormat:@"%@", self.parentColumnName];
-        DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:fieldName operatorType:SQLOperatorEqual andFieldValue:self.parentSfID];
-        [criteriaObjects addObject:criteria];
+    if (self.isSourceToTargetProcess) {
+        
+        if ([self.parentLocalId length] > 0) {
+            DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:kLocalId
+                                                             operatorType:SQLOperatorEqual
+                                                            andFieldValue:self.parentLocalId];
+            [criteriaObjects addObject:criteria];
+        }
+        
     }
-    if ([self.parentColumnName length] > 0 && [self.parentLocalId length] > 0) {
-        //NSString *fieldName = [NSString stringWithFormat:@"'%@'.%@", self.objectName, self.parentColumnName];
-         NSString *fieldName = [NSString stringWithFormat:@"%@", self.parentColumnName];
-        DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:fieldName operatorType:SQLOperatorEqual andFieldValue:self.parentLocalId];
-        [criteriaObjects addObject:criteria];
+    else {
+        if ([self.parentColumnName length] > 0 && [self.parentSfID length] > 0) {
+            //NSString *fieldName = [NSString stringWithFormat:@"'%@'.%@", self.objectName, self.parentColumnName];
+            NSString *fieldName = [NSString stringWithFormat:@"%@", self.parentColumnName];
+            DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:fieldName operatorType:SQLOperatorEqual andFieldValue:self.parentSfID];
+            [criteriaObjects addObject:criteria];
+        }
+        if ([self.parentColumnName length] > 0 && [self.parentLocalId length] > 0) {
+            //NSString *fieldName = [NSString stringWithFormat:@"'%@'.%@", self.objectName, self.parentColumnName];
+            NSString *fieldName = [NSString stringWithFormat:@"%@", self.parentColumnName];
+            DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:fieldName operatorType:SQLOperatorEqual andFieldValue:self.parentLocalId];
+            [criteriaObjects addObject:criteria];
+        }
     }
+    
     
     if ([self.criteriaObjects count] > 0 && [StringUtil isStringEmpty:self.expression]) {
         [self addDefaultAdvanceExpression];

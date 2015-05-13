@@ -47,5 +47,6 @@
 - (void)addOrCriterias:(NSArray *)subCriteriaArray withExpression:(NSString *)expression;
 - (NSArray *)getSubCriterias;
 - (NSString *)getAdavncedExpression;
+- (id )getInnerQueryRequest;
 
 @end

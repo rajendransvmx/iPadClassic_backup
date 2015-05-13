@@ -52,6 +52,9 @@
             attachModel.nameWithoutExtension = [attachModel.name substringToIndex:range.location];
             NSString *downloadedFileName = [AttachmentUtility fileNameForAttachment:attachModel];
             attachModel.isDownloaded = [downloadedAttachments containsObject:downloadedFileName];
+            if ([StringUtil isStringEmpty:attachModel.lastModifiedDate]) {
+                attachModel.lastModifiedDate = attachModel.createdDate;
+            }
             attachModel.displayDateString = [DateUtil getDateStringForDBDateTime:attachModel.lastModifiedDate inFormat:kDateAttachment];
             
             NSString *videoExtension, *imageExtension;
@@ -113,6 +116,9 @@
             attachModel.nameWithoutExtension = [attachModel.name substringToIndex:range.location];
             NSString *downloadedFileName = [NSString stringWithFormat:@"%@%@",attachModel.localId,attachModel.extensionName];
             attachModel.isDownloaded = [downloadedAttachments containsObject:downloadedFileName];
+            if ([StringUtil isStringEmpty:attachModel.lastModifiedDate]) {
+                attachModel.lastModifiedDate = attachModel.createdDate;
+            }
             attachModel.displayDateString = [DateUtil getDateStringForDBDateTime:attachModel.lastModifiedDate inFormat:kDateImagesAndVideosAttachment];
             
             NSString *videoExtension, *imageExtension;
@@ -165,8 +171,9 @@
     
 }
 
-+(BOOL)revertDeleteAttachmentsFromModifiedRecordsForParentId:(NSString*)parentId {
-    
++(BOOL)revertDeleteAttachmentsFromModifiedRecordsForParentId:(NSString*)parentId
+                                                 andLocalIds:(NSArray*)localIdsArray
+{
     id <ModifiedRecordsDAO> modifiedRecordsService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
     DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:kobjectName
                                                       operatorType:SQLOperatorEqual
@@ -174,11 +181,31 @@
     DBCriteria *criteriaTwo = [[DBCriteria alloc]initWithFieldName:@"parentLocalId"
                                                       operatorType:SQLOperatorEqual
                                                      andFieldValue:parentId];
+    DBCriteria *criteriaThree = [[DBCriteria alloc]initWithFieldName:kSyncRecordLocalId
+                                                      operatorType:SQLOperatorIn
+                                                     andFieldValues:localIdsArray];
     BOOL status = [modifiedRecordsService deleteRecordsFromObject:kModifiedRecords
-                                  whereCriteria:@[criteriaOne, criteriaTwo]
+                                  whereCriteria:@[criteriaOne, criteriaTwo, criteriaThree]
                            andAdvanceExpression:nil];
     return status;
-    
+}
+
++(NSArray*)modifiedRecordLocalIds
+{
+    return [[AttachmentsUploadManager sharedManager] localIdsModifiedArray];
+}
+
++(void)addModifiedRecordLocalId:(NSString*)localId
+{
+    if (![StringUtil isStringEmpty:localId])
+    {
+        [[[AttachmentsUploadManager sharedManager] localIdsModifiedArray] addObject:localId];
+    }
+}
+
++(void)removeModifiedRecordLocalIds
+{
+    [[[AttachmentsUploadManager sharedManager] localIdsModifiedArray] removeAllObjects];
 }
 
 +(NSArray*)getLocalIdsOfDeleteAttachmentsFromModifiedRecordsForParentId:(NSString*)parentId {
@@ -190,7 +217,7 @@
     DBCriteria *criteriaTwo = [[DBCriteria alloc]initWithFieldName:@"parentLocalId"
                                                       operatorType:SQLOperatorEqual
                                                      andFieldValue:parentId];
-    NSArray *tempArray = [modifiedRecordsService fetchDataForFields:@[@"recordLocalId"] criterias:@[criteriaOne, criteriaTwo] objectName:kModifiedRecords andModelClass:[ModifiedRecordModel class]];
+    NSArray *tempArray = [modifiedRecordsService fetchDataForFields:@[kSyncRecordLocalId] criterias:@[criteriaOne, criteriaTwo] objectName:kModifiedRecords andModelClass:[ModifiedRecordModel class]];
     NSMutableArray *localIdsArray = [[NSMutableArray alloc] initWithCapacity:0];
     for (ModifiedRecordModel *model in tempArray)
     {
@@ -203,47 +230,45 @@
 
 +(NSArray*)getImagesAndVideosForUpload {
     
-    DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorIsNull andFieldValue:nil];
-    
-    id <AttachmentDAO> attachmentService = [FactoryDAO serviceByServiceType:ServiceTypeAttachment];
-    NSArray *attachmentArray = [attachmentService fetchRecordsByFields:nil andCriteria:criteria withDistinctFlag:NO];
-    return attachmentArray;
-}
-
-+(BOOL)revertImagesAndVideosForUpload
-{
-    NSArray *imageAndVideosForUpload = [self getImagesAndVideosForUpload];
-    if (![imageAndVideosForUpload count]) {
-        return NO;
-    }
-    NSMutableArray *localIdArray = [[NSMutableArray alloc] initWithCapacity:0];
-    for (AttachmentTXModel *deleteModel in imageAndVideosForUpload)
-    {
-        if (![[AttachmentsUploadManager sharedManager] hasAttachmentInQueue:deleteModel.localId])
-        {
-            deleteModel.extensionName = [NSString stringWithFormat:@".%@",[deleteModel.name pathExtension]];
-            BOOL isSuccess = [AttachmentUtility deleteAttachment:deleteModel];
-            if (isSuccess) {
-                [localIdArray addObject:deleteModel.localId];
-            }
-        }
-    }
-    return [self deleteAttachmentsWithLocalIds:localIdArray];
-}
-
-+(NSArray*)getImagesAndVideosForUploadForParentId:(NSString*)parentId {
-    
     DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorIsNull andFieldValue:nil];
-    DBCriteria *criteriaTwo = [[DBCriteria alloc] initWithFieldName:kAttachmentTXParentId operatorType:SQLOperatorEqual andFieldValue:parentId];
+    DBCriteria *criteriaTwo = [[DBCriteria alloc] initWithFieldName:kAttachmentTXLastModifiedDate operatorType:SQLOperatorIsNotNull andFieldValue:nil];
     
     id <AttachmentDAO> attachmentService = [FactoryDAO serviceByServiceType:ServiceTypeAttachment];
     NSArray *attachmentArray = [attachmentService fetchRecordsByFields:nil andCriterias:@[criteriaOne, criteriaTwo] withDistinctFlag:NO];
     return attachmentArray;
 }
 
++(NSArray*)getImagesAndVideosForUploadForParentId:(NSString*)parentId {
+    
+    DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorIsNull andFieldValue:nil];
+    DBCriteria *criteriaTwo = [[DBCriteria alloc] initWithFieldName:kAttachmentTXParentId operatorType:SQLOperatorEqual andFieldValue:parentId];
+    DBCriteria *criteriaThree = [[DBCriteria alloc] initWithFieldName:kAttachmentTXLastModifiedDate operatorType:SQLOperatorIsNotNull andFieldValue:nil];
+    
+    id <AttachmentDAO> attachmentService = [FactoryDAO serviceByServiceType:ServiceTypeAttachment];
+    NSArray *attachmentArray = [attachmentService fetchRecordsByFields:nil andCriterias:@[criteriaOne, criteriaTwo, criteriaThree] withDistinctFlag:NO];
+    return attachmentArray;
+}
+
++(NSArray*)getRecentlyAddedImagesAndVideosForParentId:(NSString*)parentId {
+    
+    DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorIsNull andFieldValue:nil];
+    DBCriteria *criteriaTwo = [[DBCriteria alloc] initWithFieldName:kAttachmentTXParentId operatorType:SQLOperatorEqual andFieldValue:parentId];
+    DBCriteria *criteriaThree = [[DBCriteria alloc] initWithFieldName:kAttachmentTXLastModifiedDate operatorType:SQLOperatorIsNull andFieldValue:nil];
+    
+    id <AttachmentDAO> attachmentService = [FactoryDAO serviceByServiceType:ServiceTypeAttachment];
+    NSArray *attachmentArray = [attachmentService fetchRecordsByFields:nil andCriterias:@[criteriaOne, criteriaTwo, criteriaThree] withDistinctFlag:NO];
+    return attachmentArray;
+}
+
 +(BOOL)revertImagesAndVideosForUploadForParentId:(NSString*)parentId {
     
-    NSArray *imageAndVideosForUpload = [self getImagesAndVideosForUploadForParentId:parentId];
+    DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorIsNull andFieldValue:nil];
+    DBCriteria *criteriaTwo = [[DBCriteria alloc] initWithFieldName:kAttachmentTXParentId operatorType:SQLOperatorEqual andFieldValue:parentId];
+    DBCriteria *criteriaThree = [[DBCriteria alloc] initWithFieldName:kAttachmentTXLastModifiedDate operatorType:SQLOperatorIsNull andFieldValue:nil];
+    
+    id <AttachmentDAO> attachmentService = [FactoryDAO serviceByServiceType:ServiceTypeAttachment];
+    NSArray *imageAndVideosForUpload = [attachmentService fetchRecordsByFields:nil andCriterias:@[criteriaOne, criteriaTwo, criteriaThree] withDistinctFlag:NO];
+
     if (![imageAndVideosForUpload count]) {
         return NO;
     }
@@ -361,6 +386,27 @@
     BOOL status = [transactionService updateEachRecord:[self getDataDict:attachmentModel]
                                             withFields:@[kAttachmentTXParentId]
                                           withCriteria:[NSArray arrayWithObject:criteria]
+                                         withTableName:kAttachmentTableName];
+    return status;
+    
+}
+
++(BOOL)updateLastModifiedDateOfAttachmentForParentId:(NSString*)parentId {
+    
+    if ([StringUtil isStringEmpty:parentId])
+        return NO;
+    
+    DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kAttachmentTXParentId operatorType:SQLOperatorEqual andFieldValue:parentId];
+    DBCriteria *criteriaTwo = [[DBCriteria alloc] initWithFieldName:kAttachmentTXLastModifiedDate operatorType:SQLOperatorIsNull andFieldValue:nil];
+    
+    id <TransactionObjectDAO> transactionService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+    
+    AttachmentTXModel *attachmentModel = [[AttachmentTXModel alloc] init];
+    attachmentModel.lastModifiedDate = [DateUtil getDatabaseStringForDate:[NSDate date]];
+    
+    BOOL status = [transactionService updateEachRecord:[self getDataDict:attachmentModel]
+                                            withFields:@[kAttachmentTXLastModifiedDate]
+                                          withCriteria:@[criteriaOne, criteriaTwo]
                                          withTableName:kAttachmentTableName];
     return status;
     

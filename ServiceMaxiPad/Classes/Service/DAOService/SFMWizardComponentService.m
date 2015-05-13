@@ -29,8 +29,11 @@
                                  andExpression:(NSString *)expression
 {
     DBRequestSelect * requestSelect = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:fieldNames whereCriterias:criteria andAdvanceExpression:expression];
+    
+    DBField *sortField = [[DBField alloc] initWithFieldName:@"sequence" tableName:[self tableName] andOrderType:SQLOrderByTypesAscending];
    
     [requestSelect setDistinctRowsOnly];
+    [requestSelect addOrderByFields:@[sortField]];
     
     NSMutableArray * records = [[NSMutableArray alloc] initWithCapacity:0];
     @autoreleasepool {

@@ -170,6 +170,8 @@
 
 - (void)setFrameForButtonsCancelButton:(NSString *)cancelButtonTitle otherButton:(NSString *)otherButtonTitle
 {
+    self.cancelButton.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+    self.otherButton.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     if (   (cancelButtonTitle != nil)
         && (otherButtonTitle != nil) )
     {

@@ -59,7 +59,8 @@
     self.searchBar.layer.borderColor = [UIColor colorWithHexString:kSeperatorLineColor].CGColor;
     self.troubleshootTableView.tableFooterView = [[UIView alloc] init] ;
     self.detailViewController = [self.smSplitViewController.viewControllers lastObject];
-
+    self.searchBar.placeholder = [[TagManager sharedInstance]tagByName:kTag_search];
+   
 }
 
 #pragma mark - TableView delegate methods

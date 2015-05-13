@@ -988,6 +988,7 @@
 - (void) enableIncludeOnlineButton:(BOOL)enable {
     
     UIButton *includeOnlineBtn = (UIButton *)[self.view viewWithTag:kIncludeOnlineItemsButtonTag];
+    includeOnlineBtn.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     
     includeOnlineBtn.userInteractionEnabled = enable;
     if (enable) {

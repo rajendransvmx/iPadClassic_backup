@@ -53,7 +53,7 @@
 
 - (void)addViewControllersToView
 {
-    self.navigationItem.titleView = [UILabel navBarTitleLabel:@"Product Manual"];
+    self.navigationItem.titleView = [UILabel navBarTitleLabel:[[TagManager sharedInstance] tagByName:kTagProductManualTitle]];
     self.navigationController.navigationBar.barTintColor = [UIColor navBarBG]; //Only for iOS7.0 and more than 7.0
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     self.navigationController.navigationBar.translucent = NO;
@@ -106,7 +106,7 @@
             else
             {
 
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:@"Product manual not present" delegate:self cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:[[TagManager sharedInstance] tagByName:kTagProductManualNotPresent] delegate:self cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
                 [alertView show];
             }
             [self removeActivityAndLoadingLabel];
@@ -115,7 +115,7 @@
     else
     {
 
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:@"Product manual not present" delegate:self cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:[[TagManager sharedInstance] tagByName:kTagProductManualNotPresent] delegate:self cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
         [alertView show];
         
         [self removeActivityAndLoadingLabel];
@@ -168,7 +168,7 @@
                         [self loadTableViewAndWebView];
                     }
                     else{
-                        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:@"Product manual not present" delegate:self cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
+                        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:[[TagManager sharedInstance] tagByName:kTagProductManualNotPresent] delegate:self cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
                         [alertView show];
                         
                     }

@@ -97,4 +97,8 @@
     return self.advancedExpression;
 }
 
+- (id )getInnerQueryRequest {
+    return self.innerQueryRequest;
+}
+
 @end

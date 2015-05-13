@@ -296,6 +296,25 @@ static NSString *kDateFormatType24Hr  = @"%H:%M";
 + (NSString *)getDatabaseStringForDate:(NSDate *)dateToBeConverted;
 
 /**
+ * @name   getSecZeroedDatabaseStringForDate:(NSDate *)dateToBeConverted
+ *
+ * @author Anoop
+ *
+ * @brief  Returns a string representation of a given date formatted via `strftime_l()` using the receiver’s current settings.
+ *
+ * \par
+ *   By default class internally will use  "%Y-%m-%dT%H:%M:00.000%z" format
+ *
+ *
+ * @param  date The date to format.
+ *
+ * @return A string representation of *date* formatted via `strftime_l()` using the receiver’s current settings.
+ *
+ */
+
++ (NSString *)getSecZeroedDatabaseStringForDate:(NSDate *)dateToBeConverted;
+
+/**
  * @name   getDateFromDatabaseString:(NSString *)dateString
  *
  * @author Pushpak N
@@ -464,6 +483,21 @@ static NSString *kDateFormatType24Hr  = @"%H:%M";
 +(NSString *)getUserReadableDateForGMT:(NSDate *)date;
 
 /**
+ * @name   getSecZeroedUserReadableDateForGMT
+ *
+ * @author Anoopsaai Ramani
+ *
+ * @brief  Returns the datestring with user readable format with seconds always zeroed
+ *
+ *
+ * @param none
+ *
+ * @return A datestring  with user readable format
+ *
+ */
++(NSString *)getSecZeroedUserReadableDateForGMT:(NSDate *)date;
+
+/**
  * @name  <getUserReadableDate>
  *
  * @author Krishna Shanbhag
@@ -495,5 +529,8 @@ static NSString *kDateFormatType24Hr  = @"%H:%M";
 + (NSString *)getLiteralSupportedDateStringForChatterDate:(NSDate *)date;
 
 + (NSDate *)getLocalTimeFromDateBaseDate:(NSString *)date;
+//Niraj: Defect number 017148
++(NSDate *)getUserReadableDateForDateBaseDateString:(NSString *)dateString;
+//Niraj: Defect number 017148
 @end
 

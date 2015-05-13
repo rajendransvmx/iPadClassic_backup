@@ -14,10 +14,7 @@
 
 @interface ChatterCell ()
 
-@property (weak, nonatomic) IBOutlet ImageView *userImageView;
-@property (weak, nonatomic) IBOutlet UILabel *userName;
-@property (weak, nonatomic) IBOutlet UILabel *chatText;
-@property (weak, nonatomic) IBOutlet UILabel *time;
+
 
 
 @end
@@ -65,6 +62,9 @@
 {
     self.userName.text = comments.name;
     self.chatText.text = comments.commentBody;
+    self.chatText.font = [UIFont fontWithName:kHelveticaNeueRegular size:16];
+
+   // _chatText.numberOfLines = 0;
     self.time.text = comments.createdDateString;
     
     self.userId = comments.createdById;

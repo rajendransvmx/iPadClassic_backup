@@ -213,8 +213,8 @@
     
     DBField *sortField = [[DBField alloc] initWithFieldName:kIPProductNameField tableName:objectName andOrderType:SQLOrderByTypesAscending];
     [selectQuery addOrderByFields:@[sortField]];
-    
-    [selectQuery setDistinctRowsOnly];
+     /* chinna commenting ------- to get all values ------ */
+    //[selectQuery setDistinctRowsOnly];
 
     NSMutableArray * detailsArray = [self getDetailsDataForQuery:selectQuery];
     return detailsArray;

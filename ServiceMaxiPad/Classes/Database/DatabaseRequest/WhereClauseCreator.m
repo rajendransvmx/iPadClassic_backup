@@ -172,7 +172,7 @@
         criteria = [[NSString alloc] initWithFormat:@" ( %@%@ %@ '%%%@%%'  OR %@%@ IS NULL OR trim(%@) = '')",tableName,dbCriteria.lhsValue,operatorString,rhsValue,tableName,dbCriteria.lhsValue,dbCriteria.lhsValue];
         break;
          case SQLOperatorNotEqualWithIsNull:
-             criteria = [[NSString alloc] initWithFormat:@" ( %@%@ %@ '%@'  OR %@%@ IS NULL OR trim(%@) = '')",tableName,dbCriteria.lhsValue,operatorString,rhsValue,tableName,dbCriteria.lhsValue,dbCriteria.lhsValue];
+             criteria = [[NSString alloc] initWithFormat:@" ( %@%@ %@ '%@' %@  OR %@%@ IS NULL OR trim(%@) = '')",tableName,dbCriteria.lhsValue,operatorString,rhsValue,collateNocase,tableName,dbCriteria.lhsValue,dbCriteria.lhsValue];
         break;
          case SQLOperatorLike:
          case SQLOperatorNotLike:

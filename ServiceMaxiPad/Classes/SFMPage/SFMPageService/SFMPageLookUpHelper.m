@@ -148,8 +148,8 @@
     
     id <TransactionObjectDAO> transactionModel = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
     
-     NSArray * dataArray = [transactionModel fetchDataForObject:lookUpObj.objectName fields:fieldsArray expression:advanceExpression criteria:criteriaArray recordsLimit:lookUpObj.recordLimit];
-    
+    NSArray * dataArray = [transactionModel fetchDataForObject:lookUpObj.objectName fields:fieldsArray expression:advanceExpression criteria:criteriaArray recordsLimit:lookUpObj.recordLimit];
+  
     NSArray * recordsArray = [self getRecordArrayFromTransactionModel:dataArray lookUpObject:lookUpObj forDisplayFields:fieldsArray];
     
     lookUpObj.dataArray = recordsArray;
@@ -777,10 +777,56 @@
     NSArray *literalArray = [criteriaObjects filteredArrayUsingPredicate:predicate];
     
     for (DBCriteria *criteria in literalArray) {
-            NSString *literalValue = [self.viewControllerdelegate getValueForLiteral:criteria.rhsValue];
-            criteria.rhsValue = (literalValue != nil)?literalValue:@"";
+            SFMRecordFieldData *recordData = [self.viewControllerdelegate getValueForLiteral:criteria.rhsValue];
+            criteria.rhsValue = (recordData.internalValue != nil)?recordData.internalValue:@"";
+
+        
+        if ([[criteria getSubCriterias] count]) {
+            [self updateLiteralValueForSubCriterai:[criteria getSubCriterias] data:recordData];
+        }
     }
 }
+
+- (NSString *)getNameFieldForId:(NSString *)Id objectName:(NSString *)objectName
+{
+    id <TransactionObjectDAO> transactionModel = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+    
+    DBCriteria * criteria = [[DBCriteria alloc]initWithFieldName:kId operatorType:SQLOperatorEqual andFieldValue:Id];
+    
+    TransactionObjectModel *model = [transactionModel getDataForObject:objectName
+                                                                fields:nil
+                                                            expression:nil
+                                                              criteria:@[criteria]];
+    
+    NSString *fieldName = [SFMPageHelper getNameFieldForObject:objectName];
+    
+    return [model valueForField:fieldName];
+}
+
+- (void)updateLiteralValueForSubCriterai:(NSArray *)criteriaObjects data:(SFMRecordFieldData *)recordData
+{
+    NSString *tableName = nil;
+    
+    for (DBCriteria *criteria in criteriaObjects) {
+        
+        if ([[criteria getInnerQueryRequest] isKindOfClass:[DBRequestSelect class]]) {
+            DBRequestSelect *innerRequest = [criteria getInnerQueryRequest];
+            
+            if ([recordData.displayValue isEqualToString:recordData.internalValue] && tableName == nil) {
+                
+                tableName = innerRequest.tableName;
+                NSString *nameValue = [self getNameFieldForId:recordData.internalValue objectName:tableName];
+                recordData.displayValue = (nameValue != nil)?nameValue:@"";
+            }
+            NSArray *innerCriteria = [innerRequest criteriaArray];
+            
+            for (DBCriteria *criteria1 in innerCriteria) {
+                criteria1.rhsValue = (recordData.displayValue != nil)?recordData.displayValue:@"";
+            }
+        }        
+    }
+}
+
 
 - (NSArray *)getCriteriaObjectForAdvanceFilter:(SFMLookUpFilter *)filter
 {
@@ -794,9 +840,11 @@
     
     DBCriteria *criteriaId = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorIn andInnerQUeryRequest:select];
     
-    DBCriteria *criteriaLocalId = [[DBCriteria alloc] initWithFieldName:kLocalId operatorType:SQLOperatorIn andInnerQUeryRequest:select];
+    //DBCriteria *criteriaLocalId = [[DBCriteria alloc] initWithFieldName:kLocalId operatorType:SQLOperatorIn andInnerQUeryRequest:select];
     
-    return [NSArray arrayWithObjects:criteriaId, criteriaLocalId, nil];
+   // return [NSArray arrayWithObjects:criteriaId, criteriaLocalId, nil];
+    
+    return [NSArray arrayWithObjects:criteriaId, nil];
 }
 
 - (void)updateExpressionCount:(SFMLookUp *)lookUpObj
@@ -846,10 +894,12 @@
                 model.advanceExpression = [self getExpresionForExpressionId:model.searchId];
             }
             if ([model.advanceExpression length] > 0) {
-                NSString *expression = [NSString stringWithFormat:@"(%d OR %d)", (int)self.expressionCount+1,
-                              (int)(self.expressionCount +2)];
-                [advanceexpression appendFormat:@" AND (%@)", expression];
-                self.expressionCount += 2;
+//                NSString *expression = [NSString stringWithFormat:@" %d OR %d ", (int)self.expressionCount+1,
+//                              (int)(self.expressionCount +2)];
+                
+                NSString *expression = [NSString stringWithFormat:@" %d ", (int)self.expressionCount+1];
+                [advanceexpression appendFormat:@" AND  ( %@ )", expression];
+                self.expressionCount += 1;
             }
         }
     }

@@ -38,9 +38,9 @@
                 TroubleshootDataModel *model = [[TroubleshootDataModel alloc] init];
                 
                 model.Id = [dataDict objectForKey:KDocId];
-                model.keywords = [dataDict objectForKey:KDocKeyWords];
-                model.name = [dataDict objectForKey:KDocName];
-                model.type = [dataDict objectForKey:@"Type"];
+                model.Keywords = [dataDict objectForKey:KDocKeyWords];
+                model.Name = [dataDict objectForKey:KDocName];
+                model.Type = [dataDict objectForKey:@"Type"];
                 
                 [resulrArray addObject:model];
             }

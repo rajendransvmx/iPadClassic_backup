@@ -302,6 +302,13 @@ NSString *const kSVMXEventName  = @"Name";
 NSString *const kSVMXOwnerId  = @"OwnerId";
 NSString *const kSVMXLocation  = ORG_NAME_SPACE@"__Location__c";
 NSString *const kSVMXTechnicianId  = ORG_NAME_SPACE@"__Technician__c";
+NSString *const kSVMXIsAlldayEvent  = ORG_NAME_SPACE@"__IsAllDayEvent__c";
+
+
+
+//ISALLDAY General use
+
+NSString *const kGENERAL_ALL_DAY = @"isALLDay";
 
 /*SyncErrorConflict*/
 

@@ -41,6 +41,7 @@
 
     dispatch_once(&onceToken, ^{
         sharedAttachmentsUploadManager = [[AttachmentsUploadManager alloc] init];
+        sharedAttachmentsUploadManager.localIdsModifiedArray = [[NSMutableArray alloc] initWithCapacity:0];
     });
     return sharedAttachmentsUploadManager;
 }

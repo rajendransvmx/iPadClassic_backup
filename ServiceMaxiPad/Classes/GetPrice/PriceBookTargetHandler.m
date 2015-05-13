@@ -15,11 +15,14 @@
 #import "DatabaseConstant.h"
 #import "Utility.h"
 #import "StringUtil.h"
+#import "DateUtil.h"
 
 
 #define kFieldNameKey       @"key"
 #define kFieldNameValue     @"value"
 #define kFieldNameValue1    @"value1"
+
+static NSString *appendedZeroes = @".000+0000";
 
 @interface PriceBookTargetHandler()
 
@@ -276,8 +279,18 @@
     else if([fieldType isEqualToString:kSfDTDateTime]){
         
         NSString *replacedString =  [Utility replaceSpaceinDateByT:newFieldValue];
+        if (![StringUtil isStringEmpty:replacedString] && replacedString.length < 20) {
+            replacedString = [replacedString stringByAppendingString:appendedZeroes];
+        }
         finalValue = replacedString;
         finalDisplayValue = replacedString;
+        
+        if(![StringUtil isStringEmpty:finalValue]) {
+            
+            NSString *dateTime = [DateUtil getUserReadableDateForDateBaseDate:finalValue];
+            finalDisplayValue = dateTime;
+        }
+
     }
     else if ([fieldType isEqualToString:kSfDTBoolean]){
         finalValue = ([StringUtil isItTrue:newFieldValue])?kTrue:kFalse;

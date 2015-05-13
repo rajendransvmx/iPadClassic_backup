@@ -28,7 +28,7 @@
 //Tags List
 
 NSString *const kTagResetApplication   = @"IPAD018_TAG042";
-NSString *const kSfmDataBaseName        = @"sfm.sqlite";
+NSString *const kSfmDataBaseName       = @"sfm.sqlite";
 
 NSString *const kTagEditEvent          = @"IPAD006_TAG040";
 NSString *const kTagEventOverlap       = @"IPAD014_TAG030";

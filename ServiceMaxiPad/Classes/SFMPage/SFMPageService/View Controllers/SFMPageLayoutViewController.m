@@ -217,13 +217,11 @@ NSString *const kReferenceCellIdentifier = @"ReferenceCellIdentifier";
     
     if(!([StringUtil isStringEmpty:recordField.internalValue])
        && ([pageField.dataType isEqualToString:kSfDTCurrency]  //Except integer for other numberfields should consider.
-           || [pageField.dataType isEqualToString:kSfDTDouble]
-           || [pageField.dataType isEqualToString:kSfDTPercent])){
+       || [pageField.dataType isEqualToString:kSfDTDouble]
+       || [pageField.dataType isEqualToString:kSfDTPercent])){
         
         double value = recordField.internalValue.doubleValue;
         NSString * finalValue  = [[NSString alloc] initWithFormat:@"%.*f",pageField.scale.intValue,value];
-        
-
         recordField.internalValue = finalValue;
         recordField.displayValue = finalValue;
     }

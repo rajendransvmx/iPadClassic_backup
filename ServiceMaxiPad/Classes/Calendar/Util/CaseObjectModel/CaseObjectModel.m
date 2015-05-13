@@ -13,5 +13,6 @@
 @synthesize  sla;
 @synthesize  priority;
 @synthesize  conflict;
+@synthesize priorityString;
 
 @end

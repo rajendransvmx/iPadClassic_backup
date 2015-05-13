@@ -160,7 +160,7 @@ static NSInteger offset = 32;
     [self.titleLabel setTextColor:[UIColor colorWithHexString:@"#434343"]];
     [self.dateLabel setTextColor:[UIColor colorWithHexString:@"#797979"]];
     [self.sizeLabel setTextColor:[UIColor colorWithHexString:@"#797979"]];
-    [self.downloadProgressView setProgressTintColor:[UIColor colorWithHexString:@"#157DFB"]];
+    [self.downloadProgressView setProgressTintColor:[UIColor colorWithHexString:@"#FF6633"]];//Anoop: SPR 15SP
 }
 
 

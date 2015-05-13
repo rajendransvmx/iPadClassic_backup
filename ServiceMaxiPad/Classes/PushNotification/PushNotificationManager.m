@@ -639,7 +639,10 @@
         {
             //iPad
             PageEditViewController * pageEdit = (PageEditViewController *)viewController;
-            [pageEdit saveFromPushNotification];
+           // [pageEdit saveFromPushNotification];
+            if([pageEdit respondsToSelector:@selector(saveFromPushNotification)]){
+                [pageEdit performSelectorOnMainThread:@selector(saveFromPushNotification) withObject:nil waitUntilDone:YES];
+            }
         }
         return YES;
     }

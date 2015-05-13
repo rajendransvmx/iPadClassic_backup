@@ -187,18 +187,50 @@
     CGRect frame = CGRectMake(10, 15, 200, 40);
     
     UIButton *seeMore = [[UIButton alloc] initWithFrame:frame];
-    seeMore.backgroundColor = [UIColor colorWithHexString:@"#FF6633"];;
     [seeMore setTitle:[[TagManager sharedInstance]tagByName:kTag_IncludeOnlineItems] forState:UIControlStateNormal];
-    [seeMore setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     seeMore.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
     seeMore.titleLabel.font = [UIFont fontWithName:kHelveticaNeueRegular  size:kFontSize16];
     [seeMore addTarget:self action:@selector(seeMoreClicked) forControlEvents:UIControlEventTouchUpInside];
-    seeMore.userInteractionEnabled = YES;
     seeMore.tag = kIncludeOnlineResultItemsButtonTag;
     
+    [self checkStatusForSeeMore:seeMore];
     [footerView addSubview:seeMore];
     
     return footerView;
+}
+
+
+- (void)checkStatusForSeeMore:(UIButton *)seeMore
+{
+    BOOL status = YES;
+    if (self.historyInfoType == HistoryTypeProduct) {
+        if (![self isProdutExists]) {
+            status = NO;
+        }
+    }
+    else if (self.historyInfoType == HistoryTypeAccount) {
+        if (![self isAccountExists]) {
+            status = NO;
+        }
+    }
+    [self grayOutSeeMore:seeMore status:status];
+
+}
+
+- (void)grayOutSeeMore:(UIButton *)seeMore status:(BOOL)status
+{
+    if (status) {
+        seeMore.userInteractionEnabled = YES;
+        seeMore.backgroundColor = [UIColor colorWithHexString:@"#FF6633"];
+        [seeMore setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    }
+    else {
+        seeMore.userInteractionEnabled = NO;
+        seeMore.layer.borderColor =[UIColor colorWithHexString:@"#AEAEAE"].CGColor;
+        [seeMore setBackgroundColor:[UIColor colorWithHexString:@"#AEAEAE"]];
+        [seeMore setTitleColor:[UIColor colorWithHexString:@"#FFFFFF"] forState:UIControlStateNormal];
+
+    }
 }
 
 - (void)registerNetoworkNotification
@@ -233,6 +265,38 @@
     }
 }
 
+- (BOOL)isAccountExists
+{
+    BOOL result = NO;
+    
+    TransactionObjectModel *model = [SFMPageHistoryHelper getAccountHistoryInfo:self.sfPage.objectName
+                                                                       recordId:self.sfPage.recordId];
+    
+    if ([[model valueForField:kWorkOrderCompanyId] length ] > 0) {
+        result  = YES;
+    }
+    
+    return result;
+    
+    
+}
+
+- (BOOL)isProdutExists
+{
+    BOOL result = NO;
+    
+    TransactionObjectModel *model = [SFMPageHistoryHelper getProductHistoryInfo:self.sfPage.objectName
+                                                                       recordId:self.sfPage.recordId];
+
+    if ([[model valueForField:kComponentId] length] > 0) {
+        result = YES;
+    }
+    else if ([[model valueForField:kTopLevelId] length] > 0) {
+        result = YES;
+    }
+    
+    return result;
+}
 - (void)startAccountHistoryRequestOnline
 {
     TransactionObjectModel *model = [SFMPageHistoryHelper getAccountHistoryInfo:self.sfPage.objectName
@@ -375,11 +439,20 @@
     }else if (self.historyInfoType == HistoryTypeAccount)
         self.historyInfo = sfmViewPageModel.accountHistory;
     [self reloadTable];
+    [self performSelector:@selector(reloadFooter) withObject:nil afterDelay:0.1];
 }
 
 - (void)reloadTable
 {
     [self.historyTableView reloadData];
+}
+
+- (void)reloadFooter
+{
+    UIView *footerView =  [self.historyTableView tableFooterView];
+    
+    UIButton *includeOnlineBtn = (UIButton *)[footerView viewWithTag:kIncludeOnlineResultItemsButtonTag];
+    [self performSelectorOnMainThread:@selector(checkStatusForSeeMore:) withObject:includeOnlineBtn waitUntilDone:YES];
 }
 
 - (void)hideAnimator

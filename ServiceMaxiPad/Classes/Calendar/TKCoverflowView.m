@@ -368,7 +368,7 @@
 
 - (void) layoutSubviews{
 	
-	velocity = abs(pos-self.contentOffset.x);
+	velocity = fabs(pos-self.contentOffset.x);
 	movingRight = self.contentOffset.x - pos > 0 ? YES : NO;
 	pos = self.contentOffset.x;
 

@@ -164,6 +164,7 @@
 - (void)viewWillAppear:(BOOL)animated {
     
     [super viewWillAppear:animated];
+    self.addEventBtn.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     self.navigationController.navigationBar.barTintColor = [UIColor navBarBG];
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     self.navigationController.navigationBar.translucent = NO;
@@ -178,16 +179,12 @@
     
     if ((self.cEventListArray == nil) || (self.arrayWithEvents == nil))
     {
-        
         [self showDayCalender];
-        
-//        NSLog(@"Lets load events now");
+        [self changeSegementControlText];
         [[SMXDateManager sharedManager] setCurrentDate:[NSDate dateWithYear:[NSDate componentsOfCurrentDate].year
                                                                       month:[NSDate componentsOfCurrentDate].month
                                                                         day:[NSDate componentsOfCurrentDate].day]];
         [self fetchEventsFromDb];
-        //[cSegmentedControl setSelectedSegmentIndex:0];
-        
         if (viewCalendarDay.viewDetail) {
             [viewCalendarDay.viewDetail removeFromSuperview];
             viewCalendarDay.viewDetail = nil;
@@ -260,7 +257,7 @@
 {
     NSString *eventType = [CalenderHelper getEventTypeFromMobileDeviceSettings];
     NSString *objectName = kEventObject;
-    if (![eventType isEqualToString:@"Salesforce Event"]) {
+    if (![eventType isEqualToString:kSalesforceEvent]) {
         objectName = kServicemaxEventObject;
     }
     DBCriteria * criteria1 = [[DBCriteria alloc] initWithFieldName:kobjectApiName operatorType:SQLOperatorEqual andFieldValue:objectName];
@@ -313,7 +310,6 @@
 
 -(void)setTheNotifications
 {
-    
     [self addObserver:self selector:@selector(dataSyncFinished:) withName:kDataSyncStatusNotification AndObject:nil];
     [self addObserver:self selector:@selector(configSyncFinished:) withName:kConfigSyncStatusNotification AndObject:nil];
     [self addObserver:self selector:@selector(eventDisplayReset:) withName:EVENT_DISPLAY_RESET AndObject:nil];
@@ -338,12 +334,10 @@
 {
     NSTimeZone *currentTimeZone = [NSTimeZone localTimeZone];
     if (![currentTimeZone isEqualToTimeZone:cPreviousTimeZone]) {
-        
         // If the timezone is chaged, then the events have to be feteched again from the db.
         cPreviousTimeZone = nil;
         cPreviousTimeZone = [[NSTimeZone localTimeZone] copy];
         [self getEventsFromDBAndRender];
-        
     }
 }
 
@@ -929,6 +923,8 @@
     NSString *title = [NSString stringWithFormat:@"+ %@",[[TagManager sharedInstance]tagByName:kTag_Add]];
    // self.addEventBtn.backgroundColor = [UIColor redColor];//HS 2 Jan
     [self.addEventBtn setTitle:title forState:UIControlStateNormal];
+    self.addEventBtn.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+
     
     /* chinna changed color to gray for the add event button if no process exist */  //19 feb 15
     NSArray *processArrayCount = [self checkForCreateNewEventAvailable];
@@ -1060,7 +1056,6 @@
     NSDateFormatter *f = [[NSDateFormatter alloc] init];
     [f setDateFormat:@"yyyy-MM-ddHH:mm:ss ZZZ"];
     NSDate *startDate = event.dateTimeBegin;
-//    NSLog(@"%@",startDate);
     NSDate *endDate = event.dateTimeEnd;
     NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     NSDateComponents *components = [gregorianCalendar components:NSDayCalendarUnit
@@ -1396,6 +1391,7 @@
         leftButton.tag=1;
        
         [rightButton setTitle:[NSString stringWithFormat:@"+ %@",[[TagManager sharedInstance]tagByName:kTag_AddEvent]] forState:UIControlStateNormal]; //Fix for Issue 013034
+        rightButton.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
         [rightButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         //[rightButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
         self.navigationItem.rightBarButtonItem.enabled = YES;
@@ -1412,6 +1408,8 @@
         leftButton.tag=2;
         //[rightButton setTitle:[[TagManager sharedInstance] tagByName:kTagActions] forState:UIControlStateNormal];
         [rightButton setTitle:[NSString stringWithFormat:@"+ %@",[[TagManager sharedInstance]tagByName:kTag_AddEvent]] forState:UIControlStateNormal];
+        rightButton.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+
 
         [rightButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
 

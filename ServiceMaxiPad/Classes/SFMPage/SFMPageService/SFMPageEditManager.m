@@ -745,7 +745,7 @@
              syncRecord.fieldsModified = modifiedFieldAsJsonString;
         }
         else{
-            if (self.isfieldMergeEnabled  && ![StringUtil isStringEmpty:headerSfid]) {
+            if (self.isfieldMergeEnabled && ![StringUtil isStringEmpty:headerSfid]) {
                 canUpdate = NO;
             }
             

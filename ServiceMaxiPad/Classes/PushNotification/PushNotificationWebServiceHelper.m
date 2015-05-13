@@ -70,12 +70,12 @@
         self.mNotificationModel.requestStatus = NotificationRequestStateDownloadInProgress;
         [[PushNotificationManager sharedInstance]downloadStatusForRequest:self.mNotificationModel withError:nil];
         
-        RequestParamModel * requestParam = nil;
-        NSArray *requestParams = [self fetchRequestParametersForAPNSRequest:notificationModel];
-        if([requestParams count] > 0)
-        {
-            requestParam =  [requestParams objectAtIndex:0];
-        }
+//        RequestParamModel * requestParam = nil;
+//        NSArray *requestParams = [self fetchRequestParametersForAPNSRequest:notificationModel];
+//        if([requestParams count] > 0)
+//        {
+//            requestParam =  [requestParams objectAtIndex:0];
+//        }
         
         TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeAPNSDOD
                                                  requestParam:nil
@@ -102,7 +102,7 @@
 
 -(void)cancelAllDownloads
 {
-    
+  
 }
 
 
