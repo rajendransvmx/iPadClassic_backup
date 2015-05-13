@@ -945,7 +945,7 @@
     
     /* we are giving fram for parts order*/
     productsAtThisLocationLabel = [[UILabel alloc] initWithFrame:CGRectMake(productsAtThisLocationTitleLabel.frame.origin.x
-                                                                        , productsAtThisLocationTitleLabel.frame.origin.y+productsAtThisLocationTitleLabel.frame.size.height, self.frame.size.width - 30, productsAtThisLocationTitleLabel.frame.size.height)];
+                                                                        , productsAtThisLocationTitleLabel.frame.origin.y+productsAtThisLocationTitleLabel.frame.size.height,650, productsAtThisLocationTitleLabel.frame.size.height)];
     productsAtThisLocationLabel.backgroundColor = [UIColor clearColor];
     [productsAtThisLocationLabel setText:lProductsAtLocation];
     productsAtThisLocationLabel.numberOfLines = 0;
