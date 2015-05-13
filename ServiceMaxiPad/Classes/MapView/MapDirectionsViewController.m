@@ -342,14 +342,13 @@ NSInteger const kTechAnnotationIndex = -1;
     
     for(UICRouteAnnotation *annotation in  aMapView.annotations)
     {
-       // TODO : Skip current location uncomment this
-       // if (![annotation isKindOfClass:[MKUserLocation class]]) {
+        if (![annotation isKindOfClass:[MKUserLocation class]]) {
             topLeftCoord.longitude = fmin(topLeftCoord.longitude, annotation.coordinate.longitude);
             topLeftCoord.latitude = fmax(topLeftCoord.latitude, annotation.coordinate.latitude);
             
             bottomRightCoord.longitude = fmax(bottomRightCoord.longitude, annotation.coordinate.longitude);
             bottomRightCoord.latitude = fmin(bottomRightCoord.latitude, annotation.coordinate.latitude);
-        //}
+        }
     }
     
     MKCoordinateRegion region;
