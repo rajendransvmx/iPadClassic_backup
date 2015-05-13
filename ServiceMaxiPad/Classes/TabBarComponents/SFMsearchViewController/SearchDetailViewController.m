@@ -33,8 +33,10 @@
 #import "BarCodeScannerUtility.h"
 #import "SyncManager.h"
 #import "PushNotificationHeaders.h"
+#import "SFMSearchCell.h"
+#import "SFObjectFieldDAO.h"
 
-#define SRCH_ROW_HEIGHT 60.0
+#define SRCH_ROW_HEIGHT 80.0
 #define SRCH_SECTION_HEIGHT 50.0
 #define kIncludeOnlineItemsButtonTag 10
 
@@ -282,6 +284,9 @@
     
     SFMSearchFieldModel *field1 = nil;
     SFMSearchFieldModel *field2  = nil;
+    SFMSearchFieldModel *field3 = nil;
+    
+    id <SFObjectFieldDAO> objectFieldService = [FactoryDAO serviceByServiceType:ServiceTypeSFObjectField];
     
     if ([srchObj.displayFields count] > 0) {
         field1 =  [srchObj.displayFields objectAtIndex:0];
@@ -290,18 +295,36 @@
     if ([srchObj.displayFields count] > 1) {
         field2 =  [srchObj.displayFields objectAtIndex:1];
     }
+    if ([srchObj.displayFields count] > 2) {
+        field3 =  [srchObj.displayFields objectAtIndex:2];
+    }
     
     SFMRecordFieldData *fldValue1 = (SFMRecordFieldData *)[objectData valueForField:[field1 getDisplayField]];
     SFMRecordFieldData *fldValue2 = (SFMRecordFieldData *)[objectData valueForField:[field2 getDisplayField]];
+    SFMRecordFieldData *fldValue3 = (SFMRecordFieldData *)[objectData valueForField:[field3 getDisplayField]];
     
     NSString *titleString = [self getDisplayStringForValue:fldValue1.displayValue withType:field1.displayType];
-    [dataDict setObject:titleString forKey:@"title"];
+    [dataDict setObject:titleString forKey:@"tittle"];
     
     NSString *descriptionString = [self getDisplayStringForValue:fldValue2.displayValue withType:field2.displayType];
-    [dataDict setObject:descriptionString forKey:@"description"];
+    
+    NSString *keyOne = [objectFieldService getFieldLabelFromFieldName:[field2 getDisplayField] andObjectName:field2.objectName];
+    
+    if (keyOne != nil) {
+        [dataDict setObject:descriptionString forKey:keyOne];
+    }
+    
+    NSString *thirdDisplayField = [self getDisplayStringForValue:fldValue3.displayValue withType:field3.displayType];
+
+    NSString *keyTwo = [objectFieldService getFieldLabelFromFieldName:[field3 getDisplayField] andObjectName:field3.objectName];
+    
+    if (keyTwo != nil) {
+        [dataDict setObject:thirdDisplayField forKey:keyTwo];
+    }
     
     return dataDict;
 }
+
 
 - (NSString *) getDisplayStringForValue:(NSString *)value withType:(NSString *)displayType {
     if ([Utility isStringEmpty:value] && ![value isKindOfClass:[NSNumber class]]) {
@@ -502,23 +525,15 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CellIdentifier"];
+    SFMSearchCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CellIdentifier"];
     
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"CellIdentifier"];
+        cell = [[SFMSearchCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"CellIdentifier"];
         
         UIView *seperatorView = [[UIView alloc] initWithFrame:CGRectMake(10, (SRCH_ROW_HEIGHT - 1), self.searchDetailTableView.frame.size.width - 20, 1)];
         seperatorView.backgroundColor = [UIColor colorWithHexString:kSeperatorLineColor];
         seperatorView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-
-        cell.textLabel.textColor = [UIColor colorWithHexString:kEditableTextFieldColor];
-        cell.textLabel.font = [UIFont fontWithName:kHelveticaNeueMedium size:kFontSize16];
-        
-        cell.detailTextLabel.textColor = [UIColor colorWithHexString:kTextFieldFontColor];
-        cell.detailTextLabel.font = [UIFont fontWithName:kHelveticaNeueLight size:kFontSize16];
-        
         [cell.contentView addSubview:seperatorView];
-        
     }
     
     BOOL isOnlineRecord = [SFMOnlineSearchManager isOnlineRecord:[self getTransactionModelForIndexPath:indexPath]];
@@ -533,22 +548,47 @@
     }
     UIImageView* arrowView = [[UIImageView alloc] initWithImage:normalImage];
     cell.accessoryView = arrowView;
-
+    
     
     NSDictionary *displayData = [self getDisplayDetailsFor:indexPath];
     
-    if ([StringUtil isStringEmpty:[displayData objectForKey:@"title"]]) {
-        cell.textLabel.text = @"--";
+    NSArray *allKeys = [displayData allKeys];
+    
+    if ([StringUtil isStringEmpty:[displayData objectForKey:@"tittle"]]) {
+        cell.titleLabel.text = @"--";
     } else {
-        cell.textLabel.text = [displayData objectForKey:@"title"];
+        cell.titleLabel.text = [displayData objectForKey:@"tittle"];
     }
     
-    if ([StringUtil isStringEmpty:[displayData objectForKey:@"description"]]) {
-        cell.detailTextLabel.text = @"--";
-    } else {
-        cell.detailTextLabel.text = [displayData objectForKey:@"description"];
+    if ([allKeys count] > 0) {
+        if ([StringUtil isStringEmpty:[allKeys objectAtIndex:0]]) {
+            cell.fieldLabelOne.text = @"";
+        } else {
+            cell.fieldLabelOne.text = [allKeys objectAtIndex:0];
+        }
+        
+        if ([StringUtil isStringEmpty:[displayData objectForKey:[allKeys objectAtIndex:0]]]) {
+            cell.fieldValueOne.text = @"--";
+        } else {
+            cell.fieldValueOne.text = [displayData objectForKey:[allKeys objectAtIndex:0]];
+        }
     }
-
+    
+    if ([allKeys count] > 1) {
+        
+        if ([StringUtil isStringEmpty:[allKeys objectAtIndex:1]]) {
+            cell.fieldLabelTwo.text = @"";
+        } else {
+            cell.fieldLabelTwo.text = [allKeys objectAtIndex:1];
+        }
+        
+        if ([StringUtil isStringEmpty:[displayData objectForKey:[allKeys objectAtIndex:1]]]) {
+            cell.fieldValueTwo.text = @"--";
+        } else {
+            cell.fieldValueTwo.text = [displayData objectForKey:[allKeys objectAtIndex:1]];
+        }
+    }
+    
     if (![self isCellExpandedForSection:indexPath.section]) {
         cell.hidden = YES;
     }

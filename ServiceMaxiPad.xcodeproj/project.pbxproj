@@ -786,6 +786,9 @@
 		5B1CE61E1A8B31E800461135 /* SMXReschedulePopup.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B1CE61D1A8B31E800461135 /* SMXReschedulePopup.m */; };
 		5B2F9F3319EBF36C006837C8 /* SFPageButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B2F9F3219EBF36C006837C8 /* SFPageButton.m */; };
 		5B2F9F3519EBF382006837C8 /* fadeout.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B2F9F3419EBF382006837C8 /* fadeout.png */; };
+		5B3237241B03802B00DB5F94 /* MultiPageFieldView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B3237211B03802B00DB5F94 /* MultiPageFieldView.m */; };
+		5B3237251B03802B00DB5F94 /* PageEditChildListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B3237231B03802B00DB5F94 /* PageEditChildListCell.m */; };
+		5B3237281B0380A000DB5F94 /* SFMSearchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B3237261B0380A000DB5F94 /* SFMSearchCell.m */; };
 		5B4F52B71A15D1A90008FDB3 /* File in Cloud - 70.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B4F52B61A15D1A90008FDB3 /* File in Cloud - 70.png */; };
 		5B5CDDE419F660940099B239 /* SFMReadOnlyCheckBoxCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B5CDDE319F660940099B239 /* SFMReadOnlyCheckBoxCell.m */; };
 		5B8286721A01FDB100C91854 /* RecentsPlistUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8286711A01FDB100C91854 /* RecentsPlistUtility.m */; };
@@ -2452,6 +2455,12 @@
 		5B2F9F3119EBF36C006837C8 /* SFPageButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFPageButton.h; sourceTree = "<group>"; };
 		5B2F9F3219EBF36C006837C8 /* SFPageButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFPageButton.m; sourceTree = "<group>"; };
 		5B2F9F3419EBF382006837C8 /* fadeout.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fadeout.png; sourceTree = "<group>"; };
+		5B3237201B03802B00DB5F94 /* MultiPageFieldView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiPageFieldView.h; sourceTree = "<group>"; };
+		5B3237211B03802B00DB5F94 /* MultiPageFieldView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MultiPageFieldView.m; sourceTree = "<group>"; };
+		5B3237221B03802B00DB5F94 /* PageEditChildListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageEditChildListCell.h; sourceTree = "<group>"; };
+		5B3237231B03802B00DB5F94 /* PageEditChildListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PageEditChildListCell.m; sourceTree = "<group>"; };
+		5B3237261B0380A000DB5F94 /* SFMSearchCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFMSearchCell.m; sourceTree = "<group>"; };
+		5B3237271B0380A000DB5F94 /* SFMSearchCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFMSearchCell.h; sourceTree = "<group>"; };
 		5B4F52B61A15D1A90008FDB3 /* File in Cloud - 70.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "File in Cloud - 70.png"; sourceTree = "<group>"; };
 		5B5CDDE219F660940099B239 /* SFMReadOnlyCheckBoxCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFMReadOnlyCheckBoxCell.h; sourceTree = "<group>"; };
 		5B5CDDE319F660940099B239 /* SFMReadOnlyCheckBoxCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFMReadOnlyCheckBoxCell.m; sourceTree = "<group>"; };
@@ -3949,6 +3958,8 @@
 		183AA05F19E6C93400919345 /* SFMsearchViewController */ = {
 			isa = PBXGroup;
 			children = (
+				5B3237261B0380A000DB5F94 /* SFMSearchCell.m */,
+				5B3237271B0380A000DB5F94 /* SFMSearchCell.h */,
 				189F00101A1481B900570C54 /* DOD */,
 				4000050D19EBD849009F570E /* SearchService */,
 				183AA06019E6C93400919345 /* SearchDetailViewController.h */,
@@ -3968,6 +3979,10 @@
 		183AA12219E6D26300919345 /* SFMPage */ = {
 			isa = PBXGroup;
 			children = (
+				5B3237201B03802B00DB5F94 /* MultiPageFieldView.h */,
+				5B3237211B03802B00DB5F94 /* MultiPageFieldView.m */,
+				5B3237221B03802B00DB5F94 /* PageEditChildListCell.h */,
+				5B3237231B03802B00DB5F94 /* PageEditChildListCell.m */,
 				183AA12319E6D26300919345 /* Model */,
 				183AA14019E6D26300919345 /* SFMPageService */,
 				18897C881A00B004007F326B /* DataTypeUtility.h */,
@@ -6795,6 +6810,7 @@
 				184A8EB219E7A0BE006DA6BE /* SMXGuestsTableView.m in Sources */,
 				9EB4F7A31A446D6300E2A8BD /* ChatterProductDataParser.m in Sources */,
 				183A9E2519E69DB000919345 /* LinkedSfmProcessModel.m in Sources */,
+				5B3237241B03802B00DB5F94 /* MultiPageFieldView.m in Sources */,
 				183AA36219E6DA2500919345 /* AFURLConnectionOperation.m in Sources */,
 				183AA1B519E6D26400919345 /* PageLayoutEditViewController.m in Sources */,
 				6BDC50E11AA70EB700200DC0 /* TroubleshootingDetailViewController.m in Sources */,
@@ -7048,6 +7064,7 @@
 				184A8E8519E7A0BE006DA6BE /* TKGradientView.m in Sources */,
 				183A9F1619E6A15600919345 /* ZKRelatedListColumn.m in Sources */,
 				183A9E4519E69DB000919345 /* SFObjectFieldModel.m in Sources */,
+				5B3237281B0380A000DB5F94 /* SFMSearchCell.m in Sources */,
 				DE9E10CE1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m in Sources */,
 				183A9A7E19E6949800919345 /* DBRequestDelete.m in Sources */,
 				184A8E8619E7A0BE006DA6BE /* TKHTTPRequest.m in Sources */,
@@ -7132,6 +7149,7 @@
 				183A9FC319E6B18500919345 /* BusinessRuleService.m in Sources */,
 				183A9F1E19E6A15700919345 /* ZKSObject.m in Sources */,
 				9E335E071A4144E600D8CC39 /* SMDataPurgeModel.m in Sources */,
+				5B3237251B03802B00DB5F94 /* PageEditChildListCell.m in Sources */,
 				183AA04F19E6C80400919345 /* SMErrorConstants.m in Sources */,
 				184A8EF319E7A535006DA6BE /* UICGDirectionsOptions.m in Sources */,
 				D74A3D0B1A0381E000357474 /* PriceBookTargetHandler.m in Sources */,
