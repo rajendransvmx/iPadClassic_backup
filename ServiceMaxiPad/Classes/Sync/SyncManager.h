@@ -20,15 +20,14 @@ extern NSString *kSyncTimeUpdateNotification;
 extern NSString *kProfileValidationStatusNotification;
 extern NSString *kScheduledConfigSyncNotification;
 extern NSString *kUpdateEventNotification;
-
-
 extern NSString *lastConfigSyncTimeKey;
 extern NSString *lastDataSyncTimeKey;
 extern NSString *syncMetaDataFile;
 
 @interface SyncManager : NSObject <FlowDelegate, SchedulerDelegate, OPDocCustomDelegate>
 
-@property(nonatomic,assign) BOOL isConfigSyncDueAlertShown;
+@property(nonatomic, assign) BOOL isConfigSyncDueAlertShown;
+@property(nonatomic, assign) BOOL isGetPriceCallEnabled;
 
 // ...
 
@@ -67,7 +66,6 @@ extern NSString *syncMetaDataFile;
 - (BOOL)isDataSyncInProgress;
 - (BOOL)isConfigSyncInProgress;
 - (BOOL)isInitalSyncOrResetApplicationInProgress;
-
 - (BOOL)isConfigSyncInQueue;
 - (BOOL)isInitialSyncInQueue;
 

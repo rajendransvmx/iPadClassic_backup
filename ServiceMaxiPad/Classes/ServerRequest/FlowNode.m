@@ -539,7 +539,7 @@ NSString *cocoaErrorString = @"3840";
         || requestType == RequestTypeChatterFeedCommnetInsert) {
         responseStatus.syncProgressState = [SyncProgressFactory getSyncProcessStatusforRequestType:requestType];
     }
-    
+    responseStatus.requestType = requestType;
     responseStatus.category = self.nodecategoryType;
     responseStatus.syncStatus = status;
     

@@ -906,6 +906,8 @@
 		9EF961431A527EEF00F65818 /* ImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9EF961421A527EEF00F65818 /* ImageView.m */; };
 		9EFE6DFE1A0F33EF0067F9CC /* LinkedProcessViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9EFE6DFC1A0F33EF0067F9CC /* LinkedProcessViewController.m */; };
 		9EFE6DFF1A0F33EF0067F9CC /* LinkedProcessViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9EFE6DFD1A0F33EF0067F9CC /* LinkedProcessViewController.xib */; };
+		C31E66D11AE65DBE00A8AE7E /* GetPriceDataServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = C31E66D01AE65DBE00A8AE7E /* GetPriceDataServiceLayer.m */; };
+		C31E66D41AE65EC900A8AE7E /* GetPriceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C31E66D31AE65EC900A8AE7E /* GetPriceManager.m */; };
 		C34A17FA19EBE50A009E9EA8 /* map_reload@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C34A17F919EBE50A009E9EA8 /* map_reload@2x.png */; };
 		C362BE651A129FCB0067E09E /* ErrorDownloadedCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C362BE631A129FCB0067E09E /* ErrorDownloadedCollectionViewCell.m */; };
 		C362BE661A129FCB0067E09E /* ErrorDownloadedCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = C362BE641A129FCB0067E09E /* ErrorDownloadedCollectionViewCell.xib */; };
@@ -2661,6 +2663,10 @@
 		9EFE6DFB1A0F33EF0067F9CC /* LinkedProcessViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkedProcessViewController.h; sourceTree = "<group>"; };
 		9EFE6DFC1A0F33EF0067F9CC /* LinkedProcessViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LinkedProcessViewController.m; sourceTree = "<group>"; };
 		9EFE6DFD1A0F33EF0067F9CC /* LinkedProcessViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LinkedProcessViewController.xib; sourceTree = "<group>"; };
+		C31E66CF1AE65DBE00A8AE7E /* GetPriceDataServiceLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetPriceDataServiceLayer.h; sourceTree = "<group>"; };
+		C31E66D01AE65DBE00A8AE7E /* GetPriceDataServiceLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GetPriceDataServiceLayer.m; sourceTree = "<group>"; };
+		C31E66D21AE65EC900A8AE7E /* GetPriceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetPriceManager.h; sourceTree = "<group>"; };
+		C31E66D31AE65EC900A8AE7E /* GetPriceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GetPriceManager.m; sourceTree = "<group>"; };
 		C34A17F919EBE50A009E9EA8 /* map_reload@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "map_reload@2x.png"; sourceTree = "<group>"; };
 		C362BE621A129FCB0067E09E /* ErrorDownloadedCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorDownloadedCollectionViewCell.h; sourceTree = "<group>"; };
 		C362BE631A129FCB0067E09E /* ErrorDownloadedCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ErrorDownloadedCollectionViewCell.m; sourceTree = "<group>"; };
@@ -3771,6 +3777,8 @@
 		183A9F9F19E6B18500919345 /* ServiceLayer */ = {
 			isa = PBXGroup;
 			children = (
+				C31E66CF1AE65DBE00A8AE7E /* GetPriceDataServiceLayer.h */,
+				C31E66D01AE65DBE00A8AE7E /* GetPriceDataServiceLayer.m */,
 				183A9FA019E6B18500919345 /* AttachmentServiceLayer.h */,
 				183A9FA119E6B18500919345 /* AttachmentServiceLayer.m */,
 				183A9FA219E6B18500919345 /* BaseServiceLayer.h */,
@@ -6080,6 +6088,8 @@
 		D74A3D011A036FFD00357474 /* GetPrice */ = {
 			isa = PBXGroup;
 			children = (
+				C31E66D21AE65EC900A8AE7E /* GetPriceManager.h */,
+				C31E66D31AE65EC900A8AE7E /* GetPriceManager.m */,
 				D74A3D021A0381E000357474 /* PriceBookDataHandler.h */,
 				D74A3D031A0381E000357474 /* PriceBookDataHandler.m */,
 				D74A3D041A0381E000357474 /* PriceBookTargetHandler.h */,
@@ -6570,6 +6580,7 @@
 				183AA36F19E6DA9600919345 /* InitialSyncViewController.m in Sources */,
 				184A8E5D19E7A0BE006DA6BE /* SMXAddEventPopoverController.m in Sources */,
 				18E5719C1A1A32B500867F8E /* UIPlaceHolderTextView.m in Sources */,
+				C31E66D41AE65EC900A8AE7E /* GetPriceManager.m in Sources */,
 				183A9A9219E694D400919345 /* Cache.m in Sources */,
 				183AA03319E6BDB300919345 /* OneCallDataSyncHelper.m in Sources */,
 				183AA03419E6BDB300919345 /* OneCallDataSyncResponseParser.m in Sources */,
@@ -6850,6 +6861,7 @@
 				183AA04E19E6C80400919345 /* NSError+SMInternalError.m in Sources */,
 				9E8D1C581A496E2300741918 /* ChatterFeedComments.m in Sources */,
 				183A9E5A19E69DB000919345 /* SyncRecordHeapModel.m in Sources */,
+				C31E66D11AE65DBE00A8AE7E /* GetPriceDataServiceLayer.m in Sources */,
 				183A9F1F19E6A15700919345 /* ZKURLConnection.m in Sources */,
 				183A9F0F19E6A15600919345 /* ZKPicklistEntry.m in Sources */,
 				6A1BCAFD1AA85DAB0074AB7D /* EventTransactionObjectModel.m in Sources */,

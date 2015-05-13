@@ -28,13 +28,14 @@
 
 #import <Foundation/Foundation.h>
 #import "SyncConstants.h"
-
+#import "RequestConstants.h"
 
 @interface WebserviceResponseStatus : NSObject
 
 @property (nonatomic)CategoryType category;
 @property (nonatomic)SyncProgressStatus syncProgressState;
 @property (nonatomic)SyncStatus syncStatus;
+@property (nonatomic)RequestType requestType;
 @property (nonatomic,strong)NSError     *syncError;
 
 @end

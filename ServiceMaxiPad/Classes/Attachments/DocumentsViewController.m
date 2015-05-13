@@ -491,15 +491,17 @@ static NSString *const kDocumentsErrorTableViewCell = @"DocumentsErrorTableViewC
 
 - (void)showPreviewViewController:(AttachmentTXModel *)attachmentModel {
     
-    AttachmentWebView *attachmentWebview = [[AttachmentWebView alloc] initWithNibName:@"AttachmentWebView" bundle:[NSBundle mainBundle]];
-    attachmentWebview.isInViewMode = self.isViewMode;
-    attachmentWebview.attachmentTXModel = attachmentModel;
-    attachmentWebview.parentObjectName = self.parentObjectName;
-    attachmentWebview.parentSFObjectName = self.parentSFObjectName;
-    attachmentWebview.parentId = self.parentId;
-    attachmentWebview.webviewdelgate = self;
-    [self.navigationController pushViewController:attachmentWebview animated:YES];
-    
+    if (![self.navigationController.topViewController isKindOfClass:[AttachmentWebView class]])
+    {
+        AttachmentWebView *attachmentWebview = [[AttachmentWebView alloc] initWithNibName:@"AttachmentWebView" bundle:[NSBundle mainBundle]];
+        attachmentWebview.isInViewMode = self.isViewMode;
+        attachmentWebview.attachmentTXModel = attachmentModel;
+        attachmentWebview.parentObjectName = self.parentObjectName;
+        attachmentWebview.parentSFObjectName = self.parentSFObjectName;
+        attachmentWebview.parentId = self.parentId;
+        attachmentWebview.webviewdelgate = self;
+        [self.navigationController pushViewController:attachmentWebview animated:YES];
+    }
 }
 
 #pragma AttachmentSharing options

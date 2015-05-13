@@ -7,19 +7,20 @@
 //
 
 #import "SVMXOperationQueue.h"
-
+#import "SVMXServerRequest.h"
 
 static SVMXOperationQueue *sharedInstanceSVMXOperationQue = nil;
 
 @implementation SVMXOperationQueue
 
-@synthesize mainopQueue;
-
 
 - (id)init {
     self = [super init];
     if (self != nil) {
-       self.mainopQueue = [[NSOperationQueue alloc] init];;
+        self.mainOpQueue = [[NSOperationQueue alloc] init];
+        self.locationOpQueue = [[NSOperationQueue alloc] init];
+        self.logsOpQueue     = [[NSOperationQueue alloc] init];
+        self.getPriceOpQueue = [[NSOperationQueue alloc] init];
     }
     return self;
 }
@@ -44,9 +45,25 @@ static SVMXOperationQueue *sharedInstanceSVMXOperationQue = nil;
 - (void)addOperationToQue:(NSOperation *)operation {
     
     @synchronized([self class]) {
+        
         if (operation != nil) {
-            [self.mainopQueue addOperation:operation];
-           
+            CategoryType categoryType = ((SVMXServerRequest*)operation).categoryType;
+            if (categoryType == CategoryTypeLocationPing)
+            {
+                [self.locationOpQueue addOperation:operation];
+            }
+            else if (categoryType == CategoryTypeJobLog)
+            {
+                [self.logsOpQueue addOperation:operation];
+            }
+            else if (categoryType == CategoryTypeGetPriceData)
+            {
+                [self.getPriceOpQueue addOperation:operation];
+            }
+            else
+            {
+                [self.mainOpQueue addOperation:operation];
+            }
         }
     }
 }
@@ -54,7 +71,7 @@ static SVMXOperationQueue *sharedInstanceSVMXOperationQue = nil;
 
 - (void)cancelAllOperations {
      @synchronized([self class]) {
-         [self.mainopQueue cancelAllOperations];
+         [self.mainOpQueue cancelAllOperations];
        
      }
 }

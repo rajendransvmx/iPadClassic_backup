@@ -303,6 +303,7 @@ const NSInteger alertViewTagForConfigSync   = 888889;
 {
     if ( [[SNetworkReachabilityManager sharedInstance] isNetworkReachable])
     {
+        [SyncManager sharedInstance].isGetPriceCallEnabled = YES;
         [[SyncManager sharedInstance] performSyncWithType:SyncTypeData];
         [self updateDataSyncRelatedUI];
     }

@@ -29,6 +29,7 @@
 #import "SFMPageHistoryServiceLayer.h"
 #import "ChatterServiceLayer.h"
 #import "APNSServiceLayer.h"
+#import "GetPriceDataServiceLayer.h"
 
 @implementation ServiceFactory
 
@@ -229,7 +230,10 @@
                                                                                 requestType:requestType];
             }
             break;
-                
+            case CategoryTypeGetPriceData: {
+                baseServiceLayer = [[GetPriceDataServiceLayer alloc] initWithCategoryType:categoryType requestType:requestType];
+            }
+            break;
             case CategoryTypeChatter:
             case CategoryTypeChatterPosts:
             case CategoryTypeChatterUserImage:

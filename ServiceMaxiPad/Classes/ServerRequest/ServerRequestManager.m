@@ -272,7 +272,10 @@
         case CategoryTypeTechnicianAddress:
             requestType = [self getNextRequestForTechnicianAddress:currentRequest andPreviousRequest:previousRequest];
             break;
-
+        case CategoryTypeGetPriceData:
+            requestType = [self getNextRequestForGetPriceData:currentRequest
+                                           andPreviousRequest:previousRequest];
+            break;
         case CategoryTypeJobLog:
             requestType = [self getNextRequestForJobLog:currentRequest
                                      andPreviousRequest:previousRequest];
@@ -621,8 +624,12 @@
             nextRequestType = RequestTypeUserTrunk;
             break;
         case RequestTypeUserTrunk:
-            nextRequestType = RequestGetPriceDataTypeZero;
+            nextRequestType = RequestAdvancedDownLoadCriteria;//RequestGetPriceDataTypeZero;
             break;
+        // Anoop: Sync enhancement changes for onecalldatasync
+        // JIRA : IPAD-1591
+        // Doc : https://docs.google.com/a/servicemax.com/document/d/1mEZ2mqfuFIXaL0ib4udCQH66poTXDX3fmFuTeIgPpg8/edit?usp=sharing
+        /*
         case RequestGetPriceDataTypeZero:
             nextRequestType = RequestGetPriceDataTypeOne;
             break;
@@ -635,6 +642,7 @@
         case RequestGetPriceDataTypeThree:
             nextRequestType = RequestAdvancedDownLoadCriteria;
             break;
+        */
         case RequestAdvancedDownLoadCriteria:
             nextRequestType = RequestCleanUpSelect;
             break;
@@ -707,6 +715,33 @@
     }
     if (currentRequest.requestType == RequestTechnicianAddress) {
         nextRequestType = RequestTypeNone;
+    }
+    return nextRequestType;
+}
+
+- (RequestType)getNextRequestForGetPriceData:(SVMXServerRequest *)currentRequest
+                          andPreviousRequest:(SVMXServerRequest *)previousRequest
+{
+    RequestType nextRequestType = 0;
+    if (currentRequest == nil) {
+        nextRequestType = RequestGetPriceDataTypeZero;
+    }
+    
+    switch (currentRequest.requestType) {
+        case RequestGetPriceDataTypeZero:
+            nextRequestType = RequestGetPriceDataTypeOne;
+            break;
+        case RequestGetPriceDataTypeOne:
+            nextRequestType = RequestGetPriceDataTypeTwo;
+            break;
+        case RequestGetPriceDataTypeTwo:
+            nextRequestType = RequestGetPriceDataTypeThree;
+            break;
+        case RequestGetPriceDataTypeThree:
+            nextRequestType = RequestTypeNone;
+            break;
+        default:
+            break;
     }
     return nextRequestType;
 }

@@ -40,6 +40,8 @@
 #import "PerformanceAnalyser.h"
 #import "SNetworkReachabilityManager.h"
 #import "SMDataPurgeManager.h"
+#import "GetPriceManager.h"
+#import "SFMPageHelper.h"
 
 const NSInteger alertViewTagForDataSync     = 888888;
 const NSInteger alertViewTagForInitialSync  = 888890;
@@ -87,8 +89,7 @@ static SyncManager *_instance;
 @property (nonatomic, strong) NSTimer  *configSyncTimer;
 @property (nonatomic, strong) NSMutableArray  *syncQueue;
 
-
-@property(nonatomic,assign) BOOL isDataSyncRunning;
+@property(nonatomic, assign) BOOL isDataSyncRunning;
 
 - (void)performInitialSync;
 - (void)performConfigSync;
@@ -284,9 +285,16 @@ static SyncManager *_instance;
             }
             break;
             
-        case SyncTypeData:
-            [[LocationPingManager sharedInstance] triggerLocationWebservices];
-            [self performDataSync];
+        case SyncTypeData:{
+            
+                [self performDataSync];
+                [[LocationPingManager sharedInstance] triggerLocationWebservices];
+                if (self.isGetPriceCallEnabled)
+                {
+                    self.isGetPriceCallEnabled = NO;
+                    [[GetPriceManager sharedInstance] intiateGetPriceSync];
+                }
+            }
             break;
             
         case SyncTypeEvent:
@@ -714,11 +722,13 @@ static SyncManager *_instance;
     {
         if (self.isDataSyncRunning)
         {
+            self.isGetPriceCallEnabled = NO;
             SXLogInfo(@"Data sync is already running ");
             return NO;
         }
         else if (![self continueDataSyncIfConflictsResolved])
         {
+            self.isGetPriceCallEnabled = NO;
             [self postSyncTimeUpdateNotificationAfterSyncCompletion];
             return NO;
         }
@@ -743,7 +753,7 @@ static SyncManager *_instance;
 - (void)currentDataSyncfinished {
     
     @synchronized([self class]) {
-
+        
         [[SuccessiveSyncManager sharedSuccessiveSyncManager] doSuccessiveSync];
         [self updateLastSyncTime];
         
@@ -1093,6 +1103,7 @@ static SyncManager *_instance;
     
     if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable] && ![[ AppManager sharedInstance] hasTokenRevoked])
     {
+        self.isGetPriceCallEnabled = YES;
         [self performSyncWithType:SyncTypeData];
         [self postSyncTimeUpdateNotificationAfterSyncCompletion];
     }
@@ -1547,7 +1558,12 @@ static SyncManager *_instance;
     {
         if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable])
         {
-            [self performSyncWithType:SyncTypeData];
+            NSString *aggressiveSyncEnabled = [SFMPageHelper getSettingValueForSettingId:kMobileSettingsAggressiveSync];
+            if (![[aggressiveSyncEnabled uppercaseString] isEqualToString:@"FALSE"])
+            {
+                self.isGetPriceCallEnabled = NO;
+                [self performSyncWithType:SyncTypeData];
+            }
         }
     }
     return;

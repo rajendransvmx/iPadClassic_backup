@@ -65,7 +65,7 @@
                           recordId:(NSString *)recordId;
 + (SFMPageField *)getObjectInfoForObject:(NSString *)objectName fieldName:(NSString *)fieldName;
 
-+ (NSString *)getSettingValueForSeetingId:(NSString *)Id;
++ (NSString *)getSettingValueForSettingId:(NSString *)Id;
 
 +(NSString*)getTechnicianIdForOwnerId:(NSString*)ownerId;
 

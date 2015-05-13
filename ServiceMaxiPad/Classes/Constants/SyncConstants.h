@@ -34,6 +34,7 @@ typedef NS_ENUM(NSUInteger, CategoryType) {
     CategoryTypeResetApp,
     CategoryTypeValidateProfile,
     CategoryTypeDataPurge,
+    CategoryTypeGetPriceData,
     
     /******* productManual ******************/
     CategoryTypeProductManual,

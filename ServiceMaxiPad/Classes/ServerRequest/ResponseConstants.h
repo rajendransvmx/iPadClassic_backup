@@ -23,6 +23,7 @@ extern NSString *const kDocTemplate;
 extern NSString *const kMobileSettingsUniqueId;
 extern NSString *const kMobileSettingsValue;
 extern NSString *const kMobileSettingsDisplayValue;
+extern NSString *const kMobileSettingsAggressiveSync;
 
 /* SFObjectMapping OBJECT */
 extern NSString *const kObjMapId;

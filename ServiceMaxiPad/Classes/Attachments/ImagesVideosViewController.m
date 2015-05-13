@@ -597,7 +597,7 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
 
 - (void)showPreviewViewController:(AttachmentTXModel *)attachmentModel {
     
-    if(![self.navigationController.topViewController isKindOfClass:[AttachmentWebView class]])
+    if (![self.navigationController.topViewController isKindOfClass:[AttachmentWebView class]])
     {
         AttachmentWebView *attachmentWebview = [[AttachmentWebView alloc] initWithNibName:@"AttachmentWebView" bundle:[NSBundle mainBundle]];
         attachmentWebview.isInViewMode = self.isViewMode;

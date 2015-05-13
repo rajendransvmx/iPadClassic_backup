@@ -304,6 +304,8 @@ NSInteger const kTechAnnotationIndex = -1;
         pinAnnotation.canShowCallout = NO;
 		return pinAnnotation;
 	}
+    // IPAD-1324
+    /*
     else if ([annotation isKindOfClass:[MKUserLocation class]]) {
         
         MKAnnotationView *currentLocationAnnotation = [[MKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"CurrentLocation"];
@@ -313,6 +315,7 @@ NSInteger const kTechAnnotationIndex = -1;
         currentLocationAnnotation.canShowCallout = YES;
         return currentLocationAnnotation;
     }
+    */
     else {
 		return nil; 
 	}

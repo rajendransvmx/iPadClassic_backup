@@ -16,7 +16,10 @@
    
 }
 
-@property(nonatomic,strong)NSOperationQueue     *mainopQueue;
+@property(nonatomic,strong)NSOperationQueue     *mainOpQueue;
+@property(nonatomic,strong)NSOperationQueue     *logsOpQueue;
+@property(nonatomic,strong)NSOperationQueue     *locationOpQueue;
+@property(nonatomic,strong)NSOperationQueue     *getPriceOpQueue;
 
 
 + (SVMXOperationQueue *)sharedSVMXOperationQueObject;
