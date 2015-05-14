@@ -1,9 +1,9 @@
 
 --------------------------------------------------------------------------------------------
-ServiceMax Spring 15 iPad Release
+ServiceMax Summer 15 iPad Release
 
 *******************************************
-Version = 15.39.101
+Version = 15.49.002
 ===========================================
 -------------
 Fixed Defects
@@ -12,21 +12,25 @@ Fixed Defects
 -------------
 Known Issues
 -------------
-None
+1. Pending : Line item edit enhancement
+2. Sum15 Sync enhancement - Background Sync - is not in scope
+
 
 ---------------------
 Fixed - Known Issues 
 --------------------- 
 None
+
 ---------------------
 Features Implemented
 ---------------------
-None
+1.Summer 15 Sync enhancement (In Scope)- aggressive sync on/off - Splited incremental data sync. 
+2.SFM Search enhancement and View line item enhancement
 
 ---------------------
 Additional Notes
 ---------------------
-Changes merged from Winter 15 SP to Spring 15 SP
+Changes merged from Spring 15 SP to Summer 15
 
 
 
