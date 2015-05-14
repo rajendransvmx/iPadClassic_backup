@@ -47,11 +47,18 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     //self.smSplitViewController.navigationItem.titleView = [UILabel navBarTitleLabel:[[TagManager sharedInstance]tagByName:kTagPushLogs]];
+    
+    //16806 : Update the time text on changing the timezone and entering foreground
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(
+    handleAppEnterForeground) name:UIApplicationWillEnterForegroundNotification object:nil];
+    
     [self.smPopover dismissPopoverAnimated:YES];
     [self updateLastPushLogTimeAndStatusUI];
     self.pushLog.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
 }
-
+- (void) handleAppEnterForeground {
+    [self updateLastPushLogTimeAndStatusUI];
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -142,7 +149,9 @@
     if (status && lastTime) {
         
         self.statusLabel.text = status;
-        self.lastSyncLabel.text = [DateUtil getLiteralSupportedDateStringForDate:[DateUtil getDateFromDatabaseString:lastTime]];
+//        self.lastSyncLabel.text = [DateUtil getLiteralSupportedDateStringForDate:[DateUtil getDateFromDatabaseString:lastTime]];
+        
+        self.lastSyncLabel.text =[DateUtil getUserReadableDateForSyncStatus:[DateUtil getDateFromDatabaseString:lastTime]];
         
     } else {
         //Not even triggered once.
