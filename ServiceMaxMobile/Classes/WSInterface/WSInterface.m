@@ -9173,6 +9173,19 @@ NSDate * syncCompleted;
                         NSString *key2 = obj2.key;
                         NSString *value2 = obj2.value;
                         
+                        INTF_WebServicesDefServiceSvc_SVMXMap* obj3 = nil;
+                        
+                        if ([valMap2 count] > 2) {
+                            obj3 = [valMap2 objectAtIndex:2];
+                            
+                            NSString *key3 = obj3.key;
+                            NSString *value3 = obj3.value;
+                            if(key3 != nil && value3 != nil){
+                                [innerDict setObject:value3 forKey:key3];
+                            }
+                            
+                        }
+                        
                         [innerDict setObject:value1 forKey:key1];
                         [innerDict setObject:value2 forKey:key2];
                         
