@@ -788,6 +788,8 @@
 		5B2F9F3519EBF382006837C8 /* fadeout.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B2F9F3419EBF382006837C8 /* fadeout.png */; };
 		5B4F52B71A15D1A90008FDB3 /* File in Cloud - 70.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B4F52B61A15D1A90008FDB3 /* File in Cloud - 70.png */; };
 		5B5CDDE419F660940099B239 /* SFMReadOnlyCheckBoxCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B5CDDE319F660940099B239 /* SFMReadOnlyCheckBoxCell.m */; };
+		5B70BCF21B048B7600E5118B /* SFMSearchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B70BCF11B048B7600E5118B /* SFMSearchCell.m */; };
+		5B70BCF51B04998700E5118B /* MultiPageFieldView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B70BCF41B04998700E5118B /* MultiPageFieldView.m */; };
 		5B8286721A01FDB100C91854 /* RecentsPlistUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8286711A01FDB100C91854 /* RecentsPlistUtility.m */; };
 		5B8286751A025BFD00C91854 /* RecentModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8286741A025BFD00C91854 /* RecentModel.m */; };
 		5B8286791A025ED200C91854 /* RecentDaoService.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8286781A025ED200C91854 /* RecentDaoService.m */; };
@@ -2457,6 +2459,10 @@
 		5B4F52B61A15D1A90008FDB3 /* File in Cloud - 70.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "File in Cloud - 70.png"; sourceTree = "<group>"; };
 		5B5CDDE219F660940099B239 /* SFMReadOnlyCheckBoxCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFMReadOnlyCheckBoxCell.h; sourceTree = "<group>"; };
 		5B5CDDE319F660940099B239 /* SFMReadOnlyCheckBoxCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFMReadOnlyCheckBoxCell.m; sourceTree = "<group>"; };
+		5B70BCF01B048B7600E5118B /* SFMSearchCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFMSearchCell.h; sourceTree = "<group>"; };
+		5B70BCF11B048B7600E5118B /* SFMSearchCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFMSearchCell.m; sourceTree = "<group>"; };
+		5B70BCF31B04998700E5118B /* MultiPageFieldView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiPageFieldView.h; sourceTree = "<group>"; };
+		5B70BCF41B04998700E5118B /* MultiPageFieldView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MultiPageFieldView.m; sourceTree = "<group>"; };
 		5B8286701A01FDB100C91854 /* RecentsPlistUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecentsPlistUtility.h; sourceTree = "<group>"; };
 		5B8286711A01FDB100C91854 /* RecentsPlistUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecentsPlistUtility.m; sourceTree = "<group>"; };
 		5B8286731A025BFD00C91854 /* RecentModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecentModel.h; sourceTree = "<group>"; };
@@ -3957,6 +3963,8 @@
 		183AA05F19E6C93400919345 /* SFMsearchViewController */ = {
 			isa = PBXGroup;
 			children = (
+				5B70BCF01B048B7600E5118B /* SFMSearchCell.h */,
+				5B70BCF11B048B7600E5118B /* SFMSearchCell.m */,
 				189F00101A1481B900570C54 /* DOD */,
 				4000050D19EBD849009F570E /* SearchService */,
 				183AA06019E6C93400919345 /* SearchDetailViewController.h */,
@@ -3976,6 +3984,8 @@
 		183AA12219E6D26300919345 /* SFMPage */ = {
 			isa = PBXGroup;
 			children = (
+				5B70BCF31B04998700E5118B /* MultiPageFieldView.h */,
+				5B70BCF41B04998700E5118B /* MultiPageFieldView.m */,
 				183AA12319E6D26300919345 /* Model */,
 				183AA14019E6D26300919345 /* SFMPageService */,
 				18897C881A00B004007F326B /* DataTypeUtility.h */,
@@ -6658,6 +6668,7 @@
 				184A8E7219E7A0BE006DA6BE /* SMXViewWithHourLines.m in Sources */,
 				18800CF21A08D14400930FF9 /* SyncStatusDetailViewController.m in Sources */,
 				407252BC19FE718900ACA729 /* OPDocViewController.m in Sources */,
+				5B70BCF51B04998700E5118B /* MultiPageFieldView.m in Sources */,
 				183AA1D519E6D26400919345 /* SFMPageReferenceFieldCollectionViewCell.m in Sources */,
 				183AA1A619E6D26400919345 /* SFMProcess.m in Sources */,
 				183A9EFB19E6A15600919345 /* ZKDeletedObject.m in Sources */,
@@ -7059,6 +7070,7 @@
 				183A9A6219E6945B00919345 /* DatabaseConstant.m in Sources */,
 				184A8E8519E7A0BE006DA6BE /* TKGradientView.m in Sources */,
 				183A9F1619E6A15600919345 /* ZKRelatedListColumn.m in Sources */,
+				5B70BCF21B048B7600E5118B /* SFMSearchCell.m in Sources */,
 				183A9E4519E69DB000919345 /* SFObjectFieldModel.m in Sources */,
 				DE9E10CE1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m in Sources */,
 				183A9A7E19E6949800919345 /* DBRequestDelete.m in Sources */,

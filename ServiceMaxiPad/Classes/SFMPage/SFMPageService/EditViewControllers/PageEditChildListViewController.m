@@ -36,11 +36,14 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
 
 #define kChildListTableViewHeaderHeight 30.0
 #define kChildListTableViewFooterHeight 76.0
-#define kChildListTableViewRowHeight 50.0
+#define kChildListTableViewRowHeight 100.0
 #define kChildListTableViewSectionHeaderHeight 0
 #define kChildListTableViewSectionFooterHeight 1
 
 #define CELL_VIEW_TAG 100
+#define MULTI_PAGEFIELD_TAG 300
+#define TITLE_LABEL_TAG 400
+#define IMAGE_VIEW_TAG 500
 
 @interface PageEditChildListViewController ()
 
@@ -339,7 +342,6 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
 
 - (void) expandSection:(BOOL)shoudExpand forIndexPath:(NSIndexPath *)indexPath
 {
-   [self.tableView reloadData];
     NSNumber *section = [[NSNumber alloc] initWithInteger:indexPath.section];
     NSArray *indexPathArray = [[NSArray alloc] initWithObjects:[NSIndexPath indexPathForRow:1 inSection:indexPath.section], nil];
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
@@ -366,11 +368,15 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
         cell.accessoryView = nil;
         cell.accessoryView.tag = -1;
     };
-    cell.imageView.image = [UIImage imageNamed:imageName];
     
+    UIImageView *imageView = (UIImageView*)[cell.contentView viewWithTag:IMAGE_VIEW_TAG];
+    imageView.image = [UIImage imageNamed:imageName];
+    //cell.imageView.image = [UIImage imageNamed:imageName];
+
     if ([self.delegate respondsToSelector:@selector(reloadDataForIndexPath:reloadAll:)]) {
         [self.delegate reloadDataForIndexPath:self.selectedIndexPath reloadAll:NO];
     }
+    [self.tableView reloadData];
 }
 
 - (BOOL) shouldRemoveChildLine:(NSIndexPath *)indexPath{
@@ -460,11 +466,17 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     CGFloat rowHeight = kChildListTableViewRowHeight;
+    
+    if ([self isSectionExpanded:indexPath.section]) {
+        rowHeight = 50;
+    }
+    
     if (indexPath.row == 1) {
         rowHeight = [self heightOfChildViewControllerForIndexPath:indexPath];
     }
     
     return rowHeight;
+    
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
@@ -564,19 +576,60 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
     cell.textLabel.font = [UIFont fontWithName:kHelveticaNeueRegular size:kFontSize18];
 
     if (indexPath.row == 0) {
-        cell.imageView.image = [UIImage imageNamed:@"sfm_right_arrow.png"];
-        cell.textLabel.text = [self displayValueForIndexPath:indexPath];
+        UIImageView *imageView = (UIImageView*)[cell.contentView viewWithTag:IMAGE_VIEW_TAG];
+        UIImage *rightArrowImage = [UIImage imageNamed:@"sfm_right_arrow.png"];
+        UIImage *downArrowImage = [UIImage imageNamed:@"sfm_down_arrow.png"];
+        CGRect rightArrowFrame = CGRectMake(20,7, rightArrowImage.size.width, rightArrowImage.size.height);
+        CGRect downArrowFrame = CGRectMake(20,10, downArrowImage.size.width, downArrowImage.size.height);
+
+        if (imageView == nil) {
+            imageView = [[UIImageView alloc]initWithFrame:rightArrowFrame];
+            imageView.contentMode = UIViewContentModeScaleAspectFill;
+            // titleLabel.backgroundColor = [UIColor redColor];
+            imageView.tag = IMAGE_VIEW_TAG;
+            [cell.contentView addSubview:imageView];
+        }
+        imageView.frame = rightArrowFrame;
+        imageView.image = [UIImage imageNamed:@"sfm_right_arrow.png"];
+        //cell.textLabel.text = [self displayValueForIndexPath:indexPath];
 
         if ([self isSectionExpanded:indexPath.section]) {
-            cell.imageView.image = [UIImage imageNamed:@"sfm_down_arrow.png"];
+            imageView.frame = downArrowFrame;
+            imageView.image = [UIImage imageNamed:@"sfm_down_arrow.png"];
             cell.accessoryView = [self accessoryViewForCell:indexPath];
             cell.accessoryView.tag = indexPath.section;
+            MultiPageFieldView  *multiPageFieldView = (MultiPageFieldView *)[cell.contentView viewWithTag:MULTI_PAGEFIELD_TAG];
+            [multiPageFieldView removeFromSuperview];
         }
         else
         {
             cell.accessoryView = nil;
             cell.accessoryView.tag = -1;
-
+            MultiPageFieldView  *multiPageFieldView = (MultiPageFieldView *)[cell.contentView viewWithTag:MULTI_PAGEFIELD_TAG];
+            if (multiPageFieldView == nil) {
+                multiPageFieldView = [[MultiPageFieldView alloc] initWithFrame:CGRectMake(50,30,self.view.frame.size.width -50,50)];
+                multiPageFieldView.tag = MULTI_PAGEFIELD_TAG;
+               // multiPageFieldView.backgroundColor = [UIColor yellowColor];
+                [cell.contentView addSubview:multiPageFieldView];
+            }
+            SFMPageField *firstPageField = [self pageFieldForIndex:1];
+            multiPageFieldView.fieldLabelOne.text = [firstPageField label];
+            multiPageFieldView.fieldValueOne.text = [self displayValueForPageField:firstPageField indexPath:indexPath];
+            
+            SFMPageField *secondPageField = [self pageFieldForIndex:2];
+            multiPageFieldView.fieldLabelTwo.text = [secondPageField label];
+            multiPageFieldView.fieldValueTwo.text = [self displayValueForPageField:secondPageField indexPath:indexPath];
+            
+            UILabel *titleLabel = (UILabel*)[cell.contentView viewWithTag:TITLE_LABEL_TAG];
+            if (titleLabel == nil) {
+                titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(50,10,cell.frame.size.width, 20)];
+                titleLabel.backgroundColor = [UIColor clearColor];
+                titleLabel.tag = TITLE_LABEL_TAG;
+                [cell.contentView addSubview:titleLabel];
+                titleLabel.text = [self displayValueForIndexPath:indexPath];
+            }
+            //titleLabel.center = imageView.center;
+            
         }
     }
     else  if(indexPath.row == 1){
@@ -595,7 +648,12 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
     return cell;
 }
 
-
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+//    MultiPageFieldView  *multiPageFieldView = (MultiPageFieldView *)[cell.contentView viewWithTag:MULTI_PAGEFIELD_TAG];
+//    CGRect multiPageFieldFrame = CGRectMake(50, 0, self.tableView.bounds.size.width,100);
+//    multiPageFieldView.frame = multiPageFieldFrame;
+}
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -698,7 +756,7 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
     [self.tableView reloadRowsAtIndexPaths:indexPathArray withRowAnimation:UITableViewRowAnimationFade];
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:firstRowIndexPath];
     if (cell != nil) {
-        cell.textLabel.text = [self displayValueForIndexPath:firstRowIndexPath];
+        //cell.textLabel.text = [self displayValueForIndexPath:firstRowIndexPath];
     }
     
 }
@@ -1202,6 +1260,41 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
     return nil;
 }
 
+- (SFMPageField *)pageFieldForIndex:(NSUInteger)fieldIndex{
+    
+    NSArray * detailFields = self.detailLayout.detailSectionFields;
+    
+    SFMPageField * field  = nil;
+    if([detailFields count] > 0)
+    {
+        field  = [detailFields objectAtIndex:fieldIndex];
+    }
+    return field;
+}
 
+- (NSString *)displayValueForPageField:(SFMPageField *)pageField indexPath:(NSIndexPath *)indexPath{
+    NSString  * title = @"--";
+    NSMutableDictionary * detailDict =  self.sfmPage.detailsRecord;
+    
+    NSArray * detailRecords = [detailDict objectForKey:self.detailLayout.processComponentId];
+    if([detailRecords count] > indexPath.section)
+    {
+        NSDictionary * recordDict = [detailRecords objectAtIndex:indexPath.section];
+        SFMRecordFieldData * fieldData = [recordDict objectForKey:pageField.fieldName];
+        
+        if (![StringUtil isStringEmpty:fieldData.displayValue]) {
+            title = fieldData.displayValue;
+            if ([pageField.dataType isEqualToString:kSfDTBoolean]) {
+                if ([StringUtil isItTrue:fieldData.internalValue]) {
+                    title = kYes;
+                }else{
+                    title = kNo;
+                }
+                
+            }
+        }
+    }
+    return  title;
+}
 
 @end

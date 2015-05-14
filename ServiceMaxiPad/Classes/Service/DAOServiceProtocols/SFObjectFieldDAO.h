@@ -35,5 +35,6 @@
 - (BOOL)isObjectExists:(NSArray *)criteria;
 
 - (NSString*)getDatatypeOfField:(NSString*)fieldName andObject:(NSString*)objectName;
+- (NSString*)getFieldLabelFromFieldName:(NSString*)fieldName andObjectName:(NSString*)objectName;
 
 @end
