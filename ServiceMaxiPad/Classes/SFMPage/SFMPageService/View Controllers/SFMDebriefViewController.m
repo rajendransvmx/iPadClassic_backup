@@ -43,7 +43,7 @@
     tableViewTitle.text = [self getTitleForTableView];
     
     tableViewTitle.font = [UIFont fontWithName:kHelveticaNeueMedium size:kFontSize18];
-   self.debriefTableView.backgroundColor = [UIColor whiteColor];
+    self.debriefTableView.backgroundColor = [UIColor whiteColor];
     [view addSubview:tableViewTitle];
     self.debriefTableView.tableHeaderView = view;
 }
@@ -58,7 +58,7 @@
     
     self.debriefTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
-   [[self debriefTableView] registerClass:[DebriefSectionView class] forHeaderFooterViewReuseIdentifier:@"headerView"];
+    [[self debriefTableView] registerClass:[DebriefSectionView class] forHeaderFooterViewReuseIdentifier:@"headerView"];
 
     // Do any additional setup after loading the view from its nib.
    // self.debriefTableView.frame = self.view.frame;
@@ -152,12 +152,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    if([self isSectionExpanded:section]) {
-        return 50.0;
-
-    }else {
-        return 100.0;
-    }
+    return 50.0;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
@@ -191,6 +186,7 @@
     return footerView;
 }
 
+
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
    DebriefSectionView  * dbriefView = [tableView dequeueReusableHeaderFooterViewWithIdentifier:@"headerView"];
@@ -198,9 +194,7 @@
           dbriefView = [[DebriefSectionView alloc]initWithReuseIdentifier:@"headerView"];
     }
     dbriefView.delegate = self;
-    [self hideOrShowSubViewOf:dbriefView ForSection:section];
-    [self setDataOfDeBriefSection:dbriefView InSection:section];
-    
+    dbriefView.sectionLabel.text = [self getTitleForIndex:section];
     dbriefView.section = section;
     [dbriefView setExpandImage:[self isSectionExpanded:section]];
     [dbriefView setDetailLabelText];
@@ -393,61 +387,6 @@
     return  title;
 }
 
--(NSArray *)getFildInfoArrayFor:(NSInteger)section
-{
-    NSArray *fieldInfoArray = [self getFieldInforFor:section];
-    //   NSString * secTitle =[self titleForSection:section];
-    return fieldInfoArray;
-}
-
--(NSArray *)getFieldInforFor:(NSInteger)section
-{
-    
-    NSString  * title = @"?";
-    NSMutableDictionary * detailDict =  self.sfmPageView.sfmPage.detailsRecord;
-    
-    SFMPageLayout *pageLayout = self.sfmPageView.sfmPage.process.pageLayout;
-    NSArray *detailLayouts =pageLayout.detailLayouts;
-    
-    
-    SFMDetailLayout *detailLayout= [detailLayouts objectAtIndex:self.selectedSection];
-    NSArray * detailFields = detailLayout.detailSectionFields;
-    NSArray * detailRecords = [detailDict objectForKey:detailLayout.processComponentId];
-    
-    SFMPageField * field  = nil;
-    
-    NSDictionary * recordDict = nil;
-    if([detailRecords count] > section)
-    {
-        recordDict = [detailRecords objectAtIndex:section];
-    }
-    if([detailFields count] > 0)
-    {
-        field  = [detailFields objectAtIndex:0];
-    }
-    
-    NSMutableArray * sectionInfo = [[NSMutableArray alloc] init];
-    for (NSInteger count = 0; count < 3 ; count ++) {
-        if(count < [detailFields count]){
-            
-            SFMPageField * field   = [detailFields objectAtIndex:count];
-            SFMRecordFieldData * fieldData = [recordDict objectForKey:field.fieldName];
-            title = fieldData.displayValue;
-            title = (![StringUtil isStringEmpty:title])?title:@"?";
-            
-            SFMRecordFieldData * sectionField = [[SFMRecordFieldData alloc] init];
-            sectionField.name = field.label;
-            sectionField.displayValue = title;
-            
-            [sectionInfo addObject:sectionField];
-        }
-        
-    }
-    return  sectionInfo;
-    
-}
-
-
 -(void)expandImageWidth
 {
 //    UIImage * img = [UIImage imageNamed:@"Section_down_arrow@2x.png"];
@@ -602,38 +541,6 @@
             [alertHandler showCustomMessage:[error localizedDescription] withDelegate:nil title:[[TagManager sharedInstance] tagByName:kTagAlertIpadError] cancelButtonTitle:nil andOtherButtonTitles:[[NSArray alloc] initWithObjects:button, nil]];
         }
     }
-}
-
-- (void)hideOrShowSubViewOf:(DebriefSectionView*)dbriefView ForSection:(NSInteger)section
-{
-    if ([self isSectionExpanded:section]) {
-        [dbriefView.pageFieldView removeFromSuperview];
-    }else {
-        [dbriefView addSubview:dbriefView.pageFieldView];
-    }
-}
-
-- (void)setDataOfDeBriefSection:(DebriefSectionView*)dbriefView InSection:(NSInteger)section
-{
-    NSArray *fieldInfoArray = [self getFieldInforFor:section];
-    SFMRecordFieldData *recordFieldDataOne;
-    SFMRecordFieldData *recordFieldDataTwo;
-    SFMRecordFieldData *recordFieldDataThree;
-    if ([fieldInfoArray count] > 0) {
-        recordFieldDataOne = [fieldInfoArray objectAtIndex:0];
-    }
-    if ([fieldInfoArray count] > 1) {
-        recordFieldDataTwo = [fieldInfoArray objectAtIndex:1];
-    }
-    if ([fieldInfoArray count] > 2) {
-        recordFieldDataThree = [fieldInfoArray objectAtIndex:2];
-    }
-    
-    dbriefView.sectionLabel.text = recordFieldDataOne.displayValue;
-    dbriefView.pageFieldView.fieldLabelOne.text = recordFieldDataTwo.name;
-    dbriefView.pageFieldView.fieldLabelTwo.text = recordFieldDataThree.name;
-    dbriefView.pageFieldView.fieldValueOne.text = recordFieldDataTwo.displayValue;
-    dbriefView.pageFieldView.fieldValueTwo.text = recordFieldDataThree.displayValue;
 }
 
 

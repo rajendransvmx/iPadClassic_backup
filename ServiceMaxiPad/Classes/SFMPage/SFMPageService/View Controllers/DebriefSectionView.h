@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MultiPageFieldView.h"
 
 @protocol DebriefSectionViewDelegate;
 
@@ -21,8 +20,6 @@
 @property (nonatomic, assign)   UIView *topBorder;
 
 @property(nonatomic, strong) UIView *detailView;
-@property (nonatomic,strong) MultiPageFieldView *pageFieldView;
-@property(nonatomic)BOOL isExpanded;
 
 -(void)setExpandImage:(BOOL)expand;
 -(void)addGesture;

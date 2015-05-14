@@ -59,8 +59,8 @@
     [self.detailView addSubview:self.detailImage];
     
     [self addSubview:self.detailView];
-    self.pageFieldView = [[MultiPageFieldView alloc]initWithFrame:CGRectZero];
-    [self addSubview:self.pageFieldView];
+
+    
 }
 
 -(void)layoutSubviews
@@ -68,7 +68,8 @@
     CGFloat width = CGRectGetWidth(self.frame);
     
     CGFloat x = self.frame.origin.x + CGRectGetWidth(self.expandImg.frame)/2 + 15;
-    CGFloat y =  CGRectGetHeight( self.expandImg.frame)/2+10;
+    CGFloat y =  CGRectGetHeight( self.expandImg.frame)/2+10
+    ;
     
     CGRect imageViewFrame ;
     
@@ -82,21 +83,18 @@
     
     CGRect imgFrame = self.expandImg.frame;
     
-    CGRect frame = CGRectMake(0, 0, 200, self.frame.size.height);
-    //self.detailView.center = CGPointMake(CGRectGetMaxX(self.frame) + 20, y);
+    CGRect frame = CGRectMake(0, 0, 200, self.frame.size.height - 10);
+    self.detailView.bounds = frame;
+    self.detailView.center = CGPointMake(CGRectGetMaxX(self.frame) + 20, y);
+    
     
     CGRect labelFrame = CGRectMake(0, 0, width-imgFrame.size.width- frame.size.width + 90,self.frame.size.height);
     self.sectionLabel.bounds = labelFrame;
     self.sectionLabel.center =  CGPointMake( width/2 - 20 , y) ;
     
-    self.detailView.frame = CGRectMake(self.frame.size.width - 100,self.sectionLabel.frame.origin.y+15, 200, self.frame.size.height - self.sectionLabel.frame.origin.y);
-
-    self.pageFieldView.frame = CGRectMake(self.sectionLabel.frame.origin.x,self.sectionLabel.frame.origin.y +65,self.frame.size.width-self.detailView.frame.size.width +70,self.frame.size.height-40);
+    self.detailLabel.frame = CGRectMake(0, 0, self.detailView.frame.size.width - 140, self.detailView.bounds.size.height);
     
-    self.detailLabel.frame = CGRectMake(0,0, self.detailView.frame.size.width - 140, self.detailView.bounds.size.height);
-    //self.detailView.backgroundColor = [UIColor greenColor];
-    //self.detailLabel.backgroundColor = [UIColor blueColor];
-    CGRect detailImageFrame = CGRectMake(CGRectGetWidth(self.detailLabel.bounds) - 5,(self.detailView.frame.size.height - 20) / 2 + 2, 20, 20);
+    CGRect detailImageFrame = CGRectMake(CGRectGetWidth(self.detailLabel.bounds) - 5, self.bounds.origin.y + 10, 20, 20);
     
     self.detailImage.frame = detailImageFrame;
 }

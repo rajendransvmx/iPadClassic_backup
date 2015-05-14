@@ -345,12 +345,4 @@
     return objectFieldModel.type;
 }
 
-- (NSString*)getFieldLabelFromFieldName:(NSString*)fieldName andObjectName:(NSString*)objectName
-{
-    DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:@"fieldName" operatorType:SQLOperatorEqual andFieldValue:fieldName];
-    DBCriteria *criteriaTwo = [[DBCriteria alloc]initWithFieldName:@"objectName" operatorType:SQLOperatorEqual andFieldValue:objectName];
-    SFObjectFieldModel * model = [self getSFObjectFieldInfo:@[criteriaOne,criteriaTwo] advanceExpression:nil];
-    return model.label;
-}
-
 @end
