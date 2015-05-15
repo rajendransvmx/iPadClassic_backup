@@ -61,7 +61,7 @@
                                                      withInsetColor:[UIColor navBarBG]
                                                      withFrameColor:nil
                                                           withFrame:NO
-                                                         withShadow:YES
+                                                         withShadow:NO
                                                         withShining:NO
                                                        withFontType:BadgeStyleFontTypeHelveticaNeueMedium];
         
