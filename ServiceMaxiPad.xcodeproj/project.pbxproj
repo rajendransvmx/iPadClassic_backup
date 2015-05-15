@@ -729,6 +729,8 @@
 		4083C3F51A0110F30029188D /* OPDocHTML.m in Sources */ = {isa = PBXBuildFile; fileRef = 4083C3F41A0110F30029188D /* OPDocHTML.m */; };
 		4083C3F81A0111060029188D /* OPDocSignature.m in Sources */ = {isa = PBXBuildFile; fileRef = 4083C3F71A0111060029188D /* OPDocSignature.m */; };
 		4083C3FB1A011EBC0029188D /* OPDocSignatureService.m in Sources */ = {isa = PBXBuildFile; fileRef = 4083C3FA1A011EBC0029188D /* OPDocSignatureService.m */; };
+		40A06F0C1B05D41500218162 /* BadgeStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 40A06F091B05D41500218162 /* BadgeStyle.m */; };
+		40A06F0D1B05D41500218162 /* CustomBadge.m in Sources */ = {isa = PBXBuildFile; fileRef = 40A06F0B1B05D41500218162 /* CustomBadge.m */; };
 		40CA19FE19FE4B340097F5A1 /* OPDoc.html in Resources */ = {isa = PBXBuildFile; fileRef = 40CA19F419FE4B340097F5A1 /* OPDoc.html */; };
 		40CA19FF19FE4B340097F5A1 /* OPDocSignatureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 40CA19F619FE4B340097F5A1 /* OPDocSignatureViewController.m */; };
 		40CA1A0019FE4B340097F5A1 /* OPDocSignatureViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 40CA19F719FE4B340097F5A1 /* OPDocSignatureViewController.xib */; };
@@ -2358,6 +2360,10 @@
 		4083C3F91A011EBC0029188D /* OPDocSignatureService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OPDocSignatureService.h; sourceTree = "<group>"; };
 		4083C3FA1A011EBC0029188D /* OPDocSignatureService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OPDocSignatureService.m; sourceTree = "<group>"; };
 		4083C3FC1A011F0B0029188D /* OPDocSignatureDAO.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OPDocSignatureDAO.h; sourceTree = "<group>"; };
+		40A06F081B05D41500218162 /* BadgeStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BadgeStyle.h; sourceTree = "<group>"; };
+		40A06F091B05D41500218162 /* BadgeStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BadgeStyle.m; sourceTree = "<group>"; };
+		40A06F0A1B05D41500218162 /* CustomBadge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomBadge.h; sourceTree = "<group>"; };
+		40A06F0B1B05D41500218162 /* CustomBadge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomBadge.m; sourceTree = "<group>"; };
 		40CA19F419FE4B340097F5A1 /* OPDoc.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = OPDoc.html; sourceTree = "<group>"; };
 		40CA19F519FE4B340097F5A1 /* OPDocSignatureViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OPDocSignatureViewController.h; sourceTree = "<group>"; };
 		40CA19F619FE4B340097F5A1 /* OPDocSignatureViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OPDocSignatureViewController.m; sourceTree = "<group>"; };
@@ -3053,6 +3059,7 @@
 		183A9A9819E6967F00919345 /* TabBarComponents */ = {
 			isa = PBXGroup;
 			children = (
+				40A06F071B05D41500218162 /* Badge */,
 				183AA05F19E6C93400919345 /* SFMsearchViewController */,
 				183AA05519E6C8C500919345 /* RecentPage */,
 				183A9A9919E6967F00919345 /* ActionSideMenu */,
@@ -5563,6 +5570,17 @@
 			path = "Static Resources";
 			sourceTree = "<group>";
 		};
+		40A06F071B05D41500218162 /* Badge */ = {
+			isa = PBXGroup;
+			children = (
+				40A06F081B05D41500218162 /* BadgeStyle.h */,
+				40A06F091B05D41500218162 /* BadgeStyle.m */,
+				40A06F0A1B05D41500218162 /* CustomBadge.h */,
+				40A06F0B1B05D41500218162 /* CustomBadge.m */,
+			);
+			path = Badge;
+			sourceTree = "<group>";
+		};
 		4273050E1A10BD2C005F41E1 /* AdvDataValidation */ = {
 			isa = PBXGroup;
 			children = (
@@ -6538,6 +6556,7 @@
 				183A9A8219E6949800919345 /* JoinObject.m in Sources */,
 				9EB4F7921A44332C00E2A8BD /* ChatterFooterView.m in Sources */,
 				184A8E6219E7A0BE006DA6BE /* SMXDayHeaderCell.m in Sources */,
+				40A06F0D1B05D41500218162 /* CustomBadge.m in Sources */,
 				6B59CC2A1A0386F8008B1512 /* SVMXDatabaseMaster.m in Sources */,
 				6BB4C24519EE8330002A1D88 /* SFMSearchDataHandler.m in Sources */,
 				18800CEC1A08D14400930FF9 /* BadgeLabel.m in Sources */,
@@ -6809,6 +6828,7 @@
 				183A9AE819E6967F00919345 /* AddOrEditTaskVC.m in Sources */,
 				183A9A7F19E6949800919345 /* DBRequestInsert.m in Sources */,
 				183A9A9319E694D400919345 /* CacheManager.m in Sources */,
+				40A06F0C1B05D41500218162 /* BadgeStyle.m in Sources */,
 				184A8EFC19E7A535006DA6BE /* ContactCell.m in Sources */,
 				183A9B1019E69B5200919345 /* SyncDelegateHandler.m in Sources */,
 				183AA03119E6BDB300919345 /* MobileDeviceTagParser.m in Sources */,

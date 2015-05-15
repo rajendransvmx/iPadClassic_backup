@@ -25,6 +25,9 @@
 #import "SFMSearchViewController.h"
 #import "TagManager.h"
 
+#import "CustomBadge.h"
+#import "ResolveConflictsHelper.h"
+
 typedef enum {
     TabBarItemIDCalendar = 1,
     TabBarItemIDExplore,
@@ -353,16 +356,15 @@ typedef enum {
     
     theFrame.origin.x = theFrame.origin.x + theFrame.size.width + spaceMargin +5 ;
     if (!self.btn7) {
-        self.btn7 = [UIBuilder getTabBarButton:theFrame withImage:@"Tools" withSelectedImage:@"Tools" withTitle:[[TagManager sharedInstance]tagByName:kTagTools]];
+        self.btn7 = [UIBuilder getTabBarButton:theFrame withImage:@"Tools" withSelectedImage:@"Tools" withTitle:[[TagManager sharedInstance]tagByName:kTagTools]  withBadge:YES];
         btn7.imageEdgeInsets = UIEdgeInsetsMake(6, 100/2-25/2, 22, 0);
         btn7.titleEdgeInsets = UIEdgeInsetsMake(25, -25, 0, 0);
         [btn7 setTag:TabBarItemIDTools];
         btn7.backgroundColor = [UIColor clearColor];
         [btn7 setImage:[UIImage imageNamed:@"STools.png"] forState:UIControlStateSelected];
         [btn7 setImage:[UIImage imageNamed:@"NavBarTools.png"] forState:UIControlStateNormal];
-
-
-
+        
+        [self updateBadge];
     }
     
     
@@ -454,6 +456,31 @@ typedef enum {
             temp.selected = NO;
         }
     }
+}
+
+- (void)updateBadge
+{
+    NSUInteger count = [[ResolveConflictsHelper getConflictsRecords] count];
+
+    NSLog(@"Conflicts count %lu",(unsigned long)count);
+
+    CustomBadge *view = (CustomBadge*)[self.btn7 viewWithTag:BADGE_TAG];
+    
+    if(count == 0) {
+        view.hidden = YES;
+        return;
+    }
+    
+    view.hidden = NO;
+    
+    NSString *counterStr = [NSString stringWithFormat:@"%lu",(unsigned long)count];
+    
+    if(view != nil) {
+        
+        [view autoBadgeSizeWithString:counterStr];
+    }
+
+    
 }
 
 #pragma mark - TapGesture
