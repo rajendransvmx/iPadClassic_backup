@@ -647,7 +647,7 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
         }
     }
     
-    return tableViewHeight;
+    return tableViewHeight  + numberOfSections+20 ;
 }
 
 - (void)keyboardShownInSelectedIndexPath:(NSIndexPath *)indexPath;
