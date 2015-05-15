@@ -745,6 +745,8 @@ static SyncManager *_instance;
     
     @synchronized([self class]) {
 
+        [AppManager updateTabBarBadges];
+
         [[SuccessiveSyncManager sharedSuccessiveSyncManager] doSuccessiveSync];
         [self updateLastSyncTime];
         
@@ -799,6 +801,8 @@ static SyncManager *_instance;
 - (void)currentDataSyncFailedWithError:(NSError *)error {
     
     @synchronized([self class]) {
+        
+        [AppManager updateTabBarBadges];
         
         [self updatePlistWithLastDataSyncTimeAndStatus:kFailed];
         

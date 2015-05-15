@@ -81,7 +81,7 @@ typedef enum {
     btn1.layer.cornerRadius = 4.f;
     btn1.layer.shadowOffset = CGSizeMake(4.0f,4.5f);
     btn1.layer.shadowRadius = 1.5f;
-    
+    [self addBadgeToHomeButton];
 
     CalendarHomeViewController *calendarVCDefault = [ViewControllerFactory createViewControllerByContext:ViewControllerCalendar];
     
@@ -139,6 +139,33 @@ typedef enum {
 
     //[self.tabBar setSelectedItem:[self.tabBar.items objectAtIndex:1]];
     
+}
+
+- (void)addBadgeToHomeButton
+{
+    BadgeStyle *badgeStyle = [BadgeStyle freeStyleWithTextColor:[UIColor whiteColor]
+                                                 withInsetColor:[UIColor redColor]
+                                                 withFrameColor:nil
+                                                      withFrame:NO
+                                                     withShadow:NO
+                                                    withShining:NO
+                                                   withFontType:BadgeStyleFontTypeHelveticaNeueMedium];
+    
+    CustomBadge *badge = [CustomBadge customBadgeWithString:@"0" withScale:1.0 withStyle:badgeStyle];
+    
+    badge.tag = BADGE_TAG;
+    
+    
+    CGRect r = self.btn1.frame;
+    CGPoint pt = CGPointZero;
+    pt.x = r.size.width;
+    pt.y = 0.0f;
+    
+    badge.center = pt;
+    
+    [self.btn1 addSubview:badge];
+    
+    badge.hidden = YES;
 }
 
 - (void)addShadowToMenuButton:(BOOL)shouldAdd
@@ -464,20 +491,27 @@ typedef enum {
 
     NSLog(@"Conflicts count %lu",(unsigned long)count);
 
-    CustomBadge *view = (CustomBadge*)[self.btn7 viewWithTag:BADGE_TAG];
+    CustomBadge *toolsBadge = (CustomBadge*)[self.btn7 viewWithTag:BADGE_TAG];
+    CustomBadge *homeBadge = (CustomBadge*)[self.btn1 viewWithTag:BADGE_TAG];
     
     if(count == 0) {
-        view.hidden = YES;
+        toolsBadge.hidden = YES;
+        homeBadge.hidden = YES;
         return;
     }
     
-    view.hidden = NO;
+    toolsBadge.hidden = NO;
+    homeBadge.hidden = NO;
     
     NSString *counterStr = [NSString stringWithFormat:@"%lu",(unsigned long)count];
     
-    if(view != nil) {
+    if(toolsBadge != nil) {
         
-        [view autoBadgeSizeWithString:counterStr];
+        [toolsBadge autoBadgeSizeWithString:counterStr];
+    }
+    
+    if(homeBadge != nil) {
+        [homeBadge autoBadgeSizeWithString:counterStr];
     }
 
     
