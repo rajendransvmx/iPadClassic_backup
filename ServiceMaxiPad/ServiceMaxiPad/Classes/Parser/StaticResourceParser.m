@@ -95,6 +95,16 @@
                     [innerDict setObject:value1 forKey:key1];
                     [innerDict setObject:value2 forKey:key2];
                     
+                    if ([valMap2 count] > 2) {
+                        NSDictionary* obj3 = [valMap2 objectAtIndex:2];
+                        NSString *key3 = [obj3 objectForKey:@"key"];
+                        NSString *value3 = [obj3 objectForKey:@"value"];
+                        if (key3 != nil && value3 != nil) {
+                            [innerDict setObject:value3 forKey:key3];
+                        }
+                    }
+                    
+                    
                     [staticRsrcArr addObject:innerDict];
                 }
                 
