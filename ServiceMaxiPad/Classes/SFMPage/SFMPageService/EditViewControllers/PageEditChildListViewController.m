@@ -897,6 +897,9 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
         if (aNameField.displayValue != nil) {
             newField.displayValue = aNameField.displayValue;
         }
+        else {
+            newField.displayValue = self.sfmPage.nameFieldValue;
+        }
     }
     return newField;
 }
