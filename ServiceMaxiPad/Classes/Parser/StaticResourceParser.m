@@ -86,14 +86,28 @@
                     NSDictionary* obj1 = [valMap2 objectAtIndex:0];
                     NSDictionary* obj2 = [valMap2 objectAtIndex:1];
                     
+                    
+                    
                     NSString *key1 = [obj1 objectForKey:@"key"];
                     NSString *value1 = [obj1 objectForKey:@"value"];
                     
                     NSString *key2 = [obj2 objectForKey:@"key"];
                     NSString *value2 = [obj2 objectForKey:@"value"];
                     
+                    
                     [innerDict setObject:value1 forKey:key1];
                     [innerDict setObject:value2 forKey:key2];
+                    
+                    
+                    if ([valMap2 count] > 2) {
+                         NSDictionary* obj3 = [valMap2 objectAtIndex:2];
+                        NSString *key3 = [obj3 objectForKey:@"key"];
+                        NSString *value3 = [obj3 objectForKey:@"value"];
+                        if (key3 != nil && value3 != nil) {
+                            [innerDict setObject:value3 forKey:key3];
+                        }
+                    }
+                    
                     
                     [staticRsrcArr addObject:innerDict];
                 }
