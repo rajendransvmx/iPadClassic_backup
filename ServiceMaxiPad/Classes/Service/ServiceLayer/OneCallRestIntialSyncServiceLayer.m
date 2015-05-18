@@ -29,6 +29,7 @@
 #import "ResourceHandler.h"
 #import "SFPicklistModel.h"
 #import "PlistManager.h"
+#import "CalenderHelper.h"
 
 @implementation OneCallRestIntialSyncServiceLayer
 
@@ -87,6 +88,11 @@
             if (self.requestType == RequestGetPriceObjects && !callBack.callBack) {
                 DynamicTableCreator *dynamicTableCreator = [[DynamicTableCreator alloc] init];
                 [dynamicTableCreator createDynamicTables];
+            }
+            else if (self.requestType == RequestTXFetch&&  !callBack.callBack ) {
+                /* tx fetch is done*/
+                [self updateSfIdForSVMXEvent];
+                
             }
         }
         
@@ -516,6 +522,11 @@
     }
     [lastSyncTimeDict setObject:lastSyncTime forKey:kSVMXRequestValue];
     return lastSyncTimeDict;
+}
+
+- (void)updateSfIdForSVMXEvent
+{
+    [CalenderHelper updateOriginalSfIdForSVMXEvent];
 }
 
 @end

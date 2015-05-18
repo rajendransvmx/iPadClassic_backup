@@ -122,6 +122,9 @@
     
     schema =[NSString stringWithFormat:@"ALTER TABLE %@ ADD COLUMN 'TimeZone' VARCHAR",kServicemaxEventObject];
     [universalDao alterTable:schema];
+    
+    schema =[NSString stringWithFormat:@"ALTER TABLE %@ ADD COLUMN 'objectSfId' VARCHAR",kServicemaxEventObject];
+    [universalDao alterTable:schema];
 }
 
 @end

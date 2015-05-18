@@ -11,6 +11,7 @@
 #import "OneCallDataSyncHelper.h"
 #import "ResolveConflictsHelper.h"
 #import "SyncHeapService.h"
+#import "CalenderHelper.h"
 
 @implementation OneCallDataSyncServiceLayer
 
@@ -37,6 +38,11 @@
         parserObj.clientRequestIdentifier = self.requestIdentifier;
         callBack = [parserObj parseResponseWithRequestParam:requestParamModel
                                                responseData:responseData];
+        
+        if (self.requestType == RequestTXFetch&&  !callBack.callBack ) {
+            /* tx fetch is done*/
+            [self updateSfIdForSVMXEvent];
+        }
         
     }
     return callBack;
@@ -111,6 +117,11 @@
      NSDictionary *lastSyncTime = [self getLastSyncTimeForRecords];
      paramObj.valueMap = @[lastSyncTime];
     return @[paramObj];
+}
+
+- (void)updateSfIdForSVMXEvent
+{
+    [CalenderHelper updateOriginalSfIdForSVMXEvent];
 }
 
 @end

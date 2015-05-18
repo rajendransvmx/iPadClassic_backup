@@ -157,7 +157,7 @@
     }
     
     for (TransactionObjectModel *transObjModel in SVMX_EventsArray) {
-        NSString *whatId = [transObjModel valueForField:kSVMXWhatId];
+        NSString *whatId = [transObjModel valueForField:kObjectSfId];
         if (![StringUtil isStringEmpty:whatId])
 //            [whatEventStartDateValueMap setValue:[transObjModel valueForField:kSVMXStartDateTime] forKey:whatId];
                     [whatEventStartDateValueMap setValue:@{whatId:[transObjModel valueForField:kSVMXStartDateTime], kGENERAL_ALL_DAY:[transObjModel valueForField:kSVMXIsAlldayEvent]} forKey:whatId];
@@ -296,7 +296,7 @@
 
 + (NSArray*) eventsFromSVMXEVENTOfCurrentDay:(NSDate*)selectedDate {
     
-    NSArray *fieldsArray = [[NSArray alloc] initWithObjects:kSVMXActivityDate,kSVMXActivityDateTime,kSVMXDurationInMinutes,kSVMXEndDateTime, kSVMXStartDateTime, kSVMXEventName, kSVMXIsAlldayEvent, kSVMXWhatId, kId, klocalId, nil];
+    NSArray *fieldsArray = [[NSArray alloc] initWithObjects:kSVMXActivityDate,kSVMXActivityDateTime,kSVMXDurationInMinutes,kSVMXEndDateTime, kSVMXStartDateTime, kSVMXEventName, kSVMXIsAlldayEvent, kSVMXWhatId, kId, klocalId, kObjectSfId,nil];
     NSTimeZone *gmt = [[NSTimeZone alloc] initWithName:@"GMT"];
     NSDate *startDate = [NSDate date:selectedDate withTimeZone:gmt];
     NSDate *endDate = [NSDate date:[selectedDate dateByAddingDays:1] withTimeZone:gmt];
@@ -319,7 +319,7 @@
     
 //TODO: working on this.
     
-    DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kSVMXWhatId operatorType:SQLOperatorLike andFieldValue:[self prefixForWorkOrder]];
+    DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kObjectSfId operatorType:SQLOperatorLike andFieldValue:[self prefixForWorkOrder]];
     
     DBCriteria *criteriaTwo = [[DBCriteria alloc] initWithFieldName:kSVMXStartDateTime operatorType:SQLOperatorLessThan andFieldValue:endDateString];
     
@@ -343,7 +343,7 @@
 
 + (NSArray*) eventsFromSVMXEVENTOfCurrentDayForAllDayEvents:(NSDate*)selectedDate {
     
-    NSArray *fieldsArray = [[NSArray alloc] initWithObjects:kSVMXActivityDate,kSVMXActivityDateTime,kSVMXDurationInMinutes,kSVMXEndDateTime, kSVMXStartDateTime, kSVMXEventName, kSVMXIsAlldayEvent, kSVMXWhatId, kId, klocalId, nil];
+    NSArray *fieldsArray = [[NSArray alloc] initWithObjects:kSVMXActivityDate,kSVMXActivityDateTime,kSVMXDurationInMinutes,kSVMXEndDateTime, kSVMXStartDateTime, kSVMXEventName, kSVMXIsAlldayEvent, kSVMXWhatId, kId, klocalId,kObjectSfId, nil];
     NSTimeZone *gmt = [[NSTimeZone alloc] initWithName:@"GMT"];
     NSDate *startDate = [NSDate date:selectedDate withTimeZone:gmt];
     NSDate *endDate = [NSDate date:[selectedDate dateByAddingDays:1] withTimeZone:gmt];
@@ -354,7 +354,7 @@
     NSString *technicianID = [PlistManager getTechnicianId];
 
     
-    DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kSVMXWhatId operatorType:SQLOperatorLike andFieldValue:[self prefixForWorkOrder]];
+    DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kObjectSfId operatorType:SQLOperatorLike andFieldValue:[self prefixForWorkOrder]];
     
     DBCriteria *criteriaTwo = [[DBCriteria alloc] initWithFieldName:kSVMXStartDateTime operatorType:SQLOperatorLessThanEqualTo andFieldValue:startDateString];
     

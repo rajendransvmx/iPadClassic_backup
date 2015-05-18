@@ -296,6 +296,8 @@ extern NSString *const kSVMXTechnicianId;
 extern NSString *const kSVMXIsAlldayEvent;
 
 extern NSString *const kGENERAL_ALL_DAY;
+
+extern NSString *const kObjectSfId;
 //Id use kId
 /*SyncErrorConflict*/
 extern NSString *const kSyncErrorConflictTableName;

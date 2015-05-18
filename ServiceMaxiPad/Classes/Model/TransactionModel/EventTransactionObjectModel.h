@@ -16,6 +16,6 @@
 -(BOOL)isItMultiDay;
 -(NSString *)convertToJsonString;
 -(BOOL)hasTimeZoneChanged;
-
+- (NSString *)getWhatId;
 
 @end

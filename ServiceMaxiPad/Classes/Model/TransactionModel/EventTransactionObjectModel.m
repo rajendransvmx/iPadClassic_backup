@@ -40,6 +40,11 @@
 @synthesize keyIsAllDayEvent;
 
 
+- (NSString *)getWhatId
+{
+    return [self valueForField:kSVMXWhatId];
+}
+
 -(BOOL)isItMultiDay
 {
     [self setTheKeys];
@@ -195,8 +200,15 @@
     NSString *endDateString = [self dateForTheString:endDate];
     
     NSMutableDictionary *eventObject = [NSMutableDictionary new];
-    [eventObject setObject:startDateString forKey:keyStartDateTime];
-    [eventObject setObject:endDateString forKey:keyEndDateTime];
+    
+    if (startDateString != nil) {
+        [eventObject setObject:startDateString forKey:keyStartDateTime];
+    }
+    if (endDateString != nil) {
+        [eventObject setObject:endDateString forKey:keyEndDateTime];
+    }
+//    [eventObject setObject:startDateString forKey:keyStartDateTime];
+//    [eventObject setObject:endDateString forKey:keyEndDateTime];
     [eventObject setObject:[NSString stringWithFormat:@"%d",number] forKey:keyNumberofevent];
     [eventObject setObject:[NSString stringWithFormat:@"%d",index] forKey:keyIndex];
     [eventObject setObject:[NSString stringWithFormat:@"%f", duration] forKey:keyDuration];
