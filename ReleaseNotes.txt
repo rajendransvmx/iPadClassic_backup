@@ -3,18 +3,13 @@
 ServiceMax Spring 15SP iPad Release
 
 *******************************************
-Version = 15.39.102
+Version = 15.39.103
 ===========================================
 -------------
 Fixed Defects
 -------------
-017354
-16806
-16904
-009623
-012136
-16793
-14381
+017443- SVMX Events are downloaded to iPad with incorrect ID and hence unable to view the event details and no data being shown in hard wired screen
+017166- SFM Mapping SVMX.CURRENTRECORDHEADER Not Working Spring 15 upgrade
 
 -------------
 Known Issues
