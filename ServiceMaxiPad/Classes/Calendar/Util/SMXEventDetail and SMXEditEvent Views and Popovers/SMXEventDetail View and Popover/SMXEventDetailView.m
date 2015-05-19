@@ -47,7 +47,7 @@
 #define LABEL_TITLE_COLOR [UIColor colorWithRed:121.0/255.0 green:121.0/255.0 blue:121.0/255.0 alpha:1]
 #define LABEL_VALUE_COLOR [UIColor colorWithRed:67.0/255.0 green:67.0/255.0 blue:67.0/255.0 alpha:1]
 #define SMXLableWidth 270
-#define stringLimitInProduct 70
+#define stringLimitInProduct 80
 
 
 @interface SMXEventDetailView ()
@@ -945,7 +945,7 @@
     
     /* we are giving fram for parts order*/
     productsAtThisLocationLabel = [[UILabel alloc] initWithFrame:CGRectMake(productsAtThisLocationTitleLabel.frame.origin.x
-                                                                        , productsAtThisLocationTitleLabel.frame.origin.y+productsAtThisLocationTitleLabel.frame.size.height,650, productsAtThisLocationTitleLabel.frame.size.height)];
+                                                                        , productsAtThisLocationTitleLabel.frame.origin.y+productsAtThisLocationTitleLabel.frame.size.height,705, productsAtThisLocationTitleLabel.frame.size.height)];
     productsAtThisLocationLabel.backgroundColor = [UIColor clearColor];
     [productsAtThisLocationLabel setText:lProductsAtLocation];
     productsAtThisLocationLabel.numberOfLines = 0;
