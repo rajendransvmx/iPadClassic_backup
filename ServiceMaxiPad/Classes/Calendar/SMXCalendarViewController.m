@@ -64,6 +64,7 @@
 #import "MobileDeviceSettingService.h"
 #import "MobileDeviceSettingsModel.h"
 #import "DateUtil.h"
+#import "CalenderHelper.h"
 
 #define kLongFormat @"yyyy-MM-dd'T'HH:mm:ss.SSSSZ"
 #define kLongFormatZulu @"yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'"
@@ -149,6 +150,8 @@
     self.navigationController.navigationBar.barTintColor = [UIColor navBarBG];
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     self.navigationController.navigationBar.translucent = NO;
+    
+    [CalenderHelper alterSVMXEventTable];
     
     [self customNavigationBarLayout];
     [self setTheNotifications];
