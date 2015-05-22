@@ -190,6 +190,10 @@ static NSString *appendedZeroes = @".000+0000";
         else if ([fieldType isEqualToString:kSfDTBoolean]){
             fieldValue = ([StringUtil isItTrue:fieldValue])? kTrue:kFalse;
         }
+        if (([fieldType isEqualToString:kSfDTDate] || [fieldType isEqualToString:kSfDTDateTime])) {
+            
+            fieldValue =  [DateUtil getLocalDateForGetpriceFromDateString:displayValue];
+        }
         fieldValue = (fieldValue == nil)?emptyStringValue:fieldValue;
         displayValue = (displayValue == nil)?emptyStringValue:displayValue;
         
