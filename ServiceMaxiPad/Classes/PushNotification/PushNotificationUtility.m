@@ -28,6 +28,15 @@
     {
         return YES;
     }
+  
+    return NO;
+}
+
++(BOOL)isModallyPresented:(UIViewController *)controller
+{
+    if([controller presentingViewController]){
+        return YES;
+    }
     return NO;
 }
 
