@@ -1,20 +1,23 @@
 
 --------------------------------------------------------------------------------------------
-ServiceMax Spring 15SP iPad Release
+ServiceMax Spring 15 SP iPad Release
 
 *******************************************
-Version = 15.39.103
+Version = 15.39.104
 ===========================================
 -------------
 Fixed Defects
 -------------
-017443- SVMX Events are downloaded to iPad with incorrect ID and hence unable to view the event details and no data being shown in hard wired screen
-017166- SFM Mapping SVMX.CURRENTRECORDHEADER Not Working Spring 15 upgrade
+017390 - The logo does not display in the iPad Service report (custom & Standard), even with default configuration.
+017119 - Calculate Billable results 22 hours instead of 24 hours
+017443 - SVMX Events are downloaded to iPad with incorrect ID and hence unable to view the event details and no data being shown in hard wired screen
+017591 - While resolving conflicts(data sync in progress), conflict count on hamburger and Tools is not in sync with resolve conflict section of tools screen.
+017622 - Detail lines are not getting downloaded during DOD when the header has a custom child record added
 
 -------------
 Known Issues
 -------------
-Badges may appear in tab bar icons,implementation not yet completed.Please ignore.
+None
 
 ---------------------
 Fixed - Known Issues 
@@ -28,7 +31,7 @@ None
 ---------------------
 Additional Notes
 ---------------------
-Changes merged from Winter 15 SP to Spring 15 SP
+None
 
 
 
