@@ -38,4 +38,6 @@ typedef NS_ENUM(NSInteger, ViewControllerType){
 +(NSMutableDictionary*)getDictionaryFromSharedURL:(NSURL*)url;
 
 +(BOOL)shouldInitiatePushNotification:(CategoryType)categoryType;
++(BOOL)isModallyPresented:(UIViewController *)controller;
+
 @end
