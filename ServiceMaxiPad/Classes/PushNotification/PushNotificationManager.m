@@ -575,9 +575,13 @@
     }
     
     BOOL viewProcessAvailable = YES;
+    //HS Fix for defect - 017600
     //localId
-    NSString *localId = [PushNotificationUtility getLocalIdForSfId:self.finalModel.sfId objectName:self.finalModel.objectName];
-    
+    NSString *ObjectName = [PushNotificationUtility getObjectForSfId:self.finalModel.sfId];
+   // NSString *localId = [PushNotificationUtility getLocalIdForSfId:self.finalModel.sfId objectName:self.finalModel.objectName];
+    NSString *localId = [PushNotificationUtility getLocalIdForSfId:self.finalModel.sfId objectName:ObjectName];
+    //Fix ends here
+
     if(localId == nil)
     {
         [self noViewProcessAvaibleAlert];
