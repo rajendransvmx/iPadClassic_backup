@@ -142,16 +142,16 @@
                     self.mNotificationModel.requestStatus = NotificationRequestStateDownloadCompleted;
 
                 }
-                else if (st.syncStatus == SyncStatusFailed)
+                else if (st.syncStatus == SyncStatusFailed  || st.syncStatus ==  SyncStatusNetworkError)
                 {
                     //[self downloadFailedWithError:st.syncError];
                     self.mNotificationModel.requestStatus = NotificationRequestStateDownloadFailed;
-
                 }
-                else if (st.syncStatus == SyncStatusInCancelled)
+                else
                 {
-                    
+                    self.mNotificationModel.requestStatus = NotificationRequestStateDownloadFailed;
                 }
+                
                 break;
             }
             default:
