@@ -88,7 +88,7 @@
         case AlertMessageGeneral:
             titleString = [[TagManager sharedInstance]tagByName:kTag_ServiceMax];
             if (messageString == nil || messageString.length == 0) {
-                messageString = [[TagManager sharedInstance]tagByName:kTag_NetworkUnavailable];
+                messageString = [[TagManager sharedInstance]tagByName:kTag_RemoteAccessRevokedMsg];
             }
             break;
             
@@ -399,7 +399,7 @@
     if (error) {
         message = [error.userInfo objectForKey:SMErrorUserMessageKey];
     }
-    [self showAlertFor:AlertGeneral withCustomMessage:message];
+    [self showAlertFor:AlertMessageGeneral withCustomMessage:message];
     [self dismissNotificationViewController];
 }
 

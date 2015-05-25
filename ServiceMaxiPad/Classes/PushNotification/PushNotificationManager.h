@@ -44,7 +44,8 @@ typedef NS_ENUM(NSInteger,UserActionPresentedOn ){
 typedef NS_ENUM(NSInteger,AlertMessageStyle ){
     
     AlertMessageStyleNoInternet,
-    AlertMessageStyleInvalidPayload
+    AlertMessageStyleInvalidPayload,
+    AlertMessageGeneral
 };
 
 @interface PushNotificationManager : NSObject <NotifiactionHelperProtocol>
