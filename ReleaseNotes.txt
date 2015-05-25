@@ -3,21 +3,24 @@
 ServiceMax Spring 15 SP iPad Release
 
 *******************************************
-Version = 15.39.104
+Version = 15.39.105
 ===========================================
 -------------
 Fixed Defects
 -------------
-017390 - The logo does not display in the iPad Service report (custom & Standard), even with default configuration.
-017119 - Calculate Billable results 22 hours instead of 24 hours
-017443 - SVMX Events are downloaded to iPad with incorrect ID and hence unable to view the event details and no data being shown in hard wired screen
-017591 - While resolving conflicts(data sync in progress), conflict count on hamburger and Tools is not in sync with resolve conflict section of tools screen.
-017622 - Detail lines are not getting downloaded during DOD when the header has a custom child record added
+017186  - New event created and assigned to User1. Notification appears for user 2
+017470  - Notifications are appearing as Banner/Alert even when the user is logged out of Pulse App
+017600  - After switch user, for event object on view of notification displays pop up - No view layout has been configured..though event view is available.
+017615  - SXMX App crash while trying to display notification record.
+017636  - Tag values are hardcode in Pulse App
 
 -------------
 Known Issues
 -------------
-None
+Tags are not available for below text:
+View
+In Progress
+Started
 
 ---------------------
 Fixed - Known Issues 
@@ -32,6 +35,9 @@ None
 Additional Notes
 ---------------------
 None
+
+
+
 
 
 
