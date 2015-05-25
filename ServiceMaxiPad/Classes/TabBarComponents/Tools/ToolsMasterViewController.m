@@ -23,6 +23,7 @@
 #import "SyncProgressDetailModel.h"
 #import "SyncManager.h"
 #import "NSNotificationCenter+UniqueNotif.h"
+#import "AppManager.h"
 
 @interface ToolsMasterViewController ()
 
@@ -136,6 +137,7 @@
             recordCount = 0;
         }
         cell.badgeNumber = recordCount;
+        [AppManager updateTabBarBadges];
     }
     
     return cell;
