@@ -14,6 +14,8 @@
 #import "SFMPageViewController.h"
 #import "SFMPageViewManager.h"
 #import "PushNotificationHeaders.h"
+#import "TagConstant.h"
+#import "TagManager.h"
 
 #define PushNotificationProcessRequest     @"PushNotificationProcessRequest"
 #define kUpdateEventNotification @"UpdateEventOnNotification"
@@ -72,22 +74,28 @@
     NSString *messageString = message;
     switch (messageStyle) {
         case AlertMessageStyleInvalidPayload:
-            titleString = @"Payload Error";
+            titleString = [[TagManager sharedInstance]tagByName:kTag_ServiceMax];
             if (messageString == nil || messageString.length == 0) {
-                messageString = @"Payload doesnt have required information to download the record";
+                messageString = [[TagManager sharedInstance]tagByName:kTag_InvalidNotification];
             }
             break;
         case AlertMessageStyleNoInternet:
-            titleString = @"Error";
+            titleString = [[TagManager sharedInstance]tagByName:kTag_ServiceMax];
             if (messageString == nil || messageString.length == 0) {
-            messageString = @"No available network to complete the action";
+            messageString = [[TagManager sharedInstance]tagByName:kTag_NetworkUnavailable];
+            }
+            break;
+        case AlertMessageGeneral:
+            titleString = [[TagManager sharedInstance]tagByName:kTag_ServiceMax];
+            if (messageString == nil || messageString.length == 0) {
+                messageString = [[TagManager sharedInstance]tagByName:kTag_NetworkUnavailable];
             }
             break;
             
         default:
             break;
     }
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:titleString message:messageString delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] ;
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:titleString message:messageString delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil] ;
     [alert performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:NO];
     
 }
@@ -391,7 +399,7 @@
     if (error) {
         message = [error.userInfo objectForKey:SMErrorUserMessageKey];
     }
-    [self showAlertFor:AlertMessageStyleNoInternet withCustomMessage:message];
+    [self showAlertFor:AlertGeneral withCustomMessage:message];
     [self dismissNotificationViewController];
 }
 
@@ -491,11 +499,11 @@
         NSArray * options = nil;
         
         if([self isNotificationScreenPresentedOnEditViewController]){
-            options = [[NSArray alloc] initWithObjects:@"Save And View",@"View",@"Cancel", nil];
+            options = [[NSArray alloc] initWithObjects:[[TagManager sharedInstance]tagByName:kTag_SaveAndView],@"View",[[TagManager sharedInstance]tagByName:kTagCancelButton], nil];
         }
         else
         {
-            options = [[NSArray alloc] initWithObjects:@"View",@"Cancel", nil];
+            options = [[NSArray alloc] initWithObjects:@"View",[[TagManager sharedInstance]tagByName:kTagCancelButton], nil];
         }
         
         self.notificationScreenState = NotificationScreenStateUserAction;
@@ -635,7 +643,7 @@
 {
     @synchronized([self class])
     {
-        UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:@"ServiceMax For iPad" message:@"No View Layout has been configured for this object. Please contact the system administrator." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+        UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:[[TagManager sharedInstance]tagByName:kTag_ServiceMax]message:[[TagManager sharedInstance]tagByName:kTag_NoViewLayoutForObject] delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
         [alertView performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
     }
 }

@@ -423,6 +423,26 @@ extern NSString *const kTagMonthTwelveLabel;
 
 //HS 6 Jan
 
+//Tags for Pulse App
+#define kTag_PleaseLoginWithSameUserId @"IPAD025_TAG001"
+#define kTag_PleaseLoginWithSameOrgId @"IPAD025_TAG002"
+#define kTag_InvalidNotification @"IPAD025_TAG003"
+#define kTag_NetworkUnavailable @"IPAD025_TAG004"  //Network unavailable to complete action
+#define kTag_WouldLikeViewCancel @"IPAD025_TAG005" //Would you like to View/Cancel the selected Record?
+#define kTag_SaveAndView @"IPAD025_TAG006"
+#define kTag_View @"View"
+#define kTag_AbandonAndView @"IPAD025_TAG007"
+#define kTag_NoViewLayoutForObject @"IPAD025_TAG008"
+
+#define kTag_ThisRecordDeletedFromServer @"IPAD025_TAG009"
+#define kTag_Downloads @"IPAD025_TAG010"
+#define kTag_Completed @"IPAD022-TAG004"
+#define kTag_Started @"Started"
+#define kTag_InProgress @"In Progress"
+
+
+
+
 
 
 extern NSString *const kTagJanuary;

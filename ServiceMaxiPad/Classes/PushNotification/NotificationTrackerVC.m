@@ -8,6 +8,8 @@
 
 #import "NotificationTrackerVC.h"
 #import "NotificationDownloadCell.h"
+#import "TagConstant.h"
+#import "TagManager.h"
 
 
 @interface NotificationTrackerVC ()
@@ -43,8 +45,11 @@
         self.dataSourceArray = [[NSMutableArray alloc] init];
     }
     
-    if(![self.dataSourceArray containsObject:model]){
-        [self.dataSourceArray addObject:model];
+    if(![self.dataSourceArray containsObject:model])
+    {
+       
+            [self.dataSourceArray addObject:model];
+
     }
     
     [self.notificationTableView reloadData];
@@ -119,16 +124,16 @@
     
     NSString *resultString = nil;
     if (model.requestStatus == NotificationRequestStateDownloadStarted) {
-       resultString = @"started";
+       resultString = [[TagManager sharedInstance]tagByName:kTag_Started];
     }
     if (model.requestStatus == NotificationRequestStateDownloadInProgress) {
-        resultString = @"In Progress";
+        resultString = [[TagManager sharedInstance]tagByName:kTag_InProgress];
     }
     if (model.requestStatus == NotificationRequestStateDownloadCompleted) {
-        resultString = @"Completed";
+        resultString = [[TagManager sharedInstance]tagByName:kTag_Completed];
     }
     if (model.requestStatus == NotificationRequestStateDownloadFailed || model.requestStatus == NotificationRequestStateNetworkNotReachable) {
-        resultString = @"Failed";
+        resultString = [[TagManager sharedInstance]tagByName:kTagPushLogStatusFailed];
     }
     return resultString;
 }
@@ -161,11 +166,11 @@
     
     if(self.userActionPresentingMode == UserActionPresentedOnEditScreen)
     {
-        alertView  = [[UIAlertView alloc] initWithTitle:@"" message:@"Would you like to View/Cancel the selected Record" delegate:self cancelButtonTitle:nil otherButtonTitles:@"Save and View",@"View",@"Cancel", nil];
+        alertView  = [[UIAlertView alloc] initWithTitle:[[TagManager sharedInstance]tagByName:kTag_ServiceMax] message:[[TagManager sharedInstance]tagByName:kTag_WouldLikeViewCancel] delegate:self cancelButtonTitle:nil otherButtonTitles:[[TagManager sharedInstance]tagByName:kTag_SaveAndView],[[TagManager sharedInstance]tagByName:kTag_AbandonAndView],[[TagManager sharedInstance]tagByName:kTagCancelButton], nil];
     }
     else
     {
-        alertView  = [[UIAlertView alloc] initWithTitle:@"" message:@"Would you like to View/Cancel the selected Record" delegate:self cancelButtonTitle:nil otherButtonTitles:@"View",@"Cancel" , nil];
+        alertView  = [[UIAlertView alloc] initWithTitle:[[TagManager sharedInstance]tagByName:kTag_ServiceMax] message:[[TagManager sharedInstance]tagByName:kTag_WouldLikeViewCancel] delegate:self cancelButtonTitle:nil otherButtonTitles:[[TagManager sharedInstance]tagByName:kTag_View],[[TagManager sharedInstance]tagByName:kTagCancelButton] , nil];
     }
 
     [alertView performSelectorOnMainThread:@selector(show) withObject:self waitUntilDone:YES];

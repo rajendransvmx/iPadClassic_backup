@@ -18,6 +18,8 @@
 #import "SFObjectModel.h"
 #import "CustomerOrgInfo.h"
 #import "ResponseConstants.h"
+#import "TagManager.h"
+#import "TagConstant.h"
 
 @implementation PushNotificationUtility
 
@@ -209,7 +211,7 @@
         else
         {
             //NSString *orgId = [APNSDict objectForKey:kPulseNotificationUserId];
-            UIAlertView *alert  = [[UIAlertView alloc]initWithTitle:@"Login Alert" message:@"Please login with same user ID, used for Pulse App" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            UIAlertView *alert  = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:[[TagManager sharedInstance]tagByName:kTag_PleaseLoginWithSameUserId] delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil];
             [alert show];
             isValidUser = NO;
         }
@@ -217,7 +219,7 @@
     else
     {
         //NSString *userId = [APNSDict objectForKey:kPulseNotificationUserId];
-        UIAlertView *alert  = [[UIAlertView alloc]initWithTitle:@"Login Alert" message:@"Please login with same org Id, used for Pulse App" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        UIAlertView *alert  = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:[[TagManager sharedInstance]tagByName:kTag_PleaseLoginWithSameOrgId] delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil];
         [alert show];
         isValidUser = NO;
     }

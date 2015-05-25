@@ -438,14 +438,14 @@
 	<string>Day Before Yesterday</string>
 	<key>IPAD018_TAG073</key>
 	<string>Identifying configuration changes</string>
+	<key>IPAD006_TAG130</key>
+	<string>Unable to create event since there is no technician associated.</string>
 	<key>IPAD018_TAG184</key>
 	<string>Config Sync in Progress</string>
 	<key>IPAD014_TAG048</key>
 	<string>order status</string>
 	<key>IPAD015_TAG008</key>
 	<string>iPad App Version:</string>
-	<key>IPAD006_TAG130</key>
-	<string>Unable to create event since there is no technician associated.</string>
 	<key>IPAD004_TAG001</key>
 	<string>Service Report for</string>
 	<key>IPAD011_TAG003</key>
@@ -536,6 +536,8 @@
 	<string>ServiceMax Version:</string>
 	<key>IPAD006_TAG020</key>
 	<string>May</string>
+	<key>IPAD006_TAG131</key>
+	<string>Drag and drop is not allowed for multi-day and all-day events. Do you want to reschedule this event?</string>
 	<key>SERVICE_REPORT_PARTS_SECTION_TITLE</key>
 	<string>Parts</string>
 	<key>IPAD004_TAG002</key>
@@ -1150,8 +1152,6 @@
 	<string>Invalid Url</string>
 	<key>IPAD014_TAG131</key>
 	<string>Cancel Download</string>
-	<key>IPAD024_TAG037</key>
-	<string>Images and Videos</string>
 	<key>IPAD018_TAG014</key>
 	<string>Configuration Synchronization</string>
 	<key>IPAD012_TAG002</key>
@@ -1226,7 +1226,31 @@
 	<string>Troubleshooting</string>
 	<key>IPAD018_TAG148</key>
 	<string>Please do not switch to another application or press the home button during this progress.</string>
-	<key>IPAD006_TAG131</key>
-	<string>Drag and drop is not allowed for multi-day and all-day events. Do you want to reschedule this event?</string>
+	<key>IPAD025_TAG001</key>
+	<string>Please login with same user ID used for Pulse App</string>
+	<key>IPAD025_TAG002</key>
+	<string>Please login with same org ID used for Pulse App</string>
+	<key>IPAD025_TAG003</key>
+	<string>Invalid notification</string>
+	<key>IPAD025_TAG004</key>
+	<string>Network unavailable to complete action</string>
+	<key>IPAD025_TAG005</key>
+	<string>Would you like to View/Cancel the selected Record?</string>
+	<key>IPAD025_TAG006</key>
+	<string>Save And View</string>
+	<key>IPAD025_TAG007</key>
+	<string>Abandon And View</string>
+	<key>IPAD025_TAG008</key>
+	<string>No View Layout has been configured for this object. Please contact the system administrator.</string>
+	<key>IPAD025_TAG009</key>
+	<string>This record has been deleted from server.</string>
+	<key>IPAD025_TAG010</key>
+	<string>Downloads</string>
+	<key>View</key>
+	<string>View</string>
+	<key>Started</key>
+	<string>Started</string>
+	<key>In Progress</key>
+	<string>In Progress</string>
 </dict>
 </plist>

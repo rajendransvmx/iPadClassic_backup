@@ -239,8 +239,7 @@ typedef enum {
         [self addShadowToMenuButton:NO];
         _isTabClicked = YES;
     }
-    
- 
+  
 }
 
 -(void)addCustomElements

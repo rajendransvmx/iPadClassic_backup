@@ -40,6 +40,7 @@
 
 -(void)startDownloadRequest:(PushNotificationModel *)notificationModel
 {
+ 
     
     if ( IDIOM == IPAD ) {
         /* do something specifically for iPad. */
