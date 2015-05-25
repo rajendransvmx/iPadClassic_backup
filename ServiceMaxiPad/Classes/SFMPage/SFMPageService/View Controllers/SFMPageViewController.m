@@ -254,6 +254,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+
     
   
 }
@@ -349,7 +350,7 @@
     CGSize navButtonSixe = [StringUtil getSizeOfText:[[TagManager sharedInstance] tagByName:kTagActions] withFont:font];
 
     CGFloat textWidth = self.navigationController.view.frame.size.width;
-    textWidth -= navButtonSixe.width *2 + 200;
+    textWidth -= ((navButtonSixe.width *2) + 200);
     
     
     SMNavigationTitleView *titleView = [[SMNavigationTitleView alloc]initWithFrame:CGRectZero];
@@ -368,6 +369,7 @@
         titleView.frame = CGRectMake(0, 0,textWidth,45);
     }
     titleView.titleLabel.text = titleValue;
+        titleView.autoresizingMask = UIViewAutoresizingFlexibleWidth ;
     self.navigationItem.titleView = titleView;
     
     //TO:DO set conflict image
@@ -768,6 +770,19 @@
 }
 */
 
+- (BOOL) shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
+{
+    return YES;
+}
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+   //[self refreshPageData];
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+ 
+    [self setTitleAndImageForTitleView];
+}
 
 
 @end
