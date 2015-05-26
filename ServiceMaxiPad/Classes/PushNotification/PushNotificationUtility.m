@@ -20,6 +20,7 @@
 #import "ResponseConstants.h"
 #import "TagManager.h"
 #import "TagConstant.h"
+#import "LaunchViewController.h"
 
 @implementation PushNotificationUtility
 
@@ -69,13 +70,19 @@
 {
     id topVc = nil;
     CustomTabBar *customBar = (CustomTabBar*)[UIApplication sharedApplication].delegate.window.rootViewController;
-    id vc = [customBar selectedViewController];
-    if([vc isKindOfClass:[UINavigationController class]])
-    {
-        UINavigationController *nv = (UINavigationController *)vc;
-        //id topVc = [nv topViewController];
-        topVc = [nv visibleViewController];
+    
+    if ([customBar isKindOfClass:[UITabBarController class]]) {
+        
+        id vc = [customBar selectedViewController];
+        if([vc isKindOfClass:[UINavigationController class]])
+        {
+            UINavigationController *nv = (UINavigationController *)vc;
+            //id topVc = [nv topViewController];
+            topVc = [nv visibleViewController];
+        }
+
     }
+    
     return  topVc;
 }
 
