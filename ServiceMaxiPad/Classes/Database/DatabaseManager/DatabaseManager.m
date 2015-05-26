@@ -79,6 +79,7 @@ NSString *const kDatabaseEncryptedDBName       = @"encrypted";
 
 - (void)encryptAndExportDatabase
 {
+    NSLog(@" encryptAndExportDatabase --- ");
     // Encryption data base file path
     NSString *encryptedDataBasePath = [self encryptionDatabasePath];
     
@@ -237,7 +238,10 @@ NSString *const kDatabaseEncryptedDBName       = @"encrypted";
         }
     }
     
-     [self encryptAndExportDatabase];
+    if ([SMDatabase databaseEncryptionEnabled])
+    {
+        [self encryptAndExportDatabase];
+    }
     return hasValidDatabaseFile;
 }
 

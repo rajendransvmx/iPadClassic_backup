@@ -854,10 +854,16 @@
     {
       if ((![StringUtil isStringEmpty:attachmentName]) && (![StringUtil isStringEmpty:path]))
       {
+          NSString * attachementQuery = nil;
           
-          //const char* dbAttachQuery = [[NSString stringWithFormat:@"ATTACH DATABASE '%@' AS encrypted KEY '%@';", encryptedDataBasePath, [self dbSecretKey]] UTF8String];
-          
-            NSString * attachementQuery = [[NSString alloc] initWithFormat:@"ATTACH DATABASE '%@' AS %@ KEY '%s';", path, attachmentName, [[SMDatabase dataBaseKey] UTF8String]];
+          if([SMDatabase databaseEncryptionEnabled])
+          {
+              attachementQuery = [[NSString alloc] initWithFormat:@"ATTACH DATABASE '%@' AS %@ KEY '%s';", path, attachmentName, [[SMDatabase dataBaseKey] UTF8String]];
+          }
+          else
+          {
+              attachementQuery = [[NSString alloc] initWithFormat:@"ATTACH DATABASE '%@' AS %@", path, attachmentName];
+          }
 
             char * errMessage = nil;
 

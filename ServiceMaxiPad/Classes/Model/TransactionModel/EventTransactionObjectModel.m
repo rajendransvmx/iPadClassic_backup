@@ -223,7 +223,7 @@
 //    NSLog(@"self.jsonEventArray:%@", self.jsonEventArray);
     NSData *jsonData2 = [NSJSONSerialization dataWithJSONObject:self.jsonEventArray options:NSJSONWritingPrettyPrinted error:nil];
     NSString *jsonString = [[NSString alloc] initWithData:jsonData2 encoding:NSUTF8StringEncoding];
-    NSLog(@"jsonData as string:\n%@", jsonString);
+    //NSLog(@"jsonData as string:\n%@", jsonString);
     return jsonString;
 }
 

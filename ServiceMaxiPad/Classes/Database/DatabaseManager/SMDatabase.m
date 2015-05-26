@@ -154,7 +154,11 @@ NSString *const kDatabaseEncryptionKey         = @"svmxipad";
         return NO;
     }
     
-    [self setKey:kDatabaseEncryptionKey];
+    if ([[self class] databaseEncryptionEnabled])
+    {
+        [self setKey:kDatabaseEncryptionKey];
+    }
+    
     
     if (maxBusyRetryTimeInterval > 0.0)
     {
@@ -186,7 +190,10 @@ NSString *const kDatabaseEncryptionKey         = @"svmxipad";
         return NO;
     }
     
-    [self setKey:kDatabaseEncryptionKey];
+    if ([[self class] databaseEncryptionEnabled])
+    {
+        [self setKey:kDatabaseEncryptionKey];
+    }
     
     if (maxBusyRetryTimeInterval > 0.0)
     {
@@ -253,6 +260,22 @@ NSString *const kDatabaseEncryptionKey         = @"svmxipad";
 + (NSString *)dataBaseKey
 {
     return kDatabaseEncryptionKey;
+}
+
++ (BOOL)databaseEncryptionEnabled
+{
+    BOOL hasEnabled = NO;
+    
+    if (hasEnabled)
+    {
+        NSLog(@"DB Encryption ENABLED");
+    }
+    else
+    {
+        NSLog(@"DB Encryption NOT enabled");
+    }
+
+    return hasEnabled;
 }
 
 #pragma mark Busy handler routines

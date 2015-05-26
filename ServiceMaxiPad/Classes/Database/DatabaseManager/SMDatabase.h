@@ -35,9 +35,6 @@ typedef int(^DBExecuteStatementsCallbackBlock)(NSDictionary *resultsDictionary);
 - (SQLResultSet *)executeQuery:(NSString *)sql withArgumentsInArray:(NSArray *)arguments;
 - (SQLResultSet *)executeQuery:(NSString *)sql withParameterDictionary:(NSDictionary *)arguments;
 
-
-
-
 + (instancetype)databaseWithPath:(NSString*)aPath;
 
 - (instancetype)initWithPath:(NSString*)aPath;
@@ -82,6 +79,7 @@ typedef int(^DBExecuteStatementsCallbackBlock)(NSDictionary *resultsDictionary);
 - (BOOL)rekeyWithData:(NSData *)keyData;
 
 + (NSString *)dataBaseKey;
++ (BOOL)databaseEncryptionEnabled;
 
 
 #pragma mark - Database Status
