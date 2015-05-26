@@ -3,7 +3,7 @@
 ServiceMax Spring 15 iPad Release
 
 *******************************************
-Version = 15.30.005
+Version = 15.30.006
 ===========================================
 -------------
 Fixed Defects
@@ -27,7 +27,7 @@ None
 ---------------------
 Additional Notes
 ---------------------
-Database  Encryption disabled
+Database  Encryption disabled reduced number of id(400) is TX_FETCH call
 
 
 
