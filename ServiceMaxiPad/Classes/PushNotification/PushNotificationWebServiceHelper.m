@@ -65,23 +65,33 @@
     
     self.mNotificationModel = notificationModel;
     
+    
+    
+    [self performSelectorInBackground:@selector(startRequest) withObject:nil];
+
     //check for reachability
+   
+   
+    
+}
+
+-(void)startRequest
+{
     if ( [[SNetworkReachabilityManager sharedInstance] isNetworkReachable])
     {
         self.mNotificationModel.requestStatus = NotificationRequestStateDownloadInProgress;
         [[PushNotificationManager sharedInstance]downloadStatusForRequest:self.mNotificationModel withError:nil];
         
-//        RequestParamModel * requestParam = nil;
-//        NSArray *requestParams = [self fetchRequestParametersForAPNSRequest:notificationModel];
-//        if([requestParams count] > 0)
-//        {
-//            requestParam =  [requestParams objectAtIndex:0];
-//        }
+        //        RequestParamModel * requestParam = nil;
+        //        NSArray *requestParams = [self fetchRequestParametersForAPNSRequest:notificationModel];
+        //        if([requestParams count] > 0)
+        //        {
+        //            requestParam =  [requestParams objectAtIndex:0];
+        //        }
         
         TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeAPNSDOD
                                                  requestParam:nil
                                                callerDelegate:self];
-        
         [[TaskManager sharedInstance] addTask:taskModel];
     }
     else
@@ -89,7 +99,6 @@
         self.mNotificationModel.requestStatus = NotificationRequestStateNetworkNotReachable;
         [[PushNotificationManager sharedInstance] downloadStatusForRequest:self.mNotificationModel withError:nil];
     }
-    
 }
 
 -(void)addNotificationRequest:(PushNotificationModel *)notificationModel

@@ -230,58 +230,65 @@
 {
     @synchronized([self class])
     {
-        // Get rootView Controller
-        // present Notification Screen on the Root View Controller
-        if(self.notificationViewController == nil){
-            self.notificationViewController = [ViewControllerFactory createViewControllerByContext:ViewControllerPushNotification];
-        }
-        
-        UIViewController * rootViewController = [self geTopViewController];
-        
-        if([self isParentEditScreen:rootViewController])
-        {
-            [self setUserActionFor:UserActionPresentedOnEditScreen];
-        }
-        else
-        {
-            [self setUserActionFor:UserActionPresentedOnNonEditScreen];
-        }
-        self.notificationScreenState = NotificationScreenStateVisible;
-        
-        /*UIViewController *topVc = [self topViewControllerTest];
-         NSArray * array = [topVc childViewControllers];
-        
-        for (UIViewController * vc  in array) {
-           UIViewController * presented = [self topViewControllerWithRootViewController:vc];
-                //NSLog(@"Popover presented");
-                if(presented.modalPresentationStyle == UIModalPresentationPopover ){
-                [presented dismissViewControllerAnimated:YES completion:^{
-                    
-                }];
-                    break;
-
-                }
-        }*/
-        
-    
-      //  [self topViewControllerWithRootViewController:<#(UIViewController *)#>]
-    
-        /*if ([topVc popoverPresentationController]) {
-            //NSLog(@"Popover presented");
-            [topVc dismissViewControllerAnimated:YES completion:^{
-                
-            }];
-        }*/
-        
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName:POP_OVER_DISMISS object:nil];
-       [rootViewController presentViewController: self.notificationViewController  animated:YES completion:^{
-           
-           //set the notification screen state as visible.
-       }];
-        
+        [self performSelectorOnMainThread:@selector(presentViewController) withObject:nil waitUntilDone:YES];
     }
     
+}
+
+-(void)presentViewController
+{
+    // Get rootView Controller
+    // present Notification Screen on the Root View Controller
+    if(self.notificationViewController == nil){
+        self.notificationViewController = [ViewControllerFactory createViewControllerByContext:ViewControllerPushNotification];
+    }
+    
+    UIViewController * rootViewController = [self geTopViewController];
+    
+    if([self isParentEditScreen:rootViewController])
+    {
+        [self setUserActionFor:UserActionPresentedOnEditScreen];
+    }
+    else
+    {
+        [self setUserActionFor:UserActionPresentedOnNonEditScreen];
+    }
+    self.notificationScreenState = NotificationScreenStateVisible;
+    
+    /*UIViewController *topVc = [self topViewControllerTest];
+     NSArray * array = [topVc childViewControllers];
+     
+     for (UIViewController * vc  in array) {
+     UIViewController * presented = [self topViewControllerWithRootViewController:vc];
+     //NSLog(@"Popover presented");
+     if(presented.modalPresentationStyle == UIModalPresentationPopover ){
+     [presented dismissViewControllerAnimated:YES completion:^{
+     
+     }];
+     break;
+     
+     }
+     }*/
+    
+    
+    //  [self topViewControllerWithRootViewController:<#(UIViewController *)#>]
+    
+    /*if ([topVc popoverPresentationController]) {
+     //NSLog(@"Popover presented");
+     [topVc dismissViewControllerAnimated:YES completion:^{
+     
+     }];
+     }*/
+    
+    
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:POP_OVER_DISMISS object:nil];
+    [rootViewController presentViewController: self.notificationViewController  animated:YES completion:^{
+        
+        //set the notification screen state as visible.
+    }];
+    
+
 }
 
 -(void)setUserActionFor:(UserActionPresentedOn)parent
@@ -400,7 +407,6 @@
         message = [error.userInfo objectForKey:SMErrorUserMessageKey];
     }
     [self showAlertFor:AlertMessageGeneral withCustomMessage:message];
-    [self dismissNotificationViewController];
 }
 
 -(void)downloadStatusForRequest:(PushNotificationModel * )currentRequest withError:(NSError *)error {
@@ -454,6 +460,8 @@
                 }
                 else
                 {
+                    [self dismissNotificationViewController];
+
                     [self handleError:error];
                 }
             }
@@ -463,6 +471,7 @@
             }
             else
             {
+                [self dismissNotificationViewController];
                 [self handleError:error];
             }
         }
@@ -488,7 +497,7 @@
     {
         self.notificationScreenState = NotificationScreenStateHidden;
 
-        [self performSelectorOnMainThread:@selector(dismissViewOnMainThread) withObject:nil waitUntilDone:NO];
+        [self performSelectorOnMainThread:@selector(dismissViewOnMainThread) withObject:nil waitUntilDone:YES];
     }
 }
 
