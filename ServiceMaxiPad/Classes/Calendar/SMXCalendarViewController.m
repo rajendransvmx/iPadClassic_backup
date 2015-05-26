@@ -319,6 +319,7 @@
     [self addObserver:self selector:@selector(removeCalender) withName:CALENDER_VIEW_REMOVE AndObject:nil];
     [self addObserver:self selector:@selector(dateChanged:) withName:DATE_MANAGER_DATE_CHANGED AndObject:nil];
     [self addObserver:self selector:@selector(checkForTimeZoneChange:) withName:CHECK_FOR_TIMEZONE_CHANGE AndObject:nil];
+    [self addObserver:self selector:@selector(reloadCalendar:) withName:@"RefreshView_IOS" AndObject:nil];
     [self addObserver:self selector:@selector(refreshOnDayChange) withName:UIApplicationSignificantTimeChangeNotification AndObject:nil];//this is for if day change then we have to refresh calendar screen
 }
 
@@ -372,7 +373,15 @@
     [self changeSegementControlText];
 
 }
-
+-(void)reloadCalendar:(NSNotification*)notification{
+    if (cSegmentedControl.selectedSegmentIndex == 1)
+    {
+        [self performSelector:@selector(update) withObject:nil afterDelay:2.0f];
+    }
+}
+-(void)update{
+    [self performSelectorInBackground:@selector(fetchEventsFromDb) withObject:nil ];
+}
 - (void)configSyncFinished:(NSNotification*)notification
 {
     SyncProgressDetailModel *syncProgressDetailModel = [[notification userInfo]objectForKey:@"syncstatus"];
