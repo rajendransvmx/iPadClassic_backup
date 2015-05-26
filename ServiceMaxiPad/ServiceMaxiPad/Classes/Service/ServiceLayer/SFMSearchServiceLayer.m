@@ -59,6 +59,7 @@
     {
         NSArray *resultArray;
         
+        NSMutableArray *mapArray = [NSMutableArray new];
         
         NSString *objectName = [[CacheManager sharedInstance] getCachedObjectByKey:@"searchObjectName"];
         NSString *recordId = [[CacheManager sharedInstance] getCachedObjectByKey:@"searchSFID"];
@@ -87,6 +88,7 @@
         NSArray *valueMapArray  = [NSArray arrayWithObjects:valueMapParentField_for_Parent,valueMapId,valueMapFields, nil];
         [valueMapForObject setObject:valueMapArray forKey:kSVMXSVMXMap];
         
+        [mapArray addObject:valueMapForObject];
         
         RequestParamModel *reqParModel = [[RequestParamModel alloc]init];
         //reqParModel.valueMap = @[valueMapForObject];
@@ -94,11 +96,10 @@
         NSDictionary *dict_Child = [DODHelper getChildRelationshipForObject:objectName];
         NSArray * allChildObject = [dict_Child allKeys];
         NSString *child_Object = nil;
-        NSMutableDictionary *valueMapChildObject = [[NSMutableDictionary alloc]initWithCapacity:0];
-
         
         for (int i = 0 ; i < [allChildObject count]; i++)
         {
+            NSMutableDictionary *valueMapChildObject = [NSMutableDictionary new];
             
             child_Object = [allChildObject objectAtIndex:i];
             
@@ -109,31 +110,25 @@
             [valueMapChildId setObject:@"Id" forKey:kSVMXKey];
             [valueMapChildId setObject:recordId forKey:kSVMXValue];
             
-            
-            
             NSString *field_child_string = [DODHelper getFieldNamesForObject:child_Object];
             
             NSMutableDictionary *valueMapChildFields = [[NSMutableDictionary alloc]initWithCapacity:0];
             [valueMapChildFields setObject:@"Fields" forKey:kSVMXKey];
             [valueMapChildFields setObject:field_child_string forKey:kSVMXValue];
             
-            
-            
             NSMutableDictionary *valueMapParentField = [[NSMutableDictionary alloc]initWithCapacity:0];
             [valueMapParentField setObject:@"Parent_Reference_Field" forKey:kSVMXKey];
             [valueMapParentField setObject:[dict_Child objectForKey:child_Object] forKey:kSVMXValue];
             
-            
             NSArray *valueMapArray1 = [NSArray arrayWithObjects:valueMapChildId,valueMapChildFields,valueMapParentField, nil];
             [valueMapChildObject setObject:valueMapArray1 forKey:kSVMXRequestSVMXMap];
             
-            
-
-            
+            [mapArray addObject:valueMapChildObject];
         }
-
-        reqParModel.valueMap = @[valueMapForObject,valueMapChildObject];
-
+        
+        if ([mapArray count]) {
+            reqParModel.valueMap = mapArray;
+        }
         resultArray = @[reqParModel];
 
         return resultArray;
