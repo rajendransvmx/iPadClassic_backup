@@ -3,12 +3,12 @@
 ServiceMax Spring 15 iPad Release
 
 *******************************************
-Version = 15.30.004
+Version = 15.30.005
 ===========================================
 -------------
 Fixed Defects
 -------------
-016807 - Advanced look up is not working in Spring 15
+17535 - Initial sync is not going through after upgrading with Sprin 15 it is getting stuck at 5/6.
 
 -------------
 Known Issues
@@ -27,7 +27,7 @@ None
 ---------------------
 Additional Notes
 ---------------------
-
+Database  Encryption disabled
 
 
 
