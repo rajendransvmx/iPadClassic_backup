@@ -617,18 +617,21 @@
         UIViewController * rootVc = [self getRootViewController];
         ViewControllerType vcType =  [self getViewControllerTypeForViewController:rootVc];
         
+        UIViewController * topviewController = [self topViewControllerTest];
+        BOOL editView = [PushNotificationUtility isModallyPresented:topviewController];
+        if(editView){
+            [topviewController dismissViewControllerAnimated:NO completion:^{
+            }];
+        }
+        
+        
         if(vcType == CalendarViewController){
             //dismiss all view controllerts presented
             [self removeViewControllersFromCalendarViewController:rootVc];
         }
         else
         {
-            UIViewController * topviewController = [self topViewControllerTest];
-            BOOL editView = [PushNotificationUtility isModallyPresented:topviewController];
-            if(editView){
-                [topviewController dismissViewControllerAnimated:NO completion:^{
-                }];
-            }
+            
             
             [PushNotificationUtility selectCalendarViewController];
             UIViewController * calendarVc = [self getCalendarViewController]; //*****     //move to calendar view controller ****///
