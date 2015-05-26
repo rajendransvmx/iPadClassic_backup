@@ -3,14 +3,13 @@
 ServiceMax Win 15 SP iPad Release
 
 *******************************************
-Version = 15.20.021
+Version = 15.20.023
 ===========================================
 -------------
 Fixed Defects
 -------------
-17119 - Calculate Billable results 22 hours instead of 24 hours
-17122 - Data purge does not get past advanced download criteria.
-16396 - Duplication of lines on Stock Transfer parts requests Ipad only
+017622-Detail lines are not getting downloaded during DOD when the header has a custom child record added
+
 -------------
 Known Issues
 -------------
