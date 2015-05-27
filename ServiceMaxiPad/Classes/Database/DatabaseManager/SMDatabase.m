@@ -264,7 +264,7 @@ NSString *const kDatabaseEncryptionKey         = @"svmxipad";
 
 + (BOOL)databaseEncryptionEnabled
 {
-    BOOL hasEnabled = NO;
+    BOOL hasEnabled = YES;
     
     if (hasEnabled)
     {
