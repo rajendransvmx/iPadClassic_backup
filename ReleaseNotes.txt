@@ -3,16 +3,12 @@
 ServiceMax Spring 15 SP iPad Release
 
 *******************************************
-Version = 15.39.105
+Version = 15.39.106
 ===========================================
 -------------
 Fixed Defects
 -------------
-017186  - New event created and assigned to User1. Notification appears for user 2
-017470  - Notifications are appearing as Banner/Alert even when the user is logged out of Pulse App
-017600  - After switch user, for event object on view of notification displays pop up - No view layout has been configured..though event view is available.
-017615  - SXMX App crash while trying to display notification record.
-017636  - Tag values are hardcode in Pulse App
+
 
 -------------
 Known Issues
