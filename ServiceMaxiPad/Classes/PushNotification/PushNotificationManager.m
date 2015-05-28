@@ -103,12 +103,13 @@
     
     @synchronized([self class])
     {
+       
         
         //will be checking the user org is valid or not
         PushNotificationModel *model  = [[PushNotificationModel alloc] initWithDictionary:notificationDict];
 
         //Commnet below 3 lines once we get real data from server
-        if (model.sfId.length > 0 && model.objectName.length > 0) {
+        if (model.sfId.length > 0) {
             
             model.requestType = NotificationRequestTypeDownload;
             [self addRequestToNotificationQueue:model];
