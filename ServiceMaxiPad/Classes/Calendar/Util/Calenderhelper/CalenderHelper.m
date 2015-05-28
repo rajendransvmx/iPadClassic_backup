@@ -211,7 +211,9 @@
     
     id <CalenderDAO> serviceRequest = [FactoryDAO serviceByServiceType:ServiceCalenderEventList];
     
-    
+    if (![SMXCalendarViewController sharedInstance].cCaseDetailsDict) {
+        [SMXCalendarViewController sharedInstance].cCaseDetailsDict = [[NSMutableDictionary alloc]init];
+    }
     for (EventTransactionObjectModel *lModel in lEventArray) {
         
         [lModel hasTimeZoneChanged];         //Checking if the split events are adhering to the current local timezone. Everything is done at the Model level.
