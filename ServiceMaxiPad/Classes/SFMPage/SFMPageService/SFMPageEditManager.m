@@ -1752,6 +1752,13 @@
         durationField = [[SFMRecordFieldData alloc] initWithFieldName:kSVMXDurationInMinutes value:nil andDisplayValue:nil];
         [recordDictionary setObject:durationField forKey:kSVMXDurationInMinutes];
     }
+
+    SFMRecordFieldData *whatId = [recordDictionary objectForKey:kSVMXWhatId];
+    if (whatId.internalValue) {
+        SFMRecordFieldData *objectSfId = [[SFMRecordFieldData alloc] initWithFieldName:kObjectSfId value:whatId.internalValue andDisplayValue:whatId.internalValue];
+        [recordDictionary setObject:objectSfId forKey:kObjectSfId];
+    }
+    
     //durationField.internalValue = @"0";
     
     SFMRecordFieldData *ownerId = [recordDictionary objectForKey:@"OwnerId"];
