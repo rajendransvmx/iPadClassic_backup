@@ -16,6 +16,8 @@
 #import "PushNotificationHeaders.h"
 #import "TagConstant.h"
 #import "TagManager.h"
+#import "StringUtil.h"
+
 
 #define PushNotificationProcessRequest     @"PushNotificationProcessRequest"
 #define kUpdateEventNotification @"UpdateEventOnNotification"
@@ -109,8 +111,9 @@
         PushNotificationModel *model  = [[PushNotificationModel alloc] initWithDictionary:notificationDict];
 
         //Commnet below 3 lines once we get real data from server
-        if (model.sfId.length > 0) {
-            
+        //(model.sfId.length > 0)
+        if(![StringUtil isStringEmpty:model.sfId])
+             {
             model.requestType = NotificationRequestTypeDownload;
             [self addRequestToNotificationQueue:model];
         }
