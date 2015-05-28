@@ -116,7 +116,11 @@
         else {
             //ERROR
             
-            [self showAlertFor:AlertMessageStyleInvalidPayload withCustomMessage:nil];
+            BOOL processRequest = [[NotificationRuleManager sharedInstance] shouldprocessNotificationRequest];
+            if(processRequest){
+                [self showAlertFor:AlertMessageStyleInvalidPayload withCustomMessage:nil];
+                
+            }
         }
     }
 }
