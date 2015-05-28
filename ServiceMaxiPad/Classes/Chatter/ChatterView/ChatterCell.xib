@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.iPad.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.iPad.XIB" version="3.0" toolsVersion="7531" systemVersion="14D131" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7520"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <objects>
@@ -26,7 +26,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="0.0" translatesAutoresizingMaskIntoConstraints="NO" id="uq0-J8-8yr" userLabel="TimeStampLabel">
-                        <rect key="frame" x="331" y="-3" width="169" height="26"/>
+                        <rect key="frame" x="323" y="-3" width="169" height="26"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="169" id="FxH-ig-E0u"/>
                             <constraint firstAttribute="height" constant="26" id="W2d-8g-5vD"/>
@@ -44,7 +44,8 @@
                             <constraint firstAttribute="height" constant="70" id="sa5-xv-zeT"/>
                         </constraints>
                     </imageView>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="0.0" translatesAutoresizingMaskIntoConstraints="NO" id="GA1-h7-VCm" userLabel="MessageLabel">
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="0.0" translatesAutoresizingMaskIntoConstraints="NO" id="GA1-h7-VCm" userLabel="MessageLabel">
+                        <rect key="frame" x="90" y="31" width="405" height="0.0"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -54,11 +55,11 @@
                 <constraints>
                     <constraint firstItem="BzB-38-DdR" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="35k-Rk-Esr"/>
                     <constraint firstItem="GA1-h7-VCm" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="23" id="Omk-B5-5v9"/>
-                    <constraint firstAttribute="trailingMargin" secondItem="uq0-J8-8yr" secondAttribute="trailing" constant="-8" id="OxR-dm-bUN"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="uq0-J8-8yr" secondAttribute="trailing" id="OxR-dm-bUN"/>
                     <constraint firstItem="GA1-h7-VCm" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="82" id="XaV-Ob-UpT"/>
                     <constraint firstItem="GA1-h7-VCm" firstAttribute="leading" secondItem="BzB-38-DdR" secondAttribute="trailing" constant="12" id="XlN-JS-m6w"/>
                     <constraint firstItem="BzB-38-DdR" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="-3" id="iJn-Nr-BEI"/>
-                    <constraint firstAttribute="trailingMargin" secondItem="GA1-h7-VCm" secondAttribute="trailing" constant="-8" id="kaF-zK-B8S"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="GA1-h7-VCm" secondAttribute="trailing" constant="-3" id="kaF-zK-B8S"/>
                     <constraint firstItem="1d2-x5-8f1" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="82" id="nfd-6W-vkX"/>
                     <constraint firstItem="uq0-J8-8yr" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="-11" id="rwN-L7-4yg"/>
                     <constraint firstItem="1d2-x5-8f1" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="-3" id="taB-cR-l3R"/>
