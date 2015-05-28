@@ -16,12 +16,12 @@
 #import "WebserviceResponseStatus.h"
 #import "AlertMessageHandler.h"
 #import "TagManager.h"
-
 #import "ParserFactory.h"
 #import "FlowDelegate.h"
 #import "PushNotificationManager.h"
 #import "SNetworkReachabilityManager.h"
 #import "PushNotificationUtility.h"
+#import "StringUtil.h"
 
 
 #define IDIOM    UI_USER_INTERFACE_IDIOM()
@@ -210,12 +210,19 @@
     
     NSMutableDictionary *valueMapForObject = [[NSMutableDictionary alloc]initWithCapacity:0];
     [valueMapForObject setObject:@"Object_Name" forKey:kSVMXKey];
+    if([StringUtil isStringEmpty:objectName])
+    {
+        objectName = @"";
+    }
     [valueMapForObject setObject:objectName forKey:kSVMXValue];
-    
     
     
     NSMutableDictionary *valueMap_RecordId = [[NSMutableDictionary alloc]initWithCapacity:0];
     [valueMap_RecordId setObject:@"Record_Id" forKey:kSVMXKey];
+    if([StringUtil isStringEmpty:objectName])
+    {
+        objectName = @"";
+    }
     [valueMap_RecordId setObject:recordId forKey:kSVMXValue];
     
     
