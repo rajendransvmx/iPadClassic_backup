@@ -28,7 +28,7 @@ void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message
 
 @interface WSInterface()
 
-@property (nonatomic,retain) NSMutableArray * custom_unsync_reqIds;
+//@property (nonatomic,retain) NSMutableArray * custom_unsync_reqIds;
 -(void)clearCustomSyncStatus;
 
 @end
@@ -6396,7 +6396,12 @@ NSDate * syncCompleted;
         {
             if([fieldApiName isEqualToString:parentColumnName] && isChild)
             {
-                continue;
+                NSString *sfid = [record_dict objectForKey:parentColumnName];
+                if ([sfid length] < 20)
+                {
+                     continue;
+                }
+
             }
             
             NSString * referenceFieldId = [record_dict objectForKey:fieldApiName];
