@@ -72,7 +72,7 @@ NSString *const kUpdateQueryCache   = @"UpdateQueryCache";
                 }
                 
                 if ([objectName isEqualToString:kServicemaxEventObject] || [objectName isEqualToString:kEventObject]) {
-                    [self addExtraFieldsToFieldsArray:fieldsArray];
+                    [self addExtraFieldsToFieldsArray:fieldsArray eventObject:objectName];
                 }
                 insertRequest = [[DBRequestInsert alloc] initWithTableName:objectName andFieldNames:fieldsArray];
                 if (insertRequest != nil) {
@@ -110,7 +110,7 @@ NSString *const kUpdateQueryCache   = @"UpdateQueryCache";
                     }
                 }
                 if ([objectName isEqualToString:kServicemaxEventObject] || [objectName isEqualToString:kEventObject]) {
-                    [self addExtraFieldsToFieldsArray:fieldsArray];
+                    [self addExtraFieldsToFieldsArray:fieldsArray eventObject:objectName];
                 }
                 DBCriteria *criteria = [[DBCriteria alloc] initWithFieldNameToBeBinded:kId];
                 updateRequest = [[DBRequestUpdate alloc] initWithTableName:objectName andFieldNames:fieldsArray whereCriteria:@[criteria] andAdvanceExpression:nil];
@@ -142,7 +142,7 @@ NSString *const kUpdateQueryCache   = @"UpdateQueryCache";
    for (TransactionObjectModel *transModel in objects) {
        
        NSMutableDictionary *valueDictionary = (NSMutableDictionary *)[transModel getFieldValueDictionary];
-       
+       /*Update localID, if local id is not there...then we have to update localID*/
        NSString *localId =   [valueDictionary objectForKey:kLocalId];
        if (localId == nil) {
            localId =  [AppManager generateUniqueId];
@@ -333,11 +333,16 @@ NSString *const kUpdateQueryCache   = @"UpdateQueryCache";
     return nil;
 }
 
-- (void)addExtraFieldsToFieldsArray:(NSMutableArray*)fieldsArray
+- (void)addExtraFieldsToFieldsArray:(NSMutableArray*)fieldsArray eventObject:(NSString *)objectName
 {
-        [fieldsArray  addObject:kIsMultiDayEvent];
-        [fieldsArray  addObject:kSplitDayEvents];
-        [fieldsArray addObject:kTimeZone];
+    if ([objectName isEqualToString:kServicemaxEventObject])
+    {
+        [fieldsArray addObject:kObjectSfId];
+    }
+    [fieldsArray  addObject:kIsMultiDayEvent];
+    [fieldsArray  addObject:kSplitDayEvents];
+    [fieldsArray addObject:kTimeZone];
+    
 }
 
 @end
