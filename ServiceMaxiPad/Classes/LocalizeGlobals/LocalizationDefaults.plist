@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key></key>
-	<string></string>
 	<key>IPAD012_TAG025</key>
 	<string>Downloading Mobile Configuration</string>
 	<key>IPAD024_TAG010</key>
@@ -48,6 +46,8 @@
 	<string>An event can&apos;t last longer than 14 days.</string>
 	<key>IPAD004_TAG030</key>
 	<string>Service_Report</string>
+	<key>IPAD025_TAG004</key>
+	<string>Network unavailable to complete action</string>
 	<key>IPAD014_TAG110</key>
 	<string>Filters</string>
 	<key>IPAD014_TAG066</key>
@@ -136,6 +136,8 @@
 	<string>Start Date/Time must be before End Date/Time.</string>
 	<key>IPAD004_TAG031</key>
 	<string>Retrieving Service Report</string>
+	<key>IPAD025_TAG005</key>
+	<string>Would you like to View/Cancel the selected Record?</string>
 	<key>IPAD014_TAG111</key>
 	<string>Customer Debrief</string>
 	<key>IPAD014_TAG067</key>
@@ -212,6 +214,8 @@
 	<string>No view process available for the logged in user</string>
 	<key>IPAD012_TAG005</key>
 	<string>Calendar</string>
+	<key>Started</key>
+	<string>Started</string>
 	<key>IPAD007_TAG010</key>
 	<string>Notification History</string>
 	<key>IPAD014_TAG012</key>
@@ -224,6 +228,8 @@
 	<string>Record Id</string>
 	<key>IPAD006_TAG019</key>
 	<string>April</string>
+	<key>IPAD025_TAG006</key>
+	<string>Save And View</string>
 	<key>IPAD004_TAG032</key>
 	<string>Details Of Work Performed</string>
 	<key>IPAD014_TAG001</key>
@@ -320,6 +326,8 @@
 	<string>Get Price</string>
 	<key>IPAD018_TAG007</key>
 	<string>Error Message</string>
+	<key>IPAD025_TAG007</key>
+	<string>Abandon And View</string>
 	<key>IPAD004_TAG033</key>
 	<string>Email error.</string>
 	<key>IPAD014_TAG002</key>
@@ -404,6 +412,8 @@
 	<string>last sync</string>
 	<key>IPAD018_TAG008</key>
 	<string>Select Change To Apply</string>
+	<key>IPAD025_TAG008</key>
+	<string>No View Layout has been configured for this object. Please contact the system administrator.</string>
 	<key>IPAD004_TAG034</key>
 	<string>Please set up email first.</string>
 	<key>IPAD007_TAG001</key>
@@ -492,6 +502,8 @@
 	<string>Work Order Debrief</string>
 	<key>IPAD018_TAG009</key>
 	<string>Synchronization Conflicts</string>
+	<key>IPAD025_TAG009</key>
+	<string>This record has been deleted from server.</string>
 	<key>IPAD004_TAG035</key>
 	<string>Customer Sign Off</string>
 	<key>IPAD018_TAG140</key>
@@ -530,14 +542,14 @@
 	<string>Share</string>
 	<key>IPAD018_TAG074</key>
 	<string>Your configuration is out of date. From Sync screen, initiate a Sync Configuration then re-initiate data purge</string>
+	<key>IPAD006_TAG131</key>
+	<string>Drag and drop is not allowed for multi-day and all-day events. Do you want to reschedule this event?</string>
 	<key>IPAD018_TAG185</key>
 	<string>Please do not switch to another application or press the home button while sync is in progress</string>
 	<key>IPAD015_TAG009</key>
 	<string>ServiceMax Version:</string>
 	<key>IPAD006_TAG020</key>
 	<string>May</string>
-	<key>IPAD006_TAG131</key>
-	<string>Drag and drop is not allowed for multi-day and all-day events. Do you want to reschedule this event?</string>
 	<key>SERVICE_REPORT_PARTS_SECTION_TITLE</key>
 	<string>Parts</string>
 	<key>IPAD004_TAG002</key>
@@ -800,6 +812,8 @@
 	<string>August</string>
 	<key>IPAD018_TAG077</key>
 	<string>Retrieving advanced download criteria</string>
+	<key>IPAD025_TAG010</key>
+	<string>Downloads</string>
 	<key>IPAD004_TAG005</key>
 	<string>Work Performed</string>
 	<key>IPAD011_TAG007</key>
@@ -994,8 +1008,12 @@
 	<string>Explore</string>
 	<key>IPAD018_TAG179</key>
 	<string>Purge Now</string>
+	<key>IPAD025_TAG001</key>
+	<string>Please login with same user ID used for Pulse App</string>
 	<key>IPAD015_TAG023</key>
 	<string>Signed Out</string>
+	<key>View</key>
+	<string>View</string>
 	<key>IPAD018_TAG057</key>
 	<string>Push Logs</string>
 	<key>IPAD013_TAG005</key>
@@ -1030,6 +1048,8 @@
 	<string>Delete Event</string>
 	<key>IPAD012_TAG034</key>
 	<string>Now downloading configuration settings</string>
+	<key>IPAD018_TAG059</key>
+	<string>In Progress</string>
 	<key>IPAD015_TAG001</key>
 	<string>Username</string>
 	<key>IPAD014_TAG041</key>
@@ -1088,6 +1108,8 @@
 	<string>New Item</string>
 	<key>SFM002_TAG007</key>
 	<string>Delete</string>
+	<key>IPAD025_TAG002</key>
+	<string>Please login with same org ID used for Pulse App</string>
 	<key>IPAD015_TAG024</key>
 	<string>You have been signed out.</string>
 	<key>IPAD018_TAG058</key>
@@ -1172,14 +1194,14 @@
 	<string>Status</string>
 	<key>IPAD006_TAG127</key>
 	<string>t</string>
+	<key>IPAD025_TAG003</key>
+	<string>Invalid notification</string>
 	<key>IPAD012_TAG058</key>
 	<string>Recently Created</string>
 	<key>SFM002_TAG033</key>
 	<string>SFM Transaction Manager</string>
 	<key>IPAD015_TAG025</key>
 	<string>Thanks for using ServiceMax Mobile!</string>
-	<key>IPAD018_TAG059</key>
-	<string>In Progress</string>
 	<key>IPAD013_TAG007</key>
 	<string>Job Details</string>
 	<key>IPAD006_TAG005</key>
@@ -1226,31 +1248,7 @@
 	<string>Troubleshooting</string>
 	<key>IPAD018_TAG148</key>
 	<string>Please do not switch to another application or press the home button during this progress.</string>
-	<key>IPAD025_TAG001</key>
-	<string>Please login with same user ID used for Pulse App</string>
-	<key>IPAD025_TAG002</key>
-	<string>Please login with same org ID used for Pulse App</string>
-	<key>IPAD025_TAG003</key>
-	<string>Invalid notification</string>
-	<key>IPAD025_TAG004</key>
-	<string>Network unavailable to complete action</string>
-	<key>IPAD025_TAG005</key>
-	<string>Would you like to View/Cancel the selected Record?</string>
-	<key>IPAD025_TAG006</key>
-	<string>Save And View</string>
-	<key>IPAD025_TAG007</key>
-	<string>Abandon And View</string>
-	<key>IPAD025_TAG008</key>
-	<string>No View Layout has been configured for this object. Please contact the system administrator.</string>
-	<key>IPAD025_TAG009</key>
-	<string>This record has been deleted from server.</string>
-	<key>IPAD025_TAG010</key>
-	<string>Downloads</string>
-	<key>View</key>
-	<string>View</string>
-	<key>Started</key>
-	<string>Started</string>
-	<key>In Progress</key>
-	<string>In Progress</string>
+	<key>IPAD022_TAG004</key>
+	<string>Completed</string>
 </dict>
 </plist>

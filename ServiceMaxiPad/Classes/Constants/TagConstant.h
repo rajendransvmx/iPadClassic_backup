@@ -419,9 +419,9 @@ extern NSString *const kTagMonthTwelveLabel;
 #define kTag_YouHaveSignedOut @"IPAD015_TAG024" //You have been signed out.
 #define kTag_ThanksForUsingServiceMax @"IPAD015_TAG025" //Thanks for using ServiceMax Mobile!
 
-
-
 //HS 6 Jan
+
+
 
 //Tags for Pulse App
 #define kTag_PleaseLoginWithSameUserId @"IPAD025_TAG001"
@@ -436,9 +436,9 @@ extern NSString *const kTagMonthTwelveLabel;
 
 #define kTag_ThisRecordDeletedFromServer @"IPAD025_TAG009"
 #define kTag_Downloads @"IPAD025_TAG010"
-#define kTag_Completed @"IPAD022-TAG004"
+#define kTag_Completed @"IPAD022_TAG004"
 #define kTag_Started @"Started"
-#define kTag_InProgress @"In Progress"
+#define kTag_InProgress @"IPAD018_TAG059"
 
 
 
