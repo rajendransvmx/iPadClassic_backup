@@ -295,7 +295,18 @@ static SyncManager *_instance;
             break;
             
         case SyncTypeValidateProfile:
-            [self performValidateProfile];
+            if ([self isDataSyncInProgress])
+            {
+                self.configSyncStatus = SyncStatusInQueue;
+                [self enqueueSyncQueue:SyncTypeValidateProfile];
+            }
+            else
+            {
+                [self performValidateProfile];
+            }
+
+            
+           
             break;
             
         default:
@@ -820,6 +831,7 @@ static SyncManager *_instance;
                                                   cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
                                                andOtherButtonTitles:nil];
         }
+         [self manageSyncQueueProcess];
         
     }
 }
@@ -1677,6 +1689,7 @@ static SyncManager *_instance;
         case SyncTypeReset:
         case SyncTypeInitial:
         case SyncTypeConfig:
+        case SyncTypeValidateProfile:
             [self performSyncWithType:syncType];
             break;
             
