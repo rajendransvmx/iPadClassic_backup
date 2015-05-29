@@ -21,6 +21,7 @@
 
 @interface SFMDebriefViewController ()
 @property (nonatomic, strong) NSMutableDictionary * expandedSections;
+@property (nonatomic )NSInteger numberOfRecords;
 @end
 
 @implementation SFMDebriefViewController
@@ -147,7 +148,12 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return [self getSectionCount];
+    NSInteger returnCount = [self getSectionCount];
+    
+    if (!returnCount) {
+        returnCount = 1;
+    }
+    return returnCount;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
@@ -156,7 +162,10 @@
         return 50.0;
 
     }else {
-        return 100.0;
+        if (self.numberOfRecords) {
+            return 100.0;
+        }
+        return 50.0;
     }
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
@@ -168,7 +177,7 @@
 {
     
     
-    if([self getSectionCount] -1 == section){
+    if([self getSectionCount] -1 == section || !self.numberOfRecords){
         return nil;
     }
     
@@ -198,12 +207,15 @@
           dbriefView = [[DebriefSectionView alloc]initWithReuseIdentifier:@"headerView"];
     }
     dbriefView.delegate = self;
+    dbriefView.sectionRecords = self.numberOfRecords;
+    
     [self hideOrShowSubViewOf:dbriefView ForSection:section];
     [self setDataOfDeBriefSection:dbriefView InSection:section];
     
     dbriefView.section = section;
     [dbriefView setExpandImage:[self isSectionExpanded:section]];
     [dbriefView setDetailLabelText];
+    [dbriefView setNoDataLabelText:[self getTitleForTableView]];
     return dbriefView;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -360,7 +372,8 @@
     NSArray *detailLayouts =pageLayout.detailLayouts;
     SFMDetailLayout *detailLayout= [detailLayouts objectAtIndex:self.selectedSection];
     NSArray * detailRecords = [detailDict objectForKey:detailLayout.processComponentId];
-    return [detailRecords count];
+    self.numberOfRecords = [detailRecords count];
+    return self.numberOfRecords;
 }
 
 -(NSString *)titleForSection:(NSInteger)section
@@ -615,25 +628,26 @@
 
 - (void)setDataOfDeBriefSection:(DebriefSectionView*)dbriefView InSection:(NSInteger)section
 {
-    NSArray *fieldInfoArray = [self getFieldInforFor:section];
-    SFMRecordFieldData *recordFieldDataOne;
-    SFMRecordFieldData *recordFieldDataTwo;
-    SFMRecordFieldData *recordFieldDataThree;
-    if ([fieldInfoArray count] > 0) {
-        recordFieldDataOne = [fieldInfoArray objectAtIndex:0];
+    if (dbriefView.sectionRecords) {
+        NSArray *fieldInfoArray = [self getFieldInforFor:section];
+        SFMRecordFieldData *recordFieldDataOne;
+        SFMRecordFieldData *recordFieldDataTwo;
+        SFMRecordFieldData *recordFieldDataThree;
+        if ([fieldInfoArray count] > 0) {
+            recordFieldDataOne = [fieldInfoArray objectAtIndex:0];
+        }
+        if ([fieldInfoArray count] > 1) {
+            recordFieldDataTwo = [fieldInfoArray objectAtIndex:1];
+        }
+        if ([fieldInfoArray count] > 2) {
+            recordFieldDataThree = [fieldInfoArray objectAtIndex:2];
+        }
+        dbriefView.sectionLabel.text = recordFieldDataOne.displayValue;
+        dbriefView.pageFieldView.fieldLabelOne.text = recordFieldDataTwo.name;
+        dbriefView.pageFieldView.fieldLabelTwo.text = recordFieldDataThree.name;
+        dbriefView.pageFieldView.fieldValueOne.text = recordFieldDataTwo.displayValue;
+        dbriefView.pageFieldView.fieldValueTwo.text = recordFieldDataThree.displayValue;
     }
-    if ([fieldInfoArray count] > 1) {
-        recordFieldDataTwo = [fieldInfoArray objectAtIndex:1];
-    }
-    if ([fieldInfoArray count] > 2) {
-        recordFieldDataThree = [fieldInfoArray objectAtIndex:2];
-    }
-    
-    dbriefView.sectionLabel.text = recordFieldDataOne.displayValue;
-    dbriefView.pageFieldView.fieldLabelOne.text = recordFieldDataTwo.name;
-    dbriefView.pageFieldView.fieldLabelTwo.text = recordFieldDataThree.name;
-    dbriefView.pageFieldView.fieldValueOne.text = recordFieldDataTwo.displayValue;
-    dbriefView.pageFieldView.fieldValueTwo.text = recordFieldDataThree.displayValue;
 }
 
 

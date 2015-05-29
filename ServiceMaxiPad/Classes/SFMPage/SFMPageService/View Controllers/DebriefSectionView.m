@@ -16,6 +16,8 @@
 @property (nonatomic, strong) UILabel * detailLabel;
 @property (nonatomic, strong) UIImageView *detailImage;
 
+@property (nonatomic, strong) UILabel *noDataLabel;
+
 
 @end
 
@@ -61,6 +63,13 @@
     [self addSubview:self.detailView];
     self.pageFieldView = [[MultiPageFieldView alloc]initWithFrame:CGRectZero];
     [self addSubview:self.pageFieldView];
+    
+    self.noDataLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    self.noDataLabel.textColor = [UIColor colorWithHexString:kTextFieldFontColor];
+    self.noDataLabel.font = [UIFont fontWithName:kHelveticaNeueItalic size:kFontSize20];
+    self.noDataLabel.userInteractionEnabled = NO;
+    [self addSubview:self.noDataLabel];
+    
 }
 
 -(void)layoutSubviews
@@ -90,6 +99,10 @@
     self.sectionLabel.bounds = labelFrame;
     self.sectionLabel.center =  CGPointMake( width/2 - 20 , y) ;
     
+    self.noDataLabel.bounds = labelFrame;
+    self.noDataLabel.center =  CGPointMake( width/2 - 20 , y) ;
+    
+    
     self.detailView.frame = CGRectMake(self.frame.size.width - 100,self.sectionLabel.frame.origin.y+15, 200, self.frame.size.height - self.sectionLabel.frame.origin.y);
 
     self.pageFieldView.frame = CGRectMake(self.sectionLabel.frame.origin.x,self.sectionLabel.frame.origin.y +65,self.frame.size.width-self.detailView.frame.size.width +70,self.frame.size.height-40);
@@ -100,6 +113,22 @@
     CGRect detailImageFrame = CGRectMake(CGRectGetWidth(self.detailLabel.bounds) - 5,(self.detailView.frame.size.height - 20) / 2 + 2, 20, 20);
     
     self.detailImage.frame = detailImageFrame;
+    
+    if (self.sectionRecords) {
+        self.expandImg.hidden = NO;
+        self.sectionLabel.hidden = NO;
+        self.detailView.hidden = NO;
+        self.pageFieldView.hidden = NO;
+        self.noDataLabel.hidden = YES;
+    }
+    else {
+        self.noDataLabel.hidden = NO;
+        self.expandImg.hidden = YES;
+        self.sectionLabel.hidden = YES;
+        self.detailView.hidden = YES;
+        self.pageFieldView.hidden = YES;
+    }
+    
 }
 
 
@@ -122,7 +151,10 @@
 
 -(void)sectionTapped
 {
-    [self.delegate sectionTapped:self];
+    if (self.sectionRecords) {
+        [self.delegate sectionTapped:self];
+    }
+    
 }
 -(void)setExpandImage:(BOOL)expand
 {
@@ -133,6 +165,20 @@
 - (void)setDetailLabelText
 {
     self.detailLabel.text = [[TagManager sharedInstance] tagByName:kTag_Details];
+}
+
+- (void)setNoDataLabelText:(NSString *)lineItem
+{
+    if (!self.sectionRecords) {
+        
+        NSMutableString *attrSignedIntoString = [[NSMutableString alloc] initWithString:@"No"];
+        
+        [attrSignedIntoString appendFormat:@" %@ ",lineItem];
+        
+        [attrSignedIntoString appendFormat:@" %@ ",@"Entered"];
+        
+        self.noDataLabel.text = attrSignedIntoString;
+    }
 }
 
 - (void)dealloc {

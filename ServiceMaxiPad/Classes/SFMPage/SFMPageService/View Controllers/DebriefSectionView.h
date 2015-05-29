@@ -24,10 +24,14 @@
 @property (nonatomic,strong) MultiPageFieldView *pageFieldView;
 @property(nonatomic)BOOL isExpanded;
 
+@property(nonatomic)NSInteger sectionRecords;
+
 -(void)setExpandImage:(BOOL)expand;
 -(void)addGesture;
 
 - (void)setDetailLabelText;
+
+- (void)setNoDataLabelText:(NSString *)lineItem;
 
 @end
 
