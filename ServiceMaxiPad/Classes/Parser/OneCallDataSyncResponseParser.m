@@ -340,6 +340,10 @@ typedef enum {
         /* delete Ids From syncTrailer Table*/
         if([conflictObjectMapIds count] >0)
         {
+            
+            [self.oneCallSyncHelper  deleteSyncRecordsFromSyncModificationTableWithIndex:conflictObjectMapIds
+                                                                    withModificationType:operationType];
+            
             [self.oneCallSyncHelper deleteConflictRecordsFromSuccessiveSyncEntry:conflictObjectMapIds
                                                             withModificationType:operationType];
             
