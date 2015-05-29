@@ -238,18 +238,22 @@
 {
     NSString *tokenString = [[url query]stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSMutableDictionary *queryStringDictionary = [[NSMutableDictionary alloc] init];
-    NSArray *urlComponents = [tokenString componentsSeparatedByString:@"&"];
+    NSArray *urlComponents = [tokenString componentsSeparatedByString:@"&123"];
     
     for (NSString *keyValuePair in urlComponents)
     {
         NSArray *pairComponents = [keyValuePair componentsSeparatedByString:@"="];
         NSString *key = [[pairComponents firstObject] stringByRemovingPercentEncoding];
-        NSString *value = [[pairComponents lastObject] stringByRemovingPercentEncoding];
+        //NSString *value = [[pairComponents lastObject] stringByRemovingPercentEncoding];
+        NSString *value = [pairComponents lastObject];
+
         [queryStringDictionary setObject:value forKey:key];
         
         if ([key isEqualToString:kPulseNotificationString])
         {
-            value = [[urlComponents lastObject] stringByRemovingPercentEncoding];
+            //value = [[urlComponents lastObject] stringByRemovingPercentEncoding];
+            value = [urlComponents lastObject];
+
             value = [value substringFromIndex:19];
             NSData *data = [value dataUsingEncoding:NSUTF8StringEncoding];
             NSError *error = nil;

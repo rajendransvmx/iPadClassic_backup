@@ -17,6 +17,7 @@
 #import "TagConstant.h"
 #import "TagManager.h"
 #import "StringUtil.h"
+#import "SyncErrorConflictService.h"
 
 
 #define PushNotificationProcessRequest     @"PushNotificationProcessRequest"
@@ -93,6 +94,12 @@
                 messageString = [[TagManager sharedInstance]tagByName:kTag_RemoteAccessRevokedMsg];
             }
             break;
+        case AlertMessageStyleConflictsFound:
+            titleString = [[TagManager sharedInstance]tagByName:kTag_ServiceMax];
+            if (messageString == nil || messageString.length == 0) {
+                messageString = @"Please resolve Conflicts for the record";
+            }
+            break;
             
         default:
             break;
@@ -114,8 +121,24 @@
         //(model.sfId.length > 0)
         if(![StringUtil isStringEmpty:model.sfId])
              {
-            model.requestType = NotificationRequestTypeDownload;
-            [self addRequestToNotificationQueue:model];
+                 SyncErrorConflictService *conflictService = [[SyncErrorConflictService alloc]init];
+                NSString *ObjectName = [PushNotificationUtility getObjectForSfId:model.sfId];
+                 BOOL isConflictFound =   [conflictService isConflictFoundForObject:ObjectName withSfId:model.sfId];
+
+                 if (isConflictFound)//thereis sconflict
+                 {
+                     //SyncErrorConflictService
+                     [self showAlertFor:AlertMessageStyleConflictsFound withCustomMessage:nil];
+
+                     //show alert and dont start donwload
+                 }
+                 else
+                 {
+                     model.requestType = NotificationRequestTypeDownload;
+                     [self addRequestToNotificationQueue:model];
+                 }
+                 
+          
         }
         else {
             //ERROR
@@ -600,11 +623,18 @@
     }
     
     BOOL viewProcessAvailable = YES;
+    
     //HS Fix for defect - 017600
     //localId
-    NSString *ObjectName = [PushNotificationUtility getObjectForSfId:self.finalModel.sfId];
+    //NSString *ObjectName = [PushNotificationUtility getObjectForSfId:self.finalModel.sfId];
    // NSString *localId = [PushNotificationUtility getLocalIdForSfId:self.finalModel.sfId objectName:self.finalModel.objectName];
-    NSString *localId = [PushNotificationUtility getLocalIdForSfId:self.finalModel.sfId objectName:ObjectName];
+    
+    
+    if(self.finalModel.objectName == nil){
+        self.finalModel.objectName = [PushNotificationUtility getObjectForSfId:self.finalModel.sfId];
+    }
+    
+    NSString *localId = [PushNotificationUtility getLocalIdForSfId:self.finalModel.sfId objectName:self.finalModel.objectName];
     //Fix ends here
 
     if(localId == nil)

@@ -45,6 +45,7 @@ typedef NS_ENUM(NSInteger,AlertMessageStyle ){
     
     AlertMessageStyleNoInternet,
     AlertMessageStyleInvalidPayload,
+    AlertMessageStyleConflictsFound,
     AlertMessageGeneral
 };
 
