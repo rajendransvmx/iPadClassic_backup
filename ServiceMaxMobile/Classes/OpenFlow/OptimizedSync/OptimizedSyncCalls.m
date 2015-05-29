@@ -301,7 +301,6 @@
 						{
 							local_id = [dict objectForKey:key];
 						}
-                        
 						if([key isEqualToString:@"time_stamp"])
 						{
 							time_stamp = [dict objectForKey:@"time_stamp"];
@@ -471,6 +470,7 @@
 								check_id_exists = TRUE;
 							}
 						}
+                        
 					}
 					
 					if(!check_id_exists)
@@ -589,8 +589,8 @@
 		
 		else if([event_name isEqualToString:@"PUT_INSERT"] && [event_type isEqualToString:@"SYNC"])
 		{
-            //8590
-			NSMutableArray * finalSetOfrecords = [[NSMutableArray alloc] initWithCapacity:0];
+			//8590
+            NSMutableArray * finalSetOfrecords = [[NSMutableArray alloc] initWithCapacity:0];
             
 			NSArray * masterObjects = [appDelegate.databaseInterface getAllObjectsForRecordType:MASTER  forOperation:INSERT];
 			NSArray * detailObjects = [appDelegate.databaseInterface getAllObjectsForRecordType:DETAIL forOperation:INSERT];
@@ -668,6 +668,7 @@
 							record_SVMXC.key = @"Fields";
 							record_SVMXC.value = field_string;
                             
+                            
                             //8590
                             NSString * parent_object_name = @"" ,*parent_column_name = @"";
                             
@@ -692,6 +693,7 @@
 								NSArray * keys = [dict allKeys];
 								
 								NSString * local_id = @"";
+                                NSString * parent_object_name = @"";
 								NSString * parent_local_id = @"";
 								for (int j = 0; j < [keys count]; j++)
 								{

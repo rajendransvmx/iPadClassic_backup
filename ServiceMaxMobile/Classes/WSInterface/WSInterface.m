@@ -28,8 +28,7 @@ void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message
 //ex : temp_trailer , sync_heap table,Incremental_sync, temp_incremental_sync  otherwise it would affect rest of the functionality.
 
 @interface WSInterface()
-//8590
-//@property (nonatomic, retain) NSMutableArray * customSync_unsynched_records;
+
 //@property (nonatomic,retain) NSMutableArray * custom_unsync_reqIds;
 -(void)clearCustomSyncStatus;
 
@@ -6629,7 +6628,12 @@ NSDate * syncCompleted;
         {
             if([fieldApiName isEqualToString:parentColumnName] && isChild)
             {
-                continue;
+                NSString *sfid = [record_dict objectForKey:parentColumnName];
+                if ([sfid length] < 20)
+                {
+                     continue;
+                }
+
             }
             
             NSString * referenceFieldId = [record_dict objectForKey:fieldApiName];
@@ -9493,6 +9497,19 @@ NSDate * syncCompleted;
                         
                         NSString *key2 = obj2.key;
                         NSString *value2 = obj2.value;
+                        
+                        INTF_WebServicesDefServiceSvc_SVMXMap* obj3 = nil;
+                        
+                        if ([valMap2 count] > 2) {
+                            obj3 = [valMap2 objectAtIndex:2];
+                            
+                            NSString *key3 = obj3.key;
+                            NSString *value3 = obj3.value;
+                            if(key3 != nil && value3 != nil){
+                                [innerDict setObject:value3 forKey:key3];
+                            }
+                            
+                        }
                         
                         [innerDict setObject:value1 forKey:key1];
                         [innerDict setObject:value2 forKey:key2];

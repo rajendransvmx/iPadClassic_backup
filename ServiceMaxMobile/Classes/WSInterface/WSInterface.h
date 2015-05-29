@@ -323,6 +323,7 @@ typedef enum CUSTOM_SYNC_STATUS{
 
 //krishna 6580
 - (BOOL) checkForConflictsForId:(NSString *)record_id andObject_name:(NSString *)object_name;
+//@property (nonatomic,retain) NSMutableArray * custom_unsync_reqIds;
 
 /* Shra-lookup */
 - (void)getUserTrunkLocationRequest;

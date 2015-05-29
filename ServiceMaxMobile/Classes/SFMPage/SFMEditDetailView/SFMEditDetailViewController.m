@@ -188,7 +188,11 @@
     if(self.selectedIndexPath.row != 0 && [detailIds count] >0)
     {
         NSString * ModifiedlocalId = [detailIds objectAtIndex:self.selectedIndexPath.row-1];
-        [appDelegate.databaseInterface.modifiedLineRecords addObject:ModifiedlocalId];
+        //14455
+        if (![appDelegate.databaseInterface.modifiedLineRecords containsObject:ModifiedlocalId]) {
+            [appDelegate.databaseInterface.modifiedLineRecords addObject:ModifiedlocalId];
+        }
+
     }
     NSInteger reqiredFieldCount = 0;
     // COLLECT ALL DATA FROM EDIT DETAIL SCREEN AND DUMP THEM ON APP DELEGATE SFM PAGE DATA (PROBABLY BUBBLE INFO)

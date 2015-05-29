@@ -173,14 +173,14 @@
 		}
         [sfmRequest.valueMap addObject:callBack];
 		
-		[sfmRequest.valueMap addObject:SVMXDEVMap_lastModified];
+		[sfmRequest.valueMap addObject:SVMXCMap_lastModified];
 		[sfmRequest.valueMap addObject:put_delete];
 		[sfmRequest.valueMap addObject:put_insert];
 		[sfmRequest.valueMap addObject:put_update];
 		
 		
-		INTF_WebServicesDefServiceSvc_SVMXDEVlient  * SVMXDEV_client =  [appDelegate getSVMXDEVlientObject];
-		[sfmRequest addClientInfo:SVMXDEV_client];
+		INTF_WebServicesDefServiceSvc_SVMXClient  * SVMXC_client =  [appDelegate getSVMXClientObject];
+		[sfmRequest addClientInfo:SVMXC_client];
 		[datasync setRequest:sfmRequest];
 		
 		
@@ -231,7 +231,7 @@
 				
 				NSString * object_name = [all_objects objectAtIndex:i] ;
                 
-                //////////////////////////// Naveen Vasu : Defect 11366 ////////////////////////////
+                //////////////////////////// Defect 11366 ////////////////////////////
                 NSMutableDictionary * referenceTo = [appDelegate.databaseInterface getReferenceToForObjectapiName:object_name];
                 NSString * parent_object_name = @"" ,*parent_column_name = @"";
                 BOOL isChild_object =[appDelegate.databaseInterface IsChildObject:object_name];
@@ -242,8 +242,8 @@
                     parent_column_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_name field_name:@"parent_column_name"];
                 }
                 //////////////////////////// Defect 11366 /////////////////////////////////////////
-                
-				INTF_WebServicesDefServiceSvc_SVMXMap  * SVMXDEVmap = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+								
+				INTF_WebServicesDefServiceSvc_SVMXMap  * SVMXCmap = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
 				NSMutableArray * info_dict = [appDelegate.dataSync_dict objectForKey:object_name];
 				
 				// get all the fields from the table
@@ -265,13 +265,10 @@
 				
 				
 				// ADD   FIELDS  method
-				INTF_WebServicesDefServiceSvc_SVMXMap  * record_SVMXDEV  = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+				INTF_WebServicesDefServiceSvc_SVMXMap  * record_SVMXC  = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
 				
-				record_SVMXDEV.key = @"Fields";
-
-                // Vipindas field merge feature
-                // Removing as part of field merging.
-				// record_SVMXDEV.value = field_string;
+				record_SVMXC.key = @"Fields";
+				record_SVMXC.value = field_string;
 				
                 BOOL value_map_count = 0;
                 NSMutableArray *beforeSaveFields = [[NSMutableArray alloc] init];
@@ -368,8 +365,7 @@
 					}
 					
 					NSMutableDictionary * each_record = [appDelegate.databaseInterface getRecordsForRecordId:local_id  ForObjectName:object_name fields:field_string];
-                    
-                    //////////////////////////// Naveen Vasu : Defect 11366 ////////////////////////////
+                    ////// 11366 ////////
                     BOOL  replaceSuccess = [appDelegate.wsInterface replaceReferenceLocalIdWithSfidForRecord:each_record isChild:isChild_object referenceTo:referenceTo parentColoumnName:parent_column_name ObjectName:object_name recordLocalId:local_id recordSfId:@""];
                     if(!replaceSuccess)
                     {
@@ -393,24 +389,22 @@
                             }
                         }
                     }
-                    //////////////////////////// Defect 11366 ////////////////////////////
-                    
+                    ///////11366/////
                     
 					if([record_type isEqualToString:DETAIL])
 					{
 						NSString * parent_SF_Id = @"";
 						//NSString * parent_column_name = @"";
-						
-                        //////////////////////////// Naveen Vasu : Defect 11366 //////////////////////////// Condition change
+                        //////////////////////////// Defect 11366 //////////////////////////// Condition change
                         if([parent_object_name length] == 0  || [parent_object_name isEqualToString:object_name] || appDelegate.speacialSyncIsGoingOn || [parent_column_name length] == 0)
-						{
-							parent_object_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_name field_name:@"parent_name"];
-							
+                        {
+                            parent_object_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_name field_name:@"parent_name"];
+                            
                             parent_column_name = [appDelegate.databaseInterface  getParentColumnNameFormChildInfoTable:SFChildRelationShip childApiName:object_name parentApiName:parent_object_name];
-                            //////////////////////////// Defect 11366 ////////////////////////////
-						}
+                        }
+                        //////////////////////////// Defect 11366 ////////////////////////////
                         
-                        //////////////////////////// Naveen Vasu : Defect 11366 ////////////////////////////
+                        //////////////////////////// Defect 11366 ////////////////////////////
                         if([parent_local_id length] == 0)
                         {
                             parent_local_id = [each_record objectForKey:parent_column_name];
@@ -471,6 +465,7 @@
 								check_id_exists = TRUE;
 							}
 						}
+                        
 					}
 					
 					if(!check_id_exists)
@@ -534,7 +529,7 @@
 							[record_id_list addObject:local_id];
 						}
 						
-						[record_SVMXDEV.valueMap addObject:testSVMXDEVMap];
+						[record_SVMXC.valueMap addObject:testSVMXCMap];
 						value_map_count++;
 						
 					}
@@ -571,17 +566,17 @@
                     beforeSaveMap = nil;
                 }
 				
-				SVMXDEVmap.key = @"Object_Name";
-				SVMXDEVmap.value = object_name;
+				SVMXCmap.key = @"Object_Name";
+				SVMXCmap.value = object_name;
 								
 								
 				if(value_map_count !=0)
 				{
-					[SVMXDEVmap.valueMap addObject:record_SVMXDEV];
-					[sfmRequest.valueMap addObject:SVMXDEVmap];
+					[SVMXCmap.valueMap addObject:record_SVMXC];
+					[sfmRequest.valueMap addObject:SVMXCmap];
 				}
-				[record_SVMXDEV release];
-				[SVMXDEVmap release];
+				[record_SVMXC release];
+				[SVMXCmap release];
 				
 			}
 			
@@ -589,8 +584,8 @@
 		
 		else if([event_name isEqualToString:@"PUT_INSERT"] && [event_type isEqualToString:@"SYNC"])
 		{
-            //8590
-			NSMutableArray * finalSetOfrecords = [[NSMutableArray alloc] initWithCapacity:0];
+			//8590
+            NSMutableArray * finalSetOfrecords = [[NSMutableArray alloc] initWithCapacity:0];
             
 			NSArray * masterObjects = [appDelegate.databaseInterface getAllObjectsForRecordType:MASTER  forOperation:INSERT];
 			NSArray * detailObjects = [appDelegate.databaseInterface getAllObjectsForRecordType:DETAIL forOperation:INSERT];
@@ -639,10 +634,10 @@
 						// BOOL MasterObject = FALSE ;
 						if([tempMasterOrDetail isEqualToString:object_name])
 						{
-							INTF_WebServicesDefServiceSvc_SVMXMap  * SVMXDEVmap = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+							INTF_WebServicesDefServiceSvc_SVMXMap  * SVMXCmap = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
 							
-							SVMXDEVmap.key = key ;
-							SVMXDEVmap.value = object_name;
+							SVMXCmap.key = key ;
+							SVMXCmap.value = object_name;
 							
 							NSMutableArray *  info_dict = [appDelegate.dataSync_dict objectForKey:object_name];
 							
@@ -663,10 +658,11 @@
 							}
 							
 							// ADD   FIELDS  method
-							INTF_WebServicesDefServiceSvc_SVMXMap  * record_SVMXDEV  = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+							INTF_WebServicesDefServiceSvc_SVMXMap  * record_SVMXC  = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
 							
-							record_SVMXDEV.key = @"Fields";
-							record_SVMXDEV.value = field_string;
+							record_SVMXC.key = @"Fields";
+							record_SVMXC.value = field_string;
+                            
                             
                             //8590
                             NSString * parent_object_name = @"" ,*parent_column_name = @"";
@@ -724,22 +720,22 @@
 								INTF_WebServicesDefServiceSvc_SVMXMap * testSVMXDEVMap =  [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
 								
 								NSMutableDictionary * each_record = [appDelegate.databaseInterface getRecordsForRecordId:local_id  ForObjectName:object_name fields:field_string];
-                              
+                                
                                 //8590
                                 BOOL  replaceSuccess = [appdelegate.wsInterface replaceReferenceLocalIdWithSfidForRecord:each_record isChild:isChild_object referenceTo:referenceTo parentColoumnName:parent_column_name ObjectName:object_name recordLocalId:local_id recordSfId:@""];
                                 
-								
-								if([key isEqualToString:@"Child_Object"] && replaceSuccess)
-								{
+                                
+                                if([key isEqualToString:@"Child_Object"] && replaceSuccess)
+                                {
                                     //8590
-									/*if(appDelegate.speacialSyncIsGoingOn)
-									{
-										parent_object_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_name field_name:@"parent_name"];
-										
-										NSString * parent_column_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_name field_name:@"parent_column_name"];
-										
-										parent_local_id = [appDelegate.databaseInterface getParentIdFrom:object_name WithId:local_id andParentColumnName:parent_column_name id_type:@"local_id"];
-									}*/
+                                    /*if(appDelegate.speacialSyncIsGoingOn)
+                                     {
+                                     parent_object_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_name field_name:@"parent_name"];
+                                     
+                                     NSString * parent_column_name = [appDelegate.databaseInterface getchildInfoFromChildRelationShip:SFCHILDRELATIONSHIP ForChild:object_name field_name:@"parent_column_name"];
+                                     
+                                     parent_local_id = [appDelegate.databaseInterface getParentIdFrom:object_name WithId:local_id andParentColumnName:parent_column_name id_type:@"local_id"];
+                                     }*/
                                     //8590
                                     NSString * temp_parent_local_id = [each_record objectForKey:parent_column_name];
                                     if([temp_parent_local_id length] == 0)
@@ -751,28 +747,28 @@
                                         parent_local_id = temp_parent_local_id;
                                     }
                                     
-									NSString *  Parent_SF_ID_from_object_table = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:parent_object_name local_id:parent_local_id];
+                                    NSString *  Parent_SF_ID_from_object_table = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:parent_object_name local_id:parent_local_id];
                                     //8590
-									/*if([Parent_SF_ID_from_object_table isEqualToString:@""])
-									{
-										Parent_SF_ID_from_object_table = parent_local_id;
-									}
-									
-									NSString * parent_column_name = @"";
-									parent_column_name = [appDelegate.databaseInterface  getParentColumnNameFormChildInfoTable:SFChildRelationShip childApiName:object_name parentApiName:parent_object_name];
-									
-									NSArray * allKeys_child = [each_record allKeys];
-									
-									//find parent column Name
-									for(NSString * parent_key in allKeys_child)
-									{
-										if([parent_key isEqualToString:parent_column_name])
-										{
-											[each_record setValue:Parent_SF_ID_from_object_table forKey:parent_column_name];
-										}
-									}
-									
-								}*/
+                                    /*if([Parent_SF_ID_from_object_table isEqualToString:@""])
+                                     {
+                                     Parent_SF_ID_from_object_table = parent_local_id;
+                                     }
+                                     
+                                     NSString * parent_column_name = @"";
+                                     parent_column_name = [appDelegate.databaseInterface  getParentColumnNameFormChildInfoTable:SFChildRelationShip childApiName:object_name parentApiName:parent_object_name];
+                                     
+                                     NSArray * allKeys_child = [each_record allKeys];
+                                     
+                                     //find parent column Name
+                                     for(NSString * parent_key in allKeys_child)
+                                     {
+                                     if([parent_key isEqualToString:parent_column_name])
+                                     {
+                                     [each_record setValue:Parent_SF_ID_from_object_table forKey:parent_column_name];
+                                     }
+                                     }
+                                     
+                                     }*/
                                     //8590
                                     if([Parent_SF_ID_from_object_table length] == 0)
                                     {
@@ -827,17 +823,17 @@
                                     }
                                     
                                 }
-
+                                
                                 //8590
                                 if(replaceSuccess)
                                 {
                                     SBJsonWriter * localJsonWriter = [[SBJsonWriter alloc] init];
                                     NSString * json_record = [localJsonWriter stringWithObject:each_record];
                                     
-                                    testSVMXDEVMap.key = local_id;
-                                    testSVMXDEVMap.value = json_record;
+                                    testSVMXCMap.key = local_id;
+                                    testSVMXCMap.value = json_record;
                                     
-                                    [record_SVMXDEV.valueMap addObject:testSVMXDEVMap];
+                                    [record_SVMXC.valueMap addObject:testSVMXCMap];
                                     
                                     [finalSetOfrecords addObject:local_id];
                                     count ++;
@@ -851,7 +847,7 @@
                                     }
                                     [localJsonWriter release]; localJsonWriter = nil;
                                 }
-                                [testSVMXDEVMap release]; testSVMXDEVMap =  nil;
+                                [testSVMXCMap release]; testSVMXCMap =  nil;
                             }
                             
                             //8590
@@ -861,13 +857,13 @@
                             iscallBack.value = @"YES";
                             if(num_of_records)
                             {
-                                [SVMXDEVmap.valueMap addObject:record_SVMXDEV];
-                                [SVMXDEVmap.valueMap addObject:iscallBack];
-                                [sfmRequest.valueMap addObject:SVMXDEVmap];
+                                [SVMXCmap.valueMap addObject:record_SVMXC];
+                                [SVMXCmap.valueMap addObject:iscallBack];
+                                [sfmRequest.valueMap addObject:SVMXCmap];
                             }
                             [iscallBack release];
-                            [record_SVMXDEV release];  //sahana30April
-                            [SVMXDEVmap release];       //sahana30April
+                            [record_SVMXC release];  //sahana30April
+                            [SVMXCmap release];       //sahana30April
                             break;
 						}
 						
@@ -895,18 +891,18 @@
 				NSString * object_name = [all_objects objectAtIndex:i] ;
 				
 				
-				INTF_WebServicesDefServiceSvc_SVMXMap  * SVMXDEVmap = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+				INTF_WebServicesDefServiceSvc_SVMXMap  * SVMXCmap = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
 				
-				SVMXDEVmap.key = @"object_name" ;
-				SVMXDEVmap.value = object_name;
+				SVMXCmap.key = @"object_name" ;
+				SVMXCmap.value = object_name;
 				
 				NSMutableArray *  info_dict = [appDelegate.dataSync_dict objectForKey:object_name];
 				
 
-				INTF_WebServicesDefServiceSvc_SVMXMap  * record_SVMXDEV  = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+				INTF_WebServicesDefServiceSvc_SVMXMap  * record_SVMXC  = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
 				
-				record_SVMXDEV.key = @"Fields";
-				record_SVMXDEV.value = @"";
+				record_SVMXC.key = @"Fields";
+				record_SVMXC.value = @"";
 				
 				for (NSDictionary * dict in info_dict)
 				{
@@ -955,8 +951,8 @@
 					}
 					testSVMXDEVMap.value = sf_id;
 					
-					[record_SVMXDEV.valueMap addObject:testSVMXDEVMap];
-					[testSVMXDEVMap release];
+					[record_SVMXC.valueMap addObject:testSVMXCMap];
+					[testSVMXCMap release];
 					
 					if(appDelegate.speacialSyncIsGoingOn)
 					{
@@ -964,16 +960,14 @@
 					}
 					
 				}
+                SVMXCmap.key = @"Object_Name";
+				SVMXCmap.value = object_name;
 				
+				[SVMXCmap.valueMap addObject:record_SVMXC];
+				[sfmRequest.valueMap addObject:SVMXCmap];
 				
-				SVMXDEVmap.key = @"Object_Name";
-				SVMXDEVmap.value = object_name;
-				
-				[SVMXDEVmap.valueMap addObject:record_SVMXDEV];
-				[sfmRequest.valueMap addObject:SVMXDEVmap];
-				
-				[SVMXDEVmap release];
-				[record_SVMXDEV release];
+				[SVMXCmap release];
+				[record_SVMXC release];
 			}
 			
 		}
@@ -1042,9 +1036,9 @@
 			
 			if([object_api_name length] != 0 && ![object_api_name isEqualToString:@""])
 			{
-				INTF_WebServicesDefServiceSvc_SVMXMap  * SVMXDEVmap = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
-				SVMXDEVmap.key = @"TX_OBJECT" ;
-				SVMXDEVmap.value = object_api_name; //object  api name
+				INTF_WebServicesDefServiceSvc_SVMXMap  * SVMXCmap = [[INTF_WebServicesDefServiceSvc_SVMXMap alloc] init];
+				SVMXCmap.key = @"TX_OBJECT" ;
+				SVMXCmap.value = object_api_name; //object  api name
 				NSMutableArray * array_of_record_ids = [dict  objectForKey:object_api_name];
 				
 				SMLog(kLogLevelVerbose,@"OBJECT = %@, COUNT + %D", object_api_name, [array_of_record_ids count]);
@@ -1057,10 +1051,10 @@
 						[appDelegate.databaseInterface DeleterecordFromTableWithSf_Id:SYNC_ERROR_CONFLICT sf_id:record_id_str withColumn:@"sf_id"];
 					}
 					
-					[SVMXDEVmap.values addObject:record_id_str];
+					[SVMXCmap.values addObject:record_id_str];
 				}
-				[sfmRequest.valueMap addObject:SVMXDEVmap];
-				[SVMXDEVmap release];
+				[sfmRequest.valueMap addObject:SVMXCmap];
+				[SVMXCmap release];
 			}
 		}
 		
@@ -1070,10 +1064,10 @@
 		lastBatch.value = [dict objectForKey:@"LAST_BATCH"];
 		
 		[dict release];
-		//ADD SVMXDEVlient : changed krishna
-        INTF_WebServicesDefServiceSvc_SVMXDEVlient  * SVMXDEV_client = [appDelegate getSVMXDEVlientObject];
+		//ADD SVMXClient : changed krishna
+        INTF_WebServicesDefServiceSvc_SVMXClient  * SVMXC_client = [appDelegate getSVMXClientObject];
         
-        [sfmRequest addClientInfo:SVMXDEV_client];
+        [sfmRequest addClientInfo:SVMXC_client];
 		[sfmRequest addValueMap:lastBatch];
         [datasync setRequest:sfmRequest];
 		
@@ -1577,9 +1571,9 @@
 				
 				for(int w = 0 ; w < [errorvaluemap count]; w++)
 				{
-					INTF_WebServicesDefServiceSvc_SVMXMap * error_SVMXDEV_map = [errorvaluemap objectAtIndex:w];
-					local_id = (error_SVMXDEV_map.key!= nil )?error_SVMXDEV_map.key:@"";
-					sf_id    = (error_SVMXDEV_map.value != nil)? error_SVMXDEV_map.value:@"";
+					INTF_WebServicesDefServiceSvc_SVMXMap * error_SVMXC_map = [errorvaluemap objectAtIndex:w];
+					local_id = (error_SVMXC_map.key!= nil )?error_SVMXC_map.key:@"";
+					sf_id    = (error_SVMXC_map.value != nil)? error_SVMXC_map.value:@"";
 				}
 				
 				
@@ -1705,9 +1699,9 @@
 				
 				for(int w = 0 ; w < [errorvaluemap count]; w++)
 				{
-					INTF_WebServicesDefServiceSvc_SVMXMap * error_SVMXDEV_map = [errorvaluemap objectAtIndex:w];
-					local_id = (error_SVMXDEV_map.key!= nil )?error_SVMXDEV_map.key:@"";
-					sf_id    = (error_SVMXDEV_map.value != nil)? error_SVMXDEV_map.value:@"";
+					INTF_WebServicesDefServiceSvc_SVMXMap * error_SVMXC_map = [errorvaluemap objectAtIndex:w];
+					local_id = (error_SVMXC_map.key!= nil )?error_SVMXC_map.key:@"";
+					sf_id    = (error_SVMXC_map.value != nil)? error_SVMXC_map.value:@"";
 				}
 				
 				
@@ -1825,9 +1819,9 @@
 				
 				for(int w = 0 ; w < [errorvaluemap count]; w++)
 				{
-					INTF_WebServicesDefServiceSvc_SVMXMap * error_SVMXDEV_map = [errorvaluemap objectAtIndex:w];
-					local_id = (error_SVMXDEV_map.key!= nil )?error_SVMXDEV_map.key:@"";
-					sf_id    = (error_SVMXDEV_map.value != nil)? error_SVMXDEV_map.value:@"";
+					INTF_WebServicesDefServiceSvc_SVMXMap * error_SVMXC_map = [errorvaluemap objectAtIndex:w];
+					local_id = (error_SVMXC_map.key!= nil )?error_SVMXC_map.key:@"";
+					sf_id    = (error_SVMXC_map.value != nil)? error_SVMXC_map.value:@"";
 				}
 				
 				
@@ -1873,6 +1867,104 @@
 	[appDelegate.databaseInterface  insertSyncConflictsIntoSYNC_CONFLICT:conflict_dict];
 }
 
+-(BOOL)replaceReferenceLocalIdWithSfidForRecord:(NSMutableDictionary *)record_dict isChild:(BOOL)isChild referenceTo:(NSMutableDictionary *)referenceTo parentColoumnName:(NSString *)parentColumnName ObjectName:(NSString *)ObjectName recordLocalId:(NSString *)currentRecordLocalId  recordSfId:(NSString *)currentRecordSfId
+{
+    BOOL success = TRUE;
+    NSArray * referenceFields = [referenceTo allKeys];
+    NSArray * record_fields = [record_dict allKeys];
+    
+    NSMutableDictionary * updateFields = [[NSMutableDictionary alloc] initWithCapacity:0];
+    for(NSString * fieldApiName in referenceFields)
+    {
+        if([record_fields containsObject:fieldApiName])
+        {
+            if([fieldApiName isEqualToString:parentColumnName] && isChild)
+            {
+                continue;
+            }
+            
+            NSString * referenceFieldId = [record_dict objectForKey:fieldApiName];
+            
+            if([referenceFieldId length] > 30)
+            {
+                NSMutableArray * referenceTables = [referenceTo objectForKey:fieldApiName];
+                NSString * referenceTable = @"";
+                
+                
+                for(NSString * temp_referenceTable in referenceTables)
+                {
+                    BOOL recordExists = [appDelegate.databaseInterface checkRecordExistForObject:temp_referenceTable LocalId:referenceFieldId];
+                    if(recordExists)
+                    {
+                        referenceTable = temp_referenceTable;
+                        break;
+                    }
+                }
+                if([ObjectName isEqualToString:@"Event"] && [fieldApiName isEqualToString:@"WhatId"] && [referenceTable length] == 0)
+                {
+                    NSDictionary * event_ref_dict =[plistUtility readFromPlist:EVENT_REFERENCE_PLIST];
+                    referenceTable = [event_ref_dict objectForKey:referenceFieldId];
+                }
+                
+                //check for sf_id in reference table
+                NSString * reference_sf_id  = [appDelegate.databaseInterface getSfid_For_LocalId_From_Object_table:referenceTable local_id:referenceFieldId];
+                if([reference_sf_id length] == 0)
+                {
+                    reference_sf_id = [appDelegate.databaseInterface getSfid_For_LocalId_FROM_SfHeapTable:referenceFieldId];
+                }
+                
+                if([reference_sf_id length] == 0)
+                {
+                    //check whether  the  reference record exists
+                    //if not exists ,make that reference field blank
+                    BOOL does_referenceRecordExists = [appDelegate.databaseInterface checkRecordExistForObject:referenceTable LocalId:referenceFieldId];
+                    if(!does_referenceRecordExists)
+                    {
+                        //update other record
+                        [updateFields setObject:@"" forKey:fieldApiName];
+                        [record_dict  setObject:@"" forKey:fieldApiName];
+                    }
+                    else
+                    {
+                        success = FALSE;
+                        BOOL ParentrecordNotSent = [appDelegate.databaseInterface checkSentFlagForReferenceId:referenceFieldId forOperation:INSERT];
+                        //if conflict exists  for related record make it sent as true
+                        BOOL conflict_exists_local_id = [appDelegate.dataBase checkIfConflictsExistsForEventWithLocalId:referenceFieldId objectName:referenceTable];
+                       
+                       if(conflict_exists_local_id || ParentrecordNotSent || [appdelegate.wsInterface.customSync_unsynched_records containsObject:referenceFieldId])
+                       {
+                            
+                            [appDelegate.databaseInterface updateDataTrailer_RecordSentForlocalId:currentRecordLocalId operation_type:INSERT];
+                        }
+                    }
+                }
+                else
+                {
+                    //update other record
+                    [updateFields setObject:reference_sf_id forKey:fieldApiName];
+                    [record_dict setObject:reference_sf_id forKey:fieldApiName];
+                }
+                
+            }
+        }
+    }
+    
+    if([updateFields count ] > 0)
+    {
+        if([currentRecordLocalId length] != 0)
+        {
+            //update record with the reference fields updateFields
+            [appDelegate.databaseInterface  UpdateTableforId:currentRecordLocalId forObject:ObjectName data:updateFields];
+        }
+        else if([currentRecordSfId length] != 0)
+        {
+            [appDelegate.databaseInterface UpdateTableforSFId:currentRecordSfId forObject:ObjectName data:updateFields];
+        }
+    }
+    [updateFields release]; updateFields = nil;
+    
+    return success;
+}
 
 - (void) dealloc
 {
