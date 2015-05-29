@@ -18,6 +18,8 @@
 #import "NSNotificationCenter+UniqueNotif.h"
 #import "AppManager.h"
 #import "AlertMessageHandler.h"
+#import "AutoLockManager.h"
+
 
 @interface PurgeDataDetailViewController ()
 @property (nonatomic, strong)SMProgressAlertView *progressAlertView;
@@ -184,6 +186,9 @@
     {
         [self displayDataPurgeProgressView];
         [[SMDataPurgeManager sharedInstance] startMannualPurging];
+        
+        [[AutoLockManager sharedManager] disableAutoLockSettingFor:purgeDataAL];
+
     }
 
   
@@ -300,6 +305,9 @@
         self.progressAlertView.alertDelegate = nil;
         [self.progressAlertView removeFromSuperview];
     }
+    
+    [[AutoLockManager sharedManager] enableAutoLockSettingFor:purgeDataAL];
+
 }
 
 -(void)cancelDataPurge

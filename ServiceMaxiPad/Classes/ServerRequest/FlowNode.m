@@ -581,8 +581,8 @@ NSString *cocoaErrorString = @"3840";
      * Disabling idle timer, due to some reason its getting reset. so to ensure that during webservice we disable idle timer.
      *
      */
-    SMAppDelegate *appDelegate = (SMAppDelegate *)[[UIApplication sharedApplication] delegate];
-    [appDelegate disableIdleTimerForApplication];
+//    SMAppDelegate *appDelegate = (SMAppDelegate *)[[UIApplication sharedApplication] delegate];
+//    [appDelegate disableIdleTimerForApplication];
     [[SVMXOperationQueue sharedSVMXOperationQueObject] addOperationToQue:request];
 }
 

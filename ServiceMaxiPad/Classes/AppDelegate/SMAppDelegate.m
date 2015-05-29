@@ -59,7 +59,7 @@
  {
      [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
      [FileManager createApplicationDirectory];
-     [self disableIdleTimerForApplication];
+//     [self disableIdleTimerForApplication];
      //self.window.tintColor = [UIColor whiteColor];
 /*
      if([UINavigationBar conformsToProtocol:@protocol(UIAppearanceContainer)]) {
@@ -107,8 +107,8 @@
 
 - (void)disableIdleTimerForApplication
 {
-    [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
-    [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
+//    [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
+//    [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
 }
 
 /**

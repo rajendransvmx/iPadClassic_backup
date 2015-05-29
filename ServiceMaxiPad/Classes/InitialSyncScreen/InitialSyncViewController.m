@@ -15,6 +15,7 @@
 #import "PageViewController.h"
 #import "AppManager.h"
 #import "TagManager.h"
+#import "AutoLockManager.h"
 
 @interface InitialSyncViewController ()
 
@@ -72,6 +73,8 @@
     SyncManager *syncMgr = [SyncManager sharedInstance];
     [syncMgr performSyncWithType:SyncTypeInitial];
     
+    [[AutoLockManager sharedManager] disableAutoLockSettingFor:initialSyncAL]; // Disable the user controlled device Autolock. 26-May-2015 BSP
+
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(syncStatusUpdated:)
                                                  name:kInitialSyncStatusNotification
@@ -102,7 +105,6 @@
         SyncProgressDetailModel *object = [aNotif.userInfo objectForKey:@"syncstatus"];
         [self updateUserInterface:object];
     }
-    
 }
 
 - (void)updateUserInterface:(SyncProgressDetailModel*)progressObject
@@ -112,21 +114,20 @@
         float progress = [progressObject.progress floatValue];
         self.progressIndicator.progress = progress/100.0f;
     }
-    
     if(![StringUtil isStringEmpty:progressObject.message])
     {
         self.progressMessage.text = [NSString stringWithFormat:@"%@ %@ %@ %@ - %@",[[TagManager sharedInstance]tagByName:kTagSyncProgressStep], progressObject.currentStep,[[TagManager sharedInstance]tagByName:kTagSyncProgressOf],progressObject.numberOfSteps,progressObject.message];
     }
-    
     if([progressObject.progress integerValue] == 100)
     {
         [[AppManager sharedInstance] setApplicationStatus:ApplicationStatusInitialSyncCompleted];
         [[AppManager sharedInstance] loadScreen];
+        
+        [[AutoLockManager sharedManager] enableAutoLockSettingFor:initialSyncAL]; // Enable the user controlled device lock. 26-May-2015 BSP
+        
+        NSLog(@"AutoLockManager enable called for initial sync");
         //[(SMAppDelegate*)[[UIApplication sharedApplication] delegate] loadHomeScreen];
     }
 }
 
 @end
-
-
-

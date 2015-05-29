@@ -19,6 +19,7 @@
 #import "TagManager.h"
 #import "DatabaseConfigurationManager.h"
 #import "Reachability.h"
+#import "AutoLockManager.h"
 
 
 @interface ResetAppDetailViewController ()
@@ -314,6 +315,10 @@
     if (progressObject.syncStatus == SyncStatusSuccess)
     {
         SXLogDebug(@"Validation profile Succeded");
+        
+        [[AutoLockManager sharedManager] disableAutoLockSettingFor:resetAppAL];
+
+        
         [self addNotificationForResetApp];
         [self showResetApplicationProgressStatusMessage];
         
@@ -364,12 +369,18 @@
             [self removeNotificationForResetApp];
             
             [[AppManager sharedInstance] loadHomeScreen];
+            
+            [[AutoLockManager sharedManager] enableAutoLockSettingFor:resetAppAL];
+
         }
     }
     else if (progressObject.syncStatus == SyncStatusFailed)
     {
         // reset progress to 0
         [self.progressAlertView updateProgressBarWithValue:0 andMessage:[[TagManager sharedInstance]tagByName:kTag_Retrying]];
+        
+        [[AutoLockManager sharedManager] enableAutoLockSettingFor:resetAppAL];
+
     }
 }
 

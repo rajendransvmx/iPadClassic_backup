@@ -23,6 +23,7 @@
 #import "NonTagConstant.h"
 #import "NSNotificationCenter+UniqueNotif.h"
 #import "PlistManager.h"
+#import "AutoLockManager.h"
 
 
 #define kConfigSyncAlertTag     10
@@ -306,6 +307,8 @@ const NSInteger alertViewTagForConfigSync   = 888889;
 {
     if ( [[SNetworkReachabilityManager sharedInstance] isNetworkReachable])
     {
+        [[AutoLockManager sharedManager] disableAutoLockSettingFor:manualDataSyncAL];
+
         [SyncManager sharedInstance].isGetPriceCallEnabled = YES;
         [[SyncManager sharedInstance] performSyncWithType:SyncTypeData];
         [self updateDataSyncRelatedUI];
@@ -320,6 +323,8 @@ const NSInteger alertViewTagForConfigSync   = 888889;
 {
     if ( [[SNetworkReachabilityManager sharedInstance] isNetworkReachable])
     {
+        [[AutoLockManager sharedManager] disableAutoLockSettingFor:configSyncAL];
+
         SyncManager *syncManager = [SyncManager sharedInstance];
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(syncStatusUpdated:)
@@ -419,12 +424,16 @@ const NSInteger alertViewTagForConfigSync   = 888889;
             
         case SyncStatusSuccess:
         {
+            [[AutoLockManager sharedManager] enableAutoLockSettingFor:configSyncAL]; //AUTOLOCK 27-May-2015 BSP
+
             [self updatedOnConfigSyncFinished];
             [[AppManager sharedInstance] loadHomeScreen];// reload custom tab bar after config sync.
         }
         break;
         case SyncStatusFailed:
         {
+            [[AutoLockManager sharedManager] enableAutoLockSettingFor:configSyncAL]; //AUTOLOCK 27-May-2015 BSP
+
             NSString *erroMsg = [progressObject.syncError errorEndUserMessage];
             [self handleConfigSyncFailure:erroMsg];
         }
@@ -484,11 +493,18 @@ const NSInteger alertViewTagForConfigSync   = 888889;
     NSString *status = [PlistManager getLastDataSyncStatus];
     if (([status isEqualToString:kInProgress] | [status isEqualToString:kConflict]))
     {
+        if([status isEqualToString:kConflict])
+        {
+            [[AutoLockManager sharedManager] enableAutoLockSettingFor:manualDataSyncAL];
+        }
+        
         dataSyncStatusLabel.text = status;
         [dataSyncStatusLabel setTextColor:[UIColor colorWithHexString:@"#FF6633"]];
     }
     else
     {
+        [[AutoLockManager sharedManager] enableAutoLockSettingFor:manualDataSyncAL];
+
         dataSyncStatusLabel.text = status;
         [dataSyncStatusLabel setTextColor:[UIColor colorWithRed:67.0f/255
                                                           green:67.0f/255

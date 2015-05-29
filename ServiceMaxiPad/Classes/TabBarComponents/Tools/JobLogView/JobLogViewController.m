@@ -21,6 +21,7 @@
 #import "TagManager.h"
 #import "SNetworkReachabilityManager.h"
 #import "TagConstant.h"
+#import "AutoLockManager.h"
 
 
 @interface JobLogViewController ()<FlowDelegate>
@@ -100,6 +101,9 @@
                                                  requestParam:nil
                                                callerDelegate:self];
         [[TaskManager sharedInstance] addTask:taskModel];
+        
+        [[AutoLockManager sharedManager] disableAutoLockSettingFor:pushLogsAL];
+
     }
     else
     {
@@ -196,6 +200,9 @@
             [self updateLastPushLogTimeAndStatusUI];
             [self hideAnimator];
         }
+        
+        [[AutoLockManager sharedManager] enableAutoLockSettingFor:pushLogsAL];
+
     }
 }
 @end
