@@ -908,9 +908,15 @@
                         SXLogWarning(@"SFMPage - No sfid for detail");
                     }
                     else{
-                        BOOL  isRecordInsertionSucces = [modifiedRecordService saveRecordModel:syncRecord];
-                        if(isRecordInsertionSucces){
-                            
+                        
+                        if([syncRecord.operation isEqualToString:kModificationTypeUpdate]) {
+                             BOOL doesExist =   [modifiedRecordService doesRecordExistForId:localIdField.internalValue];
+                            if (!doesExist) {
+                                BOOL  isRecordInsertionSucces = [modifiedRecordService saveRecordModel:syncRecord];
+                            }
+                        }
+                        else{
+                            BOOL  isRecordInsertionSucces = [modifiedRecordService saveRecordModel:syncRecord];
                         }
                     }
                 }else{
