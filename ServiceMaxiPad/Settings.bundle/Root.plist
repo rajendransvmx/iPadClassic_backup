@@ -100,6 +100,22 @@
 		</dict>
 		<dict>
 			<key>Title</key>
+			<string>Session</string>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+		</dict>
+		<dict>
+			<key>DefaultValue</key>
+			<false/>
+			<key>Key</key>
+			<string>Session Auto Refresh</string>
+			<key>Title</key>
+			<string>Session Auto Refresh</string>
+			<key>Type</key>
+			<string>PSToggleSwitchSpecifier</string>
+		</dict>
+		<dict>
+			<key>Title</key>
 			<string>Application Information</string>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>

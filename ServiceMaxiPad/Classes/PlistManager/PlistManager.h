@@ -184,4 +184,6 @@ extern  NSString *const kPreferenceOrganizationCustom;
 + (void)setRefreshToken:(NSString*)refreshToken;
 + (NSString*)getRefreshToken;
 
+//017609
++ (BOOL) shouldValidateAccessToken;
 @end

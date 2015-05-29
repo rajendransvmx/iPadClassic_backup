@@ -185,30 +185,42 @@ static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Secon
 {
     BOOL hasTokenValid = NO;
     
-    NSInteger savedTokenBornTime = [PlistManager storedAccessTokenGeneratedTime];
-    long long timeNow = (long long)[[NSDate date] timeIntervalSince1970];
+    //017609
+    BOOL shouldRefreshToken = [PlistManager shouldValidateAccessToken];
     
-    int diffTime  = (unsigned int)  (timeNow - savedTokenBornTime);
-    
-    SXLogInfo(@"Access token validity - %lld - %lld = %d", savedTokenBornTime, timeNow, diffTime);
-    
-    //if ((abs((NSInteger) timeNow - savedTokenBornTime) >  kOAuthAccessTokenRefreshDurationInSec)
-    if ((abs(diffTime) >  kOAuthAccessTokenRefreshDurationInSec)
-        || (savedTokenBornTime == 0))
-    {
-        SXLogInfo(@"Requesting for new access token");
-        hasTokenValid = [self refreshAccessToken];
-        
-        if (hasTokenValid) {SXLogInfo(@"New  Access token recieved");}
-        else {SXLogInfo(@"Access token failed");}
-    }
-    else
-    {
+    if (!shouldRefreshToken) {
         hasTokenValid = YES;
+        SXLogInfo(@"Do not validate");
         
-        SXLogInfo(@"Has valid token");
     }
-
+    else{
+        NSInteger savedTokenBornTime = [PlistManager storedAccessTokenGeneratedTime];
+        long long timeNow = (long long)[[NSDate date] timeIntervalSince1970];
+        
+        int diffTime  = (unsigned int)  (timeNow - savedTokenBornTime);
+        
+        SXLogInfo(@"Access token validity - %lld - %lld = %d", savedTokenBornTime, timeNow, diffTime);
+        
+        //if ((abs((NSInteger) timeNow - savedTokenBornTime) >  kOAuthAccessTokenRefreshDurationInSec)
+        if ((abs(diffTime) >  kOAuthAccessTokenRefreshDurationInSec)
+            || (savedTokenBornTime == 0))
+        {
+            SXLogInfo(@"Requesting for new access token");
+            hasTokenValid = [self refreshAccessToken];
+            
+            if (hasTokenValid) {SXLogInfo(@"New  Access token recieved");}
+            else {SXLogInfo(@"Access token failed");}
+        }
+        else
+        {
+            hasTokenValid = YES;
+            
+            SXLogInfo(@"Has valid token--");
+        }
+        
+    }
+    
+    
     return hasTokenValid;
 }
 
