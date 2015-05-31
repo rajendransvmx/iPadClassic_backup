@@ -112,7 +112,6 @@
     
     @synchronized([self class])
     {
-       
         
         //will be checking the user org is valid or not
         PushNotificationModel *model  = [[PushNotificationModel alloc] initWithDictionary:notificationDict];
@@ -123,9 +122,8 @@
              {
                  SyncErrorConflictService *conflictService = [[SyncErrorConflictService alloc]init];
                 NSString *ObjectName = [PushNotificationUtility getObjectForSfId:model.sfId];
-                 BOOL isConflictFound =   [conflictService isConflictFoundForObject:ObjectName withSfId:model.sfId];
-
-                 if (isConflictFound)//thereis sconflict
+                 BOOL isConflictFound =   [conflictService isConflictFoundForObjectWithOutType:ObjectName withSfId:model.sfId];//
+                 if (isConflictFound)//there is conflict
                  {
                      //SyncErrorConflictService
                      [self showAlertFor:AlertMessageStyleConflictsFound withCustomMessage:nil];
@@ -138,7 +136,6 @@
                      [self addRequestToNotificationQueue:model];
                  }
                  
-          
         }
         else {
             //ERROR

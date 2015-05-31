@@ -213,7 +213,7 @@ forLocalNotification:(UILocalNotification *)notification
         [[PushNotificationManager sharedInstance] loadNotification:queryStringDictionary];
     }
     
-    return YES;
+    return YES; 
 }
 
 
