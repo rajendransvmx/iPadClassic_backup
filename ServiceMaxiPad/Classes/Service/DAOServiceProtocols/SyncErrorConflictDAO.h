@@ -12,5 +12,8 @@
 @protocol SyncErrorConflictDAO <CommonServiceDAO>
 
 - (BOOL)isConflictFoundForObject:(NSString*)objectName withSfId:(NSString*)sfId;
+- (BOOL)isConflictFoundForObjectWithOutType:(NSString*)objectName withSfId:(NSString*)sfId; //For Pulse app
+
+
 - (NSString *)fetchExistingModifiedFieldsJsonFromConflictTableForRecordId:(NSString*)recordId;
 @end
