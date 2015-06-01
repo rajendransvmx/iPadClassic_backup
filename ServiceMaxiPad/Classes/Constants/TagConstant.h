@@ -435,7 +435,7 @@ extern NSString *const kTagMonthTwelveLabel;
 #define kTag_NoViewLayoutForObject @"IPAD025_TAG008"
 
 #define kTag_ThisRecordDeletedFromServer @"IPAD025_TAG009"
-#define kTag_Downloads @"IPAD025_TAG010"
+#define kTag_Downloads @"IPAD025_TAG010" //Downloads
 #define kTag_Completed @"IPAD022_TAG004"
 #define kTag_Started @"Started"
 #define kTag_InProgress @"IPAD018_TAG059"

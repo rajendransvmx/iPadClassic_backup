@@ -97,7 +97,7 @@
         case AlertMessageStyleConflictsFound:
             titleString = [[TagManager sharedInstance]tagByName:kTag_ServiceMax];
             if (messageString == nil || messageString.length == 0) {
-                messageString = @"Please resolve Conflicts for the record";
+                messageString = @"Please resolve conflicts to download the record.";
             }
             break;
             

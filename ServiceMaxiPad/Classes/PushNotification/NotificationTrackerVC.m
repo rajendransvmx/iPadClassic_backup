@@ -25,6 +25,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    self.titleLabel.text = [[TagManager sharedInstance]tagByName:kTag_Downloads];
+    
     [self.notificationTableView registerNib:[UINib nibWithNibName:@"NotificationDownloadCell" bundle:nil] forCellReuseIdentifier:@"notificationDownloadCell"];
     self.notificationTableView.separatorColor = [UIColor clearColor];
 

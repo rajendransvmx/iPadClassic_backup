@@ -51,11 +51,11 @@
 //HS 1 June added for Conflicts Fix Defect - 017735 for Pulse App
 - (BOOL)isConflictFoundForObjectWithOutType:(NSString*)objectName withSfId:(NSString*)sfId
 {
-   // DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:@"errorType" operatorType:SQLOperatorEqual andFieldValue:@"ERROR"];
+    //DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:@"errorType" operatorType:SQLOperatorEqual andFieldValue:@"ERROR"];
     //DBCriteria *criteriaTwo = [[DBCriteria alloc]initWithFieldName:@"operationType" operatorType:SQLOperatorEqual andFieldValue:@"UPDATE"];
-    DBCriteria *criteriaThree = [[DBCriteria alloc]initWithFieldName:@"objectName" operatorType:SQLOperatorEqual andFieldValue:objectName];
-    DBCriteria *criteriaFour = [[DBCriteria alloc]initWithFieldName:@"sfId" operatorType:SQLOperatorEqual andFieldValue:sfId];
-    NSInteger count = [self getNumberOfRecordsFromObject:objectName withDbCriteria:@[criteriaThree,criteriaFour] andAdvancedExpression:nil];
+    DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:@"objectName" operatorType:SQLOperatorEqual andFieldValue:objectName];
+    DBCriteria *criteriaTwo = [[DBCriteria alloc]initWithFieldName:@"sfId" operatorType:SQLOperatorEqual andFieldValue:sfId];
+    NSInteger count = [self getNumberOfRecordsFromObject:[self tableName] withDbCriteria:@[criteriaOne,criteriaTwo] andAdvancedExpression:nil];
     
     BOOL hasRecordFound = NO;
     if (count > 0)
@@ -64,8 +64,9 @@
     }
     return hasRecordFound;
 }
-
 //HS 1 June ends here
+
+
 - (NSString *)fetchExistingModifiedFieldsJsonFromConflictTableForRecordId:(NSString*)recordId
 {
     DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:@"localId" operatorType:SQLOperatorEqual andFieldValue:recordId];
