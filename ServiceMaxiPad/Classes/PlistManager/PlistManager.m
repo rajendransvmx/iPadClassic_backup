@@ -1362,7 +1362,7 @@ static NSUInteger const kRefreshTokenSplitIndex      = 10;        /** Refresh to
     return reconstructedToken;
 }
 
-//017609
+
 +(BOOL) shouldValidateAccessToken
 {
     return [[[NSUserDefaults standardUserDefaults] objectForKey:kPreferenceAccessToken] boolValue];

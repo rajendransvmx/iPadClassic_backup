@@ -185,15 +185,14 @@ static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Secon
 {
     BOOL hasTokenValid = NO;
     
-    //017609
     BOOL shouldRefreshToken = [PlistManager shouldValidateAccessToken];
     
     if (!shouldRefreshToken) {
         hasTokenValid = YES;
         SXLogInfo(@"Do not validate");
-        
     }
-    else{
+    else
+    {
         NSInteger savedTokenBornTime = [PlistManager storedAccessTokenGeneratedTime];
         long long timeNow = (long long)[[NSDate date] timeIntervalSince1970];
         

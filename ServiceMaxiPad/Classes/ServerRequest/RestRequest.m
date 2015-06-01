@@ -198,9 +198,12 @@
             
             [[PerformanceAnalyser sharedInstance] observePerformanceForContext:contextValue subContextName:subContextValue operationType:PAOperationTypeNetworkLatency andRecordCount:1];
             
+            NSLog(@"Requested - Waiting response ");
             [requestOp setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
              {
                  SXLogWarning(@"%@ req-s latency : %f sec", self.eventName,[[NSDate date] timeIntervalSinceDate:requestedTime]);
+                 NSLog(@"%@ req-s latency : %f sec", self.eventName,[[NSDate date] timeIntervalSinceDate:requestedTime]);
+
                  //PA
                [[PerformanceAnalyser sharedInstance] ObservePerformanceCompletionForContext:contextValue subContextName:subContextValue operationType:PAOperationTypeNetworkLatency andRecordCount:0];
                  
@@ -212,7 +215,7 @@
              failure:^(AFHTTPRequestOperation *operation, NSError *error)
              {
                     SXLogWarning(@"%@ req-f latency : %f sec", self.eventName, [[NSDate date] timeIntervalSinceDate:requestedTime]);
-                 
+                 NSLog(@"%@ req-f latency : %f sec", self.eventName, [[NSDate date] timeIntervalSinceDate:requestedTime]);
                  //PA
                     [[PerformanceAnalyser sharedInstance] ObservePerformanceCompletionForContext:contextValue subContextName:subContextValue operationType:PAOperationTypeNetworkLatency andRecordCount:0];
                  
@@ -1089,6 +1092,7 @@
         return;
     }
     
+    NSLog(@"Response : rcvd");
     @autoreleasepool {
 
         NSString *body = @"";
