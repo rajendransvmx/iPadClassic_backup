@@ -3,17 +3,21 @@
 ServiceMax Spring 15 SP iPad Release
 
 *******************************************
-Version = 15.40.006
+Version = 15.40.007
 ===========================================
 -------------
 Fixed Defects
 -------------
-No
+017735
+017636
 
 -------------
 Known Issues
 -------------
-No
+Tags are not available for below text:
+View
+Started
+Please resolve conflicts to download the record.
 
 ---------------------
 Fixed - Known Issues 
@@ -27,8 +31,7 @@ None
 ---------------------
 Additional Notes
 ---------------------
-1. Defect 17069 - Root plist value changed to TRUE instead of FALSE
-2. Defect 17535 - Enabled the Performance Analysis report. It is active only when Logger value is warning.
+None
 
 
 
