@@ -106,7 +106,7 @@
 		</dict>
 		<dict>
 			<key>DefaultValue</key>
-			<string>15.30.010</string>
+			<string>15.30.011</string>
 			<key>Key</key>
 			<string>appVersion</string>
 			<key>Title</key>
