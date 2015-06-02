@@ -1,14 +1,14 @@
 
 --------------------------------------------------------------------------------------------
-ServiceMax Spring 15 iPad Release
+ServiceMax Spring 15 iPad Release Spring15Build
 
 *******************************************
-Version = 15.30.008
+Version = 15.30.010
 ===========================================
 -------------
 Fixed Defects
 -------------
-
+17505 - SFMs are not working in the intended order.
 -------------
 Known Issues
 -------------
