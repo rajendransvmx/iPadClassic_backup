@@ -307,6 +307,13 @@
         
         if ([self isFieldFromRelatedObjectTable:aField]) {
             
+				// 2-June BSP: For Defect 17514: Sorting on SFM Search
+
+            /*
+             
+             Actual. If nothing works, enable this.
+             
+             
             NSString *fieldObjectName = aField.objectName;
             NSString *dictionaryKey = aField.lookupFieldAPIName;
             OuterJoinObject *outerJoinObject =  [outerJoinTables objectForKey:dictionaryKey];
@@ -315,10 +322,21 @@
                 [outerJoinTables setObject:outerJoinObject forKey:dictionaryKey];
                 outerJoinObject.relationShipName = aField.lookupFieldAPIName;
                 outerJoinObject.aliasName = [self getAliasForObjectName:fieldObjectName];
+                
+                */
+            
+            NSString *fieldObjectName = (aField.lookupFieldAPIName? aField.objectName:aField.relatedObjectName);
+            NSString *dictionaryKey = (aField.lookupFieldAPIName? aField.lookupFieldAPIName:aField.relatedObjectName);
+            OuterJoinObject *outerJoinObject =  [outerJoinTables objectForKey:dictionaryKey];
+            if (outerJoinObject == nil) {
+                outerJoinObject = [[OuterJoinObject alloc] initWithObjectName:fieldObjectName];
+                [outerJoinTables setObject:outerJoinObject forKey:dictionaryKey];
+                outerJoinObject.relationShipName = (aField.lookupFieldAPIName? aField.lookupFieldAPIName:aField.relatedObjectName);
+                outerJoinObject.aliasName = [self getAliasForObjectName:fieldObjectName];
             }
             
             /* This is the field from related table */
-            NSString *searchObjectFieldName = [self getFieldNameFromRelationShipName:aField.lookupFieldAPIName withRelatedObjectName:fieldObjectName andCurrentobjectName:self.searchObject.targetObjectName];
+            NSString *searchObjectFieldName = [self getFieldNameFromRelationShipName:(aField.lookupFieldAPIName? aField.lookupFieldAPIName:aField.fieldRelationshipName) withRelatedObjectName:fieldObjectName andCurrentobjectName:self.searchObject.targetObjectName];
             if (searchObjectFieldName.length > 0) {
                 [outerJoinObject addFieldName:searchObjectFieldName];
             }
@@ -391,6 +409,12 @@
      if (searchField.lookupFieldAPIName.length > 3) {
          return YES;
      }
+    else if (searchField.objectName.length > 3 && [searchField.fieldType isEqualToString:@"OrderBy"] && searchField.relatedObjectName.length)
+    {
+				// 2-June BSP: For Defect 17514: Sorting on SFM Search
+
+        return YES;
+    }
     return NO;
 }
 #pragma mark End

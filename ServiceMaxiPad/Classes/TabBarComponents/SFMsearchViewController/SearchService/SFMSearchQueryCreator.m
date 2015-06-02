@@ -196,6 +196,12 @@
     return [SFMPageHelper getNameFieldForObject:objectName];
 }
 
+// 2-June BSP: For Defect 17514: Sorting on SFM Search
+-(BOOL)doesTableExist:(NSString *)objectName
+{
+    return [SFMPageHelper checkIfTheTableExistsForObject:objectName];
+
+}
 - (NSString *)getReferenceExpression:(NSString *)fieldName
                       withSearchText:(NSString *)searchText
                    andReferenceTable:(NSString *)referenceToTable {
@@ -232,10 +238,18 @@
             NSString *aliasName = [self getAliasNameForRelationship:sortField.lookupFieldAPIName];
               [orderByString appendFormat:@" %@.%@ COLLATE NOCASE %@ ",aliasName,sortField.fieldName,sortOrder];
         }
-        else{
-              [orderByString appendFormat:@" '%@'.%@ COLLATE NOCASE %@ ",sortField.objectName,sortField.fieldName,sortOrder];
+        else if(sortField.relatedObjectName && [self doesTableExist:sortField.relatedObjectName])
+        {
+             // 2-June BSP: For Defect 17514: Sorting on SFM Search
+            NSString *aliasName = [self getAliasNameForRelationship:sortField.relatedObjectName];
+            NSString *theFieldName = [self getNameFieldNameForObject:sortField.relatedObjectName];
+            [orderByString appendFormat:@" '%@'.%@ COLLATE NOCASE %@ ",aliasName, theFieldName,sortOrder];
+
         }
-      
+      else
+      {
+          [orderByString appendFormat:@" '%@'.%@ COLLATE NOCASE %@ ",sortField.objectName,sortField.fieldName,sortOrder];
+      }
         if (counter != (totalCount - 1)) {
             [orderByString appendString:@" , "];
         }

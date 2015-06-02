@@ -70,4 +70,8 @@
 +(NSString*)getTechnicianIdForOwnerId:(NSString*)ownerId;
 
 + (NSArray *)getContactRefernceFieldForObject:(NSString *)objectName;
+
+
++(BOOL) checkIfTheTableExistsForObject:(NSString *)objectName; // BSP 2-June
+
 @end
