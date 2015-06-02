@@ -228,14 +228,18 @@
     
     [self performSelector:@selector(timerForResetingTheLine) withObject:nil afterDelay:tillNextMinute];
     
-    [self loadWizardData];
+
     
 }
 
 
 -(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadWizardListOnSuccessiveSync) name:kSuccessiveSyncStatusNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadWizardListOnSuccessiveSync) name:kSuccessiveSyncStatusNotification object:nil];
+
+
+    NSLog(@"loadWizardData from view did appear");
+    [self loadWizardData];
 }
 
 
@@ -247,6 +251,7 @@
 
 
 -(void)reloadWizardListOnSuccessiveSync {
+    NSLog(@"loadWizardData from reloadWizardListOnSuccessiveSync");
     [self loadWizardData];
 }
 

@@ -155,6 +155,8 @@
                 [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
             }
             
+            NSLog(@"SN: %@ %d", wizardComponent.actionName, wizardComponent.isEntryCriteriaMatching);
+            
             //if the cell is last row of the section remove seperator line
             if (indexPath.row == [wizard.wizardComponents count] - 1) {
                 
