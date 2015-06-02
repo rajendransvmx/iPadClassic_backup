@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		18071BC71A14B62500DC723A /* upArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 18071BC61A14B62500DC723A /* upArrow@2x.png */; };
+		18161C7C1B1DE0E900119A95 /* SMXProductListModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 18161C7B1B1DE0E900119A95 /* SMXProductListModel.m */; };
 		18186E0A19EBFDC4009F3421 /* JobLogModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 18186E0919EBFDC4009F3421 /* JobLogModel.m */; };
 		18186E0D19EBFE20009F3421 /* JobLogService.m in Sources */ = {isa = PBXBuildFile; fileRef = 18186E0C19EBFE20009F3421 /* JobLogService.m */; };
 		18186E1119EC0023009F3421 /* JobLogServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 18186E1019EC0023009F3421 /* JobLogServiceLayer.m */; };
@@ -1015,6 +1016,8 @@
 
 /* Begin PBXFileReference section */
 		18071BC61A14B62500DC723A /* upArrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "upArrow@2x.png"; sourceTree = "<group>"; };
+		18161C7A1B1DE0E900119A95 /* SMXProductListModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMXProductListModel.h; sourceTree = "<group>"; };
+		18161C7B1B1DE0E900119A95 /* SMXProductListModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMXProductListModel.m; sourceTree = "<group>"; };
 		18186E0819EBFDC4009F3421 /* JobLogModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JobLogModel.h; sourceTree = "<group>"; };
 		18186E0919EBFDC4009F3421 /* JobLogModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JobLogModel.m; sourceTree = "<group>"; };
 		18186E0B19EBFE20009F3421 /* JobLogService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JobLogService.h; sourceTree = "<group>"; };
@@ -4608,6 +4611,8 @@
 			children = (
 				184A8E1D19E7A0BE006DA6BE /* CalenderHelper.h */,
 				184A8E1E19E7A0BE006DA6BE /* CalenderHelper.m */,
+				18161C7A1B1DE0E900119A95 /* SMXProductListModel.h */,
+				18161C7B1B1DE0E900119A95 /* SMXProductListModel.m */,
 			);
 			path = Calenderhelper;
 			sourceTree = "<group>";
@@ -6712,6 +6717,7 @@
 				183A9FFB19E6B18500919345 /* TroubleShootingServiceLayer.m in Sources */,
 				183A9FD419E6B18500919345 /* SFMSearchFieldService.m in Sources */,
 				5B8286791A025ED200C91854 /* RecentDaoService.m in Sources */,
+				18161C7C1B1DE0E900119A95 /* SMXProductListModel.m in Sources */,
 				84CB38EB1A038F310035D38C /* OpDocServiceLayer.m in Sources */,
 				407252F319FF52C700ACA729 /* DARequest.m in Sources */,
 				18E0BE8819F131E6007DBC69 /* UserGPSLogService.m in Sources */,

@@ -33,6 +33,7 @@
 #import "SVMXSystemConstant.h"
 #import "SFMPageHelper.h"
 #import "SFPicklistModel.h"
+#import "SMXProductListModel.h"
 
 #define FONT_HELVETICANUE @"HelveticaNeue"
 
@@ -928,12 +929,12 @@
     
     if ([cWOModel.IPAtLocation count] > 0)
     {
-         productLocation =   [self getTheModifiedProductLocationArray];
+        productLocation =  cWOModel.IPAtLocation; //[self getTheModifiedProductLocationArray];
     }
 
     NSString *lProductsAtLocation = @"";
-    for (NSString *lString in productLocation) {
-        lProductsAtLocation = [lProductsAtLocation stringByAppendingString:lString];
+    for (SMXProductListModel *productModel in productLocation) {
+        lProductsAtLocation = [lProductsAtLocation stringByAppendingString:[self productName_withCount:productModel]];
         lProductsAtLocation = [lProductsAtLocation stringByAppendingString:@"\n"];
     }
     
@@ -967,7 +968,13 @@
     
     [cBGScrollView setContentSize:CGSizeMake(cBGScrollView.frame.size.width, productsAtThisLocationLabel.frame.origin.y + productsAtThisLocationLabel.frame.size.height)];
 }
-
+-(NSString *)productName_withCount:(SMXProductListModel *)productModel{
+    if (productModel.count>1) {
+        return [NSString stringWithFormat:@"%@ (%d)",[self trimStringWithGivenLength:productModel.displayValue],productModel.count];
+    }else{
+        return [NSString stringWithFormat:@"%@",[self trimStringWithGivenLength:productModel.displayValue]];
+    }
+}
 #pragma mark NON-WORK ORDER EVENT
 
 -(void)setUpNonWorkOrderDetailsView

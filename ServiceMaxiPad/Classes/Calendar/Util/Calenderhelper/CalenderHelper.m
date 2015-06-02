@@ -49,7 +49,8 @@
 #import "StringUtil.h"
 #import "PlistManager.h"   //For getting Technician ID to be used in query to get events from SVMX_EVENT Table
 #import "UniversalDAO.h"
-
+#import "SMXProductListModel.h"
+#define stringLimitInProduct 80
 @interface CalenderHelper ()
 
 + (NSArray *)fetchDataForObject:(NSString *)objectName
@@ -958,21 +959,112 @@
     }
     return nil;
 }
-
++(NSArray *)fetchValueFromRefrenceTable:(NSArray *)array{
+    NSMutableDictionary *dict=[self getValuesFromReferenceTable:array];
+    return [self getList:dict productId:array];
+}
 
 +(NSArray *)getInstalledListFromSite:(NSString *)siteID
 {
-
     id <CalenderDAO> calService = [FactoryDAO serviceByServiceType:ServiceCalenderEventList];
-    
     DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kWorkOrderSite operatorType:SQLOperatorEqual andFieldValue:siteID];
-    NSArray *fieldsArray = [[NSArray alloc] initWithObjects:kIPProductNameField, nil];
+    
+    /*getting product Id from Install Product Table */
+    NSArray *fieldsArray = [[NSArray alloc] initWithObjects:kProductField, nil];
     NSArray *lDataArray = [calService fetchDataForIPObject:kInstalledProductTableName fields:fieldsArray expression:nil criteria:[NSArray arrayWithObject:criteria]];
+    NSArray *nameOfTheProducts=[self getProductFromProductTable:lDataArray];
     
-    return lDataArray;
+    /*Copying value from product table, If product table is not there the copying from Install table*/
+    if (!nameOfTheProducts) {
+        return nameOfTheProducts;
+    }
     
+    /* Product table is not there, so copying value from Install product*/
+    //fieldsArray = [[NSArray alloc] initWithObjects:kIPProductNameField, nil];
+    //lDataArray = [calService fetchDataForIPObject:kInstalledProductTableName fields:fieldsArray expression:nil criteria:[NSArray arrayWithObject:criteria]];
+    //return [self getTheModifiedProductLocationArray:lDataArray];
+    return [self fetchValueFromRefrenceTable:lDataArray];
 }
 
+/* Here we are getting value from product table*/
++(NSArray *)getProductFromProductTable:(NSArray *)ids{
+   DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorIn andFieldValues:ids];
+    NSArray *fieldsArray = [[NSArray alloc] initWithObjects:KProductName,kId,nil];
+    NSArray *workOrderArray = [self fetchDataFromWorkOrderObject:KProductTable fields:fieldsArray expression:nil criteria:[NSArray arrayWithObject:criteriaOne]];
+    if ([workOrderArray count]>0) {
+        NSMutableDictionary *dictI=[[NSMutableDictionary alloc] init];
+        for (TransactionObjectModel *model in workOrderArray) {
+            NSDictionary *dict=[model getFieldValueDictionary];
+            [dictI setObject:[dict objectForKey:@"Name"] forKey:[dict objectForKey:kId]];
+        }
+        return [self getList:dictI productId:ids];
+    }else{
+        return nil;
+    }
+}
+
++(NSArray *)getList:(NSMutableDictionary *)productIdToNameDictionary productId:(NSArray *)productIds{
+
+    // productModels
+    NSMutableDictionary *IdModel = [[NSMutableDictionary alloc] init];
+    
+    // Find the counts of Products
+    for (NSString *productId in productIds)
+    {
+        //SMXProductDisplayModel
+        SMXProductListModel *model = [IdModel objectForKey:productId];
+    
+        if (model)
+        {
+            model.count = model.count+1;
+        }
+        else
+        {
+            model = [[SMXProductListModel alloc] init];
+            model.count = 1;
+            model.productId = productId;
+            // Product Name
+            model.displayValue = [productIdToNameDictionary objectForKey:productId];
+            [IdModel setObject:model forKey:productId];
+        }
+    }
+    NSSortDescriptor *sd = [[NSSortDescriptor alloc] initWithKey:@"displayValue" ascending:YES];
+    return [[IdModel allValues] sortedArrayUsingDescriptors:@[sd]];
+}
+
+/* just truncate with the ellipsis */
++(NSString *)trimStringWithGivenLength:(NSString *)string{
+    if (string.length>stringLimitInProduct) {
+        string = [NSString stringWithFormat:@"%@... ",[string substringToIndex:stringLimitInProduct]];
+        return string;
+    }
+    return string;
+}
+
+- (NSMutableArray *)getDetailsDataForQuery:(DBRequestSelect *)selectQuery
+{
+    NSMutableArray * detailsArray = [[NSMutableArray alloc] initWithCapacity:0];
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            NSString * query = [selectQuery query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                NSDictionary * dict = [resultSet resultDictionary];
+                //Method in model to set the values
+                
+                if ([[dict valueForKey:kProductField] length]) {
+                    [detailsArray addObject:[dict valueForKey:kProductField]];
+                }
+            }
+            [resultSet close];
+        }];
+    }
+    return detailsArray;
+}
 +(NSString *)getServiceLocation:(NSString *)whatID
 {
 
