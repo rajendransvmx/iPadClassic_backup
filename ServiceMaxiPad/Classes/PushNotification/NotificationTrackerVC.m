@@ -55,9 +55,15 @@
     }
     
     [self.notificationTableView reloadData];
-    [self.notificationTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForItem:(self.dataSourceArray.count-1) inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+   // [self.notificationTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForItem:(self.dataSourceArray.count-1) inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES]; //HS 2 Jun Config Sync Crash breakpoint
+
+    
+    //HS 2 june Defect Fix: 017863
+    [self.notificationTableView scrollRectToVisible:CGRectMake(0, self.notificationTableView.contentSize.height - self.notificationTableView.bounds.size.height, self.notificationTableView.bounds.size.width, self.notificationTableView.bounds.size.height) animated:YES];
+    
     
 }
+
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     
