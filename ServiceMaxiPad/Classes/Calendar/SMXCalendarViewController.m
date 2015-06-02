@@ -232,6 +232,24 @@
     
 }
 
+
+-(void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadWizardListOnSuccessiveSync) name:kSuccessiveSyncStatusNotification object:nil];
+}
+
+
+-(void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kSuccessiveSyncStatusNotification object:nil];
+
+}
+
+
+-(void)reloadWizardListOnSuccessiveSync {
+    [self loadWizardData];
+}
+
 //HS 23 Jan for fix:012843
 
 -(NSArray *)checkForCreateNewEventAvailable

@@ -295,14 +295,24 @@
 }
 
 - (void) addNotificationObserver{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadWizardListOnSuccessiveSync) name:kSuccessiveSyncStatusNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dataSyncFinished) name:kDataSyncStatusNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(configSyncFinished:) name:kConfigSyncStatusNotification object:nil];
 }
 
 - (void) removeNotificationObserver{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kSuccessiveSyncStatusNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kDataSyncStatusNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kConfigSyncStatusNotification object:nil];
+}
 
+
+-(void)reloadWizardListOnSuccessiveSync {
+    [self updateWizardData];
+    if (self.tempViewController)
+    {
+        [self.tempViewController reloadTableView];
+    }
 }
 
 - (void)showMenu:(id)sender {

@@ -63,6 +63,8 @@ NSString *configSyncTimeIntervalKey         = @"Config sync time";
 NSString *dataSyncTimeIntervalKey           = @"Data sync time";
 NSString *syncMetaDataFile                  = @"SyncMetaData.plist";
 
+NSString *kSuccessiveSyncStatusNotification = @"SuccessiveSyncStarted";
+
 //static dispatch_once_t _sharedSyncManagerInstanceGuard;
 static SyncManager *_instance;
 
@@ -774,6 +776,9 @@ static SyncManager *_instance;
             }
             
             [self manageSyncQueueProcess];
+        }
+        else {
+            [[NSNotificationCenter defaultCenter] postNotificationName:kSuccessiveSyncStatusNotification object:nil];
         }
     }
 }
