@@ -3,7 +3,7 @@
 ServiceMax Spring 15 iPad Release Spring15Build
 
 *******************************************
-Version = 15.30.011
+Version = 15.30.012
 ===========================================
 -------------
 Fixed Defects
