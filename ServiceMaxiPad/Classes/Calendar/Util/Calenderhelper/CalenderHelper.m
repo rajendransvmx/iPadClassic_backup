@@ -975,7 +975,7 @@
     NSArray *nameOfTheProducts=[self getProductFromProductTable:lDataArray];
     
     /*Copying value from product table, If product table is not there the copying from Install table*/
-    if (!nameOfTheProducts) {
+    if (nameOfTheProducts) {
         return nameOfTheProducts;
     }
     
@@ -983,6 +983,8 @@
     //fieldsArray = [[NSArray alloc] initWithObjects:kIPProductNameField, nil];
     //lDataArray = [calService fetchDataForIPObject:kInstalledProductTableName fields:fieldsArray expression:nil criteria:[NSArray arrayWithObject:criteria]];
     //return [self getTheModifiedProductLocationArray:lDataArray];
+    
+    /*copying value from refrence table*/
     return [self fetchValueFromRefrenceTable:lDataArray];
 }
 
