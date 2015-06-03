@@ -1,27 +1,25 @@
 
 --------------------------------------------------------------------------------------------
-ServiceMax Spring 15SPiPad Release
+ServiceMax iPad  Spring 15 SP Release
 
 *******************************************
-Version = 15.40.009
+Version = 15.40.010
 ===========================================
 -------------
 Fixed Defects
 -------------
-017845
+017539 - Data sync is not bringing updated product name under product at this location hard wired screen.
 
 -------------
 Known Issues
 -------------
-Tags are not available for below text:
-View
-Started
-Please resolve conflicts to download the record.
+None
 
 ---------------------
 Fixed - Known Issues 
 --------------------- 
 None
+
 ---------------------
 Features Implemented
 ---------------------
