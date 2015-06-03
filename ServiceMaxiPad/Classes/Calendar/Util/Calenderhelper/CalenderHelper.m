@@ -972,20 +972,21 @@
     /*getting product Id from Install Product Table */
     NSArray *fieldsArray = [[NSArray alloc] initWithObjects:kProductField, nil];
     NSArray *lDataArray = [calService fetchDataForIPObject:kInstalledProductTableName fields:fieldsArray expression:nil criteria:[NSArray arrayWithObject:criteria]];
-    NSArray *nameOfTheProducts=[self getProductFromProductTable:lDataArray];
     
-    /*Copying value from product table, If product table is not there the copying from Install table*/
-    if (nameOfTheProducts) {
-        return nameOfTheProducts;
+    if ([lDataArray count]>0 && lDataArray!=nil) {
+        NSArray *nameOfTheProducts=[self getProductFromProductTable:lDataArray];
+        
+        /*Copying value from product table, If product table is not there the copying from Install table*/
+        if (nameOfTheProducts) {
+            return nameOfTheProducts;
+        }
+        
+        /*copying value from refrence table*/
+        return [self fetchValueFromRefrenceTable:lDataArray];
+    }else{
+        return nil;
     }
-    
-    /* Product table is not there, so copying value from Install product*/
-    //fieldsArray = [[NSArray alloc] initWithObjects:kIPProductNameField, nil];
-    //lDataArray = [calService fetchDataForIPObject:kInstalledProductTableName fields:fieldsArray expression:nil criteria:[NSArray arrayWithObject:criteria]];
-    //return [self getTheModifiedProductLocationArray:lDataArray];
-    
-    /*copying value from refrence table*/
-    return [self fetchValueFromRefrenceTable:lDataArray];
+   
 }
 
 /* Here we are getting value from product table*/
