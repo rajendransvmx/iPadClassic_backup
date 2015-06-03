@@ -19,6 +19,7 @@
 #import "EventTransactionObjectModel.h"
 #import "SFObjectDAO.h"
 #import "FactoryDAO.h"
+#import "SuccessiveSyncManager.h"
 
 @interface TransactionObjectService ()
 
@@ -477,6 +478,14 @@
             if (finalQuery) {
                 retValue = [self executeRecordInTransaction:model andQuery:finalQuery];
             }
+            
+            // fix 17505
+            ModifiedRecordModel *succmodel = [[SuccessiveSyncManager sharedSuccessiveSyncManager] successiveSyncRecordForSfId:[model valueForField:kId]];
+            
+            if (succmodel) {
+                [[SuccessiveSyncManager sharedSuccessiveSyncManager] updateRecord:succmodel.recordDictionary inObjectName:succmodel.objectName andLocalId:succmodel.recordLocalId];
+            }
+            
         }
         
     return retValue;

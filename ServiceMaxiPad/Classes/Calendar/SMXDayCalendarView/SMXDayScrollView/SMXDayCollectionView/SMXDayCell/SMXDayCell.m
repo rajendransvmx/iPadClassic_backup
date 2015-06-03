@@ -315,7 +315,7 @@
         }
         
         for (SMXEvent *event in arrayEvents) {
-            NSLog(@"event : %@, dateTimeBegin: %@, dateTimeEnd: %@", event.stringCustomerName, event.dateTimeBegin, event.dateTimeEnd);
+//            NSLog(@"event : %@, dateTimeBegin: %@, dateTimeEnd: %@", event.stringCustomerName, event.dateTimeBegin, event.dateTimeEnd);
             CGFloat yTimeBegin = 0.;
             CGFloat yTimeEnd = 0.;
             float lHeight = 0.;
@@ -505,8 +505,8 @@
 
                 float x_position;// = (lWidth==(self.frame.size.width - EVENT_X_POSITION)/cSamePositionAndDurationEvents.count ? EVENT_X_POSITION + i*lWidth : (self.frame.size.width - EVENT_X_POSITION) + i * lWidth);
                 
-                NSLog(@"lWidth: %lf", lWidth);
-                NSLog(@"(self.frame.size.width - EVENT_X_POSITION)/cSamePositionAndDurationEvents.count: %lf", (self.frame.size.width - EVENT_X_POSITION)/cSamePositionAndDurationEvents.count);
+//                NSLog(@"lWidth: %lf", lWidth);
+//                NSLog(@"(self.frame.size.width - EVENT_X_POSITION)/cSamePositionAndDurationEvents.count: %lf", (self.frame.size.width - EVENT_X_POSITION)/cSamePositionAndDurationEvents.count);
 
                 if (lWidth==(self.frame.size.width - EVENT_X_POSITION)/samePositionEventCount) {
                     x_position = EVENT_X_POSITION + i*lWidth;
