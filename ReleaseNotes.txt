@@ -3,12 +3,14 @@
 ServiceMax iPad  Spring 15 SP Release
 
 *******************************************
-Version = 15.40.010
+Version = 15.40.011
 ===========================================
 -------------
 Fixed Defects
 -------------
-017539 - Data sync is not bringing updated product name under product at this location hard wired screen.
+17730 - Lines not Mapping on iPad - parts request lines to parts order lines
+17505 - SFMs are not working in the intended order.
+
 
 -------------
 Known Issues
