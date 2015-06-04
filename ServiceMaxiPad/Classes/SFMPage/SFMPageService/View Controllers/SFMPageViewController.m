@@ -254,6 +254,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+
     
   
 }
@@ -295,15 +296,28 @@
 }
 
 - (void) addNotificationObserver{
+    // 17505 - merged from Spr 15 (15.30.011)
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadWizardListOnSuccessiveSync) name:kSuccessiveSyncStatusNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dataSyncFinished) name:kDataSyncStatusNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(configSyncFinished:) name:kConfigSyncStatusNotification object:nil];
 }
 
 - (void) removeNotificationObserver{
+    // 17505 - merged from Spr 15 (15.30.011)
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kSuccessiveSyncStatusNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kDataSyncStatusNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kConfigSyncStatusNotification object:nil];
-
 }
+
+// 17505 - merged from Spr 15 (15.30.011)
+-(void)reloadWizardListOnSuccessiveSync {
+    [self updateWizardData];
+    if (self.tempViewController)
+    {
+        [self.tempViewController reloadTableView];
+    }
+}
+
 
 - (void)showMenu:(id)sender {
 
@@ -349,7 +363,7 @@
     CGSize navButtonSixe = [StringUtil getSizeOfText:[[TagManager sharedInstance] tagByName:kTagActions] withFont:font];
 
     CGFloat textWidth = self.navigationController.view.frame.size.width;
-    textWidth -= navButtonSixe.width *2 + 200;
+    textWidth -= ((navButtonSixe.width *2) + 200);
     
     
     SMNavigationTitleView *titleView = [[SMNavigationTitleView alloc]initWithFrame:CGRectZero];
@@ -368,6 +382,7 @@
         titleView.frame = CGRectMake(0, 0,textWidth,45);
     }
     titleView.titleLabel.text = titleValue;
+        titleView.autoresizingMask = UIViewAutoresizingFlexibleWidth ;
     self.navigationItem.titleView = titleView;
     
     //TO:DO set conflict image
@@ -768,6 +783,19 @@
 }
 */
 
+- (BOOL) shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
+{
+    return YES;
+}
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+   //[self refreshPageData];
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+ 
+    [self setTitleAndImageForTitleView];
+}
 
 
 @end

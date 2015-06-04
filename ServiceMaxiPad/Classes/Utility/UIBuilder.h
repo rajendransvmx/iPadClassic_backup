@@ -8,9 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+#define BADGE_TAG 171
+
+
 @interface UIBuilder : NSObject
 
 +(UIButton *)getTabBarButton:(CGRect)inFrame withImage:(NSString *)inBGImage withSelectedImage:(NSString *)inSelectedImage withTitle:(NSString*)inTitle;
-
++ (UIButton *)getTabBarButton:(CGRect)inFrame withImage:(NSString *)inBGImage withSelectedImage:(NSString *)inSelectedImage withTitle:(NSString*)inTitle withBadge:(BOOL)showBadge;
 
 @end

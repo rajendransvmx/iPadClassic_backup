@@ -64,6 +64,7 @@
 #import "MobileDeviceSettingService.h"
 #import "MobileDeviceSettingsModel.h"
 #import "DateUtil.h"
+#import "CalenderHelper.h"
 
 #define kLongFormat @"yyyy-MM-dd'T'HH:mm:ss.SSSSZ"
 #define kLongFormatZulu @"yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'"
@@ -150,6 +151,8 @@
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     self.navigationController.navigationBar.translucent = NO;
     
+    [CalenderHelper alterSVMXEventTable];
+    
     [self customNavigationBarLayout];
     [self setTheNotifications];
    
@@ -235,8 +238,32 @@
     
     [self performSelector:@selector(timerForResetingTheLine) withObject:nil afterDelay:tillNextMinute];
     
-    [self loadWizardData];
     
+    
+}
+
+
+-(void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    // 17505 - merged from Spr 15 (15.30.011)
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadWizardListOnSuccessiveSync) name:kSuccessiveSyncStatusNotification object:nil];
+    
+    [self loadWizardData];
+}
+
+
+-(void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    
+    // 17505 - merged from Spr 15 (15.30.011)
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kSuccessiveSyncStatusNotification object:nil];
+    
+}
+
+// 17505 - merged from Spr 15 (15.30.011)
+-(void)reloadWizardListOnSuccessiveSync {
+    [self loadWizardData];
 }
 
 
@@ -316,6 +343,7 @@
     [self addObserver:self selector:@selector(removeCalender) withName:CALENDER_VIEW_REMOVE AndObject:nil];
     [self addObserver:self selector:@selector(dateChanged:) withName:DATE_MANAGER_DATE_CHANGED AndObject:nil];
     [self addObserver:self selector:@selector(checkForTimeZoneChange:) withName:CHECK_FOR_TIMEZONE_CHANGE AndObject:nil];
+    [self addObserver:self selector:@selector(reloadCalendar:) withName:@"RefreshView_IOS" AndObject:nil];
     [self addObserver:self selector:@selector(refreshOnDayChange) withName:UIApplicationSignificantTimeChangeNotification AndObject:nil];//this is for if day change then we have to refresh calendar screen
 }
 
@@ -369,7 +397,15 @@
     [self changeSegementControlText];
 
 }
-
+-(void)reloadCalendar:(NSNotification*)notification{
+    if (cSegmentedControl.selectedSegmentIndex == 1)
+    {
+        [self performSelector:@selector(update) withObject:nil afterDelay:2.0f];
+    }
+}
+-(void)update{
+    [self performSelectorInBackground:@selector(fetchEventsFromDb) withObject:nil ];
+}
 - (void)configSyncFinished:(NSNotification*)notification
 {
     SyncProgressDetailModel *syncProgressDetailModel = [[notification userInfo]objectForKey:@"syncstatus"];

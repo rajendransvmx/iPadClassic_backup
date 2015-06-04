@@ -11,6 +11,9 @@
 #import "PushNotificationManager.h"
 
 @interface NotificationTrackerVC : UIViewController <UITableViewDataSource, UITableViewDelegate>
+
+@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
+
 - (void) downloadProgressForNotification:(PushNotificationModel *)model;
 
 -(void)presentuserActionForRequest:(PushNotificationModel *)reqModel presentingMode:(NSInteger)presentingMode;

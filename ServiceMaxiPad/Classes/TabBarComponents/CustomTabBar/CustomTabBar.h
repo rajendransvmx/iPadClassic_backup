@@ -48,4 +48,6 @@
 -(void) hideNewTabBar;
 //-(void) ShowNewTabBar;
 
+- (void)updateBadge;
+
 @end

@@ -45,5 +45,7 @@
 
 + (NSString *)getTheHexaCodeForTheSettingId:(NSString *)settingId;
 
++ (void)updateOriginalSfIdForSVMXEvent;
 
++ (void)alterSVMXEventTable;
 @end

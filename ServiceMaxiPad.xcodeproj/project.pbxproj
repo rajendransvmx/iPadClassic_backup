@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		18071BC71A14B62500DC723A /* upArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 18071BC61A14B62500DC723A /* upArrow@2x.png */; };
+		18161C7C1B1DE0E900119A95 /* SMXProductListModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 18161C7B1B1DE0E900119A95 /* SMXProductListModel.m */; };
 		18186E0A19EBFDC4009F3421 /* JobLogModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 18186E0919EBFDC4009F3421 /* JobLogModel.m */; };
 		18186E0D19EBFE20009F3421 /* JobLogService.m in Sources */ = {isa = PBXBuildFile; fileRef = 18186E0C19EBFE20009F3421 /* JobLogService.m */; };
 		18186E1119EC0023009F3421 /* JobLogServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 18186E1019EC0023009F3421 /* JobLogServiceLayer.m */; };
@@ -729,6 +730,32 @@
 		4083C3F51A0110F30029188D /* OPDocHTML.m in Sources */ = {isa = PBXBuildFile; fileRef = 4083C3F41A0110F30029188D /* OPDocHTML.m */; };
 		4083C3F81A0111060029188D /* OPDocSignature.m in Sources */ = {isa = PBXBuildFile; fileRef = 4083C3F71A0111060029188D /* OPDocSignature.m */; };
 		4083C3FB1A011EBC0029188D /* OPDocSignatureService.m in Sources */ = {isa = PBXBuildFile; fileRef = 4083C3FA1A011EBC0029188D /* OPDocSignatureService.m */; };
+		40A06F0C1B05D41500218162 /* BadgeStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 40A06F091B05D41500218162 /* BadgeStyle.m */; };
+		40A06F0D1B05D41500218162 /* CustomBadge.m in Sources */ = {isa = PBXBuildFile; fileRef = 40A06F0B1B05D41500218162 /* CustomBadge.m */; };
+		40A06F1A1B06033100218162 /* NavBarCal@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F0E1B06033100218162 /* NavBarCal@1x.png */; };
+		40A06F1B1B06033100218162 /* NavBarCal@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F0F1B06033100218162 /* NavBarCal@3x.png */; };
+		40A06F1C1B06033100218162 /* NavBarExplore@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F101B06033100218162 /* NavBarExplore@1x.png */; };
+		40A06F1D1B06033100218162 /* NavBarExplore@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F111B06033100218162 /* NavBarExplore@3x.png */; };
+		40A06F1E1B06033100218162 /* NavBarNew@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F121B06033100218162 /* NavBarNew@1x.png */; };
+		40A06F1F1B06033100218162 /* NavBarNew@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F131B06033100218162 /* NavBarNew@3x.png */; };
+		40A06F201B06033100218162 /* NavBarRecents@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F141B06033100218162 /* NavBarRecents@1x.png */; };
+		40A06F211B06033100218162 /* NavBarRecents@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F151B06033100218162 /* NavBarRecents@3x.png */; };
+		40A06F221B06033100218162 /* NavBarTasks@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F161B06033100218162 /* NavBarTasks@1x.png */; };
+		40A06F231B06033100218162 /* NavBarTasks@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F171B06033100218162 /* NavBarTasks@3x.png */; };
+		40A06F241B06033100218162 /* NavBarTools@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F181B06033100218162 /* NavBarTools@1x.png */; };
+		40A06F251B06033100218162 /* NavBarTools@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F191B06033100218162 /* NavBarTools@3x.png */; };
+		40A06F321B06041400218162 /* SCalendar@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F261B06041400218162 /* SCalendar@1x.png */; };
+		40A06F331B06041400218162 /* SCalendar@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F271B06041400218162 /* SCalendar@3x.png */; };
+		40A06F341B06041400218162 /* SExplore@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F281B06041400218162 /* SExplore@1x.png */; };
+		40A06F351B06041400218162 /* SExplore@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F291B06041400218162 /* SExplore@3x.png */; };
+		40A06F361B06041400218162 /* SNewItem@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F2A1B06041400218162 /* SNewItem@1x.png */; };
+		40A06F371B06041400218162 /* SNewItem@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F2B1B06041400218162 /* SNewItem@3x.png */; };
+		40A06F381B06041400218162 /* SRecents@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F2C1B06041400218162 /* SRecents@1x.png */; };
+		40A06F391B06041400218162 /* SRecents@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F2D1B06041400218162 /* SRecents@3x.png */; };
+		40A06F3A1B06041400218162 /* STasks@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F2E1B06041400218162 /* STasks@1x.png */; };
+		40A06F3B1B06041400218162 /* STasks@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F2F1B06041400218162 /* STasks@3x.png */; };
+		40A06F3C1B06041400218162 /* STools@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F301B06041400218162 /* STools@1x.png */; };
+		40A06F3D1B06041400218162 /* STools@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F311B06041400218162 /* STools@3x.png */; };
 		40CA19FE19FE4B340097F5A1 /* OPDoc.html in Resources */ = {isa = PBXBuildFile; fileRef = 40CA19F419FE4B340097F5A1 /* OPDoc.html */; };
 		40CA19FF19FE4B340097F5A1 /* OPDocSignatureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 40CA19F619FE4B340097F5A1 /* OPDocSignatureViewController.m */; };
 		40CA1A0019FE4B340097F5A1 /* OPDocSignatureViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 40CA19F719FE4B340097F5A1 /* OPDocSignatureViewController.xib */; };
@@ -908,6 +935,7 @@
 		9EF961431A527EEF00F65818 /* ImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9EF961421A527EEF00F65818 /* ImageView.m */; };
 		9EFE6DFE1A0F33EF0067F9CC /* LinkedProcessViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9EFE6DFC1A0F33EF0067F9CC /* LinkedProcessViewController.m */; };
 		9EFE6DFF1A0F33EF0067F9CC /* LinkedProcessViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9EFE6DFD1A0F33EF0067F9CC /* LinkedProcessViewController.xib */; };
+		A61A1B901B202B1200B1C9C8 /* AutoLockManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A61A1B8F1B202B1200B1C9C8 /* AutoLockManager.m */; };
 		C31E66D11AE65DBE00A8AE7E /* GetPriceDataServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = C31E66D01AE65DBE00A8AE7E /* GetPriceDataServiceLayer.m */; };
 		C31E66D41AE65EC900A8AE7E /* GetPriceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C31E66D31AE65EC900A8AE7E /* GetPriceManager.m */; };
 		C34A17FA19EBE50A009E9EA8 /* map_reload@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C34A17F919EBE50A009E9EA8 /* map_reload@2x.png */; };
@@ -993,6 +1021,8 @@
 
 /* Begin PBXFileReference section */
 		18071BC61A14B62500DC723A /* upArrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "upArrow@2x.png"; sourceTree = "<group>"; };
+		18161C7A1B1DE0E900119A95 /* SMXProductListModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMXProductListModel.h; sourceTree = "<group>"; };
+		18161C7B1B1DE0E900119A95 /* SMXProductListModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMXProductListModel.m; sourceTree = "<group>"; };
 		18186E0819EBFDC4009F3421 /* JobLogModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JobLogModel.h; sourceTree = "<group>"; };
 		18186E0919EBFDC4009F3421 /* JobLogModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JobLogModel.m; sourceTree = "<group>"; };
 		18186E0B19EBFE20009F3421 /* JobLogService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JobLogService.h; sourceTree = "<group>"; };
@@ -2362,6 +2392,34 @@
 		4083C3F91A011EBC0029188D /* OPDocSignatureService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OPDocSignatureService.h; sourceTree = "<group>"; };
 		4083C3FA1A011EBC0029188D /* OPDocSignatureService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OPDocSignatureService.m; sourceTree = "<group>"; };
 		4083C3FC1A011F0B0029188D /* OPDocSignatureDAO.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OPDocSignatureDAO.h; sourceTree = "<group>"; };
+		40A06F081B05D41500218162 /* BadgeStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BadgeStyle.h; sourceTree = "<group>"; };
+		40A06F091B05D41500218162 /* BadgeStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BadgeStyle.m; sourceTree = "<group>"; };
+		40A06F0A1B05D41500218162 /* CustomBadge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomBadge.h; sourceTree = "<group>"; };
+		40A06F0B1B05D41500218162 /* CustomBadge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomBadge.m; sourceTree = "<group>"; };
+		40A06F0E1B06033100218162 /* NavBarCal@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBarCal@1x.png"; sourceTree = "<group>"; };
+		40A06F0F1B06033100218162 /* NavBarCal@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBarCal@3x.png"; sourceTree = "<group>"; };
+		40A06F101B06033100218162 /* NavBarExplore@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBarExplore@1x.png"; sourceTree = "<group>"; };
+		40A06F111B06033100218162 /* NavBarExplore@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBarExplore@3x.png"; sourceTree = "<group>"; };
+		40A06F121B06033100218162 /* NavBarNew@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBarNew@1x.png"; sourceTree = "<group>"; };
+		40A06F131B06033100218162 /* NavBarNew@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBarNew@3x.png"; sourceTree = "<group>"; };
+		40A06F141B06033100218162 /* NavBarRecents@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBarRecents@1x.png"; sourceTree = "<group>"; };
+		40A06F151B06033100218162 /* NavBarRecents@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBarRecents@3x.png"; sourceTree = "<group>"; };
+		40A06F161B06033100218162 /* NavBarTasks@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBarTasks@1x.png"; sourceTree = "<group>"; };
+		40A06F171B06033100218162 /* NavBarTasks@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBarTasks@3x.png"; sourceTree = "<group>"; };
+		40A06F181B06033100218162 /* NavBarTools@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBarTools@1x.png"; sourceTree = "<group>"; };
+		40A06F191B06033100218162 /* NavBarTools@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBarTools@3x.png"; sourceTree = "<group>"; };
+		40A06F261B06041400218162 /* SCalendar@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SCalendar@1x.png"; sourceTree = "<group>"; };
+		40A06F271B06041400218162 /* SCalendar@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SCalendar@3x.png"; sourceTree = "<group>"; };
+		40A06F281B06041400218162 /* SExplore@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SExplore@1x.png"; sourceTree = "<group>"; };
+		40A06F291B06041400218162 /* SExplore@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SExplore@3x.png"; sourceTree = "<group>"; };
+		40A06F2A1B06041400218162 /* SNewItem@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SNewItem@1x.png"; sourceTree = "<group>"; };
+		40A06F2B1B06041400218162 /* SNewItem@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SNewItem@3x.png"; sourceTree = "<group>"; };
+		40A06F2C1B06041400218162 /* SRecents@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SRecents@1x.png"; sourceTree = "<group>"; };
+		40A06F2D1B06041400218162 /* SRecents@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SRecents@3x.png"; sourceTree = "<group>"; };
+		40A06F2E1B06041400218162 /* STasks@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "STasks@1x.png"; sourceTree = "<group>"; };
+		40A06F2F1B06041400218162 /* STasks@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "STasks@3x.png"; sourceTree = "<group>"; };
+		40A06F301B06041400218162 /* STools@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "STools@1x.png"; sourceTree = "<group>"; };
+		40A06F311B06041400218162 /* STools@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "STools@3x.png"; sourceTree = "<group>"; };
 		40CA19F419FE4B340097F5A1 /* OPDoc.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = OPDoc.html; sourceTree = "<group>"; };
 		40CA19F519FE4B340097F5A1 /* OPDocSignatureViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OPDocSignatureViewController.h; sourceTree = "<group>"; };
 		40CA19F619FE4B340097F5A1 /* OPDocSignatureViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OPDocSignatureViewController.m; sourceTree = "<group>"; };
@@ -2669,6 +2727,8 @@
 		9EFE6DFB1A0F33EF0067F9CC /* LinkedProcessViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkedProcessViewController.h; sourceTree = "<group>"; };
 		9EFE6DFC1A0F33EF0067F9CC /* LinkedProcessViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LinkedProcessViewController.m; sourceTree = "<group>"; };
 		9EFE6DFD1A0F33EF0067F9CC /* LinkedProcessViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LinkedProcessViewController.xib; sourceTree = "<group>"; };
+		A61A1B8E1B202B1200B1C9C8 /* AutoLockManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoLockManager.h; sourceTree = "<group>"; };
+		A61A1B8F1B202B1200B1C9C8 /* AutoLockManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AutoLockManager.m; sourceTree = "<group>"; };
 		C31E66CF1AE65DBE00A8AE7E /* GetPriceDataServiceLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetPriceDataServiceLayer.h; sourceTree = "<group>"; };
 		C31E66D01AE65DBE00A8AE7E /* GetPriceDataServiceLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GetPriceDataServiceLayer.m; sourceTree = "<group>"; };
 		C31E66D21AE65EC900A8AE7E /* GetPriceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetPriceManager.h; sourceTree = "<group>"; };
@@ -3065,6 +3125,7 @@
 		183A9A9819E6967F00919345 /* TabBarComponents */ = {
 			isa = PBXGroup;
 			children = (
+				40A06F071B05D41500218162 /* Badge */,
 				183AA05F19E6C93400919345 /* SFMsearchViewController */,
 				183AA05519E6C8C500919345 /* RecentPage */,
 				183A9A9919E6967F00919345 /* ActionSideMenu */,
@@ -4571,6 +4632,8 @@
 			children = (
 				184A8E1D19E7A0BE006DA6BE /* CalenderHelper.h */,
 				184A8E1E19E7A0BE006DA6BE /* CalenderHelper.m */,
+				18161C7A1B1DE0E900119A95 /* SMXProductListModel.h */,
+				18161C7B1B1DE0E900119A95 /* SMXProductListModel.m */,
 			);
 			path = Calenderhelper;
 			sourceTree = "<group>";
@@ -5248,6 +5311,7 @@
 		18A2177C19E57E7E00F22EA6 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				A61A1B8D1B202B1200B1C9C8 /* AutoLockManager */,
 				6BDC50E61AA70EED00200DC0 /* PushNotification */,
 				6BDC50D21AA70EB700200DC0 /* Troubleshooting */,
 				5BE099221A5A785A00869B0D /* AdvancedSyncConflict */,
@@ -5581,6 +5645,17 @@
 			path = "Static Resources";
 			sourceTree = "<group>";
 		};
+		40A06F071B05D41500218162 /* Badge */ = {
+			isa = PBXGroup;
+			children = (
+				40A06F081B05D41500218162 /* BadgeStyle.h */,
+				40A06F091B05D41500218162 /* BadgeStyle.m */,
+				40A06F0A1B05D41500218162 /* CustomBadge.h */,
+				40A06F0B1B05D41500218162 /* CustomBadge.m */,
+			);
+			path = Badge;
+			sourceTree = "<group>";
+		};
 		4273050E1A10BD2C005F41E1 /* AdvDataValidation */ = {
 			isa = PBXGroup;
 			children = (
@@ -5638,6 +5713,18 @@
 		57A320E11AB7178C00A172E0 /* TabBarNormalImages */ = {
 			isa = PBXGroup;
 			children = (
+				40A06F0E1B06033100218162 /* NavBarCal@1x.png */,
+				40A06F0F1B06033100218162 /* NavBarCal@3x.png */,
+				40A06F101B06033100218162 /* NavBarExplore@1x.png */,
+				40A06F111B06033100218162 /* NavBarExplore@3x.png */,
+				40A06F121B06033100218162 /* NavBarNew@1x.png */,
+				40A06F131B06033100218162 /* NavBarNew@3x.png */,
+				40A06F141B06033100218162 /* NavBarRecents@1x.png */,
+				40A06F151B06033100218162 /* NavBarRecents@3x.png */,
+				40A06F161B06033100218162 /* NavBarTasks@1x.png */,
+				40A06F171B06033100218162 /* NavBarTasks@3x.png */,
+				40A06F181B06033100218162 /* NavBarTools@1x.png */,
+				40A06F191B06033100218162 /* NavBarTools@3x.png */,
 				57A320E21AB7178C00A172E0 /* NavBarCal@2x.png */,
 				57A320E31AB7178C00A172E0 /* NavBarExplore@2x.png */,
 				57A320E41AB7178C00A172E0 /* NavBarNew@2x.png */,
@@ -5651,6 +5738,18 @@
 		57A320EE1AB717FD00A172E0 /* SelectedTabBarImages */ = {
 			isa = PBXGroup;
 			children = (
+				40A06F261B06041400218162 /* SCalendar@1x.png */,
+				40A06F271B06041400218162 /* SCalendar@3x.png */,
+				40A06F281B06041400218162 /* SExplore@1x.png */,
+				40A06F291B06041400218162 /* SExplore@3x.png */,
+				40A06F2A1B06041400218162 /* SNewItem@1x.png */,
+				40A06F2B1B06041400218162 /* SNewItem@3x.png */,
+				40A06F2C1B06041400218162 /* SRecents@1x.png */,
+				40A06F2D1B06041400218162 /* SRecents@3x.png */,
+				40A06F2E1B06041400218162 /* STasks@1x.png */,
+				40A06F2F1B06041400218162 /* STasks@3x.png */,
+				40A06F301B06041400218162 /* STools@1x.png */,
+				40A06F311B06041400218162 /* STools@3x.png */,
 				57A320FB1AB7196A00A172E0 /* SCalendar@2x.png */,
 				57A320FC1AB7196A00A172E0 /* SExplore@2x.png */,
 				57A320FD1AB7196A00A172E0 /* SRecents@2x.png */,
@@ -6007,6 +6106,15 @@
 			path = View;
 			sourceTree = "<group>";
 		};
+		A61A1B8D1B202B1200B1C9C8 /* AutoLockManager */ = {
+			isa = PBXGroup;
+			children = (
+				A61A1B8E1B202B1200B1C9C8 /* AutoLockManager.h */,
+				A61A1B8F1B202B1200B1C9C8 /* AutoLockManager.m */,
+			);
+			path = AutoLockManager;
+			sourceTree = "<group>";
+		};
 		C362BE6C1A1442220067E09E /* SVMX_ImagePicker */ = {
 			isa = PBXGroup;
 			children = (
@@ -6198,6 +6306,7 @@
 				42B1EED119ECF98700E3511D /* timing-line@2x.png in Resources */,
 				18779DC219EBEF200086A9B7 /* barcode.png in Resources */,
 				C34A17FA19EBE50A009E9EA8 /* map_reload@2x.png in Resources */,
+				40A06F221B06033100218162 /* NavBarTasks@1x.png in Resources */,
 				42B1EECC19ECF96C00E3511D /* sfm_down_arrow.png in Resources */,
 				4072530B19FF6C2900ACA729 /* com.servicemax.client.lib.zip in Resources */,
 				577003F91A1B50A2002537FB /* ActionDisplayTableViewController.xib in Resources */,
@@ -6241,6 +6350,7 @@
 				18A2178219E5841900F22EA6 /* Settings.bundle in Resources */,
 				184A9CBE19E7D591006DA6BE /* leftPanelBG@2x.png in Resources */,
 				183AA1EC19E6D36C00919345 /* WizardViewController.xib in Resources */,
+				40A06F3A1B06041400218162 /* STasks@1x.png in Resources */,
 				18779DC519EBEF200086A9B7 /* info.png in Resources */,
 				184A9D9219E7D592006DA6BE /* FormCheckBoxUnFilled@2x.png in Resources */,
 				18A2173519E57C5A00F22EA6 /* Images.xcassets in Resources */,
@@ -6250,10 +6360,14 @@
 				C3E890821A0CC52000A0653B /* Attachment-SelectionCheckfilled@2x.png in Resources */,
 				4048CDC31A026CD200B1FD58 /* OPDocBackArrow@2x.png in Resources */,
 				184A9CA519E7D591006DA6BE /* triangledown@2x.png in Resources */,
+				40A06F241B06033100218162 /* NavBarTools@1x.png in Resources */,
+				40A06F1B1B06033100218162 /* NavBarCal@3x.png in Resources */,
 				184A9CC619E7D591006DA6BE /* task@2x.png in Resources */,
 				184F1C421A136A1000A2B985 /* bizInfo.png in Resources */,
 				184A9C0D19E7D591006DA6BE /* iOSChat-Retina-Orange@2x.png in Resources */,
 				9E565ED51A068B4B003D194A /* SFMLookUpFilterViewController.xib in Resources */,
+				40A06F331B06041400218162 /* SCalendar@3x.png in Resources */,
+				40A06F3C1B06041400218162 /* STools@1x.png in Resources */,
 				4072531119FF6C2900ACA729 /* com.servicemax.client.sfmconsole.zip in Resources */,
 				184A9C4E19E7D591006DA6BE /* login-servicemax-logo.png in Resources */,
 				184A9CBC19E7D591006DA6BE /* explore.png in Resources */,
@@ -6283,10 +6397,12 @@
 				18B8AEC91A1DFE36006781D2 /* up_arrow_gray.png in Resources */,
 				D752644A19EB9278006AAC4C /* SFMLookUpDeatilViewController.xib in Resources */,
 				4048CDC11A02679500B1FD58 /* OPDocBackArrow.png in Resources */,
+				40A06F1F1B06033100218162 /* NavBarNew@3x.png in Resources */,
 				184A8EA319E7A0BE006DA6BE /* orangeCircle.png in Resources */,
 				9E5E7AE019ECD68000B38EC3 /* PageEditMultiSelectFieldController.xib in Resources */,
 				407252FC19FF52C700ACA729 /* Utility.js in Resources */,
 				8B35B67219F668D0008A2B9F /* dotted_line@2x.png in Resources */,
+				40A06F231B06033100218162 /* NavBarTasks@3x.png in Resources */,
 				183A9AE919E6967F00919345 /* AddOrEditTaskVC.xib in Resources */,
 				8B2F4BF31A0C875B00D2A346 /* DownloadedCollectionViewCell.xib in Resources */,
 				57A320EA1AB7178C00A172E0 /* NavBarNew@2x.png in Resources */,
@@ -6309,6 +6425,7 @@
 				183AA1C219E6D26400919345 /* SFMDebriefViewController.xib in Resources */,
 				184A9CC919E7D591006DA6BE /* tools.png in Resources */,
 				57A320ED1AB7178C00A172E0 /* NavBarTools@2x.png in Resources */,
+				40A06F351B06041400218162 /* SExplore@3x.png in Resources */,
 				C3EF978B1A036CAE00476293 /* ImagesVideosViewController.xib in Resources */,
 				40CA1A0019FE4B340097F5A1 /* OPDocSignatureViewController.xib in Resources */,
 				18779DC619EBEF200086A9B7 /* uncheck-2x.png in Resources */,
@@ -6316,16 +6433,20 @@
 				4072531519FF6C2900ACA729 /* com.servicemax.client.zip in Resources */,
 				184A9CBD19E7D591006DA6BE /* homeIcon.png in Resources */,
 				184A9CB619E7D591006DA6BE /* summary-icon.png in Resources */,
+				40A06F201B06033100218162 /* NavBarRecents@1x.png in Resources */,
 				184A9E1619E7D592006DA6BE /* map_prioritypin@2x.png in Resources */,
 				4072531319FF6C2900ACA729 /* com.servicemax.client.sfmopdocdelivery.zip in Resources */,
 				9E239C031A08CB4B001F75D3 /* SFMLookUpFilterCell.xib in Resources */,
+				40A06F251B06033100218162 /* NavBarTools@3x.png in Resources */,
 				C3EF97A41A036D7300476293 /* Attachment-Powerpoint@2x.png in Resources */,
 				5BB909BC19EE4C4F004AA281 /* triangle-down.png in Resources */,
 				407252FB19FF52C700ACA729 /* svmx_client_api.js in Resources */,
 				42B1EECD19ECF96C00E3511D /* sfm_right_arrow.png in Resources */,
+				40A06F381B06041400218162 /* SRecents@1x.png in Resources */,
 				184A9E1119E7D592006DA6BE /* map_email@2x.png in Resources */,
 				184A9CB519E7D591006DA6BE /* Section_right_arrow@2x.png in Resources */,
 				184A9CC419E7D591006DA6BE /* newItem@2x.png in Resources */,
+				40A06F1A1B06033100218162 /* NavBarCal@1x.png in Resources */,
 				184A9CBB19E7D591006DA6BE /* calendar.png in Resources */,
 				8BF7BB2019EE7CAA00D1CED7 /* cal-right-arrow.png in Resources */,
 				184A8E9819E7A0BE006DA6BE /* triangledown.png in Resources */,
@@ -6337,8 +6458,10 @@
 				184A8EEF19E7A535006DA6BE /* api.html in Resources */,
 				18800CEB1A08D14400930FF9 /* ResetAppDetailViewController.xib in Resources */,
 				57A320EC1AB7178C00A172E0 /* NavBarTasks@2x.png in Resources */,
+				40A06F321B06041400218162 /* SCalendar@1x.png in Resources */,
 				184A9D9119E7D592006DA6BE /* FormCheckBoxFilled@2x.png in Resources */,
 				57A321031AB7196A00A172E0 /* STasks@2x.png in Resources */,
+				40A06F3D1B06041400218162 /* STools@3x.png in Resources */,
 				184A9CC219E7D591006DA6BE /* explore@2x.png in Resources */,
 				18800CE21A08D14400930FF9 /* AboutViewController.xib in Resources */,
 				184F1C401A136A1000A2B985 /* bizExclamation.png in Resources */,
@@ -6356,8 +6479,10 @@
 				8BA32EAD19EE4AA200BFA769 /* down-arrow-white@2x.png in Resources */,
 				183AA1D119E6D26400919345 /* SFMPageLayoutViewController.xib in Resources */,
 				5BEFF7B31A248B950096B254 /* cloud-download.png in Resources */,
+				40A06F361B06041400218162 /* SNewItem@1x.png in Resources */,
 				4072531219FF6C2900ACA729 /* com.servicemax.client.sfmopdocdelivery.model.zip in Resources */,
 				8B932E681A1098960002BBB2 /* Attachment-plus.png in Resources */,
+				40A06F1E1B06033100218162 /* NavBarNew@1x.png in Resources */,
 				4072530F19FF6C2900ACA729 /* com.servicemax.client.sfmbizrules.zip in Resources */,
 				8B932E6B1A1098960002BBB2 /* Attachment-video@2x.png in Resources */,
 				C3EF97A91A036D7300476293 /* Attachment-Word@2x.png in Resources */,
@@ -6375,6 +6500,7 @@
 				184F1C411A136A1000A2B985 /* bizExclamation@2x.png in Resources */,
 				183A9A0819E68CB000919345 /* LocalizationDefaults.plist in Resources */,
 				184A9CB319E7D591006DA6BE /* PortraitSelection.png in Resources */,
+				40A06F1C1B06033100218162 /* NavBarExplore@1x.png in Resources */,
 				C3AE0BA01A0795AC00490009 /* iOS-Share-Blue@2x.png in Resources */,
 				183AA1B619E6D26400919345 /* PageLayoutEditViewController.xib in Resources */,
 				183AA06B19E6C93400919345 /* SearchDetailViewController.xib in Resources */,
@@ -6400,22 +6526,28 @@
 				183AA1D719E6D26400919345 /* SFMPageShowAllViewController.xib in Resources */,
 				184A9CC119E7D591006DA6BE /* calendar@2x.png in Resources */,
 				183AA1B219E6D26400919345 /* PageEditMasterViewController.xib in Resources */,
+				40A06F1D1B06033100218162 /* NavBarExplore@3x.png in Resources */,
 				407252F719FF52C700ACA729 /* CommunicationBridgeJS.js in Resources */,
 				9EB4F7951A44332C00E2A8BD /* ChatterViewController.xib in Resources */,
 				57A321021AB7196A00A172E0 /* SRecents@2x.png in Resources */,
 				C3EF97A81A036D7300476293 /* Attachment-Unknown@2x.png in Resources */,
 				C3EF979F1A036D7300476293 /* Attachment-DownloadFileOffline@2x.png in Resources */,
 				18779DC719EBEF200086A9B7 /* uncheck.png in Resources */,
+				40A06F391B06041400218162 /* SRecents@3x.png in Resources */,
 				18FE08FE19EE827800CB8925 /* checkbox-disabled-unchecked@2x.png in Resources */,
 				9EFE6DFF1A0F33EF0067F9CC /* LinkedProcessViewController.xib in Resources */,
 				C3EF97A51A036D7300476293 /* Attachment-Share@2x.png in Resources */,
 				6BE779F11AB95E4700BBE149 /* NotificationTrackerVC.xib in Resources */,
+				40A06F341B06041400218162 /* SExplore@1x.png in Resources */,
 				184A9E1419E7D592006DA6BE /* map_phone@2x.png in Resources */,
 				5B4F52B71A15D1A90008FDB3 /* File in Cloud - 70.png in Resources */,
+				40A06F211B06033100218162 /* NavBarRecents@3x.png in Resources */,
 				18FE08F519EE826C00CB8925 /* splashsigninbutton.png in Resources */,
 				184A8EFD19E7A535006DA6BE /* Map.storyboard in Resources */,
+				40A06F371B06041400218162 /* SNewItem@3x.png in Resources */,
 				9EEC45D919F27950003B5A43 /* RemoveNew@2x.png in Resources */,
 				4273051F1A10BD2C005F41E1 /* mobile-bizrules-app.html in Resources */,
+				40A06F3B1B06041400218162 /* STasks@3x.png in Resources */,
 				9EF90F851A24B45500FFFA75 /* SFMPageHistoryViewController.xib in Resources */,
 				57A321011AB7196A00A172E0 /* SExplore@2x.png in Resources */,
 				18BB0A6D19E9088600162524 /* zbar-back.png in Resources */,
@@ -6558,6 +6690,7 @@
 				183A9A8219E6949800919345 /* JoinObject.m in Sources */,
 				9EB4F7921A44332C00E2A8BD /* ChatterFooterView.m in Sources */,
 				184A8E6219E7A0BE006DA6BE /* SMXDayHeaderCell.m in Sources */,
+				40A06F0D1B05D41500218162 /* CustomBadge.m in Sources */,
 				6B59CC2A1A0386F8008B1512 /* SVMXDatabaseMaster.m in Sources */,
 				6BB4C24519EE8330002A1D88 /* SFMSearchDataHandler.m in Sources */,
 				18800CEC1A08D14400930FF9 /* BadgeLabel.m in Sources */,
@@ -6618,6 +6751,7 @@
 				183A9FFB19E6B18500919345 /* TroubleShootingServiceLayer.m in Sources */,
 				183A9FD419E6B18500919345 /* SFMSearchFieldService.m in Sources */,
 				5B8286791A025ED200C91854 /* RecentDaoService.m in Sources */,
+				18161C7C1B1DE0E900119A95 /* SMXProductListModel.m in Sources */,
 				84CB38EB1A038F310035D38C /* OpDocServiceLayer.m in Sources */,
 				407252F319FF52C700ACA729 /* DARequest.m in Sources */,
 				18E0BE8819F131E6007DBC69 /* UserGPSLogService.m in Sources */,
@@ -6831,6 +6965,7 @@
 				183A9AE819E6967F00919345 /* AddOrEditTaskVC.m in Sources */,
 				183A9A7F19E6949800919345 /* DBRequestInsert.m in Sources */,
 				183A9A9319E694D400919345 /* CacheManager.m in Sources */,
+				40A06F0C1B05D41500218162 /* BadgeStyle.m in Sources */,
 				184A8EFC19E7A535006DA6BE /* ContactCell.m in Sources */,
 				183A9B1019E69B5200919345 /* SyncDelegateHandler.m in Sources */,
 				183AA03119E6BDB300919345 /* MobileDeviceTagParser.m in Sources */,
@@ -7112,6 +7247,7 @@
 				183AA19D19E6D26400919345 /* SFMDetailLayout.m in Sources */,
 				183A9FE919E6B18500919345 /* UserImageService.m in Sources */,
 				184A8EB119E7A0BE006DA6BE /* SMXEditEventView.m in Sources */,
+				A61A1B901B202B1200B1C9C8 /* AutoLockManager.m in Sources */,
 				183AA21C19E6D3C200919345 /* SFMTextAreaCell.m in Sources */,
 				184A8E5519E7A0BE006DA6BE /* CalendarMonthViewController.m in Sources */,
 				184A8EFA19E7A535006DA6BE /* UICRouteAnnotation.m in Sources */,

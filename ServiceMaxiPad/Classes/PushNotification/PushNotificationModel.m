@@ -28,7 +28,9 @@
         if ([payLoad count] > 0 && ![payLoad isKindOfClass:[NSNull class]]) {
             
             sfIdValue = [payLoad objectForKey:kPulseNotificationSFId];
-            objectName = [payLoad objectForKey:kPulseNotificationObjectName];
+            
+            NSString * objectName_ =  [PushNotificationUtility getObjectForSfId:sfIdValue];
+            objectName = objectName_;//[payLoad objectForKey:kPulseNotificationObjectName];
             actionTagValue = [payLoad objectForKey:kPulseNotificationActionTag];
             title = [payLoad objectForKey:kPulseNotificationTitle];
             messageDict = [payLoad objectForKey:kPulseNotificationAps];

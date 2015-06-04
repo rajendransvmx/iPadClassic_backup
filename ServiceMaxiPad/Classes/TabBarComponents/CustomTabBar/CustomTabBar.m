@@ -25,6 +25,9 @@
 #import "SFMSearchViewController.h"
 #import "TagManager.h"
 
+#import "CustomBadge.h"
+#import "ResolveConflictsHelper.h"
+
 typedef enum {
     TabBarItemIDCalendar = 1,
     TabBarItemIDExplore,
@@ -78,7 +81,7 @@ typedef enum {
     btn1.layer.cornerRadius = 4.f;
     btn1.layer.shadowOffset = CGSizeMake(4.0f,4.5f);
     btn1.layer.shadowRadius = 1.5f;
-    
+    [self addBadgeToHomeButton];
 
     CalendarHomeViewController *calendarVCDefault = [ViewControllerFactory createViewControllerByContext:ViewControllerCalendar];
     
@@ -136,6 +139,33 @@ typedef enum {
 
     //[self.tabBar setSelectedItem:[self.tabBar.items objectAtIndex:1]];
     
+}
+
+- (void)addBadgeToHomeButton
+{
+    BadgeStyle *badgeStyle = [BadgeStyle freeStyleWithTextColor:[UIColor whiteColor]
+                                                 withInsetColor:[UIColor redColor]
+                                                 withFrameColor:nil
+                                                      withFrame:NO
+                                                     withShadow:NO
+                                                    withShining:NO
+                                                   withFontType:BadgeStyleFontTypeHelveticaNeueMedium];
+    
+    CustomBadge *badge = [CustomBadge customBadgeWithString:@"0" withScale:1.0 withStyle:badgeStyle];
+    
+    badge.tag = BADGE_TAG;
+    
+    
+    CGRect r = self.btn1.frame;
+    CGPoint pt = CGPointZero;
+    pt.x = r.size.width;
+    pt.y = 0.0f;
+    
+    badge.center = pt;
+    
+    [self.btn1 addSubview:badge];
+    
+    badge.hidden = YES;
 }
 
 - (void)addShadowToMenuButton:(BOOL)shouldAdd
@@ -209,8 +239,7 @@ typedef enum {
         [self addShadowToMenuButton:NO];
         _isTabClicked = YES;
     }
-    
- 
+  
 }
 
 -(void)addCustomElements
@@ -353,16 +382,15 @@ typedef enum {
     
     theFrame.origin.x = theFrame.origin.x + theFrame.size.width + spaceMargin +5 ;
     if (!self.btn7) {
-        self.btn7 = [UIBuilder getTabBarButton:theFrame withImage:@"Tools" withSelectedImage:@"Tools" withTitle:[[TagManager sharedInstance]tagByName:kTagTools]];
+        self.btn7 = [UIBuilder getTabBarButton:theFrame withImage:@"Tools" withSelectedImage:@"Tools" withTitle:[[TagManager sharedInstance]tagByName:kTagTools]  withBadge:YES];
         btn7.imageEdgeInsets = UIEdgeInsetsMake(6, 100/2-25/2, 22, 0);
         btn7.titleEdgeInsets = UIEdgeInsetsMake(25, -25, 0, 0);
         [btn7 setTag:TabBarItemIDTools];
         btn7.backgroundColor = [UIColor clearColor];
         [btn7 setImage:[UIImage imageNamed:@"STools.png"] forState:UIControlStateSelected];
         [btn7 setImage:[UIImage imageNamed:@"NavBarTools.png"] forState:UIControlStateNormal];
-
-
-
+        
+        [self updateBadge];
     }
     
     
@@ -454,6 +482,38 @@ typedef enum {
             temp.selected = NO;
         }
     }
+}
+
+- (void)updateBadge
+{
+    NSUInteger count = [[ResolveConflictsHelper getConflictsRecords] count];
+
+    NSLog(@"Conflicts count %lu",(unsigned long)count);
+
+    CustomBadge *toolsBadge = (CustomBadge*)[self.btn7 viewWithTag:BADGE_TAG];
+    CustomBadge *homeBadge = (CustomBadge*)[self.btn1 viewWithTag:BADGE_TAG];
+    
+    if(count == 0) {
+        toolsBadge.hidden = YES;
+        homeBadge.hidden = YES;
+        return;
+    }
+    
+    toolsBadge.hidden = NO;
+    homeBadge.hidden = NO;
+    
+    NSString *counterStr = [NSString stringWithFormat:@"%lu",(unsigned long)count];
+    
+    if(toolsBadge != nil) {
+        
+        [toolsBadge autoBadgeSizeWithString:counterStr];
+    }
+    
+    if(homeBadge != nil) {
+        [homeBadge autoBadgeSizeWithString:counterStr];
+    }
+
+    
 }
 
 #pragma mark - TapGesture

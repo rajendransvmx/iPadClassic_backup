@@ -532,5 +532,7 @@ static NSString *kDateFormatType24Hr  = @"%H:%M";
 //Niraj: Defect number 017148
 +(NSDate *)getUserReadableDateForDateBaseDateString:(NSString *)dateString;
 //Niraj: Defect number 017148
+
++ (NSString*)getLocalDateForGetpriceFromDateString:(NSString*)date;
 @end
 

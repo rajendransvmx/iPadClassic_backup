@@ -95,6 +95,26 @@ void SMLogSetLogLevel(NSInteger logLevel)
 }
 
 /**
+ * @name   SMLogSetLogLevel
+ *
+ * @author Pushpak
+ *
+ * @brief Set log level
+ *
+ * @param logLevel desired log level
+ *
+ *
+ * @return void
+ *
+ */
+
+NSInteger SMLogLogLevel()
+{
+    return SMLogLevel;
+}
+
+
+/**
  * @name   SMLogPerformInitialSetup
  *
  * @author Pushpak

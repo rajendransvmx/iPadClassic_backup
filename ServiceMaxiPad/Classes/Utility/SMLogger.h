@@ -113,6 +113,11 @@ extern NSInteger SMLogLevel;
 void SMLogSetLogLevel(NSInteger logLevel);
 
 /**
+ Using this method read current log level
+ */
+NSInteger SMLogLogLevel();
+
+/**
  Call this method once at the start of your application to initialise block, most recommended in application:didFinishLaunchingWithOptions:
  */
 void SMLogPerformInitialSetup();

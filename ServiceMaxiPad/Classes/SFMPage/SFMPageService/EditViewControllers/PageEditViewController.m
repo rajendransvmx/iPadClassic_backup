@@ -564,6 +564,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
         [self updateRespondersIfAny];
         [self performSelectorOnMainThread:@selector(showActivityIndicator) withObject:nil waitUntilDone:YES];
         [self executeBusinessRules];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"RefreshView_IOS" object:nil];
         }
     }else {
         UIAlertView *lAlert = [[UIAlertView alloc] initWithTitle:@"" message:[[TagManager sharedInstance] tagByName:kTagNoTechnicianAssociatedError] delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles: nil];

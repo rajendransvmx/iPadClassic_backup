@@ -8,6 +8,8 @@
 
 #import "UIBuilder.h"
 #import "StyleManager.h"
+#import "CustomBadge.h"
+
 
 @implementation UIBuilder
 
@@ -46,5 +48,41 @@
     
 }
 
++ (UIButton *)getTabBarButton:(CGRect)inFrame withImage:(NSString *)inBGImage withSelectedImage:(NSString *)inSelectedImage withTitle:(NSString*)inTitle withBadge:(BOOL)showBadge
+{
+    
+    UIButton *btn = [UIBuilder getTabBarButton:inFrame withImage:inBGImage withSelectedImage:inSelectedImage withTitle:inTitle];
+    
+    if(showBadge)
+    {
+        NSString *counterStr = [NSString stringWithFormat:@"0"];
+        
+        BadgeStyle *badgeStyle = [BadgeStyle freeStyleWithTextColor:[UIColor whiteColor]
+                                                     withInsetColor:[UIColor navBarBG]
+                                                     withFrameColor:nil
+                                                          withFrame:NO
+                                                         withShadow:NO
+                                                        withShining:NO
+                                                       withFontType:BadgeStyleFontTypeHelveticaNeueMedium];
+        
+        CustomBadge *badge = [CustomBadge customBadgeWithString:counterStr withScale:1.0 withStyle:badgeStyle];
+        
+        badge.tag = BADGE_TAG;
+        
+        
+        CGRect r = btn.frame;
+        CGPoint pt = CGPointZero;
+        pt.x = r.size.width/2 + 12;
+        pt.y = badge.frame.size.height/2 - 2;
+
+        badge.center = pt;
+        
+        [btn addSubview:badge];
+        
+        badge.hidden = YES;
+    }
+    
+    return btn;
+}
 
 @end

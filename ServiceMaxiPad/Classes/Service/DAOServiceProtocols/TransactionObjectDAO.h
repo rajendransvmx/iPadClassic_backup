@@ -37,6 +37,7 @@
                             criteria:(NSArray *)criteria;
 
 - (BOOL)isTransactiontableEmpty:(NSString *)objectName;
+- (BOOL)isTransactionTableExist:(NSString *)objectName;  // BSP 2-June
 
 - (NSArray *)getListWorkorderCurrencies;
 

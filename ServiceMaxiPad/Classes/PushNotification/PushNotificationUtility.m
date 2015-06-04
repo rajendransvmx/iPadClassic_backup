@@ -18,6 +18,9 @@
 #import "SFObjectModel.h"
 #import "CustomerOrgInfo.h"
 #import "ResponseConstants.h"
+#import "TagManager.h"
+#import "TagConstant.h"
+#import "LaunchViewController.h"
 
 @implementation PushNotificationUtility
 
@@ -31,7 +34,6 @@
   
     return NO;
 }
-
 +(BOOL)isModallyPresented:(UIViewController *)controller
 {
     if([controller presentingViewController]){
@@ -39,6 +41,7 @@
     }
     return NO;
 }
+
 
 +(ViewControllerType)getRootViewControllerType:(UIViewController *)rootViewController;
 {
@@ -68,13 +71,19 @@
 {
     id topVc = nil;
     CustomTabBar *customBar = (CustomTabBar*)[UIApplication sharedApplication].delegate.window.rootViewController;
-    id vc = [customBar selectedViewController];
-    if([vc isKindOfClass:[UINavigationController class]])
-    {
-        UINavigationController *nv = (UINavigationController *)vc;
-        //id topVc = [nv topViewController];
-        topVc = [nv visibleViewController];
+    
+    if ([customBar isKindOfClass:[UITabBarController class]]) {
+        
+        id vc = [customBar selectedViewController];
+        if([vc isKindOfClass:[UINavigationController class]])
+        {
+            UINavigationController *nv = (UINavigationController *)vc;
+            //id topVc = [nv topViewController];
+            topVc = [nv visibleViewController];
+        }
+
     }
+    
     return  topVc;
 }
 
@@ -190,7 +199,7 @@
             default:
                 break;
         }
-    return YES;
+    return NO;
 }
 
 //Org Validation
@@ -210,7 +219,7 @@
         else
         {
             //NSString *orgId = [APNSDict objectForKey:kPulseNotificationUserId];
-            UIAlertView *alert  = [[UIAlertView alloc]initWithTitle:@"Login Alert" message:@"Please login with same user ID, used for Pulse App" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            UIAlertView *alert  = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:[[TagManager sharedInstance]tagByName:kTag_PleaseLoginWithSameUserId] delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil];
             [alert show];
             isValidUser = NO;
         }
@@ -218,7 +227,7 @@
     else
     {
         //NSString *userId = [APNSDict objectForKey:kPulseNotificationUserId];
-        UIAlertView *alert  = [[UIAlertView alloc]initWithTitle:@"Login Alert" message:@"Please login with same org Id, used for Pulse App" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        UIAlertView *alert  = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:[[TagManager sharedInstance]tagByName:kTag_PleaseLoginWithSameOrgId] delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil];
         [alert show];
         isValidUser = NO;
     }
@@ -230,18 +239,22 @@
 {
     NSString *tokenString = [[url query]stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSMutableDictionary *queryStringDictionary = [[NSMutableDictionary alloc] init];
-    NSArray *urlComponents = [tokenString componentsSeparatedByString:@"&"];
+    NSArray *urlComponents = [tokenString componentsSeparatedByString:@"&123"];
     
     for (NSString *keyValuePair in urlComponents)
     {
         NSArray *pairComponents = [keyValuePair componentsSeparatedByString:@"="];
         NSString *key = [[pairComponents firstObject] stringByRemovingPercentEncoding];
-        NSString *value = [[pairComponents lastObject] stringByRemovingPercentEncoding];
+        //NSString *value = [[pairComponents lastObject] stringByRemovingPercentEncoding];
+        NSString *value = [pairComponents lastObject];
+
         [queryStringDictionary setObject:value forKey:key];
         
         if ([key isEqualToString:kPulseNotificationString])
         {
-            value = [[urlComponents lastObject] stringByRemovingPercentEncoding];
+            //value = [[urlComponents lastObject] stringByRemovingPercentEncoding];
+            value = [urlComponents lastObject];
+
             value = [value substringFromIndex:19];
             NSData *data = [value dataUsingEncoding:NSUTF8StringEncoding];
             NSError *error = nil;

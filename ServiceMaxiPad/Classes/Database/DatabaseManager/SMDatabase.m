@@ -255,6 +255,22 @@ NSString *const kDatabaseEncryptionKey         = @"svmxipad";
     return kDatabaseEncryptionKey;
 }
 
++ (BOOL)databaseEncryptionEnabled
+{
+    BOOL hasEnabled = YES;
+    
+    if (hasEnabled)
+    {
+        NSLog(@"DB Encryption ENABLED");
+    }
+    else
+    {
+        NSLog(@"DB Encryption NOT enabled");
+    }
+
+    return hasEnabled;
+}
+
 #pragma mark Busy handler routines
 
 // NOTE: appledoc seems to choke on this function for some reason;

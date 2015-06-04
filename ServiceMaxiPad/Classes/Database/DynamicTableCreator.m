@@ -19,6 +19,8 @@
 
 -(void)createDynamicTables
 {
+    [[DatabaseIndexManager sharedInstance] createAllIndicesForStaticTables];
+    
     //  @"ALTER TABLE SFDataTrailer ADD COLUMN 'fields_modified' VARCHAR"
     //execute create query
     NSArray * allObjects = [self fetchSFObjectsInfo];     //query Object names from SFObject table
@@ -34,8 +36,9 @@
         {
             NSLog(@"TableName %@",objectName);
             BOOL createTable =  [universalDao createTable:query];
-            if (!createTable) {
-                NSLog(@"Table creation Failed");
+            if (!createTable)
+            {
+                NSLog(@"Table creation Failed %@",objectName);
             }
             else {
                 [[DatabaseIndexManager sharedInstance] registerTableNameForSingleIndexing:objectName];
@@ -53,6 +56,8 @@
             
         }
     }
+    
+    [[DatabaseIndexManager sharedInstance] generateIndexingForCompositeIndices];
 }
 
 -(NSArray *)fetchSFObjectsInfo
@@ -121,6 +126,9 @@
     [universalDao alterTable:schema];
     
     schema =[NSString stringWithFormat:@"ALTER TABLE %@ ADD COLUMN 'TimeZone' VARCHAR",kServicemaxEventObject];
+    [universalDao alterTable:schema];
+    
+    schema =[NSString stringWithFormat:@"ALTER TABLE %@ ADD COLUMN 'objectSfId' VARCHAR",kServicemaxEventObject];
     [universalDao alterTable:schema];
 }
 

@@ -198,7 +198,7 @@
 //    lFrame.size.width = self.frame.size.width - 10;
 //    self.eventAddress.frame = lFrame;
     
-    borderView.backgroundColor = [UIColor colorWithRed:121.0/255.0 green:121.0/255.0 blue:121.0/255.0 alpha:1.0];
+    //borderView.backgroundColor = [UIColor colorWithRed:121.0/255.0 green:121.0/255.0 blue:121.0/255.0 alpha:1.0];
 
     self.firstImageView.hidden = YES;
     self.secondImageView.hidden = YES;
@@ -358,14 +358,11 @@
 -(void)setTheButtonForNormalState
 {
     [self setBackgroundColor:[UIColor colorWithRed:228.0/255. green:228.0/255. blue:228.0/255. alpha:1.0]];
-    self.borderView.backgroundColor = [UIColor colorWithRed:121.0/255.0 green:121.0/255.0 blue:121.0/255.0 alpha:1.0];
-    
     [self setTheEventTitleForNormalState];
 }
 -(void)setTheButtonForSelectedState
 {
     self.backgroundColor = [UIColor colorWithRed:67.0/255.0 green:67.0/255.0 blue:67.0/255.0 alpha:1.0];
-    self.borderView.backgroundColor=[UIColor colorWithRed:67.0/255.0 green:67.0/255.0 blue:67.0/255.0 alpha:1.0];
     self.eventName.textColor = [UIColor whiteColor];
 }
 
@@ -489,20 +486,21 @@
     if ([priorityString isEqualToString:@"High"]) {
         
         colorString = [CalenderHelper getTheHexaCodeForTheSettingId:@"IPAD006_SET001"];
+        self.thirdImageView.image = [UIImage imageNamed:@"priority_Flag.png"];
     }
     else     if ([priorityString isEqualToString:@"Medium"]) {
         colorString = [CalenderHelper getTheHexaCodeForTheSettingId:@"IPAD006_SET002"];
-        
+        self.thirdImageView.image = nil;
         
     }
     else     if ([priorityString isEqualToString:@"Low"]) {
         colorString = [CalenderHelper getTheHexaCodeForTheSettingId:@"IPAD006_SET003"];
-        
+        self.thirdImageView.image = nil;
     }
     else
     {
         colorString = [CalenderHelper getTheHexaCodeForTheSettingId:@"IPAD006_SET004"];
-        
+        self.thirdImageView.image = nil;
     }
     borderColor = [UIColor colorWithHexString:colorString];
     

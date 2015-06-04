@@ -16,12 +16,12 @@
 #import "WebserviceResponseStatus.h"
 #import "AlertMessageHandler.h"
 #import "TagManager.h"
-
 #import "ParserFactory.h"
 #import "FlowDelegate.h"
 #import "PushNotificationManager.h"
 #import "SNetworkReachabilityManager.h"
 #import "PushNotificationUtility.h"
+#import "StringUtil.h"
 
 
 #define IDIOM    UI_USER_INTERFACE_IDIOM()
@@ -40,6 +40,7 @@
 
 -(void)startDownloadRequest:(PushNotificationModel *)notificationModel
 {
+ 
     
     if ( IDIOM == IPAD ) {
         /* do something specifically for iPad. */
@@ -64,23 +65,33 @@
     
     self.mNotificationModel = notificationModel;
     
+    
+    
+    [self performSelectorInBackground:@selector(startRequest) withObject:nil];
+
     //check for reachability
+   
+   
+    
+}
+
+-(void)startRequest
+{
     if ( [[SNetworkReachabilityManager sharedInstance] isNetworkReachable])
     {
         self.mNotificationModel.requestStatus = NotificationRequestStateDownloadInProgress;
         [[PushNotificationManager sharedInstance]downloadStatusForRequest:self.mNotificationModel withError:nil];
         
-//        RequestParamModel * requestParam = nil;
-//        NSArray *requestParams = [self fetchRequestParametersForAPNSRequest:notificationModel];
-//        if([requestParams count] > 0)
-//        {
-//            requestParam =  [requestParams objectAtIndex:0];
-//        }
+        //        RequestParamModel * requestParam = nil;
+        //        NSArray *requestParams = [self fetchRequestParametersForAPNSRequest:notificationModel];
+        //        if([requestParams count] > 0)
+        //        {
+        //            requestParam =  [requestParams objectAtIndex:0];
+        //        }
         
         TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeAPNSDOD
                                                  requestParam:nil
                                                callerDelegate:self];
-        
         [[TaskManager sharedInstance] addTask:taskModel];
     }
     else
@@ -88,7 +99,6 @@
         self.mNotificationModel.requestStatus = NotificationRequestStateNetworkNotReachable;
         [[PushNotificationManager sharedInstance] downloadStatusForRequest:self.mNotificationModel withError:nil];
     }
-    
 }
 
 -(void)addNotificationRequest:(PushNotificationModel *)notificationModel
@@ -141,16 +151,16 @@
                     self.mNotificationModel.requestStatus = NotificationRequestStateDownloadCompleted;
 
                 }
-                else if (st.syncStatus == SyncStatusFailed)
+                else if (st.syncStatus == SyncStatusFailed  || st.syncStatus ==  SyncStatusNetworkError)
                 {
                     //[self downloadFailedWithError:st.syncError];
                     self.mNotificationModel.requestStatus = NotificationRequestStateDownloadFailed;
-
                 }
-                else if (st.syncStatus == SyncStatusInCancelled)
+                else
                 {
-                    
+                    self.mNotificationModel.requestStatus = NotificationRequestStateDownloadFailed;
                 }
+                
                 break;
             }
             default:
@@ -200,12 +210,19 @@
     
     NSMutableDictionary *valueMapForObject = [[NSMutableDictionary alloc]initWithCapacity:0];
     [valueMapForObject setObject:@"Object_Name" forKey:kSVMXKey];
+    if([StringUtil isStringEmpty:objectName])
+    {
+        objectName = @"";
+    }
     [valueMapForObject setObject:objectName forKey:kSVMXValue];
-    
     
     
     NSMutableDictionary *valueMap_RecordId = [[NSMutableDictionary alloc]initWithCapacity:0];
     [valueMap_RecordId setObject:@"Record_Id" forKey:kSVMXKey];
+    if([StringUtil isStringEmpty:objectName])
+    {
+        objectName = @"";
+    }
     [valueMap_RecordId setObject:recordId forKey:kSVMXValue];
     
     

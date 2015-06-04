@@ -23,6 +23,8 @@
 #import "SFObjectFieldDAO.h"
 #import "SFObjectFieldModel.h"
 #import "SFObjectModel.h"
+#import "SFPicklistDAO.h"
+#import "SFPicklistModel.h"
 
 static SVMXDatabaseMaster *sharedDatamasterObject = nil;
 
@@ -711,6 +713,15 @@ static SVMXDatabaseMaster *sharedDatamasterObject = nil;
             
             [fieldInfo setObject:@"true" forKey:@"accessible"];
             [fieldInfo setObject:@"true" forKey:@"updateable"];
+            
+            if([sfobjectFldModelObject.type isEqualToString:@"picklist"] || [sfobjectFldModelObject.type isEqualToString:@"multipicklist"]){
+                
+                NSArray *picklistvalues = [self getPicklistvaluesForField:sfobjectFldModelObject andObjectName:objectName];
+                if ([picklistvalues count] > 0) {
+                     [fieldInfo setObject:picklistvalues forKey:@"picklistValues"];
+                    
+                }
+            }
             [fieldsArray addObject:fieldInfo];
 
         }
@@ -880,6 +891,44 @@ static SVMXDatabaseMaster *sharedDatamasterObject = nil;
         return VARCHAR;
     else
         return TEXT;
+}
+
+- (NSArray *)getPicklistvaluesForField:(SFObjectFieldModel *)objectField
+                         andObjectName:(NSString *)objectName {
+    
+    id daoService = [FactoryDAO serviceByServiceType:ServiceTypeSFPickList];
+    NSArray * objectsList = nil;
+    if ([daoService conformsToProtocol:@protocol(SFPicklistDAO)]) {
+        
+        NSArray *fieldNames = [NSArray arrayWithObjects:klabel, kvalue, kindexValue, kvalidFor, nil];
+        
+        DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:@"objectName" operatorType:SQLOperatorEqual andFieldValue:objectName];
+        DBCriteria *criteria2 = [[DBCriteria alloc] initWithFieldName:@"fieldName" operatorType:SQLOperatorEqual andFieldValue:objectField.fieldName];
+        
+        
+        objectsList = [daoService fetchSFPicklistInfoByFields:fieldNames andCriteria:@[criteria1,criteria2] andExpression:nil];
+        
+      
+        NSMutableArray *picklistValuesDictArray = [[NSMutableArray alloc] init];
+        
+        for (SFPicklistModel *model in objectsList ) {
+            
+            NSMutableDictionary *picklistDict = [[NSMutableDictionary alloc] init ];
+            if (model.value != nil && model.label != nil) {
+                
+                [picklistDict setObject:model.value forKey:@"value"];
+                [picklistDict setObject:model.label forKey:@"label"];
+            }
+            
+            [picklistValuesDictArray addObject:picklistDict];
+        }
+    
+        return picklistValuesDictArray;
+    }
+
+    return nil;
+    
+    
 }
 
 @end

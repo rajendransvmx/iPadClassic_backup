@@ -102,7 +102,14 @@ NSString *cocoaErrorString = @"3840";
 
 - (void)startFlow
 {    //PA
-    [[PerformanceAnalyser sharedInstance] startedPerformanceAnalyser];
+    int i = (int) SMLogLogLevel();
+    NSLog(@"Log level :%d", (int)i);
+    
+    if (ApplicationLogLevelWarning == i)
+    {
+        [PerformanceAnalyser sharedInstance].startedPerformanceAnalyser = YES;
+    }
+    
     NSString *contextValue = [[ServerRequestManager sharedInstance]getTheContextvalueForCategoryType:self.nodecategoryType];
     [[PerformanceAnalyser sharedInstance] observePerformanceForContext:contextValue subContextName:contextValue operationType:PAOperationTypeTotalTimeLatency andRecordCount:1];
     

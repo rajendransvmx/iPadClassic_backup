@@ -15,6 +15,8 @@
 #import "FactoryDAO.h"
 #import "DateUtil.h"
 #import "ResponseCallback.h"
+#import "TagManager.h"
+#import "TagConstant.h"
 
 
 
@@ -68,7 +70,7 @@
                         
                         ResponseCallback *responseCallback = [[ResponseCallback alloc]init];
                         NSMutableDictionary *userInfoDict =[[NSMutableDictionary alloc]init];
-                        [userInfoDict setObject:@"This record has been already deleted from server" forKey:SMErrorUserMessageKey];
+                        [userInfoDict setObject:[[TagManager sharedInstance]tagByName:kTag_ThisRecordDeletedFromServer] forKey:SMErrorUserMessageKey];
                         
                         NSError *error =[[NSError alloc]initWithDomain:@"APNSDODRecordFail" code:0 userInfo:userInfoDict];
                         

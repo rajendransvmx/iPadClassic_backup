@@ -14,6 +14,11 @@
 #import "SFMPageViewController.h"
 #import "SFMPageViewManager.h"
 #import "PushNotificationHeaders.h"
+#import "TagConstant.h"
+#import "TagManager.h"
+#import "StringUtil.h"
+#import "SyncErrorConflictService.h"
+
 
 #define PushNotificationProcessRequest     @"PushNotificationProcessRequest"
 #define kUpdateEventNotification @"UpdateEventOnNotification"
@@ -72,22 +77,34 @@
     NSString *messageString = message;
     switch (messageStyle) {
         case AlertMessageStyleInvalidPayload:
-            titleString = @"Payload Error";
+            titleString = [[TagManager sharedInstance]tagByName:kTag_ServiceMax];
             if (messageString == nil || messageString.length == 0) {
-                messageString = @"Payload doesnt have required information to download the record";
+                messageString = [[TagManager sharedInstance]tagByName:kTag_InvalidNotification];
             }
             break;
         case AlertMessageStyleNoInternet:
-            titleString = @"Error";
+            titleString = [[TagManager sharedInstance]tagByName:kTag_ServiceMax];
             if (messageString == nil || messageString.length == 0) {
-            messageString = @"No available network to complete the action";
+            messageString = [[TagManager sharedInstance]tagByName:kTag_NetworkUnavailable];
+            }
+            break;
+        case AlertMessageGeneral:
+            titleString = [[TagManager sharedInstance]tagByName:kTag_ServiceMax];
+            if (messageString == nil || messageString.length == 0) {
+                messageString = [[TagManager sharedInstance]tagByName:kTag_RemoteAccessRevokedMsg];
+            }
+            break;
+        case AlertMessageStyleConflictsFound:
+            titleString = [[TagManager sharedInstance]tagByName:kTag_ServiceMax];
+            if (messageString == nil || messageString.length == 0) {
+                messageString = @"Please resolve conflicts to download the record.";
             }
             break;
             
         default:
             break;
     }
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:titleString message:messageString delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] ;
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:titleString message:messageString delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil] ;
     [alert performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:NO];
     
 }
@@ -100,15 +117,34 @@
         PushNotificationModel *model  = [[PushNotificationModel alloc] initWithDictionary:notificationDict];
 
         //Commnet below 3 lines once we get real data from server
-        if (model.sfId.length > 0 && model.objectName.length > 0) {
-            
-            model.requestType = NotificationRequestTypeDownload;
-            [self addRequestToNotificationQueue:model];
+        //(model.sfId.length > 0)
+        if(![StringUtil isStringEmpty:model.sfId])
+             {
+                 SyncErrorConflictService *conflictService = [[SyncErrorConflictService alloc]init];
+                NSString *ObjectName = [PushNotificationUtility getObjectForSfId:model.sfId];
+                 BOOL isConflictFound =   [conflictService isConflictFoundForObjectWithOutType:ObjectName withSfId:model.sfId];//
+                 if (isConflictFound)//there is conflict
+                 {
+                     //SyncErrorConflictService
+                     [self showAlertFor:AlertMessageStyleConflictsFound withCustomMessage:nil];
+
+                     //show alert and dont start donwload
+                 }
+                 else
+                 {
+                     model.requestType = NotificationRequestTypeDownload;
+                     [self addRequestToNotificationQueue:model];
+                 }
+                 
         }
         else {
             //ERROR
             
-            [self showAlertFor:AlertMessageStyleInvalidPayload withCustomMessage:nil];
+            BOOL processRequest = [[NotificationRuleManager sharedInstance] shouldprocessNotificationRequest];
+            if(processRequest){
+                [self showAlertFor:AlertMessageStyleInvalidPayload withCustomMessage:nil];
+                
+            }
         }
     }
 }
@@ -222,58 +258,65 @@
 {
     @synchronized([self class])
     {
-        // Get rootView Controller
-        // present Notification Screen on the Root View Controller
-        if(self.notificationViewController == nil){
-            self.notificationViewController = [ViewControllerFactory createViewControllerByContext:ViewControllerPushNotification];
-        }
-        
-        UIViewController * rootViewController = [self geTopViewController];
-        
-        if([self isParentEditScreen:rootViewController])
-        {
-            [self setUserActionFor:UserActionPresentedOnEditScreen];
-        }
-        else
-        {
-            [self setUserActionFor:UserActionPresentedOnNonEditScreen];
-        }
-        self.notificationScreenState = NotificationScreenStateVisible;
-        
-        /*UIViewController *topVc = [self topViewControllerTest];
-         NSArray * array = [topVc childViewControllers];
-        
-        for (UIViewController * vc  in array) {
-           UIViewController * presented = [self topViewControllerWithRootViewController:vc];
-                //NSLog(@"Popover presented");
-                if(presented.modalPresentationStyle == UIModalPresentationPopover ){
-                [presented dismissViewControllerAnimated:YES completion:^{
-                    
-                }];
-                    break;
-
-                }
-        }*/
-        
-    
-      //  [self topViewControllerWithRootViewController:<#(UIViewController *)#>]
-    
-        /*if ([topVc popoverPresentationController]) {
-            //NSLog(@"Popover presented");
-            [topVc dismissViewControllerAnimated:YES completion:^{
-                
-            }];
-        }*/
-        
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName:POP_OVER_DISMISS object:nil];
-       [rootViewController presentViewController: self.notificationViewController  animated:YES completion:^{
-           
-           //set the notification screen state as visible.
-       }];
-        
+        [self performSelectorOnMainThread:@selector(presentViewController) withObject:nil waitUntilDone:YES];
     }
     
+}
+
+-(void)presentViewController
+{
+    // Get rootView Controller
+    // present Notification Screen on the Root View Controller
+    if(self.notificationViewController == nil){
+        self.notificationViewController = [ViewControllerFactory createViewControllerByContext:ViewControllerPushNotification];
+    }
+    
+    UIViewController * rootViewController = [self geTopViewController];
+    
+    if([self isParentEditScreen:rootViewController])
+    {
+        [self setUserActionFor:UserActionPresentedOnEditScreen];
+    }
+    else
+    {
+        [self setUserActionFor:UserActionPresentedOnNonEditScreen];
+    }
+    self.notificationScreenState = NotificationScreenStateVisible;
+    
+    /*UIViewController *topVc = [self topViewControllerTest];
+     NSArray * array = [topVc childViewControllers];
+     
+     for (UIViewController * vc  in array) {
+     UIViewController * presented = [self topViewControllerWithRootViewController:vc];
+     //NSLog(@"Popover presented");
+     if(presented.modalPresentationStyle == UIModalPresentationPopover ){
+     [presented dismissViewControllerAnimated:YES completion:^{
+     
+     }];
+     break;
+     
+     }
+     }*/
+    
+    
+    //  [self topViewControllerWithRootViewController:<#(UIViewController *)#>]
+    
+    /*if ([topVc popoverPresentationController]) {
+     //NSLog(@"Popover presented");
+     [topVc dismissViewControllerAnimated:YES completion:^{
+     
+     }];
+     }*/
+    
+    
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:POP_OVER_DISMISS object:nil];
+    [rootViewController presentViewController: self.notificationViewController  animated:YES completion:^{
+        
+        //set the notification screen state as visible.
+    }];
+    
+
 }
 
 -(void)setUserActionFor:(UserActionPresentedOn)parent
@@ -391,8 +434,7 @@
     if (error) {
         message = [error.userInfo objectForKey:SMErrorUserMessageKey];
     }
-    [self showAlertFor:AlertMessageStyleNoInternet withCustomMessage:message];
-    [self dismissNotificationViewController];
+    [self showAlertFor:AlertMessageGeneral withCustomMessage:message];
 }
 
 -(void)downloadStatusForRequest:(PushNotificationModel * )currentRequest withError:(NSError *)error {
@@ -446,6 +488,8 @@
                 }
                 else
                 {
+                    [self dismissNotificationViewController];
+
                     [self handleError:error];
                 }
             }
@@ -455,6 +499,7 @@
             }
             else
             {
+                [self dismissNotificationViewController];
                 [self handleError:error];
             }
         }
@@ -480,7 +525,7 @@
     {
         self.notificationScreenState = NotificationScreenStateHidden;
 
-        [self performSelectorOnMainThread:@selector(dismissViewOnMainThread) withObject:nil waitUntilDone:NO];
+        [self performSelectorOnMainThread:@selector(dismissViewOnMainThread) withObject:nil waitUntilDone:YES];
     }
 }
 
@@ -491,11 +536,11 @@
         NSArray * options = nil;
         
         if([self isNotificationScreenPresentedOnEditViewController]){
-            options = [[NSArray alloc] initWithObjects:@"Save And View",@"View",@"Cancel", nil];
+            options = [[NSArray alloc] initWithObjects:[[TagManager sharedInstance]tagByName:kTag_SaveAndView],@"View",[[TagManager sharedInstance]tagByName:kTagCancelButton], nil];
         }
         else
         {
-            options = [[NSArray alloc] initWithObjects:@"View",@"Cancel", nil];
+            options = [[NSArray alloc] initWithObjects:@"View",[[TagManager sharedInstance]tagByName:kTagCancelButton], nil];
         }
         
         self.notificationScreenState = NotificationScreenStateUserAction;
@@ -575,9 +620,20 @@
     }
     
     BOOL viewProcessAvailable = YES;
-    //localId
-    NSString *localId = [PushNotificationUtility getLocalIdForSfId:self.finalModel.sfId objectName:self.finalModel.objectName];
     
+    //HS Fix for defect - 017600
+    //localId
+    //NSString *ObjectName = [PushNotificationUtility getObjectForSfId:self.finalModel.sfId];
+   // NSString *localId = [PushNotificationUtility getLocalIdForSfId:self.finalModel.sfId objectName:self.finalModel.objectName];
+    
+    
+    if(self.finalModel.objectName == nil){
+        self.finalModel.objectName = [PushNotificationUtility getObjectForSfId:self.finalModel.sfId];
+    }
+    
+    NSString *localId = [PushNotificationUtility getLocalIdForSfId:self.finalModel.sfId objectName:self.finalModel.objectName];
+    //Fix ends here
+
     if(localId == nil)
     {
         [self noViewProcessAvaibleAlert];
@@ -596,18 +652,21 @@
         UIViewController * rootVc = [self getRootViewController];
         ViewControllerType vcType =  [self getViewControllerTypeForViewController:rootVc];
         
+        UIViewController * topviewController = [self topViewControllerTest];
+        BOOL editView = [PushNotificationUtility isModallyPresented:topviewController];
+        if(editView){
+            [topviewController dismissViewControllerAnimated:NO completion:^{
+            }];
+        }
+        
+        
         if(vcType == CalendarViewController){
             //dismiss all view controllerts presented
             [self removeViewControllersFromCalendarViewController:rootVc];
         }
         else
         {
-            UIViewController * topviewController = [self topViewControllerTest];
-            BOOL editView = [PushNotificationUtility isModallyPresented:topviewController];
-            if(editView){
-                [topviewController dismissViewControllerAnimated:NO completion:^{
-                }];
-            }            
+            
             
             [PushNotificationUtility selectCalendarViewController];
             UIViewController * calendarVc = [self getCalendarViewController]; //*****     //move to calendar view controller ****///
@@ -631,7 +690,7 @@
 {
     @synchronized([self class])
     {
-        UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:@"ServiceMax For iPad" message:@"No View Layout has been configured for this object. Please contact the system administrator." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+        UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:[[TagManager sharedInstance]tagByName:kTag_ServiceMax]message:[[TagManager sharedInstance]tagByName:kTag_NoViewLayoutForObject] delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
         [alertView performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
     }
 }

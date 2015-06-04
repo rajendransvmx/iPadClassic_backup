@@ -44,6 +44,7 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
 #define MULTI_PAGEFIELD_TAG 300
 #define TITLE_LABEL_TAG 400
 #define IMAGE_VIEW_TAG 500
+#define ADD_BUTTON_HEIGHT 30.0f
 
 @interface PageEditChildListViewController ()
 
@@ -95,10 +96,22 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
 - (void) addTableViewFooter
 {
     UIView *footerView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, kChildListTableViewFooterHeight)];
-    UIButton *addButton = [[UIButton alloc]initWithFrame:CGRectMake(50, 23, 80, 30)];
+   
+    NSString *title = [NSString stringWithFormat:@"+ %@",[[TagManager sharedInstance]tagByName:kTag_Add]];
+    
+     UIButton *addButton = [[UIButton alloc]initWithFrame:CGRectMake(50, 23, 80.0f, ADD_BUTTON_HEIGHT)];
+    CGFloat width = [ self getTheWidthForTheString:title withTheHeight:ADD_BUTTON_HEIGHT];
+    
+    if(width >= 75.0f)
+    {
+        CGRect frame = addButton.frame;
+        frame.size.width = width + 5;
+        addButton.frame = frame;
+    }
+    
     [addButton setBackgroundColor:[UIColor navBarBG]];
     [addButton addTarget:self action:@selector(addNewLine:) forControlEvents:UIControlEventTouchUpInside];
-    NSString *title = [NSString stringWithFormat:@"+ %@",[[TagManager sharedInstance]tagByName:kTag_Add]];
+
     
     [addButton setTitle:title forState:UIControlStateNormal];
     addButton.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
@@ -705,7 +718,7 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
         }
     }
     
-    return tableViewHeight;
+    return tableViewHeight  + numberOfSections+20 ;
 }
 
 - (void)keyboardShownInSelectedIndexPath:(NSIndexPath *)indexPath;
@@ -954,6 +967,9 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
         SFMRecordFieldData *aNameField = [self.sfmPage.headerRecord objectForKey:self.sfmPage.nameFieldValue];
         if (aNameField.displayValue != nil) {
             newField.displayValue = aNameField.displayValue;
+        }
+        else {
+            newField.displayValue = self.sfmPage.nameFieldValue;
         }
     }
     return newField;
@@ -1258,6 +1274,17 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
         return recordData;
     }
     return nil;
+}
+
+- (CGFloat)getTheWidthForTheString:(NSString *)string withTheHeight:(CGFloat )height
+{
+    NSDictionary *userAttributes = @{NSFontAttributeName:[UIFont fontWithName:kHelveticaNeueRegular size:kFontSize18]};
+    CGRect expectedRect = [string boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, height)
+                                               options:(NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading)
+                                            attributes:userAttributes
+                                               context:nil];
+    return expectedRect.size.width;
+    
 }
 
 - (SFMPageField *)pageFieldForIndex:(NSUInteger)fieldIndex{

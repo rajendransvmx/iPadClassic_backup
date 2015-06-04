@@ -68,6 +68,9 @@ NSString *configSyncTimeIntervalKey         = @"Config sync time";
 NSString *dataSyncTimeIntervalKey           = @"Data sync time";
 NSString *syncMetaDataFile                  = @"SyncMetaData.plist";
 
+
+NSString *kSuccessiveSyncStatusNotification = @"SuccessiveSyncStarted";
+
 //static dispatch_once_t _sharedSyncManagerInstanceGuard;
 static SyncManager *_instance;
 
@@ -302,7 +305,18 @@ static SyncManager *_instance;
             break;
             
         case SyncTypeValidateProfile:
-            [self performValidateProfile];
+            if ([self isDataSyncInProgress])
+            {
+                self.configSyncStatus = SyncStatusInQueue;
+                [self enqueueSyncQueue:SyncTypeValidateProfile];
+            }
+            else
+            {
+                [self performValidateProfile];
+            }
+
+            
+           
             break;
             
         default:
@@ -754,12 +768,14 @@ static SyncManager *_instance;
     
     @synchronized([self class]) {
         
+        [AppManager updateTabBarBadges];
+        
         [[SuccessiveSyncManager sharedSuccessiveSyncManager] doSuccessiveSync];
         [self updateLastSyncTime];
         
         // if conflicts not resolved, then stop data sync..
         BOOL conflictsResolved = [self continueDataSyncIfConflictsResolved];
-
+        
         BOOL didRestart = (conflictsResolved)?[self restartDataSyncIfNecessary]:NO;
         
         if (!didRestart) {
@@ -768,12 +784,12 @@ static SyncManager *_instance;
             
             self.isDataSyncRunning = NO;
             self.dataSyncStatus = SyncStatusSuccess;
-
+            
             [[SMDataPurgeManager sharedInstance] restartDataPurge];
             [PlistManager removeLastDataSyncStartGMTTime];
-  
+            
             [PlistManager removeLastLocalIdFromDefaults];
-
+            
             //[self updatePlistWithLastDataSyncTimeAndStatus:kSuccess];
             /* Send data sync Success notification */
             [self sendNotification:kDataSyncStatusNotification andUserInfo:nil];
@@ -787,6 +803,10 @@ static SyncManager *_instance;
             }
             
             [self manageSyncQueueProcess];
+        }
+        else {
+            // 17505 - merged from Spr 15 (15.30.011)
+            [[NSNotificationCenter defaultCenter] postNotificationName:kSuccessiveSyncStatusNotification object:nil];
         }
     }
 }
@@ -809,6 +829,8 @@ static SyncManager *_instance;
     
     @synchronized([self class]) {
         
+        [AppManager updateTabBarBadges];
+        
         [self updatePlistWithLastDataSyncTimeAndStatus:kFailed];
         
          self.isDataSyncRunning = NO;
@@ -825,6 +847,7 @@ static SyncManager *_instance;
                                                   cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
                                                andOtherButtonTitles:nil];
         }
+         [self manageSyncQueueProcess];
         
     }
 }
@@ -1684,6 +1707,7 @@ static SyncManager *_instance;
         case SyncTypeReset:
         case SyncTypeInitial:
         case SyncTypeConfig:
+        case SyncTypeValidateProfile:
             [self performSyncWithType:syncType];
             break;
             

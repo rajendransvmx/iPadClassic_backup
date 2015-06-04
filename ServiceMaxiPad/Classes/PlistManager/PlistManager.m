@@ -120,6 +120,10 @@ NSString *const kPreferenceOrganizationCustom  = @"Custom";
 NSString *const kPreferenceOrganizationSandbox  = @"Sandbox";
 NSString *const kPreferenceOrganizationProduction  = @"Production";
 
+//017609
+NSString *const kPreferenceAccessToken = @"Session Auto Refresh";
+
+
 static NSString *const kSwitchLayout = @"SwitchLayout";
 
 static NSString * const kEventWhatIdToObjectName = @"EventWhatIdToObjectName";
@@ -1357,5 +1361,13 @@ static NSUInteger const kRefreshTokenSplitIndex      = 10;        /** Refresh to
 
     return reconstructedToken;
 }
+
+
++(BOOL) shouldValidateAccessToken
+{
+    return [[[NSUserDefaults standardUserDefaults] objectForKey:kPreferenceAccessToken] boolValue];
+    
+}
+
 
 @end

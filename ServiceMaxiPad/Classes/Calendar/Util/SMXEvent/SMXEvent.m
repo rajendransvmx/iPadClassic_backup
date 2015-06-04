@@ -73,7 +73,7 @@
         {
             key_LocalID = kSVMXlocalId;
             key_ID = kSVMXID;
-            key_WhatID = kSVMXWhatId;
+            key_WhatID = kObjectSfId;
             key_StartDateTime = kSVMXStartDateTime;
             key_EndDateTime = kSVMXEndDateTime;
             key_ActivityDate = kSVMXActivityDate;
@@ -167,7 +167,7 @@
         {
             key_LocalID = kSVMXlocalId;
             key_ID = kSVMXID;
-            key_WhatID = kSVMXWhatId;
+            key_WhatID = kObjectSfId;
             key_StartDateTime = kSVMXStartDateTime;
             key_EndDateTime = kSVMXEndDateTime;
             key_ActivityDate = kSVMXActivityDate;

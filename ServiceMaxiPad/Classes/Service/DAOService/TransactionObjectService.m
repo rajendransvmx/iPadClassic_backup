@@ -405,6 +405,49 @@
     return isRecordExist;
 }
 
+
+- (BOOL)isTransactionTableExist:(NSString *)objectName // // 2-June BSP: For Defect 17514: Sorting on SFM Search
+{
+    DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:@"type" operatorType:SQLOperatorEqual andFieldValue:@"table"];
+    DBCriteria *criteria2 = [[DBCriteria alloc] initWithFieldName:@"name" operatorType:SQLOperatorEqual andFieldValue:objectName];
+    
+    DBRequestSelect * selectQuery = [[DBRequestSelect alloc] initWithTableName:@"sqlite_master" andFieldNames:@[@"name"] whereCriterias:@[criteria1, criteria2] andAdvanceExpression:nil];
+    
+    
+    __block NSString *tableName;
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            NSString * query = [selectQuery query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            if([resultSet next])
+            {
+                NSDictionary * dict = [resultSet resultDictionary];
+                
+                
+                if ([dict count]>0) {
+                    tableName = [dict valueForKey:[[dict allKeys] objectAtIndex:0]];
+                }
+                else
+                {
+                    // SXLogDebug(@"%@ count zero ", objectName);
+                }
+            }
+            [resultSet close];
+        }];
+    }
+    
+    SXLogInfo(@"isTransactiontableExist : %@ - %d", objectName, tableName);
+    if (tableName.length) {
+        return YES;
+    }
+    return NO;
+}
+
+
 #pragma mark - transcation object insert function 
 - (BOOL)insertRecordInTransaction:(TransactionObjectModel *)transModel
                   andInsertRequest:(DBRequest *)insertRequest

@@ -54,7 +54,10 @@
  */
 - (NSArray *) getAllStaticTableCreateIndicesSchema {
     
-    NSArray *schemaArray = [NSArray arrayWithObjects:kTableSyncRecordIndexSchema,kTableMobileDeviceSettingsIndexSchema,kTableSFObjectKeyIndexSchema,kTableSearchObjectIndexSchema,kTableSearchFieldIndexSchema,kTableSearchExpressionIndexSchema,kTableSearchFilterCriteriaIndexSchema,kTableSyncErrorConflictIndex_1,kTableSyncErrorConflictIndex_2,kTableEventIndexSchema,kTableAttachmentIndexSchema,kTableTaskIndexSchema,kTablePricebookIndexSchema,kTableAccountIndexSchema, nil];
+   // NSArray *schemaArray = [NSArray arrayWithObjects:kTableSyncRecordIndexSchema,kTableMobileDeviceSettingsIndexSchema,kTableSFObjectKeyIndexSchema,kTableSearchObjectIndexSchema,kTableSearchFieldIndexSchema,kTableSearchExpressionIndexSchema,kTableSearchFilterCriteriaIndexSchema,kTableSyncErrorConflictIndex_1,kTableSyncErrorConflictIndex_2,kTableEventIndexSchema,kTableAttachmentIndexSchema,kTableTaskIndexSchema,kTablePricebookIndexSchema,kTableAccountIndexSchema, nil];
+    
+    // Vipindas  Removed -Task, Event, Account, Pricebook, Attachment - Since these tables are not generated
+     NSArray *schemaArray = [NSArray arrayWithObjects:kTableSyncRecordIndexSchema,kTableMobileDeviceSettingsIndexSchema,kTableSFObjectKeyIndexSchema,kTableSearchObjectIndexSchema,kTableSearchFieldIndexSchema,kTableSearchExpressionIndexSchema,kTableSearchFilterCriteriaIndexSchema,kTableSyncErrorConflictIndex_1,kTableSyncErrorConflictIndex_2, nil];
     return schemaArray;
     
 }
@@ -265,7 +268,7 @@
     if ([array count] > 0) {
         [self databaseOperationForIndexArray:array];
     }
-    
+
 }
 #pragma mark - Add our own composite indices for table.
 - (void) addCompositeIndices:(NSArray *)indices ToTable:(NSString *)tableName {

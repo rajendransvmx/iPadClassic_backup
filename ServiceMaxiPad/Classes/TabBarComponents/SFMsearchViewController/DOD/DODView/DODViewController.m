@@ -84,6 +84,7 @@
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     self.progressView.progress    = 0.0f;
+    self.cancelButton.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     
     [self.cancelButton setTitle:[[TagManager sharedInstance]tagByName:kTag_Download] forState:UIControlStateNormal];
     [self.cancelButton setTitle:[[TagManager sharedInstance]tagByName:kTag_CancelDownload] forState:UIControlStateSelected];

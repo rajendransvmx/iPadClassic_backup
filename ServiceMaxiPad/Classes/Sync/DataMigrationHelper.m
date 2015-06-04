@@ -142,6 +142,11 @@
                     [fieldDict setObject:model.type forKey:model.fieldName];
                 }
             }
+            
+            if ([tableName isEqualToString:kServicemaxEventObject]) {
+                
+                [fieldDict setObject:@"text" forKey:kObjectSfId];
+            }
             [finalDict setObject:fieldDict forKey:tableName];
         }
     }

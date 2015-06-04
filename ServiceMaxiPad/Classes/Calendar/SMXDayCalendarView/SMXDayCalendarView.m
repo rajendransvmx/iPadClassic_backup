@@ -384,7 +384,12 @@
 
 -(void)setUpDetailView
 {
-    viewDetail = [[SMXEventDetailView alloc] initWithFrame:CGRectMake(dayContainerScroll.frame.origin.x + dayContainerScroll.frame.size.width , 0, self.frame.size.width - dayContainerScroll.frame.size.width, self.frame.size.height) event:lTempEvent];
+    UIInterfaceOrientation lInterfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
+    if (lInterfaceOrientation == UIInterfaceOrientationPortrait || lInterfaceOrientation == UIInterfaceOrientationPortraitUpsideDown) {
+        viewDetail = [[SMXEventDetailView alloc] initWithFrame:CGRectMake(dayContainerScroll.frame.origin.x + dayContainerScroll.frame.size.width , 0, self.frame.size.width, self.frame.size.height) event:lTempEvent];
+    }else{
+        viewDetail = [[SMXEventDetailView alloc] initWithFrame:CGRectMake(dayContainerScroll.frame.origin.x + dayContainerScroll.frame.size.width , 0, self.frame.size.width - dayContainerScroll.frame.size.width, self.frame.size.height) event:lTempEvent];
+    }
     //    [viewDetail setAutoresizingMask:AR_WIDTH_HEIGHT | UIViewAutoresizingFlexibleLeftMargin];
     [viewDetail setProtocol:self];
     viewDetail.backgroundColor = [UIColor whiteColor];

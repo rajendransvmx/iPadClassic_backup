@@ -235,8 +235,9 @@
             NSDictionary * dict = [resultSet resultDictionary];
             //Method in model to set the values
             
-            if ([[dict valueForKey:kIPProductNameField] length]) {
-                [detailsArray addObject:[dict valueForKey:kIPProductNameField]];
+            NSString *key = [[dict allKeys] objectAtIndex:0];
+            if ([[dict valueForKey:key] length]) {
+                [detailsArray addObject:[dict valueForKey:key]];
             }
         }
         [resultSet close];

@@ -304,6 +304,8 @@ NSString *const kSVMXLocation  = ORG_NAME_SPACE@"__Location__c";
 NSString *const kSVMXTechnicianId  = ORG_NAME_SPACE@"__Technician__c";
 NSString *const kSVMXIsAlldayEvent  = ORG_NAME_SPACE@"__IsAllDayEvent__c";
 
+NSString *const kObjectSfId = @"objectSfId";
+
 
 
 //ISALLDAY General use
@@ -354,6 +356,10 @@ NSString *const kCRFieldNameField = @"fieldName";
 
 NSString *const kInstalledProductTableName = ORG_NAME_SPACE@"__Installed_Product__c";
 NSString *const kIPProductNameField   = ORG_NAME_SPACE@"__Product_Name__c";
+
+//Product Table
+NSString *const KProductTable=@"Product2";
+NSString *const KProductName= @"Name";
 
 /* Code snippet and Code snippet manifest table*/
 NSString *const kCodeSnippetData    = ORG_NAME_SPACE@"__Data__c";

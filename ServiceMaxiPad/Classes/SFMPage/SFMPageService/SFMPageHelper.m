@@ -345,6 +345,18 @@
     return nameField;
 }
 
+// 2-June BSP: For Defect 17514: Sorting on SFM Search
++(BOOL) checkIfTheTableExistsForObject:(NSString *)objectName
+{
+    id <TransactionObjectDAO> transactionObject = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+    
+    BOOL isRecordExist = [transactionObject isTransactionTableExist:objectName];
+    
+    return isRecordExist;
+    
+    
+}
+
 + (NSDictionary *)getValuesFromReferenceTable:(NSArray *)ids
 {
     NSMutableDictionary *idValue = nil;

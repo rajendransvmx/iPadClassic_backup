@@ -48,7 +48,9 @@
 #import "EventTransactionObjectModel.h"
 #import "StringUtil.h"
 #import "PlistManager.h"   //For getting Technician ID to be used in query to get events from SVMX_EVENT Table
-
+#import "UniversalDAO.h"
+#import "SMXProductListModel.h"
+#define stringLimitInProduct 80
 @interface CalenderHelper ()
 
 + (NSArray *)fetchDataForObject:(NSString *)objectName
@@ -210,7 +212,9 @@
     
     id <CalenderDAO> serviceRequest = [FactoryDAO serviceByServiceType:ServiceCalenderEventList];
     
-    
+    if (![SMXCalendarViewController sharedInstance].cCaseDetailsDict) {
+        [SMXCalendarViewController sharedInstance].cCaseDetailsDict = [[NSMutableDictionary alloc]init];
+    }
     for (EventTransactionObjectModel *lModel in lEventArray) {
         
         [lModel hasTimeZoneChanged];         //Checking if the split events are adhering to the current local timezone. Everything is done at the Model level.
@@ -238,20 +242,20 @@
 
         NSMutableDictionary *theDict = (NSMutableDictionary *) [lModel getFieldValueDictionary];
         
-        NSString *objectName =  [serviceRequest getObjectName:[theDict objectForKey:kSVMXWhatId]];
+        NSString *objectName =  [serviceRequest getObjectName:[theDict objectForKey:kObjectSfId]];
         
         if ([objectName isEqualToString:kWorkOrderTableName]) {
-            [whatEventStartDateValueMap setObject:[theDict objectForKey:kSVMXStartDateTime]forKey:[theDict objectForKey:kSVMXWhatId]];
+            [whatEventStartDateValueMap setObject:[theDict objectForKey:kSVMXStartDateTime]forKey:[theDict objectForKey:kObjectSfId]];
 //            lModel.isWorkOrder = YES;
             [theDict setObject:@"YES" forKey:@"isWorkOrder"];
         }
         else if ([objectName isEqualToString:kCaseObject]) {
-            [lCaseSFIDArray addObject:[theDict objectForKey:kSVMXWhatId]];
+            [lCaseSFIDArray addObject:[theDict objectForKey:kObjectSfId]];
 //            lModel.isCaseEvent = YES;
             [theDict setObject:@"YES" forKey:@"isCaseEvent"];
 
             CaseObjectModel *object = [CaseObjectModel new];
-            [[SMXCalendarViewController sharedInstance].cCaseDetailsDict setObject:object forKey:[theDict objectForKey:kSVMXWhatId]];
+            [[SMXCalendarViewController sharedInstance].cCaseDetailsDict setObject:object forKey:[theDict objectForKey:kObjectSfId]];
         }
         
     }
@@ -680,7 +684,7 @@
         lRangeDayInt = 1;
     }
     
-    NSArray *fieldsArray = [[NSArray alloc] initWithObjects:kSVMXActivityDate,kSVMXActivityDateTime,kSVMXDurationInMinutes,kSVMXEndDateTime, kSVMXStartDateTime, kSVMXWhatId, kSVMXEventName, kSVMXIsAlldayEvent, klocalId, kSVMXID, kSVMXEventDescription, kIsMultiDayEvent, kSplitDayEvents, kTimeZone, nil];
+    NSArray *fieldsArray = [[NSArray alloc] initWithObjects:kSVMXActivityDate,kSVMXActivityDateTime,kSVMXDurationInMinutes,kSVMXEndDateTime, kSVMXStartDateTime, kSVMXWhatId, kSVMXEventName, kSVMXIsAlldayEvent, klocalId, kSVMXID, kSVMXEventDescription, kIsMultiDayEvent, kSplitDayEvents, kTimeZone, kObjectSfId,nil];
     
     NSDate *lStartDate = [self dateWithOutTime:[[NSDate date] dateByAddingTimeInterval:-60*60*24*lRangeDayInt]];
     NSDate *lEndDate = [self dateWithOutTime:[[NSDate date] dateByAddingDays:lRangeDayInt+1]];
@@ -955,21 +959,115 @@
     }
     return nil;
 }
-
++(NSArray *)fetchValueFromRefrenceTable:(NSArray *)array{
+    NSMutableDictionary *dict=[self getValuesFromReferenceTable:array];
+    return [self getList:dict productId:array];
+}
 
 +(NSArray *)getInstalledListFromSite:(NSString *)siteID
 {
-
     id <CalenderDAO> calService = [FactoryDAO serviceByServiceType:ServiceCalenderEventList];
-    
     DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kWorkOrderSite operatorType:SQLOperatorEqual andFieldValue:siteID];
-    NSArray *fieldsArray = [[NSArray alloc] initWithObjects:kIPProductNameField, nil];
+    
+    /*getting product Id from Install Product Table */
+    NSArray *fieldsArray = [[NSArray alloc] initWithObjects:kProductField, nil];
     NSArray *lDataArray = [calService fetchDataForIPObject:kInstalledProductTableName fields:fieldsArray expression:nil criteria:[NSArray arrayWithObject:criteria]];
     
-    return lDataArray;
-    
+    if ([lDataArray count]>0 && lDataArray!=nil) {
+        NSArray *nameOfTheProducts=[self getProductFromProductTable:lDataArray];
+        
+        /*Copying value from product table, If product table is not there the copying from Install table*/
+        if (nameOfTheProducts) {
+            return nameOfTheProducts;
+        }
+        
+        /*copying value from refrence table*/
+        return [self fetchValueFromRefrenceTable:lDataArray];
+    }else{
+        return nil;
+    }
+   
 }
 
+/* Here we are getting value from product table*/
++(NSArray *)getProductFromProductTable:(NSArray *)ids{
+   DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorIn andFieldValues:ids];
+    NSArray *fieldsArray = [[NSArray alloc] initWithObjects:KProductName,kId,nil];
+    NSArray *workOrderArray = [self fetchDataFromWorkOrderObject:KProductTable fields:fieldsArray expression:nil criteria:[NSArray arrayWithObject:criteriaOne]];
+    if ([workOrderArray count]>0) {
+        NSMutableDictionary *dictI=[[NSMutableDictionary alloc] init];
+        for (TransactionObjectModel *model in workOrderArray) {
+            NSDictionary *dict=[model getFieldValueDictionary];
+            [dictI setObject:[dict objectForKey:@"Name"] forKey:[dict objectForKey:kId]];
+        }
+        return [self getList:dictI productId:ids];
+    }else{
+        return nil;
+    }
+}
+
++(NSArray *)getList:(NSMutableDictionary *)productIdToNameDictionary productId:(NSArray *)productIds{
+
+    // productModels
+    NSMutableDictionary *IdModel = [[NSMutableDictionary alloc] init];
+    
+    // Find the counts of Products
+    for (NSString *productId in productIds)
+    {
+        //SMXProductDisplayModel
+        SMXProductListModel *model = [IdModel objectForKey:productId];
+    
+        if (model)
+        {
+            model.count = model.count+1;
+        }
+        else
+        {
+            model = [[SMXProductListModel alloc] init];
+            model.count = 1;
+            model.productId = productId;
+            // Product Name
+            model.displayValue = [productIdToNameDictionary objectForKey:productId];
+            [IdModel setObject:model forKey:productId];
+        }
+    }
+    NSSortDescriptor *sd = [[NSSortDescriptor alloc] initWithKey:@"displayValue" ascending:YES];
+    return [[IdModel allValues] sortedArrayUsingDescriptors:@[sd]];
+}
+
+/* just truncate with the ellipsis */
++(NSString *)trimStringWithGivenLength:(NSString *)string{
+    if (string.length>stringLimitInProduct) {
+        string = [NSString stringWithFormat:@"%@... ",[string substringToIndex:stringLimitInProduct]];
+        return string;
+    }
+    return string;
+}
+
+- (NSMutableArray *)getDetailsDataForQuery:(DBRequestSelect *)selectQuery
+{
+    NSMutableArray * detailsArray = [[NSMutableArray alloc] initWithCapacity:0];
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            NSString * query = [selectQuery query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                NSDictionary * dict = [resultSet resultDictionary];
+                //Method in model to set the values
+                
+                if ([[dict valueForKey:kProductField] length]) {
+                    [detailsArray addObject:[dict valueForKey:kProductField]];
+                }
+            }
+            [resultSet close];
+        }];
+    }
+    return detailsArray;
+}
 +(NSString *)getServiceLocation:(NSString *)whatID
 {
 
@@ -1142,6 +1240,11 @@
         fieldName = kLocalId;
     }
     
+    else if (whatId.length > 20) {
+        whatId = event.localID;
+        objectName = event.eventTableName; // no SFID associated with this event. Either a local event or not not synced yet.
+        fieldName = kLocalId;
+    }
     else if (whatId.length >= 15) {
         objectName = [self getTheObjectName:whatId]; // It is a salesForceID.
     }
@@ -1250,6 +1353,115 @@
     
 }
 
++ (void)updateOriginalSfIdForSVMXEvent
+{
+    [self alterSVMXEventTable];
+    
+    NSArray *whatIds = [self getAllWhatIdsFormSVMXEvent];
+    
+    if ([whatIds count]) {
+        
+        NSDictionary *mappingDict = [self getObjectMappingForIds:whatIds];
+        
+        [self updateSVMXEventRecords:mappingDict];
+    }
+}
+
++ (void)alterSVMXEventTable
+{
+    id<UniversalDAO> universalDao = [FactoryDAO serviceByServiceType:ServiceTypeUniversal];
+    NSString *schema =[NSString stringWithFormat:@"ALTER TABLE %@ ADD COLUMN 'objectSfId' VARCHAR",kServicemaxEventObject];
+    [universalDao alterTable:schema];
+}
+
++ (NSArray *)getAllWhatIdsFormSVMXEvent
+{
+    NSMutableArray *ids = [NSMutableArray new];
+    
+    DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kSVMXWhatId operatorType:SQLOperatorIsNotNull andFieldValue:nil];
+    
+    DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:kObjectSfId operatorType:SQLOperatorIsNull andFieldValue:nil];
+    
+    id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+
+    NSArray * eventArray = [transObjectService fetchEventDataForObject:kSVMXTableName fields:@[kSVMXWhatId] expression:@"1 and 2" criteria:@[criteria, criteria1]];
+    
+    for (EventTransactionObjectModel *model in eventArray) {
+        
+        NSString *whatId = [model getWhatId];
+        
+        if (whatId && (![ids containsObject:whatId])) {
+            [ids addObject:whatId];
+        }
+        
+    }
+    return ids;
+}
+
+
++ (NSDictionary *)getObjectMappingForIds:(NSArray *)Ids
+{
+    NSMutableDictionary *mappingDict = [NSMutableDictionary new];
+    for (NSString *whatId in Ids) {
+        
+        NSString *objectName = [self getTheObjectName:whatId];
+        
+        NSString *sfId = nil;
+        
+        if ([whatId length] == 18) {
+            sfId = whatId;
+        }
+        else {
+            sfId = [self getSfIdForWhatId:whatId objectName:objectName];
+        }
+        if ([sfId length]) {
+            [mappingDict setObject:sfId forKey:whatId];
+        }
+    }
+    return mappingDict;
+}
+
++ (void)updateSVMXEventRecords:(NSDictionary *)mappingDict
+{
+    NSArray *allKeys = [mappingDict allKeys];
+    
+    @autoreleasepool {
+        for(NSString *whatId in allKeys) {
+            
+            NSString *sfid = [mappingDict objectForKey:whatId];
+            
+            [self updateEachRecordWitSfId:sfid withWhatId:whatId];
+        }
+    }
+}
+
++ (NSString *)getSfIdForWhatId:(NSString *)whatId objectName:(NSString *)objectName
+{
+    if (objectName && whatId) {
+        DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorStartsWith  andFieldValue:whatId];
+        
+        id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+        
+        TransactionObjectModel *model = [transObjectService getDataForObject:objectName fields:@[kId] expression:nil criteria:@[criteria]];
+        
+        return [model valueForField:kId];
+
+    }
+    return nil;
+    
+}
+
++ (void)updateEachRecordWitSfId:(NSString *)sfId withWhatId:(NSString *)whatId
+{
+    if (sfId && whatId) {
+        DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kSVMXWhatId operatorType:SQLOperatorEqual andFieldValue:whatId];
+        
+        id <CalenderDAO> CalEventService = [FactoryDAO serviceByServiceType:ServiceCalenderEventList];
+        
+        [CalEventService updateEachRecord:@{kObjectSfId: sfId} withFields:@[kObjectSfId] withCriteria:@[criteria] withTableName:kSVMXTableName];
+    }
+    
+}
 #pragma mark - end
 
 @end

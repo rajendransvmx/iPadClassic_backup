@@ -37,7 +37,7 @@ typedef NS_ENUM(NSUInteger, RequestType)
     RequestGetDelete,                     //Initial Data Sync
     RequestgetDeleteDownloadCriteria,
     RequestCleanUpSelect,
-    RequestCleanUp,
+    RequestCleanUp,	
     RequestPutDelete,
     RequestPutInsert,
     requestGetInsert,
@@ -235,7 +235,7 @@ extern NSString *const kLastInternalResponse;
 
 
 /* TX FETCH THREAD CONFIGURATION */
-static NSInteger kMaximumnumberOfIdsPerObject                = 2500;//400;
+static NSInteger kMaximumnumberOfIdsPerObject                = 400;//2500; Vipindas changes
 static NSInteger kOverallIdLimit                             = 500;
 static NSInteger kNumberConcurrentRequests                   = 3;
 

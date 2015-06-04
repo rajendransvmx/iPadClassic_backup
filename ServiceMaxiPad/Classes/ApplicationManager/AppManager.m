@@ -1048,6 +1048,13 @@
    return customBar.selectedIndex;
     
 }
+
++ (void)updateTabBarBadges {
+    SMAppDelegate *appDelegate = (SMAppDelegate *)[[UIApplication sharedApplication] delegate];
+    CustomTabBar *customBar = (CustomTabBar*)appDelegate.window.rootViewController;
+    [customBar updateBadge];
+}
+
 @end
 
 

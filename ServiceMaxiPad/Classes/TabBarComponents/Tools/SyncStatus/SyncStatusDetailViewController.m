@@ -84,8 +84,16 @@ const NSInteger alertViewTagForConfigSync   = 888889;
     
     [self updateDataSyncRelatedUI];
     [self updateConfigSyncRelatedUI];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleAppEnterForeground) name:UIApplicationWillEnterForegroundNotification object:nil];
+
 }
 
+
+- (void) handleAppEnterForeground {
+    [self updateDataSyncRelatedUI];
+    [self updateConfigSyncRelatedUI];
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

@@ -908,9 +908,15 @@
                         SXLogWarning(@"SFMPage - No sfid for detail");
                     }
                     else{
-                        BOOL  isRecordInsertionSucces = [modifiedRecordService saveRecordModel:syncRecord];
-                        if(isRecordInsertionSucces){
-                            
+                        
+                        if([syncRecord.operation isEqualToString:kModificationTypeUpdate]) {
+                             BOOL doesExist =   [modifiedRecordService doesRecordExistForId:localIdField.internalValue];
+                            if (!doesExist) {
+                                BOOL  isRecordInsertionSucces = [modifiedRecordService saveRecordModel:syncRecord];
+                            }
+                        }
+                        else{
+                            BOOL  isRecordInsertionSucces = [modifiedRecordService saveRecordModel:syncRecord];
                         }
                     }
                 }else{
@@ -1752,6 +1758,13 @@
         durationField = [[SFMRecordFieldData alloc] initWithFieldName:kSVMXDurationInMinutes value:nil andDisplayValue:nil];
         [recordDictionary setObject:durationField forKey:kSVMXDurationInMinutes];
     }
+
+    SFMRecordFieldData *whatId = [recordDictionary objectForKey:kSVMXWhatId];
+    if (whatId.internalValue) {
+        SFMRecordFieldData *objectSfId = [[SFMRecordFieldData alloc] initWithFieldName:kObjectSfId value:whatId.internalValue andDisplayValue:whatId.internalValue];
+        [recordDictionary setObject:objectSfId forKey:kObjectSfId];
+    }
+    
     //durationField.internalValue = @"0";
     
     SFMRecordFieldData *ownerId = [recordDictionary objectForKey:@"OwnerId"];

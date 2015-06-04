@@ -54,12 +54,20 @@
                                                    selector:@selector(makeActionAccordingToNetworkChangeNotification:)
                                                        name:kNetworkConnectionChanged
                                                      object:nil];
+    //16806 : Update the time text on changing the timezone and entering foreground
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(
+                                                                              handleAppEnterForeground) name:UIApplicationWillEnterForegroundNotification object:nil];
     
 }
 
 - (void)deregisterNetworkChangeNotification
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kNetworkConnectionChanged object:nil];
+     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
+}
+- (void) handleAppEnterForeground {
+    [self updateLastPurgeDataTimeAndStatusUI];
+    [self updateNextPurgeDataTimeUI];
 }
 
 - (void)makeActionAccordingToNetworkChangeNotification:(NSNotification *)notification

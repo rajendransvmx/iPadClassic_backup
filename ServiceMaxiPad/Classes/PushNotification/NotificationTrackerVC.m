@@ -8,6 +8,8 @@
 
 #import "NotificationTrackerVC.h"
 #import "NotificationDownloadCell.h"
+#import "TagConstant.h"
+#import "TagManager.h"
 
 
 @interface NotificationTrackerVC ()
@@ -23,6 +25,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    self.titleLabel.text = [[TagManager sharedInstance]tagByName:kTag_Downloads];
+    
     [self.notificationTableView registerNib:[UINib nibWithNibName:@"NotificationDownloadCell" bundle:nil] forCellReuseIdentifier:@"notificationDownloadCell"];
     self.notificationTableView.separatorColor = [UIColor clearColor];
 
@@ -43,14 +47,23 @@
         self.dataSourceArray = [[NSMutableArray alloc] init];
     }
     
-    if(![self.dataSourceArray containsObject:model]){
-        [self.dataSourceArray addObject:model];
+    if(![self.dataSourceArray containsObject:model])
+    {
+       
+            [self.dataSourceArray addObject:model];
+
     }
     
     [self.notificationTableView reloadData];
-    [self.notificationTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForItem:(self.dataSourceArray.count-1) inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+   // [self.notificationTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForItem:(self.dataSourceArray.count-1) inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES]; //HS 2 Jun Config Sync Crash breakpoint
+
+    
+    //HS 2 june Defect Fix: 017863
+    [self.notificationTableView scrollRectToVisible:CGRectMake(0, self.notificationTableView.contentSize.height - self.notificationTableView.bounds.size.height, self.notificationTableView.bounds.size.width, self.notificationTableView.bounds.size.height) animated:YES];
+    
     
 }
+
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     
@@ -119,16 +132,16 @@
     
     NSString *resultString = nil;
     if (model.requestStatus == NotificationRequestStateDownloadStarted) {
-       resultString = @"started";
+       resultString = [[TagManager sharedInstance]tagByName:kTag_Started];
     }
     if (model.requestStatus == NotificationRequestStateDownloadInProgress) {
-        resultString = @"In Progress";
+        resultString = [[TagManager sharedInstance]tagByName:kTag_InProgress];
     }
     if (model.requestStatus == NotificationRequestStateDownloadCompleted) {
-        resultString = @"Completed";
+        resultString = [[TagManager sharedInstance]tagByName:kTag_Completed];
     }
     if (model.requestStatus == NotificationRequestStateDownloadFailed || model.requestStatus == NotificationRequestStateNetworkNotReachable) {
-        resultString = @"Failed";
+        resultString = [[TagManager sharedInstance]tagByName:kTagPushLogStatusFailed];
     }
     return resultString;
 }
@@ -161,11 +174,11 @@
     
     if(self.userActionPresentingMode == UserActionPresentedOnEditScreen)
     {
-        alertView  = [[UIAlertView alloc] initWithTitle:@"" message:@"Would you like to View/Cancel the selected Record" delegate:self cancelButtonTitle:nil otherButtonTitles:@"Save and View",@"View",@"Cancel", nil];
+        alertView  = [[UIAlertView alloc] initWithTitle:[[TagManager sharedInstance]tagByName:kTag_ServiceMax] message:[[TagManager sharedInstance]tagByName:kTag_WouldLikeViewCancel] delegate:self cancelButtonTitle:nil otherButtonTitles:[[TagManager sharedInstance]tagByName:kTag_SaveAndView],[[TagManager sharedInstance]tagByName:kTag_AbandonAndView],[[TagManager sharedInstance]tagByName:kTagCancelButton], nil];
     }
     else
     {
-        alertView  = [[UIAlertView alloc] initWithTitle:@"" message:@"Would you like to View/Cancel the selected Record" delegate:self cancelButtonTitle:nil otherButtonTitles:@"View",@"Cancel" , nil];
+        alertView  = [[UIAlertView alloc] initWithTitle:[[TagManager sharedInstance]tagByName:kTag_ServiceMax] message:[[TagManager sharedInstance]tagByName:kTag_WouldLikeViewCancel] delegate:self cancelButtonTitle:nil otherButtonTitles:[[TagManager sharedInstance]tagByName:kTag_View],[[TagManager sharedInstance]tagByName:kTagCancelButton] , nil];
     }
 
     [alertView performSelectorOnMainThread:@selector(show) withObject:self waitUntilDone:YES];

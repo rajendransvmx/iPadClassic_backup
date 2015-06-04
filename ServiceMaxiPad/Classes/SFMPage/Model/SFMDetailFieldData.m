@@ -37,7 +37,7 @@
 - (void)updateEntryCriteriaObjects
 {
     NSMutableArray * criteriaObjects = [[NSMutableArray alloc] initWithCapacity:0];
-    
+    /* Anoop : SRC to Target not showing child lines detail data if we use following criteria
     if (self.isSourceToTargetProcess) {
         
         if ([self.parentLocalId length] > 0) {
@@ -46,22 +46,22 @@
                                                             andFieldValue:self.parentLocalId];
             [criteriaObjects addObject:criteria];
         }
-        
     }
     else {
-        if ([self.parentColumnName length] > 0 && [self.parentSfID length] > 0) {
+    */
+        if (![StringUtil isStringEmpty:self.parentColumnName] && ![StringUtil isStringEmpty:self.parentSfID]) {
             //NSString *fieldName = [NSString stringWithFormat:@"'%@'.%@", self.objectName, self.parentColumnName];
             NSString *fieldName = [NSString stringWithFormat:@"%@", self.parentColumnName];
             DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:fieldName operatorType:SQLOperatorEqual andFieldValue:self.parentSfID];
             [criteriaObjects addObject:criteria];
         }
-        if ([self.parentColumnName length] > 0 && [self.parentLocalId length] > 0) {
+        if (![StringUtil isStringEmpty:self.parentColumnName] && ![StringUtil isStringEmpty:self.parentLocalId]) {
             //NSString *fieldName = [NSString stringWithFormat:@"'%@'.%@", self.objectName, self.parentColumnName];
             NSString *fieldName = [NSString stringWithFormat:@"%@", self.parentColumnName];
             DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:fieldName operatorType:SQLOperatorEqual andFieldValue:self.parentLocalId];
             [criteriaObjects addObject:criteria];
         }
-    }
+   // }
     
     
     if ([self.criteriaObjects count] > 0 && [StringUtil isStringEmpty:self.expression]) {
