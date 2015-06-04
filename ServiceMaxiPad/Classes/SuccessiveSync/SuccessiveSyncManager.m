@@ -130,11 +130,16 @@ static SuccessiveSyncManager *successiveSyncManager = nil;
     
     @synchronized([self class]){
         
-        NSArray *allLocalIds = [self.succSyncRecords allKeys];
         ModifiedRecordModel *syncRecord = nil;
         
-        for (int i=0; i<[allLocalIds count]; i++) {
-            
+        NSArray *allKeys = [self.succSyncRecords allKeys];
+        
+        for (NSString *localId in allKeys) {
+            ModifiedRecordModel *tempModel = [self.succSyncRecords objectForKey:localId];
+            if ([tempModel.sfId isEqualToString:sfId]) {
+                syncRecord = tempModel;
+                break;
+            }
         }
         return syncRecord;
     }

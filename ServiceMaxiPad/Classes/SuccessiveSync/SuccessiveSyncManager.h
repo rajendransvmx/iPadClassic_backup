@@ -50,4 +50,8 @@
 - (void) registerForSuccessiveSync:(ModifiedRecordModel *)syncRecord withData:(id)record;
 
 - (void) removeSuccessiveSyncRecordForLocalIds:(NSArray *)localIds;
+
+- (BOOL)updateRecord:(NSDictionary *)record inObjectName:(NSString *)objectName andLocalId:(NSString *)localId;
+- (ModifiedRecordModel *) successiveSyncRecordForSfId:(NSString *)sfId;
+
 @end

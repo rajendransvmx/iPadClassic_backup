@@ -24,8 +24,6 @@ extern NSString *lastConfigSyncTimeKey;
 extern NSString *lastDataSyncTimeKey;
 extern NSString *syncMetaDataFile;
 
-extern NSString *kSuccessiveSyncStatusNotification;
-
 @interface SyncManager : NSObject <FlowDelegate, SchedulerDelegate, OPDocCustomDelegate>
 
 @property(nonatomic, assign) BOOL isConfigSyncDueAlertShown;

@@ -245,25 +245,12 @@
 
 -(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
-    // 17505 - merged from Spr 15 (15.30.011)
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadWizardListOnSuccessiveSync) name:kSuccessiveSyncStatusNotification object:nil];
-    
     [self loadWizardData];
 }
 
 
 -(void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
-    
-    // 17505 - merged from Spr 15 (15.30.011)
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:kSuccessiveSyncStatusNotification object:nil];
-    
-}
-
-// 17505 - merged from Spr 15 (15.30.011)
--(void)reloadWizardListOnSuccessiveSync {
-    [self loadWizardData];
 }
 
 
