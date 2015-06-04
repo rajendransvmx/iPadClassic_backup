@@ -17,7 +17,8 @@
 
 - (NSMutableArray *)getAllFieldNames
 {
-    if (self.isSourceToTargetProcess) {
+    if ([self.sourceToTargetType isEqualToString:kProcessTypeSRCToTargetAll] ||
+        [self.sourceToTargetType isEqualToString:kProcessTypeSRCToTargetChild]) {
         return [NSMutableArray arrayWithArray:self.fieldsArray];
     }
     
@@ -26,7 +27,7 @@
     for(SFMPageField *pageField in self.fieldsArray) {
         if (pageField != nil) {
             NSString *apiName = pageField.fieldName;
-            if ([apiName length] > 0) {
+            if (![StringUtil isStringEmpty:apiName]) {
                 [fieldNames addObject:apiName];
             }
         }
@@ -37,20 +38,25 @@
 - (void)updateEntryCriteriaObjects
 {
     NSMutableArray * criteriaObjects = [[NSMutableArray alloc] initWithCapacity:0];
-    /* Anoop : SRC to Target not showing child lines detail data if we use following criteria
-    if (self.isSourceToTargetProcess) {
+    // Anoop : SRC to Target not showing child lines detail data if we use following criteria
+    if ([self.sourceToTargetType isEqualToString:kProcessTypeSRCToTargetAll]) {
         
-        if ([self.parentLocalId length] > 0) {
+        if (![StringUtil isStringEmpty:self.parentLocalId]) {
             DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:kLocalId
                                                              operatorType:SQLOperatorEqual
                                                             andFieldValue:self.parentLocalId];
             [criteriaObjects addObject:criteria];
         }
+        if (![StringUtil isStringEmpty:self.parentSfID]) {
+            DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:kId
+                                                             operatorType:SQLOperatorEqual
+                                                            andFieldValue:self.parentSfID];
+            [criteriaObjects addObject:criteria];
+        }
     }
     else {
-    */
         if (![StringUtil isStringEmpty:self.parentColumnName] && ![StringUtil isStringEmpty:self.parentSfID]) {
-            //NSString *fieldName = [NSString stringWithFormat:@"'%@'.%@", self.objectName, self.parentColumnName];
+            // NSString *fieldName = [NSString stringWithFormat:@"'%@'.%@", self.objectName, self.parentColumnName];
             NSString *fieldName = [NSString stringWithFormat:@"%@", self.parentColumnName];
             DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:fieldName operatorType:SQLOperatorEqual andFieldValue:self.parentSfID];
             [criteriaObjects addObject:criteria];
@@ -61,7 +67,7 @@
             DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:fieldName operatorType:SQLOperatorEqual andFieldValue:self.parentLocalId];
             [criteriaObjects addObject:criteria];
         }
-   // }
+    }
     
     
     if ([self.criteriaObjects count] > 0 && [StringUtil isStringEmpty:self.expression]) {
