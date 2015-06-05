@@ -47,10 +47,16 @@
                                                             andFieldValue:self.parentLocalId];
             [criteriaObjects addObject:criteria];
         }
-        if (![StringUtil isStringEmpty:self.parentSfID]) {
-            DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:kId
-                                                             operatorType:SQLOperatorEqual
-                                                            andFieldValue:self.parentSfID];
+        if (![StringUtil isStringEmpty:self.parentColumnName] && ![StringUtil isStringEmpty:self.parentSfID]) {
+            // NSString *fieldName = [NSString stringWithFormat:@"'%@'.%@", self.objectName, self.parentColumnName];
+            NSString *fieldName = [NSString stringWithFormat:@"%@", self.parentColumnName];
+            DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:fieldName operatorType:SQLOperatorEqual andFieldValue:self.parentSfID];
+            [criteriaObjects addObject:criteria];
+        }
+        if (![StringUtil isStringEmpty:self.parentColumnName] && ![StringUtil isStringEmpty:self.parentLocalId]) {
+            //NSString *fieldName = [NSString stringWithFormat:@"'%@'.%@", self.objectName, self.parentColumnName];
+            NSString *fieldName = [NSString stringWithFormat:@"%@", self.parentColumnName];
+            DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:fieldName operatorType:SQLOperatorEqual andFieldValue:self.parentLocalId];
             [criteriaObjects addObject:criteria];
         }
     }
@@ -68,7 +74,6 @@
             [criteriaObjects addObject:criteria];
         }
     }
-    
     
     if ([self.criteriaObjects count] > 0 && [StringUtil isStringEmpty:self.expression]) {
         [self addDefaultAdvanceExpression];
@@ -116,6 +121,14 @@
                 newExpression = @"(1 OR 2)";;
             }
         }
+        else if ([criteriaObjects count] == 3) {
+            if ([self.criteriaObjects count] > 0) {
+                newExpression = [[NSString alloc] initWithFormat:@"(%@) AND (%d OR %d OR %d)",self.expression,(int)([self.criteriaObjects count]+1), (int)([self.criteriaObjects count]+2), (int)([self.criteriaObjects count]+3)];
+            }
+            else {
+                newExpression = @"(1 OR 2 OR 3)";;
+            }
+        }
         else if ([criteriaObjects count] == 1) {
             if ([self.criteriaObjects count] > 0) {
                  newExpression = [[NSString alloc] initWithFormat:@"(%@) AND %d",self.expression,(int)([self.criteriaObjects count]+1)];
@@ -125,6 +138,8 @@
     else {
         if ([criteriaObjects count] == 2)
             newExpression = @"(1 OR 2)";
+        if ([criteriaObjects count] == 3)
+            newExpression = @"(1 OR 2 OR 3)";
     }
     self.expression = newExpression;
 
