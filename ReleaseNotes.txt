@@ -1,24 +1,20 @@
 
 --------------------------------------------------------------------------------------------
-ServiceMax iPad  Spring15SPBuild
+ServiceMax iPad  Sum 15 Build
 
 *******************************************
-Version = 15.40.013
+Version = 15.49.003
 ===========================================
+
+Merged Spr 15 SP branch SVN Version@5048 to HEAD(15.40.013) to Sum 15
+
 -------------
 Fixed Defects
 -------------
-017923
-017730
-017923
 
 
--------------
+------------
 Known Issues
--------------
-1. Pending : Line item edit enhancement
-2. Sum15 Sync enhancement - Background Sync - is not in scope
-
 
 ---------------------
 Fixed - Known Issues 
