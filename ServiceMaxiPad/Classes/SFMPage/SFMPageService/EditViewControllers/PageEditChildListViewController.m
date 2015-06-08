@@ -952,7 +952,9 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
     if (processComponent.parentColumnName.length > 1) {
         NSString *parentColumnId  = nil;
         SFMRecordFieldData *headerId = [self.sfmPage.headerRecord objectForKey:kId];
-        if (headerId.internalValue != nil) {
+        
+        // fix: 017923
+        if (![StringUtil isStringEmpty:headerId.internalValue]) {
             parentColumnId = headerId.internalValue;
         }
         else{
@@ -965,7 +967,7 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
         newField.displayValue = parentColumnId;
         
         SFMRecordFieldData *aNameField = [self.sfmPage.headerRecord objectForKey:self.sfmPage.nameFieldValue];
-        if (aNameField.displayValue != nil) {
+        if (![StringUtil isStringEmpty:aNameField.displayValue]) {
             newField.displayValue = aNameField.displayValue;
         }
         else {

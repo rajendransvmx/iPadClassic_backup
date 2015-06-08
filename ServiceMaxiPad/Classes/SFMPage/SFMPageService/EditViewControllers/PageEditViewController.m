@@ -81,7 +81,6 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     self = [super initWithNibName:@"PageEditViewController"  bundle:nil];
     if (self) {
         // Custom initialization
-        
         SFMPage *aPage = [[SFMPage  alloc] initWithObjectName:objectName andRecordId:recordId];
         self.sfmPage = aPage;
         self.processId = processId;

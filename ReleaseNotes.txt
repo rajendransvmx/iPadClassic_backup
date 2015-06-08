@@ -1,15 +1,16 @@
 
 --------------------------------------------------------------------------------------------
-ServiceMax iPad  Spring 15 SP Release
+ServiceMax iPad  Spring15SPBuild
 
 *******************************************
-Version = 15.40.011
+Version = 15.40.013
 ===========================================
 -------------
 Fixed Defects
 -------------
-17730 - Lines not Mapping on iPad - parts request lines to parts order lines
-17505 - SFMs are not working in the intended order.
+017923
+017730
+017923
 
 
 -------------

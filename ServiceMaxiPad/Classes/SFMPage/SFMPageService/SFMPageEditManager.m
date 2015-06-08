@@ -1305,9 +1305,8 @@
             detailParam.parentColumnName = soureceComponent.parentColumnName;
             detailParam.parentLocalId = sfpage.sourceRecordId;
             detailParam.parentSfID = headerSfId;
-            detailParam.isSourceToTargetProcess = YES;
-            
-            
+            detailParam.sourceToTargetType = sfpage.process.processInfo.processType;
+
             if (![StringUtil isStringEmpty:component.expressionId]) {
                 SFExpressionParser *expressionParser = [[SFExpressionParser alloc] initWithExpressionId:component.expressionId objectName:detailParam.objectName];
                 
