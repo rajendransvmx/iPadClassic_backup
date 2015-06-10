@@ -193,6 +193,16 @@ NSString *const kReferenceCellIdentifier = @"ReferenceCellIdentifier";
         cell.fieldValue.backgroundColor = [UIColor clearColor];
        // NSLog(@"frame of fieldValue in controller is %@",NSStringFromCGRect(cell.fieldValue.frame) );
         //HS 12 Jan
+        
+        //Reload the subviews (fieldValue,moreButton,mail,and chat buttons) for contact reference field only if fieldValue text exceeds the specified width and mail and chart buttons visible.
+        CGSize textSize =  [StringUtil getSizeOfText:recordData.displayValue withFont:cell.fieldValue.font];
+        if (textSize.width >= ((SFMPageReferenceFieldCollectionViewCell*)cell).mailButton.frame.origin.x - 20 && (((SFMPageReferenceFieldCollectionViewCell*) cell).contactFieldSubViewType == ContactSubviewTypeBoth)) {
+            
+            //reduce the width of field value label to accommadte the button.
+            ((SFMPageReferenceFieldCollectionViewCell*) cell).isShowMoreButton = YES;
+            [ ( (SFMPageReferenceFieldCollectionViewCell*) cell) resetLayout];
+            [cell.moreButton addTarget:self action:@selector(moreButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+        }
     }
     else{
         CGSize textSize =  [StringUtil getSizeOfText:recordData.displayValue withFont:cell.fieldValue.font];
@@ -310,6 +320,7 @@ NSString *const kReferenceCellIdentifier = @"ReferenceCellIdentifier";
     if ([value length] > 0){
         
         [cell configureCellForContext:ContactSubviewTypeBoth];
+        cell.contactFieldSubViewType = ContactSubviewTypeBoth;
     }
 }
 

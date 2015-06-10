@@ -27,6 +27,38 @@
     return self;
 }
 
+- (void)layoutSubviews { // Override this method to reload the subviews frames.
+    
+    [super layoutSubviews];
+    
+    //Reload subview frames only if text exceeds the specified width and it both mail and chat buttons visible.
+    if (self.isShowMoreButton && self.contactFieldSubViewType == ContactSubviewTypeBoth) {
+        [self reloadSubViewsFrames];
+    }
+}
+
+/*
+ Description: This method will reload the frames only if contact fieldValue text exceeds the
+ specified limit and if both buttones i.e mail and chat buttons visible on the page layout.
+ */
+- (void)reloadSubViewsFrames {
+    
+    CGFloat width = 0.0;
+    NSInteger spaceBetweenFieldValueAndMoreButton = 10;
+    NSInteger spaceBetweenMoreButtonAndMailButton = 15;
+    width = self.contentView.frame.size.width - (self.contentView.frame.size.width - self.mailButton.frame.origin.x) - spaceBetweenFieldValueAndMoreButton - self.moreButton.frame.size.width - spaceBetweenMoreButtonAndMailButton; // 205
+    CGRect newFrameForFieldValueLabel = CGRectMake(self.fieldValue.frame.origin.x, self.fieldValue.frame.origin.y, width, self.fieldValue.frame.size.height);
+    self.fieldValue.frame = newFrameForFieldValueLabel;
+    
+    UIImage *fadeoutImage = [UIImage imageNamed:@"fadeout"];
+    CGRect fadeOutImageViewFrame = CGRectMake(self.fieldValue.frame.size.width - fadeoutImage.size.width,0 ,fadeoutImage.size.width,fadeoutImage.size.height);
+    self.fadeOutImageView.frame = fadeOutImageViewFrame;
+    self.fadeOutImageView.backgroundColor = [UIColor clearColor];
+    
+    CGRect newFrameForMoreButton = CGRectMake(newFrameForFieldValueLabel.origin.x + newFrameForFieldValueLabel.size.width + 4, self.moreButton.frame.origin.y - 11, self.moreButton.frame.size.width, self.moreButton.frame.size.height + 20);
+    self.moreButton.frame = newFrameForMoreButton;
+    
+}
 
 - (void)isRefernceRecordExist:(BOOL)isRefernceRecordExist
 {
