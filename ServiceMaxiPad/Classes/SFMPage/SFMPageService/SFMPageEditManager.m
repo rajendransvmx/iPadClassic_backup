@@ -806,7 +806,7 @@
 - (BOOL)saveDetailRecords:(SFMPage *)sfmPage {
     
     BOOL isDetailChanged = NO;
-    BOOL canUpdate;
+    BOOL canUpdate = NO;
     SFMPageEditHelper *editHelper = [[SFMPageEditHelper alloc] init];
     id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
     
@@ -940,8 +940,15 @@
         //delete record
         if([deletedRecordIds count] > 0 )
         {
+            
+            BOOL canUpdateForDeletedRecords = [self deleteRecordIds:deletedRecordIds forProcessComponent:processComponent];
+            // ASC, even if one child line (with SFid) gets deleted, then sync should trigger.
+            if (canUpdate == NO) {
+                canUpdate = canUpdateForDeletedRecords;
+            }
+            
             [self deleteRecordIds:deletedRecordIds forProcessComponent:processComponent];
-            isDetailChanged = YES;
+            isDetailChanged = canUpdate;
         }
     }
     
@@ -952,8 +959,11 @@
     return isDetailChanged;
 }
 
-- (void)deleteRecordIds:(NSArray *)deletedRecordIds
+- (BOOL)deleteRecordIds:(NSArray *)deletedRecordIds
     forProcessComponent:(SFProcessComponentModel *)processComponent {
+    
+    
+    BOOL canUpdate = NO;
     
     NSMutableArray * localIdsList = [[NSMutableArray alloc] init];
     NSMutableArray * sfIdsList = [[NSMutableArray alloc] init];
@@ -1011,7 +1021,9 @@
             syncRecord.timeStamp = [DateUtil getDatabaseStringForDate:[NSDate date]];
             
             BOOL  isRecordInsertionSucces = [modifiedRecordService saveRecordModel:syncRecord];
-            if(isRecordInsertionSucces){}
+            if(isRecordInsertionSucces){
+                canUpdate = YES; // ASC, even if one child line (with SFid) gets deleted, then sync should trigger.
+            }
         }
     }
     
@@ -1024,6 +1036,8 @@
         // delete from conflicts table when record is deleted ..
         [editHelper deleteRecordWithIds:localIdsList fromObjectName:kSyncErrorConflictTableName andCriteriaFieldName:kLocalId];
     }
+    
+    return canUpdate;
 }
 
 
@@ -2385,6 +2399,12 @@
     }
     
     NSString *modifedFieldAsJsonString = [fieldMergeHelper getJsonAfterComparingDictOne:self.dataDictionaryBeforeModification withDataAfterModification:self.dataDictionaryAfterModification andOldModificationDict:oldDataAfterModificationDictionary];
+    
+    NSString *currentModifiedFields = [modifiedRecordService fetchExistingModifiedFieldsJsonFromModifiedRecordForRecordId:recordId andSfId:sfid];
+
+    if (![StringUtil isStringEmpty:currentModifiedFields] && [modifedFieldAsJsonString isEqualToString:currentModifiedFields]) {
+        modifedFieldAsJsonString = nil;
+    }
     
     return modifedFieldAsJsonString;
 }
