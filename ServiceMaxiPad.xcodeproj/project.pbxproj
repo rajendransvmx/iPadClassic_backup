@@ -635,7 +635,6 @@
 		18A2173D19E57C5A00F22EA6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18A2171C19E57C5A00F22EA6 /* Foundation.framework */; };
 		18A2173E19E57C5A00F22EA6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18A2172019E57C5A00F22EA6 /* UIKit.framework */; };
 		18A2174619E57C5A00F22EA6 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 18A2174419E57C5A00F22EA6 /* InfoPlist.strings */; };
-		18A2174819E57C5A00F22EA6 /* ServiceMaxiPadTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 18A2174719E57C5A00F22EA6 /* ServiceMaxiPadTests.m */; };
 		18A2175219E57CA400F22EA6 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18A2175119E57CA400F22EA6 /* CFNetwork.framework */; };
 		18A2175419E57CAC00F22EA6 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18A2175319E57CAC00F22EA6 /* MobileCoreServices.framework */; };
 		18A2175619E57CBB00F22EA6 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18A2175519E57CBB00F22EA6 /* AssetsLibrary.framework */; };
@@ -938,6 +937,12 @@
 		A61A1B901B202B1200B1C9C8 /* AutoLockManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A61A1B8F1B202B1200B1C9C8 /* AutoLockManager.m */; };
 		C31E66D11AE65DBE00A8AE7E /* GetPriceDataServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = C31E66D01AE65DBE00A8AE7E /* GetPriceDataServiceLayer.m */; };
 		C31E66D41AE65EC900A8AE7E /* GetPriceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C31E66D31AE65EC900A8AE7E /* GetPriceManager.m */; };
+		C3216E151B27E18B006A0515 /* UTStringUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = C3216E141B27E18B006A0515 /* UTStringUtil.m */; };
+		C3216E161B27E4F7006A0515 /* StringUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 18A217A919E585D700F22EA6 /* StringUtil.m */; };
+		C3216E171B27E561006A0515 /* DatabaseConstant.m in Sources */ = {isa = PBXBuildFile; fileRef = 183A9A5D19E6945B00919345 /* DatabaseConstant.m */; };
+		C3216E191B27EDB9006A0515 /* UTUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = C3216E181B27EDB9006A0515 /* UTUtility.m */; };
+		C3216E1A1B27EE52006A0515 /* Utility.m in Sources */ = {isa = PBXBuildFile; fileRef = 183AA37F19E6DC4800919345 /* Utility.m */; };
+		C3216E1B1B27EE5D006A0515 /* SVMXSystemConstant.m in Sources */ = {isa = PBXBuildFile; fileRef = 183AA34719E6D96900919345 /* SVMXSystemConstant.m */; };
 		C34A17FA19EBE50A009E9EA8 /* map_reload@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C34A17F919EBE50A009E9EA8 /* map_reload@2x.png */; };
 		C362BE651A129FCB0067E09E /* ErrorDownloadedCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C362BE631A129FCB0067E09E /* ErrorDownloadedCollectionViewCell.m */; };
 		C362BE661A129FCB0067E09E /* ErrorDownloadedCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = C362BE641A129FCB0067E09E /* ErrorDownloadedCollectionViewCell.xib */; };
@@ -2227,7 +2232,6 @@
 		18A2173B19E57C5A00F22EA6 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		18A2174319E57C5A00F22EA6 /* ServiceMaxiPadTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ServiceMaxiPadTests-Info.plist"; sourceTree = "<group>"; };
 		18A2174519E57C5A00F22EA6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		18A2174719E57C5A00F22EA6 /* ServiceMaxiPadTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ServiceMaxiPadTests.m; sourceTree = "<group>"; };
 		18A2175119E57CA400F22EA6 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		18A2175319E57CAC00F22EA6 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		18A2175519E57CBB00F22EA6 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
@@ -2733,6 +2737,8 @@
 		C31E66D01AE65DBE00A8AE7E /* GetPriceDataServiceLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GetPriceDataServiceLayer.m; sourceTree = "<group>"; };
 		C31E66D21AE65EC900A8AE7E /* GetPriceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetPriceManager.h; sourceTree = "<group>"; };
 		C31E66D31AE65EC900A8AE7E /* GetPriceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GetPriceManager.m; sourceTree = "<group>"; };
+		C3216E141B27E18B006A0515 /* UTStringUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UTStringUtil.m; sourceTree = "<group>"; };
+		C3216E181B27EDB9006A0515 /* UTUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UTUtility.m; sourceTree = "<group>"; };
 		C34A17F919EBE50A009E9EA8 /* map_reload@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "map_reload@2x.png"; sourceTree = "<group>"; };
 		C362BE621A129FCB0067E09E /* ErrorDownloadedCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorDownloadedCollectionViewCell.h; sourceTree = "<group>"; };
 		C362BE631A129FCB0067E09E /* ErrorDownloadedCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ErrorDownloadedCollectionViewCell.m; sourceTree = "<group>"; };
@@ -5293,7 +5299,8 @@
 		18A2174119E57C5A00F22EA6 /* ServiceMaxiPadTests */ = {
 			isa = PBXGroup;
 			children = (
-				18A2174719E57C5A00F22EA6 /* ServiceMaxiPadTests.m */,
+				C3216E141B27E18B006A0515 /* UTStringUtil.m */,
+				C3216E181B27EDB9006A0515 /* UTUtility.m */,
 				18A2174219E57C5A00F22EA6 /* Supporting Files */,
 			);
 			path = ServiceMaxiPadTests;
@@ -7309,7 +7316,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				18A2174819E57C5A00F22EA6 /* ServiceMaxiPadTests.m in Sources */,
+				C3216E161B27E4F7006A0515 /* StringUtil.m in Sources */,
+				C3216E151B27E18B006A0515 /* UTStringUtil.m in Sources */,
+				C3216E1B1B27EE5D006A0515 /* SVMXSystemConstant.m in Sources */,
+				C3216E1A1B27EE52006A0515 /* Utility.m in Sources */,
+				C3216E191B27EDB9006A0515 /* UTUtility.m in Sources */,
+				C3216E171B27E561006A0515 /* DatabaseConstant.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7508,6 +7520,11 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "ServiceMaxiPadTests/ServiceMaxiPadTests-Info.plist";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					XCTest,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = xctest;
@@ -7527,6 +7544,11 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ServiceMaxiPad/ServiceMaxiPad-Prefix.pch";
 				INFOPLIST_FILE = "ServiceMaxiPadTests/ServiceMaxiPadTests-Info.plist";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					XCTest,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = xctest;
