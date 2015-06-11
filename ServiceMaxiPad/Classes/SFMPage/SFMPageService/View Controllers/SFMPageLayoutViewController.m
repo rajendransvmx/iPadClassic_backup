@@ -150,6 +150,9 @@ NSString *const kReferenceCellIdentifier = @"ReferenceCellIdentifier";
         
         [((SFMPageReferenceFieldCollectionViewCell *)cell) isRefernceRecordExist:recordData.isReferenceRecordExist];
         [((SFMPageReferenceFieldCollectionViewCell *)cell) setIndex:indexPath.item];
+        //Initially make contactFieldSubviewType to None.
+        [((SFMPageReferenceFieldCollectionViewCell *)cell) setContactFieldSubViewType:ContactSubviewTypeNone];
+        
 //        NSLog(@"===============================Page %@= Reference = %d", pageField.fieldName, recordData.isReferenceRecordExist);
         
         
@@ -169,6 +172,7 @@ NSString *const kReferenceCellIdentifier = @"ReferenceCellIdentifier";
         }
     }
     
+    cell.isShowMoreButton = NO; // initially set isShowMoreButton = NO.
     cell.fieldApiName = pageField.fieldName;
     
     cell.fieldName.font = [UIFont fontWithName:kHelveticaNeueRegular size:kFontSize14];
@@ -329,7 +333,7 @@ NSString *const kReferenceCellIdentifier = @"ReferenceCellIdentifier";
     SFMPageField *pageField = [self.pageFields objectAtIndex:index];
     SFMRecordFieldData *recordData = [self getValueForField:pageField.fieldName];
     
-    if ([recordData.internalValue length] > 0) {
+    if ([recordData.internalValue length] > 0 ) {
         
         SFMPageViewController *pageView = [[SFMPageViewController alloc] init];
         SFMPageViewManager *pageManager = [[SFMPageViewManager alloc] initWithObjectName:pageField.relatedObjectName recordId:recordData.internalValue];
