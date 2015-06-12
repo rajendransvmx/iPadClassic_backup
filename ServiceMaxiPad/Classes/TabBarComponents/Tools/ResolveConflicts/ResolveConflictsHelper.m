@@ -28,6 +28,7 @@
 #import "SFChildRelationshipDAO.h"
 #import "SFChildRelationshipModel.h"
 #import "AttachmentHelper.h"
+#import "ModifiedRecordsService.h"
 
 NSString *const kResolveConflictRetry                = @"retry";
 NSString *const kResolveConflictRemove               = @"remove";
@@ -301,6 +302,15 @@ NSString *const kSyncTypeAttachmentSync              = @"SyncTypeAttachmentSync"
             
             if([syncConflictModel.overrideFlag isEqualToString:kResolveConflictHold]) {
                 
+                // If there are earlier changes in modified record fetch them add in conflict table
+                ModifiedRecordsService *modifiedRecordService = [[ModifiedRecordsService alloc]init];
+                
+                NSString *existingModifiedFields = [modifiedRecordService fetchExistingModifiedFieldsJsonFromModifiedRecordForRecordId:syncConflictModel.localId andSfId:syncConflictModel.sfId];
+                if (![StringUtil isStringEmpty:existingModifiedFields]) {
+                    syncConflictModel.fieldsModified = existingModifiedFields;
+                    [ResolveConflictsHelper updateFieldsModifiedJsonInConflictsTable:syncConflictModel];
+                }
+                
                 [ResolveConflictsHelper deleteDecideLaterConflictsFromModifiedRecordsTable:syncConflictModel];
                 // conflictsResolved = TRUE;
             }
@@ -537,6 +547,17 @@ NSString *const kSyncTypeAttachmentSync              = @"SyncTypeAttachmentSync"
                                            fromObjectName:@"RecentRecord"];
     }
     
+}
+
+
++(void)updateFieldsModifiedJsonInConflictsTable:(SyncErrorConflictModel *)syncConflictModel {
+    NSArray * fieldsArray = [[NSArray alloc] initWithObjects:@"fieldsModified", nil];
+    DBCriteria * criteria1 = [[DBCriteria alloc] initWithFieldName:@"sfId" operatorType:SQLOperatorEqual andFieldValue:syncConflictModel.sfId];
+    DBCriteria * criteria2 = [[DBCriteria alloc] initWithFieldName:@"operationType" operatorType:SQLOperatorEqual andFieldValue:@"UPDATE"];
+    DBCriteria * criteria3 = [[DBCriteria alloc] initWithFieldName:@"errorType" operatorType:SQLOperatorEqual andFieldValue:@"CONFLICT"];
+    
+    id <SyncErrorConflictDAO> syncErrorService = [FactoryDAO serviceByServiceType:ServiceTypeSyncErrorConflict];
+    [syncErrorService updateEachRecord:syncConflictModel withFields:fieldsArray withCriteria:[NSArray arrayWithObjects:criteria1, criteria2, criteria3, nil]];
 }
 
 @end
