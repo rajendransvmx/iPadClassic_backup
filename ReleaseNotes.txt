@@ -11,7 +11,10 @@ Merged Spr 15 SP branch SVN Version@5048 to HEAD(15.40.013) to Sum 15
 -------------
 Fixed Defects
 -------------
-
+018088 - Advanced sync conflict: Unit Test fixes.
+018043 - SFM Search Results - Cloud icon and ' > ' icon is missing in search results.
+013917 - Tapping on Account link takes to blank view with account name appearing on screen header for fraction of a second.
+017837 - Contact name overlaps on contact Icon.
 
 ------------
 Known Issues
