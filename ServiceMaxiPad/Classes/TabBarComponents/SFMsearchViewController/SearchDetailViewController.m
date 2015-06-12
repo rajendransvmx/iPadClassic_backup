@@ -524,20 +524,27 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    static NSString *CellIdentifier = @"CellIdentifier";
+
     
-    SFMSearchCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CellIdentifier"];
+    
+    SFMSearchCell *cell = (SFMSearchCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
     if (cell == nil) {
-        cell = [[SFMSearchCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"CellIdentifier"];
+        cell = [[SFMSearchCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
         
         UIView *seperatorView = [[UIView alloc] initWithFrame:CGRectMake(10, (SRCH_ROW_HEIGHT - 1), self.searchDetailTableView.frame.size.width - 20, 1)];
         seperatorView.backgroundColor = [UIColor colorWithHexString:kSeperatorLineColor];
         seperatorView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         [cell.contentView addSubview:seperatorView];
+        
     }
+    cell.mTransactionModel = [self getTransactionModelForIndexPath:indexPath];
     
     BOOL isOnlineRecord = [SFMOnlineSearchManager isOnlineRecord:[self getTransactionModelForIndexPath:indexPath]];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    
+    
     UIImage *normalImage;
     if (!isOnlineRecord) {
         normalImage = [UIImage imageNamed:@"sfm_right_arrow"];
@@ -546,8 +553,18 @@
         normalImage = [UIImage imageNamed:@"cloud-download"];
         cell.textLabel.textColor = [UIColor colorWithHexString:kSeperatorLineColorForSearchSection];
     }
-    UIImageView* arrowView = [[UIImageView alloc] initWithImage:normalImage];
-    cell.accessoryView = arrowView;
+    
+    //HS 12 June defect fix:018043
+    CGSize imgSize = normalImage.size;
+    CGRect frame = cell.accessoryImgView.frame;
+    frame.size = imgSize;
+    cell.accessoryImgView.frame = frame;
+    cell.accessoryImgView.backgroundColor = [UIColor clearColor];
+    cell.accessoryImgView.contentMode = UIViewContentModeCenter;
+    cell.accessoryImgView.image = normalImage;
+    //HS 12 June ends here
+
+    
     
     
     NSDictionary *displayData = [self getDisplayDetailsFor:indexPath];

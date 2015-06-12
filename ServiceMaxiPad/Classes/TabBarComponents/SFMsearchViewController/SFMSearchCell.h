@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TransactionObjectModel.h"
 
 @interface SFMSearchCell : UITableViewCell
 
@@ -15,5 +16,7 @@
 @property(nonatomic,strong)UILabel *fieldValueOne;
 @property(nonatomic,strong)UILabel *fieldLabelTwo;
 @property(nonatomic,strong)UILabel *fieldValueTwo;
+@property(nonatomic,strong)UIImageView *accessoryImgView;
+
 
 @end

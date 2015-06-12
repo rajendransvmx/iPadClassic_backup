@@ -11,6 +11,7 @@
 #import "StyleManager.h"
 #import "SFMSearchCell.h"
 #import "SFObjectFieldDAO.h"
+#import "SFMOnlineSearchManager.h"
 
 @implementation SFMSearchCell
 
@@ -37,6 +38,8 @@
 
 - (void)configureCell
 {
+  
+    
     //CGFloat width = self.frame.size.width;
     self.titleLabel = [[UILabel alloc]initWithFrame:CGRectZero];
 
@@ -44,7 +47,12 @@
    // width = self.fieldLabelOne.frame.size.width;
     self.fieldValueOne = [[UILabel alloc]initWithFrame:CGRectZero];
     self.fieldLabelTwo = [[UILabel alloc]initWithFrame:CGRectZero];
+    self.fieldLabelTwo.backgroundColor = [UIColor clearColor];
     self.fieldValueTwo = [[UILabel alloc]initWithFrame:CGRectZero];
+    self.fieldValueTwo.backgroundColor = [UIColor clearColor];
+   self.accessoryImgView= [[UIImageView alloc]init];
+
+
     
     self.titleLabel.textColor =  [UIColor colorWithHexString:kEditableTextFieldColor];//[UIColor blackColor];
     self.titleLabel.font = [UIFont fontWithName:kHelveticaNeueRegular size:kFontSize18];
@@ -60,12 +68,17 @@
     
     self.fieldValueTwo.textColor = [UIColor colorWithHexString:kEditableTextFieldColor];
     self.fieldValueTwo.font = [UIFont fontWithName:kHelveticaNeueRegular size:kFontSize16];
+    
+    
+    
+    
 
     [self addSubview:self.titleLabel];
     [self addSubview:self.fieldLabelOne];
     [self addSubview:self.fieldLabelTwo];
     [self addSubview:self.fieldValueOne];
     [self addSubview:self.fieldValueTwo];
+    [self addSubview:self.accessoryImgView];
     
    // self.backgroundColor = [UIColor blueColor];
 
@@ -82,6 +95,15 @@
     self.fieldValueOne.frame = CGRectMake(20, 50,width-20, 20);
     self.fieldLabelTwo.frame = CGRectMake(width+10, 30,width-20, 20);
     self.fieldValueTwo.frame = CGRectMake(width+10, 50,width-20, 20);
+    CGRect theFrame = self.fieldLabelTwo.frame;
+    theFrame.origin.x = theFrame.origin.x + theFrame.size.width +5;
+    theFrame.origin.y = 30;
+    theFrame.size.width = 30;
+    theFrame.size.height = 31;
+    
+    
+    self.accessoryImgView.frame = theFrame;
+   
 }
 
 @end
