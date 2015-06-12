@@ -527,29 +527,6 @@ static NSString *kSfmWizardCustomActionParams=@"SFM_WIZARD_CUSTOM_ACTIONS_PARAMS
         [daoService updateWizardWithModelArray:sfmWizardAray];
     }
 }
-- (void)updateSfWizardModelWithClassName:(NSArray*)array
-{
-    NSMutableArray *sfmWizardAray = [[NSMutableArray alloc]init];
-    NSDictionary *mappingDict = [SFWizardModel getMappingDictionaryForWizardLayoutClassName];
-    NSDictionary *mappingDictUrl = [SFWizardModel getMappingDictionaryForWizardLayoutUrl];
-    
-    for (NSDictionary *dict in array) {
-        if ([[dict objectForKey:kWizardCompCustomActionType] isEqualToString:@"URL"]) {
-            SFWizardModel *model = [[SFWizardModel alloc] init];
-            [ParserUtility parseJSON:dict toModelObject:model withMappingDict:mappingDictUrl];
-            [sfmWizardAray addObject:model];
-        }else{
-            SFWizardModel *model = [[SFWizardModel alloc] init];
-            [ParserUtility parseJSON:dict toModelObject:model withMappingDict:mappingDict];
-            [sfmWizardAray addObject:model];
-        }
-    }
-    id daoService = [FactoryDAO serviceByServiceType:ServiceTypeSFWizard];
-    
-    if ([daoService conformsToProtocol:@protocol(SFWizardDAO)]) {
-        [daoService updateWizardWithModelArray:sfmWizardAray];
-    }
-}
 
 - (void)createAndInsertSfmWizardModel:(NSArray*)array
 {
