@@ -30,6 +30,7 @@
 #import "SFWizardService.h"
 #import "WizardComponentModel.h"
 #import "SFMWizardComponentDAO.h"
+#import "SFCustomActionURLDAO.h"
 #import "SFObjectMappingDAO.h"
 #import "SFProcessComponentModel.h"
 #import "SFObjectMappingComponentDAO.h"
@@ -58,6 +59,7 @@
 #import "SourceUpdateService.h"
 #import "SFNamedSearchFilterDAO.h"
 #import "LinkedSfmProcessDAO.h"
+#import "CustomActionURLModel.h"
 
 @interface OneCallMetaDataParser ()
 
@@ -116,6 +118,8 @@ static NSString *kSearchObject =@"SEARCH_OBJECT";
 static NSString *kLinkedProcess = @"LINKED_SFM_PROCESS";
 
 static NSString *kSfmEvent = @"SFM_EVENT";
+static NSString *kSfmWizardCustomAction=@"SFM_WIZARD_CUSTOM_ACTIONS";
+static NSString *kSfmWizardCustomActionParams=@"SFM_WIZARD_CUSTOM_ACTIONS_PARAMS";
 
 @implementation OneCallMetaDataParser
 
@@ -267,6 +271,12 @@ static NSString *kSfmEvent = @"SFM_EVENT";
                 {
                     [self updateSfWizardModel:valuesArray];
                     //NSLog(@"%@",valuesArray);
+                }
+                else if ([locEventName isEqualToString:kSfmWizardCustomAction]) {
+                    [self updateSfWizardComponentModelWithClassName:valuesArray];
+                }
+                else if ([locEventName isEqualToString:kSfmWizardCustomActionParams]){
+                    [self updateSfWizardComponentModelWithClassNameActipnParam:valuesArray];
                 }
                 else if ([locEventName isEqualToString:kSfmEvent]) {
                     [self UpdateSFWizardCompomnet:valuesArray];
@@ -517,6 +527,29 @@ static NSString *kSfmEvent = @"SFM_EVENT";
         [daoService updateWizardWithModelArray:sfmWizardAray];
     }
 }
+- (void)updateSfWizardModelWithClassName:(NSArray*)array
+{
+    NSMutableArray *sfmWizardAray = [[NSMutableArray alloc]init];
+    NSDictionary *mappingDict = [SFWizardModel getMappingDictionaryForWizardLayoutClassName];
+    NSDictionary *mappingDictUrl = [SFWizardModel getMappingDictionaryForWizardLayoutUrl];
+    
+    for (NSDictionary *dict in array) {
+        if ([[dict objectForKey:kWizardCompCustomActionType] isEqualToString:@"URL"]) {
+            SFWizardModel *model = [[SFWizardModel alloc] init];
+            [ParserUtility parseJSON:dict toModelObject:model withMappingDict:mappingDictUrl];
+            [sfmWizardAray addObject:model];
+        }else{
+            SFWizardModel *model = [[SFWizardModel alloc] init];
+            [ParserUtility parseJSON:dict toModelObject:model withMappingDict:mappingDict];
+            [sfmWizardAray addObject:model];
+        }
+    }
+    id daoService = [FactoryDAO serviceByServiceType:ServiceTypeSFWizard];
+    
+    if ([daoService conformsToProtocol:@protocol(SFWizardDAO)]) {
+        [daoService updateWizardWithModelArray:sfmWizardAray];
+    }
+}
 
 - (void)createAndInsertSfmWizardModel:(NSArray*)array
 {
@@ -554,7 +587,43 @@ static NSString *kSfmEvent = @"SFM_EVENT";
     }
 }
 
-
+- (void)updateSfWizardComponentModelWithClassName:(NSArray*)array
+{
+    NSMutableArray *sfmWizardStepAray = [NSMutableArray array];
+    NSDictionary *mappingDict = [WizardComponentModel getMappingDictionaryForWizardLayoutClassName];
+    NSDictionary *mappingDictUrl = [WizardComponentModel getMappingDictionaryForWizardLayoutUrl];
+    for (NSDictionary *dict in array) {
+        if ([[dict objectForKey:kWizardCompCustomActionType] isEqualToString:@"URL"]) {
+            WizardComponentModel *model = [[WizardComponentModel alloc] init];
+            [ParserUtility parseJSON:dict toModelObject:model withMappingDict:mappingDictUrl];
+            [sfmWizardStepAray addObject:model];
+        }else{
+            WizardComponentModel *model = [[WizardComponentModel alloc] init];
+            [ParserUtility parseJSON:dict toModelObject:model withMappingDict:mappingDict];
+            [sfmWizardStepAray addObject:model];
+        }
+    }
+    id daoService = [FactoryDAO serviceByServiceType:ServiceTypeSFWizardComponent];
+    
+    if ([daoService conformsToProtocol:@protocol(SFMWizardComponentDAO)]) {
+        [daoService updateWizardComponentWithModelArray_withCustomActionFields:sfmWizardStepAray];
+    }
+}
+- (void)updateSfWizardComponentModelWithClassNameActipnParam:(NSArray*)array
+{
+    NSMutableArray *customActionAray = [NSMutableArray array];
+    NSDictionary *mappingDict = [CustomActionURLModel getMappingDictionary];
+    for (NSDictionary *dict in array) {
+        CustomActionURLModel *model = [[CustomActionURLModel alloc] init];
+        [ParserUtility parseJSON:dict toModelObject:model withMappingDict:mappingDict];
+        [customActionAray addObject:model];
+    }
+    id daoService = [FactoryDAO serviceByServiceType:ServiceTypeCustomUrlAction];
+    
+    if ([daoService conformsToProtocol:@protocol(SFCustomActionURLDAO)]) {
+        [daoService saveRecordModels:customActionAray];
+    }  
+}
 - (void)UpdateSFWizardCompomnet:(NSArray*)array
 {
     NSMutableArray *sfmEventArray = [NSMutableArray array];

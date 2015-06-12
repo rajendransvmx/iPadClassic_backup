@@ -38,6 +38,10 @@
 @synthesize sequence;
 @synthesize wizardComponentId;
 @synthesize actionName;
+@synthesize customActionType;
+@synthesize customUrl;
+@synthesize ProcessId_c;
+
 
 - (id)init
 {
@@ -62,6 +66,9 @@
     wizardStepId = nil;
     wizardComponentId = nil;
     actionName = nil;
+    customActionType=nil;
+    customUrl = nil;
+    ProcessId_c = nil;
 }
 
 + (NSDictionary *)getMappingDictionary
@@ -70,5 +77,16 @@
     
     return mapDictionary;
 }
-
++ (NSDictionary *) getMappingDictionaryForWizardLayoutClassName {
+    
+    NSDictionary *mapDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:kWizardCompDescription,@"actionDescription",kWizardCompCustomActionType,@"customActionType",kWizardCompName,@"actionName",kWizardCompId,@"processId",kWizardCompClassName,@"className",kWizardCompMethodName,@"methodName",nil];
+    
+    return mapDictionary;
+}
++ (NSDictionary *) getMappingDictionaryForWizardLayoutUrl {
+    
+    NSDictionary *mapDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:kWizardCompDescription,@"actionDescription",kWizardCompCustomActionType,@"customActionType",kWizardCompName,@"actionName",kWizardCompId,@"processId",kWizardCompCustomActionUrl,@"customUrl",kWizardCompCustomProcessId_c,@"ProcessId_c",nil];
+    
+    return mapDictionary;
+}
 @end

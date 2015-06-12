@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		18071BC71A14B62500DC723A /* upArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 18071BC61A14B62500DC723A /* upArrow@2x.png */; };
+		1814AD1A1B2AA775001167DE /* CustomActionURLModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1814AD191B2AA775001167DE /* CustomActionURLModel.m */; };
+		1814AD1E1B2AC0CB001167DE /* SFCustomActionURLService.m in Sources */ = {isa = PBXBuildFile; fileRef = 1814AD1D1B2AC0CB001167DE /* SFCustomActionURLService.m */; };
+		1814AD211B2B04D2001167DE /* SFMCustomActionHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1814AD201B2B04D2001167DE /* SFMCustomActionHelper.m */; };
 		18161C7C1B1DE0E900119A95 /* SMXProductListModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 18161C7B1B1DE0E900119A95 /* SMXProductListModel.m */; };
 		18186E0A19EBFDC4009F3421 /* JobLogModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 18186E0919EBFDC4009F3421 /* JobLogModel.m */; };
 		18186E0D19EBFE20009F3421 /* JobLogService.m in Sources */ = {isa = PBXBuildFile; fileRef = 18186E0C19EBFE20009F3421 /* JobLogService.m */; };
@@ -1026,6 +1029,13 @@
 
 /* Begin PBXFileReference section */
 		18071BC61A14B62500DC723A /* upArrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "upArrow@2x.png"; sourceTree = "<group>"; };
+		1814AD181B2AA775001167DE /* CustomActionURLModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomActionURLModel.h; sourceTree = "<group>"; };
+		1814AD191B2AA775001167DE /* CustomActionURLModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomActionURLModel.m; sourceTree = "<group>"; };
+		1814AD1B1B2ABDDB001167DE /* SFCustomActionURLDAO.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SFCustomActionURLDAO.h; sourceTree = "<group>"; };
+		1814AD1C1B2AC0CB001167DE /* SFCustomActionURLService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFCustomActionURLService.h; sourceTree = "<group>"; };
+		1814AD1D1B2AC0CB001167DE /* SFCustomActionURLService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFCustomActionURLService.m; sourceTree = "<group>"; };
+		1814AD1F1B2B04D2001167DE /* SFMCustomActionHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFMCustomActionHelper.h; sourceTree = "<group>"; };
+		1814AD201B2B04D2001167DE /* SFMCustomActionHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFMCustomActionHelper.m; sourceTree = "<group>"; };
 		18161C7A1B1DE0E900119A95 /* SMXProductListModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMXProductListModel.h; sourceTree = "<group>"; };
 		18161C7B1B1DE0E900119A95 /* SMXProductListModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMXProductListModel.m; sourceTree = "<group>"; };
 		18186E0819EBFDC4009F3421 /* JobLogModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JobLogModel.h; sourceTree = "<group>"; };
@@ -3464,6 +3474,8 @@
 				184CE34319F52BEE0060A4B5 /* ValueMappingModel.m */,
 				183A9E1519E69DB000919345 /* WizardComponentModel.h */,
 				183A9E1619E69DB000919345 /* WizardComponentModel.m */,
+				1814AD181B2AA775001167DE /* CustomActionURLModel.h */,
+				1814AD191B2AA775001167DE /* CustomActionURLModel.m */,
 				183A9E1719E69DB000919345 /* WorkOrderSummaryModel.h */,
 				183A9E1819E69DB000919345 /* WorkOrderSummaryModel.m */,
 				6BEC807A1A5E81860099B4E6 /* PageEventModel.h */,
@@ -3732,6 +3744,8 @@
 				183A9F4A19E6B18400919345 /* SFMSearchFilterCriteriaService.h */,
 				183A9F4B19E6B18400919345 /* SFMSearchFilterCriteriaService.m */,
 				183A9F4C19E6B18400919345 /* SFMWizardComponentService.h */,
+				1814AD1C1B2AC0CB001167DE /* SFCustomActionURLService.h */,
+				1814AD1D1B2AC0CB001167DE /* SFCustomActionURLService.m */,
 				183A9F4D19E6B18400919345 /* SFMWizardComponentService.m */,
 				183A9F4E19E6B18400919345 /* SFNamedSearchComponentService.h */,
 				183A9F4F19E6B18400919345 /* SFNamedSearchComponentService.m */,
@@ -3819,6 +3833,7 @@
 				183A9F8719E6B18400919345 /* SFMSearchFieldDAO.h */,
 				183A9F8819E6B18400919345 /* SFMSearchFilterCriteriaDAO.h */,
 				183A9F8919E6B18400919345 /* SFMWizardComponentDAO.h */,
+				1814AD1B1B2ABDDB001167DE /* SFCustomActionURLDAO.h */,
 				183A9F8A19E6B18400919345 /* SFNamedSearchComponentDAO.h */,
 				183A9F8B19E6B18400919345 /* SFNamedSearchDAO.h */,
 				9E9C5F441A04D6490058FD76 /* SFNamedSearchFilterDAO.h */,
@@ -4249,6 +4264,8 @@
 				183AA1E819E6D36C00919345 /* WizardViewController.h */,
 				183AA1E919E6D36C00919345 /* WizardViewController.m */,
 				183AA1EA19E6D36C00919345 /* WizardViewController.xib */,
+				1814AD1F1B2B04D2001167DE /* SFMCustomActionHelper.h */,
+				1814AD201B2B04D2001167DE /* SFMCustomActionHelper.m */,
 			);
 			path = Wizard;
 			sourceTree = "<group>";
@@ -6844,6 +6861,7 @@
 				183A9A0219E68BC700919345 /* SMCheckBoxBindedAlertView.m in Sources */,
 				4273051E1A10BD2C005F41E1 /* BusinessRuleResult.m in Sources */,
 				183A9EF619E6A15600919345 /* NSDate+Additions.m in Sources */,
+				1814AD1E1B2AC0CB001167DE /* SFCustomActionURLService.m in Sources */,
 				C3C22DCE1AB2F0840072396E /* AttachmentLocalService.m in Sources */,
 				9EF90F841A24B45500FFFA75 /* SFMPageHistoryViewController.m in Sources */,
 				183A9F1819E6A15600919345 /* ZKSaveResult.m in Sources */,
@@ -6898,6 +6916,7 @@
 				183A9A1319E68D9400919345 /* ParserFactory.m in Sources */,
 				D752643419EB9112006AAC4C /* PageEditChildLayoutViewController.m in Sources */,
 				183A9FDB19E6B18500919345 /* SFObjectMappingService.m in Sources */,
+				1814AD1A1B2AA775001167DE /* CustomActionURLModel.m in Sources */,
 				183A9FD719E6B18500919345 /* SFNamedSearchComponentService.m in Sources */,
 				183A9E5519E69DB000919345 /* SFWizardModel.m in Sources */,
 				183A9E9019E6A11800919345 /* ResponseConstants.m in Sources */,
@@ -7000,6 +7019,7 @@
 				18A2179319E5850300F22EA6 /* OAuthLoginViewController.m in Sources */,
 				183A9E2019E69DB000919345 /* DocTemplateModel.m in Sources */,
 				D752645219EB931A006AAC4C /* SFMPageEditHelper.m in Sources */,
+				1814AD211B2B04D2001167DE /* SFMCustomActionHelper.m in Sources */,
 				57BA2CEB1A11059E0081389B /* ProductManualServiveLayer.m in Sources */,
 				184A8EF019E7A535006DA6BE /* GTMStringEncoding.m in Sources */,
 				183A9A7D19E6949800919345 /* DBRequestConstant.m in Sources */,
@@ -7446,8 +7466,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: ServiceMax Inc (4B24F56ULW)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: ServiceMax Inc (4B24F56ULW)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ServiceMaxiPad/ServiceMaxiPad-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -7467,7 +7487,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DSQLITE_HAS_CODEC";
 				PRODUCT_NAME = ServiceMax;
-				PROVISIONING_PROFILE = "6f0f2b65-ebcb-4be4-a763-8c0ae81574dd";
+				PROVISIONING_PROFILE = "f16a468a-3cc5-4902-9ed6-58687bb9d6a4";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -7477,8 +7497,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: ServiceMax Inc (4B24F56ULW)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: ServiceMax Inc (4B24F56ULW)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ServiceMaxiPad/ServiceMaxiPad-Prefix.pch";
@@ -7498,7 +7518,7 @@
 				);
 				OTHER_CFLAGS = "-DSQLITE_HAS_CODEC";
 				PRODUCT_NAME = ServiceMax;
-				PROVISIONING_PROFILE = "6f0f2b65-ebcb-4be4-a763-8c0ae81574dd";
+				PROVISIONING_PROFILE = "f16a468a-3cc5-4902-9ed6-58687bb9d6a4";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

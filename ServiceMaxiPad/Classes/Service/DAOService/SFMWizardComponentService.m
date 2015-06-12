@@ -109,5 +109,16 @@
     }
 }
 
+-(void)updateWizardComponentWithModelArray_withCustomActionFields:(NSArray*)modelArray
+{
+    DBCriteria * criteria1 = [[DBCriteria alloc] initWithFieldNameToBeBinded:@"processId"];
+    
+    if([modelArray count] >0)
+    {
+        [self updateRecords:modelArray withFields:@[@"className",@"methodName",@"customActionType",@"actionName",@"actionDescription",@"customUrl",@"ProcessId_c"] withCriteria:@[criteria1]];
+       // [self updateRecords:modelArray withFields:@[@"className",@"methodName",@"customActionType",@"customUrl"] withCriteria:@[criteria1]];
+    }
+}
+
 
 @end

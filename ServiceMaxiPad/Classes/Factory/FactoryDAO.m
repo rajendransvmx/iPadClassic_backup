@@ -64,6 +64,8 @@
 #import "ProductImageDataService.h"
 #import "UserImageService.h"
 #import "AttachmentLocalService.h"
+#import "CustomActionURLModel.h"
+#import "SFCustomActionURLService.h"
 
 @implementation FactoryDAO
 
@@ -237,6 +239,9 @@
             break;
         case ServiceTypeTroubleshooting:
             serviceObject = [[TroubleshootingService alloc] init];
+            break;
+        case ServiceTypeCustomUrlAction:
+            serviceObject = [[SFCustomActionURLService alloc] init];
             break;
         case ServiceTypeDataPurge:
             serviceObject = [DataPurgeService new];

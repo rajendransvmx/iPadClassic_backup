@@ -13,5 +13,6 @@
 
 - (void)getWizardComponentsForWizards:(NSMutableArray *)wizardArray recordId:(NSString *)recordId;
 -(void)updateWizardComponentWithModelArray:(NSArray*)modelArray;
+-(void)updateWizardComponentWithModelArray_withCustomActionFields:(NSArray*)modelArray;
 
 @end

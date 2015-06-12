@@ -82,6 +82,7 @@ typedef enum ServiceType : NSUInteger
     ServiceTypeDataPurge,                   /** DataPurge Table */
     ServiceTypeChatterPostDetail,
     ServiceTypeProductImageData,
+    ServiceTypeCustomUrlAction,
 }
 ServiceType;
 

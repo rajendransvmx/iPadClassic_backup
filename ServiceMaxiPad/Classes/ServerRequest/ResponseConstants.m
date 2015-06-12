@@ -116,6 +116,20 @@ NSString *const kWizardCompName        = ORG_NAME_SPACE@"__Name__c";
 NSString *const kWizardCompProcess     = ORG_NAME_SPACE@"__Process__c";
 NSString *const kWizardCompSequence    = ORG_NAME_SPACE@"__Sequence__c";
 NSString *const kWizardCompStepName    = ORG_NAME_SPACE@"__Name__c";
+NSString *const kWizardCompClassName   = ORG_NAME_SPACE@"__Service_Class_Name__c";
+NSString *const kWizardCompMethodName  = ORG_NAME_SPACE@"__Service_Method_Name__c";
+NSString *const kWizardCompCustomActionType = ORG_NAME_SPACE@"__Custom_Action_Type__c";
+NSString *const kWizardCompCustomActionUrl =ORG_NAME_SPACE@"__Target_URL__c";
+NSString *const kWizardCompCustomProcessId_c=ORG_NAME_SPACE@"__ProcessID__c";
+
+/* custom Action Url */
+NSString *const kCustomActionProcessId       = @"Id";
+NSString *const kCustomActionDispatchProcess = ORG_NAME_SPACE@"__Dispatch_Process__c";
+NSString *const kCustomActionParameterName   = ORG_NAME_SPACE@"__Parameter_Name__c";
+NSString *const kCustomActionParameterType   = ORG_NAME_SPACE@"__Parameter_Type__c";
+NSString *const kCustomActionParameterValue  = ORG_NAME_SPACE@"__Parameter_Value__c";
+NSString *const kCustomActionName            = @"Name";
+
 
 /* SFExpression */
 /* SFExpression Object*/

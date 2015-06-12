@@ -27,7 +27,7 @@
 #import "StyleGuideConstants.h"
 #import "StyleManager.h"
 #import "TagManager.h"
-
+#import "SFMCustomActionHelper.h"
 @interface WizardViewController ()
 
 @property(assign)CGFloat cellHeight;
@@ -145,6 +145,9 @@
             textLabel.text = wizardComponent.actionName;
             
             if (wizardComponent.isEntryCriteriaMatching){
+                if ([wizardComponent.actionType isEqualToString:@"OTHERS"]) {
+                    textLabel.textColor=[UIColor greenColor];
+                }
                 textLabel.enabled = YES;
                 cell.userInteractionEnabled = YES;
                 [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
@@ -267,6 +270,16 @@
                     //Reschedule event
                     NSLog(@"REscheul Event here ");
                     [self.delegate rescheduleEvent];
+                }else if([wizardComponent.actionType isEqualToString:@"OTHERS"])//Here we are checking for custome URL
+                {
+                    /*UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Custome Action Taped"
+                                                                    message:@"More info..."
+                                                                   delegate:nil
+                                                          cancelButtonTitle:nil
+                                                          otherButtonTitles:@"OK",nil];
+                    [alert show];*/
+                    SFMCustomActionHelper *a=[[SFMCustomActionHelper alloc] init];
+                    [a loadURL:@"https://www.google.co.in" withParams:nil ActionType:@"URL"];
                 }
                 else
                 {

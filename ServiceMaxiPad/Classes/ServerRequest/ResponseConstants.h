@@ -110,6 +110,19 @@ extern NSString *const kWizardCompName;
 extern NSString *const kWizardCompProcess;
 extern NSString *const kWizardCompSequence;
 extern NSString *const kWizardCompStepName;
+extern NSString *const kWizardCompClassName;
+extern NSString *const kWizardCompMethodName;
+extern NSString *const kWizardCompCustomActionType;
+extern NSString *const kWizardCompCustomActionUrl;
+extern NSString *const kWizardCompCustomProcessId_c;
+
+/* custom Action Url */
+extern NSString *const kCustomActionProcessId;
+extern NSString *const kCustomActionDispatchProcess;
+extern NSString *const kCustomActionParameterName;
+extern NSString *const kCustomActionParameterType;
+extern NSString *const kCustomActionParameterValue;
+extern NSString *const kCustomActionName;
 
 /* SFExpression */
 /* SFExpression Object*/

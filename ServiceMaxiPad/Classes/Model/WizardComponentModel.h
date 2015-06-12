@@ -38,6 +38,9 @@
 @property(nonatomic, copy) NSString *methodName;
 @property(nonatomic, copy) NSString *wizardStepId;
 @property(nonatomic, copy) NSString *actionName;
+@property(nonatomic, copy) NSString *customActionType;
+@property(nonatomic, copy) NSString *customUrl;
+@property(nonatomic, copy) NSString *ProcessId_c;
 
 @property(nonatomic,assign) BOOL isEntryCriteriaMatching; 
 
@@ -45,5 +48,9 @@
 - (id)init;
 
 + (NSDictionary *)getMappingDictionary;
+
++ (NSDictionary *) getMappingDictionaryForWizardLayoutClassName;
+
++ (NSDictionary *) getMappingDictionaryForWizardLayoutUrl ;
 
 @end
