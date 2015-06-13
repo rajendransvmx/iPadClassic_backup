@@ -19,5 +19,6 @@
 //@property(nonatomic, copy) NSString *attributes;
 - (id)init;
 + (NSDictionary *)getMappingDictionary;
+
 //NSString *const kTableSFMCustomActionParams = @"CREATE TABLE IF NOT EXISTS customActionParams ('local_id' INTEGER PRIMARY KEY NOT NULL DEFAULT (0), 'ParamId' VARCHAR, 'name' VARCHAR, 'DispatchProcessId' VARCHAR , 'ParameterName' VARCHAR, 'ParameterType' VARCHAR 'attributes', VARCHAR)";
 @end

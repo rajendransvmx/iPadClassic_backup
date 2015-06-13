@@ -7,9 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "WizardComponentModel.h"
 
 @interface SFMCustomActionHelper : NSObject
 
--(void)loadURL:(NSString *)url withParams:(NSArray *)params ActionType:(NSString *)actionType;
+-(void)loadURL:(NSString *)url withParams:(NSArray *)params;
+-(void)callWebService:(WizardComponentModel *)model withparams:(NSArray *)params;
 -(id)init;
 @end

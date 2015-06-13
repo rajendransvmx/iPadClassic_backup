@@ -21,18 +21,18 @@
     return self;
 }
 
--(void)loadURL:(NSString *)url withParams:(NSArray *)params ActionType:(NSString *)actionType
+-(void)loadURL:(NSString *)url withParams:(NSArray *)params
 {
     if ([params count]>0) {
         url = [url stringByAppendingFormat:@"%@?",url];
     }
-    if ([actionType isEqualToString:@"URL"]) {
-        for (NSDictionary *dict in params) {
-            
-        }
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
-    }else{
+    for (NSDictionary *dict in params) {
         
     }
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
+}
+
+-(void)callWebService:(WizardComponentModel *)model withparams:(NSArray *)params{
+    
 }
 @end

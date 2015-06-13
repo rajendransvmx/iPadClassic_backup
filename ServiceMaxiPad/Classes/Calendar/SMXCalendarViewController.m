@@ -647,12 +647,12 @@
         
         SFMWizardComponentService *wizardComponentService = [[SFMWizardComponentService alloc]init];
         
-  NSMutableArray *allWizards = [wizardService getWizardsForObjcetName:objectModel.objectName andRecordId:recordId];
+        NSMutableArray *allWizards = [wizardService getWizardsForObjcetName:objectModel.objectName andRecordId:recordId];
         [wizardComponentService getWizardComponentsForWizards:allWizards recordId:recordId];
         
         //HS 1 Jan to fix issue : 013302
         //RefreshFromSalesforce wizard was not coming for event created on DOD record from calendar
-       // [self addUpdateDODBtninWizard:allWizards];
+        //[self addUpdateDODBtninWizard:allWizards];
         
         //HS 23 Jan added for fix issue :013040
         [self addRescheduleBtninWizard:allWizards];

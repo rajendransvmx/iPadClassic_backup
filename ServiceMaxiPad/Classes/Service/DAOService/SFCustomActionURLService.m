@@ -21,27 +21,48 @@
 {
     return @[@"isEntryCriteriaMatching"];
 }
-- (void)getCustomActionURL:(NSMutableArray *)CustomActionURLArray{
-    //NSMutableArray *wizardComponentsArray = [[NSMutableArray alloc]init];
+
+- (NSArray * )fetchWizardComponentParamsInfoByFields:(NSArray *)fieldNames
+                                   andCriteria:(NSArray *)criteria
+                                 andExpression:(NSString *)expression
+{
+    DBRequestSelect * requestSelect = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:fieldNames whereCriterias:criteria andAdvanceExpression:expression];
     
-    for (CustomActionURLModel *wizard in CustomActionURLArray) {
+    [requestSelect setDistinctRowsOnly];
+    
+    NSMutableArray * records = [[NSMutableArray alloc] initWithCapacity:0];
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
         
-        DBCriteria * criteriaOne = [[DBCriteria alloc] initWithFieldName:@"Id"
-                                                            operatorType:SQLOperatorEqual
-                                                           andFieldValue:wizard.Id];
-        NSArray * fieldNames = [[NSArray alloc] initWithObjects:@"Id",@"expressionId",@"DispatchProcessId",@"ParameterName",@"ParameterType",@"Name",nil];
-        
-        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            
+            NSString * query = [requestSelect query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                CustomActionURLModel * model = [[CustomActionURLModel alloc] init];
+                [resultSet kvcMagic:model];
+                [records addObject:model];
+            }
+            [resultSet close];
+        }];
     }
-    /// return wizardComponentsArray;
+    return records;
+}
+- (NSArray *)getCustomActionParams:(NSString *)wizardComponentId{
+    DBCriteria * criteriaOne = [[DBCriteria alloc] initWithFieldName:@"DispatchProcessId"
+                                                        operatorType:SQLOperatorEqual
+                                                       andFieldValue:wizardComponentId];
+    NSArray * fieldNames = [[NSArray alloc] initWithObjects:@"ParameterName",@"ParameterType",nil];
+    
+    NSArray * criteriaObjects = [[NSArray alloc] initWithObjects:criteriaOne, nil];
+    
+    NSArray * wizardComponentParamArray = [self fetchWizardComponentParamsInfoByFields:fieldNames andCriteria:criteriaObjects andExpression:nil];
+    return wizardComponentParamArray;
 }
 -(void)updateWizardComponentWithModelArray:(NSArray*)modelArray
 {
-    DBCriteria * criteria1 = [[DBCriteria alloc] initWithFieldNameToBeBinded:@"wizardComponentId"];
     
-    if([modelArray count] >0)
-    {
-        [self updateRecords:modelArray withFields:@[@"className",@"methodName"] withCriteria:@[criteria1]];
-    }
 }
 @end

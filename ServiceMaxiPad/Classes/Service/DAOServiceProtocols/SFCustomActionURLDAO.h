@@ -11,7 +11,7 @@
 
 @protocol SFCustomActionURLDAO <CommonServiceDAO>
 
-- (void)getCustomActionURL:(NSMutableArray *)CustomActionURLArray recordId:(NSString *)recordId;
+- (NSArray *)getCustomActionParams:(NSString *)wizardComponentId;
 -(void)updateCustomActionURL:(NSArray*)modelArray;
 
 @end

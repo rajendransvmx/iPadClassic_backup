@@ -1,4 +1,4 @@
- //
+//
 //  WizardViewController.m
 //  ServiceMaxMobile
 //
@@ -28,6 +28,7 @@
 #import "StyleManager.h"
 #import "TagManager.h"
 #import "SFMCustomActionHelper.h"
+#import "SFCustomActionURLService.h"
 @interface WizardViewController ()
 
 @property(assign)CGFloat cellHeight;
@@ -272,14 +273,13 @@
                     [self.delegate rescheduleEvent];
                 }else if([wizardComponent.actionType isEqualToString:@"OTHERS"])//Here we are checking for custome URL
                 {
-                    /*UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Custome Action Taped"
-                                                                    message:@"More info..."
-                                                                   delegate:nil
-                                                          cancelButtonTitle:nil
-                                                          otherButtonTitles:@"OK",nil];
-                    [alert show];*/
                     SFMCustomActionHelper *a=[[SFMCustomActionHelper alloc] init];
-                    [a loadURL:@"https://www.google.co.in" withParams:nil ActionType:@"URL"];
+                    NSArray *paramList = [self fetchParamsForWizardComponent:wizardComponent];
+                    if ([wizardComponent.customActionType isEqualToString:@"URL"]) {
+                        [a loadURL:@"https://www.google.co.in" withParams:paramList];
+                    }else{
+                        [a callWebService:wizardComponent withparams:paramList];
+                    }
                 }
                 else
                 {
@@ -339,5 +339,10 @@
                    });
 }
 
+-(NSArray *)fetchParamsForWizardComponent:(WizardComponentModel *)wizardComponent{
+    SFCustomActionURLService *wizardComponentparamService = [[SFCustomActionURLService alloc]init];
+    NSArray *paramList= [wizardComponentparamService getCustomActionParams:wizardComponent.processId];
+    return paramList;
+}
 
 @end

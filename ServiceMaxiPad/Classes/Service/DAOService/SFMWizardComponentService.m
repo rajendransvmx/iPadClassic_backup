@@ -65,7 +65,7 @@
         DBCriteria * criteriaOne = [[DBCriteria alloc] initWithFieldName:@"wizardId"
                                                             operatorType:SQLOperatorEqual
                                                            andFieldValue:wizard.wizardId];
-        NSArray * fieldNames = [[NSArray alloc] initWithObjects:@"actionDescription",@"expressionId",@"processId",@"actionType",@"actionName",nil];
+        NSArray * fieldNames = [[NSArray alloc] initWithObjects:@"actionDescription",@"expressionId",@"processId",@"actionType",@"actionName",@"className",@"methodName",@"customActionType",@"actionName",@"customUrl",@"ProcessId_c",nil];
         
         NSArray * criteriaObjects = [[NSArray alloc] initWithObjects:criteriaOne, nil];
         
