@@ -39,6 +39,9 @@
 
 @synthesize wizardsArray;
 @synthesize viewProcessArray;
+@synthesize objectId;
+@synthesize ObjectName;
+@synthesize ObjectFieldname;
 
 #pragma mark - apllication lifecycle method
 
@@ -274,9 +277,12 @@
                 }else if([wizardComponent.actionType isEqualToString:@"OTHERS"])//Here we are checking for custome URL
                 {
                     SFMCustomActionHelper *a=[[SFMCustomActionHelper alloc] init];
+                    a.objectName=wizard.objectName;
+                    a.objectId=objectId;
+                    a.ObjectFieldname=ObjectFieldname;
                     NSArray *paramList = [self fetchParamsForWizardComponent:wizardComponent];
                     if ([wizardComponent.customActionType isEqualToString:@"URL"]) {
-                        [a loadURL:@"https://www.google.co.in" withParams:paramList];
+                        [a loadURL:wizardComponent.customUrl withParams:paramList];
                     }else{
                         [a callWebService:wizardComponent withparams:paramList];
                     }

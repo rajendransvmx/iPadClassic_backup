@@ -40,7 +40,7 @@
 
 + (NSDictionary *)getMappingDictionary
 {
-    NSDictionary *mapDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:kCustomActionProcessId,@"Id",kCustomActionDispatchProcess,@"DispatchProcessId",kCustomActionParameterName,@"ParameterName",kCustomActionParameterType,@"ParameterType",kCustomActionName,@"Name", nil];
+    NSDictionary *mapDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:kCustomActionProcessId,@"Id",kCustomActionDispatchProcess,@"DispatchProcessId",kCustomActionParameterName,@"ParameterName",kCustomActionParameterType,@"ParameterType",kCustomActionName,@"Name", kCustomActionParameterValue,@"ParameterValue",nil];
     
     return mapDictionary;
 }

@@ -54,7 +54,7 @@
     DBCriteria * criteriaOne = [[DBCriteria alloc] initWithFieldName:@"DispatchProcessId"
                                                         operatorType:SQLOperatorEqual
                                                        andFieldValue:wizardComponentId];
-    NSArray * fieldNames = [[NSArray alloc] initWithObjects:@"ParameterName",@"ParameterType",nil];
+    NSArray * fieldNames = [[NSArray alloc] initWithObjects:@"ParameterName",@"ParameterType",@"ParameterValue",nil];
     
     NSArray * criteriaObjects = [[NSArray alloc] initWithObjects:criteriaOne, nil];
     
@@ -65,4 +65,6 @@
 {
     
 }
+
+
 @end

@@ -16,6 +16,7 @@
 @property(nonatomic, copy) NSString *DispatchProcessId;
 @property(nonatomic, copy) NSString *ParameterName;
 @property(nonatomic, copy) NSString *ParameterType;
+@property(nonatomic, copy) NSString *ParameterValue;
 //@property(nonatomic, copy) NSString *attributes;
 - (id)init;
 + (NSDictionary *)getMappingDictionary;

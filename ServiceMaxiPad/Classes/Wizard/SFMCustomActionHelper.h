@@ -11,6 +11,10 @@
 
 @interface SFMCustomActionHelper : NSObject
 
+@property(nonatomic,strong)NSString *objectId;
+@property(nonatomic,strong)NSString *objectName;
+@property(nonatomic,strong)NSString *URLValue;
+@property(nonatomic,strong)NSString *ObjectFieldname;
 -(void)loadURL:(NSString *)url withParams:(NSArray *)params;
 -(void)callWebService:(WizardComponentModel *)model withparams:(NSArray *)params;
 -(id)init;

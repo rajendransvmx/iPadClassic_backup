@@ -196,7 +196,7 @@ NSString *const kProductManualSchema =  @"CREATE TABLE IF NOT EXISTS ProductManu
 
 NSString *const kTableAttachmentLocalSchema = @"CREATE TABLE IF NOT EXISTS AttachmentLocal ('parentLocalId' VARCHAR PRIMARY KEY NOT NULL UNIQUE DEFAULT (0), 'parentObjectName' VARCHAR)";
 
-NSString *const kTableSFMCustomActionParams = @"CREATE TABLE IF NOT EXISTS CustomActionParams ('local_id' INTEGER PRIMARY KEY NOT NULL DEFAULT (0), 'Id' VARCHAR, 'Name' VARCHAR, 'DispatchProcessId' VARCHAR , 'ParameterName' VARCHAR, 'ParameterType' VARCHAR )";
+NSString *const kTableSFMCustomActionParams = @"CREATE TABLE IF NOT EXISTS CustomActionParams ('local_id' INTEGER PRIMARY KEY NOT NULL DEFAULT (0), 'Id' VARCHAR, 'Name' VARCHAR, 'DispatchProcessId' VARCHAR , 'ParameterName' VARCHAR, 'ParameterValue' VARCHAR , 'ParameterType' VARCHAR)";
 
 @implementation DatabaseSchemaConstant
 

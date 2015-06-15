@@ -44,7 +44,9 @@
 @property(nonatomic,strong)NSArray *viewProcessArray;
 @property (nonatomic, strong) SMActionSideBarViewController *sideMenu;
 @property(nonatomic, assign)BOOL shouldShowTroubleShooting;
-
+@property(nonatomic, strong)NSString *objectId;
+@property(nonatomic, strong)NSString *ObjectName;
+@property(nonatomic,strong)NSString *ObjectFieldname;
 
 
 @property (assign) id <WizardDelegate> delegate;
