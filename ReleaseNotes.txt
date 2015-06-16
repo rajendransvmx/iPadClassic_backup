@@ -3,7 +3,7 @@
 ServiceMax iPad  Sum 15 Build
 
 *******************************************
-Version = 15.49.004
+Version = 15.49.005
 ===========================================
 
 Merged Spr 15 SP branch SVN Version@5048 to HEAD(15.40.013) to Sum 15
@@ -30,7 +30,7 @@ Features Implemented
 ---------------------
 Additional Notes
 ---------------------
-1. Namespace set to SVMXDEV
+1. Namespace set to SVMXC
 
 
 
