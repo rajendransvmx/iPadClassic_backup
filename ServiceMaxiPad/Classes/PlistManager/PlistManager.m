@@ -115,7 +115,6 @@ static NSString *const kRefreshToken    = @"rfrt";
 /** Public constant declaration */
 
 NSString *const kPreferenceIdentifier  = @"preference_identifier";
-
 NSString *const kPreferenceOrganizationCustom  = @"Custom";
 NSString *const kPreferenceOrganizationSandbox  = @"Sandbox";
 NSString *const kPreferenceOrganizationProduction  = @"Production";
@@ -123,12 +122,13 @@ NSString *const kPreferenceOrganizationProduction  = @"Production";
 //017609
 NSString *const kPreferenceAccessToken = @"Session Auto Refresh";
 
-
 static NSString *const kSwitchLayout = @"SwitchLayout";
-
 static NSString * const kEventWhatIdToObjectName = @"EventWhatIdToObjectName";
-
 static NSUInteger const kRefreshTokenSplitIndex      = 10;        /** Refresh token split index  */
+
+// The Managed app configuration dictionary pushed down from an MDM server are stored in this key.
+static NSString * const kConfigurationKey = @"com.apple.configuration.managed";
+static NSString * const kConfigurationServerURLKey = @"serverURL";
 
 @implementation PlistManager
 
@@ -181,9 +181,23 @@ static NSUInteger const kRefreshTokenSplitIndex      = 10;        /** Refresh to
         
         [[NSUserDefaults standardUserDefaults] registerDefaults:defaultsToRegister];
         defaultsToRegister = nil;
+        [self updateServerURLFromManagedConfig];
     }
 }
 
++(void)updateServerURLFromManagedConfig
+{
+    NSDictionary *serverConfig = [[NSUserDefaults standardUserDefaults] dictionaryForKey:kConfigurationKey];
+    NSString *serverURLString = serverConfig[kConfigurationServerURLKey];
+    
+    // If validation fails, be sure to set a sensible default value as a fallback, even if it is nil.
+    if (serverURLString && [serverURLString isKindOfClass:[NSString class]] && ![serverURLString isEqualToString:[PlistManager customURLString]]) {
+        [PlistManager storeCustomURLString:serverURLString];
+        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+        [userDefaults setValue:kPreferenceOrganizationCustom forKey:kPreferenceIdentifier];
+        [userDefaults synchronize];
+    }
+}
 
 + (NSMutableDictionary *)getDefaultTags
 {
