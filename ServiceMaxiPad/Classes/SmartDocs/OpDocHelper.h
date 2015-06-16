@@ -25,4 +25,5 @@
 -(void)initiateFileSync;
 -(void)initiateDocumentSubmissionProcess;
 -(void)initiateGeneratePDFProcess;
+-(void)clearOpDocHTMLAndSignatureFilesOnReset;
 @end

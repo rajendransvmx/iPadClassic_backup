@@ -480,5 +480,19 @@
     cSingleHtmlAndAssociatedSignatureListArray = nil;
     cSignatureAndHTMLSubmitListDictionary = nil;
 }
-
+/*
+ Description: This method will clear local OpDoc html files from coreLib when users performs reset app or switch user.
+ */
+- (void)clearOpDocHTMLAndSignatureFilesOnReset {
+    NSArray *lOpDocFiles = [self getHTMLFileList];
+    if (lOpDocFiles.count  > 0) {
+        [self deleteTheFilesFromFolder:lOpDocFiles];
+        for (OPDocHTML *lOpDocHTML in lOpDocFiles) {
+            NSArray *lOpDocSignatureList = [self getSignatureListForHtmlModel:lOpDocHTML];
+            if (lOpDocSignatureList.count > 0) {
+                [self deleteTheFilesFromFolder:lOpDocSignatureList];
+            }
+        }
+    }
+}
 @end

@@ -19,6 +19,7 @@
 #import "SyncManager.h"
 #import "PlistManager.h"
 #import "SMDatabase.h"
+#import "OpDocHelper.h"
 
 
 #import "DatabaseIndexManager.h"
@@ -185,6 +186,15 @@
 - (void)performDatabaseConfigurationForSwitchUser
 {
     NSLog(@"Database config pre setup");
+    
+    /*
+     Added below code to fix 016652 issue.
+     Modfified By: Rahman
+     Mod Date: June-16-2015.
+     */
+    [[OpDocHelper sharedManager] clearOpDocHTMLAndSignatureFilesOnReset];
+        
+
     if ( [self closeDatabase])
     {
         NSLog(@"Closed database");
@@ -1233,7 +1243,6 @@
 {
    return jobLogsEnbaled;
 }
-
 
 #pragma mark - Data Migration
 
