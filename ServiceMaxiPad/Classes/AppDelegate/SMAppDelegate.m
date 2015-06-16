@@ -97,6 +97,12 @@
      [self.window makeKeyAndVisible];
      
      [self testLogin];
+     [[NSNotificationCenter defaultCenter] addObserverForName:NSUserDefaultsDidChangeNotification
+                                                       object:nil
+                                                        queue:[NSOperationQueue mainQueue]
+                                                   usingBlock:^(NSNotification *note) {
+                                                       [PlistManager updateServerURLFromManagedConfig];
+                                                   }];
      
      //[[SyncManager sharedInstance] scheduleSync];
     NSLog(@"------ AapplicationLaunching -------");
