@@ -539,7 +539,6 @@
         [cell.contentView addSubview:seperatorView];
         
     }
-    cell.mTransactionModel = [self getTransactionModelForIndexPath:indexPath];
     
     BOOL isOnlineRecord = [SFMOnlineSearchManager isOnlineRecord:[self getTransactionModelForIndexPath:indexPath]];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
