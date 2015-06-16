@@ -19,6 +19,7 @@ extern  NSString *const kPreferenceOrganizationCustom;
 @interface PlistManager : NSObject
 
 + (void)registerDefaultAppSettings;
++ (void)updateServerURLFromManagedConfig;
 + (NSMutableDictionary *)getDefaultTags;
 + (NSDictionary *)getDictionaryFromPlistWithName:(NSString *)plistFileName;
 
