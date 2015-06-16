@@ -21,7 +21,9 @@
 #import "OPDocServices.h"
 #import "OPDocSignatureService.h"
 #import "NonTagConstant.h"
+#import "OpDocHelper.h"
 
+#import "ZKQueryResult.h"
 
 #define kSmartDocsHTMLID                       @"HTMLID"
 #define kSmartDocsSignatureUsed                @"SIGNATURE"
@@ -70,14 +72,59 @@
 {
     
     SXLogDebug(@"Process the response. in OPdocService Layer");
-    SXLogInfo(@"responseData: %@", responseData);
-    NSLog(@"responseData: %@", responseData);
     
     NSDictionary *responseDict = (NSDictionary *)responseData;
+    SXLogInfo(@"responseDict :%@", responseDict);
 
     if (!responseDict.count || [responseData isKindOfClass:[NSArray class]]) {
         [[OpDocSyncDataManager sharedManager]setIsSuccessfullyUploaded:NO];
 
+    }
+    
+    else if (self.requestType == RequestTypeCheckOPDOCUploadStatus) {
+    
+    ZKQueryResult *result = [responseDict objectForKey:@"result"];
+        
+        if (result.size) {
+            NSArray *recordsArray = [result records];
+            if (recordsArray.count) {
+                [[OpDocSyncDataManager sharedManager] setFileAlreadyUploaded:YES];
+
+                ZKSObject *object = [recordsArray objectAtIndex:0];
+                
+                NSString *sfID = object.Id;
+                
+                id OPDocObject = [[OpDocSyncDataManager sharedManager] cOpDocObjectForSync];
+                
+                if([OPDocObject isKindOfClass:[OPDocHTML class]])
+                {
+                    OPDocHTML *lOPDocHTML = (OPDocHTML *)OPDocObject;
+                    lOPDocHTML.sfid = [NSString stringWithFormat:@"%@",sfID];
+                    
+                    OPDocServices *lOpdocHTMLService = [[OPDocServices alloc] init];
+                    [lOpdocHTMLService updateHTML:lOPDocHTML];
+                    
+                }
+                else{
+                    OPDocSignature *lOPDocSignature = (OPDocSignature *)OPDocObject;
+                    lOPDocSignature.sfid = [NSString stringWithFormat:@"%@",sfID];
+                    
+                    OPDocSignatureService *lOpdocSignatureService = [[OPDocSignatureService alloc] init];
+                    [lOpdocSignatureService updateSignature:lOPDocSignature];
+                    
+                }
+            }
+            else
+            {
+                [[OpDocSyncDataManager sharedManager] setFileAlreadyUploaded:NO];
+
+            }
+        }
+        else
+        {
+            [[OpDocSyncDataManager sharedManager] setFileAlreadyUploaded:NO];
+
+        }
     }
     else if (self.requestType == RequestTypeOpDocUploading) {
         
@@ -195,7 +242,8 @@
         }
         */
         
-        if([responseDict objectForKey:@"success"])
+        int successStatus = [[responseDict objectForKey:@"success"] intValue];
+        if(successStatus)
         {
             
             NSArray *ResponseForSubmitArray = [responseDict objectForKey:@"valueMap"];
@@ -233,7 +281,6 @@
         }
         
 
-        SXLogInfo(@"responseDict :%@", responseDict);
     }
     else
     { // Generate PDF
@@ -285,9 +332,9 @@
         }
     */
         
-        SXLogInfo(@"responseDict :%@", responseDict);
+        int successStatus = [[responseDict objectForKey:@"success"] intValue];
 
-        if([responseDict objectForKey:@"success"])
+        if(successStatus)
         {
             [[OpDocSyncDataManager sharedManager]setIsSuccessfullyUploaded:YES];
 
@@ -328,7 +375,17 @@
 {
     RequestParamModel * param = nil;
     
-    if (self.requestType == RequestTypeOpDocUploading) { // Uploading HTMl and Signature Files Uploading
+    if (self.requestType == RequestTypeCheckOPDOCUploadStatus) {
+        
+        
+        param = [[RequestParamModel alloc] init];
+        param.value = [[OpDocHelper sharedManager] getQueryForCheckingOPDOCFileUploadStatus];
+        
+//        return @[param];
+        
+    }
+    
+    else if (self.requestType == RequestTypeOpDocUploading) { // Uploading HTMl and Signature Files Uploading
         
         
         BOOL success = [self saveFileDetailsLocallyForObject];  // For saving the local reference of the Model details.

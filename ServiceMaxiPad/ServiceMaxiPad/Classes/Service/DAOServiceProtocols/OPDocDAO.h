@@ -55,8 +55,8 @@
 -(BOOL)deleteRecordsHTMLTableForList:(NSArray *)listArray;
 
 //Retreive the names of the files which needs to be deleted from the folder.
--(NSArray *)getAllFilesPresentInTableForWhichNeedsToBeDeleted;
--(NSArray *)getAllFilesPresentInTableForWhichNeedsToBeDeleted:(NSString *)theHTMLSFID;
+
+-(NSArray *)getAllFilesPresentInTableForWhichNeedsToBeDeleted:(NSString *)theHTMLSFIDOrHTMLFileName; //This is needed to delete the record from tables of HTML as well as SIGNATURE cause if a DELETE_ID is received from Server, we have to delete the associated ID's from both tables
 
 
 

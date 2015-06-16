@@ -15,6 +15,7 @@
 @synthesize cResponseForDocSubmitDictionary;
 @synthesize cResponseForGeneratingPDFDictionary;
 @synthesize isSuccessfullyUploaded;
+@synthesize fileAlreadyUploaded;
 
 + (id)sharedManager {
     static OpDocSyncDataManager *sharedOpDocSyncManager = nil;

@@ -276,17 +276,22 @@
                                          andPreviousRequest:previousRequest];
             break;
             
+        case CategoryTypeOpDocUploadStatus:
+            requestType = [self getNextRequestForOPDocUploadStatus:currentRequest andPreviousRequest:previousRequest];
+
+            break;
         case CategoryTypeOpDoc:
             requestType = [self getNextRequestForOPDoc:currentRequest andPreviousRequest:previousRequest];
            
             break;
-               case CategoryTypeSubmitDocument:
+        case CategoryTypeSubmitDocument:
             requestType = [self getNextRequestForSubmittingOPdocDocDetails:currentRequest andPreviousRequest:previousRequest];
             break;
             
         case CategoryTypeDataPurgeFrequency:
             requestType = [self getNextRequestForDataPurgeFrequency:currentRequest andPreviousRequest:previousRequest];
             break;
+            
         case CategoryTypeDataPurge:
             requestType =[ self getNextRequestForDataPurge:currentRequest andPreviousRequest:previousRequest];
             break;
@@ -699,6 +704,21 @@
         nextRequestType = RequestTechnicianAddress;
     }
     if (currentRequest.requestType == RequestTechnicianAddress) {
+        nextRequestType = RequestTypeNone;
+    }
+    return nextRequestType;
+}
+
+- (RequestType)getNextRequestForOPDocUploadStatus:(SVMXServerRequest *)currentRequest
+                   andPreviousRequest:(SVMXServerRequest *)previousRequest {
+    
+    RequestType nextRequestType = 0;
+    
+    if (currentRequest == nil) {
+        nextRequestType = RequestTypeCheckOPDOCUploadStatus;
+    }
+    else{
+        
         nextRequestType = RequestTypeNone;
     }
     return nextRequestType;

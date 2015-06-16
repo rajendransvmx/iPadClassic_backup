@@ -179,7 +179,9 @@
             }
                 break;
                 
-            case CategoryTypeOpDoc: {
+            case CategoryTypeOpDoc:
+            case CategoryTypeOpDocUploadStatus:
+            {
                 baseServiceLayer = [[OpDocServiceLayer alloc]initWithCategoryType:categoryType requestType:requestType];
             }
                 break;
