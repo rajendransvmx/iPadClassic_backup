@@ -3,12 +3,11 @@
 ServiceMax Win 15 SP iPad Release
 
 *******************************************
-Version = 15.20.023
+Version = 15.20.024
 ===========================================
 -------------
 Fixed Defects
 -------------
-017622-Detail lines are not getting downloaded during DOD when the header has a custom child record added
 
 -------------
 Known Issues
