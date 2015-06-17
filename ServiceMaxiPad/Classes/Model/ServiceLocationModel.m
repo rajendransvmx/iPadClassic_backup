@@ -25,7 +25,9 @@
         self.serviceLocation   = [self serviceLocationAddress];
         self.latitude          = [transactionModel valueForField:kWorkOrderLatitude];
         self.longitude         = [transactionModel valueForField:kWorkOrderLongitude];
-        self.latLonCoordinates = CLLocationCoordinate2DMake([self.latitude doubleValue], [self.longitude doubleValue]);
+        if (![StringUtil isStringEmpty:self.latitude] && ![StringUtil isStringEmpty:self.longitude]) {
+            self.latLonCoordinates = CLLocationCoordinate2DMake([self.latitude doubleValue], [self.longitude doubleValue]);
+        }
     }
     return self;
 }
@@ -43,7 +45,9 @@
         self.serviceLocation   = [self serviceLocationAddress];
         self.latitude          = [dictionary objectForKey:kWorkOrderLatitude];
         self.longitude         = [dictionary objectForKey:kWorkOrderLongitude];
-        self.latLonCoordinates = CLLocationCoordinate2DMake([self.latitude doubleValue], [self.longitude doubleValue]);
+        if (![StringUtil isStringEmpty:self.latitude] && ![StringUtil isStringEmpty:self.longitude]) {
+            self.latLonCoordinates = CLLocationCoordinate2DMake([self.latitude doubleValue], [self.longitude doubleValue]);
+        }
     }
     return self;
     
