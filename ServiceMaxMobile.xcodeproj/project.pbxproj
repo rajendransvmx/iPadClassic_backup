@@ -60,12 +60,6 @@
 		42226B2F183A3D7A00D43E4D /* uncheck.png in Resources */ = {isa = PBXBuildFile; fileRef = 42226B0C183A3D7A00D43E4D /* uncheck.png */; };
 		42226B30183A3D7A00D43E4D /* video-2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 42226B0D183A3D7A00D43E4D /* video-2x.png */; };
 		42226B31183A3D7A00D43E4D /* video.png in Resources */ = {isa = PBXBuildFile; fileRef = 42226B0E183A3D7A00D43E4D /* video.png */; };
-		424971EA183B392300D6C727 /* SMAttachmentModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 424971D0183B392300D6C727 /* SMAttachmentModel.m */; };
-		424971EB183B392300D6C727 /* SMAttachmentRequestManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 424971D2183B392300D6C727 /* SMAttachmentRequestManager.m */; };
-		424971EC183B392300D6C727 /* SMConnectionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 424971D4183B392300D6C727 /* SMConnectionManager.m */; };
-		424971EE183B392300D6C727 /* SMRestRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 424971D8183B392300D6C727 /* SMRestRequest.m */; };
-		424971EF183B392300D6C727 /* SMSalesForceRestAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 424971DA183B392300D6C727 /* SMSalesForceRestAPI.m */; };
-		424971F0183B392300D6C727 /* SVMXSystemConstant.m in Sources */ = {isa = PBXBuildFile; fileRef = 424971DC183B392300D6C727 /* SVMXSystemConstant.m */; };
 		4C062BCE17DEF2A60014E432 /* FirstDetailViewios7.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C062BCD17DEF2A60014E432 /* FirstDetailViewios7.xib */; };
 		9E3521181964F22800B8B5DD /* PageModificationObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E3521171964F22800B8B5DD /* PageModificationObserver.m */; };
 		9E35211A196AB9CF00B8B5DD /* com.servicemax.client.zip in Resources */ = {isa = PBXBuildFile; fileRef = 9E352119196AB9CF00B8B5DD /* com.servicemax.client.zip */; };
@@ -1721,8 +1715,15 @@
 		A8DDC6C317CDD78200A18541 /* zbar-helpicons@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A8DDC2C917CDD78100A18541 /* zbar-helpicons@2x.png */; };
 		A8DDC6C417CDD78200A18541 /* zbar-samples@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A8DDC2CA17CDD78100A18541 /* zbar-samples@2x.png */; };
 		AC906A2E17D7553C001BFE51 /* ModalViewControlleriOS7.xib in Resources */ = {isa = PBXBuildFile; fileRef = AC906A2D17D7553C001BFE51 /* ModalViewControlleriOS7.xib */; };
-		DE89A77E1AF89B84003625A4 /* AttachmentErrorUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = DE89A77D1AF89B84003625A4 /* AttachmentErrorUtility.m */; };
-		DECA782D1AF22C8600D97B13 /* RestRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = DECA782C1AF22C8600D97B13 /* RestRequest.m */; };
+		C8A8861A1B319CA90005AB1D /* AttachmentErrorUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = C8A886091B319CA90005AB1D /* AttachmentErrorUtility.m */; };
+		C8A8861B1B319CA90005AB1D /* RestRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = C8A8860B1B319CA90005AB1D /* RestRequest.m */; };
+		C8A8861C1B319CA90005AB1D /* SMAttachmentModel.m in Sources */ = {isa = PBXBuildFile; fileRef = C8A8860D1B319CA90005AB1D /* SMAttachmentModel.m */; };
+		C8A8861D1B319CA90005AB1D /* SMAttachmentRequestManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C8A8860F1B319CA90005AB1D /* SMAttachmentRequestManager.m */; };
+		C8A8861E1B319CA90005AB1D /* SMConnectionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C8A886111B319CA90005AB1D /* SMConnectionManager.m */; };
+		C8A8861F1B319CA90005AB1D /* SMRestRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = C8A886131B319CA90005AB1D /* SMRestRequest.m */; };
+		C8A886201B319CA90005AB1D /* SMSalesForceRestAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = C8A886151B319CA90005AB1D /* SMSalesForceRestAPI.m */; };
+		C8A886211B319CA90005AB1D /* SMZKSHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = C8A886171B319CA90005AB1D /* SMZKSHelper.m */; };
+		C8A886221B319CA90005AB1D /* SVMXSystemConstant.m in Sources */ = {isa = PBXBuildFile; fileRef = C8A886191B319CA90005AB1D /* SVMXSystemConstant.m */; };
 		F78C10CC18365BEA00A5B307 /* bgDocuments-2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F78C10C918365BEA00A5B307 /* bgDocuments-2x.png */; };
 		F78C10CD18365BEA00A5B307 /* checkDoc-2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F78C10CA18365BEA00A5B307 /* checkDoc-2x.png */; };
 		F78C10CE18365BEA00A5B307 /* uncheck-2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F78C10CB18365BEA00A5B307 /* uncheck-2x.png */; };
@@ -1741,7 +1742,6 @@
 		F8C8561D17EB299500658C5B /* SMXPing.m in Sources */ = {isa = PBXBuildFile; fileRef = F8C8561517EB299500658C5B /* SMXPing.m */; };
 		F8C8561F17EB299500658C5B /* SMXSyncLog.m in Sources */ = {isa = PBXBuildFile; fileRef = F8C8561817EB299500658C5B /* SMXSyncLog.m */; };
 		F8CD9DC4183BAC950007907E /* SVMXSystemUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = F8CD9DC3183BAC950007907E /* SVMXSystemUtility.m */; };
-		F8CD9DC7183DE8A40007907E /* SMZKSHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = F8CD9DC6183DE8A40007907E /* SMZKSHelper.m */; };
 		F8CD9DCD183F0B3B0007907E /* AttachmentQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = F8CD9DCC183F0B3B0007907E /* AttachmentQueue.m */; };
 		F8EB0FE21844B2D500AB5563 /* action-btn-content-hover.png in Resources */ = {isa = PBXBuildFile; fileRef = F8EB0FD71844B2D500AB5563 /* action-btn-content-hover.png */; };
 		F8EB0FE31844B2D500AB5563 /* action-btn-content.png in Resources */ = {isa = PBXBuildFile; fileRef = F8EB0FD81844B2D500AB5563 /* action-btn-content.png */; };
@@ -1832,18 +1832,6 @@
 		42226B0C183A3D7A00D43E4D /* uncheck.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = uncheck.png; sourceTree = "<group>"; };
 		42226B0D183A3D7A00D43E4D /* video-2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "video-2x.png"; sourceTree = "<group>"; };
 		42226B0E183A3D7A00D43E4D /* video.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = video.png; sourceTree = "<group>"; };
-		424971CF183B392300D6C727 /* SMAttachmentModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMAttachmentModel.h; sourceTree = "<group>"; };
-		424971D0183B392300D6C727 /* SMAttachmentModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMAttachmentModel.m; sourceTree = "<group>"; };
-		424971D1183B392300D6C727 /* SMAttachmentRequestManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMAttachmentRequestManager.h; sourceTree = "<group>"; };
-		424971D2183B392300D6C727 /* SMAttachmentRequestManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMAttachmentRequestManager.m; sourceTree = "<group>"; };
-		424971D3183B392300D6C727 /* SMConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMConnectionManager.h; sourceTree = "<group>"; };
-		424971D4183B392300D6C727 /* SMConnectionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMConnectionManager.m; sourceTree = "<group>"; };
-		424971D7183B392300D6C727 /* SMRestRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMRestRequest.h; sourceTree = "<group>"; };
-		424971D8183B392300D6C727 /* SMRestRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMRestRequest.m; sourceTree = "<group>"; };
-		424971D9183B392300D6C727 /* SMSalesForceRestAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMSalesForceRestAPI.h; sourceTree = "<group>"; };
-		424971DA183B392300D6C727 /* SMSalesForceRestAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMSalesForceRestAPI.m; sourceTree = "<group>"; };
-		424971DB183B392300D6C727 /* SVMXSystemConstant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVMXSystemConstant.h; sourceTree = "<group>"; };
-		424971DC183B392300D6C727 /* SVMXSystemConstant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVMXSystemConstant.m; sourceTree = "<group>"; };
 		4C062BCD17DEF2A60014E432 /* FirstDetailViewios7.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FirstDetailViewios7.xib; sourceTree = "<group>"; };
 		9E3521161964F22800B8B5DD /* PageModificationObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageModificationObserver.h; sourceTree = "<group>"; };
 		9E3521171964F22800B8B5DD /* PageModificationObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PageModificationObserver.m; sourceTree = "<group>"; };
@@ -3840,10 +3828,24 @@
 		AC906A2D17D7553C001BFE51 /* ModalViewControlleriOS7.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ModalViewControlleriOS7.xib; sourceTree = "<group>"; };
 		AC906A2F17D76144001BFE51 /* CustomToolBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomToolBar.h; sourceTree = "<group>"; };
 		AC906A3017D76144001BFE51 /* CustomToolBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomToolBar.m; sourceTree = "<group>"; };
-		DE89A77C1AF89B84003625A4 /* AttachmentErrorUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttachmentErrorUtility.h; sourceTree = "<group>"; };
-		DE89A77D1AF89B84003625A4 /* AttachmentErrorUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttachmentErrorUtility.m; sourceTree = "<group>"; };
-		DECA782B1AF22C8600D97B13 /* RestRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestRequest.h; sourceTree = "<group>"; };
-		DECA782C1AF22C8600D97B13 /* RestRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RestRequest.m; sourceTree = "<group>"; };
+		C8A886081B319CA90005AB1D /* AttachmentErrorUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttachmentErrorUtility.h; sourceTree = "<group>"; };
+		C8A886091B319CA90005AB1D /* AttachmentErrorUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttachmentErrorUtility.m; sourceTree = "<group>"; };
+		C8A8860A1B319CA90005AB1D /* RestRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestRequest.h; sourceTree = "<group>"; };
+		C8A8860B1B319CA90005AB1D /* RestRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RestRequest.m; sourceTree = "<group>"; };
+		C8A8860C1B319CA90005AB1D /* SMAttachmentModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMAttachmentModel.h; sourceTree = "<group>"; };
+		C8A8860D1B319CA90005AB1D /* SMAttachmentModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMAttachmentModel.m; sourceTree = "<group>"; };
+		C8A8860E1B319CA90005AB1D /* SMAttachmentRequestManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMAttachmentRequestManager.h; sourceTree = "<group>"; };
+		C8A8860F1B319CA90005AB1D /* SMAttachmentRequestManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMAttachmentRequestManager.m; sourceTree = "<group>"; };
+		C8A886101B319CA90005AB1D /* SMConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMConnectionManager.h; sourceTree = "<group>"; };
+		C8A886111B319CA90005AB1D /* SMConnectionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMConnectionManager.m; sourceTree = "<group>"; };
+		C8A886121B319CA90005AB1D /* SMRestRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMRestRequest.h; sourceTree = "<group>"; };
+		C8A886131B319CA90005AB1D /* SMRestRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMRestRequest.m; sourceTree = "<group>"; };
+		C8A886141B319CA90005AB1D /* SMSalesForceRestAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMSalesForceRestAPI.h; sourceTree = "<group>"; };
+		C8A886151B319CA90005AB1D /* SMSalesForceRestAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMSalesForceRestAPI.m; sourceTree = "<group>"; };
+		C8A886161B319CA90005AB1D /* SMZKSHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMZKSHelper.h; sourceTree = "<group>"; };
+		C8A886171B319CA90005AB1D /* SMZKSHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMZKSHelper.m; sourceTree = "<group>"; };
+		C8A886181B319CA90005AB1D /* SVMXSystemConstant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVMXSystemConstant.h; sourceTree = "<group>"; };
+		C8A886191B319CA90005AB1D /* SVMXSystemConstant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVMXSystemConstant.m; sourceTree = "<group>"; };
 		F78C10C918365BEA00A5B307 /* bgDocuments-2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bgDocuments-2x.png"; sourceTree = "<group>"; };
 		F78C10CA18365BEA00A5B307 /* checkDoc-2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "checkDoc-2x.png"; sourceTree = "<group>"; };
 		F78C10CB18365BEA00A5B307 /* uncheck-2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "uncheck-2x.png"; sourceTree = "<group>"; };
@@ -3858,8 +3860,6 @@
 		F8C8561817EB299500658C5B /* SMXSyncLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMXSyncLog.m; sourceTree = "<group>"; };
 		F8CD9DC2183BAC950007907E /* SVMXSystemUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVMXSystemUtility.h; sourceTree = "<group>"; };
 		F8CD9DC3183BAC950007907E /* SVMXSystemUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVMXSystemUtility.m; sourceTree = "<group>"; };
-		F8CD9DC5183DE8A40007907E /* SMZKSHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMZKSHelper.h; sourceTree = "<group>"; };
-		F8CD9DC6183DE8A40007907E /* SMZKSHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMZKSHelper.m; sourceTree = "<group>"; };
 		F8CD9DCB183F0B3B0007907E /* AttachmentQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttachmentQueue.h; sourceTree = "<group>"; };
 		F8CD9DCC183F0B3B0007907E /* AttachmentQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttachmentQueue.m; sourceTree = "<group>"; };
 		F8EB0FD71844B2D500AB5563 /* action-btn-content-hover.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "action-btn-content-hover.png"; sourceTree = "<group>"; };
@@ -4077,31 +4077,6 @@
 				42226AFF183A3D7A00D43E4D /* UnknownType.png */,
 			);
 			path = "Document Type";
-			sourceTree = "<group>";
-		};
-		424970D1183B392200D6C727 /* SVMXRestAPI */ = {
-			isa = PBXGroup;
-			children = (
-				DECA782B1AF22C8600D97B13 /* RestRequest.h */,
-				DECA782C1AF22C8600D97B13 /* RestRequest.m */,
-				424971CF183B392300D6C727 /* SMAttachmentModel.h */,
-				424971D0183B392300D6C727 /* SMAttachmentModel.m */,
-				424971D1183B392300D6C727 /* SMAttachmentRequestManager.h */,
-				424971D2183B392300D6C727 /* SMAttachmentRequestManager.m */,
-				424971D3183B392300D6C727 /* SMConnectionManager.h */,
-				424971D4183B392300D6C727 /* SMConnectionManager.m */,
-				424971D7183B392300D6C727 /* SMRestRequest.h */,
-				424971D8183B392300D6C727 /* SMRestRequest.m */,
-				424971D9183B392300D6C727 /* SMSalesForceRestAPI.h */,
-				424971DA183B392300D6C727 /* SMSalesForceRestAPI.m */,
-				F8CD9DC5183DE8A40007907E /* SMZKSHelper.h */,
-				F8CD9DC6183DE8A40007907E /* SMZKSHelper.m */,
-				424971DB183B392300D6C727 /* SVMXSystemConstant.h */,
-				424971DC183B392300D6C727 /* SVMXSystemConstant.m */,
-				DE89A77C1AF89B84003625A4 /* AttachmentErrorUtility.h */,
-				DE89A77D1AF89B84003625A4 /* AttachmentErrorUtility.m */,
-			);
-			path = SVMXRestAPI;
 			sourceTree = "<group>";
 		};
 		9E61FCA2193F403A0006DD4E /* Category */ = {
@@ -4372,12 +4347,12 @@
 		A839570417CC7D83007DD3ED /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				C8A886071B319C750005AB1D /* SVMXRestAPI */,
 				A646E1C71B1891F000EAF227 /* AFNetworking */,
 				9E61FCA2193F403A0006DD4E /* Category */,
 				9EC2FCEF190A87A80017036E /* AccessibilityLayer */,
 				A8C5071D18ACCF7B00266B0B /* SMDataPurging */,
 				A8D05EF3189F9A2700502E90 /* SuccessiveDataSync */,
-				424970D1183B392200D6C727 /* SVMXRestAPI */,
 				F8C8560D17EB299500658C5B /* SMXLogger */,
 				F8C8561017EB299500658C5B /* SMXMonitor */,
 				F8C8561317EB299500658C5B /* SMXPing */,
@@ -8058,6 +8033,31 @@
 			path = "Static Resources";
 			sourceTree = "<group>";
 		};
+		C8A886071B319C750005AB1D /* SVMXRestAPI */ = {
+			isa = PBXGroup;
+			children = (
+				C8A886081B319CA90005AB1D /* AttachmentErrorUtility.h */,
+				C8A886091B319CA90005AB1D /* AttachmentErrorUtility.m */,
+				C8A8860A1B319CA90005AB1D /* RestRequest.h */,
+				C8A8860B1B319CA90005AB1D /* RestRequest.m */,
+				C8A8860C1B319CA90005AB1D /* SMAttachmentModel.h */,
+				C8A8860D1B319CA90005AB1D /* SMAttachmentModel.m */,
+				C8A8860E1B319CA90005AB1D /* SMAttachmentRequestManager.h */,
+				C8A8860F1B319CA90005AB1D /* SMAttachmentRequestManager.m */,
+				C8A886101B319CA90005AB1D /* SMConnectionManager.h */,
+				C8A886111B319CA90005AB1D /* SMConnectionManager.m */,
+				C8A886121B319CA90005AB1D /* SMRestRequest.h */,
+				C8A886131B319CA90005AB1D /* SMRestRequest.m */,
+				C8A886141B319CA90005AB1D /* SMSalesForceRestAPI.h */,
+				C8A886151B319CA90005AB1D /* SMSalesForceRestAPI.m */,
+				C8A886161B319CA90005AB1D /* SMZKSHelper.h */,
+				C8A886171B319CA90005AB1D /* SMZKSHelper.m */,
+				C8A886181B319CA90005AB1D /* SVMXSystemConstant.h */,
+				C8A886191B319CA90005AB1D /* SVMXSystemConstant.m */,
+			);
+			path = SVMXRestAPI;
+			sourceTree = "<group>";
+		};
 		F78C10C818365BEA00A5B307 /* Attachments */ = {
 			isa = PBXGroup;
 			children = (
@@ -9655,15 +9655,16 @@
 				A8395D3A17CC7D85007DD3ED /* ZKDescribeLayoutRow.m in Sources */,
 				A8395C7217CC7D85007DD3ED /* DetailViewController.m in Sources */,
 				A8395D2A17CC7D85007DD3ED /* SMGPObjectsResponseParser.m in Sources */,
+				C8A886211B319CA90005AB1D /* SMZKSHelper.m in Sources */,
 				A8395D4517CC7D85007DD3ED /* ZKPicklistEntry.m in Sources */,
 				A8395C0417CC7D85007DD3ED /* SBJsonStreamParserState.m in Sources */,
 				A8395D3617CC7D85007DD3ED /* ZKDescribeLayoutButtonSection.m in Sources */,
 				A8395B5617CC7D85007DD3ED /* OutputDocs.js in Sources */,
 				A8395C0E17CC7D85007DD3ED /* UICGDirectionsOptions.m in Sources */,
-				424971EC183B392300D6C727 /* SMConnectionManager.m in Sources */,
 				A8395CD817CC7D85007DD3ED /* SFMEditDetailViewController.m in Sources */,
 				A8395B3017CC7D85007DD3ED /* CustomButton.m in Sources */,
 				A8395B3D17CC7D85007DD3ED /* SliderView.m in Sources */,
+				C8A8861C1B319CA90005AB1D /* SMAttachmentModel.m in Sources */,
 				A8395C2517CC7D85007DD3ED /* OAuthController.m in Sources */,
 				A8395D5C17CC7D85007DD3ED /* NSData+DDData.m in Sources */,
 				F8C8561917EB299500658C5B /* SMXLogger.m in Sources */,
@@ -9692,7 +9693,6 @@
 				9EC2FD2E190A87A80017036E /* AccessibilitySignatureConstants.m in Sources */,
 				A8395C1517CC7D85007DD3ED /* MapDirectionsViewController.m in Sources */,
 				A8395C4717CC7D85007DD3ED /* cusButton.m in Sources */,
-				424971EF183B392300D6C727 /* SMSalesForceRestAPI.m in Sources */,
 				A8395D4817CC7D85007DD3ED /* ZKQueryResult_NSTableView.m in Sources */,
 				A8395BB817CC7D85007DD3ED /* Item.m in Sources */,
 				A8395D3817CC7D85007DD3ED /* ZKDescribeLayoutItem.m in Sources */,
@@ -9712,7 +9712,6 @@
 				A8395BCB17CC7D85007DD3ED /* HTMLJSWrapper.m in Sources */,
 				9EC2FD2F190A87A80017036E /* AccessibilitySummaryAndPdfConstants.m in Sources */,
 				A8395B9717CC7D85007DD3ED /* rijndael.c in Sources */,
-				DECA782D1AF22C8600D97B13 /* RestRequest.m in Sources */,
 				A8395D3417CC7D85007DD3ED /* ZKDescribeLayout.m in Sources */,
 				A8395B9817CC7D85007DD3ED /* SignatureViewController.m in Sources */,
 				A8C5073518ACCF7B00266B0B /* SMDataPurgeModel.m in Sources */,
@@ -9733,6 +9732,7 @@
 				A8395C6E17CC7D85007DD3ED /* databaseIntefaceSfm.m in Sources */,
 				A8395C0A17CC7D85007DD3ED /* SBJsonWriter.m in Sources */,
 				9EC2FD1E190A87A80017036E /* AccesibilitySearchResultMasterViewConstants.m in Sources */,
+				C8A8861E1B319CA90005AB1D /* SMConnectionManager.m in Sources */,
 				A8395C0817CC7D85007DD3ED /* SBJsonTokeniser.m in Sources */,
 				A8395C7617CC7D85007DD3ED /* SFMChildView.m in Sources */,
 				A646E1E21B1891F000EAF227 /* AFURLResponseSerialization.m in Sources */,
@@ -9771,7 +9771,6 @@
 				A8395D2917CC7D85007DD3ED /* SMGPDataSyncResponseParser.m in Sources */,
 				A8395C6917CC7D85007DD3ED /* TimePIckerTextField.m in Sources */,
 				A646E1DD1B1891F000EAF227 /* AFHTTPSessionManager.m in Sources */,
-				424971EE183B392300D6C727 /* SMRestRequest.m in Sources */,
 				9EC2FD2A190A87A80017036E /* AccessibilitySFMDetailViewAndEditConstants.m in Sources */,
 				A8395C0F17CC7D85007DD3ED /* UICGoogleMapsAPI.m in Sources */,
 				A8395B5517CC7D85007DD3ED /* DataAcessLayer.js in Sources */,
@@ -9796,18 +9795,17 @@
 				A8395C4217CC7D85007DD3ED /* SearchViewController.m in Sources */,
 				A8395BCD17CC7D85007DD3ED /* svmx_client_api.js in Sources */,
 				A8395BF317CC7D85007DD3ED /* ManualDataSync.m in Sources */,
-				DE89A77E1AF89B84003625A4 /* AttachmentErrorUtility.m in Sources */,
 				A8395B5A17CC7D85007DD3ED /* DateTimeFormatter.m in Sources */,
 				A8395B9F17CC7D85007DD3ED /* TravelcellView.m in Sources */,
 				A8395CE817CC7D85007DD3ED /* MainViewController.m in Sources */,
 				A8395B2B17CC7D85007DD3ED /* About.m in Sources */,
-				424971F0183B392300D6C727 /* SVMXSystemConstant.m in Sources */,
 				A8395BFF17CC7D85007DD3ED /* NSObject+SBJson.m in Sources */,
 				A83956BC17CC7B59007DD3ED /* AppDelegate.m in Sources */,
 				A8395C7317CC7D85007DD3ED /* LabelPOContentView.m in Sources */,
 				A8395D4E17CC7D85007DD3ED /* ZKSaveResult.m in Sources */,
 				A8395CF517CC7D85007DD3ED /* SFMResultMainViewController.m in Sources */,
 				A8395D5717CC7D85007DD3ED /* ZKXmlDeserializer.m in Sources */,
+				C8A8861A1B319CA90005AB1D /* AttachmentErrorUtility.m in Sources */,
 				A8395C5717CC7D85007DD3ED /* MPTextFHandler.m in Sources */,
 				A8395D4F17CC7D85007DD3ED /* ZKServerSwitchboard+Describe.m in Sources */,
 				9EC2FD28190A87A80017036E /* AccessibilitySearchDetailViewConstants.m in Sources */,
@@ -9850,7 +9848,6 @@
 				A8395B3B17CC7D85007DD3ED /* ModalViewController.m in Sources */,
 				A8395C7017CC7D85007DD3ED /* bizRules-index.js in Sources */,
 				A8395C0317CC7D85007DD3ED /* SBJsonStreamParserAdapter.m in Sources */,
-				424971EA183B392300D6C727 /* SMAttachmentModel.m in Sources */,
 				A8395D4C17CC7D85007DD3ED /* ZKRelatedListColumn.m in Sources */,
 				A8395B5317CC7D85007DD3ED /* DAResponse.m in Sources */,
 				A8C5074018ACCFAB00266B0B /* SMProgressBar.m in Sources */,
@@ -9862,8 +9859,10 @@
 				A8395B5117CC7D85007DD3ED /* DARequest.m in Sources */,
 				A8395B3917CC7D85007DD3ED /* EventViewController.m in Sources */,
 				A8395B6417CC7D85007DD3ED /* PartsTableViewCell.m in Sources */,
+				C8A8861F1B319CA90005AB1D /* SMRestRequest.m in Sources */,
 				A8395B3717CC7D85007DD3ED /* CellRepository.m in Sources */,
 				A8395C1417CC7D85007DD3ED /* UICRouteOverlayMapView.m in Sources */,
+				C8A886201B319CA90005AB1D /* SMSalesForceRestAPI.m in Sources */,
 				A8395D5E17CC7D85007DD3ED /* ZipArchive.mm in Sources */,
 				1895ADA8182FC669003B9A18 /* DocumentViewCell.m in Sources */,
 				A8395D3E17CC7D85007DD3ED /* ZKGetDeletedResult.m in Sources */,
@@ -9884,11 +9883,11 @@
 				A8395B4D17CC7D85007DD3ED /* CreateObjectDetail.m in Sources */,
 				A8395C7817CC7D85007DD3ED /* SWitchViewButton.m in Sources */,
 				A8C5073418ACCF7B00266B0B /* SMDataPurgeManager.m in Sources */,
-				F8CD9DC7183DE8A40007907E /* SMZKSHelper.m in Sources */,
 				A646E1DE1B1891F000EAF227 /* AFNetworkReachabilityManager.m in Sources */,
 				A8395C4A17CC7D85007DD3ED /* TextFieldHandler.m in Sources */,
 				A8395D1917CC7D85007DD3ED /* Utility.m in Sources */,
 				A8395C4B17CC7D85007DD3ED /* CtextFieldWithDatePicker.m in Sources */,
+				C8A8861D1B319CA90005AB1D /* SMAttachmentRequestManager.m in Sources */,
 				A8395D2117CC7D85007DD3ED /* SFM_Request.m in Sources */,
 				A8395C5D17CC7D85007DD3ED /* CSwitch.m in Sources */,
 				A8395D5417CC7D85007DD3ED /* ZKSObject.m in Sources */,
@@ -9920,8 +9919,8 @@
 				A83956B817CC7B59007DD3ED /* main.m in Sources */,
 				A8395C0917CC7D85007DD3ED /* SBJsonUTF8Stream.m in Sources */,
 				A8395D2217CC7D85007DD3ED /* SMAX_Debug.m in Sources */,
-				424971EB183B392300D6C727 /* SMAttachmentRequestManager.m in Sources */,
 				A8395D5D17CC7D85007DD3ED /* SSZipArchive.m in Sources */,
+				C8A8861B1B319CA90005AB1D /* RestRequest.m in Sources */,
 				A8395D2517CC7D85007DD3ED /* xsd.m in Sources */,
 				A8395C0D17CC7D85007DD3ED /* UICGDirections.m in Sources */,
 				A8395C3917CC7D85007DD3ED /* ProductManualCell.m in Sources */,
@@ -9947,6 +9946,7 @@
 				A8395C4417CC7D85007DD3ED /* SFHFKeychainUtils.m in Sources */,
 				A8395CF117CC7D85007DD3ED /* SFMFullResultViewController.m in Sources */,
 				A8C5073718ACCF7B00266B0B /* SMDataPurgeRequestHelper.m in Sources */,
+				C8A886221B319CA90005AB1D /* SVMXSystemConstant.m in Sources */,
 				A8395B9A17CC7D85007DD3ED /* SummaryViewController.m in Sources */,
 				A80E381517E1915100B8E308 /* OptimizedSyncCalls.m in Sources */,
 				A8395D2017CC7D85007DD3ED /* NSDate+ISO8601Unparsing.m in Sources */,
