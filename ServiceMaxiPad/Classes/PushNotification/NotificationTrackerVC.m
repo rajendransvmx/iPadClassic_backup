@@ -221,7 +221,6 @@
 }
 -(void)dealloc
 {
-    NSLog(@"Dealloc NotifcationVC");
-    
+    SXLogDebug(@"Dealloc NotifcationVC");
 }
 @end

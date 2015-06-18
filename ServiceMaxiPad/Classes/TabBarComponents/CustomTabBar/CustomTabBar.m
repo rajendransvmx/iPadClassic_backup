@@ -488,7 +488,7 @@ typedef enum {
 {
     NSUInteger count = [[ResolveConflictsHelper getConflictsRecords] count];
 
-    NSLog(@"Conflicts count %lu",(unsigned long)count);
+    SXLogWarning(@"Conflicts count %lu",(unsigned long)count);
 
     CustomBadge *toolsBadge = (CustomBadge*)[self.btn7 viewWithTag:BADGE_TAG];
     CustomBadge *homeBadge = (CustomBadge*)[self.btn1 viewWithTag:BADGE_TAG];

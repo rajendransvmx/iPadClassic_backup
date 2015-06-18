@@ -119,7 +119,7 @@
         }
         else
         {
-            NSLog(@"field merging json creatn failed error :%@ ", jsonError);
+            SXLogDebug(@"field merging json creatn failed error :%@ ", jsonError);
         }
     }
     

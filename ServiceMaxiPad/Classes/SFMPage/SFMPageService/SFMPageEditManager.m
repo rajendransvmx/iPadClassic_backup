@@ -793,7 +793,7 @@
             [self checkIfObjectIsEvent:page.objectName];
         }
         
-        NSLog(@"database path: %@",[[DatabaseManager sharedInstance]primaryDatabasePath]);
+        //NSLog(@"database path: %@",[[DatabaseManager sharedInstance]primaryDatabasePath]);
         
         [[SuccessiveSyncManager sharedSuccessiveSyncManager]registerForSuccessiveSync:syncRecord withData:page.headerRecord];
         

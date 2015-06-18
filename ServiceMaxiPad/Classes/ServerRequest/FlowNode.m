@@ -103,7 +103,7 @@ NSString *cocoaErrorString = @"3840";
 - (void)startFlow
 {    //PA
     int i = (int) SMLogLogLevel();
-    NSLog(@"Log level :%d", (int)i);
+    SXLogDebug(@"Log level :%d", (int)i);
     
     if (ApplicationLogLevelWarning == i)
     {

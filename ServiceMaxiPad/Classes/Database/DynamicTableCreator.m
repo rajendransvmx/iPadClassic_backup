@@ -34,11 +34,11 @@
         NSString * query =[self prepareCreateQuery:objectName forFields:fieldsArray]; //form create query
         if([universalDao conformsToProtocol:@protocol(UniversalDAO)])
         {
-            NSLog(@"TableName %@",objectName);
+            SXLogDebug(@"TableName %@",objectName);
             BOOL createTable =  [universalDao createTable:query];
             if (!createTable)
             {
-                NSLog(@"Table creation Failed %@",objectName);
+                SXLogDebug(@"Table creation Failed %@",objectName);
             }
             else {
                 [[DatabaseIndexManager sharedInstance] registerTableNameForSingleIndexing:objectName];

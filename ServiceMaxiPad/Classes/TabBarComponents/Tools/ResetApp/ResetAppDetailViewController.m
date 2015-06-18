@@ -58,7 +58,7 @@
         
         NSNumber *number = (NSNumber *) [notification object];
         
-        NSLog(@" notification value - %d", [number intValue]);
+        NSLog(@"notification value - %d", [number intValue]);
     }
     
     double delayInSeconds = 1.0;
