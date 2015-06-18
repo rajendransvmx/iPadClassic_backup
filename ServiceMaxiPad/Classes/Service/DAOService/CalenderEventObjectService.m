@@ -235,9 +235,14 @@
             NSDictionary * dict = [resultSet resultDictionary];
             //Method in model to set the values
             
-            NSString *key = [[dict allKeys] objectAtIndex:0];
-            if ([[dict valueForKey:key] length]) {
-                [detailsArray addObject:[dict valueForKey:key]];
+            /* checkig value in product table, if SVMX_Product_c is there */
+            if (dict && ![dict isKindOfClass:[NSNull class]]){
+                if ([[dict allKeys] count]) {
+                    NSString *key =[[dict allKeys] objectAtIndex:0];
+                    if ([[dict valueForKey:key] length]) {
+                        [detailsArray addObject:[dict valueForKey:key]];
+                    }
+                }
             }
         }
         [resultSet close];
