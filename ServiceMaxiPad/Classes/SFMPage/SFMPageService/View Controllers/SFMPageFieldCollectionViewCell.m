@@ -25,12 +25,15 @@
         self.isShowMoreButton = NO;
         _fieldName = [[UILabel alloc] initWithFrame:CGRectZero];
         [self.contentView addSubview:_fieldName];
-        
-        _fieldValue = [[UILabel alloc]initWithFrame:CGRectZero];
+       
+        /* Updated _fieldValue UIlabel to fix defect 014039 */
+        _fieldValue = [[EditMenuLabel alloc]initWithFrame:CGRectZero];
         _fieldValue.backgroundColor = [UIColor greenColor];
+        _fieldValue.userInteractionEnabled = YES;
         [self.contentView addSubview:_fieldValue];
-        
-      
+       
+        UIGestureRecognizer *gestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(showEditMenuViewForLongPressGesture:)];
+        [_fieldValue addGestureRecognizer:gestureRecognizer];
         
         _moreButton = [[UIButton alloc]initWithFrame:CGRectZero];
         [self.contentView addSubview:_moreButton];
@@ -139,4 +142,18 @@
 {
     [self setNeedsLayout];
 }
+
+
+#pragma mark - UIGestureRecognizer
+
+- (void)showEditMenuViewForLongPressGesture:(UIGestureRecognizer *)recognizer  {
+    
+    CGPoint location = [recognizer locationInView:[recognizer view]];
+    [recognizer.view becomeFirstResponder];
+    UIMenuController *menuController = [UIMenuController sharedMenuController];
+    [menuController setTargetRect:CGRectMake(location.x, location.y, 0.0f, 0.0f) inView:recognizer.view.superview];
+    [menuController setMenuVisible:YES animated:YES];
+    
+}
+
 @end

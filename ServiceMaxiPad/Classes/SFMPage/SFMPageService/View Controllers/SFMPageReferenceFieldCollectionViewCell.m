@@ -72,7 +72,7 @@
     else
     {
         self.fieldValue.textColor = [UIColor blackColor];
-        self.fieldValue.userInteractionEnabled = NO; // Disable the userInteraction if reference record not exits. Bug ID:013917
+       // self.fieldValue.userInteractionEnabled = NO; // Disable the userInteraction if reference record not exits. Bug ID:013917
 
     }
 }

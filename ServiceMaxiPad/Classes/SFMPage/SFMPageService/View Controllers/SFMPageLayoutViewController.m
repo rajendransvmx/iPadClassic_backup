@@ -333,7 +333,7 @@ NSString *const kReferenceCellIdentifier = @"ReferenceCellIdentifier";
     SFMPageField *pageField = [self.pageFields objectAtIndex:index];
     SFMRecordFieldData *recordData = [self getValueForField:pageField.fieldName];
     
-    if ([recordData.internalValue length] > 0 ) {
+    if ([recordData.internalValue length] > 0 && recordData.isReferenceRecordExist) {
         
         SFMPageViewController *pageView = [[SFMPageViewController alloc] init];
         SFMPageViewManager *pageManager = [[SFMPageViewManager alloc] initWithObjectName:pageField.relatedObjectName recordId:recordData.internalValue];

@@ -7,11 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "EditMenuLabel.h"
 
 @interface SFMPageFieldCollectionViewCell : UICollectionViewCell
 
 @property(nonatomic, strong) UILabel *fieldName;
-@property(nonatomic, strong) UILabel *fieldValue;
+
+/* Updated _fieldValue UIlabel to fix defect 014039 */
+@property(nonatomic, strong) EditMenuLabel *fieldValue;
+
 @property(nonatomic, strong) UIButton *moreButton;
 @property(nonatomic, strong) UIImageView *fadeOutImageView;
 @property(nonatomic, strong) NSString *fieldApiName;

@@ -24,5 +24,6 @@
 + (UIColor *)lighterGrayColor;
 + (UIColor *)lighterGrayCustom;
 + (UIColor *)lightGrayCustom;
++ (UIColor *)copyTextHighlightingColorForHexString:(NSString *)hexString;
 
 @end
