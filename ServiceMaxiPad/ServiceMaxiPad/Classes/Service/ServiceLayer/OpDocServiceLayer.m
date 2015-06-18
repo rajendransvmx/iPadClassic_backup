@@ -241,7 +241,7 @@
             );
         }
         */
-        
+
         int successStatus = [[responseDict objectForKey:@"success"] intValue];
         if(successStatus)
         {
@@ -277,6 +277,7 @@
             
             [[OpDocSyncDataManager sharedManager]setIsSuccessfullyUploaded:NO];
 
+            [self removeSFIDFromTheTableForDOCSubmissionFAILURE]; // Removing the SFID from the tables. this will make the client to get the SFID again and then submit for doc-submission again. Its just a FAIL safe.
 
         }
         
@@ -363,7 +364,6 @@
         {
             //TODO: What if success is 0?
             [[OpDocSyncDataManager sharedManager]setIsSuccessfullyUploaded:NO];
-
         }
         
     }
@@ -587,4 +587,23 @@
     
 }
 
+
+-(void)removeSFIDFromTheTableForDOCSubmissionFAILURE
+{
+    NSDictionary *lOPDocHTMLAndSignatureObjectDict = [[OpDocSyncDataManager sharedManager] cHtmlSignatureDocSubmissionDictionary];
+    NSArray *listOfHTMLIds = [NSMutableArray arrayWithArray:[lOPDocHTMLAndSignatureObjectDict objectForKey:@"html"]];
+    NSArray *listOfSignatureIds = [NSMutableArray arrayWithArray:[lOPDocHTMLAndSignatureObjectDict objectForKey:@"signature"]];
+    
+    if (listOfSignatureIds && listOfSignatureIds.count) {
+        OPDocSignatureService *srvc = [[OPDocSignatureService alloc] init];
+        [srvc updateTableToRemovetheSFIDForList:listOfSignatureIds];
+    }
+
+    if (listOfHTMLIds && listOfHTMLIds.count) {
+        OPDocServices *lOpdocHTMLService = [[OPDocServices alloc] init];
+        [lOpdocHTMLService updateTableToRemovetheSFIDForList:listOfHTMLIds];
+    }
+
+    
+}
 @end

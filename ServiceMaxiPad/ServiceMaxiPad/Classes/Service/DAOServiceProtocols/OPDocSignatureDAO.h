@@ -61,5 +61,7 @@
 //To retrieve Signature entires which are not synced yet for a particular HTML File
 - (NSMutableArray *)getSignatureModelListForFileUploadforRecordID:(NSString *)record_ID andHTMLFileName:(NSString *)htmlFileName;
 
+//To Delete the SFID's from those records whose doc-Submission API has failed. This is done, so that when these files are submitted again for uploading, it gets the SFID's again. Its a FAIL-Safe mechanism.
+-(BOOL)updateTableToRemovetheSFIDForList:(NSArray *)listArray;
 
 @end

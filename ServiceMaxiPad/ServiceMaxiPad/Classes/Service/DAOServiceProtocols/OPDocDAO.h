@@ -59,5 +59,7 @@
 -(NSArray *)getAllFilesPresentInTableForWhichNeedsToBeDeleted:(NSString *)theHTMLSFIDOrHTMLFileName; //This is needed to delete the record from tables of HTML as well as SIGNATURE cause if a DELETE_ID is received from Server, we have to delete the associated ID's from both tables
 
 
+//To Delete the SFID's from those records whose doc-Submission API has failed. This is done, so that when these files are submitted again for uploading, it gets the SFID's again. Its a FAIL-Safe mechanism.
+-(BOOL)updateTableToRemovetheSFIDForList:(NSArray *)listArray;
 
 @end

@@ -329,14 +329,8 @@
                     }
                     else
                     {
-                        if (cHtmlListArray.count>=2) {
-                            // 1. Equal to/greater than 2 because if the count is 1 then, the doc submission of the same set which failed just now will start again. And this process will go in loop.
-                            // 2. Cant remove the entry from DB because we dont know the reason why the server failed the request.
-                            
-                            
-                            [self gettingReadyToSyncTheNextSetOfData];
+                        [self gettingReadyToSyncTheNextSetOfData];
 
-                        }
                     }
                     
                 }
@@ -349,7 +343,9 @@
                     }
                     else
                     {
+
                         [self gettingReadyToSyncTheNextSetOfData];
+   
 
                     }
                 }

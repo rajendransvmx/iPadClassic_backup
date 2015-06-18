@@ -305,4 +305,15 @@
     return result;
 }
 
+-(BOOL)updateTableToRemovetheSFIDForList:(NSArray *)listArray
+{
+    DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:kOPDocSFID operatorType:SQLOperatorIn andFieldValues:listArray];
+    
+    DBRequestUpdate * updatequery = [[DBRequestUpdate alloc] initWithTableName:[self tableName] andFieldNames:@[kOPDocSFID] whereCriteria:@[criteria1] andAdvanceExpression:nil];
+    BOOL status = [self updateEachRecord:@{kOPDocSFID:@""} withQuery:[updatequery query]];
+    
+    
+    return status;
+}
+
 @end
