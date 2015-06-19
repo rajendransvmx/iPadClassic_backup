@@ -153,7 +153,7 @@
     
     switch (requestType) {
         case RequestSFMPageData:
-            return 1;//New page layout call.
+            return kMaximumNoOfParallelPageLayoutCalls;//New page layout call.
             // Vipindas changed Bugbash - Nov 04 2014
             break;
             

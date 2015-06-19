@@ -997,7 +997,7 @@
         //some requests expects empty array
         [self.dataDictionary setObject:@[] forKey:kSVMXRequestValues];
     }
-    if (self.shouldIncludeTimeLogs && self.requestType != RequestSyncTimeLogs) {
+    if (self.shouldIncludeTimeLogs && self.requestType != RequestSyncTimeLogs && self.requestType != RequestSFMPageData) {
         
         NSMutableArray *valueMapArray = [NSMutableArray arrayWithArray:self.requestParameter.valueMap];
         NSString *contextValue =  [[ServerRequestManager sharedInstance]
@@ -1008,6 +1008,7 @@
             //[valueMapArray insertObject:[finalarray objectAtIndex:0] atIndex:0];
             [self.dataDictionary setObject:valueMapArray forKey:kSVMXRequestSVMXMap];
         }
+        
         
     }
 }

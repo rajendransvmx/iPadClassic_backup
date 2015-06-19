@@ -387,3 +387,6 @@ NSString *const kMapErrorInvalidRequest     = @"INVALID_REQUEST";
 NSString *const kMapErrorOverQueryLimit     = @"OVER_QUERY_LIMIT";
 NSString *const kMapErrorRequestDenied      = @"REQUEST_DENIED";
 NSString *const kMapErrorUnknownError       = @"UNKNOWN_ERROR";
+
+NSInteger const kPageLimit   = 15;
+NSInteger const kMaximumNoOfParallelPageLayoutCalls = 5;

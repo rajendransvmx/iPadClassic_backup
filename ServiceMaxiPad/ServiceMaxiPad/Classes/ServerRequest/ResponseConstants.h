@@ -377,3 +377,6 @@ extern NSString *const kMapErrorOverQueryLimit;
 extern NSString *const kMapErrorRequestDenied;
 extern NSString *const kMapErrorUnknownError;
 
+extern NSInteger const kPageLimit ;
+extern NSInteger const kMaximumNoOfParallelPageLayoutCalls;
+

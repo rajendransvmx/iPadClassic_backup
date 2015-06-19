@@ -31,6 +31,7 @@
 #import "SVMXSystemUtility.h"
 #import "StringUtil.h"
 #import "SMAppDelegate.h"
+#import "CacheManager.h"
 
 #define MAX_RETRY_COUNT 3
 NSString *cocoaErrorString = @"3840";
@@ -428,8 +429,10 @@ NSString *cocoaErrorString = @"3840";
  * @return Description of the return value
  *
  */
-- (BOOL)isCocoaErrorRetryCompletedForRequest:(SVMXServerRequest *)requestObject withError:(NSError *)error {
-    
+- (BOOL)isCocoaErrorRetryCompletedForRequest:(SVMXServerRequest *)requestObject withError:(NSError *)error
+{
+    [[CacheManager sharedInstance]clearCacheByKey:@"PageIds"];
+
     BOOL returnValue = YES;
     
     //check retry count > 0 and < max retry count.
@@ -608,7 +611,8 @@ NSString *cocoaErrorString = @"3840";
 
 - (void)didRequestFailedWithError:(NSError *)error Response:(id)responseObject andRequestObject:(id)request
 {
-    
+    [[CacheManager sharedInstance]clearCacheByKey:@"PageIds"];
+
     NSLog(@"Request failed with error %@ %@ Request : %@",[error description],[responseObject description],[request description]);
     NSError *serverError = [SMInternalErrorUtility checkForErrorInResponse:responseObject withStatusCode:-999 andError:error];
     if (serverError != nil)
