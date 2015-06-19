@@ -3,12 +3,12 @@
 ServiceMax iPad  Spring15SPBuild
 
 *******************************************
-Version = 15.40.014
+Version = 15.40.015
 ===========================================
 -------------
 Fixed Defects
 -------------
-018458
+018458 - Logging into iPad app causes it to crash.
 
 
 -------------
@@ -29,7 +29,7 @@ None
 ---------------------
 Additional Notes
 ---------------------
-None
+Removed unwanted logs like queries, db password and file paths
 
 
 
