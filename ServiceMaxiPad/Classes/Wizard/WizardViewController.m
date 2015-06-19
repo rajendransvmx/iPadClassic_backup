@@ -29,6 +29,8 @@
 #import "TagManager.h"
 #import "SFMCustomActionHelper.h"
 #import "SFCustomActionURLService.h"
+#import "SNetworkReachabilityManager.h"
+
 @interface WizardViewController ()
 
 @property(assign)CGFloat cellHeight;
@@ -150,11 +152,28 @@
             
             if (wizardComponent.isEntryCriteriaMatching){
                 if ([wizardComponent.actionType isEqualToString:@"OTHERS"]) {
+                    /* Before making request checking for internet connectivity */
                     textLabel.textColor=[UIColor greenColor];
+                    if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable]){
+                        textLabel.enabled = YES;
+                        cell.userInteractionEnabled = YES;
+                        [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
+                    }else{
+                        if ([wizardComponent.customActionType isEqualToString:@"Web-Service"])  {
+                            textLabel.enabled = NO;
+                            cell.userInteractionEnabled = NO;
+                            [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
+                        }else{
+                            textLabel.enabled = YES;
+                            cell.userInteractionEnabled = YES;
+                            [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
+                        }
+                    }
+                }else{
+                    textLabel.enabled = YES;
+                    cell.userInteractionEnabled = YES;
+                    [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
                 }
-                textLabel.enabled = YES;
-                cell.userInteractionEnabled = YES;
-                [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
             }
             else{
                 textLabel.enabled = NO;
@@ -276,15 +295,25 @@
                     [self.delegate rescheduleEvent];
                 }else if([wizardComponent.actionType isEqualToString:@"OTHERS"])//Here we are checking for custome URL
                 {
-                    SFMCustomActionHelper *a=[[SFMCustomActionHelper alloc] init];
-                    a.objectName=wizard.objectName;
-                    a.objectId=objectId;
-                    a.ObjectFieldname=ObjectFieldname;
-                    NSArray *paramList = [self fetchParamsForWizardComponent:wizardComponent];
-                    if ([wizardComponent.customActionType isEqualToString:@"URL"]) {
-                        [a loadURL:wizardComponent.customUrl withParams:paramList];
+                    /* Before making request checking for internet connectivity */
+                    if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable]){
+                        SFMCustomActionHelper *a=[[SFMCustomActionHelper alloc] init];
+                        a.objectName=wizard.objectName;
+                        a.objectId=objectId;
+                        a.ObjectFieldname=ObjectFieldname;
+                        NSArray *paramList = [self fetchParamsForWizardComponent:wizardComponent];
+                        if ([wizardComponent.customActionType isEqualToString:@"URL"]) {
+                            /* load url with infomation */
+                            [a loadURL:wizardComponent withParams:paramList];
+                        }else if ([wizardComponent.customActionType isEqualToString:@"Web-Service"]) {
+                            /* making webservice call */
+                            [a callWebService:wizardComponent withparams:paramList];
+                        }else{
+                            /*open new application from our application */
+                            //[a loadApp:wizardComponent withparams:paramList];
+                        }
                     }else{
-                        [a callWebService:wizardComponent withparams:paramList];
+                        
                     }
                 }
                 else

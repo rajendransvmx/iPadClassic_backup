@@ -108,10 +108,10 @@
     }
     self.tempViewController.delegate = self;
     self.tempViewController.wizardsArray = allWizards;
+    self.tempViewController.objectId=self.sfmPageView.sfmPage.recordId;
+    self.tempViewController.ObjectFieldname = kLocalId;
     self.tempViewController.viewProcessArray = [processService fetchAllViewProcessForObjectName:self.sfmPageView.sfmPage.objectName];
     self.tempViewController.shouldShowTroubleShooting = self.sfmPageView.sfmPage.process.pageLayout.headerLayout.enableTroubleShooting;
-    self.tempViewController.objectId=self.sfmPageView.sfmPage.nameFieldValue;
-    self.tempViewController.ObjectName=self.sfmPageView.sfmPage.objectName;
 }
 
 

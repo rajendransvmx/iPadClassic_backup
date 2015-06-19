@@ -15,6 +15,7 @@
 @property(nonatomic,copy) NSString *objectName;
 @property(nonatomic,copy) NSString *recordId;
 @property(nonatomic,copy) NSString *processId;
+@property(nonatomic,copy) NSString *Fieldname;
 
 @property(nonatomic,strong) NSMutableDictionary *pickListData;
 @property(nonatomic,strong) NSMutableDictionary *recordTypeData;

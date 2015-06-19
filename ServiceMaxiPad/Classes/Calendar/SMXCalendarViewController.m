@@ -667,8 +667,8 @@
         if (self.tempViewController == nil) {
             self.tempViewController = [[WizardViewController alloc]initWithNibName:@"WizardViewController" bundle:nil];
         }
-        self.tempViewController.objectId=self.selectedEvent.whatId;
-        self.tempViewController.ObjectFieldname=kId;
+        self.tempViewController.objectId=recordId;
+        self.tempViewController.ObjectFieldname=kLocalId;
         self.tempViewController.delegate = self;
         self.tempViewController.wizardsArray = allWizards;
         self.tempViewController.viewProcessArray = [processService fetchAllViewProcessForObjectName:objectModel.objectName];
