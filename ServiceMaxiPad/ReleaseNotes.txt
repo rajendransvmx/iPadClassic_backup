@@ -3,11 +3,12 @@
 ServiceMax Win 15 SP iPad Release
 
 *******************************************
-Version = 15.20.024
+Version = 15.20.025
 ===========================================
 -------------
 Fixed Defects
 -------------
+#10707: PDF document is not generated properly on the online server, after the user generates the Smart Docs in iPad and synchronizes the same with online ser
 
 -------------
 Known Issues
