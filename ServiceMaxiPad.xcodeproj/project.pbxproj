@@ -882,7 +882,6 @@
 		8BE5695F1A1DB12300532D43 /* SMXCurrentDayButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BE5695E1A1DB12300532D43 /* SMXCurrentDayButton.m */; };
 		8BF7BB1F19EE7CAA00D1CED7 /* cal-left-arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BF7BB1D19EE7CAA00D1CED7 /* cal-left-arrow.png */; };
 		8BF7BB2019EE7CAA00D1CED7 /* cal-right-arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BF7BB1E19EE7CAA00D1CED7 /* cal-right-arrow.png */; };
-		8BF7BB2419F13D1800D1CED7 /* SMXLable.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BF7BB2319F13D1800D1CED7 /* SMXLable.m */; };
 		9E0C8A6D1A0E63E500C51B76 /* LinkedProcess.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E0C8A6C1A0E63E500C51B76 /* LinkedProcess.m */; };
 		9E1B50501A40631600C71983 /* CusTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E1B504F1A40631600C71983 /* CusTextField.m */; };
 		9E2002611A7B93CB00F3C83C /* SFMNonEditableTextViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E2002601A7B93CB00F3C83C /* SFMNonEditableTextViewCell.m */; };
@@ -2637,8 +2636,6 @@
 		8BE5695E1A1DB12300532D43 /* SMXCurrentDayButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMXCurrentDayButton.m; sourceTree = "<group>"; };
 		8BF7BB1D19EE7CAA00D1CED7 /* cal-left-arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cal-left-arrow.png"; sourceTree = "<group>"; };
 		8BF7BB1E19EE7CAA00D1CED7 /* cal-right-arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cal-right-arrow.png"; sourceTree = "<group>"; };
-		8BF7BB2219F13D1800D1CED7 /* SMXLable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMXLable.h; sourceTree = "<group>"; };
-		8BF7BB2319F13D1800D1CED7 /* SMXLable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMXLable.m; sourceTree = "<group>"; };
 		9E0C8A6B1A0E63E500C51B76 /* LinkedProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkedProcess.h; sourceTree = "<group>"; };
 		9E0C8A6C1A0E63E500C51B76 /* LinkedProcess.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LinkedProcess.m; sourceTree = "<group>"; };
 		9E1B504E1A40631600C71983 /* CusTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CusTextField.h; sourceTree = "<group>"; };
@@ -4473,8 +4470,6 @@
 				184A8D8C19E7A0BE006DA6BE /* SMXDayCalendarView.m */,
 				184A8D8D19E7A0BE006DA6BE /* SMXDayHeaderCollectionView */,
 				184A8D9519E7A0BE006DA6BE /* SMXDayScrollView */,
-				8BF7BB2219F13D1800D1CED7 /* SMXLable.h */,
-				8BF7BB2319F13D1800D1CED7 /* SMXLable.m */,
 			);
 			path = SMXDayCalendarView;
 			sourceTree = "<group>";
@@ -6689,7 +6684,6 @@
 				D9F7EEF51A1083270098F8AF /* BizRulesViewController.m in Sources */,
 				183A9EF919E6A15600919345 /* ZKBaseClient.m in Sources */,
 				184A8EF619E7A535006DA6BE /* UICGRoute.m in Sources */,
-				8BF7BB2419F13D1800D1CED7 /* SMXLable.m in Sources */,
 				183A9EFE19E6A15600919345 /* ZKDescribeLayout.m in Sources */,
 				184A8E6819E7A0BE006DA6BE /* SMXMonthCalendarView.m in Sources */,
 				183AA1A719E6D26400919345 /* SFMProcessComponent.m in Sources */,

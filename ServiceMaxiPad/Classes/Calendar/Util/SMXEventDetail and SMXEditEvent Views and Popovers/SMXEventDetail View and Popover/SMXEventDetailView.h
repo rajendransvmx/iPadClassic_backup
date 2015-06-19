@@ -30,6 +30,13 @@
 - (void)showEditViewWithEvent:(SMXEvent *)_event;
 @end
 
+@interface CustomMoreButton : UIButton
+
+@property(nonatomic, strong) NSString *headerText; //save these properties values. So that we can use them when we tap on moreButton.
+@property(nonatomic, strong) NSString *valueText;
+
+@end
+
 @interface SMXEventDetailView : UIView <CLLocationManagerDelegate>
 
 @property (nonatomic, assign) id<SMXEventDetailViewProtocol> protocol;
@@ -42,6 +49,9 @@
 @property (nonatomic, strong) UIButton *buttonChat;
 
 @property (nonatomic, strong) UIButton *buttonMap;
+@property (nonatomic, strong) CustomMoreButton *moreButton;
+@property (nonatomic, strong) UIImageView *fadeOutImageView;
+@property (nonatomic, strong) UIPopoverController * popOver;
 
 - (id)initWithFrame:(CGRect)frame event:(SMXEvent *)_event;
 

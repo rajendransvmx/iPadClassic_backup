@@ -19,7 +19,6 @@
 #import "SMXEventDetailView.h"
 
 #import "SMXImportantFilesForCalendar.h"
-#import "SMXLable.h"
 #import "StyleManager.h"
 #import "ServiceLocationModel.h"
 #import "CalenderHelper.h"
@@ -34,6 +33,7 @@
 #import "SFMPageHelper.h"
 #import "SFPicklistModel.h"
 #import "SMXProductListModel.h"
+#import "MorePopOverViewController.h"
 
 #define FONT_HELVETICANUE @"HelveticaNeue"
 
@@ -50,6 +50,12 @@
 #define SMXLableWidth 270
 #define stringLimitInProduct 80
 
+@implementation CustomMoreButton
+
+@synthesize headerText;
+@synthesize valueText;
+
+@end
 
 @interface SMXEventDetailView ()
 @property (nonatomic, strong) SMXEvent *event;
@@ -63,19 +69,19 @@
 
 
 @property (nonatomic, strong) UILabel *contactTitleLabel;
-@property (nonatomic, strong) SMXLable *contactNameLabel;
+@property (nonatomic, strong) UILabel *contactNameLabel;
 @property (nonatomic, strong) UILabel *phoneTitleLabel;
-@property (nonatomic, strong) SMXLable *phoneNumberLabel;
+@property (nonatomic, strong) UILabel *phoneNumberLabel;
 @property (nonatomic, strong) UILabel *priorityTitleLabel;
-@property (nonatomic, strong) SMXLable *priorityLevelLabel;
+@property (nonatomic, strong) UILabel *priorityLevelLabel;
 @property (nonatomic, strong) UILabel *billingTypeTitleLabel;
-@property (nonatomic, strong) SMXLable *billingTypeLabel;
+@property (nonatomic, strong) UILabel *billingTypeLabel;
 @property (nonatomic, strong) UILabel *serviceLocationTitleLabel;
 @property (nonatomic, strong) UILabel *serviceLocationTextView;
 @property (nonatomic, strong) UILabel *orderStatusTitleLabel;
-@property (nonatomic, strong) SMXLable *orderStatusLabel;
+@property (nonatomic, strong) UILabel *orderStatusLabel;
 @property (nonatomic, strong) UILabel *purposeOfVisitTitleLabel;
-@property (nonatomic, strong) SMXLable *purposeOfVisitLabel;
+@property (nonatomic, strong) UILabel *purposeOfVisitLabel;
 
 @property (nonatomic, strong) UILabel *problemDescriptionTitleLabel;
 @property (nonatomic, strong) UILabel *problemDescriptionLabel;
@@ -138,6 +144,9 @@
 @synthesize buttonEmail;
 @synthesize buttonChat;
 @synthesize buttonMap;
+@synthesize moreButton;
+@synthesize fadeOutImageView;
+@synthesize popOver;
 
 @synthesize cLocationManager;
 @synthesize cCurrentLocation;
@@ -156,14 +165,19 @@
     }
     return self;
 }
-
 - (id)initWithFrame:(CGRect)frame event:(SMXEvent *)_event
 {
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
-        
+        //Add device orientation notification to default center.
+        [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(didRotate:)
+                                                    name:@"UIDeviceOrientationDidChangeNotification"
+                                                  object:nil];
+
         event = _event;
+        
         
         [self.layer setBorderColor:[UIColor lightGrayCustom].CGColor];
         [self.layer setBorderWidth:1.];
@@ -283,6 +297,15 @@
     return self;
 }
 
+#pragma mark - Notification methods
+- (void) didRotate:(NSNotification *)notification {
+    
+    if (self.popOver != nil && [self.popOver isPopoverVisible]) {
+        [self.popOver dismissPopoverAnimated:YES];
+    }
+}
+
+
 #pragma mark - Button Actions
 
 -(void)CurrentLocationIdentifier
@@ -328,6 +351,18 @@
     if ([protocol respondsToSelector:@selector(showEditViewWithEvent:)]) {
         [protocol showEditViewWithEvent:event];
     }
+}
+- (void)moreButtonClicked:(id)sender
+{
+    if (self.popOver != nil && [self.popOver isPopoverVisible]) {
+        [self.popOver dismissPopoverAnimated:YES];
+    }
+    CustomMoreButton *tempButton = (CustomMoreButton*)sender;
+    MorePopOverViewController *morePopoverController = [[MorePopOverViewController alloc]init];
+    self.popOver = [[UIPopoverController alloc] initWithContentViewController:morePopoverController];
+    [self.popOver presentPopoverFromRect:tempButton.frame inView:tempButton.superview permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    morePopoverController.fieldNameLabel.text = tempButton.headerText;
+    morePopoverController.fieldValueTextView.text = tempButton.valueText;
 }
 
 #pragma mark - Add Subviews
@@ -516,14 +551,14 @@
         contactNameLabel = nil;
     }
     
-    contactNameLabel = [[SMXLable alloc] initWithFrame:CGRectMake(gap , contactTitleLabel.frame.origin.y+contactTitleLabel.frame.size.height, SMXLableWidth-50, contactTitleLabel.frame.size.height)];
+    contactNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(gap , contactTitleLabel.frame.origin.y+contactTitleLabel.frame.size.height, SMXLableWidth-50, contactTitleLabel.frame.size.height)];
     contactNameLabel.backgroundColor = [UIColor clearColor];//HS 12 Jan
     
     [contactNameLabel setText:(cContactModel.contactName.length > 0 ? cContactModel.contactName : @"--")];
     [contactNameLabel setTextColor:LABEL_VALUE_COLOR];
     [contactNameLabel setFont:[UIFont fontWithName:FONT_HELVETICANUE_MEDIUM size:LABEL_VALUE_FONT_SIZE]];
     [contactNameLabel setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin];
-    contactNameLabel.headerText=contactTitleLabel.text;
+
 
     if (isViewProcess) {
         
@@ -533,14 +568,21 @@
         contactNameLabel.userInteractionEnabled = YES;
 
         [contactNameLabel addGestureRecognizer:tapGesture];
+        if ([self verifyStringSizeForLabel:contactNameLabel]) {
+           [cBGScrollView addSubview:[self showMoreButtonForValueLabel:contactNameLabel withHeaderText:contactTitleLabel.text]];
+            [self reloadContactNameLabelFrame];
+        }
     }
     else
     {
-        [contactNameLabel checkString];
+        if([self verifyStringSizeForLabel:contactNameLabel]) {
+            [cBGScrollView addSubview:[self showMoreButtonForValueLabel:contactNameLabel withHeaderText:contactTitleLabel.text]];
+            [self reloadContactNameLabelFrame];
+        }
 
     }
-    
     [cBGScrollView addSubview:contactNameLabel];
+
 
 }
 
@@ -555,9 +597,9 @@
 
 -(void)addEmailAndChatButtons
 {
-    UIImage *lImage = [UIImage imageNamed:@"iOS-Email-Retina-Orange.png"];
+    UIImage *lImage = [UIImage imageNamed:@"Email-new.png"];
     
-    buttonEmail = [[UIButton alloc] initWithFrame:CGRectMake(contactNameLabel.frame.origin.x + contactNameLabel.frame.size.width +10, contactNameLabel.frame.origin.y, lImage.size.width, lImage.size.height)];
+    buttonEmail = [[UIButton alloc] initWithFrame:CGRectMake(contactNameLabel.frame.origin.x + SMXLableWidth-50 +15, contactNameLabel.frame.origin.y, 30, 20)]; //SMXLableWidth-50
     buttonEmail.tag = 77777;
     [buttonEmail setBackgroundImage:lImage forState:UIControlStateNormal];
     [buttonEmail addTarget:self action:@selector(buttonEmailAction:) forControlEvents:UIControlEventTouchUpInside];
@@ -570,9 +612,9 @@
         buttonEmail.enabled = NO;
     }
     
-    lImage = [UIImage imageNamed:@"iOSChat-Retina-Orange.png"];
+    lImage = [UIImage imageNamed:@"Chat-new.png"];
     
-    buttonChat = [[UIButton alloc] initWithFrame:CGRectMake(buttonEmail.frame.origin.x + buttonEmail.frame.size.width +35, buttonEmail.frame.origin.y, lImage.size.width, lImage.size.height)];
+    buttonChat = [[UIButton alloc] initWithFrame:CGRectMake(buttonEmail.frame.origin.x + buttonEmail.frame.size.width +15, buttonEmail.frame.origin.y - 5, 30, 27)];
     [buttonChat setBackgroundImage:lImage forState:UIControlStateNormal];
     buttonChat.tag = 88888;
     [buttonChat addTarget:self action:@selector(buttonChatAction:) forControlEvents:UIControlEventTouchUpInside];
@@ -654,15 +696,16 @@
     
 
     
-    phoneNumberLabel = [[SMXLable alloc] initWithFrame:CGRectMake(gap
+    phoneNumberLabel = [[UILabel alloc] initWithFrame:CGRectMake(gap
                                                                  , phoneTitleLabel.frame.origin.y+phoneTitleLabel.frame.size.height, SMXLableWidth, phoneTitleLabel.frame.size.height)];
     [phoneNumberLabel setText:([cContactModel.phoneString length]>0 ? cContactModel.phoneString : @"--")];
     [phoneNumberLabel setTextColor:LABEL_VALUE_COLOR];
     [phoneNumberLabel setFont:[UIFont fontWithName:FONT_HELVETICANUE_MEDIUM size:LABEL_VALUE_FONT_SIZE]];
     [phoneNumberLabel setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin];
     [cBGScrollView addSubview:phoneNumberLabel];
-    phoneNumberLabel.headerText=phoneTitleLabel.text;
-    [phoneNumberLabel checkString];
+    if([self verifyStringSizeForLabel:phoneNumberLabel]) {
+        [cBGScrollView addSubview:[self showMoreButtonForValueLabel:phoneNumberLabel withHeaderText:phoneTitleLabel.text]];
+    }
     
 }
 
@@ -680,7 +723,7 @@
 
     [cBGScrollView addSubview:priorityTitleLabel];
     
-    priorityLevelLabel = [[SMXLable alloc] initWithFrame:CGRectMake(gap
+    priorityLevelLabel = [[UILabel alloc] initWithFrame:CGRectMake(gap
                                                                    , priorityTitleLabel.frame.origin.y+priorityTitleLabel.frame.size.height, SMXLableWidth, priorityTitleLabel.frame.size.height)];
     NSDictionary *lDict = [self.pickListData objectForKey:kWorkOrderPriority];
 
@@ -690,8 +733,9 @@
     [priorityLevelLabel setFont:[UIFont fontWithName:FONT_HELVETICANUE_MEDIUM size:LABEL_VALUE_FONT_SIZE]];
     [priorityLevelLabel setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin];
     [cBGScrollView addSubview:priorityLevelLabel];
-    priorityLevelLabel.headerText=priorityTitleLabel.text;
-    [priorityLevelLabel checkString];
+    if([self verifyStringSizeForLabel:priorityLevelLabel]) {
+       [cBGScrollView addSubview:[self showMoreButtonForValueLabel:priorityLevelLabel withHeaderText:priorityTitleLabel.text]];
+    }
     
 }
 
@@ -711,7 +755,7 @@
     
     
     
-    billingTypeLabel = [[SMXLable alloc] initWithFrame:CGRectMake(gap
+    billingTypeLabel = [[UILabel alloc] initWithFrame:CGRectMake(gap
                                                                  , billingTypeTitleLabel.frame.origin.y+billingTypeTitleLabel.frame.size.height, SMXLableWidth, billingTypeTitleLabel.frame.size.height)];
     
     NSDictionary *lDict = [self.pickListData objectForKey:kWorkOrderBillingType];
@@ -723,8 +767,9 @@
     [billingTypeLabel setFont:[UIFont fontWithName:FONT_HELVETICANUE_MEDIUM size:LABEL_VALUE_FONT_SIZE]];
     [billingTypeLabel setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin];
     [cBGScrollView addSubview:billingTypeLabel];
-    billingTypeLabel.headerText=billingTypeTitleLabel.text;
-    [billingTypeLabel checkString];
+    if([self verifyStringSizeForLabel:billingTypeLabel]) {
+        [cBGScrollView addSubview:[self showMoreButtonForValueLabel:billingTypeLabel withHeaderText:billingTypeTitleLabel.text]];
+    }
 }
 
 -(void)addLabelServiceLocation
@@ -830,7 +875,7 @@
     
     
     
-    orderStatusLabel = [[SMXLable alloc] initWithFrame:CGRectMake(orderStatusTitleLabel.frame.origin.x
+    orderStatusLabel = [[UILabel alloc] initWithFrame:CGRectMake(orderStatusTitleLabel.frame.origin.x
                                                                  , orderStatusTitleLabel.frame.origin.y+orderStatusTitleLabel.frame.size.height, SMXLableWidth, orderStatusTitleLabel.frame.size.height)];
     
     NSDictionary *lDict = [self.pickListData objectForKey:kWorkOrderOrderStatus];
@@ -842,8 +887,9 @@
     [orderStatusLabel setFont:[UIFont fontWithName:FONT_HELVETICANUE_MEDIUM size:LABEL_VALUE_FONT_SIZE]];
     [orderStatusLabel setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin];
     [cBGScrollView addSubview:orderStatusLabel];
-    orderStatusLabel.headerText=orderStatusTitleLabel.text;
-    [orderStatusLabel checkString];
+    if([self verifyStringSizeForLabel:orderStatusLabel]) {
+        [cBGScrollView addSubview:[self showMoreButtonForValueLabel:orderStatusLabel withHeaderText:orderStatusTitleLabel.text]];
+    }
     
 }
 
@@ -861,7 +907,7 @@
     
     
     
-    purposeOfVisitLabel = [[SMXLable alloc] initWithFrame:CGRectMake(purposeOfVisitTitleLabel.frame.origin.x
+    purposeOfVisitLabel = [[UILabel alloc] initWithFrame:CGRectMake(purposeOfVisitTitleLabel.frame.origin.x
                                                                  , purposeOfVisitTitleLabel.frame.origin.y+purposeOfVisitTitleLabel.frame.size.height, SMXLableWidth, purposeOfVisitTitleLabel.frame.size.height)];
     
     NSDictionary *lDict = [self.pickListData objectForKey:kWorkOrderPurposeOfVisit];
@@ -873,8 +919,9 @@
     [purposeOfVisitLabel setFont:[UIFont fontWithName:FONT_HELVETICANUE_MEDIUM size:LABEL_VALUE_FONT_SIZE]];
     [purposeOfVisitLabel setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin];
     [cBGScrollView addSubview:purposeOfVisitLabel];
-    purposeOfVisitLabel.headerText=purposeOfVisitTitleLabel.text;
-    [purposeOfVisitLabel checkString];
+    if([self verifyStringSizeForLabel:purposeOfVisitLabel]) {
+        [cBGScrollView addSubview:[self showMoreButtonForValueLabel:purposeOfVisitLabel withHeaderText:purposeOfVisitTitleLabel.text]];
+    }
     
 }
 
@@ -975,6 +1022,47 @@
         return [NSString stringWithFormat:@"%@",[self trimStringWithGivenLength:productModel.displayValue]];
     }
 }
+-(CustomMoreButton*)showMoreButtonForValueLabel:(UILabel*)label withHeaderText:(NSString*)headerString{
+    CGFloat buttonWidth = 40.0;
+    UIImage *fadeoutImage = [UIImage imageNamed:@"fadeout.png"];
+
+    CGRect fadeOutImageViewFrame = CGRectMake(label.frame.size.width - fadeoutImage.size.width,0 ,fadeoutImage.size.width,fadeoutImage.size.height);
+
+    fadeOutImageView = [[UIImageView alloc] initWithFrame:fadeOutImageViewFrame];
+    fadeOutImageView.backgroundColor = [UIColor clearColor];
+    fadeOutImageView.image = fadeoutImage;
+    [label addSubview:fadeOutImageView];
+    
+    moreButton = [[CustomMoreButton alloc]initWithFrame:CGRectZero];
+    moreButton.headerText = headerString;
+    moreButton.valueText = label.text;
+    moreButton.frame = CGRectMake(label.frame.origin.x + label.frame.size.width + 10,label.frame.origin.y - 2,buttonWidth,30);
+    moreButton.backgroundColor=[UIColor clearColor];
+    [moreButton setTitle:[[TagManager sharedInstance]tagByName:kTagmore] forState:UIControlStateNormal];
+    [moreButton setTitle:[[TagManager sharedInstance]tagByName:kTagmore] forState:UIControlStateSelected];
+    [moreButton setTitleColor:[UIColor colorWithHexString:kOrangeColor] forState:UIControlStateNormal];
+    [moreButton setTitleColor:[UIColor colorWithHexString:kOrangeColor] forState:UIControlStateSelected];
+    moreButton.titleLabel.font = [UIFont fontWithName:kHelveticaNeueMedium size:kFontSize16];
+    [moreButton addTarget:self action:@selector(moreButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    return moreButton;
+}
+
+- (void) reloadContactNameLabelFrame {
+    contactNameLabel.frame = CGRectMake(contactNameLabel.frame.origin.x, contactNameLabel.frame.origin.y, 170 , contactNameLabel.frame.size.height);
+    fadeOutImageView.frame = CGRectMake(contactNameLabel.frame.size.width - fadeOutImageView.frame.size.width,fadeOutImageView.frame.origin.y ,fadeOutImageView.frame.size.width,fadeOutImageView.frame.size.height);
+    moreButton.frame = CGRectMake(contactNameLabel.frame.origin.x + contactNameLabel.frame.size.width  + 10, moreButton.frame.origin.y, moreButton.frame.size.width, moreButton.frame.size.height);
+}
+
+- (BOOL)verifyStringSizeForLabel:(UILabel*)label {
+    BOOL isTextSizeExceeded = NO;
+    CGSize size = [label.text sizeWithAttributes:
+                   @{NSFontAttributeName:label.font}];
+    
+    if (size.width > label.bounds.size.width) {
+        isTextSizeExceeded = YES;
+    }
+    return isTextSizeExceeded;
+}
 #pragma mark NON-WORK ORDER EVENT
 
 -(void)setUpNonWorkOrderDetailsView
@@ -1002,13 +1090,15 @@
     
     [lNon_WOBGView addSubview:lEventNameTitleLabel];
     
-    SMXLable *lEventNameValueLabel= [[SMXLable alloc] initWithFrame:CGRectMake(lEventLabel.frame.origin.x, lEventNameTitleLabel.frame.origin.y + lEventNameTitleLabel.frame.size.height, lNon_WOBGView.frame.size.width - 20, 20)];
+    UILabel *lEventNameValueLabel= [[UILabel alloc] initWithFrame:CGRectMake(lEventLabel.frame.origin.x, lEventNameTitleLabel.frame.origin.y + lEventNameTitleLabel.frame.size.height, lNon_WOBGView.frame.size.width - 65, 20)];
     lEventNameValueLabel.text = event.stringCustomerName;
 
     lEventNameValueLabel.font = [UIFont fontWithName:FONT_HELVETICANUE size:16.0];
     lEventNameValueLabel.textColor = LABEL_VALUE_COLOR;
     [lNon_WOBGView addSubview:lEventNameValueLabel];
-    [lEventNameValueLabel checkString];
+    if([self verifyStringSizeForLabel:lEventNameValueLabel]) {
+        [lNon_WOBGView addSubview:[self showMoreButtonForValueLabel:lEventNameValueLabel withHeaderText:lEventNameTitleLabel.text]];
+    }
 
     
     UILabel *lEventDescriptionTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(lEventNameValueLabel.frame.origin.x, lEventNameValueLabel.frame.origin.y + lEventNameValueLabel.frame.size.height + 10, 150, 15)];
@@ -1084,6 +1174,7 @@
 
 -(void)dealloc{
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"UIDeviceOrientationDidChangeNotification" object:nil];
 }
 
 - (NSArray *)getTheModifiedProductLocationArray

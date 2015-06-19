@@ -24,7 +24,6 @@
 
 #import "SMXImportantFilesForCalendar.h"
 #import "SMXConstants.h"
-#import "SMXLable.h"
 #import "CalendarMonthViewController.h"
 #import "CalendarPopupContent.h"
 #import "StyleManager.h"
