@@ -321,17 +321,17 @@
     
     NSMutableArray *requestParamArray = [[NSMutableArray alloc]init];
     
-    NSArray *pageLayoutLimitArray ;
+    NSArray *pageLayoutLimitArray = nil;
     
     if([pageLayoutIds count] > kPageLimit * requestCount)
     {
         NSInteger count =  kPageLimit * requestCount;
-        pageLayoutLimitArray = [pageLayoutIds subarrayWithRange:NSMakeRange(0,count)];
+        pageLayoutLimitArray = [NSArray arrayWithArray:[pageLayoutIds subarrayWithRange:NSMakeRange(0,count)]];
         
     }
     else
     {
-        pageLayoutLimitArray = pageLayoutIds ;
+        pageLayoutLimitArray = [NSArray arrayWithArray:pageLayoutIds];
         
     }
     
@@ -355,7 +355,7 @@
         [requestParamArray addObject:requestParamModel];
     }
     
-    for(NSString *string in pageLayoutLimitArray)
+    for(NSString *string in pageLayoutLimitArray) //crash here..
     {
         if([pageLayoutIds containsObject:string])
         {
@@ -406,8 +406,19 @@
     
     [self clearObjectDataFromCache];
     
+    NSInteger length = kOBJdefnLimit;
+    NSMutableArray *allObjectNames = [NSMutableArray arrayWithArray:[objectNamesDict allKeys]];
+    
+    if ([allObjectNames count] < length) {
+        length = [allObjectNames count];
+    }
+    
+    NSArray *objectNames = [allObjectNames subarrayWithRange:NSMakeRange(0, length)];
+    [allObjectNames removeObjectsInRange:NSMakeRange(0, length)];
+    [[CacheManager sharedInstance] pushToCache:allObjectNames byKey:kOBJdefList];
+    
     RequestParamModel *model = [[RequestParamModel alloc] init];
-    model.values = [objectNamesDict allKeys];
+    model.values = objectNames;
     return [NSArray arrayWithObjects:model,nil];
     
 }

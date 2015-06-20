@@ -21,8 +21,7 @@
 #import "SFPicklistService.h"
 #import "SFChildRelationshipModel.h"
 #import "SFChildRelationshipService.h"
-
-
+#import "CacheManager.h"
 
 @implementation ObjectDefinitionParser
 
@@ -113,11 +112,81 @@
                  
                 ResponseCallback * callBackObj = [[ResponseCallback alloc] init];
                 if ([objectsDictionary count] > 0) {
+                    
+                    NSArray *callBackObjects = [objectsDictionary allKeys];
+                    NSMutableArray *cacheObjects = [[CacheManager sharedInstance] getCachedObjectByKey:kOBJdefList];
+                    NSArray *newCallBackObjects = nil;
+                    
+                    if (cacheObjects != nil) {
+                        
+                        NSInteger cacheCount = [cacheObjects count];
+                        
+                        NSUInteger length = 0;
+                        
+                        if ([callBackObjects count] < kOBJdefnLimit) {
+                            NSUInteger difference = kOBJdefnLimit - [callBackObjects count];
+                            if (difference > cacheCount) {
+                                length = cacheCount;
+                            }
+                            else {
+                                length = difference;
+                            }
+                        }
+                        
+                        NSArray *additionalObjects = [cacheObjects subarrayWithRange:NSMakeRange(0, length)];
+                        newCallBackObjects = [callBackObjects arrayByAddingObjectsFromArray:additionalObjects];
+                        [cacheObjects removeObjectsInArray:additionalObjects];
+                        
+                        if ([cacheObjects count] > 0) {
+                            [[CacheManager sharedInstance] pushToCache:cacheObjects byKey:kOBJdefList];
+                        }
+                        else {
+                            [[CacheManager sharedInstance] clearCacheByKey:kOBJdefList];
+                        }
+                        
+                    }
+                    else {
+                        newCallBackObjects = callBackObjects;
+                    }
+                    
                      RequestParamModel *newRequestModel = [[RequestParamModel alloc] init];
                      callBackObj.callBack = YES;
-                     newRequestModel.values = [objectsDictionary allKeys];
+                     newRequestModel.values = newCallBackObjects;
                      callBackObj.callBackData = newRequestModel;
                  }
+                else {
+                    
+                     NSMutableArray *cacheObjects = [[CacheManager sharedInstance] getCachedObjectByKey:kOBJdefList];
+                    
+                    if (cacheObjects != nil) {
+                        
+                        NSArray *newCallBackObjects = nil;
+                        NSInteger cacheCount = [cacheObjects count];
+                        NSUInteger length = 0;
+                        if (cacheCount < kOBJdefnLimit) {
+                            length = cacheCount;
+                        }
+                        else {
+                            length = kOBJdefnLimit;
+                        }
+                        
+                        newCallBackObjects = [cacheObjects subarrayWithRange:NSMakeRange(0, length)];
+                        [cacheObjects removeObjectsInRange:NSMakeRange(0, length)];
+                        
+                        if ([cacheObjects count] > 0) {
+                            [[CacheManager sharedInstance] pushToCache:cacheObjects byKey:kOBJdefList];
+                        }
+                        else {
+                            [[CacheManager sharedInstance] clearCacheByKey:kOBJdefList];
+                        }
+                        
+                        RequestParamModel *newRequestModel = [[RequestParamModel alloc] init];
+                        callBackObj.callBack = YES;
+                        newRequestModel.values = newCallBackObjects;
+                        callBackObj.callBackData = newRequestModel;
+
+                    }
+                }
                  return callBackObj;
 
                  

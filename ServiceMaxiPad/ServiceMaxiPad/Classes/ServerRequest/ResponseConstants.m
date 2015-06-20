@@ -390,3 +390,6 @@ NSString *const kMapErrorUnknownError       = @"UNKNOWN_ERROR";
 
 NSInteger const kPageLimit   = 15;
 NSInteger const kMaximumNoOfParallelPageLayoutCalls = 5;
+
+NSInteger const kOBJdefnLimit = 20;
+NSString *const kOBJdefList                 = @"ObjectsDefinitionList";
