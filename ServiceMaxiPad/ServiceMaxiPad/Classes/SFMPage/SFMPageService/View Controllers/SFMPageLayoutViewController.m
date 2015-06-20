@@ -181,7 +181,7 @@ NSString *const kReferenceCellIdentifier = @"ReferenceCellIdentifier";
         cell.fieldValue.lineBreakMode = NSLineBreakByTruncatingTail;//HS 12 Jan
         //cell.fieldValue.lineBreakMode = NSLineBreakByClipping;//HS 12 Jan
         cell.fieldValue.backgroundColor = [UIColor clearColor];
-        NSLog(@"frame of fieldValue in controller is %@",NSStringFromCGRect(cell.fieldValue.frame) );
+        //NSLog(@"frame of fieldValue in controller is %@",NSStringFromCGRect(cell.fieldValue.frame) );
         //HS 12 Jan
     }
     else{
