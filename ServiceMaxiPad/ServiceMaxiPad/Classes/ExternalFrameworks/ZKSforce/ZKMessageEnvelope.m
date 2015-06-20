@@ -152,7 +152,7 @@
     
     [finalString appendFormat:@"</s:Envelope>\n"];
     
-    NSLog(@" ZKS : %@ ", finalString);
+    SXLogInfo(@" ZKS : %@ ", finalString);
     
     return finalString;
 }

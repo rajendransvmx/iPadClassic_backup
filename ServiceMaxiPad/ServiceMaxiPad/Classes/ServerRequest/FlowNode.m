@@ -101,7 +101,8 @@ NSString *heapSizeErrorString = @"Apex heap size too large"; //{"errorCode":"APE
 
 - (void)startFlow
 {    //PA
-    [PerformanceAnalyser sharedInstance].startedPerformanceAnalyser = YES;
+    //[PerformanceAnalyser sharedInstance].startedPerformanceAnalyser = YES;
+    
     NSString *contextValue = [[ServerRequestManager sharedInstance]getTheContextvalueForCategoryType:self.nodecategoryType];
     [[PerformanceAnalyser sharedInstance] observePerformanceForContext:contextValue subContextName:contextValue operationType:PAOperationTypeTotalTimeLatency andRecordCount:1];
     

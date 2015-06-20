@@ -198,9 +198,13 @@
             
             [[PerformanceAnalyser sharedInstance] observePerformanceForContext:contextValue subContextName:subContextValue operationType:PAOperationTypeNetworkLatency andRecordCount:1];
             
+            //NSLog(@"Request completed - Waiting for response");
             [requestOp setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
              {
-                 SXLogWarning(@"%@ req-s latency : %f sec", self.eventName,[[NSDate date] timeIntervalSinceDate:requestedTime]);
+                SXLogWarning(@"%@ req-s latency : %f sec", self.eventName,[[NSDate date] timeIntervalSinceDate:requestedTime]);
+
+                //NSLog(@"%@ req-s latency : %f sec", self.eventName,[[NSDate date] timeIntervalSinceDate:requestedTime]);
+
                  //PA
                [[PerformanceAnalyser sharedInstance] ObservePerformanceCompletionForContext:contextValue subContextName:subContextValue operationType:PAOperationTypeNetworkLatency andRecordCount:0];
                  
@@ -1082,6 +1086,8 @@
         SXLogWarning(@"RequestLogs; Push Logs Req, Does not have log permission");
         return;
     }
+    
+    //NSLog(@"Response : rcvd");
     
     @autoreleasepool {
 
