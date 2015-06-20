@@ -410,7 +410,12 @@
     
     NSArray *tempArray = [[objectNamesDict allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
     NSMutableArray *allObjectNames = [NSMutableArray arrayWithArray:tempArray];
-
+    
+    NSArray *svmxObjects = [tempArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF contains %@", @"SVMX"]];
+    
+    [allObjectNames removeObjectsInArray:svmxObjects];
+    [allObjectNames addObjectsFromArray:svmxObjects];
+    
     if ([allObjectNames count] < length) {
         length = [allObjectNames count];
     }
