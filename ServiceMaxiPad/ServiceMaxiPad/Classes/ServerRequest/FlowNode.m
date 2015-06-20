@@ -457,7 +457,7 @@ NSString *heapSizeErrorString = @"Apex heap size too large"; //{"errorCode":"APE
         
         if ([values count] > 1) {
             
-            NSInteger length = 70/100*[values count];
+            NSInteger length = [values count]*70/100;
             NSInteger loc = [values count] - length;
             loc = (loc == 0)?1:loc;
             
