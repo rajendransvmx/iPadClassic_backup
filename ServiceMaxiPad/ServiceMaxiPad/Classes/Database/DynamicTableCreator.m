@@ -19,6 +19,8 @@
 
 -(void)createDynamicTables
 {
+    [[DatabaseIndexManager sharedInstance] createAllIndicesForStaticTables];
+    
     //execute create query
     NSArray * allObjects = [self fetchSFObjectsInfo];     //query Object names from SFObject table
 
@@ -31,16 +33,18 @@
         NSString * query =[self prepareCreateQuery:objectName forFields:fieldsArray]; //form create query
         if([universalDao conformsToProtocol:@protocol(UniversalDAO)])
         {
-            NSLog(@"TableName %@",objectName);
+            //NSLog(@"TableName %@",objectName);
            BOOL createTable =  [universalDao createTable:query];
             if (!createTable) {
-                NSLog(@"Table creation Failed");
+                NSLog(@"Table creation Failed %@",objectName);
             }
             else {
                 [[DatabaseIndexManager sharedInstance] registerTableNameForSingleIndexing:objectName];
             }
         }
     }
+    
+    [[DatabaseIndexManager sharedInstance] generateIndexingForCompositeIndices];
 }
 
 -(NSArray *)fetchSFObjectsInfo

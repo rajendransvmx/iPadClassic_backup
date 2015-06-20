@@ -511,7 +511,7 @@
                 [[NSFileManager defaultManager] removeItemAtPath:htmlfile error:NULL];
             NSString *fileWritableString = [[self getApplicationMetaDataForReport]stringByAppendingString:contentString];
             
-            NSLog(@"path : %@",htmlfile);
+            //NSLog(@"path : %@",htmlfile);
             [fileWritableString writeToFile:htmlfile
                                  atomically:NO
                                    encoding:NSUTF8StringEncoding

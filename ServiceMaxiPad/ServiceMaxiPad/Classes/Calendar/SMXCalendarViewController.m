@@ -1582,10 +1582,7 @@
 
 -(void)rescheduleEvent
 {
-    NSLog(@"here u do reschedule event");
        [viewCalendarDay rescheduleEvent:self.selectedEvent];
-
-    
 }
 
 
