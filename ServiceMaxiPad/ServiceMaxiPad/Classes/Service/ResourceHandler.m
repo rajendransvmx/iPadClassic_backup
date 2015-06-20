@@ -386,7 +386,7 @@
 
     }
     else{
-        NSLog(@"chinna deleted path");
+        //NSLog(@"chinna deleted path");
     }
     
     return  [self getResponceCallBackObjectForRequestParam:requestParamModel];
