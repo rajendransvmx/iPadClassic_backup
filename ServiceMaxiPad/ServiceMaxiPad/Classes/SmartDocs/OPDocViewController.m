@@ -361,7 +361,7 @@
         [self finalizeAndStoreHTML:finalizeDict];
     }
     else if ([eventName isEqualToString:@"console"]){
-        NSLog(@"Console: %@",jsonParameterString);
+       // NSLog(@"Console: %@",jsonParameterString);
     }
 }
 

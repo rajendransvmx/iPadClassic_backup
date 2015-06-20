@@ -265,7 +265,6 @@
                 else if ([wizardComponent.actionType isEqualToString:@"Reschedule"])
                 {
                     //Reschedule event
-                    NSLog(@"REscheul Event here ");
                     [self.delegate rescheduleEvent];
                 }
                 else
