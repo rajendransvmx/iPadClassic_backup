@@ -407,8 +407,10 @@
     [self clearObjectDataFromCache];
     
     NSInteger length = kOBJdefnLimit;
-    NSMutableArray *allObjectNames = [NSMutableArray arrayWithArray:[objectNamesDict allKeys]];
     
+    NSArray *tempArray = [[objectNamesDict allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+    NSMutableArray *allObjectNames = [NSMutableArray arrayWithArray:tempArray];
+
     if ([allObjectNames count] < length) {
         length = [allObjectNames count];
     }
