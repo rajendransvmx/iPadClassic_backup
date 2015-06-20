@@ -3,17 +3,18 @@
 ServiceMax Win 15 SP iPad Release
 
 *******************************************
-Version = 15.20.025
+Version = 15.20.026
 ===========================================
 -------------
 Fixed Defects
 -------------
-#10707: PDF document is not generated properly on the online server, after the user generates the Smart Docs in iPad and synchronizes the same with online ser
+018250 - Heap Error while Initial sync and Sync Configuration
 
 -------------
 Known Issues
 -------------
 None
+
 ---------------------
 Fixed - Known Issues 
 --------------------- 
@@ -27,5 +28,10 @@ None
 ---------------------
 Additional Notes
 ---------------------
-None
+Changes Made :
+
+1. Implemented batch request for SFM page layout and Object definition web service calls
+2. Object names sorted for requesting definition/description call
+3. In case of definition request fails, same request will resend with 30% original object names. 
+
 
