@@ -15,6 +15,8 @@
 		18186E0A19EBFDC4009F3421 /* JobLogModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 18186E0919EBFDC4009F3421 /* JobLogModel.m */; };
 		18186E0D19EBFE20009F3421 /* JobLogService.m in Sources */ = {isa = PBXBuildFile; fileRef = 18186E0C19EBFE20009F3421 /* JobLogService.m */; };
 		18186E1119EC0023009F3421 /* JobLogServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 18186E1019EC0023009F3421 /* JobLogServiceLayer.m */; };
+		181A4DCF1B37EACE00549C38 /* CustomActionWebServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 181A4DCE1B37EACE00549C38 /* CustomActionWebServiceLayer.m */; };
+		181A4DD21B383D3D00549C38 /* SFMCustomActionWebServiceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 181A4DD11B383D3D00549C38 /* SFMCustomActionWebServiceHelper.m */; };
 		183702CD1A0B836F0081CA06 /* ResolveConflictCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 183702CB1A0B836F0081CA06 /* ResolveConflictCell.m */; };
 		183702CE1A0B836F0081CA06 /* ResolveConflictCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 183702CC1A0B836F0081CA06 /* ResolveConflictCell.xib */; };
 		183702D81A0B86C60081CA06 /* ResolveConflictActionVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 183702D61A0B86C60081CA06 /* ResolveConflictActionVC.m */; };
@@ -1045,6 +1047,10 @@
 		18186E0E19EBFE2B009F3421 /* JobLogDAO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JobLogDAO.h; sourceTree = "<group>"; };
 		18186E0F19EC0023009F3421 /* JobLogServiceLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JobLogServiceLayer.h; sourceTree = "<group>"; };
 		18186E1019EC0023009F3421 /* JobLogServiceLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JobLogServiceLayer.m; sourceTree = "<group>"; };
+		181A4DCD1B37EACE00549C38 /* CustomActionWebServiceLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomActionWebServiceLayer.h; sourceTree = "<group>"; };
+		181A4DCE1B37EACE00549C38 /* CustomActionWebServiceLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomActionWebServiceLayer.m; sourceTree = "<group>"; };
+		181A4DD01B383D3D00549C38 /* SFMCustomActionWebServiceHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFMCustomActionWebServiceHelper.h; sourceTree = "<group>"; };
+		181A4DD11B383D3D00549C38 /* SFMCustomActionWebServiceHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFMCustomActionWebServiceHelper.m; sourceTree = "<group>"; };
 		183702CA1A0B836F0081CA06 /* ResolveConflictCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResolveConflictCell.h; sourceTree = "<group>"; };
 		183702CB1A0B836F0081CA06 /* ResolveConflictCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ResolveConflictCell.m; sourceTree = "<group>"; };
 		183702CC1A0B836F0081CA06 /* ResolveConflictCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ResolveConflictCell.xib; sourceTree = "<group>"; };
@@ -3911,6 +3917,8 @@
 				9EF90F7E1A24B0BD00FFFA75 /* SFMPageHistoryServiceLayer.m */,
 				9EB4F79E1A443B6F00E2A8BD /* ChatterServiceLayer.h */,
 				9EB4F79F1A443B6F00E2A8BD /* ChatterServiceLayer.m */,
+				181A4DCD1B37EACE00549C38 /* CustomActionWebServiceLayer.h */,
+				181A4DCE1B37EACE00549C38 /* CustomActionWebServiceLayer.m */,
 			);
 			path = ServiceLayer;
 			sourceTree = "<group>";
@@ -4268,6 +4276,8 @@
 				183AA1EA19E6D36C00919345 /* WizardViewController.xib */,
 				1814AD1F1B2B04D2001167DE /* SFMCustomActionHelper.h */,
 				1814AD201B2B04D2001167DE /* SFMCustomActionHelper.m */,
+				181A4DD01B383D3D00549C38 /* SFMCustomActionWebServiceHelper.h */,
+				181A4DD11B383D3D00549C38 /* SFMCustomActionWebServiceHelper.m */,
 			);
 			path = Wizard;
 			sourceTree = "<group>";
@@ -6630,6 +6640,7 @@
 				D752645119EB931A006AAC4C /* PageEditControlHandler.m in Sources */,
 				40CA19FF19FE4B340097F5A1 /* OPDocSignatureViewController.m in Sources */,
 				184A8EA819E7A0BE006DA6BE /* UIImage+SMXCustomMethods.m in Sources */,
+				181A4DD21B383D3D00549C38 /* SFMCustomActionWebServiceHelper.m in Sources */,
 				183A9FCC19E6B18500919345 /* ModifiedRecordsService.m in Sources */,
 				183A9FD219E6B18500919345 /* SFExpressionComponentService.m in Sources */,
 				183A9FE419E6B18500919345 /* StaticResourceService.m in Sources */,
@@ -6732,6 +6743,7 @@
 				183A9EFC19E6A15600919345 /* ZKDescribeField.m in Sources */,
 				183A9FF019E6B18500919345 /* DataSyncServiceLayer.m in Sources */,
 				183A9E5D19E69DB000919345 /* TroubleshootDataModel.m in Sources */,
+				181A4DCF1B37EACE00549C38 /* CustomActionWebServiceLayer.m in Sources */,
 				184A8E9119E7A0BE006DA6BE /* TKShapeView.m in Sources */,
 				5BB3180D1A137E760053C2AC /* SFMOnlineSearchManager.m in Sources */,
 				183A9E9119E6A11800919345 /* RestRequest.m in Sources */,
