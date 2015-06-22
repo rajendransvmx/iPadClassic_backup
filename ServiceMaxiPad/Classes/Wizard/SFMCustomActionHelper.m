@@ -15,12 +15,19 @@
 #import "SFObjectModel.h"
 #import "TransactionObjectDAO.h"
 #import "FactoryDAO.h"
+/////
+#import "TaskModel.h"
+#import "TaskGenerator.h"
+#import "TaskManager.h"
+////
+#import "WebserviceResponseStatus.h"
+#import "CustomActionWebServiceLayer.h"
+#import "SFCustomActionURLService.h"
 
 @implementation SFMCustomActionHelper
 @synthesize objectId;
 @synthesize objectName;
 @synthesize ObjectFieldname;
-@synthesize URLValue;
 
 - (id)init
 {
@@ -31,90 +38,47 @@
     }
     return self;
 }
--(NSArray *)fetchInformatio:(NSArray *)array{
-    NSMutableArray *fieldNames=[[NSMutableArray alloc] init];
-    for(CustomActionURLModel *customModel in array) {
-        if ([customModel.ParameterType isEqualToString:@"Field Name"]) {
-            [fieldNames addObject:customModel.ParameterValue];
-        }
-    }
-    return fieldNames;
-}
--(void)loadURL:(WizardComponentModel *)model withParams:(NSArray *)params
+
+-(NSString *)loadURL:(WizardComponentModel *)model
 {
-    if ([params count]>0) {
-        NSArray *wizardComponentParamArray = [self getCustomActionParams:objectId params:params];
+    NSArray *paramList = [self fetchParamsForWizardComponent:model];
+    if ([paramList count]>0) {
+        NSArray *wizardComponentParamArray = [self getCustomActionParams:paramList];
         NSDictionary *workOrderSummaryDict= [[NSDictionary alloc] init];
         for (TransactionObjectModel *transObjModel in wizardComponentParamArray) {
             workOrderSummaryDict=[transObjModel getFieldValueDictionary];
         }
-        UIApplication *ourApplication = [UIApplication sharedApplication];
-        NSString *url = [NSString stringWithFormat:@"%@?%@",model.customUrl,[self loadWebpage:workOrderSummaryDict paramArray:params]];
-        [ourApplication openURL:[NSURL URLWithString:[url stringByReplacingOccurrencesOfString:@"?&" withString:@"?"]]];
+        //UIApplication *ourApplication = [UIApplication sharedApplication];
+        NSString *url = [NSString stringWithFormat:@"%@?%@",model.customUrl,[self addParameters:workOrderSummaryDict paramArray:paramList]];
+        return [url stringByReplacingOccurrencesOfString:@"?&" withString:@"?"];
     }else{
-        UIApplication *ourApplication = [UIApplication sharedApplication];
-        [ourApplication openURL:[NSURL URLWithString:model.customUrl]];
+        return model.customUrl;
     }
+    return @"";
 }
 
--(void)callWebService:(WizardComponentModel *)model withparams:(NSArray *)params{
+-(NSDictionary *)fetchWebServiceParams:(WizardComponentModel *)model withparams:(NSArray *)params{
     if ([params count]>0) {
-        NSArray *wizardComponentParamArray = [self getCustomActionParams:objectId params:params];
+        NSArray *wizardComponentParamArray = [self getCustomActionParams:params];
         NSDictionary *workOrderSummaryDict= [[NSDictionary alloc] init];
         for (TransactionObjectModel *transObjModel in wizardComponentParamArray) {
             workOrderSummaryDict=[transObjModel getFieldValueDictionary];
         }
-       // NSString *url = [NSString stringWithFormat:@"%@%@",model.customUrl,[self loadWebpage:workOrderSummaryDict paramArray:params]];
-       // [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[url stringByReplacingOccurrencesOfString:@"?&" withString:@"?"]]];
-    }else{
-        
+       return [self addParameterValues:workOrderSummaryDict paramArray:params];
+        //[self callWebService];
     }
+    return nil;
 }
--(void)loadApp:(WizardComponentModel *)model withparams:(NSArray *)params{
-    NSArray *wizardComponentParamArray = [self getCustomActionParams:objectId params:params];
-    NSDictionary *workOrderSummaryDict= [[NSDictionary alloc] init];
-    for (TransactionObjectModel *transObjModel in wizardComponentParamArray) {
-        workOrderSummaryDict=[transObjModel getFieldValueDictionary];
-    }
-    NSString *url = [NSString stringWithFormat:@"%@://?%@",model.customUrl,[self loadWebpage:workOrderSummaryDict paramArray:params]];
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[url stringByReplacingOccurrencesOfString:@"?&"
-                                                                                                   withString:@"?"]]];}
+
 -(void)fetchWorkOrderDetail:(NSArray *)paramList{
     if (objectId) {
         if ([objectName isEqualToString:kWorkOrderTableName]) {
-            [self getCustomActionParams:objectId params:paramList];
+            [self getCustomActionParams:paramList];
         }
     }
 }
-- (NSArray * )fetchWizardComponentParamsInfoByFields:(NSArray *)fieldNames
-                                         andCriteria:(NSArray *)criteria
-                                       andExpression:(NSString *)expression
-{
-    DBRequestSelect * requestSelect = [[DBRequestSelect alloc] initWithTableName:objectName andFieldNames:fieldNames whereCriterias:criteria andAdvanceExpression:expression];
-    
-    [requestSelect setDistinctRowsOnly];
-    
-    NSMutableArray * records = [[NSMutableArray alloc] initWithCapacity:0];
-    @autoreleasepool {
-        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
-        
-        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
-            
-            NSString * query = [requestSelect query];
-            
-            SQLResultSet * resultSet = [db executeQuery:query];
-            
-            while ([resultSet next]) {
-                SFObjectModel * model = [[SFObjectModel alloc] init];
-               [resultSet kvcMagic:model];
-                [records addObject:model];
-            }
-            [resultSet close];
-        }];
-    }
-    return records;
-}
--(NSArray *)fetchDataFromWorkOrderObject:(NSString *)objectNameTable
+
+-(NSArray *)fetchDataFromObjectNameObject:(NSString *)objectNameTable
                                    fields:(NSArray *)fieldNames
                                expression:(NSString *)advancaeExpression
                                  criteria:(NSArray *)criteria
@@ -125,18 +89,18 @@
     return dataArray;
 }
 
-- (NSArray *)getCustomActionParams:(NSString *)wizardComponentId params:(NSArray *)array{
+- (NSArray *)getCustomActionParams:(NSArray *)array{
     DBCriteria * criteriaOne = [[DBCriteria alloc] initWithFieldName:ObjectFieldname
                                                         operatorType:SQLOperatorEqual
                                                        andFieldValue:objectId];
-    NSArray * fieldNames = [self fetchInformatio:array];
+    NSArray * fieldNames = [self fetchColumnName:array];
     
     NSArray * criteriaObjects = [[NSArray alloc] initWithObjects:criteriaOne, nil];
     
-    NSArray *wizardComponentParamArray=[self fetchDataFromWorkOrderObject:objectName fields:fieldNames expression:nil criteria:criteriaObjects];
+    NSArray *wizardComponentParamArray=[self fetchDataFromObjectNameObject:objectName fields:fieldNames expression:nil criteria:criteriaObjects];
     return  wizardComponentParamArray;
 }
--(NSString *)loadWebpage:(NSDictionary *)dictinory paramArray:(NSArray *)array{
+-(NSString *)addParameters:(NSDictionary *)dictinory paramArray:(NSArray *)array{
     NSString *param = @"";
     for(CustomActionURLModel *customModel in array) {
         //Making parameter from model with respect type
@@ -149,6 +113,22 @@
         }
     }
     return param;
+}
+-(NSDictionary *)addParameterValues:(NSDictionary *)dictinory paramArray:(NSArray *)array{
+    NSMutableDictionary *parametersWithKey=[[NSMutableDictionary alloc] init];
+    for(CustomActionURLModel *customModel in array) {
+        //Making parameter from model with respect type
+        if ([customModel.ParameterType isEqualToString:@"Field Name"]) {
+            [parametersWithKey setObject:[dictinory objectForKey:customModel.ParameterValue] forKey:customModel.ParameterName];
+            //param = [param stringByAppendingFormat:@"&%@=%@",customModel.ParameterName,[dictinory objectForKey:customModel.ParameterValue]];
+        }else if([customModel.ParameterType isEqualToString:@"Value"]) {
+            [parametersWithKey setObject:customModel.ParameterValue forKey:customModel.ParameterName];
+            //param = [param stringByAppendingFormat:@"&%@=%@",customModel.ParameterName,customModel.ParameterValue];
+        }else{
+            
+        }
+    }
+    return parametersWithKey;
 }
 - (void)otherApplication:(NSString *)customURLSchemes paramiter:(NSArray *)array
 {
@@ -166,4 +146,43 @@
         [alert show];
     }
 }
+-(NSArray *)fetchColumnName:(NSArray *)array{
+    NSMutableArray *fieldNames=[[NSMutableArray alloc] init];
+    for(CustomActionURLModel *customModel in array) {
+        if ([customModel.ParameterType isEqualToString:@"Field Name"]) {
+            [fieldNames addObject:customModel.ParameterValue];
+        }
+    }
+    return fieldNames;
+}
+-(NSArray *)fetchParamsForWizardComponent:(WizardComponentModel *)wizardComponent{
+    SFCustomActionURLService *wizardComponentparamService = [[SFCustomActionURLService alloc]init];
+    NSArray *paramList= [wizardComponentparamService getCustomActionParams:wizardComponent.processId];
+    return paramList;
+}
+//-(void)callWebService{
+//    TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeCustomWebServiceCall
+//                                             requestParam:nil
+//                                           callerDelegate:self];
+//    
+//    [[TaskManager sharedInstance] addTask:taskModel];
+//}
+//
+//
+//#pragma mark FLOW DELEGATE
+//- (void)flowStatus:(id)status;
+//{
+//    if([status isKindOfClass:[WebserviceResponseStatus class]])
+//    {
+//        WebserviceResponseStatus *st = (WebserviceResponseStatus*)status;
+//        if (st.syncStatus == SyncStatusSuccess) {
+//        
+//        }
+//        else if (st.syncStatus == SyncStatusFailed)
+//        {
+//            
+//        }
+//    }
+//}
+
 @end

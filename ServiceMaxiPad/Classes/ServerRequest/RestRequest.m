@@ -395,6 +395,10 @@
         case RequestTypeOPDocGeneratePDF:
             eventType = kSync;
             
+        case RequestTypeCustomActionWebService:
+            
+            break;
+            
         default:
             break;
             
@@ -530,6 +534,10 @@
             break;
         case RequestDataPurgeFrequency:
             url = [self getUrlWithStringApppended:kMetaSyncUrlLink];
+            break;
+            
+        case RequestTypeCustomActionWebService:
+            //url = [];
             break;
             /****************    ************** */
         default:
@@ -754,6 +762,10 @@
             break;
             /******************************************************/
             
+        case RequestTypeCustomActionWebService:
+            //self.eventName = eventSync ;
+            //class_name method_name from table or model
+            break;
 
         default:
             break;

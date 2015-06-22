@@ -13,10 +13,8 @@
 
 @property(nonatomic,strong)NSString *objectId;
 @property(nonatomic,strong)NSString *objectName;
-@property(nonatomic,strong)NSString *URLValue;
 @property(nonatomic,strong)NSString *ObjectFieldname;
--(void)loadURL:(WizardComponentModel *)model withParams:(NSArray *)params;
--(void)callWebService:(WizardComponentModel *)model withparams:(NSArray *)params;
--(void)loadApp:(WizardComponentModel *)model withparams:(NSArray *)params;
+-(NSString *)loadURL:(WizardComponentModel *)model;
+-(NSDictionary *)fetchWebServiceParams:(WizardComponentModel *)model withparams:(NSArray *)params;
 -(id)init;
 @end

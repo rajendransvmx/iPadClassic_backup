@@ -41,6 +41,9 @@
 @synthesize customActionType;
 @synthesize customUrl;
 @synthesize ProcessId_c;
+@synthesize objectName;
+@synthesize objectFieldId;
+@synthesize ObjectFieldName;
 
 
 - (id)init
@@ -69,6 +72,9 @@
     customActionType=nil;
     customUrl = nil;
     ProcessId_c = nil;
+    objectName = nil;
+    objectFieldId = nil;
+    ObjectFieldName = nil;
 }
 
 + (NSDictionary *)getMappingDictionary

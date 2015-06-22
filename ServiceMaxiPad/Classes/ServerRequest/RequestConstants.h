@@ -120,6 +120,9 @@ typedef NS_ENUM(NSUInteger, RequestType)
     RequestTypeChatterUserImage,
     RequestTypeChatterFeedInsert,
     RequestTypeChatterFeedCommnetInsert,
+    
+    /******* custom action type ********/
+    RequestTypeCustomActionWebService,
 };
 
 extern NSString *const kContentType;

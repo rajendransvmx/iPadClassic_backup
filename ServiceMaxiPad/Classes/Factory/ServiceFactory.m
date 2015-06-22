@@ -30,6 +30,7 @@
 #import "ChatterServiceLayer.h"
 #import "APNSServiceLayer.h"
 #import "GetPriceDataServiceLayer.h"
+#import "CustomActionWebServiceLayer.h"
 
 @implementation ServiceFactory
 
@@ -241,6 +242,12 @@
             case CategoryTypeChatterFeedUpdate:
             {
                 baseServiceLayer = [[ChatterServiceLayer alloc] initWithCategoryType:categoryType requestType:requestType];
+            }
+            break;
+                
+            case CategoryTypeCustomWebServiceCall:
+            {
+                baseServiceLayer =[[CustomActionWebServiceLayer alloc] initWithCategoryType:categoryType requestType:requestType];
             }
             break;
                 

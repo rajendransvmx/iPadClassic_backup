@@ -288,9 +288,9 @@
             
         case CategoryTypeOpDoc:
             requestType = [self getNextRequestForOPDoc:currentRequest andPreviousRequest:previousRequest];
-           
             break;
-               case CategoryTypeSubmitDocument:
+        
+        case CategoryTypeSubmitDocument:
             requestType = [self getNextRequestForSubmittingOPdocDocDetails:currentRequest andPreviousRequest:previousRequest];
             break;
             

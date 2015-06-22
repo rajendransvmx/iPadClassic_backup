@@ -30,6 +30,7 @@
 #import "SFMCustomActionHelper.h"
 #import "SFCustomActionURLService.h"
 #import "SNetworkReachabilityManager.h"
+#import "SFMCustomActionWebServiceHelper.h"
 
 @interface WizardViewController ()
 
@@ -297,17 +298,25 @@
                 {
                     /* Before making request checking for internet connectivity */
                     if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable]){
-                        SFMCustomActionHelper *a=[[SFMCustomActionHelper alloc] init];
-                        a.objectName=wizard.objectName;
-                        a.objectId=objectId;
-                        a.ObjectFieldname=ObjectFieldname;
-                        NSArray *paramList = [self fetchParamsForWizardComponent:wizardComponent];
+                        SFMCustomActionHelper *customActionHelper=[[SFMCustomActionHelper alloc] init];
+                        customActionHelper.objectName=wizard.objectName;
+                        customActionHelper.objectId=objectId;
+                        customActionHelper.ObjectFieldname=ObjectFieldname;
                         if ([wizardComponent.customActionType isEqualToString:@"URL"]) {
-                            /* load url with infomation */
-                            [a loadURL:wizardComponent withParams:paramList];
+                            UIApplication *ourApplication = [UIApplication sharedApplication];
+                            
+                            /* load url with params */
+                            [ourApplication openURL:[NSURL URLWithString:[customActionHelper loadURL:wizardComponent]]];
+                            
                         }else if ([wizardComponent.customActionType isEqualToString:@"Web-Service"]) {
                             /* making webservice call */
-                            [a callWebService:wizardComponent withparams:paramList];
+                            SFMCustomActionWebServiceHelper *webserviceHelper=[[SFMCustomActionWebServiceHelper alloc] init];
+                            wizardComponent.objectName=wizard.objectName;
+                            wizardComponent.objectFieldId=objectId;
+                            wizardComponent.ObjectFieldName=ObjectFieldname;
+                            [SFMCustomActionWebServiceHelper setwizardComponent:wizardComponent];
+                            [webserviceHelper addModelToTaskMaster];
+                            
                         }else{
                             /*open new application from our application */
                             //[a loadApp:wizardComponent withparams:paramList];
