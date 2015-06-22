@@ -55,6 +55,9 @@ typedef NS_ENUM(NSUInteger, CategoryType) {
     CategoryTypeChatterUserImage,
     CategoryTypeChatterFeedInsert,
     CategoryTypeChatterFeedUpdate,
+    
+    /***CustomAction--Call webView*****/
+    CategoryTypeCustomWebServiceCall,
 };
 
 typedef NS_ENUM(NSUInteger, SyncType) {
