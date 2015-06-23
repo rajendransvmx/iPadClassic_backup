@@ -293,7 +293,7 @@ static SyncManager *_instance;
                 if (self.isGetPriceCallEnabled)
                 {
                     self.isGetPriceCallEnabled = NO;
-                    [[GetPriceManager sharedInstance] intiateGetPriceSync];
+                    [[GetPriceManager sharedInstance] performSelectorInBackground:@selector(intiateGetPriceSync) withObject:nil];
                 }
             }
             break;
