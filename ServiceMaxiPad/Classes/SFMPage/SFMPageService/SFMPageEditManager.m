@@ -793,7 +793,7 @@
             [self checkIfObjectIsEvent:page.objectName];
         }
         
-        //NSLog(@"database path: %@",[[DatabaseManager sharedInstance]primaryDatabasePath]);
+       // NSLog(@"database path: %@",[[DatabaseManager sharedInstance]primaryDatabasePath]);
         
         [[SuccessiveSyncManager sharedSuccessiveSyncManager]registerForSuccessiveSync:syncRecord withData:page.headerRecord];
         
@@ -2272,7 +2272,7 @@
     if (!self.isfieldMergeEnabled)
     {
         // Woo Field Level merge is not anabled. Lets go back.
-        NSLog(@"Skipping modified fields data - comparison since it feature not anabled");
+        SXLogInfo(@"Skipping modified fields data - comparison since it feature not anabled");
         return nil;
     }
     
@@ -2293,11 +2293,11 @@
         if ((sfid == nil) && (recordId != nil))
         {
            // self.foundNonFieldMergeChanges = YES;
-            NSLog(@"Eligible for updation but Not Advance Sync Conflict - since it is unsynced record ");
+            SXLogInfo(@"Eligible for updation but Not Advance Sync Conflict - since it is unsynced record ");
         }
         else
         {
-            NSLog(@"Skipping modified fields data - comparison since unavailable before modification data");
+            SXLogInfo(@"Skipping modified fields data - comparison since unavailable before modification data");
         }
         
         return nil;

@@ -16,6 +16,16 @@
 @implementation OPDocFileUploader
 
 
++ (void)requestTocheckIfOPDocFileIsUploadedBeforewithTheCallerDelegate:(id)delegate;
+{
+    
+    TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeOpDocUploadStatus
+                                             requestParam:nil
+                                           callerDelegate:delegate];
+    
+    [[TaskManager sharedInstance] addTask:taskModel];
+}
+
 + (void)requestForUploadingOPDocFilewithTheCallerDelegate:(id)delegate;
 {
 

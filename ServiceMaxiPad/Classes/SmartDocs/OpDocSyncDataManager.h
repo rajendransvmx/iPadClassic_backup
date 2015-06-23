@@ -19,5 +19,6 @@
 @property (nonatomic, strong) NSDictionary *cResponseForGeneratingPDFDictionary;
 
 @property (nonatomic, assign) BOOL isSuccessfullyUploaded;
+@property (nonatomic, assign) BOOL fileAlreadyUploaded;
 
 @end

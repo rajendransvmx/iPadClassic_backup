@@ -108,7 +108,6 @@
 
 - (void)removeRequestObj:(NSString *)urlKey
 {
-    //NSLog(@"%@", urlKey);
     if (urlKey) {
         [self.connections removeObjectForKey:urlKey];
     }
@@ -117,7 +116,6 @@
 
 - (void)cancelConnection:(NSString *)urlKey
 {
-    //NSLog(@"%@", urlKey);
     if (urlKey && [self.connections count] > 0) {
         AsyncImageDownload *connection = [self.connections objectForKey:urlKey];
         [connection cancel];

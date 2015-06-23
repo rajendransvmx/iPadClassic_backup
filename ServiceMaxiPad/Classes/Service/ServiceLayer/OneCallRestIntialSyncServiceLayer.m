@@ -30,6 +30,8 @@
 #import "SFPicklistModel.h"
 #import "PlistManager.h"
 #import "CalenderHelper.h"
+#import "ServerRequestManager.h"
+#import "TimeLogCacheManager.h"
 
 @implementation OneCallRestIntialSyncServiceLayer
 
@@ -308,11 +310,14 @@
     
     id <SFProcessDAO> service= [FactoryDAO serviceByServiceType:ServiceTypeProcess];
     
-    NSArray *pageLayoutIds = nil;
+    NSArray *pageLayoutIds1 = nil;
     
     if ([service conformsToProtocol:@protocol(SFProcessDAO)]) {
-        pageLayoutIds = [service fetchPageLayoutIds];
+        pageLayoutIds1 = [service fetchPageLayoutIds];
     }
+    
+    
+   NSMutableArray *pageLayoutIds = [NSMutableArray arrayWithArray:pageLayoutIds1];
     
     NSInteger partition = [pageLayoutIds count] /requestCount;
     
@@ -322,13 +327,50 @@
     
     NSMutableArray *requestParamArray = [[NSMutableArray alloc]init];
     
-    for (NSUInteger i = 0; i * limit < [pageLayoutIds count]; i++) {
+    NSArray *pageLayoutLimitArray = nil;
+    
+    if([pageLayoutIds count] > kPageLimit * requestCount)
+    {
+        NSInteger count =  kPageLimit * requestCount;
+        pageLayoutLimitArray = [NSArray arrayWithArray:[pageLayoutIds subarrayWithRange:NSMakeRange(0,count)]];
+        
+    }
+    else
+    {
+        pageLayoutLimitArray = [NSArray arrayWithArray:pageLayoutIds];
+        
+    }
+    
+    NSArray *finalarray = nil;
+    
+    for (NSUInteger i = 0; i * limit < [pageLayoutLimitArray count]; i++) {
         NSUInteger start = i * limit;
-        NSRange range = NSMakeRange(start, MIN([pageLayoutIds count] - start, limit));
+        NSRange range = NSMakeRange(start, MIN([pageLayoutLimitArray count] - start, limit));
         RequestParamModel *requestParamModel = [[RequestParamModel alloc]init];
-        requestParamModel.values = [pageLayoutIds subarrayWithRange:range];
+        requestParamModel.values = [pageLayoutLimitArray subarrayWithRange:range];
+        
+        if(![finalarray count] >0)
+        {
+            NSString *contextValue =  [[ServerRequestManager sharedInstance]
+                                       getTheContextvalueForCategoryType:self.categoryType];
+
+            finalarray = [[TimeLogCacheManager sharedInstance] getRequestParameterForTimeLogWithCategory:contextValue];
+        }
+        requestParamModel.valueMap = finalarray;
+        
         [requestParamArray addObject:requestParamModel];
     }
+    
+    for(NSString *string in pageLayoutLimitArray) 
+    {
+        if([pageLayoutIds containsObject:string])
+        {
+            [pageLayoutIds removeObject:string];
+        }
+    }
+    
+    [[CacheManager sharedInstance] pushToCache:pageLayoutIds byKey:@"PageIds"];
+    finalarray = nil;
     
     return requestParamArray;
 }
@@ -370,8 +412,26 @@
     
     [self clearObjectDataFromCache];
     
+    NSInteger length = kOBJdefnLimit;
+    
+    NSArray *tempArray = [[objectNamesDict allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+    NSMutableArray *allObjectNames = [NSMutableArray arrayWithArray:tempArray];
+    
+    NSArray *svmxObjects = [tempArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF contains %@", @"SVMX"]];
+    
+    [allObjectNames removeObjectsInArray:svmxObjects];
+    [allObjectNames addObjectsFromArray:svmxObjects];
+    
+    if ([allObjectNames count] < length) {
+        length = [allObjectNames count];
+    }
+    
+    NSArray *objectNames = [allObjectNames subarrayWithRange:NSMakeRange(0, length)];
+    [allObjectNames removeObjectsInRange:NSMakeRange(0, length)];
+    [[CacheManager sharedInstance] pushToCache:allObjectNames byKey:kOBJdefList];
+    
     RequestParamModel *model = [[RequestParamModel alloc] init];
-    model.values = [objectNamesDict allKeys];
+    model.values = objectNames;
     return [NSArray arrayWithObjects:model,nil];
     
 }

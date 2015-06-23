@@ -581,10 +581,10 @@
     NSString *currentOrg       = [[CustomerOrgInfo sharedInstance] userPreferenceHost];
     
     SXLogDebug(@" LoggedInUserVerification \n\n %@ => %@  [  %@ => %@ ]", previousUserName, loggedInUserName,  previousOrg, currentOrg);
-    NSLog(@"LoggedInUserVerification \n\n %@ => %@  [  %@ => %@ ]", previousUserName, loggedInUserName,  previousOrg, currentOrg);
+    
     if ([StringUtil isStringEmpty:previousUserName])
     {
-        NSLog(@"First time login - %@", loggedInUserName);
+        //SXLogDebug(@"First time login - %@", loggedInUserName);
         [[AppManager sharedInstance] setLoggedInUserStatus:UserStatusFirstTimeLoggedIn];
         [[AppManager sharedInstance] setApplicationStatus:ApplicationStatusInitialSyncYetToStart];
         

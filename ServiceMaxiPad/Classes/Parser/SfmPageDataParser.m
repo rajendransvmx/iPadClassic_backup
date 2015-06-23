@@ -14,6 +14,9 @@
 #import "SFProcessDAO.h"
 #import "FactoryDAO.h"
 #import "StringUtil.h"
+#import "CacheManager.h"
+#import "ServerRequestManager.h"
+#import "TimeLogCacheManager.h"
 
 @implementation SfmPageDataParser
 @synthesize referenceObjects;
@@ -54,10 +57,36 @@
             callBackObj.otherCallSInformation = otherCallsInfo;
             
             RequestParamModel *paramModel = [[RequestParamModel alloc] init];
-            paramModel.values = callbackIds;
+            if([callbackIds count] < kPageLimit)
+            {
+                if(callBackObj.callBack)
+                {
+                    paramModel.values = [self getTheRemainingIdsFromCacheForTheArray:callbackIds];
+                }
+                else
+                {
+                    paramModel.values = callbackIds;
+                }
+            }
+            else
+            {
+                paramModel.values = callbackIds;
+                
+            }
+            
+            NSString *contextValue =  [[ServerRequestManager sharedInstance]
+                                       getTheContextvalueForCategoryType:self.categoryType];
+            
+           NSArray *finalarray = [[TimeLogCacheManager sharedInstance] getRequestParameterForTimeLogWithCategory:contextValue];
+            
+            if([finalarray count] > 0)
+            {
+                paramModel.valueMap = finalarray;
+            }
+        
+
             callBackObj.callBackData  = paramModel;
             return callBackObj;
-            
         }
     }
     return nil;
@@ -745,4 +774,75 @@
     NSData *data =  [NSJSONSerialization dataWithJSONObject:pageDict options:NSJSONWritingPrettyPrinted error:&err];
     return data;
 }
+
+/* Parallel Calls add the remainining Ids based on the pageLayOutlimit */
+- (NSArray *)getTheRemainingIdsFromCacheForTheArray:(NSArray *)callIdArray
+{
+    NSMutableArray * pageIdArray = [NSMutableArray arrayWithArray:callIdArray];
+    NSMutableArray *cachedPageIds =   [[CacheManager sharedInstance] getCachedObjectByKey:@"PageIds"];
+    /* getting the values from cache */
+    
+    if(cachedPageIds == nil) {
+        return callIdArray;
+    }
+    
+        NSInteger count = kPageLimit - [pageIdArray count];
+    
+        if ([cachedPageIds count] > count)
+        {
+    
+            NSArray *remainingArray = nil;
+            remainingArray = [cachedPageIds subarrayWithRange:NSMakeRange(0, count)];
+            [pageIdArray addObjectsFromArray:remainingArray];
+    
+            for(NSString *string in remainingArray)
+            {
+                [cachedPageIds removeObject:string];
+            }
+            if([cachedPageIds count]>0)
+            {
+                [[CacheManager sharedInstance] pushToCache:cachedPageIds byKey:@"PageIds"];
+                /* updating the cache */
+            }
+            else
+            {
+                /*deleting the cache */
+                [[CacheManager sharedInstance]clearCacheByKey:@"PageIds"];
+            }
+        }
+        else
+        {
+            if([cachedPageIds count] > kPageLimit)
+            {
+                NSMutableArray *remainingArray = [[NSMutableArray alloc] init];
+    
+                [remainingArray  addObjectsFromArray:[cachedPageIds subarrayWithRange:NSMakeRange(0,15)]];
+                [pageIdArray addObjectsFromArray:remainingArray];
+    
+                for(NSString *string in remainingArray)
+                {
+                    [cachedPageIds removeObject:string];
+                }
+                if([cachedPageIds count]>0)
+                {
+                    [[CacheManager sharedInstance] pushToCache:cachedPageIds byKey:@"PageIds"];
+                }
+                else
+                {
+                    [[CacheManager sharedInstance]clearCacheByKey:@"PageIds"];
+                }
+            }
+            else
+            {
+                [pageIdArray addObjectsFromArray:cachedPageIds];
+                
+            }
+            
+            [[CacheManager sharedInstance]clearCacheByKey:@"PageIds"];
+        }
+    return pageIdArray;
+    
+    
+}
+
 @end

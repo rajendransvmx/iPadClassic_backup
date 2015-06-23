@@ -213,7 +213,7 @@
                         removeableWizard  = [NSMutableArray array];
                     }
                     [removeableWizard addObject:subWizard];
-                    NSLog(@"Removable wizard");
+                    SXLogInfo(@"Removable wizard");
                 }
             }
         }

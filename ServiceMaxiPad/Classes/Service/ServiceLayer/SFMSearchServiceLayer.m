@@ -129,7 +129,6 @@
         if ([mapArray count]) {
             reqParModel.valueMap = mapArray;
         }
-        
         resultArray = @[reqParModel];
 
         return resultArray;

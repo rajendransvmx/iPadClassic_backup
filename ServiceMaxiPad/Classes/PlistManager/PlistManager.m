@@ -189,7 +189,7 @@ static NSString * const kConfigurationServerURLKey = @"serverURL";
     }
 }
 
-+ (void)updateServerURLFromManagedConfig
++(void)updateServerURLFromManagedConfig
 {
     NSDictionary *serverConfig = [[NSUserDefaults standardUserDefaults] dictionaryForKey:kConfigurationKey];
     NSString *serverURLString = serverConfig[kConfigurationServerURLKey];

@@ -16,6 +16,7 @@
     if (self = [super init]) {
         //Cocoa Error. Retrying the request again.
         self.retryCount = 1;
+        self.heapSizeRetryCount = 1;
     }
     return self;
 }

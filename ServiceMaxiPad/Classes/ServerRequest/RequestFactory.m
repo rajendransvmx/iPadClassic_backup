@@ -112,6 +112,9 @@
             case RequestGeneratePDF:
             //case RequestRecordType:
             case RequestRTDependentPicklist:
+                
+                
+            case RequestTypeCheckOPDOCUploadStatus:
             case RequestTypeOpDocUploading:
             case RequestAttachmentUpload:
             case RequestTypeChatterPost:
@@ -193,10 +196,12 @@
             break;
             
         case RequestTypeChatterPost:
+        case RequestTypeCheckOPDOCUploadStatus:
+
             zksRequestClass = [[ZKSQueryRequest alloc] initWithType:requestType];
             break;
             
-            //TO Do: Check the zks type
+            //TO DO: Check the zks type
         case RequestTroubleshooting:
         case RequestProductManual:
         case RequestChatter:

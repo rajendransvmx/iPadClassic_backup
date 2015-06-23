@@ -3,13 +3,12 @@
 ServiceMax iPad  Spring15SPBuild
 
 *******************************************
-Version = 15.40.015
+Version = 15.20.026
 ===========================================
 -------------
 Fixed Defects
 -------------
-018458 - Logging into iPad app causes it to crash.
-
+018250 - Heap Error while Initial sync and Sync Configuration
 
 -------------
 Known Issues
@@ -29,10 +28,10 @@ None
 ---------------------
 Additional Notes
 ---------------------
-Removed unwanted logs like queries, db password and file paths
+Changes Made :
 
-
-
-
+1. Implemented batch request for SFM page layout and Object definition web service calls
+2. Object names sorted for requesting definition/description call
+3. In case of definition request fails, same request will resend with 30% original object names. 
 
 

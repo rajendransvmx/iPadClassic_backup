@@ -103,7 +103,6 @@
                                                    usingBlock:^(NSNotification *note) {
                                                        [PlistManager updateServerURLFromManagedConfig];
                                                    }];
-     
      //[[SyncManager sharedInstance] scheduleSync];
     NSLog(@"------ AapplicationLaunching -------");
      
