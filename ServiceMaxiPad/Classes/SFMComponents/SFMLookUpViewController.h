@@ -44,7 +44,7 @@ typedef enum : NSUInteger {
 @end
 
 
-#define SelectImg       @"check.png"
-#define UnselectImg     @"uncheck.png"
+#define SelectImg       @"selectFilled.png"
+#define UnselectImg     @"selectEmpty.png"
 
 #define InfoImage       @"info.png"

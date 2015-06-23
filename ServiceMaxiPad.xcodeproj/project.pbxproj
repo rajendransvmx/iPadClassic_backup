@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		117656D81B3928A200BA0B63 /* selectEmpty@.png in Resources */ = {isa = PBXBuildFile; fileRef = 117656D41B3928A200BA0B63 /* selectEmpty@.png */; };
+		117656D91B3928A200BA0B63 /* selectEmpty@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 117656D51B3928A200BA0B63 /* selectEmpty@2x.png */; };
+		117656DA1B3928A200BA0B63 /* selectFilled@.png in Resources */ = {isa = PBXBuildFile; fileRef = 117656D61B3928A200BA0B63 /* selectFilled@.png */; };
+		117656DB1B3928A200BA0B63 /* selectFilled@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 117656D71B3928A200BA0B63 /* selectFilled@2x.png */; };
 		18071BC71A14B62500DC723A /* upArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 18071BC61A14B62500DC723A /* upArrow@2x.png */; };
 		1814AD1A1B2AA775001167DE /* CustomActionURLModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1814AD191B2AA775001167DE /* CustomActionURLModel.m */; };
 		1814AD1E1B2AC0CB001167DE /* SFCustomActionURLService.m in Sources */ = {isa = PBXBuildFile; fileRef = 1814AD1D1B2AC0CB001167DE /* SFCustomActionURLService.m */; };
@@ -595,11 +599,7 @@
 		186CDD841A025D6F00DC93DA /* LocalNotificationModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 186CDD831A025D6F00DC93DA /* LocalNotificationModel.m */; };
 		187491331A04C1F100D43300 /* ToolsMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 187491321A04C1F100D43300 /* ToolsMasterViewController.m */; };
 		18779DC219EBEF200086A9B7 /* barcode.png in Resources */ = {isa = PBXBuildFile; fileRef = 18779DBC19EBEF200086A9B7 /* barcode.png */; };
-		18779DC319EBEF200086A9B7 /* check.png in Resources */ = {isa = PBXBuildFile; fileRef = 18779DBD19EBEF200086A9B7 /* check.png */; };
-		18779DC419EBEF200086A9B7 /* check@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 18779DBE19EBEF200086A9B7 /* check@2x.png */; };
 		18779DC519EBEF200086A9B7 /* info.png in Resources */ = {isa = PBXBuildFile; fileRef = 18779DBF19EBEF200086A9B7 /* info.png */; };
-		18779DC619EBEF200086A9B7 /* uncheck-2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 18779DC019EBEF200086A9B7 /* uncheck-2x.png */; };
-		18779DC719EBEF200086A9B7 /* uncheck.png in Resources */ = {isa = PBXBuildFile; fileRef = 18779DC119EBEF200086A9B7 /* uncheck.png */; };
 		18800CE11A08D14400930FF9 /* AboutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18800CB81A08D14400930FF9 /* AboutViewController.m */; };
 		18800CE21A08D14400930FF9 /* AboutViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18800CB91A08D14400930FF9 /* AboutViewController.xib */; };
 		18800CE31A08D14400930FF9 /* JobLogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18800CBC1A08D14400930FF9 /* JobLogViewController.m */; };
@@ -1030,6 +1030,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		117656D41B3928A200BA0B63 /* selectEmpty@.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "selectEmpty@.png"; sourceTree = "<group>"; };
+		117656D51B3928A200BA0B63 /* selectEmpty@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "selectEmpty@2x.png"; sourceTree = "<group>"; };
+		117656D61B3928A200BA0B63 /* selectFilled@.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "selectFilled@.png"; sourceTree = "<group>"; };
+		117656D71B3928A200BA0B63 /* selectFilled@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "selectFilled@2x.png"; sourceTree = "<group>"; };
 		18071BC61A14B62500DC723A /* upArrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "upArrow@2x.png"; sourceTree = "<group>"; };
 		1814AD181B2AA775001167DE /* CustomActionURLModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomActionURLModel.h; sourceTree = "<group>"; };
 		1814AD191B2AA775001167DE /* CustomActionURLModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomActionURLModel.m; sourceTree = "<group>"; };
@@ -2180,11 +2184,7 @@
 		187491311A04C1F100D43300 /* ToolsMasterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ToolsMasterViewController.h; sourceTree = "<group>"; };
 		187491321A04C1F100D43300 /* ToolsMasterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ToolsMasterViewController.m; sourceTree = "<group>"; };
 		18779DBC19EBEF200086A9B7 /* barcode.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = barcode.png; sourceTree = "<group>"; };
-		18779DBD19EBEF200086A9B7 /* check.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = check.png; sourceTree = "<group>"; };
-		18779DBE19EBEF200086A9B7 /* check@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "check@2x.png"; sourceTree = "<group>"; };
 		18779DBF19EBEF200086A9B7 /* info.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = info.png; sourceTree = "<group>"; };
-		18779DC019EBEF200086A9B7 /* uncheck-2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "uncheck-2x.png"; sourceTree = "<group>"; };
-		18779DC119EBEF200086A9B7 /* uncheck.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = uncheck.png; sourceTree = "<group>"; };
 		18800CB71A08D14400930FF9 /* AboutViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutViewController.h; sourceTree = "<group>"; };
 		18800CB81A08D14400930FF9 /* AboutViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutViewController.m; sourceTree = "<group>"; };
 		18800CB91A08D14400930FF9 /* AboutViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AboutViewController.xib; sourceTree = "<group>"; };
@@ -5006,6 +5006,10 @@
 		184A98CF19E7D58F006DA6BE /* SFMPage */ = {
 			isa = PBXGroup;
 			children = (
+				117656D41B3928A200BA0B63 /* selectEmpty@.png */,
+				117656D51B3928A200BA0B63 /* selectEmpty@2x.png */,
+				117656D61B3928A200BA0B63 /* selectFilled@.png */,
+				117656D71B3928A200BA0B63 /* selectFilled@2x.png */,
 				18071BC61A14B62500DC723A /* upArrow@2x.png */,
 				184F1C3C1A136A1000A2B985 /* bizExclamation.png */,
 				184F1C441A137A5F00A2B985 /* arrow_down.png */,
@@ -5021,11 +5025,7 @@
 				42B1EECA19ECF96C00E3511D /* sfm_right_arrow.png */,
 				42B1EECB19ECF96C00E3511D /* timing-line.png */,
 				18779DBC19EBEF200086A9B7 /* barcode.png */,
-				18779DBD19EBEF200086A9B7 /* check.png */,
-				18779DBE19EBEF200086A9B7 /* check@2x.png */,
 				18779DBF19EBEF200086A9B7 /* info.png */,
-				18779DC019EBEF200086A9B7 /* uncheck-2x.png */,
-				18779DC119EBEF200086A9B7 /* uncheck.png */,
 				184A98D019E7D58F006DA6BE /* ObjectHighlightBar.png */,
 				184A98D119E7D58F006DA6BE /* PortraitSelection.png */,
 				184A98D219E7D58F006DA6BE /* Section_down_arrow@2x.png */,
@@ -6342,6 +6342,7 @@
 				C34A17FA19EBE50A009E9EA8 /* map_reload@2x.png in Resources */,
 				40A06F221B06033100218162 /* NavBarTasks@1x.png in Resources */,
 				42B1EECC19ECF96C00E3511D /* sfm_down_arrow.png in Resources */,
+				117656DB1B3928A200BA0B63 /* selectFilled@2x.png in Resources */,
 				4072530B19FF6C2900ACA729 /* com.servicemax.client.lib.zip in Resources */,
 				577003F91A1B50A2002537FB /* ActionDisplayTableViewController.xib in Resources */,
 				183702CE1A0B836F0081CA06 /* ResolveConflictCell.xib in Resources */,
@@ -6419,12 +6420,12 @@
 				C3EF97A61A036D7300476293 /* Attachment-SmartDoc@2x.png in Resources */,
 				184A9CC019E7D591006DA6BE /* recentlyCreated.png in Resources */,
 				C3EF97A01A036D7300476293 /* Attachment-Excel@2x.png in Resources */,
+				117656D81B3928A200BA0B63 /* selectEmpty@.png in Resources */,
 				184A9E1019E7D592006DA6BE /* map_CurrentLocation@2x.png in Resources */,
 				C3E890801A0CC52000A0653B /* Attachment-SelectionCheckempty@2x.png in Resources */,
 				184A9E1519E7D592006DA6BE /* map_priorityflag@2x.png in Resources */,
 				184A9DEA19E7D592006DA6BE /* login-servicemax-logo@2x.png in Resources */,
 				8BA32EAA19EE3F9300BFA769 /* day_triangle-down.png in Resources */,
-				18779DC419EBEF200086A9B7 /* check@2x.png in Resources */,
 				5BB909BE19EE4CEC004AA281 /* triangle-down@2x.png in Resources */,
 				57BA2CDE1A1105080081389B /* ProductManualDetail.xib in Resources */,
 				57A320FA1AB7182800A172E0 /* SNewItem@2x.png in Resources */,
@@ -6462,7 +6463,6 @@
 				40A06F351B06041400218162 /* SExplore@3x.png in Resources */,
 				C3EF978B1A036CAE00476293 /* ImagesVideosViewController.xib in Resources */,
 				40CA1A0019FE4B340097F5A1 /* OPDocSignatureViewController.xib in Resources */,
-				18779DC619EBEF200086A9B7 /* uncheck-2x.png in Resources */,
 				18800CF11A08D14400930FF9 /* SignOutDetailViewController.xib in Resources */,
 				4072531519FF6C2900ACA729 /* com.servicemax.client.zip in Resources */,
 				184A9CBD19E7D591006DA6BE /* homeIcon.png in Resources */,
@@ -6492,6 +6492,7 @@
 				184A8EEF19E7A535006DA6BE /* api.html in Resources */,
 				18800CEB1A08D14400930FF9 /* ResetAppDetailViewController.xib in Resources */,
 				57A320EC1AB7178C00A172E0 /* NavBarTasks@2x.png in Resources */,
+				117656D91B3928A200BA0B63 /* selectEmpty@2x.png in Resources */,
 				40A06F321B06041400218162 /* SCalendar@1x.png in Resources */,
 				184A9D9119E7D592006DA6BE /* FormCheckBoxFilled@2x.png in Resources */,
 				57A321031AB7196A00A172E0 /* STasks@2x.png in Resources */,
@@ -6523,7 +6524,6 @@
 				57A321041AB7196A00A172E0 /* STools@2x.png in Resources */,
 				18800CE81A08D14400930FF9 /* PurgeDataDetailViewController.xib in Resources */,
 				8B932E6A1A1098960002BBB2 /* Attachment-video.png in Resources */,
-				18779DC319EBEF200086A9B7 /* check.png in Resources */,
 				57A320E91AB7178C00A172E0 /* NavBarExplore@2x.png in Resources */,
 				5BE2CC1719ED2B2C00A9721C /* down-arrow-orange.png in Resources */,
 				C362BE661A129FCB0067E09E /* ErrorDownloadedCollectionViewCell.xib in Resources */,
@@ -6537,6 +6537,7 @@
 				40A06F1C1B06033100218162 /* NavBarExplore@1x.png in Resources */,
 				C3AE0BA01A0795AC00490009 /* iOS-Share-Blue@2x.png in Resources */,
 				183AA1B619E6D26400919345 /* PageLayoutEditViewController.xib in Resources */,
+				117656DA1B3928A200BA0B63 /* selectFilled@.png in Resources */,
 				183AA06B19E6C93400919345 /* SearchDetailViewController.xib in Resources */,
 				57BA2CE01A1105080081389B /* ProductManualMaster.xib in Resources */,
 				183702D91A0B86C60081CA06 /* ResolveConflictActionVC.xib in Resources */,
@@ -6566,7 +6567,6 @@
 				57A321021AB7196A00A172E0 /* SRecents@2x.png in Resources */,
 				C3EF97A81A036D7300476293 /* Attachment-Unknown@2x.png in Resources */,
 				C3EF979F1A036D7300476293 /* Attachment-DownloadFileOffline@2x.png in Resources */,
-				18779DC719EBEF200086A9B7 /* uncheck.png in Resources */,
 				40A06F391B06041400218162 /* SRecents@3x.png in Resources */,
 				18FE08FE19EE827800CB8925 /* checkbox-disabled-unchecked@2x.png in Resources */,
 				9EFE6DFF1A0F33EF0067F9CC /* LinkedProcessViewController.xib in Resources */,
