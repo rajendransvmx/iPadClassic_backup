@@ -14,6 +14,14 @@
 #import "DBCriteria.h"
 #import "CustomActionURLModel.h"
 #import "SFMCustomActionWebServiceHelper.h"
+#import "CustomActionWebserviceModel.h"
+#import "CacheManager.h"
+#import "ParserFactory.h"
+
+////
+#import "FactoryDAO.h"
+#import "UserGPSLogDAO.h"
+#import "StringUtil.h"
 
 @implementation CustomActionWebServiceLayer
 - (instancetype) initWithCategoryType:(CategoryType)categoryType
@@ -33,15 +41,44 @@
 - (ResponseCallback*)processResponseWithRequestParam:(RequestParamModel*)requestParamModel
                                         responseData:(id)responseData
 {
-    return nil;
+    ResponseCallback *callBack = nil;
+    WebServiceParser *parserObj = (WebServiceParser *)[ParserFactory parserWithRequestType:self.requestType];
+    if ([parserObj conformsToProtocol:@protocol(WebServiceParserProtocol)]) {
+        
+        parserObj.clientRequestIdentifier = self.requestIdentifier;
+        callBack = [parserObj parseResponseWithRequestParam:requestParamModel
+                                               responseData:responseData];
+    }
+    return callBack;
 }
 - (NSArray*)getRequestParametersWithRequestCount:(NSInteger)requestCount
 {
-    return nil;
+    NSArray *requestArray;
+    switch (self.requestType) {
+        case RequestDataPushNotification:
+            //fill Data
+            
+            requestArray =[self fetchRequestParametersForAPNSRequest];
+            
+            break;
+            case RequestTypeCustomActionWebService:
+            
+        default:
+            SXLogWarning(@"Invalid request type");
+            break;
+    }
+    requestArray =[self fetchRequestParametersForTechnicianLocationUpdateRequest];
+    return requestArray;
+//    NSArray *wizardComponentParamArray = [self getCustomActionParams];
+//    NSDictionary *workOrderSummaryDict= [[NSDictionary alloc] init];
+//    for (TransactionObjectModel *transObjModel in wizardComponentParamArray) {
+//        workOrderSummaryDict=[transObjModel getFieldValueDictionary];
+//    }
+//    return wizardComponentParamArray;
 }
--(NSArray *)fetchParamsForWizardComponent:(WizardComponentModel *)wizardComponent{
+-(NSArray *)fetchParamsForWizardComponent:(NSString *)wizardComponentProcessId{
     SFCustomActionURLService *wizardComponentparamService = [[SFCustomActionURLService alloc]init];
-    NSArray *paramList= [wizardComponentparamService getCustomActionParams:wizardComponent.processId];
+    NSArray *paramList= [wizardComponentparamService getCustomActionParams:wizardComponentProcessId];
     return paramList;
 }
 -(NSArray *)fetchDataFromObjectNameObject:(NSString *)objectNameTable
@@ -55,16 +92,20 @@
     return dataArray;
 }
 
-- (NSArray *)getCustomActionParams:(NSArray *)array{
-    WizardComponentModel *WizardComponentModel = [SFMCustomActionWebServiceHelper getWizardComponentModel];
-    DBCriteria * criteriaOne = [[DBCriteria alloc] initWithFieldName:WizardComponentModel.ObjectFieldName
+- (NSArray *)getCustomActionParams{
+    CustomActionWebserviceModel *customActionWebserviceLayer=[SFMCustomActionWebServiceHelper getCustomActionWebServiceHelper];
+    if (!customActionWebserviceLayer) {
+        return [[NSArray alloc] init];
+    }
+    NSArray *paramList = [self fetchParamsForWizardComponent:customActionWebserviceLayer.processId];
+    DBCriteria * criteriaOne = [[DBCriteria alloc] initWithFieldName:customActionWebserviceLayer.ObjectFieldName
                                                         operatorType:SQLOperatorEqual
-                                                       andFieldValue:WizardComponentModel.objectFieldId];
-    NSArray * fieldNames = [self fetchColumnName:array];
+                                                       andFieldValue:customActionWebserviceLayer.objectFieldId];
+    NSArray * fieldNames = [self fetchColumnName:paramList];
     
     NSArray * criteriaObjects = [[NSArray alloc] initWithObjects:criteriaOne, nil];
     
-    NSArray *wizardComponentParamArray=[self fetchDataFromObjectNameObject:WizardComponentModel.objectName fields:fieldNames expression:nil criteria:criteriaObjects];
+    NSArray *wizardComponentParamArray=[self fetchDataFromObjectNameObject:customActionWebserviceLayer.objectName fields:fieldNames expression:nil criteria:criteriaObjects];
     return  wizardComponentParamArray;
 }
 -(NSArray *)fetchColumnName:(NSArray *)array{
@@ -75,5 +116,70 @@
         }
     }
     return fieldNames;
+}
+- (NSArray *)fetchRequestParametersForTechnicianLocationUpdateRequest{
+    
+    NSArray *result;
+    id gpsLogService = [FactoryDAO serviceByServiceType:ServiceTypeUserGPSLog];
+    if ([gpsLogService conformsToProtocol:@protocol(UserGPSLogDAO)]) {
+        
+        UserGPSLogModel *model = [gpsLogService getLastGPSLog];
+        
+        NSMutableDictionary *finaldict = [[NSMutableDictionary alloc]initWithCapacity:0];
+        [finaldict setObject:@"Fields" forKey:kSVMXKey];
+        [finaldict setObject:@"" forKey:kSVMXValue];
+        
+        if (![StringUtil isStringEmpty:model.latitude] && ![StringUtil isStringEmpty:model.longitude]) {
+            
+            NSDictionary *latDict = @{kSVMXKey:ORG_NAME_SPACE@"__Latitude__c",
+                                      kSVMXValue:model.latitude};
+            NSDictionary *longDict = @{kSVMXKey:ORG_NAME_SPACE@"__Longitude__c",
+                                       kSVMXValue:model.longitude};
+            [finaldict setObject:@[latDict,longDict] forKey:kSVMXSVMXMap];
+        } else {
+            [finaldict setObject:@[] forKey:kSVMXSVMXMap];
+        }
+        
+        RequestParamModel *reqParModel = [[RequestParamModel alloc]init];
+        reqParModel.valueMap = @[finaldict];
+        result = @[reqParModel];
+    }
+    
+    return result;
+}
+
+- (NSArray *)fetchRequestParametersForAPNSRequest
+{
+    NSArray *resultArray;
+    
+    NSString *objectName = [[CacheManager sharedInstance]getCachedObjectByKey:@"searchObjectName"];
+    NSString *recordId = [[CacheManager sharedInstance]getCachedObjectByKey:@"searchSFID"];
+    
+    //pushNotificationModel.objectName = @"SVMXC__Service_Order_Line__c";
+    //pushNotificationModel.sfId = @"a39J00000002zUfIAI";
+    
+    
+    NSMutableDictionary *valueMapForObject = [[NSMutableDictionary alloc]initWithCapacity:0];
+    [valueMapForObject setObject:@"Object_Name" forKey:kSVMXKey];
+    [valueMapForObject setObject:objectName forKey:kSVMXValue];
+    
+    
+    
+    NSMutableDictionary *valueMap_RecordId = [[NSMutableDictionary alloc]initWithCapacity:0];
+    [valueMap_RecordId setObject:@"Record_Id" forKey:kSVMXKey];
+    [valueMap_RecordId setObject:recordId forKey:kSVMXValue];
+    
+    
+    NSArray *valueMapArray  = [NSArray arrayWithObjects:valueMap_RecordId,nil];
+    [valueMapForObject setObject:valueMapArray forKey:kSVMXSVMXMap];
+    
+    
+    RequestParamModel *reqParModel = [[RequestParamModel alloc]init];
+    
+    reqParModel.valueMap = @[valueMapForObject];
+    
+    resultArray = @[reqParModel];
+    
+    return resultArray;
 }
 @end
