@@ -21,6 +21,7 @@
 		18186E1119EC0023009F3421 /* JobLogServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 18186E1019EC0023009F3421 /* JobLogServiceLayer.m */; };
 		181A4DCF1B37EACE00549C38 /* CustomActionWebServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 181A4DCE1B37EACE00549C38 /* CustomActionWebServiceLayer.m */; };
 		181A4DD21B383D3D00549C38 /* SFMCustomActionWebServiceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 181A4DD11B383D3D00549C38 /* SFMCustomActionWebServiceHelper.m */; };
+		181A4DD51B38985D00549C38 /* CustomActionWebserviceModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 181A4DD41B38985D00549C38 /* CustomActionWebserviceModel.m */; };
 		183702CD1A0B836F0081CA06 /* ResolveConflictCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 183702CB1A0B836F0081CA06 /* ResolveConflictCell.m */; };
 		183702CE1A0B836F0081CA06 /* ResolveConflictCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 183702CC1A0B836F0081CA06 /* ResolveConflictCell.xib */; };
 		183702D81A0B86C60081CA06 /* ResolveConflictActionVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 183702D61A0B86C60081CA06 /* ResolveConflictActionVC.m */; };
@@ -697,6 +698,7 @@
 		18E522B51A6916C000FD9295 /* Sync_Error_White@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 18E522B41A6916C000FD9295 /* Sync_Error_White@2x.png */; };
 		18E522B81A69314400FD9295 /* SMLoggerHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 18E522B71A69314400FD9295 /* SMLoggerHelper.m */; };
 		18E5719C1A1A32B500867F8E /* UIPlaceHolderTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 18E5719B1A1A32B500867F8E /* UIPlaceHolderTextView.m */; };
+		18FB610F1B3982810011AF75 /* CustomWebServiceParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 18FB610E1B3982810011AF75 /* CustomWebServiceParser.m */; };
 		18FE08F519EE826C00CB8925 /* splashsigninbutton.png in Resources */ = {isa = PBXBuildFile; fileRef = 18FE08F419EE826C00CB8925 /* splashsigninbutton.png */; };
 		18FE08FB19EE827800CB8925 /* checkbox-active-checked@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 18FE08F719EE827800CB8925 /* checkbox-active-checked@2x.png */; };
 		18FE08FC19EE827800CB8925 /* checkbox-active-unchecked@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 18FE08F819EE827800CB8925 /* checkbox-active-unchecked@2x.png */; };
@@ -1055,6 +1057,8 @@
 		181A4DCE1B37EACE00549C38 /* CustomActionWebServiceLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomActionWebServiceLayer.m; sourceTree = "<group>"; };
 		181A4DD01B383D3D00549C38 /* SFMCustomActionWebServiceHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFMCustomActionWebServiceHelper.h; sourceTree = "<group>"; };
 		181A4DD11B383D3D00549C38 /* SFMCustomActionWebServiceHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFMCustomActionWebServiceHelper.m; sourceTree = "<group>"; };
+		181A4DD31B38985D00549C38 /* CustomActionWebserviceModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomActionWebserviceModel.h; sourceTree = "<group>"; };
+		181A4DD41B38985D00549C38 /* CustomActionWebserviceModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomActionWebserviceModel.m; sourceTree = "<group>"; };
 		183702CA1A0B836F0081CA06 /* ResolveConflictCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResolveConflictCell.h; sourceTree = "<group>"; };
 		183702CB1A0B836F0081CA06 /* ResolveConflictCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ResolveConflictCell.m; sourceTree = "<group>"; };
 		183702CC1A0B836F0081CA06 /* ResolveConflictCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ResolveConflictCell.xib; sourceTree = "<group>"; };
@@ -2352,6 +2356,8 @@
 		18E522B71A69314400FD9295 /* SMLoggerHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMLoggerHelper.m; sourceTree = "<group>"; };
 		18E5719A1A1A32B500867F8E /* UIPlaceHolderTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIPlaceHolderTextView.h; sourceTree = "<group>"; };
 		18E5719B1A1A32B500867F8E /* UIPlaceHolderTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIPlaceHolderTextView.m; sourceTree = "<group>"; };
+		18FB610D1B3982810011AF75 /* CustomWebServiceParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomWebServiceParser.h; sourceTree = "<group>"; };
+		18FB610E1B3982810011AF75 /* CustomWebServiceParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomWebServiceParser.m; sourceTree = "<group>"; };
 		18FE08F419EE826C00CB8925 /* splashsigninbutton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = splashsigninbutton.png; sourceTree = "<group>"; };
 		18FE08F719EE827800CB8925 /* checkbox-active-checked@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "checkbox-active-checked@2x.png"; sourceTree = "<group>"; };
 		18FE08F819EE827800CB8925 /* checkbox-active-unchecked@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "checkbox-active-unchecked@2x.png"; sourceTree = "<group>"; };
@@ -3486,6 +3492,8 @@
 				183A9E1819E69DB000919345 /* WorkOrderSummaryModel.m */,
 				6BEC807A1A5E81860099B4E6 /* PageEventModel.h */,
 				6BEC807B1A5E81860099B4E6 /* PageEventModel.m */,
+				181A4DD31B38985D00549C38 /* CustomActionWebserviceModel.h */,
+				181A4DD41B38985D00549C38 /* CustomActionWebserviceModel.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -3989,6 +3997,8 @@
 				9EB4F7A81A446DEE00E2A8BD /* ChatterPostDetailsParser.m */,
 				9EBDD6811A55314100EFF9F6 /* ChatterFeedsParser.h */,
 				9EBDD6821A55314100EFF9F6 /* ChatterFeedsParser.m */,
+				18FB610D1B3982810011AF75 /* CustomWebServiceParser.h */,
+				18FB610E1B3982810011AF75 /* CustomWebServiceParser.m */,
 			);
 			path = Parser;
 			sourceTree = "<group>";
@@ -7069,6 +7079,7 @@
 				186CDD811A02421C00DC93DA /* SMLocalNotificationHelper.m in Sources */,
 				183A997419E6609800919345 /* NonTagConstant.m in Sources */,
 				183A9F0A19E6A15600919345 /* ZKLoginResult.m in Sources */,
+				18FB610F1B3982810011AF75 /* CustomWebServiceParser.m in Sources */,
 				9E2002611A7B93CB00F3C83C /* SFMNonEditableTextViewCell.m in Sources */,
 				184A8E9419E7A0BE006DA6BE /* TKTableViewController.m in Sources */,
 				18B1170E1A723E5400D57621 /* SMKeychain.m in Sources */,
@@ -7295,6 +7306,7 @@
 				183AA03B19E6BDB300919345 /* TXFetchParser.m in Sources */,
 				18DE885A19E58A130011E9EE /* PlistManager.m in Sources */,
 				407252F619FF52C700ACA729 /* HTMLJSWrapper.m in Sources */,
+				181A4DD51B38985D00549C38 /* CustomActionWebserviceModel.m in Sources */,
 				183A9B1219E69B5200919345 /* SyncScheduler.m in Sources */,
 				184A8F1D19E7B7AD006DA6BE /* mztools.c in Sources */,
 				9EB4F7A91A446DEE00E2A8BD /* ChatterPostDetailsParser.m in Sources */,
