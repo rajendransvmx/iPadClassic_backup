@@ -105,13 +105,11 @@ NSString *heapSizeErrorString = @"Apex heap size too large"; //{"errorCode":"APE
     
     NSString *contextValue = [[ServerRequestManager sharedInstance]getTheContextvalueForCategoryType:self.nodecategoryType];
     [[PerformanceAnalyser sharedInstance] observePerformanceForContext:contextValue subContextName:contextValue operationType:PAOperationTypeTotalTimeLatency andRecordCount:1];
-    
+    [[SVMXSystemUtility sharedInstance] performSelectorOnMainThread:@selector(startNetworkActivity)
+                                                         withObject:nil
+                                                      waitUntilDone:NO];
     @synchronized([self class])
     {
-       
-        [[SVMXSystemUtility sharedInstance] performSelectorOnMainThread:@selector(startNetworkActivity)
-                                                             withObject:nil
-                                                          waitUntilDone:NO];
         int x = -99;
         if (self.nodecategoryType > self.nodecategoryType)
         {
