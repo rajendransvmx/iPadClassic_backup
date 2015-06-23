@@ -36,6 +36,7 @@
 #import "ChatterFeedsParser.h"
 #import "UserTrunkDataParser.h"
 #import "APNSParser.h"
+#import "CustomWebServiceParser.h"
 
 //#import "GroupProfileParser.h"
 
@@ -346,6 +347,10 @@
         case RequestTypeChatterFeedInsert:
         case RequestTypeChatterFeedCommnetInsert:
             parser = [[ChatterFeedsParser alloc] init];
+            break;
+            
+        case RequestTypeCustomActionWebService:
+            parser = [[CustomWebServiceParser alloc] init];
             break;
         default:
             SXLogWarning(@"Invalid parser type requested");

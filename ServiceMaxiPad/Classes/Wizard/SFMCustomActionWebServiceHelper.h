@@ -8,13 +8,16 @@
 
 #import <Foundation/Foundation.h>
 #import "WizardComponentModel.h"
+#import "CustomActionWebserviceModel.h"
 
 @interface SFMCustomActionWebServiceHelper : NSObject
 
 @property(nonatomic,strong)NSString *className;
 @property(nonatomic,strong)NSString *methodName;
-@property(nonatomic,strong)NSDictionary *ParametersWithKey;
+@property(nonatomic,strong)NSString *objectName;
+@property(nonatomic,strong)NSString *objectFieldId;
+@property(nonatomic,strong)NSString *objectFieldname;
 -(void)addModelToTaskMaster;
-+(void)setwizardComponent:(WizardComponentModel *)WizardComponentModel;
-+(WizardComponentModel *)getWizardComponentModel;
++(void)setcustomActionWebserviceModel:(CustomActionWebserviceModel *)WizardComponentModel;
++(CustomActionWebserviceModel *)getCustomActionWebServiceHelper;
 @end

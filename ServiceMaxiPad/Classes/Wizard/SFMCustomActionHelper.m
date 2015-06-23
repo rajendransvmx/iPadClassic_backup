@@ -48,8 +48,8 @@
         for (TransactionObjectModel *transObjModel in wizardComponentParamArray) {
             workOrderSummaryDict=[transObjModel getFieldValueDictionary];
         }
-        //UIApplication *ourApplication = [UIApplication sharedApplication];
         NSString *url = [NSString stringWithFormat:@"%@?%@",model.customUrl,[self addParameters:workOrderSummaryDict paramArray:paramList]];
+        
         return [url stringByReplacingOccurrencesOfString:@"?&" withString:@"?"];
     }else{
         return model.customUrl;
@@ -160,29 +160,6 @@
     NSArray *paramList= [wizardComponentparamService getCustomActionParams:wizardComponent.processId];
     return paramList;
 }
-//-(void)callWebService{
-//    TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeCustomWebServiceCall
-//                                             requestParam:nil
-//                                           callerDelegate:self];
-//    
-//    [[TaskManager sharedInstance] addTask:taskModel];
-//}
-//
-//
-//#pragma mark FLOW DELEGATE
-//- (void)flowStatus:(id)status;
-//{
-//    if([status isKindOfClass:[WebserviceResponseStatus class]])
-//    {
-//        WebserviceResponseStatus *st = (WebserviceResponseStatus*)status;
-//        if (st.syncStatus == SyncStatusSuccess) {
-//        
-//        }
-//        else if (st.syncStatus == SyncStatusFailed)
-//        {
-//            
-//        }
-//    }
-//}
+
 
 @end

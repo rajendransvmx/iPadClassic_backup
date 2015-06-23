@@ -311,10 +311,11 @@
                         }else if ([wizardComponent.customActionType isEqualToString:@"Web-Service"]) {
                             /* making webservice call */
                             SFMCustomActionWebServiceHelper *webserviceHelper=[[SFMCustomActionWebServiceHelper alloc] init];
-                            wizardComponent.objectName=wizard.objectName;
-                            wizardComponent.objectFieldId=objectId;
-                            wizardComponent.ObjectFieldName=ObjectFieldname;
-                            [SFMCustomActionWebServiceHelper setwizardComponent:wizardComponent];
+                            webserviceHelper.objectName=wizard.objectName;
+                            webserviceHelper.objectFieldId=objectId;
+                            webserviceHelper.objectFieldname=ObjectFieldname;
+                            webserviceHelper.className=wizardComponent.className;
+                            webserviceHelper.methodName=wizardComponent.methodName;
                             [webserviceHelper addModelToTaskMaster];
                             
                         }else{

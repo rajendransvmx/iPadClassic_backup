@@ -16,9 +16,12 @@
 @implementation SFMCustomActionWebServiceHelper
 @synthesize className;
 @synthesize methodName;
-@synthesize ParametersWithKey;
-static WizardComponentModel *wizardCom;
+@synthesize objectName;
+@synthesize objectFieldId;
+@synthesize objectFieldname;
 
+static WizardComponentModel *wizardCom;
+static CustomActionWebserviceModel *customActionWebserviceModel;
 - (id)init
 {
     self = [super init];
@@ -31,6 +34,13 @@ static WizardComponentModel *wizardCom;
 }
 
 -(void)addModelToTaskMaster{
+    customActionWebserviceModel = [[CustomActionWebserviceModel alloc] init];
+    customActionWebserviceModel.className=className;
+    customActionWebserviceModel.methodName=methodName;
+    customActionWebserviceModel.objectName=objectName;
+    customActionWebserviceModel.ObjectFieldName=objectFieldname;
+    customActionWebserviceModel.objectFieldId=objectFieldId;
+    
     TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeCustomWebServiceCall
                                              requestParam:nil
                                            callerDelegate:self];
@@ -53,10 +63,12 @@ static WizardComponentModel *wizardCom;
         }
     }
 }
-+(void)setwizardComponent:(WizardComponentModel *)WizardComponentModel{
-    wizardCom=WizardComponentModel;
++(void)setcustomActionWebserviceModel:(CustomActionWebserviceModel *)WizardComponentModel{
+    customActionWebserviceModel=WizardComponentModel;
 }
-+(WizardComponentModel *)getWizardComponentModel{
-    return wizardCom;
++(CustomActionWebserviceModel *)getCustomActionWebServiceHelper{
+    return customActionWebserviceModel;
 }
+
+
 @end

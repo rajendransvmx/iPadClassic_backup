@@ -93,6 +93,7 @@
         case CategoryTypeChatterUserImage:
         case CategoryTypeChatterFeedInsert:
         case CategoryTypeChatterFeedUpdate:
+        case CategoryTypeCustomWebServiceCall:
             isapplicable = NO;
             break;
         
@@ -335,6 +336,11 @@
         case CategoryTypeChatterFeedUpdate:
             requestType = [self getNextRequestForChatterFeedComment:currentRequest andPreviousRequst:previousRequest];
             break;
+            
+        case CategoryTypeCustomWebServiceCall:
+            requestType = [self getNextRequestForCustomWebService:currentRequest andPreviousRequst:previousRequest];
+            break;
+            
         default:
             break;
     }
@@ -1137,6 +1143,22 @@
             break;
         default:
             break;
+    }
+    return nextReuestType;
+}
+- (RequestType)getNextRequestForCustomWebService:(SVMXServerRequest *)currentRequest
+                                 andPreviousRequst:(SVMXServerRequest *)previousRequst
+{
+    RequestType nextReuestType = 0;
+    
+    if (currentRequest == nil) {
+        nextReuestType = RequestTypeCustomActionWebService;
+        
+    }
+    
+    if(currentRequest.requestType == RequestTypeCustomActionWebService)
+    {
+        nextReuestType = RequestTypeNone;
     }
     return nextReuestType;
 }

@@ -92,6 +92,7 @@
             case RequestTypeChatterPostDetails:
             case RequestTypeChatterFeedInsert:
             case RequestTypeChatterFeedCommnetInsert:
+            case RequestTypeCustomActionWebService:
                 requestClass = [self getRestRequestByType:requestType];
                 break;
                 

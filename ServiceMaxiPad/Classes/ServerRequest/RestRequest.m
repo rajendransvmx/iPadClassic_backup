@@ -1,4 +1,4 @@
- //
+//
 //  RestRequest.m
 //  ServiceMaxMobile
 //
@@ -19,6 +19,7 @@
 #import "StringUtil.h"
 #import "PerformanceAnalyser.h"
 #import "NSData+DDData.h"
+#import "SFMCustomActionWebServiceHelper.h"
 
 
 @implementation RestRequest
@@ -169,7 +170,7 @@
                 
                 if (httpPostDictionary != nil) {
                     
-                   // NSLog(@"httpPostDictionary : %@", [httpPostDictionary description]);
+                    NSLog(@"httpPostDictionary : %@", [httpPostDictionary description]);
                     
                     NSData *someData = [NSJSONSerialization dataWithJSONObject:httpPostDictionary options:0 error:nil];
                     [urlRequest setValue:@"gzip"      forHTTPHeaderField:@"Content-Encoding"];
@@ -394,9 +395,10 @@
         case RequestTypeOPDocHTMLAndSignatureSubmit:
         case RequestTypeOPDocGeneratePDF:
             eventType = kSync;
+            break;
             
         case RequestTypeCustomActionWebService:
-            
+            eventType = kOnDemandGetData;
             break;
             
         default:
@@ -537,7 +539,7 @@
             break;
             
         case RequestTypeCustomActionWebService:
-            //url = [];
+            url =   [self getUrlWithStringApppended:kDataSyncUrlLink];
             break;
             /****************    ************** */
         default:
@@ -765,6 +767,8 @@
         case RequestTypeCustomActionWebService:
             //self.eventName = eventSync ;
             //class_name method_name from table or model
+            self.eventName = kPushNotification;
+            //self.eventName=[self getEventName];
             break;
 
         default:
@@ -772,6 +776,13 @@
             
     }
     
+}
+-(NSString *)getEventName{
+    CustomActionWebserviceModel *customActionWebserviceLayer=[SFMCustomActionWebServiceHelper getCustomActionWebServiceHelper];
+    if (customActionWebserviceLayer) {
+        return [NSString stringWithFormat:@"%@/%@",customActionWebserviceLayer.className,customActionWebserviceLayer.methodName];
+    }
+    return @"";
 }
 
 
