@@ -113,12 +113,11 @@ NSString *cocoaErrorString = @"3840";
     NSString *contextValue = [[ServerRequestManager sharedInstance]getTheContextvalueForCategoryType:self.nodecategoryType];
     [[PerformanceAnalyser sharedInstance] observePerformanceForContext:contextValue subContextName:contextValue operationType:PAOperationTypeTotalTimeLatency andRecordCount:1];
     
+    [[SVMXSystemUtility sharedInstance] performSelectorOnMainThread:@selector(startNetworkActivity)
+                                                         withObject:nil
+                                                      waitUntilDone:NO];
     @synchronized([self class])
     {
-       
-        [[SVMXSystemUtility sharedInstance] performSelectorOnMainThread:@selector(startNetworkActivity)
-                                                             withObject:nil
-                                                          waitUntilDone:NO];
         if ([OAuthService validateAndRefreshAccessToken])
         {
             [self makeNextRequesttWithPrevious:nil firstCall:YES];
