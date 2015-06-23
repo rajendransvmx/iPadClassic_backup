@@ -41,9 +41,6 @@
 @property(nonatomic, copy) NSString *customActionType;
 @property(nonatomic, copy) NSString *customUrl;
 @property(nonatomic, copy) NSString *ProcessId_c;
-@property(nonatomic, copy) NSString *objectName;
-@property(nonatomic, copy) NSString *objectFieldId;
-@property(nonatomic, copy) NSString *ObjectFieldName;
 
 @property(nonatomic,assign) BOOL isEntryCriteriaMatching; 
 
