@@ -31,7 +31,7 @@ NSString * const kAfterSaveProcessKey = @"After Save";
 
 @implementation PageEventProcessManager
 
--(id)initWithSFMPage:(SFMPage *)aSfmPage {;
+-(id)initWithSFMPage:(SFMPage *)aSfmPage {
     self = [super init];
     if (self) {
         self.sfmPage = aSfmPage;
@@ -65,51 +65,60 @@ NSString * const kAfterSaveProcessKey = @"After Save";
 
 -(BOOL)startPageEventProcessWithParentView:(UIView *)aView {
     
-    NSDictionary *eventDict = nil;
-    
-    if (self.beforeSaveProcessDict) {
-        eventDict = self.beforeSaveProcessDict;
-        self.beforeSaveProcessDict = nil;
+    @autoreleasepool {
+        
+        
+        NSDictionary *eventDict = nil;
+        
+        if (self.beforeSaveProcessDict) {
+            eventDict = self.beforeSaveProcessDict;
+            self.beforeSaveProcessDict = nil;
+        }
+        else if (self.afterSaveProcessDict) {
+            eventDict = self.afterSaveProcessDict;
+            self.afterSaveProcessDict = nil;
+        }
+        
+        if (eventDict == nil) {
+            return NO;
+        }
+        
+        self.codeSnippetId = [eventDict objectForKey:kPageEventCodeSnippetId];
+        
+        if (aView) {
+            self.parentView = aView;
+        }
+        
+        PriceBookTargetHandler *targetHandler = [[PriceBookTargetHandler alloc] initWithSFPage:self.sfmPage];
+        self.targetHandler = targetHandler;
+        
+        PriceBookDataHandler *priceBook = [[PriceBookDataHandler alloc] initWithTargetDictionary:targetHandler.targetDictionary];
+        
+        NSDictionary *finalDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:targetHandler.targetDictionary,@"target",priceBook.priceBookInformation,@"data",nil];
+        
+        NSString *jsonString = [Utility jsonStringFromObject:finalDictionary];
+        self.jsonRepresantation = jsonString;
+        
+        priceBook.priceBookInformation = nil;
+        
+        NSString *codeSnippet = [self getCodeSnippet];
+        [self createJsExecuter:codeSnippet];
+        
+        return YES;
     }
-    else if (self.afterSaveProcessDict) {
-        eventDict = self.afterSaveProcessDict;
-        self.afterSaveProcessDict = nil;
-    }
-    
-    if (eventDict == nil) {
-        return NO;
-    }
-    
-    self.codeSnippetId = [eventDict objectForKey:kPageEventCodeSnippetId];
-    
-    if (aView) {
-        self.parentView = aView;
-    }
-    
-    PriceBookTargetHandler *targetHandler = [[PriceBookTargetHandler alloc] initWithSFPage:self.sfmPage];
-    self.targetHandler = targetHandler;
-    
-    PriceBookDataHandler *priceBook = [[PriceBookDataHandler alloc] initWithTargetDictionary:targetHandler.targetDictionary];
-    
-    NSDictionary *finalDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:targetHandler.targetDictionary,@"target",priceBook.priceBookInformation,@"data",nil];
-    
-    NSString *jsonString = [Utility jsonStringFromObject:finalDictionary];
-    self.jsonRepresantation = jsonString;
-    
-    priceBook.priceBookInformation = nil;
-    
-    NSString *codeSnippet = [self getCodeSnippet];
-    [self createJsExecuter:codeSnippet];
-    
-    return YES;
 }
 
 
 - (void)createJsExecuter:(NSString *)codeSnippet {
-    if (self.jsExecuter) {
-        self.jsExecuter = nil;
+    if (self.jsExecuter == nil) {
+        self.jsExecuter = [[JSExecuter alloc] initWithParentView:self.parentView andCodeSnippet:codeSnippet andDelegate:self];
     }
-    self.jsExecuter = [[JSExecuter alloc] initWithParentView:self.parentView andCodeSnippet:codeSnippet andDelegate:self];
+    else {
+        if (codeSnippet != nil & [codeSnippet length] > 3) {
+            self.jsExecuter.codeSnippet = codeSnippet;
+            [self.jsExecuter executeJavascriptCode:codeSnippet];
+        }
+    }
 }
 
 - (NSString *)getCodeSnippet {
@@ -192,8 +201,6 @@ NSString * const kAfterSaveProcessKey = @"After Save";
     [self.targetHandler updateTargetSfpage:self.sfmPage fromPriceResults:priceResult];
     BOOL isStarted = [self startPageEventProcessWithParentView:nil];
     if (!isStarted) {
-        self.parentView = nil;
-        self.codeSnippetId = nil;
         self.targetHandler.targetDictionary = nil;
         self.targetHandler = nil;
         [self.managerDelegate pageEventProcessCalculationFinishedSuccessFully:self.sfmPage];
@@ -203,8 +210,6 @@ NSString * const kAfterSaveProcessKey = @"After Save";
 - (void)sendMessageToDelegate:(NSString *)message {
     BOOL isStarted = [self startPageEventProcessWithParentView:nil];
     if (!isStarted) {
-        self.parentView = nil;
-        self.codeSnippetId = nil;
         self.targetHandler.targetDictionary = nil;
         self.targetHandler = nil;
         [self.managerDelegate shouldShowAlertMessageForPageEventProcess:message];
