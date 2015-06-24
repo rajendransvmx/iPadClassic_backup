@@ -476,10 +476,18 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
 
         datePrefix = dateString;
     }
+
+    if([self iSDeviceTime24HourFormat]) /* Defect 012688 , condition check to handle 24hr / 12hr format */
+    {
+        formatter.dateFormat = @"HH:mm";
+    }else
+    {
+        formatter.dateFormat = @"hh:mm a";
+        [formatter setAMSymbol:@"am"];
+        [formatter setPMSymbol:@"pm"];
+    }
+
     
-    formatter.dateFormat = @"hh:mm a";
-    [formatter setAMSymbol:@"am"];
-    [formatter setPMSymbol:@"pm"];
     dateInString = [NSString stringWithFormat:@"%@ %@",datePrefix,[formatter stringFromDate:date]];
     
     return dateInString;
