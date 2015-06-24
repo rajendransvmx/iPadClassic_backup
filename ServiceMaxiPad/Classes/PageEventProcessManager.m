@@ -42,6 +42,7 @@ NSString * const kAfterSaveProcessKey = @"After Save";
 
 -(BOOL)pageEventProcessExists {
     BOOL pageEventExists = NO;
+    return pageEventExists;
     NSArray *pageLevelEvents = self.sfmPage.process.pageLayout.headerLayout.pageLevelEvents;
     NSArray *filteredArray = [pageLevelEvents filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(%K CONTAINS[c] %@) OR (%K CONTAINS[c] %@)", kPageEventType, kBeforeSaveProcessKey, kPageEventType, kAfterSaveProcessKey]];
     
