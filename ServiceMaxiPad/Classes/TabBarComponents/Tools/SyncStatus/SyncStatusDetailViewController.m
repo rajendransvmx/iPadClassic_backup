@@ -24,7 +24,7 @@
 #import "NSNotificationCenter+UniqueNotif.h"
 #import "PlistManager.h"
 #import "AutoLockManager.h"
-
+#import "LocationPingManager.h"
 
 #define kConfigSyncAlertTag     10
 const NSInteger alertViewTagForConfigSync   = 888889;
@@ -319,6 +319,7 @@ const NSInteger alertViewTagForConfigSync   = 888889;
 
         [SyncManager sharedInstance].isGetPriceCallEnabled = YES;
         [[SyncManager sharedInstance] performSyncWithType:SyncTypeData];
+        [[LocationPingManager sharedInstance] triggerLocationWebservices];
         [self updateDataSyncRelatedUI];
     }
     else

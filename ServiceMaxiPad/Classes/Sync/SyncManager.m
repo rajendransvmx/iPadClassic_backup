@@ -289,7 +289,6 @@ static SyncManager *_instance;
         case SyncTypeData:{
             
                 [self performDataSync];
-                [[LocationPingManager sharedInstance] triggerLocationWebservices];
                 if (self.isGetPriceCallEnabled)
                 {
                     self.isGetPriceCallEnabled = NO;
@@ -1128,6 +1127,7 @@ static SyncManager *_instance;
     {
         self.isGetPriceCallEnabled = YES;
         [self performSyncWithType:SyncTypeData];
+        [[LocationPingManager sharedInstance] triggerLocationWebservices];
         [self postSyncTimeUpdateNotificationAfterSyncCompletion];
     }
     else
