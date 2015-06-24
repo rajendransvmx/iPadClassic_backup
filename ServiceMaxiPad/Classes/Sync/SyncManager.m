@@ -866,8 +866,14 @@ static SyncManager *_instance;
             BOOL doesExist =  [modifiedRecordService doesRecordExistInTheTable];
             
             if (doesExist) {
+                
+                NSLog(@"Successsive sync: initiated");
+                
                 [self performSelectorInBackground:@selector(initiateSyncInBackGround) withObject:nil];
                 return doesExist;
+            }
+            else {
+                NSLog(@"No successive sync started");
             }
         }
         return NO;
