@@ -45,6 +45,7 @@
 @property(nonatomic,strong) NSArray *sections;
 @property(nonatomic,assign) BOOL showAllSectionsByDefault;
 @property(nonatomic, strong) NSArray    *buttons;
+@property(nonatomic, strong) NSArray *pageLevelEvents;
 
 - (id)initWithDictionaty:(NSDictionary *)dictionary;
 - (NSArray *)getAllHeaderLayoutFields;

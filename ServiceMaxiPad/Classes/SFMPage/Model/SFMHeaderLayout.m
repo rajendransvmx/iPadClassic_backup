@@ -31,6 +31,7 @@
         
         _showAllSectionsByDefault = [[dictionary objectForKey:kPageHeaderShowAllSectionsByDefault] boolValue];
         
+        _pageLevelEvents = [dictionary objectForKey:kPageLevelEvents];
         
         NSMutableArray * sections = [[NSMutableArray alloc] initWithCapacity:0];
         

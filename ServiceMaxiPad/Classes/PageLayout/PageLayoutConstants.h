@@ -27,6 +27,8 @@ extern NSString *const kPageEventType;
 extern NSString *const kPageTargetCall;
 extern NSString *const kPageEventId;
 extern NSString *const kPageEventPageLayout;
+extern NSString *const kPageEventCallType;
+extern NSString *const kPageEventCodeSnippetId;
 extern NSString *const kPageHeaderpageLayoutId;
 extern NSString *const kPageHeaderSfname;
 extern NSString *const kPageHeaderObjectName;

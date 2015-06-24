@@ -596,6 +596,8 @@
     {
         NSDictionary * eventDetail = [pageLevelEvents objectAtIndex:i];
         
+        NSLog(@"eventDetail: %@", eventDetail);
+        
         NSString * headerName = [eventDetail objectForKey:kPageHeaderName];
         headerName = (headerName != nil)?headerName:@"";
         
@@ -612,14 +614,28 @@
         
         NSString * layoutId = [eventDetail objectForKey:kPageEventPageLayout];
         layoutId = (layoutId != nil)?layoutId:@"";
+        
+        NSString * eventType = [eventDetail objectForKey:kPageEventType];
+        eventType = (eventType != nil)?eventType:@"";
+        
+        NSString * eventCallType = [eventDetail objectForKey:kPageEventCallType];
+        eventCallType = (eventCallType != nil)?eventCallType:@"";
+        
+        NSString * eventCodeSnippetId = [eventDetail objectForKey:kPageEventCodeSnippetId];
+        eventCodeSnippetId = (eventCodeSnippetId != nil)?eventCodeSnippetId:@"";
+        
         //clarify
         
         NSMutableDictionary * eventsDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
         [eventsDictionary setObject:headerName forKey:kPageHeaderName];
         [eventsDictionary setObject:pEventName forKey:kPageEventName];
-        [eventsDictionary setObject:targetCall forKey:kPageEventType];
+        [eventsDictionary setObject:targetCall forKey:kPageTargetCall];
+        [eventsDictionary setObject:eventType forKey:kPageEventType];
         [eventsDictionary setObject:eventId forKey:kPageEventId];
         [eventsDictionary setObject:layoutId forKey:kPageEventPageLayout];
+        [eventsDictionary setObject:eventCallType forKey:kPageEventCallType];
+        [eventsDictionary setObject:eventCodeSnippetId forKey:kPageEventCodeSnippetId];
+        
         [sfmPageEvents addObject:eventsDictionary];
     }
     return sfmPageEvents;

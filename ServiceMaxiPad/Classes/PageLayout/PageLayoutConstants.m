@@ -30,8 +30,10 @@ NSString *const kPageHeaderLayout                 =  @"headerLayout";
 NSString *const kPageEventName                     = @"Name";
 NSString *const kPageEventType                     = ORG_NAME_SPACE@"__Event_Type__c";
 NSString *const kPageTargetCall                    =  ORG_NAME_SPACE@"__Target_Call__c";
-NSString *const kPageEventId                      =  ORG_NAME_SPACE@"__Event_Id__c";
-NSString *const kPageEventPageLayout              =  ORG_NAME_SPACE@"__Page_Layout__c";
+NSString *const kPageEventId                       =  ORG_NAME_SPACE@"__Event_Id__c";
+NSString *const kPageEventPageLayout               =  ORG_NAME_SPACE@"__Page_Layout__c";
+NSString *const kPageEventCallType                 = ORG_NAME_SPACE@"__Event_Call_Type__c";
+NSString *const kPageEventCodeSnippetId            = ORG_NAME_SPACE@"__Code_Snippet__c";
 
 NSString *const kPageHeaderpageLayoutId            = ORG_NAME_SPACE@"__Page_Layout_ID__c";
 NSString *const kPageHeaderSfname                  = ORG_NAME_SPACE@"__Name__c";

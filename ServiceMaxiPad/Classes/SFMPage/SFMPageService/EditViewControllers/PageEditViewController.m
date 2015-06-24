@@ -37,7 +37,7 @@
 #import "AttachmentLocalModel.h"
 #import "PushNotificationManager.h"
 #import "ModifiedRecordModel.h"
-
+#import "PageEventProcessManager.h"
 
 
 typedef NS_ENUM(NSInteger, SaveFlow ) {
@@ -45,7 +45,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     SaveFlowFromPushNotification
 };
 
-@interface PageEditViewController ()
+@interface PageEditViewController ()<PageEventProcessManagerDelegate>
 
 @property(nonatomic,strong)SFMPageEditManager   *sfmEditPageManager;
 @property(nonatomic,strong)SFMPage              *sfmPage;
@@ -59,6 +59,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 @property(nonatomic, strong) LinkedProcess *linkedSfmProcess;
 @property(nonatomic, strong) NSIndexPath *requiredFieldIndexPath;
 @property(nonatomic, assign) BOOL isHeader;
+@property(nonatomic, strong)PageEventProcessManager *pageEventProManager;
 
 @property (nonatomic) SaveFlow saveflow;
 @end
@@ -997,15 +998,19 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 
 - (void)saveRecordData
 {
-    if (!self.isLinkedSfmProcess) {
-        [self performSelectorInBackground:@selector(saveRecord) withObject:nil];
-    }
-    else{
-        [self performSelectorOnMainThread:@selector(stopActivityIndicator) withObject:nil waitUntilDone:YES];
-        [self saveAndLaunchLinkedSfm:self.linkedSfmProcess];
-    }
-    [self invalidateLinkedSfm];
     
+    if (![self performBeforeOrAfterSaveEventIfExists]) {
+        
+        if (!self.isLinkedSfmProcess) {
+            [self performSelectorInBackground:@selector(saveRecord) withObject:nil];
+        }
+        else{
+            [self performSelectorOnMainThread:@selector(stopActivityIndicator) withObject:nil waitUntilDone:YES];
+            [self saveAndLaunchLinkedSfm:self.linkedSfmProcess];
+        }
+        [self invalidateLinkedSfm];
+        
+    }
 }
 
 #pragma mark - alert message delegate
@@ -1266,6 +1271,51 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 -(void)notifyNotificationManager_
 {
     [[PushNotificationManager sharedInstance] onEditSaveSuccess];
+}
+
+
+#pragma mark - Before Save
+
+
+-(BOOL)performBeforeOrAfterSaveEventIfExists {
+    BOOL pageEventProcessExists = NO;
+    self.pageEventProManager = [[PageEventProcessManager alloc] initWithSFMPage:self.sfmPage];
+    self.pageEventProManager.managerDelegate = self;
+    if([self.pageEventProManager pageEventProcessExists]) {
+        pageEventProcessExists = YES;
+        [self.pageEventProManager startPageEventProcessWithParentView:self.view];
+    }
+    return pageEventProcessExists;
+}
+
+-(void)pageEventProcessCalculationFinishedSuccessFully:(SFMPage *)sfPage {
+    NSLog(@"beforeSaveProcessCalculationFinishedSuccessFully");
+    
+    if (!self.isLinkedSfmProcess) {
+        [self performSelectorInBackground:@selector(saveRecord) withObject:nil];
+    }
+    else{
+        [self performSelectorOnMainThread:@selector(stopActivityIndicator) withObject:nil waitUntilDone:YES];
+        [self saveAndLaunchLinkedSfm:self.linkedSfmProcess];
+    }
+    [self invalidateLinkedSfm];
+    
+
+}
+
+-(void)shouldShowAlertMessageForPageEventProcess:(NSString *)message {
+    NSLog(@"before save failed");
+    
+    if (!self.isLinkedSfmProcess) {
+        [self performSelectorInBackground:@selector(saveRecord) withObject:nil];
+    }
+    else{
+        [self performSelectorOnMainThread:@selector(stopActivityIndicator) withObject:nil waitUntilDone:YES];
+        [self saveAndLaunchLinkedSfm:self.linkedSfmProcess];
+    }
+    [self invalidateLinkedSfm];
+    
+
 }
 
 
