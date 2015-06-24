@@ -25,5 +25,7 @@
 -(void)initiateFileSync;
 -(void)initiateDocumentSubmissionProcess;
 -(void)initiateGeneratePDFProcess;
+-(NSString *)getQueryForCheckingOPDOCFileUploadStatus;
 -(void)clearOpDocHTMLAndSignatureFilesOnReset;
+
 @end

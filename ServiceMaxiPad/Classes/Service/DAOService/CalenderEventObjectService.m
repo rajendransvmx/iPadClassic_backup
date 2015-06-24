@@ -225,41 +225,43 @@
 {
     NSMutableArray * detailsArray = [[NSMutableArray alloc] initWithCapacity:0];
     @autoreleasepool {
-    DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
-    
-    [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
-        NSString * query = [selectQuery query];
         
-        /*
-         Expcted query result is list of Product-id from Installed Product table.
-         */
-        
-        SQLResultSet * resultSet = [db executeQuery:query];
-        
-        /*
-         Iterate through the result set (in SVMXC__Product__c column) for getting product id
-         */
-        
-        while ([resultSet next]) {
-            NSDictionary * dict = [resultSet resultDictionary];
-            //Method in model to set the values
+            DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
             
-            if (   dict
-                && (![dict isKindOfClass:[NSNull class]]))
-            {
-                if ([[dict allKeys] count] > 0) {
+            [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+                NSString * query = [selectQuery query];
+                
+                /*
+                 Expcted query result is list of Product-id from Installed Product table.
+                 */
+                
+                SQLResultSet * resultSet = [db executeQuery:query];
+                
+                /*
+                 Iterate through the result set (in SVMXC__Product__c column) for getting product id
+                 */
+                
+                while ([resultSet next]) {
                     
-                    NSString *key = [[dict allKeys] objectAtIndex:0];
+                    NSDictionary * dict = [resultSet resultDictionary];
                     
-                    if (![StringUtil isStringEmpty:[dict valueForKey:key]])
-                    {
-                        [detailsArray addObject:[dict valueForKey:key]];
+                    
+                    if (   dict
+                        && (![dict isKindOfClass:[NSNull class]]))
+                       {
+                        if ([[dict allKeys] count] > 0) {
+                            
+                            NSString *key = [[dict allKeys] objectAtIndex:0];
+                            
+                            if (![StringUtil isStringEmpty:[dict valueForKey:key]])
+                            {
+                                [detailsArray addObject:[dict valueForKey:key]];
+                            }
+                        }
                     }
                 }
-            }
-        }
-        [resultSet close];
-    }];
+                [resultSet close];
+            }];
     }
     return detailsArray;
 }

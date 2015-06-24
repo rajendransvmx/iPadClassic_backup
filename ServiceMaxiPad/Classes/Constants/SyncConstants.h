@@ -41,6 +41,7 @@ typedef NS_ENUM(NSUInteger, CategoryType) {
     CategoryTypeProductManualDownlaod,
     /**************************************/
     
+    CategoryTypeOpDocUploadStatus,
     CategoryTypeOpDoc,
     CategoryTypeSubmitDocument,
     CategoryTypeGeneratePDF,

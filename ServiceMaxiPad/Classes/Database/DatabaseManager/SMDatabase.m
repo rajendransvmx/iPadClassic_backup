@@ -464,7 +464,6 @@ static int DBDatabaseBusyHandler(void *f, int count)
 
 - (BOOL)setKey:(NSString*)key
 {
-    NSLog(@"Setting key :%@",key);
     NSData *keyData = [NSData dataWithBytes:[key UTF8String] length:(NSUInteger)strlen([key UTF8String])];
     
     return [self setKeyWithData:keyData];

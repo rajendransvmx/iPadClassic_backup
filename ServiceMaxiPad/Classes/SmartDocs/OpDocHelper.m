@@ -78,6 +78,9 @@
         
         if(lSignatureList.count)
         {
+            if (cSingleHtmlAndAssociatedSignatureListArray) {
+                cSingleHtmlAndAssociatedSignatureListArray = nil;
+            }
             cSingleHtmlAndAssociatedSignatureListArray = [[NSMutableArray alloc] initWithArray:lSignatureList];
             [cSingleHtmlAndAssociatedSignatureListArray addObject:[cHtmlListArray objectAtIndex:0]]; //Always the HTML should be last in array so that it is uploaded last. Cause uploading a HTMl causes a trigger at the server.
         }
@@ -86,15 +89,26 @@
             cSingleHtmlAndAssociatedSignatureListArray =  [[NSMutableArray alloc] initWithObjects:[cHtmlListArray objectAtIndex:0], nil];
         }
         
-        //Initiate the sync Call
-        [[OpDocSyncDataManager sharedManager] setCOpDocObjectForSync:[cSingleHtmlAndAssociatedSignatureListArray objectAtIndex:0]];
-        [OPDocFileUploader requestForUploadingOPDocFilewithTheCallerDelegate:self];
-
+        [self checkIfTheFileIsAlreadyUploaded];
+        
     }
     else
     {
         [self initiateDocumentSubmissionProcess]; // IF during the previous cycle, some files were not submitted for "DOC SUBMISSSION"
     }
+}
+
+-(void)checkIfTheFileIsAlreadyUploaded
+{
+    [[OpDocSyncDataManager sharedManager] setCOpDocObjectForSync:[cSingleHtmlAndAssociatedSignatureListArray objectAtIndex:0]];
+    [OPDocFileUploader requestTocheckIfOPDocFileIsUploadedBeforewithTheCallerDelegate:self];
+}
+
+
+-(void)uploadTheOPDOCFile
+{
+    [OPDocFileUploader requestForUploadingOPDocFilewithTheCallerDelegate:self];
+
 }
 
 -(void)secondCallOfTheSyncMethod
@@ -105,11 +119,7 @@
     
     if (cSingleHtmlAndAssociatedSignatureListArray.count)
     {
-        OpDocObject = [cSingleHtmlAndAssociatedSignatureListArray objectAtIndex:0];
-
-        [[OpDocSyncDataManager sharedManager] setCOpDocObjectForSync:OpDocObject];
-
-        [OPDocFileUploader requestForUploadingOPDocFilewithTheCallerDelegate:self];
+        [self checkIfTheFileIsAlreadyUploaded];
     }
     else
     {
@@ -175,44 +185,78 @@
     NSDictionary *lSubmitDocDict = [[OpDocSyncDataManager sharedManager] cHtmlSignatureDocSubmissionDictionary];
     
     NSMutableArray *lSubmittedHTMLList = [[NSMutableArray alloc]initWithArray:[lSubmitDocDict objectForKey:kOPDocHTMLString]];
-    NSMutableArray *lSubmittedSignatureList  = [[NSMutableArray alloc]initWithArray:[lSubmitDocDict objectForKey:kOPDocSignatureString]];
-
+//    NSMutableArray *lSubmittedSignatureList  = [[NSMutableArray alloc]initWithArray:[lSubmitDocDict objectForKey:kOPDocSignatureString]];
+    
     NSDictionary *responseForSubmitDoc = [[OpDocSyncDataManager sharedManager] cResponseForDocSubmitDictionary];
     
     NSArray *lResponseHTMLList = [responseForSubmitDoc objectForKey:kOPDocHTMLString];
     NSArray *lResponseSignatureList = [responseForSubmitDoc objectForKey:kOPDocSignatureString];
     NSArray *lResponseDeleteList = [responseForSubmitDoc objectForKey:kOPDocDeleteString];
-
-    if (lResponseHTMLList.count) {
-        
-        for (int i = 0; i<lResponseHTMLList.count; i++) {
-            if ([lSubmittedHTMLList containsObject:[lResponseHTMLList objectAtIndex:i]]) {
-                [lSubmittedHTMLList removeObject:[lResponseHTMLList objectAtIndex:i]];
+    
+    if (![self checkIftheDeletionIdIsPresentInDictForGeneratingPDFForSubmittedDict:lSubmitDocDict andResponseDict:responseForSubmitDoc])
+    {
+        if (lResponseHTMLList.count) {
+            
+            for (int i = 0; i<lResponseHTMLList.count; i++) {
+                if ([lSubmittedHTMLList containsObject:[lResponseHTMLList objectAtIndex:i]]) {
+                    [lSubmittedHTMLList removeObject:[lResponseHTMLList objectAtIndex:i]];
+                }
             }
-
+        }
+        
+        NSDictionary *lGeneratePDF = @{kOPDocHTMLString: (lSubmittedHTMLList?lSubmittedHTMLList:@[]), kOPDocSignatureString: (lResponseSignatureList?lResponseSignatureList:@[])};
+        
+        if (lGeneratePDF.count) {
+            [[OpDocSyncDataManager sharedManager] setCListForGeneratingPDFDictionary:lGeneratePDF];
+            
+            [OPDocFileUploader requestForGeneratingPDFwithTheCallerDelegate:self];
+            
+        }
+        else
+        {
+            
+            [self gettingReadyToSyncTheNextSetOfData];
+            
         }
     }
-
-    
-    NSDictionary *lGeneratePDF = @{kOPDocHTMLString: lSubmittedHTMLList, kOPDocSignatureString: lResponseSignatureList};
-    
-    if (lGeneratePDF.count) {
-        [[OpDocSyncDataManager sharedManager] setCListForGeneratingPDFDictionary:lGeneratePDF];
-        
-        [OPDocFileUploader requestForGeneratingPDFwithTheCallerDelegate:self];
-
-    }
-    else
-    {
+    else {
         
         [self gettingReadyToSyncTheNextSetOfData];
-
+        
     }
-  
-    //TODO: When should we delete the entry from db for Delete_id.
-    [self deleteTheSignatureFiles:lResponseDeleteList];   // Delete the Files Which are present in the Delete_ID value Map.
-    [self deleteTheHTMLFiles:lResponseDeleteList];   // Delete the Files Which are present in the Delete_ID value Map.
+    
+    
+    if(lResponseDeleteList.count)
+    {
+        //TODO: When should we delete the entry from db for Delete_id.
+        [self deleteTheSignatureFiles:lResponseDeleteList];   // Delete the Files Which are present in the Delete_ID value Map.
+        [self deleteTheHTMLFiles:lResponseDeleteList];   // Delete the Files Which are present in the Delete_ID value Map.
+    }
+}
 
+
+//If the deletion ID's from the response of the DOc SUBMission Response is present in the ID's being present in the PDF generation id's then: Do not proceed with generating PDF. and remove the ID's from the DB and delete the corresponding Files from client.
+// The Deletion ID's sent back cause the PDF's have already been generated for those ID's.
+-(BOOL)checkIftheDeletionIdIsPresentInDictForGeneratingPDFForSubmittedDict:( NSDictionary *)lSubmitDocDict andResponseDict:(NSDictionary *)responseForSubmitDoc
+{
+    
+    NSMutableArray *lSubmittedHTMLList = [[NSMutableArray alloc]initWithArray:[lSubmitDocDict objectForKey:kOPDocHTMLString]];
+    NSMutableArray *lSubmittedSignatureList  = [[NSMutableArray alloc]initWithArray:[lSubmitDocDict objectForKey:kOPDocSignatureString]];
+    NSArray *lResponseDeleteList = [responseForSubmitDoc objectForKey:kOPDocDeleteString];
+
+    for(NSString *sfid in lSubmittedHTMLList) {
+        if ([lResponseDeleteList containsObject:sfid]) {
+            return YES;
+        }
+    }
+    
+    for(NSString *sfid in lSubmittedSignatureList) {
+        if ([lResponseDeleteList containsObject:sfid]) {
+            return YES;
+        }
+    }
+    
+    return NO;
 }
 
 -(void)gettingReadyToSyncTheNextSetOfData
@@ -253,9 +297,30 @@
         WebserviceResponseStatus *st = (WebserviceResponseStatus*)status;
         if (st.syncStatus == SyncStatusSuccess) {
             switch (st.category) {
+                    
+                case CategoryTypeOpDocUploadStatus:
+                {
+
+                        if (![[OpDocSyncDataManager sharedManager] fileAlreadyUploaded])
+                        {
+                            [self uploadTheOPDOCFile];
+                        }
+                        else
+                        {
+                            SXLogDebug(@"SyncStatusSuccess/SyncStatusInProgress, OPDOC already Uploaded before");
+                            [self secondCallOfTheSyncMethod]; // The current file is already uploaded. SO remove this from the list and upload the next file.
+                        }
+
+                    
+                    
+                }
+                    break;
+                    
                 case CategoryTypeOpDoc:
                 {
                     // Check if the sign/html successfully updated to server if not skip this module and upload next module.
+                    int stat = [[OpDocSyncDataManager sharedManager] isSuccessfullyUploaded];
+                    SXLogDebug(@"flowStatus: OPDOC upload status: %@",(stat?@"YES":@"NO"));
                     if ([[OpDocSyncDataManager sharedManager] isSuccessfullyUploaded]) {
                         [self secondCallOfTheSyncMethod];
                     }
@@ -270,8 +335,17 @@
                     break;
                 case CategoryTypeSubmitDocument:
                 {
-                    
-                    [self initiateGeneratePDFProcess];
+                    if ([[OpDocSyncDataManager sharedManager] isSuccessfullyUploaded]) {
+                        [self initiateGeneratePDFProcess];
+
+                    }
+                    else
+                    {
+
+                        [self gettingReadyToSyncTheNextSetOfData];
+   
+
+                    }
                 }
 
                     break;
@@ -306,6 +380,15 @@
         else if (st.syncStatus == SyncStatusFailed)
         {
             switch (st.category) {
+                case CategoryTypeOpDocUploadStatus:
+                {
+                    if([self.customDelegate conformsToProtocol:@protocol(OPDocCustomDelegate)])
+                    {
+                        [self.customDelegate OpdocStatus:NO forCategory:CategoryTypeOpDocUploadStatus];
+                    }
+                }
+                    break;
+                    
                 case CategoryTypeOpDoc:
                 {
                     if([self.customDelegate conformsToProtocol:@protocol(OPDocCustomDelegate)])
@@ -337,6 +420,16 @@
                     break;
 
             }
+        }
+        else if (st.syncStatus == SyncStatusNetworkError
+                 || st.syncStatus == SyncStatusRefreshTokenFailedWithError) {
+            SXLogError(@"SyncStatusNetworkError/SyncStatusRefreshTokenFailedWithError");
+            
+        }
+        
+        else if (st.syncStatus == SyncStatusInCancelled) {
+            SXLogWarning(@"SyncStatusInCancelled");
+            
         }
     }
 }
@@ -389,6 +482,7 @@
     return lHTMLListArray;
 }
 //Old Start
+/*
 -(NSDictionary *)getSignatureAndHTMLSFIDList
 {
     
@@ -400,6 +494,7 @@
     
     return @{kOPDocHTMLString:lHTMLListArray, kOPDocSignatureString:lSignatureListArray};
 }
+ */
 //Old Finish
 
 -(void)deleteTheSignatureFiles:(NSArray *)lDeletionIDList{
@@ -411,7 +506,11 @@
     for (NSString *signatureSFID in lDeletionIDList) {
         NSArray *lDataArray = [lOPDocSignatureService getAllFilesPresentInTableForWhichNeedsToBeDeleted:signatureSFID];
         
+        if (lDataArray.count) {
+
+        [self deleteTheHTMLFileCorrespondingToSignatureFile:lDataArray];
         [self deleteTheFilesFromFolder:lDataArray];
+        }
     }
 
     
@@ -428,17 +527,84 @@
     for (NSString *htmlSFID in lDeletionIDList) {
         NSArray *lDataArray = [lOPDocHTMLService getAllFilesPresentInTableForWhichNeedsToBeDeleted:htmlSFID];
         
+        if (lDataArray.count) {
+            
+        [self deleteTheSignatureFilesCorrespondingToHTMLFile:lDataArray];
         [self deleteTheFilesFromFolder:lDataArray];
+        }
     }
 
     
     
-    BOOL result = [lOPDocHTMLService deleteRecordsHTMLTableForList:lDeletionIDList];
-    if (result) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[NSNotificationCenter defaultCenter] postNotificationName:OPDocSavedNotification object:nil];
-        });
+    BOOL result;
+    result = [lOPDocHTMLService deleteRecordsHTMLTableForList:lDeletionIDList];
+//    if (result) {
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [[NSNotificationCenter defaultCenter] postNotificationName:OPDocSavedNotification object:nil];
+//        });
+//    }
+}
+
+-(void)deleteTheHTMLFileCorrespondingToSignatureFile:(NSArray *)theSignatureModelList
+{
+    OPDocServices *lOPDocHTMLService = [OPDocServices new];
+
+    for (OPDocSignature *model in theSignatureModelList) {
+        NSArray *lDataArray = [lOPDocHTMLService getAllFilesPresentInTableForWhichNeedsToBeDeleted:model.HTMLFileName];
+        
+        if (lDataArray.count) {
+            [self updateTheHTMLTableToDeleteTheRecord:lDataArray];
+            [self deleteTheFilesFromFolder:lDataArray];
+        }
+        
+
     }
+}
+
+-(void)updateTheHTMLTableToDeleteTheRecord:(NSArray *)lHTMLModelList
+{
+    NSMutableArray *lDeletionIDList = [NSMutableArray new];
+    for (OPDocHTML *model in lHTMLModelList) {
+        if (model.sfid) {
+            [lDeletionIDList addObject:model.sfid];
+        }
+    }
+    OPDocServices *lOPDocHTMLService = [OPDocServices new];
+
+    BOOL result;
+    result = [lOPDocHTMLService deleteRecordsHTMLTableForList:lDeletionIDList];
+
+}
+
+-(void)deleteTheSignatureFilesCorrespondingToHTMLFile:(NSArray *)theHTMLModelList
+{
+    OPDocSignatureService *lOPDocSignatureService = [[OPDocSignatureService alloc] init];
+    
+    for (OPDocHTML *model in theHTMLModelList) {
+        NSArray *lDataArray = [lOPDocSignatureService getAllFilesPresentInTableForWhichNeedsToBeDeleted:model.Name];
+        if (lDataArray.count) {
+            [self updateTheSignatureTableToDeleteTheRecord:lDataArray];
+            [self deleteTheFilesFromFolder:lDataArray];
+        }
+
+        
+    }
+}
+
+-(void)updateTheSignatureTableToDeleteTheRecord:(NSArray *)lSignatureModelList
+{
+    NSMutableArray *lDeletionIDList = [NSMutableArray new];
+    for (OPDocSignature *model in lSignatureModelList) {
+        if (model.sfid) {
+            [lDeletionIDList addObject:model.sfid];
+        }
+    }
+    
+    OPDocSignatureService *lOPDocSignatureService = [OPDocSignatureService new];
+    
+    BOOL result;
+    result = [lOPDocSignatureService deleteRecordsSignatureTableForList:lDeletionIDList];
+    
 }
 
 -(void)deleteTheFilesFromFolder:(NSArray *)lDataArray
@@ -467,7 +633,7 @@
         BOOL success = NO;
         if (lFilePath) {
             success = [FileManager deleteFileAtPath:lFilePath];
-            SXLogInfo(@" FILE: %@ DELETED: %d", lFilePath, success);
+            SXLogDebug(@" FILE: %@ DELETED: %d", lFilePath, success);
         }
     }
 }
@@ -495,4 +661,33 @@
         }
     }
 }
+
+-(NSString *)getQueryForCheckingOPDOCFileUploadStatus
+{
+    if(cSingleHtmlAndAssociatedSignatureListArray.count)
+    {
+        id OPDocObject = [cSingleHtmlAndAssociatedSignatureListArray objectAtIndex:0];
+        NSString *fileName;
+        if([OPDocObject isKindOfClass:[OPDocHTML class]])
+        {
+            OPDocHTML *lOPDocHTML = (OPDocHTML *)OPDocObject;
+            fileName = lOPDocHTML.Name;
+        }
+        else
+        {
+            OPDocSignature *lOPDocSignature= (OPDocSignature *)OPDocObject;
+            fileName = lOPDocSignature.Name;
+
+            
+        }
+        
+        NSString *query = [NSString stringWithFormat:@"select id from Attachment where Name = '%@'", fileName];
+        return query;
+    }
+    return nil;
+}
+
+
+
+
 @end

@@ -15,4 +15,6 @@
 +(void)requestForSubmittingHTMLAndSignatureDocumentwithTheCallerDelegate:(id)delegate;
 +(void)requestForGeneratingPDFwithTheCallerDelegate:(id)delegate;
 
++ (void)requestTocheckIfOPDocFileIsUploadedBeforewithTheCallerDelegate:(id)delegate;
+
 @end

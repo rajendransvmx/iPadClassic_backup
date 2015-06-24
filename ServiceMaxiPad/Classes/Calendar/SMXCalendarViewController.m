@@ -1947,7 +1947,6 @@
 
 -(void)rescheduleEvent
 {
-    NSLog(@"here u do reschedule event");
     self.selectedEvent = [[SMXDateManager sharedManager] selectedEvent];
        [viewCalendarDay rescheduleEvent:self.selectedEvent];
 

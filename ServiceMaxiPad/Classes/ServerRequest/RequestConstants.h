@@ -86,6 +86,7 @@ typedef NS_ENUM(NSUInteger, RequestType)
     RequestTroubleShootDocInfoFetch,
     RequestSyncTimeLogs,
 
+    RequestTypeCheckOPDOCUploadStatus,
     RequestTypeOpDocUploading,
     RequestTypeOPDocHTMLAndSignatureSubmit,
     RequestTypeOPDocGeneratePDF,

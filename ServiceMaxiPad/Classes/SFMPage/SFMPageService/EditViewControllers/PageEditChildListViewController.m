@@ -240,8 +240,7 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
     NSDictionary *hdr_object = self.sfmPage.headerRecord;
     NSString * billingTypeValue = nil;
     SFMRecordFieldData *fieldData = [hdr_object objectForKey:kWorkOrderBillingType];
-    billingTypeValue = fieldData.internalValue; //Use display value if u wanna check for locale.
-    NSLog(@"[SET15-16] Header billingTypeValue is %@ ",billingTypeValue);
+    billingTypeValue = fieldData.internalValue; //Use display value if u want to check for locale.
     return billingTypeValue;
     
 }
@@ -315,12 +314,11 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
     NSString *returnValue = kTrue;
     NSString *setting15Value = [SFMPageEditHelper getSettingValueForKey:@"WORD005_SET015"];
     NSString *setting16Value = nil;
-    NSLog(@"[SET15-16] Setting 15 value is %@",setting15Value);
     
     if ([setting15Value isEqualToString:@"Entitlement"]) {
         //Apply Setting16
         setting16Value = [SFMPageEditHelper getSettingValueForKey:@"WORD005_SET016"];;
-        NSLog(@"[SET15-16] Setting 16 value is %@",setting16Value);
+        
         NSArray *setting16ValueArray = [setting16Value componentsSeparatedByString:@","];
         //check if the header billing type is one of the value in setting 16
         NSString *billingTypeValue = [self getHeaderBillingType];
@@ -339,7 +337,6 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
             returnValue = kFalse;
         }
     }
-    NSLog(@"[SET15-16] Setting applied value is %@",returnValue);
     return returnValue;
 }
 

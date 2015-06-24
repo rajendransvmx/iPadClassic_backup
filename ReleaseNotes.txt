@@ -36,7 +36,8 @@ Additional Notes
 ---------------------
 1. Namespace set to SVMXDEV
 
-
-
+1. Implemented batch request for SFM page layout and Object definition web service calls
+2. Object names sorted for requesting definition/description call
+3. In case of definition request fails, same request will resend with 30% original object names. 
 
 

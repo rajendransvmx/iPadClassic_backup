@@ -57,9 +57,9 @@
     {
         SXLogInfo(@" notification - %@", [notification description]);
         
-        NSNumber *number = (NSNumber *) [notification object];
+       // NSNumber *number = (NSNumber *) [notification object];
         
-        NSLog(@" notification value - %d", [number intValue]);
+       // NSLog(@"notification value - %d", [number intValue]);
     }
     
     double delayInSeconds = 1.0;

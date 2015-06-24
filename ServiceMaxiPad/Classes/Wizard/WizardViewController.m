@@ -292,7 +292,6 @@
                 else if ([wizardComponent.actionType isEqualToString:@"Reschedule"])
                 {
                     //Reschedule event
-                    NSLog(@"REscheul Event here ");
                     [self.delegate rescheduleEvent];
                 }else if([wizardComponent.actionType isEqualToString:@"OTHERS"])//Here we are checking for custome URL
                 {

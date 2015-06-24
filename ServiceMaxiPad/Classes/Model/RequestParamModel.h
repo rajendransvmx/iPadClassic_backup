@@ -28,4 +28,5 @@
 @property (nonatomic, strong)   NSArray         *valueMap;
 @property (nonatomic, strong)   NSDictionary    *context;
 @property (nonatomic, assign)   NSInteger       retryCount;
+@property (nonatomic, assign)   NSInteger       heapSizeRetryCount;
 @end

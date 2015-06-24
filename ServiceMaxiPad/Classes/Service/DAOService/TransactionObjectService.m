@@ -346,7 +346,6 @@
         [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
             NSString * query = [selectQuery query];
             
-            NSLog(@"query:%@", query);
             //   query = @"SELECT tSource.id, tDestination.id FROM SVMXC__Service_Order__c tSource, SVMXC__Service_Order_Line__c tDestination WHERE tDestination.SVMXC__Service_Order__c = tSource.localId or tDestination.SVMXC__Service_Order__c = tSource.id";
             
             SQLResultSet * resultSet = [db executeQuery:query];

@@ -309,12 +309,13 @@
 */
 
 
--(NSArray *)getAllFilesPresentInTableForWhichNeedsToBeDeleted:(NSString *)signatureSFID
+-(NSArray *)getAllFilesPresentInTableForWhichNeedsToBeDeleted:(NSString *)signatureSFIDOrHTMLFileName
 {
     // The entry should have sf_id assigned. So criteria is those entries whose sf_id is not null.
-    DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:kOPDocSFID operatorType:SQLOperatorEqual andFieldValue:signatureSFID];
-    
-    DBRequestSelect * requestSelect = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:@[kOPDocFileName] whereCriteria:criteriaOne];
+    DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:kOPDocSFID operatorType:SQLOperatorEqual andFieldValue:signatureSFIDOrHTMLFileName];
+    DBCriteria *criteriaTwo = [[DBCriteria alloc]initWithFieldName:kOPDocHTMLFileName operatorType:SQLOperatorEqual andFieldValue:signatureSFIDOrHTMLFileName];
+
+    DBRequestSelect * requestSelect = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:nil whereCriterias:@[criteriaOne, criteriaTwo] andAdvanceExpression:@"(1 or 2)"];
     
     NSMutableArray *lTheDataArray = [[NSMutableArray alloc] init];
     
@@ -350,7 +351,16 @@
     return result;
     
 }
+
+-(BOOL)updateTableToRemovetheSFIDForList:(NSArray *)listArray
+{
+    DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:kOPDocSFID operatorType:SQLOperatorIn andFieldValues:listArray];
     
+    DBRequestUpdate * updatequery = [[DBRequestUpdate alloc] initWithTableName:[self tableName] andFieldNames:@[kOPDocSFID] whereCriteria:@[criteria1] andAdvanceExpression:nil];
+    BOOL status = [self updateEachRecord:@{kOPDocSFID:@""} withQuery:[updatequery query]];
+    
+    return status;
+}
     
     
 @end

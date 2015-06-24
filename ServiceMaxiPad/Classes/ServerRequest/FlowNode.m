@@ -31,12 +31,13 @@
 #import "SVMXSystemUtility.h"
 #import "StringUtil.h"
 #import "SMAppDelegate.h"
+#import "CacheManager.h"
 #import "PushNotificationManager.h"
 #import "PushNotificationUtility.h"
 
 #define MAX_RETRY_COUNT 3
 NSString *cocoaErrorString = @"3840";
-
+NSString *heapSizeErrorString = @"Apex heap size too large"; //{"errorCode":"APEX_ERROR","message":"System.LimitException: Apex heap size too large:
 @interface FlowNode()
 {
     
@@ -103,7 +104,7 @@ NSString *cocoaErrorString = @"3840";
 - (void)startFlow
 {    //PA
     int i = (int) SMLogLogLevel();
-    NSLog(@"Log level :%d", (int)i);
+    SXLogDebug(@"Log level :%d", (int)i);
     
     if (ApplicationLogLevelWarning == i)
     {
@@ -113,11 +114,19 @@ NSString *cocoaErrorString = @"3840";
     NSString *contextValue = [[ServerRequestManager sharedInstance] getTheContextvalueForCategoryType:self.nodecategoryType];
    [[PerformanceAnalyser sharedInstance] observePerformanceForContext:contextValue subContextName:contextValue operationType:PAOperationTypeTotalTimeLatency andRecordCount:1];
     
-   [[SVMXSystemUtility sharedInstance] performSelectorOnMainThread:@selector(startNetworkActivity)
-                                                             withObject:nil
-                                                          waitUntilDone:NO];
+    [[SVMXSystemUtility sharedInstance] performSelectorOnMainThread:@selector(startNetworkActivity)
+                                                         withObject:nil
+                                                      waitUntilDone:NO];
     @synchronized([self class])
     {
+        int x = -99;
+        if (self.nodecategoryType > self.nodecategoryType)
+        {
+            x = (int)self.nodecategoryType;
+        }
+        
+        SXLogInfo(@"Req Category - %d", x);
+        
         if ([OAuthService validateAndRefreshAccessToken])
         {
             [self makeNextRequesttWithPrevious:nil firstCall:YES];
@@ -429,16 +438,67 @@ NSString *cocoaErrorString = @"3840";
  * @return Description of the return value
  *
  */
-- (BOOL)isCocoaErrorRetryCompletedForRequest:(SVMXServerRequest *)requestObject withError:(NSError *)error {
-    
+- (BOOL)isCocoaErrorRetryCompletedForRequest:(SVMXServerRequest *)requestObject withError:(NSError *)error
+{
+    [[CacheManager sharedInstance]clearCacheByKey:@"PageIds"];
+
     BOOL returnValue = YES;
     
     //check retry count > 0 and < max retry count.
     NSLog(@"\n\n\n error desc : %@, domain : %@, userinfo : %@ code %ld\n\n\n",[error description],[error domain],[error userInfo],(long)[error code]);
     
+    
+    //---------------------------------------------
+ 
+
+    BOOL isHeapSizeError = [StringUtil containsString:heapSizeErrorString inString:[error description]];
     BOOL isCocoaError = [StringUtil containsString:cocoaErrorString inString:[error description]];
+    
+    if (requestObject.requestType == RequestObjectDefinition && isHeapSizeError && requestObject.requestParameter.heapSizeRetryCount > 0 && requestObject.requestParameter.heapSizeRetryCount <= MAX_RETRY_COUNT) {
         
-    if (isCocoaError && requestObject.requestParameter.retryCount > 0 && requestObject.requestParameter.retryCount <= MAX_RETRY_COUNT) {
+        NSLog(@"Heap size error retry count : %ld\n\n",(long)requestObject.requestParameter.heapSizeRetryCount);
+        
+        NSLog(@"\n\n\nerror desc : %@\n, domain : %@\n, userinfo : %@\n code %ld\n\n\n",[error description],[error domain],[error userInfo],(long)[error code]);
+        
+        requestObject.requestParameter.heapSizeRetryCount++;
+        
+        NSMutableArray *values = [NSMutableArray arrayWithArray:requestObject.requestParameter.values];
+        
+        if ([values count] > 1) {
+            
+            NSInteger length = [values count]*70/100;
+            NSInteger loc = [values count] - length;
+            loc = (loc == 0)?1:loc;
+            
+            if ([values count] > loc) {
+                NSArray *removedObjects = [values subarrayWithRange:NSMakeRange(loc, length)];
+                [values removeObjectsInRange:NSMakeRange(loc, length)];
+                NSMutableArray *cachedObjs = [[CacheManager sharedInstance]getCachedObjectByKey:kOBJdefList];
+                if (cachedObjs) {
+                    [cachedObjs addObjectsFromArray:removedObjects];
+                }
+                else {
+                    cachedObjs = [NSMutableArray arrayWithArray:removedObjects];
+                }
+                [[CacheManager sharedInstance] pushToCache:cachedObjs byKey:kOBJdefList];
+            }
+            
+            requestObject.requestParameter.values = values;
+        }
+        
+        
+        [self makeRequestWithPrevious:requestObject
+                     withRequestParam:requestObject.requestParameter
+                      withRequestType:requestObject.requestType];
+        
+        returnValue = NO;
+        
+    }
+    
+    //----------------------------------------------
+    
+    
+    else if (isCocoaError && requestObject.requestParameter.retryCount > 0 && requestObject.requestParameter.retryCount <= MAX_RETRY_COUNT) {
         
         NSLog(@"\n\n[cocoaERROR]requestObject.requestParameter.retryCount : %ld\n\n",(long)requestObject.requestParameter.retryCount);
         
@@ -482,6 +542,11 @@ NSString *cocoaErrorString = @"3840";
             //[DateUtil getDatabaseStringForDate:[NSDate date]];
             model.syncRequestStatus = kTimeLogFailure;
         }
+        
+        if (requestObject.requestType == RequestObjectDefinition) {
+            [[CacheManager sharedInstance] clearCacheByKey:kOBJdefList];
+        }
+        
         if (optionalRequest)
         {
             [self callServiceLayerWithRequestObject:requestObject withResponseObject:responseObject];
@@ -620,7 +685,8 @@ NSString *cocoaErrorString = @"3840";
 
 - (void)didRequestFailedWithError:(NSError *)error Response:(id)responseObject andRequestObject:(id)request
 {
-    
+    [[CacheManager sharedInstance]clearCacheByKey:@"PageIds"];
+
     NSLog(@"Request failed with error %@ %@ Request : %@",[error description],[responseObject description],[request description]);
     NSError *serverError = [SMInternalErrorUtility checkForErrorInResponse:responseObject withStatusCode:-999 andError:error];
     if (serverError != nil)

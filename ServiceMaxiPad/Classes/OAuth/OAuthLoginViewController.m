@@ -178,7 +178,7 @@ NSInteger webViewLoadCounter;
         self.HUD = nil;
         
         CFTimeInterval endTime = CFAbsoluteTimeGetCurrent();
-        NSLog(@"Diff - %f",endTime - self.startTime);
+        //NSLog(@"Diff - %f",endTime - self.startTime);
     }
 }
 

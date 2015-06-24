@@ -7525,7 +7525,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DSQLITE_HAS_CODEC";
 				PRODUCT_NAME = ServiceMax;
-				PROVISIONING_PROFILE = "f16a468a-3cc5-4902-9ed6-58687bb9d6a4";
+				PROVISIONING_PROFILE = "a0157794-3523-4223-85b2-b6592c387d93";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -7535,8 +7535,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: ServiceMax Inc (4B24F56ULW)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: ServiceMax Inc (4B24F56ULW)";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ServiceMaxiPad/ServiceMaxiPad-Prefix.pch";
@@ -7556,7 +7556,7 @@
 				);
 				OTHER_CFLAGS = "-DSQLITE_HAS_CODEC";
 				PRODUCT_NAME = ServiceMax;
-				PROVISIONING_PROFILE = "f16a468a-3cc5-4902-9ed6-58687bb9d6a4";
+				PROVISIONING_PROFILE = "a0157794-3523-4223-85b2-b6592c387d93";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
