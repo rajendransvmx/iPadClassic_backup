@@ -53,10 +53,10 @@
 
 @interface SFMPageEditManager ()<BusinessRuleManagerDelegate>
 
-@property (nonatomic, strong)NSMutableDictionary *pickListInfo;
-@property (nonatomic, strong)NSString *pickListObjectName;
-
-@property(nonatomic,strong) NSMutableDictionary *dataDictionaryBeforeModification;
+@property (nonatomic, strong) NSMutableDictionary *pickListInfo;
+@property (nonatomic, strong) NSString *pickListObjectName;
+@property (nonatomic, strong) NSMutableDictionary *dataDictionaryBeforeModification;
+@property (nonatomic, strong) FieldUpdateRuleManager *ruleManager;
 @end
 
 @implementation SFMPageEditManager
@@ -2543,10 +2543,10 @@
 #pragma mark - Field update rules
 
 -(void)executeFieldUpdateRulesOnload:(SFMPage *)sfmPage andView:(UIView *)aView {
-    FieldUpdateRuleManager *ruleManager = [[FieldUpdateRuleManager alloc] initWithProcessId:self.processId sfmPage:self.sfmPage];
-    ruleManager.parentView = aView;
-    ruleManager.delegate = self;
-    [ruleManager executeFieldUpdateRules];
+    self.ruleManager = [[FieldUpdateRuleManager alloc] initWithProcessId:self.processId sfmPage:self.sfmPage];
+    self.ruleManager.parentView = aView;
+    self.ruleManager.delegate = self;
+    [self.ruleManager executeFieldUpdateRules];
 }
 
 
