@@ -403,6 +403,7 @@ NSString * const kBizRuleSourceObjectName = @"sourceObjectName";
 NSString * const kBizRuleSfId = @"Id";
 NSString * const kBizRuleDescription = @"description";
 NSString * const kBusinessRuleProcessId = @"processId";
+NSString * const kBusinessRuleRuleType = @"ruleType";
 
 
 /*Constants related to ProcessBusinessRule table*/

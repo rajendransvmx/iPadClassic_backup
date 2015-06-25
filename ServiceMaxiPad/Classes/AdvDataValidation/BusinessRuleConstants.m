@@ -39,4 +39,6 @@ NSString * const kBizRuleWarnings = @"warnings";
 NSString * const kBizRuleErrorMessageType = @"Error";
 NSString * const kBizRuleWarningMessageType = @"Warning";
 
-NSString *const kBizRuleResult = @"bizruleresult";
+NSString * const kBizRuleResult = @"bizruleresult";
+
+NSString * const kBizRuleTypeFieldUpdate = @"Field Update Rule";

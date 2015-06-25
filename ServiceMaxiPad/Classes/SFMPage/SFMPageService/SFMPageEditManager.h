@@ -62,5 +62,6 @@
                     andObjectName:(NSString *)objectName
               andHeaderObjectName:(NSString *)headerObjectName;
 
+-(void)executeFieldUpdateRulesOnload:(SFMPage *)sfmPage andView:(UIView *)aView;
 
 @end

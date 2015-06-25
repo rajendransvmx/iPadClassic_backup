@@ -25,7 +25,6 @@
 
 @interface BusinessRuleManager ()
 
-@property(nonatomic, strong) JSExecuter *jsExecuter;
 @property(nonatomic, strong) BusinessRuleDataFormatter *formatter;
 @property(nonatomic, strong) NSDictionary *bizRuleResult;
 @property(nonatomic, strong) NSMutableArray *resultArray;

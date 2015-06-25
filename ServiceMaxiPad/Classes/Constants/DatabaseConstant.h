@@ -395,6 +395,7 @@ extern NSString * const kBizRuleDescription;
 extern NSString * const kBizRuleMessageType;
 extern NSString * const kBizRuleSourceObjectName;
 extern NSString * const kBusinessRuleProcessId;
+extern NSString * const kBusinessRuleRuleType;
 
 /*Constants related to ProcessBusinessRule table*/
 extern NSString * const kBizRuleProcessSfId;

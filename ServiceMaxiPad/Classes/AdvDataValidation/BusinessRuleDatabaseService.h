@@ -41,4 +41,7 @@
 - (NSString *)getValueFromNameFieldTable:(NSString *)idValue;
 
 
+-(NSArray *)fieldUpdateRulesForBizRuleProcesses:(NSArray *)bizRuleProcessArray;
+
+
 @end

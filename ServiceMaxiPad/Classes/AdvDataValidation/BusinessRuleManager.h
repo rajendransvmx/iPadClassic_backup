@@ -53,6 +53,10 @@
  */
 @property(nonatomic, assign)id<BusinessRuleManagerDelegate> delegate;
 
+
+@property(nonatomic, strong) JSExecuter *jsExecuter;
+
+
 /**
  Dictionary to hold the record of user confirmed confirmed warnings
  */
@@ -91,4 +95,10 @@ This methos is not used.
 
 
 -(void)updateWarningDict;
+
+- (BOOL) isBizRuleInfoAvailable;
+- (void) fillBusinessRuleProcesses:(NSArray *)bizRuleProcessArray withBusinessRules:(NSArray *)bizRules;
+- (void) fillBusinessRule:(NSArray *)bizRules withExpressionComponents:(NSArray *)expComponensArray;
+- (NSString *) getBizRuleHtmlStringForProcesses:(NSArray *)bizRuleProcessArray;
+
 @end

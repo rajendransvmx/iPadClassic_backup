@@ -49,9 +49,9 @@
 #import "DataTypeCache.h"
 
 #import "SyncErrorConflictService.h"
+#import "FieldUpdateRuleManager.h"
 
-
-@interface SFMPageEditManager ()
+@interface SFMPageEditManager ()<BusinessRuleManagerDelegate>
 
 @property (nonatomic, strong)NSMutableDictionary *pickListInfo;
 @property (nonatomic, strong)NSString *pickListObjectName;
@@ -2538,4 +2538,16 @@
 }
 
 #pragma mark end
+
+
+#pragma mark - Field update rules
+
+-(void)executeFieldUpdateRulesOnload:(SFMPage *)sfmPage andView:(UIView *)aView {
+    FieldUpdateRuleManager *ruleManager = [[FieldUpdateRuleManager alloc] initWithProcessId:self.processId sfmPage:self.sfmPage];
+    ruleManager.parentView = aView;
+    ruleManager.delegate = self;
+    [ruleManager executeFieldUpdateRules];
+}
+
+
 @end

@@ -12,6 +12,7 @@
 		117656DA1B3928A200BA0B63 /* selectFilled@.png in Resources */ = {isa = PBXBuildFile; fileRef = 117656D61B3928A200BA0B63 /* selectFilled@.png */; };
 		117656DB1B3928A200BA0B63 /* selectFilled@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 117656D71B3928A200BA0B63 /* selectFilled@2x.png */; };
 		18071BC71A14B62500DC723A /* upArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 18071BC61A14B62500DC723A /* upArrow@2x.png */; };
+		180E3AB11B3AE45F0055036D /* FieldUpdateRuleManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 180E3AB01B3AE45F0055036D /* FieldUpdateRuleManager.m */; };
 		1814AD1A1B2AA775001167DE /* CustomActionURLModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1814AD191B2AA775001167DE /* CustomActionURLModel.m */; };
 		1814AD1E1B2AC0CB001167DE /* SFCustomActionURLService.m in Sources */ = {isa = PBXBuildFile; fileRef = 1814AD1D1B2AC0CB001167DE /* SFCustomActionURLService.m */; };
 		1814AD211B2B04D2001167DE /* SFMCustomActionHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1814AD201B2B04D2001167DE /* SFMCustomActionHelper.m */; };
@@ -1038,6 +1039,8 @@
 		117656D61B3928A200BA0B63 /* selectFilled@.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "selectFilled@.png"; sourceTree = "<group>"; };
 		117656D71B3928A200BA0B63 /* selectFilled@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "selectFilled@2x.png"; sourceTree = "<group>"; };
 		18071BC61A14B62500DC723A /* upArrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "upArrow@2x.png"; sourceTree = "<group>"; };
+		180E3AAF1B3AE45F0055036D /* FieldUpdateRuleManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FieldUpdateRuleManager.h; sourceTree = "<group>"; };
+		180E3AB01B3AE45F0055036D /* FieldUpdateRuleManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FieldUpdateRuleManager.m; sourceTree = "<group>"; };
 		1814AD181B2AA775001167DE /* CustomActionURLModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomActionURLModel.h; sourceTree = "<group>"; };
 		1814AD191B2AA775001167DE /* CustomActionURLModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomActionURLModel.m; sourceTree = "<group>"; };
 		1814AD1B1B2ABDDB001167DE /* SFCustomActionURLDAO.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SFCustomActionURLDAO.h; sourceTree = "<group>"; };
@@ -2928,6 +2931,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		180E3AAE1B3AE41A0055036D /* FieldUpdateRuleManager */ = {
+			isa = PBXGroup;
+			children = (
+				180E3AAF1B3AE45F0055036D /* FieldUpdateRuleManager.h */,
+				180E3AB01B3AE45F0055036D /* FieldUpdateRuleManager.m */,
+			);
+			name = FieldUpdateRuleManager;
+			sourceTree = "<group>";
+		};
 		183702C91A0B836F0081CA06 /* ResolveConflictDetailCell */ = {
 			isa = PBXGroup;
 			children = (
@@ -5367,6 +5379,7 @@
 		18A2177C19E57E7E00F22EA6 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				180E3AAE1B3AE41A0055036D /* FieldUpdateRuleManager */,
 				184ED1401B287229004C4D85 /* BeforeSave */,
 				A61A1B8D1B202B1200B1C9C8 /* AutoLockManager */,
 				6BDC50E61AA70EED00200DC0 /* PushNotification */,
@@ -6702,6 +6715,7 @@
 				183AA1D219E6D26400919345 /* SFMPageMasterSectionView.m in Sources */,
 				18800CED1A08D14400930FF9 /* BadgeTableViewCell.m in Sources */,
 				183A9F0C19E6A15600919345 /* ZKMessageEnvelope.m in Sources */,
+				180E3AB11B3AE45F0055036D /* FieldUpdateRuleManager.m in Sources */,
 				184A8EFE19E7A535006DA6BE /* MapPopUpViewController.m in Sources */,
 				183A9E2119E69DB000919345 /* DocumentModel.m in Sources */,
 				57186B5C19EF9DDD00B4642A /* TroubleshootingMasterViewController.m in Sources */,

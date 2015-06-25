@@ -134,5 +134,24 @@
 }
 
 
+-(NSArray *)fieldUpdateRulesForBizRuleProcesses:(NSArray *)bizRuleProcessArray {
+    @synchronized([self class]){
+        NSArray *fieldUpdateRuleArray = nil;
+        @autoreleasepool {
+            NSMutableArray *ruleIds = [[NSMutableArray alloc] init];
+            
+            for (ProcessBusinessRuleModel *process in bizRuleProcessArray) {
+                [ruleIds addObject:process.businessRule];
+            }
+            DBCriteria * dbCriteria1 = [[DBCriteria alloc] initWithFieldName:kBizRuleSfId operatorType:SQLOperatorIn andFieldValues:ruleIds];
+            DBCriteria * dbCriteria2 = [[DBCriteria alloc] initWithFieldName:kBusinessRuleRuleType operatorType:SQLOperatorEqual andFieldValue:kBizRuleTypeFieldUpdate];
+        
+            id<BusinessRuleDAO> bizRuleDao = [FactoryDAO serviceByServiceType:ServiceTypeBusinessRule];
+            fieldUpdateRuleArray = [bizRuleDao fetchFieldUpdateRuleInfoByFields:nil andCriteriaArray:@[dbCriteria1, dbCriteria2]];
+            return fieldUpdateRuleArray;
+        }
+    }
+}
+
 
 @end

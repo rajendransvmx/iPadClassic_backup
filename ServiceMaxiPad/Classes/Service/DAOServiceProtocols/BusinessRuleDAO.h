@@ -13,5 +13,6 @@
 
 - (NSArray * )fetchBusinessRuleInfoByFields:(NSArray *)fieldNames
                                 andCriteria:(DBCriteria *)criteria;
+- (NSArray *)fetchFieldUpdateRuleInfoByFields:(NSArray *)fieldNames andCriteriaArray:(NSArray *)criteriaArray;
 
 @end
