@@ -99,13 +99,19 @@
 }
 
 - (void)fillUpResponseCallBack:(ResponseCallback *)callBk andRequestObjectDictionary:(NSMutableDictionary *)globalObjectDictionary{
-    @synchronized([self class]) {
+    @synchronized([self class])
+    {
         NSInteger currentCount = 0;
         
         NSArray *allObjectKeys = [globalObjectDictionary allKeys];
         for (NSString *objectnName in allObjectKeys) {
             
             NSMutableArray *idsArray = [globalObjectDictionary objectForKey:objectnName];
+            if(![idsArray count] > 0)
+            {
+                [globalObjectDictionary removeObjectForKey:objectnName];
+            }
+            
             currentCount+= [idsArray count];
         }
         
