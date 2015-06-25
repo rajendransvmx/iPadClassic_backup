@@ -154,7 +154,8 @@
     @autoreleasepool{
         NSMutableDictionary *ruleDict = [[NSMutableDictionary alloc] init];
         BusinessRuleModel *bizRule = bizRuleProcess.businessRuleModel;
-		//Fix for 011532 
+		//Fix for 011532
+        bizRuleProcess.errorMessage = ([StringUtil isStringEmpty:bizRuleProcess.errorMessage])?@"":bizRuleProcess.errorMessage;
         [ruleDict setObject:bizRuleProcess.errorMessage forKey:kBizRuleMessage];
         NSMutableDictionary *ruleInfoDict = [[NSMutableDictionary alloc]init];
         NSMutableDictionary *bizRuleDict = [self formatBizRule:bizRule];

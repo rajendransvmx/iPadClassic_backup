@@ -31,17 +31,18 @@
         
         NSArray *bizRuleProcessArray = [dbService processBusinessRuleForProcessId:self.processId];
         NSArray *fieldUpdateRules = [dbService fieldUpdateRulesForBizRuleProcesses:bizRuleProcessArray];
-        NSArray *expComponensArray = [dbService expressionComponentsForBizRules:fieldUpdateRules];
         
-        [self fillBusinessRuleProcesses:bizRuleProcessArray withBusinessRules:fieldUpdateRules];
-        [self fillBusinessRule:fieldUpdateRules withExpressionComponents:expComponensArray];
-        
-        NSString *htmlStr = [self getBizRuleHtmlStringForProcesses:bizRuleProcessArray];
-        
-        self.jsExecuter = [[JSExecuter alloc] initWithParentView:self.parentView
-                                                  andCodeSnippet:htmlStr
-                                                     andDelegate:self
-                                                        andFrame:CGRectZero];
+        if ([fieldUpdateRules count] > 0) {
+            
+            NSArray *expComponensArray = [dbService expressionComponentsForBizRules:fieldUpdateRules];
+            
+            [self fillBusinessRuleProcesses:bizRuleProcessArray withBusinessRules:fieldUpdateRules];
+            [self fillBusinessRule:fieldUpdateRules withExpressionComponents:expComponensArray];
+            
+            NSString *htmlStr = [self getBizRuleHtmlStringForProcesses:bizRuleProcessArray];
+            
+            self.jsExecuter = [[JSExecuter alloc] initWithParentView:self.parentView andCodeSnippet:htmlStr andDelegate:self andFrame:CGRectZero];
+        }
     }
 }
 
