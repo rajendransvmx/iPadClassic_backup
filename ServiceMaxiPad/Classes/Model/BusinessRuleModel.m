@@ -33,6 +33,7 @@
 @synthesize name;
 @synthesize processId;
 @synthesize sourceObjectName;
+@synthesize ruleType;
 
 - (id)init
 {
@@ -54,17 +55,18 @@
 	name = nil;
     processId = nil;
     sourceObjectName = nil;
+    ruleType = nil;
 }
 
 - (void)explainMe
 {
-    SXLogInfo(@"Id : %@ \n advancedExpression : %@ \n description : %@ \n errorMessage : %@ \n  messageType : %@ \n name : %@ \n processId : %@ \n  sourceObjectName : %@ \n",  Id,advancedExpression, description, errorMessage,messageType,name,processId,sourceObjectName);
+    SXLogInfo(@"Id : %@ \n advancedExpression : %@ \n description : %@ \n errorMessage : %@ \n  messageType : %@ \n name : %@ \n processId : %@ \n  sourceObjectName : %@ \n bizRuleType : %@ \n",  Id,advancedExpression, description, errorMessage,messageType,name,processId,sourceObjectName,ruleType);
 }
 
 
 + (NSDictionary *) getMappingDictionary {
     
-    NSDictionary *mapDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:kBizRulesId,@"Id",kBizRulesAdvExpression,@"advancedExpression",kBizRulesDescription,@"description",kBizRulesErrorMsg,@"errorMessage",kBizRulesMsgType,@"messageType",kBizRulesName,@"name",kBizRulesDescription,@"processId",kBizRulesSrcObjectName,@"sourceObjectName",nil];
+    NSDictionary *mapDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:kBizRulesId,@"Id",kBizRulesAdvExpression,@"advancedExpression",kBizRulesDescription,@"description",kBizRulesErrorMsg,@"errorMessage",kBizRulesMsgType,@"messageType",kBizRulesName,@"name",kBizRulesDescription,@"processId",kBizRulesSrcObjectName,@"sourceObjectName", kBizRulesRuleType,@"ruleType", nil];
     
     return mapDictionary;
 }

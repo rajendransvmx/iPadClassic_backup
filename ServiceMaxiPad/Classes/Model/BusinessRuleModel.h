@@ -30,6 +30,7 @@
 @property(nonatomic, strong) NSString *name;
 @property(nonatomic, strong) NSString *processId;
 @property(nonatomic, strong) NSString *sourceObjectName;
+@property(nonatomic, strong) NSString *ruleType;
 
 /*An array of SFExpressionComponent objects associated with a particular business rule.
 */

@@ -150,6 +150,10 @@ NSString *const kExpressionCompDisplayType  = ORG_NAME_SPACE@"__Display_Type__c"
 NSString *const kExpressionCompSequence     = ORG_NAME_SPACE@"__Sequence__c";
 NSString *const kExpressionCompParentType   = ORG_NAME_SPACE@"__Parameter_Type__c";
 NSString *const kExpressionCompExprtype     = ORG_NAME_SPACE@"__Expression_Type__c";
+//Formula Fields
+NSString *const kExpressionCompFormula     = ORG_NAME_SPACE@"__Formula__c";
+NSString *const kExpressionCompActionType     = ORG_NAME_SPACE@"__Action_Type__c";
+
 
 /*BusinessRule OBJECT */
 
@@ -165,6 +169,9 @@ NSString *const kBizRulesDescription   = ORG_NAME_SPACE@"__Description__c";
 NSString *const kBizRulesMsgType       = ORG_NAME_SPACE@"__Message_Type__c";
 NSString *const kBizRulesProcessId     = ORG_NAME_SPACE@"__ProcessID__c";
 NSString *const kBizRulesSrcObjectName = ORG_NAME_SPACE@"__Source_Object_Name__c";
+//For serviceMax Formula
+NSString *const kBizRulesRuleType = ORG_NAME_SPACE@"__Rule_Type__c";
+
 
 /*DOC Template constants*/
 NSString *const kDocTemplateTableId           = @"Id";

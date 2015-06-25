@@ -40,6 +40,8 @@ static NSString *kComponentRhs            = @"value";
 static NSString *kExpressionType          = @"expression_type";
 static NSString *kParameterType           = @"parameter_type";
 static NSString *kOperator                = @"operator";
+static NSString *kFormula                = @"formula";
+static NSString *kActionType                = @"action_type";
 
 @implementation SFExpressionComponentModel 
 
@@ -52,6 +54,8 @@ static NSString *kOperator                = @"operator";
 @synthesize expressionType;
 @synthesize parameterType;
 @synthesize operatorValue;
+@synthesize formula;
+@synthesize actionType;
 
 - (id)init
 {
@@ -115,6 +119,13 @@ static NSString *kOperator                = @"operator";
     {
         [self setOperatorValue:value];
     }
+    else if([key isEqualToString:kFormula])
+    {
+        [self setFormula:value];
+    } else if([key isEqualToString:kActionType])
+    {
+        [self setActionType:value];
+    }
 }
 
 + (NSDictionary *)getMappingDictionary {
@@ -127,7 +138,9 @@ static NSString *kOperator                = @"operator";
                                    kExpressionCompOperator,@"operatorValue",
                                    kExpressionCompDisplayType,@"fieldType",
                                    kExpressionCompExprtype,@"expressionType",
-                                   kExpressionCompParentType,@"parameterType",nil];
+                                   kExpressionCompParentType,@"parameterType",
+                                   kExpressionCompActionType,@"actionType",
+                                   kExpressionCompFormula,@"formula", nil];
     
     return mapDictionary;
 }
@@ -140,6 +153,8 @@ static NSString *kOperator                = @"operator";
     fieldType = nil;
 	expressionType = nil;
     parameterType = nil;
+    actionType = nil;
+    formula = nil;
 	//[super dealloc];
 }
 

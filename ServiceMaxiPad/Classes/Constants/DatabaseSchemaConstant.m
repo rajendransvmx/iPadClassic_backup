@@ -30,7 +30,7 @@ NSString *const kTableAttachmentErrorSchema = @"CREATE TABLE AttachmentError ('l
 
 NSString *const kTableAttachmentsSchema = @"CREATE TABLE IF NOT EXISTS Attachments (attachmentId text(18) PRIMARY KEY NOT NULL, attachmentName text(255), parentId VARCHAR, attachmentBody BLOB)";
 
-NSString *const kTableBusinessRuleSchema = @"CREATE TABLE IF NOT EXISTS BusinessRule ('Id' VARCHAR PRIMARY KEY NOT NULL UNIQUE, 'advancedExpression' VARCHAR, 'description' VARCHAR, 'errorMessage' VARCHAR, 'messageType' VARCHAR, 'name' VARCHAR, 'processId' VARCHAR, 'sourceObjectName' VARCHAR)";
+NSString *const kTableBusinessRuleSchema = @"CREATE TABLE IF NOT EXISTS BusinessRule ('Id' VARCHAR PRIMARY KEY NOT NULL UNIQUE, 'advancedExpression' VARCHAR, 'description' VARCHAR, 'errorMessage' VARCHAR, 'messageType' VARCHAR, 'name' VARCHAR, 'processId' VARCHAR, 'sourceObjectName' VARCHAR, 'ruleType' VARCHAR)";
 
 NSString *const kTableChatterPostDetailsSchema = @"CREATE TABLE IF NOT EXISTS ChatterPostDetail ('productId' VARCHAR NOT NULL, 'body' TEXT, 'createdById' VARCHAR, 'createdDate' VARCHAR, 'Id' VARCHAR, 'feedItemId' VARCHAR, 'postType' VARCHAR, 'userName' VARCHAR, 'name' VARCHAR, 'email' VARCHAR, 'fullPhotoUrl' VARCHAR)";
 
@@ -87,7 +87,7 @@ NSString *const kTableSFDataTrailerSchema = @"CREATE TABLE IF NOT EXISTS SFDataT
 
 NSString *const kTableSFDataTrailerTempSchema = @"CREATE TABLE IF NOT EXISTS SFDataTrailer_Temp ('timestamp' DATETIME, 'local_id' INTEGER, 'sf_id' VARCHAR, 'record_type' VARCHAR, 'operation' VARCHAR, 'object_name' VARCHAR, 'sync_flag' BOOL , 'parent_object_name' VARCHAR, 'parent_local_id' VARCHAR, 'record_sent' VARCHAR, 'webservice_name' VARCHAR, 'class_name' VARCHAR, 'sync_type' VARCHAR, 'header_localId' VARCHAR)";
 
-NSString *const kTableSFExpressionComponentSchema = @"CREATE TABLE IF NOT EXISTS SFExpressionComponent ('localId' INTEGER PRIMARY KEY NOT NULL, 'expressionId' VARCHAR, 'componentSequenceNumber' DOUBLE, 'componentLHS' VARCHAR, 'componentRHS' VARCHAR, 'operatorValue' CHAR, 'fieldType' TEXT, 'expressionType' TEXT, 'parameterType' TEXT)";
+NSString *const kTableSFExpressionComponentSchema = @"CREATE TABLE IF NOT EXISTS SFExpressionComponent ('localId' INTEGER PRIMARY KEY NOT NULL, 'expressionId' VARCHAR, 'componentSequenceNumber' DOUBLE, 'componentLHS' VARCHAR, 'componentRHS' VARCHAR, 'operatorValue' CHAR, 'fieldType' TEXT, 'expressionType' TEXT, 'parameterType' TEXT, 'actionType' VARCHAR,'formula' VARCHAR)";
 
 // sequence_number varchar
 //NSString *const kTableSFExpressionComponentSchema1 = @"CREATE TABLE IF NOT EXISTS SFExpressionComponent ('local_id' INTEGER PRIMARY KEY NOT NULL, 'expression_id' VARCHAR, 'component_sequence_number' VARCHAR, 'component_lhs' VARCHAR, 'component_rhs' VARCHAR, 'operator'CHAR)";

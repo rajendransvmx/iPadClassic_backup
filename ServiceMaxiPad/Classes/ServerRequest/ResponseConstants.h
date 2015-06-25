@@ -143,6 +143,8 @@ extern NSString *const kExpressionCompDisplayType;
 extern NSString *const kExpressionCompSequence;
 extern NSString *const kExpressionCompParentType;
 extern NSString *const kExpressionCompExprtype;
+extern NSString *const kExpressionCompFormula;
+extern NSString *const kExpressionCompActionType;
 
 
 /*BusinessRule OBJECT */
@@ -159,6 +161,7 @@ extern NSString *const kBizRulesDescription;
 extern NSString *const kBizRulesMsgType;
 extern NSString *const kBizRulesProcessId;
 extern NSString *const kBizRulesSrcObjectName;
+extern NSString *const kBizRulesRuleType;
 
 /*DOC Template Object*/
 extern NSString *const kDocTemplateName;

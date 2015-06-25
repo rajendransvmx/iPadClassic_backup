@@ -34,6 +34,8 @@
 @property(nonatomic, strong) NSString *expressionType;
 @property(nonatomic, strong) NSString *parameterType;
 @property(nonatomic, strong) NSString *operatorValue;
+@property(nonatomic, strong) NSString *formula;
+@property(nonatomic, strong) NSString *actionType;
 
 - (id)init;
 - (id)initWithArray:(NSArray *)dataArray;
