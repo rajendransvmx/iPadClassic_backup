@@ -259,9 +259,7 @@
 {
     //TODO : Need to do changes based on request.
     self.eventType =  [self eventTypeByType:type];
-    
     self.url       =  [self urlByType:type];
-    
     [self nameByType:type];
     
 }
