@@ -92,8 +92,12 @@ static NSString *GetPriceDataTwo = @"2";
                                 SXLogDebug(@"Call One");
                                 callBack.callBack = [self processFirstAndLastResponse:svmxMapObject];
                                 if(callBack.callBack && !self.isWOCountZero) {
-                                    callBack.callBackData.valueMap = [NSArray arrayWithObjects:lastIndexValueMap, [self getCallBackValueMap], self.callBackValuesFromFirstAPIResponse, nil];
-                                    callBack.callBackData.values = [NSArray arrayWithArray:self.objectNames];
+                                    callBack.callBackData.valueMap = [NSArray arrayWithObjects:lastIndexValueMap, [self getCallBackValueMap], nil];
+                                    callBack.callBackData.values = self.callBackValuesFromFirstAPIResponse;
+                                }
+                                else
+                                {
+                                    callBack.callBack = NO;
                                 }
                                 break;
                             case 2:
