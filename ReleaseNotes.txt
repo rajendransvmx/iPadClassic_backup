@@ -1,21 +1,17 @@
 
 --------------------------------------------------------------------------------------------
-ServiceMax iPad  Sum 15 Build
+ServiceMax iPad  Sum 15 Build - Sum15Build
 
 *******************************************
-Version = 15.49.006
+Version = 15.49.007
 ===========================================
 
-Merged Spr 15 SP branch SVN Version@5048 to HEAD(15.40.013) to Sum 15
+Merged Spr 15 SP branch SVN 5057:5132@Spring15SP to HEAD(15.40.015) to Sum 15’
 
 -------------
 Fixed Defects
 -------------
-018257								
-016652				
-012589				
-018452
-012688
+018250 - Heap Error while Initial sync and Sync Configuration
 
 ------------
 Known Issues
@@ -28,13 +24,11 @@ None
 ---------------------
 Features Implemented
 ---------------------
-1.Summer 15 Sync enhancement (In Scope)- aggressive sync on/off - Splited incremental data sync. 
-2.SFM Search enhancement and View line item enhancement
 
 ---------------------
 Additional Notes
 ---------------------
-1. Namespace set to SVMXDEV
+1. Namespace set to SVMXC
 
 1. Implemented batch request for SFM page layout and Object definition web service calls
 2. Object names sorted for requesting definition/description call
