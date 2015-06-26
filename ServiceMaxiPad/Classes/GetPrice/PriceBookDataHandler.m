@@ -556,6 +556,17 @@
         dataArray = nil;
         finalDict = nil;
         
+        [columnNames removeObjectForKey:@"Id"];
+        [columnNames setObject:idOfServiceOffering forKey:[NSString stringWithFormat:@"%@__Included_Service__c",orgNameSpace]];
+        dataArray =  [self.dbService getRecordWhereColumnNamesAndValues:columnNames andTableName:[NSString stringWithFormat:@"%@__Custom_Coverage__c",orgNameSpace]];
+        finalDict = [[NSDictionary alloc] initWithObjectsAndKeys:idServiceCovered,@"value",@"CONTRACT_CUSTOMCOVERAGE",@"key",dataArray,@"data", nil];
+        
+        if ([dataArray count] > 0) {
+            [priceBookArray addObject:finalDict];
+        }
+        dataArray = nil;
+        finalDict = nil;
+        
     }
     columnNames = nil;
 }
