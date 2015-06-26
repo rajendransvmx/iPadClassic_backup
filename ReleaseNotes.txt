@@ -3,7 +3,7 @@
 ServiceMax iPad  Sum 15 Build - Sum15Build
 
 *******************************************
-Version = 15.49.007
+Version = 15.49.009
 ===========================================
 
 Merged Spr 15 SP branch SVN 5057:5132@Spring15SP to HEAD(15.40.015) to Sum 15’
@@ -11,7 +11,7 @@ Merged Spr 15 SP branch SVN 5057:5132@Spring15SP to HEAD(15.40.015) to Sum 15’
 -------------
 Fixed Defects
 -------------
-018250 - Heap Error while Initial sync and Sync Configuration
+018690
 
 ------------
 Known Issues
@@ -28,10 +28,11 @@ Features Implemented
 ---------------------
 Additional Notes
 ---------------------
-1. Namespace set to SVMXC
+1. Namespace set to SVMXDEV
 
-1. Implemented batch request for SFM page layout and Object definition web service calls
-2. Object names sorted for requesting definition/description call
-3. In case of definition request fails, same request will resend with 30% original object names. 
+2. Get Price  - Resolved the loop issue
+3. Data Sync  - Removed sending field names in Data Sync
+4. TXFetch    - Removed Object Name which doesn’t have ids associated during TXFetch.
+PageLayout - CallBack issue resolved which was causing Page Layout to be missing. 
 
 
