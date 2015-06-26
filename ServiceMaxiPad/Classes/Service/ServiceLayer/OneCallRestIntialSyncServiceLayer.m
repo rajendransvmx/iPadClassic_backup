@@ -309,45 +309,52 @@
      //send multiple requests for page layout */
     
     id <SFProcessDAO> service= [FactoryDAO serviceByServiceType:ServiceTypeProcess];
-    
     NSArray *pageLayoutIds1 = nil;
     
     if ([service conformsToProtocol:@protocol(SFProcessDAO)]) {
         pageLayoutIds1 = [service fetchPageLayoutIds];
     }
     
-    
    NSMutableArray *pageLayoutIds = [NSMutableArray arrayWithArray:pageLayoutIds1];
     
-    NSInteger partition = [pageLayoutIds count] /requestCount;
-    
-    /* if quotient is less tahn numberOfConcurrentRequests + 1 ,final limit should be set to 5 */
-    partition = (partition < requestCount)?requestCount:partition;
-    NSInteger limit = partition;
-    
     NSMutableArray *requestParamArray = [[NSMutableArray alloc]init];
-    
-    NSArray *pageLayoutLimitArray = nil;
+    NSMutableArray *pageLayoutLimitArray = nil;
     
     if([pageLayoutIds count] > kPageLimit * requestCount)
     {
         NSInteger count =  kPageLimit * requestCount;
-        pageLayoutLimitArray = [NSArray arrayWithArray:[pageLayoutIds subarrayWithRange:NSMakeRange(0,count)]];
+        pageLayoutLimitArray = [[NSMutableArray alloc] initWithArray:[pageLayoutIds subarrayWithRange:NSMakeRange(0,count)]];
         
     }
     else
     {
-        pageLayoutLimitArray = [NSArray arrayWithArray:pageLayoutIds];
-        
+
+        pageLayoutLimitArray = [[NSMutableArray alloc] initWithArray:pageLayoutIds];
     }
     
     NSArray *finalarray = nil;
     
-    for (NSUInteger i = 0; i * limit < [pageLayoutLimitArray count]; i++) {
-        NSUInteger start = i * limit;
-        NSRange range = NSMakeRange(start, MIN([pageLayoutLimitArray count] - start, limit));
+    for (NSUInteger i = 0; i < kMaximumNoOfParallelPageLayoutCalls; i++)
+    {
+         NSRange range;
         RequestParamModel *requestParamModel = [[RequestParamModel alloc]init];
-        requestParamModel.values = [pageLayoutLimitArray subarrayWithRange:range];
+        NSArray *tempArray = nil;
+        
+        if([pageLayoutLimitArray count] > kPageLimit)
+        {
+            range = NSMakeRange(0, kPageLimit);
+            tempArray = [pageLayoutLimitArray subarrayWithRange:range];
+            requestParamModel.values = tempArray;
+            
+            [pageLayoutLimitArray removeObjectsInRange:range];
+            [pageLayoutIds removeObjectsInArray:tempArray];
+        }
+        
+        else
+        {
+            requestParamModel.values = pageLayoutLimitArray;
+            [pageLayoutIds removeObjectsInArray:pageLayoutLimitArray];
+        }
         
         if(![finalarray count] >0)
         {
@@ -356,17 +363,10 @@
 
             finalarray = [[TimeLogCacheManager sharedInstance] getRequestParameterForTimeLogWithCategory:contextValue];
         }
+        
         requestParamModel.valueMap = finalarray;
         
         [requestParamArray addObject:requestParamModel];
-    }
-    
-    for(NSString *string in pageLayoutLimitArray) 
-    {
-        if([pageLayoutIds containsObject:string])
-        {
-            [pageLayoutIds removeObject:string];
-        }
     }
     
     [[CacheManager sharedInstance] pushToCache:pageLayoutIds byKey:@"PageIds"];
