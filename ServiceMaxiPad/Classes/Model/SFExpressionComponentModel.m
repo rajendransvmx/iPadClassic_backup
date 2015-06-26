@@ -56,6 +56,7 @@ static NSString *kActionType                = @"action_type";
 @synthesize operatorValue;
 @synthesize formula;
 @synthesize actionType;
+@synthesize description;
 
 - (id)init
 {
@@ -140,7 +141,8 @@ static NSString *kActionType                = @"action_type";
                                    kExpressionCompExprtype,@"expressionType",
                                    kExpressionCompParentType,@"parameterType",
                                    kExpressionCompActionType,@"actionType",
-                                   kExpressionCompFormula,@"formula", nil];
+                                   kExpressionCompFormula,@"formula",
+                                   kExpressionCompDescription,@"description", nil];
     
     return mapDictionary;
 }
@@ -155,6 +157,8 @@ static NSString *kActionType                = @"action_type";
     parameterType = nil;
     actionType = nil;
     formula = nil;
+    description = nil;
+
 	//[super dealloc];
 }
 

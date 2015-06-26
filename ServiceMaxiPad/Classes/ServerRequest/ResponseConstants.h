@@ -145,6 +145,7 @@ extern NSString *const kExpressionCompParentType;
 extern NSString *const kExpressionCompExprtype;
 extern NSString *const kExpressionCompFormula;
 extern NSString *const kExpressionCompActionType;
+extern NSString *const kExpressionCompDescription;
 
 
 /*BusinessRule OBJECT */

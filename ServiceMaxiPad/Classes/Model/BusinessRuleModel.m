@@ -66,7 +66,7 @@
 
 + (NSDictionary *) getMappingDictionary {
     
-    NSDictionary *mapDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:kBizRulesId,@"Id",kBizRulesAdvExpression,@"advancedExpression",kBizRulesDescription,@"description",kBizRulesErrorMsg,@"errorMessage",kBizRulesMsgType,@"messageType",kBizRulesName,@"name",kBizRulesDescription,@"processId",kBizRulesSrcObjectName,@"sourceObjectName", kBizRulesRuleType,@"ruleType", nil];
+    NSDictionary *mapDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:kBizRulesId,@"Id",kBizRulesAdvExpression,@"advancedExpression",kBizRulesDescription,@"description",kBizRulesErrorMsg,@"errorMessage",kBizRulesMsgType,@"messageType",kBizRulesName,@"name",kBizRulesProcessId,@"processId",kBizRulesSrcObjectName,@"sourceObjectName", kBizRulesRuleType,@"ruleType", nil];
     
     return mapDictionary;
 }

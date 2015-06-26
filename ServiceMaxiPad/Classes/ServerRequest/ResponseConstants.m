@@ -151,8 +151,9 @@ NSString *const kExpressionCompSequence     = ORG_NAME_SPACE@"__Sequence__c";
 NSString *const kExpressionCompParentType   = ORG_NAME_SPACE@"__Parameter_Type__c";
 NSString *const kExpressionCompExprtype     = ORG_NAME_SPACE@"__Expression_Type__c";
 //Formula Fields
-NSString *const kExpressionCompFormula     = ORG_NAME_SPACE@"__Formula__c";
-NSString *const kExpressionCompActionType     = ORG_NAME_SPACE@"__Action_Type__c";
+NSString *const kExpressionCompFormula      = ORG_NAME_SPACE@"__Formula__c";
+NSString *const kExpressionCompActionType   = ORG_NAME_SPACE@"__Action_Type__c";
+NSString *const kExpressionCompDescription  = ORG_NAME_SPACE@"__Description__c";
 
 
 /*BusinessRule OBJECT */
