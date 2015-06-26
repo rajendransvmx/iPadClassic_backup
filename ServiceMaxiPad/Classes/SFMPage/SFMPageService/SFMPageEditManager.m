@@ -2543,7 +2543,7 @@
 #pragma mark - Field update rules
 
 -(void)executeFieldUpdateRulesOnload:(SFMPage *)sfmPage andView:(UIView *)aView {
-    self.ruleManager = [[FieldUpdateRuleManager alloc] initWithProcessId:self.processId sfmPage:self.sfmPage];
+    self.ruleManager = [[FieldUpdateRuleManager alloc] initWithProcessId:self.processId sfmPage:sfmPage];
     self.ruleManager.parentView = aView;
     self.ruleManager.delegate = self;
     [self.ruleManager executeFieldUpdateRules];

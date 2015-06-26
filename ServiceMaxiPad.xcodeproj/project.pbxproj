@@ -600,6 +600,8 @@
 		186CDD7E1A023FE400DC93DA /* SMLocalNotificationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 186CDD7D1A023FE400DC93DA /* SMLocalNotificationManager.m */; };
 		186CDD811A02421C00DC93DA /* SMLocalNotificationHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 186CDD801A02421C00DC93DA /* SMLocalNotificationHelper.m */; };
 		186CDD841A025D6F00DC93DA /* LocalNotificationModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 186CDD831A025D6F00DC93DA /* LocalNotificationModel.m */; };
+		186F7E041B3D705200EDFB2D /* mobile-fieldupdaterules-app.html in Resources */ = {isa = PBXBuildFile; fileRef = 186F7E031B3D705200EDFB2D /* mobile-fieldupdaterules-app.html */; };
+		186F7E071B3D9B6300EDFB2D /* FieldUpdateRuleDataFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 186F7E061B3D9B6300EDFB2D /* FieldUpdateRuleDataFormatter.m */; };
 		187491331A04C1F100D43300 /* ToolsMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 187491321A04C1F100D43300 /* ToolsMasterViewController.m */; };
 		18779DC219EBEF200086A9B7 /* barcode.png in Resources */ = {isa = PBXBuildFile; fileRef = 18779DBC19EBEF200086A9B7 /* barcode.png */; };
 		18779DC519EBEF200086A9B7 /* info.png in Resources */ = {isa = PBXBuildFile; fileRef = 18779DBF19EBEF200086A9B7 /* info.png */; };
@@ -2191,6 +2193,9 @@
 		186CDD801A02421C00DC93DA /* SMLocalNotificationHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMLocalNotificationHelper.m; sourceTree = "<group>"; };
 		186CDD821A025D6F00DC93DA /* LocalNotificationModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalNotificationModel.h; sourceTree = "<group>"; };
 		186CDD831A025D6F00DC93DA /* LocalNotificationModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalNotificationModel.m; sourceTree = "<group>"; };
+		186F7E031B3D705200EDFB2D /* mobile-fieldupdaterules-app.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "mobile-fieldupdaterules-app.html"; sourceTree = "<group>"; };
+		186F7E051B3D9B6300EDFB2D /* FieldUpdateRuleDataFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FieldUpdateRuleDataFormatter.h; sourceTree = "<group>"; };
+		186F7E061B3D9B6300EDFB2D /* FieldUpdateRuleDataFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FieldUpdateRuleDataFormatter.m; sourceTree = "<group>"; };
 		187491311A04C1F100D43300 /* ToolsMasterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ToolsMasterViewController.h; sourceTree = "<group>"; };
 		187491321A04C1F100D43300 /* ToolsMasterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ToolsMasterViewController.m; sourceTree = "<group>"; };
 		18779DBC19EBEF200086A9B7 /* barcode.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = barcode.png; sourceTree = "<group>"; };
@@ -5740,6 +5745,9 @@
 				427305171A10BD2C005F41E1 /* BusinessRuleResult.h */,
 				427305181A10BD2C005F41E1 /* BusinessRuleResult.m */,
 				427305191A10BD2C005F41E1 /* mobile-bizrules-app.html */,
+				186F7E031B3D705200EDFB2D /* mobile-fieldupdaterules-app.html */,
+				186F7E051B3D9B6300EDFB2D /* FieldUpdateRuleDataFormatter.h */,
+				186F7E061B3D9B6300EDFB2D /* FieldUpdateRuleDataFormatter.m */,
 			);
 			path = AdvDataValidation;
 			sourceTree = "<group>";
@@ -6518,6 +6526,7 @@
 				184A9CC419E7D591006DA6BE /* newItem@2x.png in Resources */,
 				40A06F1A1B06033100218162 /* NavBarCal@1x.png in Resources */,
 				184A9CBB19E7D591006DA6BE /* calendar.png in Resources */,
+				186F7E041B3D705200EDFB2D /* mobile-fieldupdaterules-app.html in Resources */,
 				8BF7BB2019EE7CAA00D1CED7 /* cal-right-arrow.png in Resources */,
 				184A8E9819E7A0BE006DA6BE /* triangledown.png in Resources */,
 				9EB4F7911A44332C00E2A8BD /* ChatterCell.xib in Resources */,
@@ -6936,6 +6945,7 @@
 				183AA1BA19E6D26400919345 /* SFMPageHelper.m in Sources */,
 				184A8E9A19E7A0BE006DA6BE /* UIButton+TKCategory.m in Sources */,
 				183A9E3919E69DB000919345 /* SFChildRelationshipModel.m in Sources */,
+				186F7E071B3D9B6300EDFB2D /* FieldUpdateRuleDataFormatter.m in Sources */,
 				183AA19E19E6D26400919345 /* SFMHeaderLayout.m in Sources */,
 				9E5E7ADF19ECD68000B38EC3 /* PageEditMultiSelectFieldController.m in Sources */,
 				184A8E5F19E7A0BE006DA6BE /* SMXCalendarViewController.m in Sources */,

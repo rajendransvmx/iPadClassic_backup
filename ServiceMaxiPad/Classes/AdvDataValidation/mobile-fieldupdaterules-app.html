@@ -1,0 +1,77 @@
+var results = svmxExecuteFieldUpdateRules({
+rules: rules,
+data: dataToValidate,
+fields: fields
+});
+
+//document.writeln("RESULT:<pre>" + SVMX.prettyPrint(results) + "</pre>");
+var jsonString= JSON.stringify(results);
+$COMM.requestDataForType("fieldUpdateruleresult",jsonString,function(){});
+
+},
+context : {}
+
+});
+window.svmxExecuteFieldUpdateRules = function(inParams)
+{
+
+var params = {
+rules :{
+"header":{
+"id":"Work Detail",
+"key":"a0ZF000000A669dMAB",
+"rules":[
+{
+"ruleInfo":{
+"bizRuleDetails":[
+{
+"SVMXDEV__Field_Name__c":"SVMXDEV__Billable_Quantity__c",
+"SVMXDEV__Formula__c":"$F.SUM($D.Work_Detail_Work_Detail, 'SVMXDEV__Received_Quantity2__c')"
+}
+]
+},
+"aliasName":"Work Detail"
+}
+]
+},
+"Work Detail Work Detail":{
+"key":"a0ZF000000A669eMAB",
+"id":"Work Detail Work Detail",
+"name":"Work Detail Work Detail",
+"rules":[
+
+]
+}
+},
+
+data: {
+SVMXDEV__Billable_Quantity__c: 0,
+details: [{
+a0ZF000000A669eMAB: {
+lines: [{
+SVMXDEV__Received_Quantity2__c: 10
+},{
+SVMXDEV__Received_Quantity2__c: 20
+}]
+}
+}]
+}
+}
+
+
+
+
+var bizrules = SVMX.create("com.servicemax.client.sfmbizrules.impl.FieldUpdateRuleValidator");
+var result = bizrules.evaluateFieldUpdateRules(params);
+// result = {warnings: [], errors: []}
+return result;
+}
+});
+</script>
+
+</head>
+<body>
+    <div id="client_display_root"></div>
+</body>
+</html>
+

@@ -147,6 +147,12 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     [self invalidateLinkedSfm];
 }
 
+-(void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+   // [self.sfmEditPageManager executeFieldUpdateRulesOnload:self.sfmPage andView:self.view];
+}
+
 //- (void)viewDidAppear:(BOOL)animated
 //{
 //}
@@ -207,8 +213,6 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     
     /*Pass all the information to page manager and let it fill up sfpage*/
     [self.sfmEditPageManager fillSfmPage:self.sfmPage andProcessType:self.processType];
-    
-//    [self.sfmEditPageManager executeFieldUpdateRulesOnload:self.sfmPage andView:self.view];
     
     /*Reload both master and child data*/
     [self performSelectorOnMainThread:@selector(refreshAllViews) withObject:nil waitUntilDone:NO];
