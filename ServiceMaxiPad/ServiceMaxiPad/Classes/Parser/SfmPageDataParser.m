@@ -32,7 +32,7 @@
     @synchronized([self class]){
         @autoreleasepool {
             NSDictionary *responseDict = (NSDictionary *)responseData;
-
+            
             ResponseCallback * callBackObj = [[ResponseCallback alloc] init];
             NSArray * pageUIList =[responseDict objectForKey:kSVMXPageUi];
             
@@ -59,13 +59,16 @@
             RequestParamModel *paramModel = [[RequestParamModel alloc] init];
             if([callbackIds count] < kPageLimit)
             {
-                if(callBackObj.callBack)
+                NSArray *tempArray;
+                tempArray = [self getTheRemainingIdsFromCacheForTheArray:callbackIds];
+                if([tempArray count] >0)
                 {
-                    paramModel.values = [self getTheRemainingIdsFromCacheForTheArray:callbackIds];
-                }
-                else
+                    callBackObj.callBack = YES;
+                    paramModel.values = tempArray;
+                    
+                }else
                 {
-                    paramModel.values = callbackIds;
+                    callBackObj.callBack = NO;
                 }
             }
             else
@@ -77,14 +80,13 @@
             NSString *contextValue =  [[ServerRequestManager sharedInstance]
                                        getTheContextvalueForCategoryType:self.categoryType];
             
-           NSArray *finalarray = [[TimeLogCacheManager sharedInstance] getRequestParameterForTimeLogWithCategory:contextValue];
+            NSArray *finalarray = [[TimeLogCacheManager sharedInstance] getRequestParameterForTimeLogWithCategory:contextValue];
             
             if([finalarray count] > 0)
             {
                 paramModel.valueMap = finalarray;
             }
-        
-
+            
             callBackObj.callBackData  = paramModel;
             return callBackObj;
         }
