@@ -9,9 +9,11 @@
 #import "FieldUpdateRuleManager.h"
 #import "BusinessRuleDatabaseService.h"
 #import "BusinessRuleConstants.h"
+#import "FieldUpdateRuleDataFormatter.h"
+#import "Utility.h"
 
 @interface FieldUpdateRuleManager ()
-
+@property (nonatomic, strong) FieldUpdateRuleDataFormatter *formulaDataFormatter;
 @end
 
 @implementation FieldUpdateRuleManager
@@ -48,20 +50,37 @@
 
 - (void)eventOccured:(NSString *)eventName andParameter:(NSString *)jsonParameterString {
     
-    if ([eventName isEqualToString:kBizRuleResult]) {
-        /*
-        self.bizRuleResult = [Utility objectFromJsonString:jsonParameterString];
-        NSArray *bizRuleResultArray = [self.formatter formatBusinessRuleResults:self.bizRuleResult];
-        
-        if ([self.delegate respondsToSelector:@selector(businessRuleFinishedWithResults:)])
-        {
-            self.resultArray = [[NSMutableArray alloc] initWithArray:bizRuleResultArray];
-            [self updateBizRuleResultArray];
-            [self.delegate businessRuleFinishedWithResults: self.resultArray ];
-        }
-         
-         */
+    NSLog(@"%@:%@", eventName, jsonParameterString);
+    
+    if ([eventName isEqualToString:kfieldUpdateRuleResult]) {
+
     }
+}
+
+
+- (NSString *) getBizRuleHtmlStringForProcesses:(NSArray *)bizRuleProcessArray{
+    if (self.formulaDataFormatter == nil) {
+        
+        self.formulaDataFormatter = [[FieldUpdateRuleDataFormatter alloc] init];
+    }
+    self.formulaDataFormatter.bizRuleProcesses = bizRuleProcessArray;
+    self.formulaDataFormatter.sfmPage = self.sfmPage;
+    NSDictionary *bizRuleDict = [self.formulaDataFormatter formtaBusinessRuleInfo];
+    
+    NSString *metaDataStr = [Utility jsonStringFromObject:[bizRuleDict valueForKey:kBizRuleMetaData]];
+    NSString *fieldStr =    [Utility jsonStringFromObject:[bizRuleDict valueForKey:kBizRuleFields]];
+    NSString *dataStr = [Utility jsonStringFromObject:[bizRuleDict valueForKey:KBizRuleData]];
+    
+    NSString *bizRuleHtmlStr = [self htmlStringForBizRuleMetaData:metaDataStr fields:fieldStr data:dataStr];
+    
+    NSDictionary *paramsDict = [NSDictionary dictionaryWithObjects:@[[bizRuleDict valueForKey:kBizRuleMetaData], [bizRuleDict valueForKey:KBizRuleData], [NSDictionary dictionary]] forKeys:@[@"rules", @"data", @"userInfo"]];
+    NSString *paramsStr = [Utility jsonStringFromObject:paramsDict];
+    NSString *param = [NSString stringWithFormat:@"var params = %@", paramsStr];
+    
+    NSString *htmlFilePath = [[NSBundle mainBundle] pathForResource:@"mobile-fieldupdaterules-app" ofType:@"html"];
+    NSString *htmlContent = [NSString stringWithFormat:[NSString stringWithContentsOfFile:htmlFilePath encoding:NSUTF8StringEncoding error:nil], param];
+    NSString *finalString = [bizRuleHtmlStr stringByAppendingString:htmlContent];
+    return finalString;
 }
 
 @end

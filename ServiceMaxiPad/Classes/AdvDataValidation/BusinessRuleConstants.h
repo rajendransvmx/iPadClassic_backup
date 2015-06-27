@@ -40,5 +40,6 @@ NSString * const kBizRuleErrorMessageType;
 NSString * const kBizRuleWarningMessageType;
 
 NSString *const kBizRuleResult;
+NSString *const kfieldUpdateRuleResult;
 
 NSString * const kBizRuleTypeFieldUpdate;

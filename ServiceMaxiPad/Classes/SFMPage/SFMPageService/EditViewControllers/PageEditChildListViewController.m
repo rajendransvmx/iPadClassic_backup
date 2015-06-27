@@ -626,9 +626,12 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
             multiPageFieldView.fieldLabelOne.text = [firstPageField label];
             multiPageFieldView.fieldValueOne.text = [self displayValueForPageField:firstPageField indexPath:indexPath];
             
-            SFMPageField *secondPageField = [self pageFieldForIndex:2];
-            multiPageFieldView.fieldLabelTwo.text = [secondPageField label];
-            multiPageFieldView.fieldValueTwo.text = [self displayValueForPageField:secondPageField indexPath:indexPath];
+            // was crashing here, hence the condition..
+            if([self.detailLayout.detailSectionFields count] > 2) {
+                SFMPageField *secondPageField = [self pageFieldForIndex:2];
+                multiPageFieldView.fieldLabelTwo.text = [secondPageField label];
+                multiPageFieldView.fieldValueTwo.text = [self displayValueForPageField:secondPageField indexPath:indexPath];
+            }
             
             UILabel *titleLabel = (UILabel*)[cell.contentView viewWithTag:TITLE_LABEL_TAG];
             if (titleLabel == nil) {

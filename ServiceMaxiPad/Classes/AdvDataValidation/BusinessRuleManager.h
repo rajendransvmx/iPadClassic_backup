@@ -100,5 +100,6 @@ This methos is not used.
 - (void) fillBusinessRuleProcesses:(NSArray *)bizRuleProcessArray withBusinessRules:(NSArray *)bizRules;
 - (void) fillBusinessRule:(NSArray *)bizRules withExpressionComponents:(NSArray *)expComponensArray;
 - (NSString *) getBizRuleHtmlStringForProcesses:(NSArray *)bizRuleProcessArray;
+- (NSString *) htmlStringForBizRuleMetaData:(NSString *)metaDataStr fields:(NSString *)fieldsStr data:(NSString *)dataStr;
 
 @end
